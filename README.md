@@ -159,15 +159,19 @@ shallower transits, fainter stars, multi-planet systems or other data products.
 ### Calibration results
 
 <!-- CALIBRATION:START -->
-**Status: lock pending.** The self-claim and its targets are written.
-`refute lock` will hash them together with the code, from a clean committed
-tree, before any calibration light curve is analyzed.
+**Status: locked, not yet run.** The self-claim was locked before any
+calibration light curve was analyzed. The result will be published here
+whatever it is.
 
 | Item | Value |
 |---|---|
 | Claim | [`calibration/self_claim.yaml`](calibration/self_claim.yaml) |
-| Claim SHA-256 (canonical form to be locked) | `5701c54cb088f1d33895f73d98244d0ea214ddb3f861340d8261b817e189a53f` |
-| Targets | 10 known planets and 3 known false positives, selected by the seeded protocol in [`calibration/PROTOCOL.md`](calibration/PROTOCOL.md) |
+| Claim SHA-256 | `5701c54cb088f1d33895f73d98244d0ea214ddb3f861340d8261b817e189a53f` |
+| Code SHA-256 | `624f5f900334abcdc614a679a3fdc4ce9c9e8a465f2d3e553d71b24c199f4cfa` |
+| Locked from commit | [`5214f2e29de9`](https://github.com/klucilla/refute/commit/5214f2e29de98803aafff3094733ca424ae3dbde) |
+| Locked at (UTC) | 2026-10-07T21:42:15Z |
+| `refute verify` | PASS |
+| Evidence | [lock file](calibration/self_claim.lock.json) · [lock history](calibration/LOCK_HISTORY.md) |
 <!-- CALIBRATION:END -->
 
 ## Quickstart

@@ -1,0 +1,183 @@
+{
+  "attachments": [
+    {
+      "path": "targets.yaml",
+      "role": "targets",
+      "sha256": "1d0fdcd006f3bea2b1608e1ea5f7dc847704194cbfba92e67bf2c4ff31dc6883"
+    },
+    {
+      "path": "PROTOCOL.md",
+      "role": "protocol",
+      "sha256": "876b022429bc2b6443e7db5ef0c86f13750ffb21d5769e5899d7bd46041b685b"
+    },
+    {
+      "path": "selection_log.md",
+      "role": "selection-log",
+      "sha256": "4394e36506dc9776d3694d22957b03217e638033fed8fcf12200239eacc35819"
+    },
+    {
+      "path": "pool_snapshot/retrieval.json",
+      "role": "snapshot-index",
+      "sha256": "01e48d7ece0d9197fc665376780690c18749f3eca0963b6dbd0b45b7d1a99302"
+    }
+  ],
+  "canonicalization": "refute-cjson-1",
+  "claim_id": "tess-calibration-v0.1",
+  "claim_kind": "calibration",
+  "claim_path": "self_claim.yaml",
+  "claim_path_in_repo": "calibration/self_claim.yaml",
+  "claim_sha256": "5701c54cb088f1d33895f73d98244d0ea214ddb3f861340d8261b817e189a53f",
+  "code": {
+    "algorithm": "refute-code-1",
+    "files": [
+      {
+        "path": "pyproject.toml",
+        "sha256": "8293d574b21a67895315e10b674c157dd17a485df74d996a6ba7f3acfc2d3804"
+      },
+      {
+        "path": "src/refute/__init__.py",
+        "sha256": "0dd09f8819b50488139db92f49fa8cdfb147c1a1c84d9d35b1f2bbe2cce72103"
+      },
+      {
+        "path": "src/refute/cli.py",
+        "sha256": "798f3b32e1e8dffc74b80a6b6bf55d82e2071761ab0a43410dc937069922bba8"
+      },
+      {
+        "path": "src/refute/core/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "src/refute/core/canonical.py",
+        "sha256": "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      },
+      {
+        "path": "src/refute/core/claim.py",
+        "sha256": "8395db34d654a1ac6754e9519fe30b34b84acd7eab82d46af2ca97347a3a6751"
+      },
+      {
+        "path": "src/refute/core/codehash.py",
+        "sha256": "bd9aa5d47ded78db1515763aa5638040dd5f7c7ed5d1a879e72df1634147a528"
+      },
+      {
+        "path": "src/refute/core/dossier.py",
+        "sha256": "2b8ebcb6a5e4117e6a88e588f5bfd82e3a49f92a4b64828218f098e6d7a7dd73"
+      },
+      {
+        "path": "src/refute/core/environment.py",
+        "sha256": "308db3f9343952964bd9f5919140a723ea83bc2e7b41353ef42135c844596c6b"
+      },
+      {
+        "path": "src/refute/core/hashing.py",
+        "sha256": "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      },
+      {
+        "path": "src/refute/core/io.py",
+        "sha256": "c6a9a5eb99ff1b30d8d82dcd830f54e9178b753f4eda2c7cc4b88db14283d544"
+      },
+      {
+        "path": "src/refute/core/lock.py",
+        "sha256": "186531e6991e902a9a54692d04dcd731dc7b2f5ae9b527f2970030b1dfe263e3"
+      },
+      {
+        "path": "src/refute/core/pack.py",
+        "sha256": "dcc17e7da6239d5d81a9e8138f023dbc114c0a00a9f8ee17152d14d5199df226"
+      },
+      {
+        "path": "src/refute/core/run.py",
+        "sha256": "7ec5cf0a84ee41a48ef95ee5f450e9c91d85d58f5361708ef838dffd6077a2b2"
+      },
+      {
+        "path": "src/refute/core/runner.py",
+        "sha256": "f4d964306a78d9f0521cde2e48869e308d8d533a19037920065a3e44cad1902a"
+      },
+      {
+        "path": "src/refute/core/verdict.py",
+        "sha256": "6744a42bfd3fe74f7c15eca4cae23619018c0782110f05b9bc552d1be7b5a4cc"
+      },
+      {
+        "path": "src/refute/packs/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "src/refute/packs/tess/__init__.py",
+        "sha256": "d6dd260306043c10730eac397ef164589fe83316aaf71736e10b444b46834f91"
+      },
+      {
+        "path": "src/refute/packs/tess/adapter.py",
+        "sha256": "1da40510d4d042018d6c2477a6b121b012ba9272436ab9b79cf151a6b2bb908a"
+      },
+      {
+        "path": "src/refute/packs/tess/calibration.py",
+        "sha256": "116b8a0ab9ebe07a95823f68254f40b61b0621a473fd8d157b8f850092b60d17"
+      },
+      {
+        "path": "src/refute/packs/tess/detrend.py",
+        "sha256": "a47fd10bc5d973a9d0fcd0d64be1d936a475fbb1521164e4205595417ae38e60"
+      },
+      {
+        "path": "src/refute/packs/tess/ephemeris.py",
+        "sha256": "799fdd5a7b1dc2bd5f60a5bcd892c4808bda62d147b562b2366404256a1b579d"
+      },
+      {
+        "path": "src/refute/packs/tess/events.py",
+        "sha256": "3705912e8cbd33f1ede0b87d4c245beb7f68dbf1dbbc5afd0f209e74dfcaf2d2"
+      },
+      {
+        "path": "src/refute/packs/tess/exporter.py",
+        "sha256": "07c75d257f8529cbdd60ba1b12a090160f48c9e7348e4c386d16f453ef1ea064"
+      },
+      {
+        "path": "src/refute/packs/tess/gauntlet.py",
+        "sha256": "3bb5de4b830e6d4276e20375b1b766b64f686224a606358119abf2c4295b6ee5"
+      },
+      {
+        "path": "src/refute/packs/tess/holdout.py",
+        "sha256": "d7fc9c8b56d0fae9de3b7e92d0dd5b6d2153cf573007ada7b79d3f2b1c746eb2"
+      },
+      {
+        "path": "src/refute/packs/tess/params.py",
+        "sha256": "b2c48d1208a24cc58f66f83d2c87125131a253044381ee3ee76543ce5b4c1da5"
+      },
+      {
+        "path": "src/refute/packs/tess/pipeline.py",
+        "sha256": "e2062fd0860d6631a25a199dd76e656556690d6c9d2f9c664340436f5b2c2a00"
+      },
+      {
+        "path": "src/refute/packs/tess/plots.py",
+        "sha256": "3ce616722ce85a7ec2a5b3a5211c834ac78b3b8426c9b515e2aabfbfcaa031f0"
+      },
+      {
+        "path": "src/refute/packs/tess/report.py",
+        "sha256": "c1048b27284620b5a4e00f5064a48e05f69a5be1da268f7a05d1d79a97c84b32"
+      },
+      {
+        "path": "src/refute/packs/tess/schema.py",
+        "sha256": "ff11b66855dfaf25eee070ac63651e7d2a1e388494773f44ab6565290cc19a47"
+      },
+      {
+        "path": "src/refute/packs/tess/search.py",
+        "sha256": "f277ab9b95b7cf86d3df11dfc64471a10c3124e6340c611336ed7dd3d14af424"
+      },
+      {
+        "path": "src/refute/packs/tess/synthetic.py",
+        "sha256": "884b79ce97c14d791af3e9c241f3700d0724b9ddf957d2df5033b04335127143"
+      },
+      {
+        "path": "src/refute/packs/tess/types.py",
+        "sha256": "e5124295ff0c8193989b9a4d351b25ce936ad7a380c3515394ebe0f6307893f6"
+      },
+      {
+        "path": "uv.lock",
+        "sha256": "bd01509fddcf04d4a4fd95c1c9ba80bad35336a6637ece71d13221b335bc423a"
+      }
+    ],
+    "sha256": "624f5f900334abcdc614a679a3fdc4ce9c9e8a465f2d3e553d71b24c199f4cfa"
+  },
+  "git_commit": "5214f2e29de98803aafff3094733ca424ae3dbde",
+  "git_dirty": false,
+  "git_dirty_paths": [],
+  "lock_version": 1,
+  "locked_at_utc": "2026-10-07T21:42:15Z",
+  "python_version": "3.13.5",
+  "refute_version": "0.1.0"
+}
