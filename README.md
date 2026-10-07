@@ -10,7 +10,7 @@
   <a href="https://github.com/klucilla/refute/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/klucilla/refute/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg"></a>
   <a href="pyproject.toml"><img alt="Python 3.12 | 3.13 (tested in CI)" src="https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB.svg"></a>
-  <a href="ROADMAP.md"><img alt="Status: v0.1 calibration" src="https://img.shields.io/badge/status-v0.1%20calibration-orange.svg"></a>
+  <a href="ROADMAP.md"><img alt="Status: v0.2 gauntlet, in progress" src="https://img.shields.io/badge/status-v0.2%20gauntlet-orange.svg"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
 </p>
 
@@ -20,8 +20,9 @@
 </p>
 
 > [!IMPORTANT]
-> **Status: v0.1 in development.** Nothing here is a confirmed discovery. Refute produces
-> candidates and verdicts, never certainties.
+> **Status: v0.2 in development. v0.1 is closed, and its self-claim failed**
+> ([post-mortem](calibration/POSTMORTEM.md)). Nothing here is a confirmed discovery.
+> Refute produces candidates and verdicts, never certainties.
 
 ## Why
 
@@ -225,8 +226,8 @@ Packs are discovered through Python entry points, so they can live in their own 
 
 | Pack | What it attacks | Status |
 |---|---|---|
-| Exoplanet transits (TESS) | Transit signals in SPOC 2-minute light curves | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) v0.1 calibration |
-| Full TESS false-positive battery | Centroids, apertures, aliases, known binaries | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.2 |
+| Exoplanet transits (TESS) | Transit signals in SPOC 2-minute light curves | ![v0.1 released](https://img.shields.io/badge/-v0.1%20released-blue) self-claim FAIL ([post-mortem](calibration/POSTMORTEM.md)) |
+| Full TESS false-positive battery | Centroids, apertures, aliases, known binaries | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) v0.2 |
 | Paper replication (ML) | Published results with public code and data | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.3 |
 | Variable stars (TESS) | Eclipsing binaries and pulsating stars | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.5 |
 | Mathematics | Conjectures, by verifiable counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.6 |
@@ -253,8 +254,8 @@ SETI@home and Einstein@Home. The plan for Refute@Home
 
 | Phase | Focus | Status |
 |---|---|---|
-| **v0.1 Calibration** | Replicate published TESS planets, blind holdout, dossiers | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) |
-| v0.2 Gauntlet | Full false-positive battery, independent reviewers | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
+| v0.1 Calibration | Replicate published TESS planets, blind holdout, dossiers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.1.0) |
+| **v0.2 Gauntlet** | Full false-positive battery, independent reviewers | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) |
 | v0.3 Replicate papers | ML papers with public code and data, right of reply | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.4 Discover | New candidates in TESS data | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.5 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
@@ -270,8 +271,8 @@ Refute exists to attack claims, so contributions that find weaknesses in Refute 
 
 - **Attacks on Refute**, any time: lock bypasses, holdout leaks, verdicts that should not
   survive. Open an issue, or report security problems privately ([SECURITY.md](SECURITY.md)).
-- **Reproduction.** Once the v0.1 calibration dossiers are published, rerun them on your
-  machine and report any difference.
+- **Reproduction.** The v0.1 dossiers are in [release v0.1.0](https://github.com/klucilla/refute/releases/tag/v0.1.0): rerun them on
+  your machine and report any difference.
 - **Gauntlet tests** for the current phase, each with a synthetic case that passes and one
   that fails. Tests never touch the network.
 - **Ideas for later phases**: new domain packs, new attacks, computation. Open an issue to

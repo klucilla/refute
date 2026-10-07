@@ -135,3 +135,14 @@ are packed in the archive `refute-v0.1-reproduction.zip` (SHA-256
 the logs, one line per log printed by `uv sync` had the local Windows user folder in
 the path of the Python interpreter; the folder name is replaced by `<user>`. Nothing
 else was edited.
+
+## Publication
+
+On 2026-10-07, after the gate review, both archives were published as assets of
+release v0.1.0 (https://github.com/klucilla/refute/releases/tag/v0.1.0, tag on commit `6bb5e78`):
+`refute-v0.1-calibration.zip` (SHA-256
+`6f67781dbd3790cae767ff215bb0d7ee5cfed0763112304a3b318a3e987c993d`, unchanged since
+it was built) and `refute-v0.1-reproduction.zip` (SHA-256
+`1ee24bcf2d2c4843ba799c2cb64222cf7427607594c04bc9c652cbe3d698ad80`), each with its
+`.sha256` file. The published assets were downloaded again and their hashes
+checked. The repository was private at the time of the release.

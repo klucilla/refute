@@ -17,7 +17,7 @@ Agents working in this repo must read it before planning any work.
 
 ## Current phase
 
-**v0.1 Calibration**
+**v0.2 Gauntlet**
 
 ---
 
@@ -37,10 +37,15 @@ Prove the engine works by replicating published TESS planets.
 - Self-claim locked before the first run.
 
 **Exit criteria**
-- [ ] `ruff` and `pytest` pass in CI without network.
-- [ ] `refute calibrate` produces one dossier per target plus a summary.
-- [ ] Self-claim result reported honestly (pass or fail).
-- [ ] Any dossier can be reproduced with the commands it contains.
+- [x] `ruff` and `pytest` pass in CI without network.
+- [x] `refute calibrate` produces one dossier per target plus a summary.
+- [x] Self-claim result reported honestly (pass or fail).
+- [x] Any dossier can be reproduced with the commands it contains.
+
+**Closed on 2026-10-07.** Gate review: WEAKENED, with both important findings
+resolved ([docs/gates/v0.1-review.md](docs/gates/v0.1-review.md)). Self-claim
+result: FAIL ([calibration/POSTMORTEM.md](calibration/POSTMORTEM.md)). Evidence:
+[release v0.1.0](https://github.com/klucilla/refute/releases/tag/v0.1.0).
 
 ---
 
