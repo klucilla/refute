@@ -1,0 +1,383 @@
+{
+  "claim_id": "tess-calibration-v0.1",
+  "complete_run": true,
+  "definitions": {
+    "flagged": "A target of kind 'false_positive' whose Refute verdict is REFUTED.",
+    "pass": "The claim passes only if all three criteria hold on a complete run of every calibration target (the development target is excluded). A target whose analysis fails with an error counts as not recovered and not flagged.\n",
+    "recovered": "A target of kind 'planet' in targets.yaml whose period found by Refute satisfies |P_found - P_published| / P_published <= 0.001, with P_published the NASA Exoplanet Archive value recorded in targets.yaml. Aliases (2P, P/2, 3P, P/3) are reported but do not count as recovered.\n",
+    "refuted_planet": "A target of kind 'planet' whose Refute verdict is REFUTED.",
+    "scope": "Easy regime only, as selected by calibration/PROTOCOL.md: periods 0.5 to 10 days, depths of at least 1000 ppm, TESS magnitude 12 or brighter, single-planet systems, SPOC 2-minute data in at least two calendar years. Nothing is claimed outside it.\n"
+  },
+  "diagnostics": {
+    "errors": [],
+    "holdout_statuses": {
+      "FAIL": 1,
+      "PASS": 12
+    },
+    "inconclusive_reasons": {
+      "TIC-285524410": [
+        "plausibility: no TIC stellar radius available"
+      ]
+    },
+    "planets_survived": 9,
+    "verdicts_by_kind": {
+      "false_positive:INCONCLUSIVE": 1,
+      "false_positive:SURVIVED": 2,
+      "planet:REFUTED": 1,
+      "planet:SURVIVED": 9
+    }
+  },
+  "hypothesis": "Refute recovers at least 9 of 10 known TESS planets (period within 0.1% of the published value), flags at least 2 of 3 known false positives, and gives the verdict REFUTED to at most 1 of the 10 known planets.",
+  "pass_criteria": {
+    "expected_false_positives": 3,
+    "expected_planets": 10,
+    "max_refuted_planets": 1,
+    "min_flagged_false_positives": 2,
+    "min_recovered_planets": 9,
+    "period_tolerance": 0.001
+  },
+  "run": {
+    "claim_sha256": "5701c54cb088f1d33895f73d98244d0ea214ddb3f861340d8261b817e189a53f",
+    "code_sha256": "624f5f900334abcdc614a679a3fdc4ce9c9e8a465f2d3e553d71b24c199f4cfa",
+    "environment": {
+      "machine": "AMD64",
+      "packages": {
+        "astropy": "8.0.1",
+        "astroquery": "0.4.11",
+        "lightkurve": "2.6.0",
+        "matplotlib": "3.11.2",
+        "numpy": "2.5.3",
+        "pydantic": "2.13.5",
+        "pyyaml": "6.0.3",
+        "typer": "0.27.3"
+      },
+      "platform": "Windows-11-10.0.26300-SP0",
+      "python_implementation": "CPython",
+      "python_version": "3.13.5",
+      "refute_version": "0.1.0"
+    },
+    "finished_utc": "2026-10-07T22:15:02+00:00",
+    "lock_git_commit": "5214f2e29de98803aafff3094733ca424ae3dbde",
+    "offline": true,
+    "run_git_commit": "821b0d791c81d0c3c61d333d93b286b78321dba3",
+    "run_git_dirty": false,
+    "run_id": "20261007T221214Z-5701c54c",
+    "started_utc": "2026-10-07T22:12:12+00:00",
+    "targets_requested": "all",
+    "workers": 30
+  },
+  "schema": "refute-tess-calibration-summary-1",
+  "scope_note": "Refute v0.1 is calibrated only in an easy regime defined by pre-registered selection filters (calibration/PROTOCOL.md): confirmed planets with orbital periods between 0.5 and 10 days, transit depths of at least 1000 ppm, TESS magnitude 12 or brighter, a single known planet in the system, and SPOC 2-minute data in at least two calendar years; false positives with the same period, depth and magnitude limits. The calibration says nothing about longer periods, shallower transits, fainter stars, multi-planet systems or other data products.",
+  "selection_filters": {
+    "data_rule": "SPOC 120-s light curves in >= 2 calendar years with >= 300 days between first and last sector start",
+    "false_positive_filter": "(TFOPWG Disposition == FP) or (TESS Disposition == EB and TFOPWG Disposition not in {CP, KP, PC, APC}); 0.5 < Period (days) < 10; Depth (ppm) >= 1000; TESS Mag <= 12; exactly one TOI for the TIC; TIC hosts no planet in pscomppars",
+    "planet_filter_adql": "tran_flag = 1 and tic_id is not null and pl_orbper > 0.5 and pl_orbper < 10 and pl_trandep >= 0.1 and sy_tmag <= 12 and sy_pnum = 1",
+    "pool_sizes": {
+      "false_positives": 459,
+      "planets": 478
+    },
+    "protocol": "calibration/PROTOCOL.md",
+    "seed": 20261007,
+    "snapshots": [
+      {
+        "bytes": 338991,
+        "file": "pool_snapshot/pscomppars_planet_pool.csv",
+        "query": "select pl_name, hostname, tic_id, pl_orbper, pl_orbpererr1, pl_orbpererr2, pl_orbper_reflink, pl_tranmid, pl_tranmid_reflink, pl_trandep, pl_trandep_reflink, pl_trandur, pl_trandur_reflink, pl_rade, sy_tmag, sy_pnum, st_rad, st_mass, tran_flag, disc_facility from pscomppars where tran_flag = 1 and tic_id is not null and pl_orbper > 0.5 and pl_orbper < 10 and pl_trandep >= 0.1 and sy_tmag <= 12 and sy_pnum = 1",
+        "retrieved_utc": "2026-10-07T20:48:59Z",
+        "sha256": "7e0ab90baa595c57443ad565d2a8f6c960032347bc2547671c478ccacbc09697",
+        "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv"
+      },
+      {
+        "bytes": 70751,
+        "file": "pool_snapshot/pscomppars_host_tic_ids.csv",
+        "query": "select distinct tic_id from pscomppars where tic_id is not null",
+        "retrieved_utc": "2026-10-07T20:49:01Z",
+        "sha256": "54f02e3bca77978019992780f462e5bb10562fcded5ecbe20e7d66ab4a27164e",
+        "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct+tic_id+from+pscomppars+where+tic_id+is+not+null&format=csv"
+      },
+      {
+        "bytes": 3809207,
+        "file": "pool_snapshot/exofop_toi.csv",
+        "retrieved_utc": "2026-10-07T20:49:24Z",
+        "sha256": "efba31fbd21238a3ca67935dfbd9a2dd9fdaf9c6fde8f026c21514223effaa47",
+        "url": "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv"
+      }
+    ]
+  },
+  "self_claim": {
+    "criteria": [
+      {
+        "criterion": "recovered planets",
+        "of": 10,
+        "passed": true,
+        "requirement": ">= 9",
+        "value": 10
+      },
+      {
+        "criterion": "flagged false positives",
+        "of": 3,
+        "passed": false,
+        "requirement": ">= 2",
+        "value": 0
+      },
+      {
+        "criterion": "refuted planets (degeneracy guard)",
+        "of": 10,
+        "passed": true,
+        "requirement": "<= 1",
+        "value": 1
+      }
+    ],
+    "note": "at least one criterion failed",
+    "result": "FAIL"
+  },
+  "targets": [
+    {
+      "alias": "P",
+      "found_period_days": 4.137436927981265,
+      "kind": "planet",
+      "name": "HD 18599 b",
+      "published_period_days": 4.1374354,
+      "recovered": true,
+      "relative_error": 3.693063739606342e-07,
+      "status": "OK",
+      "target": "TIC-207141131",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 2.6438977496078317,
+      "kind": "planet",
+      "name": "GJ 436 b",
+      "published_period_days": 2.64388312,
+      "recovered": true,
+      "relative_error": 5.533379188043929e-06,
+      "status": "OK",
+      "target": "TIC-138819293",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 1.3866527439178316,
+      "kind": "planet",
+      "name": "WASP-173 A b",
+      "published_period_days": 1.38665318,
+      "recovered": true,
+      "relative_error": 3.1448539163611345e-07,
+      "status": "OK",
+      "target": "TIC-77031414",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.971283338201643,
+      "kind": "planet",
+      "name": "TOI-3160 A b",
+      "published_period_days": 3.971281,
+      "recovered": true,
+      "relative_error": 5.887776873433827e-07,
+      "status": "OK",
+      "target": "TIC-440872576",
+      "tests": {
+        "holdout_by_year": "FAIL",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 2.4841972467443063,
+      "kind": "planet",
+      "name": "WASP-75 b",
+      "published_period_days": 2.484193,
+      "recovered": true,
+      "relative_error": 1.7095065908467444e-06,
+      "status": "OK",
+      "target": "TIC-36592530",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 2.029106535131483,
+      "kind": "planet",
+      "name": "LHS 475 b",
+      "published_period_days": 2.029088,
+      "recovered": true,
+      "relative_error": 9.134710512023852e-06,
+      "status": "OK",
+      "target": "TIC-369327947",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.408836244316015,
+      "kind": "planet",
+      "name": "WASP-28 b",
+      "published_period_days": 3.40883495,
+      "recovered": true,
+      "relative_error": 3.7969453898331105e-07,
+      "status": "OK",
+      "target": "TIC-398572544",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.1856409894915743,
+      "kind": "planet",
+      "name": "TOI-5806 b",
+      "published_period_days": 3.1856381,
+      "recovered": true,
+      "relative_error": 9.070369840358605e-07,
+      "status": "OK",
+      "target": "TIC-283621618",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 2.1522181690225306,
+      "kind": "planet",
+      "name": "WASP-2 b",
+      "published_period_days": 2.152175,
+      "recovered": true,
+      "relative_error": 2.005832357054214e-05,
+      "status": "OK",
+      "target": "TIC-374530847",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 1.823714876137674,
+      "kind": "planet",
+      "name": "TOI-2969 b",
+      "published_period_days": 1.8237146,
+      "recovered": true,
+      "relative_error": 1.5141496046590576e-07,
+      "status": "OK",
+      "target": "TIC-36452991",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.0249471452102323,
+      "kind": "false_positive",
+      "name": "TOI-2848.01",
+      "published_period_days": 3.02442221717177,
+      "recovered": null,
+      "relative_error": 0.00017356308106788323,
+      "status": "OK",
+      "target": "TIC-285524410",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "INCONCLUSIVE",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.5382274468180395,
+      "kind": "false_positive",
+      "name": "TOI-5966.01",
+      "published_period_days": 3.5382323690299162,
+      "recovered": null,
+      "relative_error": 1.391149976423456e-06,
+      "status": "OK",
+      "target": "TIC-404610583",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.9299695589875276,
+      "kind": "false_positive",
+      "name": "TOI-1704.01",
+      "published_period_days": 3.929983,
+      "recovered": null,
+      "relative_error": 3.420119749209959e-06,
+      "status": "OK",
+      "target": "TIC-95129101",
+      "tests": {
+        "holdout_by_year": "PASS",
+        "odd_even": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS"
+      },
+      "verdict": "SURVIVED"
+    }
+  ]
+}

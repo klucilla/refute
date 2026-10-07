@@ -92,11 +92,13 @@ def test_render_results_copies_the_outcome_whatever_it_is():
             "repo_url": None,
             "summary": summary,
             "summary_md": "calibration/results/r1/summary.md",
+            "runs_md": "calibration/results/r1/RUNS.md",
             "postmortem": "calibration/POSTMORTEM.md",
         }
     )
     assert "Self-claim result: FAIL" in body
     assert "| flagged false positives | 1 of 3 | >= 2 | no |" in body
+    assert "[run log](calibration/results/r1/RUNS.md)" in body
     assert "post-mortem" in body
 
 

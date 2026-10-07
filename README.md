@@ -159,9 +159,15 @@ shallower transits, fainter stars, multi-planet systems or other data products.
 ### Calibration results
 
 <!-- CALIBRATION:START -->
-**Status: locked, not yet run.** The self-claim was locked before any
-calibration light curve was analyzed. The result will be published here
-whatever it is.
+**Self-claim result: FAIL.** At least one criterion failed.
+
+| Criterion | Value | Requirement | Passed |
+|---|---|---|---|
+| recovered planets | 10 of 10 | >= 9 | yes |
+| flagged false positives | 0 of 3 | >= 2 | no |
+| refuted planets (degeneracy guard) | 1 of 10 | <= 1 | yes |
+
+Run `20261007T221214Z-5701c54c` from commit [`821b0d791c81`](https://github.com/klucilla/refute/commit/821b0d791c81d0c3c61d333d93b286b78321dba3) (2026-10-07T22:15:02+00:00). [summary](calibration/results/20261007T221214Z-5701c54c/summary.md) · [run log](calibration/results/20261007T221214Z-5701c54c/RUNS.md) · [post-mortem](calibration/POSTMORTEM.md) · dossier archive SHA-256 `6f67781dbd3790cae767ff215bb0d7ee5cfed0763112304a3b318a3e987c993d`
 
 | Item | Value |
 |---|---|

@@ -133,14 +133,17 @@ def render(state: dict[str, Any]) -> str:
             for c in claim["criteria"]
         ),
     ]
+    note = claim["note"][:1].upper() + claim["note"][1:]
     links = [f"[summary]({state['summary_md']})"]
+    if state.get("runs_md"):
+        links.append(f"[run log]({state['runs_md']})")
     if state.get("postmortem"):
         links.append(f"[post-mortem]({state['postmortem']})")
     if state.get("archive_sha256"):
         links.append(f"dossier archive SHA-256 `{state['archive_sha256']}`")
     return "\n".join(
         [
-            f"**Self-claim result: {claim['result']}.** {claim['note']}.",
+            f"**Self-claim result: {claim['result']}.** {note}.",
             "",
             *criteria,
             "",
@@ -191,6 +194,9 @@ def collect_state(root: Path, summary_path: Path | None = None) -> dict[str, Any
         summary=json.loads(summary_path.read_text(encoding="utf-8")),
         summary_md=(run_dir / "summary.md").relative_to(root).as_posix(),
     )
+    runs_md = run_dir / "RUNS.md"
+    if runs_md.is_file():
+        state["runs_md"] = runs_md.relative_to(root).as_posix()
     postmortem = root / "calibration" / "POSTMORTEM.md"
     if postmortem.is_file():
         state["postmortem"] = postmortem.relative_to(root).as_posix()
