@@ -1,0 +1,967 @@
+schema: refute-tess-targets-1
+generated_utc: '2026-10-07T20:51:18Z'
+generator: calibration/select_targets.py
+selection:
+  protocol: calibration/PROTOCOL.md
+  seed: 20261007
+  planet_filter_adql: tran_flag = 1 and tic_id is not null and pl_orbper > 0.5 and pl_orbper < 10 and
+    pl_trandep >= 0.1 and sy_tmag <= 12 and sy_pnum = 1
+  false_positive_filter: (TFOPWG Disposition == FP) or (TESS Disposition == EB and TFOPWG Disposition
+    not in {CP, KP, PC, APC}); 0.5 < Period (days) < 10; Depth (ppm) >= 1000; TESS Mag <= 12; exactly
+    one TOI for the TIC; TIC hosts no planet in pscomppars
+  data_rule: SPOC 120-s light curves in >= 2 calendar years with >= 300 days between first and last sector
+    start
+  pool_sizes:
+    planets: 478
+    false_positives: 459
+  snapshots:
+  - file: pool_snapshot/pscomppars_planet_pool.csv
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    sha256: 7e0ab90baa595c57443ad565d2a8f6c960032347bc2547671c478ccacbc09697
+    bytes: 338991
+    query: select pl_name, hostname, tic_id, pl_orbper, pl_orbpererr1, pl_orbpererr2, pl_orbper_reflink,
+      pl_tranmid, pl_tranmid_reflink, pl_trandep, pl_trandep_reflink, pl_trandur, pl_trandur_reflink,
+      pl_rade, sy_tmag, sy_pnum, st_rad, st_mass, tran_flag, disc_facility from pscomppars where tran_flag
+      = 1 and tic_id is not null and pl_orbper > 0.5 and pl_orbper < 10 and pl_trandep >= 0.1 and sy_tmag
+      <= 12 and sy_pnum = 1
+  - file: pool_snapshot/pscomppars_host_tic_ids.csv
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct+tic_id+from+pscomppars+where+tic_id+is+not+null&format=csv
+    retrieved_utc: '2026-10-07T20:49:01Z'
+    sha256: 54f02e3bca77978019992780f462e5bb10562fcded5ecbe20e7d66ab4a27164e
+    bytes: 70751
+    query: select distinct tic_id from pscomppars where tic_id is not null
+  - file: pool_snapshot/exofop_toi.csv
+    url: https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv
+    retrieved_utc: '2026-10-07T20:49:24Z'
+    sha256: efba31fbd21238a3ca67935dfbd9a2dd9fdaf9c6fde8f026c21514223effaa47
+    bytes: 3809207
+targets:
+- key: TIC-207141131
+  tic_id: 207141131
+  kind: planet
+  name: HD 18599 b
+  published:
+    period_days: 4.1374354
+    period_err_days: 3.7e-06
+    t0_bjd: 2459111.73946
+    depth_ppm: 1008.4447
+    duration_hours: 2.06
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Desidera et al. 2023 (https://ui.adsabs.harvard.edu/abs/2023A&A...675A.158D/abstract)
+  catalog:
+    pl_name: HD 18599 b
+    hostname: HD 18599
+    tic_id: TIC 207141131
+    pl_orbper: '4.13743540000'
+    pl_orbpererr1: '0.00000360000'
+    pl_orbpererr2: '-0.00000370000'
+    pl_orbper_reflink: <a refstr=DESIDERA_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023A&A...675A.158D/abstract
+      target=ref>Desidera et al. 2023</a>
+    pl_tranmid: '2459111.73946000'
+    pl_tranmid_reflink: <a refstr=DESIDERA_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023A&A...675A.158D/abstract
+      target=ref>Desidera et al. 2023</a>
+    pl_trandep: '0.10084447'
+    pl_trandep_reflink: <a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>
+    pl_trandur: '2.0600000'
+    pl_trandur_reflink: <a refstr=DESIDERA_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023A&A...675A.158D/abstract
+      target=ref>Desidera et al. 2023</a>
+    pl_rade: '2.60000000'
+    sy_tmag: '8.1796000'
+    sy_pnum: '1'
+    st_rad: '0.767000'
+    st_mass: '0.863000'
+    tran_flag: '1'
+    disc_facility: Transiting Exoplanet Survey Satellite (TESS)
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:49:41Z'
+    n_light_curves: 6
+    sectors:
+    - 2
+    - 3
+    - 29
+    - 30
+    - 96
+    - 97
+    years:
+    - 2018
+    - 2020
+    - 2025
+    first_start_mjd: 58353.60866162037
+    last_start_mjd: 60933.17402947917
+    span_days: 2579.565
+    accepted: true
+    reason: accepted
+- key: TIC-138819293
+  tic_id: 138819293
+  kind: planet
+  name: GJ 436 b
+  published:
+    period_days: 2.64388312
+    period_err_days: 5.7e-07
+    t0_bjd: 2454510.80162
+    depth_ppm: 6818.999999999999
+    duration_hours: 1.00536
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Maciejewski et al. 2014 (https://ui.adsabs.harvard.edu/abs/2014AcA....64..323M/abstract)
+  catalog:
+    pl_name: GJ 436 b
+    hostname: GJ 436
+    tic_id: TIC 138819293
+    pl_orbper: '2.64388312000'
+    pl_orbpererr1: '0.00000057000'
+    pl_orbpererr2: '-0.00000057000'
+    pl_orbper_reflink: <a refstr=MACIEJEWSKI_ET_AL__2014 href=https://ui.adsabs.harvard.edu/abs/2014AcA....64..323M/abstract
+      target=ref>Maciejewski et al. 2014</a>
+    pl_tranmid: '2454510.80162000'
+    pl_tranmid_reflink: <a refstr=MACIEJEWSKI_ET_AL__2014 href=https://ui.adsabs.harvard.edu/abs/2014AcA....64..323M/abstract
+      target=ref>Maciejewski et al. 2014</a>
+    pl_trandep: '0.68190000'
+    pl_trandep_reflink: <a refstr=BOURRIER_ET_AL__2018 href=https://ui.adsabs.harvard.edu/abs/2018Natur.553..477B/abstract
+      target=ref>Bourrier et al. 2018</a>
+    pl_trandur: '1.0053600'
+    pl_trandur_reflink: <a refstr=LANOTTE_ET_AL__2014 href=https://ui.adsabs.harvard.edu/abs/2014A&A...572A..73L/abstract
+      target=ref>Lanotte et al. 2014</a>
+    pl_rade: '4.17000000'
+    sy_tmag: '8.4034600'
+    sy_pnum: '1'
+    st_rad: '0.455000'
+    st_mass: '0.470000'
+    tran_flag: '1'
+    disc_facility: W. M. Keck Observatory
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:49:45Z'
+    n_light_curves: 2
+    sectors:
+    - 22
+    - 49
+    years:
+    - 2020
+    - 2022
+    first_start_mjd: 58898.82688914352
+    last_start_mjd: 59636.976716087964
+    span_days: 738.15
+    accepted: true
+    reason: accepted
+- key: TIC-77031414
+  tic_id: 77031414
+  kind: planet
+  name: WASP-173 A b
+  published:
+    period_days: 1.38665318
+    period_err_days: 2.7e-07
+    t0_bjd: 2457288.8585
+    depth_ppm: 12300.0
+    duration_hours: 2.2968
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Hellier et al. 2019 (https://ui.adsabs.harvard.edu/abs/2019MNRAS.482.1379H/abstract)
+  catalog:
+    pl_name: WASP-173 A b
+    hostname: WASP-173 A
+    tic_id: TIC 77031414
+    pl_orbper: '1.38665318000'
+    pl_orbpererr1: '0.00000027000'
+    pl_orbpererr2: '-0.00000027000'
+    pl_orbper_reflink: <a refstr=HELLIER_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019MNRAS.482.1379H/abstract
+      target=ref>Hellier et al. 2019</a>
+    pl_tranmid: '2457288.85850000'
+    pl_tranmid_reflink: <a refstr=HELLIER_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019MNRAS.482.1379H/abstract
+      target=ref>Hellier et al. 2019</a>
+    pl_trandep: '1.23000000'
+    pl_trandep_reflink: <a refstr=HELLIER_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019MNRAS.482.1379H/abstract
+      target=ref>Hellier et al. 2019</a>
+    pl_trandur: '2.2968000'
+    pl_trandur_reflink: <a refstr=HELLIER_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019MNRAS.482.1379H/abstract
+      target=ref>Hellier et al. 2019</a>
+    pl_rade: '13.45080000'
+    sy_tmag: '10.9571000'
+    sy_pnum: '1'
+    st_rad: '1.110000'
+    st_mass: '1.050000'
+    tran_flag: '1'
+    disc_facility: SuperWASP-South
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:49:51Z'
+    n_light_curves: 6
+    sectors:
+    - 2
+    - 29
+    - 69
+    - 96
+    - 106
+    - 107
+    years:
+    - 2018
+    - 2020
+    - 2023
+    - 2025
+    - 2026
+    first_start_mjd: 58353.61172864583
+    last_start_mjd: 61261.599920532404
+    span_days: 2907.988
+    accepted: true
+    reason: accepted
+- key: TIC-440872576
+  tic_id: 440872576
+  kind: planet
+  name: TOI-3160 A b
+  published:
+    period_days: 3.971281
+    period_err_days: 2.5e-06
+    t0_bjd: 2459609.9851
+    depth_ppm: 8780.0
+    duration_hours: 2.995
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Yee et al. 2025 (https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract)
+  catalog:
+    pl_name: TOI-3160 A b
+    hostname: TOI-3160 A
+    tic_id: TIC 440872576
+    pl_orbper: '3.97128100000'
+    pl_orbpererr1: '0.00000250000'
+    pl_orbpererr2: '-0.00000250000'
+    pl_orbper_reflink: <a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract
+      target=ref>Yee et al. 2025</a>
+    pl_tranmid: '2459609.98510000'
+    pl_tranmid_reflink: <a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract
+      target=ref>Yee et al. 2025</a>
+    pl_trandep: '0.87800000'
+    pl_trandep_reflink: <a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract
+      target=ref>Yee et al. 2025</a>
+    pl_trandur: '2.9950000'
+    pl_trandur_reflink: <a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract
+      target=ref>Yee et al. 2025</a>
+    pl_rade: '13.76462830'
+    sy_tmag: '11.9333000'
+    sy_pnum: '1'
+    st_rad: '1.346000'
+    st_mass: '1.088000'
+    tran_flag: '1'
+    disc_facility: Transiting Exoplanet Survey Satellite (TESS)
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:49:59Z'
+    n_light_curves: 2
+    sectors:
+    - 65
+    - 91
+    years:
+    - 2023
+    - 2025
+    first_start_mjd: 60068.24362554398
+    last_start_mjd: 60774.794854074076
+    span_days: 706.551
+    accepted: true
+    reason: accepted
+- key: TIC-36592530
+  tic_id: 36592530
+  kind: planet
+  name: WASP-75 b
+  published:
+    period_days: 2.484193
+    period_err_days: 3.0e-06
+    t0_bjd: 2456016.2669
+    depth_ppm: 10700.0
+    duration_hours: 1.9728
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Gomez et al. 2013 (https://ui.adsabs.harvard.edu/abs/2013A%26A...559A..36G/abstract)
+  catalog:
+    pl_name: WASP-75 b
+    hostname: WASP-75
+    tic_id: TIC 36592530
+    pl_orbper: '2.48419300000'
+    pl_orbpererr1: '0.00000300000'
+    pl_orbpererr2: '-0.00000300000'
+    pl_orbper_reflink: <a refstr=GOMEZ_ET_AL__2013 href=https://ui.adsabs.harvard.edu/abs/2013A%26A...559A..36G/abstract
+      target=ref> Gomez et al. 2013 </a>
+    pl_tranmid: '2456016.26690000'
+    pl_tranmid_reflink: <a refstr=GOMEZ_ET_AL__2013 href=https://ui.adsabs.harvard.edu/abs/2013A%26A...559A..36G/abstract
+      target=ref> Gomez et al. 2013 </a>
+    pl_trandep: '1.07000000'
+    pl_trandep_reflink: <a refstr=GOMEZ_ET_AL__2013 href=https://ui.adsabs.harvard.edu/abs/2013A%26A...559A..36G/abstract
+      target=ref> Gomez et al. 2013 </a>
+    pl_trandur: '1.9728000'
+    pl_trandur_reflink: <a refstr=GOMEZ_ET_AL__2013 href=https://ui.adsabs.harvard.edu/abs/2013A%26A...559A..36G/abstract
+      target=ref> Gomez et al. 2013 </a>
+    pl_rade: '14.23500000'
+    sy_tmag: '10.9310000'
+    sy_pnum: '1'
+    st_rad: '1.260000'
+    st_mass: '1.140000'
+    tran_flag: '1'
+    disc_facility: SuperWASP
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:08Z'
+    n_light_curves: 3
+    sectors:
+    - 42
+    - 70
+    - 92
+    years:
+    - 2021
+    - 2023
+    - 2025
+    first_start_mjd: 59447.195236238425
+    last_start_mjd: 60802.46816380787
+    span_days: 1355.273
+    accepted: true
+    reason: accepted
+- key: TIC-369327947
+  tic_id: 369327947
+  kind: planet
+  name: LHS 475 b
+  published:
+    period_days: 2.029088
+    period_err_days: 6.0e-06
+    t0_bjd: 2459822.3762593
+    depth_ppm: 1101.0
+    duration_hours: 0.725
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Lustig-Yaeger et al. 2023 (https://ui.adsabs.harvard.edu/abs/2023NatAs...7.1317L/abstract)
+  catalog:
+    pl_name: LHS 475 b
+    hostname: LHS 475
+    tic_id: TIC 369327947
+    pl_orbper: '2.02908800000'
+    pl_orbpererr1: '0.00000600000'
+    pl_orbpererr2: '-0.00000600000'
+    pl_orbper_reflink: <a refstr=LUSTIG_YAEGER_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023NatAs...7.1317L/abstract
+      target=ref>Lustig-Yaeger et al. 2023</a>
+    pl_tranmid: '2459822.37625930'
+    pl_tranmid_reflink: <a refstr=LUSTIG_YAEGER_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023NatAs...7.1317L/abstract
+      target=ref>Lustig-Yaeger et al. 2023</a>
+    pl_trandep: '0.11010000'
+    pl_trandep_reflink: <a refstr=LUSTIG_YAEGER_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023NatAs...7.1317L/abstract
+      target=ref>Lustig-Yaeger et al. 2023</a>
+    pl_trandur: '0.7250000'
+    pl_trandur_reflink: <a refstr=LUSTIG_YAEGER_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023NatAs...7.1317L/abstract
+      target=ref>Lustig-Yaeger et al. 2023</a>
+    pl_rade: '0.99100000'
+    sy_tmag: '10.1508000'
+    sy_pnum: '1'
+    st_rad: '0.278900'
+    st_mass: '0.262000'
+    tran_flag: '1'
+    disc_facility: Transiting Exoplanet Survey Satellite (TESS)
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:26Z'
+    n_light_curves: 10
+    sectors:
+    - 12
+    - 13
+    - 27
+    - 39
+    - 66
+    - 67
+    - 93
+    - 94
+    - 101
+    - 102
+    years:
+    - 2019
+    - 2020
+    - 2021
+    - 2023
+    - 2025
+    - 2026
+    first_start_mjd: 58624.4617850463
+    last_start_mjd: 61126.57870917824
+    span_days: 2502.117
+    accepted: true
+    reason: accepted
+- key: TIC-398572544
+  tic_id: 398572544
+  kind: planet
+  name: WASP-28 b
+  published:
+    period_days: 3.40883495
+    period_err_days: 1.5e-07
+    t0_bjd: 2457642.502126
+    depth_ppm: 13395.999999999998
+    duration_hours: 3.2388
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Mo&#x10D;nik et al. 2020 (https://ui.adsabs.harvard.edu/abs/2020PASP..132a4401M/abstract)
+  catalog:
+    pl_name: WASP-28 b
+    hostname: WASP-28
+    tic_id: TIC 398572544
+    pl_orbper: '3.40883495000'
+    pl_orbpererr1: '0.00000015000'
+    pl_orbpererr2: '-0.00000015000'
+    pl_orbper_reflink: <a refstr=MO__X10D_NIK_ET_AL__2020 href=https://ui.adsabs.harvard.edu/abs/2020PASP..132a4401M/abstract
+      target=ref>Mo&#x10D;nik et al. 2020</a>
+    pl_tranmid: '2457642.50212600'
+    pl_tranmid_reflink: <a refstr=MO__X10D_NIK_ET_AL__2020 href=https://ui.adsabs.harvard.edu/abs/2020PASP..132a4401M/abstract
+      target=ref>Mo&#x10D;nik et al. 2020</a>
+    pl_trandep: '1.33960000'
+    pl_trandep_reflink: <a refstr=MO__X10D_NIK_ET_AL__2020 href=https://ui.adsabs.harvard.edu/abs/2020PASP..132a4401M/abstract
+      target=ref>Mo&#x10D;nik et al. 2020</a>
+    pl_trandur: '3.2388000'
+    pl_trandur_reflink: <a refstr=MO__X10D_NIK_ET_AL__2020 href=https://ui.adsabs.harvard.edu/abs/2020PASP..132a4401M/abstract
+      target=ref>Mo&#x10D;nik et al. 2020</a>
+    pl_rade: '13.66374747'
+    sy_tmag: '11.6238000'
+    sy_pnum: '1'
+    st_rad: '1.083000'
+    st_mass: '0.993000'
+    tran_flag: '1'
+    disc_facility: SuperWASP
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:34Z'
+    n_light_curves: 3
+    sectors:
+    - 42
+    - 70
+    - 92
+    years:
+    - 2021
+    - 2023
+    - 2025
+    first_start_mjd: 59447.19481688657
+    last_start_mjd: 60802.478049375
+    span_days: 1355.283
+    accepted: true
+    reason: accepted
+- key: TIC-283621618
+  tic_id: 283621618
+  kind: planet
+  name: TOI-5806 b
+  published:
+    period_days: 3.1856381
+    period_err_days: 1.0e-06
+    t0_bjd: 2459850.81238
+    depth_ppm: 4750.0
+    duration_hours: 2.016
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Lillo-Box et al. 2026 (https://ui.adsabs.harvard.edu/abs/2026arXiv260719756L/abstract)
+  catalog:
+    pl_name: TOI-5806 b
+    hostname: TOI-5806
+    tic_id: TIC 283621618
+    pl_orbper: '3.18563810000'
+    pl_orbpererr1: '0.00000100000'
+    pl_orbpererr2: '-0.00000100000'
+    pl_orbper_reflink: <a refstr=LILLO_BOX_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026arXiv260719756L/abstract
+      target=ref>Lillo-Box et al. 2026</a>
+    pl_tranmid: '2459850.81238000'
+    pl_tranmid_reflink: <a refstr=LILLO_BOX_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026arXiv260719756L/abstract
+      target=ref>Lillo-Box et al. 2026</a>
+    pl_trandep: '0.47500000'
+    pl_trandep_reflink: <a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>
+    pl_trandur: '2.0160000'
+    pl_trandur_reflink: <a refstr=LILLO_BOX_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026arXiv260719756L/abstract
+      target=ref>Lillo-Box et al. 2026</a>
+    pl_rade: '15.13212395'
+    sy_tmag: '8.2942000'
+    sy_pnum: '1'
+    st_rad: '1.387000'
+    st_mass: '1.333000'
+    tran_flag: '1'
+    disc_facility: Transiting Exoplanet Survey Satellite (TESS)
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:38Z'
+    n_light_curves: 2
+    sectors:
+    - 56
+    - 82
+    years:
+    - 2022
+    - 2024
+    first_start_mjd: 59824.76103769676
+    last_start_mjd: 60532.89605241898
+    span_days: 708.135
+    accepted: true
+    reason: accepted
+- key: TIC-374530847
+  tic_id: 374530847
+  kind: planet
+  name: WASP-2 b
+  published:
+    period_days: 2.152175
+    period_err_days: 1.2e-05
+    t0_bjd: 2458339.00342
+    depth_ppm: 16460.0
+    duration_hours: 1.78824
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Addison et al. 2019 (https://ui.adsabs.harvard.edu/abs/2019PASP..131k5003A/abstract)
+  catalog:
+    pl_name: WASP-2 b
+    hostname: WASP-2
+    tic_id: TIC 374530847
+    pl_orbper: '2.15217500000'
+    pl_orbpererr1: '0.00001200000'
+    pl_orbpererr2: '-0.00001100000'
+    pl_orbper_reflink: <a refstr=ADDISON_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019PASP..131k5003A/abstract
+      target=ref>Addison et al. 2019</a>
+    pl_tranmid: '2458339.00342000'
+    pl_tranmid_reflink: <a refstr=ADDISON_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019PASP..131k5003A/abstract
+      target=ref>Addison et al. 2019</a>
+    pl_trandep: '1.64600000'
+    pl_trandep_reflink: <a refstr=ADDISON_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019PASP..131k5003A/abstract
+      target=ref>Addison et al. 2019</a>
+    pl_trandur: '1.7882400'
+    pl_trandur_reflink: <a refstr=ADDISON_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019PASP..131k5003A/abstract
+      target=ref>Addison et al. 2019</a>
+    pl_rade: '12.11692900'
+    sy_tmag: '10.9984000'
+    sy_pnum: '1'
+    st_rad: '0.866000'
+    st_mass: '0.895000'
+    tran_flag: '1'
+    disc_facility: SuperWASP
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:40Z'
+    n_light_curves: 2
+    sectors:
+    - 54
+    - 81
+    years:
+    - 2022
+    - 2024
+    first_start_mjd: 59769.40256065972
+    last_start_mjd: 60506.05616310185
+    span_days: 736.654
+    accepted: true
+    reason: accepted
+- key: TIC-36452991
+  tic_id: 36452991
+  kind: planet
+  name: TOI-2969 b
+  published:
+    period_days: 1.8237146
+    period_err_days: 2.0e-07
+    t0_bjd: 2459303.30015
+    depth_ppm: 22919.999999999996
+    duration_hours: 1.846
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Frensch et al. 2025 (https://ui.adsabs.harvard.edu/abs/2025A&A...700A.118F/abstract)
+  catalog:
+    pl_name: TOI-2969 b
+    hostname: TOI-2969
+    tic_id: TIC 36452991
+    pl_orbper: '1.82371460000'
+    pl_orbpererr1: '0.00000020000'
+    pl_orbpererr2: '-0.00000020000'
+    pl_orbper_reflink: <a refstr=FRENSCH_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...700A.118F/abstract
+      target=ref>Frensch et al. 2025</a>
+    pl_tranmid: '2459303.30015000'
+    pl_tranmid_reflink: <a refstr=FRENSCH_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...700A.118F/abstract
+      target=ref>Frensch et al. 2025</a>
+    pl_trandep: '2.29200000'
+    pl_trandep_reflink: <a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>
+    pl_trandur: '1.8460000'
+    pl_trandur_reflink: <a refstr=FRENSCH_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...700A.118F/abstract
+      target=ref>Frensch et al. 2025</a>
+    pl_rade: '12.32987877'
+    sy_tmag: '11.9361000'
+    sy_pnum: '1'
+    st_rad: '0.700000'
+    st_mass: '0.710000'
+    tran_flag: '1'
+    disc_facility: Transiting Exoplanet Survey Satellite (TESS)
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:43Z'
+    n_light_curves: 4
+    sectors:
+    - 63
+    - 89
+    - 90
+    - 99
+    years:
+    - 2023
+    - 2025
+    - 2026
+    first_start_mjd: 60013.870459756945
+    last_start_mjd: 61045.614339039355
+    span_days: 1031.744
+    accepted: true
+    reason: accepted
+- key: TIC-207339000
+  tic_id: 207339000
+  kind: development
+  name: TOI-4427 b
+  published:
+    period_days: 4.6182621
+    period_err_days: 1.7e-06
+    t0_bjd: 2459598.712954
+    depth_ppm: 18614.3353
+    duration_hours: 2.655
+  source:
+    name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv
+    retrieved_utc: '2026-10-07T20:48:59Z'
+    reference: Guenther et al. 2026 (https://ui.adsabs.harvard.edu/abs/2026AJ....172...54G/abstract)
+  catalog:
+    pl_name: TOI-4427 b
+    hostname: TOI-4427
+    tic_id: TIC 207339000
+    pl_orbper: '4.61826210000'
+    pl_orbpererr1: '0.00000170000'
+    pl_orbpererr2: '-0.00000170000'
+    pl_orbper_reflink: <a refstr=GUENTHER_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026AJ....172...54G/abstract
+      target=ref>Guenther et al. 2026</a>
+    pl_tranmid: '2459598.71295400'
+    pl_tranmid_reflink: <a refstr=GUENTHER_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026AJ....172...54G/abstract
+      target=ref>Guenther et al. 2026</a>
+    pl_trandep: '1.86143353'
+    pl_trandep_reflink: <a refstr=GUENTHER_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026AJ....172...54G/abstract
+      target=ref>Guenther et al. 2026</a>
+    pl_trandur: '2.6550000'
+    pl_trandur_reflink: <a refstr=GUENTHER_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026AJ....172...54G/abstract
+      target=ref>Guenther et al. 2026</a>
+    pl_rade: '13.09208946'
+    sy_tmag: '11.3427000'
+    sy_pnum: '1'
+    st_rad: '0.890000'
+    st_mass: '0.900000'
+    tran_flag: '1'
+    disc_facility: Transiting Exoplanet Survey Satellite (TESS)
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:51Z'
+    n_light_curves: 5
+    sectors:
+    - 40
+    - 47
+    - 53
+    - 60
+    - 74
+    years:
+    - 2021
+    - 2022
+    - 2024
+    first_start_mjd: 59390.14867094907
+    last_start_mjd: 60312.36625226852
+    span_days: 922.218
+    accepted: true
+    reason: accepted
+- key: TIC-285524410
+  tic_id: 285524410
+  kind: false_positive
+  name: TOI-2848.01
+  published:
+    period_days: 3.02442221717177
+    period_err_days: 0.00037387246
+    t0_bjd: 2459964.898137
+    depth_ppm: 267015.522457355
+    duration_hours: 5.36807870503302
+  source:
+    name: ExoFOP-TESS TOI table
+    url: https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv
+    retrieved_utc: '2026-10-07T20:49:24Z'
+    reference: TOI 2848.01
+  catalog:
+    TIC ID: '285524410'
+    TOI: '2848.01'
+    Previous CTOI: TIC 285524410.01
+    Master: '5'
+    SG1A: '5'
+    SG1B: '5'
+    SG2: '5'
+    SG3: '5'
+    SG4: '5'
+    SG5: '5'
+    ESM: '1631'
+    TSM: '7369.4'
+    Predicted Mass (M_Earth): '317'
+    Predicted RV Semi-amplitude (m/s): '205.1'
+    Time Series Observations: '1'
+    Spectroscopy Observations: '0'
+    Imaging Observations: '0'
+    TESS Disposition: EB
+    TFOPWG Disposition: FP
+    TESS Mag: '11.422'
+    TESS Mag err: '0.018'
+    Planet Name: ''
+    Pipeline Signal ID: '1'
+    Source: spoc-s01-s65-b0A-PC
+    Detection: FAINT
+    RA: '07:59:59.85'
+    Dec: '-42:55:44.24'
+    PM RA (mas/yr): '-1.1'
+    PM RA err (mas/yr): '2.4'
+    PM Dec (mas/yr): '-1.9'
+    PM Dec err (mas/yr): '2.2'
+    Epoch (BJD): '2459964.898137'
+    Epoch (BJD) err: '0.0026653502'
+    Period (days): '3.02442221717177'
+    Period (days) err: '0.00037387246'
+    Duration (hours): '5.36807870503302'
+    Duration (hours) err: '0.1927099'
+    Depth (mmag): '337.263056'
+    Depth (mmag) err: '10.259543'
+    Depth (ppm): '267015.522457355'
+    Depth (ppm) err: '9404.883'
+    Planet Radius (R_Earth): ''
+    Planet Radius (R_Earth) err: ''
+    Planet Insolation (Earth Flux): '596.347587878532'
+    Planet Equil Temp (K): '1260.36001384712'
+    Planet SNR: '26.79407'
+    Stellar Distance (pc): '573.391'
+    Stellar Distance (pc) err: ''
+    Stellar Eff Temp (K): '6758'
+    Stellar Eff Temp (K) err: '202'
+    Stellar log(g) (cm/s^2): '4.19'
+    Stellar log(g) (cm/s^2) err: '1.87'
+    Stellar Radius (R_Sun): ''
+    Stellar Radius (R_Sun) err: ''
+    Stellar Metallicity: ''
+    Stellar Metallicity err: ''
+    Stellar Mass (M_Sun): ''
+    Stellar Mass (M_Sun) err: ''
+    Sectors: 7,8,34,61,62
+    Date TOI Alerted (UTC): '2021-06-04'
+    Date TOI Updated (UTC): '2024-09-06'
+    Date Modified: '2025-07-31 12:59:22'
+    Comments: no radius; found in faint-star QLP search; CTOI from Olmschenk et al; retired as TFOP FP/EB
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:50:55Z'
+    n_light_curves: 4
+    sectors:
+    - 61
+    - 62
+    - 88
+    - 89
+    years:
+    - 2023
+    - 2025
+    first_start_mjd: 59962.300219861114
+    last_start_mjd: 60717.6398821412
+    span_days: 755.34
+    accepted: true
+    reason: accepted
+  fp_reason: no radius; found in faint-star QLP search; CTOI from Olmschenk et al; retired as TFOP FP/EB
+- key: TIC-404610583
+  tic_id: 404610583
+  kind: false_positive
+  name: TOI-5966.01
+  published:
+    period_days: 3.5382323690299162
+    period_err_days: 1.5214154e-06
+    t0_bjd: 2459826.813014
+    depth_ppm: 11908.906356146135
+    duration_hours: 2.4813694096141576
+  source:
+    name: ExoFOP-TESS TOI table
+    url: https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv
+    retrieved_utc: '2026-10-07T20:49:24Z'
+    reference: TOI 5966.01
+  catalog:
+    TIC ID: '404610583'
+    TOI: '5966.01'
+    Previous CTOI: TIC 404610583.01
+    Master: '5'
+    SG1A: '5'
+    SG1B: '5'
+    SG2: '5'
+    SG3: '5'
+    SG4: '5'
+    SG5: '5'
+    ESM: '84.6'
+    TSM: '267.1'
+    Predicted Mass (M_Earth): '100.31'
+    Predicted RV Semi-amplitude (m/s): '38.6'
+    Time Series Observations: '0'
+    Spectroscopy Observations: '7'
+    Imaging Observations: '2'
+    TESS Disposition: EB
+    TFOPWG Disposition: FP
+    TESS Mag: '10.5332'
+    TESS Mag err: '0.007'
+    Planet Name: ''
+    Pipeline Signal ID: '1'
+    Source: spoc-s14-s86-b0A
+    Detection: SPOC
+    RA: '22:24:35.43'
+    Dec: '16:52:43.88'
+    PM RA (mas/yr): '-28.915'
+    PM RA err (mas/yr): '0.072'
+    PM Dec (mas/yr): '-48.469'
+    PM Dec err (mas/yr): '0.083'
+    Epoch (BJD): '2459826.813014'
+    Epoch (BJD) err: '0.00017647541'
+    Period (days): '3.5382323690299162'
+    Period (days) err: '0.0000015214154'
+    Duration (hours): '2.4813694096141576'
+    Duration (hours) err: '0.021656593'
+    Depth (mmag): '13.007538'
+    Depth (mmag) err: '0.117338'
+    Depth (ppm): '11908.906356146135'
+    Depth (ppm) err: '108.066216'
+    Planet Radius (R_Earth): '12.156944332505358'
+    Planet Radius (R_Earth) err: '.60130495'
+    Planet Insolation (Earth Flux): '591.2991648212794'
+    Planet Equil Temp (K): '1257.684086924867'
+    Planet SNR: '116.84637'
+    Stellar Distance (pc): '202.773'
+    Stellar Distance (pc) err: '2.362'
+    Stellar Eff Temp (K): '6084'
+    Stellar Eff Temp (K) err: '129.616'
+    Stellar log(g) (cm/s^2): '4.45887'
+    Stellar log(g) (cm/s^2) err: '.0815947'
+    Stellar Radius (R_Sun): '1.0424400568008423'
+    Stellar Radius (R_Sun) err: '.0510854'
+    Stellar Metallicity: ''
+    Stellar Metallicity err: ''
+    Stellar Mass (M_Sun): '1.14'
+    Stellar Mass (M_Sun) err: '.150742'
+    Sectors: 56,83
+    Date TOI Alerted (UTC): '2022-11-16'
+    Date TOI Updated (UTC): '2026-09-18'
+    Date Modified: '2026-09-29 12:05:31'
+    Comments: variable host; retired as TFOP FP/SEB1
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:51:10Z'
+    n_light_curves: 2
+    sectors:
+    - 56
+    - 83
+    years:
+    - 2022
+    - 2024
+    first_start_mjd: 59824.761291469906
+    last_start_mjd: 60558.93135938657
+    span_days: 734.17
+    accepted: true
+    reason: accepted
+  fp_reason: variable host; retired as TFOP FP/SEB1
+- key: TIC-95129101
+  tic_id: 95129101
+  kind: false_positive
+  name: TOI-1704.01
+  published:
+    period_days: 3.929983
+    period_err_days: 1.51e-05
+    t0_bjd: 2459575.195833
+    depth_ppm: 2270.0
+    duration_hours: 2.153
+  source:
+    name: ExoFOP-TESS TOI table
+    url: https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv
+    retrieved_utc: '2026-10-07T20:49:24Z'
+    reference: TOI 1704.01
+  catalog:
+    TIC ID: '95129101'
+    TOI: '1704.01'
+    Previous CTOI: ''
+    Master: '5'
+    SG1A: '5'
+    SG1B: '5'
+    SG2: '5'
+    SG3: '5'
+    SG4: '5'
+    SG5: '5'
+    ESM: '13'
+    TSM: '66.3'
+    Predicted Mass (M_Earth): '34.66'
+    Predicted RV Semi-amplitude (m/s): '11.3'
+    Time Series Observations: '0'
+    Spectroscopy Observations: '1'
+    Imaging Observations: '10'
+    TESS Disposition: PC
+    TFOPWG Disposition: FP
+    TESS Mag: '10.8508'
+    TESS Mag err: '0.007'
+    Planet Name: ''
+    Pipeline Signal ID: '1'
+    Source: qlp-s46-tois
+    Detection: QLP
+    RA: '07:39:43.89'
+    Dec: '28:07:12.53'
+    PM RA (mas/yr): '3.12'
+    PM RA err (mas/yr): '0.089'
+    PM Dec (mas/yr): '-4.992'
+    PM Dec err (mas/yr): '0.075'
+    Epoch (BJD): '2459575.195833'
+    Epoch (BJD) err: '0.0011667'
+    Period (days): '3.929983'
+    Period (days) err: '0.0000151'
+    Duration (hours): '2.153'
+    Duration (hours) err: '0.167'
+    Depth (mmag): '2.467423'
+    Depth (mmag) err: '0.001659'
+    Depth (ppm): '2270'
+    Depth (ppm) err: '1.5283'
+    Planet Radius (R_Earth): '6.51515'
+    Planet Radius (R_Earth) err: '.363202'
+    Planet Insolation (Earth Flux): '398.651'
+    Planet Equil Temp (K): '1244'
+    Planet SNR: '29'
+    Stellar Distance (pc): '343.469'
+    Stellar Distance (pc) err: '5.973'
+    Stellar Eff Temp (K): '6621.9'
+    Stellar Eff Temp (K) err: '137.7'
+    Stellar log(g) (cm/s^2): '4.33'
+    Stellar log(g) (cm/s^2) err: '.09'
+    Stellar Radius (R_Sun): '1.34'
+    Stellar Radius (R_Sun) err: '.06'
+    Stellar Metallicity: '-0.011'
+    Stellar Metallicity err: '0.01'
+    Stellar Mass (M_Sun): '1.39'
+    Stellar Mass (M_Sun) err: '.227293'
+    Sectors: 20,44,45,46
+    Date TOI Alerted (UTC): '2020-02-19'
+    Date TOI Updated (UTC): '2022-03-07'
+    Date Modified: '2025-07-31 12:59:22'
+    Comments: v-shaped; Centroids show source is TIC 95129100
+  mast:
+    service: MAST via lightkurve.search_lightcurve (author=SPOC, exptime=120)
+    retrieved_utc: '2026-10-07T20:51:18Z'
+    n_light_curves: 6
+    sectors:
+    - 44
+    - 45
+    - 46
+    - 47
+    - 71
+    - 72
+    years:
+    - 2021
+    - 2023
+    first_start_mjd: 59499.69487363426
+    last_start_mjd: 60259.68482692129
+    span_days: 759.99
+    accepted: true
+    reason: accepted
+  fp_reason: v-shaped; Centroids show source is TIC 95129100

@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Refute outputs and caches (data cache lives inside the project)
+.cache/
+dossiers/
+repro/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

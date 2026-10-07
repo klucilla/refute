@@ -1,0 +1,7 @@
+# Force LF line endings in the working tree on every platform, so that file
+# hashes (code hash, attachment hashes) are identical on Windows and Linux.
+* text=auto eol=lf
+*.fits binary
+*.png binary
+*.zip binary
+*.npz binary

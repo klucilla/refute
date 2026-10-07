@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use Refute, please cite it using the metadata below."
+title: "Refute: find signals, try to kill them, keep what survives"
+type: software
+authors:
+  - family-names: Lucilla
+    given-names: Klauber
+version: 0.1.0
+license: Apache-2.0
+repository-code: "https://github.com/klucilla/refute"
+url: "https://github.com/klucilla/refute"
+abstract: >
+  Refute is an open-source framework where agents try to break scientific
+  claims before anyone believes them. Claims are pre-registered and locked
+  with SHA-256 hashes, attacked by deterministic falsification tests and a
+  blind holdout, and reported in reproducible evidence dossiers.
+keywords:
+  - falsification
+  - reproducibility
+  - pre-registration
+  - exoplanets
+  - TESS

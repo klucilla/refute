@@ -1,0 +1,127 @@
+# Refute v0.1 self-claim.
+# Written before the first calibration run and locked with `refute lock` from a clean,
+# committed tree. Every threshold is written out here; `refute lock` also records the
+# resolved form, the attachment hashes and the code hash.
+schema_version: 1
+id: tess-calibration-v0.1
+kind: calibration
+pack: tess
+title: Refute v0.1 calibration on known TESS planets and false positives
+hypothesis: >
+  Refute recovers at least 9 of 10 known TESS planets (period within 0.1% of the
+  published value), flags at least 2 of 3 known false positives, and gives the
+  verdict REFUTED to at most 1 of the 10 known planets.
+created: 2026-10-07
+authors:
+  - Klauber Lucilla
+definitions:
+  recovered: >
+    A target of kind 'planet' in targets.yaml whose period found by Refute satisfies
+    |P_found - P_published| / P_published <= 0.001, with P_published the NASA Exoplanet
+    Archive value recorded in targets.yaml. Aliases (2P, P/2, 3P, P/3) are reported but
+    do not count as recovered.
+  flagged: A target of kind 'false_positive' whose Refute verdict is REFUTED.
+  refuted_planet: A target of kind 'planet' whose Refute verdict is REFUTED.
+  pass: >
+    The claim passes only if all three criteria hold on a complete run of every
+    calibration target (the development target is excluded). A target whose analysis
+    fails with an error counts as not recovered and not flagged.
+  scope: >
+    Easy regime only, as selected by calibration/PROTOCOL.md: periods 0.5 to 10 days,
+    depths of at least 1000 ppm, TESS magnitude 12 or brighter, single-planet systems,
+    SPOC 2-minute data in at least two calendar years. Nothing is claimed outside it.
+data_sources:
+  - name: NASA Exoplanet Archive, Planetary Systems Composite Parameters (pscomppars)
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+    retrieved: "2026-10-07"
+    notes: Planet pool and published parameters; query and SHA-256 in pool_snapshot/retrieval.json.
+  - name: ExoFOP-TESS TOI table
+    url: https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv
+    retrieved: "2026-10-07"
+    notes: False-positive pool and dispositions; SHA-256 in pool_snapshot/retrieval.json.
+  - name: MAST, TESS SPOC 2-minute light curves
+    url: https://mast.stsci.edu
+    retrieved: "2026-10-07"
+    notes: >
+      Availability checked at selection time (targets.yaml, field mast). Light curves are
+      downloaded at run time; file hashes and URLs are recorded in every dossier.
+  - name: TESS Input Catalog (TIC) via MAST
+    url: https://mast.stsci.edu
+    retrieved: "2026-10-07"
+    notes: Stellar radius, mass and log g, queried at run time and recorded in every dossier.
+attachments:
+  - path: targets.yaml
+    role: targets
+  - path: PROTOCOL.md
+    role: protocol
+  - path: selection_log.md
+    role: selection-log
+  - path: pool_snapshot/retrieval.json
+    role: snapshot-index
+test_plan:
+  data:
+    mission: TESS
+    author: SPOC
+    exptime_seconds: 120
+    flux_column: pdcsap_flux
+    quality_bitmask: default
+  detrend:
+    method: robust-local-quadratic
+    window_days: 1.0
+    knot_spacing_days: 0.1
+    segment_gap_days: 0.5
+    min_points_per_knot: 30
+    clip_sigma: 3.0
+    clip_iterations: 2
+    upper_clip_sigma: 5.0
+    transit_mask_half_width_durations: 1.0
+  search:
+    method: bls-two-stage
+    objective: likelihood
+    period_min_days: 0.5
+    period_max_days: 20.0
+    durations_hours: [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0]
+    bin_minutes: 10.0
+    frequency_factor: 1.0
+    peaks_per_sector: 5
+    max_clusters: 5
+    cluster_tolerance: 0.01
+    block_gap_days: 10.0
+    refine_samples_per_width: 6.0
+    refine_width_factor: 1.5
+    final_duration_steps: 21
+    final_oversample: 20
+  gauntlet:
+    snr:
+      min_snr: 7.1
+    odd_even:
+      max_sigma: 3.0
+      min_transits_each: 2
+    secondary_eclipse:
+      max_sigma: 3.0
+      fatal_depth_ratio: 0.10
+    plausibility:
+      max_duration_ratio: 1.5
+      max_companion_radius_rjup: 2.5
+      max_stellar_radius_rel_err: 0.3
+    holdout_by_year:
+      min_snr: 5.0
+      timing_sigma: 3.0
+      min_predicted_transits: 2
+      min_train_transits: 3
+      min_window_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+      timing_step_minutes: 1.0
+      timing_scan_half_width_durations: 0.5
+    events:
+      min_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+pass_criteria:
+  period_tolerance: 0.001
+  expected_planets: 10
+  min_recovered_planets: 9
+  expected_false_positives: 3
+  min_flagged_false_positives: 2
+  max_refuted_planets: 1
