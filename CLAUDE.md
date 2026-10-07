@@ -78,6 +78,14 @@ First pack: exoplanet transits (TESS).
 - Unit tests and CI must NOT depend on the network. Use synthetic data
   (injected signals) for tests.
 
+## Pre-registration process
+
+- The protocol and its seed are committed (and pushed) before the selection
+  runs, and the selection output is committed before the claim is written.
+  Each step is a separate commit, so git can verify the order.
+- Every rerun needs its approval recorded in a GitHub issue, with the reason
+  and the exact procedure, before it runs.
+
 ## Operating rules for agents working in this repo
 
 - It is FORBIDDEN to use as a deletion root: `C:\`, `C:\Users\kluci`, `$HOME`,

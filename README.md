@@ -190,8 +190,8 @@ cd refute
 uv sync --frozen                                 # install exactly what uv.lock pins
 uv run pytest                                    # synthetic data only, never the network
 uv run refute packs                              # installed domain packs
-uv run refute verify calibration/self_claim.yaml # FAIL until the self-claim is locked,
-                                                 # then PASS (exit 2 means TAMPERED)
+uv run refute verify calibration/self_claim.yaml # 0 PASS (the self-claim is locked),
+                                                 # 1 FAIL, 2 TAMPERED
 ```
 
 <details>
