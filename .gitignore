@@ -22,3 +22,6 @@ repro/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local Claude Code settings: never part of the tree that calibration locks require
+.claude/settings.local.json
