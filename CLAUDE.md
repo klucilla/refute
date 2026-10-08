@@ -85,6 +85,11 @@ First pack: exoplanet transits (TESS).
   Each step is a separate commit, so git can verify the order.
 - Every rerun needs its approval recorded in a GitHub issue, with the reason
   and the exact procedure, before it runs.
+- Dependency updates are planned in each phase, before its lock: `uv.lock`
+  and `pyproject.toml` are part of the code hash, so changing a dependency
+  after a lock makes the claim TAMPERED. Dependabot alerts are on; Dependabot
+  security updates and version updates stay off, so no dependency change
+  reaches the repository outside that planning.
 
 ## Operating rules for agents working in this repo
 
