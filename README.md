@@ -64,8 +64,9 @@ Many things can imitate that dip: two stars eclipsing each other, a neighbouring
 leaking into the aperture, instrument systematics, plain noise. Refute's job is to throw
 those explanations at a signal and see whether it survives. In v0.1 it tests for eclipsing
 binaries (odd/even depths, secondary eclipse, implausible size) and for noise (signal-to-noise,
-blind holdout). Nearby-star contamination and instrument systematics are **not** tested
-until v0.2 ([known limitations](docs/gauntlet-tess-v0.1.md#known-limitations-of-v01-addressed-from-v02)).
+blind holdout). v0.2, in development and not yet calibrated, adds attacks on
+nearby-star contamination (centroids and apertures in the pixel data), period aliases,
+instrument systematics and eclipsing-binary catalogs ([gauntlet v0.2](docs/gauntlet-tess-v0.2.md)).
 
 The sharpest attack is the **blind holdout**. Hide an entire year of observations. Fit the
 orbit using only the other years. Predict when the transits should appear in the hidden
@@ -80,15 +81,16 @@ flowchart LR
     A["Claim<br/>claim.yaml"] --> B["Lock<br/>SHA-256 of claim,<br/>targets and code"]
     B --> C["Gauntlet<br/>deterministic<br/>falsification tests"]
     C --> D["Blind holdout<br/>predict the<br/>hidden year"]
-    D --> E["Independent review<br/>fresh read-only agents<br/>(planned, v0.2)"]
+    D --> E["Independent review<br/>fresh read-only agents<br/>(v0.2, in development)"]
     E --> F["Dossier<br/>data hashes, plots,<br/>environment, commands"]
     F --> G["Verdict<br/>SURVIVED · WEAKENED<br/>REFUTED · INCONCLUSIVE"]
     classDef planned stroke-dasharray: 6 4
     class E planned
 ```
 
-<sub>Dashed box: planned, not built yet. In the code, the blind holdout runs as the last
-gauntlet test, and the verdict is computed before the dossier is written.</sub>
+<sub>Dashed box: in development, not yet used in a calibration. In the code, the blind
+holdout runs as the last gauntlet test, and the verdict is computed before the dossier is
+written; reviews are attached to the dossier afterwards and never change the verdict.</sub>
 
 <details>
 <summary><b>The steps in detail</b></summary>
@@ -101,12 +103,15 @@ gauntlet test, and the verdict is computed before the dossier is written.</sub>
    them afterwards makes `refute verify` return `TAMPERED` ([lock format](docs/lock-format.md)).
 3. **Gauntlet.** Domain-specific falsification tests written as deterministic code. For
    TESS v0.1: signal-to-noise, odd/even depths, secondary eclipse, physical plausibility
-   ([gauntlet](docs/gauntlet-tess-v0.1.md)).
+   ([gauntlet v0.1](docs/gauntlet-tess-v0.1.md)). v0.2 adds centroid shift, aperture
+   depth, nearby contamination, period alias, systematics and catalog cross-match
+   ([gauntlet v0.2](docs/gauntlet-tess-v0.2.md)).
 4. **Blind holdout.** Each observing year is hidden in turn and must be predicted from the
    others. The code that reads the hidden year can only open the predicted windows, their
    local baseline bands and the phase-0.5 control windows.
-5. **Independent review** *(planned, v0.2)*. Fresh, read-only agent sessions receive only
-   the dossier and try to refute it. Their reports are stored in the dossier. They can raise
+5. **Independent review** *(v0.2, in development)*. Fresh, read-only agent sessions receive
+   only the dossier and try to refute it ([protocol](docs/reviewer-protocol.md)). Their
+   reports are attached to the dossier with `refute review attach`. They can raise
    objections; they never set the verdict.
 6. **Dossier and verdict.** Every file is hashed in a manifest, and the dossier contains the
    commands that reproduce it ([dossier](docs/dossier.md), [verdicts](docs/verdicts.md)).

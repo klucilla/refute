@@ -14,15 +14,19 @@ dossiers/<run_id>/
     attachments/                    copies of the claim's attachments (e.g. targets.yaml)
     verdict.json                    verdict, every test result, candidate, holdout rounds
     report.md                       human-readable report
-    data/manifest.json              input files: SHA-256, sector, year, MAST URL;
+    data/manifest.json              input files (light curves and, from v0.2, target
+                                    pixel files): SHA-256, sector, year, MAST URL;
                                     product, flux column, quality bitmask;
-                                    TIC stellar parameters with version and retrieval time
+                                    TIC stellar parameters with version and retrieval
+                                    time; TIC neighbors (v0.2)
     plots/                          full.png, phase.png, odd_even.png, secondary.png,
                                     holdout_<year>.png
     environment/                    environment.json (Python, platform, package versions),
                                     requirements.txt (installed distributions), uv.lock
     export/                         ctoi_summary.md, ctoi_fields.json (never submitted)
     REPRODUCE.md                    exact commands to reproduce this dossier
+    review/                         v0.2, only if reviewed: reviewer reports, index.json
+                                    (report hashes and pre-review fingerprints), index.md
     MANIFEST.sha256                 SHA-256 of every other file in the dossier
 ```
 
@@ -34,9 +38,18 @@ dossiers/<run_id>/
 `refute check-dossier <dir>` recomputes `MANIFEST.sha256` and reports missing,
 modified or unlisted files.
 
+## Independent reviews
+
+Reviewer reports are attached after the verdict with `refute review attach`
+([reviewer-protocol.md](reviewer-protocol.md)). `review/index.json` records the
+SHA-256 of every report, of `verdict.json` and of the manifest lines of every
+analysis file at review time. `refute check-dossier` recomputes them, so the
+analysis, the verdict and the reports cannot change unnoticed after a review.
+
 ## Reproduction
 
-`REPRODUCE.md` lists the commands: check out the run's commit, `uv sync --frozen`,
+`REPRODUCE.md` lists the commands: clone the repository, check out the run's commit,
+`uv sync --frozen`,
 `refute verify`, re-run the single target into a new directory with
 `--workers 1`, then
 

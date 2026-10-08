@@ -6,6 +6,13 @@ The section lives between the markers ``<!-- CALIBRATION:START -->`` and
     uv run python calibration/update_readme.py            # update README.md in place
     uv run python calibration/update_readme.py --check    # exit 1 if README.md is stale
 
+Another claim (for example the v0.2 calibration) uses its own section markers:
+
+    uv run python calibration/update_readme.py --claim calibration/v0.2/self_claim.yaml \
+        --section CALIBRATION-V0.2
+
+Its lock, lock history, results and post-mortem are looked up next to the claim.
+
 The rendered state is derived only from files in the repository:
 
 1. no lock file            -> "lock pending" with the canonical claim hash;
@@ -41,6 +48,7 @@ CLAIM = Path("calibration/self_claim.yaml")
 LOCK = Path("calibration/self_claim.lock.json")
 HISTORY = Path("calibration/LOCK_HISTORY.md")
 RESULTS = Path("calibration/results")
+POSTMORTEM = Path("calibration/POSTMORTEM.md")
 
 
 class MarkerError(ValueError):
@@ -246,6 +254,18 @@ def render(state: dict[str, Any]) -> str:
     )
 
 
+def configure(claim: Path, section: str = "CALIBRATION") -> None:
+    """Point the script at another claim and README section (defaults: the v0.1 claim)."""
+    global START, END, CLAIM, LOCK, HISTORY, RESULTS, POSTMORTEM
+    START = f"<!-- {section}:START -->"
+    END = f"<!-- {section}:END -->"
+    CLAIM = Path(claim)
+    LOCK = CLAIM.with_name(f"{CLAIM.stem}.lock.json")
+    HISTORY = CLAIM.parent / "LOCK_HISTORY.md"
+    RESULTS = CLAIM.parent / "results"
+    POSTMORTEM = CLAIM.parent / "POSTMORTEM.md"
+
+
 def latest_summary(root: Path) -> Path | None:
     candidates = sorted((root / RESULTS).glob("*/summary.json"))
     return candidates[-1] if candidates else None
@@ -292,7 +312,7 @@ def collect_state(root: Path, summary_path: Path | None = None) -> dict[str, Any
     runs_md = run_dir / "RUNS.md"
     if runs_md.is_file():
         state["runs_md"] = runs_md.relative_to(root).as_posix()
-    postmortem = root / "calibration" / "POSTMORTEM.md"
+    postmortem = root / POSTMORTEM
     if postmortem.is_file():
         state["postmortem"] = postmortem.relative_to(root).as_posix()
     archive_hash = run_dir / "dossiers.zip.sha256"
@@ -311,7 +331,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--readme", type=Path, default=ROOT / "README.md")
     parser.add_argument("--summary", type=Path, default=None, help="summary.json of a run")
     parser.add_argument("--check", action="store_true", help="exit 1 if README.md is stale")
+    parser.add_argument("--claim", type=Path, default=CLAIM, help="claim (relative to the root)")
+    parser.add_argument("--section", default="CALIBRATION", help="README section marker name")
     args = parser.parse_args(argv)
+    configure(args.claim, args.section)
     text = args.readme.read_text(encoding="utf-8")
     updated = replace_section(text, render(collect_state(ROOT, args.summary)))
     if args.check:

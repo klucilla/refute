@@ -38,7 +38,8 @@ cannot change what a locked claim means.
 ```yaml
 test_plan:
   data:        {mission: TESS, author: SPOC, exptime_seconds: 120,
-                flux_column: pdcsap_flux, quality_bitmask: default}
+                flux_column: pdcsap_flux, quality_bitmask: default,
+                target_pixel_files: true, neighbor_radius_arcsec: 120}
   detrend:     {method: robust-local-quadratic, window_days: 1.0, knot_spacing_days: 0.1,
                 segment_gap_days: 0.5, min_points_per_knot: 30, clip_sigma: 3.0,
                 clip_iterations: 2, upper_clip_sigma: 5.0,
@@ -54,16 +55,37 @@ test_plan:
     odd_even:          {max_sigma: 3.0, min_transits_each: 2}
     secondary_eclipse: {max_sigma: 3.0, fatal_depth_ratio: 0.10}
     plausibility:      {max_duration_ratio: 1.5, max_companion_radius_rjup: 2.5,
-                        max_stellar_radius_rel_err: 0.3}
+                        max_stellar_radius_rel_err: 0.3,
+                        unreliable_tic_dispositions: [SPLIT, DUPLICATE, ARTIFACT],
+                        max_tmag_mismatch: 1.0}
     holdout_by_year:   {min_snr: 5.0, timing_sigma: 3.0, min_predicted_transits: 2,
                         min_train_transits: 3, min_window_coverage: 0.5,
                         baseline_gap_durations: 0.25, baseline_outer_durations: 1.5,
-                        timing_step_minutes: 1.0, timing_scan_half_width_durations: 0.5}
+                        timing_step_minutes: 1.0, timing_scan_half_width_durations: 0.5,
+                        hidden_detrend_window_factor: 3.0, max_timing_sigma_durations: 1.0}
     events:            {min_coverage: 0.5, baseline_gap_durations: 0.25,
                         baseline_outer_durations: 1.5}
+    centroid_shift:    {max_sigma: 3.0, min_offset_pixels: 0.5, min_sectors: 1}
+    aperture_depth:    {core_radius_pixels: 1.5, dilation_pixels: 1, max_sigma: 3.0,
+                        min_depth_ratio: 1.2}
+    nearby_contamination: {max_separation_arcsec: 21.0, max_eclipse_depth: 1.0,
+                        min_crowdsap: 0.8,
+                        ignored_dispositions: [SPLIT, DUPLICATE, ARTIFACT]}
+    period_alias:      {min_box_delta_bic: 10.0, sine_harmonics: 2,
+                        detrend_window_periods: 3.0,
+                        systematic_periods_days: [13.7, 6.85, 4.5667, 3.425, 1.0],
+                        systematic_tolerance: 0.01}
+    systematics:       {dump_margin_hours: 1.0, max_dump_fraction: 0.5,
+                        min_events_for_dumps: 3, max_sap_sigma: 3.0, max_sap_rel_diff: 0.5,
+                        max_background_sigma: 3.0, max_background_fraction: 0.5}
+    eb_catalog:        {match_radius_arcsec: 21.0, period_tolerance: 0.01,
+                        period_factors: [1.0, 2.0, 0.5]}
 ```
 
-What each parameter does is described in [gauntlet-tess-v0.1.md](gauntlet-tess-v0.1.md).
+What each parameter does is described in [gauntlet-tess-v0.1.md](gauntlet-tess-v0.1.md)
+and, for the sections added in v0.2, [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md).
+The `eb_catalog` test runs only if the claim has attachments with role `eb-catalog`
+(format `refute-eb-catalog-1`).
 
 ### Targets
 
@@ -94,7 +116,12 @@ pass_criteria:
   expected_false_positives: 3
   min_flagged_false_positives: 2
   max_refuted_planets: 1           # degeneracy guard
+  flag_excluded_tests: []          # v0.2: tests ignored when counting "flagged"
 ```
+
+`flag_excluded_tests` (default empty, which is the v0.1 definition): a false
+positive counts as flagged only if its verdict, recomputed with the same rules from
+the other tests, is `REFUTED`. The degeneracy guard always uses the full verdict.
 
 All criteria must hold on a complete run. The targets file must contain exactly
 `expected_planets` planets and `expected_false_positives` false positives.

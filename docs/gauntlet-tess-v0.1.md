@@ -1,5 +1,9 @@
 # TESS gauntlet v0.1
 
+> From v0.2 the gauntlet adds pixel-level, neighbor, alias, systematics and catalog
+> tests and changes tests d and e: see [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md).
+> This document stays the reference for the v0.1 self-claim, locked at tag `v0.1.0`.
+
 This document describes exactly what the TESS pack does to a target, and the
 pass/fail criterion of every test. All thresholds below are defaults of the claim
 schema and are written explicitly into every locked claim. They were fixed using

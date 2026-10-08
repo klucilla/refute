@@ -52,4 +52,11 @@ false positive *flagged* means its verdict is `REFUTED`. The degeneracy guard ca
 how many known planets may be `REFUTED`, so a gauntlet that refutes everything
 fails the claim. Analysis errors count against the claim.
 
+From v0.2 a calibration claim may list `flag_excluded_tests` in its pass criteria
+(for example `eb_catalog`, whose catalogs may share sources with the dispositions
+used to select the false positives). A false positive then counts as flagged only
+if its verdict, recomputed with the rules above from the other tests, is `REFUTED`;
+the count with every test is reported as information. The degeneracy guard always
+uses the full verdict.
+
 Verdicts are about claims, never about the people who made them.
