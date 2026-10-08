@@ -4,7 +4,10 @@ Definitions (also written into the claim):
 
 - *recovered*: a known planet whose found period is within ``period_tolerance``
   (relative) of the published period. Aliases (2P, P/2, ...) do not count.
-- *flagged*: a known false positive whose verdict is ``REFUTED``.
+- *flagged*: a known false positive whose verdict is ``REFUTED``. From v0.2 the
+  claim may list ``flag_excluded_tests``: the verdict used for this count is then
+  recomputed with the same deterministic rules from the other tests only (the
+  "signal verdict"). The count with every test is reported as information.
 - *refuted planet*: a known planet whose verdict is ``REFUTED``.
 
 The claim passes only if all three criteria hold, on a complete run of every
@@ -17,8 +20,19 @@ from collections import Counter
 from typing import Any
 
 from refute.core.claim import LoadedClaim
+from refute.core.verdict import Severity, TestResult, aggregate
 from refute.packs.tess.report import SCOPE_NOTE
 from refute.packs.tess.schema import load_targets_file
+
+
+def signal_verdict(result: dict[str, Any], excluded: list[str]) -> str | None:
+    """Verdict recomputed without the ``excluded`` tests (same aggregation rules)."""
+    if not excluded:
+        return result.get("verdict")
+    tests = [TestResult.from_dict(t) for t in result.get("tests", []) if t["name"] not in excluded]
+    if not any(t.severity is Severity.GATE for t in tests):
+        return result.get("verdict")
+    return aggregate(tests)[0].value
 
 
 def _recovered(result: dict[str, Any], tolerance: float) -> bool:
@@ -35,9 +49,14 @@ class TessCalibrator:
         tolerance = float(criteria["period_tolerance"])
         planets = [r for r in results if r.get("target_kind") == "planet"]
         fps = [r for r in results if r.get("target_kind") == "false_positive"]
+        excluded = list(criteria.get("flag_excluded_tests") or [])
         recovered = [r for r in planets if _recovered(r, tolerance)]
-        flagged = [r for r in fps if r.get("verdict") == "REFUTED"]
+        flagged = [r for r in fps if signal_verdict(r, excluded) == "REFUTED"]
+        flagged_all = [r for r in fps if r.get("verdict") == "REFUTED"]
         refuted_planets = [r for r in planets if r.get("verdict") == "REFUTED"]
+        flag_name = "flagged false positives"
+        if excluded:
+            flag_name += f" (without {', '.join(excluded)})"
 
         checks = [
             {
@@ -48,7 +67,7 @@ class TessCalibrator:
                 "passed": len(recovered) >= criteria["min_recovered_planets"],
             },
             {
-                "criterion": "flagged false positives",
+                "criterion": flag_name,
                 "value": len(flagged),
                 "of": len(fps),
                 "requirement": f">= {criteria['min_flagged_false_positives']}",
@@ -96,6 +115,7 @@ class TessCalibrator:
                     if r.get("target_kind") == "planet"
                     else None,
                     "verdict": r.get("verdict"),
+                    "signal_verdict": signal_verdict(r, excluded),
                     "status": r.get("status"),
                     "tests": {t["name"]: t["status"] for t in r.get("tests", [])},
                 }
@@ -128,6 +148,11 @@ class TessCalibrator:
             "definitions": loaded.claim.definitions,
             "pass_criteria": criteria,
             "self_claim": {"result": outcome, "note": note, "criteria": checks},
+            "information": {
+                "flag_excluded_tests": excluded,
+                "flagged_false_positives_with_every_test": len(flagged_all),
+                "of": len(fps),
+            },
             "complete_run": complete,
             "targets": rows,
             "diagnostics": {
@@ -166,11 +191,22 @@ class TessCalibrator:
             "",
             f"> **Scope.** {summary['scope_note']}",
             "",
+        ]
+        info = summary.get("information") or {}
+        if info.get("flag_excluded_tests"):
+            lines += [
+                "Information (not a criterion): "
+                f"{info['flagged_false_positives_with_every_test']} of {info['of']} false "
+                "positives are REFUTED when every test counts, including "
+                f"{', '.join(info['flag_excluded_tests'])}.",
+                "",
+            ]
+        lines += [
             "## Targets",
             "",
             "| Target | Name | Kind | Published P (d) | Found P (d) | Rel. error | Alias | "
-            "Recovered | Verdict | snr | odd_even | secondary | plausibility | holdout |",
-            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+            "Recovered | Verdict | Signal verdict | Tests not passed |",
+            "|---|---|---|---|---|---|---|---|---|---|---|",
         ]
         for row in summary["targets"]:
             tests = row["tests"]
@@ -179,14 +215,13 @@ class TessCalibrator:
                 return format(value, fmt) if isinstance(value, int | float) else "n/a"
 
             recovered = {True: "yes", False: "no", None: "-"}[row["recovered"]]
+            not_passed = ", ".join(f"{k} {v}" for k, v in tests.items() if v != "PASS") or "-"
             lines.append(
                 f"| {row['target']} | {row['name'] or ''} | {row['kind']} | "
                 f"{num(row['published_period_days'], '.6f')} | "
                 f"{num(row['found_period_days'], '.6f')} | {num(row['relative_error'], '.2e')} | "
                 f"{row['alias'] or '-'} | {recovered} | {row['verdict']} | "
-                f"{tests.get('snr', '-')} | {tests.get('odd_even', '-')} | "
-                f"{tests.get('secondary_eclipse', '-')} | {tests.get('plausibility', '-')} | "
-                f"{tests.get('holdout_by_year', '-')} |"
+                f"{row.get('signal_verdict') or '-'} | {not_passed} |"
             )
         diag = summary["diagnostics"]
         lines += [

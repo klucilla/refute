@@ -26,7 +26,19 @@ def test_defaults_are_resolved_into_the_locked_form(tmp_path):
         "exptime_seconds": 120,
         "flux_column": "pdcsap_flux",
         "quality_bitmask": "default",
+        "target_pixel_files": True,
+        "neighbor_radius_arcsec": 120.0,
     }
+    for section in (
+        "centroid_shift",
+        "aperture_depth",
+        "nearby_contamination",
+        "period_alias",
+        "systematics",
+        "eb_catalog",
+    ):
+        assert plan["gauntlet"][section], section
+    assert plan["gauntlet"]["holdout_by_year"]["hidden_detrend_window_factor"] == 3.0
     assert plan["search"]["period_max_days"] == 6.0  # explicit value from the claim
     assert loaded.canonical()["created"] == "2026-10-07"
 

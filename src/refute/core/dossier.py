@@ -22,6 +22,8 @@ from typing import Any
 from refute.core.hashing import sha256_bytes, sha256_file
 from refute.core.io import read_json, write_json, write_text
 
+REVIEW_DIR = "review"
+
 MANIFEST_NAME = "MANIFEST.sha256"
 DEFAULT_RELATIVE_TOLERANCE = 1e-6
 _ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
@@ -161,6 +163,10 @@ def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckR
         result.integrity_problems.append(f"not a directory: {root}")
         return result
     result.integrity_problems = verify_manifest(root)
+    if (root / REVIEW_DIR / "index.json").is_file():
+        from refute.core.review import verify_reviews
+
+        result.integrity_problems.extend(verify_reviews(root))
     if against is not None:
         original = Path(against)
         result.compared_with = original.as_posix()

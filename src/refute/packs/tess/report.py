@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import Any
 
 SCOPE_NOTE = (
-    "Refute v0.1 is calibrated only in an easy regime defined by pre-registered "
-    "selection filters (calibration/PROTOCOL.md): confirmed planets with orbital periods "
+    "Refute is calibrated only in an easy regime defined by pre-registered selection "
+    "filters (see the claim's protocol attachment): confirmed planets with orbital periods "
     "between 0.5 and 10 days, transit depths of at least 1000 ppm, TESS magnitude 12 or "
     "brighter, a single known planet in the system, and SPOC 2-minute data in at least two "
     "calendar years; false positives with the same period, depth and magnitude limits. "
@@ -91,6 +91,15 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
             f"| {test['name']} | {test['status']} | {test['severity']} | {test['message']} |"
         )
     lines.append("")
+    if not result.get("eb_catalog_configured"):
+        lines += [
+            "The `eb_catalog` test is not part of this gauntlet: the claim attaches no "
+            "eclipsing-binary catalog.",
+            "",
+        ]
+    warnings = result.get("data_quality_warnings") or []
+    if warnings:
+        lines += ["## Data-quality warnings (not tests)", ""] + [f"- {w}" for w in warnings] + [""]
 
     rounds = result.get("holdout_rounds") or []
     if rounds:
@@ -132,6 +141,16 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
     plots = result.get("plots") or []
     if plots:
         lines += ["## Plots", ""] + [f"- [{p}]({p})" for p in plots] + [""]
+    lines += [
+        "## Independent review",
+        "",
+        "Reports by fresh, read-only reviewer sessions are attached after the verdict, in",
+        "`review/` (index: [review/index.md](review/index.md)), following",
+        "`docs/reviewer-protocol.md`. Reviewers raise objections; they never change the",
+        "verdict. `refute check-dossier` verifies that the analysis and `verdict.json` are",
+        "unchanged since the reviews were attached. No `review/` folder means no review.",
+        "",
+    ]
     provenance = result.get("provenance") or {}
     lines += [
         "## Provenance",

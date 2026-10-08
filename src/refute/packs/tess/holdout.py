@@ -20,8 +20,12 @@ each observing year H, in turn:
    reach ``min_snr`` at the best dP. The same scan at phase 0.5 is a control:
    reported, not judged.
 
-A round is INCONCLUSIVE when train data cannot produce an ephemeris or fewer than
-``min_predicted_transits`` windows contain data. The test PASSES if every
+A round is INCONCLUSIVE when train data cannot produce an ephemeris, when the
+train-only timing uncertainty in the hidden year exceeds
+``max_timing_sigma_durations`` transit durations (v0.2, issue #2), or when fewer
+than ``min_predicted_transits`` windows contain data. From v0.2 the hidden year is
+detrended with a window at least ``hidden_detrend_window_factor`` times the widest
+masked span. The test PASSES if every
 conclusive round passes, FAILS if any round fails, and is INCONCLUSIVE if no
 round is conclusive or there are fewer than two observing years.
 """
@@ -83,7 +87,14 @@ class HiddenYear:
         mask = np.zeros(len(raw_hidden), dtype=bool)
         for window in windows:
             mask |= np.abs(raw_hidden.time - window.t_pred) <= window.baseline_inner
-        flat = detrend(raw_hidden, plan.detrend, mask=mask)
+        # Issue #2: when a masked span is as wide as the detrending window, the knots
+        # inside it have no data and the trend there is extrapolated. The window grows
+        # to a multiple of the widest masked span (from the registered windows only).
+        factor = plan.gauntlet.holdout_by_year.hidden_detrend_window_factor
+        widest = max((2.0 * w.baseline_inner for w in windows), default=0.0)
+        self.detrend_window_days = max(plan.detrend.window_days, factor * widest)
+        params = plan.detrend.model_copy(update={"window_days": self.detrend_window_days})
+        flat = detrend(raw_hidden, params, mask=mask)
         self.__time = flat.time
         self.__flux = flat.flux
         self.access_log: list[dict[str, Any]] = []
@@ -360,6 +371,27 @@ def _round(
     transit_windows = [w for w in windows if w.kind == "transit"]
     control_windows = [w for w in windows if w.kind == "control"]
 
+    max_sigma_t = max(
+        ((w.half_width - train.duration / 2) / params.timing_sigma for w in transit_windows),
+        default=0.0,
+    )
+    if max_sigma_t > params.max_timing_sigma_durations * train.duration:
+        # Issue #2: the train-only ephemeris cannot place the hidden transits to
+        # within a transit duration, so a non-detection would not be informative.
+        return RoundResult(
+            hidden_year,
+            TestStatus.INCONCLUSIVE,
+            f"train-only timing uncertainty in the hidden year ({max_sigma_t * 24:.2f} h) exceeds "
+            f"{params.max_timing_sigma_durations:g} transit duration(s) "
+            f"({train.duration * 24:.2f} h)",
+            metrics={
+                **train_info,
+                "max_timing_sigma_days": max_sigma_t,
+                "n_predicted_transits": len(transit_windows),
+            },
+            train_ephemeris=ephemeris.to_dict(),
+        )
+
     hidden = HiddenYear(raw.select(raw.year == hidden_year), windows, plan)
     measured = _measure(hidden, transit_windows, ephemeris, train.duration, cadence, params)
     control = _measure(hidden, control_windows, ephemeris, train.duration, cadence, params)
@@ -377,6 +409,7 @@ def _round(
         "best_period_correction_days": measured.get("best_period_correction_days"),
         "period_correction_scan_days": measured.get("period_correction_scan_days"),
         "n_scan_steps": measured.get("n_scan_steps"),
+        "hidden_detrend_window_days": hidden.detrend_window_days,
         "control_phase05_depth_ppm": control.get("depth_ppm"),
         "control_phase05_snr": control.get("snr"),
         "max_timing_sigma_days": max((w.half_width - train.duration / 2) for w in transit_windows)

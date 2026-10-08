@@ -1,4 +1,4 @@
-"""Gauntlet v0.1: deterministic falsification tests for a transit candidate.
+"""Gauntlet tests a-d: deterministic falsification tests for a transit candidate.
 
 Each function returns a :class:`~refute.core.verdict.TestResult` carrying the
 thresholds it used and the provenance of its inputs. The blind holdout (test e)
@@ -162,6 +162,9 @@ def star_inputs(star: StarInfo | None) -> dict[str, Any]:
         "radius_err_rsun": star.radius_err_rsun,
         "mass_msun": star.mass_msun,
         "logg_cgs": star.logg_cgs,
+        "tmag": star.tmag,
+        "tic_disposition": star.disposition,
+        "tic_duplicate_id": star.duplicate_id,
     }
 
 
@@ -195,8 +198,21 @@ def check_plausibility(
         "max_companion_radius_rjup": params.max_companion_radius_rjup,
         "max_duration_ratio": params.max_duration_ratio,
         "max_stellar_radius_rel_err": params.max_stellar_radius_rel_err,
+        "unreliable_tic_dispositions": list(params.unreliable_tic_dispositions),
     }
     inputs = star_inputs(star)
+    unreliable = {d.upper() for d in params.unreliable_tic_dispositions}
+    if star is not None and star.disposition and star.disposition.upper() in unreliable:
+        return TestResult(
+            "plausibility",
+            TestStatus.INCONCLUSIVE,
+            Severity.FATAL,
+            f"TIC row has disposition {star.disposition} (duplicate_id "
+            f"{star.duplicate_id or 'none'}): its stellar parameters may not describe the star "
+            "that dominates the light curve",
+            thresholds=thresholds,
+            inputs=inputs,
+        )
     if star is None or not _valid(star.radius_rsun):
         return TestResult(
             "plausibility",

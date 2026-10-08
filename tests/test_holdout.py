@@ -32,8 +32,11 @@ def test_signal_absent_in_hidden_year_fails(scenario_results):
 
 
 def test_pure_noise_does_not_pass(scenario_results):
+    # v0.1 gave FAIL here. From v0.2 (issue #2) a round whose train-only timing is too
+    # uncertain is INCONCLUSIVE: on noise the train "transits" have a reduced chi-square
+    # far above 1, so the rounds are INCONCLUSIVE. Either way, noise never passes.
     holdout = _holdout(scenario_results["noise"])
-    assert holdout.test.status is TestStatus.FAIL
+    assert holdout.test.status is not TestStatus.PASS
 
 
 def test_single_year_is_inconclusive(scenario_results):

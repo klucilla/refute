@@ -6,6 +6,7 @@ Exit codes are documented in ``docs/cli.md``.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -16,6 +17,7 @@ from refute.core.claim import ClaimError, load_claim
 from refute.core.dossier import check_dossier, write_archive
 from refute.core.lock import LockError, create_lock, verify_claim
 from refute.core.pack import PackError, available_packs, load_pack
+from refute.core.review import ReviewError, attach_review
 
 app = typer.Typer(
     add_completion=False,
@@ -152,11 +154,30 @@ def _run(
         cache_dir=cache_dir,
     )
     for message in outcome.messages:
-        typer.echo(message, err=outcome.exit_code != 0)
+        _echo_safely(message, err=outcome.exit_code != 0)
     if outcome.run_dir is not None:
-        typer.echo((outcome.run_dir / "summary.md").read_text(encoding="utf-8"))
-        typer.echo(f"dossiers written to {outcome.run_dir}")
+        _echo_safely((outcome.run_dir / "summary.md").read_text(encoding="utf-8"))
+        _echo_safely(f"dossiers written to {outcome.run_dir}")
     raise typer.Exit(outcome.exit_code)
+
+
+def _echo_safely(text: str, err: bool = False) -> None:
+    """Print without letting a broken or closed output stream fail a completed run.
+
+    In v0.1 the CLI crashed with "I/O operation on closed file" while printing the
+    summary of a run that had already written every dossier (issue #1). The exit
+    code reports whether the run completed, so printing must never change it.
+    """
+    try:
+        typer.echo(text, err=err)
+    except (ValueError, OSError):
+        try:
+            stream = sys.__stderr__ if err else sys.__stdout__
+            if stream is not None and not stream.closed:
+                stream.write(text + chr(10))
+                stream.flush()
+        except (ValueError, OSError):
+            pass
 
 
 TargetOpt = Annotated[
@@ -235,6 +256,26 @@ def archive_command(
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     typer.echo(f"{digest}  {path}")
+
+
+review_app = typer.Typer(no_args_is_help=True, help="Independent reviewer reports.")
+app.add_typer(review_app, name="review")
+
+
+@review_app.command("attach")
+def review_attach_command(
+    dossier: Annotated[Path, typer.Argument(help="Dossier directory.")],
+    report: Annotated[Path, typer.Argument(help="Reviewer report (Markdown).")],
+    reviewer: Annotated[str, typer.Option("--reviewer", help="Reviewer id, e.g. opus-1.")],
+    model: Annotated[str, typer.Option("--model", help="Model that wrote the report.")],
+) -> None:
+    """Attach a reviewer report to a dossier. The verdict and analysis files never change."""
+    try:
+        entry = attach_review(dossier, report, reviewer=reviewer, model=model)
+    except ReviewError as exc:
+        typer.echo(f"review refused: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(f"attached {entry['file']} (sha256 {entry['sha256']})")
 
 
 def main() -> None:

@@ -51,7 +51,7 @@ def _cache(tmp_path: Path, scenarios: dict[int, str]) -> Path:
     cache = tmp_path / "cache"
     for tic, name in scenarios.items():
         data = scenario_data(name)
-        write_synthetic_cache(cache, tic, data.lc, data.star)
+        write_synthetic_cache(cache, tic, data.lc, data.star, aux=data.aux)
     return cache
 
 
@@ -99,14 +99,26 @@ def test_replicate_run_writes_a_complete_dossier(replicate_run):
         "odd_even",
         "secondary_eclipse",
         "plausibility",
+        "centroid_shift",
+        "aperture_depth",
+        "nearby_contamination",
+        "period_alias",
+        "systematics",
         "holdout_by_year",
     }
+    assert verdict["eb_catalog_configured"] is False
     assert verdict["key_values"]["period_days"] == pytest.approx(3.7, rel=1e-3)
     manifest = read_json(dossier / "data/manifest.json")
-    assert manifest["product"]["product"].startswith("synthetic")
+    assert manifest["schema"] == "refute-tess-data-manifest-2"
+    assert manifest["product"]["product"].startswith("TESS SPOC")
     assert all(len(f["sha256"]) == 64 for f in manifest["files"])
+    assert any(f.get("kind") == "target pixel file" for f in manifest["files"])
     reproduce = (dossier / "REPRODUCE.md").read_text(encoding="utf-8")
     assert "uv sync --frozen" in reproduce
+    # Issue #7: a runnable clone line and an explained dossier placeholder.
+    assert "git clone https://github.com/klucilla/refute.git refute" in reproduce
+    assert "<URL of the Refute repository>" not in reproduce
+    assert "the folder that contains this" in reproduce
     assert "refute replicate" in reproduce and "--target TIC-1" in reproduce
     assert "check-dossier" in reproduce
     integrity = read_json(dossier / "integrity.json")

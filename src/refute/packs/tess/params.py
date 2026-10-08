@@ -21,6 +21,9 @@ class DataParams(_Model):
     exptime_seconds: Literal[120] = 120
     flux_column: Literal["pdcsap_flux"] = "pdcsap_flux"
     quality_bitmask: Literal["default"] = "default"
+    # v0.2: SPOC 2-min target pixel files and TIC sources around the target.
+    target_pixel_files: bool = True
+    neighbor_radius_arcsec: float = Field(120.0, gt=0)
 
 
 class DetrendParams(_Model):
@@ -83,6 +86,75 @@ class PlausibilityParams(_Model):
     max_duration_ratio: float = Field(1.5, gt=0)
     max_companion_radius_rjup: float = Field(2.5, gt=0)
     max_stellar_radius_rel_err: float = Field(0.3, gt=0)
+    # v0.2 (issue #3): TIC rows with these dispositions do not describe one real star.
+    unreliable_tic_dispositions: list[str] = Field(
+        default_factory=lambda: ["SPLIT", "DUPLICATE", "ARTIFACT"]
+    )
+    # Data-quality warning (report only, not a test): TIC Tmag vs the target's catalog Tmag.
+    max_tmag_mismatch: float = Field(1.0, gt=0)
+
+
+class CentroidParams(_Model):
+    """Flux-weighted centroid in the SPOC aperture of the target pixel files."""
+
+    max_sigma: float = Field(3.0, gt=0)
+    min_offset_pixels: float = Field(0.5, ge=0)
+    min_sectors: int = Field(1, ge=1)
+
+
+class ApertureParams(_Model):
+    """Transit depth in a core aperture versus a dilated aperture."""
+
+    core_radius_pixels: float = Field(1.5, gt=0)
+    dilation_pixels: int = Field(1, ge=1)
+    max_sigma: float = Field(3.0, gt=0)
+    min_depth_ratio: float = Field(1.2, gt=1)
+
+
+class ContaminationParams(_Model):
+    """Unresolved TIC neighbors that could produce the signal."""
+
+    max_separation_arcsec: float = Field(21.0, gt=0)
+    max_eclipse_depth: float = Field(1.0, gt=0, le=1)
+    min_crowdsap: float = Field(0.8, gt=0, le=1)
+    ignored_dispositions: list[str] = Field(
+        default_factory=lambda: ["SPLIT", "DUPLICATE", "ARTIFACT"]
+    )
+
+
+class AliasParams(_Model):
+    """Does a box add to a sinusoid at the found period? And known systematic periods."""
+
+    min_box_delta_bic: float = Field(10.0, gt=0)
+    sine_harmonics: int = Field(2, ge=1, le=4)
+    detrend_window_periods: float = Field(3.0, gt=0)
+    systematic_periods_days: list[float] = Field(
+        default_factory=lambda: [13.7, 13.7 / 2, 13.7 / 3, 13.7 / 4, 1.0]
+    )
+    systematic_tolerance: float = Field(0.01, gt=0)
+
+
+class SystematicsParams(_Model):
+    """Momentum dumps, SAP versus PDCSAP depth, and background at transit times."""
+
+    dump_margin_hours: float = Field(1.0, ge=0)
+    max_dump_fraction: float = Field(0.5, gt=0, le=1)
+    min_events_for_dumps: int = Field(3, ge=1)
+    max_sap_sigma: float = Field(3.0, gt=0)
+    max_sap_rel_diff: float = Field(0.5, gt=0)
+    max_background_sigma: float = Field(3.0, gt=0)
+    max_background_fraction: float = Field(0.5, gt=0)
+
+
+class EbCatalogParams(_Model):
+    """Cross-match with eclipsing-binary catalogs given as claim attachments.
+
+    The test runs only if the claim has attachments with role ``eb-catalog``.
+    """
+
+    match_radius_arcsec: float = Field(21.0, gt=0)
+    period_tolerance: float = Field(0.01, gt=0)
+    period_factors: list[float] = Field(default_factory=lambda: [1.0, 2.0, 0.5])
 
 
 class EventParams(_Model):
@@ -103,6 +175,11 @@ class HoldoutParams(_Model):
     baseline_outer_durations: float = Field(1.5, gt=0)
     timing_step_minutes: float = Field(1.0, gt=0)
     timing_scan_half_width_durations: float = Field(0.5, gt=0)
+    # v0.2 (issue #2): the hidden year is detrended with a window at least this many
+    # times the widest masked span, and a round is INCONCLUSIVE when the train-only
+    # timing uncertainty in the hidden year exceeds this many transit durations.
+    hidden_detrend_window_factor: float = Field(3.0, gt=0)
+    max_timing_sigma_durations: float = Field(1.0, gt=0)
 
 
 class GauntletParams(_Model):
@@ -112,6 +189,12 @@ class GauntletParams(_Model):
     plausibility: PlausibilityParams = Field(default_factory=PlausibilityParams)
     holdout_by_year: HoldoutParams = Field(default_factory=HoldoutParams)
     events: EventParams = Field(default_factory=EventParams)
+    centroid_shift: CentroidParams = Field(default_factory=CentroidParams)
+    aperture_depth: ApertureParams = Field(default_factory=ApertureParams)
+    nearby_contamination: ContaminationParams = Field(default_factory=ContaminationParams)
+    period_alias: AliasParams = Field(default_factory=AliasParams)
+    systematics: SystematicsParams = Field(default_factory=SystematicsParams)
+    eb_catalog: EbCatalogParams = Field(default_factory=EbCatalogParams)
 
 
 class TessTestPlan(_Model):
@@ -172,6 +255,11 @@ class CalibrationCriteria(_Model):
     expected_false_positives: int = Field(ge=0)
     min_flagged_false_positives: int = Field(ge=0)
     max_refuted_planets: int = Field(ge=0)
+    # v0.2: tests whose failures do not count when deciding whether a false positive
+    # is "flagged" (for example eb_catalog, whose catalogs may share sources with the
+    # dispositions used to select the false positives). The degeneracy guard always
+    # uses the full verdict.
+    flag_excluded_tests: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _consistent(self) -> CalibrationCriteria:

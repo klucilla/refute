@@ -1,4 +1,4 @@
-"""TESS exoplanet-transit domain pack (gauntlet v0.1).
+"""TESS exoplanet-transit domain pack (gauntlet v0.2).
 
 Exposed to the engine through the ``refute.packs`` entry point as ``PACK``.
 Importing this module does not import lightkurve; the adapter imports it only
@@ -18,8 +18,11 @@ __all__ = ["PACK"]
 
 PACK = DomainPack(
     name="tess",
-    version="0.1.0",
-    description="TESS SPOC 2-min transits: BLS search, gauntlet v0.1, blind holdout by year",
+    version="0.2.0.dev0",
+    description=(
+        "TESS SPOC 2-min transits: BLS search, gauntlet v0.2 (pixel, neighbor, alias, "
+        "systematics and catalog tests), blind holdout by year"
+    ),
     schema=TessClaimSchema(),
     adapter=TessAdapter(),
     search=TessSearch(),

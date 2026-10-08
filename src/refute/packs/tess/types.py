@@ -68,6 +68,11 @@ class StarInfo:
     tic_version: str | None
     source: str
     retrieved_utc: str | None
+    # Added in v0.2 (fetch manifest refute-tess-fetch-2); None in v0.1 manifests.
+    disposition: str | None = None
+    duplicate_id: str | None = None
+    ra_deg: float | None = None
+    dec_deg: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -142,6 +147,73 @@ class LightCurveData:
 
 
 @dataclass
+class SectorAux:
+    """Auxiliary columns of one sector's SPOC light-curve file (v0.2 battery).
+
+    Arrays are aligned with each other (same cadences as the PDCSAP light curve of
+    that sector after the quality mask). ``sap_flux`` and ``sap_bkg`` are divided by
+    the median SAP flux of the sector. ``dump_times`` are the times of every cadence
+    flagged as a momentum dump (quality bit 32), taken from the raw quality column
+    before any cadence is removed.
+    """
+
+    sector: int
+    time: np.ndarray
+    pdcsap_flux: np.ndarray
+    sap_flux: np.ndarray
+    sap_bkg: np.ndarray
+    dump_times: np.ndarray
+    crowdsap: float | None = None
+    flfrcsap: float | None = None
+
+
+@dataclass
+class PixelData:
+    """Target pixel file of one sector: background-subtracted flux cube.
+
+    ``flux`` has shape (n_cadences, n_rows, n_columns); ``aperture`` marks the SPOC
+    optimal aperture. ``target_xy`` is the target position in array coordinates
+    (x = column index, y = row index, 0-based, pixel centers at integers), from the
+    file's WCS, or None when the WCS cannot be read.
+    """
+
+    sector: int
+    time: np.ndarray
+    flux: np.ndarray
+    flux_err: np.ndarray
+    aperture: np.ndarray
+    target_xy: tuple[float, float] | None
+    filename: str = ""
+    sha256: str = ""
+
+
+@dataclass(frozen=True)
+class Neighbor:
+    """A TIC source near the target (from a cone query around the target)."""
+
+    tic_id: int
+    tmag: float | None
+    separation_arcsec: float
+    disposition: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class AuxData:
+    """Everything the v0.2 battery needs besides the PDCSAP light curve.
+
+    It is never passed to the blind holdout.
+    """
+
+    sectors: list[SectorAux] = field(default_factory=list)
+    pixels: list[PixelData] = field(default_factory=list)
+    neighbors: list[Neighbor] | None = None
+    neighbor_radius_arcsec: float | None = None
+
+
+@dataclass
 class TessData:
     """Everything loaded for one target: raw normalized light curve plus metadata."""
 
@@ -152,6 +224,7 @@ class TessData:
     star: StarInfo | None
     product: ProductInfo
     manifest: dict[str, Any] = field(default_factory=dict)
+    aux: AuxData | None = None
 
 
 @dataclass(frozen=True)

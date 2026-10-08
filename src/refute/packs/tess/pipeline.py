@@ -1,7 +1,8 @@
-"""Analysis of one target: search, gauntlet a-d, blind holdout, verdict.
+"""Analysis of one target: search, gauntlet a-d, v0.2 battery, blind holdout, verdict.
 
 The holdout (test e) is called with the raw light curve and sector metadata only.
-It never receives the candidate found by the global search.
+It never receives the candidate found by the global search, nor the pixel data,
+auxiliary columns, neighbors or catalogs used by the v0.2 battery.
 """
 
 from __future__ import annotations
@@ -11,7 +12,15 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from refute.core.verdict import Severity, TestResult, TestStatus, aggregate
+from refute.packs.tess.battery import (
+    check_aperture_depth,
+    check_centroid_shift,
+    check_nearby_contamination,
+    check_period_alias,
+    check_systematics,
+)
 from refute.packs.tess.detrend import detrend
+from refute.packs.tess.ebcatalog import EbEntry, check_eb_catalog, load_catalogs
 from refute.packs.tess.ephemeris import Ephemeris, fit_linear_ephemeris, measure_transit_times
 from refute.packs.tess.events import EventDepths, per_event_depths, per_point_sigma, transit_mask
 from refute.packs.tess.gauntlet import (
@@ -55,10 +64,56 @@ def _not_run(name: str, severity: Severity, reason: str) -> TestResult:
     return TestResult(name, TestStatus.INCONCLUSIVE, severity, reason)
 
 
+BATTERY_TESTS = (
+    ("centroid_shift", Severity.FATAL),
+    ("aperture_depth", Severity.FATAL),
+    ("nearby_contamination", Severity.WARNING),
+    ("period_alias", Severity.FATAL),
+    ("systematics", Severity.WARNING),
+)
+
+
+def battery_tests(
+    data: TessData,
+    candidate: Candidate,
+    plan: TessTestPlan,
+    catalogs: list[EbEntry] | None = None,
+) -> list[TestResult]:
+    """The v0.2 battery against the final candidate (see docs/gauntlet-tess-v0.2.md)."""
+    aux = data.aux
+    pixels = aux.pixels if aux else []
+    crowds = [a.crowdsap for a in aux.sectors if a.crowdsap is not None] if aux else []
+    tests = [
+        check_centroid_shift(pixels, candidate, plan),
+        check_aperture_depth(pixels, candidate, plan),
+        check_nearby_contamination(
+            aux.neighbors if aux else None,
+            data.star,
+            candidate.depth,
+            crowds,
+            plan.gauntlet.nearby_contamination,
+        ),
+        check_period_alias(data.lc, candidate, plan),
+        check_systematics(aux.sectors if aux else [], candidate, plan),
+    ]
+    if catalogs is not None:
+        tests.append(
+            check_eb_catalog(catalogs, data.star, candidate.period, plan.gauntlet.eb_catalog)
+        )
+    return tests
+
+
 def attack_candidate(
-    data: TessData, candidate: Candidate | None, plan: TessTestPlan
+    data: TessData,
+    candidate: Candidate | None,
+    plan: TessTestPlan,
+    catalogs: list[EbEntry] | None = None,
 ) -> GauntletOutcome:
-    """Gauntlet tests a-d against a candidate found on all data."""
+    """Gauntlet tests a-d and the v0.2 battery against a candidate found on all data.
+
+    ``catalogs`` is None when the claim has no eclipsing-binary catalog attached;
+    the ``eb_catalog`` test is then not part of the gauntlet (the report says so).
+    """
     gp = plan.gauntlet
     if candidate is None:
         tests = [
@@ -66,7 +121,10 @@ def attack_candidate(
             _not_run("odd_even", Severity.FATAL, "no candidate"),
             _not_run("secondary_eclipse", Severity.FATAL, "no candidate"),
             _not_run("plausibility", Severity.FATAL, "no candidate"),
+            *(_not_run(name, severity, "no candidate") for name, severity in BATTERY_TESTS),
         ]
+        if catalogs is not None:
+            tests.append(_not_run("eb_catalog", Severity.FATAL, "no candidate"))
         return GauntletOutcome(None, None, None, None, tests, None)
 
     cadence = plan.data.exptime_seconds / 86400.0
@@ -90,6 +148,7 @@ def attack_candidate(
         check_odd_even(primary, gp.odd_even),
         check_secondary_eclipse(primary, secondary, gp.secondary_eclipse),
         check_plausibility(final, data.star, gp.plausibility),
+        *battery_tests(data, final, plan, catalogs),
     ]
     times = measure_transit_times(
         flat,
@@ -107,11 +166,14 @@ def attack_candidate(
 
 
 def analyze_data(
-    data: TessData, plan: TessTestPlan, search_fn: SearchFn = search_period
+    data: TessData,
+    plan: TessTestPlan,
+    search_fn: SearchFn = search_period,
+    catalogs: list[EbEntry] | None = None,
 ) -> Analysis:
     flat = detrend(data.lc, plan.detrend)
     search = search_fn(flat, plan.search)
-    gauntlet = attack_candidate(data, search.candidate, plan)
+    gauntlet = attack_candidate(data, search.candidate, plan, catalogs)
     # Blind holdout: raw data and sector metadata only. Never the global candidate.
     holdout = run_holdout(data.lc, data.sectors, plan)
     tests = [*gauntlet.tests, holdout.test]
@@ -161,16 +223,53 @@ def data_manifest(data: TessData) -> dict[str, Any]:
                 "data_uri": record.get("data_uri"),
             }
         )
+    for record in data.manifest.get("pixel_files", []):
+        files.append(
+            {
+                "name": record["name"],
+                "sha256": record["sha256"],
+                "sector": record["sector"],
+                "kind": "target pixel file",
+                "url": record.get("url"),
+                "data_uri": record.get("data_uri"),
+            }
+        )
     return {
-        "schema": "refute-tess-data-manifest-1",
+        "schema": "refute-tess-data-manifest-2",
         "target_key": data.target_key,
         "retrieved_utc": data.manifest.get("retrieved_utc"),
         "query": data.manifest.get("query"),
         "product": data.product.to_dict(),
         "files": files,
         "star": data.star.to_dict() if data.star else None,
+        "neighbors": data.manifest.get("neighbors"),
         "software": data.manifest.get("software"),
     }
+
+
+def data_quality_warnings(target: dict[str, Any], data: TessData, plan: TessTestPlan) -> list[str]:
+    """Warnings for the report. They are not tests and never change a verdict."""
+    warnings = []
+    star = data.star
+    catalog = target.get("catalog") or {}
+    reference = None
+    for key in ("sy_tmag", "TESS Mag"):
+        try:
+            reference = float(catalog[key])
+            break
+        except (KeyError, TypeError, ValueError):
+            continue
+    limit = plan.gauntlet.plausibility.max_tmag_mismatch
+    if star is not None and star.tmag is not None and reference is not None:
+        if abs(star.tmag - reference) > limit:
+            warnings.append(
+                f"TIC Tmag {star.tmag:.2f} differs from the target's catalog Tmag "
+                f"{reference:.2f} by more than {limit:g} mag: the TIC row may describe "
+                "another source"
+            )
+    if star is not None and star.disposition:
+        warnings.append(f"TIC row disposition: {star.disposition}")
+    return warnings
 
 
 def build_result(
@@ -229,6 +328,8 @@ def build_result(
             "star": star_inputs(data.star),
         },
         "key_values": key_values,
+        "data_quality_warnings": data_quality_warnings(target, data, plan),
+        "eb_catalog_configured": analysis.extras.get("eb_catalog_configured", False),
         "test_plan": plan.model_dump(mode="json"),
         "provenance": {
             k: context.get(k)
@@ -277,7 +378,14 @@ class TessAnalyzer:
 
         plan = TessTestPlan.model_validate(test_plan)
         writer.write_json("data/manifest.json", data_manifest(data))
-        analysis = analyze_data(data, plan)
+        catalog_paths = [
+            writer.root / "attachments" / a["path"]
+            for a in context.get("attachments", [])
+            if a.get("role") == "eb-catalog"
+        ]
+        catalogs = load_catalogs(catalog_paths) if catalog_paths else None
+        analysis = analyze_data(data, plan, catalogs=catalogs)
+        analysis.extras["eb_catalog_configured"] = catalogs is not None
         result = build_result(target, data, plan, analysis, context)
         result["plots"] = plots.write_all(writer, data, analysis, plan)
         return result

@@ -1,7 +1,7 @@
 """Run orchestration shared by ``refute replicate`` and ``refute calibrate``.
 
 1. Verify the lock (claim, attachments, code). TAMPERED aborts with exit code 2.
-2. Fetch data for every target (network, threads), unless ``--offline``.
+2. Fetch data for every target (network, one target at a time), unless ``--offline``.
 3. Analyze every target in parallel worker processes (offline, CPU-bound).
    Each worker writes one complete dossier.
 4. Write the run summary (and, for calibration claims, evaluate the claim).
@@ -24,7 +24,7 @@ from refute.core.environment import snapshot
 from refute.core.io import dumps_json, write_json, write_text
 from refute.core.lock import VerifyStatus, lock_path_for, verify_claim
 from refute.core.pack import load_pack
-from refute.core.runner import default_workers, run_processes, run_threads
+from refute.core.runner import default_workers, run_processes
 
 
 def default_cache_dir() -> Path:
@@ -81,14 +81,17 @@ Refute repository and compare the new result with this dossier.
   locked code hash)
 
 ```bash
-git clone <URL of the Refute repository> refute
+git clone {refute.__repository__}.git refute
 cd refute
 {checkout}
 uv sync --frozen
 uv run refute verify {claim_ref}
 uv run refute {mode} {claim_arg} --target {key} --out repro --run-id repro --workers 1
-uv run refute check-dossier repro/repro/{key} --against <path to this dossier>
+uv run refute check-dossier repro/repro/{key} --against <this dossier>
 ```
+
+Replace `<this dossier>` with the path of the folder that contains this
+`REPRODUCE.md` (wherever the dossier archive was unpacked).
 
 `refute {mode}` downloads the input data from the public archive when it is not
 already cached. `check-dossier` verifies both manifests, requires identical input
@@ -240,9 +243,8 @@ def execute_run(
     if offline:
         fetch_errors = [None] * len(selected)
     else:
-        fetch_errors = run_threads(
-            _fetch_one, [(pack, t, test_plan, cache) for t in selected], workers=4
-        )
+        # One target at a time: concurrent downloads truncated files in v0.1 (issue #1).
+        fetch_errors = [_fetch_one((pack, t, test_plan, cache)) for t in selected]
 
     env = snapshot(code_root or _safe_project_root())
     context = {
@@ -263,6 +265,7 @@ def execute_run(
         "run_git_dirty": run_state.dirty,
         "refute_version": refute.__version__,
         "pack": f"{pack.name} {pack.version}",
+        "attachments": [{"path": a.path, "role": a.role} for a in loaded.claim.attachments],
     }
     attachments = tuple(
         (a.path, loaded.attachment_path(a).read_bytes()) for a in loaded.claim.attachments
