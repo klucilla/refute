@@ -26,13 +26,15 @@ from refute.packs.tess.schema import load_targets_file
 
 
 def signal_verdict(result: dict[str, Any], excluded: list[str]) -> str | None:
-    """Verdict recomputed without the ``excluded`` tests (same aggregation rules)."""
+    """Verdict recomputed without the ``excluded`` tests (same aggregation rules,
+    including the coverage rule and the expected-test check)."""
     if not excluded:
         return result.get("verdict")
     tests = [TestResult.from_dict(t) for t in result.get("tests", []) if t["name"] not in excluded]
     if not any(t.severity is Severity.GATE for t in tests):
         return result.get("verdict")
-    return aggregate(tests)[0].value
+    expected = [n for n in result.get("expected_tests") or [] if n not in excluded]
+    return aggregate(tests, expected=expected)[0].value
 
 
 def _recovered(result: dict[str, Any], tolerance: float) -> bool:

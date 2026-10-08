@@ -14,7 +14,7 @@ G, X, W = Severity.GATE, Severity.FATAL, Severity.WARNING
 
 
 def r(name, status, severity):
-    return TestResult(name, status, severity, "")
+    return TestResult(name, status, severity, "", coverage=1, coverage_unit="items")
 
 
 def test_enums_match_claude_md():

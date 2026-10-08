@@ -30,15 +30,33 @@ A test may report a different severity for different outcomes. For example the
 secondary-eclipse test is fatal for a deep eclipse at phase 0.5 and a warning for a
 shallow one.
 
+## Coverage: no PASS without examined data
+
+Every test result declares its **coverage**: how much data the check actually
+examined (transits measured, cadences used, catalog rows scanned, sub-checks run),
+with its unit. A `PASS` with zero coverage, or with no declared coverage, is turned
+into `INCONCLUSIVE` by the engine before aggregation, with the reason. A check that
+examined nothing has shown nothing. This rule lives in the core
+(`refute.core.verdict.enforce_coverage`) and applies to every domain pack.
+
+"Nothing found" is a valid `PASS` only when the data were examined: for example a
+catalog that was searched around the target and has no entry there (coverage: the
+rows scanned), or a TIC cone query that returned no neighbor (coverage: one query).
+
 ## Aggregation (deterministic)
 
 Rules are applied in order; the first that matches decides:
 
+0. a `PASS` without positive coverage counts as `INCONCLUSIVE`;
 1. a gate test that did not `PASS` -> `INCONCLUSIVE`;
 2. any fatal `FAIL` -> `REFUTED`;
-3. any `INCONCLUSIVE` test -> `INCONCLUSIVE`;
+3. any expected test missing, or any `INCONCLUSIVE` test -> `INCONCLUSIVE`;
 4. any warning `FAIL` -> `WEAKENED`;
 5. otherwise -> `SURVIVED`.
+
+The pack declares the tests a complete analysis must contain (`expected_tests` in
+`verdict.json`); a result missing any of them can never be `SURVIVED` or
+`WEAKENED`.
 
 A fatal failure refutes even when another test is inconclusive. A missing stellar
 radius can never turn into a pass: the plausibility test is then `INCONCLUSIVE`,

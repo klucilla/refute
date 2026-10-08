@@ -77,6 +77,9 @@ First pack: exoplanet transits (TESS).
 - Out of scope: medical/diagnostic claims and dual-use biology or chemistry.
 - Unit tests and CI must NOT depend on the network. Use synthetic data
   (injected signals) for tests.
+- No check may PASS without evidence that it examined data. Every TestResult
+  reports its coverage; zero coverage is INCONCLUSIVE, never PASS. This applies
+  to every domain pack.
 
 ## Pre-registration process
 

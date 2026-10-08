@@ -264,7 +264,8 @@ def _measure(
                 "n_in": int(sum(r[1] for r in rows)),
             }
     if best is None:
-        return {"n_windows_with_data": len(eligible)}
+        # No window could be measured at any period correction: nothing was examined.
+        return {"n_windows_with_data": 0, "n_windows_unmeasurable": len(eligible)}
 
     stacked_dt, stacked_flux = [], []
     for window, t_all, f_all, in_window in eligible:
@@ -400,6 +401,7 @@ def _round(
         **train_info,
         "n_predicted_transits": len(transit_windows),
         "n_windows_with_data": measured.get("n_windows_with_data", 0),
+        "n_windows_unmeasurable": measured.get("n_windows_unmeasurable", 0),
         "hidden_depth_ppm": measured.get("depth_ppm"),
         "hidden_depth_err_ppm": measured.get("depth_err_ppm"),
         "hidden_white_err_ppm": measured.get("white_err_ppm"),
@@ -506,7 +508,19 @@ def run_holdout(
             message += f" ({summary['n_inconclusive']} inconclusive)"
     else:
         status, message = TestStatus.INCONCLUSIVE, "no hidden year could be tested"
+    examined = sum(
+        int(r.metrics.get("n_windows_with_data") or 0)
+        for r in rounds
+        if r.status is not TestStatus.INCONCLUSIVE
+    )
     test = TestResult(
-        TEST_NAME, status, Severity.FATAL, message, metrics=summary, thresholds=thresholds
+        TEST_NAME,
+        status,
+        Severity.FATAL,
+        message,
+        metrics=summary,
+        thresholds=thresholds,
+        coverage=examined,
+        coverage_unit="hidden-year windows measured in conclusive rounds",
     )
     return HoldoutOutcome(test, rounds)

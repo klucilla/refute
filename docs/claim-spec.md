@@ -85,7 +85,10 @@ test_plan:
 What each parameter does is described in [gauntlet-tess-v0.1.md](gauntlet-tess-v0.1.md)
 and, for the sections added in v0.2, [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md).
 The `eb_catalog` test runs only if the claim has attachments with role `eb-catalog`
-(format `refute-eb-catalog-1`).
+(format `refute-eb-catalog-1`). A second attachment with role `eb-catalog-scan`
+(format `refute-eb-catalog-scan-1`) records which catalog snapshots were scanned,
+their hashes and row counts, the extraction radius and the targets; without it the
+test is `INCONCLUSIVE`.
 
 ### Targets
 

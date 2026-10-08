@@ -190,6 +190,7 @@ class _SectorOffset:
     offset_y: float
     sigma_x: float
     sigma_y: float
+    n_cadences: int = 0
 
     @property
     def distance(self) -> float:
@@ -229,7 +230,8 @@ def source_offset(px: PixelData, candidate: Candidate, plan: TessTestPlan) -> _S
     if g_f is None or g_x is None or g_y is None:
         return "no transit with enough coverage"
     depth = g_f.mean
-    if not (depth > 0) or depth / g_f.error < 3.0:
+    detect = plan.gauntlet.centroid_shift.max_sigma
+    if not (depth > 0) or depth / g_f.error < detect:
         return f"transit not detected in the aperture flux ({depth / g_f.error:.1f} sigma)"
     half = plan.detrend.transit_mask_half_width_durations * candidate.duration
     out = ~transit_mask(t, candidate.period, candidate.t0, half)
@@ -247,7 +249,7 @@ def source_offset(px: PixelData, candidate: Candidate, plan: TessTestPlan) -> _S
     values = (sx - tx, sy - ty, sig_x, sig_y)
     if not all(math.isfinite(v) for v in values) or min(sig_x, sig_y) <= 0:
         return "centroid offset could not be computed"
-    return _SectorOffset(px.sector, depth, *values)
+    return _SectorOffset(px.sector, depth, *values, n_cadences=int(t.size))
 
 
 def check_centroid_shift(
@@ -273,6 +275,8 @@ def check_centroid_shift(
             else f"only {len(used)} usable sector(s) (< {params.min_sectors})",
             metrics={"skipped_sectors": skipped},
             thresholds=thresholds,
+            coverage=0,
+            coverage_unit="pixel-file cadences",
         )
     chi2 = float(sum(o.chi2 for o in used))
     sigma = gaussian_sigma_from_chi2(chi2, 2 * len(used))
@@ -293,11 +297,13 @@ def check_centroid_shift(
                 "offset_y_pixels": o.offset_y,
                 "sigma_x_pixels": o.sigma_x,
                 "sigma_y_pixels": o.sigma_y,
+                "n_cadences": o.n_cadences,
             }
             for o in used
         },
         "skipped_sectors": skipped,
     }
+    coverage = sum(o.n_cadences for o in used)
     if sigma >= params.max_sigma and distance >= params.min_offset_pixels:
         return TestResult(
             "centroid_shift",
@@ -307,14 +313,19 @@ def check_centroid_shift(
             "the signal comes from another star",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=coverage,
+            coverage_unit="pixel-file cadences",
         )
     return TestResult(
         "centroid_shift",
         TestStatus.PASS,
         Severity.FATAL,
-        f"transit source consistent with the target (offset {distance:.2f} px, {sigma:.1f} sigma)",
+        f"transit source consistent with the target (offset {distance:.2f} px, "
+        f"{sigma:.1f} sigma; {len(used)} sector(s), {coverage} cadences)",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=coverage,
+        coverage_unit="pixel-file cadences",
     )
 
 
@@ -325,7 +336,9 @@ def check_aperture_depth(
 
     On the target, a larger aperture adds light from other stars and the depth
     decreases. A signal from a star outside the core gets deeper as the aperture
-    grows to include that star.
+    grows to include that star. The transit must be detected (at ``max_sigma``) in
+    at least one of the two apertures; otherwise "the depth does not grow" would be
+    vacuous and the test is INCONCLUSIVE.
     """
     params: ApertureParams = plan.gauntlet.aperture_depth
     thresholds = params.model_dump(mode="json")
@@ -345,6 +358,7 @@ def check_aperture_depth(
         series["core"].append(f_c[i_c] / np.median(f_c[i_c]))
         series["large"].append(f_l[i_l] / np.median(f_l[i_l]))
         series["sector"].append(np.full(common.size, px.sector))
+    unit = "pixel-file cadences"
     if not series["time"]:
         return TestResult(
             "aperture_depth",
@@ -352,9 +366,12 @@ def check_aperture_depth(
             Severity.FATAL,
             "no target pixel data usable for aperture photometry",
             thresholds=thresholds,
+            coverage=0,
+            coverage_unit=unit,
         )
     time = np.concatenate(series["time"])
     sector = np.concatenate(series["sector"])
+    coverage = int(time.size)
     g_core = event_shift(time, np.concatenate(series["core"]), sector, candidate, plan)
     g_large = event_shift(time, np.concatenate(series["large"]), sector, candidate, plan)
     if g_core is None or g_large is None:
@@ -364,7 +381,11 @@ def check_aperture_depth(
             Severity.FATAL,
             "no transit with enough coverage in the pixel data",
             thresholds=thresholds,
+            coverage=0,
+            coverage_unit="transits measured in the pixel data",
         )
+    core_snr = g_core.mean / g_core.error
+    large_snr = g_large.mean / g_large.error
     diff_sigma = (g_large.mean - g_core.mean) / math.hypot(g_large.error, g_core.error)
     ratio = g_large.mean / g_core.mean if g_core.mean > 0 else float("inf")
     metrics = {
@@ -372,10 +393,25 @@ def check_aperture_depth(
         "depth_core_err_ppm": g_core.error * 1e6,
         "depth_large_ppm": g_large.mean * 1e6,
         "depth_large_err_ppm": g_large.error * 1e6,
+        "detection_sigma_core": core_snr,
+        "detection_sigma_large": large_snr,
         "depth_ratio_large_to_core": ratio,
         "difference_sigma": diff_sigma,
         "n_sectors": len(series["time"]),
     }
+    if max(core_snr, large_snr) < params.max_sigma:
+        return TestResult(
+            "aperture_depth",
+            TestStatus.INCONCLUSIVE,
+            Severity.FATAL,
+            f"the transit is not detected in the pixel photometry (core {core_snr:.1f} sigma, "
+            f"large {large_snr:.1f} sigma, both < {params.max_sigma}): the depths cannot be "
+            "compared",
+            metrics=metrics,
+            thresholds=thresholds,
+            coverage=coverage,
+            coverage_unit=unit,
+        )
     if diff_sigma >= params.max_sigma and ratio >= params.min_depth_ratio:
         return TestResult(
             "aperture_depth",
@@ -385,14 +421,19 @@ def check_aperture_depth(
             "the signal comes from outside the core aperture",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=coverage,
+            coverage_unit=unit,
         )
     return TestResult(
         "aperture_depth",
         TestStatus.PASS,
         Severity.FATAL,
-        f"depth does not grow with the aperture (ratio {ratio:.2f}, {diff_sigma:.1f} sigma)",
+        f"depth does not grow with the aperture (ratio {ratio:.2f}, {diff_sigma:.1f} sigma; "
+        f"transit detected at {max(core_snr, large_snr):.1f} sigma)",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=coverage,
+        coverage_unit=unit,
     )
 
 
@@ -405,6 +446,7 @@ def check_nearby_contamination(
     depth: float,
     crowdsaps: list[float],
     params: ContaminationParams,
+    query_radius_arcsec: float | None = None,
 ) -> TestResult:
     """Warning if an unresolved TIC neighbor could produce the signal, or crowding is high.
 
@@ -413,8 +455,14 @@ def check_nearby_contamination(
     to produce the observed (crowding-corrected) depth. Neighbors closer than
     ``max_separation_arcsec`` cannot be separated by the centroid and aperture
     tests, so if such a neighbor could produce the signal the claim is weakened.
+
+    What is examined is the TIC cone query around the target (coverage: 1 query).
+    "No neighbor" is a legitimate answer only because that query was made; without
+    it (``neighbors`` is None) the test is INCONCLUSIVE. Without CROWDSAP values the
+    crowding part cannot be checked, and the test is INCONCLUSIVE too.
     """
     thresholds = params.model_dump(mode="json")
+    unit = "TIC cone queries examined"
     if neighbors is None:
         return TestResult(
             "nearby_contamination",
@@ -422,6 +470,8 @@ def check_nearby_contamination(
             Severity.WARNING,
             "no TIC neighbor query available",
             thresholds=thresholds,
+            coverage=0,
+            coverage_unit=unit,
         )
     if star is None or star.tmag is None:
         return TestResult(
@@ -430,6 +480,8 @@ def check_nearby_contamination(
             Severity.WARNING,
             "no TIC magnitude for the target",
             thresholds=thresholds,
+            coverage=0,
+            coverage_unit=unit,
         )
     ignored = {d.upper() for d in params.ignored_dispositions}
     viable, considered = [], []
@@ -449,7 +501,14 @@ def check_nearby_contamination(
         if required is None or required <= params.max_eclipse_depth:
             viable.append(row)
     crowd = float(np.median(crowdsaps)) if crowdsaps else None
+    query = (
+        f"TIC cone query of {query_radius_arcsec:g} arcsec returned {len(neighbors)} source(s)"
+        if query_radius_arcsec is not None
+        else f"TIC cone query returned {len(neighbors)} source(s)"
+    )
     metrics = {
+        "query": query,
+        "n_sources_returned": len(neighbors),
         "neighbors_within_radius": considered,
         "viable_neighbors": viable,
         "median_crowdsap": crowd,
@@ -469,18 +528,33 @@ def check_nearby_contamination(
             "nearby_contamination",
             TestStatus.FAIL,
             Severity.WARNING,
-            "; ".join(problems),
+            f"{'; '.join(problems)} ({query})",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=1,
+            coverage_unit=unit,
+        )
+    if crowd is None:
+        return TestResult(
+            "nearby_contamination",
+            TestStatus.INCONCLUSIVE,
+            Severity.WARNING,
+            f"crowding not checked: no CROWDSAP value ({query}; none could produce the signal)",
+            metrics=metrics,
+            thresholds=thresholds,
+            coverage=1,
+            coverage_unit=unit,
         )
     return TestResult(
         "nearby_contamination",
         TestStatus.PASS,
         Severity.WARNING,
-        f"no unresolved neighbor could produce the signal ({len(considered)} within "
-        f"{params.max_separation_arcsec:g} arcsec)",
+        f"{query}: {len(considered)} within {params.max_separation_arcsec:g} arcsec, none could "
+        f"produce the signal; median CROWDSAP {crowd:.2f}",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=1,
+        coverage_unit=unit,
     )
 
 
@@ -506,9 +580,14 @@ def check_period_alias(lc: LightCurveData, candidate: Candidate, plan: TessTestP
     dip is just part of a periodic variation (for example stellar variability or an
     ellipsoidal variable) and not a transit. A real transit on a star whose
     variability happens to share the period still needs the box, so it passes.
+
+    The comparison needs in-transit cadences: with fewer than one transit's worth
+    (``events.min_coverage`` of the cadences of one transit) the test is
+    INCONCLUSIVE, never a refutation.
     """
     params: AliasParams = plan.gauntlet.period_alias
     thresholds = params.model_dump(mode="json")
+    unit = "in-transit cadences"
     window = max(plan.detrend.window_days, params.detrend_window_periods * candidate.period)
     detrend_params = plan.detrend.model_copy(update={"window_days": window})
     half = plan.detrend.transit_mask_half_width_durations * candidate.duration
@@ -520,6 +599,26 @@ def check_period_alias(lc: LightCurveData, candidate: Candidate, plan: TessTestP
         np.abs(phase_offset_days(flat.time, candidate.period, candidate.t0))
         <= candidate.duration / 2
     ).astype(float)
+    n_box = int(box.sum())
+    cadence = plan.data.exptime_seconds / 86400.0
+    needed = plan.gauntlet.events.min_coverage * candidate.duration / cadence
+    near = [
+        p
+        for p in params.systematic_periods_days
+        if abs(candidate.period - p) / p <= params.systematic_tolerance
+    ]
+    if n_box < needed or y.size - n_box < 10:
+        return TestResult(
+            "period_alias",
+            TestStatus.INCONCLUSIVE,
+            Severity.FATAL,
+            f"only {n_box} in-transit cadences (< {needed:.0f}, one transit's worth): the box "
+            "and the sinusoid cannot be compared",
+            metrics={"n_in_transit_cadences": n_box, "near_systematic_periods_days": near},
+            thresholds=thresholds,
+            coverage=n_box,
+            coverage_unit=unit,
+        )
     columns = [np.ones(y.size)]
     for k in range(1, params.sine_harmonics + 1):
         columns += [np.cos(2 * np.pi * k * phase), np.sin(2 * np.pi * k * phase)]
@@ -528,17 +627,13 @@ def check_period_alias(lc: LightCurveData, candidate: Candidate, plan: TessTestP
     bic_joint = _bic(np.column_stack([sine, box]), y)
     bic_box = _bic(np.column_stack([columns[0], box]), y)
     gain = bic_sine - bic_joint
-    near = [
-        p
-        for p in params.systematic_periods_days
-        if abs(candidate.period - p) / p <= params.systematic_tolerance
-    ]
     metrics = {
         "bic_sine": bic_sine,
         "bic_sine_plus_box": bic_joint,
         "bic_box": bic_box,
         "box_delta_bic": gain,
         "detrend_window_days": window,
+        "n_in_transit_cadences": n_box,
         "near_systematic_periods_days": near,
         "period_days": candidate.period,
     }
@@ -551,6 +646,8 @@ def check_period_alias(lc: LightCurveData, candidate: Candidate, plan: TessTestP
             f"BIC by {gain:.1f} < {params.min_box_delta_bic:g})",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=n_box,
+            coverage_unit=unit,
         )
     if near:
         return TestResult(
@@ -561,15 +658,19 @@ def check_period_alias(lc: LightCurveData, candidate: Candidate, plan: TessTestP
             f"({', '.join(f'{p:.3f} d' for p in near)})",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=n_box,
+            coverage_unit=unit,
         )
     return TestResult(
         "period_alias",
         TestStatus.PASS,
         Severity.FATAL,
-        f"the dip needs a transit on top of a sinusoid (BIC gain {gain:.0f}); "
-        "not near a known systematic period",
+        f"the dip needs a transit on top of a sinusoid (BIC gain {gain:.0f}, {n_box} "
+        "in-transit cadences); not near a known systematic period",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=n_box,
+        coverage_unit=unit,
     )
 
 
@@ -590,9 +691,18 @@ def transit_centers_with_data(time: np.ndarray, candidate: Candidate) -> np.ndar
 def check_systematics(aux: list[SectorAux], candidate: Candidate, plan: TessTestPlan) -> TestResult:
     """Warning if the transits line up with momentum dumps, the SAP depth disagrees
     with the PDCSAP depth corrected for crowding, or the background rises in transit.
+
+    Strict coverage rule: each of the three sub-checks must run. If any of them
+    cannot run (too few transits with data, no transit measured in SAP, PDCSAP or
+    background, a non-positive depth, no CROWDSAP), the test is INCONCLUSIVE with
+    the reason of each sub-check, unless another sub-check already found a problem
+    (then FAIL: a problem found is evidence). Zero momentum dumps in the quality
+    column is a result of the dump sub-check (the column was examined), and the
+    report says so.
     """
     params: SystematicsParams = plan.gauntlet.systematics
     thresholds = params.model_dump(mode="json")
+    unit = "sub-checks run"
     if not aux:
         return TestResult(
             "systematics",
@@ -600,6 +710,8 @@ def check_systematics(aux: list[SectorAux], candidate: Candidate, plan: TessTest
             Severity.WARNING,
             "no SAP flux, background or quality data available",
             thresholds=thresholds,
+            coverage=0,
+            coverage_unit=unit,
         )
     time = np.concatenate([a.time for a in aux])
     sector = np.concatenate([np.full(a.time.size, a.sector) for a in aux])
@@ -613,18 +725,35 @@ def check_systematics(aux: list[SectorAux], candidate: Candidate, plan: TessTest
     g_sap = event_shift(time, np.concatenate([a.sap_flux for a in aux]), sector, candidate, plan)
     g_bkg = event_shift(time, np.concatenate([a.sap_bkg for a in aux]), sector, candidate, plan)
     crowds = [a.crowdsap for a in aux if a.crowdsap is not None]
-    crowd = float(np.median(crowds)) if crowds else 1.0
 
     metrics: dict[str, Any] = {
         "n_transits_with_data": len(centers),
+        "n_momentum_dumps": int(dumps.size),
         "n_transits_near_dumps": int(sum(near)),
         "fraction_near_dumps": fraction,
-        "median_crowdsap": crowd,
+        "median_crowdsap": float(np.median(crowds)) if crowds else None,
     }
-    problems = []
-    if len(centers) >= params.min_events_for_dumps and fraction >= params.max_dump_fraction:
-        problems.append(f"{sum(near)} of {len(centers)} transits are near momentum dumps")
-    if g_pdc is not None and g_sap is not None and g_pdc.mean > 0:
+    problems: list[str] = []
+    not_run: dict[str, str] = {}
+    ran: list[str] = []
+
+    if len(centers) >= params.min_events_for_dumps:
+        ran.append(f"momentum dumps ({int(dumps.size)} in the quality column)")
+        if fraction >= params.max_dump_fraction:
+            problems.append(f"{sum(near)} of {len(centers)} transits are near momentum dumps")
+    else:
+        not_run["momentum_dumps"] = (
+            f"only {len(centers)} transit(s) with data (< {params.min_events_for_dumps})"
+        )
+
+    if not crowds:
+        not_run["sap_vs_pdcsap"] = "no CROWDSAP value"
+    elif g_pdc is None or g_sap is None:
+        not_run["sap_vs_pdcsap"] = "no transit measured in the PDCSAP or SAP flux"
+    elif not (g_pdc.mean > 0):
+        not_run["sap_vs_pdcsap"] = "the PDCSAP depth is not positive"
+    else:
+        crowd = float(np.median(crowds))
         expected = crowd * g_pdc.mean
         diff = g_sap.mean - expected
         sigma = abs(diff) / math.hypot(g_sap.error, crowd * g_pdc.error)
@@ -638,14 +767,22 @@ def check_systematics(aux: list[SectorAux], candidate: Candidate, plan: TessTest
                 "sap_relative_difference": rel,
             }
         )
+        ran.append("SAP versus PDCSAP")
         if sigma >= params.max_sap_sigma and rel >= params.max_sap_rel_diff:
             problems.append(
                 f"SAP depth differs from the crowding-corrected PDCSAP depth by {rel:.0%} "
                 f"({sigma:.1f} sigma)"
             )
-    if g_bkg is not None and g_sap is not None and g_sap.mean > 0:
+
+    if g_bkg is None or g_sap is None:
+        not_run["background"] = "no transit measured in the background or SAP flux"
+    elif not (g_sap.mean > 0):
+        not_run["background"] = "the SAP depth is not positive"
+    elif not (g_bkg.error > 0):
+        not_run["background"] = "the background has no measurable scatter"
+    else:
         rise = -g_bkg.mean
-        sigma = rise / g_bkg.error if g_bkg.error > 0 else 0.0
+        sigma = rise / g_bkg.error
         frac = rise / g_sap.mean
         metrics.update(
             {
@@ -654,10 +791,14 @@ def check_systematics(aux: list[SectorAux], candidate: Candidate, plan: TessTest
                 "background_rise_fraction_of_depth": frac,
             }
         )
+        ran.append("background")
         if sigma >= params.max_background_sigma and frac >= params.max_background_fraction:
             problems.append(
                 f"the background rises in transit by {frac:.0%} of the depth ({sigma:.1f} sigma)"
             )
+
+    metrics["sub_checks_run"] = ran
+    metrics["sub_checks_not_run"] = not_run
     if problems:
         return TestResult(
             "systematics",
@@ -666,12 +807,28 @@ def check_systematics(aux: list[SectorAux], candidate: Candidate, plan: TessTest
             "; ".join(problems),
             metrics=metrics,
             thresholds=thresholds,
+            coverage=len(ran),
+            coverage_unit=unit,
+        )
+    if not_run:
+        reasons = "; ".join(f"{name}: {why}" for name, why in not_run.items())
+        return TestResult(
+            "systematics",
+            TestStatus.INCONCLUSIVE,
+            Severity.WARNING,
+            f"sub-check(s) could not run ({reasons})",
+            metrics=metrics,
+            thresholds=thresholds,
+            coverage=len(ran),
+            coverage_unit=unit,
         )
     return TestResult(
         "systematics",
         TestStatus.PASS,
         Severity.WARNING,
-        "no momentum-dump alignment, SAP/PDCSAP disagreement or background event",
+        f"no problem in {len(ran)} sub-checks: " + ", ".join(ran),
         metrics=metrics,
         thresholds=thresholds,
+        coverage=len(ran),
+        coverage_unit=unit,
     )

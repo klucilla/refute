@@ -42,6 +42,23 @@ and false-alarm rates are lower bounds for real data.
 - All of this is used only by the battery below. The blind holdout still receives
   only the PDCSAP light curve and the sector time spans.
 
+## Coverage (no PASS without examined data)
+
+Every test reports its coverage (the data it actually examined) and the engine turns
+a `PASS` with zero coverage into `INCONCLUSIVE` ([verdicts](verdicts.md)). An audit
+before the v0.2 lock looked for every path where a check that examined nothing could
+pass; the fixes below are corrections of correctness, not of thresholds:
+
+| Test | Coverage unit | INCONCLUSIVE instead of PASS (or of FAIL, or a crash) when |
+|---|---|---|
+| `centroid_shift` | pixel-file cadences | no usable sector; the detection floor is now `centroid_shift.max_sigma` from the claim (it was a hard-coded 3.0, same value) |
+| `aperture_depth` | pixel-file cadences | the transit is not detected at `max_sigma` in either aperture (before: "the depth does not grow" passed vacuously) |
+| `nearby_contamination` | TIC cone queries | no query, no target Tmag, or no CROWDSAP value; an empty query result passes and the report says which query was made |
+| `period_alias` | in-transit cadences | fewer in-transit cadences than one transit at `events.min_coverage` (before: an empty box gave a fatal FAIL) |
+| `systematics` | sub-checks run | any applicable sub-check could not run (strict rule): fewer than 3 transits for the dump check; no CROWDSAP, no measured transit or a non-positive depth for the SAP and background checks; the reason of each is reported. A problem found by another sub-check still gives FAIL |
+| `eb_catalog` | catalog rows scanned | no scan record (`eb-catalog-scan`), the target was not part of the extraction, or the extraction radius is smaller than the match radius (before: an empty catalog file passed) |
+| `holdout_by_year` | hidden-year windows measured | a round whose windows cannot be measured at any period correction (before: a crash) |
+
 ## Shared measurement
 
 The pixel and systematics tests measure a time series (aperture flux, centroid, SAP
@@ -219,10 +236,10 @@ battery with these thresholds against the injected ephemeris:
 | blend | period_alias | 195 | 0 | 5 | 0 |
 | blend | systematics | 200 | 0 | 0 | 0 |
 | sinusoid | centroid_shift | 45 | 0 | 0 | 155 |
-| sinusoid | aperture_depth | 200 | 0 | 0 | 0 |
+| sinusoid | aperture_depth | 28 | 0 | 0 | 172 |
 | sinusoid | nearby_contamination | 200 | 0 | 0 | 0 |
 | sinusoid | period_alias | 18 | 179 | 3 | 0 |
-| sinusoid | systematics | 198 | 0 | 2 | 0 |
+| sinusoid | systematics | 142 | 0 | 2 | 56 |
 
 Reading the table:
 
@@ -234,6 +251,10 @@ Reading the table:
 - 179 of 200 sinusoids are refuted by `period_alias`; 21 are not, so stellar
   variability can still slip through. Most sinusoids leave too few out-of-transit
   cadences for a centroid measurement, hence INCONCLUSIVE.
+- The coverage audit before the lock changed only the sinusoid rows: 172 sinusoids
+  that `aperture_depth` used to PASS without seeing any transit in the pixels, and
+  56 that `systematics` used to PASS with sub-checks that could not run, are now
+  INCONCLUSIVE. The planet and blend rows did not change.
 - The study also found a defect before any real data were used: a significance
   conversion failed for chi-square values with p below about 1e-17. It was fixed and
   a unit test covers it.

@@ -59,6 +59,8 @@ def check_snr(candidate: Candidate | None, params: SnrParams) -> TestResult:
         f"SNR {candidate.snr:.1f} {'>=' if passed else '<'} {params.min_snr}",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=int(candidate.n_transits),
+        coverage_unit="transits with data",
     )
 
 
@@ -97,6 +99,8 @@ def check_odd_even(events: EventDepths, params: OddEvenParams) -> TestResult:
         f"({'<=' if passed else '>'} {params.max_sigma})",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=g_even.n + g_odd.n,
+        coverage_unit="transits measured",
     )
 
 
@@ -134,6 +138,8 @@ def check_secondary_eclipse(
             f"no significant eclipse at phase 0.5 ({significance:.2f} sigma)",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=g_sec.n,
+            coverage_unit="phase-0.5 windows measured",
         )
     severity = Severity.FATAL if ratio >= params.fatal_depth_ratio else Severity.WARNING
     return TestResult(
@@ -144,6 +150,8 @@ def check_secondary_eclipse(
         f"({'>=' if severity is Severity.FATAL else '<'} {params.fatal_depth_ratio})",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=g_sec.n,
+        coverage_unit="phase-0.5 windows measured",
     )
 
 
@@ -261,6 +269,8 @@ def check_plausibility(
             metrics=metrics,
             thresholds=thresholds,
             inputs=inputs,
+            coverage=1,
+            coverage_unit="TIC stellar parameter set",
         )
 
     mass, mass_source = stellar_mass_msun(star)
@@ -291,6 +301,8 @@ def check_plausibility(
             metrics=metrics,
             thresholds=thresholds,
             inputs=inputs,
+            coverage=1,
+            coverage_unit="TIC stellar parameter set",
         )
     return TestResult(
         "plausibility",
@@ -300,4 +312,6 @@ def check_plausibility(
         metrics=metrics,
         thresholds=thresholds,
         inputs=inputs,
+        coverage=1,
+        coverage_unit="TIC stellar parameter set",
     )

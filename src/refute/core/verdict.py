@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import enum
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 
@@ -51,7 +51,14 @@ class Severity(enum.StrEnum):
 
 @dataclass
 class TestResult:
-    """Outcome of one deterministic falsification test."""
+    """Outcome of one deterministic falsification test.
+
+    ``coverage`` is the amount of data the check actually examined (for example
+    transits measured, cadences used, catalog rows scanned), in ``coverage_unit``.
+    Every domain pack must declare it. A PASS with no declared coverage, or with
+    zero coverage, is never accepted: :func:`enforce_coverage` turns it into
+    INCONCLUSIVE (a check that examined nothing has not shown anything).
+    """
 
     __test__ = False  # not a pytest test class
 
@@ -62,6 +69,8 @@ class TestResult:
     metrics: dict[str, Any] = field(default_factory=dict)
     thresholds: dict[str, Any] = field(default_factory=dict)
     inputs: dict[str, Any] = field(default_factory=dict)
+    coverage: int | None = None
+    coverage_unit: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -72,6 +81,8 @@ class TestResult:
             "metrics": self.metrics,
             "thresholds": self.thresholds,
             "inputs": self.inputs,
+            "coverage": self.coverage,
+            "coverage_unit": self.coverage_unit,
         }
 
     @classmethod
@@ -84,18 +95,51 @@ class TestResult:
             metrics=dict(data.get("metrics", {})),
             thresholds=dict(data.get("thresholds", {})),
             inputs=dict(data.get("inputs", {})),
+            coverage=data.get("coverage"),
+            coverage_unit=data.get("coverage_unit", ""),
         )
 
 
-def aggregate(results: Sequence[TestResult]) -> tuple[DiscoveryVerdict, str]:
+def enforce_coverage(results: Sequence[TestResult]) -> list[TestResult]:
+    """Turn every PASS without positive declared coverage into INCONCLUSIVE.
+
+    Domain-agnostic rule: no check may PASS without evidence that it examined data.
+    """
+    out = []
+    for result in results:
+        if result.status is TestStatus.PASS and not (
+            result.coverage is not None and result.coverage > 0
+        ):
+            why = (
+                "declared no coverage"
+                if result.coverage is None
+                else f"examined 0 {result.coverage_unit or 'items'}"
+            )
+            result = replace(
+                result,
+                status=TestStatus.INCONCLUSIVE,
+                message=f"PASS refused: the check {why} ({result.message})",
+            )
+        out.append(result)
+    return out
+
+
+def aggregate(
+    results: Sequence[TestResult], expected: Sequence[str] | None = None
+) -> tuple[DiscoveryVerdict, str]:
     """Combine test results into one verdict. The rules are applied in order:
 
+    0. a PASS without positive coverage counts as INCONCLUSIVE (``enforce_coverage``)
     1. a gate test that did not PASS            -> INCONCLUSIVE
     2. any fatal FAIL                           -> REFUTED
-    3. any INCONCLUSIVE test                    -> INCONCLUSIVE
+    3. any expected test missing, or any INCONCLUSIVE test -> INCONCLUSIVE
     4. any warning FAIL                         -> WEAKENED
     5. otherwise                                -> SURVIVED
+
+    ``expected`` lists the tests that must be present; a result set missing any of
+    them can never be SURVIVED or WEAKENED.
     """
+    results = enforce_coverage(results)
     gates = [r for r in results if r.severity is Severity.GATE]
     if not gates:
         raise ValueError("aggregate() needs at least one gate test")
@@ -110,6 +154,9 @@ def aggregate(results: Sequence[TestResult]) -> tuple[DiscoveryVerdict, str]:
     ]
     if fatal:
         return DiscoveryVerdict.REFUTED, "fatal failure in: " + ", ".join(fatal)
+    missing = sorted(set(expected or []) - {r.name for r in results})
+    if missing:
+        return DiscoveryVerdict.INCONCLUSIVE, "expected tests missing: " + ", ".join(missing)
     inconclusive = [r.name for r in results if r.status is TestStatus.INCONCLUSIVE]
     if inconclusive:
         return DiscoveryVerdict.INCONCLUSIVE, "could not be decided: " + ", ".join(inconclusive)

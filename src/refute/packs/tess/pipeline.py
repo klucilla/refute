@@ -11,7 +11,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
-from refute.core.verdict import Severity, TestResult, TestStatus, aggregate
+from refute.core.verdict import Severity, TestResult, TestStatus, aggregate, enforce_coverage
 from refute.packs.tess.battery import (
     check_aperture_depth,
     check_centroid_shift,
@@ -20,7 +20,7 @@ from refute.packs.tess.battery import (
     check_systematics,
 )
 from refute.packs.tess.detrend import detrend
-from refute.packs.tess.ebcatalog import EbEntry, check_eb_catalog, load_catalogs
+from refute.packs.tess.ebcatalog import EbEntry, check_eb_catalog, load_catalogs, load_scan
 from refute.packs.tess.ephemeris import Ephemeris, fit_linear_ephemeris, measure_transit_times
 from refute.packs.tess.events import EventDepths, per_event_depths, per_point_sigma, transit_mask
 from refute.packs.tess.gauntlet import (
@@ -78,6 +78,7 @@ def battery_tests(
     candidate: Candidate,
     plan: TessTestPlan,
     catalogs: list[EbEntry] | None = None,
+    catalog_scan: dict | None = None,
 ) -> list[TestResult]:
     """The v0.2 battery against the final candidate (see docs/gauntlet-tess-v0.2.md)."""
     aux = data.aux
@@ -92,13 +93,21 @@ def battery_tests(
             candidate.depth,
             crowds,
             plan.gauntlet.nearby_contamination,
+            aux.neighbor_radius_arcsec if aux else None,
         ),
         check_period_alias(data.lc, candidate, plan),
         check_systematics(aux.sectors if aux else [], candidate, plan),
     ]
     if catalogs is not None:
         tests.append(
-            check_eb_catalog(catalogs, data.star, candidate.period, plan.gauntlet.eb_catalog)
+            check_eb_catalog(
+                catalogs,
+                catalog_scan,
+                data.target_key,
+                data.star,
+                candidate.period,
+                plan.gauntlet.eb_catalog,
+            )
         )
     return tests
 
@@ -108,6 +117,7 @@ def attack_candidate(
     candidate: Candidate | None,
     plan: TessTestPlan,
     catalogs: list[EbEntry] | None = None,
+    catalog_scan: dict | None = None,
 ) -> GauntletOutcome:
     """Gauntlet tests a-d and the v0.2 battery against a candidate found on all data.
 
@@ -148,7 +158,7 @@ def attack_candidate(
         check_odd_even(primary, gp.odd_even),
         check_secondary_eclipse(primary, secondary, gp.secondary_eclipse),
         check_plausibility(final, data.star, gp.plausibility),
-        *battery_tests(data, final, plan, catalogs),
+        *battery_tests(data, final, plan, catalogs, catalog_scan),
     ]
     times = measure_transit_times(
         flat,
@@ -165,19 +175,30 @@ def attack_candidate(
     return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris)
 
 
+def expected_tests(catalogs_configured: bool) -> list[str]:
+    """Every test a complete TESS analysis must contain."""
+    names = ["snr", "odd_even", "secondary_eclipse", "plausibility"]
+    names += [name for name, _ in BATTERY_TESTS]
+    if catalogs_configured:
+        names.append("eb_catalog")
+    return [*names, "holdout_by_year"]
+
+
 def analyze_data(
     data: TessData,
     plan: TessTestPlan,
     search_fn: SearchFn = search_period,
     catalogs: list[EbEntry] | None = None,
+    catalog_scan: dict | None = None,
 ) -> Analysis:
     flat = detrend(data.lc, plan.detrend)
     search = search_fn(flat, plan.search)
-    gauntlet = attack_candidate(data, search.candidate, plan, catalogs)
+    gauntlet = attack_candidate(data, search.candidate, plan, catalogs, catalog_scan)
     # Blind holdout: raw data and sector metadata only. Never the global candidate.
     holdout = run_holdout(data.lc, data.sectors, plan)
-    tests = [*gauntlet.tests, holdout.test]
-    verdict, reason = aggregate(tests)
+    # Domain-agnostic coverage rule: a PASS that examined nothing is INCONCLUSIVE.
+    tests = enforce_coverage([*gauntlet.tests, holdout.test])
+    verdict, reason = aggregate(tests, expected=expected_tests(catalogs is not None))
     return Analysis(search, flat, gauntlet, holdout, tests, verdict.value, reason)
 
 
@@ -330,6 +351,7 @@ def build_result(
         "key_values": key_values,
         "data_quality_warnings": data_quality_warnings(target, data, plan),
         "eb_catalog_configured": analysis.extras.get("eb_catalog_configured", False),
+        "expected_tests": expected_tests(analysis.extras.get("eb_catalog_configured", False)),
         "test_plan": plan.model_dump(mode="json"),
         "provenance": {
             k: context.get(k)
@@ -384,7 +406,13 @@ class TessAnalyzer:
             if a.get("role") == "eb-catalog"
         ]
         catalogs = load_catalogs(catalog_paths) if catalog_paths else None
-        analysis = analyze_data(data, plan, catalogs=catalogs)
+        scan_paths = [
+            writer.root / "attachments" / a["path"]
+            for a in context.get("attachments", [])
+            if a.get("role") == "eb-catalog-scan"
+        ]
+        catalog_scan = load_scan(scan_paths[0]) if scan_paths else None
+        analysis = analyze_data(data, plan, catalogs=catalogs, catalog_scan=catalog_scan)
         analysis.extras["eb_catalog_configured"] = catalogs is not None
         result = build_result(target, data, plan, analysis, context)
         result["plots"] = plots.write_all(writer, data, analysis, plan)

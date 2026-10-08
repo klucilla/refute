@@ -6,7 +6,7 @@ from refute.packs.tess.calibration import TessCalibrator, signal_verdict
 
 
 def _test(name, status, severity):
-    return {"name": name, "status": status, "severity": severity, "message": ""}
+    return {"name": name, "status": status, "severity": severity, "message": "", "coverage": 1}
 
 
 def _result(key, kind, verdict, tests, period=3.0):

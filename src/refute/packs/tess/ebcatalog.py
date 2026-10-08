@@ -9,6 +9,14 @@ format ``refute-eb-catalog-1``: a CSV file with the header
 ``tic_id`` and ``period_days`` may be empty. The script that builds a snapshot
 records the source URL, retrieval time and SHA-256 of the raw catalog next to it.
 
+Because an extraction around the targets can legitimately be empty, the proof that
+the catalogs were examined comes from a second attachment, role ``eb-catalog-scan``
+(JSON, format ``refute-eb-catalog-scan-1``): the snapshots scanned (file, SHA-256,
+rows), the extraction radius and the targets the extraction was made for. Without
+it, or if the target was not part of the extraction, or if the extraction radius is
+smaller than the match radius, the test is INCONCLUSIVE: an empty answer is a PASS
+only when the catalogs were really searched around this target.
+
 Decision: a catalog entry matches the target when it has the target's TIC ID or
 lies within ``match_radius_arcsec``. A match whose period equals the found period
 times one of ``period_factors`` (within ``period_tolerance``) is a fatal failure;
@@ -19,6 +27,7 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -84,6 +93,13 @@ def load_catalogs(paths: list[Path]) -> list[EbEntry]:
     return entries
 
 
+def load_scan(path: Path) -> dict:
+    scan = json.loads(Path(path).read_text(encoding="utf-8"))
+    if scan.get("format") != "refute-eb-catalog-scan-1":
+        raise CatalogError(f"{Path(path).name}: not a refute-eb-catalog-scan-1 file")
+    return scan
+
+
 def separation_arcsec(ra1: float, dec1: float, ra2: float, dec2: float) -> float:
     """Angular separation (haversine), in arcseconds."""
     r1, d1, r2, d2 = map(math.radians, (ra1, dec1, ra2, dec2))
@@ -91,18 +107,44 @@ def separation_arcsec(ra1: float, dec1: float, ra2: float, dec2: float) -> float
     return math.degrees(2 * math.asin(min(1.0, math.sqrt(h)))) * 3600.0
 
 
+def _inconclusive(reason: str, thresholds: dict) -> TestResult:
+    return TestResult(
+        "eb_catalog",
+        TestStatus.INCONCLUSIVE,
+        Severity.FATAL,
+        reason,
+        thresholds=thresholds,
+        coverage=0,
+        coverage_unit="catalog rows scanned",
+    )
+
+
 def check_eb_catalog(
-    entries: list[EbEntry], star: StarInfo | None, period: float, params: EbCatalogParams
+    entries: list[EbEntry],
+    scan: dict | None,
+    target_key: str,
+    star: StarInfo | None,
+    period: float,
+    params: EbCatalogParams,
 ) -> TestResult:
     thresholds = params.model_dump(mode="json")
     if star is None or star.ra_deg is None or star.dec_deg is None:
-        return TestResult(
-            "eb_catalog",
-            TestStatus.INCONCLUSIVE,
-            Severity.FATAL,
-            "no target coordinates for the catalog cross-match",
-            thresholds=thresholds,
+        return _inconclusive("no target coordinates for the catalog cross-match", thresholds)
+    if not scan or not scan.get("snapshots"):
+        return _inconclusive("no record of which catalogs were scanned", thresholds)
+    if target_key not in (scan.get("per_target") or {}):
+        return _inconclusive(
+            f"the catalogs were not scanned around {target_key} (not in the extraction)",
+            thresholds,
         )
+    if float(scan.get("radius_arcsec", 0)) < params.match_radius_arcsec:
+        return _inconclusive(
+            f"extraction radius {scan.get('radius_arcsec')} arcsec is smaller than the match "
+            f"radius {params.match_radius_arcsec:g} arcsec",
+            thresholds,
+        )
+    scanned = sum(int(s["rows"]) for s in scan["snapshots"])
+    names = ", ".join(Path(s["file"]).name for s in scan["snapshots"])
     matches = []
     for entry in entries:
         sep = separation_arcsec(star.ra_deg, star.dec_deg, entry.ra_deg, entry.dec_deg)
@@ -126,7 +168,13 @@ def check_eb_catalog(
                 "matched_by": "tic_id" if by_id else "position",
             }
         )
-    metrics = {"n_catalog_entries": len(entries), "matches": matches, "found_period_days": period}
+    metrics = {
+        "n_catalog_entries": len(entries),
+        "catalog_rows_scanned": scanned,
+        "snapshots": scan["snapshots"],
+        "matches": matches,
+        "found_period_days": period,
+    }
     with_period = [m for m in matches if m["period_factor"] is not None]
     if with_period:
         m = with_period[0]
@@ -138,6 +186,8 @@ def check_eb_catalog(
             f"{m['period_days']:.6g} d = {m['period_factor']:g} x the found period",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=scanned,
+            coverage_unit="catalog rows scanned",
         )
     if matches:
         m = matches[0]
@@ -149,13 +199,17 @@ def check_eb_catalog(
             f"{m['separation_arcsec']:.1f} arcsec away, with a different or unknown period",
             metrics=metrics,
             thresholds=thresholds,
+            coverage=scanned,
+            coverage_unit="catalog rows scanned",
         )
     return TestResult(
         "eb_catalog",
         TestStatus.PASS,
         Severity.FATAL,
-        f"no eclipsing binary within {params.match_radius_arcsec:g} arcsec in "
-        f"{len(entries)} catalog entries",
+        f"no eclipsing binary within {params.match_radius_arcsec:g} arcsec: {scanned} catalog "
+        f"rows scanned ({names}), {len(entries)} extracted near the targets",
         metrics=metrics,
         thresholds=thresholds,
+        coverage=scanned,
+        coverage_unit="catalog rows scanned",
     )
