@@ -177,8 +177,20 @@ Run `20261007T221214Z-5701c54c` from commit [`821b0d791c81`](https://github.com/
 | Code SHA-256 | `624f5f900334abcdc614a679a3fdc4ce9c9e8a465f2d3e553d71b24c199f4cfa` |
 | Locked from commit | [`5214f2e29de9`](https://github.com/klucilla/refute/commit/5214f2e29de98803aafff3094733ca424ae3dbde) |
 | Locked at (UTC) | 2026-10-07T21:42:15Z |
-| `refute verify` | PASS |
+| `refute verify` | TAMPERED on this branch; locked code at tag [`v0.1.0`](https://github.com/klucilla/refute/tree/v0.1.0) |
 | Evidence | [lock file](calibration/self_claim.lock.json) · [lock history](calibration/LOCK_HISTORY.md) |
+
+> [!NOTE]
+> `refute verify` returns **TAMPERED** for this claim in this checkout because
+> the code here differs from the code it was locked with. The code at
+> tag [`v0.1.0`](https://github.com/klucilla/refute/tree/v0.1.0) has the locked code hash (recomputed from git
+> objects). Verify the lock there:
+>
+> ```bash
+> git checkout v0.1.0
+> uv sync --frozen
+> uv run refute verify calibration/self_claim.yaml
+> ```
 <!-- CALIBRATION:END -->
 
 ## Quickstart
@@ -191,15 +203,26 @@ cd refute
 uv sync --frozen                                 # install exactly what uv.lock pins
 uv run pytest                                    # synthetic data only, never the network
 uv run refute packs                              # installed domain packs
-uv run refute verify calibration/self_claim.yaml # 0 PASS (the self-claim is locked),
-                                                 # 1 FAIL, 2 TAMPERED
+uv run refute verify calibration/self_claim.yaml # 0 PASS, 1 FAIL, 2 TAMPERED
+```
+
+On `main`, `refute verify` returns `TAMPERED` (exit code 2) for the v0.1 self-claim.
+This is expected: the code changed after v0.1 closed, and the lock covers the code.
+The self-claim was locked with the code at tag `v0.1.0`, where it returns `PASS`:
+
+```bash
+git checkout v0.1.0
+uv sync --frozen
+uv run refute verify calibration/self_claim.yaml # PASS
+git checkout main && uv sync --frozen            # back to the current code
 ```
 
 <details>
 <summary><b>Run the calibration, check a dossier</b></summary>
 
 ```bash
-# Needs the locked self-claim (refute verify must return PASS). Downloads public TESS
+# Runs only where refute verify returns PASS for the claim (for the v0.1 self-claim:
+# a checkout of tag v0.1.0, see above). Downloads public TESS
 # light curves from MAST into .cache/ and analyzes every calibration target in
 # parallel (CPU count - 2 workers by default).
 uv run refute calibrate --out dossiers

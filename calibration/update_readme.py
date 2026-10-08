@@ -12,17 +12,25 @@ The rendered state is derived only from files in the repository:
 2. lock, no results        -> "locked, not yet run" with claim hash, code hash and commit;
 3. results/<run_id>/summary.json -> the self-claim result (PASS or FAIL) and its criteria.
 
-If ``refute verify`` does not return PASS, the section says so. Results are copied
-as they are, whatever they are. This script lives outside ``src/`` on purpose: it
-is documentation tooling and is not part of the locked code hash.
+If ``refute verify`` does not return PASS, the section says so. When the only
+reason could be that the code changed after the claim's phase closed, the script
+looks for a git tag (then the run commit) whose code, hashed from git objects with
+the same ``refute-code-1`` algorithm, equals the locked code, and tells the reader
+to verify the lock there. It never reports PASS for a checkout it did not verify.
+Results are copied as they are, whatever they are. This script lives outside
+``src/`` on purpose: it is documentation tooling and is not part of the locked
+code hash.
 """
 
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import subprocess
 import sys
+import tarfile
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -74,6 +82,69 @@ def commit_link(commit: str | None, url: str | None) -> str:
     return f"[{short}]({url}/commit/{commit})" if url else short
 
 
+def ref_link(ref: dict[str, Any], url: str | None) -> str:
+    if not ref.get("is_tag"):
+        return f"commit {commit_link(ref['ref'], url)}"
+    name = f"`{ref['ref']}`"
+    return f"tag [{name}]({url}/tree/{ref['ref']})" if url else f"tag {name}"
+
+
+def git_tags(root: Path) -> list[str]:
+    """Tags of the repository, newest first (empty when git or tags are unavailable)."""
+    try:
+        out = subprocess.run(
+            ["git", "tag", "--list", "--sort=-creatordate"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return []
+    return [line.strip() for line in out.stdout.splitlines() if line.strip()]
+
+
+def code_hash_at_ref(root: Path, ref: str) -> str | None:
+    """``refute-code-1`` hash of the code stored in git at ``ref`` (no checkout needed).
+
+    The files covered by the code hash are exported with ``git archive`` into a
+    temporary directory and hashed with :func:`refute.core.codehash.compute_code_hash`,
+    so the algorithm is exactly the one ``refute verify`` uses.
+    """
+    from refute.core.codehash import CodeHashError, compute_code_hash
+
+    try:
+        archive = subprocess.run(
+            ["git", "archive", "--format=tar", ref, "--", "src", "pyproject.toml", "uv.lock"],
+            cwd=root,
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        return None
+    if archive.returncode != 0:
+        return None
+    with tempfile.TemporaryDirectory() as tmp:
+        with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+            tar.extractall(tmp, filter="data")
+        try:
+            return compute_code_hash(Path(tmp)).sha256
+        except CodeHashError:
+            return None
+
+
+def find_locked_code_ref(
+    root: Path, code_sha256: str, extra_commits: list[str]
+) -> dict[str, Any] | None:
+    """First tag (newest first), then commit, whose code equals the locked code."""
+    candidates = [(tag, True) for tag in git_tags(root)]
+    candidates += [(commit, False) for commit in extra_commits if commit]
+    for ref, is_tag in candidates:
+        if code_hash_at_ref(root, ref) == code_sha256:
+            return {"ref": ref, "is_tag": is_tag}
+    return None
+
+
 def render(state: dict[str, Any]) -> str:
     url = state.get("repo_url")
     if state["stage"] == "pending":
@@ -92,6 +163,10 @@ def render(state: dict[str, Any]) -> str:
         )
     lock = state["lock"]
     verify = state["verify_status"]
+    locked_ref = state.get("locked_code_ref") if verify != "PASS" else None
+    verify_cell = verify
+    if locked_ref:
+        verify_cell = f"{verify} on this branch; locked code at {ref_link(locked_ref, url)}"
     rows = [
         "| Item | Value |",
         "|---|---|",
@@ -100,11 +175,26 @@ def render(state: dict[str, Any]) -> str:
         f"| Code SHA-256 | `{lock['code']['sha256']}` |",
         f"| Locked from commit | {commit_link(lock.get('git_commit'), url)} |",
         f"| Locked at (UTC) | {lock['locked_at_utc']} |",
-        f"| `refute verify` | {verify} |",
+        f"| `refute verify` | {verify_cell} |",
         f"| Evidence | [lock file]({LOCK.as_posix()}) · [lock history]({HISTORY.as_posix()}) |",
     ]
     warning = []
-    if verify != "PASS":
+    if locked_ref:
+        warning = [
+            "",
+            "> [!NOTE]",
+            f"> `refute verify` returns **{verify}** for this claim in this checkout because",
+            "> the code here differs from the code it was locked with. The code at",
+            f"> {ref_link(locked_ref, url)} has the locked code hash (recomputed from git",
+            "> objects). Verify the lock there:",
+            ">",
+            "> ```bash",
+            f"> git checkout {locked_ref['ref']}",
+            "> uv sync --frozen",
+            f"> uv run refute verify {CLAIM.as_posix()}",
+            "> ```",
+        ]
+    elif verify != "PASS":
         warning = [
             "",
             "> [!WARNING]",
@@ -187,6 +277,11 @@ def collect_state(root: Path, summary_path: Path | None = None) -> dict[str, Any
     summary_path = summary_path or latest_summary(root)
     if summary_path is None:
         state["stage"] = "locked"
+        if state["verify_status"] != "PASS":
+            # The lock commit itself has no lock file yet, so only tags are candidates.
+            state["locked_code_ref"] = find_locked_code_ref(
+                root, state["lock"]["code"]["sha256"], []
+            )
         return state
     run_dir = summary_path.parent
     state.update(
@@ -203,6 +298,11 @@ def collect_state(root: Path, summary_path: Path | None = None) -> dict[str, Any
     archive_hash = run_dir / "dossiers.zip.sha256"
     if archive_hash.is_file():
         state["archive_sha256"] = archive_hash.read_text(encoding="utf-8").split()[0]
+    if state["verify_status"] != "PASS":
+        run_commit = state["summary"].get("run", {}).get("run_git_commit")
+        state["locked_code_ref"] = find_locked_code_ref(
+            root, state["lock"]["code"]["sha256"], [run_commit]
+        )
     return state
 
 
