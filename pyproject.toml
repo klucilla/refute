@@ -34,6 +34,11 @@ refute = "refute.cli:main"
 tess = "refute.packs.tess:PACK"
 
 [dependency-groups]
+# Verifies the drand signature in the v0.2 target selection (calibration/v0.2/).
+# Added after the WP0 freeze as a documented exception (calibration/v0.2/PROTOCOL.md).
+calibration = [
+  "py-ecc>=8.0.0,<9",
+]
 dev = [
   "pytest>=8.0",
   "pytest-socket>=0.7",
@@ -49,6 +54,9 @@ build-backend = "hatchling.build"
 packages = ["src/refute"]
 
 [tool.uv]
+# The calibration group is installed by default, so the drand verification used by
+# the v0.2 selection runs (and is tested) everywhere, including CI.
+default-groups = ["dev", "calibration"]
 # Supply-chain cooldown: `uv lock` only considers releases uploaded at least 7 days
 # before the moment it resolves. Recorded in uv.lock as exclude-newer-span = "P7D".
 exclude-newer = "7 days"
