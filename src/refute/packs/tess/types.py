@@ -185,6 +185,9 @@ class PixelData:
     target_xy: tuple[float, float] | None
     filename: str = ""
     sha256: str = ""
+    # Cadences of the file that passed its own quality mask but are absent from the
+    # sector's SPOC light curve, and were therefore dropped (v0.2).
+    n_dropped_cadences: int = 0
 
 
 @dataclass(frozen=True)

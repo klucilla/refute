@@ -283,6 +283,9 @@ def check_centroid_shift(
         "offset_chi2": chi2,
         "offset_dof": 2 * len(used),
         "mean_offset_pixels": distance,
+        "cadences_dropped_to_match_the_light_curve": {
+            str(px.sector): px.n_dropped_cadences for px in pixels
+        },
         "sectors": {
             str(o.sector): {
                 "depth_aperture": o.depth,

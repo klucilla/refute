@@ -30,7 +30,11 @@ and false-alarm rates are lower bounds for real data.
 - **Target pixel files** (SPOC 2-min) are downloaded for every sector: the
   background-subtracted flux cube, the SPOC optimal aperture (bit 2 of the aperture
   image) and the target position in array coordinates, from the aperture HDU's WCS
-  and the target's `RA_OBJ`/`DEC_OBJ`.
+  and the target's `RA_OBJ`/`DEC_OBJ`. Only the cadences kept in the same sector's
+  light curve are used: a target pixel file also contains cadences whose PDCSAP flux
+  SPOC left empty, and the pixel tests must use the same data as the official SPOC
+  light curve. The number of dropped cadences per sector is reported by
+  `centroid_shift`. (Found on the development target; see the v0.2 protocol.)
 - **TIC**: besides the stellar parameters, the target row's `disposition`,
   `duplicate_id` and coordinates are recorded, and a cone query returns every TIC
   source within `neighbor_radius_arcsec` (120 arcsec) with its Tmag, separation and

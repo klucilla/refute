@@ -109,6 +109,31 @@ def test_spoc_like_fits_round_trip(tmp_path):
     assert loaded.aux.neighbors[0].tic_id == 2
 
 
+def test_pixel_cadences_are_restricted_to_the_light_curve(tmp_path):
+    # SPOC leaves PDCSAP empty on some cadences that the target pixel file keeps.
+    # The pixel tests must use the same cadences as the light curve.
+    from refute.packs.tess.adapter import matching_cadences
+
+    data = scenario_data("planet")
+    gap = slice(2000, 2600)
+    for aux in data.aux.sectors:
+        aux.pdcsap_flux[gap] = np.nan
+    write_synthetic_cache(tmp_path, 1, data.lc, data.star, aux=data.aux)
+    loaded = TessAdapter().load({"tic_id": 1}, TessTestPlan().model_dump(), tmp_path)
+    for px in loaded.aux.pixels:
+        lc_time = loaded.lc.time[loaded.lc.sector == px.sector]
+        assert px.n_dropped_cadences == 600
+        assert px.time.size == lc_time.size == px.flux.shape[0]
+        assert np.allclose(px.time, lc_time, rtol=0, atol=1e-6)
+    times = np.array([1.0, 2.0, 3.0])
+    assert matching_cadences(times, np.array([2.0 + 5e-6, 2.5, 3.0])).tolist() == [
+        True,
+        False,
+        True,
+    ]
+    assert matching_cadences(np.zeros(0), times).tolist() == [False, False, False]
+
+
 def test_tampered_cache_file_is_rejected(tmp_path):
     data = scenario_data("planet")
     manifest = write_synthetic_cache(tmp_path, 1, data.lc, data.star, aux=data.aux)

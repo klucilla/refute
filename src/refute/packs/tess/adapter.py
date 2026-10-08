@@ -19,6 +19,9 @@ manifest and reads the FITS files directly with astropy:
   column before any cadence is removed;
 - target pixel files: the background-subtracted flux cube, the SPOC optimal
   aperture (aperture image bit 2) and the target position from the file's WCS.
+  Only the cadences kept in the same sector's light curve are used, so the pixel
+  tests see the same data as the official SPOC light curve (a target pixel file
+  also contains cadences whose PDCSAP flux SPOC left empty).
 
 It returns raw normalized data: detrending is done by the analysis, not here.
 """
@@ -59,6 +62,7 @@ TIC_SOURCE = "TESS Input Catalog via MAST (astroquery.mast.Catalogs, catalog='TI
 FITS_BLOCK = 2880
 MOMENTUM_DUMP_BIT = 32
 APERTURE_OPTIMAL_BIT = 2
+CADENCE_MATCH_DAYS = 1e-5  # about 1 s; TESS 2-min cadences are 120 s apart
 
 
 class DataError(Exception):
@@ -497,6 +501,19 @@ def read_spoc_tpf(path: Path, bitmask: int) -> dict[str, Any]:
     }
 
 
+def matching_cadences(reference: np.ndarray, times: np.ndarray) -> np.ndarray:
+    """Mask of ``times`` that equal a time in ``reference`` within CADENCE_MATCH_DAYS."""
+    reference = np.sort(np.asarray(reference, dtype=float))
+    times = np.asarray(times, dtype=float)
+    if reference.size == 0 or times.size == 0:
+        return np.zeros(times.size, dtype=bool)
+    index = np.clip(np.searchsorted(reference, times), 1, reference.size - 1)
+    nearest = np.minimum(np.abs(times - reference[index - 1]), np.abs(times - reference[index]))
+    if reference.size == 1:
+        nearest = np.abs(times - reference[0])
+    return nearest <= CADENCE_MATCH_DAYS
+
+
 def _read_npz(path: Path) -> dict[str, Any]:
     with np.load(path) as archive:
         return {
@@ -585,16 +602,20 @@ def load_from_manifest(manifest: dict[str, Any], cache_dir: Path, data: DataPara
         if record["format"] != "spoc-tpf":
             raise DataError(f"unknown pixel file format {record['format']}")
         read = read_spoc_tpf(path, _bitmask(manifest, data))
+        sector = int(record["sector"])
+        lc_times = [t for t, s in zip(times, sectors, strict=True) if int(s[0]) == sector]
+        keep = matching_cadences(lc_times[0] if lc_times else np.zeros(0), read["time"])
         pixels.append(
             PixelData(
-                sector=int(record["sector"]),
-                time=read["time"],
-                flux=read["flux"],
-                flux_err=read["flux_err"],
+                sector=sector,
+                time=read["time"][keep],
+                flux=read["flux"][keep],
+                flux_err=read["flux_err"][keep],
                 aperture=read["aperture"],
                 target_xy=read["target_xy"],
                 filename=record["name"],
                 sha256=record["sha256"],
+                n_dropped_cadences=int((~keep).sum()),
             )
         )
 
