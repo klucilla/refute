@@ -48,6 +48,11 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/refute"]
 
+[tool.uv]
+# Supply-chain cooldown: `uv lock` only considers releases uploaded at least 7 days
+# before the moment it resolves. Recorded in uv.lock as exclude-newer-span = "P7D".
+exclude-newer = "7 days"
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"

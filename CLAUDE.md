@@ -90,6 +90,13 @@ First pack: exoplanet transits (TESS).
   after a lock makes the claim TAMPERED. Dependabot alerts are on; Dependabot
   security updates and version updates stay off, so no dependency change
   reaches the repository outside that planning.
+- Dependency updates use a 7-day cooldown: no release uploaded in the last
+  7 days is accepted. For Python packages this is `exclude-newer = "7 days"`
+  in `[tool.uv]` of `pyproject.toml` (recorded in `uv.lock` as
+  `exclude-newer-span = "P7D"`), so a plain `uv lock --upgrade` applies it.
+  The same rule applies by hand to pre-commit hooks and GitHub Actions (the
+  release date must be at least 7 days old). The ruff hook version stays
+  equal to the ruff version in `uv.lock`.
 
 ## Operating rules for agents working in this repo
 
