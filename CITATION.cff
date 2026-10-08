@@ -5,6 +5,7 @@ type: software
 authors:
   - family-names: Lucilla
     given-names: Klauber
+    orcid: "https://orcid.org/0009-0002-4519-5457"
 version: 0.1.0
 license: Apache-2.0
 repository-code: "https://github.com/klucilla/refute"

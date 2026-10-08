@@ -15,6 +15,18 @@ Agents working in this repo must read it before planning any work.
   the failure is reported and analyzed, never hidden by changing thresholds,
   targets or data.
 
+## Cross-cutting principles
+
+These hold for every phase. They add no work to the current phase; they constrain
+how later work is done.
+
+- **"Everyone can use it".** The volunteer client (v0.7 Refute@Home) must work
+  for non-technical users: one-click installers for Windows and macOS, no Python
+  or terminal required, a graphical interface, Portuguese and English from day
+  one, results explained in plain language, and nothing sent anywhere without
+  explicit confirmation. Technical decisions in earlier phases must not block
+  this.
+
 ## Current phase
 
 **v0.2 Gauntlet**
@@ -143,6 +155,8 @@ Volunteer computing.
 - AI-assisted triage that never decides verdicts.
 - Evaluation of BOINC (the open-source platform behind SETI@home and
   Einstein@Home) versus a custom coordinator.
+- The client follows the "Everyone can use it" principle (see Cross-cutting
+  principles above).
 
 ---
 
