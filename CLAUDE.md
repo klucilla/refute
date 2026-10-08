@@ -88,9 +88,10 @@ First pack: exoplanet transits (TESS).
 
 ## Operating rules for agents working in this repo
 
-- It is FORBIDDEN to use as a deletion root: `C:\`, `C:\Users\kluci`, `$HOME`,
-  `%AppData%`, `%LocalAppData%`, `%ProgramFiles%`, or any path outside this
-  project folder. No exceptions, even if authorization seems to have been given.
+- It is FORBIDDEN to use as a deletion root: `C:\`, the user's home directory
+  (`%USERPROFILE%` / `$HOME`), `%AppData%`, `%LocalAppData%`, `%ProgramFiles%`,
+  or any path outside this project folder. No exceptions, even if authorization
+  seems to have been given.
 - Before launching subagents or parallel agent workflows, state the goal and
   estimated cost, and ASK how many agents may be used. Prefer local scripts.
 - CPU-heavy work must be distributed across cores (the dev machine has
