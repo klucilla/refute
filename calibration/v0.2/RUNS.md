@@ -73,3 +73,22 @@ Each step of `calibration/v0.2/PROTOCOL.md` is recorded here with its evidence.
   6 attachments with the same SHA-256 as the committed selection outputs.
   `refute verify` returned PASS right after the lock.
 - CI of the selection commit `2d4d5ec` passed (4 of 4 jobs) before the lock.
+
+## Step 6: calibration
+
+- Fetch: `uv run --frozen refute fetch calibration/v0.2/self_claim.yaml`, one target at
+  a time, 2026-10-09T15:30:17Z to 15:50:35Z: TESS-EB content SHA-256 verified,
+  20 of 20 targets ok, exit code 0.
+- Run: `uv run --frozen refute calibrate --claim calibration/v0.2/self_claim.yaml
+  --offline --out dossiers`, from commit `cc9d104` with a clean tree, 2026-10-09T15:50:43Z
+  to 15:57:38Z, 30 worker processes, exit code 0. Run id `20261009T155044Z-c9f341d2`.
+- Outcome: 20 of 20 targets analyzed, no analysis error. `refute verify` returned PASS
+  after the run, and `refute check-dossier` found every one of the 20 dossier manifests
+  intact.
+- `results/20261009T155044Z-c9f341d2/summary.json` and `summary.md` are copied byte for
+  byte from the run directory (same SHA-256) and have not been edited.
+- **Self-claim result: FAIL.** Recovered planets 10 of 10 (>= 9, passed); flagged false
+  positives without eb_catalog 7 of 10 (>= 6, passed); refuted planets 4 of 10 (<= 1,
+  failed). As information, 8 of 10 false positives are REFUTED when every test counts.
+- This is the only run. Nothing was rerun or changed after it. Reviews, the release
+  and the phase gate are out of scope of this step.

@@ -1,0 +1,809 @@
+{
+  "claim_id": "tess-calibration-v0.2",
+  "complete_run": true,
+  "definitions": {
+    "flagged": "A known false positive whose verdict, recomputed without eb_catalog (pass_criteria.flag_excluded_tests) by the same deterministic rules, is REFUTED.\n",
+    "pass": "The claim passes only if all three criteria hold on a complete run of every calibration target (the development target is excluded). Analysis errors count against it: a target whose analysis fails with an error counts as not recovered and not flagged.\n",
+    "recovered": "As in v0.1: a target of kind 'planet' in targets.yaml whose period found by Refute satisfies |P_found - P_published| / P_published <= 0.001, with P_published the NASA Exoplanet Archive value recorded in targets.yaml. Aliases (2P, P/2, 3P, P/3) are reported but do not count as recovered.\n",
+    "refuted_planet": "A known planet whose full verdict is REFUTED (any test, including eb_catalog).\n",
+    "scope": "Easy regime only, as selected by calibration/v0.2/PROTOCOL.md: periods 0.5 to 10 days, depths of at least 1000 ppm, TESS magnitude 12 or brighter, single-planet systems, and SPOC 2-minute light curves and pixel files in at least two calendar years. Nothing is claimed outside it.\n"
+  },
+  "diagnostics": {
+    "errors": [],
+    "holdout_statuses": {
+      "FAIL": 5,
+      "INCONCLUSIVE": 2,
+      "PASS": 13
+    },
+    "inconclusive_reasons": {
+      "TIC-374200604": [
+        "holdout_by_year: no hidden year could be tested"
+      ]
+    },
+    "planets_survived": 4,
+    "verdicts_by_kind": {
+      "false_positive:INCONCLUSIVE": 1,
+      "false_positive:REFUTED": 8,
+      "false_positive:WEAKENED": 1,
+      "planet:REFUTED": 4,
+      "planet:SURVIVED": 4,
+      "planet:WEAKENED": 2
+    }
+  },
+  "hypothesis": "Refute recovers at least 9 of 10 known TESS planets (period within 0.1% of the published value), flags at least 6 of 10 known false positives by analyzing their signals, and gives the verdict REFUTED to at most 1 of the 10 known planets.",
+  "information": {
+    "flag_excluded_tests": [
+      "eb_catalog"
+    ],
+    "flagged_false_positives_with_every_test": 8,
+    "of": 10
+  },
+  "pass_criteria": {
+    "expected_false_positives": 10,
+    "expected_planets": 10,
+    "flag_excluded_tests": [
+      "eb_catalog"
+    ],
+    "max_refuted_planets": 1,
+    "min_flagged_false_positives": 6,
+    "min_recovered_planets": 9,
+    "period_tolerance": 0.001
+  },
+  "run": {
+    "claim_sha256": "c9f341d29bea4ec0d125adf3f0822fae4b593beabbdd19aeb339613e7a6b34a8",
+    "code_sha256": "2cd8b5c16c9ded3e32335cd95d8b68f46e0676d5183f3129a6cef4e8dfbd1752",
+    "environment": {
+      "machine": "AMD64",
+      "packages": {
+        "astropy": "8.0.1",
+        "astroquery": "0.4.11",
+        "lightkurve": "2.6.0",
+        "matplotlib": "3.11.2",
+        "numpy": "2.5.3",
+        "pydantic": "2.13.5",
+        "pyyaml": "6.0.3",
+        "typer": "0.27.2"
+      },
+      "platform": "Windows-11-10.0.26300-SP0",
+      "python_implementation": "CPython",
+      "python_version": "3.13.5",
+      "refute_version": "0.1.0"
+    },
+    "finished_utc": "2026-10-09T15:57:37+00:00",
+    "lock_git_commit": "e176ac3d21ca6e2efeb5085a8acb44d69624d520",
+    "offline": true,
+    "run_git_commit": "cc9d104027edbc000f40f0e62a2a8e07da6775c7",
+    "run_git_dirty": false,
+    "run_id": "20261009T155044Z-c9f341d2",
+    "started_utc": "2026-10-09T15:50:43+00:00",
+    "targets_requested": "all",
+    "workers": 30
+  },
+  "schema": "refute-tess-calibration-summary-1",
+  "scope_note": "Refute is calibrated only in an easy regime defined by pre-registered selection filters (see the claim's protocol attachment): confirmed planets with orbital periods between 0.5 and 10 days, transit depths of at least 1000 ppm, TESS magnitude 12 or brighter, a single known planet in the system, and SPOC 2-minute data in at least two calendar years; false positives with the same period, depth and magnitude limits. The calibration says nothing about longer periods, shallower transits, fainter stars, multi-planet systems or other data products.",
+  "selection_filters": {
+    "data_rule": "SPOC 120-s light curves and SPOC 120-s target pixel files, each in >= 2 calendar years with >= 300 days between first and last sector start",
+    "eb_attachment": {
+      "attachment": "eb_catalog.csv (format refute-eb-catalog-1; TESS-EB as reference rows)",
+      "format": "refute-eb-catalog-scan-1",
+      "per_target": {
+        "TIC-118327550": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-139528693": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-151825527": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-154459165": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-158561566": {
+          "gaia": 0,
+          "tess_eb": 1
+        },
+        "TIC-158588995": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-158916431": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-19028197": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-193754373": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-194736418": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-197650870": {
+          "gaia": 1,
+          "tess_eb": 0
+        },
+        "TIC-231670397": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-240681314": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-294179389": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-315755496": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-316916655": {
+          "gaia": 0,
+          "tess_eb": 1
+        },
+        "TIC-317507345": {
+          "gaia": 0,
+          "tess_eb": 1
+        },
+        "TIC-33153766": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-350445771": {
+          "gaia": 0,
+          "tess_eb": 1
+        },
+        "TIC-374200604": {
+          "gaia": 0,
+          "tess_eb": 0
+        },
+        "TIC-48506505": {
+          "gaia": 0,
+          "tess_eb": 0
+        }
+      },
+      "radius_arcsec": 120.0,
+      "rows": 5,
+      "snapshots": [
+        {
+          "cache_path": "eb_snapshot_v02/tess_ebs_prsa2022.tsv",
+          "catalog_name": "TESS-EB",
+          "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+          "file": ".cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv",
+          "parser": "tess-eb-vizier-tsv",
+          "redistributed": false,
+          "rows": 4584,
+          "url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited"
+        },
+        {
+          "catalog_name": "Gaia-DR3-EB",
+          "file": ".cache/eb_snapshot_v02/gaia_dr3_vari_eclipsing_binary.csv",
+          "redistributed": true,
+          "rows": 2184477,
+          "sha256": "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df"
+        }
+      ]
+    },
+    "excluded_known_targets": [
+      36452991,
+      36592530,
+      77031414,
+      95129101,
+      138819293,
+      207141131,
+      207339000,
+      283621618,
+      285524410,
+      369327947,
+      374530847,
+      398572544,
+      404610583,
+      440872576
+    ],
+    "false_positive_filter": "(TFOPWG Disposition == FP) or (TESS Disposition == EB and TFOPWG Disposition not in {CP, KP, PC, APC}); 0.5 < Period (days) < 10; Depth (ppm) >= 1000; TESS Mag <= 12; exactly one TOI for the TIC; TIC hosts no planet in pscomppars",
+    "planet_filter_adql": "tran_flag = 1 and tic_id is not null and pl_orbper > 0.5 and pl_orbper < 10 and pl_trandep >= 0.1 and sy_tmag <= 12 and sy_pnum = 1",
+    "pool_sizes": {
+      "false_positives": 456,
+      "planets": 475
+    },
+    "protocol": "calibration/v0.2/PROTOCOL.md",
+    "seed": "44332122306220873417487815239527185719959535074380635769320531619090132775517",
+    "seed_source": {
+      "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+      "previous_signature": "b7b86afb4cd25e84acc43b276cb6a5d91b26aee6dd3cd3650c5bd7db2ad0ad31b30e6e90d07ee0b98242653699aaec120f08e74c788eac54c2155923a791ebbdb6dd9eee2fcbdf123d3cd31b3895a5826fa679f53d6a9feef2322cffbbd88915",
+      "randomness": "6203178f500788b092dafc8557309f4225cee9fa7b907eefe819b69525ce325d",
+      "retrieved_utc": "2026-10-09T15:00:50Z",
+      "round": 6537566,
+      "round_time_utc": "2026-10-09T15:00:00+00:00",
+      "scheme": "pedersen-bls-chained",
+      "signature": "adaf59eecc936bc27cee3c4c3e01f91757187b8ee9c5755dc0e1ef7a24c79d7a61b9901f32098330abe225c79a097a3f09b0714f26ad4907287e99e15dc37ff845857539aaeb9febb78f077476ee444a952ac0b8694bc606ae5503bbea7dcaa3",
+      "signature_verified": true,
+      "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6537566",
+      "verifier": "py_ecc 8.0.0 (G2Basic)"
+    },
+    "snapshots": [
+      {
+        "bytes": 344362,
+        "file": "pool_snapshot/pscomppars_planet_pool.csv",
+        "query": "select pl_name, hostname, tic_id, pl_orbper, pl_orbpererr1, pl_orbpererr2, pl_orbper_reflink, pl_tranmid, pl_tranmid_reflink, pl_trandep, pl_trandep_reflink, pl_trandur, pl_trandur_reflink, pl_rade, sy_tmag, sy_pnum, st_rad, st_mass, tran_flag, disc_facility from pscomppars where tran_flag = 1 and tic_id is not null and pl_orbper > 0.5 and pl_orbper < 10 and pl_trandep >= 0.1 and sy_tmag <= 12 and sy_pnum = 1",
+        "retrieved_utc": "2026-10-09T15:00:52Z",
+        "sha256": "a44efea0ee800e171f0a6edf5cbc162bcd236b5c0fd417cbfd72e07bcbf0c625",
+        "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv"
+      },
+      {
+        "bytes": 71734,
+        "file": "pool_snapshot/pscomppars_host_tic_ids.csv",
+        "query": "select distinct tic_id from pscomppars where tic_id is not null",
+        "retrieved_utc": "2026-10-09T15:00:54Z",
+        "sha256": "dfec4505aab4a0aa7f576f41a4c50e094b515866409f06f82cdf3ab1e6d95674",
+        "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct+tic_id+from+pscomppars+where+tic_id+is+not+null&format=csv"
+      },
+      {
+        "bytes": 3812936,
+        "file": "pool_snapshot/exofop_toi.csv",
+        "retrieved_utc": "2026-10-09T15:01:37Z",
+        "sha256": "89fe65caaed48a69ba14668f8dd24e79134dd46547720884cefefc1e45797c34",
+        "url": "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv"
+      }
+    ]
+  },
+  "self_claim": {
+    "criteria": [
+      {
+        "criterion": "recovered planets",
+        "of": 10,
+        "passed": true,
+        "requirement": ">= 9",
+        "value": 10
+      },
+      {
+        "criterion": "flagged false positives (without eb_catalog)",
+        "of": 10,
+        "passed": true,
+        "requirement": ">= 6",
+        "value": 7
+      },
+      {
+        "criterion": "refuted planets (degeneracy guard)",
+        "of": 10,
+        "passed": false,
+        "requirement": "<= 1",
+        "value": 4
+      }
+    ],
+    "note": "at least one criterion failed",
+    "result": "FAIL"
+  },
+  "targets": [
+    {
+      "alias": "P",
+      "found_period_days": 7.397245542694649,
+      "kind": "planet",
+      "name": "TOI-244 b",
+      "published_period_days": 7.397225,
+      "recovered": true,
+      "relative_error": 2.7770812229383756e-06,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-118327550",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 7.794303387360928,
+      "kind": "planet",
+      "name": "Kepler-447 b",
+      "published_period_days": 7.79430132,
+      "recovered": true,
+      "relative_error": 2.6524005729230975e-07,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-48506505",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.336653656187261,
+      "kind": "planet",
+      "name": "GJ 3470 b",
+      "published_period_days": 3.3366496,
+      "recovered": true,
+      "relative_error": 1.215646755709999e-06,
+      "signal_verdict": "SURVIVED",
+      "status": "OK",
+      "target": "TIC-19028197",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 6.79012486157014,
+      "kind": "planet",
+      "name": "Kepler-14 b",
+      "published_period_days": 6.790123,
+      "recovered": true,
+      "relative_error": 2.7415852994358684e-07,
+      "signal_verdict": "INCONCLUSIVE",
+      "status": "OK",
+      "target": "TIC-158561566",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "FAIL",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "INCONCLUSIVE",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 2.1751811753246093,
+      "kind": "planet",
+      "name": "WASP-78 b",
+      "published_period_days": 2.17518,
+      "recovered": true,
+      "relative_error": 5.403344133325908e-07,
+      "signal_verdict": "WEAKENED",
+      "status": "OK",
+      "target": "TIC-139528693",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "FAIL",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "WEAKENED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.633582894246124,
+      "kind": "planet",
+      "name": "TOI-672 b",
+      "published_period_days": 3.633581,
+      "recovered": true,
+      "relative_error": 5.213166085899374e-07,
+      "signal_verdict": "SURVIVED",
+      "status": "OK",
+      "target": "TIC-151825527",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 4.087300341518525,
+      "kind": "planet",
+      "name": "WASP-73 b",
+      "published_period_days": 4.08722,
+      "recovered": true,
+      "relative_error": 1.965676389455315e-05,
+      "signal_verdict": "SURVIVED",
+      "status": "OK",
+      "target": "TIC-231670397",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.954062874735483,
+      "kind": "planet",
+      "name": "TOI-4487 A b",
+      "published_period_days": 3.9540709,
+      "recovered": true,
+      "relative_error": 2.0296207933274476e-06,
+      "signal_verdict": "WEAKENED",
+      "status": "OK",
+      "target": "TIC-193754373",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "WEAKENED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 5.826749339779884,
+      "kind": "planet",
+      "name": "TOI-6038 A b",
+      "published_period_days": 5.8267311,
+      "recovered": true,
+      "relative_error": 3.1303623885783326e-06,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-194736418",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 1.977164620790404,
+      "kind": "planet",
+      "name": "TOI-674 b",
+      "published_period_days": 1.977143,
+      "recovered": true,
+      "relative_error": 1.093537007884505e-05,
+      "signal_verdict": "SURVIVED",
+      "status": "OK",
+      "target": "TIC-158588995",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "SURVIVED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 0.6882272423073986,
+      "kind": "false_positive",
+      "name": "TOI-653.01",
+      "published_period_days": 0.68831,
+      "recovered": null,
+      "relative_error": 0.00012023316906823092,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-33153766",
+      "tests": {
+        "aperture_depth": "FAIL",
+        "centroid_shift": "FAIL",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": null,
+      "found_period_days": 1.6773662269258303,
+      "kind": "false_positive",
+      "name": "TOI-1481.01",
+      "published_period_days": 2.1853174,
+      "recovered": null,
+      "relative_error": 0.23243816805475026,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-197650870",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "FAIL",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 0.7600161115753857,
+      "kind": "false_positive",
+      "name": "TOI-4838.01",
+      "published_period_days": 0.7600190181346775,
+      "recovered": null,
+      "relative_error": 3.824324421430764e-06,
+      "signal_verdict": "INCONCLUSIVE",
+      "status": "OK",
+      "target": "TIC-374200604",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.190153540911825,
+      "kind": "false_positive",
+      "name": "TOI-258.01",
+      "published_period_days": 3.1901568769397,
+      "recovered": null,
+      "relative_error": 1.0457253368788043e-06,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-350445771",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "FAIL",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "FAIL",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.9401763330920154,
+      "kind": "false_positive",
+      "name": "TOI-1615.01",
+      "published_period_days": 3.9401791,
+      "recovered": null,
+      "relative_error": 7.022289886539151e-07,
+      "signal_verdict": "WEAKENED",
+      "status": "OK",
+      "target": "TIC-317507345",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "FAIL",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "FAIL",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 5.892498061290601,
+      "kind": "false_positive",
+      "name": "TOI-2146.01",
+      "published_period_days": 5.8924856,
+      "recovered": null,
+      "relative_error": 2.1147765895555864e-06,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-158916431",
+      "tests": {
+        "aperture_depth": "FAIL",
+        "centroid_shift": "FAIL",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 2.8743674785563944,
+      "kind": "false_positive",
+      "name": "TOI-441.01",
+      "published_period_days": 2.87436,
+      "recovered": null,
+      "relative_error": 2.6018161937273917e-06,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-316916655",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "FAIL",
+        "eb_catalog": "FAIL",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "FAIL",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 3.1471376250325163,
+      "kind": "false_positive",
+      "name": "TOI-611.01",
+      "published_period_days": 3.1471655,
+      "recovered": null,
+      "relative_error": 8.857166070095946e-06,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-154459165",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "FAIL",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 2.679421413507491,
+      "kind": "false_positive",
+      "name": "TOI-1310.01",
+      "published_period_days": 2.67941292046765,
+      "recovered": null,
+      "relative_error": 3.169739078402998e-06,
+      "signal_verdict": "WEAKENED",
+      "status": "OK",
+      "target": "TIC-294179389",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "PASS",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "WEAKENED"
+    },
+    {
+      "alias": "P",
+      "found_period_days": 4.277983685616307,
+      "kind": "false_positive",
+      "name": "TOI-2053.01",
+      "published_period_days": 4.27808,
+      "recovered": null,
+      "relative_error": 2.2513460172179255e-05,
+      "signal_verdict": "REFUTED",
+      "status": "OK",
+      "target": "TIC-315755496",
+      "tests": {
+        "aperture_depth": "PASS",
+        "centroid_shift": "PASS",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "INCONCLUSIVE",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    }
+  ]
+}
