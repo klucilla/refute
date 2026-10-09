@@ -1,0 +1,25 @@
+[
+  {
+    "file": "pool_snapshot/pscomppars_planet_pool.csv",
+    "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2C+hostname%2C+tic_id%2C+pl_orbper%2C+pl_orbpererr1%2C+pl_orbpererr2%2C+pl_orbper_reflink%2C+pl_tranmid%2C+pl_tranmid_reflink%2C+pl_trandep%2C+pl_trandep_reflink%2C+pl_trandur%2C+pl_trandur_reflink%2C+pl_rade%2C+sy_tmag%2C+sy_pnum%2C+st_rad%2C+st_mass%2C+tran_flag%2C+disc_facility+from+pscomppars+where+tran_flag+%3D+1+and+tic_id+is+not+null+and+pl_orbper+%3E+0.5+and+pl_orbper+%3C+10+and+pl_trandep+%3E%3D+0.1+and+sy_tmag+%3C%3D+12+and+sy_pnum+%3D+1&format=csv",
+    "retrieved_utc": "2026-10-09T15:00:52Z",
+    "sha256": "a44efea0ee800e171f0a6edf5cbc162bcd236b5c0fd417cbfd72e07bcbf0c625",
+    "bytes": 344362,
+    "query": "select pl_name, hostname, tic_id, pl_orbper, pl_orbpererr1, pl_orbpererr2, pl_orbper_reflink, pl_tranmid, pl_tranmid_reflink, pl_trandep, pl_trandep_reflink, pl_trandur, pl_trandur_reflink, pl_rade, sy_tmag, sy_pnum, st_rad, st_mass, tran_flag, disc_facility from pscomppars where tran_flag = 1 and tic_id is not null and pl_orbper > 0.5 and pl_orbper < 10 and pl_trandep >= 0.1 and sy_tmag <= 12 and sy_pnum = 1"
+  },
+  {
+    "file": "pool_snapshot/pscomppars_host_tic_ids.csv",
+    "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+distinct+tic_id+from+pscomppars+where+tic_id+is+not+null&format=csv",
+    "retrieved_utc": "2026-10-09T15:00:54Z",
+    "sha256": "dfec4505aab4a0aa7f576f41a4c50e094b515866409f06f82cdf3ab1e6d95674",
+    "bytes": 71734,
+    "query": "select distinct tic_id from pscomppars where tic_id is not null"
+  },
+  {
+    "file": "pool_snapshot/exofop_toi.csv",
+    "url": "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv",
+    "retrieved_utc": "2026-10-09T15:01:37Z",
+    "sha256": "89fe65caaed48a69ba14668f8dd24e79134dd46547720884cefefc1e45797c34",
+    "bytes": 3812936
+  }
+]

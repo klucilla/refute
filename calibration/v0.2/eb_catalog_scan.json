@@ -1,0 +1,111 @@
+{
+  "attachment": "eb_catalog.csv (format refute-eb-catalog-1; TESS-EB as reference rows)",
+  "format": "refute-eb-catalog-scan-1",
+  "per_target": {
+    "TIC-118327550": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-139528693": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-151825527": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-154459165": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-158561566": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-158588995": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-158916431": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-19028197": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-193754373": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-194736418": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-197650870": {
+      "gaia": 1,
+      "tess_eb": 0
+    },
+    "TIC-231670397": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-240681314": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-294179389": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-315755496": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-316916655": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-317507345": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-33153766": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-350445771": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-374200604": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-48506505": {
+      "gaia": 0,
+      "tess_eb": 0
+    }
+  },
+  "radius_arcsec": 120.0,
+  "rows": 5,
+  "snapshots": [
+    {
+      "cache_path": "eb_snapshot_v02/tess_ebs_prsa2022.tsv",
+      "catalog_name": "TESS-EB",
+      "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+      "file": ".cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv",
+      "parser": "tess-eb-vizier-tsv",
+      "redistributed": false,
+      "rows": 4584,
+      "url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited"
+    },
+    {
+      "catalog_name": "Gaia-DR3-EB",
+      "file": ".cache/eb_snapshot_v02/gaia_dr3_vari_eclipsing_binary.csv",
+      "redistributed": true,
+      "rows": 2184477,
+      "sha256": "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df"
+    }
+  ]
+}
