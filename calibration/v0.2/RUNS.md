@@ -62,3 +62,14 @@ Each step of `calibration/v0.2/PROTOCOL.md` is recorded here with its evidence.
   analysis found a period of 2.732534 d (published 2.7325321 d) and the verdict
   SURVIVED, with every test PASS.
 - Nothing was changed because of this target: no code, threshold, criterion or target.
+
+## Steps 4 and 5: claim and lock
+
+- Claim committed in `e176ac3` (claim SHA-256
+  `c9f341d29bea4ec0d125adf3f0822fae4b593beabbdd19aeb339613e7a6b34a8`).
+- `uv run --frozen refute lock calibration/v0.2/self_claim.yaml` at
+  2026-10-09T15:29:55Z from `e176ac3` with a clean tree: code SHA-256
+  `2cd8b5c16c9ded3e32335cd95d8b68f46e0676d5183f3129a6cef4e8dfbd1752` (38 files),
+  6 attachments with the same SHA-256 as the committed selection outputs.
+  `refute verify` returned PASS right after the lock.
+- CI of the selection commit `2d4d5ec` passed (4 of 4 jobs) before the lock.
