@@ -1,0 +1,14 @@
+{
+  "analysis_manifest_sha256": "6e76d795b62e48ef844e09209d74f334ce182db38d9c6d80f88c41b8f926127d",
+  "reviews": [
+    {
+      "attached_utc": "2026-10-09T17:12:11Z",
+      "file": "review/opus-1.md",
+      "model": "claude-opus-5-5",
+      "reviewer": "opus-1",
+      "sha256": "a1d957af23cd613d44e053ebd2784b017bca6de2ec5839ada80ba6b171497678"
+    }
+  ],
+  "schema": "refute-review-index-1",
+  "verdict_sha256": "1acd568a85df5965c2bbe0eb1cb788fcf4e4c47938d034eea1eaf625895c28e0"
+}
