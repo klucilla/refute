@@ -44,3 +44,21 @@ Each step of `calibration/v0.2/PROTOCOL.md` is recorded here with its evidence.
   (the catalogs are live). The timeout is recorded here; the issue for handling such
   errors in future selections is https://github.com/klucilla/refute/issues/22
   (future phase; nothing implemented now). Nothing was rerun.
+
+## Step 3: new development target (crash and I/O hunt only)
+
+- Target: WASP-93 b (TIC 240681314), the 11th accepted planet, kind `development`
+  in `targets.yaml`; excluded from the claim.
+- Procedure: a scratch script that follows the per-target path of `refute calibrate`
+  without a lock (TESS-EB content-hash check, fetch, offline load, analysis with the
+  `eb_catalog.csv` and `eb_catalog_scan.json` attachments, plots, parameter sheet,
+  verdict and report), writing a throwaway dossier under the git-ignored `dossiers/`.
+  Code at commit `2d4d5ec`, claim-schema default thresholds.
+- Time: 2026-10-09T15:26:13Z to 15:27:28Z.
+- Data: SPOC 120-s light curves and target pixel files of sectors 17, 57 and 84
+  (years 2019, 2022, 2024); 46570 cadences. In every sector the target pixel file
+  kept exactly the light curve's cadences (12507, 17990 and 16073).
+- Result: **no crash, no I/O or reading error** in any stage. For transparency, the
+  analysis found a period of 2.732534 d (published 2.7325321 d) and the verdict
+  SURVIVED, with every test PASS.
+- Nothing was changed because of this target: no code, threshold, criterion or target.

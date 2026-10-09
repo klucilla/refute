@@ -1,0 +1,214 @@
+# Refute v0.2 self-claim.
+# Written after the v0.2 target selection (calibration/v0.2/PROTOCOL.md, step 4) and
+# locked with `refute lock` from a clean, committed tree. Hypothesis and pass criteria
+# are copied from the protocol; every threshold is the claim-schema default at this
+# commit, written out here. `refute lock` also records the resolved form, the
+# attachment hashes and the code hash.
+schema_version: 1
+id: tess-calibration-v0.2
+kind: calibration
+pack: tess
+title: Refute v0.2 calibration on known TESS planets and false positives
+hypothesis: >
+  Refute recovers at least 9 of 10 known TESS planets (period within 0.1% of the
+  published value), flags at least 6 of 10 known false positives by analyzing
+  their signals, and gives the verdict REFUTED to at most 1 of the 10 known
+  planets.
+created: 2026-10-09
+authors:
+  - Klauber Lucilla
+definitions:
+  recovered: >
+    As in v0.1: a target of kind 'planet' in targets.yaml whose period found by Refute
+    satisfies |P_found - P_published| / P_published <= 0.001, with P_published the NASA
+    Exoplanet Archive value recorded in targets.yaml. Aliases (2P, P/2, 3P, P/3) are
+    reported but do not count as recovered.
+  flagged: >
+    A known false positive whose verdict, recomputed without eb_catalog
+    (pass_criteria.flag_excluded_tests) by the same deterministic rules, is REFUTED.
+  refuted_planet: >
+    A known planet whose full verdict is REFUTED (any test, including eb_catalog).
+  pass: >
+    The claim passes only if all three criteria hold on a complete run of every
+    calibration target (the development target is excluded). Analysis errors count
+    against it: a target whose analysis fails with an error counts as not recovered and
+    not flagged.
+  scope: >
+    Easy regime only, as selected by calibration/v0.2/PROTOCOL.md: periods 0.5 to 10
+    days, depths of at least 1000 ppm, TESS magnitude 12 or brighter, single-planet
+    systems, and SPOC 2-minute light curves and pixel files in at least two calendar
+    years. Nothing is claimed outside it.
+data_sources:
+  - name: NASA Exoplanet Archive, Planetary Systems Composite Parameters (pscomppars)
+    url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+    retrieved: "2026-10-09T15:00:52Z"
+    notes: Planet pool and published parameters; query and SHA-256 in pool_snapshot/retrieval.json.
+  - name: ExoFOP-TESS TOI table
+    url: https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv
+    retrieved: "2026-10-09T15:01:37Z"
+    notes: False-positive pool and dispositions; SHA-256 in pool_snapshot/retrieval.json.
+  - name: MAST, TESS SPOC 2-minute light curves and target pixel files
+    url: https://mast.stsci.edu
+    retrieved: "2026-10-09T15:18:34Z"
+    notes: >
+      Availability checked at selection time (targets.yaml, field mast). Data are
+      downloaded at run time; file hashes and URLs are recorded in every dossier.
+  - name: TESS Input Catalog (TIC) via MAST
+    url: https://mast.stsci.edu
+    retrieved: "2026-10-09T15:18:34Z"
+    notes: >
+      Target coordinates for the eclipsing-binary extraction at selection time; stellar
+      parameters and neighbors queried at run time and recorded in every dossier.
+  - name: TESS-EB, Prsa et al. 2022 (VizieR J/ApJS/258/16/tess-ebs)
+    url: https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited
+    retrieved: "2026-10-09T02:44:20Z"
+    notes: >
+      Not redistributed: eb_catalog.csv holds reference rows only, resolved at run time
+      from a local copy whose content SHA-256 is checked against eb_catalog_scan.json.
+  - name: Gaia DR3 eclipsing-binary candidates (gaiadr3.vari_eclipsing_binary)
+    url: https://gea.esac.esa.int/tap-server/tap/async
+    retrieved: "2026-10-09T01:29:48Z"
+    notes: >
+      Rows within 120 arcsec of the selected targets, in eb_catalog.csv (CC BY-NC 3.0
+      IGO, credit ESA/Gaia/DPAC); snapshot hash in eb_catalog_scan.json.
+attachments:
+  - path: targets.yaml
+    role: targets
+  - path: PROTOCOL.md
+    role: protocol
+  - path: selection_log.md
+    role: selection-log
+  - path: pool_snapshot/retrieval.json
+    role: snapshot-index
+  - path: eb_catalog.csv
+    role: eb-catalog
+  - path: eb_catalog_scan.json
+    role: eb-catalog-scan
+test_plan:
+  data:
+    mission: TESS
+    author: SPOC
+    exptime_seconds: 120
+    flux_column: pdcsap_flux
+    quality_bitmask: default
+    target_pixel_files: true
+    neighbor_radius_arcsec: 120.0
+  detrend:
+    method: robust-local-quadratic
+    window_days: 1.0
+    knot_spacing_days: 0.1
+    segment_gap_days: 0.5
+    min_points_per_knot: 30
+    clip_sigma: 3.0
+    clip_iterations: 2
+    upper_clip_sigma: 5.0
+    transit_mask_half_width_durations: 1.0
+  search:
+    method: bls-two-stage
+    objective: likelihood
+    period_min_days: 0.5
+    period_max_days: 20.0
+    durations_hours:
+    - 0.5
+    - 1.0
+    - 1.5
+    - 2.0
+    - 3.0
+    - 4.0
+    - 6.0
+    - 8.0
+    bin_minutes: 10.0
+    frequency_factor: 1.0
+    peaks_per_sector: 5
+    max_clusters: 5
+    cluster_tolerance: 0.01
+    block_gap_days: 10.0
+    refine_samples_per_width: 6.0
+    refine_width_factor: 1.5
+    final_duration_steps: 21
+    final_oversample: 20
+  gauntlet:
+    snr:
+      min_snr: 7.1
+    odd_even:
+      max_sigma: 3.0
+      min_transits_each: 2
+    secondary_eclipse:
+      max_sigma: 3.0
+      fatal_depth_ratio: 0.1
+    plausibility:
+      max_duration_ratio: 1.5
+      max_companion_radius_rjup: 2.5
+      max_stellar_radius_rel_err: 0.3
+      unreliable_tic_dispositions:
+      - SPLIT
+      - DUPLICATE
+      - ARTIFACT
+      max_tmag_mismatch: 1.0
+    holdout_by_year:
+      min_snr: 5.0
+      timing_sigma: 3.0
+      min_predicted_transits: 2
+      min_train_transits: 3
+      min_window_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+      timing_step_minutes: 1.0
+      timing_scan_half_width_durations: 0.5
+      hidden_detrend_window_factor: 3.0
+      max_timing_sigma_durations: 1.0
+    events:
+      min_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+    centroid_shift:
+      max_sigma: 3.0
+      min_offset_pixels: 0.5
+      min_sectors: 1
+    aperture_depth:
+      core_radius_pixels: 1.5
+      dilation_pixels: 1
+      max_sigma: 3.0
+      min_depth_ratio: 1.2
+    nearby_contamination:
+      max_separation_arcsec: 21.0
+      max_eclipse_depth: 1.0
+      min_crowdsap: 0.8
+      ignored_dispositions:
+      - SPLIT
+      - DUPLICATE
+      - ARTIFACT
+    period_alias:
+      min_box_delta_bic: 10.0
+      sine_harmonics: 2
+      detrend_window_periods: 3.0
+      systematic_periods_days:
+      - 13.7
+      - 6.85
+      - 4.566666666666666
+      - 3.425
+      - 1.0
+      systematic_tolerance: 0.01
+    systematics:
+      dump_margin_hours: 1.0
+      max_dump_fraction: 0.5
+      min_events_for_dumps: 3
+      max_sap_sigma: 3.0
+      max_sap_rel_diff: 0.5
+      max_background_sigma: 3.0
+      max_background_fraction: 0.5
+    eb_catalog:
+      match_radius_arcsec: 21.0
+      period_tolerance: 0.01
+      period_factors:
+      - 1.0
+      - 2.0
+      - 0.5
+pass_criteria:
+  period_tolerance: 0.001
+  expected_planets: 10
+  min_recovered_planets: 9
+  expected_false_positives: 10
+  min_flagged_false_positives: 6
+  max_refuted_planets: 1
+  flag_excluded_tests: [eb_catalog]
