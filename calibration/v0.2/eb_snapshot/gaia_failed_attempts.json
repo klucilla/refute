@@ -1,0 +1,58 @@
+[
+  {
+    "attempt": "anonymous, whole table",
+    "job": "https://gea.esac.esa.int/tap-server/tap/async/22e96005-c32e-11f1-826d-bc97e148b76b-O",
+    "range": "whole table",
+    "started_utc": "2026-10-08T15:37:15Z",
+    "outcome": "ERROR",
+    "error": "JDBC exception executing SQL [update uws_o.uws_owner ... set files_current_size=... where ... (files_current_size+?)<files_quota] [ERROR: canceling statement due to lock timeout]",
+    "source": "UWS error document of the job, read 2026-10-08"
+  },
+  {
+    "attempt": "anonymous, part 01",
+    "job": "https://gea.esac.esa.int/tap-server/tap/async/0d1e9d6e-c339-11f1-826d-bc97e148b76b-O",
+    "range": "[0, 345876451382054092)",
+    "started_utc": "2026-10-08T16:55:23Z",
+    "outcome": "ERROR",
+    "error": "same database lock timeout while recording the anonymous file quota",
+    "source": "snapshot script output, 2026-10-08"
+  },
+  {
+    "attempt": "account kjohanes, part 02 (first authenticated run)",
+    "job": "https://gea.esac.esa.int/tap-server/tap/async/fde1de85-c34f-11f1-826d-bc97e148b76b-O",
+    "range": "[345876451382054092, 691752902764108185)",
+    "started_utc": "2026-10-08T19:39:35Z",
+    "outcome": "interrupted (accidental Ctrl+C); the script logged out at 2026-10-08T19:52:49Z",
+    "error": null,
+    "followup": "deletion requested after login at 2026-10-08T20:03:41Z: failed; at 2026-10-09T01:10Z the job no longer existed (HTTP 404 without login)",
+    "source": "snapshot.log and the maintainer's terminal output"
+  },
+  {
+    "attempt": "account kjohanes, part 06 (second authenticated run)",
+    "job": "https://gea.esac.esa.int/tap-server/tap/async/330cba00-c358-11f1-826d-bc97e148b76b-O",
+    "range": "[1729382256910270464, 2075258708292324556)",
+    "started_utc": "2026-10-08T20:38:23Z",
+    "outcome": "failed (no completion; the job was deleted by the script after the failure)",
+    "error": "not captured: the previous version of the script reported only the first failure, which was part 07's",
+    "source": "snapshot.log"
+  },
+  {
+    "attempt": "account kjohanes, part 07 (second authenticated run)",
+    "job": "https://gea.esac.esa.int/tap-server/tap/async/33757ee3-c35c-11f1-826d-bc97e148b76b-O",
+    "range": "[2075258708292324556, 2421135159674378649)",
+    "started_utc": "2026-10-08T21:07:01Z",
+    "outcome": "ERROR",
+    "error": "JDBC exception executing SQL [update uws_o.uws_owner ujoe1_0 set files_current_size=(ujoe1_0.files_current_size+?) where ujoe1_0.owner_id=? and (ujoe1_0.files_current_size+?)<ujoe1_0.files_quota] [ERROR: canceling statement due to lock timeout",
+    "source": "the maintainer's terminal output (traceback at the end of the run, 2026-10-09T01:08Z)"
+  },
+  {
+    "attempt": "account kjohanes, third authenticated run (parts 06 and 07)",
+    "job": "https://gea.esac.esa.int/tap-server/tap/async/604b1b12-c37e-11f1-826d-bc97e148b76b-O",
+    "range": "parts 06 and 07",
+    "started_utc": "2026-10-09T01:11:31Z",
+    "outcome": "both parts downloaded (07 at 01:17:56Z, 06 at 01:29:48Z); then an accidental Ctrl+C by the maintainer (confirmed on 2026-10-09) at 01:29:48Z, before the join; logged out at 01:29:49Z",
+    "error": null,
+    "followup": "a fourth run (login 2026-10-09T02:44:19Z) reused all 20 parts (06 and 07 with records recovered from snapshot.log after their file, rows and SHA-256 matched), downloaded nothing and joined the table",
+    "source": "snapshot.log"
+  }
+]

@@ -439,13 +439,58 @@ Reference: [2019AJ....157...98G](https://ui.adsabs.harvard.edu/abs/2019AJ....157
 [doi:10.3847/1538-3881/aafc33](https://doi.org/10.3847/1538-3881/aafc33) (from astroquery's
 [CITATION file](https://github.com/astropy/astroquery/blob/main/astroquery/CITATION)).
 
+**Gaia DR3** (eclipsing-binary candidates, from v0.2): credit and citation instructions
+<https://gea.esac.esa.int/archive/documentation/GDR3/Miscellaneous/sec_credit_and_citation_instructions/> (retrieved 2026-10-08)
+
+> This work has made use of data from the European Space Agency (ESA) mission Gaia
+> (https://www.cosmos.esa.int/gaia), processed by the Gaia Data Processing and Analysis
+> Consortium (DPAC, https://www.cosmos.esa.int/web/gaia/dpac/consortium). Funding for
+> the DPAC has been provided by national institutions, in particular the institutions
+> participating in the Gaia Multilateral Agreement.
+
+The same page asks to cite the Gaia mission paper and the Gaia DR3 release paper:
+Gaia Collaboration, Prusti et al. (2016), The Gaia mission, A&A 595, A1,
+[doi:10.1051/0004-6361/201629272](https://doi.org/10.1051/0004-6361/201629272);
+Gaia Collaboration, Vallenari et al. (2023), Gaia Data Release 3: Summary of the
+content and survey properties, A&A 674, A1,
+[doi:10.1051/0004-6361/202243940](https://doi.org/10.1051/0004-6361/202243940).
+The eclipsing-binary table is described in Mowlavi et al. (2023), Gaia Data Release 3:
+The first Gaia catalogue of eclipsing-binary candidates, A&A 674, A16,
+[doi:10.1051/0004-6361/202245330](https://doi.org/10.1051/0004-6361/202245330).
+Gaia data are distributed under the
+[CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/) license
+(<https://www.cosmos.esa.int/web/gaia-users/license>, retrieved 2026-10-08), with
+credit to ESA/Gaia/DPAC; files in this repository and its releases that contain
+Gaia rows keep that license, not Apache-2.0.
+
+**TESS Eclipsing Binary catalog** (from v0.2): Prsa et al. (2022), TESS Eclipsing
+Binary Stars. I. Short-cadence Observations of 4584 Eclipsing Binaries in Sectors
+1-26, ApJS 258, 16,
+[doi:10.3847/1538-4365/ac324a](https://doi.org/10.3847/1538-4365/ac324a), retrieved
+through VizieR (table J/ApJS/258/16/tess-ebs,
+[doi:10.26093/cds/vizier.22580016](https://doi.org/10.26093/cds/vizier.22580016)) on
+2026-10-08. The CDS asks (<https://cds.unistra.fr/vizier-org/licences_vizier.html>,
+retrieved 2026-10-08):
+
+> This research has made use of the VizieR catalogue access tool, CDS, Strasbourg,
+> France (DOI : 10.26093/cds/vizier). The original description of the VizieR service was
+> published in 2000, A&AS 143, 23
+
 Refute also builds on NumPy, Matplotlib, pydantic, Typer and PyYAML.
 
 </details>
 
-Refute is not affiliated with or endorsed by NASA, STScI, Caltech/IPAC or any of the projects above.
+Refute is not affiliated with or endorsed by NASA, STScI, Caltech/IPAC, ESA, CDS or any of the projects above.
 All artwork in this repository is original ([docs/assets/build_assets.py](docs/assets/build_assets.py)).
 
 ## License
 
-[Apache-2.0](LICENSE)
+The code is licensed under [Apache-2.0](LICENSE).
+
+Some data files are not code and keep the terms of their sources
+([details](calibration/v0.2/eb_snapshot/DATA_LICENSE.md)):
+
+| Data | Terms |
+|---|---|
+| Gaia DR3 rows: `calibration/v0.2/eb_catalog.csv` (written by the v0.2 selection) and the Gaia snapshot `gaia_dr3_vari_eclipsing_binary.csv` published as a release asset | [CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/): non-commercial use, with credit to ESA/Gaia/DPAC |
+| TESS-EB catalog (Prsa et al. 2022) | **not redistributed**: the publisher (CC BY 4.0) and the CDS (CC BY-NC, linking BY-NC-ND) disagree, so the repository keeps only the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; the file is downloaded and its hash checked on every run |

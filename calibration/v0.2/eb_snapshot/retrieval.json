@@ -1,0 +1,40 @@
+[
+  {
+    "catalog_name": "TESS-EB",
+    "catalog": "TESS-EB (Prsa et al. 2022, ApJS 258, 16; VizieR J/ApJS/258/16/tess-ebs)",
+    "file": ".cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv",
+    "cache_path": "eb_snapshot_v02/tess_ebs_prsa2022.tsv",
+    "url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited",
+    "retrieved_utc": "2026-10-09T02:44:20Z",
+    "bytes": 254392,
+    "rows": 4584,
+    "sha256": "39b73495a09156959f4ae80ca6231cf3268f60075a1c44990e1add7e8dcb2bac",
+    "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+    "content_rule": "non-empty lines not starting with '#', LF endings, final LF",
+    "parser": "tess-eb-vizier-tsv",
+    "redistributed": false
+  },
+  {
+    "catalog_name": "Gaia-DR3-EB",
+    "file": ".cache/eb_snapshot_v02/gaia_dr3_vari_eclipsing_binary.csv",
+    "catalog": "Gaia DR3 eclipsing-binary candidates (gaiadr3.vari_eclipsing_binary)",
+    "redistributed": true,
+    "url": "https://gea.esac.esa.int/tap-server/tap/async",
+    "retrieved_utc": "2026-10-09T01:29:48Z",
+    "bytes": 166493796,
+    "rows": 2184477,
+    "sha256": "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df",
+    "count_query": "SELECT COUNT(*) AS n FROM gaiadr3.vari_eclipsing_binary",
+    "count": 2184477,
+    "parts": "eb_snapshot/gaia_parts.json",
+    "splits": "eb_snapshot/gaia_splits.json",
+    "join": "rows of all parts, sorted by ascending source_id, LF line endings, one header",
+    "units": {
+      "ra": "deg (ICRS, epoch J2016.0)",
+      "dec": "deg",
+      "frequency": "d**-1"
+    },
+    "note": "Too large for git; to be published as a release asset with this SHA-256.",
+    "authenticated_as": "kjohanes"
+  }
+]
