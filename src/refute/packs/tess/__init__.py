@@ -10,7 +10,7 @@ from __future__ import annotations
 from refute.core.pack import DomainPack
 from refute.packs.tess.adapter import TessAdapter
 from refute.packs.tess.calibration import TessCalibrator
-from refute.packs.tess.exporter import CtoiExporter
+from refute.packs.tess.exporter import CandidateParameterExporter
 from refute.packs.tess.pipeline import TessAnalyzer, TessGauntlet, TessHoldout, TessSearch
 from refute.packs.tess.schema import TessClaimSchema
 
@@ -28,7 +28,7 @@ PACK = DomainPack(
     search=TessSearch(),
     gauntlet=TessGauntlet(),
     holdout=TessHoldout(),
-    exporter=CtoiExporter(),
+    exporter=CandidateParameterExporter(),
     analyzer=TessAnalyzer(),
     calibrator=TessCalibrator(),
 )

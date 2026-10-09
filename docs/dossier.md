@@ -23,7 +23,7 @@ dossiers/<run_id>/
                                     holdout_<year>.png
     environment/                    environment.json (Python, platform, package versions),
                                     requirements.txt (installed distributions), uv.lock
-    export/                         ctoi_summary.md, ctoi_fields.json: a parameter sheet
+    export/                         candidate_parameters.md and .json: a parameter sheet
                                     for a human, never submitted; not an ExoFOP upload
                                     (see the note below)
     REPRODUCE.md                    exact commands to reproduce this dossier
