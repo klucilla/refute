@@ -112,7 +112,11 @@ Search for new candidates in TESS data.
 - Multi-year stitching, long-period and single-transit search.
 - Deduplication against current TOI and CTOI lists before reporting.
 - Candidate ledger with full gauntlet and reviewer history.
-- Exporter output a human can use to prepare an ExoFOP CTOI submission.
+- Exporter output with the parameters (period, epoch in BJD, depth in ppm and duration, with
+  uncertainties) and supporting material a human needs for the publication path. A dossier is
+  never uploaded to ExoFOP directly: since 2026-08-19 ExoFOP accepts community candidates only
+  after peer-reviewed publication (or an RNAAS citing a peer-reviewed methodology) and with its
+  approval. Publication path and exporter requirements: issue #18.
 
 **Exit criteria**
 - [ ] Injection-recovery test on real light curves (injected synthetic

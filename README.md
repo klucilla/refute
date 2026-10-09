@@ -326,8 +326,14 @@ Community participation follows the [Contributor Covenant](CODE_OF_CONDUCT.md).
 
 No. In v0.1 Refute only re-examines planets and false positives that are already known, to measure
 how well its attacks work. Candidate search starts in v0.4, and even then a signal that survives is
-only a **candidate**: confirming a planet takes follow-up observations and expert vetting. Refute can
-prepare a sheet that helps a person submit a community candidate to ExoFOP; it never submits anything.
+only a **candidate**: confirming a planet takes follow-up observations and expert vetting. A dossier
+cannot be sent to ExoFOP as a community candidate: since 2026-08-19 ExoFOP accepts community
+candidates only after they are published in a peer-reviewed journal (or in a Research Note of the
+AAS that cites a peer-reviewed methodology), and only with its approval
+([guidelines](https://exofop.ipac.caltech.edu/tess/candidate_help.php)). Each dossier's `export/`
+sheet only gathers the parameters a person would need for that later step. Refute never submits
+anything; the planned publication path is tracked in
+[klucilla/refute#18](https://github.com/klucilla/refute/issues/18).
 
 </details>
 

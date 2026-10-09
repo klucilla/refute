@@ -23,7 +23,9 @@ dossiers/<run_id>/
                                     holdout_<year>.png
     environment/                    environment.json (Python, platform, package versions),
                                     requirements.txt (installed distributions), uv.lock
-    export/                         ctoi_summary.md, ctoi_fields.json (never submitted)
+    export/                         ctoi_summary.md, ctoi_fields.json: a parameter sheet
+                                    for a human, never submitted; not an ExoFOP upload
+                                    (see the note below)
     REPRODUCE.md                    exact commands to reproduce this dossier
     review/                         v0.2, only if reviewed: reviewer reports, index.json
                                     (report hashes and pre-review fingerprints), index.md
@@ -32,6 +34,13 @@ dossiers/<run_id>/
 
 `run_id` is `<UTC timestamp>-<first 8 hex digits of the claim hash>` unless
 `--run-id` is given.
+
+ExoFOP accepts community candidates only after they are published in a
+peer-reviewed journal, or in a Research Note of the AAS that cites a peer-reviewed
+methodology, and only with ExoFOP's approval (news of 2026-08-19 and
+https://exofop.ipac.caltech.edu/tess/candidate_help.php). A dossier is therefore never
+sent to ExoFOP directly; the `export/` sheet only gathers parameters for that later,
+human step (publication path: issue #18).
 
 ## Integrity
 

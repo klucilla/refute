@@ -29,4 +29,6 @@ completed; a problem while printing the summary never changes it. Whether a self
 passed is a scientific result, reported in `summary.md` and `summary.json`.
 
 Refute never submits anything to any scientific body. The `export/` files in each
-dossier help a human prepare a submission by hand.
+dossier only gather parameters for a human. They are not an ExoFOP upload: ExoFOP
+accepts community candidates only after peer-reviewed publication (or an RNAAS citing a
+peer-reviewed methodology) and with its approval (issue #18).
