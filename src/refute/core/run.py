@@ -232,6 +232,9 @@ def execute_run(
     test_plan = loaded.claim.test_plan
     cache = Path(cache_dir) if cache_dir is not None else default_cache_dir()
     cache.mkdir(parents=True, exist_ok=True)
+    claim_data_messages = prepare_claim_data(pack, loaded, cache, offline)
+    if isinstance(claim_data_messages, RunOutcome):
+        return claim_data_messages
     lock = integrity.lock or {}
     run_state = git_state(claim_file.parent)
     claim_sha = lock["claim_sha256"]
@@ -266,6 +269,7 @@ def execute_run(
         "refute_version": refute.__version__,
         "pack": f"{pack.name} {pack.version}",
         "attachments": [{"path": a.path, "role": a.role} for a in loaded.claim.attachments],
+        "cache_dir": str(cache),
     }
     attachments = tuple(
         (a.path, loaded.attachment_path(a).read_bytes()) for a in loaded.claim.attachments
@@ -316,6 +320,19 @@ def execute_run(
     write_json(run_dir / "summary.json", summary)
     write_text(run_dir / "summary.md", summary_md + _run_footer(summary["run"]))
     return RunOutcome(exit_code=0, run_dir=run_dir, summary=summary, results=results)
+
+
+def prepare_claim_data(
+    pack: Any, loaded: LoadedClaim, cache: Path, offline: bool
+) -> list[str] | RunOutcome:
+    """Run the pack's optional claim-level preparation; any failure stops the run."""
+    prepare = getattr(pack.adapter, "prepare_claim_data", None)
+    if prepare is None:
+        return []
+    try:
+        return list(prepare(loaded, cache, offline))
+    except Exception as exc:  # noqa: BLE001 - reported, the run stops before any analysis
+        return RunOutcome(exit_code=1, messages=[f"claim data check failed: {exc}"])
 
 
 def _safe_project_root() -> Path | None:

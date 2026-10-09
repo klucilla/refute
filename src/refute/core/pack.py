@@ -33,6 +33,15 @@ class PackError(Exception):
 
 @runtime_checkable
 class DataAdapter(Protocol):
+    """Fetches and loads data. Optionally it may also define
+
+    ``prepare_claim_data(loaded, cache_dir, offline) -> list[str]``: claim-level data
+    every target needs (for example a reference catalog that may not be
+    redistributed). The engine calls it once, before any analysis; it must download
+    what is missing (unless offline), verify recorded hashes and raise on any
+    problem, which stops the run.
+    """
+
     def fetch(self, target: dict[str, Any], test_plan: dict[str, Any], cache_dir: Path) -> dict:
         """Download and cache the target's public data (network). Returns a fetch record."""
 

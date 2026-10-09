@@ -9,6 +9,20 @@ format ``refute-eb-catalog-1``: a CSV file with the header
 ``tic_id`` and ``period_days`` may be empty. The script that builds a snapshot
 records the source URL, retrieval time and SHA-256 of the raw catalog next to it.
 
+Some catalogs may not be redistributed (v0.2: TESS-EB, because its terms differ
+between the publisher and the CDS). Their entries appear in the attachment only as
+*reference rows*: catalog and source identifier, with empty coordinates and period.
+The scan record lists such a catalog as an external snapshot (``redistributed:
+false``) with its source URL, its local cache path and the SHA-256 of its canonical
+content. Before any analysis, :func:`prepare_external_snapshots` downloads the file
+if it is missing and checks that hash; if it does not match, the run stops. The
+analyzer then resolves the reference rows from that verified local copy
+(:func:`resolve_references`).
+
+The canonical content of a VizieR ASU response is every non-empty line that does not
+start with ``#``, joined with LF and ending with LF: VizieR writes the query date in
+comment lines, so the raw file changes at every download while its content does not.
+
 Because an extraction around the targets can legitimately be empty, the proof that
 the catalogs were examined comes from a second attachment, role ``eb-catalog-scan``
 (JSON, format ``refute-eb-catalog-scan-1``): the snapshots scanned (file, SHA-256,
@@ -26,9 +40,11 @@ a match by position or ID only is a warning; no match passes.
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import json
 import math
+import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -49,9 +65,13 @@ class EbEntry:
     catalog: str
     source_id: str
     tic_id: int | None
-    ra_deg: float
-    dec_deg: float
+    ra_deg: float | None  # None for a reference row (resolved from an external snapshot)
+    dec_deg: float | None
     period_days: float | None
+
+    @property
+    def is_reference(self) -> bool:
+        return self.ra_deg is None or self.dec_deg is None
 
 
 def _optional(value: str, kind: type) -> int | float | None:
@@ -71,19 +91,114 @@ def parse_catalog(text: str, name: str = "catalog") -> list[EbEntry]:
         if len(row) != len(COLUMNS):
             raise CatalogError(f"{name}: line {line} has {len(row)} fields")
         try:
-            entries.append(
-                EbEntry(
-                    catalog=row[0],
-                    source_id=row[1],
-                    tic_id=_optional(row[2], int),
-                    ra_deg=float(row[3]),
-                    dec_deg=float(row[4]),
-                    period_days=_optional(row[5], float),
-                )
+            entry = EbEntry(
+                catalog=row[0],
+                source_id=row[1],
+                tic_id=_optional(row[2], int),
+                ra_deg=_optional(row[3], float),
+                dec_deg=_optional(row[4], float),
+                period_days=_optional(row[5], float),
             )
         except ValueError as exc:
             raise CatalogError(f"{name}: line {line}: {exc}") from exc
+        if (entry.ra_deg is None) != (entry.dec_deg is None):
+            raise CatalogError(f"{name}: line {line}: give both coordinates or neither")
+        if entry.is_reference and entry.period_days is not None:
+            raise CatalogError(f"{name}: line {line}: a reference row carries no catalog values")
+        entries.append(entry)
     return entries
+
+
+# --- external (not redistributed) snapshots -----------------------------------------
+
+
+def vizier_content(data: bytes) -> bytes:
+    """Canonical content of a VizieR ASU response (comment lines removed, LF endings)."""
+    text = data.decode("utf-8").replace("\r\n", "\n")
+    lines = [ln for ln in text.split("\n") if ln and not ln.startswith("#")]
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+def content_sha256(data: bytes) -> str:
+    return hashlib.sha256(vizier_content(data)).hexdigest()
+
+
+def parse_tess_eb(data: bytes) -> dict[str, tuple[float, float, float | None]]:
+    """TESS-EB VizieR TSV (TIC, m_TIC, RAJ2000, DEJ2000, Per) keyed by 'TIC <tic> (<m>)'."""
+    lines = vizier_content(data).decode("utf-8").splitlines()
+    if not lines or lines[0].split("\t")[:5] != ["TIC", "m_TIC", "RAJ2000", "DEJ2000", "Per"]:
+        raise CatalogError("unexpected TESS-EB snapshot header")
+    rows = {}
+    for line in lines[3:]:  # header, units, dashes
+        tic, m_tic, ra, dec, per = (f.strip() for f in line.split("\t"))
+        rows[f"TIC {int(tic)} ({m_tic})"] = (float(ra), float(dec), _optional(per, float))
+    return rows
+
+
+EXTERNAL_PARSERS = {"tess-eb-vizier-tsv": parse_tess_eb}
+
+
+def external_snapshots(scan: dict | None) -> list[dict]:
+    return [s for s in (scan or {}).get("snapshots", []) if s.get("redistributed") is False]
+
+
+def prepare_external_snapshots(
+    scan: dict | None, cache_dir: Path, offline: bool, download=None
+) -> list[str]:
+    """Make sure every external snapshot is in the cache with the recorded content hash.
+
+    Downloads a missing file from its recorded URL (unless ``offline``). Raises
+    :class:`CatalogError` if a file is missing offline or its content hash differs:
+    the run must stop before any analysis. Returns one message per snapshot.
+    """
+    fetch = download or _download
+    messages = []
+    for snap in external_snapshots(scan):
+        path = Path(cache_dir) / snap["cache_path"]
+        if not path.is_file():
+            if offline:
+                raise CatalogError(
+                    f"{snap['catalog_name']} snapshot not in the cache ({snap['cache_path']}); "
+                    "run without --offline to download it"
+                )
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(fetch(snap["url"]))
+        digest = content_sha256(path.read_bytes())
+        if digest != snap["content_sha256"]:
+            raise CatalogError(
+                f"{snap['catalog_name']} snapshot content SHA-256 is {digest}, the claim records "
+                f"{snap['content_sha256']}: STOP (the source changed or the file is corrupt)"
+            )
+        messages.append(f"{snap['catalog_name']}: content SHA-256 verified ({digest})")
+    return messages
+
+
+def _download(url: str) -> bytes:
+    request = urllib.request.Request(url, headers={"User-Agent": "refute"})
+    with urllib.request.urlopen(request, timeout=180) as response:  # noqa: S310 - recorded URL
+        return response.read()
+
+
+def resolve_references(entries: list[EbEntry], scan: dict | None, cache_dir: Path) -> list[EbEntry]:
+    """Fill reference rows from the verified external snapshots (offline)."""
+    if not any(e.is_reference for e in entries):
+        return entries
+    tables: dict[str, dict] = {}
+    for snap in external_snapshots(scan):
+        data = (Path(cache_dir) / snap["cache_path"]).read_bytes()
+        if content_sha256(data) != snap["content_sha256"]:
+            raise CatalogError(f"{snap['catalog_name']} snapshot hash mismatch: STOP")
+        tables[snap["catalog_name"]] = EXTERNAL_PARSERS[snap["parser"]](data)
+    resolved = []
+    for entry in entries:
+        if entry.is_reference:
+            table = tables.get(entry.catalog)
+            if table is None or entry.source_id not in table:
+                raise CatalogError(f"reference row {entry.catalog} {entry.source_id} not found")
+            ra, dec, per = table[entry.source_id]
+            entry = EbEntry(entry.catalog, entry.source_id, entry.tic_id, ra, dec, per)
+        resolved.append(entry)
+    return resolved
 
 
 def load_catalogs(paths: list[Path]) -> list[EbEntry]:
@@ -145,6 +260,8 @@ def check_eb_catalog(
         )
     scanned = sum(int(s["rows"]) for s in scan["snapshots"])
     names = ", ".join(Path(s["file"]).name for s in scan["snapshots"])
+    if any(e.is_reference for e in entries):
+        raise CatalogError("unresolved reference rows: resolve them before the cross-match")
     matches = []
     for entry in entries:
         sep = separation_arcsec(star.ra_deg, star.dec_deg, entry.ra_deg, entry.dec_deg)

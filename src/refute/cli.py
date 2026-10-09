@@ -118,7 +118,15 @@ def fetch_command(
     if missing:
         typer.echo(f"unknown target(s): {', '.join(missing)}", err=True)
         raise typer.Exit(1)
+    from refute.core.run import RunOutcome, prepare_claim_data
+
     cache = cache_dir or default_cache_dir()
+    prepared = prepare_claim_data(loaded.pack, loaded, cache, offline=False)
+    if isinstance(prepared, RunOutcome):
+        typer.echo(prepared.messages[0], err=True)
+        raise typer.Exit(1)
+    for message in prepared:
+        typer.echo(message)
     failures = 0
     for item in selected:
         key = loaded.pack.schema.target_key(item)

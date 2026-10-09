@@ -169,6 +169,14 @@ snapshot records the source URL, retrieval time and SHA-256 of the raw catalog.
 Without such attachments the test is not part of the gauntlet, and every dossier
 report says so.
 
+A catalog that may not be redistributed (v0.2: TESS-EB) appears in `eb_catalog.csv`
+only as reference rows (catalog and identifier, no values). Its scan record gives the
+source URL and the SHA-256 of its canonical content (comment lines removed, since
+VizieR writes the query date in them). Before any analysis the engine calls the
+pack's `prepare_claim_data`, which downloads the file if it is missing and checks
+that hash; a mismatch stops the run. The reference rows are resolved from the
+verified local copy.
+
 Because a catalog may share sources with the dispositions used to select known
 false positives, a calibration claim can list `eb_catalog` in
 `pass_criteria.flag_excluded_tests`: a false positive then counts as *flagged* only

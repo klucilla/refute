@@ -397,6 +397,21 @@ class TessAdapter:
         write_json(manifest_path(cache_dir, tic_id), manifest)
         return manifest
 
+    def prepare_claim_data(self, loaded: Any, cache_dir: Path, offline: bool) -> list[str]:
+        """Claim-level data needed before any analysis (engine hook, see core.pack).
+
+        For the TESS pack: external catalog snapshots listed in the ``eb-catalog-scan``
+        attachment (not redistributed) are downloaded if missing and their content
+        hash is checked. Raises on any mismatch, so the run stops.
+        """
+        from refute.packs.tess.ebcatalog import load_scan, prepare_external_snapshots
+
+        attachment = loaded.attachment_by_role("eb-catalog-scan")
+        if attachment is None:
+            return []
+        scan = load_scan(loaded.attachment_path(attachment))
+        return prepare_external_snapshots(scan, Path(cache_dir), offline)
+
     def load(self, target: dict[str, Any], test_plan: dict[str, Any], cache_dir: Path) -> TessData:
         plan = TessTestPlan.model_validate(test_plan)
         tic_id = int(target["tic_id"])

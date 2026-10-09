@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from refute.core.verdict import Severity, TestResult, TestStatus, aggregate, enforce_coverage
@@ -20,7 +21,13 @@ from refute.packs.tess.battery import (
     check_systematics,
 )
 from refute.packs.tess.detrend import detrend
-from refute.packs.tess.ebcatalog import EbEntry, check_eb_catalog, load_catalogs, load_scan
+from refute.packs.tess.ebcatalog import (
+    EbEntry,
+    check_eb_catalog,
+    load_catalogs,
+    load_scan,
+    resolve_references,
+)
 from refute.packs.tess.ephemeris import Ephemeris, fit_linear_ephemeris, measure_transit_times
 from refute.packs.tess.events import EventDepths, per_event_depths, per_point_sigma, transit_mask
 from refute.packs.tess.gauntlet import (
@@ -412,6 +419,12 @@ class TessAnalyzer:
             if a.get("role") == "eb-catalog-scan"
         ]
         catalog_scan = load_scan(scan_paths[0]) if scan_paths else None
+        if catalogs is not None:
+            # Reference rows of catalogs that are not redistributed are resolved from
+            # the local snapshot verified before the run (prepare_claim_data).
+            catalogs = resolve_references(
+                catalogs, catalog_scan, Path(context.get("cache_dir", "."))
+            )
         analysis = analyze_data(data, plan, catalogs=catalogs, catalog_scan=catalog_scan)
         analysis.extras["eb_catalog_configured"] = catalogs is not None
         result = build_result(target, data, plan, analysis, context)
