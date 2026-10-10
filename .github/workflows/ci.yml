@@ -32,7 +32,9 @@ jobs:
         run: uv run ruff format --check .
       # The tests that spread work over processes use REFUTE_WORKERS when it is set
       # (src/refute/core/runner.py). In CI it is every core of the runner; locally the
-      # default stays os.cpu_count() - 2. The worker count never changes results.
+      # default stays os.cpu_count() - 2. The number of workers should change only the
+      # execution, preserving the scientific results (a worker-count equivalence test
+      # is planned: docs/validation/v0.2.1/workers-equivalence-acceptance.md).
       # pytest-xdist is not used.
       - name: Runner CPUs and test parallelism
         shell: bash

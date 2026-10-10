@@ -6,7 +6,9 @@
 
 The default number of analysis workers is ``os.cpu_count() - 2`` (at least 1). The
 environment variable ``REFUTE_WORKERS`` (a positive integer) overrides it; CI sets it
-to every core of the runner. The worker count never changes results.
+to every core of the runner. The number of workers should change only the
+execution, preserving the scientific results; a test comparing worker counts is
+planned (docs/validation/v0.2.1/workers-equivalence-acceptance.md).
 Tasks must be top-level functions with picklable arguments.
 """
 
