@@ -2,8 +2,9 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-10 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended once (Amendment 1, below): the wording
-of one expectation in B1, with the reason recorded.
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended twice (below): Amendment 1 corrects
+the wording of one expectation in B1; Amendment 2 records the sabotage results,
+corrects the planned-sabotage table and records one open item. Reasons recorded.
 
 ## Problem
 
@@ -218,7 +219,7 @@ before the next. Each must be caught by the cases listed.
 
 | Sabotage | Must be caught by |
 |---|---|
-| S1. The guard always reports a valid train | A1-A5, B1, B2, B4, D3 |
+| S1. The guard always reports a valid train | A1-A5, B1, B2, B4, ~~D3~~ (corrected by Amendment 2) |
 | S2. Rule (a) uses an SNR measured on train plus hidden data (a leak) | C1 |
 | S3. An invalid train gives FAIL instead of INCONCLUSIVE | A5, B1, B2, B4, D1 |
 | S4a. Rule (a) removed | A1, B2, B3 |
@@ -259,6 +260,46 @@ not touch them, and the test written in the second commit checks exactly that: t
 have no reason and the same status with the guard on and off. The sentence is
 corrected to that wording. No expectation was weakened: the guard-on and guard-off
 statuses must still be identical, and the 2020 round expectation is unchanged.
+
+## Amendment 2 (2026-10-10): sabotage results
+
+After the code passed every case (commit `78d79f5`), the planned sabotages were run
+against the H4 tests only (`tests/test_holdout_train_validity.py`,
+`tests/test_holdout_train_validity_e2e.py`, `tests/test_holdout_blindness.py`). The
+changes to the implementation were staged first, each sabotage was applied to
+`src/refute/packs/tess/holdout.py`, the tests were run, and the file was restored
+from the index; `git diff` was empty after every restore. Nothing was committed.
+
+| Sabotage | Failing cases | Caught by | Planned and caught |
+|---|---|---|---|
+| S1. The guard always reports a valid train | 62 | A1-A6, B1-B4, C1, C2 | yes, except D3 (see below) |
+| S2. Rule (a) uses an SNR measured on train plus hidden data | 51 | C1 (36 cases), A6, B2, B3 | yes |
+| S3. An invalid train gives FAIL instead of INCONCLUSIVE | 68 | A5, B1-B4, C1, C2, D | yes |
+| S4a. Rule (a) removed | 23 | A1, A4, A5, A6, B2, B3 | yes |
+| S4b. Rule (b) removed | 31 | A2, A4, A5, B1, B4, C1, C2 | yes |
+| S4c. Rule (c) removed | 3 | A3, A4, A5 (rule (c) alone) | yes |
+| S5. Rule (c) computed from the hidden cadence times | 0 | none | not detectable (see below) |
+
+**Correction of the planned table (S1 and D3).** The table listed D3 among the cases
+that catch S1. That was wrong: D3 restricts *where* train-validity reasons may appear
+(only in the listed scenarios, and in `noise` and `vanishing` only on rounds already
+INCONCLUSIVE without the guard). S1 removes every reason, so D3 has nothing to
+reject, and D1 and D2 hold trivially because the guard never acts. S1 is caught by
+the cases that require a reason to be present (A1-A6, B1-B4, C1, C2). This is a
+correction of the plan, not a coverage gap.
+
+**Open item: S5 is not detectable with the current scenarios.** In every synthetic
+scenario a sector's metadata span `[t_start, t_end]` is exactly the first and last
+cadence time of that sector, and the blindness tests replace the hidden flux while
+keeping its times. Computing rule (c) from the hidden cadence times therefore gives
+the same value as computing it from the metadata, and no test can tell the two apart.
+The rule is correct as implemented (it reads only `SectorInfo` spans in
+`_round`, and `plan_round` receives the spans, never hidden cadences), but that is
+shown by reading the code, not by a test. A scenario that would make S5 detectable:
+cadences removed from part of the hidden year (for example a gap inside a hidden
+sector, or the hidden sector's last days missing) while its metadata span stays
+whole, so that cadence-based and metadata-based fractions differ. Not implemented in
+H4; recorded as an open item.
 
 ## Out of scope
 
