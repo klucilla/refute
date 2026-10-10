@@ -1,10 +1,10 @@
 # v0.2.1 H3 (timing uncertainty in the blind holdout): measurement protocol
 
-Status: **part 1, the measurement protocol, is fixed before any measurement runs.**
-This file is committed on its own, before the measurement it describes. Written
-2026-10-10 on branch `claude/v0-2-1-gauntlet-fixes-13f5e7`. The acceptance criteria
-for the implementation (part 2) are written after the maintainer chooses `N_min`
-from the results of part 1.
+Status: **closed: no limit was sustained and option A is abandoned.** Part 1, the
+measurement protocol, was committed on its own (`ec5e30d`) before the measurement ran;
+the "Part 1 result" section was added afterwards, without changing the protocol.
+Written 2026-10-10 on branch `claude/v0-2-1-gauntlet-fixes-13f5e7`. There is no part 2:
+the timing problem moves to H3b (see the end of this file).
 
 ## Problem
 
@@ -144,10 +144,134 @@ FAIL: the floor changes the fit weights, the period and the predictions. For eve
 cell, FAIL with the floor is compared with FAIL without it, and any increase is
 reported.
 
-## Open items
+## Part 1 result (2026-10-10)
 
-- **H3b**: measure transit times with a model that has an ingress (trapezoid) instead
-  of a box, so the formal timing error is realistic without a floor. It will need its
-  own validation against correlated noise and low SNR. Not part of H3.
+Measured with the protocol above, unchanged, on the code of commit `78d79f5` (the
+engine after H4; `ec5e30d` only added this file). 36 cells x 60 seeds x (without,
+with the floor) = 4320 rounds. The scripts and the raw results are in
+`docs/validation/v0.2.1/H3/` (`measure.py`, `tables.py`, `results.json`); a second run
+of the committed `measure.py` reproduced `results.json` byte for byte (SHA-256
+`65417d91f2e27789901fd5a6064b2eb4dcdd0b74f2f6db8545558caaa8689099`). The tables
+below are the output of `tables.py`.
+
+### Table 1. Calibration without the floor (periodic signals, 60 trials per cell)
+
+| Signal | Noise | N | Orbit (d) | Measured N | Other signal | Trials with ephemeris | Trials with a 3-sigma deviation | Transits > 3 sigma / total | Trials that read | Trials with a window loss | 95% upper bound | < 5%? |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| planet | white | 3 | 5.2 | 3-3 | 0 | 60 | 8 | 56 / 420 | 0 | 0 | 4.9% | yes |
+| planet | white | 4 | 5.8 | 4-4 | 0 | 60 | 3 | 21 / 420 | 19 | 2 | 10.1% | no |
+| planet | white | 5 | 8.9 | 5-5 | 0 | 60 | 3 | 21 / 420 | 20 | 1 | 7.7% | no |
+| planet | white | 6 | 9.5 | 6-6 | 0 | 60 | 5 | 35 / 420 | 35 | 3 | 12.4% | no |
+| planet | white | 7 | 12.6 | 7-7 | 0 | 60 | 3 | 21 / 420 | 47 | 0 | 4.9% | yes |
+| planet | white | 8 | 13.2 | 8-8 | 0 | 60 | 0 | 0 / 420 | 57 | 0 | 4.9% | yes |
+| planet | red | 3 | 5.2 | 2-3 | 3 | 57 | 11 | 77 / 399 | 0 | 0 | 4.9% | yes |
+| planet | red | 4 | 5.8 | 4-4 | 0 | 60 | 7 | 49 / 420 | 6 | 1 | 7.7% | no |
+| planet | red | 5 | 8.9 | 5-10 | 1 | 59 | 6 | 42 / 413 | 10 | 3 | 12.4% | no |
+| planet | red | 6 | 9.5 | 6-6 | 0 | 60 | 4 | 28 / 420 | 5 | 1 | 7.7% | no |
+| planet | red | 7 | 12.6 | 7-7 | 0 | 60 | 4 | 28 / 420 | 13 | 0 | 4.9% | yes |
+| planet | red | 8 | 13.2 | 7-8 | 0 | 60 | 2 | 14 / 420 | 14 | 0 | 4.9% | yes |
+| false_positive | white | 3 | 4.2 | 3-3 | 0 | 60 | 4 | 36 / 540 | 0 | 0 | 4.9% | yes |
+| false_positive | white | 4 | 4.5 | 4-4 | 0 | 60 | 3 | 27 / 540 | 28 | 2 | 10.1% | no |
+| false_positive | white | 5 | 7.1 | 5-5 | 0 | 60 | 1 | 9 / 540 | 38 | 0 | 4.9% | yes |
+| false_positive | white | 6 | 7.4 | 6-6 | 0 | 60 | 2 | 18 / 540 | 54 | 0 | 4.9% | yes |
+| false_positive | white | 7 | 10.0 | 7-7 | 0 | 60 | 1 | 9 / 540 | 60 | 0 | 4.9% | yes |
+| false_positive | white | 8 | 10.3 | 8-8 | 0 | 60 | 0 | 0 / 540 | 60 | 0 | 4.9% | yes |
+| false_positive | red | 3 | 4.2 | 3-3 | 0 | 60 | 4 | 36 / 540 | 0 | 0 | 4.9% | yes |
+| false_positive | red | 4 | 4.5 | 4-4 | 0 | 60 | 8 | 72 / 540 | 16 | 3 | 12.4% | no |
+| false_positive | red | 5 | 7.1 | 5-5 | 0 | 60 | 3 | 27 / 540 | 14 | 1 | 7.7% | no |
+| false_positive | red | 6 | 7.4 | 6-6 | 0 | 60 | 7 | 63 / 540 | 26 | 3 | 12.4% | no |
+| false_positive | red | 7 | 10.0 | 7-7 | 0 | 60 | 0 | 0 / 540 | 43 | 0 | 4.9% | yes |
+| false_positive | red | 8 | 10.3 | 8-8 | 0 | 60 | 3 | 27 / 540 | 56 | 1 | 7.7% | no |
+
+### Criterion by N (the four periodic cells, without the floor)
+
+| N | planet white | planet red | FP white | FP red | N satisfies |
+|---|---|---|---|---|---|
+| 3 | yes | yes | yes | yes | yes |
+| 4 | no | no | no | no | no |
+| 5 | no | no | yes | no | no |
+| 6 | no | no | yes | no | no |
+| 7 | yes | yes | yes | yes | yes |
+| 8 | yes | yes | yes | no | no |
+
+Smallest N that satisfies it with every larger measured N: none: no limit sustained
+
+### Table 2. Outcomes without / with the floor (applied at every N, 60 trials)
+
+| Signal | Noise | N | PASS | FAIL | INCONCLUSIVE | FAIL increase with the floor? | Trials with a window loss |
+|---|---|---|---|---|---|---|---|
+| planet | white | 3 | 0 / 0 | 0 / 0 | 60 / 60 | no (+0, -0) | 0 / 0 |
+| planet | white | 4 | 17 / 0 | 2 / 0 | 41 / 60 | no (+0, -2) | 2 / 0 |
+| planet | white | 5 | 20 / 0 | 0 / 0 | 40 / 60 | no (+0, -0) | 1 / 0 |
+| planet | white | 6 | 32 / 0 | 3 / 0 | 25 / 60 | no (+0, -3) | 3 / 0 |
+| planet | white | 7 | 47 / 0 | 0 / 0 | 13 / 60 | no (+0, -0) | 0 / 0 |
+| planet | white | 8 | 57 / 31 | 0 / 0 | 3 / 29 | no (+0, -0) | 0 / 0 |
+| planet | red | 3 | 0 / 0 | 0 / 0 | 60 / 60 | no (+0, -0) | 0 / 0 |
+| planet | red | 4 | 5 / 0 | 1 / 0 | 54 / 60 | no (+0, -1) | 1 / 0 |
+| planet | red | 5 | 7 / 0 | 3 / 0 | 50 / 60 | no (+0, -3) | 3 / 0 |
+| planet | red | 6 | 4 / 0 | 1 / 0 | 55 / 60 | no (+0, -1) | 1 / 0 |
+| planet | red | 7 | 13 / 0 | 0 / 0 | 47 / 60 | no (+0, -0) | 0 / 0 |
+| planet | red | 8 | 14 / 0 | 0 / 0 | 46 / 60 | no (+0, -0) | 0 / 0 |
+| false_positive | white | 3 | 0 / 0 | 0 / 0 | 60 / 60 | no (+0, -0) | 0 / 0 |
+| false_positive | white | 4 | 28 / 0 | 0 / 0 | 32 / 60 | no (+0, -0) | 2 / 0 |
+| false_positive | white | 5 | 38 / 38 | 0 / 0 | 22 / 22 | no (+0, -0) | 0 / 0 |
+| false_positive | white | 6 | 54 / 54 | 0 / 0 | 6 / 6 | no (+0, -0) | 0 / 0 |
+| false_positive | white | 7 | 60 / 60 | 0 / 0 | 0 / 0 | no (+0, -0) | 0 / 0 |
+| false_positive | white | 8 | 60 / 60 | 0 / 0 | 0 / 0 | no (+0, -0) | 0 / 0 |
+| false_positive | red | 3 | 0 / 0 | 0 / 0 | 60 / 60 | no (+0, -0) | 0 / 0 |
+| false_positive | red | 4 | 14 / 0 | 2 / 0 | 44 / 60 | no (+0, -2) | 3 / 0 |
+| false_positive | red | 5 | 13 / 0 | 1 / 0 | 46 / 60 | no (+0, -1) | 1 / 0 |
+| false_positive | red | 6 | 23 / 25 | 3 / 1 | 34 / 34 | no (+0, -2) | 3 / 1 |
+| false_positive | red | 7 | 43 / 43 | 0 / 0 | 17 / 17 | no (+0, -0) | 0 / 0 |
+| false_positive | red | 8 | 56 / 56 | 0 / 0 | 4 / 4 | no (+0, -0) | 1 / 0 |
+| vanishing | white | 3 | 0 / 0 | 0 / 0 | 60 / 60 | no (+0, -0) | n/a |
+| vanishing | white | 4 | 0 / 0 | 19 / 0 | 41 / 60 | no (+0, -19) | n/a |
+| vanishing | white | 5 | 0 / 0 | 20 / 0 | 40 / 60 | no (+0, -20) | n/a |
+| vanishing | white | 6 | 0 / 0 | 35 / 0 | 25 / 60 | no (+0, -35) | n/a |
+| vanishing | white | 7 | 0 / 0 | 47 / 0 | 13 / 60 | no (+0, -47) | n/a |
+| vanishing | white | 8 | 0 / 0 | 57 / 31 | 3 / 29 | no (+0, -26) | n/a |
+| vanishing | red | 3 | 0 / 0 | 0 / 0 | 60 / 60 | no (+0, -0) | n/a |
+| vanishing | red | 4 | 0 / 0 | 6 / 0 | 54 / 60 | no (+0, -6) | n/a |
+| vanishing | red | 5 | 1 / 0 | 9 / 0 | 50 / 60 | no (+0, -9) | n/a |
+| vanishing | red | 6 | 0 / 0 | 5 / 0 | 55 / 60 | no (+0, -5) | n/a |
+| vanishing | red | 7 | 0 / 0 | 13 / 0 | 47 / 60 | no (+0, -13) | n/a |
+| vanishing | red | 8 | 0 / 0 | 14 / 0 | 46 / 60 | no (+0, -14) | n/a |
+
+### Conclusion
+
+1. **No limit was sustained.** `N = 7` satisfies the criterion in the four periodic
+   cells, but `N = 8` does not (false positive, red noise: 1 window loss in 60, upper
+   bound 7.7%), so no `N` satisfies it together with every larger measured `N`.
+   **Option A (a floor by count of train transit times) is abandoned.**
+2. **The underestimation exists at every N**, not only with few train times: 3-sigma
+   deviations appear in 0 to 11 of 60 trials at every `N`, up to 19% of transits per
+   cell against about 0.27% for a calibrated Gaussian error; window losses that lead
+   to FAIL of a real planet appear at `N` = 4, 5 and 6 (1 to 3 per cell).
+3. **The floor removes the losses but removes the power.** With the ingress at its
+   geometric maximum, the floor removed every window loss but one, and it never
+   increased FAIL in any of the 36 cells (tested: no new FAIL). But it removed almost
+   all PASS of planets up to `N = 7` and almost all the power against a vanishing
+   signal (FAIL 47 to 0 at `N = 7`, 57 to 31 at `N = 8`, white noise) in this design
+   (two years, prediction about 200 epochs ahead).
+
+### A defect of the protocol's own criterion
+
+`N = 3` "satisfied" the criterion only **vacuously**: no round with 3 train times read
+the hidden year (all ended INCONCLUSIVE through the timing-uncertainty rule), and the
+protocol counted rounds that were not read as trials without a loss. A criterion
+that a test can satisfy by never looking is not evidence of calibration.
+
+**Rule for the next measurement protocols:** only rounds that **read the hidden
+year** count as trials of a window-loss criterion, and the protocol declares, before
+measuring, the minimum number of such reads per cell below which the cell is
+reported as "not enough reads" and cannot satisfy the criterion.
+
+## Open items and follow-up
+
+- **H3b** (moved into the v0.2.1 package by the maintainer, 2026-10-10, after the
+  part 1 result; no longer an open item): measure transit times with a model that
+  has an ingress (trapezoid) instead of a box, so the formal timing error is
+  realistic without a floor. It needs its own plan, approved separately, and its own
+  validation against correlated noise and low SNR, following the rule above.
 - **Global ephemeris** (dossier and exporter): reported only; its errors have the same
   underestimation. Linked to H13; not part of H3.
