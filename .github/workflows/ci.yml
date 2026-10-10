@@ -30,7 +30,16 @@ jobs:
         run: uv run ruff check .
       - name: Format
         run: uv run ruff format --check .
+      # The tests that spread work over processes use REFUTE_WORKERS when it is set
+      # (src/refute/core/runner.py). In CI it is every core of the runner; locally the
+      # default stays os.cpu_count() - 2. The worker count never changes results.
+      # pytest-xdist is not used.
+      - name: Runner CPUs and test parallelism
+        shell: bash
+        run: |
+          uv run python -c "import importlib.util, os; print('os.cpu_count():', os.cpu_count()); print('pytest-xdist installed:', importlib.util.find_spec('xdist') is not None)"
+          echo "REFUTE_WORKERS=$(uv run python -c 'import os; print(os.cpu_count() or 1)')" >> "$GITHUB_ENV"
       # Tests run with --disable-socket (pytest-socket, see pyproject.toml):
       # any attempt to use the network fails the test suite.
       - name: Tests (no network)
-        run: uv run pytest
+        run: uv run pytest --durations=25
