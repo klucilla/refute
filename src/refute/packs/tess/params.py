@@ -180,6 +180,14 @@ class HoldoutParams(_Model):
     # timing uncertainty in the hidden year exceeds this many transit durations.
     hidden_detrend_window_factor: float = Field(3.0, gt=0)
     max_timing_sigma_durations: float = Field(1.0, gt=0)
+    # v0.2.1 (H4): a round whose train-only candidate fails the SNR gate, has a box
+    # longer than this fraction of its period, or predicts transit windows covering
+    # more than this fraction of the hidden year is INCONCLUSIVE before the hidden year
+    # is read. Both limits follow from the window geometry (docs/gauntlet-tess-v0.2.1.md).
+    # require_valid_train: false reports the rules without applying them.
+    require_valid_train: bool = True
+    max_train_duration_period_ratio: float = Field(0.2, gt=0, le=1)
+    max_hidden_window_fraction: float = Field(0.5, gt=0, le=1)
 
 
 class GauntletParams(_Model):

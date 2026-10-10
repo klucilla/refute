@@ -62,7 +62,9 @@ test_plan:
                         min_train_transits: 3, min_window_coverage: 0.5,
                         baseline_gap_durations: 0.25, baseline_outer_durations: 1.5,
                         timing_step_minutes: 1.0, timing_scan_half_width_durations: 0.5,
-                        hidden_detrend_window_factor: 3.0, max_timing_sigma_durations: 1.0}
+                        hidden_detrend_window_factor: 3.0, max_timing_sigma_durations: 1.0,
+                        require_valid_train: true, max_train_duration_period_ratio: 0.2,
+                        max_hidden_window_fraction: 0.5}
     events:            {min_coverage: 0.5, baseline_gap_durations: 0.25,
                         baseline_outer_durations: 1.5}
     centroid_shift:    {max_sigma: 3.0, min_offset_pixels: 0.5, min_sectors: 1}
@@ -83,7 +85,9 @@ test_plan:
 ```
 
 What each parameter does is described in [gauntlet-tess-v0.1.md](gauntlet-tess-v0.1.md)
-and, for the sections added in v0.2, [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md).
+and, for the sections added in v0.2, [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md);
+the v0.2.1 additions (`holdout_by_year` train validity) are in
+[gauntlet-tess-v0.2.1.md](gauntlet-tess-v0.2.1.md).
 The `eb_catalog` test runs only if the claim has attachments with role `eb-catalog`
 (format `refute-eb-catalog-1`). A second attachment with role `eb-catalog-scan`
 (format `refute-eb-catalog-scan-1`) records which catalog snapshots were scanned,

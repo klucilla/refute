@@ -2,7 +2,8 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-10 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`.
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended once (Amendment 1, below): the wording
+of one expectation in B1, with the reason recorded.
 
 ## Problem
 
@@ -153,7 +154,8 @@ is never skipped. Premises about today's behavior are checked in the test itself
   INCONCLUSIVE with reason (b) only; (c) does not trigger (window fraction below 0.5);
   the hidden year is not read. The other rounds of this scenario fail with a *valid*
   train (the sinusoid in their hidden year lowers the SNR); that is outside H4 and
-  they must stay FAIL. Seeds 0-4.
+  ~~they must stay FAIL~~ *(Amendment 1)* they have no reason and the same status with
+  the guard on and off. Seeds 0-4.
 - B2. **(a) alone turns a FAIL into INCONCLUSIVE (declared test double).** Scenario
   `vanishing`, round hiding 2020 (train 2018 holds the real signal). Inside the test
   only, the train search of that round (`refute.packs.tess.holdout.search_period`) is
@@ -246,6 +248,17 @@ locked commit `cc9d104`.
   an INCONCLUSIVE holdout. The blind holdout is not the eclipsing-binary test.
 - **Variability in the hidden year** (the other rounds of B1) still lowers the hidden
   SNR with a valid train; that is outside H4 (closer to H6).
+
+## Amendment 1 (2026-10-10): wording of B1
+
+B1 said that the other rounds of `variability_train_only` (hiding 2018 and 2019)
+"must stay FAIL". That is not true of every development seed: in the prototype run
+before this file was written, the 2019 round of seed 3 is PASS (hidden SNR 5.2), so
+those rounds are not all FAIL even without H4. What B1 needs to show is that H4 does
+not touch them, and the test written in the second commit checks exactly that: they
+have no reason and the same status with the guard on and off. The sentence is
+corrected to that wording. No expectation was weakened: the guard-on and guard-off
+statuses must still be identical, and the 2020 round expectation is unchanged.
 
 ## Out of scope
 
