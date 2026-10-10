@@ -2,7 +2,9 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-10 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7` (from `main` at `3dec26f`).
+`claude/v0-2-1-gauntlet-fixes-13f5e7` (from `main` at `3dec26f`). Amended once
+(Amendment 1, below): A11 strengthened and B6 added, with the reason recorded; no
+case was removed or weakened.
 
 ## Problem
 
@@ -84,6 +86,9 @@ Unchanged (regression):
   on and off, for the same results.
 - A11. Monotonicity property: for randomly generated result sets (development seeds),
   `flagged with H7 ⊆ flagged without H7`, and the denominator is the same.
+  *Strengthened by Amendment 1:* `flagged with H7` equals `flagged without H7` minus
+  the false positives whose signal is not recovered (computed by the test from the
+  definition above), and for at least one development seed the inclusion is strict.
 - A12. Reporting: the criterion is named
   `flagged false positives (signal recovered)`, or
   `flagged false positives (signal recovered; without <tests>)` with exclusions.
@@ -118,6 +123,11 @@ search found). If the premise does not hold, the test **fails**; it is never ski
   Premise: the found period matches P or P/2. Expected: signal recovered.
 - B5. **Planets unchanged.** `planet` and `planet_three_years`: `recovered` and
   `refuted planets` identical with the flag on and off.
+- B6. **Forced aliases** *(added by Amendment 1)*. `eb_secondary` with the published
+  period set to 2 x the injected period and to 1/2 x the injected period. Premise: the
+  found period matches the injected period, and the factor that matches the published
+  period is exactly P/2 (first case) or 2P (second case), with no other factor
+  matching. Expected: signal recovered and flagged with the flag on.
 
 ## Seeds
 
@@ -168,6 +178,34 @@ as a future-phase item (milestone v1.0); nothing is implemented now.
   **Open item.**
 - **Coverage**: "signal not recovered" stays in the denominator; `signal_recovered`
   is available for the coverage requirement defined later in v0.2.1.
+
+## Amendment 1 (2026-10-10): gaps found by deliberate sabotage
+
+After the code passed every case, three temporary sabotages of the implementation
+(never committed, each reverted with an empty `git diff` before the next) were run
+against the H7 tests only, to check that the tests detect defects:
+
+1. `signal_recovered` always returns true: caught (A4-A7, A12, B1, B2).
+2. The factors are ignored (only P is accepted): caught by A2, A3 and A12, but
+   **not by B4**. On development seeds 0-2 the search finds P, not P/2, for
+   `eb_equal`, and the premise of B4 accepts either, so no end-to-end case exercised
+   the 2P or P/2 path.
+3. `evaluate` ignores the flag (counts as in v0.2): caught by A4-A7, A12, B1 and B2,
+   but **not by A11**. `flagged with H7 ⊆ flagged without H7` also holds when H7 is
+   disabled (equal sets), so the property only caught H7 creating flags, not H7
+   being switched off.
+
+Changes, all additions, none removing or weakening a case:
+
+- A11 is strengthened as written above (exact difference, plus a strict inclusion on
+  at least one development seed).
+- B6 is added (published period forced to 2 x and 1/2 x the injected period, so the
+  P/2 and 2P paths are exercised end to end regardless of which alias the search
+  happens to find). B4 stays as written.
+
+The definition, the factors, the tolerance and the seeds do not change. Sabotages 2
+and 3 are rerun after the new tests exist: sabotage 2 must then also fail B6, and
+sabotage 3 must also fail A11.
 
 ## Out of scope
 
