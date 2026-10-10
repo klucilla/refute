@@ -1,5 +1,5 @@
 """v0.2.1 H7 end to end on synthetic data: full analysis, build_result, then the
-calibrator. Cases B1-B5 of docs/validation/v0.2.1/H7-acceptance.md.
+calibrator. Cases B1-B6 of docs/validation/v0.2.1/H7-acceptance.md.
 
 Every case first checks its premise (which period the search found). A premise that
 does not hold fails the test; it is never skipped.
@@ -125,6 +125,23 @@ def test_b4_equal_eclipses_found_at_an_allowed_alias_are_recovered(analyses, see
     assert _matches(found, INJECTED["eb_equal"], (1.0, 0.5)), f"premise: found {found} d"
     on = _summary([result], True)
     assert on["targets"][0]["signal_recovered"] is True
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+@pytest.mark.parametrize(("multiple", "factor"), [(2.0, 0.5), (0.5, 2.0)])
+def test_b6_forced_aliases_are_recovered(analyses, multiple, factor, seed):
+    # Amendment 1: the published period is 2x (found = P/2) or 1/2x (found = 2P) the
+    # injected one, so the alias factors are exercised whichever alias the search finds.
+    published = INJECTED["eb_secondary"] * multiple
+    result = _result(analyses, "eb_secondary", seed, "false_positive", published)
+    found = _found(result)
+    assert _matches(found, INJECTED["eb_secondary"], (1.0,)), f"premise: found {found} d"
+    matching = [f for f in FACTORS if _matches(found, published, (f,))]
+    assert matching == [factor], f"premise: found {found} d matches factors {matching}"
+    assert result["verdict"] == "REFUTED"
+    on = _summary([result], True)
+    assert on["targets"][0]["signal_recovered"] is True
+    assert on["self_claim"]["criteria"][1]["value"] == 1
 
 
 @pytest.mark.parametrize("seed", SEEDS)

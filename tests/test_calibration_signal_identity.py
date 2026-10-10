@@ -235,25 +235,57 @@ def _random_results(seed):
     return results
 
 
+def _false_positives(results):
+    return [r for r in results if r["target_kind"] == "false_positive"]
+
+
+def _flagged_keys(loaded, fps):
+    # One result at a time: each target's flag depends only on its own result.
+    return {r["target_key"] for r in fps if _flagged(loaded, [r])["value"] == 1}
+
+
+def _recovered_by_definition(result, tolerance=0.001, factors=FACTORS):
+    # Independent of the implementation: the definition in H7-acceptance.md.
+    comparison = result.get("period_comparison") or {}
+    published = comparison.get("published_period_days")
+    found = comparison.get("found_period_days")
+    if published is None or found is None or published <= 0:
+        return False
+    return any(abs(found - f * published) / (f * published) <= tolerance for f in factors)
+
+
 @pytest.mark.parametrize("seed", DEVELOPMENT_SEEDS)
 @pytest.mark.parametrize("excluded", [[], ["eb_catalog"]])
 def test_a11_flagged_with_identity_is_a_subset(seed, excluded):
     results = _random_results(seed)
-    fps = [r for r in results if r["target_kind"] == "false_positive"]
-
-    def flagged_keys(loaded):
-        # One result at a time: each target's flag depends only on its own result.
-        return {r["target_key"] for r in fps if _flagged(loaded, [r])["value"] == 1}
-
+    fps = _false_positives(results)
     off_loaded = _loaded(flag_excluded_tests=excluded)
     on_loaded = _on(flag_excluded_tests=excluded)
-    with_identity, without_identity = flagged_keys(on_loaded), flagged_keys(off_loaded)
+    with_identity = _flagged_keys(on_loaded, fps)
+    without_identity = _flagged_keys(off_loaded, fps)
     assert with_identity <= without_identity
+    # Amendment 1: exactly the false positives whose signal is not recovered drop out.
+    not_recovered = {r["target_key"] for r in fps if not _recovered_by_definition(r)}
+    assert with_identity == without_identity - not_recovered
     on, off = _flagged(on_loaded, results), _flagged(off_loaded, results)
     assert on["of"] == off["of"] == len(fps)
     assert on["value"] == len(with_identity) and off["value"] == len(without_identity)
     information = _summary(on_loaded, results)["information"]
     assert information["flagged_without_signal_identity"] == len(without_identity)
+
+
+@pytest.mark.parametrize("excluded", [[], ["eb_catalog"]])
+def test_a11_some_development_seed_is_strict(excluded):
+    # Amendment 1: equal sets would also be subsets, so the property alone does not
+    # show that H7 is in effect.
+    strict = []
+    for seed in DEVELOPMENT_SEEDS:
+        fps = _false_positives(_random_results(seed))
+        with_identity = _flagged_keys(_on(flag_excluded_tests=excluded), fps)
+        without_identity = _flagged_keys(_loaded(flag_excluded_tests=excluded), fps)
+        if with_identity < without_identity:
+            strict.append(seed)
+    assert strict, "no development seed has a flag removed by H7"
 
 
 # --- A12: reporting ----------------------------------------------------------------------
