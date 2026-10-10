@@ -8,6 +8,12 @@ Definitions (also written into the claim):
   claim may list ``flag_excluded_tests``: the verdict used for this count is then
   recomputed with the same deterministic rules from the other tests only (the
   "signal verdict"). The count with every test is reported as information.
+  From v0.2.1 the claim may set ``flag_requires_signal_recovery``: a false positive
+  then counts as flagged only if its signal is also *recovered*, that is, the found
+  period matches the catalogued period at one of ``flag_signal_period_factors``
+  (default P, 2P, P/2) within ``period_tolerance``. A false positive whose
+  catalogued signal was not the one analyzed stays in the denominator. The count
+  under the v0.2 definition is reported as information.
 - *refuted planet*: a known planet whose verdict is ``REFUTED``.
 
 The claim passes only if all three criteria hold, on a complete run of every
@@ -21,6 +27,8 @@ from typing import Any
 
 from refute.core.claim import LoadedClaim
 from refute.core.verdict import Severity, TestResult, aggregate
+from refute.packs.tess.params import DEFAULT_SIGNAL_PERIOD_FACTORS
+from refute.packs.tess.pipeline import matching_factor
 from refute.packs.tess.report import SCOPE_NOTE
 from refute.packs.tess.schema import load_targets_file
 
@@ -43,6 +51,23 @@ def _recovered(result: dict[str, Any], tolerance: float) -> bool:
     return error is not None and error <= tolerance
 
 
+def signal_recovered(result: dict[str, Any], tolerance: float, factors: list[float]) -> bool:
+    """Whether the analyzed signal is the catalogued one: the found period matches the
+    published period at one of ``factors``. A missing period is not recovered."""
+    comparison = result.get("period_comparison") or {}
+    factor = matching_factor(
+        comparison.get("published_period_days"),
+        comparison.get("found_period_days"),
+        factors,
+        tolerance,
+    )
+    return factor is not None
+
+
+def _format_factors(factors: list[float]) -> str:
+    return ", ".join(format(f, "g") for f in factors)
+
+
 class TessCalibrator:
     def evaluate(
         self, loaded: LoadedClaim, results: list[dict[str, Any]], complete: bool
@@ -52,13 +77,22 @@ class TessCalibrator:
         planets = [r for r in results if r.get("target_kind") == "planet"]
         fps = [r for r in results if r.get("target_kind") == "false_positive"]
         excluded = list(criteria.get("flag_excluded_tests") or [])
+        identity = bool(criteria.get("flag_requires_signal_recovery", False))
+        factors = list(criteria.get("flag_signal_period_factors") or DEFAULT_SIGNAL_PERIOD_FACTORS)
         recovered = [r for r in planets if _recovered(r, tolerance)]
-        flagged = [r for r in fps if signal_verdict(r, excluded) == "REFUTED"]
+        flagged_v02 = [r for r in fps if signal_verdict(r, excluded) == "REFUTED"]
+        not_recovered = [r for r in fps if not signal_recovered(r, tolerance, factors)]
+        flagged = flagged_v02
+        if identity:
+            flagged = [r for r in flagged_v02 if signal_recovered(r, tolerance, factors)]
         flagged_all = [r for r in fps if r.get("verdict") == "REFUTED"]
         refuted_planets = [r for r in planets if r.get("verdict") == "REFUTED"]
-        flag_name = "flagged false positives"
+        qualifiers = ["signal recovered"] if identity else []
         if excluded:
-            flag_name += f" (without {', '.join(excluded)})"
+            qualifiers.append(f"without {', '.join(excluded)}")
+        flag_name = "flagged false positives"
+        if qualifiers:
+            flag_name += f" ({'; '.join(qualifiers)})"
 
         checks = [
             {
@@ -104,24 +138,27 @@ class TessCalibrator:
         rows = []
         for r in results:
             comparison = r.get("period_comparison") or {}
-            rows.append(
-                {
-                    "target": r.get("target_key"),
-                    "name": r.get("target_name"),
-                    "kind": r.get("target_kind"),
-                    "published_period_days": comparison.get("published_period_days"),
-                    "found_period_days": comparison.get("found_period_days"),
-                    "relative_error": comparison.get("relative_error"),
-                    "alias": comparison.get("alias"),
-                    "recovered": _recovered(r, tolerance)
-                    if r.get("target_kind") == "planet"
-                    else None,
-                    "verdict": r.get("verdict"),
-                    "signal_verdict": signal_verdict(r, excluded),
-                    "status": r.get("status"),
-                    "tests": {t["name"]: t["status"] for t in r.get("tests", [])},
-                }
-            )
+            row = {
+                "target": r.get("target_key"),
+                "name": r.get("target_name"),
+                "kind": r.get("target_kind"),
+                "published_period_days": comparison.get("published_period_days"),
+                "found_period_days": comparison.get("found_period_days"),
+                "relative_error": comparison.get("relative_error"),
+                "alias": comparison.get("alias"),
+                "recovered": _recovered(r, tolerance) if r.get("target_kind") == "planet" else None,
+                "verdict": r.get("verdict"),
+                "signal_verdict": signal_verdict(r, excluded),
+                "status": r.get("status"),
+                "tests": {t["name"]: t["status"] for t in r.get("tests", [])},
+            }
+            if identity:
+                row["signal_recovered"] = (
+                    signal_recovered(r, tolerance, factors)
+                    if r.get("target_kind") == "false_positive"
+                    else None
+                )
+            rows.append(row)
         verdicts = Counter((r.get("target_kind"), r.get("verdict")) for r in results)
         inconclusive_reasons = {
             r.get("target_key"): [
@@ -143,6 +180,18 @@ class TessCalibrator:
         selection = {}
         if targets_attachment is not None:
             selection = load_targets_file(loaded.attachment_path(targets_attachment)).selection
+        information: dict[str, Any] = {
+            "flag_excluded_tests": excluded,
+            "flagged_false_positives_with_every_test": len(flagged_all),
+            "of": len(fps),
+        }
+        if identity:
+            information["flag_signal_period_factors"] = factors
+            information["false_positives_signal_not_recovered"] = {
+                "count": len(not_recovered),
+                "targets": [r.get("target_key") for r in not_recovered],
+            }
+            information["flagged_without_signal_identity"] = len(flagged_v02)
         return {
             "schema": "refute-tess-calibration-summary-1",
             "claim_id": loaded.claim.id,
@@ -150,11 +199,7 @@ class TessCalibrator:
             "definitions": loaded.claim.definitions,
             "pass_criteria": criteria,
             "self_claim": {"result": outcome, "note": note, "criteria": checks},
-            "information": {
-                "flag_excluded_tests": excluded,
-                "flagged_false_positives_with_every_test": len(flagged_all),
-                "of": len(fps),
-            },
+            "information": information,
             "complete_run": complete,
             "targets": rows,
             "diagnostics": {
@@ -203,12 +248,25 @@ class TessCalibrator:
                 f"{', '.join(info['flag_excluded_tests'])}.",
                 "",
             ]
+        identity = "flagged_without_signal_identity" in info
+        if identity:
+            missed = info["false_positives_signal_not_recovered"]
+            lines += [
+                "Definition change since v0.2: a false positive counts as flagged only if the "
+                "analyzed period matches the catalogued period "
+                f"(factors {_format_factors(info['flag_signal_period_factors'])}). "
+                f"{missed['count']} of {info['of']} false positives were not recovered; under "
+                f"the v0.2 definition {info['flagged_without_signal_identity']} would count as "
+                "flagged.",
+                "",
+            ]
+        signal_header = " Signal recovered |" if identity else ""
         lines += [
             "## Targets",
             "",
             "| Target | Name | Kind | Published P (d) | Found P (d) | Rel. error | Alias | "
-            "Recovered | Verdict | Signal verdict | Tests not passed |",
-            "|---|---|---|---|---|---|---|---|---|---|---|",
+            f"Recovered |{signal_header} Verdict | Signal verdict | Tests not passed |",
+            "|---|---|---|---|---|---|---|---|---|---|---|" + ("---|" if identity else ""),
         ]
         for row in summary["targets"]:
             tests = row["tests"]
@@ -216,13 +274,15 @@ class TessCalibrator:
             def num(value: Any, fmt: str) -> str:
                 return format(value, fmt) if isinstance(value, int | float) else "n/a"
 
-            recovered = {True: "yes", False: "no", None: "-"}[row["recovered"]]
+            marks = {True: "yes", False: "no", None: "-"}
+            recovered = marks[row["recovered"]]
+            signal_cell = f" {marks[row.get('signal_recovered')]} |" if identity else ""
             not_passed = ", ".join(f"{k} {v}" for k, v in tests.items() if v != "PASS") or "-"
             lines.append(
                 f"| {row['target']} | {row['name'] or ''} | {row['kind']} | "
                 f"{num(row['published_period_days'], '.6f')} | "
                 f"{num(row['found_period_days'], '.6f')} | {num(row['relative_error'], '.2e')} | "
-                f"{row['alias'] or '-'} | {recovered} | {row['verdict']} | "
+                f"{row['alias'] or '-'} | {recovered} |{signal_cell} {row['verdict']} | "
                 f"{row.get('signal_verdict') or '-'} | {not_passed} |"
             )
         diag = summary["diagnostics"]

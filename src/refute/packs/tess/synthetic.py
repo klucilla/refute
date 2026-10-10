@@ -561,6 +561,10 @@ PLANET = SignalSpec(period=3.7, t0=1326.3, depth=0.002, duration=2.5 / 24)
 BLEND_SCENE = Scene(neighbor_xy=(7.0, 5.0), neighbor_ratio=0.3)
 BLEND_NEIGHBOR = SignalSpec(period=2.3, t0=1325.8, depth=0.08, duration=2.0 / 24)
 SINUSOID_PERIOD = 0.7
+# v0.2.1 H7: a weak eclipse at this period under a stronger sinusoid at SINUSOID_PERIOD
+# (2.9 / 0.7 is not commensurate), so the search finds the variability, not the eclipse.
+# Scenario "fp_variability_dominates"; not in SCENARIOS (only the H7 tests use it).
+FP_VARIABILITY_PERIOD = 2.9
 SCENARIOS = (
     "planet",
     "planet_three_years",
@@ -620,6 +624,11 @@ def scenario_data(name: str, seed: int = 3) -> TessData:
         lc, sectors = make_lightcurve(None, noise_ppm=600.0, seed=seed)
         wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)
         lc = LightCurveData(lc.time, lc.flux + wave, lc.flux_err, lc.sector, lc.year)
+    elif name == "fp_variability_dominates":
+        spec = SignalSpec(period=FP_VARIABILITY_PERIOD, t0=1326.1, depth=0.001, duration=3 / 24)
+        lc, sectors = make_lightcurve(spec, **trend)
+        wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)
+        lc = LightCurveData(lc.time, lc.flux + wave, lc.flux_err, lc.sector, lc.year)
     else:
         raise ValueError(f"unknown scenario {name}")
     return make_data(lc, sectors, star, aux=make_aux(lc, seed=seed))
@@ -627,7 +636,14 @@ def scenario_data(name: str, seed: int = 3) -> TessData:
 
 def analyze_scenario(name: str):
     """Top-level (picklable) helper: full analysis of a named scenario with the fast plan."""
+    return analyze_scenario_seed((name, 3))
+
+
+def analyze_scenario_seed(task: tuple[str, int]):
+    """Top-level (picklable) helper: full analysis of ``(scenario name, seed)`` with the
+    fast plan."""
     from refute.packs.tess.params import TessTestPlan
     from refute.packs.tess.pipeline import analyze_data
 
-    return analyze_data(scenario_data(name), TessTestPlan.model_validate(fast_plan_dict()))
+    name, seed = task
+    return analyze_data(scenario_data(name, seed), TessTestPlan.model_validate(fast_plan_dict()))

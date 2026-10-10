@@ -120,11 +120,31 @@ pass_criteria:
   min_flagged_false_positives: 2
   max_refuted_planets: 1           # degeneracy guard
   flag_excluded_tests: []          # v0.2: tests ignored when counting "flagged"
+  flag_requires_signal_recovery: false    # v0.2.1: "flagged" needs the catalogued signal
+  flag_signal_period_factors: [1.0, 2.0, 0.5]   # v0.2.1: P, 2P, P/2
 ```
 
 `flag_excluded_tests` (default empty, which is the v0.1 definition): a false
 positive counts as flagged only if its verdict, recomputed with the same rules from
 the other tests, is `REFUTED`. The degeneracy guard always uses the full verdict.
+
+`flag_requires_signal_recovery` (default `false`, which is the v0.2 definition): when
+`true`, a false positive counts as flagged only if its signal is also *recovered*:
+the found period matches the published (catalogued) period at one of
+`flag_signal_period_factors`, that is,
+`|P_found - f * P_pub| / (f * P_pub) <= period_tolerance` for some factor `f`
+(inclusive). A missing period (analysis error, no candidate, no published period)
+is not recovered. A false positive whose signal is not recovered stays in the
+denominator. `flag_signal_period_factors` must be a non-empty list of positive
+numbers and is used only when `flag_requires_signal_recovery` is `true`. Planets are
+not affected. With the flag on, the calibration summary also reports the false
+positives whose signal was not recovered, the count under the v0.2 definition, and a
+"Signal recovered" column. See `docs/validation/v0.2.1/H7-acceptance.md`.
+
+Both fields are resolved into the locked claim, so adding them changed the resolved
+hash of older claims (the same happened to v0.1 claims when `flag_excluded_tests`
+was added). Older calibrations are verified at their locked commit; see
+[issue #30](https://github.com/klucilla/refute/issues/30).
 
 All criteria must hold on a complete run. The targets file must contain exactly
 `expected_planets` planets and `expected_false_positives` false positives.

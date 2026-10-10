@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class _Model(BaseModel):
@@ -248,6 +248,10 @@ class TargetsFile(_Model):
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
 
+# P, 2P and P/2: the periods at which a found signal is the catalogued one (v0.2.1).
+DEFAULT_SIGNAL_PERIOD_FACTORS = (1.0, 2.0, 0.5)
+
+
 class CalibrationCriteria(_Model):
     period_tolerance: float = Field(gt=0)
     expected_planets: int = Field(ge=1)
@@ -260,6 +264,20 @@ class CalibrationCriteria(_Model):
     # dispositions used to select the false positives). The degeneracy guard always
     # uses the full verdict.
     flag_excluded_tests: list[str] = Field(default_factory=list)
+    # v0.2.1: a false positive counts as "flagged" only if the analyzed period matches
+    # the catalogued period at one of these factors (within period_tolerance). Opt-in:
+    # false keeps the v0.2 definition.
+    flag_requires_signal_recovery: bool = False
+    flag_signal_period_factors: list[float] = Field(
+        default_factory=lambda: list(DEFAULT_SIGNAL_PERIOD_FACTORS), min_length=1
+    )
+
+    @field_validator("flag_signal_period_factors")
+    @classmethod
+    def _positive_factors(cls, factors: list[float]) -> list[float]:
+        if any(f <= 0 for f in factors):
+            raise ValueError("every period factor must be > 0")
+        return factors
 
     @model_validator(mode="after")
     def _consistent(self) -> CalibrationCriteria:
