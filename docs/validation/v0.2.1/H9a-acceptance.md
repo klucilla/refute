@@ -2,7 +2,8 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-10 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`.
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended once (Amendment 1, below): it records
+the sabotage results; no criterion was changed.
 
 ## Problem
 
@@ -144,6 +145,33 @@ next.
 | S4. The catalog list is ignored (any catalog with the target's TIC downgraded) | A4 |
 | S5. The downgrade gives PASS instead of a warning | A1, B1 |
 | S6. The switch is inverted (empty list downgrades, default does not) | A1, A7 |
+
+## Amendment 1 (2026-10-10): sabotage results
+
+After the code passed every case (commit `9d3f369`; full suite 482 passed), the
+planned sabotages were run against the H9(a) tests only
+(`tests/test_ebcatalog_own_tic.py`, `tests/test_ebcatalog_own_tic_e2e.py`, 55 cases).
+The implementation was staged first; each sabotage was applied to
+`src/refute/packs/tess/ebcatalog.py`, the tests were run, and the file was restored
+from the index; `git diff` was empty after every restore. Nothing was committed.
+
+**First attempt did not execute.** The first run of the sabotage script failed with
+a syntax error in the script itself (a newline escape broken by the shell heredoc
+used to generate it), before any sabotage was applied: `ebcatalog.py` was not
+modified and `git diff` was empty. The script was rewritten without a heredoc and
+the six sabotages were run again. The results below are from that second run.
+
+| Sabotage | Failing cases (of 55) | Caught by | Planned cases caught |
+|---|---|---|---|
+| S1. The rule is ignored | 14 | A1, A5, A7, B1, C | A1, B1, C2/C3: yes |
+| S2. Any TESS-EB row counts as the target's own | 8 | A2, A5, B3 | A2, A5, B3: yes |
+| S3. Position-only matches downgraded | 9 | A2, A3, A5, B3 | A3: yes (the neighbor rows also match by position, hence A2, A5, B3) |
+| S4. The catalog list is ignored | 11 | A4, A7, B1, C | A4: yes |
+| S5. The downgrade gives PASS | 23 | A1, A7, B1, D (11 scenarios) | A1, B1: yes |
+| S6. The switch is inverted | 29 | A1, A4, A5, A7, B1, C, D (11 scenarios) | A1, A7: yes |
+
+Every sabotage was caught by the cases planned for it; the planned table needs no
+correction.
 
 ## Declared price
 
