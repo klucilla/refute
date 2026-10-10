@@ -2,7 +2,9 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-10 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`.
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended once before any test was written
+(Amendment 1, below): the adversarial execution F4 and the exact path
+normalization.
 
 ## Problem
 
@@ -83,20 +85,25 @@ recorded, not set by the test.
 - **F**: the full claim with `--workers 1` (all targets in the main process).
 - **R11, R12, R13**: the `REPRODUCE.md` command for each target,
   `--target <key> --workers 1`, each in its own process.
+- **F4** *(Amendment 1)*: the full claim with `--workers 1`, in a new process whose
+  environment has `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS` and `MKL_NUM_THREADS`
+  set to `4` **by the test** before the process starts. `init_worker()` keeps those
+  values (`setdefault`), so this is the case that can break: the inherited environment
+  without those variables is the easy case.
 
 ### Level (a): the REPRODUCE.md contract (pass/fail criterion)
 
-For each target, `check_dossier(R_k, against=O_k)` and `check_dossier(F_k,
-against=O_k)` must be OK: manifest integrity of both dossiers, and
+For each target, `check_dossier(R_k, against=O_k)`, `check_dossier(F_k,
+against=O_k)` and `check_dossier(F4_k, against=O_k)` must be OK: manifest integrity of both dossiers, and
 `compare_dossiers` equal (verdict, status, every test's status, `key_values` within
 relative tolerance 1e-6, input data hashes identical). For the full runs, F and O must
 also have the same self-claim result and criterion values, and the same verdict per
-target in `summary.json`.
+target in `summary.json`; so must F4 and O.
 
 ### Level (b): exact equality (diagnostic, recorded)
 
-The canonical bytes of each `verdict.json` (F and R against O) and of `summary.json`
-(F against O), after removing only the allowed operational differences below, are
+The canonical bytes of each `verdict.json` (F, F4 and R against O) and of
+`summary.json` (F and F4 against O), after removing only the allowed operational differences below, are
 compared for exact equality. Any difference is **recorded** (a test warning listing
 each differing field, and a JSON report in the test's temporary directory); it does
 not fail the test. A difference only in the last digits of a number, or in a PNG, is
@@ -119,18 +126,34 @@ Only these may differ without being reported as a level (b) difference:
 4. `environment/numeric_runtime.json` (recorded and reported for every execution).
 5. `summary.json`: `run.run_id`, `run.started_utc`, `run.finished_utc`,
    `run.workers`; `summary.md`: the footer lines with those fields.
-6. Names of the run directories and absolute paths.
+6. The run directory of each execution: before any comparison, every occurrence of
+   that execution's run-directory path (the exact absolute path string, as written by
+   the run) is replaced by the fixed marker `<RUN_DIR>`. **Nothing else is
+   normalized**: no removal or rewriting by a generic pattern of anything that looks
+   like a path *(Amendment 1)*.
 
 The partial runs R11-R13 have a NOT_EVALUATED self-claim by design (`--target`); their
 `summary.json` is not compared.
 
+## Amendment 1 (2026-10-10, before the tests): F4 and exact path normalization
+
+Requested by the maintainer after the first version of this file, before any test was
+written:
+
+- **F4**, the adversarial case of `setdefault`, is added to the executions, to level
+  (a) and level (b), and to E1 and E2 (see above).
+- **Paths** are normalized only by exact replacement of each execution's run-directory
+  prefix with a fixed marker; no generic pattern is used.
+
 ## Acceptance criteria
 
-- E1. Level (a) holds for every target, for F and for each R_k, and for the full-run
-  summary.
+- E1. Level (a) holds for every target, for F, F4 and each R_k, and for the full-run
+  summaries of F and F4.
 - E2. Every dossier of every execution has `environment/numeric_runtime.json` with
-  the fields listed above; the test report prints, per execution and target, the
-  loaded BLAS libraries and their thread counts and the four thread variables.
+  the fields listed above, with `process` equal to `worker` in O and `main` in F, F4
+  and R; in F4 the three variables set by the test are recorded as `4`. The test
+  report prints, per execution and target, the loaded BLAS libraries and their
+  **effective** thread counts and the four thread variables.
 - E3. The level (b) and report/PNG results are recorded (warning and JSON report),
   whatever they are.
 - E4. The full existing suite passes; `ruff check` and `ruff format --check` pass.
@@ -162,7 +185,7 @@ impact go into the release notes; the v0.2 results and lock are preserved unchan
 
 An engine item independent of the H hypotheses, required **before the v0.2.1 lock**
 (it supports the reproducibility of every dossier), alongside the coverage
-requirement. It comes before the CI change of option D. Estimated CI cost: five
-offline executions of a 3-target calibration (O, F, R11-R13), about 2 minutes per job
+requirement. It comes before the CI change of option D. Estimated CI cost: six
+offline executions of a 3-target calibration (O, F, F4, R11-R13), about 2 to 3 minutes per job
 (an estimate by analogy with `test_calibration_run_evaluates_the_self_claim`, 23 to
 27 s for one 3-target execution in CI; not yet measured).
