@@ -81,12 +81,14 @@ test_plan:
                         min_events_for_dumps: 3, max_sap_sigma: 3.0, max_sap_rel_diff: 0.5,
                         max_background_sigma: 3.0, max_background_fraction: 0.5}
     eb_catalog:        {match_radius_arcsec: 21.0, period_tolerance: 0.01,
-                        period_factors: [1.0, 2.0, 0.5]}
+                        period_factors: [1.0, 2.0, 0.5],
+                        same_photometry_catalogs: [TESS-EB]}
 ```
 
 What each parameter does is described in [gauntlet-tess-v0.1.md](gauntlet-tess-v0.1.md)
 and, for the sections added in v0.2, [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md);
-the v0.2.1 additions (`holdout_by_year` train validity) are in
+the v0.2.1 additions (`holdout_by_year` train validity, `eb_catalog` own-TIC
+matches) are in
 [gauntlet-tess-v0.2.1.md](gauntlet-tess-v0.2.1.md).
 The `eb_catalog` test runs only if the claim has attachments with role `eb-catalog`
 (format `refute-eb-catalog-1`). A second attachment with role `eb-catalog-scan`

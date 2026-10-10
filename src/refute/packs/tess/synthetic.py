@@ -657,6 +657,31 @@ def analyze_scenario_seed(task: tuple[str, int]):
     return analyze_data(scenario_data(name, seed), TessTestPlan.model_validate(fast_plan_dict()))
 
 
+def analyze_scenario_with_catalog(task: dict):
+    """Top-level (picklable) helper: full analysis of ``task["name"]`` and
+    ``task["seed"]`` with the fast plan and a synthetic eclipsing-binary catalog made
+    of ``task["rows"]`` (``refute-eb-catalog-1`` rows), scanned around the target;
+    ``task["eb_catalog"]`` overrides ``gauntlet.eb_catalog``."""
+    from refute.packs.tess.ebcatalog import COLUMNS, parse_catalog
+    from refute.packs.tess.params import TessTestPlan
+    from refute.packs.tess.pipeline import analyze_data
+
+    data = scenario_data(task["name"], task["seed"])
+    plan = fast_plan_dict()
+    plan["gauntlet"] = {"eb_catalog": dict(task.get("eb_catalog") or {})}
+    rows = list(task.get("rows") or [])
+    catalog = parse_catalog("\n".join([",".join(COLUMNS), *rows]) + "\n")
+    scan = {
+        "format": "refute-eb-catalog-scan-1",
+        "radius_arcsec": 120.0,
+        "snapshots": [{"file": "synthetic.csv", "sha256": "0" * 64, "rows": max(1, len(rows))}],
+        "per_target": {data.target_key: {}},
+    }
+    return analyze_data(
+        data, TessTestPlan.model_validate(plan), catalogs=catalog, catalog_scan=scan
+    )
+
+
 HIDDEN_REPLACEMENTS = ("noise", "signal", "nothing")
 
 

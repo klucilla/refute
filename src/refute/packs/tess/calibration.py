@@ -210,6 +210,14 @@ class TessCalibrator:
                 "holdout_statuses": dict(Counter(holdout)),
                 "errors": [r.get("target_key") for r in results if r.get("status") == "ERROR"],
                 "inconclusive_reasons": inconclusive_reasons,
+                "eb_catalog_downgraded": [
+                    r.get("target_key")
+                    for r in results
+                    if any(
+                        t["name"] == "eb_catalog" and (t.get("metrics") or {}).get("downgraded")
+                        for t in r.get("tests", [])
+                    )
+                ],
             },
             "scope_note": SCOPE_NOTE,
             "selection_filters": selection,
@@ -295,6 +303,11 @@ class TessCalibrator:
             f"- Verdicts by kind: {diag['verdicts_by_kind']}",
             f"- Analysis errors: {diag['errors'] or 'none'}",
         ]
+        if diag.get("eb_catalog_downgraded"):
+            lines.append(
+                "- eb_catalog downgraded to a warning (own TIC in a same-photometry catalog, "
+                f"v0.2.1): {', '.join(diag['eb_catalog_downgraded'])}"
+            )
         for key, reasons in diag["inconclusive_reasons"].items():
             lines.append(f"- {key} INCONCLUSIVE: {'; '.join(str(r) for r in reasons)}")
         lines.append("")

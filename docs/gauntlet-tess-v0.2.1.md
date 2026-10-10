@@ -84,3 +84,44 @@ duration/period above 0.2 gets an INCONCLUSIVE holdout; the blind holdout is not
 eclipsing-binary test.
 
 Acceptance criteria and validation: `docs/validation/v0.2.1/H4-acceptance.md`.
+
+## eb_catalog: own-TIC matches in a same-photometry catalog (H9a)
+
+Before v0.2.1 any catalog entry matching the target (by TIC ID, or within
+`match_radius_arcsec`) with a period equal to the found period times one of
+`period_factors` was a fatal failure. TESS-EB (Prsa et al. 2022) is built from the
+same TESS photometry that the gauntlet analyzes: an entry under the target's own TIC
+at the signal's period is a classification of the same light curve, not independent
+evidence.
+
+From v0.2.1, `eb_catalog.same_photometry_catalogs` (default `[TESS-EB]`, compared
+with the `catalog` column of the attachment) lists the catalogs built from the same
+photometry. The decision is:
+
+1. Any **other** period-compatible match is fatal, as before: a neighbor's TIC, a
+   position-only match (a Gaia row: another instrument), or the target's TIC in a
+   catalog outside the list.
+2. Otherwise, a period-compatible match under the target's **own TIC** in a listed
+   catalog is a **warning** (FAIL, severity WARNING), never PASS: the verdict is at
+   most WEAKENED. The test metrics record `downgraded: true`.
+3. Everything else is unchanged (position or ID match with another period: warning;
+   no match: PASS; the coverage rules).
+
+An empty list restores the v0.2 decision. The test message, the per-target report
+and the calibration summary (diagnostics) state the downgrade.
+
+**Declared price.** A real eclipsing binary that looks like a planet in the TESS data
+and is caught only by its own TESS-EB entry goes from REFUTED to WEAKENED, with the
+warning visible. In `discover` mode that is a loss of power against such binaries.
+
+**Gaia stays fatal.** Gaia DR3 contains planet hosts misclassified as eclipsing
+binaries, so a Gaia row at the target's position and period can still refute a real
+planet. Recognizing the target's own Gaia source (through the Gaia identifier in the
+TIC) is an open item.
+
+**Calibration.** While a calibration claim lists `eb_catalog` in
+`flag_excluded_tests` (as the v0.2 claim does), the flagged count does not change;
+the degeneracy guard can only fall, by the planets that only their own TESS-EB entry
+refuted.
+
+Acceptance criteria and validation: `docs/validation/v0.2.1/H9a-acceptance.md`.

@@ -155,6 +155,17 @@ class EbCatalogParams(_Model):
     match_radius_arcsec: float = Field(21.0, gt=0)
     period_tolerance: float = Field(0.01, gt=0)
     period_factors: list[float] = Field(default_factory=lambda: [1.0, 2.0, 0.5])
+    # v0.2.1 (H9a): catalogs built from the same photometry as the light curve. A
+    # period match under the target's own TIC in one of them is a warning, not a fatal
+    # failure (it is not independent evidence). An empty list restores v0.2.
+    same_photometry_catalogs: list[str] = Field(default_factory=lambda: ["TESS-EB"])
+
+    @field_validator("same_photometry_catalogs")
+    @classmethod
+    def _named(cls, names: list[str]) -> list[str]:
+        if any(not name.strip() for name in names):
+            raise ValueError("catalog names must not be empty")
+        return names
 
 
 class EventParams(_Model):
