@@ -205,3 +205,59 @@ Times are UTC on 2026-10-11: start is when the 3 sessions were launched (within 
 | TIC 139528693 | WASP-78 b | planet | WEAKENED | 12:07:59 | 12:11:50 | 231 | OBJECTIONS | `5a792ba717776c6bd189803488298e56c929502e38de05549ee82e2f576c588b` |
 | TIC 193754373 | TOI-4487 A b | planet | WEAKENED | 12:07:59 | 12:11:51 | 232 | OBJECTIONS | `996807d73dbcd40f52b7a9c6d3b62475ea3026a76a6ad97e241c880e9142205d` |
 | TIC 231670397 | WASP-73 b | planet | SURVIVED | 12:07:59 | 12:11:20 | 201 | OBJECTIONS | `2efb834374811a851b6b5a616a6c14621fa35018e794819cffc24d847cc2323a` |
+
+## Step 8: release archives of v0.2.0 (built 2026-10-11)
+
+Two archives will be published as assets of release v0.2.0, with the Gaia DR3 snapshot
+(`gaia_dr3_vari_eclipsing_binary.csv`, SHA-256
+`5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df`). Both were built
+from frozen staging folders with `refute.core.dossier.write_archive` (sorted entries,
+fixed timestamps and modes), twice each, on 2026-10-11 at about 14:01Z.
+
+| Archive | SHA-256 | Bytes | Members |
+|---|---|---|---|
+| `refute-v0.2-calibration.zip` | `05b23627ea9dd567e0ae56ccc29f625ded979a7081a43b72968391f211792039` | 10065988 | 596 |
+| `refute-v0.2-reproduction.zip` | `549830c6d918402fe68ab07c79bb390900e8d327c46759b9cdd9d04480291268` | 1031851 | 61 |
+
+- **Double build.** The two builds of each archive have the same SHA-256. The staging
+  folder did not change during the builds, and each archive, extracted into a new
+  folder, equals its frozen file list byte for byte (frozen lists: SHA-256
+  `c80ee53caa507817f3ee65b206d9932030612e8b7a07d52fa60ae7058c42a877` for the
+  calibration archive, `6ef92eb48417d6791fb4d06649de4f274189a26324790871e89a0c3bf6f56df3`
+  for the reproduction archive).
+- **Calibration archive.** The 20 dossiers of run `20261009T155044Z-c9f341d2` with the
+  17 reviews, the run's `summary.json` and `summary.md`, `RUNS.md` (equal to the blob
+  of this file at `962f162`), `INDEX.md` and `DATA_CREDITS.md`. Compared member by member
+  with the earlier staging build `43032da921fba2e3987eb8143aae705cfb3dc6fc0e447ca36f66c4bbf0093ac7`:
+  the same 596 members, and only `DATA_CREDITS.md` differs. Reason: corrections of its
+  text approved by the maintainer after that build (the four TESS-EB reference rows,
+  the TESS Input Catalog credit, and the scope and record of the search for TESS-EB
+  values).
+- **check-dossier.** On the extracted calibration archive: 20 of 20 dossiers
+  `OK: manifest intact`. On the 2 dossiers of the extracted reproduction archive,
+  `--against` the same dossiers of the extracted calibration archive: both
+  `OK: manifest intact; key results reproduced`.
+- **Reproduction archive.** The fresh-clone reproduction of 2 of the 20 dossiers
+  (GJ 3470 b, TIC 19028197; TOI-653.01, TIC 33153766), run on 2026-10-11 from
+  00:36:59Z to 00:41:05Z: `REPRODUCTION.md` (the record), `DATA_CREDITS.md`, the run
+  logs and listings (`repro_calibrate.txt`, `background_task_bnyz3nfv5.output`,
+  `check_dossier_rerun_2026-10-11.txt`, `downloaded_files.tsv`,
+  `plots_comparison_2026-10-11.tsv`), the published copy of
+  `session_transcript_extract.txt`, and the reproduced dossiers in
+  `TIC-19028197/dossier/` and `TIC-33153766/dossier/`, copied byte for byte. Changes
+  declared in `REPRODUCTION.md`, "Changes in the published archive": lines 57 to 164 of
+  the transcript extract (three tool calls that are not part of the reproduction, one
+  of which printed four TESS-EB periods) are removed and replaced by one marker line;
+  the Windows user name in 8 paths is replaced by `<user>`; line endings are kept as
+  written (some lines of three files end in CR LF), nothing was normalized.
+- **Search for TESS-EB values.** Four runs of the same read-only search on
+  2026-10-11, started at 01:25:13Z, 13:05:54Z, 13:13:02Z and 14:02:16Z. The fourth
+  covered all git refs, both final archives above, the Gaia DR3 asset and the
+  published copy of the search record: 14 hits in the repository, 14 in the
+  calibration archive, 0 in the reproduction archive, 0 in the Gaia asset and 84 in
+  the record, all of them values described in the record. In the published copy of
+  the record's transcript extract, the TESS-EB coordinates of TIC 71612483 are
+  withheld (maintainer's decision of 2026-10-11; see `SEARCH.md`, "Changes in the
+  published copy"). The record (script, outputs, refs, hit lists and `SEARCH.md`) is
+  published in `calibration/v0.2/audit/tess-eb-search/` by the commit before this
+  one.
