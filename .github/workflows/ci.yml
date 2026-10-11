@@ -26,10 +26,12 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install (frozen lockfile)
         run: uv sync --frozen
+      # calibration/*/audit/ holds published records whose bytes are cited by SHA-256:
+      # they are never linted or reformatted (see CLAUDE.md).
       - name: Lint
-        run: uv run ruff check .
+        run: uv run ruff check . --extend-exclude "calibration/*/audit"
       - name: Format
-        run: uv run ruff format --check .
+        run: uv run ruff format --check . --extend-exclude "calibration/*/audit"
       # Tests run with --disable-socket (pytest-socket, see pyproject.toml):
       # any attempt to use the network fails the test suite.
       - name: Tests (no network)

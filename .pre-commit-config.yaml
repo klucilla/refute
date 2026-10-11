@@ -1,3 +1,6 @@
+# calibration/*/audit/ holds published records whose bytes are cited by SHA-256:
+# no hook may lint, reformat or change them (see CLAUDE.md).
+exclude: ^calibration/[^/]+/audit/
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.16.9 # keep equal to the ruff version in uv.lock

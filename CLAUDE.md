@@ -126,6 +126,10 @@ First pack: exoplanet transits (TESS).
 - Test counts (passed, failed, errors, skipped) are reported from a JUnit
   XML file (`pytest --junitxml=<path>`), never from the progress markers or
   the console summary line.
+- `calibration/*/audit/` holds published records (scripts, outputs, transcript
+  extracts) whose bytes are cited by SHA-256. Never edit, reformat or normalize
+  line endings there; linters and pre-commit hooks exclude these folders on
+  purpose. A correction is a new file or a new record, never an edit.
 
 ## Communication
 
