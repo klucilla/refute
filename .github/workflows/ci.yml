@@ -26,12 +26,13 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install (frozen lockfile)
         run: uv sync --frozen
-      # calibration/*/audit/ holds published records whose bytes are cited by SHA-256:
-      # they are never linted or reformatted (see CLAUDE.md).
+      # calibration/*/audit/ and docs/validation/v0.2.1/pre-document-runs/ hold preserved
+      # records whose bytes are cited by SHA-256: they are never linted or reformatted
+      # (see CLAUDE.md).
       - name: Lint
-        run: uv run ruff check . --extend-exclude "calibration/*/audit"
+        run: uv run ruff check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs"
       - name: Format
-        run: uv run ruff format --check . --extend-exclude "calibration/*/audit"
+        run: uv run ruff format --check . --extend-exclude "calibration/*/audit" --extend-exclude "docs/validation/v0.2.1/pre-document-runs"
       # The tests that spread work over processes use REFUTE_WORKERS when it is set
       # (src/refute/core/runner.py). In CI it is every core of the runner; locally the
       # default stays os.cpu_count() - 2. The number of workers should change only the
