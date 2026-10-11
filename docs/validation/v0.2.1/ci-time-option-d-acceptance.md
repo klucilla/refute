@@ -2,7 +2,9 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-11 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`.
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended once (Amendment 1, below), before any
+test was written: a withdrawn statement about Python versions, the time metric, the
+split of the code commit and a structural case E0.
 
 ## Problem
 
@@ -195,7 +197,86 @@ Amendment 1 because the module now has more cases; the planned catches must not.
 
 ## Open items (not part of D)
 
-- The Python 3.12 jobs take about 1.5-1.8 times as long as the Python 3.13 jobs on the
-  same runners and the same tests. The cause is not investigated.
+- ~~The Python 3.12 jobs take about 1.5-1.8 times as long as the Python 3.13 jobs on
+  the same runners and the same tests. The cause is not investigated.~~ *(Withdrawn by
+  Amendment 1: the data do not support it.)*
 - After D, the next largest costs are the H4 property fixture (186-325 s) and the
   blindness fixture (86-148 s). No change to them is planned here.
+
+## Amendment 1 (2026-10-11, before any test was written)
+
+Requested by the maintainer when approving the document (commit `f0fb1b1`). No
+criterion of sections E, F or S is weakened.
+
+### 1. Run-to-run variation, not a Python-version effect
+
+The open item "the Python 3.12 jobs take about 1.5-1.8 times as long" is withdrawn
+(struck through above). It came from one CI run. A second run contradicts it:
+
+| Job | Run 38093716503 (`41c66c0`): job / H9(a) fixture | Run 38098624281 (`89bd3b4`): job / H9(a) fixture |
+|---|---|---|
+| ubuntu-latest / Python 3.12 | 24:24 / 752 s | 26:11 / 771 s |
+| windows-latest / Python 3.12 | 18:06 / 543 s | 25:17 / 716 s |
+| windows-latest / Python 3.13 | 24:12 / 721 s | 18:10 / 512 s |
+| ubuntu-latest / Python 3.13 | 24:20 / 760 s | 14:36 / 422 s |
+
+The same job takes very different times from one run to the next (windows 3.12:
+18:06 then 25:17; ubuntu 3.13: 24:20 then 14:36), and the order of the jobs changes.
+This is recorded as **variation between runs of the GitHub runners, with no cause
+attributed**. The H9(a) fixture and everything it calls are the same in both runs
+(between `41c66c0` and `89bd3b4` the only change under `src/refute/packs/` or
+`runner.py` is a docstring of `runner.py`). The baseline table at the top of this
+document is one of these two runs.
+
+The "Estimate" bullet of section T was computed from one run per job; with this
+variation it says nothing about any particular job and is kept only as the
+expected size of the saving (about 40% of the fixture).
+
+### 2. The time metric
+
+- **Metric:** the `setup` duration of the H9(a) fixture reported by
+  `pytest --durations=25` (the line of
+  `tests/test_ebcatalog_own_tic_e2e.py::test_b1_planet_with_its_own_tess_eb_entry_is_weakened[0]`),
+  per job. The job wall time and the pytest total are recorded next to it, but the
+  effect of D is judged on the fixture time, not only on the job time.
+- **Baseline:** the same metric in the two runs above, per job (eight values).
+- **After D:** **at least two CI runs** of the code of D, the same metric per job,
+  compared with the baseline per job and in range (minimum and maximum over the runs).
+- **The 15-minute target** stays a target on the job wall time. It is met only if
+  every job of every measured run is at or under 15 minutes. Otherwise the decision
+  rule of section T applies unchanged: record the measured times and state that the
+  options evaluated so far have not yet reached the target; never declare it
+  unreachable; any further option or any revision of the target is the
+  maintainer's explicit decision.
+
+### 3. The code commit is split in two
+
+- **Commit 3a: the refactor only.** Extract `eb_catalog_test` and
+  `conclude_analysis` from `pipeline.py`, with no change of behavior. Proof:
+  - **before touching the code**, a reference is recorded **outside the repository**:
+    for every scenario of the H9(a) module (13) and seeds 0-9, with the default rule
+    and with the switch off, and for the 5 neighbor-row `blend` analyses, the
+    per-target verdict record (`build_result`, serialized with `dumps_json`, the
+    serializer of the dossiers);
+  - after the refactor, the same records are produced again and must be **identical
+    byte for byte** to the reference (265 records: 13 x 10 x 2 + 5, compared one by one; the SHA-256
+    of the reference file is recorded in a later amendment);
+  - the **full suite passes without editing any existing test**.
+- **Commit 3b: option D.** The shared-path helper, the new fixture of
+  `tests/test_ebcatalog_own_tic_e2e.py`, then sabotages S1-S9 and the time
+  measurement (section T as amended here).
+
+### 4. Structural case E0 (added)
+
+E1 alone would also pass if the fixture computed every switch-off analysis completely
+(that is, if D were silently not applied). E0 checks the structure of the fixture:
+
+- **E0.** For every scenario and seed 0-9, the switch-off analysis used by B, C and D
+  comes from the shared path: the helper marks each derived analysis in
+  `Analysis.extras` (`"shared_path": True`). The complete switch-off controls exist
+  for seeds 0-1 only and carry no mark. The fixture runs exactly **161 complete
+  analyses** (130 with the default rule, 26 controls, 5 neighbor-row `blend`).
+
+The mark is in `extras`, which the verdict record does not serialize (it reads only
+`eb_catalog_configured`, which `analyze_data` does not set), so it does not affect
+the byte comparison of E1.
