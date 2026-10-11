@@ -130,6 +130,9 @@ First pack: exoplanet transits (TESS).
   extracts) whose bytes are cited by SHA-256. Never edit, reformat or normalize
   line endings there; linters and pre-commit hooks exclude these folders on
   purpose. A correction is a new file or a new record, never an edit.
+- Never print webhook or secret configuration (for example
+  `gh api repos/.../hooks` without a filter): its URLs can contain tokens. Use a
+  `--jq` filter that leaves out `config`.
 
 ## Communication
 
