@@ -4,7 +4,11 @@
 - CPU-bound work (analysis) uses ``ProcessPoolExecutor`` with the ``spawn`` start
   method on every platform, so behaviour is identical on Windows and Linux.
 
-The default number of analysis workers is ``os.cpu_count() - 2`` (at least 1).
+The default number of analysis workers is ``os.cpu_count() - 2`` (at least 1). The
+environment variable ``REFUTE_WORKERS`` (a positive integer) overrides it; CI sets it
+to every core of the runner. The number of workers should change only the
+execution, preserving the scientific results; a test comparing worker counts is
+planned (docs/validation/v0.2.1/workers-equivalence-acceptance.md).
 Tasks must be top-level functions with picklable arguments.
 """
 
@@ -24,7 +28,15 @@ _SINGLE_THREAD_ENV = (
 )
 
 
+WORKERS_ENV = "REFUTE_WORKERS"
+
+
 def default_workers() -> int:
+    override = os.environ.get(WORKERS_ENV, "").strip()
+    if override:
+        if not override.isdigit() or int(override) < 1:
+            raise ValueError(f"{WORKERS_ENV} must be a positive integer, got {override!r}")
+        return int(override)
     return max(1, (os.cpu_count() or 1) - 2)
 
 

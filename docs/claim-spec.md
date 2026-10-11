@@ -62,7 +62,9 @@ test_plan:
                         min_train_transits: 3, min_window_coverage: 0.5,
                         baseline_gap_durations: 0.25, baseline_outer_durations: 1.5,
                         timing_step_minutes: 1.0, timing_scan_half_width_durations: 0.5,
-                        hidden_detrend_window_factor: 3.0, max_timing_sigma_durations: 1.0}
+                        hidden_detrend_window_factor: 3.0, max_timing_sigma_durations: 1.0,
+                        require_valid_train: true, max_train_duration_period_ratio: 0.2,
+                        max_hidden_window_fraction: 0.5}
     events:            {min_coverage: 0.5, baseline_gap_durations: 0.25,
                         baseline_outer_durations: 1.5}
     centroid_shift:    {max_sigma: 3.0, min_offset_pixels: 0.5, min_sectors: 1}
@@ -79,11 +81,15 @@ test_plan:
                         min_events_for_dumps: 3, max_sap_sigma: 3.0, max_sap_rel_diff: 0.5,
                         max_background_sigma: 3.0, max_background_fraction: 0.5}
     eb_catalog:        {match_radius_arcsec: 21.0, period_tolerance: 0.01,
-                        period_factors: [1.0, 2.0, 0.5]}
+                        period_factors: [1.0, 2.0, 0.5],
+                        same_photometry_catalogs: [TESS-EB]}
 ```
 
 What each parameter does is described in [gauntlet-tess-v0.1.md](gauntlet-tess-v0.1.md)
-and, for the sections added in v0.2, [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md).
+and, for the sections added in v0.2, [gauntlet-tess-v0.2.md](gauntlet-tess-v0.2.md);
+the v0.2.1 additions (`holdout_by_year` train validity, `eb_catalog` own-TIC
+matches) are in
+[gauntlet-tess-v0.2.1.md](gauntlet-tess-v0.2.1.md).
 The `eb_catalog` test runs only if the claim has attachments with role `eb-catalog`
 (format `refute-eb-catalog-1`). A second attachment with role `eb-catalog-scan`
 (format `refute-eb-catalog-scan-1`) records which catalog snapshots were scanned,
@@ -120,11 +126,31 @@ pass_criteria:
   min_flagged_false_positives: 2
   max_refuted_planets: 1           # degeneracy guard
   flag_excluded_tests: []          # v0.2: tests ignored when counting "flagged"
+  flag_requires_signal_recovery: false    # v0.2.1: "flagged" needs the catalogued signal
+  flag_signal_period_factors: [1.0, 2.0, 0.5]   # v0.2.1: P, 2P, P/2
 ```
 
 `flag_excluded_tests` (default empty, which is the v0.1 definition): a false
 positive counts as flagged only if its verdict, recomputed with the same rules from
 the other tests, is `REFUTED`. The degeneracy guard always uses the full verdict.
+
+`flag_requires_signal_recovery` (default `false`, which is the v0.2 definition): when
+`true`, a false positive counts as flagged only if its signal is also *recovered*:
+the found period matches the published (catalogued) period at one of
+`flag_signal_period_factors`, that is,
+`|P_found - f * P_pub| / (f * P_pub) <= period_tolerance` for some factor `f`
+(inclusive). A missing period (analysis error, no candidate, no published period)
+is not recovered. A false positive whose signal is not recovered stays in the
+denominator. `flag_signal_period_factors` must be a non-empty list of positive
+numbers and is used only when `flag_requires_signal_recovery` is `true`. Planets are
+not affected. With the flag on, the calibration summary also reports the false
+positives whose signal was not recovered, the count under the v0.2 definition, and a
+"Signal recovered" column. See `docs/validation/v0.2.1/H7-acceptance.md`.
+
+Both fields are resolved into the locked claim, so adding them changed the resolved
+hash of older claims (the same happened to v0.1 claims when `flag_excluded_tests`
+was added). Older calibrations are verified at their locked commit; see
+[issue #30](https://github.com/klucilla/refute/issues/30).
 
 All criteria must hold on a complete run. The targets file must contain exactly
 `expected_planets` planets and `expected_false_positives` false positives.

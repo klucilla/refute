@@ -22,6 +22,8 @@ dossiers/<run_id>/
     plots/                          full.png, phase.png, odd_even.png, secondary.png,
                                     holdout_<year>.png
     environment/                    environment.json (Python, platform, package versions),
+                                    numeric_runtime.json (v0.2.1: BLAS thread pools and
+                                    thread variables of the analyzing process),
                                     requirements.txt (installed distributions), uv.lock
     export/                         candidate_parameters.md and .json: a parameter sheet
                                     for a human, never submitted; not an ExoFOP upload

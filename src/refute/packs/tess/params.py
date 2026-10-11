@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class _Model(BaseModel):
@@ -155,6 +155,17 @@ class EbCatalogParams(_Model):
     match_radius_arcsec: float = Field(21.0, gt=0)
     period_tolerance: float = Field(0.01, gt=0)
     period_factors: list[float] = Field(default_factory=lambda: [1.0, 2.0, 0.5])
+    # v0.2.1 (H9a): catalogs built from the same photometry as the light curve. A
+    # period match under the target's own TIC in one of them is a warning, not a fatal
+    # failure (it is not independent evidence). An empty list restores v0.2.
+    same_photometry_catalogs: list[str] = Field(default_factory=lambda: ["TESS-EB"])
+
+    @field_validator("same_photometry_catalogs")
+    @classmethod
+    def _named(cls, names: list[str]) -> list[str]:
+        if any(not name.strip() for name in names):
+            raise ValueError("catalog names must not be empty")
+        return names
 
 
 class EventParams(_Model):
@@ -180,6 +191,14 @@ class HoldoutParams(_Model):
     # timing uncertainty in the hidden year exceeds this many transit durations.
     hidden_detrend_window_factor: float = Field(3.0, gt=0)
     max_timing_sigma_durations: float = Field(1.0, gt=0)
+    # v0.2.1 (H4): a round whose train-only candidate fails the SNR gate, has a box
+    # longer than this fraction of its period, or predicts transit windows covering
+    # more than this fraction of the hidden year is INCONCLUSIVE before the hidden year
+    # is read. Both limits follow from the window geometry (docs/gauntlet-tess-v0.2.1.md).
+    # require_valid_train: false reports the rules without applying them.
+    require_valid_train: bool = True
+    max_train_duration_period_ratio: float = Field(0.2, gt=0, le=1)
+    max_hidden_window_fraction: float = Field(0.5, gt=0, le=1)
 
 
 class GauntletParams(_Model):
@@ -248,6 +267,10 @@ class TargetsFile(_Model):
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
 
+# P, 2P and P/2: the periods at which a found signal is the catalogued one (v0.2.1).
+DEFAULT_SIGNAL_PERIOD_FACTORS = (1.0, 2.0, 0.5)
+
+
 class CalibrationCriteria(_Model):
     period_tolerance: float = Field(gt=0)
     expected_planets: int = Field(ge=1)
@@ -260,6 +283,20 @@ class CalibrationCriteria(_Model):
     # dispositions used to select the false positives). The degeneracy guard always
     # uses the full verdict.
     flag_excluded_tests: list[str] = Field(default_factory=list)
+    # v0.2.1: a false positive counts as "flagged" only if the analyzed period matches
+    # the catalogued period at one of these factors (within period_tolerance). Opt-in:
+    # false keeps the v0.2 definition.
+    flag_requires_signal_recovery: bool = False
+    flag_signal_period_factors: list[float] = Field(
+        default_factory=lambda: list(DEFAULT_SIGNAL_PERIOD_FACTORS), min_length=1
+    )
+
+    @field_validator("flag_signal_period_factors")
+    @classmethod
+    def _positive_factors(cls, factors: list[float]) -> list[float]:
+        if any(f <= 0 for f in factors):
+            raise ValueError("every period factor must be > 0")
+        return factors
 
     @model_validator(mode="after")
     def _consistent(self) -> CalibrationCriteria:
