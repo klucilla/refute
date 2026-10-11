@@ -228,7 +228,7 @@ synthetic scenarios** on the locked code. It is evidence for these scenarios, **
 proof that the real v0.2 dossiers reproduce. If a discrepancy appears, its scope and
 impact go into the release notes; the v0.2 results and lock are preserved unchanged.
 
-## Place in the v0.2.1 plan and cost
+## Place in the v0.2.1 phase (ROADMAP.md, section "v0.2.1 Gauntlet fixes") and cost
 
 An engine item independent of the H hypotheses, required **before the v0.2.1 lock**
 (it supports the reproducibility of every dossier), alongside the coverage
