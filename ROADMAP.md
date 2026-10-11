@@ -90,58 +90,107 @@ Make the attacks serious and add independent review.
       run [summary.json](https://github.com/klucilla/refute/blob/v0.2.0/calibration/v0.2/results/20261009T155044Z-c9f341d2/summary.json),
       report [calibration/v0.2/POSTMORTEM.md](https://github.com/klucilla/refute/blob/v0.2.0/calibration/v0.2/POSTMORTEM.md).
 
-**Closed on 2026-10-11.** Gate review: Claude's gate verdict: WEAKENED; Codex provided a
-second review but did not assign a gate verdict
-([docs/gates/v0.2-review.md](docs/gates/v0.2-review.md)); the important findings
-(rows 4, 5 and 7) were resolved. Self-claim result: FAIL. Planets recovered: 10 of 10
-(required at least 9); false positives flagged without `eb_catalog`: 7 of 10 (required
-at least 6); planets refuted: 4 of 10 (required at most 1)
+**Closed on 2026-10-11.** Gate review: Claude's gate verdict: WEAKENED; Codex
+provided a second review but did not assign a gate verdict
+([docs/gates/v0.2-review.md](docs/gates/v0.2-review.md)). The closing requirement
+asked for the problems of a WEAKENED gate to be recorded in issues; instead, the
+important findings (rows 4, 5 and 7) were fixed before the close (commits 4c6d805
+and f479823, and tag v0.2.0-calibration-lock), and every finding has its resolution
+in docs/gates/v0.2-review.md. Self-claim result: FAIL. Planets recovered: 10 of 10
+(required at least 9); false positives flagged without `eb_catalog`: 7 of 10
+(required at least 6); planets refuted: 4 of 10 (required at most 1)
 ([calibration/v0.2/POSTMORTEM.md](calibration/v0.2/POSTMORTEM.md)). Evidence:
-[release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0), archived on
-Zenodo with version DOI [10.5281/zenodo.23301001](https://doi.org/10.5281/zenodo.23301001)
-and concept DOI [10.5281/zenodo.23301000](https://doi.org/10.5281/zenodo.23301000).
+[release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0), archived
+on Zenodo with version DOI
+[10.5281/zenodo.23301001](https://doi.org/10.5281/zenodo.23301001) and concept DOI
+[10.5281/zenodo.23301000](https://doi.org/10.5281/zenodo.23301000).
 
 ---
 
 ## v0.2.1 Gauntlet fixes
 
-Fix what the failed v0.2 calibration exposed, and test the fixes with a new
-pre-registered calibration.
+Fix what the failed v0.2 calibration exposed, and test the changes with a new
+pre-registered calibration. The goal is to measure correctly, not to raise a count:
+if the honest count of flagged false positives falls, that is a result.
+
+Requirements fixed by the maintainer on 2026-10-09, recorded here on 2026-10-11,
+before any v0.2.1 lock or result.
 
 **Scope**
-- Blind holdout: a round with an invalid train candidate is INCONCLUSIVE (hypothesis
-  4 of the v0.2 post-mortem); transit times measured with an ingress model, so that
-  the timing error is realistic (hypothesis 3 of the v0.2 post-mortem); robust
-  stacking of window depths and the error model of a round (issue #35).
+- Order: hypothesis 7 (signal identity) comes first, before any evaluation of
+  performance.
 - Calibration measure: a known false positive counts as flagged only if the analyzed
   signal is the catalogued one (hypothesis 7 of the v0.2 post-mortem).
+- Blind holdout: a round with an invalid train candidate is INCONCLUSIVE, using only
+  that round's train data and the claim's parameters; a test shows that changing the
+  hidden-year data changes no decision taken before the windows are read; the
+  directed mode (published period) stays separate from the general mode (hypothesis
+  4 of the v0.2 post-mortem). A round whose expected SNR, from the train depth and
+  the hidden-year noise, is near or below `min_snr` is INCONCLUSIVE, not FAIL;
+  whether a FAIL also requires the measured hidden depth to be inconsistent with the
+  train prediction is decided in its acceptance criteria (hypothesis 1 of the v0.2
+  post-mortem). Transit times measured with an ingress model, so that the timing
+  error is realistic (hypothesis 3 of the v0.2 post-mortem). Robust stacking of
+  window depths (issue #35) and the error model of a round (hypothesis 2 of the v0.2
+  post-mortem; issue #35).
 - `eb_catalog`: a period match under the target's own TIC in a catalog built from
   the same TESS photometry is a warning, not a fatal failure (hypothesis 9 of the
   v0.2 post-mortem).
 - Engine: the number of workers should change only the execution, preserving the
   scientific results (workers-equivalence test; numerical runtime recorded in every
   dossier); the environment leak of `init_worker()` with one worker (issue #32, to
-  be decided); a coverage requirement for the calibration.
+  be decided); a coverage requirement fixed before the lock: how many targets and
+  holdout rounds must give a conclusive result, with INCONCLUSIVE kept in the
+  denominators.
 - CI: at most 15 minutes per job (maintainer's target).
-- Documentation: how blind the holdout is (issue #23); AI use statement and what the
-  blind holdout does and does not prove (issue #14).
+- Documentation: how blind the holdout is, in the documentation and in the report
+  sentence of every dossier, changed under the new lock (issue #23); AI use
+  statement and what the blind holdout does and does not prove (issue #14).
 - Process: every legal or license statement has a URL, a date and a stored literal
   excerpt (issue #34); evaluate redistributing the TESS-EB snapshot (issue #33).
 - The self-claim of the new calibration (targets, numbers and thresholds) is defined
   in the v0.2.1 protocol before the lock.
+- The calibration report states every definition change since v0.2 (hypothesis 7
+  changes "flagged"; hypothesis 9 changes "refuted").
+- Synthetic scenes are idealized: synthetic numbers compare engine versions and test
+  known mechanisms; they set no bounds for real data.
+- The v0.2 calibration is never re-locked or re-run.
 - Hypotheses of the v0.2 post-mortem and open items not listed here are not part of
-  v0.2.1.
+  v0.2.1. Hypotheses 6, 10, 11(a), and 8 with 12, enter only if their validation is
+  ready before the protocol; 8 and 12 also need the adversarial case of a planet
+  with a persistent systematic bias toward a neighbor, using each sector's
+  pixel-to-sky transform.
 
 **Exit criteria**
-- [ ] Every change has acceptance criteria committed before its tests and code, and
-      synthetic cases that must pass and must fail.
-- [ ] No threshold is set, tuned or checked on a known target or on real data.
+- [ ] Every change has acceptance criteria, metrics and regression cases committed
+      before its tests and code, and synthetic cases that must pass and must fail,
+      including correlated noise.
+- [ ] A synthetic population study with known truth measures, before and after each
+      change, the rate of refuted planets, the rate of flagged false positives, the
+      false-alarm rate on noise-only light curves (white and correlated) and the
+      INCONCLUSIVE fraction; its metrics and acceptance limits are committed before
+      it runs.
+- [ ] Synthetic seeds and scenarios are split, before use, into a development set
+      and a confirmation set; the confirmation set, with seeds derived from a future
+      drand round, runs once, at the end, on frozen code, and only its result counts
+      as validation.
+- [ ] No synthetic test that passes at the start of v0.2.1 fails at its end without
+      a justification written before.
+- [ ] No threshold is set, tuned or checked on a known target or on real data; every
+      target used in the v0.1 and v0.2 calibrations, including development targets,
+      is used only for declared debugging.
+- [ ] New thresholds are in the code and in the gauntlet documentation before the
+      protocol of the new calibration.
 - [ ] The workers-equivalence test passes and the coverage requirement is defined,
       both before the v0.2.1 lock.
-- [ ] New pre-registered calibration (new lock, newly drawn targets, excluding v0.1
-      and v0.2), run and reported.
-- [ ] Reviewer reports stored and linked from the dossiers of the new calibration, as
-      in v0.2.
+- [ ] New pre-registered calibration (new lock of protocol, code, dependencies and
+      claim; newly drawn targets, excluding every target used in the v0.1 and v0.2
+      calibrations, including development targets), run and reported, even if it
+      fails.
+- [ ] If the new calibration fails, the maintainer records an explicit decision;
+      there is no automatic new attempt.
+- [ ] Reviewer reports stored and linked from the dossiers of the new calibration,
+      as in v0.2.
 - [ ] Every issue of milestone v0.2.1 closed, or moved to a later milestone with the
       reason stated.
 
@@ -182,6 +231,7 @@ Search for new candidates in TESS data.
   never uploaded to ExoFOP directly: since 2026-08-19 ExoFOP accepts community candidates only
   after peer-reviewed publication (or an RNAAS citing a peer-reviewed methodology) and with its
   approval. Publication path and exporter requirements: issue #18.
+- Discovery performance needs a requirement of its own; closing v0.2.1 is not enough.
 
 **Exit criteria**
 - [ ] Injection-recovery test on real light curves (injected synthetic
