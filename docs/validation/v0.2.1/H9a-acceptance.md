@@ -44,9 +44,11 @@ target's TIC ID **and** its catalog is in `same_photometry_catalogs`. Decision:
    v0.2. No match: PASS, as in v0.2. The coverage rules (INCONCLUSIVE without a scan
    record, and so on) are unchanged.
 
-**Reporting (the change of definition is stated: ROADMAP.md, v0.2.1, Scope: "The calibration report states every definition change since v0.2 (hypothesis 7 changes "flagged"; hypothesis 9 changes "refuted")."
-As rules of this document, its criteria and its sample sizes, the seeds below, are
-fixed before any result):**
+**Reporting:** the change of definition is stated (ROADMAP.md, v0.2.1, Scope: "The calibration report states every definition change since v0.2 (hypothesis 7 changes "flagged"; hypothesis 9 changes "refuted").").
+As rules of this document, the criteria and the sample sizes (the seeds listed below) are
+fixed before the tests and the code of the change. One premise check, on the code before
+H9(a), ran on seeds 0 to 4, seconds before this file was committed; see
+[pre-document-runs.md](pre-document-runs.md).
 
 - The test message of case 2 says that the match is the target's own TIC in a
   catalog built from the same TESS photometry, and that from v0.2.1 it is a warning,
