@@ -25,8 +25,8 @@ Refute uses [uv](https://docs.astral.sh/uv/) and Python 3.12 or newer.
 ```bash
 uv sync
 uv run pre-commit install
-uv run ruff check .
-uv run ruff format --check .
+uv run ruff check . --extend-exclude "calibration/*/audit"
+uv run ruff format --check . --extend-exclude "calibration/*/audit"
 uv run pytest
 ```
 

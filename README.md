@@ -20,8 +20,9 @@
 </p>
 
 > [!IMPORTANT]
-> **Status: v0.2 in development. v0.1 is closed, and its self-claim failed**
-> ([post-mortem](calibration/POSTMORTEM.md)). Nothing here is a confirmed discovery.
+> **Status: the v0.2 self-claim was locked, run and failed**
+> ([post-mortem](calibration/v0.2/POSTMORTEM.md)); v0.1 is closed, and its self-claim also
+> failed ([post-mortem](calibration/POSTMORTEM.md)). Nothing here is a confirmed discovery.
 > Refute produces candidates and verdicts, never certainties.
 
 ## Why
@@ -64,9 +65,10 @@ Many things can imitate that dip: two stars eclipsing each other, a neighbouring
 leaking into the aperture, instrument systematics, plain noise. Refute's job is to throw
 those explanations at a signal and see whether it survives. In v0.1 it tests for eclipsing
 binaries (odd/even depths, secondary eclipse, implausible size) and for noise (signal-to-noise,
-blind holdout). v0.2, in development and not yet calibrated, adds attacks on
-nearby-star contamination (centroids and apertures in the pixel data), period aliases,
-instrument systematics and eclipsing-binary catalogs ([gauntlet v0.2](docs/gauntlet-tess-v0.2.md)).
+blind holdout). v0.2 adds attacks on nearby-star contamination (centroids and apertures in
+the pixel data), period aliases, instrument systematics and eclipsing-binary catalogs
+([gauntlet v0.2](docs/gauntlet-tess-v0.2.md)); its self-claim was locked, run and failed
+([results](#calibration-results-v02)).
 
 The sharpest attack is the **blind holdout**. Hide an entire year of observations. Fit the
 orbit using only the other years. Predict when the transits should appear in the hidden
@@ -162,7 +164,46 @@ brighter, single-planet systems, and SPOC 2-minute data in at least two calendar
 spanning at least 300 days. The result of the self-claim says nothing about longer periods,
 shallower transits, fainter stars, multi-planet systems or other data products.
 
-### Calibration results
+### Calibration results (v0.2)
+
+> *Refute recovers at least 9 of 10 known TESS planets (period within 0.1% of the
+> published value), flags at least 6 of 10 known false positives by analyzing
+> their signals, and gives the verdict REFUTED to at most 1 of the 10 known
+> planets.*
+
+Targets drawn with the seed of drand round 6537566 after the protocol was published
+([calibration/v0.2/PROTOCOL.md](calibration/v0.2/PROTOCOL.md)), in the same easy regime
+as v0.1, excluding the v0.1 targets.
+
+<!-- CALIBRATION-V0.2:START -->
+**Self-claim result: FAIL.** At least one criterion failed.
+
+| Criterion | Value | Requirement | Passed |
+|---|---|---|---|
+| recovered planets | 10 of 10 | >= 9 | yes |
+| flagged false positives (without eb_catalog) | 7 of 10 | >= 6 | yes |
+| refuted planets (degeneracy guard) | 4 of 10 | <= 1 | no |
+
+Run `20261009T155044Z-c9f341d2` from commit [`cc9d104027ed`](https://github.com/klucilla/refute/commit/cc9d104027edbc000f40f0e62a2a8e07da6775c7) (2026-10-09T15:57:37+00:00). [summary](calibration/v0.2/results/20261009T155044Z-c9f341d2/summary.md) · [post-mortem](calibration/v0.2/POSTMORTEM.md)
+
+| Item | Value |
+|---|---|
+| Claim | [`calibration/v0.2/self_claim.yaml`](calibration/v0.2/self_claim.yaml) |
+| Claim SHA-256 | `c9f341d29bea4ec0d125adf3f0822fae4b593beabbdd19aeb339613e7a6b34a8` |
+| Code SHA-256 | `2cd8b5c16c9ded3e32335cd95d8b68f46e0676d5183f3129a6cef4e8dfbd1752` |
+| Locked from commit | [`e176ac3d21ca`](https://github.com/klucilla/refute/commit/e176ac3d21ca6e2efeb5085a8acb44d69624d520) |
+| Locked at (UTC) | 2026-10-09T15:29:55Z |
+| `refute verify` | PASS |
+| Evidence | [lock file](calibration/v0.2/self_claim.lock.json) · [lock history](calibration/v0.2/LOCK_HISTORY.md) |
+<!-- CALIBRATION-V0.2:END -->
+
+Independent reviews: 17 of the 20 dossiers (every false positive, the 4 refuted planets
+and 3 planets drawn with drand round 6542966), one fresh reviewer session per dossier;
+reviews never change a verdict. Reproduction: 2 of the 20 dossiers were reproduced from
+fresh clones, both with key results reproduced. Details: [run log](calibration/v0.2/RUNS.md)
+and [post-mortem](calibration/v0.2/POSTMORTEM.md).
+
+### Calibration results (v0.1)
 
 <!-- CALIBRATION:START -->
 **Self-claim result: FAIL.** At least one criterion failed.
@@ -469,7 +510,7 @@ Binary Stars. I. Short-cadence Observations of 4584 Eclipsing Binaries in Sector
 [doi:10.3847/1538-4365/ac324a](https://doi.org/10.3847/1538-4365/ac324a), retrieved
 through VizieR (table J/ApJS/258/16/tess-ebs,
 [doi:10.26093/cds/vizier.22580016](https://doi.org/10.26093/cds/vizier.22580016)) on
-2026-10-08. The CDS asks (<https://cds.unistra.fr/vizier-org/licences_vizier.html>,
+2026-10-09 (UTC). The CDS asks (<https://cds.unistra.fr/vizier-org/licences_vizier.html>,
 retrieved 2026-10-08):
 
 > This research has made use of the VizieR catalogue access tool, CDS, Strasbourg,
@@ -493,7 +534,7 @@ Some data files are not code and keep the terms of their sources
 | Data | Terms |
 |---|---|
 | Gaia DR3 rows: `calibration/v0.2/eb_catalog.csv` (written by the v0.2 selection) and the Gaia snapshot `gaia_dr3_vari_eclipsing_binary.csv` published as a release asset | [CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/): non-commercial use, with credit to ESA/Gaia/DPAC |
-| TESS-EB catalog (Prsa et al. 2022) | **not redistributed**, as a precaution (a conflict between the publisher's and the CDS's terms is not demonstrated by the sources checked on 2026-10-10; an earlier statement about the CDS terms was withdrawn as unconfirmed, see [erratum E1](calibration/v0.2/ERRATA.md)). The repository keeps only the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; the file is downloaded and its hash checked on every run. Four records appear, with citation, in the v0.2 calibration dossiers, to be published with release v0.2.0. |
+| TESS-EB catalog (Prsa et al. 2022) | **not redistributed**, as a precaution (a conflict between the publisher's and the CDS's terms is not demonstrated by the sources checked on 2026-10-10; an earlier statement about the CDS terms was withdrawn as unconfirmed, see [erratum E1](calibration/v0.2/ERRATA.md)). The repository keeps the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; besides these, it contains the 4 TESS-EB periods quoted in four review reports of the v0.2 calibration and the record of the search for TESS-EB values (see "Search record" in [DATA_LICENSE.md](calibration/v0.2/eb_snapshot/DATA_LICENSE.md)). The file is downloaded and its hash checked on every run. Four records appear, with citation, in the v0.2 calibration dossiers, to be published with release v0.2.0. |
 
 > **Correction (decided 2026-10-10, applied 2026-10-11).** Until 2026-10-11 this table
 > said that the CDS gives TESS-EB CC BY-NC terms with a link to BY-NC-ND. That
