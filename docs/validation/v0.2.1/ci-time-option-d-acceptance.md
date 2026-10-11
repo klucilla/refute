@@ -2,10 +2,11 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-11 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended twice (below): Amendment 1, before any
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended three times (below): Amendment 1, before any
 test was written (a withdrawn statement about Python versions, the time metric, the
 split of the code commit and a structural case E0); Amendment 2, before the code (a
-third baseline run).
+third baseline run); Amendment 3, before the code (the E cases marked as expected
+failures until commit 3b).
 
 ## Problem
 
@@ -299,3 +300,18 @@ per job (twelve values of the metric):
 Over the three runs the H9(a) fixture took 608-771 s (ubuntu 3.12), 543-719 s
 (windows 3.12), 512-725 s (windows 3.13) and 417-760 s (ubuntu 3.13). Nothing else
 changes.
+
+## Amendment 3 (2026-10-11, before the code): E cases marked as expected failures
+
+Decided by the maintainer, so that the CI of the branch is green while the E cases
+are red by design. In a commit of its own ("tests: mark option D cases as expected
+failures until 3b"), E0, E1 (13 scenarios) and the E1 premise (2 seeds) are marked
+`pytest.mark.xfail(strict=True)` with the reason "red by design until commit 3b of
+option D; see docs/validation/v0.2.1/ci-time-option-d-acceptance.md". No assertion
+and no other test changes. Full suite after the marks: 489 passed, 16 xfailed,
+0 failures (count from the JUnit XML).
+
+**Commit 3b removes the marks.** When the shared path exists, the 16 cases pass;
+with `strict=True` an unexpected pass is a failure, so 3b must remove the marks in
+the same commit, and its suite run must show the 16 cases as passed, not xfailed.
+Nothing else in sections E, F, S or T changes.
