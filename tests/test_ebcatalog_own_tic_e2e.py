@@ -1,13 +1,16 @@
 """v0.2.1 H9(a) end to end: full analyses with a synthetic catalog (B1-B3), the
 calibration evaluation (C1-C3) and the property over every scenario (D1-D2) of
 docs/validation/v0.2.1/H9a-acceptance.md. Premises use the switch
-``same_photometry_catalogs: []`` (the v0.2 behavior)."""
+``same_photometry_catalogs: []`` (the v0.2 behavior). Cases E0-E1 check the shared
+path of option D (docs/validation/v0.2.1/ci-time-option-d-acceptance.md): the
+switch-off analyses derived from the default-rule ones equal complete ones."""
 
 from types import SimpleNamespace
 
 import pytest
 
 from conftest import target_entry
+from refute.core.io import dumps_json
 from refute.core.runner import default_workers, run_processes
 from refute.packs.tess import synthetic
 from refute.packs.tess.calibration import TessCalibrator
@@ -187,3 +190,59 @@ def test_d_downgrade_never_refutes_and_changes_only_eb_catalog(analyses, name):
         eb = _test(on, "eb_catalog")
         if eb.status.value == "FAIL":
             assert on.verdict != "SURVIVED", (name, seed)
+
+
+# --- E (option D: docs/validation/v0.2.1/ci-time-option-d-acceptance.md) ----------------
+
+CONTROL_SEEDS = (0, 1)
+
+
+def _shared(analysis):
+    return analysis.extras.get("shared_path") is True
+
+
+def _record(analysis, name, seed):
+    target = target_entry(1, "planet", PERIODS[name], name=f"{name} {seed}")
+    context = {"pass_criteria": {"period_tolerance": 0.001}}
+    data = synthetic.scenario_data(name, seed)
+    return dumps_json(build_result(target, data, _plan(OFF), analysis, context))
+
+
+def _gauntlet_tests(analysis):
+    return dumps_json([t.to_dict() for t in analysis.gauntlet.tests])
+
+
+def test_e0_switch_off_analyses_come_from_the_shared_path(analyses):
+    for name in SCENARIOS:
+        for seed in SEEDS:
+            assert _shared(analyses[(name, seed, "off")]), (name, seed, "off is not derived")
+            assert not _shared(analyses[(name, seed, "on")]), (name, seed, "on is derived")
+            control = analyses.get((name, seed, "off_complete"))
+            if seed in CONTROL_SEEDS:
+                assert control is not None and not _shared(control), (name, seed, "control")
+            else:
+                assert control is None, (name, seed, "unexpected control")
+    complete = {id(a) for a in analyses.values() if not _shared(a)}
+    assert len(complete) == 161
+
+
+@pytest.mark.parametrize("name", SCENARIOS)
+def test_e1_shared_path_equals_the_complete_switch_off_analysis(analyses, name):
+    for seed in CONTROL_SEEDS:
+        complete = analyses.get((name, seed, "off_complete"))
+        assert complete is not None, (seed, "no complete switch-off control")
+        derived = analyses[(name, seed, "off")]
+        assert _shared(derived), (seed, "the switch-off analysis is not derived")
+        assert _record(derived, name, seed) == _record(complete, name, seed), seed
+        assert _gauntlet_tests(derived) == _gauntlet_tests(complete), seed
+
+
+@pytest.mark.parametrize("seed", CONTROL_SEEDS)
+def test_e1_premise_the_switch_changes_the_planet_analysis(analyses, seed):
+    on, off = analyses[("planet", seed, "on")], analyses[("planet", seed, "off")]
+    assert _shared(off), "the switch-off analysis is not derived"
+    assert (on.verdict, off.verdict) == ("WEAKENED", "REFUTED")
+    assert _test(on, "eb_catalog").severity.value == "warning"
+    eb_off = _test(off, "eb_catalog")
+    assert (eb_off.status.value, eb_off.severity.value) == ("FAIL", "fatal")
+    assert eb_off.metrics["downgraded"] is False
