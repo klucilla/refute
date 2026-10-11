@@ -48,6 +48,6 @@ between the sources) is not demonstrated by the sources checked.
 **Decision for v0.2.0 (maintainer, 2026-10-10).** The full TESS-EB catalog is still
 not redistributed, now as a precaution: a conflict between the sources' terms is not
 demonstrated by the sources checked. The four TESS-EB records contained in four v0.2
-calibration dossiers are published with citation (see the data credits of release
-v0.2.0). The download-and-hash-check procedure of runs and reproductions is
-unchanged.
+calibration dossiers will be published with release v0.2.0, with citation (see the
+data credits of that release). The download-and-hash-check procedure of runs and
+reproductions is unchanged.

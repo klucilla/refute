@@ -33,9 +33,9 @@ the repository nor in any release.**
 **Decision for v0.2.0 (maintainer, 2026-10-10).** The full catalog is still not
 redistributed, now as a precaution: a conflict between the sources' terms is not
 demonstrated by the sources checked. Four TESS-EB records contained in four v0.2
-calibration dossiers are published with citation in release v0.2.0, as localized
-evidence of the audit; the same four periods had already been quoted in the reviews
-committed in `b4be588`.
+calibration dossiers will be published with release v0.2.0, with citation, as
+localized evidence of the audit; the same four periods had already been quoted in the
+reviews committed in `b4be588`.
 
 ~~**Reason: the license terms differ between the sources.**~~ *(withdrawn, see the
 correction above)*
