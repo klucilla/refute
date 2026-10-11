@@ -1,0 +1,20 @@
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-158561566/data/manifest.json	770	47.33305	158561566	DEJ2000	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-158561566/data/manifest.json	776	287.708814	158561566	RAJ2000	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-158561566/review/opus-1.md	8	6.7899645	158561566	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-158561566/verdict.json	2885	6.7899645	158561566	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-316916655/review/opus-1.md	11	2.8747759	316916655	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-316916655/verdict.json	827	2.8747759	316916655	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-317507345/review/opus-1.md	12	3.9400619	317507345	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-317507345/verdict.json	2386	3.9400619	317507345	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-350445771/review/opus-1.md	35	3.1904288	350445771	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-350445771/verdict.json	8502	3.1904288	350445771	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/DATA_CREDITS.md	16	6.7899645	158561566	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/DATA_CREDITS.md	17	2.8747759	316916655	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/DATA_CREDITS.md	18	3.9400619	317507345	Per	True
+refute-v0.2-calibration.zip	refute-v0.2-calibration/DATA_CREDITS.md	19	3.1904288	350445771	Per	True
+# refute-v0.2-calibration.zip: 14 hits
+repro-record-files.zip	session_transcript_extract.txt	158	6.7899645	158561566	Per	True
+repro-record-files.zip	session_transcript_extract.txt	159	2.8747759	316916655	Per	True
+repro-record-files.zip	session_transcript_extract.txt	160	3.9400619	317507345	Per	True
+repro-record-files.zip	session_transcript_extract.txt	161	3.1904288	350445771	Per	True
+# repro-record-files.zip: 4 hits

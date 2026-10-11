@@ -37,6 +37,14 @@ calibration dossiers will be published with release v0.2.0, with citation, as
 localized evidence of the audit; the same four periods had already been quoted in the
 reviews committed in `b4be588`.
 
+**Search record (decided 2026-10-11).** The record of the search for TESS-EB values,
+published in `calibration/v0.2/audit/tess-eb-search/`, shows the values the search
+matched: the periods of the four records above; the position of TIC 158561566 (from
+the TESS Input Catalog via MAST, equal to its TESS-EB position); and the TESS-EB
+periods of TIC 71612483, 24450633 and 399729481, which coincide with values in the
+ExoFOP-TESS pool snapshots. They are published as evidence of the check, with the
+citation above. Nothing else from TESS-EB is in that folder.
+
 ~~**Reason: the license terms differ between the sources.**~~ *(withdrawn, see the
 correction above)*
 

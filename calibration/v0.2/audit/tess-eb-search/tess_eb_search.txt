@@ -1,0 +1,20 @@
+snapshot content SHA-256: a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c OK
+rows: 4584 columns: ['TIC', 'm_TIC', 'RAJ2000', 'DEJ2000', 'Per']
+search tokens: 18724 | values skipped (< 6 significant digits): 0
+refs covered: codex/turn-diffs/checkpoints/1738d590eb90052e6140b2a5fa30ad3a/5271bb2c718c72e98cfd186ba416a509/1791679873317/995eecfd-0546-45dc-83d5-5a23a5a9af8c, claude/v0-2-1-gauntlet-fixes-13f5e7, claude/v0-3-planning-draft-abff23, main, origin, origin/claude/v0-2-1-gauntlet-fixes-13f5e7, origin/main, v0.1.0
+repository blobs scanned: 379
+refute-v0.1-calibration.zip: SHA-256 OK; members scanned: 586
+refute-v0.1-reproduction.zip: SHA-256 OK; members scanned: 218
+
+== REPOSITORY (all reachable blobs): 14 hits; with the row's TIC in the same file: 10 (the 4 known periods: 8; other values: 2); without the TIC: 4
+   known period of TIC [158561566] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-158561566/opus-1.md
+   known period of TIC [316916655] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-316916655/opus-1.md
+   known period of TIC [317507345] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-317507345/opus-1.md
+   known period of TIC [350445771] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-350445771/opus-1.md
+   known period of TIC [158561566, 316916655, 317507345, 350445771] in docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md
+   OTHER VALUE WITH ITS TIC: ('calibration/pool_snapshot/exofop_toi.csv (blob 0370a4cf)', '1.2168732', 71612483, 'Per', True)
+   OTHER VALUE WITH ITS TIC: ('calibration/v0.2/pool_snapshot/exofop_toi.csv (blob 0a992310)', '1.2168732', 71612483, 'Per', True)
+   without TIC: 0.22867 (Per of TIC 24450633): 2 hit(s), e.g. calibration/pool_snapshot/exofop_toi.csv (blob 0370a4cf)
+   without TIC: 0.803801 (Per of TIC 399729481): 2 hit(s), e.g. calibration/pool_snapshot/exofop_toi.csv (blob 0370a4cf)
+
+== v0.1 ASSETS: 0 hits; with the row's TIC in the same file: 0 (the 4 known periods: 0; other values: 0); without the TIC: 0
