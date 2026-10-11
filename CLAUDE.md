@@ -114,6 +114,18 @@ First pack: exoplanet transits (TESS).
   configurable. Use `ProcessPoolExecutor` or equivalent.
 - Always deliver complete files, never partial snippets.
 - Data cache lives inside the project (`.cache/`, git-ignored).
+- Never end a process by name or by a pattern (`taskkill /IM`, `pkill`,
+  `killall`, `Stop-Process -Name`, or any filter that can match other
+  processes). End only a process that this session started, by the PID
+  recorded when it was started. Other sessions and programs run Python on
+  the same machine.
+- Always run Python from the project's virtual environment, by its path
+  (`.venv/Scripts/python.exe` on Windows, `.venv/bin/python` elsewhere) or
+  through `uv run`; never a bare `python`, `python3` or `py`. On Windows a
+  bare `python` may be the Microsoft Store alias, which hangs.
+- Test counts (passed, failed, errors, skipped) are reported from a JUnit
+  XML file (`pytest --junitxml=<path>`), never from the progress markers or
+  the console summary line.
 
 ## Communication
 
