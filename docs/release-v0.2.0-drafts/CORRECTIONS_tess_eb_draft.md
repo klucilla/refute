@@ -1,6 +1,6 @@
 > **Drafts for closing v0.2. To be applied on `main` by the release session. Do not apply from this branch.** (Written on branch `claude/v0-2-1-gauntlet-fixes-13f5e7`, 2026-10-10; nothing here changes `calibration/v0.2/` or `main`.)
 
-# Draft correction texts (not committed; location to be decided by the maintainer)
+# Draft correction texts (location decided 2026-10-10: applied on `main` by the session that closes v0.2)
 
 ======================================================================
 (1) ERRATA FILE for the locked PROTOCOL.md (new file; PROTOCOL.md is a locked
