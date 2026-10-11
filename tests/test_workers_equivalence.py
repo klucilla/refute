@@ -1,7 +1,7 @@
 """v0.2.1 workers equivalence: the same locked synthetic calibration run with
 ``--workers 3``, ``--workers 1`` (also with BLAS thread variables preset to 4) and the
-per-target REPRODUCE.md command, each in a new independent process. Criteria E1-E3 of
-docs/validation/v0.2.1/workers-equivalence-acceptance.md.
+per-target REPRODUCE.md command, each in a new independent process. Criteria E0-E3 of
+docs/validation/v0.2.1/workers-equivalence-acceptance.md (with Amendments 1 and 2).
 
 Level (a), the REPRODUCE.md contract (``check_dossier``), decides. Level (b), exact
 equality after removing only the allowed operational differences, and the reports and
@@ -20,6 +20,7 @@ from pathlib import Path
 import pytest
 
 from conftest import calibration_claim, git, target_entry, targets_file, write_yaml
+from refute.core.codehash import compute_code_hash
 from refute.core.dossier import check_dossier
 from refute.core.lock import create_lock
 from refute.packs.tess.synthetic import scenario_data, write_synthetic_cache
@@ -37,9 +38,13 @@ MARKER = "<RUN_DIR>"
 # Literal, not imported: the test must also run against the v0.2 lock (cc9d104), which
 # predates REFUTE_WORKERS.
 WORKERS_ENV = "REFUTE_WORKERS"
-# Set only for the declared one-off run against cc9d104, whose code does not write the
-# numerical-runtime record: E2 then records its absence instead of failing.
+# Legacy mode, only for the declared one-off run against cc9d104 (Amendment 2, item 2):
+# E2 then requires the record to be ABSENT and the code under test to have the code hash
+# locked in cc9d104; anything else fails.
 LEGACY = os.environ.get("REFUTE_EQUIVALENCE_LEGACY_CODE") == "1"
+ROOT = Path(__file__).resolve().parents[1]
+V02_LOCK = ROOT / "calibration" / "v0.2" / "self_claim.lock.json"
+V02_CODE_SHA256 = "2cd8b5c16c9ded3e32335cd95d8b68f46e0676d5183f3129a6cef4e8dfbd1752"
 CLI = "import sys; from refute.cli import main; sys.argv[0] = 'refute'; main()"
 
 
@@ -53,9 +58,11 @@ def _execute(
     target: str | None = None,
     preset: dict[str, str] | None = None,
 ) -> Path:
-    """One execution in a new process. The environment is the test process's, without
-    REFUTE_WORKERS, plus ``preset`` (F4 only)."""
-    env = {k: v for k, v in os.environ.items() if k != WORKERS_ENV}
+    """One execution in a new process. The environment is the test process's without
+    REFUTE_WORKERS and without the four thread variables (an explicit, repeatable base),
+    plus ``preset`` (F4 only)."""
+    removed = {WORKERS_ENV, *THREAD_VARS}
+    env = {k: v for k, v in os.environ.items() if k not in removed}
     env.update(preset or {})
     args = [
         sys.executable,
@@ -105,14 +112,34 @@ def runs(tmp_path_factory):
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "lock")
     out = tmp / "out"
-    runs = {
-        "O": _execute(claim, repo, out, "O", 3, cache),
+    runs = {"O": _execute(claim, repo, out, "O", 3, cache)}
+    _check_premises(runs["O"])
+    runs |= {
         "F": _execute(claim, repo, out, "F", 1, cache),
         "F4": _execute(claim, repo, out, "F4", 1, cache, preset=PRESET),
     }
     for key in KEYS:
         runs[f"R{key[4:]}"] = _execute(claim, repo, out, f"R{key[4:]}", 1, cache, target=key)
     return {"runs": runs, "report": tmp / "workers_equivalence_report.json"}
+
+
+def _verdict(dossier: Path) -> dict:
+    return json.loads((dossier / "verdict.json").read_text(encoding="utf-8"))
+
+
+def _check_premises(original: Path) -> None:
+    """E0: the scenarios represent what they should, in O, before any comparison."""
+    planet, fp, vanishing = (_verdict(original / key) for key in KEYS)
+
+    def holdout(verdict):
+        return next(t for t in verdict["tests"] if t["name"] == "holdout_by_year")
+
+    assert holdout(planet)["status"] == "PASS", "premise: planet blind holdout PASS"
+    assert any(r["access_log"] for r in planet["holdout_rounds"]), "premise: a round read"
+    assert holdout(vanishing)["status"] == "FAIL", "premise: vanishing blind holdout FAIL"
+    assert fp["verdict"] == "REFUTED", f"premise: false positive REFUTED, got {fp['verdict']}"
+    flagged = _summary(original)["self_claim"]["criteria"][1]
+    assert flagged["value"] == 1, f"premise: the false positive is flagged, got {flagged}"
 
 
 def _dossiers(runs):
@@ -156,39 +183,65 @@ def test_e1_full_run_summaries_agree(runs, name):
 # --- E2: the numerical runtime is recorded ------------------------------------------------
 
 
+NOT_MEASURED = "the BLAS question is NOT MEASURED"
+
+
+def _all_dossiers(runs):
+    for name, run_dir in runs.items():
+        for key in KEYS if not name.startswith("R") else [f"TIC-{name[1:]}"]:
+            yield name, key, run_dir / key
+
+
 def test_e2_numeric_runtime_is_recorded_in_every_dossier(runs):
     records = {}
-    for name, run_dir in runs["runs"].items():
-        keys = KEYS if not name.startswith("R") else [f"TIC-{name[1:]}"]
-        for key in keys:
-            path = run_dir / key / RUNTIME_FILE
-            if LEGACY and not path.is_file():
-                records[f"{name}/{key}"] = "not recorded by this code version"
-                continue
-            assert path.is_file(), f"missing {path}"
-            record = json.loads(path.read_text(encoding="utf-8"))
-            for field in (
-                "process",
-                "thread_env",
-                "numpy_version",
-                "blas",
-                "threadpoolctl_available",
-                "threadpools",
-            ):
-                assert field in record, (name, key, field)
-            assert set(record["thread_env"]) == set(THREAD_VARS)
-            assert record["process"] == ("worker" if name == "O" else "main"), (name, key)
-            if name == "F4":
-                for var, value in PRESET.items():
-                    assert record["thread_env"][var] == value, (key, var)
-            records[f"{name}/{key}"] = {
-                "process": record["process"],
-                "thread_env": record["thread_env"],
-                "threadpools": [
-                    {k: p.get(k) for k in ("user_api", "internal_api", "num_threads")}
-                    for p in record["threadpools"] or []
-                ],
-            }
+    if LEGACY:
+        code = compute_code_hash().sha256
+        assert code == V02_CODE_SHA256, f"legacy mode on code {code}, not the v0.2 lock"
+        if V02_LOCK.is_file():
+            locked = json.loads(V02_LOCK.read_text(encoding="utf-8"))["code"]["sha256"]
+            assert locked == V02_CODE_SHA256, "the v0.2 lock file disagrees"
+        for name, key, dossier in _all_dossiers(runs["runs"]):
+            assert not (dossier / RUNTIME_FILE).is_file(), f"legacy mode, but {name}/{key} has it"
+            records[f"{name}/{key}"] = "absent (code locked in cc9d104)"
+        _append_report(runs["report"], "numeric_runtime", records)
+        return
+    for name, key, dossier in _all_dossiers(runs["runs"]):
+        path = dossier / RUNTIME_FILE
+        assert path.is_file(), f"missing {path}: {NOT_MEASURED}"
+        record = json.loads(path.read_text(encoding="utf-8"))
+        for field in (
+            "process",
+            "thread_env",
+            "numpy_version",
+            "blas",
+            "threadpoolctl_available",
+            "threadpools",
+        ):
+            assert field in record, (name, key, field)
+        assert set(record["thread_env"]) == set(THREAD_VARS)
+        assert record["process"] == ("worker" if name == "O" else "main"), (name, key)
+        assert record["threadpoolctl_available"] is True, f"{name}/{key}: {NOT_MEASURED}"
+        assert isinstance(record["blas"], str) and record["blas"], f"{name}/{key}: {NOT_MEASURED}"
+        pools = record["threadpools"]
+        assert isinstance(pools, list) and pools, f"{name}/{key}: no thread pool, {NOT_MEASURED}"
+        for pool in pools:
+            threads = pool.get("num_threads")
+            valid = isinstance(threads, int) and not isinstance(threads, bool) and threads >= 1
+            assert valid, f"{name}/{key}: invalid thread count {pool}, {NOT_MEASURED}"
+        blas_pools = [p for p in pools if p.get("user_api") == "blas"]
+        assert blas_pools, f"{name}/{key}: no BLAS pool reported, {NOT_MEASURED}"
+        if name == "F4":
+            effective = [p["num_threads"] for p in blas_pools]
+            assert all(n == 4 for n in effective), f"F4/{key}: effective BLAS threads {effective}"
+        records[f"{name}/{key}"] = {
+            "process": record["process"],
+            "thread_env": record["thread_env"],
+            "blas": record["blas"],
+            "threadpools": [
+                {k: p.get(k) for k in ("user_api", "internal_api", "version", "num_threads")}
+                for p in pools
+            ],
+        }
     _append_report(runs["report"], "numeric_runtime", records)
     print(json.dumps(records, indent=1))
 

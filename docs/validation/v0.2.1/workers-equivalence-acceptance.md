@@ -2,9 +2,10 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-10 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended once before any test was written
-(Amendment 1, below): the adversarial execution F4 and the exact path
-normalization.
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended twice (below): Amendment 1, before
+any test was written (the adversarial execution F4 and the exact path normalization);
+Amendment 2, after the first test run and before the code of the record (an explicit
+environment, the legacy mode, a stricter E2 and checked premises).
 
 ## Problem
 
@@ -77,9 +78,12 @@ seed). The confirmation set is not used.
 Each execution is a **new, independent process** (a subprocess of the test running the
 `refute` command line), never two executions in the same process: the first would
 change the environment inherited by the second (`init_worker()` writes the thread
-variables into `os.environ`). Every subprocess gets the test process's environment
+variables into `os.environ`). ~~Every subprocess gets the test process's environment
 with `REFUTE_WORKERS` removed; the thread variables are left as inherited and are
-recorded, not set by the test.
+recorded, not set by the test.~~ *(Amendment 2)* Every subprocess gets the test
+process's environment with `REFUTE_WORKERS` **and the four thread variables**
+(`OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`, `NUMEXPR_NUM_THREADS`)
+removed. F4 starts from the same clean base and sets only its three variables.
 
 - **O** (original): the full claim with `--workers 3` (one spawned worker per target).
 - **F**: the full claim with `--workers 1` (all targets in the main process).
@@ -87,7 +91,8 @@ recorded, not set by the test.
   `--target <key> --workers 1`, each in its own process.
 - **F4** *(Amendment 1)*: the full claim with `--workers 1`, in a new process whose
   environment has `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS` and `MKL_NUM_THREADS`
-  set to `4` **by the test** before the process starts. `init_worker()` keeps those
+  set to `4` **by the test** before the process starts (from the clean base of
+  Amendment 2, so `NUMEXPR_NUM_THREADS` is not inherited either). `init_worker()` keeps those
   values (`setdefault`), so this is the case that can break: the inherited environment
   without those variables is the easy case.
 
@@ -145,15 +150,57 @@ written:
 - **Paths** are normalized only by exact replacement of each execution's run-directory
   prefix with a fixed marker; no generic pattern is used.
 
+## Amendment 2 (2026-10-10, after the first test run, before the record's code)
+
+Requested by the maintainer after the second commit (`b7e34dd`):
+
+1. **Explicit environment.** O, F and R11-R13 run with the four thread variables
+   removed from the subprocess environment; F4 starts from that clean base and sets
+   only `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS` and `MKL_NUM_THREADS` to `4`. The
+   reason is to have **explicit, repeatable scenarios**. This file makes **no claim**
+   about how often either environment occurs on real machines; that was not measured.
+   **The first run of the test (`b7e34dd`) is an exploratory observation only**: its
+   subprocesses inherited the test process's environment, which may already hold
+   thread variables written by `init_worker()` in earlier in-process runs of the suite,
+   so its environment possibly depended on the order of the suite.
+2. **Legacy mode, `REFUTE_EQUIVALENCE_LEGACY_CODE=1`.** In normal mode (the variable
+   unset) E2 requires `environment/numeric_runtime.json` in every dossier. In legacy
+   mode E2 requires the file to be **absent** in every dossier **and** the code hash
+   of the Refute code under test (computed with the lock's own mechanism,
+   `refute.core.codehash.compute_code_hash`, on the installed source tree, not on the
+   claim's temporary repository) to equal the code hash locked in `cc9d104`
+   (`calibration/v0.2/self_claim.lock.json`,
+   `2cd8b5c16c9ded3e32335cd95d8b68f46e0676d5183f3129a6cef4e8dfbd1752`). Anything
+   else fails. The mode exists only for the one-off run against `cc9d104`.
+3. **Stricter E2 (see below).** The record must come from `threadpoolctl`, with an
+   identified BLAS backend and valid, non-empty thread counts. If the introspection
+   does not provide that, E2 fails and the BLAS question is recorded as **NOT
+   MEASURED**. F4 is checked by the threads `threadpoolctl` reports, not by the
+   variables. **Configured threads do not mean that every operation uses all of
+   them**: the record shows the libraries' thread settings, not the threading of each
+   call.
+4. **Checked premises.** Before any comparison, the test confirms in O that the
+   planet's blind holdout PASSES with at least one round that read the hidden year,
+   that the vanishing planet's blind holdout FAILS, and that the false positive is
+   flagged (verdict REFUTED, counted in the flagged criterion). If a premise fails,
+   the test fails before comparing.
+5. Socket blocking stays on; no warning is silenced generically.
+
 ## Acceptance criteria
 
+- E0 *(Amendment 2)*. The premises of item 4 hold in O.
 - E1. Level (a) holds for every target, for F, F4 and each R_k, and for the full-run
   summaries of F and F4.
 - E2. Every dossier of every execution has `environment/numeric_runtime.json` with
   the fields listed above, with `process` equal to `worker` in O and `main` in F, F4
-  and R; in F4 the three variables set by the test are recorded as `4`. The test
-  report prints, per execution and target, the loaded BLAS libraries and their
-  **effective** thread counts and the four thread variables.
+  and R; ~~in F4 the three variables set by the test are recorded as `4`~~.
+  *(Amendment 2)* `threadpoolctl_available` is true, the BLAS backend is identified,
+  and every reported thread pool has a positive integer thread count (the list is not
+  empty); in F4 every BLAS pool reported by `threadpoolctl` has 4 threads. Otherwise
+  E2 fails and the BLAS question is recorded as NOT MEASURED. The test report prints,
+  per execution and target, the loaded BLAS libraries and their **effective** thread
+  counts and the four thread variables. In legacy mode E2 is as described in
+  Amendment 2, item 2.
 - E3. The level (b) and report/PNG results are recorded (warning and JSON report),
   whatever they are.
 - E4. The full existing suite passes; `ruff check` and `ruff format --check` pass.
@@ -175,8 +222,8 @@ two paths), run against this test only, and reverted with an empty `git diff`.
 
 After the test exists and passes here, it is run **once** against a separate checkout
 of `cc9d104` (the v0.2 calibration lock), with nothing committed there. That code does
-not write `numeric_runtime.json`; the test records its absence instead of failing E2
-for that run. The result says whether the `REPRODUCE.md` contract holds **for these
+not write `numeric_runtime.json`; the run uses the legacy mode of Amendment 2 (item 2),
+which requires that absence and the locked code hash. The result says whether the `REPRODUCE.md` contract holds **for these
 synthetic scenarios** on the locked code. It is evidence for these scenarios, **not**
 proof that the real v0.2 dossiers reproduce. If a discrepancy appears, its scope and
 impact go into the release notes; the v0.2 results and lock are preserved unchanged.
