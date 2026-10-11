@@ -493,4 +493,9 @@ Some data files are not code and keep the terms of their sources
 | Data | Terms |
 |---|---|
 | Gaia DR3 rows: `calibration/v0.2/eb_catalog.csv` (written by the v0.2 selection) and the Gaia snapshot `gaia_dr3_vari_eclipsing_binary.csv` published as a release asset | [CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/): non-commercial use, with credit to ESA/Gaia/DPAC |
-| TESS-EB catalog (Prsa et al. 2022) | **not redistributed**: the publisher (CC BY 4.0) and the CDS (CC BY-NC, linking BY-NC-ND) disagree, so the repository keeps only the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; the file is downloaded and its hash checked on every run |
+| TESS-EB catalog (Prsa et al. 2022) | **not redistributed**, as a precaution (a conflict between the publisher's and the CDS's terms is not demonstrated by the sources checked on 2026-10-10; an earlier statement about the CDS terms was withdrawn as unconfirmed, see [erratum E1](calibration/v0.2/ERRATA.md)). The repository keeps only the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; the file is downloaded and its hash checked on every run. Four records appear, with citation, in the v0.2 calibration dossiers, to be published with release v0.2.0. |
+
+> **Correction (decided 2026-10-10, applied 2026-10-11).** Until 2026-10-11 this table
+> said that the CDS gives TESS-EB CC BY-NC terms with a link to BY-NC-ND. That
+> statement, added in `16e880d`, could not be confirmed and is withdrawn; see
+> [erratum E1](calibration/v0.2/ERRATA.md).
