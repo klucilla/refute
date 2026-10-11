@@ -195,6 +195,13 @@ def test_d_downgrade_never_refutes_and_changes_only_eb_catalog(analyses, name):
 # --- E (option D: docs/validation/v0.2.1/ci-time-option-d-acceptance.md) ----------------
 
 CONTROL_SEEDS = (0, 1)
+# Red by design until commit 3b of option D adds the shared path; strict, so that the
+# marks must be removed in 3b, when the cases pass.
+RED_UNTIL_3B = pytest.mark.xfail(
+    strict=True,
+    reason="red by design until commit 3b of option D; "
+    "see docs/validation/v0.2.1/ci-time-option-d-acceptance.md",
+)
 
 
 def _shared(analysis):
@@ -212,6 +219,7 @@ def _gauntlet_tests(analysis):
     return dumps_json([t.to_dict() for t in analysis.gauntlet.tests])
 
 
+@RED_UNTIL_3B
 def test_e0_switch_off_analyses_come_from_the_shared_path(analyses):
     for name in SCENARIOS:
         for seed in SEEDS:
@@ -226,6 +234,7 @@ def test_e0_switch_off_analyses_come_from_the_shared_path(analyses):
     assert len(complete) == 161
 
 
+@RED_UNTIL_3B
 @pytest.mark.parametrize("name", SCENARIOS)
 def test_e1_shared_path_equals_the_complete_switch_off_analysis(analyses, name):
     for seed in CONTROL_SEEDS:
@@ -237,6 +246,7 @@ def test_e1_shared_path_equals_the_complete_switch_off_analysis(analyses, name):
         assert _gauntlet_tests(derived) == _gauntlet_tests(complete), seed
 
 
+@RED_UNTIL_3B
 @pytest.mark.parametrize("seed", CONTROL_SEEDS)
 def test_e1_premise_the_switch_changes_the_planet_analysis(analyses, seed):
     on, off = analyses[("planet", seed, "on")], analyses[("planet", seed, "off")]
