@@ -134,8 +134,8 @@ search found). If the premise does not hold, the test **fails**; it is never ski
 - **Development set: seeds 0 to 9.** Unit and property tests may use all of them.
   The end-to-end tests use seeds 0, 1 and 2 of that set (each scenario runs a full
   analysis, so the subset keeps the suite fast).
-- **Confirmation set: not generated and not used now.** Per rule 5 of the v0.2.1
-  plan it is reserved, derived later from a future drand round and run once, with the
+- **Confirmation set: not generated and not used now.** Per the roadmap
+  (ROADMAP.md, v0.2.1, Exit criteria: "the confirmation set, with seeds derived from a future drand round, runs once, at the end, on frozen code, and only its result counts as validation") it is reserved, derived later from a future drand round and run once, with the
   code frozen. Nothing in H7 depends on it.
 
 No known target (real data) is used to validate H7 or to choose any value.

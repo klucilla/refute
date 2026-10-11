@@ -44,7 +44,9 @@ target's TIC ID **and** its catalog is in `same_photometry_catalogs`. Decision:
    v0.2. No match: PASS, as in v0.2. The coverage rules (INCONCLUSIVE without a scan
    record, and so on) are unchanged.
 
-**Reporting (the change of definition is stated, R11):**
+**Reporting (the change of definition is stated: ROADMAP.md, v0.2.1, Scope: "The calibration report states every definition change since v0.2 (hypothesis 7 changes "flagged"; hypothesis 9 changes "refuted")."
+As rules of this document, its criteria and its sample sizes, the seeds below, are
+fixed before any result):**
 
 - The test message of case 2 says that the match is the target's own TIC in a
   catalog built from the same TESS photometry, and that from v0.2.1 it is a warning,
@@ -202,5 +204,6 @@ hypothesis (H11 is judged on what it measures).
   through the Gaia source identifier recorded in the TIC. That would allow a
   separate decision for own-source Gaia matches. Not part of H9(a): Gaia matches by
   position stay fatal.
-- H9(b) (fatal only with an independent source) and H9(c) remain unchosen; R9 prefers
-  (a) and asks to avoid (c).
+- H9(b) (fatal only with an independent source) and H9(c) remain unchosen; the roadmap
+  chooses (a) (ROADMAP.md, v0.2.1, Scope: "a period match under the target's own TIC in a catalog built from the same TESS photometry is a warning, not a fatal failure"), and this document
+  avoids (c).

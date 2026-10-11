@@ -82,7 +82,7 @@ That is 3 signals x 2 noises x 6 values of `N` = 36 cells.
 **Development seeds 0 to 59** for every cell: 60 independent trials per cell (one
 light curve and one round per seed). This extends the development set used by H7 and
 H4 (0 to 9) for this measurement only. The confirmation set is not generated and not
-used; it stays reserved per rule 5 of the v0.2.1 plan.
+used; it stays reserved (ROADMAP.md, v0.2.1, Exit criteria: "the confirmation set, with seeds derived from a future drand round, runs once, at the end, on frozen code, and only its result counts as validation").
 
 ### Metrics
 

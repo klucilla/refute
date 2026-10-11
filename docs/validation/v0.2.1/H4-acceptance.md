@@ -35,8 +35,9 @@ predict windows). They never compare with the full-data analysis (which contains
 hidden year) nor with other rounds (whose train data contain this round's hidden
 year).
 
-**Out of scope, open item:** the *directed* mode of the v0.2.1 plan (requiring the
-train candidate to match a published period and epoch). It would pass target
+**Out of scope, open item:** the *directed* mode (ROADMAP.md, v0.2.1, Scope: "the directed mode (published period) stays separate from the general mode") (requiring the
+train candidate to match a published period and epoch; the epoch is this document's own
+addition). It would pass target
 information into `run_holdout`, which changes the isolation contract.
 
 ## Definition
@@ -209,8 +210,8 @@ For every existing scenario plus `fp_variability_dominates` and
 
 - **Development set: seeds 0 to 9** (the same set as H7). Cases use the subsets
   stated above to keep the suite fast.
-- **Confirmation set: not generated and not used now.** It is reserved per rule 5 of
-  the v0.2.1 plan.
+- **Confirmation set: not generated and not used now.** It is reserved
+  (ROADMAP.md, v0.2.1, Exit criteria: "the confirmation set, with seeds derived from a future drand round, runs once, at the end, on frozen code, and only its result counts as validation").
 
 ## Planned sabotages (run after the code passes, never committed)
 
@@ -238,9 +239,9 @@ locked commit `cc9d104`.
 - **Refuted planets:** can only fall or stay equal: the guard never creates a FAIL
   (D1, D2). A planet with every round invalid gets an INCONCLUSIVE holdout and an
   INCONCLUSIVE verdict instead of SURVIVED; this counts against the coverage
-  requirement defined later (R7) and is reported.
+  requirement defined later (ROADMAP.md, v0.2.1, Scope: "a coverage requirement fixed before the lock: how many targets and holdout rounds must give a conclusive result, with INCONCLUSIVE kept in the denominators") and is reported.
 - **Flagged false positives:** can fall when a flag depended on a round with an
-  invalid train. Intended (R4); not compensated by any other hypothesis.
+  invalid train. Intended (ROADMAP.md, v0.2.1, opening paragraph: "The goal is to measure correctly, not to raise a count: if the honest count of flagged false positives falls, that is a result."); not compensated by any other hypothesis.
 - **Recovered planets:** unchanged (full-data analysis).
 - **Power against noise:** the blind test stays the defense against signals that do
   not repeat. The guard only removes rounds whose train is not a valid basis for a
