@@ -10,7 +10,7 @@
   <a href="https://github.com/klucilla/refute/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/klucilla/refute/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg"></a>
   <a href="pyproject.toml"><img alt="Python 3.12 | 3.13 (tested in CI)" src="https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB.svg"></a>
-  <a href="ROADMAP.md"><img alt="Status: v0.2 gauntlet, in progress" src="https://img.shields.io/badge/status-v0.2%20gauntlet-orange.svg"></a>
+  <a href="ROADMAP.md"><img alt="Status: v0.2.1 gauntlet fixes, in progress" src="https://img.shields.io/badge/status-v0.2.1%20gauntlet%20fixes-orange.svg"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
 </p>
 
@@ -312,7 +312,7 @@ Packs are discovered through Python entry points, so they can live in their own 
 | Pack | What it attacks | Status |
 |---|---|---|
 | Exoplanet transits (TESS) | Transit signals in SPOC 2-minute light curves | ![v0.1 released](https://img.shields.io/badge/-v0.1%20released-blue) self-claim FAIL ([post-mortem](calibration/POSTMORTEM.md)) |
-| Full TESS false-positive battery | Centroids, apertures, aliases, known binaries | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) v0.2 |
+| Full TESS false-positive battery | Centroids, apertures, aliases, known binaries | ![v0.2 released](https://img.shields.io/badge/-v0.2%20released-blue) self-claim FAIL ([post-mortem](calibration/v0.2/POSTMORTEM.md)) |
 | Paper replication (ML) | Published results with public code and data | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.3 |
 | Variable stars (TESS) | Eclipsing binaries and pulsating stars | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.5 |
 | Mathematics | Conjectures, by verifiable counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.6 |
@@ -340,7 +340,8 @@ SETI@home and Einstein@Home. The plan for Refute@Home
 | Phase | Focus | Status |
 |---|---|---|
 | v0.1 Calibration | Replicate published TESS planets, blind holdout, dossiers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.1.0) |
-| **v0.2 Gauntlet** | Full false-positive battery, independent reviewers | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) |
+| v0.2 Gauntlet | Full false-positive battery, independent reviewers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.2.0) |
+| **v0.2.1 Gauntlet fixes** | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) |
 | v0.3 Replicate papers | ML papers with public code and data, right of reply | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.4 Discover | New candidates in TESS data | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.5 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
