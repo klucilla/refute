@@ -2,9 +2,10 @@
 
 Status: **criteria fixed before any validation runs.** This file is committed on its
 own, before the tests and the code it describes. Written 2026-10-11 on branch
-`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended once (Amendment 1, below), before any
-test was written: a withdrawn statement about Python versions, the time metric, the
-split of the code commit and a structural case E0.
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended twice (below): Amendment 1, before any
+test was written (a withdrawn statement about Python versions, the time metric, the
+split of the code commit and a structural case E0); Amendment 2, before the code (a
+third baseline run).
 
 ## Problem
 
@@ -280,3 +281,21 @@ E1 alone would also pass if the fixture computed every switch-off analysis compl
 The mark is in `extras`, which the verdict record does not serialize (it reads only
 `eb_catalog_configured`, which `analyze_data` does not set), so it does not affect
 the byte comparison of E1.
+
+## Amendment 2 (2026-10-11, before the code): a third baseline run
+
+Requested by the maintainer. The CI run of commit `3f1c36c` (run 38139325927, a
+documentation-only commit, the same tests and code as `89bd3b4` under `src/` and
+`tests/`) is added to the baseline of Amendment 1, item 2, which now has three runs
+per job (twelve values of the metric):
+
+| Job | Run 38139325927 (`3f1c36c`): job / H9(a) fixture |
+|---|---|
+| ubuntu-latest / Python 3.12 | 21:11 / 608 s |
+| windows-latest / Python 3.12 | 25:21 / 719 s |
+| windows-latest / Python 3.13 | 25:31 / 725 s |
+| ubuntu-latest / Python 3.13 | 14:21 / 417 s |
+
+Over the three runs the H9(a) fixture took 608-771 s (ubuntu 3.12), 543-719 s
+(windows 3.12), 512-725 s (windows 3.13) and 417-760 s (ubuntu 3.13). Nothing else
+changes.
