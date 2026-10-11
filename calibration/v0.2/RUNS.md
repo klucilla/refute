@@ -148,3 +148,43 @@ Times are UTC on 2026-10-09: start is when the session was launched (within abou
 | TIC 48506505 | Kepler-447 b | planet | REFUTED | 17:16:44 | 17:19:56 | 192 | SERIOUS OBJECTIONS | `17310ae47e88b4bb7428596d909077ee39d12cf28a607838b580c9ba19eae54b` |
 | TIC 158561566 | Kepler-14 b | planet | REFUTED | 17:20:29 | 17:24:42 | 253 | SERIOUS OBJECTIONS | `217884dc43d1660a05ed5f40c30ee62c807e6b7dbbf3cc217544b15369cb8e9d` |
 | TIC 194736418 | TOI-6038 A b | planet | REFUTED | 17:20:29 | 17:24:05 | 216 | SERIOUS OBJECTIONS | `ac6fe0cae720a8e1e2e8277b0218f5524a4ca01c80faebc652ffcbaad723eed9` |
+
+## Step 7, continued: reviewer draw and the 3 drawn planets (17 of 17)
+
+- **Draw.** `uv run --frozen python calibration/v0.2/select_reviews.py
+  calibration/v0.2/results/20261009T155044Z-c9f341d2/summary.json`, run 2026-10-11
+  from 12:07:13Z to 12:07:18Z, exit code 0. drand round 6542966 (published
+  2026-10-11T12:00:00Z) retrieved 12:07:18Z from `api.drand.sh`, signature verified
+  (py_ecc 8.0.0, G2Basic). Randomness
+  `191d41e9bf0605e8ce51a2f71c5830dc4f5d1308b79c63ae95aab8a2f0c1b5da`. Checked again on
+  `drand.cloudflare.com`: same randomness, signature verified, same seed and the same
+  3 planets. The script's output is saved as
+  `results/20261009T155044Z-c9f341d2/review_selection.json`, unchanged except for
+  line endings (LF, as for every text file in the repository; the script printed
+  CRLF on Windows): SHA-256
+  `b3b57470c122d3eb80689245d4ee683f738dc87556de7182beb6906c8bcb0bd2`.
+- **Drawn planets** (from the 6 planets whose verdict is not REFUTED): TIC 139528693
+  (WASP-78 b, WEAKENED), TIC 193754373 (TOI-4487 A b, WEAKENED) and TIC 231670397
+  (WASP-73 b, SURVIVED). The fixed part of the script's list (10 false positives and
+  the 4 refuted planets) is identical to the 14 dossiers reviewed on 2026-10-09.
+- **Procedure.** Same as for the first 14: one fresh Claude Opus 5.5 session per
+  dossier with only the fixed prompt, all 3 in parallel, each on a byte-identical copy
+  of its dossier under `.cache/review-isolation/` (deleted after the attachment). Each
+  report was extracted verbatim and attached with `refute review attach ...
+  --reviewer opus-1 --model claude-opus-5-5`. After the attachments `refute
+  check-dossier` reported all 20 dossier manifests intact and `refute verify`
+  returned PASS. Copies of each `review/` folder are in
+  `results/20261009T155044Z-c9f341d2/reviews/<target>/`.
+- **Second reviewer (Codex).** Not applicable to these 3 (the second review is only for
+  unexpected verdicts); for the 4 unexpected verdicts it stays left out, because the
+  Codex connection was still not available ("Connection closed") on 2026-10-11.
+- No verdict changed.
+
+Times are UTC on 2026-10-11: start is when the 3 sessions were launched (within about
+20 s), end is start plus each session's reported duration.
+
+| Target | Name | Kind | Verdict | Start | End | Duration (s) | Reviewer assessment | Report SHA-256 |
+|---|---|---|---|---|---|---|---|---|
+| TIC 139528693 | WASP-78 b | planet | WEAKENED | 12:07:59 | 12:11:50 | 231 | OBJECTIONS | `5a792ba717776c6bd189803488298e56c929502e38de05549ee82e2f576c588b` |
+| TIC 193754373 | TOI-4487 A b | planet | WEAKENED | 12:07:59 | 12:11:51 | 232 | OBJECTIONS | `996807d73dbcd40f52b7a9c6d3b62475ea3026a76a6ad97e241c880e9142205d` |
+| TIC 231670397 | WASP-73 b | planet | SURVIVED | 12:07:59 | 12:11:20 | 201 | OBJECTIONS | `2efb834374811a851b6b5a616a6c14621fa35018e794819cffc24d847cc2323a` |

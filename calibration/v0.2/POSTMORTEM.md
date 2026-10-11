@@ -1,8 +1,16 @@
 # Post-mortem: v0.2 self-claim (FAIL)
 
-> **Draft, to be completed after the reviewer draw of 2026-10-11.** Committed before
-> the reviews of the 3 drawn planets, so that git records that the observations and
-> hypotheses below were written before those reviews.
+> **Completed on 2026-10-11, after the reviewer draw.** The draft was committed in
+> `3dec26f` before the reviews of the 3 drawn planets, so git records that everything
+> else in this document was written before those reviews. Changes made after the draw
+> (`git diff 3dec26f -- calibration/v0.2/POSTMORTEM.md`):
+> - this note, which replaces the draft note;
+> - the section "Reviews (Fact)": its first paragraph, the OBJECTIONS row of its table
+>   and its last sentence;
+> - the section "The 3 planets drawn for review": its heading (no longer
+>   "placeholder"), its text and its table, all written after the draw.
+>
+> Nothing else was changed.
 
 **The pre-registered v0.2 self-claim failed.** Refute recovered the periods of all
 10 known planets and flagged 7 of 10 known false positives, but it gave the verdict
@@ -92,20 +100,19 @@ by a relative 0.23 and is not an alias of it.
 
 ## Reviews (Fact)
 
-The 10 false positives and the 4 refuted planets were reviewed on 2026-10-09 by
-fresh Claude Opus 5.5 sessions, one per dossier, following
-`docs/reviewer-protocol.md` (details and times in [RUNS.md](RUNS.md)). No verdict
-changed. The second reviewer, Codex, was left out because its connection was not
-available.
+17 dossiers were reviewed by fresh Claude Opus 5.5 sessions, one per dossier,
+following `docs/reviewer-protocol.md` (details and times in [RUNS.md](RUNS.md)): the
+10 false positives and the 4 refuted planets on 2026-10-09, and the 3 planets drawn
+with drand round 6542966 on 2026-10-11. No verdict changed. The second reviewer, Codex,
+was left out because its connection was not available.
 
 | Assessment | Dossiers |
 |---|---|
 | SERIOUS OBJECTIONS | TOI-244 b, Kepler-447 b, Kepler-14 b, TOI-6038 A b, TOI-1481.01, TOI-1310.01, TOI-2053.01 |
-| OBJECTIONS | TOI-653.01, TOI-4838.01, TOI-258.01, TOI-1615.01, TOI-2146.01, TOI-441.01, TOI-611.01 |
+| OBJECTIONS | TOI-653.01, TOI-4838.01, TOI-258.01, TOI-1615.01, TOI-2146.01, TOI-441.01, TOI-611.01, WASP-78 b, TOI-4487 A b, WASP-73 b |
 | NO OBJECTION | none |
 
-The 3 planets drawn with drand round 6542966 are reviewed later (see the last
-section).
+The 3 drawn planets are listed in the section "The 3 planets drawn for review".
 
 ## Observations by test
 
@@ -351,17 +358,31 @@ locked claim on new targets.
     - The parameter sheet mixes estimators.
     - The report rounds epochs and words the holdout's blindness too strongly.
 
-## The 3 planets drawn for review (placeholder)
+## The 3 planets drawn for review
 
-To be filled after drand round 6542966 (2026-10-11T12:00:00Z):
-`select_reviews.py` draws 3 of the 6 planets whose verdict is not REFUTED: GJ 3470 b,
-WASP-78 b, TOI-672 b, WASP-73 b, TOI-4487 A b and TOI-674 b.
+*Fact.* `select_reviews.py` ran on 2026-10-11 at 12:07Z with drand round 6542966
+(published 2026-10-11T12:00:00Z; signature verified, and the same randomness on a
+second endpoint). It drew 3 of the 6 planets whose verdict is not REFUTED (GJ 3470 b,
+WASP-78 b, TOI-672 b, WASP-73 b, TOI-4487 A b and TOI-674 b); its output is
+[`review_selection.json`](results/20261009T155044Z-c9f341d2/review_selection.json).
+The 3 reviews ran the same day, with the same procedure as the first 14. The
+*Reviewer* columns restate the reports; they were not recomputed.
 
-| Target | Name | Verdict | Assessment | Main objections | Review |
+| Target | Name | Verdict | Assessment | Main objections (reviewer) | Review |
 |---|---|---|---|---|---|
-| _pending_ | | | | | |
-| _pending_ | | | | | |
-| _pending_ | | | | | |
+| TIC 139528693 | WASP-78 b | WEAKENED (`secondary_eclipse` warning: 4.0 sigma, depth ratio 0.022) | OBJECTIONS | Important: the 168 ± 42 ppm phase-0.5 dip, also positive in the 3 hidden-year controls, is within the reviewer's estimate for a planetary occultation (about 50 to 280 ppm thermal, plus reflected light); `secondary_eclipse` has no branch for that case, so the WEAKENED is not evidence against the planet. Minor: `centroid_shift` sectors disagree at many sigma (chi2 390.5 for 10 dof) and the PASS rests on the 0.5 px floor; train depths about 32% below hidden depths (unmasked train detrend); the parameter sheet mixes two fits; holdout wording; one outlier even event; TIC versus Archive stellar values. | [TIC-139528693](results/20261009T155044Z-c9f341d2/reviews/TIC-139528693/opus-1.md) |
+| TIC 193754373 | TOI-4487 A b | WEAKENED (`nearby_contamination` warning: CROWDSAP 0.70, a neighbor at 14.7″ needs a 1.5% eclipse) | OBJECTIONS | Important: the neighbor at 14.7″ (about 0.7 px) lies inside the 1.5 px core aperture, so `aperture_depth` cannot test it; `centroid_shift` reports "consistent" at 12.2 sigma (chi2 197.3 for 14 dof), passing only on the floor; the warning ignores centroid data that, per the reviewer's WCS check, place the source within about 3″ of the target in every sector. Minor: train depth about 30% below hidden depth; holdout wording; the parameter sheet mixes two fits; epoch precision; host name "TOI-4487 A" implies a companion that is not tested. | [TIC-193754373](results/20261009T155044Z-c9f341d2/reviews/TIC-193754373/opus-1.md) |
+| TIC 231670397 | WASP-73 b | SURVIVED | OBJECTIONS | Important: `centroid_shift` "consistent with the target" at 7.6 sigma (chi2 101.5 for 16 dof), with offsets mostly toward +x, passing only on the 0.5 px floor. Minor: an unresolved companion within 1 to 2″ is not tested (nothing in the evidence supports it); TIC versus Archive stellar values (outcome unchanged with either); a detrending artifact at a gap edge in sector 103; train depth about 1880 ppm against about 3300 to 3460 ppm hidden (unmasked train detrend); timing chi2 28.8; report wording and epoch precision. "I found nothing that makes a test pass for the wrong reason." | [TIC-231670397](results/20261009T155044Z-c9f341d2/reviews/TIC-231670397/opus-1.md) |
+
+*Fact.* None of the 3 drawn reviews is SERIOUS OBJECTIONS or NO OBJECTION. The
+objections they raise concern points already listed in "Observations by test" (the
+0.5 px centroid floor, the unmasked train detrending, the holdout wording, the
+parameter sheet) plus one not listed there: the reviewer of WASP-78 b reads its
+`secondary_eclipse` warning as compatible with a planetary occultation. The
+hypotheses section was not edited after these reviews.
+
+The WASP-78 b row of the `secondary_eclipse` table above says "not reviewed" because
+it was written before the draw and was not edited; its review is in this section.
 
 ## Rules for the next calibration
 
