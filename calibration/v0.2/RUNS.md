@@ -208,8 +208,9 @@ Times are UTC on 2026-10-11: start is when the 3 sessions were launched (within 
 
 ## Step 8: release archives of v0.2.0 (built 2026-10-11)
 
-Two archives will be published as assets of release v0.2.0, with the Gaia DR3 snapshot
-(`gaia_dr3_vari_eclipsing_binary.csv`, SHA-256
+Two archives were published as assets of [release
+v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11, with
+the Gaia DR3 snapshot (`gaia_dr3_vari_eclipsing_binary.csv`, SHA-256
 `5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df`). Both were built
 from frozen staging folders with `refute.core.dossier.write_archive` (sorted entries,
 fixed timestamps and modes), twice each, on 2026-10-11 at about 14:01Z; the

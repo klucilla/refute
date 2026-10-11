@@ -35,7 +35,8 @@ exactly as locked. The result files are in
 >
 > Dossier paths such as `TIC-118327550/verdict.json` are relative to the run
 > directory `dossiers/20261009T155044Z-c9f341d2/`. That directory is not in git; it
-> will be published as the dossier archive. Review reports are in git, under
+> was published as the dossier archive with [release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11.
+> Review reports are in git, under
 > `results/20261009T155044Z-c9f341d2/reviews/<target>/opus-1.md`.
 
 ## The claim

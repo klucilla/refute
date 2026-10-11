@@ -34,7 +34,7 @@
       "dec": "deg",
       "frequency": "d**-1"
     },
-    "note": "Too large for git; to be published as a release asset with this SHA-256.",
+    "note": "Too large for git; published as an asset of release v0.2.0 on 2026-10-11, with this SHA-256: https://github.com/klucilla/refute/releases/tag/v0.2.0",
     "authenticated_as": "kjohanes"
   }
 ]

@@ -83,16 +83,14 @@ flowchart LR
     A["Claim<br/>claim.yaml"] --> B["Lock<br/>SHA-256 of claim,<br/>targets and code"]
     B --> C["Gauntlet<br/>deterministic<br/>falsification tests"]
     C --> D["Blind holdout<br/>predict the<br/>hidden year"]
-    D --> E["Independent review<br/>fresh read-only agents<br/>(v0.2, in development)"]
+    D --> E["Independent review<br/>fresh read-only agents<br/>(from v0.2)"]
     E --> F["Dossier<br/>data hashes, plots,<br/>environment, commands"]
     F --> G["Verdict<br/>SURVIVED · WEAKENED<br/>REFUTED · INCONCLUSIVE"]
-    classDef planned stroke-dasharray: 6 4
-    class E planned
 ```
 
-<sub>Dashed box: in development, not yet used in a calibration. In the code, the blind
-holdout runs as the last gauntlet test, and the verdict is computed before the dossier is
-written; reviews are attached to the dossier afterwards and never change the verdict.</sub>
+<sub>In the code, the blind holdout runs as the last gauntlet test, and the verdict is
+computed before the dossier is written; reviews are attached to the dossier afterwards and
+never change the verdict.</sub>
 
 <details>
 <summary><b>The steps in detail</b></summary>
@@ -111,7 +109,7 @@ written; reviews are attached to the dossier afterwards and never change the ver
 4. **Blind holdout.** Each observing year is hidden in turn and must be predicted from the
    others. The code that reads the hidden year can only open the predicted windows, their
    local baseline bands and the phase-0.5 control windows.
-5. **Independent review** *(v0.2, in development)*. Fresh, read-only agent sessions receive
+5. **Independent review** *(from v0.2)*. Fresh, read-only agent sessions receive
    only the dossier and try to refute it ([protocol](docs/reviewer-protocol.md)). Their
    reports are attached to the dossier with `refute review attach`. They can raise
    objections; they never set the verdict.
@@ -552,7 +550,7 @@ Some data files are not code and keep the terms of their sources
 | Data | Terms |
 |---|---|
 | Gaia DR3 rows: `calibration/v0.2/eb_catalog.csv` (written by the v0.2 selection) and the Gaia snapshot `gaia_dr3_vari_eclipsing_binary.csv` published as a release asset | [CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/): non-commercial use, with credit to ESA/Gaia/DPAC |
-| TESS-EB catalog (Prsa et al. 2022) | **not redistributed**, as a precaution (a conflict between the publisher's and the CDS's terms is not demonstrated by the sources checked on 2026-10-10; an earlier statement about the CDS terms was withdrawn as unconfirmed, see [erratum E1](calibration/v0.2/ERRATA.md)). The repository keeps the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; besides these, it contains the 4 TESS-EB periods quoted in four review reports of the v0.2 calibration and the record of the search for TESS-EB values (see "Search record" in [DATA_LICENSE.md](calibration/v0.2/eb_snapshot/DATA_LICENSE.md)). The file is downloaded and its hash checked on every run. Four records appear, with citation, in the v0.2 calibration dossiers, to be published with release v0.2.0. |
+| TESS-EB catalog (Prsa et al. 2022) | **not redistributed**, as a precaution (a conflict between the publisher's and the CDS's terms is not demonstrated by the sources checked on 2026-10-10; an earlier statement about the CDS terms was withdrawn as unconfirmed, see [erratum E1](calibration/v0.2/ERRATA.md)). The repository keeps the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; besides these, it contains the 4 TESS-EB periods quoted in four review reports of the v0.2 calibration and the record of the search for TESS-EB values (see "Search record" in [DATA_LICENSE.md](calibration/v0.2/eb_snapshot/DATA_LICENSE.md)). The file is downloaded and its hash checked on every run. Four records appear, with citation, in the v0.2 calibration dossiers, which were published with [release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11. |
 
 > **Correction (decided 2026-10-10, applied 2026-10-11).** Until 2026-10-11 this table
 > said that the CDS gives TESS-EB CC BY-NC terms with a link to BY-NC-ND. That
