@@ -193,9 +193,27 @@ Run `20261009T155044Z-c9f341d2` from commit [`cc9d104027ed`](https://github.com/
 | Code SHA-256 | `2cd8b5c16c9ded3e32335cd95d8b68f46e0676d5183f3129a6cef4e8dfbd1752` |
 | Locked from commit | [`e176ac3d21ca`](https://github.com/klucilla/refute/commit/e176ac3d21ca6e2efeb5085a8acb44d69624d520) |
 | Locked at (UTC) | 2026-10-09T15:29:55Z |
-| `refute verify` | PASS |
+| `refute verify` | TAMPERED on this branch; locked code at tag [`v0.2.0-calibration-lock`](https://github.com/klucilla/refute/tree/v0.2.0-calibration-lock) |
 | Evidence | [lock file](calibration/v0.2/self_claim.lock.json) · [lock history](calibration/v0.2/LOCK_HISTORY.md) |
+
+> [!NOTE]
+> `refute verify` returns **TAMPERED** for this claim in this checkout because
+> the code here differs from the code it was locked with. The code at
+> tag [`v0.2.0-calibration-lock`](https://github.com/klucilla/refute/tree/v0.2.0-calibration-lock) has the locked code hash (recomputed from git
+> objects). Verify the lock there:
+>
+> ```bash
+> git checkout v0.2.0-calibration-lock
+> uv sync --frozen
+> uv run refute verify calibration/v0.2/self_claim.yaml
+> ```
 <!-- CALIBRATION-V0.2:END -->
+
+From version 0.2.0 on, the code differs from the code locked with the v0.2 claim: the
+version number is part of the code hash, so `refute verify` at the commits after the
+version change reports `TAMPERED` for this claim. To verify the v0.2 claim, use tag
+`v0.2.0-calibration-lock` (commit `cc9d104`), where `refute verify` returns `PASS`. The
+v0.1 claim is verified the same way at tag [`v0.1.0`](https://github.com/klucilla/refute/tree/v0.1.0).
 
 Independent reviews: 17 of the 20 dossiers (every false positive, the 4 refuted planets
 and 3 planets drawn with drand round 6542966), one fresh reviewer session per dossier;
