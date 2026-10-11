@@ -1,0 +1,105 @@
+# Output of the run started at 2026-10-10T16:40:48.980Z (UTC), transcribed literally from the tool
+# result at 2026-10-10T16:41:19.433Z in the session transcript 286dcd73-0856-44d4-9b8c-b9fbf5851ed1.jsonl; it was not saved
+# to a file at the time. Only the Windows user name in paths is replaced by <user>.
+# Command of that tool call, with each heredoc body replaced by [...]
+# (the scripts it wrote are the .py files of this folder):
+#   S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"
+#   cat > "$S/h4_proto.py" <<'PYEOF' [...]
+#   cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && .venv/Scripts/python.exe "$S/affinity_run.py" "$S/h4_proto.py"
+# ---- output ----
+[affinity] process mask 0xffffff00
+weak 0.0004 s0 full P=3.7000 gate=PASS snr=19.2 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6978 snr=10.96 D/P=0.025 cov=nan :: train-only timing uncertainty in the hidden year (4.50 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6971 snr=11.25 D/P=0.021 cov=nan :: train-only timing uncertainty in the hidden year (13.50 h) exceeds 1 t
+weak 0.0004 s1 full P=3.7000 gate=PASS snr=20.9 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7020 snr=11.46 D/P=0.020 cov=nan :: train-only timing uncertainty in the hidden year (7.21 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6987 snr=13.19 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (5.70 h) exceeds 1 tr
+weak 0.0004 s2 full P=3.7000 gate=PASS snr=19.2 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6984 snr=10.94 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (4.43 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6982 snr=11.94 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (8.06 h) exceeds 1 tr
+weak 0.0004 s3 full P=3.7000 gate=PASS snr=17.4 verdict=SURVIVED
+  [2018] PASS         trainP=3.6998 snr=11.63 D/P=0.023 cov=0.122 :: transits found at 7 predicted windows, SNR 8.1
+  [2020] INCONCLUSIVE trainP=3.7022 snr=9.16 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (15.69 h) exceeds 1 t
+weak 0.0004 s4 full P=3.7000 gate=PASS snr=17.8 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7022 snr=10.48 D/P=0.019 cov=nan :: train-only timing uncertainty in the hidden year (8.24 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.7004 snr=10.54 D/P=0.021 cov=nan :: train-only timing uncertainty in the hidden year (9.96 h) exceeds 1 tr
+weak 0.0005 s0 full P=3.7000 gate=PASS snr=23.9 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6965 snr=13.53 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (5.85 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6971 snr=13.85 D/P=0.021 cov=nan :: train-only timing uncertainty in the hidden year (4.67 h) exceeds 1 tr
+weak 0.0005 s1 full P=3.7000 gate=PASS snr=25.6 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7020 snr=14.02 D/P=0.020 cov=nan :: train-only timing uncertainty in the hidden year (2.71 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6986 snr=15.88 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (5.61 h) exceeds 1 tr
+weak 0.0005 s2 full P=3.7000 gate=PASS snr=23.9 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6984 snr=13.56 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (5.51 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6982 snr=14.54 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (5.39 h) exceeds 1 tr
+weak 0.0005 s3 full P=3.7000 gate=PASS snr=21.9 verdict=REFUTED
+  [2018] PASS         trainP=3.7000 snr=14.32 D/P=0.023 cov=0.141 :: transits found at 7 predicted windows, SNR 10.9
+  [2020] FAIL         trainP=3.7022 snr=11.79 D/P=0.023 cov=0.145 :: no significant signal at 6 predicted windows (SNR 0.8 < 5.0)
+weak 0.0005 s4 full P=3.7000 gate=PASS snr=22.4 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7028 snr=12.96 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (6.01 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.7004 snr=13.25 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (5.98 h) exceeds 1 tr
+weak 0.0006 s0 full P=3.7000 gate=PASS snr=28.5 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6980 snr=16.11 D/P=0.025 cov=nan :: train-only timing uncertainty in the hidden year (3.98 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6992 snr=16.41 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (3.17 h) exceeds 1 tr
+weak 0.0006 s1 full P=3.7000 gate=PASS snr=30.3 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7018 snr=16.56 D/P=0.020 cov=nan :: train-only timing uncertainty in the hidden year (2.59 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6986 snr=18.61 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (4.82 h) exceeds 1 tr
+weak 0.0006 s2 full P=3.7000 gate=PASS snr=28.5 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6985 snr=16.18 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (5.14 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6982 snr=17.22 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (4.30 h) exceeds 1 tr
+weak 0.0006 s3 full P=3.7000 gate=PASS snr=26.6 verdict=REFUTED
+  [2018] PASS         trainP=3.6998 snr=17.01 D/P=0.023 cov=0.143 :: transits found at 7 predicted windows, SNR 12.4
+  [2020] FAIL         trainP=3.7021 snr=14.51 D/P=0.023 cov=0.145 :: no significant signal at 6 predicted windows (SNR 0.9 < 5.0)
+weak 0.0006 s4 full P=3.7000 gate=PASS snr=27.1 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7005 snr=15.60 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (2.84 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.7004 snr=15.94 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (5.98 h) exceeds 1 tr
+weak 0.0007 s0 full P=3.7000 gate=PASS snr=33.2 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6979 snr=18.78 D/P=0.025 cov=nan :: train-only timing uncertainty in the hidden year (3.53 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6992 snr=18.92 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (2.92 h) exceeds 1 tr
+weak 0.0007 s1 full P=3.7000 gate=PASS snr=35.1 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7007 snr=19.30 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (6.33 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6994 snr=21.29 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (2.38 h) exceeds 1 tr
+weak 0.0007 s2 full P=3.7000 gate=PASS snr=33.2 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6985 snr=18.84 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (4.88 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6982 snr=19.87 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (4.30 h) exceeds 1 tr
+weak 0.0007 s3 full P=3.7000 gate=PASS snr=31.3 verdict=REFUTED
+  [2018] PASS         trainP=3.7000 snr=19.73 D/P=0.023 cov=0.141 :: transits found at 7 predicted windows, SNR 16.6
+  [2020] FAIL         trainP=3.7021 snr=17.11 D/P=0.023 cov=0.145 :: no significant signal at 6 predicted windows (SNR 0.9 < 5.0)
+weak 0.0007 s4 full P=3.7000 gate=PASS snr=31.7 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7025 snr=18.20 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (5.08 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.7004 snr=18.57 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (5.98 h) exceeds 1 tr
+weak 0.0008 s0 full P=3.7000 gate=PASS snr=37.9 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6979 snr=21.42 D/P=0.025 cov=nan :: train-only timing uncertainty in the hidden year (3.03 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6992 snr=21.48 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (3.11 h) exceeds 1 tr
+weak 0.0008 s1 full P=3.7000 gate=PASS snr=39.8 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7008 snr=22.03 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (6.33 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6994 snr=23.96 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (2.42 h) exceeds 1 tr
+weak 0.0008 s2 full P=3.7000 gate=PASS snr=37.9 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.6994 snr=21.52 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (5.81 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.6982 snr=22.45 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (4.30 h) exceeds 1 tr
+weak 0.0008 s3 full P=3.7000 gate=PASS snr=35.9 verdict=SURVIVED
+  [2018] PASS         trainP=3.6998 snr=22.32 D/P=0.023 cov=0.143 :: transits found at 7 predicted windows, SNR 17.1
+  [2020] INCONCLUSIVE trainP=3.7021 snr=19.67 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (3.24 h) exceeds 1 tr
+weak 0.0008 s4 full P=3.7000 gate=PASS snr=36.4 verdict=INCONCLUSIVE
+  [2018] INCONCLUSIVE trainP=3.7017 snr=20.81 D/P=0.024 cov=nan :: train-only timing uncertainty in the hidden year (3.14 h) exceeds 1 tr
+  [2020] INCONCLUSIVE trainP=3.7004 snr=21.28 D/P=0.023 cov=nan :: train-only timing uncertainty in the hidden year (5.75 h) exceeds 1 tr
+var 0.0040 s0 full P=3.7000 gate=PASS snr=71.6 verdict=REFUTED
+  [2018] FAIL         trainP=3.7000 snr=57.44 D/P=0.025 cov=0.030 :: no significant signal at 7 predicted windows (SNR 3.9 < 5.0)
+  [2019] FAIL         trainP=3.7000 snr=57.32 D/P=0.025 cov=0.027 :: no significant signal at 7 predicted windows (SNR 3.9 < 5.0)
+  [2020] FAIL         trainP=0.7000 snr=114.72 D/P=0.357 cov=0.385 :: no significant signal at 36 predicted windows (SNR 0.5 < 5.0)
+var 0.0040 s1 full P=3.7000 gate=PASS snr=72.0 verdict=REFUTED
+  [2018] FAIL         trainP=3.7000 snr=58.75 D/P=0.024 cov=0.028 :: no significant signal at 7 predicted windows (SNR 4.6 < 5.0)
+  [2019] FAIL         trainP=3.7000 snr=58.77 D/P=0.024 cov=0.024 :: no significant signal at 7 predicted windows (SNR 4.5 < 5.0)
+  [2020] FAIL         trainP=0.7000 snr=114.94 D/P=0.357 cov=0.390 :: no significant signal at 36 predicted windows (SNR 0.7 < 5.0)
+var 0.0040 s2 full P=3.7000 gate=PASS snr=71.0 verdict=REFUTED
+  [2018] FAIL         trainP=3.7000 snr=57.59 D/P=0.025 cov=0.033 :: no significant signal at 7 predicted windows (SNR 3.8 < 5.0)
+  [2019] FAIL         trainP=3.7000 snr=57.38 D/P=0.025 cov=0.026 :: no significant signal at 7 predicted windows (SNR 4.1 < 5.0)
+  [2020] FAIL         trainP=0.7000 snr=115.10 D/P=0.357 cov=0.388 :: no significant signal at 36 predicted windows (SNR 0.5 < 5.0)
+var 0.0040 s3 full P=3.7000 gate=PASS snr=69.0 verdict=REFUTED
+  [2018] FAIL         trainP=3.7000 snr=56.48 D/P=0.023 cov=0.031 :: no significant signal at 7 predicted windows (SNR 4.1 < 5.0)
+  [2019] PASS         trainP=3.7000 snr=56.15 D/P=0.023 cov=0.025 :: transits found at 7 predicted windows, SNR 5.2
+  [2020] FAIL         trainP=0.7000 snr=115.84 D/P=0.357 cov=0.389 :: no significant signal at 36 predicted windows (SNR 0.5 < 5.0)
+var 0.0040 s4 full P=3.7000 gate=PASS snr=70.0 verdict=REFUTED
+  [2018] FAIL         trainP=3.7000 snr=57.00 D/P=0.024 cov=0.031 :: no significant signal at 7 predicted windows (SNR 4.2 < 5.0)
+  [2019] FAIL         trainP=3.7000 snr=56.63 D/P=0.024 cov=0.025 :: no significant signal at 7 predicted windows (SNR 4.7 < 5.0)
+  [2020] FAIL         trainP=0.7000 snr=115.39 D/P=0.357 cov=0.390 :: no significant signal at 35 predicted windows (SNR 0.8 < 5.0)

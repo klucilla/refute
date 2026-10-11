@@ -1,0 +1,34 @@
+# Output of the run started at 2026-10-10T16:06:03.402Z (UTC), transcribed literally from the tool
+# result at 2026-10-10T16:06:27.296Z in the session transcript 286dcd73-0856-44d4-9b8c-b9fbf5851ed1.jsonl; it was not saved
+# to a file at the time. Only the Windows user name in paths is replaced by <user>.
+# Command of that tool call, with each heredoc body replaced by [...]
+# (the scripts it wrote are the .py files of this folder):
+#   S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"
+#   cat > "$S/affinity_run.py" <<'EOF' [...]
+#   cat >> "$S/premises.py" <<'EOF'
+#   EOF
+#   cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && time .venv/Scripts/python.exe "$S/affinity_run.py" "$S/premises.py"
+# ---- output ----
+[affinity] process mask 0xffffff00
+('fp_var', 0, 0.699339887497983, 'REFUTED', 14876)
+('fp_var', 1, 0.6993385322818624, 'REFUTED', 22340)
+('fp_var', 2, 0.6993374763035124, 'REFUTED', 51576)
+('eb_secondary', 0, 2.899999078876031, 'REFUTED', 50844)
+('eb_secondary', 1, 2.900004905725447, 'REFUTED', 17680)
+('eb_secondary', 2, 2.899999078876031, 'REFUTED', 20940)
+('eb_odd_even', 0, 1.8000021688216468, 'REFUTED', 33080)
+('eb_odd_even', 1, 1.800001032010663, 'REFUTED', 54312)
+('eb_odd_even', 2, 1.8000021688216468, 'REFUTED', 37340)
+('eb_equal', 0, 1.6000032390840344, 'REFUTED', 36100)
+('eb_equal', 1, 1.5999986526058705, 'REFUTED', 37620)
+('eb_equal', 2, 1.5999970038520617, 'REFUTED', 54072)
+('planet', 0, 3.7000063920991613, 'SURVIVED', 38740)
+('planet', 1, 3.7000063920991613, 'SURVIVED', 53828)
+('planet', 2, 3.6999994355537487, 'SURVIVED', 45180)
+('planet_three_years', 0, 3.6999887531154894, 'SURVIVED', 55724)
+('planet_three_years', 1, 3.7000053018481753, 'SURVIVED', 46036)
+('planet_three_years', 2, 3.699997404614784, 'SURVIVED', 5268)
+
+real	0m23.179s
+user	0m0.000s
+sys	0m0.015s

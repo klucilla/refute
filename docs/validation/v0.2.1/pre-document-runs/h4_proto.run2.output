@@ -1,0 +1,68 @@
+# Output of the run started at 2026-10-10T16:41:48.679Z (UTC), transcribed literally from the tool
+# result at 2026-10-10T16:42:13.337Z in the session transcript 286dcd73-0856-44d4-9b8c-b9fbf5851ed1.jsonl; it was not saved
+# to a file at the time. Only the Windows user name in paths is replaced by <user>.
+# Command of that tool call:
+#   S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"
+#   sed -i 's/    tasks = \[("weak", d, k) for d in (0.0004, 0.0005, 0.0006, 0.0007, 0.0008) for k in range(5)\]/    tasks = [("weak", d, k) for d in (0.0002, 0.00023, 0.00026) for k in range(10)]/; s/    tasks += \[("var", a, k) for a in (0.004,) for k in range(5)\]/    tasks += []/' "$S/h4_proto.py"
+#   cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && .venv/Scripts/python.exe "$S/affinity_run.py" "$S/h4_proto.py" | grep -v "^\[affinity" | awk '/^weak/{h=$0; next} {print substr(h,1,60) " " $0}' | sed 's/ :: .*//' 
+# ---- output ----
+weak 0.0002 s0 full P=3.7001 gate=PASS snr=9.7 verdict=REFUT   [2018] INCONCLUSIVE trainP=3.6965 snr=6.16 D/P=0.019 cov=nan
+weak 0.0002 s0 full P=3.7001 gate=PASS snr=9.7 verdict=REFUT   [2020] INCONCLUSIVE trainP=3.6976 snr=6.24 D/P=0.019 cov=nan
+weak 0.0002 s1 full P=3.7001 gate=PASS snr=11.4 verdict=REFU   [2018] INCONCLUSIVE trainP=3.7020 snr=6.22 D/P=0.020 cov=nan
+weak 0.0002 s1 full P=3.7001 gate=PASS snr=11.4 verdict=REFU   [2020] INCONCLUSIVE trainP=3.7044 snr=8.04 D/P=0.018 cov=nan
+weak 0.0002 s2 full P=3.7000 gate=PASS snr=10.1 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6999 snr=5.73 D/P=0.024 cov=nan
+weak 0.0002 s2 full P=3.7000 gate=PASS snr=10.1 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6982 snr=6.68 D/P=0.024 cov=nan
+weak 0.0002 s3 full P=3.7000 gate=PASS snr=8.2 verdict=REFUT   [2018] INCONCLUSIVE trainP=3.6992 snr=6.35 D/P=0.020 cov=nan
+weak 0.0002 s3 full P=3.7000 gate=PASS snr=8.2 verdict=REFUT   [2020] INCONCLUSIVE trainP=5.0578 snr=5.31 D/P=0.009 cov=nan
+weak 0.0002 s4 full P=3.6999 gate=PASS snr=8.6 verdict=REFUT   [2018] INCONCLUSIVE trainP=1.8512 snr=5.84 D/P=0.043 cov=nan
+weak 0.0002 s4 full P=3.6999 gate=PASS snr=8.6 verdict=REFUT   [2020] INCONCLUSIVE trainP=3.7045 snr=5.54 D/P=0.028 cov=nan
+weak 0.0002 s5 full P=3.7000 gate=PASS snr=10.6 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6980 snr=5.84 D/P=0.024 cov=nan
+weak 0.0002 s5 full P=3.7000 gate=PASS snr=10.6 verdict=REFU   [2020] INCONCLUSIVE trainP=3.7014 snr=6.73 D/P=0.025 cov=nan
+weak 0.0002 s6 full P=3.6999 gate=PASS snr=9.6 verdict=REFUT   [2018] INCONCLUSIVE trainP=3.7021 snr=5.66 D/P=0.027 cov=nan
+weak 0.0002 s6 full P=3.6999 gate=PASS snr=9.6 verdict=REFUT   [2020] INCONCLUSIVE trainP=3.6963 snr=5.95 D/P=0.012 cov=nan
+weak 0.0002 s7 full P=3.7000 gate=PASS snr=10.4 verdict=REFU   [2018] INCONCLUSIVE trainP=3.7010 snr=6.99 D/P=0.023 cov=nan
+weak 0.0002 s7 full P=3.7000 gate=PASS snr=10.4 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6992 snr=5.80 D/P=0.025 cov=nan
+weak 0.0002 s8 full P=3.7000 gate=PASS snr=10.6 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6996 snr=7.34 D/P=0.025 cov=nan
+weak 0.0002 s8 full P=3.7000 gate=PASS snr=10.6 verdict=REFU   [2020] INCONCLUSIVE trainP=0.5129 snr=3.84 D/P=0.487 cov=nan
+weak 0.0002 s9 full P=3.7000 gate=PASS snr=10.6 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6980 snr=6.74 D/P=0.023 cov=nan
+weak 0.0002 s9 full P=3.7000 gate=PASS snr=10.6 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6920 snr=5.64 D/P=0.021 cov=nan
+weak 0.0002 s0 full P=3.7001 gate=PASS snr=11.0 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6965 snr=6.87 D/P=0.019 cov=nan
+weak 0.0002 s0 full P=3.7001 gate=PASS snr=11.0 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6976 snr=7.00 D/P=0.019 cov=nan
+weak 0.0002 s1 full P=3.7000 gate=PASS snr=12.8 verdict=REFU   [2018] INCONCLUSIVE trainP=3.7010 snr=7.04 D/P=0.020 cov=nan
+weak 0.0002 s1 full P=3.7000 gate=PASS snr=12.8 verdict=REFU   [2020] INCONCLUSIVE trainP=3.7044 snr=8.75 D/P=0.018 cov=nan
+weak 0.0002 s2 full P=3.7000 gate=PASS snr=11.4 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6999 snr=6.48 D/P=0.024 cov=nan
+weak 0.0002 s2 full P=3.7000 gate=PASS snr=11.4 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6982 snr=7.48 D/P=0.024 cov=nan
+weak 0.0002 s3 full P=3.7000 gate=PASS snr=9.5 verdict=REFUT   [2018] INCONCLUSIVE trainP=3.6992 snr=7.13 D/P=0.020 cov=nan
+weak 0.0002 s3 full P=3.7000 gate=PASS snr=9.5 verdict=REFUT   [2020] INCONCLUSIVE trainP=5.0576 snr=5.42 D/P=0.009 cov=nan
+weak 0.0002 s4 full P=3.6999 gate=PASS snr=10.0 verdict=REFU   [2018] INCONCLUSIVE trainP=1.8512 snr=6.40 D/P=0.043 cov=nan
+weak 0.0002 s4 full P=3.6999 gate=PASS snr=10.0 verdict=REFU   [2020] INCONCLUSIVE trainP=3.7034 snr=6.16 D/P=0.027 cov=nan
+weak 0.0002 s5 full P=3.7000 gate=PASS snr=12.0 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6980 snr=6.63 D/P=0.024 cov=nan
+weak 0.0002 s5 full P=3.7000 gate=PASS snr=12.0 verdict=REFU   [2020] INCONCLUSIVE trainP=3.7014 snr=7.48 D/P=0.025 cov=nan
+weak 0.0002 s6 full P=3.6999 gate=PASS snr=11.0 verdict=REFU   [2018] INCONCLUSIVE trainP=3.7021 snr=6.45 D/P=0.027 cov=nan
+weak 0.0002 s6 full P=3.6999 gate=PASS snr=11.0 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6949 snr=6.54 D/P=0.015 cov=nan
+weak 0.0002 s7 full P=3.7000 gate=PASS snr=11.8 verdict=REFU   [2018] INCONCLUSIVE trainP=3.7010 snr=7.78 D/P=0.023 cov=nan
+weak 0.0002 s7 full P=3.7000 gate=PASS snr=11.8 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6992 snr=6.60 D/P=0.025 cov=nan
+weak 0.0002 s8 full P=3.7000 gate=PASS snr=11.9 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6996 snr=8.13 D/P=0.025 cov=nan
+weak 0.0002 s8 full P=3.7000 gate=PASS snr=11.9 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6947 snr=5.87 D/P=0.023 cov=nan
+weak 0.0002 s9 full P=3.7001 gate=PASS snr=11.7 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6980 snr=7.52 D/P=0.023 cov=nan
+weak 0.0002 s9 full P=3.7001 gate=PASS snr=11.7 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6920 snr=6.31 D/P=0.021 cov=nan
+weak 0.0003 s0 full P=3.7000 gate=PASS snr=12.9 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6965 snr=7.58 D/P=0.019 cov=nan
+weak 0.0003 s0 full P=3.7000 gate=PASS snr=12.9 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6976 snr=7.75 D/P=0.019 cov=nan
+weak 0.0003 s1 full P=3.7000 gate=PASS snr=14.2 verdict=INCO   [2018] INCONCLUSIVE trainP=3.7010 snr=7.84 D/P=0.020 cov=nan
+weak 0.0003 s1 full P=3.7000 gate=PASS snr=14.2 verdict=INCO   [2020] INCONCLUSIVE trainP=3.7044 snr=9.45 D/P=0.018 cov=nan
+weak 0.0003 s2 full P=3.7000 gate=PASS snr=12.7 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6999 snr=7.30 D/P=0.024 cov=nan
+weak 0.0003 s2 full P=3.7000 gate=PASS snr=12.7 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6982 snr=8.29 D/P=0.024 cov=nan
+weak 0.0003 s3 full P=3.7000 gate=PASS snr=10.9 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6992 snr=7.90 D/P=0.020 cov=nan
+weak 0.0003 s3 full P=3.7000 gate=PASS snr=10.9 verdict=REFU   [2020] INCONCLUSIVE trainP=3.7021 snr=5.47 D/P=0.023 cov=nan
+weak 0.0003 s4 full P=3.6999 gate=PASS snr=11.3 verdict=REFU   [2018] INCONCLUSIVE trainP=1.8512 snr=6.93 D/P=0.043 cov=nan
+weak 0.0003 s4 full P=3.6999 gate=PASS snr=11.3 verdict=REFU   [2020] INCONCLUSIVE trainP=3.7028 snr=6.89 D/P=0.026 cov=nan
+weak 0.0003 s5 full P=3.7000 gate=PASS snr=13.4 verdict=INCO   [2018] INCONCLUSIVE trainP=3.6980 snr=7.43 D/P=0.024 cov=nan
+weak 0.0003 s5 full P=3.7000 gate=PASS snr=13.4 verdict=INCO   [2020] INCONCLUSIVE trainP=3.7014 snr=8.24 D/P=0.025 cov=nan
+weak 0.0003 s6 full P=3.6999 gate=PASS snr=12.3 verdict=REFU   [2018] INCONCLUSIVE trainP=3.7002 snr=7.25 D/P=0.024 cov=nan
+weak 0.0003 s6 full P=3.6999 gate=PASS snr=12.3 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6982 snr=7.19 D/P=0.016 cov=nan
+weak 0.0003 s7 full P=3.7000 gate=PASS snr=13.2 verdict=INCO   [2018] INCONCLUSIVE trainP=3.7010 snr=8.59 D/P=0.023 cov=nan
+weak 0.0003 s7 full P=3.7000 gate=PASS snr=13.2 verdict=INCO   [2020] INCONCLUSIVE trainP=3.6992 snr=7.39 D/P=0.025 cov=nan
+weak 0.0003 s8 full P=3.7000 gate=PASS snr=13.3 verdict=REFU   [2018] INCONCLUSIVE trainP=3.6996 snr=8.91 D/P=0.025 cov=nan
+weak 0.0003 s8 full P=3.7000 gate=PASS snr=13.3 verdict=REFU   [2020] INCONCLUSIVE trainP=3.6947 snr=6.60 D/P=0.023 cov=nan
+weak 0.0003 s9 full P=3.7000 gate=PASS snr=13.1 verdict=INCO   [2018] INCONCLUSIVE trainP=3.6986 snr=8.31 D/P=0.023 cov=nan
+weak 0.0003 s9 full P=3.7000 gate=PASS snr=13.1 verdict=INCO   [2020] INCONCLUSIVE trainP=3.6920 snr=6.97 D/P=0.021 cov=nan
