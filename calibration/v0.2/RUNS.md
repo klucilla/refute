@@ -149,6 +149,23 @@ Times are UTC on 2026-10-09: start is when the session was launched (within abou
 | TIC 158561566 | Kepler-14 b | planet | REFUTED | 17:20:29 | 17:24:42 | 253 | SERIOUS OBJECTIONS | `217884dc43d1660a05ed5f40c30ee62c807e6b7dbbf3cc217544b15369cb8e9d` |
 | TIC 194736418 | TOI-6038 A b | planet | REFUTED | 17:20:29 | 17:24:05 | 216 | SERIOUS OBJECTIONS | `ac6fe0cae720a8e1e2e8277b0218f5524a4ca01c80faebc652ffcbaad723eed9` |
 
+## Note: commit e-mail (repository setting, not part of the lock)
+
+- On 2026-10-09 the maintainer turned on GitHub's "Keep my email addresses private"
+  and "Block command line pushes that expose my email". From then on, a push whose
+  last commit has the maintainer's personal e-mail as author is refused.
+- Checked at 2026-10-09T21:21:28Z: the repository's local git configuration (not the
+  global one) already sets `user.email` to the GitHub no-reply address
+  `33322686+klucilla@users.noreply.github.com`. Nothing had to be changed.
+- All commits on the published refs, from 5214f2e (root, and the commit the v0.1 lock
+  was made from) to 358f7a7, have the maintainer's GitHub no-reply address as author
+  and committer (checked 2026-10-11T12:25:51Z). The only other address found is
+  GitHub's own noreply@github.com, as committer of the test merge commits GitHub
+  creates for open pull requests (refs/pull/*/merge); merges made through GitHub's web
+  interface would carry it too. No personal e-mail address appears in any commit.
+- No commit was changed and no history was rewritten. The git configuration is not
+  part of the claim, its attachments or the code hash, so it does not affect the lock.
+
 ## Step 7, continued: reviewer draw and the 3 drawn planets (17 of 17)
 
 - **Draw.** `uv run --frozen python calibration/v0.2/select_reviews.py
