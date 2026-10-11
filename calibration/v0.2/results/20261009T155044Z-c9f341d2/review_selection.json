@@ -1,0 +1,64 @@
+{
+  "drand": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6542966,
+    "round_time_utc": "2026-10-11T12:00:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6542966",
+    "retrieved_utc": "2026-10-11T12:07:18Z",
+    "randomness": "191d41e9bf0605e8ce51a2f71c5830dc4f5d1308b79c63ae95aab8a2f0c1b5da",
+    "signature": "b38da381cc7674f5ed172ed3077e6ea3dd756b98d61b5ab70043d70afb2b253cebf1903c26301e2724e3b273ace3dcdf0f4b89e0418f6026e3ef545b1a0ce136d5ed8aad818a4da6e7f9a256268c25a3b0a281dce8e8b5844ad5d7120fe2397d",
+    "previous_signature": "860e9c096ffc9cb2b83e076fad3dc1818ea8dbca0c0dc8e702f94431799b7039a162b28d3907c07aae7a0aa3d5a9a38103c0e7765240a8901c81fe11d4fe43d55c72520da1026b65b92ff66cc3975a426d258f080e6b95a1431fdeadc017cfd4",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "11359514694757473149203427955766906592503018143993726735029372672914514621914",
+  "false_positives": [
+    "TIC-33153766",
+    "TIC-197650870",
+    "TIC-374200604",
+    "TIC-350445771",
+    "TIC-317507345",
+    "TIC-158916431",
+    "TIC-316916655",
+    "TIC-154459165",
+    "TIC-294179389",
+    "TIC-315755496"
+  ],
+  "unexpected": [
+    "TIC-118327550",
+    "TIC-48506505",
+    "TIC-158561566",
+    "TIC-194736418"
+  ],
+  "random_planets": [
+    "TIC-139528693",
+    "TIC-193754373",
+    "TIC-231670397"
+  ],
+  "review": [
+    "TIC-118327550",
+    "TIC-139528693",
+    "TIC-154459165",
+    "TIC-158561566",
+    "TIC-158916431",
+    "TIC-193754373",
+    "TIC-194736418",
+    "TIC-197650870",
+    "TIC-231670397",
+    "TIC-294179389",
+    "TIC-315755496",
+    "TIC-316916655",
+    "TIC-317507345",
+    "TIC-33153766",
+    "TIC-350445771",
+    "TIC-374200604",
+    "TIC-48506505"
+  ],
+  "second_reviewer": [
+    "TIC-118327550",
+    "TIC-48506505",
+    "TIC-158561566",
+    "TIC-194736418"
+  ]
+}

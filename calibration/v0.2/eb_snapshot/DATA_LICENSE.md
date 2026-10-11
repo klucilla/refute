@@ -21,18 +21,42 @@ These files are under CC BY-NC 3.0 IGO, not Apache-2.0.
 
 ## TESS-EB: not redistributed
 
+> **Correction (decided 2026-10-10, applied 2026-10-11; erratum E1).** The reason
+> originally given below cited a CDS statement that could not be confirmed and is
+> withdrawn. The sources checked on 2026-10-10 do not demonstrate a conflict between
+> the publisher's and the CDS's terms; see erratum E1 for the sources.
+
 **Decision (maintainer, 2026-10-08): the rows of the TESS-EB catalog (Prsa et al.
 2022, ApJS 258, 16, doi:10.3847/1538-4365/ac324a) are not redistributed, neither in
 the repository nor in any release.**
 
-**Reason: the license terms differ between the sources.**
+**Decision for v0.2.0 (maintainer, 2026-10-10).** The full catalog is still not
+redistributed, now as a precaution: a conflict between the sources' terms is not
+demonstrated by the sources checked. Four TESS-EB records contained in four v0.2
+calibration dossiers were published with [release
+v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11, with
+citation, as localized evidence of the audit; the same four periods had already been
+quoted in the reviews committed in `b4be588`.
+
+**Search record (decided 2026-10-11).** The record of the search for TESS-EB values,
+published in `calibration/v0.2/audit/tess-eb-search/`, shows the values the search
+matched: the periods of the four records above; the position of TIC 158561566 (from
+the TESS Input Catalog via MAST, equal to its TESS-EB position); and the TESS-EB
+periods of TIC 71612483, 24450633 and 399729481, which coincide with values in the
+ExoFOP-TESS pool snapshots. They are published as evidence of the check, with the
+citation above. Nothing else from TESS-EB is in that folder.
+
+~~**Reason: the license terms differ between the sources.**~~ *(withdrawn, see the
+correction above)*
 
 - The publisher's metadata (Crossref, version of record) gives the article the
   CC BY 4.0 license (http://creativecommons.org/licenses/by/4.0/), from 2022-01-12.
-- The CDS page https://cds.unistra.fr/vizier-org/licences_vizier.html states that
+  *(Confirmed on 2026-10-10.)*
+- ~~The CDS page https://cds.unistra.fr/vizier-org/licences_vizier.html states that
   tabular data from AAS journals (J/ApJ, J/ApJS, J/AJ) are "under CC-BY-NC licence",
   and links to http://creativecommons.org/licenses/by-nc-nd/, which forbids
-  derivatives.
+  derivatives.~~ *(Withdrawn as unconfirmed, decided 2026-10-10, applied 2026-10-11:
+  the page says neither.)*
 
 What the repository keeps instead:
 

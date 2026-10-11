@@ -1,0 +1,8 @@
+09fbf43ffed0d7b1d10c3931cb14d2180bbcc9dc refs/codex/turn-diffs/checkpoints/1738d590eb90052e6140b2a5fa30ad3a/5271bb2c718c72e98cfd186ba416a509/1791679873317/995eecfd-0546-45dc-83d5-5a23a5a9af8c
+552554c82a67c169285edf899c9b86cb48e756d5 refs/heads/claude/v0-2-1-gauntlet-fixes-13f5e7
+a2c91610a828e9fc440eb11b0c89cef0a922a854 refs/heads/claude/v0-3-planning-draft-abff23
+55a56f61ba50dd0e44a142977adcb179cf016b9e refs/heads/main
+55a56f61ba50dd0e44a142977adcb179cf016b9e refs/remotes/origin/HEAD
+3f1c36c75c9076984c49d09d3cb305ee656308a2 refs/remotes/origin/claude/v0-2-1-gauntlet-fixes-13f5e7
+55a56f61ba50dd0e44a142977adcb179cf016b9e refs/remotes/origin/main
+6bb5e78ad24e33dbaa391e677234a440c3753056 refs/tags/v0.1.0

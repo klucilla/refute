@@ -29,7 +29,7 @@ how later work is done.
 
 ## Current phase
 
-**v0.2 Gauntlet**
+**v0.2.1 Gauntlet fixes**
 
 ---
 
@@ -76,9 +76,74 @@ Make the attacks serious and add independent review.
 - Re-run calibration with the full battery under a new locked claim.
 
 **Exit criteria**
-- [ ] Every new test has synthetic positive and negative cases.
-- [ ] Reviewer reports are stored and linked from dossiers.
-- [ ] New calibration claim locked, run and reported.
+- [x] Every new test has synthetic positive and negative cases. Evidence:
+      [tests/test_battery.py](https://github.com/klucilla/refute/blob/v0.2.0/tests/test_battery.py),
+      [tests/test_ebcatalog.py](https://github.com/klucilla/refute/blob/v0.2.0/tests/test_ebcatalog.py),
+      [docs/gauntlet-tess-v0.2.md](https://github.com/klucilla/refute/blob/v0.2.0/docs/gauntlet-tess-v0.2.md).
+- [x] Reviewer reports are stored and linked from dossiers. Evidence: 17 reports in the
+      dossiers of the release asset `refute-v0.2-calibration.zip` (`review/` in each
+      `MANIFEST.sha256`, linked from `report.md`); copies in
+      [calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/](https://github.com/klucilla/refute/tree/v0.2.0/calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews).
+- [x] New calibration claim locked, run and reported. Evidence: lock
+      [calibration/v0.2/self_claim.lock.json](https://github.com/klucilla/refute/blob/v0.2.0-calibration-lock/calibration/v0.2/self_claim.lock.json)
+      (`refute verify` returns `PASS` at tag `v0.2.0-calibration-lock`, commit `cc9d104`),
+      run [summary.json](https://github.com/klucilla/refute/blob/v0.2.0/calibration/v0.2/results/20261009T155044Z-c9f341d2/summary.json),
+      report [calibration/v0.2/POSTMORTEM.md](https://github.com/klucilla/refute/blob/v0.2.0/calibration/v0.2/POSTMORTEM.md).
+
+**Closed on 2026-10-11.** Gate review: Claude's gate verdict: WEAKENED; Codex provided a
+second review but did not assign a gate verdict
+([docs/gates/v0.2-review.md](docs/gates/v0.2-review.md)); the important findings
+(rows 4, 5 and 7) were resolved. Self-claim result: FAIL. Planets recovered: 10 of 10
+(required at least 9); false positives flagged without `eb_catalog`: 7 of 10 (required
+at least 6); planets refuted: 4 of 10 (required at most 1)
+([calibration/v0.2/POSTMORTEM.md](calibration/v0.2/POSTMORTEM.md)). Evidence:
+[release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0), archived on
+Zenodo with version DOI [10.5281/zenodo.23301001](https://doi.org/10.5281/zenodo.23301001)
+and concept DOI [10.5281/zenodo.23301000](https://doi.org/10.5281/zenodo.23301000).
+
+---
+
+## v0.2.1 Gauntlet fixes
+
+Fix what the failed v0.2 calibration exposed, and test the fixes with a new
+pre-registered calibration.
+
+**Scope**
+- Blind holdout: a round with an invalid train candidate is INCONCLUSIVE (hypothesis
+  4 of the v0.2 post-mortem); transit times measured with an ingress model, so that
+  the timing error is realistic (hypothesis 3 of the v0.2 post-mortem); robust
+  stacking of window depths and the error model of a round (issue #35).
+- Calibration measure: a known false positive counts as flagged only if the analyzed
+  signal is the catalogued one (hypothesis 7 of the v0.2 post-mortem).
+- `eb_catalog`: a period match under the target's own TIC in a catalog built from
+  the same TESS photometry is a warning, not a fatal failure (hypothesis 9 of the
+  v0.2 post-mortem).
+- Engine: the number of workers should change only the execution, preserving the
+  scientific results (workers-equivalence test; numerical runtime recorded in every
+  dossier); the environment leak of `init_worker()` with one worker (issue #32, to
+  be decided); a coverage requirement for the calibration.
+- CI: at most 15 minutes per job (maintainer's target).
+- Documentation: how blind the holdout is (issue #23); AI use statement and what the
+  blind holdout does and does not prove (issue #14).
+- Process: every legal or license statement has a URL, a date and a stored literal
+  excerpt (issue #34); evaluate redistributing the TESS-EB snapshot (issue #33).
+- The self-claim of the new calibration (targets, numbers and thresholds) is defined
+  in the v0.2.1 protocol before the lock.
+- Hypotheses of the v0.2 post-mortem and open items not listed here are not part of
+  v0.2.1.
+
+**Exit criteria**
+- [ ] Every change has acceptance criteria committed before its tests and code, and
+      synthetic cases that must pass and must fail.
+- [ ] No threshold is set, tuned or checked on a known target or on real data.
+- [ ] The workers-equivalence test passes and the coverage requirement is defined,
+      both before the v0.2.1 lock.
+- [ ] New pre-registered calibration (new lock, newly drawn targets, excluding v0.1
+      and v0.2), run and reported.
+- [ ] Reviewer reports stored and linked from the dossiers of the new calibration, as
+      in v0.2.
+- [ ] Every issue of milestone v0.2.1 closed, or moved to a later milestone with the
+      reason stated.
 
 ---
 

@@ -148,3 +148,145 @@ Times are UTC on 2026-10-09: start is when the session was launched (within abou
 | TIC 48506505 | Kepler-447 b | planet | REFUTED | 17:16:44 | 17:19:56 | 192 | SERIOUS OBJECTIONS | `17310ae47e88b4bb7428596d909077ee39d12cf28a607838b580c9ba19eae54b` |
 | TIC 158561566 | Kepler-14 b | planet | REFUTED | 17:20:29 | 17:24:42 | 253 | SERIOUS OBJECTIONS | `217884dc43d1660a05ed5f40c30ee62c807e6b7dbbf3cc217544b15369cb8e9d` |
 | TIC 194736418 | TOI-6038 A b | planet | REFUTED | 17:20:29 | 17:24:05 | 216 | SERIOUS OBJECTIONS | `ac6fe0cae720a8e1e2e8277b0218f5524a4ca01c80faebc652ffcbaad723eed9` |
+
+## Note: commit e-mail (repository setting, not part of the lock)
+
+- On 2026-10-09 the maintainer turned on GitHub's "Keep my email addresses private"
+  and "Block command line pushes that expose my email". From then on, a push whose
+  last commit has the maintainer's personal e-mail as author is refused.
+- Checked at 2026-10-09T21:21:28Z: the repository's local git configuration (not the
+  global one) already sets `user.email` to the GitHub no-reply address
+  `33322686+klucilla@users.noreply.github.com`. Nothing had to be changed.
+- All commits on the published refs, from 5214f2e (root, and the commit the v0.1 lock
+  was made from) to 358f7a7, have the maintainer's GitHub no-reply address as author
+  and committer (checked 2026-10-11T12:25:51Z). The only other address found is
+  GitHub's own noreply@github.com, as committer of the test merge commits GitHub
+  creates for open pull requests (refs/pull/*/merge); merges made through GitHub's web
+  interface would carry it too. No personal e-mail address appears in any commit.
+- No commit was changed and no history was rewritten. The git configuration is not
+  part of the claim, its attachments or the code hash, so it does not affect the lock.
+
+## Step 7, continued: reviewer draw and the 3 drawn planets (17 of 17)
+
+- **Draw.** `uv run --frozen python calibration/v0.2/select_reviews.py
+  calibration/v0.2/results/20261009T155044Z-c9f341d2/summary.json`, run 2026-10-11
+  from 12:07:13Z to 12:07:18Z, exit code 0. drand round 6542966 (published
+  2026-10-11T12:00:00Z) retrieved 12:07:18Z from `api.drand.sh`, signature verified
+  (py_ecc 8.0.0, G2Basic). Randomness
+  `191d41e9bf0605e8ce51a2f71c5830dc4f5d1308b79c63ae95aab8a2f0c1b5da`. Checked again on
+  `drand.cloudflare.com`: same randomness, signature verified, same seed and the same
+  3 planets. The script's output is saved as
+  `results/20261009T155044Z-c9f341d2/review_selection.json`, unchanged except for
+  line endings (LF, as for every text file in the repository; the script printed
+  CRLF on Windows): SHA-256
+  `b3b57470c122d3eb80689245d4ee683f738dc87556de7182beb6906c8bcb0bd2`.
+- **Drawn planets** (from the 6 planets whose verdict is not REFUTED): TIC 139528693
+  (WASP-78 b, WEAKENED), TIC 193754373 (TOI-4487 A b, WEAKENED) and TIC 231670397
+  (WASP-73 b, SURVIVED). The fixed part of the script's list (10 false positives and
+  the 4 refuted planets) is identical to the 14 dossiers reviewed on 2026-10-09.
+- **Procedure.** Same as for the first 14: one fresh Claude Opus 5.5 session per
+  dossier with only the fixed prompt, all 3 in parallel, each on a byte-identical copy
+  of its dossier under `.cache/review-isolation/` (deleted after the attachment). Each
+  report was extracted verbatim and attached with `refute review attach ...
+  --reviewer opus-1 --model claude-opus-5-5`. After the attachments `refute
+  check-dossier` reported all 20 dossier manifests intact and `refute verify`
+  returned PASS. Copies of each `review/` folder are in
+  `results/20261009T155044Z-c9f341d2/reviews/<target>/`.
+- **Second reviewer (Codex).** Not applicable to these 3 (the second review is only for
+  unexpected verdicts); for the 4 unexpected verdicts it stays left out, because the
+  Codex connection was still not available ("Connection closed") on 2026-10-11.
+- No verdict changed.
+
+Times are UTC on 2026-10-11: start is when the 3 sessions were launched (within about
+20 s), end is start plus each session's reported duration.
+
+| Target | Name | Kind | Verdict | Start | End | Duration (s) | Reviewer assessment | Report SHA-256 |
+|---|---|---|---|---|---|---|---|---|
+| TIC 139528693 | WASP-78 b | planet | WEAKENED | 12:07:59 | 12:11:50 | 231 | OBJECTIONS | `5a792ba717776c6bd189803488298e56c929502e38de05549ee82e2f576c588b` |
+| TIC 193754373 | TOI-4487 A b | planet | WEAKENED | 12:07:59 | 12:11:51 | 232 | OBJECTIONS | `996807d73dbcd40f52b7a9c6d3b62475ea3026a76a6ad97e241c880e9142205d` |
+| TIC 231670397 | WASP-73 b | planet | SURVIVED | 12:07:59 | 12:11:20 | 201 | OBJECTIONS | `2efb834374811a851b6b5a616a6c14621fa35018e794819cffc24d847cc2323a` |
+
+## Step 8: release archives of v0.2.0 (built 2026-10-11)
+
+Two archives were published as assets of [release
+v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11, with
+the Gaia DR3 snapshot (`gaia_dr3_vari_eclipsing_binary.csv`, SHA-256
+`5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df`). Both were built
+from frozen staging folders with `refute.core.dossier.write_archive` (sorted entries,
+fixed timestamps and modes), twice each, on 2026-10-11 at about 14:01Z; the
+calibration archive was built again, twice, at about 15:08Z (see the correction
+below).
+
+| Archive | SHA-256 | Bytes | Members |
+|---|---|---|---|
+| `refute-v0.2-calibration.zip` | ~~`05b23627ea9dd567e0ae56ccc29f625ded979a7081a43b72968391f211792039`~~ `906c6f46ab3dde9c6bd06ac0f9c453b1b388555b35c33990b3a995f0be04c829` | ~~10065988~~ 10066005 | 596 |
+| `refute-v0.2-reproduction.zip` | `549830c6d918402fe68ab07c79bb390900e8d327c46759b9cdd9d04480291268` | 1031851 | 61 |
+
+- **Double build.** The two builds of each archive have the same SHA-256. The staging
+  folder did not change during the builds, and each archive, extracted into a new
+  folder, equals its frozen file list byte for byte (frozen lists: SHA-256
+  ~~`c80ee53caa507817f3ee65b206d9932030612e8b7a07d52fa60ae7058c42a877`~~
+  `eb95923b6bfe3b314811ad18875fdc5316c13c90b3b5a22f40b44ad319e1230d` for the
+  calibration archive, `6ef92eb48417d6791fb4d06649de4f274189a26324790871e89a0c3bf6f56df3`
+  for the reproduction archive).
+- **Calibration archive.** The 20 dossiers of run `20261009T155044Z-c9f341d2` with
+  the 17 reviews, the run's `summary.json` and `summary.md`, `RUNS.md` (equal to the
+  blob of this file at `962f162`), `INDEX.md` and `DATA_CREDITS.md`. Compared member
+  by member with the earlier staging build
+  `43032da921fba2e3987eb8143aae705cfb3dc6fc0e447ca36f66c4bbf0093ac7`: the same 596
+  members, and only `DATA_CREDITS.md` differs. Reason: corrections of its text
+  approved by the maintainer after that build (the four TESS-EB reference rows, the
+  TESS Input Catalog credit, and the scope and record of the search for TESS-EB
+  values). The rebuilt archive, compared member by member with the first final build
+  `05b23627ea9dd567e0ae56ccc29f625ded979a7081a43b72968391f211792039`: the same 596
+  members, and only `DATA_CREDITS.md` differs (see the correction below).
+- **check-dossier.** On the extracted calibration archive: 20 of 20 dossiers
+  `OK: manifest intact`. On the 2 dossiers of the extracted reproduction archive,
+  `--against` the same dossiers of the extracted calibration archive: both
+  `OK: manifest intact; key results reproduced`. Repeated on the rebuilt calibration
+  archive, extracted into a new folder: 20 of 20, and both reproductions again
+  `OK: manifest intact; key results reproduced`.
+- **Reproduction archive.** The fresh-clone reproduction of 2 of the 20 dossiers
+  (GJ 3470 b, TIC 19028197; TOI-653.01, TIC 33153766), run on 2026-10-11 from
+  00:36:59Z to 00:41:05Z: `REPRODUCTION.md` (the record), `DATA_CREDITS.md`, the run
+  logs and listings (`repro_calibrate.txt`, `background_task_bnyz3nfv5.output`,
+  `check_dossier_rerun_2026-10-11.txt`, `downloaded_files.tsv`,
+  `plots_comparison_2026-10-11.tsv`), the published copy of
+  `session_transcript_extract.txt`, and the reproduced dossiers in
+  `TIC-19028197/dossier/` and `TIC-33153766/dossier/`, copied byte for byte. Changes
+  declared in `REPRODUCTION.md`, "Changes in the published archive": lines 57 to 164 of
+  the transcript extract (three tool calls that are not part of the reproduction, one
+  of which printed four TESS-EB periods) are removed and replaced by one marker line;
+  the Windows user name in 8 paths is replaced by `<user>`; line endings are kept as
+  written (some lines of ~~three~~ four files end in CR LF: `repro_calibrate.txt`
+  90 CR, `background_task_bnyz3nfv5.output` 34, the transcript extract 16 and
+  `check_dossier_rerun_2026-10-11.txt` 2), nothing was normalized.
+- **Search for TESS-EB values.** ~~Four~~ Five runs of the same read-only search on
+  2026-10-11, started at 01:25:13Z, 13:05:54Z, 13:13:02Z, 14:02:16Z and 15:09:07Z.
+  The fourth covered all git refs, both final archives above, the Gaia DR3 asset and
+  the published copy of the search record: 14 hits in the repository, 14 in the
+  calibration archive, 0 in the reproduction archive, 0 in the Gaia asset and 84 in
+  the record, all of them values described in the record. In the published copy of
+  the record's transcript extract, the TESS-EB coordinates of TIC 71612483 are
+  withheld (maintainer's decision of 2026-10-11; see `SEARCH.md`, "Changes in the
+  published copy"). The record (script, outputs, refs, hit lists and `SEARCH.md`) is
+  published in `calibration/v0.2/audit/tess-eb-search/` by the commit before this
+  one. The fifth run, after the correction below, covered all git refs and the
+  rebuilt calibration archive (`906c6f46...`): 242 hits in the repository (the same
+  as the phase-gate run; the published search record now accounts for most of them)
+  and the same 14 in the calibration archive, at the same members, lines and values
+  as in the fourth run. Its outputs and `ADDENDUM_2026-10-11.md` are in the same
+  folder.
+
+**Correction (2026-10-11, after the phase gate).** Two statements of this step were
+corrected. (1) The calibration archive was rebuilt (maintainer's decision of
+2026-10-11, after the phase gate; see `docs/gates/v0.2-review.md`, finding 11): its
+`DATA_CREDITS.md` said that changing a dossier would break "its integrity manifest
+and the lock of the calibration claim"; the lock covers only the claim, its six
+attachments and the code, so the sentence now reads "its integrity manifest
+(`MANIFEST.sha256`, checked by `refute check-dossier`)". This changed the archive's
+SHA-256 from `05b23627ea9dd567e0ae56ccc29f625ded979a7081a43b72968391f211792039` to
+`906c6f46ab3dde9c6bd06ac0f9c453b1b388555b35c33990b3a995f0be04c829` and its size from
+10065988 to 10066005 bytes; the reproduction archive is unchanged. (2) The
+reproduction archive has four files with CR LF line endings, not three:
+`background_task_bnyz3nfv5.output` (34 CR) was missing from the count.

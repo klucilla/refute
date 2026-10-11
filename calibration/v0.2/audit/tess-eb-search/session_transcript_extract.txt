@@ -1,0 +1,147 @@
+# TESS-EB value search, 2026-10-11: the runs of the script and the follow-up check of the ExoFOP coincidence
+# Source: 286dcd73-0856-44d4-9b8c-b9fbf5851ed1.jsonl, entries 2026-10-11T01:14:20 to 2026-10-11T01:25:40 (UTC).
+# Tool inputs and outputs are copied unedited; nothing else is added.
+
+======== TOOL CALL 2026-10-11T01:14:22.918Z (Write)
+{"file_path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\claude\\C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7\\286dcd73-0856-44d4-9b8c-b9fbf5851ed1\\scratchpad\\tess_eb_search.py", "content": "\"\"\"Scratch (read-only): search the versioned repository (every reachable blob) and the\nv0.1 release assets for values of the TESS-EB snapshot (content SHA-256 a31936ce...).\"\"\"\nimport collections\nimport hashlib\nimport re\nimport subprocess\nimport sys\nimport zipfile\nfrom pathlib import Path\n\nREPO = Path(sys.argv[1])\nTSV = Path(sys.argv[2])\nZIPS = {Path(p): h for p, h in (a.split(\"=\") for a in sys.argv[3:])}\nEXPECTED = \"a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c\"\nKNOWN = {158561566: \"6.7899645\", 316916655: \"2.8747759\", 317507345: \"3.9400619\",\n         350445771: \"3.1904288\"}\n\nraw = TSV.read_bytes()\nlines = [l for l in raw.decode(\"utf-8\").splitlines() if l.strip() and not l.startswith(\"#\")]\ncontent = (\"\\n\".join(lines) + \"\\n\").encode(\"utf-8\")\ndigest = hashlib.sha256(content).hexdigest()\nprint(\"snapshot content SHA-256:\", digest, \"OK\" if digest == EXPECTED else \"MISMATCH\")\nheader = lines[0].split(\"\\t\")\nrows = []\nfor l in lines[3:]:  # header, units, dashes\n    cells = dict(zip(header, (c.strip() for c in l.split(\"\\t\"))))\n    if cells.get(\"TIC\", \"\").isdigit():\n        rows.append(cells)\nprint(\"rows:\", len(rows), \"columns:\", header)\n\ndef sig_digits(s):\n    d = s.replace(\"-\", \"\").replace(\".\", \"\").lstrip(\"0\")\n    return len(d)\n\ntokens = {}  # token -> list of (tic, field)\nfor r in rows:\n    tic = int(r[\"TIC\"])\n    for field in (\"Per\", \"RAJ2000\", \"DEJ2000\"):\n        v = r.get(field, \"\")\n        if not v:\n            continue\n        variants = {v}\n        try:\n            variants.add(repr(float(v)))\n        except ValueError:\n            pass\n        for t in variants:\n            if sig_digits(t) >= 6:  # low-specificity numbers are skipped and counted\n                tokens.setdefault(t, []).append((tic, field))\nskipped = sum(1 for r in rows for f in (\"Per\", \"RAJ2000\", \"DEJ2000\")\n              if r.get(f) and sig_digits(r[f]) < 6)\nprint(\"search tokens:\", len(tokens), \"| values skipped (< 6 significant digits):\", skipped)\npattern = re.compile(rb\"(?<![\\d.])(\" + b\"|\".join(re.escape(t.encode()) for t in\n                     sorted(tokens, key=len, reverse=True)) + rb\")(?![\\d])\")\n\ndef scan(name, data, hits):\n    for m in pattern.finditer(data):\n        tok = m.group(1).decode()\n        for tic, field in tokens[tok]:\n            paired = str(tic).encode() in data\n            hits.append((name, tok, tic, field, paired))\n\n# Corpus A: every reachable blob of the repository, with one path per blob.\nobjs = subprocess.run([\"git\", \"-C\", str(REPO), \"rev-list\", \"--objects\", \"--all\"],\n                      capture_output=True, text=True, check=True).stdout.splitlines()\npaths = {}\nfor line in objs:\n    sha, _, path = line.partition(\" \")\n    if path:\n        paths.setdefault(sha, path)\nbatch = subprocess.run([\"git\", \"-C\", str(REPO), \"cat-file\", \"--batch-check\"],\n                       input=\"\\n\".join(paths), capture_output=True, text=True, check=True).stdout\nblobs = [l.split()[0] for l in batch.splitlines() if l.split()[1] == \"blob\"]\nhits_a = []\nfor sha in blobs:\n    data = subprocess.run([\"git\", \"-C\", str(REPO), \"cat-file\", \"blob\", sha],\n                          capture_output=True, check=True).stdout\n    scan(f\"{paths[sha]} (blob {sha[:8]})\", data, hits_a)\nprint(\"repository blobs scanned:\", len(blobs))\n\n# Corpus B: v0.1 release assets (local copies, SHA-256 checked against the release notes).\nhits_b = []\nfor z, expected in ZIPS.items():\n    h = hashlib.sha256(z.read_bytes()).hexdigest()\n    print(f\"{z.name}: SHA-256 {h[:16]}... {'OK' if h == expected else 'MISMATCH'}\")\n    with zipfile.ZipFile(z) as zf:\n        for info in zf.infolist():\n            if not info.is_dir():\n                scan(f\"{z.name}:{info.filename}\", zf.read(info), hits_b)\n    print(f\"  members scanned: {sum(1 for i in zipfile.ZipFile(z).infolist() if not i.is_dir())}\")\n\nfor label, hits in ((\"REPOSITORY\", hits_a), (\"v0.1 ASSETS\", hits_b)):\n    paired = [h for h in hits if h[4]]\n    unpaired = [h for h in hits if not h[4]]\n    known = [h for h in paired if KNOWN.get(h[2]) == h[1] and h[3] == \"Per\"]\n    other = [h for h in paired if h not in known]\n    print(f\"\\n== {label}: {len(hits)} token hits; with the row's TIC in the same file: \"\n          f\"{len(paired)} (the 4 known periods: {len(known)}, other: {len(other)}); \"\n          f\"without the TIC (numeric coincidence candidates): {len(unpaired)}\")\n    by_file = collections.defaultdict(set)\n    for h in known:\n        by_file[h[0].split(\" (blob\")[0]].add(h[2])\n    for f, tics in sorted(by_file.items()):\n        print(f\"   known period(s) {sorted(tics)} in {f}\")\n    for h in other[:40]:\n        print(\"   OTHER (TIC present):\", h)\n    c = collections.Counter((h[1], h[3]) for h in unpaired)\n    for (tok, field), n in c.most_common(15):\n        print(f\"   unpaired token {tok} ({field}, TIC {tokens[tok][0][0]}): {n} hit(s), e.g. \"\n              f\"{next(h[0] for h in unpaired if h[1] == tok)}\")\n"}
+
+-------- RESULT 2026-10-11T01:14:22.972Z
+File created successfully at: C:\Users\<user>\AppData\Local\Temp\claude\C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7\286dcd73-0856-44d4-9b8c-b9fbf5851ed1\scratchpad\tess_eb_search.py (file state is current in your context — no need to Read it back)
+
+======== TOOL CALL 2026-10-11T01:14:27.932Z (Bash)
+S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"; R="C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7"; cd "$R" && git fetch -q origin && time .venv/Scripts/python.exe "$S/tess_eb_search.py" "$R" "C:/Projetos/refute/.cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv" "C:/Projetos/refute/dossiers/refute-v0.1-calibration.zip=6f67781dbd3790cae767ff215bb0d7ee5cfed0763112304a3b318a3e987c993d" "C:/Projetos/refute/dossiers/refute-v0.1-reproduction.zip=1ee24bcf2d2c4843ba799c2cb64222cf7427607594c04bc9c652cbe3d698ad80" 2>&1 | cut -c1-260
+
+-------- RESULT 2026-10-11T01:24:29.144Z
+Command did not complete within its 600s timeout and was moved to the background (ID: b5v4dvekr). Output is being written to: C:\Users\<user>\AppData\Local\Temp\claude\C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7\286dcd73-0856-44d4-9b8c-b9fbf5851ed1\tasks\b5v4dvekr.output. You will be notified when it completes. To check interim output, use Read on that file path.
+Session cwd remains C:\Projetos\refute\.claude\worktrees\v0-2-1-gauntlet-fixes-13f5e7; directory changes made by the backgrounded command do not apply to subsequent commands.
+
+======== TOOL CALL 2026-10-11T01:24:35.276Z (Read)
+{"file_path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\claude\\C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7\\286dcd73-0856-44d4-9b8c-b9fbf5851ed1\\tasks\\b5v4dvekr.output"}
+
+-------- RESULT 2026-10-11T01:24:35.319Z
+<system-reminder>Warning: the file exists but the contents are empty.</system-reminder>
+
+======== TOOL CALL 2026-10-11T01:24:42.370Z (TaskStop)
+{"task_id": "b5v4dvekr"}
+
+-------- RESULT 2026-10-11T01:24:42.396Z
+{"message":"Successfully stopped task: b5v4dvekr (S=\"C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad\"; R=\"C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7\"; cd \"$R\" && git fetch -q origin && time .venv/Scripts/python.exe \"$S/tess_eb_search.py\" \"$R\" \"C:/Projetos/refute/.cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv\" \"C:/Projetos/refute/dossiers/refute-v0.1-calibration.zip=6f67781dbd3790cae767ff215bb0d7ee5cfed0763112304a3b318a3e987c993d\" \"C:/Projetos/refute/dossiers/refute-v0.1-reproduction.zip=1ee24bcf2d2c4843ba799c2cb64222cf7427607594c04bc9c652cbe3d698ad80\" 2>&1 | cut -c1-260)","task_id":"b5v4dvekr","task_type":"local_bash","command":"S=\"C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad\"; R=\"C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7\"; cd \"$R\" && git fetch -q origin && time .venv/Scripts/python.exe \"$S/tess_eb_search.py\" \"$R\" \"C:/Projetos/refute/.cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv\" \"C:/Projetos/refute/dossiers/refute-v0.1-calibration.zip=6f67781dbd3790cae767ff215bb0d7ee5cfed0763112304a3b318a3e987c993d\" \"C:/Projetos/refute/dossiers/refute-v0.1-reproduction.zip=1ee24bcf2d2c4843ba799c2cb64222cf7427607594c04bc9c652cbe3d698ad80\" 2>&1 | cut -c1-260"}
+
+======== TOOL CALL 2026-10-11T01:24:48.140Z (Bash)
+S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"; cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && .venv/Scripts/python.exe - "$S/tess_eb_search.py" <<'PYEOF'
+import sys
+from pathlib import Path
+p = Path(sys.argv[1]); t = p.read_text(encoding="utf-8")
+old_start = t.index('pattern = re.compile(')
+old_end = t.index("# Corpus A:")
+new = '''NUMBER = re.compile(rb"(?<![\\d.])[-+]?\\d+\\.\\d+(?![\\d])")
+
+
+def scan(name, data, hits):
+    for m in NUMBER.finditer(data):
+        tok = m.group(0).decode()
+        if tok.startswith("+"):
+            tok = tok[1:]
+        for tic, field in tokens.get(tok, ()):
+            paired = str(tic).encode() in data
+            hits.append((name, tok, tic, field, paired))
+
+
+'''
+t = t[:old_start] + new + t[old_end:]
+# one git process for every blob
+t = t.replace('''hits_a = []
+for sha in blobs:
+    data = subprocess.run(["git", "-C", str(REPO), "cat-file", "blob", sha],
+                          capture_output=True, check=True).stdout
+    scan(f"{paths[sha]} (blob {sha[:8]})", data, hits_a)''', '''hits_a = []
+proc = subprocess.run(["git", "-C", str(REPO), "cat-file", "--batch"], input="\\n".join(blobs).encode() + b"\\n",
+                      capture_output=True, check=True).stdout
+pos = 0
+for sha in blobs:
+    end = proc.index(b"\\n", pos)
+    head = proc[pos:end].split()
+    size = int(head[2])
+    data = proc[end + 1:end + 1 + size]
+    pos = end + 1 + size + 1
+    scan(f"{paths[sha]} (blob {sha[:8]})", data, hits_a)''')
+p.write_text(t, encoding="utf-8")
+print("ok")
+PYEOF
+.venv/Scripts/python.exe -c "import ast; ast.parse(open(r'$S/tess_eb_search.py').read()); print('syntax ok')"
+
+-------- RESULT 2026-10-11T01:24:48.948Z
+Exit code 1
+<stdin>:6: SyntaxWarning: invalid escape sequence '\d'
+ok
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import ast; ast.parse(open(r'C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad/tess_eb_search.py').read()); print('syntax ok')
+                ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\<user>\AppData\Local\Programs\Python\Python313\Lib\ast.py", line 50, in parse
+    return compile(source, filename, mode, flags,
+                   _feature_version=feature_version, optimize=optimize)
+  File "<unknown>", line 78
+    proc = subprocess.run(["git", "-C", str(REPO), "cat-file", "--batch"], input="
+                                                                                 ^
+SyntaxError: unterminated string literal (detected at line 78)
+
+======== TOOL CALL 2026-10-11T01:25:08.948Z (Write)
+{"file_path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\claude\\C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7\\286dcd73-0856-44d4-9b8c-b9fbf5851ed1\\scratchpad\\tess_eb_search.py", "content": "\"\"\"Scratch (read-only): search the versioned repository (every reachable blob) and the\nv0.1 release assets for values of the TESS-EB snapshot (content SHA-256 a31936ce...).\"\"\"\nimport collections\nimport hashlib\nimport re\nimport subprocess\nimport sys\nimport zipfile\nfrom pathlib import Path\n\nREPO = Path(sys.argv[1])\nTSV = Path(sys.argv[2])\nZIPS = {Path(p): h for p, h in (a.split(\"=\") for a in sys.argv[3:])}\nEXPECTED = \"a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c\"\nKNOWN = {158561566: \"6.7899645\", 316916655: \"2.8747759\", 317507345: \"3.9400619\",\n         350445771: \"3.1904288\"}\nNL = \"\\n\"\n\nraw = TSV.read_bytes()\nlines = [l for l in raw.decode(\"utf-8\").splitlines() if l.strip() and not l.startswith(\"#\")]\ncontent = (NL.join(lines) + NL).encode(\"utf-8\")\ndigest = hashlib.sha256(content).hexdigest()\nprint(\"snapshot content SHA-256:\", digest, \"OK\" if digest == EXPECTED else \"MISMATCH\")\nheader = lines[0].split(\"\\t\")\nrows = []\nfor l in lines[3:]:  # header, units, dashes\n    cells = dict(zip(header, (c.strip() for c in l.split(\"\\t\"))))\n    if cells.get(\"TIC\", \"\").isdigit():\n        rows.append(cells)\nprint(\"rows:\", len(rows), \"columns:\", header)\n\n\ndef sig_digits(s):\n    return len(s.replace(\"-\", \"\").replace(\".\", \"\").lstrip(\"0\"))\n\n\ntokens = {}  # number string -> list of (tic, field)\nskipped = 0\nfor r in rows:\n    tic = int(r[\"TIC\"])\n    for field in (\"Per\", \"RAJ2000\", \"DEJ2000\"):\n        v = r.get(field, \"\")\n        if not v:\n            continue\n        if sig_digits(v) < 6:  # too unspecific to search; counted\n            skipped += 1\n            continue\n        variants = {v}\n        try:\n            variants.add(repr(float(v)))\n        except ValueError:\n            pass\n        for t in variants:\n            tokens.setdefault(t, []).append((tic, field))\nprint(\"search tokens:\", len(tokens), \"| values skipped (< 6 significant digits):\", skipped)\n\nNUMBER = re.compile(rb\"(?<![\\d.])-?\\d+\\.\\d+(?![\\d])\")\n\n\ndef scan(name, data, hits):\n    for m in NUMBER.finditer(data):\n        tok = m.group(0).decode()\n        for tic, field in tokens.get(tok, ()):\n            hits.append((name, tok, tic, field, str(tic).encode() in data))\n\n\n# Corpus A: every reachable blob of the repository, one path per blob, one git process.\nobjs = subprocess.run([\"git\", \"-C\", str(REPO), \"rev-list\", \"--objects\", \"--all\"],\n                      capture_output=True, text=True, check=True).stdout.splitlines()\npaths = {}\nfor line in objs:\n    sha, _, path = line.partition(\" \")\n    if path:\n        paths.setdefault(sha, path)\ncheck = subprocess.run([\"git\", \"-C\", str(REPO), \"cat-file\", \"--batch-check\"],\n                       input=NL.join(paths) + NL, capture_output=True, text=True,\n                       check=True).stdout\nblobs = [l.split()[0] for l in check.splitlines() if l.split()[1] == \"blob\"]\nout = subprocess.run([\"git\", \"-C\", str(REPO), \"cat-file\", \"--batch\"],\n                     input=(NL.join(blobs) + NL).encode(), capture_output=True,\n                     check=True).stdout\nhits_a = []\npos = 0\nfor sha in blobs:\n    end = out.index(b\"\\n\", pos)\n    size = int(out[pos:end].split()[2])\n    data = out[end + 1:end + 1 + size]\n    pos = end + 1 + size + 1\n    scan(f\"{paths[sha]} (blob {sha[:8]})\", data, hits_a)\nrefs = subprocess.run([\"git\", \"-C\", str(REPO), \"for-each-ref\", \"--format=%(refname:short)\"],\n                      capture_output=True, text=True, check=True).stdout.split()\nprint(\"refs covered:\", \", \".join(refs))\nprint(\"repository blobs scanned:\", len(blobs))\n\n# Corpus B: v0.1 release assets (local copies, SHA-256 checked against the release notes).\nhits_b = []\nfor z, expected in ZIPS.items():\n    h = hashlib.sha256(z.read_bytes()).hexdigest()\n    with zipfile.ZipFile(z) as zf:\n        members = [i for i in zf.infolist() if not i.is_dir()]\n        for info in members:\n            scan(f\"{z.name}:{info.filename}\", zf.read(info), hits_b)\n    print(f\"{z.name}: SHA-256 {'OK' if h == expected else 'MISMATCH ' + h}; \"\n          f\"members scanned: {len(members)}\")\n\nfor label, hits in ((\"REPOSITORY (all reachable blobs)\", hits_a), (\"v0.1 ASSETS\", hits_b)):\n    paired = [h for h in hits if h[4]]\n    unpaired = [h for h in hits if not h[4]]\n    known = [h for h in paired if KNOWN.get(h[2]) == h[1] and h[3] == \"Per\"]\n    other = [h for h in paired if h not in known]\n    print(f\"\\n== {label}: {len(hits)} hits; with the row's TIC in the same file: \"\n          f\"{len(paired)} (the 4 known periods: {len(known)}; other values: {len(other)}); \"\n          f\"without the TIC: {len(unpaired)}\")\n    by_file = collections.defaultdict(set)\n    for h in known:\n        by_file[h[0].split(\" (blob\")[0]].add(h[2])\n    for f, tics in sorted(by_file.items()):\n        print(f\"   known period of TIC {sorted(tics)} in {f}\")\n    for h in other[:60]:\n        print(\"   OTHER VALUE WITH ITS TIC:\", h)\n    counts = collections.Counter((h[1], h[3], h[2]) for h in unpaired)\n    for (tok, field, tic), n in counts.most_common(20):\n        example = next(h[0] for h in unpaired if h[1] == tok)\n        print(f\"   without TIC: {tok} ({field} of TIC {tic}): {n} hit(s), e.g. {example}\")\n"}
+
+-------- RESULT 2026-10-11T01:25:08.978Z
+The file C:\Users\<user>\AppData\Local\Temp\claude\C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7\286dcd73-0856-44d4-9b8c-b9fbf5851ed1\scratchpad\tess_eb_search.py has been updated successfully. (file state is current in your context — no need to Read it back)
+
+======== TOOL CALL 2026-10-11T01:25:13.869Z (Bash)
+S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"; R="C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7"; cd "$R" && time .venv/Scripts/python.exe "$S/tess_eb_search.py" "$R" "C:/Projetos/refute/.cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv" "C:/Projetos/refute/dossiers/refute-v0.1-calibration.zip=6f67781dbd3790cae767ff215bb0d7ee5cfed0763112304a3b318a3e987c993d" "C:/Projetos/refute/dossiers/refute-v0.1-reproduction.zip=1ee24bcf2d2c4843ba799c2cb64222cf7427607594c04bc9c652cbe3d698ad80" > "$S/tess_eb_search.txt" 2>&1; cut -c1-240 "$S/tess_eb_search.txt"
+
+-------- RESULT 2026-10-11T01:25:16.410Z
+real	0m1.838s
+user	0m0.000s
+sys	0m0.015s
+snapshot content SHA-256: a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c OK
+rows: 4584 columns: ['TIC', 'm_TIC', 'RAJ2000', 'DEJ2000', 'Per']
+search tokens: 18724 | values skipped (< 6 significant digits): 0
+refs covered: codex/turn-diffs/checkpoints/1738d590eb90052e6140b2a5fa30ad3a/5271bb2c718c72e98cfd186ba416a509/1791679873317/995eecfd-0546-45dc-83d5-5a23a5a9af8c, claude/v0-2-1-gauntlet-fixes-13f5e7, claude/v0-3-planning-draft-abff23, main, o
+repository blobs scanned: 379
+refute-v0.1-calibration.zip: SHA-256 OK; members scanned: 586
+refute-v0.1-reproduction.zip: SHA-256 OK; members scanned: 218
+
+== REPOSITORY (all reachable blobs): 14 hits; with the row's TIC in the same file: 10 (the 4 known periods: 8; other values: 2); without the TIC: 4
+   known period of TIC [158561566] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-158561566/opus-1.md
+   known period of TIC [316916655] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-316916655/opus-1.md
+   known period of TIC [317507345] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-317507345/opus-1.md
+   known period of TIC [350445771] in calibration/v0.2/results/20261009T155044Z-c9f341d2/reviews/TIC-350445771/opus-1.md
+   known period of TIC [158561566, 316916655, 317507345, 350445771] in docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md
+   OTHER VALUE WITH ITS TIC: ('calibration/pool_snapshot/exofop_toi.csv (blob 0370a4cf)', '1.2168732', 71612483, 'Per', True)
+   OTHER VALUE WITH ITS TIC: ('calibration/v0.2/pool_snapshot/exofop_toi.csv (blob 0a992310)', '1.2168732', 71612483, 'Per', True)
+   without TIC: 0.22867 (Per of TIC 24450633): 2 hit(s), e.g. calibration/pool_snapshot/exofop_toi.csv (blob 0370a4cf)
+   without TIC: 0.803801 (Per of TIC 399729481): 2 hit(s), e.g. calibration/pool_snapshot/exofop_toi.csv (blob 0370a4cf)
+
+== v0.1 ASSETS: 0 hits; with the row's TIC in the same file: 0 (the 4 known periods: 0; other values: 0); without the TIC: 0
+
+======== TOOL CALL 2026-10-11T01:25:29.634Z (Bash)
+cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && head -1 calibration/v0.2/pool_snapshot/exofop_toi.csv | cut -c1-200; grep -n "71612483" calibration/v0.2/pool_snapshot/exofop_toi.csv | cut -c1-200; grep -n "71612483" "C:/Projetos/refute/.cache/eb_snapshot_v02/tess_ebs_prsa2022.tsv"; git log --format="%h %s" -1 -- calibration/v0.2/pool_snapshot/exofop_toi.csv; grep -n "exofop_toi.csv" calibration/v0.2/pool_snapshot/retrieval.json | head -2
+
+-------- RESULT 2026-10-11T01:25:30.578Z
+TIC ID,TOI,Previous CTOI,Master,SG1A,SG1B,SG2,SG3,SG4,SG5,ESM,TSM,Predicted Mass (M_Earth),Predicted RV Semi-amplitude (m/s),Time Series Observations,Spectroscopy Observations,Imaging Observations,TES
+1902:71612483,1834.01,,5,5,5,5,4,5,5,198.3,181.2,317,191.2,3,0,4,PC,APC,11.4951,0.006,,1,qlp-s50-tois,SPOC,13:29:10.62,31:24:06.9,-82.096,0.038,-7.129,0.032,2459689.763585,0.0002362,1.2164402,0.000000
+2722:0071612483	1	<withheld>	<withheld>	  1.2168732
+2d4d5ec calibration v0.2: target selection outputs (drand round 6537566)
+19:    "file": "pool_snapshot/exofop_toi.csv",
+
+======== TOOL CALL 2026-10-11T01:25:37.805Z (Bash)
+cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && .venv/Scripts/python.exe - <<'PYEOF'
+import csv
+with open("calibration/v0.2/pool_snapshot/exofop_toi.csv", encoding="utf-8") as fh:
+    rows = list(csv.reader(fh))
+head = rows[0]
+for i, r in enumerate(rows[1:], 2):
+    for j, c in enumerate(r):
+        if "1.2168732" in c:
+            print("line", i, "TIC", r[0], "TOI", r[1], "column:", head[j] if j < len(head) else j, "| cell:", c[:160])
+PYEOF
+
+-------- RESULT 2026-10-11T01:25:38.887Z
+line 1441 TIC 199444169 TOI 1410.01 column: Period (days) | cell: 1.2168732
+
