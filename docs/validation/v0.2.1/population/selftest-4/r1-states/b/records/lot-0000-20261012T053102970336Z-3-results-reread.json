@@ -1,0 +1,14 @@
+{
+  "lot": 0,
+  "results_sha256": {
+    "M0-f479823/false_positive-measurable-correlated-0000": "40b02736db9d0e4770356ff0b7313aa5bc2056ff1ed27af63da52446edc31f84",
+    "M0-f479823/false_positive-measurable-white-0004": "a84e2da54611e19d90f83210d8dcde0b77d58112cf34846112ac19e3cc0e8cb8",
+    "M1-3217db7/false_positive-measurable-correlated-0000": "b9691b18fca4a3f3213fddb38384434e3ec2c8ad609ea0b506164531272d79b6",
+    "M1-3217db7/false_positive-measurable-white-0004": "cb650b33135cbfc29d02d465d2d4c6738e04cd418c6c3a94b5342d85b64cbd4f",
+    "M2-78d79f5/false_positive-measurable-correlated-0000": "09355d03a47dd16a1f4c1f9022576abb35fefb176f750410cd8ecc3c590e0a03",
+    "M2-78d79f5/false_positive-measurable-white-0004": "59298b084973e4e445a54b40e99fbb76cceee40befb17de27e468a70c66b7d86",
+    "M3-9d3f369/false_positive-measurable-correlated-0000": "6f9b1c22b2f11d9b1b8342fadf0418fa01deba6c4955964c79c861d367a45486",
+    "M3-9d3f369/false_positive-measurable-white-0004": "5932caebe4c40326fa1e635c8ebcb351c90d90e1e37dbc4ba0d1556edf4f465b"
+  },
+  "utc": "2026-10-12T05:31:57.475083+00:00"
+}

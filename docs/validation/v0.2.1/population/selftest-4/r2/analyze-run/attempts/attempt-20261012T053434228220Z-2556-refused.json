@@ -1,0 +1,82 @@
+{
+  "argv": [
+    "analyze",
+    "--manifest",
+    "docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json",
+    "--cache",
+    ".cache/population/selftest-4",
+    "--out",
+    "docs/validation/v0.2.1/population/selftest-4/r2/analyze-run",
+    "--point",
+    "M0"
+  ],
+  "attempt": "20261012T053434228220Z-2556",
+  "binding": {
+    "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+    "point": "M0"
+  },
+  "checkout": {
+    "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+    "editable_root": "C:\\Projetos\\refute\\.worktrees\\v0.2.0",
+    "refute_root": "C:\\Projetos\\refute\\.worktrees\\v0.2.0",
+    "refute_version": "0.2.0",
+    "src_dirty": false,
+    "src_status": [],
+    "worktree_toplevel": "C:\\Projetos\\refute\\.worktrees\\v0.2.0"
+  },
+  "details": [
+    "harness: docs/validation/v0.2.1/population/population.py has changes that are not committed (git diff HEAD)",
+    "harness: the running harness is not docs/validation/v0.2.1/population/population.py of commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 (SHA-256)"
+  ],
+  "dispatched": false,
+  "fingerprint": {
+    "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+    "numpy": "2.5.3",
+    "numpy_blas": {
+      "detection method": "pkgconfig",
+      "found": true,
+      "include directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include",
+      "lib directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib",
+      "name": "scipy-openblas",
+      "openblas configuration": "OpenBLAS 0.3.34.106.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24",
+      "pc file directory": "D:/a/numpy-release/numpy-release/.openblas",
+      "version": "0.3.34.106.0"
+    },
+    "python": "3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]",
+    "refute_file": "C:\\Projetos\\refute\\.worktrees\\v0.2.0\\src\\refute\\__init__.py",
+    "thread_env": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "threadpools": [
+      {
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "user_api": "blas",
+        "version": "0.3.34.106.0"
+      }
+    ]
+  },
+  "format": "refute-population-attempt/1",
+  "harness_commit": "1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033",
+  "harness_sha256": "9040b4d13eff37440a2b8973374787ad646577edf5e7579d36fca5f814a73e9c",
+  "kind": "refused",
+  "manifest_sha256": "763cb5c23a06310de04d7586df319fb3d878f190955e8876a2f8bda79f1face8",
+  "points": {
+    "committed": true,
+    "path": "docs/validation/v0.2.1/population/points.json",
+    "repository_commit": "1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033",
+    "sha256": "7f26cc75bd96c6feaa7ed40a5f5b880241af1ff4e2b43872d0684a2bdd51d3c9"
+  },
+  "reason": "the point cannot be measured in this environment",
+  "results": "none",
+  "started_utc": "20261012T053434228220Z",
+  "thread_env_inherited": {
+    "MKL_NUM_THREADS": null,
+    "NUMEXPR_NUM_THREADS": null,
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "lot": 1,
+  "results_sha256": {
+    "M0-f479823/no_transit-none-correlated-0000": "3e436be5a2da1badebc583a0f9cac3b5d9d3e2bd77592e09f4e34d569fcdb431",
+    "M0-f479823/no_transit-none-white-0000": "9a0ac387e09d91c7cf4278ac2d42ea1f3013905fa7ed19ae08e469e1181397f1",
+    "M1-3217db7/no_transit-none-correlated-0000": "2f97a650bf3d8f67805abf22d71fec99898021f6a825fec8f59742c5b6cda170",
+    "M1-3217db7/no_transit-none-white-0000": "c8dda28c0c5c773c846faf35cab580014a9d441856f0f28226498f7c87f4477f",
+    "M2-78d79f5/no_transit-none-correlated-0000": "8f770fdec91a1000518a62ec2b5889c94d090b180d20755668533939fce1360b",
+    "M2-78d79f5/no_transit-none-white-0000": "b16e259ae6f55a1602c35f879f94f58ce980f064c517031cf22f26f4f5808b6a",
+    "M3-9d3f369/no_transit-none-correlated-0000": "0048a3aea4b12a1ac9f11b4d42dce0b4f52c56acb654a7c3013b028d740d759d",
+    "M3-9d3f369/no_transit-none-white-0000": "4195d914a9492921883314d0a3c9abdf454aeb89e506ab3f27758d364e361cfd"
+  },
+  "utc": "2026-10-12T05:32:32.721842+00:00"
+}

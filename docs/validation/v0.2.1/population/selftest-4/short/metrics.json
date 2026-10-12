@@ -1,0 +1,2979 @@
+{
+  "format": "refute-population-metrics/2",
+  "harness_sha256": "408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225",
+  "manifest_sha256": "763cb5c23a06310de04d7586df319fb3d878f190955e8876a2f8bda79f1face8",
+  "paired": [
+    {
+      "comparisons": {
+        "aggregate": {
+          "i": {
+            "false_alarm | no_transit": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "flagged_identity | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "flagged_old | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "inconclusive | no_transit": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "refuted | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "ii": {
+            "flagged_identity | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "flagged_old | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "inconclusive | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "refuted | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          }
+        },
+        "i": {
+          "false_alarm | no_transit": {
+            "correlated|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "flagged_identity | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | no_transit": {
+            "correlated|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          }
+        },
+        "ii": {
+          "flagged_identity | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          }
+        },
+        "ii_by_catalog_variant": {
+          "flagged_identity | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable|neighbor": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable|neighbor": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          }
+        }
+      },
+      "from": "M0",
+      "to": "M1"
+    },
+    {
+      "comparisons": {
+        "aggregate": {
+          "i": {
+            "false_alarm | no_transit": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "flagged_identity | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "flagged_old | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "inconclusive | no_transit": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "refuted | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "ii": {
+            "flagged_identity | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "flagged_old | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "inconclusive | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "refuted | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          }
+        },
+        "i": {
+          "false_alarm | no_transit": {
+            "correlated|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "flagged_identity | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | no_transit": {
+            "correlated|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          }
+        },
+        "ii": {
+          "flagged_identity | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          }
+        },
+        "ii_by_catalog_variant": {
+          "flagged_identity | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable|neighbor": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable|neighbor": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          }
+        }
+      },
+      "from": "M1",
+      "to": "M2"
+    },
+    {
+      "comparisons": {
+        "aggregate": {
+          "i": {
+            "false_alarm | no_transit": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "flagged_identity | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "flagged_old | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "inconclusive | no_transit": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "refuted | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "ii": {
+            "flagged_identity | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "flagged_old | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "inconclusive | false_positive": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "inconclusive | planet": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "refuted | planet": {
+              "became_false": [
+                "planet-measurable-white-0000"
+              ],
+              "became_true": [],
+              "difference": -0.5,
+              "mcnemar_exact_p": 1.0,
+              "n": 2,
+              "rate_after": 0.5,
+              "rate_before": 1.0
+            }
+          }
+        },
+        "i": {
+          "false_alarm | no_transit": {
+            "correlated|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "flagged_identity | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | no_transit": {
+            "correlated|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|none": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          }
+        },
+        "ii": {
+          "flagged_identity | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable": {
+              "became_false": [
+                "planet-measurable-white-0000"
+              ],
+              "became_true": [],
+              "difference": -1.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 1.0
+            }
+          }
+        },
+        "ii_by_catalog_variant": {
+          "flagged_identity | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "flagged_old | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            }
+          },
+          "inconclusive | false_positive": {
+            "correlated|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "inconclusive | planet": {
+            "correlated|measurable|neighbor": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            },
+            "white|measurable|own": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 0.0
+            }
+          },
+          "refuted | planet": {
+            "correlated|measurable|neighbor": {
+              "became_false": [],
+              "became_true": [],
+              "difference": 0.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 1.0,
+              "rate_before": 1.0
+            },
+            "white|measurable|own": {
+              "became_false": [
+                "planet-measurable-white-0000"
+              ],
+              "became_true": [],
+              "difference": -1.0,
+              "mcnemar_exact_p": 1.0,
+              "n": 1,
+              "rate_after": 0.0,
+              "rate_before": 1.0
+            }
+          }
+        }
+      },
+      "from": "M2",
+      "to": "M3"
+    }
+  ],
+  "points": [
+    {
+      "binding": {
+        "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+        "point": "M0"
+      },
+      "checkout": {
+        "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+        "editable_root": "C:\\Projetos\\refute\\.worktrees\\v0.2.0",
+        "refute_root": "C:\\Projetos\\refute\\.worktrees\\v0.2.0",
+        "refute_version": "0.2.0",
+        "src_dirty": false,
+        "src_status": [],
+        "worktree_toplevel": "C:\\Projetos\\refute\\.worktrees\\v0.2.0"
+      },
+      "metrics": {
+        "approval": {
+          "failed": [
+            "C1 refuted planets, below, white",
+            "C1 refuted planets, near, white",
+            "C1 refuted planets, measurable, white",
+            "C2 flagged false positives, measurable, white",
+            "C3 INCONCLUSIVE, planet, measurable, white",
+            "C3 INCONCLUSIVE, false_positive, measurable, white",
+            "C4 false alarm, white",
+            "C5 planets refuted only by own-TIC eb_catalog, white",
+            "C1 refuted planets, below, correlated",
+            "C1 refuted planets, near, correlated",
+            "C1 refuted planets, measurable, correlated",
+            "C2 flagged false positives, measurable, correlated",
+            "C3 INCONCLUSIVE, planet, measurable, correlated",
+            "C3 INCONCLUSIVE, false_positive, measurable, correlated",
+            "C4 false alarm, correlated"
+          ],
+          "passes": false,
+          "rule": "The study is approved only if every criterion passes, C6 included. A rate can meet its limit while the study fails."
+        },
+        "by_mechanism": {
+          "i": {
+            "false_positive|measurable|correlated|eb_secondary": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "no_transit|None|correlated|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "no_transit|None|white|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|correlated|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|white|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            }
+          },
+          "ii": {
+            "false_positive|measurable|correlated|eb_secondary|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|correlated|two_years|neighbor": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 1,
+              "refuted_only_by_eb_catalog_lower": 0.05,
+              "refuted_only_by_eb_catalog_upper": 1.0,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|white|two_years|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 1,
+              "refuted_only_by_eb_catalog_lower": 0.05,
+              "refuted_only_by_eb_catalog_upper": 1.0,
+              "refuted_upper": 1.0
+            }
+          }
+        },
+        "criteria": {
+          "C1 refuted planets, below, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, below, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, near, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, near, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C2 flagged false positives, measurable, correlated": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C2 flagged false positives, measurable, white": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": true
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, white": {
+            "k": 1,
+            "n": 1,
+            "passes": false
+          },
+          "C6 analysis errors and missing results": {
+            "k": 0,
+            "passes": true
+          }
+        },
+        "errors": [],
+        "named_families": [
+          {
+            "condition": "ii",
+            "criterion": "C5",
+            "estimate": 1.0,
+            "family": "planet|measurable|white|two_years|own",
+            "k": 1,
+            "limit": 0.0,
+            "n": 1,
+            "outcome": "refuted_only_by_eb_catalog"
+          }
+        ],
+        "status_counts": {
+          "analyzed": 10
+        }
+      },
+      "point": "M0",
+      "refused_attempts": {
+        "M0-f479823": []
+      },
+      "runs": [
+        "M0-f479823"
+      ]
+    },
+    {
+      "binding": {
+        "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+        "point": "M1"
+      },
+      "checkout": {
+        "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+        "editable_root": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7",
+        "refute_root": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7",
+        "refute_version": "0.1.0",
+        "src_dirty": false,
+        "src_status": [],
+        "worktree_toplevel": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7"
+      },
+      "metrics": {
+        "approval": {
+          "failed": [
+            "C1 refuted planets, below, white",
+            "C1 refuted planets, near, white",
+            "C1 refuted planets, measurable, white",
+            "C2 flagged false positives, measurable, white",
+            "C3 INCONCLUSIVE, planet, measurable, white",
+            "C3 INCONCLUSIVE, false_positive, measurable, white",
+            "C4 false alarm, white",
+            "C5 planets refuted only by own-TIC eb_catalog, white",
+            "C1 refuted planets, below, correlated",
+            "C1 refuted planets, near, correlated",
+            "C1 refuted planets, measurable, correlated",
+            "C2 flagged false positives, measurable, correlated",
+            "C3 INCONCLUSIVE, planet, measurable, correlated",
+            "C3 INCONCLUSIVE, false_positive, measurable, correlated",
+            "C4 false alarm, correlated"
+          ],
+          "passes": false,
+          "rule": "The study is approved only if every criterion passes, C6 included. A rate can meet its limit while the study fails."
+        },
+        "by_mechanism": {
+          "i": {
+            "false_positive|measurable|correlated|eb_secondary": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "no_transit|None|correlated|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "no_transit|None|white|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|correlated|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|white|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            }
+          },
+          "ii": {
+            "false_positive|measurable|correlated|eb_secondary|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|correlated|two_years|neighbor": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 1,
+              "refuted_only_by_eb_catalog_lower": 0.05,
+              "refuted_only_by_eb_catalog_upper": 1.0,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|white|two_years|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 1,
+              "refuted_only_by_eb_catalog_lower": 0.05,
+              "refuted_only_by_eb_catalog_upper": 1.0,
+              "refuted_upper": 1.0
+            }
+          }
+        },
+        "criteria": {
+          "C1 refuted planets, below, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, below, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, near, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, near, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C2 flagged false positives, measurable, correlated": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C2 flagged false positives, measurable, white": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": true
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, white": {
+            "k": 1,
+            "n": 1,
+            "passes": false
+          },
+          "C6 analysis errors and missing results": {
+            "k": 0,
+            "passes": true
+          }
+        },
+        "errors": [],
+        "named_families": [
+          {
+            "condition": "ii",
+            "criterion": "C5",
+            "estimate": 1.0,
+            "family": "planet|measurable|white|two_years|own",
+            "k": 1,
+            "limit": 0.0,
+            "n": 1,
+            "outcome": "refuted_only_by_eb_catalog"
+          }
+        ],
+        "status_counts": {
+          "analyzed": 10
+        }
+      },
+      "point": "M1",
+      "refused_attempts": {
+        "M1-3217db7": []
+      },
+      "runs": [
+        "M1-3217db7"
+      ]
+    },
+    {
+      "binding": {
+        "commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540",
+        "point": "M2"
+      },
+      "checkout": {
+        "commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540",
+        "editable_root": "C:\\Projetos\\refute\\.worktrees\\M2-78d79f5",
+        "refute_root": "C:\\Projetos\\refute\\.worktrees\\M2-78d79f5",
+        "refute_version": "0.1.0",
+        "src_dirty": false,
+        "src_status": [],
+        "worktree_toplevel": "C:\\Projetos\\refute\\.worktrees\\M2-78d79f5"
+      },
+      "metrics": {
+        "approval": {
+          "failed": [
+            "C1 refuted planets, below, white",
+            "C1 refuted planets, near, white",
+            "C1 refuted planets, measurable, white",
+            "C2 flagged false positives, measurable, white",
+            "C3 INCONCLUSIVE, planet, measurable, white",
+            "C3 INCONCLUSIVE, false_positive, measurable, white",
+            "C4 false alarm, white",
+            "C5 planets refuted only by own-TIC eb_catalog, white",
+            "C1 refuted planets, below, correlated",
+            "C1 refuted planets, near, correlated",
+            "C1 refuted planets, measurable, correlated",
+            "C2 flagged false positives, measurable, correlated",
+            "C3 INCONCLUSIVE, planet, measurable, correlated",
+            "C3 INCONCLUSIVE, false_positive, measurable, correlated",
+            "C4 false alarm, correlated"
+          ],
+          "passes": false,
+          "rule": "The study is approved only if every criterion passes, C6 included. A rate can meet its limit while the study fails."
+        },
+        "by_mechanism": {
+          "i": {
+            "false_positive|measurable|correlated|eb_secondary": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "no_transit|None|correlated|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "no_transit|None|white|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|correlated|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|white|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            }
+          },
+          "ii": {
+            "false_positive|measurable|correlated|eb_secondary|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|correlated|two_years|neighbor": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 1,
+              "refuted_only_by_eb_catalog_lower": 0.05,
+              "refuted_only_by_eb_catalog_upper": 1.0,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|white|two_years|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 1,
+              "refuted_only_by_eb_catalog_lower": 0.05,
+              "refuted_only_by_eb_catalog_upper": 1.0,
+              "refuted_upper": 1.0
+            }
+          }
+        },
+        "criteria": {
+          "C1 refuted planets, below, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, below, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, near, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, near, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C2 flagged false positives, measurable, correlated": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C2 flagged false positives, measurable, white": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": true
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, white": {
+            "k": 1,
+            "n": 1,
+            "passes": false
+          },
+          "C6 analysis errors and missing results": {
+            "k": 0,
+            "passes": true
+          }
+        },
+        "errors": [],
+        "named_families": [
+          {
+            "condition": "ii",
+            "criterion": "C5",
+            "estimate": 1.0,
+            "family": "planet|measurable|white|two_years|own",
+            "k": 1,
+            "limit": 0.0,
+            "n": 1,
+            "outcome": "refuted_only_by_eb_catalog"
+          }
+        ],
+        "status_counts": {
+          "analyzed": 10
+        }
+      },
+      "point": "M2",
+      "refused_attempts": {
+        "M2-78d79f5": []
+      },
+      "runs": [
+        "M2-78d79f5"
+      ]
+    },
+    {
+      "binding": {
+        "commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3",
+        "point": "M3"
+      },
+      "checkout": {
+        "commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3",
+        "editable_root": "C:\\Projetos\\refute\\.worktrees\\M3-9d3f369",
+        "refute_root": "C:\\Projetos\\refute\\.worktrees\\M3-9d3f369",
+        "refute_version": "0.1.0",
+        "src_dirty": false,
+        "src_status": [],
+        "worktree_toplevel": "C:\\Projetos\\refute\\.worktrees\\M3-9d3f369"
+      },
+      "metrics": {
+        "approval": {
+          "failed": [
+            "C1 refuted planets, below, white",
+            "C1 refuted planets, near, white",
+            "C1 refuted planets, measurable, white",
+            "C2 flagged false positives, measurable, white",
+            "C3 INCONCLUSIVE, planet, measurable, white",
+            "C3 INCONCLUSIVE, false_positive, measurable, white",
+            "C4 false alarm, white",
+            "C1 refuted planets, below, correlated",
+            "C1 refuted planets, near, correlated",
+            "C1 refuted planets, measurable, correlated",
+            "C2 flagged false positives, measurable, correlated",
+            "C3 INCONCLUSIVE, planet, measurable, correlated",
+            "C3 INCONCLUSIVE, false_positive, measurable, correlated",
+            "C4 false alarm, correlated"
+          ],
+          "passes": false,
+          "rule": "The study is approved only if every criterion passes, C6 included. A rate can meet its limit while the study fails."
+        },
+        "by_mechanism": {
+          "i": {
+            "false_positive|measurable|correlated|eb_secondary": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "no_transit|None|correlated|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "no_transit|None|white|pure_noise": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 1,
+              "inconclusive_lower": 0.05,
+              "inconclusive_upper": 1.0,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|correlated|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            },
+            "planet|measurable|white|two_years": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            }
+          },
+          "ii": {
+            "false_positive|measurable|correlated|eb_secondary|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "false_positive|measurable|white|blend|own": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 1,
+              "flagged_identity_lower": 0.05,
+              "flagged_identity_upper": 1.0,
+              "flagged_old": 1,
+              "flagged_old_lower": 0.05,
+              "flagged_old_upper": 1.0,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|correlated|two_years|neighbor": {
+              "false_alarm": 0,
+              "false_alarm_lower": 0.0,
+              "false_alarm_upper": 0.95,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 1,
+              "refuted_lower": 0.05,
+              "refuted_only_by_eb_catalog": 1,
+              "refuted_only_by_eb_catalog_lower": 0.05,
+              "refuted_only_by_eb_catalog_upper": 1.0,
+              "refuted_upper": 1.0
+            },
+            "planet|measurable|white|two_years|own": {
+              "false_alarm": 1,
+              "false_alarm_lower": 0.05,
+              "false_alarm_upper": 1.0,
+              "flagged_identity": 0,
+              "flagged_identity_lower": 0.0,
+              "flagged_identity_upper": 0.95,
+              "flagged_old": 0,
+              "flagged_old_lower": 0.0,
+              "flagged_old_upper": 0.95,
+              "inconclusive": 0,
+              "inconclusive_lower": 0.0,
+              "inconclusive_upper": 0.95,
+              "n": 1,
+              "refuted": 0,
+              "refuted_lower": 0.0,
+              "refuted_only_by_eb_catalog": 0,
+              "refuted_only_by_eb_catalog_lower": 0.0,
+              "refuted_only_by_eb_catalog_upper": 0.95,
+              "refuted_upper": 0.95
+            }
+          }
+        },
+        "criteria": {
+          "C1 refuted planets, below, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, below, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C1 refuted planets, near, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C1 refuted planets, near, white": {
+            "k": 0,
+            "n": 0,
+            "passes": false,
+            "rate": null
+          },
+          "C2 flagged false positives, measurable, correlated": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C2 flagged false positives, measurable, white": {
+            "bound": 0.05,
+            "k": 1,
+            "n": 1,
+            "passes": false,
+            "rate": 1.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, false_positive, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C3 INCONCLUSIVE, planet, measurable, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, correlated": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C4 false alarm, white": {
+            "bound": 0.95,
+            "k": 0,
+            "n": 1,
+            "passes": false,
+            "rate": 0.0
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, correlated": {
+            "k": 0,
+            "n": 0,
+            "passes": true
+          },
+          "C5 planets refuted only by own-TIC eb_catalog, white": {
+            "k": 0,
+            "n": 1,
+            "passes": true
+          },
+          "C6 analysis errors and missing results": {
+            "k": 0,
+            "passes": true
+          }
+        },
+        "errors": [],
+        "named_families": [],
+        "status_counts": {
+          "analyzed": 10
+        }
+      },
+      "point": "M3",
+      "refused_attempts": {
+        "M3-9d3f369": []
+      },
+      "runs": [
+        "M3-9d3f369"
+      ]
+    }
+  ],
+  "points_sha256": "7f26cc75bd96c6feaa7ed40a5f5b880241af1ff4e2b43872d0684a2bdd51d3c9",
+  "records": [
+    "docs\\validation\\v0.2.1\\population\\selftest-4\\short\\orchestrate-records\\lot-0000-20261012T053102970336Z-3-results-reread.json",
+    "docs\\validation\\v0.2.1\\population\\selftest-4\\short\\orchestrate-records\\lot-0001-20261012T053157491154Z-3-results-reread.json",
+    "docs\\validation\\v0.2.1\\population\\selftest-4\\short\\orchestrate-records\\lot-0002-20261012T053232737769Z-3-results-reread.json"
+  ],
+  "redraws": {
+    "false_positive|measurable|blend": {
+      "cases": 1,
+      "cases_redrawn": 0,
+      "redraws": {}
+    },
+    "false_positive|measurable|eb_secondary": {
+      "cases": 1,
+      "cases_redrawn": 0,
+      "redraws": {}
+    },
+    "no_transit|none|pure_noise": {
+      "cases": 2,
+      "cases_redrawn": 0,
+      "redraws": {}
+    },
+    "planet|measurable|two_years": {
+      "cases": 2,
+      "cases_redrawn": 0,
+      "redraws": {}
+    }
+  },
+  "results_checked_against_records": true,
+  "run_harness_sha256": "408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225"
+}

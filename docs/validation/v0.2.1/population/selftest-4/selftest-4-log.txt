@@ -1,0 +1,252 @@
+# selftest-4 log (commands and their output, in order)
+# harness SHA-256 408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225, run on commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033
+$ [v0.2.0 env] generate --population selftest --manifest manifest.json --workers 24 --order index --no-store
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 44 (hash only); wall 5.3 s; per case 1.82 s mean, 2.99 s max; peak worker memory 199.3 MB; bytes 3547686423
+manifest docs/validation/v0.2.1/population/selftest-4/manifest.json: SHA-256 cc0cb9a7edfdd13208d335406f119d96a596fdce811b07b0b0da7de357397d5c
+exit 0
+$ [v0.2.0 env] generate --population selftest --manifest manifest-workers1-shuffle7.json --workers 1 --order shuffle:7 --no-store
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 1 process(es) (the main process), pools ["[('openblas', 1)]"]
+cases generated: 44 (hash only); wall 8.0 s; per case 0.17 s mean, 0.29 s max; peak worker memory 211.5 MB; bytes 3547686423
+manifest docs/validation/v0.2.1/population/selftest-4/manifest-workers1-shuffle7.json: SHA-256 cc0cb9a7edfdd13208d335406f119d96a596fdce811b07b0b0da7de357397d5c
+exit 0
+$ compare with selftest-3/manifest.json and check the three reference cases
+case ids identical: True (44 in selftest-3, 44 in selftest-2)
+case SHA-256 equal to selftest-2: 44 of 44
+whole case entries equal to selftest-2: 44 of 44
+manifest keys that differ (outside the cases): ['harness_commit', 'harness_sha256']
+  environment fields that differ: []
+    thread_env selftest-2 {'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1'} -> selftest-3 {'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1'}
+    threadpools selftest-2 [('openblas', 1)] -> selftest-3 [('openblas', 1)]
+  generator keys added: []
+reference case planet-measurable-white-0000: in the manifest True, SHA-256 f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e equal to the published table True
+reference case planet-measurable-correlated-0000: in the manifest True, SHA-256 a7dd6266f4ffd30f3cead01987a301c64db2086791a7296e0db55f3f416055c4 equal to the published table True
+reference case false_positive-measurable-white-0004: in the manifest True, SHA-256 1817b9f776969ae050ba6cd7b1849dda968595041dabe37711390cec7b37b724 equal to the published table True
+manifest files: 2, distinct SHA-256: ['cc0cb9a7edfdd13208d335406f119d96a596fdce811b07b0b0da7de357397d5c']
+exit 0
+$ [v0.2.0 env] generate the short manifest (6 cases of short-cases.txt: one planet, false positive and no-transit case per noise model) --no-store
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 6 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 6 (hash only); wall 1.7 s; per case 1.01 s mean, 1.03 s max; peak worker memory 161.3 MB; bytes 452895952
+manifest docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: SHA-256 763cb5c23a06310de04d7586df319fb3d878f190955e8876a2f8bda79f1face8
+exit 0
+# in the output of the comparison above (a script written for self-test 3), 'selftest-3' labels this folder (selftest-4/manifest.json) and 'selftest-2' labels selftest-3/manifest.json
+$ short orchestrate over the 6 cases at M0-M3, lots of 2 (3 lots), records in short/orchestrate-records
+affinity: logical processors 8-31 (mask 0xffffff00)
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M0", "installed_commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M1", "installed_commit": "3217db72cae26bc809b62a5239ae6226344e7a26", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M2", "installed_commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M3", "installed_commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1'}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 2 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 2 (stored); wall 1.4 s; per case 0.89 s mean, 0.90 s max; peak worker memory 161.2 MB; bytes 150965970
+checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M1: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M1: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M2: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M2: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M3: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M3: {'analyzed': 2}
+lot 0: done (2 cases)
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1'}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 2 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 2 (stored); wall 1.4 s; per case 0.86 s mean, 0.86 s max; peak worker memory 160.9 MB; bytes 150964182
+checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M1: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M1: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M2: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M2: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M3: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M3: {'analyzed': 2}
+lot 1: done (2 cases)
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1'}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 2 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 2 (stored); wall 1.4 s; per case 0.88 s mean, 0.89 s max; peak worker memory 161.0 MB; bytes 150965800
+checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M1: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M1: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M2: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M2: {'analyzed': 2}
+affinity: logical processors 8-31 (mask 0xffffff00)
+M3: 2 cases, 0 already valid, 2 to analyze (inputs present and checked by SHA-256)
+M3: {'analyzed': 2}
+lot 2: done (2 cases)
+exit 0
+$ the same orchestrate again on the finished state (every lot must be skipped after checking records 3 and 4)
+affinity: logical processors 8-31 (mask 0xffffff00)
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M0", "installed_commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M1", "installed_commit": "3217db72cae26bc809b62a5239ae6226344e7a26", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M2", "installed_commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M3", "installed_commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3", "problems": []}
+lot 0: results valid and equal to record 3, record 4 present; skipped
+lot 1: results valid and equal to record 3, record 4 present; skipped
+lot 2: results valid and equal to record 3, record 4 present; skipped
+exit 0
+$ metrics over the short runs, with --records
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to docs\validation\v0.2.1\population\selftest-4\short\metrics.json and docs\validation\v0.2.1\population\selftest-4\short\metrics.md
+exit 0
+$ outcomes of the short runs compared with selftest-3, and the harness commit recorded in each run.json
+M0-f479823 outcomes equal to selftest-3: 6 of 6 | harness_commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 | harness 408020676340
+M1-3217db7 outcomes equal to selftest-3: 6 of 6 | harness_commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 | harness 408020676340
+M2-78d79f5 outcomes equal to selftest-3: 6 of 6 | harness_commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 | harness 408020676340
+M3-9d3f369 outcomes equal to selftest-3: 6 of 6 | harness_commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 | harness 408020676340
+exit 0
+$ R1 (a). assemble the state from the short orchestrate (lot 0)
+left out lot-0000-20261012T053102970336Z-3-results-reread.json
+left out lot-0000-20261012T053102970336Z-4-inputs-deleted.json
+records copied 10, left out 2; runs copied: ['M0-f479823', 'M1-3217db7', 'M2-78d79f5', 'M3-9d3f369']
+exit 0
+$ R1 (a). put the inputs of lot 0 in the cache .cache/population/selftest-4-r1 (generate --check, stored) [v0.2.0 env]
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 2 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 2 (stored); wall 1.4 s; per case 0.89 s mean, 0.90 s max; peak worker memory 161.4 MB; bytes 150965970
+checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+exit 0
+# R1 (a): copied lot0-cases.txt to .cache/population/selftest-4-r1/lot-0000-assembled.txt, standing for the lot file an interrupted attempt leaves in the cache
+$ R1 (a). snapshot (SHA-256 of every file) of the state and the cache, before
+65 files
+exit 0
+$ R1 (a). orchestrate (resume) over the state
+affinity: logical processors 8-31 (mask 0xffffff00)
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M0", "installed_commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M1", "installed_commit": "3217db72cae26bc809b62a5239ae6226344e7a26", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M2", "installed_commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M3", "installed_commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3", "problems": []}
+lot 0: results complete without record 3; records 3 and 4 written (2 inputs deleted)
+lot 1: results valid and equal to record 3, record 4 present; skipped
+lot 2: results valid and equal to record 3, record 4 present; skipped
+exit 0
+$ R1 (a). snapshot after, and the comparison
+64 files
+exit 0
+$ R1 (a). files added, removed or changed by the resume
+files before 65, after 64; added ['docs/validation/v0.2.1/population/selftest-4/r1-states/a/records/lot-0000-20261012T053358757300Z-3-results-reread.json', 'docs/validation/v0.2.1/population/selftest-4/r1-states/a/records/lot-0000-20261012T053358757300Z-4-inputs-deleted.json']; removed ['.cache/population/selftest-4-r1/false_positive-measurable-correlated-0000.rpc', '.cache/population/selftest-4-r1/false_positive-measurable-white-0004.rpc', '.cache/population/selftest-4-r1/lot-0000-assembled.txt']; changed []
+exit 0
+$ R1 (b). assemble the state from the short orchestrate (lot 0)
+left out lot-0000-20261012T053102970336Z-4-inputs-deleted.json
+records copied 11, left out 1; runs copied: ['M0-f479823', 'M1-3217db7', 'M2-78d79f5', 'M3-9d3f369']
+exit 0
+$ R1 (b). put the inputs of lot 0 in the cache .cache/population/selftest-4-r1 (generate --check, stored) [v0.2.0 env]
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 2 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 2 (stored); wall 1.4 s; per case 0.86 s mean, 0.88 s max; peak worker memory 161.6 MB; bytes 150965970
+checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+exit 0
+# R1 (b): copied lot0-cases.txt to .cache/population/selftest-4-r1/lot-0000-assembled.txt, standing for the lot file an interrupted attempt leaves in the cache
+$ R1 (b). snapshot (SHA-256 of every file) of the state and the cache, before
+66 files
+exit 0
+$ R1 (b). orchestrate (resume) over the state
+affinity: logical processors 8-31 (mask 0xffffff00)
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M0", "installed_commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M1", "installed_commit": "3217db72cae26bc809b62a5239ae6226344e7a26", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M2", "installed_commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M3", "installed_commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3", "problems": []}
+lot 0: record 3 checked, record 4 written (2 inputs deleted)
+lot 1: results valid and equal to record 3, record 4 present; skipped
+lot 2: results valid and equal to record 3, record 4 present; skipped
+exit 0
+$ R1 (b). snapshot after, and the comparison
+64 files
+exit 0
+$ R1 (b). files added, removed or changed by the resume
+files before 66, after 64; added ['docs/validation/v0.2.1/population/selftest-4/r1-states/b/records/lot-0000-20261012T053102970336Z-4-inputs-deleted.json']; removed ['.cache/population/selftest-4-r1/false_positive-measurable-correlated-0000.rpc', '.cache/population/selftest-4-r1/false_positive-measurable-white-0004.rpc', '.cache/population/selftest-4-r1/lot-0000-assembled.txt']; changed []
+exit 0
+$ R1 (c). assemble the state from the short orchestrate (lot 0)
+left out lot-0000-20261012T053102970336Z-4-inputs-deleted.json
+changed lot-0000-20261012T053102970336Z-3-results-reread.json: results_sha256[M0-f479823/false_positive-measurable-correlated-0000] 40b02736db9d0e4770356ff0b7313aa5bc2056ff1ed27af63da52446edc31f84 -> 40b02736db9d0e4770356ff0b7313aa5bc2056ff1ed27af63da52446edc31f80; file SHA-256 d4f4415a0ff3be6af274a33c7bf0838c2b8fa42c2f967a519104b1fa4979ca36 -> 5f5248001ec0e776168277ed45e5d61cb2e373e81424f381448fb4b2926c55d8
+records copied 11, left out 1; runs copied: ['M0-f479823', 'M1-3217db7', 'M2-78d79f5', 'M3-9d3f369']
+exit 0
+$ R1 (c). put the inputs of lot 0 in the cache .cache/population/selftest-4-r1 (generate --check, stored) [v0.2.0 env]
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 2 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 2 (stored); wall 1.4 s; per case 0.87 s mean, 0.88 s max; peak worker memory 161.5 MB; bytes 150965970
+checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+exit 0
+# R1 (c): copied lot0-cases.txt to .cache/population/selftest-4-r1/lot-0000-assembled.txt, standing for the lot file an interrupted attempt leaves in the cache
+$ R1 (c). snapshot (SHA-256 of every file) of the state and the cache, before
+66 files
+exit 0
+$ R1 (c). orchestrate (resume) over the state
+affinity: logical processors 8-31 (mask 0xffffff00)
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M0", "installed_commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M1", "installed_commit": "3217db72cae26bc809b62a5239ae6226344e7a26", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M2", "installed_commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540", "problems": []}
+affinity: logical processors 8-31 (mask 0xffffff00)
+{"point": "M3", "installed_commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3", "problems": []}
+  DIVERGED M0-f479823/false_positive-measurable-correlated-0000 40b02736db9d0e4770356ff0b7313aa5bc2056ff1ed27af63da52446edc31f80 40b02736db9d0e4770356ff0b7313aa5bc2056ff1ed27af63da52446edc31f84
+lot 0: record lot-0000-20261012T053102970336Z-3 and the results on disk diverge (1 files); stopped for investigation (nothing written or deleted)
+exit 1
+$ R1 (c). snapshot after, and the comparison
+66 files
+exit 0
+$ R1 (c). files added, removed or changed by the resume
+files before 66, after 66; added []; removed []; changed []
+exit 0
+$ R2: population.py SHA-256 before 408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225; git status --porcelain: ''
+  appended one line; SHA-256 9040b4d13eff37440a2b8973374787ad646577edf5e7579d36fca5f814a73e9c; git status --porcelain: 'M docs/validation/v0.2.1/population/population.py'
+$ R2. generate --check (short manifest, hash only) [v0.2.0 env]
+affinity: logical processors 8-31 (mask 0xffffff00)
+generate refused: ['docs/validation/v0.2.1/population/population.py has changes that are not committed (git diff HEAD)', 'the running harness is not docs/validation/v0.2.1/population/population.py of commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 (SHA-256)']
+exit 1
+$ R2. analyze --point M0 [v0.2.0 env]
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED harness: docs/validation/v0.2.1/population/population.py has changes that are not committed (git diff HEAD)
+  REFUSED harness: the running harness is not docs/validation/v0.2.1/population/population.py of commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 (SHA-256)
+M0: refused before dispatch: the point cannot be measured in this environment (nothing analyzed)
+exit 1
+$ R2. orchestrate [branch env]
+affinity: logical processors 8-31 (mask 0xffffff00)
+orchestrate refused: ['docs/validation/v0.2.1/population/population.py has changes that are not committed (git diff HEAD)', 'the running harness is not docs/validation/v0.2.1/population/population.py of commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 (SHA-256)']
+exit 1
+  git restore population.py: ''
+  SHA-256 after restore 408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225, equal to before: True
+  git status --porcelain -- population.py: ''

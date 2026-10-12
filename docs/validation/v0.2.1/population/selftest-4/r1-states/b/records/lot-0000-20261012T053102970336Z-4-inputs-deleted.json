@@ -1,0 +1,12 @@
+{
+  "completed_on_resume": true,
+  "deleted": [
+    "false_positive-measurable-correlated-0000.rpc",
+    "false_positive-measurable-white-0004.rpc"
+  ],
+  "lot": 0,
+  "lot_files_deleted": [
+    "lot-0000-assembled.txt"
+  ],
+  "utc": "2026-10-12T05:34:05.225842+00:00"
+}
