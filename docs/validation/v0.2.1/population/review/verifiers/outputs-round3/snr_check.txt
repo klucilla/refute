@@ -1,0 +1,11 @@
+planet-measurable-white-0000 (two_years, 14 transits): max rel. diff of unit SNRs 0.00e+00; r from depth = 5.308529, r_target = 5.308529; SNR_global = 54.46; T14 at final depth 2.88719 h vs harness 2.88722 h; ingress 0.05000 vs 0.05000
+planet-measurable-correlated-0002 (three_years, 29 transits): max rel. diff of unit SNRs 3.97e-12; r from depth = 1.841131, r_target = 1.841131; SNR_global = 16.87; T14 at final depth 2.58222 h vs harness 2.58221 h; ingress 0.05000 vs 0.05000
+planet-near-correlated-0005 (few_train, 12 transits): max rel. diff of unit SNRs 3.74e-12; r from depth = 1.253540, r_target = 1.253540; SNR_global = 15.40; T14 at final depth 2.34632 h vs harness 2.34632 h; ingress 0.06867 vs 0.06867
+false_positive-measurable-correlated-0002 (eb_odd_even, 12 transits): max rel. diff of unit SNRs 4.91e-12; r from depth = 1.588366, r_target = 1.588366; SNR_global = 16.56
+false_positive-measurable-white-0004 (blend, 20 transits): max rel. diff of unit SNRs 0.00e+00; r from depth = 1.783818, r_target = 1.783818; SNR_global = 17.92 dilution=0.134993 (harness 0.134993) crowdsap=0.8811 pixel-noise term=183 ppm -> white sigma 627 ppm
+false_positive-measurable-correlated-0004 (blend, 26 transits): max rel. diff of unit SNRs 3.24e-12; r from depth = 4.327938, r_target = 4.327938; SNR_global = 43.46 dilution=0.024775 (harness 0.024775) crowdsap=0.9758 pixel-noise term=183 ppm -> white sigma 627 ppm
+false_positive-below-correlated-0001 (eb_secondary, 14 transits): max rel. diff of unit SNRs 4.83e-12; r from depth = 0.749446, r_target = 0.749446; SNR_global = 7.53
+planet-near-white-0007 (variability_some_years, 18 transits): max rel. diff of unit SNRs 0.00e+00; r from depth = 1.239062, r_target = 1.239062; SNR_global = 10.78; T14 at final depth 3.06042 h vs harness 3.06042 h; ingress 0.05000 vs 0.05000
+Monte Carlo m=75 seed=11: simulated 1.87472e-07, formula 1.87093e-07, ratio 1.0020
+Monte Carlo m=75 seed=12: simulated 1.86819e-07, formula 1.87093e-07, ratio 0.9985
+Monte Carlo m=112 seed=13: simulated 1.45849e-07, formula 1.45671e-07, ratio 1.0012

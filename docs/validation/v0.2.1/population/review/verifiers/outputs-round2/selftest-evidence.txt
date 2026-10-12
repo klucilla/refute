@@ -1,0 +1,45 @@
+M0-f479823 vs M0-f479823: 44 and 44 results, 44 common, 0 with different outcomes []
+M1-3217db7 vs M1-3217db7: 44 and 44 results, 44 common, 0 with different outcomes []
+M2-78d79f5 vs M2-78d79f5: 44 and 44 results, 44 common, 0 with different outcomes []
+M3-9d3f369 vs M3-9d3f369: 44 and 44 results, 44 common, 0 with different outcomes []
+M0-f479823 vs M0: 44 and 6 results, 6 common, 0 with different outcomes []
+M3-9d3f369 vs M3: 44 and 6 results, 6 common, 0 with different outcomes []
+lot-0000-20261012T042259658504Z-1-started.json
+lot-0000-20261012T042259658504Z-2-regenerated.json
+lot-0000-20261012T042259658504Z-3-results-reread.json
+lot-0000-20261012T042259658504Z-4-inputs-deleted.json
+lot-0001-20261012T042420336136Z-1-started.json
+lot-0001-20261012T042420336136Z-2-regenerated.json
+lot-0001-20261012T042506578281Z-1-started.json
+lot-0001-20261012T042506578281Z-2-regenerated.json
+lot-0001-20261012T042506578281Z-3-results-reread.json
+lot-0001-20261012T042506578281Z-4-inputs-deleted.json
+lot-0002-20261012T042637089977Z-1-started.json
+lot-0002-20261012T042637089977Z-2-regenerated.json
+lot-0002-20261012T042637089977Z-3-results-reread.json
+lot-0002-20261012T042637089977Z-4-inputs-deleted.json
+== lot-0000-20261012T042259658504Z-2-regenerated.json
+{'check': {'bytes': 1132245442, 'cases': 15, 'checked_against': 'docs/validation/v0.2.1/population/selftest-3/manifest.json', 'diverged': [], 'frozen_manifest_sha256': '2e6881e158bfbb2e3eb7fbe8c60bb5cc4f1fe2de53c70fb115b55f473b29e154', 'identical': 15, 'stored': True}, 'lot': 0, 'utc': '2026-10-12T04:23:04.000415+00:00'}
+== lot-0001-20261012T042420336136Z-2-regenerated.json
+{'check': {'bytes': 1169974937, 'cases': 15, 'checked_against': 'docs/validation/v0.2.1/population/selftest-3/manifest.json', 'diverged': [], 'frozen_manifest_sha256': '2e6881e158bfbb2e3eb7fbe8c60bb5cc4f1fe2de53c70fb115b55f473b29e154', 'identical': 15, 'stored': True}, 'lot': 1, 'utc': '2026-10-12T04:24:24.629339+00:00'}
+== lot-0001-20261012T042506578281Z-2-regenerated.json
+{'check': {'bytes': 1169974937, 'cases': 15, 'checked_against': 'docs/validation/v0.2.1/population/selftest-3/manifest.json', 'diverged': [], 'frozen_manifest_sha256': '2e6881e158bfbb2e3eb7fbe8c60bb5cc4f1fe2de53c70fb115b55f473b29e154', 'identical': 15, 'stored': True}, 'lot': 1, 'utc': '2026-10-12T04:25:10.904461+00:00'}
+== lot-0002-20261012T042637089977Z-2-regenerated.json
+{'check': {'bytes': 1245466044, 'cases': 14, 'checked_against': 'docs/validation/v0.2.1/population/selftest-3/manifest.json', 'diverged': [], 'frozen_manifest_sha256': '2e6881e158bfbb2e3eb7fbe8c60bb5cc4f1fe2de53c70fb115b55f473b29e154', 'identical': 14, 'stored': True}, 'lot': 2, 'utc': '2026-10-12T04:26:41.321599+00:00'}
+== lot-0000-20261012T042259658504Z-4-inputs-deleted.json
+deleted: 15
+{'lot': 0, 'lot_files_deleted': ['lot-0000-20261012T042259658504Z-check.json', 'lot-0000-20261012T042259658504Z.txt'], 'utc': '2026-10-12T04:24:20.329237+00:00'}
+== lot-0001-20261012T042506578281Z-4-inputs-deleted.json
+deleted: 15
+{'lot': 1, 'lot_files_deleted': ['lot-0001-20261012T042420336136Z-check.json', 'lot-0001-20261012T042420336136Z.txt', 'lot-0001-20261012T042506578281Z-check.json', 'lot-0001-20261012T042506578281Z.txt'], 'utc': '2026-10-12T04:26:37.084730+00:00'}
+== lot-0002-20261012T042637089977Z-4-inputs-deleted.json
+deleted: 14
+{'lot': 2, 'lot_files_deleted': ['lot-0002-20261012T042637089977Z-check.json', 'lot-0002-20261012T042637089977Z.txt'], 'utc': '2026-10-12T04:28:48.459731+00:00'}
+M0-f479823 {'commit': 'f4798230f1bca607bcc0e98fe47711a26ec4ee59', 'point': 'M0'} 448f1e5 7f26cc75bd96 True dirty False editable==root True pools [1]
+   worker pools {((1,), '1'): 44} | attempts ['attempt-20261012T042304260006Z-42328-finished.json', 'attempt-20261012T042304260006Z-42328-started.json', 'attempt-20261012T042424890732Z-40216-finished.json', 'attempt-20261012T042424890732Z-40216-started.json', 'attempt-20261012T042511176590Z-33180-finished.json', 'attempt-20261012T042511176590Z-33180-started.json', 'attempt-20261012T042641564517Z-4400-finished.json', 'attempt-20261012T042641564517Z-4400-started.json', 'attempt-20261012T042948288168Z-53388-refused.json']
+M1-3217db7 {'commit': '3217db72cae26bc809b62a5239ae6226344e7a26', 'point': 'M1'} 448f1e5 7f26cc75bd96 True dirty False editable==root True pools [1]
+   worker pools {((1,), '1'): 44} | attempts ['attempt-20261012T042322781198Z-21172-finished.json', 'attempt-20261012T042322781198Z-21172-started.json', 'attempt-20261012T042452468254Z-32136-started.json', 'attempt-20261012T042512468397Z-35944-finished.json', 'attempt-20261012T042512468397Z-35944-started.json', 'attempt-20261012T042712953638Z-26016-finished.json', 'attempt-20261012T042712953638Z-26016-started.json']
+M2-78d79f5 {'commit': '78d79f5b4495ab7cf7bac5cd2907b25b78c74540', 'point': 'M2'} 448f1e5 7f26cc75bd96 True dirty False editable==root True pools [1]
+   worker pools {((1,), '1'): 44} | attempts ['attempt-20261012T042341125207Z-52328-finished.json', 'attempt-20261012T042341125207Z-52328-started.json', 'attempt-20261012T042539528029Z-45160-finished.json', 'attempt-20261012T042539528029Z-45160-started.json', 'attempt-20261012T042744129873Z-34788-finished.json', 'attempt-20261012T042744129873Z-34788-started.json']
+M3-9d3f369 {'commit': '9d3f36947abdafba35eb657dd5e2e895f5ac14d3', 'point': 'M3'} 448f1e5 7f26cc75bd96 True dirty False editable==root True pools [1]
+   worker pools {((1,), '1'): 44} | attempts ['attempt-20261012T042359678263Z-49688-finished.json', 'attempt-20261012T042359678263Z-49688-started.json', 'attempt-20261012T042607219241Z-50992-finished.json', 'attempt-20261012T042607219241Z-50992-started.json', 'attempt-20261012T042815206750Z-20676-finished.json', 'attempt-20261012T042815206750Z-20676-started.json']

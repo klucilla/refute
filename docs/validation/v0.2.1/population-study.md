@@ -642,3 +642,58 @@ are, and no result is ever replaced in silence.
 **Self-test.** `population/selftest-3/` tests the corrected harness (the earlier
 `selftest/` and `selftest-2/` are left as they were). Self-test outcomes are not a
 measurement.
+
+## Amendment 3 (2026-10-12): resume rules and harness identity
+
+Decided by the maintainer on 2026-10-12, after the second and third rounds of the
+independent review (Phase G). It describes the harness at commit `1692d99` (SHA-256
+`408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225`). No criterion, size,
+band, mechanism, seed rule or limit changes.
+
+**R1, resuming a lot.** `orchestrate` skips a lot only when every result of the lot is
+valid at every point **and** its records 3 (results re-read, with the SHA-256 of every
+result file) and 4 (inputs deleted) exist, with the hashes of record 3 equal to the
+result files on disk. Otherwise:
+
+- every result valid and no record 3: the results are re-read, record 3 is written, the
+  lot's inputs and lot files are deleted (only inside `.cache/population/`) and record 4
+  is written;
+- record 3 present and record 4 absent: the hashes of record 3 are checked against the
+  result files, then the inputs and lot files are deleted and record 4 is written;
+- any divergence between a record and the results (a different hash, a missing or extra
+  result) stops the run for investigation, and nothing is written or deleted.
+
+**R2, a committed harness.** `generate`, `analyze` and `orchestrate` refuse to run unless
+`population.py` is tracked in its repository and the running file is byte for byte the
+file of the HEAD commit (`git diff --quiet HEAD` and the SHA-256 of `git show
+HEAD:<path>`); a file changed on disk after the process started is refused too.
+
+**Harness identity.** The identity of the harness is its SHA-256 (`harness_sha256`),
+recorded in every manifest, run, attempt and result. The `harness_commit` recorded with it
+is the HEAD of the repository at the moment of execution, not the commit that last changed
+the harness (N-a). `generate --check` compares only the cases (each case entry, with the
+SHA-256 of the case's bytes), not the header of the manifest (harness, harness commit,
+environment): a regeneration by another harness with the same case bytes passes the check
+(N-b).
+
+**N-c, operation.** The workers do not check the harness's SHA-256 again; the check is made
+by the process that starts them. Operating rule: no edit of the branch while the
+development population is generated and measured (until the end of M3, except the commits
+the maintainer asks for), and the SHA-256 of the harness on disk is checked at the end of
+each measurement point.
+
+**Independent review.** The harness had three rounds of independent review (Phase G), on
+commits `6e57b35`, `a83e09a` and `b7c724c`; the third found it fit for the first
+generation. The reports and the verifiers of the reviewer are in `population/review/`.
+
+**Reference cases** (Amendment 1, item e). The three cases are chosen (self-test
+population, by the rule declared in the draft release notes: in `selftest-2/`, the case
+with the smallest index among planets with white noise and the plain two-year mechanism,
+planets with AR(1) noise and the same mechanism, and false-positive blends with white
+noise). Their publication is postponed until it is confirmed whether a GitHub pre-release
+starts an archive in Zenodo.
+
+**Frozen manifest.** The manifest of the development population, once generated and
+checked (two generations in separate processes, byte-identical), is committed and frozen
+at `population/manifest-dev.json`, with `population/manifest-dev.README.md` beside it
+(generation environment, SHA-256 of the manifest, generation times, counts and redraws).

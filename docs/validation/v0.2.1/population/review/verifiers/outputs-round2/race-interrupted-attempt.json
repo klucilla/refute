@@ -1,0 +1,14 @@
+{
+  "attempt": "20261012T051547239384Z-13564",
+  "exception": "RuntimeError: infrastructure, planet-near-white-0005: InfrastructureError: input file missing from the cache; no result written",
+  "format": "refute-population-attempt/1",
+  "kind": "interrupted",
+  "results_written": [
+    "false_positive-below-white-0001",
+    "false_positive-measurable-white-0004",
+    "no_transit-none-correlated-0002",
+    "no_transit-none-white-0000",
+    "planet-measurable-white-0004"
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\docs\\validation\\v0.2.1\\population\\population.py\", line 1621, in mode_analyze\n    statuses = run_processes(\n        analyze_one,\n        [(e, str(cache), str(run_dir), ctx, attempt_id) for e in todo],\n        args.workers,\n    )\n  File \"C:\\Projetos\\refute\\.worktrees\\v0.2.0\\src\\refute\\core\\runner.py\", line 52, in run_processes\n    return [fn(task) for task in tasks]\n            ~~^^^^^^\n  File \"C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\docs\\validation\\v0.2.1\\population\\population.py\", line 1416, in analyze_one\n    raise RuntimeError(\n        f\"infrastructure, {entry['id']}: {type(exc).__name__}: {exc}; no result written\"\n    ) from None\nRuntimeError: infrastructure, planet-near-white-0005: InfrastructureError: input file missing from the cache; no result written\n"
+}

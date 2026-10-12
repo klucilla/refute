@@ -1,0 +1,28 @@
+k=   0 n=    1  upper harness 0.950000 mine 0.950000 scipy-ci 0.950000 | lower harness 0.000000 mine 0.000000 scipy-ci 0.000000
+k=   1 n=    1  upper harness 1.000000 mine 1.000000 scipy-ci 1.000000 | lower harness 0.050000 mine 0.050000 scipy-ci 0.050000
+k=   0 n=   10  upper harness 0.258866 mine 0.258866 scipy-ci 0.258866 | lower harness 0.000000 mine 0.000000 scipy-ci 0.000000
+k=  10 n=   10  upper harness 1.000000 mine 1.000000 scipy-ci 1.000000 | lower harness 0.741134 mine 0.741134 scipy-ci 0.741134
+k=   0 n=  250  upper harness 0.011911 mine 0.011911 scipy-ci 0.011911 | lower harness 0.000000 mine 0.000000 scipy-ci 0.000000
+k= 250 n=  250  upper harness 1.000000 mine 1.000000 scipy-ci 1.000000 | lower harness 0.988089 mine 0.988089 scipy-ci 0.988089
+k=  16 n=  250  upper harness 0.095585 mine 0.095585 scipy-ci 0.095585 | lower harness 0.040552 mine 0.040552 scipy-ci 0.040552
+k=  17 n=  250  upper harness 0.100255 mine 0.100255 scipy-ci 0.100255 | lower harness 0.043788 mine 0.043788 scipy-ci 0.043788
+k= 163 n=  250  upper harness 0.702005 mine 0.702005 scipy-ci 0.702005 | lower harness 0.599278 mine 0.599278 scipy-ci 0.599278
+k= 164 n=  250  upper harness 0.705835 mine 0.705835 scipy-ci 0.705835 | lower harness 0.603376 mine 0.603376 scipy-ci 0.603376
+k=  39 n=  250  upper harness 0.198781 mine 0.198781 scipy-ci 0.198781 | lower harness 0.119459 mine 0.119459 scipy-ci 0.119459
+k=  40 n=  250  upper harness 0.203129 mine 0.203129 scipy-ci 0.203129 | lower harness 0.123034 mine 0.123034 scipy-ci 0.123034
+k=  14 n= 2200  upper harness 0.009931 mine 0.009931 scipy-ci 0.009931 | lower harness 0.003851 mine 0.003851 scipy-ci 0.003851
+k=  15 n= 2200  upper harness 0.010479 mine 0.010479 scipy-ci 0.010479 | lower harness 0.004207 mine 0.004207 scipy-ci 0.004207
+k=  20 n=  600  upper harness 0.048070 mine 0.048070 scipy-ci 0.048070 | lower harness 0.022198 mine 0.022198 scipy-ci 0.022198
+k=  21 n=  600  upper harness 0.050011 mine 0.050011 scipy-ci 0.050011 | lower harness 0.023571 mine 0.023571 scipy-ci 0.023571
+k=   1 n=    2  upper harness 0.974679 mine 0.974679 scipy-ci 0.974679 | lower harness 0.025321 mine 0.025321 scipy-ci 0.025321
+largest absolute difference: 1.35e-14
+McNemar became_true= 0 became_false= 0: harness 1, exact 1
+McNemar became_true= 0 became_false= 1: harness 1, exact 1
+McNemar became_true= 1 became_false= 0: harness 1, exact 1
+McNemar became_true= 0 became_false= 5: harness 0.0625, exact 0.0625
+McNemar became_true= 5 became_false= 0: harness 0.0625, exact 0.0625
+McNemar became_true= 3 became_false= 3: harness 1, exact 1
+McNemar became_true= 2 became_false= 9: harness 0.0654297, exact 0.0654297
+McNemar became_true=10 became_false=30: harness 0.00222143, exact 0.00222143
+McNemar became_true= 0 became_false=40: harness 1.81899e-12, exact 1.81899e-12
+McNemar became_true= 7 became_false= 8: harness 1, exact 1

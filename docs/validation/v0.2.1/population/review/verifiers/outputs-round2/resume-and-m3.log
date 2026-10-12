@@ -1,0 +1,19 @@
+== resume M0
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 6 cases, 2 already valid, 4 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 4}
+exit=0
+runs/M0/cases/false_positive-below-white-0001.json: OK
+runs/M0/cases/false_positive-measurable-white-0004.json: OK
+== M3, 1 worker (main process)
+affinity: logical processors 8-31 (mask 0xffffff00)
+M3: 6 cases, 0 already valid, 6 to analyze (inputs present and checked by SHA-256)
+M3: {'analyzed': 6}
+exit=0
+runs/M0 binding {'commit': 'f4798230f1bca607bcc0e98fe47711a26ec4ee59', 'point': 'M0'} | points_at_start {'committed': True, 'path': 'docs/validation/v0.2.1/population/points.json', 'repository_commit': 'a83e09a6b60fcdf5ca0cc7fd6d0445c30431a0cf', 'sha256': '7f26cc75bd96c6feaa7ed40a5f5b880241af1ff4e2b43872d0684a2bdd51d3c9'} | run pools [1] {'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1'}
+    ('20261012T051240777325Z-17324', 12260, (1,), '1', 'analyzed') 1
+    ('20261012T051240777325Z-17324', 16232, (1,), '1', 'analyzed') 1
+    ('20261012T051302235228Z-44684', 42708, (1,), '1', 'analyzed') 2
+    ('20261012T051302235228Z-44684', 43840, (1,), '1', 'analyzed') 2
+runs/M3 binding {'commit': '9d3f36947abdafba35eb657dd5e2e895f5ac14d3', 'point': 'M3'} | points_at_start {'committed': True, 'path': 'docs/validation/v0.2.1/population/points.json', 'repository_commit': 'a83e09a6b60fcdf5ca0cc7fd6d0445c30431a0cf', 'sha256': '7f26cc75bd96c6feaa7ed40a5f5b880241af1ff4e2b43872d0684a2bdd51d3c9'} | run pools [1] {'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1'}
+    ('20261012T051316368513Z-21304', 21304, (1,), '1', 'analyzed') 6

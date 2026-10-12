@@ -1,0 +1,8 @@
+planet-measurable-white-0004
+planet-near-white-0005
+false_positive-measurable-white-0004
+false_positive-below-white-0001
+no_transit-none-white-0000
+no_transit-none-correlated-0002
+planet-measurable-white-0000
+no_transit-none-correlated-0004

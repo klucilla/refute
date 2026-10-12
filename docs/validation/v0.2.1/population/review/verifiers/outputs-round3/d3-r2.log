@@ -1,0 +1,35 @@
+== D3 resume, at HEAD b7c724c, of a copy of the selftest-4 M0 run (started at 1692d99), one result removed
+checked against C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7/docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 6 identical, 0 diverged
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 6 cases, 5 already valid, 1 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 1}
+exit=0
+run.json harness_commit (kept): 1692d99
+attempt 20261012T053105848904Z-47336 harness_commit 1692d99 harness_sha256 408020676340
+attempt 20261012T053200290951Z-45712 harness_commit 1692d99 harness_sha256 408020676340
+attempt 20261012T053235666046Z-49852 harness_commit 1692d99 harness_sha256 408020676340
+attempt 20261012T073626123389Z-46276 harness_commit b7c724c harness_sha256 408020676340
+re-analyzed outcome equal to the original: True
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to out\d3.json and out\d3.md
+metrics exit=0
+== D4 a new run started now records HEAD (b7c724c), not the last commit that changed the harness (1692d99)
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 1 cases, 0 already valid, 1 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 1}
+exit=0
+new run.json harness_commit b7c724cd91be2d7040152bb2831f29415119ee14
+== R2 an untracked copy of the harness (with points.json next to it), in .cache/review-g/r3/copy
+affinity: logical processors 8-31 (mask 0xffffff00)
+generate refused: ['the harness is not tracked in a git repository']
+exit=1
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED harness: the harness is not tracked in a git repository
+  REFUSED points.json is not committed unchanged in its repository (a point is committed before its measurement)
+M0: refused before dispatch: the point cannot be measured in this environment (nothing analyzed)
+exit=1
+files in copy-run: 1 (attempt-20261012T073651788188Z-1980-refused.json)
+affinity: logical processors 8-31 (mask 0xffffff00)
+orchestrate refused: ['the harness is not tracked in a git repository']
+exit=1
+orchestrate wrote: 0

@@ -1,0 +1,113 @@
+=== A1 (C1) M3 environment with --point M0, on a copy of the M0 run
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED point M0 is commit f4798230f1bca607bcc0e98fe47711a26ec4ee59, but the installed Refute is at 9d3f36947abdafba35eb657dd5e2e895f5ac14d3
+M0: refused before dispatch: the point cannot be measured in this environment (nothing analyzed)
+exit=1
+results and run.json unchanged
+attempt-20261012T051240777325Z-17324-started.json
+attempt-20261012T051302235228Z-44684-finished.json
+attempt-20261012T051302235228Z-44684-started.json
+attempt-20261012T051449947790Z-35624-refused.json
+=== A2 (C1) unknown point M9
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED unknown point 'M9': it is not in points.json
+M9: refused before dispatch: the point cannot be measured in this environment (nothing analyzed)
+exit=1
+files written: 1 (attempt-20261012T051450715490Z-43548-refused.json)
+=== A3 (C1) metrics: point M0 made of half of the real M0 run and half of the M3 run relabeled M0
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED c1-mixed-b: point M0 is f4798230f1bca607bcc0e98fe47711a26ec4ee59 in points.json, but the run's binding is 9d3f36947abdafba35eb657dd5e2e895f5ac14d3 and its checkout 9d3f36947abdafba35eb657dd5e2e895f5ac14d3
+  REFUSED c1-mixed-b: the recorded points.json does not hold the run's association
+  REFUSED runs of point M0 are not compatible: checkout differs
+  REFUSED runs of point M0 are not compatible: plan differs
+  REFUSED runs of point M0 are not compatible: fingerprint differs
+metrics refused: 5 provenance problem(s); nothing computed
+exit=2
+--- A3b: also the binding commit set to M0's commit
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED c1-mixed-c: point M0 is f4798230f1bca607bcc0e98fe47711a26ec4ee59 in points.json, but the run's binding is f4798230f1bca607bcc0e98fe47711a26ec4ee59 and its checkout 9d3f36947abdafba35eb657dd5e2e895f5ac14d3
+  REFUSED runs of point M0 are not compatible: checkout differs
+  REFUSED runs of point M0 are not compatible: plan differs
+  REFUSED runs of point M0 are not compatible: fingerprint differs
+metrics refused: 4 provenance problem(s); nothing computed
+exit=2
+=== B (C2) metrics over the run with the refused attempt of A1
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to neg\out\b.json and neg\out\b.md
+exit=0
+{'c1-wrongenv': [{'attempt': '20261012T051449947790Z-35624', 'installed_commit': '9d3f36947abdafba35eb657dd5e2e895f5ac14d3', 'point_requested': 'M0', 'reason': 'the point cannot be measured in this environment', 'results': 'none'}]}
+=== C1 (C3) empty cache
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED false_positive-below-white-0001
+  REFUSED false_positive-measurable-white-0004
+  REFUSED no_transit-none-correlated-0002
+  REFUSED no_transit-none-white-0000
+  REFUSED planet-measurable-white-0004
+  REFUSED planet-near-white-0005
+M0: refused before dispatch: inputs missing from the cache; no result written (nothing analyzed)
+exit=1
+result files: 0; attempts: attempt-20261012T051455485248Z-10096-refused.json
+--- same command with the right cache
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 6 cases, 0 already valid, 6 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 6}
+exit=0
+result files: 6
+=== C2 (C3) divergent hash: one of two inputs with its last byte changed
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED no_transit-none-white-0000: input 12cff6d04e98303ba208a90dd93300e390e7f950f0cb5efcd738cb2f94c0e27f, manifest 400aa2b70d8fa3b28b15e6fe21d14b341693321184ef82da98db00fe3a660b39
+M0: refused before dispatch: input SHA-256 differs from the manifest; stopped for investigation (nothing analyzed)
+exit=1
+result files: 0; attempts: attempt-20261012T051520865002Z-50824-refused.json
+=== D truncated result, on a copy of the M0 run
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED planet-near-white-0005.json: not valid JSON (JSONDecodeError: Expecting property name enclosed in double quotes: line 85 column 2 (char 2069))
+M0: refused before dispatch: invalid existing results; stopped for investigation (nothing analyzed)
+exit=1
+result files: 5 (5 expected, nothing redone)
+=== E1 (N8) a result file whose content is another case
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED dupid/planet-measurable-white-0004.json: the file name is not its case 'planet-near-white-0005'
+  REFUSED dupid/planet-near-white-0005.json: case id planet-near-white-0005 appears twice in the run
+metrics refused: 2 provenance problem(s); nothing computed
+exit=2
+ls: cannot access 'neg/out/e1*': No such file or directory
+=== E2 (N8) --records: constructed results-reread record over runs/M0 and runs/M3
+12 hashes
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to neg\out\e2-ok.json and neg\out\e2-ok.md
+exit=0
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED M0/planet-near-white-0005: SHA-256 differs from the results-reread record
+metrics refused: 1 provenance problem(s); nothing computed
+exit=2
+ls: cannot access 'neg/out/e2-bad*': No such file or directory
+=== E3 (N8) existing output
+affinity: logical processors 8-31 (mask 0xffffff00)
+neg\out\e2-ok.json (or its .md) exists; nothing computed
+exit=1
+=== E4 (N8) same point twice; two runs with the same folder name
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED c1-mixed-a: 3 case ids repeated within point M0
+metrics refused: 1 provenance problem(s); nothing computed
+exit=2
+affinity: logical processors 8-31 (mask 0xffffff00)
+two runs have the same folder name; nothing computed
+exit=1
+=== F points.json history: recorded repository commit where points.json does not exist; recorded SHA-256 changed
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED f-commit: the recorded points.json is not found at the recorded repository commit
+metrics refused: 1 provenance problem(s); nothing computed
+exit=2
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED f-sha: the recorded points.json SHA-256 differs from the file at that commit
+metrics refused: 1 provenance problem(s); nothing computed
+exit=2
+=== G (N9) orchestrate with --project not the top of the harness's repository; cache outside .cache/population
+affinity: logical processors 8-31 (mask 0xffffff00)
+--project must be the top of the harness's repository (C:\Projetos\refute\.claude\worktrees\v0-2-1-gauntlet-fixes-13f5e7)
+exit=1
+affinity: logical processors 8-31 (mask 0xffffff00)
+the cache must be inside C:\Projetos\refute\.claude\worktrees\v0-2-1-gauntlet-fixes-13f5e7\.cache\population
+exit=1
+written by G: 0
