@@ -27,7 +27,14 @@ Modes (``python population.py <mode> --help``):
   point estimate is worse than their limit, and paired comparisons between points.
   Refuses runs whose provenance or integrity does not check.
 - ``orchestrate``: the cycle by lot (regenerate, check, analyze at every point, check the
-  results on disk, then delete the lot's inputs and lot files from the cache).
+  results on disk, then delete the lot's inputs and lot files from the cache). A lot is
+  skipped only when every result is valid and its records 3 (results re-read) and 4
+  (inputs deleted) exist and agree with the results; a lot with every result valid but a
+  missing record 3 or 4 is completed from the results, and any divergence between a
+  record and the results stops the run.
+
+``generate``, ``analyze`` and ``orchestrate`` refuse to run unless this file is, byte for
+byte, the file of the HEAD commit of its repository; runs record that commit.
 
 Errors (Amendment 2, N10): an exception of the analysis of a case is a permanent result
 with status ``error``; it is published and investigated, and correcting it needs a new
@@ -84,6 +91,10 @@ METRICS_FORMAT = "refute-population-metrics/2"
 GENERATOR_COMMIT = "f4798230f1bca607bcc0e98fe47711a26ec4ee59"
 GENERATOR_SYNTHETIC_SHA256 = "b1d9518ea96ee3fd91b861c33601d57742ad96520b15079d97bd217f391fc50d"
 HARNESS_PATH = Path(__file__).resolve()
+# The bytes of the harness this process runs, read once at start (R2: they must be the
+# file of the repository's HEAD commit).
+HARNESS_BYTES = HARNESS_PATH.read_bytes()
+HARNESS_SHA256 = hashlib.sha256(HARNESS_BYTES).hexdigest()
 POINTS_PATH = HARNESS_PATH.parent / "points.json"
 
 # --- protocol constants (population-study.md, sections 3 and 4) ------------------------
@@ -1133,6 +1144,31 @@ def recorded_points_problems(state: dict, binding: dict, current: list[dict]) ->
     return problems
 
 
+def harness_problems() -> tuple[str, list[str]]:
+    """The HEAD commit of the harness's repository, and why the running harness is not
+    byte for byte the file of that commit (R2): untracked, changed against HEAD
+    (``git diff --quiet HEAD``), a SHA-256 different from ``git show HEAD:<path>``, or a
+    file changed on disk since this process started."""
+    folder = HARNESS_PATH.parent
+    rel = git(folder, "ls-files", "--full-name", "--", HARNESS_PATH.name)
+    head = git(folder, "rev-parse", "HEAD")
+    problems = []
+    if not rel or not head:
+        problems.append("the harness is not tracked in a git repository")
+    else:
+        diff = subprocess.run(
+            ["git", "-C", str(folder), "diff", "--quiet", "HEAD", "--", HARNESS_PATH.name]
+        )
+        if diff.returncode != 0:
+            problems.append(f"{rel} has changes that are not committed (git diff HEAD)")
+        blob = git_blob(folder, f"{head}:{rel}")
+        if blob is None or hashlib.sha256(blob).hexdigest() != HARNESS_SHA256:
+            problems.append(f"the running harness is not {rel} of commit {head} (SHA-256)")
+    if file_sha256(HARNESS_PATH) != HARNESS_SHA256:
+        problems.append("the harness file changed on disk after this process started")
+    return head, problems
+
+
 def write_atomic(path: Path, data: bytes, *, exclusive: bool = True) -> None:
     """Write ``data`` to a temporary file in the same folder and move it into place with
     ``os.replace``, so that no final file is ever written in parts. With ``exclusive``
@@ -1180,6 +1216,9 @@ def mode_generate(args) -> int:
     from refute.core.runner import run_processes
     from refute.packs.tess import synthetic
 
+    harness_commit, harness_refused = harness_problems()
+    if harness_refused:
+        raise SystemExit(f"generate refused: {harness_refused}")
     checkout = refute_checkout()
     environment = numeric_environment()
     synth = Path(synthetic.__file__)
@@ -1223,7 +1262,8 @@ def mode_generate(args) -> int:
         "format": MANIFEST_FORMAT,
         "serialization": SERIALIZATION,
         "population": args.population,
-        "harness_sha256": file_sha256(HARNESS_PATH),
+        "harness_sha256": HARNESS_SHA256,
+        "harness_commit": harness_commit,
         "generator": {**checkout, "synthetic_py_sha256": GENERATOR_SYNTHETIC_SHA256},
         "environment": environment,
         "thresholds": {"snr_gate": 7.1, "hidden_min_snr": 5.0},
@@ -1522,12 +1562,15 @@ def mode_analyze(args) -> int:
     checkout = refute_checkout()
     fingerprint = environment_fingerprint(checkout)
     binding, state, problems = binding_problems(args.point, checkout)
-    harness_sha = file_sha256(HARNESS_PATH)
+    harness_commit, harness_refused = harness_problems()
+    problems = [f"harness: {p}" for p in harness_refused] + problems
+    harness_sha = HARNESS_SHA256
     manifest_sha = file_sha256(manifest_path)
     attempt = {
         "started_utc": stamp,
         "argv": sys.argv[1:],
         "harness_sha256": harness_sha,
+        "harness_commit": harness_commit,
         "manifest_sha256": manifest_sha,
         "binding": binding,
         "points": state,
@@ -1564,6 +1607,7 @@ def mode_analyze(args) -> int:
         "points_at_start": state,
         "checkout": checkout,
         "harness_sha256": harness_sha,
+        "harness_commit": harness_commit,
         "manifest_sha256": manifest_sha,
         "plan": _plan().model_dump(mode="json"),
         "fingerprint": fingerprint,
@@ -2085,7 +2129,7 @@ def mode_metrics(args) -> int:
     out = {
         "format": METRICS_FORMAT,
         "manifest_sha256": manifest_sha,
-        "harness_sha256": file_sha256(HARNESS_PATH),
+        "harness_sha256": HARNESS_SHA256,
         "run_harness_sha256": sorted(harnesses)[0],
         "points_sha256": file_sha256(POINTS_PATH),
         "results_checked_against_records": bool(args.records),
@@ -2233,12 +2277,25 @@ def _lot_results(points, lot, by_id) -> tuple[bool, list[str], dict]:
     return complete and not problems, problems, hashes
 
 
+def _lot_record_kinds(records: Path, n: int) -> dict[str, set[str]]:
+    """For each attempt (UTC stamp) of lot ``n``, the kinds of its records ("1" to "4")."""
+    kinds: dict[str, set[str]] = {}
+    for f in records.glob(f"lot-{n:04d}-*.json"):
+        parts = f.name.split("-")  # lot, nnnn, stamp, kind, ...
+        if len(parts) > 3:
+            kinds.setdefault(parts[2], set()).add(parts[3])
+    return kinds
+
+
 def mode_orchestrate(args) -> int:
     """Lots: regenerate and check, analyze at every point, re-read and validate the results
     on disk, record that, then delete the lot's inputs and lot files (only inside
     .cache/population/ of the harness's repository)."""
     from refute.core.io import dumps_json
 
+    _, harness_refused = harness_problems()
+    if harness_refused:
+        raise SystemExit(f"orchestrate refused: {harness_refused}")
     project = Path(args.project).resolve()
     top = Path(git(HARNESS_PATH.parent, "rev-parse", "--show-toplevel") or "/").resolve()
     if project != top:
@@ -2279,8 +2336,20 @@ def mode_orchestrate(args) -> int:
             return f.name
         return None
 
+    def finish(n: int, lot: list[str], prefix: str, extra: dict) -> list[str]:
+        """Delete the lot's inputs and every lot file of the lot (also those left by its
+        interrupted attempts), then write record 4."""
+        deleted = [d for d in (remove(cache / f"{i}.rpc") for i in lot) if d]
+        own = {*cache.glob(f"lot-{n:04d}-*.txt"), *cache.glob(f"lot-{n:04d}-*-check.json")}
+        lot_files = [d for d in (remove(f) for f in sorted(own)) if d]
+        record(
+            f"{prefix}-4-inputs-deleted.json",
+            {"lot": n, "utc": now(), "deleted": deleted, "lot_files_deleted": lot_files, **extra},
+        )
+        return deleted
+
     for n, lot in enumerate(lots):
-        complete, problems, _ = _lot_results(points, lot, by_id)
+        complete, problems, hashes = _lot_results(points, lot, by_id)
         if problems:
             for p in problems[:20]:
                 print("  INVALID", p, flush=True)
@@ -2288,8 +2357,44 @@ def mode_orchestrate(args) -> int:
                 f"lot {n}: invalid results; stopped for investigation "
                 "(nothing overwritten, deleted or redone)"
             )
+        # R1: a lot is finished only with every result valid AND its records 3 and 4.
+        kinds = _lot_record_kinds(records, n)
+        reread = sorted(s for s, k in kinds.items() if "3" in k)
+        if reread:
+            stamp = reread[-1]
+            prefix = f"lot-{n:04d}-{stamp}"
+            recorded = json.loads(
+                (records / f"{prefix}-3-results-reread.json").read_text(encoding="utf-8")
+            )["results_sha256"]
+            if not complete or recorded != hashes:
+                differ = sorted(
+                    k for k in set(recorded) | set(hashes) if recorded.get(k) != hashes.get(k)
+                )
+                for k in differ[:20]:
+                    print("  DIVERGED", k, recorded.get(k), hashes.get(k), flush=True)
+                raise SystemExit(
+                    f"lot {n}: record {prefix}-3 and the results on disk diverge "
+                    f"({len(differ)} files{'' if complete else '; results incomplete'}); "
+                    "stopped for investigation (nothing written or deleted)"
+                )
+            if "4" in kinds[stamp]:
+                print(f"lot {n}: results valid and equal to record 3, record 4 present; skipped")
+                continue
+            deleted = finish(n, lot, prefix, {"completed_on_resume": True})
+            print(f"lot {n}: record 3 checked, record 4 written ({len(deleted)} inputs deleted)")
+            continue
         if complete:
-            print(f"lot {n}: every result present and valid at every point; skipped", flush=True)
+            stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+            prefix = f"lot-{n:04d}-{stamp}"
+            record(
+                f"{prefix}-3-results-reread.json",
+                {"lot": n, "utc": now(), "results_sha256": hashes, "written_on_resume": True},
+            )
+            deleted = finish(n, lot, prefix, {"completed_on_resume": True})
+            print(
+                f"lot {n}: results complete without record 3; records 3 and 4 written "
+                f"({len(deleted)} inputs deleted)"
+            )
             continue
         stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
         prefix = f"lot-{n:04d}-{stamp}"
@@ -2367,14 +2472,7 @@ def mode_orchestrate(args) -> int:
         record(
             f"{prefix}-3-results-reread.json", {"lot": n, "utc": now(), "results_sha256": hashes}
         )
-        deleted = [d for d in (remove(cache / f"{i}.rpc") for i in lot) if d]
-        # This lot's list and check report, and those left by its interrupted attempts.
-        own = {*cache.glob(f"lot-{n:04d}-*.txt"), *cache.glob(f"lot-{n:04d}-*-check.json")}
-        lot_files = [d for d in (remove(f) for f in sorted(own | {lot_file, report_file})) if d]
-        record(
-            f"{prefix}-4-inputs-deleted.json",
-            {"lot": n, "utc": now(), "deleted": deleted, "lot_files_deleted": lot_files},
-        )
+        finish(n, lot, prefix, {})
         print(f"lot {n}: done ({len(lot)} cases)", flush=True)
     return 0
 
