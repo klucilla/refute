@@ -1,0 +1,27 @@
+{
+  "deleted": [
+    "false_positive-measurable-white-0006.rpc",
+    "no_transit-none-correlated-0000.rpc",
+    "no_transit-none-correlated-0001.rpc",
+    "no_transit-none-correlated-0002.rpc",
+    "no_transit-none-correlated-0003.rpc",
+    "no_transit-none-correlated-0004.rpc",
+    "no_transit-none-correlated-0005.rpc",
+    "no_transit-none-white-0000.rpc",
+    "no_transit-none-white-0001.rpc",
+    "no_transit-none-white-0002.rpc",
+    "no_transit-none-white-0003.rpc",
+    "no_transit-none-white-0004.rpc",
+    "no_transit-none-white-0005.rpc",
+    "planet-measurable-correlated-0000.rpc",
+    "planet-measurable-correlated-0002.rpc"
+  ],
+  "lot": 1,
+  "lot_files_deleted": [
+    "lot-0001-20261012T042420336136Z-check.json",
+    "lot-0001-20261012T042420336136Z.txt",
+    "lot-0001-20261012T042506578281Z-check.json",
+    "lot-0001-20261012T042506578281Z.txt"
+  ],
+  "utc": "2026-10-12T04:26:37.084730+00:00"
+}

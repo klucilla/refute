@@ -1,0 +1,20 @@
+{
+  "cases": [
+    "planet-measurable-correlated-0004",
+    "planet-measurable-correlated-0006",
+    "planet-measurable-white-0000",
+    "planet-measurable-white-0002",
+    "planet-measurable-white-0004",
+    "planet-measurable-white-0006",
+    "planet-near-correlated-0001",
+    "planet-near-correlated-0003",
+    "planet-near-correlated-0005",
+    "planet-near-correlated-0007",
+    "planet-near-white-0001",
+    "planet-near-white-0003",
+    "planet-near-white-0005",
+    "planet-near-white-0007"
+  ],
+  "lot": 2,
+  "utc": "2026-10-12T04:26:37.091236+00:00"
+}

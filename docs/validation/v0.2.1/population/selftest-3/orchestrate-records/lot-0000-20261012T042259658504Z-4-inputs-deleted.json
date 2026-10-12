@@ -1,0 +1,25 @@
+{
+  "deleted": [
+    "false_positive-below-correlated-0001.rpc",
+    "false_positive-below-correlated-0003.rpc",
+    "false_positive-below-correlated-0005.rpc",
+    "false_positive-below-correlated-0007.rpc",
+    "false_positive-below-white-0001.rpc",
+    "false_positive-below-white-0003.rpc",
+    "false_positive-below-white-0005.rpc",
+    "false_positive-below-white-0007.rpc",
+    "false_positive-measurable-correlated-0000.rpc",
+    "false_positive-measurable-correlated-0002.rpc",
+    "false_positive-measurable-correlated-0004.rpc",
+    "false_positive-measurable-correlated-0006.rpc",
+    "false_positive-measurable-white-0000.rpc",
+    "false_positive-measurable-white-0002.rpc",
+    "false_positive-measurable-white-0004.rpc"
+  ],
+  "lot": 0,
+  "lot_files_deleted": [
+    "lot-0000-20261012T042259658504Z-check.json",
+    "lot-0000-20261012T042259658504Z.txt"
+  ],
+  "utc": "2026-10-12T04:24:20.329237+00:00"
+}
