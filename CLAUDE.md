@@ -161,3 +161,11 @@ First pack: exoplanet transits (TESS).
 - Tests with `pytest`. Lint/format with `ruff`. CI on GitHub Actions.
 - Everything in English: code, comments, docs, commit messages.
 - License: Apache-2.0.
+
+## Project folder hygiene
+
+Project folder hygiene: only files in use stay in the project folder. Downloaded or
+generated files that are no longer used are removed, after an inventory approved by
+the maintainer. Removal happens only inside the project folder, from an explicit list
+of paths, never from a broad root and never with git clean -x. Files outside the
+project folder are never removed.

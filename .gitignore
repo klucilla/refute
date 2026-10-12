@@ -25,3 +25,6 @@ Thumbs.db
 
 # Local Claude Code settings: never part of the tree that calibration locks require
 .claude/settings.local.json
+
+# Local backups (git bundles of branches that exist only on this machine)
+.backup/
