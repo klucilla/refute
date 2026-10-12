@@ -1,0 +1,73 @@
+{
+  "case": "no_transit-none-correlated-0001",
+  "conditions": {
+    "i": {
+      "candidate_period": 0.5558919279631249,
+      "fatal": [],
+      "identity_factor": null,
+      "signal_identity": false,
+      "signal_verdict_without_eb_catalog": "INCONCLUSIVE",
+      "status": "analyzed",
+      "tests": [
+        {
+          "name": "snr",
+          "severity": "gate",
+          "status": "PASS"
+        },
+        {
+          "name": "odd_even",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "secondary_eclipse",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "plausibility",
+          "severity": "warning",
+          "status": "FAIL"
+        },
+        {
+          "name": "centroid_shift",
+          "severity": "fatal",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "name": "aperture_depth",
+          "severity": "fatal",
+          "status": "INCONCLUSIVE"
+        },
+        {
+          "name": "nearby_contamination",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "period_alias",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "systematics",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "holdout_by_year",
+          "severity": "fatal",
+          "status": "INCONCLUSIVE"
+        }
+      ],
+      "verdict": "INCONCLUSIVE",
+      "verdict_reason": "could not be decided: centroid_shift, aperture_depth, holdout_by_year"
+    }
+  },
+  "expected_sha256": "b4bb620a6fcef2c7efd8422b369bca355df7872d54cef08a64d2f8546a9e3154",
+  "format": "refute-population-result/1",
+  "input_sha256": "b4bb620a6fcef2c7efd8422b369bca355df7872d54cef08a64d2f8546a9e3154",
+  "peak_memory_mb": 237.2,
+  "seconds": 8.926,
+  "status": "analyzed"
+}

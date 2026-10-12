@@ -432,3 +432,105 @@ command and the JUnit evidence in [`baseline/README.md`](baseline/README.md).
 - The drand round of the confirmation population: its number, committed before the
   round is published.
 - The coverage requirement of the calibration.
+
+## Amendment 1 (2026-10-11): inputs are regenerated and checked by hash
+
+Decided by the maintainer on 2026-10-11, after the size estimate of section 7 (roughly
+400 GB uncompressed for the development population). It replaces "generated once and
+saved" in section 7 by "regenerated and checked by hash". No criterion, size, band,
+mechanism, seed rule or limit changes.
+
+**a. Manifest frozen before any measurement.**
+
+- The first generation produces, for every case, the SHA-256 of its canonical
+  serialization, its seeds, its final parameters, its expected SNRs and its redraw
+  counts, **without analyzing any case** (`population.py generate --no-store`, which
+  computes the bytes and their hash without writing them).
+- It runs twice, in separate processes; the two manifests must be identical byte for
+  byte.
+- The manifest is then committed and frozen. Only after that do M0 and the other points
+  begin.
+- A regeneration that diverges from the manifest stops that case for investigation.
+  The expected hash is never updated to accept new bytes, and no case is removed from
+  the population.
+
+**b. Canonical representation `refute-population-serialization/1`.** One byte stream
+per case, which is both what is hashed and what is written to the cache:
+
+1. the ASCII line `refute-population-serialization/1` followed by LF;
+2. the length of the metadata in bytes, as an 8-byte little-endian unsigned integer;
+3. the metadata: JSON, UTF-8, keys sorted, no spaces (`separators=(",", ":")`), no
+   NaN or infinity, every float written as Python's shortest round-trip representation
+   of its binary64 value, integers as integers, seeds as decimal strings;
+4. the arrays, concatenated without separators, in the order listed in the metadata key
+   `arrays` (a list of `[name, dtype, shape]`), each in C order and in its declared
+   dtype: `<f8` (little-endian binary64), `<i8` (little-endian 64-bit integer) or `|b1`
+   (one byte per boolean).
+
+The arrays, in this order: `lc/time`, `lc/flux`, `lc/flux_err` (`<f8`), `lc/sector`,
+`lc/year` (`<i8`); for each auxiliary sector `k` in order, `aux/sectors/k/time`,
+`pdcsap_flux`, `sap_flux`, `sap_bkg`, `dump_times` (`<f8`); for each pixel file `k` in
+order, `aux/pixels/k/time` (`<f8`, shape `(n,)`), `flux` and `flux_err` (`<f8`, shape
+`(n, 11, 11)`), `aperture` (`|b1`, shape `(11, 11)`). The metadata holds everything
+else that determines the input: the case (id, class, band, noise model, index,
+mechanism, catalog variant, seed, extra mechanism settings), the seed of the accepted
+attempt, the redraw counts, the final parameters, the expected SNRs, the catalog of
+condition (ii) (its CSV text and its scan record), the target key and TIC, the sector
+information, the star parameters, the product information, the data manifest, and the
+scalars of the auxiliary data (per sector: sector, CROWDSAP, FLFRCSAP; per pixel file:
+sector, target position, file name, its SHA-256 field, dropped cadences; neighbors and
+neighbor radius). No time of day, local path or compression setting enters the bytes.
+The harness reads a case back into the data classes of the code being measured.
+
+**c. Frozen generation environment.**
+
+- The generator runs only in the environment of tag `v0.2.0`: the virtual environment
+  of the worktree `.worktrees/v0.2.0`, built from the `uv.lock` of `f479823`, separate
+  from the analysis environments. The harness refuses to generate elsewhere: it checks
+  the commit of the installed Refute, a clean `src/`, and the SHA-256 of
+  `synthetic.py` (`b1d9518ea96ee3fd91b861c33601d57742ad96520b15079d97bd217f391fc50d`).
+- The manifest records: the Python version, the platform, the NumPy version and its
+  BLAS build, the thread pools reported by `threadpoolctl`, the four thread variables,
+  the random generator (`numpy.random.default_rng`, PCG64) and the sequence of random
+  calls.
+- Each case has its own seeds (parameters, noise, auxiliary data), derived from its
+  case seed by SHA-256; there is no global random state. The helpers of `synthetic.py`
+  at `v0.2.0` take a generator or a seed and do not use `numpy.random`'s global state
+  (checked on 2026-10-11: `make_lightcurve` and `make_blend` build
+  `np.random.default_rng(seed)`, `make_aux` builds `np.random.default_rng(seed + 1000)`,
+  and `render_pixels` and `make_sector_aux` receive the generator).
+- The number of workers, the order of the cases and the size of the lots do not change
+  any generated number (checked by the self-test below).
+- **Input reproduction is accepted when its hashes match the published manifest.** No
+  promise is made that the same versions and seeds give the same bytes on any machine.
+
+**d. Lots.** For M0 to M3 the population is processed in lots
+(`population.py orchestrate`): each lot is regenerated into `.cache/population/`
+(git-ignored), checked against the frozen manifest, and analyzed in the four
+environments (one worktree with its own virtual environment per point, all inside
+`.worktrees/`) before it is deleted. The results and records of the lot are written and
+read back from disk **before** the cleanup, and files are removed only inside
+`.cache/population/`. The lot size is chosen from the free RAM, the free disk of the
+cache and the number of processes; measured on 2026-10-11: a case takes 56.6 MB
+(single orbit plus one sector), 75.5 MB (two sectors) or 113.2 MB (three sectors), and
+a worker peaks at about 0.2 GB when generating and 0.32 GB when analyzing, so a lot of
+100 cases needs up to about 11 GB of cache.
+
+**e. Complete reference cases.** A small set of cases (white noise, AR(1) noise and a
+blend) is kept whole, to check the reader and the serialization without regenerating
+thousands of cases. Where it is kept is decided by the maintainer after the size
+measurement: on 2026-10-11 each of the three is 75.5 MB raw and about 34 MB with lzma
+(36 MB with zlib).
+
+**Harness and self-test.** The harness is
+`docs/validation/v0.2.1/population/population.py` (modes `generate`, `analyze`,
+`metrics`, `orchestrate`). Its self-test (`selftest/`, seeds with the prefix
+`refute-v0.2.1-population-selftest`, at most 2 cases per class and mechanism in each
+noise model, 44 cases) is not a measurement: no case of the development population was
+generated or analyzed.
+
+**Still to fix before the v0.2.1 lock** (replaces the list above): where the inputs are
+kept is decided by this amendment (regenerated and checked by hash); where the
+reference cases of item e are kept is pending; the drand round of the confirmation
+population (its number, committed before the round is published); the coverage
+requirement of the calibration.
