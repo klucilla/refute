@@ -1,0 +1,166 @@
+{
+  "case": "planet-measurable-correlated-0006",
+  "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+  "conditions": {
+    "i": {
+      "candidate_period": 2.0643292074538198,
+      "fatal": [
+        "holdout_by_year"
+      ],
+      "identity_factor": 1.0,
+      "signal_identity": true,
+      "signal_verdict_without_eb_catalog": "REFUTED",
+      "status": "analyzed",
+      "tests": [
+        {
+          "name": "snr",
+          "severity": "gate",
+          "status": "PASS"
+        },
+        {
+          "name": "odd_even",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "secondary_eclipse",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "plausibility",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "centroid_shift",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "aperture_depth",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "nearby_contamination",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "period_alias",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "systematics",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "holdout_by_year",
+          "severity": "fatal",
+          "status": "FAIL"
+        }
+      ],
+      "verdict": "REFUTED",
+      "verdict_reason": "fatal failure in: holdout_by_year"
+    },
+    "ii": {
+      "candidate_period": 2.0643292074538198,
+      "fatal": [
+        "eb_catalog",
+        "holdout_by_year"
+      ],
+      "identity_factor": 1.0,
+      "signal_identity": true,
+      "signal_verdict_without_eb_catalog": "REFUTED",
+      "status": "analyzed",
+      "tests": [
+        {
+          "name": "snr",
+          "severity": "gate",
+          "status": "PASS"
+        },
+        {
+          "name": "odd_even",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "secondary_eclipse",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "plausibility",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "centroid_shift",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "aperture_depth",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "nearby_contamination",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "period_alias",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "systematics",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "eb_catalog",
+          "severity": "fatal",
+          "status": "FAIL"
+        },
+        {
+          "name": "holdout_by_year",
+          "severity": "fatal",
+          "status": "FAIL"
+        }
+      ],
+      "verdict": "REFUTED",
+      "verdict_reason": "fatal failure in: eb_catalog, holdout_by_year"
+    }
+  },
+  "expected_sha256": "26651bbe2aeaca135c1319a21446cd42a3e3d0cb5e9114fb82068085e55c7b45",
+  "format": "refute-population-result/1",
+  "harness_sha256": "376bd7f9e33f2e4b0b7f55157261da61b11cd11e2ae23a3a3e45e3b32895f29d",
+  "input_sha256": "26651bbe2aeaca135c1319a21446cd42a3e3d0cb5e9114fb82068085e55c7b45",
+  "manifest_sha256": "4e96bce466dd0b3e0775b5d36972819bcce314a2bb27fe39f2eab401b8dccb14",
+  "peak_memory_mb": 317.2,
+  "point": "M1",
+  "seconds": 23.436,
+  "status": "analyzed",
+  "worker_environment": {
+    "pid": 21292,
+    "thread_env": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "threadpools": [
+      {
+        "internal_api": "openblas",
+        "num_threads": 24,
+        "user_api": "blas",
+        "version": "0.3.34.106.0"
+      }
+    ]
+  }
+}

@@ -939,10 +939,38 @@ def file_sha256(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def write_new(path: Path, data: bytes) -> None:
-    """Write a file that must not exist yet (results are never overwritten)."""
-    with open(path, "xb") as fh:
+def environment_fingerprint() -> dict:
+    """What must be identical between the start of a run and every resumption."""
+    import refute
+
+    env = numeric_environment()
+    return {
+        "python": env["python"],
+        "numpy": env["numpy"],
+        "numpy_blas": env["numpy_blas"],
+        "threadpools": env["threadpools"],
+        "thread_env": env["thread_env"],
+        "commit": refute_checkout()["commit"],
+        "refute_file": str(Path(refute.__file__).resolve()),
+    }
+
+
+def write_atomic(path: Path, data: bytes, *, exclusive: bool = True) -> None:
+    """Write ``data`` to a temporary file in the same folder and move it into place with
+    ``os.replace``, so that no final file is ever written in parts. With ``exclusive``
+    (the default) an existing final file is never replaced (results are never
+    overwritten)."""
+    path = Path(path)
+    if exclusive and path.exists():
+        raise FileExistsError(f"{path} exists; it is never overwritten")
+    tmp = path.with_name(f".{path.name}.tmp-{os.getpid()}")
+    with open(tmp, "wb") as fh:
         fh.write(data)
+        fh.flush()
+        os.fsync(fh.fileno())
+    if exclusive and path.exists():
+        raise FileExistsError(f"{path} appeared while writing; left {tmp.name} in place")
+    os.replace(tmp, path)
 
 
 def _selected(cases: list[dict], cases_from: str | None) -> list[dict]:
@@ -1026,7 +1054,7 @@ def mode_generate(args) -> int:
         for d in diverged:
             print("  DIVERGED", d)
         return 2 if diverged else 0
-    write_new(Path(args.manifest), blob)
+    write_atomic(Path(args.manifest), blob)
     print(f"manifest {args.manifest}: SHA-256 {hashlib.sha256(blob).hexdigest()}")
     return 0
 
@@ -1044,6 +1072,23 @@ def _identity(found: float | None, injected: float) -> tuple[bool, float | None]
         if abs(found - f * injected) / (f * injected) <= PERIOD_TOLERANCE:
             return True, f
     return False, None
+
+
+CONDITION_KEYS = {
+    "analyzed": (
+        "verdict",
+        "verdict_reason",
+        "tests",
+        "fatal",
+        "candidate_period",
+        "signal_verdict_without_eb_catalog",
+        "signal_identity",
+        "identity_factor",
+    ),
+    "error": ("traceback",),
+}
+RECORD_KEYS = ("seconds", "peak_memory_mb", "worker_environment")
+CONTEXT_KEYS = ("point", "commit", "harness_sha256", "manifest_sha256")
 
 
 def _outcome(data, plan, entry, catalogs, scan) -> dict:
@@ -1090,12 +1135,63 @@ def _outcome(data, plan, entry, catalogs, scan) -> dict:
         return {"status": "error", "traceback": traceback.format_exc()}
 
 
-def analyze_one(task: tuple[dict, str, str]) -> str:
-    entry, cache, run_dir = task
+def validate_result(path: Path, entry: dict, ctx: dict) -> list[str]:
+    """Problems of an existing result file; an empty list means it is valid and complete."""
+    try:
+        rec = json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 - any unreadable file is a problem to report
+        return [f"{Path(path).name}: not valid JSON ({type(exc).__name__}: {exc})"]
+    name = Path(path).name
+    problems = []
+    if not isinstance(rec, dict):
+        return [f"{name}: not a JSON object"]
+    if rec.get("format") != RESULT_FORMAT:
+        problems.append(f"{name}: format {rec.get('format')!r}")
+    if rec.get("case") != entry["id"]:
+        problems.append(f"{name}: case {rec.get('case')!r} is not {entry['id']}")
+    if rec.get("expected_sha256") != entry["sha256"]:
+        problems.append(f"{name}: expected_sha256 differs from the manifest")
+    for key in CONTEXT_KEYS:
+        if rec.get(key) != ctx[key]:
+            problems.append(f"{name}: {key} {rec.get(key)!r} is not {ctx[key]!r}")
+    for key in RECORD_KEYS:
+        if key not in rec:
+            problems.append(f"{name}: missing {key}")
+    status = rec.get("status")
+    if status == "analyzed":
+        if rec.get("input_sha256") != entry["sha256"]:
+            problems.append(f"{name}: analyzed, but input_sha256 differs from the manifest")
+        expected = {"i", "ii"} if entry["class"] != "no_transit" else {"i"}
+        conditions = rec.get("conditions") or {}
+        if set(conditions) != expected:
+            problems.append(f"{name}: conditions {sorted(conditions)} are not {sorted(expected)}")
+        for cond, o in conditions.items():
+            keys = CONDITION_KEYS.get(o.get("status") if isinstance(o, dict) else None)
+            if keys is None:
+                problems.append(f"{name}: condition {cond} has status {o!r}")
+            elif any(k not in o for k in keys):
+                problems.append(f"{name}: condition {cond} is incomplete")
+    elif status == "refused":
+        if "reason" not in rec:
+            problems.append(f"{name}: refused without a reason")
+    elif status == "error":
+        if "traceback" not in rec:
+            problems.append(f"{name}: error without a traceback")
+    else:
+        problems.append(f"{name}: status {status!r}")
+    return problems
+
+
+def _worker_environment() -> dict:
+    env = numeric_environment()
+    return {"pid": os.getpid(), "threadpools": env["threadpools"], "thread_env": env["thread_env"]}
+
+
+def analyze_one(task: tuple[dict, str, str, dict]) -> str:
+    entry, cache, run_dir, ctx = task
     from refute.core.io import dumps_json
 
     start = time.perf_counter()
-
     out = Path(run_dir) / "cases" / f"{entry['id']}.json"
     if out.exists():
         return "kept"
@@ -1104,42 +1200,70 @@ def analyze_one(task: tuple[dict, str, str]) -> str:
         "format": RESULT_FORMAT,
         "case": entry["id"],
         "expected_sha256": entry["sha256"],
+        **{k: ctx[k] for k in CONTEXT_KEYS},
     }
-    if not path.is_file():
-        record.update(status="refused", reason="input file missing from the cache")
-    else:
-        blob = path.read_bytes()
-        digest = hashlib.sha256(blob).hexdigest()
-        record["input_sha256"] = digest
-        if digest != entry["sha256"]:
-            record.update(
-                status="refused", reason="input SHA-256 does not match the manifest; not analyzed"
-            )
+    try:
+        if not path.is_file():
+            record.update(status="refused", reason="input file missing from the cache")
         else:
-            meta, arrays = deserialize(blob)
-            data = parts_to_data(meta, arrays)
-            plan = _plan()
-            conditions = {"i": _outcome(data, plan, entry, None, None)}
-            if meta["catalog"] is not None:
-                from refute.packs.tess.ebcatalog import parse_catalog
+            blob = path.read_bytes()
+            digest = hashlib.sha256(blob).hexdigest()
+            record["input_sha256"] = digest
+            if digest != entry["sha256"]:
+                record.update(
+                    status="refused",
+                    reason="input SHA-256 does not match the manifest; not analyzed",
+                )
+            else:
+                meta, arrays = deserialize(blob)
+                data = parts_to_data(meta, arrays)
+                plan = _plan()
+                conditions = {"i": _outcome(data, plan, entry, None, None)}
+                if meta["catalog"] is not None:
+                    from refute.packs.tess.ebcatalog import parse_catalog
 
-                entries = parse_catalog(meta["catalog"]["text"], "population-catalog.csv")
-                conditions["ii"] = _outcome(data, plan, entry, entries, meta["catalog"]["scan"])
-            record.update(status="analyzed", conditions=conditions)
+                    entries = parse_catalog(meta["catalog"]["text"], "population-catalog.csv")
+                    conditions["ii"] = _outcome(data, plan, entry, entries, meta["catalog"]["scan"])
+                record.update(status="analyzed", conditions=conditions)
+    except Exception:  # noqa: BLE001 - recorded as a result with status "error"
+        record.update(status="error", traceback=traceback.format_exc())
     record["seconds"] = round(time.perf_counter() - start, 3)
     record["peak_memory_mb"] = peak_memory_mb()
-    write_new(out, dumps_json(record).encode("utf-8"))
+    record["worker_environment"] = _worker_environment()
+    write_atomic(out, dumps_json(record).encode("utf-8"))
     return record["status"]
+
+
+def _attempt(run_dir: Path, stamp: str, kind: str, payload: dict) -> None:
+    from refute.core.io import dumps_json
+
+    folder = run_dir / "attempts"
+    folder.mkdir(parents=True, exist_ok=True)
+    write_atomic(
+        folder / f"attempt-{stamp}-{os.getpid()}-{kind}.json",
+        dumps_json({"kind": kind, **payload}).encode("utf-8"),
+    )
+
+
+def _run_context(run: dict) -> dict:
+    return {
+        "point": run["point"],
+        "commit": run["checkout"]["commit"],
+        "harness_sha256": run["harness_sha256"],
+        "manifest_sha256": run["manifest_sha256"],
+    }
 
 
 def mode_analyze(args) -> int:
     from refute.core.io import dumps_json
     from refute.core.runner import run_processes
 
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     manifest_path = Path(args.manifest)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     run_dir = Path(args.out)
     (run_dir / "cases").mkdir(parents=True, exist_ok=True)
+    fingerprint = environment_fingerprint()
     run = {
         "format": RESULT_FORMAT,
         "point": args.point,
@@ -1147,27 +1271,62 @@ def mode_analyze(args) -> int:
         "harness_sha256": file_sha256(HARNESS_PATH),
         "manifest_sha256": file_sha256(manifest_path),
         "plan": _plan().model_dump(mode="json"),
+        "fingerprint": fingerprint,
         "environment": numeric_environment(),
     }
     run_file = run_dir / "run.json"
+    attempt = {"started_utc": stamp, "argv": sys.argv[1:], "fingerprint": fingerprint}
     if run_file.exists():
         previous = json.loads(run_file.read_text(encoding="utf-8"))
-        for key in ("point", "checkout", "harness_sha256", "manifest_sha256", "plan"):
-            if previous[key] != json.loads(dumps_json(run[key])):
+        for key in (
+            "point",
+            "checkout",
+            "harness_sha256",
+            "manifest_sha256",
+            "plan",
+            "fingerprint",
+        ):
+            if previous.get(key) != json.loads(dumps_json(run[key])):
+                _attempt(run_dir, stamp, "refused", {**attempt, "reason": f"{key} differs"})
                 raise SystemExit(f"resume refused: {key} differs from {run_file}")
+        run = previous
     else:
-        run["started_utc"] = datetime.now(UTC).isoformat(timespec="seconds")
-        write_new(run_file, dumps_json(run).encode("utf-8"))
+        run["started_utc"] = stamp
+        write_atomic(run_file, dumps_json(run).encode("utf-8"))
+    ctx = _run_context(run)
     entries = _selected(manifest["cases"], args.cases_from)
-    todo = [e for e in entries if not (run_dir / "cases" / f"{e['id']}.json").exists()]
+    existing = [e for e in entries if (run_dir / "cases" / f"{e['id']}.json").exists()]
+    problems = [
+        p for e in existing for p in validate_result(run_dir / "cases" / f"{e['id']}.json", e, ctx)
+    ]
+    if problems:
+        _attempt(
+            run_dir,
+            stamp,
+            "refused",
+            {**attempt, "reason": "invalid results", "problems": problems},
+        )
+        for p in problems[:20]:
+            print("  INVALID", p)
+        raise SystemExit(
+            f"{args.point}: {len(problems)} problem(s) in existing results; stopped for "
+            "investigation (nothing overwritten, deleted or redone)"
+        )
+    todo = [e for e in entries if e not in existing]
+    _attempt(
+        run_dir,
+        stamp,
+        "started",
+        {**attempt, "cases": len(entries), "already_valid": len(existing), "to_analyze": len(todo)},
+    )
     print(
-        f"{args.point}: {len(entries)} cases, {len(entries) - len(todo)} already done, "
-        f"{len(todo)} to analyze"
+        f"{args.point}: {len(entries)} cases, {len(existing)} already valid, {len(todo)} to analyze"
     )
     statuses = run_processes(
-        analyze_one, [(e, args.cache, str(run_dir)) for e in todo], args.workers
+        analyze_one, [(e, args.cache, str(run_dir), ctx) for e in todo], args.workers
     )
     counts = {s: statuses.count(s) for s in sorted(set(statuses))}
+    _attempt(run_dir, stamp, "finished", {**attempt, "counts": counts})
     print(f"{args.point}: {counts}")
     return 0
 
@@ -1187,13 +1346,25 @@ def cp_lower(k: int, n: int) -> float:
     return 0.0 if k <= 0 else float(beta.ppf(0.05, k, n - k + 1))
 
 
-def _load_run(run_dir: Path) -> tuple[dict, dict[str, dict]]:
+def _load_run(run_dir: Path) -> tuple[dict, dict[str, dict], list[str]]:
+    """A run, its case records, and the provenance problems found in it."""
     run = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    ctx = _run_context(run)
+    problems = []
+    if run.get("fingerprint", {}).get("commit") != ctx["commit"]:
+        problems.append(f"{run_dir.name}: fingerprint commit differs from the checkout commit")
+    for f in sorted((run_dir / "attempts").glob("attempt-*.json")):
+        a = json.loads(f.read_text(encoding="utf-8"))
+        if a.get("fingerprint", {}).get("commit") != ctx["commit"]:
+            problems.append(f"{run_dir.name}/{f.name}: attempt commit differs from the run")
     cases = {}
     for f in sorted((run_dir / "cases").glob("*.json")):
         rec = json.loads(f.read_text(encoding="utf-8"))
+        for key in CONTEXT_KEYS:
+            if rec.get(key) != ctx[key]:
+                problems.append(f"{run_dir.name}/{f.name}: {key} differs from its run")
         cases[rec["case"]] = rec
-    return run, cases
+    return run, cases, problems
 
 
 def _cond(rec: dict | None, condition: str) -> dict:
@@ -1205,10 +1376,14 @@ def _cond(rec: dict | None, condition: str) -> dict:
 
 
 def _outcomes(entry: dict, rec: dict | None, condition: str = "i") -> dict:
+    """Outcomes of one case. A refused, error or missing result is never a successful
+    analysis: it stays in every denominator, counts as an error (C6) and as INCONCLUSIVE
+    (C3), and never as refuted, flagged or a false alarm."""
     o = _cond(rec, condition)
     ok = o.get("status") == "analyzed"
     verdict = o.get("verdict") if ok else None
     return {
+        "status": o.get("status"),
         "error": not ok,
         "refuted": verdict == "REFUTED",
         "inconclusive": (verdict == "INCONCLUSIVE") or not ok,
@@ -1238,7 +1413,12 @@ def run_metrics(manifest: dict, recs: dict[str, dict]) -> dict:
     def sel(**kw):
         return [c for c in cases if all(c[k] == v for k, v in kw.items())]
 
-    m: dict = {"criteria": {}, "by_mechanism": {}, "errors": {}}
+    m: dict = {"criteria": {}, "by_mechanism": {}, "errors": {}, "status_counts": {}}
+    for c in cases:
+        conds = ("i", "ii") if c["class"] != "no_transit" else ("i",)
+        for cond in conds:
+            s = _outcomes(c, recs.get(c["id"]), cond)["status"]
+            m["status_counts"][s] = m["status_counts"].get(s, 0) + 1
     for noise in ("white", "correlated"):
         for band in ("below", "near", "measurable"):
             r = _rate(sel(**{"class": "planet", "band": band, "noise": noise}), "refuted", recs)
@@ -1337,34 +1517,67 @@ def paired(manifest: dict, a: dict[str, dict], b: dict[str, dict]) -> dict:
 def mode_metrics(args) -> int:
     from refute.core.io import dumps_json
 
+    manifest_sha = file_sha256(Path(args.manifest))
     manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
-    runs = [_load_run(Path(r)) for r in args.runs]
+    loaded = [(Path(r), *_load_run(Path(r))) for r in args.runs]
+    problems = [p for _, _, _, probs in loaded for p in probs]
+    for path, run, _, _ in loaded:
+        if run["manifest_sha256"] != manifest_sha:
+            problems.append(
+                f"{path.name}: manifest {run['manifest_sha256'][:12]} is not {manifest_sha[:12]}"
+            )
+    harnesses = {run["harness_sha256"] for _, run, _, _ in loaded}
+    if len(harnesses) > 1:
+        problems.append(
+            f"runs come from {len(harnesses)} different harnesses: "
+            f"{sorted(h[:12] for h in harnesses)}"
+        )
+    by_point: dict[str, dict[str, dict]] = {}
+    order: list[str] = []
+    for path, run, recs, _ in loaded:
+        point = run["point"]
+        merged = by_point.setdefault(point, {})
+        if point not in order:
+            order.append(point)
+        repeated = sorted(set(merged) & set(recs))
+        if repeated:
+            problems.append(f"{path.name}: {len(repeated)} case ids repeated within point {point}")
+        merged.update(recs)
+    if problems:
+        for p in problems[:30]:
+            print("  REFUSED", p)
+        print(f"metrics refused: {len(problems)} provenance problem(s); nothing computed")
+        return 2
+    runs_by_point = {p: [run for _, run, _, _ in loaded if run["point"] == p] for p in order}
     out = {
         "format": "refute-population-metrics/1",
-        "manifest_sha256": file_sha256(Path(args.manifest)),
+        "manifest_sha256": manifest_sha,
         "harness_sha256": file_sha256(HARNESS_PATH),
+        "run_harness_sha256": sorted(harnesses)[0],
         "points": [],
         "paired": [],
     }
-    for (run, recs), path in zip(runs, args.runs, strict=True):
+    for point in order:
         out["points"].append(
             {
-                "point": run["point"],
-                "run": Path(path).name,
-                "checkout": run["checkout"],
-                "metrics": run_metrics(manifest, recs),
+                "point": point,
+                "runs": [str(p.name) for p, run, _, _ in loaded if run["point"] == point],
+                "checkout": runs_by_point[point][0]["checkout"],
+                "metrics": run_metrics(manifest, by_point[point]),
             }
         )
-    for (ra, a), (rb, b) in zip(runs, runs[1:], strict=False):
+    for pa, pb in zip(order, order[1:], strict=False):
         out["paired"].append(
-            {"from": ra["point"], "to": rb["point"], "comparisons": paired(manifest, a, b)}
+            {"from": pa, "to": pb, "comparisons": paired(manifest, by_point[pa], by_point[pb])}
         )
     target = Path(args.out)
-    write_new(target, dumps_json(out).encode("utf-8"))
+    write_atomic(target, dumps_json(out).encode("utf-8"))
     lines = [f"# Population metrics ({Path(args.manifest).name})", ""]
     for point in out["points"]:
         lines += [
             f"## {point['point']} ({point['checkout']['commit'][:7]})",
+            "",
+            f"Result statuses (per condition): {point['metrics']['status_counts']}",
             "",
             "| Criterion | k | n | bound | passes |",
             "|---|---|---|---|---|",
@@ -1373,7 +1586,7 @@ def mode_metrics(args) -> int:
             bound = f"{r['bound']:.4f}" if "bound" in r else "-"
             lines.append(f"| {name} | {r['k']} | {r.get('n', '-')} | {bound} | {r['passes']} |")
         lines.append("")
-    write_new(target.with_suffix(".md"), ("\n".join(lines) + "\n").encode("utf-8"))
+    write_atomic(target.with_suffix(".md"), ("\n".join(lines) + "\n").encode("utf-8"))
     print(f"metrics written to {target} and {target.with_suffix('.md')}")
     return 0
 
@@ -1381,24 +1594,67 @@ def mode_metrics(args) -> int:
 # --- orchestration ----------------------------------------------------------------------
 
 
+def _lot_results(points, lot, by_id) -> tuple[bool, list[str], dict]:
+    """Whether every case of a lot has a valid result at every point, the problems of the
+    results that exist, and the SHA-256 of every result file read."""
+    complete, problems, hashes = True, [], {}
+    for _, _, run_dir in points:
+        run_file = Path(run_dir) / "run.json"
+        if not run_file.exists():
+            complete = False
+            continue
+        ctx = _run_context(json.loads(run_file.read_text(encoding="utf-8")))
+        for i in lot:
+            f = Path(run_dir) / "cases" / f"{i}.json"
+            if not f.exists():
+                complete = False
+                continue
+            found = validate_result(f, by_id[i], ctx)
+            problems += [f"{Path(run_dir).name}: {p}" for p in found]
+            hashes[f"{Path(run_dir).name}/{i}"] = file_sha256(f)
+    return complete and not problems, problems, hashes
+
+
 def mode_orchestrate(args) -> int:
-    """Lots: regenerate and check, analyze at every point, check results, delete inputs."""
+    """Lots: regenerate and check, analyze at every point, re-read and validate the results
+    on disk, record that, then delete the lot's inputs (only inside .cache/population/)."""
+    from refute.core.io import dumps_json
+
     project_cache = (Path(args.project) / ".cache" / "population").resolve()
     cache = Path(args.cache).resolve()
     if project_cache not in (cache, *cache.parents):
         raise SystemExit(f"the cache must be inside {project_cache}")
     manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
+    by_id = {c["id"]: c for c in manifest["cases"]}
     points = [p.split("=", 2) for p in args.point]  # name=python=run_dir
     ids = [c["id"] for c in manifest["cases"]]
     lots = [ids[i : i + args.lot_size] for i in range(0, len(ids), args.lot_size)]
     cache.mkdir(parents=True, exist_ok=True)
-    log = Path(args.log)
+    records = Path(args.records)
+    records.mkdir(parents=True, exist_ok=True)
+
+    def now():
+        return datetime.now(UTC).isoformat(timespec="microseconds")
+
+    def record(name, payload):
+        write_atomic(records / name, dumps_json(payload).encode("utf-8"))
+
     for n, lot in enumerate(lots):
-        done = all((Path(r) / "cases" / f"{i}.json").exists() for _, _, r in points for i in lot)
-        if done:
+        complete, problems, _ = _lot_results(points, lot, by_id)
+        if problems:
+            for p in problems[:20]:
+                print("  INVALID", p)
+            raise SystemExit(
+                f"lot {n}: invalid results; stopped for investigation "
+                "(nothing overwritten, deleted or redone)"
+            )
+        if complete:
+            print(f"lot {n}: every result present and valid at every point; skipped")
             continue
-        lot_file = cache / f"lot-{n:04d}.txt"
-        lot_file.write_text("\n".join(lot) + "\n", encoding="utf-8")
+        stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+        lot_file = cache / f"lot-{n:04d}-{stamp}.txt"
+        write_atomic(lot_file, ("\n".join(lot) + "\n").encode("utf-8"))
+        record(f"lot-{n:04d}-{stamp}-1-started.json", {"lot": n, "cases": lot, "utc": now()})
         gen = subprocess.run(
             [
                 args.generator_python,
@@ -1423,6 +1679,7 @@ def mode_orchestrate(args) -> int:
                 f"lot {n}: regeneration diverged or failed; stopped for "
                 "investigation (nothing deleted)"
             )
+        record(f"lot-{n:04d}-{stamp}-2-regenerated.json", {"lot": n, "utc": now()})
         for name, python, run_dir in points:
             res = subprocess.run(
                 [
@@ -1447,19 +1704,26 @@ def mode_orchestrate(args) -> int:
             )
             if res.returncode != 0:
                 raise SystemExit(f"lot {n}: analyze failed at {name}; stopped")
-        for _, _, run_dir in points:
-            for i in lot:
-                json.loads((Path(run_dir) / "cases" / f"{i}.json").read_text(encoding="utf-8"))
+        complete, problems, hashes = _lot_results(points, lot, by_id)
+        if problems or not complete:
+            raise SystemExit(
+                f"lot {n}: results incomplete or invalid after analysis; stopped (nothing deleted)"
+            )
+        record(
+            f"lot-{n:04d}-{stamp}-3-results-reread.json",
+            {"lot": n, "utc": now(), "results_sha256": hashes},
+        )
+        deleted = []
         for i in lot:
             f = (cache / f"{i}.rpc").resolve()
             if project_cache in f.parents and f.is_file():
                 f.unlink()
-        lot_file.unlink()
-        with open(log, "a", encoding="utf-8") as fh:
-            fh.write(
-                f"{datetime.now(UTC).isoformat(timespec='seconds')} lot {n} done "
-                f"({len(lot)} cases)\n"
-            )
+                deleted.append(f.name)
+        record(
+            f"lot-{n:04d}-{stamp}-4-inputs-deleted.json",
+            {"lot": n, "utc": now(), "deleted": deleted},
+        )
+        print(f"lot {n}: done ({len(lot)} cases)", flush=True)
     return 0
 
 
@@ -1491,7 +1755,7 @@ def main(argv: list[str] | None = None) -> int:
     o.add_argument("--generator-python", required=True)
     o.add_argument("--point", action="append", required=True)
     o.add_argument("--lot-size", type=int, default=50)
-    o.add_argument("--log", required=True)
+    o.add_argument("--records", required=True, help="folder for the lot records")
     for p in (g, a, o):
         p.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 8))
     for p in (g, a, m, o):

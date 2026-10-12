@@ -1,0 +1,32 @@
+affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-correlated-0001.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-correlated-0003.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-correlated-0005.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-correlated-0007.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-white-0001.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-white-0003.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-white-0005.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-below-white-0007.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-correlated-0000.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-correlated-0002.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-correlated-0004.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-correlated-0006.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-white-0000.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-white-0002.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-white-0004.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/false_positive-measurable-white-0006.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-correlated-0000.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-correlated-0001.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-correlated-0002.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-correlated-0003.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-correlated-0004.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-correlated-0005.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-white-0000.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-white-0001.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-white-0002.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-white-0003.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-white-0004.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/no_transit-none-white-0005.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/planet-measurable-correlated-0000.json: harness_sha256 differs from its run
+  REFUSED harness-copy-of-M1-3217db7/planet-measurable-correlated-0002.json: harness_sha256 differs from its run
+metrics refused: 45 provenance problem(s); nothing computed

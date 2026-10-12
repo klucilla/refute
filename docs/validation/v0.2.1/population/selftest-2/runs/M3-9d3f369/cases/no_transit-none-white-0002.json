@@ -1,0 +1,96 @@
+{
+  "case": "no_transit-none-white-0002",
+  "commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3",
+  "conditions": {
+    "i": {
+      "candidate_period": 0.5426793399843839,
+      "fatal": [
+        "period_alias"
+      ],
+      "identity_factor": null,
+      "signal_identity": false,
+      "signal_verdict_without_eb_catalog": "INCONCLUSIVE",
+      "status": "analyzed",
+      "tests": [
+        {
+          "name": "snr",
+          "severity": "gate",
+          "status": "FAIL"
+        },
+        {
+          "name": "odd_even",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "secondary_eclipse",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "plausibility",
+          "severity": "warning",
+          "status": "FAIL"
+        },
+        {
+          "name": "centroid_shift",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "aperture_depth",
+          "severity": "fatal",
+          "status": "PASS"
+        },
+        {
+          "name": "nearby_contamination",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "period_alias",
+          "severity": "fatal",
+          "status": "FAIL"
+        },
+        {
+          "name": "systematics",
+          "severity": "warning",
+          "status": "PASS"
+        },
+        {
+          "name": "holdout_by_year",
+          "severity": "fatal",
+          "status": "INCONCLUSIVE"
+        }
+      ],
+      "verdict": "INCONCLUSIVE",
+      "verdict_reason": "gate test 'snr' is FAIL: no significant signal to attack"
+    }
+  },
+  "expected_sha256": "185f1170808c7c4210e14f485f8ec95c5121d8414711b97a3d43bae8e96ba891",
+  "format": "refute-population-result/1",
+  "harness_sha256": "376bd7f9e33f2e4b0b7f55157261da61b11cd11e2ae23a3a3e45e3b32895f29d",
+  "input_sha256": "185f1170808c7c4210e14f485f8ec95c5121d8414711b97a3d43bae8e96ba891",
+  "manifest_sha256": "4e96bce466dd0b3e0775b5d36972819bcce314a2bb27fe39f2eab401b8dccb14",
+  "peak_memory_mb": 239.8,
+  "point": "M3",
+  "seconds": 9.236,
+  "status": "analyzed",
+  "worker_environment": {
+    "pid": 52152,
+    "thread_env": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "threadpools": [
+      {
+        "internal_api": "openblas",
+        "num_threads": 24,
+        "user_api": "blas",
+        "version": "0.3.34.106.0"
+      }
+    ]
+  }
+}
