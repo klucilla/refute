@@ -1,0 +1,30 @@
+{
+  "format": "refute-population-points/1",
+  "rule": "Append only. A new point is added at the end and committed before its measurement. An association already used never changes; a change is a new point. Every run records the association it used (point and full commit), the SHA-256 of this file and the commit of the repository it was in.",
+  "points": [
+    {
+      "point": "M0",
+      "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+      "code": "tag v0.2.0",
+      "added": "2026-10-12"
+    },
+    {
+      "point": "M1",
+      "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+      "code": "H7",
+      "added": "2026-10-12"
+    },
+    {
+      "point": "M2",
+      "commit": "78d79f5b4495ab7cf7bac5cd2907b25b78c74540",
+      "code": "H4, with H7",
+      "added": "2026-10-12"
+    },
+    {
+      "point": "M3",
+      "commit": "9d3f36947abdafba35eb657dd5e2e895f5ac14d3",
+      "code": "H9(a), with H7 and H4",
+      "added": "2026-10-12"
+    }
+  ]
+}

@@ -534,3 +534,111 @@ kept is decided by this amendment (regenerated and checked by hash); where the
 reference cases of item e are kept is pending; the drand round of the confirmation
 population (its number, committed before the round is published); the coverage
 requirement of the calibration.
+
+## Amendment 2 (2026-10-12): independent harness review
+
+An independent review (Phase G) of the harness at commit `6e57b35` found no blocking
+issue, three corrections required before the first generation (C1 to C3) and notes N1 to
+N10. The harness was corrected before any case of the development population was
+generated or analyzed. No criterion, size, band, mechanism, seed rule or limit changes.
+
+**What changed in `population/population.py`** (one line each):
+
+- **C1, point, commit and results.** `population/points.json` binds each point name to a
+  full commit; `analyze` and `orchestrate` refuse an unknown point, an installed Refute at
+  another commit and a dirty `src/` (tracked changes and untracked files); every run
+  records the binding (point and full commit), the SHA-256 of `points.json` at that moment
+  and the commit of the repository it was in; `metrics` checks each run's binding against
+  that point's line in `points.json`, checks through git that the recorded file existed at
+  the recorded commit, and refuses to join runs of one point whose checkout, manifest,
+  harness, plan or environment fingerprint differ.
+- **C2, refused attempts.** A refusal before dispatch (no case analyzed in that attempt)
+  is recorded in `attempts/` with `"results": "none"` and does not invalidate the run in
+  `metrics`, which lists it; an attempt that dispatched cases goes through every
+  provenance check, and every result names the attempt that wrote it.
+- **C3, missing cache.** Before dispatch, every pending input must exist in the cache and
+  match the manifest's SHA-256; a missing input stops the run (no result is written for
+  it, the attempt is recorded), and a divergent hash is recorded and stops the run for
+  investigation. The expected hash is never updated and nothing is redone in silence. The
+  `refused` result status of the earlier harness no longer exists.
+- **N1, thread configuration.** `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`,
+  `MKL_NUM_THREADS` and `NUMEXPR_NUM_THREADS` are set to 1 at the top of the harness,
+  before NumPy or Refute is imported, in the generator and at every point; threadpoolctl
+  confirms one thread in every pool of the main process and of every worker (with one
+  worker too), and the harness refuses to run otherwise. Determinism was checked again
+  after this change (self-test 3).
+- **N3, overall approval.** `metrics` publishes an overall result that requires every
+  criterion, C6 included; the report says that a rate can meet its limit while the study
+  fails.
+- **N4.** The counts of the regeneration check are written as structured data in the
+  `2-regenerated` record of each lot; `orchestrate` and its subprocesses write their
+  output without buffering.
+- **N7, more results in `metrics`.** Paired comparisons by band and noise model in
+  conditions (i) and (ii), and in condition (ii) also by catalog variant (the aggregate
+  comparisons are kept as additional information); results by mechanism in both
+  conditions; redraws aggregated by class, band and mechanism; and every family whose
+  point estimate is worse than the limit of its criterion is named automatically.
+- **N8, integrity in `metrics`.** Every result is validated; its file name must be its
+  case; with `--records`, its SHA-256 must equal the one in the `results-reread` records
+  of `orchestrate`; a case id may appear only once per point; the output folder is created,
+  or an existing output refused, before anything is computed.
+- **N9, cleanup root.** `--project` must be the top of the harness's repository; the
+  lot files (`lot-*.txt` and the check report) are removed at the end of each lot, after
+  the results are re-read, only inside `.cache/population/`.
+- **N10, environments and errors.** A point's Refute must be the editable install of
+  that point's worktree. See "Errors and interruptions" below.
+
+**N2, two SNRs.** The SNR that places a case in its band (section 3) is computed under the
+chosen noise model, without the noise of the pixel data. For a blend, the light curve
+analyzed comes from aperture photometry of the rendered pixels, which adds noise, so the
+SNR with that noise is lower than the band SNR. In the review's example with white noise
+(600 ppm plus about 183 ppm from the pixels) the ratio is about
+600 / sqrt(600^2 + 183^2) = 0.9565, 4.4% lower. That percentage does not extend to the
+AR(1) model, where the effect depends on the covariance and on the number of cadences.
+The bands do not change; every report states that blend bands use the SNR without the
+pixel noise.
+
+**N5, seed rules (checked against the harness code).**
+
+- Case seed: the first 8 bytes, big-endian, as an unsigned integer, of the SHA-256 of the
+  UTF-8 string `<prefix>|<class>|<band>|<noise>|<index>`, with `<class>` one of
+  `planet`, `false_positive`, `no_transit`; `<band>` one of `below`, `near`,
+  `measurable`, or `none` for the cases without an injected transit; `<noise>` one of
+  `white`, `correlated`; `<index>` the decimal index without padding.
+- Prefixes: `refute-v0.2.1-population-dev` (development), `refute-v0.2.1-population-selftest`
+  (self-tests); for the confirmation, the prefix is the randomness string of the drand
+  round, as published by drand.
+- Attempt `k >= 1` of a redraw uses `sub_seed(seed, "redraw", k)`; attempt 0 uses the case
+  seed. `sub_seed(x, a, ...)` is the same 8-byte big-endian reading of the SHA-256 of the
+  decimal `x` and the parts joined by `|`.
+- With `seed_k` the seed of the accepted attempt: noise from
+  `numpy.random.default_rng(sub_seed(seed_k, "noise"))` (that is, of `<seed_k>|noise`); the
+  auxiliary data from `sub_seed(seed_k, "aux")` (`<seed_k>|aux`), passed to `make_aux` of
+  v0.2.0, which builds `numpy.random.default_rng(seed + 1000)`; for a blend, the harness
+  builds `numpy.random.default_rng(sub_seed(seed_k, "aux"))` itself, without the `+ 1000`.
+
+**N6, commensurate periods.** The ratio tested in 4.4 is `P_eclipse / P_var`, against every
+fraction `p/q` with `q <= 4` and `p <= 80`, with an absolute tolerance of 0.01. With
+`P_eclipse <= 5.5` d and `P_var >= 0.3` d the ratio is at most 18.33, so `p <= 80` covers
+every fraction that can occur (at most `p = 74` with `q = 4`).
+
+**`points.json`.** Only receives new points, added at the end. An association already
+used never changes: a change is a new point. A new point is committed before its
+measurement (the harness refuses a `points.json` that is not committed unchanged). Each
+run records the association it used, the SHA-256 of `points.json` and the repository
+commit, and `metrics` refuses a run whose recorded file is not found at that commit or
+whose entries were changed later.
+
+**Errors and interruptions.** An exception raised by the analysis of a case becomes a
+permanent result with status `error`: it stays in every denominator, is published and is
+investigated; correcting it needs a new attempt (a new harness or new code), never a
+replacement of the result. An infrastructure failure (`MemoryError`, `OSError`, an
+interruption, an input missing from the cache or with a different SHA-256) stops the run
+without writing a result for the case; the attempt is recorded and may be resumed only for
+the cases without a result, with the same inputs, environment and harness. This also
+applies to infrastructure errors already recorded: their attempt records stay as they
+are, and no result is ever replaced in silence.
+
+**Self-test.** `population/selftest-3/` tests the corrected harness (the earlier
+`selftest/` and `selftest-2/` are left as they were). Self-test outcomes are not a
+measurement.
