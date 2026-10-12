@@ -2271,6 +2271,8 @@ def mode_orchestrate(args) -> int:
         write_atomic(records / name, dumps_json(payload).encode("utf-8"))
 
     def remove(f: Path) -> str | None:
+        if f.is_symlink():
+            return None
         f = f.resolve()
         if project_cache in f.parents and f.is_file():
             f.unlink()
@@ -2366,7 +2368,9 @@ def mode_orchestrate(args) -> int:
             f"{prefix}-3-results-reread.json", {"lot": n, "utc": now(), "results_sha256": hashes}
         )
         deleted = [d for d in (remove(cache / f"{i}.rpc") for i in lot) if d]
-        lot_files = [d for d in (remove(lot_file), remove(report_file)) if d]
+        # This lot's list and check report, and those left by its interrupted attempts.
+        own = {*cache.glob(f"lot-{n:04d}-*.txt"), *cache.glob(f"lot-{n:04d}-*-check.json")}
+        lot_files = [d for d in (remove(f) for f in sorted(own | {lot_file, report_file})) if d]
         record(
             f"{prefix}-4-inputs-deleted.json",
             {"lot": n, "utc": now(), "deleted": deleted, "lot_files_deleted": lot_files},
