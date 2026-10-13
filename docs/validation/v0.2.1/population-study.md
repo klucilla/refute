@@ -697,3 +697,382 @@ starts an archive in Zenodo.
 checked (two generations in separate processes, byte-identical), is committed and frozen
 at `population/manifest-dev.json`, with `population/manifest-dev.README.md` beside it
 (generation environment, SHA-256 of the manifest, generation times, counts and redraws).
+
+## Amendment 4 (2026-10-13): harness v2, machine qualification, generation and analysis rules
+
+Decided by the maintainer on 2026-10-12 and 2026-10-13, after the divergence of the
+development generations of 2026-10-12. No criterion, size, band, mechanism, seed rule or
+limit changes.
+
+**What happened.** The v1 harness (`population.py`, SHA-256
+`408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225`) generated the
+development population several times, hash only, in separate processes. Manifests B, A2, A3,
+B2 and D are byte-identical (manifest B, SHA-256
+`4073d96a0bce901a31241d5c2dd3d7b46192a4731a4ec3996ea1077039b833e9`); manifest A differs from
+them in 2 of 5200 cases (`planet-below-white-0016` and `planet-below-white-0100`) and manifest
+C in 1 (`no_transit-none-white-1731`); nine instrumented repetitions had no divergence. No
+divergent byte was captured, so the difference cannot be located below the whole case. These
+generations are diagnostics: none is a frozen manifest, and none is ever approved
+retroactively.
+
+**What this amendment adds.** A new harness, `population/population_v2.py` (SHA-256
+`2e001aac326ae92d1f8608aab24bd88184ead0e0c5180e0bdf6282a9cafc6067`), with its comparator `population/population_compare.py` (SHA-256 `d05716c52397332f89746bfe317f98eb6245b023b81c4178f8fe4b3f49379ab0`,
+schema `refute-population-compare/1`) and the D6 test script `population/d6.py` (SHA-256
+`1640cb47fc1ceb3ff18007e6ab5f26c3cd7f22e648b560c8cc5c915473b458fa`). `population.py` stays as it is. The case bytes do not change: v2 builds and
+serializes every case exactly as v1 (`refute-population-serialization/1`). The rules below
+were written before the implementation, in the specification
+`population/harness-v2-spec.md` (revision 6, committed next to the harness, SHA-256
+`4433584194bf6bb93467f9d34c86e164e532b36aef013beacf9e73a381d83769`) and in the D6 proposal
+(revision 4, SHA-256 `891cdcf421b212950a46984e6ecbcf2c4f735b2ae1b05c6b9c863f0b78b3eebb`,
+written in Portuguese and kept with the maintainer's diagnostic records; its rules are
+restated in English in item 15). The other documents the specification cites (the D7 report
+and its errata, the Codex reviews) are also diagnostic records, not in the repository. Where
+this text and those drafts differ, this text governs.
+
+### What Amendment 4 replaces, keeps and extends
+
+| Earlier text | Amendment 4 |
+|---|---|
+| Amendment 1, item a ("It runs twice, in separate processes; the two manifests must be identical byte for byte.") | **Replaced** by the rule of K = 3 generations and N = 3 sets (item 6). "The manifest is then committed and frozen. Only after that do M0 and the other points begin." and "The expected hash is never updated ... no case is removed" are **kept**. |
+| Amendment 1, item b (serialization) | **Kept** (the same bytes). |
+| Amendment 1, item c (frozen generation environment; the manifest records the environment) | The environment is **kept** (tag v0.2.0 only). **Where it is recorded changes**: the environment, thread variables and pools and the random generator move from the manifest to the execution record of each generation, so that the K scientific manifests of a set can be identical; v2 adds the machine record and the dispatch check (items 3 and 4). |
+| Amendment 1, item d (lots) | **Extended**: every lot is analyzed in two slots (item 7). |
+| Amendment 2, C3 (a divergent input hash stops the run) | **Kept**; the divergence now also writes a lock (item 5). |
+| Amendment 2, N10 (infrastructure failures may be resumed) | **Restricted**: an observed divergence is never an infrastructure failure; in generation, an interrupted generation is never resumed (its set is consumed); resumption after an infrastructure failure remains only for analysis, per slot. |
+| Amendment 3, R1 and R2 | **Extended** (item 9). |
+| Amendment 3, N-c | **Kept**, with one declared exception: the manual, approved commits of lock markers, journal entries and resolutions. |
+| Protocol section 9 (a new confirmation needs a new future drand round) | **Restated**: if the code, the harness, the generation, the comparator or the plan change after the confirmation has been examined, the attempt is preserved and published and the new confirmation needs a new future drand round; the comparison with manifest B never applies to it. |
+| Protocol section 10 (where results go) | **Adjusted** (item 11). |
+
+### 1. Machine qualification (a prerequisite of every campaign on this machine)
+
+The campaign runs only on the current machine (AMD Ryzen 9 5900XT, Gigabyte B550M AORUS ELITE
+AX, BIOS F8d, 4 x 16 GiB without ECC). No generation of a new campaign starts unless the
+qualification's result is PASS. The criteria were fixed before any qualification test ran:
+
+- **MemTest86:** at least 4 full passes of the declared test set, all testable RAM, zero
+  errors.
+- **y-cruncher:** version and configuration fixed before the run, an explicit list of
+  components, at least 4 effective hours with every component completing a cycle, zero
+  verification errors, hangs or unexpected restarts. The four hours are a requirement of the
+  project, not a certification by the tool's author.
+- **Result:** PASS (every requirement executed and met; only PASS allows a campaign), FAIL (an
+  error or instability observed) or INCOMPLETE (an interruption or a requirement not executed;
+  redone from the start and in full). After a FAIL, a new qualification is valid only with an
+  identified cause and a documented corrective action. Every attempt, the failed ones
+  included, is recorded and published. A relevant later change (BIOS, microcode, memory, CPU
+  tuning, the EasyTune profile, operating system, NumPy build) invalidates the qualification.
+
+**The qualification of 2026-10-12 and 2026-10-13:**
+
+- **y-cruncher, attempt 1 (2026-10-12): FAIL.** Version 0.8.7 Build 9547 (binary
+  `19-ZN2 ~ Kagari`), configuration file `qualificacao-refute.cfg`: `StressTest`,
+  `AllocateLocally` true, logical cores 0 to 31, 41768774400 bytes, 120 s per test, 15000 s in
+  total, `StopOnError` true, tests BKT, BBP, SFTv4, SNT, SVT, FFTv4, N63, VT3. One verification
+  error in N63 on logical core 8 (`ConvolutionFailedException: Coefficient is too large`); no
+  hardware event in the Windows log.
+- **A diagnostic (2026-10-12), not an attempt:** N63 alone, 32 threads, about one hour, Stop on
+  Error off: 29 of 29 iterations without error. It does not cancel the FAIL and does not
+  identify the component.
+- **MemTest86 (2026-10-12 to 2026-10-13):** 4 passes, about 12 hours, memory at 2666 MHz and
+  1.20 V (the daily configuration). Tests 0 to 10 without errors. Test 13 (Hammer) failed in
+  the 4 passes: 26 errors, all at the physical address `0x8C7CBD968` (about 35 GiB) and in the
+  same bit, always from 1 to 0, also at the slow rate.
+- **Probable cause, not demonstrated:** a weak DRAM cell, sensitive to row hammer, in one of
+  the four modules. It is the probable cause of the three generation divergences and of the
+  y-cruncher error of attempt 1 (an isolated, rare and silent bit, with no WHEA event on memory
+  without ECC). It is not demonstrated, because no divergent byte was captured.
+- **Corrective action:** the physical page `0x8C7CBD` (4 KiB) is excluded from use by Windows
+  (BCD `badmemorylist`). No module was removed or replaced. The entry was checked by the
+  maintainer, as administrator, on 2026-10-13.
+- **The MemTest86 criterion was changed by the maintainer after seeing the result, and is
+  recorded as such:** the run of 2026-10-12 to 13 is accepted, because tests 0 to 10 had no
+  errors and every error of test 13 was confined to a single address, whose page is excluded.
+  Reason: the exclusion holds only inside Windows, and MemTest86 runs outside it. Under the
+  criterion written before the tests (zero errors), this run would have been a FAIL.
+- **Residual risk, declared:** the module is still defective and may have other weak cells
+  that were not detected; the exclusion holds only while the memory configuration and the BCD
+  do not change. The protections of the study (K = 3 in generation, two slots in analysis)
+  turn an error of this kind into a block, not into an accepted result.
+- **Invalidation:** the qualification is invalid if any later test shows an error at another
+  address, or if the memory, the BIOS or the `badmemorylist` entry changes.
+- **y-cruncher, attempt 2 (2026-10-13, about 04:27 to 08:40): PASS.** Version 0.8.7 Build
+  9547, configured by hand (the program did not find the `.cfg` file): 32 logical cores,
+  45.8 GiB (1.43 GiB per thread), NUMA local, 120 s per test, 15000 s in total, Stop on Error
+  on, the 8 tests. 15 complete cycles (iterations 0 to 14) with the 8 tests passed; iteration
+  15 ended by the 15000 s limit; zero errors, no hang and no restart.
+- **State: QUALIFIED, under the conditions above.** The cause of attempt 1 remains probable,
+  not demonstrated. The three fatal machine-check events in the Windows log (2026-07-30,
+  2026-08-23 and 2026-08-24) predate the processor replacement of September 2026 and are no
+  evidence about the current processor.
+
+### 2. Identity and eligibility
+
+- **Common identity** (`campaign_id`, the SHA-256 of the committed campaign declaration, the
+  chain and the set) is carried by the scientific artifacts (manifest and block index), which
+  carry nothing that varies between generations.
+- **Execution identity** (the common identity; the generation, or the point, lot and slot; a
+  new `execution_id` per process start; `attempt`; `eligibility`; `origin`: mode, harness
+  SHA-256 and HEAD commit) is carried by every execution artifact.
+- A campaign lives in `population/campaigns/<campaign_id>/` (declaration, journal, lock
+  markers, resolutions) and has eligibility `campaign`: every check is enforced. A campaign
+  declared under any other folder is a **diagnostic**: its declaration says
+  `"eligibility": "diagnostic"`, every artifact it writes is `diagnostic`, the git checks are
+  recorded but not enforced, and it can never be accepted as campaign evidence. Renaming,
+  moving or copying files does not change their identity; a diagnostic is never promoted.
+- There are two chains, `development` and `confirmation`. A declaration names its chain, its
+  predecessor and the sets the chain has already consumed; a new campaign never resets its
+  chain's counter. The development chain starts with the v1 generations, a diagnostic
+  predecessor that consumes no set.
+
+### 3. Generation records
+
+- **Scientific manifest** (`refute-population-manifest/2`): format, serialization, population,
+  harness SHA-256, generator commit and `synthetic.py` SHA-256, thresholds, call sequence, the
+  common identity, the block size, the SHA-256 of the block index, and every case entry. A case
+  entry holds the v1 fields and, computed over slices of the final bytes: the whole SHA-256
+  (computed twice with two fresh `hashlib` objects; unequal digests are an integrity error, a
+  detector of transient errors, not independent of a systematic defect), the layout (header
+  length and, per segment in blob order, name, dtype, shape, offset, length and SHA-256; the
+  segments `magic`, `header_length`, `header` and every array cover every byte without gaps)
+  and the SHA-256 of its block list.
+- **Block index** (`refute-population-blocks/1`): the SHA-256 of every block of 1 MiB of every
+  segment of every case. The bytes of whole generations are not retained.
+- **Execution record** (`refute-population-execution/1`), one per generation: the execution
+  identity, the configuration (workers, order, affinity, thread variables and pools, the
+  dispatch table of the main process and of every worker), the machine record (Python, NumPy
+  and its bundled libraries with their hashes, the wheels of `uv.lock`, operating system, UCRT,
+  CPU and microcode, BIOS, board, memory, ECC, the EasyTune service, and the settings declared
+  by the maintainer), timings, the SHA-256 of the manifest and block index it produced, and
+  the operational data of every case (PID, position in its process, times).
+- **Localization concession (accepted by the maintainer).** A divergence is detected by the
+  hashes. Without the original bytes, the localization may end at the block (one segment and
+  one block of at most 1 MiB); the element, the bits and the magnitude may not be known. A
+  later regeneration is a new observation, never a capture of the earlier one.
+
+### 4. Dispatch and cache
+
+- The campaign declaration holds the closed inventory of NumPy dispatch: every function and
+  signature of `numpy.lib.introspect.opt_func_info()` with its `current` target, and the value
+  of `NPY_DISABLE_CPU_FEATURES`. The main process and every worker read the effective table
+  before the first case; any difference, missing entry or unreadable table ends the execution.
+  The table covers NumPy's dispatched loops only, not OpenBLAS, SciPy, Astropy or other
+  compiled code.
+- A case written to the cache never replaces a different existing file: equal bytes are kept;
+  different bytes leave the existing file untouched, are written beside it as
+  `<case>.<sha256>.rpc`, and end the execution with a lock.
+
+### 5. Journal, lock markers and closure
+
+- Each campaign has an append-only, hash-chained journal (`journal.jsonl`). Entries:
+  `started` (before the first dispatch), `process` (every worker as it starts, with its PID),
+  `closed` (after every recorded process has ended, verified by PID), `interrupted`,
+  `reconciled` (the maintainer's record of an execution whose closure cannot be shown; it
+  counts as interrupted), `divergence`, `accepted` (a set) and `compared` (two slots).
+- At a divergence (generation, cache, input hash, slots, reconciliation of records or metrics)
+  the harness writes a lock marker keyed by the campaign (`locks/`) and a `divergence` entry,
+  dispatches nothing more, and waits for its processes.
+- Every campaign mode refuses while a lock marker or a `divergence` entry has no committed
+  resolution, while an execution has `started` without `closed` or `reconciled`, or while the
+  journal chain is broken; the lookup is by campaign, whatever run directory is used. Deleting
+  a marker is not a resolution (the `divergence` entry still blocks, and a marker deleted from
+  git is found in the history). A lock is lifted only by a committed resolution record that
+  names the lock by its SHA-256 and applies a rule registered in the declaration.
+- **The harness never runs a git command that writes.** Committing markers, journal entries
+  and resolutions is a manual step approved by the maintainer, after every process has
+  stopped. **Accepted risk, not resolved:** until that commit, the marker and the journal exist
+  only on disk and could be deleted or altered by hand; every report repeats it.
+
+### 6. Generation rule and budget (decided by the maintainer)
+
+- A **set** is K = 3 generations of the whole population, each in a new main process with new
+  workers, in configurations declared in advance (proposed: 24 workers in index order, 12
+  workers in a declared shuffled order, 24 workers in another declared shuffled order). A set
+  is complete when its three manifests and block indexes are byte-identical; each generation
+  is compared with the earlier ones of its set as soon as it ends.
+- `check-set` accepts the first complete set only if every execution of the campaign is
+  closed and the **blocking comparisons** find nothing: no case differs from a value that
+  appeared in two or more generations of another set of the campaign; and, for the
+  development population only, every case's SHA-256 equals manifest B. These comparisons can
+  only block. The accepted manifest is then committed and frozen. Cases or executions of
+  different sets are never combined.
+- **Budget:** N = 3 sets per campaign; at most 6 sets in the development chain and 6 in the
+  confirmation chain. A set consumes budget when its first generation starts, also when it
+  ends interrupted or divergent; an interrupted generation leaves its set incomplete and
+  consumed, never completed by another generation. Reaching the ceiling prevents new sets
+  only: the sixth set, if complete, unanimous and unblocked, is accepted normally; otherwise
+  the chain is blocked and published. The ceiling is never raised after failures are seen; the
+  number 6 is a decision of cost and governance with no statistical guarantee. A software or
+  environment change opens a new campaign in the same chain. This budget applies to
+  generation only.
+
+### 7. Analysis rule: two slots
+
+- Every lot is analyzed at every point in two slots, each an independent execution (new main
+  process and workers), on the same inputs checked by hash, with the same configuration; the
+  slots differ only in the order of the cases (two permutations of the population frozen in
+  the declaration with their SHA-256).
+- An interrupted slot resumes only its own remaining cases (infrastructure only); a result
+  never migrates between slots.
+- The two complete records of every case are compared with the comparator's profile `slots`.
+  A divergence writes a lock and blocks the lot and the approval; there is no repetition until
+  agreement and no majority vote. Resuming after an investigation needs a report that
+  identifies the cause or declares it unknown, delimits the scope and applies a rule
+  registered in the declaration; a correction is a new version and a new campaign.
+
+### 8. Complete scientific record, envelope and typed contract
+
+- Per case, point and slot: `refute-population-result/3`, with exactly the members `/format`,
+  `/identity`, `/case`, `/input` (SHA-256 of the bytes read and of the manifest entry),
+  `/status` (`analyzed` or `error`; a missing record counts as `missing`), `/traceback` (only
+  with `error`), `/conditions/i` and, except without transit, `/conditions/ii` (each with
+  `/scientific`, the complete output of `build_result` of the code being measured, and
+  `/harness_outcomes`: signal identity, its factor, the verdict without `eb_catalog`),
+  `/configuration` (thread variables, pools, dispatch table SHA-256), `/operational` (PID,
+  seconds, peak memory, times, position in the process), `/comparison` and `/integrity`.
+  Records are never rewritten: the effective comparison status and integrity come from the
+  comparison reports and the locks.
+- **Typed contract** (closed list; anything else is a harness error with status `error`):
+  `None`, booleans, integers in the int64 range, strings, lists, tuples, dicts with string keys;
+  every `float` and `numpy.float64` as `{"f64": <16 hex digits, big-endian binary64>, "dec":
+  <repr>}`, the bits taken from the original value (sign of zero and NaN payload kept), a
+  finite `dec` checked to give the same bits. `numpy.float32`, `numpy.float16`, arrays and
+  other types are errors. JSON is UTF-8, keys sorted, no spaces.
+
+### 9. Comparator (`refute-population-compare/1`), R1, R2, N10 and N-c
+
+- **Blobs:** structure first (each blob's layout parsed on its own; a structural difference is
+  reported as such), then bytes (first differing offset, segment, block; for the header, the
+  JSON paths; for an array, the first differing element and the count), then, only as an
+  explanation, absolute and relative differences and ULPs; differences only in the sign of
+  zero or in a NaN payload are counted apart and never treated as equal. Without bytes, from
+  the manifest entries and block indexes, it locates the segment and the block.
+- **Records:** structure, then values by their typed encoding, skipping exactly the paths of
+  the named profile. There is no default profile. **`slots`** excludes exactly
+  `/identity/slot`, `/identity/execution_id`, `/identity/attempt`,
+  `/identity/origin/harness_commit`, `/operational/pid`, `/operational/seconds`,
+  `/operational/peak_memory_mb`, `/operational/started_utc`, `/operational/ended_utc`,
+  `/operational/sequence_position`, `/comparison/status`, `/comparison/report_sha256` and
+  `/integrity` (a record with `/control` is an error under it). **`d6-science`** excludes
+  those 13 plus `/configuration/thread_env`, `/configuration/threadpools`,
+  `/configuration/dispatch_table_sha256` and `/control`. **`d6-control`** compares only
+  `/control`. Every report records the profile and the SHA-256 of its definition
+  (`slots` `a3e7e797828786b513221071666ff78e1ec07d5ef0158cce8d4cd2b403c95571`, `d6-science` `ce6816bea4354535901c34657e604d495ad24590284404ea18887efeaefca084`, `d6-control` `86f232108d6be8fdf5630a8801b560406098705d79f40d5c023081dc73d1019a`). The comparator's file
+  SHA-256, version, schema and profiles are frozen in the campaign declaration.
+- **R1 (extended).** A lot is finished only when both slots have every result valid at every
+  point, each slot has its record 3 (results re-read, with hashes), the comparison of the two
+  slots has every case identical (record 3c, with its hash), and record 4 (inputs deleted)
+  exists. The completion rules of Amendment 3 apply per slot; a missing comparison is run
+  before record 4; any divergence between records and results, or between slots, writes a
+  lock.
+- **R2 (extended).** Every campaign mode refuses unless `population_v2.py` and
+  `population_compare.py` are, byte for byte, the files of HEAD and their SHA-256 equal the
+  declaration.
+- **N10 (restricted)** and **N-c (kept)** as in the table above.
+
+### 10. Metrics and the integrity-failure report
+
+- C1 to C6, their limits and bounds do not change. A blocked lot, a divergent case and a case
+  `missing` or `error` in either slot count as integrity errors in C6.
+- Before computing anything, `metrics` reconciles: every case of the frozen manifest exactly
+  once per point and slot, with a valid record; the denominators per stratum equal the
+  manifest's counts; the records equal records 3 and the comparisons 3c; and, with
+  `--check-against`, the recomputed metrics equal the ones already recorded. Any mismatch
+  writes a lock.
+- `metrics --integrity-report` (for a locked campaign) reads every lock, divergence,
+  resolution and execution, never lifts or requires lifting a lock, never computes an
+  approval, and writes a publishable report whose approval is "BLOCKED: integrity failure".
+
+### 11. Records: where they go (adjusts protocol section 10)
+
+Committed (manually): the campaign declaration, journal, lock markers and resolutions; per
+lot, the index of the SHA-256 of every result record; the aggregated metrics; every divergence
+in full (both records, the comparison report, the lock). Published as a compressed release
+asset: the complete result records (pending the Zenodo question of Amendment 3). Measured in
+the self-test: about 63 KB per record (one case, one point, one slot), so about
+2.6 GB for the development population at four points and two slots.
+
+### 12. Prohibitions
+
+Never update a frozen manifest or any expected hash to accept an observed variant. Never
+regenerate or re-analyze until a result matches, and never use a later coincidence as the
+resolution of an earlier divergence. Never replace the evidence of an earlier attempt. Never
+combine cases or executions of different sets, slots or campaigns. Never accept a diagnostic
+artifact as campaign evidence.
+
+### 13. The determinism and measurement population
+
+`population determinism`: the cases of the development structure built with the prefix
+`refute-v0.2.1-population-determinism`, keeping, in every class, band and noise model, the
+index `10 j + (j mod 5)` for `j = 0, 1, ...` (one case in ten consecutive indexes): 520 cases,
+10 % of every block, with the same mix of classes, bands, noise models, mechanisms and catalog
+variants as the development population, and including the mechanisms that diverged (planets
+below threshold with white noise, two and three years; no transit with trend and variability,
+white noise). v1 builds the same cases with `--population
+confirm:refute-v0.2.1-population-determinism` and `--cases-from` the list of their ids.
+
+### 14. Overhead per generation (fixed before any campaign is frozen)
+
+One v2 generation may take at most 25 % more time than one v1 generation of the same
+population, machine, workers and order. Measurement: the determinism population, hash only,
+24 workers, index order, six runs alternating v1 and v2, each a new process; overhead =
+median(v2) / median(v1) - 1 on the wall time of each process; accepted at 20 % or less.
+**Measured in the self-test: 12.0 %** (wall time per process, v1 34.2, 34.4, 33.6 s, v2 39.6, 38.3, 37.8 s; medians 34.2 and 38.3 s). **Decision: the double hash
+is kept.** It is recorded in every campaign declaration and never changes during a campaign.
+
+### 15. D6 (a requirement of v2, not yet run)
+
+D6 (`population/d6.py`) tests systematic dependence of the analysis on the process history,
+the order of the cases, the partition between workers and the NumPy dispatch target, in the
+contrasts of a declared matrix only. Its inputs: a closed list of 40 cases of the determinism
+population, chosen by a rule declared in `d6.py` from the generation parameters (never from
+analysis results), generated in K = 3 new processes and accepted as a diagnostic campaign.
+Seven configurations, each run twice in new processes at M0 and M3: F (a new process per
+case), R-idx, R-rev and R-shf (one process, index, reverse and a declared shuffled order),
+P24 and P12 (24 and 12 processes, worker w receiving the fixed list `cases[w::24]` or
+`cases[w::12]`), and E (as R-idx, with `NPY_DISABLE_CPU_FEATURES=X86_V3`). Contrasts:
+F x R-idx, R-rev x R-idx, R-shf x R-idx, P24 x P12, E x R-idx and P24 x F, plus the two
+repetitions of every configuration.
+
+- **Check 1:** the observed configuration (thread variables, pools, dispatch table) against
+  the one declared for each variant, and the observed sequence (each declared process
+  position, with its PID, analyzed exactly its declared list in order; no case analyzed twice).
+- **Check 2:** the science between variants with the profile `d6-science`.
+- **Control pass:** every D6 record carries `/control/cases_before_in_process`; the profile
+  `d6-control` must report a difference exactly where the declared assignment makes the value
+  differ, and nowhere else.
+- **Negative control:** injected differences in copies of records (a changed character, the
+  sign of a zero, a NaN payload, a header field, a metric value, a missing field, an extra
+  field, a float whose `dec` and `f64` disagree) located by `d6-science`; a control difference
+  ignored by `d6-science` and found by `d6-control`; a copy of E's execution record with the
+  default dispatch table refused by check 1.
+- **Result:** PASS only with all six conditions of a valid conclusion (every analysis present;
+  every status `analyzed`; inputs verified; records complete and valid under the typed
+  contract; integrity and every execution closed; check 1 and the negative control passed) and
+  no difference in check 2. FAIL on any scientific difference, a control that misreports, or a
+  record with status `error`. INCOMPLETE on a missing analysis, an execution invalidated by
+  check 1, an interruption or an input that does not match its hash; an INCOMPLETE D6 is
+  redone from the start, in full. Only PASS meets the requirement. A negative result holds
+  only for the contrasts of the matrix and the inputs exercised.
+
+D6 runs only when the maintainer releases it. The self-test ran its machinery once, on 13
+cases at M3 only (a smoke run, not the D6).
+
+### 16. Revalidation before any campaign
+
+Reference cases with their SHA-256
+(`f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e`,
+`a7dd6266f4ffd30f3cead01987a301c64db2086791a7296e0db55f3f416055c4` and
+`1817b9f776969ae050ba6cd7b1849dda968595041dabe37711390cec7b37b724`); the determinism
+cases in K = 3 new processes, identical in every segment and block; the injected differences
+located by the comparator (with and without the bytes) and in result records; the journal and
+the lock; the overhead per generation; the size of the records; D6 with result PASS; the
+machine qualification with result PASS, recorded before the campaign declaration. The
+self-test of v2 is in `population/selftest-v2/` (every check passed; the D6 smoke run of 13 cases at M3 gave PASS, which is not the D6); D6 is pending.
+
+### 17. Residual risk
+
+Three identical generations and two identical slots make an undetected transient error
+unlikely, but do not demonstrate the absence of a defect and do not detect a systematic one.
+D6 tests systematic dependence only on its matrix. The cause of the 2026-10-12 divergences is
+probable, not demonstrated.
