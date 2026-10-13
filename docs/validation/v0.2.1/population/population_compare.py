@@ -135,6 +135,10 @@ def is_typed_float(value) -> bool:
     )
 
 
+def _bits_ok(bits) -> bool:
+    return isinstance(bits, str) and len(bits) == 16 and all(c in "0123456789abcdef" for c in bits)
+
+
 def float_problem(value: dict) -> str | None:
     """Why a typed float is invalid (None if it is valid): 16 lowercase hex digits, and a
     ``dec`` that names the same value (non-finite: ``nan``, ``inf``, ``-inf`` by class; finite:
@@ -228,6 +232,8 @@ def record_problems(rec, name: str) -> list[str]:
                 problems.append(f"{name}{path}: invalid typed float: {p}")
         elif item[0] == "unsupported":
             problems.append(f"{name}{path}: unsupported value {item[1]}")
+        elif item[0] == "int" and not -(1 << 63) <= item[1] <= (1 << 63) - 1:
+            problems.append(f"{name}{path}: integer outside the int64 range")
     return problems
 
 
@@ -270,7 +276,13 @@ def compare_records(left, right, profile_name: str, *, labels=("left", "right"))
                 differences.append({"path": path, "kind": "length", "left": a[1], "right": b[1]})
         elif a[0] == "float":
             if a[1] != b[1] or a[2] != b[2]:
-                differences.append({"path": path, **float_explanation(a[1], b[1]), "type": "float"})
+                if _bits_ok(a[1]) and _bits_ok(b[1]):
+                    explained = float_explanation(a[1], b[1])
+                    differences.append({"path": path, **explained, "type": "float"})
+                else:  # malformed bits: reported (and the record is invalid), never parsed
+                    differences.append(
+                        {"path": path, "kind": "invalid_float", "left": a[1], "right": b[1]}
+                    )
         elif a[1] != b[1]:
             differences.append({"path": path, "kind": "value", "left": a[1], "right": b[1]})
     status = "invalid" if problems else ("identical" if not differences else "divergent")
@@ -565,7 +577,9 @@ def compare_manifests(man_a: dict, man_b: dict, blocks_a: dict, blocks_b: dict) 
         if ea is None or eb is None:
             cases.append({"case": cid, "status": "only_in_" + ("right" if ea is None else "left")})
             continue
-        if canonical(ea) == canonical(eb):
+        ba = (blocks_a.get("cases") or {}).get(cid, {})
+        bb = (blocks_b.get("cases") or {}).get(cid, {})
+        if canonical(ea) == canonical(eb) and canonical(ba) == canonical(bb):
             continue
         cases.append(
             {
@@ -580,15 +594,19 @@ def compare_manifests(man_a: dict, man_b: dict, blocks_a: dict, blocks_b: dict) 
                 ),
             }
         )
+    block_header = {k: v for k, v in blocks_a.items() if k != "cases"}
+    block_header_b = {k: v for k, v in blocks_b.items() if k != "cases"}
+    same_headers = canonical(header) == canonical(header_b) and canonical(
+        block_header
+    ) == canonical(block_header_b)
     return {
         "format": SCHEMA,
         "comparator_sha256": COMPARATOR_SHA256,
         "kind": "manifests",
         "header_paths": _json_differences(header, header_b),
+        "block_index_header_paths": _json_differences(block_header, block_header_b),
         "cases_compared": len(set(by_a) | set(by_b)),
         "cases_differing": len(cases),
         "cases": cases,
-        "status": "identical"
-        if not cases and canonical(header) == canonical(header_b)
-        else "differs",
+        "status": "identical" if not cases and same_headers else "differs",
     }

@@ -75,6 +75,7 @@ import math  # noqa: E402
 import multiprocessing  # noqa: E402
 import platform  # noqa: E402
 import queue as queue_module  # noqa: E402
+import re  # noqa: E402
 import secrets  # noqa: E402
 import struct  # noqa: E402
 import subprocess  # noqa: E402
@@ -117,6 +118,58 @@ COMPARATOR_BYTES = COMPARATOR_PATH.read_bytes()
 COMPARATOR_SHA256_AT_START = hashlib.sha256(COMPARATOR_BYTES).hexdigest()
 POINTS_PATH = HARNESS_PATH.parent / "points.json"
 DEFAULT_ROOT = HARNESS_PATH.parent / "campaigns"
+# The project folder (the top of the repository): every path the harness writes must be
+# inside it.
+PROJECT_ROOT = HARNESS_PATH.parents[4]
+# Manifest B: the value repeated by the v1 generations B, A2, A3, B2 and D of the development
+# population (Amendment 4, item 6), the reference of every development campaign.
+MANIFEST_B_SHA256 = "4073d96a0bce901a31241d5c2dd3d7b46192a4731a4ec3996ea1077039b833e9"
+VERDICTS = ("SURVIVED", "WEAKENED", "REFUTED", "INCONCLUSIVE")
+CAMPAIGN_ID_CHARS = frozenset("abcdefghijklmnopqrstuvwxyz0123456789.-")
+
+
+def inside_project(path, what: str) -> Path:
+    """The resolved path, which must be the project folder or inside it."""
+    p = Path(path).resolve()
+    if p != PROJECT_ROOT and PROJECT_ROOT not in p.parents:
+        raise SystemExit(f"refused: {what} {p} is not inside the project folder {PROJECT_ROOT}")
+    return p
+
+
+def _user_path_pattern():
+    name = os.environ.get("USERNAME") or os.environ.get("USER") or ""
+    if len(name) < 2:
+        return None
+    return re.compile(
+        r"([\\/]+)(Users|home)([\\/]+)" + re.escape(name) + r"(?=[\\/]|$)", re.IGNORECASE
+    )
+
+
+_USER_PATH = _user_path_pattern()
+
+
+def home_problems() -> list[str]:
+    """The project must not be inside the user's home directory: the masking of the records
+    would then also change the paths the harness reads back."""
+    home = Path.home().resolve()
+    if PROJECT_ROOT == home or home in PROJECT_ROOT.parents:
+        return [f"the project folder is inside the user's home directory ({PROJECT_ROOT})"]
+    return []
+
+
+def mask_user(value):
+    """The value with the user's home directory replaced by ``Users/<user>`` (or
+    ``home/<user>``) in every string, dictionary keys included (records, tracebacks and
+    machine records never carry the user name)."""
+    if _USER_PATH is None:
+        return value
+    if isinstance(value, str):
+        return _USER_PATH.sub(lambda m: f"{m.group(1)}{m.group(2)}{m.group(3)}<user>", value)
+    if isinstance(value, dict):
+        return {mask_user(k): mask_user(v) for k, v in value.items()}
+    if isinstance(value, list | tuple):
+        return [mask_user(v) for v in value]
+    return value
 
 
 def _load_comparator():
@@ -964,10 +1017,13 @@ def store_case(cache: Path, case_id: str, blob: bytes, digest: str) -> tuple[str
         if existing == blob:
             return "kept", None
         side = cache / f"{case_id}.{digest}.rpc"
+        note = ""
         if not side.exists():
             write_atomic(side, blob)
+        elif side.read_bytes() != blob:
+            note = f"; {side.name} already existed with other bytes (left untouched)"
         return "diverged", (
-            f"cache: {path.name} exists with SHA-256 {hashlib.sha256(existing).hexdigest()}; "
+            f"cache: {path.name} exists with SHA-256 {hashlib.sha256(existing).hexdigest()}{note}; "
             f"the new bytes ({digest}) are in {side.name}"
         )
     write_atomic(path, blob)
@@ -1590,10 +1646,11 @@ def run_provenance_problems(camp, point: str, runs: list[str]) -> list[str]:
 
 
 def write_atomic(path: Path, data: bytes, *, exclusive: bool = True) -> None:
-    """Write ``data`` to a temporary file in the same folder and move it into place with
-    ``os.replace``, so that no final file is ever written in parts. With ``exclusive``
-    (the default) an existing final file is never replaced."""
-    path = Path(path)
+    """Write ``data`` to a temporary file in the same folder and move it into place, so that
+    no final file is ever written in parts; only inside the project. With ``exclusive`` (the
+    default) an existing final file is never replaced: the final name is created by a hard
+    link, which fails if the name exists (no window between a test and a rename)."""
+    path = inside_project(path, "the file")
     if exclusive and path.exists():
         raise FileExistsError(f"{path} exists; it is never overwritten")
     tmp = path.with_name(f".{path.name}.tmp-{os.getpid()}-{secrets.token_hex(3)}")
@@ -1601,14 +1658,21 @@ def write_atomic(path: Path, data: bytes, *, exclusive: bool = True) -> None:
         fh.write(data)
         fh.flush()
         os.fsync(fh.fileno())
-    if exclusive and path.exists():
-        raise FileExistsError(f"{path} appeared while writing; left {tmp.name} in place")
-    os.replace(tmp, path)
+    if not exclusive:
+        os.replace(tmp, path)
+        return
+    try:
+        os.link(tmp, path)
+    except FileExistsError:
+        raise FileExistsError(f"{path} appeared while writing; left {tmp.name} in place") from None
+    os.unlink(tmp)  # the temporary name of this process only; the final name stays
 
 
 def write_json(path: Path, obj) -> str:
-    """Write canonical JSON (plus a newline) exclusively; returns its SHA-256."""
-    data = canonical_json(obj) + b"\n"
+    """Write canonical JSON (plus a newline) exclusively, with the user's home directory
+    masked, inside the project only; returns its SHA-256."""
+    path = inside_project(path, "the file")
+    data = canonical_json(mask_user(obj)) + b"\n"
     write_atomic(path, data)
     return hashlib.sha256(data).hexdigest()
 
@@ -1691,10 +1755,15 @@ def typed(value, path: str = ""):
 
 
 def record_bytes(record: dict) -> bytes:
-    """A record already typed: UTF-8 JSON, keys sorted, no spaces."""
+    """A record already typed: UTF-8 JSON, keys sorted, no spaces, the user's home directory
+    masked (in a traceback, for example)."""
     return (
         json.dumps(
-            record, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+            mask_user(record),
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
         ).encode("utf-8")
         + b"\n"
     )
@@ -1711,6 +1780,7 @@ class Campaign:
     declaration: dict = field(default_factory=dict)
     declaration_sha256: str = ""
     problems: list = field(default_factory=list)
+    superseded: bool = False
 
     @property
     def dir(self) -> Path:
@@ -1754,15 +1824,306 @@ class Campaign:
         return chosen
 
 
+def campaign_id_problems(campaign_id: str) -> list[str]:
+    """A campaign id is a single folder name: lowercase letters, digits, dots and hyphens,
+    starting with a letter or digit, at most 64 characters, never ``..``."""
+    ok = (
+        isinstance(campaign_id, str)
+        and 0 < len(campaign_id) <= 64
+        and campaign_id[0] in CAMPAIGN_ID_CHARS - {".", "-"}
+        and set(campaign_id) <= CAMPAIGN_ID_CHARS
+        and ".." not in campaign_id
+    )
+    return [] if ok else [f"campaign id {campaign_id!r} is not a plain folder name"]
+
+
+def strict_declaration_problems(decl: dict) -> list[str]:
+    """The rules a campaign declaration must meet under the default root (Amendment 4,
+    clarifications of 2026-10-13): the whole population, no case list; the chain of the
+    population; manifest B as the reference of the development population and no reference
+    for any other; the qualification and the full D6 named with their SHA-256."""
+    problems = []
+    pop = decl.get("population")
+    if "cases" in decl:
+        problems.append("a campaign declaration cannot restrict the population to a case list")
+    chain = (
+        "development"
+        if pop == "dev"
+        else "confirmation"
+        if str(pop).startswith("confirm:")
+        else None
+    )
+    if chain is None:
+        problems.append(f"population {pop!r} is not a campaign population (dev or confirm:...)")
+    elif decl.get("chain") != chain:
+        problems.append(
+            f"population {pop!r} belongs to the {chain} chain, not {decl.get('chain')!r}"
+        )
+    ref = decl.get("reference_manifest")
+    if pop == "dev":
+        if not ref or ref.get("sha256") != MANIFEST_B_SHA256:
+            problems.append(f"the development population needs manifest B ({MANIFEST_B_SHA256})")
+    elif ref:
+        problems.append("only the development population has a reference manifest")
+    for key in ("qualification", "d6"):
+        item = decl.get(key) or {}
+        if not item.get("path") or not item.get("sha256"):
+            problems.append(f"the declaration does not name the {key} record (path and SHA-256)")
+    return problems
+
+
+QUALIFICATION_FORMAT = "refute-machine-qualification/1"
+D6_PROFILES = ("d6-science", "d6-control")
+
+
+def machine_snapshot() -> dict:
+    """The validity conditions of the qualification that this process can read without
+    elevation: CPU, microcode, BIOS, board and memory modules (CIM and registry)."""
+    cim = _cim_record()
+    reg = _registry_cpu()
+    modules = [
+        {
+            k: m.get(k)
+            for k in ("bank", "locator", "part", "capacity", "configured", "configured_voltage_mv")
+        }
+        for m in cim.get("memory") or []
+    ]
+    return {
+        "cpu_name": (cim.get("cpu") or {}).get("name"),
+        "cpu_processor_id": (cim.get("cpu") or {}).get("processor_id"),
+        "microcode_revision": reg.get("microcode_revision"),
+        "bios_version": (cim.get("bios") or {}).get("version"),
+        "bios_date": (cim.get("bios") or {}).get("date"),
+        "board_product": (cim.get("board") or {}).get("product"),
+        "memory_modules": sorted(modules, key=lambda m: (str(m["bank"]), str(m["locator"]))),
+        "unavailable": cim.get("unavailable"),
+    }
+
+
+QUALIFICATION_CONDITIONS = (
+    "cpu_name",
+    "cpu_processor_id",
+    "microcode_revision",
+    "bios_version",
+    "bios_date",
+    "board_product",
+    "memory_modules",
+)
+MEMORY_MODULE_KEYS = ("bank", "locator", "part", "capacity", "configured", "configured_voltage_mv")
+
+
+def _absent(value) -> bool:
+    return value is None or (isinstance(value, str) and not value.strip())
+
+
+def qualification_condition_problems(want) -> list[str]:
+    """The machine-checked validity conditions must all be present, with values: the seven
+    conditions, and at least one memory module with every field. An incomplete record is
+    refused before any comparison (a condition left out would otherwise never be compared)."""
+    if not isinstance(want, dict):
+        return ["the qualification record has no machine-checked validity conditions"]
+    problems = []
+    missing = [k for k in QUALIFICATION_CONDITIONS if k not in want or _absent(want[k])]
+    if missing:
+        problems.append(f"the qualification record lacks the conditions {missing}")
+    unknown = sorted(set(want) - set(QUALIFICATION_CONDITIONS) - {"note"})
+    if unknown:
+        problems.append(f"the qualification record has unknown conditions {unknown}")
+    modules = want.get("memory_modules")
+    if "memory_modules" not in missing:
+        if not isinstance(modules, list) or not modules:
+            problems.append("the qualification record lists no memory module")
+        else:
+            for i, m in enumerate(modules):
+                if not isinstance(m, dict):
+                    problems.append(f"memory module {i}: not an object")
+                    continue
+                lacks = [k for k in MEMORY_MODULE_KEYS if k not in m or _absent(m[k])]
+                if lacks or set(m) - set(MEMORY_MODULE_KEYS):
+                    problems.append(
+                        f"memory module {i}: fields missing {lacks} or unknown "
+                        f"{sorted(set(m) - set(MEMORY_MODULE_KEYS))}"
+                    )
+    return problems
+
+
+def qualification_problems(qual: dict, snapshot: dict) -> list[str]:
+    """The structured qualification record: result PASS, the seven machine-checked validity
+    conditions present with values, and each equal to this machine now. An incomplete PASS
+    record is refused. The conditions that need elevation (the BCD badmemorylist entry) are
+    attested by the maintainer and not compared."""
+    problems = []
+    if not isinstance(qual, dict) or qual.get("format") != QUALIFICATION_FORMAT:
+        return [f"the qualification record is not {QUALIFICATION_FORMAT}"]
+    if qual.get("result") != "PASS":
+        problems.append(f"the machine qualification record says {qual.get('result')!r}, not PASS")
+    want = qual.get("validity_conditions_machine_checked")
+    incomplete = qualification_condition_problems(want)
+    if incomplete:
+        return problems + incomplete
+    if snapshot.get("unavailable"):
+        problems.append(f"the machine record cannot be read: {snapshot['unavailable']}")
+    for key in QUALIFICATION_CONDITIONS:
+        value = want[key]
+        got = snapshot.get(key)
+        if key == "memory_modules":
+            value = sorted(value, key=lambda m: (str(m["bank"]), str(m["locator"])))
+        if got != value:
+            problems.append(
+                f"qualification condition {key}: the machine has {got!r}, qualified {value!r}"
+            )
+    return problems
+
+
+def prerequisite_problems(decl: dict, snapshot: dict | None = None) -> list[str]:
+    """Section 8.2 and 17: a campaign generation starts only after the machine qualification
+    and the full D6, both named by path and SHA-256 in the declaration. The qualification's
+    result and validity conditions are read from its structured record (never from the
+    declaration) and compared with this machine; the D6 report must be a PASS of the full
+    matrix produced by the current d6.py, harness and comparator profiles."""
+    problems = []
+    for key in ("qualification", "d6"):
+        item = decl.get(key) or {}
+        try:
+            path = inside_project(PROJECT_ROOT / str(item.get("path", "")), f"the {key} record")
+        except SystemExit as exc:
+            problems.append(str(exc))
+            continue
+        if not path.is_file() or file_sha256(path) != item.get("sha256"):
+            problems.append(f"the {key} record is missing or differs from its SHA-256")
+            continue
+        try:
+            doc = read_json(path)
+        except ValueError:
+            problems.append(f"the {key} record is not valid JSON")
+            continue
+        if key == "qualification":
+            problems += qualification_problems(
+                doc, snapshot if snapshot is not None else machine_snapshot()
+            )
+            continue
+        if doc.get("format") != "refute-population-d6-report/1":
+            problems.append("the D6 record is not a D6 report")
+            continue
+        if doc.get("result") != "PASS" or not doc.get("counts_as_d6"):
+            problems.append(
+                f"the D6 report is {doc.get('result')!r}, counts as the D6: "
+                f"{doc.get('counts_as_d6')!r} (a PASS of the full matrix is required)"
+            )
+        d6_path = HARNESS_PATH.parent / "d6.py"
+        current = {
+            "d6_sha256": file_sha256(d6_path) if d6_path.is_file() else None,
+            "harness_sha256": HARNESS_SHA256,
+            "profiles": {n: CMP.profile_sha256(n) for n in D6_PROFILES},
+        }
+        for k, v in current.items():
+            if doc.get(k) != v:
+                problems.append(f"the D6 report is of another version ({k} differs)")
+    return problems
+
+
+def _declarations(root: Path) -> dict[str, tuple[dict, str]]:
+    out = {}
+    if root.is_dir():
+        for d in sorted(root.iterdir()):
+            f = d / "declaration.json"
+            if f.is_file():
+                data = f.read_bytes()
+                try:
+                    out[d.name] = (json.loads(data), hashlib.sha256(data).hexdigest())
+                except ValueError:
+                    out[d.name] = ({}, hashlib.sha256(data).hexdigest())
+    return out
+
+
+def chain_problems(camp: Campaign, root: Path | None = None) -> list[str]:
+    """Section 1 and 8.5: the chain's counter is never reset. The declared predecessor must
+    exist under the same root with the declared declaration SHA-256, have no unreconciled
+    execution, and the sets it consumed plus its own count before must equal this
+    declaration's count before; every other campaign of the chain must be an ancestor (one
+    line per chain). The first campaign of the development chain names the v1 generations as
+    its diagnostic predecessor and counts 0."""
+    root = (root or DEFAULT_ROOT).resolve()
+    decl = camp.declaration
+    chain = decl.get("chain")
+    pred = decl.get("predecessor") or {}
+    before = decl.get("chain_sets_consumed_before")
+    problems = []
+    others = {k: v for k, v in _declarations(root).items() if k != camp.campaign_id}
+    ancestors: set[str] = set()
+    cur = pred.get("campaign_id")
+    if cur is None:
+        want = "v1-diagnostic" if chain == "development" else "none"
+        if pred.get("kind") != want:
+            problems.append(
+                f"the first campaign of the {chain} chain names predecessor kind {want!r}"
+            )
+        if before != 0:
+            problems.append("the first campaign of a chain counts 0 sets consumed before it")
+    else:
+        if cur not in others:
+            problems.append(f"the predecessor {cur!r} is not a campaign under {root}")
+        else:
+            pdecl, psha = others[cur]
+            if psha != pred.get("campaign_declaration_sha256"):
+                problems.append("the predecessor's declaration differs from its declared SHA-256")
+            if pdecl.get("chain") != chain:
+                problems.append("the predecessor belongs to another chain")
+            pcamp = Campaign(root, cur, camp.strict, pdecl, psha)
+            entries, jp = read_journal(pcamp)
+            problems += [f"predecessor journal: {p}" for p in jp]
+            for ex, st in executions(entries).items():
+                if "started" in st and "closed" not in st and "reconciled" not in st:
+                    problems.append(f"the predecessor's execution {ex} has no closure")
+            consumed = budget_state(pcamp, entries)["chain_sets_consumed"]
+            if before != consumed:
+                problems.append(
+                    f"the declaration counts {before} sets consumed before it; the predecessor "
+                    f"line consumed {consumed}"
+                )
+        seen = cur
+        while seen in others and seen not in ancestors:
+            ancestors.add(seen)
+            seen = (others[seen][0].get("predecessor") or {}).get("campaign_id")
+
+    def line_of(cid: str) -> set[str]:
+        """The predecessors of a campaign under the root, following its declarations."""
+        line, seen = set(), (others[cid][0].get("predecessor") or {}).get("campaign_id")
+        while seen is not None and seen not in line:
+            line.add(seen)
+            nxt = others.get(seen)
+            seen = (nxt[0].get("predecessor") or {}).get("campaign_id") if nxt else None
+        return line
+
+    for other, (odecl, _) in others.items():
+        if odecl.get("chain") != chain or other in ancestors:
+            continue
+        if camp.campaign_id in line_of(other):
+            # A successor exists: no new set starts here; reconciliation, metrics and the
+            # integrity report of this campaign still work.
+            camp.superseded = True
+        else:
+            problems.append(
+                f"campaign {other!r} of the same chain is neither a predecessor nor a successor"
+            )
+    return problems
+
+
 def open_campaign(root: str | None, campaign_id: str) -> Campaign:
     """Load and check a campaign declaration. Under the default root the campaign is
-    strict (eligibility ``campaign``); under any other root it is a diagnostic."""
-    default = DEFAULT_ROOT.resolve()
-    r = Path(root).resolve() if root else default
+    strict (eligibility ``campaign``); under any other root, inside the project, it is a
+    diagnostic."""
+    problems = campaign_id_problems(campaign_id)
+    if problems:
+        refuse("no campaign", problems)
+    default = inside_project(DEFAULT_ROOT, "the default campaigns root")
+    r = inside_project(root, "the campaigns root") if root else default
     strict = r == default
     if not strict and (default == r or default in r.parents):
         raise SystemExit("a diagnostic root cannot be inside the campaigns directory")
     camp = Campaign(r, campaign_id, strict)
+    if camp.dir.resolve().parent != r:
+        refuse("no campaign", [f"the campaign folder {camp.dir} is not directly under {r}"])
     path = camp.dir / "declaration.json"
     if not path.is_file():
         raise SystemExit(f"no declaration at {path}")
@@ -1804,9 +2165,22 @@ def open_campaign(root: str | None, campaign_id: str) -> Campaign:
                 p.append(f"slot {s}: the permutation does not match its declared SHA-256")
     except (KeyError, SystemExit) as exc:
         p.append(f"declaration population: {exc}")
+    if not isinstance(decl.get("affinity"), str) or "-" not in decl.get("affinity", ""):
+        p.append("the declaration does not declare the affinity of its executions (e.g. 8-31)")
+    if (decl.get("overhead") or {}).get("double_hash") is not True:
+        p.append("the declaration does not record the overhead decision (double hash kept)")
     if strict:
         p += [f"declaration: {x}" for x in committed_problems(path)]
+        p += strict_declaration_problems(decl)
+        p += chain_problems(camp)
     return camp
+
+
+def affinity_problems(camp: Campaign, cpus: str) -> list[str]:
+    """Every execution of a campaign runs with the declared affinity (Amendment 4,
+    clarifications: the two slots share one configuration, affinity included)."""
+    want = camp.declaration.get("affinity")
+    return [] if cpus == want else [f"affinity {cpus!r} is not the declared {want!r}"]
 
 
 def refuse(message: str, details: list[str] | None = None) -> None:
@@ -1881,12 +2255,18 @@ def read_journal(camp: Campaign) -> tuple[list[dict], list[str]]:
     return entries, problems
 
 
-def append_journal(camp: Campaign, kind: str, identity: dict, payload: dict) -> str:
-    """Append one entry (hash-chained); returns its SHA-256."""
+def append_journal(camp: Campaign, kind: str, identity: dict, payload: dict, *, check=None) -> str:
+    """Append one entry (hash-chained); returns its SHA-256. With ``check``, a function of
+    the journal's entries returning refusals, the check and the append happen under the same
+    lock, so that two executions of one unit can never both start."""
     with _FileLock(camp.dir / "journal.lock"):
         entries, problems = read_journal(camp)
         if problems:
             raise SystemExit(f"journal integrity: {problems[:3]}; nothing appended")
+        if check is not None:
+            refused = check(entries)
+            if refused:
+                refuse(f"{kind} not written", refused)
         entry = {
             "format": JOURNAL_FORMAT,
             "seq": len(entries),
@@ -1896,7 +2276,7 @@ def append_journal(camp: Campaign, kind: str, identity: dict, payload: dict) -> 
             "identity": identity,
             "payload": payload,
         }
-        line = canonical_json(entry)
+        line = canonical_json(mask_user(entry))
         with open(camp.journal, "ab") as fh:
             fh.write(line + b"\n")
             fh.flush()
@@ -2186,10 +2566,39 @@ class Execution:
     dispatch, a ``process`` entry for every worker as it reports, then ``interrupted`` (if
     it ended by an exception) and ``closed`` once every recorded process has ended."""
 
-    def __init__(self, camp: Campaign, identity: dict, payload: dict) -> None:
-        self.camp, self.identity = camp, identity
+    def __init__(self, camp: Campaign, identity: dict, payload: dict, unit: dict, check) -> None:
+        """``check(entries)``: the refusals of this unit, evaluated under the journal lock
+        together with the blocking state, immediately before ``started`` is appended."""
+        self.camp, self.identity, self.unit = camp, identity, unit
         self.pids: list[int] = []
-        append_journal(camp, "started", identity, {**payload, "main_pid": os.getpid()})
+        self.lock_sha256: str | None = None
+        self.later_events: list = []
+
+        def full_check(entries):
+            return blocking_problems(camp) + check(entries)
+
+        append_journal(
+            camp,
+            "started",
+            identity,
+            {**payload, "unit": unit, "main_pid": os.getpid()},
+            check=full_check,
+        )
+
+    def lock(self, reason: str, evidence: list) -> None:
+        """A divergence, written at the instant it is detected: the first one writes the
+        lock marker and the journal entry; every later one is written to the journal at
+        once (kind ``event``) and listed again in the closure record."""
+        if self.lock_sha256 is None:
+            self.lock_sha256 = write_lock(self.camp, self.identity, self.unit, reason, evidence)
+        else:
+            self.later_events.append({"reason": reason, "evidence": evidence})
+            append_journal(
+                self.camp,
+                "event",
+                self.identity,
+                {"reason": reason, "evidence": evidence, "lock_sha256": self.lock_sha256},
+            )
 
     def worker(self, report: dict) -> None:
         self.pids.append(report["pid"])
@@ -2199,6 +2608,10 @@ class Execution:
             self.identity,
             {"pid": report["pid"], "problems": report["problems"]},
         )
+        if report["problems"]:
+            # A worker whose dispatch or thread pools differ from the declaration is an
+            # integrity divergence, never an infrastructure failure (section 5).
+            self.lock("a worker's dispatch or thread pools differ from the declaration", [report])
 
     def interrupted(self, reason: str, details: dict) -> None:
         append_journal(self.camp, "interrupted", self.identity, {"reason": reason, **details})
@@ -2230,6 +2643,8 @@ class Execution:
                 "pids_verified_ended": sorted(self.pids),
                 "files_on_disk_at_close": on_disk,
                 "files_unchanged": unchanged,
+                "lock_sha256": self.lock_sha256,
+                "later_divergence_events": self.later_events,
             },
         )
         if not unchanged:
@@ -2243,30 +2658,70 @@ class Execution:
         return unchanged
 
 
+class ObservationLog:
+    """Every result of an execution as it arrives, one JSON line per case (masked, flushed
+    to the operating system at once; synchronized to disk at a divergence and at the end):
+    an interruption after a detection keeps every observation made until then."""
+
+    def __init__(self, path: Path) -> None:
+        self.path = inside_project(path, "the observations file")
+        self.fh = open(self.path, "xb")
+
+    def append(self, obj, *, sync: bool = False) -> None:
+        self.fh.write(canonical_json(mask_user(obj)) + b"\n")
+        self.fh.flush()
+        if sync:
+            os.fsync(self.fh.fileno())
+
+    def close(self) -> str:
+        self.fh.flush()
+        os.fsync(self.fh.fileno())
+        self.fh.close()
+        return file_sha256(self.path)
+
+
 # --- generation modes -------------------------------------------------------------------
 
 
-def _set_generations(entries: list[dict], set_number: int) -> dict[int, dict]:
-    """The generations of a set in the journal: generation -> its execution's entries."""
-    out: dict[int, dict] = {}
+def _set_generation_lists(entries: list[dict], set_number: int) -> dict[int, list[dict]]:
+    """Every execution of every generation of a set, in journal order."""
+    out: dict[int, list[dict]] = {}
     for ex, st in executions(entries).items():
         ident = st["identity"]
         if ident.get("set") == set_number and ident.get("generation") is not None:
-            if ident["origin"]["mode"] == "generate":
-                out[ident["generation"]] = {"execution_id": ex, **st}
+            if ident["origin"]["mode"] == "generate" and "started" in st:
+                out.setdefault(ident["generation"], []).append({"execution_id": ex, **st})
     return out
+
+
+def _set_generations(entries: list[dict], set_number: int) -> dict[int, dict]:
+    """The generations of a set: generation -> its (first) execution. Two executions of one
+    generation are refused at their start and found by duplicate_generations."""
+    return {g: lst[0] for g, lst in _set_generation_lists(entries, set_number).items()}
+
+
+def duplicate_generations(entries: list[dict], set_number: int) -> list[str]:
+    return [
+        f"generation {g} of set {set_number} has {len(lst)} executions"
+        for g, lst in sorted(_set_generation_lists(entries, set_number).items())
+        if len(lst) > 1
+    ]
 
 
 def generation_refusals(camp: Campaign, entries: list[dict], s: int, g: int) -> list[str]:
     """The set and generation rules of section 8 (budget, order, no completion of an
-    interrupted set, nothing after an accepted set)."""
-    problems = []
+    interrupted set, nothing after an accepted set, one execution per generation)."""
+    problems = duplicate_generations(entries, s)
+    if camp.superseded:
+        problems.append("a successor campaign of the chain exists; no generation starts here")
     budget = camp.declaration["budget"]
     if accepted_set(entries) is not None:
         problems.append("the campaign already has an accepted set; no new generation starts")
     gens = _set_generations(entries, s)
     started_sets = budget_state(camp, entries)["sets_started_in_campaign"]
     if not gens:
+        if g != 1:
+            problems.append(f"a new set starts with generation 1, not {g}")
         if s != (max(started_sets) + 1 if started_sets else 1):
             problems.append(f"set {s} is not the next set (sets started: {started_sets})")
         if s > budget["N"]:
@@ -2306,10 +2761,15 @@ def mode_generate(args) -> int:
     problems += dproblems
     entries, _ = read_journal(camp)
     problems += generation_refusals(camp, entries, args.set, args.generation)
+    problems += affinity_problems(camp, args.cpus)
+    if camp.strict:
+        problems += prerequisite_problems(camp.declaration)
     if problems:
         refuse(f"generation {args.set}.{args.generation} not started", problems)
     config = camp.declaration["generation_configurations"][args.generation - 1]
-    out_dir = Path(args.out)
+    out_dir = inside_project(args.out, "--out")
+    if args.cache:
+        inside_project(args.cache, "--cache")
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = f"set{args.set}-gen{args.generation}"
     paths = {
@@ -2328,6 +2788,8 @@ def mode_generate(args) -> int:
     machine = MachineRecord(camp.declaration.get("machine_declared") or {})
     started_utc = utc_now()
     t0 = time.perf_counter()
+    unit = {"kind": "generation", "set": args.set, "generation": args.generation}
+    obs_path = out_dir / f"observations-{stem}-{identity['execution_id']}.jsonl"
     ex = Execution(
         camp,
         identity,
@@ -2336,8 +2798,12 @@ def mode_generate(args) -> int:
             "cases": len(cases),
             "store": cache is not None,
             "out": str(out_dir),
+            "observations": str(obs_path),
         },
+        unit,
+        lambda entries: generation_refusals(camp, entries, args.set, args.generation),
     )
+    obs = ObservationLog(obs_path)
     print(
         f"generate {camp.campaign_id} set {args.set} generation {args.generation}: "
         f"{len(cases)} cases, {config['workers']} workers, order {config['order']}",
@@ -2346,10 +2812,30 @@ def mode_generate(args) -> int:
     events: list[dict] = []
 
     def on_result(i, r):
+        obs.append(r, sync=bool(r["problems"]))  # before the lock: the observation is kept
         if r["problems"]:
             events.append({"case": r["case"], "problems": r["problems"]})
+            ex.lock(
+                "integrity problem while building cases",
+                [{**events[-1], "observations": str(obs_path)}],
+            )
             return "integrity"
         return None
+
+    def write_evidence(results: dict, workers: dict) -> str:
+        """Everything observed before an integrity stop: the entries, blocks, problems and
+        operational data of every case built (the bytes are not kept, section 3)."""
+        path = out_dir / f"evidence-{stem}-{identity['execution_id']}.json"
+        write_json(
+            path,
+            {
+                "identity": identity,
+                "events": events,
+                "workers": {str(k): v for k, v in sorted(workers.items())},
+                "cases": [results[i] for i in sorted(results)],
+            },
+        )
+        return str(path)
 
     tasks = [(c, str(cache) if cache else None, None) for c in cases]
     try:
@@ -2362,26 +2848,25 @@ def mode_generate(args) -> int:
             on_result=on_result,
         )
     except BaseException as exc:
+        obs_sha = obs.close()
         ex.interrupted("exception", {"exception": f"{type(exc).__name__}: {exc}"})
-        ex.close({"result": "interrupted"})
+        ex.close(
+            {"result": "interrupted", "observations": str(obs_path), "observations_sha256": obs_sha}
+        )
         raise SystemExit(f"interrupted: {exc}; the set is incomplete and consumed") from None
     wall = time.perf_counter() - t0
-    if events:
-        write_lock(
-            camp,
-            identity,
-            {"kind": "generation", "set": args.set, "generation": args.generation},
-            "integrity problem while building cases",
-            events,
-        )
-        ex.close({"result": "divergence"})
+    obs_sha = obs.close()
+    kept = {"observations": str(obs_path), "observations_sha256": obs_sha}
+    if ex.lock_sha256 is not None:
+        evidence = write_evidence(outcome.results, outcome.workers)
+        ex.close({"result": "divergence", "evidence": evidence, **kept})
         return 2
     if outcome.error or len(outcome.results) != len(tasks):
         ex.interrupted(
             "error",
             {"error": outcome.error, "results": len(outcome.results), "tasks": len(tasks)},
         )
-        ex.close({"result": "interrupted"})
+        ex.close({"result": "interrupted", **kept})
         print(f"generation interrupted: {outcome.error}; the set is incomplete and consumed")
         return 3
     results = [outcome.results[i] for i in range(len(tasks))]
@@ -2418,6 +2903,7 @@ def mode_generate(args) -> int:
             **config,
             "affinity": args.cpus,
             "affinity_mask": affinity_mask(),
+            "random_generator": "numpy.random.default_rng (PCG64)",
             "thread_env_inherited": INHERITED_THREAD_ENV,
             "thread_env": {v: os.environ.get(v) for v in THREAD_VARIABLES},
             "threadpools_main": thread_pools(),
@@ -2462,6 +2948,7 @@ def mode_generate(args) -> int:
     closed = ex.close(
         {
             "result": "generated",
+            **kept,
             "manifest": str(paths["manifest"]),
             "manifest_sha256": manifest_sha,
             "block_index": str(paths["block_index"]),
@@ -2525,8 +3012,17 @@ def _compare_with_set(camp: Campaign, identity: dict, s: int, g: int) -> int:
         if k == g:
             continue
         other, problems = _closed_generation(camp, gens[k])
+        if problems == ["not closed as generated"]:
+            continue  # an interrupted generation: its set is consumed and never accepted
         if problems:
-            continue
+            write_lock(
+                camp,
+                identity,
+                {"kind": "generation", "set": s, "generation": k},
+                "the artifacts of an earlier generation are missing or differ from the journal",
+                problems,
+            )
+            return 2
         if (other["manifest_sha256"], other["block_index_sha256"]) == (
             mine["manifest_sha256"],
             mine["block_index_sha256"],
@@ -2574,15 +3070,24 @@ def mode_check_set(args) -> int:
     gens = _set_generations(entries, args.set)
     identity = new_execution_identity(camp, "check-set", args.set, 1)
     unit = {"kind": "set", "set": args.set}
-    found = []
+    duplicates = duplicate_generations(entries, args.set)
+    if duplicates:
+        write_lock(camp, identity, unit, "a generation has more than one execution", duplicates)
+        return 2
+    found, damaged = [], []
     pays = {}
     for g in range(1, k + 1):
         if g not in gens:
             found.append(f"generation {g} has not run")
             continue
         pay, p = _closed_generation(camp, gens[g])
+        if p and p != ["not closed as generated"]:
+            damaged += [f"generation {g}: {x}" for x in p]
         found += [f"generation {g}: {x}" for x in p]
         pays[g] = pay
+    if damaged:
+        write_lock(camp, identity, unit, "generation artifacts missing or changed", damaged)
+        return 2
     if found:
         refuse(f"set {args.set} is not complete", found)
     manifests = {pays[g]["manifest_sha256"] for g in pays}
@@ -2601,8 +3106,13 @@ def mode_check_set(args) -> int:
         values: dict[str, dict[str, int]] = {}
         for st in _set_generations(entries, other).values():
             pay, p = _closed_generation(camp, st)
-            if p:
+            if p == ["not closed as generated"]:
                 continue
+            if p:
+                write_lock(
+                    camp, identity, unit, "the artifacts of another set are missing or changed", p
+                )
+                return 2
             for e in read_json(Path(pay["manifest"]))["cases"]:
                 values.setdefault(e["id"], {}).setdefault(e["sha256"], 0)
                 values[e["id"]][e["sha256"]] += 1
@@ -2699,17 +3209,51 @@ def _accepted_inputs(camp: Campaign, manifest_path: str) -> tuple[dict, dict, di
     return manifest, blocks, pay, set_number
 
 
-def closed_executions(camp: Campaign, mode: str) -> set[str]:
-    """The execution ids of a mode that started and were closed (or reconciled) in the
-    journal: the only executions whose records a campaign mode accepts."""
+def analysis_units(entries: list[dict]) -> dict[tuple, dict]:
+    """Every analysis unit (point, lot, slot) in the journal: the run directory fixed by its
+    first execution, and its executions in order. A unit has exactly one run directory, so
+    a case has at most one record per slot (the first valid observation; records are never
+    replaced), and a second analysis of a unit in another folder is refused."""
+    units: dict[tuple, dict] = {}
+    for e in entries:
+        ident = e.get("identity") or {}
+        if e["kind"] != "started" or (ident.get("origin") or {}).get("mode") != "analyze":
+            continue
+        key = (ident.get("point"), ident.get("lot"), ident.get("slot"))
+        unit = units.setdefault(key, {"run_dir": e["payload"].get("run_dir"), "executions": []})
+        unit["executions"].append(ident["execution_id"])
+    return units
+
+
+def analysis_unit_refusals(entries: list[dict], key: tuple, run_dir: str) -> list[str]:
+    unit = analysis_units(entries).get(key)
+    if unit is not None and unit["run_dir"] != run_dir:
+        return [
+            f"the unit point {key[0]}, lot {key[1]}, slot {key[2]} is bound to "
+            f"{unit['run_dir']}; it is never analyzed again in another folder"
+        ]
+    return []
+
+
+def accepted_record_executions(camp: Campaign) -> dict[str, tuple]:
+    """execution id -> (point, lot, slot, run directory) for the analysis executions that
+    started and were closed (or reconciled) in the journal: the only executions whose
+    records a campaign mode accepts, and only in their unit's run directory."""
     entries, _ = read_journal(camp)
-    return {
-        ex
-        for ex, st in executions(entries).items()
-        if st["identity"]["origin"]["mode"] == mode
-        and "started" in st
-        and ("closed" in st or "reconciled" in st)
-    }
+    states = executions(entries)
+    out = {}
+    for key, unit in analysis_units(entries).items():
+        for ex in unit["executions"]:
+            st = states.get(ex, {})
+            if "closed" in st or "reconciled" in st:
+                out[ex] = (*key, unit["run_dir"])
+    return out
+
+
+def bound_run_dir(camp: Campaign, point: str, lot: int, slot: int) -> str | None:
+    entries, _ = read_journal(camp)
+    unit = analysis_units(entries).get((point, lot, slot))
+    return unit["run_dir"] if unit else None
 
 
 def lots_of(manifest: dict, size: int) -> list[list[str]]:
@@ -2724,21 +3268,32 @@ def mode_regenerate(args) -> int:
     problems += [f"thread pools: {p}" for p in single_thread_problems()]
     declared = camp.declaration["dispatch"]
     problems += dispatch_problems(declared)[2]
+    problems += affinity_problems(camp, args.cpus)
     if problems:
         refuse(f"lot {args.lot} not regenerated", problems)
     manifest, blocks, _, set_number = _accepted_inputs(camp, args.manifest)
     lot = lots_of(manifest, camp.declaration["analysis"]["lot_size"])[args.lot]
     by_id = {c["id"]: c for c in camp.cases()}
     frozen = {e["id"]: e for e in manifest["cases"]}
-    cache = Path(args.cache)
+    cache = inside_project(args.cache, "--cache")
     cache.mkdir(parents=True, exist_ok=True)
     identity = new_execution_identity(camp, "regenerate", set_number, 1, lot=args.lot)
-    ex = Execution(camp, identity, {"lot": args.lot, "cases": len(lot), "cache": str(cache)})
+    obs_path = cache / f"observations-lot{args.lot:04d}-{identity['execution_id']}.jsonl"
+    ex = Execution(
+        camp,
+        identity,
+        {"lot": args.lot, "cases": len(lot), "cache": str(cache), "observations": str(obs_path)},
+        {"kind": "regeneration", "lot": args.lot},
+        lambda entries: [],
+    )
+    obs = ObservationLog(obs_path)
     events: list[dict] = []
 
     def on_result(i, r):
+        obs.append(r, sync=bool(r["problems"]))
         if r["problems"]:
             events.append({"case": r["case"], "problems": r["problems"]})
+            ex.lock("regenerated inputs differ", [{**events[-1], "observations": str(obs_path)}])
             return "integrity"
         return None
 
@@ -2751,25 +3306,20 @@ def mode_regenerate(args) -> int:
             generate_task, tasks, workers, declared, on_worker=ex.worker, on_result=on_result
         )
     except BaseException as exc:
+        kept = {"observations": str(obs_path), "observations_sha256": obs.close()}
         ex.interrupted("exception", {"exception": f"{type(exc).__name__}: {exc}"})
-        ex.close({"result": "interrupted"})
+        ex.close({"result": "interrupted", **kept})
         raise SystemExit(f"regeneration interrupted: {exc}") from None
-    if events:
-        write_lock(
-            camp,
-            identity,
-            {"kind": "regeneration", "lot": args.lot},
-            "regenerated inputs differ",
-            events,
-        )
-        ex.close({"result": "divergence"})
+    kept = {"observations": str(obs_path), "observations_sha256": obs.close()}
+    if ex.lock_sha256 is not None:
+        ex.close({"result": "divergence", "events": events, **kept})
         return 2
     if outcome.error or len(outcome.results) != len(tasks):
         ex.interrupted("error", {"error": outcome.error})
-        ex.close({"result": "interrupted"})
+        ex.close({"result": "interrupted", **kept})
         return 3
     stored = {r["case"]: r["stored"] for r in outcome.results.values()}
-    if not ex.close({"result": "regenerated", "lot": args.lot, "stored": stored}):
+    if not ex.close({"result": "regenerated", "lot": args.lot, "stored": stored, **kept}):
         return 2
     print(
         f"lot {args.lot}: {len(lot)} inputs regenerated and checked "
@@ -2969,6 +3519,49 @@ OPERATIONAL_KEYS = {
 }
 
 
+SCIENTIFIC_KEYS = (
+    "schema",
+    "status",
+    "verdict",
+    "verdict_reason",
+    "candidate",
+    "tests",
+    "expected_tests",
+    "test_plan",
+    "key_values",
+    "holdout_rounds",
+)
+
+
+def scientific_problems(sci) -> list[str]:
+    """The minimal content of a complete scientific record (the output of ``build_result``
+    at the four points): an analysis whose record lacks it is not a successful analysis
+    (Amendment 4, clarifications of 2026-10-13)."""
+    if not isinstance(sci, dict):
+        return ["the scientific record is not an object"]
+    problems = [f"scientific record without {k!r}" for k in SCIENTIFIC_KEYS if k not in sci]
+    if sci.get("schema") != "refute-tess-verdict-1":
+        problems.append(f"scientific schema {sci.get('schema')!r}")
+    if sci.get("status") != "OK":
+        problems.append(f"scientific status {sci.get('status')!r}")
+    if sci.get("verdict") not in VERDICTS:
+        problems.append(f"verdict {sci.get('verdict')!r} is not one of {VERDICTS}")
+    tests = sci.get("tests")
+    if not isinstance(tests, list) or not tests:
+        problems.append("the scientific record has no tests")
+    else:
+        for t in tests:
+            if not isinstance(t, dict) or not all(
+                isinstance(t.get(k), str) for k in ("name", "status", "severity")
+            ):
+                problems.append("a test without a name, status or severity")
+                break
+    exp = sci.get("expected_tests")
+    if not isinstance(exp, list) or not all(isinstance(x, str) for x in exp):
+        problems.append("expected_tests is not a list of names")
+    return problems
+
+
 def validate_record(
     rec, entry: dict, expect: dict, *, extra_top: frozenset = frozenset()
 ) -> list[str]:
@@ -3012,8 +3605,12 @@ def validate_record(
         for c, o in conds.items():
             if not isinstance(o, dict) or set(o) != CONDITION_KEYS:
                 problems.append(f"{name}: condition {c} members differ from the schema")
-            elif set(o["harness_outcomes"] or {}) != OUTCOME_KEYS:
+                continue
+            if set(o["harness_outcomes"] or {}) != OUTCOME_KEYS:
                 problems.append(f"{name}: condition {c} harness outcomes differ from the schema")
+            problems += [
+                f"{name}: condition {c}: {p}" for p in scientific_problems(o["scientific"])
+            ]
     if set(rec.get("configuration") or {}) != CONFIGURATION_KEYS:
         problems.append(f"{name}: configuration members differ from the schema")
     if set(rec.get("operational") or {}) != OPERATIONAL_KEYS:
@@ -3037,6 +3634,7 @@ RUN_KEYS = (
     "campaign_declaration_sha256",
     "point",
     "slot",
+    "affinity",
     "binding",
     "checkout",
     "harness_sha256",
@@ -3056,6 +3654,7 @@ def _fingerprint(checkout: dict) -> dict:
         "numpy_blas": env["numpy_blas"],
         "threadpools": env["threadpools"],
         "thread_env": env["thread_env"],
+        "affinity_mask": affinity_mask(),
         "commit": checkout["commit"],
         "refute_file": str(Path(refute.__file__).resolve()),
     }
@@ -3069,6 +3668,11 @@ def mode_analyze(args) -> int:
     problems += dispatch_problems(declared)[2]
     if args.slot not in (1, 2):
         problems.append(f"slot {args.slot} is not 1 or 2")
+    problems += affinity_problems(camp, args.cpus)
+    run_dir = inside_project(args.out, "--out")
+    inside_project(args.cache, "--cache")
+    unit_key = (args.point, args.lot, args.slot)
+    problems += analysis_unit_refusals(read_journal(camp)[0], unit_key, str(run_dir))
     if problems:
         refuse(f"{args.point} lot {args.lot} slot {args.slot} not analyzed", problems)
     manifest, _, _, set_number = _accepted_inputs(camp, args.manifest)
@@ -3081,7 +3685,6 @@ def mode_analyze(args) -> int:
     )
     order = [c for c in slot_order if c in lot]
     by_id = {e["id"]: e for e in manifest["cases"]}
-    run_dir = Path(args.out)
     (run_dir / "cases").mkdir(parents=True, exist_ok=True)
     run = {
         "format": RESULT_FORMAT,
@@ -3089,6 +3692,7 @@ def mode_analyze(args) -> int:
         "campaign_declaration_sha256": camp.declaration_sha256,
         "point": args.point,
         "slot": args.slot,
+        "affinity": args.cpus,
         "binding": binding,
         "points_at_start": state,
         "checkout": checkout,
@@ -3142,11 +3746,16 @@ def mode_analyze(args) -> int:
             invalid.append(f"{c}: not valid JSON")
             continue
         invalid += validate_record(rec, by_id[c], expect)
+    if existing:
+        _, _, foreign = slot_records(
+            run_dir, existing, by_id, expect, accepted_record_executions(camp)
+        )
+        invalid += [p for p in foreign if "not an execution of this unit" in p]
     if invalid:
         write_lock(camp, identity, unit, "invalid existing results", invalid[:200])
         return 2
     todo = [c for c in order if c not in existing]
-    cache = Path(args.cache)
+    cache = inside_project(args.cache, "--cache")
     missing = [c for c in todo if not (cache / f"{c}.rpc").is_file()]
     if missing:
         refuse("inputs missing from the cache; no result written", missing)
@@ -3164,7 +3773,9 @@ def mode_analyze(args) -> int:
     ex = Execution(
         camp,
         identity,
-        {**unit, "cases": len(todo), "already_valid": len(existing), "run_dir": str(run_dir)},
+        {"cases": len(todo), "already_valid": len(existing), "run_dir": str(run_dir)},
+        unit,
+        lambda entries: analysis_unit_refusals(entries, unit_key, str(run_dir)),
     )
     events: list[dict] = []
     infra: list[dict] = []
@@ -3172,6 +3783,7 @@ def mode_analyze(args) -> int:
     def on_result(i, r):
         if "integrity" in r:
             events.append(r)
+            ex.lock("input SHA-256 differs from the manifest at read", [r])
             return "integrity"
         if "infrastructure" in r:
             infra.append(r)
@@ -3190,9 +3802,8 @@ def mode_analyze(args) -> int:
         raise SystemExit(
             f"interrupted: {exc}; resume only this slot's cases without a result"
         ) from None
-    if events:
-        write_lock(camp, identity, unit, "input SHA-256 differs from the manifest at read", events)
-        ex.close({"result": "divergence"})
+    if ex.lock_sha256 is not None:
+        ex.close({"result": "divergence", "events": events})
         return 2
     if infra or outcome.error or len(outcome.results) != len(tasks):
         ex.interrupted("infrastructure", {"failures": infra, "error": outcome.error})
@@ -3211,12 +3822,13 @@ def mode_analyze(args) -> int:
 
 
 def slot_records(
-    run_dir: Path, lot: list[str], by_id: dict, expect: dict, allowed: set[str] | None = None
+    run_dir: Path, lot: list[str], by_id: dict, expect: dict, allowed: dict | None = None
 ) -> tuple[dict, dict, list[str]]:
     """The records of a lot in one slot's run directory: case -> record, case -> SHA-256 of
     the file, and the problems (missing or invalid, or written by an execution that is not
-    in ``allowed``, the executions started and closed in the journal)."""
+    in ``allowed`` for this unit and this directory: ``accepted_record_executions``)."""
     recs, hashes, problems = {}, {}, []
+    here = str(Path(run_dir).resolve())
     for c in lot:
         f = Path(run_dir) / "cases" / f"{c}.json"
         if not f.is_file():
@@ -3230,9 +3842,11 @@ def slot_records(
             continue
         problems += validate_record(rec, by_id[c], expect)
         ex = (rec.get("identity") or {}).get("execution_id") if isinstance(rec, dict) else None
-        if allowed is not None and ex not in allowed:
+        want = (expect.get("point"), expect.get("lot"), expect.get("slot"), here)
+        if allowed is not None and allowed.get(ex) != want:
             problems.append(
-                f"{c}: written by execution {ex!r}, not started and closed in the journal"
+                f"{c}: written by execution {ex!r}, which is not an execution of this unit "
+                "and this run directory, started and closed in the journal"
             )
         recs[c] = rec
         hashes[c] = hashlib.sha256(data).hexdigest()
@@ -3249,11 +3863,22 @@ def compare_lot_slots(
     records: Path,
 ) -> tuple[int, str | None]:
     """Record 3c: the two slots of a lot at a point compared with the profile ``slots``.
-    A difference (or a missing or invalid record) writes a lock."""
+    A difference (or a missing or invalid record) writes a lock. One comparison per lot and
+    point, whatever the records folder: an already registered comparison refuses a new one,
+    and a registered comparison that is missing, altered or repeated writes a lock."""
     lot = lots_of(manifest, camp.declaration["analysis"]["lot_size"])[lot_n]
     by_id = {e["id"]: e for e in manifest["cases"]}
     identity = new_execution_identity(camp, "compare-slots", set_number, 1, point=point, lot=lot_n)
     unit = {"kind": "slots", "point": point, "lot": lot_n}
+    registered, why, damaged = registered_comparison(camp, point, lot_n)
+    if damaged:
+        write_lock(camp, identity, unit, why, [why])
+        return 2, None
+    if registered is not None:
+        refuse(
+            f"{point} lot {lot_n} is already compared (one comparison per lot and point)",
+            [f"registered report: {journal_comparisons(camp)[(point, lot_n)][0]['report']}"],
+        )
     base = {
         "campaign_id": camp.campaign_id,
         "campaign_declaration_sha256": camp.declaration_sha256,
@@ -3262,7 +3887,17 @@ def compare_lot_slots(
         "lot": lot_n,
         "eligibility": camp.eligibility,
     }
-    allowed = closed_executions(camp, "analyze")
+    bound = [bound_run_dir(camp, point, lot_n, s) for s in (1, 2)]
+    given = [str(inside_project(r, "--runs")) for r in runs]
+    if bound != given:
+        refuse(
+            "the runs given are not the run directories bound to this lot",
+            [
+                f"slot {s}: given {g}, bound {b}"
+                for s, (g, b) in enumerate(zip(given, bound, strict=True), 1)
+            ],
+        )
+    allowed = accepted_record_executions(camp)
     r1, h1, p1 = slot_records(Path(runs[0]), lot, by_id, {**base, "slot": 1}, allowed)
     r2, h2, p2 = slot_records(Path(runs[1]), lot, by_id, {**base, "slot": 2}, allowed)
     if p1 or p2:
@@ -3318,10 +3953,75 @@ def compare_lot_slots(
             [{"report": str(rfile), "sha256": rsha}, *divergent],
         )
         return 2, str(rfile)
+
+    def no_comparison_yet(entries):
+        same = [
+            e
+            for e in entries
+            if e["kind"] == "compared"
+            and (e["payload"].get("point"), e["payload"].get("lot")) == (point, lot_n)
+        ]
+        if same:
+            return [f"{point} lot {lot_n} was compared meanwhile ({same[0]['payload']['report']})"]
+        return []
+
     append_journal(
-        camp, "compared", identity, {**unit, "report": str(rfile), "report_sha256": rsha}
+        camp,
+        "compared",
+        identity,
+        {**unit, "report": str(rfile), "report_sha256": rsha},
+        check=no_comparison_yet,
     )
     return 0, str(rfile)
+
+
+def journal_comparisons(camp: Campaign) -> dict[tuple, list[dict]]:
+    """(point, lot) -> the comparisons 3c registered in the journal (report path and SHA-256),
+    in journal order. A comparison report counts only if the journal names it; more than one
+    for a lot and point is a divergence."""
+    entries, _ = read_journal(camp)
+    out: dict[tuple, list[dict]] = {}
+    for e in entries:
+        if e["kind"] == "compared":
+            out.setdefault((e["payload"]["point"], e["payload"]["lot"]), []).append(e["payload"])
+    return out
+
+
+def registered_comparison(camp: Campaign, point: str, lot: int) -> tuple[dict | None, str, bool]:
+    """The comparison report of a lot at a point, re-read and checked against the journal:
+    (the report, "", False); (None, why not, False) when no comparison is registered yet (the
+    lot is not finished); (None, why, True) when two comparisons are registered for the lot
+    and point, or the registered report is missing, altered or not an identical comparison of
+    this lot: damaged evidence, a divergence (lock)."""
+    regs = journal_comparisons(camp).get((point, lot), [])
+    if not regs:
+        return None, "no comparison registered in the journal", False
+    if len(regs) > 1:
+        return (
+            None,
+            f"{len(regs)} comparisons are registered for {point} lot {lot} (one is allowed): "
+            + ", ".join(r["report"] for r in regs),
+            True,
+        )
+    pay = regs[0]
+    path = Path(pay["report"])
+    if not path.is_file() or file_sha256(path) != pay["report_sha256"]:
+        return None, f"the registered comparison report {path} is missing or altered", True
+    report = read_json(path)
+    if (
+        report.get("format") != SLOTS_REPORT_FORMAT
+        or report.get("point") != point
+        or report.get("lot") != lot
+        or not report.get("all_identical")
+        or (report.get("identity") or {}).get("campaign_declaration_sha256")
+        != camp.declaration_sha256
+    ):
+        return (
+            None,
+            f"the comparison report {path} is not an identical comparison of this lot",
+            True,
+        )
+    return report, "", False
 
 
 def mode_compare_slots(args) -> int:
@@ -3330,8 +4030,9 @@ def mode_compare_slots(args) -> int:
     if problems:
         refuse("slots not compared", problems)
     manifest, _, _, set_number = _accepted_inputs(camp, args.manifest)
+    records = inside_project(args.records, "--records")
     code, rfile = compare_lot_slots(
-        camp, manifest, set_number, args.point, args.lot, args.runs, Path(args.records)
+        camp, manifest, set_number, args.point, args.lot, args.runs, records
     )
     print(
         f"{args.point} lot {args.lot}: comparison "
@@ -3363,7 +4064,7 @@ def mode_orchestrate(args) -> int:
     slots (record 3c per point), then delete the lot's inputs (record 4, only inside
     .cache/population/ of the harness's repository)."""
     camp = open_campaign(args.root, args.campaign)
-    problems = campaign_refusals(camp)
+    problems = campaign_refusals(camp) + affinity_problems(camp, args.cpus)
     if problems:
         refuse("orchestrate not started", problems)
     project = Path(args.project).resolve()
@@ -3377,8 +4078,11 @@ def mode_orchestrate(args) -> int:
     manifest, _, _, set_number = _accepted_inputs(camp, args.manifest)
     by_id = {e["id"]: e for e in manifest["cases"]}
     points = [p.split("=", 2) for p in args.point]  # name=python=run_dir_prefix
+    for _, _, prefix in points:
+        for run in _slot_dirs(prefix):
+            inside_project(run, "a run directory")
     lots = lots_of(manifest, camp.declaration["analysis"]["lot_size"])
-    records = Path(args.records)
+    records = inside_project(args.records, "--records")
     records.mkdir(parents=True, exist_ok=True)
     child_env = {**os.environ, "PYTHONUNBUFFERED": "1"}
     common = ["--root", str(camp.root), "--campaign", camp.campaign_id, "--cpus", args.cpus or ""]
@@ -3388,6 +4092,7 @@ def mode_orchestrate(args) -> int:
 
     def reread(n: int, lot: list[str]) -> tuple[bool, dict, list[str]]:
         complete, hashes, problems = True, {}, []
+        allowed = accepted_record_executions(camp)
         for name, _, prefix in points:
             for s, run in enumerate(_slot_dirs(prefix), start=1):
                 expect = {
@@ -3397,9 +4102,7 @@ def mode_orchestrate(args) -> int:
                     "lot": n,
                     "slot": s,
                 }
-                _, h, p = slot_records(
-                    Path(run), lot, by_id, expect, closed_executions(camp, "analyze")
-                )
+                _, h, p = slot_records(Path(run), lot, by_id, expect, allowed)
                 missing = [x for x in p if x.endswith(": missing")]
                 complete = complete and not missing
                 problems += [f"{name} slot {s}: {x}" for x in p if not x.endswith(": missing")]
@@ -3428,13 +4131,32 @@ def mode_orchestrate(args) -> int:
             ident = new_execution_identity(camp, "orchestrate", set_number, 1, lot=n)
             write_lock(camp, ident, {"kind": "lot", "lot": n}, "invalid results", problems[:200])
             return 2
+        # The registered comparisons are checked first, whatever the records folder (B2): a
+        # missing, altered or repeated one locks; one registered elsewhere refuses a new run.
+        registered = {}
+        for name, _, _ in points:
+            report, why, damaged = registered_comparison(camp, name, n)
+            if damaged:
+                ident = new_execution_identity(camp, "orchestrate", set_number, 1, lot=n)
+                write_lock(camp, ident, {"kind": "slots", "point": name, "lot": n}, why, [why])
+                return 2
+            if report is not None:
+                registered[name] = journal_comparisons(camp)[(name, n)][0]["report"]
         kinds = _lot_kinds(records, n)
+        if "3" not in kinds and registered:
+            refuse(
+                f"lot {n} is already compared; it is resumed only with the records folder of "
+                "that comparison",
+                [f"{k}: {v}" for k, v in registered.items()],
+            )
         if "3" in kinds:
             recorded = {}
             for f in kinds["3"]:
                 r = read_json(f)
                 recorded[r["run"]] = r["results_sha256"]
-            if not complete or recorded != hashes:
+            # A record 3 that exists must equal the results; a missing one (a stop while the
+            # records 3 were written) is rebuilt from complete, valid results (N5).
+            if not complete or any(hashes.get(k) != v for k, v in recorded.items()):
                 ident = new_execution_identity(camp, "orchestrate", set_number, 1, lot=n)
                 write_lock(
                     camp,
@@ -3445,13 +4167,24 @@ def mode_orchestrate(args) -> int:
                 )
                 return 2
             prefix = "-".join(kinds["3"][0].stem.split("-")[:3])
-            compared = {
-                read_json(f)["point"]
-                for f in kinds.get("3c", [])
-                if read_json(f).get("all_identical")
-            }
+            for name, _, _ in points:
+                for s in (1, 2):
+                    key = f"{name}/slot{s}"
+                    if key not in recorded:
+                        record(
+                            f"{prefix}-3-{name}-slot{s}-results-reread.json",
+                            {
+                                "lot": n,
+                                "utc": utc_now(),
+                                "point": name,
+                                "slot": s,
+                                "run": key,
+                                "results_sha256": hashes[key],
+                                "written_on_resume": True,
+                            },
+                        )
             for name, _, run_prefix in points:
-                if name not in compared:
+                if name not in registered:
                     code, _ = compare_lot_slots(
                         camp, manifest, set_number, name, n, _slot_dirs(run_prefix), records
                     )
@@ -3588,6 +4321,10 @@ def condition_view(rec: dict | None, condition: str, effective: str) -> dict:
     if c is None:
         return {"status": "missing"}
     sci, out = _decoded(c["scientific"]), _decoded(c["harness_outcomes"])
+    if scientific_problems(sci):
+        # An analysis without its complete scientific record (no valid verdict, no tests)
+        # counts as an error in C6, never as a successful analysis.
+        return {"status": "error"}
     return {
         "status": "analyzed",
         "verdict": sci.get("verdict"),
@@ -3762,50 +4499,77 @@ def run_metrics(cases: list[dict], views: dict[tuple[str, str], dict]) -> dict:
 def _gather_point(
     camp, manifest, set_number, point, prefix, records, lot_size
 ) -> tuple[dict, list[str]]:
-    """Reconciliation of one point: every case of the manifest exactly once per slot, with
-    a valid envelope; every lot compared (3c, identical) and its records 3 equal to the
-    files. Returns the effective views and the problems found."""
+    """Reconciliation of one point (R1 extended): for every lot, both slots' records in the
+    run directories bound to the lot, written by executions of the unit closed in the
+    journal; the records 3 of both slots equal to the files; the comparison 3c registered in
+    the journal, identical, naming the same files; and record 4. Returns the effective
+    views, the problems of content (a divergence) and the lots not finished."""
     by_id = {e["id"]: e for e in manifest["cases"]}
     problems: list[str] = []
+    unfinished: list[str] = []
     recs: dict[int, dict] = {1: {}, 2: {}}
     hashes: dict[int, dict] = {1: {}, 2: {}}
-    allowed = closed_executions(camp, "analyze")
+    compared: set[str] = set()
+    entries, _ = read_journal(camp)
+    units = analysis_units(entries)
+    allowed = accepted_record_executions(camp)
+    given = [str(Path(r).resolve()) for r in _slot_dirs(prefix)]
     problems += run_provenance_problems(camp, point, _slot_dirs(prefix))
-    for s, run in enumerate(_slot_dirs(prefix), start=1):
+    for s, run in enumerate(given, start=1):
         found = {f.stem for f in (Path(run) / "cases").glob("*.json")}
-        extra = sorted(found - set(by_id))
-        problems += [f"{point} slot {s}: {x} is not in the manifest" for x in extra]
-        for n, lot in enumerate(lots_of(manifest, lot_size)):
+        problems += [
+            f"{point} slot {s}: {x} is not in the manifest" for x in sorted(found - set(by_id))
+        ]
+    for n, lot in enumerate(lots_of(manifest, lot_size)):
+        kinds = _lot_kinds(Path(records), n)
+        reread = {}
+        for f in kinds.get("3", []):
+            r = read_json(f)
+            if r.get("point") == point:
+                reread[r.get("slot")] = r.get("results_sha256")
+        for s in (1, 2):
+            unit = units.get((point, n, s))
+            if unit is None or unit["run_dir"] != given[s - 1]:
+                unfinished.append(f"{point} lot {n} slot {s}: not analyzed in the run given")
+                continue
             expect = {
                 "campaign_id": camp.campaign_id,
+                "campaign_declaration_sha256": camp.declaration_sha256,
                 "set": set_number,
                 "point": point,
                 "lot": n,
                 "slot": s,
                 "eligibility": camp.eligibility,
             }
-            r, h, p = slot_records(Path(run), lot, by_id, expect, allowed)
+            r, h, p = slot_records(Path(given[s - 1]), lot, by_id, expect, allowed)
             recs[s].update(r)
             hashes[s].update(h)
+            unfinished += [f"{point} slot {s} lot {n}: {x}" for x in p if x.endswith(": missing")]
             problems += [f"{point} slot {s} lot {n}: {x}" for x in p if not x.endswith(": missing")]
-    compared: dict[str, str] = {}
-    reread: dict[str, dict] = {}
-    for f in sorted(Path(records).glob("lot-*.json")):
-        r = read_json(f)
-        if r.get("format") == SLOTS_REPORT_FORMAT and r.get("point") == point:
-            for c, v in r["cases"].items():
-                if v["status"] == "identical" and r.get("all_identical"):
-                    compared[c] = v["report_sha256"]
-                    if v["slot1_sha256"] != hashes[1].get(c) or v["slot2_sha256"] != hashes[2].get(
-                        c
-                    ):
-                        problems.append(f"{point} {c}: the comparison report names other files")
-        elif r.get("point") == point and "results_sha256" in r:
-            reread.setdefault(r["slot"], {}).update(r["results_sha256"])
-    for s in (1, 2):
-        for c, sha in reread.get(s, {}).items():
-            if hashes[s].get(c) != sha:
-                problems.append(f"{point} slot {s} {c}: SHA-256 differs from record 3")
+            if s not in reread:
+                unfinished.append(f"{point} lot {n} slot {s}: no record 3")
+            elif reread[s] != h:
+                problems.append(f"{point} lot {n} slot {s}: the files differ from record 3")
+        report, why, damaged = registered_comparison(camp, point, n)
+        if damaged:
+            problems.append(f"{point} lot {n}: {why}")
+        elif report is None:
+            unfinished.append(f"{point} lot {n}: {why}")
+        else:
+            for c in lot:
+                v = report["cases"].get(c) or {}
+                if v.get("status") != "identical" or (
+                    v.get("slot1_sha256"),
+                    v.get("slot2_sha256"),
+                ) != (
+                    hashes[1].get(c),
+                    hashes[2].get(c),
+                ):
+                    problems.append(f"{point} {c}: the registered comparison names other files")
+                else:
+                    compared.add(c)
+        if "4" not in kinds:
+            unfinished.append(f"lot {n}: no record 4")
     views = {}
     for c, e in by_id.items():
         if c not in recs[1] or c not in recs[2]:
@@ -3816,7 +4580,7 @@ def _gather_point(
             effective = "ok"
         for cond in _conditions(e):
             views[(c, cond)] = condition_view(recs[1].get(c), cond, effective)
-    return views, problems
+    return views, problems, unfinished
 
 
 def mode_metrics(args) -> int:
@@ -3828,20 +4592,36 @@ def mode_metrics(args) -> int:
         refuse("metrics not computed (use --integrity-report for a locked campaign)", problems)
     if not args.manifest or not args.records or not args.point:
         raise SystemExit("metrics needs --manifest, --records and at least one --point")
-    target = Path(args.out)
+    target = inside_project(args.out, "--out")
+    records = inside_project(args.records, "--records")
     if target.exists() or target.with_suffix(".md").exists():
         raise SystemExit(f"{target} (or its .md) exists; nothing computed")
-    target.parent.mkdir(parents=True, exist_ok=True)
     manifest, _, _, set_number = _accepted_inputs(camp, args.manifest)
     lot_size = camp.declaration["analysis"]["lot_size"]
     points = [p.split("=", 1) for p in args.point]  # name=run_dir_prefix
+    for _, prefix in points:
+        for run in _slot_dirs(prefix):
+            inside_project(run, "a run directory")
+    identity = new_execution_identity(camp, "metrics", set_number, 1)
     out = {
         "format": METRICS_FORMAT,
+        "identity": identity,
+        "eligibility": camp.eligibility,
+        "approval_status": (
+            "computed from eligible campaign evidence"
+            if camp.strict
+            else "DIAGNOSTIC: not an approval"
+        ),
         "campaign_id": camp.campaign_id,
         "campaign_declaration_sha256": camp.declaration_sha256,
         "manifest_sha256": file_sha256(Path(args.manifest)),
         "harness_sha256": HARNESS_SHA256,
         "comparator_sha256": CMP.COMPARATOR_SHA256,
+        "accepted_risk": (
+            "Between a detection and the manual commit, the lock marker and the journal exist "
+            "only on disk and could be deleted or altered by hand; only the commit makes such "
+            "an action visible."
+        ),
         "points": [],
     }
     all_problems = []
@@ -3857,9 +4637,11 @@ def mode_metrics(args) -> int:
         all_problems.append("the manifest's denominators per stratum differ from the population")
     out["redraws"] = redraw_summary(manifest)
     by_point: dict[str, dict] = {}
+    unfinished: list[str] = []
     for name, prefix in points:
-        views, p = _gather_point(camp, manifest, set_number, name, prefix, args.records, lot_size)
+        views, p, u = _gather_point(camp, manifest, set_number, name, prefix, records, lot_size)
         all_problems += p
+        unfinished += u
         by_point[name] = views
         out["points"].append({"point": name, "metrics": run_metrics(manifest["cases"], views)})
     names = [name for name, _ in points]
@@ -3874,9 +4656,11 @@ def mode_metrics(args) -> int:
         ):
             all_problems.append(f"the recomputed metrics differ from {args.check_against}")
     if all_problems:
-        ident = new_execution_identity(camp, "metrics", set_number, 1)
-        write_lock(camp, ident, {"kind": "metrics"}, "reconciliation failed", all_problems[:300])
+        write_lock(camp, identity, {"kind": "metrics"}, "reconciliation failed", all_problems[:300])
         return 2
+    if unfinished:
+        refuse("metrics not computed: lots are not finished (R1)", unfinished[:60])
+    target.parent.mkdir(parents=True, exist_ok=True)
     write_json(target, out)
     write_atomic(target.with_suffix(".md"), metrics_markdown(out).encode("utf-8"))
     print(f"metrics written to {target}")
@@ -3961,8 +4745,18 @@ def _fmt(x) -> str:
 
 
 def metrics_markdown(out: dict) -> str:
+    diagnostic = out.get("eligibility") != "campaign"
     lines = [
-        f"# Population metrics, campaign {out['campaign_id']}",
+        (
+            f"# DIAGNOSTIC: not an approval. Population metrics of the diagnostic "
+            f"{out['campaign_id']}"
+            if diagnostic
+            else f"# Population metrics, campaign {out['campaign_id']}"
+        ),
+        "",
+        f"Eligibility: {out.get('eligibility')}. {out.get('approval_status')}.",
+        "",
+        f"Accepted risk: {out.get('accepted_risk')}",
         "",
         "Every point uses the fast plan of the test suite (section 7); false-alarm rates under "
         "the calibration plan could be higher. The SNR bands of blends use the expected SNR "
@@ -3976,7 +4770,12 @@ def metrics_markdown(out: dict) -> str:
         lines += [
             f"## {point['point']}",
             "",
-            f"**Overall approval: {'PASSES' if a['passes'] else 'FAILS'}.** {a['rule']}"
+            (
+                "**DIAGNOSTIC: not an approval.** Criteria computed on diagnostic evidence "
+                f"(they would {'pass' if a['passes'] else 'fail'}). {a['rule']}"
+                if diagnostic
+                else f"**Overall approval: {'PASSES' if a['passes'] else 'FAILS'}.** {a['rule']}"
+            )
             + (f" Failed: {', '.join(a['failed'])}." if a["failed"] else ""),
             "",
             f"Statuses (per condition): {m['status_counts']}",
@@ -4103,6 +4902,8 @@ def mode_reconcile(args) -> int:
     camp = open_campaign(args.root, args.campaign)
     if camp.problems:
         refuse("no reconciliation", camp.problems)
+    if camp.strict and harness_problems()[1]:
+        refuse("no reconciliation (R2)", harness_problems()[1])
     entries, problems = read_journal(camp)
     if problems:
         refuse("journal integrity", problems)
@@ -4257,6 +5058,8 @@ def main(argv: list[str] | None = None) -> int:
         p.add_argument("--cpus", default="8-31")
     args = parser.parse_args(argv)
     print(f"affinity: {set_affinity(args.cpus)}", flush=True)
+    if home_problems():
+        refuse("the harness does not run here", home_problems())
     return {
         "generate": mode_generate,
         "check-set": mode_check_set,

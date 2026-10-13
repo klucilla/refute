@@ -65,6 +65,78 @@ CONTRASTS = (
     ("P24", "F"),
 )
 SHUFFLE_SEED = 20261012
+# The declared matrix of the D6: only a run of exactly this matrix can count as the D6.
+D6_CASES = 40
+D6_POINTS = ("M0", "M3")
+D6_REPETITIONS = (1, 2)
+
+
+def selection_manifest(root: str, campaign_id: str) -> tuple[dict, str, list[str]]:
+    """The manifest the 40 cases are selected from: the accepted set of a campaign of the
+    whole ``determinism`` population (no case list, no lock), checked against its journal,
+    with exactly the 520 cases and seeds of the population. Returns (manifest, SHA-256,
+    problems)."""
+    camp = v2.open_campaign(root, campaign_id)
+    problems = list(camp.problems) + v2.blocking_problems(camp)
+    if camp.declaration.get("population") != "determinism" or "cases" in camp.declaration:
+        problems.append("the selection campaign is not of the whole determinism population")
+    entries, _ = v2.read_journal(camp)
+    acc = v2.accepted_set(entries)
+    if acc is None:
+        return {}, "", [*problems, "the selection campaign has no accepted set"]
+    path = Path(acc["payload"]["manifest"])
+    if not path.is_file() or v2.file_sha256(path) != acc["payload"]["manifest_sha256"]:
+        return {}, "", [*problems, "the accepted selection manifest is missing or differs"]
+    manifest = v2.read_json(path)
+    want = {c["id"]: c["seed"] for c in v2.population_cases("determinism")}
+    got = {e["id"]: e["seed"] for e in manifest.get("cases", [])}
+    if got != want:
+        problems.append(
+            f"the selection manifest has {len(got)} cases, not the {len(want)} of the population"
+        )
+    return manifest, acc["payload"]["manifest_sha256"], problems
+
+
+def selection_problems(decl: dict) -> list[str]:
+    """The declared cases recomputed from the selection manifest (the first N for a smoke
+    run), and the inputs campaign restricted to exactly these cases."""
+    sel = decl.get("selection") or {}
+    manifest, sha, problems = selection_manifest(sel.get("campaign_root"), sel.get("campaign_id"))
+    if problems:
+        return problems
+    if sha != sel.get("manifest_sha256"):
+        problems.append("the selection manifest is not the one declared")
+    cases = decl.get("cases") or []
+    if cases != select_cases(manifest, D6_CASES)[: len(cases)]:
+        problems.append("the declared cases are not the declared rule applied to the selection")
+    inputs = v2.open_campaign(decl["inputs"]["campaign_root"], decl["inputs"]["campaign_id"])
+    if set(inputs.declaration.get("cases") or []) != set(cases):
+        problems.append("the inputs campaign is not restricted to exactly the declared cases")
+    return problems
+
+
+def matrix_problems(decl: dict) -> list[str]:
+    """Why a declaration is not the declared D6 matrix (then its result is a smoke run)."""
+    problems = []
+    if decl.get("smoke"):
+        problems.append("the declaration is a smoke run")
+    if len(decl.get("cases") or []) != D6_CASES or len(set(decl.get("cases") or [])) != D6_CASES:
+        problems.append(f"the declaration does not have {D6_CASES} distinct cases")
+    if list(decl.get("points") or []) != list(D6_POINTS):
+        problems.append(f"the points are {decl.get('points')}, not {list(D6_POINTS)}")
+    if list(decl.get("repetitions") or []) != list(D6_REPETITIONS):
+        problems.append("the repetitions are not 1 and 2")
+    if sorted(decl.get("configurations") or {}) != sorted(CONFIGURATIONS):
+        problems.append("the configurations are not the seven of the D6")
+    if [list(c) for c in decl.get("contrasts") or []] != [list(c) for c in CONTRASTS]:
+        problems.append("the contrasts are not the declared ones")
+    for name in CONFIGURATIONS:
+        cfg = (decl.get("configurations") or {}).get(name) or {}
+        if cfg.get("assignment") != assignment(name, decl.get("cases") or []):
+            problems.append(f"the assignment of {name} is not the declared rule")
+        if cfg.get("control_values") != control_values(name, decl.get("cases") or []):
+            problems.append(f"the control values of {name} are not the declared rule")
+    return problems
 
 
 # --- the closed list of cases ------------------------------------------------------------
@@ -177,34 +249,39 @@ def control_values(configuration: str, cases: list[str]) -> dict[str, int]:
 
 
 def mode_plan(args) -> int:
-    target = Path(args.out)
+    target = v2.inside_project(args.out, "--out")
     if target.exists():
         raise SystemExit(f"{target} exists; it is never replaced")
-    manifest = v2.read_json(Path(args.selection_manifest))
-    if manifest.get("population") != "determinism":
-        raise SystemExit("the selection manifest is not of the determinism population")
-    cases = select_cases(manifest, 40)
+    manifest, selection_sha, problems = selection_manifest(
+        args.selection_root, args.selection_campaign
+    )
+    if problems:
+        v2.refuse("no D6 plan", problems)
+    cases = select_cases(manifest, D6_CASES)
     if args.limit:
         cases = cases[: args.limit]
     default = v2.read_json(Path(args.dispatch_default))
     e_table = v2.read_json(Path(args.dispatch_e))
     if e_table["environment"] != E_ENVIRONMENT:
         raise SystemExit(f"the E table was not read under {E_ENVIRONMENT}")
+    smoke = bool(args.limit) or args.points != list(D6_POINTS) or len(cases) != D6_CASES
     decl = {
         "format": DECLARATION_FORMAT,
         "d6_sha256": D6_SHA256,
         "harness_sha256": v2.HARNESS_SHA256,
         "comparator": CMP.identity(),
-        "smoke": bool(args.limit),
+        "smoke": smoke,
         "note": (
-            f"SMOKE RUN OF THE D6 MACHINERY WITH {len(cases)} CASES: NOT THE D6 "
-            "(which has 40 cases at M0 and M3)"
-            if args.limit
-            else "the D6 of D6-proposta.md, revision 4"
+            f"SMOKE RUN OF THE D6 MACHINERY WITH {len(cases)} CASES AT {args.points}: NOT THE "
+            f"D6 (which has {D6_CASES} cases at {list(D6_POINTS)})"
+            if smoke
+            else "the D6 of Amendment 4, item 15 (D6 proposal revision 4)"
         ),
         "inputs": {"campaign_root": args.inputs_root, "campaign_id": args.inputs_campaign},
         "selection": {
-            "manifest_sha256": v2.file_sha256(Path(args.selection_manifest)),
+            "campaign_root": args.selection_root,
+            "campaign_id": args.selection_campaign,
+            "manifest_sha256": selection_sha,
             "rule": select_cases.__doc__,
         },
         "cases": cases,
@@ -282,7 +359,14 @@ def d6_task(task: tuple) -> dict:
 
 
 def _inputs(decl: dict) -> tuple[dict, dict]:
+    """The accepted inputs: a diagnostic campaign without problems or locks, K = 3, whose
+    accepted set's manifest is the one in its journal."""
     camp = v2.open_campaign(decl["inputs"]["campaign_root"], decl["inputs"]["campaign_id"])
+    problems = list(camp.problems) + v2.blocking_problems(camp)
+    if (camp.declaration.get("budget") or {}).get("K") != 3:
+        problems.append("the inputs campaign does not have K = 3")
+    if problems:
+        v2.refuse("the D6 inputs campaign is not usable", problems)
     entries, _ = v2.read_journal(camp)
     acc = v2.accepted_set(entries)
     if acc is None:
@@ -376,6 +460,8 @@ def mode_run(args) -> int:
     decl, decl_sha = v2.read_json(decl_path), v2.file_sha256(decl_path)
     if decl["d6_sha256"] != D6_SHA256 or decl["harness_sha256"] != v2.HARNESS_SHA256:
         raise SystemExit("the D6 declaration names another d6.py or harness")
+    if args.point not in decl["points"]:
+        raise SystemExit(f"point {args.point} is not in the D6 declaration")
     checkout = v2.refute_checkout()
     _, _, problems = v2.binding_problems(args.point, checkout)
     if problems:
@@ -384,7 +470,13 @@ def mode_run(args) -> int:
     for configuration in configs:
         for rep in args.repetition or decl["repetitions"]:
             rec = run_one(
-                decl, decl_sha, configuration, rep, args.point, Path(args.cache), Path(args.out)
+                decl,
+                decl_sha,
+                configuration,
+                rep,
+                args.point,
+                v2.inside_project(args.cache, "--cache"),
+                v2.inside_project(args.out, "--out"),
             )
             print(
                 f"{configuration} rep {rep} {args.point}: {len(rec['processes'])} "
@@ -397,15 +489,44 @@ def mode_run(args) -> int:
 # --- check ---------------------------------------------------------------------------------
 
 
-def check_one(decl: dict, run_dir: Path, configuration: str, by_id: dict) -> tuple[list[str], dict]:
-    """Check 1 for one execution, and its records (validated by the closed schema plus the
-    control section)."""
+def check_one(
+    decl: dict,
+    decl_sha: str,
+    run_dir: Path,
+    configuration: str,
+    rep: int,
+    point: str,
+    by_id: dict,
+) -> tuple[list[str], dict]:
+    """Check 1 for one execution: its execution record closed and naming this declaration,
+    d6.py, harness, configuration, repetition and point; the observed configuration and
+    sequence against the declaration; every record file with the SHA-256 the execution
+    recorded, and its control value equal to the declared one."""
     problems: list[str] = []
     ex_path = run_dir / "execution.json"
     if not ex_path.is_file():
         return [f"{run_dir.name}: no execution record (missing or interrupted)"], {}
     ex = v2.read_json(ex_path)
     cfg = decl["configurations"][configuration]
+    ident = ex.get("identity") or {}
+    for key, got, want in (
+        ("closed", ex.get("closed"), True),
+        ("declaration", ex.get("declaration_sha256"), decl_sha),
+        ("identity declaration", ident.get("campaign_declaration_sha256"), decl_sha),
+        ("d6.py", ex.get("d6_sha256"), D6_SHA256),
+        ("harness", (ident.get("origin") or {}).get("harness_sha256"), v2.HARNESS_SHA256),
+        ("configuration", ex.get("configuration"), configuration),
+        ("repetition", ex.get("repetition"), rep),
+        ("point", ex.get("point"), point),
+    ):
+        if got != want:
+            problems.append(f"{run_dir.name}: execution record {key} is {got!r}, not {want!r}")
+    # The checkout of the execution: the point's commit in points.json, clean and editable.
+    entry = v2.point_entry(v2.load_points(), point)
+    checkout = ex.get("checkout") or {}
+    if entry is None or checkout.get("commit") != entry["commit"]:
+        problems.append(f"{run_dir.name}: the checkout commit is not point {point} of points.json")
+    problems += [f"{run_dir.name}: {p}" for p in v2.install_problems(checkout)] if checkout else []
     want_table = hashlib.sha256(v2.canonical_json(cfg["dispatch"]["table"])).hexdigest()
     positions = {p["position"]: p for p in ex["processes"]}
     if sorted(positions) != list(range(len(cfg["assignment"]))):
@@ -452,6 +573,13 @@ def check_one(decl: dict, run_dir: Path, configuration: str, by_id: dict) -> tup
             seen[s[2]] = pos
             if s[0] != p["pid"]:
                 problems.append(f"{run_dir.name}: case {s[2]} recorded with another PID")
+        files = [run_dir / "cases" / f"{s[2]}.json" for s in p["sequence"]]
+        got = [v2.file_sha256(f) if f.is_file() else None for f in files]
+        if got != p.get("records_sha256"):
+            problems.append(
+                f"{run_dir.name} position {pos}: the record files differ from the SHA-256 "
+                "the execution recorded"
+            )
     recs = {}
     for c in decl["cases"]:
         f = run_dir / "cases" / f"{c}.json"
@@ -462,6 +590,12 @@ def check_one(decl: dict, run_dir: Path, configuration: str, by_id: dict) -> tup
                 problems.append(
                     f"{run_dir.name} {c}: the record's dispatch table differs from the declaration"
                 )
+            got = (recs[c].get("control") or {}).get("cases_before_in_process")
+            if got != cfg["control_values"].get(c):
+                problems.append(
+                    f"{run_dir.name} {c}: control value {got!r}, declared "
+                    f"{cfg['control_values'].get(c)!r}"
+                )
     return problems, recs
 
 
@@ -469,7 +603,7 @@ def mode_check(args) -> int:
     decl_path = Path(args.declaration)
     decl, decl_sha = v2.read_json(decl_path), v2.file_sha256(decl_path)
     by_id, acc = _inputs(decl)
-    out_root = Path(args.out)
+    out_root = v2.inside_project(args.out, "--out")
     check1: list[str] = []
     missing: list[str] = []
     invalid: list[str] = []
@@ -479,7 +613,7 @@ def mode_check(args) -> int:
         for configuration in CONFIGURATIONS:
             for rep in decl["repetitions"]:
                 run_dir = out_root / f"{configuration}-rep{rep}-{point}"
-                p, recs = check_one(decl, run_dir, configuration, by_id)
+                p, recs = check_one(decl, decl_sha, run_dir, configuration, rep, point, by_id)
                 check1 += p
                 for c in decl["cases"]:
                     rec = recs.get(c)
@@ -543,7 +677,12 @@ def mode_check(args) -> int:
             tally = control_tally.setdefault(label, {"expected": 0, "found": 0})
             tally["expected"] += int(va != vb)
             tally["found"] += int(found)
-            if found != (va != vb):
+            # A difference must be exactly where declared, and only in the control value.
+            exact = not found or (
+                ctl["status"] == "divergent"
+                and [d["path"] for d in ctl["differences"]] == ["/control/cases_before_in_process"]
+            )
+            if found != (va != vb) or not exact:
                 control.append(
                     {
                         "contrast": label,
@@ -554,12 +693,20 @@ def mode_check(args) -> int:
                         "differences": ctl["differences"][:3],
                     }
                 )
-    nc_path = out_root / "negative-control.json"
-    negative = v2.read_json(nc_path) if nc_path.is_file() else None
+    # The negative control runs here, on these records, with this comparator (never read
+    # back from a file).
+    try:
+        negative = negative_control(decl, decl_sha, out_root, by_id)
+    except (OSError, KeyError, StopIteration) as exc:
+        negative = {"passed": False, "error": f"{type(exc).__name__}: {exc}"}
+    matrix = matrix_problems(decl)
+    selection = selection_problems(decl)
+    if selection:
+        invalid += [f"selection: {p}" for p in selection]
     conditions = {
         "1_all_present": not missing,
         "2_status_analyzed": not errors and not missing,
-        "3_inputs_verified": not any("input SHA-256" in x for x in invalid),
+        "3_inputs_verified": not any("input SHA-256" in x for x in invalid) and not selection,
         "4_records_complete_and_typed": not invalid,
         "5_integrity_and_closed": all(
             (out_root / f"{cf_}-rep{r}-{p}" / "execution.json").is_file()
@@ -571,18 +718,26 @@ def mode_check(args) -> int:
         and bool(negative and negative.get("passed"))
         and not control,
     }
-    if errors or science or control or (negative is not None and not negative.get("passed")):
+    if errors or science or control or not negative.get("passed"):
         result = "FAIL"
     elif not all(conditions.values()):
         result = "INCOMPLETE"
     else:
         result = "PASS"
+    counts = result == "PASS" and not matrix
+    if matrix and result == "PASS":
+        result = "PASS (smoke run, not the D6)"
     report = {
         "format": REPORT_FORMAT,
         "declaration_sha256": decl_sha,
+        "d6_sha256": D6_SHA256,
+        "harness_sha256": v2.HARNESS_SHA256,
         "smoke": decl.get("smoke"),
         "note": decl.get("note"),
         "result": result,
+        "counts_as_d6": counts,
+        "matrix_problems": matrix,
+        "selection_problems": selection,
         "conditions": conditions,
         "check1": check1,
         "missing": missing[:200],
@@ -595,14 +750,15 @@ def mode_check(args) -> int:
         "negative_control": negative,
         "profiles": {n: CMP.profile_sha256(n) for n in ("d6-science", "d6-control")},
     }
-    target = Path(args.report)
+    target = v2.inside_project(args.report, "--report")
     v2.write_json(target, report)
     print(
-        f"D6 {'SMOKE ' if decl.get('smoke') else ''}result: {result}; conditions "
+        f"D6 result: {result} (counts as the D6: {counts}); conditions "
         f"{conditions}; science differences {len(science)}; control mismatches "
-        f"{len(control)}; check 1 problems {len(check1)}"
+        f"{len(control)}; check 1 problems {len(check1)}; negative control "
+        f"{'passed' if negative.get('passed') else 'FAILED'}"
     )
-    return 0 if result == "PASS" else 2
+    return 0 if result.startswith("PASS") else 2
 
 
 # --- negative control (injected differences and a wrong configuration) --------------------
@@ -625,9 +781,23 @@ def _get(rec, path):
 
 def mode_negative_control(args) -> int:
     decl_path = Path(args.declaration)
-    decl = v2.read_json(decl_path)
+    decl, decl_sha = v2.read_json(decl_path), v2.file_sha256(decl_path)
     by_id, _ = _inputs(decl)
-    out_root = Path(args.out)
+    out_root = v2.inside_project(args.out, "--out")
+    report = negative_control(decl, decl_sha, out_root, by_id)
+    target = out_root / "negative-control.json"
+    if not target.exists():
+        v2.write_json(target, report)
+    for r in report["results"]:
+        print(f"{'OK   ' if r['ok'] else 'WRONG'} {r['label']}")
+    print(f"negative control: {'PASSED' if report['passed'] else 'FAILED'}")
+    return 0 if report["passed"] else 2
+
+
+def negative_control(decl: dict, decl_sha: str, out_root: Path, by_id: dict) -> dict:
+    """Injected differences in copies of a real record (located by d6-science), a control
+    difference (ignored by d6-science, found by d6-control), and a copy of E's execution
+    record with the default dispatch table (refused by check 1)."""
     point = decl["points"][0]
     c = decl["cases"][0]
     rec = v2.read_json(out_root / f"R-idx-rep1-{point}" / "cases" / f"{c}.json")
@@ -717,17 +887,18 @@ def mode_negative_control(args) -> int:
     )
     # A wrong configuration injected: a copy of E's execution with the default table.
     e_dir = out_root / f"E-rep1-{point}"
-    wrong = out_root / "negative-control-wrong-E"
-    if not wrong.exists():
-        (wrong / "cases").mkdir(parents=True)
-        ex = v2.read_json(e_dir / "execution.json")
-        default_sha = hashlib.sha256(
-            v2.canonical_json(decl["configurations"]["R-idx"]["dispatch"]["table"])
-        ).hexdigest()
-        for p in ex["processes"]:
-            p["dispatch_table_sha256"] = default_sha
-        v2.write_json(wrong / "execution.json", ex)
-    p, _ = check_one(decl, wrong, "E", by_id)
+    # A new copy for every negative control (never one left by an earlier run).
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+    wrong = out_root / f"negative-control-wrong-E-{stamp}-{os.getpid()}"
+    (wrong / "cases").mkdir(parents=True)
+    ex = v2.read_json(e_dir / "execution.json")
+    default_sha = hashlib.sha256(
+        v2.canonical_json(decl["configurations"]["R-idx"]["dispatch"]["table"])
+    ).hexdigest()
+    for p in ex["processes"]:
+        p["dispatch_table_sha256"] = default_sha
+    v2.write_json(wrong / "execution.json", ex)
+    p, _ = check_one(decl, decl_sha, wrong, "E", 1, point, by_id)
     results.append(
         {
             "label": "E with the default dispatch table is refused by check 1",
@@ -735,24 +906,19 @@ def mode_negative_control(args) -> int:
             "check1": p[:3],
         }
     )
-    report = {
+    return {
         "results": results,
         "passed": all(r["ok"] for r in results),
         "record": f"R-idx-rep1-{point}/{c}",
     }
-    target = out_root / "negative-control.json"
-    v2.write_json(target, report)
-    for r in results:
-        print(f"{'OK   ' if r['ok'] else 'WRONG'} {r['label']}")
-    print(f"negative control: {'PASSED' if report['passed'] else 'FAILED'}")
-    return 0 if report["passed"] else 2
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="sub", required=True)
     p = sub.add_parser("plan")
-    p.add_argument("--selection-manifest", required=True)
+    p.add_argument("--selection-root", required=True, help="root of the selection campaign")
+    p.add_argument("--selection-campaign", required=True, help="campaign of the 520 cases")
     p.add_argument("--dispatch-default", required=True)
     p.add_argument("--dispatch-e", required=True)
     p.add_argument("--inputs-root", required=True)
@@ -778,6 +944,8 @@ def main() -> int:
         x.add_argument("--cpus", default="8-31")
     args = parser.parse_args()
     print(f"affinity: {v2.set_affinity(args.cpus)}", flush=True)
+    if v2.home_problems():
+        v2.refuse("d6.py does not run here", v2.home_problems())
     return {
         "plan": mode_plan,
         "run": mode_run,
