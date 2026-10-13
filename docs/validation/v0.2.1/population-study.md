@@ -1076,3 +1076,154 @@ Three identical generations and two identical slots make an undetected transient
 unlikely, but do not demonstrate the absence of a defect and do not detect a systematic one.
 D6 tests systematic dependence only on its matrix. The cause of the 2026-10-12 divergences is
 probable, not demonstrated.
+
+### Amendment 4, clarifications of 2026-10-13
+
+Decided by the maintainer on 2026-10-13, after an independent read-only review of the code of
+commit `113e07c` (by Codex; the review and its critique are kept with the maintainer's
+diagnostic records). The review found ways for the code to accept evidence that the rules
+above exclude; the three files were corrected **before any campaign started** (no campaign
+directory exists yet), and keep their names: their identity is their SHA-256,
+`population_v2.py` `8b3b6ad6aca6e713636b04e40db5a7d253c05458c8b143c38d984100072c1f82`, `population_compare.py` `0e62dcc4dc99a53fcc319aa513734f31e9d877406cc81e56ea97c80042e2f01f`, `d6.py` `bef4ab9db52b059ae63bcb6bc27bdc77ec2db51cf8bf762c13278d76f5f70466`
+(profiles: `slots` `a3e7e797828786b513221071666ff78e1ec07d5ef0158cce8d4cd2b403c95571`, `d6-science` `ce6816bea4354535901c34657e604d495ad24590284404ea18887efeaefca084`, `d6-control` `86f232108d6be8fdf5630a8801b560406098705d79f40d5c023081dc73d1019a`). The text of
+Amendment 4 above is not changed; these rules are added to it, each with its reason. No
+criterion, size, band, mechanism, seed rule or limit changes.
+
+1. **One run directory per analysis unit, the first valid observation.** The first
+   execution of an analysis unit (point, lot, slot) fixes its run directory in the journal; a
+   later execution of the unit is accepted only in that directory and only for the cases
+   without a record, and a second analysis of the unit in another directory is refused. A
+   record counts only if it was written by an execution of its unit, started and closed (or
+   reconciled) in the journal, in the unit's directory. So each case has exactly one record
+   per slot and point: the first valid observation. *Reason:* otherwise a unit could be
+   analyzed again elsewhere and the folder to compare chosen afterwards.
+2. **The complete scientific record is required.** A record with status `analyzed` must
+   carry, in every condition, the minimal content of `build_result` at the four points
+   (`schema` `refute-tess-verdict-1`, `status` `OK`, a verdict in SURVIVED, WEAKENED,
+   REFUTED, INCONCLUSIVE, the tests with name, status and severity, `expected_tests`, and the
+   other declared members); a record without it is invalid, and a condition without a valid
+   verdict counts as an error in C6, never as a successful analysis. *Reason:* an empty
+   scientific section would otherwise count as analyzed and fall outside every numerator.
+3. **R1 in metrics.** `metrics` computes nothing unless every lot has, at every point, the
+   records 3 of both slots, the comparison 3c registered in the journal (by the SHA-256 of
+   its report) with every case identical and naming the same files, and record 4; a lot not
+   finished is a refusal, a mismatch is a lock. Comparison reports not registered in the
+   journal are ignored. There is one comparison per lot and point: a second one is refused,
+   whatever the records folder (by `compare-slots`, and by `orchestrate` before it writes any
+   record), and the check and the `compared` entry are made under the journal lock; two
+   `compared` entries for one lot and point, or a registered report that is later missing or
+   altered, are damaged evidence and a lock (in `metrics`, `orchestrate` and
+   `compare-slots`). *Reason:* R1 was checked by `orchestrate` but not by `metrics`, a damaged
+   report was treated as a lot not yet compared, and a comparison repeated in another records
+   folder replaced the registered one.
+4. **Campaign declarations** (under `population/campaigns/` only). The whole population,
+   never a case list; the chain given by the population (`dev`: development; `confirm:...`:
+   confirmation); for the development population, manifest B
+   (`4073d96a0bce901a31241d5c2dd3d7b46192a4731a4ec3996ea1077039b833e9`) as the reference, and
+   no reference for any other population. *Reason:* a case list or a missing reference would
+   allow a population or a comparison chosen after seeing diagnostics.
+5. **The chain's counter is verified.** A declaration names its predecessor (campaign id and
+   declaration SHA-256) or, for the first campaign of a chain, the kind `v1-diagnostic`
+   (development) or `none` (confirmation) with 0 sets consumed before it; the harness checks
+   that the predecessor exists with that SHA-256 and has no unclosed execution, that the sets
+   consumed before equal the predecessor line's count, and that every other campaign of the
+   chain is an ancestor or a successor (one line per chain; see item 15). *Reason:* the count was declared, not verified.
+6. **Prerequisites are enforced.** A campaign generation is refused unless the declaration
+   names, by path and SHA-256, the structured machine qualification record
+   (`refute-machine-qualification/1`; the record of this machine is
+   `population/machine-qualification.json`, SHA-256 `707faf63d13f39d77cb8dc7e278c45994d9552aa77378e41c911a0a1a64d6fe1`, the published record; the
+   local working notes it names are not published) and the report of the full D6. The
+   qualification's result is read from its record (never from the declaration) and must be PASS; its seven
+   validity conditions that can be read without elevation (CPU name, processor id, microcode
+   revision, BIOS version, BIOS date, board, and the memory modules with their bank, slot,
+   part number, capacity, configured speed and voltage) must all be present, with values and
+   at least one memory module (an incomplete PASS record is refused before any comparison),
+   and must equal the machine at the start of the generation; the BCD
+   `badmemorylist` entry is attested by the maintainer (2026-10-13) and not machine-verified,
+   because reading it requires administrator rights; the BIOS settings (defaults or Auto, no
+   manual CPU or memory tuning) and the absence of an EasyTune profile are stated by the
+   maintainer (2026-10-12) and not machine-verified either. The D6 report must be a PASS
+   that counts as the D6 (item 13) produced by the current `d6.py`, harness and comparator
+   profiles (their SHA-256 in the report); a D6 of another version does not count. *Reason:* the
+   qualification and D6 were required but not checked by the code, then the PASS was taken
+   from the declaration and an old D6 counted.
+7. **The affinity is declared.** Every declaration declares the affinity of its executions
+   (on this machine, logical processors 8 to 31); generation, regeneration, analysis and
+   orchestration refuse another, and the run record and its fingerprint (compared between the
+   two slots) carry it. *Reason:* the slots share one configuration, affinity included.
+8. **Campaign ids and paths.** A campaign id is a plain folder name (lowercase letters,
+   digits, dots and hyphens, no `..`), its folder is directly under its root, and every path
+   the harness and the D6 script write (outputs, caches, records, reports, the given roots
+   and the default root, resolved) must be inside the project folder. The user's home
+   directory (`Users/<user>` or `home/<user>`) is masked in every string and dictionary key
+   of every record, journal entry, machine record and traceback before it is written, and the
+   harness and the D6 script refuse to run when the project folder is inside the user's home
+   directory (the mask would then change the paths the harness reads back). *Reason:* an id with path components could move a strict
+   campaign out of `population/campaigns/`, and the records are meant for publication.
+9. **Detection writes the lock at once, and every observation is kept.** Every result of a
+   generation or regeneration (entry, blocks, problems, operational data) is appended, as it
+   arrives, to the execution's observations file (one JSON line per case, flushed at once,
+   synchronized to disk at a divergence and at the end), named in the `started` entry; a
+   divergence writes its lock marker and journal entry at the instant it is detected, after
+   its observation; every later event of the same execution is written to the journal at
+   once (kind `event`); at a normal end a generation stopped by integrity also writes an
+   evidence file. An interruption after a detection therefore keeps the lock and every
+   observation made until then. An earlier generation or another set whose artifacts are
+   missing or changed is a lock, never skipped. A worker that reports a dispatch or
+   thread-pool difference is an integrity divergence (lock), never an infrastructure
+   failure. *Reason:* a stop between the detection and the end of the pool lost the
+   divergence and the observations, and a skipped artifact removed evidence from the
+   blocking comparisons.
+10. **One execution per unit.** The refusals of a unit and its `started` entry are evaluated
+    and appended under the journal lock in one step, so that two simultaneous executions of a
+    unit can never both start; two executions of one generation found later are a lock; a new
+    set starts with generation 1. Final files are created exclusively by a hard link (no window
+    between a test and a rename). *Reason:* a race could start a generation twice and hide one
+    of them.
+11. **Records 3 on resumption.** A record 3 that exists must equal the results; a missing one
+    (a stop while records 3 were written) is rebuilt from complete, valid results. *Reason:* a
+    partial set of records 3 produced a false lock.
+12. **Diagnostic metrics are labelled.** `metrics` of a diagnostic campaign writes its
+    eligibility and identity, and its report says "DIAGNOSTIC: not an approval" instead of an
+    overall approval; every metrics report repeats the accepted risk of item 5 of Amendment 4.
+    *Reason:* a diagnostic report could be read as an approval.
+13. **The D6 result counts only for the declared matrix.** A D6 run counts as the D6 only with
+    exactly the declared matrix (40 distinct cases, M0 and M3, the seven configurations, two
+    repetitions, the declared assignment); any other run, even with every check passed, is
+    reported as "PASS (smoke run, not the D6)". The 40 cases are authenticated: the
+    selection manifest must be the accepted set of a campaign of the whole `determinism`
+    population (no case list, no lock, exactly its 520 cases and seeds), the cases are
+    recomputed from it by the declared rule both in `plan` and in `check`, and the inputs
+    campaign must be restricted to exactly these cases. Check 1 also verifies every
+    execution record (closed; naming the declaration, `d6.py`, the harness, the
+    configuration, the repetition and the point; its checkout at the point's commit in
+    `points.json`, clean and editable) and the SHA-256 of every record file; the control
+    value of every record must equal its declared value, and the control pass must find
+    differences only at `/control/cases_before_in_process`; the negative control runs inside
+    the check, on the same records, with a new copy of E's execution record each time; the
+    inputs campaign must be unblocked with K = 3. *Reason:* the earlier check could pass
+    without the matrix, the closures, the control values or an authenticated selection.
+14. **Comparator.** A malformed `f64` and an integer outside the int64 range make a record
+    invalid (reported, never an exception); a manifest comparison also compares the block
+    lists and the block index headers. *Reason:* robustness of the reports.
+15. **Smaller additions.** `reconcile` (which writes to the journal) applies R2 in a strict
+    campaign; the execution record names the random generator; the declaration must record
+    the overhead decision (the double hash kept). A campaign with a successor in its chain
+    (a campaign whose predecessor line includes it) is superseded: no generation runs in it
+    (neither a new set nor the continuation of a set), and its reconciliation, metrics,
+    status and integrity-failure report still work.
+
+**Left for later, with the reason.** The confirmation prefix is not yet checked against a
+drand round (the confirmation campaign is not in view; it will be checked before it, from
+the round number and randomness declared); the loss of the tail of a journal before it is
+committed remains the accepted risk of item 5; `status` reads the campaign without applying
+R2, and the integrity-failure report reads the campaign and writes only its own report.
+
+**Reviews and self-tests.** Two further read-only reviews of the corrections were made. The
+second found four remaining blocking points (items 3, 6, 9 and 13); the third found two of
+them resolved (items 9 and 13) and two partly resolved (items 3 and 6). The maintainer
+decided to complete items 3 and 6 without a fourth review, proven by specific tests. The
+self-test of these files is `population/selftest-v2-4/` (reference cases kept; overhead 16.5 %; determinism byte-identical; injections 5 of 5 and 6 of 6; D6 smoke run PASS (not the D6), negative control 11 of 11; review findings 19 of 19, 14 of 14 and 18 of 18; test suite 505 tests, 0 failures, 0 errors);
+`population/selftest-v2/` tested the files of commit `113e07c`, and
+`population/selftest-v2-2/` and `population/selftest-v2-3/` intermediate versions (after the
+first and the second review); all three are left as they were.
