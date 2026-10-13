@@ -1,0 +1,12 @@
+{
+ "started_utc": "2026-10-13T17:56:29+00:00",
+ "watched_pid": 35196,
+ "total_physical_bytes": 68637130752,
+ "baseline_in_use_bytes": 34375806976,
+ "baseline_commit_bytes": 56692441088,
+ "peak_in_use_bytes": 42560073728,
+ "peak_commit_bytes": 65657159680,
+ "peak_utc": "2026-10-13T18:02:36+00:00",
+ "samples": 727,
+ "ended_utc": "2026-10-13T18:20:45+00:00"
+}
