@@ -22,6 +22,118 @@ The first four are defined in the code (`PaperVerdict`); `INCONCLUSIVE` is added
 it in the core work package of v0.3, with its tests. The rules are in
 [docs/plans/v0.3-plan.md](plans/v0.3-plan.md), section 8.
 
+**Status.** The rules below are the specification of the v0.3 plan. The engine
+implements them in the core work package (WP2); until then they describe required
+behavior, not existing code.
+
+`INCONCLUSIVE` means that Refute could not decide, for reasons on its side. It is
+treated as a possibly correct answer that is less informative, with no value
+judgment (plan, section 8.2).
+
+### Gates and prerequisites
+
+- **Gates of the base reproduction:** `environment_build`, `data_present`, and
+  `run_completed` and `metric_extracted` of the **base** runs.
+- **Prerequisites of an attack:** the run and the metric of **that** attack. An
+  interruption or a failed prerequisite of an attack makes only that attack
+  `INCONCLUSIVE`; it never reopens the base reproduction.
+
+(Plan, section 8.1.)
+
+### Order of verdicts for one claim
+
+The first rule that matches decides. This order deliberately differs from the order
+used for discovery verdicts (section "Aggregation" below), so that a valid robustness
+failure is not erased by an attack that did not run:
+
+0. coverage enforcement (see "Coverage for paper claims" below);
+1. a gate of the base reproduction that did not pass: `NOT_REPRODUCIBLE` or
+   `INCONCLUSIVE`, by the attribution rule below;
+2. a valid fatal failure (`base_reproduction`, `metric_recompute`):
+   `NOT_REPRODUCED`;
+3. a base reproduction that is incomplete, with no valid negative conclusion:
+   `INCONCLUSIVE`;
+4. any attack with a valid failure and its prerequisites met: `FRAGILE`; the attacks
+   not executed are recorded and the incomplete coverage is flagged;
+5. any expected attack missing or `INCONCLUSIVE`: `INCONCLUSIVE`, with the status
+   "Basic reproduction obtained; robustness inconclusive";
+6. otherwise: `REPRODUCED`.
+
+"Basic reproduction obtained" is declared only after `metric_recompute`, where it
+applies. (Plan, section 8.1.)
+
+### Attribution: `NOT_REPRODUCIBLE` or `INCONCLUSIVE`
+
+At every stage (build, data, run, metric, attacks):
+
+- **`NOT_REPRODUCIBLE`** only for a failure of the artifact's own documented
+  procedure, shown by complete attempts:
+  - every rung of the build ladder ran to its end and failed with an error of the
+    procedure itself; or
+  - the documented command fails in the built environment; or
+  - a declared artifact answers as absent (for example HTTP 404 or 410) in all of the
+    N attempts fixed before the lock, spaced by an interval fixed before the lock.
+- **`INCONCLUSIVE`** for everything else: an exhausted budget, an operational guard,
+  an error of Refute, a transient network failure, a stage interrupted before its
+  end, or an undetermined cause.
+
+(Plan, section 8.2.)
+
+### Partial results
+
+Verdicts are per claim. An exhausted budget does not erase a conclusion already shown
+with its prerequisites met:
+
+- budget exhausted during the base reproduction, with no conclusion: `INCONCLUSIVE`
+  (`budget_exhausted`), never `NOT_REPRODUCIBLE`;
+- base reproduction obtained, robustness incomplete, and no valid negative
+  conclusion: `INCONCLUSIVE`, with the status "Basic reproduction obtained;
+  robustness inconclusive";
+- a claim already shown to be `NOT_REPRODUCED`, or `FRAGILE` by a valid failure: the
+  conclusion is kept, and the remaining checks are recorded as not executed.
+
+Partial values go into the dossier as information only. (Plan, section 8.3.)
+
+### The result of a paper
+
+The result of a paper is the profile of its claims, never a single verdict:
+
+- the report always shows the full profile of the claims, in the drawn order, with
+  `INCONCLUSIVE` in the denominators;
+- a headline appears only when every claim has the same verdict, with count and
+  scope, for example "3 of 3 drawn claims: REPRODUCED"; otherwise the headline is
+  "Mixed results: see the claims";
+- no single claim defines the paper;
+- a paper whose claims are all `INCONCLUSIVE`, or `INCONCLUSIVE` and `REPRODUCED`, is
+  described as inconclusive for those claims, never as positive or reproduced, and
+  stays in the denominators;
+- any negative claim verdict starts the right of reply for that paper
+  ([right-of-reply.md](right-of-reply.md)).
+
+(Plan, section 8.3.)
+
+### Coverage for paper claims
+
+Each check has a coverage unit and a **minimum coverage**, fixed per claim before the
+lock, separately for a positive and for a negative conclusion (for example, the base
+reproduction must complete the number of seeds declared in the claim). Coverage below
+the minimum gives no conclusion: it never yields a pass, and it yields a negative
+conclusion only where the valid evidence already obtained establishes it.
+
+| Check | Coverage unit | Zero coverage means |
+|---|---|---|
+| claim extraction | approved claims | the paper cannot be `REPRODUCED` |
+| `data_present` | examples per split (train, validation, test, holdout) | an empty split, or one smaller than the paper states (tolerance fixed), does not pass the gate |
+| `metric_extracted` | examples the metric was computed on | a metric on zero examples does not pass the gate |
+| `base_reproduction` | runs completed | no run: not decided |
+| `seeds`, `data_split` | valid runs completed | `INCONCLUSIVE`, never PASS |
+| comparison | paired comparisons made | nothing compared: `INCONCLUSIVE` |
+| the repository's own test suite | tests collected and not skipped | zero collected or all skipped: `INCONCLUSIVE` for that check, never PASS |
+| `leakage` | example pairs hashed | `INCONCLUSIVE` |
+
+The repository's own test suite is information only: its result is reported with its
+coverage and never decides a verdict. (Plan, section 8.4.)
+
 ## Test results
 
 Every test returns `PASS`, `FAIL` or `INCONCLUSIVE` (never a silent skip), with a
