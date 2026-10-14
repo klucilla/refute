@@ -367,6 +367,39 @@ Refute exists to attack claims, so contributions that find weaknesses in Refute 
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [ROADMAP.md](ROADMAP.md): work happens only on the current phase.
 
+## How AI is used in this project
+
+AI agents do much of the work in this repository. A human maintainer decides.
+
+**What the agents do**, as recorded in the repository:
+
+- write code, tests and documentation, and propose plans, claims and run commands, in
+  sessions run by the maintainer; commits written with an agent carry a
+  `Co-Authored-By` trailer that names it;
+- run analyses and checks in those sessions, when the maintainer approves them;
+- review dossiers as independent reviewers, in fresh read-only sessions that never saw
+  how the claim was built: Claude as the primary reviewer and, for some dossiers, Codex
+  as a second reviewer from another model family
+  ([reviewer protocol](docs/reviewer-protocol.md));
+- review plans and documents as a second agent (Codex, read-only). Its objections, the
+  answers and the decision taken are recorded in the pull request.
+
+**What the maintainer decides:**
+
+- every pre-registration step, lock and run;
+- every commit, push, merge, release and change to issues, approved explicitly; some
+  kinds of change (for example acceptance documents) have a standing approval with a
+  limited scope;
+- every message to the authors of a paper: agents never send email, and nothing is
+  ever submitted to a scientific body by an agent;
+- the machine where third-party code runs.
+
+**What the agents never do: decide a verdict.** Verdicts come only from deterministic,
+versioned code with thresholds locked before the data are seen ("Agents propose.
+Deterministic tests decide."). A reviewer raises objections; it never sets or changes a
+verdict. Using AI does not make a result more or less true: the evidence is in each
+dossier, which can be checked with the commands it contains.
+
 ## Code of conduct for verdicts
 
 - Verdicts are about **claims, never about authors**. "Not reproduced" does not mean misconduct.
