@@ -369,7 +369,7 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [ROADMAP.md](ROADMAP.md): work
 
 ## How AI is used in this project
 
-AI agents do much of the work in this repository. A human maintainer decides.
+AI agents take part in the work in this repository. A human maintainer decides.
 
 **What the agents do**, as recorded in the repository:
 
@@ -378,27 +378,27 @@ AI agents do much of the work in this repository. A human maintainer decides.
   `Co-Authored-By` trailer that names it;
 - run analyses and checks in those sessions, when the maintainer approves them;
 - review dossiers as independent reviewers, in fresh read-only sessions that never saw
-  how the claim was built: Claude as the primary reviewer and, for some dossiers, Codex
-  as a second reviewer from another model family
-  ([reviewer protocol](docs/reviewer-protocol.md));
-- review plans and documents as a second agent (Codex, read-only). Its objections, the
-  answers and the decision taken are recorded in the pull request.
+  how the claim was built, with Claude as the primary reviewer
+  ([reviewer protocol](docs/reviewer-protocol.md)); the protocol also provides for a
+  second reviewer from another model family (Codex) for some dossiers;
+- review plans and documents as a second agent (Codex, read-only). From v0.3 on, the
+  procedure records its objections, the answers and the decision taken in the pull
+  request.
 
 **What the maintainer decides:**
 
 - every pre-registration step, lock and run;
-- every commit, push, merge, release and change to issues, approved explicitly; some
-  kinds of change (for example acceptance documents) have a standing approval with a
-  limited scope;
+- every commit, push, merge, release and change to issues, each approved explicitly;
 - every message to the authors of a paper: agents never send email, and nothing is
   ever submitted to a scientific body by an agent;
 - the machine where third-party code runs.
 
-**What the agents never do: decide a verdict.** Verdicts come only from deterministic,
-versioned code with thresholds locked before the data are seen ("Agents propose.
-Deterministic tests decide."). A reviewer raises objections; it never sets or changes a
-verdict. Using AI does not make a result more or less true: the evidence is in each
-dossier, which can be checked with the commands it contains.
+**What the agents never do: decide the verdict on a claim.** Claim verdicts come only
+from deterministic, versioned code, with the claim and its thresholds locked before the
+hidden data are revealed ("Agents propose. Deterministic tests decide."). A reviewer
+raises objections; it never sets or changes a verdict. Using AI does not make a result
+more or less true: the evidence is in each dossier, which can be checked with the
+commands it contains.
 
 ## Code of conduct for verdicts
 
