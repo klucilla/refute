@@ -14,8 +14,13 @@ A claim is never "proven". It survives the attacks, or it does not. There is no
 
 ## Paper verdicts (from v0.3)
 
-`REPRODUCED`, `FRAGILE`, `NOT_REPRODUCED`, `NOT_REPRODUCIBLE`. Defined in the
-code, not used in v0.1.
+Paper claims: `REPRODUCED`, `FRAGILE`, `NOT_REPRODUCED`, `NOT_REPRODUCIBLE`,
+`INCONCLUSIVE` (Refute could not decide for reasons on its side, such as an
+exhausted budget or the hang guard; never a failure of the artifact).
+
+The first four are defined in the code (`PaperVerdict`); `INCONCLUSIVE` is added to
+it in the core work package of v0.3, with its tests. The rules are in
+[docs/plans/v0.3-plan.md](plans/v0.3-plan.md), section 8.
 
 ## Test results
 
