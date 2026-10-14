@@ -161,38 +161,94 @@ before any v0.2.1 lock or result.
   with a persistent systematic bias toward a neighbor, using each sector's
   pixel-to-sky transform.
 
+**Population study closed by a scope decision on 2026-10-14**, without a demonstration
+that approval was impossible
+([closure record](docs/validation/v0.2.1/population/closure-record.md)):
+- M0 to M3: FAILS on the development population, with full integrity.
+- Confirmation: not run; no drand round was declared.
+- M4 and M5: not implemented, not measured.
+- Proposed corrections: hypotheses and plans, with 6 of the 9 rows of their last revision
+  still open.
+- The calibration population of the corrections plan: never generated nor analyzed.
+
+The exit criteria below are not met and none is marked done. Each pending criterion is
+**deferred**, with its reason; no gate is scheduled.
+
 **Exit criteria**
 - [ ] Every change has acceptance criteria, metrics and regression cases committed
       before its tests and code, and synthetic cases that must pass and must fail,
       including correlated noise.
+      *Deferred.* The changes made in v0.2.1 (H7, H4, H9(a), workers equivalence, CI
+      option D) have acceptance records committed before their tests and code
+      (`docs/validation/v0.2.1/*-acceptance.md`); whether each one covers correlated
+      noise was not audited at the closure. The TESS corrections never reached that
+      stage (6 open rows).
 - [ ] A synthetic population study with known truth measures, before and after each
       change, the rate of refuted planets, the rate of flagged false positives, the
       false-alarm rate on noise-only light curves (white and correlated) and the
       INCONCLUSIVE fraction; its metrics and acceptance limits are committed before
       it runs.
+      *Deferred.* The study and its limits were committed before it ran, and M0 to M3
+      were measured (FAILS); the measurement after the remaining changes (M4, M5)
+      belongs to the deferred TESS corrections.
 - [ ] Synthetic seeds and scenarios are split, before use, into a development set
       and a confirmation set; the confirmation set, with seeds derived from a future
       drand round, runs once, at the end, on frozen code, and only its result counts
       as validation.
+      *Deferred.* The split is declared (the development prefix and the confirmation
+      rule of the population study, section 5); the confirmation never ran and no drand
+      round was declared. Nothing of v0.2.1 counts as validated.
 - [ ] No synthetic test that passes at the start of v0.2.1 fails at its end without
       a justification written before.
+      *Deferred.* It can be checked on the suite against the baseline of the population
+      study, section 12; it was not checked at the closure of the study.
 - [ ] No threshold is set, tuned or checked on a known target or on real data; every
       target used in the v0.1 and v0.2 calibrations, including development targets,
       is used only for declared debugging.
+      *Deferred.* The rule stays in force. The population study used synthetic data
+      only, and the development runs on real targets are declared in
+      `docs/validation/v0.2.1/pre-document-runs.md`; no audit was made at the closure.
 - [ ] New thresholds are in the code and in the gauntlet documentation before the
       protocol of the new calibration.
+      *Deferred.* No protocol of a new calibration was written; this applies when one
+      is.
 - [ ] The workers-equivalence test passes and the coverage requirement is defined,
       both before the v0.2.1 lock.
+      *Deferred.* There is no v0.2.1 lock. The workers-equivalence test exists and runs
+      in CI (`docs/validation/v0.2.1/workers-equivalence-acceptance.md`); the coverage
+      requirement was never defined (population study, "Still to fix before the v0.2.1
+      lock").
 - [ ] New pre-registered calibration (new lock of protocol, code, dependencies and
       claim; newly drawn targets, excluding every target used in the v0.1 and v0.2
       calibrations, including development targets), run and reported, even if it
       fails.
+      *Deferred.* Its prerequisite, a population study approved on frozen code, was not
+      reached; a new calibration now would test code that failed the synthetic
+      criteria.
 - [ ] If the new calibration fails, the maintainer records an explicit decision;
       there is no automatic new attempt.
+      *Deferred* with the new calibration. The closure record is the maintainer's
+      explicit decision about the population study.
 - [ ] Reviewer reports stored and linked from the dossiers of the new calibration,
       as in v0.2.
+      *Deferred* with the new calibration.
 - [ ] Every issue of milestone v0.2.1 closed, or moved to a later milestone with the
       reason stated.
+      *Deferred.* Six issues were open at the closure of the study (#14, #23, #32, #33,
+      #34, #35); each is closed or moved, with its reason, by a decision of the
+      maintainer. #35 (robust stacking and the error model of a round) belongs to the
+      deferred TESS corrections.
+
+**Deferred work, with no target version**
+- **TESS corrections** (holdout capacity and FAIL rule, correlated noise, timing with an
+  ingress model, prewhitening, `period_alias`): deferred with no target version. Input:
+  revision 3 of the corrections plan and its 6 open rows
+  ([corrections plan](docs/validation/v0.2.1/population/corrections-plan/README.md)),
+  under the resumption conditions of the closure record.
+- **Directed mode** of the holdout (a claimed ephemeris): a separate pending item, outside
+  the TESS corrections and their budget (corrections plan, revision 3, Appendix A).
+
+Neither moves to v0.3 automatically; v0.3 is unchanged.
 
 ---
 
