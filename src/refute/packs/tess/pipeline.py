@@ -7,7 +7,7 @@ auxiliary columns, neighbors or catalogs used by the v0.2 battery.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -106,17 +106,26 @@ def battery_tests(
         check_systematics(aux.sectors if aux else [], candidate, plan),
     ]
     if catalogs is not None:
-        tests.append(
-            check_eb_catalog(
-                catalogs,
-                catalog_scan,
-                data.target_key,
-                data.star,
-                candidate.period,
-                plan.gauntlet.eb_catalog,
-            )
-        )
+        tests.append(eb_catalog_test(data, candidate, plan, catalogs, catalog_scan))
     return tests
+
+
+def eb_catalog_test(
+    data: TessData,
+    candidate: Candidate,
+    plan: TessTestPlan,
+    catalogs: list[EbEntry],
+    catalog_scan: dict | None,
+) -> TestResult:
+    """The ``eb_catalog`` test of the battery for the final candidate."""
+    return check_eb_catalog(
+        catalogs,
+        catalog_scan,
+        data.target_key,
+        data.star,
+        candidate.period,
+        plan.gauntlet.eb_catalog,
+    )
 
 
 def attack_candidate(
@@ -203,10 +212,40 @@ def analyze_data(
     gauntlet = attack_candidate(data, search.candidate, plan, catalogs, catalog_scan)
     # Blind holdout: raw data and sector metadata only. Never the global candidate.
     holdout = run_holdout(data.lc, data.sectors, plan)
+    return conclude_analysis(search, flat, gauntlet, holdout, catalogs is not None)
+
+
+def conclude_analysis(
+    search: SearchResult,
+    flattened: LightCurveData,
+    gauntlet: GauntletOutcome,
+    holdout: HoldoutOutcome,
+    catalogs_configured: bool,
+) -> Analysis:
+    """The end of an analysis: the coverage rule over every test, then the verdict."""
     # Domain-agnostic coverage rule: a PASS that examined nothing is INCONCLUSIVE.
     tests = enforce_coverage([*gauntlet.tests, holdout.test])
-    verdict, reason = aggregate(tests, expected=expected_tests(catalogs is not None))
-    return Analysis(search, flat, gauntlet, holdout, tests, verdict.value, reason)
+    verdict, reason = aggregate(tests, expected=expected_tests(catalogs_configured))
+    return Analysis(search, flattened, gauntlet, holdout, tests, verdict.value, reason)
+
+
+ALIAS_FACTORS = (("P", 1.0), ("2P", 2.0), ("P/2", 0.5), ("3P", 3.0), ("P/3", 1.0 / 3.0))
+
+
+def matching_factor(
+    published: float | None,
+    found: float | None,
+    factors: Sequence[float],
+    tolerance: float,
+) -> float | None:
+    """The first factor ``f`` with ``|found - f * published| / (f * published) <= tolerance``
+    (inclusive), or None. Missing or non-positive periods match nothing."""
+    if published is None or found is None or published <= 0:
+        return None
+    for factor in factors:
+        if abs(found - factor * published) / (factor * published) <= tolerance:
+            return factor
+    return None
 
 
 def period_comparison(
@@ -224,10 +263,10 @@ def period_comparison(
         return out
     out["relative_error"] = abs(found - published) / published
     check = tolerance if tolerance is not None else 0.001
-    for name, factor in (("P", 1.0), ("2P", 2.0), ("P/2", 0.5), ("3P", 3.0), ("P/3", 1.0 / 3.0)):
-        if abs(found - factor * published) / (factor * published) <= check:
-            out["alias"] = name
-            break
+    names = {factor: name for name, factor in ALIAS_FACTORS}
+    factor = matching_factor(published, found, [f for _, f in ALIAS_FACTORS], check)
+    if factor is not None:
+        out["alias"] = names[factor]
     if tolerance is not None:
         out["within_tolerance"] = out["relative_error"] <= tolerance
     return out

@@ -1,0 +1,25 @@
+== 44 cases, 1 worker, inherited OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=4, hash only, vs selftest-2 manifest (old harness)
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': '4', 'OPENBLAS_NUM_THREADS': '2', 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 1 process(es) (the main process), pools ["[('openblas', 1)]"]
+cases generated: 44 (hash only); wall 8.0 s; per case 0.17 s mean, 0.27 s max; peak worker memory 211.7 MB; bytes 3547686423
+checked against C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7/docs/validation/v0.2.1/population/selftest-2/manifest.json: 44 identical, 0 diverged
+exit=0
+== 44 cases, 3 workers reverse, hash only, vs selftest-2 manifest
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 3 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 44 (hash only); wall 4.5 s; per case 0.26 s mean, 0.91 s max; peak worker memory 200.5 MB; bytes 3547686423
+checked against C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7/docs/validation/v0.2.1/population/selftest-2/manifest.json: 44 identical, 0 diverged
+exit=0
+== 44 cases, 24 workers shuffle:99, hash only, vs selftest-3 manifest
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 44 (hash only); wall 5.5 s; per case 1.89 s mean, 3.39 s max; peak worker memory 199.2 MB; bytes 3547686423
+checked against C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7/docs/validation/v0.2.1/population/selftest-3/manifest.json: 44 identical, 0 diverged
+exit=0
+selftest-2 vs selftest-3 case entries identical: True 44
+env s2: {'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None, 'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None} [24]
+env s3: {'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1'} [1]
+top-level keys that differ: ['environment', 'generator', 'harness_sha256']

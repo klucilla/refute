@@ -1,0 +1,758 @@
+# declare 2026-10-13T16:57:19+00:00
+harness population_v2.py SHA-256 8b3b6ad6aca6e713636b04e40db5a7d253c05458c8b143c38d984100072c1f82
+comparator population_compare.py SHA-256 0e62dcc4dc99a53fcc319aa513734f31e9d877406cc81e56ea97c80042e2f01f
+profile slots: SHA-256 a3e7e797828786b513221071666ff78e1ec07d5ef0158cce8d4cd2b403c95571
+profile d6-science: SHA-256 ce6816bea4354535901c34657e604d495ad24590284404ea18887efeaefca084
+profile d6-control: SHA-256 86f232108d6be8fdf5630a8801b560406098705d79f40d5c023081dc73d1019a
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py dispatch-table --out <repo>\.cache\population\v2-selftest-4\dispatch-M3-9d3f369.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  written to <repo>\.cache\population\v2-selftest-4\dispatch-M3-9d3f369.json (SHA-256 of the table 93167bad1531cc9680a978aef67509a5fdc9a617aa7733f9c1b4beb7a474a4f0)
+  [exit 0, wall 0.3 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py dispatch-table --out <repo>\.cache\population\v2-selftest-4\dispatch-v0.2.0.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  written to <repo>\.cache\population\v2-selftest-4\dispatch-v0.2.0.json (SHA-256 of the table 93167bad1531cc9680a978aef67509a5fdc9a617aa7733f9c1b4beb7a474a4f0)
+  [exit 0, wall 0.3 s]
+dispatch table v0.2.0 93167bad1531cc9680a978aef67509a5fdc9a617aa7733f9c1b4beb7a474a4f0, M3 93167bad1531cc9680a978aef67509a5fdc9a617aa7733f9c1b4beb7a474a4f0 (equal: True)
+declaration v2-selftest-reference: 3 cases, SHA-256 dd42ddcfd56df089f8b9c67c666bf2f9015faa039c0fafd37517684eae732c4d
+declaration v2-selftest-determinism: 520 cases, SHA-256 4e605fcbd2ffd132aa9877492a801d4bb9fa3c5363e9b7cb8a0ddad685d59b81
+declaration v2-selftest-overhead: 520 cases, SHA-256 381ae657d2215e2c7e4dc522bd69eef4f2994e3a3ff0df74c1d5a11d9598a18c
+declaration v2-selftest-lock: 2 cases, SHA-256 9acc35ad59ec839259b7124b106c4a4563dc80b2ba13f82bfe068448e38043b3
+declaration v2-selftest-interrupt: 3 cases, SHA-256 ac5922f92d4166b60862cb60b23ed65f64f5e912a49a38b8322b91c7792bcbb4
+declaration v2-selftest-concurrent: 2 cases, SHA-256 5aec5c6ad34e0bab3dbdea1c69f5576a632cf5cec2c43abf98cb23391905366c
+declaration v2-selftest-workerlock: 2 cases, SHA-256 c7c1998b64c5a6ee9378a62d63036b591c193e6f4be6f37f87adb3c500e053ee
+declaration v2-selftest-cmpdamage: 2 cases, SHA-256 0cdd06382ac32c803a61d594ae788fbef1b453e8d426c9e33ff4c4a29525c3a7
+declaration v2-selftest-analysis: 4 cases, SHA-256 7c78ec27fe20cabbeba82f040d69f25424223ea9d4c5cb23acc235cf683c1056
+declaration v2-selftest-cmpalter: 2 cases, SHA-256 f24649f1061d5e7a4885af74ab60d1ecda7a191df9455c5fe43303210a244303
+declaration v2-selftest-cmpremove: 2 cases, SHA-256 27b3dcbf12ac91d42cb63c0cffc58532e271ef2aefb1828955c1a2840be190cc
+# reference cases 2026-10-13T16:57:20+00:00
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-reference --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-reference --cache <repo>\.cache\population\v2-selftest-4\cache-reference --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-reference set 1 generation 1: 3 cases, 1 workers, order index
+  generated 3 cases in 2.5 s; manifest ead6c8244586b5f09416ab143896588883d5ab939626081a5f632d49b0ce3c29; block index bc01e86511fd0818ef6059c26061a51266a41d2730ef93121593445bd7046a42
+  set 1: generation 1 is the first of its set
+  [exit 0, wall 4.5 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-reference --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-reference --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-reference set 1 generation 2: 3 cases, 2 workers, order reverse
+  generated 3 cases in 2.1 s; manifest ead6c8244586b5f09416ab143896588883d5ab939626081a5f632d49b0ce3c29; block index bc01e86511fd0818ef6059c26061a51266a41d2730ef93121593445bd7046a42
+  set 1: generation 2 is byte-identical to generations [1]
+  [exit 0, wall 4.0 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-reference --set 1 --generation 3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-reference --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-reference set 1 generation 3: 3 cases, 3 workers, order shuffle:7
+  generated 3 cases in 2.2 s; manifest ead6c8244586b5f09416ab143896588883d5ab939626081a5f632d49b0ce3c29; block index bc01e86511fd0818ef6059c26061a51266a41d2730ef93121593445bd7046a42
+  set 1: generation 3 is byte-identical to generations [1, 2]
+  [exit 0, wall 4.1 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-reference --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  set 1 accepted: manifest ead6c8244586b5f09416ab143896588883d5ab939626081a5f632d49b0ce3c29 (commit and freeze it manually, with the journal)
+  [exit 0, wall 0.8 s]
+reference false_positive-measurable-white-0004: 1817b9f776969ae050ba6cd7b1849dda968595041dabe37711390cec7b37b724 EXPECTED
+  stored file SHA-256 1817b9f776969ae050ba6cd7b1849dda968595041dabe37711390cec7b37b724 (75483086 bytes)
+reference planet-measurable-correlated-0000: a7dd6266f4ffd30f3cead01987a301c64db2086791a7296e0db55f3f416055c4 EXPECTED
+  stored file SHA-256 a7dd6266f4ffd30f3cead01987a301c64db2086791a7296e0db55f3f416055c4 (75482963 bytes)
+reference planet-measurable-white-0000: f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e EXPECTED
+  stored file SHA-256 f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e (75482837 bytes)
+# overhead 2026-10-13T16:57:34+00:00
+$ v1 run 1: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population.py generate --population confirm:refute-v0.2.1-population-determinism --cases-from <repo>\.cache\population\v2-selftest-4\determinism-ids.txt --cache <repo>\.cache\population\v2-selftest-4\cache-v1-hash-only --no-store --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead\v1-run1.json --workers 24 --order index --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  thread variables inherited {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1'}, set to 1; main process pools [('openblas', 1)]
+  worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+  cases generated: 520 (hash only); wall 35.2 s; per case 1.50 s mean, 4.41 s max; peak worker memory 199.4 MB; bytes 40949239739
+  manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead\v1-run1.json: SHA-256 5d5d1369f9df2463ae84fa9e448629bed84bbaae954a2e0642869481cbbb51f5
+  [exit 0, wall 36.8 s]
+$ v2 run 1: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-overhead --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-overhead set 1 generation 1: 520 cases, 24 workers, order index
+  generated 520 cases in 38.9 s; manifest 98249a7350fa2aff6bbf393902deed1c380e9d46b164d1ae4c71f71b9a9c4415; block index 9ef4022aedf819b65a65157444f72e035ff83677e1cceea2466dd5339a600b0e
+  set 1: generation 1 is the first of its set
+  [exit 0, wall 41.3 s]
+$ v1 run 2: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population.py generate --population confirm:refute-v0.2.1-population-determinism --cases-from <repo>\.cache\population\v2-selftest-4\determinism-ids.txt --cache <repo>\.cache\population\v2-selftest-4\cache-v1-hash-only --no-store --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead\v1-run2.json --workers 24 --order index --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  thread variables inherited {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1'}, set to 1; main process pools [('openblas', 1)]
+  worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+  cases generated: 520 (hash only); wall 35.2 s; per case 1.50 s mean, 4.03 s max; peak worker memory 199.2 MB; bytes 40949239739
+  manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead\v1-run2.json: SHA-256 5d5d1369f9df2463ae84fa9e448629bed84bbaae954a2e0642869481cbbb51f5
+  [exit 0, wall 36.7 s]
+$ v2 run 2: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-overhead --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-overhead set 1 generation 2: 520 cases, 24 workers, order index
+  generated 520 cases in 40.2 s; manifest 98249a7350fa2aff6bbf393902deed1c380e9d46b164d1ae4c71f71b9a9c4415; block index 9ef4022aedf819b65a65157444f72e035ff83677e1cceea2466dd5339a600b0e
+  set 1: generation 2 is byte-identical to generations [1]
+  [exit 0, wall 42.8 s]
+$ v1 run 3: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population.py generate --population confirm:refute-v0.2.1-population-determinism --cases-from <repo>\.cache\population\v2-selftest-4\determinism-ids.txt --cache <repo>\.cache\population\v2-selftest-4\cache-v1-hash-only --no-store --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead\v1-run3.json --workers 24 --order index --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  thread variables inherited {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1'}, set to 1; main process pools [('openblas', 1)]
+  worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+  cases generated: 520 (hash only); wall 36.4 s; per case 1.55 s mean, 4.12 s max; peak worker memory 199.3 MB; bytes 40949239739
+  manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead\v1-run3.json: SHA-256 5d5d1369f9df2463ae84fa9e448629bed84bbaae954a2e0642869481cbbb51f5
+  [exit 0, wall 38.0 s]
+$ v2 run 3: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-overhead --set 1 --generation 3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-overhead --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-overhead set 1 generation 3: 520 cases, 24 workers, order index
+  generated 520 cases in 40.8 s; manifest 98249a7350fa2aff6bbf393902deed1c380e9d46b164d1ae4c71f71b9a9c4415; block index 9ef4022aedf819b65a65157444f72e035ff83677e1cceea2466dd5339a600b0e
+  set 1: generation 3 is byte-identical to generations [1, 2]
+  [exit 0, wall 43.1 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-overhead --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  set 1 accepted: manifest 98249a7350fa2aff6bbf393902deed1c380e9d46b164d1ae4c71f71b9a9c4415 (commit and freeze it manually, with the journal)
+  [exit 0, wall 0.8 s]
+overhead walls v1 [36.8, 36.7, 38.0] v2 [41.3, 42.8, 43.1]
+overhead = median(v2) / median(v1) - 1 = 42.8 / 36.8 - 1 = 16.5 % (limit 25 %, accepted up to 20 %): ACCEPTED
+v1 run 1: 520 of 520 case SHA-256 equal to v2 (of 520)
+v1 run 2: 520 of 520 case SHA-256 equal to v2 (of 520)
+v1 run 3: 520 of 520 case SHA-256 equal to v2 (of 520)
+# determinism 2026-10-13T17:01:34+00:00
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-determinism --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-determinism --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-determinism set 1 generation 1: 520 cases, 24 workers, order index
+  generated 520 cases in 41.3 s; manifest 0555c90bf70847f3d1d1f667be55a97472b04d3c6c9ed59fa6160411e2433c4b; block index aaf6e45d11c9228f617f977923ba76441cda48a4dd4ee1268e779d7680ea0c24
+  set 1: generation 1 is the first of its set
+  [exit 0, wall 43.6 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-determinism --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-determinism --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-determinism set 1 generation 2: 520 cases, 12 workers, order shuffle:20261013
+  generated 520 cases in 38.4 s; manifest 0555c90bf70847f3d1d1f667be55a97472b04d3c6c9ed59fa6160411e2433c4b; block index aaf6e45d11c9228f617f977923ba76441cda48a4dd4ee1268e779d7680ea0c24
+  set 1: generation 2 is byte-identical to generations [1]
+  [exit 0, wall 40.9 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-determinism --set 1 --generation 3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-determinism --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-determinism set 1 generation 3: 520 cases, 24 workers, order shuffle:31
+  generated 520 cases in 40.3 s; manifest 0555c90bf70847f3d1d1f667be55a97472b04d3c6c9ed59fa6160411e2433c4b; block index aaf6e45d11c9228f617f977923ba76441cda48a4dd4ee1268e779d7680ea0c24
+  set 1: generation 3 is byte-identical to generations [1, 2]
+  [exit 0, wall 42.8 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-determinism --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  set 1 accepted: manifest 0555c90bf70847f3d1d1f667be55a97472b04d3c6c9ed59fa6160411e2433c4b (commit and freeze it manually, with the journal)
+  [exit 0, wall 0.8 s]
+determinism: 520 cases; segments 14060; blocks 50920; manifests and block indexes of the three generations byte-identical (check-set accepted)
+  planet-below-white-0000: mechanism two_years, SHA-256 3aef3fc7c5e0c40a54a6a21102e5584bdc27e7b2062dadaa4ae6c194d8027be3
+  planet-below-white-0111: mechanism three_years, SHA-256 adb70e10a88db0f405a9d29142d5c240ed1bfd352273c143b37b029c8d35ccc9
+  no_transit-none-white-1544: mechanism trend_variability, SHA-256 51c77d47a532d677b1400a9cb3ab28781aa70b06963223452236128137a61ed5
+# injected differences 2026-10-13T17:03:43+00:00
+one byte of an array: with bytes OK; without bytes OK; {"segment": "aux/pixels/1/flux", "offset": 51240799, "block": 11, "element": [12396, 7, 7], "explanation": {"by_kind": {"value": 1}, "max_abs_diff": "3.814697265625e-06", "max_rel_diff": "3.720840880644416e-08", "ulp_histogram": {">1024": 1}}, "header_paths": [], "without_bytes": [["aux/pixels/1/flux", [11]]]}
+the sign of one zero: with bytes OK; without bytes OK; {"segment": "aux/sectors/0/sap_bkg", "offset": 1951114, "block": 0, "element": [100], "explanation": {"by_kind": {"sign_of_zero": 1}, "max_abs_diff": "0.0", "max_rel_diff": "0.0", "ulp_histogram": {}}, "header_paths": [], "without_bytes": [["aux/sectors/0/sap_bkg", [0]]]}
+the payload of one NaN: with bytes OK; without bytes OK; {"segment": "lc/flux_err", "offset": 602523, "block": 0, "element": [7], "explanation": {"by_kind": {"nan_payload": 1}, "max_abs_diff": "0.0", "max_rel_diff": "0.0", "ulp_histogram": {}}, "header_paths": [], "without_bytes": [["lc/flux_err", [0]]]}
+one header field: with bytes OK; without bytes OK; {"segment": "header", "offset": 936, "block": 0, "element": null, "explanation": null, "header_paths": ["/attempt_seed"], "without_bytes": [["header", [0]]]}
+a structural change (another shape): with bytes OK; without bytes OK; {"structure": {"header_length": [3385, 3385], "segments_only_left": [["lc/time", "<f8", [37440], 3427, 299520], ["lc/flux", "<f8", [37440], 302947, 299520], ["lc/flux_err", "<f8", [37440], 602467, 299520], ["lc/sector", "<i8", [37440], 901987, 299520], ["lc/year", "<i8", [37440], 1201507, 299520], ["aux/sectors/0/time", "<f8", [18720], 1501027, 149760], ["aux/sectors/0/pdcsap_flux", "<f8", [18720]
+blob injections: 5 of 5 located as expected 
+# journal and lock 2026-10-13T17:03:46+00:00
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock --cache <repo>\.cache\population\v2-selftest-4\cache-lock --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-lock set 1 generation 1: 2 cases, 2 workers, order index
+  LOCK written: <repo>\.cache\population\v2-selftest-4\campaigns\v2-selftest-lock\locks\lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json (SHA-256 4a0566bebd56a6b5f03d6504ab4e386c4cbfcee97c2396a92ce19318936f14f5); the campaign is blocked
+  [exit 2, wall 3.7 s]
+planted file untouched: True
+new bytes written beside it: ['planet-measurable-white-0000.f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e.rpc']
+lock markers: ['lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json']
+$ refusal (another directory): C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lock marker lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json has no committed resolution
+    REFUSED journal entry 3: divergence without a resolution
+  refused: generation 1.2 not started
+  [exit 1, wall 1.7 s]
+$ refusal: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lock marker lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json has no committed resolution
+    REFUSED journal entry 3: divergence without a resolution
+  refused: set 1 not checked
+  [exit 1, wall 0.6 s]
+$ refusal: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py regenerate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock\none.json --cache <repo>\.cache\population\v2-selftest-4\cache-lock --lot 0 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lock marker lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json has no committed resolution
+    REFUSED journal entry 3: divergence without a resolution
+  refused: lot 0 not regenerated
+  [exit 1, wall 1.6 s]
+$ refusal: C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py analyze --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock\none.json --cache <repo>\.cache\population\v2-selftest-4\cache-lock --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir --point M3 --lot 0 --slot 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lock marker lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json has no committed resolution
+    REFUSED journal entry 3: divergence without a resolution
+  refused: M3 lot 0 slot 1 not analyzed
+  [exit 1, wall 1.0 s]
+$ refusal: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py compare-slots --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock\none.json --point M3 --lot 0 --runs <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir --records <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lock marker lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json has no committed resolution
+    REFUSED journal entry 3: divergence without a resolution
+  refused: slots not compared
+  [exit 1, wall 0.7 s]
+$ refusal: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py orchestrate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock\none.json --project <repo> --cache <repo>\.cache\population\v2-selftest-4\cache-lock --generator-python C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe --point M3=C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir --records <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lock marker lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json has no committed resolution
+    REFUSED journal entry 3: divergence without a resolution
+  refused: orchestrate not started
+  [exit 1, wall 0.7 s]
+$ refusal: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py metrics --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock-other-dir\metrics.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lock marker lock-20261013T170349673070Z-20261013T170347953900Z-19764-3dc7f197.json has no committed resolution
+    REFUSED journal entry 3: divergence without a resolution
+  refused: metrics not computed (use --integrity-report for a locked campaign)
+  [exit 1, wall 0.7 s]
+$ integrity-failure report: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py metrics --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-lock --integrity-report --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock\integrity-report.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  integrity report written to <repo>\.cache\population\v2-selftest-4\out\v2-selftest-lock\integrity-report.json: BLOCKED: integrity failure (1 lock(s))
+  [exit 0, wall 0.3 s]
+integrity report approval: BLOCKED: integrity failure; locks 1; divergences 1
+$ status no-marker: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py status --root <repo>\.cache\population\v2-selftest-4\lock-states\no-marker --campaign v2-selftest-lock --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  {
+   "campaign_id": "v2-selftest-lock",
+   "eligibility": "diagnostic",
+   "declaration_sha256": "9acc35ad59ec839259b7124b106c4a4563dc80b2ba13f82bfe068448e38043b3",
+   "declaration_problems": [],
+   "journal_entries": 5,
+   "journal_problems": [],
+   "blocking": [
+    "journal entry 3: divergence without a resolution"
+   ],
+   "budget": {
+    "sets_started_in_campaign": [
+     1
+    ],
+    "chain_sets_consumed_before": 0,
+    "chain_sets_consumed": 1,
+    "chain_ceiling": 6,
+    "campaign_N": 3
+   },
+   "accepted_set": null
+  }
+  [exit 0, wall 0.3 s]
+state no-marker: blocking 1 ['journal entry 3: divergence without a resolution']
+$ status resolved: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py status --root <repo>\.cache\population\v2-selftest-4\lock-states\resolved --campaign v2-selftest-lock --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  {
+   "campaign_id": "v2-selftest-lock",
+   "eligibility": "diagnostic",
+   "declaration_sha256": "9acc35ad59ec839259b7124b106c4a4563dc80b2ba13f82bfe068448e38043b3",
+   "declaration_problems": [],
+   "journal_entries": 5,
+   "journal_problems": [],
+   "blocking": [],
+   "budget": {
+    "sets_started_in_campaign": [
+     1
+    ],
+    "chain_sets_consumed_before": 0,
+    "chain_sets_consumed": 1,
+    "chain_ceiling": 6,
+    "campaign_N": 3
+   },
+   "accepted_set": null
+  }
+  [exit 0, wall 0.3 s]
+state resolved: blocking 0 []
+$ status unclosed: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py status --root <repo>\.cache\population\v2-selftest-4\lock-states\unclosed --campaign v2-selftest-lock --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  {
+   "campaign_id": "v2-selftest-lock",
+   "eligibility": "diagnostic",
+   "declaration_sha256": "9acc35ad59ec839259b7124b106c4a4563dc80b2ba13f82bfe068448e38043b3",
+   "declaration_problems": [],
+   "journal_entries": 6,
+   "journal_problems": [],
+   "blocking": [
+    "execution selftest-assembled-unclosed started and has no verified closure"
+   ],
+   "budget": {
+    "sets_started_in_campaign": [
+     1
+    ],
+    "chain_sets_consumed_before": 0,
+    "chain_sets_consumed": 1,
+    "chain_ceiling": 6,
+    "campaign_N": 3
+   },
+   "accepted_set": null
+  }
+  [exit 0, wall 0.3 s]
+state unclosed: blocking 1 ['execution selftest-assembled-unclosed started and has no verified closure']
+$ reconcile: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py reconcile --root <repo>\.cache\population\v2-selftest-4\lock-states\unclosed --campaign v2-selftest-lock --execution-id selftest-assembled-unclosed --reason self-test: assembled execution without a closure --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  execution selftest-assembled-unclosed reconciled as interrupted (its set, if any, is consumed)
+  [exit 0, wall 0.3 s]
+$ status unclosed after reconcile: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py status --root <repo>\.cache\population\v2-selftest-4\lock-states\unclosed --campaign v2-selftest-lock --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  {
+   "campaign_id": "v2-selftest-lock",
+   "eligibility": "diagnostic",
+   "declaration_sha256": "9acc35ad59ec839259b7124b106c4a4563dc80b2ba13f82bfe068448e38043b3",
+   "declaration_problems": [],
+   "journal_entries": 7,
+   "journal_problems": [],
+   "blocking": [],
+   "budget": {
+    "sets_started_in_campaign": [
+     1
+    ],
+    "chain_sets_consumed_before": 0,
+    "chain_sets_consumed": 1,
+    "chain_ceiling": 6,
+    "campaign_N": 3
+   },
+   "accepted_set": null
+  }
+  [exit 0, wall 0.3 s]
+state unclosed after reconcile: blocking []
+# analysis, two slots, M0 and M3 2026-10-13T17:03:59+00:00
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-analysis set 1 generation 1: 4 cases, 4 workers, order index
+  generated 4 cases in 2.5 s; manifest f843a959bd34097fe3e4c03981f3d92f236deed67815c8b44bcb99ad84d0a24f; block index 9e171ac94e68c58459ad441f3ef3f020bd26ce9cf19b4bc56576c71876539d52
+  set 1: generation 1 is the first of its set
+  [exit 0, wall 4.5 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-analysis set 1 generation 2: 4 cases, 4 workers, order index
+  generated 4 cases in 2.4 s; manifest f843a959bd34097fe3e4c03981f3d92f236deed67815c8b44bcb99ad84d0a24f; block index 9e171ac94e68c58459ad441f3ef3f020bd26ce9cf19b4bc56576c71876539d52
+  set 1: generation 2 is byte-identical to generations [1]
+  [exit 0, wall 4.5 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --set 1 --generation 3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-analysis set 1 generation 3: 4 cases, 4 workers, order index
+  generated 4 cases in 2.2 s; manifest f843a959bd34097fe3e4c03981f3d92f236deed67815c8b44bcb99ad84d0a24f; block index 9e171ac94e68c58459ad441f3ef3f020bd26ce9cf19b4bc56576c71876539d52
+  set 1: generation 3 is byte-identical to generations [1, 2]
+  [exit 0, wall 4.2 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  set 1 accepted: manifest f843a959bd34097fe3e4c03981f3d92f236deed67815c8b44bcb99ad84d0a24f (commit and freeze it manually, with the journal)
+  [exit 0, wall 0.7 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py orchestrate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\manifest-set1-gen1.json --project <repo> --cache <repo>\.cache\population\v2-selftest-4\cache-analysis --generator-python C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe --records <repo>\.cache\population\v2-selftest-4\records-analysis --point M0=C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs\M0 --point M3=C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs\M3 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  lot 0: 2 inputs regenerated and checked (['written'])
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M0 lot 0 slot 1: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M0 lot 0 slot 2: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 0 slot 1: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 0 slot 2: {'analyzed': 2}
+  lot 0: done (2 cases)
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  lot 1: 2 inputs regenerated and checked (['written'])
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M0 lot 1 slot 1: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M0 lot 1 slot 2: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 1 slot 1: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 1 slot 2: {'analyzed': 2}
+  lot 1: done (2 cases)
+  [exit 0, wall 176.7 s]
+$ orchestrate again on the finished state: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py orchestrate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\manifest-set1-gen1.json --project <repo> --cache <repo>\.cache\population\v2-selftest-4\cache-analysis --generator-python C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe --records <repo>\.cache\population\v2-selftest-4\records-analysis --point M0=C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs\M0 --point M3=C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs\M3 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  lot 0: results valid and equal to records 3, comparisons and record 4 present; skipped
+  lot 1: results valid and equal to records 3, comparisons and record 4 present; skipped
+  [exit 0, wall 0.9 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py metrics --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\manifest-set1-gen1.json --records <repo>\.cache\population\v2-selftest-4\records-analysis --point M0=<repo>\.cache\population\v2-selftest-4\runs\M0 --point M3=<repo>\.cache\population\v2-selftest-4\runs\M3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\metrics.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  metrics written to <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\metrics.json
+  [exit 0, wall 1.9 s]
+result records: 16 files, 1002039 bytes, mean 62627 bytes per record (one case, one slot, one point)
+# result-record injections 2026-10-13T17:07:13+00:00
+real slot 1 vs slot 2 (profile slots): identical, 0 differences
+one metric value (one ULP): OK (status divergent, paths ['/conditions/i/scientific/tests/0/metrics/depth_err_ppm'], problems [])
+a missing field: OK (status divergent, paths ['/conditions/i/scientific/verdict_reason'], problems [])
+an extra field: OK (status divergent, paths ['/conditions/i/scientific/extra_field'], problems [])
+a float whose dec and f64 disagree: OK (status invalid, paths ['/conditions/i/scientific/tests/0/metrics/depth_err_ppm'], problems ["right/conditions/i/scientific/tests/0/metrics/depth_err_ppm: invalid typed float: dec '40.755189713322494' does not give the bits 4033e0aa0e787f74"])
+a /control section under the profile slots: OK (invalid)
+excluded paths only (pid, execution id): OK (identical)
+record injections: 6 of 6 as expected 
+# D6 smoke (not the D6) 2026-10-13T17:07:13+00:00
+D6 rule, first 13 of 40: ['planet-below-white-0000', 'planet-below-white-0011', 'planet-below-white-0100', 'planet-below-white-0111', 'no_transit-none-white-1544', 'no_transit-none-white-1550', 'planet-below-white-0150', 'planet-below-white-0200', 'planet-below-correlated-0150', 'planet-below-correlated-0100', 'planet-below-correlated-0000', 'planet-below-correlated-0200', 'false_positive-below-white-0050']
+declaration v2-selftest-d6inputs: 13 cases, SHA-256 c5bbcc8e50d5508918cc4e59f409965d5ca9902f7624b09cceb03535da56245a
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-d6inputs --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-d6inputs --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-d6inputs set 1 generation 1: 13 cases, 13 workers, order index
+  generated 13 cases in 4.0 s; manifest f70077b2201fdbe440b3a63984d5575fd9e47f127670952aeb30905a1be5a0de; block index 83a46628477f2b3b7c9e11a1cff2419b59b312560c82093df3d3fcd3f6c2a5ec
+  set 1: generation 1 is the first of its set
+  [exit 0, wall 5.9 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-d6inputs --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-d6inputs --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-d6inputs set 1 generation 2: 13 cases, 13 workers, order index
+  generated 13 cases in 3.9 s; manifest f70077b2201fdbe440b3a63984d5575fd9e47f127670952aeb30905a1be5a0de; block index 83a46628477f2b3b7c9e11a1cff2419b59b312560c82093df3d3fcd3f6c2a5ec
+  set 1: generation 2 is byte-identical to generations [1]
+  [exit 0, wall 6.0 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-d6inputs --set 1 --generation 3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-d6inputs --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-d6inputs set 1 generation 3: 13 cases, 13 workers, order index
+  generated 13 cases in 4.0 s; manifest f70077b2201fdbe440b3a63984d5575fd9e47f127670952aeb30905a1be5a0de; block index 83a46628477f2b3b7c9e11a1cff2419b59b312560c82093df3d3fcd3f6c2a5ec
+  set 1: generation 3 is byte-identical to generations [1, 2]
+  [exit 0, wall 5.9 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-d6inputs --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  set 1 accepted: manifest f70077b2201fdbe440b3a63984d5575fd9e47f127670952aeb30905a1be5a0de (commit and freeze it manually, with the journal)
+  [exit 0, wall 0.7 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py regenerate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-d6inputs --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-d6inputs\manifest-set1-gen1.json --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --lot 0 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  lot 0: 13 inputs regenerated and checked (['written'])
+  [exit 0, wall 5.9 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py dispatch-table --out <repo>\.cache\population\v2-selftest-4\dispatch-default-M3.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  written to <repo>\.cache\population\v2-selftest-4\dispatch-default-M3.json (SHA-256 of the table 93167bad1531cc9680a978aef67509a5fdc9a617aa7733f9c1b4beb7a474a4f0)
+  [exit 0, wall 0.3 s]
+$ NPY_DISABLE_CPU_FEATURES=X86_V3: C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py dispatch-table --out <repo>\.cache\population\v2-selftest-4\dispatch-E-M3.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  written to <repo>\.cache\population\v2-selftest-4\dispatch-E-M3.json (SHA-256 of the table 8b3627ccde0ba4cc5aa7c99317a16ac60835ace751a782c1f91f4dfb862c1bcf)
+  [exit 0, wall 0.3 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py plan --selection-root <repo>\.cache\population\v2-selftest-4\campaigns --selection-campaign v2-selftest-determinism --dispatch-default <repo>\.cache\population\v2-selftest-4\dispatch-default-M3.json --dispatch-e <repo>\.cache\population\v2-selftest-4\dispatch-E-M3.json --inputs-root <repo>\.cache\population\v2-selftest-4\campaigns --inputs-campaign v2-selftest-d6inputs --points M3 --limit 13 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  D6 declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json: 13 cases; SHA-256 3c3ebed1b7b9acb2591c838bab74da3be953142fba88c7fc1e0ebdf518235eab
+  [exit 0, wall 0.4 s]
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration R-idx --repetition 1 --cpus 8-31
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration R-idx --repetition 2 --cpus 8-31
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration R-rev --repetition 1 --cpus 8-31
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration R-rev --repetition 2 --cpus 8-31
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration R-shf --repetition 1 --cpus 8-31
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration R-shf --repetition 2 --cpus 8-31
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration E --repetition 1 --cpus 8-31
+$ (background) C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration E --repetition 2 --cpus 8-31
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration F --repetition 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  F rep 1 M3: 13 process(es), 31.698 s
+  [exit 0, wall 35.0 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration F --repetition 2 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  F rep 2 M3: 13 process(es), 31.895 s
+  [exit 0, wall 33.6 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration P24 --repetition 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  P24 rep 1 M3: 13 process(es), 31.828 s
+  [exit 0, wall 33.5 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration P24 --repetition 2 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  P24 rep 2 M3: 13 process(es), 32.524 s
+  [exit 0, wall 34.3 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration P12 --repetition 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  P12 rep 1 M3: 12 process(es), 31.989 s
+  [exit 0, wall 33.7 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py run --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --point M3 --cache <repo>\.cache\population\v2-selftest-4\cache-d6 --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --configuration P12 --repetition 2 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  P12 rep 2 M3: 12 process(es), 31.796 s
+  [exit 0, wall 33.5 s]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  R-idx rep 1 M3: 1 process(es), 220.35 s
+  [exit 0]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  R-idx rep 2 M3: 1 process(es), 213.359 s
+  [exit 0]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  R-rev rep 1 M3: 1 process(es), 212.213 s
+  [exit 0]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  R-rev rep 2 M3: 1 process(es), 218.042 s
+  [exit 0]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  R-shf rep 1 M3: 1 process(es), 218.844 s
+  [exit 0]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  R-shf rep 2 M3: 1 process(es), 212.079 s
+  [exit 0]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  E rep 1 M3: 1 process(es), 222.035 s
+  [exit 0]
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  E rep 2 M3: 1 process(es), 220.73 s
+  [exit 0]
+D6 smoke executions: wall 225 s
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py negative-control --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  OK    one byte changed (a string)
+  OK    the sign of a zero
+  OK    the payload of a NaN
+  OK    a header field (/input)
+  OK    a metric value
+  OK    a missing field
+  OK    an extra field
+  OK    a float whose dec and f64 disagree
+  OK    a control difference is not science (d6-science)
+  OK    a control difference is found by d6-control
+  OK    E with the default dispatch table is refused by check 1
+  negative control: PASSED
+  [exit 0, wall 0.6 s]
+$ C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py check --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --out <repo>\.cache\population\v2-selftest-4\d6-smoke\runs --report <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-smoke-report.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  D6 result: PASS (smoke run, not the D6) (counts as the D6: False); conditions {'1_all_present': True, '2_status_analyzed': True, '3_inputs_verified': True, '4_records_complete_and_typed': True, '5_integrity_and_closed': True, '6_check1_and_negative_control': True}; science differences 0; control mismatches 0; check 1 problems 0; negative control passed
+  [exit 0, wall 18.1 s]
+# blocking findings of the code review 2026-10-13T17:11:44+00:00
+$ B1 second analysis of a unit in another folder: C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py analyze --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\manifest-set1-gen1.json --cache <repo>\.cache\population\v2-selftest-4\cache-analysis --out <repo>\.cache\population\v2-selftest-4\runs-second\M3-slot1 --point M3 --lot 0 --slot 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED the unit point M3, lot 0, slot 1 is bound to <repo>\.cache\population\v2-selftest-4\runs\M3-slot1; it is never analyzed again in another folder
+  refused: M3 lot 0 slot 1 not analyzed
+  [exit 1, wall 1.0 s]
+OK    B1 second analysis in another folder refused: corded)
+  REFUSED the unit point M3, lot 0, slot 1 is bound to <repo>\.cache\population\v2-selftest-4\runs\M3-slot1; it is never analyzed again in another folder
+refused: M3 lot 0 slot 1 not analyzed
+OK    B2 empty scientific record refused, counted as an error in C6: ["planet-below-white-0000: condition i: scientific record without 'schema'", "planet-below-white-0000: condition i: scientific record without 'status'"]
+$ B2 metrics without record 4 of lot 1: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py metrics --root <repo>\.cache\population\v2-selftest-4\blocker-states\no-record-4\campaigns --campaign v2-selftest-analysis --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\manifest-set1-gen1.json --records <repo>\.cache\population\v2-selftest-4\blocker-states\no-record-4\records --point M0=<repo>\.cache\population\v2-selftest-4\runs\M0 --point M3=<repo>\.cache\population\v2-selftest-4\runs\M3 --out <repo>\.cache\population\v2-selftest-4\blocker-states\no-record-4\metrics.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED lot 1: no record 4
+    REFUSED lot 1: no record 4
+  refused: metrics not computed: lots are not finished (R1)
+  [exit 1, wall 2.1 s]
+OK    B2 metrics refuses a lot without record 4: ocessors 8-31 (mask 0xffffff00)
+diagnostic: R2 not enforced (4 finding(s) recorded)
+  REFUSED lot 1: no record 4
+  REFUSED lot 1: no record 4
+refused: metrics not computed: lots are not finished (R1)
+OK    B3 wrong count before and a sibling campaign of the chain refused: ['the declaration counts 5 sets consumed before it; the predecessor line consumed 0', "campaign 'chain-c' of the same chain is neither a predecessor nor a successor"]
+OK    B4 case list and missing manifest B refused in a strict declaration: ['a campaign declaration cannot restrict the population to a case list', 'the development population needs manifest B (4073d96a0bce901a31241d5c2dd3d7b46192a4731a4ec3996ea1077039b833e9)', 'the declaration does not name the qualification record (path and SHA-256)', 'the declaration does not name the d
+OK    B5 a smoke D6 and a wrong qualification hash refused as prerequisites: ['the qualification record is missing or differs from its SHA-256', "the D6 report is 'PASS (smoke run, not the D6)', counts as the D6: False (a PASS of the full matrix is required)"]
+OK    B5-D6 a run without M0 and the 40 cases does not count as the D6: ['the declaration is a smoke run', 'the declaration does not have 40 distinct cases', "the points are ['M3'], not ['M0', 'M3']"]
+$ B5-D6 check with a forged control value: C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py check --declaration <repo>\.cache\population\v2-selftest-4\d6-smoke\d6-declaration.json --out <repo>\.cache\population\v2-selftest-4\blocker-states\d6-forged-control --report <repo>\.cache\population\v2-selftest-4\blocker-states\d6-forged-report.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  D6 result: FAIL (counts as the D6: False); conditions {'1_all_present': True, '2_status_analyzed': True, '3_inputs_verified': True, '4_records_complete_and_typed': True, '5_integrity_and_closed': True, '6_check1_and_negative_control': False}; science differences 0; control mismatches 2; check 1 problems 1; negative control passed
+  [exit 2, wall 17.0 s]
+OK    B5-D6 a consistently forged control value is caught by the declared value (not PASS): ['FAIL', ['R-idx-rep1-M3 no_transit-none-white-1544: control value 5, declared 4']]
+OK    B6 a worker's dispatch problem writes a lock: ['lock-20261013T171204492776Z-20261013T171204477315Z-19728-2f6d9d55.json']
+OK    B7 the lock is written at detection, before the closure; the evidence file exists: [['started', 'process', 'process', 'divergence', 'closed'], 'C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\.cache\\population\\v2-selftest-4\\out\\v2-selftest-lock\\evidence-set1-gen1-20261013T170347953900Z-19764-3dc7f197.json']
+$ (two at once) C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-concurrent --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-concurrent-1 --cpus 8-31 | C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-concurrent --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-concurrent-2 --cpus 8-31
+  [process 1, PID 32208, exit 1] refused: started not written
+  [process 2, PID 27548, exit 0] set 1: generation 1 is the first of its set
+OK    B8 two simultaneous executions of one unit: one ran to its closure (exit 0), the other was refused (exit 1): [[1, 0], 1, 1]
+OK    B9 diagnostic metrics labelled 'DIAGNOSTIC: not an approval': # DIAGNOSTIC: not an approval. Population metrics of the diagnostic v2-selftest-analysis
+$ B10 analyze with another affinity: C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py analyze --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\manifest-set1-gen1.json --cache <repo>\.cache\population\v2-selftest-4\cache-analysis --out <repo>\.cache\population\v2-selftest-4\runs\M3-slot1 --point M3 --lot 0 --slot 1 --cpus 8-30
+  affinity: logical processors 8-30 (mask 0x7fffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED affinity '8-30' is not the declared '8-31'
+  refused: M3 lot 0 slot 1 not analyzed
+  [exit 1, wall 1.0 s]
+OK    B10 another affinity refused: affinity: logical processors 8-30 (mask 0x7fffff00)
+diagnostic: R2 not enforced (4 finding(s) recorded)
+  REFUSED affinity '8-30' is not the declared '8-31'
+refused: M3 lot 0 slot 1 not analyzed
+$ B11: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py status --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign .. --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+    REFUSED campaign id '..' is not a plain folder name
+  refused: no campaign
+  [exit 1, wall 0.3 s]
+OK    B11 campaign id '..' refused: affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED campaign id '..' is not a plain folder name
+refused: no campaign
+$ B11: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py status --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign C:\outside --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+    REFUSED campaign id 'C:\\outside' is not a plain folder name
+  refused: no campaign
+  [exit 1, wall 0.3 s]
+OK    B11 campaign id 'C:\\outside' refused: affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED campaign id 'C:\\outside' is not a plain folder name
+refused: no campaign
+$ B11: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py status --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign a/../b --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+    REFUSED campaign id 'a/../b' is not a plain folder name
+  refused: no campaign
+  [exit 1, wall 0.3 s]
+OK    B11 campaign id 'a/../b' refused: affinity: logical processors 8-31 (mask 0xffffff00)
+  REFUSED campaign id 'a/../b' is not a plain folder name
+refused: no campaign
+$ containment: --out outside the project: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py metrics --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-analysis --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-analysis\manifest-set1-gen1.json --records <repo>\.cache\population\v2-selftest-4\records-analysis --point M0=<repo>\.cache\population\v2-selftest-4\runs\M0 --out C:\Projetos\refute\.claude\worktrees\outside-refute-v2-test\metrics.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  refused: --out C:\Projetos\refute\.claude\worktrees\outside-refute-v2-test\metrics.json is not inside the project folder <repo>
+  [exit 1, wall 0.7 s]
+OK    containment: --out outside the project refused, nothing created:  finding(s) recorded)
+refused: --out C:\Projetos\refute\.claude\worktrees\outside-refute-v2-test\metrics.json is not inside the project folder <repo>
+OK    N6 the user's home directory is masked: masked
+OK    N3 a malformed f64 is reported as invalid: invalid
+blocking findings: 19 of 19 as expected 
+# second code review 2026-10-13T17:12:11+00:00
+OK    B5 the real qualification record passes on this machine (positive control): []
+OK    B5 a qualification record with result FAIL is refused: ["the machine qualification record says 'FAIL', not PASS"]
+OK    B5 a qualification of another BIOS is refused: ["qualification condition bios_version: the machine has 'F8d', qualified 'F9'"]
+OK    B5 an assembled D6 PASS of the current versions passes the gate (positive control): []
+OK    B5 a D6 report of another version of d6.py is refused: ['the D6 report is of another version (d6_sha256 differs)']
+$ B5-D6 plan from a campaign restricted to 4 cases: C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\d6.py plan --selection-root <repo>\.cache\population\v2-selftest-4\campaigns --selection-campaign v2-selftest-analysis --dispatch-default <repo>\.cache\population\v2-selftest-4\dispatch-default-M3.json --dispatch-e <repo>\.cache\population\v2-selftest-4\dispatch-E-M3.json --inputs-root <repo>\.cache\population\v2-selftest-4\campaigns --inputs-campaign v2-selftest-d6inputs --points M0 M3 --out <repo>\.cache\population\v2-selftest-4\blocker-states\d6-plan-from-subset.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+    REFUSED the selection campaign is not of the whole determinism population
+    REFUSED the selection manifest has 4 cases, not the 520 of the population
+  refused: no D6 plan
+  [exit 1, wall 0.4 s]
+OK    B5-D6 a D6 planned from a subset of the population is refused: sors 8-31 (mask 0xffffff00)
+  REFUSED the selection campaign is not of the whole determinism population
+  REFUSED the selection manifest has 4 cases, not the 520 of the population
+refused: no D6 plan
+OK    B5-D6 a declared case list that is not the rule is caught: ['the declared cases are not the declared rule applied to the selection', 'the inputs campaign is not restricted to exactly the declared cases']
+OK    B5-D6 the real declaration recomputes from its selection (positive control): []
+$ (to be stopped after the detection) C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-interrupt --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-interrupt --cache <repo>\.cache\population\v2-selftest-4\cache-interrupt --cpus 8-31
+  stopped PID 40848 and its workers [22216] after the divergence entry
+OK    B7 a stop after the detection keeps the observation of the divergent case (entry, blocks, problems) and the lock: [['started', 'process', 'divergence'], 1]
+OK    B2 a registered comparison report altered or missing is damaged (a lock); one not registered is only unfinished: ['the registered comparison report C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\.cache\\population\\v2-selftest-4\\blocker-states\\comparison-registered.json is missing or altered', 'the registered comparison report C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet
+OK    a predecessor with a successor stays usable, marked superseded (no new set): [[], True]
+OK    the project folder is not inside the user's home directory: []
+OK    the mask covers /home/<user> and C:\Users\<user>: masked
+OK    the default campaigns root is contained in the project: 
+second review findings: 14 of 14 as expected []
+# third code review 2026-10-13T17:12:17+00:00
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-cmpalter set 1 generation 1: 2 cases, 2 workers, order index
+  generated 2 cases in 2.1 s; manifest 2cf182d300563ae7123842d6300260f14b7f8589027dd20588e9f01358929cd8; block index 1f5e7bc37d5eb0dbe108103b1cde9f8138ef7aa85ad0bf2256cf512f255cd108
+  set 1: generation 1 is the first of its set
+  [exit 0, wall 3.9 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-cmpalter set 1 generation 2: 2 cases, 2 workers, order index
+  generated 2 cases in 2.1 s; manifest 2cf182d300563ae7123842d6300260f14b7f8589027dd20588e9f01358929cd8; block index 1f5e7bc37d5eb0dbe108103b1cde9f8138ef7aa85ad0bf2256cf512f255cd108
+  set 1: generation 2 is byte-identical to generations [1]
+  [exit 0, wall 3.9 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --set 1 --generation 3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-cmpalter set 1 generation 3: 2 cases, 2 workers, order index
+  generated 2 cases in 2.2 s; manifest 2cf182d300563ae7123842d6300260f14b7f8589027dd20588e9f01358929cd8; block index 1f5e7bc37d5eb0dbe108103b1cde9f8138ef7aa85ad0bf2256cf512f255cd108
+  set 1: generation 3 is byte-identical to generations [1, 2]
+  [exit 0, wall 4.1 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  set 1 accepted: manifest 2cf182d300563ae7123842d6300260f14b7f8589027dd20588e9f01358929cd8 (commit and freeze it manually, with the journal)
+  [exit 0, wall 0.7 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py orchestrate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter\manifest-set1-gen1.json --project <repo> --cache <repo>\.cache\population\v2-selftest-4\cache-v2-selftest-cmpalter --generator-python C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe --point M3=C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpalter\M3 --records <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpalter --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  lot 0: 2 inputs regenerated and checked (['written'])
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 0 slot 1: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 0 slot 2: {'analyzed': 2}
+  lot 0: done (2 cases)
+  [exit 0, wall 57.5 s]
+$ B2 compare-slots again, another records folder: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py compare-slots --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter\manifest-set1-gen1.json --point M3 --lot 0 --runs <repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpalter\M3-slot1 <repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpalter\M3-slot2 --records <repo>\.cache\population\v2-selftest-4\records-cmpalter-other --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED registered report: <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpalter\lot-0000-20261013T171327657648Z-3c-M3-comparison.json
+  refused: M3 lot 0 is already compared (one comparison per lot and point)
+  [exit 1, wall 0.7 s]
+OK    B2 a second comparison of the same lot and point (compare-slots, another --records folder) is refused and appends nothing: [1, 't-4\\records-v2-selftest-cmpalter\\lot-0000-20261013T171327657648Z-3c-M3-comparison.json\nrefused: M3 lot 0 is already compared (one comparison per lot and point)\n', 26, 26]
+$ B2 orchestrate again, another records folder: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py orchestrate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter\manifest-set1-gen1.json --project <repo> --cache <repo>\.cache\population\v2-selftest-4\cache-v2-selftest-cmpalter --generator-python C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe --point M3=C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpalter\M3 --records <repo>\.cache\population\v2-selftest-4\records-cmpalter-other --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED M3: <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpalter\lot-0000-20261013T171327657648Z-3c-M3-comparison.json
+  refused: lot 0 is already compared; it is resumed only with the records folder of that comparison
+  [exit 1, wall 0.7 s]
+OK    B2 orchestrate with another --records folder on a compared lot is refused and writes no record: [1, 'mpalter\\lot-0000-20261013T171327657648Z-3c-M3-comparison.json\nrefused: lot 0 is already compared; it is resumed only with the records folder of that comparison\n', 26, 26]
+$ B2 compare-slots again, the same records folder: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py compare-slots --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter\manifest-set1-gen1.json --point M3 --lot 0 --runs <repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpalter\M3-slot1 <repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpalter\M3-slot2 --records <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpalter --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+    REFUSED registered report: <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpalter\lot-0000-20261013T171327657648Z-3c-M3-comparison.json
+  refused: M3 lot 0 is already compared (one comparison per lot and point)
+  [exit 1, wall 0.7 s]
+OK    B2 a second comparison in the same records folder is refused as well: [1, 't-4\\records-v2-selftest-cmpalter\\lot-0000-20261013T171327657648Z-3c-M3-comparison.json\nrefused: M3 lot 0 is already compared (one comparison per lot and point)\n']
+$ B2 orchestrate after the registered comparison was altered: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py orchestrate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpalter --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpalter\manifest-set1-gen1.json --project <repo> --cache <repo>\.cache\population\v2-selftest-4\cache-v2-selftest-cmpalter --generator-python C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe --point M3=C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpalter\M3 --records <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpalter --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  LOCK written: <repo>\.cache\population\v2-selftest-4\campaigns\v2-selftest-cmpalter\locks\lock-20261013T171330604768Z-20261013T171330603917Z-17500-5a1d6ec1.json (SHA-256 9f1ef4b3553574e55945a167e71f708ef1f307cc5c45c84aa32de64d834aaace); the campaign is blocked
+  [exit 2, wall 0.8 s]
+OK    B2 a registered comparison altered afterwards makes orchestrate write a lock: [2, ['the registered comparison report C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\.cache\\population\\v2-selftest-4\\records-v2-selftest-cmpalter\\lot-0000-20261013T171327657648Z-3c-M3-comparison.json is missing or altered: ["the registered comparison report C:\\\\Projet
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpremove --set 1 --generation 1 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpremove --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-cmpremove set 1 generation 1: 2 cases, 2 workers, order index
+  generated 2 cases in 2.1 s; manifest 93f95ad7aba5e73dd0c6e058ed4d6789d1a1bd9a4871e31d71ae876239804994; block index 89af149260fab8e0d07e340446514128fae25c0a319fde4b53d596ab1acf5d0c
+  set 1: generation 1 is the first of its set
+  [exit 0, wall 4.0 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpremove --set 1 --generation 2 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpremove --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-cmpremove set 1 generation 2: 2 cases, 2 workers, order index
+  generated 2 cases in 2.1 s; manifest 93f95ad7aba5e73dd0c6e058ed4d6789d1a1bd9a4871e31d71ae876239804994; block index 89af149260fab8e0d07e340446514128fae25c0a319fde4b53d596ab1acf5d0c
+  set 1: generation 2 is byte-identical to generations [1]
+  [exit 0, wall 4.0 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py generate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpremove --set 1 --generation 3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpremove --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  generate v2-selftest-cmpremove set 1 generation 3: 2 cases, 2 workers, order index
+  generated 2 cases in 2.1 s; manifest 93f95ad7aba5e73dd0c6e058ed4d6789d1a1bd9a4871e31d71ae876239804994; block index 89af149260fab8e0d07e340446514128fae25c0a319fde4b53d596ab1acf5d0c
+  set 1: generation 3 is byte-identical to generations [1, 2]
+  [exit 0, wall 4.1 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py check-set --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpremove --set 1 --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  set 1 accepted: manifest 93f95ad7aba5e73dd0c6e058ed4d6789d1a1bd9a4871e31d71ae876239804994 (commit and freeze it manually, with the journal)
+  [exit 0, wall 0.7 s]
+$ C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py orchestrate --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpremove --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpremove\manifest-set1-gen1.json --project <repo> --cache <repo>\.cache\population\v2-selftest-4\cache-v2-selftest-cmpremove --generator-python C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe --point M3=C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe=<repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpremove\M3 --records <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpremove --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  lot 0: 2 inputs regenerated and checked (['written'])
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 0 slot 1: {'analyzed': 2}
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  M3 lot 0 slot 2: {'analyzed': 2}
+  lot 0: done (2 cases)
+  [exit 0, wall 54.1 s]
+$ B2 metrics after the registered comparison was removed: C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe <repo>\docs\validation\v0.2.1\population\population_v2.py metrics --root <repo>\.cache\population\v2-selftest-4\campaigns --campaign v2-selftest-cmpremove --manifest <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpremove\manifest-set1-gen1.json --records <repo>\.cache\population\v2-selftest-4\records-v2-selftest-cmpremove --point M3=<repo>\.cache\population\v2-selftest-4\runs-v2-selftest-cmpremove\M3 --out <repo>\.cache\population\v2-selftest-4\out\v2-selftest-cmpremove\metrics.json --cpus 8-31
+  affinity: logical processors 8-31 (mask 0xffffff00)
+  diagnostic: R2 not enforced (4 finding(s) recorded)
+  LOCK written: <repo>\.cache\population\v2-selftest-4\campaigns\v2-selftest-cmpremove\locks\lock-20261013T171439072843Z-20261013T171438162443Z-19232-3f3c673d.json (SHA-256 8116c9d1d15a3d8834c8b3f58eee52d1a01da88924edeea2bd4b631c04612f75); the campaign is blocked
+  [exit 2, wall 1.6 s]
+OK    B2 a registered comparison removed afterwards makes the metrics write a lock: [2, ['reconciliation failed: ["M3 lot 0: the registered comparison report C:\\\\Projetos\\\\refute\\\\.claude\\\\worktrees\\\\v0-2-1-gauntlet-fixes-13f5e7\\\\.cache\\\\population\\\\v2-selftest-4\\\\records-v2-selftest-cmpremove\\\\lot-0000-20261013T171437428785Z-3c-M3-comparison.json is missing or 
+OK    B2 two compared entries for the same lot and point are damaged evidence (a lock): 2 comparisons are registered for M0 lot 7 (one is allowed): C:\Projetos\refute\.claude\worktrees\v0-2-1-gauntlet-fixes-13f5e7\.cache\population\v2-selftest-4\blocker-states-4\comparison-twice.json, C:\Projetos\refute\.claude\worktrees\v0-2-1-gauntlet-fixes-13f5e7\.cache\population\v2-selftest-4\bloc
+OK    B5 the real qualification record passes on this machine (positive control): []
+OK    B5 a PASS qualification record without the machine-checked conditions is refused: ['the qualification record has no machine-checked validity conditions']
+OK    B5 a PASS qualification record with part of the conditions (no microcode, no modules) is refused: ["the qualification record lacks the conditions ['microcode_revision', 'memory_modules']"]
+OK    B5 a PASS qualification record with an empty value is refused: ["the qualification record lacks the conditions ['bios_date']"]
+OK    B5 a PASS qualification record with no memory module is refused: ['the qualification record lists no memory module']
+OK    B5 a PASS qualification record with a memory module without its part number is refused: ["memory module 0: fields missing ['part'] or unknown []"]
+OK    B5 a PASS qualification record with an unknown condition is refused: ["the qualification record has unknown conditions ['cpu_stepping']"]
+OK    B5 the gate refuses an incomplete PASS record named by its correct SHA-256: ["the qualification record lacks the conditions ['microcode_revision', 'memory_modules']"]
+OK    B5 the gate passes the real record with a D6 PASS of the current versions (positive control): []
+OK    the mask covers dictionary keys: masked
+OK    d6.py refuses to run when the project is inside the home directory: refused: d6.py does not run here
+OK    population_v2.py refuses to run when the project is inside the home directory: refused: the harness does not run here
+third review findings: 18 of 18 as expected []

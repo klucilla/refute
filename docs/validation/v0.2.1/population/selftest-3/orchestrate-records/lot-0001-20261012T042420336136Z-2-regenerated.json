@@ -1,0 +1,13 @@
+{
+  "check": {
+    "bytes": 1169974937,
+    "cases": 15,
+    "checked_against": "docs/validation/v0.2.1/population/selftest-3/manifest.json",
+    "diverged": [],
+    "frozen_manifest_sha256": "2e6881e158bfbb2e3eb7fbe8c60bb5cc4f1fe2de53c70fb115b55f473b29e154",
+    "identical": 15,
+    "stored": true
+  },
+  "lot": 1,
+  "utc": "2026-10-12T04:24:24.629339+00:00"
+}

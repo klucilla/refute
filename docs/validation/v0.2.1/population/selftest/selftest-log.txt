@@ -1,0 +1,66 @@
+# self-test log (commands and their output)
+$ generate --population selftest --manifest manifest.json --workers 24 --order index 
+affinity: logical processors 8-31 (mask 0xffffff00)
+cases generated: 44 (stored); wall 6.6 s; per case 2.47 s mean, 4.08 s max; peak worker memory 200.1 MB; bytes 3547686423
+manifest docs/validation/v0.2.1/population/selftest/manifest.json: SHA-256 e6d1808a6eb6a3e382ca7a7ac34f5d009ba8306077961838baf2a78a934d0eda
+$ generate --population selftest --manifest manifest-repeat.json --workers 24 --order index 
+affinity: logical processors 8-31 (mask 0xffffff00)
+cases generated: 44 (stored); wall 6.6 s; per case 2.49 s mean, 4.21 s max; peak worker memory 200.3 MB; bytes 3547686423
+manifest docs/validation/v0.2.1/population/selftest/manifest-repeat.json: SHA-256 e6d1808a6eb6a3e382ca7a7ac34f5d009ba8306077961838baf2a78a934d0eda
+$ generate --population selftest --manifest manifest-workers3-reverse.json --workers 3 --order reverse 
+affinity: logical processors 8-31 (mask 0xffffff00)
+cases generated: 44 (stored); wall 5.8 s; per case 0.35 s mean, 1.04 s max; peak worker memory 201.2 MB; bytes 3547686423
+manifest docs/validation/v0.2.1/population/selftest/manifest-workers3-reverse.json: SHA-256 e6d1808a6eb6a3e382ca7a7ac34f5d009ba8306077961838baf2a78a934d0eda
+$ generate --population selftest --manifest manifest-workers1-shuffle7.json --workers 1 --order shuffle:7 
+affinity: logical processors 8-31 (mask 0xffffff00)
+cases generated: 44 (stored); wall 10.8 s; per case 0.24 s mean, 0.48 s max; peak worker memory 209.6 MB; bytes 3547686423
+manifest docs/validation/v0.2.1/population/selftest/manifest-workers1-shuffle7.json: SHA-256 e6d1808a6eb6a3e382ca7a7ac34f5d009ba8306077961838baf2a78a934d0eda
+$ generate --population selftest --manifest manifest-hash-only.json --workers 24 --order index --no-store
+affinity: logical processors 8-31 (mask 0xffffff00)
+cases generated: 44 (hash only); wall 5.6 s; per case 2.02 s mean, 3.35 s max; peak worker memory 200.3 MB; bytes 3547686423
+manifest docs/validation/v0.2.1/population/selftest/manifest-hash-only.json: SHA-256 e6d1808a6eb6a3e382ca7a7ac34f5d009ba8306077961838baf2a78a934d0eda
+$ generate --check manifest.json --workers 5 --order shuffle:11
+affinity: logical processors 8-31 (mask 0xffffff00)
+cases generated: 44 (stored); wall 5.3 s; per case 0.51 s mean, 1.76 s max; peak worker memory 200.8 MB; bytes 3547686423
+checked against docs/validation/v0.2.1/population/selftest/manifest.json: 44 identical, 0 diverged
+exit 0
+$ analyze --point M0 (environment of tag v0.2.0) 01:20:25
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 44 cases, 0 already done, 44 to analyze
+M0: {'analyzed': 44}
+wall 43 s
+$ analyze --point HEAD (this branch, cbd98cb) 01:21:09
+affinity: logical processors 8-31 (mask 0xffffff00)
+HEAD: 44 cases, 0 already done, 44 to analyze
+HEAD: {'analyzed': 44}
+wall 41 s
+$ resume: analyze --point HEAD again on the same run folder
+affinity: logical processors 8-31 (mask 0xffffff00)
+HEAD: 44 cases, 44 already done, 0 to analyze
+HEAD: {}
+$ corrupt one byte of planet-measurable-white-0000.rpc in the cache (XOR 0x01 at the middle byte)
+before f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e offset 37741418 0x40
+after  b944753beed4ce1cb33d37d2b8472526d9f47c6c389de8c8c6de5d9d1e6eabcc offset 37741418 0x41
+$ analyze --point HEAD-corrupted-input --cases-from (that case only)
+affinity: logical processors 8-31 (mask 0xffffff00)
+HEAD-corrupted-input: 1 cases, 0 already done, 1 to analyze
+HEAD-corrupted-input: {'refused': 1}
+{
+  "case": "planet-measurable-white-0000",
+  "expected_sha256": "f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e",
+  "format": "refute-population-result/1",
+  "input_sha256": "b944753beed4ce1cb33d37d2b8472526d9f47c6c389de8c8c6de5d9d1e6eabcc",
+  "peak_memory_mb": 168.6,
+  "reason": "input SHA-256 does not match the manifest; not analyzed",
+  "seconds": 0.057,
+  "status": "refused"
+}
+
+$ restore the byte, then generate --check that case
+restored
+affinity: logical processors 8-31 (mask 0xffffff00)
+cases generated: 1 (stored); wall 0.3 s; per case 0.21 s mean, 0.21 s max; peak worker memory 171.1 MB; bytes 75482837
+checked against docs/validation/v0.2.1/population/selftest/manifest.json: 1 identical, 0 diverged
+$ metrics --runs M0 HEAD
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to docs\validation\v0.2.1\population\selftest\metrics-20261012T012206Z.json and docs\validation\v0.2.1\population\selftest\metrics-20261012T012206Z.md

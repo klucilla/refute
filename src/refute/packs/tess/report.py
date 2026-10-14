@@ -14,6 +14,11 @@ SCOPE_NOTE = (
     "multi-planet systems or other data products."
 )
 
+EB_CATALOG_DOWNGRADE_NOTE = (
+    "The `eb_catalog` match is under the target's own TIC in a catalog built from the same "
+    "TESS photometry, so it is not evidence independent of the light curve: from v0.2.1 "
+    "such a match is a warning, not a fatal failure."
+)
 NOT_A_DISCOVERY = (
     "A verdict is about a claim, never about its authors. Refute produces candidates and "
     "verdicts only: nothing here is a confirmed discovery, and nothing has been submitted "
@@ -91,6 +96,11 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
             f"| {test['name']} | {test['status']} | {test['severity']} | {test['message']} |"
         )
     lines.append("")
+    if any(
+        t["name"] == "eb_catalog" and (t.get("metrics") or {}).get("downgraded")
+        for t in result.get("tests", [])
+    ):
+        lines += [EB_CATALOG_DOWNGRADE_NOTE, ""]
     if not result.get("eb_catalog_configured"):
         lines += [
             "The `eb_catalog` test is not part of this gauntlet: the claim attaches no "

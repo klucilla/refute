@@ -1,0 +1,86 @@
+{
+  "already_valid": 0,
+  "argv": [
+    "analyze",
+    "--manifest",
+    "docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json",
+    "--cache",
+    "C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\.cache\\population\\selftest-4",
+    "--out",
+    "docs/validation/v0.2.1/population/selftest-4/short/runs/M1-3217db7",
+    "--point",
+    "M1",
+    "--cases-from",
+    "C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\.cache\\population\\selftest-4\\lot-0001-20261012T053157491154Z.txt",
+    "--workers",
+    "24",
+    "--cpus",
+    "8-31"
+  ],
+  "attempt": "20261012T053207949049Z-26472",
+  "binding": {
+    "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+    "point": "M1"
+  },
+  "cases": 2,
+  "checkout": {
+    "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+    "editable_root": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7",
+    "refute_root": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7",
+    "refute_version": "0.1.0",
+    "src_dirty": false,
+    "src_status": [],
+    "worktree_toplevel": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7"
+  },
+  "dispatched": true,
+  "fingerprint": {
+    "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+    "numpy": "2.5.3",
+    "numpy_blas": {
+      "detection method": "pkgconfig",
+      "found": true,
+      "include directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include",
+      "lib directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib",
+      "name": "scipy-openblas",
+      "openblas configuration": "OpenBLAS 0.3.34.106.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24",
+      "pc file directory": "D:/a/numpy-release/numpy-release/.openblas",
+      "version": "0.3.34.106.0"
+    },
+    "python": "3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]",
+    "refute_file": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7\\src\\refute\\__init__.py",
+    "thread_env": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "threadpools": [
+      {
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "user_api": "blas",
+        "version": "0.3.34.106.0"
+      }
+    ]
+  },
+  "format": "refute-population-attempt/1",
+  "harness_commit": "1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033",
+  "harness_sha256": "408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225",
+  "inputs_checked": 2,
+  "kind": "started",
+  "manifest_sha256": "763cb5c23a06310de04d7586df319fb3d878f190955e8876a2f8bda79f1face8",
+  "points": {
+    "committed": true,
+    "path": "docs/validation/v0.2.1/population/points.json",
+    "repository_commit": "1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033",
+    "sha256": "7f26cc75bd96c6feaa7ed40a5f5b880241af1ff4e2b43872d0684a2bdd51d3c9"
+  },
+  "started_utc": "20261012T053207949049Z",
+  "thread_env_inherited": {
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "to_analyze": 2
+}

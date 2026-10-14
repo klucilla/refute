@@ -1,0 +1,20 @@
+# Output of the run started at 2026-10-10T18:09:48.972Z (UTC), transcribed literally from the tool
+# result at 2026-10-10T18:10:00.216Z in the session transcript 286dcd73-0856-44d4-9b8c-b9fbf5851ed1.jsonl; it was not saved
+# to a file at the time. Only the Windows user name in paths is replaced by <user>.
+# Command of that tool call, with each heredoc body replaced by [...]
+# (the scripts it wrote are the .py files of this folder):
+#   S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"
+#   cat > "$S/h9_premise.py" <<'PYEOF' [...]
+#   cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && timeout 300 .venv/Scripts/python.exe "$S/affinity_run.py" "$S/h9_premise.py"
+# ---- output ----
+[affinity] process mask 0xffffff00
+('planet', 0, 'TIC-1', 3.7, 'REFUTED', ['eb_catalog'])
+('planet', 1, 'TIC-1', 3.7, 'REFUTED', ['eb_catalog'])
+('planet', 2, 'TIC-1', 3.7, 'REFUTED', ['eb_catalog'])
+('planet', 3, 'TIC-1', 3.7, 'REFUTED', ['eb_catalog'])
+('planet', 4, 'TIC-1', 3.7, 'REFUTED', ['eb_catalog'])
+('blend', 0, 'TIC-1', 2.3, 'REFUTED', ['centroid_shift', 'aperture_depth', 'eb_catalog'])
+('blend', 1, 'TIC-1', 2.3, 'REFUTED', ['centroid_shift', 'aperture_depth', 'eb_catalog'])
+('blend', 2, 'TIC-1', 2.3, 'REFUTED', ['centroid_shift', 'aperture_depth', 'eb_catalog'])
+('blend', 3, 'TIC-1', 2.3, 'REFUTED', ['centroid_shift', 'aperture_depth', 'eb_catalog'])
+('blend', 4, 'TIC-1', 2.3, 'REFUTED', ['centroid_shift', 'aperture_depth', 'eb_catalog'])

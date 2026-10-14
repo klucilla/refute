@@ -1,0 +1,41 @@
+# Output of the run started at 2026-10-10T16:36:13.993Z (UTC), transcribed literally from the tool
+# result at 2026-10-10T16:37:17.435Z in the session transcript 286dcd73-0856-44d4-9b8c-b9fbf5851ed1.jsonl; it was not saved
+# to a file at the time. Only the Windows user name in paths is replaced by <user>.
+# Command of that tool call, with each heredoc body replaced by [...]
+# (the scripts it wrote are the .py files of this folder):
+#   S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"
+#   cat > "$S/h4_survey.py" <<'PYEOF' [...]
+#   cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && .venv/Scripts/python.exe "$S/affinity_run.py" "$S/h4_survey.py"
+# ---- output ----
+[affinity] process mask 0xffffff00
+planet                    rounds= 20 {'PASS': 17, 'INCONCLUSIVE': 3} verdicts={'SURVIVED': 10}
+    train SNR min 53.255 | D/P max 0.024 | window coverage max 0.155
+planet_three_years        rounds= 30 {'PASS': 30} verdicts={'SURVIVED': 10}
+    train SNR min 76.359 | D/P max 0.024 | window coverage max 0.026
+noise                     rounds= 20 {'INCONCLUSIVE': 20} verdicts={'INCONCLUSIVE': 10}
+    train SNR min 3.845 | D/P max 0.342 | window coverage max n/a
+    SNR<7.1: 20 rounds; currently PASS/FAIL: 0 []
+    D/P>0.2: 2 rounds; currently PASS/FAIL: 0 []
+eb_secondary              rounds= 20 {'PASS': 20} verdicts={'REFUTED': 10}
+    train SNR min 171.072 | D/P max 0.037 | window coverage max 0.164
+eb_odd_even               rounds= 20 {'PASS': 20} verdicts={'REFUTED': 10}
+    train SNR min 199.778 | D/P max 0.039 | window coverage max 0.147
+eb_equal                  rounds= 20 {'PASS': 20} verdicts={'REFUTED': 10}
+    train SNR min 5538.050 | D/P max 0.055 | window coverage max 0.115
+vanishing                 rounds= 20 {'INCONCLUSIVE': 11, 'FAIL': 9} verdicts={'INCONCLUSIVE': 1, 'REFUTED': 9}
+    train SNR min 4.236 | D/P max 0.191 | window coverage max 0.148
+    SNR<7.1: 10 rounds; currently PASS/FAIL: 0 []
+no_radius                 rounds= 20 {'PASS': 17, 'INCONCLUSIVE': 3} verdicts={'INCONCLUSIVE': 10}
+    train SNR min 53.255 | D/P max 0.024 | window coverage max 0.155
+single_year               rounds=  0 {} verdicts={'INCONCLUSIVE': 10}
+    train SNR min n/a | D/P max n/a | window coverage max n/a
+blend                     rounds= 20 {'PASS': 20} verdicts={'REFUTED': 10}
+    train SNR min 473.915 | D/P max 0.031 | window coverage max 0.081
+sinusoid                  rounds= 20 {'PASS': 20} verdicts={'REFUTED': 10}
+    train SNR min 80.993 | D/P max 0.357 | window coverage max 1.000
+    D/P>0.2: 20 rounds; currently PASS/FAIL: 20 [(0, 2018, 'PASS'), (0, 2020, 'PASS'), (1, 2018, 'PASS'), (1, 2020, 'PASS'), (2, 2018, 'PASS'), (2, 2020, 'PASS')]
+    cov>0.5: 20 rounds; currently PASS/FAIL: 20 [(0, 2018, 'PASS'), (0, 2020, 'PASS'), (1, 2018, 'PASS'), (1, 2020, 'PASS'), (2, 2018, 'PASS'), (2, 2020, 'PASS')]
+fp_variability_dominates  rounds= 20 {'PASS': 20} verdicts={'REFUTED': 10}
+    train SNR min 81.113 | D/P max 0.357 | window coverage max 1.000
+    D/P>0.2: 20 rounds; currently PASS/FAIL: 20 [(0, 2018, 'PASS'), (0, 2020, 'PASS'), (1, 2018, 'PASS'), (1, 2020, 'PASS'), (2, 2018, 'PASS'), (2, 2020, 'PASS')]
+    cov>0.5: 20 rounds; currently PASS/FAIL: 20 [(0, 2018, 'PASS'), (0, 2020, 'PASS'), (1, 2018, 'PASS'), (1, 2020, 'PASS'), (2, 2018, 'PASS'), (2, 2020, 'PASS')]

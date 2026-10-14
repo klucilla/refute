@@ -1,0 +1,317 @@
+# v0.2.1 CI time, option D (one H9(a) analysis for both rules): acceptance criteria
+
+Status: **criteria fixed before any validation runs.** This file is committed on its
+own, before the tests and the code it describes. Written 2026-10-11 on branch
+`claude/v0-2-1-gauntlet-fixes-13f5e7`. Amended three times (below): Amendment 1, before any
+test was written (a withdrawn statement about Python versions, the time metric, the
+split of the code commit and a structural case E0); Amendment 2, before the code (a
+third baseline run); Amendment 3, before the code (the E cases marked as expected
+failures until commit 3b).
+
+## Problem
+
+Every CI job runs the whole test suite on a 4-core GitHub runner
+(`os.cpu_count()` = 4, `REFUTE_WORKERS` = 4, no `pytest-xdist`). The maintainer's
+target is **at most 15 minutes per job**. The rule decided on 2026-10-10: if every job
+is at or under 15 minutes, stop; otherwise choose between marking the slow tests and
+running each H9(a) analysis once for both rules. The second option (D) was chosen.
+This document fixes how D is done and how it is judged.
+
+### Baseline (CI run 38098624281, commit `89bd3b4`, 2026-10-11)
+
+| Job | Job wall time | pytest | H9(a) fixture | H4 fixture | Blindness fixture |
+|---|---|---|---|---|---|
+| ubuntu-latest / Python 3.12 | 26:11 | 25:55 | 771 s | 325 s | 148 s |
+| windows-latest / Python 3.12 | 25:17 | 24:41 | 716 s | 288 s | 133 s |
+| windows-latest / Python 3.13 | 18:10 | 17:29 | 512 s | 209 s | 96 s |
+| ubuntu-latest / Python 3.13 | 14:36 | 14:19 | 422 s | 186 s | 86 s |
+
+Fixture times are the `setup` durations reported by `pytest --durations=25`:
+`tests/test_ebcatalog_own_tic_e2e.py` (module fixture `analyses`),
+`tests/test_holdout_train_validity_e2e.py` and `tests/test_holdout_blindness.py`.
+All 489 tests passed in every job. Three of the four jobs are above the target.
+
+The H9(a) fixture is the largest single cost. It runs **265 complete analyses**:
+13 scenarios x seeds 0-9 x two rules (the default `same_photometry_catalogs:
+["TESS-EB"]`, "on", and the switch `same_photometry_catalogs: []`, "off"), plus 5
+`blend` analyses with a neighbor's catalog row. The two rules differ **only in the
+`eb_catalog` test**: the detrending, the search, the gauntlet tests a-d, the rest of
+the battery and the blind holdout do not read `test_plan.gauntlet.eb_catalog`. Each
+pair therefore repeats the same expensive work to change one test.
+
+## Definition of option D
+
+### Production seam (behavior-neutral refactor of `src/refute/packs/tess/pipeline.py`)
+
+Two steps that `analyze_data` already performs are extracted into named functions,
+so that production and the test helper call **the same code**:
+
+- `eb_catalog_test(data, candidate, plan, catalogs, catalog_scan) -> TestResult`:
+  the call of `check_eb_catalog` that `battery_tests` makes today (target key, star,
+  the final candidate's period, `plan.gauntlet.eb_catalog`). `battery_tests` calls it.
+- `conclude_analysis(search, flattened, gauntlet, holdout, catalogs_configured)
+  -> Analysis`: the coverage rule (`enforce_coverage`) and the aggregation
+  (`aggregate` with `expected_tests`) that end `analyze_data` today.
+  `analyze_data` calls it.
+
+Nothing else in the pipeline changes. The outputs of every analysis are unchanged
+(checked by F4 below). The code hash changes, as it already does for every v0.2.1
+change; the v0.2 lock is verified at `cc9d104` and is not affected.
+
+### Shared path (test helper in `src/refute/packs/tess/synthetic.py`)
+
+A picklable helper runs, for one scenario and seed:
+
+1. the **complete analysis with the default rule**, through `analyze_data`
+   exactly as `analyze_scenario_with_catalog` does today (the "on" analysis);
+2. for the switch-off rule, the **"off" analysis derived from the same expensive
+   work**: the `eb_catalog` test is **recomputed by `eb_catalog_test`, that is by
+   `check_eb_catalog`, with `same_photometry_catalogs: []`**, it replaces the
+   `eb_catalog` test of the gauntlet, and the analysis is concluded again by
+   `conclude_analysis` (coverage rule and verdict aggregation recomputed). When there
+   is no candidate, `eb_catalog` is "not run" under both rules (as in
+   `attack_candidate`) and only the conclusion is recomputed.
+
+**Prohibited:** producing the switch-off result by editing the default result (for
+example changing the severity of `eb_catalog` from WARNING to FATAL, or copying the
+default verdict). Both rules pass through the production decision code:
+`check_eb_catalog` for the test, `enforce_coverage` and `aggregate` for the verdict.
+Sabotage S7 below checks that such a shortcut would be caught.
+
+### Complete switch-off runs kept as the control
+
+The fixture also keeps **complete switch-off analyses** (`analyze_data` with
+`same_photometry_catalogs: []`, no sharing) for **seeds 0-1 of every scenario**. They
+are the reference against which the shared path is checked (E1).
+
+### What the fixture runs after D
+
+| Analyses | Before | After |
+|---|---|---|
+| Default rule, complete (`analyze_data`) | 130 | 130 (each also yields the derived switch-off analysis) |
+| Switch off, complete | 130 | 26 (seeds 0-1, control for E1) |
+| `blend` with the neighbor's row, complete | 5 | 5 (unchanged) |
+| **Total complete analyses** | **265** | **161** |
+
+All tasks run in one process pool (`run_processes`, `default_workers()`), as today.
+
+### What stays exactly as it is
+
+- The text, seeds and assertions of cases B1-B3, C and D of
+  `docs/validation/v0.2.1/H9a-acceptance.md`: B and C on seeds 0-4, **D on seeds 0-9
+  for every scenario** (the D seeds are not reduced). Their "off" analyses now come
+  from the shared path; for seeds 0-1 E1 ties them to the complete ones.
+- Every other test module, the CI workflow, `REFUTE_WORKERS`, and the slow tests (none
+  is marked or skipped).
+
+## Acceptance criteria
+
+Option D is accepted when every item below holds.
+
+### E. Shared path equals the complete path (new cases in `tests/test_ebcatalog_own_tic_e2e.py`)
+
+- **E1. Exact equality, every scenario, seeds 0-1.** For each of the 13 scenarios and
+  seeds 0 and 1, the derived switch-off analysis equals the complete switch-off
+  analysis:
+  - the per-target verdict record (`build_result` with the switch-off plan and the
+    same target and context, serialized as JSON with sorted keys) is **identical
+    byte for byte**: verdict, verdict reason, candidate, ephemeris, every test (name,
+    status, severity, message, metrics, thresholds, coverage), holdout rounds, search
+    diagnostics and key values;
+  - the gauntlet test lists (before the coverage rule) are identical (`to_dict`).
+  No tolerance: the expensive work is the same computation in both paths.
+- **E1 premise (non-vacuous).** For `planet` seeds 0 and 1, the derived switch-off
+  analysis differs from the default one (switch off: REFUTED with `eb_catalog` fatal;
+  default: WEAKENED with `eb_catalog` warning). Without this, E1 could pass by
+  copying the default analysis.
+
+### F. No regression
+
+- **F1.** Cases B1-B3, C and D pass, unchanged in text and seeds.
+- **F2.** The 5 neighbor-row `blend` analyses stay complete analyses (B3 unchanged).
+- **F3.** The full suite passes. The only test module edited is
+  `tests/test_ebcatalog_own_tic_e2e.py`, and its existing cases are edited only in the
+  fixture that supplies the analyses.
+- **F4.** The refactor is neutral: `tests/test_workers_equivalence.py` and every
+  existing pipeline, holdout, catalog and calibration test pass unchanged.
+- **F5.** `ruff check .` and `ruff format --check .` pass.
+
+### S. Sabotages (run after the code passes, never committed)
+
+Each run against `tests/test_ebcatalog_own_tic.py` and
+`tests/test_ebcatalog_own_tic_e2e.py` only, reverted with an empty `git diff` before
+the next. Sabotage scripts are written to files with the editor, not generated by
+shell heredocs (Amendment 1 of H9(a) records a failed first run caused by a heredoc).
+
+**Redone, as planned in H9(a)** (applied to `src/refute/packs/tess/ebcatalog.py`):
+
+| Sabotage | Must be caught by |
+|---|---|
+| S1. The rule is ignored (own-TIC same-photometry matches stay fatal) | A1, B1, C2, C3 |
+| S2. Any TESS-EB row counts as the target's own (neighbors downgraded) | A2, A5, B3 |
+| S3. Position-only matches (Gaia rows) downgraded | A3 |
+| S4. The catalog list is ignored (any catalog with the target's TIC downgraded) | A4 |
+| S5. The downgrade gives PASS instead of a warning | A1, B1 |
+| S6. The switch is inverted (empty list downgrades, default does not) | A1, A7 |
+
+E1 is **not** expected to catch S1-S6: they change the production rule, which both the
+shared and the complete path run. The failing counts may differ from H9(a)
+Amendment 1 because the module now has more cases; the planned catches must not.
+
+**New, against the shared path** (applied to the helper in `synthetic.py`):
+
+| Sabotage | Must be caught by |
+|---|---|
+| S7. The switch-off result is fabricated from the default one: `eb_catalog` severity changed from WARNING to FATAL and the verdict re-aggregated, without calling `check_eb_catalog` | E1 |
+| S8. The switch-off analysis keeps the default `eb_catalog` test (not recomputed) | E1 and its premise |
+| S9. `eb_catalog` is recomputed but the analysis is not concluded again (default verdict kept) | E1 and its premise |
+
+### T. Time (measured, never assumed)
+
+- **Local:** the H9(a) module, before and after, with the usual CPU affinity
+  (logical processors 8-31; the first four physical cores left to Windows), wall
+  time and the fixture's `setup` duration.
+- **CI:** after the push that the maintainer approves, the job wall times and the
+  `--durations` lines of every job, compared with the baseline above.
+- **Estimate (not a result).** Scaling the H9(a) fixture by 161/265 saves about 40%
+  of it: roughly 300 s on the Python 3.12 jobs and 165-200 s on the Python 3.13 jobs.
+  On the baseline that would put the Python 3.13 jobs near or under 15 minutes and
+  leave the Python 3.12 jobs around 20-21 minutes.
+- **Decision rule.** If every job is at or under 15 minutes, the CI-time work stops.
+  Otherwise this document records the measured times and states only that **the
+  options evaluated so far (`REFUTE_WORKERS` set to all runner cores, then option D)
+  have not yet reached the target**. The 15-minute target is not declared
+  unreachable. Any further option, or any revision of the target, is an explicit
+  decision of the maintainer, recorded here before it is implemented.
+
+## Risks
+
+- **A future step added to `analyze_data` after the gauntlet.** The derived analysis
+  would miss it unless it goes through `conclude_analysis`. The seam is in production
+  code, so the helper follows it; E1 compares the complete records and would show a
+  missing step on seeds 0-1.
+- **Hidden state in the `eb_catalog` decision.** Today it reads only the catalog
+  entries, the scan record, the target key, the star and the final period. If that
+  changed, E1 is the check, on seeds 0-1 only.
+- **Seeds 2-9 rely on the shared path without a complete control.** That is the price
+  of D; E1 on seeds 0-1 of every scenario, with exact equality, is the evidence that
+  the path is the same.
+
+## Open items (not part of D)
+
+- ~~The Python 3.12 jobs take about 1.5-1.8 times as long as the Python 3.13 jobs on
+  the same runners and the same tests. The cause is not investigated.~~ *(Withdrawn by
+  Amendment 1: the data do not support it.)*
+- After D, the next largest costs are the H4 property fixture (186-325 s) and the
+  blindness fixture (86-148 s). No change to them is planned here.
+
+## Amendment 1 (2026-10-11, before any test was written)
+
+Requested by the maintainer when approving the document (commit `f0fb1b1`). No
+criterion of sections E, F or S is weakened.
+
+### 1. Run-to-run variation, not a Python-version effect
+
+The open item "the Python 3.12 jobs take about 1.5-1.8 times as long" is withdrawn
+(struck through above). It came from one CI run. A second run contradicts it:
+
+| Job | Run 38093716503 (`41c66c0`): job / H9(a) fixture | Run 38098624281 (`89bd3b4`): job / H9(a) fixture |
+|---|---|---|
+| ubuntu-latest / Python 3.12 | 24:24 / 752 s | 26:11 / 771 s |
+| windows-latest / Python 3.12 | 18:06 / 543 s | 25:17 / 716 s |
+| windows-latest / Python 3.13 | 24:12 / 721 s | 18:10 / 512 s |
+| ubuntu-latest / Python 3.13 | 24:20 / 760 s | 14:36 / 422 s |
+
+The same job takes very different times from one run to the next (windows 3.12:
+18:06 then 25:17; ubuntu 3.13: 24:20 then 14:36), and the order of the jobs changes.
+This is recorded as **variation between runs of the GitHub runners, with no cause
+attributed**. The H9(a) fixture and everything it calls are the same in both runs
+(between `41c66c0` and `89bd3b4` the only change under `src/refute/packs/` or
+`runner.py` is a docstring of `runner.py`). The baseline table at the top of this
+document is one of these two runs.
+
+The "Estimate" bullet of section T was computed from one run per job; with this
+variation it says nothing about any particular job and is kept only as the
+expected size of the saving (about 40% of the fixture).
+
+### 2. The time metric
+
+- **Metric:** the `setup` duration of the H9(a) fixture reported by
+  `pytest --durations=25` (the line of
+  `tests/test_ebcatalog_own_tic_e2e.py::test_b1_planet_with_its_own_tess_eb_entry_is_weakened[0]`),
+  per job. The job wall time and the pytest total are recorded next to it, but the
+  effect of D is judged on the fixture time, not only on the job time.
+- **Baseline:** the same metric in the two runs above, per job (eight values).
+- **After D:** **at least two CI runs** of the code of D, the same metric per job,
+  compared with the baseline per job and in range (minimum and maximum over the runs).
+- **The 15-minute target** stays a target on the job wall time. It is met only if
+  every job of every measured run is at or under 15 minutes. Otherwise the decision
+  rule of section T applies unchanged: record the measured times and state that the
+  options evaluated so far have not yet reached the target; never declare it
+  unreachable; any further option or any revision of the target is the
+  maintainer's explicit decision.
+
+### 3. The code commit is split in two
+
+- **Commit 3a: the refactor only.** Extract `eb_catalog_test` and
+  `conclude_analysis` from `pipeline.py`, with no change of behavior. Proof:
+  - **before touching the code**, a reference is recorded **outside the repository**:
+    for every scenario of the H9(a) module (13) and seeds 0-9, with the default rule
+    and with the switch off, and for the 5 neighbor-row `blend` analyses, the
+    per-target verdict record (`build_result`, serialized with `dumps_json`, the
+    serializer of the dossiers);
+  - after the refactor, the same records are produced again and must be **identical
+    byte for byte** to the reference (265 records: 13 x 10 x 2 + 5, compared one by one; the SHA-256
+    of the reference file is recorded in a later amendment);
+  - the **full suite passes without editing any existing test**.
+- **Commit 3b: option D.** The shared-path helper, the new fixture of
+  `tests/test_ebcatalog_own_tic_e2e.py`, then sabotages S1-S9 and the time
+  measurement (section T as amended here).
+
+### 4. Structural case E0 (added)
+
+E1 alone would also pass if the fixture computed every switch-off analysis completely
+(that is, if D were silently not applied). E0 checks the structure of the fixture:
+
+- **E0.** For every scenario and seed 0-9, the switch-off analysis used by B, C and D
+  comes from the shared path: the helper marks each derived analysis in
+  `Analysis.extras` (`"shared_path": True`). The complete switch-off controls exist
+  for seeds 0-1 only and carry no mark. The fixture runs exactly **161 complete
+  analyses** (130 with the default rule, 26 controls, 5 neighbor-row `blend`).
+
+The mark is in `extras`, which the verdict record does not serialize (it reads only
+`eb_catalog_configured`, which `analyze_data` does not set), so it does not affect
+the byte comparison of E1.
+
+## Amendment 2 (2026-10-11, before the code): a third baseline run
+
+Requested by the maintainer. The CI run of commit `3f1c36c` (run 38139325927, a
+documentation-only commit, the same tests and code as `89bd3b4` under `src/` and
+`tests/`) is added to the baseline of Amendment 1, item 2, which now has three runs
+per job (twelve values of the metric):
+
+| Job | Run 38139325927 (`3f1c36c`): job / H9(a) fixture |
+|---|---|
+| ubuntu-latest / Python 3.12 | 21:11 / 608 s |
+| windows-latest / Python 3.12 | 25:21 / 719 s |
+| windows-latest / Python 3.13 | 25:31 / 725 s |
+| ubuntu-latest / Python 3.13 | 14:21 / 417 s |
+
+Over the three runs the H9(a) fixture took 608-771 s (ubuntu 3.12), 543-719 s
+(windows 3.12), 512-725 s (windows 3.13) and 417-760 s (ubuntu 3.13). Nothing else
+changes.
+
+## Amendment 3 (2026-10-11, before the code): E cases marked as expected failures
+
+Decided by the maintainer, so that the CI of the branch is green while the E cases
+are red by design. In a commit of its own ("tests: mark option D cases as expected
+failures until 3b"), E0, E1 (13 scenarios) and the E1 premise (2 seeds) are marked
+`pytest.mark.xfail(strict=True)` with the reason "red by design until commit 3b of
+option D; see docs/validation/v0.2.1/ci-time-option-d-acceptance.md". No assertion
+and no other test changes. Full suite after the marks: 489 passed, 16 xfailed,
+0 failures (count from the JUnit XML).
+
+**Commit 3b removes the marks.** When the shared path exists, the 16 cases pass;
+with `strict=True` an unexpected pass is a failure, so 3b must remove the marks in
+the same commit, and its suite run must show the 16 cases as passed, not xfailed.
+Nothing else in sections E, F, S or T changes.

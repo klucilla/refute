@@ -20,7 +20,7 @@ import refute
 from refute.core.claim import ClaimError, LoadedClaim, load_claim
 from refute.core.codehash import CodeHashError, git_state, project_root
 from refute.core.dossier import DossierWriter
-from refute.core.environment import snapshot
+from refute.core.environment import numeric_runtime, snapshot
 from refute.core.io import dumps_json, write_json, write_text
 from refute.core.lock import VerifyStatus, lock_path_for, verify_claim
 from refute.core.pack import load_pack
@@ -110,6 +110,8 @@ def run_target_task(task: TargetTask) -> dict[str, Any]:
     writer.write_json("target.json", task.target)
     for name, content in task.attachments:
         writer.write_bytes(f"attachments/{name}", content)
+    # v0.2.1: the numerical runtime of the process that analyzes this target.
+    writer.write_json("environment/numeric_runtime.json", numeric_runtime())
 
     if task.fetch_error is not None:
         result = pack.analyzer.error_result(

@@ -1,0 +1,84 @@
+{
+  "format": "refute-machine-qualification/1",
+  "machine": "AMD Ryzen 9 5900XT, Gigabyte B550M AORUS ELITE AX, 4 x 16 GiB without ECC",
+  "recorded_utc": "2026-10-13",
+  "result": "PASS",
+  "result_note": "QUALIFIED under the conditions below. The cause of attempt 1 is probable (a weak DRAM cell), not demonstrated: no divergent byte was captured.",
+  "source_records": [
+    ".cache/population/diag/qualificacao/qualificacao.md",
+    ".cache/population/diag/qualificacao/ycruncher.md",
+    ".cache/population/diag/qualificacao/diagnostico.md",
+    ".cache/population/diag/qualificacao/config-maquina.md"
+  ],
+  "source_records_note": "local working notes, not published; this JSON is the published qualification record",
+  "criteria_fixed_before_the_tests": {
+    "memtest86": "at least 4 full passes of the declared test set, all testable RAM, zero errors",
+    "y_cruncher": "version and configuration fixed before the run, an explicit list of components, at least 4 effective hours with every component completing a cycle, zero verification errors, hangs or unexpected restarts"
+  },
+  "attempts": [
+    {
+      "tool": "y-cruncher",
+      "attempt": 1,
+      "date": "2026-10-12",
+      "version": "0.8.7 Build 9547 (binary 19-ZN2 ~ Kagari)",
+      "configuration": "qualificacao-refute.cfg: StressTest, AllocateLocally true, logical cores 0-31, 41768774400 bytes, 120 s per test, 15000 s in total, StopOnError true, tests BKT, BBP, SFTv4, SNT, SVT, FFTv4, N63, VT3",
+      "result": "FAIL",
+      "observation": "one verification error in N63 on logical core 8 (ConvolutionFailedException: Coefficient is too large); no hardware event in the Windows log"
+    },
+    {
+      "tool": "y-cruncher",
+      "attempt": "diagnostic (not a qualification attempt)",
+      "date": "2026-10-12",
+      "configuration": "N63 alone, 32 threads, 43.5 GiB, 120 s per test, 3600 s in total, Stop on Error off",
+      "result": "29 of 29 iterations passed; it does not cancel the FAIL and does not identify the component"
+    },
+    {
+      "tool": "MemTest86",
+      "date": "2026-10-12 to 2026-10-13",
+      "configuration": "4 passes, about 12 hours, memory at 2666 MHz and 1.20 V (the daily configuration)",
+      "result": "accepted under a criterion changed after seeing the result",
+      "observation": "tests 0 to 10 without errors; test 13 (Hammer) failed in the 4 passes: 26 errors, all at the physical address 0x8C7CBD968 (about 35 GiB) and in the same bit, always from 1 to 0, also at the slow rate",
+      "criterion_changed_after_seeing_the_result": "The run is accepted because tests 0 to 10 had no errors and every error of test 13 was confined to a single address, whose page is excluded. Reason: the exclusion holds only inside Windows, and MemTest86 runs outside it. Under the criterion written before the tests (zero errors), this run would have been a FAIL."
+    },
+    {
+      "tool": "corrective action",
+      "date": "2026-10-13",
+      "action": "the physical page 0x8C7CBD (4 KiB) excluded from use by Windows (BCD badmemorylist); no module removed or replaced"
+    },
+    {
+      "tool": "y-cruncher",
+      "attempt": 2,
+      "date": "2026-10-13, about 04:27 to 08:40",
+      "version": "0.8.7 Build 9547",
+      "configuration": "configured by hand (the program did not find the .cfg file): 32 logical cores, 45.8 GiB (1.43 GiB per thread), NUMA local, 120 s per test, 15000 s in total, Stop on Error on, the 8 tests",
+      "result": "PASS",
+      "observation": "15 complete cycles (iterations 0 to 14) with the 8 tests passed; iteration 15 ended by the 15000 s limit; zero errors, no hang and no restart"
+    }
+  ],
+  "residual_risk": "The module is still defective and may have other weak cells that were not detected; the exclusion holds only while the memory configuration and the BCD do not change. The protections of the study (K = 3 in generation, two slots in analysis) turn an error of this kind into a block, not into an accepted result.",
+  "invalidated_if": [
+    "any later test shows an error at another address",
+    "the memory (modules, slots, frequency, voltage or timings), the BIOS or the badmemorylist entry changes",
+    "the microcode, the CPU tuning, the EasyTune profile, the operating system or the NumPy build changes"
+  ],
+  "validity_conditions_machine_checked": {
+    "note": "compared with the machine record of every campaign generation (readable without elevation)",
+    "cpu_name": "AMD Ryzen 9 5900XT 16-Core Processor",
+    "cpu_processor_id": "178BFBFF00A20F12",
+    "microcode_revision": "0x0a201213",
+    "bios_version": "F8d",
+    "bios_date": "2026-08-17",
+    "board_product": "B550M AORUS ELITE AX",
+    "memory_modules": [
+      {"bank": "P0 CHANNEL A", "locator": "DIMM 0", "part": "KHX3200C15/16G", "capacity": "17179869184", "configured": 2666, "configured_voltage_mv": 1200},
+      {"bank": "P0 CHANNEL A", "locator": "DIMM 1", "part": "KF432C16BBK2/32", "capacity": "17179869184", "configured": 2666, "configured_voltage_mv": 1200},
+      {"bank": "P0 CHANNEL B", "locator": "DIMM 0", "part": "KHX3200C15/16G", "capacity": "17179869184", "configured": 2666, "configured_voltage_mv": 1200},
+      {"bank": "P0 CHANNEL B", "locator": "DIMM 1", "part": "KF432C16BBK2/32", "capacity": "17179869184", "configured": 2666, "configured_voltage_mv": 1200}
+    ]
+  },
+  "validity_conditions_attested": {
+    "badmemorylist": "physical page 0x8C7CBD: attested by the maintainer on 2026-10-13, not machine-verified (reading the BCD requires administrator rights)",
+    "bios_cpu_and_memory_settings": "BIOS at defaults or Auto, no manual CPU or memory tuning: stated by the maintainer on 2026-10-12, not machine-verified",
+    "easytune_profile": "EasyTune not used (the EasyTuneEngineService is installed and running, with no profile applied): stated by the maintainer on 2026-10-12, not machine-verified"
+  }
+}

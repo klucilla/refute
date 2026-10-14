@@ -1,0 +1,25 @@
+=== H (N10) in-worker infrastructure stop: metrics before the resume, then resume with the input restored
+{'kind': 'interrupted', 'exception': 'RuntimeError: infrastructure, planet-near-white-0005: InfrastructureError: input file missing from the cache; no result written', 'results_written': ['false_positive-below-white-0001', 'false_positive-measurable-white-0004', 'no_transit-none-correlated-0002', 'no_transit-none-white-0000', 'planet-measurable-white-0004']}
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to neg\out\h-before.json and neg\out\h-before.md
+exit=0
+{'analyzed': 8, 'missing': 2} {'k': 1, 'passes': False} False
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 6 cases, 5 already valid, 1 to analyze (inputs present and checked by SHA-256)
+M0: {'analyzed': 1}
+exit=0
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to neg\out\h-after.json and neg\out\h-after.md
+exit=0
+{'analyzed': 10} {'k': 0, 'passes': True}
+=== metrics over runs/M0 runs/M3 (structure of the N3/N7 output)
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to out\m-base.json and out\m-base.md
+exit=0
+top keys ['format', 'harness_sha256', 'manifest_sha256', 'paired', 'points', 'points_sha256', 'records', 'redraws', 'results_checked_against_records', 'run_harness_sha256']
+point keys ['approval', 'by_mechanism', 'criteria', 'errors', 'named_families', 'status_counts']
+approval {'failed': ['C1 refuted planets, below, white', 'C1 refuted planets, near, white', 'C1 refuted planets, measurable, white', 'C2 flagged false positives, measurable, white', 'C3 INCONCLUSIVE, planet, measurable, white', 'C3 INCONCLUSIVE, false_positive, measurable, white', 'C4 false alarm, white', 'C1 refuted planets, below, correlated', 'C1 refuted planets, near, correlated', 'C1 refuted planets, measurable, correlated', 'C2 flagged false positives, measurable, correlated', 'C3 INCONCLUSIVE, planet, measurable, correlated', 'C3 INCONCLUSIVE, false_positive, measurable, correlated', 'C4 false alarm, correlated'], 'passes': False, 'rule': 'The study is approved only if every criterion passes, C6 included. A rate can meet its limit while the study fails.'}
+by_mechanism conds {'i': 6, 'ii': 4}
+named_families []
+paired keys ['aggregate', 'i', 'ii', 'ii_by_catalog_variant'] | i labels ['false_alarm | no_transit', 'flagged_identity | false_positive', 'flagged_old | false_positive'] | ii groups example ['white|measurable|neighbor', 'white|near|independent']
+redraws {'false_positive|below|eb_secondary': {'cases': 1, 'cases_redrawn': 0, 'redraws': {}}, 'false_positive|measurable|blend': {'cases': 1, 'cases_redrawn': 0, 'redraws': {}}, 'no_transit|none|pure_noise': {'cases': 1, 'cases_redrawn': 0, 'redraws': {}}, 'no_transit|none|trend': {'cases': 1, 'cases_redrawn': 0, 'redraws': {}}, 'planet|measurable|few_train': {'cases': 1, 'cases_redrawn': 0, 'redraws': {}}, 'planet|near|few_train': {'cases': 1, 'cases_redrawn': 0, 'redraws': {}}}

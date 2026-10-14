@@ -1,0 +1,24 @@
+== HEAD b7c724cd91be2d7040152bb2831f29415119ee14; last commit that changed population.py: 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033
+== D1 generate --check (44, hash only) vs selftest-4 manifest, whose harness_commit is:
+1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 408020676340
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 44 (hash only); wall 5.5 s; per case 1.96 s mean, 3.21 s max; peak worker memory 199.5 MB; bytes 3547686423
+checked against C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7/docs/validation/v0.2.1/population/selftest-4/manifest.json: 44 identical, 0 diverged
+exit=0
+== D1b generate --check vs selftest-3 manifest (another harness, 33e2d418...)
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 44 (hash only); wall 5.4 s; per case 1.89 s mean, 3.21 s max; peak worker memory 199.3 MB; bytes 3547686423
+checked against C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7/docs/validation/v0.2.1/population/selftest-3/manifest.json: 44 identical, 0 diverged
+exit=0
+== D2 metrics now (HEAD b7c724c) over copies of the selftest-4 short runs (run at 1692d99), with --records
+   M0 harness_commit 1692d99 harness_sha256 408020676340 points_at_start 1692d99
+   M1 harness_commit 1692d99 harness_sha256 408020676340 points_at_start 1692d99
+   M2 harness_commit 1692d99 harness_sha256 408020676340 points_at_start 1692d99
+   M3 harness_commit 1692d99 harness_sha256 408020676340 points_at_start 1692d99
+affinity: logical processors 8-31 (mask 0xffffff00)
+metrics written to out\d2.json and out\d2.md
+exit=0

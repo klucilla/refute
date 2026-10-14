@@ -35,6 +35,13 @@ Decision: a catalog entry matches the target when it has the target's TIC ID or
 lies within ``match_radius_arcsec``. A match whose period equals the found period
 times one of ``period_factors`` (within ``period_tolerance``) is a fatal failure;
 a match by position or ID only is a warning; no match passes.
+
+From v0.2.1 (H9a), a period match under the target's own TIC in a catalog listed in
+``same_photometry_catalogs`` (default TESS-EB, which is built from the same TESS
+photometry) is a warning, not a fatal failure, unless another period match (a
+neighbor, a position-only match such as a Gaia row, or the target's TIC in another
+catalog) makes it fatal. The metrics record ``downgraded``. An empty list restores
+the v0.2 decision.
 """
 
 from __future__ import annotations
@@ -283,24 +290,45 @@ def check_eb_catalog(
                 "period_days": entry.period_days,
                 "period_factor": factor,
                 "matched_by": "tic_id" if by_id else "position",
+                "same_photometry": entry.catalog in params.same_photometry_catalogs,
             }
         )
+    with_period = [m for m in matches if m["period_factor"] is not None]
+    own = [m for m in with_period if m["matched_by"] == "tic_id" and m["same_photometry"]]
+    other = [m for m in with_period if m not in own]
+    downgraded = bool(own) and not other
     metrics = {
         "n_catalog_entries": len(entries),
         "catalog_rows_scanned": scanned,
         "snapshots": scan["snapshots"],
         "matches": matches,
         "found_period_days": period,
+        "downgraded": downgraded,
+        "downgraded_matches": own if downgraded else [],
     }
-    with_period = [m for m in matches if m["period_factor"] is not None]
-    if with_period:
-        m = with_period[0]
+    if other:
+        m = other[0]
         return TestResult(
             "eb_catalog",
             TestStatus.FAIL,
             Severity.FATAL,
             f"listed as an eclipsing binary in {m['catalog']} ({m['source_id']}) with period "
             f"{m['period_days']:.6g} d = {m['period_factor']:g} x the found period",
+            metrics=metrics,
+            thresholds=thresholds,
+            coverage=scanned,
+            coverage_unit="catalog rows scanned",
+        )
+    if downgraded:
+        m = own[0]
+        return TestResult(
+            "eb_catalog",
+            TestStatus.FAIL,
+            Severity.WARNING,
+            f"listed as an eclipsing binary in {m['catalog']} ({m['source_id']}) with period "
+            f"{m['period_days']:.6g} d = {m['period_factor']:g} x the found period, under the "
+            f"target's own TIC; {m['catalog']} is built from the same TESS photometry, so from "
+            "v0.2.1 this is a warning, not a fatal failure",
             metrics=metrics,
             thresholds=thresholds,
             coverage=scanned,

@@ -561,6 +561,13 @@ PLANET = SignalSpec(period=3.7, t0=1326.3, depth=0.002, duration=2.5 / 24)
 BLEND_SCENE = Scene(neighbor_xy=(7.0, 5.0), neighbor_ratio=0.3)
 BLEND_NEIGHBOR = SignalSpec(period=2.3, t0=1325.8, depth=0.08, duration=2.0 / 24)
 SINUSOID_PERIOD = 0.7
+# v0.2.1 H7: a weak eclipse at this period under a stronger sinusoid at SINUSOID_PERIOD
+# (2.9 / 0.7 is not commensurate), so the search finds the variability, not the eclipse.
+# Scenario "fp_variability_dominates"; not in SCENARIOS (only the H7 tests use it).
+FP_VARIABILITY_PERIOD = 2.9
+# v0.2.1 H4: scenario "variability_train_only" (not in SCENARIOS): the planet_three_years
+# transit plus a SINUSOID_PERIOD sinusoid present in 2018 and 2019 and absent in 2020.
+VARIABILITY_TRAIN_YEARS = (2018, 2019)
 SCENARIOS = (
     "planet",
     "planet_three_years",
@@ -620,6 +627,16 @@ def scenario_data(name: str, seed: int = 3) -> TessData:
         lc, sectors = make_lightcurve(None, noise_ppm=600.0, seed=seed)
         wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)
         lc = LightCurveData(lc.time, lc.flux + wave, lc.flux_err, lc.sector, lc.year)
+    elif name == "variability_train_only":
+        lc, sectors = make_lightcurve(PLANET, sector_starts=THREE_YEARS, **trend)
+        wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)
+        wave = np.where(np.isin(lc.year, VARIABILITY_TRAIN_YEARS), wave, 0.0)
+        lc = LightCurveData(lc.time, lc.flux + wave, lc.flux_err, lc.sector, lc.year)
+    elif name == "fp_variability_dominates":
+        spec = SignalSpec(period=FP_VARIABILITY_PERIOD, t0=1326.1, depth=0.001, duration=3 / 24)
+        lc, sectors = make_lightcurve(spec, **trend)
+        wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)
+        lc = LightCurveData(lc.time, lc.flux + wave, lc.flux_err, lc.sector, lc.year)
     else:
         raise ValueError(f"unknown scenario {name}")
     return make_data(lc, sectors, star, aux=make_aux(lc, seed=seed))
@@ -627,7 +644,80 @@ def scenario_data(name: str, seed: int = 3) -> TessData:
 
 def analyze_scenario(name: str):
     """Top-level (picklable) helper: full analysis of a named scenario with the fast plan."""
+    return analyze_scenario_seed((name, 3))
+
+
+def analyze_scenario_seed(task: tuple[str, int]):
+    """Top-level (picklable) helper: full analysis of ``(scenario name, seed)`` with the
+    fast plan."""
     from refute.packs.tess.params import TessTestPlan
     from refute.packs.tess.pipeline import analyze_data
 
-    return analyze_data(scenario_data(name), TessTestPlan.model_validate(fast_plan_dict()))
+    name, seed = task
+    return analyze_data(scenario_data(name, seed), TessTestPlan.model_validate(fast_plan_dict()))
+
+
+def analyze_scenario_with_catalog(task: dict):
+    """Top-level (picklable) helper: full analysis of ``task["name"]`` and
+    ``task["seed"]`` with the fast plan and a synthetic eclipsing-binary catalog made
+    of ``task["rows"]`` (``refute-eb-catalog-1`` rows), scanned around the target;
+    ``task["eb_catalog"]`` overrides ``gauntlet.eb_catalog``."""
+    from refute.packs.tess.ebcatalog import COLUMNS, parse_catalog
+    from refute.packs.tess.params import TessTestPlan
+    from refute.packs.tess.pipeline import analyze_data
+
+    data = scenario_data(task["name"], task["seed"])
+    plan = fast_plan_dict()
+    plan["gauntlet"] = {"eb_catalog": dict(task.get("eb_catalog") or {})}
+    rows = list(task.get("rows") or [])
+    catalog = parse_catalog("\n".join([",".join(COLUMNS), *rows]) + "\n")
+    scan = {
+        "format": "refute-eb-catalog-scan-1",
+        "radius_arcsec": 120.0,
+        "snapshots": [{"file": "synthetic.csv", "sha256": "0" * 64, "rows": max(1, len(rows))}],
+        "per_target": {data.target_key: {}},
+    }
+    return analyze_data(
+        data, TessTestPlan.model_validate(plan), catalogs=catalog, catalog_scan=scan
+    )
+
+
+HIDDEN_REPLACEMENTS = ("noise", "signal", "nothing")
+
+
+def replace_year_flux(lc: LightCurveData, year: int, variant: str, seed: int) -> LightCurveData:
+    """``lc`` with the flux of one observing year replaced (times, errors, sectors and
+    years kept): ``noise`` is white noise at the scenario level, ``signal`` a deep
+    eclipse at another period plus that noise, ``nothing`` a constant flux."""
+    if variant not in HIDDEN_REPLACEMENTS:
+        raise ValueError(f"unknown replacement {variant}")
+    rng = np.random.default_rng(10_000 + seed)
+    sel = lc.year == year
+    time = lc.time[sel]
+    if variant == "nothing":
+        new = np.ones(time.size)
+    else:
+        new = 1.0 + rng.normal(0.0, 600e-6, time.size)
+        if variant == "signal":
+            new -= trapezoid(time, 1.3, 1325.2, 0.02, 2.0 / 24, 0.15)
+    flux = lc.flux.copy()
+    flux[sel] = new
+    return LightCurveData(lc.time, flux, lc.flux_err, lc.sector, lc.year)
+
+
+def holdout_scenario_seed(task: dict):
+    """Top-level (picklable) helper: the blind holdout alone for ``task["name"]`` and
+    ``task["seed"]`` with the fast plan, ``task["holdout"]`` overriding
+    ``holdout_by_year`` and an optional ``task["replace"] = (year, variant)``
+    (see :func:`replace_year_flux`)."""
+    from refute.packs.tess.holdout import run_holdout
+    from refute.packs.tess.params import TessTestPlan
+
+    plan = fast_plan_dict()
+    plan["gauntlet"] = {"holdout_by_year": dict(task.get("holdout") or {})}
+    data = scenario_data(task["name"], task["seed"])
+    lc = data.lc
+    if task.get("replace") is not None:
+        year, variant = task["replace"]
+        lc = replace_year_flux(lc, year, variant, task["seed"])
+    return run_holdout(lc, data.sectors, TessTestPlan.model_validate(plan))

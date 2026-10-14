@@ -1,0 +1,80 @@
+{
+  "argv": [
+    "analyze",
+    "--manifest",
+    "docs/validation/v0.2.1/population/selftest-3/manifest.json",
+    "--cache",
+    ".cache/population/selftest-3",
+    "--out",
+    "docs/validation/v0.2.1/population/selftest-3/negative-tests/fingerprint-copy-of-M0-f479823",
+    "--point",
+    "M0"
+  ],
+  "attempt": "20261012T042942367690Z-48076",
+  "binding": {
+    "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+    "point": "M0"
+  },
+  "checkout": {
+    "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+    "editable_root": "C:\\Projetos\\refute\\.worktrees\\v0.2.0",
+    "refute_root": "C:\\Projetos\\refute\\.worktrees\\v0.2.0",
+    "refute_version": "0.2.0",
+    "src_dirty": false,
+    "src_status": [],
+    "worktree_toplevel": "C:\\Projetos\\refute\\.worktrees\\v0.2.0"
+  },
+  "details": [
+    "fingerprint differs from docs\\validation\\v0.2.1\\population\\selftest-3\\negative-tests\\fingerprint-copy-of-M0-f479823\\run.json"
+  ],
+  "dispatched": false,
+  "fingerprint": {
+    "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+    "numpy": "2.5.3",
+    "numpy_blas": {
+      "detection method": "pkgconfig",
+      "found": true,
+      "include directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include",
+      "lib directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib",
+      "name": "scipy-openblas",
+      "openblas configuration": "OpenBLAS 0.3.34.106.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24",
+      "pc file directory": "D:/a/numpy-release/numpy-release/.openblas",
+      "version": "0.3.34.106.0"
+    },
+    "python": "3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]",
+    "refute_file": "C:\\Projetos\\refute\\.worktrees\\v0.2.0\\src\\refute\\__init__.py",
+    "thread_env": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "threadpools": [
+      {
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "user_api": "blas",
+        "version": "0.3.34.106.0"
+      }
+    ]
+  },
+  "format": "refute-population-attempt/1",
+  "harness_sha256": "33e2d4186ea41b4c691a37bd2d83f77ed2cdc7ed825790f21595f53b2896cd85",
+  "kind": "refused",
+  "manifest_sha256": "2e6881e158bfbb2e3eb7fbe8c60bb5cc4f1fe2de53c70fb115b55f473b29e154",
+  "points": {
+    "committed": true,
+    "path": "docs/validation/v0.2.1/population/points.json",
+    "repository_commit": "448f1e526389908d5ff981ab5f4b4f3285c18eaa",
+    "sha256": "7f26cc75bd96c6feaa7ed40a5f5b880241af1ff4e2b43872d0684a2bdd51d3c9"
+  },
+  "reason": "resume with a different run",
+  "results": "none",
+  "started_utc": "20261012T042942367690Z",
+  "thread_env_inherited": {
+    "MKL_NUM_THREADS": null,
+    "NUMEXPR_NUM_THREADS": null,
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "already_valid": 0,
+  "argv": [
+    "analyze",
+    "--manifest",
+    "docs/validation/v0.2.1/population/selftest-2/manifest.json",
+    "--cache",
+    "C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\.cache\\population\\selftest-2",
+    "--out",
+    "docs/validation/v0.2.1/population/selftest-2/runs/M1-3217db7",
+    "--point",
+    "M1",
+    "--cases-from",
+    "C:\\Projetos\\refute\\.claude\\worktrees\\v0-2-1-gauntlet-fixes-13f5e7\\.cache\\population\\selftest-2\\lot-0001-20261012T021931896181Z.txt",
+    "--workers",
+    "24",
+    "--cpus",
+    "8-31"
+  ],
+  "cases": 15,
+  "fingerprint": {
+    "commit": "3217db72cae26bc809b62a5239ae6226344e7a26",
+    "numpy": "2.5.3",
+    "numpy_blas": {
+      "detection method": "pkgconfig",
+      "found": true,
+      "include directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/include",
+      "lib directory": "C:/Users/runneradmin/AppData/Local/Temp/cibw-run-hg727bee/cp313-win_amd64/build/venv/Lib/site-packages/scipy_openblas64/lib",
+      "name": "scipy-openblas",
+      "openblas configuration": "OpenBLAS 0.3.34.106.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=24",
+      "pc file directory": "D:/a/numpy-release/numpy-release/.openblas",
+      "version": "0.3.34.106.0"
+    },
+    "python": "3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]",
+    "refute_file": "C:\\Projetos\\refute\\.worktrees\\M1-3217db7\\src\\refute\\__init__.py",
+    "thread_env": {
+      "MKL_NUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null,
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    },
+    "threadpools": [
+      {
+        "internal_api": "openblas",
+        "num_threads": 24,
+        "user_api": "blas",
+        "version": "0.3.34.106.0"
+      }
+    ]
+  },
+  "kind": "started",
+  "started_utc": "20261012T022003022492Z",
+  "to_analyze": 15
+}

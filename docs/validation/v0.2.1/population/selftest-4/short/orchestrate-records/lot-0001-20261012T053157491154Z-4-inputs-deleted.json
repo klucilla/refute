@@ -1,0 +1,12 @@
+{
+  "deleted": [
+    "no_transit-none-correlated-0000.rpc",
+    "no_transit-none-white-0000.rpc"
+  ],
+  "lot": 1,
+  "lot_files_deleted": [
+    "lot-0001-20261012T053157491154Z-check.json",
+    "lot-0001-20261012T053157491154Z.txt"
+  ],
+  "utc": "2026-10-12T05:32:32.734820+00:00"
+}

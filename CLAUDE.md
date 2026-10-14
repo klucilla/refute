@@ -126,10 +126,11 @@ First pack: exoplanet transits (TESS).
 - Test counts (passed, failed, errors, skipped) are reported from a JUnit
   XML file (`pytest --junitxml=<path>`), never from the progress markers or
   the console summary line.
-- `calibration/*/audit/` holds published records (scripts, outputs, transcript
-  extracts) whose bytes are cited by SHA-256. Never edit, reformat or normalize
-  line endings there; linters and pre-commit hooks exclude these folders on
-  purpose. A correction is a new file or a new record, never an edit.
+- `calibration/*/audit/` and `docs/validation/v0.2.1/pre-document-runs/` hold
+  published records (scripts, outputs, transcript extracts) whose bytes are cited
+  by SHA-256. Never edit, reformat or normalize line endings there; linters and
+  pre-commit hooks exclude these folders on purpose. A correction is a new file
+  or a new record, never an edit.
 - Never print webhook or secret configuration (for example
   `gh api repos/.../hooks` without a filter): its URLs can contain tokens. Use a
   `--jq` filter that leaves out `config`.

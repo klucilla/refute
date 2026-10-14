@@ -1,0 +1,20 @@
+# development manifest generations
+# harness SHA-256 408020676340322f4728ce3a8b4eecae505bfbec7ec34643ad9afed0e5a76225, HEAD 68d13fd055d6d4cf4c0cd32764e5cd9c12aeaaff
+# generation A started 2026-10-12T12:12:50Z
+$ [v0.2.0 env] generate --population dev --manifest manifest-a.json --workers 24 --order index --no-store
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 24 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 5200 (hash only); wall 268.1 s; per case 1.20 s mean, 3.77 s max; peak worker memory 201.9 MB; bytes 409492397072
+manifest .cache/population/dev-gen/manifest-a.json: SHA-256 206d7af1c0618fab778c68b575d569ff8a9789bdaa61e8f8adbbeed86dcfcfc3
+exit 0
+# generation A ended 2026-10-12T12:17:20Z
+# generation B started 2026-10-12T12:17:20Z
+$ [v0.2.0 env] generate --population dev --manifest manifest-b.json --workers 12 --order shuffle:20261012 --no-store
+affinity: logical processors 8-31 (mask 0xffffff00)
+thread variables inherited {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None, 'NUMEXPR_NUM_THREADS': None}, set to 1; main process pools [('openblas', 1)]
+worker thread pools: 12 process(es) (spawned), pools ["[('openblas', 1)]"]
+cases generated: 5200 (hash only); wall 252.6 s; per case 0.57 s mean, 1.74 s max; peak worker memory 202.1 MB; bytes 409492397072
+manifest .cache/population/dev-gen/manifest-b.json: SHA-256 4073d96a0bce901a31241d5c2dd3d7b46192a4731a4ec3996ea1077039b833e9
+exit 0
+# generation B ended 2026-10-12T12:21:35Z

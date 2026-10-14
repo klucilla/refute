@@ -28,6 +28,17 @@ detrended with a window at least ``hidden_detrend_window_factor`` times the wide
 masked span. The test PASSES if every
 conclusive round passes, FAILS if any round fails, and is INCONCLUSIVE if no
 round is conclusive or there are fewer than two observing years.
+
+From v0.2.1 (H4) a round is also INCONCLUSIVE, never FAIL, when its train-only
+candidate is not a valid basis for a prediction: (a) it fails the SNR gate of the
+full analysis, (b) its duration exceeds ``max_train_duration_period_ratio`` of its
+period, or (c) its transit windows cover more than ``max_hidden_window_fraction`` of
+the hidden sectors' time spans. (a) and (b) are checked right after the train
+search; (c) after the windows are predicted and the timing rule is applied. All
+three use only the train data, the plan and the hidden sectors' metadata, and are
+decided by :func:`plan_round`, which never receives hidden-year flux: an invalid
+round never builds :class:`HiddenYear`. ``require_valid_train: false`` reports the
+three rules without applying them.
 """
 
 from __future__ import annotations
@@ -47,11 +58,15 @@ from refute.packs.tess.ephemeris import (
     measure_transit_times,
 )
 from refute.packs.tess.events import per_point_sigma, transit_mask
+from refute.packs.tess.gauntlet import check_snr
 from refute.packs.tess.params import HoldoutParams, TessTestPlan
 from refute.packs.tess.search import search_period
 from refute.packs.tess.types import Candidate, LightCurveData, SectorInfo
 
 TEST_NAME = "holdout_by_year"
+REASON_TRAIN_SNR = "train_snr_below_gate"
+REASON_DURATION_RATIO = "duration_period_ratio_above_max"
+REASON_WINDOW_FRACTION = "hidden_window_fraction_above_max"
 
 
 class HoldoutAccessError(RuntimeError):
@@ -317,24 +332,145 @@ def _predict_windows(
     return windows
 
 
-def _round(
-    raw: LightCurveData,
-    sectors: Sequence[SectorInfo],
+def hidden_window_fraction(
+    windows: Sequence[PredictedWindow], spans: Sequence[tuple[float, float]]
+) -> float:
+    """Fraction of the hidden sectors' time spans covered by the union of the transit
+    windows (control windows do not count). Metadata only: no hidden cadence is used."""
+    total = sum(max(0.0, end - start) for start, end in spans)
+    if total <= 0:
+        return 0.0
+    covered = 0.0
+    for start, end in spans:
+        pieces = sorted(
+            (max(start, w.t_pred - w.half_width), min(end, w.t_pred + w.half_width))
+            for w in windows
+            if w.kind == "transit"
+        )
+        lo = hi = None
+        for a, b in pieces:
+            if b <= a:
+                continue
+            if hi is None or a > hi:
+                if hi is not None:
+                    covered += hi - lo
+                lo, hi = a, b
+            else:
+                hi = max(hi, b)
+        if hi is not None:
+            covered += hi - lo
+    return covered / total
+
+
+def _empty_validity(plan: TessTestPlan) -> dict[str, Any]:
+    params = plan.gauntlet.holdout_by_year
+    return {
+        "applied": params.require_valid_train,
+        "train_snr": None,
+        "min_train_snr": plan.gauntlet.snr.min_snr,
+        "duration_period_ratio": None,
+        "max_duration_period_ratio": params.max_train_duration_period_ratio,
+        "hidden_window_fraction": None,
+        "max_hidden_window_fraction": params.max_hidden_window_fraction,
+        "reasons": [],
+    }
+
+
+def train_validity(
+    candidate: Candidate,
+    plan: TessTestPlan,
+    windows: Sequence[PredictedWindow] | None = None,
+    spans: Sequence[tuple[float, float]] | None = None,
+) -> dict[str, Any]:
+    """Rules (a)-(c) for a train-only candidate. (c) is evaluated only when the
+    predicted windows and the hidden sectors' spans are given."""
+    params = plan.gauntlet.holdout_by_year
+    out = _empty_validity(plan)
+    ratio = candidate.duration / candidate.period
+    out["train_snr"] = float(candidate.snr)
+    out["duration_period_ratio"] = float(ratio)
+    reasons = []
+    if check_snr(candidate, plan.gauntlet.snr).status is not TestStatus.PASS:
+        reasons.append(REASON_TRAIN_SNR)
+    if not ratio <= params.max_train_duration_period_ratio:
+        reasons.append(REASON_DURATION_RATIO)
+    if windows is not None and spans is not None:
+        fraction = hidden_window_fraction(windows, spans)
+        out["hidden_window_fraction"] = float(fraction)
+        if not fraction <= params.max_hidden_window_fraction:
+            reasons.append(REASON_WINDOW_FRACTION)
+    out["reasons"] = reasons
+    return out
+
+
+def _invalid_message(validity: dict[str, Any]) -> str:
+    parts = []
+    for reason in validity["reasons"]:
+        if reason == REASON_TRAIN_SNR:
+            parts.append(f"train SNR {validity['train_snr']:.2f} < {validity['min_train_snr']:g}")
+        elif reason == REASON_DURATION_RATIO:
+            parts.append(
+                f"duration/period {validity['duration_period_ratio']:.3f} > "
+                f"{validity['max_duration_period_ratio']:g}"
+            )
+        else:
+            parts.append(
+                f"transit windows cover {validity['hidden_window_fraction']:.3f} of the hidden "
+                f"year > {validity['max_hidden_window_fraction']:g}"
+            )
+    return "the train-only candidate is not a valid basis for a prediction: " + "; ".join(parts)
+
+
+@dataclass
+class RoundPlan:
+    """Everything a round decides before the hidden year is read."""
+
+    decided: RoundResult | None
+    train: Candidate | None = None
+    ephemeris: Ephemeris | None = None
+    windows: list[PredictedWindow] = field(default_factory=list)
+    train_info: dict[str, Any] = field(default_factory=dict)
+
+
+def plan_round(
+    train_raw: LightCurveData,
+    hidden_spans: Sequence[tuple[float, float]],
     hidden_year: int,
     plan: TessTestPlan,
-) -> RoundResult:
+) -> RoundPlan:
+    """The pre-read part of a round, from the train data and the hidden sectors' time
+    spans only. ``decided`` is set when the round ends here (INCONCLUSIVE)."""
     params = plan.gauntlet.holdout_by_year
     cadence = plan.data.exptime_seconds / 86400.0
-    train_raw = raw.select(raw.year != hidden_year)
+    empty = {"train_validity": _empty_validity(plan)}
     if len(train_raw) == 0:
-        return RoundResult(hidden_year, TestStatus.INCONCLUSIVE, "no training data")
+        return RoundPlan(
+            RoundResult(hidden_year, TestStatus.INCONCLUSIVE, "no training data", metrics=empty)
+        )
 
     train_flat = detrend(train_raw, plan.detrend)
     search = search_period(train_flat, plan.search)
     train: Candidate | None = search.candidate
     if train is None or not (train.depth > 0):
-        return RoundResult(
-            hidden_year, TestStatus.INCONCLUSIVE, "the train-only search found no candidate"
+        return RoundPlan(
+            RoundResult(
+                hidden_year,
+                TestStatus.INCONCLUSIVE,
+                "the train-only search found no candidate",
+                metrics=empty,
+            )
+        )
+
+    validity = train_validity(train, plan)
+    if validity["reasons"] and params.require_valid_train:
+        return RoundPlan(
+            RoundResult(
+                hidden_year,
+                TestStatus.INCONCLUSIVE,
+                _invalid_message(validity),
+                metrics={"train_candidate": train.to_dict(), "train_validity": validity},
+            ),
+            train=train,
         )
 
     mask_half = plan.detrend.transit_mask_half_width_durations * train.duration
@@ -354,23 +490,25 @@ def _round(
         step_minutes=params.timing_step_minutes,
         scan_half_width_durations=params.timing_scan_half_width_durations,
     )
-    train_info = {
+    train_info: dict[str, Any] = {
         "train_candidate": train.to_dict(),
         "n_transit_times": len(times),
+        "train_validity": validity,
     }
     if len(times) < params.min_train_transits:
-        return RoundResult(
-            hidden_year,
-            TestStatus.INCONCLUSIVE,
-            f"only {len(times)} train transit times (< {params.min_train_transits})",
-            metrics=train_info,
+        return RoundPlan(
+            RoundResult(
+                hidden_year,
+                TestStatus.INCONCLUSIVE,
+                f"only {len(times)} train transit times (< {params.min_train_transits})",
+                metrics=train_info,
+            ),
+            train=train,
         )
     ephemeris = fit_linear_ephemeris(times)
 
-    spans = [(s.t_start, s.t_end) for s in sectors if s.year == hidden_year]
-    windows = _predict_windows(ephemeris, train.duration, spans, params)
+    windows = _predict_windows(ephemeris, train.duration, list(hidden_spans), params)
     transit_windows = [w for w in windows if w.kind == "transit"]
-    control_windows = [w for w in windows if w.kind == "control"]
 
     max_sigma_t = max(
         ((w.half_width - train.duration / 2) / params.timing_sigma for w in transit_windows),
@@ -379,19 +517,64 @@ def _round(
     if max_sigma_t > params.max_timing_sigma_durations * train.duration:
         # Issue #2: the train-only ephemeris cannot place the hidden transits to
         # within a transit duration, so a non-detection would not be informative.
-        return RoundResult(
-            hidden_year,
-            TestStatus.INCONCLUSIVE,
-            f"train-only timing uncertainty in the hidden year ({max_sigma_t * 24:.2f} h) exceeds "
-            f"{params.max_timing_sigma_durations:g} transit duration(s) "
-            f"({train.duration * 24:.2f} h)",
-            metrics={
-                **train_info,
-                "max_timing_sigma_days": max_sigma_t,
-                "n_predicted_transits": len(transit_windows),
-            },
-            train_ephemeris=ephemeris.to_dict(),
+        return RoundPlan(
+            RoundResult(
+                hidden_year,
+                TestStatus.INCONCLUSIVE,
+                f"train-only timing uncertainty in the hidden year ({max_sigma_t * 24:.2f} h) "
+                f"exceeds {params.max_timing_sigma_durations:g} transit duration(s) "
+                f"({train.duration * 24:.2f} h)",
+                metrics={
+                    **train_info,
+                    "max_timing_sigma_days": max_sigma_t,
+                    "n_predicted_transits": len(transit_windows),
+                },
+                train_ephemeris=ephemeris.to_dict(),
+            ),
+            train=train,
+            ephemeris=ephemeris,
+            windows=windows,
         )
+
+    validity = train_validity(train, plan, windows, hidden_spans)
+    train_info["train_validity"] = validity
+    if validity["reasons"] and params.require_valid_train:
+        return RoundPlan(
+            RoundResult(
+                hidden_year,
+                TestStatus.INCONCLUSIVE,
+                _invalid_message(validity),
+                metrics={
+                    **train_info,
+                    "max_timing_sigma_days": max_sigma_t,
+                    "n_predicted_transits": len(transit_windows),
+                },
+                train_ephemeris=ephemeris.to_dict(),
+            ),
+            train=train,
+            ephemeris=ephemeris,
+            windows=windows,
+        )
+    return RoundPlan(None, train, ephemeris, windows, train_info)
+
+
+def _round(
+    raw: LightCurveData,
+    sectors: Sequence[SectorInfo],
+    hidden_year: int,
+    plan: TessTestPlan,
+) -> RoundResult:
+    params = plan.gauntlet.holdout_by_year
+    cadence = plan.data.exptime_seconds / 86400.0
+    spans = [(s.t_start, s.t_end) for s in sectors if s.year == hidden_year]
+    prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)
+    if prepared.decided is not None:
+        return prepared.decided
+    train, ephemeris, windows = prepared.train, prepared.ephemeris, prepared.windows
+    assert train is not None and ephemeris is not None
+    train_info = prepared.train_info
+    transit_windows = [w for w in windows if w.kind == "transit"]
+    control_windows = [w for w in windows if w.kind == "control"]
 
     hidden = HiddenYear(raw.select(raw.year == hidden_year), windows, plan)
     measured = _measure(hidden, transit_windows, ephemeris, train.duration, cadence, params)

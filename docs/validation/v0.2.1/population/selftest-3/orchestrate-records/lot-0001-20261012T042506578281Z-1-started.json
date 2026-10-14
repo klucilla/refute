@@ -1,0 +1,21 @@
+{
+  "cases": [
+    "false_positive-measurable-white-0006",
+    "no_transit-none-correlated-0000",
+    "no_transit-none-correlated-0001",
+    "no_transit-none-correlated-0002",
+    "no_transit-none-correlated-0003",
+    "no_transit-none-correlated-0004",
+    "no_transit-none-correlated-0005",
+    "no_transit-none-white-0000",
+    "no_transit-none-white-0001",
+    "no_transit-none-white-0002",
+    "no_transit-none-white-0003",
+    "no_transit-none-white-0004",
+    "no_transit-none-white-0005",
+    "planet-measurable-correlated-0000",
+    "planet-measurable-correlated-0002"
+  ],
+  "lot": 1,
+  "utc": "2026-10-12T04:25:06.580489+00:00"
+}

@@ -1,0 +1,32 @@
+snapshot keys: ['.cache/population/selftest-4-r1/false_positive-measurable-correlated-0000.rpc', '.cache/population/selftest-4-r1/false_positive-measurable-white-0004.rpc', '.cache/population/selftest-4-r1/lot-0000-assembled.txt', 'docs/validation/v0.2.1/population/selftest-4/r1-states/a/records/lot-0000-20261012T053102970336Z-1-started.json', 'docs/validation/v0.2.1/population/selftest-4/r1-states/a/records/lot-0000-20261012T053102970336Z-2-regenerated.json', 'docs/validation/v0.2.1/population/selftest-4/r1-states/a/records/lot-0001-20261012T053157491154Z-1-started.json']
+a added ['docs/validation/v0.2.1/population/selftest-4/r1-states/a/records/lot-0000-20261012T053358757300Z-3-results-reread.json', 'docs/validation/v0.2.1/population/selftest-4/r1-states/a/records/lot-0000-20261012T053358757300Z-4-inputs-deleted.json'] | removed ['.cache/population/selftest-4-r1/false_positive-measurable-correlated-0000.rpc', '.cache/population/selftest-4-r1/false_positive-measurable-white-0004.rpc', '.cache/population/selftest-4-r1/lot-0000-assembled.txt'] | changed []
+b added ['docs/validation/v0.2.1/population/selftest-4/r1-states/b/records/lot-0000-20261012T053102970336Z-4-inputs-deleted.json'] | removed ['.cache/population/selftest-4-r1/false_positive-measurable-correlated-0000.rpc', '.cache/population/selftest-4-r1/false_positive-measurable-white-0004.rpc', '.cache/population/selftest-4-r1/lot-0000-assembled.txt'] | changed []
+c added [] | removed [] | changed []
+a lot-0000-20261012T053358757300Z-3-results-reread.json {'lot': 0, 'results_sha256': 8, 'utc': '2026-10-12T05:33:58.757328+00:00', 'written_on_resume': True}
+a lot-0000-20261012T053358757300Z-4-inputs-deleted.json {'completed_on_resume': True, 'deleted': ['false_positive-measurable-correlated-0000.rpc', 'false_positive-measurable-white-0004.rpc'], 'lot': 0, 'lot_files_deleted': ['lot-0000-assembled.txt'], 'utc': '2026-10-12T05:33:58.769555+00:00'}
+b lot-0000-20261012T053102970336Z-3-results-reread.json {'lot': 0, 'results_sha256': 8, 'utc': '2026-10-12T05:31:57.475083+00:00'}
+b lot-0000-20261012T053102970336Z-4-inputs-deleted.json {'completed_on_resume': True, 'deleted': ['false_positive-measurable-correlated-0000.rpc', 'false_positive-measurable-white-0004.rpc'], 'lot': 0, 'lot_files_deleted': ['lot-0000-assembled.txt'], 'utc': '2026-10-12T05:34:05.225842+00:00'}
+record 3 keys equal: True | entries that differ: [('M0-f479823/false_positive-measurable-correlated-0000', '40b02736db9d', '40b02736db9d')]
+53:checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+71:checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+89:checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+104:$ the same orchestrate again on the finished state (every lot must be skipped after checking records 3 and 4)
+114:lot 0: results valid and equal to record 3, record 4 present; skipped
+115:lot 1: results valid and equal to record 3, record 4 present; skipped
+116:lot 2: results valid and equal to record 3, record 4 present; skipped
+138:checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+154:lot 0: results complete without record 3; records 3 and 4 written (2 inputs deleted)
+155:lot 1: results valid and equal to record 3, record 4 present; skipped
+156:lot 2: results valid and equal to record 3, record 4 present; skipped
+173:checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+189:lot 0: record 3 checked, record 4 written (2 inputs deleted)
+190:lot 1: results valid and equal to record 3, record 4 present; skipped
+191:lot 2: results valid and equal to record 3, record 4 present; skipped
+209:checked against docs/validation/v0.2.1/population/selftest-4/short/manifest-short.json: 2 identical, 0 diverged
+225:  DIVERGED M0-f479823/false_positive-measurable-correlated-0000 40b02736db9d0e4770356ff0b7313aa5bc2056ff1ed27af63da52446edc31f80 40b02736db9d0e4770356ff0b7313aa5bc2056ff1ed27af63da52446edc31f84
+226:lot 0: record lot-0000-20261012T053102970336Z-3 and the results on disk diverge (1 files); stopped for investigation (nothing written or deleted)
+238:generate refused: ['docs/validation/v0.2.1/population/population.py has changes that are not committed (git diff HEAD)', 'the running harness is not docs/validation/v0.2.1/population/population.py of commit 1692d9927a1dbdd4f94
+242:  REFUSED harness: docs/validation/v0.2.1/population/population.py has changes that are not committed (git diff HEAD)
+243:  REFUSED harness: the running harness is not docs/validation/v0.2.1/population/population.py of commit 1692d9927a1dbdd4f94d0ff7db5c6fbbfbd0b033 (SHA-256)
+244:M0: refused before dispatch: the point cannot be measured in this environment (nothing analyzed)
+248:orchestrate refused: ['docs/validation/v0.2.1/population/population.py has changes that are not committed (git diff HEAD)', 'the running harness is not docs/validation/v0.2.1/population/population.py of commit 1692d9927a1dbdd4

@@ -1,0 +1,7 @@
+# copied M0-f479823 to dup/M0-f479823-copy
+# copied M2-78d79f5 to tampered/M2-78d79f5
+# tampered planet-measurable-correlated-0000.json: condition (i) verdict SURVIVED -> REFUTED; SHA-256 142ddc879b41ac5579a16ae23006e97a2cb8ff93b121f4a438a14bbfffd87c2a -> f28bb53b949f2f79987bc570fd823af4eae56442e6a02029b110bfafe6826508
+# copied M1-3217db7 to swapped/M1-3217db7
+# swapped the file names of false_positive-below-correlated-0001.json and false_positive-below-correlated-0003.json
+# copied M1-3217db7 to mixed/M1-3217db7-as-M0
+# mixed: M1-3217db7-as-M0/run.json point and binding point M1 -> M0 (checkout and commit unchanged); SHA-256 d13afc6a29903e7e2752e1a6c76962260b38fd29185d110eea231c223c86a2e5 -> 03db35f0ec11093f62917e88c42051dc0d8d4c6932ab5236dfb7dc865f7a7ebb

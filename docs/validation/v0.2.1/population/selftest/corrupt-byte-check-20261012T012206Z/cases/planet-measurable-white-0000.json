@@ -1,0 +1,10 @@
+{
+  "case": "planet-measurable-white-0000",
+  "expected_sha256": "f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e",
+  "format": "refute-population-result/1",
+  "input_sha256": "b944753beed4ce1cb33d37d2b8472526d9f47c6c389de8c8c6de5d9d1e6eabcc",
+  "peak_memory_mb": 168.6,
+  "reason": "input SHA-256 does not match the manifest; not analyzed",
+  "seconds": 0.057,
+  "status": "refused"
+}

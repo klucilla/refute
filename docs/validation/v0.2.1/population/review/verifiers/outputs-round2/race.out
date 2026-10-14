@@ -1,0 +1,2 @@
+affinity: logical processors 8-31 (mask 0xffffff00)
+M0: 6 cases, 0 already valid, 6 to analyze (inputs present and checked by SHA-256)

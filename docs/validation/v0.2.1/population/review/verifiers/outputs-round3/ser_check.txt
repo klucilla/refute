@@ -1,0 +1,9 @@
+planet-measurable-white-0000: 75482837 bytes, metadata 3385 bytes, 23 arrays, 75479410 array bytes; problems: none
+  data keys: ['aux', 'data_manifest', 'product', 'sectors', 'star', 'target_key', 'tic_id'] | product: {'author': 'synthetic', 'exptime_seconds': 120, 'flux_column': 'flux', 'product': 'synthetic light curve (refute.packs.tess.synthetic)', 'quality_bitmask': 'none', 'quality_bitmask_value': None, 'reader': 'numpy.load'}
+  star retrieved_utc: None | data_manifest: {'files': [{'name': 'synthetic_sector_01.npz', 'sha256': ''}, {'name': 'synthetic_sector_02.npz', 'sha256': ''}]}
+false_positive-measurable-white-0004: 75483086 bytes, metadata 3634 bytes, 23 arrays, 75479410 array bytes; problems: none; out-of-transit point-to-point scatter 631 ppm
+  data keys: ['aux', 'data_manifest', 'product', 'sectors', 'star', 'target_key', 'tic_id'] | product: {'author': 'synthetic', 'exptime_seconds': 120, 'flux_column': 'flux', 'product': 'synthetic light curve (refute.packs.tess.synthetic)', 'quality_bitmask': 'none', 'quality_bitmask_value': None, 'reader': 'numpy.load'}
+  star retrieved_utc: None | data_manifest: {'files': [{'name': 'synthetic_sector_01.npz', 'sha256': ''}, {'name': 'synthetic_sector_02.npz', 'sha256': ''}]}
+no_transit-none-correlated-0004: 75482200 bytes, metadata 2748 bytes, 23 arrays, 75479410 array bytes; problems: none
+  data keys: ['aux', 'data_manifest', 'product', 'sectors', 'star', 'target_key', 'tic_id'] | product: {'author': 'synthetic', 'exptime_seconds': 120, 'flux_column': 'flux', 'product': 'synthetic light curve (refute.packs.tess.synthetic)', 'quality_bitmask': 'none', 'quality_bitmask_value': None, 'reader': 'numpy.load'}
+  star retrieved_utc: None | data_manifest: {'files': [{'name': 'synthetic_sector_01.npz', 'sha256': ''}, {'name': 'synthetic_sector_02.npz', 'sha256': ''}]}

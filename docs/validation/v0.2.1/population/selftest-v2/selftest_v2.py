@@ -1,0 +1,1091 @@
+"""Self-test of the population harness v2 (not a measurement).
+
+Every step runs ``population_v2.py`` (and, for the overhead, ``population.py``) as separate
+processes in diagnostic campaigns under ``.cache/population/v2-selftest/campaigns`` (never
+the default campaigns root), and appends every command and its output to
+``selftest-v2-log.txt`` next to this file. The populations are ``selftest`` (prefix
+``refute-v0.2.1-population-selftest``) and ``determinism`` (prefix
+``refute-v0.2.1-population-determinism``); no development case is generated or analyzed.
+
+Usage (with the Python of the repository's virtual environment, affinity 8 to 31):
+  selftest_v2.py <step>   step: declare | reference | overhead | determinism | inject |
+                          lock | analysis | records | summary
+"""
+
+from __future__ import annotations
+
+import copy
+import hashlib
+import json
+import os
+import shutil
+import struct
+import subprocess
+import sys
+import time
+from datetime import UTC, datetime
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+POP = HERE.parent
+REPO = POP.parents[3]
+sys.path.insert(0, str(POP))
+import population_v2 as v2  # noqa: E402
+
+CMP = v2.CMP
+V1 = POP / "population.py"
+V2 = POP / "population_v2.py"
+# V2_SELFTEST_WORK (development runs only): another work folder, with the log inside it.
+WORK = Path(
+    os.environ.get("V2_SELFTEST_WORK") or REPO / ".cache" / "population" / "v2-selftest-final"
+)
+ROOT = WORK / "campaigns"
+LOG = WORK / "dev-log.txt" if os.environ.get("V2_SELFTEST_WORK") else HERE / "selftest-v2-log.txt"
+PLANTED = b"not the bytes of the case\n"
+GEN_PY = Path(r"C:\Projetos\refute\.worktrees\v0.2.0\.venv\Scripts\python.exe")
+POINT_PY = {
+    "M0": GEN_PY,
+    "M3": Path(r"C:\Projetos\refute\.worktrees\M3-9d3f369\.venv\Scripts\python.exe"),
+}
+CPUS = "8-31"
+REFERENCE = {
+    "planet-measurable-white-0000": (
+        "f3951b9e85d21ea8cbc42a23074ad5b442498d049bfbb51896c6277c85192c4e"
+    ),
+    "planet-measurable-correlated-0000": (
+        "a7dd6266f4ffd30f3cead01987a301c64db2086791a7296e0db55f3f416055c4"
+    ),
+    "false_positive-measurable-white-0004": (
+        "1817b9f776969ae050ba6cd7b1849dda968595041dabe37711390cec7b37b724"
+    ),
+}
+# Cases of the analysis step: the mechanisms that diverged in the v1 generations (planets
+# below threshold with white noise, two and three years; no transit with trend and
+# variability, white noise) and a blend.
+ANALYSIS_CASES = [
+    "planet-below-white-0000",
+    "planet-below-white-0111",
+    "no_transit-none-white-1544",
+    "false_positive-measurable-white-0133",
+]
+
+
+def _masked(text: str) -> str:
+    """The text with the Windows user name replaced by <user> (it is never logged)."""
+    name = os.environ.get("USERNAME", "")
+    return text.replace(name, "<user>") if len(name) >= 3 else text
+
+
+def log(text: str) -> None:
+    text = _masked(text)
+    WORK.mkdir(parents=True, exist_ok=True)
+    with open(LOG, "a", encoding="utf-8", newline="\n") as fh:
+        fh.write(text.rstrip("\n") + "\n")
+    print(text, flush=True)
+
+
+def run(cmd: list, *, expect: int | None = 0, label: str = "") -> tuple[int, str, float]:
+    """Run a command, log it and its output, and return (code, output, wall seconds)."""
+    shown = " ".join(str(c).replace(str(REPO), "<repo>") for c in cmd)
+    log(f"$ {label + ': ' if label else ''}{shown}")
+    t0 = time.perf_counter()
+    res = subprocess.run([str(c) for c in cmd], capture_output=True, text=True, encoding="utf-8")
+    wall = time.perf_counter() - t0
+    out = (res.stdout + res.stderr).replace(str(REPO), "<repo>")
+    for line in out.splitlines()[-60:]:
+        log(f"  {line}")
+    log(f"  [exit {res.returncode}, wall {wall:.1f} s]")
+    if expect is not None and res.returncode != expect:
+        raise SystemExit(f"unexpected exit {res.returncode} (expected {expect}): {shown}")
+    return res.returncode, out, wall
+
+
+def dispatch_table(python: Path) -> dict:
+    out = WORK / f"dispatch-{python.parents[2].name}.json"
+    if not out.exists():
+        run([python, V2, "dispatch-table", "--out", out, "--cpus", CPUS])
+    return json.loads(out.read_bytes())
+
+
+def declaration(cid: str, population: str, cases: list[str] | None, configs: list[dict], **kw):
+    table = dispatch_table(GEN_PY)
+    ids = [c["id"] for c in v2.population_cases(population)]
+    if cases is not None:
+        keep = set(cases)
+        if keep - set(ids):
+            raise SystemExit(f"cases not in the population: {sorted(keep - set(ids))}")
+        ids = [i for i in ids if i in keep]
+    qual = REPO / ".cache" / "population" / "diag" / "qualificacao" / "qualificacao.md"
+    slots = {}
+    for s, order in (("1", "shuffle:11"), ("2", "shuffle:22")):
+        slots[s] = {"order": order, "order_sha256": v2.order_sha256(v2._ordered(ids, order))}
+    decl = {
+        "format": v2.DECLARATION_FORMAT,
+        "campaign_id": cid,
+        "eligibility": "diagnostic",
+        "chain": "development",
+        "predecessor": {"note": "self-test campaign: no predecessor; consumes no set of any chain"},
+        "chain_sets_consumed_before": 0,
+        "population": population,
+        "harness_sha256": v2.HARNESS_SHA256,
+        "comparator": CMP.identity(),
+        "budget": {"K": 3, "N": 3, "chain_ceiling": 6},
+        "generation_configurations": configs,
+        "dispatch": {
+            "environment": table["environment"],
+            "target": sorted({t for sigs in table["table"].values() for t in sigs.values() if t}),
+            "table": table["table"],
+        },
+        "analysis": {"workers": 24, "lot_size": kw.get("lot_size", 50), "slots": slots},
+        "reference_manifest": None,
+        "rules": {
+            "investigation": "self-test: no investigation; every lock is expected",
+            "resolution": [
+                {"id": "selftest-simulated", "text": "a lock written on purpose by the self-test"}
+            ],
+        },
+        "overhead": {"double_hash": True},
+        "qualification": {
+            "record": ".cache/population/diag/qualificacao/qualificacao.md",
+            "sha256": v2.file_sha256(qual),
+            "result": "PASS, under the conditions recorded there",
+        },
+        "machine_declared": {
+            "memory": "4 x 16 GiB, 2666 MHz, 1.20 V (daily configuration)",
+            "badmemorylist": "physical page 0x8C7CBD excluded (maintainer's record)",
+            "bios_cpu_settings": "not recorded",
+            "easytune_profile": "not recorded",
+        },
+    }
+    if cases is not None:
+        decl["cases"] = ids
+    folder = ROOT / cid
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / "declaration.json"
+    if path.exists():
+        log(f"declaration {cid} exists (SHA-256 {v2.file_sha256(path)}); kept")
+        return
+    sha = v2.write_json(path, decl)
+    log(f"declaration {cid}: {len(ids)} cases, SHA-256 {sha}")
+
+
+def harness(python: Path, mode: str, cid: str, *args, expect: int | None = 0, label=""):
+    return run(
+        [python, V2, mode, "--root", ROOT, "--campaign", cid, *args, "--cpus", CPUS],
+        expect=expect,
+        label=label,
+    )
+
+
+def step_declare() -> None:
+    WORK.mkdir(parents=True, exist_ok=True)
+    log(f"# declare {datetime.now(UTC).isoformat(timespec='seconds')}")
+    log(f"harness population_v2.py SHA-256 {v2.HARNESS_SHA256}")
+    log(f"comparator population_compare.py SHA-256 {CMP.COMPARATOR_SHA256}")
+    for prof in ("slots", "d6-science", "d6-control"):
+        log(f"profile {prof}: SHA-256 {CMP.profile_sha256(prof)}")
+    m3 = dispatch_table(POINT_PY["M3"])
+    gen = dispatch_table(GEN_PY)
+    log(f"dispatch table v0.2.0 {gen['sha256']}, M3 {m3['sha256']} (equal: {gen == m3})")
+    declaration(
+        "v2-selftest-reference",
+        "selftest",
+        list(REFERENCE),
+        [
+            {"workers": 1, "order": "index"},
+            {"workers": 2, "order": "reverse"},
+            {"workers": 3, "order": "shuffle:7"},
+        ],
+    )
+    declaration(
+        "v2-selftest-determinism",
+        "determinism",
+        None,
+        [
+            {"workers": 24, "order": "index"},
+            {"workers": 12, "order": "shuffle:20261013"},
+            {"workers": 24, "order": "shuffle:31"},
+        ],
+    )
+    declaration(
+        "v2-selftest-overhead", "determinism", None, [{"workers": 24, "order": "index"}] * 3
+    )
+    declaration(
+        "v2-selftest-lock",
+        "selftest",
+        ["planet-measurable-white-0000", "no_transit-none-white-0000"],
+        [{"workers": 2, "order": "index"}] * 3,
+    )
+    declaration(
+        "v2-selftest-analysis",
+        "determinism",
+        ANALYSIS_CASES,
+        [{"workers": 4, "order": "index"}] * 3,
+        lot_size=2,
+    )
+
+
+def step_reference() -> None:
+    cid = "v2-selftest-reference"
+    log(f"# reference cases {datetime.now(UTC).isoformat(timespec='seconds')}")
+    out = WORK / "out" / cid
+    cache = WORK / "cache-reference"
+    harness(
+        GEN_PY, "generate", cid, "--set", "1", "--generation", "1", "--out", out, "--cache", cache
+    )
+    for g in (2, 3):
+        harness(GEN_PY, "generate", cid, "--set", "1", "--generation", str(g), "--out", out)
+    harness(GEN_PY, "check-set", cid, "--set", "1")
+    manifest = json.loads((out / "manifest-set1-gen1.json").read_bytes())
+    for e in manifest["cases"]:
+        ok = REFERENCE[e["id"]] == e["sha256"]
+        log(f"reference {e['id']}: {e['sha256']} {'EXPECTED' if ok else 'DIFFERS'}")
+        stored = cache / f"{e['id']}.rpc"
+        log(f"  stored file SHA-256 {v2.file_sha256(stored)} ({stored.stat().st_size} bytes)")
+        if not ok:
+            raise SystemExit("a reference case differs")
+
+
+def _v1_ids() -> Path:
+    path = WORK / "determinism-ids.txt"
+    if not path.exists():
+        ids = [c["id"] for c in v2.population_cases("determinism")]
+        path.write_text("\n".join(ids) + "\n", encoding="utf-8")
+    return path
+
+
+def step_overhead() -> None:
+    """Section 4: six runs alternating v1 and v2, each a new process, hash only, 24 workers,
+    index order, on the 520 cases of the measurement population. Overhead =
+    median(v2) / median(v1) - 1, from the wall time of each process (start to exit)."""
+    cid = "v2-selftest-overhead"
+    log(f"# overhead {datetime.now(UTC).isoformat(timespec='seconds')}")
+    ids = _v1_ids()
+    out = WORK / "out" / cid
+    out.mkdir(parents=True, exist_ok=True)
+    walls = {"v1": [], "v2": []}
+    for k in (1, 2, 3):
+        v1_manifest = out / f"v1-run{k}.json"
+        _, _, w1 = run(
+            [
+                GEN_PY,
+                V1,
+                "generate",
+                "--population",
+                "confirm:" + v2.DETERMINISM_PREFIX,
+                "--cases-from",
+                ids,
+                "--cache",
+                WORK / "cache-v1-hash-only",
+                "--no-store",
+                "--manifest",
+                v1_manifest,
+                "--workers",
+                "24",
+                "--order",
+                "index",
+                "--cpus",
+                CPUS,
+            ],
+            label=f"v1 run {k}",
+        )
+        walls["v1"].append(w1)
+        _, _, w2 = harness(
+            GEN_PY,
+            "generate",
+            cid,
+            "--set",
+            "1",
+            "--generation",
+            str(k),
+            "--out",
+            out,
+            label=f"v2 run {k}",
+        )
+        walls["v2"].append(w2)
+    harness(GEN_PY, "check-set", cid, "--set", "1")
+    med = {k: sorted(v)[1] for k, v in walls.items()}
+    overhead = med["v2"] / med["v1"] - 1
+    log(
+        f"overhead walls v1 {[round(x, 1) for x in walls['v1']]} "
+        f"v2 {[round(x, 1) for x in walls['v2']]}"
+    )
+    log(
+        f"overhead = median(v2) / median(v1) - 1 = {med['v2']:.1f} / {med['v1']:.1f} - 1 = "
+        f"{overhead * 100:.1f} % (limit 25 %, accepted up to 20 %): "
+        f"{'ACCEPTED' if overhead <= 0.20 else 'ABOVE THE MARGIN'}"
+    )
+    v2m = json.loads((out / "manifest-set1-gen1.json").read_bytes())
+    v2sha = {e["id"]: e["sha256"] for e in v2m["cases"]}
+    for k in (1, 2, 3):
+        v1m = json.loads((out / f"v1-run{k}.json").read_bytes())
+        same = sum(v2sha.get(e["id"]) == e["sha256"] for e in v1m["cases"])
+        log(f"v1 run {k}: {same} of {len(v1m['cases'])} case SHA-256 equal to v2 (of {len(v2sha)})")
+    (out / "overhead.json").write_text(
+        json.dumps({"walls": walls, "medians": med, "overhead": overhead}, indent=1),
+        encoding="utf-8",
+    )
+
+
+def step_determinism() -> None:
+    cid = "v2-selftest-determinism"
+    log(f"# determinism {datetime.now(UTC).isoformat(timespec='seconds')}")
+    out = WORK / "out" / cid
+    for g in (1, 2, 3):
+        harness(GEN_PY, "generate", cid, "--set", "1", "--generation", str(g), "--out", out)
+    harness(GEN_PY, "check-set", cid, "--set", "1")
+    m = json.loads((out / "manifest-set1-gen1.json").read_bytes())
+    b = json.loads((out / "blocks-set1-gen1.json").read_bytes())
+    log(
+        f"determinism: {len(m['cases'])} cases; segments "
+        f"{sum(len(e['layout']['segments']) for e in m['cases'])}; blocks "
+        f"{sum(len(x) for c in b['cases'].values() for x in c.values())}; manifests and block "
+        "indexes of the three generations byte-identical (check-set accepted)"
+    )
+    for name in (
+        "planet-below-white-0000",
+        "planet-below-white-0111",
+        "no_transit-none-white-1544",
+    ):
+        e = next(x for x in m["cases"] if x["id"] == name)
+        log(f"  {name}: mechanism {e['mechanism']}, SHA-256 {e['sha256']}")
+
+
+# --- injected differences ----------------------------------------------------------------
+
+
+def _segment(entry_layout: dict, name: str) -> dict:
+    return next(s for s in entry_layout["segments"] if s["name"] == name)
+
+
+def _set_f8(blob: bytearray, offset: int, bits: int) -> None:
+    blob[offset : offset + 8] = struct.pack("<Q", bits)
+
+
+def step_inject() -> None:
+    log(f"# injected differences {datetime.now(UTC).isoformat(timespec='seconds')}")
+    cache = WORK / "cache-reference"
+    original = (cache / "planet-measurable-white-0000.rpc").read_bytes()
+    _, layout, blocks, problems = v2.case_hashes(original)
+    assert not problems
+    results = []
+
+    def check(label: str, a: bytes, b: bytes, expect: dict) -> None:
+        rep = CMP.compare_blobs(a, b)
+        _, la, ba, _ = v2.case_hashes(a)
+        _, lb, bb, _ = v2.case_hashes(b)
+        loc = CMP.locate_without_bytes(
+            {"sha256": "a", "layout": la}, {"sha256": "b", "layout": lb}, ba, bb
+        )
+        ok = rep["status"] == expect["status"]
+        detail = {}
+        if expect["status"] == "bytes":
+            s = rep["segments"][0]
+            ok = ok and len(rep["segments"]) == 1 and s["segment"] == expect["segment"]
+            ok = (
+                ok
+                and s["first_differing_offset"] == expect["offset"]
+                and s["block"] == expect["block"]
+            )
+            if "element" in expect:
+                ok = ok and s["first_element"] == expect["element"] and s["elements_differing"] == 1
+            if "kind" in expect:
+                ok = ok and s["explanation"]["by_kind"] == {expect["kind"]: 1}
+            if "header_path" in expect:
+                ok = ok and any(d["path"] == expect["header_path"] for d in s["header_paths"])
+            ok_loc = loc["status"] == "blocks" and len(loc["segments"]) == 1
+            ok_loc = ok_loc and loc["segments"][0]["segment"] == expect["segment"]
+            ok_loc = ok_loc and [x["block"] for x in loc["segments"][0]["blocks"]] == [
+                expect["block"]
+            ]
+            detail = {
+                "segment": s["segment"],
+                "offset": s["first_differing_offset"],
+                "block": s["block"],
+                "element": s.get("first_element"),
+                "explanation": s.get("explanation"),
+                "header_paths": [d["path"] for d in s.get("header_paths", [])][:3],
+                "without_bytes": [
+                    (x["segment"], [y["block"] for y in x["blocks"]]) for x in loc["segments"]
+                ],
+            }
+        else:
+            ok_loc = loc["status"] == "structural"
+            detail = {"structure": rep.get("structure"), "without_bytes": loc["status"]}
+        results.append(
+            {
+                "label": label,
+                "located_with_bytes": ok,
+                "located_without_bytes": ok_loc,
+                "detail": detail,
+            }
+        )
+        log(
+            f"{label}: with bytes {'OK' if ok else 'WRONG'}; without bytes "
+            f"{'OK' if ok_loc else 'WRONG'}; {json.dumps(detail)[:400]}"
+        )
+
+    seg = _segment(layout, "aux/pixels/1/flux")
+    e = 1_500_000  # an element in block 11 of the segment
+    if e >= seg["length"] // 8:
+        raise SystemExit("the element is outside the segment")
+    off = seg["offset"] + e * 8 + 3
+    b = bytearray(original)
+    b[off] ^= 0x10
+    shape = seg["shape"]
+    element = [e // (shape[1] * shape[2]), (e // shape[2]) % shape[1], e % shape[2]]
+    check(
+        "one byte of an array",
+        original,
+        bytes(b),
+        {
+            "status": "bytes",
+            "segment": "aux/pixels/1/flux",
+            "offset": off,
+            "block": (e * 8 + 3) // v2.BLOCK_SIZE,
+            "element": element,
+        },
+    )
+    seg = _segment(layout, "aux/sectors/0/sap_bkg")
+    e = 100
+    off = seg["offset"] + e * 8
+    a, b = bytearray(original), bytearray(original)
+    _set_f8(a, off, 0x0000000000000000)
+    _set_f8(b, off, 0x8000000000000000)
+    check(
+        "the sign of one zero",
+        bytes(a),
+        bytes(b),
+        {
+            "status": "bytes",
+            "segment": "aux/sectors/0/sap_bkg",
+            "offset": off + 7,
+            "block": (e * 8) // v2.BLOCK_SIZE,
+            "element": [e],
+            "kind": "sign_of_zero",
+        },
+    )
+    seg = _segment(layout, "lc/flux_err")
+    e = 7
+    off = seg["offset"] + e * 8
+    a, b = bytearray(original), bytearray(original)
+    _set_f8(a, off, 0x7FF8000000000001)
+    _set_f8(b, off, 0x7FF8000000000002)
+    check(
+        "the payload of one NaN",
+        bytes(a),
+        bytes(b),
+        {
+            "status": "bytes",
+            "segment": "lc/flux_err",
+            "offset": off,
+            "block": 0,
+            "element": [e],
+            "kind": "nan_payload",
+        },
+    )
+    seg = _segment(layout, "header")
+    head = original[seg["offset"] : seg["offset"] + seg["length"]]
+    key = b'"attempt_seed":"'
+    pos = head.index(key) + len(key)
+    digit = head[pos : pos + 1]
+    new = b"1" if digit != b"1" else b"2"
+    b = bytearray(original)
+    b[seg["offset"] + pos] = new[0]
+    check(
+        "one header field",
+        original,
+        bytes(b),
+        {
+            "status": "bytes",
+            "segment": "header",
+            "offset": seg["offset"] + pos,
+            "block": pos // v2.BLOCK_SIZE,
+            "header_path": "/attempt_seed",
+        },
+    )
+    meta, arrays = v2.deserialize(original)
+    names = [a[0] for a in meta["arrays"]]
+    dtypes = {a[0]: a[1] for a in meta["arrays"]}
+    arrays["lc/time"] = arrays["lc/time"][:-1]
+    base = {k: v for k, v in meta.items() if k != "arrays"}
+    changed = v2.serialize(base, [(n, arrays[n], dtypes[n]) for n in names])
+    check("a structural change (another shape)", original, changed, {"status": "structural"})
+    (WORK / "inject").mkdir(parents=True, exist_ok=True)
+    (WORK / "inject" / "blob-results.json").write_text(
+        json.dumps(results, indent=1), encoding="utf-8"
+    )
+    bad = [
+        r["label"] for r in results if not (r["located_with_bytes"] and r["located_without_bytes"])
+    ]
+    log(
+        f"blob injections: {len(results) - len(bad)} of {len(results)} located as expected "
+        f"{bad or ''}"
+    )
+
+
+def _first_float_path(rec: dict, prefix: str) -> str:
+    for path, item in CMP.flatten(rec).items():
+        if path.startswith(prefix) and item[0] == "float" and item[2] not in ("nan", "inf", "-inf"):
+            return path
+    raise SystemExit(f"no float under {prefix}")
+
+
+def _get(rec, path):
+    for part in path.split("/")[1:]:
+        part = part.replace("~1", "/").replace("~0", "~")
+        rec = rec[int(part)] if isinstance(rec, list) else rec[part]
+    return rec
+
+
+def step_records() -> None:
+    """Result-record injections, on copies of a real slot-1 record of the analysis step."""
+    log(f"# result-record injections {datetime.now(UTC).isoformat(timespec='seconds')}")
+    run1 = WORK / "runs" / "M3-slot1" / "cases" / "planet-below-white-0000.json"
+    run2 = WORK / "runs" / "M3-slot2" / "cases" / "planet-below-white-0000.json"
+    r1, r2 = json.loads(run1.read_bytes()), json.loads(run2.read_bytes())
+    rep = CMP.compare_records(r1, r2, "slots")
+    log(
+        f"real slot 1 vs slot 2 (profile slots): {rep['status']}, "
+        f"{rep['counts']['differences']} differences"
+    )
+    results = []
+
+    def check(label, a, b, status, path, kind=None):
+        rep = CMP.compare_records(a, b, "slots")
+        paths = [d["path"] for d in rep["differences"]]
+        ok = rep["status"] == status
+        if status == "divergent":
+            ok = ok and paths == [path] and (kind is None or rep["differences"][0]["kind"] == kind)
+        else:
+            ok = ok and any(path in p for p in rep["problems"])
+        results.append(
+            {
+                "label": label,
+                "ok": ok,
+                "status": rep["status"],
+                "paths": paths,
+                "problems": rep["problems"][:3],
+            }
+        )
+        log(
+            f"{label}: {'OK' if ok else 'WRONG'} (status {rep['status']}, paths {paths[:3]}, "
+            f"problems {rep['problems'][:2]})"
+        )
+
+    path = _first_float_path(r1, "/conditions/i/scientific/tests")
+    x = copy.deepcopy(r1)
+    val = _get(x, path)
+    bits = int(val["f64"], 16) + 1
+    val["f64"] = f"{bits:016x}"
+    val["dec"] = repr(struct.unpack(">d", bits.to_bytes(8, "big"))[0])
+    check("one metric value (one ULP)", r1, x, "divergent", path, "value")
+    x = copy.deepcopy(r1)
+    del x["conditions"]["i"]["scientific"]["verdict_reason"]
+    check(
+        "a missing field",
+        r1,
+        x,
+        "divergent",
+        "/conditions/i/scientific/verdict_reason",
+        "only_in_left",
+    )
+    x = copy.deepcopy(r1)
+    x["conditions"]["i"]["scientific"]["extra_field"] = 1
+    check(
+        "an extra field",
+        r1,
+        x,
+        "divergent",
+        "/conditions/i/scientific/extra_field",
+        "only_in_right",
+    )
+    x = copy.deepcopy(r1)
+    val = _get(x, path)
+    val["dec"] = repr(float(val["dec"]) * 2 + 1)
+    check("a float whose dec and f64 disagree", r1, x, "invalid", path)
+    x = copy.deepcopy(r1)
+    x["control"] = {"cases_before_in_process": 0}
+    rep = CMP.compare_records(r1, x, "slots")
+    ok = rep["status"] == "invalid" and any("/control" in p for p in rep["problems"])
+    results.append(
+        {"label": "a /control section under the profile slots", "ok": ok, "status": rep["status"]}
+    )
+    log(f"a /control section under the profile slots: {'OK' if ok else 'WRONG'} ({rep['status']})")
+    x = copy.deepcopy(r1)
+    x["operational"]["pid"] = 1
+    x["identity"]["execution_id"] = "other"
+    rep = CMP.compare_records(r1, x, "slots")
+    ok = rep["status"] == "identical"
+    results.append(
+        {"label": "excluded paths only (pid, execution id)", "ok": ok, "status": rep["status"]}
+    )
+    log(f"excluded paths only (pid, execution id): {'OK' if ok else 'WRONG'} ({rep['status']})")
+    (WORK / "inject").mkdir(parents=True, exist_ok=True)
+    (WORK / "inject" / "record-results.json").write_text(
+        json.dumps(results, indent=1), encoding="utf-8"
+    )
+    bad = [r["label"] for r in results if not r["ok"]]
+    log(f"record injections: {len(results) - len(bad)} of {len(results)} as expected {bad or ''}")
+
+
+def step_lock() -> None:
+    """A divergence simulated through the cache rule (a different file already at a case's
+    path): the lock marker and the journal entry are written, every campaign mode then
+    refuses, also with another output directory; assembled copies show that a missing
+    marker does not unblock, that a resolution with a registered rule does, and that an
+    execution without a closure blocks until it is reconciled."""
+    cid = "v2-selftest-lock"
+    log(f"# journal and lock {datetime.now(UTC).isoformat(timespec='seconds')}")
+    out = WORK / "out" / cid
+    cache = WORK / "cache-lock"
+    cache.mkdir(parents=True, exist_ok=True)
+    planted = cache / "planet-measurable-white-0000.rpc"
+    if not planted.exists():
+        planted.write_bytes(PLANTED)
+    harness(
+        GEN_PY,
+        "generate",
+        cid,
+        "--set",
+        "1",
+        "--generation",
+        "1",
+        "--out",
+        out,
+        "--cache",
+        cache,
+        expect=2,
+    )
+    log(f"planted file untouched: {planted.read_bytes() == PLANTED}")
+    side = sorted(p.name for p in cache.glob("planet-measurable-white-0000.*.rpc"))
+    log(f"new bytes written beside it: {side}")
+    camp_dir = ROOT / cid
+    log(f"lock markers: {sorted(p.name for p in (camp_dir / 'locks').glob('*.json'))}")
+    other = WORK / "out" / f"{cid}-other-dir"
+    harness(
+        GEN_PY,
+        "generate",
+        cid,
+        "--set",
+        "1",
+        "--generation",
+        "2",
+        "--out",
+        other,
+        expect=1,
+        label="refusal (another directory)",
+    )
+    harness(GEN_PY, "check-set", cid, "--set", "1", expect=1, label="refusal")
+    harness(
+        GEN_PY,
+        "regenerate",
+        cid,
+        "--manifest",
+        out / "none.json",
+        "--cache",
+        cache,
+        "--lot",
+        "0",
+        expect=1,
+        label="refusal",
+    )
+    harness(
+        POINT_PY["M3"],
+        "analyze",
+        cid,
+        "--manifest",
+        out / "none.json",
+        "--cache",
+        cache,
+        "--out",
+        other,
+        "--point",
+        "M3",
+        "--lot",
+        "0",
+        "--slot",
+        "1",
+        expect=1,
+        label="refusal",
+    )
+    harness(
+        GEN_PY,
+        "compare-slots",
+        cid,
+        "--manifest",
+        out / "none.json",
+        "--point",
+        "M3",
+        "--lot",
+        "0",
+        "--runs",
+        other,
+        other,
+        "--records",
+        other,
+        expect=1,
+        label="refusal",
+    )
+    harness(
+        GEN_PY,
+        "orchestrate",
+        cid,
+        "--manifest",
+        out / "none.json",
+        "--project",
+        REPO,
+        "--cache",
+        cache,
+        "--generator-python",
+        GEN_PY,
+        "--point",
+        f"M3={POINT_PY['M3']}={other}",
+        "--records",
+        other,
+        expect=1,
+        label="refusal",
+    )
+    harness(GEN_PY, "metrics", cid, "--out", other / "metrics.json", expect=1, label="refusal")
+    report = out / "integrity-report.json"
+    if not report.exists():
+        harness(
+            GEN_PY,
+            "metrics",
+            cid,
+            "--integrity-report",
+            "--out",
+            report,
+            label="integrity-failure report",
+        )
+    rep = json.loads(report.read_bytes())
+    log(
+        f"integrity report approval: {rep['approval']}; locks {len(rep['locks'])}; "
+        f"divergences {len(rep['divergences'])}"
+    )
+    # Assembled states (copies only; nothing is deleted).
+    states = WORK / "lock-states"
+    for state in ("no-marker", "resolved", "unclosed"):
+        root = states / state
+        target = root / cid
+        if target.exists():
+            continue
+        shutil.copytree(
+            camp_dir,
+            target,
+            ignore=shutil.ignore_patterns(
+                "journal.lock", *(["lock-*.json"] if state == "no-marker" else [])
+            ),
+        )
+    lock_file = sorted((camp_dir / "locks").glob("lock-*.json"))[0]
+    resolution = states / "resolved" / cid / "resolutions" / "resolution-selftest.json"
+    if not resolution.exists():
+        resolution.parent.mkdir(parents=True, exist_ok=True)
+        v2.write_json(
+            resolution,
+            {
+                "format": v2.RESOLUTION_FORMAT,
+                "campaign_id": cid,
+                "lock_sha256": v2.file_sha256(lock_file),
+                "rule": "selftest-simulated",
+                "text": "self-test: the lock was written on purpose",
+            },
+        )
+    unclosed = states / "unclosed" / cid
+    resolution2 = unclosed / "resolutions" / "resolution-selftest.json"
+    if not resolution2.exists():
+        resolution2.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(resolution, resolution2)
+        entries, _ = v2.read_journal(v2.Campaign(states / "unclosed", cid, False))
+        last = entries[-1]
+        ident = dict(entries[0]["identity"])
+        ident["execution_id"] = "selftest-assembled-unclosed"
+        line = {
+            "format": v2.JOURNAL_FORMAT,
+            "seq": len(entries),
+            "prev_sha256": last["_sha256"],
+            "utc": v2.utc_now(),
+            "kind": "started",
+            "identity": ident,
+            "payload": {"main_pid": 999999, "assembled": True},
+        }
+        with open(unclosed / "journal.jsonl", "ab") as fh:
+            fh.write(v2.canonical_json(line) + b"\n")
+    for state in ("no-marker", "resolved", "unclosed"):
+        root = states / state
+        code, outp, _ = run(
+            [GEN_PY, V2, "status", "--root", root, "--campaign", cid, "--cpus", CPUS],
+            label=f"status {state}",
+        )
+        blocking = json.loads(outp[outp.index("{") :])["blocking"]
+        log(f"state {state}: blocking {len(blocking)} {blocking[:3]}")
+    run(
+        [
+            GEN_PY,
+            V2,
+            "reconcile",
+            "--root",
+            states / "unclosed",
+            "--campaign",
+            cid,
+            "--execution-id",
+            "selftest-assembled-unclosed",
+            "--reason",
+            "self-test: assembled execution without a closure",
+            "--cpus",
+            CPUS,
+        ],
+        label="reconcile",
+    )
+    code, outp, _ = run(
+        [GEN_PY, V2, "status", "--root", states / "unclosed", "--campaign", cid, "--cpus", CPUS],
+        label="status unclosed after reconcile",
+    )
+    log(
+        "state unclosed after reconcile: blocking "
+        f"{json.loads(outp[outp.index('{') :])['blocking']}"
+    )
+
+
+def step_analysis() -> None:
+    cid = "v2-selftest-analysis"
+    log(f"# analysis, two slots, M0 and M3 {datetime.now(UTC).isoformat(timespec='seconds')}")
+    out = WORK / "out" / cid
+    for g in (1, 2, 3):
+        harness(GEN_PY, "generate", cid, "--set", "1", "--generation", str(g), "--out", out)
+    harness(GEN_PY, "check-set", cid, "--set", "1")
+    manifest = out / "manifest-set1-gen1.json"
+    cache = WORK / "cache-analysis"  # inside .cache/population/, as orchestrate requires
+    records = WORK / "records-analysis"
+    runs = WORK / "runs"
+    points = [f"{p}={POINT_PY[p]}={runs / p}" for p in ("M0", "M3")]
+    args = [
+        "--manifest",
+        manifest,
+        "--project",
+        REPO,
+        "--cache",
+        cache,
+        "--generator-python",
+        GEN_PY,
+        "--records",
+        records,
+    ]
+    for p in points:
+        args += ["--point", p]
+    harness(GEN_PY, "orchestrate", cid, *args)
+    harness(GEN_PY, "orchestrate", cid, *args, label="orchestrate again on the finished state")
+    metrics = WORK / "out" / cid / "metrics.json"
+    if not metrics.exists():
+        harness(
+            GEN_PY,
+            "metrics",
+            cid,
+            "--manifest",
+            manifest,
+            "--records",
+            records,
+            "--point",
+            f"M0={runs / 'M0'}",
+            "--point",
+            f"M3={runs / 'M3'}",
+            "--out",
+            metrics,
+        )
+    sizes = [f.stat().st_size for f in runs.glob("*/cases/*.json")]
+    log(
+        f"result records: {len(sizes)} files, {sum(sizes)} bytes, mean "
+        f"{sum(sizes) / len(sizes):.0f} bytes per record (one case, one slot, one point)"
+    )
+
+
+def step_d6smoke() -> None:
+    """A reduced run of the D6 machinery (not the D6): the first 13 cases of the declared
+    rule, at M3 only, the 7 configurations twice; then the negative control and the check."""
+    import d6
+
+    log(f"# D6 smoke (not the D6) {datetime.now(UTC).isoformat(timespec='seconds')}")
+    det = json.loads(
+        (WORK / "out" / "v2-selftest-determinism" / "manifest-set1-gen1.json").read_bytes()
+    )
+    cases = d6.select_cases(det, 40)[:13]
+    log(f"D6 rule, first 13 of 40: {cases}")
+    cid = "v2-selftest-d6inputs"
+    declaration(
+        cid, "determinism", cases, [{"workers": 13, "order": "index"}] * 3, lot_size=len(cases)
+    )
+    out = WORK / "out" / cid
+    for g in (1, 2, 3):
+        if not (out / f"manifest-set1-gen{g}.json").exists():
+            harness(GEN_PY, "generate", cid, "--set", "1", "--generation", str(g), "--out", out)
+    entries, _ = v2.read_journal(v2.Campaign(ROOT, cid, False))
+    if v2.accepted_set(entries) is None:
+        harness(GEN_PY, "check-set", cid, "--set", "1")
+    cache = WORK / "cache-d6"
+    if not cache.exists():
+        harness(
+            GEN_PY,
+            "regenerate",
+            cid,
+            "--manifest",
+            out / "manifest-set1-gen1.json",
+            "--cache",
+            cache,
+            "--lot",
+            "0",
+        )
+    m3 = POINT_PY["M3"]
+    default = WORK / "dispatch-default-M3.json"
+    if not default.exists():
+        run([m3, V2, "dispatch-table", "--out", default, "--cpus", CPUS])
+    e_table = WORK / "dispatch-E-M3.json"
+    if not e_table.exists():
+        os.environ["NPY_DISABLE_CPU_FEATURES"] = "X86_V3"
+        try:
+            run(
+                [m3, V2, "dispatch-table", "--out", e_table, "--cpus", CPUS],
+                label="NPY_DISABLE_CPU_FEATURES=X86_V3",
+            )
+        finally:
+            os.environ.pop("NPY_DISABLE_CPU_FEATURES", None)
+    d6_script = POP / "d6.py"
+    d6dir = WORK / "d6-smoke"
+    decl = d6dir / "d6-declaration.json"
+    if not decl.exists():
+        d6dir.mkdir(parents=True, exist_ok=True)
+        run(
+            [
+                m3,
+                d6_script,
+                "plan",
+                "--selection-manifest",
+                out.parent / "v2-selftest-determinism" / "manifest-set1-gen1.json",
+                "--dispatch-default",
+                default,
+                "--dispatch-e",
+                e_table,
+                "--inputs-root",
+                ROOT,
+                "--inputs-campaign",
+                cid,
+                "--points",
+                "M3",
+                "--limit",
+                "13",
+                "--out",
+                decl,
+                "--cpus",
+                CPUS,
+            ]
+        )
+    runs = d6dir / "runs"
+    sequential = [c for c in ("R-idx", "R-rev", "R-shf", "E")]
+    procs = []
+    t0 = time.perf_counter()
+    for c in sequential:
+        for rep in (1, 2):
+            if (runs / f"{c}-rep{rep}-M3").exists():
+                continue
+            cmd = [
+                m3,
+                d6_script,
+                "run",
+                "--declaration",
+                decl,
+                "--point",
+                "M3",
+                "--cache",
+                cache,
+                "--out",
+                runs,
+                "--configuration",
+                c,
+                "--repetition",
+                str(rep),
+                "--cpus",
+                CPUS,
+            ]
+            log("$ (background) " + " ".join(str(x).replace(str(REPO), "<repo>") for x in cmd))
+            procs.append(
+                subprocess.Popen(
+                    [str(x) for x in cmd],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                )
+            )
+    for c in ("F", "P24", "P12"):
+        for rep in (1, 2):
+            if not (runs / f"{c}-rep{rep}-M3").exists():
+                run(
+                    [
+                        m3,
+                        d6_script,
+                        "run",
+                        "--declaration",
+                        decl,
+                        "--point",
+                        "M3",
+                        "--cache",
+                        cache,
+                        "--out",
+                        runs,
+                        "--configuration",
+                        c,
+                        "--repetition",
+                        str(rep),
+                        "--cpus",
+                        CPUS,
+                    ]
+                )
+    for p in procs:
+        text, _ = p.communicate()
+        for line in text.splitlines()[-5:]:
+            log(f"  {line}")
+        log(f"  [exit {p.returncode}]")
+    log(f"D6 smoke executions: wall {time.perf_counter() - t0:.0f} s")
+    run([m3, d6_script, "negative-control", "--declaration", decl, "--out", runs, "--cpus", CPUS])
+    report = d6dir / "d6-smoke-report.json"
+    if not report.exists():
+        run(
+            [
+                m3,
+                d6_script,
+                "check",
+                "--declaration",
+                decl,
+                "--out",
+                runs,
+                "--report",
+                report,
+                "--cpus",
+                CPUS,
+            ],
+            expect=None,
+        )
+
+
+def step_summary() -> None:
+    lines = []
+    for f in sorted(HERE.iterdir()):
+        if f.is_file() and f.name != "SHA256SUMS":
+            lines.append(f"{hashlib.sha256(f.read_bytes()).hexdigest()}  {f.name}")
+    (HERE / "SHA256SUMS").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("\n".join(lines))
+
+
+STEPS = {
+    "declare": step_declare,
+    "reference": step_reference,
+    "overhead": step_overhead,
+    "determinism": step_determinism,
+    "inject": step_inject,
+    "lock": step_lock,
+    "analysis": step_analysis,
+    "records": step_records,
+    "d6smoke": step_d6smoke,
+    "summary": step_summary,
+}
+
+if __name__ == "__main__":
+    STEPS[sys.argv[1]]()

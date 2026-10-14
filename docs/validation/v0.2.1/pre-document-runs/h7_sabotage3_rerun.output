@@ -1,0 +1,57 @@
+# Output of the run started at 2026-10-10T16:27:39.257Z (UTC), transcribed literally from the tool
+# result at 2026-10-10T16:28:05.132Z in the session transcript 286dcd73-0856-44d4-9b8c-b9fbf5851ed1.jsonl; it was not saved
+# to a file at the time. Only the Windows user name in paths is replaced by <user>.
+# Command of that tool call:
+#   S="C:/Users/<user>/AppData/Local/Temp/claude/C--Projetos-refute--claude-worktrees-v0-2-1-gauntlet-fixes-13f5e7/286dcd73-0856-44d4-9b8c-b9fbf5851ed1/scratchpad"; cd "C:/Projetos/refute/.claude/worktrees/v0-2-1-gauntlet-fixes-13f5e7" && .venv/Scripts/python.exe -c "
+#   from pathlib import Path
+#   p = Path('src/refute/packs/tess/calibration.py'); t = p.read_text(encoding='utf-8')
+#   old = '        if identity:\n            flagged = [r for r in flagged_v02'
+#   assert t.count(old) == 1
+#   p.write_text(t.replace(old, '        if False:  # SABOTAGE 3\n            flagged = [r for r in flagged_v02'), encoding='utf-8', newline='\n')
+#   " && git diff | grep '^[-+] ' ; .venv/Scripts/python.exe "$S/affinity_run.py" -m pytest tests/test_calibration_signal_identity.py tests/test_calibration_signal_identity_e2e.py -rf -p no:warnings --tb=no 2>&1 | grep -E "^FAILED|^[0-9]+ (passed|failed)" | sed 's/ - .*//'; git checkout -- src/refute/packs/tess/calibration.py && echo "--- git diff após restaurar:" && git diff --stat && echo "(vazio)"
+# ---- output ----
+-        if identity:
++        if False:  # SABOTAGE 3
+FAILED tests/test_calibration_signal_identity.py::test_a4_a_different_signal_is_not_recovered
+FAILED tests/test_calibration_signal_identity.py::test_a5_triple_and_third_period_are_outside_the_factors[9.0]
+FAILED tests/test_calibration_signal_identity.py::test_a5_triple_and_third_period_are_outside_the_factors[1.0]
+FAILED tests/test_calibration_signal_identity.py::test_a6_just_above_the_tolerance_is_not_recovered[3.0-3.0033000000000003-0.001]
+FAILED tests/test_calibration_signal_identity.py::test_a6_just_above_the_tolerance_is_not_recovered[3.0-5.9934-0.001]
+FAILED tests/test_calibration_signal_identity.py::test_a6_just_above_the_tolerance_is_not_recovered[8.0-9.000000000000002-0.125]
+FAILED tests/test_calibration_signal_identity.py::test_a6_just_above_the_tolerance_is_not_recovered[8.0-4.500000000000001-0.125]
+FAILED tests/test_calibration_signal_identity.py::test_a7_missing_periods_are_not_recovered[no-found-period]
+FAILED tests/test_calibration_signal_identity.py::test_a7_missing_periods_are_not_recovered[no-published-period]
+FAILED tests/test_calibration_signal_identity.py::test_a7_missing_periods_are_not_recovered[no-comparison]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-0]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-1]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-2]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-3]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-4]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-5]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-6]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-7]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-8]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded0-9]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-0]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-1]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-2]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-3]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-4]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-5]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-6]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-7]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-8]
+FAILED tests/test_calibration_signal_identity.py::test_a11_flagged_with_identity_is_a_subset[excluded1-9]
+FAILED tests/test_calibration_signal_identity.py::test_a11_some_development_seed_is_strict[excluded0]
+FAILED tests/test_calibration_signal_identity.py::test_a11_some_development_seed_is_strict[excluded1]
+FAILED tests/test_calibration_signal_identity.py::test_a12_reporting_states_the_definition_change
+FAILED tests/test_calibration_signal_identity.py::test_a12_custom_factors_are_used_and_reported
+FAILED tests/test_calibration_signal_identity_e2e.py::test_b1_variability_dominates_signal_not_recovered[0]
+FAILED tests/test_calibration_signal_identity_e2e.py::test_b1_variability_dominates_signal_not_recovered[1]
+FAILED tests/test_calibration_signal_identity_e2e.py::test_b1_variability_dominates_signal_not_recovered[2]
+FAILED tests/test_calibration_signal_identity_e2e.py::test_b2_wrong_published_period_is_not_recovered[0]
+FAILED tests/test_calibration_signal_identity_e2e.py::test_b2_wrong_published_period_is_not_recovered[1]
+FAILED tests/test_calibration_signal_identity_e2e.py::test_b2_wrong_published_period_is_not_recovered[2]
+40 failed, 45 passed in 22.38s
+--- git diff após restaurar:
+(vazio)

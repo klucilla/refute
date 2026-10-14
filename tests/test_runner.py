@@ -2,11 +2,29 @@ import os
 
 import pytest
 
-from refute.core.runner import default_workers, run_processes, run_threads, selftest_task
+from refute.core.runner import (
+    WORKERS_ENV,
+    default_workers,
+    run_processes,
+    run_threads,
+    selftest_task,
+)
 
 
-def test_default_workers_is_cpu_count_minus_two():
+def test_default_workers_is_cpu_count_minus_two(monkeypatch):
+    monkeypatch.delenv(WORKERS_ENV, raising=False)
     assert default_workers() == max(1, (os.cpu_count() or 1) - 2)
+
+
+def test_workers_env_overrides_the_default(monkeypatch):
+    monkeypatch.setenv(WORKERS_ENV, "7")
+    assert default_workers() == 7
+    monkeypatch.setenv(WORKERS_ENV, "")
+    assert default_workers() == max(1, (os.cpu_count() or 1) - 2)
+    for bad in ("0", "-2", "two", "1.5"):
+        monkeypatch.setenv(WORKERS_ENV, bad)
+        with pytest.raises(ValueError, match=WORKERS_ENV):
+            default_workers()
 
 
 def test_process_pool_runs_in_other_processes_and_keeps_order():
