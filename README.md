@@ -341,7 +341,7 @@ SETI@home and Einstein@Home. The plan for Refute@Home
 |---|---|---|
 | v0.1 Calibration | Replicate published TESS planets, blind holdout, dossiers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.1.0) |
 | v0.2 Gauntlet | Full false-positive battery, independent reviewers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.2.0) |
-| v0.2.1 Gauntlet fixes | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![closed by scope decision, criteria not met](https://img.shields.io/badge/-closed%20by%20scope%20decision%2C%20criteria%20not%20met-lightgrey) [closure record](docs/validation/v0.2.1/population/closure-record.md) |
+| v0.2.1 Gauntlet fixes | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![closed by scope decision, criteria deferred](https://img.shields.io/badge/-closed%20by%20scope%20decision%2C%20criteria%20deferred-lightgrey) [closure record](docs/validation/v0.2.1/population/closure-record.md) |
 | **v0.3 Replicate papers** | ML papers with public code and data, right of reply | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) |
 | v0.4 Discover | New candidates in TESS data | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.5 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |

@@ -32,9 +32,9 @@ how later work is done.
 **v0.3 Replicate papers (ML pack)**
 
 Opened on 2026-10-14 by the maintainer's decision, as an explicit exception to "How
-phases work" above. It is not an approved gate: v0.2.1 Gauntlet fixes met none of
-its exit criteria, its population study was closed by a scope decision, and no gate
-review was run
+phases work" above. It is not an approved gate: none of the v0.2.1 Gauntlet fixes
+exit criteria is ticked (all are deferred), its population study was closed by a
+scope decision, and no gate review was run
 ([closure record](docs/validation/v0.2.1/population/closure-record.md)).
 This exception applies only to the transition from v0.2.1 to v0.3; gate
 requirements for subsequent phases remain unchanged.
