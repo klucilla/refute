@@ -1,12 +1,45 @@
 name: CI
 
+# The workflow is skipped when every changed file is documentation that no test,
+# lint step or build reads. Not ignored, because they are read: README.md (the
+# package metadata in pyproject.toml and tests/test_update_readme.py), LICENSE
+# (license-files), everything under calibration/, and every .py, .json, .yaml or
+# .csv file, including those under docs/ (ruff lints them). A change that mixes
+# documentation with any other file still runs the workflow.
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "docs/**/*.md"
+      - "docs/assets/*.svg"
+      - "docs/assets/*.png"
+      - "CLAUDE.md"
+      - "CODE_OF_CONDUCT.md"
+      - "CONTRIBUTING.md"
+      - "PROMPT-v0.1.md"
+      - "ROADMAP.md"
+      - "SECURITY.md"
+  # Same list as for push.
   pull_request:
+    paths-ignore:
+      - "docs/**/*.md"
+      - "docs/assets/*.svg"
+      - "docs/assets/*.png"
+      - "CLAUDE.md"
+      - "CODE_OF_CONDUCT.md"
+      - "CONTRIBUTING.md"
+      - "PROMPT-v0.1.md"
+      - "ROADMAP.md"
+      - "SECURITY.md"
 
 permissions:
   contents: read
+
+# A newer run on the same pull request branch cancels the one in progress. Runs on
+# main are never cancelled: every merge commit on main is tested.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   test:
