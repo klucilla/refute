@@ -275,9 +275,14 @@ The original "Replica" idea: re-derive published results.
   before any negative result is published.
 - Scope limited to papers that run on consumer hardware.
 
-**Exit criteria**
-- [ ] 5 papers processed end to end, including at least one `NOT_REPRODUCIBLE`.
-- [ ] Right-of-reply workflow documented and exercised.
+**Exit criteria** (changed on 2026-10-14 by the maintainer, before any selection;
+plan: [docs/plans/v0.3-plan.md](docs/plans/v0.3-plan.md))
+- [ ] 5 papers processed end to end (the main sample), with every verdict path,
+      including `NOT_REPRODUCIBLE`, shown to be handled correctly by a controlled
+      test (an artifact built to be non-reproducible), whether or not the real
+      sample contains one.
+- [ ] Right of reply: the notification was made and recorded; the reply period
+      remains open.
 
 ---
 
