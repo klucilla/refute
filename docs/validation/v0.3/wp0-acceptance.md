@@ -28,11 +28,16 @@ a change after a lock makes that lock `TAMPERED`.
 ## 2. Dependency plan (candidates, no change yet)
 
 Versions checked on PyPI on 2026-10-14 (JSON API, first upload time of each
-version), against the 7-day cooldown on that date:
+version), against the 7-day cooldown on that date. The check used a working script
+(`pypi_cooldown.py`, kept outside the repository with the evaluation records). **Its
+limitation:** it uses the first upload time of each version, not the upload time of
+each file. The final check of the cooldown has to look at the upload time of every
+artifact actually used: the files listed with their hashes in `uv.lock`, the uv
+Python builds and the uv binary. The script is not a permanent verifier.
 
 | Package | Needed by | Newest | Eligible on 2026-10-14 | Status |
 |---|---|---|---|---|
-| `pyarrow` | WP5: read the Parquet frame (D-18), `calibration` group | 26.0.0 (2026-10-09) | 25.0.1 (2026-08-10) | Decided (D-18). 26.0.0 becomes eligible from 2026-10-16. The version is the one `uv lock` resolves under `exclude-newer` on the day of the change. |
+| `pyarrow` | WP5: read the Parquet frame (D-18), `calibration` group | 26.0.0 (2026-10-09) | 25.0.1 (2026-08-10) | Decided (D-18). An eligible earlier version, such as 25.0.1, can be used now. 2026-10-16 matters only if 26.0.0 is chosen: its first file was uploaded on 2026-10-09T08:13Z, and each of its files reaches 7 days at its own upload time plus 7 days. The version is the one `uv lock` resolves under `exclude-newer` on the day of the change. |
 | `scikit-learn` | WP3: a candidate independent implementation for `metric_recompute` (plan section 6.3, line 486: "recompute the metric with an independent implementation"; the plan names no library) | 1.9.1 (2026-09-10) | 1.9.1 | **Open, for the maintainer.** Already in `uv.lock` as a transitive dependency of `lightkurve` 2.6.0 (`uv.lock`, the `lightkurve` entry), at 1.9.1. The alternative is metric code written in Refute (numpy). |
 
 No other new runtime dependency is planned. The Docker CLI is called as a
@@ -116,18 +121,38 @@ Log lines, job 116091070768 (ubuntu-24.04 / Python 3.13):
 2026-10-14T20:37:28.7268119Z cpython-3.13.16-linux-x86_64-gnu    /home/runner/work/_temp/uv-python-only-managed/cpython-3.13-linux-x86_64-gnu/bin/python3.13
 ```
 
-Log lines, jobs 116091071034 and 116091071083 (windows-2025; the same two lines in
-each, the first job at 20:37:46.4074795Z and 20:37:46.4075564Z):
+**Windows jobs: observed facts.** The command of the step that failed, as echoed in
+both logs:
+
+```
+git archive HEAD | tar -x -C "$fresh"
+```
+
+with `fresh="$RUNNER_TEMP/fresh-only-managed"`.
+
+Log lines, job 116091071034 (windows-2025 / Python 3.12):
+
+```
+2026-10-14T20:37:46.4074795Z tar: D\:\a\\_temp/fresh-only-managed: Cannot open: No such file or directory
+2026-10-14T20:37:46.4075564Z tar: Error is not recoverable: exiting now
+2026-10-14T20:37:46.4163507Z ##[error]Process completed with exit code 2.
+```
+
+Log lines, job 116091071083 (windows-2025 / Python 3.13):
 
 ```
 2026-10-14T20:37:48.9279508Z tar: D\:\a\\_temp/fresh-only-managed: Cannot open: No such file or directory
 2026-10-14T20:37:48.9281152Z tar: Error is not recoverable: exiting now
+2026-10-14T20:37:48.9364091Z ##[error]Process completed with exit code 2.
 ```
 
-Cause of the Windows failure: `tar -C` received the Windows form of `$RUNNER_TEMP`,
-and GNU tar reads a path with a drive letter (`D:`) as a remote host. The step failed
-in its own setup, before `uv`, so it says nothing about uv on Windows. The only Windows
-data is the local result of section 3.2, with a different uv version (0.12.1).
+The step stopped at `tar`, before any `uv` command, so it says nothing about uv on
+Windows. The only Windows data is the local result of section 3.2, with a different
+uv version (0.12.1).
+
+**Hypothesis, not verified:** GNU tar may have read the drive letter (`D:`) of the
+Windows form of `$RUNNER_TEMP` as a remote host name. This was not reproduced, so it is
+not established as the cause.
 
 On Ubuntu, `only-managed` gave uv-managed 3.12.15, while the normal CI install of the
 same job used 3.12.3 (PR #37). The origin and the patch version both change with the
