@@ -36,7 +36,8 @@ permissions:
   contents: read
 
 # A newer run on the same pull request branch cancels the one in progress. Runs on
-# main are never cancelled: every merge commit on main is tested.
+# main are never cancelled; a push to main is tested unless every changed file is in
+# the paths-ignore list above.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -71,6 +72,26 @@ jobs:
           uv --version
           uv run python -VV
           uv pip list --format=freeze
+      # WP0 evaluation (docs/validation/v0.3/wp0-acceptance.md, section 3), information
+      # only: which interpreter uv picks with python-preference only-managed, in a fresh
+      # copy of the repository (no .venv) and an empty uv Python install directory.
+      # It changes nothing for the steps below and never fails the job.
+      - name: Evaluate uv only-managed interpreter (information only)
+        continue-on-error: true
+        shell: bash
+        env:
+          UV_PYTHON_PREFERENCE: only-managed
+        run: |
+          fresh="$RUNNER_TEMP/fresh-only-managed"
+          export UV_PYTHON_INSTALL_DIR="$RUNNER_TEMP/uv-python-only-managed"
+          mkdir -p "$fresh" "$UV_PYTHON_INSTALL_DIR"
+          git archive HEAD | tar -x -C "$fresh"
+          cd "$fresh"
+          test ! -e .venv
+          uv --version
+          uv sync --frozen --quiet
+          uv run --frozen python -c "import os, sys; d = os.path.normcase(os.path.abspath(os.environ['UV_PYTHON_INSTALL_DIR'])); b = os.path.normcase(os.path.abspath(sys.base_prefix)); print('python=' + sys.version.replace(chr(10), ' ')); print('base_prefix=' + sys.base_prefix); print('uv_managed=' + str(b.startswith(d)))"
+          uv python list --only-installed
       # calibration/*/audit/, docs/validation/v0.2.1/pre-document-runs/ and
       # docs/validation/v0.2.1/population/ hold records whose bytes are cited by SHA-256:
       # they are never linted or reformatted (see CLAUDE.md).
