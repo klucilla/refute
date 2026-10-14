@@ -1,0 +1,154 @@
+{
+ "seed": 20261014,
+ "simulations": 200000,
+ "maintainer_checks": {
+  "no_count_passes": {
+   "90": {
+    "passing_counts": []
+   },
+   "120": {
+    "passing_counts": []
+   }
+  },
+  "pass_probability_at_nominal_0.9545": {
+   "300": 0.32330794126862006,
+   "530": 0.826253273315523,
+   "650": 0.9109549959526624,
+   "800": 0.9589775816916897,
+   "1000": 0.9902287722109786,
+   "1200": 0.9971413176898807
+  },
+  "pass_probability_at_true_0.90": {
+   "300": 0.0005341961970264194,
+   "530": 0.00024052554123008707,
+   "650": 0.00010654359636429058,
+   "1000": 2.235285750363425e-05
+  },
+  "eight_independent_cells_at_0.91": 0.47025252761515224
+ },
+ "design": {
+  "conditions_per_reserve": 17,
+  "joint_target": 0.8,
+  "target_each": 0.9869596801906171
+ },
+ "coverage_condition": {
+  "n_per_condition": 1000,
+  "nominal": {
+   "joint_simulated": 0.989825,
+   "one_sigma_exact": 0.9994708615605624,
+   "two_sigma_exact": 0.990228765092961,
+   "median_simulated": 1.0,
+   "true_one_sigma_coverage": 0.6826894921370859,
+   "true_two_sigma_coverage": 0.9544997361036416
+  },
+  "false_pass": {
+   "true_two_sigma_0.90 (pull scale 1.2159)": {
+    "joint_simulated": 1e-05,
+    "one_sigma_exact": 0.003797382861084651,
+    "two_sigma_exact": 2.2389219150235704e-05,
+    "median_simulated": 0.99993,
+    "true_one_sigma_coverage": 0.5891712341742421,
+    "true_two_sigma_coverage": 0.9000038127102856
+   },
+   "true_one_sigma_0.55 (pull scale 1.3238)": {
+    "joint_simulated": 0.0,
+    "one_sigma_exact": 1.2632574114831693e-07,
+    "two_sigma_exact": 2.397966724618314e-12,
+    "median_simulated": 0.999885,
+    "true_one_sigma_coverage": 0.5499916573696382,
+    "true_two_sigma_coverage": 0.8691611551325632
+   },
+   "pulls_too_narrow (scale 0.80)": {
+    "joint_simulated": 0.0,
+    "one_sigma_exact": 1.1418415522980251e-05,
+    "two_sigma_exact": 1.4312490709764107e-05,
+    "median_simulated": 1.0,
+    "true_one_sigma_coverage": 0.7887004526662893,
+    "true_two_sigma_coverage": 0.9875806693484477
+   },
+   "bias_0.35": {
+    "joint_simulated": 7e-05,
+    "one_sigma_exact": 0.937474048437788,
+    "two_sigma_exact": 0.7375208869084464,
+    "median_simulated": 7e-05,
+    "true_one_sigma_coverage": 0.6536458977567333,
+    "true_two_sigma_coverage": 0.9411418264315133
+   }
+  }
+ },
+ "tail_conditions": {
+  "T_0.02": {
+   "alpha": 0.02,
+   "design_true_rate": 0.005,
+   "n": 725,
+   "max_failures_allowed": 8,
+   "power": 0.9880584241584659,
+   "false_pass_at_2alpha": 3.1185735559276163e-06,
+   "false_pass_at_1.5alpha": 0.0005920333754010886,
+   "zero_failure_minimum_n": 149
+  },
+  "T_0.01": {
+   "alpha": 0.01,
+   "design_true_rate": 0.0025,
+   "n": 1450,
+   "max_failures_allowed": 8,
+   "power": 0.9879509652876929,
+   "false_pass_at_2alpha": 3.6660560937072583e-06,
+   "false_pass_at_1.5alpha": 0.0006348958034323793,
+   "zero_failure_minimum_n": 299
+  },
+  "zero_failure_reference": {
+   "0.01": 299,
+   "0.02": 149,
+   "0.05": 59
+  }
+ },
+ "lower_condition": {
+  "r": 0.8,
+  "design_true_rate": 0.9,
+  "n": 200,
+  "min_kept_required": 170,
+  "power": 0.9904916880530268,
+  "false_pass_at_0.75": 0.00041501191250703967,
+  "false_pass_at_0.70": 6.516969014054091e-07
+ },
+ "median_ratio_condition": {
+  "n": 50,
+  "assumed_spread": 0.05,
+  "power": 0.999159877363722,
+  "false_pass_at_median_0.94": 0.0005499295343969202,
+  "false_pass_at_median_0.96": 0.15541296589867803
+ },
+ "joint_power_independence_approximation": 0.8381795803434755,
+ "t1_minimum_conclusive_fraction": 0.3625,
+ "parts": {
+  "groups_per_part": {
+   "planets_no_variability_per_noise": 1000,
+   "planets_with_variability_per_noise": 1000,
+   "null_per_noise": 1450
+  },
+  "t1_needs_conclusive_targets": 725,
+  "replicas_of_the_development_structure_per_part": {
+   "planets_no_variability": 3,
+   "planets_with_variability": 10,
+   "null_white": 1,
+   "null_correlated": 3
+  },
+  "cases_per_part": 6900,
+  "paired_second_runs_per_part": 4900,
+  "cost_per_evaluation_h": {
+   "analysis": 0.9583333333333334,
+   "paired_second_run": 0.6805555555555556,
+   "generation_once": 0.1234775641025641,
+   "total_per_configuration_evaluation": 1.6388888888888888
+  },
+  "assumptions": "12 s per light curve per worker, 24 workers, ideal division; generation at the campaign 1 rate (335 s per 5200 cases); the lot overhead of campaign 1 (about 20%) is not included"
+ },
+ "total_cost_h": {
+  "selection_part_all_configurations_worst_case": 9.833333333333332,
+  "reserve_r4_once": 1.762366452991453,
+  "reserve_r5_once": 1.762366452991453,
+  "selection_generation_once": 0.1234775641025641,
+  "configuration_budget": 6
+ }
+}

@@ -1227,3 +1227,20 @@ self-test of these files is `population/selftest-v2-4/` (reference cases kept; o
 `population/selftest-v2/` tested the files of commit `113e07c`, and
 `population/selftest-v2-2/` and `population/selftest-v2-3/` intermediate versions (after the
 first and the second review); all three are left as they were.
+
+## Study status
+
+**Closed on 2026-10-14 by a scope decision of the maintainer**, without a demonstration that
+approval was impossible (record: `population/closure-record.md`).
+
+- M0 to M3: FAILS on the development population, with full integrity
+  (`population/campaigns/dev-campaign-1/`).
+- Confirmation: not run; no drand round was declared.
+- M4 and M5: not implemented, not measured.
+- Proposed corrections: hypotheses and plans, with 6 of the 9 rows of their last revision still
+  open (`population/corrections-plan/`).
+- The calibration population of the corrections plan: never generated nor analyzed.
+
+Nothing in this document changes with the closure: the criteria, their limits, the frozen
+manifest, `points.json` and the results stay as recorded above. The conditions for a future
+resumption are in the closure record.

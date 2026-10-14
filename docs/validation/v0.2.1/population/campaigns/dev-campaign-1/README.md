@@ -28,3 +28,8 @@ result records (2.36 GB, 57 KB per record on average),
 the observations of the three generations and of the 52 regenerations, and the manifest and
 block index of each of the three generations (byte-identical; one copy of each is committed); 41661 files, 2.82 GB in all.
 The paths inside the records are those of the maintainer's machine; the user name is masked.
+
+Added at the closure of the study (2026-10-14; `../../closure-record.md`), read from these
+records without changing them: `diagnosis.md` (M0 and M3), `holdout-investigation.md`,
+`c3-inconclusive-investigation.md` (with a dated errata) and `investigations/`, the read-only
+scripts and small JSON outputs behind the three documents (its `README.md`).
