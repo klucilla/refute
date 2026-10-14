@@ -35,10 +35,11 @@ on:
 permissions:
   contents: read
 
-# A newer run on the same branch or pull request cancels the one in progress.
+# A newer run on the same pull request branch cancels the one in progress. Runs on
+# main are never cancelled: every merge commit on main is tested.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   test:
