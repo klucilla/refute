@@ -1,5 +1,7 @@
 # WP1 acceptance: v0.3 documentation
 
+Line numbers refer to docs/plans/v0.3-plan.md at commit 8456780.
+
 Work package WP1 of [docs/plans/v0.3-plan.md](../../plans/v0.3-plan.md) (section 11,
 line 880: "Docs: paper section of `docs/verdicts.md`, ML section of
 `docs/claim-spec.md`, `docs/sandbox.md`, `docs/right-of-reply.md`, reviewer prompt for
@@ -7,7 +9,7 @@ papers"). Issue #44. Also covers part 1 of #14 (AI use statement in the README) 
 the rule of #34 (sourcing of legal and license statements).
 
 This document is committed **before** the documents it accepts (plan lines 871-875).
-Line numbers refer to `docs/plans/v0.3-plan.md` at commit `8456780`.
+The plan has not changed between its last commit (`bc288b1`) and `8456780`.
 
 ## 1. General criteria (every WP1 document)
 
@@ -136,8 +138,9 @@ existing CI suite, which must stay green on any PR of WP1 that runs CI.
 - **L3.** The rule applies to new statements from its adoption on. Existing
   statements are not rewritten in this package; their review, if wanted, is a
   separate item.
-- **L4.** The repository has no standing release checklist file. Release notes are
-  covered through the rule; a release checklist, if created later, points to it.
+- **L4.** The part of #34 about the release checklist is **not** in WP1. It is
+  tracked in #53, where the next release is prepared. WP1 covers only the rule in the
+  operating rules of `CLAUDE.md`.
 - **L5.** The PR that adds the rule refers to #34 and does not close it before the
   maintainer decides.
 
@@ -171,10 +174,31 @@ existing CI suite, which must stay green on any PR of WP1 that runs CI.
 - **A7.** `README.md` is not in the CI `paths-ignore` list, so the PR that changes it
   runs CI, which must be green.
 
-## 9. Acceptance of the package
+## 9. Verification method
+
+How each group of criteria is checked. The scripts named here are declared, not yet
+written; each is added, with its own review, in the PR whose documents it checks.
+
+| Group | Script | Maintainer review | Independent review |
+|---|---|---|---|
+| G (general) | **Link checker:** every relative link of the WP1 documents resolves at the PR commit (G3). **Plan reference checker:** every cited plan line range exists in `docs/plans/v0.3-plan.md` at the stated commit (G1, by reference). | G1, G2, G4, G5, G6: the text against the plan | — |
+| V (`docs/verdicts.md`) | Link and plan reference checkers. A fixed-string check that the discovery section is byte-identical to main (V8). | Each criterion against plan section 8 | **Yes:** a read-only second agent compares the paper section with plan 8.1-8.4 and reports any rule added, changed or missing |
+| C (`docs/claim-spec.md`) | Link and plan reference checkers. A fixed-string check that the TESS sections are byte-identical to main (C7). | Each criterion against plan sections 5 and 6.2 | **Yes:** the same read-only comparison, for the claim fields, the draw and the comparison predicates |
+| S (`docs/sandbox.md`) | Link and plan reference checkers. A fixed-string check that the document states "not yet validated" (S2). | Each requirement against plan 6.1 and 7; S4 (no host, address, credential or path beyond the plan) | **Yes:** the read-only comparison with plan 6.1. The requirements themselves are validated only by the WP6 acceptance tests, not by this check |
+| R (`docs/right-of-reply.md`) | Link and plan reference checkers | Each criterion against plan section 9 | **Yes:** the read-only comparison with plan section 9, including the order notification, gate, publication |
+| P (reviewer prompt) | Link checker. A fixed-string check that the v0.2 TESS procedure of `docs/reviewer-protocol.md` is byte-identical to main (P1). | Each criterion against plan 10.3 | — |
+| L (rule of #34 in `CLAUDE.md`) | A fixed-string check that the rule is in the section "Operating rules for agents working in this repo" (L1) | L1-L5: the wording of the rule | — |
+| A (AI use statement) | — | A1-A7: every sentence traced to a source in the repository, listed in the PR | **Yes:** a read-only second agent looks for claims the repository does not support (A4, A5) |
+
+The independent reviews are read-only. Their answers are saved outside the repository
+and summarized in the PR, as for the plan of v0.3. They raise objections; the
+maintainer decides.
+
+## 10. Acceptance of the package
 
 WP1 is accepted when:
 - every document of sections 2 to 8 exists on main and meets its criteria;
+- the checks of section 9 were run, and their results are recorded in the PRs;
 - the maintainer has reviewed each criterion against the document;
 - CI is green on every WP1 PR that runs CI.
 
