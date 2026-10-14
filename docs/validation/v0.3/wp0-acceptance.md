@@ -17,8 +17,8 @@ a change after a lock makes that lock `TAMPERED`.
    `uv.lock`).
 2. Fix the exact Python versions (major.minor.patch) used by Refute locally and in
    CI, and how they are pinned.
-3. Evaluate uv's `python-preference = "only-managed"` (section 3) and record a
-   recommendation, adopted only by a decision of the maintainer.
+3. Evaluate uv's `python-preference = "only-managed"` (section 3) and record the
+   maintainer's decision (section 3.4).
 4. Keep the CI runner image pinned and recorded (`ubuntu-24.04`, `windows-2025`;
    PR #37), with the migration to `ubuntu-26.04` as a separate commit with its own
    green run.
@@ -33,7 +33,7 @@ version), against the 7-day cooldown on that date:
 | Package | Needed by | Newest | Eligible on 2026-10-14 | Status |
 |---|---|---|---|---|
 | `pyarrow` | WP5: read the Parquet frame (D-18), `calibration` group | 26.0.0 (2026-10-09) | 25.0.1 (2026-08-10) | Decided (D-18). 26.0.0 becomes eligible from 2026-10-16. The version is the one `uv lock` resolves under `exclude-newer` on the day of the change. |
-| `scikit-learn` | WP3: an independent implementation for `metric_recompute` (plan section 6.3 names it as an example) | 1.9.1 (2026-09-10) | 1.9.1 | **Open, for the maintainer.** The alternative is metric code written in Refute (numpy). That avoids a large dependency, but it is less independent from Refute's own code. |
+| `scikit-learn` | WP3: a candidate independent implementation for `metric_recompute` (plan section 6.3, line 486: "recompute the metric with an independent implementation"; the plan names no library) | 1.9.1 (2026-09-10) | 1.9.1 | **Open, for the maintainer.** Already in `uv.lock` as a transitive dependency of `lightkurve` 2.6.0 (`uv.lock`, the `lightkurve` entry), at 1.9.1. The alternative is metric code written in Refute (numpy). |
 
 No other new runtime dependency is planned. The Docker CLI is called as a
 subprocess (no SDK). arXiv, GitHub and Hugging Face are queried over HTTP with the
@@ -60,9 +60,13 @@ its containers, never in Refute's environment.
 - **Both systems:**
   - Windows locally: the maintainer's machine, with the process and its children on
     CPU threads 8 to 31 (mask `FFFFFF00`);
-  - Ubuntu (`ubuntu-24.04`) and Windows (`windows-2025`) in CI: the step "Evaluate
-    uv only-managed interpreter" of `.github/workflows/ci.yml`, information only.
-- Each check runs once with the default preference and once with `only-managed`.
+  - Ubuntu (`ubuntu-24.04`) and Windows (`windows-2025`) in CI: a temporary
+    information-only step, "Evaluate uv only-managed interpreter", added to
+    `.github/workflows/ci.yml` in commit `1087b3b` and removed after its run
+    (section 3.2).
+- Locally, each check runs once with the default preference and once with
+  `only-managed`; in CI, only with `only-managed` (the default is the CI's normal
+  install, recorded by the "Record environment" step).
 
 ### 3.2 Local result (Windows, 2026-10-14T20:35:20Z)
 
@@ -78,6 +82,57 @@ For comparison, the CI run of 2026-10-14 on PR #37 (uv 0.13.1, default preferenc
 used 3.12.3 and 3.13.16 on `ubuntu-24.04`, and 3.12.10 and 3.13.15 on
 `windows-2025`.
 
+### 3.2.1 CI result of the temporary step (commit `1087b3b`)
+
+Run: https://github.com/klucilla/refute/actions/runs/38633597971 (PR #57, all four
+jobs `success`). The step had `continue-on-error: true`, so a failure of the step does
+not show in the job status: the outcome below comes from each job's log. Lines are
+transcribed from the logs (timestamps in UTC).
+
+| Job id | Job | Step outcome | Interpreter with `only-managed` | Origin |
+|---|---|---|---|---|
+| 116091070882 | ubuntu-24.04 / Python 3.12 | ran, completed | CPython 3.12.15 | uv-managed |
+| 116091070768 | ubuntu-24.04 / Python 3.13 | ran, completed | CPython 3.13.16 | uv-managed |
+| 116091071034 | windows-2025 / Python 3.12 | **ran, failed** before `uv sync` | none (no data) | — |
+| 116091071083 | windows-2025 / Python 3.13 | **ran, failed** before `uv sync` | none (no data) | — |
+
+Log lines, job 116091070882 (ubuntu-24.04 / Python 3.12):
+
+```
+2026-10-14T20:37:25.2906122Z uv 0.13.1 (x86_64-unknown-linux-gnu)
+2026-10-14T20:37:27.0818054Z python=3.12.15 (main, Oct 14 2026, 01:05:27) [Clang 23.1.3 ]
+2026-10-14T20:37:27.0818906Z base_prefix=/home/runner/work/_temp/uv-python-only-managed/cpython-3.12.15-linux-x86_64-gnu
+2026-10-14T20:37:27.0819562Z uv_managed=True
+2026-10-14T20:37:27.1577130Z cpython-3.12.15-linux-x86_64-gnu    /home/runner/work/_temp/uv-python-only-managed/cpython-3.12-linux-x86_64-gnu/bin/python3.12
+```
+
+Log lines, job 116091070768 (ubuntu-24.04 / Python 3.13):
+
+```
+2026-10-14T20:37:26.7726091Z uv 0.13.1 (x86_64-unknown-linux-gnu)
+2026-10-14T20:37:28.6780716Z python=3.13.16 (main, Oct 14 2026, 01:04:01) [Clang 23.1.3 ]
+2026-10-14T20:37:28.6781281Z base_prefix=/home/runner/work/_temp/uv-python-only-managed/cpython-3.13.16-linux-x86_64-gnu
+2026-10-14T20:37:28.6781741Z uv_managed=True
+2026-10-14T20:37:28.7268119Z cpython-3.13.16-linux-x86_64-gnu    /home/runner/work/_temp/uv-python-only-managed/cpython-3.13-linux-x86_64-gnu/bin/python3.13
+```
+
+Log lines, jobs 116091071034 and 116091071083 (windows-2025; the same two lines in
+each, the first job at 20:37:46.4074795Z and 20:37:46.4075564Z):
+
+```
+2026-10-14T20:37:48.9279508Z tar: D\:\a\\_temp/fresh-only-managed: Cannot open: No such file or directory
+2026-10-14T20:37:48.9281152Z tar: Error is not recoverable: exiting now
+```
+
+Cause of the Windows failure: `tar -C` received the Windows form of `$RUNNER_TEMP`,
+and GNU tar reads a path with a drive letter (`D:`) as a remote host. The step failed
+in its own setup, before `uv`, so it says nothing about uv on Windows. The only Windows
+data is the local result of section 3.2, with a different uv version (0.12.1).
+
+On Ubuntu, `only-managed` gave uv-managed 3.12.15, while the normal CI install of the
+same job used 3.12.3 (PR #37). The origin and the patch version both change with the
+preference.
+
 ### 3.3 What the result shows
 
 - **The origin of the interpreter changes with the preference.** On this machine,
@@ -91,38 +146,49 @@ used 3.12.3 and 3.13.16 on `ubuntu-24.04`, and 3.12.10 and 3.13.15 on
 **Choosing the origin of the interpreter does not replace fixing its exact version.**
 `only-managed` alone would still let the patch version move with uv's managed builds.
 
-### 3.4 Recommendation (not adopted here)
+### 3.4 Decision (approved by the maintainer on 2026-10-14)
 
-Option recommended for the maintainer's decision, in this order:
+To be implemented in a dependency PR of its own, not in this document's PR, in this
+order:
 1. pin the uv version, the same locally and in CI (the `version` input of
-   `setup-uv`, and the local install), under the 7-day rule;
-2. pin the exact Python versions (`.python-version` with major.minor.patch, and the
-   CI matrix with the same patch versions), choosing patches that exist as
-   uv-managed builds for both systems;
-3. then adopt `python-preference = "only-managed"` in `[tool.uv]`, so that every
-   system uses the same build source.
+   `setup-uv`, and the local install);
+2. pin the exact Python versions, major.minor.patch, in `.python-version` and in the
+   CI matrix, choosing patches that exist as uv-managed builds for both systems;
+3. then adopt `python-preference = "only-managed"` in `[tool.uv]`;
+4. validate on Windows (locally, with CPU affinity on threads 8 to 31, and in CI) and
+   on Ubuntu (CI): in a fresh environment, the recorded interpreter has the pinned
+   exact version and is uv-managed.
 
-**Concessions:**
-- managed interpreters are downloaded from uv's Python builds, a source outside
-  PyPI; the 7-day rule has to be applied to them by hand;
+**The 7-day cooldown counts from the upload time of the artifacts that are actually
+installed, not from the date of the version:** the wheel or sdist files on PyPI, the
+uv Python builds, and the uv binary.
+
+**Concessions accepted:**
+- managed interpreters come from uv's Python builds, a source outside PyPI;
 - the first run on a new machine needs the network;
 - the system Python on the maintainer's machine is no longer used by Refute.
 
-Without step 2, step 3 still leaves the patch version moving.
-
-The decision is not obvious, so nothing is adopted in this commit.
+**Choosing the origin does not replace fixing the exact version.** Step 2 is
+required; step 3 alone still lets the patch version move.
 
 ## 4. Acceptance criteria
 
 1. This document is on main before any change to `pyproject.toml`, `uv.lock`,
    `.python-version` or the Python versions of the CI matrix.
-2. The CI evaluation step prints, for each of the four jobs, the interpreter chosen
-   with `only-managed` in a fresh clone: exact version, and whether it is uv-managed.
-   Its output is recorded with the decision of section 3.4.
-3. Every later dependency change of WP0 satisfies the acceptance of section 2.
-4. The decisions of sections 2 (`scikit-learn`) and 3.4 are recorded with the
-   maintainer's answer before the first v0.3 lock.
-5. The CI comment on `concurrency` describes the behavior with `paths-ignore` (issue
+2. The evaluation of section 3 is recorded with its sources: the local result, and
+   the CI run with its job ids and transcribed log lines (section 3.2.1), including
+   the Windows jobs whose step failed. The temporary CI step is removed after its run,
+   so `.github/workflows/ci.yml` carries no evaluation step.
+3. Every later dependency change of WP0 satisfies the acceptance of section 2, and the
+   7-day cooldown counts from the upload time of every installed artifact (section
+   3.4).
+4. The interpreter change of section 3.4 is made in its own dependency PR and is
+   accepted only when, in a fresh environment, the recorded interpreter has the
+   pinned exact version and is uv-managed on Windows (local and CI) and on Ubuntu
+   (CI).
+5. The decision on `scikit-learn` (section 2) is recorded with the maintainer's answer
+   before the first v0.3 lock.
+6. The CI comment on `concurrency` describes the behavior with `paths-ignore` (issue
    #41).
 
 No synthetic test cases apply to this package: it adds no code. Its regression check
