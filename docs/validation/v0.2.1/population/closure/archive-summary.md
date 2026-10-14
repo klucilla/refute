@@ -96,6 +96,21 @@ files_total: 48717
 bytes_total: 28247619426
 ```
 
+On Windows, with the CPU affinity of this project (logical processors 8 to 31), from the root
+of the repository, in PowerShell:
+
+```
+cmd /v:on /c "start `"`" /affinity FFFFFF00 /wait /b .venv\Scripts\python.exe docs\validation\v0.2.1\population\closure\verify_archive.py `"COPY`" --manifest `"COPY\closure\archive-manifest-snap-v0.2.1-population-20261014T115407Z.tsv`" --sets A,B,C --report REPORT.json & exit !errorlevel!"; "exit: $LASTEXITCODE"
+```
+
+- Use this form, not `cmd /c start ... /wait` without `exit !errorlevel!`: that earlier form
+  loses the exit status of the script (a refusal with exit 2 is reported as exit 0). With
+  `/v:on`, the path of `COPY` must not contain `!`.
+- An unreadable destination (for example a disk whose file system is not recognized) ends with
+  a Python traceback and exit 1: an input/output error is not handled by the verifiers. The
+  copy is still not accepted, but exit 1 then does not necessarily mean a wrong hash or a
+  missing file; read the output.
+
 ### Checks of the script (2026-10-14, the working folder in place as the archive)
 
 Recorded in `.cache/population-complements/verify-controls.log` (a complement of the snapshot).
@@ -111,6 +126,39 @@ Recorded in `.cache/population-complements/verify-controls.log` (a complement of
 | a manifest without set-A rows, override, set A | 2 | 2 | refused: empty selection |
 | manifest missing | 2 | 2 | refused: manifest not found |
 | one set-A row removed, override, set A | 1 | 1 | not verified, 42830 of 42831 (count differs) |
+
+## Complements of the snapshot
+
+The reports and administrative outputs written after the snapshot (the verification controls,
+the dry run of the deletion, the inventory of the rest of the working tree, the summary of the
+snapshot manifest, the negative-control manifests and a preserved copy of the untracked
+`journal.lock` of campaign 1) are not part of the snapshot. They are archived next to it, in
+their own folder, with their own manifest.
+
+| Item | Value |
+|---|---|
+| Nature | complements written after snapshot `snap-v0.2.1-population-20261014T115407Z` |
+| Location in the archive | `population-complements/` (the former `.cache/population-complements/`) |
+| Manifest | `complements-manifest-snap-v0.2.1-population-20261014T115407Z.tsv`, at the root of `population-complements/` |
+| Manifest SHA-256 | `cc63137710f8f4feed6a46ebaa4c6f255801eb50e64bef816ef4c4a24827114c` |
+| Files listed | 15 (the manifest itself is the declared exclusion) |
+| Columns | `sha256`, `size_bytes`, `path` (relative to `population-complements/`), `kind` (`complement`) |
+
+The complements are verified by `verify_complements_copy.py`, SHA-256
+`9ee102f84a04eae12949652f9141553477326b385985471dfb75bbe713f18a1c`, kept in the archive under
+`archive-tools/` (the former `.cache/archive-tools/`). **It is not in the repository.** It is
+read-only, requires `--manifest`, checks the manifest SHA-256 above and the 15 files (size and
+SHA-256), reports extra files without failing, never writes under the copy and prints
+"COMPLEMENTS VERIFIED" with exit status 0 only if all 15 files are verified. With the CPU
+affinity of this project, from the root of the repository, in PowerShell:
+
+```
+cmd /v:on /c "start `"`" /affinity FFFFFF00 /wait /b .venv\Scripts\python.exe ARCHIVE_TOOLS\verify_complements_copy.py `"COMPLEMENTS_COPY`" --manifest `"COMPLEMENTS_COPY\complements-manifest-snap-v0.2.1-population-20261014T115407Z.tsv`" --report REPORT.json & exit !errorlevel!"; "exit: $LASTEXITCODE"
+```
+
+`ARCHIVE_TOOLS` is the folder that holds the script (`.cache\archive-tools` in the working tree,
+or `archive-tools` in the archive) and `COMPLEMENTS_COPY` the copy of `population-complements/`.
+The notes on the exit status and on an unreadable destination above apply here too.
 
 ## Deletion of the working copies
 
