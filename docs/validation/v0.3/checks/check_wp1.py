@@ -54,8 +54,11 @@ WP1_FILES = [
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 LINES = re.compile(r"\blines? (\d+)(?:-(\d+))?\b", re.IGNORECASE)
 NUMBER = r"\d+(?:\.\d+)?"
+# "plan, section 8.2", "plan section 7.3", and a Markdown link to the plan followed by
+# ", sections 5 and 6.2"; the words may be split across lines.
 SECTION = re.compile(
-    rf"\bplan,? sections? ({NUMBER}(?:(?:,\s+and\s+|,\s+|\s+and\s+){NUMBER})*)",
+    rf"(?:\bplan,?|v0\.3-plan\.md\),?)\s+sections?\s+"
+    rf"({NUMBER}(?:(?:,\s+and\s+|,\s+|\s+and\s+){NUMBER})*)",
     re.IGNORECASE,
 )
 PAPER_SECTION = b"## Paper verdicts (from v0.3)"
