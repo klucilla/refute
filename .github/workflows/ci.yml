@@ -15,7 +15,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        # Runner OS labels are pinned (not `-latest`) so an image migration happens in
+        # its own commit with its own green run. Pinning the OS label does not freeze
+        # the image: its version is recorded by the "Record environment" step.
+        os: [ubuntu-24.04, windows-2025]
         python: ["3.12", "3.13"]
     steps:
       # Actions are pinned to a commit; the tag is in the comment. setup-uv
@@ -26,6 +29,15 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install (frozen lockfile)
         run: uv sync --frozen
+      # The effective environment of this run: runner image, uv, Python and the
+      # installed dependencies (from the frozen uv.lock).
+      - name: Record environment
+        shell: bash
+        run: |
+          echo "ImageOS=$ImageOS ImageVersion=$ImageVersion"
+          uv --version
+          uv run python -VV
+          uv pip list --format=freeze
       # calibration/*/audit/, docs/validation/v0.2.1/pre-document-runs/ and
       # docs/validation/v0.2.1/population/ hold records whose bytes are cited by SHA-256:
       # they are never linted or reformatted (see CLAUDE.md).
