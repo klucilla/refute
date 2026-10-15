@@ -200,53 +200,56 @@ def _encode(values: np.ndarray, labels: Sequence[Any]) -> np.ndarray:
     return out
 
 
-# Integers up to 2**53 are exact in a 64-bit float; a decimal text with at most 15
-# significant digits converts to a float that gives the same text back (DBL_DIG), so two
-# distinct such texts never become the same float.
-_EXACT_INTEGER = 2**53
-_SAFE_DIGITS = 15
-
-
-def _exact_float(value: Any, what: str) -> float:
-    """``value`` as a 64-bit float, refusing any conversion that can lose information
-    (Codex review of PR #81): two distinct inputs must never become the same float, or
-    both implementations would agree on a wrong value."""
+def _exact(value: Any, what: str) -> int | float | Decimal:
+    """The exact number a file holds: a Python int, a float (a value already stored as
+    a float is exact as such), or the Decimal of a text."""
     if isinstance(value, np.generic):
         value = value.item()
     if isinstance(value, bool):
         raise RecomputeError(f"{what} holds a boolean, not a number")
-    if isinstance(value, int):
-        if abs(value) > _EXACT_INTEGER:
-            raise RecomputeError(f"{what} holds an integer beyond 2**53, inexact as a float")
-        return float(value)
-    if isinstance(value, float):
-        return value  # already a 64-bit float: nothing more is lost
+    if isinstance(value, int | float):
+        return value
     if isinstance(value, str):
         text = value.strip()
         if not _NUMBER.match(text):
             raise RecomputeError(f"{what} holds a value that is not a number")
         value = Decimal(text)
-    if not isinstance(value, Decimal) or not value.is_finite():
-        raise RecomputeError(f"{what} holds a value that is not a finite number")
-    result = float(value)
-    digits = len(value.normalize().as_tuple().digits)
-    if digits > _SAFE_DIGITS and Decimal(format(result, f".{min(digits, 17)}g")) != value:
-        # more digits than a float keeps, and not the exact print of a float
-        raise RecomputeError(f"{what} holds {value}, which a 64-bit float cannot keep exactly")
-    return result
+    if not isinstance(value, Decimal):
+        raise RecomputeError(f"{what} holds a value that is not a number")
+    return value
 
 
-def _floats(values: np.ndarray, what: str) -> np.ndarray:
-    if values.dtype.kind == "f":
-        out = values.astype(np.float64)
-    elif values.dtype.kind in "iu":
-        if values.size and np.max(np.abs(values.astype(object))) > _EXACT_INTEGER:
-            raise RecomputeError(f"{what} holds an integer beyond 2**53, inexact as a float")
-        out = values.astype(np.float64)
-    else:
-        out = np.array([_exact_float(v, what) for v in values], dtype=np.float64)
-    if not np.all(np.isfinite(out)):
-        raise RecomputeError(f"{what} holds a non-finite value")
+def _floats(arrays: Sequence[tuple[np.ndarray, str]]) -> list[np.ndarray]:
+    """The arrays as 64-bit floats, refusing any conversion that changes what the metric
+    sees (Codex review of PR #81). Over the values of all the arrays compared with each
+    other: a non-zero value must not become zero, and the conversion must keep their
+    strict order, so two distinct values never become one float and no tie is created
+    (2**53 against 2**53 + 1, 1e-400 against 2e-400, 0.1 against 0.10000000000000001).
+    A merely rounded value is accepted: that error is far below the decision's epsilon."""
+    pairs: list[tuple[int | float | Decimal, float]] = []
+    out = []
+    for values, what in arrays:
+        floats = np.empty(len(values), dtype=np.float64)
+        for i, v in enumerate(values):
+            exact = _exact(v, what)
+            try:
+                f = float(exact)
+            except OverflowError:
+                raise RecomputeError(f"{what} holds a value beyond the float range") from None
+            if not math.isfinite(f) or (isinstance(exact, Decimal) and not exact.is_finite()):
+                raise RecomputeError(f"{what} holds a non-finite value")
+            if f == 0 and exact != 0:
+                raise RecomputeError(f"{what} holds {exact}, which underflows to zero")
+            floats[i] = f
+            pairs.append((exact, f))
+        out.append(floats)
+    pairs.sort(key=lambda p: p[0])
+    for (e1, f1), (e2, f2) in zip(pairs, pairs[1:], strict=False):
+        if e1 != e2 and not f1 < f2:
+            raise RecomputeError(
+                f"the distinct values {e1} and {e2} become the same float: the conversion "
+                "would change the metric"
+            )
     return out
 
 
@@ -262,14 +265,16 @@ class Prepared:
 
 def prepare(conv: Convention, data: dict[str, np.ndarray]) -> Prepared:
     if conv.metric in REGRESSION:
-        return Prepared(_floats(data["y_true"], "y_true"), _floats(data["y_pred"], "y_pred"))
+        y_true, y_pred = _floats([(data["y_true"], "y_true"), (data["y_pred"], "y_pred")])
+        return Prepared(y_true, y_pred)
     labels = list(conv.labels or ())
     y_true = _encode(data["y_true"], labels)
     pos = -1
     if conv.pos_label is not None:
         pos = [_key(v) for v in labels].index(_key(conv.pos_label))
     if conv.metric == "auroc":
-        return Prepared(y_true, _floats(data["y_score"], "y_score"), len(labels), pos)
+        (y_score,) = _floats([(data["y_score"], "y_score")])
+        return Prepared(y_true, y_score, len(labels), pos)
     return Prepared(y_true, _encode(data["y_pred"], labels), len(labels), pos)
 
 

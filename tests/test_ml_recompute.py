@@ -372,25 +372,29 @@ def test_integers_beyond_2_53_are_refused_not_collapsed():
         rc.prepare(c, big)
     outcome_ = run(c, "1.0", big, 1, channel="native", unit="native")
     assert outcome_.status is TestStatus.INCONCLUSIVE
-    arr = np.array([2**53 + 1], dtype=np.int64)
+    numpy_ints = {
+        "y_true": np.array([2**53], dtype=np.int64),
+        "y_pred": np.array([2**53 + 1], dtype=np.int64),
+    }
     with pytest.raises(RecomputeError):
-        rc.prepare(c, {"y_true": arr, "y_pred": arr})
-    assert both(c, data([2**53], [2**53 - 1])) == (1.0, 1.0)  # 2**53 itself is exact
+        rc.prepare(c, numpy_ints)
+    assert both(c, data([2**53], [2**53 - 1])) == (1.0, 1.0)  # distinct floats: exact
 
 
 @pytest.mark.parametrize(
-    ("text", "ok"),
+    ("y_true", "y_pred", "ok"),
     [
-        ("0.1", True),
-        ("0.10000000000000001", True),  # the 17-digit print of the float 0.1
-        ("123456789012345", True),  # 15 significant digits
-        ("9007199254740993", False),  # 2**53 + 1 as text
-        ("0.1000000000000000000001", False),  # more digits than a float keeps
+        ("0.1", "0.2", True),
+        ("0.1000000000000000000001", "0", True),  # rounded, but nothing collides
+        ("9007199254740992", "9007199254740993", False),  # 2**53 and 2**53 + 1
+        ("1e-400", "0", False),  # underflows to zero
+        ("0.1", "0.10000000000000001", False),  # two texts, one float
+        (1.5, "1.5", True),  # equal values are not a collision
     ],
 )
-def test_decimal_texts_are_read_only_when_no_digit_is_lost(text, ok):
+def test_conversion_must_keep_distinct_values_distinct(y_true, y_pred, ok):
     c = conv("mae", "native")
-    d = data([text], ["0"])
+    d = data([y_true], [y_pred])
     if ok:
         rc.prepare(c, d)
     else:
@@ -398,15 +402,24 @@ def test_decimal_texts_are_read_only_when_no_digit_is_lost(text, ok):
             rc.prepare(c, d)
 
 
-def test_auroc_scores_that_would_collide_are_refused():
+@pytest.mark.parametrize(
+    "scores",
+    [
+        ["0.1000000000000000000001", "0.1000000000000000000002"],
+        ["1e-400", "2e-400"],  # both underflow: a tie would give AUROC 0.5 instead of 1
+        ["0.1", "0.10000000000000001"],
+    ],
+)
+def test_auroc_scores_that_would_tie_are_refused(scores):
     c = conv("auroc", labels=L01, pos_label=1)
-    d = data([0, 1], ["0.1000000000000000000001", "0.1000000000000000000002"], "y_score")
+    d = data([0, 1], scores, "y_score")
     with pytest.raises(RecomputeError):
         rc.prepare(c, d)
+    assert run(c, "1.0", d, 2).status is TestStatus.INCONCLUSIVE
 
 
 def test_jsonl_numbers_keep_their_text(tmp_path):
-    (tmp_path / "p.jsonl").write_text('{"t": 1.0, "p": 9007199254740993.0}\n')
+    (tmp_path / "p.jsonl").write_text('{"t": 9007199254740992.0, "p": 9007199254740993.0}\n')
     d = rc.read_predictions(tmp_path / "p.jsonl", "jsonl", {"y_true": "t", "y_pred": "p"})
     with pytest.raises(RecomputeError):
         rc.prepare(conv("mae", "native"), d)
