@@ -103,22 +103,28 @@ WP2 lands before any v0.3 lock.
   - The reading of `cpu.stat` itself is implemented in WP3 (runner).
 - **W2.10a** **Control during execution, not only at the end.** The final record is
   still read once, at the end.
-  - **Allowances are reservations.** Before a container starts, the accountant grants
-    it an allowance and deducts it at once from the available balance of its account.
-    The balance is the authorized amount under the sharing rule, minus what is
-    already charged and minus the allowances of containers still running. Concurrent
-    containers inside a claim can therefore never be granted the same balance twice.
-    When a container ends, its real usage is charged and the unused part of its
-    allowance is released.
-  - **The stopping margin lies inside the authorized balance.** The allowance granted
-    is the available amount minus a stopping margin M. The runner (WP3) reads the
-    container's usage during the run and stops it when its usage reaches the
-    allowance. M absorbs the consumption between the last reading and the moment the
-    container stops, so the account never goes past its authorized balance, and the
-    reserves of the claims not yet run are never touched. If a container ever
-    overshoots by more than M, the accountant records the breach. The paper's
-    accounting is then invalid (Refute error, `INCONCLUSIVE`); it is never absorbed
-    silently.
+  - **Three quantities per container.**
+    - **F**, the stopping threshold: the runner (WP3) stops the container when its
+      usage reaches F.
+    - **M**, the stopping margin: the consumption allowed between the last reading
+      and the moment the container stops.
+    - **R = F + M**, the container's reservation.
+  - **Reservations are deducted when granted.** Before a container starts, R is
+    deducted atomically from the authorized balance of its account. The grant is
+    refused if R exceeds what is available.
+    - **Invariant, at every moment:** charged usage + Σ R of the containers still
+      running ≤ authorized balance of the account.
+    - The authorized balance is the one given by the sharing rule. The reserves of
+      the claims not yet run stay outside it, so they are never touched.
+  - **Choice of F.** A single container gets F = available − M. When the claim runs k
+    containers in parallel (for example the seeds of an attack), each gets
+    F = available / k − M. The runner refuses to start if that F is not positive. The
+    rule is fixed before the lock.
+  - **When a container ends,** its R is replaced by its real usage and the difference
+    is released.
+  - **Breach.** If a container's real usage exceeds its R, the accountant records a
+    breach. The paper's accounting is then invalid (Refute error, `INCONCLUSIVE`); a
+    breach is never absorbed silently.
   - **M is derived, not assumed.** The WP3 acceptance revision derives M from the CPU
     quota period of the cgroup (`cpu.max`: quota and period;
     https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files, accessed
@@ -132,11 +138,16 @@ WP2 lands before any v0.3 lock.
     - a reading delayed by the maximum sampling delay;
     - a slow stop.
 
-    In each case, the sum of charged usage and outstanding allowances never exceeds
-    the authorized balance, and the reserves of the claims not yet run stay intact.
-    A case at the limit of a claim that still has claims after it is included. A
-    simulated overshoot above M is recorded as a breach and invalidates the
-    accounting.
+    These cases must hold:
+    - two concurrent containers with positive thresholds, both using their whole
+      margin at the same time;
+    - in every case, charged usage + Σ R of running containers ≤ authorized balance,
+      at every simulated step, and the reserves of the claims not yet run stay
+      intact;
+    - a case at the limit of a claim that still has claims after it;
+    - a simulated usage above R is recorded as a breach and invalidates the
+      accounting;
+    - a grant whose R exceeds the available amount is refused.
 
 ### 1.5 Seal and annexes (plan 9.1, lines 722-729)
 
