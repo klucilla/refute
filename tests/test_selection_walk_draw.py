@@ -276,6 +276,54 @@ def test_git_dates_are_ignored_only_the_push_run_counts():
         )
 
 
+def test_forbidden_replacement_reasons_are_refused_even_if_listed():
+    inv = inventory([candidate(i) for i in range(1, 6)])
+    draw = draw_claims(inv, SEED)
+    for reason in (
+        "unfavorable_result",
+        "observed_cost",
+        "INCONCLUSIVE verdict",
+        "budget_exceeded",
+    ):
+        with pytest.raises(InventoryError, match="never a replacement reason"):
+            replace_claim(draw, inv, draw.drawn[0], reason, (reason,))
+    with pytest.raises(InventoryError, match="never a replacement reason"):
+        replace_claim(draw, inv, draw.drawn[0], "typo", ("typo", "bad_result"))
+
+
+def test_exhausted_replacements_stop_the_draw_and_keep_the_record():
+    inv = inventory([candidate(1), candidate(2, "comparison")])
+    draw = draw_claims(inv, SEED)
+    comparison = inv["candidates"][1]["candidate_id"]
+    with pytest.raises(inv_mod.ReplacementExhaustedError) as caught:
+        replace_claim(draw, inv, comparison, "typo", ("typo",))
+    assert caught.value.record["invalidated"] == comparison
+    assert "eligible comparison" in str(caught.value)
+    value = inv["candidates"][0]["candidate_id"]
+    with pytest.raises(inv_mod.ReplacementExhaustedError):
+        replace_claim(draw, inv, value, "typo", ("typo",))
+
+
+def test_publication_needs_the_published_hashes():
+    good = [run("2026-10-30T10:00:00Z")]
+    with pytest.raises(PublicationError, match="no published inventory hashes"):
+        check_publication(SHA, good, ROUND, timedelta(hours=1), True, FILES, {})
+    bad = {"inventories/2401.01234.json": "not-a-hash"}
+    with pytest.raises(PublicationError, match="not a SHA-256"):
+        check_publication(SHA, good, ROUND, timedelta(hours=1), True, bad, bad)
+
+
+def test_the_round_time_is_recorded_in_utc():
+    from datetime import timezone
+
+    brt = timezone(timedelta(hours=-3))
+    local = datetime(2026, 11, 1, 9, 0, 0, tzinfo=brt)  # 12:00 UTC
+    proof = check_publication(
+        SHA, [run("2026-10-30T10:00:00Z")], local, timedelta(minutes=90), True, FILES, FILES
+    )
+    assert proof.round_published_at == "2026-11-01T12:00:00Z" and proof.margin_seconds == 5400.0
+
+
 def test_fetch_push_runs_reads_the_api_offline():
     seen = []
 

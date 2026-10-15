@@ -38,8 +38,8 @@ class PublicationProof:
     commit_sha: str
     run_id: int
     run_created_at: str
-    round_published_at: str
-    margin_seconds: int
+    round_published_at: str  # converted to UTC
+    margin_seconds: float
 
 
 def check_publication(
@@ -53,7 +53,8 @@ def check_publication(
 ) -> PublicationProof:
     """``runs``: the GitHub API ``workflow_runs`` for ``head_sha = commit_sha``.
     ``files_in_commit``: SHA-256 of each inventory file as stored in that commit;
-    ``published_hashes``: the hashes published with the inventories."""
+    ``published_hashes``: the hashes published with the inventories, one per required
+    inventory (never empty: every inventory the draw needs must be covered)."""
     if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
         raise PublicationError("the commit SHA must be 40 lowercase hex digits")
     if round_published_at.tzinfo is None:
@@ -62,7 +63,11 @@ def check_publication(
         raise PublicationError("the margin cannot be negative")
     if not tree_clean:
         raise PublicationError("the working tree is not clean")
+    if not published_hashes:
+        raise PublicationError("no published inventory hashes: nothing is shown to be published")
     for name, digest in published_hashes.items():
+        if not re.fullmatch(r"[0-9a-f]{64}", str(digest)):
+            raise PublicationError(f"inventory {name}: the published hash is not a SHA-256")
         if name not in files_in_commit:
             raise PublicationError(f"inventory {name} is not in the commit of the evidence")
         if files_in_commit[name] != digest:
@@ -83,8 +88,8 @@ def check_publication(
         commit_sha,
         int(first["id"]),
         first["created_at"],
-        round_published_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        int(margin.total_seconds()),
+        round_published_at.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        margin.total_seconds(),
     )
 
 

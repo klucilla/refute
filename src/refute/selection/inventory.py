@@ -136,6 +136,33 @@ def draw_claims(inv: dict[str, Any], claim_seed_bytes: bytes) -> ClaimDraw:
     return ClaimDraw(arxiv_id, digest, order, drawn, required, substituted)
 
 
+class ReplacementExhaustedError(InventoryError):
+    """No candidate can replace an invalidated claim; the maintainer decides."""
+
+    def __init__(self, message: str, record: dict[str, str]):
+        super().__init__(message)
+        self.record = record
+
+
+# Words that name a result, a cost or a verdict: never a reason to replace a claim.
+_FORBIDDEN_WORDS = (
+    "result",
+    "cost",
+    "budget",
+    "verdict",
+    "inconclusive",
+    "fragile",
+    "reproduc",
+    "outcome",
+    "runtime",
+)
+
+
+def _forbidden_reason(reason: str) -> bool:
+    text = str(reason).lower()
+    return any(word in text for word in _FORBIDDEN_WORDS)
+
+
 def _is_comparison(candidate: dict[str, Any]) -> bool:
     return candidate["type"] == "comparison" and bool(candidate.get("eligible_comparison"))
 
@@ -153,8 +180,16 @@ def replace_claim(
     when the invalidated claim is the only comparison and a comparison is required, it
     is the next eligible comparison. The original record is kept in ``replacements``.
     A candidate is never replaced because of a result, a cost or an INCONCLUSIVE
-    verdict: those reasons are not in any closed list this function accepts.
+    verdict (plan section 5.2, item 5): a reason or a closed list that names one of
+    those is refused, whatever the protocol says. When no candidate can replace it,
+    ``ReplacementExhaustedError`` stops the draw for the maintainer: the claim set is
+    never reduced, and a required comparison is never dropped, silently.
     """
+    forbidden = [r for r in [reason, *allowed_reasons] if _forbidden_reason(r)]
+    if forbidden:
+        raise InventoryError(
+            f"a result, cost or verdict is never a replacement reason: {forbidden}"
+        )
     if reason not in allowed_reasons:
         raise InventoryError(f"reason not in the protocol's closed list: {reason!r}")
     if invalid_id not in draw.drawn:
@@ -172,13 +207,13 @@ def replace_claim(
     candidates = [i for i in draw.shuffled if i not in used]
     if keep_comparison:
         candidates = [i for i in candidates if _is_comparison(by_id[i])]
-    new_drawn = list(draw.drawn)
     record = {"invalidated": invalid_id, "reason": reason, "replacement": ""}
-    if candidates:
-        new_drawn[new_drawn.index(invalid_id)] = candidates[0]
-        record["replacement"] = candidates[0]
-    else:
-        new_drawn.remove(invalid_id)
+    if not candidates:
+        what = "eligible comparison" if keep_comparison else "candidate"
+        raise ReplacementExhaustedError(f"no {what} left to replace {invalid_id}", record)
+    new_drawn = list(draw.drawn)
+    new_drawn[new_drawn.index(invalid_id)] = candidates[0]
+    record["replacement"] = candidates[0]
     return ClaimDraw(
         draw.arxiv_id,
         draw.inventory_sha256,
