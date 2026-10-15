@@ -96,6 +96,10 @@ jobs:
           echo "REFUTE_WORKERS=$(uv run python -c 'import os; print(os.cpu_count() or 1)')" >> "$GITHUB_ENV"
       # Tests run with --disable-socket (pytest-socket, see pyproject.toml):
       # any attempt to use the network fails the test suite.
+      # The shard arguments are computed first, so that a failure of ci_shard.py fails
+      # the step (GitHub's bash runs with -e) instead of leaving pytest without them.
       - name: Tests (no network)
         shell: bash
-        run: uv run pytest --durations=25 $(uv run python scripts/ci_shard.py ${{ matrix.shard }})
+        run: |
+          args="$(uv run python scripts/ci_shard.py ${{ matrix.shard }})"
+          uv run pytest --durations=25 $args
