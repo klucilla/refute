@@ -6,6 +6,14 @@ These scripts build the Hyper-V VM in which third-party paper code will run
 does not validate its isolation**: no paper code runs until every WP6 acceptance test
 passes. In phase 1 the VM has no network.
 
+**Not validated in operation yet.** The JEA endpoint and the scripts are tested only
+with synthetic inputs, without Windows administrator rights and without Hyper-V
+(tests/test_vm_scripts.py). Nothing here has been run on the machine: the
+registration, the endpoint's restrictions (NoLanguage, the virtual account's groups,
+the loopback-only WinRM, the transcripts) and every Hyper-V operation remain
+unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded
+(wp6-acceptance.md, W6.4 to W6.6).
+
 ## Who can do what
 
 - The maintainer's account is **not** a member of Hyper-V Administrators.
