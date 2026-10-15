@@ -1152,13 +1152,84 @@ def test_each_altered_derived_value_is_refused(tmp_path, name):
         verify_derived(claim)
 
 
-def test_a_missing_derived_value_is_refused(tmp_path):
+MISSING = {
+    "seeds.attack": ["c1", "seeds", "attack"],
+    "holdout.factor": ["c1", "attack:holdout", "params", "factor"],
+    "ladder": ["test_plan", "build", "ladder"],
+    "budget": ["test_plan", "budget", "paper_cpu_hours"],
+    # expected None: a missing key is still refused (Codex review)
+    "sd record quantile": ["c1", "metric", "reported_uncertainty", "quantile"],
+    "none record sd": ["c2", "comparison", "uncertainty_method", "sd"],
+    "none record quantile": ["c2", "comparison", "paired_uncertainty", "quantile"],
+}
+
+
+@pytest.mark.parametrize("name", sorted(MISSING))
+def test_a_missing_derived_value_is_refused(tmp_path, name):
     from refute.packs.ml.schema import verify_derived
 
     claim = copy.deepcopy(load(tmp_path).canonical())
-    del target(claim, "c1")["seeds"]["attack"]
+    path = MISSING[name]
+    node = claim
+    for key in path[:-1]:
+        node = _step(node, key)
+    del node[path[-1]]
     with pytest.raises(ValueError, match="derived value differs"):
         verify_derived(claim)
+
+
+def test_a_truncated_derived_base_is_refused(tmp_path):
+    """Codex review: n_base comes from reported_n_seeds and base_cap, never from the
+    written list, so a prefix of the derived base does not pass."""
+    from refute.packs.ml.schema import verify_derived
+
+    run_seed = seeds.run_seed(CLAIM_SEED, ARXIV)
+
+    def derived(claim):
+        for t in claim["targets"]:
+            t["seeds"] = {
+                "base": seeds.derived_seeds(run_seed, "base", 3),
+                "base_cap": 3,
+                "base_source": "derived",
+            }
+
+    claim = copy.deepcopy(load(tmp_path, derived).canonical())
+    t = target(claim, "c1")
+    t["seeds"]["base"] = t["seeds"]["base"][:2]
+    with pytest.raises(ValueError, match="derived value differs"):
+        verify_derived(claim)
+
+
+def test_recorded_derived_values_are_exact(tmp_path):
+    """The written derived values of the CI fixture, recorded on 2026-10-15; every CI job
+    (Python 3.12 and 3.13, Ubuntu and Windows) must give exactly these."""
+    value = target(load(tmp_path, _ci_value_claim).canonical(), "c1")
+    record = value["metric"]["reported_uncertainty"]
+    assert (record["status"], record["quantile"], record["sd"]) == (
+        "converted",
+        4.30265272975,  # t(0.975, 2) = 4.303 in the NIST table
+        0.120766251638,
+    )
+    assert attack(value, "holdout")["params"] == {
+        "split_argument": "--holdout-seed={seed}",
+        "fraction": 0.1,
+        "m": 5000,
+        "factor": 1.4142135623730951,
+    }
+
+
+def test_numbers_the_yaml_reads_are_compared_without_a_float(tmp_path):
+    """Codex review: the second reading accepts every number form the claim accepts."""
+    path = build_claim(tmp_path)
+    text = path.read_text(encoding="utf-8")
+    # YAML 1.1 reads 9.12e1 as a string; the schema's float field accepts it
+    path.write_text(text.replace("reported: 91.2\n", "reported: 9.12e1\n"))
+    load_claim(path, pack=PACK)
+    # a base-60 float elsewhere in the file (1:30.0 = 90.0) does not break the reading
+    marker = "active_time_limit_hours: 10\n"
+    assert marker in text
+    path.write_text(text.replace(marker, "active_time_limit_hours: 1:30.0\n", 1))
+    load_claim(path, pack=PACK)
 
 
 def test_resolution_does_not_depend_on_key_order(tmp_path):

@@ -972,9 +972,10 @@ class MlClaimSchema:
                 written = [_decimal(p, f"{t.key}: transcription.value") for p in parts]
                 comparison = raw["comparison"]
                 claimed = [comparison["reported_method"], comparison["reported_reference"]]
-            if any(not isinstance(c, Decimal | int) or isinstance(c, bool) for c in claimed):
+            decimals = [_claimed_decimal(c) for c in claimed]
+            if any(d is None for d in decimals):
                 raise ValueError(f"{t.key}: the published values must be decimal numbers")
-            if [Decimal(c) for c in claimed] != written:
+            if decimals != written:
                 raise ValueError(f"{t.key}: the transcribed value differs from the claim's")
             try:
                 command = json.loads(text.command)
@@ -1148,18 +1149,40 @@ class MlClaimSchema:
 
 
 class _DecimalLoader(yaml.SafeLoader):
-    """A YAML loader whose floats are Decimals of their written text."""
+    """A YAML loader whose floats are Decimals of their written text: the same numbers
+    the SafeLoader reads (YAML 1.1 floats, with "_" separators and base-60 forms), never
+    passed through a binary float. ``.inf`` and ``.nan`` stay their text, so a comparison
+    with them refuses instead of the whole file failing to load."""
 
 
-def _construct_decimal(loader: yaml.SafeLoader, node: yaml.Node) -> Decimal:
+def _construct_decimal(loader: yaml.SafeLoader, node: yaml.Node) -> Decimal | str:
     text = str(loader.construct_scalar(node)).replace("_", "")
+    if ":" in text:  # YAML 1.1 base 60, for example 1:30.5 = 90.5
+        sign = -1 if text.startswith("-") else 1
+        total = Decimal(0)
+        for part in text.lstrip("+-").split(":"):
+            total = total * 60 + Decimal(part)
+        return sign * total
     try:
         value = Decimal(text)
     except InvalidOperation:
-        raise ValueError(f"not a finite decimal number: {text!r}") from None
-    if not value.is_finite():
-        raise ValueError(f"not a finite decimal number: {text!r}")
-    return value
+        return text
+    return value if value.is_finite() else text
+
+
+def _claimed_decimal(value: Any) -> Decimal | None:
+    """A published value of the claim file as an exact Decimal: a YAML float (Decimal), an
+    int, or a numeric string that the schema's float fields also accept (``"9.12e1"``,
+    which YAML 1.1 reads as a string). Anything else is None."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, Decimal):
+        return value if value.is_finite() else None
+    if isinstance(value, int):
+        return Decimal(value)
+    if isinstance(value, str) and _DECIMAL_TEXT.match(value.strip()):
+        return Decimal(value.strip())
+    return None
 
 
 _DecimalLoader.add_constructor("tag:yaml.org,2002:float", _construct_decimal)
@@ -1193,23 +1216,23 @@ def verify_derived(claim: dict[str, Any]) -> None:
     no platform-specific digits (quantiles and SDs are rounded to 12 significant digits),
     no dictionary order."""
     plan = claim["test_plan"]
-    if plan["build"].get("ladder") != list(BUILD_LADDER):
+    if "ladder" not in plan["build"] or plan["build"]["ladder"] != list(BUILD_LADDER):
         raise ValueError("derived value differs: test_plan.build.ladder")
     budget = plan["budget"]
     want = BUDGET_PROFILES[budget["profile"]]
-    got = (
-        budget.get("paper_cpu_hours"),
-        budget.get("base_cpu_hours"),
-        budget.get("attacks_cpu_hours"),
-    )
-    if got != want:
+    names = ("paper_cpu_hours", "base_cpu_hours", "attacks_cpu_hours")
+    if any(n not in budget for n in names) or tuple(budget[n] for n in names) != want:
         raise ValueError("derived value differs: test_plan.budget")
     run_seed = plan["paper"]["run_seed_sha256"]
     datasets = {d["name"]: d for d in plan["datasets"]}
     for t in claim["targets"]:
         key, s = t["key"], t["seeds"]
         base = list(s["base"])
-        n_base = len(base)
+        # n_base by its rule (1.0.4), never from the written list (Codex review)
+        reported = t["metric"].get("reported_n_seeds")
+        n_base = 1 if reported is None else min(reported, s["base_cap"])
+        if len(base) != n_base:
+            raise ValueError(f"derived value differs: {key} seeds.base holds {len(base)} seeds")
         if s["base_source"] == "derived" and base != seeds.derived_seeds(run_seed, "base", n_base):
             raise ValueError(f"derived value differs: {key} seeds.base")
         for name, domain, count in (
@@ -1217,7 +1240,7 @@ def verify_derived(claim: dict[str, Any]) -> None:
             ("data_split", "data_split", seeds.DATA_SPLIT_SEEDS),
             ("holdout", "holdout", seeds.HOLDOUT_SEEDS),
         ):
-            if s.get(name) != seeds.derived_seeds(run_seed, domain, count, base):
+            if name not in s or s[name] != seeds.derived_seeds(run_seed, domain, count, base):
                 raise ValueError(f"derived value differs: {key} seeds.{name}")
         holdout = next(a for a in t["attacks"] if a["name"] == "holdout")
         if holdout["applies"]:
@@ -1229,7 +1252,7 @@ def verify_derived(claim: dict[str, Any]) -> None:
                 ("m", m),
                 ("factor", rules.holdout_factor(t["metric"]["n_examples"], m)),
             ):
-                if p.get(name) != value:
+                if name not in p or p[name] != value:
                     raise ValueError(f"derived value differs: {key} holdout.{name}")
         unit = t["metric"]["unit"]
         comparison = t.get("comparison")
@@ -1265,7 +1288,8 @@ def verify_derived(claim: dict[str, Any]) -> None:
             inputs = {k: v for k, v in record.items() if k not in ("status", "sd", "quantile")}
             fresh = resolve_uncertainty(Uncertainty.model_validate(inputs), unit, center)
             for name in ("status", "sd", "quantile"):
-                if record.get(name) != fresh[name]:
+                # a missing key is refused even when the expected value is None
+                if name not in record or record[name] != fresh[name]:
                     raise ValueError(f"derived value differs: {key} {where}.{name}")
 
 
