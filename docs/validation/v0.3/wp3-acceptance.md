@@ -260,7 +260,8 @@ uncertainty not convertible". By predicate:
 
 | Predicate | A larger tolerance makes it | With the lower tolerance, what stands |
 |---|---|---|
-| value modes, `magnitude`, `margin` (`d ≥ g − tol`), the `seeds`, `data_split` and `holdout` attacks (the claim's predicate), `ablation` in `margin` | easier to pass | a `PASS`; a `FAIL` becomes `INCONCLUSIVE` |
+| value modes, `magnitude`, the `seeds`, `data_split` and `holdout` attacks (the claim's predicate) | easier to pass | a `PASS`; a `FAIL` becomes `INCONCLUSIVE` |
+| `margin` (`d ≥ g − tol` and `d > 0`), `ablation` in `margin` (`d_abl ≥ g_abl − tol_abl` and `d_abl > 0`), and the attacks that apply these predicates | the first condition: easier to pass; the second does not use a tolerance | a `PASS`; a `FAIL` because `d ≤ 0` (or `d_abl ≤ 0`) stays `FAIL`, since it holds for every tolerance; a `FAIL` with a positive difference but too small a margin under the lower tolerance becomes `INCONCLUSIVE` |
 | `trivial_baseline` (beat the baseline by more than the tolerance) | harder to pass | a `FAIL`; a `PASS` becomes `INCONCLUSIVE` |
 | `direction`, `ablation` in `direction` | no tolerance | unaffected |
 
@@ -648,6 +649,10 @@ paired uncertainty, `tol_d = sqrt(tol_m² + tol_b²)`.
   `d_pub` = 10, reproduced `d` = 8, `magnitude`): `tol_d` is the lower paired
   tolerance `max(0.5, 0.2) = 0.5`, not the marginal `sqrt(1.8² + 1.6²)`; the deviation
   of 2 gives `INCONCLUSIVE`, never `PASS` and never `FAIL`;
+- `margin` with a paired uncertainty reported but not convertible (`g_pub` = 10): a
+  reproduced `d` of 0 or below gives `FAIL` (it fails for every tolerance); a
+  reproduced `d` of 8, positive but below `g_pub` minus the lower tolerance, gives
+  `INCONCLUSIVE`; the same for `ablation` in `margin` with `d_abl`;
 - `trivial_baseline` with a reported but not convertible uncertainty (accuracy
   published and reproduced 60%, baseline 50%, SE 10 points with no `n`): an advantage
   of 10 points over a lower tolerance of 1.2 gives `INCONCLUSIVE`, never `PASS`; an
@@ -655,7 +660,7 @@ paired uncertainty, `tol_d = sqrt(tol_m² + tol_b²)`.
 
 **Holdout rule (1.0.10), must pass with recorded values:** `m = floor(0.1 · n_train)`
 and `factor = max(1, sqrt(n_examples / m))` for a large and for a small holdout; the
-factor is 1 when `m ≥ n_examples`; `m < 100` (including `n_train < 10`, `m = 0`), a
+factor is 1 when `m ≥ n_examples`; `m < 100` (`n_train < 1000`, including `m = 0`), a
 `direction` claim and a metric outside the list make the attack not applicable. The
 cases on both sides (no false `FRAGILE`, a real deviation still detected) are
 end-to-end papers of WP4 (W4.3a, PR #79).
