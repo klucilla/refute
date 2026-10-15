@@ -34,10 +34,13 @@ refute = "refute.cli:main"
 tess = "refute.packs.tess:PACK"
 
 [dependency-groups]
-# Verifies the drand signature in the v0.2 target selection (calibration/v0.2/).
-# Added after the WP0 freeze as a documented exception (calibration/v0.2/PROTOCOL.md).
+# py-ecc verifies the drand signature in the v0.2 target selection (calibration/v0.2/);
+# added after the WP0 freeze as a documented exception (calibration/v0.2/PROTOCOL.md).
+# pyarrow reads the Parquet frame of the v0.3 selection (decision D-18; WP0 table of
+# docs/validation/v0.3/wp0-acceptance.md), resolved under the 7-day cooldown.
 calibration = [
   "py-ecc>=8.0.0,<9",
+  "pyarrow>=25.0.1,<26",
 ]
 dev = [
   "pytest>=8.0",
