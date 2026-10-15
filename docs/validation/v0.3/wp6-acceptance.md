@@ -7,10 +7,14 @@ line 885). Issue #49. Committed **before** the VM is built and before any test o
 of the package (plan lines 871-875). The requirements are in
 [docs/sandbox.md](../../sandbox.md) and in plan section 6.1 (lines 345-408).
 
-**The maintainer builds and changes the VM** (administrator rights). An agent writes
-the procedures and the test scripts and reads their outputs; it never changes Windows
-or Hyper-V settings. No third-party code runs until every test of section 3 passes and
-the maintainer records the result.
+**Who builds and changes the VM** (revised on 2026-10-15 by decision of the
+maintainer; plan section 7.1). The VM is built by versioned scripts in `scripts/vm/`
+run by Claude Code through a local JEA endpoint, each mutating operation approved by
+the maintainer; the maintainer's account is not a member of Hyper-V Administrators.
+The maintainer registers the endpoint and performs every step that needs
+administrator rights. No other Windows or Hyper-V setting is changed by an agent. No
+third-party code runs until every test of section 3 passes and the maintainer records
+the result.
 
 ## 1. Operating system of the VM
 
@@ -100,10 +104,39 @@ https://docs.docker.com/engine/install/ubuntu/ (accessed 2026-10-14). The guest 
   `refute resume` and `refute status`, inside the VM. Each command records an event
   with a UTC timestamp in `run/events.jsonl`, and a heartbeat every 10 s records
   gaps longer than 30 s as pauses.
-- **W6.2** A small documented PowerShell script for the VM-level controls, run by the
-  maintainer.
+- **W6.2** A small documented PowerShell script for the VM-level controls, run
+  through the JEA endpoint of section 4a, each call approved by the maintainer.
 - **W6.3** Synthetic tests in CI for the event log and the heartbeat logic, with no
   Docker and no VM. The Docker and VM parts are tested by V12 on the built VM.
+
+## 4a. Phase 1 scripts and the JEA endpoint (scripts/vm/README.md)
+
+- **W6.4 Endpoint.** One local JEA endpoint, `RefuteVm`: `SessionType
+  RestrictedRemoteServer` (NoLanguage); a virtual account in Hyper-V Administrators
+  only; one role capability exposing only `Get-RefuteVmStatus` and
+  `Invoke-RefuteVmOperation`, for the maintainer's account only; no parameter takes a
+  path or a VM name; the module and its configuration installed where only
+  administrators can write; `-AccessMode Local`; WinRM listeners on `127.0.0.1` and
+  `::1` only and a firewall rule that blocks inbound TCP 5985 and 5986 from every
+  address except loopback, on every profile; transcripts of every session in
+  `C:\ProgramData\RefuteVm\Transcripts`. The registration script shows every change
+  before it applies it, never deletes or overwrites, and writes the evidence.
+- **W6.5 Operations.** One administrative action per call. A simulation computes the
+  plan (target, every change with its value before and after, refusal) and its
+  SHA-256 without changing the managed state; the real call needs that hash and
+  refuses if the plan changed. Every simulation, intent, refusal and result is logged.
+  Every operation checks the VM's identity (the VMId recorded at creation, its name,
+  its paths, its disks and media) and refuses any divergence. No operation deletes a
+  VM or a disk, turns a VM off without a guest shutdown, connects a network adapter,
+  enables an integration service or turns Secure Boot off.
+- **W6.6 Synthetic tests (CI, no Hyper-V).** Every script parses; every data file
+  loads; the pure logic refuses each divergence above and plans each change; the plan
+  hash is deterministic and changes with the observed state; the operation lists of
+  the module and of the caller are the same; no script calls a forbidden command; the
+  scripts are ASCII; the seed ISO is a CIDATA volume with the rendered `user-data` and
+  `meta-data` (where IMAPI2FS exists). On the machine, the evidence of W6.4 is
+  recorded before the first operation, and the first operation is shown simulated to
+  the maintainer before it runs.
 
 ## 5. Synthetic cases, metrics and regression
 

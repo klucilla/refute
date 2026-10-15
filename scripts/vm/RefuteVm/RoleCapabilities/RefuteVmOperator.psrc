@@ -1,0 +1,11 @@
+@{
+    # Role capability of the JEA endpoint RefuteVm (scripts/vm/README.md). The
+    # connecting account sees only these two functions; with SessionType
+    # RestrictedRemoteServer the session runs in NoLanguage mode, so it can call them
+    # with literal arguments but cannot run any other command, script block or
+    # expression. The functions take no path and no VM name.
+    GUID             = '6f1c6a0e-5b2d-4f4e-9d1a-3c7e2b8a9f41'
+    Description      = 'Refute VM operator: status and one approved operation per call.'
+    ModulesToImport  = @('RefuteVm')
+    VisibleFunctions = @('Get-RefuteVmStatus', 'Invoke-RefuteVmOperation')
+}

@@ -1,0 +1,39 @@
+#cloud-config
+# Autoinstall configuration of the Refute VM (WP6, phase 1), read by the Ubuntu Server
+# 26.04.1 live installer from the CIDATA seed (NoCloud). The VM has no network during
+# the installation. Keys: https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+# (retrieved 2026-10-15). The installer still asks "Continue with autoinstall?" on the
+# console; the maintainer answers it.
+autoinstall:
+  version: 1
+  interactive-sections: []
+  refresh-installer:
+    update: false
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  timezone: Etc/UTC
+  network:
+    version: 2
+    ethernets: {}
+  apt:
+    fallback: offline-install
+  storage:
+    layout:
+      name: direct
+  ssh:
+    install-server: true
+    allow-pw: false
+  updates: security
+  shutdown: poweroff
+  user-data:
+    hostname: refute-vm
+    disable_root: true
+    ssh_pwauth: false
+    users:
+      - name: refute
+        shell: /bin/bash
+        lock_passwd: true
+        sudo: "ALL=(ALL) NOPASSWD:ALL"
+        ssh_authorized_keys:
+          - {{SSH_PUBLIC_KEY}}
