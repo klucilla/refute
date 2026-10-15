@@ -43,6 +43,33 @@ def inside_work(path: Path) -> bool:
     return path.resolve().is_relative_to(WORK.resolve())
 
 
+def worktree_problems(worktree: Path, claim: str, expected_commit: str) -> list[str]:
+    """Reasons not to trust a worktree for the historical check (empty when it is fine).
+
+    The worktree must be at the tag's commit, with no change to any tracked file, and
+    the lock of the claim must have the identity recorded in the frozen table of
+    ``refute.core.lock_compat`` (read from this checkout's ``src/``)."""
+    sys.path.insert(0, str(ROOT / "src"))
+    from refute.core.lock_compat import HISTORICAL_LOCKS, lock_identity
+
+    problems = []
+    head = run(["git", "rev-parse", "HEAD"], worktree).stdout.strip()
+    if head != expected_commit:
+        problems.append(f"worktree is at {head or 'nothing'}, expected {expected_commit}")
+    status = run(["git", "status", "--porcelain", "--untracked-files=no"], worktree)
+    if status.returncode != 0 or status.stdout.strip():
+        problems.append("tracked files differ from the commit: " + status.stdout.strip()[:300])
+    lock_file = worktree / Path(claim).with_suffix(".lock.json")
+    try:
+        identity = lock_identity(json.loads(lock_file.read_text(encoding="utf-8")))
+    except (OSError, ValueError) as exc:
+        problems.append(f"lock unreadable: {exc}")
+    else:
+        if not any(dict(e.identity) == identity for e in HISTORICAL_LOCKS):
+            problems.append("the lock does not have a historical identity of the table")
+    return problems
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--python", help="interpreter for uv (default: uv's choice)")
@@ -63,11 +90,12 @@ def main() -> int:
                 print(f"{tag}: git worktree add failed: {added.stderr.strip()}")
                 failures += 1
                 continue
-        head = run(["git", "rev-parse", "HEAD"], worktree).stdout.strip()
-        if head != expected:
-            print(f"{tag}: worktree is at {head}, expected {expected}")
+        problems = worktree_problems(worktree, claim, expected)
+        if problems:
+            print(f"{tag}: worktree refused: " + "; ".join(problems))
             failures += 1
             continue
+        head = expected
         sync = run(["uv", "sync", "--frozen", *python], worktree)
         if sync.returncode != 0:
             print(f"{tag}: uv sync --frozen failed: {sync.stderr.strip()[-500:]}")
@@ -91,7 +119,10 @@ def main() -> int:
             f"code locked {result['locked_code_sha256']} now {result['current_code_sha256']}; "
             f"output {out_file.relative_to(ROOT).as_posix()} sha256 {digest}"
         )
-        if result["status"] != "PASS":
+        if result["status"] != "PASS" or verify.returncode != 0:
+            failures += 1
+        elif worktree_problems(worktree, claim, expected):  # nothing changed during the run
+            print(f"{tag}: tracked files changed during the run")
             failures += 1
     if args.remove_worktrees:
         for tag, _ in LOCKED_TAGS:

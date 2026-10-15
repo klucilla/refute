@@ -43,8 +43,7 @@ In both outputs every attachment matches its lock, and no component is `TAMPERED
 
 ## Cleanup
 
-After this record, the worktrees and their environments under `.cache/` are deleted.
-They are regenerable: the script recreates them. They are listed in the report of the
-round:
-- the ones created by this script under `.cache/lock-compat/`;
-- the ones of the investigation under `.cache/hash-investigation/`.
+Pending when this record was written: deleting the worktrees and their environments
+under `.cache/` (`.cache/lock-compat/` and `.cache/hash-investigation/`). They are
+regenerable, since the script recreates them. Their deletion is reported in the pull
+request, not here.

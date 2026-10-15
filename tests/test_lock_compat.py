@@ -133,6 +133,25 @@ def edit_claim(claim_file, change):
     claim_file.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
 
 
+def test_unchanged_copy_differs_only_in_the_code(tmp_path):
+    """Control for the copies below: an unchanged copy matches by projection."""
+    result = verify_claim(copy_v02(tmp_path))
+    assert result.tampered == ["code"]
+    assert result.claim_projection == entry_for("tess-calibration-v0.2").name
+
+
+@pytest.mark.parametrize("value", [False, True])
+def test_alias_of_a_listed_field_in_the_claim_file_is_refused(value):
+    """A resolver that accepted an alias could set a listed field under another name;
+    the projection refuses any written key that is not a resolved key."""
+    loaded = load_claim(CLAIMS["tess-calibration-v0.2"])
+    lock = read_lock(lock_path_for(CLAIMS["tess-calibration-v0.2"]))
+    raw = with_value(loaded.raw, ("pass_criteria", "require_signal_recovery_alias"), value)
+    projection = project(loaded.canonical(), raw, lock)
+    assert not projection.applied
+    assert "is not a resolved key" in projection.reason
+
+
 def test_old_field_changed_is_tampered(tmp_path):
     claim = copy_v02(tmp_path)
     edit_claim(claim, lambda d: d["pass_criteria"].update(min_recovered_planets=8))
@@ -236,3 +255,81 @@ def test_unknown_lock_is_verified_exactly_as_before(tmp_path):
     assert "claim" in result.tampered
     assert result.claim_projection is None
     assert not any("historical projection" in m for m in result.messages)
+
+
+# Option C script: a worktree is trusted only at the tag, unchanged, with a known lock -----
+
+
+def load_script():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "verify_locked_tags", ROOT / "scripts" / "verify_locked_tags.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def git(cwd, *args):
+    import subprocess
+
+    subprocess.run(
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", *args],
+        cwd=cwd,
+        check=True,
+        capture_output=True,
+    )
+
+
+@pytest.fixture
+def tag_like_repo(tmp_path):
+    """A small git repository holding a copy of the v0.2 claim, its lock and history."""
+    repo = tmp_path / "repo"
+    target = repo / "calibration" / "v0.2"
+    shutil.copytree(
+        CLAIMS["tess-calibration-v0.2"].parent,
+        target,
+        ignore=shutil.ignore_patterns("results", "audit"),
+    )
+    git(repo, "init", "-q")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "-m", "snapshot")
+    import subprocess
+
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+    ).stdout.strip()
+    return repo, head
+
+
+def test_script_accepts_an_unchanged_worktree(tag_like_repo):
+    repo, head = tag_like_repo
+    script = load_script()
+    assert script.worktree_problems(repo, "calibration/v0.2/self_claim.yaml", head) == []
+
+
+def test_script_refuses_a_modified_tracked_file(tag_like_repo):
+    repo, head = tag_like_repo
+    claim = repo / "calibration" / "v0.2" / "self_claim.yaml"
+    claim.write_text(claim.read_text(encoding="utf-8") + "\n# edited\n", encoding="utf-8")
+    problems = load_script().worktree_problems(repo, "calibration/v0.2/self_claim.yaml", head)
+    assert any("tracked files differ" in p for p in problems)
+
+
+def test_script_refuses_another_commit_or_an_unknown_lock(tag_like_repo):
+    repo, head = tag_like_repo
+    script = load_script()
+    assert script.worktree_problems(repo, "calibration/v0.2/self_claim.yaml", "0" * 40)
+    lock_file = repo / "calibration" / "v0.2" / "self_claim.lock.json"
+    lock = json.loads(lock_file.read_text(encoding="utf-8"))
+    lock["git_commit"] = "f" * 40
+    lock_file.write_text(json.dumps(lock), encoding="utf-8")
+    git(repo, "commit", "-q", "-am", "consistent but unknown lock")
+    import subprocess
+
+    new_head = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+    ).stdout.strip()
+    problems = script.worktree_problems(repo, "calibration/v0.2/self_claim.yaml", new_head)
+    assert any("historical identity" in p for p in problems)

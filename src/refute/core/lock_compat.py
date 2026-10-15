@@ -200,6 +200,20 @@ def _get(tree: Any, path: Path) -> Any:
     return node
 
 
+def _foreign_keys(raw: Any, canonical: Any, prefix: Path = ()) -> list[Path]:
+    """Key paths written in ``raw`` that are not keys of ``canonical`` at that place."""
+    out: list[Path] = []
+    if not isinstance(raw, Mapping):
+        return out
+    for key, value in raw.items():
+        path = (*prefix, key)
+        if not isinstance(canonical, Mapping) or key not in canonical:
+            out.append(path)
+        else:
+            out.extend(_foreign_keys(value, canonical[key], path))
+    return out
+
+
 def project(
     canonical: Mapping[str, Any],
     raw: Mapping[str, Any],
@@ -214,6 +228,16 @@ def project(
     entry = find_entry(lock, table)
     if entry is None:
         return Projection(entry=None, applied=False, reason="lock not in the table")
+    # Every key written in the claim file must be a key of the resolved claim at the same
+    # place. Otherwise an alias (or another spelling) could set a listed field without
+    # appearing at its canonical path below.
+    foreign = _foreign_keys(raw, canonical)
+    if foreign:
+        return Projection(
+            entry.name,
+            False,
+            reason=f"key {'.'.join(foreign[0])} of the claim file is not a resolved key",
+        )
     for path in entry.added:
         if _get(raw, path) is not _MISSING:
             return Projection(
