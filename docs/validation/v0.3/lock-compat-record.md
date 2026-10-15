@@ -29,6 +29,23 @@ code and environment of its own tag, not with the current code.
 
 In both outputs every attachment matches its lock, and no component is `TAMPERED`.
 
+### Run 2, with the final script
+
+The script was then hardened after the Codex review (commit e9c9534). It now trusts a
+worktree only when:
+- it is at the tag's commit;
+- no tracked file has changed;
+- the lock has a historical identity of the table.
+
+It checks this before and after the run, and requires exit 0 as well as `PASS`. Run 2
+used this version, on the same worktrees, on 2026-10-15. The run-1 files above stay as
+they are.
+
+| Tag | Commit | Status | Claim and code hashes | Output | SHA-256 of the output |
+|---|---|---|---|---|---|
+| `v0.1.0` | `6bb5e78ad24e` | PASS (exit 0) | equal to the lock, as in run 1 | [v0.1.0.run2.json](lock-compat-record/v0.1.0.run2.json) | `2ada52103295f3b8a0e7cdbe14b5db2f6f51ee93678fae4a81d46e9166a8e09b` |
+| `v0.2.0-calibration-lock` | `cc9d104027ed` | PASS (exit 0) | equal to the lock, as in run 1 | [v0.2.0-calibration-lock.run2.json](lock-compat-record/v0.2.0-calibration-lock.run2.json) | `c6fe8c319973c6c26b2767721af52cf4a052397370bd38ebde0db7963409e268` |
+
 ## How this relates to the projection
 
 - At each tag, the claim, code and attachment hashes all equal the lock: the lock is
