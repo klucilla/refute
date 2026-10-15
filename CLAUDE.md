@@ -203,7 +203,7 @@ lists.
     work package is under the standing approval;
   - a **change** to a criterion already merged (loosening, replacing or removing it)
     needs the maintainer;
-  - a criterion that touches the claim schema, serialization, canonicalization, a
+  - a criterion that touches a schema, serialization, canonicalization, a
     lock, lock verification, a verdict or security needs the maintainer;
   - when the maintainer approves the design of a schema in an acceptance document,
     code that implements exactly that design is under the standing approval.
