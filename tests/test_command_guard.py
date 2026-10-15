@@ -205,6 +205,8 @@ def test_settings_register_the_hook_for_bash_and_powershell():
     (hook,) = entry["hooks"]
     assert hook["type"] == "command"
     assert any("command_guard.py" in part for part in [hook["command"], *hook.get("args", [])])
+    # A wrapper that cannot start, a timeout or invalid output blocks the command too.
+    assert hook["onFailure"] == "block"
 
 
 # Codex round 3 ------------------------------------------------------------------------------

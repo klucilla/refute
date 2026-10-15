@@ -15,8 +15,8 @@ a failure of the hook itself also blocks.
 **Limits.** This is a guard against slips, not a sandbox. It reads the command text; it
 does not follow scripts, variables or aliases. Input that is not JSON, or a call of
 another tool, is let through: the hook trusts the Claude Code protocol. If the wrapper
-shell cannot start, or the hook times out, Claude Code continues (``onFailure: block``
-needs a newer Claude Code than the one in use).
+shell cannot start, or the hook times out, the command is blocked too:
+``.claude/settings.json`` sets ``"onFailure": "block"`` (Claude Code v2.1.295 or later).
 
 How a command is read. The tool decides the shell rules: ``Bash`` (and code given to
 ``bash -c``) uses Bash quoting, ``PowerShell`` (and ``powershell -Command``) uses
