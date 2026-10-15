@@ -67,13 +67,13 @@ foreach ($name in $Files) {
 }
 
 [void][System.IO.Directory]::CreateDirectory($GnupgHome)
-$ringDir = $GnupgHome.Replace('\', '/')
+$ringDir = ConvertTo-RefuteMsysPath $GnupgHome
 Invoke-Checked $GpgPath @('--homedir', $ringDir, '--batch', '--keyserver', $Keyserver, '--recv-keys', $Fingerprint) | Out-Null
 $colons = Invoke-Checked $GpgPath @('--homedir', $ringDir, '--batch', '--with-colons', '--fingerprint', $Fingerprint)
 $fprs = @($colons | Where-Object { $_.StartsWith('fpr:') } | ForEach-Object { $_.Split(':')[9] })
 if ($fprs.Count -lt 1 -or $fprs[0] -cne $Fingerprint) { throw "the imported key's fingerprint is not $Fingerprint" }
 
-$sums = (Join-Path $MediaDir 'SHA256SUMS').Replace('\', '/')
+$sums = ConvertTo-RefuteMsysPath (Join-Path $MediaDir 'SHA256SUMS')
 $status = Invoke-Checked $GpgPath @('--homedir', $ringDir, '--batch', '--status-fd', '1', '--verify', "$sums.gpg", $sums)
 $validsig = Test-RefuteGpgStatus -Lines $status -Fingerprint $Fingerprint
 $expected = Get-RefuteSumsHash -Lines ([System.IO.File]::ReadAllLines((Join-Path $MediaDir 'SHA256SUMS'))) -Name $IsoName
