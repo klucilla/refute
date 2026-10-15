@@ -105,7 +105,23 @@ https://docs.docker.com/engine/install/ubuntu/ (accessed 2026-10-14). The guest 
 - **W6.3** Synthetic tests in CI for the event log and the heartbeat logic, with no
   Docker and no VM. The Docker and VM parts are tested by V12 on the built VM.
 
-## 5. Acceptance of the package
+## 5. Synthetic cases, metrics and regression
+
+- **Synthetic cases (W6.3, CI, no Docker, no VM).**
+  - **Must pass:** each command records its event with a UTC timestamp; a heartbeat
+    gap of 31 s is recorded as a pause; a reset restores the CPU limit written in the
+    claim.
+  - **Must fail:** a malformed or out-of-order event is refused; a gap of 30 s or less
+    is not recorded as a pause; a throttle with a non-positive value is refused.
+- **Metrics:** every row V1 to V22 has a pass or fail result with its evidence and
+  date. Test counts of W6.3 come from a JUnit XML file.
+- **Regression:**
+  - the existing suite passes;
+  - after any later change to the VM's network, Docker Engine, the builder or the
+    host-side ACLs, rows V2 to V9, V21 and V22 are run again before any third-party
+    code runs, with the new results recorded.
+
+## 6. Acceptance of the package
 
 WP6 is accepted when **every row V1 to V22** passes with its evidence recorded (on the
 built VM, or by the named WP2 or WP3 tests where the row says so), W6.1 to W6.3 pass,
