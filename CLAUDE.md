@@ -136,6 +136,12 @@ First pack: exoplanet transits (TESS).
 - Never print webhook or secret configuration (for example
   `gh api repos/.../hooks` without a filter): its URLs can contain tokens. Use a
   `--jq` filter that leaves out `config`.
+- Every legal or license statement written to the repository (README, protocols,
+  data-license files, release notes) gives the source URL, the retrieval date and a
+  short literal excerpt stored in the repository, in a `sources/` record next to the
+  statement, so that it can be checked later even if the page changes. A statement
+  that cannot be sourced is marked as unconfirmed, or is not made. This applies to
+  new statements from the adoption of this rule on (issue #34).
 
 ## Communication
 

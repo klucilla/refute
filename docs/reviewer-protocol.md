@@ -96,3 +96,70 @@ Every dossier's `report.md` links `review/index.md`.
 Objections never change a verdict. The maintainer reads every report; an important
 or critical objection becomes a GitHub issue, and a fix can only be tested by a new,
 separately locked claim on new targets.
+
+## Paper dossiers (v0.3)
+
+The procedure above (TESS dossiers, v0.2) is unchanged. For paper dossiers, v0.3
+adapts it as follows ([docs/plans/v0.3-plan.md](plans/v0.3-plan.md), section 10.3).
+The tooling for paper dossiers is built in the v0.3 work packages; until then this
+section is the planned procedure.
+
+### Which dossiers are reviewed
+
+The protocol of the v0.3 claim fixes the list before the lock. A **second reviewer**
+from another model family reviews every dossier with a negative claim verdict
+(`FRAGILE`, `NOT_REPRODUCED` or `NOT_REPRODUCIBLE`), plus 1 drawn dossier with no
+negative claim, if access is available at no additional cost.
+
+### What the reviewer also checks
+
+Besides the checks of the TESS prompt that apply (integrity, data, each check, text),
+the reviewer of a paper dossier checks:
+
+- the claim inventory and the transcription of each drawn claim against the paper
+  (value, location, metric, split, command, type and comparison reference);
+- the triage rejections recorded in the selection log.
+
+A reviewer raises objections and never sets a verdict. The report is an **annex** of
+the dossier, with its own manifest citing the hash of the sealed experimental core
+([right-of-reply.md](right-of-reply.md)).
+
+### Prompt for paper dossiers
+
+```text
+You are an independent reviewer for Refute. Your job is to try to REFUTE the
+verdicts in one paper dossier, using only the evidence in it and the paper it
+cites. You did not build it.
+
+Dossier: <dossier>
+
+Rules: read-only. Do not create, edit, move or delete files; do not commit, push,
+download, install or post anything. You may read every file in the dossier, run
+`uv run --frozen refute check-dossier <dossier>`, read the code at the commit named
+in REPRODUCE.md, and read the paper at the version named in the claims.
+
+Check, with evidence (file and field, page and table of the paper, or command
+output):
+1. Integrity: does check-dossier pass? Do the claim, lock, core seal and data
+   hashes agree?
+2. Inventory and transcription: does each drawn claim match the paper (value,
+   location, metric, split, command, type, comparison reference)? Was the inventory
+   built by the rules of the protocol?
+3. Triage: does each rejection in the selection log follow its stated reason?
+4. Each check: is the input sensible, and does the result follow from it? Look for
+   a check that passed for the wrong reason or failed because of a limitation of
+   Refute rather than of the artifact.
+5. Verdict rules: does each claim verdict follow the order and the attribution
+   rules of docs/verdicts.md?
+6. Text: does the report overstate anything, describe an inconclusive paper as
+   positive, or say anything about the authors rather than the claims?
+
+Write your report in Markdown with these sections:
+## Summary (two sentences)
+## Objections (table: severity critical/important/minor, evidence, why it matters)
+## Checks with no objection (with evidence)
+## Assessment: one of NO OBJECTION, OBJECTIONS, SERIOUS OBJECTIONS
+
+You do not decide the verdicts. Objections concern the claims and the procedure,
+never the authors.
+```
