@@ -107,14 +107,56 @@ PASS = [
 ]
 
 
+B, P = guard.BASH, guard.POWERSHELL
+
+# Codex round 2: cases that depend on the shell's own quoting and escapes.
+BLOCK_BY_SHELL = [
+    ('& "C:\\Program Files\\Git\\usr\\bin\\sed.exe" -n 1p README.md', P),
+    ('& "C:\\Program Files\\Git\\usr\\bin\\sed.exe" -n 1p README.md', B),
+    ('& "C:\\Projetos\\refute\\.venv\\Scripts\\python.exe" -m pytest -q', P),
+    ('& "C:\\Projetos\\refute\\.venv\\Scripts\\python.exe" -m pytest -q', B),
+    (".venv/Scripts/python.exe \\\n  -m pytest -q", B),
+    ("& .venv/Scripts/python.exe `\n  -m pytest -q", P),
+    ("Start-Process -FilePath .venv/Scripts/python.exe -ArgumentList '-m','pytest','-q' -Wait", P),
+    ('Write-Output @"\n$(Select-String -Path README.md -Pattern Refute)\n"@', P),
+    ("echo '<<EOF'\n.venv/Scripts/python.exe -m pytest -q", B),
+    ('echo "<<EOF"\nsed -n 1p x', B),
+    ("Get-Content x | sls y", P),
+    ("iex 'sed -n 1p x'", P),
+]
+
+PASS_BY_SHELL = [
+    (".venv/Scripts/python.exe -c \"print('import pytest')\"", B),
+    (".venv/Scripts/python.exe -c \"print('import pytest')\"", P),
+    (".venv/Scripts/python.exe - <<'EOF'\nprint('pytest.main is only text here')\nEOF", B),
+    ("Write-Output @'\n$(Select-String is literal in a single here-string)\n'@", P),
+    ("git log --format='%h `x`' -1", P),
+    ("echo 'a # <<EOF'\ngit status", B),
+    ("git status # <<EOF\ngit log -1", B),
+]
+
+
 @pytest.mark.parametrize("command", BLOCK)
-def test_refused(command):
-    assert guard.check(command) is not None
+@pytest.mark.parametrize("shell", [B, P])
+def test_refused(command, shell):
+    if shell == P and ("<<" in command or "\\\n" in command or "`" in command):
+        pytest.skip("Bash here-documents, continuations and backticks are not PowerShell syntax")
+    assert guard.check(command, shell=shell) is not None
 
 
 @pytest.mark.parametrize("command", PASS)
 def test_allowed(command):
-    assert guard.check(command) is None
+    assert guard.check(command, shell=B) is None
+
+
+@pytest.mark.parametrize(("command", "shell"), BLOCK_BY_SHELL)
+def test_refused_by_shell(command, shell):
+    assert guard.check(command, shell=shell) is not None
+
+
+@pytest.mark.parametrize(("command", "shell"), PASS_BY_SHELL)
+def test_allowed_by_shell(command, shell):
+    assert guard.check(command, shell=shell) is None
 
 
 def run_hook(payload):
@@ -130,6 +172,12 @@ def test_hook_exit_code_2_with_the_reason_on_stderr():
     out = run_hook({"tool_name": "Bash", "tool_input": {"command": "sed -n 1p x"}})
     assert out.returncode == 2
     assert "command_guard" in out.stderr and "Read tool" in out.stderr
+
+
+def test_hook_reads_powershell_with_powershell_rules():
+    command = "& .venv/Scripts/python.exe `\n  -m pytest -q"
+    out = run_hook({"tool_name": "PowerShell", "tool_input": {"command": command}})
+    assert out.returncode == 2 and "run_tests_affinity" in out.stderr
 
 
 def test_hook_passes_allowed_commands_and_other_tools_silently():
