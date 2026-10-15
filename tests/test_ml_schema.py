@@ -987,6 +987,57 @@ def test_the_draw_must_use_the_same_inventory(tmp_path):
         load(tmp_path, files={"draw": draw})
 
 
+@pytest.mark.parametrize(
+    ("change", "reason"),
+    [
+        (lambda d: d.update(arxiv_id="2401.09999"), "another paper"),
+        (lambda d: d.update(comparison_required=False), "comparison requirement"),
+        (lambda d: d["shuffled"].append("c9"), "drawable candidates"),
+    ],
+)
+def test_the_draw_must_agree_with_its_inventory(tmp_path, change, reason):
+    draw = inv.draw_record(inv.draw_claims(inventory(), CLAIM_SEED))
+    change(draw)
+    with pytest.raises(ClaimError, match=reason):
+        load(tmp_path, files={"draw": draw})
+
+
+def test_a_separate_reference_run_has_the_same_seed_control(tmp_path):
+    def separate(claim):
+        reference = run_block()
+        reference["argv"] = ["python", "baseline.py"]
+        reference["seed_argument"] = None
+        target(claim, "c2")["comparison"]["reference_run"] = reference
+
+    with pytest.raises(ClaimError, match="same seeds"):
+        load(tmp_path, separate)
+
+    def controlled(claim):
+        reference = run_block()
+        reference["argv"] = ["python", "baseline.py"]
+        target(claim, "c2")["comparison"]["reference_run"] = reference
+
+    load(tmp_path, controlled)
+
+
+def test_a_regression_metric_is_native(tmp_path):
+    def mae_in_percent(claim):
+        t = target(claim, "c1")
+        t["metric"]["name"] = "mae"
+        t["inventory"]["transcription"]["metric"] = "mae"
+        for name in ("holdout", "trivial_baseline"):
+            attack(t, name).update(applies=False)
+            attack(t, name).pop("params")
+        t["metric_recompute"] = {"applies": False, "reason": "not saved"}
+
+    with pytest.raises(ClaimError, match="not a bounded rate"):
+        load(tmp_path, mae_in_percent)
+
+
+def test_a_reason_may_accompany_the_default_tolerance(tmp_path):
+    load(tmp_path, _set(["c1", "tolerance"], {"override_reason": "defaults kept on purpose"}))
+
+
 def test_draw_record_round_trip():
     draw = inv.draw_claims(inventory(), CLAIM_SEED)
     assert inv.read_draw_record(inv.draw_record(draw)) == draw

@@ -724,6 +724,10 @@ class MlTarget(_Model):
                     f"metric_extraction.unit {unit} cannot be converted to metric.unit "
                     f"{self.metric.unit}"
                 )
+        # 1.0.8: the percent and fraction defaults are for bounded rates only; the
+        # regression metrics of W3.15 are not rates and use native (Codex review)
+        if self.metric.name in recompute.REGRESSION and self.metric.unit != "native":
+            raise ValueError(f"{self.metric.name} is not a bounded rate: its unit is native")
 
     def _tolerance(self) -> None:
         t, unit = self.tolerance, self.metric.unit
@@ -744,8 +748,6 @@ class MlTarget(_Model):
         )
         if overridden and not (t.override_reason and t.override_reason.strip()):
             raise ValueError("a tolerance other than the default, or a native unit, needs a reason")
-        if not overridden and t.override_reason is not None:
-            raise ValueError("override_reason is only for a tolerance other than the default")
 
     def _seeds(self) -> None:
         n_base = self.n_base
@@ -759,6 +761,15 @@ class MlTarget(_Model):
                 raise ValueError("with no seed argument, n_base must be 1")
             if self.attack("seeds").applies if self._has_attacks() else False:
                 raise ValueError("with no seed argument, the seeds attack does not apply")
+        reference = self.comparison.reference_run if self.comparison is not None else None
+        if isinstance(reference, Run) and (reference.seed_argument is None) != (
+            self.run.seed_argument is None
+        ):
+            # 1.0.5: both methods run with the same seeds (Codex review)
+            raise ValueError(
+                "a separate reference run takes a seed argument exactly when the method's "
+                "run does, so both run with the same seeds"
+            )
         base = set(self.seeds.base)
         for name in ("attack", "data_split", "holdout"):
             if base & set(getattr(self.seeds, name) or []):
@@ -921,7 +932,7 @@ class MlClaimSchema:
         inventory = _attachment_record(loaded, INVENTORY_ROLE)
         draw_record = _attachment_record(loaded, DRAW_ROLE)
         inventory_hash = self._check_inventory(plan, targets, inventory)
-        self._check_draw(targets, draw_record, inventory_hash)
+        self._check_draw(targets, draw_record, inventory, inventory_hash)
         resolved = [
             self._derive(plan, target, raw_target)
             for raw_target, target in zip(claim.targets, targets, strict=True)
@@ -986,13 +997,35 @@ class MlClaimSchema:
         return digest
 
     @staticmethod
-    def _check_draw(targets: list[MlTarget], record: dict[str, Any], inventory_hash: str) -> None:
+    def _check_draw(
+        targets: list[MlTarget],
+        record: dict[str, Any],
+        inventory: dict[str, Any],
+        inventory_hash: str,
+    ) -> None:
         try:
             draw = inv.read_draw_record(record)
         except inv.InventoryError as exc:
             raise ValueError(f"claim draw: {exc}") from None
         if draw.inventory_sha256 != inventory_hash:
             raise ValueError("the claim draw used another inventory")
+        # the record must agree with the inventory it names (Codex review); whether its
+        # order comes from the drand round is the provenance check of WP5/WP7
+        if draw.arxiv_id != inventory["paper"]["arxiv_id"]:
+            raise ValueError("the claim draw is for another paper")
+        required = inv.has_eligible_comparison(inventory)
+        if draw.comparison_required != required:
+            raise ValueError("the claim draw states the comparison requirement wrongly")
+        drawable = sorted(
+            c["candidate_id"]
+            for c in inventory["candidates"]
+            if c["type"] == "value" or (required and c["eligible_comparison"])
+        )
+        if sorted(draw.shuffled) != drawable:
+            raise ValueError("the claim draw did not shuffle exactly the drawable candidates")
+        by_id = {c["candidate_id"]: c for c in inventory["candidates"]}
+        if required and not any(by_id[i]["type"] == "comparison" for i in draw.drawn):
+            raise ValueError("the claim draw holds no comparison although one is required")
         if [t.inventory.candidate_id for t in targets] != draw.drawn:
             raise ValueError("the claims in targets are not the drawn claims in the drawn order")
         for i, t in enumerate(targets, start=1):
