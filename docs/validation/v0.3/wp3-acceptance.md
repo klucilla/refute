@@ -68,13 +68,28 @@ in [docs/sandbox.md](../../sandbox.md).
   (plan lines 392-402). The recorded causes of each failure feed the attribution rule
   of WP2.
 - **W3.10** Usage records for the WP2 accountant, `(container_id, account,
-  usage_usec)`. In the docker backend they come from cgroup `cpu.stat`. Every
-  container of a paper, **including the BuildKit builder** (run in its own container
-  for that paper, with the `docker-container` driver) and every failed attempt, runs
-  under one parent cgroup per paper; its usage is reported for the WP2 completeness
-  check. The tolerance of that check is fixed in this document's revision before the
-  runner code. In the subprocess backend the records come from the process
-  accounting of the child processes.
+  usage_usec)`.
+  - **Docker backend:** the records come from cgroup `cpu.stat`. Every process of a
+    paper, **including the build steps** (the `RUN` steps of a Dockerfile) and every
+    failed attempt, runs under one parent cgroup per paper; its usage is reported for
+    the WP2 completeness check.
+  - **Subprocess backend:** the records come from the process accounting of the child
+    processes.
+  - **Fixed in this document's revision, before the runner code:** the tolerance of
+    the completeness check, and the reading interval of the in-run control (WP2
+    W2.10a).
+- **W3.10b** **The builder is not privileged.** Buildx's `docker-container` driver
+  creates its builder container as privileged (`HostConfig.Privileged: true`;
+  https://github.com/docker/buildx/blob/v0.29.1/driver/docker-container/driver.go#L117-L121,
+  accessed 2026-10-14). The sandbox forbids `--privileged` (plan lines 375-379), so
+  that driver is **not** used.
+  - The revision of this document chooses, before the runner code, a builder
+    configuration and version shown to be compatible with the sandbox: no privileged
+    container; build steps under the paper's parent cgroup; and the entitlement
+    restrictions of V9. Candidates to evaluate: the Docker Engine's built-in BuildKit
+    (`docker` driver) with the build steps placed under the paper's cgroup, and
+    rootless BuildKit.
+  - The choice is checked by WP6 tests V7, V8 and V21.
 
 ### 1.5 Metric extraction
 
@@ -163,4 +178,4 @@ pass and one that must, here or in WP4.
 - The `tess` pack and its claims are unaffected: entry points and resolved TESS claims
   are unchanged.
 - The sandbox requirements that WP6 relies on but that are code of this package are
-  tested here and named in the WP6 table (`wp6-acceptance.md`, V14-V20).
+  tested here and named in the WP6 table (`wp6-acceptance.md`, V14 to V22).

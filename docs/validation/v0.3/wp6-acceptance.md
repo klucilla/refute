@@ -68,9 +68,14 @@ host name, user name, address or credential beyond what the plan already states.
 | V18 | Build ladder and allowed patches fixed before the lock (plan lines 392-402) | WP3 runner tests: rungs tried in order, every attempt logged; a patch not in the hashed list is refused; a source edit after the lock is refused | as stated |
 | V19 | Every run started by the maintainer or with the maintainer's approval for that paper (plan lines 403-405) | The runner refuses to start a paper without an approval record for that paper, checked by a test; on the VM, an attempt without the record is refused | refused without approval |
 | V20 | CI tests only the subprocess backend (plan lines 406-408) | The CI suite contains the subprocess-backend tests and no test that pulls images | as stated |
+| V21 | No privileged builder (plan lines 375-379; WP3 W3.10b) | `docker inspect` of every container that takes part in a build, including any builder container: `HostConfig.Privileged` is `false`, with no added devices or capabilities beyond the sandbox's. The `RUN` steps of a synthetic build run under the paper's parent cgroup, shown by their cgroup path | not privileged; build steps in the paper's cgroup |
+| V22 | Budget control during a run (WP2 W2.10a) | A synthetic job that keeps consuming CPU on the VM is stopped when its allowance is reached, within the bounded overshoot; the recorded usage matches the parent cgroup within the tolerance | stopped in bound; accounting complete |
 
 V14 and V16 to V20 are covered by WP3 or WP2 tests where the code lives. This table
 names them so that every requirement of plan 6.1 has a test and an evidence record.
+For those rows the evidence is the name of the test, the commit, and the CI run (or
+the local run, for docker tests) where it passed, plus the VM run where the row says
+so.
 
 **Note A, Hyper-V port ACLs.** `Add-VMNetworkAdapterExtendedAcl` filters by direction,
 local and remote IP address (IPv4 and IPv6, host, subnet or wildcard), protocol and
@@ -102,7 +107,8 @@ https://docs.docker.com/engine/install/ubuntu/ (accessed 2026-10-14). The guest 
 
 ## 5. Acceptance of the package
 
-WP6 is accepted when V1 to V13 pass on the built VM with their evidence recorded,
-W6.1 to W6.3 pass, and the maintainer records the result. Until then
+WP6 is accepted when **every row V1 to V22** passes with its evidence recorded (on the
+built VM, or by the named WP2 or WP3 tests where the row says so), W6.1 to W6.3 pass,
+and the maintainer records the result. Until then
 [docs/sandbox.md](../../sandbox.md) keeps saying "not yet validated", and no
 third-party code runs.

@@ -101,6 +101,19 @@ WP2 lands before any v0.3 lock.
     acceptance revision makes the paper's accounting invalid, recorded as a Refute
     error (`INCONCLUSIVE`), never as a pass.
   - The reading of `cpu.stat` itself is implemented in WP3 (runner).
+- **W2.10a** **Control during execution, not only at the end.** Before a container
+  starts, the accountant gives it an allowance: what its account may still use under
+  the sharing rule. While it runs, the runner (WP3) reads its usage at a fixed
+  interval, fixed in the WP3 acceptance revision, and stops the container when the
+  allowance is reached. The final record is still read once, at the end.
+  - The overshoot between two readings is bounded by the interval times the
+    container's CPU limit.
+  - The overshoot is charged like any other usage. If it takes the pool past its
+    limit, the reason is `budget_exhausted`.
+  - Synthetic case (WP2, with a simulated meter): a job that keeps consuming is
+    stopped at its allowance plus at most the bounded overshoot. Its account and the
+    pool never go beyond the limit plus that bound, and the reserves of the claims
+    not yet run are untouched.
 
 ### 1.5 Seal and annexes (plan 9.1, lines 722-729)
 
