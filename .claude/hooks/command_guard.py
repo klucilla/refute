@@ -19,11 +19,15 @@ shell cannot start, or the hook times out, Claude Code continues (``onFailure: b
 needs a newer Claude Code than the one in use).
 
 How a command is read. The tool decides the shell rules: ``Bash`` (and code given to
-``bash -c``) uses Bash quoting, ``PowerShell`` (and ``powershell -Command``, ``cmd
-/c``) uses PowerShell quoting.
+``bash -c``) uses Bash quoting, ``PowerShell`` (and ``powershell -Command``) uses
+PowerShell quoting, and code given to ``cmd /c`` uses the caret as its escape, with no
+substitutions.
 
 - Line continuations are joined first (``\\`` + new line in Bash, a backtick + new line
-  in PowerShell).
+  in PowerShell, a caret + new line in cmd).
+- A ``#`` that starts a word, outside quotes, starts a comment (Bash and PowerShell).
+- ``&`` inside a word belongs to it only in a redirection (``2>&1``, ``>&2``, ``&>``);
+  otherwise it separates commands (``a&b`` runs ``b``).
 - A lexer splits the command into segments at ``;``, ``|``, ``&&``, ``||``, ``&``,
   ``(``, ``)``, ``{``, ``}``, new lines and command substitutions, outside quotes.
   Quotes join with the surrounding word as in a shell (``s""ed`` is ``sed``); a quoted
@@ -62,7 +66,7 @@ READ_TOOLS = {"sed", "gsed", "awk", "gawk", "mawk", "nawk", "select-string", "sl
 PYTEST_WORDS = {"pytest", "py.test"}
 SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 POWERSHELLS = {"powershell", "pwsh"}
-BASH, POWERSHELL = "bash", "powershell"
+BASH, POWERSHELL, CMD = "bash", "powershell", "cmd"
 _PY_FALLBACK = re.compile(r"\bimport\s+pytest\b|\bfrom\s+pytest\b|\bpytest\s*\.\s*main\b")
 
 # Prefixes before the command word, with the options of each that take a value.
@@ -190,8 +194,10 @@ def lex(command: str, shell: str = BASH) -> Lexed:
     out = Lexed()
     if shell == BASH:
         text = re.sub(r"\\\r?\n", " ", command)
-    else:
+    elif shell == POWERSHELL:
         text = re.sub(r"`\r?\n", " ", command)
+    else:  # cmd: a caret ends a continued line
+        text = re.sub(r"\^\r?\n", " ", command)
 
     def herestring(match: re.Match[str]) -> str:
         if match.group(1) == '"':  # expandable: its $(...) subexpressions run
@@ -202,7 +208,8 @@ def lex(command: str, shell: str = BASH) -> Lexed:
                 out.nested.append(inner)
         return " HERESTRING "
 
-    text = _HERESTRING.sub(herestring, text)
+    if shell == POWERSHELL:  # here-strings are PowerShell syntax only
+        text = _HERESTRING.sub(herestring, text)
 
     pending: list[tuple[str, bool]] = []
     if shell == BASH:  # here-documents: keep the header line, take the body out
@@ -223,7 +230,7 @@ def lex(command: str, shell: str = BASH) -> Lexed:
                 pending.append(("\n".join(body), quoted))
         text = "\n".join(kept)
 
-    escape = "\\" if shell == BASH else "`"
+    escape = {BASH: "\\", POWERSHELL: "`", CMD: "^"}[shell]
     segment: list[Word] = []
     word = ""
     in_word = False
@@ -266,7 +273,7 @@ def lex(command: str, shell: str = BASH) -> Lexed:
                     content.append(text[j + 1])
                     j += 2
                     continue
-                if text.startswith("$(", j):
+                if shell != CMD and text.startswith("$(", j):
                     body, j = _read_until(text, j + 2, ")")
                     out.nested.append(body)
                     continue
@@ -280,13 +287,17 @@ def lex(command: str, shell: str = BASH) -> Lexed:
             in_word = True
             i = j + 1
             continue
+        if ch == "#" and not in_word and shell != CMD:
+            end = text.find("\n", i)
+            i = len(text) if end < 0 else end
+            continue
         if ch == escape and i + 1 < len(text):
             word += text[i + 1]
             in_word = True
             all_quoted = False
             i += 2
             continue
-        if text.startswith("$(", i):
+        if shell != CMD and text.startswith("$(", i):
             end_segment()
             body, i = _read_until(text, i + 2, ")")
             out.nested.append(body)
@@ -300,7 +311,8 @@ def lex(command: str, shell: str = BASH) -> Lexed:
             end_segment()
             i += 2
             continue
-        if ch == "&" and in_word:  # 2>&1 and similar: part of a word
+        if ch == "&" and in_word and (word.endswith((">", "<")) or text.startswith("&>", i)):
+            # a redirection such as 2>&1 or >&2: part of the word
             word += ch
             i += 1
             continue
@@ -366,6 +378,7 @@ def _python_uses_pytest(code: str) -> bool:
             if "pytest" in args and (
                 (isinstance(func, ast.Name) and func.id == "__import__")
                 or (isinstance(func, ast.Attribute) and func.attr == "import_module")
+                or (isinstance(func, ast.Name) and func.id == "import_module")
             ):
                 return True
     return False
@@ -429,11 +442,23 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
     if name in PYTEST_WORDS:
         return PYTEST_REASON
     if _is_python(name):
-        for k, arg in enumerate(args):
-            if arg == "-m" and k + 1 < len(args) and args[k + 1].lower() in PYTEST_WORDS:
-                return PYTEST_REASON
-            if arg == "-c" and k + 1 < len(args) and _python_uses_pytest(args[k + 1]):
-                return PYTEST_REASON
+        k = 0
+        while k < len(args):  # what follows -c CODE, -m MODULE or a script is argv
+            arg = args[k]
+            if arg == "-m":
+                if k + 1 < len(args) and args[k + 1].lower() in PYTEST_WORDS:
+                    return PYTEST_REASON
+                break
+            if arg == "-c":
+                if k + 1 < len(args) and _python_uses_pytest(args[k + 1]):
+                    return PYTEST_REASON
+                break
+            if arg in ("-W", "-X", "--check-hash-based-pycs"):
+                k += 2
+                continue
+            if not arg.startswith("-") or arg == "-":
+                break
+            k += 1
     if name in SHELLS:
         for k, arg in enumerate(args):
             if re.fullmatch(r"-[a-z]*c[a-z]*", arg) and k + 1 < len(args):
@@ -447,7 +472,7 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
     if name == "cmd":
         for k, arg in enumerate(lowered):
             if arg in ("/c", "/k") and k + 1 < len(args):
-                return check(" ".join(args[k + 1 :]), depth + 1, POWERSHELL)
+                return check(" ".join(args[k + 1 :]), depth + 1, CMD)
     if name == "eval" and args:
         return check(" ".join(args), depth + 1, BASH)
     if name in ("invoke-expression", "iex") and args:
@@ -463,8 +488,12 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
                 k += 2
                 continue
             if a in ("-argumentlist", "-args", "-arguments") and k + 1 < len(args):
-                arglist = args[k + 1].replace(",", " ")  # an array joins with commas
+                parts = [args[k + 1]]
                 k += 2
+                while parts[-1].endswith(",") and k < len(args):  # 'a', 'b', ...
+                    parts.append(args[k])
+                    k += 1
+                arglist = " ".join(parts).replace(",", " ")
                 continue
             if not args[k].startswith("-"):
                 positional.append(args[k])

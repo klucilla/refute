@@ -205,3 +205,41 @@ def test_settings_register_the_hook_for_bash_and_powershell():
     (hook,) = entry["hooks"]
     assert hook["type"] == "command"
     assert any("command_guard.py" in part for part in [hook["command"], *hook.get("args", [])])
+
+
+# Codex round 3 ------------------------------------------------------------------------------
+
+BLOCK_ROUND3 = [
+    (
+        "Start-Process -FilePath .venv/Scripts/python.exe -ArgumentList '-m', 'pytest', '-q' -Wait",
+        P,
+    ),
+    ("git status&sed -n 1p README.md", B),
+    (r'cmd /c ".venv\Scripts\py^thon.exe -m pytest -q"', P),
+    (
+        '.venv/Scripts/python.exe -c "from importlib import import_module; '
+        "import_module('pytest').main()\"",
+        B,
+    ),
+    ("git status; sed -n 1p x # a comment after the command", B),
+]
+
+PASS_ROUND3 = [
+    ("git status # example; sed -n 1p README.md", B),
+    ("Get-ChildItem # example | Select-String x", P),
+    ("cat <<'EOF'\n@\"\n$(Select-String -Path README.md -Pattern Refute)\n\"@\nEOF", B),
+    ('.venv/Scripts/python.exe -c "print(1)" -m pytest', B),
+    (".venv/Scripts/python.exe scripts/x.py -m pytest", B),
+    ("git log 2>&1 | head -1", B),
+    ("echo hi >&2", B),
+]
+
+
+@pytest.mark.parametrize(("command", "shell"), BLOCK_ROUND3)
+def test_refused_round3(command, shell):
+    assert guard.check(command, shell=shell) is not None
+
+
+@pytest.mark.parametrize(("command", "shell"), PASS_ROUND3)
+def test_allowed_round3(command, shell):
+    assert guard.check(command, shell=shell) is None
