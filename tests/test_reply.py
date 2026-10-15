@@ -250,3 +250,22 @@ def test_write_error_never_shows_the_path(tmp_path, monkeypatch):
     with pytest.raises(ReplyDraftError) as refused:
         write_reply_draft(d, contact_file, out)
     assert EMAIL not in str(refused.value)
+
+
+def test_error_while_checking_paths_never_shows_the_path(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    d = sealed_dossier(tmp_path / "D1")
+    contact_file = contact(tmp_path)
+    out = tmp_path / "private" / EMAIL / "draft.txt"
+    real = Path.resolve
+
+    def failing(self, *args, **kwargs):
+        if EMAIL in str(self):
+            raise OSError(5, "I/O error", str(self))
+        return real(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "resolve", failing)
+    with pytest.raises(ReplyDraftError) as refused:
+        write_reply_draft(d, contact_file, out)
+    assert EMAIL not in str(refused.value)

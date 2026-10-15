@@ -188,7 +188,16 @@ def render(
 
 
 def write_reply_draft(dossier: Path | str, contact_path: Path | str, out: Path | str) -> ReplyDraft:
-    """Check the inputs, write the draft and return its hashes (W2.13, W2.13a)."""
+    """Check the inputs, write the draft and return its hashes (W2.13, W2.13a). Any
+    file system error, also while paths are checked, becomes a refusal that names only
+    the kind of error: a path may hold personal data."""
+    try:
+        return _write_reply_draft(Path(dossier), Path(contact_path), Path(out))
+    except OSError as exc:
+        raise ReplyDraftError(f"a file system operation failed ({type(exc).__name__})") from None
+
+
+def _write_reply_draft(dossier: Path, contact_path: Path, out: Path) -> ReplyDraft:
     from refute.core.seal import check_sealed
 
     dossier, contact_path, out = Path(dossier), Path(contact_path), Path(out)

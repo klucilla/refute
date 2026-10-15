@@ -408,6 +408,9 @@ def _reads_python_stdin(words: list[Word]) -> bool:
             return True
         if not arg.startswith("-"):
             return False  # a script
+        if arg == "--check-hash-based-pycs":  # a long option that takes a value
+            k += 2
+            continue
         if arg.startswith("--"):
             k += 1
             continue

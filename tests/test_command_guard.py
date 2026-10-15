@@ -318,3 +318,11 @@ def test_here_string_piped_to_python_reading_stdin_implicitly(command):
 def test_python_with_a_script_does_not_read_the_here_string():
     command = "@'\nimport pytest\n'@ | .venv/Scripts/python.exe scripts/x.py"
     assert guard.check(command, shell=P) is None
+
+
+def test_long_python_option_with_a_value_before_reading_stdin():
+    command = (
+        "@'\nimport pytest\npytest.main()\n'@ | "
+        ".venv/Scripts/python.exe --check-hash-based-pycs always"
+    )
+    assert guard.check(command, shell=P) is not None
