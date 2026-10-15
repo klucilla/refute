@@ -160,7 +160,10 @@ def read_predictions(path: Path, fmt: str, fields: dict[str, str]) -> dict[str, 
         with path.open(encoding="utf-8") as handle:
             for line in handle:
                 if line.strip():
-                    rows.append(json.loads(line, parse_constant=_refuse_constant))
+                    # numbers keep their text (Decimal), so a lossy conversion is seen
+                    rows.append(
+                        json.loads(line, parse_constant=_refuse_constant, parse_float=Decimal)
+                    )
         out = {}
         for role, name in fields.items():
             if any(not isinstance(r, dict) or name not in r for r in rows):
@@ -188,7 +191,7 @@ def _encode(values: np.ndarray, labels: Sequence[Any]) -> np.ndarray:
     index = {_key(v): i for i, v in enumerate(labels)}
     out = np.empty(len(values), dtype=np.int64)
     for i, v in enumerate(values):
-        if isinstance(v, bool | float | np.floating | np.bool_):
+        if isinstance(v, bool | float | Decimal | np.floating | np.bool_):
             raise RecomputeError(f"label value {v!r} is not an integer or a string")
         k = _key(v.item() if isinstance(v, np.generic) else v)
         if k not in index:
@@ -197,11 +200,51 @@ def _encode(values: np.ndarray, labels: Sequence[Any]) -> np.ndarray:
     return out
 
 
+# Integers up to 2**53 are exact in a 64-bit float; a decimal text with at most 15
+# significant digits converts to a float that gives the same text back (DBL_DIG), so two
+# distinct such texts never become the same float.
+_EXACT_INTEGER = 2**53
+_SAFE_DIGITS = 15
+
+
+def _exact_float(value: Any, what: str) -> float:
+    """``value`` as a 64-bit float, refusing any conversion that can lose information
+    (Codex review of PR #81): two distinct inputs must never become the same float, or
+    both implementations would agree on a wrong value."""
+    if isinstance(value, np.generic):
+        value = value.item()
+    if isinstance(value, bool):
+        raise RecomputeError(f"{what} holds a boolean, not a number")
+    if isinstance(value, int):
+        if abs(value) > _EXACT_INTEGER:
+            raise RecomputeError(f"{what} holds an integer beyond 2**53, inexact as a float")
+        return float(value)
+    if isinstance(value, float):
+        return value  # already a 64-bit float: nothing more is lost
+    if isinstance(value, str):
+        text = value.strip()
+        if not _NUMBER.match(text):
+            raise RecomputeError(f"{what} holds a value that is not a number")
+        value = Decimal(text)
+    if not isinstance(value, Decimal) or not value.is_finite():
+        raise RecomputeError(f"{what} holds a value that is not a finite number")
+    result = float(value)
+    digits = len(value.normalize().as_tuple().digits)
+    if digits > _SAFE_DIGITS and Decimal(format(result, f".{min(digits, 17)}g")) != value:
+        # more digits than a float keeps, and not the exact print of a float
+        raise RecomputeError(f"{what} holds {value}, which a 64-bit float cannot keep exactly")
+    return result
+
+
 def _floats(values: np.ndarray, what: str) -> np.ndarray:
-    try:
-        out = np.array([float(v) for v in values], dtype=np.float64)
-    except (TypeError, ValueError):
-        raise RecomputeError(f"{what} holds a value that is not a number") from None
+    if values.dtype.kind == "f":
+        out = values.astype(np.float64)
+    elif values.dtype.kind in "iu":
+        if values.size and np.max(np.abs(values.astype(object))) > _EXACT_INTEGER:
+            raise RecomputeError(f"{what} holds an integer beyond 2**53, inexact as a float")
+        out = values.astype(np.float64)
+    else:
+        out = np.array([_exact_float(v, what) for v in values], dtype=np.float64)
     if not np.all(np.isfinite(out)):
         raise RecomputeError(f"{what} holds a non-finite value")
     return out
@@ -285,10 +328,17 @@ def own_metric(conv: Convention, p: Prepared) -> float:
         return float(np.mean(err**2))
     if m == "rmse":
         return math.sqrt(float(np.mean(err**2)))
+    _refuse_constant_target(p)
     ss_tot = float(np.sum((p.y_true - np.mean(p.y_true)) ** 2))
-    if ss_tot == 0:
-        raise UndefinedMetricError("r2 of a constant y_true")
     return 1.0 - float(np.sum(err**2)) / ss_tot
+
+
+def _refuse_constant_target(p: Prepared) -> None:
+    """r2 is undefined for a constant ``y_true``. The values are compared directly: a
+    variance computed from a rounded mean can be a tiny positive number for equal
+    values (Codex review of PR #81)."""
+    if np.all(p.y_true == p.y_true[0]):
+        raise UndefinedMetricError("r2 of a constant y_true")
 
 
 def _average_ranks(values: np.ndarray) -> np.ndarray:
@@ -337,8 +387,7 @@ def sklearn_metric(conv: Convention, p: Prepared) -> float:
         return float(skm.mean_squared_error(p.y_true, p.y_other))
     if m == "rmse":
         return float(skm.root_mean_squared_error(p.y_true, p.y_other))
-    if float(np.sum((p.y_true - np.mean(p.y_true)) ** 2)) == 0:
-        raise UndefinedMetricError("r2 of a constant y_true")
+    _refuse_constant_target(p)
     return float(skm.r2_score(p.y_true, p.y_other, force_finite=False))
 
 
@@ -365,7 +414,8 @@ class PrintedInterval:
 def printed_interval(token: str, rounding: str) -> PrintedInterval:
     """``q = 10^(e - d)`` from the token's text (d decimals, exponent e); nearest:
     ``[v - q/2, v + q/2]``; truncate: ``[v, v + q)``, or ``(v - q, v]`` when the text has a
-    leading ``-`` (``-0.0`` included), or ``(-q, q)`` for an unsigned zero; unknown:
+    leading ``-`` (``-0.0`` included), or ``(-q, q)`` for a zero with no sign (``+0.0``
+    has one: ``[0, q)``); unknown:
     ``[v - q, v + q]``. Open and closed ends are treated alike: the decision widens the
     interval by an epsilon anyway."""
     text = token.strip()
@@ -381,8 +431,8 @@ def printed_interval(token: str, rounding: str) -> PrintedInterval:
         return PrintedInterval(value, value - q, value + q)
     if text.startswith("-"):
         return PrintedInterval(value, value - q, value)
-    if value == 0:
-        return PrintedInterval(value, -q, q)
+    if value == 0 and not text.startswith("+"):
+        return PrintedInterval(value, -q, q)  # an unsigned zero: either sign was truncated
     return PrintedInterval(value, value, value + q)
 
 
@@ -478,21 +528,39 @@ def recompute_run(
 # ---- the check over every base run ------------------------------------------------------
 
 
-def metric_recompute_result(outcomes: Sequence[RunOutcome], expected_runs: int) -> TestResult:
-    """The ``metric_recompute`` check of one claim. One valid failure establishes the
-    failure; every expected run must pass for a PASS; anything else is INCONCLUSIVE.
-    Coverage: runs recomputed in full."""
-    if expected_runs < 1:
-        raise ValueError("expected_runs must be at least 1")
+def metric_recompute_result(
+    outcomes: Sequence[RunOutcome], expected_labels: Sequence[str]
+) -> TestResult:
+    """The ``metric_recompute`` check of one claim over its base runs, named by
+    ``expected_labels`` (for example ``seed=1``, or ``method:seed=1`` for a comparison).
+
+    Each outcome must name a distinct expected run, and a decided outcome (PASS or
+    FAIL) must have been recomputed in full; anything else is an input error
+    (``ValueError``), so a repeated or foreign outcome can neither fill a PASS nor
+    establish a failure. One valid failure establishes the failure; every expected run
+    must pass for a PASS; anything else is INCONCLUSIVE. Coverage: runs recomputed in
+    full."""
+    expected = list(expected_labels)
+    if not expected or len(set(expected)) != len(expected):
+        raise ValueError("expected_labels must be a non-empty list of distinct run labels")
+    labels = [o.label for o in outcomes]
+    if len(set(labels)) != len(labels):
+        raise ValueError("two outcomes name the same run")
+    foreign = sorted(set(labels) - set(expected))
+    if foreign:
+        raise ValueError("outcomes for runs that are not expected: " + ", ".join(foreign))
+    for o in outcomes:
+        if o.status in (TestStatus.PASS, TestStatus.FAIL) and not o.recomputed_in_full:
+            raise ValueError(f"run {o.label} is {o.status} but was not recomputed in full")
     failed = [o for o in outcomes if o.status is TestStatus.FAIL]
-    passed = [o for o in outcomes if o.status is TestStatus.PASS]
+    passed = {o.label for o in outcomes if o.status is TestStatus.PASS}
     coverage = sum(1 for o in outcomes if o.recomputed_in_full)
     if failed:
         status, message = (
             TestStatus.FAIL,
             f"{len(failed)} run(s) printed a value their predictions do not give",
         )
-    elif len(passed) == expected_runs and len(outcomes) == expected_runs:
+    elif passed == set(expected):
         status, message = TestStatus.PASS, "every run printed the value its predictions give"
     else:
         status, message = TestStatus.INCONCLUSIVE, "not every run could be decided"
@@ -502,7 +570,7 @@ def metric_recompute_result(outcomes: Sequence[RunOutcome], expected_runs: int) 
         severity=Severity.FATAL,
         message=message,
         metrics={
-            EXPECTED_COVERAGE: expected_runs,
+            EXPECTED_COVERAGE: len(expected),
             FAILURE_ESTABLISHED: bool(failed),
             "runs": [
                 {"label": o.label, "status": str(o.status), "reason": o.reason, **o.details}

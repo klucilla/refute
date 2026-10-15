@@ -188,6 +188,7 @@ def test_labels_match_by_text_and_unknown_labels_are_refused():
         ("0.5", "truncate", "0.5", "0.6"),
         ("-0.0", "truncate", "-0.1", "0.0"),
         ("0.0", "truncate", "-0.1", "0.1"),
+        ("+0.0", "truncate", "0.0", "0.1"),  # a sign is given: not the unsigned-zero case
         ("-0.4", "truncate", "-0.5", "-0.4"),
         ("0.50", "unknown", "0.49", "0.51"),
         ("1", "nearest", "0.5", "1.5"),
@@ -303,21 +304,25 @@ def test_readers_refuse_pickles_missing_fields_and_non_finite_values(tmp_path):
 # ---- the check over the runs ---------------------------------------------------------------
 
 
-def outcome(status, full=True):
-    return rc.RunOutcome("seed", status, "r", full)
+SEEDS = ["seed=1", "seed=2", "seed=3"]
+
+
+def outcome(label, status, full=True):
+    return rc.RunOutcome(label, status, "r", full)
 
 
 def test_check_passes_only_when_every_expected_run_passes():
-    r = rc.metric_recompute_result([outcome(TestStatus.PASS)] * 3, expected_runs=3)
+    r = rc.metric_recompute_result([outcome(s, TestStatus.PASS) for s in SEEDS], SEEDS)
     assert (r.name, r.status, r.coverage) == (METRIC_RECOMPUTE, TestStatus.PASS, 3)
     assert r.metrics[EXPECTED_COVERAGE] == 3 and r.metrics[FAILURE_ESTABLISHED] is False
-    r = rc.metric_recompute_result([outcome(TestStatus.PASS)] * 2, expected_runs=3)
+    r = rc.metric_recompute_result([outcome(s, TestStatus.PASS) for s in SEEDS[:2]], SEEDS)
     assert r.status is TestStatus.INCONCLUSIVE
 
 
 def test_one_valid_failure_establishes_the_failure():
     r = rc.metric_recompute_result(
-        [outcome(TestStatus.FAIL), outcome(TestStatus.INCONCLUSIVE, False)], expected_runs=3
+        [outcome("seed=1", TestStatus.FAIL), outcome("seed=2", TestStatus.INCONCLUSIVE, False)],
+        SEEDS,
     )
     assert r.status is TestStatus.FAIL and r.metrics[FAILURE_ESTABLISHED] is True
     assert r.coverage == 1
@@ -325,6 +330,102 @@ def test_one_valid_failure_establishes_the_failure():
 
 def test_an_unreadable_run_makes_the_check_inconclusive():
     r = rc.metric_recompute_result(
-        [outcome(TestStatus.PASS), outcome(TestStatus.INCONCLUSIVE, False)], expected_runs=2
+        [outcome("seed=1", TestStatus.PASS), outcome("seed=2", TestStatus.INCONCLUSIVE, False)],
+        SEEDS[:2],
     )
     assert r.status is TestStatus.INCONCLUSIVE and r.coverage == 1
+
+
+@pytest.mark.parametrize(
+    "outcomes",
+    [
+        # one PASS repeated cannot stand for three runs
+        [outcome("seed=1", TestStatus.PASS)] * 3,
+        # a run that is not expected
+        [outcome(s, TestStatus.PASS) for s in SEEDS] + [outcome("seed=9", TestStatus.FAIL)],
+        # a decided outcome that was not recomputed in full
+        [outcome("seed=1", TestStatus.FAIL, False), outcome("seed=2", TestStatus.PASS)],
+        [outcome("seed=1", TestStatus.PASS, False)],
+    ],
+)
+def test_outcomes_must_name_distinct_expected_runs_recomputed_in_full(outcomes):
+    """Codex review of PR #81, blocker 3: the check counts runs, not outcomes."""
+    with pytest.raises(ValueError):
+        rc.metric_recompute_result(outcomes, SEEDS)
+
+
+@pytest.mark.parametrize("expected", [[], ["seed=1", "seed=1"]])
+def test_expected_runs_are_a_non_empty_list_of_distinct_labels(expected):
+    with pytest.raises(ValueError):
+        rc.metric_recompute_result([], expected)
+
+
+# ---- numeric safety (Codex review of PR #81, blockers 1 and 2) -----------------------------
+
+
+def test_integers_beyond_2_53_are_refused_not_collapsed():
+    # 2**53 and 2**53 + 1 are the same 64-bit float: MAE would be 0 instead of 1 in both
+    # implementations, and a printed "1.0" would look like a valid failure
+    c = conv("mae", "native")
+    big = data([2**53], [2**53 + 1])
+    with pytest.raises(RecomputeError):
+        rc.prepare(c, big)
+    outcome_ = run(c, "1.0", big, 1, channel="native", unit="native")
+    assert outcome_.status is TestStatus.INCONCLUSIVE
+    arr = np.array([2**53 + 1], dtype=np.int64)
+    with pytest.raises(RecomputeError):
+        rc.prepare(c, {"y_true": arr, "y_pred": arr})
+    assert both(c, data([2**53], [2**53 - 1])) == (1.0, 1.0)  # 2**53 itself is exact
+
+
+@pytest.mark.parametrize(
+    ("text", "ok"),
+    [
+        ("0.1", True),
+        ("0.10000000000000001", True),  # the 17-digit print of the float 0.1
+        ("123456789012345", True),  # 15 significant digits
+        ("9007199254740993", False),  # 2**53 + 1 as text
+        ("0.1000000000000000000001", False),  # more digits than a float keeps
+    ],
+)
+def test_decimal_texts_are_read_only_when_no_digit_is_lost(text, ok):
+    c = conv("mae", "native")
+    d = data([text], ["0"])
+    if ok:
+        rc.prepare(c, d)
+    else:
+        with pytest.raises(RecomputeError):
+            rc.prepare(c, d)
+
+
+def test_auroc_scores_that_would_collide_are_refused():
+    c = conv("auroc", labels=L01, pos_label=1)
+    d = data([0, 1], ["0.1000000000000000000001", "0.1000000000000000000002"], "y_score")
+    with pytest.raises(RecomputeError):
+        rc.prepare(c, d)
+
+
+def test_jsonl_numbers_keep_their_text(tmp_path):
+    (tmp_path / "p.jsonl").write_text('{"t": 1.0, "p": 9007199254740993.0}\n')
+    d = rc.read_predictions(tmp_path / "p.jsonl", "jsonl", {"y_true": "t", "y_pred": "p"})
+    with pytest.raises(RecomputeError):
+        rc.prepare(conv("mae", "native"), d)
+    (tmp_path / "q.jsonl").write_text('{"t": 1.5, "p": 2}\n')
+    d = rc.read_predictions(tmp_path / "q.jsonl", "jsonl", {"y_true": "t", "y_pred": "p"})
+    assert both(conv("mae", "native"), d) == (0.5, 0.5)
+    with pytest.raises(RecomputeError):  # a JSON float is never a class label
+        rc.prepare(conv("accuracy", labels=L01), data([Decimal("1.0")], [1]))
+
+
+def test_r2_of_equal_targets_is_undefined_whatever_the_rounding_of_the_mean():
+    # three 0.1: the mean rounds to 0.10000000000000002 and the summed squares are ~6e-34,
+    # which passed a "variance == 0" guard and gave r2 ~ -5e31
+    c = conv("r2", "native")
+    d = data([0.1, 0.1, 0.1], [0.2, 0.2, 0.2])
+    p = rc.prepare(c, d)
+    with pytest.raises(UndefinedMetricError):
+        rc.own_metric(c, p)
+    with pytest.raises(UndefinedMetricError):
+        rc.sklearn_metric(c, p)
+    outcome_ = run(c, "0.0", d, 3, channel="native", unit="native")
+    assert outcome_.status is TestStatus.INCONCLUSIVE
