@@ -37,6 +37,21 @@ function Get-RefuteSumsHash {
     return $found[0]
 }
 
+function ConvertTo-RefuteMsysPath {
+    # An absolute Windows path on a drive ("C:\a\b") in the form the MSYS programs of Git
+    # for Windows (gpg) read when started from PowerShell ("/c/a/b"). Started outside an
+    # MSYS shell, they get no automatic path conversion, and "C:/a/b" is read as a
+    # relative path. Refuses relative, UNC and ".." paths.
+    param([string]$Path)
+    if ($Path -cnotmatch '^[A-Za-z]:\\' -or $Path.Contains('..') -or $Path.Contains('/')) {
+        throw "not an absolute Windows path on a drive: $Path"
+    }
+    $rest = $Path.Substring(3).TrimEnd('\').Replace('\', '/')
+    $drive = '/' + $Path.Substring(0, 1).ToLowerInvariant()
+    if ($rest) { return "$drive/$rest" }
+    return $drive
+}
+
 function ConvertTo-RefuteVmPublicKey {
     # "ssh-ed25519 <base64> [comment]" -> "ssh-ed25519 <base64> refute-vm", after checking
     # the blob: the string "ssh-ed25519" then a 32-byte key (RFC 8709 wire format).

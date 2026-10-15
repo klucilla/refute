@@ -267,6 +267,16 @@ foreach ($bad in @("ssh-rsa $b64", "ssh-ed25519 notbase64!", "ssh-ed25519 $([Sys
     try { ConvertTo-RefuteVmPublicKey $bad | Out-Null } catch { $failed = $_.Exception.Message }
     Add-Case "key refused: $($bad.Substring(0, 12))" ($null -ne $failed) $failed
 }
+# The gpg of Git for Windows is an MSYS program: started from PowerShell it reads
+# "C:/a/b" as a relative path, so every path it gets is in the "/c/a/b" form.
+Add-Case 'msys path: key ring folder' ((ConvertTo-RefuteMsysPath 'C:\Projetos\refute\.cache\vm\gnupg') -ceq '/c/Projetos/refute/.cache/vm/gnupg')
+Add-Case 'msys path: file, lowercase drive' ((ConvertTo-RefuteMsysPath 'K:\Meu Drive\SHA256SUMS') -ceq '/k/Meu Drive/SHA256SUMS')
+Add-Case 'msys path: trailing separator and drive root' ((ConvertTo-RefuteMsysPath 'C:\a\') -ceq '/c/a' -and (ConvertTo-RefuteMsysPath 'C:\') -ceq '/c')
+foreach ($bad in @('relative\path', '\\server\share\x', 'C:/Projetos/refute', 'C:\Projetos\..\Windows', '/c/Projetos')) {
+    $failed = $null
+    try { ConvertTo-RefuteMsysPath $bad | Out-Null } catch { $failed = $_.Exception.Message }
+    Add-Case "msys path refused: $bad" ($null -ne $failed) $failed
+}
 
 # ---- registration decisions (Codex review round 2) ----------------------------------------
 . (Join-Path $vmDir 'RefuteRegistration.Core.ps1')
