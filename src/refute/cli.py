@@ -305,7 +305,13 @@ def annex_command(
     except SealError as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
+    from refute.core.hashing import sha256_file
+    from refute.core.seal import ANNEX_DIR, ANNEX_MANIFEST
+
+    manifest = sha256_file(dossier / ANNEX_DIR / name / ANNEX_MANIFEST)
     typer.echo(f"annex {name}: {len(record['files'])} file(s), core {record['core_sha256']}")
+    # recorded publicly, like the seal: lets a later check catch a replaced manifest
+    typer.echo(f"annex {name}: {ANNEX_MANIFEST} sha256 {manifest}")
 
 
 @app.command("reply-draft")

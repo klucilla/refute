@@ -244,6 +244,10 @@ class Accountant:
         """What ``account`` may use now, under the order and the sharing rule (W2.9)."""
         if not self._valid_account(account):
             return self._refusal(account, f"unknown account {account}")
+        if not self.accounting_valid:  # after a breach nothing more is granted
+            return self._refusal(
+                account, "the accounting is invalid (" + "; ".join(self.invalid_reasons) + ")"
+            )
         if account.pool is Pool.SETUP:
             if self.phase is not Phase.SETUP:
                 return self._refusal(account, "the setup account is closed")
@@ -412,9 +416,11 @@ class Accountant:
         if set(eligible) != set(self.claims):
             raise ValueError("eligibility must be given for every claim")
         self._no_running("freeze_attacks")
-        balance = max(self._pool_balance(Pool.BASE), 0)
+        # A base overrun (only possible through a breach) reduces the attack pool, so the
+        # paper total never exceeds its limit.
+        balance = self._pool_balance(Pool.BASE)
         chosen = [c for c in self.claims if eligible[c]]
-        total = self.attack_pool_base_usec + balance
+        total = max(self.attack_pool_base_usec + balance, 0)
         if not chosen:
             self.no_distribution = True
             self.attacks = _Distribution([], total, 0)

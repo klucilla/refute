@@ -117,6 +117,12 @@ older manifest that lists such paths keeps covering them.
 `refute check-dossier` on a sealed dossier reports separately whether the core is
 intact against its seal and whether each annex is intact against its manifest.
 
+Limit: an annex is checked against its own `ANNEX.json`. A copy in which an annex file
+and its manifest were both replaced consistently, or an annex removed whole, is not
+detected from the dossier alone. `refute annex` therefore prints the SHA-256 of the
+new `ANNEX.json`, so that it can be recorded publicly like the core hash. A check
+against such an external list of annex manifests is not implemented.
+
 ## Archives
 
 `refute archive dossiers/<run_id>` writes a deterministic zip (sorted entries,

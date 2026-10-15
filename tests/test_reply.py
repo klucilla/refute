@@ -204,3 +204,49 @@ def test_template_has_no_words_about_people(verdict):
     text = render(claim, verdict, "0" * 64, "R", "e@x").lower()
     for word in FORBIDDEN_WORDS:
         assert word not in text, word
+
+
+# WP2 package review --------------------------------------------------------------------------
+
+
+def test_contact_outside_private_is_refused(tmp_path):
+    d = sealed_dossier(tmp_path / "D1")
+    public = tmp_path / "public" / "c.json"
+    public.parent.mkdir()
+    public.write_text(contact(tmp_path).read_text(encoding="utf-8"), encoding="utf-8")
+    with pytest.raises(ReplyDraftError, match="private"):
+        write_reply_draft(d, public, out_path(tmp_path))
+
+
+def test_draft_inside_another_dossier_is_refused(tmp_path):
+    d = sealed_dossier(tmp_path / "D1")
+    other = sealed_dossier(tmp_path / "D2")
+    with pytest.raises(ReplyDraftError, match="never"):
+        write_reply_draft(d, contact(tmp_path), other / "private" / "draft.txt")
+    assert not (other / "private").exists()
+
+
+def test_forbidden_words_from_the_claim_are_refused_without_quoting_them(tmp_path):
+    claim = dict(CLAIM)
+    claim["statement"] = "Accuracy is 91.2%, and the authors failed to report the seed."
+    d = sealed_dossier(tmp_path / "D1", claim=claim)
+    with pytest.raises(ReplyDraftError) as refused:
+        write_reply_draft(d, contact(tmp_path), out_path(tmp_path))
+    assert "authors failed" not in str(refused.value)
+    assert not out_path(tmp_path).exists()
+
+
+def test_write_error_never_shows_the_path(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    d = sealed_dossier(tmp_path / "D1")
+    contact_file = contact(tmp_path)
+    out = tmp_path / "private" / EMAIL / "draft.txt"  # the path holds the address
+
+    def failing(self, *args, **kwargs):
+        raise PermissionError(13, "Permission denied", str(self))
+
+    monkeypatch.setattr(Path, "write_text", failing)
+    with pytest.raises(ReplyDraftError) as refused:
+        write_reply_draft(d, contact_file, out)
+    assert EMAIL not in str(refused.value)

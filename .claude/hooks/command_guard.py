@@ -395,11 +395,31 @@ def _python_uses_pytest(code: str) -> bool:
 
 
 def _reads_python_stdin(words: list[Word]) -> bool:
-    """A segment that runs Python on its standard input (``python -``)."""
+    """A segment that runs Python on its standard input: ``python -``, or Python with
+    no script, no ``-c`` and no ``-m`` (it then reads the program from stdin)."""
     start = _command_index(words)
     if start is None or not _is_python(_name(words[start].text)):
         return False
-    return any(w.text == "-" for w in words[start + 1 :])
+    args = [w.text for w in words[start + 1 :]]
+    k = 0
+    while k < len(args):
+        arg = args[k]
+        if arg == "-":
+            return True
+        if not arg.startswith("-"):
+            return False  # a script
+        if arg.startswith("--"):
+            k += 1
+            continue
+        for pos in range(1, len(arg)):
+            if arg[pos] in "mc":
+                return False  # -c CODE or -m MODULE: not the program from stdin
+            if arg[pos] in "WX":
+                if pos == len(arg) - 1:
+                    k += 1  # the value is the next word
+                break
+        k += 1
+    return True
 
 
 def _command_index(words: list[Word]) -> int | None:

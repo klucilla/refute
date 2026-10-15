@@ -299,3 +299,22 @@ def test_refused_round5(command, shell):
 @pytest.mark.parametrize(("command", "shell"), PASS_ROUND5)
 def test_allowed_round5(command, shell):
     assert guard.check(command, shell=shell) is None
+
+
+# WP2 package review --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "@'\nimport pytest\npytest.main()\n'@ | & .venv/Scripts/python.exe",
+        "@'\nimport pytest\n'@ | .venv/Scripts/python.exe -u",
+    ],
+)
+def test_here_string_piped_to_python_reading_stdin_implicitly(command):
+    assert guard.check(command, shell=P) is not None
+
+
+def test_python_with_a_script_does_not_read_the_here_string():
+    command = "@'\nimport pytest\n'@ | .venv/Scripts/python.exe scripts/x.py"
+    assert guard.check(command, shell=P) is None

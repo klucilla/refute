@@ -214,15 +214,40 @@ def write_reply_draft(dossier: Path | str, contact_path: Path | str, out: Path |
         if value is None or not str(value).strip():
             raise ReplyDraftError(f"the locked claim has no {'.'.join(path)}")
         claim[path[-1]] = str(value).strip()
+    if not _private(contact_path):
+        raise ReplyDraftError(f"the contact file must be under a {PRIVATE_DIR}/ folder")
     contact = _read_contact(contact_path)
     if (contact["arxiv_id"], contact["version"]) != (claim["arxiv_id"], claim["version"]):
         raise ReplyDraftError("the contact file belongs to another paper or version")
-    if PRIVATE_DIR not in out.resolve().parent.parts or _inside(out, dossier):
+    if not _private(out) or _inside(out, dossier) or _in_some_dossier(out):
         raise ReplyDraftError(
             f"the draft holds the address: write it under a {PRIVATE_DIR}/ folder, never "
             "into a dossier"
         )
     text = render(claim, verdict, seal_record["core_sha256"], reproduce, contact["email"])
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(text, encoding="utf-8", newline="\n")
-    return ReplyDraft(out, sha256_bytes(out.read_bytes()), address_sha256(contact["email"]))
+    lowered = text.lower()
+    if any(word in lowered for word in FORBIDDEN_WORDS):  # also in quoted claim text
+        raise ReplyDraftError(
+            "the draft would contain a word about people from the forbidden list; "
+            "check the locked claim and REPRODUCE.md"
+        )
+    try:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(text, encoding="utf-8", newline="\n")
+        draft_sha256 = sha256_bytes(out.read_bytes())
+    except OSError as exc:  # the path may hold personal data: report only the kind
+        raise ReplyDraftError(f"the draft could not be written ({type(exc).__name__})") from None
+    return ReplyDraft(out, draft_sha256, address_sha256(contact["email"]))
+
+
+def _private(path: Path) -> bool:
+    """The file lies under a folder named ``private``."""
+    return PRIVATE_DIR in path.resolve().parent.parts
+
+
+def _in_some_dossier(path: Path) -> bool:
+    """The path lies inside any dossier (a folder with MANIFEST.sha256 or SEAL.json)."""
+    for folder in path.resolve().parents:
+        if (folder / "MANIFEST.sha256").exists() or (folder / "SEAL.json").exists():
+            return True
+    return False

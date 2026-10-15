@@ -85,13 +85,32 @@ def default_workers() -> int:
     return max(1, usable_cpus() - 2)
 
 
-def init_worker() -> None:
-    """Worker initializer: one BLAS thread per process and a non-interactive plot backend."""
+def _configure_worker() -> None:
+    """One BLAS thread per process and a non-interactive plot backend (changes
+    ``os.environ``: the thread variables, and the first import of matplotlib may set
+    MPLCONFIGDIR)."""
     for name in _SINGLE_THREAD_ENV:
         os.environ.setdefault(name, "1")
     import matplotlib
 
     matplotlib.use("Agg")
+
+
+def init_worker() -> None:
+    """Worker initializer.
+
+    In a spawned worker process it configures the process for good. Called in the main
+    process it leaves ``os.environ`` exactly as it was (W2.16, #32): the configuration
+    of an in-process run is applied and undone by ``run_processes``.
+    """
+    if multiprocessing.parent_process() is not None:
+        _configure_worker()
+        return
+    saved = dict(os.environ)
+    try:
+        _configure_worker()
+    finally:
+        _restore_environ(saved)
 
 
 def _restore_environ(saved: dict[str, str]) -> None:
@@ -113,13 +132,13 @@ def run_processes[T, R](fn: Callable[[T], R], tasks: Sequence[T], workers: int) 
     if not tasks:
         return []
     if workers == 1 or len(tasks) == 1:
-        # init_worker() changes os.environ (the thread variables, and the first import
-        # of matplotlib may set MPLCONFIGDIR). In the current process the whole
-        # environment is restored afterwards, as it would be with worker processes,
-        # so nothing leaks into later code (#32).
+        # The worker configuration changes os.environ (the thread variables, and the
+        # first import of matplotlib may set MPLCONFIGDIR). In the current process the
+        # whole environment is restored afterwards, as it would be with worker
+        # processes, so nothing leaks into later code (#32).
         saved = dict(os.environ)
         try:
-            init_worker()
+            _configure_worker()
             return [fn(task) for task in tasks]
         finally:
             _restore_environ(saved)
