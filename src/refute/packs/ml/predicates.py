@@ -21,31 +21,63 @@ and a PASS does not. ``direction`` uses no tolerance.
 
 Equality at the limit counts as reproduced for the value modes and ``magnitude``; never
 for ``direction`` or for the ``d > 0`` part of ``margin`` (plan section 6.2).
+
+**Exact decimal arithmetic.** Published values, tolerances and reproduced values are
+decimal numbers; in binary floats ``61.2 − 60`` is ``1.2000000000000028``, which would
+move a value at the limit across it (Codex review). Every number is therefore taken as
+a ``Decimal``: a ``Decimal`` or a decimal text as given, an int exactly, and a float by
+its shortest representation (``repr``, which reads back as the same float), and the
+predicates compute in decimal arithmetic with 50 significant digits. The runner passes
+the reproduced value as the exact decimal mean of the extracted tokens.
 """
 
 from __future__ import annotations
 
-import math
+import re
 from dataclasses import dataclass
+from decimal import Decimal, localcontext
 from typing import Literal
 
 from refute.core.verdict import TestStatus
 
 Status = Literal["converted", "none", "not_convertible"]
+Number = Decimal | float | int | str
 NOT_CONVERTIBLE = "reported uncertainty not convertible"
+PRECISION = 50
+_DECIMAL = re.compile(r"^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$")
+
+
+def dec(value: Number, what: str = "a value") -> Decimal:
+    """``value`` as an exact finite Decimal (floats by their shortest representation)."""
+    if isinstance(value, bool):
+        raise ValueError(f"{what} is a boolean, not a number")
+    if isinstance(value, Decimal):
+        out = value
+    elif isinstance(value, int):
+        out = Decimal(value)
+    elif isinstance(value, float):
+        out = Decimal(repr(value)) if value == value and abs(value) != float("inf") else None
+    elif isinstance(value, str) and _DECIMAL.match(value.strip()):
+        out = Decimal(value.strip())
+    else:
+        out = None
+    if out is None or not out.is_finite():
+        raise ValueError(f"{what} must be a finite number")
+    return out
 
 
 @dataclass(frozen=True)
 class ToleranceParams:
-    rel_tol: float
-    k_sd: float
-    abs_floor: float
+    rel_tol: Decimal
+    k_sd: Decimal
+    abs_floor: Decimal
 
-    def __post_init__(self) -> None:
-        for name in ("rel_tol", "k_sd", "abs_floor"):
-            value = getattr(self, name)
-            if not math.isfinite(value) or value < 0:
-                raise ValueError(f"{name} must be finite and at least 0")
+    def __init__(self, rel_tol: Number, k_sd: Number, abs_floor: Number):
+        for name, value in (("rel_tol", rel_tol), ("k_sd", k_sd), ("abs_floor", abs_floor)):
+            number = dec(value, name)
+            if number < 0:
+                raise ValueError(f"{name} must be at least 0")
+            object.__setattr__(self, name, number)
 
 
 @dataclass(frozen=True)
@@ -54,14 +86,19 @@ class PublishedUncertainty:
     in the claim's unit."""
 
     status: Status
-    sd: float | None = None
+    sd: Decimal | None = None
 
-    def __post_init__(self) -> None:
-        if self.status == "converted":
-            if self.sd is None or not math.isfinite(self.sd) or self.sd < 0:
+    def __init__(self, status: Status, sd: Number | None = None):
+        if status not in ("converted", "none", "not_convertible"):
+            raise ValueError(f"unknown uncertainty status {status!r}")
+        if status == "converted":
+            if sd is None or dec(sd, "sd") < 0:
                 raise ValueError("a converted uncertainty has a finite sd of at least 0")
-        elif self.sd is not None:
-            raise ValueError(f"an uncertainty with status {self.status} has no sd")
+            sd = dec(sd, "sd")
+        elif sd is not None:
+            raise ValueError(f"an uncertainty with status {status} has no sd")
+        object.__setattr__(self, "status", status)
+        object.__setattr__(self, "sd", sd)
 
 
 NONE = PublishedUncertainty("none")
@@ -71,31 +108,39 @@ NONE = PublishedUncertainty("none")
 class Tolerance:
     """A tolerance, or only its lower bound when an uncertainty was not convertible."""
 
-    value: float
+    value: Decimal
     lower_bound: bool = False
+
+    def __init__(self, value: Number, lower_bound: bool = False):
+        number = dec(value, "a tolerance")
+        if number < 0:
+            raise ValueError("a tolerance is at least 0")
+        object.__setattr__(self, "value", number)
+        object.__setattr__(self, "lower_bound", lower_bound)
 
 
 @dataclass(frozen=True)
 class Outcome:
     status: TestStatus
     reason: str
-    tolerance: float | None = None
+    tolerance: Decimal | None = None
 
 
-def one_number(x: float, params: ToleranceParams, uncertainty: PublishedUncertainty) -> Tolerance:
+def one_number(x: Number, params: ToleranceParams, uncertainty: PublishedUncertainty) -> Tolerance:
     """``max(abs_floor, rel_tol · |x|, k_sd · sd)`` (plan line 415; 1.0.9)."""
-    _finite(x, "the published value")
-    base = max(params.abs_floor, params.rel_tol * abs(x))
-    if uncertainty.status == "converted":
-        return Tolerance(max(base, params.k_sd * uncertainty.sd))
-    return Tolerance(base, lower_bound=uncertainty.status == "not_convertible")
+    with localcontext() as ctx:
+        ctx.prec = PRECISION
+        base = max(params.abs_floor, params.rel_tol * abs(dec(x, "the published value")))
+        if uncertainty.status == "converted":
+            return Tolerance(max(base, params.k_sd * uncertainty.sd))
+        return Tolerance(base, lower_bound=uncertainty.status == "not_convertible")
 
 
 def difference_tolerance(
-    p: float,
+    p: Number,
     params: ToleranceParams,
-    reported_method: float,
-    reported_reference: float,
+    reported_method: Number,
+    reported_reference: Number,
     uncertainty_method: PublishedUncertainty,
     uncertainty_reference: PublishedUncertainty,
     paired: PublishedUncertainty,
@@ -109,14 +154,14 @@ def difference_tolerance(
     tol_m = one_number(reported_method, params, uncertainty_method)
     tol_b = one_number(reported_reference, params, uncertainty_reference)
     return Tolerance(
-        math.sqrt(tol_m.value**2 + tol_b.value**2),
-        lower_bound=tol_m.lower_bound or tol_b.lower_bound,
+        _hypot(tol_m.value, tol_b.value), lower_bound=tol_m.lower_bound or tol_b.lower_bound
     )
 
 
-def _finite(value: float, what: str) -> None:
-    if not math.isfinite(value):
-        raise ValueError(f"{what} must be finite")
+def _hypot(a: Decimal, b: Decimal) -> Decimal:
+    with localcontext() as ctx:
+        ctx.prec = PRECISION
+        return (a * a + b * b).sqrt()
 
 
 def _easier(
@@ -135,68 +180,69 @@ def _easier(
 
 
 def value_predicate(
-    x_rep: float,
-    reported: float,
+    x_rep: Number,
+    reported: Number,
     mode: Literal["two_sided", "one_sided_at_least", "one_sided_at_most"],
     tol: Tolerance,
 ) -> Outcome:
     """The value modes (plan section 6.2)."""
-    _finite(x_rep, "the reproduced value")
-    _finite(reported, "the published value")
-    if mode == "two_sided":
-        holds = abs(x_rep - reported) <= tol.value
-        what = f"|{x_rep} - {reported}| <= {tol.value}"
-    elif mode == "one_sided_at_least":
-        holds = x_rep >= reported - tol.value
-        what = f"{x_rep} >= {reported} - {tol.value}"
-    elif mode == "one_sided_at_most":
-        holds = x_rep <= reported + tol.value
-        what = f"{x_rep} <= {reported} + {tol.value}"
-    else:
-        raise ValueError(f"unknown value mode {mode!r}")
+    x, r, t = dec(x_rep, "the reproduced value"), dec(reported, "the published value"), tol.value
+    with localcontext() as ctx:
+        ctx.prec = PRECISION
+        if mode == "two_sided":
+            holds, what = abs(x - r) <= t, f"|{x} - {r}| <= {t}"
+        elif mode == "one_sided_at_least":
+            holds, what = x >= r - t, f"{x} >= {r} - {t}"
+        elif mode == "one_sided_at_most":
+            holds, what = x <= r + t, f"{x} <= {r} + {t}"
+        else:
+            raise ValueError(f"unknown value mode {mode!r}")
     return _easier(holds, tol, what)
 
 
 def comparison_predicate(
-    d_rep: float,
+    d_rep: Number,
     mode: Literal["direction", "margin", "magnitude"],
     tol: Tolerance | None = None,
-    g_pub: float | None = None,
-    d_pub: float | None = None,
+    g_pub: Number | None = None,
+    d_pub: Number | None = None,
 ) -> Outcome:
     """The comparison modes; ``d_rep`` is oriented so that positive is an advantage in
     the claimed sense."""
-    _finite(d_rep, "the reproduced difference")
+    d = dec(d_rep, "the reproduced difference")
     if mode == "direction":
-        if d_rep > 0:
-            return Outcome(TestStatus.PASS, f"d_rep = {d_rep} > 0")
+        if d > 0:
+            return Outcome(TestStatus.PASS, f"d_rep = {d} > 0")
         return Outcome(
-            TestStatus.FAIL, f"d_rep = {d_rep} is not > 0 (a tie does not keep the direction)"
+            TestStatus.FAIL, f"d_rep = {d} is not > 0 (a tie does not keep the direction)"
         )
     if tol is None:
         raise ValueError(f"{mode} needs tol_d")
-    if mode == "margin":
-        if g_pub is None:
-            raise ValueError("margin needs g_pub")
-        holds = d_rep >= g_pub - tol.value and d_rep > 0
-        return _easier(
-            holds,
-            tol,
-            f"d_rep = {d_rep} >= {g_pub} - {tol.value} and d_rep > 0",
-            fails_for_every_tolerance=d_rep <= 0,
-        )
-    if mode == "magnitude":
-        if d_pub is None:
-            raise ValueError("magnitude needs d_pub")
-        return _easier(abs(d_rep - d_pub) <= tol.value, tol, f"|{d_rep} - {d_pub}| <= {tol.value}")
+    with localcontext() as ctx:
+        ctx.prec = PRECISION
+        if mode == "margin":
+            if g_pub is None:
+                raise ValueError("margin needs g_pub")
+            g = dec(g_pub, "g_pub")
+            return _easier(
+                d >= g - tol.value and d > 0,
+                tol,
+                f"d_rep = {d} >= {g} - {tol.value} and d_rep > 0",
+                fails_for_every_tolerance=d <= 0,
+            )
+        if mode == "magnitude":
+            if d_pub is None:
+                raise ValueError("magnitude needs d_pub")
+            p = dec(d_pub, "d_pub")
+            return _easier(abs(d - p) <= tol.value, tol, f"|{d} - {p}| <= {tol.value}")
     raise ValueError(f"unknown comparison mode {mode!r}")
 
 
 def ablation_predicate(
-    d_abl: float,
+    d_abl: Number,
     mode: Literal["direction", "margin"],
     tol_abl: Tolerance | None = None,
-    g_abl: float | None = None,
+    g_abl: Number | None = None,
 ) -> Outcome:
     """The ablation attack (1.0.6): ``direction`` is ``d_abl > 0``; ``margin`` is
     ``d_abl ≥ g_abl − tol_abl`` and ``d_abl > 0``."""
@@ -208,35 +254,36 @@ def ablation_predicate(
 
 
 def ablation_tolerance(
-    reported_full: float,
-    reported_ablated: float,
+    reported_full: Number,
+    reported_ablated: Number,
     params: ToleranceParams,
-    sd_full: float | None,
-    sd_ablated: float | None,
+    sd_full: Number | None,
+    sd_ablated: Number | None,
 ) -> Tolerance:
     """``tol_abl = sqrt(tol_full² + tol_ablated²)``, each with its published SD (or no
     ``k_sd`` term without one)."""
     full = one_number(reported_full, params, _sd(sd_full))
     ablated = one_number(reported_ablated, params, _sd(sd_ablated))
-    return Tolerance(math.sqrt(full.value**2 + ablated.value**2))
+    return Tolerance(_hypot(full.value, ablated.value))
 
 
-def _sd(value: float | None) -> PublishedUncertainty:
+def _sd(value: Number | None) -> PublishedUncertainty:
     return NONE if value is None else PublishedUncertainty("converted", value)
 
 
 def trivial_baseline_predicate(
-    x_rep: float,
-    baseline: float,
+    x_rep: Number,
+    baseline: Number,
     higher_is_better: bool,
     tol: Tolerance,
 ) -> Outcome:
     """The claim must beat the baseline by more than its tolerance (1.0.6). A larger
     tolerance makes it harder to pass: under a lower bound a FAIL stands and a PASS
     becomes INCONCLUSIVE."""
-    _finite(x_rep, "the reproduced value")
-    _finite(baseline, "the baseline")
-    advantage = x_rep - baseline if higher_is_better else baseline - x_rep
+    x, b = dec(x_rep, "the reproduced value"), dec(baseline, "the baseline")
+    with localcontext() as ctx:
+        ctx.prec = PRECISION
+        advantage = x - b if higher_is_better else b - x
     what = f"advantage {advantage} over the baseline > {tol.value}"
     if advantage <= tol.value:
         return Outcome(TestStatus.FAIL, f"{what} does not hold", tol.value)
@@ -249,9 +296,12 @@ def trivial_baseline_predicate(
     return Outcome(TestStatus.PASS, f"{what} holds", tol.value)
 
 
-def widen(tol: Tolerance, factor: float) -> Tolerance:
+def widen(tol: Tolerance, factor: Number) -> Tolerance:
     """The holdout's wider tolerance (1.0.10): the claim's tolerance times
     ``factor`` (≥ 1). A lower bound stays a lower bound."""
-    if not math.isfinite(factor) or factor < 1:
+    f = dec(factor, "the holdout factor")
+    if f < 1:
         raise ValueError("the holdout factor is at least 1")
-    return Tolerance(tol.value * factor, tol.lower_bound)
+    with localcontext() as ctx:
+        ctx.prec = PRECISION
+        return Tolerance(tol.value * f, tol.lower_bound)
