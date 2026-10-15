@@ -28,6 +28,24 @@ foreach ($file in $scripts) {
         }
     }
 }
+# The registration preview: every command and every .NET method called before the apply
+# section of Register-RefuteVmEndpoint.ps1, and everywhere in the core it dot-sources
+# (tests/test_vm_scripts.py checks them against an allowlist).
+$register = Join-Path $vmDir 'Register-RefuteVmEndpoint.ps1'
+$tokens = $null; $errors = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile($register, [ref]$tokens, [ref]$errors)
+$marker = @($tokens | Where-Object { $_.Kind -eq 'Comment' -and $_.Text.StartsWith('# ---- apply') })
+$applyAt = if ($marker.Count -eq 1) { $marker[0].Extent.StartOffset } else { -1 }
+$coreAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'RefuteRegistration.Core.ps1'), [ref]$null, [ref]$null)
+$previewNodes = @($ast.FindAll({ param($n) $true }, $true) | Where-Object { $_.Extent.StartOffset -lt $applyAt }) + @($coreAst.FindAll({ param($n) $true }, $true))
+$out['Preview'] = [ordered]@{
+    ApplyMarkerFound = ($applyAt -ge 0)
+    Commands         = @($previewNodes | Where-Object { $_ -is [System.Management.Automation.Language.CommandAst] } |
+            ForEach-Object { $_.GetCommandName() } | Where-Object { $_ } | Sort-Object -Unique)
+    Methods          = @($previewNodes | Where-Object { $_ -is [System.Management.Automation.Language.InvokeMemberExpressionAst] } |
+            ForEach-Object { [string]$_.Member } | Sort-Object -Unique)
+}
+
 foreach ($file in @(Get-ChildItem -LiteralPath $vmDir -Recurse -File | Where-Object { $_.Extension -in '.psd1', '.psrc' } | Sort-Object FullName)) {
     $name = $file.FullName.Substring($vmDir.Length + 1).Replace('\', '/')
     try { Import-PowerShellDataFile -LiteralPath $file.FullName | Out-Null; $out.Data[$name] = 'ok' } catch { $out.Data[$name] = $_.Exception.Message }

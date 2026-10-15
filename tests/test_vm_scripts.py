@@ -201,22 +201,86 @@ PREVIEW_FORBIDDEN = (
 )
 
 
-def test_the_registration_preview_only_reads():
-    """Everything before the apply section (the preview and the functions it calls)
-    holds no command that changes the machine, or may (Codex review of the preview)."""
-    import re
+# Every command and .NET method the preview may call (before the apply section of
+# Register-RefuteVmEndpoint.ps1, and in the core it dot-sources), from the PowerShell
+# AST: reads, in-memory work and output only. A new command fails this test until it is
+# reviewed. The ACL methods (SetOwner, SetAccessRuleProtection, AddAccessRule) act on an
+# in-memory DirectorySecurity that only Set-Acl, in the apply section, writes.
+PREVIEW_COMMANDS = {
+    "find-rolecapabilitycopies",
+    "foreach-object",
+    "get-acl",
+    "get-childitem",
+    "get-filehash",
+    "get-localgroupmember",
+    "get-modulepathroots",
+    "get-netfirewallrule",
+    "get-refutewriterightsmask",
+    "get-registrylisteners",
+    "get-service",
+    "get-sidaccount",
+    "get-treehashes",
+    "import-powershelldatafile",
+    "join-path",
+    "new-object",
+    "resolve-path",
+    "set-strictmode",
+    "sort-object",
+    "test-listenersloopbackonly",
+    "test-path",
+    "test-refuterightswrite",
+    "where-object",
+    "write-output",
+}
+PREVIEW_METHODS = {
+    "add",
+    "addaccessrule",
+    "close",
+    "computehash",
+    "create",
+    "dispose",
+    "getbytes",
+    "getcurrent",
+    "getenvironmentvariable",
+    "isinrole",
+    "lastindexof",
+    "max",
+    "opensubkey",
+    "replace",
+    "setaccessruleprotection",
+    "setowner",
+    "split",
+    "substring",
+    "tolowerinvariant",
+    "tostring",
+    "translate",
+    "trimend",
+}
 
+
+def test_the_registration_preview_only_reads(cases):
+    """Codex review of the preview: everything the preview can run is on the allowlist
+    (case-insensitive, from the AST, comments excluded, core included); no command that
+    changes the machine, or may, appears in it."""
+    preview = cases["Preview"]
+    assert preview["ApplyMarkerFound"]
+    commands = {c.lower() for c in preview["Commands"]}
+    methods = {m.lower() for m in preview["Methods"]}
+    assert commands - PREVIEW_COMMANDS == set()
+    assert methods - PREVIEW_METHODS == set()
+    assert not {c.lower() for c in PREVIEW_FORBIDDEN} & commands
     text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
-    preview = text[: text.index("# ---- apply")]
-    code = re.sub(r"<#.*?#>", "", preview, flags=re.S)  # comment-based help
-    code = "\n".join(line.split("#", 1)[0] for line in code.splitlines())  # line comments
-    found = [
-        c for c in PREVIEW_FORBIDDEN if re.search(r"(?<![\w-])" + re.escape(c) + r"(?![\w-])", code)
-    ]
-    assert found == []
-    assert "exit 0" in preview  # the preview ends before the apply section
-    assert "OpenSubKey" in preview  # the endpoint is read from the registry
-    assert "Hyper-V.psd1" in preview
+    before = text[: text.index("# ---- apply")]
+    # the registry key is opened read-only (one argument), and every path without -Apply
+    # ends before the apply section: problems exit 1, a clean preview exits 0
+    assert (
+        '.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\Plugin\\$EndpointName")'
+        in before
+    )
+    tail = [line.strip() for line in before.strip().splitlines()[-8:]]
+    assert any(line.startswith("if ($problems.Count)") for line in tail)
+    assert "exit 1" in "\n".join(tail)
+    assert tail[-1].startswith("if (-not $Apply)") and tail[-1].endswith("exit 0 }")
 
 
 def _iso_files(data: bytes) -> tuple[str, str, dict[str, bytes]]:
