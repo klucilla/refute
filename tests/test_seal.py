@@ -10,6 +10,7 @@ from typer.testing import CliRunner
 
 from refute.cli import app
 from refute.core.dossier import DossierWriter, check_dossier, verify_manifest
+from refute.core.hashing import sha256_file
 from refute.core.seal import (
     ANNEX_MANIFEST,
     SEAL_NAME,
@@ -74,16 +75,17 @@ def test_archive_is_deterministic_stored_and_sorted(tmp_path):
     assert all(i.external_attr == 0o644 << 16 and i.create_system == 3 for i in infos)
 
 
-def test_text_line_endings_do_not_change_the_core_hash(tmp_path):
-    lf = make_dossier(tmp_path / "LF")
-    crlf = tmp_path / "CRLF"
-    w = DossierWriter(crlf)
-    for rel in ("claim.yaml", "logs/run.log"):
-        w.write_bytes(rel, (lf / rel).read_bytes().replace(b"\n", b"\r\n"))
-    w.write_bytes("verdict.json", (lf / "verdict.json").read_bytes())
-    w.write_bytes("outputs/predictions.bin", BINARY)
-    w.write_bytes("MANIFEST.sha256", (lf / "MANIFEST.sha256").read_bytes().replace(b"\n", b"\r\n"))
-    assert core_sha256(lf) == core_sha256(crlf)
+def test_the_archive_holds_the_raw_bytes_so_a_line_ending_change_is_detected(tmp_path):
+    """The archive stores raw bytes, consistent with MANIFEST.sha256; the repository's
+    .gitattributes keeps text LF on every checkout. A change of terminators only is a
+    change of the core."""
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    with zipfile.ZipFile(io.BytesIO(core_archive(d))) as z:
+        assert z.read("claim.yaml") == (d / "claim.yaml").read_bytes()
+    raw = (d / "logs/run.log").read_bytes()
+    (d / "logs/run.log").write_bytes(raw.replace(b"\n", b"\r\n"))
+    assert any("core file modified: logs/run.log" in p for p in verify_seal(d))
 
 
 def test_binary_content_is_hashed_as_it_is(tmp_path):
@@ -230,3 +232,139 @@ def test_cli_seal_refuses_duplicate_names_before_sealing(tmp_path):
     out = runner.invoke(app, ["seal", str(a), str(b)])
     assert out.exit_code == 1
     assert not (a / SEAL_NAME).exists() and not (b / SEAL_NAME).exists()
+
+
+# Codex round 1 ------------------------------------------------------------------------------
+
+
+def test_annex_line_ending_change_is_detected(tmp_path):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    add_annex(d, "reply", annex_source(tmp_path / "src", "line 1\nline 2\n"))
+    path = d / "annexes/reply/report.md"
+    path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+    assert check_sealed(d).annexes["reply"] == ["annex file modified: report.md"]
+
+
+@pytest.mark.parametrize("bad", ["D1\n" + "b" * 64 + "  D2", "a/b", "a\b", "", "tab\there"])
+def test_combined_hash_refuses_ambiguous_names(bad):
+    with pytest.raises(ValueError):
+        combined_sha256({"D1": "a" * 64, bad: "b" * 64})
+
+
+def test_combined_hash_refuses_invalid_core_hashes():
+    with pytest.raises(ValueError):
+        combined_sha256({"D1": "not-a-hash"})
+
+
+@pytest.mark.parametrize("bad", ["reply\n", "con", "nul", "com1", "lpt9", "aux"])
+def test_annex_names_must_be_portable(tmp_path, bad):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    with pytest.raises(SealError, match="invalid annex name"):
+        add_annex(d, bad, annex_source(tmp_path / "src"))
+
+
+@pytest.mark.parametrize("files", [["annex.json"], ["Report.md", "report.md"], ["con.txt"]])
+def test_annex_file_names_must_be_portable(tmp_path, files):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    src = tmp_path / "src"
+    src.mkdir()
+    try:
+        for name in files:
+            (src / name).write_text("x\n", encoding="utf-8")
+    except OSError:
+        pytest.skip("this file system cannot even create these names")
+    if len(list(src.iterdir())) < len(files):
+        pytest.skip("this file system folds the case of names")
+    with pytest.raises(SealError):
+        add_annex(d, "reply", src)
+    assert not (d / "annexes" / "reply").exists()
+
+
+@pytest.mark.parametrize("content", ["[]", '{"annex_version": 1, "name": "reply", "files": [1]}'])
+def test_malformed_annex_manifest_is_reported_for_that_annex_only(tmp_path, content):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    add_annex(d, "reply", annex_source(tmp_path / "src"))
+    (d / "annexes/reply" / ANNEX_MANIFEST).write_text(content, encoding="utf-8")
+    check = check_sealed(d)
+    assert check.core_problems == []
+    assert check.annexes["reply"]
+    out = CliRunner().invoke(app, ["check-dossier", str(d)])
+    assert "core: intact against its seal" in out.output
+    assert "annex reply: NOT intact" in out.output
+
+
+def _link_dir(link, target):
+    """A directory link: a junction on Windows, a symbolic link elsewhere."""
+    import os
+    import sys
+
+    if sys.platform == "win32":
+        import _winapi
+
+        _winapi.CreateJunction(str(target), str(link))
+    else:
+        os.symlink(target, link, target_is_directory=True)
+
+
+def test_annexes_as_a_link_into_the_core_is_refused(tmp_path):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    _link_dir(d / "annexes", d / "outputs")
+    before = core_sha256(d)
+    with pytest.raises(SealError):
+        add_annex(d, "reply", annex_source(tmp_path / "src"))
+    assert core_sha256(d) == before
+    assert not (d / "outputs" / "reply").exists()
+    assert check_sealed(d).annex_problems
+
+
+def test_link_inside_an_annex_does_not_mark_the_core(tmp_path):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    add_annex(d, "reply", annex_source(tmp_path / "src"))
+    _link_dir(d / "annexes/reply/inner", tmp_path)
+    check = check_sealed(d)
+    assert check.core_problems == []
+    assert any("not allowed" in p for p in check.annexes["reply"])
+
+
+def test_link_in_an_annex_source_is_refused(tmp_path):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    src = annex_source(tmp_path / "src")
+    _link_dir(src / "inner", tmp_path / "D1")
+    with pytest.raises(SealError, match="not allowed"):
+        add_annex(d, "reply", src)
+
+
+def test_older_manifest_listing_seal_or_annex_paths_keeps_covering_them(tmp_path):
+    """A manifest written before v0.3 that lists SEAL.json or annexes/ files keeps its
+    meaning: those files stay covered and a change is still detected."""
+    root = tmp_path / "legacy"
+    w = DossierWriter(root)
+    w.write_text("verdict.json", "{}\n")
+    w.write_text("SEAL.json", "legacy content\n")
+    w.write_text("annexes/note.txt", "legacy note\n")
+    lines = [
+        f"{sha256_file(root / rel)}  {rel}\n"
+        for rel in ("SEAL.json", "annexes/note.txt", "verdict.json")
+    ]
+    (root / "MANIFEST.sha256").write_text("".join(lines), encoding="utf-8", newline="\n")
+    assert verify_manifest(root) == []
+    (root / "annexes/note.txt").write_text("changed\n", encoding="utf-8")
+    assert verify_manifest(root) == ["modified file: annexes/note.txt"]
+
+
+def test_against_checks_the_seal_of_the_original(tmp_path):
+    original = make_dossier(tmp_path / "orig" / "D1")
+    seal(original)
+    add_annex(original, "reply", annex_source(tmp_path / "src"))
+    (original / "annexes/reply/report.md").write_text("tampered\n", encoding="utf-8")
+    copy = make_dossier(tmp_path / "new" / "D1")
+    result = check_dossier(copy, against=original)
+    assert any(p.startswith("original: annex reply:") for p in result.integrity_problems)
+    assert not result.ok

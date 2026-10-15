@@ -56,18 +56,22 @@ class DossierWriter:
         return write_manifest(self.root)
 
 
-def _dossier_files(root: Path) -> list[str]:
+def _dossier_files(root: Path, recorded: set[str] | None = None) -> list[str]:
     """Files covered by ``MANIFEST.sha256``: every file except the manifest itself and,
     from v0.3, the seal record and the annexes (``refute.core.seal``), which are added
-    after the core is sealed and have their own manifests."""
+    after the core is sealed and have their own manifests. A path of those two kinds
+    that an existing manifest already lists (``recorded``) stays covered, so an older
+    manifest keeps its meaning."""
     from refute.core.seal import ANNEX_DIR, SEAL_NAME
 
+    recorded = recorded or set()
     out = []
     for p in root.rglob("*"):
         rel = p.relative_to(root).as_posix()
-        if not p.is_file() or rel in (MANIFEST_NAME, SEAL_NAME):
+        if not p.is_file() or rel == MANIFEST_NAME:
             continue
-        if rel.startswith(f"{ANNEX_DIR}/"):
+        sealed_layout = rel == SEAL_NAME or rel.startswith(f"{ANNEX_DIR}/")
+        if sealed_layout and rel not in recorded:
             continue
         out.append(rel)
     return sorted(out)
@@ -96,7 +100,7 @@ def verify_manifest(root: Path | str) -> list[str]:
     if not (root / MANIFEST_NAME).is_file():
         return [f"{MANIFEST_NAME} is missing"]
     recorded = read_manifest(root)
-    present = set(_dossier_files(root))
+    present = set(_dossier_files(root, set(recorded)))
     problems = []
     for rel, digest in sorted(recorded.items()):
         if rel not in present:
@@ -186,6 +190,12 @@ def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckR
         original = Path(against)
         result.compared_with = original.as_posix()
         problems = verify_manifest(original)
+        if (original / SEAL_NAME).exists() or (original / ANNEX_DIR).exists():
+            sealed = check_sealed(original)
+            problems += [f"core: {p}" for p in sealed.core_problems]
+            problems += sealed.annex_problems
+            for name, annex_problems in sealed.annexes.items():
+                problems += [f"annex {name}: {p}" for p in annex_problems]
         result.integrity_problems.extend(f"original: {p}" for p in problems)
         result.differences = compare_dossiers(root, original)
     return result

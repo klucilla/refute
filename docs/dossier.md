@@ -92,16 +92,27 @@ The archive (`refute-seal-1`):
 - is a zip of the core files in sorted path order;
 - stores them without compression;
 - uses a fixed timestamp, mode 0644 and Unix as the creating system;
-- normalizes CRLF to LF in text files, as for lock attachments, and stores binary
-  content as it is.
+- holds the raw bytes of each file, as `MANIFEST.sha256` does. The repository's
+  `.gitattributes` keeps text files LF on every checkout, so a change of line endings
+  is a change of the core.
+
+The combined hash is the SHA-256 of the canonical JSON of the sorted
+`[name, core sha256]` pairs; dossier names may not contain path separators or control
+characters.
 
 A dossier is sealed once: the core never changes after the seal (plan section 9.1).
 
 `refute annex <dossier> <name> <directory>` adds an annex (a reviewer report, a
 `reply` record, the authors' reply) under `annexes/<name>/` with its own `ANNEX.json`.
-That manifest lists the SHA-256 of each annex file and cites the core hash. An annex
-is added only to a sealed, intact core, is never rewritten, and never changes the
-core hash. `MANIFEST.sha256` does not cover `SEAL.json` or `annexes/`.
+That manifest lists the raw-byte SHA-256 of each annex file and cites the core hash.
+- An annex is added only to a sealed, intact core.
+- It is never rewritten, and never changes the core hash.
+- Annex names and annex file names must be portable: lowercase names, no Windows
+  device names, no names that differ only by case.
+- Symbolic links and junctions are refused in the dossier and in the annex source.
+
+`MANIFEST.sha256` written from v0.3 on does not cover `SEAL.json` or `annexes/`. An
+older manifest that lists such paths keeps covering them.
 
 `refute check-dossier` on a sealed dossier reports separately whether the core is
 intact against its seal and whether each annex is intact against its manifest.
