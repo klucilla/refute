@@ -3,6 +3,8 @@
 Applied to the frame before the draw, in the plan's order, with the count after each
 one for the selection log:
 
+0. rows with no arXiv ID or no repository URL are counted and set aside (the archive
+   has rows with a null ``paper_arxiv_id``; they cannot be drawn);
 1. deduplication of rows with the same ``paper_arxiv_id`` and ``repo_url``;
 2. ``is_official`` and ``mentioned_in_paper`` both true;
 3. a new-style arXiv ID (``YYMM.NNNNN``) whose year-month is inside the window;
@@ -70,6 +72,8 @@ class FilterStep:
     papers_after: int
     removed_papers: list[str] = field(default_factory=list)
     conflicts: list[str] = field(default_factory=list)
+    # rows removed by the step (for 0_ids_present, whose rows have no paper ID to list)
+    rows_removed: int = 0
 
 
 def _papers(rows: Iterable[dict[str, Any]]) -> set[str]:
@@ -90,24 +94,43 @@ def apply_filters(
 
     def step(name: str, kept: list[dict[str, Any]], before: list[dict[str, Any]]) -> None:
         removed = sorted(_papers(before) - _papers(kept))
-        steps.append(FilterStep(name, len(kept), len(_papers(kept)), removed))
+        steps.append(
+            FilterStep(
+                name, len(kept), len(_papers(kept)), removed, rows_removed=len(before) - len(kept)
+            )
+        )
 
     all_rows = [dict(r) for r in rows]
-    for r in all_rows:
-        if not isinstance(r.get("paper_arxiv_id"), str) or not isinstance(r.get("repo_url"), str):
-            raise FilterError("every row needs a text paper_arxiv_id and repo_url")
+    # Rows with no text arXiv ID or no text repository URL (the archive has rows with a
+    # null paper_arxiv_id) cannot be drawn; they are counted as a step, not an error.
+    with_ids = [
+        r
+        for r in all_rows
+        if isinstance(r.get("paper_arxiv_id"), str)
+        and r["paper_arxiv_id"]
+        and isinstance(r.get("repo_url"), str)
+        and r["repo_url"]
+    ]
+    steps.append(
+        FilterStep(
+            "0_ids_present",
+            len(with_ids),
+            len(_papers(with_ids)),
+            rows_removed=len(all_rows) - len(with_ids),
+        )
+    )
 
     # Duplicates that differ in another column keep the first row in a fixed order (so
     # the result never depends on the input order) and are recorded as conflicts.
     unique: dict[tuple[str, str], dict[str, Any]] = {}
     conflicts: set[str] = set()
-    for r in sorted(all_rows, key=_row_key):
+    for r in sorted(with_ids, key=_row_key):
         key = (r["paper_arxiv_id"], r["repo_url"])
         if key in unique and unique[key] != r:
             conflicts.add(f"{key[0]} {key[1]}")
         unique.setdefault(key, r)
     deduped = [unique[k] for k in sorted(unique)]
-    step("1_deduplicate", deduped, all_rows)
+    step("1_deduplicate", deduped, with_ids)
     steps[-1].conflicts = sorted(conflicts)
 
     official = [

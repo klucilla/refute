@@ -62,6 +62,7 @@ def test_filters_counts_order_and_removed_papers():
     ]
     log = {s.name: s for s in steps}
     assert [s.name for s in steps] == [
+        "0_ids_present",
         "1_deduplicate",
         "2_official_and_mentioned",
         "3_window",
@@ -91,9 +92,19 @@ def test_filters_do_not_depend_on_the_input_order():
         assert apply_filters(shuffled, pilot_ids=["2404.55555"]) == expected
 
 
-def test_filters_refuse_rows_without_text_ids():
-    with pytest.raises(FilterError):
-        apply_filters([{**row("2401.00001", "x"), "paper_arxiv_id": None}])
+def test_rows_without_ids_are_counted_not_fatal():
+    # The archive has rows with a null paper_arxiv_id (Codex review of PR #78).
+    rows = [
+        row("2405.66666", "https://github.com/l/kept"),
+        {**row("x", "https://github.com/n/null-id"), "paper_arxiv_id": None},
+        {**row("2405.77777", "y"), "repo_url": None},
+        {**row("", "https://github.com/o/empty-id")},
+    ]
+    papers, steps = apply_filters(rows)
+    assert [p["paper_arxiv_id"] for p in papers] == ["2405.66666"]
+    first = steps[0]
+    assert (first.name, first.rows_after, first.rows_removed) == ("0_ids_present", 1, 3)
+    assert steps[1].rows_removed == 0
 
 
 @pytest.mark.parametrize(
