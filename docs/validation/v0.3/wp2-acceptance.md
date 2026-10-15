@@ -176,6 +176,30 @@ WP2 lands before any v0.3 lock.
   The address comes only from the corresponding-author field recorded in the claim
   from the paper. The command never sends anything and opens no network connection;
   it prints the SHA-256 of the draft.
+- **W2.13a Input contract (design proposed on 2026-10-15, for the maintainer's
+  approval; it touches the claim schema, which WP3 implements).** The draft reads
+  only files of a **sealed, intact core** (W2.11), and refuses otherwise:
+  - `SEAL.json`: the core hash, quoted in the draft;
+  - `verdict.json`: the claim verdict, with its meaning taken from a fixed table in
+    the code that repeats [docs/verdicts.md](../../verdicts.md);
+  - `REPRODUCE.md`: the reproduction commands, quoted as they are;
+  - the locked claim (`claim.yaml`), from these ML claim fields, which the WP3 schema
+    must define with exactly these names:
+    - `key`, `statement`;
+    - `source.arxiv_id`, `source.version`, `source.location`: the claim and its
+      location in the paper;
+    - `source.repository_url`, `source.repository_commit`: the code and the commit
+      tested;
+    - `contact.email`: the corresponding-author address **as printed in the paper**;
+    - `contact.printed_at`: where it is printed (for example "page 1, footnote");
+    - `contact.retrieved_utc`: when it was read.
+
+    Without `contact.email` the command refuses: no other source of personal data is
+    ever searched.
+  - The draft is written to a path given by the user, outside the dossier, never
+    into the core. The reply period stated in the draft is the one of D-15 (30 days
+    from sending). The SHA-256 of the draft is printed, for the `reply/` annex
+    (plan section 9.1, item 5).
 - **W2.14** The template contains no words about people beyond addressing the
   authors. A fixed list of forbidden words (for example "misconduct", "error by the
   authors", "fraud", "sloppy") is checked by a test.
