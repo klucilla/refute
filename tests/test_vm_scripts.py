@@ -339,19 +339,29 @@ def test_the_registration_preview_runs_to_its_end_in_windows_powershell(tmp_path
     exe = shutil.which("powershell.exe")
     assert exe, "Windows PowerShell 5.1 is part of Windows"
     account = f"{os.environ['COMPUTERNAME']}\\{os.environ['USERNAME']}"
+    argv = [
+        exe,
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        str(VM / "Register-RefuteVmEndpoint.ps1"),
+        "-OperatorAccount",
+        account,
+    ]
+    # the module analysis cache is disabled only by the environment the process starts
+    # with (Codex review); without it the script refuses before reading anything
+    plain = {k: v for k, v in os.environ.items() if k.upper() != "PSMODULEANALYSISCACHEPATH"}
+    refused = subprocess.run(
+        argv, cwd=tmp_path, env=plain, capture_output=True, text=True, timeout=600
+    )
+    assert refused.returncode == 1 and "PSModuleAnalysisCachePath=nul" in refused.stdout
+    assert "Mode:" not in refused.stdout
     out = subprocess.run(
-        [
-            exe,
-            "-NoProfile",
-            "-NonInteractive",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-File",
-            str(VM / "Register-RefuteVmEndpoint.ps1"),
-            "-OperatorAccount",
-            account,
-        ],
+        argv,
         cwd=tmp_path,
+        env={**plain, "PSModuleAnalysisCachePath": "nul"},
         capture_output=True,
         text=True,
         timeout=600,
@@ -364,9 +374,6 @@ def test_the_registration_preview_runs_to_its_end_in_windows_powershell(tmp_path
     # endpoint is registered reports its copy, which is correct there)
     if os.environ.get("CI"):
         assert "a role capability named RefuteVmOperator already exists" not in out.stdout
-    # the preview disables the module analysis cache for its own process
-    script = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
-    assert "$env:PSModuleAnalysisCachePath = 'nul'" in script[: script.index("# ---- apply")]
     # exit 0 only on a ready host as Administrator; otherwise 1 with the problems listed
     assert out.returncode in (0, 1), text
     if out.returncode == 1:

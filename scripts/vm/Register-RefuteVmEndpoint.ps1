@@ -46,9 +46,15 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
 # Commands of Windows modules load them automatically, and Windows PowerShell 5.1 then
-# writes its module analysis cache; 'nul' disables that cache for this process only
-# (about_Windows_PowerShell_5.1, "Module analysis cache"), so the preview writes nothing.
-$env:PSModuleAnalysisCachePath = 'nul'
+# writes its module analysis cache. Only a value set BEFORE powershell.exe starts
+# disables it (about_Windows_PowerShell_5.1, "Module analysis cache"), so the script
+# refuses to run unless it was started with PSModuleAnalysisCachePath=nul, before
+# reading anything (scripts/vm/README.md).
+if ($env:PSModuleAnalysisCachePath -ne 'nul') {
+    Write-Output 'Problems (nothing was changed):'
+    Write-Output '  - start powershell.exe with PSModuleAnalysisCachePath=nul in its environment (see scripts/vm/README.md), so no module analysis cache is written'
+    exit 1
+}
 
 $EndpointName = 'RefuteVm'
 $RoleName = 'RefuteVmOperator'
