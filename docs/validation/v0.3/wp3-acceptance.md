@@ -60,7 +60,7 @@ default is written out in the resolved claim.
 | Field | Type and rule |
 |---|---|
 | `paper.arxiv_id`, `paper.version` | new-style arXiv id (`NNNN.NNNNN`), integer version ≥ 1; every claim's `source` must match |
-| `paper.run_seed_sha256` | the per-paper **run seed** (plan lines 488 and 491, "the per-paper seed"), 64 hex digits: `sha256(claim_seed_bytes || "refute/v0.3/runs" || arxiv_id_utf8)`, where `claim_seed_bytes` are the bytes of the drand randomness of the round reserved for the claims, and both strings are UTF-8. It is derived from the claim-draw seed with its own domain string, so it differs from the seed that shuffled the claim inventory, `sha256(claim_seed_bytes || arxiv_id_utf8)` (plan line 297). All the derived seeds of 1.0.4 come from it. Decided by the maintainer on 2026-10-15 |
+| `paper.run_seed_sha256` | the per-paper **run seed** (plan lines 488 and 491, "the per-paper seed"), 64 lowercase hex digits: the SHA-256 digest of the concatenation, with no separator, space or line break, of (1) `claim_seed_bytes`: the 32 bytes obtained by decoding the hex `randomness` of the drand round reserved for the claims, (2) the 16 bytes of the ASCII text `refute/v0.3/runs`, and (3) the UTF-8 bytes of the canonical arXiv ID without version (for example `2401.01234`). It is derived from the claim-draw seed with its own domain string, so it differs from the seed that shuffled the claim inventory, `sha256(claim_seed_bytes || arxiv_id_utf8)` (plan line 297). All the derived seeds of 1.0.4 come from it. Decided by the maintainer on 2026-10-15 |
 | `budget.profile` | `main` (384 / 192 / 192 CPU-hours: paper / base / attacks, plan section 7.3) or `development` (96 / 48 / 48 CPU-hours; the 96 come from plan section 4.5, the split 48 / 48 was decided by the maintainer on 2026-10-15). The three values are written out and must equal the profile; no other value is accepted |
 | `repository.url` | `https://` URL; every claim's `source.repository_url` must match |
 | `repository.commit` | 40 hexadecimal characters; every claim's `source.repository_commit` must match |
@@ -206,11 +206,12 @@ An uncertainty record (`reported_uncertainty`, `uncertainty_method`,
 `uncertainty_reference`, `paired_uncertainty`) has:
 
 - `kind`: `sd` (standard deviation of the runs), `se` (standard error of their mean),
-  `ci` (confidence interval of their mean) or `none`;
-- `value` (for `sd` and `se`), or `lower`, `upper` and `level` (for `ci`; `level` in
-  (0, 1), for example 0.95);
-- `n`: the number of runs the published uncertainty is over (≥ 2; required for `se`
-  and `ci`);
+  `ci` (confidence interval of their mean) or `none` (the paper reports nothing);
+- `value` (for `sd` and `se`), or `lower`, `upper`, `level` and `method` (for `ci`;
+  `level` in (0, 1), for example 0.95; `method` as the paper states it: `t` for
+  mean ± t·SD/√n, `normal` for mean ± z·SD/√n, or `other_or_unknown`);
+- `n`: the number of runs the published uncertainty is over, as the paper states it
+  (≥ 2), or absent when the paper does not state it;
 - `unit` as printed (`percent`, `fraction` or `native`), `location` and `quote` in
   the paper.
 
@@ -231,53 +232,86 @@ same `n` seeds, and `sd_d` is their standard deviation.
 | `kind` | `sd` used by the tolerance |
 |---|---|
 | `sd` | `value` |
-| `se` | `value · sqrt(n)` |
-| `ci` | `se = (upper − lower) / (2 · t(1 − (1 − level)/2, n − 1))`, then `se · sqrt(n)` |
-| `none` | no `k_sd` term (plan line 420) |
-| `se` or `ci` without `n` | not convertible: treated as `none`, and the dossier says so |
+| `se`, with `n` | `value · sqrt(n)` |
+| `ci`, `method: t`, with `n`, symmetric | `se = (upper − lower) / (2 · t(1 − (1 − level)/2, n − 1))`, then `se · sqrt(n)` |
+| `ci`, `method: normal`, with `n`, symmetric | `se = (upper − lower) / (2 · z(1 − (1 − level)/2))`, then `se · sqrt(n)` |
+| `none` | no `k_sd` term (plan line 420): the paper reports no uncertainty |
+| anything else: `se` or `ci` without `n`; `ci` with `method: other_or_unknown` (bootstrap, transformed, model-based, not stated); a `ci` that is not symmetric about the reported value (the two half-widths differ by more than 1% of the width) | **reported but not convertible** (below) |
 
-`t(q, df)` is the quantile of Student's t distribution, computed with SciPy
-(`scipy.stats.t.ppf`, SciPy 1.18.1 in `uv.lock`). The resolved claim writes out the
-quantile used and the resulting `sd`. A CI that is not symmetric about the reported
-value (the two half-widths differ by more than 1% of the width) is recorded as such;
-the formula above still applies.
+`t(q, df)` and `z(q)` are quantiles of Student's t and of the normal distribution,
+computed with SciPy (`scipy.stats.t.ppf`, `scipy.stats.norm.ppf`; SciPy 1.18.1 in
+`uv.lock`). The resolved claim writes out the quantile used and the resulting `sd`.
+These conversions hold for the usual standard error of the mean of `n` independent
+runs and for an interval built as mean ± quantile · SD/√n; nothing else is inverted.
 
-**Source** (retrieved 2026-10-15): Cochrane Handbook for Systematic Reviews of
-Interventions, version 6.5, chapter 6, section 6.5.2.2,
-https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-06:
-"A standard deviation can be obtained from the SE of a mean by multiplying by the
-square root of the sample size"; the 95% interval is 3.92 SE wide only for large
-samples, and "If the sample size is small (say fewer than 60 participants in each
-group) then confidence intervals should have been calculated using a value from a t
-distribution". The runs of a paper are few (seeds), so the t quantile with `n − 1`
-degrees of freedom is always used; for paired differences the `n` differences are one
-sample, so the degrees of freedom are `n − 1`.
+**Reported but not convertible.** It is never treated as "no uncertainty", because
+dropping the `k_sd` term would narrow the tolerance and could produce a false
+negative. The tolerance is computed without the `k_sd` term; a `PASS` of the base
+reproduction (or of an attack that uses this tolerance) stands, since a narrower
+tolerance cannot make a false pass; a `FAIL` that this narrower tolerance alone would
+produce is `INCONCLUSIVE`, with the reason "reported uncertainty not convertible".
+For a comparison, a `paired_uncertainty` that is reported but not convertible gives
+the same treatment to `tol_d`, computed by the branch without a paired uncertainty
+(1.0.5).
+
+**Source** (retrieved 2026-10-15):
+
+- Cochrane Handbook for Systematic Reviews of Interventions, version 6.5, chapter 6,
+  section 6.5.2.2,
+  https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-06:
+  "A standard deviation can be obtained from the SE of a mean by multiplying by the
+  square root of the sample size"; a 95% interval is 3.92 SE wide only for large
+  samples, and "If the sample size is small (say fewer than 60 participants in each
+  group) then confidence intervals should have been calculated using a value from a t
+  distribution".
+- NIST/SEMATECH e-Handbook of Statistical Methods, 1.3.5.2 "Confidence Limits for the
+  Mean", https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm: the limits
+  are the mean ± t(1 − α/2, N − 1) · s/√N, "with N - 1 degrees of freedom".
+- NIST Dataplot reference manual, "T TEST",
+  https://itl.nist.gov/div898/software/dataplot/refman1/auxillar/t_test.htm: the
+  paired statistic uses "the standard deviation of the differences of the paired
+  samples" and √n, with n − 1 degrees of freedom. For paired runs the `n` differences
+  are one sample, so the degrees of freedom are `n − 1`.
 
 #### 1.0.10 Holdout: fraction and wider tolerance (closes the holdout factor)
 
-- **Where it applies.** Only for metrics that are a mean of per-example values:
-  `accuracy`, `error_rate`, `mae`, `mse`, with a declared `train` split. For any other
-  metric the attack is not applicable in v0.3, with the reason.
+- **Where it applies.** Only when all of these hold; otherwise the attack is not
+  applicable, with the reason, decided before the lock:
+  - the metric is a mean of per-example values: `accuracy`, `error_rate`, `mae`,
+    `mse`;
+  - the claim's mode has a tolerance to widen: any value mode, `margin` or `magnitude`.
+    A `direction` claim has no tolerance (1.0.5), so a sign flip from noise cannot be
+    told apart from a real one: the holdout does not apply to it;
+  - a `train` split is declared and `m ≥ 100` (below).
 - **Fraction.** Fixed, not a parameter: `m = floor(0.1 · n_train)` examples of the
   training split (`datasets[].splits.train.expected_examples`) are carved out with
-  `seeds.holdout` before training, and the model trains on the rest.
+  `seeds.holdout` before training, and the model trains on the rest. With `m < 100`
+  (so `n_train < 1000`, including `m = 0`) the attack is not applicable: the holdout
+  estimate would be too noisy to tell a real deviation apart (for a rate near 0.5 its
+  standard error would be above 0.05).
 - **Wider tolerance.** The claim's predicate (the same mode) is applied to the value
   measured on the holdout, with the claim's tolerance multiplied by
   `factor = max(1, sqrt(n_examples / m))`, where `n_examples` is the size of the split
   the claim reports on (`metric.n_examples`). The factor and `m` are written out in the
   resolved claim.
-- **Justification.** For a metric that is a mean of per-example values, the sampling
-  standard deviation of the estimate falls with the square root of the number of
-  examples (standard error = standard deviation / `sqrt(N)`; Cochrane Handbook 6.5.2.2,
-  cited in 1.0.9). An estimate on `m` holdout examples therefore varies
-  `sqrt(n_examples / m)` times as much as one on the `n_examples` of the reported
-  split, so the tolerance that absorbs the reported split's variation is widened by
-  that ratio; it is never narrowed (factor ≥ 1).
-- **Concession.** Training on 90% of the data can lower the result a little; the
-  factor does not model that bias. The fraction is kept small for that reason, and the
-  WP4 cases check both sides: changes of this kind (sampling noise, a slightly smaller
-  training set) must not produce `FRAGILE`, and a real deviation (a model fitted to its
-  evaluation split) must still produce it.
+- **Why this factor: an operational convention, under stated assumptions.** For a
+  mean of per-example values, the standard error of the estimate is the per-example
+  standard deviation divided by the square root of the number of examples (NIST
+  e-Handbook 1.3.5.2 and Cochrane Handbook 6.5.2.2, cited in 1.0.9). If the per-example
+  variance on the holdout is comparable to that on the reported split, the examples
+  are independent enough, and the variance is finite, an estimate on `m` examples
+  varies `sqrt(n_examples / m)` times as much as one on `n_examples`. The factor widens
+  the tolerance by that ratio and never narrows it (factor ≥ 1). It is a convention
+  motivated by that approximation, not a derived guarantee: the claim's tolerance
+  also holds a floor, a relative term and the SD between runs, not only the sampling
+  error between examples.
+- **Concession: the training bias is not modelled.** Training on 90% of the training
+  split can lower the result, and on small datasets the drop can matter; the factor
+  does not account for it. The WP4 cases check behaviour in defined scenarios on both
+  sides: no false `FRAGILE` from sampling noise or from a smaller training set inside
+  the bound, and a real deviation (a model fitted to its evaluation split) still
+  detected. They do not guarantee the absence of false failures on real papers; an
+  attack failure is reported with this concession.
 - **Fixed before the lock.** The fraction 0.1, the factor rule and every value derived
   from them are fixed before the lock and are never adjusted because of results on
   the sample, the pilot or the development papers.
@@ -575,10 +609,10 @@ aggregation is this `applies`.
   their oriented difference; `leakage.max_overlap_fraction` outside [0, 1);
   `trivial_baseline` for a metric other than `accuracy` or `error_rate`, for a task
   that is not single-label classification, or with fewer than 2 declared `labels`;
-- uncertainty (1.0.9): an unknown `kind`; `se` or `ci` with `n` < 2 written by hand
-  (a missing `n` is allowed and makes it not convertible); a `ci` with `lower` ≥
-  `upper` or `level` outside (0, 1); a negative `sd` or `se`; a record without
-  `location` and `quote`;
+- uncertainty (1.0.9): an unknown `kind` or CI `method`; an `n` below 2 (an absent
+  `n` is valid and makes `se` or `ci` not convertible); a `ci` with `lower` ≥ `upper`
+  or `level` outside (0, 1); a negative `sd` or `se`; a record without `location` and
+  `quote`;
 - coverage: a `coverage_minimum` name WP2 would refuse for this claim.
 
 **Schema, must pass:** the run seed of 1.0.2 for a fixed `claim_seed_bytes` and arXiv
@@ -588,16 +622,24 @@ derived seed lists from it equal values recorded in the test; a claim with
 every accepted coverage name.
 
 **Uncertainty conversion (1.0.9), must pass with recorded values:** `sd` kept; `se`
-times `sqrt(n)`; a 95% `ci` with `n = 5` converted with `t(0.975, 4)`; a 90% `ci`
-with `t(0.95, n − 1)`; a printed unit in `fraction` for a claim in `percent`; `se`
-without `n` treated as `none` and recorded; a paired uncertainty giving
-`tol_d = max(abs_floor, rel_tol · |p|, k_sd · sd_d)`; without a paired uncertainty,
-`tol_d = sqrt(tol_m² + tol_b²)`.
+times `sqrt(n)`; a 95% `ci` with `method: t` and `n = 5` converted with `t(0.975, 4)`;
+a 90% `ci` with `t(0.95, n − 1)`; a 95% `ci` with `method: normal` converted with
+`z(0.975)`; a printed unit in `fraction` for a claim in `percent`; a paired
+uncertainty giving `tol_d = max(abs_floor, rel_tol · |p|, k_sd · sd_d)`; without a
+paired uncertainty, `tol_d = sqrt(tol_m² + tol_b²)`.
+
+**Reported but not convertible (1.0.9):** `se` without `n`, a `ci` with
+`method: other_or_unknown`, and an asymmetric `ci`: a result inside the narrower
+tolerance is `PASS`; a result outside it is `INCONCLUSIVE` with the reason "reported
+uncertainty not convertible", never `FAIL` (for example: published 80%, SE 2 points
+with no `n`, reproduced 75%). `kind: none` with the same numbers gives `FAIL`.
 
 **Holdout rule (1.0.10), must pass with recorded values:** `m = floor(0.1 · n_train)`
 and `factor = max(1, sqrt(n_examples / m))` for a large and for a small holdout; the
-factor is 1 when `m ≥ n_examples`. The cases on both sides (no false `FRAGILE`, a real
-deviation still detected) are end-to-end papers of WP4 (W4.3a).
+factor is 1 when `m ≥ n_examples`; `m < 100` (including `n_train < 10`, `m = 0`), a
+`direction` claim and a metric outside the list make the attack not applicable. The
+cases on both sides (no false `FRAGILE`, a real deviation still detected) are
+end-to-end papers of WP4 (W4.3a, PR #79).
 
 **Random baseline (1.0.6):** `1/K` accuracy and `1 − 1/K` error rate for `K` = 2, 3
 and 10 declared classes, independent of the class frequencies.
