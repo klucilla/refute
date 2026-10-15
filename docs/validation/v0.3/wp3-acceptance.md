@@ -14,13 +14,16 @@ in [docs/sandbox.md](../../sandbox.md).
 ### 1.0 Claim schema: design (revision of 2026-10-15, for the maintainer's approval)
 
 This design fixes the exact form of an ML claim before any WP3 test or code (W3.1 to
-W3.4). It needs the maintainer's approval as a design (CLAUDE.md, "Acceptance
-documents and schemas"); code that implements exactly this design is then under the
-standing approval.
+W3.4). The maintainer approved its core on 2026-10-15, with the decisions recorded in
+place: the run seed (1.0.2), the development budget split (1.0.2), the random
+baseline (1.0.6), the published uncertainty and the paired SD (1.0.9), the holdout
+rule (1.0.10), and the distinction between `metric_recompute` and the base
+reproduction (1.7). Code that implements exactly this design is under the standing
+approval (CLAUDE.md, "Acceptance documents and schemas"); no predicate is implemented
+before 1.0.9 is merged.
 
 Every model is strict (unknown fields are errors), like the core schema. Every
-default is written out in the resolved claim. **"Proposal"** marks a value or rule
-that the plan does not fix and that this design proposes.
+default is written out in the resolved claim.
 
 #### 1.0.1 Placement and execution
 
@@ -57,8 +60,8 @@ that the plan does not fix and that this design proposes.
 | Field | Type and rule |
 |---|---|
 | `paper.arxiv_id`, `paper.version` | new-style arXiv id (`NNNN.NNNNN`), integer version ≥ 1; every claim's `source` must match |
-| `paper.seed_sha256` | the per-paper seed: `sha256(claim_seed_bytes || arxiv_id_utf8)` of the claim draw (plan line 297), 64 hex digits. All the derived seeds of 1.0.4 come from it. **Proposal:** the plan says "the per-paper seed" (lines 488, 491) without defining it; this design uses the claim-draw seed, which is public and fixed before the lock |
-| `budget.profile` | `main` (384 / 192 / 192 CPU-hours: paper / base / attacks, plan section 7.3) or `development` (96 CPU-hours, plan section 4.5; **proposal:** 48 / 48). The three values are written out and must equal the profile; no other value is accepted |
+| `paper.run_seed_sha256` | the per-paper **run seed** (plan lines 488 and 491, "the per-paper seed"), 64 hex digits: `sha256(claim_seed_bytes || "refute/v0.3/runs" || arxiv_id_utf8)`, where `claim_seed_bytes` are the bytes of the drand randomness of the round reserved for the claims, and both strings are UTF-8. It is derived from the claim-draw seed with its own domain string, so it differs from the seed that shuffled the claim inventory, `sha256(claim_seed_bytes || arxiv_id_utf8)` (plan line 297). All the derived seeds of 1.0.4 come from it. Decided by the maintainer on 2026-10-15 |
+| `budget.profile` | `main` (384 / 192 / 192 CPU-hours: paper / base / attacks, plan section 7.3) or `development` (96 / 48 / 48 CPU-hours; the 96 come from plan section 4.5, the split 48 / 48 was decided by the maintainer on 2026-10-15). The three values are written out and must equal the profile; no other value is accepted |
 | `repository.url` | `https://` URL; every claim's `source.repository_url` must match |
 | `repository.commit` | 40 hexadecimal characters; every claim's `source.repository_commit` must match |
 | `repository.latest_commit_at_draw` | 40 hexadecimal characters (plan lines 383-388) |
@@ -89,7 +92,7 @@ with an operational reason (`budget_exhausted` or the guard's name); it is never
 | `source` | `arxiv_id`, `version`, `location` (table, row and column as printed), `quote` (as printed), `retrieved_utc`, `repository_url`, `repository_commit` |
 | `inventory` | `candidate_id` and `position` (1, 2, 3, ... equal to the order in `targets`). The claim file has exactly one attachment with role `claim-inventory` and one with role `claim-draw`, both with `sha256`; the pack checks that the candidate is in the inventory with the same transcription (value, location, metric, split, command) and that the positions are those of the draw. Their formats are fixed in WP5 |
 | `dataset` | the name of an entry of `test_plan.datasets`; `metric.split` must be one of its splits |
-| `metric` | `name`, `split`, `unit` (`percent`, `fraction` or `native`), `higher_is_better` (information only), `reported` (finite; value claims only), `reported_sd` (≥ 0 or null), `reported_n_seeds` (≥ 1 or null), `n_examples` (≥ 1; equal to the split's `expected_examples`) |
+| `metric` | `name`, `split`, `unit` (`percent`, `fraction` or `native`), `higher_is_better` (information only), `reported` (finite; value claims only), `reported_uncertainty` (1.0.9; value claims only), `reported_n_seeds` (≥ 1 or null), `n_examples` (≥ 1; equal to the split's `expected_examples`) |
 | `comparison_mode` | required; `two_sided`, `one_sided_at_least`, `one_sided_at_most` for `value`; `direction`, `margin`, `magnitude` for `comparison` |
 | `comparison` | comparison claims only (1.0.5) |
 | `scope` | `full_training` or `checkpoint_evaluation`; the second also needs `weights` (the name of a weights entry) |
@@ -116,7 +119,8 @@ with an operational reason (`budget_exhausted` or the guard's name); it is never
   extracted values. With `n_base` < `reported_n_seeds`, the dossier says the mean
   is over fewer seeds than the paper's.
 - **Derived seeds.** For a domain `D` (`base`, `seeds`, `data_split`, `holdout`), the
-  generator is `random.Random(int.from_bytes(sha256(paper_seed || D_utf8), "big"))`
+  generator is `random.Random(int.from_bytes(sha256(run_seed || D_utf8), "big"))`,
+  where `run_seed` is the 32 bytes of `paper.run_seed_sha256` (1.0.2),
   and the seeds are its successive `randrange(2**31)` values, skipping repeats and
   any value already used by the base run. The derived lists are written out in the
   resolved claim and checked again at validation:
@@ -128,16 +132,22 @@ with an operational reason (`budget_exhausted` or the guard's name); it is never
 
 `comparison`: `method`, `reference`, `orientation` (`method_minus_reference` or
 `reference_minus_method`, so that a positive `d` is an advantage in the claimed
-sense), `reported_method`, `reported_reference`, `reported_sd_method` and
-`reported_sd_reference` (≥ 0 or null), `g_pub` (required for `margin`, absent
-otherwise), `d_pub` (required for `magnitude`, absent otherwise), `paired_sd` (≥ 0 or
-null), and `reference_run`.
+sense), `reported_method`, `reported_reference`, `uncertainty_method` and
+`uncertainty_reference` (1.0.9), `g_pub` (required for `margin`, absent otherwise),
+`d_pub` (required for `magnitude`, absent otherwise), `paired_uncertainty` (1.0.9),
+and `reference_run`.
 
 - **Tolerances.** `tol_m` and `tol_b` are the one-number tolerance (plan line 415) of
-  each method's reported value with its own SD, under the claim's `tolerance`
-  parameters. Without `paired_sd`: `tol_d = sqrt(tol_m² + tol_b²)` (plan lines
-  449-455). With `paired_sd` (**proposal**, plan line 453 says only that it "is used
-  instead"): `tol_d = max(abs_floor, k_sd · paired_sd)`.
+  each method's reported value, `max(abs_floor, rel_tol · |x|, k_sd · sd_x)`, with
+  `sd_x` from its uncertainty (1.0.9; the `k_sd` term is absent when the paper gives
+  none), under the claim's `tolerance` parameters.
+  - **Without a paired uncertainty:** `tol_d = sqrt(tol_m² + tol_b²)` (plan lines
+    449-455).
+  - **With a paired uncertainty** (plan line 453: "that value is used instead"): the
+    same one-number tolerance applied to the published difference,
+    `tol_d = max(abs_floor, rel_tol · |p|, k_sd · sd_d)`, where `p` is `d_pub`
+    (`magnitude`) or `g_pub` (`margin`), and `sd_d` is the standard deviation of the
+    paired difference (1.0.9). In `direction` mode no tolerance is used.
 - **Pairing.** Both methods run with the same seeds, the same data and the same split.
   `d` is computed for each seed and `d_rep` is the mean of the per-seed differences
   (equal to the difference of the means).
@@ -159,9 +169,9 @@ order of the applicable ones is the effective order (plan section 7.4).
 | `seeds` | none (5 seeds from 1.0.4; WP2 `seeds_attack`) |
 | `data_split` | `original_proportions` (as the repository uses them) and `proportions`: lists of finite numbers in (0, 1) that sum to 1 within 1e-9 and are equal to each other; `split_argument` (how the repository takes the split seed). Not applicable to a fixed benchmark test set (plan line 489). WP2 `data_split_attack` |
 | `ablation` | `disable` (the `argv` items added, or `{config_file, key, value}`: the value that turns the component off); `orientation` (`full_minus_ablated` or `ablated_minus_full`, so that a positive `d_abl` means the component helps in the claimed sense); `mode`: `direction` (`d_abl > 0`) or `margin`, which also needs the paper's published values `reported_full` and `reported_ablated` (with `reported_sd_full`, `reported_sd_ablated`, ≥ 0 or null) and `g_abl` = their oriented difference; then `tol_abl = sqrt(tol_full² + tol_ablated²)`, each the one-number tolerance of that published value under the claim's `tolerance` parameters, and the rule is `d_abl ≥ g_abl − tol_abl` and `d_abl > 0`. `d_abl` is the mean over the attack's runs, which use the base seeds. The same for value and comparison claims (on a comparison claim, the full model is the claim's method). Only when the repository exposes the switch (plan line 490) |
-| `holdout` | `fraction` in (0, 0.5]; `tolerance_factor` > 1 (**proposal:** the wider tolerance is `tolerance_factor` times the claim's tolerance); `split_argument`. The holdout is carved with `seeds.holdout` before training |
+| `holdout` | `split_argument`; the fraction and the wider tolerance are not free parameters: they follow the rule of 1.0.10. The holdout is carved with `seeds.holdout` before training |
 | `leakage` | `max_overlap_fraction` in [0, 1); the unit is one example, hashed (SHA-256) from its bytes as stored in the declared dataset format; the overlap is the fraction of test examples whose hash appears in train |
-| `trivial_baseline` | `kind`: `majority` (the most frequent class of the training labels, applied to the test split) or `random` (**proposal:** its expected value under uniform random guessing, computed exactly, with no random draw). Only for `accuracy` and `error_rate`; the claim must beat the baseline by more than its tolerance |
+| `trivial_baseline` | `kind`: `majority` (the most frequent class of the training labels, predicted for every test example) or `random` (decided by the maintainer on 2026-10-15: its expected value under uniform random guessing, computed exactly, with no random draw). `labels`: the `K ≥ 2` classes of the task, declared. **Where it applies:** only for `accuracy` and `error_rate`, on a single-label classification task (binary or multi-class: each example has exactly one true class among the `K` declared ones). Then `random` gives accuracy `1/K` and error rate `1 − 1/K`, whatever the class frequencies (each guess is right with probability `1/K`). **Outside that** (any other metric, regression, multi-label or multi-output tasks, an undeclared or unknown number of classes) `trivial_baseline` cannot be declared applicable: validation refuses it, and the claim records it as not applicable with the reason. The claim must beat the baseline by more than its tolerance |
 
 #### 1.0.7 Coverage minimums
 
@@ -189,6 +199,88 @@ percentage points, while the same performance written as an error rate of 1% get
 one. The defaults apply to bounded rates in `percent` or `fraction`; any other metric
 uses `native` and states its tolerance with a reason, and an override of a default
 always needs a written reason before the lock.
+
+#### 1.0.9 Published uncertainty: SD, SE, CI or none (closes `paired_sd`)
+
+An uncertainty record (`reported_uncertainty`, `uncertainty_method`,
+`uncertainty_reference`, `paired_uncertainty`) has:
+
+- `kind`: `sd` (standard deviation of the runs), `se` (standard error of their mean),
+  `ci` (confidence interval of their mean) or `none`;
+- `value` (for `sd` and `se`), or `lower`, `upper` and `level` (for `ci`; `level` in
+  (0, 1), for example 0.95);
+- `n`: the number of runs the published uncertainty is over (≥ 2; required for `se`
+  and `ci`);
+- `unit` as printed (`percent`, `fraction` or `native`), `location` and `quote` in
+  the paper.
+
+**Provenance.** Every number of an uncertainty record comes from the paper, transcribed
+with its location and quote and approved with the inventory (plan section 5.2). None
+comes from Refute's runs: a tolerance is fixed before the lock and never depends on a
+result of the sample.
+
+**Unit.** The record is converted from its printed unit to `metric.unit` (× 100 or
+÷ 100), like the reported values; the resulting `sd` is in `metric.unit`.
+
+**Definition and formulas.** `sd` is the standard deviation of the individual runs
+(the plan's `reported_sd`, the `k_sd` term of plan line 415). For a paired
+uncertainty, the runs are the per-run differences
+`d_i = metric_method,i − metric_reference,i` (with the claim's orientation) over the
+same `n` seeds, and `sd_d` is their standard deviation.
+
+| `kind` | `sd` used by the tolerance |
+|---|---|
+| `sd` | `value` |
+| `se` | `value · sqrt(n)` |
+| `ci` | `se = (upper − lower) / (2 · t(1 − (1 − level)/2, n − 1))`, then `se · sqrt(n)` |
+| `none` | no `k_sd` term (plan line 420) |
+| `se` or `ci` without `n` | not convertible: treated as `none`, and the dossier says so |
+
+`t(q, df)` is the quantile of Student's t distribution, computed with SciPy
+(`scipy.stats.t.ppf`, SciPy 1.18.1 in `uv.lock`). The resolved claim writes out the
+quantile used and the resulting `sd`. A CI that is not symmetric about the reported
+value (the two half-widths differ by more than 1% of the width) is recorded as such;
+the formula above still applies.
+
+**Source** (retrieved 2026-10-15): Cochrane Handbook for Systematic Reviews of
+Interventions, version 6.5, chapter 6, section 6.5.2.2,
+https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-06:
+"A standard deviation can be obtained from the SE of a mean by multiplying by the
+square root of the sample size"; the 95% interval is 3.92 SE wide only for large
+samples, and "If the sample size is small (say fewer than 60 participants in each
+group) then confidence intervals should have been calculated using a value from a t
+distribution". The runs of a paper are few (seeds), so the t quantile with `n − 1`
+degrees of freedom is always used; for paired differences the `n` differences are one
+sample, so the degrees of freedom are `n − 1`.
+
+#### 1.0.10 Holdout: fraction and wider tolerance (closes the holdout factor)
+
+- **Where it applies.** Only for metrics that are a mean of per-example values:
+  `accuracy`, `error_rate`, `mae`, `mse`, with a declared `train` split. For any other
+  metric the attack is not applicable in v0.3, with the reason.
+- **Fraction.** Fixed, not a parameter: `m = floor(0.1 · n_train)` examples of the
+  training split (`datasets[].splits.train.expected_examples`) are carved out with
+  `seeds.holdout` before training, and the model trains on the rest.
+- **Wider tolerance.** The claim's predicate (the same mode) is applied to the value
+  measured on the holdout, with the claim's tolerance multiplied by
+  `factor = max(1, sqrt(n_examples / m))`, where `n_examples` is the size of the split
+  the claim reports on (`metric.n_examples`). The factor and `m` are written out in the
+  resolved claim.
+- **Justification.** For a metric that is a mean of per-example values, the sampling
+  standard deviation of the estimate falls with the square root of the number of
+  examples (standard error = standard deviation / `sqrt(N)`; Cochrane Handbook 6.5.2.2,
+  cited in 1.0.9). An estimate on `m` holdout examples therefore varies
+  `sqrt(n_examples / m)` times as much as one on the `n_examples` of the reported
+  split, so the tolerance that absorbs the reported split's variation is widened by
+  that ratio; it is never narrowed (factor ≥ 1).
+- **Concession.** Training on 90% of the data can lower the result a little; the
+  factor does not model that bias. The fraction is kept small for that reason, and the
+  WP4 cases check both sides: changes of this kind (sampling noise, a slightly smaller
+  training set) must not produce `FRAGILE`, and a real deviation (a model fitted to its
+  evaluation split) must still produce it.
+- **Fixed before the lock.** The fraction 0.1, the factor rule and every value derived
+  from them are fixed before the lock and are never adjusted because of results on
+  the sample, the pilot or the development papers.
 
 ### 1.1 Schema
 
@@ -300,11 +392,27 @@ must not be able to produce it alone. Alternatives considered: Refute's code onl
 implementation) and scikit-learn only (less code, but it may be the very library the
 paper used, and there is no cross-check by a different algorithm).
 
-**What is compared.** For each base run (each seed and, for a comparison claim, each
-method), the metric recomputed from that run's saved predictions is compared with
-the value that run printed through the claim's fixed `metric_extraction`: the same
-channel as the base reproduction, never another print, and never the paper's
-`metric.reported`.
+**Two different checks, kept apart in the text and in the code** (decided by the
+maintainer on 2026-10-15):
+
+- **`metric_recompute` checks the chain inside one run:** it recomputes the metric from
+  the run's saved predictions and compares it with the value **that same run printed**.
+  It says whether the printed number is what the predictions give. It never looks at
+  the paper.
+- **The base reproduction compares the run with the paper:** the value the runs
+  produced (`x_rep`, 1.0.4) is compared with **the claim published in the paper**
+  (`metric.reported`, or the comparison of 1.0.5), with the claim's mode and
+  tolerance.
+
+The code keeps them in separate functions and separate results (`metric_recompute`
+and `base_reproduction` in the WP2 aggregation), and neither reads the other's
+reference value.
+
+**What is compared by `metric_recompute`.** For each base run (each seed and, for a
+comparison claim, each method), the metric recomputed from that run's saved
+predictions is compared with the value that run printed through the claim's fixed
+`metric_extraction`: the same channel as the base reproduction, never another print,
+and never the paper's `metric.reported`.
 
 **The printed interval.** The extracted token is kept as text. If it has `d` digits
 after the decimal point and an exponent `e` (0 when absent), its quantum is
@@ -460,16 +568,39 @@ aggregation is this `applies`.
   that overlap the base seeds;
 - attacks: an attack missing, repeated or unknown; an attack that applies with no
   `params`, or one that does not apply with `params`; `data_split` proportions that
-  do not sum to 1 or differ from `original_proportions`; `holdout.tolerance_factor`
-  ≤ 1 or a `fraction` outside (0, 0.5]; `ablation` with no `orientation`, or in
-  `margin` mode without `reported_full`, `reported_ablated` or `g_abl`, or with a
-  `g_abl` different from their oriented difference; `leakage.max_overlap_fraction` outside
-  [0, 1); `trivial_baseline` for a metric other than `accuracy` or `error_rate`;
+  do not sum to 1 or differ from `original_proportions`; `holdout` applicable for a
+  metric outside 1.0.10 or with no `train` split, or with a fraction or factor given
+  by hand; `ablation` with no `orientation`, or in `margin` mode without
+  `reported_full`, `reported_ablated` or `g_abl`, or with a `g_abl` different from
+  their oriented difference; `leakage.max_overlap_fraction` outside [0, 1);
+  `trivial_baseline` for a metric other than `accuracy` or `error_rate`, for a task
+  that is not single-label classification, or with fewer than 2 declared `labels`;
+- uncertainty (1.0.9): an unknown `kind`; `se` or `ci` with `n` < 2 written by hand
+  (a missing `n` is allowed and makes it not convertible); a `ci` with `lower` ≥
+  `upper` or `level` outside (0, 1); a negative `sd` or `se`; a record without
+  `location` and `quote`;
 - coverage: a `coverage_minimum` name WP2 would refuse for this claim.
 
-**Schema, must pass:** the derived seed lists of a fixed `paper.seed_sha256` equal
-values recorded in the test; a claim with `build.allowed_patches: []` resolves; the
-resolved claim writes out every default and every accepted coverage name.
+**Schema, must pass:** the run seed of 1.0.2 for a fixed `claim_seed_bytes` and arXiv
+ID equals a value recorded in the test, and differs from the claim-draw seed; the
+derived seed lists from it equal values recorded in the test; a claim with
+`build.allowed_patches: []` resolves; the resolved claim writes out every default and
+every accepted coverage name.
+
+**Uncertainty conversion (1.0.9), must pass with recorded values:** `sd` kept; `se`
+times `sqrt(n)`; a 95% `ci` with `n = 5` converted with `t(0.975, 4)`; a 90% `ci`
+with `t(0.95, n − 1)`; a printed unit in `fraction` for a claim in `percent`; `se`
+without `n` treated as `none` and recorded; a paired uncertainty giving
+`tol_d = max(abs_floor, rel_tol · |p|, k_sd · sd_d)`; without a paired uncertainty,
+`tol_d = sqrt(tol_m² + tol_b²)`.
+
+**Holdout rule (1.0.10), must pass with recorded values:** `m = floor(0.1 · n_train)`
+and `factor = max(1, sqrt(n_examples / m))` for a large and for a small holdout; the
+factor is 1 when `m ≥ n_examples`. The cases on both sides (no false `FRAGILE`, a real
+deviation still detected) are end-to-end papers of WP4 (W4.3a).
+
+**Random baseline (1.0.6):** `1/K` accuracy and `1 − 1/K` error rate for `K` = 2, 3
+and 10 declared classes, independent of the class frequencies.
 
 **Reply draft (D-S3):** must refuse when the sealed `target.json` has no `key`, when
 no entry or two entries of `targets` match it, when the matching entry differs from
