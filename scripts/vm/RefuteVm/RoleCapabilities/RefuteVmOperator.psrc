@@ -1,0 +1,14 @@
+@{
+    # Role capability of the JEA endpoint RefuteVm (scripts/vm/README.md). The
+    # connecting account sees these two functions, plus the default helper commands
+    # that SessionType RestrictedRemoteServer keeps (Clear-Host, Exit-PSSession,
+    # Get-Command, Get-FormatData, Get-Help, Measure-Object, Out-Default,
+    # Select-Object). The session runs in NoLanguage mode: literal arguments only, no
+    # script block or expression. The functions take no path and no VM name.
+    # The module is pinned by name, version and GUID, so no other module named RefuteVm
+    # can be imported in its place.
+    GUID             = '6f1c6a0e-5b2d-4f4e-9d1a-3c7e2b8a9f41'
+    Description      = 'Refute VM operator: status and one approved operation per call.'
+    ModulesToImport  = @(@{ ModuleName = 'RefuteVm'; RequiredVersion = '0.1.0'; GUID = 'b2713b52-46f8-4c00-a4bf-2b940708587a' })
+    VisibleFunctions = @('Get-RefuteVmStatus', 'Invoke-RefuteVmOperation')
+}
