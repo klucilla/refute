@@ -327,6 +327,68 @@ uncertainty not convertible". By predicate:
   from them are fixed before the lock and are never adjusted because of results on
   the sample, the pilot or the development papers.
 
+#### 1.0.11 Implementation decisions (maintainer, 2026-10-15, PR #85)
+
+The schema PR raised points that 1.0.1 to 1.0.10 do not fix. The maintainer decided them
+on 2026-10-15:
+
+- **Transcribed value and command (1.0.3, `inventory`).** The claim's
+  `inventory.transcription` is a copy of the inventory's, and must equal it. In
+  addition, the transcription is tied to the claim's own fields:
+  - **location, metric and split:** each equals the claim's `source.location`,
+    `metric.name` and `metric.split`;
+  - **value:** the printed number. A value claim has one decimal; a comparison has
+    `"<method> vs <reference>"`, two decimals. Each number must equal the claim's
+    `metric.reported`, or `comparison.reported_method` and
+    `comparison.reported_reference`, as **decimals written in the claim file**: the file
+    is read again with its numbers kept as decimals, never passed through a float.
+    `91.2` and `91.20` are equal; `91.2` and `91.20000000000000001` are not, although
+    they are the same float;
+  - **command:** a JSON array of argument strings. It must equal `run.argv` followed by
+    `run.seed_argument` (when there is one), **compared as argument lists**, so that
+    `["a b"]` and `["a", "b"]` differ.
+- **`trivial_baseline.params.task`:** `single_label_classification`, the only accepted
+  value. The baseline stays limited to the metrics and tasks of 1.0.6.
+- **`reference_run`:** either a full `run` block, or
+  `{same: true, metric_extraction: {...}}`. The second means the same runs as the
+  method's, read with the reference's **own** extraction.
+- **Claim draw record:** format `refute-ml-claim-draw-1` (`selection/inventory.py`).
+  The `claim-inventory` and `claim-draw` attachments are stored in canonical JSON, so the
+  SHA-256 of the file is the hash of its content, the one the approval names. The record
+  must agree with its inventory: the same paper and the same comparison requirement; the
+  shuffled list holds exactly the drawable candidates; the draw holds a comparison when
+  one is required.
+- **Derived values written at validation.** The derived seed lists of 1.0.4 and the
+  holdout's fraction, size and factor of 1.0.10 need both a claim and `test_plan`, so
+  `validate_claim` writes them into the resolved claim before the lock hashes it. The
+  core schema and its canonicalization do not change. Three conditions apply:
+  - **Revalidation.** Every validation recomputes each derived value from the claim's
+    own inputs, and requires equality with the written one (`verify_derived`). This
+    covers the build ladder, the budget of the profile, the derived seed lists, the
+    holdout values, and each uncertainty's status, SD and quantile. A difference, or a
+    missing value, is refused.
+  - **Stability.** The same inputs give the same derived values, with no dependence on
+    platform, order or clock:
+    - the seeds come from SHA-256 and `random.Random` with an integer seed;
+    - the holdout factor is a correctly rounded square root;
+    - the quantiles and converted SDs are rounded to 12 significant digits, so the last
+      bits of a platform's floating-point library do not reach the claim;
+    - the key order of the YAML does not change the hash.
+
+    The recorded-value tests run on every CI job: Python 3.12 and 3.13, on Ubuntu and
+    Windows.
+  - **Tests.** Each written derived value is altered in a test, and the alteration must
+    be refused.
+- **Smaller points:**
+  - `datasets[].size_tolerance` is a non-negative integer number of examples;
+  - the budget values may be omitted and are filled from the profile; a given value
+    that differs from the profile is refused;
+  - `named_ref` and `named_ref_location` given with `version_basis: latest_at_draw` are
+    refused explicitly.
+- **Units.** `percent` and `fraction`, with their default floors, are for the closed list
+  of bounded rates: accuracy, error_rate, precision, recall, f1 and auroc. Any other
+  metric uses `native` and states its tolerance with a reason (1.0.8).
+
 ### 1.1 Schema
 
 - **W3.1** The `ml` pack validates and resolves ML claims with the fields of section
@@ -625,6 +687,16 @@ aggregation is this `applies`.
   or `level` outside (0, 1); a negative `sd` or `se`; a record without `location` and
   `quote`;
 - coverage: a `coverage_minimum` name WP2 would refuse for this claim.
+- 1.0.11:
+  - a transcribed value that differs from the published value, as decimals: a value
+    claim, a comparison, and `91.20000000000000001` against `91.2`;
+  - a transcribed command that differs from `run.argv` and `seed_argument`, including
+    the same words split into other arguments;
+  - a command that is not a JSON array, and a value that is not a printed decimal;
+  - a draw record that names another paper, states the comparison requirement wrongly,
+    or shuffled other candidates;
+  - each written derived value altered, or missing;
+  - a metric outside the bounded rates in `percent` or `fraction`.
 
 **Schema, must pass:** the run seed of 1.0.2 for a fixed `claim_seed_bytes` and arXiv
 ID equals a value recorded in the test, and differs from the claim-draw seed; the

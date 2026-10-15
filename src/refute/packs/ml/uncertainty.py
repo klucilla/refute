@@ -103,13 +103,20 @@ def unit_factor(from_unit: str, to_unit: str) -> float:
     return 100.0 if (from_unit, to_unit) == ("fraction", "percent") else 0.01
 
 
+def _stable(value: float) -> float:
+    """``value`` rounded to 12 significant digits, so the written derived values do not
+    depend on the last bits of a platform's floating-point library (the maintainer's
+    condition on derived values, 2026-10-15)."""
+    return float(f"{value:.12g}")
+
+
 def _quantile(method: str, level: float, n: int) -> float:
     from scipy import stats
 
     q = 1 - (1 - level) / 2
     if method == "t":
-        return float(stats.t.ppf(q, n - 1))
-    return float(stats.norm.ppf(q))
+        return _stable(float(stats.t.ppf(q, n - 1)))
+    return _stable(float(stats.norm.ppf(q)))
 
 
 def resolve_uncertainty(
@@ -125,14 +132,16 @@ def resolve_uncertainty(
         return out
     factor = unit_factor(record.unit or "", metric_unit)
     if record.kind == "sd":
-        out.update(status="converted", sd=record.value * factor, quantile=None)
+        out.update(status="converted", sd=_stable(record.value * factor), quantile=None)
         return out
     if record.n is None:
         out.update(status="not_convertible", sd=None, quantile=None)
         return out
     if record.kind == "se":
         out.update(
-            status="converted", sd=record.value * factor * math.sqrt(record.n), quantile=None
+            status="converted",
+            sd=_stable(record.value * factor * math.sqrt(record.n)),
+            quantile=None,
         )
         return out
     lower, upper = record.lower * factor, record.upper * factor
@@ -145,5 +154,5 @@ def resolve_uncertainty(
         return out
     q = _quantile(record.method, record.level, record.n)
     se = width / (2 * q)
-    out.update(status="converted", sd=se * math.sqrt(record.n), quantile=q)
+    out.update(status="converted", sd=_stable(se * math.sqrt(record.n)), quantile=q)
     return out

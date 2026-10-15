@@ -24,9 +24,11 @@ from __future__ import annotations
 import json
 import math
 import re
-from pathlib import PurePosixPath
+from decimal import Decimal, InvalidOperation
+from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, Literal
 
+import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 from refute.core.canonical import canonical_bytes
@@ -52,9 +54,12 @@ COMPARISON_MODES = ("direction", "margin", "magnitude")
 DEFAULT_REL_TOL = 0.02
 DEFAULT_K_SD = 2.0
 DEFAULT_ABS_FLOOR = {"percent": 0.5, "fraction": 0.005}
+# 1.0.11 (maintainer, 2026-10-15): the bounded rates that may use percent or fraction
+BOUNDED_RATES = ("accuracy", "error_rate", "precision", "recall", "f1", "auroc")
 INVENTORY_ROLE = "claim-inventory"
 DRAW_ROLE = "claim-draw"
 PATCH_ROLE = "allowed-patch"
+_DECIMAL_TEXT = re.compile(r"^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$")
 
 
 class _Model(BaseModel):
@@ -724,10 +729,12 @@ class MlTarget(_Model):
                     f"metric_extraction.unit {unit} cannot be converted to metric.unit "
                     f"{self.metric.unit}"
                 )
-        # 1.0.8: the percent and fraction defaults are for bounded rates only; the
-        # regression metrics of W3.15 are not rates and use native (Codex review)
-        if self.metric.name in recompute.REGRESSION and self.metric.unit != "native":
-            raise ValueError(f"{self.metric.name} is not a bounded rate: its unit is native")
+        # 1.0.8 and 1.0.11: percent and fraction (with their default floors) are for the
+        # closed list of bounded rates; any other metric is native
+        if self.metric.name not in BOUNDED_RATES and self.metric.unit != "native":
+            raise ValueError(
+                f"{self.metric.name} is not a bounded rate {BOUNDED_RATES}: its unit is native"
+            )
 
     def _tolerance(self) -> None:
         t, unit = self.tolerance, self.metric.unit
@@ -933,11 +940,53 @@ class MlClaimSchema:
         draw_record = _attachment_record(loaded, DRAW_ROLE)
         inventory_hash = self._check_inventory(plan, targets, inventory)
         self._check_draw(targets, draw_record, inventory, inventory_hash)
+        self._check_transcribed_numbers(loaded, targets)
         resolved = [
             self._derive(plan, target, raw_target)
             for raw_target, target in zip(claim.targets, targets, strict=True)
         ]
         loaded.claim = claim.model_copy(update={"targets": resolved})
+        # the written derived values must equal a fresh derivation (maintainer's
+        # condition on item e, 2026-10-15)
+        verify_derived(loaded.canonical())
+
+    @staticmethod
+    def _check_transcribed_numbers(loaded: LoadedClaim, targets: list[MlTarget]) -> None:
+        """The approved transcription's value and command are the claim's (maintainer's
+        decision 1, 2026-10-15). Numbers are compared as the decimals written in the claim
+        file, read again without passing through a float; commands as argument lists."""
+        raw_targets = _read_decimal_claim(loaded.path).get("targets") or []
+        if len(raw_targets) != len(targets):
+            raise ValueError("the claim file changed while it was being read")
+        for t, raw in zip(targets, raw_targets, strict=True):
+            text = t.inventory.transcription
+            if t.type == "value":
+                written = [_decimal(text.value, f"{t.key}: transcription.value")]
+                claimed = [raw["metric"]["reported"]]
+            else:
+                parts = text.value.split(" vs ")
+                if len(parts) != 2:
+                    raise ValueError(
+                        f"{t.key}: a comparison's transcribed value is '<method> vs <reference>'"
+                    )
+                written = [_decimal(p, f"{t.key}: transcription.value") for p in parts]
+                comparison = raw["comparison"]
+                claimed = [comparison["reported_method"], comparison["reported_reference"]]
+            if any(not isinstance(c, Decimal | int) or isinstance(c, bool) for c in claimed):
+                raise ValueError(f"{t.key}: the published values must be decimal numbers")
+            if [Decimal(c) for c in claimed] != written:
+                raise ValueError(f"{t.key}: the transcribed value differs from the claim's")
+            try:
+                command = json.loads(text.command)
+            except json.JSONDecodeError:
+                command = None
+            if not isinstance(command, list) or any(not isinstance(a, str) for a in command):
+                raise ValueError(
+                    f"{t.key}: the transcribed command is a JSON array of argument strings"
+                )
+            argv = list(t.run.argv) + ([t.run.seed_argument] if t.run.seed_argument else [])
+            if command != argv:
+                raise ValueError(f"{t.key}: the transcribed command differs from the claim's")
 
     def targets_for_run(self, loaded: LoadedClaim) -> list[dict[str, Any]]:
         return list(loaded.claim.targets)
@@ -1096,6 +1145,128 @@ class MlClaimSchema:
                 factor=rules.holdout_factor(t.metric.n_examples, m),
             )
         return out
+
+
+class _DecimalLoader(yaml.SafeLoader):
+    """A YAML loader whose floats are Decimals of their written text."""
+
+
+def _construct_decimal(loader: yaml.SafeLoader, node: yaml.Node) -> Decimal:
+    text = str(loader.construct_scalar(node)).replace("_", "")
+    try:
+        value = Decimal(text)
+    except InvalidOperation:
+        raise ValueError(f"not a finite decimal number: {text!r}") from None
+    if not value.is_finite():
+        raise ValueError(f"not a finite decimal number: {text!r}")
+    return value
+
+
+_DecimalLoader.add_constructor("tag:yaml.org,2002:float", _construct_decimal)
+
+
+def _read_decimal_claim(path: Path) -> dict[str, Any]:
+    try:
+        data = yaml.load(path.read_text(encoding="utf-8"), Loader=_DecimalLoader)  # noqa: S506
+    except (OSError, UnicodeDecodeError, yaml.YAMLError) as exc:
+        raise ValueError(f"cannot read the claim file again: {exc}") from None
+    if not isinstance(data, dict):
+        raise ValueError("the claim file must hold a mapping")
+    return data
+
+
+def _decimal(text: str, what: str) -> Decimal:
+    if not _DECIMAL_TEXT.match(text.strip()):
+        raise ValueError(f"{what} must be a decimal number as printed, got {text!r}")
+    return Decimal(text.strip())
+
+
+# ---- derived values: written once, recomputed at every validation ---------------------------
+
+
+def verify_derived(claim: dict[str, Any]) -> None:
+    """Recomputes every value the resolution derives and requires equality with the
+    written one (maintainer's condition on item e, 2026-10-15): the build ladder and the
+    budget of the profile, the derived seed lists, the holdout fraction, size and factor,
+    and each uncertainty's status, sd and quantile. Raises ValueError on any difference
+    or missing value. The derivations depend only on the claim's own values: no clock,
+    no platform-specific digits (quantiles and SDs are rounded to 12 significant digits),
+    no dictionary order."""
+    plan = claim["test_plan"]
+    if plan["build"].get("ladder") != list(BUILD_LADDER):
+        raise ValueError("derived value differs: test_plan.build.ladder")
+    budget = plan["budget"]
+    want = BUDGET_PROFILES[budget["profile"]]
+    got = (
+        budget.get("paper_cpu_hours"),
+        budget.get("base_cpu_hours"),
+        budget.get("attacks_cpu_hours"),
+    )
+    if got != want:
+        raise ValueError("derived value differs: test_plan.budget")
+    run_seed = plan["paper"]["run_seed_sha256"]
+    datasets = {d["name"]: d for d in plan["datasets"]}
+    for t in claim["targets"]:
+        key, s = t["key"], t["seeds"]
+        base = list(s["base"])
+        n_base = len(base)
+        if s["base_source"] == "derived" and base != seeds.derived_seeds(run_seed, "base", n_base):
+            raise ValueError(f"derived value differs: {key} seeds.base")
+        for name, domain, count in (
+            ("attack", "seeds", seeds.ATTACK_SEEDS),
+            ("data_split", "data_split", seeds.DATA_SPLIT_SEEDS),
+            ("holdout", "holdout", seeds.HOLDOUT_SEEDS),
+        ):
+            if s.get(name) != seeds.derived_seeds(run_seed, domain, count, base):
+                raise ValueError(f"derived value differs: {key} seeds.{name}")
+        holdout = next(a for a in t["attacks"] if a["name"] == "holdout")
+        if holdout["applies"]:
+            n_train = datasets[t["dataset"]]["splits"]["train"]["expected_examples"]
+            m = rules.holdout_size(n_train)
+            p = holdout["params"]
+            for name, value in (
+                ("fraction", rules.HOLDOUT_FRACTION),
+                ("m", m),
+                ("factor", rules.holdout_factor(t["metric"]["n_examples"], m)),
+            ):
+                if p.get(name) != value:
+                    raise ValueError(f"derived value differs: {key} holdout.{name}")
+        unit = t["metric"]["unit"]
+        comparison = t.get("comparison")
+        records = []
+        if t["metric"].get("reported_uncertainty") is not None:
+            records.append(
+                (
+                    "metric.reported_uncertainty",
+                    t["metric"]["reported_uncertainty"],
+                    t["metric"].get("reported"),
+                )
+            )
+        if comparison:
+            center = (
+                comparison.get("d_pub")
+                if comparison.get("d_pub") is not None
+                else comparison.get("g_pub")
+            )
+            records += [
+                (
+                    "comparison.uncertainty_method",
+                    comparison["uncertainty_method"],
+                    comparison["reported_method"],
+                ),
+                (
+                    "comparison.uncertainty_reference",
+                    comparison["uncertainty_reference"],
+                    comparison["reported_reference"],
+                ),
+                ("comparison.paired_uncertainty", comparison["paired_uncertainty"], center),
+            ]
+        for where, record, center in records:
+            inputs = {k: v for k, v in record.items() if k not in ("status", "sd", "quantile")}
+            fresh = resolve_uncertainty(Uncertainty.model_validate(inputs), unit, center)
+            for name in ("status", "sd", "quantile"):
+                if record.get(name) != fresh[name]:
+                    raise ValueError(f"derived value differs: {key} {where}.{name}")
 
 
 def _errors(exc: ValidationError) -> str:

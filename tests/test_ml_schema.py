@@ -43,14 +43,14 @@ TRANSCRIPTIONS = {
         "location": "Table 2, row Ours, column CIFAR-10",
         "metric": "accuracy",
         "split": "test",
-        "command": "python train.py --seed=<seed>",
+        "command": '["python", "train.py", "--seed={seed}"]',
     },
     "c2": {
         "value": "91.2 vs 89.0",
         "location": "Table 2, rows Ours and ResNet, column CIFAR-10",
         "metric": "accuracy",
         "split": "test",
-        "command": "python train.py --seed=<seed>",
+        "command": '["python", "train.py", "--seed={seed}"]',
     },
 }
 
@@ -465,7 +465,9 @@ def test_allowed_patch_attachment(tmp_path):
     load(tmp_path, patch)
 
 
-def test_a_claim_without_seed_option_runs_once(tmp_path):
+def test_a_claim_without_seed_option_runs_once(tmp_path, monkeypatch):
+    monkeypatch.setitem(TRANSCRIPTIONS["c1"], "command", '["python", "train.py"]')
+
     def no_seed(claim):
         t = target(claim, "c1")
         t["run"]["seed_argument"] = None
@@ -1020,11 +1022,12 @@ def test_a_separate_reference_run_has_the_same_seed_control(tmp_path):
     load(tmp_path, controlled)
 
 
-def test_a_regression_metric_is_native(tmp_path):
+@pytest.mark.parametrize("metric", ["mae", "r2", "bleu", "top5_accuracy"])
+def test_a_metric_outside_the_bounded_rates_is_native(tmp_path, metric):
     def mae_in_percent(claim):
         t = target(claim, "c1")
-        t["metric"]["name"] = "mae"
-        t["inventory"]["transcription"]["metric"] = "mae"
+        t["metric"]["name"] = metric
+        t["inventory"]["transcription"]["metric"] = metric
         for name in ("holdout", "trivial_baseline"):
             attack(t, name).update(applies=False)
             attack(t, name).pop("params")
@@ -1036,6 +1039,145 @@ def test_a_regression_metric_is_native(tmp_path):
 
 def test_a_reason_may_accompany_the_default_tolerance(tmp_path):
     load(tmp_path, _set(["c1", "tolerance"], {"override_reason": "defaults kept on purpose"}))
+
+
+# ---- transcribed value and command (maintainer's decision 1, 2026-10-15) ----------------------
+
+
+@pytest.mark.parametrize(
+    ("mutate", "reason"),
+    [
+        (_set(["c1", "metric", "reported"], 91.3), "transcribed value differs"),
+        (_set(["c2", "comparison", "reported_reference"], 88.0), "transcribed value differs"),
+        (_set(["c1", "run", "argv"], ["python", "train2.py"]), "transcribed command differs"),
+        (_set(["c1", "run", "seed_argument"], "--seed {seed}"), "transcribed command differs"),
+    ],
+)
+def test_the_transcribed_value_and_command_are_the_claims(tmp_path, mutate, reason):
+    with pytest.raises(ClaimError, match=reason):
+        load(tmp_path, mutate)
+
+
+def test_values_are_compared_as_written_decimals_never_through_a_float(tmp_path):
+    # 91.20000000000000001 is the float 91.2, but not the decimal 91.2 transcribed
+    path = build_claim(tmp_path)
+    text = path.read_text(encoding="utf-8")
+    assert text.count("reported: 91.2\n") == 1
+    path.write_text(text.replace("reported: 91.2\n", "reported: 91.20000000000000001\n"))
+    with pytest.raises(ClaimError, match="transcribed value differs"):
+        load_claim(path, pack=PACK)
+    # trailing zeros are the same decimal
+    path.write_text(text.replace("reported: 91.2\n", "reported: 91.20\n"))
+    load_claim(path, pack=PACK)
+
+
+def test_commands_are_compared_as_argument_lists(tmp_path, monkeypatch):
+    # "train.py --seed={seed}" as one argument is not two arguments
+    monkeypatch.setitem(TRANSCRIPTIONS["c1"], "command", '["python", "train.py --seed={seed}"]')
+    with pytest.raises(ClaimError, match="transcribed command differs"):
+        load(tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("cid", "field", "text", "reason"),
+    [
+        ("c1", "command", "python train.py --seed={seed}", "JSON array"),
+        ("c1", "value", "91.2%", "decimal number as printed"),
+        ("c2", "value", "91.2 / 89.0", "<method> vs <reference>"),
+    ],
+)
+def test_transcription_formats(tmp_path, monkeypatch, cid, field, text, reason):
+    monkeypatch.setitem(TRANSCRIPTIONS[cid], field, text)
+    with pytest.raises(ClaimError, match=reason):
+        load(tmp_path)
+
+
+# ---- derived values (maintainer's condition on item e, 2026-10-15) -----------------------------
+
+
+def _ci_value_claim(claim):
+    target(claim, "c1")["metric"]["reported_uncertainty"] = {
+        "kind": "ci",
+        "lower": 90.9,
+        "upper": 91.5,
+        "level": 0.95,
+        "method": "t",
+        "n": 3,
+        "unit": "percent",
+        "location": "Table 2",
+        "quote": "91.2 [90.9, 91.5]",
+    }
+
+
+def _tamper(path, value):
+    def apply(claim):
+        node = claim
+        for key in path[:-1]:
+            node = _step(node, key)
+        node[path[-1]] = value
+
+    return apply
+
+
+DERIVED = {
+    "ladder": (["test_plan", "build", "ladder"], ["own_environment"]),
+    "budget": (["test_plan", "budget", "base_cpu_hours"], 191.0),
+    "seeds.attack": (["c1", "seeds", "attack"], [11, 12, 13, 14, 15]),
+    "seeds.data_split": (["c1", "seeds", "data_split"], [11, 12, 13]),
+    "seeds.holdout": (["c1", "seeds", "holdout"], [11]),
+    "holdout.fraction": (["c1", "attack:holdout", "params", "fraction"], 0.2),
+    "holdout.m": (["c1", "attack:holdout", "params", "m"], 4999),
+    "holdout.factor": (["c1", "attack:holdout", "params", "factor"], 1.0),
+    "uncertainty.status": (["c1", "metric", "reported_uncertainty", "status"], "none"),
+    "uncertainty.sd": (["c1", "metric", "reported_uncertainty", "sd"], 0.31),
+    "uncertainty.quantile": (["c1", "metric", "reported_uncertainty", "quantile"], 2.0),
+    "paired.status": (["c2", "comparison", "paired_uncertainty", "status"], "converted"),
+}
+
+
+def test_the_written_derived_values_pass_their_own_check(tmp_path):
+    from refute.packs.ml.schema import verify_derived
+
+    verify_derived(load(tmp_path, _ci_value_claim).canonical())
+
+
+@pytest.mark.parametrize("name", sorted(DERIVED))
+def test_each_altered_derived_value_is_refused(tmp_path, name):
+    from refute.packs.ml.schema import verify_derived
+
+    claim = copy.deepcopy(load(tmp_path, _ci_value_claim).canonical())
+    path, value = DERIVED[name]
+    _tamper(path, value)(claim)
+    with pytest.raises(ValueError, match="derived value differs"):
+        verify_derived(claim)
+
+
+def test_a_missing_derived_value_is_refused(tmp_path):
+    from refute.packs.ml.schema import verify_derived
+
+    claim = copy.deepcopy(load(tmp_path).canonical())
+    del target(claim, "c1")["seeds"]["attack"]
+    with pytest.raises(ValueError, match="derived value differs"):
+        verify_derived(claim)
+
+
+def test_resolution_does_not_depend_on_key_order(tmp_path):
+    path = build_claim(tmp_path)
+    a = load_claim(path, pack=PACK).sha256()
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    path.write_text(yaml.safe_dump(data, sort_keys=True), encoding="utf-8")
+    b = load_claim(path, pack=PACK).sha256()
+    assert a == b
+
+
+def test_converted_values_are_rounded_to_12_significant_digits():
+    out = resolve_uncertainty(
+        unc(kind="ci", lower=90.0, upper=92.0, level=0.95, method="t", n=5), "percent", 91.0
+    )
+    assert out["quantile"] == float(f"{out['quantile']:.12g}")
+    assert out["sd"] == float(f"{out['sd']:.12g}")
+    frac = resolve_uncertainty(unc(kind="sd", value=0.003, unit="fraction"), "percent", 91.2)
+    assert frac["sd"] == 0.3  # not 0.30000000000000004
 
 
 def test_draw_record_round_trip():
