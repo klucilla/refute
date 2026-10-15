@@ -374,9 +374,11 @@ AI agents take part in the work in this repository. A human maintainer decides.
 **What the agents do**, as recorded in the repository:
 
 - write code, tests and documentation, and propose plans, claims and run commands, in
-  sessions run by the maintainer; commits written with an agent carry a
-  `Co-Authored-By` trailer that names it;
-- run analyses and checks in those sessions, when the maintainer approves them;
+  sessions run by the maintainer; in the repository history, commits written with an
+  agent carry a `Co-Authored-By` trailer that names it, except merge commits created
+  on GitHub;
+- run analyses, tests and checks in those sessions, within the work the maintainer
+  approved;
 - review dossiers as independent reviewers, in fresh read-only sessions that never saw
   how the claim was built, with Claude as the primary reviewer
   ([reviewer protocol](docs/reviewer-protocol.md)); the protocol also provides for a
@@ -387,8 +389,12 @@ AI agents take part in the work in this repository. A human maintainer decides.
 
 **What the maintainer decides:**
 
-- every pre-registration step, lock and run;
-- every commit, push, merge, release and change to issues, each approved explicitly;
+- every pre-registration step, lock and run of a claim;
+- releases, each approved individually;
+- merges, each approved individually unless covered by the limited standing approval
+  recorded in [CLAUDE.md](CLAUDE.md) ("GitHub operations");
+- the work that agents carry out: they commit, push and update issues only within
+  the work the maintainer approved;
 - every message to the authors of a paper: agents never send email, and nothing is
   ever submitted to a scientific body by an agent;
 - the machine where third-party code runs.

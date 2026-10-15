@@ -155,6 +155,37 @@ First pack: exoplanet transits (TESS).
 - Pre-registration checkpoints (lock before calibrate) still require an
   explicit stop and approval at each step.
 
+### Standing approval (v0.3)
+
+The maintainer gave this standing approval in chat on 2026-10-14, for phase v0.3. It
+replaces the per-action approval above only for what it lists.
+
+- **Allowed without asking each time:**
+  - merging a pull request that contains only acceptance documents, WP1 documents
+    other than README, or code with synthetic tests;
+  - recording minor follow-ups in the "v0.3 follow-ups" issue (#59). Recording an
+    item does not authorize implementing it.
+- **Conditions for that merge:**
+  - a merge commit, pinned to the head that was checked;
+  - CI green, or skipped as expected by the paths-ignore list;
+  - every acceptance criterion checked one by one in the pull request;
+  - the Codex review resolved, with question, answer, verdict and reason recorded in
+    the pull request.
+- **After every merge:** the agent checks the CI run of the merge commit on main until
+  its final result. If it fails, the agent stops and tells the maintainer. When the
+  paths-ignore list skips the run (documentation only), the agent records that no run
+  was expected; a run missing for any other reason is treated as a failure.
+- **Never under the standing approval:**
+  - README, the site or any other public communication about the project; the
+    acceptance and WP1 documents listed above are the only documentation it covers;
+  - locks, drand rounds, and any change to a lock, a locked hash or a published
+    dossier;
+  - running third-party code, and the VM;
+  - sending email;
+  - changes to `ci.yml` that loosen checks;
+  - deletions outside `.cache/`.
+- The items that are always asked individually (list above) stay so.
+
 ## Tech standards
 
 - Python 3.12+, `pyproject.toml`, `uv` as package manager.
