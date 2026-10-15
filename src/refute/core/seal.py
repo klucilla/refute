@@ -87,10 +87,26 @@ def _walk(root: Path, skip_top: str | None = None) -> list[str]:
     return sorted(out)
 
 
+def _check_reserved_spellings(root: Path) -> None:
+    """A top-level name that differs from ``annexes`` or ``SEAL.json`` only by case is
+    refused: on a case-insensitive file system it is the same entry, so writing an
+    annex there would change the core."""
+    try:
+        names = os.listdir(root)
+    except OSError as exc:
+        raise SealError(f"cannot list {root}: {exc.strerror}") from exc
+    for name in names:
+        for reserved in (ANNEX_DIR, SEAL_NAME):
+            if name != reserved and name.lower() == reserved.lower():
+                raise SealError(f"{name!r} differs from the reserved name {reserved!r} by case")
+
+
 def core_files(dossier: Path | str) -> list[str]:
     """The paths of the core: everything except ``SEAL.json`` and ``annexes/``. The
     annexes are not visited here; they are checked on their own."""
-    return [rel for rel in _walk(Path(dossier), skip_top=ANNEX_DIR) if rel != SEAL_NAME]
+    root = Path(dossier)
+    _check_reserved_spellings(root)
+    return [rel for rel in _walk(root, skip_top=ANNEX_DIR) if rel != SEAL_NAME]
 
 
 def core_archive(dossier: Path | str) -> bytes:
@@ -361,7 +377,12 @@ def check_sealed(dossier: Path | str) -> SealCheck:
     if _is_link(annex_root):
         result.annex_problems.append(f"{ANNEX_DIR}/ is a link")
     elif annex_root.is_dir():
-        for entry in sorted(annex_root.iterdir()):
+        try:
+            entries = sorted(annex_root.iterdir())
+        except OSError as exc:
+            result.annex_problems.append(f"cannot list {ANNEX_DIR}/: {exc.strerror}")
+            return result
+        for entry in entries:
             if entry.is_dir() and not _is_link(entry):
                 result.annexes[entry.name] = verify_annex(root, entry.name)
             else:

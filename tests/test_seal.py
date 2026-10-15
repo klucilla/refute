@@ -512,3 +512,54 @@ def test_broken_junction_or_link_as_seal_is_still_checked(tmp_path):
     target.rmdir()
     result = check_dossier(d)
     assert result.seal is not None and not result.ok
+
+
+# Codex round 4 ------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("alias", ["Annexes", "ANNEXES", "Seal.json"])
+def test_case_aliases_of_reserved_names_are_refused(tmp_path, alias):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    before = (d / SEAL_NAME).read_bytes()
+    if alias.endswith(".json"):
+        try:
+            (d / alias).write_text("{}", encoding="utf-8")
+        except OSError:
+            pytest.skip("cannot create the alias")
+    else:
+        (d / alias).mkdir()
+    if (d / SEAL_NAME).read_bytes() != before:  # the file system folded SEAL.json
+        pytest.skip("this file system folds the case of names")
+    assert any("differs from the reserved name" in p for p in verify_seal(d))
+    with pytest.raises(SealError):
+        add_annex(d, "reply", annex_source(tmp_path / "src"))
+    assert not (d / alias / "reply").exists()
+
+
+def test_case_alias_before_the_seal_is_refused(tmp_path):
+    d = make_dossier(tmp_path / "D1")
+    (d / "Annexes").mkdir()
+    # refused either as an alias (case-sensitive file systems) or as annexes present
+    with pytest.raises(SealError, match="reserved name|annexes before its seal"):
+        seal(d)
+    assert not (d / SEAL_NAME).exists()
+
+
+def test_unlistable_annexes_directory_is_reported_without_stopping(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    add_annex(d, "reply", annex_source(tmp_path / "src"))
+    real = Path.iterdir
+
+    def refusing(self):
+        if self.name == "annexes":
+            raise PermissionError(13, "Permission denied", str(self))
+        return real(self)
+
+    monkeypatch.setattr(Path, "iterdir", refusing)
+    check = check_sealed(d)
+    assert check.core_problems == []
+    assert any("cannot list annexes/" in p for p in check.annex_problems)
