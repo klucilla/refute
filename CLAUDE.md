@@ -191,12 +191,22 @@ lists.
     dossier;
   - any change to the claim schema, claim serialization or canonicalization, the
     lock format or lock verification, or to acceptance criteria; these need the
-    maintainer's explicit approval, also when the pull request is otherwise in scope;
+    maintainer's explicit approval, also when the pull request is otherwise in scope
+    (see "Acceptance documents and schemas" below);
   - running third-party code, and the VM;
   - sending email;
   - changes to `ci.yml` that loosen checks;
   - deletions outside `.cache/`.
 - The items that are always asked individually (list above) stay so.
+- **Acceptance documents and schemas** (clarified by the maintainer on 2026-10-15):
+  - a **new** acceptance document that only translates the plan into criteria for one
+    work package is under the standing approval;
+  - a **change** to a criterion already merged (loosening, replacing or removing it)
+    needs the maintainer;
+  - a criterion that touches a schema, serialization, canonicalization, a
+    lock, lock verification, a verdict or security needs the maintainer;
+  - when the maintainer approves the design of a schema in an acceptance document,
+    code that implements exactly that design is under the standing approval.
 
 ## Tech standards
 
