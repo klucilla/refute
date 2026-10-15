@@ -243,12 +243,69 @@ def check_dossier_command(
         typer.echo(f"integrity: {problem}")
     for difference in result.differences:
         typer.echo(f"difference: {difference}")
+    if result.seal is not None:
+        # The core and each annex are reported separately (W2.12).
+        if result.seal.core_problems:
+            typer.echo("core: NOT intact against its seal")
+            for problem in result.seal.core_problems:
+                typer.echo(f"core: {problem}")
+        else:
+            typer.echo("core: intact against its seal")
+        for problem in result.seal.annex_problems:
+            typer.echo(f"annexes: {problem}")
+        for name, problems in result.seal.annexes.items():
+            if problems:
+                typer.echo(f"annex {name}: NOT intact")
+                for problem in problems:
+                    typer.echo(f"annex {name}: {problem}")
+            else:
+                typer.echo(f"annex {name}: intact against its manifest")
     if result.ok:
         message = "OK: manifest intact"
         if against is not None:
             message += "; key results reproduced"
         typer.echo(message)
     raise typer.Exit(0 if result.ok else 1)
+
+
+@app.command("seal")
+def seal_command(
+    dossiers: Annotated[list[Path], typer.Argument(help="Dossier directories to seal.")],
+) -> None:
+    """Seal the experimental core of each dossier (SEAL.json) and print the core hashes
+    and the combined hash of the set."""
+    from refute.core.seal import SealError, combined_sha256, seal
+
+    if len({d.name for d in dossiers}) != len(dossiers):
+        typer.echo("dossier names must be unique within a set", err=True)
+        raise typer.Exit(1)
+    cores = {}
+    for dossier in dossiers:
+        try:
+            record = seal(dossier)
+        except SealError as exc:
+            typer.echo(f"{dossier}: {exc}", err=True)
+            raise typer.Exit(1) from exc
+        cores[dossier.name] = record["core_sha256"]
+        typer.echo(f"{record['core_sha256']}  {dossier.name}")
+    typer.echo(f"{combined_sha256(cores)}  combined ({len(cores)} dossier(s))")
+
+
+@app.command("annex")
+def annex_command(
+    dossier: Annotated[Path, typer.Argument(help="Sealed dossier directory.")],
+    name: Annotated[str, typer.Argument(help="Annex name (lowercase letters, digits, '-').")],
+    source: Annotated[Path, typer.Argument(help="Directory with the annex files.")],
+) -> None:
+    """Add an annex (annexes/<name>/ with its ANNEX.json) to a sealed, intact dossier."""
+    from refute.core.seal import SealError, add_annex
+
+    try:
+        record = add_annex(dossier, name, source)
+    except SealError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(f"annex {name}: {len(record['files'])} file(s), core {record['core_sha256']}")
 
 
 @app.command("archive")

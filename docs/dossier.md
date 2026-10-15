@@ -80,6 +80,43 @@ made from a later commit that also contains the lock file (commit B). `REPRODUCE
 checks out the run commit; `refute verify` proves that its code hash equals the
 locked one.
 
+## Seal and annexes (from v0.3)
+
+`refute seal <dossier>...` seals the **experimental core** of each dossier: every
+file except `SEAL.json` and `annexes/`, that is the locked claims, the outputs, the
+logs, `verdict.json` and `MANIFEST.sha256`. It writes `SEAL.json` with the SHA-256 of
+a deterministic archive of the core, and prints the core hashes and one combined hash
+of the set (`<core sha256>  <dossier name>` lines, sorted by name).
+
+The archive (`refute-seal-1`):
+- is a zip of the core files in sorted path order;
+- stores them without compression;
+- uses a fixed timestamp, mode 0644 and Unix as the creating system;
+- holds the raw bytes of each file, as `MANIFEST.sha256` does. The repository's
+  `.gitattributes` keeps text files LF on every checkout, so a change of line endings
+  is a change of the core.
+
+The combined hash is the SHA-256 of the canonical JSON of the sorted
+`[name, core sha256]` pairs; dossier names may not contain path separators or control
+characters.
+
+A dossier is sealed once: the core never changes after the seal (plan section 9.1).
+
+`refute annex <dossier> <name> <directory>` adds an annex (a reviewer report, a
+`reply` record, the authors' reply) under `annexes/<name>/` with its own `ANNEX.json`.
+That manifest lists the raw-byte SHA-256 of each annex file and cites the core hash.
+- An annex is added only to a sealed, intact core.
+- It is never rewritten, and never changes the core hash.
+- Annex names and annex file names must be portable: lowercase names, no Windows
+  device names, no names that differ only by case.
+- Symbolic links and junctions are refused in the dossier and in the annex source.
+
+`MANIFEST.sha256` written from v0.3 on does not cover `SEAL.json` or `annexes/`. An
+older manifest that lists such paths keeps covering them.
+
+`refute check-dossier` on a sealed dossier reports separately whether the core is
+intact against its seal and whether each annex is intact against its manifest.
+
 ## Archives
 
 `refute archive dossiers/<run_id>` writes a deterministic zip (sorted entries,

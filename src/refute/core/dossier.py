@@ -56,12 +56,25 @@ class DossierWriter:
         return write_manifest(self.root)
 
 
-def _dossier_files(root: Path) -> list[str]:
-    return sorted(
-        p.relative_to(root).as_posix()
-        for p in root.rglob("*")
-        if p.is_file() and p.relative_to(root).as_posix() != MANIFEST_NAME
-    )
+def _dossier_files(root: Path, recorded: set[str] | None = None) -> list[str]:
+    """Files covered by ``MANIFEST.sha256``: every file except the manifest itself and,
+    from v0.3, the seal record and the annexes (``refute.core.seal``), which are added
+    after the core is sealed and have their own manifests. A path of those two kinds
+    that an existing manifest already lists (``recorded``) stays covered, so an older
+    manifest keeps its meaning."""
+    from refute.core.seal import ANNEX_DIR, SEAL_NAME
+
+    recorded = recorded or set()
+    out = []
+    for p in root.rglob("*"):
+        rel = p.relative_to(root).as_posix()
+        if not p.is_file() or rel == MANIFEST_NAME:
+            continue
+        sealed_layout = rel == SEAL_NAME or rel.startswith(f"{ANNEX_DIR}/")
+        if sealed_layout and rel not in recorded:
+            continue
+        out.append(rel)
+    return sorted(out)
 
 
 def write_manifest(root: Path | str) -> Path:
@@ -87,7 +100,7 @@ def verify_manifest(root: Path | str) -> list[str]:
     if not (root / MANIFEST_NAME).is_file():
         return [f"{MANIFEST_NAME} is missing"]
     recorded = read_manifest(root)
-    present = set(_dossier_files(root))
+    present = set(_dossier_files(root, set(recorded)))
     problems = []
     for rel, digest in sorted(recorded.items()):
         if rel not in present:
@@ -150,10 +163,41 @@ class CheckResult:
     integrity_problems: list[str] = field(default_factory=list)
     differences: list[str] = field(default_factory=list)
     compared_with: str | None = None
+    seal: Any = None  # refute.core.seal.SealCheck when the dossier is sealed
 
     @property
     def ok(self) -> bool:
-        return not self.integrity_problems and not self.differences
+        sealed_ok = self.seal is None or self.seal.ok
+        return not self.integrity_problems and not self.differences and sealed_ok
+
+
+def _sealed_layout(root: Path) -> bool:
+    """True for a dossier with the v0.3 seal layout: ``SEAL.json`` or ``annexes/``
+    present and not covered by its ``MANIFEST.sha256``. An older manifest that lists
+    such paths marks a legacy dossier, checked by its manifest only."""
+    import json
+
+    from refute.core.seal import ANNEX_DIR, SEAL_ALGORITHM, SEAL_NAME
+
+    def there(path: Path) -> bool:  # a broken link counts as present
+        return path.exists() or path.is_symlink() or path.is_junction()
+
+    seal_path = root / SEAL_NAME
+    if not there(seal_path) and not there(root / ANNEX_DIR):
+        return False
+    if seal_path.is_symlink() or seal_path.is_junction():
+        return True  # refused by the seal check
+    try:
+        if json.loads(seal_path.read_text(encoding="utf-8")).get("algorithm") == SEAL_ALGORITHM:
+            return True  # a v0.3 seal is always checked, even if a manifest lists it
+    except (OSError, ValueError, AttributeError):
+        pass
+    try:
+        recorded = read_manifest(root)
+    except OSError:
+        return True
+    legacy = SEAL_NAME in recorded or any(r.startswith(f"{ANNEX_DIR}/") for r in recorded)
+    return not legacy
 
 
 def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckResult:
@@ -163,6 +207,10 @@ def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckR
         result.integrity_problems.append(f"not a directory: {root}")
         return result
     result.integrity_problems = verify_manifest(root)
+    from refute.core.seal import check_sealed
+
+    if _sealed_layout(root):
+        result.seal = check_sealed(root)
     if (root / REVIEW_DIR / "index.json").is_file():
         from refute.core.review import verify_reviews
 
@@ -171,6 +219,12 @@ def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckR
         original = Path(against)
         result.compared_with = original.as_posix()
         problems = verify_manifest(original)
+        if _sealed_layout(original):
+            sealed = check_sealed(original)
+            problems += [f"core: {p}" for p in sealed.core_problems]
+            problems += sealed.annex_problems
+            for name, annex_problems in sealed.annexes.items():
+                problems += [f"annex {name}: {p}" for p in annex_problems]
         result.integrity_problems.extend(f"original: {p}" for p in problems)
         result.differences = compare_dossiers(root, original)
     return result
