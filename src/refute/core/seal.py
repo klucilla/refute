@@ -66,7 +66,11 @@ def _walk(root: Path, skip_top: str | None = None) -> list[str]:
     if _is_link(root):
         raise SealError(f"symbolic links and junctions are not allowed: {root}")
     out = []
-    for current, dirs, files in os.walk(root, followlinks=False):
+
+    def failed(error: OSError) -> None:  # an unreadable directory is never skipped
+        raise SealError(f"cannot list {error.filename}: {error.strerror}")
+
+    for current, dirs, files in os.walk(root, onerror=failed, followlinks=False):
         here = Path(current)
         if here == root and skip_top is not None:
             dirs[:] = [d for d in dirs if d != skip_top]
@@ -234,19 +238,29 @@ def _check_annex_name(name: str) -> None:
         )
 
 
+_NOT_PORTABLE = set('<>:"\\|?*')
+
+
 def _check_annex_files(rels: list[str]) -> None:
+    """Every component of every path (directories too) must be portable: no Windows
+    device name, no character Windows forbids or control character, no trailing dot
+    or space, and no two components that differ only by case at the same place."""
     seen: dict[str, str] = {}
     for rel in rels:
-        parts = rel.split("/")
         if rel.lower() == ANNEX_MANIFEST.lower():
             raise SealError(f"the annex source must not contain {ANNEX_MANIFEST}")
-        for part in parts:
+        parts = rel.split("/")
+        for i, part in enumerate(parts):
             stem = part.split(".")[0].lower()
-            if stem in _RESERVED or part.endswith((".", " ")):
+            if (
+                stem in _RESERVED
+                or part.endswith((".", " "))
+                or any(ch in _NOT_PORTABLE or ord(ch) < 32 for ch in part)
+            ):
                 raise SealError(f"file name not portable across platforms: {rel}")
-        if rel.lower() in seen:
-            raise SealError(f"file names differ only by case: {seen[rel.lower()]} and {rel}")
-        seen[rel.lower()] = rel
+            prefix = "/".join(parts[: i + 1])
+            if seen.setdefault(prefix.lower(), prefix) != prefix:
+                raise SealError(f"names differ only by case: {seen[prefix.lower()]} and {prefix}")
 
 
 def add_annex(dossier: Path | str, name: str, source: Path | str) -> dict[str, Any]:

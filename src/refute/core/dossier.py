@@ -171,6 +171,23 @@ class CheckResult:
         return not self.integrity_problems and not self.differences and sealed_ok
 
 
+def _sealed_layout(root: Path) -> bool:
+    """True for a dossier with the v0.3 seal layout: ``SEAL.json`` or ``annexes/``
+    present and not covered by its ``MANIFEST.sha256``. An older manifest that lists
+    such paths marks a legacy dossier, checked by its manifest only."""
+    from refute.core.seal import ANNEX_DIR, SEAL_NAME
+
+    present = (root / SEAL_NAME).exists() or (root / ANNEX_DIR).exists()
+    if not present:
+        return False
+    try:
+        recorded = read_manifest(root)
+    except OSError:
+        return True
+    legacy = SEAL_NAME in recorded or any(r.startswith(f"{ANNEX_DIR}/") for r in recorded)
+    return not legacy
+
+
 def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckResult:
     root = Path(path)
     result = CheckResult(path=root.as_posix())
@@ -178,9 +195,9 @@ def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckR
         result.integrity_problems.append(f"not a directory: {root}")
         return result
     result.integrity_problems = verify_manifest(root)
-    from refute.core.seal import ANNEX_DIR, SEAL_NAME, check_sealed
+    from refute.core.seal import check_sealed
 
-    if (root / SEAL_NAME).exists() or (root / ANNEX_DIR).exists():
+    if _sealed_layout(root):
         result.seal = check_sealed(root)
     if (root / REVIEW_DIR / "index.json").is_file():
         from refute.core.review import verify_reviews
@@ -190,7 +207,7 @@ def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckR
         original = Path(against)
         result.compared_with = original.as_posix()
         problems = verify_manifest(original)
-        if (original / SEAL_NAME).exists() or (original / ANNEX_DIR).exists():
+        if _sealed_layout(original):
             sealed = check_sealed(original)
             problems += [f"core: {p}" for p in sealed.core_problems]
             problems += sealed.annex_problems

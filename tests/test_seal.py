@@ -368,3 +368,88 @@ def test_against_checks_the_seal_of_the_original(tmp_path):
     result = check_dossier(copy, against=original)
     assert any(p.startswith("original: annex reply:") for p in result.integrity_problems)
     assert not result.ok
+
+
+# Codex round 2 ------------------------------------------------------------------------------
+
+
+def test_unlistable_directory_stops_the_check(tmp_path, monkeypatch):
+    import os
+
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    add_annex(d, "reply", annex_source(tmp_path / "src"))
+    hidden = d / "annexes" / "reply" / "hidden"
+    hidden.mkdir()
+    (hidden / "extra.md").write_text("not in the manifest\n", encoding="utf-8")
+    real = os.scandir
+
+    def refusing(path="."):
+        if os.fspath(path).endswith("hidden"):
+            raise PermissionError(13, "Permission denied", os.fspath(path))
+        return real(path)
+
+    monkeypatch.setattr(os, "scandir", refusing)
+    problems = check_sealed(d).annexes["reply"]
+    assert problems and "cannot list" in problems[0]
+
+
+@pytest.mark.parametrize(
+    "rels",
+    [
+        ["a:b.md"],
+        ["a\x01b.md"],
+        ["dir|x/a.md"],
+        ["A/x.txt", "a/y.txt"],
+        ["sub/CON.md"],
+        ["trailing./a.md"],
+        ["Annex.json"],
+    ],
+)
+def test_annex_path_components_must_be_portable(rels):
+    from refute.core.seal import _check_annex_files
+
+    with pytest.raises(SealError):
+        _check_annex_files(rels)
+
+
+def test_portable_annex_paths_are_accepted():
+    from refute.core.seal import _check_annex_files
+
+    _check_annex_files(["report.md", "data/table.csv", "data/notes.txt", "a-b/c_d.json"])
+
+
+def test_legacy_dossier_is_checked_by_its_manifest_only(tmp_path):
+    root = tmp_path / "legacy"
+    w = DossierWriter(root)
+    w.write_text("verdict.json", "{}\n")
+    w.write_text("SEAL.json", "legacy content\n")
+    w.write_text("annexes/note.txt", "legacy note\n")
+    w.finalize()  # a manifest that lists SEAL.json and annexes/note.txt, as before v0.3
+    from refute.core.dossier import read_manifest
+
+    assert "SEAL.json" not in read_manifest(root)  # finalize() writes the v0.3 form
+    lines = [
+        f"{sha256_file(root / rel)}  {rel}\n"
+        for rel in ("SEAL.json", "annexes/note.txt", "verdict.json")
+    ]
+    (root / "MANIFEST.sha256").write_text("".join(lines), encoding="utf-8", newline="\n")
+    result = check_dossier(root)
+    assert result.ok and result.seal is None
+    out = CliRunner().invoke(app, ["check-dossier", str(root)])
+    assert out.exit_code == 0 and "core:" not in out.output
+    copy = tmp_path / "copy"
+    w2 = DossierWriter(copy)
+    w2.write_text("verdict.json", "{}\n")
+    w2.finalize()
+    assert not any("original" in p for p in check_dossier(copy, against=root).integrity_problems)
+
+
+def test_cli_shows_problems_of_the_annexes_directory(tmp_path):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    _link_dir(d / "annexes", d / "outputs")
+    out = CliRunner().invoke(app, ["check-dossier", str(d)])
+    assert out.exit_code == 1
+    assert "core: intact against its seal" in out.output
+    assert "annexes: annexes/ is a link" in out.output

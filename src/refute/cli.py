@@ -251,6 +251,8 @@ def check_dossier_command(
                 typer.echo(f"core: {problem}")
         else:
             typer.echo("core: intact against its seal")
+        for problem in result.seal.annex_problems:
+            typer.echo(f"annexes: {problem}")
         for name, problems in result.seal.annexes.items():
             if problems:
                 typer.echo(f"annex {name}: NOT intact")
