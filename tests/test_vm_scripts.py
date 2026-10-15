@@ -288,7 +288,9 @@ def test_the_registration_preview_only_reads(cases):
     assert tail[-1].startswith("if (-not $Apply)") and tail[-1].endswith("exit 0 }")
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="the registration runs in Windows PowerShell 5.1")
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="the registration runs in Windows PowerShell 5.1"
+)
 def test_the_registration_preview_runs_to_its_end_in_windows_powershell(tmp_path):
     """The preview itself, in powershell.exe (Windows PowerShell 5.1, StrictMode 2.0), on
     a machine with no RefuteVmOperator role capability anywhere (the maintainer's first
