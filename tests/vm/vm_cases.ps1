@@ -151,7 +151,9 @@ $o.Vms[0].SecureBoot = 'Off'
 Add-Case 'StartVm refused: Secure Boot off' ($null -ne (Plan 'StartVm' $o).Refusal)
 
 $sha = 'a' * 64; $other = 'b' * 64
-Add-Case 'ImportInstallIso refused: hash not configured' ((Plan 'ImportInstallIso' (New-Observed) -Media $sha).Refusal -like '*not configured*')
+$unset = Copy-Config @{ InstallIsoSha256 = '' }
+Add-Case 'ImportInstallIso refused: hash not configured' ((Plan 'ImportInstallIso' (New-Observed) $unset $sha).Refusal -like '*not configured*')
+Add-Case 'repository config: install ISO hash set (64 lowercase hex)' ($config.InstallIsoSha256 -cmatch '^[0-9a-f]{64}$')
 $cfg = Copy-Config @{ InstallIsoSha256 = $sha }
 Add-Case 'ImportInstallIso refused: another hash' ($null -ne (Plan 'ImportInstallIso' (New-Observed) $cfg $other).Refusal)
 $o = New-Observed; $o.Files.InstallIsoSourceSha256 = $other

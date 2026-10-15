@@ -98,6 +98,22 @@ user name, host name or address.
 9. `DetachInstallMedia`, then `StartVm`. Secure Boot is never turned off without the
    maintainer's decision; no operation can do it.
 
+### Install media after the installation
+
+The downloaded ISO (`C:\Projetos\refute\.cache\vm\media\ubuntu-26.04.1-live-server-amd64.iso`,
+2,927,861,760 bytes) is regenerable. After the VM is installed and the install media are
+detached (step 9), it is deleted from the project folder by its literal path. What is
+kept:
+
+- its SHA-256, in `RefuteVm.Config.psd1`;
+- the verification evidence: `media-verification.json`, copied to
+  `docs/validation/v0.3/wp6-results/`;
+- `SHA256SUMS` and `SHA256SUMS.gpg`, kept with the WP6 records under the project's
+  cleanup rule.
+
+The copy that the endpoint made in `C:\Hyper-V\refute-vm\media` is outside the project.
+Removing it is the maintainer's decision (see "Reversal").
+
 Capacity control (plan section 7.5): `SetProcessorMaximum -Percent <1-100>`
 (a percentage, not a number of CPUs), `SuspendVm`, `ResumeVm`, `SaveVm`, `StartVm`.
 
