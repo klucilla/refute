@@ -3,16 +3,18 @@ process: ``python -I _reaper.py <status.json> <workdir> <log> -- argv...``.
 
 It declares itself a **child subreaper** (prctl PR_SET_CHILD_SUBREAPER), so every
 descendant of the run that loses its parent is re-parented to it, and it waits for
-**every** process of the run. The total CPU time is then exact: each waited process
-reports its own time and the time of the children it waited for (wait4 rusage), and
-nothing escapes, wherever in the tree a process ends. While the run is alive the status
-holds an estimate from /proc (live descendants plus what was already waited), used only
-by the guards; the final status holds the exact total.
+every process that ends as its child. The CPU total is the sum of their wait4 rusage
+(each includes the children that process waited for), and never less than the largest
+live reading from /proc (the time of live descendants plus what was already waited):
+a descendant reaped automatically by a parent that ignores SIGCHLD leaves no rusage
+anywhere, so the live reading is the conservative floor. Exact accounting of every such
+case needs a cgroup, which is the docker backend's job on the VM (W3.10); this backend
+runs synthetic repositories only.
 
-When the first process ends, or when the supervisor receives SIGTERM (the runner's
-stop), it kills every remaining descendant, found by walking the parent links in /proc
-from itself, waits for all of them and writes the final status. It only ever signals
-its own descendants.
+When the first process ends, on SIGTERM (the runner's stop), or on any error of its
+own, it kills every remaining descendant and waits for all of them before writing the
+final status. A descendant is signalled through a pidfd opened on it and checked to
+still descend from this supervisor, so a reused PID is never signalled.
 """
 
 from __future__ import annotations
@@ -42,19 +44,25 @@ def _write(path: str, status: dict) -> None:
     os.replace(tmp, path)
 
 
+def _stat(pid: int) -> tuple[int, int] | None:
+    """(ppid, ticks of utime + stime + cutime + cstime) of ``pid``, or None. Read as
+    bytes: a process name may hold any byte."""
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as handle:
+            stat = handle.read()
+        fields = stat[stat.rindex(b")") + 2 :].split()
+        return int(fields[1]), sum(int(fields[i]) for i in (11, 12, 13, 14))
+    except (OSError, ValueError, IndexError):
+        return None
+
+
 def _proc_table() -> dict[int, tuple[int, int]]:
-    """pid -> (ppid, ticks of utime + stime + cutime + cstime), for every process."""
     table = {}
     for entry in os.listdir("/proc"):
-        if not entry.isdigit():
-            continue
-        try:
-            with open(f"/proc/{entry}/stat", encoding="ascii") as handle:
-                stat = handle.read()
-        except OSError:
-            continue
-        fields = stat[stat.rindex(")") + 2 :].split()
-        table[int(entry)] = (int(fields[1]), sum(int(fields[i]) for i in (11, 12, 13, 14)))
+        if entry.isdigit():
+            row = _stat(int(entry))
+            if row is not None:
+                table[int(entry)] = row
     return table
 
 
@@ -68,6 +76,50 @@ def _descendants(table: dict[int, tuple[int, int]], root: int) -> list[int]:
         out.append(pid)
         todo.extend(children.get(pid, []))
     return out
+
+
+def _descends_from(pid: int, root: int) -> bool:
+    """Whether ``pid`` is now a descendant of ``root``, by its parent links."""
+    seen = set()
+    while pid not in (0, 1) and pid not in seen:
+        seen.add(pid)
+        row = _stat(pid)
+        if row is None:
+            return False
+        pid = row[0]
+        if pid == root:
+            return True
+    return False
+
+
+def _kill(pid: int, root: int) -> None:
+    """SIGKILL ``pid`` through a pidfd, only if, once the pidfd is open, the process it
+    refers to still descends from ``root`` (a reused PID is never signalled)."""
+    try:
+        fd = os.pidfd_open(pid)
+    except OSError:
+        return  # gone
+    try:
+        if _descends_from(pid, root):
+            signal.pidfd_send_signal(fd, signal.SIGKILL)
+    except OSError:
+        pass
+    finally:
+        os.close(fd)
+
+
+def _reap(reaped: list[int], first_pid: int, result: dict) -> int:
+    """Waits for every child that ended; returns -1 when there is no child left."""
+    while True:
+        try:
+            pid, wstatus, rusage = os.wait4(-1, os.WNOHANG)
+        except ChildProcessError:
+            return -1
+        if pid == 0:
+            return 0
+        reaped[0] += int(round((rusage.ru_utime + rusage.ru_stime) * 1_000_000))
+        if pid == first_pid:
+            result["exit_code"] = os.waitstatus_to_exitcode(wstatus)
 
 
 def main(argv: list[str]) -> int:
@@ -85,49 +137,53 @@ def main(argv: list[str]) -> int:
         first = subprocess.Popen(
             command, cwd=workdir, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT
         )
-    reaped_usec = 0
-    exit_code = None
+    reaped = [0]
+    result: dict = {"exit_code": None}
+    floor = 0  # the largest live reading
+    error = None
     killing = False
-    while True:
-        # wait for every process that ended: the run's own processes only (all of them
-        # are this supervisor's descendants)
+    try:
         while True:
-            try:
-                pid, wstatus, rusage = os.wait4(-1, os.WNOHANG)
-            except ChildProcessError:
-                pid = -1
+            left = _reap(reaped, first.pid, result)
+            table = _proc_table()
+            alive = _descendants(table, me)
+            live = reaped[0] + sum(table[p][1] for p in alive) * 1_000_000 // ticks
+            floor = max(floor, live)
+            if left == -1 and not alive:
                 break
-            if pid == 0:
+            if result["exit_code"] is not None or _stop:
+                killing = True
+            if killing:
+                for pid in alive:
+                    _kill(pid, me)
+            _write(status_path, {"final": False, "usage_usec": floor})
+            time.sleep(POLL_S)
+    except BaseException as exc:  # noqa: BLE001 - every error still ends the run
+        error = f"{type(exc).__name__}: {exc}"
+    finally:
+        # whatever happened, nothing of the run outlives the supervisor
+        deadline = time.monotonic() + 30
+        while True:
+            alive = _descendants(_proc_table(), me)
+            for pid in alive:
+                _kill(pid, me)
+            if _reap(reaped, first.pid, result) == -1 and not alive:
                 break
-            reaped_usec += int(round((rusage.ru_utime + rusage.ru_stime) * 1_000_000))
-            if pid == first.pid:
-                exit_code = os.waitstatus_to_exitcode(wstatus)
-                first.returncode = exit_code
-        table = _proc_table()
-        alive = _descendants(table, me)
-        if pid == -1 and not alive:
-            break  # nothing left of the run
-        if not killing and (exit_code is not None or _stop):
-            killing = True
-        if killing:
-            for victim in alive:
-                try:
-                    os.kill(victim, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-        live_usec = sum(table[p][1] for p in alive if p in table) * 1_000_000 // ticks
-        _write(status_path, {"final": False, "usage_usec": reaped_usec + live_usec})
-        time.sleep(POLL_S)
+            if time.monotonic() > deadline:
+                error = (error or "") + f"; descendants still alive after 30 s: {alive}"
+                break
+            time.sleep(POLL_S)
     _write(
         status_path,
         {
             "final": True,
-            "usage_usec": reaped_usec,
-            "exit_code": exit_code,
+            "usage_usec": max(reaped[0], floor),
+            "exit_code": result["exit_code"],
             "stopped": bool(_stop),
+            "error": error,
         },
     )
-    return 0
+    return 0 if error is None else 1
 
 
 if __name__ == "__main__":

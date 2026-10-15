@@ -13,8 +13,11 @@ For each run the backend:
   on Windows through a Job Object to which the process is assigned while still
   suspended, so no child can escape before the assignment, and the final reading waits
   until the job has no active process; on Linux through a supervisor process
-  (``_reaper.py``) that is a child subreaper and waits for every process of the run, so
-  the final total is the exact sum of their rusage;
+  (``_reaper.py``) that is a child subreaper and waits for every process of the run.
+  On Linux the total is the sum of their rusage, never below the largest live reading;
+  a descendant reaped automatically by a parent that ignores SIGCHLD can still escape
+  part of its accounting, which only a cgroup closes: that is the docker backend's job
+  on the VM, and this backend never runs a real paper;
 - stops the run, and every process in it, when one of the guards fires:
   - ``threshold``: the CPU time reached F, the threshold of the WP2 grant;
   - ``active_time_limit``: the stage's active time limit;
@@ -388,11 +391,13 @@ class _Reaped(_Tracker):
         return self.status
 
     def poll(self) -> int | None:
+        ended = self.proc.poll() is not None  # read before the status: no race
         status = self._read()
         if status.get("final"):
+            self._check(status)
             self.proc.wait(timeout=_END_TIMEOUT_S)
             return status["exit_code"]
-        if self.proc.poll() is not None:
+        if ended:
             raise OSError(
                 f"the run supervisor ended without a final status ({self.proc.returncode})"
             )
@@ -401,11 +406,17 @@ class _Reaped(_Tracker):
     def usage_usec(self) -> int:
         return int(self._read()["usage_usec"])
 
+    @staticmethod
+    def _check(status: dict) -> None:
+        if status.get("error"):
+            raise OSError(f"the run supervisor failed: {status['error']}")
+
     def _wait_final(self) -> dict:
         self.proc.wait(timeout=_END_TIMEOUT_S)
         status = self._read()
         if not status.get("final"):
             raise OSError("the run supervisor wrote no final status")
+        self._check(status)
         return status
 
     def final_usage_usec(self) -> int:
