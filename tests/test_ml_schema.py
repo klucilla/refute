@@ -1263,16 +1263,20 @@ def test_numbers_the_yaml_reads_are_compared_without_a_float(tmp_path):
     ("written", "transcribed", "accepted"),
     [
         ("1e3", "1000", True),  # YAML 1.1 reads 1e3 as a string; exact decimal 1000
-        ("1e3", "1000.0000000000001", False),  # same float as 1000, another decimal
+        ("1e3", "1000.00000000000001", False),  # the same float as 1000, another decimal
         ("1:30.5", "90.5", True),  # base 60
-        ("1:30.5", "90.50000000000001", False),
+        ("1:30.5", "90.500000000000001", False),  # the same float as 90.5
     ],
 )
 def test_published_value_forms_against_the_transcription(
     tmp_path, monkeypatch, written, transcribed, accepted
 ):
     """Maintainer's decision 1.0.11: decimals preserved, never through a float, including
-    1e3 and base-60 numbers."""
+    1e3 and base-60 numbers. The refused transcriptions are the same float as the
+    published value, so only a decimal comparison can refuse them (Codex review)."""
+    if not accepted:
+        published = 1000.0 if written == "1e3" else 90.5
+        assert float(transcribed) == published  # a float comparison would accept it
     monkeypatch.setitem(TRANSCRIPTIONS["c1"], "value", transcribed)
     path = build_claim(tmp_path)
     text = path.read_text(encoding="utf-8")
