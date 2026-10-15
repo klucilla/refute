@@ -57,11 +57,20 @@ class DossierWriter:
 
 
 def _dossier_files(root: Path) -> list[str]:
-    return sorted(
-        p.relative_to(root).as_posix()
-        for p in root.rglob("*")
-        if p.is_file() and p.relative_to(root).as_posix() != MANIFEST_NAME
-    )
+    """Files covered by ``MANIFEST.sha256``: every file except the manifest itself and,
+    from v0.3, the seal record and the annexes (``refute.core.seal``), which are added
+    after the core is sealed and have their own manifests."""
+    from refute.core.seal import ANNEX_DIR, SEAL_NAME
+
+    out = []
+    for p in root.rglob("*"):
+        rel = p.relative_to(root).as_posix()
+        if not p.is_file() or rel in (MANIFEST_NAME, SEAL_NAME):
+            continue
+        if rel.startswith(f"{ANNEX_DIR}/"):
+            continue
+        out.append(rel)
+    return sorted(out)
 
 
 def write_manifest(root: Path | str) -> Path:
@@ -150,10 +159,12 @@ class CheckResult:
     integrity_problems: list[str] = field(default_factory=list)
     differences: list[str] = field(default_factory=list)
     compared_with: str | None = None
+    seal: Any = None  # refute.core.seal.SealCheck when the dossier is sealed
 
     @property
     def ok(self) -> bool:
-        return not self.integrity_problems and not self.differences
+        sealed_ok = self.seal is None or self.seal.ok
+        return not self.integrity_problems and not self.differences and sealed_ok
 
 
 def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckResult:
@@ -163,6 +174,10 @@ def check_dossier(path: Path | str, against: Path | str | None = None) -> CheckR
         result.integrity_problems.append(f"not a directory: {root}")
         return result
     result.integrity_problems = verify_manifest(root)
+    from refute.core.seal import ANNEX_DIR, SEAL_NAME, check_sealed
+
+    if (root / SEAL_NAME).exists() or (root / ANNEX_DIR).exists():
+        result.seal = check_sealed(root)
     if (root / REVIEW_DIR / "index.json").is_file():
         from refute.core.review import verify_reviews
 
