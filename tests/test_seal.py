@@ -453,3 +453,62 @@ def test_cli_shows_problems_of_the_annexes_directory(tmp_path):
     assert out.exit_code == 1
     assert "core: intact against its seal" in out.output
     assert "annexes: annexes/ is a link" in out.output
+
+
+# Codex round 3 ------------------------------------------------------------------------------
+
+
+def test_listing_the_seal_in_the_manifest_does_not_switch_off_the_seal_check(tmp_path):
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    with (d / "MANIFEST.sha256").open("a", encoding="utf-8", newline="\n") as handle:
+        handle.write(f"{sha256_file(d / SEAL_NAME)}  {SEAL_NAME}\n")
+    result = check_dossier(d)
+    assert result.seal is not None
+    assert any("core file modified: MANIFEST.sha256" in p for p in result.seal.core_problems)
+    assert not result.ok
+
+
+def test_broken_link_as_seal_is_still_checked(tmp_path):
+    import os
+
+    d = make_dossier(tmp_path / "D1")
+    try:
+        os.symlink(tmp_path / "nowhere.json", d / SEAL_NAME)
+    except OSError:
+        pytest.skip("this account cannot create symbolic links")
+    result = check_dossier(d)
+    assert result.seal is not None and not result.ok
+    out = CliRunner().invoke(app, ["check-dossier", str(d)])
+    assert out.exit_code == 1 and "core: NOT intact" in out.output
+
+
+def test_unreadable_annex_file_is_a_problem_of_that_annex(tmp_path, monkeypatch):
+    import refute.core.seal as seal_module
+
+    d = make_dossier(tmp_path / "D1")
+    seal(d)
+    add_annex(d, "reply", annex_source(tmp_path / "src"))
+    real = seal_module.sha256_file
+
+    def refusing(path):
+        if str(path).endswith("report.md"):
+            raise PermissionError(13, "Permission denied", str(path))
+        return real(path)
+
+    monkeypatch.setattr(seal_module, "sha256_file", refusing)
+    check = check_sealed(d)
+    assert check.core_problems == []
+    assert any("cannot read an annex file" in p for p in check.annexes["reply"])
+
+
+def test_broken_junction_or_link_as_seal_is_still_checked(tmp_path):
+    """The same check with a directory link whose target is gone (a junction on
+    Windows, where symbolic links may need a privilege)."""
+    d = make_dossier(tmp_path / "D1")
+    target = tmp_path / "gone"
+    target.mkdir()
+    _link_dir(d / SEAL_NAME, target)
+    target.rmdir()
+    result = check_dossier(d)
+    assert result.seal is not None and not result.ok

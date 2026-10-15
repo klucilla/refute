@@ -328,7 +328,10 @@ def verify_annex(dossier: Path | str, name: str) -> list[str]:
     else:
         if record.get("core_sha256") != sealed:
             problems.append("the annex cites another core hash than the seal")
-    current = {f["path"]: f["sha256"] for f in _file_list(target, present)}
+    try:
+        current = {f["path"]: f["sha256"] for f in _file_list(target, present)}
+    except OSError as exc:
+        return [*problems, f"cannot read an annex file: {exc}"]
     for rel in sorted(set(listed) | set(current)):
         if rel not in current:
             problems.append(f"annex file missing: {rel}")

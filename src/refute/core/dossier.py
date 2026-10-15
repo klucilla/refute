@@ -175,11 +175,23 @@ def _sealed_layout(root: Path) -> bool:
     """True for a dossier with the v0.3 seal layout: ``SEAL.json`` or ``annexes/``
     present and not covered by its ``MANIFEST.sha256``. An older manifest that lists
     such paths marks a legacy dossier, checked by its manifest only."""
-    from refute.core.seal import ANNEX_DIR, SEAL_NAME
+    import json
 
-    present = (root / SEAL_NAME).exists() or (root / ANNEX_DIR).exists()
-    if not present:
+    from refute.core.seal import ANNEX_DIR, SEAL_ALGORITHM, SEAL_NAME
+
+    def there(path: Path) -> bool:  # a broken link counts as present
+        return path.exists() or path.is_symlink() or path.is_junction()
+
+    seal_path = root / SEAL_NAME
+    if not there(seal_path) and not there(root / ANNEX_DIR):
         return False
+    if seal_path.is_symlink() or seal_path.is_junction():
+        return True  # refused by the seal check
+    try:
+        if json.loads(seal_path.read_text(encoding="utf-8")).get("algorithm") == SEAL_ALGORITHM:
+            return True  # a v0.3 seal is always checked, even if a manifest lists it
+    except (OSError, ValueError, AttributeError):
+        pass
     try:
         recorded = read_manifest(root)
     except OSError:
