@@ -43,12 +43,20 @@ if (Test-Path -LiteralPath $GnupgHome) { throw "the key ring folder already exis
 if (-not (Test-Path -LiteralPath $GpgPath -PathType Leaf)) { throw "gpg not found: $GpgPath" }
 if (-not $Apply) { Write-Output 'Preview only. Run with -Apply to download and verify.'; exit 0 }
 
+. (Join-Path $PSScriptRoot 'RefuteMedia.Core.ps1')
+
 function Invoke-Checked {
-    # Runs an external program and stops on a non-zero exit code.
+    # Runs an external program and stops on a non-zero exit code. Inside this function
+    # stderr text is collected, not raised: gpg writes its progress to stderr, and
+    # Windows PowerShell 5.1 would otherwise stop on the first such line. The exit code
+    # decides.
     param([string]$File, [string[]]$Arguments)
+    $ErrorActionPreference = 'Continue'
     $output = & $File @Arguments 2>&1
-    if ($LASTEXITCODE -ne 0) { throw "$([System.IO.Path]::GetFileName($File)) failed with exit code $LASTEXITCODE`n$($output -join "`n")" }
-    return @($output | ForEach-Object { [string]$_ })
+    $code = $LASTEXITCODE
+    $text = @($output | ForEach-Object { [string]$_ })
+    if ($code -ne 0) { throw "$([System.IO.Path]::GetFileName($File)) failed with exit code $code`n$($text -join "`n")" }
+    return $text
 }
 
 [void][System.IO.Directory]::CreateDirectory($MediaDir)
@@ -63,20 +71,12 @@ $ringDir = $GnupgHome.Replace('\', '/')
 Invoke-Checked $GpgPath @('--homedir', $ringDir, '--batch', '--keyserver', $Keyserver, '--recv-keys', $Fingerprint) | Out-Null
 $colons = Invoke-Checked $GpgPath @('--homedir', $ringDir, '--batch', '--with-colons', '--fingerprint', $Fingerprint)
 $fprs = @($colons | Where-Object { $_.StartsWith('fpr:') } | ForEach-Object { $_.Split(':')[9] })
-if ($fprs.Count -lt 1 -or $fprs[0] -ne $Fingerprint) { throw "the imported key's fingerprint is not $Fingerprint" }
+if ($fprs.Count -lt 1 -or $fprs[0] -cne $Fingerprint) { throw "the imported key's fingerprint is not $Fingerprint" }
 
 $sums = (Join-Path $MediaDir 'SHA256SUMS').Replace('\', '/')
 $status = Invoke-Checked $GpgPath @('--homedir', $ringDir, '--batch', '--status-fd', '1', '--verify', "$sums.gpg", $sums)
-$validsig = @($status | Where-Object { $_ -match '^\[GNUPG:\] VALIDSIG ' })
-if ($validsig.Count -ne 1) { throw 'no single VALIDSIG line in the gpg status' }
-$fields = $validsig[0].Split(' ')
-if ($fields[-1] -ne $Fingerprint) { throw "SHA256SUMS is signed by another primary key: $($fields[-1])" }
-if (-not @($status | Where-Object { $_ -match '^\[GNUPG:\] GOODSIG ' }).Count) { throw 'no GOODSIG line in the gpg status' }
-
-$lines = @([System.IO.File]::ReadAllLines((Join-Path $MediaDir 'SHA256SUMS')) | Where-Object {
-        $_ -match '^([0-9a-f]{64}) [ *](.+)$' -and $Matches[2] -ceq $IsoName })
-if ($lines.Count -ne 1) { throw "expected one line for $IsoName in SHA256SUMS, found $($lines.Count)" }
-$expected = $lines[0].Substring(0, 64)
+$validsig = Test-RefuteGpgStatus -Lines $status -Fingerprint $Fingerprint
+$expected = Get-RefuteSumsHash -Lines ([System.IO.File]::ReadAllLines((Join-Path $MediaDir 'SHA256SUMS'))) -Name $IsoName
 $actual = (Get-FileHash -LiteralPath (Join-Path $MediaDir $IsoName) -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($actual -cne $expected) { throw "the ISO's SHA-256 $actual differs from SHA256SUMS ($expected)" }
 
@@ -84,7 +84,7 @@ $evidence = [ordered]@{
     RetrievedUtc       = $retrieved
     BaseUrl            = $BaseUrl
     Fingerprint        = $Fingerprint
-    ValidSig           = $validsig[0]
+    ValidSig           = $validsig
     GpgVersion         = (Invoke-Checked $GpgPath @('--version'))[0]
     Sha256SumsSha256   = (Get-FileHash -LiteralPath (Join-Path $MediaDir 'SHA256SUMS') -Algorithm SHA256).Hash.ToLowerInvariant()
     SignatureSha256    = (Get-FileHash -LiteralPath (Join-Path $MediaDir 'SHA256SUMS.gpg') -Algorithm SHA256).Hash.ToLowerInvariant()

@@ -8,6 +8,7 @@ Skipped when no PowerShell is installed.
 
 from __future__ import annotations
 
+import base64
 import json
 import shutil
 import subprocess
@@ -40,8 +41,9 @@ def _run(script: Path, *args: str) -> subprocess.CompletedProcess:
 
 
 @pytest.fixture(scope="module")
-def cases() -> dict:
-    out = _run(ROOT / "tests" / "vm" / "vm_cases.ps1", "-Root", str(ROOT))
+def cases(tmp_path_factory) -> dict:
+    work = tmp_path_factory.mktemp("vm_cases")
+    out = _run(ROOT / "tests" / "vm" / "vm_cases.ps1", "-Root", str(ROOT), "-WorkDir", str(work))
     assert out.returncode == 0, out.stderr
     return json.loads(out.stdout)
 
@@ -103,6 +105,7 @@ HYPERV_ALLOWED = {
     "Get-VMNetworkAdapter",
     "Get-VMHardDiskDrive",
     "Get-VMDvdDrive",
+    "Get-VHD",
     "Set-VMHost",
     "New-VHD",
     "New-VM",
@@ -148,6 +151,22 @@ def test_no_turn_off_and_no_secure_boot_off():
         text = path.read_text(encoding="utf-8")
         assert "-TurnOff" not in text, path
         assert "EnableSecureBoot Off" not in text, path
+        for line in text.splitlines():
+            if "Stop-VM" in line:
+                assert "-Force" not in line, (path, line)
+
+
+def test_registration_blocks_winrm_before_starting_it():
+    text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    apply = text[text.index("# ---- apply") :]
+    rule = apply.index("New-NetFirewallRule")
+    active = apply.index("Get-NetFirewallRule -PolicyStore ActiveStore -Name")
+    registry = apply.index("Test-ListenersLoopbackOnly @(Get-RegistryListeners)")
+    start = apply.index("Start-Service -Name WinRM")
+    register = apply.index("Register-PSSessionConfiguration")
+    assert rule < active < registry < start < register
+    assert "-AccessMode Local" in apply
+    assert "-PreviewSha256" in text and "the change list differs from the previewed one" in text
 
 
 def _iso_files(data: bytes) -> tuple[str, str, dict[str, bytes]]:
@@ -185,7 +204,9 @@ def _iso_files(data: bytes) -> tuple[str, str, dict[str, bytes]]:
 @pytest.mark.skipif(sys.platform != "win32", reason="IMAPI2FS is a Windows component")
 def test_seed_iso_is_a_cidata_volume_with_the_rendered_files(tmp_path):
     key = tmp_path / "vm.pub"
-    blob = "AAAAC3NzaC1lZDI1NTE5AAAAIGq8Zx0k4lYtV2b1x7oQ4yYzW9xg0m3v5u6r8s9t0u1v"
+    # RFC 8709 wire format: string "ssh-ed25519", then a 32-byte key (synthetic bytes)
+    raw = b"\x00\x00\x00\x0bssh-ed25519" + b"\x00\x00\x00\x20" + bytes(range(32))
+    blob = base64.b64encode(raw).decode("ascii")
     key.write_text(f"ssh-ed25519 {blob} somebody@somehost\n", encoding="ascii")
     iso = tmp_path / "seed.iso"
     out = _run(VM / "New-RefuteSeedIso.ps1", "-PublicKeyPath", str(key), "-OutputPath", str(iso))

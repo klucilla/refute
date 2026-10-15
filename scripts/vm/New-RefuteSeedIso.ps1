@@ -31,9 +31,10 @@ if (Test-Path -LiteralPath $OutputPath) { throw "the ISO already exists: $Output
 if (Test-Path -LiteralPath $contentDir) { throw "the content folder already exists: $contentDir" }
 if (-not (Test-Path -LiteralPath (Split-Path -Parent $OutputPath) -PathType Container)) { throw 'the output folder does not exist' }
 
-$key = ([System.IO.File]::ReadAllText($PublicKeyPath)).Trim()
-if ($key -cnotmatch '^ssh-ed25519 ([A-Za-z0-9+/]+={0,2})( [^\r\n]*)?$') { throw 'the public key must be one ssh-ed25519 key' }
-$key = "ssh-ed25519 $($Matches[1]) refute-vm"
+. (Join-Path $PSScriptRoot 'RefuteMedia.Core.ps1')
+$keyText = [System.IO.File]::ReadAllText($PublicKeyPath)
+if ($keyText.Trim().Contains("`n")) { throw 'the public key file must hold one key' }
+$key = ConvertTo-RefuteVmPublicKey $keyText
 
 function Get-RefuteSeedFile {
     param([string]$Name, [string]$Key)

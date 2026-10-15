@@ -17,10 +17,62 @@ function Read-RefuteVmState {
 }
 
 function Write-RefuteVmState {
+    # Written to a new file, then moved over the state file in one step, so a reader
+    # never sees a half-written state.
     param([System.Collections.IDictionary]$Config, [string]$VmId, [string]$SeedIsoSha256)
     $map = [ordered]@{ VmId = $VmId; SeedIsoSha256 = $SeedIsoSha256 }
     $utf8 = New-Object System.Text.UTF8Encoding($false)
-    [System.IO.File]::WriteAllText($Config.StateFile, (ConvertTo-RefuteCanonicalJson $map), $utf8)
+    $next = $Config.StateFile + '.next'
+    [System.IO.File]::WriteAllText($next, (ConvertTo-RefuteCanonicalJson $map), $utf8)
+    if (Test-Path -LiteralPath $Config.StateFile -PathType Leaf) {
+        [System.IO.File]::Replace($next, $Config.StateFile, [NullString]::Value)
+    } else {
+        [System.IO.File]::Move($next, $Config.StateFile)
+    }
+}
+
+function Enter-RefuteVmLock {
+    # One operation at a time on this host: the lock file is opened with no sharing and
+    # kept open until the operation ends; a second session is refused at once.
+    param([System.Collections.IDictionary]$Config)
+    $path = Join-Path (Split-Path -Parent $Config.StateFile) 'operation.lock'
+    try {
+        return [System.IO.File]::Open($path, [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+    } catch {
+        throw 'another RefuteVm operation is in progress; try again when it ends'
+    }
+}
+
+function Copy-RefuteVerifiedFile {
+    # Copies Source to Destination only if its bytes have the given SHA-256. The source
+    # is opened with no write sharing (it cannot change while it is read), the bytes are
+    # hashed as they are copied into Destination.partial (created new, never
+    # overwritten), and only a matching copy is moved to Destination (which must not
+    # exist). A copy that does not match stays as .partial for the maintainer to inspect.
+    param([string]$Source, [string]$Destination, [string]$Sha256)
+    foreach ($p in $Source, $Destination) {
+        $item = Get-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue
+        if ($item -and ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) { throw "reparse point refused: $p" }
+    }
+    if (Test-Path -LiteralPath $Destination) { throw "the destination already exists: $Destination" }
+    $partial = $Destination + '.partial'
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    $in = [System.IO.File]::Open($Source, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::Read)
+    try {
+        $out = [System.IO.File]::Open($partial, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+        try {
+            $buffer = New-Object byte[] 1048576
+            while (($read = $in.Read($buffer, 0, $buffer.Length)) -gt 0) {
+                [void]$sha.TransformBlock($buffer, 0, $read, $null, 0)
+                $out.Write($buffer, 0, $read)
+            }
+            [void]$sha.TransformFinalBlock((New-Object byte[] 0), 0, 0)
+        } finally { $out.Dispose() }
+    } finally { $in.Dispose() }
+    $actual = -join ($sha.Hash | ForEach-Object { $_.ToString('x2') })
+    $sha.Dispose()
+    if ($actual -cne $Sha256) { throw "the copied bytes have SHA-256 $actual, not $Sha256; left at $partial" }
+    [System.IO.File]::Move($partial, $Destination)
 }
 
 function Write-RefuteVmLog {
@@ -72,11 +124,16 @@ function Get-RefuteVmObserved {
             NetworkAdapters             = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | ForEach-Object {
                     [ordered]@{ Name = [string]$_.Name; SwitchName = [string]$_.SwitchName } })
             HardDisks                   = @(Get-VMHardDiskDrive -VM $vm -ErrorAction Stop | ForEach-Object { [string]$_.Path })
-            DvdDrives                   = @(Get-VMDvdDrive -VM $vm -ErrorAction Stop | Where-Object { $_.Path } | ForEach-Object { [string]$_.Path })
+            DvdDrives                   = @(Get-VMDvdDrive -VM $vm -ErrorAction Stop | ForEach-Object { [string]$_.Path })
         }
     }
+    $baseDisk = [ordered]@{ Exists = $false; Format = ''; Type = ''; SizeBytes = 0 }
+    if (Test-Path -LiteralPath $Config.BaseDiskPath -PathType Leaf) {
+        $vhd = Get-VHD -Path $Config.BaseDiskPath -ErrorAction Stop
+        $baseDisk = [ordered]@{ Exists = $true; Format = [string]$vhd.VhdFormat; Type = [string]$vhd.VhdType; SizeBytes = [long]$vhd.Size }
+    }
     $files = [ordered]@{
-        BaseDiskExists         = (Test-Path -LiteralPath $Config.BaseDiskPath -PathType Leaf)
+        BaseDisk               = $baseDisk
         InstallIsoMediaSha256  = ''
         InstallIsoSourceSha256 = ''
         SeedIsoMediaSha256     = ''
@@ -150,12 +207,12 @@ function Invoke-RefuteVmMutation {
         'DisconnectNetwork' { Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | Disconnect-VMNetworkAdapter -ErrorAction Stop }
         'AttachBaseDisk' { Add-VMHardDiskDrive -VM $vm -Path $Config.BaseDiskPath -ErrorAction Stop }
         'ImportInstallIso' {
-            Copy-Item -LiteralPath "$($Config.MediaSource)\$($Config.InstallIsoName)" -Destination $installMedia -ErrorAction Stop
-            if ((Get-RefuteFileSha256 $installMedia) -cne $MediaSha256) { throw 'the copied install ISO has another SHA-256; it is left in place for the maintainer to inspect' }
+            Assert-RefuteNoReparsePoint $Config.MediaSource
+            Copy-RefuteVerifiedFile -Source "$($Config.MediaSource)\$($Config.InstallIsoName)" -Destination $installMedia -Sha256 $MediaSha256
         }
         'ImportSeedIso' {
-            Copy-Item -LiteralPath "$($Config.MediaSource)\$($Config.SeedIsoName)" -Destination $seedMedia -ErrorAction Stop
-            if ((Get-RefuteFileSha256 $seedMedia) -cne $MediaSha256) { throw 'the copied seed ISO has another SHA-256; it is left in place for the maintainer to inspect' }
+            Assert-RefuteNoReparsePoint $Config.MediaSource
+            Copy-RefuteVerifiedFile -Source "$($Config.MediaSource)\$($Config.SeedIsoName)" -Destination $seedMedia -Sha256 $MediaSha256
             Write-RefuteVmState -Config $Config -VmId $Observed.RecordedVmId -SeedIsoSha256 $MediaSha256
         }
         'AttachInstallMedia' {
@@ -170,7 +227,9 @@ function Invoke-RefuteVmMutation {
             Set-VMFirmware -VM $vm -FirstBootDevice $dvd[0] -ErrorAction Stop
         }
         'StartVm' { Start-VM -VM $vm -ErrorAction Stop }
-        'StopVm' { Stop-VM -VM $vm -Force -ErrorAction Stop }
+        # A guest shutdown through the integration service, never forced and never a
+        # power cut: if the guest does not shut down cleanly the operation fails.
+        'StopVm' { Stop-VM -VM $vm -Confirm:$false -ErrorAction Stop }
         'DetachInstallMedia' {
             $disk = @(Get-VMHardDiskDrive -VM $vm -ErrorAction Stop | Where-Object { [string]$_.Path -ieq $Config.BaseDiskPath })
             if ($disk.Count -ne 1) { throw 'the base disk changed since the plan' }

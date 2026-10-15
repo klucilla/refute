@@ -31,14 +31,9 @@ function Get-RefuteVmModuleFiles {
 }
 
 function Get-RefuteVmCaller {
-    $connected = ''
-    if (Get-Variable -Name PSSenderInfo -ErrorAction SilentlyContinue) {
-        if ($PSSenderInfo) { $connected = [string]$PSSenderInfo.ConnectedUser }
-    }
-    return [ordered]@{
-        ConnectedUser = $connected
-        RunAsUser     = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-    }
+    $sender = $null
+    if (Get-Variable -Name PSSenderInfo -ErrorAction SilentlyContinue) { $sender = $PSSenderInfo }
+    return Get-RefuteVmCallerRecord -SenderInfo $sender -RunAsUser ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name)
 }
 
 function Get-RefuteVmStatus {
@@ -94,64 +89,73 @@ function Invoke-RefuteVmOperation {
         [string]$ServiceGuid = ''
     )
     $config = Get-RefuteVmModuleConfig
+    $operationId = [guid]::NewGuid().ToString()
     $includeMedia = @('ImportInstallIso', 'ImportSeedIso', 'AttachInstallMedia') -contains $Operation
-    $observed = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
-    $plan = New-RefuteVmPlan -Operation $Operation -Config $config -Observed $observed -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
-    $planSha = Get-RefuteVmPlanSha256 $plan
-    $record = [ordered]@{
-        Utc        = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
-        Operation  = $Operation
-        Mode       = $(if ($Simulate) { 'simulated' } else { 'intent' })
-        PlanSha256 = $planSha
-        Plan       = $plan
-        Caller     = Get-RefuteVmCaller
-        Module     = Get-RefuteVmModuleFiles
-    }
-    if ($Simulate) {
-        Write-RefuteVmLog -Config $config -Record $record
-        return ConvertTo-RefuteCanonicalJson ([ordered]@{ Mode = 'simulated'; PlanSha256 = $planSha; Plan = $plan })
-    }
-    if (-not $PlanSha256) { throw 'run the operation with -Simulate first and pass its PlanSha256' }
-    if ($plan.Refusal) {
-        $record.Mode = 'refused'
-        Write-RefuteVmLog -Config $config -Record $record
-        throw "refused: $($plan.Refusal)"
-    }
-    if ($planSha -cne $PlanSha256) {
-        $record.Mode = 'refused'
-        $record['Reason'] = 'the plan differs from the simulated one (state or configuration changed)'
-        Write-RefuteVmLog -Config $config -Record $record
-        throw 'refused: the plan differs from the simulated one; simulate again'
-    }
-    Write-RefuteVmLog -Config $config -Record $record
-    $outcome = 'already done'
-    $failure = $null
-    if (-not $plan.AlreadyDone) {
-        try {
-            Invoke-RefuteVmMutation -Config $config -Observed $observed -Plan $plan -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
-            $after = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
-            if (Test-RefuteVmPlanReached -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid) {
-                $outcome = 'done'
-            } else {
-                $outcome = 'not reached'
-            }
-        } catch {
-            $outcome = 'failed'
-            $failure = $_.Exception.Message
+    # A real call holds the lock from the observation to the final check, so the guards
+    # are evaluated on the state the action meets and no other session acts meanwhile.
+    $lock = $null
+    if (-not $Simulate) { $lock = Enter-RefuteVmLock -Config $config }
+    try {
+        $observed = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
+        $plan = New-RefuteVmPlan -Operation $Operation -Config $config -Observed $observed -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+        $planSha = Get-RefuteVmPlanSha256 $plan
+        $record = [ordered]@{
+            Utc         = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+            OperationId = $operationId
+            Operation   = $Operation
+            Mode        = $(if ($Simulate) { 'simulated' } else { 'intent' })
+            PlanSha256  = $planSha
+            Plan        = $plan
+            Caller      = Get-RefuteVmCaller
+            Module      = Get-RefuteVmModuleFiles
         }
+        if ($Simulate) {
+            Write-RefuteVmLog -Config $config -Record $record
+            return ConvertTo-RefuteCanonicalJson ([ordered]@{ Mode = 'simulated'; PlanSha256 = $planSha; Plan = $plan })
+        }
+        $refusal = $null
+        if (-not $PlanSha256) { $refusal = 'no PlanSha256: run the operation with -Simulate first and pass its PlanSha256' }
+        elseif ($plan.Refusal) { $refusal = $plan.Refusal }
+        elseif ($planSha -cne $PlanSha256) { $refusal = 'the plan differs from the simulated one (state or configuration changed); simulate again' }
+        if ($refusal) {
+            $record.Mode = 'refused'
+            $record['Reason'] = $refusal
+            Write-RefuteVmLog -Config $config -Record $record
+            throw "refused: $refusal"
+        }
+        Write-RefuteVmLog -Config $config -Record $record
+        $outcome = 'already done'
+        $failure = $null
+        if (-not $plan.AlreadyDone) {
+            try {
+                Invoke-RefuteVmMutation -Config $config -Observed $observed -Plan $plan -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+                $after = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
+                if (Test-RefuteVmPlanReached -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid) {
+                    $outcome = 'done'
+                } else {
+                    $outcome = 'not reached'
+                }
+            } catch {
+                $outcome = 'failed'
+                $failure = $_.Exception.Message
+            }
+        }
+        $result = [ordered]@{
+            Utc         = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+            OperationId = $operationId
+            Operation   = $Operation
+            Mode        = 'result'
+            PlanSha256  = $planSha
+            Outcome     = $outcome
+            Error       = $failure
+            Caller      = Get-RefuteVmCaller
+        }
+        Write-RefuteVmLog -Config $config -Record $result
+        if ($outcome -eq 'failed' -or $outcome -eq 'not reached') { throw "$Operation ${outcome}: $failure" }
+        return ConvertTo-RefuteCanonicalJson ([ordered]@{ Mode = 'result'; Outcome = $outcome; PlanSha256 = $planSha; Plan = $plan })
+    } finally {
+        if ($lock) { $lock.Dispose() }
     }
-    $result = [ordered]@{
-        Utc        = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
-        Operation  = $Operation
-        Mode       = 'result'
-        PlanSha256 = $planSha
-        Outcome    = $outcome
-        Error      = $failure
-        Caller     = Get-RefuteVmCaller
-    }
-    Write-RefuteVmLog -Config $config -Record $result
-    if ($outcome -eq 'failed' -or $outcome -eq 'not reached') { throw "$Operation ${outcome}: $failure" }
-    return ConvertTo-RefuteCanonicalJson ([ordered]@{ Mode = 'result'; Outcome = $outcome; PlanSha256 = $planSha; Plan = $plan })
 }
 
 Export-ModuleMember -Function Get-RefuteVmStatus, Invoke-RefuteVmOperation

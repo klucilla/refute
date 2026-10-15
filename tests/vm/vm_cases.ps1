@@ -2,7 +2,7 @@
 # read the data files, list the commands each script calls, and run the pure logic of
 # RefuteVm.Core.ps1 on synthetic observed states. Prints one JSON object; the
 # assertions are in tests/test_vm_scripts.py. Windows PowerShell 5.1 and PowerShell 7.
-param([Parameter(Mandatory = $true)][string]$Root)
+param([Parameter(Mandatory = $true)][string]$Root, [Parameter(Mandatory = $true)][string]$WorkDir)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
 
@@ -75,7 +75,7 @@ function New-Observed {
     return [ordered]@{
         Host                  = [ordered]@{ VirtualMachinePath = 'C:\ProgramData\Microsoft\Windows\Hyper-V'; VirtualHardDiskPath = 'C:\Users\Public\Documents\Hyper-V\Virtual Hard Disks'; EnableEnhancedSessionMode = $true }
         Vms                   = @()
-        Files                 = [ordered]@{ BaseDiskExists = $false; InstallIsoMediaSha256 = ''; InstallIsoSourceSha256 = ''; SeedIsoMediaSha256 = ''; SeedIsoSourceSha256 = '' }
+        Files                 = [ordered]@{ BaseDisk = [ordered]@{ Exists = $false; Format = ''; Type = ''; SizeBytes = 0 }; InstallIsoMediaSha256 = ''; InstallIsoSourceSha256 = ''; SeedIsoMediaSha256 = ''; SeedIsoSourceSha256 = '' }
         RecordedVmId          = ''
         RecordedSeedIsoSha256 = ''
     }
@@ -170,6 +170,108 @@ $p = Plan 'StopVm' $o
 $after = New-Observed; $after.RecordedVmId = $vmId; $v2 = New-Vm; $v2.State = 'Off'; $after.Vms = @($v2)
 Add-Case 'StopVm reached when Off' (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $after)
 Add-Case 'StopVm not reached when Running' (-not (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $o))
+
+# ---- review round 1 (Codex): preconditions, state, disks, media, lock, caller --------------
+$o = New-Observed; $o.RecordedVmId = $vmId; $v = New-Vm; $v.SecureBootTemplate = 'MicrosoftUEFICertificateAuthority'; $o.Vms = @($v)
+$h1 = Get-RefuteVmPlanSha256 (Plan 'StartVm' $o)
+$o.Vms[0].FirstBootDevice = 'C:\Hyper-V\refute-vm\media\ubuntu-26.04.1-live-server-amd64.iso'
+Add-Case 'plan hash changes when a precondition changes (boot device)' ($h1 -cne (Get-RefuteVmPlanSha256 (Plan 'StartVm' $o)))
+Add-Case 'plan holds the target VM record' ((Plan 'StartVm' $o).Preconditions.TargetVm.VmId -eq $vmId)
+
+$o = New-Observed; $o.Files.SeedIsoMediaSha256 = $sha
+Add-Case 'ImportSeedIso refused: seed in MediaRoot but not recorded' ((Plan 'ImportSeedIso' $o -Media $sha).Refusal -like '*not recorded*')
+$o.RecordedSeedIsoSha256 = $sha
+Add-Case 'ImportSeedIso already done when file and state agree' ((Plan 'ImportSeedIso' $o -Media $sha).AlreadyDone)
+
+$o = New-Observed; $o.Files.BaseDisk = [ordered]@{ Exists = $true; Format = 'VHD'; Type = 'Fixed'; SizeBytes = 10 }
+Add-Case 'CreateBaseDisk refused: another file at the path' ((Plan 'CreateBaseDisk' $o).Refusal -like '*never overwritten*')
+$o.Files.BaseDisk = [ordered]@{ Exists = $true; Format = 'VHDX'; Type = 'Dynamic'; SizeBytes = [long]$config.BaseDiskSizeBytes }
+Add-Case 'CreateBaseDisk already done for the configured disk' ((Plan 'CreateBaseDisk' $o).AlreadyDone)
+
+$o = New-Observed; $o.RecordedVmId = $vmId; $v = New-Vm; $v.HardDisks = @($config.BaseDiskPath); $v.DvdDrives = @(''); $o.Vms = @($v)
+$o.Files.BaseDisk = [ordered]@{ Exists = $true; Format = 'VHDX'; Type = 'Dynamic'; SizeBytes = [long]$config.BaseDiskSizeBytes }
+Add-Case 'an empty DVD drive is not a divergence' ($null -eq (Plan 'SetProcessor' $o).Refusal)
+$p = Plan 'DetachInstallMedia' $o
+Add-Case 'DetachInstallMedia lists the empty drive' (@($p.Changes | Where-Object { $_.Before -eq 'empty drive' }).Count -eq 1)
+
+$sender = [pscustomobject]@{ UserInfo = [pscustomobject]@{ Identity = [pscustomobject]@{ Name = 'PC\operator' } } }
+$c = Get-RefuteVmCallerRecord -SenderInfo $sender -RunAsUser 'WinRM Virtual Users\WinRM VA_1'
+Add-Case 'caller from PSSenderInfo.UserInfo.Identity.Name' ($c.ConnectedUser -eq 'PC\operator' -and $c.RunAsUser -like 'WinRM*')
+Add-Case 'caller outside a remote session' ((Get-RefuteVmCallerRecord -SenderInfo $null -RunAsUser 'x').ConnectedUser -eq '')
+
+. (Join-Path $moduleDir 'RefuteVm.HyperV.ps1')
+$src = Join-Path $WorkDir 'source.iso'; $dst = Join-Path $WorkDir 'dest.iso'
+[System.IO.File]::WriteAllBytes($src, [byte[]](1..200))
+$srcSha = (Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash.ToLowerInvariant()
+$failed = $null
+try { Copy-RefuteVerifiedFile -Source $src -Destination $dst -Sha256 ('0' * 64) } catch { $failed = $_.Exception.Message }
+Add-Case 'verified copy refuses other bytes and keeps only the .partial' ($failed -like '*not*' -and -not (Test-Path -LiteralPath $dst) -and (Test-Path -LiteralPath "$dst.partial"))
+$dst2 = Join-Path $WorkDir 'dest2.iso'
+Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha
+Add-Case 'verified copy of the right bytes' ((Get-FileHash -LiteralPath $dst2 -Algorithm SHA256).Hash.ToLowerInvariant() -eq $srcSha -and -not (Test-Path -LiteralPath "$dst2.partial"))
+$failed = $null
+try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_.Exception.Message }
+Add-Case 'verified copy never overwrites' ($failed -like '*already exists*')
+
+$onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)
+if ($onWindows) {
+    # FileShare.None is enforced by Windows; the endpoint runs only there.
+    $lockConfig = @{ StateFile = (Join-Path $WorkDir 'vm.json') }
+    $first = Enter-RefuteVmLock -Config $lockConfig
+    $failed = $null
+    try { $second = Enter-RefuteVmLock -Config $lockConfig; $second.Dispose() } catch { $failed = $_.Exception.Message }
+    $first.Dispose()
+    Add-Case 'a second operation is refused while one holds the lock' ($failed -like '*in progress*')
+    $again = Enter-RefuteVmLock -Config $lockConfig; $again.Dispose()
+    Add-Case 'the lock is free after the operation' $true
+}
+
+$stateConfig = @{ StateFile = (Join-Path $WorkDir 'state.json') }
+Write-RefuteVmState -Config $stateConfig -VmId $vmId -SeedIsoSha256 ''
+Write-RefuteVmState -Config $stateConfig -VmId $vmId -SeedIsoSha256 $sha
+$state = Read-RefuteVmState -Config $stateConfig
+Add-Case 'state is replaced whole' ($state.RecordedVmId -eq $vmId -and $state.RecordedSeedIsoSha256 -eq $sha -and -not (Test-Path -LiteralPath "$($stateConfig.StateFile).next"))
+
+# ---- media and key decisions ---------------------------------------------------------------
+. (Join-Path $vmDir 'RefuteMedia.Core.ps1')
+$fpr = '843938DF228D22F7B3742BC0D94AA3F0EFE21092'
+$good = @("[GNUPG:] NEWSIG", "[GNUPG:] GOODSIG D94AA3F0EFE21092 Ubuntu CD Image Automatic Signing Key (2012)",
+    "[GNUPG:] VALIDSIG $fpr 2026-08-27 1756334580 0 4 0 1 10 00 $fpr")
+Add-Case 'gpg: signature by the primary key' ((Test-RefuteGpgStatus -Lines $good -Fingerprint $fpr) -like '*VALIDSIG*')
+$subkey = @($good[0], $good[1], "[GNUPG:] VALIDSIG 0123456789ABCDEF0123456789ABCDEF01234567 2026-08-27 1 0 4 0 1 10 00 $fpr")
+Add-Case 'gpg: signature by a subkey of the primary key' ((Test-RefuteGpgStatus -Lines $subkey -Fingerprint $fpr) -like '*VALIDSIG*')
+foreach ($bad in @(
+        @{ Name = 'another primary key'; Lines = @($good[0], $good[1], "[GNUPG:] VALIDSIG $fpr 2026 1 0 4 0 1 10 00 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF") },
+        @{ Name = 'no VALIDSIG'; Lines = @($good[0], $good[1]) },
+        @{ Name = 'two VALIDSIG'; Lines = @($good + $good[2]) },
+        @{ Name = 'no GOODSIG'; Lines = @($good[0], $good[2]) },
+        @{ Name = 'BADSIG present'; Lines = @($good + '[GNUPG:] BADSIG D94AA3F0EFE21092 x') })) {
+    $failed = $null
+    try { Test-RefuteGpgStatus -Lines $bad.Lines -Fingerprint $fpr | Out-Null } catch { $failed = $_.Exception.Message }
+    Add-Case "gpg refused: $($bad.Name)" ($null -ne $failed) $failed
+}
+$iso = 'ubuntu-26.04.1-live-server-amd64.iso'
+$sums = @("$('a' * 64) *$iso", "$('b' * 64) *$iso.zsync", "$('c' * 64)  ubuntu-26.04.1-desktop-amd64.iso")
+Add-Case 'SHA256SUMS: the exact line' ((Get-RefuteSumsHash -Lines $sums -Name $iso) -eq ('a' * 64))
+foreach ($bad in @(@{ Name = 'missing'; Lines = @($sums[1]) }, @{ Name = 'twice'; Lines = @($sums[0], $sums[0]) }, @{ Name = 'uppercase hash'; Lines = @("$('A' * 64) *$iso") })) {
+    $failed = $null
+    try { Get-RefuteSumsHash -Lines $bad.Lines -Name $iso | Out-Null } catch { $failed = $_.Exception.Message }
+    Add-Case "SHA256SUMS refused: $($bad.Name)" ($null -ne $failed) $failed
+}
+$typeBytes = [System.Text.Encoding]::ASCII.GetBytes('ssh-ed25519')
+$blob = [byte[]](@(0, 0, 0, 11) + $typeBytes + @(0, 0, 0, 32) + (1..32))
+$b64 = [System.Convert]::ToBase64String($blob)
+Add-Case 'key: a valid ed25519 key, comment replaced' ((ConvertTo-RefuteVmPublicKey "ssh-ed25519 $b64 someone@somehost") -ceq "ssh-ed25519 $b64 refute-vm")
+foreach ($bad in @("ssh-rsa $b64", "ssh-ed25519 notbase64!", "ssh-ed25519 $([System.Convert]::ToBase64String([byte[]](1..51)))")) {
+    $failed = $null
+    try { ConvertTo-RefuteVmPublicKey $bad | Out-Null } catch { $failed = $_.Exception.Message }
+    Add-Case "key refused: $($bad.Substring(0, 12))" ($null -ne $failed) $failed
+}
+
+$psrc = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RoleCapabilities/RefuteVmOperator.psrc')
+$psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.psd1')
+$pin = $psrc.ModulesToImport[0]
+Add-Case 'role capability pins the module version and GUID' ($pin.ModuleName -eq 'RefuteVm' -and $pin.RequiredVersion -eq $psd1.ModuleVersion -and $pin.GUID -eq $psd1.GUID)
 
 $out.Cases = $cases.ToArray()
 ConvertTo-RefuteCanonicalJson $out

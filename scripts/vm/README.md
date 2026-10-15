@@ -13,16 +13,25 @@ passes. In phase 1 the VM has no network.
   (Just Enough Administration). It runs each session as a temporary virtual account
   that is a member of Hyper-V Administrators only (not of Administrators), and it
   exposes two functions of the `RefuteVm` module: `Get-RefuteVmStatus` (read only)
-  and `Invoke-RefuteVmOperation` (one administrative action per call). The session is
-  in NoLanguage mode, so a caller can pass literal arguments to these two functions
-  and nothing else. No parameter takes a path or a VM name: they come from
+  and `Invoke-RefuteVmOperation` (one administrative action per call), besides the
+  default helper commands that a `RestrictedRemoteServer` session keeps
+  (`Clear-Host`, `Exit-PSSession`, `Get-Command`, `Get-FormatData`, `Get-Help`,
+  `Measure-Object`, `Out-Default`, `Select-Object`). The session is in NoLanguage
+  mode: literal arguments only, no script block or expression. The module is pinned
+  by name, version and GUID in the role capability. No parameter takes a path or a VM
+  name: they come from
   `RefuteVm.Config.psd1`, installed with the module under `%ProgramFiles%`, where only
   administrators can write.
 - Claude Code calls the endpoint through `Invoke-RefuteVm.ps1`; every call is a
   separate command on the maintainer's permission screen. Each operation runs twice:
   first with `-Simulate` (the plan and its `PlanSha256`; the managed state does not
   change), then with `-PlanSha256 <hash>`, which refuses if the plan is no longer the
-  same.
+  same. The plan holds the observed preconditions (host settings, files, the recorded
+  state and the whole record of the target VM), so a change to any of them changes the
+  hash. A real call holds an exclusive lock from its observation to its final check:
+  one operation at a time, and a second session is refused. The endpoint does not
+  require that a simulation was logged before a real call; the approval of the two
+  commands on the permission screen is what binds them.
 - **Limit.** The endpoint limits what can be done; it does not prove who approved a
   call. Any process that runs as the operator account can call it.
 - The maintainer runs, as Administrator, the registration of the endpoint and any
@@ -65,7 +74,9 @@ user name, host name or address.
 5. `New-RefuteSeedIso.ps1`; it prints the seed ISO's SHA-256.
 6. The maintainer, in Windows PowerShell started as Administrator:
    `scripts\vm\Register-RefuteVmEndpoint.ps1 -OperatorAccount <COMPUTERNAME>\<account>`
-   (preview), then the same with `-Apply`.
+   (preview; it prints a `PreviewSha256`), then the same with
+   `-Apply -PreviewSha256 <hash>`, which refuses if the machine changed since the
+   preview.
 7. `Invoke-RefuteVm.ps1 -Status`, then each operation, simulated and then run:
    `SetHostPaths`, `DisableEnhancedSessionHost`, `CreateBaseDisk`, `CreateVm`,
    `SetMemory`, `SetProcessor`, `SetSecureBoot`, `DisableCheckpoints`,
@@ -84,42 +95,47 @@ Capacity control (plan section 7.5): `SetProcessorMaximum -Percent <1-100>`
 
 ## What the registration changes
 
-`Register-RefuteVmEndpoint.ps1` without `-Apply` prints this list for the actual
-machine, with the file hashes and the current WinRM state. With `-Apply`, and only if
-every target is absent (it never deletes or overwrites):
+`Register-RefuteVmEndpoint.ps1` runs as Administrator. Without `-Apply` it prints the
+list below for the actual machine (with the module's file hashes and the current WinRM
+state) and its `PreviewSha256`. With `-Apply -PreviewSha256 <hash>`, only if the list
+is unchanged and every target is absent (it never deletes or overwrites), in this
+order:
 
-1. copies the module to `%ProgramFiles%\WindowsPowerShell\Modules\RefuteVm\<version>`
-   and checks the copied hashes;
-2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` with explicit ACLs
-   (Transcripts: SYSTEM and Administrators only; Log and State: also Hyper-V
-   Administrators modify, Users read);
-3. creates `C:\Hyper-V`, `C:\Hyper-V\Virtual Hard Disks`, `C:\Hyper-V\refute-vm`,
-   `C:\Hyper-V\refute-vm\media` (SYSTEM and Administrators full control, Hyper-V
-   Administrators modify);
-4. sets the WinRM service to start automatically and starts it;
-5. adds WinRM HTTP listeners on `127.0.0.1` and `::1` only; it stops if any other
-   listener exists;
-6. adds the firewall rule `Refute-JEA-Block-WinRM-Inbound`: inbound TCP 5985 and 5986
-   blocked from every address except loopback, on every profile;
-7. writes `C:\ProgramData\RefuteVm\RefuteVm.pssc` and registers the endpoint with
-   `Register-PSSessionConfiguration -AccessMode Local`, which restarts WinRM. JEA
-   grants each virtual account the "Log on as a service" right for the length of its
-   session.
+1. copies the module to `%ProgramFiles%\WindowsPowerShell\Modules\RefuteVm\<version>`,
+   checks the copied hashes, that only SYSTEM, Administrators, TrustedInstaller and
+   CREATOR OWNER can write there, and that exactly one role capability named
+   `RefuteVmOperator` exists on the module path (machine `PSModulePath`, Program Files
+   and System32);
+2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
+   tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
+   only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
+   SYSTEM and Administrators full control, Hyper-V Administrators modify);
+3. adds the firewall rule `Refute-JEA-Block-WinRM-Inbound` (inbound TCP 5985 and 5986
+   blocked from every address except loopback, on every profile) **before WinRM is
+   started**, and checks that it is in the active policy, that every profile is
+   enabled and that no enabled inbound rule overrides block rules;
+4. reads the WinRM listeners from the registry (the service may be stopped) and stops
+   if any is not HTTP on `127.0.0.1` or `::1`;
+5. sets WinRM to start automatically, starts it, checks the listeners again through
+   WinRM, adds the loopback listeners that are missing, and checks that every listener
+   is HTTP, port 5985, enabled, on loopback;
+6. writes `C:\ProgramData\RefuteVm\RefuteVm.pssc` and registers the endpoint with
+   `Register-PSSessionConfiguration -AccessMode Local` (this restarts WinRM), then
+   checks its virtual account, group and permission. JEA grants each virtual account
+   the "Log on as a service" right for the length of its session;
+7. writes the evidence (module hashes, role capability copies, endpoint settings,
+   listeners, listening sockets, firewall profiles and rule, folder ACLs) to
+   `C:\ProgramData\RefuteVm\Log\registration-evidence.json`.
 
-The evidence (listeners, listening sockets, the firewall rule, the endpoint's
-permission and run-as settings, the module hashes, the folder ACLs) is written to
-`C:\ProgramData\RefuteVm\Log\registration-evidence.json`.
+**If it stops in the middle** (a check fails), it prints what was already done; the
+parts already made stay as they are, and the endpoint is registered only by the last
+step. The maintainer decides what to do; the script never removes anything, and a new
+run refuses while any target exists.
 
-## Undoing the registration (run by the maintainer, as Administrator)
+## Reversal
 
-```powershell
-Unregister-PSSessionConfiguration -Name RefuteVm -Force
-Remove-NetFirewallRule -Name Refute-JEA-Block-WinRM-Inbound
-Get-ChildItem WSMan:\localhost\Listener   # note the names of the two loopback listeners added here
-Remove-Item -Path 'WSMan:\localhost\Listener\<name of one loopback listener>' -Recurse   # once per listener
-Remove-Item -LiteralPath "$env:ProgramFiles\WindowsPowerShell\Modules\RefuteVm" -Recurse
-Remove-Item -LiteralPath 'C:\ProgramData\RefuteVm' -Recurse
-```
-
-The VM and `C:\Hyper-V` are removed by the maintainer only, by the maintainer's own
-decision; no script deletes them.
+The registration creates only the items listed above, all named in the evidence file.
+Reverting any of them (the endpoint registration, the firewall rule, the loopback
+listeners, the installed module, the data folders, the `C:\Hyper-V` tree and the VM) is
+the maintainer's decision and action, as Administrator; no script of the project
+removes them.

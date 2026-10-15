@@ -161,6 +161,17 @@ function Get-RefuteVmPlanSha256 {
     return Get-RefuteSha256Text (ConvertTo-RefuteCanonicalJson $Plan)
 }
 
+function Get-RefuteVmCallerRecord {
+    # The connecting account (PSSenderInfo.UserInfo.Identity.Name; empty outside a
+    # remote session) and the account the session runs as (the JEA virtual account).
+    param($SenderInfo, [string]$RunAsUser)
+    $connected = ''
+    if ($null -ne $SenderInfo -and $null -ne $SenderInfo.UserInfo -and $null -ne $SenderInfo.UserInfo.Identity) {
+        $connected = [string]$SenderInfo.UserInfo.Identity.Name
+    }
+    return [ordered]@{ ConnectedUser = $connected; RunAsUser = $RunAsUser }
+}
+
 function New-RefuteVmChange {
     param([string]$Item, $Before, $After)
     return [ordered]@{ Item = $Item; Before = $Before; After = $After }
@@ -188,7 +199,8 @@ function Resolve-RefuteVmTarget {
     }
     $allowedMedia = @("$($Config.MediaRoot)\$($Config.InstallIsoName)", "$($Config.MediaRoot)\$($Config.SeedIsoName)")
     foreach ($dvd in @($vm.DvdDrives)) {
-        if ($allowedMedia -inotcontains $dvd) { return @{ Vm = $null; Refusal = "unexpected DVD media: $dvd" } }
+        # an empty drive ('') is allowed; it is listed, and DetachInstallMedia removes it
+        if ($dvd -and $allowedMedia -inotcontains $dvd) { return @{ Vm = $null; Refusal = "unexpected DVD media: $dvd" } }
     }
     if ($Operation -ne 'DisconnectNetwork') {
         foreach ($adapter in @($vm.NetworkAdapters)) {
@@ -203,8 +215,10 @@ function Resolve-RefuteVmTarget {
 function New-RefuteVmPlan {
     # The plan of one operation: its target, the changes it would make (each with the
     # value observed before and the value after), whether it is already done, or why it
-    # is refused. The plan holds no time and no identity, so the same configuration and
-    # the same observed state always give the same plan and the same PlanSha256.
+    # is refused. It also holds the observed preconditions (host settings, files, the
+    # recorded state and the whole record of the target VM), so a change to any of them
+    # between the simulation and the real call changes the PlanSha256. The plan holds no
+    # time and no identity: the same configuration and observed state give the same hash.
     param(
         [string]$Operation,
         [System.Collections.IDictionary]$Config,
@@ -224,6 +238,13 @@ function New-RefuteVmPlan {
         Argument     = $argument
         ConfigSha256 = Get-RefuteSha256Text (ConvertTo-RefuteCanonicalJson $Config)
         Target       = [ordered]@{ VmName = $Config.VmName; VmId = $null }
+        Preconditions = [ordered]@{
+            Host                  = $Observed.Host
+            Files                 = $Observed.Files
+            RecordedVmId          = $Observed.RecordedVmId
+            RecordedSeedIsoSha256 = $Observed.RecordedSeedIsoSha256
+            TargetVm              = $null
+        }
         Changes      = @()
         AlreadyDone  = $false
         Refusal      = $null
@@ -245,6 +266,7 @@ function New-RefuteVmPlan {
         if ($target.Refusal) { return (& $refuse $target.Refusal) }
         $vm = $target.Vm
         $plan.Target.VmId = $vm.VmId
+        $plan.Preconditions.TargetVm = $vm
         if ($spec.VmState -notcontains $vm.State) {
             return (& $refuse "the VM is $($vm.State); this operation needs: $($spec.VmState -join ' or ')")
         }
@@ -268,8 +290,11 @@ function New-RefuteVmPlan {
             }
         }
         'CreateBaseDisk' {
-            if (-not $Observed.Files.BaseDiskExists) {
+            $disk = $Observed.Files.BaseDisk
+            if (-not $disk.Exists) {
                 $changes.Add((New-RefuteVmChange 'BaseDisk' 'absent' ("dynamic VHDX of $($Config.BaseDiskSizeBytes) bytes at $($Config.BaseDiskPath)")))
+            } elseif ($disk.Format -cne 'VHDX' -or $disk.Type -cne 'Dynamic' -or $disk.SizeBytes -ne $Config.BaseDiskSizeBytes) {
+                return (& $refuse "a file at the base disk path is not the configured disk ($($disk.Format), $($disk.Type), $($disk.SizeBytes) bytes); never overwritten")
             }
         }
         'CreateVm' {
@@ -307,7 +332,9 @@ function New-RefuteVmPlan {
             }
         }
         'AttachBaseDisk' {
-            if (-not $Observed.Files.BaseDiskExists) { return (& $refuse 'the base disk does not exist (CreateBaseDisk first)') }
+            $disk = $Observed.Files.BaseDisk
+            if (-not $disk.Exists) { return (& $refuse 'the base disk does not exist (CreateBaseDisk first)') }
+            if ($disk.Format -cne 'VHDX' -or $disk.Type -cne 'Dynamic' -or $disk.SizeBytes -ne $Config.BaseDiskSizeBytes) { return (& $refuse 'the base disk is not the configured disk') }
             if (@($vm.HardDisks) -inotcontains $Config.BaseDiskPath) { $changes.Add((New-RefuteVmChange 'HardDisk' 'none' $Config.BaseDiskPath)) }
         }
         'ImportInstallIso' {
@@ -319,7 +346,10 @@ function New-RefuteVmPlan {
             $changes.Add((New-RefuteVmChange 'Media.InstallIso' 'absent' $MediaSha256))
         }
         'ImportSeedIso' {
-            if ($Observed.Files.SeedIsoMediaSha256 -ceq $MediaSha256) { break }
+            if ($Observed.Files.SeedIsoMediaSha256 -ceq $MediaSha256) {
+                if ($Observed.RecordedSeedIsoSha256 -cne $MediaSha256) { return (& $refuse 'the seed ISO is in MediaRoot but its hash is not recorded in the state; the maintainer inspects') }
+                break
+            }
             if ($Observed.Files.SeedIsoMediaSha256) { return (& $refuse 'a different seed ISO is already in MediaRoot (never overwritten)') }
             if ($Observed.Files.SeedIsoSourceSha256 -cne $MediaSha256) { return (& $refuse 'the seed ISO in MediaSource is missing or has another SHA-256') }
             $changes.Add((New-RefuteVmChange 'Media.SeedIso' 'absent' $MediaSha256))
@@ -343,7 +373,11 @@ function New-RefuteVmPlan {
         'StopVm' { $changes.Add((New-RefuteVmChange 'State' $vm.State 'Off')) }
         'DetachInstallMedia' {
             if (@($vm.HardDisks) -inotcontains $Config.BaseDiskPath) { return (& $refuse 'the base disk is not attached') }
-            foreach ($dvd in @($vm.DvdDrives)) { $changes.Add((New-RefuteVmChange 'DvdDrive' $dvd 'none')) }
+            foreach ($dvd in @($vm.DvdDrives)) {
+                $shown = $dvd
+                if (-not $dvd) { $shown = 'empty drive' }
+                $changes.Add((New-RefuteVmChange 'DvdDrive' $shown 'removed'))
+            }
             if ($vm.FirstBootDevice -ine $Config.BaseDiskPath) { $changes.Add((New-RefuteVmChange 'Firmware.FirstBootDevice' $vm.FirstBootDevice $Config.BaseDiskPath)) }
         }
         'SetProcessorMaximum' {

@@ -120,11 +120,17 @@ https://docs.docker.com/engine/install/ubuntu/ (accessed 2026-10-14). The guest 
   `::1` only and a firewall rule that blocks inbound TCP 5985 and 5986 from every
   address except loopback, on every profile; transcripts of every session in
   `C:\ProgramData\RefuteVm\Transcripts`. The registration script shows every change
-  before it applies it, never deletes or overwrites, and writes the evidence.
+  and a hash of the list before it applies it, applies only with that hash, adds the
+  firewall rule and checks the active policy and the listeners before WinRM is
+  started, registers the endpoint last after its post-conditions hold, never deletes
+  or overwrites, and writes the evidence.
 - **W6.5 Operations.** One administrative action per call. A simulation computes the
-  plan (target, every change with its value before and after, refusal) and its
-  SHA-256 without changing the managed state; the real call needs that hash and
-  refuses if the plan changed. Every simulation, intent, refusal and result is logged.
+  plan (target, the observed preconditions, every change with its value before and
+  after, refusal) and its SHA-256 without changing the managed state; the real call
+  needs that hash, holds an exclusive lock from its observation to its final check,
+  and refuses if the plan changed. Media are copied only through a verified copy
+  (source read without write sharing, hashed while copied, moved into place only if
+  the hash matches, never overwriting). Every simulation, intent, refusal and result is logged.
   Every operation checks the VM's identity (the VMId recorded at creation, its name,
   its paths, its disks and media) and refuses any divergence. No operation deletes a
   VM or a disk, turns a VM off without a guest shutdown, connects a network adapter,
