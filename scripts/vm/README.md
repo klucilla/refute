@@ -59,6 +59,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 |---|---|---|
 | `RefuteVm/` | the endpoint | module: `RefuteVm.Core.ps1` (pure logic: configuration checks, plans, plan hash), `RefuteVm.HyperV.ps1` (observed state and the one mutation), `RefuteVm.psm1`, `RefuteVm.Config.psd1`, `RoleCapabilities/RefuteVmOperator.psrc` |
 | `Register-RefuteVmEndpoint.ps1` | the maintainer, as Administrator | registers the endpoint; without `-Apply`, only shows what would change |
+| `Remove-RefuteWinRmListener.ps1` | the maintainer, as Administrator | removes the WinRM listener `*+HTTP`, with a `.reg` backup in `C:\ProgramData\RefuteVm-backup`, with WinRM stopped; without `-Apply`, only shows the listener keys and what would change |
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |
@@ -80,6 +81,11 @@ user name, host name or address.
    download (2.7 GB from releases.ubuntu.com).
 4. A reviewed change sets `InstallIsoSha256` in `RefuteVm.Config.psd1`.
 5. `New-RefuteSeedIso.ps1`; it prints the seed ISO's SHA-256.
+5a. Only if WinRM has a listener on every address (`*+HTTP`; the registration refuses
+   any listener that is not HTTP on loopback): the maintainer decided on 2026-10-15 to
+   remove it with `Remove-RefuteWinRmListener.ps1`, started like the registration below
+   (preview, the maintainer's OK, then `-Apply -PreviewSha256 <hash>`). The WinRM service
+   must be stopped; the script never starts or stops it.
 6. The maintainer, in Windows PowerShell started as Administrator, starts a new
    `powershell.exe -NoProfile` whose environment holds `PSModuleAnalysisCachePath=nul`
    (set in the parent shell first: only a value present when PowerShell starts disables

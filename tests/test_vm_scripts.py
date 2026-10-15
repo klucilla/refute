@@ -207,6 +207,7 @@ PREVIEW_FORBIDDEN = (
 # reviewed. The ACL methods (SetOwner, SetAccessRuleProtection, AddAccessRule) act on an
 # in-memory DirectorySecurity that only Set-Acl, in the apply section, writes.
 PREVIEW_COMMANDS = {
+    "find-refutehypervmanifest",
     "find-rolecapabilitycopies",
     "foreach-object",
     "get-acl",
@@ -251,12 +252,78 @@ PREVIEW_METHODS = {
     "setaccessruleprotection",
     "setowner",
     "split",
+    "startswith",
     "substring",
     "tolowerinvariant",
     "tostring",
     "translate",
     "trimend",
+    "tryparse",
 }
+
+# The preview of Remove-RefuteWinRmListener.ps1 (and the core): reads of the registry,
+# the service state and the backup folder ACL, in-memory work and output.
+LISTENER_PREVIEW_COMMANDS = {
+    "foreach-object",
+    "get-acl",
+    "get-childitem",
+    "get-refutebackupproblems",
+    "get-refutelistenerremoval",
+    "get-refutewriterightsmask",
+    "get-service",
+    "join-path",
+    "new-object",
+    "read-refutelisteners",
+    "set-strictmode",
+    "sort-object",
+    "test-path",
+    "where-object",
+    "write-output",
+}
+LISTENER_PREVIEW_METHODS = {
+    "add",
+    "close",
+    "computehash",
+    "create",
+    "dispose",
+    "endswith",
+    "getbytes",
+    "getcurrent",
+    "getsubkeynames",
+    "getvalue",
+    "getvaluenames",
+    "isinrole",
+    "lastindexof",
+    "max",
+    "opensubkey",
+    "startswith",
+    "substring",
+    "tostring",
+    "translate",
+    "tryparse",
+}
+
+
+def test_the_listener_removal_preview_only_reads(cases):
+    """The preview of the listener removal: allowlisted commands and methods only, no
+    dynamic command, no redirection; the registry keys are opened read-only; the WinRM
+    service is never started, stopped or set anywhere in the script."""
+    preview = cases["PreviewListener"]
+    assert preview["ApplyMarkerFound"]
+    assert {c.lower() for c in preview["Commands"]} - LISTENER_PREVIEW_COMMANDS == set()
+    assert {m.lower() for m in preview["Methods"]} - LISTENER_PREVIEW_METHODS == set()
+    assert preview["Unnamed"] == [] and preview["Redirections"] == []
+    text = (VM / "Remove-RefuteWinRmListener.ps1").read_text(encoding="utf-8")
+    before = text[: text.index("# ---- apply")]
+    assert (
+        ".OpenSubKey($ListenerRoot)" in before and ".OpenSubKey($ListenerRoot, $true)" not in before
+    )
+    for command in ("Start-Service", "Stop-Service", "Restart-Service", "Set-Service", "WSMan:"):
+        assert command.lower() not in text.lower(), command
+    # the apply opens the listener root writable once, to delete exactly the target key
+    apply = text[text.index("# ---- apply") :]
+    assert apply.count(".OpenSubKey($ListenerRoot, $true)") == 1
+    assert "DeleteSubKeyTree($Target)" in apply
 
 
 def test_the_registration_preview_only_reads(cases):
@@ -315,6 +382,10 @@ REVIEWED_SINGLE_OBJECTS = {
     # instead give an array holding that empty array (Count 1)
     ("RefuteVm/RefuteVm.Core.ps1", "$problems.Count"),
     ("RefuteVm/RefuteVm.psm1", "$problems.Count"),
+    # Read-RefuteListeners returns one ordered dictionary (empty or not); a dictionary is
+    # never unrolled by the pipeline, so .Count and [$name] are its own members
+    ("Remove-RefuteWinRmListener.ps1", "$listeners.Count"),
+    ("Remove-RefuteWinRmListener.ps1", "$listeners[$name]"),
 }
 
 
@@ -378,6 +449,57 @@ def test_the_registration_preview_runs_to_its_end_in_windows_powershell(tmp_path
     assert out.returncode in (0, 1), text
     if out.returncode == 1:
         assert "Problems (nothing was changed):" in out.stdout, text
+
+
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="the listener removal runs in Windows PowerShell 5.1"
+)
+def test_the_listener_removal_preview_runs_and_never_applies_without_its_hash(tmp_path):
+    """The preview of Remove-RefuteWinRmListener.ps1 in powershell.exe: it refuses without
+    PSModuleAnalysisCachePath=nul in its launch environment, otherwise prints the listener
+    keys and a PreviewSha256 and changes nothing; -Apply without -PreviewSha256 is refused
+    before the apply section."""
+    import os
+
+    exe = shutil.which("powershell.exe")
+    assert exe
+    argv = [
+        exe,
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        str(VM / "Remove-RefuteWinRmListener.ps1"),
+    ]
+    plain = {k: v for k, v in os.environ.items() if k.upper() != "PSMODULEANALYSISCACHEPATH"}
+    env = {**plain, "PSModuleAnalysisCachePath": "nul"}
+
+    def run(*extra, environment=env):
+        return subprocess.run(
+            [*argv, *extra],
+            cwd=tmp_path,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+
+    refused = run(environment=plain)
+    assert refused.returncode == 1 and "PSModuleAnalysisCachePath=nul" in refused.stdout
+    assert "Mode:" not in refused.stdout
+    out = run()
+    text = out.stdout + out.stderr
+    assert "PropertyNotFoundStrict" not in text, text
+    assert "Mode: preview (no change)" in out.stdout and "PreviewSha256: " in out.stdout, text
+    assert "Listener keys under HKLM" in out.stdout, text
+    assert out.returncode in (0, 1), text
+    if out.returncode == 1:
+        assert "Problems (nothing was changed):" in out.stdout, text
+    no_hash = run("-Apply")
+    assert no_hash.returncode == 1, no_hash.stdout + no_hash.stderr
+    assert "-Apply needs -PreviewSha256 from a preview run" in no_hash.stdout
+    assert "Already done" not in no_hash.stdout and "Done:" not in no_hash.stdout
 
 
 def _iso_files(data: bytes) -> tuple[str, str, dict[str, bytes]]:
