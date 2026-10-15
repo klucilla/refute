@@ -14,6 +14,9 @@ htmlcov/
 
 # Refute outputs and caches (data cache lives inside the project)
 .cache/
+# Personal data for the right of reply (author addresses, drafts, sent messages):
+# never committed; archived to the maintainer's Drive (WP2 W2.13a)
+private/
 dossiers/
 repro/
 
