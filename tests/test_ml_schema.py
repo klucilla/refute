@@ -4,6 +4,7 @@ schema cases of section 2), offline."""
 import copy
 import json
 import math
+from decimal import Decimal
 
 import pytest
 import yaml
@@ -1216,6 +1217,32 @@ def test_recorded_derived_values_are_exact(tmp_path):
         "m": 5000,
         "factor": 1.4142135623730951,
     }
+
+
+@pytest.mark.parametrize("precision", [5, 28, 100])
+def test_base_60_is_exact_whatever_the_decimal_context(tmp_path, monkeypatch, precision):
+    """Codex review: 1:30.000000000000000000000000001 is 90 + 1e-27, not 90, whatever
+    the decimal context of the caller."""
+    import decimal
+
+    from refute.packs.ml import schema
+
+    text = "x: 1:30.000000000000000000000000001"
+    with decimal.localcontext() as ctx:
+        ctx.prec = precision
+        value = yaml.load(text, Loader=schema._DecimalLoader)["x"]
+    assert value == Decimal("90.000000000000000000000000001")
+    # in a claim, the transcription "90" does not match it
+    monkeypatch.setitem(TRANSCRIPTIONS["c1"], "value", "90")
+    path = build_claim(tmp_path)
+    content = path.read_text(encoding="utf-8")
+    path.write_text(
+        content.replace("reported: 91.2\n", "reported: 1:30.000000000000000000000000001\n")
+    )
+    with decimal.localcontext() as ctx:
+        ctx.prec = precision
+        with pytest.raises(ClaimError, match="transcribed value differs"):
+            load_claim(path, pack=PACK)
 
 
 def test_numbers_the_yaml_reads_are_compared_without_a_float(tmp_path):

@@ -24,7 +24,7 @@ from __future__ import annotations
 import json
 import math
 import re
-from decimal import Decimal, InvalidOperation
+from decimal import Context, Decimal, Inexact, InvalidOperation, Rounded
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -1159,10 +1159,17 @@ def _construct_decimal(loader: yaml.SafeLoader, node: yaml.Node) -> Decimal | st
     text = str(loader.construct_scalar(node)).replace("_", "")
     if ":" in text:  # YAML 1.1 base 60, for example 1:30.5 = 90.5
         sign = -1 if text.startswith("-") else 1
-        total = Decimal(0)
-        for part in text.lstrip("+-").split(":"):
-            total = total * 60 + Decimal(part)
-        return sign * total
+        parts = text.lstrip("+-").split(":")
+        # exact arithmetic, independent of the caller's decimal context: enough digits
+        # for every term, and any rounding raises instead of passing (Codex review)
+        exact = Context(prec=len(text) * 4 + 50, traps=[Inexact, Rounded, InvalidOperation])
+        try:
+            total = Decimal(0)
+            for part in parts:
+                total = exact.add(exact.multiply(total, Decimal(60)), Decimal(part))
+            return exact.multiply(Decimal(sign), total)
+        except (Inexact, Rounded, InvalidOperation):
+            return text
     try:
         value = Decimal(text)
     except InvalidOperation:
