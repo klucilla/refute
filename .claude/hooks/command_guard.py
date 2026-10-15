@@ -134,6 +134,7 @@ class Lexed:
     nested: list[str] = field(default_factory=list)  # command substitution bodies
     heredocs: list[tuple[list[Word], str, bool]] = field(default_factory=list)
     herestrings: list[str] = field(default_factory=list)  # PowerShell bodies
+    separators: list[str] = field(default_factory=list)  # what ended each segment
 
 
 def _read_until(text: str, i: int, close: str) -> tuple[str, int]:
@@ -214,7 +215,7 @@ def lex(command: str, shell: str = BASH) -> Lexed:
                     continue
                 inner, k = _read_until(body, start + 2, ")")
                 out.nested.append(inner)
-        return " HERESTRING "
+        return f" __HERESTRING_{len(out.herestrings) - 1}__ "
 
     if shell == POWERSHELL:  # here-strings are PowerShell syntax only
         text = _HERESTRING.sub(herestring, text)
@@ -251,16 +252,17 @@ def lex(command: str, shell: str = BASH) -> Lexed:
             segment.append(Word(word, quoted=all_quoted))
         word, in_word, all_quoted = "", False, True
 
-    def end_segment() -> None:
+    def end_segment(separator: str = "") -> None:
         nonlocal segment
         end_word()
         if segment:
             out.segments.append(segment)
+            out.separators.append(separator)
         segment = []
 
     while i < len(text):
         ch = text[i]
-        if ch == "'":
+        if ch == "'" and shell != CMD:
             j = text.find("'", i + 1)
             j = len(text) if j < 0 else j
             word += text[i + 1 : j]
@@ -331,7 +333,7 @@ def lex(command: str, shell: str = BASH) -> Lexed:
             i += 1
             continue
         if ch in ";|(){}\n":
-            end_segment()
+            end_segment(ch)
             i += 1
             continue
         if ch in " \t\r":
@@ -461,18 +463,29 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
         k = 0
         while k < len(args):  # what follows -c CODE, -m MODULE or a script is argv
             arg = args[k]
-            if arg == "-m":
-                if k + 1 < len(args) and args[k + 1].lower() in PYTEST_WORDS:
-                    return PYTEST_REASON
-                break
-            if arg == "-c":
-                if k + 1 < len(args) and _python_uses_pytest(args[k + 1]):
-                    return PYTEST_REASON
-                break
-            if arg in ("-W", "-X", "--check-hash-based-pycs"):
+            if arg == "--check-hash-based-pycs":
                 k += 2
                 continue
-            if not arg.startswith("-") or arg == "-":
+            if not arg.startswith("-") or arg in ("-", "--"):
+                break
+            if arg.startswith("--"):
+                k += 1
+                continue
+            stop = False
+            for pos in range(1, len(arg)):  # a cluster of short options: -Bm, -mpytest
+                option = arg[pos]
+                if option in "mcWX":
+                    value = arg[pos + 1 :]
+                    if not value:
+                        k += 1
+                        value = args[k] if k < len(args) else ""
+                    if option == "m" and value.lower() in PYTEST_WORDS:
+                        return PYTEST_REASON
+                    if option == "c" and _python_uses_pytest(value):
+                        return PYTEST_REASON
+                    stop = option in "mc"
+                    break
+            if stop:
                 break
             k += 1
     if name in SHELLS:
@@ -537,9 +550,14 @@ def check(command: str, depth: int = 0, shell: str = BASH) -> str | None:
         reason = _check_segment(words, depth, shell)
         if reason:
             return reason
-    if lexed.herestrings and any(_reads_python_stdin(w) for w in lexed.segments):
-        if any(_python_uses_pytest(body) for body in lexed.herestrings):
-            return PYTEST_REASON
+    for n, words in enumerate(lexed.segments):  # @'...'@ | python -
+        piped = n + 1 < len(lexed.segments) and lexed.separators[n] == "|"
+        if not piped or not _reads_python_stdin(lexed.segments[n + 1]):
+            continue
+        for w in words:
+            m = re.fullmatch(r"__HERESTRING_(\d+)__", w.text)
+            if m and _python_uses_pytest(lexed.herestrings[int(m.group(1))]):
+                return PYTEST_REASON
     for body in lexed.nested:
         reason = check(body, depth + 1, shell)
         if reason:
