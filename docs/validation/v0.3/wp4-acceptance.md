@@ -37,6 +37,30 @@ lines 47-50). Committed **before** the tests and code of the package (plan lines
     attacks;
   - **an interrupted attack next to a valid failure** (must stay `FRAGILE`);
   - **n_attack = 0.**
+- **W4.3a Added on 2026-10-15** (additions only; nothing above changes). They follow the
+  WP2 core as merged and the WP3 claim design (PR #77); the cases that use WP3 fields
+  are written only after the maintainer approves that design:
+  - **one paper per remaining attack path:** `ablation` (the switched-off component
+    makes no difference in the claimed sense), `holdout` (the claim fails on the
+    carved split beyond the wider tolerance) and `trivial_baseline` (a majority-class
+    baseline does as well): each must be `FRAGILE`;
+  - **comparison claims end to end:** one paper per mode (`direction`, `margin`,
+    `magnitude`) that reproduces, and one `direction` paper with a tie (`d_rep = 0`)
+    that must not be `REPRODUCED`;
+  - **a repository with no seed option:** the base runs once and the `seeds` attack is
+    recorded as not applicable, with its reason;
+  - **`metric_recompute` fatal path:** a printed value outside its interval while the
+    two implementations agree gives `NOT_REPRODUCED`; the same repository with a
+    printed value that only a boundary case separates gives `INCONCLUSIVE`, never
+    `NOT_REPRODUCED`;
+  - **execution in phases:** in a paper with three claims, the accounting record shows
+    every base reproduction, in the drawn order, before the first attack of any claim
+    (WP3 D-S4);
+  - **development profile:** one paper run under the `development` budget profile, with
+    its own accounting and no verdict counted;
+  - **reply draft:** from the sealed dossier of the `NOT_REPRODUCED` paper,
+    `refute reply-draft` writes a draft whose claim fields come from that claim's entry
+    of the sealed `claim.yaml` (WP3 D-S3), with a synthetic contact under `private/`.
 - **W4.4** For each paper, the full verdict is checked:
   - the claim verdict;
   - the reason;
@@ -58,7 +82,11 @@ Must-fail checks:
 - the interrupted-attack paper must not be `INCONCLUSIVE`;
 - the coverage papers of #15 must not be `REPRODUCED`. The zero-tests-collected
   paper is the exception: its suite check must not be PASS, and its verdict must not
-  change because of the suite.
+  change because of the suite;
+- (W4.3a) the `direction` tie must not be `REPRODUCED`; the `metric_recompute`
+  boundary case must not be `NOT_REPRODUCED`; the no-seed repository must not run the
+  `seeds` attack; no attack of any claim may start before the last base reproduction
+  ends.
 
 ## 3. Metrics and evidence
 
@@ -66,7 +94,7 @@ Must-fail checks:
 - CI is green on the four jobs.
 - The CI time per job stays within the maintainer's target of 15 minutes; the WP4
   cases add seconds, not minutes.
-- The PR lists each case of W4.3 with its test.
+- The PR lists each case of W4.3 and W4.3a with its test.
 
 ## 4. Regression cases
 
