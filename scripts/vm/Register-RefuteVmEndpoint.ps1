@@ -178,9 +178,10 @@ if (-not $isAdmin) { $problems.Add('run in a PowerShell started as Administrator
 if ($Apply -and -not $PreviewSha256) { $problems.Add('-Apply needs -PreviewSha256 from a preview run') }
 # The preview only reads: no WSMan provider access (it may offer to start WinRM) and no
 # module discovery (it may write the module analysis cache). The Hyper-V module is found
-# by its manifest file.
-$hyperVManifest = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V\Hyper-V.psd1'
-if (-not (Test-Path -LiteralPath $hyperVManifest -PathType Leaf)) { $problems.Add('the Hyper-V PowerShell module is not available') }
+# by its manifest file, directly in the module folder or in a version subfolder
+# (Windows 10 and 11: Hyper-V\2.0.0.0\Hyper-V.psd1); see Find-RefuteHyperVManifest.
+$hyperVManifest = Find-RefuteHyperVManifest -ModuleFolder (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V')
+if (-not $hyperVManifest) { $problems.Add('the Hyper-V PowerShell module is not available') }
 
 $operatorSid = $null
 try {
@@ -225,6 +226,7 @@ $sourceHashes = Get-TreeHashes $sourceRoot
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("Operator account: $OperatorAccount ($operatorSid)")
 $lines.Add("Virtual account group: $groupAccount ($SidHyperVAdmins)")
+$lines.Add("Hyper-V module manifest: $(if ($hyperVManifest) { $hyperVManifest } else { 'not found' })")
 $lines.Add("1. Copy the module to $ModuleDestination (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write):")
 foreach ($k in $sourceHashes.Keys) { $lines.Add("     $($sourceHashes[$k])  $k") }
 $lines.Add("2. Create these folders, owner Administrators, inheritance removed:")

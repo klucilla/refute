@@ -32,10 +32,6 @@ foreach ($file in $scripts) {
 # section of Register-RefuteVmEndpoint.ps1, and everywhere in the core it dot-sources
 # (tests/test_vm_scripts.py checks them against an allowlist).
 $register = Join-Path $vmDir 'Register-RefuteVmEndpoint.ps1'
-$tokens = $null; $errors = $null
-$ast = [System.Management.Automation.Language.Parser]::ParseFile($register, [ref]$tokens, [ref]$errors)
-$marker = @($tokens | Where-Object { $_.Kind -eq 'Comment' -and $_.Text.StartsWith('# ---- apply') })
-$applyAt = if ($marker.Count -eq 1) { $marker[0].Extent.StartOffset } else { -1 }
 $coreAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'RefuteRegistration.Core.ps1'), [ref]$null, [ref]$null)
 
 function Get-PreviewSurface([object[]]$Nodes) {
@@ -55,9 +51,21 @@ function Get-PreviewSurface([object[]]$Nodes) {
     }
 }
 
-$previewNodes = @($ast.FindAll({ param($n) $true }, $true) | Where-Object { $_.Extent.StartOffset -lt $applyAt }) + @($coreAst.FindAll({ param($n) $true }, $true))
-$out['Preview'] = Get-PreviewSurface $previewNodes
-$out.Preview['ApplyMarkerFound'] = ($applyAt -ge 0)
+function Get-ScriptPreview([string]$Path) {
+    # The preview surface of one script: everything before its "# ---- apply" comment, and
+    # the whole core it dot-sources.
+    $scriptTokens = $null
+    $scriptAst = [System.Management.Automation.Language.Parser]::ParseFile($Path, [ref]$scriptTokens, [ref]$null)
+    $applyMarker = @($scriptTokens | Where-Object { $_.Kind -eq 'Comment' -and $_.Text.StartsWith('# ---- apply') })
+    $at = if ($applyMarker.Count -eq 1) { $applyMarker[0].Extent.StartOffset } else { -1 }
+    $nodes = @($scriptAst.FindAll({ param($n) $true }, $true) | Where-Object { $_.Extent.StartOffset -lt $at }) + @($coreAst.FindAll({ param($n) $true }, $true))
+    $surface = Get-PreviewSurface $nodes
+    $surface['ApplyMarkerFound'] = ($at -ge 0)
+    return $surface
+}
+
+$out['Preview'] = Get-ScriptPreview $register
+$out['PreviewListener'] = Get-ScriptPreview (Join-Path $vmDir 'Remove-RefuteWinRmListener.ps1')
 # negative checks: the collector sees a dynamic command and a file redirection
 $probe = [System.Management.Automation.Language.Parser]::ParseInput("& `$someCommand`nWrite-Output 'probe' > `$somewhere", [ref]$null, [ref]$null)
 $probeSurface = Get-PreviewSurface @($probe.FindAll({ param($n) $true }, $true))
@@ -365,6 +373,49 @@ $fw = @(
 $found = @(Find-RefuteBlockOverrides $fw)
 Add-Case 'only enabled inbound bypass rules are found' ($found.Count -eq 1 -and $found[0] -eq 'bypass-in') ($found -join ',')
 Add-Case 'no bypass rule, nothing found' (@(Find-RefuteBlockOverrides @($fw[0], $fw[2], $fw[3])).Count -eq 0)
+
+# Hyper-V module manifest: both layouts (the maintainer's first preview did not find the
+# version subfolder of Windows 10 and 11)
+$hv = Join-Path $WorkDir 'hyperv'
+foreach ($layout in 'flat', 'versioned', 'two', 'none', 'noversion') {
+    [void][System.IO.Directory]::CreateDirectory((Join-Path $hv $layout))
+}
+[System.IO.File]::WriteAllText((Join-Path $hv 'flat\Hyper-V.psd1'), '@{}')
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'versioned\2.0.0.0'))
+[System.IO.File]::WriteAllText((Join-Path $hv 'versioned\2.0.0.0\Hyper-V.psd1'), '@{}')
+foreach ($v in '1.1', '2.0.0.0') {
+    [void][System.IO.Directory]::CreateDirectory((Join-Path $hv "two\$v"))
+    [System.IO.File]::WriteAllText((Join-Path $hv "two\$v\Hyper-V.psd1"), '@{}')
+}
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'noversion\latest'))
+[System.IO.File]::WriteAllText((Join-Path $hv 'noversion\latest\Hyper-V.psd1'), '@{}')
+Add-Case 'Hyper-V manifest: flat layout' ((Find-RefuteHyperVManifest (Join-Path $hv 'flat')) -eq (Join-Path $hv 'flat\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: version subfolder' ((Find-RefuteHyperVManifest (Join-Path $hv 'versioned')) -eq (Join-Path $hv 'versioned\2.0.0.0\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: the highest version wins' ((Find-RefuteHyperVManifest (Join-Path $hv 'two')) -eq (Join-Path $hv 'two\2.0.0.0\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: none' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'none')))
+Add-Case 'Hyper-V manifest: a folder that is not a version is ignored' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'noversion')))
+Add-Case 'Hyper-V manifest: missing module folder' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'absent')))
+
+# WinRM listener removal plan
+$plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'
+Add-Case 'listener: *+HTTP alone, nothing remains' ($plan1.TargetPresent -and @($plan1.Remaining).Count -eq 0 -and @($plan1.ForeignRemaining).Count -eq 0)
+$plan2 = Get-RefuteListenerRemoval -Names @('*+HTTP', 'IP:127.0.0.1+HTTP', 'IP:::1+HTTP') -Target '*+HTTP'
+Add-Case 'listener: loopback HTTP may remain' ($plan2.TargetPresent -and @($plan2.Remaining).Count -eq 2 -and @($plan2.ForeignRemaining).Count -eq 0)
+$plan3 = Get-RefuteListenerRemoval -Names @('*+HTTP', '*+HTTPS', 'IP:10.0.0.5+HTTP', 'IP:127.0.0.1+HTTPS') -Target '*+HTTP'
+Add-Case 'listener: other non-loopback or HTTPS listeners are reported' (@($plan3.ForeignRemaining).Count -eq 3)
+$plan4 = Get-RefuteListenerRemoval -Names @('IP:127.0.0.1+HTTP') -Target '*+HTTP'
+Add-Case 'listener: target absent' (-not $plan4.TargetPresent)
+$plan5 = Get-RefuteListenerRemoval -Names @() -Target '*+HTTP'
+Add-Case 'listener: no listener at all' (-not $plan5.TargetPresent -and @($plan5.ForeignRemaining).Count -eq 0)
+
+# .reg export check
+$key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Listener\*+HTTP'
+$good = "Windows Registry Editor Version 5.00`r`n`r`n[$key]`r`n`"Port`"=dword:00001761`r`n"
+Add-Case 'reg export: exactly the key' (Test-RefuteRegExport -Text $good -KeyPath $key)
+Add-Case 'reg export: a subkey of the key is allowed' (Test-RefuteRegExport -Text ($good + "[$key\sub]`r`n") -KeyPath $key)
+Add-Case 'reg export: another key is refused' (-not (Test-RefuteRegExport -Text ($good + "[HKEY_LOCAL_MACHINE\SOFTWARE\Other]`r`n") -KeyPath $key))
+Add-Case 'reg export: a sibling key is refused' (-not (Test-RefuteRegExport -Text ($good + "[$key" + "S]`r`n") -KeyPath $key))
+Add-Case 'reg export: the key missing is refused' (-not (Test-RefuteRegExport -Text "Windows Registry Editor Version 5.00`r`n" -KeyPath $key))
 
 $psrc = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RoleCapabilities/RefuteVmOperator.psrc')
 $psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.psd1')
