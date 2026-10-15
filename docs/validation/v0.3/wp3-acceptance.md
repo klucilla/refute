@@ -33,23 +33,24 @@ in [docs/sandbox.md](../../sandbox.md).
 
 ### 1.2 Compatibility of locked claims (related to #30)
 
-- **W3.5** **No regression in the resolution of existing claims.**
-  - **Existing state, outside WP3.** With the code at the base of WP3 (main
-    `2b9c637`), the resolved claim hash of the v0.2 claim is already different from
-    its lock: `refute verify calibration/v0.2/self_claim.yaml` reports the locked
-    `c9f341d2...6b34a8` against `5fe1a3de...6d502` now. Fields added in v0.2.1
-    changed it (`docs/claim-spec.md`, end of the TESS section). This is tracked in
-    #30. The historical locks stay verifiable at their locked commits, and WP3 does
-    not try to restore them.
-  - **What WP3 must not change.** A test loads the v0.1 and v0.2 claims and their
-    attachments, resolves them with the WP3 code, and requires their canonical forms
-    and claim hashes to equal the values computed with the code at the base of WP3.
-    Those values are recorded in the test before any WP3 change, with the commit they
-    come from. Any WP3 change that alters them is redesigned, for example by keeping
-    ML fields in the ML pack schema.
+- **W3.5** **Compatibility of the locked claims** (revised on 2026-10-15 by decision
+  of the maintainer; the earlier revision of 7497955 had replaced the requirement
+  without approval). The mechanism and its safeguards are in
+  [lock-compat-acceptance.md](lock-compat-acceptance.md). Two separate requirements,
+  both offline in CI:
+  1. **Equality with the locked hashes.** A test loads the historical locked claims
+     (the v0.1 claim and the v0.2 claim, each with its lock file), resolves them with
+     the new code, and requires that their historical projection equals the
+     `claim_sha256` recorded in each lock. Running the verification only at the old
+     commits does not count.
+  2. **No regression of the full current resolution.** The full resolved claim hash of
+     each claim equals a value recorded in the test, with the commit it comes from.
+  - Any WP3 change that alters either is redesigned, for example by keeping ML fields
+    in the ML pack schema. Until the maintainer approves the compatibility pull
+    request, no WP3 change touches the claim schema or claim serialization.
   - **Attachments** are checked separately by the existing lock verification
-    (`src/refute/core/lock.py`). This test covers the claim hash only.
-  - The locks are never edited. The test runs offline in CI.
+    (`src/refute/core/lock.py`).
+  - The locks are never edited.
 
 ### 1.3 Adapter
 
@@ -157,9 +158,9 @@ Refute's own code. scikit-learn 1.9.1 is already in `uv.lock` through `lightkurv
 - an empty split (#15);
 - an extraction path that matches nothing.
 
-**No regression (W3.5):** the v0.1 and v0.2 claims resolve, with the WP3 code, to
-the canonical forms and claim hashes recorded from the base of WP3. A change in the
-TESS resolution must fail this test.
+**Compatibility (W3.5):** with the WP3 code, the historical projection of the v0.1
+and v0.2 claims equals the `claim_sha256` of each lock, and their full resolved hashes
+equal the recorded values. A change in the TESS resolution must fail this test.
 
 Every coverage row of [docs/verdicts.md](../../verdicts.md) gets a case that must not
 pass and one that must, here or in WP4.
