@@ -44,7 +44,7 @@ concurrency:
 
 jobs:
   test:
-    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    name: ${{ matrix.os }} / Python ${{ matrix.python }} / ${{ matrix.shard }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -54,6 +54,10 @@ jobs:
         # the image: its version is recorded by the "Record environment" step.
         os: [ubuntu-24.04, windows-2025]
         python: ["3.12", "3.13"]
+        # The suite is split into shards that run in parallel (scripts/ci_shard.py):
+        # every test still runs on every OS and Python above; tests/test_ci_shard.py
+        # checks that each test file is in exactly one shard.
+        shard: [heavy-a, heavy-b, rest]
     steps:
       # Actions are pinned to a commit; the tag is in the comment. setup-uv
       # publishes no major-version tags since v8, so `@v10` would not resolve.
@@ -92,5 +96,10 @@ jobs:
           echo "REFUTE_WORKERS=$(uv run python -c 'import os; print(os.cpu_count() or 1)')" >> "$GITHUB_ENV"
       # Tests run with --disable-socket (pytest-socket, see pyproject.toml):
       # any attempt to use the network fails the test suite.
+      # The shard arguments are computed first, so that a failure of ci_shard.py fails
+      # the step (GitHub's bash runs with -e) instead of leaving pytest without them.
       - name: Tests (no network)
-        run: uv run pytest --durations=25
+        shell: bash
+        run: |
+          args="$(uv run python scripts/ci_shard.py ${{ matrix.shard }})"
+          uv run pytest --durations=25 $args
