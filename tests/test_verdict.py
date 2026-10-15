@@ -29,6 +29,7 @@ def test_enums_match_claude_md():
         "FRAGILE",
         "NOT_REPRODUCED",
         "NOT_REPRODUCIBLE",
+        "INCONCLUSIVE",
     ]
     assert "TRUE" not in {v.value for v in DiscoveryVerdict}
 
