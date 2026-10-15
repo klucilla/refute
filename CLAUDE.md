@@ -162,6 +162,42 @@ First pack: exoplanet transits (TESS).
 - Pre-registration checkpoints (lock before calibrate) still require an
   explicit stop and approval at each step.
 
+### Standing approval (v0.3)
+
+The maintainer gave this standing approval in chat on 2026-10-14 and extended it on
+2026-10-15, for phase v0.3. It replaces the per-action approval above only for what it
+lists.
+
+- **Allowed without asking each time:**
+  - commits, pushes and pull requests for the work the maintainer assigned;
+  - merging a pull request that contains only acceptance documents, WP1 documents
+    other than README, or code with synthetic tests;
+  - recording minor follow-ups in the "v0.3 follow-ups" issue (#59). Recording an
+    item does not authorize implementing it.
+- **Conditions for that merge:**
+  - a merge commit, pinned to the head that was checked;
+  - CI green, or skipped as expected by the paths-ignore list;
+  - every acceptance criterion checked one by one in the pull request;
+  - the Codex review resolved, with question, answer, verdict and reason recorded in
+    the pull request.
+- **After every merge:** the agent checks the CI run of the merge commit on main until
+  its final result. If it fails, the agent stops and tells the maintainer. When the
+  paths-ignore list skips the run (documentation only), the agent records that no run
+  was expected; a run missing for any other reason is treated as a failure.
+- **Never under the standing approval:**
+  - README, the site or any other public communication about the project; the
+    acceptance and WP1 documents listed above are the only documentation it covers;
+  - locks, drand rounds, and any change to a lock, a locked hash or a published
+    dossier;
+  - any change to the claim schema, claim serialization or canonicalization, the
+    lock format or lock verification, or to acceptance criteria; these need the
+    maintainer's explicit approval, also when the pull request is otherwise in scope;
+  - running third-party code, and the VM;
+  - sending email;
+  - changes to `ci.yml` that loosen checks;
+  - deletions outside `.cache/`.
+- The items that are always asked individually (list above) stay so.
+
 ## Tech standards
 
 - Python 3.12+, `pyproject.toml`, `uv` as package manager.
@@ -174,8 +210,28 @@ First pack: exoplanet transits (TESS).
 
 ## Project folder hygiene
 
-Project folder hygiene: only files in use stay in the project folder. Downloaded or
-generated files that are no longer used are removed, after an inventory approved by
-the maintainer. Removal happens only inside the project folder, from an explicit list
-of paths, never from a broad root and never with git clean -x. Files outside the
-project folder are never removed.
+Only files in use, or planned for use in an open task, stay in the project folder
+(C:\Projetos\refute).
+
+- **Never deleted by this rule:** tracked files, the published records of
+  `calibration/*/audit/` and `docs/validation/v0.2.1/pre-document-runs/`, and
+  published dossiers.
+- **Still in use, or planned for use in an open task:** kept. This includes the
+  project's main virtual environment and the environments of analyses or fixes in
+  progress. When in doubt, keep it and ask the maintainer.
+- **No longer used, with value** (results, scripts, logs, published texts): archived
+  to `K:\Meu Drive\Pessoal\Projetos\refute\<new subfolder>` with a saved script and a
+  SHA-256 manifest of source and destination, checked; only then deleted from the
+  project folder.
+- **Regenerable, no longer used and with nothing worth keeping** (caches of finished
+  runs, worktrees and virtual environments of finished investigations, old builds,
+  unused downloads; anything with value is archived first, as above): deleted
+  without archiving; inside `.cache/` without a prior approval round. Every deleted
+  path is listed in the report of that round.
+- **How:** deletion only by full literal path, with a guard that the path is inside the
+  project folder; never from a broad root and never with `git clean -x`. A deletion
+  outside `.cache/` still needs the maintainer's approval (see "Standing approval
+  (v0.3)"). Nothing outside the project folder is ever deleted, and the forbidden
+  deletion roots of the operating rules above stay forbidden.
+- At the end of each work package, the agent reports what fell out of use and archives
+  or deletes it by these rules.

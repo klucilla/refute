@@ -367,6 +367,45 @@ Refute exists to attack claims, so contributions that find weaknesses in Refute 
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [ROADMAP.md](ROADMAP.md): work happens only on the current phase.
 
+## How AI is used in this project
+
+AI agents take part in the work in this repository. A human maintainer decides.
+
+**What the agents do**, as recorded in the repository:
+
+- write code, tests and documentation, and propose plans, claims and run commands, in
+  sessions run by the maintainer; in the repository history, commits written with an
+  agent carry a `Co-Authored-By` trailer that names it, except merge commits created
+  on GitHub;
+- run analyses, tests and checks in those sessions, within the work the maintainer
+  approved;
+- review dossiers as independent reviewers, in fresh read-only sessions that never saw
+  how the claim was built, with Claude as the primary reviewer
+  ([reviewer protocol](docs/reviewer-protocol.md)); the protocol also provides for a
+  second reviewer from another model family (Codex) for some dossiers;
+- review plans and documents as a second agent (Codex, read-only). From v0.3 on, the
+  procedure records its objections, the answers and the decision taken in the pull
+  request.
+
+**What the maintainer decides:**
+
+- every pre-registration step, lock and run of a claim;
+- releases, each approved individually;
+- merges, each approved individually unless covered by the limited standing approval
+  recorded in [CLAUDE.md](CLAUDE.md) ("GitHub operations");
+- the work that agents carry out: they commit, push and update issues only within
+  the work the maintainer approved;
+- every message to the authors of a paper: agents never send email, and nothing is
+  ever submitted to a scientific body by an agent;
+- the machine where third-party code runs.
+
+**What the agents never do: decide the verdict on a claim.** Claim verdicts come only
+from deterministic, versioned code, with the claim and its thresholds locked before the
+hidden data are revealed ("Agents propose. Deterministic tests decide."). A reviewer
+raises objections; it never sets or changes a verdict. Using AI does not make a result
+more or less true: the evidence is in each dossier, which can be checked with the
+commands it contains.
+
 ## Code of conduct for verdicts
 
 - Verdicts are about **claims, never about authors**. "Not reproduced" does not mean misconduct.
