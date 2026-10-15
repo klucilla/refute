@@ -165,17 +165,86 @@ WP2 lands before any v0.3 lock.
 
 ### 1.6 Reply draft (plan 9.1, item 4, lines 732-737)
 
-- **W2.13** `refute reply-draft <dossier>` writes a draft email, in English, from the
-  dossier only:
+- **W2.13** `refute reply-draft <dossier>` writes a draft email, in English. Its
+  scientific content comes from the sealed dossier only; the contact is the only
+  input from outside it (W2.13a):
   - the claim and its location;
   - the paper version and commit;
   - the verdict and its meaning;
   - the reproduction commands;
   - an invitation to reply within the period, and an offer to publish the reply.
 
-  The address comes only from the corresponding-author field recorded in the claim
-  from the paper. The command never sends anything and opens no network connection;
-  it prints the SHA-256 of the draft.
+  The address comes only from the corresponding-author address printed in the paper,
+  recorded per paper outside the locked claim (W2.13a). The command never sends
+  anything and opens no network connection; it prints the SHA-256 of the draft.
+- **W2.13a Input contract (approved in design by the maintainer on 2026-10-15, with
+  the contact moved out of the claim).**
+  - **Scientific content from the sealed core only.** The draft takes its content
+    only from a sealed, intact core (W2.11) and refuses otherwise:
+    - `SEAL.json`: the core hash, quoted in the draft;
+    - `verdict.json`: the claim verdict, with its meaning taken from a fixed table in
+      the code that repeats [docs/verdicts.md](../../verdicts.md);
+    - `REPRODUCE.md`: the reproduction commands, quoted as they are;
+    - the locked claim (`claim.yaml`), from these ML claim fields, which the WP3
+      schema defines with exactly these names:
+      - `key`, `statement`;
+      - `source.arxiv_id`, `source.version`, `source.location`: the claim and its
+        location in the paper;
+      - `source.repository_url`, `source.repository_commit`: the code and the commit
+        tested.
+
+    The claim has no contact field.
+  - **Contact, per paper, outside the claim and outside the public repository.** The
+    corresponding-author address as printed in the paper is kept in a local file
+    under `private/`, which `.gitignore` excludes (added in the same change as this
+    design, before any contact file exists). The file name is free and opaque; the
+    file holds:
+    - `arxiv_id` and `version`: the paper it belongs to. The command refuses a
+      contact whose paper differs from the claim's `source.arxiv_id` and
+      `source.version`;
+    - `email`;
+    - `printed_at`: only the coordinates of the address in the paper (for example
+      "page 1, footnote 2"), never a transcription. The command refuses a value with
+      `@`;
+    - `retrieved_utc`: when it was read.
+
+    The file is archived to the maintainer's Drive under the cleanup rule. The
+    command takes it with `--contact <file>`, refuses without an `email`, and never
+    searches any other source of personal data.
+  - **Draft.** The draft is written to a path given by the user under `private/`,
+    because it contains the address; it is never written into a dossier or any other
+    publishable folder. The reply period it states is the one of D-15 (30 days from
+    sending). The command prints only the SHA-256 of the draft and of the address.
+    On success and on every refusal, its output and errors never contain the
+    address, the contact file content or the draft text (tested with a synthetic
+    address).
+  - **The message sent.** The maintainer may edit the draft before sending. The
+    `.eml` of the message as sent (exported from Sent) is kept under `private/` next
+    to the draft, and the annex records its SHA-256 too, so the draft and the final
+    message are both preserved and linked. These hashes show the integrity of
+    material kept privately. They are not a public proof of delivery or reading.
+  - **Public record.** The `reply/` annex (plan section 9.1, item 5), added after
+    sending, records:
+    - the SHA-256 of the address;
+    - `printed_at` and `retrieved_utc`;
+    - the SHA-256 of the draft and of the `.eml` as sent;
+    - the send date;
+    - the core hash;
+    - the reply deadline.
+
+    It never records the address itself. The hashes are **plain SHA-256, without a
+    salt**, decided by the maintainer on 2026-10-15:
+    - the address is already public in the paper, so its hash reveals nothing new;
+    - without a salt, anyone can check the notification by hashing the printed
+      address;
+    - a salt would be one more secret that, if lost, erases the proof;
+    - privacy rests on the rule that only the address printed in the paper is used.
+
+    The Codex review had pointed out that a plain hash lets anyone confirm a guessed
+    address, and so does the hash of a draft whose other text can be rebuilt. For an
+    address that the paper prints, that confirmation is the intended verification.
+    Plan section 9.1 and [docs/right-of-reply.md](../../right-of-reply.md) stay as
+    they are.
 - **W2.14** The template contains no words about people beyond addressing the
   authors. A fixed list of forbidden words (for example "misconduct", "error by the
   authors", "fraud", "sloppy") is checked by a test.
@@ -211,7 +280,9 @@ All offline and deterministic, in `tests/`.
 - the attack pool frozen after base runs with leftovers;
 - n_attack = 0;
 - a seal, then an annex added: the core is still intact;
-- a reply draft with the address taken from the claim;
+- a reply draft with the address taken only from the private contact file, and
+  refusals for a missing address, a contact of another paper and a `printed_at`
+  with `@`, none of which prints the address;
 - the worker count under a restricted mask: 6 CPUs gives 4, 2 CPUs gives 1.
 
 **Must fail, or must not reach the negative or positive verdict:**
