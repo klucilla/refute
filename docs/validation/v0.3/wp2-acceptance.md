@@ -85,13 +85,22 @@ WP2 lands before any v0.3 lock.
   remaining balance and reserves. When a charge exceeds what is allowed, it is
   refused with the reason `budget_exhausted`, and the reason names the pool (`setup`,
   `base` or `attacks`).
-- **W2.10** The meter. Usage is summed over every container of the paper, and the
-  orchestration on the host is recorded separately. **How a shared cost is attributed
-  only once:** every container belongs to exactly one account (setup, one claim's base,
-  or one claim's attack); a container that serves several claims is setup. The
-  reading of `cpu.stat` itself is implemented in WP3 (runner). WP2 receives
-  `(account, usage_usec)` records and rejects a record whose account is unknown or
-  appears twice for the same container.
+- **W2.10** The meter. Usage is summed over every container of the paper, **including
+  the builder and every failed build attempt**; the orchestration on the host is
+  recorded separately.
+  - **Records:** WP2 receives `(container_id, account, usage_usec)` records, where
+    `usage_usec` is the cumulative total of that container, read once when it ends.
+  - **How a shared cost is attributed only once:** every container belongs to exactly
+    one account (setup, one claim's base, or one claim's attack). A container that
+    serves several claims is setup; the builder is setup.
+  - **Rejected records:** an unknown account; the same `container_id` twice; a
+    negative value.
+  - **Completeness check:** all containers of a paper run under one parent cgroup per
+    paper, implemented in WP3. The accountant compares the sum of the records with
+    the parent cgroup's own usage. A difference above a tolerance fixed in the WP3
+    acceptance revision makes the paper's accounting invalid, recorded as a Refute
+    error (`INCONCLUSIVE`), never as a pass.
+  - The reading of `cpu.stat` itself is implemented in WP3 (runner).
 
 ### 1.5 Seal and annexes (plan 9.1, lines 722-729)
 
@@ -170,10 +179,16 @@ All offline and deterministic, in `tests/`.
   `REPRODUCED` (#15 cases);
 - a profile of `INCONCLUSIVE` and `REPRODUCED` claims, which must not produce a
   "REPRODUCED" headline;
-- a charge over the reserve, which is refused (`budget_exhausted`);
+- a charge above the pool balance minus the reserves of the claims not yet run,
+  which is refused (`budget_exhausted`). The opposite case **must pass**: a charge
+  above a claim's own reserve but within the leftovers. In the plan example (3 claims,
+  S = 30, reserve 54), after the first claim uses 30, a charge of 60 for the second is
+  allowed, because 54 stays reserved for the third;
 - a transfer from attacks to the base, which is refused;
 - a usage record with an unknown account, or the same container twice, which is
   rejected;
+- records whose sum differs from the parent cgroup's usage, for example a builder
+  left out, which make the accounting invalid (`INCONCLUSIVE`);
 - a changed byte in the core, which `check-dossier` reports as core not intact;
 - a changed annex, which is reported as that annex not intact, with the core still
   intact;

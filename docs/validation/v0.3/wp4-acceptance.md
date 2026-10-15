@@ -23,8 +23,12 @@ lines 47-50). Committed **before** the tests and code of the package (plan lines
     rung of the build ladder, with complete attempts;
   - **its twin**, where the failure comes from Refute's side (an exhausted budget, an
     interruption), which must be `INCONCLUSIVE`;
-  - **one paper per coverage case of #15:** zero claims, zero tests collected, an empty
-    split, a metric on zero examples, nothing to compare;
+  - **one paper per coverage case of #15:** zero claims, an empty split, a metric on
+    zero examples, nothing to compare;
+  - **zero tests collected in the repository's own test suite:** that check is
+    `INCONCLUSIVE` and never PASS. Since the suite is information only (plan lines
+    711-715), a paper whose decisive checks pass stays `REPRODUCED`; the twin with
+    the suite present gives the same verdict;
   - **seed-fragile:** the predicate fails on 2 of 5 seeds;
   - **split-fragile:** the predicate fails on 1 of 3 re-splits;
   - **leaky:** duplicates between train and test above the fixed fraction;
@@ -52,7 +56,9 @@ expected verdict.
 Must-fail checks:
 - the `NOT_REPRODUCIBLE` twin must not be `NOT_REPRODUCIBLE`;
 - the interrupted-attack paper must not be `INCONCLUSIVE`;
-- the coverage papers must not be `REPRODUCED`.
+- the coverage papers of #15 must not be `REPRODUCED`. The zero-tests-collected
+  paper is the exception: its suite check must not be PASS, and its verdict must not
+  change because of the suite.
 
 ## 3. Metrics and evidence
 

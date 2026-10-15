@@ -70,9 +70,22 @@ commit and the maintainer's approval.
   - replacement after the draw follows the next candidate in the shuffled order, of
     the same type when the comparison must be kept, and only for a reason of the
     closed list.
-- **W5.11** The tool refuses to draw from an inventory whose hash is not in a pushed
-  commit made before the claim round's publication time. The check is done against
-  git and the round's time; a dirty or unpushed inventory is refused.
+- **W5.11** **Proof that the inventories were published before the claim round.**
+  - **Git dates are not evidence.** Author and committer dates are set by whoever
+    makes the commit (https://git-scm.com/docs/git-commit#_commit_information,
+    accessed 2026-10-14).
+  - **Evidence:** a server-side GitHub timestamp tied to the commit SHA that contains
+    the inventories and their hashes. It is the `created_at` of the GitHub Actions run
+    started by the push of that commit, read from the GitHub API and saved in the
+    protocol record. The inventories are stored in a path that the CI `paths-ignore`
+    list does not skip, so that the push starts a run.
+  - **Rule:** the evidence must be earlier than the claim round's publication time by
+    a margin fixed in the protocol.
+  - **Missing evidence:** no run, an API error, or evidence for another SHA makes that
+    round unusable for those inventories. The tool refuses to draw; the maintainer
+    decides.
+  - **Other refusals:** a dirty working tree, an inventory file whose hash differs
+    from the published one, and an inventory not in the commit of the evidence.
 
 ## 2. Synthetic cases (offline; fixtures for drand, PyPI-free)
 
@@ -87,6 +100,9 @@ commit and the maintainer's approval.
 - a beacon with a wrong signature is refused;
 - a transient error that persists stops the walk; it is not a rejection;
 - an inventory not pushed before the round is refused;
+- a commit with an author and committer date before the round, but whose push (and
+  run) happened after it, is refused;
+- missing push evidence is refused, and the round is marked unusable;
 - a pilot adjustment that is not the first triggered alternative is refused;
 - a second adjustment is refused.
 

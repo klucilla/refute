@@ -33,13 +33,23 @@ in [docs/sandbox.md](../../sandbox.md).
 
 ### 1.2 Compatibility of locked claims (related to #30)
 
-- **W3.5** A test loads the **historical locked claims** (the v0.1 claim and the v0.2
-  claim, each with its lock file), recomputes the canonical form and the claim hash
-  **with the new code**, and requires **equality with the hashes recorded in the
-  locks**. Running the verification only at the old commits does not count. If a WP3
-  change would alter those hashes, the change is redesigned (for example, ML fields
-  stay in the ML pack schema). The locks are never edited. The test runs offline in
-  CI.
+- **W3.5** **No regression in the resolution of existing claims.**
+  - **Existing state, outside WP3.** With the code at the base of WP3 (main
+    `2b9c637`), the resolved claim hash of the v0.2 claim is already different from
+    its lock: `refute verify calibration/v0.2/self_claim.yaml` reports the locked
+    `c9f341d2...6b34a8` against `5fe1a3de...6d502` now. Fields added in v0.2.1
+    changed it (`docs/claim-spec.md`, end of the TESS section). This is tracked in
+    #30. The historical locks stay verifiable at their locked commits, and WP3 does
+    not try to restore them.
+  - **What WP3 must not change.** A test loads the v0.1 and v0.2 claims and their
+    attachments, resolves them with the WP3 code, and requires their canonical forms
+    and claim hashes to equal the values computed with the code at the base of WP3.
+    Those values are recorded in the test before any WP3 change, with the commit they
+    come from. Any WP3 change that alters them is redesigned, for example by keeping
+    ML fields in the ML pack schema.
+  - **Attachments** are checked separately by the existing lock verification
+    (`src/refute/core/lock.py`). This test covers the claim hash only.
+  - The locks are never edited. The test runs offline in CI.
 
 ### 1.3 Adapter
 
@@ -57,9 +67,14 @@ in [docs/sandbox.md](../../sandbox.md).
 - **W3.9** The build ladder, the allowed-patch list and the logging of every attempt
   (plan lines 392-402). The recorded causes of each failure feed the attribution rule
   of WP2.
-- **W3.10** Usage records `(account, usage_usec)` for the WP2 accountant: from cgroup
-  `cpu.stat` in the docker backend, and from the process accounting of the
-  subprocess backend.
+- **W3.10** Usage records for the WP2 accountant, `(container_id, account,
+  usage_usec)`. In the docker backend they come from cgroup `cpu.stat`. Every
+  container of a paper, **including the BuildKit builder** (run in its own container
+  for that paper, with the `docker-container` driver) and every failed attempt, runs
+  under one parent cgroup per paper; its usage is reported for the WP2 completeness
+  check. The tolerance of that check is fixed in this document's revision before the
+  runner code. In the subprocess backend the records come from the process
+  accounting of the child processes.
 
 ### 1.5 Metric extraction
 
@@ -127,8 +142,9 @@ Refute's own code. scikit-learn 1.9.1 is already in `uv.lock` through `lightkurv
 - an empty split (#15);
 - an extraction path that matches nothing.
 
-**Compatibility (W3.5):** the v0.1 and v0.2 locked claims recompute to their recorded
-hashes with the new code.
+**No regression (W3.5):** the v0.1 and v0.2 claims resolve, with the WP3 code, to
+the canonical forms and claim hashes recorded from the base of WP3. A change in the
+TESS resolution must fail this test.
 
 Every coverage row of [docs/verdicts.md](../../verdicts.md) gets a case that must not
 pass and one that must, here or in WP4.
@@ -146,3 +162,5 @@ pass and one that must, here or in WP4.
 - W3.5 passes.
 - The `tess` pack and its claims are unaffected: entry points and resolved TESS claims
   are unchanged.
+- The sandbox requirements that WP6 relies on but that are code of this package are
+  tested here and named in the WP6 table (`wp6-acceptance.md`, V14-V20).
