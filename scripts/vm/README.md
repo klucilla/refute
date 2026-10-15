@@ -80,7 +80,10 @@ user name, host name or address.
    download (2.7 GB from releases.ubuntu.com).
 4. A reviewed change sets `InstallIsoSha256` in `RefuteVm.Config.psd1`.
 5. `New-RefuteSeedIso.ps1`; it prints the seed ISO's SHA-256.
-6. The maintainer, in Windows PowerShell started as Administrator:
+6. The maintainer, in Windows PowerShell started as Administrator, starts a new
+   `powershell.exe -NoProfile` whose environment holds `PSModuleAnalysisCachePath=nul`
+   (set in the parent shell first: only a value present when PowerShell starts disables
+   the module analysis cache, and the script refuses to run without it), then runs
    `scripts\vm\Register-RefuteVmEndpoint.ps1 -OperatorAccount <COMPUTERNAME>\<account>`
    (preview; it prints a `PreviewSha256`), then the same with
    `-Apply -PreviewSha256 <hash>`, which refuses if the machine changed since the

@@ -100,8 +100,10 @@ function Get-RefuteVmObserved {
         $firmware = $null
         if ($vm.Generation -eq 2) { $firmware = Get-VMFirmware -VM $vm -ErrorAction Stop }
         $firstBoot = 'none'
-        if ($firmware -and $firmware.BootOrder.Count) {
-            $device = $firmware.BootOrder[0].Device
+        # @(...): a missing or single boot entry is still a list (StrictMode, PowerShell 5.1)
+        $bootOrder = @(if ($firmware) { $firmware.BootOrder | Where-Object { $null -ne $_ } })
+        if ($bootOrder.Count) {
+            $device = $bootOrder[0].Device
             if ($device -and $device.PSObject.Properties.Name -contains 'Path' -and $device.Path) { $firstBoot = [string]$device.Path }
         }
         [ordered]@{

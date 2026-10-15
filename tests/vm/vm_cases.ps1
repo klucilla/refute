@@ -63,6 +63,39 @@ $probe = [System.Management.Automation.Language.Parser]::ParseInput("& `$someCom
 $probeSurface = Get-PreviewSurface @($probe.FindAll({ param($n) $true }, $true))
 $out['PreviewProbe'] = [ordered]@{ Unnamed = $probeSurface.Unnamed.Count; Redirections = $probeSurface.Redirections.Count }
 
+# Windows PowerShell 5.1 pattern (the maintainer's first preview run): a variable that
+# receives the output of a command or function without @(...) is $null when the output
+# is empty, so .Count or [i] on it fails under StrictMode. Every such use is listed.
+function Get-UnsafeListUse($Ast) {
+    $bare = @{}
+    foreach ($a in $Ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.AssignmentStatementAst] }, $true)) {
+        $isVariable = $a.Left -is [System.Management.Automation.Language.VariableExpressionAst]
+        $isCommand = $a.Right -is [System.Management.Automation.Language.PipelineAst] -and
+            $a.Right.PipelineElements[0] -is [System.Management.Automation.Language.CommandAst]
+        # New-Object writes exactly one object (a constructor), never an empty output
+        $isConstructor = $isCommand -and $a.Right.PipelineElements[0].GetCommandName() -eq 'New-Object'
+        if ($isVariable -and $isCommand -and -not $isConstructor) { $bare[$a.Left.VariablePath.UserPath.ToLowerInvariant()] = $true }
+    }
+    $uses = @()
+    foreach ($n in $Ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.MemberExpressionAst] -or $n -is [System.Management.Automation.Language.IndexExpressionAst] }, $true)) {
+        $target = if ($n -is [System.Management.Automation.Language.IndexExpressionAst]) { $n.Target } else { $n.Expression }
+        if (-not ($target -is [System.Management.Automation.Language.VariableExpressionAst])) { continue }
+        if (-not $bare.ContainsKey($target.VariablePath.UserPath.ToLowerInvariant())) { continue }
+        $isCount = $n -is [System.Management.Automation.Language.MemberExpressionAst] -and [string]$n.Member -eq 'Count'
+        if ($isCount -or $n -is [System.Management.Automation.Language.IndexExpressionAst]) { $uses += $n.Extent.Text }
+    }
+    return , @($uses | Sort-Object -Unique)
+}
+$out['UnsafeListUse'] = [ordered]@{}
+foreach ($file in $scripts) {
+    $fileAst = [System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$null, [ref]$null)
+    $name = $file.FullName.Substring($vmDir.Length + 1).Replace('\', '/')
+    $out.UnsafeListUse[$name] = Get-UnsafeListUse $fileAst
+}
+# negative check: the detector sees the pattern in a synthetic snippet
+$probeAst = [System.Management.Automation.Language.Parser]::ParseInput("function f { @() }`n`$x = f`nif (`$x.Count) { `$x[0] }", [ref]$null, [ref]$null)
+$out['UnsafeListProbe'] = Get-UnsafeListUse $probeAst
+
 foreach ($file in @(Get-ChildItem -LiteralPath $vmDir -Recurse -File | Where-Object { $_.Extension -in '.psd1', '.psrc' } | Sort-Object FullName)) {
     $name = $file.FullName.Substring($vmDir.Length + 1).Replace('\', '/')
     try { Import-PowerShellDataFile -LiteralPath $file.FullName | Out-Null; $out.Data[$name] = 'ok' } catch { $out.Data[$name] = $_.Exception.Message }
