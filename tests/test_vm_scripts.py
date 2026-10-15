@@ -268,6 +268,11 @@ def test_the_registration_preview_only_reads(cases):
     methods = {m.lower() for m in preview["Methods"]}
     assert commands - PREVIEW_COMMANDS == set()
     assert methods - PREVIEW_METHODS == set()
+    # nothing a name list cannot see: no dynamic command (the dot-source of the reviewed
+    # core is the only exception) and no redirection to a file
+    assert preview["Unnamed"] == [] and preview["Redirections"] == []
+    # the collector does see both forms (synthetic probe)
+    assert cases["PreviewProbe"] == {"Unnamed": 1, "Redirections": 1}
     assert not {c.lower() for c in PREVIEW_FORBIDDEN} & commands
     text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
     before = text[: text.index("# ---- apply")]

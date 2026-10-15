@@ -37,14 +37,31 @@ $ast = [System.Management.Automation.Language.Parser]::ParseFile($register, [ref
 $marker = @($tokens | Where-Object { $_.Kind -eq 'Comment' -and $_.Text.StartsWith('# ---- apply') })
 $applyAt = if ($marker.Count -eq 1) { $marker[0].Extent.StartOffset } else { -1 }
 $coreAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'RefuteRegistration.Core.ps1'), [ref]$null, [ref]$null)
-$previewNodes = @($ast.FindAll({ param($n) $true }, $true) | Where-Object { $_.Extent.StartOffset -lt $applyAt }) + @($coreAst.FindAll({ param($n) $true }, $true))
-$out['Preview'] = [ordered]@{
-    ApplyMarkerFound = ($applyAt -ge 0)
-    Commands         = @($previewNodes | Where-Object { $_ -is [System.Management.Automation.Language.CommandAst] } |
-            ForEach-Object { $_.GetCommandName() } | Where-Object { $_ } | Sort-Object -Unique)
-    Methods          = @($previewNodes | Where-Object { $_ -is [System.Management.Automation.Language.InvokeMemberExpressionAst] } |
-            ForEach-Object { [string]$_.Member } | Sort-Object -Unique)
+
+function Get-PreviewSurface([object[]]$Nodes) {
+    # Named commands, .NET methods, and the two forms a name list cannot see (Codex review):
+    # a command whose name is not static (& $x, . $x), except the reviewed dot-source of
+    # the core, and any redirection to a file.
+    $commands = @($Nodes | Where-Object { $_ -is [System.Management.Automation.Language.CommandAst] })
+    [ordered]@{
+        Commands     = @($commands | ForEach-Object { $_.GetCommandName() } | Where-Object { $_ } | Sort-Object -Unique)
+        Methods      = @($Nodes | Where-Object { $_ -is [System.Management.Automation.Language.InvokeMemberExpressionAst] } |
+                ForEach-Object { [string]$_.Member } | Sort-Object -Unique)
+        Unnamed      = @($commands | Where-Object { -not $_.GetCommandName() } |
+                Where-Object { $_.Extent.Text -ne ". (Join-Path `$PSScriptRoot 'RefuteRegistration.Core.ps1')" } |
+                ForEach-Object { $_.Extent.Text })
+        Redirections = @($Nodes | Where-Object { $_ -is [System.Management.Automation.Language.FileRedirectionAst] } |
+                ForEach-Object { $_.Extent.Text })
+    }
 }
+
+$previewNodes = @($ast.FindAll({ param($n) $true }, $true) | Where-Object { $_.Extent.StartOffset -lt $applyAt }) + @($coreAst.FindAll({ param($n) $true }, $true))
+$out['Preview'] = Get-PreviewSurface $previewNodes
+$out.Preview['ApplyMarkerFound'] = ($applyAt -ge 0)
+# negative checks: the collector sees a dynamic command and a file redirection
+$probe = [System.Management.Automation.Language.Parser]::ParseInput("& `$someCommand`nWrite-Output 'probe' > `$somewhere", [ref]$null, [ref]$null)
+$probeSurface = Get-PreviewSurface @($probe.FindAll({ param($n) $true }, $true))
+$out['PreviewProbe'] = [ordered]@{ Unnamed = $probeSurface.Unnamed.Count; Redirections = $probeSurface.Redirections.Count }
 
 foreach ($file in @(Get-ChildItem -LiteralPath $vmDir -Recurse -File | Where-Object { $_.Extension -in '.psd1', '.psrc' } | Sort-Object FullName)) {
     $name = $file.FullName.Substring($vmDir.Length + 1).Replace('\', '/')
