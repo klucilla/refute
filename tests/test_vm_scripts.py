@@ -288,6 +288,47 @@ def test_the_registration_preview_only_reads(cases):
     assert tail[-1].startswith("if (-not $Apply)") and tail[-1].endswith("exit 0 }")
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="the registration runs in Windows PowerShell 5.1")
+def test_the_registration_preview_runs_to_its_end_in_windows_powershell(tmp_path):
+    """The preview itself, in powershell.exe (Windows PowerShell 5.1, StrictMode 2.0), on
+    a machine with no RefuteVmOperator role capability anywhere (the maintainer's first
+    run stopped there: a function returning an empty list gives $null, and .Count on
+    $null is an error under StrictMode). Without -Apply nothing changes; as a normal
+    user, or on a host without Hyper-V, the preview lists its problems and exits 1."""
+    import os
+
+    exe = shutil.which("powershell.exe")
+    assert exe, "Windows PowerShell 5.1 is part of Windows"
+    account = f"{os.environ['COMPUTERNAME']}\\{os.environ['USERNAME']}"
+    out = subprocess.run(
+        [
+            exe,
+            "-NoProfile",
+            "-NonInteractive",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(VM / "Register-RefuteVmEndpoint.ps1"),
+            "-OperatorAccount",
+            account,
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
+    text = out.stdout + out.stderr
+    assert "PropertyNotFoundStrict" not in text and "Count" not in out.stderr, text
+    assert "Mode: preview (no change)" in out.stdout, text
+    assert "PreviewSha256: " in out.stdout, text
+    # no role capability exists, so none is reported
+    assert "a role capability named RefuteVmOperator already exists" not in out.stdout
+    # exit 0 only on a ready host as Administrator; otherwise 1 with the problems listed
+    assert out.returncode in (0, 1), text
+    if out.returncode == 1:
+        assert "Problems (nothing was changed):" in out.stdout, text
+
+
 def _iso_files(data: bytes) -> tuple[str, str, dict[str, bytes]]:
     """Volume labels (ISO 9660 and Joliet) and the files of the Joliet root."""
     sec = 2048
