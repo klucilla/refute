@@ -17,7 +17,7 @@ inventories: the draw is refused and the maintainer decides.
 from __future__ import annotations
 
 import re
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -50,6 +50,7 @@ def check_publication(
     tree_clean: bool,
     files_in_commit: Mapping[str, str],
     published_hashes: Mapping[str, str],
+    required_inventories: Collection[str],
 ) -> PublicationProof:
     """``runs``: the GitHub API ``workflow_runs`` for ``head_sha = commit_sha``.
     ``files_in_commit``: SHA-256 of each inventory file as stored in that commit;
@@ -65,6 +66,16 @@ def check_publication(
         raise PublicationError("the working tree is not clean")
     if not published_hashes:
         raise PublicationError("no published inventory hashes: nothing is shown to be published")
+    required = set(required_inventories)
+    if not required:
+        raise PublicationError("the set of required inventories is empty")
+    if set(published_hashes) != required:
+        missing = sorted(required - set(published_hashes))
+        extra = sorted(set(published_hashes) - required)
+        raise PublicationError(
+            f"the published hashes do not cover exactly the required inventories "
+            f"(missing: {missing}, not required: {extra})"
+        )
     for name, digest in published_hashes.items():
         if not re.fullmatch(r"[0-9a-f]{64}", str(digest)):
             raise PublicationError(f"inventory {name}: the published hash is not a SHA-256")

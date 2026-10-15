@@ -232,6 +232,7 @@ def test_replacement_keeps_the_comparison_and_the_record():
 SHA = "b" * 40
 ROUND = datetime(2026, 11, 1, 12, 0, 0, tzinfo=UTC)
 FILES = {"inventories/2401.01234.json": "c" * 64}
+REQ = list(FILES)
 
 
 def run(created, sha=SHA, event="push", run_id=1):
@@ -240,7 +241,7 @@ def run(created, sha=SHA, event="push", run_id=1):
 
 def test_a_push_run_before_the_round_is_proof():
     proof = check_publication(
-        SHA, [run("2026-10-30T10:00:00Z")], ROUND, timedelta(hours=1), True, FILES, FILES
+        SHA, [run("2026-10-30T10:00:00Z")], ROUND, timedelta(hours=1), True, FILES, FILES, REQ
     )
     assert proof.run_created_at == "2026-10-30T10:00:00Z" and proof.margin_seconds == 3600
 
@@ -265,14 +266,14 @@ def test_a_push_run_before_the_round_is_proof():
 )
 def test_missing_or_late_evidence_is_refused(runs, tree_clean, in_commit, message):
     with pytest.raises(PublicationError, match=message):
-        check_publication(SHA, runs, ROUND, timedelta(hours=1), tree_clean, in_commit, FILES)
+        check_publication(SHA, runs, ROUND, timedelta(hours=1), tree_clean, in_commit, FILES, REQ)
 
 
 def test_git_dates_are_ignored_only_the_push_run_counts():
     # a commit dated before the round but pushed after it: its run is after the round
     with pytest.raises(PublicationError):
         check_publication(
-            SHA, [run("2026-11-01T13:00:00Z")], ROUND, timedelta(0), True, FILES, FILES
+            SHA, [run("2026-11-01T13:00:00Z")], ROUND, timedelta(0), True, FILES, FILES, REQ
         )
 
 
@@ -307,10 +308,23 @@ def test_exhausted_replacements_stop_the_draw_and_keep_the_record():
 def test_publication_needs_the_published_hashes():
     good = [run("2026-10-30T10:00:00Z")]
     with pytest.raises(PublicationError, match="no published inventory hashes"):
-        check_publication(SHA, good, ROUND, timedelta(hours=1), True, FILES, {})
+        check_publication(SHA, good, ROUND, timedelta(hours=1), True, FILES, {}, REQ)
     bad = {"inventories/2401.01234.json": "not-a-hash"}
     with pytest.raises(PublicationError, match="not a SHA-256"):
-        check_publication(SHA, good, ROUND, timedelta(hours=1), True, bad, bad)
+        check_publication(SHA, good, ROUND, timedelta(hours=1), True, bad, bad, REQ)
+
+
+def test_every_required_inventory_must_be_published():
+    good = [run("2026-10-30T10:00:00Z")]
+    both = {**FILES, "inventories/2402.00001.json": "f" * 64}
+    required = list(both)
+    # B is in the commit but its hash was not published: refused
+    with pytest.raises(PublicationError, match="missing"):
+        check_publication(SHA, good, ROUND, timedelta(hours=1), True, both, FILES, required)
+    with pytest.raises(PublicationError, match="empty"):
+        check_publication(SHA, good, ROUND, timedelta(hours=1), True, FILES, FILES, [])
+    proof = check_publication(SHA, good, ROUND, timedelta(hours=1), True, both, both, required)
+    assert proof.commit_sha == SHA
 
 
 def test_the_round_time_is_recorded_in_utc():
@@ -319,7 +333,7 @@ def test_the_round_time_is_recorded_in_utc():
     brt = timezone(timedelta(hours=-3))
     local = datetime(2026, 11, 1, 9, 0, 0, tzinfo=brt)  # 12:00 UTC
     proof = check_publication(
-        SHA, [run("2026-10-30T10:00:00Z")], local, timedelta(minutes=90), True, FILES, FILES
+        SHA, [run("2026-10-30T10:00:00Z")], local, timedelta(minutes=90), True, FILES, FILES, REQ
     )
     assert proof.round_published_at == "2026-11-01T12:00:00Z" and proof.margin_seconds == 5400.0
 
