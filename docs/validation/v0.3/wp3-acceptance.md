@@ -244,15 +244,25 @@ computed with SciPy (`scipy.stats.t.ppf`, `scipy.stats.norm.ppf`; SciPy 1.18.1 i
 These conversions hold for the usual standard error of the mean of `n` independent
 runs and for an interval built as mean ± quantile · SD/√n; nothing else is inverted.
 
-**Reported but not convertible.** It is never treated as "no uncertainty", because
-dropping the `k_sd` term would narrow the tolerance and could produce a false
-negative. The tolerance is computed without the `k_sd` term; a `PASS` of the base
-reproduction (or of an attack that uses this tolerance) stands, since a narrower
-tolerance cannot make a false pass; a `FAIL` that this narrower tolerance alone would
-produce is `INCONCLUSIVE`, with the reason "reported uncertainty not convertible".
-For a comparison, a `paired_uncertainty` that is reported but not convertible gives
-the same treatment to `tol_d`, computed by the branch without a paired uncertainty
-(1.0.5).
+**Reported but not convertible.** It is never treated as "no uncertainty". The true
+tolerance is unknown; it is only known to be **at least** the tolerance computed
+without the `k_sd` term (the "lower tolerance"):
+
+- one value: `max(abs_floor, rel_tol · |x|)`;
+- a comparison whose `paired_uncertainty` is reported but not convertible: the paired
+  structure is kept, `tol_d = max(abs_floor, rel_tol · |p|)`; the branch without a
+  paired uncertainty (1.0.5) is used only when the paper reports no paired
+  uncertainty at all, since it is not necessarily narrower.
+
+A conclusion stands only if it would hold for **every** tolerance at or above the
+lower tolerance; otherwise the check is `INCONCLUSIVE`, with the reason "reported
+uncertainty not convertible". By predicate:
+
+| Predicate | A larger tolerance makes it | With the lower tolerance, what stands |
+|---|---|---|
+| value modes, `magnitude`, `margin` (`d ≥ g − tol`), the `seeds`, `data_split` and `holdout` attacks (the claim's predicate), `ablation` in `margin` | easier to pass | a `PASS`; a `FAIL` becomes `INCONCLUSIVE` |
+| `trivial_baseline` (beat the baseline by more than the tolerance) | harder to pass | a `FAIL`; a `PASS` becomes `INCONCLUSIVE` |
+| `direction`, `ablation` in `direction` | no tolerance | unaffected |
 
 **Source** (retrieved 2026-10-15):
 
@@ -629,10 +639,19 @@ uncertainty giving `tol_d = max(abs_floor, rel_tol · |p|, k_sd · sd_d)`; witho
 paired uncertainty, `tol_d = sqrt(tol_m² + tol_b²)`.
 
 **Reported but not convertible (1.0.9):** `se` without `n`, a `ci` with
-`method: other_or_unknown`, and an asymmetric `ci`: a result inside the narrower
-tolerance is `PASS`; a result outside it is `INCONCLUSIVE` with the reason "reported
-uncertainty not convertible", never `FAIL` (for example: published 80%, SE 2 points
-with no `n`, reproduced 75%). `kind: none` with the same numbers gives `FAIL`.
+`method: other_or_unknown`, and an asymmetric `ci`:
+- value claim: a result inside the lower tolerance is `PASS`; a result outside it is
+  `INCONCLUSIVE` with the reason "reported uncertainty not convertible", never `FAIL`
+  (published 80%, SE 2 points with no `n`, reproduced 75%); `kind: none` with the same
+  numbers gives `FAIL`;
+- comparison with a paired SE of 0.05 points and no `n` (published 90 and 80, so
+  `d_pub` = 10, reproduced `d` = 8, `magnitude`): `tol_d` is the lower paired
+  tolerance `max(0.5, 0.2) = 0.5`, not the marginal `sqrt(1.8² + 1.6²)`; the deviation
+  of 2 gives `INCONCLUSIVE`, never `PASS` and never `FAIL`;
+- `trivial_baseline` with a reported but not convertible uncertainty (accuracy
+  published and reproduced 60%, baseline 50%, SE 10 points with no `n`): an advantage
+  of 10 points over a lower tolerance of 1.2 gives `INCONCLUSIVE`, never `PASS`; an
+  advantage below the lower tolerance gives `FAIL`.
 
 **Holdout rule (1.0.10), must pass with recorded values:** `m = floor(0.1 · n_train)`
 and `factor = max(1, sqrt(n_examples / m))` for a large and for a small holdout; the
