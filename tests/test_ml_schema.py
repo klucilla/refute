@@ -1259,6 +1259,74 @@ def test_numbers_the_yaml_reads_are_compared_without_a_float(tmp_path):
     load_claim(path, pack=PACK)
 
 
+@pytest.mark.parametrize(
+    ("written", "transcribed", "accepted"),
+    [
+        ("1e3", "1000", True),  # YAML 1.1 reads 1e3 as a string; exact decimal 1000
+        ("1e3", "1000.0000000000001", False),  # same float as 1000, another decimal
+        ("1:30.5", "90.5", True),  # base 60
+        ("1:30.5", "90.50000000000001", False),
+    ],
+)
+def test_published_value_forms_against_the_transcription(
+    tmp_path, monkeypatch, written, transcribed, accepted
+):
+    """Maintainer's decision 1.0.11: decimals preserved, never through a float, including
+    1e3 and base-60 numbers."""
+    monkeypatch.setitem(TRANSCRIPTIONS["c1"], "value", transcribed)
+    path = build_claim(tmp_path)
+    text = path.read_text(encoding="utf-8")
+    path.write_text(text.replace("reported: 91.2\n", f"reported: {written}\n"))
+    if accepted:
+        load_claim(path, pack=PACK)
+    else:
+        with pytest.raises(ClaimError, match="transcribed value differs"):
+            load_claim(path, pack=PACK)
+
+
+@pytest.mark.parametrize(
+    "named",
+    [
+        {"named_ref": "v1.0"},
+        {"named_ref_location": "README, line 3"},
+        {"named_ref": "v1.0", "named_ref_location": "README, line 3"},
+    ],
+)
+def test_named_ref_is_refused_with_latest_at_draw(tmp_path, named):
+    """Maintainer's decision 1.0.11: the explicit refusal is kept."""
+
+    def mutate(claim):
+        claim["test_plan"]["repository"].update(named)
+
+    with pytest.raises(ClaimError, match="latest_at_draw takes no named_ref"):
+        load(tmp_path, mutate)
+
+
+@pytest.mark.parametrize(
+    ("reference_run", "reason"),
+    [
+        ({"same": True}, "metric_extraction"),
+        ("same", "reference_run"),
+        (
+            {
+                "same": False,
+                "metric_extraction": {
+                    "from": "log",
+                    "regex": {"pattern": "r=([0-9.]+)", "group": 1},
+                    "unit": "percent",
+                },
+            },
+            "reference_run",
+        ),
+    ],
+)
+def test_a_same_run_reference_needs_its_own_extraction(tmp_path, reference_run, reason):
+    """Maintainer's decision 1.0.11: reference_run may use the same runs, with its own
+    extraction."""
+    with pytest.raises(ClaimError, match=reason):
+        load(tmp_path, _set(["c2", "comparison", "reference_run"], reference_run))
+
+
 def test_resolution_does_not_depend_on_key_order(tmp_path):
     path = build_claim(tmp_path)
     a = load_claim(path, pack=PACK).sha256()
