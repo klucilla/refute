@@ -402,6 +402,44 @@ def test_conversion_must_keep_distinct_values_distinct(y_true, y_pred, ok):
             rc.prepare(c, d)
 
 
+def test_rounding_that_keeps_the_order_but_moves_a_distance_is_inconclusive():
+    # Codex round 3: 2**53 + 1 rounds to 2**53 while 2**53 + 2 is exact; no collision and
+    # no change of order, but the MAE becomes 2 instead of 1
+    c = conv("mae", "native")
+    d = data(["9007199254740993"], ["9007199254740994"])
+    outcome_ = run(c, "1.0", d, 1, channel="native", unit="native")
+    assert outcome_.status is TestStatus.INCONCLUSIVE and "rounding" in outcome_.reason
+
+
+@pytest.mark.parametrize("metric", ["mae", "mse", "rmse", "r2"])
+def test_exact_float_texts_need_no_exact_check_and_pass(metric):
+    y_true = ["3", "-0.5", "2", "7"]
+    y_pred = ["2.5", "0.0", "2", "8"]
+    c = conv(metric, "native")
+    p = rc.prepare(c, data(y_true, y_pred))
+    assert p.exact is None  # every value here is exactly a float
+    expected = {
+        "mae": 0.5,
+        "mse": 0.375,
+        "rmse": math.sqrt(0.375),
+        "r2": 1 - 1.5 / 29.1875,
+    }[metric]
+    token = repr(round(expected, 6))
+    outcome_ = run(c, token, data(y_true, y_pred), 4, channel="native", unit="native")
+    assert outcome_.status is TestStatus.PASS
+
+
+def test_texts_that_are_not_floats_get_the_exact_check():
+    c = conv("mae", "native")
+    p = rc.prepare(c, data(["0.1", "0.2"], ["0.3", "0.2"]))
+    assert p.exact is not None
+    assert rc.exact_regression_metric("mae", *p.exact) == pytest.approx(0.1)
+    outcome_ = run(
+        c, "0.1", data(["0.1", "0.2"], ["0.3", "0.2"]), 2, channel="native", unit="native"
+    )
+    assert outcome_.status is TestStatus.PASS and "exact" in outcome_.details
+
+
 @pytest.mark.parametrize(
     "scores",
     [

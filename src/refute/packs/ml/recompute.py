@@ -27,7 +27,8 @@ import math
 import re
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
-from decimal import Decimal
+from decimal import Decimal, localcontext
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
@@ -219,30 +220,42 @@ def _exact(value: Any, what: str) -> int | float | Decimal:
     return value
 
 
-def _floats(arrays: Sequence[tuple[np.ndarray, str]]) -> list[np.ndarray]:
-    """The arrays as 64-bit floats, refusing any conversion that changes what the metric
-    sees (Codex review of PR #81). Over the values of all the arrays compared with each
-    other: a non-zero value must not become zero, and the conversion must keep their
-    strict order, so two distinct values never become one float and no tie is created
-    (2**53 against 2**53 + 1, 1e-400 against 2e-400, 0.1 against 0.10000000000000001).
-    A merely rounded value is accepted: that error is far below the decision's epsilon."""
+def _floats(
+    arrays: Sequence[tuple[np.ndarray, str]],
+) -> tuple[list[np.ndarray], list[list[Fraction]] | None]:
+    """The arrays as 64-bit floats (Codex review of PR #81, rounds 1 to 3).
+
+    Over the values of all the arrays compared with each other: a non-zero value must
+    not become zero, and the conversion must keep their strict order, so two distinct
+    values never become one float and no tie is created (2**53 against 2**53 + 1,
+    1e-400 against 2e-400, 0.1 against 0.10000000000000001). That is all a rank metric
+    (AUROC) needs. A metric of distances also depends on how far each value moved: when
+    any value is not exactly a float, the exact values are returned too, so that
+    ``exact_regression_metric`` can check the result (otherwise None)."""
     pairs: list[tuple[int | float | Decimal, float]] = []
     out = []
+    exacts: list[list[Fraction]] = []
+    lossy = False
     for values, what in arrays:
         floats = np.empty(len(values), dtype=np.float64)
+        column: list[Fraction] = []
         for i, v in enumerate(values):
             exact = _exact(v, what)
             try:
                 f = float(exact)
             except OverflowError:
                 raise RecomputeError(f"{what} holds a value beyond the float range") from None
-            if not math.isfinite(f) or (isinstance(exact, Decimal) and not exact.is_finite()):
+            if not math.isfinite(f):
                 raise RecomputeError(f"{what} holds a non-finite value")
             if f == 0 and exact != 0:
                 raise RecomputeError(f"{what} holds {exact}, which underflows to zero")
+            fraction = Fraction(exact)
+            lossy = lossy or Fraction(f) != fraction
             floats[i] = f
+            column.append(fraction)
             pairs.append((exact, f))
         out.append(floats)
+        exacts.append(column)
     pairs.sort(key=lambda p: p[0])
     for (e1, f1), (e2, f2) in zip(pairs, pairs[1:], strict=False):
         if e1 != e2 and not f1 < f2:
@@ -250,7 +263,32 @@ def _floats(arrays: Sequence[tuple[np.ndarray, str]]) -> list[np.ndarray]:
                 f"the distinct values {e1} and {e2} become the same float: the conversion "
                 "would change the metric"
             )
-    return out
+    return out, (exacts if lossy else None)
+
+
+def exact_regression_metric(
+    metric: str, y_true: Sequence[Fraction], y_pred: Sequence[Fraction]
+) -> float:
+    """MAE, MSE, RMSE or r2 computed in exact rational arithmetic from the values the
+    file holds (RMSE: the square root of the exact MSE, to 40 digits). Used only to check
+    the float result when the conversion to floats rounded some value."""
+    n = len(y_true)
+    errors = [p - t for t, p in zip(y_true, y_pred, strict=True)]
+    if metric == "mae":
+        return float(sum((abs(e) for e in errors), Fraction(0)) / n)
+    squares = sum((e * e for e in errors), Fraction(0))
+    if metric == "mse":
+        return float(squares / n)
+    if metric == "rmse":
+        mse = squares / n
+        with localcontext() as ctx:
+            ctx.prec = 40
+            return float((Decimal(mse.numerator) / Decimal(mse.denominator)).sqrt())
+    mean = sum(y_true, Fraction(0)) / n
+    total = sum(((t - mean) * (t - mean) for t in y_true), Fraction(0))
+    if total == 0:
+        raise UndefinedMetricError("r2 of a constant y_true")
+    return float(1 - squares / total)
 
 
 @dataclass(frozen=True)
@@ -261,19 +299,22 @@ class Prepared:
     y_other: np.ndarray  # predicted class indices, scores, or predicted values
     n_labels: int = 0
     pos_index: int = -1
+    # regression only: the exact values, when the conversion to floats rounded some value
+    exact: tuple[list[Fraction], list[Fraction]] | None = None
 
 
 def prepare(conv: Convention, data: dict[str, np.ndarray]) -> Prepared:
     if conv.metric in REGRESSION:
-        y_true, y_pred = _floats([(data["y_true"], "y_true"), (data["y_pred"], "y_pred")])
-        return Prepared(y_true, y_pred)
+        (y_true, y_pred), exacts = _floats([(data["y_true"], "y_true"), (data["y_pred"], "y_pred")])
+        exact = None if exacts is None else (exacts[0], exacts[1])
+        return Prepared(y_true, y_pred, exact=exact)
     labels = list(conv.labels or ())
     y_true = _encode(data["y_true"], labels)
     pos = -1
     if conv.pos_label is not None:
         pos = [_key(v) for v in labels].index(_key(conv.pos_label))
     if conv.metric == "auroc":
-        (y_score,) = _floats([(data["y_score"], "y_score")])
+        (y_score,), _ = _floats([(data["y_score"], "y_score")])  # AUROC needs only the order
         return Prepared(y_true, y_score, len(labels), pos)
     return Prepared(y_true, _encode(data["y_pred"], labels), len(labels), pos)
 
@@ -511,7 +552,18 @@ def recompute_run(
             interval.value * factor, interval.lower * factor, interval.upper * factor
         )
         to_claim = 100.0 if metric_unit == "percent" else 1.0
-        own = own_metric(conv, prepared) * to_claim
+        own_raw = own_metric(conv, prepared)
+        if prepared.exact is not None:
+            # some value was rounded on its way to a float: the result must still be the
+            # exact metric of the values in the file (Codex review of PR #81, round 3)
+            exact = exact_regression_metric(conv.metric, *prepared.exact)
+            if abs(own_raw - exact) > 1e-9 * max(1.0, abs(exact)):
+                raise RecomputeError(
+                    f"rounding the inputs to floats moves {conv.metric} from {exact!r} to "
+                    f"{own_raw!r}"
+                )
+            details["exact"] = exact
+        own = own_raw * to_claim
         other = second(conv, prepared) * to_claim
     except RecomputeError as exc:
         return RunOutcome(label, TestStatus.INCONCLUSIVE, str(exc), False, details)
