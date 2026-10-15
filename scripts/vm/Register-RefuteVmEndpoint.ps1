@@ -159,7 +159,11 @@ $isAdmin = ([System.Security.Principal.WindowsPrincipal][System.Security.Princip
 if ($PSVersionTable.PSEdition -ne 'Desktop' -or $PSVersionTable.PSVersion.Major -ne 5) { $problems.Add('run in Windows PowerShell 5.1 (powershell.exe)') }
 if (-not $isAdmin) { $problems.Add('run in a PowerShell started as Administrator (also for the preview: the checks read protected settings)') }
 if ($Apply -and -not $PreviewSha256) { $problems.Add('-Apply needs -PreviewSha256 from a preview run') }
-if (-not (Get-Module -ListAvailable -Name Hyper-V)) { $problems.Add('the Hyper-V PowerShell module is not available') }
+# The preview only reads: no WSMan provider access (it may offer to start WinRM) and no
+# module discovery (it may write the module analysis cache). The Hyper-V module is found
+# by its manifest file.
+$hyperVManifest = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V\Hyper-V.psd1'
+if (-not (Test-Path -LiteralPath $hyperVManifest -PathType Leaf)) { $problems.Add('the Hyper-V PowerShell module is not available') }
 
 $operatorSid = $null
 try {
@@ -180,7 +184,11 @@ try { $psrcCopies = Find-RoleCapabilityCopies } catch { $problems.Add("the modul
 if ($psrcCopies.Count) { $problems.Add("a role capability named $RoleName already exists: " + ($psrcCopies -join ', ')) }
 if ($isAdmin) {
     if (Get-NetFirewallRule -Name $FirewallRuleName -ErrorAction SilentlyContinue) { $problems.Add("the firewall rule $FirewallRuleName already exists") }
-    if (Get-PSSessionConfiguration -Name $EndpointName -ErrorAction SilentlyContinue) { $problems.Add("the endpoint $EndpointName is already registered") }
+    # The endpoint is a WSMan plugin: read its registry key, never the WSMan provider.
+    try {
+        $plugin = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Plugin\$EndpointName")
+        if ($plugin) { $plugin.Close(); $problems.Add("the endpoint $EndpointName is already registered") }
+    } catch { $problems.Add("cannot read the WSMan plugin key: $($_.Exception.Message)") }
 }
 $listeners = @(Get-RegistryListeners)
 $foreign = @(Test-ListenersLoopbackOnly $listeners)
