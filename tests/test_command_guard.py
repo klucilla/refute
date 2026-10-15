@@ -243,3 +243,32 @@ def test_refused_round3(command, shell):
 @pytest.mark.parametrize(("command", "shell"), PASS_ROUND3)
 def test_allowed_round3(command, shell):
     assert guard.check(command, shell=shell) is None
+
+
+# Codex round 4 ------------------------------------------------------------------------------
+
+BLOCK_ROUND4 = [
+    (
+        "Start-Process -FilePath .venv/Scripts/python.exe "
+        "-ArgumentList '-c \"import pytest; pytest.main()\"' -Wait",
+        P,
+    ),
+    ("@'\nimport pytest\npytest.main()\n'@ | & .venv/Scripts/python.exe -", P),
+    ("cat <<< hello\n.venv/Scripts/python.exe -m pytest -q", B),
+]
+
+PASS_ROUND4 = [
+    ('Write-Output @"\n`$(Select-String -Path README.md -Pattern Refute)\n"@', P),
+    ("@'\nprint('pytest is only text')\n'@ | & .venv/Scripts/python.exe -", P),
+    ("cat <<< hello", B),
+]
+
+
+@pytest.mark.parametrize(("command", "shell"), BLOCK_ROUND4)
+def test_refused_round4(command, shell):
+    assert guard.check(command, shell=shell) is not None
+
+
+@pytest.mark.parametrize(("command", "shell"), PASS_ROUND4)
+def test_allowed_round4(command, shell):
+    assert guard.check(command, shell=shell) is None

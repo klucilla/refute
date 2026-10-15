@@ -133,6 +133,7 @@ class Lexed:
     segments: list[list[Word]] = field(default_factory=list)
     nested: list[str] = field(default_factory=list)  # command substitution bodies
     heredocs: list[tuple[list[Word], str, bool]] = field(default_factory=list)
+    herestrings: list[str] = field(default_factory=list)  # PowerShell bodies
 
 
 def _read_until(text: str, i: int, close: str) -> tuple[str, int]:
@@ -180,7 +181,10 @@ def _unquoted_heredoc_starts(line: str) -> list[re.Match[str]]:
             quote = ch
         elif ch == "#" and (i == 0 or line[i - 1] in " \t;|&("):
             break
-        elif line.startswith("<<", i) and not line.startswith("<<<", i):
+        elif line.startswith("<<<", i):
+            i += 3
+            continue
+        elif line.startswith("<<", i):
             m = _HEREDOC_START.match(line, i)
             if m:
                 found.append(m)
@@ -200,10 +204,14 @@ def lex(command: str, shell: str = BASH) -> Lexed:
         text = re.sub(r"\^\r?\n", " ", command)
 
     def herestring(match: re.Match[str]) -> str:
+        body = match.group(2)
+        out.herestrings.append(body)
         if match.group(1) == '"':  # expandable: its $(...) subexpressions run
-            body = match.group(2)
             k = 0
             while (start := body.find("$(", k)) >= 0:
+                if start > 0 and body[start - 1] == "`":  # `$( is literal
+                    k = start + 2
+                    continue
                 inner, k = _read_until(body, start + 2, ")")
                 out.nested.append(inner)
         return " HERESTRING "
@@ -384,6 +392,14 @@ def _python_uses_pytest(code: str) -> bool:
     return False
 
 
+def _reads_python_stdin(words: list[Word]) -> bool:
+    """A segment that runs Python on its standard input (``python -``)."""
+    start = _command_index(words)
+    if start is None or not _is_python(_name(words[start].text)):
+        return False
+    return any(w.text == "-" for w in words[start + 1 :])
+
+
 def _command_index(words: list[Word]) -> int | None:
     """Index of the command word of a segment, after assignments and prefixes."""
     i = 0
@@ -500,12 +516,10 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
             k += 1
         target = target or (positional[0] if positional else "")
         if target:
-            # the target is one word even with blanks; the arguments are re-read
-            return _check_segment(
-                [Word(target, quoted=True), *(Word(t) for t in arglist.split())],
-                depth + 1,
-                shell,
-            )
+            # the target is one word even with blanks; the argument list is lexed
+            # again, so a quoted argument (for example the code of -c) stays whole
+            words = [w for seg in lex(arglist, POWERSHELL).segments for w in seg]
+            return _check_segment([Word(target, quoted=True), *words], depth + 1, shell)
     for k, arg in enumerate(args):  # find -exec <command> ...
         if arg in ("-exec", "-execdir", "-ok") and k + 1 < len(args):
             found = _check_segment(rest[k + 2 :], depth, shell)
@@ -523,6 +537,9 @@ def check(command: str, depth: int = 0, shell: str = BASH) -> str | None:
         reason = _check_segment(words, depth, shell)
         if reason:
             return reason
+    if lexed.herestrings and any(_reads_python_stdin(w) for w in lexed.segments):
+        if any(_python_uses_pytest(body) for body in lexed.herestrings):
+            return PYTEST_REASON
     for body in lexed.nested:
         reason = check(body, depth + 1, shell)
         if reason:
