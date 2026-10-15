@@ -232,13 +232,19 @@ WP2 lands before any v0.3 lock.
     - the core hash;
     - the reply deadline.
 
-    It never records the address itself. **Open decision of the maintainer:** a plain
-    SHA-256 of an address printed in the paper lets anyone confirm a guess, and so
-    does the hash of a draft whose other text can be rebuilt. A salted commitment
-    would avoid this: a random 32-byte salt kept only in the private file, with the
-    SHA-256 over a fixed encoding of version, purpose, salt and content. Choosing it
-    also changes the "SHA-256 of the draft" of plan section 9.1 and
-    [docs/right-of-reply.md](../../right-of-reply.md).
+    It never records the address itself. The hashes are **plain SHA-256, without a
+    salt**, decided by the maintainer on 2026-10-15:
+    - the address is already public in the paper, so its hash reveals nothing new;
+    - without a salt, anyone can check the notification by hashing the printed
+      address;
+    - a salt would be one more secret that, if lost, erases the proof;
+    - privacy rests on the rule that only the address printed in the paper is used.
+
+    The Codex review had pointed out that a plain hash lets anyone confirm a guessed
+    address, and so does the hash of a draft whose other text can be rebuilt. For an
+    address that the paper prints, that confirmation is the intended verification.
+    Plan section 9.1 and [docs/right-of-reply.md](../../right-of-reply.md) stay as
+    they are.
 - **W2.14** The template contains no words about people beyond addressing the
   authors. A fixed list of forbidden words (for example "misconduct", "error by the
   authors", "fraud", "sloppy") is checked by a test.
