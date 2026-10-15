@@ -18,13 +18,13 @@ Paper claims: `REPRODUCED`, `FRAGILE`, `NOT_REPRODUCED`, `NOT_REPRODUCIBLE`,
 `INCONCLUSIVE` (Refute could not decide for reasons on its side, such as an
 exhausted budget or the hang guard; never a failure of the artifact).
 
-The first four are defined in the code (`PaperVerdict`); `INCONCLUSIVE` is added to
-it in the core work package of v0.3, with its tests. The rules are in
+All five are defined in the code (`PaperVerdict`). The rules are in
 [docs/plans/v0.3-plan.md](plans/v0.3-plan.md), section 8.
 
-**Status.** The rules below are the specification of the v0.3 plan. The engine
-implements them in the core work package (WP2); until then they describe required
-behavior, not existing code.
+**Status.** The rules below are the specification of the v0.3 plan. The verdict of
+one claim (order, attribution, minimum coverage) and the result of a paper are
+implemented in `refute.core.paper` (core work package WP2). The budget rules that
+these verdicts refer to are not implemented yet.
 
 `INCONCLUSIVE` means that Refute could not decide, for reasons on its side. It is
 treated as a possibly correct answer that is less informative, with no value
@@ -76,6 +76,16 @@ At every stage (build, data, run, metric, attacks):
 - **`INCONCLUSIVE`** for everything else: an exhausted budget, an operational guard,
   an error of Refute, a transient network failure, a stage interrupted before its
   end, or an undetermined cause.
+
+In the code, a failed gate carries its recorded cause and the attempts completed and
+required (`GateFailure`). `NOT_REPRODUCIBLE` needs all the required attempts and a
+cause that applies to the gate:
+- a build-ladder failure applies to `environment_build`;
+- a failure of the documented command applies to `data_present`, `run_completed` and
+  `metric_extracted`;
+- an absent artifact applies to every gate.
+
+Anything else is `INCONCLUSIVE`.
 
 (Plan, section 8.2.)
 

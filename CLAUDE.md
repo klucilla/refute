@@ -112,7 +112,8 @@ First pack: exoplanet transits (TESS).
 - Before launching subagents or parallel agent workflows, state the goal and
   estimated cost, and ASK how many agents may be used. Prefer local scripts.
 - CPU-heavy work must be distributed across cores (the dev machine has
-  16 cores / 32 threads). Default worker count: `os.cpu_count() - 2`,
+  16 cores / 32 threads). Default worker count: the CPUs allowed by the
+  process's affinity mask, minus 2 (`refute.core.runner.default_workers`),
   configurable. Use `ProcessPoolExecutor` or equivalent.
 - Always deliver complete files, never partial snippets.
 - Data cache lives inside the project (`.cache/`, git-ignored).

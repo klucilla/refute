@@ -20,12 +20,18 @@ class DiscoveryVerdict(enum.StrEnum):
 
 
 class PaperVerdict(enum.StrEnum):
-    """Verdicts for published-paper claims (used from v0.3 on)."""
+    """Verdicts for published-paper claims (used from v0.3 on).
+
+    ``INCONCLUSIVE``: Refute could not decide for reasons on its side (for example an
+    exhausted budget or the hang guard); never a failure of the artifact. The rules
+    are in ``refute.core.paper`` and ``docs/verdicts.md``.
+    """
 
     REPRODUCED = "REPRODUCED"
     FRAGILE = "FRAGILE"
     NOT_REPRODUCED = "NOT_REPRODUCED"
     NOT_REPRODUCIBLE = "NOT_REPRODUCIBLE"
+    INCONCLUSIVE = "INCONCLUSIVE"
 
 
 class TestStatus(enum.StrEnum):
