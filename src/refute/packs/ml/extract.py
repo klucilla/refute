@@ -11,8 +11,10 @@ The value is read from a file the run wrote (``from: file``, the path may hold
 - ``regex``: a regular expression searched in the text; it must match exactly once,
   and the value is its ``group`` (number or name).
 
-The result is the **token as text** (for a JSON number, its text as written, kept
-through ``Decimal``), because ``metric_recompute`` derives the printed interval from it
+A JSON object with a repeated key, and a CSV header with a repeated column, are refused:
+the value would depend on which copy a parser keeps. The result is the **token as
+text**, exactly as written (for a JSON number, its source text: ``1e-2`` stays
+``1e-2``), because ``metric_recompute`` derives the printed interval from it
 (section 1.7). Any failure (no file, no match, more than one match, a value that is not
 a finite decimal number) raises ``ExtractionError``: the gate ``metric_extracted`` does
 not pass (W3.12). No LLM reads outputs; nothing is guessed.
@@ -69,10 +71,29 @@ def parse_json_path(path: str) -> list[str | int]:
     return steps
 
 
+class _JsonNumber(str):
+    """A JSON number kept as the exact text written in the document."""
+
+
+def _unique_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """A JSON object whose keys are unique: a repeated key is ambiguous, and the
+    standard parser would silently keep the last one (Codex review)."""
+    out: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in out:
+            raise ValueError(f"the key {key!r} is repeated in one object")
+        out[key] = value
+    return out
+
+
 def _from_json(text: str, path: str, where: str) -> Extracted:
     try:
         document = json.loads(
-            text, parse_float=Decimal, parse_int=Decimal, parse_constant=_refuse_constant
+            text,
+            parse_float=_JsonNumber,
+            parse_int=_JsonNumber,
+            parse_constant=_refuse_constant,
+            object_pairs_hook=_unique_keys,
         )
     except (json.JSONDecodeError, ValueError) as exc:
         raise ExtractionError(f"{where}: not valid JSON: {exc}") from None
@@ -84,7 +105,7 @@ def _from_json(text: str, path: str, where: str) -> Extracted:
         elif not isinstance(node, dict) or step not in node:
             raise ExtractionError(f"{where}: {path} has no key {step!r}")
         node = node[step]
-    if isinstance(node, bool) or not isinstance(node, Decimal):
+    if not isinstance(node, _JsonNumber):
         raise ExtractionError(f"{where}: {path} is not a number ({type(node).__name__})")
     return _number(str(node), where)
 
@@ -94,18 +115,38 @@ def _refuse_constant(name: str) -> Any:
 
 
 def _from_csv(text: str, column: str, row: dict[str, str], where: str) -> Extracted:
-    reader = csv.DictReader(io.StringIO(text, newline=""))
-    header = reader.fieldnames or []
+    reader = csv.reader(io.StringIO(text, newline=""))
+    try:
+        header = next(reader)
+    except StopIteration:
+        raise ExtractionError(f"{where}: the CSV is empty") from None
+    except csv.Error as exc:
+        raise ExtractionError(f"{where}: not valid CSV: {exc}") from None
+    repeated = sorted({h for h in header if header.count(h) > 1})
+    if repeated:
+        # a repeated column is ambiguous (Codex review)
+        raise ExtractionError(f"{where}: the header repeats the columns {repeated}")
     for name in (column, row["column"]):
         if name not in header:
             raise ExtractionError(f"{where}: no column {name!r}")
-    rows = [r for r in reader if r[row["column"]] == row["equals"]]
-    if len(rows) != 1:
+    value_at, key_at = header.index(column), header.index(row["column"])
+    matches = []
+    try:
+        for number, fields in enumerate(reader, start=2):
+            if len(fields) != len(header):
+                raise ExtractionError(
+                    f"{where}: line {number} has {len(fields)} fields, the header {len(header)}"
+                )
+            if fields[key_at] == row["equals"]:
+                matches.append(fields[value_at])
+    except csv.Error as exc:
+        raise ExtractionError(f"{where}: not valid CSV: {exc}") from None
+    if len(matches) != 1:
         raise ExtractionError(
-            f"{where}: {len(rows)} rows have {row['column']} = {row['equals']!r}; "
+            f"{where}: {len(matches)} rows have {row['column']} = {row['equals']!r}; "
             "exactly one is needed"
         )
-    return _number(rows[0][column], where)
+    return _number(matches[0], where)
 
 
 def _from_regex(text: str, pattern: str, group: int | str, where: str) -> Extracted:

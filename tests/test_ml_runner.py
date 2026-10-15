@@ -92,6 +92,31 @@ def test_csv_column_of_the_single_matching_row(tmp_path):
         ex.extract(spec, tmp_path, "", None)
 
 
+def test_ambiguous_documents_are_refused(tmp_path):
+    """Codex review: a repeated JSON key or CSV column would let a parser choose."""
+    (tmp_path / "m.json").write_text('{"a": 1, "a": 2}')
+    with pytest.raises(ex.ExtractionError, match="repeated"):
+        ex.extract({"from": "file", "file": "m.json", "json_path": "$.a"}, tmp_path, "", None)
+    (tmp_path / "r.csv").write_text("split,acc,acc\ntest,1,2\n")
+    spec = {
+        "from": "file",
+        "file": "r.csv",
+        "csv": {"column": "acc", "row": {"column": "split", "equals": "test"}},
+    }
+    with pytest.raises(ex.ExtractionError, match="repeats the columns"):
+        ex.extract(spec, tmp_path, "", None)
+    (tmp_path / "r.csv").write_text("split,acc\ntest\n")
+    with pytest.raises(ex.ExtractionError, match="fields"):
+        ex.extract(spec, tmp_path, "", None)
+
+
+def test_the_json_token_is_kept_literally(tmp_path):
+    (tmp_path / "m.json").write_text('{"a": 1e-2, "b": 91.20, "c": 7}')
+    for path, token in (("$.a", "1e-2"), ("$.b", "91.20"), ("$.c", "7")):
+        spec = {"from": "file", "file": "m.json", "json_path": path}
+        assert ex.extract(spec, tmp_path, "", None).token == token
+
+
 def test_file_errors(tmp_path):
     spec = {"from": "file", "file": "missing.json", "json_path": "$.a"}
     with pytest.raises(ex.ExtractionError, match="cannot read"):
@@ -176,6 +201,54 @@ def test_the_threshold_stops_the_whole_run(tmp_path):
     assert result.elapsed_s < 20
 
 
+def test_no_process_of_the_run_survives_the_stop(tmp_path):
+    """Codex review: the stop and the final reading cover every descendant."""
+    beat = tmp_path / "beat.txt"
+    heart = script(
+        tmp_path,
+        "heart.py",
+        f"""
+        import time
+        end = time.process_time() + 30
+        while time.process_time() < end:
+            with open({str(beat)!r}, "a") as handle:
+                handle.write("x")
+        """,
+    )
+    child = script(tmp_path, "child.py", f"import subprocess\nsubprocess.run({heart!r})\n")
+    result = sb.SubprocessBackend().run(spec(tmp_path, child, threshold_usec=300_000))
+    assert result.stopped == sb.STOP_THRESHOLD
+    size = beat.stat().st_size
+    import time
+
+    time.sleep(1.0)
+    assert beat.stat().st_size == size  # the grandchild no longer writes
+
+
+def test_a_finished_run_leaves_no_descendant(tmp_path):
+    beat = tmp_path / "beat.txt"
+    orphan = script(
+        tmp_path,
+        "orphan.py",
+        f"""
+        import time
+        for _ in range(100):
+            with open({str(beat)!r}, "a") as handle:
+                handle.write("x")
+            time.sleep(0.05)
+        """,
+    )
+    # the first process starts a child and exits at once, leaving it behind
+    parent = script(tmp_path, "parent.py", f"import subprocess\nsubprocess.Popen({orphan!r})\n")
+    result = sb.SubprocessBackend().run(spec(tmp_path, parent))
+    assert result.exit_code == 0
+    size = beat.stat().st_size if beat.exists() else 0
+    import time
+
+    time.sleep(1.0)
+    assert (beat.stat().st_size if beat.exists() else 0) == size
+
+
 def test_no_progress_stops_a_silent_idle_run(tmp_path):
     idle = script(tmp_path, "idle.py", "import time\ntime.sleep(30)\n")
     result = sb.SubprocessBackend().run(spec(tmp_path, idle, no_progress_s=1.0))
@@ -202,6 +275,8 @@ def test_the_active_time_limit_stops_a_run_that_keeps_printing(tmp_path):
         dict(threshold_usec=0),
         dict(threshold_usec=1.5),
         dict(active_time_limit_s=0),
+        dict(active_time_limit_s=float("inf")),
+        dict(no_progress_s=float("nan")),
     ],
 )
 def test_invalid_specs(tmp_path, bad):

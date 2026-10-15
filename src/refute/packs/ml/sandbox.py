@@ -11,8 +11,10 @@ For each run the backend:
   stdout and stderr to one log file;
 - accounts the CPU time of **every process of the run**, children included (W3.10):
   on Windows through a Job Object to which the process is assigned while still
-  suspended, so no child can escape before the assignment; on Linux through the
-  process's own session (``/proc`` while it runs, ``wait4`` rusage at the end);
+  suspended, so no child can escape before the assignment, and the final reading waits
+  until the job has no active process; on Linux through a supervisor process
+  (``_reaper.py``) that is a child subreaper and waits for every process of the run, so
+  the final total is the exact sum of their rusage;
 - stops the run, and every process in it, when one of the guards fires:
   - ``threshold``: the CPU time reached F, the threshold of the WP2 grant;
   - ``active_time_limit``: the stage's active time limit;
@@ -22,12 +24,15 @@ For each run the backend:
   and the reason it was stopped, if it was.
 
 Only processes this backend started are ever stopped: the Job Object (Windows) or the
-process group of the run (Linux), never anything found by name.
+supervisor's own descendants (Linux), never anything found by name. Any error while
+supervising stops the run before it propagates.
 """
 
 from __future__ import annotations
 
-import os
+import json
+import math
+import signal
 import subprocess
 import sys
 import time
@@ -61,8 +66,9 @@ class RunSpec:
             type(self.threshold_usec) is not int or self.threshold_usec <= 0
         ):
             raise ValueError("threshold_usec is a positive int")
-        if not (self.active_time_limit_s > 0 and self.no_progress_s > 0 and self.poll_s > 0):
-            raise ValueError("time limits and the poll interval are positive")
+        times = (self.active_time_limit_s, self.no_progress_s, self.poll_s)
+        if not all(isinstance(t, int | float) and math.isfinite(t) and t > 0 for t in times):
+            raise ValueError("time limits and the poll interval are positive and finite")
 
 
 @dataclass(frozen=True)
@@ -81,22 +87,20 @@ class SubprocessBackend:
         spec.log_path.parent.mkdir(parents=True, exist_ok=True)
         with spec.log_path.open("wb") as log:
             if sys.platform == "win32":
-                tracker = _WindowsJob(spec, log)
+                tracker: _Tracker = _WindowsJob(spec, log)
             else:
-                tracker = _PosixSession(spec, log)
+                tracker = _Reaped(spec)
             return _supervise(spec, tracker)
 
 
 def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
     start = time.monotonic()
     last_usage, last_size, last_progress = -1, -1, start
-    seen = 0  # the largest usage observed while running
     stopped = None
     try:
         while True:
             exit_code = tracker.poll()
             usage = tracker.usage_usec()
-            seen = max(seen, usage)
             now = time.monotonic()
             if exit_code is not None:
                 break
@@ -114,11 +118,11 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
                 exit_code = None
                 break
             time.sleep(spec.poll_s)
-        # a descendant stopped before its parent waited for it is in the observed usage
-        # but not in the parent's final rusage: never report less than what was seen
-        final = max(tracker.final_usage_usec(), seen)
+        # exact on both platforms: the job's total after its last process ended, or the
+        # supervisor's sum over every waited process
+        final = tracker.final_usage_usec()
     finally:
-        tracker.close()
+        tracker.close()  # stops whatever is left of the run, also after an error
     return RunResult(exit_code, final, stopped, time.monotonic() - start, spec.log_path)
 
 
@@ -266,8 +270,12 @@ class _WindowsJob(_Tracker):
             )
             self._resume(self.proc.pid)
         except BaseException:
+            # the process may still be suspended and outside the job: end it by its own
+            # handle (the process this backend started), with a deadline
             _k32.TerminateJobObject(self.job, 1)
-            self.proc.wait()
+            self.proc.kill()
+            self.proc.wait(timeout=_END_TIMEOUT_S)
+            self.close()
             raise
 
     @staticmethod
@@ -299,7 +307,7 @@ class _WindowsJob(_Tracker):
     def poll(self) -> int | None:
         return self.proc.poll()
 
-    def usage_usec(self) -> int:
+    def _accounting(self) -> _Accounting:
         info = _Accounting()
         _win_check(
             _k32.QueryInformationJobObject(
@@ -307,96 +315,112 @@ class _WindowsJob(_Tracker):
             ),
             "QueryInformationJobObject",
         )
-        # 100-nanosecond units -> microseconds
+        return info
+
+    def usage_usec(self) -> int:
+        info = self._accounting()
+        # 100-nanosecond units -> microseconds; the job keeps the time of ended processes
         return int((info.TotalUserTime + info.TotalKernelTime) // 10)
+
+    def _end_all(self) -> None:
+        """Ends every process of the job and waits until none is active: process
+        termination is asynchronous, so the final reading waits for it."""
+        _win_check(_k32.TerminateJobObject(self.job, 1), "TerminateJobObject")
+        self.proc.wait(timeout=_END_TIMEOUT_S)
+        deadline = time.monotonic() + _END_TIMEOUT_S
+        while self._accounting().ActiveProcesses:
+            if time.monotonic() > deadline:
+                raise OSError("processes of the job are still active after termination")
+            time.sleep(0.02)
 
     def final_usage_usec(self) -> int:
         # children may outlive the first process: end them (they belong to this job)
-        _k32.TerminateJobObject(self.job, 1)
-        self.proc.wait()
+        self._end_all()
         return self.usage_usec()
 
     def stop(self) -> None:
-        _k32.TerminateJobObject(self.job, 1)
-        self.proc.wait()
+        self._end_all()
 
     def close(self) -> None:
         if self.job:
+            _k32.TerminateJobObject(self.job, 1)  # nothing of the run outlives it
             _k32.CloseHandle(self.job)
             self.job = None
 
 
-# ---- Linux: the run's own session ------------------------------------------------------------
+# ---- Linux: a subreaper supervisor ----------------------------------------------------------
+
+_END_TIMEOUT_S = 30.0
+_REAPER = Path(__file__).with_name("_reaper.py")
 
 
-class _PosixSession(_Tracker):
-    def __init__(self, spec: RunSpec, log) -> None:
+class _Reaped(_Tracker):
+    """The run under ``_reaper.py``, which waits for every process of the run and writes
+    its status (live estimate, then the exact final total) to a JSON file."""
+
+    def __init__(self, spec: RunSpec) -> None:
+        self.status_path = spec.log_path.with_name(spec.log_path.name + ".status.json")
+        self.status_path.unlink(missing_ok=True)
         self.proc = subprocess.Popen(
-            spec.argv,
-            cwd=spec.workdir,
+            [
+                sys.executable,
+                "-I",
+                str(_REAPER),
+                str(self.status_path),
+                str(spec.workdir),
+                str(spec.log_path),
+                "--",
+                *spec.argv,
+            ],
             env=spec.env,
             stdin=subprocess.DEVNULL,
-            stdout=log,
-            stderr=subprocess.STDOUT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             start_new_session=True,
         )
-        self.sid = self.proc.pid
-        self.exit_code: int | None = None
-        self.rusage_usec: int | None = None
-        self.ticks = os.sysconf("SC_CLK_TCK")
+        self.status: dict = {"final": False, "usage_usec": 0}
+
+    def _read(self) -> dict:
+        try:
+            self.status = json.loads(self.status_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            pass  # not written yet, or being replaced: keep the last reading
+        return self.status
 
     def poll(self) -> int | None:
-        if self.exit_code is None:
-            pid, status, rusage = os.wait4(self.proc.pid, os.WNOHANG)
-            if pid:
-                self._record(status, rusage)
-        return self.exit_code
-
-    def _record(self, status: int, rusage) -> None:
-        self.exit_code = os.waitstatus_to_exitcode(status)
-        self.proc.returncode = self.exit_code
-        self.rusage_usec = int(round((rusage.ru_utime + rusage.ru_stime) * 1_000_000))
+        status = self._read()
+        if status.get("final"):
+            self.proc.wait(timeout=_END_TIMEOUT_S)
+            return status["exit_code"]
+        if self.proc.poll() is not None:
+            raise OSError(
+                f"the run supervisor ended without a final status ({self.proc.returncode})"
+            )
+        return None
 
     def usage_usec(self) -> int:
-        """While running: user and system time of every live process of the session, and
-        of the children they already waited for (cutime, cstime), from /proc."""
-        if self.rusage_usec is not None:
-            return self.rusage_usec
-        total = 0
-        for entry in os.listdir("/proc"):
-            if not entry.isdigit():
-                continue
-            try:
-                with open(f"/proc/{entry}/stat", encoding="ascii") as handle:
-                    stat = handle.read()
-            except OSError:
-                continue
-            fields = stat[stat.rindex(")") + 2 :].split()
-            if int(fields[3]) != self.sid:  # field 6 of stat: the session id
-                continue
-            total += sum(int(fields[i]) for i in (11, 12, 13, 14))  # utime stime cutime cstime
-        return total * 1_000_000 // self.ticks
+        return int(self._read()["usage_usec"])
+
+    def _wait_final(self) -> dict:
+        self.proc.wait(timeout=_END_TIMEOUT_S)
+        status = self._read()
+        if not status.get("final"):
+            raise OSError("the run supervisor wrote no final status")
+        return status
 
     def final_usage_usec(self) -> int:
-        if self.exit_code is None:
-            _, status, rusage = os.wait4(self.proc.pid, 0)
-            self._record(status, rusage)
-        self._kill_group()  # descendants left behind belong to the run's group
-        return self.rusage_usec or 0
-
-    def _kill_group(self) -> None:
-        import signal
-
-        try:
-            os.killpg(self.sid, signal.SIGKILL)
-        except (ProcessLookupError, PermissionError):
-            pass
+        return int(self._wait_final()["usage_usec"])
 
     def stop(self) -> None:
-        self._kill_group()
-        if self.exit_code is None:
-            _, status, rusage = os.wait4(self.proc.pid, 0)
-            self._record(status, rusage)
+        if self.proc.poll() is None:
+            self.proc.send_signal(signal.SIGTERM)  # the supervisor this backend started
+        self._wait_final()
 
     def close(self) -> None:
-        pass
+        if self.proc.poll() is None:
+            self.proc.send_signal(signal.SIGTERM)
+            try:
+                self.proc.wait(timeout=_END_TIMEOUT_S)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+                self.proc.wait()
