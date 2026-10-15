@@ -94,9 +94,9 @@ with an operational reason (`budget_exhausted` or the guard's name); it is never
 | `comparison` | comparison claims only (1.0.5) |
 | `scope` | `full_training` or `checkpoint_evaluation`; the second also needs `weights` (the name of a weights entry) |
 | `run` | `argv` (list of strings, run without a shell), `workdir` (relative, `/` separators, no `..`), `seed_argument` (a template with exactly one `{seed}`, such as `--seed={seed}`, or null), `metric_extraction` |
-| `run.metric_extraction` | `from`: `file` or `log`; `file` (relative path, when `from: file`; it may contain `{seed}`); exactly one of `json_path`, `csv` (`column`, and `row` as `{column, equals}`), `regex` (`pattern`, `group`). The extracted token is kept as text (1.7, rounding); the value must be finite |
+| `run.metric_extraction` | `from`: `file` or `log`; `file` (relative path, when `from: file`; it may contain `{seed}`); exactly one of `json_path`, `csv` (`column`, and `row` as `{column, equals}`), `regex` (`pattern`, `group`); `unit`: the unit in which the repository prints the value on this channel (`percent`, `fraction` or `native`; `native` only when `metric.unit` is `native`). The extracted token is kept as text (1.7, rounding) and converted from the channel's unit to `metric.unit` (× 100 or ÷ 100) before any comparison; the value must be finite. Every extraction (the method's, the reference's) declares its own `unit` |
 | `seeds` | 1.0.4 |
-| `tolerance` | `rel_tol` (default 0.02), `k_sd` (default 2), `abs_floor` (default 0.5 for `percent`, 0.005 for `fraction`, no default for `native`), `override_reason` (required when a value differs from its default, and always for `native`). See 1.0.8 |
+| `tolerance` | `rel_tol` (default 0.02), `k_sd` (default 2), `abs_floor` (default 0.5 for `percent`, 0.005 for `fraction`, no default for `native`), `override_reason` (required when a value differs from its default, and always for `native`). The three values must be finite and ≥ 0, whatever the reason given. See 1.0.8 |
 | `coverage_minimum` | 1.0.7 |
 | `attacks` | 1.0.6 |
 | `metric_recompute` | 1.7 |
@@ -158,7 +158,7 @@ order of the applicable ones is the effective order (plan section 7.4).
 |---|---|
 | `seeds` | none (5 seeds from 1.0.4; WP2 `seeds_attack`) |
 | `data_split` | `original_proportions` (as the repository uses them) and `proportions`: lists of finite numbers in (0, 1) that sum to 1 within 1e-9 and are equal to each other; `split_argument` (how the repository takes the split seed). Not applicable to a fixed benchmark test set (plan line 489). WP2 `data_split_attack` |
-| `ablation` | `disable` (the `argv` items added, or `{config_file, key, value}`: the value that turns the component off); `mode`: `direction` (the full model is better in the claimed sense, `d_abl > 0`) or `margin` with the published `g_abl` (`d_abl ≥ g_abl − tol_d` and `d_abl > 0`), with the claim's tolerance. Only when the repository exposes the switch (plan line 490) |
+| `ablation` | `disable` (the `argv` items added, or `{config_file, key, value}`: the value that turns the component off); `orientation` (`full_minus_ablated` or `ablated_minus_full`, so that a positive `d_abl` means the component helps in the claimed sense); `mode`: `direction` (`d_abl > 0`) or `margin`, which also needs the paper's published values `reported_full` and `reported_ablated` (with `reported_sd_full`, `reported_sd_ablated`, ≥ 0 or null) and `g_abl` = their oriented difference; then `tol_abl = sqrt(tol_full² + tol_ablated²)`, each the one-number tolerance of that published value under the claim's `tolerance` parameters, and the rule is `d_abl ≥ g_abl − tol_abl` and `d_abl > 0`. `d_abl` is the mean over the attack's runs, which use the base seeds. The same for value and comparison claims (on a comparison claim, the full model is the claim's method). Only when the repository exposes the switch (plan line 490) |
 | `holdout` | `fraction` in (0, 0.5]; `tolerance_factor` > 1 (**proposal:** the wider tolerance is `tolerance_factor` times the claim's tolerance); `split_argument`. The holdout is carved with `seeds.holdout` before training |
 | `leakage` | `max_overlap_fraction` in [0, 1); the unit is one example, hashed (SHA-256) from its bytes as stored in the declared dataset format; the overlap is the fraction of test examples whose hash appears in train |
 | `trivial_baseline` | `kind`: `majority` (the most frequent class of the training labels, applied to the test split) or `random` (**proposal:** its expected value under uniform random guessing, computed exactly, with no random draw). Only for `accuracy` and `error_rate`; the claim must beat the baseline by more than its tolerance |
@@ -312,12 +312,20 @@ after the decimal point and an exponent `e` (0 when absent), its quantum is
 the lock, gives the interval of true values that print as that token:
 
 - `nearest` (default): `[v − q/2, v + q/2]`;
-- `truncate`: `[v, v + q)` for `v ≥ 0` and `(v − q, v]` for `v < 0`;
-- `unknown`: the check can pass but can never fail.
+- `truncate`: the sign is read from the token's text, not from its value: a token
+  without a leading `-` gives `[v, v + q)`, a token with a leading `-` (including
+  `-0.0`) gives `(v − q, v]`. A zero token without a sign (for example `0.0`, which a
+  truncated negative value may also print) gives `(−q, q)`;
+- `unknown`: `[v − q, v + q]`, which contains both the rounded and the truncated
+  readings; with `unknown` the check can pass (both values inside, widened by `ε`) but
+  never fail: what would be a failure is `INCONCLUSIVE`.
 
 A JSON number gets the same treatment from its source text: a repository that saved
-a rounded number gets the interval of that rounding. The token, its interval and both
-recomputed values are converted with the same scale factor (`percent` or `fraction`).
+a rounded number gets the interval of that rounding. **Units.** The token and its
+interval are converted from the unit declared by the channel's `metric_extraction.unit`
+to `metric.unit`; the two implementations compute rates as fractions, and their
+results are converted separately from `fraction` to `metric.unit` (`native` metrics are
+not converted). A channel whose unit is not declared cannot be declared applicable.
 
 **Decision, with `ε = 1e-9 · max(1, |a|)`:**
 
@@ -441,7 +449,9 @@ aggregation is this `applies`.
   `metric.n_examples` different from the split's `expected_examples`; `comparison` on
   a value claim, or missing on a comparison claim; `g_pub` outside `margin`, `d_pub`
   outside `magnitude`; a tolerance different from its default, or `unit: native`, with
-  no `override_reason`; `scope: checkpoint_evaluation` with no `weights`;
+  no `override_reason`; a negative or non-finite `rel_tol`, `k_sd` or `abs_floor`, even
+  with a reason; a `metric_extraction` with no `unit`, or with `native` for a metric in
+  `percent` or `fraction`; `scope: checkpoint_evaluation` with no `weights`;
   `run.argv` given as one string; a `workdir` or extraction `file` with `..` or an
   absolute path; a `seed_argument` without exactly one `{seed}`;
 - seeds: repeated base seeds; a base list longer than `base_cap` or than
@@ -451,7 +461,9 @@ aggregation is this `applies`.
 - attacks: an attack missing, repeated or unknown; an attack that applies with no
   `params`, or one that does not apply with `params`; `data_split` proportions that
   do not sum to 1 or differ from `original_proportions`; `holdout.tolerance_factor`
-  ≤ 1 or a `fraction` outside (0, 0.5]; `leakage.max_overlap_fraction` outside
+  ≤ 1 or a `fraction` outside (0, 0.5]; `ablation` with no `orientation`, or in
+  `margin` mode without `reported_full`, `reported_ablated` or `g_abl`, or with a
+  `g_abl` different from their oriented difference; `leakage.max_overlap_fraction` outside
   [0, 1); `trivial_baseline` for a metric other than `accuracy` or `error_rate`;
 - coverage: a `coverage_minimum` name WP2 would refuse for this claim.
 
@@ -473,9 +485,14 @@ order, and the accountant's reserves are those of WP2.
   implementations agreeing with each other and inside the printed interval;
 - must give `FAIL`: both implementations agree and are both outside the printed
   interval (widened by `ε`) on the same side;
+- must pass: `0.50` printed with `nearest`, `a = 0.5050000004`, `b = 0.5049999996`
+  (both inside the interval widened by `ε`, whose upper end is `0.505000001`); a
+  truncated `-0.0` with `a = b = −0.04`; a channel in `fraction` (`0.912`) for a claim
+  in `percent` (`91.2`);
 - must give `INCONCLUSIVE`, never `FAIL`: the two implementations disagree (simulated
-  by a patched implementation in the test); one inside and one outside the interval
-  (for example `0.50` printed, `a = 0.5050000004`, `b = 0.5049999996`); a zero
+  by a patched implementation in the test); one inside and one outside the widened
+  interval while agreeing with each other (for example `0.50` printed, `a =
+  0.5050000014`, `b = 0.5050000006`); a zero
   denominator under `zero_division: undefined`; a constant `y_true` for `r2`;
   `printed_rounding: unknown` with values outside the interval; a predictions file
   missing, unreadable or with a count of examples different from `metric.n_examples`;
