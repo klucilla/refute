@@ -87,7 +87,8 @@ class Account:
     claim: str | None = None
 
     def __str__(self) -> str:
-        return self.pool.value if self.claim is None else f"{self.pool.value}:{self.claim}"
+        pool = str(self.pool)
+        return pool if self.claim is None else f"{pool}:{self.claim}"
 
 
 SETUP = Account(Pool.SETUP)
@@ -198,9 +199,13 @@ class Accountant:
         )
 
     def _valid_account(self, account: Account) -> bool:
+        """Only SETUP, base(claim) and attack(claim) of a known claim: the pool must be a
+        member of ``Pool`` itself (equal strings of another enum do not count)."""
+        if not isinstance(account, Account) or type(account.pool) is not Pool:
+            return False
         if account.pool is Pool.SETUP:
             return account.claim is None
-        return account.claim in self.claims
+        return account.pool in (Pool.BASE, Pool.ATTACKS) and account.claim in self.claims
 
     def _pool_of(self, account: Account) -> Pool:
         return Pool.ATTACKS if account.pool is Pool.ATTACKS else Pool.BASE
@@ -257,6 +262,15 @@ class Accountant:
             if self.phase is not Phase.BASE:
                 return self._refusal(
                     account, "no transfer from the attacks to the base reproduction"
+                )
+            if self.setup_exhausted:  # no usable base budget after the setup
+                return Decision(
+                    False,
+                    BUDGET_EXHAUSTED,
+                    Pool.SETUP,
+                    0,
+                    self._pool_balance(Pool.BASE),
+                    0,
                 )
             dist = self.base
             pool = Pool.BASE
@@ -315,7 +329,7 @@ class Accountant:
                 raise ValueError(f"container {cid} was already granted")
         d = self.authorized(account)
         if not d.allowed:
-            raise BudgetRefusedError(d, f"grant refused for {account}: {d.reason} ({d.pool.value})")
+            raise BudgetRefusedError(d, f"grant refused for {account}: {d.reason} ({d.pool})")
         share = d.available_usec // len(ids)
         threshold = share - self.margin_usec
         if threshold <= 0:
@@ -324,7 +338,7 @@ class Accountant:
             )
             raise BudgetRefusedError(
                 refused,
-                f"grant refused for {account}: {BUDGET_EXHAUSTED} ({d.pool.value}); "
+                f"grant refused for {account}: {BUDGET_EXHAUSTED} ({d.pool}); "
                 f"threshold {threshold} usec is not positive",
             )
         grants = [Grant(cid, account, threshold, self.margin_usec, share) for cid in ids]

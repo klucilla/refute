@@ -84,11 +84,20 @@ def test_setup_exhausting_the_base_pool_names_setup():
     run(acc, SETUP, "build", BASE_POOL_USEC - 1)  # one microsecond left
     acc.end_setup()
     assert acc.base.reserve_usec == 0
+    assert acc.setup_exhausted  # 1 usec left, not more than the margin
     d = acc.authorized(base("C1"))
-    assert d.allowed  # a few microseconds are left, not enough to run
+    assert not d.allowed and d.reason == BUDGET_EXHAUSTED and d.pool is Pool.SETUP
     with pytest.raises(BudgetRefusedError) as refused:
         acc.grant(base("C1"), ["c1"])
     assert refused.value.decision.reason == BUDGET_EXHAUSTED
+    assert refused.value.decision.pool is Pool.SETUP
+    # Codex counterexample: base 100, one claim, M = 10, S = 90
+    small = Accountant(["C1"], margin_usec=10, base_pool_usec=100)
+    run(small, SETUP, "build", 90)
+    small.end_setup()
+    with pytest.raises(BudgetRefusedError) as refused_small:
+        small.grant(base("C1"), ["c1"])
+    assert refused_small.value.decision.pool is Pool.SETUP
     acc2 = Accountant(["C1", "C2"], margin_usec=0, base_pool_usec=cpu_hours(10))
     run(acc2, SETUP, "build", cpu_hours(10))
     acc2.end_setup()
@@ -459,3 +468,21 @@ def test_concurrent_grants_never_take_the_same_budget():
     granted = [g for g in results if g is not None]
     assert sum(g.reservation_usec for g in granted) <= available
     assert acc.invariant_holds()
+
+
+@pytest.mark.parametrize("pool", [Phase.BASE, Phase.ATTACKS, "base", "attacks", "setup"])
+def test_account_with_a_pool_that_is_not_a_pool_member_is_unknown(pool):
+    from refute.core.budget import Account
+
+    acc = three_claims(30)
+    for claim in ("C1", "C2", "C3"):
+        acc.close_base(claim)
+    acc.freeze_attacks({"C1": True, "C2": True, "C3": True})
+    forged = Account(pool, "C1")
+    d = acc.authorized(forged)
+    assert not d.allowed and "unknown account" in d.reason
+    with pytest.raises(BudgetRefusedError):
+        acc.grant(forged, ["x"])
+    (g,) = acc.grant(attack("C1"), ["real"])
+    with pytest.raises(RecordRejectedError):
+        acc.finish("real", forged, 1)
