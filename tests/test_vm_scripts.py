@@ -173,6 +173,52 @@ def test_registration_blocks_winrm_before_starting_it():
     assert "-PreviewSha256" in text and "the change list differs from the previewed one" in text
 
 
+# Commands that change the machine, or may (the WSMan provider can offer to start WinRM;
+# module discovery can write the module analysis cache). None may run in the preview.
+PREVIEW_FORBIDDEN = (
+    "Get-PSSessionConfiguration",
+    "Get-Module",
+    "Import-Module",
+    "WSMan:",
+    "Get-WSManInstance",
+    "Set-Service",
+    "Start-Service",
+    "Set-Acl",
+    "Copy-Item",
+    "New-Item",
+    "New-NetFirewallRule",
+    "Set-NetFirewall",
+    "New-PSSessionConfigurationFile",
+    "Register-PSSessionConfiguration",
+    "CreateDirectory",
+    "WriteAllText",
+    "Out-File",
+    "Set-Content",
+    "Add-Content",
+    "Set-ItemProperty",
+    "New-ItemProperty",
+    "Add-LocalGroupMember",
+)
+
+
+def test_the_registration_preview_only_reads():
+    """Everything before the apply section (the preview and the functions it calls)
+    holds no command that changes the machine, or may (Codex review of the preview)."""
+    import re
+
+    text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    preview = text[: text.index("# ---- apply")]
+    code = re.sub(r"<#.*?#>", "", preview, flags=re.S)  # comment-based help
+    code = "\n".join(line.split("#", 1)[0] for line in code.splitlines())  # line comments
+    found = [
+        c for c in PREVIEW_FORBIDDEN if re.search(r"(?<![\w-])" + re.escape(c) + r"(?![\w-])", code)
+    ]
+    assert found == []
+    assert "exit 0" in preview  # the preview ends before the apply section
+    assert "OpenSubKey" in preview  # the endpoint is read from the registry
+    assert "Hyper-V.psd1" in preview
+
+
 def _iso_files(data: bytes) -> tuple[str, str, dict[str, bytes]]:
     """Volume labels (ISO 9660 and Joliet) and the files of the Joliet root."""
     sec = 2048
