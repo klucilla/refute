@@ -45,6 +45,10 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
+# Commands of Windows modules load them automatically, and Windows PowerShell 5.1 then
+# writes its module analysis cache; 'nul' disables that cache for this process only
+# (about_Windows_PowerShell_5.1, "Module analysis cache"), so the preview writes nothing.
+$env:PSModuleAnalysisCachePath = 'nul'
 
 $EndpointName = 'RefuteVm'
 $RoleName = 'RefuteVmOperator'
@@ -68,7 +72,14 @@ $PsscPath = Join-Path $DataRoot 'RefuteVm.pssc'
 $EvidencePath = Join-Path $DataRoot 'Log\registration-evidence.json'
 
 function Get-SidAccount([string]$Sid) {
-    return (New-Object System.Security.Principal.SecurityIdentifier $Sid).Translate([System.Security.Principal.NTAccount]).Value
+    # The account name of a SID, or the SID itself when this host has no such account
+    # (for example Hyper-V Administrators on a host without Hyper-V): the preview lists it
+    # as a problem instead of stopping.
+    try {
+        return (New-Object System.Security.Principal.SecurityIdentifier $Sid).Translate([System.Security.Principal.NTAccount]).Value
+    } catch [System.Security.Principal.IdentityNotMappedException] {
+        return "$Sid (no account on this host)"
+    }
 }
 
 function Get-TreeHashes([string]$Root) {
@@ -180,7 +191,9 @@ if (Test-Path -LiteralPath $ModuleBase) { $problems.Add("$ModuleBase already exi
 if (Test-Path -LiteralPath $DataRoot) { $problems.Add("$DataRoot already exists") }
 foreach ($folder in $VmFolders) { if (Test-Path -LiteralPath $folder) { $problems.Add("$folder already exists") } }
 $psrcCopies = @()
-try { $psrcCopies = Find-RoleCapabilityCopies } catch { $problems.Add("the module path cannot be searched completely: $($_.Exception.Message)") }
+# @(...): a function that returns an empty list gives $null to its caller, and .Count on
+# $null is an error under StrictMode in Windows PowerShell 5.1
+try { $psrcCopies = @(Find-RoleCapabilityCopies) } catch { $problems.Add("the module path cannot be searched completely: $($_.Exception.Message)") }
 if ($psrcCopies.Count) { $problems.Add("a role capability named $RoleName already exists: " + ($psrcCopies -join ', ')) }
 if ($isAdmin) {
     if (Get-NetFirewallRule -Name $FirewallRuleName -ErrorAction SilentlyContinue) { $problems.Add("the firewall rule $FirewallRuleName already exists") }
@@ -190,12 +203,14 @@ if ($isAdmin) {
         if ($plugin) { $plugin.Close(); $problems.Add("the endpoint $EndpointName is already registered") }
     } catch { $problems.Add("cannot read the WSMan plugin key: $($_.Exception.Message)") }
 }
-$listeners = @(Get-RegistryListeners)
+$listeners = @()
+try { $listeners = @(Get-RegistryListeners) } catch { $problems.Add("cannot read the WinRM listeners from the registry: $($_.Exception.Message)") }
 $foreign = @(Test-ListenersLoopbackOnly $listeners)
 if ($foreign.Count) { $problems.Add('WinRM has listeners other than HTTP on loopback: ' + (($foreign | ForEach-Object { $_.Name }) -join ', ') + ' (the maintainer decides; this script never removes them)') }
 $winrm = Get-Service -Name WinRM
 $config = Import-PowerShellDataFile -LiteralPath (Join-Path $ModuleSource 'RefuteVm.Config.psd1')
 $groupAccount = Get-SidAccount $SidHyperVAdmins
+if ($groupAccount.EndsWith('(no account on this host)')) { $problems.Add("the group Hyper-V Administrators ($SidHyperVAdmins) does not exist on this host") }
 $groupName = $groupAccount.Split('\')[-1]
 
 # ---- the change list (preview) ---------------------------------------------------------

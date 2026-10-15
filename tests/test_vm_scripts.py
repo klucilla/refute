@@ -239,6 +239,7 @@ PREVIEW_METHODS = {
     "computehash",
     "create",
     "dispose",
+    "endswith",
     "getbytes",
     "getcurrent",
     "getenvironmentvariable",
@@ -288,6 +289,42 @@ def test_the_registration_preview_only_reads(cases):
     assert tail[-1].startswith("if (-not $Apply)") and tail[-1].endswith("exit 0 }")
 
 
+def test_no_command_output_is_counted_or_indexed_without_an_array(cases):
+    """Windows PowerShell 5.1 under StrictMode: `$x = f` with an empty output leaves $null,
+    so `$x.Count` or `$x[0]` fails (the maintainer's first preview run). Every script must
+    wrap such output in @(...); the detector is checked on a synthetic snippet."""
+    found = {
+        (name, use)
+        for name, uses in cases["UnsafeListUse"].items()
+        for use in uses
+        if (name, use) not in REVIEWED_SINGLE_OBJECTS
+    }
+    assert found == set()
+    assert sorted(cases["UnsafeListProbe"]) == ["$x.Count", "$x[0]"]
+
+
+# Uses the detector lists that are not lists at all, reviewed one by one: the command
+# always returns exactly one object, and .Count or [k] is that object's own member.
+REVIEWED_SINGLE_OBJECTS = {
+    # Get-VMProcessor returns one VMProcessor; Count is its number of virtual processors
+    ("RefuteVm/RefuteVm.HyperV.ps1", "$processor.Count"),
+    # Get-TreeHashes returns one ordered dictionary; [$k] reads a key
+    ("Register-RefuteVmEndpoint.ps1", "$sourceHashes[$k]"),
+    # Test-RefuteVmConfig returns its array with the comma operator (", $x.ToArray()"),
+    # so an empty list arrives as one empty array, never $null; @(...) around it would
+    # instead give an array holding that empty array (Count 1)
+    ("RefuteVm/RefuteVm.Core.ps1", "$problems.Count"),
+    ("RefuteVm/RefuteVm.psm1", "$problems.Count"),
+}
+
+
+def test_the_config_check_returns_an_array_even_when_empty(cases):
+    """The reviewed exception above, checked: a valid configuration gives an empty array
+    (the first synthetic case), not $null."""
+    first = cases["Cases"][0]
+    assert first["Name"] == "config of the repository is valid" and first["Ok"], first
+
+
 @pytest.mark.skipif(
     sys.platform != "win32", reason="the registration runs in Windows PowerShell 5.1"
 )
@@ -323,8 +360,13 @@ def test_the_registration_preview_runs_to_its_end_in_windows_powershell(tmp_path
     assert "PropertyNotFoundStrict" not in text and "Count" not in out.stderr, text
     assert "Mode: preview (no change)" in out.stdout, text
     assert "PreviewSha256: " in out.stdout, text
-    # no role capability exists, so none is reported
-    assert "a role capability named RefuteVmOperator already exists" not in out.stdout
+    # on a CI runner no role capability exists, so none is reported (a host where the
+    # endpoint is registered reports its copy, which is correct there)
+    if os.environ.get("CI"):
+        assert "a role capability named RefuteVmOperator already exists" not in out.stdout
+    # the preview disables the module analysis cache for its own process
+    script = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    assert "$env:PSModuleAnalysisCachePath = 'nul'" in script[: script.index("# ---- apply")]
     # exit 0 only on a ready host as Administrator; otherwise 1 with the problems listed
     assert out.returncode in (0, 1), text
     if out.returncode == 1:
