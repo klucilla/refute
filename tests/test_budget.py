@@ -486,3 +486,24 @@ def test_account_with_a_pool_that_is_not_a_pool_member_is_unknown(pool):
     (g,) = acc.grant(attack("C1"), ["real"])
     with pytest.raises(RecordRejectedError):
         acc.finish("real", forged, 1)
+
+
+# WP2 package review --------------------------------------------------------------------------
+
+
+def test_no_grant_after_a_breach_and_no_overrun_of_the_paper_limit():
+    acc = Accountant(
+        ["C1"], margin_usec=0, base_pool_usec=cpu_hours(10), attack_pool_base_usec=cpu_hours(10)
+    )
+    acc.end_setup()
+    (g,) = acc.grant(base("C1"), ["c1"])
+    acc.finish("c1", base("C1"), g.reservation_usec + 1)  # a breach
+    assert not acc.accounting_valid
+    d = acc.authorized(base("C1"))
+    assert not d.allowed and "invalid" in d.reason
+    with pytest.raises(BudgetRefusedError):
+        acc.grant(base("C1"), ["c2"])
+    acc.close_base("C1")
+    acc.freeze_attacks({"C1": True})
+    assert acc.attacks.total_usec == cpu_hours(10) - 1  # the overrun reduces the pool
+    assert acc.total_charged() + acc.attacks.total_usec <= cpu_hours(20)

@@ -227,3 +227,19 @@ def test_invalid_worker_count():
 def test_threads_keep_order():
     assert run_threads(lambda x: x + 1, [1, 2, 3], workers=3) == [2, 3, 4]
     assert run_processes(selftest_task, [], workers=2) == []
+
+
+# WP2 package review --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("preset", [None, "4"])
+def test_direct_init_worker_in_the_main_process_leaves_the_environment_unchanged(
+    monkeypatch, preset
+):
+    """W2.16 literally: init_worker() called in the current process."""
+    from refute.core.runner import init_worker
+
+    _set_thread_env(monkeypatch, preset)
+    before = dict(os.environ)
+    init_worker()
+    assert dict(os.environ) == before

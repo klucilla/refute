@@ -134,6 +134,10 @@ class ClaimVerdict:
 # attack (for example 5 seeds). A result below it is recorded as incomplete even when
 # it is a valid failure.
 EXPECTED_COVERAGE = "expected_coverage"
+# Set by an attack whose own rule already establishes the failure from the valid runs
+# obtained (``seeds_attack``, ``data_split_attack``); a negative minimum then does not
+# erase it (W2.6).
+FAILURE_ESTABLISHED = "failure_established"
 
 
 def _is_incomplete(result: TestResult) -> bool:
@@ -163,7 +167,11 @@ def apply_minimum_coverage(result: TestResult, minimum: CoverageMinimum | None) 
                 f"{minimum.positive} ({result.message})"
             ),
         )
-    if result.status is TestStatus.FAIL and result.coverage < minimum.negative:
+    established = result.metrics.get(FAILURE_ESTABLISHED) is True and result.coverage > 0
+    if result.status is TestStatus.FAIL and result.coverage < minimum.negative and not established:
+        # W2.6: below the negative minimum a FAIL gives no conclusion, unless the valid
+        # evidence already obtained establishes it (for example 2 valid failures of 5
+        # seeds, or 1 of 3 splits, by the attack's own rule).
         return replace(
             result,
             status=TestStatus.INCONCLUSIVE,
@@ -424,6 +432,7 @@ def _runs_attack(
             EXPECTED_COVERAGE: expected_runs,
             "valid_runs": len(valid),
             "valid_failures": failed,
+            FAILURE_ESTABLISHED: failed >= failures_for_fragile,
         }
         return result
 

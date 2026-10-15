@@ -498,3 +498,26 @@ def test_profile_all_inconclusive_headline_says_inconclusive():
 def test_profile_needs_claims():
     with pytest.raises(ValueError):
         paper_profile([])
+
+
+# WP2 package review --------------------------------------------------------------------------
+
+
+def test_failure_established_by_the_attack_rule_survives_a_negative_minimum():
+    seeds = seeds_attack([False, False, None, None, None], mean_holds=None)
+    v = verdict(
+        base(),
+        [attack("seeds", seeds), attack("data_split", OK, coverage=3)],
+        minimums={"seeds": CoverageMinimum(positive=5, negative=5)},
+    )
+    assert v.verdict is PaperVerdict.FRAGILE
+    assert v.incomplete_coverage
+
+
+def test_a_plain_fail_below_the_negative_minimum_still_gives_no_conclusion():
+    v = verdict(
+        base(),
+        [attack("seeds", KO, coverage=2), attack("data_split", OK)],
+        minimums={"seeds": CoverageMinimum(positive=5, negative=5)},
+    )
+    assert v.verdict is PaperVerdict.INCONCLUSIVE

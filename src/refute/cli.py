@@ -305,7 +305,34 @@ def annex_command(
     except SealError as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
+    from refute.core.hashing import sha256_file
+    from refute.core.seal import ANNEX_DIR, ANNEX_MANIFEST
+
+    manifest = sha256_file(dossier / ANNEX_DIR / name / ANNEX_MANIFEST)
     typer.echo(f"annex {name}: {len(record['files'])} file(s), core {record['core_sha256']}")
+    # recorded publicly, like the seal: lets a later check catch a replaced manifest
+    typer.echo(f"annex {name}: {ANNEX_MANIFEST} sha256 {manifest}")
+
+
+@app.command("reply-draft")
+def reply_draft_command(
+    dossier: Annotated[Path, typer.Argument(help="Sealed dossier directory.")],
+    contact: Annotated[
+        Path, typer.Option("--contact", help="Private contact file (JSON, under private/).")
+    ],
+    out: Annotated[Path, typer.Option("--out", help="Draft to write (under private/).")],
+) -> None:
+    """Write an email draft to the authors from a sealed dossier. Never sends anything;
+    prints only the SHA-256 of the draft and of the address."""
+    from refute.core.reply import ReplyDraftError, write_reply_draft
+
+    try:
+        result = write_reply_draft(dossier, contact, out)
+    except ReplyDraftError as exc:
+        typer.echo(f"reply-draft refused: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(f"draft sha256 {result.draft_sha256}")
+    typer.echo(f"address sha256 {result.address_sha256}")
 
 
 @app.command("archive")
