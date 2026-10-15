@@ -411,13 +411,22 @@ def test_rounding_that_keeps_the_order_but_moves_a_distance_is_inconclusive():
     assert outcome_.status is TestStatus.INCONCLUSIVE and "rounding" in outcome_.reason
 
 
+def test_rounding_of_the_arithmetic_with_exact_inputs_is_inconclusive():
+    # Codex round 4: every input is exactly a float, but the mean of 1e16 and 1e16 + 2
+    # rounds to 1e16, so the float r2 is 0 while the exact r2 is -1
+    c = conv("r2", "native")
+    d = data([10000000000000000, 10000000000000002], [10000000000000000, 10000000000000000])
+    outcome_ = run(c, "-1.0", d, 2, channel="native", unit="native")
+    assert outcome_.status is TestStatus.INCONCLUSIVE and "rounding" in outcome_.reason
+
+
 @pytest.mark.parametrize("metric", ["mae", "mse", "rmse", "r2"])
-def test_exact_float_texts_need_no_exact_check_and_pass(metric):
+def test_ordinary_regression_values_pass_the_exact_check(metric):
     y_true = ["3", "-0.5", "2", "7"]
     y_pred = ["2.5", "0.0", "2", "8"]
     c = conv(metric, "native")
     p = rc.prepare(c, data(y_true, y_pred))
-    assert p.exact is None  # every value here is exactly a float
+    assert p.exact is not None  # every regression run is checked against exact arithmetic
     expected = {
         "mae": 0.5,
         "mse": 0.375,

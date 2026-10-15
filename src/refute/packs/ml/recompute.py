@@ -222,20 +222,20 @@ def _exact(value: Any, what: str) -> int | float | Decimal:
 
 def _floats(
     arrays: Sequence[tuple[np.ndarray, str]],
-) -> tuple[list[np.ndarray], list[list[Fraction]] | None]:
-    """The arrays as 64-bit floats (Codex review of PR #81, rounds 1 to 3).
+) -> tuple[list[np.ndarray], list[list[Fraction]]]:
+    """The arrays as 64-bit floats, and the exact values of the file (Codex review of
+    PR #81, rounds 1 to 4).
 
     Over the values of all the arrays compared with each other: a non-zero value must
     not become zero, and the conversion must keep their strict order, so two distinct
     values never become one float and no tie is created (2**53 against 2**53 + 1,
     1e-400 against 2e-400, 0.1 against 0.10000000000000001). That is all a rank metric
-    (AUROC) needs. A metric of distances also depends on how far each value moved: when
-    any value is not exactly a float, the exact values are returned too, so that
-    ``exact_regression_metric`` can check the result (otherwise None)."""
+    (AUROC) needs. A metric of distances also depends on how far each value moved and
+    on the rounding of the arithmetic itself (the mean in r2), so for those the exact
+    values go to ``exact_regression_metric``."""
     pairs: list[tuple[int | float | Decimal, float]] = []
     out = []
     exacts: list[list[Fraction]] = []
-    lossy = False
     for values, what in arrays:
         floats = np.empty(len(values), dtype=np.float64)
         column: list[Fraction] = []
@@ -249,10 +249,8 @@ def _floats(
                 raise RecomputeError(f"{what} holds a non-finite value")
             if f == 0 and exact != 0:
                 raise RecomputeError(f"{what} holds {exact}, which underflows to zero")
-            fraction = Fraction(exact)
-            lossy = lossy or Fraction(f) != fraction
             floats[i] = f
-            column.append(fraction)
+            column.append(Fraction(exact))
             pairs.append((exact, f))
         out.append(floats)
         exacts.append(column)
@@ -263,15 +261,16 @@ def _floats(
                 f"the distinct values {e1} and {e2} become the same float: the conversion "
                 "would change the metric"
             )
-    return out, (exacts if lossy else None)
+    return out, exacts
 
 
 def exact_regression_metric(
     metric: str, y_true: Sequence[Fraction], y_pred: Sequence[Fraction]
 ) -> float:
     """MAE, MSE, RMSE or r2 computed in exact rational arithmetic from the values the
-    file holds (RMSE: the square root of the exact MSE, to 40 digits). Used only to check
-    the float result when the conversion to floats rounded some value."""
+    file holds (RMSE: the square root of the exact MSE, to 40 digits). Every regression
+    run checks the float result against it: the conversion and the float arithmetic can
+    both move a metric of distances."""
     n = len(y_true)
     errors = [p - t for t, p in zip(y_true, y_pred, strict=True)]
     if metric == "mae":
@@ -299,15 +298,14 @@ class Prepared:
     y_other: np.ndarray  # predicted class indices, scores, or predicted values
     n_labels: int = 0
     pos_index: int = -1
-    # regression only: the exact values, when the conversion to floats rounded some value
+    # regression only: the exact values of the file (y_true, y_pred)
     exact: tuple[list[Fraction], list[Fraction]] | None = None
 
 
 def prepare(conv: Convention, data: dict[str, np.ndarray]) -> Prepared:
     if conv.metric in REGRESSION:
         (y_true, y_pred), exacts = _floats([(data["y_true"], "y_true"), (data["y_pred"], "y_pred")])
-        exact = None if exacts is None else (exacts[0], exacts[1])
-        return Prepared(y_true, y_pred, exact=exact)
+        return Prepared(y_true, y_pred, exact=(exacts[0], exacts[1]))
     labels = list(conv.labels or ())
     y_true = _encode(data["y_true"], labels)
     pos = -1
@@ -554,13 +552,14 @@ def recompute_run(
         to_claim = 100.0 if metric_unit == "percent" else 1.0
         own_raw = own_metric(conv, prepared)
         if prepared.exact is not None:
-            # some value was rounded on its way to a float: the result must still be the
-            # exact metric of the values in the file (Codex review of PR #81, round 3)
+            # the float result must be the exact metric of the values in the file: the
+            # conversion and the float arithmetic can both move it (Codex review of PR #81,
+            # rounds 3 and 4)
             exact = exact_regression_metric(conv.metric, *prepared.exact)
             if abs(own_raw - exact) > 1e-9 * max(1.0, abs(exact)):
                 raise RecomputeError(
-                    f"rounding the inputs to floats moves {conv.metric} from {exact!r} to "
-                    f"{own_raw!r}"
+                    f"floating-point rounding moves {conv.metric} from its exact value "
+                    f"{exact!r} to {own_raw!r}"
                 )
             details["exact"] = exact
         own = own_raw * to_claim
