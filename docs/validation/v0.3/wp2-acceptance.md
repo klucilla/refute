@@ -161,7 +161,11 @@ WP2 lands before any v0.3 lock.
   - whether the core is intact against its seal;
   - whether each annex is intact against its manifest.
 
-  Adding an annex never changes the core hash.
+  Adding an annex never changes the core hash. `refute annex` prints the SHA-256 of
+  the new `ANNEX.json`; that hash is committed and pushed at once, with no content,
+  like the seal hash (added with the maintainer's approval on 2026-10-15). An
+  automatic check of a dossier against the published annex hashes is not part of
+  WP2.
 
 ### 1.6 Reply draft (plan 9.1, item 4, lines 732-737)
 
