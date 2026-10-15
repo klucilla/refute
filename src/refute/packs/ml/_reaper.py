@@ -5,11 +5,13 @@ It declares itself a **child subreaper** (prctl PR_SET_CHILD_SUBREAPER), so ever
 descendant of the run that loses its parent is re-parented to it, and it waits for
 every process that ends as its child. The CPU total is the sum of their wait4 rusage
 (each includes the children that process waited for), and never less than the largest
-live reading from /proc (the time of live descendants plus what was already waited):
-a descendant reaped automatically by a parent that ignores SIGCHLD leaves no rusage
-anywhere, so the live reading is the conservative floor. Exact accounting of every such
-case needs a cgroup, which is the docker backend's job on the VM (W3.10); this backend
-runs synthetic repositories only.
+live reading from /proc (the time of live descendants plus what was already waited).
+**Known limit:** a descendant reaped automatically by a parent that ignores SIGCHLD
+leaves no rusage anywhere; its time is lost, and several such children in sequence add
+up, so the total can be below the real usage. The live reading is not a guaranteed
+bound either (the /proc scan is not atomic). Exact accounting needs a cgroup, which is
+the docker backend's job on the VM (W3.10). This backend runs synthetic repositories
+only and is never used for the budget of a real paper.
 
 When the first process ends, on SIGTERM (the runner's stop), or on any error of its
 own, it kills every remaining descendant and waits for all of them before writing the

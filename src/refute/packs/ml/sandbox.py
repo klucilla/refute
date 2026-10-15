@@ -14,10 +14,11 @@ For each run the backend:
   suspended, so no child can escape before the assignment, and the final reading waits
   until the job has no active process; on Linux through a supervisor process
   (``_reaper.py``) that is a child subreaper and waits for every process of the run.
-  On Linux the total is the sum of their rusage, never below the largest live reading;
-  a descendant reaped automatically by a parent that ignores SIGCHLD can still escape
-  part of its accounting, which only a cgroup closes: that is the docker backend's job
-  on the VM, and this backend never runs a real paper;
+  On Linux the total is the sum of their rusage, and never below the largest live
+  reading. **Known limit:** the time of descendants reaped automatically by a parent that
+  ignores SIGCHLD is lost and can add up, so the total can be below the real usage. Only
+  a cgroup closes that: it is the docker backend's job on the VM, and this backend never
+  runs a real paper;
 - stops the run, and every process in it, when one of the guards fires:
   - ``threshold``: the CPU time reached F, the threshold of the WP2 grant;
   - ``active_time_limit``: the stage's active time limit;
