@@ -61,6 +61,38 @@ lines 47-50). Committed **before** the tests and code of the package (plan lines
   - **reply draft:** from the sealed dossier of the `NOT_REPRODUCED` paper,
     `refute reply-draft` writes a draft whose claim fields come from that claim's entry
     of the sealed `claim.yaml` (WP3 D-S3), with a synthetic contact under `private/`.
+- **W4.3b Holdout, both sides** (WP3 1.0.10; decided by the maintainer on 2026-10-15).
+  Each case is a synthetic paper whose expected result is fixed before its first run;
+  the values below are never adjusted after a run of the sample, the pilot or the
+  development papers.
+  - **Must not give a false `FRAGILE`:**
+    - *sampling noise only:* a model whose true per-example accuracy is the same on
+      every split; the holdout value differs from the reported one only by the
+      sampling of `m` examples, inside the widened tolerance;
+    - *smaller training set:* the same data, where training on 90% of the training
+      split lowers the result by less than the widened tolerance;
+    - each of these must give a holdout attack that passes.
+  - **Must still detect a real deviation (`FRAGILE`):**
+    - *fitted to the evaluation split:* a model that memorizes the reported split and
+      is at chance level on unseen examples, so its holdout value falls outside the
+      widened tolerance;
+    - *selected on the test set:* a model whose reported value is the best of many
+      configurations chosen on the reported split, and whose holdout value falls
+      outside the widened tolerance.
+  - **Not applicable, recorded with the reason:** a training split with
+    `n_train < 1000` (`m < 100`), a `direction` claim, a metric outside the list.
+- **W4.3c Published uncertainty** (WP3 1.0.9; decided by the maintainer on 2026-10-15),
+  each a synthetic paper with a fixed expected result:
+  - a comparison with a paired SD, a paired SE with `n`, and a paired 95% `t` CI
+    with `n`: the same reproduced difference is judged with
+    `tol_d = max(abs_floor, rel_tol · |p|, k_sd · sd_d)`, and the result is the
+    recorded one;
+  - a value claim whose paper reports an SE with no `n` (reported but not
+    convertible): a reproduced value outside the narrower tolerance is
+    `INCONCLUSIVE`, never `NOT_REPRODUCED`; the same paper with `kind: none` is
+    `NOT_REPRODUCED`;
+  - a comparison whose paired CI is asymmetric or of unknown method: the same
+    treatment, never a negative verdict from that uncertainty alone.
 - **W4.4** For each paper, the full verdict is checked:
   - the claim verdict;
   - the reason;
@@ -86,7 +118,11 @@ Must-fail checks:
 - (W4.3a) the `direction` tie must not be `REPRODUCED`; the `metric_recompute`
   boundary case must not be `NOT_REPRODUCED`; the no-seed repository must not run the
   `seeds` attack; no attack of any claim may start before the last base reproduction
-  ends.
+  ends;
+- (W4.3b) the two holdout cases that must not fail must not be `FRAGILE`; the two
+  real deviations must be `FRAGILE`;
+- (W4.3c) a reported but not convertible uncertainty must never produce
+  `NOT_REPRODUCED` by itself.
 
 ## 3. Metrics and evidence
 
@@ -94,7 +130,7 @@ Must-fail checks:
 - CI is green on the four jobs.
 - The CI time per job stays within the maintainer's target of 15 minutes; the WP4
   cases add seconds, not minutes.
-- The PR lists each case of W4.3 and W4.3a with its test.
+- The PR lists each case of W4.3, W4.3a, W4.3b and W4.3c with its test.
 
 ## 4. Regression cases
 
