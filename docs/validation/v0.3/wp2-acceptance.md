@@ -101,19 +101,42 @@ WP2 lands before any v0.3 lock.
     acceptance revision makes the paper's accounting invalid, recorded as a Refute
     error (`INCONCLUSIVE`), never as a pass.
   - The reading of `cpu.stat` itself is implemented in WP3 (runner).
-- **W2.10a** **Control during execution, not only at the end.** Before a container
-  starts, the accountant gives it an allowance: what its account may still use under
-  the sharing rule. While it runs, the runner (WP3) reads its usage at a fixed
-  interval, fixed in the WP3 acceptance revision, and stops the container when the
-  allowance is reached. The final record is still read once, at the end.
-  - The overshoot between two readings is bounded by the interval times the
-    container's CPU limit.
-  - The overshoot is charged like any other usage. If it takes the pool past its
-    limit, the reason is `budget_exhausted`.
-  - Synthetic case (WP2, with a simulated meter): a job that keeps consuming is
-    stopped at its allowance plus at most the bounded overshoot. Its account and the
-    pool never go beyond the limit plus that bound, and the reserves of the claims
-    not yet run are untouched.
+- **W2.10a** **Control during execution, not only at the end.** The final record is
+  still read once, at the end.
+  - **Allowances are reservations.** Before a container starts, the accountant grants
+    it an allowance and deducts it at once from the available balance of its account.
+    The balance is the authorized amount under the sharing rule, minus what is
+    already charged and minus the allowances of containers still running. Concurrent
+    containers inside a claim can therefore never be granted the same balance twice.
+    When a container ends, its real usage is charged and the unused part of its
+    allowance is released.
+  - **The stopping margin lies inside the authorized balance.** The allowance granted
+    is the available amount minus a stopping margin M. The runner (WP3) reads the
+    container's usage during the run and stops it when its usage reaches the
+    allowance. M absorbs the consumption between the last reading and the moment the
+    container stops, so the account never goes past its authorized balance, and the
+    reserves of the claims not yet run are never touched. If a container ever
+    overshoots by more than M, the accountant records the breach. The paper's
+    accounting is then invalid (Refute error, `INCONCLUSIVE`); it is never absorbed
+    silently.
+  - **M is derived, not assumed.** The WP3 acceptance revision derives M from the CPU
+    quota period of the cgroup (`cpu.max`: quota and period;
+    https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files, accessed
+    2026-10-14), the reading interval, the delay of a reading, and the latency of
+    stopping a container. It measures these on the VM (WP6 V22) before fixing M.
+  - **Synthetic cases (WP2, with a simulated meter).** These conditions are
+    simulated, not assumed away:
+    - two concurrent containers in one claim, each consuming without stopping on its
+      own;
+    - a burst that uses a whole quota period at once;
+    - a reading delayed by the maximum sampling delay;
+    - a slow stop.
+
+    In each case, the sum of charged usage and outstanding allowances never exceeds
+    the authorized balance, and the reserves of the claims not yet run stay intact.
+    A case at the limit of a claim that still has claims after it is included. A
+    simulated overshoot above M is recorded as a breach and invalidates the
+    accounting.
 
 ### 1.5 Seal and annexes (plan 9.1, lines 722-729)
 
