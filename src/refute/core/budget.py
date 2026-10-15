@@ -24,13 +24,21 @@ every moment, charged usage plus the reservations of running containers stays wi
 the authorized balance. When a container ends, ``finish()`` replaces R by the real
 usage. A usage above R is a breach, which makes the accounting invalid (a Refute error,
 ``INCONCLUSIVE``); a breach is never absorbed silently.
+
+Every public method runs under one lock, so concurrent grants, records and phase
+changes are serialized: two grants can never both take the same available budget.
+Every amount must be an ``int`` (not ``bool``, ``float`` or NaN) and non-negative. The
+pools can be smaller than 192 + 192 CPU-hours (development papers), never larger.
 """
 
 from __future__ import annotations
 
 import enum
-from collections.abc import Mapping, Sequence
+import functools
+import threading
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
+from typing import Any
 
 USEC_PER_CPU_HOUR = 3_600 * 1_000_000
 PAPER_LIMIT_USEC = 384 * USEC_PER_CPU_HOUR
@@ -42,6 +50,22 @@ BUDGET_EXHAUSTED = "budget_exhausted"
 def cpu_hours(hours: int) -> int:
     """Whole CPU-hours in microseconds."""
     return hours * USEC_PER_CPU_HOUR
+
+
+def _usec(value: Any, name: str) -> int:
+    """An amount of microseconds: an ``int`` (not ``bool``) and not negative."""
+    if type(value) is not int or value < 0:
+        raise ValueError(f"{name} must be a non-negative integer of microseconds, got {value!r}")
+    return value
+
+
+def _locked[F: Callable[..., Any]](method: F) -> F:
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        with self._lock:
+            return method(self, *args, **kwargs)
+
+    return wrapper  # type: ignore[return-value]
 
 
 class Pool(enum.StrEnum):
@@ -134,8 +158,14 @@ class Accountant:
             raise ValueError("a paper needs at least one claim")
         if len(set(claims)) != len(claims):
             raise ValueError("claims must be unique")
-        if margin_usec < 0 or base_pool_usec <= 0 or attack_pool_base_usec < 0:
-            raise ValueError("the margin and the pools must be non-negative, the base positive")
+        _usec(margin_usec, "margin_usec")
+        _usec(base_pool_usec, "base_pool_usec")
+        _usec(attack_pool_base_usec, "attack_pool_base_usec")
+        if not 0 < base_pool_usec <= BASE_POOL_USEC:
+            raise ValueError("the base pool must be positive and at most 192 CPU-hours")
+        if attack_pool_base_usec > ATTACK_POOL_BASE_USEC:
+            raise ValueError("the attack pool base must be at most 192 CPU-hours")
+        self._lock = threading.RLock()
         self.claims = claims
         self.margin_usec = margin_usec
         self.base_pool_usec = base_pool_usec
@@ -159,12 +189,18 @@ class Accountant:
 
     @property
     def setup_exhausted(self) -> bool:
-        """The setup used the whole base pool: every claim is INCONCLUSIVE (setup)."""
+        """The setup left no usable base budget (decided from the frozen S: what remains
+        cannot fund a container beyond its margin): every claim is INCONCLUSIVE
+        (budget_exhausted, setup)."""
         return (
-            self.base is not None
-            and self.base.reserve_usec == 0
-            and (self._pool_balance(Pool.BASE) <= 0)
+            self.setup_usec is not None
+            and self.base_pool_usec - self.setup_usec <= self.margin_usec
         )
+
+    def _valid_account(self, account: Account) -> bool:
+        if account.pool is Pool.SETUP:
+            return account.claim is None
+        return account.claim in self.claims
 
     def _pool_of(self, account: Account) -> Pool:
         return Pool.ATTACKS if account.pool is Pool.ATTACKS else Pool.BASE
@@ -198,9 +234,10 @@ class Accountant:
         balance = self._pool_balance(self._pool_of(account))
         return Decision(False, reason, pool, 0, balance, 0)
 
+    @_locked
     def authorized(self, account: Account) -> Decision:
         """What ``account`` may use now, under the order and the sharing rule (W2.9)."""
-        if account.claim is not None and account.claim not in self.claims:
+        if not self._valid_account(account):
             return self._refusal(account, f"unknown account {account}")
         if account.pool is Pool.SETUP:
             if self.phase is not Phase.SETUP:
@@ -251,10 +288,10 @@ class Accountant:
             )
         return Decision(True, "", account.pool, available, balance, reserved)
 
+    @_locked
     def decide(self, account: Account, amount_usec: int) -> Decision:
         """Whether a charge of ``amount_usec`` to ``account`` is allowed now (W2.9)."""
-        if amount_usec < 0:
-            raise ValueError("a charge cannot be negative")
+        _usec(amount_usec, "amount_usec")
         d = self.authorized(account)
         if d.allowed and amount_usec > d.available_usec:
             return Decision(
@@ -264,6 +301,7 @@ class Accountant:
 
     # -- control during execution (W2.10a) -------------------------------------------
 
+    @_locked
     def grant(self, account: Account, container_ids: Sequence[str]) -> list[Grant]:
         """Reserve R for each of k containers that start together for ``account``.
 
@@ -297,13 +335,17 @@ class Accountant:
         )
         return grants
 
+    @_locked
     def finish(self, container_id: str, account: Account, usage_usec: int) -> None:
         """The final record of a container, read once when it ends (W2.10)."""
-        if usage_usec < 0:
-            raise RecordRejectedError(f"negative usage for container {container_id}")
+        if type(usage_usec) is not int or usage_usec < 0:
+            raise RecordRejectedError(
+                f"usage of container {container_id} must be a non-negative integer, "
+                f"got {usage_usec!r}"
+            )
         if container_id in self.records:
             raise RecordRejectedError(f"container {container_id} recorded twice")
-        if account.pool is not Pool.SETUP and account.claim not in self.claims:
+        if not self._valid_account(account):
             raise RecordRejectedError(f"unknown account {account}")
         grant = self.running.get(container_id)
         if grant is None:
@@ -327,6 +369,7 @@ class Accountant:
         if self.running:
             raise ValueError(f"{what}: containers still running: {sorted(self.running)}")
 
+    @_locked
     def end_setup(self) -> None:
         if self.phase is not Phase.SETUP:
             raise ValueError("the setup is already closed")
@@ -339,12 +382,14 @@ class Accountant:
         self.phase = Phase.BASE
         self.log.append(f"setup S={self.setup_usec}; base reserve {self.base.reserve_usec}")
 
+    @_locked
     def close_base(self, claim: str) -> None:
         if self.phase is not Phase.BASE or claim != self._current(self.base):
             raise ValueError(f"the current base claim is {self._current(self.base)}, not {claim}")
         self._no_running(f"close_base({claim})")
         self.base.done.append(claim)
 
+    @_locked
     def freeze_attacks(self, eligible: Mapping[str, bool]) -> None:
         """After all base runs: freeze the eligible claims (base obtained and at least one
         applicable attack, fixed before the lock), the pool and the reserve."""
@@ -369,6 +414,7 @@ class Accountant:
             f"reserve {self.attacks.reserve_usec}"
         )
 
+    @_locked
     def close_attack(self, claim: str) -> None:
         if self.phase is not Phase.ATTACKS or claim != self._current(self.attacks):
             raise ValueError(
@@ -381,6 +427,7 @@ class Accountant:
 
     # -- checks ------------------------------------------------------------------------
 
+    @_locked
     def invariant_holds(self) -> bool:
         """Charged usage plus running reservations stay within each pool, and the
         reserves of the claims not yet run are untouched."""
@@ -395,18 +442,21 @@ class Accountant:
                     reserved = self._waiting_reserves(dist, current)
             if self._used(pool) + reserved > self._pool_total(pool):
                 return False
-        return self.total_charged() <= self.base_pool_usec + self.attack_pool_base_usec
+        total = self.total_charged()
+        return total <= self.base_pool_usec + self.attack_pool_base_usec <= PAPER_LIMIT_USEC
 
+    @_locked
     def total_charged(self) -> int:
         return sum(self.charged.values())
 
+    @_locked
     def check_completeness(self, parent_usage_usec: int, tolerance_usec: int) -> bool:
         """Compare the sum of the records with the usage of the paper's parent cgroup.
 
         A difference above the tolerance, or a container still without its final
         record, makes the accounting invalid (a Refute error, never a pass)."""
-        if tolerance_usec < 0 or parent_usage_usec < 0:
-            raise ValueError("the parent usage and the tolerance must be non-negative")
+        _usec(parent_usage_usec, "parent_usage_usec")
+        _usec(tolerance_usec, "tolerance_usec")
         if self.running:
             self.invalid_reasons.append(
                 f"containers without a final record: {sorted(self.running)}"

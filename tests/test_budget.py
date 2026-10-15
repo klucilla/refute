@@ -304,8 +304,12 @@ def test_in_run_control_keeps_the_invariant_and_the_reserves(name):
     acc.end_setup()
     grants = acc.grant(base("C1"), ["seed-1", "seed-2"])  # two containers in parallel
     assert all(g.threshold_usec > 0 for g in grants)
-    # the burst falls on the last tick below F, between two readings
+    # the burst falls on the last tick below F that is not a reading tick
     burst_tick = grants[0].threshold_usec // rate
+    if burst:  # the burst scenario reads every 2 ticks, so an odd tick is between readings
+        assert s["read_every"] == 2
+        if burst_tick % 2 == 0:
+            burst_tick -= 1
     meter = Meter(
         acc,
         grants,
@@ -363,3 +367,95 @@ def test_grant_whose_reservation_exceeds_what_is_available_is_refused():
         big_margin.grant(base("C1"), ["c1"])
     assert not big_margin.running
     assert acc.grant(base("C1"), ["c1"])  # the same claim with a small margin
+
+
+def test_both_concurrent_containers_reach_their_whole_reservation_at_the_same_step():
+    """Simulated: two containers of one claim both stop exactly at R = F + M, at the
+    same tick; at every step charged + live usage stays within the authorized balance."""
+    acc = Accountant(["C1", "C2"], margin_usec=40, base_pool_usec=2_000)
+    acc.end_setup()  # S = 0, reserve 1000 per claim
+    grants = acc.grant(base("C1"), ["a", "b"])  # available 1000: R = 500, F = 460
+    assert [(g.threshold_usec, g.reservation_usec) for g in grants] == [(460, 500)] * 2
+    final = Meter(acc, grants, rate=10, stop_latency=4).run(checked(acc, Pool.BASE, "C1"))
+    assert final == {"a": 500, "b": 500}
+    assert acc.accounting_valid and acc.invariant_holds()
+    acc.close_base("C1")
+    assert acc.authorized(base("C2")).available_usec == 1_000  # the reserve of C2 intact
+
+
+# Codex round 1: amounts, limits, accounts, attribution, concurrency -----------------------
+
+
+@pytest.mark.parametrize("bad", [float("nan"), 1.5, -1, True, "10"])
+def test_non_integer_or_negative_amounts_are_rejected(bad):
+    acc = Accountant(["C1"], margin_usec=M)
+    acc.grant(SETUP, ["build"])
+    with pytest.raises(RecordRejectedError):
+        acc.finish("build", SETUP, bad)
+    assert "build" in acc.running  # unchanged
+    with pytest.raises(ValueError):
+        acc.decide(SETUP, bad)
+    with pytest.raises(ValueError):
+        acc.check_completeness(bad, 0)
+    with pytest.raises(ValueError):
+        acc.check_completeness(0, bad)
+    with pytest.raises(ValueError):
+        Accountant(["C1"], margin_usec=bad)
+
+
+def test_pools_can_never_exceed_the_paper_limits():
+    with pytest.raises(ValueError):
+        Accountant(["C1"], margin_usec=M, base_pool_usec=cpu_hours(400))
+    with pytest.raises(ValueError):
+        Accountant(["C1"], margin_usec=M, attack_pool_base_usec=cpu_hours(193))
+    dev = Accountant(
+        ["C1"], margin_usec=M, base_pool_usec=cpu_hours(48), attack_pool_base_usec=cpu_hours(48)
+    )  # a smaller paper is allowed
+    assert dev.base_pool_usec == cpu_hours(48)
+
+
+def test_setup_account_with_a_claim_is_unknown():
+    from refute.core.budget import Account
+
+    acc = Accountant(["C1"], margin_usec=M)
+    wrong = Account(Pool.SETUP, "C1")
+    assert not acc.authorized(wrong).allowed
+    with pytest.raises(BudgetRefusedError):
+        acc.grant(wrong, ["x"])
+
+
+def test_setup_is_named_only_when_the_setup_exhausted_the_pool():
+    acc = Accountant(["C1", "C2"], margin_usec=0, base_pool_usec=cpu_hours(10))
+    run(acc, SETUP, "build", cpu_hours(10) - 2)  # the setup leaves 2 usec, reserve 1 each
+    acc.end_setup()
+    assert not acc.setup_exhausted
+    run(acc, base("C1"), "c1", 1)
+    acc.close_base("C1")
+    run(acc, base("C2"), "c2", 1)
+    d = acc.authorized(base("C2"))
+    assert not d.allowed and d.pool is Pool.BASE  # C2 used the last microsecond, not setup
+
+
+def test_concurrent_grants_never_take_the_same_budget():
+    import threading
+
+    acc = three_claims(30)
+    available = acc.authorized(base("C1")).available_usec
+    barrier = threading.Barrier(8)
+    results = []
+
+    def take(i):
+        barrier.wait()
+        try:
+            results.append(acc.grant(base("C1"), [f"c{i}"])[0])
+        except BudgetRefusedError:
+            results.append(None)
+
+    threads = [threading.Thread(target=take, args=(i,)) for i in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    granted = [g for g in results if g is not None]
+    assert sum(g.reservation_usec for g in granted) <= available
+    assert acc.invariant_holds()
