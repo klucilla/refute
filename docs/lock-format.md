@@ -104,6 +104,37 @@ that the lock is the latest `LOCK_HISTORY.md` entry for that claim.
 `TAMPERED` takes precedence over `FAIL`. `refute replicate` and `refute calibrate`
 run `verify` first and stop with the same exit code unless it is `PASS`.
 
+## Historical locks: projection of the claim hash
+
+The claim hash covers the *resolved* claim, so an optional field added to the schema
+after a lock changes the resolved hash of the older claim even though its file is
+unchanged (issue #30). For the historical locks listed in
+`src/refute/core/lock_compat.py` (the v0.1 and v0.2 calibration claims), `verify`
+then tries a projection of the claim:
+
+- **Which locks.** A lock gets a projection only when its `lock_version`,
+  `canonicalization`, `claim_id`, `claim_kind`, `claim_path_in_repo`, `claim_sha256`,
+  code hash, `git_commit` and `locked_at_utc` all equal a table entry.
+- **What is removed.** The projection removes exactly the key paths listed for that
+  lock, the fields added since it. It applies only if each listed path still has its
+  frozen value, compared as canonical JSON, and none of them is written in the claim
+  file.
+- **The result.** If the remaining resolved claim hashes to the locked `claim_sha256`,
+  the claim component matches. The output then names the table entry and gives the
+  full resolved hash and the projected hash.
+
+The projection shows that the claim content and the values resolved at lock time are
+intact. It does not show that the current code evaluates the claim the same way. The
+attachment, code and history checks are unchanged, so a code difference keeps the
+result `TAMPERED`, and `calibrate` and `replicate` still stop. The table is frozen, and
+its provenance is the fixtures in `tests/fixtures/locked_canonical/`: each is the
+canonical form computed with the lock commit's own code, and each hashes to its locked
+`claim_sha256`. The acceptance criteria are in
+[validation/v0.3/lock-compat-acceptance.md](validation/v0.3/lock-compat-acceptance.md).
+The verification at each lock's tag, in its own environment, remains the complete check
+(see the README and
+[validation/v0.3/lock-compat-record.md](validation/v0.3/lock-compat-record.md)).
+
 ## Interoperability
 
 The format is deliberately small (one JSON file, one Markdown log, SHA-256 and a

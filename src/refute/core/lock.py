@@ -31,6 +31,8 @@ from refute.core.codehash import (
 )
 from refute.core.hashing import sha256_text_normalized
 from refute.core.io import append_text, write_json
+from refute.core.lock_compat import LIMIT as PROJECTION_LIMIT
+from refute.core.lock_compat import project
 
 LOCK_VERSION = 1
 HISTORY_FILENAME = "LOCK_HISTORY.md"
@@ -253,6 +255,8 @@ class VerifyResult:
     lock: dict[str, Any] | None = None
     current_claim_sha256: str | None = None
     current_code_sha256: str | None = None
+    claim_projection: str | None = None
+    projected_claim_sha256: str | None = None
     verified_at_utc: str = field(default_factory=utc_now)
 
     @property
@@ -271,6 +275,8 @@ class VerifyResult:
             "locked_code_sha256": self.lock.get("code", {}).get("sha256") if self.lock else None,
             "current_claim_sha256": self.current_claim_sha256,
             "current_code_sha256": self.current_code_sha256,
+            "claim_projection": self.claim_projection,
+            "projected_claim_sha256": self.projected_claim_sha256,
             "verified_at_utc": self.verified_at_utc,
         }
 
@@ -304,10 +310,31 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
     current_claim = loaded.sha256()
     result.current_claim_sha256 = current_claim
     if current_claim != lock["claim_sha256"]:
-        result.tampered.append("claim")
-        result.messages.append(
-            f"claim hash mismatch: locked {lock['claim_sha256']}, now {current_claim}"
-        )
+        # Historical locks only: remove the exact fields added since the lock
+        # (refute.core.lock_compat); every safeguard must hold, or the claim is TAMPERED.
+        projection = project(loaded.canonical(), loaded.raw, lock)
+        if projection.applied and projection.sha256 == lock["claim_sha256"]:
+            result.claim_projection = projection.entry
+            result.projected_claim_sha256 = projection.sha256
+            result.messages.append(
+                f"claim matches its lock by historical projection {projection.entry}: "
+                f"locked {lock['claim_sha256']}, full resolved hash now {current_claim}; "
+                f"{PROJECTION_LIMIT}"
+            )
+        else:
+            result.tampered.append("claim")
+            why = (
+                f"; historical projection {projection.entry} not applied: {projection.reason}"
+                if projection.entry and not projection.applied
+                else (
+                    f"; historical projection {projection.entry} gives {projection.sha256}"
+                    if projection.entry
+                    else ""
+                )
+            )
+            result.messages.append(
+                f"claim hash mismatch: locked {lock['claim_sha256']}, now {current_claim}{why}"
+            )
 
     for record in lock["attachments"]:
         path = claim_file.parent / record["path"]
