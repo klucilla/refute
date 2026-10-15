@@ -136,6 +136,7 @@ conclusion only where the valid evidence already obtained establishes it.
 | `data_present` | examples per split (train, validation, test, holdout) | an empty split, or one smaller than the paper states (tolerance fixed), does not pass the gate |
 | `metric_extracted` | examples the metric was computed on | a metric on zero examples does not pass the gate |
 | `base_reproduction` | runs completed | no run: not decided |
+| `metric_recompute` | base runs recomputed in full (all the claim's examples, by both implementations) | no run recomputed: `INCONCLUSIVE`, never PASS; one valid failure establishes the failure |
 | `seeds`, `data_split` | valid runs completed | `INCONCLUSIVE`, never PASS |
 | comparison | paired comparisons made | nothing compared: `INCONCLUSIVE` |
 | the repository's own test suite | tests collected and not skipped | zero collected or all skipped: `INCONCLUSIVE` for that check, never PASS |
