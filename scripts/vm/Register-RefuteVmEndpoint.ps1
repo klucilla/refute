@@ -130,13 +130,14 @@ function New-FolderAcl {
     return $acl
 }
 
+. (Join-Path $PSScriptRoot 'RefuteRegistration.Core.ps1')
+
 function Get-NonAdminWriters([string]$Path) {
-    # Accounts other than SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER that
-    # can write to Path or below.
-    $write = [System.Security.AccessControl.FileSystemRights]'Write, Modify, FullControl, Delete, ChangePermissions, TakeOwnership'
+    # Accounts other than SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER whose
+    # allow entry on Path grants any change (read and execute entries do not count).
     $allowed = @($SidSystem, $SidAdmins, $SidTrustedInstaller, $SidCreatorOwner)
     return @((Get-Acl -LiteralPath $Path).Access | Where-Object {
-            $_.AccessControlType -eq 'Allow' -and ($_.FileSystemRights -band $write) -and
+            $_.AccessControlType -eq 'Allow' -and (Test-RefuteRightsWrite ([int]$_.FileSystemRights)) -and
             $allowed -notcontains $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
         } | ForEach-Object { [string]$_.IdentityReference })
 }
@@ -261,7 +262,12 @@ try {
     if (-not $active -or [string]$active.Enabled -ne 'True' -or [string]$active.Action -ne 'Block') { throw 'the block rule is not in the active firewall policy' }
     $profilesOff = @(Get-NetFirewallProfile -PolicyStore ActiveStore | Where-Object { [string]$_.Enabled -ne 'True' } | ForEach-Object { $_.Name })
     if ($profilesOff.Count) { throw ('firewall profiles not enabled: ' + ($profilesOff -join ', ')) }
-    $overrides = @(Get-NetFirewallRule -PolicyStore ActiveStore | Where-Object { $_.OverrideBlockRules -and [string]$_.Enabled -eq 'True' -and [string]$_.Direction -eq 'Inbound' } | ForEach-Object { $_.Name })
+    # OverrideBlockRules belongs to each rule's security filter, not to the rule.
+    $inbound = foreach ($r in @(Get-NetFirewallRule -PolicyStore ActiveStore | Where-Object { [string]$_.Enabled -eq 'True' -and [string]$_.Direction -eq 'Inbound' })) {
+        $filter = Get-NetFirewallSecurityFilter -AssociatedNetFirewallRule $r
+        [ordered]@{ Name = $r.Name; Enabled = [string]$r.Enabled; Direction = [string]$r.Direction; OverrideBlockRules = [bool]$filter.OverrideBlockRules }
+    }
+    $overrides = @(Find-RefuteBlockOverrides @($inbound))
     if ($overrides.Count) { throw ('enabled inbound rules override block rules: ' + ($overrides -join ', ')) }
     # 4. listeners from the registry, before the service starts
     $foreign = @(Test-ListenersLoopbackOnly @(Get-RegistryListeners))

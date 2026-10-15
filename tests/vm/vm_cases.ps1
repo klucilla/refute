@@ -268,6 +268,24 @@ foreach ($bad in @("ssh-rsa $b64", "ssh-ed25519 notbase64!", "ssh-ed25519 $([Sys
     Add-Case "key refused: $($bad.Substring(0, 12))" ($null -ne $failed) $failed
 }
 
+# ---- registration decisions (Codex review round 2) ----------------------------------------
+. (Join-Path $vmDir 'RefuteRegistration.Core.ps1')
+$r = [System.Security.AccessControl.FileSystemRights]
+foreach ($readOnly in @($r::ReadAndExecute, $r::Read, $r::ListDirectory, $r::ReadPermissions, $r::Synchronize)) {
+    Add-Case "read-only rights are not a writer: $readOnly" (-not (Test-RefuteRightsWrite ([int]$readOnly)))
+}
+foreach ($writer in @($r::Modify, $r::FullControl, $r::Write, $r::WriteData, $r::AppendData, $r::Delete, $r::ChangePermissions, $r::TakeOwnership, $r::DeleteSubdirectoriesAndFiles, $r::WriteAttributes)) {
+    Add-Case "change rights are a writer: $writer" (Test-RefuteRightsWrite ([int]$writer))
+}
+$fw = @(
+    [ordered]@{ Name = 'plain-allow'; Enabled = 'True'; Direction = 'Inbound'; OverrideBlockRules = $false },
+    [ordered]@{ Name = 'bypass-in'; Enabled = 'True'; Direction = 'Inbound'; OverrideBlockRules = $true },
+    [ordered]@{ Name = 'bypass-disabled'; Enabled = 'False'; Direction = 'Inbound'; OverrideBlockRules = $true },
+    [ordered]@{ Name = 'bypass-out'; Enabled = 'True'; Direction = 'Outbound'; OverrideBlockRules = $true })
+$found = @(Find-RefuteBlockOverrides $fw)
+Add-Case 'only enabled inbound bypass rules are found' ($found.Count -eq 1 -and $found[0] -eq 'bypass-in') ($found -join ',')
+Add-Case 'no bypass rule, nothing found' (@(Find-RefuteBlockOverrides @($fw[0], $fw[2], $fw[3])).Count -eq 0)
+
 $psrc = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RoleCapabilities/RefuteVmOperator.psrc')
 $psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.psd1')
 $pin = $psrc.ModulesToImport[0]

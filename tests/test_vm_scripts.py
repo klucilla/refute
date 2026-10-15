@@ -166,6 +166,10 @@ def test_registration_blocks_winrm_before_starting_it():
     register = apply.index("Register-PSSessionConfiguration")
     assert rule < active < registry < start < register
     assert "-AccessMode Local" in apply
+    # the bypass check reads each rule's security filter (Codex review round 2)
+    assert "Get-NetFirewallSecurityFilter -AssociatedNetFirewallRule" in apply
+    assert apply.index("Get-NetFirewallSecurityFilter") < start
+    assert "Test-RefuteRightsWrite" in text
     assert "-PreviewSha256" in text and "the change list differs from the previewed one" in text
 
 
