@@ -4,6 +4,8 @@ command text."""
 
 import importlib.util
 import json
+import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -413,6 +415,115 @@ def test_the_reasons_name_the_rule():
     assert "commit_checked.py" in guard.check("git commit -m x", shell=B)
     assert "backslash" in guard.check("Write-Output 'a\\b'", shell=P)
     assert "Read tool" in guard.check("head -1 x", shell=B)
+
+
+def test_the_wrapper_blocks_when_the_hook_cannot_run(tmp_path):
+    """The command of .claude/settings.json, run by bash as Claude Code runs it, with a
+    project folder that has no interpreter: the hook cannot start, and the wrapper turns
+    that into exit 2 (block). onFailure itself is Claude Code's and is checked above only
+    as configuration."""
+    git_bash = Path("C:/Program Files/Git/bin/bash.exe")
+    bash = str(git_bash) if sys.platform == "win32" else shutil.which("bash")
+    if not bash or not Path(bash).exists():
+        pytest.skip("bash is not available")
+    settings = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    command = settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+    payload = {"tool_name": "Bash", "tool_input": {"command": "git status"}}
+    out = subprocess.run(
+        [bash, "-c", command],
+        input=json.dumps(payload),
+        capture_output=True,
+        text=True,
+        env={**os.environ, "CLAUDE_PROJECT_DIR": tmp_path.as_posix()},
+    )
+    assert out.returncode == 2
+    assert "command is blocked" in out.stderr
+
+
+# Codex review of PR #115, round 1: ways around the new rules ------------------------------
+
+BLOCK_PR115 = [
+    # git aliases given on the command line, prefixes in any form, leading redirections
+    ("git -c alias.x=commit x -m y", B),
+    ("git -c 'alias.x=!git commit -m y' x", B),
+    ("git --config-env=alias.x=VAR x", B),
+    ("git --config-env alias.x=VAR x", B),
+    ("2>/dev/null git commit -m x", B),
+    ("'env' git commit -m x", B),
+    ('"command" git commit -m x', B),
+    ("env -S 'git commit -m x'", B),
+    ("env --split-string='git commit' -m x", B),
+    ("xargs git commit -m x", B),
+    ("cmd /c git commit -m x", P),
+    ("& git commit -m x", P),
+    # option precedence, option values and abbreviations
+    ("git merge --no-commit --commit origin/main", B),
+    ("git merge -m --no-commit origin/main", B),
+    ("git merge --squash --no-squash origin/main", B),
+    ("git merge --continue", B),
+    ("git cherry-pick -n --commit abc123", B),
+    ("git cherry-pick --skip", B),
+    ("git revert --continue", B),
+    ("git pull --ff-only --no-ff origin main", B),
+    ("git pull --ff-only --rebase origin main", B),
+    # Start-Process by position, with other parameters, or with an array
+    ("Start-Process git commit", P),
+    ("Start-Process -WindowStyle Hidden git commit", P),
+    ("Start-Process -FilePath git -Arg 'commit -m x'", P),
+    ("Start-Process git -ArgumentList @('commit', '-m', 'x')", P),
+    ("Start-Process -RSO out.txt git commit", P),
+    # PowerShell parameter prefixes, code as the first argument, code on standard input
+    ("powershell -co 'git commit -m x'", B),
+    ("powershell -NoProfile 'git commit -m x'", B),
+    ("pwsh -NoProfile -ExecutionPolicy Bypass -Command 'git commit -m x'", B),
+    ("pwsh -Command -", B),
+    ("powershell -File -", B),
+    ("@'\ngit status\n'@ | pwsh -Command -", P),
+    ("echo 'git status' | bash", B),
+    ("echo 'git status' | bash -o pipefail", B),
+    ("echo 'git status' | bash -s", B),
+    ("'git status' | cmd", P),
+    ("bash <<< 'git commit -m x'", B),
+    (".venv/Scripts/python.exe <<< 'import pytest'", B),
+    # cat operands and input redirections
+    ("0<README.md cat", B),
+    ("0< README.md cat", B),
+    ("cat 0<README.md", B),
+    ("cat -- -notes", B),
+    ("cat '<<notes'", B),
+    ("cat -n README.md", B),
+    ("command head -1 x", B),
+    ("/usr/bin/tail -1 x", B),
+]
+
+PASS_PR115 = [
+    ("git merge --no-com origin/main", B),
+    ("git merge --commit --no-commit origin/main", B),
+    ("git merge --no-commit -m 'x --commit' origin/main", B),
+    ("git merge --squash origin/main", B),
+    ("git cherry-pick -xn abc123", B),
+    ("git cherry-pick --abort", B),
+    ("git pull --ff --ff-only origin main", B),
+    ("git -c core.quotepath=false log -1", B),
+    ("git -c alias.x=log x -1", B),
+    ("echo hi | cat", B),
+    ("cat - <<'EOF'\nline\nEOF", B),
+    ("printf x | bash scripts/x.sh", B),
+    ("git log | bash -c 'wc -l'", B),
+    ("Start-Process notepad -ArgumentList @('a.txt')", P),
+    ("pwsh -NoProfile -File scripts/x.ps1 -Name commit", B),
+    ("git log --format='%h commit' -1", B),
+]
+
+
+@pytest.mark.parametrize(("command", "shell"), BLOCK_PR115)
+def test_refused_pr115(command, shell):
+    assert guard.check(command, shell=shell) is not None
+
+
+@pytest.mark.parametrize(("command", "shell"), PASS_PR115)
+def test_allowed_pr115(command, shell):
+    assert guard.check(command, shell=shell) is None
 
 
 def test_long_python_option_with_a_value_before_reading_stdin():

@@ -2,6 +2,7 @@
 (the maintainer's rule of 2026-10-16). Each test works in a new git repository in a
 temporary folder; nothing touches this repository and nothing uses the network."""
 
+import importlib.util
 import subprocess
 import sys
 from pathlib import Path
@@ -28,6 +29,7 @@ def repo(tmp_path: Path) -> Path:
     ):
         assert git(path, *args).returncode == 0
     (path / "pyproject.toml").write_text("[tool.ruff]\nline-length = 100\n", encoding="utf-8")
+    assert git(path, "add", "pyproject.toml").returncode == 0
     return path
 
 
@@ -65,7 +67,7 @@ def test_ruff_passing_commits(repo):
     stage(repo, "good.py", "x = 1\n")
     out = commit(repo, "-q", "-m", "good")
     assert out.returncode == 0, out.stdout + out.stderr
-    assert "ruff passed on 1 staged Python file" in out.stdout
+    assert "ruff passed on 1 of 1 staged Python file(s) (0 in folders CI excludes)" in out.stdout
     assert commits(repo) == 1
 
 
@@ -111,6 +113,87 @@ def test_options_that_could_commit_unchecked_content_are_refused(repo, args):
     (repo / "bad.py").write_text("import os\n", encoding="utf-8")
     out = commit(repo, *args)
     assert out.returncode == 2 and "nothing was committed" in out.stderr
+    assert commits(repo) == 0
+
+
+LONG_LINE = "x = " + "1 + " * 21 + "1\n"  # 90 columns: fine at 100, too long at 80
+
+
+@pytest.mark.parametrize(
+    ("staged", "work"),
+    [
+        (
+            "import os\n",
+            "x = 1\n",
+        ),  # ruff would read a passing file, git would commit a failing one
+        ("x = 1\n", "import os\n"),  # ruff would read a failing file for a passing commit
+    ],
+)
+def test_a_python_file_whose_work_tree_differs_from_the_index_is_refused(repo, staged, work):
+    stage(repo, "mod.py", staged)
+    (repo / "mod.py").write_text(work, encoding="utf-8")
+    out = commit(repo, "-m", "x")
+    assert out.returncode == 2 and "mod.py" in out.stderr and "differs" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_an_unstaged_ruff_configuration_is_refused(repo):
+    stage(repo, "long.py", LONG_LINE)
+    (repo / "pyproject.toml").write_text("[tool.ruff]\nline-length = 80\n", encoding="utf-8")
+    out = commit(repo, "-m", "x")
+    assert out.returncode == 2 and "pyproject.toml" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_an_untracked_ruff_configuration_in_a_parent_folder_is_refused(repo):
+    (repo / "pkg").mkdir()
+    stage(repo, "pkg/long.py", LONG_LINE)
+    (repo / "pkg" / "ruff.toml").write_text("line-length = 80\n", encoding="utf-8")
+    out = commit(repo, "-m", "x")
+    assert out.returncode == 2 and "pkg/ruff.toml" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_a_staged_ruff_configuration_is_the_one_ruff_reads(repo):
+    stage(repo, "long.py", LONG_LINE)
+    stage(repo, "pyproject.toml", "[tool.ruff]\nline-length = 80\n")
+    out = commit(repo, "-m", "x")
+    assert out.returncode != 0 and "ruff" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_a_renamed_file_is_checked_under_its_new_name(repo):
+    stage(repo, "notes.txt", "import os\n")
+    assert commit(repo, "-q", "-m", "notes").returncode == 0
+    assert git(repo, "mv", "notes.txt", "bad.py").returncode == 0
+    out = commit(repo, "-m", "rename")
+    assert out.returncode != 0 and "nothing was committed" in out.stderr
+    assert commits(repo) == 1
+
+
+def test_a_stub_file_is_checked(repo):
+    stage(repo, "bad.pyi", "import os\n")
+    out = commit(repo, "-m", "x")
+    assert out.returncode != 0 and commits(repo) == 0
+
+
+def test_files_in_folders_ci_excludes_are_counted_apart(repo):
+    (repo / "calibration" / "v0" / "audit").mkdir(parents=True)
+    stage(repo, "calibration/v0/audit/record.py", "import os\n")  # a published record
+    stage(repo, "good.py", "x = 1\n")
+    out = commit(repo, "-q", "-m", "x")
+    assert out.returncode == 0, out.stdout + out.stderr
+    assert "ruff passed on 1 of 2 staged Python file(s) (1 in folders CI excludes)" in out.stdout
+
+
+def test_the_script_refuses_to_run_outside_a_virtual_environment(repo, monkeypatch):
+    spec = importlib.util.spec_from_file_location("commit_checked", SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module.sys, "prefix", module.sys.base_prefix)
+    monkeypatch.chdir(repo)
+    stage(repo, "good.py", "x = 1\n")
+    assert module.main(["-m", "x"]) == 2
     assert commits(repo) == 0
 
 
