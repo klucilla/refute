@@ -608,6 +608,141 @@ class MetricRecompute(_Model):
         return self
 
 
+# ---- coverage of metric_extracted (1.5a; the maintainer's design direction of 2026-10-16) ------
+
+# The routes in the order a claim must list them: first the native evidence the run already
+# produces, (c) saved predictions, (d) sufficient statistics, (a) a printed count with its
+# cited link; then (b) the hook, fixed in the hashed list of allowed patches. With no route
+# that closes the chain, metric_extracted is INCONCLUSIVE. (e), an observer of a specific
+# evaluator, is out of v0.3; (f), a trace of the dataset reads, is complementary only.
+NATIVE_ROUTES = ("saved_predictions", "sufficient_statistics", "printed_count")
+COVERAGE_ROUTES = (*NATIVE_ROUTES, "hook")
+# (b): the one metric function a hook may observe for each metric; nothing else in v0.3
+HOOK_FUNCTIONS = {
+    "accuracy": "sklearn.metrics.accuracy_score",
+    "precision": "sklearn.metrics.precision_score",
+    "recall": "sklearn.metrics.recall_score",
+    "f1": "sklearn.metrics.f1_score",
+    "auroc": "sklearn.metrics.roc_auc_score",
+}
+# (d): a count of correctly classified examples and the total, for these metrics only
+STATISTICS_METRICS = ("accuracy", "error_rate")
+_ROUTE_FIELDS = {
+    "saved_predictions": (),
+    "sufficient_statistics": ("correct", "total", "link"),
+    "printed_count": ("count", "link"),
+    "hook": ("patch", "function", "call_site"),
+}
+
+
+class CodeCitation(_Model):
+    """A place in the paper's repository at ``source.repository_commit``: a relative file,
+    an inclusive range of 1-based lines, and what that code does in the chain from the
+    counter (or the call) to the value ``metric_extraction`` reads."""
+
+    file: str
+    lines: list[int] = Field(min_length=2, max_length=2)
+    role: str
+
+    @model_validator(mode="after")
+    def _check(self) -> CodeCitation:
+        _relative(self.file, "citation file")
+        first, last = self.lines
+        if not 1 <= first <= last:
+            raise ValueError("citation lines are [first, last], 1-based, first <= last")
+        _text(self.role, "citation role")
+        return self
+
+
+class CountSelector(_Model):
+    """A deterministic reader of one integer count, as ``metric_extraction`` reads a value
+    (W3.11): a JSON path, a CSV cell or a regular expression, on a file or the log."""
+
+    from_: Literal["file", "log"] = Field(alias="from")
+    file: str | None = None
+    json_path: str | None = None
+    csv: CsvExtraction | None = None
+    regex: RegexExtraction | None = None
+
+    @model_validator(mode="after")
+    def _check(self) -> CountSelector:
+        if self.from_ == "file":
+            _relative(self.file or "", "coverage count file", ("seed",))
+        elif self.file is not None:
+            raise ValueError("a coverage count file is only for 'from: file'")
+        ways = [w for w in (self.json_path, self.csv, self.regex) if w is not None]
+        if len(ways) != 1:
+            raise ValueError("a coverage count takes exactly one of json_path, csv, regex")
+        return self
+
+
+class CoverageRoute(_Model):
+    route: Literal["saved_predictions", "sufficient_statistics", "printed_count", "hook"]
+    count: CountSelector | None = None
+    correct: CountSelector | None = None
+    total: CountSelector | None = None
+    link: list[CodeCitation] | None = None
+    patch: str | None = None
+    function: str | None = None
+    call_site: CodeCitation | None = None
+
+    @model_validator(mode="after")
+    def _check(self) -> CoverageRoute:
+        want = set(_ROUTE_FIELDS[self.route])
+        given = {
+            name
+            for name in ("count", "correct", "total", "link", "patch", "function", "call_site")
+            if getattr(self, name) is not None
+        }
+        if given != want:
+            raise ValueError(
+                f"coverage route {self.route} takes exactly {sorted(want)} (given {sorted(given)})"
+            )
+        if self.link is not None and not self.link:
+            raise ValueError(f"coverage route {self.route} cites at least one place in the code")
+        if self.patch is not None:
+            _relative(self.patch, "coverage hook patch")
+        return self
+
+
+class CoverageEvidence(_Model):
+    """How the coverage of ``metric_extracted`` is shown for one method, for every base seed
+    (1.5a): the routes in the fixed order, the hash of the split's labels when a route
+    compares labels, the rule for conflicting evidence, and complementary evidence that
+    never decides."""
+
+    routes: list[CoverageRoute] = Field(min_length=1)
+    labels_sha256: str | None = Field(default=None, pattern=HEX64)
+    conflict_rule: Literal["all_must_agree"] = "all_must_agree"
+    complementary: list[Literal["dataset_read_trace"]] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _check(self) -> CoverageEvidence:
+        names = [r.route for r in self.routes]
+        if len(set(names)) != len(names):
+            raise ValueError("a coverage route is listed twice")
+        order = [COVERAGE_ROUTES.index(n) for n in names]
+        if order != sorted(order):
+            raise ValueError(f"coverage routes are listed in the order {COVERAGE_ROUTES}")
+        needs_labels = {"saved_predictions", "hook"} & set(names)
+        if bool(needs_labels) != (self.labels_sha256 is not None):
+            raise ValueError(
+                "labels_sha256 is required with the saved_predictions or hook route, "
+                "and absent otherwise"
+            )
+        if len(set(self.complementary)) != len(self.complementary):
+            raise ValueError("complementary evidence is listed twice")
+        return self
+
+    def route(self, name: str) -> CoverageRoute | None:
+        return next((r for r in self.routes if r.route == name), None)
+
+
+class Coverage(_Model):
+    method: CoverageEvidence
+    reference: CoverageEvidence | None = None
+
+
 def _convention(raw: dict[str, Any]) -> recompute.Convention:
     allowed = {"metric", "scale", "labels", "average", "pos_label", "zero_division"}
     unknown = sorted(set(raw) - allowed)
@@ -664,6 +799,7 @@ class MlTarget(_Model):
     coverage_minimum: dict[str, CoverageMin] = Field(default_factory=dict)
     attacks: list[AttackEntry]
     metric_recompute: MetricRecompute
+    coverage_evidence: Coverage
     approvals: Approvals
 
     @model_validator(mode="after")
@@ -676,6 +812,7 @@ class MlTarget(_Model):
         self._seeds()
         self._attacks()
         self._metric_recompute()
+        self._coverage()
         return self
 
     @property
@@ -818,6 +955,45 @@ class MlTarget(_Model):
                 "a comparison recomputes the predictions of both methods: the file names "
                 "{method}; otherwise metric_recompute does not apply"
             )
+
+    def _coverage(self) -> None:
+        """1.5a: each method has its own coverage evidence, for every base seed."""
+        cov = self.coverage_evidence
+        if (cov.reference is not None) != (self.type == "comparison"):
+            raise ValueError(
+                "coverage_evidence.reference is required for a comparison claim and absent "
+                "otherwise (each method has its own evidence)"
+            )
+        for side, evidence in (("method", cov.method), ("reference", cov.reference)):
+            if evidence is None:
+                continue
+            where = f"coverage_evidence.{side}"
+            if evidence.route("saved_predictions") and not self.metric_recompute.applies:
+                raise ValueError(
+                    f"{where}: the saved_predictions route reads the predictions of "
+                    "metric_recompute, which must apply"
+                )
+            if (
+                evidence.route("sufficient_statistics")
+                and self.metric.name not in STATISTICS_METRICS
+            ):
+                raise ValueError(
+                    f"{where}: sufficient_statistics applies only to {STATISTICS_METRICS}"
+                )
+            hook = evidence.route("hook")
+            if hook is not None and hook.function != HOOK_FUNCTIONS.get(self.metric.name):
+                raise ValueError(
+                    f"{where}: the hook observes {HOOK_FUNCTIONS.get(self.metric.name)} for "
+                    f"{self.metric.name}, no other function"
+                )
+            counts = [
+                c
+                for r in evidence.routes
+                for c in (r.count, r.correct, r.total)
+                if c is not None and c.from_ == "file"
+            ]
+            if self.n_base > 1 and any("{seed}" not in (c.file or "") for c in counts):
+                raise ValueError(f"{where}: with several base runs a count file names {{seed}}")
 
     def coverage_names(self) -> list[str]:
         """The names WP2 accepts for this claim (1.0.7), in a fixed order."""
@@ -1113,6 +1289,15 @@ class MlClaimSchema:
             )
         if t.weights is not None and t.weights not in {w.name for w in plan.weights}:
             raise ValueError(f"{t.key}: weights {t.weights} is not declared in test_plan")
+        # 1.5a: the hook is an allowed patch, fixed and hashed before the lock
+        patches = {p.attachment for p in plan.build.allowed_patches}
+        for evidence in (t.coverage_evidence.method, t.coverage_evidence.reference):
+            hook = evidence.route("hook") if evidence is not None else None
+            if hook is not None and hook.patch not in patches:
+                raise ValueError(
+                    f"{t.key}: the coverage hook {hook.patch} is not in test_plan.build."
+                    "allowed_patches"
+                )
         holdout = t.attack("holdout")
         if holdout.applies:
             train = dataset.splits.get("train")

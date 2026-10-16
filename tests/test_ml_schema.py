@@ -37,6 +37,19 @@ REPO = "https://github.com/example/repo"
 COMMIT = "a" * 40
 STAMP = "2026-10-15T00:00:00Z"
 LABELS = list(range(10))
+# a synthetic SHA-256 of the split's labels (1.5a; the run compares it, the schema cannot)
+LABELS_SHA256 = "b" * 64
+CITE = {"file": "src/eval.py", "lines": [40, 52], "role": "counts the evaluated examples"}
+
+
+def printed_count(pattern=r"evaluated=(\d+)"):
+    """(a): a count the run prints, with the cited code from the counter to the output."""
+    return {
+        "route": "printed_count",
+        "count": {"from": "log", "regex": {"pattern": pattern, "group": 1}},
+        "link": [dict(CITE)],
+    }
+
 
 TRANSCRIPTIONS = {
     "c1": {
@@ -250,6 +263,12 @@ def value_claim(inventory_hash, position):
             },
             "convention": {"metric": "accuracy", "scale": "percent", "labels": LABELS},
         },
+        "coverage_evidence": {
+            "method": {
+                "routes": [{"route": "saved_predictions"}, printed_count()],
+                "labels_sha256": LABELS_SHA256,
+            }
+        },
         "approvals": approvals(inventory_hash),
     }
 
@@ -301,6 +320,10 @@ def comparison_claim(inventory_hash, position):
         "metric_recompute": {
             "applies": False,
             "reason": "the repository saves the predictions of one method only",
+        },
+        "coverage_evidence": {
+            "method": {"routes": [printed_count()]},
+            "reference": {"routes": [printed_count(r"ref_evaluated=(\d+)")]},
         },
         "approvals": approvals(inventory_hash),
     }
@@ -464,6 +487,65 @@ def test_allowed_patch_attachment(tmp_path):
         ]
 
     load(tmp_path, patch)
+
+
+def test_the_coverage_evidence_is_written_out_with_its_default_rule(tmp_path):
+    """1.5a: the routes of each method are kept in their order, and the rule for
+    conflicting evidence is written out (all_must_agree, the only rule of v0.3)."""
+    claim = load(tmp_path).canonical()
+    value = target(claim, "c1")["coverage_evidence"]
+    assert [r["route"] for r in value["method"]["routes"]] == ["saved_predictions", "printed_count"]
+    assert value["method"]["conflict_rule"] == "all_must_agree"
+    assert value["method"]["labels_sha256"] == LABELS_SHA256
+    assert value["method"]["complementary"] == []
+    assert value["reference"] is None
+    comparison = target(claim, "c2")["coverage_evidence"]
+    assert comparison["reference"]["routes"][0]["count"]["regex"]["pattern"] == (
+        r"ref_evaluated=(\d+)"
+    )
+
+
+def test_every_route_in_its_order_with_complementary_evidence(tmp_path):
+    """The four routes together, in the fixed order (c), (d), (a), (b): the hook names an
+    allowed patch, the observed function of its metric and the call that is the selected
+    evaluation; a dataset read trace is complementary evidence."""
+
+    def every_route(claim):
+        (tmp_path / "hook.patch").write_text("--- a\n+++ b\n")
+        claim["attachments"].append({"path": "hook.patch", "role": "allowed-patch"})
+        claim["test_plan"]["build"]["allowed_patches"] = [
+            {"attachment": "hook.patch", "reason": "observes accuracy_score in the container"}
+        ]
+        stats_file = "out/stats_{seed}.json"
+        target(claim, "c1")["coverage_evidence"]["method"] = {
+            "routes": [
+                {"route": "saved_predictions"},
+                {
+                    "route": "sufficient_statistics",
+                    "correct": {"from": "file", "file": stats_file, "json_path": "$.correct"},
+                    "total": {"from": "file", "file": stats_file, "json_path": "$.total"},
+                    "link": [dict(CITE, role="writes correct and total of the test evaluation")],
+                },
+                printed_count(),
+                {
+                    "route": "hook",
+                    "patch": "hook.patch",
+                    "function": "sklearn.metrics.accuracy_score",
+                    "call_site": dict(CITE, lines=[48, 48], role="the test evaluation call"),
+                },
+            ],
+            "labels_sha256": LABELS_SHA256,
+            "complementary": ["dataset_read_trace"],
+        }
+
+    claim = load(tmp_path, every_route).canonical()
+    routes = target(claim, "c1")["coverage_evidence"]["method"]["routes"]
+    assert [r["route"] for r in routes] == [
+        "saved_predictions",
+        "sufficient_statistics",
+        "printed_count",
+        "hook",
+    ]
 
 
 def test_a_claim_without_seed_option_runs_once(tmp_path, monkeypatch):
@@ -923,6 +1005,111 @@ FAILS = {
     "recompute file without {seed} for several runs": _set(
         ["c1", "metric_recompute", "predictions", "file"], "preds/p.npy"
     ),
+    # coverage of metric_extracted (1.5a)
+    "coverage evidence missing": _drop(["c1", "coverage_evidence"]),
+    "coverage without a route": _set(["c1", "coverage_evidence", "method", "routes"], []),
+    "coverage route (e) out of v0.3": _set(
+        ["c1", "coverage_evidence", "method", "routes"], [{"route": "evaluator_observer"}]
+    ),
+    "coverage route (f) decides": _set(
+        ["c1", "coverage_evidence", "method", "routes"], [{"route": "dataset_read_trace"}]
+    ),
+    "coverage complementary other than (f)": _set(
+        ["c1", "coverage_evidence", "method", "complementary"], ["printed_count"]
+    ),
+    "coverage routes out of order": _set(
+        ["c1", "coverage_evidence", "method", "routes"],
+        [printed_count(), {"route": "saved_predictions"}],
+    ),
+    "coverage route twice": _set(
+        ["c1", "coverage_evidence", "method", "routes"], [printed_count(), printed_count()]
+    ),
+    "coverage conflict rule other than all_must_agree": _set(
+        ["c1", "coverage_evidence", "method", "conflict_rule"], "first_route_wins"
+    ),
+    "coverage labels missing for saved predictions": _drop(
+        ["c1", "coverage_evidence", "method", "labels_sha256"]
+    ),
+    "coverage labels without a route that compares labels": _set(
+        ["c2", "coverage_evidence", "method", "labels_sha256"], LABELS_SHA256
+    ),
+    "coverage saved predictions without metric_recompute": _apply(
+        _set(["c2", "coverage_evidence", "method", "routes"], [{"route": "saved_predictions"}]),
+        _set(["c2", "coverage_evidence", "method", "labels_sha256"], LABELS_SHA256),
+    ),
+    "coverage printed count without link": _drop(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link"]
+    ),
+    "coverage printed count with an empty link": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link"], []
+    ),
+    "coverage printed count with a hook field": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "patch"], "hook.patch"
+    ),
+    "coverage citation lines reversed": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link", 0, "lines"], [52, 40]
+    ),
+    "coverage citation outside the repository": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link", 0, "file"], "../eval.py"
+    ),
+    "coverage count file without {seed} for several runs": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "file", "file": "out/count.json", "json_path": "$.n"},
+    ),
+    "coverage statistics for a metric outside the list": _apply(
+        _set(["c1", "attack:holdout", "applies"], False),
+        _drop(["c1", "attack:holdout", "params"]),
+        _set(["c1", "attack:trivial_baseline", "applies"], False),
+        _drop(["c1", "attack:trivial_baseline", "params"]),
+        _set(["c1", "metric", "name"], "f1"),
+        _set(["c1", "inventory", "transcription", "metric"], "f1"),
+        _set(["c1", "metric_recompute"], {"applies": False, "reason": "not saved"}),
+        _set(
+            ["c1", "coverage_evidence", "method"],
+            {
+                "routes": [
+                    {
+                        "route": "sufficient_statistics",
+                        "correct": {"from": "log", "regex": {"pattern": r"c=(\d+)", "group": 1}},
+                        "total": {"from": "log", "regex": {"pattern": r"n=(\d+)", "group": 1}},
+                        "link": [dict(CITE)],
+                    }
+                ]
+            },
+        ),
+    ),
+    "coverage hook for another function": _set(
+        ["c2", "coverage_evidence", "method"],
+        {
+            "routes": [
+                {
+                    "route": "hook",
+                    "patch": "hook.patch",
+                    "function": "sklearn.metrics.f1_score",
+                    "call_site": dict(CITE),
+                }
+            ],
+            "labels_sha256": LABELS_SHA256,
+        },
+    ),
+    "coverage hook not an allowed patch": _set(
+        ["c2", "coverage_evidence", "method"],
+        {
+            "routes": [
+                {
+                    "route": "hook",
+                    "patch": "hook.patch",
+                    "function": "sklearn.metrics.accuracy_score",
+                    "call_site": dict(CITE),
+                }
+            ],
+            "labels_sha256": LABELS_SHA256,
+        },
+    ),
+    "coverage reference missing for a comparison": _drop(["c2", "coverage_evidence", "reference"]),
+    "coverage reference on a value claim": _set(
+        ["c1", "coverage_evidence", "reference"], {"routes": [printed_count()]}
+    ),
 }
 
 
@@ -951,6 +1138,28 @@ REASONS = {
     "comparison claim with value mode": "a comparison claim takes comparison_mode",
     "comparison missing": "needs its comparison block",
     "comparison on a value claim": "a value claim has no comparison block",
+    "coverage citation lines reversed": "first <= last",
+    "coverage citation outside the repository": "citation file must be relative",
+    "coverage complementary other than (f)": "Input should be 'dataset_read_trace'",
+    "coverage conflict rule other than all_must_agree": "Input should be 'all_must_agree'",
+    "coverage count file without {seed} for several runs": "a count file names {seed}",
+    "coverage evidence missing": "coverage_evidence: Field required",
+    "coverage hook for another function": "no other function",
+    "coverage hook not an allowed patch": "is not in test_plan.build.allowed_patches",
+    "coverage labels missing for saved predictions": "labels_sha256 is required",
+    "coverage labels without a route that compares labels": "labels_sha256 is required",
+    "coverage printed count with a hook field": "takes exactly",
+    "coverage printed count with an empty link": "cites at least one place",
+    "coverage printed count without link": "takes exactly",
+    "coverage reference missing for a comparison": "coverage_evidence.reference is required",
+    "coverage reference on a value claim": "coverage_evidence.reference is required",
+    "coverage route (e) out of v0.3": "route: Input should be",
+    "coverage route (f) decides": "route: Input should be",
+    "coverage route twice": "listed twice",
+    "coverage routes out of order": "listed in the order",
+    "coverage saved predictions without metric_recompute": "which must apply",
+    "coverage statistics for a metric outside the list": "sufficient_statistics applies only to",
+    "coverage without a route": "routes: List should have at least 1 item",
     "coverage name WP2 refuses": "WP2 refuses",
     "d_pub outside magnitude": "d_pub is required in magnitude mode",
     "dataset not declared": "dataset imagenet is not declared",

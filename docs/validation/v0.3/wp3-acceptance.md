@@ -620,6 +620,114 @@ requires before the runner code. They decide when a run or the accounting of a p
 - **W3.12** A non-finite value, or a metric on zero examples, does not pass
   `metric_extracted`.
 
+### 1.5a Coverage of `metric_extracted`: contract and routes (design of 2026-10-16, for the maintainer's approval)
+
+**Source.** The maintainer's design direction of 2026-10-16 (item 6). Saved predictions
+are not required: the coverage of `metric_extracted` may be shown by any route below,
+declared in the claim before the lock. With no route that closes the chain, the gate is
+`INCONCLUSIVE`.
+
+- **W3.12a Contract.** For each base seed and each method (the method, and for a
+  comparison claim also its reference), the evidence states:
+  1. **identity:** the run (seed and method), the split and the selected evaluation (the
+     epoch or checkpoint, when there is one);
+  2. **observed coverage:** how many examples contributed to the value read, after
+     filters, masks and aggregation;
+  3. **a deterministic link** to the value that `metric_extraction` reads;
+  4. **provenance:** the files, positions and hashes that let the link be checked.
+
+  The split's declared size (`expected_examples`, equal to `metric.n_examples`) is
+  compared with the observed count (a different count is `INCONCLUSIVE`, as in W3.17).
+  It never replaces the count.
+- **W3.12b Routes, in this order** (`coverage_evidence.<method>.routes`, listed in this
+  order, each at most once):
+  1. **evidence the run produces natively:**
+     - **(c) `saved_predictions`:** the predictions of `metric_recompute`, which must
+       apply. Their `y_true` is checked against `labels_sha256`.
+     - **(d) `sufficient_statistics`:** a count of correctly classified examples and the
+       total, each read by a deterministic selector (a JSON path, a CSV cell or a
+       regular expression, on a file or the log). It applies to `accuracy` and
+       `error_rate` only. The claim cites the code that writes the two numbers from the
+       selected evaluation.
+     - **(a) `printed_count`:** a count the run prints, read by a deterministic selector.
+       The claim cites the code from the counter to the computation and to the printed
+       value.
+  2. **(b) `hook`:**
+     - **What it is:** an allowed patch of `test_plan.build.allowed_patches`, so it is
+       fixed and hashed before the lock, its diff is in the dossier, and it runs only in
+       the container.
+     - **What it observes:** the one function of the claim's metric (`accuracy`:
+       `sklearn.metrics.accuracy_score`; `precision`, `recall`, `f1`: the matching
+       scikit-learn function; `auroc`: `sklearn.metrics.roc_auc_score`), at the cited call
+       that is the selected evaluation.
+  3. **None closes the chain:** `metric_extracted` is `INCONCLUSIVE`.
+
+  **(e)**, an observer of a specific evaluator, is out of v0.3: the schema has no such
+  route. **(f)**, a trace of the dataset reads (`complementary: [dataset_read_trace]`),
+  is complementary evidence only: loading the data is not evaluating it, and it never
+  decides.
+- **W3.12c The hook.** Proving that the hook loaded is not enough. The observed event
+  must be bound to:
+  - the metric: the declared function;
+  - the split: the hash of the observed `y_true` equals `labels_sha256`;
+  - the seed: the run;
+  - the selected evaluation: the cited call site.
+
+  Exactly one event of the run satisfies all four. None, or more than one, is
+  `INCONCLUSIVE`.
+- **W3.12d The link.** It is never "the last call", nearness in time, or an equal value.
+  Splits of the same size are never confused:
+  - routes that see labels identify the split by `labels_sha256`, the SHA-256 of the
+    canonical JSON array of the split's labels in example order;
+  - the other routes identify it by the cited code and the files it writes.
+
+  An equal value is a consistency check only: a different value is a conflict.
+- **W3.12e Conflicting evidence.** `conflict_rule: all_must_agree`, the only rule of
+  v0.3, is written out by the resolution. Every declared route that produces evidence
+  must agree on the count, and on the value within the printed rounding. Any
+  disagreement is `INCONCLUSIVE`. The coverage is never taken from the most convenient
+  route.
+- **W3.12f Schema** (`coverage_evidence` of each claim, `src/refute/packs/ml/schema.py`):
+
+  ```yaml
+  coverage_evidence:
+    method:                       # the claim's method; for a comparison also `reference`
+      routes:                     # at least one, in the order (c), (d), (a), (b)
+        - route: saved_predictions
+        - route: sufficient_statistics
+          correct: {from: file, file: "out/stats_{seed}.json", json_path: "$.correct"}
+          total:   {from: file, file: "out/stats_{seed}.json", json_path: "$.total"}
+          link: [{file: src/eval.py, lines: [40, 52], role: "writes correct and total"}]
+        - route: printed_count
+          count: {from: log, regex: {pattern: "evaluated=(\\d+)", group: 1}}
+          link: [{file: src/eval.py, lines: [40, 52], role: "counts the evaluated examples"}]
+        - route: hook
+          patch: hook.patch       # an entry of test_plan.build.allowed_patches
+          function: sklearn.metrics.accuracy_score
+          call_site: {file: src/eval.py, lines: [48, 48], role: "the test evaluation call"}
+      labels_sha256: <64 hex>     # with saved_predictions or hook, and only then
+      conflict_rule: all_must_agree
+      complementary: [dataset_read_trace]   # optional; never decides
+  ```
+
+  Citations name a file of the repository at `source.repository_commit` (relative,
+  without `..`) and an inclusive range of 1-based lines. With several base runs, a
+  count read from a file names `{seed}`.
+
+**Choices this text makes that the direction did not fix (for the maintainer's review):**
+- the order inside the native routes, (c), (d), (a), as the direction lists them;
+- at least one route per method: a claim with none would always be `INCONCLUSIVE` on
+  `metric_extracted`, so it is not ready to lock;
+- (d) only for `accuracy` and `error_rate`, the metrics a correct count and a total
+  determine;
+- one scikit-learn function per metric for (b), and none for `error_rate`;
+- `labels_sha256` as the SHA-256 of the canonical JSON array of the labels.
+
+**What follows, outside this pull request:**
+- the gate code of #110 accepts these routes, with `INCONCLUSIVE` and none of them;
+- #111 gets papers on both sides of each route;
+- both wait for the maintainer's OK of this design.
+
 ### 1.6 Attacks
 
 - **W3.13** The predicates of plan section 6.2 (lines 410-462), the attack rules of
@@ -830,6 +938,26 @@ aggregation is this `applies`.
   or `level` outside (0, 1); a negative `sd` or `se`; a record without `location` and
   `quote`;
 - coverage: a `coverage_minimum` name WP2 would refuse for this claim.
+- coverage evidence (1.5a):
+  - **missing or empty:** no `coverage_evidence`, or a method with no route;
+  - **routes refused:**
+    - (e) or (f) given as a route;
+    - complementary evidence other than `dataset_read_trace`;
+    - routes out of the order (c), (d), (a), (b), or a route listed twice;
+    - a `conflict_rule` other than `all_must_agree`;
+  - **labels:** `labels_sha256` missing with `saved_predictions` or `hook`, or given
+    without them;
+  - **(c):** `saved_predictions` when `metric_recompute` does not apply;
+  - **(a):** `printed_count` without its `link`, with an empty `link`, or with a field
+    of another route;
+  - **citations:** lines reversed, or a file outside the repository;
+  - **count files:** a count file without `{seed}` when there are several base runs;
+  - **(d):** `sufficient_statistics` for a metric outside `accuracy` and
+    `error_rate`;
+  - **(b):** a `hook` observing a function other than its metric's, or naming a patch
+    that is not in `test_plan.build.allowed_patches`;
+  - **methods:** no `reference` evidence for a comparison claim, or one for a value
+    claim.
 - 1.0.11:
   - a transcribed value that differs from the published value, as decimals: a value
     claim, a comparison, and `91.20000000000000001` against `91.2`;
