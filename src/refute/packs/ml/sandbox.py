@@ -48,7 +48,7 @@ import subprocess
 import sys
 import time
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from refute.packs.ml import synthetic
@@ -100,13 +100,18 @@ class SubprocessBackend:
     def __init__(self, authorizations: Sequence[synthetic.Authorization] = ()) -> None:
         self._authorized: dict[Path, synthetic.Authorization] = {}
         for auth in authorizations:
-            if not isinstance(auth, synthetic.Authorization):
+            if not synthetic.issued(auth):
                 raise synthetic.SyntheticRefusedError("not an authorization of materialize")
             self._authorized[auth.root] = auth
 
     def run(self, spec: RunSpec) -> RunResult:
-        # refused before anything starts: the folder, the command and the files (item E)
-        synthetic.check_run(spec.argv, spec.workdir, self._authorized)
+        # refused before anything starts: the folder, the command, the files and the logs
+        # (item E); what runs is the checked command, by absolute paths, in the fixture
+        status = spec.log_path.with_name(spec.log_path.name + ".status.json")
+        launch = synthetic.check_run(
+            spec.argv, spec.workdir, [spec.log_path, status], self._authorized
+        )
+        spec = replace(spec, argv=launch, workdir=Path(spec.workdir))
         spec.log_path.parent.mkdir(parents=True, exist_ok=True)
         with spec.log_path.open("wb") as log:
             if sys.platform == "win32":

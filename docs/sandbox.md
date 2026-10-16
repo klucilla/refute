@@ -140,9 +140,14 @@ only** (decided by the maintainer on 2026-10-16, design A'; `src/refute/packs/ml
   it; the backend is built with those authorizations and, built with none, refuses every
   run;
 - before each run the backend refuses, before any process starts, a folder it was not
-  given, a command other than its own interpreter in isolated mode (`-I`) running a code
-  file of the fixture, a changed or missing file, any other file outside the output
-  folders, and any symbolic link or junction. No mark inside a repository can grant this.
+  given (or given through another path), a command other than its own interpreter in
+  isolated mode (`-I`) running a code file of the fixture named as in the catalog, a
+  changed or missing file, a file with a second link, any other file outside the output
+  folders, any symbolic link or junction, and a log inside the folder. What it launches is
+  the checked command, by the interpreter's and the code file's absolute paths. No mark
+  inside a repository can grant this. The harness and Refute's modules are trusted code
+  in one process; the guarantee is that nothing a claim or a repository writes makes the
+  backend run anything but cataloged code.
 
 Under this backend the build ladder is played by a cataloged fixture, one build per rung.
 Only the deliberate failure the harness declared before the run, recognised by its exit

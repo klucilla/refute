@@ -3,6 +3,7 @@ maintainer's review of 2026-10-16, design A'; closes the gap of #87), and the bu
 played by a cataloged fixture under the subprocess backend, end to end through the WP2
 core. Offline."""
 
+import dataclasses
 import hashlib
 import json
 import os
@@ -72,20 +73,48 @@ def test_an_authorization_is_created_only_by_materialize(tmp_path):
         sy.Authorization(sy.CATALOG["sandbox-probe"], tmp_path, {}, object())
     with pytest.raises(sy.SyntheticRefusedError, match="not an authorization"):
         sb.SubprocessBackend(["not an authorization"])
+    # a copy of an issued authorization, even with the same fields, was not issued
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    copy = dataclasses.replace(auth)
+    assert sy.issued(auth) and not sy.issued(copy)
+    with pytest.raises(sy.SyntheticRefusedError, match="not an authorization"):
+        sb.SubprocessBackend([copy])
+
+
+def test_the_catalog_and_the_manifest_are_read_only(tmp_path):
+    """Codex review of #109: no entry or hash can be added or changed in place."""
+    with pytest.raises(TypeError):
+        sy.CATALOG["real-paper"] = sy.CATALOG["sandbox-probe"]
+    with pytest.raises(TypeError):
+        sy.CATALOG["sandbox-probe"].code["extra.py"] = "0" * 64
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    with pytest.raises(TypeError):
+        auth.manifest["extra.py"] = "0" * 64
 
 
 # ---- the backend refuses everything that is not a synthetic fixture (the gap of #87) ----------
 
 
-def test_a_backend_with_no_authorization_runs_nothing(tmp_path):
-    """A real repository's command is refused before any process starts."""
+def test_a_backend_with_no_authorization_runs_nothing(tmp_path, monkeypatch):
+    """A real repository's command is refused before any process starts: no process is
+    even created (a sentinel replaces the process creation)."""
     repo = tmp_path / "repo"
     repo.mkdir()
     marker = repo / "ran.txt"
     (repo / "train.py").write_text(f"open({str(marker)!r}, 'w').write('x')\n")
+    started = []
+
+    def sentinel(*args, **kwargs):
+        started.append(args)
+        raise AssertionError("a process was created")
+
+    monkeypatch.setattr(sb.subprocess, "Popen", sentinel)
     with pytest.raises(sy.SyntheticRefusedError, match="runs nothing else"):
         sb.SubprocessBackend().run(spec(repo, [sys.executable, "-I", "train.py"]))
-    assert not marker.exists()
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    with pytest.raises(sy.SyntheticRefusedError):
+        sb.SubprocessBackend([auth]).run(spec(auth.root, [sys.executable, "-c", "print(1)"]))
+    assert started == [] and not marker.exists()
 
 
 def test_an_unauthorized_folder_is_refused_even_with_a_cataloged_script(tmp_path):
@@ -105,12 +134,54 @@ def test_an_unauthorized_folder_is_refused_even_with_a_cataloged_script(tmp_path
         [sys.executable, "-I", "-c", "print(1)"],
         [sys.executable, "-I", "other.py"],  # not a code file of the fixture
         [sys.executable, "-I", "../probe.py"],  # outside the fixture
+        [sys.executable, "-I", "./probe.py"],  # not named as in the catalog
     ],
 )
 def test_a_command_that_is_not_a_fixture_code_file_is_refused(tmp_path, argv):
     auth = fixture("sandbox-probe", tmp_path / "fixture")
     with pytest.raises(sy.SyntheticRefusedError):
         sb.SubprocessBackend([auth]).run(spec(auth.root, argv))
+
+
+def test_what_runs_is_the_checked_command_by_absolute_paths(tmp_path, monkeypatch):
+    """Codex review of #109: the backend launches this interpreter and the code file by
+    their absolute paths, in the fixture's folder, never the words it was given."""
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    seen = []
+    original = sb.subprocess.Popen
+
+    def recording(argv, *args, **kwargs):
+        seen.append((list(argv), kwargs.get("cwd")))
+        return original(argv, *args, **kwargs)
+
+    monkeypatch.setattr(sb.subprocess, "Popen", recording)
+    assert sb.SubprocessBackend([auth]).run(spec(auth.root, PROBE)).exit_code == 0
+    launched = [argv for argv, _ in seen if str(auth.root / "probe.py") in argv]
+    assert launched, seen
+    argv = launched[0]
+    script = argv.index(str(auth.root / "probe.py"))
+    assert argv[script - 1] == "-I" and argv[script + 1 :] == ["exit", "0"]
+    assert sys.executable in argv
+
+
+def test_the_folder_must_be_given_exactly_and_the_log_outside_it(tmp_path):
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    backend = sb.SubprocessBackend([auth])
+    with pytest.raises(sy.SyntheticRefusedError, match="own absolute folder"):
+        backend.run(spec(auth.root / "out" / "..", PROBE))
+    with pytest.raises(sy.SyntheticRefusedError, match="outside the fixture"):
+        backend.run(spec(auth.root, PROBE, log_path=auth.root / "out" / "run.log"))
+
+
+def test_a_hard_link_to_a_fixture_file_is_refused(tmp_path):
+    """A second link would let the file change through another path after the check."""
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    try:
+        os.link(auth.root / "probe.py", tmp_path / "other-name.py")
+    except OSError:
+        pytest.skip("this system does not let the test create a hard link")
+    with pytest.raises(sy.SyntheticRefusedError, match="another link"):
+        sb.SubprocessBackend([auth]).run(spec(auth.root, PROBE))
 
 
 def test_a_changed_or_added_file_is_refused(tmp_path):
@@ -120,7 +191,9 @@ def test_a_changed_or_added_file_is_refused(tmp_path):
     (auth.root / "out").mkdir()
     (auth.root / "out" / "result.txt").write_text("an output is allowed")
     assert backend.run(spec(auth.root, PROBE)).exit_code == 0
-    shadow = auth.root / "json.py"  # would shadow a module: the script's folder is on sys.path
+    # -I keeps the script's folder off sys.path, but a child started without -I would import
+    # it: any file the fixture does not hold is refused
+    shadow = auth.root / "json.py"
     shadow.write_text("raise SystemExit(9)\n")
     with pytest.raises(sy.SyntheticRefusedError, match="does not hold: json.py"):
         backend.run(spec(auth.root, PROBE))
@@ -166,8 +239,10 @@ def ladder_fixture(tmp_path, plan):
 
 def synthetic_build(auth, expected, threshold_usec=None):
     """The build of one rung: the cataloged build.py under the subprocess backend, its
-    result classified from what the harness declared before the run (``expected``)."""
+    result classified from what the harness declared before the ladder runs: a read-only
+    ``BuildExpectations`` fixed here, before the first rung."""
     backend = sb.SubprocessBackend([auth])
+    expectations = sy.BuildExpectations(expected)
 
     def build(rung):
         log = auth.root.parent / "logs" / f"{rung.name}.log"
@@ -175,7 +250,7 @@ def synthetic_build(auth, expected, threshold_usec=None):
         result = backend.run(spec(auth.root, argv, log_path=log, threshold_usec=threshold_usec))
         text = result.log_path.read_text(encoding="utf-8", errors="replace")
         return sy.classify_synthetic_build(
-            result.exit_code, result.stopped, text, expected[rung.name]
+            result.exit_code, result.stopped, text, expectations.by_rung[rung.name]
         )
 
     return build
@@ -255,9 +330,23 @@ def test_the_classification_reads_only_the_declared_expectation():
     assert ok.outcome is Outcome.COMPLETED
     failed = sy.classify_synthetic_build(86, None, deliberate, "procedure_error")
     assert (failed.outcome, failed.cause) == (Outcome.FAILED, FailureCause.BUILD_LADDER)
-    for code, text, expected in ((86, deliberate, "ok"), (1, deliberate, "procedure_error")):
+    for code, text, expected in (
+        (86, deliberate, "ok"),
+        (1, deliberate, "procedure_error"),
+        (86, "x " + deliberate, "procedure_error"),  # the line must be exact, not a part
+        (86, sy.DELIBERATE_BUILD_LINE + " (and more)\n", "procedure_error"),
+    ):
         other = sy.classify_synthetic_build(code, None, text, expected)
         assert other.cause is FailureCause.UNDETERMINED
+    windows = sy.classify_synthetic_build(
+        86, None, sy.DELIBERATE_BUILD_LINE + "\r\n", "procedure_error"
+    )
+    assert windows.cause is FailureCause.BUILD_LADDER
+    expectations = sy.BuildExpectations({"own_environment": "ok"})
+    with pytest.raises(TypeError):
+        expectations.by_rung["own_environment"] = "procedure_error"
+    with pytest.raises(ValueError, match="expectations"):
+        sy.BuildExpectations({"own_environment": "maybe"})
     guard = sy.classify_synthetic_build(None, sb.STOP_NO_PROGRESS, "", "ok")
     assert guard.outcome is Outcome.OPERATIONAL_GUARD
     with pytest.raises(ValueError, match="expected"):
