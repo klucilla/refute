@@ -742,8 +742,8 @@ declared in the claim before the lock. With no route that closes the chain, the 
     allocated under a lock, and writes an event or a failure record, then a commit
     record.
   - **The final record:** `finish()` is called once by the installation, from `atexit`,
-    after the main thread and every non-daemon thread have ended, never from inside an
-    observed call. It waits until no call is in progress, then, in one locked step,
+    after the main program's execution and every non-daemon thread have ended, never
+    from inside an observed call. It waits until no call is in progress, then, in one locked step,
     writes the final record and closes the observer. The final record states the number
     of calls and whether any failure happened (a sink that raised included). It also
     holds the SHA-256 of every record written before it; the digest and each write
@@ -753,7 +753,8 @@ declared in the claim before the lock. With no route that closes the chain, the 
     written after the final record, which the gate refuses. **Limitation:** the log
     cannot show the absence of records that never reached it, so a call that begins
     after the final record and whose own records the sink then fails to write leaves no
-    trace. Only a daemon thread can still call at that point.
+    trace. Such late calls may come from daemon threads or from shutdown callbacks
+    (other `atexit` handlers) that run after `finish()`.
   - **The log is judged by its content, not by whether the sink returned.** A sink that
     raises after the final record was written leaves a complete log that matches its
     digest. A log written in part, reordered or edited does not match it.

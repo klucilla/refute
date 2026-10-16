@@ -42,8 +42,8 @@ hashed before the lock; the hook does not detect it.
 - Each call that returned gets a unique sequence number (allocated under a lock) and
   writes an event, or a failure record, and then a commit record.
 - ``Observer.finish()`` is called once by the installation, from ``atexit``, after the
-  main thread and every non-daemon thread have ended; never from inside an observed
-  call. It waits until no call is in progress (a call blocked forever leaves no final
+  main program's execution and every non-daemon thread have ended; never from inside an
+  observed call. It waits until no call is in progress (a call blocked forever leaves no final
   record, and the run's hang guard ends it), then, in one locked step, writes the final
   record and closes the observer. The final record holds the number of calls, whether
   any failure happened (a sink that raised included), and the SHA-256 of every record
@@ -52,8 +52,9 @@ hashed before the lock; the hook does not detect it.
 - **A call after the final record** is still observed and its records are written after
   the final record, which the gate refuses. **Limitation:** the log cannot show the
   absence of records that never reached it, so a call that begins after the final record
-  and whose own records the sink then fails to write leaves no trace. Only a daemon
-  thread can call at that point.
+  and whose own records the sink then fails to write leaves no trace. Such late calls
+  may come from daemon threads or from shutdown callbacks (other ``atexit`` handlers)
+  that run after ``finish()``.
 - **The log is judged by its content, not by whether the sink returned.** A sink that
   raises after writing the final record leaves a complete log that matches its digest. A
   log written in part, reordered or edited does not match it.
