@@ -398,6 +398,10 @@ PREVIEW_COMMANDS = {
     "find-rolecapabilitycopies",
     "convertto-refutemoduleroot",
     "convertto-refuteaclentries",
+    # the ACL of the VM tree, built in memory (version 2, after the failure of SetHostPaths)
+    "convertto-refuteaclrules",
+    "get-refutevmtreeaclspec",
+    "new-refutefolderacl",
     "convertto-refutespecificrights",
     "convertto-refutewindowsfullpath",
     "foreach-object",
@@ -477,6 +481,9 @@ PREVIEW_METHODS = {
 LISTENER_PREVIEW_COMMANDS = {
     "convertto-refutemoduleroot",
     "convertto-refuteaclentries",
+    # in the core it dot-sources: the ACL of the VM tree, built in memory only
+    "convertto-refuteaclrules",
+    "new-refutefolderacl",
     "convertto-refutespecificrights",
     "convertto-refutewindowsfullpath",
     "foreach-object",
@@ -512,6 +519,11 @@ LISTENER_PREVIEW_COMMANDS = {
 }
 LISTENER_PREVIEW_METHODS = {
     "add",
+    # the core's New-RefuteFolderAcl acts on an in-memory DirectorySecurity; this script
+    # never calls it, and never calls Set-Acl
+    "addaccessrule",
+    "setaccessruleprotection",
+    "setowner",
     "close",
     "computehash",
     "containskey",
@@ -563,6 +575,99 @@ def test_the_listener_removal_preview_only_reads(cases):
     apply = text[text.index("# ---- apply") :]
     assert apply.count(".OpenSubKey($ListenerRoot, $true)") == 1
     assert "DeleteSubKeyTree($Target)" in apply
+
+
+# The preview of Set-RefuteVmTreeAcl.ps1 (and the core): reads of the VM tree's folders and
+# ACLs, in-memory ACL objects, and output. Set-Acl appears only after its apply marker.
+VMTREE_PREVIEW_COMMANDS = (
+    LISTENER_PREVIEW_COMMANDS
+    - {
+        "get-refutebackupproblems",
+        "get-refutelistenerremoval",
+        "read-refutelisteners",
+        "get-service",
+    }
+) | {
+    "compare-refutevmtreeacl",
+    "get-refutevmtreeaclspec",
+    "get-sidname",
+}
+VMTREE_PREVIEW_METHODS = (
+    LISTENER_PREVIEW_METHODS
+    - {
+        "getsubkeynames",
+        "getvalue",
+        "getvaluenames",
+        "opensubkey",
+    }
+) | {"getowner"}
+
+
+def test_the_vm_tree_acl_preview_only_reads(cases):
+    """The preview of Set-RefuteVmTreeAcl.ps1: allowlisted commands and methods only, no
+    dynamic command, no redirection; Set-Acl and the evidence write only after the apply
+    marker."""
+    preview = cases["PreviewVmTree"]
+    assert preview["ApplyMarkerFound"]
+    assert {c.lower() for c in preview["Commands"]} - VMTREE_PREVIEW_COMMANDS == set()
+    assert {m.lower() for m in preview["Methods"]} - VMTREE_PREVIEW_METHODS == set()
+    assert preview["Unnamed"] == [] and preview["Redirections"] == []
+    text = (VM / "Set-RefuteVmTreeAcl.ps1").read_text(encoding="utf-8")
+    before = text[: text.index("# ---- apply")]
+    assert "Set-Acl" not in before and "WriteAllText" not in before
+    apply = text[text.index("# ---- apply") :]
+    assert apply.count("Set-Acl -LiteralPath $TreeRoot") == 1
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="the script runs in Windows PowerShell 5.1")
+def test_the_vm_tree_acl_preview_runs_and_never_applies_without_its_hash(tmp_path):
+    """The preview of Set-RefuteVmTreeAcl.ps1 in powershell.exe: it refuses without
+    PSModuleAnalysisCachePath=nul, otherwise lists the ACL it would set (with the
+    ChangePermissions of Hyper-V Administrators) and a PreviewSha256 and changes nothing;
+    -Apply without -PreviewSha256 is refused before the apply section."""
+    import os
+
+    exe = shutil.which("powershell.exe")
+    assert exe
+    argv = [
+        exe,
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        str(VM / "Set-RefuteVmTreeAcl.ps1"),
+    ]
+    plain = {k: v for k, v in os.environ.items() if k.upper() != "PSMODULEANALYSISCACHEPATH"}
+    env = {**plain, "PSModuleAnalysisCachePath": "nul"}
+
+    def run(*extra, environment=env):
+        return subprocess.run(
+            [*argv, *extra],
+            cwd=tmp_path,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+
+    refused = run(environment=plain)
+    assert refused.returncode == 1 and "PSModuleAnalysisCachePath=nul" in refused.stdout
+    out = run()
+    text = out.stdout + out.stderr
+    assert "PropertyNotFoundStrict" not in text, text
+    assert "Mode: preview (no change)" in out.stdout and "PreviewSha256: " in out.stdout, text
+    assert "Modify, ChangePermissions" in out.stdout, text
+    assert out.returncode in (0, 1), text
+    if out.returncode == 1:
+        assert "Problems (nothing was changed):" in out.stdout, text
+    no_hash = run("-Apply")
+    assert no_hash.returncode in (0, 1), no_hash.stdout + no_hash.stderr
+    assert "Done:" not in no_hash.stdout
+    if no_hash.returncode == 1:
+        assert "-Apply needs -PreviewSha256 from a preview run" in no_hash.stdout or (
+            "Problems (nothing was changed):" in no_hash.stdout
+        )
 
 
 def test_the_registration_preview_only_reads(cases):

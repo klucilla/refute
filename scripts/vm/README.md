@@ -72,6 +72,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 | `RefuteVm/` | the endpoint | module: `RefuteVm.Core.ps1` (pure logic: configuration checks, plans, plan hash), `RefuteVm.HyperV.ps1` (observed state and the one mutation), `RefuteVm.psm1`, `RefuteVm.Config.psd1`, `RoleCapabilities/RefuteVmOperator.psrc` |
 | `Register-RefuteVmEndpoint.ps1` | the maintainer, as Administrator | registers the endpoint; without `-Apply`, only shows what would change |
 | `Remove-RefuteWinRmListener.ps1` | the maintainer, as Administrator | removes the WinRM listener `*+HTTP`, with a `.reg` backup in `C:\ProgramData\RefuteVm-backup`, with WinRM stopped; without `-Apply`, only shows the listener keys and what would change |
+| `Set-RefuteVmTreeAcl.ps1` | the maintainer, as Administrator | replaces the ACL of `C:\Hyper-V` set by the registration of 2026-10-15 with version 2 (after the failure of SetHostPaths, [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md) section 9); without `-Apply`, only shows the ACL now and the one it would set |
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |
@@ -189,7 +190,12 @@ order:
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
-   SYSTEM and Administrators full control, Hyper-V Administrators modify);
+   version 2 of `Get-RefuteVmTreeAclSpec`, that is SYSTEM and Administrators full
+   control, Hyper-V Administrators modify and change permissions, and NT VIRTUAL
+   MACHINE\Virtual Machines as on the default folder of Windows: list and create in
+   folders, read files. The Hyper-V management service changes permissions with the
+   identity of its caller, so modify alone made SetHostPaths fail; a host registered
+   before this change gets version 2 with `Set-RefuteVmTreeAcl.ps1`);
 3. adds the firewall rule `Refute-JEA-Block-WinRM-Inbound` (inbound TCP 5985 and 5986
    blocked from every address except loopback, on every profile) **before WinRM is
    started**, and checks that it is in the active policy, that every profile is

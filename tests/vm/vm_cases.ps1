@@ -66,6 +66,7 @@ function Get-ScriptPreview([string]$Path) {
 
 $out['Preview'] = Get-ScriptPreview $register
 $out['PreviewListener'] = Get-ScriptPreview (Join-Path $vmDir 'Remove-RefuteWinRmListener.ps1')
+$out['PreviewVmTree'] = Get-ScriptPreview (Join-Path $vmDir 'Set-RefuteVmTreeAcl.ps1')
 # negative checks: the collector sees a dynamic command and a file redirection
 $probe = [System.Management.Automation.Language.Parser]::ParseInput("& `$someCommand`nWrite-Output 'probe' > `$somewhere", [ref]$null, [ref]$null)
 $probeSurface = Get-PreviewSurface @($probe.FindAll({ param($n) $true }, $true))
@@ -405,6 +406,49 @@ $fw = @(
 $found = @(Find-RefuteBlockOverrides $fw)
 Add-Case 'only enabled inbound bypass rules are found' ($found.Count -eq 1 -and $found[0] -eq 'bypass-in') ($found -join ',')
 Add-Case 'no bypass rule, nothing found' (@(Find-RefuteBlockOverrides @($fw[0], $fw[2], $fw[3])).Count -eq 0)
+
+# The ACL of the VM tree: SetHostPaths failed through the endpoint with version 1 on
+# 2026-10-16 (access denied); version 2 lets Hyper-V Administrators change permissions and
+# gives the Virtual Machines group the entries of the default folder of Windows.
+$tree1 = @(Get-RefuteVmTreeAclSpec -Version 1)
+$tree2 = @(Get-RefuteVmTreeAclSpec -Version 2)
+$acl1 = New-RefuteFolderAcl $tree1
+$acl2 = New-RefuteFolderAcl $tree2
+Add-Case 'VM tree ACL: version 2 matches its spec' (@(Compare-RefuteVmTreeAcl -Acl $acl2 -Spec $tree2).Count -eq 0) (@(Compare-RefuteVmTreeAcl -Acl $acl2 -Spec $tree2) -join '; ')
+Add-Case 'VM tree ACL: version 1 matches its spec' (@(Compare-RefuteVmTreeAcl -Acl $acl1 -Spec $tree1).Count -eq 0)
+Add-Case 'VM tree ACL: version 1 is not version 2' (@(Compare-RefuteVmTreeAcl -Acl $acl1 -Spec $tree2).Count -gt 0)
+$fsr = [System.Security.AccessControl.FileSystemRights]
+$changePermissions = [int]$fsr::ChangePermissions
+$takeOwnership = [int]$fsr::TakeOwnership
+function Get-RuleRights([string]$Rule) { return [int]($Rule.Split(' ')[2]) }
+$hv1 = @(ConvertTo-RefuteAclRules $acl1 | Where-Object { $_ -like 'Allow S-1-5-32-578 *' })
+$hv2 = @(ConvertTo-RefuteAclRules $acl2 | Where-Object { $_ -like 'Allow S-1-5-32-578 *' })
+Add-Case 'VM tree ACL: version 1 gives Hyper-V Administrators no ChangePermissions (the cause)' ($hv1.Count -eq 1 -and ((Get-RuleRights $hv1[0]) -band $changePermissions) -eq 0) ($hv1 -join '; ')
+Add-Case 'VM tree ACL: version 2 gives Hyper-V Administrators ChangePermissions, inherited by folders and files, and no TakeOwnership' (
+    $hv2.Count -eq 1 -and ((Get-RuleRights $hv2[0]) -band $changePermissions) -ne 0 -and ((Get-RuleRights $hv2[0]) -band $takeOwnership) -eq 0 -and
+    $hv2[0].EndsWith(' ContainerInherit, ObjectInherit None explicit')) ($hv2 -join '; ')
+$vmGroup = @(ConvertTo-RefuteAclRules $acl2 | Where-Object { $_ -like 'Allow S-1-5-83-0 *' })
+$replace = [int]($fsr::Delete -bor $fsr::DeleteSubdirectoriesAndFiles -bor $fsr::ChangePermissions -bor $fsr::TakeOwnership -bor $fsr::WriteAttributes -bor $fsr::WriteExtendedAttributes)
+# .NET merges the entry of the folder and the one inherited by the folders below (same
+# rights) into one entry that applies to both: two entries in all, the same effect
+Add-Case 'VM tree ACL: the Virtual Machines group lists and creates in folders, reads files, and can never delete, rewrite attributes or change permissions' (
+    $vmGroup.Count -eq 2 -and @($vmGroup | Where-Object { ((Get-RuleRights $_) -band $replace) -ne 0 }).Count -eq 0 -and
+    @($vmGroup | Where-Object { $_.EndsWith(' ContainerInherit None explicit') -and ((Get-RuleRights $_) -band [int]$fsr::CreateFiles) -ne 0 }).Count -eq 1 -and
+    @($vmGroup | Where-Object { $_.EndsWith(' ObjectInherit InheritOnly explicit') -and ((Get-RuleRights $_) -band [int]($fsr::CreateFiles -bor $fsr::AppendData)) -eq 0 }).Count -eq 1) ($vmGroup -join '; ')
+Add-Case 'VM tree ACL: only SYSTEM, Administrators, Hyper-V Administrators and Virtual Machines' (
+    @(ConvertTo-RefuteAclRules $acl2 | Where-Object { @('S-1-5-18', 'S-1-5-32-544', 'S-1-5-32-578', 'S-1-5-83-0') -notcontains $_.Split(' ')[1] }).Count -eq 0)
+$otherOwner = New-RefuteFolderAcl $tree2
+$otherOwner.SetOwner((New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-545'))
+Add-Case 'VM tree ACL: another owner is a difference' (@(@(Compare-RefuteVmTreeAcl -Acl $otherOwner -Spec $tree2) -like '*owner*').Count -eq 1)
+$unprotected = New-RefuteFolderAcl $tree2
+$unprotected.SetAccessRuleProtection($false, $false)
+Add-Case 'VM tree ACL: an inheriting DACL is a difference' (@(@(Compare-RefuteVmTreeAcl -Acl $unprotected -Spec $tree2) -like '*inherits*').Count -eq 1)
+$widened = New-RefuteFolderAcl $tree2
+$widened.AddAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule(
+            (New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-545'), 'Modify',
+            [System.Security.AccessControl.InheritanceFlags]'ContainerInherit, ObjectInherit',
+            [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)))
+Add-Case 'VM tree ACL: an extra entry is a difference' (@(@(Compare-RefuteVmTreeAcl -Acl $widened -Spec $tree2) -like 'unexpected entry: Allow S-1-5-32-545 *').Count -eq 1)
 
 # Hyper-V module manifest: both layouts (the maintainer's first preview did not find the
 # version subfolder of Windows 10 and 11)

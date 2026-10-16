@@ -275,3 +275,63 @@ hash of a configuration.
   `57812ca`.
 - **Not validated yet:** every operation. The first, `SetHostPaths`, is simulated first
   (`-Simulate`), and runs only with the maintainer's OK, one operation at a time.
+
+## 9. Operation 1, SetHostPaths: failed, with no change to the host (2026-10-16)
+
+Run by the maintainer through the endpoint, from the operator account. Account names are
+replaced by `<operator-account>` and `<virtual-account>`; no security descriptor is
+published.
+
+### 9.1 What was run and what the log holds
+
+| Step | Result |
+|---|---|
+| `-Operation SetHostPaths -Simulate` | `Mode` simulated, `AlreadyDone` false, `Refusal` null, `ConfigSha256` `fa27a08622297aa2615cf48d09d584fed6b4ab25b1862ce2f5d0d91c728208ff`; exactly two changes: `Host.VirtualMachinePath` from `C:\ProgramData\Microsoft\Windows\Hyper-V` to `C:\Hyper-V`, and `Host.VirtualHardDiskPath` from `C:\ProgramData\Microsoft\Windows\Virtual Hard Disks` to `C:\Hyper-V\Virtual Hard Disks`; `PlanSha256` `3976d96a09c23d1a6ca1cd858a16087810c4ecb814af3384a219b6041cffd304` |
+| `-Operation SetHostPaths -PlanSha256 <that hash>`, twice (22:08:38 and 22:09:30 UTC; the first from an Administrator terminal by mistake, the second from a normal one) | both failed: "Failed to modify service settings. The default virtual machine configuration store cannot be changed to 'C:\Hyper-V': Access denied. (0x80070005)" (translated from the localized message) |
+| `C:\ProgramData\RefuteVm\Log\operations.jsonl`, read on 2026-10-16 | for each attempt, an `intent` record and a `result` record with `Outcome` failed, both with that `PlanSha256`; each session ran as its own `<virtual-account>`, a different WinRM virtual account (VA numbers 9 and 12 in the log) |
+| `-Status` and a new `-Simulate` afterwards | nothing changed: the same two planned changes and the same `PlanSha256` |
+| Log Microsoft-Windows-Hyper-V-VMMS-Admin | a pair of events 15110 ("Failed to modify service settings") and 18170 (the access denied) at each attempt, with no account name and no right named |
+
+### 9.2 Diagnosis
+
+**The ACL the maintainer read (as Administrator, read-only):**
+- `C:\Hyper-V`, as the registration set it:
+  - owner Administrators, protected DACL;
+  - SYSTEM and Administrators full control;
+  - Hyper-V Administrators modify;
+  - all entries inherited by folders and files.
+
+  The folders below inherit it.
+- The default folder of Windows, `C:\ProgramData\Microsoft\Windows\Hyper-V`, has:
+  - entries for CREATOR OWNER, SYSTEM and Administrators;
+  - entries for NT VIRTUAL MACHINE\Virtual Machines: read on the files below, list and create in the folder and the folders below;
+  - no entry for Hyper-V Administrators.
+
+**What the sources say** (accessed 2026-10-16):
+- **A JEA virtual account exists for one session only, under a new name each time.** "Virtual accounts are one-time, temporary local accounts that are created for the connecting user to use during the duration of their JEA session", and "each JEA user session has a unique virtual account": https://learn.microsoft.com/en-us/powershell/scripting/security/remoting/jea/security-considerations.
+- **The Hyper-V management service acts with the identity of its caller when it changes permissions.** It runs as SYSTEM, "but impersonates during this operation the current user" when it gives a VM access to an attached virtual disk: https://decoder.cloud/2020/01/20/from-hyper-v-admin-to-system/ (a security research article, not Microsoft documentation).
+- **A VM needs its own SID on its files.** Microsoft's fix for a VM that does not start is to grant `NT VIRTUAL MACHINE\<VM ID>` access to the disk and to the configuration file: https://learn.microsoft.com/en-us/troubleshoot/windows-server/virtualization/hyper-v-virtual-machine-not-start-0x80070005.
+- **The Virtual Machines group is maintained by Hyper-V.** NT VIRTUAL MACHINE\Virtual Machines is S-1-5-83-0, "created when the Hyper-V role is installed", with its membership maintained by the Hyper-V management service: https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers.
+
+**Hypothesis: supported, not confirmed.**
+- **What it says:** to adopt a folder as a default, and to attach a disk or an ISO to a VM, the Hyper-V management service changes permissions with the caller's identity. The caller is the session's virtual account, a member of Hyper-V Administrators only. It has Modify on the tree but neither ChangePermissions nor ownership, so the change is denied.
+- **What supports it:** the error, the impersonation described above, and the default folder of Windows, which holds the Virtual Machines entries.
+- **Why it is not confirmed:** no source states which right `Set-VMHost` needs on a new default folder. Only an attempt after a corrected ACL can confirm it.
+- **Each session is a new account.** A file created in one session is not owned by the account of the next one.
+
+**Operations that would meet the same denial with the ACL of the registration:**
+- **SetHostPaths:** failed, as observed.
+- **AttachBaseDisk:** gives the VM's SID access to the base disk created in another session.
+- **AttachInstallMedia:** gives the VM's SID access to the two ISOs copied in another session.
+- **At risk:**
+  - **CreateVm:** gives the VM's SID access to its configuration, in a folder created in the same session.
+  - **SaveVm:** the saved state is written in the VM's folder, where the Virtual Machines group has no entry.
+- **Not concerned:** the operations that change only VM or host settings (memory, processors, Secure Boot, checkpoints, integration services, network, boot order, start, stop, suspend, resume, the processor maximum, enhanced session mode).
+- **Another question, for ImportInstallIso and ImportSeedIso:** they read the media in the project folder, which the virtual account may not be allowed to read. That is a separate check, for the operations themselves.
+
+**Proposed correction, not applied: version 2 of the tree ACL** (`Get-RefuteVmTreeAclSpec` in `scripts/vm/RefuteRegistration.Core.ps1`).
+- **Hyper-V Administrators:** Modify plus ChangePermissions, inherited.
+- **NT VIRTUAL MACHINE\Virtual Machines:** the entries of the default folder of Windows (list and create in folders, read files).
+- **Nothing else changes.** The maintainer applies it with the new `scripts/vm/Set-RefuteVmTreeAcl.ps1`, as Administrator: a preview, then `-Apply -PreviewSha256`.
+
+**Status of W6.4:** no operation has succeeded; operation 1 is pending the corrected ACL and the maintainer's new attempt.
