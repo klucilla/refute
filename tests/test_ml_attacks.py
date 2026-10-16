@@ -105,6 +105,12 @@ def test_ablation_direction_and_margin():
     )
 
 
+def test_the_ablation_mean_is_exact():
+    """Codex review (base reproduction): a small positive mean is not rounded to a tie."""
+    assert at.ablation(["1", "1e-50", "-1"], "direction").status is TestStatus.PASS
+    assert at.ablation(["-1", "1e-50", "1"], "direction").status is TestStatus.PASS
+
+
 def test_ablation_needs_every_run_for_its_mean():
     result = at.ablation(["0.5", None], "direction")
     assert result.status is TestStatus.INCONCLUSIVE and result.coverage == 1
