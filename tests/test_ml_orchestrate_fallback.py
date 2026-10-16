@@ -94,6 +94,30 @@ def test_a_non_zero_exit_classified_as_built_completes_the_step(tmp_path):
     assert out.steps[0].outcome is orc.Outcome.COMPLETED
 
 
+@pytest.mark.parametrize("decision", ["completed", "next", "stop"])
+@pytest.mark.parametrize(
+    ("stop", "outcome"),
+    [
+        (sb.STOP_THRESHOLD, orc.Outcome.BUDGET_EXHAUSTED),
+        (sb.STOP_ACTIVE_TIME, orc.Outcome.OPERATIONAL_GUARD),
+        (sb.STOP_NO_PROGRESS, orc.Outcome.OPERATIONAL_GUARD),
+    ],
+)
+def test_a_stop_on_refutes_side_is_never_overridden(tmp_path, stop, outcome, decision):
+    """Codex review of #110: whatever the classification answers, a container stopped by
+    its threshold or a guard ends the step with that outcome, and no next rung runs."""
+    asked = []
+
+    def fallback(record):
+        asked.append(record.container_id)
+        return decision
+
+    exits = {"setup/r1": stop, "setup/r2": 0, "setup/r3": 0}
+    out, backend, _ = run(tmp_path, exits, fallback)
+    assert out.steps[0].outcome is outcome
+    assert backend.calls == ["setup/r1"] and asked == []
+
+
 def test_a_guard_stop_ends_the_step_with_its_own_outcome(tmp_path):
     exits = {"setup/r1": sb.STOP_NO_PROGRESS, "setup/r2": 0, "setup/r3": 0}
     out, backend, _ = run(tmp_path, exits)
