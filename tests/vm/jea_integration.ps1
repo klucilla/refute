@@ -123,6 +123,31 @@ foreach ($pin in 'RequiredVersion', 'ModuleVersion', 'MaximumVersion', 'ModuleVe
 $out.Sessions.SubfolderWithNetworkAccess = Test-Session 'RefuteProbeSubfolder' $true
 $out.Sessions.FlatTwinWithNetworkAccess = Test-Session 'RefuteProbeFlatTwin' $true
 
+# The relative entries of the session's module path (Codex review of #99): a role capability
+# with a name of its own is placed only where the session resolves the first relative
+# entry, and a real session to an endpoint that names it shows whether JEA's search finds
+# it there (positive control); a capability placed in a folder on no module path must not
+# be found (negative control).
+$out.Relative = [ordered]@{ Entry = ''; Resolved = ''; Control = $null; Nowhere = $null }
+$rootsText = [string]$out.Sessions.PathWithNetworkAccess.Roots
+if ($rootsText) {
+    $rows = @($rootsText.Split("`n"))
+    $relative = @($rows[1..($rows.Count - 1)] | ForEach-Object { , @($_.Split("`t")) } |
+            Where-Object { $_[1] -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)' })
+    if ($relative.Count) {
+        $out.Relative.Entry = $relative[0][1]
+        $out.Relative.Resolved = $relative[0][3]
+        if ($out.Relative.Resolved) {
+            New-ProbeModule (Join-Path $out.Relative.Resolved 'RefuteJeaRelative') 'RefuteJeaRelative' @{ ProbeRelative = $sameRole }
+            Register-Probe 'RefuteProbeRelative' 'ProbeRelative'
+            $out.Relative.Control = Test-Session 'RefuteProbeRelative' $true
+        }
+    }
+}
+New-ProbeModule (Join-Path $env:TEMP 'refute-jea-nowhere\RefuteJeaNowhere') 'RefuteJeaNowhere' @{ ProbeNowhere = $sameRole }
+Register-Probe 'RefuteProbeNowhere' 'ProbeNowhere'
+$out.Relative.Nowhere = Test-Session 'RefuteProbeNowhere' $true
+
 # the module roots the registration searches, from the function the registration itself
 # calls (scripts/vm/RefuteRegistration.Core.ps1), not from a copy of its formula
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)

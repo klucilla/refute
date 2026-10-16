@@ -478,6 +478,22 @@ if ($onWindows) {
     Add-Case 'JEA probe: a root that cannot be read is never present' ($probeRows[2][0] -ne 'present') ($probeRows[2] -join ' | ')
 }
 Add-Case 'JEA probe: a relative entry is inspected where the process resolves it' ($probeRows[3][1] -eq 'present' -and $probeRows[3][3] -eq $present -and $probeRows[3][0] -eq 'present' -and $probeRows[3][5] -eq $probeRole) ($probeRows[3] -join ' | ')
+if ($onWindows) {
+    # a drive-relative entry ('C:') is the current folder of that drive, never its root
+    $drive = (Join-Path $WorkDir 'probe-roots').Substring(0, 2)
+    Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+    try {
+        [System.IO.Directory]::SetCurrentDirectory($present)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $drive, 'Process')
+        $driveText = Get-RefuteJeaModuleRoots
+    } finally {
+        [System.IO.Directory]::SetCurrentDirectory($savedCwd)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+        Remove-Module JeaProbe
+    }
+    $driveRow = @($driveText.Split("`n"))[1].Split("`t")
+    Add-Case "JEA probe: '$drive' resolves to the current folder of the drive, not '$drive\'" ($driveRow[1] -eq $drive -and $driveRow[3] -eq $present -and $driveRow[0] -eq 'present') ($driveRow -join ' | ')
+}
 
 # WinRM listener removal plan
 $plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'

@@ -42,7 +42,13 @@ function Get-RefuteJeaModuleRoots {
         $root = $entry.TrimEnd('\')
         if ($root -match '^[A-Za-z]:$') { $root = $root + '\' }
         $files = [System.Collections.Generic.List[string]]::new()
-        try { $full = [System.IO.Path]::GetFullPath($root) } catch { $full = '' }
+        # the entry as written is resolved first ('C:' is the current folder of drive C, not
+        # 'C:\'), and only the absolute result is normalised (Codex review of #99)
+        try { $full = [System.IO.Path]::GetFullPath($entry) } catch { $full = '' }
+        if ($full) {
+            $full = $full.TrimEnd('\')
+            if ($full -match '^[A-Za-z]:$') { $full = $full + '\' }
+        }
         if (-not $full) {
             $lines.Add([string]::Join("`t", @('error', $entry, $root, '', 'the entry cannot be resolved', '')))
             continue

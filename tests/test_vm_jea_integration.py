@@ -169,6 +169,26 @@ def test_the_roots_the_session_searches_are_known_to_the_registration(result, se
     )
 
 
+def test_a_relative_entry_is_searched_where_the_session_resolves_it(result):
+    """Codex review of #99: the probe reads the module path after the session opened, so
+    it does not show by itself that JEA's search (made when the session is created) resolves
+    a relative entry the same way. A role capability with its own name, placed only where
+    the session resolves the first relative entry, must be found by a real session
+    (positive control); one placed in a folder on no module path must not (negative
+    control)."""
+    relative = result["Relative"]
+    nowhere = relative["Nowhere"]
+    assert not nowhere["Opened"] and "ProbeNowhere" in nowhere["Error"], nowhere
+    print(
+        "relative entry and where the session resolves it:", relative["Entry"], relative["Resolved"]
+    )
+    if not relative["Entry"]:
+        return  # this runner's session has no relative entry: nothing to compare
+    control = relative["Control"]
+    assert control is not None, relative
+    _opened(control)
+
+
 @pytest.mark.parametrize(
     ("entry", "qualified"),
     [
