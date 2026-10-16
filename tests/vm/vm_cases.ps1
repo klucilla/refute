@@ -526,38 +526,44 @@ Add-Case 'generic rights: GENERIC_WRITE on an ancestor only creates children' (@
 # Owner and access entries by SID, never by translated names (the maintainer's decision of
 # 2026-10-16, after 'ALL APPLICATION PACKAGES' could not be translated on a Portuguese
 # Windows). A synthetic security object: its rules by SID are S-1-15-2-1 (ALL APPLICATION
-# PACKAGES, read) and S-1-15-2-2 (ALL RESTRICTED APPLICATION PACKAGES, GENERIC_WRITE,
-# inherit-only); read by name it would give the Portuguese names, and reading it by name
-# (Access, Owner, or rules of the NTAccount type) is counted as a failure.
-$ptNames = @('AUTORIDADE DE PACOTE DE APLICATIVOS\TODOS OS PACOTES DE APLICATIVOS',
-    'AUTORIDADE DE PACOTE DE APLICATIVOS\TODOS OS PACOTES DE APLICATIVOS RESTRITOS')
-$script:byName = 0
-# the rules come from a real in-memory descriptor (SDDL keeps GW unmapped, as Windows can
-# on an inherit-only entry); the synthetic object only wraps it
-$sddlAcl = New-Object System.Security.AccessControl.DirectorySecurity
-$sddlAcl.SetSecurityDescriptorSddlForm('O:BAD:(A;;0x1200a9;;;S-1-15-2-1)(A;OICIIO;GW;;;S-1-15-2-2)')
-$sidRules = @($sddlAcl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]))
-$fakeAcl = New-Object PSObject
-Add-Member -InputObject $fakeAcl -MemberType ScriptProperty -Name Access -Value { $script:byName++; @($ptNames | ForEach-Object { [ordered]@{ IdentityReference = $_ } }) }
-Add-Member -InputObject $fakeAcl -MemberType ScriptProperty -Name Owner -Value { $script:byName++; $ptNames[0] }
-Add-Member -InputObject $fakeAcl -MemberType ScriptMethod -Name GetOwner -Value {
-    param($type)
-    if ($type -ne [System.Security.Principal.SecurityIdentifier]) { $script:byName++ }
-    New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-544'
-}
-Add-Member -InputObject $fakeAcl -MemberType ScriptMethod -Name GetAccessRules -Value {
-    param($explicit, $inherited, $type)
-    if ($type -ne [System.Security.Principal.SecurityIdentifier]) { $script:byName++ }
-    $sidRules
-}
-$converted = ConvertTo-RefuteAclEntries $fakeAcl
-$convertedSids = @($converted.Entries | ForEach-Object { $_.Sid })
-Add-Case 'ACL by SID: the owner and the entries come by SID, the Portuguese names are never read' (
-    $script:byName -eq 0 -and $converted.Owner -eq 'S-1-5-32-544' -and ($convertedSids -join ',') -eq 'S-1-15-2-1,S-1-15-2-2') "byName=$($script:byName) owner=$($converted.Owner) sids=$($convertedSids -join ',')"
-$restricted = @($converted.Entries | Where-Object { $_.Sid -eq 'S-1-15-2-2' })
-Add-Case 'ACL by SID: GENERIC_WRITE inherit-only for S-1-15-2-2 is a writer, read-only S-1-15-2-1 is not' (
-    @(Get-RefuteAceWriters $converted.Entries).Count -eq 1 -and $restricted[0].InheritOnly -and $restricted[0].Rights -eq $gw) ((@(Get-RefuteAceWriters $converted.Entries)) -join ' | ')
+# PACKAGES, read, an INHERITED entry) and S-1-15-2-2 (ALL RESTRICTED APPLICATION PACKAGES,
+# GENERIC_WRITE, inherit-only, an EXPLICIT entry); read by name it would give the Portuguese
+# names, and reading it by name (Access, Owner, or rules of the NTAccount type) is counted
+# as a failure; so is leaving out the explicit or the inherited entries (Codex review).
+# Windows only: the access control types of .NET are not supported elsewhere.
 if ($onWindows) {
+    $ptNames = @('AUTORIDADE DE PACOTE DE APLICATIVOS\TODOS OS PACOTES DE APLICATIVOS',
+        'AUTORIDADE DE PACOTE DE APLICATIVOS\TODOS OS PACOTES DE APLICATIVOS RESTRITOS')
+    $script:byName = 0
+    $script:partial = 0
+    # the rules come from a real in-memory descriptor (SDDL keeps GW unmapped, as Windows
+    # can on an inherit-only entry; ID marks an inherited entry); the synthetic object only
+    # wraps it, and returns the explicit and the inherited entries as asked
+    $sddlAcl = New-Object System.Security.AccessControl.DirectorySecurity
+    $sddlAcl.SetSecurityDescriptorSddlForm('O:BAD:(A;OICIIO;GW;;;S-1-15-2-2)(A;ID;0x1200a9;;;S-1-15-2-1)')
+    $sidRules = @($sddlAcl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]))
+    $fakeAcl = New-Object PSObject
+    Add-Member -InputObject $fakeAcl -MemberType ScriptProperty -Name Access -Value { $script:byName++; @($ptNames | ForEach-Object { [ordered]@{ IdentityReference = $_ } }) }
+    Add-Member -InputObject $fakeAcl -MemberType ScriptProperty -Name Owner -Value { $script:byName++; $ptNames[0] }
+    Add-Member -InputObject $fakeAcl -MemberType ScriptMethod -Name GetOwner -Value {
+        param($type)
+        if ($type -ne [System.Security.Principal.SecurityIdentifier]) { $script:byName++ }
+        New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-544'
+    }
+    Add-Member -InputObject $fakeAcl -MemberType ScriptMethod -Name GetAccessRules -Value {
+        param($explicit, $inherited, $type)
+        if ($type -ne [System.Security.Principal.SecurityIdentifier]) { $script:byName++ }
+        if (-not ($explicit -and $inherited)) { $script:partial++ }
+        @($sidRules | Where-Object { ($_.IsInherited -and $inherited) -or (-not $_.IsInherited -and $explicit) })
+    }
+    $converted = ConvertTo-RefuteAclEntries $fakeAcl
+    $convertedSids = @($converted.Entries | ForEach-Object { $_.Sid } | Sort-Object)
+    Add-Case 'ACL by SID: the owner and the explicit and inherited entries come by SID, the Portuguese names are never read' (
+        $script:byName -eq 0 -and $script:partial -eq 0 -and $converted.Owner -eq 'S-1-5-32-544' -and ($convertedSids -join ',') -eq 'S-1-15-2-1,S-1-15-2-2'
+    ) "byName=$($script:byName) partial=$($script:partial) owner=$($converted.Owner) sids=$($convertedSids -join ',')"
+    $restricted = @($converted.Entries | Where-Object { $_.Sid -eq 'S-1-15-2-2' })
+    Add-Case 'ACL by SID: GENERIC_WRITE inherit-only for S-1-15-2-2 is a writer, read-only S-1-15-2-1 is not' (
+        @(Get-RefuteAceWriters $converted.Entries).Count -eq 1 -and $restricted[0].InheritOnly -and $restricted[0].Rights -eq $gw) ((@(Get-RefuteAceWriters $converted.Entries)) -join ' | ')
     # a real folder that holds ALL APPLICATION PACKAGES entries: the check reads it (the
     # names translation used to make it "cannot be read" on a Portuguese Windows)
     $pshomeModules = Join-Path $PSHOME 'Modules'
