@@ -84,9 +84,13 @@ class RunResult:
     log_path: Path
     # measured when the run was stopped (1.4a, D and S), None otherwise: from the planned
     # reading instant to the stop request, and from the stop request to the end of every
-    # process of the run
+    # process of the run. Signed: a negative D is recorded as measured, never truncated.
     detection_delay_s: float | None = None
     stop_latency_s: float | None = None
+    # the clock D and S were measured with (time.get_clock_info('perf_counter')), recorded
+    # with every result; in memory only, not part of any serialized record
+    measurement_clock: str | None = None
+    measurement_resolution_s: float | None = None
 
 
 @dataclass(frozen=True)
@@ -133,13 +137,25 @@ class SubprocessBackend:
 
 
 def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
+    """Poll the run until it ends or a guard fires.
+
+    The loop and the guards run on ``time.monotonic``. D and S (1.4a) are measured on one
+    other clock, ``time.perf_counter_ns``: every instant they use (the planned reading
+    instant, the first one included, the stop request and the end of the stop) comes from
+    it, the differences are taken in integer nanoseconds and only then converted to
+    seconds. On Windows with Python 3.12, ``time.monotonic`` is ``GetTickCount64()`` with a
+    resolution of 15.625 ms, so two readings around a 10 ms sleep could be equal and D came
+    out as minus the poll interval (main run 38902889911; clock diagnostic run 38909648617,
+    commit 4895b9a of the branch diag/clock-info). A negative D is recorded as measured."""
     start = time.monotonic()
     last_usage, last_size, last_progress = -1, -1, start
     stopped = None
     detection = latency = None
-    # the planned instant of the next reading: poll_s after the previous reading ended (the
-    # cadence of the loop is unchanged; a late wake-up counts in D)
-    planned = start
+    poll_ns = round(spec.poll_s * 1_000_000_000)
+    # the planned instant of the next reading, on the measurement clock: poll_s after the
+    # previous reading ended (the cadence of the loop is unchanged; a late wake-up counts
+    # in D); for the first reading, the start of the supervision
+    planned_ns = time.perf_counter_ns()
     try:
         while True:
             exit_code = tracker.poll()
@@ -159,21 +175,30 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
             if stopped:
                 # D: from the planned reading instant to the stop request; S: from the
                 # request to the end of every process of the run (1.4a), recorded only
-                requested = time.monotonic()
-                detection = requested - planned
+                requested_ns = time.perf_counter_ns()
+                detection = (requested_ns - planned_ns) / 1_000_000_000
                 tracker.stop()
-                latency = time.monotonic() - requested
+                latency = (time.perf_counter_ns() - requested_ns) / 1_000_000_000
                 exit_code = None
                 break
-            planned = time.monotonic() + spec.poll_s
+            planned_ns = time.perf_counter_ns() + poll_ns
             time.sleep(spec.poll_s)
         # exact on both platforms: the job's total after its last process ended, or the
         # supervisor's sum over every waited process
         final = tracker.final_usage_usec()
     finally:
         tracker.close()  # stops whatever is left of the run, also after an error
+    clock = time.get_clock_info("perf_counter")
     return RunResult(
-        exit_code, final, stopped, time.monotonic() - start, spec.log_path, detection, latency
+        exit_code,
+        final,
+        stopped,
+        time.monotonic() - start,
+        spec.log_path,
+        detection,
+        latency,
+        clock.implementation,
+        clock.resolution,
     )
 
 
