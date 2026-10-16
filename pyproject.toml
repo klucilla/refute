@@ -63,6 +63,9 @@ default-groups = ["dev", "calibration"]
 # Supply-chain cooldown: `uv lock` only considers releases uploaded at least 7 days
 # before the moment it resolves. Recorded in uv.lock as exclude-newer-span = "P7D".
 exclude-newer = "7 days"
+# Interpreters come only from uv-managed builds, at the exact versions of .python-version
+# and of the CI matrix (WP0, docs/validation/v0.3/wp0-acceptance.md sections 3.4-3.5).
+python-preference = "only-managed"
 
 [tool.ruff]
 line-length = 100
