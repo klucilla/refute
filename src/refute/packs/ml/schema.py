@@ -35,6 +35,7 @@ from refute.core.canonical import canonical_bytes
 from refute.core.hashing import sha256_bytes
 from refute.core.paper import BASE_GATES, BASE_REPRODUCTION, METRIC_RECOMPUTE, prerequisite_names
 from refute.packs.ml import recompute, rules, seeds
+from refute.packs.ml.extract import ExtractionError, parse_json_path
 from refute.packs.ml.uncertainty import Uncertainty, resolve_uncertainty
 from refute.selection import inventory as inv
 
@@ -85,6 +86,17 @@ def _relative(value: str, what: str, placeholders: tuple[str, ...] = ()) -> str:
         if name not in placeholders:
             raise ValueError(f"{what} has an unknown placeholder {{{name}}}")
     return value
+
+
+def _json_path(value: str | None, what: str) -> None:
+    """A json_path in the grammar the extractor reads (extract.parse_json_path): '$' then
+    '.name' or '[index]' steps, naming one value (Codex review of #120)."""
+    if value is None:
+        return
+    try:
+        parse_json_path(value)
+    except ExtractionError as exc:
+        raise ValueError(f"{what}: {exc}") from None
 
 
 def _finite(value: float | None, what: str) -> None:
@@ -365,6 +377,7 @@ class Extraction(_Model):
         ways = [w for w in (self.json_path, self.csv, self.regex) if w is not None]
         if len(ways) != 1:
             raise ValueError("metric_extraction takes exactly one of json_path, csv, regex")
+        _json_path(self.json_path, "metric_extraction.json_path")
         return self
 
 
@@ -688,10 +701,7 @@ class CountSelector(_Model):
         ways = [w for w in (self.json_path, self.csv, self.regex) if w is not None]
         if len(ways) != 1:
             raise ValueError("a coverage count takes exactly one of json_path, csv, regex")
-        if self.json_path is not None and (
-            not self.json_path.startswith("$") or not self.json_path[1:].strip()
-        ):
-            raise ValueError("a coverage count json_path starts with '$' and names a member")
+        _json_path(self.json_path, "coverage count json_path")
         return self
 
 
@@ -715,24 +725,36 @@ class SelectedEvaluation(_Model):
         return self
 
 
+class OtherSplit(_Model):
+    name: str
+    labels_sha256: str = Field(pattern=HEX64)
+
+    @field_validator("name")
+    @classmethod
+    def _name(cls, value: str) -> str:
+        return _text(value, "split_identity.other_splits name")
+
+
 class SplitIdentity(_Model):
     """How the routes that see labels tell the claim's split from the others (W3.12d):
-    the SHA-256 of the canonical JSON array of its labels in example order, and the same
-    hash for every other split of the dataset the repository can evaluate, with how that
-    list was established. A split whose labels equal another's cannot be identified by
-    its labels: the routes that see labels do not apply to it."""
+    the SHA-256 of the canonical JSON array of its labels in example order; every other
+    split of the dataset the repository can evaluate, by name, with the same hash; and the
+    cited code where the repository defines the splits it can evaluate, which justifies the
+    list (empty only when that code evaluates the claim's split alone). Every split the
+    claim's dataset declares in test_plan must be in the list (checked across sections). A
+    split whose labels equal another's cannot be identified by its labels: the routes that
+    see labels do not apply to it."""
 
     labels_sha256: str = Field(pattern=HEX64)
-    other_splits_labels_sha256: list[str]
-    other_splits_reason: str
+    other_splits: list[OtherSplit]
+    splits_evidence: list[CodeCitation] = Field(min_length=1)
 
     @model_validator(mode="after")
     def _check(self) -> SplitIdentity:
-        _text(self.other_splits_reason, "split_identity.other_splits_reason")
-        for value in self.other_splits_labels_sha256:
-            if not re.fullmatch(HEX64, value):
-                raise ValueError("split_identity.other_splits_labels_sha256 holds SHA-256 hashes")
-        if self.labels_sha256 in self.other_splits_labels_sha256:
+        names = [s.name for s in self.other_splits]
+        if len(set(names)) != len(names):
+            raise ValueError("split_identity.other_splits names a split twice")
+        if self.labels_sha256 in {s.labels_sha256 for s in self.other_splits}:
             raise ValueError(
                 "the split's labels equal another split's: the routes that see labels cannot "
                 "identify it"
@@ -803,33 +825,17 @@ class CoverageEvidence(_Model):
 
 
 def _evidence_key(route: CoverageRoute) -> str:
-    """What a route reads, without its citations: two methods whose routes read the same
-    thing would share one piece of evidence."""
-    return json.dumps(
-        route.model_dump(mode="json", by_alias=True, exclude={"link"}), sort_keys=True
-    )
+    """What a route reads, without the text of its citations: its selectors, or the hook's
+    patch, function and call site (file and lines)."""
+    data = route.model_dump(mode="json", by_alias=True, exclude={"link"})
+    if data.get("call_site") is not None:
+        data["call_site"] = {k: data["call_site"][k] for k in ("file", "lines")}
+    return json.dumps(data, sort_keys=True)
 
 
 class Coverage(_Model):
     method: CoverageEvidence
     reference: CoverageEvidence | None = None
-
-    @model_validator(mode="after")
-    def _own_evidence(self) -> Coverage:
-        # each method has its own evidence (W3.12a): a count, a statistics file or a hook
-        # call declared identically for both would be one piece of evidence counted twice
-        if self.reference is None:
-            return self
-        method = {_evidence_key(r) for r in self.method.routes if r.route != "saved_predictions"}
-        shared = method & {
-            _evidence_key(r) for r in self.reference.routes if r.route != "saved_predictions"
-        }
-        if shared:
-            raise ValueError(
-                "coverage_evidence.method and .reference declare the same evidence; each "
-                "method has its own"
-            )
-        return self
 
 
 def _convention(raw: dict[str, Any]) -> recompute.Convention:
@@ -1083,6 +1089,21 @@ class MlTarget(_Model):
             ]
             if self.n_base > 1 and any("{seed}" not in (c.file or "") for c in counts):
                 raise ValueError(f"{where}: with several base runs a count file names {{seed}}")
+        # each method has its own evidence (W3.12a). When the reference value comes from the
+        # same runs, a route declared alike for both (same selectors, or the same hook call)
+        # would read one piece of evidence twice. This is a necessary check only: two
+        # different selectors can still read the same token, which the gate checks on the
+        # resolved file, token or event. Separate runs may use the same selector on their
+        # own logs and files.
+        if cov.reference is not None and isinstance(self.comparison.reference_run, SameRuns):
+            keys = {_evidence_key(r) for r in cov.method.routes if r.route != "saved_predictions"}
+            if keys & {
+                _evidence_key(r) for r in cov.reference.routes if r.route != "saved_predictions"
+            }:
+                raise ValueError(
+                    "coverage_evidence.method and .reference read the same evidence of the same "
+                    "runs; each method has its own"
+                )
 
     def coverage_names(self) -> list[str]:
         """The names WP2 accepts for this claim (1.0.7), in a fixed order."""
@@ -1378,15 +1399,31 @@ class MlClaimSchema:
             )
         if t.weights is not None and t.weights not in {w.name for w in plan.weights}:
             raise ValueError(f"{t.key}: weights {t.weights} is not declared in test_plan")
-        # 1.5a: the hook is an allowed patch, fixed and hashed before the lock
+        # 1.5a: the hook is an allowed patch, fixed and hashed before the lock; the split's
+        # identity names every other split the dataset declares
         patches = {p.attachment for p in plan.build.allowed_patches}
         for evidence in (t.coverage_evidence.method, t.coverage_evidence.reference):
-            hook = evidence.route("hook") if evidence is not None else None
+            if evidence is None:
+                continue
+            hook = evidence.route("hook")
             if hook is not None and hook.patch not in patches:
                 raise ValueError(
                     f"{t.key}: the coverage hook {hook.patch} is not in test_plan.build."
                     "allowed_patches"
                 )
+            identity = evidence.split_identity
+            if identity is not None:
+                others = {s.name for s in identity.other_splits}
+                if t.metric.split in others:
+                    raise ValueError(
+                        f"{t.key}: split_identity.other_splits names the claim's own split"
+                    )
+                missing = sorted(set(dataset.splits) - {t.metric.split} - others)
+                if missing:
+                    raise ValueError(
+                        f"{t.key}: split_identity.other_splits leaves out the declared "
+                        f"splits {missing}"
+                    )
         holdout = t.attack("holdout")
         if holdout.applies:
             train = dataset.splits.get("train")

@@ -640,11 +640,16 @@ declared in the claim before the lock. With no route that closes the chain, the 
      cites the code from its evidence to that value (`link`);
   4. **provenance:** the files, positions and hashes that let the link be checked.
 
-  Each method has its own evidence: the schema refuses a count, statistics or a hook
-  declared identically for the method and its reference.
+  **Each method has its own evidence.** The gate compares what each method's routes
+  actually resolve to (the file, the token or the event) and refuses one piece of
+  evidence counted for both. When the reference value comes from the same runs, the
+  schema already refuses a route declared alike for both: the same selectors, or the
+  same hook call. This is a necessary check only: two different selectors can still read
+  one token. Separate runs may use the same selector on their own logs and files.
 
   The split's declared size (`expected_examples`, equal to `metric.n_examples`) is
-  compared with the observed count, never substituted for it.
+  compared with the observed count on every route, never substituted for it. **A
+  different count is `INCONCLUSIVE`**, as W3.17 states for the recomputation.
 - **W3.12b Routes, in this order** (`coverage_evidence.<method>.routes`, listed in this
   order, each at most once, at least one):
   1. **evidence the run produces natively:**
@@ -699,12 +704,17 @@ declared in the claim before the lock. With no route that closes the chain, the 
     `split_identity` gives:
     - `labels_sha256`: the SHA-256 of the canonical JSON array of the split's labels, in
       example order;
-    - the same hash for every other split of the dataset the repository can evaluate;
-    - how that list was established.
+    - `other_splits`: every other split of the dataset the repository can evaluate, by
+      name, with the same hash;
+    - `splits_evidence`: the cited code where the repository defines the splits it can
+      evaluate, which justifies the list. The list is empty only when that code
+      evaluates the claim's split alone.
 
-    The schema refuses a split whose labels hash equals another's: two splits with the
-    same labels in the same order cannot be told apart by labels, and (c) and (b) do
-    not apply to them.
+    The schema checks that:
+    - every split the claim's dataset declares in `test_plan` is in the list;
+    - the claim's own split is not in it;
+    - no other split has the same labels hash. Two splits with the same labels in the
+      same order cannot be told apart by labels, and (c) and (b) do not apply to them.
   - **The other routes** identify the split by the cited code and the files it writes.
 - **W3.12e Conflicting evidence.**
   - **The rule:** `conflict_rule: all_must_agree`, the only rule of v0.3, written out by
@@ -737,8 +747,8 @@ declared in the claim before the lock. With no route that closes the chain, the 
           link: [{file: src/eval.py, lines: [48, 52], role: "prints the call's return"}]
       split_identity:             # with saved_predictions or hook, and only then
         labels_sha256: <64 hex>
-        other_splits_labels_sha256: [<64 hex>]
-        other_splits_reason: "the dataset has a train and a test split; train is the other"
+        other_splits: [{name: train, labels_sha256: <64 hex>}]
+        splits_evidence: [{file: src/data.py, lines: [10, 18], role: "the splits the code can load"}]
       conflict_rule: all_must_agree
       complementary: [dataset_read_trace]   # optional; never decides
   ```
@@ -747,7 +757,9 @@ declared in the claim before the lock. With no route that closes the chain, the 
   - Citations name a file of the repository at `source.repository_commit` (relative,
     without `..`) and an inclusive range of 1-based lines.
   - With several base runs, a count read from a file names `{seed}`.
-  - A count `json_path` starts with `$` and names a member.
+  - A `json_path`, of a count or of `metric_extraction`, is in the grammar the
+    extractor reads (`extract.parse_json_path`): `$` followed by `.name` or `[index]`
+    steps, naming one value.
   - The group a regular expression reads must exist in its pattern. This also applies to
     `metric_extraction`, which shares the regular expression model.
 
@@ -764,20 +776,22 @@ declared in the claim before the lock. With no route that closes the chain, the 
     could pick one.
 - **Conflicts:** `all_must_agree` is the only rule; the direction allows any rule fixed
   before the lock.
-- **The count:** it is compared with the split's declared size on every route, not only
-  on (c) as in W3.17.
+- **The count:** it is compared with the split's declared size on every route, and a
+  different count is `INCONCLUSIVE`, not only on (c) as in W3.17.
 - **Every route has a link,** (c) and (b) included, and **every method has a selected
   evaluation**.
 - **Split identity:**
   - `split_identity` exactly with (c) or (b);
-  - split identity by labels plus the labels of the other splits, not by example
-    identifiers, which predictions files and metric calls usually do not carry;
+  - split identity by labels, plus the named other splits with their labels and the
+    cited code that defines them, not by example identifiers, which predictions files
+    and metric calls usually do not carry;
   - (c) and (b) do not apply when two splits have equal labels.
 - **Files and selectors:**
   - `{seed}` in count files when there are several runs;
   - the selector checks (`json_path`, the regex group), which also tighten
     `metric_extraction`;
-  - method and reference may not declare the same evidence.
+  - with the same runs, method and reference may not declare a route alike; the gate
+    compares the resolved evidence in every case.
 
 **What follows, outside this pull request:**
 - the gate code of #110 accepts these routes, with `INCONCLUSIVE` and none of them;
@@ -1004,7 +1018,8 @@ aggregation is this `applies`.
   - **selected evaluation:** missing; `final` with a value; `epoch` without its number;
     a `checkpoint` outside the repository;
   - **split identity:** missing with `saved_predictions` or `hook`, or given without
-    them; labels equal to another split's; no reason for the list of other splits;
+    them; labels equal to another split's; no `splits_evidence`; a declared split left
+    out of `other_splits`, or the claim's own split in it;
   - **(c):** `saved_predictions` when `metric_recompute` does not apply, or without its
     `link`;
   - **(a):** `printed_count` without its `link`, with an empty `link`, or with a field
@@ -1012,14 +1027,17 @@ aggregation is this `applies`.
   - **citations:** lines reversed, or a file outside the repository;
   - **counts:**
     - a count file without `{seed}` when there are several base runs;
-    - a `json_path` with no member;
+    - a `json_path` outside the extractor's grammar (`$`, `$.`, `$]`, `$..acc`, also in
+      `metric_extraction`);
     - a regular expression whose group (by number or name) does not exist;
   - **(d):** `sufficient_statistics` for a metric outside `accuracy` and
     `error_rate`;
   - **(b):** a `hook` observing a function other than its metric's, naming a patch
     that is not in `test_plan.build.allowed_patches`, or without its `link`;
   - **methods:** no `reference` evidence for a comparison claim, or one for a value
-    claim; the same evidence declared for the method and the reference.
+    claim; with the same runs, a route declared alike for the method and the reference
+    (the same selector, or the same hook call with another role text). The case **must
+    pass** with separate runs and the same selector on their own logs.
 - 1.0.11:
   - a transcribed value that differs from the published value, as decimals: a value
     claim, a comparison, and `91.20000000000000001` against `91.2`;

@@ -65,8 +65,10 @@ def hook_evidence(function):
 def split_identity():
     return {
         "labels_sha256": LABELS_SHA256,
-        "other_splits_labels_sha256": [OTHER_LABELS_SHA256],
-        "other_splits_reason": "the dataset has a train and a test split; train is the other",
+        "other_splits": [{"name": "train", "labels_sha256": OTHER_LABELS_SHA256}],
+        "splits_evidence": [
+            {"file": "src/data.py", "lines": [10, 18], "role": "the splits the code can load"}
+        ],
     }
 
 
@@ -1075,11 +1077,49 @@ FAILS = {
         ["c2", "coverage_evidence", "method", "split_identity"], split_identity()
     ),
     "coverage split labels equal another split's": _set(
-        ["c1", "coverage_evidence", "method", "split_identity", "other_splits_labels_sha256"],
-        [OTHER_LABELS_SHA256, LABELS_SHA256],
+        ["c1", "coverage_evidence", "method", "split_identity", "other_splits"],
+        [
+            {"name": "train", "labels_sha256": OTHER_LABELS_SHA256},
+            {"name": "val", "labels_sha256": LABELS_SHA256},
+        ],
     ),
-    "coverage split identity without its reason": _set(
-        ["c1", "coverage_evidence", "method", "split_identity", "other_splits_reason"], " "
+    "coverage split identity without its evidence": _set(
+        ["c1", "coverage_evidence", "method", "split_identity", "splits_evidence"], []
+    ),
+    "coverage split identity leaves out a declared split": _set(
+        ["c1", "coverage_evidence", "method", "split_identity", "other_splits"], []
+    ),
+    "coverage split identity names the claim's own split": _set(
+        ["c1", "coverage_evidence", "method", "split_identity", "other_splits"],
+        [
+            {"name": "train", "labels_sha256": OTHER_LABELS_SHA256},
+            {"name": "test", "labels_sha256": "d" * 64},
+        ],
+    ),
+    "coverage hook alike for both methods with other roles": _apply(
+        _set(
+            ["c2", "coverage_evidence", "method"], hook_evidence("sklearn.metrics.accuracy_score")
+        ),
+        _set(
+            ["c2", "coverage_evidence", "reference"],
+            hook_evidence("sklearn.metrics.accuracy_score"),
+        ),
+        _set(
+            ["c2", "coverage_evidence", "reference", "routes", 0, "call_site", "role"],
+            "the reference's evaluation call",
+        ),
+    ),
+    "coverage count json_path with an empty step": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "log", "json_path": "$."},
+    ),
+    "coverage count json_path with a bare bracket": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "log", "json_path": "$]"},
+    ),
+    "metric_extraction json_path outside the grammar": _set(
+        ["c1", "run", "metric_extraction"],
+        {"from": "file", "file": "out/{seed}.json", "json_path": "$..acc", "unit": "percent"},
     ),
     "coverage saved predictions without metric_recompute": _apply(
         _set(
@@ -1214,13 +1254,16 @@ REASONS = {
     "coverage conflict rule other than all_must_agree": "Input should be 'all_must_agree'",
     "coverage count file without {seed} for several runs": "a count file names {seed}",
     "coverage evidence missing": "coverage_evidence: Field required",
-    "coverage count json_path without a member": "starts with '$' and names a member",
+    "coverage count json_path with a bare bracket": "unsupported step at 1",
+    "coverage count json_path with an empty step": "unsupported step at 1",
+    "coverage count json_path without a member": "names the whole document",
+    "coverage hook alike for both methods with other roles": "read the same evidence",
     "coverage count regex without its group": "regex has no group 9",
     "coverage count regex without its named group": "regex has no group named 'count'",
     "coverage hook for another function": "no other function",
     "coverage hook not an allowed patch": "is not in test_plan.build.allowed_patches",
     "coverage hook without link": "takes exactly",
-    "coverage same evidence for both methods": "declare the same evidence",
+    "coverage same evidence for both methods": "read the same evidence of the same runs",
     "coverage saved predictions without link": "takes exactly",
     "coverage selected checkpoint outside the repository": "checkpoint must be relative",
     "coverage selected epoch without its number": "an epoch number",
@@ -1228,8 +1271,11 @@ REASONS = {
     "coverage selected evaluation missing": "selected_evaluation: Field required",
     "coverage split identity missing for saved predictions": "split_identity is required",
     "coverage split identity without a route that sees labels": "split_identity is required",
-    "coverage split identity without its reason": "other_splits_reason must be non-empty",
+    "coverage split identity leaves out a declared split": "leaves out the declared splits",
+    "coverage split identity names the claim's own split": "names the claim's own split",
+    "coverage split identity without its evidence": "List should have at least 1 item",
     "coverage split labels equal another split's": "cannot identify it",
+    "metric_extraction json_path outside the grammar": "unsupported step at 1",
     "coverage printed count with a hook field": "takes exactly",
     "coverage printed count with an empty link": "cites at least one place",
     "coverage printed count without link": "takes exactly",
@@ -1372,6 +1418,47 @@ def test_a_separate_reference_run_has_the_same_seed_control(tmp_path):
         target(claim, "c2")["comparison"]["reference_run"] = reference
 
     load(tmp_path, controlled)
+
+
+def test_separate_reference_runs_may_read_their_own_logs_with_the_same_selector(tmp_path):
+    """1.5a, Codex review of #120: with a separate reference run, the method and the
+    reference read different logs, so the same selector is two pieces of evidence; with
+    the same runs it is one, and it is refused (case 'coverage same evidence for both
+    methods')."""
+
+    def separate(claim):
+        reference = run_block()
+        reference["argv"] = ["python", "baseline.py"]
+        t = target(claim, "c2")
+        t["comparison"]["reference_run"] = reference
+        t["coverage_evidence"]["reference"]["routes"] = [printed_count()]
+
+    load(tmp_path, separate)
+
+
+def test_selectors_accept_the_grammar_and_groups_they_can_read(tmp_path):
+    """Positive limits of the selector checks: a json_path with name and index steps, a
+    regular expression's group 0 and an existing named group, in metric_extraction and in
+    a coverage count."""
+
+    def selectors(claim):
+        t = target(claim, "c2")
+        t["run"]["metric_extraction"] = {
+            "from": "file",
+            "file": "out/metrics_{seed}.json",
+            "json_path": "$.runs[0].test-acc",
+            "unit": "percent",
+        }
+        t["coverage_evidence"]["method"]["routes"][0]["count"] = {
+            "from": "log",
+            "regex": {"pattern": r"evaluated=(?P<n>\d+)", "group": "n"},
+        }
+        t["coverage_evidence"]["reference"]["routes"][0]["count"] = {
+            "from": "log",
+            "regex": {"pattern": r"\d+", "group": 0},
+        }
+
+    load(tmp_path, selectors)
 
 
 @pytest.mark.parametrize("metric", ["mae", "r2", "bleu", "top5_accuracy"])
