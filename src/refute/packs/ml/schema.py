@@ -849,7 +849,16 @@ class MlTarget(_Model):
             raise ValueError(f"coverage_minimum names checks WP2 refuses for this claim: {unknown}")
         coverage = self.coverage_defaults()
         for name, given in self.coverage_minimum.items():
-            coverage[name] = given.model_dump(mode="json")
+            value = given.model_dump(mode="json")
+            # a claim may raise a minimum, never lower it below 1.0.7 (the maintainer,
+            # 2026-10-16): the written value never contradicts the design
+            low = sorted(k for k in ("positive", "negative") if value[k] < coverage[name][k])
+            if low:
+                raise ValueError(
+                    f"coverage_minimum.{name}: {', '.join(low)} below the 1.0.7 default "
+                    f"{coverage[name]}"
+                )
+            coverage[name] = value
         out = self.model_dump(mode="json", by_alias=True)
         out["coverage_minimum"] = {name: coverage[name] for name in names}
         unit = self.metric.unit

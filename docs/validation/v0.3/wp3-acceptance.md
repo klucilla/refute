@@ -189,6 +189,11 @@ attack, and the prerequisites of each applicable attack (`<attack>:run`,
   `data_split` require their fixed number of valid runs (WP2), `metric_recompute`
   requires all the examples of each run.
 
+These values are floors (decided by the maintainer on 2026-10-16): a claim may give a
+higher minimum for any name, never a lower one. A given value below the written default,
+for a positive or a negative conclusion and for any name (`base_reproduction` and
+`metric_recompute` included), is refused at validation.
+
 #### 1.0.8 Tolerance defaults and their concession
 
 `abs_floor` 0.5 for `percent` and 0.005 for `fraction` are the same floor in two
@@ -213,7 +218,15 @@ An uncertainty record (`reported_uncertainty`, `uncertainty_method`,
 - `n`: the number of runs the published uncertainty is over, as the paper states it
   (≥ 2), or absent when the paper does not state it;
 - `unit` as printed (`percent`, `fraction` or `native`), `location` and `quote` in
-  the paper.
+  the paper; a `none` record has none of them (below).
+
+**`kind: none`** (decided by the maintainer on 2026-10-16). It means that the paper does
+**not publish** an uncertainty for that value; it does **not** mean an unknown
+uncertainty. There is no uncertainty to locate or quote, so a `none` record takes no
+unit, location or quote, and one given is refused; the claim's value keeps its own quote
+(`source.quote`). The claim uses the default tolerances without a `k_sd` term (plan line
+420), and it **can** produce a `FAIL` by the normal rules, unlike a reported uncertainty
+that is not convertible (below), whose `FAIL` becomes `INCONCLUSIVE`.
 
 **Provenance.** Every number of an uncertainty record comes from the paper, transcribed
 with its location and quote and approved with the inventory (plan section 5.2). None
@@ -303,8 +316,8 @@ uncertainty not convertible". By predicate:
 - **Wider tolerance.** The claim's predicate (the same mode) is applied to the value
   measured on the holdout, with the claim's tolerance multiplied by
   `factor = max(1, sqrt(n_examples / m))`, where `n_examples` is the size of the split
-  the claim reports on (`metric.n_examples`). The factor and `m` are written out in the
-  resolved claim.
+  the claim reports on (`metric.n_examples`). The factor is computed by the binary64
+  definition of 1.0.11. The factor and `m` are written out in the resolved claim.
 - **Why this factor: an operational convention, under stated assumptions.** For a
   mean of per-example values, the standard error of the estimate is the per-example
   standard deviation divided by the square root of the number of examples (NIST
@@ -368,15 +381,45 @@ on 2026-10-15:
     holdout values, and each uncertainty's status, SD and quantile. A difference, or a
     missing value, is refused.
   - **Stability.** The same inputs give the same derived values, with no dependence on
-    platform, order or clock:
+    order or clock:
     - the seeds come from SHA-256 and `random.Random` with an integer seed;
-    - the holdout factor is a correctly rounded square root;
+    - the holdout factor follows the definition below;
     - the quantiles and converted SDs are rounded to 12 significant digits, so the last
       bits of a platform's floating-point library do not reach the claim;
     - the key order of the YAML does not change the hash.
 
     The recorded-value tests run on every CI job: Python 3.12 and 3.13, on Ubuntu and
     Windows.
+  - **Holdout factor: the normative definition** (decided by the maintainer on
+    2026-10-16). The factor of 1.0.10 is defined in IEEE-754 binary64, with **two
+    rounding steps**:
+    1. `q = fl(float(n_examples) / float(m))`: the division, rounded to the nearest
+       binary64;
+    2. `f = max(1, fl(sqrt(q)))`: the square root of `q`, rounded to the nearest
+       binary64.
+
+    This is the definition; it is not the correctly rounded root of the exact ratio
+    `n_examples / m`, from which it differs by one unit in the last place for some pairs
+    (for `n_examples = 108`, `m = 100`: `0x1.0a0b02501c79ap+0`, against
+    `0x1.0a0b02501c799p+0` for the exact ratio). Reference cases, with `n_examples`, `m`
+    and the expected result in hexadecimal (`float.hex`), checked with exact rational
+    arithmetic and tested in CI (`tests/test_ml_schema.py`,
+    `test_holdout_factor_reference_values`):
+
+    | `n_examples` | `m` | `f` |
+    |---|---|---|
+    | 50 | 100 | `0x1.0000000000000p+0` |
+    | 100 | 100 | `0x1.0000000000000p+0` |
+    | 400 | 100 | `0x1.0000000000000p+1` |
+    | 4000 | 199 | `0x1.1eef580e6f51bp+2` |
+    | 10000 | 1000 | `0x1.94c583ada5b53p+1` |
+    | 108 | 100 | `0x1.0a0b02501c79ap+0` |
+    | 5000 | 1999 | `0x1.94df6df17465ep+0` |
+    | 109 | 101 | `0x1.09f20785dfe41p+0` |
+    | 106 | 102 | `0x1.04f8a99a17336p+0` |
+
+    No determinism on every platform is promised: this is the normative definition, and
+    CI checks it on the platforms of CI.
   - **Tests.** Each written derived value is altered in a test, and the alteration must
     be refused.
 - **Smaller points:**

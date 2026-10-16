@@ -580,6 +580,15 @@ def test_none_means_no_uncertainty():
     assert out["status"] == "none"
 
 
+@pytest.mark.parametrize("field", ["unit", "location", "quote"])
+def test_a_none_record_has_nothing_to_locate_or_quote(field):
+    """'none' means the paper publishes no uncertainty for the value (not an unknown one):
+    an uncertainty unit, location or quote is refused (1.0.9, the maintainer, 2026-10-16)."""
+    value = "percent" if field == "unit" else "Table 2"
+    with pytest.raises(ValueError, match=f"takes no {field}"):
+        Uncertainty.model_validate({"kind": "none", field: value})
+
+
 @pytest.mark.parametrize(
     "record",
     [
@@ -613,6 +622,43 @@ def test_holdout_rule():
     for m in (0, 99):
         with pytest.raises(ValueError):
             rules.holdout_factor(10000, m)
+
+
+@pytest.mark.parametrize(
+    ("n_examples", "m", "expected_hex"),
+    [
+        (50, 100, "0x1.0000000000000p+0"),  # n_examples < m: the factor is 1
+        (100, 100, "0x1.0000000000000p+0"),
+        (400, 100, "0x1.0000000000000p+1"),
+        (4000, 199, "0x1.1eef580e6f51bp+2"),
+        (10000, 1000, "0x1.94c583ada5b53p+1"),
+        # the two roundings differ from the correctly rounded root of the exact ratio,
+        # which would be 0x1.0a0b02501c799p+0, 0x1.94df6df17465dp+0, 0x1.09f20785dfe40p+0
+        # and 0x1.04f8a99a17335p+0
+        (108, 100, "0x1.0a0b02501c79ap+0"),
+        (5000, 1999, "0x1.94df6df17465ep+0"),
+        (109, 101, "0x1.09f20785dfe41p+0"),
+        (106, 102, "0x1.04f8a99a17336p+0"),
+    ],
+)
+def test_holdout_factor_reference_values(n_examples, m, expected_hex):
+    """The normative definition of 1.0.11, in IEEE-754 binary64 with two roundings:
+    q = fl(float(n) / float(m)), then f = max(1, fl(sqrt(q))). The expected values were
+    checked with exact rational arithmetic (each step the nearest binary64); this test
+    checks them on every CI platform, which is all the definition promises."""
+    assert rules.holdout_factor(n_examples, m).hex() == expected_hex
+
+
+def test_a_claim_may_raise_a_coverage_minimum(tmp_path):
+    """1.0.7: the defaults are floors; a value above them is written as given."""
+    raised = {
+        "base_reproduction": {"positive": 3, "negative": 3},
+        "seeds": {"positive": 5, "negative": 2},
+    }
+    claim = load(tmp_path, _set(["c1", "coverage_minimum"], raised)).canonical()
+    written = target(claim, "c1")["coverage_minimum"]
+    assert written["seeds"] == {"positive": 5, "negative": 2}
+    assert written["base_reproduction"] == {"positive": 3, "negative": 3}
 
 
 @pytest.mark.parametrize("k", [2, 3, 10])
@@ -850,6 +896,17 @@ FAILS = {
     "coverage name WP2 refuses": _set(
         ["c1", "coverage_minimum"], {"data_split": {"positive": 1, "negative": 1}}
     ),
+    # 1.0.7, the maintainer (2026-10-16): a claim may raise a minimum, never lower it
+    "base_reproduction minimum below n_base": _set(
+        ["c1", "coverage_minimum"], {"base_reproduction": {"positive": 2, "negative": 3}}
+    ),
+    "metric_recompute minimum below its default": _set(
+        ["c1", "coverage_minimum"], {"metric_recompute": {"positive": 1, "negative": 1}}
+    ),
+    # 1.0.9, the maintainer (2026-10-16): 'none' is no published uncertainty, nothing to quote
+    "uncertainty none with a location": _set(
+        ["c1", "metric", "reported_uncertainty"], {"kind": "none", "location": "Table 2"}
+    ),
     # metric_recompute
     "recompute for an unsupported metric": _apply(
         _set(["c1", "metric_recompute", "convention", "metric"], "top5"),
@@ -886,6 +943,7 @@ REASONS = {
     "attack repeated": "exactly once",
     "attack unknown": "name: Input should be",
     "base longer than base_cap": "n_base = 2",
+    "base_reproduction minimum below n_base": "base_reproduction: positive below the 1.0.7",
     "base longer than reported_n_seeds": "n_base = 2",
     "budget differs from profile": "no other value is accepted",
     "candidate not in inventory": "is not in the inventory",
@@ -912,6 +970,7 @@ REASONS = {
     "ladder given": "build.ladder is fixed",
     "leakage fraction 1": "max_overlap_fraction: Input should be less than 1",
     "magnitude without d_pub": "d_pub is required in magnitude mode",
+    "metric_recompute minimum below its default": "metric_recompute: positive below the 1.0.7",
     "margin without g_pub": "g_pub is required in margin mode",
     "ml field at top level": "metric: Extra inputs are not permitted",
     "n_examples differs from split": "n_examples differs",
@@ -951,6 +1010,7 @@ REASONS = {
     "trivial baseline for another task": "task: Input should be 'single_label_classification'",
     "trivial baseline with one label": "labels: List should have at least 2 items",
     "two inventory attachments": "role 'claim-inventory'",
+    "uncertainty none with a location": "uncertainty 'none' takes no location",
     "uncertainty unknown kind": "kind: Input should be",
     "uncertainty without location": "needs its location and quote",
     "value claim with comparison mode": "a value claim takes comparison_mode",
