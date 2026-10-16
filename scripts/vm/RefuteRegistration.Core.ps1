@@ -84,10 +84,25 @@ function Find-RefuteVersionedRoleCapability {
     return $found  # callers wrap the call in @(...)
 }
 
+function ConvertTo-RefuteModuleRoot {
+    # One module path entry as a root, with its meaning kept: a final '\' is removed except
+    # from a volume root ('C:\' stays 'C:\'; 'C:' would mean the current folder of drive
+    # C). Only fully qualified paths are accepted (a drive letter and '\', or a UNC path
+    # '\\server\share'); a relative or drive-relative entry ('Modules', 'C:Modules') would
+    # depend on each process's current folder, so it is refused (Codex review of #102).
+    param([string]$Entry)
+    if ($Entry -match '^[A-Za-z]:\\$') { return $Entry }
+    if ($Entry -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') {
+        throw "the module path entry '$Entry' is not a fully qualified path"
+    }
+    return $Entry.TrimEnd('\')
+}
+
 function Join-RefuteModuleRoots {
     # The module folder roots named by the given PSModulePath values (';'-separated) and
-    # extra folders: each trimmed of a final '\', without empty entries or repeats
-    # (compared without case), sorted. Pure: the caller reads the values.
+    # extra folders, each through ConvertTo-RefuteModuleRoot (a relative entry is refused),
+    # without empty entries or repeats (compared without case), sorted. Pure: the caller
+    # reads the values.
     param([string[]]$PathValues, [string[]]$Extra)
     $all = @()
     foreach ($value in @($PathValues)) {
@@ -98,8 +113,8 @@ function Join-RefuteModuleRoots {
     $roots = @()
     foreach ($entry in $all) {
         if (-not $entry) { continue }
-        $root = $entry.TrimEnd('\')
-        if (-not $root -or $seen.ContainsKey($root.ToLowerInvariant())) { continue }
+        $root = ConvertTo-RefuteModuleRoot $entry
+        if ($seen.ContainsKey($root.ToLowerInvariant())) { continue }
         $seen[$root.ToLowerInvariant()] = $true
         $roots += $root
     }
