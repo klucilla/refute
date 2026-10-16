@@ -88,7 +88,8 @@ class RunResult:
     detection_delay_s: float | None = None
     stop_latency_s: float | None = None
     # the clock D and S were measured with (time.get_clock_info('perf_counter')), recorded
-    # with every result; in memory only, not part of any serialized record
+    # with every result. No current caller writes a RunResult to a dossier; if one does
+    # (refute.core.io serializes every field of a dataclass), these two go with it
     measurement_clock: str | None = None
     measurement_resolution_s: float | None = None
 
@@ -151,12 +152,13 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
     last_usage, last_size, last_progress = -1, -1, start
     stopped = None
     detection = latency = None
-    poll_ns = round(spec.poll_s * 1_000_000_000)
-    # the planned instant of the next reading, on the measurement clock: poll_s after the
-    # previous reading ended (the cadence of the loop is unchanged; a late wake-up counts
-    # in D); for the first reading, the start of the supervision
-    planned_ns = time.perf_counter_ns()
     try:
+        # inside the try, so that any error here still stops the run (finally below)
+        poll_ns = round(spec.poll_s * 1_000_000_000)
+        # the planned instant of the next reading, on the measurement clock: poll_s after
+        # the previous reading ended (the cadence of the loop is unchanged; a late wake-up
+        # counts in D); for the first reading, the start of the supervision
+        planned_ns = time.perf_counter_ns()
         while True:
             exit_code = tracker.poll()
             usage = tracker.usage_usec()

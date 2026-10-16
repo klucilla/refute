@@ -215,8 +215,9 @@ POLL = 1 / 128  # 7 812 500 ns, shorter than one step
 
 
 def test_a_quantized_clock_can_give_d_of_minus_one_poll(tmp_path, monkeypatch):
-    """The failure of main run 38902889911, reproduced exactly. Step q = 1/64 s, poll 1/128
-    s, t0 = 5/512 s (9 765 625 ns); the clock value is floor(t/q)*q. Readings (ns):
+    """A synthetic reproduction of the mechanism hypothesized for main run 38902889911 (that
+    run used poll 0.01 s; this test does not rebuild it). Step q = 1/64 s, poll 1/128 s,
+    t0 = 5/512 s (9 765 625 ns); the clock value is floor(t/q)*q. Readings (ns):
     start t=9 765 625, clock 0, planned 0 | 1st t=9 765 625, clock 0, planned 7 812 500,
     sleep to t=17 578 125 | 2nd t=17 578 125, clock 15 625 000, planned 23 437 500, sleep
     to t=25 390 625 | 3rd t=25 390 625, clock 15 625 000 (same tick), request at
@@ -274,10 +275,43 @@ def test_f_reached_at_the_first_reading_uses_the_measured_start(tmp_path, monkey
 
 def test_the_cadence_of_the_readings_is_unchanged(tmp_path, monkeypatch):
     """Codex review of #108: the loop still sleeps poll_s after each reading (no catching
-    up on a late schedule), so the readings and the stop are those of before."""
+    up on a late schedule), so the readings and the stop are those of before. poll 1 s,
+    reading 0.5 s; fine clock. Readings: start planned 0 | 1st usage read to t=0.5,
+    planned 1.5, sleep to 1.5 | 2nd usage read to t=2.0, planned 3.0, sleep to 3.0 | 3rd
+    usage read to t=3.5, request at 3.5: D = 0.5."""
     clock = SimClock(read_ns=500_000_000)
-    simulate(tmp_path, monkeypatch, clock, poll_s=1.0)
+    result, _ = simulate(tmp_path, monkeypatch, clock, poll_s=1.0)
     assert clock.slept == [1.0, 1.0]  # every sleep is poll_s, after the reading
+    assert result.detection_delay_s == 0.5
+
+
+def test_d_and_s_are_differences_of_integers(tmp_path, monkeypatch):
+    """The differences are taken in integer nanoseconds before any conversion: with the
+    measurement clock at 2**60 ns (about 1.15e9 s, where a float second has a step of
+    about 2.4e-7 s), a reading and a stop of 1 ns each still give D = S = 1e-9 exactly.
+    Readings (ns, measurement clock): start planned 2**60 | 1st usage read to t=1 (F
+    reached), request at 2**60 + 1: D = 1 ns; the stop ends at 2**60 + 2: S = 1 ns."""
+    clock = SimClock(read_ns=1, measure_origin=2**60)
+    result, _ = simulate(tmp_path, monkeypatch, clock, step=1000, stop_ns=1)
+    assert result.detection_delay_s == 1e-9 and result.stop_latency_s == 1e-9
+
+
+class ClosingTracker(FakeTracker):
+    def __init__(self):
+        super().__init__(step=1)
+        self.closed = False
+
+    def close(self):
+        self.closed = True
+
+
+def test_an_error_before_the_first_reading_still_closes_the_run(tmp_path):
+    """Codex review of #116: a poll interval that is positive and finite but overflows in
+    nanoseconds (1e300 s) raises inside the guarded block, so the run is still closed."""
+    tracker = ClosingTracker()
+    with pytest.raises(OverflowError):
+        sb._supervise(spec(tmp_path, poll_s=1e300), tracker)
+    assert tracker.closed
 
 
 def test_a_no_progress_stop_records_d_and_s(tmp_path, monkeypatch):
