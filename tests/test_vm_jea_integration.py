@@ -110,44 +110,57 @@ def test_a_role_capability_in_a_version_subfolder_is_not_found(sessions):
     assert not s["Opened"] and "ProbeVersioned" in s["Error"], s
 
 
-def _session_roots(text: str) -> list[dict]:
-    """The lines of Get-RefuteJeaModuleRoots (tests/vm/JeaProbe.psm1): state (present,
-    absent or error), the entry as written, its normalised root, error, psrc files."""
+def _session_roots(text: str) -> tuple[str, list[dict]]:
+    """The lines of Get-RefuteJeaModuleRoots (tests/vm/JeaProbe.psm1): first the session's
+    current folder, then per entry its state (present, absent or error), the entry as
+    written, its normalised root, the full path the session resolves it to (the folder
+    inspected), error, psrc files."""
+    lines = text.split("\n")
+    head, cwd = lines[0].split("\t")
+    assert head == "cwd", lines[0]
     roots = []
-    for line in text.split("\n"):
-        state, entry, path, error, files = line.split("\t")
+    for line in lines[1:]:
+        state, entry, path, full, error, files = line.split("\t")
         assert state in ("present", "absent", "error"), line
         roots.append(
             {
                 "Entry": entry,
                 "Path": path,
+                "Full": full,
                 "State": state,
                 "Error": error,
                 "RoleCapabilities": [f for f in files.split("|") if f],
             }
         )
-    return roots
+    return cwd, roots
 
 
 def test_the_roots_the_session_searches_are_known_to_the_registration(result, sessions):
     """The module path seen inside a JEA session, read by its virtual account while the
-    session is open. Every root is one the registration searches (the registration's own
-    function, Get-RefuteRegistrationModuleRoots), or, root by root, is confirmed absent, or
-    was read without error and holds no role capability at all in that session: JEA can
-    select nothing there. A root that could not be read is never taken as absent (Codex
-    review of #99). No folder is exempted by its name (Codex review of #99 and #102). This
-    is evidence for the GitHub runner only."""
+    session is open, each entry inspected at the full path the session resolves it to. Every
+    folder is one the registration searches (the registration's own function,
+    Get-RefuteRegistrationModuleRoots), or, folder by folder, is confirmed absent, or was
+    read without error and holds no role capability at all in that session: JEA can select
+    nothing there. A folder that could not be read is never taken as absent, and no folder
+    is exempted by its name (Codex review of #99 and #102). This is evidence for the GitHub
+    runner only.
+
+    A relative entry (on the runner, the virtual account's user module folder, whose
+    Documents path is empty: ``WindowsPowerShell\\Modules``) depends on the session's
+    current folder: it is reported, and held to the same rule at the folder it resolves to.
+    The registration itself refuses relative entries in the paths it reads."""
     known = {p.lower() for p in result["Roots"]["Registration"]}
-    session = _session_roots(sessions["PathWithNetworkAccess"]["Roots"])
+    cwd, session = _session_roots(sessions["PathWithNetworkAccess"]["Roots"])
     assert session, "the session reported no module path"
-    # every entry, as written and before any normalisation, is fully qualified (a drive and
-    # '\', or UNC), as the registration requires: a relative entry ('C:', 'Modules') would
-    # depend on the session's current folder (Codex review of #99, round 5)
-    relative = [r["Entry"] for r in session if not FULLY_QUALIFIED.match(r["Entry"])]
-    assert relative == [], relative
-    unknown = [r for r in session if r["State"] != "absent" and r["Path"].lower() not in known]
-    print("session roots outside the registration's set:", json.dumps(unknown, indent=1))
-    selectable = [r for r in unknown if r["State"] == "error" or r["RoleCapabilities"]]
+    relative = [r for r in session if not FULLY_QUALIFIED.match(r["Entry"])]
+    print("session current folder:", cwd)
+    print("relative entries of the session's module path:", json.dumps(relative, indent=1))
+    assert all(FULLY_QUALIFIED.match(r["Full"]) for r in session if r["Full"]), session
+    unknown = [r for r in session if r["State"] != "absent" and r["Full"].lower() not in known]
+    print("session folders outside the registration's set:", json.dumps(unknown, indent=1))
+    selectable = [
+        r for r in unknown if r["State"] == "error" or not r["Full"] or r["RoleCapabilities"]
+    ]
     assert selectable == [], (selectable, result["Roots"]["Registration"])
     # the probe's own role capabilities are seen from inside the session, so the listing works
     listed = [f for r in session for f in r["RoleCapabilities"]]
