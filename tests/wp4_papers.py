@@ -343,6 +343,30 @@ PAPERS = [
         flags=(False, True),
     ),
     SyntheticPaper(
+        "routes-value-conflict",
+        "1.5a W3.12e (Codex review of #110): (d) follows a tampered printed value, (c)'s "
+        "predictions keep the original; the counts agree, the values do not: a conflict, "
+        "never NOT_REPRODUCED",
+        INCONCLUSIVE,
+        config={"stats": True, "stats_bias": 8, "print_bias": 0.2},
+        routes=("saved_predictions", "sufficient_statistics"),
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "route-b-ambiguous-next-to-a-count",
+        "1.5a W3.12c (Codex review of #110): two bound hook events next to a printed count "
+        "that works; the ambiguity is not hidden",
+        INCONCLUSIVE,
+        config={"print_count": True, "hook": True, "hook_calls": 2},
+        routes=("printed_count", "hook"),
+        recompute=False,
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
         "routes-all-agree",
         "1.5a: every route together, all agreeing",
         REPRODUCED,
