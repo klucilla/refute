@@ -596,6 +596,8 @@ VMTREE_PREVIEW_COMMANDS = (
 ) | {
     "compare-refutevmtreeacl",
     "compare-refutevmtreebelow",
+    "get-hypervadminmembers",
+    "get-localgroupmember",
     "get-refutevmtreeaclspec",
     "get-sidname",
     "get-statehash",

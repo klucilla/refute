@@ -33,9 +33,14 @@ stopping at the first problem:
 It refuses when C:\Hyper-V holds anything but version 1 (or version 2: then there is
 nothing to do), when a folder below is a link, has explicit entries or inherits anything
 other than what C:\Hyper-V passes down, when a file exists anywhere under C:\Hyper-V, when a
-folder other than the three of the registration exists there, or when a folder of the
-evidence is missing or a link: the maintainer decides those cases. It never deletes
-anything, and it does not touch the Hyper-V host settings.
+folder other than the three of the registration exists there, when C:\, C:\ProgramData or
+C:\ProgramData\RefuteVm lets another account delete, change permissions or take ownership,
+when the Log folder does not hold exactly the ACL of the registration, or when Hyper-V
+Administrators has any member (an open session of the endpoint): the maintainer decides
+those cases. The members of that group can delete C:\Hyper-V (Modify), so no session may
+be open during the apply; the short window between the last read and the change is a premise
+the maintainer accepts, not a check. It never deletes anything, and it does not touch the
+Hyper-V host settings.
 #>
 [CmdletBinding()]
 param(
@@ -58,8 +63,28 @@ $Below = [ordered]@{ 'C:\Hyper-V\Virtual Hard Disks' = 1; 'C:\Hyper-V\refute-vm'
 # the evidence folder and its parents, each checked (no link) and bound to the preview hash
 $EvidenceChain = @('C:\ProgramData', 'C:\ProgramData\RefuteVm', 'C:\ProgramData\RefuteVm\Log')
 $EvidenceFolder = $EvidenceChain[-1]
+# the ACL Register-RefuteVmEndpoint.ps1 gives the Log folder (its $FolderAcls): owner
+# Administrators, protected; SYSTEM and Administrators full control, Hyper-V Administrators
+# modify (no DeleteSubdirectoriesAndFiles, so no deletion of a file it cannot delete), Users
+# read and execute; all inherited by folders and files
+$all = 'ContainerInherit, ObjectInherit'
+$LogAclSpec = @(
+    [ordered]@{ Sid = 'S-1-5-18'; Rights = 'FullControl'; Inheritance = $all; Propagation = 'None' },
+    [ordered]@{ Sid = 'S-1-5-32-544'; Rights = 'FullControl'; Inheritance = $all; Propagation = 'None' },
+    [ordered]@{ Sid = 'S-1-5-32-578'; Rights = 'Modify'; Inheritance = $all; Propagation = 'None' },
+    [ordered]@{ Sid = 'S-1-5-32-545'; Rights = 'ReadAndExecute'; Inheritance = $all; Propagation = 'None' }
+)
 
 . (Join-Path $PSScriptRoot 'RefuteRegistration.Core.ps1')
+
+function Get-HyperVAdminMembers {
+    # The SIDs of the members of Hyper-V Administrators (S-1-5-32-578), by SID (never by a
+    # localized name). If the group cannot be read, that is reported as a member, so the
+    # check refuses rather than passes.
+    try {
+        return @(Get-LocalGroupMember -SID 'S-1-5-32-578' -ErrorAction Stop | ForEach-Object { [string]$_.SID.Value } | Sort-Object)
+    } catch { return @("(the group cannot be read: $($_.Exception.Message))") }
+}
 
 function Get-SidName([string]$Sid) {
     # The account name of a SID for the listing, or the SID itself when it does not map.
@@ -91,6 +116,7 @@ function Get-TreeState {
             foreach ($rule in @(ConvertTo-RefuteAclRules $acl)) { $state.Add("    $rule") }
         } catch { $state.Add("$p | cannot be read: $($_.Exception.Message)") }
     }
+    $state.Add('Hyper-V Administrators members: ' + $(if (@(Get-HyperVAdminMembers).Count) { @(Get-HyperVAdminMembers) -join ', ' } else { 'none' }))
     return $state
 }
 
@@ -142,16 +168,34 @@ try {
     $extra = @($folders | Where-Object { @($Below.Keys) -notcontains $_ })
     if ($extra.Count) { $problems.Add("folders other than the registration's exist under $TreeRoot (the maintainer decides): $($extra -join ', ')") }
 } catch { $problems.Add("$TreeRoot cannot be listed: $($_.Exception.Message)") }
-# the evidence folders: present, folders, not links, owned by administrators or SYSTEM
-foreach ($folder in $EvidenceChain) {
-    try {
-        $item = Get-Item -LiteralPath $folder -Force -ErrorAction Stop
-        if (-not $item.PSIsContainer) { $problems.Add("$folder is not a folder") }
-        if (([int]$item.Attributes -band [int][System.IO.FileAttributes]::ReparsePoint) -ne 0) { $problems.Add("$folder is a reparse point (a link or junction)") }
-        $owner = [string](Get-Acl -LiteralPath $folder -ErrorAction Stop).GetOwner([System.Security.Principal.SecurityIdentifier]).Value
-        if (-not (Test-RefuteAllowedOwner $owner)) { $problems.Add("$folder is owned by $owner") }
-    } catch { $problems.Add("$folder cannot be read: $($_.Exception.Message)") }
+# the evidence folders and C:\ (Codex review of #126, round 2): C:\, C:\ProgramData and
+# C:\ProgramData\RefuteVm get the ancestor check of the registration (no link, an allowed
+# owner, no other account allowed to delete, change permissions or take ownership), and the
+# Log folder must hold exactly the ACL the registration gives it, so no other account can
+# delete the evidence file or change the folder's permissions
+foreach ($folder in @('C:\') + $EvidenceChain[0..($EvidenceChain.Count - 2)]) {
+    foreach ($p in @(Get-RefuteItemProblems -Item $folder -IsAncestor $true)) { $problems.Add($p) }
 }
+try {
+    $item = Get-Item -LiteralPath $EvidenceFolder -Force -ErrorAction Stop
+    if (-not $item.PSIsContainer) { $problems.Add("$EvidenceFolder is not a folder") }
+    if (([int]$item.Attributes -band [int][System.IO.FileAttributes]::ReparsePoint) -ne 0) { $problems.Add("$EvidenceFolder is a reparse point (a link or junction)") }
+    $logAcl = Get-Acl -LiteralPath $EvidenceFolder -ErrorAction Stop
+    $owner = [string]$logAcl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
+    if ($owner -ne 'S-1-5-32-544') { $problems.Add("$EvidenceFolder is owned by $owner, not Administrators") }
+    if (-not $logAcl.AreAccessRulesProtected) { $problems.Add("$EvidenceFolder inherits from its parent") }
+    $logWanted = @(ConvertTo-RefuteAclRules (New-RefuteFolderAcl $LogAclSpec))
+    $logActual = @(ConvertTo-RefuteAclRules $logAcl)
+    foreach ($rule in $logActual) { if ($logWanted -notcontains $rule) { $problems.Add("$EvidenceFolder has an unexpected entry: $rule") } }
+    foreach ($rule in $logWanted) { if ($logActual -notcontains $rule) { $problems.Add("$EvidenceFolder misses the entry: $rule") } }
+} catch { $problems.Add("$EvidenceFolder cannot be read: $($_.Exception.Message)") }
+# Hyper-V Administrators: Modify includes Delete, so a member could rename C:\Hyper-V and put
+# something else in its place between the last read and the change. The maintainer's account is
+# not a member, and a JEA session adds its virtual account only while it is open: the group
+# must have no member, here and when the state is read again (no VM operation may run
+# during the apply; the short window after the last read is a premise the maintainer accepts)
+$hyperVMembers = @(Get-HyperVAdminMembers)
+if ($hyperVMembers.Count) { $problems.Add("Hyper-V Administrators has members (close every session of the endpoint first): $($hyperVMembers -join ', ')") }
 
 # ---- the state and the change list (preview) --------------------------------------------
 $lines = New-Object System.Collections.Generic.List[string]
@@ -246,11 +290,17 @@ try {
     $evidence.Error = $_.Exception.Message
     Write-Output "STOPPED: $($_.Exception.Message)"
 } finally {
-    # 5. the evidence (entries by SID; no account name), also when a step stopped
+    # 5. the evidence (entries by SID; no account name), also when a step stopped; the
+    # stream is closed even if the write fails, and that failure is reported after the
+    # first one
     if ($stream) {
-        $bytes = (New-Object System.Text.UTF8Encoding($false)).GetBytes((ConvertTo-Json $evidence -Depth 6))
-        $stream.Write($bytes, 0, $bytes.Length)
-        $stream.Dispose()
+        try {
+            $bytes = (New-Object System.Text.UTF8Encoding($false)).GetBytes((ConvertTo-Json $evidence -Depth 6))
+            $stream.Write($bytes, 0, $bytes.Length)
+        } catch {
+            $failed = $true
+            Write-Output "STOPPED: the evidence could not be written: $($_.Exception.Message)"
+        } finally { $stream.Dispose() }
     }
 }
 if ($failed) {

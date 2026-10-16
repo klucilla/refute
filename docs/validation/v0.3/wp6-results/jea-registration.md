@@ -336,7 +336,8 @@ published.
   - The `PreviewSha256` covers the state the change depends on: every item of the tree and the evidence folders, with creation time, attributes, owner, protection and every access entry.
   - The script reads that state again just before the change.
   - Each folder below must inherit exactly what the tree passes down, before and after; the check compares who gets which rights on the folder, its subfolders and its files.
-  - The evidence goes to a new file, created before the change, that only SYSTEM and Administrators can change.
+  - The evidence goes to a new file, created before the change, that only SYSTEM and Administrators can change. The Log folder must hold exactly the registration's ACL, and `C:\`, `C:\ProgramData` and `C:\ProgramData\RefuteVm` must let no other account delete, change permissions or take ownership.
+  - **A premise, not a check:** Hyper-V Administrators has Delete on the tree (Modify), so a member could rename `C:\Hyper-V` and put something else in its place. The script refuses while the group has any member (an open session of the endpoint), at the preview and when it reads the state again; the short window between that last read and the change is a premise the maintainer accepts.
 - **What version 2 does not prove:** it is a candidate for compatibility with the default folder of Windows, not a proven minimum. With ChangePermissions, Hyper-V Administrators can widen the tree's ACL; what they can do in practice stays limited by the commands the endpoint exposes. The Virtual Machines entries also give every VM on the host read access to the disks and media under `C:\Hyper-V`, since the group is not the Refute VM alone.
 
 **Could the CI have caught it? Yes, with a real call.**
@@ -344,6 +345,9 @@ published.
 - **What it does now:** it makes the real call on the runner, under each version of the tree ACL, each in a new session:
   - under version 1 the call must fail with access denied and leave the host paths unchanged;
   - under version 2 it must succeed.
-- **The limit:** the runner is Windows Server 2025, not the maintainer's Windows 11. Its result supports or weakens the diagnosis; it does not replace the attempt on the host.
+- **First run, 38978769925 (head `3adc0a5`, 2026-10-16):**
+  - **Version 1:** the call failed with the host's message: "The default virtual machine configuration store cannot be changed to 'C:\Hyper-V': Access is denied. (0x80070005)". The host paths did not change.
+  - **Version 2:** the module reported `done`, and its own observation after the call showed the new paths. The test's `Get-VMHost`, in a process that had read the host before the attempts, still showed the old ones, so the test failed. It now reads the host paths through CIM; the next run decides.
+- **The limits:** the runner is Windows Server 2025, not the maintainer's Windows 11. Its result supports or weakens the diagnosis; it does not replace the attempt on the host. It does not show which of the two additions of version 2 is needed, nor the other operations. Both attempts share one tree, so the whole tree is checked against each version before its call.
 
 **Status of W6.4:** no operation has succeeded; operation 1 is pending the corrected ACL and the maintainer's new attempt.

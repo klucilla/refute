@@ -409,7 +409,9 @@ Add-Case 'no bypass rule, nothing found' (@(Find-RefuteBlockOverrides @($fw[0], 
 
 # The ACL of the VM tree: SetHostPaths failed through the endpoint with version 1 on
 # 2026-10-16 (access denied); version 2 lets Hyper-V Administrators change permissions and
-# gives the Virtual Machines group the entries of the default folder of Windows.
+# gives the Virtual Machines group the entries of the default folder of Windows. Windows
+# only: PowerShell on Linux has no DirectorySecurity (the Windows jobs run these cases).
+if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
 $tree1 = @(Get-RefuteVmTreeAclSpec -Version 1)
 $tree2 = @(Get-RefuteVmTreeAclSpec -Version 2)
 $acl1 = New-RefuteFolderAcl $tree1
@@ -495,6 +497,7 @@ $oiOnly = [pscustomobject]@{ AccessControlType = 'Allow'; IdentityReference = $s
     InheritanceFlags = [System.Security.AccessControl.InheritanceFlags]::ObjectInherit; PropagationFlags = [System.Security.AccessControl.PropagationFlags]::None }
 $oiChild = @(ConvertTo-RefuteAclEffect @(Get-RefuteChildRules @($oiOnly)))
 Add-Case 'ACL effect: a files-only entry passes to a child folder for its files only' (($oiChild -join '|') -ceq 'Allow S-1-5-32-578 files 1179785') ($oiChild -join '; ')
+}
 
 # Hyper-V module manifest: both layouts (the maintainer's first preview did not find the
 # version subfolder of Windows 10 and 11)

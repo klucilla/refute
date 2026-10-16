@@ -311,7 +311,9 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
     as they were; under version 2 it must succeed and set them. Only where the runner has
     the vmms service and no C:\\Hyper-V of its own. The runner is Windows Server, not the
     maintainer's Windows 11: what it shows is evidence for the diagnosis, not a check of
-    the host."""
+    the host. It does not show which of the two additions of version 2 is needed, nor
+    the other operations, nor version 2 on a tree no earlier attempt touched (both
+    attempts share the tree; the whole tree is checked before each)."""
     host_paths = result["RefuteVm"]["HostPaths"]
     print(json.dumps(host_paths, indent=1))
     if not host_paths["Ran"]:
@@ -326,12 +328,15 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
         )
         record_property(f"version{version}_root_after", json.dumps(attempt["RootAfter"]))
     for attempt in (v1, v2):
+        # the whole tree held exactly this version before the call
+        assert attempt["TreeProblems"] == [], attempt
         assert attempt["Error"] == "" and attempt["Simulate"]["Ok"], attempt
         assert attempt["Real"] is not None, attempt
-    # version 1: access denied, nothing changed
+    # version 1: the module's own failure of SetHostPaths, with the access denied of
+    # 2026-10-16 (0x80070005), and nothing changed
     denied = v1["Real"]["Error"]
     assert not v1["Real"]["Ok"], v1
-    assert "0x80070005" in denied or "denied" in denied.lower(), v1
+    assert "SetHostPaths failed:" in denied and "0x80070005" in denied, v1
     assert _norm(v1["HostAfter"]["VirtualMachinePath"]) == _norm(original["VirtualMachinePath"]), v1
     assert _norm(v1["HostAfter"]["VirtualHardDiskPath"]) == _norm(
         original["VirtualHardDiskPath"]

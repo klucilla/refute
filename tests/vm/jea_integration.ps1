@@ -293,16 +293,31 @@ try {
         $out.RefuteVm.HostPaths.Ran = $true
         . (Join-Path $repoRoot 'scripts\vm\RefuteRegistration.Core.ps1')
         Import-Module Hyper-V
-        $vmHost = Get-VMHost
-        $out.RefuteVm.HostPaths.Original = [ordered]@{ VirtualMachinePath = [string]$vmHost.VirtualMachinePath; VirtualHardDiskPath = [string]$vmHost.VirtualHardDiskPath }
+        function Get-HostPathsCim {
+            # The host paths read from the service's settings through CIM, on every call:
+            # the Hyper-V module of this process can keep the VMHost object it read first
+            # (run 38978769925: Get-VMHost here still showed the old paths after the session
+            # had set and observed the new ones)
+            $settings = Get-CimInstance -Namespace 'root\virtualization\v2' -ClassName 'Msvm_VirtualSystemManagementServiceSettingData' -ErrorAction Stop
+            return [ordered]@{ VirtualMachinePath = [string]$settings.DefaultExternalDataRoot; VirtualHardDiskPath = [string]$settings.DefaultVirtualHardDiskPath }
+        }
+        $out.RefuteVm.HostPaths.Original = Get-HostPathsCim
         $vmTree = 'C:\Hyper-V'
         [void][System.IO.Directory]::CreateDirectory($vmTree)
         Set-Acl -LiteralPath $vmTree -AclObject (New-RefuteFolderAcl @(Get-RefuteVmTreeAclSpec -Version 1))
         foreach ($folder in 'C:\Hyper-V\Virtual Hard Disks', 'C:\Hyper-V\refute-vm', 'C:\Hyper-V\refute-vm\media') { [void][System.IO.Directory]::CreateDirectory($folder) }
         foreach ($version in 1, 2) {
-            $attempt = [ordered]@{ Version = $version; RootBefore = @(); Simulate = $null; Real = $null; Error = ''; HostAfter = $null; RootAfter = @() }
-            Set-Acl -LiteralPath $vmTree -AclObject (New-RefuteFolderAcl @(Get-RefuteVmTreeAclSpec -Version $version))
+            $attempt = [ordered]@{ Version = $version; RootBefore = @(); TreeProblems = @(); Simulate = $null; Real = $null; Error = ''; HostAfter = $null; HostAfterModule = $null; RootAfter = @() }
+            $spec = @(Get-RefuteVmTreeAclSpec -Version $version)
+            Set-Acl -LiteralPath $vmTree -AclObject (New-RefuteFolderAcl $spec)
             $attempt.RootBefore = @(ConvertTo-RefuteAclRules (Get-Acl -LiteralPath $vmTree))
+            # the whole tree before the call (Codex review of #126, round 2): the root holds
+            # exactly this version and every folder below inherits exactly what it passes
+            # down, so nothing an earlier attempt left on the tree takes part in this one
+            $attempt.TreeProblems = @(Compare-RefuteVmTreeAcl -Acl (Get-Acl -LiteralPath $vmTree) -Spec $spec)
+            foreach ($below in @(@('C:\Hyper-V\Virtual Hard Disks', 1), @('C:\Hyper-V\refute-vm', 1), @('C:\Hyper-V\refute-vm\media', 2))) {
+                $attempt.TreeProblems += @(Compare-RefuteVmTreeBelow -Acl (Get-Acl -LiteralPath $below[0]) -Spec $spec -Depth $below[1] | ForEach-Object { "$($below[0]): $_" })
+            }
             try {
                 $hostSession = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
                 try {
@@ -316,8 +331,9 @@ try {
             } catch {
                 $attempt.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
             }
+            $attempt.HostAfter = Get-HostPathsCim
             $vmHost = Get-VMHost
-            $attempt.HostAfter = [ordered]@{ VirtualMachinePath = [string]$vmHost.VirtualMachinePath; VirtualHardDiskPath = [string]$vmHost.VirtualHardDiskPath }
+            $attempt.HostAfterModule = [ordered]@{ VirtualMachinePath = [string]$vmHost.VirtualMachinePath; VirtualHardDiskPath = [string]$vmHost.VirtualHardDiskPath }
             # what the Hyper-V management service left on the tree (entries by SID)
             $attempt.RootAfter = @(ConvertTo-RefuteAclRules (Get-Acl -LiteralPath $vmTree))
             $out.RefuteVm.HostPaths.Attempts["Version$version"] = $attempt
