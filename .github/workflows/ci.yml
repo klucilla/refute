@@ -53,7 +53,11 @@ jobs:
         # its own commit with its own green run. Pinning the OS label does not freeze
         # the image: its version is recorded by the "Record environment" step.
         os: [ubuntu-24.04, windows-2025]
-        python: ["3.12", "3.13"]
+        # Exact Python versions (major.minor.patch), from uv-managed builds only
+        # (python-preference = "only-managed" in pyproject.toml), so the patch no longer
+        # depends on what the runner image ships; the "Check interpreter" step enforces
+        # both (docs/validation/v0.3/wp0-acceptance.md, sections 3.4 and 3.5).
+        python: ["3.12.15", "3.13.16"]
         # The suite is split into shards that run in parallel (scripts/ci_shard.py):
         # every test still runs on every OS and Python above; tests/test_ci_shard.py
         # checks that each test file is in exactly one shard.
@@ -64,18 +68,27 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         with:
+          # uv is pinned, the same version locally and in CI, released at least 7 days
+          # before it was chosen (CLAUDE.md; wp0-acceptance.md section 3.5).
+          version: "0.12.24"
           python-version: ${{ matrix.python }}
       - name: Install (frozen lockfile)
         run: uv sync --frozen
-      # The effective environment of this run: runner image, uv, Python and the
-      # installed dependencies (from the frozen uv.lock).
+      # The effective environment of this run: runner image, uv, Python (version and
+      # origin) and the installed dependencies (from the frozen uv.lock).
       - name: Record environment
         shell: bash
         run: |
           echo "ImageOS=$ImageOS ImageVersion=$ImageVersion"
           uv --version
           uv run python -VV
+          uv python find
+          uv python list --only-installed
           uv pip list --format=freeze
+      # Fails the job unless the environment's interpreter has exactly the matrix
+      # version and is a uv-managed build (under the job's uv Python install directory).
+      - name: Check interpreter
+        run: uv run python scripts/check_interpreter.py "${{ matrix.python }}"
       # calibration/*/audit/, docs/validation/v0.2.1/pre-document-runs/ and
       # docs/validation/v0.2.1/population/ hold records whose bytes are cited by SHA-256:
       # they are never linted or reformatted (see CLAUDE.md).
