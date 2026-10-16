@@ -255,6 +255,58 @@ resolution). The local install of uv 0.12.24 and the local validation of step 4 
 section 3.4 (Windows, CPU threads 8 to 31, a fresh environment) are done by the
 maintainer before the merge; until then the criterion 4 below is not met.
 
+### 3.6 Local environment: uv's Pythons outside AppData (recorded on 2026-10-16)
+
+A record of the local environment, not a criterion.
+
+**The local failures and their probable cause.**
+- **What was observed:** on this machine, `uv python install` run from a session of the
+  Claude desktop app failed with "Missing expected target directory for Python minor
+  version link", for 3.12.13 on 2026-10-07 and for 3.13.16 on 2026-10-16. The files of
+  3.13.16 written from that session were found in the app's private per-package folder
+  (`AppData\Local\Packages\<the app's package>\LocalCache\Roaming\uv\python`), not in
+  the real `AppData\Roaming\uv\python`, which is uv's default install directory.
+- **What the source says:** the Claude desktop app is installed as an MSIX package. For
+  packaged apps that are virtualized, on Windows 10 version 1903 and later, "All newly
+  created files and folders in the user's `AppData` folder [...] are written to a
+  private per-user, per-app location; but merged at runtime to appear in the real
+  `AppData` location"; the page states that this section "applies only to virtualized
+  apps"
+  (https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes#appdata-operations-on-windows-10-version-1903-and-later,
+  accessed 2026-10-16).
+- **The hypothesis, not verified:** the new interpreter folder was redirected to the
+  private location, while uv's minor-version link needed it in the real AppData, so the
+  link step failed. Where the link pointed, and whether an interpreter installed that
+  way would work from a terminal outside the app, were not checked.
+- **What is confirmed:** with uv's Pythons installed outside AppData (the rule below),
+  the install, the virtual environment and the full suite work (the result below).
+
+**The rule.**
+- **uv's Pythons stay outside AppData.** The user environment variable
+  `UV_PYTHON_INSTALL_DIR` is `C:\uv\python`.
+- **A new environment variable applies only to processes started after it is set.** The
+  Windows Terminal keeps the environment it started with, so every Terminal window must
+  be closed before a new one sees the variable.
+  - The first installation of 2026-10-16, from a Terminal opened before the variable,
+    still went to AppData.
+  - The Claude desktop app also has to be restarted.
+
+**The result.** The maintainer, from a normal terminal opened after the variable was
+set, ran `uv python install 3.13.16`, `uv venv --clear --python 3.13.16` and
+`uv sync --frozen` in the main folder.
+
+Checked on 2026-10-16 from a session of the app restarted after that, in the main
+folder:
+- `UV_PYTHON_INSTALL_DIR` is `C:\uv\python`;
+- `.venv\Scripts\python.exe -VV` gives CPython 3.13.16;
+- `sys.base_prefix` is `C:\uv\python\cpython-3.13.16-windows-x86_64-none`;
+- `scripts/check_interpreter.py 3.13.16` is OK;
+- the full suite on `main` at `f942692`, through `scripts/run_tests_affinity.ps1`:
+  JUnit tests=1901 failures=0 errors=0 skipped=51.
+
+The copies of 3.13.16 left under AppData, both the app's private copy and the real one,
+are outside the project and are the maintainer's decision.
+
 ## 4. Acceptance criteria
 
 1. This document is on main before any change to `pyproject.toml`, `uv.lock`,
