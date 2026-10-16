@@ -107,19 +107,38 @@ def test_a_role_capability_in_a_version_subfolder_is_not_found(sessions):
     assert not s["Opened"] and "ProbeVersioned" in s["Error"], s
 
 
-def test_the_roots_the_session_searches_are_known_to_the_registration(result):
-    """The module path seen inside a JEA session: every existing root outside the user
-    profiles is one the registration searches (Get-ModulePathRoots: machine and process
-    PSModulePath, Program Files, System32, PSHOME), so a role capability the service could
-    load is never outside the registration's check (Codex review of #102)."""
+def _session_roots(text: str) -> list[dict]:
+    """The lines of Get-RefuteJeaModuleRoots: exists, root, error, psrc files."""
+    roots = []
+    for line in text.split("\n"):
+        exists, path, error, files = line.split("\t")
+        roots.append(
+            {
+                "Path": path,
+                "Exists": exists == "1",
+                "Error": error,
+                "RoleCapabilities": [f for f in files.split("|") if f],
+            }
+        )
+    return roots
+
+
+def test_the_roots_the_session_searches_are_known_to_the_registration(result, sessions):
+    """The module path seen inside a JEA session, read by its virtual account while the
+    session is open. Every existing root is one the registration searches (the registration's
+    own function, Get-RefuteRegistrationModuleRoots), or, root by root, holds no role
+    capability at all in that session, read without error: JEA can select nothing there.
+    No folder is exempted by its name (Codex review of #99 and #102). This is evidence for
+    the GitHub runner only."""
     known = {p.lower() for p in result["Roots"]["Registration"]}
-    session = result["Roots"]["Session"]
+    session = _session_roots(sessions["PathWithNetworkAccess"]["Roots"])
     assert session, "the session reported no module path"
-    outside = [
-        r["Path"]
-        for r in session
-        if r["Exists"]
-        and not r["Path"].lower().startswith("c:\\users\\")
-        and r["Path"].lower() not in known
-    ]
-    assert outside == [], (outside, result["Roots"])
+    unknown = [r for r in session if r["Exists"] and r["Path"].lower() not in known]
+    print("session roots outside the registration's set:", json.dumps(unknown, indent=1))
+    selectable = [r for r in unknown if r["Error"] or r["RoleCapabilities"]]
+    assert selectable == [], (selectable, result["Roots"]["Registration"])
+    # the probe's own role capabilities are seen from inside the session, so the listing works
+    listed = [f for r in session for f in r["RoleCapabilities"]]
+    assert any(
+        f.lower().endswith("\\refutejeaprobe\\rolecapabilities\\probebypath.psrc") for f in listed
+    )

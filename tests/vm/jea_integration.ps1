@@ -13,9 +13,11 @@
 #      version subfolder (a twin at the top of its module is the positive control);
 #   3. RequiredVersion or GUID in ModulesToImport makes PowerShell call Get-Module in the
 #      restricted session (it fails); by the manifest path, or by name, it imports.
-# It also records the module path seen inside a JEA session (the roots the service
-# searches). Prints one JSON object; tests/test_vm_jea_integration.py holds the
-# assertions. It never deletes anything (the runner is discarded).
+# It also records, from inside a JEA session, every root of the session's module path and
+# the role capability files under each, next to the roots the registration searches
+# (Get-RefuteRegistrationModuleRoots, the registration's own function). Prints one JSON
+# object; tests/test_vm_jea_integration.py holds the assertions. It never deletes anything
+# (the runner is discarded).
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
 
@@ -37,15 +39,43 @@ $modules = Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules'
 $account = "$env:COMPUTERNAME\$env:USERNAME"
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $guid = 'c3d6a0f1-8e2b-4a57-9f30-1b2c3d4e5f60'
-$visible = "VisibleFunctions = @('Get-RefuteJeaProbe', 'Get-RefuteJeaModulePath')"
+$visible = "VisibleFunctions = @('Get-RefuteJeaProbe', 'Get-RefuteJeaModuleRoots')"
+# The probe functions. Get-RefuteJeaModuleRoots runs inside the JEA session, as its virtual
+# account, while the session is open: for each entry of the session's PSModulePath, one
+# line "<exists 0|1><TAB><root><TAB><error><TAB><psrc files joined by |>", where the files
+# are every <root>\<folder>\RoleCapabilities\*.psrc (what JEA could select there). It uses
+# .NET only: no cmdlet, which a restricted session may not have (cause 3).
+$probeCode = @'
+function Get-RefuteJeaProbe { 'probe-ok' }
+function Get-RefuteJeaModuleRoots {
+    $lines = [System.Collections.Generic.List[string]]::new()
+    foreach ($entry in [Environment]::GetEnvironmentVariable('PSModulePath').Split(';')) {
+        if (-not $entry) { continue }
+        $root = $entry.TrimEnd('\')
+        $exists = [System.IO.Directory]::Exists($root)
+        $files = [System.Collections.Generic.List[string]]::new()
+        $err = ''
+        if ($exists) {
+            try {
+                foreach ($dir in [System.IO.Directory]::GetDirectories($root)) {
+                    $folder = [System.IO.Path]::Combine($dir, 'RoleCapabilities')
+                    if ([System.IO.Directory]::Exists($folder)) { $files.AddRange([System.IO.Directory]::GetFiles($folder, '*.psrc')) }
+                }
+            } catch { $err = $_.Exception.Message.Replace("`t", ' ').Replace("`r", ' ').Replace("`n", ' ') }
+        }
+        $flag = if ($exists) { '1' } else { '0' }
+        $lines.Add([string]::Join("`t", @($flag, $root, $err, [string]::Join('|', $files.ToArray()))))
+    }
+    [string]::Join("`n", $lines.ToArray())
+}
+Export-ModuleMember -Function Get-RefuteJeaProbe, Get-RefuteJeaModuleRoots
+'@
 
 function New-ProbeModule([string]$Folder, [string]$Name, [hashtable]$RoleFiles) {
-    # A module exporting Get-RefuteJeaProbe and Get-RefuteJeaModulePath (the module path
-    # of the session process), with role capability files in $Folder.
+    # A module exporting the probe functions, with role capability files in $Folder.
     [void][System.IO.Directory]::CreateDirectory((Join-Path $Folder 'RoleCapabilities'))
-    $code = "function Get-RefuteJeaProbe { 'probe-ok' }`r`nfunction Get-RefuteJeaModulePath { [Environment]::GetEnvironmentVariable('PSModulePath') }`r`nExport-ModuleMember -Function Get-RefuteJeaProbe, Get-RefuteJeaModulePath`r`n"
-    [System.IO.File]::WriteAllText((Join-Path $Folder "$Name.psm1"), $code, $utf8)
-    [System.IO.File]::WriteAllText((Join-Path $Folder "$Name.psd1"), "@{ RootModule = '$Name.psm1'; ModuleVersion = '0.1.0'; GUID = '$guid'; FunctionsToExport = @('Get-RefuteJeaProbe', 'Get-RefuteJeaModulePath') }`r`n", $utf8)
+    [System.IO.File]::WriteAllText((Join-Path $Folder "$Name.psm1"), $probeCode, $utf8)
+    [System.IO.File]::WriteAllText((Join-Path $Folder "$Name.psd1"), "@{ RootModule = '$Name.psm1'; ModuleVersion = '0.1.0'; GUID = '$guid'; FunctionsToExport = @('Get-RefuteJeaProbe', 'Get-RefuteJeaModuleRoots') }`r`n", $utf8)
     foreach ($role in $RoleFiles.Keys) {
         [System.IO.File]::WriteAllText((Join-Path $Folder "RoleCapabilities\$role.psrc"), $RoleFiles[$role], $utf8)
     }
@@ -59,7 +89,7 @@ function Register-Probe([string]$Endpoint, [string]$Role) {
 }
 
 function Test-Session([string]$Endpoint, [bool]$NetworkAccess) {
-    $result = [ordered]@{ Opened = $false; Error = ''; ErrorId = ''; Commands = @(); Probe = ''; ModulePath = '' }
+    $result = [ordered]@{ Opened = $false; Error = ''; ErrorId = ''; Commands = @(); Probe = ''; Roots = '' }
     try {
         if ($NetworkAccess) {
             $s = New-PSSession -ComputerName localhost -ConfigurationName $Endpoint -EnableNetworkAccess -ErrorAction Stop
@@ -71,7 +101,7 @@ function Test-Session([string]$Endpoint, [bool]$NetworkAccess) {
             $result.Commands = @(Invoke-Command -Session $s -ScriptBlock { Get-Command } | ForEach-Object { [string]$_.Name } | Sort-Object)
             # the call shape of Invoke-RefuteVm.ps1: a script block built from one literal command
             $result.Probe = [string](Invoke-Command -Session $s -ScriptBlock ([scriptblock]::Create('Get-RefuteJeaProbe')))
-            $result.ModulePath = [string](Invoke-Command -Session $s -ScriptBlock ([scriptblock]::Create('Get-RefuteJeaModulePath')))
+            $result.Roots = [string](Invoke-Command -Session $s -ScriptBlock ([scriptblock]::Create('Get-RefuteJeaModuleRoots')))
         } finally { Remove-PSSession -Session $s }
     } catch {
         $result.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
@@ -117,13 +147,9 @@ foreach ($pin in 'RequiredVersion', 'ModuleVersion', 'MaximumVersion', 'ModuleVe
 $out.Sessions.SubfolderWithNetworkAccess = Test-Session 'RefuteProbeSubfolder' $true
 $out.Sessions.FlatTwinWithNetworkAccess = Test-Session 'RefuteProbeFlatTwin' $true
 
-# the module roots of this machine, computed like Get-ModulePathRoots of the registration
-# (machine PSModulePath, this process's PSModulePath, Program Files, System32, PSHOME)
-$roots = @([Environment]::GetEnvironmentVariable('PSModulePath', 'Machine').Split(';')) +
-    @([Environment]::GetEnvironmentVariable('PSModulePath', 'Process').Split(';')) +
-    @($modules, (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules'), (Join-Path $PSHOME 'Modules'))
-$out.Roots.Registration = @($roots | Where-Object { $_ } | ForEach-Object { $_.TrimEnd('\') } | Sort-Object -Unique)
-$out.Roots.Session = @($out.Sessions.PathWithNetworkAccess.ModulePath.Split(';') | Where-Object { $_ } | ForEach-Object {
-        [ordered]@{ Path = $_.TrimEnd('\'); Exists = (Test-Path -LiteralPath $_ -PathType Container) }
-    })
+# the module roots the registration searches, from the function the registration itself
+# calls (scripts/vm/RefuteRegistration.Core.ps1), not from a copy of its formula
+$repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+. (Join-Path $repo 'scripts\vm\RefuteRegistration.Core.ps1')
+$out.Roots.Registration = @(Get-RefuteRegistrationModuleRoots)
 Write-Result
