@@ -164,6 +164,18 @@ def test_an_extended_configuration_must_be_staged_too(repo):
     assert commits(repo) == 0
 
 
+def test_an_extend_chain_through_a_file_named_like_pyproject_is_followed(repo):
+    """Codex review: base-pyproject.toml holds top-level options, so its extend counts."""
+    stage(repo, "ruff.toml", 'extend = "base-pyproject.toml"\n')
+    stage(repo, "base-pyproject.toml", 'extend = "rules.toml"\n')
+    stage(repo, "rules.toml", "line-length = 100\n")
+    stage(repo, "good.py", "x = 1\n")
+    (repo / "rules.toml").write_text("line-length = 80\n", encoding="utf-8")
+    out = commit(repo, "-m", "x")
+    assert out.returncode == 2 and "rules.toml" in out.stderr
+    assert commits(repo) == 0
+
+
 def test_an_extended_configuration_outside_the_repository_is_refused(repo):
     stage(repo, "ruff.toml", 'extend = "../base.toml"\n')
     stage(repo, "good.py", "x = 1\n")

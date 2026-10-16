@@ -150,9 +150,10 @@ def _extends(path: str, data: bytes) -> list[str]:
         document = tomllib.loads(data.decode("utf-8"))
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as error:
         raise RefusedError(f"{path} is not valid TOML: {error}") from error
-    section = (
-        document.get("tool", {}).get("ruff", {}) if path.endswith("pyproject.toml") else document
-    )
+    # ruff reads [tool.ruff] only from a file named exactly pyproject.toml; any other name
+    # (base-pyproject.toml included) holds its options at the top level
+    is_pyproject = posixpath.basename(path) == "pyproject.toml"
+    section = document.get("tool", {}).get("ruff", {}) if is_pyproject else document
     value = section.get("extend") if isinstance(section, dict) else None
     if value is None:
         return []
