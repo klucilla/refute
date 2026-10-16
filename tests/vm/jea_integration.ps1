@@ -51,9 +51,11 @@ function Get-RefuteJeaModuleRoots {
     $lines = [System.Collections.Generic.List[string]]::new()
     foreach ($entry in [Environment]::GetEnvironmentVariable('PSModulePath').Split(';')) {
         if (-not $entry) { continue }
-        # the entry as JEA reads it: a volume root keeps its '\' ('C:' would be the current
-        # folder of drive C); any other final '\' is dropped for the comparison only
-        $root = if ($entry -match '^[A-Za-z]:\\$') { $entry } else { $entry.TrimEnd('\') }
+        # the entry as JEA reads it, normalised like ConvertTo-RefuteModuleRoot: the final
+        # '\' characters are dropped, and a volume root keeps one ('C:' would be the current
+        # folder of drive C)
+        $root = $entry.TrimEnd('\')
+        if ($root -match '^[A-Za-z]:$') { $root = $root + '\' }
         $exists = [System.IO.Directory]::Exists($root)
         $files = [System.Collections.Generic.List[string]]::new()
         $err = ''
