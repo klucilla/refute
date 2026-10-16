@@ -225,8 +225,10 @@ An uncertainty record (`reported_uncertainty`, `uncertainty_method`,
 uncertainty. There is no uncertainty to locate or quote, so a `none` record takes no
 unit, location or quote, and one given is refused; the claim's value keeps its own quote
 (`source.quote`). The claim uses the default tolerances without a `k_sd` term (plan line
-420), and it **can** produce a `FAIL` by the normal rules, unlike a reported uncertainty
-that is not convertible (below), whose `FAIL` becomes `INCONCLUSIVE`.
+420), and it **can** produce a `FAIL` by the normal rules. This differs from a reported
+uncertainty that is not convertible (below): there, in the value modes, a `FAIL` under
+the lower tolerance becomes `INCONCLUSIVE`; for the other predicates, the table below
+says what stands.
 
 **Provenance.** Every number of an uncertainty record comes from the paper, transcribed
 with its location and quote and approved with the inventory (plan section 5.2). None
