@@ -17,10 +17,10 @@ holdout and uncertainty papers of W4.3b and W4.3c, the reply draft, the seal and
 dossier verification of W4.4.
 
 The detailed expectations (``expected_counts``, ``interrupted``, ``interrupted_steps``,
-``flags``, ``incomplete``, ``not_applicable``) were added after the first runs, asked by the Codex review of #111.
-They restate what each case's text already fixed in the first commit of this file (for
-example "2 of 5 seeds") or what the WP2 core gives for that case; no expected verdict
-changed.
+``flags``, ``incomplete``, ``not_applicable``) were added after the first runs, asked by the
+Codex review of #111. They restate what each case's text already fixed in the first commit
+of this file (for example "2 of 5 seeds") or what the WP2 core gives for that case; no
+expected verdict changed.
 
 ``no-seed-option`` is the claim's declaration: the claim has no seed argument and records
 the ``seeds`` attack as not applicable, with its reason. The cataloged trainer itself still
