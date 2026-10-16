@@ -107,4 +107,11 @@ jobs:
           REFUTE_JEA_INTEGRATION: ${{ runner.os == 'Windows' && '1' || '0' }}
         run: |
           args="$(uv run python scripts/ci_shard.py ${{ matrix.shard }})"
-          uv run pytest --durations=25 $args
+          uv run pytest --durations=25 --junitxml=junit.xml $args
+      # Test counts come from the JUnit file, never from the console line (CLAUDE.md); the
+      # outcome of each JEA integration test is listed too. Runs also when the tests fail.
+      - name: Test counts (JUnit)
+        if: always()
+        shell: bash
+        run: |
+          uv run python scripts/junit_counts.py junit.xml --show test_vm_jea_integration

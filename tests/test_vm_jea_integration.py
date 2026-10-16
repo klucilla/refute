@@ -1,11 +1,13 @@
 """A real JEA endpoint on the Windows CI runner (tests/vm/jea_integration.ps1).
 
-Runs only on GitHub Actions Windows jobs, where the CI sets REFUTE_JEA_INTEGRATION=1 and
-the runner is an ephemeral machine with Administrator rights; it is skipped everywhere
+Runs only on GitHub-hosted Actions Windows jobs, where the CI sets REFUTE_JEA_INTEGRATION=1
+and the runner is an ephemeral machine with Administrator rights; it is skipped everywhere
 else, and the PowerShell script refuses to run outside that environment too, because it
-enables WinRM and registers session configurations. It checks, with disposable endpoints
-shaped like RefuteVm (RestrictedRemoteServer, RunAsVirtualAccount, AccessMode Local), the
-three causes the maintainer found when the RefuteVm session would not open (2026-10-16).
+enables WinRM and registers session configurations. These variables guard against an
+accidental run; they do not authenticate the machine. It checks, with disposable
+endpoints shaped like RefuteVm (RestrictedRemoteServer, RunAsVirtualAccount, AccessMode
+Local), the three causes the maintainer found when the RefuteVm session would not open
+(2026-10-16), each with the failure it predicts and a positive control.
 """
 
 from __future__ import annotations
@@ -21,19 +23,27 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "tests" / "vm" / "jea_integration.ps1"
+PINS = (
+    "RequiredVersion",
+    "ModuleVersion",
+    "MaximumVersion",
+    "ModuleVersionGuid",
+    "RequiredVersionGuid",
+)
 
 pytestmark = pytest.mark.skipif(
     not (
         sys.platform == "win32"
         and os.environ.get("GITHUB_ACTIONS") == "true"
+        and os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted"
         and os.environ.get("REFUTE_JEA_INTEGRATION") == "1"
     ),
-    reason="runs only on the GitHub Actions Windows runners (REFUTE_JEA_INTEGRATION=1)",
+    reason="runs only on GitHub-hosted Windows runners (REFUTE_JEA_INTEGRATION=1)",
 )
 
 
 @pytest.fixture(scope="module")
-def sessions() -> dict:
+def result() -> dict:
     exe = shutil.which("powershell.exe")
     assert exe, "Windows PowerShell 5.1 is part of Windows"
     out = subprocess.run(
@@ -43,43 +53,73 @@ def sessions() -> dict:
         timeout=900,
     )
     assert out.returncode == 0, out.stdout + out.stderr
-    result = json.loads(out.stdout.strip().splitlines()[-1])
-    assert result["Ran"], result["Reason"]
+    data = json.loads(out.stdout.strip().splitlines()[-1])
+    assert data["Ran"], data["Reason"]
+    print(json.dumps(data, indent=1))  # the evidence, in the CI log
+    return data
+
+
+@pytest.fixture(scope="module")
+def sessions(result) -> dict:
     return result["Sessions"]
 
 
-def test_a_session_by_manifest_path_opens_with_network_access(sessions):
-    """The fix of the role capability (import by the manifest path) and of
-    Invoke-RefuteVm.ps1 (-EnableNetworkAccess, no -Credential): the session opens, shows
-    the visible function and the helper commands, and runs the function."""
-    s = sessions["PathWithNetworkAccess"]
-    assert s["Opened"], s["Error"]
+def _opened(s: dict) -> None:
+    assert s["Opened"], s
     assert "Get-RefuteJeaProbe" in s["Commands"] and "Get-Command" in s["Commands"]
     assert "Get-Module" not in s["Commands"]
     assert s["Probe"] == "probe-ok"
 
 
+def test_a_session_by_manifest_path_opens_with_network_access(sessions):
+    """The fix of the role capability (import by the manifest path) and of
+    Invoke-RefuteVm.ps1 (-EnableNetworkAccess, no -Credential): the session opens, shows
+    the visible functions and the helper commands, and runs the function."""
+    _opened(sessions["PathWithNetworkAccess"])
+
+
 def test_a_session_by_name_opens_too(sessions):
     """The alternative the maintainer named: ModulesToImport by name only."""
-    s = sessions["NameWithNetworkAccess"]
-    assert s["Opened"] and s["Probe"] == "probe-ok", s["Error"]
+    _opened(sessions["NameWithNetworkAccess"])
 
 
-def test_without_network_access_a_local_endpoint_refuses(sessions):
+def test_without_network_access_a_local_endpoint_denies_access(sessions):
     """Cause 1: with AccessMode Local, localhost without -EnableNetworkAccess is a network
-    logon, which the endpoint denies."""
+    logon, which the endpoint denies: an access-denied error, not any other failure."""
     s = sessions["PathWithoutNetworkAccess"]
-    assert not s["Opened"] and s["Error"]
+    assert not s["Opened"]
+    assert "AccessDenied" in s["ErrorId"] or "Access is denied" in s["Error"], s
 
 
-def test_a_version_pin_cannot_open_the_restricted_session(sessions):
-    """Cause 3: RequiredVersion and GUID make PowerShell call Get-Module in the restricted
-    session, which does not have it."""
-    s = sessions["VersionWithNetworkAccess"]
+@pytest.mark.parametrize("pin", PINS)
+def test_each_version_pin_cannot_open_the_restricted_session(sessions, pin):
+    """Cause 3: any of RequiredVersion, ModuleVersion, MaximumVersion (and GUID, which needs
+    a version key) makes PowerShell call Get-Module in the restricted session."""
+    s = sessions[f"Pin{pin}"]
     assert not s["Opened"] and "Get-Module" in s["Error"], s
 
 
 def test_a_role_capability_in_a_version_subfolder_is_not_found(sessions):
-    """Cause 2: JEA looks for <module path>\\<module>\\RoleCapabilities\\<name>.psrc only."""
+    """Cause 2: the same role capability is found at the top of its module (the positive
+    control) and not in a version subfolder, where the error names the role capability."""
+    _opened(sessions["FlatTwinWithNetworkAccess"])
     s = sessions["SubfolderWithNetworkAccess"]
-    assert not s["Opened"] and s["Error"], s
+    assert not s["Opened"] and "ProbeVersioned" in s["Error"], s
+
+
+def test_the_roots_the_session_searches_are_known_to_the_registration(result):
+    """The module path seen inside a JEA session: every existing root outside the user
+    profiles is one the registration searches (Get-ModulePathRoots: machine and process
+    PSModulePath, Program Files, System32, PSHOME), so a role capability the service could
+    load is never outside the registration's check (Codex review of #102)."""
+    known = {p.lower() for p in result["Roots"]["Registration"]}
+    session = result["Roots"]["Session"]
+    assert session, "the session reported no module path"
+    outside = [
+        r["Path"]
+        for r in session
+        if r["Exists"]
+        and not r["Path"].lower().startswith("c:\\users\\")
+        and r["Path"].lower() not in known
+    ]
+    assert outside == [], (outside, result["Roots"])
