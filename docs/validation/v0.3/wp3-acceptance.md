@@ -710,8 +710,10 @@ declared in the claim before the lock. With no route that closes the chain, the 
       `int` or `str`, or from numpy's own `ndarray`.
     - **A trusted numpy type:** it is the compiled type found in the `__dict__` of the
       numpy module the program already imported, which must be an exact module. Its
-      metaclass must be exactly `type`, and it must not be a heap type: a class that only
-      calls itself `numpy.ndarray` is never trusted. The hook never imports numpy itself.
+      metaclass must be exactly `type`, it must not be a heap type, and its compiled name
+      must be `numpy.<name>` for the name looked up: a class that only calls itself
+      `numpy.ndarray`, or a compiled type of another module placed under numpy's name, is
+      never trusted. The hook never imports numpy itself.
     - **Anything else is not touched** (an iterator, a subclass, an object with a custom
       metaclass, a fake numpy class): none of its methods or attributes runs, and a
       failure record with a fixed message is written. Unknown exceptions are never
@@ -722,14 +724,36 @@ declared in the claim before the lock. With no route that closes the chain, the 
     when the hook is installed (for example `sklearn.metrics.accuracy_score`), which the
     gate compares with the claim's `function`.
 
+  **Trust boundary (a declared premise).** The hook runs inside the observed program and
+  shares its interpreter. It trusts the interpreter and the modules the program has
+  loaded (the standard library, and numpy as found in `sys.modules`) as they are, and does
+  not authenticate them: a program that replaces a module, or a field of one, could
+  equally replace the modules the hook itself uses, or the hook, and no check inside the
+  process can rule that out. What the checks above guarantee is narrower: no code reached
+  through the arguments or the result of the observed call runs. Such a replacement would
+  be code of the repository at its pinned commit, or of a patch hashed before the lock;
+  the hook does not detect it.
+
   **Any failure of the hook itself makes the gate `INCONCLUSIVE`**, and never changes the
   call.
-  - **One record per call:** each call gets a unique sequence number, allocated under a
-    lock, and writes an event or a failure record, then a commit record.
-  - **The final record:** at the end, once no call is in progress, a final record
-    states the number of calls and whether any failure happened (a sink that raised
-    included). It also holds the SHA-256 of every record written before it; the digest
-    and each write happen in one locked step.
+  - **Calls in progress:** a call is counted from its entry into the wrapper, before the
+    observed function runs, until its records are written (or the function raised).
+  - **One record per call:** each call that returned gets a unique sequence number,
+    allocated under a lock, and writes an event or a failure record, then a commit
+    record.
+  - **The final record:** `finish()` is called once by the installation, from `atexit`,
+    after the main thread and every non-daemon thread have ended, never from inside an
+    observed call. It waits until no call is in progress, then, in one locked step,
+    writes the final record and closes the observer. The final record states the number
+    of calls and whether any failure happened (a sink that raised included). It also
+    holds the SHA-256 of every record written before it; the digest and each write
+    happen in one locked step. A call blocked forever leaves no final record (the run's
+    hang guard ends it), and a second `finish()` writes nothing.
+  - **A call after the final record** is still observed, unchanged, and its records are
+    written after the final record, which the gate refuses. **Limitation:** the log
+    cannot show the absence of records that never reached it, so a call that begins
+    after the final record and whose own records the sink then fails to write leaves no
+    trace. Only a daemon thread can still call at that point.
   - **The log is judged by its content, not by whether the sink returned.** A sink that
     raises after the final record was written leaves a complete log that matches its
     digest. A log written in part, reordered or edited does not match it.
@@ -758,13 +782,19 @@ declared in the claim before the lock. With no route that closes the chain, the 
     - an object with a counting metaclass, a fake `numpy.ndarray` and a list subclass;
     - an untrusted element and an iterator;
     - a 0-d object array holding a counting object;
+    - a function object offered as labels while numpy's `ndarray` is replaced by the
+      compiled type of Python functions;
     - a fake numpy scalar result and an unknown result.
 
-    2-D arrays are refused too.
+    2-D arrays are refused too, and every numpy type the hook reads is trusted with the
+    real numpy on each CI platform.
+  - **calls in progress:** `finish()` waits for a call still inside the observed
+    function, and counts it; a call whose function raised is no longer in progress;
   - **recorded failures:** each of these reaches the gate as a failure:
     - from the sink: a sink that fails after the commit record, a log written in part,
       and a call still in the sink when `finish()` starts (it waits, then reports the
       failure);
+    - after the end: a call made after `finish()` (a second `finish()` writes nothing);
     - from the hook: a failing `sys._getframe`;
     - from the records: an uncommitted event, a commit with no event or before its
       event, a repeated sequence number or a gap, an incomplete event, wrong types, an
@@ -880,8 +910,10 @@ declared in the claim before the lock. With no route that closes the chain, the 
   - the labels hash follows the order of the examples, so a split evaluated in an order
     that changes the sequence of labels is `INCONCLUSIVE` by (c) and (b) (the
     limitation in W3.12d);
-  - the hook reads only exact known types and commits each event after the sink
-    accepted it (W3.12c).
+  - the hook reads only exact known types; its log is judged by its content (a final
+    record with the count and the digest of every record before it); it trusts the
+    interpreter and the loaded modules as a declared premise, and a call after the final
+    record whose records never reach the log is a declared limitation (W3.12c).
 - **Files and selectors:**
   - `{seed}` in count files when there are several runs;
   - the selector checks (`json_path`, the regex group), which also tighten

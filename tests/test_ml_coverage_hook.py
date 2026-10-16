@@ -5,16 +5,19 @@ gate see any failure of its own (offline)."""
 import hashlib
 import sys
 import threading
+import types
 
 import numpy as np
 import pytest
 
 from refute.core.canonical import canonical_bytes
 from refute.packs.ml.coverage_hook import (
+    _NUMPY_NUMBERS,
     COMMITTED,
     FINAL,
     HOOK_FAILURE,
     Observer,
+    _trusted_numpy,
     committed_events,
     record_line,
 )
@@ -97,9 +100,15 @@ def test_the_function_s_own_exception_propagates_unchanged():
         raise error
 
     records = []
+    observer = Observer(records.append)
     with pytest.raises(ValueError) as caught:
-        Observer(records.append).wrap(failing, NAME)([0], [0])
+        observer.wrap(failing, NAME)([0], [0])
     assert caught.value is error and records == []
+    finisher = threading.Thread(target=observer.finish)
+    finisher.start()
+    finisher.join(5)
+    assert not finisher.is_alive()  # the raising call is no longer counted as in progress
+    assert records == [final_for([], 0)]
 
 
 # ---- what is recorded ------------------------------------------------------------------------
@@ -299,6 +308,82 @@ def test_finish_waits_for_a_call_in_progress():
     assert written[-1][FINAL]["failed"] is True
     _, failures = committed_events(written)
     assert failures
+
+
+def test_finish_waits_for_a_call_still_inside_the_observed_function():
+    """A call is counted from its entry into the wrapper, so finish() also waits for a
+    call that has not yet returned from the observed function, and the final record
+    counts it."""
+    written = []
+    inside = threading.Event()
+    release = threading.Event()
+
+    def slow(y_true, y_pred):
+        inside.set()
+        release.wait(5)
+        return 0.5
+
+    observer = Observer(written.append)
+    worker = threading.Thread(target=observer.wrap(slow, NAME), args=([0, 1], [0, 1]))
+    worker.start()
+    assert inside.wait(5)
+    finisher = threading.Thread(target=observer.finish)
+    finisher.start()
+    finisher.join(0.2)
+    assert finisher.is_alive()  # waiting for the call inside the function
+    release.set()
+    worker.join(5)
+    finisher.join(5)
+    events, failures = committed_events(written)
+    assert failures == [] and len(events) == 1 and written[-1][FINAL]["calls"] == 1
+
+
+def test_a_call_after_finish_is_written_after_the_final_record_and_refused():
+    """finish() closes the observer: a second finish() writes nothing, and a later call is
+    still observed, unchanged, with its records after the final record, which the gate
+    refuses."""
+    records = []
+    observer = Observer(records.append)
+    wrapped = observer.wrap(plain, NAME)
+    wrapped([0, 1], [0, 1])
+    observer.finish()
+    observer.finish()
+    assert [FINAL in r for r in records] == [False, False, True]
+    assert wrapped([0, 1], [0, 0]) == 0.5
+    events, failures = committed_events(records)
+    assert events == [] and "record 3 after the final record" in failures
+
+
+def test_a_compiled_type_of_another_module_under_numpy_s_name_is_not_trusted(monkeypatch):
+    """A numpy module whose ndarray is a compiled type of another module (here the type
+    of Python functions) does not make a function argument trusted labels: neither its
+    ndim nor its tolist is read."""
+
+    def labels():
+        return None
+
+    def tolist():
+        Counted.calls += 1
+        return [0, 1]
+
+    labels.ndim = 1
+    labels.tolist = tolist
+    fake = types.ModuleType("numpy")
+    fake.ndarray = types.FunctionType
+    monkeypatch.setitem(sys.modules, "numpy", fake)
+    Counted.calls = 0
+    returned, records = run(lambda t, p: 0.5, labels, labels)
+    monkeypatch.undo()
+    assert returned == 0.5 and Counted.calls == 0
+    events, failures = committed_events(records)
+    assert events == [] and "hook failure 1: labels of an unread type" in failures
+
+
+def test_numpy_s_own_types_are_trusted():
+    """Every numpy type the hook reads is trusted with the real numpy, on each platform of
+    CI, so a renamed type shows here instead of silently reading as unread."""
+    assert _trusted_numpy("ndarray") == (np.ndarray,)
+    assert _trusted_numpy(*_NUMPY_NUMBERS) == tuple(getattr(np, n) for n in _NUMPY_NUMBERS)
 
 
 @pytest.mark.parametrize(

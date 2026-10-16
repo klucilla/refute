@@ -12,25 +12,48 @@ only through operations whose code is Python's own or numpy's compiled code:
 - **The labels** (the first argument, ``y_true`` in scikit-learn's metric functions) are
   read only when their type is exactly ``list`` or ``tuple`` with every element exactly
   ``int`` or ``str``, or exactly numpy's own ``ndarray``.
-- **A numpy type is trusted only when it is the compiled type** held by the numpy module
-  the program already imported. That module must be an exact ``ModuleType``; its type is
-  read from the module's ``__dict__``, its metaclass must be exactly ``type``, and it
-  must not be a heap type (a class written in Python is one). So a class that merely
-  calls itself ``numpy.ndarray`` is never trusted, and none of its methods run. The hook
-  never imports numpy, since importing it early could change the program.
+- **A numpy type is trusted only when it is a compiled type of numpy's own** held by the
+  numpy module the program already imported. That module must be an exact
+  ``ModuleType``; the type is read from the module's ``__dict__``; its metaclass must be
+  exactly ``type``; it must not be a heap type (a class written in Python is one); and
+  its compiled name must be ``numpy.<name>`` for the name looked up (read through
+  ``type``'s own descriptors, which for a compiled type come from its C definition). So
+  a class that merely calls itself ``numpy.ndarray`` is never trusted, nor a compiled
+  type of another module placed under numpy's name, and none of their methods run. The
+  hook never imports numpy, since importing it early could change the program.
 - **The result** is recorded only when its type is exactly ``int`` or ``float``, or a
   trusted numpy number. Otherwise nothing of it is read.
 - **Failures** are recorded with fixed messages; the hook never formats an unknown
   object or exception.
 
+**Trust boundary (a declared premise).** The hook runs inside the observed program and
+shares its interpreter. It trusts the interpreter and the modules the program has
+loaded (the standard library, and numpy as found in ``sys.modules``) as they are; it
+does not authenticate them. A program that replaces a module, or a field of one, could
+equally replace the modules the hook itself uses (``hashlib``, ``json``) or the hook,
+and no check inside the process can rule that out. What the checks above guarantee is
+narrower: no code reached through the arguments or the result of the observed call runs.
+Such a replacement would be code of the repository at its pinned commit, or of a patch
+hashed before the lock; the hook does not detect it.
+
 **Records.**
-- Each call gets a unique sequence number (allocated under a lock) and writes an event,
-  or a failure record, and then a commit record.
-- ``Observer.finish()`` (registered with ``atexit`` by the installation) waits until no
-  call is in progress, then writes a final record. It holds the number of calls, whether
+- Each call is counted from the moment it enters the wrapper, before the observed
+  function runs, until its records are written (or the function raised).
+- Each call that returned gets a unique sequence number (allocated under a lock) and
+  writes an event, or a failure record, and then a commit record.
+- ``Observer.finish()`` is called once by the installation, from ``atexit``, after the
+  main thread and every non-daemon thread have ended; never from inside an observed
+  call. It waits until no call is in progress (a call blocked forever leaves no final
+  record, and the run's hang guard ends it), then, in one locked step, writes the final
+  record and closes the observer. The final record holds the number of calls, whether
   any failure happened (a sink that raised included), and the SHA-256 of every record
-  written before it (``record_line``; the digest and the write happen in one locked
-  step).
+  written before it (``record_line``; the digest and each write happen in one locked
+  step). A second ``finish()`` writes nothing.
+- **A call after the final record** is still observed and its records are written after
+  the final record, which the gate refuses. **Limitation:** the log cannot show the
+  absence of records that never reached it, so a call that begins after the final record
+  and whose own records the sink then fails to write leaves no trace. Only a daemon
+  thread can call at that point.
 - **The log is judged by its content, not by whether the sink returned.** A sink that
   raises after writing the final record leaves a complete log that matches its digest. A
   log written in part, reordered or edited does not match it.
@@ -81,14 +104,20 @@ class _RefusedError(Exception):
 
 def _trusted_numpy(*names: str) -> tuple[type, ...]:
     """numpy's compiled types of these names, from the numpy module the program already
-    imported; none when numpy is absent or does not look like the real module."""
+    imported; none when numpy is absent or does not look like the real module. A type is
+    kept only when it is compiled (metaclass exactly ``type``, not a heap type) and its
+    compiled name is ``numpy.<name>``; for such a type, ``__module__`` and ``__name__``
+    are read by ``type``'s own descriptors from its C definition."""
     module = sys.modules.get("numpy")
     if type(module) is not types.ModuleType:
         return ()
     found = []
     for name in names:
         kind = module.__dict__.get(name)
-        if type(kind) is type and not (kind.__flags__ & _HEAPTYPE):
+        if type(kind) is not type or kind.__flags__ & _HEAPTYPE:
+            continue
+        owner, own_name = kind.__module__, kind.__name__
+        if type(owner) is str and owner == "numpy" and type(own_name) is str and own_name == name:
             found.append(kind)
     return tuple(found)
 
@@ -161,15 +190,21 @@ class Observer:
         self._next = 0
         self._failed = False
         self._active = 0
+        self._closed = False
         self._digest = hashlib.sha256()
+
+    def _enter(self) -> None:
+        # counted from the entry, so finish() also waits for a call still inside the
+        # observed function
+        with self._lock:
+            self._active += 1
 
     def _seq(self) -> int:
         with self._lock:
             self._next += 1
-            self._active += 1
             return self._next
 
-    def _done(self, failed: bool) -> None:
+    def _leave(self, failed: bool) -> None:
         with self._lock:
             self._failed = self._failed or failed
             self._active -= 1
@@ -188,7 +223,12 @@ class Observer:
         public ``name``, which the gate compares with the claim's function."""
 
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            result = function(*args, **kwargs)
+            self._enter()
+            try:
+                result = function(*args, **kwargs)
+            except BaseException:
+                self._leave(False)  # the function's own exception: no record, re-raised
+                raise
             self._observe(name, args, kwargs, result)
             return result
 
@@ -223,17 +263,23 @@ class Observer:
             except Exception:  # noqa: BLE001 - recorded by the final record, never formatted
                 failed = True
         finally:
-            self._done(failed)
+            self._leave(failed)
 
     def finish(self) -> None:
-        """The final record, written once every call in progress has ended: the number of
-        calls, whether anything failed, and the SHA-256 of every record written before it
-        (``record_line``), so the gate checks the log by its content. A sink failure after
-        the final record was written leaves a complete, verifiable log; a log the sink
-        wrote only in part does not match the digest."""
+        """The final record, written once every call in progress has ended (counted from
+        its entry into the wrapper): the number of calls, whether anything failed, and the
+        SHA-256 of every record written before it (``record_line``), so the gate checks
+        the log by its content. The wait, the final record and the closing happen in one
+        locked step, so any later call writes its records after the final record, which the
+        gate refuses. A second call writes nothing. A sink failure after the final record
+        was written leaves a complete, verifiable log; a log the sink wrote only in part
+        does not match the digest."""
         with self._lock:
+            if self._closed:
+                return
             while self._active:
                 self._lock.wait()
+            self._closed = True
             final = {
                 FINAL: {
                     "calls": self._next,
@@ -241,10 +287,10 @@ class Observer:
                     "records_sha256": self._digest.hexdigest(),
                 }
             }
-        try:
-            self._sink(final)
-        except Exception:  # noqa: BLE001,S110 - judged by content: no or bad final, INCONCLUSIVE
-            pass
+            try:
+                self._sink(final)
+            except Exception:  # noqa: BLE001,S110 - judged by content: no or bad final, INCONCLUSIVE
+                pass
 
 
 _HEX64 = frozenset("0123456789abcdef")
