@@ -519,18 +519,41 @@ def run_completed(values: Sequence[Value]):
 # ---- the coverage of metric_extracted (1.5a, W3.12a to W3.12e) ---------------------------------
 
 _COUNT = re.compile(r"^\d+$")
+_WS = re.compile(r"[ \t\n\r]*")
+
+
+@dataclass(frozen=True)
+class Piece:
+    """One piece of evidence a route read: its source (a file of the run's folder, the
+    run's log, or the hook's log) and what it read there: a span of characters, the
+    position of a hook event, or the whole file (``end`` None). Two pieces are the same
+    evidence when they read overlapping parts of one source, whatever the selectors that
+    reached them (W3.12a: the gate compares what the routes resolve to)."""
+
+    source: str
+    start: int
+    end: int | None
+
+    def overlaps(self, other: Piece) -> bool:
+        if self.source != other.source:
+            return False
+        mine = self.end if self.end is not None else float("inf")
+        theirs = other.end if other.end is not None else float("inf")
+        return self.start < theirs and other.start < mine
 
 
 @dataclass(frozen=True)
 class RouteReading:
     """What one coverage route showed for one base run of one method: the examples it
-    counted (None: the route gave no evidence, with its reason), what it read (to tell two
-    pieces of evidence apart), and whether it found a conflict or a failure of the hook,
-    which makes the gate ``INCONCLUSIVE`` whatever the other routes show."""
+    counted (None: the route gave no evidence, with its reason), the metric it gives in
+    the claim's unit (when it gives one), the pieces it read, and whether it found a
+    conflict or a failure of the hook, which makes the gate ``INCONCLUSIVE`` whatever the
+    other routes show."""
 
     route: str
     count: int | None = None
-    identity: str = ""
+    value: Decimal | None = None
+    pieces: tuple[Piece, ...] = ()
     note: str = ""
     blocking: bool = False
 
@@ -543,30 +566,121 @@ def _relative_file(spec: str, seed: int | None) -> PurePosixPath:
     return posix
 
 
-def _position(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | None) -> str:
-    """Where a selector read its token: the JSON path's steps, the CSV cell, or the span of
-    the regular expression's group in its text."""
-    if selector.get("json_path") is not None:
-        return "json:" + json.dumps(ex.parse_json_path(selector["json_path"]))
-    if selector.get("csv") is not None:
-        c = selector["csv"]
-        return f"csv:{c['column']}:{c['row']['column']}={c['row']['equals']}"
-    text = log
-    if selector["from"] == "file":
-        path = workdir.joinpath(*_relative_file(selector["file"], seed).parts)
-        text = path.read_text(encoding="utf-8")
-    regex = selector["regex"]
-    match = next(re.finditer(regex["pattern"], text))
-    return f"regex:{match.start(regex['group'])}-{match.end(regex['group'])}"
+def _json_span(text: str, steps: Sequence[str | int]) -> tuple[int, int]:
+    """The span of the value a JSON path names, in the document's own text."""
+    decoder = json.JSONDecoder()
+
+    def skip(i: int) -> int:
+        return _WS.match(text, i).end()
+
+    def expect(i: int, char: str) -> int:
+        if i >= len(text) or text[i] != char:
+            raise ValueError(f"expected {char!r} at {i}")
+        return skip(i + 1)
+
+    i = skip(0)
+    for step in steps:
+        if isinstance(step, int):
+            i = expect(i, "[")
+            for _ in range(step):
+                _, i = decoder.raw_decode(text, i)
+                i = expect(skip(i), ",")
+            continue
+        i = expect(i, "{")
+        while True:
+            if i >= len(text) or text[i] != '"':
+                raise ValueError(f"expected a key at {i}")
+            key, i = json.decoder.scanstring(text, i + 1)
+            i = expect(skip(i), ":")
+            if key == step:
+                break
+            _, i = decoder.raw_decode(text, i)
+            i = expect(skip(i), ",")
+    _, end = decoder.raw_decode(text, i)
+    return i, end
+
+
+def _csv_fields(text: str) -> list[tuple[int, int, int, int, str]]:
+    """(row, column, start, end, value) of every field, in the csv module's default
+    dialect (comma, double quote, a doubled quote inside a quoted field)."""
+    out, i, row, col, n = [], 0, 0, 0, len(text)
+    while i < n:
+        start = i
+        if text[i] == '"':
+            parts, j = [], i + 1
+            while True:
+                k = text.index('"', j)
+                parts.append(text[j:k])
+                if text.startswith('""', k):
+                    parts.append('"')
+                    j = k + 2
+                    continue
+                j = k + 1
+                break
+            value = "".join(parts)
+        else:
+            j = i
+            while j < n and text[j] not in ",\r\n":
+                j += 1
+            value = text[i:j]
+        out.append((row, col, start, j, value))
+        if j >= n:
+            break
+        if text[j] == ",":
+            i, col = j + 1, col + 1
+            if i == n:
+                out.append((row, col, i, i, ""))
+            continue
+        i = j + 2 if text.startswith("\r\n", j) else j + 1
+        row, col = row + 1, 0
+    return out
+
+
+def _csv_span(text: str, column: str, row_spec: Mapping[str, str]) -> tuple[int, int]:
+    """The span of the one cell the CSV selector reads."""
+    by_row: dict[int, dict[int, tuple[int, int, str]]] = {}
+    for r, c, s, e, v in _csv_fields(text):
+        by_row.setdefault(r, {})[c] = (s, e, v)
+    names = [cell[2] for _, cell in sorted(by_row.get(0, {}).items())]
+    at, key = names.index(column), names.index(row_spec["column"])
+    hits = [
+        cells[at]
+        for r, cells in by_row.items()
+        if r > 0 and at in cells and key in cells and cells[key][2] == row_spec["equals"]
+    ]
+    if len(hits) != 1:
+        raise ValueError(f"{len(hits)} rows match")
+    return hits[0][0], hits[0][1]
+
+
+def _piece(selector: Mapping[str, Any], source: str, text: str) -> Piece:
+    """What a selector read, as a span of its source's text. When the span cannot be
+    found, the piece is the whole source, so it overlaps anything read there."""
+    try:
+        if selector.get("json_path") is not None:
+            start, end = _json_span(text, ex.parse_json_path(selector["json_path"]))
+        elif selector.get("csv") is not None:
+            start, end = _csv_span(text, selector["csv"]["column"], selector["csv"]["row"])
+        else:
+            regex = selector["regex"]
+            (match,) = list(re.finditer(regex["pattern"], text))
+            start, end = match.start(regex["group"]), match.end(regex["group"])
+    except (ValueError, IndexError, ex.ExtractionError):
+        return Piece(source, 0, None)
+    return Piece(source, start, end)
 
 
 def _count(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | None):
-    """One count, read like ``metric_extraction`` reads a value (W3.11), and where it was
+    """One count, read like ``metric_extraction`` reads a value (W3.11), and the piece it
     read. The token must be a non-negative integer."""
     got = ex.extract(dict(selector), workdir, log, seed)
     if not _COUNT.match(got.token):
         raise ex.ExtractionError(f"{got.source}: {got.token!r} is not a count of examples")
-    return int(got.token), f"{got.source}|{_position(selector, workdir, log, seed)}"
+    text = log
+    if selector["from"] == "file":
+        path = workdir.joinpath(*_relative_file(selector["file"], seed).parts)
+        text = path.read_text(encoding="utf-8")
+    return int(got.token), _piece(selector, got.source, text)
 
 
 def _inside(value: Decimal, token: str, token_unit: str, rounding: str) -> bool:
@@ -601,35 +715,51 @@ class _RunEvidence:
     token_unit: str
 
 
+def _rounding(ctx: ClaimContext) -> str:
+    """The printed rounding the routes' values are judged with: the claim's
+    ``metric_recompute.printed_rounding``, or ``unknown`` when ``metric_recompute`` does not
+    apply, since no rounding is then declared. ``unknown`` is the interval that holds both
+    the rounded and the truncated readings (section 1.7): wider, so it admits a value the
+    declared rounding might refuse; this choice is recorded with the gate's design."""
+    mr = ctx.claim["metric_recompute"]
+    return mr["printed_rounding"] if mr["applies"] else "unknown"
+
+
+def _as_claim_unit(fraction: Decimal, ctx: ClaimContext) -> Decimal:
+    return fraction * rc.unit_factor("fraction", ctx.claim["metric"]["unit"])
+
+
 def _route_reading(
-    ctx: ClaimContext, route: Mapping[str, Any], evidence: Mapping[str, Any], run: _RunEvidence
+    ctx: ClaimContext,
+    route: Mapping[str, Any],
+    evidence: Mapping[str, Any],
+    run: _RunEvidence,
+    recomputed: Decimal | None,
 ) -> RouteReading:
     name = route["route"]
-    rounding = (
-        ctx.claim["metric_recompute"]["printed_rounding"]
-        if ctx.claim["metric_recompute"]["applies"]
-        else "unknown"  # no rounding declared: the interval that holds both readings
-    )
+    rounding = _rounding(ctx)
     identity = evidence.get("split_identity") or {}
     try:
         if name == "printed_count":
-            count, where = _count(route["count"], run.workdir, run.log, run.seed)
-            return RouteReading(name, count, where)
+            count, piece = _count(route["count"], run.workdir, run.log, run.seed)
+            return RouteReading(name, count, pieces=(piece,))
         if name == "sufficient_statistics":
-            correct, where_c = _count(route["correct"], run.workdir, run.log, run.seed)
-            total, where_t = _count(route["total"], run.workdir, run.log, run.seed)
+            correct, piece_c = _count(route["correct"], run.workdir, run.log, run.seed)
+            total, piece_t = _count(route["total"], run.workdir, run.log, run.seed)
             if total < 1 or correct > total:
                 return RouteReading(name, note=f"correct {correct} of total {total}", blocking=True)
             right = correct if ctx.claim["metric"]["name"] == "accuracy" else total - correct
+            fraction = Decimal(right) / Decimal(total)
             if run.token is not None and not _inside(
-                Decimal(right) / Decimal(total), run.token.token, run.token_unit, rounding
+                fraction, run.token.token, run.token_unit, rounding
             ):
                 return RouteReading(
                     name,
                     note=f"{right}/{total} is not the printed {run.token.token}",
                     blocking=True,
                 )
-            return RouteReading(name, total, f"{where_c}+{where_t}")
+            value = _as_claim_unit(fraction, ctx)
+            return RouteReading(name, total, value, (piece_c, piece_t))
         if name == "saved_predictions":
             mr = ctx.claim["metric_recompute"]
             file = mr["predictions"]["file"].replace("{seed}", str(run.seed))
@@ -645,7 +775,10 @@ def _route_reading(
             if digest != identity.get("labels_sha256"):
                 # another split, or the claim's split in another order (W3.12d, limitation)
                 return RouteReading(name, note="the saved labels are not the split's, in its order")
-            return RouteReading(name, len(labels), f"file:{file}")
+            # its value is the metric recomputed from these predictions (1.7), so it is
+            # compared with the other routes' values (W3.12e)
+            whole = Piece(f"file:{file}", 0, None)
+            return RouteReading(name, len(labels), recomputed, (whole,))
         return _hook_reading(ctx, route, identity, run, rounding)
     except (ex.ExtractionError, rc.RecomputeError, OSError, ValueError, KeyError) as exc:
         return RouteReading(name, note=str(exc))
@@ -654,10 +787,12 @@ def _route_reading(
 def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> RouteReading:
     """(b): exactly one committed event of the run's hook log bound to the metric (the
     declared function), the split (its labels), the run, and the selected evaluation (the
-    cited call site). Any failure of the hook makes the gate INCONCLUSIVE (W3.12c)."""
+    cited call site). Anything else is INCONCLUSIVE whatever the other routes show
+    (W3.12c): no log (no final record), a failure of the hook, none or several bound
+    events, or a returned value outside the printed interval."""
     path = run.workdir.joinpath(*PurePosixPath(ch.HOOK_LOG).parts)
     if not path.is_file():
-        return RouteReading("hook", note="no hook log")
+        return RouteReading("hook", note="no hook log (no final record)", blocking=True)
     records, failures = ch.read_log(path.read_bytes())
     if not failures:
         events, failures = ch.committed_events(records)
@@ -682,12 +817,16 @@ def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> Rou
     matching = [e for e in events if bound(e)]
     if len(matching) != 1:
         return RouteReading(
-            "hook", note=f"{len(matching)} events bound to the metric, split and call site"
+            "hook",
+            note=f"{len(matching)} events bound to the metric, split and call site",
+            blocking=True,
         )
     event = matching[0]
+    value = None
     if event["result"] != "unread" and run.token is not None:
         try:
-            agrees = _inside(Decimal(event["result"]), run.token.token, run.token_unit, rounding)
+            returned = Decimal(event["result"])
+            agrees = _inside(returned, run.token.token, run.token_unit, rounding)
         except (ArithmeticError, ValueError):
             agrees = False
         if not agrees:
@@ -696,13 +835,34 @@ def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> Rou
                 note=f"the call returned {event['result']}, not the printed {run.token.token}",
                 blocking=True,
             )
-    return RouteReading("hook", event["n_examples"], f"hook:{event['seq']}")
+        value = _as_claim_unit(returned, ctx)
+    piece = Piece(f"hook:{ch.HOOK_LOG}", event["seq"], event["seq"] + 1)
+    return RouteReading("hook", event["n_examples"], value, (piece,))
 
 
-def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records):
-    """Every declared route of every base run of every method (W3.12a): a list of readings
-    by (seed, method)."""
-    out: dict[tuple[int | None, str], list[RouteReading]] = {}
+@dataclass(frozen=True)
+class RunCoverage:
+    """The readings of one base run of one method, and how far apart two routes' values
+    may be: the printed quantum in the claim's unit (twice it for an ``unknown``
+    rounding)."""
+
+    readings: list[RouteReading]
+    tolerance: Decimal | None
+
+
+def _tolerance(ctx: ClaimContext, run: _RunEvidence) -> Decimal | None:
+    if run.token is None:
+        return None
+    quantum = Decimal(1).scaleb(Decimal(run.token.token).as_tuple().exponent)
+    quantum *= rc.unit_factor(run.token_unit, ctx.claim["metric"]["unit"])
+    return quantum * (2 if _rounding(ctx) == "unknown" else 1)
+
+
+def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records, recomputed):
+    """Every declared route of every base run of every method (W3.12a), by (seed, method).
+    ``recomputed`` gives, by (seed, method), the metric recomputed from that run's saved
+    predictions (in the claim's unit), when ``metric_recompute`` computed it."""
+    out: dict[tuple[int | None, str], RunCoverage] = {}
     for seed, by_role in values.items():
         for role in ["method", "reference"] if ctx.comparison is not None else ["method"]:
             holder_role = (
@@ -711,9 +871,10 @@ def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records)
             value = by_role[holder_role]
             evidence = ctx.claim["coverage_evidence"][role]
             if value.outcome is not orc.Outcome.COMPLETED:
-                out[(seed, role)] = [
-                    RouteReading(r["route"], note=value.reason) for r in evidence["routes"]
-                ]
+                out[(seed, role)] = RunCoverage(
+                    [RouteReading(r["route"], note=value.reason) for r in evidence["routes"]],
+                    None,
+                )
                 continue
             cid = ids[(seed, holder_role)]
             record = records[cid]
@@ -726,16 +887,22 @@ def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records)
                 value.tokens.get(role),
                 run_spec["metric_extraction"]["unit"],
             )
-            out[(seed, role)] = [_route_reading(ctx, r, evidence, run) for r in evidence["routes"]]
+            mine = recomputed.get((seed, role))
+            out[(seed, role)] = RunCoverage(
+                [_route_reading(ctx, r, evidence, run, mine) for r in evidence["routes"]],
+                _tolerance(ctx, run),
+            )
     return out
 
 
 def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
     """Every base run gave a finite value for every reading, and its coverage is shown
     (1.5a): for every base seed and every method, at least one declared route gives a count
-    of examples; every route that gives one agrees (``all_must_agree``) with the others and
-    with the split's declared size; no route found a conflict or a failure of the hook; and,
-    with the same runs, the method and the reference never count one piece of evidence. A
+    of examples; every route that gives one agrees (``all_must_agree``) with the others on
+    the count, with the split's declared size, and, among the routes that give a value
+    (the recomputed metric of (c), the ratio of (d), the returned value of (b)), on the value
+    within the printed rounding; no route found a conflict or a failure of the hook; and,
+    with the same runs, the method and the reference never read overlapping evidence. A
     printed value alone shows no examples: with no route that closes the chain, the gate
     is ``INCONCLUSIVE``, never a raw PASS."""
     roles = ["method", "reference"] if ctx.comparison is not None else ["method"]
@@ -745,8 +912,9 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
         return gate, GateFailure(FailureCause.UNDETERMINED)
     expected = ctx.claim["metric"]["n_examples"]
     problems, shown = [], {}
-    for (seed, role), found in readings.items():
+    for (seed, role), run in readings.items():
         where = f"{role} seed={seed}"
+        found = run.readings
         for r in found:
             if r.blocking:
                 problems.append(f"{where}: {r.route}: {r.note}")
@@ -761,11 +929,21 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
             problems.append(
                 f"{where}: {next(iter(counts.values()))} examples, the split declares {expected}"
             )
+        given = {r.route: r.value for r in found if r.count is not None and r.value is not None}
+        if len(given) > 1 and run.tolerance is not None:
+            low, high = min(given.values()), max(given.values())
+            eps = Decimal("1e-9") * max(Decimal(1), abs(high))
+            if high - low > run.tolerance + eps:
+                shown_values = {k: str(v) for k, v in given.items()}
+                problems.append(f"{where}: the routes disagree on the value {shown_values}")
     if ctx.comparison is not None and not ctx.separate_reference:
-        for seed in {s for s, _ in readings}:
-            mine = {r.identity for r in readings[(seed, "method")] if r.count is not None}
-            theirs = {r.identity for r in readings[(seed, "reference")] if r.count is not None}
-            if mine & theirs:
+        for seed in sorted({s for s, _ in readings}, key=str):
+
+            def pieces(role: str, seed=seed) -> list[Piece]:
+                found = readings[(seed, role)].readings
+                return [p for r in found if r.count is not None for p in r.pieces]
+
+            if any(a.overlaps(b) for a in pieces("method") for b in pieces("reference")):
                 problems.append(f"seed={seed}: the method and the reference count one evidence")
     if problems:
         gate = _gate(
@@ -804,7 +982,8 @@ def _recompute(
     ctx: ClaimContext, harness: Harness, base: Mapping[int | None, Mapping[str, Value]], ids
 ):
     """``metric_recompute`` over every base run (1.7), with the same token the base read
-    (requirement 4)."""
+    (requirement 4), and the metric each run's predictions give (Refute's own
+    implementation, in the claim's unit) by (seed, method), for the coverage routes."""
     mr = ctx.claim["metric_recompute"]
     conv_raw = mr["convention"]
     labels = conv_raw.get("labels")
@@ -825,7 +1004,7 @@ def _recompute(
         "method": (ctx.comparison or {}).get("method"),
         "reference": (ctx.comparison or {}).get("reference"),
     }
-    outcomes, expected = [], []
+    outcomes, expected, recomputed = [], [], {}
     for seed, by_role in base.items():
         for role, run in methods:
             label = f"seed={seed}" if ctx.comparison is None else f"{names[role]}:seed={seed}"
@@ -852,20 +1031,21 @@ def _recompute(
                     rc.RunOutcome(label, TestStatus.INCONCLUSIVE, f"predictions: {exc}")
                 )
                 continue
-            outcomes.append(
-                rc.recompute_run(
-                    label,
-                    conv,
-                    token.token,
-                    run["metric_extraction"]["unit"],
-                    unit,
-                    mr["printed_rounding"],
-                    data,
-                    n_examples,
-                    harness.second,
-                )
+            outcome = rc.recompute_run(
+                label,
+                conv,
+                token.token,
+                run["metric_extraction"]["unit"],
+                unit,
+                mr["printed_rounding"],
+                data,
+                n_examples,
+                harness.second,
             )
-    return rc.metric_recompute_result(outcomes, expected)
+            outcomes.append(outcome)
+            if "own" in outcome.details:
+                recomputed[(seed, role)] = Decimal(repr(outcome.details["own"]))
+    return rc.metric_recompute_result(outcomes, expected), recomputed
 
 
 # ---- the attacks -----------------------------------------------------------------------------
@@ -1124,10 +1304,10 @@ class PaperIntegration:
         if failure is not None:
             failures["run_completed"] = failure
         ids = {(seed, role): cid for cid, role, seed, _ in _runs(ctx, "base")}
-        recompute_result = None
+        recompute_result, recomputed = None, {}
         if ctx.claim["metric_recompute"]["applies"]:
-            recompute_result = _recompute(ctx, self.harness, values, ids)
-        readings = coverage_readings(ctx, self.harness, values, ids, records)
+            recompute_result, recomputed = _recompute(ctx, self.harness, values, ids)
+        readings = coverage_readings(ctx, self.harness, values, ids, records, recomputed)
         gate, failure = metric_extracted(ctx, flat, readings)
         checks.append(gate)
         if failure is not None:
