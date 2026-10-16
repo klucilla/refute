@@ -16,8 +16,8 @@ predictions saved per method), the coverage papers of #15 that need other datase
 holdout and uncertainty papers of W4.3b and W4.3c, the reply draft, the seal and the
 dossier verification of W4.4.
 
-The detailed expectations (``expected_counts``, ``interrupted``, ``flags``, ``incomplete``,
-``not_applicable``) were added after the first runs, asked by the Codex review of #111.
+The detailed expectations (``expected_counts``, ``interrupted``, ``interrupted_steps``,
+``flags``, ``incomplete``, ``not_applicable``) were added after the first runs, asked by the Codex review of #111.
 They restate what each case's text already fixed in the first commit of this file (for
 example "2 of 5 seeds") or what the WP2 core gives for that case; no expected verdict
 changed.
@@ -64,6 +64,8 @@ class SyntheticPaper:
     expected_counts: dict = field(default_factory=dict)
     # runs of the seeds attack a guard must stop, named by the claim's seed list ("attack[2]")
     interrupted: tuple[str, ...] = ()
+    # attack steps every run of which a guard must stop (the step ends as operational_guard)
+    interrupted_steps: tuple[str, ...] = ()
     # the claim's status flags (W4.4): (basic reproduction obtained, incomplete coverage)
     flags: tuple[bool, bool] = (True, False)
     # attacks recorded as incomplete (a result below the attack's expected coverage)
@@ -155,6 +157,7 @@ PAPERS = [
         stages={"attack_run": {"active_time_limit_hours": 0.01, "no_progress_hours": 0.001}},
         expected_checks={"seeds": "FAIL", "data_split": "INCONCLUSIVE"},
         expected_counts={"seeds": (5, 2)},
+        interrupted_steps=("data_split",),
         flags=(True, True),
     ),
     SyntheticPaper(
