@@ -976,6 +976,53 @@ def test_values_within_a_quantum_of_each_other_must_each_print_as_the_token():
     assert gate.status is TestStatus.PASS and failure is None
 
 
+def test_with_no_rounding_known_only_identical_values_agree():
+    """The maintainer's condition of 2026-10-16: an unknown rounding never loosens
+    all_must_agree. With metric_recompute not applying, no rounding is declared: (d) and
+    (b) giving 89.200 and 89.2001, both printing as "89.20", do not agree; identical values
+    do."""
+    from decimal import Decimal
+
+    target = value_target({}, recompute=False, routes=["sufficient_statistics", "hook"])
+    target["metric"]["n_examples"] = 4000
+    ctx = _context(resolved(DATA, target))
+    assert ig._rounding(ctx) == "unknown"
+    token = ig.ex.Extracted("89.20", Decimal("89.20"), "log")
+    value = ig.Value(ig.orc.Outcome.COMPLETED, "", {"method": token})
+    interval = ig._interval("89.20", "unknown")
+
+    def gate(first, second):
+        readings = {
+            (1, "method"): ig.RunCoverage(
+                [
+                    ig.RouteReading("sufficient_statistics", 4000, Decimal(first)),
+                    ig.RouteReading("hook", 4000, Decimal(second)),
+                ],
+                interval,
+            )
+        }
+        return ig.metric_extracted(ctx, [value], readings)[0]
+
+    different = gate("89.200", "89.2001")
+    assert different.status is TestStatus.INCONCLUSIVE
+    assert "only identical values agree" in different.message
+    assert gate("89.200", "89.2").status is TestStatus.PASS  # the same number, two spellings
+    # with a declared rounding the same two values agree (both print as the token)
+    declared = value_target({}, routes=["saved_predictions", "sufficient_statistics"])
+    ctx_declared = _context(resolved(DATA, declared))
+    assert ig._rounding(ctx_declared) == "nearest"
+    readings = {
+        (1, "method"): ig.RunCoverage(
+            [
+                ig.RouteReading("saved_predictions", 4000, Decimal("89.200")),
+                ig.RouteReading("sufficient_statistics", 4000, Decimal("89.2001")),
+            ],
+            ig._interval("89.20", "nearest"),
+        )
+    }
+    assert ig.metric_extracted(ctx_declared, [value], readings)[0].status is TestStatus.PASS
+
+
 def test_pieces_are_compared_by_what_they_read_not_by_their_selectors():
     text = "split,n,id\ntest,4000,t1\nval,500,v1\n"
     by_split = {"from": "log", "csv": {"column": "n", "row": {"column": "split", "equals": "test"}}}

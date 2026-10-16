@@ -702,13 +702,22 @@ def _count(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | Non
     return int(got.token), _piece(selector, source, text)
 
 
-def _inside(value: Decimal, token: str, token_unit: str, rounding: str) -> bool:
-    """Whether a fraction lies in the interval of values that print as ``token`` (section
-    1.7), widened by the epsilon of the decision table."""
+def _interval(token: str, rounding: str) -> tuple[Decimal, Decimal]:
+    """The values that print as ``token`` (section 1.7), in the token's unit: the link of
+    one route's value to the printed value. ``unknown`` is section 1.7's interval, which
+    holds both the rounded and the truncated readings. It never decides agreement between
+    two routes: with no rounding known only identical values agree (``metric_extracted``)."""
     interval = rc.printed_interval(token, rounding)
+    return interval.lower, interval.upper
+
+
+def _inside(value: Decimal, token: str, token_unit: str, rounding: str) -> bool:
+    """Whether a fraction prints as ``token`` (``_interval``), widened by the epsilon of the
+    decision table."""
+    lower, upper = _interval(token, rounding)
     x = value * rc.unit_factor("fraction", token_unit)
     eps = Decimal("1e-9") * max(Decimal(1), abs(x))
-    return interval.lower - eps <= x <= interval.upper + eps
+    return lower - eps <= x <= upper + eps
 
 
 def _labels_sha256(values: Sequence[Any]) -> str | None:
@@ -737,9 +746,10 @@ class _RunEvidence:
 def _rounding(ctx: ClaimContext) -> str:
     """The printed rounding the routes' values are judged with: the claim's
     ``metric_recompute.printed_rounding``, or ``unknown`` when ``metric_recompute`` does not
-    apply, since no rounding is then declared. ``unknown`` is the interval that holds both
-    the rounded and the truncated readings (section 1.7): wider, so it admits a value the
-    declared rounding might refuse; this choice is recorded with the gate's design."""
+    apply, since no rounding is then declared. ``unknown`` never loosens all_must_agree:
+    two routes' values agree only when they are identical (``metric_extracted``; the
+    maintainer's condition of 2026-10-16). The link of one route's value to the printed
+    value uses section 1.7's interval for ``unknown`` (``_interval``)."""
     mr = ctx.claim["metric_recompute"]
     return mr["printed_rounding"] if mr["applies"] else "unknown"
 
@@ -873,9 +883,9 @@ class RunCoverage:
 def _printed(ctx: ClaimContext, run: _RunEvidence) -> tuple[Decimal, Decimal] | None:
     if run.token is None:
         return None
-    interval = rc.printed_interval(run.token.token, _rounding(ctx))
+    lower, upper = _interval(run.token.token, _rounding(ctx))
     factor = rc.unit_factor(run.token_unit, ctx.claim["metric"]["unit"])
-    return interval.lower * factor, interval.upper * factor
+    return lower * factor, upper * factor
 
 
 def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records, recomputed):
@@ -921,7 +931,8 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
     of examples; every route that gives one agrees (``all_must_agree``) with the others on
     the count, with the split's declared size, and, among the routes that give a value
     (the recomputed metric of (c), the ratio of (d), the returned value of (b)), on the value
-    within the printed rounding; no route found a conflict or a failure of the hook; and,
+    within the printed rounding, or exactly when no rounding is known; no route found a
+    conflict or a failure of the hook; and,
     with the same runs, the method and the reference never read overlapping evidence. A
     printed value alone shows no examples: with no route that closes the chain, the gate
     is ``INCONCLUSIVE``, never a raw PASS."""
@@ -967,6 +978,14 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
                 problems.append(
                     f"{where}: the routes disagree on the value: {outside} outside the "
                     f"printed interval [{lower}, {upper}]"
+                )
+            elif _rounding(ctx) == "unknown" and len(set(given.values())) > 1:
+                # no rounding known: only identical values agree (all_must_agree is never
+                # loosened, the maintainer's condition of 2026-10-16)
+                shown_values = {k: str(v) for k, v in given.items()}
+                problems.append(
+                    f"{where}: the routes disagree on the value {shown_values} (no rounding "
+                    "is known, so only identical values agree)"
                 )
     if ctx.comparison is not None and not ctx.separate_reference:
         for seed in sorted({s for s, _ in readings}, key=str):
