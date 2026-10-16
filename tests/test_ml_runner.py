@@ -1,17 +1,19 @@
 """ML pack runner, part 1: metric extraction (W3.11, W3.12) and the subprocess backend
-(W3.8 to W3.10), offline, on synthetic commands run by this interpreter (the project's
-virtual environment)."""
+(W3.8 to W3.10), offline. Every run of the backend is the cataloged synthetic fixture
+``sandbox-probe`` (tests/fixtures/sandbox/probe.py), written by the harness and run by this
+interpreter (the project's virtual environment); the backend refuses anything else."""
 
 import json
 import os
 import sys
-import textwrap
+import time
 from decimal import Decimal
 
 import pytest
 
 from refute.packs.ml import extract as ex
 from refute.packs.ml import sandbox as sb
+from synthetic_harness import fixture
 
 # ---- extraction ----------------------------------------------------------------------------
 
@@ -137,18 +139,24 @@ def test_file_errors(tmp_path):
 # ---- subprocess backend ----------------------------------------------------------------------
 
 
-def script(tmp_path, name, body):
-    path = tmp_path / name
-    path.write_text(textwrap.dedent(body), encoding="utf-8")
-    return [sys.executable, "-I", str(path)]
+@pytest.fixture
+def probe(tmp_path):
+    """The cataloged fixture ``sandbox-probe`` in its own folder, and a backend that runs
+    only it."""
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    return auth, sb.SubprocessBackend([auth])
 
 
-def spec(tmp_path, argv, **kw):
+def probe_argv(*args):
+    return [sys.executable, "-I", "probe.py", *args]
+
+
+def spec(auth, argv, **kw):
     values = dict(
         argv=argv,
-        workdir=tmp_path,
+        workdir=auth.root,
         env=dict(os.environ),
-        log_path=tmp_path / "logs" / "run.log",
+        log_path=auth.root.parent / "logs" / "run.log",
         threshold_usec=None,
         active_time_limit_s=60.0,
         no_progress_s=30.0,
@@ -158,111 +166,65 @@ def spec(tmp_path, argv, **kw):
     return sb.RunSpec(**values)
 
 
-BUSY = """
-    import time
-    end = time.process_time() + {seconds}
-    while time.process_time() < end:
-        pass
-    print("acc=91.2", flush=True)
-"""
-
-
-def test_a_run_writes_its_log_and_exit_code(tmp_path):
-    argv = script(tmp_path, "ok.py", 'print("acc=91.2")\nimport sys\nsys.exit(3)\n')
-    result = sb.SubprocessBackend().run(spec(tmp_path, argv))
+def test_a_run_writes_its_log_and_exit_code(probe):
+    auth, backend = probe
+    result = backend.run(spec(auth, probe_argv("exit", "3")))
     assert result.exit_code == 3 and result.stopped is None
     assert "acc=91.2" in result.log_path.read_text()
     assert type(result.usage_usec) is int and result.usage_usec >= 0
 
 
-def test_the_cpu_of_children_and_grandchildren_is_counted(tmp_path):
-    busy = script(tmp_path, "busy.py", BUSY.format(seconds=0.6))
-    # a child that starts a grandchild; the grandchild and a second child are busy
-    child = script(
-        tmp_path, "child.py", f"import subprocess\nsubprocess.run({busy!r}, check=True)\n"
-    )
-    parent = script(
-        tmp_path,
-        "parent.py",
-        f"import subprocess\nsubprocess.run({child!r}, check=True)\n"
-        f"subprocess.run({busy!r}, check=True)\n",
-    )
-    result = sb.SubprocessBackend().run(spec(tmp_path, parent))
+def test_the_cpu_of_children_and_grandchildren_is_counted(probe):
+    auth, backend = probe
+    # a child that starts a busy grandchild, then a second busy child
+    result = backend.run(spec(auth, probe_argv("tree", "0.6")))
     assert result.exit_code == 0 and result.stopped is None
-    assert result.usage_usec >= 1_000_000  # at least the two busy grandchildren
+    assert result.usage_usec >= 1_000_000  # at least the two busy descendants
 
 
-def test_the_threshold_stops_the_whole_run(tmp_path):
-    busy = script(tmp_path, "busy.py", BUSY.format(seconds=30))
-    parent = script(tmp_path, "parent.py", f"import subprocess\nsubprocess.run({busy!r})\n")
-    result = sb.SubprocessBackend().run(spec(tmp_path, parent, threshold_usec=400_000))
+def test_the_threshold_stops_the_whole_run(probe):
+    auth, backend = probe
+    result = backend.run(spec(auth, probe_argv("wait", "busy", "30"), threshold_usec=400_000))
     assert result.stopped == sb.STOP_THRESHOLD and result.exit_code is None
     assert 400_000 <= result.usage_usec < 10_000_000
     assert result.elapsed_s < 20
 
 
-def test_no_process_of_the_run_survives_the_stop(tmp_path):
+def test_no_process_of_the_run_survives_the_stop(probe):
     """Codex review: the stop and the final reading cover every descendant."""
-    beat = tmp_path / "beat.txt"
-    heart = script(
-        tmp_path,
-        "heart.py",
-        f"""
-        import time
-        end = time.process_time() + 30
-        while time.process_time() < end:
-            with open({str(beat)!r}, "a") as handle:
-                handle.write("x")
-        """,
-    )
-    child = script(tmp_path, "child.py", f"import subprocess\nsubprocess.run({heart!r})\n")
-    result = sb.SubprocessBackend().run(spec(tmp_path, child, threshold_usec=300_000))
+    auth, backend = probe
+    beat = auth.root / "out" / "beat.txt"
+    beat.parent.mkdir()
+    argv = probe_argv("wait", "beat", "out/beat.txt", "30")
+    result = backend.run(spec(auth, argv, threshold_usec=300_000))
     assert result.stopped == sb.STOP_THRESHOLD
     size = beat.stat().st_size
-    import time
-
     time.sleep(1.0)
     assert beat.stat().st_size == size  # the grandchild no longer writes
 
 
-def test_a_finished_run_leaves_no_descendant(tmp_path):
-    beat = tmp_path / "beat.txt"
-    orphan = script(
-        tmp_path,
-        "orphan.py",
-        f"""
-        import time
-        for _ in range(100):
-            with open({str(beat)!r}, "a") as handle:
-                handle.write("x")
-            time.sleep(0.05)
-        """,
-    )
+def test_a_finished_run_leaves_no_descendant(probe):
+    auth, backend = probe
+    beat = auth.root / "out" / "tick.txt"
+    beat.parent.mkdir()
     # the first process starts a child and exits at once, leaving it behind
-    parent = script(tmp_path, "parent.py", f"import subprocess\nsubprocess.Popen({orphan!r})\n")
-    result = sb.SubprocessBackend().run(spec(tmp_path, parent))
+    result = backend.run(spec(auth, probe_argv("detach", "tick", "out/tick.txt")))
     assert result.exit_code == 0
     size = beat.stat().st_size if beat.exists() else 0
-    import time
-
     time.sleep(1.0)
     assert (beat.stat().st_size if beat.exists() else 0) == size
 
 
-def test_no_progress_stops_a_silent_idle_run(tmp_path):
-    idle = script(tmp_path, "idle.py", "import time\ntime.sleep(30)\n")
-    result = sb.SubprocessBackend().run(spec(tmp_path, idle, no_progress_s=1.0))
+def test_no_progress_stops_a_silent_idle_run(probe):
+    auth, backend = probe
+    result = backend.run(spec(auth, probe_argv("idle", "30"), no_progress_s=1.0))
     assert result.stopped == sb.STOP_NO_PROGRESS and result.elapsed_s < 15
 
 
-def test_the_active_time_limit_stops_a_run_that_keeps_printing(tmp_path):
-    chatty = script(
-        tmp_path,
-        "chatty.py",
-        "import time\nfor i in range(300):\n    print(i, flush=True)\n    time.sleep(0.1)\n",
-    )
-    result = sb.SubprocessBackend().run(
-        spec(tmp_path, chatty, active_time_limit_s=1.5, no_progress_s=1.0)
+def test_the_active_time_limit_stops_a_run_that_keeps_printing(probe):
+    auth, backend = probe
+    result = backend.run(
+        spec(auth, probe_argv("chatty"), active_time_limit_s=1.5, no_progress_s=1.0)
     )
     assert result.stopped == sb.STOP_ACTIVE_TIME and result.elapsed_s < 15
 
@@ -281,27 +243,30 @@ def test_the_active_time_limit_stops_a_run_that_keeps_printing(tmp_path):
 )
 def test_invalid_specs(tmp_path, bad):
     values = {"argv": ["x"], **bad}
-    with pytest.raises(ValueError):
-        spec(tmp_path, values.pop("argv"), **values)
-
-
-def test_extraction_from_a_real_run(tmp_path):
-    argv = script(
-        tmp_path,
-        "train.py",
-        """
-        import json, sys
-        seed = int(sys.argv[1].split("=")[1])
-        json.dump({"test": {"acc": 91.25}}, open(f"m-{seed}.json", "w"))
-        print("final acc=91.25")
-        """,
+    argv = values.pop("argv")
+    defaults = dict(
+        workdir=tmp_path,
+        env={},
+        log_path=tmp_path / "run.log",
+        threshold_usec=None,
+        active_time_limit_s=60.0,
+        no_progress_s=30.0,
     )
-    result = sb.SubprocessBackend().run(spec(tmp_path, [*argv, "--seed=4"]))
+    with pytest.raises(ValueError):
+        sb.RunSpec(argv=argv, **{**defaults, **values})
+
+
+def test_extraction_from_a_real_run(probe):
+    auth, backend = probe
+    result = backend.run(spec(auth, probe_argv("train", "4")))
     assert result.exit_code == 0
     log = result.log_path.read_text()
-    by_log = ex.extract(regex(r"final acc=([0-9.]+)"), tmp_path, log, 4)
+    by_log = ex.extract(regex(r"final acc=([0-9.]+)"), auth.root, log, 4)
     by_file = ex.extract(
-        {"from": "file", "file": "m-{seed}.json", "json_path": "$.test.acc"}, tmp_path, log, 4
+        {"from": "file", "file": "out/m-{seed}.json", "json_path": "$.test.acc"},
+        auth.root,
+        log,
+        4,
     )
     assert by_log.value == by_file.value == Decimal("91.25")
-    assert json.loads((tmp_path / "m-4.json").read_text())["test"]["acc"] == 91.25
+    assert json.loads((auth.root / "out" / "m-4.json").read_text())["test"]["acc"] == 91.25

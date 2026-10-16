@@ -5,6 +5,13 @@ here, runs a command of a synthetic repository directly, for CI and local tests.
 **not** an isolation boundary: it never runs third-party code (CLAUDE.md, standing
 approval: running third-party code needs the maintainer and the VM).
 
+**It runs synthetic fixtures only** (item E of the maintainer's review of 2026-10-16;
+closes the gap of #87): it is built with the authorizations of fixtures the harness wrote
+from the closed catalog of ``synthetic.py``, and refuses, before any process starts, a run
+whose folder is not one of them, whose command is not this interpreter in isolated mode
+running a code file of the fixture, or whose folder no longer holds exactly what was
+written (``synthetic.check_run``). Built with no authorization, it refuses every run.
+
 For each run the backend:
 
 - starts ``argv`` (a list, never a shell) in ``workdir`` with the given environment,
@@ -40,8 +47,11 @@ import signal
 import subprocess
 import sys
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
+
+from refute.packs.ml import synthetic
 
 STOP_THRESHOLD = "threshold"
 STOP_ACTIVE_TIME = "active_time_limit"
@@ -87,7 +97,16 @@ class RunResult:
 class SubprocessBackend:
     name = "subprocess"
 
+    def __init__(self, authorizations: Sequence[synthetic.Authorization] = ()) -> None:
+        self._authorized: dict[Path, synthetic.Authorization] = {}
+        for auth in authorizations:
+            if not isinstance(auth, synthetic.Authorization):
+                raise synthetic.SyntheticRefusedError("not an authorization of materialize")
+            self._authorized[auth.root] = auth
+
     def run(self, spec: RunSpec) -> RunResult:
+        # refused before anything starts: the folder, the command and the files (item E)
+        synthetic.check_run(spec.argv, spec.workdir, self._authorized)
         spec.log_path.parent.mkdir(parents=True, exist_ok=True)
         with spec.log_path.open("wb") as log:
             if sys.platform == "win32":
