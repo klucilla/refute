@@ -59,6 +59,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 |---|---|---|
 | `RefuteVm/` | the endpoint | module: `RefuteVm.Core.ps1` (pure logic: configuration checks, plans, plan hash), `RefuteVm.HyperV.ps1` (observed state and the one mutation), `RefuteVm.psm1`, `RefuteVm.Config.psd1`, `RoleCapabilities/RefuteVmOperator.psrc` |
 | `Register-RefuteVmEndpoint.ps1` | the maintainer, as Administrator | registers the endpoint; without `-Apply`, only shows what would change |
+| `Remove-RefuteWinRmListener.ps1` | the maintainer, as Administrator | removes the WinRM listener `*+HTTP`, with a `.reg` backup in `C:\ProgramData\RefuteVm-backup`, with WinRM stopped; without `-Apply`, only shows the listener keys and what would change |
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |
@@ -80,7 +81,15 @@ user name, host name or address.
    download (2.7 GB from releases.ubuntu.com).
 4. A reviewed change sets `InstallIsoSha256` in `RefuteVm.Config.psd1`.
 5. `New-RefuteSeedIso.ps1`; it prints the seed ISO's SHA-256.
-6. The maintainer, in Windows PowerShell started as Administrator:
+5a. Only if WinRM has a listener on every address (`*+HTTP`; the registration refuses
+   any listener that is not HTTP on loopback): the maintainer decided on 2026-10-15 to
+   remove it with `Remove-RefuteWinRmListener.ps1`, started like the registration below
+   (preview, the maintainer's OK, then `-Apply -PreviewSha256 <hash>`). The WinRM service
+   must be stopped; the script never starts or stops it.
+6. The maintainer, in Windows PowerShell started as Administrator, starts a new
+   `powershell.exe -NoProfile` whose environment holds `PSModuleAnalysisCachePath=nul`
+   (set in the parent shell first: only a value present when PowerShell starts disables
+   the module analysis cache, and the script refuses to run without it), then runs
    `scripts\vm\Register-RefuteVmEndpoint.ps1 -OperatorAccount <COMPUTERNAME>\<account>`
    (preview; it prints a `PreviewSha256`), then the same with
    `-Apply -PreviewSha256 <hash>`, which refuses if the machine changed since the
@@ -97,6 +106,22 @@ user name, host name or address.
    "Continue with autoinstall?". The installer powers the VM off when it ends.
 9. `DetachInstallMedia`, then `StartVm`. Secure Boot is never turned off without the
    maintainer's decision; no operation can do it.
+
+### Install media after the installation
+
+The downloaded ISO (`C:\Projetos\refute\.cache\vm\media\ubuntu-26.04.1-live-server-amd64.iso`,
+2,927,861,760 bytes) is regenerable. After the VM is installed and the install media are
+detached (step 9), it is deleted from the project folder by its literal path. What is
+kept:
+
+- its SHA-256, in `RefuteVm.Config.psd1`;
+- the verification evidence: `media-verification.json`, copied to
+  `docs/validation/v0.3/wp6-results/`;
+- `SHA256SUMS` and `SHA256SUMS.gpg`, kept with the WP6 records under the project's
+  cleanup rule.
+
+The copy that the endpoint made in `C:\Hyper-V\refute-vm\media` is outside the project.
+Removing it is the maintainer's decision (see "Reversal").
 
 Capacity control (plan section 7.5): `SetProcessorMaximum -Percent <1-100>`
 (a percentage, not a number of CPUs), `SuspendVm`, `ResumeVm`, `SaveVm`, `StartVm`.

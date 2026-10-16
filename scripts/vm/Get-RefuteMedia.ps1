@@ -85,7 +85,8 @@ $evidence = [ordered]@{
     BaseUrl            = $BaseUrl
     Fingerprint        = $Fingerprint
     ValidSig           = $validsig
-    GpgVersion         = (Invoke-Checked $GpgPath @('--version'))[0]
+    # @(...): one line of output would otherwise come back as a string, and [0] its first character
+    GpgVersion         = @(Invoke-Checked $GpgPath @('--version'))[0]
     Sha256SumsSha256   = (Get-FileHash -LiteralPath (Join-Path $MediaDir 'SHA256SUMS') -Algorithm SHA256).Hash.ToLowerInvariant()
     SignatureSha256    = (Get-FileHash -LiteralPath (Join-Path $MediaDir 'SHA256SUMS.gpg') -Algorithm SHA256).Hash.ToLowerInvariant()
     IsoName            = $IsoName

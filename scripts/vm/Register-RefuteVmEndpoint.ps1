@@ -45,6 +45,16 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
+# Commands of Windows modules load them automatically, and Windows PowerShell 5.1 then
+# writes its module analysis cache. Only a value set BEFORE powershell.exe starts
+# disables it (about_Windows_PowerShell_5.1, "Module analysis cache"), so the script
+# refuses to run unless it was started with PSModuleAnalysisCachePath=nul, before
+# reading anything (scripts/vm/README.md).
+if ($env:PSModuleAnalysisCachePath -ne 'nul') {
+    Write-Output 'Problems (nothing was changed):'
+    Write-Output '  - start powershell.exe with PSModuleAnalysisCachePath=nul in its environment (see scripts/vm/README.md), so no module analysis cache is written'
+    exit 1
+}
 
 $EndpointName = 'RefuteVm'
 $RoleName = 'RefuteVmOperator'
@@ -68,7 +78,14 @@ $PsscPath = Join-Path $DataRoot 'RefuteVm.pssc'
 $EvidencePath = Join-Path $DataRoot 'Log\registration-evidence.json'
 
 function Get-SidAccount([string]$Sid) {
-    return (New-Object System.Security.Principal.SecurityIdentifier $Sid).Translate([System.Security.Principal.NTAccount]).Value
+    # The account name of a SID, or the SID itself when this host has no such account
+    # (for example Hyper-V Administrators on a host without Hyper-V): the preview lists it
+    # as a problem instead of stopping.
+    try {
+        return (New-Object System.Security.Principal.SecurityIdentifier $Sid).Translate([System.Security.Principal.NTAccount]).Value
+    } catch [System.Security.Principal.IdentityNotMappedException] {
+        return "$Sid (no account on this host)"
+    }
 }
 
 function Get-TreeHashes([string]$Root) {
@@ -159,7 +176,12 @@ $isAdmin = ([System.Security.Principal.WindowsPrincipal][System.Security.Princip
 if ($PSVersionTable.PSEdition -ne 'Desktop' -or $PSVersionTable.PSVersion.Major -ne 5) { $problems.Add('run in Windows PowerShell 5.1 (powershell.exe)') }
 if (-not $isAdmin) { $problems.Add('run in a PowerShell started as Administrator (also for the preview: the checks read protected settings)') }
 if ($Apply -and -not $PreviewSha256) { $problems.Add('-Apply needs -PreviewSha256 from a preview run') }
-if (-not (Get-Module -ListAvailable -Name Hyper-V)) { $problems.Add('the Hyper-V PowerShell module is not available') }
+# The preview only reads: no WSMan provider access (it may offer to start WinRM) and no
+# module discovery (it may write the module analysis cache). The Hyper-V module is found
+# by its manifest file, directly in the module folder or in a version subfolder
+# (Windows 10 and 11: Hyper-V\2.0.0.0\Hyper-V.psd1); see Find-RefuteHyperVManifest.
+$hyperVManifest = Find-RefuteHyperVManifest -ModuleFolder (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V')
+if (-not $hyperVManifest) { $problems.Add('the Hyper-V PowerShell module is not available') }
 
 $operatorSid = $null
 try {
@@ -176,18 +198,26 @@ if (Test-Path -LiteralPath $ModuleBase) { $problems.Add("$ModuleBase already exi
 if (Test-Path -LiteralPath $DataRoot) { $problems.Add("$DataRoot already exists") }
 foreach ($folder in $VmFolders) { if (Test-Path -LiteralPath $folder) { $problems.Add("$folder already exists") } }
 $psrcCopies = @()
-try { $psrcCopies = Find-RoleCapabilityCopies } catch { $problems.Add("the module path cannot be searched completely: $($_.Exception.Message)") }
+# @(...): a function that returns an empty list gives $null to its caller, and .Count on
+# $null is an error under StrictMode in Windows PowerShell 5.1
+try { $psrcCopies = @(Find-RoleCapabilityCopies) } catch { $problems.Add("the module path cannot be searched completely: $($_.Exception.Message)") }
 if ($psrcCopies.Count) { $problems.Add("a role capability named $RoleName already exists: " + ($psrcCopies -join ', ')) }
 if ($isAdmin) {
     if (Get-NetFirewallRule -Name $FirewallRuleName -ErrorAction SilentlyContinue) { $problems.Add("the firewall rule $FirewallRuleName already exists") }
-    if (Get-PSSessionConfiguration -Name $EndpointName -ErrorAction SilentlyContinue) { $problems.Add("the endpoint $EndpointName is already registered") }
+    # The endpoint is a WSMan plugin: read its registry key, never the WSMan provider.
+    try {
+        $plugin = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Plugin\$EndpointName")
+        if ($plugin) { $plugin.Close(); $problems.Add("the endpoint $EndpointName is already registered") }
+    } catch { $problems.Add("cannot read the WSMan plugin key: $($_.Exception.Message)") }
 }
-$listeners = @(Get-RegistryListeners)
+$listeners = @()
+try { $listeners = @(Get-RegistryListeners) } catch { $problems.Add("cannot read the WinRM listeners from the registry: $($_.Exception.Message)") }
 $foreign = @(Test-ListenersLoopbackOnly $listeners)
 if ($foreign.Count) { $problems.Add('WinRM has listeners other than HTTP on loopback: ' + (($foreign | ForEach-Object { $_.Name }) -join ', ') + ' (the maintainer decides; this script never removes them)') }
 $winrm = Get-Service -Name WinRM
 $config = Import-PowerShellDataFile -LiteralPath (Join-Path $ModuleSource 'RefuteVm.Config.psd1')
 $groupAccount = Get-SidAccount $SidHyperVAdmins
+if ($groupAccount.EndsWith('(no account on this host)')) { $problems.Add("the group Hyper-V Administrators ($SidHyperVAdmins) does not exist on this host") }
 $groupName = $groupAccount.Split('\')[-1]
 
 # ---- the change list (preview) ---------------------------------------------------------
@@ -196,6 +226,7 @@ $sourceHashes = Get-TreeHashes $sourceRoot
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("Operator account: $OperatorAccount ($operatorSid)")
 $lines.Add("Virtual account group: $groupAccount ($SidHyperVAdmins)")
+$lines.Add("Hyper-V module manifest: $(if ($hyperVManifest) { $hyperVManifest } else { 'not found' })")
 $lines.Add("1. Copy the module to $ModuleDestination (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write):")
 foreach ($k in $sourceHashes.Keys) { $lines.Add("     $($sourceHashes[$k])  $k") }
 $lines.Add("2. Create these folders, owner Administrators, inheritance removed:")
