@@ -11,9 +11,11 @@ preview (the machine changed), and then makes exactly those changes in this orde
 stopping at the first problem:
 
   1. copies the RefuteVm module (configuration and role capability included) to
-     %ProgramFiles%\WindowsPowerShell\Modules\RefuteVm\<version> and checks the hashes,
-     that only administrators can write there, and that exactly one role capability
-     named RefuteVmOperator exists on the module path;
+     %ProgramFiles%\WindowsPowerShell\Modules\RefuteVm, with NO version subfolder (JEA
+     looks for <module path>\<module>\RoleCapabilities\<name>.psrc only), and checks the
+     hashes, that only administrators can write there, that the search JEA makes finds
+     exactly that role capability, and that no other copy exists on the module path (in
+     particular none in a version subfolder);
   2. creates C:\ProgramData\RefuteVm\{Transcripts,Log,State} and the C:\Hyper-V tree
      with explicit ACLs (owner: Administrators);
   3. adds the Windows Firewall rule that blocks inbound TCP 5985 and 5986 from every
@@ -73,7 +75,11 @@ $ListenerKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Listener'
 $ModuleSource = Join-Path $PSScriptRoot 'RefuteVm'
 $ModuleManifest = Import-PowerShellDataFile -LiteralPath (Join-Path $ModuleSource 'RefuteVm.psd1')
 $ModuleBase = Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules\RefuteVm'
-$ModuleDestination = Join-Path $ModuleBase $ModuleManifest.ModuleVersion
+# No version subfolder: JEA finds a role capability only at
+# <module path>\<module>\RoleCapabilities\<name>.psrc (maintainer's diagnosis, 2026-10-16),
+# and the role capability imports the manifest by this exact path.
+$ModuleDestination = $ModuleBase
+$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'
 $PsscPath = Join-Path $DataRoot 'RefuteVm.pssc'
 $EvidencePath = Join-Path $DataRoot 'Log\registration-evidence.json'
 
@@ -194,9 +200,27 @@ if ($operatorSid) {
         if ($members -contains $operatorSid) { $problems.Add('the operator account is a member of Hyper-V Administrators; remove it first (it would bypass the endpoint)') }
     } catch { $problems.Add("cannot read the members of Hyper-V Administrators: $($_.Exception.Message)") }
 }
-if (Test-Path -LiteralPath $ModuleBase) { $problems.Add("$ModuleBase already exists") }
-if (Test-Path -LiteralPath $DataRoot) { $problems.Add("$DataRoot already exists") }
-foreach ($folder in $VmFolders) { if (Test-Path -LiteralPath $folder) { $problems.Add("$folder already exists") } }
+function Test-TargetExists([string]$Path) {
+    # True when Path exists, or when it cannot be read (a folder only administrators can
+    # read, met by a preview run as a normal user on a registered host): then the problem
+    # is listed instead of stopping the preview.
+    try {
+        return (Test-Path -LiteralPath $Path -ErrorAction Stop)
+    } catch {
+        $problems.Add("$Path cannot be read: $($_.Exception.Message)")
+        return $false
+    }
+}
+if (Test-TargetExists $ModuleBase) { $problems.Add("$ModuleBase already exists") }
+if (Test-TargetExists $DataRoot) { $problems.Add("$DataRoot already exists") }
+foreach ($folder in $VmFolders) { if (Test-TargetExists $folder) { $problems.Add("$folder already exists") } }
+# The role capability imports the module by the path of its installed manifest (no
+# version, no GUID: those make PowerShell call Get-Module in the restricted session).
+$roleData = Import-PowerShellDataFile -LiteralPath (Join-Path $ModuleSource "RoleCapabilities\$RoleName.psrc")
+$imports = @($roleData.ModulesToImport)
+if ($imports.Count -ne 1 -or $imports[0] -isnot [string] -or $imports[0] -ne $InstalledManifest) {
+    $problems.Add("the role capability must import exactly $InstalledManifest (it imports: " + (($imports | ForEach-Object { [string]$_ }) -join ', ') + ')')
+}
 $psrcCopies = @()
 # @(...): a function that returns an empty list gives $null to its caller, and .Count on
 # $null is an error under StrictMode in Windows PowerShell 5.1
@@ -227,7 +251,7 @@ $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("Operator account: $OperatorAccount ($operatorSid)")
 $lines.Add("Virtual account group: $groupAccount ($SidHyperVAdmins)")
 $lines.Add("Hyper-V module manifest: $(if ($hyperVManifest) { $hyperVManifest } else { 'not found' })")
-$lines.Add("1. Copy the module to $ModuleDestination (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write):")
+$lines.Add("1. Copy the module to $ModuleDestination, no version subfolder (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write; the JEA search finds exactly its RoleCapabilities\$RoleName.psrc, and no other copy exists); the role capability imports ${InstalledManifest}:")
 foreach ($k in $sourceHashes.Keys) { $lines.Add("     $($sourceHashes[$k])  $k") }
 $lines.Add("2. Create these folders, owner Administrators, inheritance removed:")
 foreach ($folder in $FolderAcls.Keys) {
@@ -272,9 +296,17 @@ try {
     if ((ConvertTo-Json (Get-TreeHashes $ModuleDestination) -Compress) -ne (ConvertTo-Json $sourceHashes -Compress)) { throw 'the installed module differs from the source' }
     $writers = @(Get-ChildItem -LiteralPath $ModuleBase -Recurse -Force | ForEach-Object { $_.FullName }) + @($ModuleBase) | ForEach-Object { Get-NonAdminWriters $_ } | Sort-Object -Unique
     if (@($writers).Count) { throw ('accounts other than administrators can write to the module: ' + ($writers -join ', ')) }
-    $copies = @(Find-RoleCapabilityCopies)
     $expected = Join-Path $ModuleDestination "RoleCapabilities\$RoleName.psrc"
+    # the search JEA makes (first match wins), then any other copy, in a version subfolder
+    # or deeper: exactly one role capability, the one JEA loads
+    $moduleRoots = @(Get-ModulePathRoots)
+    $jeaFinds = @(Find-RefuteJeaRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName)
+    if ($jeaFinds.Count -ne 1 -or $jeaFinds[0] -ne $expected) { throw ("the JEA search must find exactly $expected, found: " + ($jeaFinds -join ', ')) }
+    $versioned = @(Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName)
+    if ($versioned.Count) { throw ('copies of the role capability in a version subfolder: ' + ($versioned -join ', ')) }
+    $copies = @(Find-RoleCapabilityCopies)
     if ($copies.Count -ne 1 -or $copies[0] -ne $expected) { throw ("expected exactly one role capability at $expected, found: " + ($copies -join ', ')) }
+    if (-not (Test-Path -LiteralPath $InstalledManifest -PathType Leaf)) { throw "the manifest the role capability imports is missing: $InstalledManifest" }
     # 2. folders
     foreach ($folder in $FolderAcls.Keys) {
         [void][System.IO.Directory]::CreateDirectory($folder)
@@ -347,6 +379,7 @@ $evidence = [ordered]@{
     PreviewSha256    = $previewHash
     Module           = [ordered]@{ Path = $ModuleDestination; Files = Get-TreeHashes $ModuleDestination }
     RoleCapabilities = @(Find-RoleCapabilityCopies)
+    JeaRoleCapability = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Get-ModulePathRoots) -RoleName $RoleName)
     Endpoint         = [ordered]@{
         Name                      = $endpoint.Name
         Permission                = [string]$endpoint.Permission

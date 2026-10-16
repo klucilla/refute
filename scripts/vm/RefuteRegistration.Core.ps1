@@ -44,6 +44,44 @@ function Find-RefuteHyperVManifest {
     return $null
 }
 
+function Find-RefuteJeaRoleCapability {
+    # The role capability files JEA can load for RoleName, in the order JEA looks for them:
+    # for each module folder root, each folder directly under it, then
+    # <root>\<folder>\RoleCapabilities\<RoleName>.psrc; JEA takes the first one found
+    # (GetRoleCapabilityPath in
+    # https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/remoting/fanin/InitialSessionStateProvider.cs,
+    # accessed 2026-10-16). A copy in a version subfolder (<folder>\<version>\RoleCapabilities)
+    # is never found by this search. Read-only.
+    param([string[]]$ModuleRoots, [string]$RoleName)
+    $found = @()
+    foreach ($root in $ModuleRoots) {
+        if (-not (Test-Path -LiteralPath $root -PathType Container)) { continue }
+        foreach ($dir in @(Get-ChildItem -LiteralPath $root -Directory -Force | Sort-Object Name)) {
+            $file = Join-Path (Join-Path $dir.FullName 'RoleCapabilities') "$RoleName.psrc"
+            if (Test-Path -LiteralPath $file -PathType Leaf) { $found += $file }
+        }
+    }
+    return $found  # callers wrap the call in @(...): an empty result arrives as $null
+}
+
+function Find-RefuteVersionedRoleCapability {
+    # Copies of the role capability one level deeper, in a version subfolder
+    # (<root>\<folder>\<version>\RoleCapabilities\<RoleName>.psrc): JEA never loads them, and
+    # the registration refuses them so that no stale copy stays next to the one it loads.
+    param([string[]]$ModuleRoots, [string]$RoleName)
+    $found = @()
+    foreach ($root in $ModuleRoots) {
+        if (-not (Test-Path -LiteralPath $root -PathType Container)) { continue }
+        foreach ($dir in @(Get-ChildItem -LiteralPath $root -Directory -Force | Sort-Object Name)) {
+            foreach ($sub in @(Get-ChildItem -LiteralPath $dir.FullName -Directory -Force | Sort-Object Name)) {
+                $file = Join-Path (Join-Path $sub.FullName 'RoleCapabilities') "$RoleName.psrc"
+                if (Test-Path -LiteralPath $file -PathType Leaf) { $found += $file }
+            }
+        }
+    }
+    return $found  # callers wrap the call in @(...)
+}
+
 function Get-RefuteListenerRemoval {
     # What removing the listener key Target leaves, from the names of every key under
     # WSMAN\Listener ("<address>+<transport>", for example "*+HTTP" or "IP:127.0.0.1+HTTP").

@@ -106,6 +106,24 @@ def test_the_role_capability_imports_the_installed_manifest_by_path(cases):
     assert entries == [{"Kind": "string", "Value": INSTALLED_MANIFEST}]
 
 
+def test_the_registration_installs_without_a_version_subfolder():
+    """JEA finds <module path>\\<module>\\RoleCapabilities\\<name>.psrc only (the maintainer's
+    diagnosis of 2026-10-16): the module goes to RefuteVm itself, the apply checks the JEA
+    search and refuses a copy in a version subfolder, and the preview checks that the role
+    capability imports the installed manifest."""
+    text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    assert "$ModuleDestination = $ModuleBase\n" in text.replace("\r\n", "\n")
+    assert "ModuleManifest.ModuleVersion" not in text
+    apply = text[text.index("# ---- apply") :]
+    assert "Find-RefuteJeaRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    assert (
+        "Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    )
+    preview = text[: text.index("# ---- apply")]
+    assert "the role capability must import exactly $InstalledManifest" in preview
+    assert "$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'" in text
+
+
 def test_operation_lists_agree(cases):
     table = cases["OperationTable"]
     assert cases["ValidateSets"]["RefuteVm/RefuteVm.psm1"] == table
@@ -270,6 +288,7 @@ PREVIEW_COMMANDS = {
     "test-listenersloopbackonly",
     "test-path",
     "test-refuterightswrite",
+    "test-targetexists",
     "where-object",
     "write-output",
 }
