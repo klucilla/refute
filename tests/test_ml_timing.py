@@ -34,7 +34,12 @@ class FakeTracker(sb._Tracker):
         return self.usage
 
     def stop(self):
-        time.sleep(self.stop_s)
+        # waits by the clock the supervisor reads (time.monotonic), not by one sleep: on
+        # Windows a sleep of 0.2 s was measured as 0.188 s by that coarser clock (CI run
+        # 38853937526), so the test bound S >= stop_s did not hold
+        end = time.monotonic() + self.stop_s
+        while time.monotonic() < end:
+            time.sleep(0.005)
 
     def close(self):
         pass
