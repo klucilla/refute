@@ -13,7 +13,8 @@ XML = """<?xml version="1.0" encoding="utf-8"?>
 <testcase classname="tests.test_a" name="test_two"><failure message="x"/></testcase>
 <testcase classname="tests.test_vm_jea_integration" name="test_three">
 <skipped message="y"/></testcase>
-<testcase classname="tests.test_vm_jea_integration" name="test_four"/>
+<testcase classname="tests.test_vm_jea_integration" name="test_four">
+<properties><property name="evidence" value="{&quot;a&quot;: 1}"/></properties></testcase>
 </testsuite></testsuites>
 """
 
@@ -33,6 +34,7 @@ def test_counts_and_outcomes(tmp_path):
         "tests=4 failures=1 errors=0 skipped=1",
         "skipped tests.test_vm_jea_integration::test_three",
         "passed tests.test_vm_jea_integration::test_four",
+        '    evidence={"a": 1}',
     ]
 
 

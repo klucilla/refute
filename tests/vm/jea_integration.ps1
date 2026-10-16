@@ -127,20 +127,53 @@ $out.Sessions.FlatTwinWithNetworkAccess = Test-Session 'RefuteProbeFlatTwin' $tr
 # with a name of its own is placed only where the session resolves the first relative
 # entry, and a real session to an endpoint that names it shows whether JEA's search finds
 # it there (positive control); a capability placed in a folder on no module path must not
-# be found (negative control).
-$out.Relative = [ordered]@{ Entry = ''; Resolved = ''; Control = $null; Nowhere = $null }
+# be found (negative control). The positive control runs only when no absolute entry
+# reaches that folder: neither an absolute entry of the session's module path nor one of
+# the machine's or this host's module path (JEA finds <root>\<module>\RoleCapabilities, so
+# only an entry equal to the folder could reach it). Applicable records why it ran or not.
+$out.Relative = [ordered]@{
+    Entry = ''; Resolved = ''; Absolute = @(); Exclusive = $null; Applicable = 'no relative entry'
+    Control = $null; Nowhere = $null
+}
+$qualified = '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)'
+function ConvertTo-ProbeFolder([string]$Path) {
+    # the probe's normalisation (tests/vm/JeaProbe.psm1): full path, no trailing '\' except
+    # on a drive root; '' for an entry that cannot be resolved
+    try { $full = [System.IO.Path]::GetFullPath($Path).TrimEnd('\') } catch { return '' }
+    if ($full -match '^[A-Za-z]:$') { $full = $full + '\' }
+    return $full
+}
 $rootsText = [string]$out.Sessions.PathWithNetworkAccess.Roots
 if ($rootsText) {
     $rows = @($rootsText.Split("`n"))
-    $relative = @($rows[1..($rows.Count - 1)] | ForEach-Object { , @($_.Split("`t")) } |
-            Where-Object { $_[1] -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)' })
+    $parsed = @($rows[1..($rows.Count - 1)] | ForEach-Object { , @($_.Split("`t")) })
+    $absolute = [System.Collections.Generic.List[string]]::new()
+    foreach ($row in $parsed) {
+        if ($row[1] -match $qualified -and $row[3]) { $absolute.Add($row[3]) }
+    }
+    $hostPaths = @([Environment]::GetEnvironmentVariable('PSModulePath', 'Machine'), $env:PSModulePath)
+    foreach ($entry in @($hostPaths | ForEach-Object { "$_".Split(';') } | Where-Object { $_ -match $qualified })) {
+        $folder = ConvertTo-ProbeFolder $entry
+        if ($folder) { $absolute.Add($folder) }
+    }
+    $out.Relative.Absolute = @($absolute | Sort-Object -Unique)
+    $relative = @($parsed | Where-Object { $_[1] -notmatch $qualified })
     if ($relative.Count) {
         $out.Relative.Entry = $relative[0][1]
         $out.Relative.Resolved = $relative[0][3]
-        if ($out.Relative.Resolved) {
-            New-ProbeModule (Join-Path $out.Relative.Resolved 'RefuteJeaRelative') 'RefuteJeaRelative' @{ ProbeRelative = $sameRole }
-            Register-Probe 'RefuteProbeRelative' 'ProbeRelative'
-            $out.Relative.Control = Test-Session 'RefuteProbeRelative' $true
+        if (-not $out.Relative.Resolved) {
+            $out.Relative.Applicable = 'the relative entry cannot be resolved'
+        } else {
+            $same = @($absolute | Where-Object { $_ -ieq $out.Relative.Resolved })
+            $out.Relative.Exclusive = ($same.Count -eq 0)
+            if ($out.Relative.Exclusive) {
+                New-ProbeModule (Join-Path $out.Relative.Resolved 'RefuteJeaRelative') 'RefuteJeaRelative' @{ ProbeRelative = $sameRole }
+                Register-Probe 'RefuteProbeRelative' 'ProbeRelative'
+                $out.Relative.Control = Test-Session 'RefuteProbeRelative' $true
+                $out.Relative.Applicable = 'ran'
+            } else {
+                $out.Relative.Applicable = 'an absolute entry reaches the resolved folder'
+            }
         }
     }
 }

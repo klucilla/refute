@@ -169,23 +169,42 @@ def test_the_roots_the_session_searches_are_known_to_the_registration(result, se
     )
 
 
-def test_a_relative_entry_is_searched_where_the_session_resolves_it(result):
+def test_a_relative_entry_is_searched_where_the_session_resolves_it(result, request):
     """Codex review of #99: the probe reads the module path after the session opened, so
     it does not show by itself that JEA's search (made when the session is created) resolves
     a relative entry the same way. A role capability with its own name, placed only where
     the session resolves the first relative entry, must be found by a real session
     (positive control); one placed in a folder on no module path must not (negative
-    control)."""
+    control). The positive control counts only in a folder no absolute entry reaches (the
+    session's, the machine's or the host's module path), and its evidence is recorded in
+    the JUnit file, which the CI prints (scripts/junit_counts.py --show): the entry, the
+    resolved folder, whether it is exclusive, whether the control ran and opened. With no
+    relative entry the positive control is recorded as not applicable, never as run."""
     relative = result["Relative"]
     nowhere = relative["Nowhere"]
-    assert not nowhere["Opened"] and "ProbeNowhere" in nowhere["Error"], nowhere
-    print(
-        "relative entry and where the session resolves it:", relative["Entry"], relative["Resolved"]
-    )
-    if not relative["Entry"]:
-        return  # this runner's session has no relative entry: nothing to compare
+    absolute = relative["Absolute"]
+    absolute = [absolute] if isinstance(absolute, str) else list(absolute)
     control = relative["Control"]
-    assert control is not None, relative
+    evidence = {
+        "entry": relative["Entry"],
+        "resolved": relative["Resolved"],
+        "exclusive": relative["Exclusive"],
+        "positive_control": relative["Applicable"],
+        "positive_opened": None if control is None else control["Opened"],
+        "negative_opened": nowhere["Opened"],
+        "absolute_entries": absolute,
+    }
+    request.node.user_properties.append(("relative_entry_control", json.dumps(evidence)))
+    print("relative entry control:", json.dumps(evidence, indent=1))
+    assert not nowhere["Opened"] and "ProbeNowhere" in nowhere["Error"], nowhere
+    if not relative["Entry"]:
+        # this runner's session has no relative entry: the positive control does not apply
+        assert relative["Applicable"] == "no relative entry" and control is None, relative
+        return
+    assert relative["Applicable"] == "ran", relative
+    folder = relative["Resolved"].rstrip("\\").lower()
+    assert relative["Exclusive"] is True
+    assert folder not in {a.rstrip("\\").lower() for a in absolute}, relative
     _opened(control)
 
 

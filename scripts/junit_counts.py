@@ -1,5 +1,6 @@
 """Print the test counts of a JUnit XML file (pytest --junitxml), and the outcome of every
-test whose name contains a given text.
+test whose name contains a given text, with the properties the test recorded
+(pytest ``record_property``), so that a passing test can leave its evidence in the CI log.
 
 The house rule (CLAUDE.md) takes test counts from a JUnit file, never from the console
 summary; the CI prints them with this script after the test step.
@@ -32,6 +33,8 @@ def outcomes(path: Path, text: str) -> list[str]:
             continue
         kinds = [child.tag for child in case if child.tag in ("failure", "error", "skipped")]
         out.append(f"{kinds[0] if kinds else 'passed'} {name}")
+        for prop in case.iter("property"):
+            out.append(f"    {prop.get('name', '')}={prop.get('value', '')}")
     return out
 
 
