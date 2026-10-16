@@ -158,7 +158,18 @@ order:
    machine at that moment. A CI test on a real endpoint (tests/test_vm_jea_integration.py)
    calls the same function and shows, for the GitHub runner only, that every existing
    root a JEA session reports is in the set or holds no role capability; it does not
-   validate the maintainer's host;
+   validate the maintainer's host. The registration also checks the **effective
+   discovery set** of the session (`Get-RefuteJeaDiscoveryRoots`): the machine
+   `PSModulePath`, Program Files, `$PSHOME\Modules`, and the virtual account's user
+   entry, which is relative (`WindowsPowerShell\Modules`, its Documents path being
+   empty) and resolves against the session's current folder, `%SystemRoot%\system32`
+   (as the CI test observed on the runner). In every folder of that set, in every module
+   folder under it, in every `RoleCapabilities` folder and `.psrc` file, only SYSTEM,
+   Administrators and TrustedInstaller may write (CREATOR OWNER only as an inherit-only
+   entry); for a folder of the set that does not exist, the same holds for its nearest
+   existing ancestor, which decides who can create it. The preview and the apply both
+   refuse otherwise. **Limit:** the set is computed from the machine's state at that
+   moment and from the current folder observed on the CI runner;
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:

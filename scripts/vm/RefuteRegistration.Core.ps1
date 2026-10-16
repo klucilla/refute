@@ -123,6 +123,141 @@ function Join-RefuteModuleRoots {
     return @($roots | Sort-Object)
 }
 
+function Resolve-RefuteSessionEntry {
+    # One module path entry as a JEA session resolves it. A fully qualified entry is a root
+    # (ConvertTo-RefuteModuleRoot). A relative entry ('WindowsPowerShell\Modules', the user
+    # entry of a virtual account whose Documents path is empty, as the integration test of
+    # #99 observed on the CI runner) resolves against the session's current folder,
+    # CurrentFolder, which must be fully qualified. A drive-relative ('C:Modules') or
+    # root-relative ('\Modules') entry depends on per-drive state no one can read here, so
+    # it is refused. Pure.
+    param([string]$Entry, [string]$CurrentFolder)
+    if ($Entry -match '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') { return ConvertTo-RefuteModuleRoot $Entry }
+    if ($Entry -match '^[A-Za-z]:' -or $Entry.StartsWith('\') -or $Entry.StartsWith('/')) {
+        throw "the module path entry '$Entry' is drive-relative or root-relative"
+    }
+    $base = ConvertTo-RefuteModuleRoot $CurrentFolder
+    $parts = @($base.TrimEnd('\').Split('\'))
+    foreach ($part in @($Entry.Replace('/', '\').Split('\'))) {
+        if ($part -eq '' -or $part -eq '.') { continue }
+        if ($part -eq '..') {
+            if ($parts.Count -gt 1) { $parts = @($parts[0..($parts.Count - 2)]) }
+            continue
+        }
+        $parts += $part
+    }
+    return ConvertTo-RefuteModuleRoot (($parts -join '\') + '\')
+}
+
+function Join-RefuteDiscoveryRoots {
+    # The folders where a JEA session discovers role capabilities: every entry of the given
+    # PSModulePath values and every extra folder (fully qualified), and every relative entry
+    # resolved against the session's current folder (Resolve-RefuteSessionEntry); without
+    # repeats (compared without case), sorted. Folders that do not exist are kept: the
+    # caller checks who could create them. Pure.
+    param([string[]]$PathValues, [string[]]$Extra, [string[]]$RelativeEntries, [string]$CurrentFolder)
+    $roots = @(Join-RefuteModuleRoots -PathValues $PathValues -Extra $Extra)
+    foreach ($entry in @($RelativeEntries)) {
+        if ($entry) { $roots += Resolve-RefuteSessionEntry -Entry $entry -CurrentFolder $CurrentFolder }
+    }
+    $seen = @{}
+    $out = @()
+    foreach ($root in $roots) {
+        if ($seen.ContainsKey($root.ToLowerInvariant())) { continue }
+        $seen[$root.ToLowerInvariant()] = $true
+        $out += $root
+    }
+    return @($out | Sort-Object)
+}
+
+function Get-RefuteJeaDiscoveryRoots {
+    # The effective discovery set of the RefuteVm session on this machine (the maintainer's
+    # item 9, 2026-10-16): the machine PSModulePath, Program Files\WindowsPowerShell\Modules
+    # and $PSHOME\Modules (PowerShell adds both), and the virtual account's user entry, which
+    # is relative ('WindowsPowerShell\Modules') because its Documents path is empty, resolved
+    # against the session's current folder, %SystemRoot%\system32 (observed on the CI runner
+    # by the integration test of #99). Existing folders or not.
+    $extra = @(
+        (Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules'),
+        (Join-Path $PSHOME 'Modules')
+    )
+    return @(Join-RefuteDiscoveryRoots -PathValues @([Environment]::GetEnvironmentVariable('PSModulePath', 'Machine')) `
+            -Extra $extra -RelativeEntries @('WindowsPowerShell\Modules') -CurrentFolder (Join-Path $env:SystemRoot 'system32'))
+}
+
+function Test-RefuteAllowedWriter {
+    # Whether an allow entry that grants a change is acceptable on a folder or file of the
+    # discovery set: SYSTEM, Administrators or TrustedInstaller; CREATOR OWNER only as an
+    # inherit-only entry (it then applies to what someone who could already write creates).
+    param([string]$Sid, [bool]$InheritOnly)
+    if (@('S-1-5-18', 'S-1-5-32-544', 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464') -contains $Sid) { return $true }
+    return ($Sid -eq 'S-1-3-0' -and $InheritOnly)
+}
+
+function Get-RefuteAceWriters {
+    # From access entries (Sid, Rights as an integer, Type 'Allow' or 'Deny', InheritOnly),
+    # the ones that grant a change to an account the discovery set must not let write
+    # (Test-RefuteAllowedWriter), as "<sid> <rights>". Pure.
+    param([object[]]$Entries)
+    return @($Entries | Where-Object {
+            [string]$_.Type -eq 'Allow' -and (Test-RefuteRightsWrite ([int]$_.Rights)) -and
+            -not (Test-RefuteAllowedWriter -Sid ([string]$_.Sid) -InheritOnly ([bool]$_.InheritOnly))
+        } | ForEach-Object { "$($_.Sid) $([int]$_.Rights)" })
+}
+
+function Get-RefuteDiscoveryProblems {
+    # Reads, never writes. For each folder of the discovery set: when it exists, the access
+    # entries of the folder, of every folder directly under it (a writer there could add
+    # <folder>\RoleCapabilities), of every existing <folder>\RoleCapabilities and of the
+    # .psrc files in it; when it does not exist, those of its nearest existing ancestor
+    # (whoever may create it could add role capabilities). Returns one problem per entry
+    # that lets another account write, and one per item that cannot be read.
+    param([string[]]$Roots)
+    $problems = @()
+    foreach ($root in @($Roots)) {
+        $targets = @()
+        try {
+            if (Test-Path -LiteralPath $root -PathType Container -ErrorAction Stop) {
+                $targets += $root
+                foreach ($dir in @(Get-ChildItem -LiteralPath $root -Directory -Force -ErrorAction Stop)) {
+                    $targets += $dir.FullName
+                    $rc = Join-Path $dir.FullName 'RoleCapabilities'
+                    if (Test-Path -LiteralPath $rc -PathType Container -ErrorAction Stop) {
+                        $targets += $rc
+                        $targets += @(Get-ChildItem -LiteralPath $rc -File -Force -Filter '*.psrc' -ErrorAction Stop | ForEach-Object { $_.FullName })
+                    }
+                }
+            } else {
+                $ancestor = Split-Path -Parent $root
+                while ($ancestor -and -not (Test-Path -LiteralPath $ancestor -PathType Container -ErrorAction Stop)) {
+                    $ancestor = Split-Path -Parent $ancestor
+                }
+                if ($ancestor) { $targets += $ancestor }
+            }
+        } catch {
+            $problems += "$root cannot be read: $($_.Exception.Message)"
+            continue
+        }
+        foreach ($target in $targets) {
+            try {
+                $entries = @((Get-Acl -LiteralPath $target -ErrorAction Stop).Access | ForEach-Object {
+                        [ordered]@{
+                            Sid         = $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
+                            Rights      = [int]$_.FileSystemRights
+                            Type        = [string]$_.AccessControlType
+                            InheritOnly = ([string]$_.PropagationFlags -match 'InheritOnly')
+                        }
+                    })
+            } catch {
+                $problems += "$target cannot be read: $($_.Exception.Message)"
+                continue
+            }
+            foreach ($w in @(Get-RefuteAceWriters $entries)) { $problems += "$target can be written by $w" }
+        }
+    }
+    return $problems  # callers wrap the call in @(...)
+}
+
 function Get-RefuteRegistrationModuleRoots {
     # The module folder roots the registration searches for role capability copies (the
     # registration script and the JEA integration test, tests/vm/jea_integration.ps1, call
@@ -131,6 +266,8 @@ function Get-RefuteRegistrationModuleRoots {
     # (<Default>\Documents\WindowsPowerShell\Modules). A JEA virtual account gets a new
     # profile, created from the Default profile when its session starts, so its own user
     # module folder does not exist at registration; what it can hold comes from there.
+    # It also holds every folder of the effective discovery set (Get-RefuteJeaDiscoveryRoots),
+    # including the relative user entry resolved against the session's current folder.
     # Only existing folders are returned.
     $default = (Get-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList' -Name Default).Default
     $extra = @(
@@ -138,7 +275,7 @@ function Get-RefuteRegistrationModuleRoots {
         (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules'),
         (Join-Path $PSHOME 'Modules'),
         (Join-Path ([Environment]::ExpandEnvironmentVariables($default)) 'Documents\WindowsPowerShell\Modules')
-    )
+    ) + @(Get-RefuteJeaDiscoveryRoots)
     $values = @(
         [Environment]::GetEnvironmentVariable('PSModulePath', 'Machine'),
         [Environment]::GetEnvironmentVariable('PSModulePath', 'Process')

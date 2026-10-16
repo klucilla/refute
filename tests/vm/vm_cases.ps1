@@ -444,6 +444,50 @@ foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
     Add-Case "module roots: the relative entry '$relative' is refused" $refused
 }
 
+# The effective discovery set of the session (item 9 of the maintainer's message of
+# 2026-10-16): a relative entry resolves against the session's current folder; a
+# drive-relative or root-relative entry, and a relative current folder, are refused
+$sys32 = 'C:\Windows\system32'
+Add-Case 'session entry: a relative entry resolves against the current folder' ((Resolve-RefuteSessionEntry -Entry 'WindowsPowerShell\Modules' -CurrentFolder $sys32) -ceq 'C:\Windows\system32\WindowsPowerShell\Modules')
+Add-Case 'session entry: dot and dot-dot segments are resolved' ((Resolve-RefuteSessionEntry -Entry '.\a\..\Mods\' -CurrentFolder 'C:\X') -ceq 'C:\X\Mods')
+Add-Case 'session entry: dot-dot stops at the volume root' ((Resolve-RefuteSessionEntry -Entry '..\..\..\M' -CurrentFolder 'C:\X') -ceq 'C:\M')
+Add-Case 'session entry: a fully qualified entry is kept as a root' ((Resolve-RefuteSessionEntry -Entry 'D:\Mods\' -CurrentFolder $sys32) -ceq 'D:\Mods')
+foreach ($bad in @(@('C:Modules', $sys32), @('\Modules', $sys32), @('/Modules', $sys32), @('Modules', 'system32'))) {
+    $refused = $false
+    try { [void](Resolve-RefuteSessionEntry -Entry $bad[0] -CurrentFolder $bad[1]) } catch { $refused = $true }
+    Add-Case "session entry refused: '$($bad[0])' against '$($bad[1])'" $refused
+}
+$disc = @(Join-RefuteDiscoveryRoots -PathValues @('C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules') `
+        -Extra @('C:\Program Files\WindowsPowerShell\Modules\') -RelativeEntries @('WindowsPowerShell\Modules', 'windowspowershell\modules') -CurrentFolder $sys32)
+Add-Case 'discovery set: absolute entries, extras and resolved relative entries, without repeats' ($disc.Count -eq 3 -and
+    $disc -ccontains 'C:\Program Files\WindowsPowerShell\Modules' -and $disc -ccontains 'C:\Windows\system32\WindowsPowerShell\v1.0\Modules' -and
+    $disc -ccontains 'C:\Windows\system32\WindowsPowerShell\Modules') ($disc -join ', ')
+
+# Who may write in the discovery set: SYSTEM, Administrators, TrustedInstaller; CREATOR
+# OWNER only as an inherit-only entry; a deny entry or a read-only entry never counts
+function New-Ace([string]$Sid, $Rights, [string]$Type, [bool]$InheritOnly) { [ordered]@{ Sid = $Sid; Rights = [int]$Rights; Type = $Type; InheritOnly = $InheritOnly } }
+$ti = 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
+$okAces = @((New-Ace 'S-1-5-18' $r::FullControl 'Allow' $false), (New-Ace 'S-1-5-32-544' $r::Modify 'Allow' $false), (New-Ace $ti $r::FullControl 'Allow' $false),
+    (New-Ace 'S-1-3-0' $r::FullControl 'Allow' $true), (New-Ace 'S-1-5-32-545' $r::ReadAndExecute 'Allow' $false), (New-Ace 'S-1-5-32-545' $r::Modify 'Deny' $false))
+Add-Case 'discovery writers: SYSTEM, Administrators, TrustedInstaller, inherit-only CREATOR OWNER, read-only and deny entries are accepted' (@(Get-RefuteAceWriters $okAces).Count -eq 0)
+foreach ($badAce in @((New-Ace 'S-1-5-32-545' $r::Modify 'Allow' $false), (New-Ace 'S-1-5-11' $r::AppendData 'Allow' $false),
+        (New-Ace 'S-1-3-0' $r::FullControl 'Allow' $false), (New-Ace 'S-1-1-0' $r::WriteData 'Allow' $true))) {
+    Add-Case "discovery writers: $($badAce.Sid) with rights $($badAce.Rights) (inherit-only $($badAce.InheritOnly)) is a writer" (@(Get-RefuteAceWriters @($badAce)).Count -eq 1)
+}
+# on real folders: a folder the current account can write (the test's work folder) is
+# reported, also through a module folder under it; an absent folder is checked through its
+# nearest existing ancestor
+$discRoot = Join-Path $WorkDir 'discovery'
+[void][System.IO.Directory]::CreateDirectory((Join-Path $discRoot 'SomeModule\RoleCapabilities'))
+[System.IO.File]::WriteAllText((Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), '@{}')
+$discProblems = @(Get-RefuteDiscoveryProblems -Roots @($discRoot))
+Add-Case 'discovery problems: a root, its module folder, its RoleCapabilities and the .psrc the current account can write are reported' (
+    @($discProblems | Where-Object { $_.StartsWith("$discRoot can be written by") }).Count -ge 1 -and
+    @($discProblems | Where-Object { $_.StartsWith((Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc') + ' can be written by') }).Count -ge 1) ($discProblems -join ' | ')
+$absentProblems = @(Get-RefuteDiscoveryProblems -Roots @(Join-Path $discRoot 'absent\deeper'))
+Add-Case 'discovery problems: an absent folder is checked through its nearest existing ancestor' (
+    @($absentProblems | Where-Object { $_.StartsWith("$discRoot can be written by") }).Count -ge 1) ($absentProblems -join ' | ')
+
 # The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
 # capability, an absent root, and a root that cannot be read as a folder (a file). A root
 # that cannot be read is never reported as absent (Codex review of #99).
