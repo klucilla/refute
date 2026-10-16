@@ -480,6 +480,13 @@ requires before the runner code. They decide when a run or the accounting of a p
 - **Fixed before the lock, never after.** Δ, the formula of M, the measured maxima D
   and S, C, P, N, σ and T are written in the protocol before the lock and are never
   adjusted because of a run of the sample, the pilot or the development papers.
+- **D and S recorded, with an alert (decided by the maintainer on 2026-10-16).** For every
+  container stopped by its threshold or a guard, the runner records the detection delay
+  (from the planned reading instant to the stop request) and the stop latency (from the
+  request to the end of every process of the run) it measured. When a value exceeds its
+  V22 maximum, an alert is recorded with the paper's run, for the maintainer. Nothing is
+  adjusted automatically: M, T, the thresholds and every other limit stay as fixed before
+  the lock.
 - **Subprocess backend.** It has no parent cgroup, so the completeness check is
   recorded as not applicable there; this backend never runs a real paper (PR #87).
 - **Synthetic cases (WP3):**
