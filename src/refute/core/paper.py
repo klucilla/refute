@@ -240,6 +240,15 @@ def _gate_failure_verdict(name: str, gate: TestResult, failure: GateFailure | No
                 f"{failure.attempts_completed} of {failure.attempts_required}",
                 incomplete_coverage=True,
             )
+        if cause is FailureCause.ARTIFACT_ABSENT and not proven_absence(gate, failure):
+            # an absence is attributed only with its evidence, one HTTP 404 or 410 per
+            # attempt, whatever the gate's coverage (Codex review of #106)
+            return ClaimVerdict(
+                PaperVerdict.INCONCLUSIVE,
+                f"base gate '{name}' failed ({cause.value}) without a recorded HTTP 404 or "
+                f"410 in each of the {failure.attempts_required} attempts",
+                incomplete_coverage=True,
+            )
         return ClaimVerdict(
             PaperVerdict.NOT_REPRODUCIBLE,
             f"base gate '{name}' failed: the artifact's documented procedure failed "

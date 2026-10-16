@@ -1,11 +1,13 @@
 """Paper claim verdicts and the result of a paper (docs/validation/v0.3/wp2-acceptance.md,
 W2.1-W2.7). All cases are synthetic and offline."""
 
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
 from refute.core.paper import (
+    ABSENT_HTTP_STATUSES,
     BASE_GATES,
     EXPECTED_COVERAGE,
     ROBUSTNESS_INCONCLUSIVE,
@@ -149,7 +151,14 @@ def test_step0_attack_fail_without_examined_data_is_never_fragile(coverage):
     ],
 )
 def test_step1_each_artifact_cause_with_complete_attempts_gives_not_reproducible(gate, cause):
-    v = verdict(base(**{gate: KO}), failures={gate: complete(cause)})
+    checks = base(**{gate: KO})
+    if cause is FailureCause.ARTIFACT_ABSENT:
+        # an absence needs its evidence: one HTTP 404 or 410 per attempt (proven_absence)
+        checks = [
+            replace(c, metrics={ABSENT_HTTP_STATUSES: [404, 410, 404]}) if c.name == gate else c
+            for c in checks
+        ]
+    v = verdict(checks, failures={gate: complete(cause)})
     assert v.verdict is PaperVerdict.NOT_REPRODUCIBLE
     assert cause.value in v.reason
 

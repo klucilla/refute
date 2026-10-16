@@ -61,6 +61,38 @@ def test_any_other_zero_coverage_stays_inconclusive(result, failure, why):
     assert verdict(result, failure) is PaperVerdict.INCONCLUSIVE, why
 
 
+GATES = ("environment_build", "data_present", "run_completed", "metric_extracted")
+
+
+def gate_verdict(name, result, failure):
+    """The verdict with every gate before ``name`` passing and ``result`` in its place."""
+    base = []
+    for g in GATES:
+        if g == name:
+            base.append(result)
+            break
+        base.append(TestResult(g, TestStatus.PASS, Severity.GATE, "ok", coverage=1))
+    return aggregate_claim(base, [], [], metric_recompute_applies=False, failures={name: failure})
+
+
+@pytest.mark.parametrize("name", GATES)
+@pytest.mark.parametrize("statuses", [None, (404, 503, 404), (404, 404), ("404", 404, 404)])
+def test_an_absence_without_its_evidence_is_inconclusive_also_with_coverage(name, statuses):
+    """Codex review of #106: with a positive coverage the zero-coverage rule does not
+    apply, and the attribution itself requires the HTTP evidence of every attempt."""
+    result = gate(coverage=5, statuses=statuses, name=name)
+    got = gate_verdict(name, result, ABSENT)
+    assert got.verdict is PaperVerdict.INCONCLUSIVE, got.reason
+    assert "HTTP 404 or 410" in got.reason
+
+
+@pytest.mark.parametrize("name", GATES)
+def test_an_absence_with_its_evidence_is_not_reproducible_on_every_gate(name):
+    for coverage in (0, 5):
+        got = gate_verdict(name, gate(coverage=coverage, name=name), ABSENT)
+        assert got.verdict is PaperVerdict.NOT_REPRODUCIBLE, (coverage, got.reason)
+
+
 def test_a_pass_without_coverage_is_never_a_pass():
     passed = gate(status=TestStatus.PASS)
     assert not proven_absence(passed, ABSENT)
