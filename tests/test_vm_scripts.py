@@ -66,6 +66,23 @@ def test_synthetic_cases(cases):
     assert failed == []
 
 
+def test_the_endpoint_is_called_as_a_loopback_session(cases):
+    """The endpoint is registered with AccessMode Local: a session to localhost is a
+    loopback session only with implicit credentials and -EnableNetworkAccess
+    (https://learn.microsoft.com/powershell/module/microsoft.powershell.core/disable-psremoting,
+    accessed 2026-10-16); without it the maintainer's session was refused (2026-10-16).
+    From the AST of Invoke-RefuteVm.ps1, read by Windows PowerShell 5.1 on Windows."""
+    calls = cases["InvokeRemoting"]
+    sessions = [c for c in calls if c["Command"] == "New-PSSession"]
+    assert len(sessions) == 1, calls
+    params = {p.lower() for p in sessions[0]["Parameters"]}
+    assert {"computername", "configurationname", "enablenetworkaccess"} <= params
+    assert "credential" not in params
+    others = [c for c in calls if c["Command"] != "New-PSSession"]
+    assert {c["Command"] for c in others} <= {"Invoke-Command"}
+    assert all({p.lower() for p in c["Parameters"]} == {"scriptblock", "session"} for c in others)
+
+
 def test_operation_lists_agree(cases):
     table = cases["OperationTable"]
     assert cases["ValidateSets"]["RefuteVm/RefuteVm.psm1"] == table

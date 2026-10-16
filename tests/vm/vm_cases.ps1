@@ -422,5 +422,18 @@ $psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.p
 $pin = $psrc.ModulesToImport[0]
 Add-Case 'role capability pins the module version and GUID' ($pin.ModuleName -eq 'RefuteVm' -and $pin.RequiredVersion -eq $psd1.ModuleVersion -and $pin.GUID -eq $psd1.GUID)
 
+# The remoting calls of Invoke-RefuteVm.ps1 and their parameter names, from the AST: the
+# endpoint (AccessMode Local) needs -EnableNetworkAccess and implicit credentials.
+$invokeAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'Invoke-RefuteVm.ps1'), [ref]$null, [ref]$null)
+$out.InvokeRemoting = @($invokeAst.FindAll({ param($n) $n -is [System.Management.Automation.Language.CommandAst] }, $true) |
+        Where-Object { @('New-PSSession', 'Enter-PSSession', 'Invoke-Command', 'New-CimSession') -contains $_.GetCommandName() } |
+        ForEach-Object {
+            [ordered]@{
+                Command    = $_.GetCommandName()
+                Parameters = @($_.CommandElements | Where-Object { $_ -is [System.Management.Automation.Language.CommandParameterAst] } |
+                        ForEach-Object { $_.ParameterName } | Sort-Object)
+            }
+        })
+
 $out.Cases = $cases.ToArray()
 ConvertTo-RefuteCanonicalJson $out
