@@ -74,17 +74,25 @@ interruption of the run, not a fault of the hook. The observed call has already
 returned, and nothing it returned is changed. Without the final record, the gate is
 ``INCONCLUSIVE``.
 
+**Installation and the log.** A claim installs the hook through an allowed patch, fixed
+and hashed before the lock (W3.12b). The patch calls ``install()``, which writes the log to
+``HOOK_LOG``, relative to the run's working directory (one line per record,
+``record_line``), and registers ``finish()`` with ``atexit``. The gate reads that file
+from the run's own folder with ``read_log`` (strict JSON lines; a line cut short, a
+repeated key or a non-finite constant is a failure) and then ``committed_events``.
+
 This module uses the standard library only, because it runs in the paper's container,
 where Refute is not installed. Its labels hash is the canonical form of
-``refute.core.canonical`` for lists of integers and strings, which tests check. A claim
-installs it through an allowed patch, fixed and hashed before the lock (W3.12b).
+``refute.core.canonical`` for lists of integers and strings, which tests check.
 """
 
 from __future__ import annotations
 
+import atexit
 import functools
 import hashlib
 import json
+import os
 import sys
 import threading
 import types
@@ -92,6 +100,7 @@ import unicodedata
 from collections.abc import Callable
 from typing import Any
 
+HOOK_LOG = "refute-hook/coverage.jsonl"  # relative to the run's working directory
 HOOK_FAILURE = "hook_failure"
 COMMITTED = "committed"
 FINAL = "final"
@@ -394,3 +403,66 @@ def committed_events(records: list[Any]) -> tuple[list[dict[str, Any]], list[str
     if failures:
         return [], failures
     return [events[s] for s in sorted(events)], failures
+
+
+# ---- installation, and the log the gate reads ---------------------------------------------------
+
+
+def file_sink(path: str) -> Callable[[dict[str, Any]], None]:
+    """A sink that appends each record to ``path`` as one line (``record_line``) and
+    flushes it to the operating system before returning."""
+    folder = os.path.dirname(path)
+    if folder:
+        os.makedirs(folder, exist_ok=True)
+
+    def sink(record: dict[str, Any]) -> None:
+        with open(path, "ab") as stream:
+            stream.write(record_line(record))
+            stream.flush()
+
+    return sink
+
+
+def install(path: str = HOOK_LOG) -> Observer:
+    """What the allowed patch calls: an observer writing to ``path`` (relative to the
+    run's working directory), whose ``finish()`` runs at exit."""
+    observer = Observer(file_sink(path))
+    atexit.register(observer.finish)
+    return observer
+
+
+def _unique_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in out:
+            raise ValueError("a repeated key")
+        out[key] = value
+    return out
+
+
+def _no_constant(name: str) -> Any:
+    raise ValueError("a non-finite constant")
+
+
+def read_log(data: bytes) -> tuple[list[Any], list[str]]:
+    """The records of a hook log, one JSON object per line, each ending with a newline.
+    Returns the records and every failure: a line that is not UTF-8 JSON, a repeated key,
+    a non-finite constant, or a last line cut short (no newline). With a failure the
+    records are empty."""
+    if not data:
+        return [], ["the hook log is empty"]
+    if not data.endswith(b"\n"):
+        return [], ["the last line of the hook log is cut short"]
+    records: list[Any] = []
+    for number, line in enumerate(data.split(b"\n")[:-1], start=1):
+        try:
+            records.append(
+                json.loads(
+                    line.decode("utf-8"),
+                    object_pairs_hook=_unique_pairs,
+                    parse_constant=_no_constant,
+                )
+            )
+        except (UnicodeDecodeError, ValueError):
+            return [], [f"line {number} of the hook log is not a record"]
+    return records, []

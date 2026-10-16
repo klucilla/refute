@@ -24,8 +24,11 @@ classified; the margin M and the V22 maxima.
 4. the same extracted token feeds ``metric_recompute``; values are converted to the
    claim's unit before any predicate; differences keep the claim's orientation;
 5. gates from evidence: ``data_present`` checks every declared split against its
-   expected size, and ``metric_extracted`` claims examples only when the saved
-   predictions show them (a printed number does not);
+   expected size, and ``metric_extracted`` claims examples only through the coverage
+   routes the claim declared (1.5a: saved predictions, sufficient statistics, a printed
+   count, the hook), for every base seed and every method, all agreeing; a printed
+   value alone shows no examples, and with no route that closes the chain the gate is
+   ``INCONCLUSIVE``;
 6. the coverage minimums of 1.0.7 come from the resolved claim;
 7. an attack keeps its valid failures when some of its runs did not end (its
    prerequisites are the runs and values it used);
@@ -47,14 +50,17 @@ the docker backend.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from collections.abc import Callable, Hashable, Mapping, Sequence
 from dataclasses import dataclass, field
 from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from refute.core import budget as bg
+from refute.core.canonical import canonical_bytes
 from refute.core.paper import (
     BASE_GATES,
     BASE_REPRODUCTION,
@@ -71,6 +77,7 @@ from refute.core.paper import (
 )
 from refute.core.verdict import PaperVerdict, Severity, TestResult, TestStatus
 from refute.packs.ml import attacks as at
+from refute.packs.ml import coverage_hook as ch
 from refute.packs.ml import extract as ex
 from refute.packs.ml import ladder as ld
 from refute.packs.ml import orchestrate as orc
@@ -274,10 +281,35 @@ def _argv(ctx: ClaimContext, role: str, seed: int | None, extra: Sequence[str]) 
     return argv + list(extra)
 
 
-def _outputs(ctx: ClaimContext, role: str, seed: int | None) -> list[str]:
-    """The files a run of ``role`` is read from: its extraction file (``from: file``) and,
-    for a base run when ``metric_recompute`` applies, its predictions."""
+def _read_roles(ctx: ClaimContext, role: str) -> list[str]:
+    """The roles whose readings a container of ``role`` carries: the reference too when it
+    comes from the same runs as the method."""
+    if role == "method" and ctx.comparison is not None and not ctx.separate_reference:
+        return ["method", "reference"]
+    return [role]
+
+
+def _coverage_files(ctx: ClaimContext, role: str, seed: int | None) -> list[str]:
+    """The files the coverage routes of ``role`` read from a run's folder: the count files
+    of (d) and (a), and the hook's log of (b)."""
     out = []
+    for name in _read_roles(ctx, role):
+        evidence = ctx.claim["coverage_evidence"].get(name)
+        for route in (evidence or {}).get("routes", []):
+            for field_name in ("count", "correct", "total"):
+                selector = route.get(field_name)
+                if selector is not None and selector["from"] == "file":
+                    out.append(selector["file"].replace("{seed}", str(seed)))
+            if route["route"] == "hook":
+                out.append(ch.HOOK_LOG)
+    return out
+
+
+def _outputs(ctx: ClaimContext, role: str, seed: int | None) -> list[str]:
+    """The files a run of ``role`` is read from: its extraction file (``from: file``), the
+    files of its coverage routes and, for a base run when ``metric_recompute`` applies,
+    its predictions."""
+    out = _coverage_files(ctx, role, seed)
     run = ctx.claim["run"] if role == "method" else ctx.comparison["reference_run"]
     readings = [run["metric_extraction"]]
     if role == "method" and ctx.comparison is not None and not ctx.separate_reference:
@@ -484,23 +516,274 @@ def run_completed(values: Sequence[Value]):
     )
 
 
-def metric_extracted(ctx: ClaimContext, values: Sequence[Value], examples: int | None):
-    """Every base run gave a finite value for every reading. ``examples`` is the number
-    of examples the saved predictions show for every run, or None: a printed number does
-    not show how many examples it was computed on (requirement 5), so without that
-    evidence the gate cannot pass (coverage undeclared)."""
+# ---- the coverage of metric_extracted (1.5a, W3.12a to W3.12e) ---------------------------------
+
+_COUNT = re.compile(r"^\d+$")
+
+
+@dataclass(frozen=True)
+class RouteReading:
+    """What one coverage route showed for one base run of one method: the examples it
+    counted (None: the route gave no evidence, with its reason), what it read (to tell two
+    pieces of evidence apart), and whether it found a conflict or a failure of the hook,
+    which makes the gate ``INCONCLUSIVE`` whatever the other routes show."""
+
+    route: str
+    count: int | None = None
+    identity: str = ""
+    note: str = ""
+    blocking: bool = False
+
+
+def _relative_file(spec: str, seed: int | None) -> PurePosixPath:
+    relative = spec.replace("{seed}", str(seed)) if "{seed}" in spec else spec
+    posix = PurePosixPath(relative)
+    if posix.is_absolute() or ".." in posix.parts or "\\" in relative:
+        raise ex.ExtractionError(f"a coverage file must be relative, without '..': {relative!r}")
+    return posix
+
+
+def _position(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | None) -> str:
+    """Where a selector read its token: the JSON path's steps, the CSV cell, or the span of
+    the regular expression's group in its text."""
+    if selector.get("json_path") is not None:
+        return "json:" + json.dumps(ex.parse_json_path(selector["json_path"]))
+    if selector.get("csv") is not None:
+        c = selector["csv"]
+        return f"csv:{c['column']}:{c['row']['column']}={c['row']['equals']}"
+    text = log
+    if selector["from"] == "file":
+        path = workdir.joinpath(*_relative_file(selector["file"], seed).parts)
+        text = path.read_text(encoding="utf-8")
+    regex = selector["regex"]
+    match = next(re.finditer(regex["pattern"], text))
+    return f"regex:{match.start(regex['group'])}-{match.end(regex['group'])}"
+
+
+def _count(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | None):
+    """One count, read like ``metric_extraction`` reads a value (W3.11), and where it was
+    read. The token must be a non-negative integer."""
+    got = ex.extract(dict(selector), workdir, log, seed)
+    if not _COUNT.match(got.token):
+        raise ex.ExtractionError(f"{got.source}: {got.token!r} is not a count of examples")
+    return int(got.token), f"{got.source}|{_position(selector, workdir, log, seed)}"
+
+
+def _inside(value: Decimal, token: str, token_unit: str, rounding: str) -> bool:
+    """Whether a fraction lies in the interval of values that print as ``token`` (section
+    1.7), widened by the epsilon of the decision table."""
+    interval = rc.printed_interval(token, rounding)
+    x = value * rc.unit_factor("fraction", token_unit)
+    eps = Decimal("1e-9") * max(Decimal(1), abs(x))
+    return interval.lower - eps <= x <= interval.upper + eps
+
+
+def _labels_sha256(values: Sequence[Any]) -> str | None:
+    """The SHA-256 of the canonical JSON array of labels (W3.12d), or None when a label is
+    not an int or a str."""
+    out = []
+    for v in values:
+        if type(v) is not int and type(v) is not str:
+            return None
+        out.append(v)
+    return hashlib.sha256(canonical_bytes(out)).hexdigest()
+
+
+@dataclass(frozen=True)
+class _RunEvidence:
+    """One base run of one method, as the coverage routes see it."""
+
+    role: str  # the method whose evidence this is
+    seed: int | None
+    workdir: Path  # the folder of the container that ran it
+    log: str
+    token: ex.Extracted | None  # what metric_extraction read for this method
+    token_unit: str
+
+
+def _route_reading(
+    ctx: ClaimContext, route: Mapping[str, Any], evidence: Mapping[str, Any], run: _RunEvidence
+) -> RouteReading:
+    name = route["route"]
+    rounding = (
+        ctx.claim["metric_recompute"]["printed_rounding"]
+        if ctx.claim["metric_recompute"]["applies"]
+        else "unknown"  # no rounding declared: the interval that holds both readings
+    )
+    identity = evidence.get("split_identity") or {}
+    try:
+        if name == "printed_count":
+            count, where = _count(route["count"], run.workdir, run.log, run.seed)
+            return RouteReading(name, count, where)
+        if name == "sufficient_statistics":
+            correct, where_c = _count(route["correct"], run.workdir, run.log, run.seed)
+            total, where_t = _count(route["total"], run.workdir, run.log, run.seed)
+            if total < 1 or correct > total:
+                return RouteReading(name, note=f"correct {correct} of total {total}", blocking=True)
+            right = correct if ctx.claim["metric"]["name"] == "accuracy" else total - correct
+            if run.token is not None and not _inside(
+                Decimal(right) / Decimal(total), run.token.token, run.token_unit, rounding
+            ):
+                return RouteReading(
+                    name,
+                    note=f"{right}/{total} is not the printed {run.token.token}",
+                    blocking=True,
+                )
+            return RouteReading(name, total, f"{where_c}+{where_t}")
+        if name == "saved_predictions":
+            mr = ctx.claim["metric_recompute"]
+            file = mr["predictions"]["file"].replace("{seed}", str(run.seed))
+            method_name = (ctx.comparison or {}).get(run.role)
+            if method_name is not None:
+                file = file.replace("{method}", str(method_name))
+            path = run.workdir.joinpath(*_relative_file(file, run.seed).parts)
+            data = rc.read_predictions(
+                path, mr["predictions"]["format"], mr["predictions"]["fields"]
+            )
+            labels = data["y_true"].tolist()
+            digest = _labels_sha256(labels)
+            if digest != identity.get("labels_sha256"):
+                # another split, or the claim's split in another order (W3.12d, limitation)
+                return RouteReading(name, note="the saved labels are not the split's, in its order")
+            return RouteReading(name, len(labels), f"file:{file}")
+        return _hook_reading(ctx, route, identity, run, rounding)
+    except (ex.ExtractionError, rc.RecomputeError, OSError, ValueError, KeyError) as exc:
+        return RouteReading(name, note=str(exc))
+
+
+def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> RouteReading:
+    """(b): exactly one committed event of the run's hook log bound to the metric (the
+    declared function), the split (its labels), the run, and the selected evaluation (the
+    cited call site). Any failure of the hook makes the gate INCONCLUSIVE (W3.12c)."""
+    path = run.workdir.joinpath(*PurePosixPath(ch.HOOK_LOG).parts)
+    if not path.is_file():
+        return RouteReading("hook", note="no hook log")
+    records, failures = ch.read_log(path.read_bytes())
+    if not failures:
+        events, failures = ch.committed_events(records)
+    if failures:
+        return RouteReading("hook", note="; ".join(failures), blocking=True)
+    site = route["call_site"]
+    root = run.workdir.resolve()
+
+    def bound(event: Mapping[str, Any]) -> bool:
+        try:
+            file = Path(event["call_site"]["file"]).resolve().relative_to(root).as_posix()
+        except ValueError:
+            return False
+        first, last = site["lines"]
+        return (
+            event["function"] == route["function"]
+            and file == site["file"]
+            and first <= event["call_site"]["line"] <= last
+            and event["labels_sha256"] == identity.get("labels_sha256")
+        )
+
+    matching = [e for e in events if bound(e)]
+    if len(matching) != 1:
+        return RouteReading(
+            "hook", note=f"{len(matching)} events bound to the metric, split and call site"
+        )
+    event = matching[0]
+    if event["result"] != "unread" and run.token is not None:
+        try:
+            agrees = _inside(Decimal(event["result"]), run.token.token, run.token_unit, rounding)
+        except (ArithmeticError, ValueError):
+            agrees = False
+        if not agrees:
+            return RouteReading(
+                "hook",
+                note=f"the call returned {event['result']}, not the printed {run.token.token}",
+                blocking=True,
+            )
+    return RouteReading("hook", event["n_examples"], f"hook:{event['seq']}")
+
+
+def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records):
+    """Every declared route of every base run of every method (W3.12a): a list of readings
+    by (seed, method)."""
+    out: dict[tuple[int | None, str], list[RouteReading]] = {}
+    for seed, by_role in values.items():
+        for role in ["method", "reference"] if ctx.comparison is not None else ["method"]:
+            holder_role = (
+                "reference" if role == "reference" and ctx.separate_reference else "method"
+            )
+            value = by_role[holder_role]
+            evidence = ctx.claim["coverage_evidence"][role]
+            if value.outcome is not orc.Outcome.COMPLETED:
+                out[(seed, role)] = [
+                    RouteReading(r["route"], note=value.reason) for r in evidence["routes"]
+                ]
+                continue
+            cid = ids[(seed, holder_role)]
+            record = records[cid]
+            run_spec = ctx.claim["run"] if role == "method" else ctx.comparison["reference_run"]
+            run = _RunEvidence(
+                role,
+                seed,
+                harness.workspaces[cid],
+                record.result.log_path.read_text(encoding="utf-8", errors="replace"),
+                value.tokens.get(role),
+                run_spec["metric_extraction"]["unit"],
+            )
+            out[(seed, role)] = [_route_reading(ctx, r, evidence, run) for r in evidence["routes"]]
+    return out
+
+
+def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
+    """Every base run gave a finite value for every reading, and its coverage is shown
+    (1.5a): for every base seed and every method, at least one declared route gives a count
+    of examples; every route that gives one agrees (``all_must_agree``) with the others and
+    with the split's declared size; no route found a conflict or a failure of the hook; and,
+    with the same runs, the method and the reference never count one piece of evidence. A
+    printed value alone shows no examples: with no route that closes the chain, the gate
+    is ``INCONCLUSIVE``, never a raw PASS."""
     roles = ["method", "reference"] if ctx.comparison is not None else ["method"]
     errors = [f"{r}: {v.errors[r]}" for v in values for r in roles if r in v.errors]
     if errors:
         gate = _gate("metric_extracted", TestStatus.FAIL, "; ".join(errors), 0, "examples")
         return gate, GateFailure(FailureCause.UNDETERMINED)
-    if examples is None:
-        # no PASS without examined data: INCONCLUSIVE, never a raw PASS (Codex review)
-        message = "every run printed a value; no saved predictions show the examples"
-        gate = _gate("metric_extracted", TestStatus.INCONCLUSIVE, message, 0, "examples")
+    expected = ctx.claim["metric"]["n_examples"]
+    problems, shown = [], {}
+    for (seed, role), found in readings.items():
+        where = f"{role} seed={seed}"
+        for r in found:
+            if r.blocking:
+                problems.append(f"{where}: {r.route}: {r.note}")
+        counts = {r.route: r.count for r in found if r.count is not None}
+        shown[where] = sorted(counts)
+        if not counts:
+            notes = "; ".join(f"{r.route}: {r.note}" for r in found)
+            problems.append(f"{where}: no route shows the examples ({notes})")
+        elif len(set(counts.values())) > 1:
+            problems.append(f"{where}: the routes disagree on the count {counts}")
+        elif next(iter(counts.values())) != expected:
+            problems.append(
+                f"{where}: {next(iter(counts.values()))} examples, the split declares {expected}"
+            )
+    if ctx.comparison is not None and not ctx.separate_reference:
+        for seed in {s for s, _ in readings}:
+            mine = {r.identity for r in readings[(seed, "method")] if r.count is not None}
+            theirs = {r.identity for r in readings[(seed, "reference")] if r.count is not None}
+            if mine & theirs:
+                problems.append(f"seed={seed}: the method and the reference count one evidence")
+    if problems:
+        gate = _gate(
+            "metric_extracted",
+            TestStatus.INCONCLUSIVE,
+            "; ".join(problems),
+            0,
+            "examples",
+            {"routes_with_evidence": shown},
+        )
         return gate, GateFailure(FailureCause.UNDETERMINED)
     return _gate(
-        "metric_extracted", TestStatus.PASS, "every run gave its value", examples, "examples"
+        "metric_extracted",
+        TestStatus.PASS,
+        "every run gave its value; its examples are shown by the declared routes",
+        expected,
+        "examples",
+        {"routes_with_evidence": shown},
     ), None
 
 
@@ -521,7 +804,7 @@ def _recompute(
     ctx: ClaimContext, harness: Harness, base: Mapping[int | None, Mapping[str, Value]], ids
 ):
     """``metric_recompute`` over every base run (1.7), with the same token the base read
-    (requirement 4). Returns the check and the examples shown by every run (or None)."""
+    (requirement 4)."""
     mr = ctx.claim["metric_recompute"]
     conv_raw = mr["convention"]
     labels = conv_raw.get("labels")
@@ -542,7 +825,7 @@ def _recompute(
         "method": (ctx.comparison or {}).get("method"),
         "reference": (ctx.comparison or {}).get("reference"),
     }
-    outcomes, expected, shown = [], [], []
+    outcomes, expected = [], []
     for seed, by_role in base.items():
         for role, run in methods:
             label = f"seed={seed}" if ctx.comparison is None else f"{names[role]}:seed={seed}"
@@ -569,7 +852,6 @@ def _recompute(
                     rc.RunOutcome(label, TestStatus.INCONCLUSIVE, f"predictions: {exc}")
                 )
                 continue
-            shown.append(len(next(iter(data.values()))) if data else 0)
             outcomes.append(
                 rc.recompute_run(
                     label,
@@ -583,9 +865,7 @@ def _recompute(
                     harness.second,
                 )
             )
-    result = rc.metric_recompute_result(outcomes, expected)
-    examples = n_examples if len(shown) == len(expected) and set(shown) == {n_examples} else None
-    return result, examples
+    return rc.metric_recompute_result(outcomes, expected)
 
 
 # ---- the attacks -----------------------------------------------------------------------------
@@ -843,15 +1123,12 @@ class PaperIntegration:
         checks.append(gate)
         if failure is not None:
             failures["run_completed"] = failure
-        recompute_applies = ctx.claim["metric_recompute"]["applies"]
-        examples = None
+        ids = {(seed, role): cid for cid, role, seed, _ in _runs(ctx, "base")}
         recompute_result = None
-        if recompute_applies:
-            ids = {}
-            for cid, role, seed, _ in _runs(ctx, "base"):
-                ids[(seed, role)] = cid
-            recompute_result, examples = _recompute(ctx, self.harness, values, ids)
-        gate, failure = metric_extracted(ctx, flat, examples)
+        if ctx.claim["metric_recompute"]["applies"]:
+            recompute_result = _recompute(ctx, self.harness, values, ids)
+        readings = coverage_readings(ctx, self.harness, values, ids, records)
+        gate, failure = metric_extracted(ctx, flat, readings)
         checks.append(gate)
         if failure is not None:
             failures["metric_extracted"] = failure
