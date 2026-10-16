@@ -699,25 +699,45 @@ declared in the claim before the lock. With no route that closes the chain, the 
 
   **The hook is observation only** (the maintainer's addition of 2026-10-16). Its
   reference implementation is `src/refute/packs/ml/coverage_hook.py`, standard library
-  only, as it runs in the paper's container. It:
-  - calls the observed function with exactly the arguments it received, the same objects
-    and unchanged;
-  - returns exactly the object the function returned, or lets exactly the exception it
-    raised propagate;
-  - reads its first argument only after the call, and never reads an iterator, which
-    reading would consume.
+  only, as it runs in the paper's container.
+  - **The call:** the hook calls the observed function with exactly the arguments it
+    received (the same objects, untouched before the call) and returns exactly the
+    object the function returned, or lets exactly the exception it raised propagate.
+  - **What it runs after the call:** only operations whose code is known.
+    - It reads the labels only from an argument whose type is exactly a `list` or
+      `tuple` of `int` or `str`, or exactly a `numpy.ndarray`, testing the type with
+      `type()` alone.
+    - Any other argument (an iterator, a subclass, an unknown object) is not touched: no
+      `__iter__`, `__len__` or attribute of it runs, and a failure record is written
+      instead.
+    - It records the returned value only for an exact `int`, `float` or numpy number.
+      For any other type it records only the type name, and that object's `__repr__`
+      never runs.
+  - **The function's name:** the event names the function by the public name declared
+    when the hook is installed (for example `sklearn.metrics.accuracy_score`), which the
+    gate compares with the claim's `function`.
 
   **Any failure of the hook itself makes the gate `INCONCLUSIVE`**, and never changes the
-  call:
-  - an argument it cannot read gives a failure record;
-  - a sink that fails leaves no event.
+  call. An event counts only when the commit record that follows it was written:
+  - an argument the hook does not read gives a failure record;
+  - a failure while it reads the call site gives a failure record;
+  - a sink that fails, even after it wrote the event, leaves the event without its
+    commit record;
+  - metadata of the function that cannot be copied never stops the installation.
 
-  `tests/test_ml_coverage_hook.py` shows that:
-  - the value returned with the hook is identical to the value without it (the same
-    object, the same type and text);
+  An interrupt (`KeyboardInterrupt`, `SystemExit`) raised during the hook's own work is
+  not swallowed: the run is interrupted, after the observed call has returned.
+
+  `tests/test_ml_coverage_hook.py` shows each of these cases:
+  - the value returned with and without the hook, for a list, a tuple and a numpy array,
+    has the same type and text, and the returned object is the same one;
   - the arguments are the same objects;
-  - an iterator is not consumed;
-  - each kind of hook failure leaves the call unchanged.
+  - a list subclass whose protocols count their calls is refused with zero calls, an
+    iterator is not consumed, and an unknown result's `__repr__` is not called;
+  - a sink that writes and then fails leaves an uncommitted event, and a failing
+    `sys._getframe` gives a failure record, both with the call unchanged;
+  - metadata that cannot be copied is tolerated, and the function's own exception and
+    an interrupt both propagate.
 - **W3.12d The link and the split.** The link is never "the last call", nearness in time,
   or an equal value. An equal value is a consistency check only: a different value is a
   conflict.
@@ -743,10 +763,12 @@ declared in the claim before the lock. With no route that closes the chain, the 
 
   **Limitation** (the maintainer's addition of 2026-10-16). The labels hash follows the
   order of the examples. A repository that evaluates the split in another order (a
-  shuffled loader, for example) gives a different hash. The routes that see labels, (c)
-  and (b), then cannot identify the split, and the gate is `INCONCLUSIVE` by those
-  routes: never `PASS`, and never a failure of the claim. The routes that do not see
-  labels, (d) and (a), are not affected.
+  shuffled loader, for example) gives a different hash when that order changes the
+  sequence of labels. Swapping two examples of the same class keeps the sequence, and
+  the hash. With a different hash, the routes that see labels, (c) and (b), cannot
+  identify the split, and the gate is `INCONCLUSIVE` by those routes: never `PASS`, and
+  never a failure of the claim. The routes that do not see labels, (d) and (a), are not
+  affected.
 - **W3.12e Conflicting evidence.**
   - **The rule:** `conflict_rule: all_must_agree`, the only rule of v0.3, written out by
     the resolution.
@@ -817,8 +839,11 @@ declared in the claim before the lock. With no route that closes the chain, the 
     cited code that defines them, not by example identifiers, which predictions files
     and metric calls usually do not carry;
   - (c) and (b) do not apply when two splits have equal labels;
-  - the labels hash follows the order of the examples, so a split evaluated in another
-    order is `INCONCLUSIVE` by (c) and (b) (the limitation in W3.12d).
+  - the labels hash follows the order of the examples, so a split evaluated in an order
+    that changes the sequence of labels is `INCONCLUSIVE` by (c) and (b) (the
+    limitation in W3.12d);
+  - the hook reads only exact known types and commits each event after the sink
+    accepted it (W3.12c).
 - **Files and selectors:**
   - `{seed}` in count files when there are several runs;
   - the selector checks (`json_path`, the regex group), which also tighten
