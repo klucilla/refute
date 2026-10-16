@@ -18,7 +18,17 @@ describes a tested setup.
   cache, and a differencing disk per paper so that every paper starts from the same
   clean state. No shared folders; Enhanced Session off; Guest Service Interface off.
   Results are pulled by the host over SSH with a key used only for this VM.
-- The maintainer builds the VM (it needs administrator rights).
+- **The VM is built and operated through the approved JEA model**
+  ([scripts/vm/README.md](../scripts/vm/README.md)).
+  - **The endpoint:** versioned scripts are run by a local JEA endpoint, `RefuteVm`. It
+    is a restricted session that exposes two functions and runs as a virtual account in
+    Hyper-V Administrators only.
+  - **Operations:** each operation is simulated first and runs only with the
+    maintainer's explicit approval of that operation, given by its plan hash.
+  - **The maintainer's steps:** the maintainer registers the endpoint and runs every
+    step that needs administrator rights; the agent's account has no Hyper-V rights.
+  - **No validation by construction:** building the VM does not validate its isolation.
+    That is the work of the WP6 acceptance tests (W6.4 to W6.6).
 - Every sandboxed run is started by the maintainer, or with the maintainer's explicit
   approval for that paper. An agent never executes repository code on the host.
 
@@ -28,8 +38,9 @@ describes a tested setup.
   local network and private or special address ranges (IPv4 RFC 1918 and link-local;
   IPv6 unique-local, link-local and the other special-purpose ranges of the IANA
   registry) is blocked by access control lists on the VM's network adapter port in
-  Hyper-V, set by the maintainer on Windows. A firewall inside the guest is only a
-  second layer, since a compromised guest could change it.
+  Hyper-V. The maintainer sets them on Windows, as Administrator: this is a step
+  outside the endpoint, which has no operation for it. A firewall inside the guest is
+  only a second layer, since a compromised guest could change it.
 - **Build egress only through an allowlist.** During the build, the VM reaches the
   internet only through a controlled intermediary (a forwarding proxy) with an
   allowlist of declared destinations: package registries and the declared data hosts.
@@ -108,10 +119,11 @@ after the lock are forbidden.
 - **Containers (inside the VM):** `docker update --cpus N` changes only the CPU quota,
   never `--cpuset-cpus`; `docker pause` and `docker unpause` freeze and resume the
   processes.
-- **Whole VM (Windows, administrator):** `Set-VMProcessor -Maximum`, `Suspend-VM` /
-  `Resume-VM`, `Save-VM` / `Start-VM`, in a small documented script run by the
-  maintainer. Whether `-Maximum` can change while the VM runs is to be verified on the
-  VM before the protocol.
+- **Whole VM:** through the operations of the JEA endpoint: `SetProcessorMaximum`
+  (`Set-VMProcessor -Maximum`), `SuspendVm` / `ResumeVm` and `SaveVm` / `StartVm`.
+  Each is simulated first and runs with the maintainer's explicit approval of that
+  operation (scripts/vm/README.md). Whether `-Maximum` can change while the VM runs is
+  to be verified on the VM before the protocol.
 - **Planned commands:** `refute throttle --cpus N`, `refute throttle --reset`,
   `refute pause`, `refute resume`, `refute status`. Every throttle, pause and resume
   is to be recorded as an event with a UTC timestamp in `run/events.jsonl`; a

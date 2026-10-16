@@ -20,8 +20,19 @@ the maintainer sends every message from their own account.
    committed and pushed at once, with no content. The core never changes after the
    seal.
 2. **Annexes.** Reviewer reports, the `reply/` records and the authors' reply are
-   annexes, each with its own manifest that cites the hash of the sealed core. The
-   published dossier lets anyone verify the original core and each annex.
+   annexes, each with its own manifest (`ANNEX.json`) that cites the hash of the sealed
+   core. When an annex is added, the SHA-256 of its `ANNEX.json` is committed and pushed
+   at once, with no content, like the seal hash (plan, section 9.1). The published
+   dossier lets anyone verify the original core and each annex it contains.
+
+   **What the dossier alone cannot show.** An annex that is replaced, or removed
+   completely, is detected only by comparing the dossier with the complete public list
+   of annex manifest hashes:
+   - every published `ANNEX.json` hash must be in the dossier;
+   - every annex in the dossier must have its hash in that list.
+
+   `refute check-dossier` does not perform this comparison: it verifies the dossier
+   from the inside, so a dossier from which a whole annex was removed still passes it.
 3. **Embargo.** Until a paper's results may be published, every public commit or
    issue about it contains only hashes or neutral metadata.
 
