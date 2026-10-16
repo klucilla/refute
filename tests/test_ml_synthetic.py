@@ -151,17 +151,22 @@ def test_what_runs_is_the_checked_command_by_absolute_paths(tmp_path, monkeypatc
     original = sb.subprocess.Popen
 
     def recording(argv, *args, **kwargs):
-        seen.append((list(argv), kwargs.get("cwd")))
+        seen.append((list(argv), kwargs.get("env")))
         return original(argv, *args, **kwargs)
 
     monkeypatch.setattr(sb.subprocess, "Popen", recording)
-    assert sb.SubprocessBackend([auth]).run(spec(auth.root, PROBE)).exit_code == 0
-    launched = [argv for argv, _ in seen if str(auth.root / "probe.py") in argv]
+    # variables that would select code outside the catalog never reach the process
+    env = {**os.environ, "LD_PRELOAD": str(auth.root / "out" / "x.so"), "PYTHONPATH": "out"}
+    env["OMP_NUM_THREADS"] = "1"
+    assert sb.SubprocessBackend([auth]).run(spec(auth.root, PROBE, env=env)).exit_code == 0
+    launched = [(argv, e) for argv, e in seen if str(auth.root / "probe.py") in argv]
     assert launched, seen
-    argv = launched[0]
+    argv, launched_env = launched[0]
     script = argv.index(str(auth.root / "probe.py"))
     assert argv[script - 1] == "-I" and argv[script + 1 :] == ["exit", "0"]
     assert sys.executable in argv
+    assert set(launched_env) <= sy.LAUNCH_ENV_KEYS and launched_env["OMP_NUM_THREADS"] == "1"
+    assert "LD_PRELOAD" not in launched_env and "PYTHONPATH" not in launched_env
 
 
 def test_the_folder_must_be_given_exactly_and_the_log_outside_it(tmp_path):

@@ -144,9 +144,9 @@ class SubprocessBackend:
         # (item E); what runs is the checked command, by absolute paths, in the fixture
         status = spec.log_path.with_name(spec.log_path.name + ".status.json")
         launch = synthetic.check_run(
-            spec.argv, spec.workdir, [spec.log_path, status], self._authorized
+            spec.argv, spec.workdir, spec.env, [spec.log_path, status], self._authorized
         )
-        spec = replace(spec, argv=launch, workdir=Path(spec.workdir))
+        spec = replace(spec, argv=launch.argv, env=launch.env, workdir=Path(spec.workdir))
         spec.log_path.parent.mkdir(parents=True, exist_ok=True)
         with spec.log_path.open("wb") as log:
             if sys.platform == "win32":
