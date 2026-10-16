@@ -562,6 +562,28 @@ def test_a_comparison_pairs_its_methods_by_seed(tmp_path):
     assert base["metric_extracted"].status is TestStatus.INCONCLUSIVE
 
 
+def test_methods_are_paired_by_seed_not_by_position_of_completion():
+    """Distinct values per seed tell a correct pairing from a swapped one: seed 1 gives
+    90 - 80 = 10, seed 2 gives 91 - 85 = 6 (swapped references would give 5 and 11)."""
+    from decimal import Decimal
+
+    ctx = ig.ClaimContext(
+        {"comparison": {"reference_run": {"argv": ["x"]}, "orientation": "method_minus_reference"}},
+        {},
+    )
+
+    def value(role, v):
+        return ig.Value(
+            ig.orc.Outcome.COMPLETED, "", {role: ig.ex.Extracted(str(v), Decimal(v), "log")}
+        )
+
+    by_seed = {
+        2: {"reference": value("reference", 85), "method": value("method", 91)},
+        1: {"method": value("method", 90), "reference": value("reference", 80)},
+    }
+    assert ig._base_series(ctx, by_seed) == [Decimal(6), Decimal(10)]
+
+
 def test_a_missing_reference_value_leaves_its_seed_without_a_difference():
     from decimal import Decimal
 

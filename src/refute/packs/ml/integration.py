@@ -892,6 +892,14 @@ class PaperIntegration:
                 return ld.RungResult(orc.Outcome.NOT_EXECUTED, None, "not reached")
             if record.result is None:
                 return ld.RungResult(orc.Outcome.REFUTE_ERROR, None, record.error)
+            outcome, reason = orc._outcome([record])  # noqa: SLF001
+            if outcome in (
+                orc.Outcome.BUDGET_EXHAUSTED,
+                orc.Outcome.OPERATIONAL_GUARD,
+                orc.Outcome.REFUTE_ERROR,
+            ):
+                # a stop on Refute's side keeps its own cause, whatever a classifier says
+                return ld.RungResult(outcome, None, reason)
             if cid not in self._rung_results:  # a record the fallback did not classify
                 return ld.RungResult(orc.Outcome.REFUTE_ERROR, None, "rung not classified")
             return self._rung_results[cid]

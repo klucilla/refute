@@ -98,8 +98,9 @@ class Step:
     one ``fallback(record)`` classifies it once: ``"completed"`` (built: the step
     completes), ``"next"`` (an error of the procedure itself: the next container is tried;
     after the last one the step fails) or ``"stop"`` (anything else: the step ends with
-    that container's own outcome, or FAILED if it exited 0). Every container that ran is
-    recorded and accounted."""
+    that container's own outcome, or FAILED if it exited 0). A container stopped on
+    Refute's side (threshold, guard, Refute error) ends the step with that outcome and is
+    never classified. Every container that ran is recorded and accounted."""
 
     name: str
     containers: Sequence[Container]
@@ -382,6 +383,14 @@ class PaperRunner:
             problems += self._finish(account, [record])
             outcome, reason = _outcome([record])
             if record.result is None or problems:
+                break
+            if outcome in (
+                Outcome.BUDGET_EXHAUSTED,
+                Outcome.OPERATIONAL_GUARD,
+                Outcome.REFUTE_ERROR,
+            ):
+                # a stop on Refute's side is never overridden by a classification: the
+                # step ends with it, built or not (Codex review of #110)
                 break
             try:
                 decision = step.fallback(record)
