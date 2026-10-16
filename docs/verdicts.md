@@ -87,6 +87,13 @@ cause that applies to the gate:
 
 Anything else is `INCONCLUSIVE`.
 
+This mapping per gate is not in plan section 8, which states the attribution rule only.
+It was introduced by `314a420` (2026-10-14); `c5d8b12` (2026-10-16) limited the
+documented command to `data_present`; `c3d9514` (2026-10-16) required the HTTP evidence
+for an absent artifact, whatever the coverage. The maintainer confirmed this document as
+the record of the rule on 2026-10-16, at the acceptance of WP1 (#44); plan section 8 is
+unchanged.
+
 **A failed run or metric extraction is `INCONCLUSIVE` by default** (decided by the
 maintainer on 2026-10-16). At `run_completed` and `metric_extracted`, an exit code from
 1 to 125, even in every attempt, is not evidence that the artifact caused the failure:
@@ -158,6 +165,11 @@ coverage stays `INCONCLUSIVE`.
 | comparison | paired comparisons made | nothing compared: `INCONCLUSIVE` |
 | the repository's own test suite | tests collected and not skipped | zero collected or all skipped: `INCONCLUSIVE` for that check, never PASS |
 | `leakage` | example pairs hashed | `INCONCLUSIVE` |
+
+The `metric_recompute` row is not in plan section 8: it was added by `c7a76ae`
+(2026-10-15), from W3.17 of the WP3 acceptance
+([wp3-acceptance.md](validation/v0.3/wp3-acceptance.md)). The maintainer confirmed this
+document as its record on 2026-10-16, at the acceptance of WP1 (#44).
 
 The repository's own test suite is information only: its result is reported with its
 coverage and never decides a verdict. (Plan, section 8.4.)
