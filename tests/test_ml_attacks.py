@@ -201,6 +201,43 @@ def test_a_tie_beaten_only_in_part_is_inconclusive():
         assert "does not beat every tied majority class" in result.message
 
 
+TIE_ERROR = at.trivial_baseline_value(
+    "majority", ["a", "b"], "error_rate", "percent", ["a", "a", "b", "b"], ["a"] * 7 + ["b"] * 3
+)
+
+
+@pytest.mark.parametrize(
+    ("x_rep", "expected"),
+    [
+        ("28.5", TestStatus.PASS),  # below 30 (the strongest) by more than 1
+        ("69.5", TestStatus.FAIL),  # not below 70 (the weakest) by more than 1
+        ("50", TestStatus.INCONCLUSIVE),  # beats 70 but not 30
+        ("29.5", TestStatus.INCONCLUSIVE),  # beats 30 by less than the tolerance
+    ],
+)
+def test_a_tie_on_the_error_rate_follows_the_same_three_paths(x_rep, expected):
+    """Error rate, lower is better: the tied classes give error rates 30% (strongest) and
+    70% (weakest); the claim must be below the strongest by more than the tolerance."""
+    assert (TIE_ERROR.weakest, TIE_ERROR.strongest) == (Decimal(70), Decimal(30))
+    assert at.trivial_baseline(x_rep, TIE_ERROR, False, TOL).status is expected
+
+
+@pytest.mark.parametrize(
+    ("baseline", "x_rep", "higher", "expected"),
+    [
+        (TIE, "90", True, TestStatus.INCONCLUSIVE),  # would pass: not with a lower tolerance
+        (TIE, "50", True, TestStatus.INCONCLUSIVE),  # between the tied classes
+        (TIE, "30.5", True, TestStatus.FAIL),  # fails even the weakest: kept
+        (TIE_ERROR, "10", False, TestStatus.INCONCLUSIVE),
+        (TIE_ERROR, "69.5", False, TestStatus.FAIL),
+    ],
+)
+def test_a_tie_with_a_reported_but_not_convertible_uncertainty(baseline, x_rep, higher, expected):
+    """1.0.9: with only a lower bound of the tolerance, a larger tolerance makes the attack
+    harder to pass, so a PASS becomes INCONCLUSIVE and a FAIL stands; a tie keeps both."""
+    assert at.trivial_baseline(x_rep, baseline, higher, LOWER).status is expected
+
+
 def test_a_balanced_dataset_ties_every_class():
     """Balanced training labels: every class ties. With balanced test labels too, every
     tied class has the same test accuracy (1/K), so there is no intermediate case; with
