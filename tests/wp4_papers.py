@@ -140,7 +140,10 @@ PAPERS = [
         config={"exit_code": 3},
         expected_checks={"run_completed": "FAIL"},
         expected_failures={"run_completed": "undetermined"},
-        flags=(False, False),
+        # corrected after the first check (was (False, False)): no run completed, so the
+        # failed gate has zero coverage and the coverage rule makes it INCONCLUSIVE, an
+        # incomplete coverage; the expected verdict is unchanged
+        flags=(False, True),
     ),
     SyntheticPaper(
         "interrupted-attack",
