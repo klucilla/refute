@@ -14,6 +14,7 @@ import pytest
 
 from ml_papers import dataset_bytes
 from refute.packs.ml import integration as ig
+from refute.packs.ml import orchestrate as orc
 from refute.packs.ml import sandbox as sb
 from refute.packs.ml import synthetic as sy
 from refute.packs.ml.schema import MlClaimSchema, MlTarget, MlTestPlan
@@ -179,13 +180,19 @@ def test_each_synthetic_paper_gives_its_expected_verdict(tmp_path, paper):
         if record.result is not None
         and record.result.stopped in (sb.STOP_ACTIVE_TIME, sb.STOP_NO_PROGRESS)
     }
-    if "seeds" in paper.attacks:
-        expected = set()
-        for name in paper.interrupted:
-            m = re.fullmatch(r"(\w+)\[(\d+)\]", name)
-            seed = resolved["seeds"][m.group(1)][int(m.group(2))]
-            expected.add(ig.container_id(claim.key, "seeds", "method", seed))
-        assert {c for c in stopped if "/seeds/" in c} == expected
+    expected = set()
+    for name in paper.interrupted:
+        m = re.fullmatch(r"(\w+)\[(\d+)\]", name)
+        seed = resolved["seeds"][m.group(1)][int(m.group(2))]
+        expected.add(ig.container_id(claim.key, "seeds", "method", seed))
+    planned = ig.plan_container_ids(build(paper)[1])
+    for step in paper.interrupted_steps:
+        expected.update(c for c in planned if f"/{step}/" in c)
+        (record,) = [s for s in steps if s.phase == "attacks" and s.step == step]
+        assert record.outcome is orc.Outcome.OPERATIONAL_GUARD, record
+    # every attack run a guard stopped, and only those (the setup's rungs are checked by
+    # their failure cause)
+    assert {c for c in stopped if not c.startswith("setup/")} == expected
     # an attack that does not apply is recorded so in the claim, with its reason, and
     # never runs
     entries = {e["name"]: e for e in resolved["attacks"]}
