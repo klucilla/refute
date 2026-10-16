@@ -52,6 +52,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 from collections.abc import Callable, Hashable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -670,17 +671,23 @@ def _piece(selector: Mapping[str, Any], source: str, text: str) -> Piece:
     return Piece(source, start, end)
 
 
+def _file_source(path: Path) -> str:
+    """The identity of a file actually read: its resolved path, case-normalized, so two
+    spellings of one file (``preds/./x``, ``preds/x``) are one source (Codex review)."""
+    return "file:" + os.path.normcase(str(path.resolve()))
+
+
 def _count(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | None):
     """One count, read like ``metric_extraction`` reads a value (W3.11), and the piece it
     read. The token must be a non-negative integer."""
     got = ex.extract(dict(selector), workdir, log, seed)
     if not _COUNT.match(got.token):
         raise ex.ExtractionError(f"{got.source}: {got.token!r} is not a count of examples")
-    text = log
+    text, source = log, "log"
     if selector["from"] == "file":
         path = workdir.joinpath(*_relative_file(selector["file"], seed).parts)
-        text = path.read_text(encoding="utf-8")
-    return int(got.token), _piece(selector, got.source, text)
+        text, source = path.read_text(encoding="utf-8"), _file_source(path)
+    return int(got.token), _piece(selector, source, text)
 
 
 def _inside(value: Decimal, token: str, token_unit: str, rounding: str) -> bool:
@@ -777,11 +784,13 @@ def _route_reading(
                 return RouteReading(name, note="the saved labels are not the split's, in its order")
             # its value is the metric recomputed from these predictions (1.7), so it is
             # compared with the other routes' values (W3.12e)
-            whole = Piece(f"file:{file}", 0, None)
+            whole = Piece(_file_source(path), 0, None)
             return RouteReading(name, len(labels), recomputed, (whole,))
         return _hook_reading(ctx, route, identity, run, rounding)
     except (ex.ExtractionError, rc.RecomputeError, OSError, ValueError, KeyError) as exc:
-        return RouteReading(name, note=str(exc))
+        # a hook whose log could not be examined is a failure of the hook (W3.12c): it
+        # blocks whatever the other routes show (Codex review)
+        return RouteReading(name, note=str(exc), blocking=name == "hook")
 
 
 def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> RouteReading:
@@ -836,26 +845,25 @@ def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> Rou
                 blocking=True,
             )
         value = _as_claim_unit(returned, ctx)
-    piece = Piece(f"hook:{ch.HOOK_LOG}", event["seq"], event["seq"] + 1)
+    piece = Piece("hook:" + os.path.normcase(str(path.resolve())), event["seq"], event["seq"] + 1)
     return RouteReading("hook", event["n_examples"], value, (piece,))
 
 
 @dataclass(frozen=True)
 class RunCoverage:
-    """The readings of one base run of one method, and how far apart two routes' values
-    may be: the printed quantum in the claim's unit (twice it for an ``unknown``
-    rounding)."""
+    """The readings of one base run of one method, and the interval of values that print
+    as its token, in the claim's unit (``printed_rounding``, or ``unknown``)."""
 
     readings: list[RouteReading]
-    tolerance: Decimal | None
+    interval: tuple[Decimal, Decimal] | None
 
 
-def _tolerance(ctx: ClaimContext, run: _RunEvidence) -> Decimal | None:
+def _printed(ctx: ClaimContext, run: _RunEvidence) -> tuple[Decimal, Decimal] | None:
     if run.token is None:
         return None
-    quantum = Decimal(1).scaleb(Decimal(run.token.token).as_tuple().exponent)
-    quantum *= rc.unit_factor(run.token_unit, ctx.claim["metric"]["unit"])
-    return quantum * (2 if _rounding(ctx) == "unknown" else 1)
+    interval = rc.printed_interval(run.token.token, _rounding(ctx))
+    factor = rc.unit_factor(run.token_unit, ctx.claim["metric"]["unit"])
+    return interval.lower * factor, interval.upper * factor
 
 
 def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records, recomputed):
@@ -890,7 +898,7 @@ def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records,
             mine = recomputed.get((seed, role))
             out[(seed, role)] = RunCoverage(
                 [_route_reading(ctx, r, evidence, run, mine) for r in evidence["routes"]],
-                _tolerance(ctx, run),
+                _printed(ctx, run),
             )
     return out
 
@@ -929,13 +937,25 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
             problems.append(
                 f"{where}: {next(iter(counts.values()))} examples, the split declares {expected}"
             )
+        # with two routes or more that give a value, each must print as the token (W3.12e);
+        # with (c) alone, its value against the printed one is metric_recompute (1.7, fatal)
         given = {r.route: r.value for r in found if r.count is not None and r.value is not None}
-        if len(given) > 1 and run.tolerance is not None:
-            low, high = min(given.values()), max(given.values())
-            eps = Decimal("1e-9") * max(Decimal(1), abs(high))
-            if high - low > run.tolerance + eps:
-                shown_values = {k: str(v) for k, v in given.items()}
-                problems.append(f"{where}: the routes disagree on the value {shown_values}")
+        if len(given) > 1 and run.interval is not None:
+            lower, upper = run.interval
+            outside = {
+                k: str(v)
+                for k, v in given.items()
+                if not (
+                    lower - Decimal("1e-9") * max(Decimal(1), abs(v))
+                    <= v
+                    <= upper + Decimal("1e-9") * max(Decimal(1), abs(v))
+                )
+            }
+            if outside:
+                problems.append(
+                    f"{where}: the routes disagree on the value: {outside} outside the "
+                    f"printed interval [{lower}, {upper}]"
+                )
     if ctx.comparison is not None and not ctx.separate_reference:
         for seed in sorted({s for s, _ in readings}, key=str):
 
