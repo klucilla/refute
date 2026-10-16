@@ -169,6 +169,19 @@ def test_each_synthetic_paper_gives_its_expected_verdict(tmp_path, paper):
         assert statuses[name] == status, (name, statuses, claim.verdict.reason)
     for gate, cause in paper.expected_failures.items():
         assert claim.failures[gate].cause.value == cause, claim.failures
+    # a route paper fails for the reason its case names, with every earlier gate passing,
+    # and one that shows the examples does so through every route it declares, run by run
+    # (Codex review of #111)
+    base = {c.name: c for c in claim.base}
+    if paper.expected_reason:
+        for gate in ("environment_build", "data_present", "run_completed"):
+            assert base[gate].status.value == "PASS", (gate, base[gate].message)
+        assert paper.expected_reason in base["metric_extracted"].message, base[
+            "metric_extracted"
+        ].message
+    if paper.expected_checks.get("metric_extracted") == "PASS":
+        shown = base["metric_extracted"].metrics["routes_with_evidence"]
+        assert shown and all(v == sorted(paper.routes) for v in shown.values()), shown
     # the claim profile (W4.4): one claim, its verdict as the headline
     assert outcome.profile.headline == f"1 of 1 drawn claims: {paper.expected}"
     if outcome.run is not None:
@@ -274,3 +287,10 @@ def test_each_coverage_route_has_papers_on_both_sides():
         alone = [p for p in PAPERS if p.routes == (name,)]
         sides = {p.expected_checks.get("metric_extracted") for p in alone}
         assert {"PASS", "INCONCLUSIVE"} <= sides, (name, sides)
+    # every INCONCLUSIVE route paper names its reason
+    for p in PAPERS:
+        if (
+            p.name.startswith("route")
+            and p.expected_checks.get("metric_extracted") == "INCONCLUSIVE"
+        ):
+            assert p.expected_reason, p.name
