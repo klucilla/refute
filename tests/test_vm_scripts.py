@@ -78,6 +78,8 @@ def test_the_endpoint_is_called_as_a_loopback_session(cases):
     params = {p.lower() for p in sessions[0]["Parameters"]}
     assert {"computername", "configurationname", "enablenetworkaccess"} <= params
     assert "credential" not in params
+    values = {k.lower(): v for k, v in sessions[0]["Values"].items()}
+    assert values["computername"] == "localhost" and values["configurationname"] == "RefuteVm"
     others = [c for c in calls if c["Command"] != "New-PSSession"]
     assert {c["Command"] for c in others} <= {"Invoke-Command"}
     assert all({p.lower() for p in c["Parameters"]} == {"scriptblock", "session"} for c in others)
