@@ -25,9 +25,13 @@ unvalidated until they are tested on Windows and Hyper-V, with the evidence reco
   default helper commands that a `RestrictedRemoteServer` session keeps
   (`Clear-Host`, `Exit-PSSession`, `Get-Command`, `Get-FormatData`, `Get-Help`,
   `Measure-Object`, `Out-Default`, `Select-Object`). The session is in NoLanguage
-  mode: literal arguments only, no script block or expression. The module is pinned
-  by name, version and GUID in the role capability. No parameter takes a path or a VM
-  name: they come from
+  mode: literal arguments only, no script block or expression. The role capability
+  imports the module by the absolute path of its installed manifest,
+  `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, which pins that
+  copy in a folder only administrators can write. It names no version and no GUID: with
+  them PowerShell resolves the module by calling `Get-Module` inside the restricted
+  session, which has no `Get-Module`, and the session cannot open (observed on
+  2026-10-16). No parameter takes a path or a VM name: they come from
   `RefuteVm.Config.psd1`, installed with the module under `%ProgramFiles%`, where only
   administrators can write.
 - Claude Code calls the endpoint through `Invoke-RefuteVm.ps1`; every call is a

@@ -66,6 +66,46 @@ def test_synthetic_cases(cases):
     assert failed == []
 
 
+INSTALLED_MANIFEST = r"C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1"
+VERSION_KEYS = {"requiredversion", "moduleversion", "maximumversion", "guid"}
+
+
+def _version_keys(entries: list[dict]) -> list[str]:
+    return sorted(
+        key
+        for entry in entries
+        if entry["Kind"] == "table"
+        for key in entry["Names"]
+        if key.lower() in VERSION_KEYS
+    )
+
+
+def test_no_role_capability_imports_a_module_by_version(cases):
+    """With RequiredVersion, ModuleVersion, MaximumVersion or GUID in ModulesToImport,
+    PowerShell resolves the module by calling Get-Module inside the restricted session,
+    which has no Get-Module: the session cannot open (the maintainer, 2026-10-16). Every
+    .psrc of the repository imports by name or path only; the probe shows the detector
+    sees every refused key."""
+    imports = cases["RoleCapabilityImports"]
+    assert "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc" in imports
+    assert {name: _version_keys(e) for name, e in imports.items() if _version_keys(e)} == {}
+    assert _version_keys(cases["RoleCapabilityProbe"]) == [
+        "GUID",
+        "MaximumVersion",
+        "ModuleVersion",
+        "RequiredVersion",
+    ]
+
+
+def test_the_role_capability_imports_the_installed_manifest_by_path(cases):
+    """The module is pinned by the absolute path of its manifest in the folder the
+    registration installs it to (no version subfolder), writable by administrators only."""
+    entries = cases["RoleCapabilityImports"][
+        "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc"
+    ]
+    assert entries == [{"Kind": "string", "Value": INSTALLED_MANIFEST}]
+
+
 def test_operation_lists_agree(cases):
     table = cases["OperationTable"]
     assert cases["ValidateSets"]["RefuteVm/RefuteVm.psm1"] == table
