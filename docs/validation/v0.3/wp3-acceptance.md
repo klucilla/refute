@@ -443,6 +443,13 @@ on 2026-10-15:
 - **W3.8** One interface, two backends:
   - `docker`, for the VM; tested locally, since CI cannot pull images;
   - `subprocess`, tested in CI on synthetic repositories (plan lines 406-408).
+  - **Synthetic only (decided by the maintainer on 2026-10-16, design A').** The
+    `subprocess` backend runs only fixtures of a closed catalog in Refute's code, written
+    by the harness, which a claim or a repository can neither choose nor extend; it
+    refuses everything else before any process starts (closes the gap of #87). Under it,
+    the build ladder is played by a cataloged fixture, and only the deliberate failure
+    declared by the harness before the run is an error of the procedure
+    ([docs/sandbox.md](../../sandbox.md), "Testing without the VM").
 - **W3.9** The build ladder, the allowed-patch list and the logging of every attempt
   (plan lines 392-402). The recorded causes of each failure feed the attribution rule
   of WP2.

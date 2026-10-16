@@ -129,3 +129,29 @@ after the lock are forbidden.
 
 CI cannot pull images (no network), so the container backend is tested locally; CI
 tests a `subprocess` backend with the same interface on synthetic repositories.
+
+The `subprocess` backend is not an isolation boundary, so it runs **synthetic fixtures
+only** (decided by the maintainer on 2026-10-16, design A'; `src/refute/packs/ml/synthetic.py`):
+
+- a closed catalog in Refute's code names each fixture's code files with their SHA-256,
+  the data files the harness may add and the folders its runs may write to; a claim or a
+  repository can neither choose an entry nor extend the list;
+- the test harness writes a fixture into a new folder and receives an authorization for
+  it; the backend is built with those authorizations and, built with none, refuses every
+  run;
+- before each run the backend refuses, before any process starts, a folder it was not
+  given (or given through another path), a command other than its own interpreter in
+  isolated mode (`-I`) running a code file of the fixture named as in the catalog, a
+  changed or missing file, a file with a second link, any other file outside the output
+  folders, any symbolic link or junction, and a log inside the folder. What it launches is
+  the checked command, by the interpreter's and the code file's absolute paths. No mark
+  inside a repository can grant this. The harness and Refute's modules are trusted code
+  in one process; the guarantee is that nothing a claim or a repository writes makes the
+  backend run anything but cataloged code.
+
+Under this backend the build ladder is played by a cataloged fixture, one build per rung.
+Only the deliberate failure the harness declared before the run, recognised by its exit
+code and its line in the log, counts as an error of the procedure; a stop by the threshold
+or a guard keeps its own cause, and any other outcome, an unexpected success included, is
+undetermined (`INCONCLUSIVE`). This exercises the ladder's rules end to end; Docker, the
+resolution of dependencies and a real change of the Python version are not shown by it.
