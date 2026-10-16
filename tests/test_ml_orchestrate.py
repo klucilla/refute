@@ -4,7 +4,6 @@ container; the last test runs synthetic commands on the real subprocess backend.
 
 import os
 import sys
-import textwrap
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
@@ -13,6 +12,7 @@ import pytest
 from refute.core import budget as bg
 from refute.packs.ml import orchestrate as orc
 from refute.packs.ml import sandbox as sb
+from synthetic_harness import fixture
 
 M = 100  # stopping margin of the tests, in microseconds
 
@@ -410,29 +410,17 @@ def test_the_plan_and_the_accountant_must_agree(tmp_path):
 
 
 def test_a_synthetic_paper_on_the_subprocess_backend(tmp_path):
-    # each job writes its own file with its start and end times: concurrent appends to
-    # one shared file are not atomic on Windows (a line was lost in CI)
-    marks = tmp_path / "marks"
-    marks.mkdir()
-    body = textwrap.dedent(
-        f"""
-        import pathlib, sys, time
-        start = time.monotonic_ns()
-        end = time.process_time() + 0.05
-        while time.process_time() < end:
-            pass
-        name = sys.argv[1].replace("/", "_")
-        pathlib.Path({str(marks)!r}, name).write_text(f"{{start}} {{time.monotonic_ns()}}")
-        """
-    )
-    path = tmp_path / "job.py"
-    path.write_text(body, encoding="utf-8")
+    # each job is the cataloged probe (``probe.py job``): it writes its own file with its
+    # start and end times, since concurrent appends to one shared file are not atomic on
+    # Windows (a line was lost in CI)
+    auth = fixture("sandbox-probe", tmp_path / "fixture")
+    marks = auth.root / "out" / "marks"
 
     def real(cid):
         def make(f):
             return sb.RunSpec(
-                argv=[sys.executable, "-I", str(path), cid],
-                workdir=tmp_path,
+                argv=[sys.executable, "-I", "probe.py", "job", "out/marks", cid],
+                workdir=auth.root,
                 env=dict(os.environ),
                 log_path=tmp_path / "logs" / f"{cid.replace('/', '_')}.log",
                 threshold_usec=f,
@@ -455,7 +443,7 @@ def test_a_synthetic_paper_on_the_subprocess_backend(tmp_path):
         [orc.Step("build", [real("setup/build")])], [claim_of("C1"), claim_of("C2")]
     )
     acc = bg.Accountant(["C1", "C2"], margin_usec=bg.cpu_hours(1) // 3600)  # M = 1 CPU-s
-    run = orc.PaperRunner(plan, sb.SubprocessBackend(), acc).run()
+    run = orc.PaperRunner(plan, sb.SubprocessBackend([auth]), acc).run()
     assert all(s.outcome is orc.Outcome.COMPLETED for s in run.steps), outcomes(run)
     times = {}
     for path_ in marks.iterdir():
