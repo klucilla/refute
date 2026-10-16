@@ -23,10 +23,11 @@ failed with an error of the procedure. A rung that was not applicable is not an 
 so the WP2 core gives ``INCONCLUSIVE`` (incomplete attempts) unless all three rungs ran
 and failed. Whether a failure is an error of the procedure itself is decided by the
 caller that ran the build (``RungResult.cause``); anything else, or nothing, is never an
-artifact cause. This denominator (three rungs, not only the applicable ones) is a
+artifact cause. This denominator (three rungs, not only the applicable ones) was a
 provisional decision of 2026-10-16, taken under the maintainer's night delegation as the
-more conservative reading, waiting for the maintainer's ratification; the alternative
-(only the applicable rungs) would change the verdict criterion.
+more conservative reading (#94); ratified by the maintainer on 2026-10-16, preserving the
+validation conditions and the documented concessions. The alternative (only the
+applicable rungs) would change the verdict criterion.
 
 The ladder stops at the first rung that builds, and also at the first rung that ends for
 a reason on Refute's side (budget, operational guard, Refute error, a transient network
