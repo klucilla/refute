@@ -17,6 +17,7 @@ import sys
 import numpy as np
 
 from ml_papers import dataset_bytes
+from refute.core.canonical import canonical_bytes
 from refute.core.paper import FailureCause, GateFailure
 from refute.core.verdict import PaperVerdict, TestStatus
 from refute.packs.ml import integration as ig
@@ -25,13 +26,14 @@ from refute.packs.ml import seeds
 from refute.packs.ml import synthetic as sy
 from refute.packs.ml.fetch import ArtifactSpec, FetchAttempt, FetchResult
 from refute.packs.ml.schema import MlClaimSchema, MlTarget, MlTestPlan
-from synthetic_harness import fixture
+from synthetic_harness import SOURCES, fixture
 
 ARXIV = "2401.01234"
 STAMP = "2026-10-15T00:00:00Z"
 CLAIM_SEED = bytes(range(32))
 SPLITS = {"train": 2000, "validation": 500, "test": 4000}
 ALL_RUNGS = ("own_environment", "requirements_compiled", "requirements_compiled_next_python")
+HOOK_PATCH = "patches/coverage-hook.patch"
 
 
 def plan_dict(data: bytes) -> dict:
@@ -53,7 +55,7 @@ def plan_dict(data: bytes) -> dict:
             "python_ladder": ["3.12", "3.13"],
             "exclude_newer": "2026-01-01",
             "base_image": "python@sha256:" + "c" * 64,
-            "allowed_patches": [],
+            "allowed_patches": [{"attachment": HOOK_PATCH, "reason": "the coverage hook"}],
         },
         "datasets": [
             {
@@ -117,7 +119,67 @@ def attack_entries(applies: dict) -> list:
     return out
 
 
-def value_target(applies: dict, recompute: bool = True) -> dict:
+def _split_labels(data: bytes, split: str) -> list[int]:
+    names = {"train": "train", "validation": "val", "test": "test"}
+    return [int(v) for v in np.load(io.BytesIO(data), allow_pickle=False)[f"y_{names[split]}"]]
+
+
+def split_sha256(split: str, data: bytes | None = None) -> str:
+    """The labels hash of a split (W3.12d): the canonical JSON array of its labels."""
+    return hashlib.sha256(canonical_bytes(_split_labels(data or DATA, split))).hexdigest()
+
+
+LINK = [{"file": "train.py", "lines": [1, 2], "role": "prints the value from the count"}]
+
+
+def call_site_line() -> int:
+    """The line of the trainer's cited call site (the hook's selected evaluation)."""
+    text = SOURCES["ml-paper"]["train.py"].read_text(encoding="utf-8")
+    return next(n for n, line in enumerate(text.splitlines(), 1) if "# the cited call site" in line)
+
+
+def route(name: str) -> dict:
+    """One coverage route of 1.5a, as a claim for the cataloged trainer declares it."""
+    if name == "saved_predictions":
+        return {"route": name, "link": LINK}
+    if name == "printed_count":
+        regex = {"pattern": r"evaluated=(\d+)", "group": 1}
+        return {"route": name, "count": {"from": "log", "regex": regex}, "link": LINK}
+    if name == "sufficient_statistics":
+        file = "preds/stats-{seed}.json"
+        return {
+            "route": name,
+            "correct": {"from": "file", "file": file, "json_path": "$.correct"},
+            "total": {"from": "file", "file": file, "json_path": "$.total"},
+            "link": LINK,
+        }
+    line = call_site_line()
+    return {
+        "route": "hook",
+        "patch": HOOK_PATCH,
+        "function": "sklearn.metrics.accuracy_score",
+        "call_site": {"file": "train.py", "lines": [line, line], "role": "the test evaluation"},
+        "link": LINK,
+    }
+
+
+def coverage(routes, split: str = "test") -> dict:
+    """The coverage evidence of one method: the routes in their order, and the split's
+    identity when a route sees labels."""
+    out = {"selected_evaluation": {"kind": "final"}, "routes": [route(r) for r in routes]}
+    if {"saved_predictions", "hook"} & set(routes):
+        out["split_identity"] = {
+            "labels_sha256": split_sha256(split),
+            "other_splits": [
+                {"name": s, "labels_sha256": split_sha256(s)} for s in SPLITS if s != split
+            ],
+            "splits_evidence": [{"file": "train.py", "lines": [1, 2], "role": "the splits"}],
+        }
+    return out
+
+
+def value_target(applies: dict, recompute: bool = True, routes=None) -> dict:
+    routes = routes or (["saved_predictions"] if recompute else ["printed_count"])
     target = {
         "key": f"arXiv-{ARXIV}v1-C1",
         "type": "value",
@@ -179,6 +241,7 @@ def value_target(applies: dict, recompute: bool = True) -> dict:
         }
         if recompute
         else {"applies": False, "reason": "no saved predictions"},
+        "coverage_evidence": {"method": coverage(routes)},
         "approvals": {
             "transcription": {
                 "approved_by": "maintainer",
@@ -332,6 +395,9 @@ def test_a_claim_that_holds_is_reproduced_end_to_end(tmp_path):
         n: c.message for n, c in base.items()
     }
     assert base["metric_extracted"].coverage == SPLITS["test"]  # shown by the saved predictions
+    assert base["metric_extracted"].metrics["routes_with_evidence"]["method seed=1"] == [
+        "saved_predictions"
+    ]
     assert base["data_present"].metrics["splits"] == SPLITS
     statuses = {a.name: a.result.status for a in claim.attacks}
     assert statuses == dict.fromkeys(applies, TestStatus.PASS), [
@@ -407,13 +473,14 @@ def test_a_split_of_another_size_is_inconclusive(tmp_path):
     assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
 
 
-def test_without_saved_predictions_the_metric_shows_no_examples(tmp_path):
-    """Requirement 5: a printed number does not show how many examples it was computed on;
-    without that evidence metric_extracted cannot pass, so the claim is INCONCLUSIVE."""
+def test_with_no_route_that_closes_the_chain_the_metric_shows_no_examples(tmp_path):
+    """Requirement 5 and 1.5a: a printed value does not show how many examples it was
+    computed on. The claim declares a printed count the run never prints, so no route
+    closes the chain: metric_extracted is INCONCLUSIVE, never a raw PASS."""
     claim_file = resolved(DATA, value_target({}, recompute=False))
     claim, base = checks(Paper(tmp_path, claim_file, CONFIG).run(), KEY)
-    # never a raw PASS without examined data (Codex review of #110)
-    assert base["metric_extracted"].status is TestStatus.INCONCLUSIVE
+    gate = base["metric_extracted"]
+    assert gate.status is TestStatus.INCONCLUSIVE and "no route shows the examples" in gate.message
     assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
 
 
@@ -553,13 +620,17 @@ def test_a_comparison_pairs_its_methods_by_seed(tmp_path):
             "metric_extraction": target["run"]["metric_extraction"],
         },
     }
-    outcome = Paper(tmp_path, resolved(DATA, target), CONFIG).run()
+    # separate runs may use the same selector on their own logs (1.5a)
+    target["coverage_evidence"]["reference"] = coverage(["printed_count"])
+    outcome = Paper(tmp_path, resolved(DATA, target), {**CONFIG, "print_count": True}).run()
     claim, base = checks(outcome, KEY)
     assert base["base_reproduction"].status is TestStatus.PASS
     ids = [c.container_id for s in outcome.run.steps for c in s.containers]
     assert f"{KEY}/base/reference/s1" in ids and f"{KEY}/base/method/s1" in ids
-    # metric_recompute does not apply: no saved predictions show the examples (pending point 1)
-    assert base["metric_extracted"].status is TestStatus.INCONCLUSIVE
+    # each method's printed count shows its examples, run by run
+    gate = base["metric_extracted"]
+    assert gate.status is TestStatus.PASS, gate.message
+    assert gate.metrics["routes_with_evidence"]["reference seed=2"] == ["printed_count"]
 
 
 def test_methods_are_paired_by_seed_not_by_position_of_completion():
@@ -582,6 +653,161 @@ def test_methods_are_paired_by_seed_not_by_position_of_completion():
         1: {"method": value("method", 90), "reference": value("reference", 80)},
     }
     assert ig._base_series(ctx, by_seed) == [Decimal(6), Decimal(10)]
+
+
+# ---- the coverage routes of metric_extracted (1.5a), on both sides -----------------------------
+
+
+def _metric_gate(tmp_path, routes, config, recompute=False):
+    claim_file = resolved(DATA, value_target({}, recompute=recompute, routes=routes))
+    claim, base = checks(Paper(tmp_path, claim_file, {**CONFIG, **config}).run(), KEY)
+    return claim, base["metric_extracted"]
+
+
+def test_route_c_saved_predictions_in_another_order_do_not_identify_the_split(tmp_path):
+    """The declared limitation of W3.12d: the predictions saved in a shuffled order keep the
+    accuracy (metric_recompute passes) but not the order of the labels, so (c) cannot
+    identify the split and, alone, leaves the gate INCONCLUSIVE."""
+    claim_file = resolved(DATA, value_target({}))
+    claim, base = checks(Paper(tmp_path, claim_file, {**CONFIG, "shuffle_preds": True}).run(), KEY)
+    assert base["metric_recompute"].status is TestStatus.PASS
+    gate = base["metric_extracted"]
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "not the split's, in its order" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_route_a_a_printed_count_of_the_split_shows_its_examples(tmp_path):
+    claim, gate = _metric_gate(tmp_path, ["printed_count"], {"print_count": True})
+    assert gate.status is TestStatus.PASS and gate.coverage == SPLITS["test"], gate.message
+    assert claim.verdict.verdict is PaperVerdict.REPRODUCED, claim.verdict.reason
+
+
+def test_route_a_a_count_that_is_not_the_split_s_size_is_inconclusive(tmp_path):
+    claim, gate = _metric_gate(tmp_path, ["printed_count"], {"print_count": True, "count_bias": -1})
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "3999 examples, the split declares 4000" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_route_d_sufficient_statistics_that_give_the_printed_value(tmp_path):
+    claim, gate = _metric_gate(tmp_path, ["sufficient_statistics"], {"stats": True})
+    assert gate.status is TestStatus.PASS and gate.coverage == SPLITS["test"], gate.message
+    assert claim.verdict.verdict is PaperVerdict.REPRODUCED, claim.verdict.reason
+
+
+def test_route_d_statistics_that_disagree_with_the_printed_value_are_a_conflict(tmp_path):
+    """8 more correct examples in 4000 move the accuracy by 0.2 points: outside the printed
+    two decimals, a conflict (all_must_agree), INCONCLUSIVE."""
+    claim, gate = _metric_gate(
+        tmp_path, ["sufficient_statistics"], {"stats": True, "stats_bias": 8}
+    )
+    assert gate.status is TestStatus.INCONCLUSIVE and "is not the printed" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_route_b_one_hook_event_bound_to_metric_split_run_and_call_site(tmp_path):
+    claim, gate = _metric_gate(tmp_path, ["hook"], {"hook": True})
+    assert gate.status is TestStatus.PASS and gate.coverage == SPLITS["test"], gate.message
+    assert gate.metrics["routes_with_evidence"]["method seed=3"] == ["hook"]
+    assert claim.verdict.verdict is PaperVerdict.REPRODUCED, claim.verdict.reason
+
+
+def test_route_b_two_events_at_the_call_site_are_inconclusive(tmp_path):
+    """Exactly one event must remain (W3.12c): two calls at the cited site do not."""
+    claim, gate = _metric_gate(tmp_path, ["hook"], {"hook": True, "hook_calls": 2})
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "2 events bound to the metric, split and call site" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_route_b_an_event_on_another_split_is_not_the_claim_s(tmp_path):
+    claim, gate = _metric_gate(tmp_path, ["hook"], {"hook": True, "hook_split": "validation"})
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "0 events bound" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_route_b_a_hook_that_never_ran_leaves_no_evidence(tmp_path):
+    claim, gate = _metric_gate(tmp_path, ["hook"], {})
+    assert gate.status is TestStatus.INCONCLUSIVE and "no hook log" in gate.message
+
+
+def test_route_b_a_hook_log_edited_after_the_run_is_a_failure_of_the_hook(tmp_path):
+    """A log whose records no longer match its final digest: INCONCLUSIVE whatever the
+    other routes show (a failure of the hook, W3.12c)."""
+    claim_file = resolved(DATA, value_target({}, routes=["saved_predictions", "hook"]))
+    paper = Paper(tmp_path, claim_file, {**CONFIG, "hook": True})
+    integration = ig.PaperIntegration(claim_file, paper.harness)
+    outcome = integration.run()
+    _, base = checks(outcome, KEY)
+    assert base["metric_extracted"].status is TestStatus.PASS, base["metric_extracted"].message
+    log = paper.harness.workspaces[f"{KEY}/base/method/s2"] / "refute-hook" / "coverage.jsonl"
+    lines = log.read_bytes().split(b"\n")
+    lines[0] = lines[0].replace(b'"n_examples":4000', b'"n_examples":3999')
+    log.write_bytes(b"\n".join(lines))
+    again = integration.evaluate(outcome.run)
+    gate = {c.name: c for c in again.claims[0].base}["metric_extracted"]
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "digest different" in gate.message
+
+
+def test_routes_that_disagree_on_the_count_are_a_conflict(tmp_path):
+    """all_must_agree: (c) shows 4000 examples, (a) prints 4001; the agreeing route does not
+    win, the gate is INCONCLUSIVE."""
+    claim, gate = _metric_gate(
+        tmp_path,
+        ["saved_predictions", "printed_count"],
+        {"print_count": True, "count_bias": 1},
+        recompute=True,
+    )
+    assert gate.status is TestStatus.INCONCLUSIVE and "disagree on the count" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_every_route_together_agrees(tmp_path):
+    routes = ["saved_predictions", "sufficient_statistics", "printed_count", "hook"]
+    config = {"print_count": True, "stats": True, "hook": True}
+    claim, gate = _metric_gate(tmp_path, routes, config, recompute=True)
+    assert gate.status is TestStatus.PASS, gate.message
+    assert gate.metrics["routes_with_evidence"]["method seed=1"] == sorted(routes)
+    assert claim.verdict.verdict is PaperVerdict.REPRODUCED, claim.verdict.reason
+
+
+def test_the_same_runs_never_count_one_evidence_for_both_methods(tmp_path):
+    """A comparison whose reference comes from the same runs: two different selectors that
+    read the same token are one piece of evidence counted twice, INCONCLUSIVE."""
+    target = value_target({}, recompute=False)
+    target.update(type="comparison", comparison_mode="direction", statement="A beats B.")
+    target["inventory"]["transcription"]["value"] = "89.2 vs 83.2"
+    metric = target["metric"]
+    del metric["reported"], metric["reported_uncertainty"]
+    target["comparison"] = {
+        "method": "A",
+        "reference": "B",
+        "orientation": "method_minus_reference",
+        "reported_method": 89.2,
+        "reported_reference": 83.2,
+        "uncertainty_method": {"kind": "none"},
+        "uncertainty_reference": {"kind": "none"},
+        "paired_uncertainty": {"kind": "none"},
+        "reference_run": {
+            "same": True,
+            "metric_extraction": {
+                "from": "log",
+                "regex": {"pattern": r"acc=([0-9.]+)\s", "group": 1},
+                "unit": "percent",
+            },
+        },
+    }
+    other = coverage(["printed_count"])
+    other["routes"][0]["count"]["regex"] = {"pattern": r"evaluated=([0-9]+)", "group": 1}
+    target["coverage_evidence"]["reference"] = other
+    outcome = Paper(tmp_path, resolved(DATA, target), {**CONFIG, "print_count": True}).run()
+    _, base = checks(outcome, KEY)
+    gate = base["metric_extracted"]
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "the method and the reference count one evidence" in gate.message
 
 
 def test_a_missing_reference_value_leaves_its_seed_without_a_difference():

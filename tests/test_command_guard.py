@@ -4,6 +4,8 @@ command text."""
 
 import importlib.util
 import json
+import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -78,9 +80,10 @@ PASS = [
     SCRIPT,
     "powershell -NoProfile -ExecutionPolicy Bypass -File 'C:\\Projetos\\refute\\scripts\\"
     "run_tests_affinity.ps1' -Junit 'C:\\x\\j.xml'",
-    "git commit -m 'stop using sed and pytest directly'",
-    "git -c user.name=x commit -q -F - <<'EOF'\nfix: no sed, no awk, no pytest here\n"
-    "Select-String is mentioned too\nEOF\ngit push -q",
+    ".venv/Scripts/python.exe scripts/commit_checked.py -m 'stop using sed and pytest directly'",
+    "cat <<'EOF' > .cache/x/msg.txt\nfix: no sed, no awk, no pytest here\n"
+    "Select-String is mentioned too\nEOF\n"
+    ".venv/Scripts/python.exe scripts/commit_checked.py -q -F .cache/x/msg.txt\ngit push -q",
     ".venv/Scripts/python.exe - <<'EOF'\nimport re\nprint('sed awk pytest')\nEOF",
     'gh pr comment 1 --body "ran pytest through the script; no sed"',
     "grep -n pytest pyproject.toml",
@@ -88,7 +91,6 @@ PASS = [
     "ls tests | grep test_seal",
     "echo used based awkward pytestish",
     "git log --oneline -1 && git status --short",
-    "cat .cache/x/junit.xml",
     "Get-Content x.txt -TotalCount 5",
     "$x = @'\nsed -n 1p\npytest\n'@\nWrite-Output $x",
     ".venv/Scripts/python.exe -m ruff check src tests",
@@ -97,13 +99,13 @@ PASS = [
     "powershell -NoProfile -File .cache/codex/run-codex.ps1 -Question q.md -Answer a.txt "
     "-Events e.jsonl",
     # Codex round 1: false positives
-    "git commit -m 'pytest'",
-    "git commit -m pytest",
+    ".venv/Scripts/python.exe scripts/commit_checked.py -m 'pytest'",
+    ".venv/Scripts/python.exe scripts/commit_checked.py -m pytest",
     "grep -c 'sed' README.md",
     "gh pr comment 1 --body 'Example: bash -c \"sed -n 1p README.md\"'",
     "gh pr comment 1 --body 'Document pwsh -EncodedCommand AAA='",
     "echo 'python -m pytest is not allowed here'",
-    "git log 2>&1 | head -5",
+    "git log 2>&1 > .cache/x/log.txt",
 ]
 
 
@@ -232,7 +234,6 @@ PASS_ROUND3 = [
     ("cat <<'EOF'\n@\"\n$(Select-String -Path README.md -Pattern Refute)\n\"@\nEOF", B),
     ('.venv/Scripts/python.exe -c "print(1)" -m pytest', B),
     (".venv/Scripts/python.exe scripts/x.py -m pytest", B),
-    ("git log 2>&1 | head -1", B),
     ("echo hi >&2", B),
 ]
 
@@ -320,6 +321,245 @@ def test_here_string_piped_to_python_reading_stdin_implicitly(command):
 def test_python_with_a_script_does_not_read_the_here_string():
     command = "@'\nimport pytest\n'@ | .venv/Scripts/python.exe scripts/x.py"
     assert guard.check(command, shell=P) is None
+
+
+# Rules of the maintainer's message of 2026-10-16: head, tail and cat reading a file in Bash;
+# a backslash in an inline PowerShell command; a commit without the ruff gate --------------
+
+BLOCK_2026_10_16 = [
+    # cat, head and tail read in Bash, in every compound form
+    ("cat README.md", B),
+    ("cat < README.md", B),
+    ("head -5 README.md", B),
+    ("tail -n 3 x.log", B),
+    ("git log --oneline | head -5", B),
+    ("git log 2>&1 | head -5", B),
+    ("ls; cat x", B),
+    ("git status && tail -1 x", B),
+    ("(cat x)", B),
+    ("echo $(head -1 x)", B),
+    ("git status\ncat x", B),
+    ("bash -c 'tail -f x.log'", P),
+    # a backslash in an inline PowerShell command, even inside quotes
+    ("Get-Content -LiteralPath 'C:\\Projetos\\refute\\README.md' -TotalCount 5", P),
+    ("& 'C:\\Projetos\\refute\\.venv\\Scripts\\python.exe' -m ruff check src", P),
+    ('Write-Output "a\\b"', P),
+    ("$p = 'x'; Test-Path $p\\y", P),
+    ("bash -c 'powershell -Command \"Get-ChildItem C:\\\\x\"'", B),
+    # a commit without the ruff gate, in every compound form
+    ("git commit -m x", B),
+    ("git commit -m x", P),
+    ("git add a.py && git commit -m x", B),
+    ("ruff check a.py; git commit -q -F msg.txt", P),
+    (".venv/Scripts/python.exe -m ruff check a.py || git commit -m x", B),
+    ("echo msg | git commit -F -", B),
+    ("(git commit -m x)", B),
+    ("x=$(git commit -m y)", B),
+    ("git status\ngit commit -m x", B),
+    ("git -C C:/Projetos/refute -c user.name=x commit -m x", B),
+    ("git merge --no-edit origin/main", B),
+    ("git merge origin/main", P),
+    ("git cherry-pick abc123", B),
+    ("git revert HEAD", B),
+    ("git pull origin main", B),
+    ("bash -c 'git commit -m x'", P),
+]
+
+PASS_2026_10_16 = [
+    # cat fed only by a here-document or here-string writes text, it reads no file
+    ("cat <<'EOF' > .cache/x/msg.txt\nline\nEOF", B),
+    ("cat <<< hello", B),
+    ("git log --oneline -3", B),
+    # the gate script, and the git commands that do not commit
+    (".venv/Scripts/python.exe scripts/commit_checked.py -q -F .cache/x/msg.txt", B),
+    (".venv/Scripts/python.exe scripts/commit_checked.py -q -F .cache/x/msg.txt", P),
+    ("git merge --no-commit origin/main", B),
+    ("git merge --abort", P),
+    ("git cherry-pick -n abc123", B),
+    ("git pull --ff-only origin main", B),
+    ("git log --grep 'commit' -1", B),
+    ("gh pr create --title 'git commit without ruff is refused' --body-file x.md", B),
+    # a backslash is fine in Bash (the rule is about inline PowerShell), and a saved
+    # script is called by a path written with '/'; the hook never reads its content
+    ("grep -c 'a\\\\b' README.md", B),
+    (
+        "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Projetos/refute/.cache/tools/x.ps1",
+        P,
+    ),
+    ("& 'C:/Projetos/refute/.venv/Scripts/python.exe' 'C:/Projetos/refute/.cache/tools/x.py'", P),
+    ("Get-Content -LiteralPath 'C:/Projetos/refute/README.md' -TotalCount 5", P),
+]
+
+
+@pytest.mark.parametrize(("command", "shell"), BLOCK_2026_10_16)
+def test_refused_2026_10_16(command, shell):
+    assert guard.check(command, shell=shell) is not None
+
+
+@pytest.mark.parametrize(("command", "shell"), PASS_2026_10_16)
+def test_allowed_2026_10_16(command, shell):
+    assert guard.check(command, shell=shell) is None
+
+
+def test_a_saved_script_with_backslashes_is_not_read(tmp_path):
+    """The rule is about inline commands: a saved script whose code holds backslashes and a
+    regular expression passes, because the hook checks only the command text."""
+    script = tmp_path / "saved.ps1"
+    script.write_text("Get-ChildItem 'C:\\Windows' | Where-Object { $_.Name -match '^\\w+$' }\n")
+    command = f"powershell -NoProfile -File {script.as_posix()}"
+    assert "\\" in script.read_text() and "\\" not in command
+    assert guard.check(command, shell=P) is None
+
+
+def test_the_reasons_name_the_rule():
+    assert "commit_checked.py" in guard.check("git commit -m x", shell=B)
+    assert "backslash" in guard.check("Write-Output 'a\\b'", shell=P)
+    assert "Read tool" in guard.check("head -1 x", shell=B)
+
+
+def test_the_wrapper_blocks_when_the_hook_cannot_run(tmp_path):
+    """The command of .claude/settings.json, run by bash as Claude Code runs it, with a
+    project folder that has no interpreter: the hook cannot start, and the wrapper turns
+    that into exit 2 (block). onFailure itself is Claude Code's and is checked above only
+    as configuration."""
+    git_bash = Path("C:/Program Files/Git/bin/bash.exe")
+    bash = str(git_bash) if sys.platform == "win32" else shutil.which("bash")
+    if not bash or not Path(bash).exists():
+        pytest.skip("bash is not available")
+    settings = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    command = settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+    payload = {"tool_name": "Bash", "tool_input": {"command": "git status"}}
+    out = subprocess.run(
+        [bash, "-c", command],
+        input=json.dumps(payload),
+        capture_output=True,
+        text=True,
+        env={**os.environ, "CLAUDE_PROJECT_DIR": tmp_path.as_posix()},
+    )
+    assert out.returncode == 2
+    assert "command is blocked" in out.stderr
+
+
+# Codex review of PR #115, round 1: ways around the new rules ------------------------------
+
+BLOCK_PR115 = [
+    # git aliases given on the command line, prefixes in any form, leading redirections
+    ("git -c alias.x=commit x -m y", B),
+    ("git -c 'alias.x=!git commit -m y' x", B),
+    ("git --config-env=alias.x=VAR x", B),
+    ("git --config-env alias.x=VAR x", B),
+    ("2>/dev/null git commit -m x", B),
+    ("'env' git commit -m x", B),
+    ('"command" git commit -m x', B),
+    ("env -S 'git commit -m x'", B),
+    ("env --split-string='git commit' -m x", B),
+    ("xargs git commit -m x", B),
+    ("cmd /c git commit -m x", P),
+    ("& git commit -m x", P),
+    # option precedence, option values and abbreviations
+    ("git merge --no-commit --commit origin/main", B),
+    ("git merge -m --no-commit origin/main", B),
+    ("git merge --squash --no-squash origin/main", B),
+    ("git merge --continue", B),
+    ("git cherry-pick -n --commit abc123", B),
+    ("git cherry-pick --skip", B),
+    ("git revert --continue", B),
+    ("git pull --ff-only --no-ff origin main", B),
+    ("git pull --ff-only --rebase origin main", B),
+    # Start-Process by position, with other parameters, or with an array
+    ("Start-Process git commit", P),
+    ("Start-Process -WindowStyle Hidden git commit", P),
+    ("Start-Process -FilePath git -Arg 'commit -m x'", P),
+    ("Start-Process git -ArgumentList @('commit', '-m', 'x')", P),
+    ("Start-Process -RSO out.txt git commit", P),
+    # PowerShell parameter prefixes, code as the first argument, code on standard input
+    ("powershell -co 'git commit -m x'", B),
+    ("powershell -NoProfile 'git commit -m x'", B),
+    ("pwsh -NoProfile -ExecutionPolicy Bypass -Command 'git commit -m x'", B),
+    ("pwsh -Command -", B),
+    ("powershell -File -", B),
+    ("@'\ngit status\n'@ | pwsh -Command -", P),
+    ("echo 'git status' | bash", B),
+    ("echo 'git status' | bash -o pipefail", B),
+    ("echo 'git status' | bash -s", B),
+    ("'git status' | cmd", P),
+    ("bash <<< 'git commit -m x'", B),
+    (".venv/Scripts/python.exe <<< 'import pytest'", B),
+    # cat operands and input redirections
+    ("0<README.md cat", B),
+    ("0< README.md cat", B),
+    ("cat 0<README.md", B),
+    ("cat -- -notes", B),
+    ("cat '<<notes'", B),
+    ("cat -n README.md", B),
+    ("command head -1 x", B),
+    ("/usr/bin/tail -1 x", B),
+]
+
+PASS_PR115 = [
+    ("git merge --no-com origin/main", B),
+    ("git merge --commit --no-commit origin/main", B),
+    ("git merge --no-commit -m 'x --commit' origin/main", B),
+    ("git merge --squash origin/main", B),
+    ("git cherry-pick -xn abc123", B),
+    ("git cherry-pick --abort", B),
+    ("git pull --ff --ff-only origin main", B),
+    ("git -c core.quotepath=false log -1", B),
+    ("git -c alias.x=log x -1", B),
+    ("echo hi | cat", B),
+    ("cat - <<'EOF'\nline\nEOF", B),
+    ("printf x | bash scripts/x.sh", B),
+    ("git log | bash -c 'wc -l'", B),
+    ("Start-Process notepad -ArgumentList @('a.txt')", P),
+    ("pwsh -NoProfile -File scripts/x.ps1 -Name commit", B),
+    ("git log --format='%h commit' -1", B),
+]
+
+
+BLOCK_PR115 += [
+    # Codex round 2: a here-string before the command, array subexpressions that run
+    ("<<< 'git commit -m msg' bash", B),
+    ("<<<'git commit -m msg' sh", B),
+    ("<<< 'import pytest' .venv/Scripts/python.exe", B),
+    ("Write-Output @(git commit -m x)", P),
+    ("Write-Output @('a'; git commit -m x)", P),
+]
+
+BLOCK_PR115 += [
+    # Codex round 3: a redirection inside the git arguments, a redirection glued to the
+    # command name, a quoted program after a prefix program in PowerShell
+    ("git 2>/dev/null commit -m msg", B),
+    ("git -C . 2> /dev/null commit -m msg", B),
+    ("cat<README.md", B),
+    ("cat>/dev/null<README.md", B),
+    ("& 'C:/Program Files/Git/usr/bin/env.exe' 'git' commit -m msg", P),
+]
+
+PASS_PR115 += [
+    ("echo hi>.cache/x/out.txt", B),
+    ("git log -1 2>&1", B),
+    ("git log -1>/dev/null", B),
+    ("cat<<'EOF'\nline\nEOF", B),
+]
+
+PASS_PR115 += [
+    # Codex round 2: a here-string that is data, and literal strings in an array
+    ("bash -c 'wc -l' <<< 'git commit -m msg'", B),
+    (".venv/Scripts/python.exe scripts/x.py <<< 'import pytest'", B),
+    ("Write-Output @('pytest')", P),
+    ("Start-Process notepad -ArgumentList @('pytest')", P),
+    ("'git commit' | Out-Null", P),
+]
+
+
+@pytest.mark.parametrize(("command", "shell"), BLOCK_PR115)
+def test_refused_pr115(command, shell):
+    assert guard.check(command, shell=shell) is not None
+
+
+@pytest.mark.parametrize(("command", "shell"), PASS_PR115)
+def test_allowed_pr115(command, shell):
+    assert guard.check(command, shell=shell) is None
 
 
 def test_long_python_option_with_a_value_before_reading_stdin():

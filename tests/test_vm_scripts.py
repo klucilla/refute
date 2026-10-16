@@ -66,6 +66,193 @@ def test_synthetic_cases(cases):
     assert failed == []
 
 
+INSTALLED_MANIFEST = r"C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1"
+UTILITY_MANIFEST = (
+    r"C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+    r"\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1"
+)
+HYPERV_MANIFEST = r"C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Hyper-V\2.0.0.0\Hyper-V.psd1"
+VERSION_KEYS = {"requiredversion", "moduleversion", "maximumversion", "guid"}
+
+
+def _version_keys(entries: list[dict]) -> list[str]:
+    return sorted(
+        key
+        for entry in entries
+        if entry["Kind"] == "table"
+        for key in entry["Names"]
+        if key.lower() in VERSION_KEYS
+    )
+
+
+def test_no_role_capability_imports_a_module_by_version(cases):
+    """With RequiredVersion, ModuleVersion, MaximumVersion or GUID in ModulesToImport,
+    PowerShell resolves the module by calling Get-Module inside the restricted session,
+    which has no Get-Module: the session cannot open (the maintainer, 2026-10-16). Every
+    .psrc of the repository imports by name or path only; the probe shows the detector
+    sees every refused key."""
+    imports = cases["RoleCapabilityImports"]
+    assert "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc" in imports
+    assert {name: _version_keys(e) for name, e in imports.items() if _version_keys(e)} == {}
+    assert _version_keys(cases["RoleCapabilityProbe"]) == [
+        "GUID",
+        "MaximumVersion",
+        "ModuleVersion",
+        "RequiredVersion",
+    ]
+
+
+def test_the_role_capability_imports_the_installed_manifest_by_path(cases):
+    """The module is pinned by the absolute path of its manifest in the folder the
+    registration installs it to (no version subfolder), writable by administrators only.
+    Before it, the two modules its functions need in a restricted session (the maintainer's
+    H.5 of 2026-10-16), each by the absolute path of its manifest in System32, so that no
+    name is resolved through the module path (Codex review of #118):
+    Microsoft.PowerShell.Utility in $PSHOME (by name its functions do not come) and
+    Hyper-V in its version subfolder."""
+    entries = cases["RoleCapabilityImports"][
+        "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc"
+    ]
+    assert entries == [
+        {"Kind": "string", "Value": UTILITY_MANIFEST},
+        {"Kind": "string", "Value": HYPERV_MANIFEST},
+        {"Kind": "string", "Value": INSTALLED_MANIFEST},
+    ]
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows PowerShell 5.1 and Hyper-V module")
+def test_every_command_the_module_calls_exists_in_the_restricted_session():
+    """The maintainer's H.5 of 2026-10-16: in the real session 'Import-PowerShellDataFile'
+    was not recognized, a fourth layer found on the machine. A RestrictedRemoteServer state
+    plus the role capability's ModulesToImport (with the repository's copy of RefuteVm)
+    must hold every command the module's three files call, also on paths a host without
+    Hyper-V never runs (tests/vm/jea_commands.ps1; no administrator rights needed). It
+    shows that the commands exist in that state; what the connecting account sees is
+    checked on the real endpoint (tests/test_vm_jea_integration.py)."""
+    data = _windows_powershell_json("jea_commands.ps1")
+    if not data["Ran"]:
+        pytest.skip(data["Reason"])
+    print(json.dumps(data, indent=1))
+    assert data["Imports"][:2] == [UTILITY_MANIFEST, HYPERV_MANIFEST]
+    assert data["Checked"] >= 40 and data["Defined"] >= 20  # 44 and 27 on 2026-10-16
+    assert data["Missing"] == []
+    # every call without a command name, by its form (Codex review of #118): the local
+    # refusal script block, and the dot-sourcing of the module's two files. A new dynamic
+    # call fails here until it is reviewed.
+    assert data["Dynamic"] == {
+        "Ampersand $refuse": 28,
+        "Dot (Join-Path $PSScriptRoot 'RefuteVm.Core.ps1')": 1,
+        "Dot (Join-Path $PSScriptRoot 'RefuteVm.HyperV.ps1')": 1,
+    }
+    # the Hyper-V cmdlets come from the manifest the role capability names, and their
+    # assembly from the global assembly cache, not from a folder of the module path
+    hyperv = data["HyperV"]
+    assert hyperv["ModulePath"].lower() == HYPERV_MANIFEST.lower(), hyperv
+    assert hyperv["GlobalAssemblyCache"] is True, hyperv
+    assert (
+        hyperv["AssemblyLocation"]
+        .lower()
+        .startswith(
+            "c:\\windows\\microsoft.net\\assembly\\gac_msil\\microsoft.hyperv.powershell.cmdlets\\"
+        )
+    ), hyperv
+
+
+def _windows_powershell_json(script: str) -> dict:
+    exe = shutil.which("powershell.exe")
+    assert exe, "Windows PowerShell 5.1 is part of Windows"
+    out = subprocess.run(
+        [
+            exe,
+            "-NoProfile",
+            "-NonInteractive",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(ROOT / "tests" / "vm" / script),
+            "-Root",
+            str(ROOT),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    assert out.returncode == 0, out.stdout + out.stderr
+    return json.loads(out.stdout.strip().splitlines()[-1])
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows PowerShell 5.1")
+def test_the_status_and_the_simulation_record_the_caller_and_the_module():
+    """Codex review of #118: the caller and the module hashes are computed before the
+    Hyper-V step; this checks the records on any Windows machine, with or without Hyper-V
+    (the real endpoint test reads the record on the runner). With the
+    observation and the log writer replaced inside the module (tests/vm/module_records.ps1),
+    the status output and the simulated record hold the caller, the module hashes and the
+    configuration hash the module's own functions give."""
+    data = _windows_powershell_json("module_records.ps1")
+    if not data["Ran"]:
+        pytest.skip(data["Reason"])
+    expected = data["Expected"]
+    caller = json.loads(expected["Caller"])
+    module = json.loads(expected["Module"])
+    assert module and caller
+    status = json.loads(data["Status"])
+    assert status["Caller"] == caller and status["Module"] == module
+    assert status["ConfigSha256"] == expected["ConfigSha256"]
+    assert status["Observed"]["Vms"] == []
+    simulate = json.loads(data["Simulate"])
+    assert simulate["Mode"] == "simulated" and len(data["Records"]) == 1
+    record = json.loads(data["Records"][0])
+    assert record["Mode"] == "simulated" and record["Operation"] == "SetHostPaths"
+    assert record["Caller"] == caller and record["Module"] == module
+    assert record["PlanSha256"] == simulate["PlanSha256"]
+
+
+def test_the_registration_installs_without_a_version_subfolder():
+    """JEA finds <module path>\\<module>\\RoleCapabilities\\<name>.psrc only (the maintainer's
+    diagnosis of 2026-10-16): the module goes to RefuteVm itself, the apply checks the JEA
+    search and refuses a copy in a version subfolder, and the preview checks that the role
+    capability imports the installed manifest."""
+    text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    assert "$ModuleDestination = $ModuleBase\n" in text.replace("\r\n", "\n")
+    assert "ModuleManifest.ModuleVersion" not in text
+    apply = text[text.index("# ---- apply") :]
+    assert "Find-RefuteJeaRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    assert (
+        "Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    )
+    preview = text[: text.index("# ---- apply")]
+    assert (
+        "$ExpectedImports = @($UtilityManifest, $HyperVManifestPath, $InstalledManifest)" in preview
+    )
+    assert f"$HyperVManifestPath = '{HYPERV_MANIFEST}'" in preview
+    assert "$hyperVManifest -ne $HyperVManifestPath" in preview
+    assert "@(Get-RefuteTreeProblems -Roots $ImportTrees)" in preview
+    assert "the role capability must import exactly $($ExpectedImports -join ', ')" in preview
+    assert "the role capability must make visible exactly Get-RefuteVmStatus" in preview
+    assert "$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'" in text
+
+
+def test_the_endpoint_is_called_as_a_loopback_session(cases):
+    """The endpoint is registered with AccessMode Local: a session to localhost is a
+    loopback session only with implicit credentials and -EnableNetworkAccess
+    (https://learn.microsoft.com/powershell/module/microsoft.powershell.core/disable-psremoting,
+    accessed 2026-10-16); without it the maintainer's session was refused (2026-10-16).
+    From the AST of Invoke-RefuteVm.ps1, read by Windows PowerShell 5.1 on Windows."""
+    calls = cases["InvokeRemoting"]
+    sessions = [c for c in calls if c["Command"] == "New-PSSession"]
+    assert len(sessions) == 1, calls
+    params = {p.lower() for p in sessions[0]["Parameters"]}
+    assert {"computername", "configurationname", "enablenetworkaccess"} <= params
+    assert "credential" not in params
+    values = {k.lower(): v for k, v in sessions[0]["Values"].items()}
+    assert values["computername"] == "localhost" and values["configurationname"] == "RefuteVm"
+    others = [c for c in calls if c["Command"] != "New-PSSession"]
+    assert {c["Command"] for c in others} <= {"Invoke-Command"}
+    assert all({p.lower() for p in c["Parameters"]} == {"scriptblock", "session"} for c in others)
+
+
 def test_operation_lists_agree(cases):
     table = cases["OperationTable"]
     assert cases["ValidateSets"]["RefuteVm/RefuteVm.psm1"] == table
@@ -209,13 +396,26 @@ PREVIEW_FORBIDDEN = (
 PREVIEW_COMMANDS = {
     "find-refutehypervmanifest",
     "find-rolecapabilitycopies",
+    "convertto-refutemoduleroot",
+    "convertto-refuteaclentries",
+    "convertto-refutespecificrights",
+    "convertto-refutewindowsfullpath",
     "foreach-object",
     "get-acl",
     "get-childitem",
     "get-filehash",
+    "get-itemproperty",
     "get-localgroupmember",
     "get-modulepathroots",
     "get-netfirewallrule",
+    "get-item",
+    "get-refuteacewriters",
+    "get-refuteancestorwriters",
+    "get-refutediscoveryproblems",
+    "get-refuteitemproblems",
+    "get-refutejeadiscoveryroots",
+    "get-refuteregistrationmoduleroots",
+    "get-refutetreeproblems",
     "get-refutewriterightsmask",
     "get-registrylisteners",
     "get-service",
@@ -223,13 +423,20 @@ PREVIEW_COMMANDS = {
     "get-treehashes",
     "import-powershelldatafile",
     "join-path",
+    "join-refutediscoveryroots",
+    "join-refutemoduleroots",
     "new-object",
     "resolve-path",
+    "resolve-refutesessionentry",
     "set-strictmode",
     "sort-object",
+    "split-path",
     "test-listenersloopbackonly",
     "test-path",
+    "test-refuteallowedowner",
+    "test-refuteallowedwriter",
     "test-refuterightswrite",
+    "test-targetexists",
     "where-object",
     "write-output",
 }
@@ -238,12 +445,16 @@ PREVIEW_METHODS = {
     "addaccessrule",
     "close",
     "computehash",
+    "containskey",
     "create",
     "dispose",
     "endswith",
+    "expandenvironmentvariables",
     "getbytes",
+    "getaccessrules",
     "getcurrent",
     "getenvironmentvariable",
+    "getowner",
     "isinrole",
     "lastindexof",
     "max",
@@ -264,19 +475,38 @@ PREVIEW_METHODS = {
 # The preview of Remove-RefuteWinRmListener.ps1 (and the core): reads of the registry,
 # the service state and the backup folder ACL, in-memory work and output.
 LISTENER_PREVIEW_COMMANDS = {
+    "convertto-refutemoduleroot",
+    "convertto-refuteaclentries",
+    "convertto-refutespecificrights",
+    "convertto-refutewindowsfullpath",
     "foreach-object",
     "get-acl",
     "get-childitem",
+    "get-item",
+    "get-itemproperty",
+    "get-refuteacewriters",
+    "get-refuteancestorwriters",
     "get-refutebackupproblems",
+    "get-refutediscoveryproblems",
+    "get-refuteitemproblems",
+    "get-refutejeadiscoveryroots",
     "get-refutelistenerremoval",
+    "get-refutetreeproblems",
     "get-refutewriterightsmask",
     "get-service",
     "join-path",
+    "join-refutediscoveryroots",
+    "join-refutemoduleroots",
     "new-object",
     "read-refutelisteners",
+    "resolve-refutesessionentry",
     "set-strictmode",
     "sort-object",
+    "split-path",
     "test-path",
+    "test-refuteallowedowner",
+    "test-refuteallowedwriter",
+    "test-refuterightswrite",
     "where-object",
     "write-output",
 }
@@ -284,11 +514,16 @@ LISTENER_PREVIEW_METHODS = {
     "add",
     "close",
     "computehash",
+    "containskey",
     "create",
     "dispose",
     "endswith",
+    "expandenvironmentvariables",
     "getbytes",
+    "getaccessrules",
     "getcurrent",
+    "getenvironmentvariable",
+    "getowner",
     "getsubkeynames",
     "getvalue",
     "getvaluenames",
@@ -296,10 +531,14 @@ LISTENER_PREVIEW_METHODS = {
     "lastindexof",
     "max",
     "opensubkey",
+    "replace",
+    "split",
     "startswith",
     "substring",
+    "tolowerinvariant",
     "tostring",
     "translate",
+    "trimend",
     "tryparse",
 }
 

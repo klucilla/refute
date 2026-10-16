@@ -28,12 +28,16 @@ def holdout_size(n_train: int) -> int:
 
 
 def holdout_factor(n_examples: int, m: int) -> float:
-    """``max(1, sqrt(n_examples / m))``; ``m`` must be at least the minimum."""
+    """``max(1, sqrt(n_examples / m))`` by the operational definition of 1.0.11, in IEEE-754
+    binary64 with two roundings: ``q = fl(float(n_examples) / float(m))``, the quotient
+    rounded to the nearest binary64; then ``f = max(1, fl(sqrt(q)))``, the root rounded to
+    the nearest binary64. ``m`` must be at least the minimum."""
     if m < HOLDOUT_MIN_EXAMPLES:
         raise ValueError(f"a holdout of {m} examples is below {HOLDOUT_MIN_EXAMPLES}")
     if n_examples < 1:
         raise ValueError("n_examples must be at least 1")
-    return max(1.0, math.sqrt(n_examples / m))
+    q = float(n_examples) / float(m)
+    return max(1.0, math.sqrt(q))
 
 
 def random_baseline(metric: str, n_classes: int) -> float:

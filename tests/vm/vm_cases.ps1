@@ -291,6 +291,38 @@ $failed = $null
 try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_.Exception.Message }
 Add-Case 'verified copy never overwrites' ($failed -like '*already exists*')
 
+# The first Hyper-V call (Codex review of #118): only a host without the vmms service gets
+# the module's own message; a command that is not recognized and any failure on a host
+# with the service keep their own error. Get-VMHost and the service probe are replaced by
+# functions here (a function wins over a cmdlet of the same name).
+function Get-HostCheckFailure([scriptblock]$VmHost, [bool]$Installed) {
+    Set-Item -Path function:Get-VMHost -Value $VmHost
+    Set-Item -Path function:Test-RefuteVmmsInstalled -Value ([scriptblock]::Create("return `$$Installed"))
+    try {
+        $got = Get-RefuteVmHostChecked
+        return [ordered]@{ Value = $got; Type = ''; Message = '' }
+    } catch {
+        return [ordered]@{ Value = $null; Type = $_.Exception.GetType().FullName; Message = $_.Exception.Message }
+    } finally {
+        Remove-Item -Path function:Get-VMHost
+    }
+}
+$denied = { throw (New-Object System.UnauthorizedAccessException 'synthetic: access denied') }
+$noService = { throw (New-Object System.InvalidOperationException 'synthetic: no virtualization service') }
+$notFound = { throw (New-Object System.Management.Automation.CommandNotFoundException 'synthetic: Get-VMHost is not recognized') }
+$r = Get-HostCheckFailure $noService $false
+Add-Case 'Hyper-V check: no vmms service gives the own message' ($r.Message -like 'Hyper-V is not available on this host (the vmms service is not installed): synthetic: no virtualization service') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $denied $true
+Add-Case 'Hyper-V check: access denied with the service installed keeps its error' ($r.Type -eq 'System.UnauthorizedAccessException' -and $r.Message -eq 'synthetic: access denied') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $notFound $false
+Add-Case 'Hyper-V check: a command not recognized is never the own message' ($r.Type -eq 'System.Management.Automation.CommandNotFoundException' -and $r.Message -notlike '*not available*') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $notFound $true
+Add-Case 'Hyper-V check: a command not recognized keeps its error with the service installed' ($r.Type -eq 'System.Management.Automation.CommandNotFoundException') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure { 'synthetic host' } $false
+Add-Case 'Hyper-V check: a host that answers is returned' ($r.Value -eq 'synthetic host' -and $r.Type -eq '') ($r.Type + ': ' + $r.Message)
+Remove-Item -Path function:Test-RefuteVmmsInstalled
+. (Join-Path $moduleDir 'RefuteVm.HyperV.ps1')
+
 $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)
 if ($onWindows) {
     # FileShare.None is enforced by Windows; the endpoint runs only there.
@@ -396,6 +428,299 @@ Add-Case 'Hyper-V manifest: none' ($null -eq (Find-RefuteHyperVManifest (Join-Pa
 Add-Case 'Hyper-V manifest: a folder that is not a version is ignored' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'noversion')))
 Add-Case 'Hyper-V manifest: missing module folder' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'absent')))
 
+# The role capability search of JEA: <root>\<module>\RoleCapabilities\<name>.psrc only
+# (the maintainer's diagnosis of 2026-10-16); a copy in a version subfolder is not found
+function New-RoleFile([string[]]$Parts) {
+    $dir = $WorkDir
+    foreach ($p in $Parts) { $dir = Join-Path $dir $p }
+    $dir = Join-Path $dir 'RoleCapabilities'
+    [void][System.IO.Directory]::CreateDirectory($dir)
+    $file = Join-Path $dir 'Op.psrc'
+    [System.IO.File]::WriteAllText($file, '@{}')
+    return $file
+}
+$flatRole = New-RoleFile @('jea', 'flat', 'M')
+$verRole = New-RoleFile @('jea', 'versioned', 'M', '0.1.0')
+$bothFlat = New-RoleFile @('jea', 'both', 'M')
+$bothVer = New-RoleFile @('jea', 'both', 'M', '0.1.0')
+$firstRoot = New-RoleFile @('jea', 'first', 'A')
+$secondRoot = New-RoleFile @('jea', 'second', 'B')
+[void](New-RoleFile @('jea', 'other', 'M'))
+$jea = Join-Path $WorkDir 'jea'
+$jf = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+$vf = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+Add-Case 'JEA search: a role capability at the module top is found' ($jf.Count -eq 1 -and $jf[0] -eq $flatRole -and $vf.Count -eq 0) (($jf + $vf) -join ', ')
+$jv = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+$vv = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+Add-Case 'JEA search: a version subfolder is never found, and is reported' ($jv.Count -eq 0 -and $vv.Count -eq 1 -and $vv[0] -eq $verRole) (($jv + $vv) -join ', ')
+$jb = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+$vb = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+Add-Case 'JEA search: a stale copy in a version subfolder is reported next to the found one' ($jb.Count -eq 1 -and $jb[0] -eq $bothFlat -and $vb.Count -eq 1 -and $vb[0] -eq $bothVer)
+$jo = @(Find-RefuteJeaRoleCapability -ModuleRoots @((Join-Path $jea 'second'), (Join-Path $jea 'first')) -RoleName 'Op')
+Add-Case 'JEA search: module roots are searched in order (the first found is the one loaded)' ($jo.Count -eq 2 -and $jo[0] -eq $secondRoot -and $jo[1] -eq $firstRoot)
+Add-Case 'JEA search: another role name is not found' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Other').Count -eq 0)
+Add-Case 'JEA search: a missing root is skipped' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'absent') -RoleName 'Op').Count -eq 0)
+
+# The module roots the registration searches: PSModulePath values and extra folders,
+# trimmed, without empty entries or repeats (compared without case), sorted
+$joined = @(Join-RefuteModuleRoots -PathValues @('C:\B\;C:\A;;c:\a\', $null, '') -Extra @('C:\C', 'C:\B'))
+Add-Case 'module roots: entries split, trimmed, deduplicated without case, sorted' ($joined.Count -eq 3 -and $joined[0] -eq 'C:\A' -and $joined[1] -eq 'C:\B' -and $joined[2] -eq 'C:\C') ($joined -join ', ')
+Add-Case 'module roots: nothing given gives nothing' (@(Join-RefuteModuleRoots -PathValues @() -Extra @()).Count -eq 0)
+# a volume root keeps its '\' ('C:' would be the current folder of drive C); UNC paths are
+# trimmed; relative and drive-relative entries are refused (Codex review of #102)
+$volume = @(Join-RefuteModuleRoots -PathValues @('C:\;D:\Mods\;\\srv\share\Mods\;E:\\;F:\Mods\\') -Extra @())
+Add-Case 'module roots: a volume root keeps one backslash, also after repeated ones' ($volume.Count -eq 5 -and $volume -ccontains 'C:\' -and $volume -ccontains 'D:\Mods' -and $volume -ccontains '\\srv\share\Mods' -and $volume -ccontains 'E:\' -and $volume -ccontains 'F:\Mods') ($volume -join ', ')
+foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
+    $refused = $false
+    try { [void](Join-RefuteModuleRoots -PathValues @("C:\A;$relative") -Extra @()) } catch { $refused = $true }
+    Add-Case "module roots: the relative entry '$relative' is refused" $refused
+}
+
+# The effective discovery set of the session (item 9 of the maintainer's message of
+# 2026-10-16): a relative entry resolves against the session's current folder; a
+# drive-relative or root-relative entry, and a relative current folder, are refused
+$sys32 = 'C:\Windows\system32'
+Add-Case 'session entry: a relative entry resolves against the current folder' ((Resolve-RefuteSessionEntry -Entry 'WindowsPowerShell\Modules' -CurrentFolder $sys32) -ceq 'C:\Windows\system32\WindowsPowerShell\Modules')
+Add-Case 'session entry: dot and dot-dot segments are resolved' ((Resolve-RefuteSessionEntry -Entry '.\a\..\Mods\' -CurrentFolder 'C:\X') -ceq 'C:\X\Mods')
+Add-Case 'session entry: dot-dot stops at the volume root' ((Resolve-RefuteSessionEntry -Entry '..\..\..\M' -CurrentFolder 'C:\X') -ceq 'C:\M')
+Add-Case 'session entry: a fully qualified entry is kept as a root' ((Resolve-RefuteSessionEntry -Entry 'D:\Mods\' -CurrentFolder $sys32) -ceq 'D:\Mods')
+# Windows rules on every OS (Codex review of #114): a UNC share stays the root, '/' is a
+# separator, '.' and '..' are resolved in absolute entries too. The expected values are
+# written out; on Windows they are also compared with .NET's own resolution.
+$onWindows = [System.Environment]::OSVersion.Platform -eq 'Win32NT'
+foreach ($pair in @(@('..\..\Mods', '\\srv\share\X', '\\srv\share\Mods'), @('C:/Mods', $sys32, 'C:\Mods'), @('C:\A\..\Mods', $sys32, 'C:\Mods'),
+        @('a/./b/../c', 'C:\X', 'C:\X\a\c'), @('WindowsPowerShell\Modules', $sys32, 'C:\Windows\system32\WindowsPowerShell\Modules'))) {
+    $ours = Resolve-RefuteSessionEntry -Entry $pair[0] -CurrentFolder $pair[1]
+    Add-Case "session entry: '$($pair[0])' against '$($pair[1])' gives '$($pair[2])'" ($ours -ceq $pair[2]) $ours
+    if ($onWindows) {
+        $dotnet = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($pair[1], $pair[0].Replace('/', '\'))).TrimEnd('\')
+        Add-Case "session entry: '$($pair[0])' against '$($pair[1])' as .NET resolves it on Windows" ($ours -ceq $dotnet) "$ours / $dotnet"
+    }
+}
+Add-Case 'full path: a volume root keeps its backslash' ((ConvertTo-RefuteWindowsFullPath 'C:\a\..') -ceq 'C:\')
+Add-Case 'full path: a UNC share root' ((ConvertTo-RefuteWindowsFullPath '\\srv\share\..\x\') -ceq '\\srv\share\x')
+foreach ($bad in '\\?\C:\Mods', '\\.\C:\Mods', 'C:\Mods.\x', 'C:\Mods \x', 'Mods', 'C:Mods',
+    'C:\Modules|audit', 'C:\Modules:stream', 'C:\a<b', 'C:\a>b', 'C:\a"b', 'C:\a*b', 'C:\a?b', "C:\a`tb", '\\srv\sh:are\x') {
+    $refused = $false
+    try { [void](ConvertTo-RefuteWindowsFullPath $bad) } catch { $refused = $true }
+    Add-Case "full path refused: '$bad'" $refused
+}
+Add-Case 'session entry: a UNC share is kept under dot-dot' ((Resolve-RefuteSessionEntry -Entry '..\..\Mods' -CurrentFolder '\\srv\share\X') -ceq '\\srv\share\Mods')
+foreach ($bad in @(@('C:Modules', $sys32), @('\Modules', $sys32), @('/Modules', $sys32), @('Modules', 'system32'))) {
+    $refused = $false
+    try { [void](Resolve-RefuteSessionEntry -Entry $bad[0] -CurrentFolder $bad[1]) } catch { $refused = $true }
+    Add-Case "session entry refused: '$($bad[0])' against '$($bad[1])'" $refused
+}
+$disc = @(Join-RefuteDiscoveryRoots -PathValues @('C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules') `
+        -Extra @('C:\Program Files\WindowsPowerShell\Modules\') -RelativeEntries @('WindowsPowerShell\Modules', 'windowspowershell\modules') -CurrentFolder $sys32)
+Add-Case 'discovery set: absolute entries, extras and resolved relative entries, without repeats' ($disc.Count -eq 3 -and
+    $disc -ccontains 'C:\Program Files\WindowsPowerShell\Modules' -and $disc -ccontains 'C:\Windows\system32\WindowsPowerShell\v1.0\Modules' -and
+    $disc -ccontains 'C:\Windows\system32\WindowsPowerShell\Modules') ($disc -join ', ')
+
+# Who may write in the discovery set: SYSTEM, Administrators, TrustedInstaller; CREATOR
+# OWNER only as an inherit-only entry; a deny entry or a read-only entry never counts
+function New-Ace([string]$Sid, $Rights, [string]$Type, [bool]$InheritOnly) { [ordered]@{ Sid = $Sid; Rights = [int]$Rights; Type = $Type; InheritOnly = $InheritOnly } }
+$ti = 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
+$okAces = @((New-Ace 'S-1-5-18' $r::FullControl 'Allow' $false), (New-Ace 'S-1-5-32-544' $r::Modify 'Allow' $false), (New-Ace $ti $r::FullControl 'Allow' $false),
+    (New-Ace 'S-1-3-0' $r::FullControl 'Allow' $true), (New-Ace 'S-1-5-32-545' $r::ReadAndExecute 'Allow' $false), (New-Ace 'S-1-5-32-545' $r::Modify 'Deny' $false))
+Add-Case 'discovery writers: SYSTEM, Administrators, TrustedInstaller, inherit-only CREATOR OWNER, read-only and deny entries are accepted' (@(Get-RefuteAceWriters $okAces).Count -eq 0)
+foreach ($badAce in @((New-Ace 'S-1-5-32-545' $r::Modify 'Allow' $false), (New-Ace 'S-1-5-11' $r::AppendData 'Allow' $false),
+        (New-Ace 'S-1-3-0' $r::FullControl 'Allow' $false), (New-Ace 'S-1-1-0' $r::WriteData 'Allow' $true))) {
+    Add-Case "discovery writers: $($badAce.Sid) with rights $($badAce.Rights) (inherit-only $($badAce.InheritOnly)) is a writer" (@(Get-RefuteAceWriters @($badAce)).Count -eq 1)
+}
+# Owners and ancestors (Codex review of #114): an owner outside SYSTEM, Administrators and
+# TrustedInstaller is refused; an ancestor counts only the rights that replace what is
+# below it, never creating a new child nor an inherit-only entry
+Add-Case 'owner: SYSTEM, Administrators, TrustedInstaller are allowed' ((Test-RefuteAllowedOwner 'S-1-5-18') -and (Test-RefuteAllowedOwner 'S-1-5-32-544') -and (Test-RefuteAllowedOwner $ti))
+Add-Case 'owner: Users, Authenticated Users and CREATOR OWNER are refused' (-not (Test-RefuteAllowedOwner 'S-1-5-32-545') -and -not (Test-RefuteAllowedOwner 'S-1-5-11') -and -not (Test-RefuteAllowedOwner 'S-1-3-0'))
+$ancOk = @((New-Ace 'S-1-5-11' $r::AppendData 'Allow' $false), (New-Ace 'S-1-5-11' $r::WriteData 'Allow' $false), (New-Ace 'S-1-5-11' $r::Modify 'Allow' $true), (New-Ace 'S-1-5-32-544' $r::FullControl 'Allow' $false))
+Add-Case 'ancestor: creating a child, an inherit-only entry and Administrators are accepted' (@(Get-RefuteAncestorWriters $ancOk).Count -eq 0)
+foreach ($ancBad in @((New-Ace 'S-1-5-11' $r::DeleteSubdirectoriesAndFiles 'Allow' $false), (New-Ace 'S-1-5-32-545' $r::ChangePermissions 'Allow' $false), (New-Ace 'S-1-1-0' $r::TakeOwnership 'Allow' $false), (New-Ace 'S-1-5-32-545' $r::Delete 'Allow' $false))) {
+    Add-Case "ancestor: $($ancBad.Sid) with rights $($ancBad.Rights) can replace what is below" (@(Get-RefuteAncestorWriters @($ancBad)).Count -eq 1)
+}
+
+# Generic rights (Codex review of the integrated JEA package): GENERIC_ALL (0x10000000) and
+# GENERIC_WRITE (0x40000000), which Windows can keep unmapped on an inherit-only entry,
+# count as the specific rights they grant; GENERIC_READ (0x80000000) and GENERIC_EXECUTE
+# (0x20000000) never count as writing
+$ga, $gx, $gw, $gr = 0x10000000, 0x20000000, 0x40000000, 0x80000000
+Add-Case 'generic rights: GENERIC_ALL maps to every right' ((ConvertTo-RefuteSpecificRights $ga) -eq [int]$r::FullControl)
+Add-Case 'generic rights: GENERIC_WRITE maps to FILE_GENERIC_WRITE' ((ConvertTo-RefuteSpecificRights $gw) -eq [int]($r::WriteData -bor $r::AppendData -bor $r::WriteAttributes -bor $r::WriteExtendedAttributes -bor $r::ReadPermissions -bor $r::Synchronize))
+foreach ($gBad in @((New-Ace 'S-1-5-32-545' $ga 'Allow' $true), (New-Ace 'S-1-5-32-545' $gw 'Allow' $true), (New-Ace 'S-1-5-11' $ga 'Allow' $false), (New-Ace 'S-1-5-11' $gw 'Allow' $false))) {
+    Add-Case "generic rights: $($gBad.Sid) with $('0x{0:X8}' -f $gBad.Rights) (inherit-only $($gBad.InheritOnly)) is a writer" (@(Get-RefuteAceWriters @($gBad)).Count -eq 1)
+}
+foreach ($gOk in @((New-Ace 'S-1-5-32-545' $gr 'Allow' $true), (New-Ace 'S-1-5-32-545' $gx 'Allow' $false), (New-Ace 'S-1-5-32-545' ($gr -bor $gx) 'Allow' $false))) {
+    Add-Case "generic rights: $($gOk.Sid) with $('0x{0:X8}' -f $gOk.Rights) only reads" (@(Get-RefuteAceWriters @($gOk)).Count -eq 0)
+}
+Add-Case 'generic rights: GENERIC_ALL on an ancestor can replace what is below' (@(Get-RefuteAncestorWriters @(New-Ace 'S-1-5-32-545' $ga 'Allow' $false)).Count -eq 1)
+Add-Case 'generic rights: GENERIC_WRITE on an ancestor only creates children' (@(Get-RefuteAncestorWriters @(New-Ace 'S-1-5-32-545' $gw 'Allow' $false)).Count -eq 0)
+
+# Owner and access entries by SID, never by translated names (the maintainer's decision of
+# 2026-10-16, after 'ALL APPLICATION PACKAGES' could not be translated on a Portuguese
+# Windows). A synthetic security object: its rules by SID are S-1-15-2-1 (ALL APPLICATION
+# PACKAGES, read, an INHERITED entry) and S-1-15-2-2 (ALL RESTRICTED APPLICATION PACKAGES,
+# GENERIC_WRITE, inherit-only, an EXPLICIT entry); read by name it would give the Portuguese
+# names, and reading it by name (Access, Owner, or rules of the NTAccount type) is counted
+# as a failure; so is leaving out the explicit or the inherited entries (Codex review).
+# Windows only: the access control types of .NET are not supported elsewhere.
+if ($onWindows) {
+    $ptNames = @('AUTORIDADE DE PACOTE DE APLICATIVOS\TODOS OS PACOTES DE APLICATIVOS',
+        'AUTORIDADE DE PACOTE DE APLICATIVOS\TODOS OS PACOTES DE APLICATIVOS RESTRITOS')
+    $script:byName = 0
+    $script:partial = 0
+    # the rules come from a real in-memory descriptor (SDDL keeps GW unmapped, as Windows
+    # can on an inherit-only entry; ID marks an inherited entry); the synthetic object only
+    # wraps it, and returns the explicit and the inherited entries as asked
+    $sddlAcl = New-Object System.Security.AccessControl.DirectorySecurity
+    $sddlAcl.SetSecurityDescriptorSddlForm('O:BAD:(A;OICIIO;GW;;;S-1-15-2-2)(A;ID;0x1200a9;;;S-1-15-2-1)')
+    $sidRules = @($sddlAcl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]))
+    $fakeAcl = New-Object PSObject
+    Add-Member -InputObject $fakeAcl -MemberType ScriptProperty -Name Access -Value { $script:byName++; @($ptNames | ForEach-Object { [ordered]@{ IdentityReference = $_ } }) }
+    Add-Member -InputObject $fakeAcl -MemberType ScriptProperty -Name Owner -Value { $script:byName++; $ptNames[0] }
+    Add-Member -InputObject $fakeAcl -MemberType ScriptMethod -Name GetOwner -Value {
+        param($type)
+        if ($type -ne [System.Security.Principal.SecurityIdentifier]) { $script:byName++ }
+        New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-544'
+    }
+    Add-Member -InputObject $fakeAcl -MemberType ScriptMethod -Name GetAccessRules -Value {
+        param($explicit, $inherited, $type)
+        if ($type -ne [System.Security.Principal.SecurityIdentifier]) { $script:byName++ }
+        if (-not ($explicit -and $inherited)) { $script:partial++ }
+        @($sidRules | Where-Object { ($_.IsInherited -and $inherited) -or (-not $_.IsInherited -and $explicit) })
+    }
+    $converted = ConvertTo-RefuteAclEntries $fakeAcl
+    $convertedSids = @($converted.Entries | ForEach-Object { $_.Sid } | Sort-Object)
+    Add-Case 'ACL by SID: the owner and the explicit and inherited entries come by SID, the Portuguese names are never read' (
+        $script:byName -eq 0 -and $script:partial -eq 0 -and $converted.Owner -eq 'S-1-5-32-544' -and ($convertedSids -join ',') -eq 'S-1-15-2-1,S-1-15-2-2'
+    ) "byName=$($script:byName) partial=$($script:partial) owner=$($converted.Owner) sids=$($convertedSids -join ',')"
+    $restricted = @($converted.Entries | Where-Object { $_.Sid -eq 'S-1-15-2-2' })
+    Add-Case 'ACL by SID: GENERIC_WRITE inherit-only for S-1-15-2-2 is a writer, read-only S-1-15-2-1 is not' (
+        @(Get-RefuteAceWriters $converted.Entries).Count -eq 1 -and $restricted[0].InheritOnly -and $restricted[0].Rights -eq $gw) ((@(Get-RefuteAceWriters $converted.Entries)) -join ' | ')
+    # a real folder that holds ALL APPLICATION PACKAGES entries: the check reads it (the
+    # names translation used to make it "cannot be read" on a Portuguese Windows)
+    $pshomeModules = Join-Path $PSHOME 'Modules'
+    $pshomeProblems = @(Get-RefuteItemProblems -Item $pshomeModules -IsAncestor $false)
+    $pshomeSids = @((ConvertTo-RefuteAclEntries (Get-Acl -LiteralPath $pshomeModules)).Entries | ForEach-Object { $_.Sid })
+    Add-Case 'ACL by SID: $PSHOME\Modules is read, with its S-1-15-2-1 entry, and reports no problem' (
+        $pshomeProblems.Count -eq 0 -and $pshomeSids -contains 'S-1-15-2-1') (($pshomeProblems + $pshomeSids) -join ' | ')
+}
+
+# on real folders: a folder the current account can write (the test's work folder) is
+# reported at every level (the root, a module folder, its RoleCapabilities, a .psrc, and a
+# module folder with no RoleCapabilities), its owner too; an absent folder is checked
+# through its nearest existing ancestor
+$discRoot = Join-Path $WorkDir 'discovery'
+[void][System.IO.Directory]::CreateDirectory((Join-Path $discRoot 'SomeModule\RoleCapabilities'))
+[void][System.IO.Directory]::CreateDirectory((Join-Path $discRoot 'NoRoles'))
+[System.IO.File]::WriteAllText((Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), '@{}')
+$discProblems = @(Get-RefuteDiscoveryProblems -Roots @($discRoot))
+if ($onWindows) {
+    foreach ($level in @($discRoot, (Join-Path $discRoot 'SomeModule'), (Join-Path $discRoot 'SomeModule\RoleCapabilities'),
+            (Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), (Join-Path $discRoot 'NoRoles'))) {
+        Add-Case "discovery problems: '$($level.Substring($WorkDir.Length + 1))' writable by the current account is reported" (
+            @($discProblems | Where-Object { $_.StartsWith("$level can be written by") }).Count -ge 1) ($discProblems -join ' | ')
+    }
+    Add-Case 'discovery problems: a root owned by the current account is reported' (@($discProblems | Where-Object { $_.StartsWith("$discRoot is owned by") }).Count -eq 1) ($discProblems -join ' | ')
+    $absentProblems = @(Get-RefuteDiscoveryProblems -Roots @(Join-Path $discRoot 'absent\deeper'))
+    Add-Case 'discovery problems: an absent folder is checked through its nearest existing ancestor' (
+        @($absentProblems | Where-Object { $_.StartsWith("$discRoot can be written by") }).Count -ge 1) ($absentProblems -join ' | ')
+    # the folders above that ancestor are checked as ancestors (Codex review of #114, round
+    # 2): the work folder, owned by the current account, is reported
+    Add-Case 'discovery problems: the ancestors above the nearest existing one are checked too' (
+        @($absentProblems | Where-Object { $_.StartsWith("$WorkDir is owned by") }).Count -eq 1) ($absentProblems -join ' | ')
+} else {
+    # Windows ACLs cannot be read here (no Get-Acl): every folder is reported as unreadable,
+    # never accepted (the registration itself runs only on Windows)
+    Add-Case 'discovery problems: without Windows ACLs every level is reported, never accepted' (
+        @($discProblems | Where-Object { $_.StartsWith("$discRoot cannot be read") }).Count -ge 1) ($discProblems -join ' | ')
+}
+
+# The folders the role capability's imports load from (Get-RefuteTreeProblems, Codex review
+# of #118): every file and folder below the root gets the full check, every ancestor the
+# ancestor check; a reparse point and a missing root are problems
+$treeRoot = Join-Path $WorkDir 'imports'
+[void][System.IO.Directory]::CreateDirectory((Join-Path $treeRoot 'deep\deeper'))
+[System.IO.File]::WriteAllText((Join-Path $treeRoot 'deep\deeper\Some.dll'), 'x')
+$treeProblems = @(Get-RefuteTreeProblems -Roots @($treeRoot))
+if ($onWindows) {
+    foreach ($level in @($treeRoot, (Join-Path $treeRoot 'deep'), (Join-Path $treeRoot 'deep\deeper'), (Join-Path $treeRoot 'deep\deeper\Some.dll'))) {
+        Add-Case "import trees: '$($level.Substring($WorkDir.Length + 1))' writable and owned by the current account is reported" (
+            @($treeProblems | Where-Object { $_.StartsWith("$level can be written by") }).Count -ge 1 -and
+            @($treeProblems | Where-Object { $_.StartsWith("$level is owned by") }).Count -eq 1) ($treeProblems -join ' | ')
+    }
+    Add-Case 'import trees: the ancestors are checked as ancestors' (
+        @($treeProblems | Where-Object { $_.StartsWith("$WorkDir is owned by") }).Count -eq 1) ($treeProblems -join ' | ')
+    # a junction (no administrator right needed) inside the tree is refused
+    $junction = Join-Path $treeRoot 'link'
+    New-Item -ItemType Junction -Path $junction -Value (Join-Path $treeRoot 'deep') | Out-Null
+    $linkProblems = @(Get-RefuteTreeProblems -Roots @($treeRoot))
+    Add-Case 'import trees: a junction inside the tree is a problem' (
+        @($linkProblems | Where-Object { $_ -eq "$junction is a reparse point (a link or junction)" }).Count -eq 1) ($linkProblems -join ' | ')
+    # the real folders of the role capability's imports on this machine: none of them may
+    # report a problem (the registration refuses otherwise); only where they exist
+    $systemTrees = @(
+        (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility'),
+        (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V'),
+        (Join-Path $env:SystemRoot 'Microsoft.NET\assembly\GAC_MSIL\Microsoft.HyperV.PowerShell.Cmdlets'))
+    if (@($systemTrees | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Container) }).Count -eq 0) {
+        $systemProblems = @(Get-RefuteTreeProblems -Roots $systemTrees)
+        Add-Case 'import trees: the folders of this Windows machine report no problem' ($systemProblems.Count -eq 0) ($systemProblems -join ' | ')
+    }
+}
+$missingTree = @(Get-RefuteTreeProblems -Roots @(Join-Path $treeRoot 'absent'))
+Add-Case 'import trees: a missing folder is a problem' ($missingTree.Count -eq 1 -and $missingTree[0] -eq "$(Join-Path $treeRoot 'absent') does not exist") ($missingTree -join ' | ')
+
+# The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
+# capability, an absent root, and a root that cannot be read as a folder (a file). A root
+# that cannot be read is never reported as absent (Codex review of #99).
+$probeRole = New-RoleFile @('probe-roots', 'present', 'Mod')
+$present = Join-Path (Join-Path $WorkDir 'probe-roots') 'present'
+$absent = Join-Path (Join-Path $WorkDir 'probe-roots') 'absent'
+$fileRoot = Join-Path (Join-Path $WorkDir 'probe-roots') 'a-file'
+[System.IO.File]::WriteAllText($fileRoot, 'x')
+Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+$savedModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Process')
+$savedCwd = [System.IO.Directory]::GetCurrentDirectory()
+try {
+    # a relative entry ('present') resolves against the process's current folder
+    [System.IO.Directory]::SetCurrentDirectory((Join-Path $WorkDir 'probe-roots'))
+    [Environment]::SetEnvironmentVariable('PSModulePath', "$present;$absent;$fileRoot;present", 'Process')
+    $probeText = Get-RefuteJeaModuleRoots
+} finally {
+    [System.IO.Directory]::SetCurrentDirectory($savedCwd)
+    [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+    Remove-Module JeaProbe
+}
+$probeLines = @($probeText.Split("`n"))
+$probeRows = @($probeLines[1..($probeLines.Count - 1)] | ForEach-Object { , @($_.Split("`t")) })
+Add-Case 'JEA probe: the current folder first, then one line of six fields per entry' ($probeLines[0].StartsWith("cwd`t") -and $probeRows.Count -eq 4 -and @($probeRows | Where-Object { $_.Count -ne 6 }).Count -eq 0) $probeText
+Add-Case 'JEA probe: a present root lists its role capability' ($probeRows[0][0] -eq 'present' -and $probeRows[0][1] -eq $present -and $probeRows[0][5] -eq $probeRole) ($probeRows[0] -join ' | ')
+Add-Case 'JEA probe: an absent root is confirmed absent' ($probeRows[1][0] -eq 'absent' -and $probeRows[1][4] -eq '') ($probeRows[1] -join ' | ')
+$onWindows = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+if ($onWindows) {
+    # on Windows a file read as a folder is an IOException, never DirectoryNotFound
+    Add-Case 'JEA probe: a root that cannot be read is an error, never absent' ($probeRows[2][0] -eq 'error' -and $probeRows[2][4]) ($probeRows[2] -join ' | ')
+} else {
+    Add-Case 'JEA probe: a root that cannot be read is never present' ($probeRows[2][0] -ne 'present') ($probeRows[2] -join ' | ')
+}
+Add-Case 'JEA probe: a relative entry is inspected where the process resolves it' ($probeRows[3][1] -eq 'present' -and $probeRows[3][3] -eq $present -and $probeRows[3][0] -eq 'present' -and $probeRows[3][5] -eq $probeRole) ($probeRows[3] -join ' | ')
+if ($onWindows) {
+    # a drive-relative entry ('C:') is the current folder of that drive, never its root
+    $drive = (Join-Path $WorkDir 'probe-roots').Substring(0, 2)
+    Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+    try {
+        [System.IO.Directory]::SetCurrentDirectory($present)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $drive, 'Process')
+        $driveText = Get-RefuteJeaModuleRoots
+    } finally {
+        [System.IO.Directory]::SetCurrentDirectory($savedCwd)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+        Remove-Module JeaProbe
+    }
+    $driveRow = @($driveText.Split("`n"))[1].Split("`t")
+    Add-Case "JEA probe: '$drive' resolves to the current folder of the drive, not '$drive\'" ($driveRow[1] -eq $drive -and $driveRow[3] -eq $present -and $driveRow[0] -eq 'present') ($driveRow -join ' | ')
+}
+
 # WinRM listener removal plan
 $plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'
 Add-Case 'listener: *+HTTP alone, nothing remains' ($plan1.TargetPresent -and @($plan1.Remaining).Count -eq 0 -and @($plan1.ForeignRemaining).Count -eq 0)
@@ -417,10 +742,59 @@ Add-Case 'reg export: another key is refused' (-not (Test-RefuteRegExport -Text 
 Add-Case 'reg export: a sibling key is refused' (-not (Test-RefuteRegExport -Text ($good + "[$key" + "S]`r`n") -KeyPath $key))
 Add-Case 'reg export: the key missing is refused' (-not (Test-RefuteRegExport -Text "Windows Registry Editor Version 5.00`r`n" -KeyPath $key))
 
-$psrc = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RoleCapabilities/RefuteVmOperator.psrc')
-$psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.psd1')
-$pin = $psrc.ModulesToImport[0]
-Add-Case 'role capability pins the module version and GUID' ($pin.ModuleName -eq 'RefuteVm' -and $pin.RequiredVersion -eq $psd1.ModuleVersion -and $pin.GUID -eq $psd1.GUID)
+function Get-PsrcImports([string]$Path) {
+    # The ModulesToImport entries of one role capability file: a string (a name or a
+    # path) as it is, a hashtable as its sorted key names (tests/test_vm_scripts.py refuses
+    # version and GUID keys, which make PowerShell call Get-Module in the restricted session).
+    $data = Import-PowerShellDataFile -LiteralPath $Path
+    $entries = @()
+    if ($data.ContainsKey('ModulesToImport')) { $entries = @($data.ModulesToImport) }
+    return @($entries | ForEach-Object {
+            if ($_ -is [System.Collections.IDictionary]) {
+                # "Names", not "Keys": a key named Keys would hide the dictionary's own .Keys
+                [ordered]@{ Kind = 'table'; Names = @($_.Keys | ForEach-Object { [string]$_ } | Sort-Object) }
+            } else {
+                [ordered]@{ Kind = 'string'; Value = [string]$_ }
+            }
+        })
+}
+
+# every .psrc of the repository (top-level folders starting with '.' are skipped: .git,
+# .venv, .cache), and a synthetic file with the refused keys (the detector sees them)
+$out.RoleCapabilityImports = [ordered]@{}
+$tops = @(Get-ChildItem -LiteralPath $Root -Force | Where-Object { -not $_.Name.StartsWith('.') })
+foreach ($top in $tops) {
+    $found = if ($top.PSIsContainer) { @(Get-ChildItem -LiteralPath $top.FullName -Recurse -File -Filter '*.psrc') } elseif ($top.Extension -eq '.psrc') { @($top) } else { @() }
+    foreach ($file in $found) {
+        $out.RoleCapabilityImports[$file.FullName.Substring($Root.Length + 1).Replace('\', '/')] = @(Get-PsrcImports $file.FullName)
+    }
+}
+$probe = Join-Path $WorkDir 'probe.psrc'
+[System.IO.File]::WriteAllText($probe, "@{ ModulesToImport = @('Plain', @{ ModuleName = 'X'; RequiredVersion = '1.0'; GUID = 'b2713b52-46f8-4c00-a4bf-2b940708587a' }, @{ ModuleName = 'Y'; ModuleVersion = '1.0'; MaximumVersion = '2.0' }) }")
+$out.RoleCapabilityProbe = @(Get-PsrcImports $probe)
+
+# The remoting calls of Invoke-RefuteVm.ps1 and their parameter names, from the AST: the
+# endpoint (AccessMode Local) needs -EnableNetworkAccess and implicit credentials.
+$invokeAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'Invoke-RefuteVm.ps1'), [ref]$null, [ref]$null)
+$out.InvokeRemoting = @($invokeAst.FindAll({ param($n) $n -is [System.Management.Automation.Language.CommandAst] }, $true) |
+        Where-Object { @('New-PSSession', 'Enter-PSSession', 'Invoke-Command', 'New-CimSession') -contains $_.GetCommandName() } |
+        ForEach-Object {
+            # the literal value that follows a parameter, when it is a constant
+            $values = [ordered]@{}
+            $elements = @($_.CommandElements)
+            for ($i = 0; $i -lt $elements.Count - 1; $i++) {
+                if ($elements[$i] -is [System.Management.Automation.Language.CommandParameterAst] -and
+                    $elements[$i + 1] -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+                    $values[$elements[$i].ParameterName] = $elements[$i + 1].Value
+                }
+            }
+            [ordered]@{
+                Command    = $_.GetCommandName()
+                Parameters = @($_.CommandElements | Where-Object { $_ -is [System.Management.Automation.Language.CommandParameterAst] } |
+                        ForEach-Object { $_.ParameterName } | Sort-Object)
+                Values     = $values
+            }
+        })
 
 $out.Cases = $cases.ToArray()
 ConvertTo-RefuteCanonicalJson $out

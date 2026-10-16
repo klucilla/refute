@@ -196,6 +196,65 @@ uv Python builds, and the uv binary.
 **Choosing the origin does not replace fixing the exact version.** Step 2 is
 required; step 3 alone still lets the patch version move.
 
+### 3.5 Implementation plan of the decision (recorded on 2026-10-16, before the change)
+
+Written in the interpreter PR, in a commit of its own before the commit that changes
+`.python-version`, `pyproject.toml` and `.github/workflows/ci.yml`.
+
+**State before the change.** CI run 38852395034 (2026-10-16, PR #110, default
+preference, uv not pinned), from each job's "Install" and "Record environment" lines:
+
+| Job | uv | Interpreter | Origin |
+|---|---|---|---|
+| ubuntu-24.04 / Python 3.12 | 0.13.1 | CPython 3.12.3 | system, `/usr/bin/python3.12` |
+| ubuntu-24.04 / Python 3.13 | 0.13.1 | CPython 3.13.16 | uv-managed, downloaded in the job |
+| windows-2025 / Python 3.12 | 0.13.1 | CPython 3.12.10 | runner tool cache, `C:\hostedtoolcache\windows\Python\3.12.10` |
+| windows-2025 / Python 3.13 | 0.13.1 | CPython 3.13.16 | runner tool cache, `C:\hostedtoolcache\windows\Python\3.13.16` |
+
+`setup-uv` logged "Could not determine uv version from uv.toml or pyproject.toml.
+Falling back to latest." in every job: uv 0.13.1, released 2026-10-14T05:15:30Z, was
+inside the 7-day cooldown on the day of the run.
+
+**Chosen versions and their sources** (GitHub API, retrieved 2026-10-16):
+
+- **uv 0.12.24.** The releases of `astral-sh/uv`: 0.13.1 (2026-10-14T05:15:30Z),
+  0.13.0 (2026-10-09T19:49:55Z), 0.12.24 (2026-10-08T20:06:20Z). On 2026-10-16 the
+  newest release at least 7 days old is 0.12.24. Its assets
+  `uv-x86_64-pc-windows-msvc.zip` and `uv-x86_64-unknown-linux-gnu.tar.gz` were
+  uploaded at 2026-10-08T20:06:17Z.
+- **CPython 3.12.15 and 3.13.16.** The download metadata embedded in uv 0.12.24
+  (`crates/uv-python-managed/download-metadata.json` at tag `0.12.24`) lists, as the
+  newest builds for x86_64 Windows and Linux (glibc), `cpython-3.12.15` and
+  `cpython-3.13.16`, both of the python-build-standalone release `20261003`
+  (published 2026-10-03T14:56:28Z). Their `install_only_stripped` archives for
+  `x86_64-pc-windows-msvc` and `x86_64-unknown-linux-gnu` were uploaded between
+  2026-10-03T14:54:03Z and 2026-10-03T14:54:37Z. A uv version fixes the build it
+  downloads for a given patch, from the catalog embedded in that version, so pinning
+  uv also fixes the build **of a new download**. It does not fix the build of an
+  installation of the same patch that already exists in the install directory, nor of
+  one taken from a catalog or mirror replaced by configuration; the build is fixed only
+  in a fresh install directory with uv's own catalog (as in CI, where the install
+  directory of each job starts empty).
+
+**The change** (the next commit of the PR):
+1. `.github/workflows/ci.yml`: the `version: "0.12.24"` input of `setup-uv`; the
+   matrix `python: ["3.12.15", "3.13.16"]`; the "Record environment" step adds
+   `uv python find <matrix version>` and `uv python list --only-installed`; a new
+   step, "Check interpreter", fails the job unless the interpreter of the environment
+   is CPython, has exactly the matrix version and has its base installation under the
+   uv Python install directory of the job (`scripts/check_interpreter.py`, with unit
+   tests). This step is a permanent check, not an evaluation step (criterion 2 of
+   section 4). It shows where the base installation is and which version it reports;
+   it does not authenticate the build (any CPython of that version placed in the
+   directory passes), which rests on the pinned uv and the fresh install directory.
+2. `.python-version`: `3.13.16`.
+3. `pyproject.toml`, `[tool.uv]`: `python-preference = "only-managed"`.
+
+`uv.lock` does not change (the preference and the interpreter do not enter the
+resolution). The local install of uv 0.12.24 and the local validation of step 4 of
+section 3.4 (Windows, CPU threads 8 to 31, a fresh environment) are done by the
+maintainer before the merge; until then the criterion 4 below is not met.
+
 ## 4. Acceptance criteria
 
 1. This document is on main before any change to `pyproject.toml`, `uv.lock`,
