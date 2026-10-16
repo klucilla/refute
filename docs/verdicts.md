@@ -81,12 +81,21 @@ In the code, a failed gate carries its recorded cause and the attempts completed
 required (`GateFailure`). `NOT_REPRODUCIBLE` needs all the required attempts and a
 cause that applies to the gate:
 - a build-ladder failure applies to `environment_build`;
-- a failure of the documented command applies to `data_present`, `run_completed` and
-  `metric_extracted`;
+- a failure of the documented command applies to `data_present` only;
 - an absent artifact applies to every gate, and only with its evidence: one recorded
   HTTP status per attempt, each 404 or 410, whatever the gate's coverage.
 
 Anything else is `INCONCLUSIVE`.
+
+**A failed run or metric extraction is `INCONCLUSIVE` by default** (decided by the
+maintainer on 2026-10-16). At `run_completed` and `metric_extracted`, an exit code from
+1 to 125, even in every attempt, is not evidence that the artifact caused the failure:
+a wrong argument in the transcribed command, a resource limit, a configuration on
+Refute's side or an unknown cause give one too. These gates are never attributed to
+the documented command; only a proven absence of a declared artifact applies there.
+Cases where positive, deterministic evidence could justify attributing such a failure
+to the artifact are left for a later decision of the maintainer and are not
+implemented.
 
 (Plan, section 8.2.)
 
