@@ -22,8 +22,9 @@ harness, never from a claim, a repository or a path:
   or a junction, that the log is outside the folder, and that the command is this
   interpreter, in isolated mode (``-I``), running a code file of the fixture named by its
   path in the catalog. It returns the command to launch: this interpreter's absolute path
-  and the code file's absolute path, never the words given. Anything else is refused
-  before any process starts.
+  and the code file's absolute path, never the words given, with an environment built
+  from an allowlist (``LAUNCH_ENV_KEYS``), so no variable such as ``LD_PRELOAD`` can load
+  code before Python starts. Anything else is refused before any process starts.
 
 **Trust boundary.** The harness and every module of Refute run in one trusted Python
 process: code already in it could replace any of these objects, and nothing here defends
@@ -221,16 +222,53 @@ def _same_file(a: str, b: str) -> bool:
         return False
 
 
+# The only environment variables a synthetic run receives (Codex review of #109): the
+# thread counts of the claim, what Python needs to start on each system, and the
+# temporary and home folders. Anything else is dropped, so no variable can select code
+# outside the catalog (LD_PRELOAD, LD_LIBRARY_PATH, DYLD_*, PYTHON*, PATH, ...).
+LAUNCH_ENV_KEYS = frozenset(
+    {
+        "OMP_NUM_THREADS",
+        "MKL_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS",
+        "NUMEXPR_NUM_THREADS",
+        "SYSTEMROOT",
+        "SystemRoot",
+        "WINDIR",
+        "TEMP",
+        "TMP",
+        "TMPDIR",
+        "HOME",
+        "USERPROFILE",
+        "LANG",
+        "LC_ALL",
+    }
+)
+
+
+def launch_env(env: Mapping[str, str]) -> dict[str, str]:
+    """The environment a synthetic run is launched with: only ``LAUNCH_ENV_KEYS``."""
+    return {k: v for k, v in env.items() if k in LAUNCH_ENV_KEYS}
+
+
+@dataclass(frozen=True)
+class Launch:
+    argv: list[str]
+    env: dict[str, str]
+
+
 def check_run(
     argv: Sequence[str],
     workdir: Path,
+    env: Mapping[str, str],
     log_paths: Sequence[Path],
     authorizations: Mapping[Path, Authorization],
-) -> list[str]:
-    """The command to launch for a run, or ``SyntheticRefusedError`` before anything
-    starts. ``argv`` must be ``[<this interpreter>, '-I', <code file as cataloged>,
-    *arguments]``; the returned command uses this interpreter's absolute path and the code
-    file's absolute path, so what was checked is what runs."""
+) -> Launch:
+    """The command and environment to launch for a run, or ``SyntheticRefusedError``
+    before anything starts. ``argv`` must be ``[<this interpreter>, '-I', <code file as
+    cataloged>, *arguments]``; the returned command uses this interpreter's absolute path
+    and the code file's absolute path, so what was checked is what runs, and the returned
+    environment holds only ``LAUNCH_ENV_KEYS``."""
     workdir = Path(workdir)
     if not workdir.is_absolute() or workdir.resolve() != workdir:
         raise SyntheticRefusedError(f"{workdir} must be the fixture's own absolute folder")
@@ -256,7 +294,7 @@ def check_run(
         )
     verify_tree(auth)
     script = auth.root.joinpath(*_relative(argv[2]).parts)
-    return [sys.executable, "-I", str(script), *argv[3:]]
+    return Launch([sys.executable, "-I", str(script), *argv[3:]], launch_env(env))
 
 
 # ---- the build ladder under the subprocess backend (A') --------------------------------------
