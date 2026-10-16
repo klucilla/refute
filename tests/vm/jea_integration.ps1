@@ -181,6 +181,59 @@ New-ProbeModule (Join-Path $env:TEMP 'refute-jea-nowhere\RefuteJeaNowhere') 'Ref
 Register-Probe 'RefuteProbeNowhere' 'ProbeNowhere'
 $out.Relative.Nowhere = Test-Session 'RefuteProbeNowhere' $true
 
+# The real RefuteVm endpoint, end to end (the maintainer's H.5 of 2026-10-16, after a fourth
+# layer, 'Import-PowerShellDataFile' not recognized, was found on the machine): the module
+# and its role capability from the repository, installed where the registration installs
+# them (no version subfolder), with a test configuration (the repository's, with a VM name
+# of its own; every path stays where Test-RefuteVmConfig requires it); an endpoint shaped
+# like the real one (RestrictedRemoteServer, a virtual account in Hyper-V Administrators
+# only, AccessMode Local); a session with -EnableNetworkAccess; Get-Command,
+# Get-RefuteVmStatus and Invoke-RefuteVmOperation -Simulate, each as a literal command.
+# The runner has the Hyper-V PowerShell module but not the service, so both calls stop at
+# the module's first Hyper-V call, with the module's own message.
+$out.RefuteVm = [ordered]@{ Opened = $false; Error = ''; Commands = @(); Status = $null; Simulate = $null }
+$repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$source = Join-Path $repoRoot 'scripts\vm\RefuteVm'
+$target = Join-Path $modules 'RefuteVm'
+[void][System.IO.Directory]::CreateDirectory((Join-Path $target 'RoleCapabilities'))
+foreach ($file in 'RefuteVm.psd1', 'RefuteVm.psm1', 'RefuteVm.Core.ps1', 'RefuteVm.HyperV.ps1', 'RoleCapabilities\RefuteVmOperator.psrc') {
+    Copy-Item -LiteralPath (Join-Path $source $file) -Destination (Join-Path $target $file)
+}
+$configText = [System.IO.File]::ReadAllText((Join-Path $source 'RefuteVm.Config.psd1'))
+$testConfig = $configText.Replace("= 'refute-vm'", "= 'refute-ci-vm'")
+if ($testConfig -eq $configText) { throw 'the test configuration was not written' }
+[System.IO.File]::WriteAllText((Join-Path $target 'RefuteVm.Config.psd1'), $testConfig, $utf8)
+$hyperVAdmins = (New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-578').Translate([System.Security.Principal.NTAccount]).Value.Split('\')[-1]
+$refutePssc = Join-Path $env:TEMP 'RefuteVmCi.pssc'
+New-PSSessionConfigurationFile -Path $refutePssc -SessionType RestrictedRemoteServer -RunAsVirtualAccount `
+    -RunAsVirtualAccountGroups $hyperVAdmins -RoleDefinitions @{ $account = @{ RoleCapabilities = 'RefuteVmOperator' } }
+Register-PSSessionConfiguration -Name 'RefuteVmCi' -Path $refutePssc -AccessMode Local -Force | Out-Null
+
+function Invoke-Literal($Session, [string]$Command) {
+    # one literal command, the call shape of Invoke-RefuteVm.ps1
+    $call = [ordered]@{ Ok = $false; Output = ''; Error = ''; ErrorId = ''; Exception = '' }
+    try {
+        $call.Output = [string](Invoke-Command -Session $Session -ScriptBlock ([scriptblock]::Create($Command)) -ErrorAction Stop)
+        $call.Ok = $true
+    } catch {
+        $call.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
+        $call.ErrorId = [string]$_.FullyQualifiedErrorId
+        $call.Exception = $_.Exception.GetType().FullName
+    }
+    return $call
+}
+try {
+    $refuteSession = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
+    $out.RefuteVm.Opened = $true
+    try {
+        $out.RefuteVm.Commands = @(Invoke-Command -Session $refuteSession -ScriptBlock { Get-Command } | ForEach-Object { [string]$_.Name } | Sort-Object)
+        $out.RefuteVm.Status = Invoke-Literal $refuteSession 'Get-RefuteVmStatus'
+        $out.RefuteVm.Simulate = Invoke-Literal $refuteSession 'Invoke-RefuteVmOperation -Operation SetHostPaths -Simulate'
+    } finally { Remove-PSSession -Session $refuteSession }
+} catch {
+    $out.RefuteVm.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
+}
+
 # the module roots the registration searches, from the function the registration itself
 # calls (scripts/vm/RefuteRegistration.Core.ps1), not from a copy of its formula
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)

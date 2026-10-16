@@ -67,6 +67,10 @@ def test_synthetic_cases(cases):
 
 
 INSTALLED_MANIFEST = r"C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1"
+UTILITY_MANIFEST = (
+    r"C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+    r"\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1"
+)
 VERSION_KEYS = {"requiredversion", "moduleversion", "maximumversion", "guid"}
 
 
@@ -99,11 +103,55 @@ def test_no_role_capability_imports_a_module_by_version(cases):
 
 def test_the_role_capability_imports_the_installed_manifest_by_path(cases):
     """The module is pinned by the absolute path of its manifest in the folder the
-    registration installs it to (no version subfolder), writable by administrators only."""
+    registration installs it to (no version subfolder), writable by administrators only.
+    Before it, the two modules its functions need in a restricted session (the maintainer's
+    H.5 of 2026-10-16): Microsoft.PowerShell.Utility by the path of its manifest in $PSHOME
+    (by name its functions do not come) and Hyper-V by name."""
     entries = cases["RoleCapabilityImports"][
         "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc"
     ]
-    assert entries == [{"Kind": "string", "Value": INSTALLED_MANIFEST}]
+    assert entries == [
+        {"Kind": "string", "Value": UTILITY_MANIFEST},
+        {"Kind": "string", "Value": "Hyper-V"},
+        {"Kind": "string", "Value": INSTALLED_MANIFEST},
+    ]
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows PowerShell 5.1 and Hyper-V module")
+def test_every_command_the_module_calls_exists_in_the_restricted_session():
+    """The maintainer's H.5 of 2026-10-16: in the real session 'Import-PowerShellDataFile'
+    was not recognized, a fourth layer found on the machine. A RestrictedRemoteServer state
+    plus the role capability's ModulesToImport (with the repository's copy of RefuteVm)
+    must hold every command the module's three files call, also on paths a host without
+    Hyper-V never runs (tests/vm/jea_commands.ps1; no administrator rights needed)."""
+    exe = shutil.which("powershell.exe")
+    assert exe, "Windows PowerShell 5.1 is part of Windows"
+    out = subprocess.run(
+        [
+            exe,
+            "-NoProfile",
+            "-NonInteractive",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(ROOT / "tests" / "vm" / "jea_commands.ps1"),
+            "-Root",
+            str(ROOT),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    assert out.returncode == 0, out.stdout + out.stderr
+    data = json.loads(out.stdout.strip().splitlines()[-1])
+    if not data["Ran"]:
+        pytest.skip(data["Reason"])
+    print(json.dumps(data, indent=1))
+    assert data["Imports"][0].endswith("Microsoft.PowerShell.Utility.psd1")
+    assert data["Imports"][1] == "Hyper-V"
+    assert data["Checked"] >= 40 and data["Defined"] >= 20  # 44 and 25 on 2026-10-16
+    assert data["Missing"] == []
 
 
 def test_the_registration_installs_without_a_version_subfolder():
@@ -120,7 +168,9 @@ def test_the_registration_installs_without_a_version_subfolder():
         "Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
     )
     preview = text[: text.index("# ---- apply")]
-    assert "the role capability must import exactly $InstalledManifest" in preview
+    assert "$ExpectedImports = @($UtilityManifest, 'Hyper-V', $InstalledManifest)" in preview
+    assert "the role capability must import exactly $($ExpectedImports -join ', ')" in preview
+    assert "the role capability must make visible exactly Get-RefuteVmStatus" in preview
     assert "$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'" in text
 
 

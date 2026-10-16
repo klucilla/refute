@@ -45,13 +45,18 @@ function Get-RefuteVmStatus {
     [CmdletBinding()]
     param([switch]$IncludeMedia)
     $config = Get-RefuteVmModuleConfig
+    # everything that does not need Hyper-V first, so that a host without it (the CI
+    # runner) still exercises the rest of the call before the Hyper-V step
+    $module = Get-RefuteVmModuleFiles
+    $configSha = Get-RefuteSha256Text (ConvertTo-RefuteCanonicalJson $config)
+    $caller = Get-RefuteVmCaller
     $observed = Get-RefuteVmObserved -Config $config -IncludeMedia:$IncludeMedia
     $status = [ordered]@{
-        Module       = Get-RefuteVmModuleFiles
-        ConfigSha256 = Get-RefuteSha256Text (ConvertTo-RefuteCanonicalJson $config)
+        Module       = $module
+        ConfigSha256 = $configSha
         Config       = $config
         Observed     = $observed
-        Caller       = Get-RefuteVmCaller
+        Caller       = $caller
     }
     return ConvertTo-RefuteCanonicalJson $status
 }
@@ -91,6 +96,10 @@ function Invoke-RefuteVmOperation {
     $config = Get-RefuteVmModuleConfig
     $operationId = [guid]::NewGuid().ToString()
     $includeMedia = @('ImportInstallIso', 'ImportSeedIso', 'AttachInstallMedia') -contains $Operation
+    # computed before the Hyper-V step, as in Get-RefuteVmStatus; the same values go into
+    # the records below
+    $caller = Get-RefuteVmCaller
+    $moduleFiles = Get-RefuteVmModuleFiles
     # A real call holds the lock from the observation to the final check, so the guards
     # are evaluated on the state the action meets and no other session acts meanwhile.
     $lock = $null
@@ -106,8 +115,8 @@ function Invoke-RefuteVmOperation {
             Mode        = $(if ($Simulate) { 'simulated' } else { 'intent' })
             PlanSha256  = $planSha
             Plan        = $plan
-            Caller      = Get-RefuteVmCaller
-            Module      = Get-RefuteVmModuleFiles
+            Caller      = $caller
+            Module      = $moduleFiles
         }
         if ($Simulate) {
             Write-RefuteVmLog -Config $config -Record $record
@@ -148,7 +157,7 @@ function Invoke-RefuteVmOperation {
             PlanSha256  = $planSha
             Outcome     = $outcome
             Error       = $failure
-            Caller      = Get-RefuteVmCaller
+            Caller      = $caller
         }
         Write-RefuteVmLog -Config $config -Record $result
         if ($outcome -eq 'failed' -or $outcome -eq 'not reached') { throw "$Operation ${outcome}: $failure" }

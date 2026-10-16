@@ -92,7 +92,17 @@ function Get-RefuteVmObserved {
     # The state the plan is computed from. Names are compared exactly in Core: Get-VM is
     # called without -Name, so no wildcard is ever interpreted.
     param([System.Collections.IDictionary]$Config, [switch]$IncludeMedia)
-    $vmHost = Get-VMHost -ErrorAction Stop
+    # The first Hyper-V call. A host without Hyper-V (the CI runner has the PowerShell
+    # module but not the service) stops here with a message of its own. A command that is
+    # not recognized is never turned into that message: it means a missing import, a defect
+    # (tests/test_vm_jea_integration.py fails on it).
+    try {
+        $vmHost = Get-VMHost -ErrorAction Stop
+    } catch [System.Management.Automation.CommandNotFoundException] {
+        throw
+    } catch {
+        throw "Hyper-V is not available on this host: $($_.Exception.Message)"
+    }
     $recorded = Read-RefuteVmState -Config $Config
     $vms = foreach ($vm in @(Get-VM -ErrorAction Stop)) {
         $memory = Get-VMMemory -VM $vm -ErrorAction Stop

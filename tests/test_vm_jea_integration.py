@@ -208,6 +208,51 @@ def test_a_relative_entry_is_searched_where_the_session_resolves_it(result, requ
     _opened(control)
 
 
+VISIBLE = [
+    "Clear-Host",
+    "Exit-PSSession",
+    "Get-Command",
+    "Get-FormatData",
+    "Get-Help",
+    "Get-RefuteVmStatus",
+    "Invoke-RefuteVmOperation",
+    "Measure-Object",
+    "Out-Default",
+    "Select-Object",
+]
+HYPERV_ABSENT = "Hyper-V is not available on this host"
+
+
+def test_the_refutevm_endpoint_shows_exactly_its_ten_commands(result):
+    """The real module and role capability (the maintainer's H.5 of 2026-10-16): the session
+    opens with -EnableNetworkAccess and Get-Command shows exactly the two functions and the
+    eight helper commands of RestrictedRemoteServer. The modules ModulesToImport adds for the
+    functions (Microsoft.PowerShell.Utility, Hyper-V) stay invisible to the connecting
+    account."""
+    refute = result["RefuteVm"]
+    assert refute["Opened"], refute
+    assert sorted(refute["Commands"], key=str.lower) == sorted(VISIBLE, key=str.lower)
+
+
+@pytest.mark.parametrize("call", ["Status", "Simulate"])
+def test_the_refutevm_calls_run_until_only_hyper_v_is_missing(result, call):
+    """Get-RefuteVmStatus and Invoke-RefuteVmOperation -Operation SetHostPaths -Simulate run
+    end to end on the runner. It has the Hyper-V PowerShell module but not the service, so
+    each stops at the module's first Hyper-V call with the module's own message; a command
+    that is not recognized fails this test, whatever comes after it. If the runner ever has
+    Hyper-V, the call succeeds and returns the observed state."""
+    refute = result["RefuteVm"]
+    assert refute["Opened"], refute
+    c = refute[call]
+    print(call, json.dumps(c, indent=1))
+    text = c["Error"] + c["Output"]
+    assert "is not recognized" not in text and "CommandNotFound" not in c["ErrorId"], c
+    if c["Ok"]:
+        assert '"Observed":{' in c["Output"] or '"Plan":{' in c["Output"], c
+    else:
+        assert HYPERV_ABSENT in c["Error"], c
+
+
 @pytest.mark.parametrize(
     ("entry", "qualified"),
     [

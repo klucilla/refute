@@ -31,7 +31,11 @@ unvalidated until they are tested on Windows and Hyper-V, with the evidence reco
   copy in a folder only administrators can write. It names no version and no GUID: with
   them PowerShell resolves the module by calling `Get-Module` inside the restricted
   session, which has no `Get-Module`, and the session cannot open (observed on
-  2026-10-16). No parameter takes a path or a VM name: they come from
+  2026-10-16).
+  - **Two more imports, before the module.** The session holds the core cmdlets but not the functions of `Microsoft.PowerShell.Utility` (`Import-PowerShellDataFile`, `Get-FileHash`) nor the Hyper-V cmdlets, which the module's functions call ("`Import-PowerShellDataFile` is not recognized", observed on 2026-10-16). So the role capability also imports `Microsoft.PowerShell.Utility` by the path of its manifest in `$PSHOME` (by name its functions do not come) and `Hyper-V` by name.
+  - **What the connecting account sees.** The commands these imports bring are private: the module's functions call them, but the connecting account does not see them. A CI test on a real endpoint checks the visible list, and another checks that every command the module calls exists in such a session.
+
+  No parameter takes a path or a VM name: they come from
   `RefuteVm.Config.psd1`, installed with the module under `%ProgramFiles%`, where only
   administrators can write.
 - Claude Code calls the endpoint through `Invoke-RefuteVm.ps1`; every call is a
@@ -148,7 +152,9 @@ order:
    of JEA's finds exactly one role capability,
    `RefuteVm\RoleCapabilities\RefuteVmOperator.psrc`, that no other copy exists (none in
    a version subfolder), and, already in the preview, that the role capability imports
-   exactly `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`. The
+   exactly, in this order, the `Microsoft.PowerShell.Utility` manifest in `$PSHOME`,
+   `Hyper-V` and `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, and
+   makes visible only the two functions. The
    search covers these module roots (`Get-RefuteRegistrationModuleRoots` in
    `RefuteRegistration.Core.ps1`): the machine and process `PSModulePath`, Program Files,
    System32, `$PSHOME\Modules`, and the Default profile's
