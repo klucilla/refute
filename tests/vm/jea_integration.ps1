@@ -40,42 +40,12 @@ $account = "$env:COMPUTERNAME\$env:USERNAME"
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $guid = 'c3d6a0f1-8e2b-4a57-9f30-1b2c3d4e5f60'
 $visible = "VisibleFunctions = @('Get-RefuteJeaProbe', 'Get-RefuteJeaModuleRoots')"
-# The probe functions. Get-RefuteJeaModuleRoots runs inside the JEA session, as its virtual
-# account, while the session is open: for each entry of the session's PSModulePath, one
-# line "<exists 0|1><TAB><entry as written><TAB><root><TAB><error><TAB><psrc files joined
-# by |>", where the files are every <root>\<folder>\RoleCapabilities\*.psrc (what JEA could
-# select there). The entry is reported as written, so the test validates it before any
-# normalisation. It uses .NET only: no cmdlet, which a restricted session may not have
-# (cause 3).
-$probeCode = @'
-function Get-RefuteJeaProbe { 'probe-ok' }
-function Get-RefuteJeaModuleRoots {
-    $lines = [System.Collections.Generic.List[string]]::new()
-    foreach ($entry in [Environment]::GetEnvironmentVariable('PSModulePath').Split(';')) {
-        if (-not $entry) { continue }
-        # the entry as JEA reads it, normalised like ConvertTo-RefuteModuleRoot: the final
-        # '\' characters are dropped, and a volume root keeps one ('C:' would be the current
-        # folder of drive C)
-        $root = $entry.TrimEnd('\')
-        if ($root -match '^[A-Za-z]:$') { $root = $root + '\' }
-        $exists = [System.IO.Directory]::Exists($root)
-        $files = [System.Collections.Generic.List[string]]::new()
-        $err = ''
-        if ($exists) {
-            try {
-                foreach ($dir in [System.IO.Directory]::GetDirectories($root)) {
-                    $folder = [System.IO.Path]::Combine($dir, 'RoleCapabilities')
-                    if ([System.IO.Directory]::Exists($folder)) { $files.AddRange([System.IO.Directory]::GetFiles($folder, '*.psrc')) }
-                }
-            } catch { $err = $_.Exception.Message.Replace("`t", ' ').Replace("`r", ' ').Replace("`n", ' ') }
-        }
-        $flag = if ($exists) { '1' } else { '0' }
-        $lines.Add([string]::Join("`t", @($flag, $entry, $root, $err, [string]::Join('|', $files.ToArray()))))
-    }
-    [string]::Join("`n", $lines.ToArray())
-}
-Export-ModuleMember -Function Get-RefuteJeaProbe, Get-RefuteJeaModuleRoots
-'@
+# The probe functions (tests/vm/JeaProbe.psm1, checked on synthetic folders by
+# tests/vm/vm_cases.ps1). Get-RefuteJeaModuleRoots runs inside the JEA session, as its
+# virtual account, while the session is open, and reports each entry of the session's
+# PSModulePath as written, its normalised root, whether it is present, absent or could not
+# be read, and every <root>\<folder>\RoleCapabilities\*.psrc under it.
+$probeCode = [System.IO.File]::ReadAllText((Join-Path $PSScriptRoot 'JeaProbe.psm1'))
 
 function New-ProbeModule([string]$Folder, [string]$Name, [hashtable]$RoleFiles) {
     # A module exporting the probe functions, with role capability files in $Folder.

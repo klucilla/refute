@@ -444,6 +444,35 @@ foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
     Add-Case "module roots: the relative entry '$relative' is refused" $refused
 }
 
+# The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
+# capability, an absent root, and a root that cannot be read as a folder (a file). A root
+# that cannot be read is never reported as absent (Codex review of #99).
+$probeRole = New-RoleFile @('probe-roots', 'present', 'Mod')
+$present = Join-Path (Join-Path $WorkDir 'probe-roots') 'present'
+$absent = Join-Path (Join-Path $WorkDir 'probe-roots') 'absent'
+$fileRoot = Join-Path (Join-Path $WorkDir 'probe-roots') 'a-file'
+[System.IO.File]::WriteAllText($fileRoot, 'x')
+Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+$savedModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Process')
+try {
+    [Environment]::SetEnvironmentVariable('PSModulePath', "$present;$absent;$fileRoot", 'Process')
+    $probeText = Get-RefuteJeaModuleRoots
+} finally {
+    [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+    Remove-Module JeaProbe
+}
+$probeRows = @($probeText.Split("`n") | ForEach-Object { , @($_.Split("`t")) })
+Add-Case 'JEA probe: one line of five fields per entry' ($probeRows.Count -eq 3 -and @($probeRows | Where-Object { $_.Count -ne 5 }).Count -eq 0) $probeText
+Add-Case 'JEA probe: a present root lists its role capability' ($probeRows[0][0] -eq 'present' -and $probeRows[0][1] -eq $present -and $probeRows[0][4] -eq $probeRole) ($probeRows[0] -join ' | ')
+Add-Case 'JEA probe: an absent root is confirmed absent' ($probeRows[1][0] -eq 'absent' -and $probeRows[1][3] -eq '') ($probeRows[1] -join ' | ')
+$onWindows = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+if ($onWindows) {
+    # on Windows a file read as a folder is an IOException, never DirectoryNotFound
+    Add-Case 'JEA probe: a root that cannot be read is an error, never absent' ($probeRows[2][0] -eq 'error' -and $probeRows[2][3]) ($probeRows[2] -join ' | ')
+} else {
+    Add-Case 'JEA probe: a root that cannot be read is never present' ($probeRows[2][0] -ne 'present') ($probeRows[2] -join ' | ')
+}
+
 # WinRM listener removal plan
 $plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'
 Add-Case 'listener: *+HTTP alone, nothing remains' ($plan1.TargetPresent -and @($plan1.Remaining).Count -eq 0 -and @($plan1.ForeignRemaining).Count -eq 0)

@@ -111,16 +111,17 @@ def test_a_role_capability_in_a_version_subfolder_is_not_found(sessions):
 
 
 def _session_roots(text: str) -> list[dict]:
-    """The lines of Get-RefuteJeaModuleRoots: exists, the entry as written, its normalised
-    root, error, psrc files."""
+    """The lines of Get-RefuteJeaModuleRoots (tests/vm/JeaProbe.psm1): state (present,
+    absent or error), the entry as written, its normalised root, error, psrc files."""
     roots = []
     for line in text.split("\n"):
-        exists, entry, path, error, files = line.split("\t")
+        state, entry, path, error, files = line.split("\t")
+        assert state in ("present", "absent", "error"), line
         roots.append(
             {
                 "Entry": entry,
                 "Path": path,
-                "Exists": exists == "1",
+                "State": state,
                 "Error": error,
                 "RoleCapabilities": [f for f in files.split("|") if f],
             }
@@ -130,11 +131,12 @@ def _session_roots(text: str) -> list[dict]:
 
 def test_the_roots_the_session_searches_are_known_to_the_registration(result, sessions):
     """The module path seen inside a JEA session, read by its virtual account while the
-    session is open. Every existing root is one the registration searches (the registration's
-    own function, Get-RefuteRegistrationModuleRoots), or, root by root, holds no role
-    capability at all in that session, read without error: JEA can select nothing there.
-    No folder is exempted by its name (Codex review of #99 and #102). This is evidence for
-    the GitHub runner only."""
+    session is open. Every root is one the registration searches (the registration's own
+    function, Get-RefuteRegistrationModuleRoots), or, root by root, is confirmed absent, or
+    was read without error and holds no role capability at all in that session: JEA can
+    select nothing there. A root that could not be read is never taken as absent (Codex
+    review of #99). No folder is exempted by its name (Codex review of #99 and #102). This
+    is evidence for the GitHub runner only."""
     known = {p.lower() for p in result["Roots"]["Registration"]}
     session = _session_roots(sessions["PathWithNetworkAccess"]["Roots"])
     assert session, "the session reported no module path"
@@ -143,9 +145,9 @@ def test_the_roots_the_session_searches_are_known_to_the_registration(result, se
     # depend on the session's current folder (Codex review of #99, round 5)
     relative = [r["Entry"] for r in session if not FULLY_QUALIFIED.match(r["Entry"])]
     assert relative == [], relative
-    unknown = [r for r in session if r["Exists"] and r["Path"].lower() not in known]
+    unknown = [r for r in session if r["State"] != "absent" and r["Path"].lower() not in known]
     print("session roots outside the registration's set:", json.dumps(unknown, indent=1))
-    selectable = [r for r in unknown if r["Error"] or r["RoleCapabilities"]]
+    selectable = [r for r in unknown if r["State"] == "error" or r["RoleCapabilities"]]
     assert selectable == [], (selectable, result["Roots"]["Registration"])
     # the probe's own role capabilities are seen from inside the session, so the listing works
     listed = [f for r in session for f in r["RoleCapabilities"]]
