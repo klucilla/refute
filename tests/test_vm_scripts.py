@@ -67,6 +67,11 @@ def test_synthetic_cases(cases):
 
 
 INSTALLED_MANIFEST = r"C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1"
+UTILITY_MANIFEST = (
+    r"C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+    r"\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1"
+)
+HYPERV_MANIFEST = r"C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Hyper-V\2.0.0.0\Hyper-V.psd1"
 VERSION_KEYS = {"requiredversion", "moduleversion", "maximumversion", "guid"}
 
 
@@ -99,11 +104,109 @@ def test_no_role_capability_imports_a_module_by_version(cases):
 
 def test_the_role_capability_imports_the_installed_manifest_by_path(cases):
     """The module is pinned by the absolute path of its manifest in the folder the
-    registration installs it to (no version subfolder), writable by administrators only."""
+    registration installs it to (no version subfolder), writable by administrators only.
+    Before it, the two modules its functions need in a restricted session (the maintainer's
+    H.5 of 2026-10-16), each by the absolute path of its manifest in System32, so that no
+    name is resolved through the module path (Codex review of #118):
+    Microsoft.PowerShell.Utility in $PSHOME (by name its functions do not come) and
+    Hyper-V in its version subfolder."""
     entries = cases["RoleCapabilityImports"][
         "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc"
     ]
-    assert entries == [{"Kind": "string", "Value": INSTALLED_MANIFEST}]
+    assert entries == [
+        {"Kind": "string", "Value": UTILITY_MANIFEST},
+        {"Kind": "string", "Value": HYPERV_MANIFEST},
+        {"Kind": "string", "Value": INSTALLED_MANIFEST},
+    ]
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows PowerShell 5.1 and Hyper-V module")
+def test_every_command_the_module_calls_exists_in_the_restricted_session():
+    """The maintainer's H.5 of 2026-10-16: in the real session 'Import-PowerShellDataFile'
+    was not recognized, a fourth layer found on the machine. A RestrictedRemoteServer state
+    plus the role capability's ModulesToImport (with the repository's copy of RefuteVm)
+    must hold every command the module's three files call, also on paths a host without
+    Hyper-V never runs (tests/vm/jea_commands.ps1; no administrator rights needed). It
+    shows that the commands exist in that state; what the connecting account sees is
+    checked on the real endpoint (tests/test_vm_jea_integration.py)."""
+    data = _windows_powershell_json("jea_commands.ps1")
+    if not data["Ran"]:
+        pytest.skip(data["Reason"])
+    print(json.dumps(data, indent=1))
+    assert data["Imports"][:2] == [UTILITY_MANIFEST, HYPERV_MANIFEST]
+    assert data["Checked"] >= 40 and data["Defined"] >= 20  # 44 and 27 on 2026-10-16
+    assert data["Missing"] == []
+    # every call without a command name, by its form (Codex review of #118): the local
+    # refusal script block, and the dot-sourcing of the module's two files. A new dynamic
+    # call fails here until it is reviewed.
+    assert data["Dynamic"] == {
+        "Ampersand $refuse": 28,
+        "Dot (Join-Path $PSScriptRoot 'RefuteVm.Core.ps1')": 1,
+        "Dot (Join-Path $PSScriptRoot 'RefuteVm.HyperV.ps1')": 1,
+    }
+    # the Hyper-V cmdlets come from the manifest the role capability names, and their
+    # assembly from the global assembly cache, not from a folder of the module path
+    hyperv = data["HyperV"]
+    assert hyperv["ModulePath"].lower() == HYPERV_MANIFEST.lower(), hyperv
+    assert hyperv["GlobalAssemblyCache"] is True, hyperv
+    assert (
+        hyperv["AssemblyLocation"]
+        .lower()
+        .startswith(
+            "c:\\windows\\microsoft.net\\assembly\\gac_msil\\microsoft.hyperv.powershell.cmdlets\\"
+        )
+    ), hyperv
+
+
+def _windows_powershell_json(script: str) -> dict:
+    exe = shutil.which("powershell.exe")
+    assert exe, "Windows PowerShell 5.1 is part of Windows"
+    out = subprocess.run(
+        [
+            exe,
+            "-NoProfile",
+            "-NonInteractive",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(ROOT / "tests" / "vm" / script),
+            "-Root",
+            str(ROOT),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    assert out.returncode == 0, out.stdout + out.stderr
+    return json.loads(out.stdout.strip().splitlines()[-1])
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows PowerShell 5.1")
+def test_the_status_and_the_simulation_record_the_caller_and_the_module():
+    """Codex review of #118: the caller and the module hashes are computed before the
+    Hyper-V step; this checks the records on any Windows machine, with or without Hyper-V
+    (the real endpoint test reads the record on the runner). With the
+    observation and the log writer replaced inside the module (tests/vm/module_records.ps1),
+    the status output and the simulated record hold the caller, the module hashes and the
+    configuration hash the module's own functions give."""
+    data = _windows_powershell_json("module_records.ps1")
+    if not data["Ran"]:
+        pytest.skip(data["Reason"])
+    expected = data["Expected"]
+    caller = json.loads(expected["Caller"])
+    module = json.loads(expected["Module"])
+    assert module and caller
+    status = json.loads(data["Status"])
+    assert status["Caller"] == caller and status["Module"] == module
+    assert status["ConfigSha256"] == expected["ConfigSha256"]
+    assert status["Observed"]["Vms"] == []
+    simulate = json.loads(data["Simulate"])
+    assert simulate["Mode"] == "simulated" and len(data["Records"]) == 1
+    record = json.loads(data["Records"][0])
+    assert record["Mode"] == "simulated" and record["Operation"] == "SetHostPaths"
+    assert record["Caller"] == caller and record["Module"] == module
+    assert record["PlanSha256"] == simulate["PlanSha256"]
 
 
 def test_the_registration_installs_without_a_version_subfolder():
@@ -120,7 +223,14 @@ def test_the_registration_installs_without_a_version_subfolder():
         "Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
     )
     preview = text[: text.index("# ---- apply")]
-    assert "the role capability must import exactly $InstalledManifest" in preview
+    assert (
+        "$ExpectedImports = @($UtilityManifest, $HyperVManifestPath, $InstalledManifest)" in preview
+    )
+    assert f"$HyperVManifestPath = '{HYPERV_MANIFEST}'" in preview
+    assert "$hyperVManifest -ne $HyperVManifestPath" in preview
+    assert "@(Get-RefuteTreeProblems -Roots $ImportTrees)" in preview
+    assert "the role capability must import exactly $($ExpectedImports -join ', ')" in preview
+    assert "the role capability must make visible exactly Get-RefuteVmStatus" in preview
     assert "$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'" in text
 
 
@@ -305,6 +415,7 @@ PREVIEW_COMMANDS = {
     "get-refuteitemproblems",
     "get-refutejeadiscoveryroots",
     "get-refuteregistrationmoduleroots",
+    "get-refutetreeproblems",
     "get-refutewriterightsmask",
     "get-registrylisteners",
     "get-service",
@@ -380,6 +491,7 @@ LISTENER_PREVIEW_COMMANDS = {
     "get-refuteitemproblems",
     "get-refutejeadiscoveryroots",
     "get-refutelistenerremoval",
+    "get-refutetreeproblems",
     "get-refutewriterightsmask",
     "get-service",
     "join-path",

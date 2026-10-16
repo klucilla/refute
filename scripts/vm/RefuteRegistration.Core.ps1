@@ -361,6 +361,40 @@ function Get-RefuteDiscoveryProblems {
     return $problems  # callers wrap the call in @(...)
 }
 
+function Get-RefuteTreeProblems {
+    # Reads, never writes. For each folder of Roots (the folders a role capability's imports
+    # load from: the module folders and the folder of an assembly a manifest loads): the
+    # folder and every file and folder below it get the full check of Get-RefuteItemProblems,
+    # and every ancestor up to the volume root the ancestor check, so that no other account
+    # can change, replace or redirect what the imports load (Codex review of #118). A
+    # missing folder is a problem. Returns one problem per finding.
+    param([string[]]$Roots)
+    $problems = @()
+    foreach ($root in @($Roots)) {
+        $targets = @()
+        $ancestors = @()
+        try {
+            if (-not (Test-Path -LiteralPath $root -PathType Container -ErrorAction Stop)) {
+                $problems += "$root does not exist"
+                continue
+            }
+            $targets += $root
+            $targets += @(Get-ChildItem -LiteralPath $root -Recurse -Force -ErrorAction Stop | ForEach-Object { $_.FullName })
+            $ancestor = Split-Path -Parent $root
+            while ($ancestor) {
+                $ancestors += $ancestor
+                $ancestor = Split-Path -Parent $ancestor
+            }
+        } catch {
+            $problems += "$root cannot be read: $($_.Exception.Message)"
+            continue
+        }
+        foreach ($item in $targets) { $problems += @(Get-RefuteItemProblems -Item $item -IsAncestor $false) }
+        foreach ($item in $ancestors) { $problems += @(Get-RefuteItemProblems -Item $item -IsAncestor $true) }
+    }
+    return $problems  # callers wrap the call in @(...)
+}
+
 function ConvertTo-RefuteAclEntries {
     # The owner and the access entries of a security object (from Get-Acl), by the SIDs
     # stored in its security descriptor: GetOwner and GetAccessRules with the

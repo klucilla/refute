@@ -291,6 +291,38 @@ $failed = $null
 try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_.Exception.Message }
 Add-Case 'verified copy never overwrites' ($failed -like '*already exists*')
 
+# The first Hyper-V call (Codex review of #118): only a host without the vmms service gets
+# the module's own message; a command that is not recognized and any failure on a host
+# with the service keep their own error. Get-VMHost and the service probe are replaced by
+# functions here (a function wins over a cmdlet of the same name).
+function Get-HostCheckFailure([scriptblock]$VmHost, [bool]$Installed) {
+    Set-Item -Path function:Get-VMHost -Value $VmHost
+    Set-Item -Path function:Test-RefuteVmmsInstalled -Value ([scriptblock]::Create("return `$$Installed"))
+    try {
+        $got = Get-RefuteVmHostChecked
+        return [ordered]@{ Value = $got; Type = ''; Message = '' }
+    } catch {
+        return [ordered]@{ Value = $null; Type = $_.Exception.GetType().FullName; Message = $_.Exception.Message }
+    } finally {
+        Remove-Item -Path function:Get-VMHost
+    }
+}
+$denied = { throw (New-Object System.UnauthorizedAccessException 'synthetic: access denied') }
+$noService = { throw (New-Object System.InvalidOperationException 'synthetic: no virtualization service') }
+$notFound = { throw (New-Object System.Management.Automation.CommandNotFoundException 'synthetic: Get-VMHost is not recognized') }
+$r = Get-HostCheckFailure $noService $false
+Add-Case 'Hyper-V check: no vmms service gives the own message' ($r.Message -like 'Hyper-V is not available on this host (the vmms service is not installed): synthetic: no virtualization service') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $denied $true
+Add-Case 'Hyper-V check: access denied with the service installed keeps its error' ($r.Type -eq 'System.UnauthorizedAccessException' -and $r.Message -eq 'synthetic: access denied') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $notFound $false
+Add-Case 'Hyper-V check: a command not recognized is never the own message' ($r.Type -eq 'System.Management.Automation.CommandNotFoundException' -and $r.Message -notlike '*not available*') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $notFound $true
+Add-Case 'Hyper-V check: a command not recognized keeps its error with the service installed' ($r.Type -eq 'System.Management.Automation.CommandNotFoundException') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure { 'synthetic host' } $false
+Add-Case 'Hyper-V check: a host that answers is returned' ($r.Value -eq 'synthetic host' -and $r.Type -eq '') ($r.Type + ': ' + $r.Message)
+Remove-Item -Path function:Test-RefuteVmmsInstalled
+. (Join-Path $moduleDir 'RefuteVm.HyperV.ps1')
+
 $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)
 if ($onWindows) {
     # FileShare.None is enforced by Windows; the endpoint runs only there.
@@ -602,6 +634,41 @@ if ($onWindows) {
     Add-Case 'discovery problems: without Windows ACLs every level is reported, never accepted' (
         @($discProblems | Where-Object { $_.StartsWith("$discRoot cannot be read") }).Count -ge 1) ($discProblems -join ' | ')
 }
+
+# The folders the role capability's imports load from (Get-RefuteTreeProblems, Codex review
+# of #118): every file and folder below the root gets the full check, every ancestor the
+# ancestor check; a reparse point and a missing root are problems
+$treeRoot = Join-Path $WorkDir 'imports'
+[void][System.IO.Directory]::CreateDirectory((Join-Path $treeRoot 'deep\deeper'))
+[System.IO.File]::WriteAllText((Join-Path $treeRoot 'deep\deeper\Some.dll'), 'x')
+$treeProblems = @(Get-RefuteTreeProblems -Roots @($treeRoot))
+if ($onWindows) {
+    foreach ($level in @($treeRoot, (Join-Path $treeRoot 'deep'), (Join-Path $treeRoot 'deep\deeper'), (Join-Path $treeRoot 'deep\deeper\Some.dll'))) {
+        Add-Case "import trees: '$($level.Substring($WorkDir.Length + 1))' writable and owned by the current account is reported" (
+            @($treeProblems | Where-Object { $_.StartsWith("$level can be written by") }).Count -ge 1 -and
+            @($treeProblems | Where-Object { $_.StartsWith("$level is owned by") }).Count -eq 1) ($treeProblems -join ' | ')
+    }
+    Add-Case 'import trees: the ancestors are checked as ancestors' (
+        @($treeProblems | Where-Object { $_.StartsWith("$WorkDir is owned by") }).Count -eq 1) ($treeProblems -join ' | ')
+    # a junction (no administrator right needed) inside the tree is refused
+    $junction = Join-Path $treeRoot 'link'
+    New-Item -ItemType Junction -Path $junction -Value (Join-Path $treeRoot 'deep') | Out-Null
+    $linkProblems = @(Get-RefuteTreeProblems -Roots @($treeRoot))
+    Add-Case 'import trees: a junction inside the tree is a problem' (
+        @($linkProblems | Where-Object { $_ -eq "$junction is a reparse point (a link or junction)" }).Count -eq 1) ($linkProblems -join ' | ')
+    # the real folders of the role capability's imports on this machine: none of them may
+    # report a problem (the registration refuses otherwise); only where they exist
+    $systemTrees = @(
+        (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility'),
+        (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V'),
+        (Join-Path $env:SystemRoot 'Microsoft.NET\assembly\GAC_MSIL\Microsoft.HyperV.PowerShell.Cmdlets'))
+    if (@($systemTrees | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Container) }).Count -eq 0) {
+        $systemProblems = @(Get-RefuteTreeProblems -Roots $systemTrees)
+        Add-Case 'import trees: the folders of this Windows machine report no problem' ($systemProblems.Count -eq 0) ($systemProblems -join ' | ')
+    }
+}
+$missingTree = @(Get-RefuteTreeProblems -Roots @(Join-Path $treeRoot 'absent'))
+Add-Case 'import trees: a missing folder is a problem' ($missingTree.Count -eq 1 -and $missingTree[0] -eq "$(Join-Path $treeRoot 'absent') does not exist") ($missingTree -join ' | ')
 
 # The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
 # capability, an absent root, and a root that cannot be read as a folder (a file). A root

@@ -208,6 +208,118 @@ def test_a_relative_entry_is_searched_where_the_session_resolves_it(result, requ
     _opened(control)
 
 
+VISIBLE = [
+    "Clear-Host",
+    "Exit-PSSession",
+    "Get-Command",
+    "Get-FormatData",
+    "Get-Help",
+    "Get-RefuteVmStatus",
+    "Invoke-RefuteVmOperation",
+    "Measure-Object",
+    "Out-Default",
+    "Select-Object",
+]
+HYPERV_ABSENT = "Hyper-V is not available on this host"
+
+
+def test_the_refutevm_endpoint_shows_exactly_its_ten_commands(result):
+    """The real module and role capability (the maintainer's H.5 of 2026-10-16): the session
+    opens with -EnableNetworkAccess and Get-Command shows exactly the two functions and the
+    eight helper commands of RestrictedRemoteServer. The modules ModulesToImport adds for the
+    functions (Microsoft.PowerShell.Utility, Hyper-V) stay invisible to the connecting
+    account."""
+    refute = result["RefuteVm"]
+    assert refute["Opened"], refute
+    assert sorted(refute["Commands"], key=str.lower) == sorted(VISIBLE, key=str.lower)
+
+
+def _summary(c: dict) -> str:
+    """A short line for the CI log (record_property): the outcome, and the top-level keys of
+    the JSON output or the error."""
+    if c["Ok"]:
+        keys = sorted(json.loads(c["Output"]))
+        return f"ok keys={','.join(keys)} bytes={len(c['Output'])}"
+    return f"error {c['Exception']} {c['ErrorId']}: {c['Error'][:300]}"
+
+
+@pytest.mark.parametrize("call", ["Status", "Simulate"])
+def test_the_refutevm_calls_run_until_only_hyper_v_is_missing(result, call, record_property):
+    """Get-RefuteVmStatus and Invoke-RefuteVmOperation -Operation SetHostPaths -Simulate run
+    end to end on the runner, through the real endpoint. A command that is not recognized
+    fails this test, whatever comes after it. On a host without the vmms service each call
+    stops at the module's first Hyper-V call with the module's own message; on a host with
+    it (the windows-2025 runner, since run 38934817010 of 2026-10-16) each call runs to its
+    end: the status holds the observed state, the simulation its plan."""
+    refute = result["RefuteVm"]
+    assert refute["Opened"], refute
+    c = refute[call]
+    record_property("vmms", str(refute["Vmms"]))
+    record_property("result", _summary(c))
+    print(call, json.dumps(c, indent=1))
+    text = c["Error"] + c["Output"]
+    assert "is not recognized" not in text and "CommandNotFound" not in c["ErrorId"], c
+    if refute["Vmms"]:
+        # any failure on a host with the service keeps its own error and fails here
+        assert c["Ok"], c
+        out = json.loads(c["Output"])
+        if call == "Status":
+            assert {"Caller", "Config", "ConfigSha256", "Module", "Observed"} <= set(out), out
+            assert out["Config"]["VmName"] == "refute-ci-vm"
+        else:
+            assert out["Mode"] == "simulated" and len(out["PlanSha256"]) == 64, out
+    else:
+        assert not c["Ok"] and HYPERV_ABSENT in c["Error"], c
+
+
+def test_the_simulation_writes_its_record_as_the_virtual_account(result, record_property):
+    """The simulated call writes one record to the operation log, as the session's virtual
+    account (the caller is the connecting account, run as a WinRM virtual account), with
+    the module hashes and the plan hash the call returned. Only where the runner has the
+    vmms service; without it the call stops before any record."""
+    refute = result["RefuteVm"]
+    if not refute["Vmms"]:
+        assert refute["LogRecords"] == [], refute["LogRecords"]
+        pytest.skip("no vmms service on this runner: the call stops before any record")
+    records = [json.loads(line) for line in refute["LogRecords"]]
+    assert len(records) == 1, records
+    record = records[0]
+    caller = record["Caller"]
+    record_property("caller", json.dumps(caller, sort_keys=True))
+    record_property("module_files", ",".join(sorted(record["Module"])))
+    assert record["Mode"] == "simulated" and record["Operation"] == "SetHostPaths"
+    assert record["PlanSha256"] == json.loads(refute["Simulate"]["Output"])["PlanSha256"]
+    assert caller["ConnectedUser"].lower() == refute["Account"].lower(), caller
+    # a JEA virtual account is named "WinRM VA_<n>_<computer>_<user>"
+    assert "\\winrm va_" in caller["RunAsUser"].lower(), caller
+    files = {"RefuteVm.psm1", "RefuteVm.Config.psd1", "RoleCapabilities/RefuteVmOperator.psrc"}
+    assert files <= set(record["Module"]), record["Module"]
+
+
+PRIVATE = [
+    "Get-FileHash",
+    "Import-PowerShellDataFile",
+    "Get-VMHost",
+    "Microsoft.PowerShell.Utility\\Get-FileHash",
+    "Microsoft.PowerShell.Utility\\Import-PowerShellDataFile",
+    "Hyper-V\\Get-VMHost",
+    "Get-Module",
+    "RefuteVm\\Get-RefuteVmModuleFiles",
+]
+
+
+@pytest.mark.parametrize("name", PRIVATE)
+def test_the_imported_commands_cannot_be_called_from_the_session(result, name):
+    """Negative controls (Codex review of #118): the commands the role capability imports
+    for the module's functions, and an internal function of the module, cannot be called by
+    the connecting account, by name or module-qualified. Each is read-only."""
+    refute = result["RefuteVm"]
+    assert refute["Opened"], refute
+    c = refute["Private"][name]
+    assert not c["Ok"], c
+    assert "CommandNotFound" in c["ErrorId"] or "is not recognized" in c["Error"], c
+
+
 def test_the_discovery_set_is_exactly_the_folders_the_session_searches(result, sessions, request):
     """Codex review of #114: the effective discovery set the registration computes
     (Get-RefuteJeaDiscoveryRoots: machine PSModulePath, Program Files, $PSHOME\\Modules and

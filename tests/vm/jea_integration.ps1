@@ -181,6 +181,106 @@ New-ProbeModule (Join-Path $env:TEMP 'refute-jea-nowhere\RefuteJeaNowhere') 'Ref
 Register-Probe 'RefuteProbeNowhere' 'ProbeNowhere'
 $out.Relative.Nowhere = Test-Session 'RefuteProbeNowhere' $true
 
+# The real RefuteVm endpoint, end to end (the maintainer's H.5 of 2026-10-16, after a fourth
+# layer, 'Import-PowerShellDataFile' not recognized, was found on the machine): the module
+# and its role capability from the repository, installed where the registration installs
+# them (no version subfolder), with a test configuration (the repository's, with a VM name
+# of its own; every path stays where Test-RefuteVmConfig requires it); an endpoint shaped
+# like the real one (RestrictedRemoteServer, a virtual account in Hyper-V Administrators
+# only, AccessMode Local); a session with -EnableNetworkAccess; Get-Command,
+# Get-RefuteVmStatus and Invoke-RefuteVmOperation -Simulate, each as a literal command.
+# The data folders (Log, State) are created with the ACL the registration gives them. On a
+# host without the Hyper-V service both calls stop at the module's first Hyper-V call, with
+# the module's own message; the windows-2025 runner has the service (run 38934817010 of
+# 2026-10-16 got past the observation), so both calls run to their end there and the
+# simulation writes its record, which is read back. Afterwards the module folder is moved
+# out of the module path (never deleted), so that later tests on the runner find no
+# RefuteVmOperator role capability.
+$out.RefuteVm = [ordered]@{ Opened = $false; Error = ''; Commands = @(); Status = $null; Simulate = $null; Private = [ordered]@{}; Vmms = $false; LogRecords = @(); Account = $account }
+# whether this host has the Virtual Machine Management service (the module's own message
+# for a host without Hyper-V depends on it)
+$vmmsKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Services\vmms')
+if ($vmmsKey) { $out.RefuteVm.Vmms = $true; $vmmsKey.Close() }
+$repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$source = Join-Path $repoRoot 'scripts\vm\RefuteVm'
+$target = Join-Path $modules 'RefuteVm'
+# everything from the copy of the module to the reading of the log runs inside this try:
+# its finally moves the module out of the module path, also when a step fails (Codex
+# review of #118, round 2)
+try {
+    [void][System.IO.Directory]::CreateDirectory((Join-Path $target 'RoleCapabilities'))
+    foreach ($file in 'RefuteVm.psd1', 'RefuteVm.psm1', 'RefuteVm.Core.ps1', 'RefuteVm.HyperV.ps1', 'RoleCapabilities\RefuteVmOperator.psrc') {
+        Copy-Item -LiteralPath (Join-Path $source $file) -Destination (Join-Path $target $file)
+    }
+    $configText = [System.IO.File]::ReadAllText((Join-Path $source 'RefuteVm.Config.psd1'))
+    $testConfig = $configText.Replace("= 'refute-vm'", "= 'refute-ci-vm'")
+    if ($testConfig -eq $configText) { throw 'the test configuration was not written' }
+    [System.IO.File]::WriteAllText((Join-Path $target 'RefuteVm.Config.psd1'), $testConfig, $utf8)
+    $hyperVAdmins = (New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-578').Translate([System.Security.Principal.NTAccount]).Value.Split('\')[-1]
+    # the data folders, as Register-RefuteVmEndpoint.ps1 creates them: owner Administrators,
+    # inheritance removed; SYSTEM and Administrators full control, Hyper-V Administrators
+    # modify, Users read
+    $operationLog = 'C:\ProgramData\RefuteVm\Log\operations.jsonl'
+    foreach ($folder in 'C:\ProgramData\RefuteVm\Log', 'C:\ProgramData\RefuteVm\State') {
+        [void][System.IO.Directory]::CreateDirectory($folder)
+        $acl = New-Object System.Security.AccessControl.DirectorySecurity
+        $acl.SetOwner((New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-544'))
+        $acl.SetAccessRuleProtection($true, $false)
+        $inherit = [System.Security.AccessControl.InheritanceFlags]'ContainerInherit, ObjectInherit'
+        foreach ($entry in @(@('S-1-5-18', 'FullControl'), @('S-1-5-32-544', 'FullControl'), @('S-1-5-32-578', 'Modify'), @('S-1-5-32-545', 'ReadAndExecute'))) {
+            $acl.AddAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule (
+                        (New-Object System.Security.Principal.SecurityIdentifier $entry[0]), [System.Security.AccessControl.FileSystemRights]$entry[1], $inherit,
+                        [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)))
+        }
+        Set-Acl -LiteralPath $folder -AclObject $acl
+    }
+    $refutePssc = Join-Path $env:TEMP 'RefuteVmCi.pssc'
+    $refuteTranscripts = Join-Path $env:TEMP 'RefuteVmCi-transcripts'
+    [void][System.IO.Directory]::CreateDirectory($refuteTranscripts)
+    New-PSSessionConfigurationFile -Path $refutePssc -SessionType RestrictedRemoteServer -RunAsVirtualAccount `
+        -RunAsVirtualAccountGroups $hyperVAdmins -TranscriptDirectory $refuteTranscripts `
+        -RoleDefinitions @{ $account = @{ RoleCapabilities = 'RefuteVmOperator' } }
+    Register-PSSessionConfiguration -Name 'RefuteVmCi' -Path $refutePssc -AccessMode Local -Force | Out-Null
+
+    function Invoke-Literal($Session, [string]$Command) {
+        # one literal command, the call shape of Invoke-RefuteVm.ps1
+        $call = [ordered]@{ Ok = $false; Output = ''; Error = ''; ErrorId = ''; Exception = '' }
+        try {
+            $call.Output = [string](Invoke-Command -Session $Session -ScriptBlock ([scriptblock]::Create($Command)) -ErrorAction Stop)
+            $call.Ok = $true
+        } catch {
+            $call.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
+            $call.ErrorId = [string]$_.FullyQualifiedErrorId
+            $call.Exception = $_.Exception.GetType().FullName
+        }
+        return $call
+    }
+    try {
+        $refuteSession = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
+        $out.RefuteVm.Opened = $true
+        try {
+            $out.RefuteVm.Commands = @(Invoke-Command -Session $refuteSession -ScriptBlock { Get-Command } | ForEach-Object { [string]$_.Name } | Sort-Object)
+            $out.RefuteVm.Status = Invoke-Literal $refuteSession 'Get-RefuteVmStatus'
+            $out.RefuteVm.Simulate = Invoke-Literal $refuteSession 'Invoke-RefuteVmOperation -Operation SetHostPaths -Simulate'
+            # negative controls (Codex review of #118): the commands the imports bring for the
+            # module's functions cannot be called by the connecting account, by name or by a
+            # module-qualified name; all are read-only, so a failure here changes nothing
+            foreach ($private in 'Get-FileHash', 'Import-PowerShellDataFile', 'Get-VMHost', 'Microsoft.PowerShell.Utility\Get-FileHash',
+                'Microsoft.PowerShell.Utility\Import-PowerShellDataFile', 'Hyper-V\Get-VMHost', 'Get-Module', 'RefuteVm\Get-RefuteVmModuleFiles') {
+                $out.RefuteVm.Private[$private] = Invoke-Literal $refuteSession $private
+            }
+        } finally { Remove-PSSession -Session $refuteSession }
+    } catch {
+        $out.RefuteVm.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
+    }
+    if (Test-Path -LiteralPath $operationLog -PathType Leaf) {
+        $out.RefuteVm.LogRecords = @([System.IO.File]::ReadAllLines($operationLog) | Where-Object { $_ })
+    }
+} finally {
+    # out of the module path, kept on the runner (nothing is deleted)
+    if (Test-Path -LiteralPath $target) { Move-Item -LiteralPath $target -Destination (Join-Path $env:TEMP 'RefuteVm-installed-by-jea-test') }
+}
+
 # the module roots the registration searches, from the function the registration itself
 # calls (scripts/vm/RefuteRegistration.Core.ps1), not from a copy of its formula
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)

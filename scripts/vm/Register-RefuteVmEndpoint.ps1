@@ -220,12 +220,44 @@ function Test-TargetExists([string]$Path) {
 if (Test-TargetExists $ModuleBase) { $problems.Add("$ModuleBase already exists") }
 if (Test-TargetExists $DataRoot) { $problems.Add("$DataRoot already exists") }
 foreach ($folder in $VmFolders) { if (Test-TargetExists $folder) { $problems.Add("$folder already exists") } }
-# The role capability imports the module by the path of its installed manifest (no
-# version, no GUID: those make PowerShell call Get-Module in the restricted session).
+# The role capability imports exactly, in this order, each by the absolute path of its
+# manifest: Microsoft.PowerShell.Utility in $PSHOME (its functions, Import-PowerShellDataFile
+# and Get-FileHash, do not come by name in a restricted session), Hyper-V (the manifest this
+# host has, found above), and the module where this script installs it. No name is resolved
+# through the module path. No version, no GUID: those make PowerShell call Get-Module in the
+# restricted session. The visible commands stay the two functions.
+$UtilityManifest = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1'
+$HyperVManifestPath = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Hyper-V\2.0.0.0\Hyper-V.psd1'
+$ExpectedImports = @($UtilityManifest, $HyperVManifestPath, $InstalledManifest)
 $roleData = Import-PowerShellDataFile -LiteralPath (Join-Path $ModuleSource "RoleCapabilities\$RoleName.psrc")
 $imports = @($roleData.ModulesToImport)
-if ($imports.Count -ne 1 -or $imports[0] -isnot [string] -or $imports[0] -ne $InstalledManifest) {
-    $problems.Add("the role capability must import exactly $InstalledManifest (it imports: " + (($imports | ForEach-Object { [string]$_ }) -join ', ') + ')')
+$importsOk = $imports.Count -eq $ExpectedImports.Count
+for ($i = 0; $importsOk -and $i -lt $imports.Count; $i++) {
+    $importsOk = ($imports[$i] -is [string]) -and ($imports[$i] -ceq $ExpectedImports[$i])
+}
+if (-not $importsOk) {
+    $problems.Add("the role capability must import exactly $($ExpectedImports -join ', ') (it imports: " + (($imports | ForEach-Object { [string]$_ }) -join ', ') + ')')
+}
+if ($UtilityManifest -ne (Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1') -or
+    -not (Test-Path -LiteralPath $UtilityManifest -PathType Leaf)) {
+    $problems.Add("the Microsoft.PowerShell.Utility manifest is not at $UtilityManifest on this host")
+}
+if ($hyperVManifest -and $hyperVManifest -ne $HyperVManifestPath) {
+    $problems.Add("the Hyper-V manifest of this host is $hyperVManifest, not $HyperVManifestPath (the role capability imports that path; a new version needs a reviewed role capability)")
+}
+# What the imports load: the two module folders in System32 and the folder of the Hyper-V
+# cmdlets assembly in the global assembly cache (the Hyper-V manifest's NestedModules).
+# Every file and folder there, and every ancestor up to the volume root, gets the checks
+# of the discovery set (Get-RefuteTreeProblems): generic rights mapped, an allowed owner,
+# no reparse point (Codex review of #118, rounds 1 and 2).
+$ImportTrees = @(
+    (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility'),
+    (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V'),
+    (Join-Path $env:SystemRoot 'Microsoft.NET\assembly\GAC_MSIL\Microsoft.HyperV.PowerShell.Cmdlets'))
+foreach ($p in @(Get-RefuteTreeProblems -Roots $ImportTrees)) { $problems.Add("imports: $p") }
+if (@($roleData.Keys | Where-Object { $_ -like 'Visible*' }) -join ',' -ne 'VisibleFunctions' -or
+    (@($roleData.VisibleFunctions) -join ',') -cne 'Get-RefuteVmStatus,Invoke-RefuteVmOperation') {
+    $problems.Add('the role capability must make visible exactly Get-RefuteVmStatus and Invoke-RefuteVmOperation, and nothing else')
 }
 $psrcCopies = @()
 # @(...): a function that returns an empty list gives $null to its caller, and .Count on
@@ -264,7 +296,7 @@ $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("Operator account: $OperatorAccount ($operatorSid)")
 $lines.Add("Virtual account group: $groupAccount ($SidHyperVAdmins)")
 $lines.Add("Hyper-V module manifest: $(if ($hyperVManifest) { $hyperVManifest } else { 'not found' })")
-$lines.Add("1. Copy the module to $ModuleDestination, no version subfolder (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write; the JEA search finds exactly its RoleCapabilities\$RoleName.psrc, and no other copy exists); the role capability imports ${InstalledManifest}:")
+$lines.Add("1. Copy the module to $ModuleDestination, no version subfolder (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write; the JEA search finds exactly its RoleCapabilities\$RoleName.psrc, and no other copy exists); the role capability imports $($ExpectedImports -join ', ') and makes visible only Get-RefuteVmStatus and Invoke-RefuteVmOperation; checked in $($ImportTrees -join ', '), every file and folder and every ancestor: the owners and writers allowed for the discovery set, no reparse point:")
 foreach ($k in $sourceHashes.Keys) { $lines.Add("     $($sourceHashes[$k])  $k") }
 $lines.Add("   Discovery set of the session (checked: only SYSTEM, Administrators and TrustedInstaller can write, or create the absent ones): $($discoveryRoots -join ', ')")
 $lines.Add("2. Create these folders, owner Administrators, inheritance removed:")
