@@ -1,11 +1,13 @@
 """Paper claim verdicts and the result of a paper (docs/validation/v0.3/wp2-acceptance.md,
 W2.1-W2.7). All cases are synthetic and offline."""
 
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
 from refute.core.paper import (
+    ABSENT_HTTP_STATUSES,
     BASE_GATES,
     EXPECTED_COVERAGE,
     ROBUSTNESS_INCONCLUSIVE,
@@ -143,17 +145,34 @@ def test_step0_attack_fail_without_examined_data_is_never_fragile(coverage):
     ("gate", "cause"),
     [
         ("environment_build", FailureCause.BUILD_LADDER),
-        ("run_completed", FailureCause.DOCUMENTED_COMMAND),
-        ("metric_extracted", FailureCause.DOCUMENTED_COMMAND),
         ("data_present", FailureCause.DOCUMENTED_COMMAND),
         ("data_present", FailureCause.ARTIFACT_ABSENT),
         ("environment_build", FailureCause.ARTIFACT_ABSENT),
     ],
 )
 def test_step1_each_artifact_cause_with_complete_attempts_gives_not_reproducible(gate, cause):
-    v = verdict(base(**{gate: KO}), failures={gate: complete(cause)})
+    checks = base(**{gate: KO})
+    if cause is FailureCause.ARTIFACT_ABSENT:
+        # an absence needs its evidence: one HTTP 404 or 410 per attempt (proven_absence)
+        checks = [
+            replace(c, metrics={ABSENT_HTTP_STATUSES: [404, 410, 404]}) if c.name == gate else c
+            for c in checks
+        ]
+    v = verdict(checks, failures={gate: complete(cause)})
     assert v.verdict is PaperVerdict.NOT_REPRODUCIBLE
     assert cause.value in v.reason
+
+
+@pytest.mark.parametrize("gate", ["run_completed", "metric_extracted"])
+@pytest.mark.parametrize("attempts", [1, 3, 10])
+def test_step1_a_failed_run_or_metric_is_never_blamed_on_the_documented_command(gate, attempts):
+    # decided by the maintainer on 2026-10-16: an exit code from 1 to 125, in every
+    # attempt, is not evidence that the artifact caused the failure (a wrong argument, a
+    # resource limit or a configuration also gives one): INCONCLUSIVE by default
+    failure = complete(FailureCause.DOCUMENTED_COMMAND, attempts)
+    v = verdict(base(**{gate: KO}), failures={gate: failure})
+    assert v.verdict is PaperVerdict.INCONCLUSIVE
+    assert "does not apply to this gate" in v.reason
 
 
 @pytest.mark.parametrize(
@@ -163,7 +182,7 @@ def test_step1_each_artifact_cause_with_complete_attempts_gives_not_reproducible
 def test_step1_artifact_cause_with_incomplete_attempts_is_inconclusive(cause):
     gate = {
         FailureCause.BUILD_LADDER: "environment_build",
-        FailureCause.DOCUMENTED_COMMAND: "run_completed",
+        FailureCause.DOCUMENTED_COMMAND: "data_present",
         FailureCause.ARTIFACT_ABSENT: "data_present",
     }[cause]
     failure = GateFailure(cause, attempts_completed=2, attempts_required=3)

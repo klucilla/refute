@@ -5,6 +5,13 @@ here, runs a command of a synthetic repository directly, for CI and local tests.
 **not** an isolation boundary: it never runs third-party code (CLAUDE.md, standing
 approval: running third-party code needs the maintainer and the VM).
 
+**It runs synthetic fixtures only** (item E of the maintainer's review of 2026-10-16;
+closes the gap of #87): it is built with the authorizations of fixtures the harness wrote
+from the closed catalog of ``synthetic.py``, and refuses, before any process starts, a run
+whose folder is not one of them, whose command is not this interpreter in isolated mode
+running a code file of the fixture, or whose folder no longer holds exactly what was
+written (``synthetic.check_run``). Built with no authorization, it refuses every run.
+
 For each run the backend:
 
 - starts ``argv`` (a list, never a shell) in ``workdir`` with the given environment,
@@ -40,8 +47,11 @@ import signal
 import subprocess
 import sys
 import time
-from dataclasses import dataclass
+from collections.abc import Sequence
+from dataclasses import dataclass, replace
 from pathlib import Path
+
+from refute.packs.ml import synthetic
 
 STOP_THRESHOLD = "threshold"
 STOP_ACTIVE_TIME = "active_time_limit"
@@ -82,12 +92,66 @@ class RunResult:
     stopped: str | None
     elapsed_s: float
     log_path: Path
+    # measured when the run was stopped (1.4a, D and S), None otherwise: from the planned
+    # reading instant to the stop request, and from the stop request to the end of every
+    # process of the run. Signed: a negative D is recorded as measured, never truncated.
+    detection_delay_s: float | None = None
+    stop_latency_s: float | None = None
+    # the clock D and S were measured with (time.get_clock_info('perf_counter')), recorded
+    # with every result. No current caller writes a RunResult to a dossier; if one does
+    # (refute.core.io serializes every field of a dataclass), these two go with it
+    measurement_clock: str | None = None
+    measurement_resolution_s: float | None = None
+
+
+@dataclass(frozen=True)
+class TimingMaxima:
+    """The largest detection delay D and stop latency S measured on the VM in WP6 V22,
+    fixed before the lock (wp3-acceptance.md 1.4a). A measured value above them raises an
+    alert (``timing_alerts``); nothing is adjusted automatically."""
+
+    detection_delay_s: float
+    stop_latency_s: float
+
+    def __post_init__(self) -> None:
+        for value in (self.detection_delay_s, self.stop_latency_s):
+            if not isinstance(value, int | float) or not math.isfinite(value) or value <= 0:
+                raise ValueError("the V22 maxima are positive and finite")
+
+
+def timing_alerts(result: RunResult, maxima: TimingMaxima) -> list[str]:
+    """The alerts of one run: a measured D or S above its V22 maximum (decided by the
+    maintainer on 2026-10-16). An alert is recorded for the maintainer; it changes no
+    margin M, no tolerance T, no threshold and no limit."""
+    alerts = []
+    measured = (
+        ("detection delay D", result.detection_delay_s, maxima.detection_delay_s),
+        ("stop latency S", result.stop_latency_s, maxima.stop_latency_s),
+    )
+    for what, value, maximum in measured:
+        if value is not None and value > maximum:
+            alerts.append(f"{what} {value:.3f} s above the V22 maximum {maximum:.3f} s")
+    return alerts
 
 
 class SubprocessBackend:
     name = "subprocess"
 
+    def __init__(self, authorizations: Sequence[synthetic.Authorization] = ()) -> None:
+        self._authorized: dict[Path, synthetic.Authorization] = {}
+        for auth in authorizations:
+            if not synthetic.issued(auth):
+                raise synthetic.SyntheticRefusedError("not an authorization of materialize")
+            self._authorized[auth.root] = auth
+
     def run(self, spec: RunSpec) -> RunResult:
+        # refused before anything starts: the folder, the command, the files and the logs
+        # (item E); what runs is the checked command, by absolute paths, in the fixture
+        status = spec.log_path.with_name(spec.log_path.name + ".status.json")
+        launch = synthetic.check_run(
+            spec.argv, spec.workdir, spec.env, [spec.log_path, status], self._authorized
+        )
+        spec = replace(spec, argv=launch.argv, env=launch.env, workdir=Path(spec.workdir))
         spec.log_path.parent.mkdir(parents=True, exist_ok=True)
         with spec.log_path.open("wb") as log:
             if sys.platform == "win32":
@@ -98,10 +162,27 @@ class SubprocessBackend:
 
 
 def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
+    """Poll the run until it ends or a guard fires.
+
+    The loop and the guards run on ``time.monotonic``. D and S (1.4a) are measured on one
+    other clock, ``time.perf_counter_ns``: every instant they use (the planned reading
+    instant, the first one included, the stop request and the end of the stop) comes from
+    it, the differences are taken in integer nanoseconds and only then converted to
+    seconds. On Windows with Python 3.12, ``time.monotonic`` is ``GetTickCount64()`` with a
+    resolution of 15.625 ms, so two readings around a 10 ms sleep could be equal and D came
+    out as minus the poll interval (main run 38902889911; clock diagnostic run 38909648617,
+    commit 4895b9a of the branch diag/clock-info). A negative D is recorded as measured."""
     start = time.monotonic()
     last_usage, last_size, last_progress = -1, -1, start
     stopped = None
+    detection = latency = None
     try:
+        # inside the try, so that any error here still stops the run (finally below)
+        poll_ns = round(spec.poll_s * 1_000_000_000)
+        # the planned instant of the next reading, on the measurement clock: poll_s after
+        # the previous reading ended (the cadence of the loop is unchanged; a late wake-up
+        # counts in D); for the first reading, the start of the supervision
+        planned_ns = time.perf_counter_ns()
         while True:
             exit_code = tracker.poll()
             usage = tracker.usage_usec()
@@ -118,16 +199,33 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
             elif now - last_progress >= spec.no_progress_s:
                 stopped = STOP_NO_PROGRESS
             if stopped:
+                # D: from the planned reading instant to the stop request; S: from the
+                # request to the end of every process of the run (1.4a), recorded only
+                requested_ns = time.perf_counter_ns()
+                detection = (requested_ns - planned_ns) / 1_000_000_000
                 tracker.stop()
+                latency = (time.perf_counter_ns() - requested_ns) / 1_000_000_000
                 exit_code = None
                 break
+            planned_ns = time.perf_counter_ns() + poll_ns
             time.sleep(spec.poll_s)
         # exact on both platforms: the job's total after its last process ended, or the
         # supervisor's sum over every waited process
         final = tracker.final_usage_usec()
     finally:
         tracker.close()  # stops whatever is left of the run, also after an error
-    return RunResult(exit_code, final, stopped, time.monotonic() - start, spec.log_path)
+    clock = time.get_clock_info("perf_counter")
+    return RunResult(
+        exit_code,
+        final,
+        stopped,
+        time.monotonic() - start,
+        spec.log_path,
+        detection,
+        latency,
+        clock.implementation,
+        clock.resolution,
+    )
 
 
 class _Tracker:

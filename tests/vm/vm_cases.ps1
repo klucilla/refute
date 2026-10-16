@@ -396,6 +396,105 @@ Add-Case 'Hyper-V manifest: none' ($null -eq (Find-RefuteHyperVManifest (Join-Pa
 Add-Case 'Hyper-V manifest: a folder that is not a version is ignored' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'noversion')))
 Add-Case 'Hyper-V manifest: missing module folder' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'absent')))
 
+# The role capability search of JEA: <root>\<module>\RoleCapabilities\<name>.psrc only
+# (the maintainer's diagnosis of 2026-10-16); a copy in a version subfolder is not found
+function New-RoleFile([string[]]$Parts) {
+    $dir = $WorkDir
+    foreach ($p in $Parts) { $dir = Join-Path $dir $p }
+    $dir = Join-Path $dir 'RoleCapabilities'
+    [void][System.IO.Directory]::CreateDirectory($dir)
+    $file = Join-Path $dir 'Op.psrc'
+    [System.IO.File]::WriteAllText($file, '@{}')
+    return $file
+}
+$flatRole = New-RoleFile @('jea', 'flat', 'M')
+$verRole = New-RoleFile @('jea', 'versioned', 'M', '0.1.0')
+$bothFlat = New-RoleFile @('jea', 'both', 'M')
+$bothVer = New-RoleFile @('jea', 'both', 'M', '0.1.0')
+$firstRoot = New-RoleFile @('jea', 'first', 'A')
+$secondRoot = New-RoleFile @('jea', 'second', 'B')
+[void](New-RoleFile @('jea', 'other', 'M'))
+$jea = Join-Path $WorkDir 'jea'
+$jf = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+$vf = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+Add-Case 'JEA search: a role capability at the module top is found' ($jf.Count -eq 1 -and $jf[0] -eq $flatRole -and $vf.Count -eq 0) (($jf + $vf) -join ', ')
+$jv = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+$vv = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+Add-Case 'JEA search: a version subfolder is never found, and is reported' ($jv.Count -eq 0 -and $vv.Count -eq 1 -and $vv[0] -eq $verRole) (($jv + $vv) -join ', ')
+$jb = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+$vb = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+Add-Case 'JEA search: a stale copy in a version subfolder is reported next to the found one' ($jb.Count -eq 1 -and $jb[0] -eq $bothFlat -and $vb.Count -eq 1 -and $vb[0] -eq $bothVer)
+$jo = @(Find-RefuteJeaRoleCapability -ModuleRoots @((Join-Path $jea 'second'), (Join-Path $jea 'first')) -RoleName 'Op')
+Add-Case 'JEA search: module roots are searched in order (the first found is the one loaded)' ($jo.Count -eq 2 -and $jo[0] -eq $secondRoot -and $jo[1] -eq $firstRoot)
+Add-Case 'JEA search: another role name is not found' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Other').Count -eq 0)
+Add-Case 'JEA search: a missing root is skipped' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'absent') -RoleName 'Op').Count -eq 0)
+
+# The module roots the registration searches: PSModulePath values and extra folders,
+# trimmed, without empty entries or repeats (compared without case), sorted
+$joined = @(Join-RefuteModuleRoots -PathValues @('C:\B\;C:\A;;c:\a\', $null, '') -Extra @('C:\C', 'C:\B'))
+Add-Case 'module roots: entries split, trimmed, deduplicated without case, sorted' ($joined.Count -eq 3 -and $joined[0] -eq 'C:\A' -and $joined[1] -eq 'C:\B' -and $joined[2] -eq 'C:\C') ($joined -join ', ')
+Add-Case 'module roots: nothing given gives nothing' (@(Join-RefuteModuleRoots -PathValues @() -Extra @()).Count -eq 0)
+# a volume root keeps its '\' ('C:' would be the current folder of drive C); UNC paths are
+# trimmed; relative and drive-relative entries are refused (Codex review of #102)
+$volume = @(Join-RefuteModuleRoots -PathValues @('C:\;D:\Mods\;\\srv\share\Mods\;E:\\;F:\Mods\\') -Extra @())
+Add-Case 'module roots: a volume root keeps one backslash, also after repeated ones' ($volume.Count -eq 5 -and $volume -ccontains 'C:\' -and $volume -ccontains 'D:\Mods' -and $volume -ccontains '\\srv\share\Mods' -and $volume -ccontains 'E:\' -and $volume -ccontains 'F:\Mods') ($volume -join ', ')
+foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
+    $refused = $false
+    try { [void](Join-RefuteModuleRoots -PathValues @("C:\A;$relative") -Extra @()) } catch { $refused = $true }
+    Add-Case "module roots: the relative entry '$relative' is refused" $refused
+}
+
+# The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
+# capability, an absent root, and a root that cannot be read as a folder (a file). A root
+# that cannot be read is never reported as absent (Codex review of #99).
+$probeRole = New-RoleFile @('probe-roots', 'present', 'Mod')
+$present = Join-Path (Join-Path $WorkDir 'probe-roots') 'present'
+$absent = Join-Path (Join-Path $WorkDir 'probe-roots') 'absent'
+$fileRoot = Join-Path (Join-Path $WorkDir 'probe-roots') 'a-file'
+[System.IO.File]::WriteAllText($fileRoot, 'x')
+Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+$savedModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Process')
+$savedCwd = [System.IO.Directory]::GetCurrentDirectory()
+try {
+    # a relative entry ('present') resolves against the process's current folder
+    [System.IO.Directory]::SetCurrentDirectory((Join-Path $WorkDir 'probe-roots'))
+    [Environment]::SetEnvironmentVariable('PSModulePath', "$present;$absent;$fileRoot;present", 'Process')
+    $probeText = Get-RefuteJeaModuleRoots
+} finally {
+    [System.IO.Directory]::SetCurrentDirectory($savedCwd)
+    [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+    Remove-Module JeaProbe
+}
+$probeLines = @($probeText.Split("`n"))
+$probeRows = @($probeLines[1..($probeLines.Count - 1)] | ForEach-Object { , @($_.Split("`t")) })
+Add-Case 'JEA probe: the current folder first, then one line of six fields per entry' ($probeLines[0].StartsWith("cwd`t") -and $probeRows.Count -eq 4 -and @($probeRows | Where-Object { $_.Count -ne 6 }).Count -eq 0) $probeText
+Add-Case 'JEA probe: a present root lists its role capability' ($probeRows[0][0] -eq 'present' -and $probeRows[0][1] -eq $present -and $probeRows[0][5] -eq $probeRole) ($probeRows[0] -join ' | ')
+Add-Case 'JEA probe: an absent root is confirmed absent' ($probeRows[1][0] -eq 'absent' -and $probeRows[1][4] -eq '') ($probeRows[1] -join ' | ')
+$onWindows = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+if ($onWindows) {
+    # on Windows a file read as a folder is an IOException, never DirectoryNotFound
+    Add-Case 'JEA probe: a root that cannot be read is an error, never absent' ($probeRows[2][0] -eq 'error' -and $probeRows[2][4]) ($probeRows[2] -join ' | ')
+} else {
+    Add-Case 'JEA probe: a root that cannot be read is never present' ($probeRows[2][0] -ne 'present') ($probeRows[2] -join ' | ')
+}
+Add-Case 'JEA probe: a relative entry is inspected where the process resolves it' ($probeRows[3][1] -eq 'present' -and $probeRows[3][3] -eq $present -and $probeRows[3][0] -eq 'present' -and $probeRows[3][5] -eq $probeRole) ($probeRows[3] -join ' | ')
+if ($onWindows) {
+    # a drive-relative entry ('C:') is the current folder of that drive, never its root
+    $drive = (Join-Path $WorkDir 'probe-roots').Substring(0, 2)
+    Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+    try {
+        [System.IO.Directory]::SetCurrentDirectory($present)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $drive, 'Process')
+        $driveText = Get-RefuteJeaModuleRoots
+    } finally {
+        [System.IO.Directory]::SetCurrentDirectory($savedCwd)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+        Remove-Module JeaProbe
+    }
+    $driveRow = @($driveText.Split("`n"))[1].Split("`t")
+    Add-Case "JEA probe: '$drive' resolves to the current folder of the drive, not '$drive\'" ($driveRow[1] -eq $drive -and $driveRow[3] -eq $present -and $driveRow[0] -eq 'present') ($driveRow -join ' | ')
+}
+
 # WinRM listener removal plan
 $plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'
 Add-Case 'listener: *+HTTP alone, nothing remains' ($plan1.TargetPresent -and @($plan1.Remaining).Count -eq 0 -and @($plan1.ForeignRemaining).Count -eq 0)
@@ -417,10 +516,36 @@ Add-Case 'reg export: another key is refused' (-not (Test-RefuteRegExport -Text 
 Add-Case 'reg export: a sibling key is refused' (-not (Test-RefuteRegExport -Text ($good + "[$key" + "S]`r`n") -KeyPath $key))
 Add-Case 'reg export: the key missing is refused' (-not (Test-RefuteRegExport -Text "Windows Registry Editor Version 5.00`r`n" -KeyPath $key))
 
-$psrc = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RoleCapabilities/RefuteVmOperator.psrc')
-$psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.psd1')
-$pin = $psrc.ModulesToImport[0]
-Add-Case 'role capability pins the module version and GUID' ($pin.ModuleName -eq 'RefuteVm' -and $pin.RequiredVersion -eq $psd1.ModuleVersion -and $pin.GUID -eq $psd1.GUID)
+function Get-PsrcImports([string]$Path) {
+    # The ModulesToImport entries of one role capability file: a string (a name or a
+    # path) as it is, a hashtable as its sorted key names (tests/test_vm_scripts.py refuses
+    # version and GUID keys, which make PowerShell call Get-Module in the restricted session).
+    $data = Import-PowerShellDataFile -LiteralPath $Path
+    $entries = @()
+    if ($data.ContainsKey('ModulesToImport')) { $entries = @($data.ModulesToImport) }
+    return @($entries | ForEach-Object {
+            if ($_ -is [System.Collections.IDictionary]) {
+                # "Names", not "Keys": a key named Keys would hide the dictionary's own .Keys
+                [ordered]@{ Kind = 'table'; Names = @($_.Keys | ForEach-Object { [string]$_ } | Sort-Object) }
+            } else {
+                [ordered]@{ Kind = 'string'; Value = [string]$_ }
+            }
+        })
+}
+
+# every .psrc of the repository (top-level folders starting with '.' are skipped: .git,
+# .venv, .cache), and a synthetic file with the refused keys (the detector sees them)
+$out.RoleCapabilityImports = [ordered]@{}
+$tops = @(Get-ChildItem -LiteralPath $Root -Force | Where-Object { -not $_.Name.StartsWith('.') })
+foreach ($top in $tops) {
+    $found = if ($top.PSIsContainer) { @(Get-ChildItem -LiteralPath $top.FullName -Recurse -File -Filter '*.psrc') } elseif ($top.Extension -eq '.psrc') { @($top) } else { @() }
+    foreach ($file in $found) {
+        $out.RoleCapabilityImports[$file.FullName.Substring($Root.Length + 1).Replace('\', '/')] = @(Get-PsrcImports $file.FullName)
+    }
+}
+$probe = Join-Path $WorkDir 'probe.psrc'
+[System.IO.File]::WriteAllText($probe, "@{ ModulesToImport = @('Plain', @{ ModuleName = 'X'; RequiredVersion = '1.0'; GUID = 'b2713b52-46f8-4c00-a4bf-2b940708587a' }, @{ ModuleName = 'Y'; ModuleVersion = '1.0'; MaximumVersion = '2.0' }) }")
+$out.RoleCapabilityProbe = @(Get-PsrcImports $probe)
 
 # The remoting calls of Invoke-RefuteVm.ps1 and their parameter names, from the AST: the
 # endpoint (AccessMode Local) needs -EnableNetworkAccess and implicit credentials.
