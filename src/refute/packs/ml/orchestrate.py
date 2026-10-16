@@ -94,14 +94,16 @@ class Step:
     """Containers that start together, inside one claim (the setup takes one).
 
     With ``fallback`` (the build ladder: one setup step, WP3 integration requirement 2),
-    the containers run one at a time, in order, each with its own grant: the step stops at
-    the first container that completes; after a container that failed, ``fallback(record)``
-    decides whether the next one is tried (an error of the procedure itself: yes; any
-    other cause: no). Every container that ran is recorded and accounted."""
+    the containers run one at a time, in order, each with its own grant, and after each
+    one ``fallback(record)`` classifies it once: ``"completed"`` (built: the step
+    completes), ``"next"`` (an error of the procedure itself: the next container is tried;
+    after the last one the step fails) or ``"stop"`` (anything else: the step ends with
+    that container's own outcome, or FAILED if it exited 0). Every container that ran is
+    recorded and accounted."""
 
     name: str
     containers: Sequence[Container]
-    fallback: Callable[[ContainerRecord], bool] | None = None
+    fallback: Callable[[ContainerRecord], str] | None = None
 
     def __post_init__(self) -> None:
         if not self.name:
@@ -363,9 +365,9 @@ class PaperRunner:
         return self._close_step(phase, claim, step, outcome, reason, records, problems)
 
     def _run_fallback(self, phase: str, claim: str | None, account: bg.Account, step: Step):
-        """The containers one at a time (the build ladder): stop at the first that
-        completes; after a failure, ``step.fallback`` decides whether to try the next. The
-        step ends as its last container did; a refused grant ends it with that refusal."""
+        """The containers one at a time (the build ladder), each classified once by
+        ``step.fallback`` (see ``Step``). A refused grant ends the step with that
+        refusal; a container with no result is a Refute error."""
         records: list[ContainerRecord] = []
         problems: list[str] = []
         outcome, reason = Outcome.NOT_EXECUTED, "no container ran"
@@ -379,15 +381,25 @@ class PaperRunner:
             records.append(record)
             problems += self._finish(account, [record])
             outcome, reason = _outcome([record])
-            if outcome is not Outcome.FAILED or problems:
+            if record.result is None or problems:
                 break
             try:
-                go_on = bool(step.fallback(record))
+                decision = step.fallback(record)
             except Exception as exc:  # a Refute error: recorded, the step stops
                 outcome, reason = Outcome.REFUTE_ERROR, "the fallback failed: " + _error(exc)
                 break
-            if not go_on:
+            if decision == "completed":
+                outcome, reason = Outcome.COMPLETED, ""
                 break
+            if decision == "next":
+                outcome = Outcome.FAILED
+                continue
+            if decision != "stop":
+                outcome, reason = Outcome.REFUTE_ERROR, f"unknown fallback decision {decision!r}"
+                break
+            if outcome is Outcome.COMPLETED:  # it exited 0, but is not classified as built
+                outcome, reason = Outcome.FAILED, "the container ended but is not a success"
+            break
         return self._close_step(phase, claim, step, outcome, reason, records, problems)
 
     def _add(self, record: StepRecord) -> StepRecord:

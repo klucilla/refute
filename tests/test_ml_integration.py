@@ -243,14 +243,16 @@ class Paper:
     """The harness: one fresh cataloged fixture per container, a backend that runs only
     them, and the evidence of the dataset."""
 
-    def __init__(self, tmp_path, claim_file, config, ladder=None, data=None, evidence=None):
+    def __init__(
+        self, tmp_path, claim_file, config, ladder=None, data=None, evidence=None, expect=None
+    ):
         self.data = data or dataset_bytes(seed=7, n_train=2000, n_val=500, n_test=4000)
         (tmp_path / "fetched").mkdir()
         dataset_path = tmp_path / "fetched" / "synthetic.npz"
         dataset_path.write_bytes(self.data)
         ladder = ladder or {ALL_RUNGS[0]: "ok", ALL_RUNGS[1]: "ok", ALL_RUNGS[2]: "ok"}
         self.expectations = sy.BuildExpectations(
-            {r: ("ok" if a == "ok" else "procedure_error") for r, a in ladder.items()}
+            expect or {r: ("ok" if a == "ok" else "procedure_error") for r, a in ladder.items()}
         )
         workspaces, auths = {}, []
         for cid in ig.plan_container_ids(claim_file):
@@ -410,7 +412,8 @@ def test_without_saved_predictions_the_metric_shows_no_examples(tmp_path):
     without that evidence metric_extracted cannot pass, so the claim is INCONCLUSIVE."""
     claim_file = resolved(DATA, value_target({}, recompute=False))
     claim, base = checks(Paper(tmp_path, claim_file, CONFIG).run(), KEY)
-    assert base["metric_extracted"].coverage is None
+    # never a raw PASS without examined data (Codex review of #110)
+    assert base["metric_extracted"].status is TestStatus.INCONCLUSIVE
     assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
 
 
@@ -426,3 +429,154 @@ def test_an_invalid_accounting_gives_no_verdict(tmp_path):
     assert again.claims[0].verdict.verdict is PaperVerdict.INCONCLUSIVE
     assert again.claims[0].computed is PaperVerdict.REPRODUCED
     assert ig.ACCOUNTING_INVALID in again.claims[0].verdict.reason
+
+
+# ---- Codex review of #110 -----------------------------------------------------------------------
+
+
+def test_the_unit_conversion_is_exact_whatever_the_decimal_context():
+    from decimal import Decimal, localcontext
+
+    with localcontext() as ctx:
+        ctx.prec = 5  # a small context must not round the conversion
+        assert ig._convert(
+            Decimal("0.9000000000000000000000000000001"), "fraction", "percent"
+        ) == Decimal("90.00000000000000000000000000001")
+        assert ig._convert(Decimal("91.25"), "percent", "fraction") == Decimal("0.9125")
+
+
+def _context(claim_file):
+    return ig.ClaimContext(claim_file["targets"][0], claim_file["test_plan"])
+
+
+def test_a_fetch_result_for_another_artifact_is_not_evidence(tmp_path):
+    claim_file = resolved(DATA, value_target({}))
+    other = DATA + b"x"
+    evidence = dataset_evidence(None, other, fetch_ok=False)  # 404 x3, but another artifact
+    gate, failure = ig.data_present(_context(claim_file), evidence)
+    assert (
+        gate.status is TestStatus.INCONCLUSIVE and "not for the declared artifact" in gate.message
+    )
+
+
+def test_an_absence_counts_only_against_the_attempts_the_claim_fixed(tmp_path):
+    """The claim fixes 3 attempts; a fetch record of 1 attempt of 1 is incomplete."""
+    claim_file = resolved(DATA, value_target({}))
+    spec = ArtifactSpec(
+        "synthetic",
+        "https://example.org/synthetic.npz",
+        hashlib.sha256(DATA).hexdigest(),
+        len(DATA),
+    )
+    one = FetchResult(
+        spec,
+        None,
+        False,
+        (FetchAttempt(1, "absent", 404, spec.url, "HTTP 404"),),
+        GateFailure(FailureCause.ARTIFACT_ABSENT, 1, 1),
+    )
+    evidence = ig.DatasetEvidence(one, None)
+    gate, failure = ig.data_present(_context(claim_file), evidence)
+    assert failure == GateFailure(FailureCause.ARTIFACT_ABSENT, 1, 3)
+
+
+def test_partial_reads_of_a_split_are_never_taken_for_the_split(tmp_path):
+    applies = {"leakage": True, "trivial_baseline": True}
+    target = value_target(applies)
+    target["attacks"][5]["params"]["kind"] = "majority"
+    paper = Paper(tmp_path, resolved(DATA, target), CONFIG)
+    full = paper.harness.datasets["synthetic"]
+    partial = dataclasses.replace(
+        full,
+        labels=lambda split: list(full.labels(split))[:10],
+        example_hashes=lambda split: list(full.example_hashes(split))[:10],
+    )
+    outcome = ig.run_paper(
+        paper.claim_file, dataclasses.replace(paper.harness, datasets={"synthetic": partial})
+    )
+    claim = outcome.claims[0]
+    assert all(a.result is None for a in claim.attacks), [a.name for a in claim.attacks]
+    assert any("not every example" in n for n in claim.notes)
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_an_output_present_before_the_run_stops_the_paper(tmp_path):
+    """Requirement 10: a stale predictions file in a base run's folder is never read as
+    that run's output; the run is refused (a Refute error) and the claim is INCONCLUSIVE."""
+    paper = Paper(tmp_path, resolved(DATA, value_target({})), CONFIG)
+    folder = paper.harness.workspaces[f"{KEY}/base/method/s1"]
+    (folder / "preds").mkdir()
+    (folder / "preds" / "1.npy").write_bytes(b"stale")
+    outcome = paper.run()
+    assert "outputs present before the run" in outcome.run.stopped
+    assert outcome.claims[0].verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_an_unexpected_success_of_a_rung_is_never_built(tmp_path):
+    """Codex review of #110: each rung is classified once; a rung declared to fail by its
+    procedure that exits 0 is not a success: the setup stops, nothing else runs."""
+    expect = dict.fromkeys(ALL_RUNGS, "procedure_error")
+    outcome = Paper(tmp_path, resolved(DATA, value_target({})), CONFIG, expect=expect).run()
+    claim, base = checks(outcome, KEY)
+    assert base["environment_build"].status is TestStatus.INCONCLUSIVE
+    assert claim.failures["environment_build"].cause is FailureCause.UNDETERMINED
+    ids = [c.container_id for s in outcome.run.steps for c in s.containers]
+    assert ids == ["setup/build/own_environment"]
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_a_comparison_pairs_its_methods_by_seed(tmp_path):
+    """A comparison with a separate reference run (the method without its augmentation):
+    each seed's difference is method minus reference of that seed."""
+    target = value_target({}, recompute=False)
+    target.update(
+        type="comparison",
+        comparison_mode="direction",
+        statement="The augmentation helps.",
+    )
+    target["inventory"]["transcription"]["value"] = "89.2 vs 83.2"
+    metric = target["metric"]
+    del metric["reported"], metric["reported_uncertainty"]
+    target["comparison"] = {
+        "method": "Aug",
+        "reference": "NoAug",
+        "orientation": "method_minus_reference",
+        "reported_method": 89.2,
+        "reported_reference": 83.2,
+        "uncertainty_method": {"kind": "none"},
+        "uncertainty_reference": {"kind": "none"},
+        "paired_uncertainty": {"kind": "none"},
+        "reference_run": {
+            "argv": ["python", "train.py", "--no-aug"],
+            "workdir": ".",
+            "seed_argument": "--seed={seed}",
+            "metric_extraction": target["run"]["metric_extraction"],
+        },
+    }
+    outcome = Paper(tmp_path, resolved(DATA, target), CONFIG).run()
+    claim, base = checks(outcome, KEY)
+    assert base["base_reproduction"].status is TestStatus.PASS
+    ids = [c.container_id for s in outcome.run.steps for c in s.containers]
+    assert f"{KEY}/base/reference/s1" in ids and f"{KEY}/base/method/s1" in ids
+    # metric_recompute does not apply: no saved predictions show the examples (pending point 1)
+    assert base["metric_extracted"].status is TestStatus.INCONCLUSIVE
+
+
+def test_a_missing_reference_value_leaves_its_seed_without_a_difference():
+    from decimal import Decimal
+
+    ctx = ig.ClaimContext(
+        {"comparison": {"reference_run": {"argv": ["x"]}, "orientation": "method_minus_reference"}},
+        {},
+    )
+    ok = ig.Value(
+        ig.orc.Outcome.COMPLETED, "", {"method": ig.ex.Extracted("90", Decimal(90), "log")}
+    )
+    ref = ig.Value(
+        ig.orc.Outcome.COMPLETED, "", {"reference": ig.ex.Extracted("80", Decimal(80), "log")}
+    )
+    missing = ig.Value(ig.orc.Outcome.FAILED, "exit 1")
+    series = ig._base_series(
+        ctx, {1: {"method": ok, "reference": ref}, 2: {"method": ok, "reference": missing}}
+    )
+    assert series == [Decimal(10), None]
