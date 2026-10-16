@@ -66,6 +66,64 @@ def test_synthetic_cases(cases):
     assert failed == []
 
 
+INSTALLED_MANIFEST = r"C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1"
+VERSION_KEYS = {"requiredversion", "moduleversion", "maximumversion", "guid"}
+
+
+def _version_keys(entries: list[dict]) -> list[str]:
+    return sorted(
+        key
+        for entry in entries
+        if entry["Kind"] == "table"
+        for key in entry["Names"]
+        if key.lower() in VERSION_KEYS
+    )
+
+
+def test_no_role_capability_imports_a_module_by_version(cases):
+    """With RequiredVersion, ModuleVersion, MaximumVersion or GUID in ModulesToImport,
+    PowerShell resolves the module by calling Get-Module inside the restricted session,
+    which has no Get-Module: the session cannot open (the maintainer, 2026-10-16). Every
+    .psrc of the repository imports by name or path only; the probe shows the detector
+    sees every refused key."""
+    imports = cases["RoleCapabilityImports"]
+    assert "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc" in imports
+    assert {name: _version_keys(e) for name, e in imports.items() if _version_keys(e)} == {}
+    assert _version_keys(cases["RoleCapabilityProbe"]) == [
+        "GUID",
+        "MaximumVersion",
+        "ModuleVersion",
+        "RequiredVersion",
+    ]
+
+
+def test_the_role_capability_imports_the_installed_manifest_by_path(cases):
+    """The module is pinned by the absolute path of its manifest in the folder the
+    registration installs it to (no version subfolder), writable by administrators only."""
+    entries = cases["RoleCapabilityImports"][
+        "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc"
+    ]
+    assert entries == [{"Kind": "string", "Value": INSTALLED_MANIFEST}]
+
+
+def test_the_registration_installs_without_a_version_subfolder():
+    """JEA finds <module path>\\<module>\\RoleCapabilities\\<name>.psrc only (the maintainer's
+    diagnosis of 2026-10-16): the module goes to RefuteVm itself, the apply checks the JEA
+    search and refuses a copy in a version subfolder, and the preview checks that the role
+    capability imports the installed manifest."""
+    text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    assert "$ModuleDestination = $ModuleBase\n" in text.replace("\r\n", "\n")
+    assert "ModuleManifest.ModuleVersion" not in text
+    apply = text[text.index("# ---- apply") :]
+    assert "Find-RefuteJeaRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    assert (
+        "Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    )
+    preview = text[: text.index("# ---- apply")]
+    assert "the role capability must import exactly $InstalledManifest" in preview
+    assert "$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'" in text
+
+
 def test_operation_lists_agree(cases):
     table = cases["OperationTable"]
     assert cases["ValidateSets"]["RefuteVm/RefuteVm.psm1"] == table
@@ -213,9 +271,11 @@ PREVIEW_COMMANDS = {
     "get-acl",
     "get-childitem",
     "get-filehash",
+    "get-itemproperty",
     "get-localgroupmember",
     "get-modulepathroots",
     "get-netfirewallrule",
+    "get-refuteregistrationmoduleroots",
     "get-refutewriterightsmask",
     "get-registrylisteners",
     "get-service",
@@ -223,6 +283,7 @@ PREVIEW_COMMANDS = {
     "get-treehashes",
     "import-powershelldatafile",
     "join-path",
+    "join-refutemoduleroots",
     "new-object",
     "resolve-path",
     "set-strictmode",
@@ -230,6 +291,7 @@ PREVIEW_COMMANDS = {
     "test-listenersloopbackonly",
     "test-path",
     "test-refuterightswrite",
+    "test-targetexists",
     "where-object",
     "write-output",
 }
@@ -238,9 +300,11 @@ PREVIEW_METHODS = {
     "addaccessrule",
     "close",
     "computehash",
+    "containskey",
     "create",
     "dispose",
     "endswith",
+    "expandenvironmentvariables",
     "getbytes",
     "getcurrent",
     "getenvironmentvariable",
@@ -267,11 +331,13 @@ LISTENER_PREVIEW_COMMANDS = {
     "foreach-object",
     "get-acl",
     "get-childitem",
+    "get-itemproperty",
     "get-refutebackupproblems",
     "get-refutelistenerremoval",
     "get-refutewriterightsmask",
     "get-service",
     "join-path",
+    "join-refutemoduleroots",
     "new-object",
     "read-refutelisteners",
     "set-strictmode",
@@ -284,11 +350,14 @@ LISTENER_PREVIEW_METHODS = {
     "add",
     "close",
     "computehash",
+    "containskey",
     "create",
     "dispose",
     "endswith",
+    "expandenvironmentvariables",
     "getbytes",
     "getcurrent",
+    "getenvironmentvariable",
     "getsubkeynames",
     "getvalue",
     "getvaluenames",
@@ -296,10 +365,13 @@ LISTENER_PREVIEW_METHODS = {
     "lastindexof",
     "max",
     "opensubkey",
+    "split",
     "startswith",
     "substring",
+    "tolowerinvariant",
     "tostring",
     "translate",
+    "trimend",
     "tryparse",
 }
 

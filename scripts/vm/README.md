@@ -25,9 +25,13 @@ unvalidated until they are tested on Windows and Hyper-V, with the evidence reco
   default helper commands that a `RestrictedRemoteServer` session keeps
   (`Clear-Host`, `Exit-PSSession`, `Get-Command`, `Get-FormatData`, `Get-Help`,
   `Measure-Object`, `Out-Default`, `Select-Object`). The session is in NoLanguage
-  mode: literal arguments only, no script block or expression. The module is pinned
-  by name, version and GUID in the role capability. No parameter takes a path or a VM
-  name: they come from
+  mode: literal arguments only, no script block or expression. The role capability
+  imports the module by the absolute path of its installed manifest,
+  `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, which pins that
+  copy in a folder only administrators can write. It names no version and no GUID: with
+  them PowerShell resolves the module by calling `Get-Module` inside the restricted
+  session, which has no `Get-Module`, and the session cannot open (observed on
+  2026-10-16). No parameter takes a path or a VM name: they come from
   `RefuteVm.Config.psd1`, installed with the module under `%ProgramFiles%`, where only
   administrators can write.
 - Claude Code calls the endpoint through `Invoke-RefuteVm.ps1`; every call is a
@@ -134,11 +138,27 @@ state) and its `PreviewSha256`. With `-Apply -PreviewSha256 <hash>`, only if the
 is unchanged and every target is absent (it never deletes or overwrites), in this
 order:
 
-1. copies the module to `%ProgramFiles%\WindowsPowerShell\Modules\RefuteVm\<version>`,
-   checks the copied hashes, that only SYSTEM, Administrators, TrustedInstaller and
-   CREATOR OWNER can write there, and that exactly one role capability named
-   `RefuteVmOperator` exists on the module path (machine `PSModulePath`, Program Files
-   and System32);
+1. copies the module to `%ProgramFiles%\WindowsPowerShell\Modules\RefuteVm`, with **no
+   version subfolder**: JEA looks for `<module path>\<module>\RoleCapabilities\<name>.psrc`
+   only, one folder deep, and a copy in `RefuteVm\<version>` is never found (diagnosed
+   by the maintainer on 2026-10-16; `GetRoleCapabilityPath` in
+   https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/remoting/fanin/InitialSessionStateProvider.cs,
+   accessed 2026-10-16). It checks the copied hashes, that only SYSTEM, Administrators,
+   TrustedInstaller and CREATOR OWNER can write there, that a search with the structure
+   of JEA's finds exactly one role capability,
+   `RefuteVm\RoleCapabilities\RefuteVmOperator.psrc`, that no other copy exists (none in
+   a version subfolder), and, already in the preview, that the role capability imports
+   exactly `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`. The
+   search covers these module roots (`Get-RefuteRegistrationModuleRoots` in
+   `RefuteRegistration.Core.ps1`): the machine and process `PSModulePath`, Program Files,
+   System32, `$PSHOME\Modules`, and the Default profile's
+   `Documents\WindowsPowerShell\Modules`. A virtual account's own user module folder
+   does not exist at registration: its profile is created, from the Default profile,
+   when its session starts. **Limit:** what the registration checks is this set on the
+   machine at that moment. A CI test on a real endpoint (tests/test_vm_jea_integration.py)
+   calls the same function and shows, for the GitHub runner only, that every existing
+   root a JEA session reports is in the set or holds no role capability; it does not
+   validate the maintainer's host;
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
@@ -156,7 +176,7 @@ order:
    `Register-PSSessionConfiguration -AccessMode Local` (this restarts WinRM), then
    checks its virtual account, group and permission. JEA grants each virtual account
    the "Log on as a service" right for the length of its session;
-7. writes the evidence (module hashes, role capability copies, endpoint settings,
+7. writes the evidence (module hashes, role capability copies and the one JEA finds, endpoint settings,
    listeners, listening sockets, firewall profiles and rule, folder ACLs) to
    `C:\ProgramData\RefuteVm\Log\registration-evidence.json`.
 
