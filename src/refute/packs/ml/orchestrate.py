@@ -52,6 +52,8 @@ from refute.packs.ml.sandbox import (
     STOP_THRESHOLD,
     RunResult,
     RunSpec,
+    TimingMaxima,
+    timing_alerts,
 )
 
 
@@ -179,6 +181,9 @@ class PaperRun:
     invalid_reasons: list[str] = field(default_factory=list)
     completeness: str = COMPLETENESS_NOT_APPLICABLE
     accountant_log: list[str] = field(default_factory=list)
+    # a measured D or S above its V22 maximum, per container (1.4a; decided by the
+    # maintainer on 2026-10-16): recorded for the maintainer, with no other effect
+    timing_alerts: list[str] = field(default_factory=list)
 
     def of(self, phase: str, claim: str | None) -> list[StepRecord]:
         return [s for s in self.steps if s.phase == phase and s.claim == claim]
@@ -215,7 +220,11 @@ class PaperRunner:
 
     ``parent_usage`` and ``tolerance_usec`` are given only by a backend with a parent
     cgroup per paper (docker, on the VM): the completeness check of W2.10 then runs at
-    the end. Without them it is recorded as not applicable."""
+    the end. Without them it is recorded as not applicable.
+
+    ``timing_maxima`` are the V22 maxima of D and S: a container whose measured value
+    exceeds one gets an alert in ``PaperRun.timing_alerts``. The alert changes nothing
+    else: not the margin M, the tolerance T, a threshold, a limit or an outcome."""
 
     def __init__(
         self,
@@ -225,6 +234,7 @@ class PaperRunner:
         *,
         parent_usage: Callable[[], int] | None = None,
         tolerance_usec: int | None = None,
+        timing_maxima: TimingMaxima | None = None,
     ) -> None:
         if [c.key for c in plan.claims] != list(accountant.claims):
             raise ValueError("the accountant's claims must be the plan's, in the drawn order")
@@ -237,8 +247,11 @@ class PaperRunner:
         self.plan = plan
         self.backend = backend
         self.accountant = accountant
+        if timing_maxima is not None and not isinstance(timing_maxima, TimingMaxima):
+            raise ValueError("timing_maxima is a TimingMaxima")
         self.parent_usage = parent_usage
         self.tolerance_usec = tolerance_usec
+        self.timing_maxima = timing_maxima
         self.run_record = PaperRun()
 
     # -- one container, one step -------------------------------------------------------
@@ -313,6 +326,9 @@ class PaperRunner:
         for record in records:
             if record.result is None:
                 continue  # no final usage: the container stays without a record
+            if self.timing_maxima is not None:
+                for alert in timing_alerts(record.result, self.timing_maxima):
+                    self.run_record.timing_alerts.append(f"{record.container_id}: {alert}")
             try:
                 self.accountant.finish(record.container_id, account, record.result.usage_usec)
             except (bg.RecordRejectedError, ValueError) as exc:

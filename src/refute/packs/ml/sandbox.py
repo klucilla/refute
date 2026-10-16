@@ -82,6 +82,41 @@ class RunResult:
     stopped: str | None
     elapsed_s: float
     log_path: Path
+    # measured when the run was stopped (1.4a, D and S), None otherwise: from the planned
+    # reading instant to the stop request, and from the stop request to the end of every
+    # process of the run
+    detection_delay_s: float | None = None
+    stop_latency_s: float | None = None
+
+
+@dataclass(frozen=True)
+class TimingMaxima:
+    """The largest detection delay D and stop latency S measured on the VM in WP6 V22,
+    fixed before the lock (wp3-acceptance.md 1.4a). A measured value above them raises an
+    alert (``timing_alerts``); nothing is adjusted automatically."""
+
+    detection_delay_s: float
+    stop_latency_s: float
+
+    def __post_init__(self) -> None:
+        for value in (self.detection_delay_s, self.stop_latency_s):
+            if not isinstance(value, int | float) or not math.isfinite(value) or value <= 0:
+                raise ValueError("the V22 maxima are positive and finite")
+
+
+def timing_alerts(result: RunResult, maxima: TimingMaxima) -> list[str]:
+    """The alerts of one run: a measured D or S above its V22 maximum (decided by the
+    maintainer on 2026-10-16). An alert is recorded for the maintainer; it changes no
+    margin M, no tolerance T, no threshold and no limit."""
+    alerts = []
+    measured = (
+        ("detection delay D", result.detection_delay_s, maxima.detection_delay_s),
+        ("stop latency S", result.stop_latency_s, maxima.stop_latency_s),
+    )
+    for what, value, maximum in measured:
+        if value is not None and value > maximum:
+            alerts.append(f"{what} {value:.3f} s above the V22 maximum {maximum:.3f} s")
+    return alerts
 
 
 class SubprocessBackend:
@@ -101,6 +136,8 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
     start = time.monotonic()
     last_usage, last_size, last_progress = -1, -1, start
     stopped = None
+    detection = latency = None
+    planned = start  # the planned instant of the next reading: every poll_s from the start
     try:
         while True:
             exit_code = tracker.poll()
@@ -118,16 +155,24 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
             elif now - last_progress >= spec.no_progress_s:
                 stopped = STOP_NO_PROGRESS
             if stopped:
+                # D: from the planned reading instant to the stop request; S: from the
+                # request to the end of every process of the run (1.4a), recorded only
+                requested = time.monotonic()
+                detection = requested - planned
                 tracker.stop()
+                latency = time.monotonic() - requested
                 exit_code = None
                 break
-            time.sleep(spec.poll_s)
+            planned += spec.poll_s
+            time.sleep(max(0.0, planned - time.monotonic()))
         # exact on both platforms: the job's total after its last process ended, or the
         # supervisor's sum over every waited process
         final = tracker.final_usage_usec()
     finally:
         tracker.close()  # stops whatever is left of the run, also after an error
-    return RunResult(exit_code, final, stopped, time.monotonic() - start, spec.log_path)
+    return RunResult(
+        exit_code, final, stopped, time.monotonic() - start, spec.log_path, detection, latency
+    )
 
 
 class _Tracker:
