@@ -410,15 +410,19 @@ def test_the_plan_and_the_accountant_must_agree(tmp_path):
 
 
 def test_a_synthetic_paper_on_the_subprocess_backend(tmp_path):
-    order = tmp_path / "order.txt"
+    # each job writes its own file with its start and end times: concurrent appends to
+    # one shared file are not atomic on Windows (a line was lost in CI)
+    marks = tmp_path / "marks"
+    marks.mkdir()
     body = textwrap.dedent(
         f"""
-        import sys, time
+        import pathlib, sys, time
+        start = time.monotonic_ns()
         end = time.process_time() + 0.05
         while time.process_time() < end:
             pass
-        with open({str(order)!r}, "a") as handle:
-            handle.write(sys.argv[1] + "\\n")
+        name = sys.argv[1].replace("/", "_")
+        pathlib.Path({str(marks)!r}, name).write_text(f"{{start}} {{time.monotonic_ns()}}")
         """
     )
     path = tmp_path / "job.py"
@@ -453,9 +457,20 @@ def test_a_synthetic_paper_on_the_subprocess_backend(tmp_path):
     acc = bg.Accountant(["C1", "C2"], margin_usec=bg.cpu_hours(1) // 3600)  # M = 1 CPU-s
     run = orc.PaperRunner(plan, sb.SubprocessBackend(), acc).run()
     assert all(s.outcome is orc.Outcome.COMPLETED for s in run.steps), outcomes(run)
-    lines = order.read_text().split()
-    assert lines[:3] == ["setup/build", "C1/run", "C2/run"]  # every base before any attack
-    assert sorted(lines[3:5]) == ["C1/s1", "C1/s2"] and sorted(lines[5:]) == ["C2/s1", "C2/s2"]
+    times = {}
+    for path_ in marks.iterdir():
+        start, end = (int(v) for v in path_.read_text().split())
+        times[path_.name.replace("_", "/")] = (start, end)
+    assert sorted(times) == sorted(
+        ["setup/build", "C1/run", "C2/run", "C1/s1", "C1/s2", "C2/s1", "C2/s2"]
+    )
+    # setup, then the base of C1, then of C2, then every attack (D-S4)
+    assert times["setup/build"][1] <= times["C1/run"][0]
+    assert times["C1/run"][1] <= times["C2/run"][0]
+    attacks_c1 = [times["C1/s1"], times["C1/s2"]]
+    attacks_c2 = [times["C2/s1"], times["C2/s2"]]
+    assert times["C2/run"][1] <= min(s for s, _ in attacks_c1)
+    assert max(e for _, e in attacks_c1) <= min(s for s, _ in attacks_c2)
     assert all(
         type(c.result.usage_usec) is int and c.result.usage_usec > 0
         for s in run.steps
