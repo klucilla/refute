@@ -59,13 +59,17 @@ def fetch(tmp_path, opener, attempts=3, **kw):
 
 
 def data_present_verdict(result):
-    """The gate as the runner records it: PASS with the file, FAIL with the cause."""
+    """The gate of a failed fetch: FAIL with zero examples (nothing was obtained) and, for
+    a proven absence, the HTTP statuses of every attempt (Codex review: a fixed coverage
+    of 1 would have counted an attempt as an example)."""
     gate = TestResult(
         "data_present",
         TestStatus.PASS if result.ok else TestStatus.FAIL,
         Severity.GATE,
         "fetch",
-        coverage=1,
+        metrics=fe.absence_evidence(result),
+        coverage=1 if result.ok else 0,
+        coverage_unit="examples",
     )
     base = [TestResult("environment_build", TestStatus.PASS, Severity.GATE, "ok", coverage=1), gate]
     failures = {"data_present": result.failure} if result.failure else None
