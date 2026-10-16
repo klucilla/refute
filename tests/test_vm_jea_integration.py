@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -23,6 +24,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "tests" / "vm" / "jea_integration.ps1"
+FULLY_QUALIFIED = re.compile(r"^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)")
 PINS = (
     "RequiredVersion",
     "ModuleVersion",
@@ -133,6 +135,10 @@ def test_the_roots_the_session_searches_are_known_to_the_registration(result, se
     known = {p.lower() for p in result["Roots"]["Registration"]}
     session = _session_roots(sessions["PathWithNetworkAccess"]["Roots"])
     assert session, "the session reported no module path"
+    # every entry is fully qualified (a drive and '\', or UNC), as the registration requires:
+    # a relative entry would depend on the session's current folder
+    relative = [r["Path"] for r in session if not FULLY_QUALIFIED.match(r["Path"])]
+    assert relative == [], relative
     unknown = [r for r in session if r["Exists"] and r["Path"].lower() not in known]
     print("session roots outside the registration's set:", json.dumps(unknown, indent=1))
     selectable = [r for r in unknown if r["Error"] or r["RoleCapabilities"]]
