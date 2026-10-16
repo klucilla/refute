@@ -525,6 +525,23 @@ BLOCK_PR115 += [
     ("Write-Output @('a'; git commit -m x)", P),
 ]
 
+BLOCK_PR115 += [
+    # Codex round 3: a redirection inside the git arguments, a redirection glued to the
+    # command name, a quoted program after a prefix program in PowerShell
+    ("git 2>/dev/null commit -m msg", B),
+    ("git -C . 2> /dev/null commit -m msg", B),
+    ("cat<README.md", B),
+    ("cat>/dev/null<README.md", B),
+    ("& 'C:/Program Files/Git/usr/bin/env.exe' 'git' commit -m msg", P),
+]
+
+PASS_PR115 += [
+    ("echo hi>.cache/x/out.txt", B),
+    ("git log -1 2>&1", B),
+    ("git log -1>/dev/null", B),
+    ("cat<<'EOF'\nline\nEOF", B),
+]
+
 PASS_PR115 += [
     # Codex round 2: a here-string that is data, and literal strings in an array
     ("bash -c 'wc -l' <<< 'git commit -m msg'", B),

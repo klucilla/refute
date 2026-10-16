@@ -492,6 +492,8 @@ def lex(command: str, shell: str = BASH) -> Lexed:
             end_word()
             i += 1
             continue
+        if ch in "<>" and in_word and not word.isdigit() and word[-1:] not in ("<", ">", "&"):
+            end_word()  # cat<file: the redirection starts its own word (2>&1 stays whole)
         word += ch
         in_word = True
         all_quoted = False
@@ -632,6 +634,20 @@ def _refuse_read(word: str) -> str:
         f"'{word}' is not allowed: read excerpts with the Read tool and search with the "
         "Grep tool (CLAUDE.md, project rules)"
     )
+
+
+def _drop_redirections(words: list[Word]) -> list[Word]:
+    """The words without redirections and their detached targets."""
+    kept: list[Word] = []
+    k = 0
+    while k < len(words):
+        redirection = _redirection(words[k])
+        if redirection:
+            k += 1 if redirection[1] else 2
+            continue
+        kept.append(words[k])
+        k += 1
+    return kept
 
 
 def _leading_redirections(words: list[Word], start: int) -> list[Word]:
@@ -900,12 +916,10 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
             return reason
     if start is None:
         return None
-    if (
-        shell == POWERSHELL
-        and words[start].quoted
-        and (start == 0 or words[start - 1].text not in ("&", "."))
-    ):
-        return None  # a string at the start of a PowerShell statement is a value, not a call
+    if shell == POWERSHELL and start == 0 and words[0].quoted:
+        # a string that opens a PowerShell statement is a value, not a call; after '&',
+        # '.' or a prefix program (env.exe 'git' ...) it is the program, and is checked
+        return None
     rest = words[start:]
     name = _name(rest[0].text)
     args = [w.text for w in rest[1:]]
@@ -920,8 +934,8 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
         and _cat_reads_a_file(_leading_redirections(words, start) + rest[1:])
     ):
         return _refuse_read(name)
-    if name == "git":
-        reason = _git_commit_reason(args, depth)
+    if name == "git":  # redirections anywhere (git 2>/dev/null commit) are not arguments
+        reason = _git_commit_reason([w.text for w in _drop_redirections(rest[1:])], depth)
         if reason:
             return reason
     shell_program = name in SHELLS and _reads_code_from_stdin(words)

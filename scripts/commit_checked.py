@@ -21,10 +21,13 @@ Usage: python scripts/commit_checked.py [-q] (-m MESSAGE | -F FILE) [--no-edit]
    recursively) must hold the same content in the work tree and in the index, or be absent
    from both (line endings are not compared). An ``extend`` outside the repository, or
    with ``~`` or ``$``, is refused.
-5. ``ruff check`` and ``ruff format --check`` run on each staged file, with the folders CI
-   excludes (``--force-exclude``). If any run exits with a code other than 0, nothing is
-   committed and the script exits with that code. The output says how many staged files
-   ruff checked and how many fall in the excluded folders.
+5. ``ruff check`` (with every fix mode forced off: ``--no-fix``, ``fix = false``,
+   ``fix-only = false``, so it judges the blob and not a fixed copy) and
+   ``ruff format --check`` run on each staged file, with the folders CI excludes
+   (``--force-exclude``). If any run exits with a code other than 0, nothing is committed
+   and the script exits with that code (1 for a negative code, a run ended by a signal).
+   The output says how many staged files ruff checked and how many fall in the excluded
+   folders.
 6. Just before the commit, the staged tree, the list and the configuration are read again;
    any change refuses the commit.
 7. ``git commit`` runs with the given options. **Limit:** between step 6 and the moment
@@ -204,6 +207,20 @@ def staged_state(root: str) -> tuple[str, dict[str, str], dict[str, bytes | None
     return tree, blobs, config_state(root, files) if files else {}
 
 
+class CheckFailedError(Exception):
+    """A ruff run on a staged file exited with a code other than 0."""
+
+    def __init__(self, message: str, code: int) -> None:
+        super().__init__(message)
+        self.code = code
+
+
+# a configuration may turn fixes on: ruff check would then judge its fixed output, not the
+# blob that is committed, so every fix mode is forced off (--no-fix alone does not undo
+# fix-only)
+NO_FIX = ("--no-fix", "--config", "fix = false", "--config", "fix-only = false")
+
+
 def ruff_command(*args: str) -> list[str]:
     """``python -m ruff`` with this interpreter, the CI exclusions enforced."""
     excludes = [x for e in EXCLUDE for x in ("--extend-exclude", e)]
@@ -212,7 +229,8 @@ def ruff_command(*args: str) -> list[str]:
 
 def check_staged(root: str, blobs: dict[str, str]) -> int:
     """Run ruff on the staged blobs. Returns the number of files ruff checked (the others
-    are in excluded folders), or minus ruff's exit code when a check failed."""
+    are in excluded folders); raises CheckFailedError when any run exits with a code
+    other than 0 (a negative code, a process ended by a signal, included)."""
     files = sorted(blobs)
     missing = [f for f in files if not posixpath.isfile(posixpath.join(root, f))]
     if missing:  # --show-files needs the path; a staged file deleted from the work tree
@@ -231,16 +249,14 @@ def check_staged(root: str, blobs: dict[str, str]) -> int:
     checked = len([line for line in shown.stdout.splitlines() if line.strip()])
     for f in files:
         data = blob(root, blobs[f])
-        for step in (["check"], ["format", "--check"]):
+        for step in (["check", *NO_FIX], ["format", "--check"]):
             command = [*ruff_command(*step, "--stdin-filename", f), "-"]
             result = subprocess.run(command, cwd=root, input=data)
             if result.returncode != 0:
-                print(
-                    f"commit_checked: ruff {' '.join(step)} exited with {result.returncode} "
-                    f"on the staged {f}; nothing was committed",
-                    file=sys.stderr,
+                raise CheckFailedError(
+                    f"ruff {step[0]} exited with {result.returncode} on the staged {f}",
+                    result.returncode if result.returncode > 0 else 1,
                 )
-                return -result.returncode or -1
     return checked
 
 
@@ -266,14 +282,15 @@ def main(argv: list[str]) -> int:
         if blobs:
             ruff_version_check(root)
             checked = check_staged(root, blobs)
-            if checked < 0:
-                return -checked
             if staged_state(root) != state:
                 raise RefusedError("the index or the ruff configuration changed while ruff ran")
             print(
                 f"commit_checked: ruff passed on {checked} of {len(blobs)} staged Python "
                 f"file(s) ({len(blobs) - checked} in folders CI excludes)"
             )
+    except CheckFailedError as error:
+        print(f"commit_checked: {error}; nothing was committed", file=sys.stderr)
+        return error.code
     except RefusedError as error:
         print(f"commit_checked: {error}; nothing was committed", file=sys.stderr)
         return 2

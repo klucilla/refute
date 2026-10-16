@@ -240,6 +240,42 @@ def test_the_script_refuses_to_run_outside_a_virtual_environment(repo, monkeypat
     assert commits(repo) == 0
 
 
+@pytest.mark.parametrize("setting", ["fix = true", "fix-only = true"])
+def test_a_configuration_that_turns_fixes_on_cannot_pass_a_failing_blob(repo, setting):
+    """Codex review: with fixes on, ruff check would judge its fixed output."""
+    stage(repo, "pyproject.toml", f"[tool.ruff]\nline-length = 100\n{setting}\n")
+    stage(repo, "bad.py", "import os\n")
+    out = commit(repo, "-m", "x")
+    assert out.returncode != 0 and "staged bad.py" in out.stderr
+    assert commits(repo) == 0
+    assert git(repo, "show", ":bad.py").stdout == "import os\n"
+
+
+@pytest.mark.parametrize("step", ["check", "format"])
+@pytest.mark.parametrize("code", [-11, 1, 2])
+def test_any_failing_ruff_code_stops_before_the_commit(repo, monkeypatch, step, code):
+    """Codex review: a negative code (a run ended by a signal) must stop too."""
+    spec = importlib.util.spec_from_file_location("commit_checked", SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    real_run = module.subprocess.run
+    calls = []
+
+    def fake_run(cmd, *args, **kwargs):
+        calls.append(cmd)
+        if "--stdin-filename" in cmd and step in cmd:
+            return subprocess.CompletedProcess(cmd, code)
+        return real_run(cmd, *args, **kwargs)
+
+    monkeypatch.setattr(module.subprocess, "run", fake_run)
+    monkeypatch.chdir(repo)
+    stage(repo, "good.py", "x = 1\n")
+    result = module.main(["-m", "x"])
+    assert result != 0 and result == (code if code > 0 else 1)
+    assert not any(c[:1] == ["git"] and "commit" in c for c in calls)
+    assert commits(repo) == 0
+
+
 def test_a_merge_prepared_with_no_commit_is_committed_with_no_edit(repo):
     stage(repo, "base.py", "x = 1\n")
     assert commit(repo, "-q", "-m", "base").returncode == 0
