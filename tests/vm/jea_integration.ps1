@@ -186,4 +186,7 @@ $out.Relative.Nowhere = Test-Session 'RefuteProbeNowhere' $true
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 . (Join-Path $repo 'scripts\vm\RefuteRegistration.Core.ps1')
 $out.Roots.Registration = @(Get-RefuteRegistrationModuleRoots)
+# the effective discovery set the registration computes (Get-RefuteJeaDiscoveryRoots),
+# existing folders or not, compared with what a real session searches (Codex review of #114)
+$out.Roots.Discovery = @(Get-RefuteJeaDiscoveryRoots)
 Write-Result

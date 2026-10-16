@@ -208,6 +208,28 @@ def test_a_relative_entry_is_searched_where_the_session_resolves_it(result, requ
     _opened(control)
 
 
+def test_the_discovery_set_is_exactly_the_folders_the_session_searches(result, sessions, request):
+    """Codex review of #114: the effective discovery set the registration computes
+    (Get-RefuteJeaDiscoveryRoots: machine PSModulePath, Program Files, $PSHOME\\Modules and
+    the relative user entry resolved against %SystemRoot%\\system32) must be EQUAL to the
+    folders a real RefuteVm-shaped session searches (every entry of its module path,
+    resolved where the session resolves it), existing or not. The difference is recorded
+    in the JUnit file. This is evidence for the GitHub runner only."""
+    _, session = _session_roots(sessions["PathWithNetworkAccess"]["Roots"])
+    observed = {r["Full"].rstrip("\\").lower() for r in session if r["Full"]}
+    discovery = result["Roots"]["Discovery"]
+    discovery = [discovery] if isinstance(discovery, str) else list(discovery)
+    computed = {p.rstrip("\\").lower() for p in discovery}
+    evidence = {
+        "session": sorted(observed),
+        "computed": sorted(computed),
+        "missing_from_computed": sorted(observed - computed),
+        "not_searched_by_the_session": sorted(computed - observed),
+    }
+    request.node.user_properties.append(("discovery_set", json.dumps(evidence)))
+    assert observed == computed, evidence
+
+
 @pytest.mark.parametrize(
     ("entry", "qualified"),
     [
