@@ -4,6 +4,7 @@ gate see any failure of its own (offline)."""
 
 import hashlib
 import sys
+import threading
 
 import numpy as np
 import pytest
@@ -15,7 +16,15 @@ from refute.packs.ml.coverage_hook import (
     HOOK_FAILURE,
     Observer,
     committed_events,
+    record_line,
 )
+
+
+def final_for(records, calls, failed=False):
+    """The final record the hook would write after these records."""
+    digest = hashlib.sha256(b"".join(record_line(r) for r in records)).hexdigest()
+    return {FINAL: {"calls": calls, "failed": failed, "records_sha256": digest}}
+
 
 NAME = "sklearn.metrics.accuracy_score"
 
@@ -107,7 +116,7 @@ def test_a_committed_event_records_the_declared_name_count_hash_and_value():
     assert event["labels_sha256"] == hashlib.sha256(canonical_bytes(y_true)).hexdigest()
     assert event["result"] == repr(0.75)
     assert event["call_site"]["file"].endswith("test_ml_coverage_hook.py")
-    assert records[1] == {COMMITTED: 1} and records[2] == {FINAL: {"calls": 1, "failed": False}}
+    assert records[1] == {COMMITTED: 1} and records[2] == final_for(records[:2], 1)
 
 
 @pytest.mark.parametrize("y_true", [["cat", "dog", "Ångström"], np.array([4, 4, 2]), (0, 1, 2)])
@@ -227,7 +236,103 @@ def test_a_sink_that_writes_then_fails_is_reported_by_the_final_record():
     returned, _ = run(accuracy, [0, 1], [0, 1], sink=sink)
     assert returned is accuracy.last
     events, failures = committed_events(written)
-    assert events == [] and failures == ["the final record reports {'calls': 1, 'failed': True}"]
+    assert events == [] and failures == [
+        "the final record does not match the log: calls 1, failed True, digest equal"
+    ]
+
+
+def test_a_sink_that_fails_after_writing_the_final_record_leaves_a_valid_log():
+    """Judged by content: the log is complete and matches its digest, so the exception the
+    sink raised after the last write changes nothing in the evidence."""
+    written = []
+
+    def sink(record):
+        written.append(record)
+        if FINAL in record:
+            raise OSError("close failed")
+
+    run(plain, [0, 1], [0, 1], sink=sink)
+    events, failures = committed_events(written)
+    assert failures == [] and len(events) == 1
+
+
+def test_a_log_written_in_part_does_not_match_its_digest():
+    written = []
+
+    def sink(record):
+        if COMMITTED in record:  # the commit record never reaches the log
+            raise OSError("disk full")
+        written.append(record)
+
+    run(plain, [0, 1], [0, 1], sink=sink)
+    _, failures = committed_events(written)
+    assert "event 1 without its commit record" in failures
+    assert any("digest different" in f for f in failures)
+
+
+def test_finish_waits_for_a_call_in_progress():
+    """A call still inside the sink when finish() starts is counted, and its failure is
+    reported: finish() waits until no call is in progress."""
+    written = []
+    inside = threading.Event()
+    release = threading.Event()
+
+    def sink(record):
+        written.append(record)
+        if COMMITTED in record:
+            inside.set()
+            release.wait(5)
+            raise OSError("late failure")
+
+    observer = Observer(sink)
+    wrapped = observer.wrap(plain, NAME)
+    worker = threading.Thread(target=wrapped, args=([0, 1], [0, 1]))
+    worker.start()
+    assert inside.wait(5)
+    finisher = threading.Thread(target=observer.finish)
+    finisher.start()
+    finisher.join(0.2)
+    assert finisher.is_alive()  # waiting for the call in progress
+    release.set()
+    worker.join(5)
+    finisher.join(5)
+    assert written[-1][FINAL]["failed"] is True
+    _, failures = committed_events(written)
+    assert failures
+
+
+@pytest.mark.parametrize(
+    "y_true",
+    [np.array(5), np.array([[0, 1], [1, 0]]), np.array([0, 1], dtype=object)],
+    ids=["0-d", "2-d", "object-1d"],
+)
+def test_numpy_labels_must_be_a_one_dimensional_array_of_int_or_str(y_true):
+    _, records = run(lambda t, p: 1.0, y_true, y_true)
+    events, failures = committed_events(records)
+    if y_true.ndim == 1:
+        # a 1-D object array of Python ints is read like a list of ints
+        assert failures == [] and events[0]["n_examples"] == 2
+    else:
+        assert events == [] and failures
+
+
+def test_a_zero_d_object_array_never_runs_the_object_it_holds():
+    class Inner:
+        def __iter__(self):
+            Counted.calls += 1
+            return iter([0, 1])
+
+        def __len__(self):
+            Counted.calls += 1
+            return 2
+
+    Counted.calls = 0
+    holder = np.empty((), dtype=object)
+    holder[()] = Inner()
+    _, records = run(lambda t, p: 1.0, holder, holder)
+    assert Counted.calls == 0
+    _, failures = committed_events(records)
+    assert failures
 
 
 def test_a_failure_of_getframe_is_recorded_and_the_call_is_unchanged(monkeypatch):
@@ -274,33 +379,61 @@ EVENT = {
     "call_site": {"file": "x.py", "line": 1},
     "n_examples": 2,
     "labels_sha256": "0" * 64,
+    "result": "0.5",
 }
-FINAL_OK = {FINAL: {"calls": 1, "failed": False}}
+COMMIT = {COMMITTED: 1}
+GOOD = [EVENT, COMMIT]
+BAD_EVENT = {
+    "seq": 1,
+    "function": None,
+    "call_site": None,
+    "n_examples": -1,
+    "labels_sha256": "x",
+    "result": "0.5",
+}
+
+
+def with_final(records, calls=1):
+    return [*records, final_for(records, calls)]
 
 
 @pytest.mark.parametrize(
     ("records", "reason"),
     [
-        ([EVENT, FINAL_OK], "event 1 without its commit record"),
-        ([{COMMITTED: 1}, FINAL_OK], "a commit record with no event: 1"),
+        (with_final([EVENT]), "event 1 without its commit record"),
+        (with_final([COMMIT], 0), "a commit record without its event before it"),
+        (with_final([COMMIT, EVENT]), "a commit record without its event before it"),
         (
-            [{"seq": 1, HOOK_FAILURE: "x"}, EVENT, {COMMITTED: 1}, FINAL_OK],
+            with_final([{"seq": 1, HOOK_FAILURE: "x"}, EVENT, COMMIT]),
             "record 1: a sequence number repeated",
         ),
-        ([{"seq": 1}, {COMMITTED: 1}, FINAL_OK], "event 1 is incomplete"),
-        ([EVENT, {COMMITTED: 1}], "no final record"),
-        ([EVENT, {COMMITTED: 1}, FINAL_OK, EVENT], "after the final record"),
-        ([EVENT, {COMMITTED: 1}, {FINAL: {"calls": 2, "failed": False}}], "final record reports"),
+        (with_final([{"seq": 1}, COMMIT]), "not an event as the hook writes it"),
+        (with_final([BAD_EVENT, COMMIT]), "not an event as the hook writes it"),
+        (with_final([dict(EVENT, extra=1), COMMIT]), "not an event as the hook writes it"),
+        (with_final([dict(EVENT, seq=2), {COMMITTED: 2}]), "not 1 to n"),
+        (GOOD, "no final record"),
+        ([*GOOD, {FINAL: None}], "the final record is malformed"),
+        ([*GOOD, {FINAL: {"calls": 1, "failed": 0, "records_sha256": "0" * 64}}], "malformed"),
+        ([*with_final(GOOD), EVENT], "after the final record"),
+        (with_final(GOOD, 2), "the final record does not match the log: calls 2"),
+        ([EVENT, COMMIT, final_for([EVENT], 1)], "digest different"),
     ],
     ids=[
         "uncommitted",
         "commit-without-event",
+        "commit-before-event",
         "duplicate-seq",
         "incomplete",
+        "bad-types",
+        "extra-field",
+        "gap",
         "no-final",
+        "final-null",
+        "final-types",
         "after-final",
         "final-count",
-    ],  # fmt: skip
+        "digest",
+    ],
 )
 def test_the_gate_parser_refuses_every_malformed_or_partial_record_set(records, reason):
     events, failures = committed_events(records)
@@ -308,5 +441,5 @@ def test_the_gate_parser_refuses_every_malformed_or_partial_record_set(records, 
 
 
 def test_a_complete_record_set_is_accepted():
-    events, failures = committed_events([EVENT, {COMMITTED: 1}, FINAL_OK])
+    events, failures = committed_events(with_final(GOOD))
     assert failures == [] and events == [EVENT]

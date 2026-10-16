@@ -726,12 +726,24 @@ declared in the claim before the lock. With no route that closes the chain, the 
   call.
   - **One record per call:** each call gets a unique sequence number, allocated under a
     lock, and writes an event or a failure record, then a commit record.
-  - **The final record:** at the end, a final record states the number of calls and
-    whether any failure happened, including a sink that raised after it had written.
-  - **What the gate accepts:** the events only when every record is well formed, no
-    sequence number repeats, every event is committed and has no failure record, and
-    the final record is last, says no failure and counts the calls. Anything else, or
-    no final record, is `INCONCLUSIVE`.
+  - **The final record:** at the end, once no call is in progress, a final record
+    states the number of calls and whether any failure happened (a sink that raised
+    included). It also holds the SHA-256 of every record written before it; the digest
+    and each write happen in one locked step.
+  - **The log is judged by its content, not by whether the sink returned.** A sink that
+    raises after the final record was written leaves a complete log that matches its
+    digest. A log written in part, reordered or edited does not match it.
+  - **What the gate accepts:** the events only when:
+    - every record has exactly the form and the types the hook writes;
+    - the sequence numbers are 1 to n with no repeat;
+    - each event comes before its commit record, and there is no failure record;
+    - the final record is last, says no failure, counts the calls and matches the
+      digest.
+
+    Anything else (an absent or malformed final record included) is `INCONCLUSIVE`.
+  - **Labels from numpy** are read only from a one-dimensional array whose `tolist()`
+    is a list. A 0-d array of dtype object is refused, so it never gives back the object
+    it holds.
   - **Interrupts:** an interrupt (`KeyboardInterrupt`, `SystemExit`) raised during the
     hook's own work is not swallowed. The run is interrupted, after the observed call
     has returned.
@@ -742,13 +754,26 @@ declared in the claim before the lock. With no route that closes the chain, the 
     arguments);
   - **value:** the value returned with and without the hook has the same type and text,
     for a list, a tuple and a numpy array;
-  - **untouched objects:** an object with a counting metaclass, a fake `numpy.ndarray`,
-    a list subclass, an untrusted element, an iterator, a fake numpy scalar result and
-    an unknown result run zero lines of their own code;
-  - **recorded failures:** a sink that fails after the commit record, a failing
-    `sys._getframe`, an uncommitted event, a commit with no event, a repeated sequence
-    number, an incomplete event, no final record, a record after it, and a wrong count
-    all reach the gate as failures;
+  - **untouched objects:** these run zero lines of their own code:
+    - an object with a counting metaclass, a fake `numpy.ndarray` and a list subclass;
+    - an untrusted element and an iterator;
+    - a 0-d object array holding a counting object;
+    - a fake numpy scalar result and an unknown result.
+
+    2-D arrays are refused too.
+  - **recorded failures:** each of these reaches the gate as a failure:
+    - from the sink: a sink that fails after the commit record, a log written in part,
+      and a call still in the sink when `finish()` starts (it waits, then reports the
+      failure);
+    - from the hook: a failing `sys._getframe`;
+    - from the records: an uncommitted event, a commit with no event or before its
+      event, a repeated sequence number or a gap, an incomplete event, wrong types, an
+      extra field;
+    - from the final record: none, a null one, one with wrong types, a record after it,
+      a wrong count and a wrong digest.
+
+    A sink that fails only after writing the final record leaves an accepted, complete
+    log;
   - **propagation:** metadata that cannot be copied is tolerated, and the function's own
     exception and an interrupt propagate.
 - **W3.12d The link and the split.** The link is never "the last call", nearness in time,
