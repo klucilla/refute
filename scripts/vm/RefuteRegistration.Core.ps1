@@ -13,10 +13,39 @@ function Get-RefuteWriteRightsMask {
         $rights::ChangePermissions -bor $rights::TakeOwnership)
 }
 
-function Test-RefuteRightsWrite {
-    # True when the rights of one access entry allow any change.
+function ConvertTo-RefuteSpecificRights {
+    # An access mask with its generic rights (bits 28 to 31) replaced by the specific file
+    # rights they grant, the FILE_GENERIC_* mapping of
+    # https://learn.microsoft.com/en-us/windows/win32/fileio/file-security-and-access-rights
+    # (accessed 2026-10-16): GENERIC_ALL gives every right; GENERIC_WRITE gives WriteData,
+    # AppendData, WriteAttributes, WriteExtendedAttributes, ReadPermissions and Synchronize;
+    # GENERIC_READ and GENERIC_EXECUTE give read and execute rights only. Windows can keep
+    # an inherit-only entry with GENERIC_ALL or GENERIC_WRITE unmapped, so without this an
+    # entry such as (A;OICIIO;GA;;;BU) would not count as a writer (Codex review of the
+    # integrated JEA package). Pure.
     param([int]$Rights)
-    return (($Rights -band (Get-RefuteWriteRightsMask)) -ne 0)
+    $r = [System.Security.AccessControl.FileSystemRights]
+    $specific = $Rights -band 0x0FFFFFFF
+    if ($Rights -band 0x10000000) { $specific = $specific -bor [int]$r::FullControl }
+    if ($Rights -band 0x20000000) {
+        $specific = $specific -bor [int]($r::ExecuteFile -bor $r::ReadAttributes -bor $r::ReadPermissions -bor $r::Synchronize)
+    }
+    if ($Rights -band 0x40000000) {
+        $specific = $specific -bor [int]($r::WriteData -bor $r::AppendData -bor $r::WriteAttributes -bor
+            $r::WriteExtendedAttributes -bor $r::ReadPermissions -bor $r::Synchronize)
+    }
+    if ($Rights -band 0x80000000) {
+        $specific = $specific -bor [int]($r::ReadData -bor $r::ReadAttributes -bor $r::ReadExtendedAttributes -bor
+            $r::ReadPermissions -bor $r::Synchronize)
+    }
+    return [int]$specific
+}
+
+function Test-RefuteRightsWrite {
+    # True when the rights of one access entry allow any change, generic rights included
+    # (ConvertTo-RefuteSpecificRights).
+    param([int]$Rights)
+    return (((ConvertTo-RefuteSpecificRights $Rights) -band (Get-RefuteWriteRightsMask)) -ne 0)
 }
 
 function Find-RefuteHyperVManifest {
@@ -266,7 +295,7 @@ function Get-RefuteAncestorWriters {
     $rights = [System.Security.AccessControl.FileSystemRights]
     $mask = [int]($rights::Delete -bor $rights::DeleteSubdirectoriesAndFiles -bor $rights::ChangePermissions -bor $rights::TakeOwnership)
     return @($Entries | Where-Object {
-            [string]$_.Type -eq 'Allow' -and -not [bool]$_.InheritOnly -and (([int]$_.Rights -band $mask) -ne 0) -and
+            [string]$_.Type -eq 'Allow' -and -not [bool]$_.InheritOnly -and (((ConvertTo-RefuteSpecificRights ([int]$_.Rights)) -band $mask) -ne 0) -and
             -not (Test-RefuteAllowedWriter -Sid ([string]$_.Sid) -InheritOnly $false)
         } | ForEach-Object { "$($_.Sid) $([int]$_.Rights)" })
 }

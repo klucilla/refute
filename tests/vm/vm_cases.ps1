@@ -507,6 +507,22 @@ foreach ($ancBad in @((New-Ace 'S-1-5-11' $r::DeleteSubdirectoriesAndFiles 'Allo
     Add-Case "ancestor: $($ancBad.Sid) with rights $($ancBad.Rights) can replace what is below" (@(Get-RefuteAncestorWriters @($ancBad)).Count -eq 1)
 }
 
+# Generic rights (Codex review of the integrated JEA package): GENERIC_ALL (0x10000000) and
+# GENERIC_WRITE (0x40000000), which Windows can keep unmapped on an inherit-only entry,
+# count as the specific rights they grant; GENERIC_READ (0x80000000) and GENERIC_EXECUTE
+# (0x20000000) never count as writing
+$ga, $gx, $gw, $gr = 0x10000000, 0x20000000, 0x40000000, 0x80000000
+Add-Case 'generic rights: GENERIC_ALL maps to every right' ((ConvertTo-RefuteSpecificRights $ga) -eq [int]$r::FullControl)
+Add-Case 'generic rights: GENERIC_WRITE maps to FILE_GENERIC_WRITE' ((ConvertTo-RefuteSpecificRights $gw) -eq [int]($r::WriteData -bor $r::AppendData -bor $r::WriteAttributes -bor $r::WriteExtendedAttributes -bor $r::ReadPermissions -bor $r::Synchronize))
+foreach ($gBad in @((New-Ace 'S-1-5-32-545' $ga 'Allow' $true), (New-Ace 'S-1-5-32-545' $gw 'Allow' $true), (New-Ace 'S-1-5-11' $ga 'Allow' $false), (New-Ace 'S-1-5-11' $gw 'Allow' $false))) {
+    Add-Case "generic rights: $($gBad.Sid) with $('0x{0:X8}' -f $gBad.Rights) (inherit-only $($gBad.InheritOnly)) is a writer" (@(Get-RefuteAceWriters @($gBad)).Count -eq 1)
+}
+foreach ($gOk in @((New-Ace 'S-1-5-32-545' $gr 'Allow' $true), (New-Ace 'S-1-5-32-545' $gx 'Allow' $false), (New-Ace 'S-1-5-32-545' ($gr -bor $gx) 'Allow' $false))) {
+    Add-Case "generic rights: $($gOk.Sid) with $('0x{0:X8}' -f $gOk.Rights) only reads" (@(Get-RefuteAceWriters @($gOk)).Count -eq 0)
+}
+Add-Case 'generic rights: GENERIC_ALL on an ancestor can replace what is below' (@(Get-RefuteAncestorWriters @(New-Ace 'S-1-5-32-545' $ga 'Allow' $false)).Count -eq 1)
+Add-Case 'generic rights: GENERIC_WRITE on an ancestor only creates children' (@(Get-RefuteAncestorWriters @(New-Ace 'S-1-5-32-545' $gw 'Allow' $false)).Count -eq 0)
+
 # on real folders: a folder the current account can write (the test's work folder) is
 # reported at every level (the root, a module folder, its RoleCapabilities, a .psrc, and a
 # module folder with no RoleCapabilities), its owner too; an absent folder is checked

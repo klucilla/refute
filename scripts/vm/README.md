@@ -6,13 +6,13 @@ These scripts build the Hyper-V VM in which third-party paper code will run
 does not validate its isolation**: no paper code runs until every WP6 acceptance test
 passes. In phase 1 the VM has no network.
 
-**Not validated in operation yet.** The JEA endpoint and the scripts are tested only
-with synthetic inputs, without Windows administrator rights and without Hyper-V
-(tests/test_vm_scripts.py). Nothing here has been run on the machine: the
-registration, the endpoint's restrictions (NoLanguage, the virtual account's groups,
-the loopback-only WinRM, the transcripts) and every Hyper-V operation remain
-unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded
-(wp6-acceptance.md, W6.4 to W6.6).
+**Not validated in operation yet.** What has been checked so far, and where:
+
+- **Synthetic tests:** the scripts are tested with synthetic inputs, without Windows administrator rights and without Hyper-V (tests/test_vm_scripts.py).
+- **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py).
+- **The maintainer's machine:**
+  - the WinRM listener removal and the endpoint registration were run once, from `main` at `627842d`, with a first read-only check from the operator account; the record is [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md);
+  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6).
 
 ## Who can do what
 
@@ -163,13 +163,15 @@ order:
    `PSModulePath`, Program Files, `$PSHOME\Modules`, and the virtual account's user
    entry, which is relative (`WindowsPowerShell\Modules`, its Documents path being
    empty) and resolves against the session's current folder, `%SystemRoot%\system32`
-   (as the CI test observed on the runner). In every folder of that set, in every module
-   folder under it, in every `RoleCapabilities` folder and `.psrc` file, only SYSTEM,
-   Administrators and TrustedInstaller may write (CREATOR OWNER only as an inherit-only
-   entry); for a folder of the set that does not exist, the same holds for its nearest
-   existing ancestor, which decides who can create it. The preview and the apply both
-   refuse otherwise. **Limit:** the set is computed from the machine's state at that
-   moment and from the current folder observed on the CI runner;
+   (as the CI test observed on the runner). The checks on that set:
+   - **Writers:** in every folder of the set, in every module folder under it, and in every `RoleCapabilities` folder and `.psrc` file, only SYSTEM, Administrators and TrustedInstaller may write. CREATOR OWNER is accepted only as an inherit-only entry. The generic rights `GENERIC_ALL` and `GENERIC_WRITE` count as the specific rights they grant, so an inherit-only entry that keeps them unmapped is caught too.
+   - **Owners and links:** every one of these items has one of those three owners and is not a reparse point.
+   - **Ancestors:** no ancestor, up to the volume root, can be deleted, have its permissions changed or be taken over by another account.
+   - **A folder of the set that does not exist:** the same checks apply to its nearest existing ancestor, which decides who can create it, and the ancestors above that one are checked as ancestors.
+
+   The preview and the apply both refuse otherwise. **Limit:** the set is computed from
+   the machine's state at that moment and from the current folder observed on the CI
+   runner;
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
