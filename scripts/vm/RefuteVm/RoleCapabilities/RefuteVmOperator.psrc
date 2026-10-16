@@ -5,10 +5,20 @@
     # Get-Command, Get-FormatData, Get-Help, Measure-Object, Out-Default,
     # Select-Object). The session runs in NoLanguage mode: literal arguments only, no
     # script block or expression. The functions take no path and no VM name.
-    # The module is pinned by name, version and GUID, so no other module named RefuteVm
-    # can be imported in its place.
+    #
+    # The module is imported by the absolute path of its installed manifest, in a folder
+    # only administrators can write (Register-RefuteVmEndpoint.ps1 installs it there,
+    # with no version subfolder, and checks this path). That path pins the copy, so no
+    # other module named RefuteVm can be imported in its place. No RequiredVersion,
+    # ModuleVersion, MaximumVersion or GUID: with any of them PowerShell resolves the
+    # module by calling Get-Module inside the restricted session, which does not have it,
+    # and the session cannot open ("The term 'Get-Module' is not recognized", observed by
+    # the maintainer on 2026-10-16). With a name or a path only, it runs Import-Module
+    # directly (ProcessModulesToImport in
+    # https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/InitialSessionState.cs,
+    # accessed 2026-10-16). tests/test_vm_scripts.py refuses version keys in every .psrc.
     GUID             = '6f1c6a0e-5b2d-4f4e-9d1a-3c7e2b8a9f41'
     Description      = 'Refute VM operator: status and one approved operation per call.'
-    ModulesToImport  = @(@{ ModuleName = 'RefuteVm'; RequiredVersion = '0.1.0'; GUID = 'b2713b52-46f8-4c00-a4bf-2b940708587a' })
+    ModulesToImport  = @('C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1')
     VisibleFunctions = @('Get-RefuteVmStatus', 'Invoke-RefuteVmOperation')
 }

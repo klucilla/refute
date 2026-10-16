@@ -417,10 +417,36 @@ Add-Case 'reg export: another key is refused' (-not (Test-RefuteRegExport -Text 
 Add-Case 'reg export: a sibling key is refused' (-not (Test-RefuteRegExport -Text ($good + "[$key" + "S]`r`n") -KeyPath $key))
 Add-Case 'reg export: the key missing is refused' (-not (Test-RefuteRegExport -Text "Windows Registry Editor Version 5.00`r`n" -KeyPath $key))
 
-$psrc = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RoleCapabilities/RefuteVmOperator.psrc')
-$psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.psd1')
-$pin = $psrc.ModulesToImport[0]
-Add-Case 'role capability pins the module version and GUID' ($pin.ModuleName -eq 'RefuteVm' -and $pin.RequiredVersion -eq $psd1.ModuleVersion -and $pin.GUID -eq $psd1.GUID)
+function Get-PsrcImports([string]$Path) {
+    # The ModulesToImport entries of one role capability file: a string (a name or a
+    # path) as it is, a hashtable as its sorted key names (tests/test_vm_scripts.py refuses
+    # version and GUID keys, which make PowerShell call Get-Module in the restricted session).
+    $data = Import-PowerShellDataFile -LiteralPath $Path
+    $entries = @()
+    if ($data.ContainsKey('ModulesToImport')) { $entries = @($data.ModulesToImport) }
+    return @($entries | ForEach-Object {
+            if ($_ -is [System.Collections.IDictionary]) {
+                # "Names", not "Keys": a key named Keys would hide the dictionary's own .Keys
+                [ordered]@{ Kind = 'table'; Names = @($_.Keys | ForEach-Object { [string]$_ } | Sort-Object) }
+            } else {
+                [ordered]@{ Kind = 'string'; Value = [string]$_ }
+            }
+        })
+}
+
+# every .psrc of the repository (top-level folders starting with '.' are skipped: .git,
+# .venv, .cache), and a synthetic file with the refused keys (the detector sees them)
+$out.RoleCapabilityImports = [ordered]@{}
+$tops = @(Get-ChildItem -LiteralPath $Root -Force | Where-Object { -not $_.Name.StartsWith('.') })
+foreach ($top in $tops) {
+    $found = if ($top.PSIsContainer) { @(Get-ChildItem -LiteralPath $top.FullName -Recurse -File -Filter '*.psrc') } elseif ($top.Extension -eq '.psrc') { @($top) } else { @() }
+    foreach ($file in $found) {
+        $out.RoleCapabilityImports[$file.FullName.Substring($Root.Length + 1).Replace('\', '/')] = @(Get-PsrcImports $file.FullName)
+    }
+}
+$probe = Join-Path $WorkDir 'probe.psrc'
+[System.IO.File]::WriteAllText($probe, "@{ ModulesToImport = @('Plain', @{ ModuleName = 'X'; RequiredVersion = '1.0'; GUID = 'b2713b52-46f8-4c00-a4bf-2b940708587a' }, @{ ModuleName = 'Y'; ModuleVersion = '1.0'; MaximumVersion = '2.0' }) }")
+$out.RoleCapabilityProbe = @(Get-PsrcImports $probe)
 
 # The remoting calls of Invoke-RefuteVm.ps1 and their parameter names, from the AST: the
 # endpoint (AccessMode Local) needs -EnableNetworkAccess and implicit credentials.
