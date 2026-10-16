@@ -106,10 +106,16 @@ section is the planned procedure.
 
 ### Which dossiers are reviewed
 
-The protocol of the v0.3 claim fixes the list before the lock. A **second reviewer**
-from another model family reviews every dossier with a negative claim verdict
-(`FRAGILE`, `NOT_REPRODUCED` or `NOT_REPRODUCIBLE`), plus 1 drawn dossier with no
-negative claim, if access is available at no additional cost.
+**What is fixed before the lock.** The protocol of the v0.3 claim fixes, before the
+lock, the **criteria** that put a dossier on the list and the **rule of the draw**. It
+cannot fix the list itself: which dossiers have a negative claim verdict is known only
+after the runs. A **second reviewer** from another model family reviews:
+- every dossier with a negative claim verdict (`FRAGILE`, `NOT_REPRODUCED` or
+  `NOT_REPRODUCIBLE`);
+- 1 dossier with no negative claim, drawn by that fixed rule, if access is available at
+  no additional cost.
+
+The list results from applying those criteria and that rule after the runs.
 
 ### What the reviewer also checks
 
