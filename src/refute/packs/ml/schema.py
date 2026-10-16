@@ -335,6 +335,18 @@ class RegexExtraction(_Model):
             raise ValueError(f"regex does not compile: {exc}") from None
         return value
 
+    @model_validator(mode="after")
+    def _group_exists(self) -> RegexExtraction:
+        # a group the pattern does not have can never extract anything (Codex review of
+        # #120): refused before the lock rather than found by the gate
+        compiled = re.compile(self.pattern)
+        if isinstance(self.group, int):
+            if not 0 <= self.group <= compiled.groups:
+                raise ValueError(f"regex has no group {self.group}")
+        elif self.group not in compiled.groupindex:
+            raise ValueError(f"regex has no group named {self.group!r}")
+        return self
+
 
 class Extraction(_Model):
     from_: Literal["file", "log"] = Field(alias="from")
@@ -627,12 +639,15 @@ HOOK_FUNCTIONS = {
 }
 # (d): a count of correctly classified examples and the total, for these metrics only
 STATISTICS_METRICS = ("accuracy", "error_rate")
+# every route cites the code from its evidence to the value metric_extraction reads (link)
 _ROUTE_FIELDS = {
-    "saved_predictions": (),
+    "saved_predictions": ("link",),
     "sufficient_statistics": ("correct", "total", "link"),
     "printed_count": ("count", "link"),
-    "hook": ("patch", "function", "call_site"),
+    "hook": ("patch", "function", "call_site", "link"),
 }
+# the routes whose evidence holds the labels, which identify the split (W3.12d)
+LABEL_ROUTES = ("saved_predictions", "hook")
 
 
 class CodeCitation(_Model):
@@ -673,6 +688,55 @@ class CountSelector(_Model):
         ways = [w for w in (self.json_path, self.csv, self.regex) if w is not None]
         if len(ways) != 1:
             raise ValueError("a coverage count takes exactly one of json_path, csv, regex")
+        if self.json_path is not None and (
+            not self.json_path.startswith("$") or not self.json_path[1:].strip()
+        ):
+            raise ValueError("a coverage count json_path starts with '$' and names a member")
+        return self
+
+
+class SelectedEvaluation(_Model):
+    """The evaluation whose value ``metric_extraction`` reads (W3.12a): the final one of the
+    run, an epoch, or a checkpoint file. Every route's evidence must come from it."""
+
+    kind: Literal["final", "epoch", "checkpoint"]
+    value: int | str | None = None
+
+    @model_validator(mode="after")
+    def _check(self) -> SelectedEvaluation:
+        if self.kind == "final" and self.value is not None:
+            raise ValueError("selected_evaluation 'final' takes no value")
+        if self.kind == "epoch" and not (isinstance(self.value, int) and self.value >= 0):
+            raise ValueError("selected_evaluation 'epoch' takes a value that is an epoch number")
+        if self.kind == "checkpoint":
+            if not isinstance(self.value, str):
+                raise ValueError("selected_evaluation 'checkpoint' takes the checkpoint's path")
+            _relative(self.value, "selected_evaluation checkpoint", ("seed",))
+        return self
+
+
+class SplitIdentity(_Model):
+    """How the routes that see labels tell the claim's split from the others (W3.12d):
+    the SHA-256 of the canonical JSON array of its labels in example order, and the same
+    hash for every other split of the dataset the repository can evaluate, with how that
+    list was established. A split whose labels equal another's cannot be identified by
+    its labels: the routes that see labels do not apply to it."""
+
+    labels_sha256: str = Field(pattern=HEX64)
+    other_splits_labels_sha256: list[str]
+    other_splits_reason: str
+
+    @model_validator(mode="after")
+    def _check(self) -> SplitIdentity:
+        _text(self.other_splits_reason, "split_identity.other_splits_reason")
+        for value in self.other_splits_labels_sha256:
+            if not re.fullmatch(HEX64, value):
+                raise ValueError("split_identity.other_splits_labels_sha256 holds SHA-256 hashes")
+        if self.labels_sha256 in self.other_splits_labels_sha256:
+            raise ValueError(
+                "the split's labels equal another split's: the routes that see labels cannot "
+                "identify it"
+            )
         return self
 
 
@@ -707,12 +771,13 @@ class CoverageRoute(_Model):
 
 class CoverageEvidence(_Model):
     """How the coverage of ``metric_extracted`` is shown for one method, for every base seed
-    (1.5a): the routes in the fixed order, the hash of the split's labels when a route
-    compares labels, the rule for conflicting evidence, and complementary evidence that
-    never decides."""
+    (1.5a): the selected evaluation, the routes in the fixed order, the split's identity
+    when a route sees labels, the rule for conflicting evidence, and complementary evidence
+    that never decides."""
 
+    selected_evaluation: SelectedEvaluation
     routes: list[CoverageRoute] = Field(min_length=1)
-    labels_sha256: str | None = Field(default=None, pattern=HEX64)
+    split_identity: SplitIdentity | None = None
     conflict_rule: Literal["all_must_agree"] = "all_must_agree"
     complementary: list[Literal["dataset_read_trace"]] = Field(default_factory=list)
 
@@ -724,10 +789,9 @@ class CoverageEvidence(_Model):
         order = [COVERAGE_ROUTES.index(n) for n in names]
         if order != sorted(order):
             raise ValueError(f"coverage routes are listed in the order {COVERAGE_ROUTES}")
-        needs_labels = {"saved_predictions", "hook"} & set(names)
-        if bool(needs_labels) != (self.labels_sha256 is not None):
+        if bool(set(LABEL_ROUTES) & set(names)) != (self.split_identity is not None):
             raise ValueError(
-                "labels_sha256 is required with the saved_predictions or hook route, "
+                "split_identity is required with the saved_predictions or hook route, "
                 "and absent otherwise"
             )
         if len(set(self.complementary)) != len(self.complementary):
@@ -738,9 +802,34 @@ class CoverageEvidence(_Model):
         return next((r for r in self.routes if r.route == name), None)
 
 
+def _evidence_key(route: CoverageRoute) -> str:
+    """What a route reads, without its citations: two methods whose routes read the same
+    thing would share one piece of evidence."""
+    return json.dumps(
+        route.model_dump(mode="json", by_alias=True, exclude={"link"}), sort_keys=True
+    )
+
+
 class Coverage(_Model):
     method: CoverageEvidence
     reference: CoverageEvidence | None = None
+
+    @model_validator(mode="after")
+    def _own_evidence(self) -> Coverage:
+        # each method has its own evidence (W3.12a): a count, a statistics file or a hook
+        # call declared identically for both would be one piece of evidence counted twice
+        if self.reference is None:
+            return self
+        method = {_evidence_key(r) for r in self.method.routes if r.route != "saved_predictions"}
+        shared = method & {
+            _evidence_key(r) for r in self.reference.routes if r.route != "saved_predictions"
+        }
+        if shared:
+            raise ValueError(
+                "coverage_evidence.method and .reference declare the same evidence; each "
+                "method has its own"
+            )
+        return self
 
 
 def _convention(raw: dict[str, Any]) -> recompute.Convention:

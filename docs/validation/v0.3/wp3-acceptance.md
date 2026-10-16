@@ -629,21 +629,28 @@ declared in the claim before the lock. With no route that closes the chain, the 
 
 - **W3.12a Contract.** For each base seed and each method (the method, and for a
   comparison claim also its reference), the evidence states:
-  1. **identity:** the run (seed and method), the split and the selected evaluation (the
-     epoch or checkpoint, when there is one);
+  1. **identity:**
+     - the run: its seed and method;
+     - the split;
+     - the **selected evaluation**, declared before the lock (`selected_evaluation`): the
+       `final` evaluation of the run, an `epoch`, or a `checkpoint` file.
   2. **observed coverage:** how many examples contributed to the value read, after
      filters, masks and aggregation;
-  3. **a deterministic link** to the value that `metric_extraction` reads;
+  3. **a deterministic link** to the value that `metric_extraction` reads: every route
+     cites the code from its evidence to that value (`link`);
   4. **provenance:** the files, positions and hashes that let the link be checked.
 
+  Each method has its own evidence: the schema refuses a count, statistics or a hook
+  declared identically for the method and its reference.
+
   The split's declared size (`expected_examples`, equal to `metric.n_examples`) is
-  compared with the observed count (a different count is `INCONCLUSIVE`, as in W3.17).
-  It never replaces the count.
+  compared with the observed count, never substituted for it.
 - **W3.12b Routes, in this order** (`coverage_evidence.<method>.routes`, listed in this
-  order, each at most once):
+  order, each at most once, at least one):
   1. **evidence the run produces natively:**
      - **(c) `saved_predictions`:** the predictions of `metric_recompute`, which must
-       apply. Their `y_true` is checked against `labels_sha256`.
+       apply. The claim cites the code that writes them from the selected evaluation and
+       that prints the value from them.
      - **(d) `sufficient_statistics`:** a count of correctly classified examples and the
        total, each read by a deterministic selector (a JSON path, a CSV cell or a
        regular expression, on a file or the log). It applies to `accuracy` and
@@ -659,41 +666,63 @@ declared in the claim before the lock. With no route that closes the chain, the 
      - **What it observes:** the one function of the claim's metric (`accuracy`:
        `sklearn.metrics.accuracy_score`; `precision`, `recall`, `f1`: the matching
        scikit-learn function; `auroc`: `sklearn.metrics.roc_auc_score`), at the cited call
-       that is the selected evaluation.
+       (`call_site`) that computes the selected evaluation.
+     - **Link:** the claim cites the code from that call's return to the printed value.
   3. **None closes the chain:** `metric_extracted` is `INCONCLUSIVE`.
 
-  **(e)**, an observer of a specific evaluator, is out of v0.3: the schema has no such
-  route. **(f)**, a trace of the dataset reads (`complementary: [dataset_read_trace]`),
-  is complementary evidence only: loading the data is not evaluating it, and it never
+  **(e)**, an observer of a specific evaluator, is out of v0.3:
+  - the schema has no such route;
+  - a hook can observe only the closed list of functions above, and a printed count or
+    statistics come from the repository's own output.
+
+  **(f)**, a trace of the dataset reads (`complementary: [dataset_read_trace]`), is
+  complementary evidence only: loading the data is not evaluating it, and it never
   decides.
 - **W3.12c The hook.** Proving that the hook loaded is not enough. The observed event
   must be bound to:
-  - the metric: the declared function;
-  - the split: the hash of the observed `y_true` equals `labels_sha256`;
-  - the seed: the run;
-  - the selected evaluation: the cited call site.
+  - **the metric:** the declared function;
+  - **the split:** the hash of the observed `y_true` equals the split's
+    `labels_sha256` (W3.12d);
+  - **the seed:** the run;
+  - **the selected evaluation:** the cited call site.
 
   Exactly one event of the run satisfies all four. None, or more than one, is
-  `INCONCLUSIVE`.
-- **W3.12d The link.** It is never "the last call", nearness in time, or an equal value.
-  Splits of the same size are never confused:
-  - routes that see labels identify the split by `labels_sha256`, the SHA-256 of the
-    canonical JSON array of the split's labels in example order;
-  - the other routes identify it by the cited code and the files it writes.
+  `INCONCLUSIVE`. A call site that runs once per evaluation and evaluates several epochs
+  or checkpoints therefore cannot identify the selected one by itself: in v0.3 the hook
+  closes the chain only when one event remains.
+- **W3.12d The link and the split.** The link is never "the last call", nearness in time,
+  or an equal value. An equal value is a consistency check only: a different value is a
+  conflict.
 
-  An equal value is a consistency check only: a different value is a conflict.
-- **W3.12e Conflicting evidence.** `conflict_rule: all_must_agree`, the only rule of
-  v0.3, is written out by the resolution. Every declared route that produces evidence
-  must agree on the count, and on the value within the printed rounding. Any
-  disagreement is `INCONCLUSIVE`. The coverage is never taken from the most convenient
-  route.
+  Splits are never confused:
+  - **The routes that see labels, (c) and (b),** identify the split by its labels.
+    `split_identity` gives:
+    - `labels_sha256`: the SHA-256 of the canonical JSON array of the split's labels, in
+      example order;
+    - the same hash for every other split of the dataset the repository can evaluate;
+    - how that list was established.
+
+    The schema refuses a split whose labels hash equals another's: two splits with the
+    same labels in the same order cannot be told apart by labels, and (c) and (b) do
+    not apply to them.
+  - **The other routes** identify the split by the cited code and the files it writes.
+- **W3.12e Conflicting evidence.**
+  - **The rule:** `conflict_rule: all_must_agree`, the only rule of v0.3, written out by
+    the resolution.
+  - **Agreement:** every declared route that produces evidence must agree on the count,
+    and on the value within the printed rounding.
+  - **Disagreement:** any disagreement is `INCONCLUSIVE`. The coverage is never taken
+    from the most convenient route.
 - **W3.12f Schema** (`coverage_evidence` of each claim, `src/refute/packs/ml/schema.py`):
 
   ```yaml
   coverage_evidence:
     method:                       # the claim's method; for a comparison also `reference`
+      selected_evaluation: {kind: final}       # or {kind: epoch, value: 30},
+                                               # or {kind: checkpoint, value: "ckpt/best_{seed}.pt"}
       routes:                     # at least one, in the order (c), (d), (a), (b)
         - route: saved_predictions
+          link: [{file: src/eval.py, lines: [40, 52], role: "writes the predictions it prints from"}]
         - route: sufficient_statistics
           correct: {from: file, file: "out/stats_{seed}.json", json_path: "$.correct"}
           total:   {from: file, file: "out/stats_{seed}.json", json_path: "$.total"}
@@ -705,23 +734,50 @@ declared in the claim before the lock. With no route that closes the chain, the 
           patch: hook.patch       # an entry of test_plan.build.allowed_patches
           function: sklearn.metrics.accuracy_score
           call_site: {file: src/eval.py, lines: [48, 48], role: "the test evaluation call"}
-      labels_sha256: <64 hex>     # with saved_predictions or hook, and only then
+          link: [{file: src/eval.py, lines: [48, 52], role: "prints the call's return"}]
+      split_identity:             # with saved_predictions or hook, and only then
+        labels_sha256: <64 hex>
+        other_splits_labels_sha256: [<64 hex>]
+        other_splits_reason: "the dataset has a train and a test split; train is the other"
       conflict_rule: all_must_agree
       complementary: [dataset_read_trace]   # optional; never decides
   ```
 
-  Citations name a file of the repository at `source.repository_commit` (relative,
-  without `..`) and an inclusive range of 1-based lines. With several base runs, a
-  count read from a file names `{seed}`.
+  **Field rules:**
+  - Citations name a file of the repository at `source.repository_commit` (relative,
+    without `..`) and an inclusive range of 1-based lines.
+  - With several base runs, a count read from a file names `{seed}`.
+  - A count `json_path` starts with `$` and names a member.
+  - The group a regular expression reads must exist in its pattern. This also applies to
+    `metric_extraction`, which shares the regular expression model.
 
 **Choices this text makes that the direction did not fix (for the maintainer's review):**
-- the order inside the native routes, (c), (d), (a), as the direction lists them;
-- at least one route per method: a claim with none would always be `INCONCLUSIVE` on
-  `metric_extracted`, so it is not ready to lock;
-- (d) only for `accuracy` and `error_rate`, the metrics a correct count and a total
-  determine;
-- one scikit-learn function per metric for (b), and none for `error_rate`;
-- `labels_sha256` as the SHA-256 of the canonical JSON array of the labels.
+- **Routes:**
+  - the order inside the native routes is (c), (d), (a), as the direction lists them;
+  - at least one route per method: a claim with none would always be `INCONCLUSIVE` on
+    `metric_extracted`, so it is not ready to lock.
+- **(d):** only a correct count and a total (no confusion matrix), and only for
+  `accuracy` and `error_rate`.
+- **(b):**
+  - one scikit-learn function per metric, and none for `error_rate`;
+  - exactly one matching event per run; several are `INCONCLUSIVE`, even if a rule
+    could pick one.
+- **Conflicts:** `all_must_agree` is the only rule; the direction allows any rule fixed
+  before the lock.
+- **The count:** it is compared with the split's declared size on every route, not only
+  on (c) as in W3.17.
+- **Every route has a link,** (c) and (b) included, and **every method has a selected
+  evaluation**.
+- **Split identity:**
+  - `split_identity` exactly with (c) or (b);
+  - split identity by labels plus the labels of the other splits, not by example
+    identifiers, which predictions files and metric calls usually do not carry;
+  - (c) and (b) do not apply when two splits have equal labels.
+- **Files and selectors:**
+  - `{seed}` in count files when there are several runs;
+  - the selector checks (`json_path`, the regex group), which also tighten
+    `metric_extraction`;
+  - method and reference may not declare the same evidence.
 
 **What follows, outside this pull request:**
 - the gate code of #110 accepts these routes, with `INCONCLUSIVE` and none of them;
@@ -945,19 +1001,25 @@ aggregation is this `applies`.
     - complementary evidence other than `dataset_read_trace`;
     - routes out of the order (c), (d), (a), (b), or a route listed twice;
     - a `conflict_rule` other than `all_must_agree`;
-  - **labels:** `labels_sha256` missing with `saved_predictions` or `hook`, or given
-    without them;
-  - **(c):** `saved_predictions` when `metric_recompute` does not apply;
+  - **selected evaluation:** missing; `final` with a value; `epoch` without its number;
+    a `checkpoint` outside the repository;
+  - **split identity:** missing with `saved_predictions` or `hook`, or given without
+    them; labels equal to another split's; no reason for the list of other splits;
+  - **(c):** `saved_predictions` when `metric_recompute` does not apply, or without its
+    `link`;
   - **(a):** `printed_count` without its `link`, with an empty `link`, or with a field
     of another route;
   - **citations:** lines reversed, or a file outside the repository;
-  - **count files:** a count file without `{seed}` when there are several base runs;
+  - **counts:**
+    - a count file without `{seed}` when there are several base runs;
+    - a `json_path` with no member;
+    - a regular expression whose group (by number or name) does not exist;
   - **(d):** `sufficient_statistics` for a metric outside `accuracy` and
     `error_rate`;
-  - **(b):** a `hook` observing a function other than its metric's, or naming a patch
-    that is not in `test_plan.build.allowed_patches`;
+  - **(b):** a `hook` observing a function other than its metric's, naming a patch
+    that is not in `test_plan.build.allowed_patches`, or without its `link`;
   - **methods:** no `reference` evidence for a comparison claim, or one for a value
-    claim.
+    claim; the same evidence declared for the method and the reference.
 - 1.0.11:
   - a transcribed value that differs from the published value, as decimals: a value
     claim, a comparison, and `91.20000000000000001` against `91.2`;
