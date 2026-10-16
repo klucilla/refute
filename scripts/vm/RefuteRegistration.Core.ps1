@@ -85,17 +85,19 @@ function Find-RefuteVersionedRoleCapability {
 }
 
 function ConvertTo-RefuteModuleRoot {
-    # One module path entry as a root, with its meaning kept: a final '\' is removed except
-    # from a volume root ('C:\' stays 'C:\'; 'C:' would mean the current folder of drive
-    # C). Only fully qualified paths are accepted (a drive letter and '\', or a UNC path
-    # '\\server\share'); a relative or drive-relative entry ('Modules', 'C:Modules') would
-    # depend on each process's current folder, so it is refused (Codex review of #102).
+    # One module path entry as a root, with its meaning kept: the final '\' characters are
+    # removed, and a volume root keeps one ('C:\' and 'C:\\' give 'C:\'; 'C:' would mean
+    # the current folder of drive C). Only fully qualified paths are accepted (a drive
+    # letter and '\', or a UNC path '\\server\share'); a relative or drive-relative entry
+    # ('Modules', 'C:Modules') would depend on each process's current folder, so it is
+    # refused (Codex review of #102).
     param([string]$Entry)
-    if ($Entry -match '^[A-Za-z]:\\$') { return $Entry }
     if ($Entry -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') {
         throw "the module path entry '$Entry' is not a fully qualified path"
     }
-    return $Entry.TrimEnd('\')
+    $root = $Entry.TrimEnd('\')
+    if ($root -match '^[A-Za-z]:$') { return $root + '\' }
+    return $root
 }
 
 function Join-RefuteModuleRoots {
