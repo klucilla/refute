@@ -890,6 +890,71 @@ def test_a_json_path_and_a_regex_on_one_token_are_one_evidence(tmp_path):
     assert "the method and the reference count one evidence" in gate.message
 
 
+def test_two_spellings_of_one_file_are_one_source(tmp_path):
+    """Codex review (round 2): ``preds/./stats-1.json`` and ``preds/stats-1.json`` are one
+    file, so a token read through each is one evidence."""
+    target = _same_runs_comparison(coverage(["printed_count"]))
+    plain = {"from": "file", "file": "preds/stats-{seed}.json", "json_path": "$.total"}
+    dotted = {"from": "file", "file": "preds/./stats-{seed}.json", "json_path": "$.total"}
+    target["coverage_evidence"]["method"]["routes"][0]["count"] = plain
+    target["coverage_evidence"]["reference"]["routes"][0]["count"] = dotted
+    outcome = Paper(tmp_path, resolved(DATA, target), {**CONFIG, "stats": True}).run()
+    _, base = checks(outcome, KEY)
+    gate = base["metric_extracted"]
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "the method and the reference count one evidence" in gate.message
+
+
+def test_a_hook_log_that_cannot_be_read_blocks_even_with_another_route(tmp_path, monkeypatch):
+    """Codex review (round 2): a hook whose log could not be examined is a failure of the
+    hook, whatever a working printed count shows."""
+    claim_file = resolved(DATA, value_target({}, recompute=False, routes=["printed_count", "hook"]))
+    paper = Paper(tmp_path, claim_file, {**CONFIG, "print_count": True, "hook": True})
+    integration = ig.PaperIntegration(claim_file, paper.harness)
+    outcome = integration.run()
+    assert {c.name: c for c in outcome.claims[0].base}["metric_extracted"].status is (
+        TestStatus.PASS
+    )
+
+    def unreadable(data):
+        raise OSError("permission denied")
+
+    monkeypatch.setattr(ig.ch, "read_log", unreadable)
+    again = integration.evaluate(outcome.run)
+    gate = {c.name: c for c in again.claims[0].base}["metric_extracted"]
+    assert gate.status is TestStatus.INCONCLUSIVE and "permission denied" in gate.message
+
+
+def test_values_within_a_quantum_of_each_other_must_each_print_as_the_token():
+    """Codex review (round 2): with 40000 examples, (c) gives 89.1925 and (d) 89.2000. They
+    are less than one quantum (0.01) apart, but (c) does not print as "89.20" (nearest:
+    [89.195, 89.205]), so the routes disagree: INCONCLUSIVE."""
+    from decimal import Decimal
+
+    target = value_target({}, routes=["saved_predictions", "sufficient_statistics"])
+    target["metric"]["n_examples"] = 4000
+    ctx = _context(resolved(DATA, target))
+    token = ig.ex.Extracted("89.20", Decimal("89.20"), "log")
+    value = ig.Value(ig.orc.Outcome.COMPLETED, "", {"method": token})
+    readings = {
+        (1, "method"): ig.RunCoverage(
+            [
+                ig.RouteReading("saved_predictions", 4000, Decimal("89.1925")),
+                ig.RouteReading("sufficient_statistics", 4000, Decimal("89.2000")),
+            ],
+            (Decimal("89.195"), Decimal("89.205")),
+        )
+    }
+    gate, failure = ig.metric_extracted(ctx, [value], readings)
+    assert gate.status is TestStatus.INCONCLUSIVE and "89.1925" in gate.message
+    # the same two values, both inside the interval, agree
+    readings[(1, "method")].readings[0] = ig.RouteReading(
+        "saved_predictions", 4000, Decimal("89.1975")
+    )
+    gate, failure = ig.metric_extracted(ctx, [value], readings)
+    assert gate.status is TestStatus.PASS and failure is None
+
+
 def test_pieces_are_compared_by_what_they_read_not_by_their_selectors():
     text = "split,n,id\ntest,4000,t1\nval,500,v1\n"
     by_split = {"from": "log", "csv": {"column": "n", "row": {"column": "split", "equals": "test"}}}
