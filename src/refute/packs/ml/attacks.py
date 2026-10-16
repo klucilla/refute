@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Callable, Hashable, Sequence
+from dataclasses import dataclass
 from decimal import Decimal, localcontext
 from fractions import Fraction
 
@@ -186,46 +187,24 @@ def leakage(
     return result
 
 
-def trivial_baseline_value(
-    kind: str,
-    labels: Sequence[Hashable],
-    metric: str,
-    unit: str,
-    train_labels: Sequence[Hashable] | None = None,
-    test_labels: Sequence[Hashable] | None = None,
-) -> Decimal:
-    """The baseline of 1.0.6 in the claim's unit (``percent`` or ``fraction``):
+@dataclass(frozen=True)
+class Baseline:
+    """The trivial baseline of 1.0.6 in the claim's unit. ``weakest`` and ``strongest``
+    are equal unless several classes tie for the most frequent training class
+    (``majority``): then they are the baselines of the tied class easiest and hardest to
+    beat on the test labels. ``tied`` lists the tied classes with their test accuracy;
+    ``coverage`` is the number of test labels examined (majority) or 1 (random, an exact
+    expectation)."""
 
-    - ``random``: the expected value of a uniform guess among the ``K`` declared labels,
-      computed exactly: accuracy ``1/K``, error rate ``1 - 1/K``;
-    - ``majority``: the most frequent class of the training labels predicted for every
-      test example. When several classes tie for the most frequent, the tied class with
-      the lowest accuracy on the test labels is used, the weakest baseline, so that a tie
-      never produces a failure the data do not force. The concession: a PASS then means
-      beating the weakest of the tied classes, not every one of them (a provisional
-      decision of 2026-10-16 under the maintainer's night delegation, waiting for
-      ratification).
-    """
-    if metric not in ("accuracy", "error_rate"):
-        raise ValueError("trivial_baseline applies only to accuracy and error_rate")
-    declared = list(labels)
-    if len(declared) < 2 or len(set(declared)) != len(declared):
-        raise ValueError("trivial_baseline needs at least 2 distinct declared labels")
-    if kind == "random":
-        accuracy = Fraction(1, len(declared))
-    elif kind == "majority":
-        if not train_labels or not test_labels:
-            raise ValueError("the majority baseline needs the training and test labels")
-        unknown = (set(train_labels) | set(test_labels)) - set(declared)
-        if unknown:
-            raise ValueError(f"labels outside the declared classes: {sorted(map(str, unknown))}")
-        counts = Counter(train_labels)
-        top = max(counts.values())
-        tied = [c for c in declared if counts.get(c, 0) == top]
-        test_counts = Counter(test_labels)
-        accuracy = min(Fraction(test_counts.get(c, 0), len(test_labels)) for c in tied)
-    else:
-        raise ValueError(f"unknown baseline kind {kind!r}")
+    kind: str
+    weakest: Decimal
+    strongest: Decimal
+    tied: tuple[tuple[str, str], ...]
+    coverage: int
+    coverage_unit: str
+
+
+def _in_unit(accuracy: Fraction, metric: str, unit: str) -> Decimal:
     value = accuracy if metric == "accuracy" else 1 - accuracy
     scale = {"percent": 100, "fraction": 1}.get(unit)
     if scale is None:
@@ -235,21 +214,94 @@ def trivial_baseline_value(
         return Decimal(value.numerator * scale) / Decimal(value.denominator)
 
 
+def trivial_baseline_value(
+    kind: str,
+    labels: Sequence[Hashable],
+    metric: str,
+    unit: str,
+    train_labels: Sequence[Hashable] | None = None,
+    test_labels: Sequence[Hashable] | None = None,
+) -> Baseline:
+    """The baseline of 1.0.6 in the claim's unit (``percent`` or ``fraction``):
+
+    - ``random``: the expected value of a uniform guess among the ``K`` declared labels,
+      computed exactly: accuracy ``1/K``, error rate ``1 - 1/K``;
+    - ``majority``: the most frequent class of the training labels predicted for every
+      test example. When several classes tie for the most frequent, every tied class is
+      a possible baseline: ``strongest`` is the one with the highest test accuracy,
+      ``weakest`` the one with the lowest (decided by the maintainer on 2026-10-16;
+      ``trivial_baseline`` applies the rule).
+    """
+    if metric not in ("accuracy", "error_rate"):
+        raise ValueError("trivial_baseline applies only to accuracy and error_rate")
+    declared = list(labels)
+    if len(declared) < 2 or len(set(declared)) != len(declared):
+        raise ValueError("trivial_baseline needs at least 2 distinct declared labels")
+    if kind == "random":
+        value = _in_unit(Fraction(1, len(declared)), metric, unit)
+        return Baseline(kind, value, value, (), 1, "exact expectation")
+    if kind != "majority":
+        raise ValueError(f"unknown baseline kind {kind!r}")
+    if not train_labels or not test_labels:
+        raise ValueError("the majority baseline needs the training and test labels")
+    unknown = (set(train_labels) | set(test_labels)) - set(declared)
+    if unknown:
+        raise ValueError(f"labels outside the declared classes: {sorted(map(str, unknown))}")
+    counts = Counter(train_labels)
+    top = max(counts.values())
+    test_counts = Counter(test_labels)
+    accuracies = {
+        c: Fraction(test_counts.get(c, 0), len(test_labels))
+        for c in declared
+        if counts.get(c, 0) == top
+    }
+    low, high = min(accuracies.values()), max(accuracies.values())
+    # the baseline easiest to beat is the lowest accuracy, or the highest error rate
+    weakest, strongest = _in_unit(low, metric, unit), _in_unit(high, metric, unit)
+    tied = (
+        tuple((str(c), f"{a.numerator}/{a.denominator}") for c, a in accuracies.items())
+        if len(accuracies) > 1
+        else ()
+    )
+    return Baseline(kind, weakest, strongest, tied, len(test_labels), "test examples")
+
+
 def trivial_baseline(
     x_rep: pr.Number,
-    baseline: pr.Number,
+    baseline: Baseline,
     higher_is_better: bool,
     tol: pr.Tolerance,
-    coverage: int,
 ) -> TestResult:
-    """The claim must beat the baseline by more than its tolerance (1.0.6).
-    ``coverage`` is the number of test labels examined (majority) or 1 (random, an exact
-    expectation)."""
-    if coverage < 1:
+    """The claim must beat the baseline by more than its tolerance (1.0.6). With tied
+    majority classes (decided by the maintainer on 2026-10-16, with the usual tolerance):
+
+    - PASS only when the claim beats every tied class, that is the strongest one;
+    - FAIL when it does not beat even the weakest one;
+    - INCONCLUSIVE in between (it beats some tied classes but not all).
+
+    Without a tie the strongest and the weakest are the same baseline."""
+    if baseline.coverage < 1:
         return attack_result(
             "trivial_baseline", TestStatus.INCONCLUSIVE, 0, "no test label was examined"
         )
-    outcome = pr.trivial_baseline_predicate(x_rep, baseline, higher_is_better, tol)
-    result = attack_result("trivial_baseline", outcome.status, coverage, outcome.reason)
-    result.metrics = {"baseline": str(pr.dec(baseline, "the baseline"))}
+    strong = pr.trivial_baseline_predicate(x_rep, baseline.strongest, higher_is_better, tol)
+    weak = pr.trivial_baseline_predicate(x_rep, baseline.weakest, higher_is_better, tol)
+    if strong.status is TestStatus.PASS:
+        status, reason = TestStatus.PASS, strong.reason
+    elif weak.status is TestStatus.FAIL:
+        status, reason = TestStatus.FAIL, weak.reason
+    else:
+        status = TestStatus.INCONCLUSIVE
+        reason = (
+            "the claim does not beat every tied majority class (strongest: "
+            f"{strong.reason}; weakest: {weak.reason})"
+        )
+    result = attack_result("trivial_baseline", status, baseline.coverage, reason)
+    result.coverage_unit = baseline.coverage_unit
+    result.metrics = {
+        "baseline_kind": baseline.kind,
+        "baseline_weakest": str(baseline.weakest),
+        "baseline_strongest": str(baseline.strongest),
+        "tied_classes": [list(t) for t in baseline.tied],
+    }
     return result

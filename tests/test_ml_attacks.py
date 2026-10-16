@@ -152,24 +152,111 @@ def test_random_baseline_is_exact_and_independent_of_frequencies():
         third = Decimal(100) / Decimal(3)
     for k, acc in ((2, Decimal(50)), (3, third), (10, Decimal(10))):
         labels = list(range(k))
-        assert at.trivial_baseline_value("random", labels, "accuracy", "percent") == acc
-    assert at.trivial_baseline_value("random", ["a", "b"], "error_rate", "fraction") == Decimal(
-        "0.5"
-    )
+        b = at.trivial_baseline_value("random", labels, "accuracy", "percent")
+        assert b.weakest == b.strongest == acc and b.tied == ()
+    b = at.trivial_baseline_value("random", ["a", "b"], "error_rate", "fraction")
+    assert b.weakest == b.strongest == Decimal("0.5") and b.coverage == 1
 
 
 def test_majority_baseline_from_the_training_labels():
     train = ["a"] * 9 + ["b"]
     test = ["a"] * 6 + ["b"] * 4
-    value = at.trivial_baseline_value("majority", ["a", "b"], "accuracy", "fraction", train, test)
-    assert value == Decimal("0.6")
+    b = at.trivial_baseline_value("majority", ["a", "b"], "accuracy", "fraction", train, test)
+    assert b.weakest == b.strongest == Decimal("0.6") and b.tied == ()
+    assert b.coverage == 10 and b.coverage_unit == "test examples"
 
 
-def test_a_tie_for_the_majority_takes_the_weakest_baseline():
+def test_a_tie_for_the_majority_gives_the_weakest_and_the_strongest_class():
     train = ["a", "a", "b", "b"]
     test = ["a"] * 7 + ["b"] * 3
-    value = at.trivial_baseline_value("majority", ["a", "b"], "accuracy", "fraction", train, test)
-    assert value == Decimal("0.3")
+    b = at.trivial_baseline_value("majority", ["a", "b"], "accuracy", "fraction", train, test)
+    assert (b.weakest, b.strongest) == (Decimal("0.3"), Decimal("0.7"))
+    assert dict(b.tied) == {"a": "7/10", "b": "3/10"}
+    err = at.trivial_baseline_value("majority", ["a", "b"], "error_rate", "fraction", train, test)
+    # the baseline easiest to beat is the highest error rate
+    assert (err.weakest, err.strongest) == (Decimal("0.7"), Decimal("0.3"))
+
+
+TIE = at.trivial_baseline_value(
+    "majority", ["a", "b"], "accuracy", "percent", ["a", "a", "b", "b"], ["a"] * 7 + ["b"] * 3
+)
+
+
+def test_a_tie_passes_only_when_every_tied_class_is_beaten():
+    """The maintainer's rule of 2026-10-16: tied classes 30% and 70%, tolerance 1 point."""
+    passed = at.trivial_baseline("71.5", TIE, True, TOL)  # beats 70 by more than 1
+    assert passed.status is TestStatus.PASS
+    assert passed.metrics["tied_classes"] == [["a", "7/10"], ["b", "3/10"]]
+    assert passed.metrics["baseline_strongest"] == "70" and passed.coverage_unit == "test examples"
+
+
+def test_a_tie_fails_when_not_even_the_weakest_class_is_beaten():
+    assert at.trivial_baseline("30.5", TIE, True, TOL).status is TestStatus.FAIL  # 30 + 1 > 30.5
+
+
+def test_a_tie_beaten_only_in_part_is_inconclusive():
+    for x in ("50", "31.5", "71"):  # beats 30 by more than 1, not 70 by more than 1
+        result = at.trivial_baseline(x, TIE, True, TOL)
+        assert result.status is TestStatus.INCONCLUSIVE, x
+        assert "does not beat every tied majority class" in result.message
+
+
+TIE_ERROR = at.trivial_baseline_value(
+    "majority", ["a", "b"], "error_rate", "percent", ["a", "a", "b", "b"], ["a"] * 7 + ["b"] * 3
+)
+
+
+@pytest.mark.parametrize(
+    ("x_rep", "expected"),
+    [
+        ("28.5", TestStatus.PASS),  # below 30 (the strongest) by more than 1
+        ("69.5", TestStatus.FAIL),  # not below 70 (the weakest) by more than 1
+        ("50", TestStatus.INCONCLUSIVE),  # beats 70 but not 30
+        ("29.5", TestStatus.INCONCLUSIVE),  # beats 30 by less than the tolerance
+    ],
+)
+def test_a_tie_on_the_error_rate_follows_the_same_three_paths(x_rep, expected):
+    """Error rate, lower is better: the tied classes give error rates 30% (strongest) and
+    70% (weakest); the claim must be below the strongest by more than the tolerance."""
+    assert (TIE_ERROR.weakest, TIE_ERROR.strongest) == (Decimal(70), Decimal(30))
+    assert at.trivial_baseline(x_rep, TIE_ERROR, False, TOL).status is expected
+
+
+@pytest.mark.parametrize(
+    ("baseline", "x_rep", "higher", "expected"),
+    [
+        (TIE, "90", True, TestStatus.INCONCLUSIVE),  # would pass: not with a lower tolerance
+        (TIE, "50", True, TestStatus.INCONCLUSIVE),  # between the tied classes
+        (TIE, "30.5", True, TestStatus.FAIL),  # fails even the weakest: kept
+        (TIE_ERROR, "10", False, TestStatus.INCONCLUSIVE),
+        (TIE_ERROR, "69.5", False, TestStatus.FAIL),
+    ],
+)
+def test_a_tie_with_a_reported_but_not_convertible_uncertainty(baseline, x_rep, higher, expected):
+    """1.0.9: with only a lower bound of the tolerance, a larger tolerance makes the attack
+    harder to pass, so a PASS becomes INCONCLUSIVE and a FAIL stands; a tie keeps both."""
+    assert at.trivial_baseline(x_rep, baseline, higher, LOWER).status is expected
+
+
+def test_a_balanced_dataset_ties_every_class():
+    """Balanced training labels: every class ties. With balanced test labels too, every
+    tied class has the same test accuracy (1/K), so there is no intermediate case; with
+    imbalanced test labels the three paths apply."""
+    train = ["a", "b", "c"] * 10
+    balanced = at.trivial_baseline_value(
+        "majority", ["a", "b", "c"], "accuracy", "percent", train, ["a", "b", "c"] * 5
+    )
+    assert balanced.weakest == balanced.strongest
+    assert len(balanced.tied) == 3
+    assert at.trivial_baseline("40", balanced, True, TOL).status is TestStatus.PASS  # 33.3 + 1
+    assert at.trivial_baseline("34", balanced, True, TOL).status is TestStatus.FAIL
+    skewed = at.trivial_baseline_value(
+        "majority", ["a", "b", "c"], "accuracy", "percent", train, ["a"] * 6 + ["b"] * 3 + ["c"]
+    )
+    assert (skewed.weakest, skewed.strongest) == (Decimal(10), Decimal(60))
+    assert at.trivial_baseline("62", skewed, True, TOL).status is TestStatus.PASS
+    assert at.trivial_baseline("40", skewed, True, TOL).status is TestStatus.INCONCLUSIVE
+    assert at.trivial_baseline("10.5", skewed, True, TOL).status is TestStatus.FAIL
 
 
 def test_baseline_validation():
@@ -183,12 +270,16 @@ def test_baseline_validation():
         at.trivial_baseline_value("random", [0, 1], "accuracy", "native")
 
 
+def _single(value, coverage=100):
+    return at.Baseline("majority", Decimal(value), Decimal(value), (), coverage, "test examples")
+
+
 def test_the_claim_must_beat_the_baseline_by_more_than_its_tolerance():
-    beat = at.trivial_baseline("60", "50", True, TOL, 100)
+    beat = at.trivial_baseline("60", _single("50"), True, TOL)
     assert beat.status is TestStatus.PASS
-    assert at.trivial_baseline("50.5", "50", True, TOL, 100).status is TestStatus.FAIL
-    assert at.trivial_baseline("60", "50", True, LOWER, 100).status is TestStatus.INCONCLUSIVE
-    assert at.trivial_baseline("60", "50", True, TOL, 0).status is TestStatus.INCONCLUSIVE
+    assert at.trivial_baseline("50.5", _single("50"), True, TOL).status is TestStatus.FAIL
+    assert at.trivial_baseline("60", _single("50"), True, LOWER).status is TestStatus.INCONCLUSIVE
+    assert at.trivial_baseline("60", _single("50", 0), True, TOL).status is TestStatus.INCONCLUSIVE
 
 
 # ---- through the WP2 core --------------------------------------------------------------------
