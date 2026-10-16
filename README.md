@@ -134,9 +134,12 @@ implemented and runs once the self-claim is locked.
 | Claim type | Possible verdicts |
 |---|---|
 | Discovery claims | `SURVIVED` · `WEAKENED` · `REFUTED` · `INCONCLUSIVE` |
-| Paper claims (from v0.3) | `REPRODUCED` · `FRAGILE` · `NOT_REPRODUCED` · `NOT_REPRODUCIBLE` |
+| Paper claims (from v0.3) | `REPRODUCED` · `FRAGILE` · `NOT_REPRODUCED` · `NOT_REPRODUCIBLE` · `INCONCLUSIVE` |
 
-There is no `TRUE`. How test results combine into a verdict: [docs/verdicts.md](docs/verdicts.md).
+For a paper claim, `INCONCLUSIVE` means Refute could not decide, for reasons on its own
+side such as an exhausted budget or the hang guard; it is never a failure of the paper's
+artifact. There is no `TRUE`. How test results combine into a verdict:
+[docs/verdicts.md](docs/verdicts.md).
 
 ## Refute tests itself first
 
