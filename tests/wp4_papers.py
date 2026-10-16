@@ -20,7 +20,10 @@ The detailed expectations (``expected_counts``, ``interrupted``, ``interrupted_s
 ``flags``, ``incomplete``, ``not_applicable``) were added after the first runs, asked by the
 Codex review of #111. They restate what each case's text already fixed in the first commit
 of this file (for example "2 of 5 seeds") or what the WP2 core gives for that case; no
-expected verdict changed.
+expected verdict changed. One of them, the flags of ``failed-run``, was wrong as first
+written and was corrected after its first check (0cdf05d): an expectation erratum, accepted
+as such by the maintainer on 2026-10-16, which is not an approval of the original
+expectation.
 
 ``no-seed-option`` is the claim's declaration: the claim has no seed argument and records
 the ``seeds`` attack as not applicable, with its reason. The cataloged trainer itself still
@@ -142,9 +145,11 @@ PAPERS = [
         config={"exit_code": 3},
         expected_checks={"run_completed": "FAIL"},
         expected_failures={"run_completed": "undetermined"},
-        # corrected after the first check (was (False, False)): no run completed, so the
-        # failed gate has zero coverage and the coverage rule makes it INCONCLUSIVE, an
-        # incomplete coverage; the expected verdict is unchanged
+        # EXPECTATION ERRATUM (commit 0cdf05d, accepted as such by the maintainer on
+        # 2026-10-16; not an approval of the original expectation): set to (False, False)
+        # in a389d0c and corrected after its first check. No run completed, so the failed
+        # gate has zero coverage and the coverage rule makes it INCONCLUSIVE, an incomplete
+        # coverage. The expected verdict (INCONCLUSIVE) is unchanged.
         flags=(False, True),
     ),
     SyntheticPaper(
