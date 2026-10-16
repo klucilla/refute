@@ -129,22 +129,67 @@ between 00:01 and 00:20 UTC. Nothing was changed.
 | `Test-WSMan -ComputerName localhost`, anonymous and with `-Authentication Negotiate` | both succeed (with Negotiate the server reports its OS version): WinRM answers on loopback, and Negotiate succeeds for this identification request |
 | Status (`Invoke-RefuteVm.ps1 -Status`) | **not run**: it needs the same session |
 | Transcripts in `C:\ProgramData\RefuteVm\Transcripts` | the operator account cannot list the folder (access denied), as designed; no session was created, so no transcript is expected |
-| Logon session of the calling process | the same logon session as the desktop shell (`explorer.exe`), interactive (logon type 2), authentication package CloudAP; no Kerberos tickets in the cache |
+| Logon session of the calling process | the same logon session as the desktop shell (`explorer.exe`), interactive (logon type 2) |
+
+These calls were made without `-EnableNetworkAccess` (cause 1 of section 5). A
+hypothesis about the sign-in method of the account, considered in the first version of
+this record, was ruled out by the maintainer and is not part of the evidence.
+
+## 5. Diagnosis by the maintainer (2026-10-16)
+
+The endpoint, WinRM, the firewall rule and the ACLs of section 3 are correct and are not
+redone. Three causes were found:
+
+1. **Loopback session.** With `-AccessMode Local`, a connection to localhost is a
+   loopback connection only with implicit credentials (no `-Credential`) and
+   `-EnableNetworkAccess`; otherwise it goes through the network stack and is denied.
+   Source: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/disable-psremoting
+   (accessed 2026-10-16): "For loopback connections you must use implicit credentials
+   along the EnableNetworkAccess parameter."
+2. **Role capability location.** JEA looks for
+   `<module path>\<module>\RoleCapabilities\<name>.psrc`, with no version subfolder
+   (`GetRoleCapabilityPath` in
+   https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/remoting/fanin/InitialSessionStateProvider.cs,
+   accessed 2026-10-16; PowerShell 7 code, the behaviour of 5.1 inferred from the error
+   observed). The registration had installed the module in `RefuteVm\0.1.0`, and the
+   check of the script accepted the version subfolder. `Get-RefuteVmModuleFiles` hashes
+   everything below the module folder, so an old subfolder would also disturb that check.
+3. **Module import in the restricted session** (found after the repair below).
+   `New-PSSession -ComputerName localhost -ConfigurationName RefuteVm -EnableNetworkAccess`
+   failed with "The term 'Get-Module' is not recognized". The role capability imported
+   the module with `RequiredVersion` and `GUID`; with that form PowerShell resolves the
+   module by calling `Get-Module` inside the already restricted runspace, and a
+   `RestrictedRemoteServer` session has no `Get-Module`. With a name only it imports
+   without that call (`ProcessModulesToImport` in
+   https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/InitialSessionState.cs
+   and `GetModuleIfAvailable` in
+   https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/Modules/ModuleCmdletBase.cs,
+   accessed 2026-10-16).
+
+**Manual repair by the maintainer, as Administrator, on 2026-10-16 at about 00:10 (local
+time):** the hashes of the 6 files in `Modules\RefuteVm\0.1.0` were checked (6 of 6), the
+files were copied to `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\`
+(`RoleCapabilities\` included), the 6 hashes were checked at the destination, and the
+folder `RefuteVm\0.1.0` was removed by its literal path with a guard (`Test-Path`
+returned False afterwards; exactly the 6 files remained).
+
+The local `registration-evidence.json` (section 3) still names the old path
+`Modules\RefuteVm\0.1.0` (module path, role capability copy and folder ACL key); it is a
+record of the registration as it ran and is not rewritten.
+
+## 6. Read-only check after the repair (2026-10-16, 03:13 UTC)
+
+Run once by Claude Code under the operator account, authorized by the maintainer for this
+check only (`.cache` script, nothing changed):
+
+| Check | Result |
+|---|---|
+| Files under `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\` | exactly 6; the only subfolder is `RoleCapabilities`; no version subfolder |
+| Their SHA-256 | 6 of 6 equal to the export of `627842d` (section 3.1) |
+| `New-PSSession -ComputerName localhost -ConfigurationName RefuteVm -EnableNetworkAccess` | **fails**: "The term 'Get-Module' is not recognized as the name of a cmdlet, function, script file, or operable program" (translated from the localized message; `PSSessionOpenFailed`), cause 3 |
 
 **Status of W6.4:** the registration evidence matches W6.4; the endpoint's use by the
-operator account is **not validated**.
-
-- The failure is reported during CreateShell and also occurs with the default endpoint.
-  This suggests a problem in the shared session-establishment path rather than one
-  specific to `RefuteVm`; it does not show that the configuration of `RefuteVm` is
-  right.
-- The successful `Test-WSMan` requests do not rule out an authentication, credential
-  context or authorization failure during session creation.
-- **Hypothesis, not established:** the credentials available to the operator's logon
-  session for the local WinRM flow (the session was opened through CloudAP, for
-  example with a Windows Hello PIN). CloudAP alone does not show that a PIN was used,
-  and the absence of Kerberos tickets does not show that NTLM credentials are absent.
-- The cause remains undetermined. Further diagnosis needs reads that require
-  administrator rights (for example the Security event log around the times above), so
-  it is left to the maintainer, with no configuration change proposed. No VM operation
-  is attempted while the status call fails.
+operator account is **not validated** until the role capability imports the module by
+the path of its manifest and `Invoke-RefuteVm.ps1` opens a loopback session (pull
+requests of 2026-10-16), the installed role capability is replaced by the maintainer, and
+the session and `Invoke-RefuteVm.ps1 -Status` work. No VM operation is attempted before.

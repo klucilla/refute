@@ -448,5 +448,28 @@ $probe = Join-Path $WorkDir 'probe.psrc'
 [System.IO.File]::WriteAllText($probe, "@{ ModulesToImport = @('Plain', @{ ModuleName = 'X'; RequiredVersion = '1.0'; GUID = 'b2713b52-46f8-4c00-a4bf-2b940708587a' }, @{ ModuleName = 'Y'; ModuleVersion = '1.0'; MaximumVersion = '2.0' }) }")
 $out.RoleCapabilityProbe = @(Get-PsrcImports $probe)
 
+# The remoting calls of Invoke-RefuteVm.ps1 and their parameter names, from the AST: the
+# endpoint (AccessMode Local) needs -EnableNetworkAccess and implicit credentials.
+$invokeAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'Invoke-RefuteVm.ps1'), [ref]$null, [ref]$null)
+$out.InvokeRemoting = @($invokeAst.FindAll({ param($n) $n -is [System.Management.Automation.Language.CommandAst] }, $true) |
+        Where-Object { @('New-PSSession', 'Enter-PSSession', 'Invoke-Command', 'New-CimSession') -contains $_.GetCommandName() } |
+        ForEach-Object {
+            # the literal value that follows a parameter, when it is a constant
+            $values = [ordered]@{}
+            $elements = @($_.CommandElements)
+            for ($i = 0; $i -lt $elements.Count - 1; $i++) {
+                if ($elements[$i] -is [System.Management.Automation.Language.CommandParameterAst] -and
+                    $elements[$i + 1] -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+                    $values[$elements[$i].ParameterName] = $elements[$i + 1].Value
+                }
+            }
+            [ordered]@{
+                Command    = $_.GetCommandName()
+                Parameters = @($_.CommandElements | Where-Object { $_ -is [System.Management.Automation.Language.CommandParameterAst] } |
+                        ForEach-Object { $_.ParameterName } | Sort-Object)
+                Values     = $values
+            }
+        })
+
 $out.Cases = $cases.ToArray()
 ConvertTo-RefuteCanonicalJson $out
