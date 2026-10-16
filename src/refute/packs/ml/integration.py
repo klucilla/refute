@@ -50,7 +50,9 @@ the docker backend.
 
 from __future__ import annotations
 
+import csv
 import hashlib
+import io
 import json
 import os
 import re
@@ -618,6 +620,9 @@ def _csv_fields(text: str) -> list[tuple[int, int, int, int, str]]:
                     continue
                 j = k + 1
                 break
+            if j < n and text[j] not in ",\r\n":
+                # the csv module keeps text after a closing quote; this locator does not
+                raise ValueError(f"text after a closing quote at {j}")
             value = "".join(parts)
         else:
             j = i
@@ -638,10 +643,17 @@ def _csv_fields(text: str) -> list[tuple[int, int, int, int, str]]:
 
 
 def _csv_span(text: str, column: str, row_spec: Mapping[str, str]) -> tuple[int, int]:
-    """The span of the one cell the CSV selector reads."""
+    """The span of the one cell the CSV selector reads. The locator's fields must be
+    exactly the rows the csv module reads (the reader of ``metric_extraction``); any
+    difference abandons the span (Codex review)."""
     by_row: dict[int, dict[int, tuple[int, int, str]]] = {}
     for r, c, s, e, v in _csv_fields(text):
         by_row.setdefault(r, {})[c] = (s, e, v)
+    located = [
+        [cell[2] for _, cell in sorted(cells.items())] for _, cells in sorted(by_row.items())
+    ]
+    if located != list(csv.reader(io.StringIO(text, newline=""))):
+        raise ValueError("the locator and the csv module read different rows")
     names = [cell[2] for _, cell in sorted(by_row.get(0, {}).items())]
     at, key = names.index(column), names.index(row_spec["column"])
     hits = [

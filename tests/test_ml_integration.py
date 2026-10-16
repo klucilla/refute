@@ -963,6 +963,14 @@ def test_pieces_are_compared_by_what_they_read_not_by_their_selectors():
     regex = {"from": "log", "regex": {"pattern": r"test,(\d+)", "group": 1}}
     a, b, c, d = (ig._piece(s, "log", text) for s in (by_split, by_id, other, regex))
     assert a.overlaps(b) and a.overlaps(d) and not a.overlaps(c)
+    # Codex review (round 3): the csv module keeps text after a closing quote ("test"x
+    # reads as testx), so both selectors read the 4000 of the first row; the locator
+    # cannot follow it and abandons the span: the whole source, which overlaps
+    odd = 'n,id,split\n4000,t1,"test"x\n500,t2,"testx"y\n'
+    by_t1 = {"csv": {"column": "n", "row": {"column": "id", "equals": "t1"}}}
+    by_testx = {"csv": {"column": "n", "row": {"column": "split", "equals": "testx"}}}
+    first, second = (ig._piece(s, "file:y", odd) for s in (by_t1, by_testx))
+    assert second.end is None and first.overlaps(second)
     document = '{"a": {"n": 4000}, "b": [1, {"n": 4000}]}'
     first = ig._piece({"json_path": "$.a.n"}, "file:x", document)
     second = ig._piece({"json_path": "$.b[1].n"}, "file:x", document)
