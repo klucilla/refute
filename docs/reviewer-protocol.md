@@ -115,8 +115,7 @@ after the runs. A **second reviewer** from another model family reviews:
 - 1 dossier with no negative claim, drawn by that fixed rule, if access is available at
   no additional cost.
 
-The list follows from those criteria and that rule after the runs, with no choice
-left.
+The list results from applying those criteria and that rule after the runs.
 
 ### What the reviewer also checks
 

@@ -24,7 +24,9 @@ describes a tested setup.
     is a restricted session that exposes two functions and runs as a virtual account in
     Hyper-V Administrators only.
   - **Operations:** each operation is simulated first and runs only with the
-    maintainer's explicit approval of that operation, given by its plan hash.
+    maintainer's explicit approval of that operation, given by its plan hash. That
+    approval is part of the procedure: the endpoint limits what can be done, but it does
+    not prove who approved a call.
   - **The maintainer's steps:** the maintainer registers the endpoint and runs every
     step that needs administrator rights; the agent's account has no Hyper-V rights.
   - **No validation by construction:** building the VM does not validate its isolation.
@@ -38,9 +40,10 @@ describes a tested setup.
   local network and private or special address ranges (IPv4 RFC 1918 and link-local;
   IPv6 unique-local, link-local and the other special-purpose ranges of the IANA
   registry) is blocked by access control lists on the VM's network adapter port in
-  Hyper-V. The maintainer sets them on Windows, as Administrator: this is a step
-  outside the endpoint, which has no operation for it. A firewall inside the guest is
-  only a second layer, since a compromised guest could change it.
+  Hyper-V. They are set on Windows by the versioned scripts, through the JEA endpoint,
+  under the maintainer's explicit approval (plan, section 6.1). The current endpoint has
+  no operation for them yet, so this requirement is not implemented. A firewall inside
+  the guest is only a second layer, since a compromised guest could change it.
 - **Build egress only through an allowlist.** During the build, the VM reaches the
   internet only through a controlled intermediary (a forwarding proxy) with an
   allowlist of declared destinations: package registries and the declared data hosts.
