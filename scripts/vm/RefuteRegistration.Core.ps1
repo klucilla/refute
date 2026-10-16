@@ -90,12 +90,15 @@ function ConvertTo-RefuteModuleRoot {
     # the current folder of drive C). Only fully qualified paths are accepted (a drive
     # letter and '\', or a UNC path '\\server\share'); a relative or drive-relative entry
     # ('Modules', 'C:Modules') would depend on each process's current folder, so it is
-    # refused (Codex review of #102).
+    # refused (Codex review of #102). '/' is read as '\', and the path is normalised as
+    # .NET does ([System.IO.Path]::GetFullPath: '.', '..' and repeated separators), with
+    # no access to the disk (Codex review of #114).
     param([string]$Entry)
-    if ($Entry -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') {
+    $e = $Entry.Replace('/', '\')
+    if ($e -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') {
         throw "the module path entry '$Entry' is not a fully qualified path"
     }
-    $root = $Entry.TrimEnd('\')
+    $root = [System.IO.Path]::GetFullPath($e).TrimEnd('\')
     if ($root -match '^[A-Za-z]:$') { return $root + '\' }
     return $root
 }
@@ -130,23 +133,16 @@ function Resolve-RefuteSessionEntry {
     # #99 observed on the CI runner) resolves against the session's current folder,
     # CurrentFolder, which must be fully qualified. A drive-relative ('C:Modules') or
     # root-relative ('\Modules') entry depends on per-drive state no one can read here, so
-    # it is refused. Pure.
+    # it is refused. The resolution is .NET's own (Combine, then GetFullPath, which keeps
+    # a UNC share as the root), with no access to the disk (Codex review of #114). Pure.
     param([string]$Entry, [string]$CurrentFolder)
-    if ($Entry -match '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') { return ConvertTo-RefuteModuleRoot $Entry }
-    if ($Entry -match '^[A-Za-z]:' -or $Entry.StartsWith('\') -or $Entry.StartsWith('/')) {
+    $e = $Entry.Replace('/', '\')
+    if ($e -match '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') { return ConvertTo-RefuteModuleRoot $e }
+    if ($e -match '^[A-Za-z]:' -or $e.StartsWith('\')) {
         throw "the module path entry '$Entry' is drive-relative or root-relative"
     }
     $base = ConvertTo-RefuteModuleRoot $CurrentFolder
-    $parts = @($base.TrimEnd('\').Split('\'))
-    foreach ($part in @($Entry.Replace('/', '\').Split('\'))) {
-        if ($part -eq '' -or $part -eq '.') { continue }
-        if ($part -eq '..') {
-            if ($parts.Count -gt 1) { $parts = @($parts[0..($parts.Count - 2)]) }
-            continue
-        }
-        $parts += $part
-    }
-    return ConvertTo-RefuteModuleRoot (($parts -join '\') + '\')
+    return ConvertTo-RefuteModuleRoot ([System.IO.Path]::GetFullPath([System.IO.Path]::Combine($base, $e)))
 }
 
 function Join-RefuteDiscoveryRoots {
@@ -205,17 +201,45 @@ function Get-RefuteAceWriters {
         } | ForEach-Object { "$($_.Sid) $([int]$_.Rights)" })
 }
 
+function Test-RefuteAllowedOwner {
+    # The owner of a folder or file of the discovery set, or of one of its ancestors, must
+    # be SYSTEM, Administrators or TrustedInstaller: an owner has an implicit right to
+    # change the DACL, so a DACL without its writers does not protect an item another
+    # account owns (Codex review of #114).
+    param([string]$Sid)
+    return (@('S-1-5-18', 'S-1-5-32-544', 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464') -contains $Sid)
+}
+
+function Get-RefuteAncestorWriters {
+    # From the access entries of an ANCESTOR of a discovery folder, the ones that let
+    # another account replace or redirect what is below it: delete it or its children,
+    # change its permissions or take its ownership. Creating a new child (WriteData,
+    # AppendData) does not replace an existing one, and an inherit-only entry does not
+    # apply to the ancestor itself, so neither counts. Pure.
+    param([object[]]$Entries)
+    $rights = [System.Security.AccessControl.FileSystemRights]
+    $mask = [int]($rights::Delete -bor $rights::DeleteSubdirectoriesAndFiles -bor $rights::ChangePermissions -bor $rights::TakeOwnership)
+    return @($Entries | Where-Object {
+            [string]$_.Type -eq 'Allow' -and -not [bool]$_.InheritOnly -and (([int]$_.Rights -band $mask) -ne 0) -and
+            -not (Test-RefuteAllowedWriter -Sid ([string]$_.Sid) -InheritOnly $false)
+        } | ForEach-Object { "$($_.Sid) $([int]$_.Rights)" })
+}
+
 function Get-RefuteDiscoveryProblems {
-    # Reads, never writes. For each folder of the discovery set: when it exists, the access
-    # entries of the folder, of every folder directly under it (a writer there could add
-    # <folder>\RoleCapabilities), of every existing <folder>\RoleCapabilities and of the
-    # .psrc files in it; when it does not exist, those of its nearest existing ancestor
-    # (whoever may create it could add role capabilities). Returns one problem per entry
-    # that lets another account write, and one per item that cannot be read.
+    # Reads, never writes. For each folder of the discovery set: when it exists, the owner
+    # and the access entries of the folder, of every folder directly under it (a writer
+    # there could add <folder>\RoleCapabilities), of every existing <folder>\RoleCapabilities
+    # and of the .psrc files in it; when it does not exist, those of its nearest existing
+    # ancestor (whoever may create it could add role capabilities). Every ancestor of an
+    # existing folder, up to its volume root, is checked too: no reparse point (a link or
+    # junction could redirect the path), an allowed owner, and no entry that lets another
+    # account replace what is below it. Any item that is a reparse point is refused.
+    # Returns one problem per finding, and one per item that cannot be read.
     param([string[]]$Roots)
     $problems = @()
     foreach ($root in @($Roots)) {
         $targets = @()
+        $ancestors = @()
         try {
             if (Test-Path -LiteralPath $root -PathType Container -ErrorAction Stop) {
                 $targets += $root
@@ -226,6 +250,11 @@ function Get-RefuteDiscoveryProblems {
                         $targets += $rc
                         $targets += @(Get-ChildItem -LiteralPath $rc -File -Force -Filter '*.psrc' -ErrorAction Stop | ForEach-Object { $_.FullName })
                     }
+                }
+                $ancestor = Split-Path -Parent $root
+                while ($ancestor) {
+                    $ancestors += $ancestor
+                    $ancestor = Split-Path -Parent $ancestor
                 }
             } else {
                 $ancestor = Split-Path -Parent $root
@@ -238,9 +267,17 @@ function Get-RefuteDiscoveryProblems {
             $problems += "$root cannot be read: $($_.Exception.Message)"
             continue
         }
-        foreach ($target in $targets) {
+        foreach ($item in @($targets) + @($ancestors)) {
+            $isAncestor = $ancestors -contains $item
             try {
-                $entries = @((Get-Acl -LiteralPath $target -ErrorAction Stop).Access | ForEach-Object {
+                $info = Get-Item -LiteralPath $item -Force -ErrorAction Stop
+                if (([int]$info.Attributes -band [int][System.IO.FileAttributes]::ReparsePoint) -ne 0) {
+                    $problems += "$item is a reparse point (a link or junction)"
+                    continue
+                }
+                $acl = Get-Acl -LiteralPath $item -ErrorAction Stop
+                $owner = $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
+                $entries = @($acl.Access | ForEach-Object {
                         [ordered]@{
                             Sid         = $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
                             Rights      = [int]$_.FileSystemRights
@@ -249,10 +286,15 @@ function Get-RefuteDiscoveryProblems {
                         }
                     })
             } catch {
-                $problems += "$target cannot be read: $($_.Exception.Message)"
+                $problems += "$item cannot be read: $($_.Exception.Message)"
                 continue
             }
-            foreach ($w in @(Get-RefuteAceWriters $entries)) { $problems += "$target can be written by $w" }
+            if (-not (Test-RefuteAllowedOwner $owner)) { $problems += "$item is owned by $owner" }
+            if ($isAncestor) {
+                foreach ($w in @(Get-RefuteAncestorWriters $entries)) { $problems += "$item (an ancestor) can be changed by $w" }
+            } else {
+                foreach ($w in @(Get-RefuteAceWriters $entries)) { $problems += "$item can be written by $w" }
+            }
         }
     }
     return $problems  # callers wrap the call in @(...)
