@@ -411,9 +411,9 @@ uncertainty not convertible". By predicate:
 ### 1.4a Reading interval, stopping margin and completeness tolerance (W3.10; WP2 W2.10 and W2.10a)
 
 Provisional revision of 2026-10-16, taken during the maintainer's absence under the
-night delegation of 2026-10-15 with the agreement of Codex, choosing at each point the
-option that leads to `INCONCLUSIVE` rather than to a false failure or a false pass; it
-waits for the maintainer's ratification. It fixes the values that W3.10 requires
+night delegation of 2026-10-15, after a Codex review recorded in its pull request,
+choosing at each point the option that leads to `INCONCLUSIVE` rather than to a false
+failure or a false pass; it waits for the maintainer's ratification. It fixes the values that W3.10 requires
 before the runner code. They decide when a run or the accounting of a paper is invalid
 (a Refute error, `INCONCLUSIVE`), never a verdict about the paper.
 
@@ -422,51 +422,74 @@ before the runner code. They decide when a run or the accounting of a paper is i
   container when a reading reaches F, its threshold (W2.10a). The subprocess backend
   (CI and local tests only, never a real paper's budget) polls at most every Δ; tests
   may use a shorter interval.
-- **CPU limit required.** Every container of a paper runs with a CPU quota in
-  `cpu.max` (quota and period; https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files,
-  accessed 2026-10-14). The runner refuses to start a container whose `cpu.max` quota
-  is `max` (no limit) or whose limit exceeds the C used to derive M.
-- **Stopping margin M, derived, not assumed:** `M = 2 × C × (P + Δ + D + S)`, in
-  CPU-seconds, converted to integer microseconds and rounded up, where:
+- **CPU limits admitted.** Every container of a paper runs with a CPU quota in
+  `cpu.max` (quota and period) and with `cpu.max.burst` equal to 0, so the group
+  accumulates no unused bandwidth from earlier periods. Sources:
+  https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files and
+  https://docs.kernel.org/scheduler/sched-bwc.html ("A value of 0 for cpu.cfs_burst_us
+  indicates that the group can not accumulate any unused bandwidth"), both accessed
+  2026-10-16. The runner refuses to start a container whose quota is `max` (no limit),
+  whose burst is not 0, whose limit (quota / period) is above C, or whose period is
+  above P.
+- **Stopping margin M, derived, not assumed:**
+  `M = 2 × C × (P + Δ + D + S) + N × σ`, in CPU-seconds, converted to integer
+  microseconds and rounded up, where:
   - `C` is the largest CPU limit (quota / period) any container of the paper may get,
     at most the 24 vCPU of the VM; one M per paper, given to the WP2 accountant;
-  - `P` is the `cpu.max` period, since a whole period can be used at once (the burst
-    case of W2.10a);
-  - `D` is the largest delay of one reading measured on the VM in WP6 V22: from the
-    planned reading instant to the value being available;
-  - `S` is the largest stop latency measured on the VM in V22: from the stop request
-    to the container's cgroup reporting no further usage;
-  - the factor 2 covers variation around the measured maxima.
+  - `P` is the largest `cpu.max` period any container of the paper may get;
+  - `D` is the largest detection delay measured on the VM in WP6 V22: from the planned
+    reading instant to the moment the stop request is issued for a reading that
+    reached F (the reading itself and the decision);
+  - `S` is the largest stop latency measured on the VM in V22: from the stop request to
+    the moment every process of the container's cgroup and of its descendants has
+    ended (the cgroup is no longer populated), not only two equal readings;
+  - `N × σ` covers the per-CPU runtime slices that the kernel hands out ahead of use
+    and that can let a group briefly exceed its quota ("typically at most 1ms per
+    cpu", sched-bwc.html above): `N` is the number of CPUs of the VM and `σ` the value
+    of `/proc/sys/kernel/sched_cfs_bandwidth_slice_us` read on the VM (default 5 ms),
+    used instead of the smaller 1 ms;
+  - the factor 2: with periodic quotas and no burst, the usage in an interval of length
+    L is at most `C × L + 2 × C × P` (two partial periods at its ends), which
+    `2 × C × (P + L)` covers, with `L = Δ + D + S` the longest time from the last
+    reading below F to the end of the container's usage.
 
-  Example only, not a decision: C = 24, P = 0.1 s, D = 0.1 s, S = 1 s give
-  M = 2 × 24 × 2.2 = 105.6 CPU-s, about 0.03 CPU-hour.
-- **Run-time check of D and S.** For every container the runner records the delay of
-  each reading and the stop latency. If one exceeds the recorded maximum D or S, the
-  accounting of the paper is invalid (`INCONCLUSIVE`, Refute error), even when the
-  usage stayed within R = F + M. A usage above R is a breach (W2.10a), also invalid.
-  Neither is ever absorbed.
-- **Completeness tolerance T:** `T = 1 CPU-s × (n_containers + 1)`, in microseconds,
-  where `n_containers` is the number of containers of the paper. The accounting is
-  complete when `|parent − Σ records| ≤ T`, `parent` being the usage of the paper's
-  parent cgroup and the records the final reading of each container (W2.10). The term
-  per container covers the usage between a container's final reading and its removal;
-  there is no term proportional to the total, so a missing record (for example a
-  builder left out) larger than T is never hidden by the size of the paper. Measured
-  in V22 on runs of known synthetic containers, the difference must stay below T/2;
-  otherwise T is revised with the maintainer before the lock.
+  The measured maxima of V22 check the implementation on the VM; they do not prove a
+  universal worst case. A usage above R = F + M is a breach (W2.10a): the accounting of
+  the paper is invalid (`INCONCLUSIVE`, a Refute error), never absorbed.
+
+  Example only, not a decision: C = 24, P = 0.1 s, D = 0.1 s, S = 1 s, N = 24,
+  σ = 5 ms give M = 2 × 24 × 2.2 + 0.12 = 105.72 CPU-s, about 0.03 CPU-hour.
+- **Completeness (W2.10).** Two checks, both required:
+  - **every expected container has its final record:** the containers of a paper are
+    those the runner started, each after a grant of the accountant; a container granted
+    without a final record makes the accounting invalid, whatever its usage;
+  - **the parent cgroup agrees with the records within T:**
+    `|parent − Σ records| ≤ T`, with `T = 1 CPU-s × (n_containers + 1)` in
+    microseconds, `n_containers` being the number of containers of the paper, `parent`
+    the usage of the paper's parent cgroup, and the records the final reading of each
+    container. There is no term proportional to the total, so the size of the paper
+    never widens T.
+
+  T is an operational tolerance, provisional until V22: usage that no record covers
+  (for example build steps that ran outside every container of the runner) is detected
+  only when it is larger than T, and below T it is bounded by T, not excluded. Measured
+  in V22 on runs of known synthetic containers, builders and failed attempts included,
+  the difference must stay below T/2; otherwise T is revised with the maintainer before
+  the lock.
 - **Fixed before the lock, never after.** Δ, the formula of M, the measured maxima D
-  and S, the values C and P, and T are written in the protocol before the lock and are
-  never adjusted because of a run of the sample, the pilot or the development papers.
+  and S, C, P, N, σ and T are written in the protocol before the lock and are never
+  adjusted because of a run of the sample, the pilot or the development papers.
 - **Subprocess backend.** It has no parent cgroup, so the completeness check is
   recorded as not applicable there; this backend never runs a real paper (PR #87).
 - **Synthetic cases (WP3):**
   - **must pass:** a container stopped at F with a final usage ≤ F + M; a difference
     between the parent and the records of exactly T;
-  - **must give `INCONCLUSIVE` (accounting invalid):** a final usage above R = F + M;
-    a reading delay above D, or a stop latency above S, with a usage within R; a
-    difference between the parent and the records of T + 1 µs; a missing builder record;
-  - **must be refused before the start:** a container without a CPU quota, or with a
-    limit above C.
+  - **must give `INCONCLUSIVE` (accounting invalid):** a final usage above R = F + M; a
+    granted container (a builder, for example) without its final record; a difference
+    between the parent and the records of T + 1 µs, such as a builder's usage of more
+    than T that no record covers;
+  - **must be refused before the start:** a container without a CPU quota, with a burst
+    other than 0, with a limit above C or with a period above P.
 
 ### 1.5 Metric extraction
 
