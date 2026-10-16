@@ -22,11 +22,16 @@
     # the script functions of Microsoft.PowerShell.Utility (Import-PowerShellDataFile,
     # Get-FileHash) nor the Hyper-V cmdlets, which the module's functions call ("The term
     # 'Import-PowerShellDataFile' is not recognized", observed by the maintainer on
-    # 2026-10-16). Two more imports, before RefuteVm:
-    #   - Microsoft.PowerShell.Utility by the absolute path of its manifest in $PSHOME: by
-    #     name it is taken as already loaded (its cmdlets are) and its functions do not
-    #     come; by the path they do (tests/vm/jea_commands.ps1);
-    #   - Hyper-V by name, in System32 (Hyper-V\2.0.0.0 on Windows 10, 11 and Server).
+    # 2026-10-16). Two more imports, before RefuteVm, each by the absolute path of its
+    # manifest in System32, so that no other folder of the module path is searched:
+    #   - Microsoft.PowerShell.Utility, in $PSHOME: by name it is taken as already loaded
+    #     (its cmdlets are) and its functions do not come; by the path they do
+    #     (tests/vm/jea_commands.ps1);
+    #   - Hyper-V, in its version subfolder (Hyper-V\2.0.0.0 on Windows 10, 11 and Server
+    #     2025). Its manifest loads the cmdlets from Microsoft.HyperV.PowerShell.Cmdlets.dll
+    #     in the global assembly cache. The registration requires this manifest to be the
+    #     one the host has, and only administrators able to write to the module folders and
+    #     the assembly folder.
     # The commands they bring are private: the functions of RefuteVm call them, the
     # connecting account does not see them. VisibleFunctions below is the only list of
     # visible commands, and tests/test_vm_jea_integration.py checks on a real endpoint that
@@ -35,7 +40,7 @@
     Description      = 'Refute VM operator: status and one approved operation per call.'
     ModulesToImport  = @(
         'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1',
-        'Hyper-V',
+        'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Hyper-V\2.0.0.0\Hyper-V.psd1',
         'C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1'
     )
     VisibleFunctions = @('Get-RefuteVmStatus', 'Invoke-RefuteVmOperation')

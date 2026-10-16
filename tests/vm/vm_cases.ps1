@@ -291,6 +291,38 @@ $failed = $null
 try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_.Exception.Message }
 Add-Case 'verified copy never overwrites' ($failed -like '*already exists*')
 
+# The first Hyper-V call (Codex review of #118): only a host without the vmms service gets
+# the module's own message; a command that is not recognized and any failure on a host
+# with the service keep their own error. Get-VMHost and the service probe are replaced by
+# functions here (a function wins over a cmdlet of the same name).
+function Get-HostCheckFailure([scriptblock]$VmHost, [bool]$Installed) {
+    Set-Item -Path function:Get-VMHost -Value $VmHost
+    Set-Item -Path function:Test-RefuteVmmsInstalled -Value ([scriptblock]::Create("return `$$Installed"))
+    try {
+        $got = Get-RefuteVmHostChecked
+        return [ordered]@{ Value = $got; Type = ''; Message = '' }
+    } catch {
+        return [ordered]@{ Value = $null; Type = $_.Exception.GetType().FullName; Message = $_.Exception.Message }
+    } finally {
+        Remove-Item -Path function:Get-VMHost
+    }
+}
+$denied = { throw (New-Object System.UnauthorizedAccessException 'synthetic: access denied') }
+$noService = { throw (New-Object System.InvalidOperationException 'synthetic: no virtualization service') }
+$notFound = { throw (New-Object System.Management.Automation.CommandNotFoundException 'synthetic: Get-VMHost is not recognized') }
+$r = Get-HostCheckFailure $noService $false
+Add-Case 'Hyper-V check: no vmms service gives the own message' ($r.Message -like 'Hyper-V is not available on this host (the vmms service is not installed): synthetic: no virtualization service') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $denied $true
+Add-Case 'Hyper-V check: access denied with the service installed keeps its error' ($r.Type -eq 'System.UnauthorizedAccessException' -and $r.Message -eq 'synthetic: access denied') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $notFound $false
+Add-Case 'Hyper-V check: a command not recognized is never the own message' ($r.Type -eq 'System.Management.Automation.CommandNotFoundException' -and $r.Message -notlike '*not available*') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure $notFound $true
+Add-Case 'Hyper-V check: a command not recognized keeps its error with the service installed' ($r.Type -eq 'System.Management.Automation.CommandNotFoundException') ($r.Type + ': ' + $r.Message)
+$r = Get-HostCheckFailure { 'synthetic host' } $false
+Add-Case 'Hyper-V check: a host that answers is returned' ($r.Value -eq 'synthetic host' -and $r.Type -eq '') ($r.Type + ': ' + $r.Message)
+Remove-Item -Path function:Test-RefuteVmmsInstalled
+. (Join-Path $moduleDir 'RefuteVm.HyperV.ps1')
+
 $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)
 if ($onWindows) {
     # FileShare.None is enforced by Windows; the endpoint runs only there.

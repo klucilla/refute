@@ -88,21 +88,44 @@ function Get-RefuteFileSha256 {
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 
+function Test-RefuteVmmsInstalled {
+    # True when the Virtual Machine Management service (vmms) is installed: its service key
+    # exists. A key that cannot be read counts as installed, so that only a host where the
+    # service is certainly absent gets the message of Get-RefuteVmHostChecked.
+    try {
+        $key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Services\vmms')
+    } catch {
+        return $true
+    }
+    if ($null -eq $key) { return $false }
+    $key.Close()
+    return $true
+}
+
+function Get-RefuteVmHostChecked {
+    # The first Hyper-V call. A host without the Hyper-V service (with the PowerShell module
+    # only) stops here with a message of its own. Every other
+    # failure keeps its own error: a command that is not recognized (a missing import, a
+    # defect; tests/test_vm_jea_integration.py fails on it), and any failure on a host where
+    # the service is installed (access denied, for example).
+    try {
+        return Get-VMHost -ErrorAction Stop
+    } catch [System.Management.Automation.CommandNotFoundException] {
+        throw
+    } catch {
+        $failure = $_
+        if (-not (Test-RefuteVmmsInstalled)) {
+            throw "Hyper-V is not available on this host (the vmms service is not installed): $($failure.Exception.Message)"
+        }
+        throw $failure
+    }
+}
+
 function Get-RefuteVmObserved {
     # The state the plan is computed from. Names are compared exactly in Core: Get-VM is
     # called without -Name, so no wildcard is ever interpreted.
     param([System.Collections.IDictionary]$Config, [switch]$IncludeMedia)
-    # The first Hyper-V call. A host without Hyper-V (the CI runner has the PowerShell
-    # module but not the service) stops here with a message of its own. A command that is
-    # not recognized is never turned into that message: it means a missing import, a defect
-    # (tests/test_vm_jea_integration.py fails on it).
-    try {
-        $vmHost = Get-VMHost -ErrorAction Stop
-    } catch [System.Management.Automation.CommandNotFoundException] {
-        throw
-    } catch {
-        throw "Hyper-V is not available on this host: $($_.Exception.Message)"
-    }
+    $vmHost = Get-RefuteVmHostChecked
     $recorded = Read-RefuteVmState -Config $Config
     $vms = foreach ($vm in @(Get-VM -ErrorAction Stop)) {
         $memory = Get-VMMemory -VM $vm -ErrorAction Stop

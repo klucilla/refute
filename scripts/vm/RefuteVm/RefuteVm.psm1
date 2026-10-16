@@ -45,8 +45,8 @@ function Get-RefuteVmStatus {
     [CmdletBinding()]
     param([switch]$IncludeMedia)
     $config = Get-RefuteVmModuleConfig
-    # everything that does not need Hyper-V first, so that a host without it (the CI
-    # runner) still exercises the rest of the call before the Hyper-V step
+    # everything that does not need Hyper-V first, so that a host without it still
+    # exercises the rest of the call before the Hyper-V step
     $module = Get-RefuteVmModuleFiles
     $configSha = Get-RefuteSha256Text (ConvertTo-RefuteCanonicalJson $config)
     $caller = Get-RefuteVmCaller

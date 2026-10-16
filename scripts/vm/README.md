@@ -32,7 +32,7 @@ unvalidated until they are tested on Windows and Hyper-V, with the evidence reco
   them PowerShell resolves the module by calling `Get-Module` inside the restricted
   session, which has no `Get-Module`, and the session cannot open (observed on
   2026-10-16).
-  - **Two more imports, before the module.** The session holds the core cmdlets but not the functions of `Microsoft.PowerShell.Utility` (`Import-PowerShellDataFile`, `Get-FileHash`) nor the Hyper-V cmdlets, which the module's functions call ("`Import-PowerShellDataFile` is not recognized", observed on 2026-10-16). So the role capability also imports `Microsoft.PowerShell.Utility` by the path of its manifest in `$PSHOME` (by name its functions do not come) and `Hyper-V` by name.
+  - **Two more imports, before the module.** The session holds the core cmdlets but not the functions of `Microsoft.PowerShell.Utility` (`Import-PowerShellDataFile`, `Get-FileHash`) nor the Hyper-V cmdlets, which the module's functions call ("`Import-PowerShellDataFile` is not recognized", observed on 2026-10-16). So the role capability also imports, each by the absolute path of its manifest in System32 (no name is resolved through the module path), `Microsoft.PowerShell.Utility` in `$PSHOME` (by name its functions do not come) and `Hyper-V` in `Hyper-V\2.0.0.0`.
   - **What the connecting account sees.** The commands these imports bring are private: the module's functions call them, but the connecting account does not see them. A CI test on a real endpoint checks the visible list, and another checks that every command the module calls exists in such a session.
 
   No parameter takes a path or a VM name: they come from
@@ -152,9 +152,12 @@ order:
    of JEA's finds exactly one role capability,
    `RefuteVm\RoleCapabilities\RefuteVmOperator.psrc`, that no other copy exists (none in
    a version subfolder), and, already in the preview, that the role capability imports
-   exactly, in this order, the `Microsoft.PowerShell.Utility` manifest in `$PSHOME`,
-   `Hyper-V` and `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, and
-   makes visible only the two functions. The
+   exactly, in this order, the `Microsoft.PowerShell.Utility` manifest in `$PSHOME`, the
+   Hyper-V manifest `Hyper-V\2.0.0.0\Hyper-V.psd1` in System32 (it must be the one the host
+   has) and `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, and
+   makes visible only the two functions; in the folders these imports load from (the two
+   module folders in System32 and the Hyper-V cmdlets assembly in the global assembly
+   cache) only the same accounts can write, and no item is a reparse point. The
    search covers these module roots (`Get-RefuteRegistrationModuleRoots` in
    `RefuteRegistration.Core.ps1`): the machine and process `PSModulePath`, Program Files,
    System32, `$PSHOME\Modules`, and the Default profile's
