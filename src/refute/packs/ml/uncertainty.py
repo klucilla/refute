@@ -60,9 +60,22 @@ class Uncertainty(StrictModel):
             raise ValueError(f"uncertainty: {', '.join(given)} are derived, never given by hand")
         numbers = {"value": self.value, "lower": self.lower, "upper": self.upper}
         if self.kind == "none":
+            # 'none' means the paper publishes no uncertainty for this value (not an unknown
+            # one): there is no uncertainty to locate, quote or give a unit to; the claim's
+            # value keeps its own quote (1.0.9, the maintainer, 2026-10-16)
             extra = [
                 k
-                for k in ("value", "lower", "upper", "level", "method", "n", "unit")
+                for k in (
+                    "value",
+                    "lower",
+                    "upper",
+                    "level",
+                    "method",
+                    "n",
+                    "unit",
+                    "location",
+                    "quote",
+                )
                 if getattr(self, k) is not None
             ]
             if extra:

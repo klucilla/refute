@@ -6,13 +6,17 @@ These scripts build the Hyper-V VM in which third-party paper code will run
 does not validate its isolation**: no paper code runs until every WP6 acceptance test
 passes. In phase 1 the VM has no network.
 
-**Not validated in operation yet.** The JEA endpoint and the scripts are tested only
-with synthetic inputs, without Windows administrator rights and without Hyper-V
-(tests/test_vm_scripts.py). Nothing here has been run on the machine: the
-registration, the endpoint's restrictions (NoLanguage, the virtual account's groups,
-the loopback-only WinRM, the transcripts) and every Hyper-V operation remain
-unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded
-(wp6-acceptance.md, W6.4 to W6.6).
+**Not validated in operation yet.** What has been checked so far, and where:
+
+- **Synthetic tests:** the scripts are tested with synthetic inputs, without Windows administrator rights and without Hyper-V (tests/test_vm_scripts.py).
+- **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py).
+- **The maintainer's machine:**
+  - the WinRM listener removal and the endpoint registration were run once, from `main` at `627842d`, with a first read-only check from the operator account. On 2026-10-16 the maintainer then:
+    - repaired the installed module by hand: copied it to `RefuteVm\`, with no version subfolder, and removed `RefuteVm\0.1.0` (sections 5 and 6 of the record);
+    - replaced the installed `RefuteVmOperator.psrc` with the one of `main` at `46fe0c2` (H.5). The session then opened from the operator account, ran as a virtual account and showed exactly the ten visible commands (section 7).
+  - The reinstallation of #118 (the role capability and two module files) is pending until the maintainer does it.
+  - The record is [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md).
+  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6).
 
 ## Who can do what
 
@@ -25,9 +29,17 @@ unvalidated until they are tested on Windows and Hyper-V, with the evidence reco
   default helper commands that a `RestrictedRemoteServer` session keeps
   (`Clear-Host`, `Exit-PSSession`, `Get-Command`, `Get-FormatData`, `Get-Help`,
   `Measure-Object`, `Out-Default`, `Select-Object`). The session is in NoLanguage
-  mode: literal arguments only, no script block or expression. The module is pinned
-  by name, version and GUID in the role capability. No parameter takes a path or a VM
-  name: they come from
+  mode: literal arguments only, no script block or expression. The role capability
+  imports the module by the absolute path of its installed manifest,
+  `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, which pins that
+  copy in a folder only administrators can write. It names no version and no GUID: with
+  them PowerShell resolves the module by calling `Get-Module` inside the restricted
+  session, which has no `Get-Module`, and the session cannot open (observed on
+  2026-10-16).
+  - **Two more imports, before the module.** The session holds the core cmdlets but not the functions of `Microsoft.PowerShell.Utility` (`Import-PowerShellDataFile`, `Get-FileHash`) nor the Hyper-V cmdlets, which the module's functions call ("`Import-PowerShellDataFile` is not recognized", observed on 2026-10-16). So the role capability also imports, each by the absolute path of its manifest in System32 (no name is resolved through the module path), `Microsoft.PowerShell.Utility` in `$PSHOME` (by name its functions do not come) and `Hyper-V` in `Hyper-V\2.0.0.0`.
+  - **What the connecting account sees.** The commands these imports bring are private: the module's functions call them, but the connecting account does not see them. A CI test on a real endpoint checks the visible list, and another checks that every command the module calls exists in such a session.
+
+  No parameter takes a path or a VM name: they come from
   `RefuteVm.Config.psd1`, installed with the module under `%ProgramFiles%`, where only
   administrators can write.
 - Claude Code calls the endpoint through `Invoke-RefuteVm.ps1`; every call is a
@@ -134,11 +146,46 @@ state) and its `PreviewSha256`. With `-Apply -PreviewSha256 <hash>`, only if the
 is unchanged and every target is absent (it never deletes or overwrites), in this
 order:
 
-1. copies the module to `%ProgramFiles%\WindowsPowerShell\Modules\RefuteVm\<version>`,
-   checks the copied hashes, that only SYSTEM, Administrators, TrustedInstaller and
-   CREATOR OWNER can write there, and that exactly one role capability named
-   `RefuteVmOperator` exists on the module path (machine `PSModulePath`, Program Files
-   and System32);
+1. copies the module to `%ProgramFiles%\WindowsPowerShell\Modules\RefuteVm`, with **no
+   version subfolder**: JEA looks for `<module path>\<module>\RoleCapabilities\<name>.psrc`
+   only, one folder deep, and a copy in `RefuteVm\<version>` is never found (diagnosed
+   by the maintainer on 2026-10-16; `GetRoleCapabilityPath` in
+   https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/remoting/fanin/InitialSessionStateProvider.cs,
+   accessed 2026-10-16). It checks the copied hashes, that only SYSTEM, Administrators,
+   TrustedInstaller and CREATOR OWNER can write there, that a search with the structure
+   of JEA's finds exactly one role capability,
+   `RefuteVm\RoleCapabilities\RefuteVmOperator.psrc`, that no other copy exists (none in
+   a version subfolder), and, already in the preview, that the role capability imports
+   exactly, in this order, the `Microsoft.PowerShell.Utility` manifest in `$PSHOME`, the
+   Hyper-V manifest `Hyper-V\2.0.0.0\Hyper-V.psd1` in System32 (it must be the one the host
+   has) and `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, and
+   makes visible only the two functions; in the folders these imports load from (the two
+   module folders in System32 and the Hyper-V cmdlets assembly in the global assembly
+   cache), every file and folder and every ancestor gets the checks of the discovery set
+   below (owners, writers with generic rights mapped, no reparse point). The
+   search covers these module roots (`Get-RefuteRegistrationModuleRoots` in
+   `RefuteRegistration.Core.ps1`): the machine and process `PSModulePath`, Program Files,
+   System32, `$PSHOME\Modules`, and the Default profile's
+   `Documents\WindowsPowerShell\Modules`. A virtual account's own user module folder
+   does not exist at registration: its profile is created, from the Default profile,
+   when its session starts. **Limit:** what the registration checks is this set on the
+   machine at that moment. A CI test on a real endpoint (tests/test_vm_jea_integration.py)
+   calls the same function and shows, for the GitHub runner only, that every existing
+   root a JEA session reports is in the set or holds no role capability; it does not
+   validate the maintainer's host. The registration also checks the **effective
+   discovery set** of the session (`Get-RefuteJeaDiscoveryRoots`): the machine
+   `PSModulePath`, Program Files, `$PSHOME\Modules`, and the virtual account's user
+   entry, which is relative (`WindowsPowerShell\Modules`, its Documents path being
+   empty) and resolves against the session's current folder, `%SystemRoot%\system32`
+   (as the CI test observed on the runner). The checks on that set:
+   - **Writers:** in every folder of the set, in every module folder under it, and in every `RoleCapabilities` folder and `.psrc` file, only SYSTEM, Administrators and TrustedInstaller may write. CREATOR OWNER is accepted only as an inherit-only entry. The generic rights `GENERIC_ALL` and `GENERIC_WRITE` count as the specific rights they grant, so an inherit-only entry that keeps them unmapped is caught too.
+   - **Owners and links:** every one of these items has one of those three owners and is not a reparse point.
+   - **Ancestors:** no ancestor, up to the volume root, can be deleted, have its permissions changed or be taken over by another account.
+   - **A folder of the set that does not exist:** the same checks apply to its nearest existing ancestor, which decides who can create it, and the ancestors above that one are checked as ancestors.
+
+   The preview and the apply both refuse otherwise. **Limit:** the set is computed from
+   the machine's state at that moment and from the current folder observed on the CI
+   runner;
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
@@ -156,7 +203,7 @@ order:
    `Register-PSSessionConfiguration -AccessMode Local` (this restarts WinRM), then
    checks its virtual account, group and permission. JEA grants each virtual account
    the "Log on as a service" right for the length of its session;
-7. writes the evidence (module hashes, role capability copies, endpoint settings,
+7. writes the evidence (module hashes, role capability copies and the one JEA finds, endpoint settings,
    listeners, listening sockets, firewall profiles and rule, folder ACLs) to
    `C:\ProgramData\RefuteVm\Log\registration-evidence.json`.
 

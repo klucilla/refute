@@ -249,6 +249,7 @@ Each claim specifies, before the lock (plan, section 5.4):
 | The robustness changes that can produce `FRAGILE`, and their order | `attacks`, with applicability and order decided before the lock |
 | The minimum coverage of each check, for a positive and for a negative conclusion | `coverage_minimum` (see [verdicts.md](verdicts.md), "Coverage for paper claims") |
 | The scope: full training, or evaluation of a released checkpoint | `scope`; a checkpoint evaluation also follows the checks on model weights ([sandbox.md](sandbox.md)) |
+| How the coverage of `metric_extracted` is shown for each method and seed: the routes, in their fixed order | `coverage_evidence` (section 1.5a of [wp3-acceptance.md](validation/v0.3/wp3-acceptance.md)) |
 | What separates a limitation of Refute from an impossibility to reproduce | the attribution rule in [verdicts.md](verdicts.md) |
 
 A claim that does not specify all of these is not ready to lock.

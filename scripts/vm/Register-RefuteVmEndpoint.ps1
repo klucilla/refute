@@ -11,9 +11,15 @@ preview (the machine changed), and then makes exactly those changes in this orde
 stopping at the first problem:
 
   1. copies the RefuteVm module (configuration and role capability included) to
-     %ProgramFiles%\WindowsPowerShell\Modules\RefuteVm\<version> and checks the hashes,
-     that only administrators can write there, and that exactly one role capability
-     named RefuteVmOperator exists on the module path;
+     %ProgramFiles%\WindowsPowerShell\Modules\RefuteVm, with NO version subfolder (JEA
+     looks for <module path>\<module>\RoleCapabilities\<name>.psrc only), and checks the
+     hashes, that only administrators can write there, that the search JEA makes finds
+     exactly that role capability, that no other copy exists on the module path (in
+     particular none in a version subfolder), and that in the effective discovery set of
+     the session (machine PSModulePath, Program Files, $PSHOME\Modules and the relative
+     user entry resolved against %SystemRoot%\system32) only SYSTEM, Administrators and
+     TrustedInstaller can write, or create the folders that do not exist (the preview
+     checks this too);
   2. creates C:\ProgramData\RefuteVm\{Transcripts,Log,State} and the C:\Hyper-V tree
      with explicit ACLs (owner: Administrators);
   3. adds the Windows Firewall rule that blocks inbound TCP 5985 and 5986 from every
@@ -73,7 +79,11 @@ $ListenerKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Listener'
 $ModuleSource = Join-Path $PSScriptRoot 'RefuteVm'
 $ModuleManifest = Import-PowerShellDataFile -LiteralPath (Join-Path $ModuleSource 'RefuteVm.psd1')
 $ModuleBase = Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules\RefuteVm'
-$ModuleDestination = Join-Path $ModuleBase $ModuleManifest.ModuleVersion
+# No version subfolder: JEA finds a role capability only at
+# <module path>\<module>\RoleCapabilities\<name>.psrc (maintainer's diagnosis, 2026-10-16),
+# and the role capability imports the manifest by this exact path.
+$ModuleDestination = $ModuleBase
+$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'
 $PsscPath = Join-Path $DataRoot 'RefuteVm.pssc'
 $EvidencePath = Join-Path $DataRoot 'Log\registration-evidence.json'
 
@@ -98,11 +108,13 @@ function Get-TreeHashes([string]$Root) {
 }
 
 function Get-ModulePathRoots {
-    # Every folder Windows PowerShell searches for modules for a service session: the
-    # machine PSModulePath, Program Files and System32. Enumeration errors stop the script.
-    $roots = @([Environment]::GetEnvironmentVariable('PSModulePath', 'Machine').Split(';')) +
-        @((Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules'), (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules'))
-    return @($roots | Where-Object { $_ } | ForEach-Object { $_.TrimEnd('\') } | Sort-Object -Unique | Where-Object { Test-Path -LiteralPath $_ })
+    # The module folder roots the registration searches (RefuteRegistration.Core.ps1,
+    # Get-RefuteRegistrationModuleRoots: machine and process PSModulePath, Program Files,
+    # System32, $PSHOME\Modules and the Default profile's user module folder). The
+    # integration test on a real endpoint (tests/vm/jea_integration.ps1) calls the same
+    # function and checks every existing root a JEA session reports against it. Enumeration
+    # errors stop the script.
+    return @(Get-RefuteRegistrationModuleRoots)
 }
 
 function Find-RoleCapabilityCopies {
@@ -151,12 +163,12 @@ function New-FolderAcl {
 
 function Get-NonAdminWriters([string]$Path) {
     # Accounts other than SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER whose
-    # allow entry on Path grants any change (read and execute entries do not count).
+    # allow entry on Path grants any change (read and execute entries do not count),
+    # compared by SID (ConvertTo-RefuteAclEntries), shown with their account names.
     $allowed = @($SidSystem, $SidAdmins, $SidTrustedInstaller, $SidCreatorOwner)
-    return @((Get-Acl -LiteralPath $Path).Access | Where-Object {
-            $_.AccessControlType -eq 'Allow' -and (Test-RefuteRightsWrite ([int]$_.FileSystemRights)) -and
-            $allowed -notcontains $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
-        } | ForEach-Object { [string]$_.IdentityReference })
+    return @((ConvertTo-RefuteAclEntries (Get-Acl -LiteralPath $Path)).Entries | Where-Object {
+            $_.Type -eq 'Allow' -and (Test-RefuteRightsWrite $_.Rights) -and $allowed -notcontains $_.Sid
+        } | ForEach-Object { Get-SidAccount $_.Sid })
 }
 
 $FolderAcls = [ordered]@{
@@ -194,14 +206,71 @@ if ($operatorSid) {
         if ($members -contains $operatorSid) { $problems.Add('the operator account is a member of Hyper-V Administrators; remove it first (it would bypass the endpoint)') }
     } catch { $problems.Add("cannot read the members of Hyper-V Administrators: $($_.Exception.Message)") }
 }
-if (Test-Path -LiteralPath $ModuleBase) { $problems.Add("$ModuleBase already exists") }
-if (Test-Path -LiteralPath $DataRoot) { $problems.Add("$DataRoot already exists") }
-foreach ($folder in $VmFolders) { if (Test-Path -LiteralPath $folder) { $problems.Add("$folder already exists") } }
+function Test-TargetExists([string]$Path) {
+    # True when Path exists, or when it cannot be read (a folder only administrators can
+    # read, met by a preview run as a normal user on a registered host): then the problem
+    # is listed instead of stopping the preview.
+    try {
+        return (Test-Path -LiteralPath $Path -ErrorAction Stop)
+    } catch {
+        $problems.Add("$Path cannot be read: $($_.Exception.Message)")
+        return $false
+    }
+}
+if (Test-TargetExists $ModuleBase) { $problems.Add("$ModuleBase already exists") }
+if (Test-TargetExists $DataRoot) { $problems.Add("$DataRoot already exists") }
+foreach ($folder in $VmFolders) { if (Test-TargetExists $folder) { $problems.Add("$folder already exists") } }
+# The role capability imports exactly, in this order, each by the absolute path of its
+# manifest: Microsoft.PowerShell.Utility in $PSHOME (its functions, Import-PowerShellDataFile
+# and Get-FileHash, do not come by name in a restricted session), Hyper-V (the manifest this
+# host has, found above), and the module where this script installs it. No name is resolved
+# through the module path. No version, no GUID: those make PowerShell call Get-Module in the
+# restricted session. The visible commands stay the two functions.
+$UtilityManifest = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1'
+$HyperVManifestPath = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Hyper-V\2.0.0.0\Hyper-V.psd1'
+$ExpectedImports = @($UtilityManifest, $HyperVManifestPath, $InstalledManifest)
+$roleData = Import-PowerShellDataFile -LiteralPath (Join-Path $ModuleSource "RoleCapabilities\$RoleName.psrc")
+$imports = @($roleData.ModulesToImport)
+$importsOk = $imports.Count -eq $ExpectedImports.Count
+for ($i = 0; $importsOk -and $i -lt $imports.Count; $i++) {
+    $importsOk = ($imports[$i] -is [string]) -and ($imports[$i] -ceq $ExpectedImports[$i])
+}
+if (-not $importsOk) {
+    $problems.Add("the role capability must import exactly $($ExpectedImports -join ', ') (it imports: " + (($imports | ForEach-Object { [string]$_ }) -join ', ') + ')')
+}
+if ($UtilityManifest -ne (Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1') -or
+    -not (Test-Path -LiteralPath $UtilityManifest -PathType Leaf)) {
+    $problems.Add("the Microsoft.PowerShell.Utility manifest is not at $UtilityManifest on this host")
+}
+if ($hyperVManifest -and $hyperVManifest -ne $HyperVManifestPath) {
+    $problems.Add("the Hyper-V manifest of this host is $hyperVManifest, not $HyperVManifestPath (the role capability imports that path; a new version needs a reviewed role capability)")
+}
+# What the imports load: the two module folders in System32 and the folder of the Hyper-V
+# cmdlets assembly in the global assembly cache (the Hyper-V manifest's NestedModules).
+# Every file and folder there, and every ancestor up to the volume root, gets the checks
+# of the discovery set (Get-RefuteTreeProblems): generic rights mapped, an allowed owner,
+# no reparse point (Codex review of #118, rounds 1 and 2).
+$ImportTrees = @(
+    (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility'),
+    (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V'),
+    (Join-Path $env:SystemRoot 'Microsoft.NET\assembly\GAC_MSIL\Microsoft.HyperV.PowerShell.Cmdlets'))
+foreach ($p in @(Get-RefuteTreeProblems -Roots $ImportTrees)) { $problems.Add("imports: $p") }
+if (@($roleData.Keys | Where-Object { $_ -like 'Visible*' }) -join ',' -ne 'VisibleFunctions' -or
+    (@($roleData.VisibleFunctions) -join ',') -cne 'Get-RefuteVmStatus,Invoke-RefuteVmOperation') {
+    $problems.Add('the role capability must make visible exactly Get-RefuteVmStatus and Invoke-RefuteVmOperation, and nothing else')
+}
 $psrcCopies = @()
 # @(...): a function that returns an empty list gives $null to its caller, and .Count on
 # $null is an error under StrictMode in Windows PowerShell 5.1
 try { $psrcCopies = @(Find-RoleCapabilityCopies) } catch { $problems.Add("the module path cannot be searched completely: $($_.Exception.Message)") }
 if ($psrcCopies.Count) { $problems.Add("a role capability named $RoleName already exists: " + ($psrcCopies -join ', ')) }
+# The effective discovery set of the session (Get-RefuteJeaDiscoveryRoots), relative user
+# entry included: only SYSTEM, Administrators and TrustedInstaller may write where the
+# session finds role capabilities, or create a folder it would search (item 9 of the
+# maintainer's message of 2026-10-16).
+$discoveryRoots = @()
+try { $discoveryRoots = @(Get-RefuteJeaDiscoveryRoots) } catch { $problems.Add("the discovery set cannot be computed: $($_.Exception.Message)") }
+foreach ($p in @(Get-RefuteDiscoveryProblems -Roots $discoveryRoots)) { $problems.Add("discovery set: $p") }
 if ($isAdmin) {
     if (Get-NetFirewallRule -Name $FirewallRuleName -ErrorAction SilentlyContinue) { $problems.Add("the firewall rule $FirewallRuleName already exists") }
     # The endpoint is a WSMan plugin: read its registry key, never the WSMan provider.
@@ -227,8 +296,9 @@ $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("Operator account: $OperatorAccount ($operatorSid)")
 $lines.Add("Virtual account group: $groupAccount ($SidHyperVAdmins)")
 $lines.Add("Hyper-V module manifest: $(if ($hyperVManifest) { $hyperVManifest } else { 'not found' })")
-$lines.Add("1. Copy the module to $ModuleDestination (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write):")
+$lines.Add("1. Copy the module to $ModuleDestination, no version subfolder (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write; the JEA search finds exactly its RoleCapabilities\$RoleName.psrc, and no other copy exists); the role capability imports $($ExpectedImports -join ', ') and makes visible only Get-RefuteVmStatus and Invoke-RefuteVmOperation; checked in $($ImportTrees -join ', '), every file and folder and every ancestor: the owners and writers allowed for the discovery set, no reparse point:")
 foreach ($k in $sourceHashes.Keys) { $lines.Add("     $($sourceHashes[$k])  $k") }
+$lines.Add("   Discovery set of the session (checked: only SYSTEM, Administrators and TrustedInstaller can write, or create the absent ones): $($discoveryRoots -join ', ')")
 $lines.Add("2. Create these folders, owner Administrators, inheritance removed:")
 foreach ($folder in $FolderAcls.Keys) {
     $lines.Add("     $folder")
@@ -272,9 +342,20 @@ try {
     if ((ConvertTo-Json (Get-TreeHashes $ModuleDestination) -Compress) -ne (ConvertTo-Json $sourceHashes -Compress)) { throw 'the installed module differs from the source' }
     $writers = @(Get-ChildItem -LiteralPath $ModuleBase -Recurse -Force | ForEach-Object { $_.FullName }) + @($ModuleBase) | ForEach-Object { Get-NonAdminWriters $_ } | Sort-Object -Unique
     if (@($writers).Count) { throw ('accounts other than administrators can write to the module: ' + ($writers -join ', ')) }
-    $copies = @(Find-RoleCapabilityCopies)
     $expected = Join-Path $ModuleDestination "RoleCapabilities\$RoleName.psrc"
+    # the search JEA makes (first match wins), then any other copy, in a version subfolder
+    # or deeper: exactly one role capability, the one JEA loads
+    $moduleRoots = @(Get-ModulePathRoots)
+    $jeaFinds = @(Find-RefuteJeaRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName)
+    if ($jeaFinds.Count -ne 1 -or $jeaFinds[0] -ne $expected) { throw ("the JEA search must find exactly $expected, found: " + ($jeaFinds -join ', ')) }
+    $versioned = @(Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName)
+    if ($versioned.Count) { throw ('copies of the role capability in a version subfolder: ' + ($versioned -join ', ')) }
+    $copies = @(Find-RoleCapabilityCopies)
     if ($copies.Count -ne 1 -or $copies[0] -ne $expected) { throw ("expected exactly one role capability at $expected, found: " + ($copies -join ', ')) }
+    if (-not (Test-Path -LiteralPath $InstalledManifest -PathType Leaf)) { throw "the manifest the role capability imports is missing: $InstalledManifest" }
+    # the discovery set again, after the copy: no other writer anywhere the session searches
+    $discoveryWriters = @(Get-RefuteDiscoveryProblems -Roots @(Get-RefuteJeaDiscoveryRoots))
+    if ($discoveryWriters.Count) { throw ('the discovery set lets other accounts write: ' + ($discoveryWriters -join '; ')) }
     # 2. folders
     foreach ($folder in $FolderAcls.Keys) {
         [void][System.IO.Directory]::CreateDirectory($folder)
@@ -347,6 +428,8 @@ $evidence = [ordered]@{
     PreviewSha256    = $previewHash
     Module           = [ordered]@{ Path = $ModuleDestination; Files = Get-TreeHashes $ModuleDestination }
     RoleCapabilities = @(Find-RoleCapabilityCopies)
+    JeaRoleCapability = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Get-ModulePathRoots) -RoleName $RoleName)
+    DiscoveryRoots   = @(Get-RefuteJeaDiscoveryRoots | ForEach-Object { [ordered]@{ Path = $_; Exists = (Test-Path -LiteralPath $_ -PathType Container) } })
     Endpoint         = [ordered]@{
         Name                      = $endpoint.Name
         Permission                = [string]$endpoint.Permission
