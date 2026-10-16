@@ -129,29 +129,44 @@ def split_sha256(split: str, data: bytes | None = None) -> str:
     return hashlib.sha256(canonical_bytes(_split_labels(data or DATA, split))).hexdigest()
 
 
-LINK = [{"file": "train.py", "lines": [1, 2], "role": "prints the value from the count"}]
+def trainer_line(marker: str) -> int:
+    """The line of the cataloged trainer that holds ``marker`` (exactly one)."""
+    text = SOURCES["ml-paper"]["train.py"].read_text(encoding="utf-8")
+    (line,) = [n for n, line in enumerate(text.splitlines(), 1) if marker in line]
+    return line
 
 
 def call_site_line() -> int:
     """The line of the trainer's cited call site (the hook's selected evaluation)."""
-    text = SOURCES["ml-paper"]["train.py"].read_text(encoding="utf-8")
-    return next(n for n, line in enumerate(text.splitlines(), 1) if "# the cited call site" in line)
+    return trainer_line("# the cited call site")
+
+
+def _cite(first: str, last: str, role: str) -> dict:
+    """A citation of the trainer's code from the line holding ``first`` to the one holding
+    ``last`` (Codex review of #111: the links cite the code, not the docstring)."""
+    return {"file": "train.py", "lines": [trainer_line(first), trainer_line(last)], "role": role}
+
+
+PRINT = 'print(f"acc={printed:.2f}")'
 
 
 def route(name: str) -> dict:
-    """One coverage route of 1.5a, as a claim for the cataloged trainer declares it."""
+    """One coverage route of 1.5a, as a claim for the cataloged trainer declares it, with
+    links that cite the trainer's code from the evidence to the printed value."""
     if name == "saved_predictions":
-        return {"route": name, "link": LINK}
+        link = [_cite('preds["t"], preds["p"] = y_eval, y_pred', PRINT, "saves, then prints")]
+        return {"route": name, "link": link}
     if name == "printed_count":
         regex = {"pattern": r"evaluated=(\d+)", "group": 1}
-        return {"route": name, "count": {"from": "log", "regex": regex}, "link": LINK}
+        link = [_cite(PRINT, 'print(f"evaluated=', "prints the value, then its count")]
+        return {"route": name, "count": {"from": "log", "regex": regex}, "link": link}
     if name == "sufficient_statistics":
         file = "preds/stats-{seed}.json"
         return {
             "route": name,
             "correct": {"from": "file", "file": file, "json_path": "$.correct"},
             "total": {"from": "file", "file": file, "json_path": "$.total"},
-            "link": LINK,
+            "link": [_cite("correct = int((y_pred == y_eval).sum())", PRINT, "writes, prints")],
         }
     line = call_site_line()
     return {
@@ -159,7 +174,7 @@ def route(name: str) -> dict:
         "patch": HOOK_PATCH,
         "function": "sklearn.metrics.accuracy_score",
         "call_site": {"file": "train.py", "lines": [line, line], "role": "the test evaluation"},
-        "link": LINK,
+        "link": [_cite("# the cited call site", PRINT, "prints the call's return")],
     }
 
 
@@ -173,7 +188,13 @@ def coverage(routes, split: str = "test") -> dict:
             "other_splits": [
                 {"name": s, "labels_sha256": split_sha256(s)} for s in SPLITS if s != split
             ],
-            "splits_evidence": [{"file": "train.py", "lines": [1, 2], "role": "the splits"}],
+            "splits_evidence": [
+                _cite(
+                    'x_train, y_train = data["x_train"]',
+                    'x_eval, y_eval = data["x_test"]',
+                    "the splits the trainer can evaluate",
+                )
+            ],
         }
     return out
 
@@ -963,6 +984,14 @@ def test_pieces_are_compared_by_what_they_read_not_by_their_selectors():
     regex = {"from": "log", "regex": {"pattern": r"test,(\d+)", "group": 1}}
     a, b, c, d = (ig._piece(s, "log", text) for s in (by_split, by_id, other, regex))
     assert a.overlaps(b) and a.overlaps(d) and not a.overlaps(c)
+    # Codex review (round 3): the csv module keeps text after a closing quote ("test"x
+    # reads as testx), so both selectors read the 4000 of the first row; the locator
+    # cannot follow it and abandons the span: the whole source, which overlaps
+    odd = 'n,id,split\n4000,t1,"test"x\n500,t2,"testx"y\n'
+    by_t1 = {"csv": {"column": "n", "row": {"column": "id", "equals": "t1"}}}
+    by_testx = {"csv": {"column": "n", "row": {"column": "split", "equals": "testx"}}}
+    first, second = (ig._piece(s, "file:y", odd) for s in (by_t1, by_testx))
+    assert second.end is None and first.overlaps(second)
     document = '{"a": {"n": 4000}, "b": [1, {"n": 4000}]}'
     first = ig._piece({"json_path": "$.a.n"}, "file:x", document)
     second = ig._piece({"json_path": "$.b[1].n"}, "file:x", document)
