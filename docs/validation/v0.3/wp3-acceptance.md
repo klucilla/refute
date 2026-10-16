@@ -410,11 +410,12 @@ uncertainty not convertible". By predicate:
 
 ### 1.4a Reading interval, stopping margin and completeness tolerance (W3.10; WP2 W2.10 and W2.10a)
 
-Provisional revision of 2026-10-16, taken during the maintainer's absence under the
-night delegation of 2026-10-15, after a Codex review recorded in its pull request,
+Revision of 2026-10-16, taken during the maintainer's absence under the night
+delegation of 2026-10-15, after a Codex review recorded in its pull request (#92),
 choosing at each point the option that leads to `INCONCLUSIVE` rather than to a false
-failure or a false pass; it waits for the maintainer's ratification. It fixes the values that W3.10 requires
-before the runner code. They decide when a run or the accounting of a paper is invalid
+failure or a false pass; ratified by the maintainer on 2026-10-16, preserving the
+validation conditions and the documented concessions. It fixes the values that W3.10
+requires before the runner code. They decide when a run or the accounting of a paper is invalid
 (a Refute error, `INCONCLUSIVE`), never a verdict about the paper.
 
 - **Reading interval Δ = 1 s.** While a container runs, the docker backend reads the
