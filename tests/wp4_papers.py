@@ -41,6 +41,8 @@ class SyntheticPaper:
     attacks: tuple[str, ...] = ()
     config: dict = field(default_factory=dict)  # added to BASE_CONFIG
     step_config: dict = field(default_factory=dict)  # step name -> config for its runs
+    # one run of the seeds attack -> config, named by the claim's seed list ("attack[2]")
+    seed_config: dict = field(default_factory=dict)
     ladder: dict = field(default_factory=lambda: dict(LADDER_OK))
     stages: dict = field(default_factory=dict)  # stage name -> limits in hours
     reported: float = 89.2
@@ -123,6 +125,27 @@ PAPERS = [
         step_config={"data_split": {"sleep_s": 60}},
         stages={"attack_run": {"active_time_limit_hours": 0.01, "no_progress_hours": 0.001}},
         expected_checks={"seeds": "FAIL", "data_split": "INCONCLUSIVE"},
+    ),
+    SyntheticPaper(
+        "seeds-interrupted-established",
+        "W4.3 (Codex review of #110): inside one attack, two valid failures and an interrupted "
+        "run: the failure stays established",
+        FRAGILE,
+        attacks=("seeds",),
+        config={"bad_seeds": "attack[:2]", "seed_penalty": 8},
+        seed_config={"attack[2]": {"sleep_s": 60}},
+        stages={"attack_run": {"active_time_limit_hours": 0.01, "no_progress_hours": 0.001}},
+        expected_checks={"seeds": "FAIL"},
+    ),
+    SyntheticPaper(
+        "seeds-interrupted-insufficient",
+        "W4.3 (Codex review of #110): inside one attack, an interrupted run and no valid "
+        "failure: never a PASS",
+        INCONCLUSIVE,
+        attacks=("seeds",),
+        seed_config={"attack[2]": {"sleep_s": 60}},
+        stages={"attack_run": {"active_time_limit_hours": 0.01, "no_progress_hours": 0.001}},
+        expected_checks={"seeds": "INCONCLUSIVE"},
     ),
     SyntheticPaper(
         "ablation-fragile",
