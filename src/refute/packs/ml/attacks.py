@@ -40,6 +40,7 @@ from refute.core.paper import (
 )
 from refute.core.verdict import TestResult, TestStatus
 from refute.packs.ml import predicates as pr
+from refute.packs.ml.reproduction import decide_on_mean
 
 Predicate = Callable[[Decimal], pr.Outcome]
 
@@ -56,12 +57,6 @@ def _holds(outcome: pr.Outcome) -> bool | None:
     return None
 
 
-def _mean(values: Sequence[Decimal]) -> Decimal:
-    with localcontext() as ctx:
-        ctx.prec = pr.PRECISION
-        return sum(values, Decimal(0)) / Decimal(len(values))
-
-
 def _values(values: Sequence[pr.Number | None], expected: int, what: str) -> list[Decimal | None]:
     if len(values) != expected:
         raise ValueError(f"{what} expects {expected} run slots, got {len(values)}")
@@ -76,7 +71,7 @@ def seeds(values: Sequence[pr.Number | None], predicate: Predicate) -> TestResul
     runs = [None if x is None else _holds(predicate(x)) for x in xs]
     mean_holds = None
     if all(x is not None for x in xs):
-        mean = predicate(_mean(xs))
+        mean, _ = decide_on_mean(xs, predicate)  # exact mean (reproduction.py)
         mean_holds = _holds(mean)
         if mean_holds is False:
             # the 5 runs exist and the predicate fails conclusively on their mean: a
@@ -134,7 +129,7 @@ def ablation(
             len(ds),
             f"{len(valid)} valid runs of {len(ds)}: d_abl needs every run",
         )
-    outcome = pr.ablation_predicate(_mean(valid), mode, tol_abl, g_abl)
+    outcome, _ = decide_on_mean(valid, lambda d: pr.ablation_predicate(d, mode, tol_abl, g_abl))
     return _runs_result("ablation", outcome.status, len(valid), len(ds), outcome.reason)
 
 
