@@ -91,10 +91,17 @@ class Container:
 
 @dataclass(frozen=True)
 class Step:
-    """Containers that start together, inside one claim (the setup takes one)."""
+    """Containers that start together, inside one claim (the setup takes one).
+
+    With ``fallback`` (the build ladder: one setup step, WP3 integration requirement 2),
+    the containers run one at a time, in order, each with its own grant: the step stops at
+    the first container that completes; after a container that failed, ``fallback(record)``
+    decides whether the next one is tried (an error of the procedure itself: yes; any
+    other cause: no). Every container that ran is recorded and accounted."""
 
     name: str
     containers: Sequence[Container]
+    fallback: Callable[[ContainerRecord], bool] | None = None
 
     def __post_init__(self) -> None:
         if not self.name:
@@ -148,7 +155,8 @@ class PaperPlan:
         if not keys or len(set(keys)) != len(keys):
             raise ValueError("a paper needs claims with unique keys")
         for step in self.setup_steps:
-            if len(step.containers) != 1:
+            # a fallback step also runs one container at a time
+            if len(step.containers) != 1 and step.fallback is None:
                 raise ValueError(
                     f"setup step {step.name}: the setup runs one container at a time (D-S4)"
                 )
@@ -310,18 +318,15 @@ class PaperRunner:
                 records.append(self._no_result(c, g, _error(exc)))
         return tuple(records)  # in the plan's order
 
-    def _run_step(self, phase: str, claim: str | None, account: bg.Account, step: Step):
-        ids = [c.container_id for c in step.containers]
-        try:
-            grants = self.accountant.grant(account, ids)
-        except bg.BudgetRefusedError as exc:
-            d = exc.decision
-            if d.reason == bg.BUDGET_EXHAUSTED:
-                outcome, reason = Outcome.BUDGET_EXHAUSTED, f"{d.reason} ({d.pool})"
-            else:
-                outcome, reason = Outcome.REFUTE_ERROR, d.reason
-            return self._add(StepRecord(phase, claim, step.name, outcome, reason))
-        records = self._run_together(step.containers, grants)
+    @staticmethod
+    def _refused(decision: bg.Decision) -> tuple[Outcome, str]:
+        if decision.reason == bg.BUDGET_EXHAUSTED:
+            return Outcome.BUDGET_EXHAUSTED, f"{decision.reason} ({decision.pool})"
+        return Outcome.REFUTE_ERROR, decision.reason
+
+    def _finish(self, account: bg.Account, records: Sequence[ContainerRecord]) -> list[str]:
+        """Gives the accountant the final usage of each container that ran (W2.10) and
+        records the timing alerts; returns the rejected records."""
         problems = []
         for record in records:
             if record.result is None:
@@ -333,13 +338,57 @@ class PaperRunner:
                 self.accountant.finish(record.container_id, account, record.result.usage_usec)
             except (bg.RecordRejectedError, ValueError) as exc:
                 problems.append(f"{record.container_id}: record rejected: {exc}")
-        outcome, reason = _outcome(records)
+        return problems
+
+    def _close_step(self, phase, claim, step, outcome, reason, records, problems) -> StepRecord:
         if problems or not self.accountant.accounting_valid:
             outcome = Outcome.REFUTE_ERROR
             reason = "; ".join(
                 [r for r in [reason] if r] + problems + self.accountant.invalid_reasons
             )
-        return self._add(StepRecord(phase, claim, step.name, outcome, reason, records))
+        return self._add(StepRecord(phase, claim, step.name, outcome, reason, tuple(records)))
+
+    def _run_step(self, phase: str, claim: str | None, account: bg.Account, step: Step):
+        if step.fallback is not None:
+            return self._run_fallback(phase, claim, account, step)
+        ids = [c.container_id for c in step.containers]
+        try:
+            grants = self.accountant.grant(account, ids)
+        except bg.BudgetRefusedError as exc:
+            outcome, reason = self._refused(exc.decision)
+            return self._add(StepRecord(phase, claim, step.name, outcome, reason))
+        records = self._run_together(step.containers, grants)
+        problems = self._finish(account, records)
+        outcome, reason = _outcome(records)
+        return self._close_step(phase, claim, step, outcome, reason, records, problems)
+
+    def _run_fallback(self, phase: str, claim: str | None, account: bg.Account, step: Step):
+        """The containers one at a time (the build ladder): stop at the first that
+        completes; after a failure, ``step.fallback`` decides whether to try the next. The
+        step ends as its last container did; a refused grant ends it with that refusal."""
+        records: list[ContainerRecord] = []
+        problems: list[str] = []
+        outcome, reason = Outcome.NOT_EXECUTED, "no container ran"
+        for container in step.containers:
+            try:
+                grants = self.accountant.grant(account, [container.container_id])
+            except bg.BudgetRefusedError as exc:
+                outcome, reason = self._refused(exc.decision)
+                break
+            (record,) = self._run_together([container], grants)
+            records.append(record)
+            problems += self._finish(account, [record])
+            outcome, reason = _outcome([record])
+            if outcome is not Outcome.FAILED or problems:
+                break
+            try:
+                go_on = bool(step.fallback(record))
+            except Exception as exc:  # a Refute error: recorded, the step stops
+                outcome, reason = Outcome.REFUTE_ERROR, "the fallback failed: " + _error(exc)
+                break
+            if not go_on:
+                break
+        return self._close_step(phase, claim, step, outcome, reason, records, problems)
 
     def _add(self, record: StepRecord) -> StepRecord:
         self.run_record.steps.append(record)
