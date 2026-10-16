@@ -90,9 +90,16 @@ CATALOG: Mapping[str, Fixture] = MappingProxyType(
             ),
             Fixture(
                 "ml-paper",
-                {"train.py": "8f01adf478c66c5eb248426c93329478c943b87263d52491dab2ad76f40a4280"},
+                {
+                    "train.py": "e9da85d49bf5d0ccfcbd70e6f312d80c88e73ff698d7eea533ff5892e6235325",
+                    # the coverage hook, as an allowed patch would install it (1.5a, route
+                    # (b)): the bytes of src/refute/packs/ml/coverage_hook.py
+                    "coverage_hook.py": (
+                        "a6223fb44452c55e552badbb5e9951bf29037a87ee185844bb9107011efcc69a"
+                    ),
+                },
                 data=frozenset({"config.json", "data/dataset.npz"}),
-                outputs=("preds",),
+                outputs=("preds", "refute-hook"),
             ),
             Fixture(
                 "ladder-build",

@@ -36,14 +36,44 @@ accuracy drops by P points (up to half an example), while correct predictions re
 - ``exit_code``: exit with this code before doing anything (a documented command that
   fails in the built environment);
 - ``sleep_s``: sleep this long before training (for the operational guards).
+
+The coverage routes of ``metric_extracted`` (wp3-acceptance.md, 1.5a), all off by default:
+
+- ``print_count``: also print ``evaluated=<N>`` (route (a)), plus ``count_bias``;
+- ``stats``: write ``preds/stats-<name>.json`` with ``correct`` and ``total`` (route (d)),
+  plus ``stats_bias`` added to ``correct``;
+- ``hook``: compute the accuracy through ``accuracy_score`` observed by the coverage hook
+  (``coverage_hook.py``, next to this file, installed as an allowed patch would install
+  it; route (b)); ``hook_calls`` repeats the cited call, and ``hook_split: "validation"``
+  makes that call evaluate the validation split instead;
+- ``shuffle_preds``: save the predictions in a shuffled order (both fields alike), which
+  keeps the accuracy and changes the order of the labels.
 """
 
+import importlib.util
 import json
 import sys
 import time
 from pathlib import Path
 
 import numpy as np
+
+
+def accuracy_score(y_true, y_pred):
+    """The metric function a hook may observe for accuracy (a fraction)."""
+    return float((y_true == y_pred).mean())
+
+
+def _metric(config):
+    """``accuracy_score``, observed by the coverage hook when the configuration says so."""
+    if not config.get("hook"):
+        return accuracy_score
+    spec = importlib.util.spec_from_file_location(
+        "coverage_hook", Path(__file__).with_name("coverage_hook.py")
+    )
+    hook = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(hook)
+    return hook.install().wrap(accuracy_score, "sklearn.metrics.accuracy_score")
 
 
 def _arguments(argv):
@@ -124,14 +154,28 @@ def main(argv):
     if len(y_eval) == 0:
         print("acc=nan")  # a metric on zero examples
         return 0
-    accuracy = 100.0 * float((y_pred == y_eval).mean())
+    metric = _metric(config)
+    hooked_true, hooked_pred = y_eval, y_pred
+    if config.get("hook_split") == "validation":
+        hooked_true = y_val
+        hooked_pred = ((x_val[:, None, :] - centroids[None]) ** 2).sum(axis=2).argmin(axis=1)
+    for _ in range(int(config.get("hook_calls", 1))):
+        accuracy = 100.0 * metric(hooked_true, hooked_pred)  # the cited call site
     printed = accuracy + float(config.get("print_bias", 0))
     preds = np.zeros(len(y_eval), dtype=[("t", np.int64), ("p", np.int64)])
     preds["t"], preds["p"] = y_eval, y_pred
+    if config.get("shuffle_preds"):
+        preds = preds[np.random.RandomState(seed + 4).permutation(len(preds))]
     Path("preds").mkdir(exist_ok=True)
     name = "base" if args["seed"] is None else str(args["seed"])
     np.save(Path("preds") / f"{name}.npy", preds, allow_pickle=False)
+    if config.get("stats"):
+        correct = int((y_pred == y_eval).sum()) + int(config.get("stats_bias", 0))
+        stats = {"correct": correct, "total": int(len(y_eval))}
+        (Path("preds") / f"stats-{name}.json").write_text(json.dumps(stats), encoding="utf-8")
     print(f"acc={printed:.2f}")
+    if config.get("print_count"):
+        print(f"evaluated={len(y_eval) + int(config.get('count_bias', 0))}")
     return 0
 
 

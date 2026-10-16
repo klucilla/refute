@@ -19,6 +19,8 @@ from refute.packs.ml.coverage_hook import (
     Observer,
     _trusted_numpy,
     committed_events,
+    file_sink,
+    read_log,
     record_line,
 )
 
@@ -528,3 +530,34 @@ def test_the_gate_parser_refuses_every_malformed_or_partial_record_set(records, 
 def test_a_complete_record_set_is_accepted():
     events, failures = committed_events(with_final(GOOD))
     assert failures == [] and events == [EVENT]
+
+
+# ---- the log on disk (installation and reading) --------------------------------------------------
+
+
+def test_a_file_log_reads_back_to_the_records_the_gate_accepts(tmp_path):
+    path = str(tmp_path / "refute-hook" / "coverage.jsonl")
+    observer = Observer(file_sink(path))
+    observer.wrap(plain, NAME)([0, 1, 1], [0, 1, 0])
+    observer.finish()
+    records, failures = read_log((tmp_path / "refute-hook" / "coverage.jsonl").read_bytes())
+    assert failures == []
+    events, failures = committed_events(records)
+    assert failures == [] and events[0]["n_examples"] == 3
+
+
+@pytest.mark.parametrize(
+    ("data", "reason"),
+    [
+        (b"", "empty"),
+        (b'{"committed":1}', "cut short"),
+        (b'{"seq":1,"seq":2}\n', "line 1"),
+        (b'{"x":NaN}\n', "line 1"),
+        (b"\xff\n", "line 1"),
+        (b'{"committed":1}\nnot json\n', "line 2"),
+    ],
+    ids=["empty", "cut-short", "repeated-key", "nan", "not-utf8", "not-json"],
+)
+def test_a_malformed_log_is_a_failure(data, reason):
+    records, failures = read_log(data)
+    assert records == [] and any(reason in f for f in failures), failures
