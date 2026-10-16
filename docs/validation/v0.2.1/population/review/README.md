@@ -27,3 +27,15 @@ escaped backslashes) and anywhere, by a script written to a file; a positive con
 (a file with the three path forms) was found and replaced by the same script. Result:
 0 occurrences in 43 files, so nothing was replaced and no file of this folder differs from
 what was delivered.
+
+## Note added on 2026-10-16: records not kept
+
+Recorded at the maintainer's request; the facts are as the maintainer reported them.
+
+- On 2026-10-12 the local folder `.cache/review-g` (the reviewer's folder named above)
+  was deleted by a cleanup script of the maintainer, whose only condition was that the
+  record of commit `68d13fd` had been committed.
+- **Preserved:** the 45 files that commit `68d13fd` added to this folder: this README,
+  the reports of the three rounds and `verifiers/`.
+- **Not archived:** the raw records that existed only in `r2/` of that folder: `neg/`,
+  `out/`, `runs/` and `kill-1.err`.
