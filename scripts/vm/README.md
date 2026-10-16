@@ -157,7 +157,8 @@ order:
    has) and `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`, and
    makes visible only the two functions; in the folders these imports load from (the two
    module folders in System32 and the Hyper-V cmdlets assembly in the global assembly
-   cache) only the same accounts can write, and no item is a reparse point. The
+   cache), every file and folder and every ancestor gets the checks of the discovery set
+   below (owners, writers with generic rights mapped, no reparse point). The
    search covers these module roots (`Get-RefuteRegistrationModuleRoots` in
    `RefuteRegistration.Core.ps1`): the machine and process `PSModulePath`, Program Files,
    System32, `$PSHOME\Modules`, and the Default profile's
