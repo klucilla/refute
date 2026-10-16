@@ -810,6 +810,104 @@ def test_the_same_runs_never_count_one_evidence_for_both_methods(tmp_path):
     assert "the method and the reference count one evidence" in gate.message
 
 
+# ---- Codex review of the routes (#110, round 1) -------------------------------------------------
+
+
+def test_an_ambiguous_hook_is_inconclusive_even_with_another_route_that_works(tmp_path):
+    """W3.12c: none or several bound events is INCONCLUSIVE; a working printed count does
+    not hide it."""
+    claim, gate = _metric_gate(
+        tmp_path, ["printed_count", "hook"], {"print_count": True, "hook": True, "hook_calls": 2}
+    )
+    assert gate.status is TestStatus.INCONCLUSIVE and "2 events bound" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_a_declared_hook_that_left_no_log_is_inconclusive_even_with_another_route(tmp_path):
+    claim, gate = _metric_gate(tmp_path, ["printed_count", "hook"], {"print_count": True})
+    assert gate.status is TestStatus.INCONCLUSIVE and "no hook log" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_routes_that_disagree_on_the_value_are_a_conflict_not_a_failure(tmp_path):
+    """(d) follows a tampered printed value (8 more correct of 4000, +0.2 points printed),
+    (c)'s predictions keep the original: the counts agree but the values do not, so the
+    gate is INCONCLUSIVE (W3.12e) and the claim never reaches NOT_REPRODUCED."""
+    claim, gate = _metric_gate(
+        tmp_path,
+        ["saved_predictions", "sufficient_statistics"],
+        {"stats": True, "stats_bias": 8, "print_bias": 0.2},
+        recompute=True,
+    )
+    assert gate.status is TestStatus.INCONCLUSIVE and "disagree on the value" in gate.message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def _same_runs_comparison(reference_coverage: dict) -> dict:
+    target = value_target({}, recompute=False)
+    target.update(type="comparison", comparison_mode="direction", statement="A beats B.")
+    target["inventory"]["transcription"]["value"] = "89.2 vs 83.2"
+    metric = target["metric"]
+    del metric["reported"], metric["reported_uncertainty"]
+    target["comparison"] = {
+        "method": "A",
+        "reference": "B",
+        "orientation": "method_minus_reference",
+        "reported_method": 89.2,
+        "reported_reference": 83.2,
+        "uncertainty_method": {"kind": "none"},
+        "uncertainty_reference": {"kind": "none"},
+        "paired_uncertainty": {"kind": "none"},
+        "reference_run": {
+            "same": True,
+            "metric_extraction": {
+                "from": "log",
+                "regex": {"pattern": r"acc=([0-9.]+)\s", "group": 1},
+                "unit": "percent",
+            },
+        },
+    }
+    target["coverage_evidence"]["reference"] = reference_coverage
+    return target
+
+
+def test_a_json_path_and_a_regex_on_one_token_are_one_evidence(tmp_path):
+    """The method reads the total of the statistics file by its JSON path, the reference by
+    a regular expression on the same file: two selectors, one token (Codex review)."""
+    target = _same_runs_comparison(coverage(["printed_count"]))
+    by_json = {"from": "file", "file": "preds/stats-{seed}.json", "json_path": "$.total"}
+    by_regex = {
+        "from": "file",
+        "file": "preds/stats-{seed}.json",
+        "regex": {"pattern": r'"total": (\d+)', "group": 1},
+    }
+    target["coverage_evidence"]["method"]["routes"][0]["count"] = by_json
+    target["coverage_evidence"]["reference"]["routes"][0]["count"] = by_regex
+    outcome = Paper(tmp_path, resolved(DATA, target), {**CONFIG, "stats": True}).run()
+    _, base = checks(outcome, KEY)
+    gate = base["metric_extracted"]
+    assert gate.status is TestStatus.INCONCLUSIVE
+    assert "the method and the reference count one evidence" in gate.message
+
+
+def test_pieces_are_compared_by_what_they_read_not_by_their_selectors():
+    text = "split,n,id\ntest,4000,t1\nval,500,v1\n"
+    by_split = {"from": "log", "csv": {"column": "n", "row": {"column": "split", "equals": "test"}}}
+    by_id = {"from": "log", "csv": {"column": "n", "row": {"column": "id", "equals": "t1"}}}
+    other = {"from": "log", "csv": {"column": "n", "row": {"column": "id", "equals": "v1"}}}
+    regex = {"from": "log", "regex": {"pattern": r"test,(\d+)", "group": 1}}
+    a, b, c, d = (ig._piece(s, "log", text) for s in (by_split, by_id, other, regex))
+    assert a.overlaps(b) and a.overlaps(d) and not a.overlaps(c)
+    document = '{"a": {"n": 4000}, "b": [1, {"n": 4000}]}'
+    first = ig._piece({"json_path": "$.a.n"}, "file:x", document)
+    second = ig._piece({"json_path": "$.b[1].n"}, "file:x", document)
+    near = ig._piece({"regex": {"pattern": r'"a": \{"n": (\d+)', "group": 1}}, "file:x", document)
+    assert document[first.start : first.end] == "4000" and not first.overlaps(second)
+    assert first.overlaps(near) and not second.overlaps(near)
+    # a span that cannot be found is the whole source, so it overlaps everything there
+    assert ig._piece({"json_path": "$.missing"}, "file:x", document).overlaps(second)
+
+
 def test_a_missing_reference_value_leaves_its_seed_without_a_difference():
     from decimal import Decimal
 
