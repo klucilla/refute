@@ -87,10 +87,13 @@ def run_paper(tmp_path, paper: SyntheticPaper, claims: int = 1):
         else:
             step = cid.split("/")[1]
             claim = next(t for t in claim_file["targets"] if cid.startswith(t["key"] + "/"))
-            settings = {
-                "data": "data/dataset.npz",
-                **_config(paper, claim, paper.step_config.get(step, {})),
-            }
+            extra = dict(paper.step_config.get(step, {}))
+            for name, overrides in paper.seed_config.items():
+                m = re.fullmatch(r"(\w+)\[(\d+)\]", name)
+                seed = claim["seeds"][m.group(1)][int(m.group(2))]
+                if step == "seeds" and cid.endswith(f"/s{seed}"):
+                    extra.update(overrides)
+            settings = {"data": "data/dataset.npz", **_config(paper, claim, extra)}
             auth = fixture(
                 "ml-paper",
                 folder,
