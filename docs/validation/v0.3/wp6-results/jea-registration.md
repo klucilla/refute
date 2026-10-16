@@ -227,3 +227,51 @@ raw security descriptor is not published: its group field holds the account SID.
 **Status of W6.4 after H.5:**
 - **Validated:** the session opens from the operator account and shows exactly the ten commands.
 - **Not validated yet:** the status and the operations. They wait for #118 and for the maintainer's replacement of the installed role capability and module, with the same hash and ACL checks as in 7.1. No VM operation is attempted before.
+
+## 8. Reinstallation of #118 and the first complete status (2026-10-16)
+
+Run by the maintainer on 2026-10-16, with commands the maintainer checked. Account names
+are replaced by `<operator-account>` and `<virtual-account>`, as in section 7; the raw
+security descriptor is not published.
+
+### 8.1 Replacing the three files changed by #118
+
+Source: the merge of #118, `main` at `57812ca314b99289e701d07fa5c000979df3be27`.
+
+| File | Installed before (expected) | New (`57812ca`) |
+|---|---|---|
+| `RoleCapabilities/RefuteVmOperator.psrc` | `d6ec0bf7f5bfdae982dc4c7653a6a74cb63c8287dd85459e24ac40a25614a103` | `4f82875330f13e52193829c2251923207bab9e316131eda52e3f44d6633e132c` |
+| `RefuteVm.psm1` | `19a9c777c9baac18e933663f8a1739eb62ddc05869f62c089c7e675f86d714d2` | `9633d81d9d1e672316c89494704dbee837f368b16d1c26f6848b872b6085c8df` |
+| `RefuteVm.HyperV.ps1` | `316183ad1ce0aae0eb28c9e2dfa31fc83fa4819eaecc112540a08e332c4e6d0e` | `32de95348c7d9d2a4da3b3648c69b955bf8d11983ceef05c7b2ba592a97d69ac` |
+
+| Step | Result |
+|---|---|
+| 1. Source | the three files downloaded raw from GitHub at `57812ca`; their SHA-256 equal to the blobs in git (3 of 3) |
+| 2. Copy, as Administrator | the three installed files before: equal to the expected hashes above (3 of 3); copied; the three after: equal to the new hashes (3 of 3); the same ACL before and after on the three (compared without printing the security descriptor); 6 files in the module |
+
+The other three installed files (`RefuteVm.Config.psd1`, `RefuteVm.Core.ps1`,
+`RefuteVm.psd1`) did not change in #118.
+
+### 8.2 Session and status from the operator account (not an administrator)
+
+| Check | Result |
+|---|---|
+| `New-PSSession -ComputerName localhost -ConfigurationName RefuteVm -EnableNetworkAccess` | **opens** |
+| `Get-Command` in the session | exactly the ten commands of section 7.2 |
+| `Invoke-RefuteVm.ps1 -Status`, from a worktree at `57812ca` | **completes** |
+| Caller | connected user `<operator-account>`; run as `<virtual-account>`, a WinRM virtual account (`VA_7_...`) |
+| Config | loaded; `ConfigSha256` `fa27a08622297aa2615cf48d09d584fed6b4ab25b1862ce2f5d0d91c728208ff` |
+| Module | the six hashes equal to the blobs of `57812ca`: the three new ones above, `RefuteVm.Config.psd1` `2559b7348a98430f9f61ebd85f8dfcf456292fadc32e6c3ea608e8db872c6a1e`, `RefuteVm.Core.ps1` `5b717a3355ec0919717524fe9937a37d544a75ae413ca49bb7397a18b409bf4e`, `RefuteVm.psd1` `fcbb3416bca125295d2c979567eb7c8cc07a173e0397da4967ed82c17c22d188` |
+| Observed | no VM; the base disk absent; no imported media; on the host, `EnableEnhancedSessionMode` true and the default Hyper-V paths for virtual hard disks and virtual machines, under `C:\ProgramData\Microsoft\Windows` |
+
+**Correction to section 7.2.** The `ConfigSha256` recorded there,
+`74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b`, is the SHA-256 of
+the four bytes `null`: the configuration did not load in that attempt, so it is not the
+hash of a configuration.
+
+**Status of W6.4 after the reinstallation:**
+- **Validated:** the session opens from the operator account, shows exactly the ten
+  commands, and `-Status` runs read-only to the end with the module of `main` at
+  `57812ca`.
+- **Not validated yet:** every operation. The first, `SetHostPaths`, is simulated first
+  (`-Simulate`), and runs only with the maintainer's OK, one operation at a time.

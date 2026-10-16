@@ -14,9 +14,9 @@ passes. In phase 1 the VM has no network.
   - the WinRM listener removal and the endpoint registration were run once, from `main` at `627842d`, with a first read-only check from the operator account. On 2026-10-16 the maintainer then:
     - repaired the installed module by hand: copied it to `RefuteVm\`, with no version subfolder, and removed `RefuteVm\0.1.0` (sections 5 and 6 of the record);
     - replaced the installed `RefuteVmOperator.psrc` with the one of `main` at `46fe0c2` (H.5). The session then opened from the operator account, ran as a virtual account and showed exactly the ten visible commands (section 7).
-  - The reinstallation of #118 (the role capability and two module files) is pending until the maintainer does it.
+  - On 2026-10-16 the maintainer reinstalled the files changed by #118 (the role capability and two module files) from `main` at `57812ca`, with the hashes checked before and after, the same ACL and 6 files. The session then opened from the operator account with exactly the ten visible commands, and `Invoke-RefuteVm.ps1 -Status` completed: the configuration loaded, the six module hashes equal to `57812ca`, no VM, no base disk and no imported media (section 8 of the record).
   - The record is [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md).
-  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6).
+  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6). No VM operation has run yet.
 
 ## Who can do what
 
