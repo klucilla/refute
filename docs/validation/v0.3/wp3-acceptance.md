@@ -703,41 +703,54 @@ declared in the claim before the lock. With no route that closes the chain, the 
   - **The call:** the hook calls the observed function with exactly the arguments it
     received (the same objects, untouched before the call) and returns exactly the
     object the function returned, or lets exactly the exception it raised propagate.
-  - **What it runs after the call:** only operations whose code is known.
-    - It reads the labels only from an argument whose type is exactly a `list` or
-      `tuple` of `int` or `str`, or exactly a `numpy.ndarray`, testing the type with
-      `type()` alone.
-    - Any other argument (an iterator, a subclass, an unknown object) is not touched: no
-      `__iter__`, `__len__` or attribute of it runs, and a failure record is written
-      instead.
-    - It records the returned value only for an exact `int`, `float` or numpy number.
-      For any other type it records only the type name, and that object's `__repr__`
-      never runs.
+  - **What it runs after the call:** only Python's own code or numpy's compiled code.
+    - **Comparison:** types are compared with `is` only, so no `__eq__` of a class or
+      metaclass runs.
+    - **Labels:** read only from an exact `list` or `tuple` whose elements are exactly
+      `int` or `str`, or from numpy's own `ndarray`.
+    - **A trusted numpy type:** it is the compiled type found in the `__dict__` of the
+      numpy module the program already imported, which must be an exact module. Its
+      metaclass must be exactly `type`, and it must not be a heap type: a class that only
+      calls itself `numpy.ndarray` is never trusted. The hook never imports numpy itself.
+    - **Anything else is not touched** (an iterator, a subclass, an object with a custom
+      metaclass, a fake numpy class): none of its methods or attributes runs, and a
+      failure record with a fixed message is written. Unknown exceptions are never
+      formatted.
+    - **The returned value** is recorded only for an exact `int`, `float` or trusted
+      numpy number. For any other value the event says `unread`, and nothing of it runs.
   - **The function's name:** the event names the function by the public name declared
     when the hook is installed (for example `sklearn.metrics.accuracy_score`), which the
     gate compares with the claim's `function`.
 
   **Any failure of the hook itself makes the gate `INCONCLUSIVE`**, and never changes the
-  call. An event counts only when the commit record that follows it was written:
-  - an argument the hook does not read gives a failure record;
-  - a failure while it reads the call site gives a failure record;
-  - a sink that fails, even after it wrote the event, leaves the event without its
-    commit record;
-  - metadata of the function that cannot be copied never stops the installation.
+  call.
+  - **One record per call:** each call gets a unique sequence number, allocated under a
+    lock, and writes an event or a failure record, then a commit record.
+  - **The final record:** at the end, a final record states the number of calls and
+    whether any failure happened, including a sink that raised after it had written.
+  - **What the gate accepts:** the events only when every record is well formed, no
+    sequence number repeats, every event is committed and has no failure record, and
+    the final record is last, says no failure and counts the calls. Anything else, or
+    no final record, is `INCONCLUSIVE`.
+  - **Interrupts:** an interrupt (`KeyboardInterrupt`, `SystemExit`) raised during the
+    hook's own work is not swallowed. The run is interrupted, after the observed call
+    has returned.
 
-  An interrupt (`KeyboardInterrupt`, `SystemExit`) raised during the hook's own work is
-  not swallowed: the run is interrupted, after the observed call has returned.
-
-  `tests/test_ml_coverage_hook.py` shows each of these cases:
-  - the value returned with and without the hook, for a list, a tuple and a numpy array,
-    has the same type and text, and the returned object is the same one;
-  - the arguments are the same objects;
-  - a list subclass whose protocols count their calls is refused with zero calls, an
-    iterator is not consumed, and an unknown result's `__repr__` is not called;
-  - a sink that writes and then fails leaves an uncommitted event, and a failing
-    `sys._getframe` gives a failure record, both with the call unchanged;
-  - metadata that cannot be copied is tolerated, and the function's own exception and
-    an interrupt both propagate.
+  `tests/test_ml_coverage_hook.py` shows, for these cases:
+  - **identity:** the returned object is the very object the function returned, and the
+    function received the very argument objects, unchanged (shown with list
+    arguments);
+  - **value:** the value returned with and without the hook has the same type and text,
+    for a list, a tuple and a numpy array;
+  - **untouched objects:** an object with a counting metaclass, a fake `numpy.ndarray`,
+    a list subclass, an untrusted element, an iterator, a fake numpy scalar result and
+    an unknown result run zero lines of their own code;
+  - **recorded failures:** a sink that fails after the commit record, a failing
+    `sys._getframe`, an uncommitted event, a commit with no event, a repeated sequence
+    number, an incomplete event, no final record, a record after it, and a wrong count
+    all reach the gate as failures;
+  - **propagation:** metadata that cannot be copied is tolerated, and the function's own
+    exception and an interrupt propagate.
 - **W3.12d The link and the split.** The link is never "the last call", nearness in time,
   or an equal value. An equal value is a consistency check only: a different value is a
   conflict.
