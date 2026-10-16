@@ -37,10 +37,12 @@ folder other than the three of the registration exists there, when C:\, C:\Progr
 C:\ProgramData\RefuteVm lets another account delete, change permissions or take ownership,
 when the Log folder does not hold exactly the ACL of the registration, or when Hyper-V
 Administrators has any member (an open session of the endpoint): the maintainer decides
-those cases. The members of that group can delete C:\Hyper-V (Modify), so no session may
-be open during the apply; the short window between the last read and the change is a premise
-the maintainer accepts, not a check. It never deletes anything, and it does not touch the
-Hyper-V host settings.
+those cases. The members of that group can delete C:\Hyper-V (Modify), so no session of
+the endpoint and no other writer may run during the whole apply: a premise the maintainer
+accepts. The empty-group check supports it but does not prove it (whether an open session
+always shows in the group is checked on the CI runner only), and it does not close the
+short window between the last read and the change. It never deletes anything, and it does
+not touch the Hyper-V host settings.
 #>
 [CmdletBinding()]
 param(
@@ -95,10 +97,12 @@ function Get-SidName([string]$Sid) {
     }
 }
 
-function Get-TreeState {
+function Get-TreeState([string[]]$Members) {
     # The state the change depends on, as lines: for C:\Hyper-V, every item below it, and
     # the evidence folders: the path, creation time, attributes, owner, protection and every
-    # access entry (explicit and inherited, by SID). Unreadable items give a line saying so.
+    # access entry (explicit and inherited, by SID); then the members of Hyper-V
+    # Administrators, the one sample the caller read and checked for this state.
+    # Unreadable items give a line saying so.
     $paths = New-Object System.Collections.Generic.List[string]
     $paths.Add($TreeRoot)
     try {
@@ -116,7 +120,7 @@ function Get-TreeState {
             foreach ($rule in @(ConvertTo-RefuteAclRules $acl)) { $state.Add("    $rule") }
         } catch { $state.Add("$p | cannot be read: $($_.Exception.Message)") }
     }
-    $state.Add('Hyper-V Administrators members: ' + $(if (@(Get-HyperVAdminMembers).Count) { @(Get-HyperVAdminMembers) -join ', ' } else { 'none' }))
+    $state.Add('Hyper-V Administrators members: ' + $(if (@($Members).Count) { @($Members) -join ', ' } else { 'none' }))
     return $state
 }
 
@@ -190,17 +194,19 @@ try {
     foreach ($rule in $logWanted) { if ($logActual -notcontains $rule) { $problems.Add("$EvidenceFolder misses the entry: $rule") } }
 } catch { $problems.Add("$EvidenceFolder cannot be read: $($_.Exception.Message)") }
 # Hyper-V Administrators: Modify includes Delete, so a member could rename C:\Hyper-V and put
-# something else in its place between the last read and the change. The maintainer's account is
-# not a member, and a JEA session adds its virtual account only while it is open: the group
-# must have no member, here and when the state is read again (no VM operation may run
-# during the apply; the short window after the last read is a premise the maintainer accepts)
+# something else in its place between the last read and the change. The maintainer's account
+# is not a member. One sample of the group is read for each state, and the state is accepted
+# only when that sample is empty: here and when the state is read again before the change.
+# Whether an open JEA session always shows in this list is checked on the CI runner only;
+# that no session and no other writer runs during the whole apply is a premise the
+# maintainer accepts, apart from this check.
 $hyperVMembers = @(Get-HyperVAdminMembers)
 if ($hyperVMembers.Count) { $problems.Add("Hyper-V Administrators has members (close every session of the endpoint first): $($hyperVMembers -join ', ')") }
 
 # ---- the state and the change list (preview) --------------------------------------------
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("State now (C:\Hyper-V is $state):")
-$treeState = @(Get-TreeState)
+$treeState = @(Get-TreeState -Members $hyperVMembers)
 foreach ($line in $treeState) { $lines.Add("  $line") }
 $lines.Add("1. Create the evidence file $EvidenceFolder\vmtree-acl-evidence-<UTC time>.json, a new file only SYSTEM and Administrators can change (Users read)")
 $lines.Add('2. Read the state again; stop if it differs from this preview')
@@ -259,9 +265,11 @@ try {
         ($fileRules -join '|') -cne ($fileWanted -join '|')) { throw "the evidence file $evidencePath does not hold the ACL it was created with" }
     $done.Add("evidence file created: $evidencePath")
     # 2. the state again, just before the change
+    $membersAgain = @(Get-HyperVAdminMembers)
+    if ($membersAgain.Count) { throw "Hyper-V Administrators has members now: $($membersAgain -join ', '); nothing on the tree was changed" }
     $again = New-Object System.Collections.Generic.List[string]
     $again.Add("State now (C:\Hyper-V is $state):")
-    foreach ($line in @(Get-TreeState)) { $again.Add("  $line") }
+    foreach ($line in @(Get-TreeState -Members $membersAgain)) { $again.Add("  $line") }
     foreach ($line in @($lines | Select-Object -Skip ($treeState.Count + 1))) { $again.Add($line) }
     if ((Get-StateHash $again) -cne $previewHash) { throw 'the state changed after the preview; nothing on the tree was changed' }
     # 3. the new ACL; the folders below inherit it

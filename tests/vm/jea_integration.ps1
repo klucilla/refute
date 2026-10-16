@@ -282,11 +282,12 @@ try {
     # may change the host paths; on 2026-10-16 the real call failed on the maintainer's host
     # with access denied under version 1). Only where the runner has the vmms service, and
     # only when C:\Hyper-V does not exist before the test. The tree is created as the
-    # registration creates it; version 1 is tried first, then version 2, each in a new
-    # session (a new virtual account, as on the host): the simulation, then the real call
-    # with its PlanSha256. Afterwards the host paths stay as the last call left them: the
-    # runner is discarded after the job, and nothing is deleted.
-    $out.RefuteVm.HostPaths = [ordered]@{ Ran = $false; Reason = ''; Original = $null; Attempts = [ordered]@{} }
+    # registration creates it; version 1 is tried first, then version 1 with ChangePermissions
+    # only, then version 2, each from the original host paths and in a new session (a new
+    # virtual account, as on the host): the simulation, then the real call with its
+    # PlanSha256. Afterwards the host paths stay as the last call left them: the runner is
+    # discarded after the job, and nothing is deleted.
+    $out.RefuteVm.HostPaths = [ordered]@{ Ran = $false; Reason = ''; Original = $null; MembersBefore = @(); Attempts = [ordered]@{} }
     if (-not $out.RefuteVm.Vmms) { $out.RefuteVm.HostPaths.Reason = 'the runner has no vmms service' }
     elseif (Test-Path -LiteralPath 'C:\Hyper-V') { $out.RefuteVm.HostPaths.Reason = 'C:\Hyper-V exists before the test' }
     else {
@@ -298,17 +299,51 @@ try {
             # the Hyper-V module of this process can keep the VMHost object it read first
             # (run 38978769925: Get-VMHost here still showed the old paths after the session
             # had set and observed the new ones)
-            $settings = Get-CimInstance -Namespace 'root\virtualization\v2' -ClassName 'Msvm_VirtualSystemManagementServiceSettingData' -ErrorAction Stop
-            return [ordered]@{ VirtualMachinePath = [string]$settings.DefaultExternalDataRoot; VirtualHardDiskPath = [string]$settings.DefaultVirtualHardDiskPath }
+            $settings = @(Get-CimInstance -Namespace 'root\virtualization\v2' -ClassName 'Msvm_VirtualSystemManagementServiceSettingData' -ErrorAction Stop)
+            if ($settings.Count -ne 1) { throw "expected one instance of the service settings, found $($settings.Count)" }
+            $read = [ordered]@{ Utc = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ'); VirtualMachinePath = [string]$settings[0].DefaultExternalDataRoot; VirtualHardDiskPath = [string]$settings[0].DefaultVirtualHardDiskPath }
+            if (-not $read.VirtualMachinePath -or -not $read.VirtualHardDiskPath) { throw 'the service settings hold an empty default path' }
+            return $read
         }
+        function Get-HostPathsNewProcess {
+            # Get-VMHost in a new powershell.exe, which has no object read before
+            $text = & powershell.exe -NoProfile -NonInteractive -Command '$h = Hyper-V\Get-VMHost; $h.VirtualMachinePath + [char]124 + $h.VirtualHardDiskPath'
+            $parts = ([string]($text | Select-Object -Last 1)).Split([char]124)
+            return [ordered]@{ Utc = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ'); VirtualMachinePath = $parts[0]; VirtualHardDiskPath = $(if ($parts.Count -gt 1) { $parts[1] } else { '' }) }
+        }
+        function Get-HyperVAdminSids {
+            return @(Get-LocalGroupMember -SID 'S-1-5-32-578' -ErrorAction Stop | ForEach-Object { [string]$_.SID.Value } | Sort-Object)
+        }
+        $out.RefuteVm.HostPaths.MembersBefore = @(Get-HyperVAdminSids)
         $out.RefuteVm.HostPaths.Original = Get-HostPathsCim
         $vmTree = 'C:\Hyper-V'
         [void][System.IO.Directory]::CreateDirectory($vmTree)
         Set-Acl -LiteralPath $vmTree -AclObject (New-RefuteFolderAcl @(Get-RefuteVmTreeAclSpec -Version 1))
         foreach ($folder in 'C:\Hyper-V\Virtual Hard Disks', 'C:\Hyper-V\refute-vm', 'C:\Hyper-V\refute-vm\media') { [void][System.IO.Directory]::CreateDirectory($folder) }
-        foreach ($version in 1, 2) {
-            $attempt = [ordered]@{ Version = $version; RootBefore = @(); TreeProblems = @(); Simulate = $null; Real = $null; Error = ''; HostAfter = $null; HostAfterModule = $null; RootAfter = @() }
-            $spec = @(Get-RefuteVmTreeAclSpec -Version $version)
+        # three trees: version 1; version 1 with ChangePermissions for Hyper-V Administrators and
+        # no Virtual Machines entries (the maintainer's preference, if it is enough); version 2
+        $changePermissionsOnly = @(Get-RefuteVmTreeAclSpec -Version 1 | ForEach-Object {
+                $entry = [ordered]@{}; foreach ($k in $_.Keys) { $entry[$k] = $_[$k] }
+                if ($entry.Sid -eq 'S-1-5-32-578') { $entry.Rights = 'Modify, ChangePermissions' }
+                $entry
+            })
+        $trees = [ordered]@{
+            Version1              = @(Get-RefuteVmTreeAclSpec -Version 1)
+            ChangePermissionsOnly = $changePermissionsOnly
+            Version2              = @(Get-RefuteVmTreeAclSpec -Version 2)
+        }
+        foreach ($name in @($trees.Keys)) {
+            $attempt = [ordered]@{ Tree = $name; Restored = $null; RootBefore = @(); TreeProblems = @(); Simulate = $null; Real = $null; Error = ''; MembersDuringSession = @(); HostAfter = $null; HostAfterNewProcess = $null; HostAfterModule = $null; RootAfter = @() }
+            $spec = $trees[$name]
+            # each attempt starts from the original host paths: the harness, as Administrator,
+            # puts them back if an earlier attempt changed them, and checks it through CIM
+            $now = Get-HostPathsCim
+            if ($now.VirtualMachinePath -ne $out.RefuteVm.HostPaths.Original.VirtualMachinePath -or $now.VirtualHardDiskPath -ne $out.RefuteVm.HostPaths.Original.VirtualHardDiskPath) {
+                Set-VMHost -VirtualMachinePath $out.RefuteVm.HostPaths.Original.VirtualMachinePath -VirtualHardDiskPath $out.RefuteVm.HostPaths.Original.VirtualHardDiskPath -ErrorAction Stop
+                $now = Get-HostPathsCim
+                $attempt.Restored = $now
+                if ($now.VirtualMachinePath -ne $out.RefuteVm.HostPaths.Original.VirtualMachinePath) { throw 'the host paths could not be put back' }
+            }
             Set-Acl -LiteralPath $vmTree -AclObject (New-RefuteFolderAcl $spec)
             $attempt.RootBefore = @(ConvertTo-RefuteAclRules (Get-Acl -LiteralPath $vmTree))
             # the whole tree before the call (Codex review of #126, round 2): the root holds
@@ -321,6 +356,9 @@ try {
             try {
                 $hostSession = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
                 try {
+                    # a positive control for the empty-group check of Set-RefuteVmTreeAcl.ps1:
+                    # the members of Hyper-V Administrators while this session is open
+                    try { $attempt.MembersDuringSession = @(Get-HyperVAdminSids) } catch { $attempt.MembersDuringSession = @("(cannot be read: $($_.Exception.Message))") }
                     $attempt.Simulate = Invoke-Literal $hostSession 'Invoke-RefuteVmOperation -Operation SetHostPaths -Simulate'
                     if ($attempt.Simulate.Ok) {
                         $planSha = [string](ConvertFrom-Json $attempt.Simulate.Output).PlanSha256
@@ -331,12 +369,15 @@ try {
             } catch {
                 $attempt.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
             }
+            # the host paths after the call, three ways: CIM (decides), Get-VMHost in a new
+            # process, and Get-VMHost in this process, which read the host before
             $attempt.HostAfter = Get-HostPathsCim
+            $attempt.HostAfterNewProcess = Get-HostPathsNewProcess
             $vmHost = Get-VMHost
-            $attempt.HostAfterModule = [ordered]@{ VirtualMachinePath = [string]$vmHost.VirtualMachinePath; VirtualHardDiskPath = [string]$vmHost.VirtualHardDiskPath }
+            $attempt.HostAfterModule = [ordered]@{ Utc = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ'); VirtualMachinePath = [string]$vmHost.VirtualMachinePath; VirtualHardDiskPath = [string]$vmHost.VirtualHardDiskPath }
             # what the Hyper-V management service left on the tree (entries by SID)
             $attempt.RootAfter = @(ConvertTo-RefuteAclRules (Get-Acl -LiteralPath $vmTree))
-            $out.RefuteVm.HostPaths.Attempts["Version$version"] = $attempt
+            $out.RefuteVm.HostPaths.Attempts[$name] = $attempt
         }
     }
 } finally {

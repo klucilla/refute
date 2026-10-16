@@ -300,6 +300,13 @@ def _norm(path: str) -> str:
     return path.rstrip("\\").lower()
 
 
+def _as_list(value) -> list:
+    # ConvertTo-Json writes a one-item array as the item itself, and an empty one as []
+    if value is None:
+        return []
+    return [value] if isinstance(value, str) else list(value)
+
+
 def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
     result, record_property
 ):
@@ -311,27 +318,36 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
     as they were; under version 2 it must succeed and set them. Only where the runner has
     the vmms service and no C:\\Hyper-V of its own. The runner is Windows Server, not the
     maintainer's Windows 11: what it shows is evidence for the diagnosis, not a check of
-    the host. It does not show which of the two additions of version 2 is needed, nor
-    the other operations, nor version 2 on a tree no earlier attempt touched (both
-    attempts share the tree; the whole tree is checked before each)."""
+    the host. Between them, version 1 with ChangePermissions only (no Virtual Machines
+    entries) is tried and recorded, not asserted: it tells whether the maintainer's
+    preferred change is enough for this operation on the runner. Each attempt starts from
+    the original host paths, and the whole tree is checked before each. It does not show
+    the other operations."""
     host_paths = result["RefuteVm"]["HostPaths"]
     print(json.dumps(host_paths, indent=1))
     if not host_paths["Ran"]:
         pytest.skip(host_paths["Reason"])
     original = host_paths["Original"]
-    v1 = host_paths["Attempts"]["Version1"]
-    v2 = host_paths["Attempts"]["Version2"]
-    for version, attempt in (("1", v1), ("2", v2)):
+    attempts = host_paths["Attempts"]
+    v1, v2 = attempts["Version1"], attempts["Version2"]
+    for name, attempt in attempts.items():
         record_property(
-            f"version{version}_real",
+            f"{name}_real",
             _summary(attempt["Real"]) if attempt["Real"] else attempt["Error"],
         )
-        record_property(f"version{version}_root_after", json.dumps(attempt["RootAfter"]))
-    for attempt in (v1, v2):
+        record_property(f"{name}_root_after", json.dumps(attempt["RootAfter"]))
+        for way in ("HostAfter", "HostAfterNewProcess", "HostAfterModule", "Restored"):
+            record_property(f"{name}_{way}", json.dumps(attempt[way]))
+    before = set(_as_list(host_paths["MembersBefore"]))
+    for attempt in attempts.values():
         # the whole tree held exactly this version before the call
         assert attempt["TreeProblems"] == [], attempt
         assert attempt["Error"] == "" and attempt["Simulate"]["Ok"], attempt
         assert attempt["Real"] is not None, attempt
+        # the positive control of the empty-group check of Set-RefuteVmTreeAcl.ps1: while
+        # a session is open, Hyper-V Administrators lists one more member, its virtual account
+        during = set(_as_list(attempt["MembersDuringSession"]))
+        assert before < during and len(during - before) == 1, (before, during)
     # version 1: the module's own failure of SetHostPaths, with the access denied of
     # 2026-10-16 (0x80070005), and nothing changed
     denied = v1["Real"]["Error"]
@@ -341,7 +357,10 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
     assert _norm(v1["HostAfter"]["VirtualHardDiskPath"]) == _norm(
         original["VirtualHardDiskPath"]
     ), v1
-    # version 2: done, and the host paths are the tree
+    # version 2: done, from the original paths, and the host paths are the tree
+    assert _norm(
+        v2["Restored"]["VirtualMachinePath"] if v2["Restored"] else original["VirtualMachinePath"]
+    ) == _norm(original["VirtualMachinePath"]), v2
     assert v2["Real"]["Ok"], v2
     assert json.loads(v2["Real"]["Output"])["Outcome"] == "done", v2
     assert _norm(v2["HostAfter"]["VirtualMachinePath"]) == "c:\\hyper-v", v2
