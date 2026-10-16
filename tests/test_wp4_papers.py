@@ -40,6 +40,9 @@ def _target(paper: SyntheticPaper, key_number: int = 1) -> dict:
         target["metric"]["reported_n_seeds"] = None
         target["seeds"] = {"base": [0], "base_cap": 1, "base_source": "documented"}
         target["metric_recompute"]["predictions"]["file"] = "preds/base.npy"
+    for entry in target["attacks"]:
+        if entry["name"] in paper.not_applicable:
+            entry["reason"] = paper.not_applicable[entry["name"]]
     return target
 
 
@@ -64,10 +67,15 @@ def _config(paper: SyntheticPaper, claim: dict, extra: dict) -> dict:
     return out
 
 
-def run_paper(tmp_path, paper: SyntheticPaper, claims: int = 1):
+def build(paper: SyntheticPaper, claims: int = 1) -> tuple[bytes, dict]:
+    """The paper's dataset and its resolved claim file (both deterministic)."""
     data = dataset_bytes(seed=7, leak=paper.leak, **N)
     targets = [_target(paper, k) for k in range(1, claims + 1)]
-    claim_file = _claim_file(paper, data, targets)
+    return data, _claim_file(paper, data, targets)
+
+
+def run_paper(tmp_path, paper: SyntheticPaper, claims: int = 1):
+    data, claim_file = build(paper, claims)
     (tmp_path / "fetched").mkdir(parents=True)
     fetched = tmp_path / "fetched" / "synthetic.npz"
     fetched.write_bytes(data)
@@ -152,6 +160,39 @@ def test_each_synthetic_paper_gives_its_expected_verdict(tmp_path, paper):
     assert outcome.profile.headline == f"1 of 1 drawn claims: {paper.expected}"
     if outcome.run is not None:
         assert outcome.run.accounting_valid or paper.expected == "INCONCLUSIVE"
+    # the status flags (W4.4) and the attacks recorded as incomplete
+    flags = (claim.verdict.basic_reproduction_obtained, claim.verdict.incomplete_coverage)
+    assert flags == paper.flags, claim.verdict
+    assert tuple(claim.verdict.attacks_incomplete) == paper.incomplete, claim.verdict
+    # the counts of each attack's own result: what the injected effect must give
+    attacks = {a.name: a for a in claim.attacks}
+    for name, (valid, failures) in paper.expected_counts.items():
+        metrics = attacks[name].result.metrics
+        assert (metrics["valid_runs"], metrics["valid_failures"]) == (valid, failures), metrics
+    # the runs a guard must stop, and only those
+    resolved = build(paper)[1]["targets"][0]
+    steps = outcome.run.steps if outcome.run is not None else ()
+    records = {c.container_id: c for s in steps for c in s.containers}
+    stopped = {
+        cid
+        for cid, record in records.items()
+        if record.result is not None
+        and record.result.stopped in (sb.STOP_ACTIVE_TIME, sb.STOP_NO_PROGRESS)
+    }
+    if "seeds" in paper.attacks:
+        expected = set()
+        for name in paper.interrupted:
+            m = re.fullmatch(r"(\w+)\[(\d+)\]", name)
+            seed = resolved["seeds"][m.group(1)][int(m.group(2))]
+            expected.add(ig.container_id(claim.key, "seeds", "method", seed))
+        assert {c for c in stopped if "/seeds/" in c} == expected
+    # an attack that does not apply is recorded so in the claim, with its reason, and
+    # never runs
+    entries = {e["name"]: e for e in resolved["attacks"]}
+    for name, reason in paper.not_applicable.items():
+        assert entries[name]["applies"] is False and entries[name]["reason"] == reason
+        assert name not in attacks
+        assert not any(f"/{name}/" in cid for cid in records)
 
 
 def test_the_no_seed_repository_runs_once_and_never_the_seeds_attack(tmp_path):
@@ -159,6 +200,7 @@ def test_the_no_seed_repository_runs_once_and_never_the_seeds_attack(tmp_path):
     outcome = run_paper(tmp_path, paper)
     ids = [c.container_id for s in outcome.run.steps for c in s.containers]
     base = [i for i in ids if "/base/" in i]
+    # one base run with no seed: the claim has no seed argument, so none is passed
     assert base == [f"{outcome.claims[0].key}/base/method/s-"]
     assert not any("/seeds/" in i for i in ids)
 
@@ -182,15 +224,17 @@ def test_every_base_reproduction_ends_before_the_first_attack(tmp_path):
     assert [c.verdict.verdict.value for c in outcome.claims] == PHASES["expected"]
 
 
-def test_a_paper_run_twice_gives_the_same_profile(tmp_path):
-    """W4.5: the experimental reproduction of a controlled case gives the same profile."""
-    paper = next(p for p in PAPERS if p.name == "seed-fragile")
+@pytest.mark.parametrize("paper", PAPERS, ids=[p.name for p in PAPERS])
+def test_each_paper_run_twice_gives_the_same_profile(tmp_path, paper):
+    """W4.5: the experimental reproduction of each controlled case gives the same claim
+    profile (verdicts, headline) and the same status of every check."""
     first = run_paper(tmp_path / "first", paper)
     second = run_paper(tmp_path / "second", paper)
     assert [(c.key, c.verdict.verdict) for c in first.claims] == [
         (c.key, c.verdict.verdict) for c in second.claims
     ]
     assert first.profile.headline == second.profile.headline
+    assert [_statuses(c) for c in first.claims] == [_statuses(c) for c in second.claims]
 
 
 def test_the_definitions_cover_the_verdict_paths():
