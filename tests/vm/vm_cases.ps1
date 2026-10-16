@@ -452,12 +452,25 @@ Add-Case 'session entry: a relative entry resolves against the current folder' (
 Add-Case 'session entry: dot and dot-dot segments are resolved' ((Resolve-RefuteSessionEntry -Entry '.\a\..\Mods\' -CurrentFolder 'C:\X') -ceq 'C:\X\Mods')
 Add-Case 'session entry: dot-dot stops at the volume root' ((Resolve-RefuteSessionEntry -Entry '..\..\..\M' -CurrentFolder 'C:\X') -ceq 'C:\M')
 Add-Case 'session entry: a fully qualified entry is kept as a root' ((Resolve-RefuteSessionEntry -Entry 'D:\Mods\' -CurrentFolder $sys32) -ceq 'D:\Mods')
-# the same results as .NET (Codex review of #114): a UNC share stays the root, '/' is a
-# separator, '.' and '..' are resolved in absolute entries too
-foreach ($pair in @(@('..\..\Mods', '\\srv\share\X'), @('C:/Mods', $sys32), @('C:\A\..\Mods', $sys32), @('a/./b/../c', 'C:\X'), @('WindowsPowerShell\Modules', $sys32))) {
-    $dotnet = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($pair[1], $pair[0].Replace('/', '\'))).TrimEnd('\')
+# Windows rules on every OS (Codex review of #114): a UNC share stays the root, '/' is a
+# separator, '.' and '..' are resolved in absolute entries too. The expected values are
+# written out; on Windows they are also compared with .NET's own resolution.
+$onWindows = [System.Environment]::OSVersion.Platform -eq 'Win32NT'
+foreach ($pair in @(@('..\..\Mods', '\\srv\share\X', '\\srv\share\Mods'), @('C:/Mods', $sys32, 'C:\Mods'), @('C:\A\..\Mods', $sys32, 'C:\Mods'),
+        @('a/./b/../c', 'C:\X', 'C:\X\a\c'), @('WindowsPowerShell\Modules', $sys32, 'C:\Windows\system32\WindowsPowerShell\Modules'))) {
     $ours = Resolve-RefuteSessionEntry -Entry $pair[0] -CurrentFolder $pair[1]
-    Add-Case "session entry: '$($pair[0])' against '$($pair[1])' as .NET resolves it" ($ours -ceq $dotnet) "$ours / $dotnet"
+    Add-Case "session entry: '$($pair[0])' against '$($pair[1])' gives '$($pair[2])'" ($ours -ceq $pair[2]) $ours
+    if ($onWindows) {
+        $dotnet = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($pair[1], $pair[0].Replace('/', '\'))).TrimEnd('\')
+        Add-Case "session entry: '$($pair[0])' against '$($pair[1])' as .NET resolves it on Windows" ($ours -ceq $dotnet) "$ours / $dotnet"
+    }
+}
+Add-Case 'full path: a volume root keeps its backslash' ((ConvertTo-RefuteWindowsFullPath 'C:\a\..') -ceq 'C:\')
+Add-Case 'full path: a UNC share root' ((ConvertTo-RefuteWindowsFullPath '\\srv\share\..\x\') -ceq '\\srv\share\x')
+foreach ($bad in '\\?\C:\Mods', '\\.\C:\Mods', 'C:\Mods.\x', 'C:\Mods \x', 'Mods', 'C:Mods') {
+    $refused = $false
+    try { [void](ConvertTo-RefuteWindowsFullPath $bad) } catch { $refused = $true }
+    Add-Case "full path refused: '$bad'" $refused
 }
 Add-Case 'session entry: a UNC share is kept under dot-dot' ((Resolve-RefuteSessionEntry -Entry '..\..\Mods' -CurrentFolder '\\srv\share\X') -ceq '\\srv\share\Mods')
 foreach ($bad in @(@('C:Modules', $sys32), @('\Modules', $sys32), @('/Modules', $sys32), @('Modules', 'system32'))) {

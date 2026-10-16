@@ -287,6 +287,7 @@ PREVIEW_COMMANDS = {
     "find-refutehypervmanifest",
     "find-rolecapabilitycopies",
     "convertto-refutemoduleroot",
+    "convertto-refutewindowsfullpath",
     "foreach-object",
     "get-acl",
     "get-childitem",
@@ -329,7 +330,6 @@ PREVIEW_METHODS = {
     "add",
     "addaccessrule",
     "close",
-    "combine",
     "computehash",
     "containskey",
     "create",
@@ -339,7 +339,6 @@ PREVIEW_METHODS = {
     "getbytes",
     "getcurrent",
     "getenvironmentvariable",
-    "getfullpath",
     "getowner",
     "isinrole",
     "lastindexof",
@@ -362,6 +361,7 @@ PREVIEW_METHODS = {
 # the service state and the backup folder ACL, in-memory work and output.
 LISTENER_PREVIEW_COMMANDS = {
     "convertto-refutemoduleroot",
+    "convertto-refutewindowsfullpath",
     "foreach-object",
     "get-acl",
     "get-childitem",
@@ -394,7 +394,6 @@ LISTENER_PREVIEW_COMMANDS = {
 LISTENER_PREVIEW_METHODS = {
     "add",
     "close",
-    "combine",
     "computehash",
     "containskey",
     "create",
@@ -404,7 +403,6 @@ LISTENER_PREVIEW_METHODS = {
     "getbytes",
     "getcurrent",
     "getenvironmentvariable",
-    "getfullpath",
     "getowner",
     "getsubkeynames",
     "getvalue",

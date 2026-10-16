@@ -84,21 +84,59 @@ function Find-RefuteVersionedRoleCapability {
     return $found  # callers wrap the call in @(...)
 }
 
+function ConvertTo-RefuteWindowsFullPath {
+    # A fully qualified Windows path, normalised with Windows rules written out here, so
+    # that the result is the same on every OS (on Linux, .NET's GetFullPath does not know
+    # 'C:\' and would prefix the current folder). '/' is read as '\'; the root is a drive
+    # ('C:') or a UNC share ('\\server\share'); empty and '.' segments are dropped; '..'
+    # removes the previous segment and never goes above the root. A device path
+    # ('\\?\', '\\.\') and a segment ending in '.' or ' ' (which Windows would trim) are
+    # refused instead of imitated. Pure: no access to the disk.
+    param([string]$Path)
+    $p = $Path.Replace('/', '\')
+    if ($p -match '^([A-Za-z]:)\\(.*)$') {
+        $root = $Matches[1]
+        $rest = $Matches[2]
+    } elseif ($p -match '^(\\\\([^\\]+)\\([^\\]+))(.*)$') {
+        if ($Matches[2] -eq '?' -or $Matches[2] -eq '.') {
+            throw "the path '$Path' is a device path"
+        }
+        $root = $Matches[1]
+        $rest = $Matches[4]
+    } else {
+        throw "the path '$Path' is not a fully qualified path"
+    }
+    $parts = @()
+    foreach ($segment in $rest.Split('\')) {
+        if ($segment -eq '' -or $segment -eq '.') { continue }
+        if ($segment -eq '..') {
+            if ($parts.Count -le 1) { $parts = @() } else { $parts = @($parts[0..($parts.Count - 2)]) }
+            continue
+        }
+        if ($segment.EndsWith('.') -or $segment.EndsWith(' ')) {
+            throw "the path '$Path' has a segment ending in '.' or ' '"
+        }
+        $parts += $segment
+    }
+    if ($parts.Count -eq 0) { return $root + '\' }
+    return $root + '\' + ($parts -join '\')
+}
+
 function ConvertTo-RefuteModuleRoot {
     # One module path entry as a root, with its meaning kept: the final '\' characters are
     # removed, and a volume root keeps one ('C:\' and 'C:\\' give 'C:\'; 'C:' would mean
     # the current folder of drive C). Only fully qualified paths are accepted (a drive
     # letter and '\', or a UNC path '\\server\share'); a relative or drive-relative entry
     # ('Modules', 'C:Modules') would depend on each process's current folder, so it is
-    # refused (Codex review of #102). '/' is read as '\', and the path is normalised as
-    # .NET does ([System.IO.Path]::GetFullPath: '.', '..' and repeated separators), with
-    # no access to the disk (Codex review of #114).
+    # refused (Codex review of #102). '/' is read as '\', and '.', '..' and repeated
+    # separators are normalised by ConvertTo-RefuteWindowsFullPath, with no access to the
+    # disk and the same result on every OS (Codex review of #114).
     param([string]$Entry)
     $e = $Entry.Replace('/', '\')
     if ($e -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') {
         throw "the module path entry '$Entry' is not a fully qualified path"
     }
-    $root = [System.IO.Path]::GetFullPath($e).TrimEnd('\')
+    $root = (ConvertTo-RefuteWindowsFullPath $e).TrimEnd('\')
     if ($root -match '^[A-Za-z]:$') { return $root + '\' }
     return $root
 }
@@ -133,8 +171,10 @@ function Resolve-RefuteSessionEntry {
     # #99 observed on the CI runner) resolves against the session's current folder,
     # CurrentFolder, which must be fully qualified. A drive-relative ('C:Modules') or
     # root-relative ('\Modules') entry depends on per-drive state no one can read here, so
-    # it is refused. The resolution is .NET's own (Combine, then GetFullPath, which keeps
-    # a UNC share as the root), with no access to the disk (Codex review of #114). Pure.
+    # it is refused. The entry is joined to the folder and normalised with Windows rules
+    # (ConvertTo-RefuteWindowsFullPath: '..' never goes above the drive or the UNC share),
+    # with no access to the disk and the same result on every OS (Codex review of #114).
+    # Pure.
     param([string]$Entry, [string]$CurrentFolder)
     $e = $Entry.Replace('/', '\')
     if ($e -match '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') { return ConvertTo-RefuteModuleRoot $e }
@@ -142,7 +182,7 @@ function Resolve-RefuteSessionEntry {
         throw "the module path entry '$Entry' is drive-relative or root-relative"
     }
     $base = ConvertTo-RefuteModuleRoot $CurrentFolder
-    return ConvertTo-RefuteModuleRoot ([System.IO.Path]::GetFullPath([System.IO.Path]::Combine($base, $e)))
+    return ConvertTo-RefuteModuleRoot ($base.TrimEnd('\') + '\' + $e)
 }
 
 function Join-RefuteDiscoveryRoots {
