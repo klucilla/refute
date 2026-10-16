@@ -229,16 +229,24 @@ inside the 7-day cooldown on the day of the run.
   (published 2026-10-03T14:56:28Z). Their `install_only_stripped` archives for
   `x86_64-pc-windows-msvc` and `x86_64-unknown-linux-gnu` were uploaded between
   2026-10-03T14:54:03Z and 2026-10-03T14:54:37Z. A uv version fixes the build it
-  downloads for a given patch, so pinning uv also fixes the build.
+  downloads for a given patch, from the catalog embedded in that version, so pinning
+  uv also fixes the build **of a new download**. It does not fix the build of an
+  installation of the same patch that already exists in the install directory, nor of
+  one taken from a catalog or mirror replaced by configuration; the build is fixed only
+  in a fresh install directory with uv's own catalog (as in CI, where the install
+  directory of each job starts empty).
 
 **The change** (the next commit of the PR):
 1. `.github/workflows/ci.yml`: the `version: "0.12.24"` input of `setup-uv`; the
    matrix `python: ["3.12.15", "3.13.16"]`; the "Record environment" step adds
-   `uv python find` and `uv python list --only-installed`; a new step, "Check
-   interpreter", fails the job unless the interpreter of the environment has exactly
-   the matrix version and its base installation is under the uv Python install
-   directory of the job (`scripts/check_interpreter.py`, with unit tests). This step
-   is a permanent check, not an evaluation step (criterion 2 of section 4).
+   `uv python find <matrix version>` and `uv python list --only-installed`; a new
+   step, "Check interpreter", fails the job unless the interpreter of the environment
+   is CPython, has exactly the matrix version and has its base installation under the
+   uv Python install directory of the job (`scripts/check_interpreter.py`, with unit
+   tests). This step is a permanent check, not an evaluation step (criterion 2 of
+   section 4). It shows where the base installation is and which version it reports;
+   it does not authenticate the build (any CPython of that version placed in the
+   directory passes), which rests on the pinned uv and the fresh install directory.
 2. `.python-version`: `3.13.16`.
 3. `pyproject.toml`, `[tool.uv]`: `python-preference = "only-managed"`.
 

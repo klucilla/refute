@@ -82,7 +82,7 @@ jobs:
           echo "ImageOS=$ImageOS ImageVersion=$ImageVersion"
           uv --version
           uv run python -VV
-          uv python find
+          uv python find "${{ matrix.python }}"
           uv python list --only-installed
           uv pip list --format=freeze
       # Fails the job unless the environment's interpreter has exactly the matrix
