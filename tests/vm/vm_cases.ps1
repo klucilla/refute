@@ -429,6 +429,12 @@ Add-Case 'JEA search: module roots are searched in order (the first found is the
 Add-Case 'JEA search: another role name is not found' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Other').Count -eq 0)
 Add-Case 'JEA search: a missing root is skipped' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'absent') -RoleName 'Op').Count -eq 0)
 
+# The module roots the registration searches: PSModulePath values and extra folders,
+# trimmed, without empty entries or repeats (compared without case), sorted
+$joined = @(Join-RefuteModuleRoots -PathValues @('C:\B\;C:\A;;c:\a\', $null, '') -Extra @('C:\C', 'C:\B'))
+Add-Case 'module roots: entries split, trimmed, deduplicated without case, sorted' ($joined.Count -eq 3 -and $joined[0] -eq 'C:\A' -and $joined[1] -eq 'C:\B' -and $joined[2] -eq 'C:\C') ($joined -join ', ')
+Add-Case 'module roots: nothing given gives nothing' (@(Join-RefuteModuleRoots -PathValues @() -Extra @()).Count -eq 0)
+
 # WinRM listener removal plan
 $plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'
 Add-Case 'listener: *+HTTP alone, nothing remains' ($plan1.TargetPresent -and @($plan1.Remaining).Count -eq 0 -and @($plan1.ForeignRemaining).Count -eq 0)

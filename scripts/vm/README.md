@@ -145,13 +145,20 @@ order:
    https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/remoting/fanin/InitialSessionStateProvider.cs,
    accessed 2026-10-16). It checks the copied hashes, that only SYSTEM, Administrators,
    TrustedInstaller and CREATOR OWNER can write there, that a search with the structure
-   of JEA's, over a superset of its module roots (machine and process `PSModulePath`,
-   Program Files, System32, `$PSHOME\Modules`), finds exactly one role capability,
+   of JEA's finds exactly one role capability,
    `RefuteVm\RoleCapabilities\RefuteVmOperator.psrc`, that no other copy exists (none in
    a version subfolder), and, already in the preview, that the role capability imports
-   exactly `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`. That the
-   roots a JEA session searches are within this set is checked on a real endpoint in CI
-   (tests/test_vm_jea_integration.py);
+   exactly `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`. The
+   search covers these module roots (`Get-RefuteRegistrationModuleRoots` in
+   `RefuteRegistration.Core.ps1`): the machine and process `PSModulePath`, Program Files,
+   System32, `$PSHOME\Modules`, and the Default profile's
+   `Documents\WindowsPowerShell\Modules`. A virtual account's own user module folder
+   does not exist at registration: its profile is created, from the Default profile,
+   when its session starts. **Limit:** what the registration checks is this set on the
+   machine at that moment. A CI test on a real endpoint (tests/test_vm_jea_integration.py)
+   calls the same function and shows, for the GitHub runner only, that every existing
+   root a JEA session reports is in the set or holds no role capability; it does not
+   validate the maintainer's host;
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
