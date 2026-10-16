@@ -259,20 +259,27 @@ maintainer before the merge; until then the criterion 4 below is not met.
 
 A record of the local environment, not a criterion.
 
-**The cause of the local failures.** On this machine, `uv python install` run from a
-session of the Claude desktop app failed with "Missing expected target directory for
-Python minor version link", for 3.12.13 on 2026-10-07 and for 3.13.16 on 2026-10-16.
-- **What the app is:** an MSIX package, and Windows redirects what a packaged app writes
-  in the user's AppData: "All writes to the user's AppData folder [...] are copied on
-  write to a private per-user, per-app location"
-  (https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes,
+**The local failures and their probable cause.**
+- **What was observed:** on this machine, `uv python install` run from a session of the
+  Claude desktop app failed with "Missing expected target directory for Python minor
+  version link", for 3.12.13 on 2026-10-07 and for 3.13.16 on 2026-10-16. The files of
+  3.13.16 written from that session were found in the app's private per-package folder
+  (`AppData\Local\Packages\<the app's package>\LocalCache\Roaming\uv\python`), not in
+  the real `AppData\Roaming\uv\python`, which is uv's default install directory.
+- **What the source says:** the Claude desktop app is installed as an MSIX package. For
+  packaged apps that are virtualized, on Windows 10 version 1903 and later, "All newly
+  created files and folders in the user's `AppData` folder [...] are written to a
+  private per-user, per-app location; but merged at runtime to appear in the real
+  `AppData` location"; the page states that this section "applies only to virtualized
+  apps"
+  (https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes#appdata-operations-on-windows-10-version-1903-and-later,
   accessed 2026-10-16).
-- **The effect:** uv's default install directory for Pythons is under AppData, so the
-  interpreter landed in the app's private copy, while the link of the minor version
-  pointed at the real AppData.
-- **The consequence:** an interpreter installed that way is seen only from inside the
-  app, so a virtual environment built on it would not work from the maintainer's own
-  terminal.
+- **The hypothesis, not verified:** the new interpreter folder was redirected to the
+  private location, while uv's minor-version link needed it in the real AppData, so the
+  link step failed. Where the link pointed, and whether an interpreter installed that
+  way would work from a terminal outside the app, were not checked.
+- **What is confirmed:** with uv's Pythons installed outside AppData (the rule below),
+  the install, the virtual environment and the full suite work (the result below).
 
 **The rule.**
 - **uv's Pythons stay outside AppData.** The user environment variable
