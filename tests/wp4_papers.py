@@ -36,6 +36,11 @@ chain or finds a conflict (``metric_extracted`` is INCONCLUSIVE, so the claim is
 expectations are fixed here, in their own commit, before the runner supports them. A paper
 declares its routes (``routes``) and whether ``metric_recompute`` applies (``recompute``);
 every other paper keeps the saved predictions route with ``metric_recompute``.
+
+``expected_reason`` was added after the first runs of the route papers, asked by the
+Codex review of #111 (round 1): it restates, as a phrase of the gate's message, the reason
+each case's text already names (for example "two events at the cited call site"); no
+expected verdict, check, cause or flag changed.
 """
 
 from __future__ import annotations
@@ -86,6 +91,9 @@ class SyntheticPaper:
     # the coverage routes the claim declares (1.5a), and whether metric_recompute applies
     routes: tuple[str, ...] = ("saved_predictions",)
     recompute: bool = True
+    # for a route paper whose metric_extracted is INCONCLUSIVE: a phrase its message must
+    # hold (the reason the case names), with every gate before it passing
+    expected_reason: str = ""
 
 
 PAPERS = [
@@ -247,6 +255,7 @@ PAPERS = [
         "accuracy but do not identify the split",
         INCONCLUSIVE,
         config={"shuffle_preds": True},
+        expected_reason="the saved labels are not the split's, in its order",
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
         expected_failures={"metric_extracted": "undetermined"},
         flags=(False, True),
@@ -265,6 +274,7 @@ PAPERS = [
         "1.5a (d): correct and total that do not give the printed value (a conflict)",
         INCONCLUSIVE,
         config={"stats": True, "stats_bias": 8},
+        expected_reason="is not the printed",
         routes=("sufficient_statistics",),
         recompute=False,
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
@@ -285,6 +295,7 @@ PAPERS = [
         "1.5a (a): a printed count that is not the split's declared size",
         INCONCLUSIVE,
         config={"print_count": True, "count_bias": -1},
+        expected_reason="3999 examples, the split declares 4000",
         routes=("printed_count",),
         recompute=False,
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
@@ -295,6 +306,7 @@ PAPERS = [
         "route-a-absent",
         "1.5a: no route closes the chain (the declared count is never printed)",
         INCONCLUSIVE,
+        expected_reason="no route shows the examples",
         routes=("printed_count",),
         recompute=False,
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
@@ -315,6 +327,7 @@ PAPERS = [
         "1.5a (b), W3.12c: two events at the cited call site (not exactly one)",
         INCONCLUSIVE,
         config={"hook": True, "hook_calls": 2},
+        expected_reason="2 events bound to the metric, split and call site",
         routes=("hook",),
         recompute=False,
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
@@ -326,6 +339,7 @@ PAPERS = [
         "1.5a (b): the cited call evaluates another split (its labels are not the split's)",
         INCONCLUSIVE,
         config={"hook": True, "hook_split": "validation"},
+        expected_reason="0 events bound to the metric, split and call site",
         routes=("hook",),
         recompute=False,
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
@@ -337,6 +351,7 @@ PAPERS = [
         "1.5a W3.12e: (c) shows 4000 examples, (a) prints 4001; all_must_agree, no route wins",
         INCONCLUSIVE,
         config={"print_count": True, "count_bias": 1},
+        expected_reason="the routes disagree on the count",
         routes=("saved_predictions", "printed_count"),
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
         expected_failures={"metric_extracted": "undetermined"},
@@ -349,6 +364,7 @@ PAPERS = [
         "never NOT_REPRODUCED",
         INCONCLUSIVE,
         config={"stats": True, "stats_bias": 8, "print_bias": 0.2},
+        expected_reason="the routes disagree on the value",
         routes=("saved_predictions", "sufficient_statistics"),
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
         expected_failures={"metric_extracted": "undetermined"},
@@ -360,6 +376,7 @@ PAPERS = [
         "that works; the ambiguity is not hidden",
         INCONCLUSIVE,
         config={"print_count": True, "hook": True, "hook_calls": 2},
+        expected_reason="hook: 2 events bound to the metric, split and call site",
         routes=("printed_count", "hook"),
         recompute=False,
         expected_checks={"metric_extracted": "INCONCLUSIVE"},
