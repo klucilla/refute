@@ -221,7 +221,7 @@ raw security descriptor is not published: its group field holds the account SID.
 4. **Commands the module needs in the restricted session.**
    - **What the session holds:** a `RestrictedRemoteServer` session holds the core cmdlets as private commands, which a module's functions can call. It does not hold the script functions of `Microsoft.PowerShell.Utility` (`Import-PowerShellDataFile`, `Get-FileHash`) nor the Hyper-V cmdlets.
    - **What is missing:** with the role capability of `46fe0c2`, 29 of the 44 commands the module calls are missing: the two functions and 27 Hyper-V cmdlets. The analysis and the fix are in PR #118.
-   - **The fix in #118:** it imports `Microsoft.PowerShell.Utility` by the path of its manifest in `$PSHOME` (by name its functions do not come) and `Hyper-V` by name, with no change to the visible commands.
+   - **The fix in #118:** it imports `Microsoft.PowerShell.Utility` and `Hyper-V`, each by the absolute path of its manifest in System32 (by name the functions of Utility do not come), with no change to the visible commands.
    - **The test in #118:** it checks this end to end on a real endpoint in CI.
 
 **Status of W6.4 after H.5:**
