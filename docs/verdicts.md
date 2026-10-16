@@ -83,7 +83,8 @@ cause that applies to the gate:
 - a build-ladder failure applies to `environment_build`;
 - a failure of the documented command applies to `data_present`, `run_completed` and
   `metric_extracted`;
-- an absent artifact applies to every gate.
+- an absent artifact applies to every gate, and only with its evidence: one recorded
+  HTTP status per attempt, each 404 or 410, whatever the gate's coverage.
 
 Anything else is `INCONCLUSIVE`.
 
