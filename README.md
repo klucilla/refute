@@ -76,7 +76,7 @@ year, each with an uncertainty window, then read the hidden year **only** inside
 windows, their local baselines and control windows at the opposite phase. A real periodic
 signal passes. Noise rarely does.
 
-## How a claim moves through Refute
+## How a TESS signal claim moves through Refute
 
 ```mermaid
 flowchart LR
