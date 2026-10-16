@@ -13,7 +13,9 @@ Order for one claim (the first rule that matches decides):
    in all N attempts, ``proven_absence``), decided by its attribution in step 1;
 1. a gate of the base reproduction that did not pass: NOT_REPRODUCIBLE when the
    failure is recorded as a failure of the artifact's documented procedure with
-   complete attempts, INCONCLUSIVE for every other or unknown cause;
+   complete attempts and the cause applies to that gate (``ARTIFACT_CAUSE_GATES``: a
+   failed run or metric extraction is never attributed to the documented command),
+   INCONCLUSIVE for every other or unknown cause;
 2. a valid fatal failure (``base_reproduction``, and ``metric_recompute`` where it
    applies): NOT_REPRODUCED;
 3. a base reproduction that is incomplete: INCONCLUSIVE;
@@ -52,7 +54,7 @@ class FailureCause(enum.StrEnum):
     """
 
     BUILD_LADDER = "artifact_build_ladder"  # every rung ran to its end and failed
-    DOCUMENTED_COMMAND = "artifact_documented_command"  # fails in the built environment
+    DOCUMENTED_COMMAND = "artifact_documented_command"  # data_present only (see below)
     ARTIFACT_ABSENT = "artifact_absent"  # answers as absent in all of the N attempts
     BUDGET_EXHAUSTED = "budget_exhausted"
     OPERATIONAL_GUARD = "operational_guard"
@@ -62,12 +64,15 @@ class FailureCause(enum.StrEnum):
     UNDETERMINED = "undetermined"
 
 
-# The gates on which each artifact cause can be recorded.
+# The gates on which each artifact cause can be recorded. A failed run or metric
+# extraction (``run_completed``, ``metric_extracted``) is not attributed to the
+# artifact's documented command: an exit code from 1 to 125 is not evidence of the
+# artifact's cause, since a wrong argument, a resource limit or a configuration of
+# Refute's side also gives one (decided by the maintainer on 2026-10-16). There the
+# cause is INCONCLUSIVE by default; only a proven absence still applies.
 ARTIFACT_CAUSE_GATES: dict[FailureCause, frozenset[str]] = {
     FailureCause.BUILD_LADDER: frozenset({"environment_build"}),
-    FailureCause.DOCUMENTED_COMMAND: frozenset(
-        {"data_present", "run_completed", "metric_extracted"}
-    ),
+    FailureCause.DOCUMENTED_COMMAND: frozenset({"data_present"}),
     FailureCause.ARTIFACT_ABSENT: frozenset(BASE_GATES),
 }
 
