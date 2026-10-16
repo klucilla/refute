@@ -51,6 +51,11 @@ WP2 lands before any v0.3 lock.
     evidence already obtained establishes it (plan lines 696-701).
   - The existing `enforce_coverage` (zero or undeclared coverage) stays, and applies
     first.
+  - **Exception, decided by the maintainer on 2026-10-16:** a gate failed by a proven
+    absence of a declared artifact (HTTP 404 or 410 in all of the N attempts fixed before
+    the lock, one recorded status per attempt, cause `artifact_absent` with complete
+    attempts) is decided by its attribution (`NOT_REPRODUCIBLE`) before the zero-coverage
+    rule. Any other zero coverage stays `INCONCLUSIVE`.
 
 ### 1.3 The result of a paper (plan lines 681-692)
 

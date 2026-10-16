@@ -130,6 +130,13 @@ reproduction must complete the number of seeds declared in the claim). Coverage 
 the minimum gives no conclusion: it never yields a pass, and it yields a negative
 conclusion only where the valid evidence already obtained establishes it.
 
+**Proven absence of a declared artifact** (decided by the maintainer on 2026-10-16): a
+gate that failed because a declared artifact answered HTTP 404 or 410 in **all** of the N
+attempts fixed before the lock, with one recorded status per attempt, has examined no
+example but its evidence is complete. It is decided by its attribution
+(`NOT_REPRODUCIBLE`, section "Attribution") before the zero-coverage rule. Any other zero
+coverage stays `INCONCLUSIVE`.
+
 | Check | Coverage unit | Zero coverage means |
 |---|---|---|
 | claim extraction | approved claims | the paper cannot be `REPRODUCED` |
