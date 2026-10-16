@@ -35,6 +35,13 @@ WP2 lands before any v0.3 lock.
   procedure with complete attempts. Every other cause (exhausted budget, operational
   guard, Refute error, transient network failure, interrupted stage, undetermined) is
   `INCONCLUSIVE`. A missing or unknown cause is treated as undetermined.
+  - **Run and metric failures, decided by the maintainer on 2026-10-16:** a failed
+    `run_completed` or `metric_extracted` is never attributed to the documented
+    command. An exit code from 1 to 125 is not enough evidence of the artifact's cause
+    (failures of arguments, resources, configuration or of unknown cause give one too),
+    so these failures are `INCONCLUSIVE` by default; only a proven absence of a
+    declared artifact still applies to them. The documented command remains an
+    artifact cause for `data_present`.
 - **W2.4** An interruption or a failed prerequisite of an attack makes only that
   attack `INCONCLUSIVE`; it never changes the gates of the base reproduction (plan
   lines 619-621).
@@ -51,6 +58,11 @@ WP2 lands before any v0.3 lock.
     evidence already obtained establishes it (plan lines 696-701).
   - The existing `enforce_coverage` (zero or undeclared coverage) stays, and applies
     first.
+  - **Exception, decided by the maintainer on 2026-10-16:** a gate failed by a proven
+    absence of a declared artifact (HTTP 404 or 410 in all of the N attempts fixed before
+    the lock, one recorded status per attempt, cause `artifact_absent` with complete
+    attempts) is decided by its attribution (`NOT_REPRODUCIBLE`) before the zero-coverage
+    rule. Any other zero coverage stays `INCONCLUSIVE`.
 
 ### 1.3 The result of a paper (plan lines 681-692)
 
@@ -293,6 +305,8 @@ All offline and deterministic, in `tests/`.
 - a gate failure with cause `budget_exhausted`, `operational_guard`, `refute_error`,
   `transient_network`, `interrupted` or a missing cause, which must be `INCONCLUSIVE`
   and never `NOT_REPRODUCIBLE`;
+- a failed `run_completed` or `metric_extracted` recorded as a failure of the
+  documented command, with every attempt complete, which must be `INCONCLUSIVE`;
 - a valid `seeds` failure next to an interrupted `data_split`, which must be `FRAGILE`
   and not `INCONCLUSIVE`;
 - an attack interrupted with no valid failure, which must be `INCONCLUSIVE` with the

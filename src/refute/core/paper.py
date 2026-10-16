@@ -8,10 +8,14 @@ Order for one claim (the first rule that matches decides):
 
 0. coverage: a PASS with zero or undeclared coverage, or below the positive minimum,
    is INCONCLUSIVE; a FAIL with zero or undeclared coverage, or below the negative
-   minimum, is INCONCLUSIVE (with no declared minimum, both minimums are 1);
+   minimum, is INCONCLUSIVE (with no declared minimum, both minimums are 1); the one
+   exception is a gate failed by a proven absence of a declared artifact (HTTP 404 or 410
+   in all N attempts, ``proven_absence``), decided by its attribution in step 1;
 1. a gate of the base reproduction that did not pass: NOT_REPRODUCIBLE when the
    failure is recorded as a failure of the artifact's documented procedure with
-   complete attempts, INCONCLUSIVE for every other or unknown cause;
+   complete attempts and the cause applies to that gate (``ARTIFACT_CAUSE_GATES``: a
+   failed run or metric extraction is never attributed to the documented command),
+   INCONCLUSIVE for every other or unknown cause;
 2. a valid fatal failure (``base_reproduction``, and ``metric_recompute`` where it
    applies): NOT_REPRODUCED;
 3. a base reproduction that is incomplete: INCONCLUSIVE;
@@ -50,7 +54,7 @@ class FailureCause(enum.StrEnum):
     """
 
     BUILD_LADDER = "artifact_build_ladder"  # every rung ran to its end and failed
-    DOCUMENTED_COMMAND = "artifact_documented_command"  # fails in the built environment
+    DOCUMENTED_COMMAND = "artifact_documented_command"  # data_present only (see below)
     ARTIFACT_ABSENT = "artifact_absent"  # answers as absent in all of the N attempts
     BUDGET_EXHAUSTED = "budget_exhausted"
     OPERATIONAL_GUARD = "operational_guard"
@@ -60,12 +64,15 @@ class FailureCause(enum.StrEnum):
     UNDETERMINED = "undetermined"
 
 
-# The gates on which each artifact cause can be recorded.
+# The gates on which each artifact cause can be recorded. A failed run or metric
+# extraction (``run_completed``, ``metric_extracted``) is not attributed to the
+# artifact's documented command: an exit code from 1 to 125 is not evidence of the
+# artifact's cause, since a wrong argument, a resource limit or a configuration of
+# Refute's side also gives one (decided by the maintainer on 2026-10-16). There the
+# cause is INCONCLUSIVE by default; only a proven absence still applies.
 ARTIFACT_CAUSE_GATES: dict[FailureCause, frozenset[str]] = {
     FailureCause.BUILD_LADDER: frozenset({"environment_build"}),
-    FailureCause.DOCUMENTED_COMMAND: frozenset(
-        {"data_present", "run_completed", "metric_extracted"}
-    ),
+    FailureCause.DOCUMENTED_COMMAND: frozenset({"data_present"}),
     FailureCause.ARTIFACT_ABSENT: frozenset(BASE_GATES),
 }
 
@@ -138,6 +145,31 @@ EXPECTED_COVERAGE = "expected_coverage"
 # obtained (``seeds_attack``, ``data_split_attack``); a negative minimum then does not
 # erase it (W2.6).
 FAILURE_ESTABLISHED = "failure_established"
+# Recorded by a gate that failed because a declared artifact answered as absent: one HTTP
+# status per attempt (refute.packs.ml.fetch.absence_evidence).
+ABSENT_HTTP_STATUSES = "absent_http_statuses"
+ABSENT_STATUSES = frozenset({404, 410})
+
+
+def proven_absence(gate: TestResult, failure: GateFailure | None) -> bool:
+    """A procedural coverage rule, specific to a proven absence (decided by the maintainer
+    on 2026-10-16): a gate that FAILED because a declared artifact answered HTTP 404 or 410
+    in **all** of the N attempts fixed before the lock (plan section 8.2) has examined no
+    example, yet its evidence is complete. It is decided by its attribution
+    (``NOT_REPRODUCIBLE``) before the rule that turns a zero-coverage FAIL into
+    ``INCONCLUSIVE``. Every condition is required: the cause ``artifact_absent``, complete
+    attempts, and one recorded status per attempt, each 404 or 410. Any other zero coverage
+    stays ``INCONCLUSIVE``."""
+    if gate.status is not TestStatus.FAIL or failure is None:
+        return False
+    if failure.known_cause is not FailureCause.ARTIFACT_ABSENT:
+        return False
+    if failure.attempts_required < 1 or failure.attempts_completed < failure.attempts_required:
+        return False
+    statuses = gate.metrics.get(ABSENT_HTTP_STATUSES)
+    if not isinstance(statuses, list) or len(statuses) != failure.attempts_required:
+        return False
+    return all(type(s) is int and s in ABSENT_STATUSES for s in statuses)
 
 
 def _is_incomplete(result: TestResult) -> bool:
@@ -208,6 +240,15 @@ def _gate_failure_verdict(name: str, gate: TestResult, failure: GateFailure | No
                 f"{failure.attempts_completed} of {failure.attempts_required}",
                 incomplete_coverage=True,
             )
+        if cause is FailureCause.ARTIFACT_ABSENT and not proven_absence(gate, failure):
+            # an absence is attributed only with its evidence, one HTTP 404 or 410 per
+            # attempt, whatever the gate's coverage (Codex review of #106)
+            return ClaimVerdict(
+                PaperVerdict.INCONCLUSIVE,
+                f"base gate '{name}' failed ({cause.value}) without a recorded HTTP 404 or "
+                f"410 in each of the {failure.attempts_required} attempts",
+                incomplete_coverage=True,
+            )
         return ClaimVerdict(
             PaperVerdict.NOT_REPRODUCIBLE,
             f"base gate '{name}' failed: the artifact's documented procedure failed "
@@ -272,7 +313,16 @@ def aggregate_claim(
     if unknown:
         raise ValueError("failure causes given for names that are not gates: " + ", ".join(unknown))
 
-    checked = {r.name: apply_minimum_coverage(r, minimums.get(r.name)) for r in base}
+    # a proven absence of a declared artifact is decided by its attribution before the
+    # coverage rule (proven_absence); every other result goes through the coverage rule
+    checked = {
+        r.name: (
+            r
+            if r.name in BASE_GATES and proven_absence(r, failures.get(r.name))
+            else apply_minimum_coverage(r, minimums.get(r.name))
+        )
+        for r in base
+    }
     by_name = {a.name: a for a in attacks}
     # attacks with no result are "not executed" in every verdict; attacks with a result
     # were executed, even when an earlier rule decides the verdict
