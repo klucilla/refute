@@ -13,10 +13,39 @@ function Get-RefuteWriteRightsMask {
         $rights::ChangePermissions -bor $rights::TakeOwnership)
 }
 
-function Test-RefuteRightsWrite {
-    # True when the rights of one access entry allow any change.
+function ConvertTo-RefuteSpecificRights {
+    # An access mask with its generic rights (bits 28 to 31) replaced by the specific file
+    # rights they grant, the FILE_GENERIC_* mapping of
+    # https://learn.microsoft.com/en-us/windows/win32/fileio/file-security-and-access-rights
+    # (accessed 2026-10-16): GENERIC_ALL gives every right; GENERIC_WRITE gives WriteData,
+    # AppendData, WriteAttributes, WriteExtendedAttributes, ReadPermissions and Synchronize;
+    # GENERIC_READ and GENERIC_EXECUTE give read and execute rights only. Windows can keep
+    # an inherit-only entry with GENERIC_ALL or GENERIC_WRITE unmapped, so without this an
+    # entry such as (A;OICIIO;GA;;;BU) would not count as a writer (Codex review of the
+    # integrated JEA package). Pure.
     param([int]$Rights)
-    return (($Rights -band (Get-RefuteWriteRightsMask)) -ne 0)
+    $r = [System.Security.AccessControl.FileSystemRights]
+    $specific = $Rights -band 0x0FFFFFFF
+    if ($Rights -band 0x10000000) { $specific = $specific -bor [int]$r::FullControl }
+    if ($Rights -band 0x20000000) {
+        $specific = $specific -bor [int]($r::ExecuteFile -bor $r::ReadAttributes -bor $r::ReadPermissions -bor $r::Synchronize)
+    }
+    if ($Rights -band 0x40000000) {
+        $specific = $specific -bor [int]($r::WriteData -bor $r::AppendData -bor $r::WriteAttributes -bor
+            $r::WriteExtendedAttributes -bor $r::ReadPermissions -bor $r::Synchronize)
+    }
+    if ($Rights -band 0x80000000) {
+        $specific = $specific -bor [int]($r::ReadData -bor $r::ReadAttributes -bor $r::ReadExtendedAttributes -bor
+            $r::ReadPermissions -bor $r::Synchronize)
+    }
+    return [int]$specific
+}
+
+function Test-RefuteRightsWrite {
+    # True when the rights of one access entry allow any change, generic rights included
+    # (ConvertTo-RefuteSpecificRights).
+    param([int]$Rights)
+    return (((ConvertTo-RefuteSpecificRights $Rights) -band (Get-RefuteWriteRightsMask)) -ne 0)
 }
 
 function Find-RefuteHyperVManifest {
@@ -84,18 +113,65 @@ function Find-RefuteVersionedRoleCapability {
     return $found  # callers wrap the call in @(...)
 }
 
+function ConvertTo-RefuteWindowsFullPath {
+    # A fully qualified Windows path, normalised with Windows rules written out here, so
+    # that the result is the same on every OS (on Linux, .NET's GetFullPath does not know
+    # 'C:\' and would prefix the current folder). '/' is read as '\'; the root is a drive
+    # ('C:') or a UNC share ('\\server\share'); empty and '.' segments are dropped; '..'
+    # removes the previous segment and never goes above the root. A device path
+    # ('\\?\', '\\.\'), a segment ending in '.' or ' ' (which Windows would trim), and a
+    # character Windows does not accept in a path ('<', '>', '"', '|', '?', '*', a control
+    # character, or ':' anywhere but after the drive letter, which would name an alternate
+    # data stream) are refused instead of imitated. Pure: no access to the disk.
+    param([string]$Path)
+    $p = $Path.Replace('/', '\')
+    $afterRoot = if ($p -match '^[A-Za-z]:') { $p.Substring(2) } else { $p }
+    if ($afterRoot -match '[<>"|?*:\x00-\x1F]' -and -not ($p -match '^\\\\[?.]\\')) {
+        throw "the path '$Path' has a character Windows does not accept in a path"
+    }
+    if ($p -match '^([A-Za-z]:)\\(.*)$') {
+        $root = $Matches[1]
+        $rest = $Matches[2]
+    } elseif ($p -match '^(\\\\([^\\]+)\\([^\\]+))(.*)$') {
+        if ($Matches[2] -eq '?' -or $Matches[2] -eq '.') {
+            throw "the path '$Path' is a device path"
+        }
+        $root = $Matches[1]
+        $rest = $Matches[4]
+    } else {
+        throw "the path '$Path' is not a fully qualified path"
+    }
+    $parts = @()
+    foreach ($segment in $rest.Split('\')) {
+        if ($segment -eq '' -or $segment -eq '.') { continue }
+        if ($segment -eq '..') {
+            if ($parts.Count -le 1) { $parts = @() } else { $parts = @($parts[0..($parts.Count - 2)]) }
+            continue
+        }
+        if ($segment.EndsWith('.') -or $segment.EndsWith(' ')) {
+            throw "the path '$Path' has a segment ending in '.' or ' '"
+        }
+        $parts += $segment
+    }
+    if ($parts.Count -eq 0) { return $root + '\' }
+    return $root + '\' + ($parts -join '\')
+}
+
 function ConvertTo-RefuteModuleRoot {
     # One module path entry as a root, with its meaning kept: the final '\' characters are
     # removed, and a volume root keeps one ('C:\' and 'C:\\' give 'C:\'; 'C:' would mean
     # the current folder of drive C). Only fully qualified paths are accepted (a drive
     # letter and '\', or a UNC path '\\server\share'); a relative or drive-relative entry
     # ('Modules', 'C:Modules') would depend on each process's current folder, so it is
-    # refused (Codex review of #102).
+    # refused (Codex review of #102). '/' is read as '\', and '.', '..' and repeated
+    # separators are normalised by ConvertTo-RefuteWindowsFullPath, with no access to the
+    # disk and the same result on every OS (Codex review of #114).
     param([string]$Entry)
-    if ($Entry -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') {
+    $e = $Entry.Replace('/', '\')
+    if ($e -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') {
         throw "the module path entry '$Entry' is not a fully qualified path"
     }
-    $root = $Entry.TrimEnd('\')
+    $root = (ConvertTo-RefuteWindowsFullPath $e).TrimEnd('\')
     if ($root -match '^[A-Za-z]:$') { return $root + '\' }
     return $root
 }
@@ -123,6 +199,239 @@ function Join-RefuteModuleRoots {
     return @($roots | Sort-Object)
 }
 
+function Resolve-RefuteSessionEntry {
+    # One module path entry as a JEA session resolves it. A fully qualified entry is a root
+    # (ConvertTo-RefuteModuleRoot). A relative entry ('WindowsPowerShell\Modules', the user
+    # entry of a virtual account whose Documents path is empty, as the integration test of
+    # #99 observed on the CI runner) resolves against the session's current folder,
+    # CurrentFolder, which must be fully qualified. A drive-relative ('C:Modules') or
+    # root-relative ('\Modules') entry depends on per-drive state no one can read here, so
+    # it is refused. The entry is joined to the folder and normalised with Windows rules
+    # (ConvertTo-RefuteWindowsFullPath: '..' never goes above the drive or the UNC share),
+    # with no access to the disk and the same result on every OS (Codex review of #114).
+    # Pure.
+    param([string]$Entry, [string]$CurrentFolder)
+    $e = $Entry.Replace('/', '\')
+    if ($e -match '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+)') { return ConvertTo-RefuteModuleRoot $e }
+    if ($e -match '^[A-Za-z]:' -or $e.StartsWith('\')) {
+        throw "the module path entry '$Entry' is drive-relative or root-relative"
+    }
+    $base = ConvertTo-RefuteModuleRoot $CurrentFolder
+    return ConvertTo-RefuteModuleRoot ($base.TrimEnd('\') + '\' + $e)
+}
+
+function Join-RefuteDiscoveryRoots {
+    # The folders where a JEA session discovers role capabilities: every entry of the given
+    # PSModulePath values and every extra folder (fully qualified), and every relative entry
+    # resolved against the session's current folder (Resolve-RefuteSessionEntry); without
+    # repeats (compared without case), sorted. Folders that do not exist are kept: the
+    # caller checks who could create them. Pure.
+    param([string[]]$PathValues, [string[]]$Extra, [string[]]$RelativeEntries, [string]$CurrentFolder)
+    $roots = @(Join-RefuteModuleRoots -PathValues $PathValues -Extra $Extra)
+    foreach ($entry in @($RelativeEntries)) {
+        if ($entry) { $roots += Resolve-RefuteSessionEntry -Entry $entry -CurrentFolder $CurrentFolder }
+    }
+    $seen = @{}
+    $out = @()
+    foreach ($root in $roots) {
+        if ($seen.ContainsKey($root.ToLowerInvariant())) { continue }
+        $seen[$root.ToLowerInvariant()] = $true
+        $out += $root
+    }
+    return @($out | Sort-Object)
+}
+
+function Get-RefuteJeaDiscoveryRoots {
+    # The effective discovery set of the RefuteVm session on this machine (the maintainer's
+    # item 9, 2026-10-16): the machine PSModulePath, Program Files\WindowsPowerShell\Modules
+    # and $PSHOME\Modules (PowerShell adds both), and the virtual account's user entry, which
+    # is relative ('WindowsPowerShell\Modules') because its Documents path is empty, resolved
+    # against the session's current folder, %SystemRoot%\system32 (observed on the CI runner
+    # by the integration test of #99). Existing folders or not.
+    $extra = @(
+        (Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules'),
+        (Join-Path $PSHOME 'Modules')
+    )
+    return @(Join-RefuteDiscoveryRoots -PathValues @([Environment]::GetEnvironmentVariable('PSModulePath', 'Machine')) `
+            -Extra $extra -RelativeEntries @('WindowsPowerShell\Modules') -CurrentFolder (Join-Path $env:SystemRoot 'system32'))
+}
+
+function Test-RefuteAllowedWriter {
+    # Whether an allow entry that grants a change is acceptable on a folder or file of the
+    # discovery set: SYSTEM, Administrators or TrustedInstaller; CREATOR OWNER only as an
+    # inherit-only entry (it then applies to what someone who could already write creates).
+    param([string]$Sid, [bool]$InheritOnly)
+    if (@('S-1-5-18', 'S-1-5-32-544', 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464') -contains $Sid) { return $true }
+    return ($Sid -eq 'S-1-3-0' -and $InheritOnly)
+}
+
+function Get-RefuteAceWriters {
+    # From access entries (Sid, Rights as an integer, Type 'Allow' or 'Deny', InheritOnly),
+    # the ones that grant a change to an account the discovery set must not let write
+    # (Test-RefuteAllowedWriter), as "<sid> <rights>". Pure.
+    param([object[]]$Entries)
+    return @($Entries | Where-Object {
+            [string]$_.Type -eq 'Allow' -and (Test-RefuteRightsWrite ([int]$_.Rights)) -and
+            -not (Test-RefuteAllowedWriter -Sid ([string]$_.Sid) -InheritOnly ([bool]$_.InheritOnly))
+        } | ForEach-Object { "$($_.Sid) $([int]$_.Rights)" })
+}
+
+function Test-RefuteAllowedOwner {
+    # The owner of a folder or file of the discovery set, or of one of its ancestors, must
+    # be SYSTEM, Administrators or TrustedInstaller: an owner has an implicit right to
+    # change the DACL, so a DACL without its writers does not protect an item another
+    # account owns (Codex review of #114).
+    param([string]$Sid)
+    return (@('S-1-5-18', 'S-1-5-32-544', 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464') -contains $Sid)
+}
+
+function Get-RefuteAncestorWriters {
+    # From the access entries of an ANCESTOR of a discovery folder, the ones that let
+    # another account replace or redirect what is below it: delete it or its children,
+    # change its permissions or take its ownership. Creating a new child (WriteData,
+    # AppendData) does not replace an existing one, and an inherit-only entry does not
+    # apply to the ancestor itself, so neither counts. Pure.
+    param([object[]]$Entries)
+    $rights = [System.Security.AccessControl.FileSystemRights]
+    $mask = [int]($rights::Delete -bor $rights::DeleteSubdirectoriesAndFiles -bor $rights::ChangePermissions -bor $rights::TakeOwnership)
+    return @($Entries | Where-Object {
+            [string]$_.Type -eq 'Allow' -and -not [bool]$_.InheritOnly -and (((ConvertTo-RefuteSpecificRights ([int]$_.Rights)) -band $mask) -ne 0) -and
+            -not (Test-RefuteAllowedWriter -Sid ([string]$_.Sid) -InheritOnly $false)
+        } | ForEach-Object { "$($_.Sid) $([int]$_.Rights)" })
+}
+
+function Get-RefuteDiscoveryProblems {
+    # Reads, never writes. For each folder of the discovery set: when it exists, the owner
+    # and the access entries of the folder, of every folder directly under it (a writer
+    # there could add <folder>\RoleCapabilities), of every existing <folder>\RoleCapabilities
+    # and of the .psrc files in it; when it does not exist, those of its nearest existing
+    # ancestor (whoever may create it could add role capabilities). Every ancestor of an
+    # existing folder, up to its volume root, is checked too: no reparse point (a link or
+    # junction could redirect the path), an allowed owner, and no entry that lets another
+    # account replace what is below it; for a folder that does not exist, the ancestors
+    # above its nearest existing one are checked the same way. Any item that is a reparse
+    # point is refused.
+    # Returns one problem per finding, and one per item that cannot be read.
+    param([string[]]$Roots)
+    $problems = @()
+    foreach ($root in @($Roots)) {
+        $targets = @()
+        $ancestors = @()
+        try {
+            if (Test-Path -LiteralPath $root -PathType Container -ErrorAction Stop) {
+                $targets += $root
+                foreach ($dir in @(Get-ChildItem -LiteralPath $root -Directory -Force -ErrorAction Stop)) {
+                    $targets += $dir.FullName
+                    $rc = Join-Path $dir.FullName 'RoleCapabilities'
+                    if (Test-Path -LiteralPath $rc -PathType Container -ErrorAction Stop) {
+                        $targets += $rc
+                        $targets += @(Get-ChildItem -LiteralPath $rc -File -Force -Filter '*.psrc' -ErrorAction Stop | ForEach-Object { $_.FullName })
+                    }
+                }
+                $ancestor = Split-Path -Parent $root
+                while ($ancestor) {
+                    $ancestors += $ancestor
+                    $ancestor = Split-Path -Parent $ancestor
+                }
+            } else {
+                $ancestor = Split-Path -Parent $root
+                while ($ancestor -and -not (Test-Path -LiteralPath $ancestor -PathType Container -ErrorAction Stop)) {
+                    $ancestor = Split-Path -Parent $ancestor
+                }
+                if ($ancestor) {
+                    # the nearest existing ancestor gets the full check (whoever may write
+                    # in it can create the folder), and every folder above it, up to the
+                    # volume root, the ancestor rules (Codex review of #114, round 2)
+                    $targets += $ancestor
+                    $above = Split-Path -Parent $ancestor
+                    while ($above) {
+                        $ancestors += $above
+                        $above = Split-Path -Parent $above
+                    }
+                }
+            }
+        } catch {
+            $problems += "$root cannot be read: $($_.Exception.Message)"
+            continue
+        }
+        foreach ($item in @($targets) + @($ancestors)) {
+            $problems += @(Get-RefuteItemProblems -Item $item -IsAncestor ($ancestors -contains $item))
+        }
+    }
+    return $problems  # callers wrap the call in @(...)
+}
+
+function Get-RefuteItemProblems {
+    # Reads, never writes. The checks of one file or folder: not a reparse point, an allowed
+    # owner, and no access entry that lets another account write it (for an ancestor: that
+    # lets another account replace or redirect what is below it). Returns one problem per
+    # finding, or one when the item cannot be read.
+    param([string]$Item, [bool]$IsAncestor)
+    $problems = @()
+    try {
+        $info = Get-Item -LiteralPath $Item -Force -ErrorAction Stop
+        if (([int]$info.Attributes -band [int][System.IO.FileAttributes]::ReparsePoint) -ne 0) {
+            return @("$Item is a reparse point (a link or junction)")
+        }
+        $acl = Get-Acl -LiteralPath $Item -ErrorAction Stop
+        $owner = $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
+        # the entries with their SIDs as stored: translating account names back to SIDs
+        # fails for some built-in names (ALL APPLICATION PACKAGES in a Portuguese Windows,
+        # measured on 2026-10-16), and a SID needs no translation
+        $entries = @($acl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]) | ForEach-Object {
+                [ordered]@{
+                    Sid         = $_.IdentityReference.Value
+                    Rights      = [int]$_.FileSystemRights
+                    Type        = [string]$_.AccessControlType
+                    InheritOnly = ([string]$_.PropagationFlags -match 'InheritOnly')
+                }
+            })
+    } catch {
+        return @("$Item cannot be read: $($_.Exception.Message)")
+    }
+    if (-not (Test-RefuteAllowedOwner $owner)) { $problems += "$Item is owned by $owner" }
+    if ($IsAncestor) {
+        foreach ($w in @(Get-RefuteAncestorWriters $entries)) { $problems += "$Item (an ancestor) can be changed by $w" }
+    } else {
+        foreach ($w in @(Get-RefuteAceWriters $entries)) { $problems += "$Item can be written by $w" }
+    }
+    return $problems  # callers wrap the call in @(...)
+}
+
+function Get-RefuteTreeProblems {
+    # Reads, never writes. For each folder of Roots (the folders a role capability's imports
+    # load from: the module folders and the folder of an assembly a manifest loads): the
+    # folder and every file and folder below it get the full check of Get-RefuteItemProblems,
+    # and every ancestor up to the volume root the ancestor check, so that no other account
+    # can change, replace or redirect what the imports load (Codex review of #118). A
+    # missing folder is a problem. Returns one problem per finding.
+    param([string[]]$Roots)
+    $problems = @()
+    foreach ($root in @($Roots)) {
+        $targets = @()
+        $ancestors = @()
+        try {
+            if (-not (Test-Path -LiteralPath $root -PathType Container -ErrorAction Stop)) {
+                $problems += "$root does not exist"
+                continue
+            }
+            $targets += $root
+            $targets += @(Get-ChildItem -LiteralPath $root -Recurse -Force -ErrorAction Stop | ForEach-Object { $_.FullName })
+            $ancestor = Split-Path -Parent $root
+            while ($ancestor) {
+                $ancestors += $ancestor
+                $ancestor = Split-Path -Parent $ancestor
+            }
+        } catch {
+            $problems += "$root cannot be read: $($_.Exception.Message)"
+            continue
+        }
+        foreach ($item in $targets) { $problems += @(Get-RefuteItemProblems -Item $item -IsAncestor $false) }
+        foreach ($item in $ancestors) { $problems += @(Get-RefuteItemProblems -Item $item -IsAncestor $true) }
+    }
+    return $problems  # callers wrap the call in @(...)
+}
+
 function Get-RefuteRegistrationModuleRoots {
     # The module folder roots the registration searches for role capability copies (the
     # registration script and the JEA integration test, tests/vm/jea_integration.ps1, call
@@ -131,6 +440,8 @@ function Get-RefuteRegistrationModuleRoots {
     # (<Default>\Documents\WindowsPowerShell\Modules). A JEA virtual account gets a new
     # profile, created from the Default profile when its session starts, so its own user
     # module folder does not exist at registration; what it can hold comes from there.
+    # It also holds every folder of the effective discovery set (Get-RefuteJeaDiscoveryRoots),
+    # including the relative user entry resolved against the session's current folder.
     # Only existing folders are returned.
     $default = (Get-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList' -Name Default).Default
     $extra = @(
@@ -138,7 +449,7 @@ function Get-RefuteRegistrationModuleRoots {
         (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules'),
         (Join-Path $PSHOME 'Modules'),
         (Join-Path ([Environment]::ExpandEnvironmentVariables($default)) 'Documents\WindowsPowerShell\Modules')
-    )
+    ) + @(Get-RefuteJeaDiscoveryRoots)
     $values = @(
         [Environment]::GetEnvironmentVariable('PSModulePath', 'Machine'),
         [Environment]::GetEnvironmentVariable('PSModulePath', 'Process')

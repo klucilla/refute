@@ -14,8 +14,12 @@ stopping at the first problem:
      %ProgramFiles%\WindowsPowerShell\Modules\RefuteVm, with NO version subfolder (JEA
      looks for <module path>\<module>\RoleCapabilities\<name>.psrc only), and checks the
      hashes, that only administrators can write there, that the search JEA makes finds
-     exactly that role capability, and that no other copy exists on the module path (in
-     particular none in a version subfolder);
+     exactly that role capability, that no other copy exists on the module path (in
+     particular none in a version subfolder), and that in the effective discovery set of
+     the session (machine PSModulePath, Program Files, $PSHOME\Modules and the relative
+     user entry resolved against %SystemRoot%\system32) only SYSTEM, Administrators and
+     TrustedInstaller can write, or create the folders that do not exist (the preview
+     checks this too);
   2. creates C:\ProgramData\RefuteVm\{Transcripts,Log,State} and the C:\Hyper-V tree
      with explicit ACLs (owner: Administrators);
   3. adds the Windows Firewall rule that blocks inbound TCP 5985 and 5986 from every
@@ -243,23 +247,14 @@ if ($hyperVManifest -and $hyperVManifest -ne $HyperVManifestPath) {
 }
 # What the imports load: the two module folders in System32 and the folder of the Hyper-V
 # cmdlets assembly in the global assembly cache (the Hyper-V manifest's NestedModules).
-# Only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER may write there, and no
-# item may be a reparse point (Codex review of #118).
+# Every file and folder there, and every ancestor up to the volume root, gets the checks
+# of the discovery set (Get-RefuteTreeProblems): generic rights mapped, an allowed owner,
+# no reparse point (Codex review of #118, rounds 1 and 2).
 $ImportTrees = @(
     (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility'),
     (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V'),
     (Join-Path $env:SystemRoot 'Microsoft.NET\assembly\GAC_MSIL\Microsoft.HyperV.PowerShell.Cmdlets'))
-foreach ($tree in $ImportTrees) {
-    if (-not (Test-Path -LiteralPath $tree -PathType Container)) { $problems.Add("$tree does not exist"); continue }
-    try {
-        $children = @(Get-ChildItem -LiteralPath $tree -Recurse -Force)
-        $reparse = @($children | Where-Object { $_.Attributes -band [System.IO.FileAttributes]::ReparsePoint } | ForEach-Object { $_.FullName })
-        if ([System.IO.File]::GetAttributes($tree) -band [System.IO.FileAttributes]::ReparsePoint) { $reparse = @($tree) + $reparse }
-        if ($reparse.Count) { $problems.Add("reparse points under ${tree}: " + ($reparse -join ', ')) }
-        $treeWriters = @(@($tree) + @($children | ForEach-Object { $_.FullName }) | ForEach-Object { Get-NonAdminWriters $_ } | Sort-Object -Unique)
-        if ($treeWriters.Count) { $problems.Add("accounts other than administrators can write under ${tree}: " + ($treeWriters -join ', ')) }
-    } catch { $problems.Add("$tree cannot be checked: $($_.Exception.Message)") }
-}
+foreach ($p in @(Get-RefuteTreeProblems -Roots $ImportTrees)) { $problems.Add("imports: $p") }
 if (@($roleData.Keys | Where-Object { $_ -like 'Visible*' }) -join ',' -ne 'VisibleFunctions' -or
     (@($roleData.VisibleFunctions) -join ',') -cne 'Get-RefuteVmStatus,Invoke-RefuteVmOperation') {
     $problems.Add('the role capability must make visible exactly Get-RefuteVmStatus and Invoke-RefuteVmOperation, and nothing else')
@@ -269,6 +264,13 @@ $psrcCopies = @()
 # $null is an error under StrictMode in Windows PowerShell 5.1
 try { $psrcCopies = @(Find-RoleCapabilityCopies) } catch { $problems.Add("the module path cannot be searched completely: $($_.Exception.Message)") }
 if ($psrcCopies.Count) { $problems.Add("a role capability named $RoleName already exists: " + ($psrcCopies -join ', ')) }
+# The effective discovery set of the session (Get-RefuteJeaDiscoveryRoots), relative user
+# entry included: only SYSTEM, Administrators and TrustedInstaller may write where the
+# session finds role capabilities, or create a folder it would search (item 9 of the
+# maintainer's message of 2026-10-16).
+$discoveryRoots = @()
+try { $discoveryRoots = @(Get-RefuteJeaDiscoveryRoots) } catch { $problems.Add("the discovery set cannot be computed: $($_.Exception.Message)") }
+foreach ($p in @(Get-RefuteDiscoveryProblems -Roots $discoveryRoots)) { $problems.Add("discovery set: $p") }
 if ($isAdmin) {
     if (Get-NetFirewallRule -Name $FirewallRuleName -ErrorAction SilentlyContinue) { $problems.Add("the firewall rule $FirewallRuleName already exists") }
     # The endpoint is a WSMan plugin: read its registry key, never the WSMan provider.
@@ -294,8 +296,9 @@ $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("Operator account: $OperatorAccount ($operatorSid)")
 $lines.Add("Virtual account group: $groupAccount ($SidHyperVAdmins)")
 $lines.Add("Hyper-V module manifest: $(if ($hyperVManifest) { $hyperVManifest } else { 'not found' })")
-$lines.Add("1. Copy the module to $ModuleDestination, no version subfolder (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write; the JEA search finds exactly its RoleCapabilities\$RoleName.psrc, and no other copy exists); the role capability imports $($ExpectedImports -join ', ') and makes visible only Get-RefuteVmStatus and Invoke-RefuteVmOperation; checked in $($ImportTrees -join ', '): only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write, no reparse point:")
+$lines.Add("1. Copy the module to $ModuleDestination, no version subfolder (owner and ACL inherited from Program Files; checked: only SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER can write; the JEA search finds exactly its RoleCapabilities\$RoleName.psrc, and no other copy exists); the role capability imports $($ExpectedImports -join ', ') and makes visible only Get-RefuteVmStatus and Invoke-RefuteVmOperation; checked in $($ImportTrees -join ', '), every file and folder and every ancestor: the owners and writers allowed for the discovery set, no reparse point:")
 foreach ($k in $sourceHashes.Keys) { $lines.Add("     $($sourceHashes[$k])  $k") }
+$lines.Add("   Discovery set of the session (checked: only SYSTEM, Administrators and TrustedInstaller can write, or create the absent ones): $($discoveryRoots -join ', ')")
 $lines.Add("2. Create these folders, owner Administrators, inheritance removed:")
 foreach ($folder in $FolderAcls.Keys) {
     $lines.Add("     $folder")
@@ -350,6 +353,9 @@ try {
     $copies = @(Find-RoleCapabilityCopies)
     if ($copies.Count -ne 1 -or $copies[0] -ne $expected) { throw ("expected exactly one role capability at $expected, found: " + ($copies -join ', ')) }
     if (-not (Test-Path -LiteralPath $InstalledManifest -PathType Leaf)) { throw "the manifest the role capability imports is missing: $InstalledManifest" }
+    # the discovery set again, after the copy: no other writer anywhere the session searches
+    $discoveryWriters = @(Get-RefuteDiscoveryProblems -Roots @(Get-RefuteJeaDiscoveryRoots))
+    if ($discoveryWriters.Count) { throw ('the discovery set lets other accounts write: ' + ($discoveryWriters -join '; ')) }
     # 2. folders
     foreach ($folder in $FolderAcls.Keys) {
         [void][System.IO.Directory]::CreateDirectory($folder)
@@ -423,6 +429,7 @@ $evidence = [ordered]@{
     Module           = [ordered]@{ Path = $ModuleDestination; Files = Get-TreeHashes $ModuleDestination }
     RoleCapabilities = @(Find-RoleCapabilityCopies)
     JeaRoleCapability = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Get-ModulePathRoots) -RoleName $RoleName)
+    DiscoveryRoots   = @(Get-RefuteJeaDiscoveryRoots | ForEach-Object { [ordered]@{ Path = $_; Exists = (Test-Path -LiteralPath $_ -PathType Container) } })
     Endpoint         = [ordered]@{
         Name                      = $endpoint.Name
         Permission                = [string]$endpoint.Permission

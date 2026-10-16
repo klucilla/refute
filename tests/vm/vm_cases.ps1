@@ -476,6 +476,150 @@ foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
     Add-Case "module roots: the relative entry '$relative' is refused" $refused
 }
 
+# The effective discovery set of the session (item 9 of the maintainer's message of
+# 2026-10-16): a relative entry resolves against the session's current folder; a
+# drive-relative or root-relative entry, and a relative current folder, are refused
+$sys32 = 'C:\Windows\system32'
+Add-Case 'session entry: a relative entry resolves against the current folder' ((Resolve-RefuteSessionEntry -Entry 'WindowsPowerShell\Modules' -CurrentFolder $sys32) -ceq 'C:\Windows\system32\WindowsPowerShell\Modules')
+Add-Case 'session entry: dot and dot-dot segments are resolved' ((Resolve-RefuteSessionEntry -Entry '.\a\..\Mods\' -CurrentFolder 'C:\X') -ceq 'C:\X\Mods')
+Add-Case 'session entry: dot-dot stops at the volume root' ((Resolve-RefuteSessionEntry -Entry '..\..\..\M' -CurrentFolder 'C:\X') -ceq 'C:\M')
+Add-Case 'session entry: a fully qualified entry is kept as a root' ((Resolve-RefuteSessionEntry -Entry 'D:\Mods\' -CurrentFolder $sys32) -ceq 'D:\Mods')
+# Windows rules on every OS (Codex review of #114): a UNC share stays the root, '/' is a
+# separator, '.' and '..' are resolved in absolute entries too. The expected values are
+# written out; on Windows they are also compared with .NET's own resolution.
+$onWindows = [System.Environment]::OSVersion.Platform -eq 'Win32NT'
+foreach ($pair in @(@('..\..\Mods', '\\srv\share\X', '\\srv\share\Mods'), @('C:/Mods', $sys32, 'C:\Mods'), @('C:\A\..\Mods', $sys32, 'C:\Mods'),
+        @('a/./b/../c', 'C:\X', 'C:\X\a\c'), @('WindowsPowerShell\Modules', $sys32, 'C:\Windows\system32\WindowsPowerShell\Modules'))) {
+    $ours = Resolve-RefuteSessionEntry -Entry $pair[0] -CurrentFolder $pair[1]
+    Add-Case "session entry: '$($pair[0])' against '$($pair[1])' gives '$($pair[2])'" ($ours -ceq $pair[2]) $ours
+    if ($onWindows) {
+        $dotnet = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($pair[1], $pair[0].Replace('/', '\'))).TrimEnd('\')
+        Add-Case "session entry: '$($pair[0])' against '$($pair[1])' as .NET resolves it on Windows" ($ours -ceq $dotnet) "$ours / $dotnet"
+    }
+}
+Add-Case 'full path: a volume root keeps its backslash' ((ConvertTo-RefuteWindowsFullPath 'C:\a\..') -ceq 'C:\')
+Add-Case 'full path: a UNC share root' ((ConvertTo-RefuteWindowsFullPath '\\srv\share\..\x\') -ceq '\\srv\share\x')
+foreach ($bad in '\\?\C:\Mods', '\\.\C:\Mods', 'C:\Mods.\x', 'C:\Mods \x', 'Mods', 'C:Mods',
+    'C:\Modules|audit', 'C:\Modules:stream', 'C:\a<b', 'C:\a>b', 'C:\a"b', 'C:\a*b', 'C:\a?b', "C:\a`tb", '\\srv\sh:are\x') {
+    $refused = $false
+    try { [void](ConvertTo-RefuteWindowsFullPath $bad) } catch { $refused = $true }
+    Add-Case "full path refused: '$bad'" $refused
+}
+Add-Case 'session entry: a UNC share is kept under dot-dot' ((Resolve-RefuteSessionEntry -Entry '..\..\Mods' -CurrentFolder '\\srv\share\X') -ceq '\\srv\share\Mods')
+foreach ($bad in @(@('C:Modules', $sys32), @('\Modules', $sys32), @('/Modules', $sys32), @('Modules', 'system32'))) {
+    $refused = $false
+    try { [void](Resolve-RefuteSessionEntry -Entry $bad[0] -CurrentFolder $bad[1]) } catch { $refused = $true }
+    Add-Case "session entry refused: '$($bad[0])' against '$($bad[1])'" $refused
+}
+$disc = @(Join-RefuteDiscoveryRoots -PathValues @('C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules') `
+        -Extra @('C:\Program Files\WindowsPowerShell\Modules\') -RelativeEntries @('WindowsPowerShell\Modules', 'windowspowershell\modules') -CurrentFolder $sys32)
+Add-Case 'discovery set: absolute entries, extras and resolved relative entries, without repeats' ($disc.Count -eq 3 -and
+    $disc -ccontains 'C:\Program Files\WindowsPowerShell\Modules' -and $disc -ccontains 'C:\Windows\system32\WindowsPowerShell\v1.0\Modules' -and
+    $disc -ccontains 'C:\Windows\system32\WindowsPowerShell\Modules') ($disc -join ', ')
+
+# Who may write in the discovery set: SYSTEM, Administrators, TrustedInstaller; CREATOR
+# OWNER only as an inherit-only entry; a deny entry or a read-only entry never counts
+function New-Ace([string]$Sid, $Rights, [string]$Type, [bool]$InheritOnly) { [ordered]@{ Sid = $Sid; Rights = [int]$Rights; Type = $Type; InheritOnly = $InheritOnly } }
+$ti = 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
+$okAces = @((New-Ace 'S-1-5-18' $r::FullControl 'Allow' $false), (New-Ace 'S-1-5-32-544' $r::Modify 'Allow' $false), (New-Ace $ti $r::FullControl 'Allow' $false),
+    (New-Ace 'S-1-3-0' $r::FullControl 'Allow' $true), (New-Ace 'S-1-5-32-545' $r::ReadAndExecute 'Allow' $false), (New-Ace 'S-1-5-32-545' $r::Modify 'Deny' $false))
+Add-Case 'discovery writers: SYSTEM, Administrators, TrustedInstaller, inherit-only CREATOR OWNER, read-only and deny entries are accepted' (@(Get-RefuteAceWriters $okAces).Count -eq 0)
+foreach ($badAce in @((New-Ace 'S-1-5-32-545' $r::Modify 'Allow' $false), (New-Ace 'S-1-5-11' $r::AppendData 'Allow' $false),
+        (New-Ace 'S-1-3-0' $r::FullControl 'Allow' $false), (New-Ace 'S-1-1-0' $r::WriteData 'Allow' $true))) {
+    Add-Case "discovery writers: $($badAce.Sid) with rights $($badAce.Rights) (inherit-only $($badAce.InheritOnly)) is a writer" (@(Get-RefuteAceWriters @($badAce)).Count -eq 1)
+}
+# Owners and ancestors (Codex review of #114): an owner outside SYSTEM, Administrators and
+# TrustedInstaller is refused; an ancestor counts only the rights that replace what is
+# below it, never creating a new child nor an inherit-only entry
+Add-Case 'owner: SYSTEM, Administrators, TrustedInstaller are allowed' ((Test-RefuteAllowedOwner 'S-1-5-18') -and (Test-RefuteAllowedOwner 'S-1-5-32-544') -and (Test-RefuteAllowedOwner $ti))
+Add-Case 'owner: Users, Authenticated Users and CREATOR OWNER are refused' (-not (Test-RefuteAllowedOwner 'S-1-5-32-545') -and -not (Test-RefuteAllowedOwner 'S-1-5-11') -and -not (Test-RefuteAllowedOwner 'S-1-3-0'))
+$ancOk = @((New-Ace 'S-1-5-11' $r::AppendData 'Allow' $false), (New-Ace 'S-1-5-11' $r::WriteData 'Allow' $false), (New-Ace 'S-1-5-11' $r::Modify 'Allow' $true), (New-Ace 'S-1-5-32-544' $r::FullControl 'Allow' $false))
+Add-Case 'ancestor: creating a child, an inherit-only entry and Administrators are accepted' (@(Get-RefuteAncestorWriters $ancOk).Count -eq 0)
+foreach ($ancBad in @((New-Ace 'S-1-5-11' $r::DeleteSubdirectoriesAndFiles 'Allow' $false), (New-Ace 'S-1-5-32-545' $r::ChangePermissions 'Allow' $false), (New-Ace 'S-1-1-0' $r::TakeOwnership 'Allow' $false), (New-Ace 'S-1-5-32-545' $r::Delete 'Allow' $false))) {
+    Add-Case "ancestor: $($ancBad.Sid) with rights $($ancBad.Rights) can replace what is below" (@(Get-RefuteAncestorWriters @($ancBad)).Count -eq 1)
+}
+
+# Generic rights (Codex review of the integrated JEA package): GENERIC_ALL (0x10000000) and
+# GENERIC_WRITE (0x40000000), which Windows can keep unmapped on an inherit-only entry,
+# count as the specific rights they grant; GENERIC_READ (0x80000000) and GENERIC_EXECUTE
+# (0x20000000) never count as writing
+$ga, $gx, $gw, $gr = 0x10000000, 0x20000000, 0x40000000, 0x80000000
+Add-Case 'generic rights: GENERIC_ALL maps to every right' ((ConvertTo-RefuteSpecificRights $ga) -eq [int]$r::FullControl)
+Add-Case 'generic rights: GENERIC_WRITE maps to FILE_GENERIC_WRITE' ((ConvertTo-RefuteSpecificRights $gw) -eq [int]($r::WriteData -bor $r::AppendData -bor $r::WriteAttributes -bor $r::WriteExtendedAttributes -bor $r::ReadPermissions -bor $r::Synchronize))
+foreach ($gBad in @((New-Ace 'S-1-5-32-545' $ga 'Allow' $true), (New-Ace 'S-1-5-32-545' $gw 'Allow' $true), (New-Ace 'S-1-5-11' $ga 'Allow' $false), (New-Ace 'S-1-5-11' $gw 'Allow' $false))) {
+    Add-Case "generic rights: $($gBad.Sid) with $('0x{0:X8}' -f $gBad.Rights) (inherit-only $($gBad.InheritOnly)) is a writer" (@(Get-RefuteAceWriters @($gBad)).Count -eq 1)
+}
+foreach ($gOk in @((New-Ace 'S-1-5-32-545' $gr 'Allow' $true), (New-Ace 'S-1-5-32-545' $gx 'Allow' $false), (New-Ace 'S-1-5-32-545' ($gr -bor $gx) 'Allow' $false))) {
+    Add-Case "generic rights: $($gOk.Sid) with $('0x{0:X8}' -f $gOk.Rights) only reads" (@(Get-RefuteAceWriters @($gOk)).Count -eq 0)
+}
+Add-Case 'generic rights: GENERIC_ALL on an ancestor can replace what is below' (@(Get-RefuteAncestorWriters @(New-Ace 'S-1-5-32-545' $ga 'Allow' $false)).Count -eq 1)
+Add-Case 'generic rights: GENERIC_WRITE on an ancestor only creates children' (@(Get-RefuteAncestorWriters @(New-Ace 'S-1-5-32-545' $gw 'Allow' $false)).Count -eq 0)
+
+# on real folders: a folder the current account can write (the test's work folder) is
+# reported at every level (the root, a module folder, its RoleCapabilities, a .psrc, and a
+# module folder with no RoleCapabilities), its owner too; an absent folder is checked
+# through its nearest existing ancestor
+$discRoot = Join-Path $WorkDir 'discovery'
+[void][System.IO.Directory]::CreateDirectory((Join-Path $discRoot 'SomeModule\RoleCapabilities'))
+[void][System.IO.Directory]::CreateDirectory((Join-Path $discRoot 'NoRoles'))
+[System.IO.File]::WriteAllText((Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), '@{}')
+$discProblems = @(Get-RefuteDiscoveryProblems -Roots @($discRoot))
+if ($onWindows) {
+    foreach ($level in @($discRoot, (Join-Path $discRoot 'SomeModule'), (Join-Path $discRoot 'SomeModule\RoleCapabilities'),
+            (Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), (Join-Path $discRoot 'NoRoles'))) {
+        Add-Case "discovery problems: '$($level.Substring($WorkDir.Length + 1))' writable by the current account is reported" (
+            @($discProblems | Where-Object { $_.StartsWith("$level can be written by") }).Count -ge 1) ($discProblems -join ' | ')
+    }
+    Add-Case 'discovery problems: a root owned by the current account is reported' (@($discProblems | Where-Object { $_.StartsWith("$discRoot is owned by") }).Count -eq 1) ($discProblems -join ' | ')
+    $absentProblems = @(Get-RefuteDiscoveryProblems -Roots @(Join-Path $discRoot 'absent\deeper'))
+    Add-Case 'discovery problems: an absent folder is checked through its nearest existing ancestor' (
+        @($absentProblems | Where-Object { $_.StartsWith("$discRoot can be written by") }).Count -ge 1) ($absentProblems -join ' | ')
+    # the folders above that ancestor are checked as ancestors (Codex review of #114, round
+    # 2): the work folder, owned by the current account, is reported
+    Add-Case 'discovery problems: the ancestors above the nearest existing one are checked too' (
+        @($absentProblems | Where-Object { $_.StartsWith("$WorkDir is owned by") }).Count -eq 1) ($absentProblems -join ' | ')
+} else {
+    # Windows ACLs cannot be read here (no Get-Acl): every folder is reported as unreadable,
+    # never accepted (the registration itself runs only on Windows)
+    Add-Case 'discovery problems: without Windows ACLs every level is reported, never accepted' (
+        @($discProblems | Where-Object { $_.StartsWith("$discRoot cannot be read") }).Count -ge 1) ($discProblems -join ' | ')
+}
+
+# The folders the role capability's imports load from (Get-RefuteTreeProblems, Codex review
+# of #118): every file and folder below the root gets the full check, every ancestor the
+# ancestor check; a reparse point and a missing root are problems
+$treeRoot = Join-Path $WorkDir 'imports'
+[void][System.IO.Directory]::CreateDirectory((Join-Path $treeRoot 'deep\deeper'))
+[System.IO.File]::WriteAllText((Join-Path $treeRoot 'deep\deeper\Some.dll'), 'x')
+$treeProblems = @(Get-RefuteTreeProblems -Roots @($treeRoot))
+if ($onWindows) {
+    foreach ($level in @($treeRoot, (Join-Path $treeRoot 'deep'), (Join-Path $treeRoot 'deep\deeper'), (Join-Path $treeRoot 'deep\deeper\Some.dll'))) {
+        Add-Case "import trees: '$($level.Substring($WorkDir.Length + 1))' writable and owned by the current account is reported" (
+            @($treeProblems | Where-Object { $_.StartsWith("$level can be written by") }).Count -ge 1 -and
+            @($treeProblems | Where-Object { $_.StartsWith("$level is owned by") }).Count -eq 1) ($treeProblems -join ' | ')
+    }
+    Add-Case 'import trees: the ancestors are checked as ancestors' (
+        @($treeProblems | Where-Object { $_.StartsWith("$WorkDir is owned by") }).Count -eq 1) ($treeProblems -join ' | ')
+    # a junction (no administrator right needed) inside the tree is refused
+    $junction = Join-Path $treeRoot 'link'
+    New-Item -ItemType Junction -Path $junction -Value (Join-Path $treeRoot 'deep') | Out-Null
+    $linkProblems = @(Get-RefuteTreeProblems -Roots @($treeRoot))
+    Add-Case 'import trees: a junction inside the tree is a problem' (
+        @($linkProblems | Where-Object { $_ -eq "$junction is a reparse point (a link or junction)" }).Count -eq 1) ($linkProblems -join ' | ')
+    # the real folders of the role capability's imports on this machine: none of them may
+    # report a problem (the registration refuses otherwise); only where they exist
+    $systemTrees = @(
+        (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility'),
+        (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules\Hyper-V'),
+        (Join-Path $env:SystemRoot 'Microsoft.NET\assembly\GAC_MSIL\Microsoft.HyperV.PowerShell.Cmdlets'))
+    if (@($systemTrees | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Container) }).Count -eq 0) {
+        $systemProblems = @(Get-RefuteTreeProblems -Roots $systemTrees)
+        Add-Case 'import trees: the folders of this Windows machine report no problem' ($systemProblems.Count -eq 0) ($systemProblems -join ' | ')
+    }
+}
+$missingTree = @(Get-RefuteTreeProblems -Roots @(Join-Path $treeRoot 'absent'))
+Add-Case 'import trees: a missing folder is a problem' ($missingTree.Count -eq 1 -and $missingTree[0] -eq "$(Join-Path $treeRoot 'absent') does not exist") ($missingTree -join ' | ')
+
 # The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
 # capability, an absent root, and a root that cannot be read as a folder (a file). A root
 # that cannot be read is never reported as absent (Codex review of #99).
