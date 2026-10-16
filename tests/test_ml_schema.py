@@ -37,6 +37,49 @@ REPO = "https://github.com/example/repo"
 COMMIT = "a" * 40
 STAMP = "2026-10-15T00:00:00Z"
 LABELS = list(range(10))
+# synthetic SHA-256 hashes of the labels of the claim's split and of the other split (1.5a;
+# the run compares them, the schema cannot)
+LABELS_SHA256 = "b" * 64
+OTHER_LABELS_SHA256 = "c" * 64
+CITE = {"file": "src/eval.py", "lines": [40, 52], "role": "counts the evaluated examples"}
+FINAL = {"kind": "final"}
+
+
+def hook_evidence(function):
+    """(b) alone, for one method: the patch is not declared in test_plan by default."""
+    return {
+        "selected_evaluation": dict(FINAL),
+        "routes": [
+            {
+                "route": "hook",
+                "patch": "hook.patch",
+                "function": function,
+                "call_site": dict(CITE),
+                "link": [dict(CITE)],
+            }
+        ],
+        "split_identity": split_identity(),
+    }
+
+
+def split_identity():
+    return {
+        "labels_sha256": LABELS_SHA256,
+        "other_splits": [{"name": "train", "labels_sha256": OTHER_LABELS_SHA256}],
+        "splits_evidence": [
+            {"file": "src/data.py", "lines": [10, 18], "role": "the splits the code can load"}
+        ],
+    }
+
+
+def printed_count(pattern=r"evaluated=(\d+)"):
+    """(a): a count the run prints, with the cited code from the counter to the output."""
+    return {
+        "route": "printed_count",
+        "count": {"from": "log", "regex": {"pattern": pattern, "group": 1}},
+        "link": [dict(CITE)],
+    }
+
 
 TRANSCRIPTIONS = {
     "c1": {
@@ -250,6 +293,19 @@ def value_claim(inventory_hash, position):
             },
             "convention": {"metric": "accuracy", "scale": "percent", "labels": LABELS},
         },
+        "coverage_evidence": {
+            "method": {
+                "selected_evaluation": dict(FINAL),
+                "routes": [
+                    {
+                        "route": "saved_predictions",
+                        "link": [dict(CITE, role="writes the test predictions it prints from")],
+                    },
+                    printed_count(),
+                ],
+                "split_identity": split_identity(),
+            }
+        },
         "approvals": approvals(inventory_hash),
     }
 
@@ -301,6 +357,13 @@ def comparison_claim(inventory_hash, position):
         "metric_recompute": {
             "applies": False,
             "reason": "the repository saves the predictions of one method only",
+        },
+        "coverage_evidence": {
+            "method": {"selected_evaluation": dict(FINAL), "routes": [printed_count()]},
+            "reference": {
+                "selected_evaluation": dict(FINAL),
+                "routes": [printed_count(r"ref_evaluated=(\d+)")],
+            },
         },
         "approvals": approvals(inventory_hash),
     }
@@ -464,6 +527,68 @@ def test_allowed_patch_attachment(tmp_path):
         ]
 
     load(tmp_path, patch)
+
+
+def test_the_coverage_evidence_is_written_out_with_its_default_rule(tmp_path):
+    """1.5a: the routes of each method are kept in their order, and the rule for
+    conflicting evidence is written out (all_must_agree, the only rule of v0.3)."""
+    claim = load(tmp_path).canonical()
+    value = target(claim, "c1")["coverage_evidence"]
+    assert [r["route"] for r in value["method"]["routes"]] == ["saved_predictions", "printed_count"]
+    assert value["method"]["conflict_rule"] == "all_must_agree"
+    assert value["method"]["split_identity"]["labels_sha256"] == LABELS_SHA256
+    assert value["method"]["selected_evaluation"] == {"kind": "final", "value": None}
+    assert value["method"]["complementary"] == []
+    assert value["reference"] is None
+    comparison = target(claim, "c2")["coverage_evidence"]
+    assert comparison["reference"]["routes"][0]["count"]["regex"]["pattern"] == (
+        r"ref_evaluated=(\d+)"
+    )
+
+
+def test_every_route_in_its_order_with_complementary_evidence(tmp_path):
+    """The four routes together, in the fixed order (c), (d), (a), (b): the hook names an
+    allowed patch, the observed function of its metric and the call that is the selected
+    evaluation; a dataset read trace is complementary evidence."""
+
+    def every_route(claim):
+        (tmp_path / "hook.patch").write_text("--- a\n+++ b\n")
+        claim["attachments"].append({"path": "hook.patch", "role": "allowed-patch"})
+        claim["test_plan"]["build"]["allowed_patches"] = [
+            {"attachment": "hook.patch", "reason": "observes accuracy_score in the container"}
+        ]
+        stats_file = "out/stats_{seed}.json"
+        target(claim, "c1")["coverage_evidence"]["method"] = {
+            "selected_evaluation": {"kind": "checkpoint", "value": "ckpt/best_{seed}.pt"},
+            "routes": [
+                {"route": "saved_predictions", "link": [dict(CITE)]},
+                {
+                    "route": "sufficient_statistics",
+                    "correct": {"from": "file", "file": stats_file, "json_path": "$.correct"},
+                    "total": {"from": "file", "file": stats_file, "json_path": "$.total"},
+                    "link": [dict(CITE, role="writes correct and total of the test evaluation")],
+                },
+                printed_count(),
+                {
+                    "route": "hook",
+                    "patch": "hook.patch",
+                    "function": "sklearn.metrics.accuracy_score",
+                    "call_site": dict(CITE, lines=[48, 48], role="the test evaluation call"),
+                    "link": [dict(CITE, lines=[48, 52], role="prints the call's return")],
+                },
+            ],
+            "split_identity": split_identity(),
+            "complementary": ["dataset_read_trace"],
+        }
+
+    claim = load(tmp_path, every_route).canonical()
+    routes = target(claim, "c1")["coverage_evidence"]["method"]["routes"]
+    assert [r["route"] for r in routes] == [
+        "saved_predictions",
+        "sufficient_statistics",
+        "printed_count",
+        "hook",
+    ]
 
 
 def test_a_claim_without_seed_option_runs_once(tmp_path, monkeypatch):
@@ -923,6 +1048,178 @@ FAILS = {
     "recompute file without {seed} for several runs": _set(
         ["c1", "metric_recompute", "predictions", "file"], "preds/p.npy"
     ),
+    # coverage of metric_extracted (1.5a)
+    "coverage evidence missing": _drop(["c1", "coverage_evidence"]),
+    "coverage without a route": _set(["c1", "coverage_evidence", "method", "routes"], []),
+    "coverage route (e) out of v0.3": _set(
+        ["c1", "coverage_evidence", "method", "routes"], [{"route": "evaluator_observer"}]
+    ),
+    "coverage route (f) decides": _set(
+        ["c1", "coverage_evidence", "method", "routes"], [{"route": "dataset_read_trace"}]
+    ),
+    "coverage complementary other than (f)": _set(
+        ["c1", "coverage_evidence", "method", "complementary"], ["printed_count"]
+    ),
+    "coverage routes out of order": _set(
+        ["c1", "coverage_evidence", "method", "routes"],
+        [printed_count(), {"route": "saved_predictions", "link": [dict(CITE)]}],
+    ),
+    "coverage route twice": _set(
+        ["c1", "coverage_evidence", "method", "routes"], [printed_count(), printed_count()]
+    ),
+    "coverage conflict rule other than all_must_agree": _set(
+        ["c1", "coverage_evidence", "method", "conflict_rule"], "first_route_wins"
+    ),
+    "coverage split identity missing for saved predictions": _drop(
+        ["c1", "coverage_evidence", "method", "split_identity"]
+    ),
+    "coverage split identity without a route that sees labels": _set(
+        ["c2", "coverage_evidence", "method", "split_identity"], split_identity()
+    ),
+    "coverage split labels equal another split's": _set(
+        ["c1", "coverage_evidence", "method", "split_identity", "other_splits"],
+        [
+            {"name": "train", "labels_sha256": OTHER_LABELS_SHA256},
+            {"name": "val", "labels_sha256": LABELS_SHA256},
+        ],
+    ),
+    "coverage split identity without its evidence": _set(
+        ["c1", "coverage_evidence", "method", "split_identity", "splits_evidence"], []
+    ),
+    "coverage split identity leaves out a declared split": _set(
+        ["c1", "coverage_evidence", "method", "split_identity", "other_splits"], []
+    ),
+    "coverage split identity names the claim's own split": _set(
+        ["c1", "coverage_evidence", "method", "split_identity", "other_splits"],
+        [
+            {"name": "train", "labels_sha256": OTHER_LABELS_SHA256},
+            {"name": "test", "labels_sha256": "d" * 64},
+        ],
+    ),
+    "coverage hook alike for both methods with other roles": _apply(
+        _set(
+            ["c2", "coverage_evidence", "method"], hook_evidence("sklearn.metrics.accuracy_score")
+        ),
+        _set(
+            ["c2", "coverage_evidence", "reference"],
+            hook_evidence("sklearn.metrics.accuracy_score"),
+        ),
+        _set(
+            ["c2", "coverage_evidence", "reference", "routes", 0, "call_site", "role"],
+            "the reference's evaluation call",
+        ),
+    ),
+    "coverage count json_path with an empty step": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "log", "json_path": "$."},
+    ),
+    "coverage count json_path with a bare bracket": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "log", "json_path": "$]"},
+    ),
+    "metric_extraction json_path outside the grammar": _set(
+        ["c1", "run", "metric_extraction"],
+        {"from": "file", "file": "out/{seed}.json", "json_path": "$..acc", "unit": "percent"},
+    ),
+    "coverage saved predictions without metric_recompute": _apply(
+        _set(
+            ["c2", "coverage_evidence", "method", "routes"],
+            [{"route": "saved_predictions", "link": [dict(CITE)]}],
+        ),
+        _set(["c2", "coverage_evidence", "method", "split_identity"], split_identity()),
+    ),
+    "coverage saved predictions without link": _drop(
+        ["c1", "coverage_evidence", "method", "routes", 0, "link"]
+    ),
+    "coverage selected evaluation missing": _drop(
+        ["c1", "coverage_evidence", "method", "selected_evaluation"]
+    ),
+    "coverage selected evaluation final with a value": _set(
+        ["c1", "coverage_evidence", "method", "selected_evaluation"], {"kind": "final", "value": 3}
+    ),
+    "coverage selected epoch without its number": _set(
+        ["c1", "coverage_evidence", "method", "selected_evaluation"], {"kind": "epoch"}
+    ),
+    "coverage selected checkpoint outside the repository": _set(
+        ["c1", "coverage_evidence", "method", "selected_evaluation"],
+        {"kind": "checkpoint", "value": "../best.pt"},
+    ),
+    "coverage count json_path without a member": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "log", "json_path": "$"},
+    ),
+    "coverage count regex without its group": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "log", "regex": {"pattern": "evaluated=10000", "group": 9}},
+    ),
+    "coverage count regex without its named group": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "log", "regex": {"pattern": r"evaluated=(?P<n>\d+)", "group": "count"}},
+    ),
+    "coverage same evidence for both methods": _set(
+        ["c2", "coverage_evidence", "reference", "routes"], [printed_count()]
+    ),
+    "coverage printed count without link": _drop(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link"]
+    ),
+    "coverage printed count with an empty link": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link"], []
+    ),
+    "coverage printed count with a hook field": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "patch"], "hook.patch"
+    ),
+    "coverage citation lines reversed": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link", 0, "lines"], [52, 40]
+    ),
+    "coverage citation outside the repository": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "link", 0, "file"], "../eval.py"
+    ),
+    "coverage count file without {seed} for several runs": _set(
+        ["c2", "coverage_evidence", "method", "routes", 0, "count"],
+        {"from": "file", "file": "out/count.json", "json_path": "$.n"},
+    ),
+    "coverage statistics for a metric outside the list": _apply(
+        _set(["c1", "attack:holdout", "applies"], False),
+        _drop(["c1", "attack:holdout", "params"]),
+        _set(["c1", "attack:trivial_baseline", "applies"], False),
+        _drop(["c1", "attack:trivial_baseline", "params"]),
+        _set(["c1", "metric", "name"], "f1"),
+        _set(["c1", "inventory", "transcription", "metric"], "f1"),
+        _set(["c1", "metric_recompute"], {"applies": False, "reason": "not saved"}),
+        _set(
+            ["c1", "coverage_evidence", "method"],
+            {
+                "selected_evaluation": dict(FINAL),
+                "routes": [
+                    {
+                        "route": "sufficient_statistics",
+                        "correct": {"from": "log", "regex": {"pattern": r"c=(\d+)", "group": 1}},
+                        "total": {"from": "log", "regex": {"pattern": r"n=(\d+)", "group": 1}},
+                        "link": [dict(CITE)],
+                    }
+                ],
+            },
+        ),
+    ),
+    "coverage hook for another function": _set(
+        ["c2", "coverage_evidence", "method"],
+        hook_evidence("sklearn.metrics.f1_score"),
+    ),
+    "coverage hook not an allowed patch": _set(
+        ["c2", "coverage_evidence", "method"],
+        hook_evidence("sklearn.metrics.accuracy_score"),
+    ),
+    "coverage hook without link": _apply(
+        _set(
+            ["c2", "coverage_evidence", "method"], hook_evidence("sklearn.metrics.accuracy_score")
+        ),
+        _drop(["c2", "coverage_evidence", "method", "routes", 0, "link"]),
+    ),
+    "coverage reference missing for a comparison": _drop(["c2", "coverage_evidence", "reference"]),
+    "coverage reference on a value claim": _set(
+        ["c1", "coverage_evidence", "reference"],
+        {"selected_evaluation": dict(FINAL), "routes": [printed_count(r"other=(\d+)")]},
+    ),
 }
 
 
@@ -951,6 +1248,46 @@ REASONS = {
     "comparison claim with value mode": "a comparison claim takes comparison_mode",
     "comparison missing": "needs its comparison block",
     "comparison on a value claim": "a value claim has no comparison block",
+    "coverage citation lines reversed": "first <= last",
+    "coverage citation outside the repository": "citation file must be relative",
+    "coverage complementary other than (f)": "Input should be 'dataset_read_trace'",
+    "coverage conflict rule other than all_must_agree": "Input should be 'all_must_agree'",
+    "coverage count file without {seed} for several runs": "a count file names {seed}",
+    "coverage evidence missing": "coverage_evidence: Field required",
+    "coverage count json_path with a bare bracket": "unsupported step at 1",
+    "coverage count json_path with an empty step": "unsupported step at 1",
+    "coverage count json_path without a member": "names the whole document",
+    "coverage hook alike for both methods with other roles": "read the same evidence",
+    "coverage count regex without its group": "regex has no group 9",
+    "coverage count regex without its named group": "regex has no group named 'count'",
+    "coverage hook for another function": "no other function",
+    "coverage hook not an allowed patch": "is not in test_plan.build.allowed_patches",
+    "coverage hook without link": "takes exactly",
+    "coverage same evidence for both methods": "read the same evidence of the same runs",
+    "coverage saved predictions without link": "takes exactly",
+    "coverage selected checkpoint outside the repository": "checkpoint must be relative",
+    "coverage selected epoch without its number": "an epoch number",
+    "coverage selected evaluation final with a value": "'final' takes no value",
+    "coverage selected evaluation missing": "selected_evaluation: Field required",
+    "coverage split identity missing for saved predictions": "split_identity is required",
+    "coverage split identity without a route that sees labels": "split_identity is required",
+    "coverage split identity leaves out a declared split": "leaves out the declared splits",
+    "coverage split identity names the claim's own split": "names the claim's own split",
+    "coverage split identity without its evidence": "List should have at least 1 item",
+    "coverage split labels equal another split's": "cannot identify it",
+    "metric_extraction json_path outside the grammar": "unsupported step at 1",
+    "coverage printed count with a hook field": "takes exactly",
+    "coverage printed count with an empty link": "cites at least one place",
+    "coverage printed count without link": "takes exactly",
+    "coverage reference missing for a comparison": "coverage_evidence.reference is required",
+    "coverage reference on a value claim": "coverage_evidence.reference is required",
+    "coverage route (e) out of v0.3": "route: Input should be",
+    "coverage route (f) decides": "route: Input should be",
+    "coverage route twice": "listed twice",
+    "coverage routes out of order": "listed in the order",
+    "coverage saved predictions without metric_recompute": "which must apply",
+    "coverage statistics for a metric outside the list": "sufficient_statistics applies only to",
+    "coverage without a route": "routes: List should have at least 1 item",
     "coverage name WP2 refuses": "WP2 refuses",
     "d_pub outside magnitude": "d_pub is required in magnitude mode",
     "dataset not declared": "dataset imagenet is not declared",
@@ -1081,6 +1418,71 @@ def test_a_separate_reference_run_has_the_same_seed_control(tmp_path):
         target(claim, "c2")["comparison"]["reference_run"] = reference
 
     load(tmp_path, controlled)
+
+
+def test_separate_reference_runs_may_read_their_own_logs_with_the_same_selector(tmp_path):
+    """1.5a, Codex review of #120: with a separate reference run, the method and the
+    reference read different logs, so the same selector is two pieces of evidence; with
+    the same runs it is one, and it is refused (case 'coverage same evidence for both
+    methods')."""
+
+    def separate(claim):
+        reference = run_block()
+        reference["argv"] = ["python", "baseline.py"]
+        t = target(claim, "c2")
+        t["comparison"]["reference_run"] = reference
+        t["coverage_evidence"]["reference"]["routes"] = [printed_count()]
+
+    load(tmp_path, separate)
+
+
+def test_the_same_hook_call_may_serve_two_selected_evaluations(tmp_path):
+    """Codex review of #120, round 3: with the same runs, one evaluation helper may compute
+    the method's and the reference's values from two different checkpoints; the hook
+    declarations differ by their selected evaluation, so the schema accepts them and the
+    gate checks that the events are distinct."""
+
+    def two_checkpoints(claim):
+        (tmp_path / "hook.patch").write_text("--- a\n+++ b\n")
+        claim["attachments"].append({"path": "hook.patch", "role": "allowed-patch"})
+        claim["test_plan"]["build"]["allowed_patches"] = [
+            {"attachment": "hook.patch", "reason": "observes accuracy_score in the container"}
+        ]
+        cov = target(claim, "c2")["coverage_evidence"]
+        cov["method"] = hook_evidence("sklearn.metrics.accuracy_score")
+        cov["reference"] = hook_evidence("sklearn.metrics.accuracy_score")
+        cov["method"]["selected_evaluation"] = {"kind": "checkpoint", "value": "ours_{seed}.pt"}
+        cov["reference"]["selected_evaluation"] = {
+            "kind": "checkpoint",
+            "value": "baseline_{seed}.pt",
+        }
+
+    load(tmp_path, two_checkpoints)
+
+
+def test_selectors_accept_the_grammar_and_groups_they_can_read(tmp_path):
+    """Positive limits of the selector checks: a json_path with name and index steps, a
+    regular expression's group 0 and an existing named group, in metric_extraction and in
+    a coverage count."""
+
+    def selectors(claim):
+        t = target(claim, "c2")
+        t["run"]["metric_extraction"] = {
+            "from": "file",
+            "file": "out/metrics_{seed}.json",
+            "json_path": "$.runs[0].test-acc",
+            "unit": "percent",
+        }
+        t["coverage_evidence"]["method"]["routes"][0]["count"] = {
+            "from": "log",
+            "regex": {"pattern": r"evaluated=(?P<n>\d+)", "group": "n"},
+        }
+        t["coverage_evidence"]["reference"]["routes"][0]["count"] = {
+            "from": "log",
+            "regex": {"pattern": r"\d+", "group": 0},
+        }
+
+    load(tmp_path, selectors)
 
 
 @pytest.mark.parametrize("metric", ["mae", "r2", "bleu", "top5_accuracy"])

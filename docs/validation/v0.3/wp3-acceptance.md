@@ -620,6 +620,313 @@ requires before the runner code. They decide when a run or the accounting of a p
 - **W3.12** A non-finite value, or a metric on zero examples, does not pass
   `metric_extracted`.
 
+### 1.5a Coverage of `metric_extracted`: contract and routes (design of 2026-10-16, for the maintainer's approval)
+
+**Source.** The maintainer's design direction of 2026-10-16 (item 6). Saved predictions
+are not required: the coverage of `metric_extracted` may be shown by any route below,
+declared in the claim before the lock. With no route that closes the chain, the gate is
+`INCONCLUSIVE`.
+
+- **W3.12a Contract.** For each base seed and each method (the method, and for a
+  comparison claim also its reference), the evidence states:
+  1. **identity:**
+     - the run: its seed and method;
+     - the split;
+     - the **selected evaluation**, declared before the lock (`selected_evaluation`): the
+       `final` evaluation of the run, an `epoch`, or a `checkpoint` file.
+  2. **observed coverage:** how many examples contributed to the value read, after
+     filters, masks and aggregation;
+  3. **a deterministic link** to the value that `metric_extraction` reads: every route
+     cites the code from its evidence to that value (`link`);
+  4. **provenance:** the files, positions and hashes that let the link be checked.
+
+  **Each method has its own evidence.** The gate compares what each method's routes
+  actually resolve to (the file, the token or the event) and refuses one piece of
+  evidence counted for both. When the reference value comes from the same runs, the
+  schema already refuses a route declared alike for both: the same selectors, or the
+  same hook call for the same selected evaluation (one call site may compute two
+  checkpoints). This is a necessary check only: two different selectors can still read
+  one token. Separate runs may use the same selector on their own logs and files.
+
+  The split's declared size (`expected_examples`, equal to `metric.n_examples`) is
+  compared with the observed count on every route, never substituted for it. **A
+  different count is `INCONCLUSIVE`**, as W3.17 states for the recomputation.
+- **W3.12b Routes, in this order** (`coverage_evidence.<method>.routes`, listed in this
+  order, each at most once, at least one):
+  1. **evidence the run produces natively:**
+     - **(c) `saved_predictions`:** the predictions of `metric_recompute`, which must
+       apply. The claim cites the code that writes them from the selected evaluation and
+       that prints the value from them.
+     - **(d) `sufficient_statistics`:** a count of correctly classified examples and the
+       total, each read by a deterministic selector (a JSON path, a CSV cell or a
+       regular expression, on a file or the log). It applies to `accuracy` and
+       `error_rate` only. The claim cites the code that writes the two numbers from the
+       selected evaluation.
+     - **(a) `printed_count`:** a count the run prints, read by a deterministic selector.
+       The claim cites the code from the counter to the computation and to the printed
+       value.
+  2. **(b) `hook`:**
+     - **What it is:** an allowed patch of `test_plan.build.allowed_patches`, so it is
+       fixed and hashed before the lock, its diff is in the dossier, and it runs only in
+       the container.
+     - **What it observes:** the one function of the claim's metric (`accuracy`:
+       `sklearn.metrics.accuracy_score`; `precision`, `recall`, `f1`: the matching
+       scikit-learn function; `auroc`: `sklearn.metrics.roc_auc_score`), at the cited call
+       (`call_site`) that computes the selected evaluation.
+     - **Link:** the claim cites the code from that call's return to the printed value.
+  3. **None closes the chain:** `metric_extracted` is `INCONCLUSIVE`.
+
+  **(e)**, an observer of a specific evaluator, is out of v0.3:
+  - the schema has no such route;
+  - a hook can observe only the closed list of functions above, and a printed count or
+    statistics come from the repository's own output.
+
+  **(f)**, a trace of the dataset reads (`complementary: [dataset_read_trace]`), is
+  complementary evidence only: loading the data is not evaluating it, and it never
+  decides.
+- **W3.12c The hook.** Proving that the hook loaded is not enough. The observed event
+  must be bound to:
+  - **the metric:** the declared function;
+  - **the split:** the hash of the observed `y_true` equals the split's
+    `labels_sha256` (W3.12d);
+  - **the seed:** the run;
+  - **the selected evaluation:** the cited call site.
+
+  Exactly one event of the run satisfies all four. None, or more than one, is
+  `INCONCLUSIVE`. A call site that runs once per evaluation and evaluates several epochs
+  or checkpoints therefore cannot identify the selected one by itself: in v0.3 the hook
+  closes the chain only when one event remains.
+
+  **The hook is observation only** (the maintainer's addition of 2026-10-16). Its
+  reference implementation is `src/refute/packs/ml/coverage_hook.py`, standard library
+  only, as it runs in the paper's container.
+  - **The call:** the hook calls the observed function with exactly the arguments it
+    received (the same objects, untouched before the call) and returns exactly the
+    object the function returned, or lets exactly the exception it raised propagate.
+  - **What it runs after the call:** only Python's own code or numpy's compiled code.
+    - **Comparison:** types are compared with `is` only, so no `__eq__` of a class or
+      metaclass runs.
+    - **Labels:** read only from an exact `list` or `tuple` whose elements are exactly
+      `int` or `str`, or from numpy's own `ndarray`.
+    - **A trusted numpy type:** it is the compiled type found in the `__dict__` of the
+      numpy module the program already imported, which must be an exact module. Its
+      metaclass must be exactly `type`, it must not be a heap type, and its compiled name
+      must be `numpy.<name>` for the name looked up: a class that only calls itself
+      `numpy.ndarray`, or a compiled type of another module placed under numpy's name, is
+      never trusted. The hook never imports numpy itself.
+    - **Anything else is not touched** (an iterator, a subclass, an object with a custom
+      metaclass, a fake numpy class): none of its methods or attributes runs, and a
+      failure record with a fixed message is written. Unknown exceptions are never
+      formatted.
+    - **The returned value** is recorded only for an exact `int`, `float` or trusted
+      numpy number. For any other value the event says `unread`, and nothing of it runs.
+  - **The function's name:** the event names the function by the public name declared
+    when the hook is installed (for example `sklearn.metrics.accuracy_score`), which the
+    gate compares with the claim's `function`.
+
+  **Trust boundary (a declared premise).** The hook runs inside the observed program and
+  shares its interpreter. It trusts the interpreter and the modules the program has
+  loaded (the standard library, and numpy as found in `sys.modules`) as they are, and does
+  not authenticate them: a program that replaces a module, or a field of one, could
+  equally replace the modules the hook itself uses, or the hook, and no check inside the
+  process can rule that out. What the checks above guarantee is narrower: no code reached
+  through the arguments or the result of the observed call runs. Such a replacement would
+  be code of the repository at its pinned commit, or of a patch hashed before the lock;
+  the hook does not detect it.
+
+  **Any failure of the hook itself makes the gate `INCONCLUSIVE`**, and never changes the
+  call.
+  - **Calls in progress:** a call is counted from its entry into the wrapper, before the
+    observed function runs, until its records are written (or the function raised).
+  - **One record per call:** each call that returned gets a unique sequence number,
+    allocated under a lock, and writes an event or a failure record, then a commit
+    record.
+  - **The final record:** `finish()` is called once by the installation, from `atexit`,
+    after the main program's execution and every non-daemon thread have ended, never
+    from inside an observed call. It waits until no call is in progress, then, in one locked step,
+    writes the final record and closes the observer. The final record states the number
+    of calls and whether any failure happened (a sink that raised included). It also
+    holds the SHA-256 of every record written before it; the digest and each write
+    happen in one locked step. A call blocked forever leaves no final record (the run's
+    hang guard ends it), and a second `finish()` writes nothing.
+  - **A call after the final record** is still observed, unchanged, and its records are
+    written after the final record, which the gate refuses. **Limitation:** the log
+    cannot show the absence of records that never reached it, so a call that begins
+    after the final record and whose own records the sink then fails to write leaves no
+    trace. Such late calls may come from daemon threads or from shutdown callbacks
+    (other `atexit` handlers) that run after `finish()`.
+  - **The log is judged by its content, not by whether the sink returned.** A sink that
+    raises after the final record was written leaves a complete log that matches its
+    digest. A log written in part, reordered or edited does not match it.
+  - **What the gate accepts:** the events only when:
+    - every record has exactly the form and the types the hook writes;
+    - the sequence numbers are 1 to n with no repeat;
+    - each event comes before its commit record, and there is no failure record;
+    - the final record is last, says no failure, counts the calls and matches the
+      digest.
+
+    Anything else (an absent or malformed final record included) is `INCONCLUSIVE`.
+  - **Labels from numpy** are read only from a one-dimensional array whose `tolist()`
+    is a list. A 0-d array of dtype object is refused, so it never gives back the object
+    it holds.
+  - **Interrupts:** an interrupt (`KeyboardInterrupt`, `SystemExit`) raised during the
+    hook's own work is not swallowed. The run is interrupted, after the observed call
+    has returned.
+
+  `tests/test_ml_coverage_hook.py` shows, for these cases:
+  - **identity:** the returned object is the very object the function returned, and the
+    function received the very argument objects, unchanged (shown with list
+    arguments);
+  - **value:** the value returned with and without the hook has the same type and text,
+    for a list, a tuple and a numpy array;
+  - **untouched objects:** these run zero lines of their own code:
+    - an object with a counting metaclass, a fake `numpy.ndarray` and a list subclass;
+    - an untrusted element and an iterator;
+    - a 0-d object array holding a counting object;
+    - a function object offered as labels while numpy's `ndarray` is replaced by the
+      compiled type of Python functions;
+    - a fake numpy scalar result and an unknown result.
+
+    2-D arrays are refused too, and every numpy type the hook reads is trusted with the
+    real numpy on each CI platform.
+  - **calls in progress:** `finish()` waits for a call still inside the observed
+    function, and counts it; a call whose function raised is no longer in progress;
+  - **recorded failures:** each of these reaches the gate as a failure:
+    - from the sink: a sink that fails after the commit record, a log written in part,
+      and a call still in the sink when `finish()` starts (it waits, then reports the
+      failure);
+    - after the end: a call made after `finish()` (a second `finish()` writes nothing);
+    - from the hook: a failing `sys._getframe`;
+    - from the records: an uncommitted event, a commit with no event or before its
+      event, a repeated sequence number or a gap, an incomplete event, wrong types, an
+      extra field;
+    - from the final record: none, a null one, one with wrong types, a record after it,
+      a wrong count and a wrong digest.
+
+    A sink that fails only after writing the final record leaves an accepted, complete
+    log;
+  - **propagation:** metadata that cannot be copied is tolerated, and the function's own
+    exception and an interrupt propagate.
+- **W3.12d The link and the split.** The link is never "the last call", nearness in time,
+  or an equal value. An equal value is a consistency check only: a different value is a
+  conflict.
+
+  Splits are never confused:
+  - **The routes that see labels, (c) and (b),** identify the split by its labels.
+    `split_identity` gives:
+    - `labels_sha256`: the SHA-256 of the canonical JSON array of the split's labels, in
+      example order;
+    - `other_splits`: every other split of the dataset the repository can evaluate, by
+      name, with the same hash;
+    - `splits_evidence`: the cited code where the repository defines the splits it can
+      evaluate, which justifies the list. The list is empty only when that code
+      evaluates the claim's split alone.
+
+    The schema checks that:
+    - every split the claim's dataset declares in `test_plan`, except the claim's own,
+      is in the list;
+    - the claim's own split is not in it;
+    - no other split has the same labels hash. Two splits with the same labels in the
+      same order cannot be told apart by labels, and (c) and (b) do not apply to them.
+  - **The other routes** identify the split by the cited code and the files it writes.
+
+  **Limitation** (the maintainer's addition of 2026-10-16). The labels hash follows the
+  order of the examples. A repository that evaluates the split in another order (a
+  shuffled loader, for example) gives a different hash when that order changes the
+  sequence of labels. Swapping two examples of the same class keeps the sequence, and
+  the hash. With a different hash, the routes that see labels, (c) and (b), cannot
+  identify the split, and the gate is `INCONCLUSIVE` by those routes: never `PASS`, and
+  never a failure of the claim. The routes that do not see labels, (d) and (a), are not
+  affected.
+- **W3.12e Conflicting evidence.**
+  - **The rule:** `conflict_rule: all_must_agree`, the only rule of v0.3, written out by
+    the resolution.
+  - **Agreement:** every declared route that produces evidence must agree on the count,
+    and on the value within the printed rounding.
+  - **Disagreement:** any disagreement is `INCONCLUSIVE`. The coverage is never taken
+    from the most convenient route.
+- **W3.12f Schema** (`coverage_evidence` of each claim, `src/refute/packs/ml/schema.py`):
+
+  ```yaml
+  coverage_evidence:
+    method:                       # the claim's method; for a comparison also `reference`
+      selected_evaluation: {kind: final}       # or {kind: epoch, value: 30},
+                                               # or {kind: checkpoint, value: "ckpt/best_{seed}.pt"}
+      routes:                     # at least one, in the order (c), (d), (a), (b)
+        - route: saved_predictions
+          link: [{file: src/eval.py, lines: [40, 52], role: "writes the predictions it prints from"}]
+        - route: sufficient_statistics
+          correct: {from: file, file: "out/stats_{seed}.json", json_path: "$.correct"}
+          total:   {from: file, file: "out/stats_{seed}.json", json_path: "$.total"}
+          link: [{file: src/eval.py, lines: [40, 52], role: "writes correct and total"}]
+        - route: printed_count
+          count: {from: log, regex: {pattern: "evaluated=(\\d+)", group: 1}}
+          link: [{file: src/eval.py, lines: [40, 52], role: "counts the evaluated examples"}]
+        - route: hook
+          patch: hook.patch       # an entry of test_plan.build.allowed_patches
+          function: sklearn.metrics.accuracy_score
+          call_site: {file: src/eval.py, lines: [48, 48], role: "the test evaluation call"}
+          link: [{file: src/eval.py, lines: [48, 52], role: "prints the call's return"}]
+      split_identity:             # with saved_predictions or hook, and only then
+        labels_sha256: <64 hex>
+        other_splits: [{name: train, labels_sha256: <64 hex>}]
+        splits_evidence: [{file: src/data.py, lines: [10, 18], role: "the splits the code can load"}]
+      conflict_rule: all_must_agree
+      complementary: [dataset_read_trace]   # optional; never decides
+  ```
+
+  **Field rules:**
+  - Citations name a file of the repository at `source.repository_commit` (relative,
+    without `..`) and an inclusive range of 1-based lines.
+  - With several base runs, a count read from a file names `{seed}`.
+  - A `json_path`, of a count or of `metric_extraction`, is in the grammar the
+    extractor reads (`extract.parse_json_path`): `$` followed by `.name` or `[index]`
+    steps, naming one value.
+  - The group a regular expression reads must exist in its pattern. This also applies to
+    `metric_extraction`, which shares the regular expression model.
+
+**Choices this text makes that the direction did not fix (for the maintainer's review):**
+- **Routes:**
+  - the order inside the native routes is (c), (d), (a), as the direction lists them;
+  - at least one route per method: a claim with none would always be `INCONCLUSIVE` on
+    `metric_extracted`, so it is not ready to lock.
+- **(d):** only a correct count and a total (no confusion matrix), and only for
+  `accuracy` and `error_rate`.
+- **(b):**
+  - one scikit-learn function per metric, and none for `error_rate`;
+  - exactly one matching event per run; several are `INCONCLUSIVE`, even if a rule
+    could pick one.
+- **Conflicts:** `all_must_agree` is the only rule; the direction allows any rule fixed
+  before the lock.
+- **The count:** it is compared with the split's declared size on every route, and a
+  different count is `INCONCLUSIVE`, not only on (c) as in W3.17.
+- **Every route has a link,** (c) and (b) included, and **every method has a selected
+  evaluation**.
+- **Split identity:**
+  - `split_identity` exactly with (c) or (b);
+  - split identity by labels, plus the named other splits with their labels and the
+    cited code that defines them, not by example identifiers, which predictions files
+    and metric calls usually do not carry;
+  - (c) and (b) do not apply when two splits have equal labels;
+  - the labels hash follows the order of the examples, so a split evaluated in an order
+    that changes the sequence of labels is `INCONCLUSIVE` by (c) and (b) (the
+    limitation in W3.12d);
+  - the hook reads only exact known types; its log is judged by its content (a final
+    record with the count and the digest of every record before it); it trusts the
+    interpreter and the loaded modules as a declared premise, and a call after the final
+    record whose records never reach the log is a declared limitation (W3.12c).
+- **Files and selectors:**
+  - `{seed}` in count files when there are several runs;
+  - the selector checks (`json_path`, the regex group), which also tighten
+    `metric_extraction`;
+  - with the same runs, method and reference may not declare a route alike; the gate
+    compares the resolved evidence in every case.
+
+**What follows, outside this pull request:**
+- the gate code of #110 accepts these routes, with `INCONCLUSIVE` and none of them;
+- #111 gets papers on both sides of each route;
+- both wait for the maintainer's OK of this design.
+
 ### 1.6 Attacks
 
 - **W3.13** The predicates of plan section 6.2 (lines 410-462), the attack rules of
@@ -830,6 +1137,38 @@ aggregation is this `applies`.
   or `level` outside (0, 1); a negative `sd` or `se`; a record without `location` and
   `quote`;
 - coverage: a `coverage_minimum` name WP2 would refuse for this claim.
+- coverage evidence (1.5a):
+  - **missing or empty:** no `coverage_evidence`, or a method with no route;
+  - **routes refused:**
+    - (e) or (f) given as a route;
+    - complementary evidence other than `dataset_read_trace`;
+    - routes out of the order (c), (d), (a), (b), or a route listed twice;
+    - a `conflict_rule` other than `all_must_agree`;
+  - **selected evaluation:** missing; `final` with a value; `epoch` without its number;
+    a `checkpoint` outside the repository;
+  - **split identity:** missing with `saved_predictions` or `hook`, or given without
+    them; labels equal to another split's; no `splits_evidence`; a declared split left
+    out of `other_splits`, or the claim's own split in it;
+  - **(c):** `saved_predictions` when `metric_recompute` does not apply, or without its
+    `link`;
+  - **(a):** `printed_count` without its `link`, with an empty `link`, or with a field
+    of another route;
+  - **citations:** lines reversed, or a file outside the repository;
+  - **counts:**
+    - a count file without `{seed}` when there are several base runs;
+    - a `json_path` outside the extractor's grammar (`$`, `$.`, `$]`, `$..acc`, also in
+      `metric_extraction`);
+    - a regular expression whose group (by number or name) does not exist;
+  - **(d):** `sufficient_statistics` for a metric outside `accuracy` and
+    `error_rate`;
+  - **(b):** a `hook` observing a function other than its metric's, naming a patch
+    that is not in `test_plan.build.allowed_patches`, or without its `link`;
+  - **methods:** no `reference` evidence for a comparison claim, or one for a value
+    claim; with the same runs, a route declared alike for the method and the reference
+    (the same selector, or the same hook call for the same selected evaluation, with
+    another role text). **Must pass:**
+    - separate runs with the same selector on their own logs;
+    - the same hook call for two different selected checkpoints.
 - 1.0.11:
   - a transcribed value that differs from the published value, as decimals: a value
     claim, a comparison, and `91.20000000000000001` against `91.2`;
