@@ -369,7 +369,14 @@ try {
     Set-Acl -LiteralPath $VmFolders[0] -AclObject (New-RefuteFolderAcl $VmTreeAcl)
     $treeProblems = @(Compare-RefuteVmTreeAcl -Acl (Get-Acl -LiteralPath $VmFolders[0]) -Spec $VmTreeAcl)
     if ($treeProblems.Count) { throw ('the ACL of the VM tree differs from its spec: ' + ($treeProblems -join '; ')) }
-    foreach ($folder in $VmFolders[1..($VmFolders.Count - 1)]) { [void][System.IO.Directory]::CreateDirectory($folder) }
+    foreach ($folder in $VmFolders[1..($VmFolders.Count - 1)]) {
+        [void][System.IO.Directory]::CreateDirectory($folder)
+        # each folder below inherits exactly what the tree's ACL passes down (compared by
+        # effect, Compare-RefuteVmTreeBelow), with no entry of its own
+        $depth = @($folder.Substring($VmFolders[0].Length).Split('\') | Where-Object { $_ }).Count
+        $belowProblems = @(Compare-RefuteVmTreeBelow -Acl (Get-Acl -LiteralPath $folder) -Spec $VmTreeAcl -Depth $depth)
+        if ($belowProblems.Count) { throw ("$folder does not inherit the ACL of the VM tree: " + ($belowProblems -join '; ')) }
+    }
     $done.Add('folders created')
     # 3. firewall, before WinRM starts
     New-NetFirewallRule -Name $FirewallRuleName -DisplayName 'Refute JEA: block WinRM from the network' `

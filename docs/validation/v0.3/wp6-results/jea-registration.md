@@ -333,5 +333,17 @@ published.
 - **Hyper-V Administrators:** Modify plus ChangePermissions, inherited.
 - **NT VIRTUAL MACHINE\Virtual Machines:** the entries of the default folder of Windows (list and create in folders, read files).
 - **Nothing else changes.** The maintainer applies it with the new `scripts/vm/Set-RefuteVmTreeAcl.ps1`, as Administrator: a preview, then `-Apply -PreviewSha256`.
+  - The `PreviewSha256` covers the state the change depends on: every item of the tree and the evidence folders, with creation time, attributes, owner, protection and every access entry.
+  - The script reads that state again just before the change.
+  - Each folder below must inherit exactly what the tree passes down, before and after; the check compares who gets which rights on the folder, its subfolders and its files.
+  - The evidence goes to a new file, created before the change, that only SYSTEM and Administrators can change.
+- **What version 2 does not prove:** it is a candidate for compatibility with the default folder of Windows, not a proven minimum. With ChangePermissions, Hyper-V Administrators can widen the tree's ACL; what they can do in practice stays limited by the commands the endpoint exposes. The Virtual Machines entries also give every VM on the host read access to the disks and media under `C:\Hyper-V`, since the group is not the Refute VM alone.
+
+**Could the CI have caught it? Yes, with a real call.**
+- **What the test did:** since run 38934817010 the CI endpoint test runs on a `windows-2025` runner that has the Hyper-V management service. It called only `-Status` and `SetHostPaths -Simulate`, and a simulation cannot show whether the virtual account may change the host paths.
+- **What it does now:** it makes the real call on the runner, under each version of the tree ACL, each in a new session:
+  - under version 1 the call must fail with access denied and leave the host paths unchanged;
+  - under version 2 it must succeed.
+- **The limit:** the runner is Windows Server 2025, not the maintainer's Windows 11. Its result supports or weakens the diagnosis; it does not replace the attempt on the host.
 
 **Status of W6.4:** no operation has succeeded; operation 1 is pending the corrected ACL and the maintainer's new attempt.

@@ -296,6 +296,53 @@ def test_the_simulation_writes_its_record_as_the_virtual_account(result, record_
     assert files <= set(record["Module"]), record["Module"]
 
 
+def _norm(path: str) -> str:
+    return path.rstrip("\\").lower()
+
+
+def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
+    result, record_property
+):
+    """The failure of 2026-10-16 (#126, Codex review): on the maintainer's host the first
+    real VM operation, SetHostPaths, failed through the endpoint with access denied, while
+    the simulation passed. The simulation cannot catch it, so the runner makes the real
+    call, in a new session for each version of the C:\\Hyper-V ACL: under version 1 (the
+    registration of 2026-10-15) it must fail with access denied and leave the host paths
+    as they were; under version 2 it must succeed and set them. Only where the runner has
+    the vmms service and no C:\\Hyper-V of its own. The runner is Windows Server, not the
+    maintainer's Windows 11: what it shows is evidence for the diagnosis, not a check of
+    the host."""
+    host_paths = result["RefuteVm"]["HostPaths"]
+    print(json.dumps(host_paths, indent=1))
+    if not host_paths["Ran"]:
+        pytest.skip(host_paths["Reason"])
+    original = host_paths["Original"]
+    v1 = host_paths["Attempts"]["Version1"]
+    v2 = host_paths["Attempts"]["Version2"]
+    for version, attempt in (("1", v1), ("2", v2)):
+        record_property(
+            f"version{version}_real",
+            _summary(attempt["Real"]) if attempt["Real"] else attempt["Error"],
+        )
+        record_property(f"version{version}_root_after", json.dumps(attempt["RootAfter"]))
+    for attempt in (v1, v2):
+        assert attempt["Error"] == "" and attempt["Simulate"]["Ok"], attempt
+        assert attempt["Real"] is not None, attempt
+    # version 1: access denied, nothing changed
+    denied = v1["Real"]["Error"]
+    assert not v1["Real"]["Ok"], v1
+    assert "0x80070005" in denied or "denied" in denied.lower(), v1
+    assert _norm(v1["HostAfter"]["VirtualMachinePath"]) == _norm(original["VirtualMachinePath"]), v1
+    assert _norm(v1["HostAfter"]["VirtualHardDiskPath"]) == _norm(
+        original["VirtualHardDiskPath"]
+    ), v1
+    # version 2: done, and the host paths are the tree
+    assert v2["Real"]["Ok"], v2
+    assert json.loads(v2["Real"]["Output"])["Outcome"] == "done", v2
+    assert _norm(v2["HostAfter"]["VirtualMachinePath"]) == "c:\\hyper-v", v2
+    assert _norm(v2["HostAfter"]["VirtualHardDiskPath"]) == "c:\\hyper-v\\virtual hard disks", v2
+
+
 PRIVATE = [
     "Get-FileHash",
     "Import-PowerShellDataFile",

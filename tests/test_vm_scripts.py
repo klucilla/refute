@@ -398,8 +398,11 @@ PREVIEW_COMMANDS = {
     "find-rolecapabilitycopies",
     "convertto-refutemoduleroot",
     "convertto-refuteaclentries",
-    # the ACL of the VM tree, built in memory (version 2, after the failure of SetHostPaths)
+    # the ACL of the VM tree, built in memory (version 2, after the failure of SetHostPaths),
+    # and the effect of ACL rules, computed in memory
     "convertto-refuteaclrules",
+    "convertto-refuteacleffect",
+    "get-refutechildrules",
     "get-refutevmtreeaclspec",
     "new-refutefolderacl",
     "convertto-refutespecificrights",
@@ -481,8 +484,11 @@ PREVIEW_METHODS = {
 LISTENER_PREVIEW_COMMANDS = {
     "convertto-refutemoduleroot",
     "convertto-refuteaclentries",
-    # in the core it dot-sources: the ACL of the VM tree, built in memory only
+    # in the core it dot-sources: the ACL of the VM tree, built in memory only, and the
+    # effect of ACL rules, computed in memory
     "convertto-refuteaclrules",
+    "convertto-refuteacleffect",
+    "get-refutechildrules",
     "new-refutefolderacl",
     "convertto-refutespecificrights",
     "convertto-refutewindowsfullpath",
@@ -589,8 +595,11 @@ VMTREE_PREVIEW_COMMANDS = (
     }
 ) | {
     "compare-refutevmtreeacl",
+    "compare-refutevmtreebelow",
     "get-refutevmtreeaclspec",
     "get-sidname",
+    "get-statehash",
+    "get-treestate",
 }
 VMTREE_PREVIEW_METHODS = (
     LISTENER_PREVIEW_METHODS
@@ -605,8 +614,11 @@ VMTREE_PREVIEW_METHODS = (
 
 def test_the_vm_tree_acl_preview_only_reads(cases):
     """The preview of Set-RefuteVmTreeAcl.ps1: allowlisted commands and methods only, no
-    dynamic command, no redirection; Set-Acl and the evidence write only after the apply
-    marker."""
+    dynamic command, no redirection; Set-Acl and the evidence file only after the apply
+    marker. In the apply (Codex review of #126): the evidence file is created first, as a
+    new file with its ACL set at creation, and the state is read and compared with the
+    preview again, both before the one Set-Acl; the evidence is written in a finally block,
+    so also when a step stops."""
     preview = cases["PreviewVmTree"]
     assert preview["ApplyMarkerFound"]
     assert {c.lower() for c in preview["Commands"]} - VMTREE_PREVIEW_COMMANDS == set()
@@ -614,9 +626,17 @@ def test_the_vm_tree_acl_preview_only_reads(cases):
     assert preview["Unnamed"] == [] and preview["Redirections"] == []
     text = (VM / "Set-RefuteVmTreeAcl.ps1").read_text(encoding="utf-8")
     before = text[: text.index("# ---- apply")]
-    assert "Set-Acl" not in before and "WriteAllText" not in before
+    for writer in ("Set-Acl", "WriteAllText", "FileStream", "CreateNew"):
+        assert writer not in before, writer
     apply = text[text.index("# ---- apply") :]
     assert apply.count("Set-Acl -LiteralPath $TreeRoot") == 1
+    set_acl = apply.index("Set-Acl -LiteralPath $TreeRoot")
+    create = apply.index("[System.IO.FileMode]::CreateNew")
+    assert create < set_acl
+    assert "[System.IO.FileShare]::Read, 4096, [System.IO.FileOptions]::None, $fileAcl)" in apply
+    assert apply.index("(Get-StateHash $again) -cne $previewHash") < set_acl
+    assert "WriteAllText" not in apply and "FileMode]::Create," not in apply
+    assert apply.index("} finally {") > set_acl and "$stream.Write(" in apply
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="the script runs in Windows PowerShell 5.1")

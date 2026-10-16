@@ -9,7 +9,7 @@ passes. In phase 1 the VM has no network.
 **Not validated in operation yet.** What has been checked so far, and where:
 
 - **Synthetic tests:** the scripts are tested with synthetic inputs, without Windows administrator rights and without Hyper-V (tests/test_vm_scripts.py).
-- **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py).
+- **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py). Where the runner has the Hyper-V management service, `SetHostPaths` also runs for real through it, under each version of the `C:\Hyper-V` ACL; the runner is Windows Server, not the maintainer's host.
 - **The maintainer's machine:**
   - the WinRM listener removal and the endpoint registration were run once, from `main` at `627842d`, with a first read-only check from the operator account. On 2026-10-16 the maintainer then:
     - repaired the installed module by hand: copied it to `RefuteVm\`, with no version subfolder, and removed `RefuteVm\0.1.0` (sections 5 and 6 of the record);
@@ -72,7 +72,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 | `RefuteVm/` | the endpoint | module: `RefuteVm.Core.ps1` (pure logic: configuration checks, plans, plan hash), `RefuteVm.HyperV.ps1` (observed state and the one mutation), `RefuteVm.psm1`, `RefuteVm.Config.psd1`, `RoleCapabilities/RefuteVmOperator.psrc` |
 | `Register-RefuteVmEndpoint.ps1` | the maintainer, as Administrator | registers the endpoint; without `-Apply`, only shows what would change |
 | `Remove-RefuteWinRmListener.ps1` | the maintainer, as Administrator | removes the WinRM listener `*+HTTP`, with a `.reg` backup in `C:\ProgramData\RefuteVm-backup`, with WinRM stopped; without `-Apply`, only shows the listener keys and what would change |
-| `Set-RefuteVmTreeAcl.ps1` | the maintainer, as Administrator | replaces the ACL of `C:\Hyper-V` set by the registration of 2026-10-15 with version 2 (after the failure of SetHostPaths, [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md) section 9); without `-Apply`, only shows the ACL now and the one it would set |
+| `Set-RefuteVmTreeAcl.ps1` | the maintainer, as Administrator | replaces the ACL of `C:\Hyper-V` set by the registration of 2026-10-15 with version 2 (after the failure of SetHostPaths, [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md) section 9); without `-Apply`, only shows the state of the tree and of the evidence folders and the ACL it would set; the evidence goes to a new file in `C:\ProgramData\RefuteVm\Log` that only SYSTEM and Administrators can change |
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |

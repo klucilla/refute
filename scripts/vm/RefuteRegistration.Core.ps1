@@ -549,6 +549,89 @@ function Compare-RefuteVmTreeAcl {
     return $problems  # callers wrap the call in @(...)
 }
 
+function ConvertTo-RefuteAclEffect {
+    # What a list of access rules (FileSystemAccessRule, or objects with the same properties)
+    # grants or denies, to whom and where, whatever the way Windows or .NET splits or merges
+    # the entries: sorted strings "<Allow|Deny> <sid> <target> <rights>", the rights an
+    # integer, the union of the entries, generic rights mapped (ConvertTo-RefuteSpecificRights).
+    # Targets: folder (the folder itself); subfolders and files (every folder and file below
+    # it); an entry with NoPropagateInherit reaches only the first level, shown as
+    # child-folders and child-files. Pure.
+    param([object[]]$Rules)
+    $sum = @{}
+    foreach ($rule in @($Rules)) {
+        $inheritance = [int]$rule.InheritanceFlags
+        $propagation = [int]$rule.PropagationFlags
+        $noPropagate = ($propagation -band [int][System.Security.AccessControl.PropagationFlags]::NoPropagateInherit) -ne 0
+        $targets = @()
+        if (($propagation -band [int][System.Security.AccessControl.PropagationFlags]::InheritOnly) -eq 0) { $targets += 'folder' }
+        if ($inheritance -band [int][System.Security.AccessControl.InheritanceFlags]::ContainerInherit) { $targets += $(if ($noPropagate) { 'child-folders' } else { 'subfolders' }) }
+        if ($inheritance -band [int][System.Security.AccessControl.InheritanceFlags]::ObjectInherit) { $targets += $(if ($noPropagate) { 'child-files' } else { 'files' }) }
+        $rights = ConvertTo-RefuteSpecificRights ([int]$rule.FileSystemRights)
+        foreach ($target in $targets) {
+            $key = '{0} {1} {2}' -f [string]$rule.AccessControlType, [string]$rule.IdentityReference.Value, $target
+            if ($sum.ContainsKey($key)) { $sum[$key] = $sum[$key] -bor $rights } else { $sum[$key] = $rights }
+        }
+    }
+    return @($sum.Keys | ForEach-Object { '{0} {1}' -f $_, $sum[$_] } | Sort-Object)
+}
+
+function Get-RefuteChildRules {
+    # The rules a folder with no explicit entry of its own inherits from the rules of its
+    # parent, by the inheritance rules of Windows: an entry with ContainerInherit applies to
+    # the child folder and keeps its flags (InheritOnly cleared), unless NoPropagateInherit
+    # stops it there; an entry with ObjectInherit only passes to the child folder as an
+    # inherit-only entry for the files below it (none with NoPropagateInherit). Returns
+    # objects with the properties ConvertTo-RefuteAclEffect reads. Pure.
+    param([object[]]$Rules)
+    $ci = [int][System.Security.AccessControl.InheritanceFlags]::ContainerInherit
+    $oi = [int][System.Security.AccessControl.InheritanceFlags]::ObjectInherit
+    $np = [int][System.Security.AccessControl.PropagationFlags]::NoPropagateInherit
+    $io = [int][System.Security.AccessControl.PropagationFlags]::InheritOnly
+    $child = @()
+    foreach ($rule in @($Rules)) {
+        $inheritance = [int]$rule.InheritanceFlags
+        $propagation = [int]$rule.PropagationFlags
+        $flags = $null
+        if ($inheritance -band $ci) {
+            if ($propagation -band $np) { $flags = @(0, 0) } else { $flags = @($inheritance, 0) }
+        } elseif (($inheritance -band $oi) -and -not ($propagation -band $np)) {
+            $flags = @($oi, $io)
+        }
+        if ($null -eq $flags) { continue }
+        $child += [pscustomobject]@{
+            AccessControlType = $rule.AccessControlType
+            IdentityReference = $rule.IdentityReference
+            FileSystemRights  = [int]$rule.FileSystemRights
+            InheritanceFlags  = [System.Security.AccessControl.InheritanceFlags]$flags[0]
+            PropagationFlags  = [System.Security.AccessControl.PropagationFlags]$flags[1]
+        }
+    }
+    return $child
+}
+
+function Compare-RefuteVmTreeBelow {
+    # The differences between the ACL of a folder below C:\Hyper-V (from Get-Acl), Depth
+    # levels down, and what it inherits from a spec version on C:\Hyper-V: it must inherit
+    # (DACL not protected), hold no explicit entry, and its effect (ConvertTo-RefuteAclEffect)
+    # must equal the effect of the rules the spec passes down Depth levels
+    # (Get-RefuteChildRules). Comparing effects, not entries, keeps the check exact while
+    # Windows and .NET may write the same rights as other entries. Returns one line per
+    # difference; none means equal. The owner is checked by the callers. Pure.
+    param([object]$Acl, [object[]]$Spec, [ValidateRange(1, 8)][int]$Depth)
+    $problems = @()
+    if ($Acl.AreAccessRulesProtected) { $problems += 'the DACL does not inherit from its parent' }
+    $explicit = @(ConvertTo-RefuteAclRules $Acl -IncludeInherited $false)
+    foreach ($rule in $explicit) { $problems += "explicit entry: $rule" }
+    $rules = @((New-RefuteFolderAcl $Spec).GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]))
+    for ($i = 0; $i -lt $Depth; $i++) { $rules = @(Get-RefuteChildRules $rules) }
+    $wanted = @(ConvertTo-RefuteAclEffect $rules)
+    $actual = @(ConvertTo-RefuteAclEffect @($Acl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier])))
+    foreach ($e in $actual) { if ($wanted -notcontains $e) { $problems += "unexpected effect: $e" } }
+    foreach ($e in $wanted) { if ($actual -notcontains $e) { $problems += "missing effect: $e" } }
+    return $problems  # callers wrap the call in @(...)
+}
+
 function Get-RefuteListenerRemoval {
     # What removing the listener key Target leaves, from the names of every key under
     # WSMAN\Listener ("<address>+<transport>", for example "*+HTTP" or "IP:127.0.0.1+HTTP").
