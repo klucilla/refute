@@ -361,43 +361,6 @@ function Get-RefuteDiscoveryProblems {
     return $problems  # callers wrap the call in @(...)
 }
 
-function Get-RefuteItemProblems {
-    # Reads, never writes. The checks of one file or folder: not a reparse point, an allowed
-    # owner, and no access entry that lets another account write it (for an ancestor: that
-    # lets another account replace or redirect what is below it). Returns one problem per
-    # finding, or one when the item cannot be read.
-    param([string]$Item, [bool]$IsAncestor)
-    $problems = @()
-    try {
-        $info = Get-Item -LiteralPath $Item -Force -ErrorAction Stop
-        if (([int]$info.Attributes -band [int][System.IO.FileAttributes]::ReparsePoint) -ne 0) {
-            return @("$Item is a reparse point (a link or junction)")
-        }
-        $acl = Get-Acl -LiteralPath $Item -ErrorAction Stop
-        $owner = $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
-        # the entries with their SIDs as stored: translating account names back to SIDs
-        # fails for some built-in names (ALL APPLICATION PACKAGES in a Portuguese Windows,
-        # measured on 2026-10-16), and a SID needs no translation
-        $entries = @($acl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]) | ForEach-Object {
-                [ordered]@{
-                    Sid         = $_.IdentityReference.Value
-                    Rights      = [int]$_.FileSystemRights
-                    Type        = [string]$_.AccessControlType
-                    InheritOnly = ([string]$_.PropagationFlags -match 'InheritOnly')
-                }
-            })
-    } catch {
-        return @("$Item cannot be read: $($_.Exception.Message)")
-    }
-    if (-not (Test-RefuteAllowedOwner $owner)) { $problems += "$Item is owned by $owner" }
-    if ($IsAncestor) {
-        foreach ($w in @(Get-RefuteAncestorWriters $entries)) { $problems += "$Item (an ancestor) can be changed by $w" }
-    } else {
-        foreach ($w in @(Get-RefuteAceWriters $entries)) { $problems += "$Item can be written by $w" }
-    }
-    return $problems  # callers wrap the call in @(...)
-}
-
 function Get-RefuteTreeProblems {
     # Reads, never writes. For each folder of Roots (the folders a role capability's imports
     # load from: the module folders and the folder of an assembly a manifest loads): the
@@ -428,6 +391,51 @@ function Get-RefuteTreeProblems {
         }
         foreach ($item in $targets) { $problems += @(Get-RefuteItemProblems -Item $item -IsAncestor $false) }
         foreach ($item in $ancestors) { $problems += @(Get-RefuteItemProblems -Item $item -IsAncestor $true) }
+    }
+    return $problems  # callers wrap the call in @(...)
+}
+
+function ConvertTo-RefuteAclEntries {
+    # The owner and the access entries of a security object (from Get-Acl), by the SIDs
+    # stored in its security descriptor: GetOwner and GetAccessRules with the
+    # SecurityIdentifier type. An account name is never translated back to a SID and never
+    # compared: translating the name of ALL APPLICATION PACKAGES (S-1-15-2-1) failed on a
+    # Portuguese Windows (measured on 2026-10-16), and a localized name differs from host to
+    # host. Pure: it reads only the object it is given. Returns Owner (a SID) and Entries
+    # (Sid, Rights as an integer, Type 'Allow' or 'Deny', InheritOnly).
+    param([object]$Acl)
+    $entries = @($Acl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]) | ForEach-Object {
+            [ordered]@{
+                Sid         = [string]$_.IdentityReference.Value
+                Rights      = [int]$_.FileSystemRights
+                Type        = [string]$_.AccessControlType
+                InheritOnly = ([string]$_.PropagationFlags -match 'InheritOnly')
+            }
+        })
+    return [ordered]@{ Owner = [string]$Acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value; Entries = $entries }
+}
+
+function Get-RefuteItemProblems {
+    # Reads, never writes. The checks of one file or folder: not a reparse point, an allowed
+    # owner, and no access entry that lets another account write it (for an ancestor: that
+    # lets another account replace or redirect what is below it). Returns one problem per
+    # finding, or one when the item cannot be read.
+    param([string]$Item, [bool]$IsAncestor)
+    $problems = @()
+    try {
+        $info = Get-Item -LiteralPath $Item -Force -ErrorAction Stop
+        if (([int]$info.Attributes -band [int][System.IO.FileAttributes]::ReparsePoint) -ne 0) {
+            return @("$Item is a reparse point (a link or junction)")
+        }
+        $acl = ConvertTo-RefuteAclEntries (Get-Acl -LiteralPath $Item -ErrorAction Stop)
+    } catch {
+        return @("$Item cannot be read: $($_.Exception.Message)")
+    }
+    if (-not (Test-RefuteAllowedOwner $acl.Owner)) { $problems += "$Item is owned by $($acl.Owner)" }
+    if ($IsAncestor) {
+        foreach ($w in @(Get-RefuteAncestorWriters $acl.Entries)) { $problems += "$Item (an ancestor) can be changed by $w" }
+    } else {
+        foreach ($w in @(Get-RefuteAceWriters $acl.Entries)) { $problems += "$Item can be written by $w" }
     }
     return $problems  # callers wrap the call in @(...)
 }

@@ -159,8 +159,11 @@ All criteria must hold on a complete run. The targets file must contain exactly
 
 **Status.** This section states what an ML claim must contain, following
 [docs/plans/v0.3-plan.md](plans/v0.3-plan.md), sections 5 and 6.2. The exact schema
-(field names, types, defaults and validation) is fixed in the ML pack work package
-(WP3); until then this section is a specification, not existing code.
+(field names, types, defaults and validation) is section 1.0 of
+[docs/validation/v0.3/wp3-acceptance.md](validation/v0.3/wp3-acceptance.md), implemented
+in `src/refute/packs/ml/schema.py`. The example below is the plan's illustration, not
+the full form: for instance, the published SD is now an uncertainty record
+(`reported_uncertainty`, section 1.0.9 there), and the command is an `argv` list.
 
 ### What a claim is
 

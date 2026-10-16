@@ -397,6 +397,7 @@ PREVIEW_COMMANDS = {
     "find-refutehypervmanifest",
     "find-rolecapabilitycopies",
     "convertto-refutemoduleroot",
+    "convertto-refuteaclentries",
     "convertto-refutespecificrights",
     "convertto-refutewindowsfullpath",
     "foreach-object",
@@ -475,6 +476,7 @@ PREVIEW_METHODS = {
 # the service state and the backup folder ACL, in-memory work and output.
 LISTENER_PREVIEW_COMMANDS = {
     "convertto-refutemoduleroot",
+    "convertto-refuteaclentries",
     "convertto-refutespecificrights",
     "convertto-refutewindowsfullpath",
     "foreach-object",

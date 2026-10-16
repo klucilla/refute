@@ -193,3 +193,37 @@ operator account is **not validated** until the role capability imports the modu
 the path of its manifest and `Invoke-RefuteVm.ps1` opens a loopback session (pull
 requests of 2026-10-16), the installed role capability is replaced by the maintainer, and
 the session and `Invoke-RefuteVm.ps1 -Status` work. No VM operation is attempted before.
+
+## 7. H.5: the role capability of main installed, and a fourth cause (2026-10-16)
+
+Run by the maintainer on 2026-10-16. Account names are replaced by `<operator-account>`
+(the maintainer's account) and `<virtual-account>` (the session's virtual account). The
+raw security descriptor is not published: its group field holds the account SID.
+
+### 7.1 Replacing the installed role capability
+
+| Step | Result |
+|---|---|
+| 1. Source | `RefuteVmOperator.psrc` downloaded raw from GitHub at the merge of #100 (`46fe0c218d0082a8314931d5aa3044481dbbee04`), SHA-256 `d6ec0bf7f5bfdae982dc4c7653a6a74cb63c8287dd85459e24ac40a25614a103` (1766 bytes), equal to the blob in git |
+| 2. Copy, as Administrator | installed before: `1303b08422e7a875a94a6b094d1f2733685c3c4837989606086f51887c6f1b08` (the role capability of `627842d`); copied; installed after: equal to the new hash (True); the same ACL before and after (True): owner Administrators, inherited entries only, SYSTEM and Administrators full control, Users, All Application Packages and All Restricted Application Packages read and execute only; 6 files in the module |
+
+### 7.2 Session from the operator account (not an administrator)
+
+| Check | Result |
+|---|---|
+| `New-PSSession -ComputerName localhost -ConfigurationName RefuteVm -EnableNetworkAccess` | **opens** (causes 1 to 3 of section 5 are resolved) |
+| `Get-Command` in the session | exactly: `Clear-Host`, `Exit-PSSession`, `Get-Command`, `Get-FormatData`, `Get-Help`, `Get-RefuteVmStatus`, `Invoke-RefuteVmOperation`, `Measure-Object`, `Out-Default`, `Select-Object` (no `Get-Module`) |
+| Identity of the session | connected user `<operator-account>`; run as `<virtual-account>`, a WinRM virtual account (`VA_5_...`) |
+| `Invoke-RefuteVm.ps1 -Status`, from a worktree at main `6a8fe5c` | **fails** in the module: "The term 'Import-PowerShellDataFile' is not recognized" (reported at `Invoke-RefuteVm.ps1:65`). The output held the caller record and `ConfigSha256` `74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b`, with `Config` null, `Module` empty and `Observed` null |
+
+### 7.3 The fourth cause
+
+4. **Commands the module needs in the restricted session.**
+   - **What the session holds:** a `RestrictedRemoteServer` session holds the core cmdlets as private commands, which a module's functions can call. It does not hold the script functions of `Microsoft.PowerShell.Utility` (`Import-PowerShellDataFile`, `Get-FileHash`) nor the Hyper-V cmdlets.
+   - **What is missing:** with the role capability of `46fe0c2`, 29 of the 44 commands the module calls are missing: the two functions and 27 Hyper-V cmdlets. The analysis and the fix are in PR #118.
+   - **The fix in #118:** it imports `Microsoft.PowerShell.Utility` and `Hyper-V`, each by the absolute path of its manifest in System32 (by name the functions of Utility do not come), with no change to the visible commands.
+   - **The test in #118:** it checks this end to end on a real endpoint in CI.
+
+**Status of W6.4 after H.5:**
+- **Validated:** the session opens from the operator account and shows exactly the ten commands.
+- **Not validated yet:** the status and the operations. They wait for #118 and for the maintainer's replacement of the installed role capability and module, with the same hash and ACL checks as in 7.1. No VM operation is attempted before.

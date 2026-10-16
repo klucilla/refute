@@ -136,6 +136,77 @@ def draw_claims(inv: dict[str, Any], claim_seed_bytes: bytes) -> ClaimDraw:
     return ClaimDraw(arxiv_id, digest, order, drawn, required, substituted)
 
 
+DRAW_FORMAT = "refute-ml-claim-draw-1"
+_DRAW_KEYS = (
+    "format",
+    "arxiv_id",
+    "inventory_sha256",
+    "shuffled",
+    "drawn",
+    "comparison_required",
+    "comparison_substituted",
+    "replacements",
+)
+
+
+def draw_record(draw: ClaimDraw) -> dict[str, Any]:
+    """The claim draw as a record (format ``refute-ml-claim-draw-1``), stored in canonical
+    JSON as the ``claim-draw`` attachment of the paper's claim file."""
+    return {
+        "format": DRAW_FORMAT,
+        "arxiv_id": draw.arxiv_id,
+        "inventory_sha256": draw.inventory_sha256,
+        "shuffled": list(draw.shuffled),
+        "drawn": list(draw.drawn),
+        "comparison_required": draw.comparison_required,
+        "comparison_substituted": draw.comparison_substituted,
+        "replacements": [dict(r) for r in draw.replacements],
+    }
+
+
+def read_draw_record(record: dict[str, Any]) -> ClaimDraw:
+    """The inverse of ``draw_record``; raises InventoryError for a malformed record."""
+    if not isinstance(record, dict) or sorted(record) != sorted(_DRAW_KEYS):
+        raise InventoryError(f"a claim draw record has exactly the keys {_DRAW_KEYS}")
+    if record["format"] != DRAW_FORMAT:
+        raise InventoryError(f"format must be {DRAW_FORMAT}")
+    if not ARXIV_ID.match(str(record["arxiv_id"])):
+        raise InventoryError("arxiv_id must be a new-style arXiv ID without version")
+    if not re.fullmatch(r"[0-9a-f]{64}", str(record["inventory_sha256"])):
+        raise InventoryError("inventory_sha256 must be 64 lowercase hex digits")
+    for key in ("shuffled", "drawn"):
+        ids = record[key]
+        if not isinstance(ids, list) or any(not isinstance(i, str) for i in ids):
+            raise InventoryError(f"{key} must be a list of candidate IDs")
+        if len(set(ids)) != len(ids):
+            raise InventoryError(f"{key} repeats a candidate")
+    if not record["drawn"] or not set(record["drawn"]) <= set(record["shuffled"]):
+        raise InventoryError("drawn must be a non-empty subset of shuffled")
+    if not isinstance(record["comparison_required"], bool):
+        raise InventoryError("comparison_required must be true or false")
+    if record["comparison_substituted"] is not None and not isinstance(
+        record["comparison_substituted"], str
+    ):
+        raise InventoryError("comparison_substituted must be a candidate ID or null")
+    replacements = record["replacements"]
+    if not isinstance(replacements, list) or any(
+        not isinstance(r, dict)
+        or sorted(r) != ["invalidated", "reason", "replacement"]
+        or any(not isinstance(v, str) for v in r.values())
+        for r in replacements
+    ):
+        raise InventoryError("replacements are records {invalidated, reason, replacement}")
+    return ClaimDraw(
+        record["arxiv_id"],
+        record["inventory_sha256"],
+        list(record["shuffled"]),
+        list(record["drawn"]),
+        record["comparison_required"],
+        record["comparison_substituted"],
+        [dict(r) for r in replacements],
+    )
+
+
 class ReplacementExhaustedError(InventoryError):
     """No candidate can replace an invalidated claim; the maintainer decides."""
 
