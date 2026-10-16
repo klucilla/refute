@@ -30,9 +30,13 @@ classified; the margin M and the V22 maxima.
 7. an attack keeps its valid failures when some of its runs did not end (its
    prerequisites are the runs and values it used);
 8. an exit code 0 means the command ended, never that a predicate holds;
-9. F is the grant's (checked by the orchestrator); M and the V22 maxima are given; a paper
-   whose accounting is invalid gets no verdict but ``INCONCLUSIVE``;
-10. fresh folders per container; outputs read from the container's own folder;
+9. F is the grant's (checked by the orchestrator); M, the V22 maxima and, with a parent
+   cgroup, its usage and T are given by the harness; a paper whose accounting is invalid
+   gets no verdict but ``INCONCLUSIVE``. Partly met: the subprocess backend has no parent
+   cgroup (the completeness check is not applicable there), and ``metric_recompute`` runs
+   in this process, not yet in the trusted verifier container of W3.18 (docker, on the VM);
+10. one folder of its own per container, and the files a run is read from must not exist
+    before it starts, so every value read was written by that run;
 11. a failure of the setup or of one dataset is attributed only to the claims that use
     it.
 
@@ -123,6 +127,11 @@ class Harness:
     timing_maxima: TimingMaxima | None = None
     second: Callable[..., float] = rc.sklearn_metric  # the second recompute implementation
     base_env: Mapping[str, str] = field(default_factory=dict)  # under the claim's threads
+    # the usage of the paper's parent cgroup and the tolerance T (1.4a): given only by a
+    # backend with a parent cgroup per paper (docker, on the VM); the subprocess backend
+    # has none, so the completeness check is recorded as not applicable there
+    parent_usage: Callable[[], int] | None = None
+    tolerance_usec: int | None = None
 
 
 # ---- the claims ---------------------------------------------------------------------------
@@ -265,6 +274,30 @@ def _argv(ctx: ClaimContext, role: str, seed: int | None, extra: Sequence[str]) 
     return argv + list(extra)
 
 
+def _outputs(ctx: ClaimContext, role: str, seed: int | None) -> list[str]:
+    """The files a run of ``role`` is read from: its extraction file (``from: file``) and,
+    for a base run when ``metric_recompute`` applies, its predictions."""
+    out = []
+    run = ctx.claim["run"] if role == "method" else ctx.comparison["reference_run"]
+    readings = [run["metric_extraction"]]
+    if role == "method" and ctx.comparison is not None and not ctx.separate_reference:
+        readings.append(ctx.comparison["reference_run"]["metric_extraction"])
+    for extraction in readings:
+        if extraction["from"] == "file":
+            out.append(extraction["file"].replace("{seed}", str(seed)))
+    mr = ctx.claim["metric_recompute"]
+    if mr["applies"]:
+        names = [(ctx.comparison or {}).get("method"), (ctx.comparison or {}).get("reference")]
+        if role == "reference":
+            names = names[1:]
+        elif ctx.separate_reference:
+            names = names[:1]
+        for name in names:
+            file = mr["predictions"]["file"].replace("{seed}", str(seed))
+            out.append(file.replace("{method}", str(name)) if name is not None else file)
+    return sorted(set(out))
+
+
 def plan_container_ids(claim_file: Mapping[str, Any]) -> list[str]:
     """Every container id of the paper, for the harness to prepare one fresh folder each
     (the ladder's rungs are named ``setup/build/<rung>``)."""
@@ -297,10 +330,13 @@ class Value:
 
 
 def _convert(value: Decimal, from_unit: str, to_unit: str) -> Decimal:
-    """× 100 or ÷ 100, exactly (1.0.3)."""
+    """× 100 or ÷ 100, exactly (1.0.3): the decimal exponent is moved by 2 on the value's
+    own digits, so no decimal context can round it (Codex review of #110)."""
     if from_unit == to_unit:
         return value
-    return value.scaleb(2) if (from_unit, to_unit) == ("fraction", "percent") else value.scaleb(-2)
+    shift = 2 if (from_unit, to_unit) == ("fraction", "percent") else -2
+    sign, digits, exponent = value.as_tuple()
+    return Decimal((sign, digits, exponent + shift))
 
 
 def _read(ctx: ClaimContext, record: orc.ContainerRecord | None, workdir: Path, role: str, seed):
@@ -347,12 +383,30 @@ def _gate(name, status, message, coverage, unit, metrics=None) -> TestResult:
 
 
 def data_present(ctx: ClaimContext, evidence: DatasetEvidence | None):
-    """The claim's own dataset only (requirement 11): fetched and verified, and every
-    declared split of the expected size within its tolerance (requirement 5; #15)."""
+    """The claim's own dataset only (requirement 11): the fetch result must be for the
+    declared artifact (name, URL, SHA-256, size), an absence counts only against the
+    attempts the claim fixed (``absent_artifact.attempts``), and every declared split must
+    be of its expected size within its tolerance (requirement 5; #15)."""
     name = ctx.claim["dataset"]
     if evidence is None:
         gate = _gate(
             "data_present", TestStatus.INCONCLUSIVE, f"no evidence for {name}", 0, "examples"
+        )
+        return gate, GateFailure(FailureCause.UNDETERMINED)
+    declared = next(d for d in ctx.plan["datasets"] if d["name"] == name)
+    spec = evidence.fetch.spec
+    if (spec.name, spec.url, spec.sha256, spec.size_bytes) != (
+        declared["name"],
+        declared["url"],
+        declared["sha256"],
+        declared["size_bytes"],
+    ):
+        gate = _gate(
+            "data_present",
+            TestStatus.INCONCLUSIVE,
+            f"the fetch result is not for the declared artifact {name}",
+            0,
+            "examples",
         )
         return gate, GateFailure(FailureCause.UNDETERMINED)
     if not evidence.fetch.ok:
@@ -360,8 +414,13 @@ def data_present(ctx: ClaimContext, evidence: DatasetEvidence | None):
         gate = _gate(
             "data_present", TestStatus.FAIL, f"{name} was not fetched", 0, "examples", metrics
         )
-        return gate, evidence.fetch.failure
-    declared = next(d for d in ctx.plan["datasets"] if d["name"] == name)
+        failure = evidence.fetch.failure
+        if failure is not None and failure.known_cause is FailureCause.ARTIFACT_ABSENT:
+            # the attempts are those the claim fixed before the lock, never the fetcher's
+            required = int(ctx.plan["absent_artifact"]["attempts"])
+            done = min(failure.attempts_completed, len(metrics.get("absent_http_statuses", [])))
+            failure = GateFailure(FailureCause.ARTIFACT_ABSENT, done, required)
+        return gate, failure
     if evidence.split_counts is None:
         gate = _gate(
             "data_present",
@@ -436,8 +495,10 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], examples: int |
         gate = _gate("metric_extracted", TestStatus.FAIL, "; ".join(errors), 0, "examples")
         return gate, GateFailure(FailureCause.UNDETERMINED)
     if examples is None:
+        # no PASS without examined data: INCONCLUSIVE, never a raw PASS (Codex review)
         message = "every run printed a value; no saved predictions show the examples"
-        return _gate("metric_extracted", TestStatus.PASS, message, None, "examples"), None
+        gate = _gate("metric_extracted", TestStatus.INCONCLUSIVE, message, 0, "examples")
+        return gate, GateFailure(FailureCause.UNDETERMINED)
     return _gate(
         "metric_extracted", TestStatus.PASS, "every run gave its value", examples, "examples"
     ), None
@@ -566,6 +627,13 @@ def _series(
     return out
 
 
+def _complete(evidence: DatasetEvidence, split: str, items: Sequence | None) -> bool:
+    """A read of a split covers every example the dataset check counted (Codex review of
+    #110): a partial read is never taken for the split."""
+    counts = evidence.split_counts
+    return items is not None and counts is not None and counts.get(split) == len(items) > 0
+
+
 def _mean_bracket(values: Sequence[Decimal]) -> tuple[Decimal, Decimal]:
     mean = rp.exact_mean(values)
     exact = rp._finite_decimal(mean)  # noqa: SLF001 - the exact path of reproduction.py
@@ -582,6 +650,10 @@ def _host_trivial_baseline(ctx: ClaimContext, evidence: DatasetEvidence | None, 
     try:
         train = list(evidence.labels("train")) if params["kind"] == "majority" else None
         test = list(evidence.labels(metric["split"])) if params["kind"] == "majority" else None
+        if params["kind"] == "majority" and not (
+            _complete(evidence, "train", train) and _complete(evidence, metric["split"], test)
+        ):
+            return None, "the labels read are not every example of their split"
         baseline = at.trivial_baseline_value(
             params["kind"], params["labels"], metric["name"], metric["unit"], train, test
         )
@@ -642,6 +714,16 @@ class PaperIntegration:
         found_env, found_req = harness.ladder_inputs
         self.rungs = ld.ladder_rungs(found_env, found_req, self.plan["build"]["python_ladder"])
         self._runner: orc.PaperRunner | None = None
+        self._rung_results: dict[str, ld.RungResult] = {}
+        # one folder of its own per container (requirement 10)
+        folders = [Path(p).resolve() for p in harness.workspaces.values()]
+        if len(set(folders)) != len(folders):
+            raise ValueError("every container needs a folder of its own")
+        self._outputs: dict[str, list[str]] = {}
+        for ctx in self.contexts:
+            for step in ["base", *[n for n in ctx.applicable() if n in CONTAINER_ATTACKS]]:
+                for cid, role, seed, _ in _runs(ctx, step):
+                    self._outputs[cid] = _outputs(ctx, role, seed)
 
     # -- specs
 
@@ -651,6 +733,13 @@ class PaperIntegration:
         safe = re.sub(r"[^A-Za-z0-9_.-]", "_", cid)
 
         def make(threshold: int) -> RunSpec:
+            # the outputs this run is read from must not exist before it starts, so every
+            # value read afterwards was written by this run (requirement 10)
+            stale = [
+                p for p in self._outputs.get(cid, []) if (self.harness.workspaces[cid] / p).exists()
+            ]
+            if stale:
+                raise ValueError(f"{cid}: outputs present before the run: {stale}")
             return RunSpec(
                 argv=self.harness.command(argv),
                 workdir=self.harness.workspaces[cid],
@@ -677,11 +766,16 @@ class PaperIntegration:
         ]
         by_id = {f"setup/build/{r.name}": r for r in applicable}
 
-        def fallback(record: orc.ContainerRecord) -> bool:
+        def fallback(record: orc.ContainerRecord) -> str:
+            # each rung is classified once; the ladder's gate reads the same result
+            # (Codex review of #110)
             result = self.harness.classify_build(by_id[record.container_id], record.result)
-            return (
-                result.outcome is orc.Outcome.FAILED and result.cause is FailureCause.BUILD_LADDER
-            )
+            self._rung_results[record.container_id] = result
+            if result.outcome is orc.Outcome.COMPLETED:
+                return "completed"
+            if result.outcome is orc.Outcome.FAILED and result.cause is FailureCause.BUILD_LADDER:
+                return "next"
+            return "stop"
 
         return orc.Step("build", containers, fallback=fallback)
 
@@ -792,12 +886,15 @@ class PaperIntegration:
 
     def _ladder_result(self, records: Mapping[str, orc.ContainerRecord]) -> ld.LadderResult:
         def build(rung: ld.Rung) -> ld.RungResult:
-            record = records.get(f"setup/build/{rung.name}")
+            cid = f"setup/build/{rung.name}"
+            record = records.get(cid)
             if record is None:
                 return ld.RungResult(orc.Outcome.NOT_EXECUTED, None, "not reached")
             if record.result is None:
                 return ld.RungResult(orc.Outcome.REFUTE_ERROR, None, record.error)
-            return self.harness.classify_build(rung, record.result)
+            if cid not in self._rung_results:  # a record the fallback did not classify
+                return ld.RungResult(orc.Outcome.REFUTE_ERROR, None, "rung not classified")
+            return self._rung_results[cid]
 
         return ld.run_ladder(self.rungs, build)
 
@@ -811,6 +908,11 @@ class PaperIntegration:
                 test = list(evidence.example_hashes(ctx.claim["metric"]["split"]))
             except (OSError, ValueError, KeyError) as exc:
                 return Attack(name), f"the examples could not be hashed: {exc}"
+            if not (
+                _complete(evidence, "train", train)
+                and _complete(evidence, ctx.claim["metric"]["split"], test)
+            ):
+                return Attack(name), "the hashes are not every example of their split"
             limit = ctx.attack("leakage")["params"]["max_overlap_fraction"]
             result = at.leakage(train, test, limit)
             run = TestResult(
@@ -941,7 +1043,12 @@ class PaperIntegration:
             attack_pool_base_usec=bg.cpu_hours(int(self.plan["budget"]["attacks_cpu_hours"])),
         )
         self._runner = orc.PaperRunner(
-            plan, self.harness.backend, accountant, timing_maxima=self.harness.timing_maxima
+            plan,
+            self.harness.backend,
+            accountant,
+            parent_usage=self.harness.parent_usage,
+            tolerance_usec=self.harness.tolerance_usec,
+            timing_maxima=self.harness.timing_maxima,
         )
         return self.evaluate(self._runner.run())
 

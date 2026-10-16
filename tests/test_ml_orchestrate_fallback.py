@@ -1,5 +1,6 @@
 """The fallback step of the orchestrator (the build ladder as one setup step, WP3
-integration requirement 2), offline, with a fake backend."""
+integration requirement 2), offline, with a fake backend. The fallback classifies each
+container once: "completed", "next" or "stop"."""
 
 import pytest
 
@@ -37,7 +38,14 @@ def container(tmp_path, cid):
     return orc.Container(cid, make)
 
 
-def run(tmp_path, exits, fallback):
+def by_exit(record):
+    """Built when the container exited 0; an error of the procedure otherwise."""
+    if record.result.stopped:
+        return "stop"
+    return "completed" if record.result.exit_code == 0 else "next"
+
+
+def run(tmp_path, exits, fallback=by_exit):
     rungs = ["setup/r1", "setup/r2", "setup/r3"]
     step = orc.Step("build", [container(tmp_path, r) for r in rungs], fallback=fallback)
     claim = orc.ClaimPlan(
@@ -49,8 +57,8 @@ def run(tmp_path, exits, fallback):
     return orc.PaperRunner(plan, backend, acc).run(), backend, acc
 
 
-def test_the_step_stops_at_the_first_container_that_completes(tmp_path):
-    out, backend, acc = run(tmp_path, {"setup/r1": 1, "setup/r2": 0, "setup/r3": 0}, lambda r: True)
+def test_the_step_stops_at_the_first_container_classified_as_built(tmp_path):
+    out, backend, acc = run(tmp_path, {"setup/r1": 1, "setup/r2": 0, "setup/r3": 0})
     setup = out.steps[0]
     assert setup.outcome is orc.Outcome.COMPLETED
     assert [c.container_id for c in setup.containers] == ["setup/r1", "setup/r2"]
@@ -58,35 +66,45 @@ def test_the_step_stops_at_the_first_container_that_completes(tmp_path):
     assert acc.total_charged() == 3000  # every container that ran is accounted
 
 
-def test_every_container_failing_with_the_fallback_saying_go_on_fails_the_step(tmp_path):
-    out, backend, _ = run(
-        tmp_path, dict.fromkeys(["setup/r1", "setup/r2", "setup/r3"], 2), lambda r: True
-    )
+def test_every_container_classified_next_fails_the_step(tmp_path):
+    out, backend, _ = run(tmp_path, dict.fromkeys(["setup/r1", "setup/r2", "setup/r3"], 2))
     assert out.steps[0].outcome is orc.Outcome.FAILED
     assert len(out.steps[0].containers) == 3
     assert "C1/run" not in backend.calls  # the base does not run without the setup
 
 
-def test_the_fallback_saying_stop_ends_the_step_at_that_failure(tmp_path):
-    out, backend, _ = run(tmp_path, {"setup/r1": 1, "setup/r2": 0, "setup/r3": 0}, lambda r: False)
+def test_stop_ends_the_step_at_that_container(tmp_path):
+    out, backend, _ = run(tmp_path, {"setup/r1": 1, "setup/r2": 0, "setup/r3": 0}, lambda r: "stop")
     assert out.steps[0].outcome is orc.Outcome.FAILED
     assert backend.calls == ["setup/r1"]
 
 
+def test_an_exit_0_not_classified_as_built_fails_the_step(tmp_path):
+    """Codex review of #110: the classification, not the exit code, decides; a container
+    that exited 0 but is not a success ends the step as FAILED, with no next rung."""
+    out, backend, _ = run(
+        tmp_path, dict.fromkeys(["setup/r1", "setup/r2", "setup/r3"], 0), lambda r: "stop"
+    )
+    assert out.steps[0].outcome is orc.Outcome.FAILED
+    assert backend.calls == ["setup/r1"]
+
+
+def test_a_non_zero_exit_classified_as_built_completes_the_step(tmp_path):
+    out, _, _ = run(tmp_path, {"setup/r1": 5, "setup/r2": 0, "setup/r3": 0}, lambda r: "completed")
+    assert out.steps[0].outcome is orc.Outcome.COMPLETED
+
+
 def test_a_guard_stop_ends_the_step_with_its_own_outcome(tmp_path):
     exits = {"setup/r1": sb.STOP_NO_PROGRESS, "setup/r2": 0, "setup/r3": 0}
-    out, backend, _ = run(tmp_path, exits, lambda r: True)
+    out, backend, _ = run(tmp_path, exits)
     assert out.steps[0].outcome is orc.Outcome.OPERATIONAL_GUARD
     assert backend.calls == ["setup/r1"]
 
 
-def test_a_fallback_that_raises_is_a_refute_error(tmp_path):
-    def broken(record):
-        raise RuntimeError("no classification")
-
-    out, _, _ = run(tmp_path, {"setup/r1": 1, "setup/r2": 0, "setup/r3": 0}, broken)
+@pytest.mark.parametrize("fallback", [lambda r: 1 / 0, lambda r: "maybe"])
+def test_a_fallback_that_raises_or_answers_nonsense_is_a_refute_error(tmp_path, fallback):
+    out, _, _ = run(tmp_path, {"setup/r1": 1, "setup/r2": 0, "setup/r3": 0}, fallback)
     assert out.steps[0].outcome is orc.Outcome.REFUTE_ERROR
-    assert "the fallback failed" in out.steps[0].reason
     assert not out.accounting_valid
 
 
