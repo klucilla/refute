@@ -42,9 +42,11 @@ $guid = 'c3d6a0f1-8e2b-4a57-9f30-1b2c3d4e5f60'
 $visible = "VisibleFunctions = @('Get-RefuteJeaProbe', 'Get-RefuteJeaModuleRoots')"
 # The probe functions. Get-RefuteJeaModuleRoots runs inside the JEA session, as its virtual
 # account, while the session is open: for each entry of the session's PSModulePath, one
-# line "<exists 0|1><TAB><root><TAB><error><TAB><psrc files joined by |>", where the files
-# are every <root>\<folder>\RoleCapabilities\*.psrc (what JEA could select there). It uses
-# .NET only: no cmdlet, which a restricted session may not have (cause 3).
+# line "<exists 0|1><TAB><entry as written><TAB><root><TAB><error><TAB><psrc files joined
+# by |>", where the files are every <root>\<folder>\RoleCapabilities\*.psrc (what JEA could
+# select there). The entry is reported as written, so the test validates it before any
+# normalisation. It uses .NET only: no cmdlet, which a restricted session may not have
+# (cause 3).
 $probeCode = @'
 function Get-RefuteJeaProbe { 'probe-ok' }
 function Get-RefuteJeaModuleRoots {
@@ -68,7 +70,7 @@ function Get-RefuteJeaModuleRoots {
             } catch { $err = $_.Exception.Message.Replace("`t", ' ').Replace("`r", ' ').Replace("`n", ' ') }
         }
         $flag = if ($exists) { '1' } else { '0' }
-        $lines.Add([string]::Join("`t", @($flag, $root, $err, [string]::Join('|', $files.ToArray()))))
+        $lines.Add([string]::Join("`t", @($flag, $entry, $root, $err, [string]::Join('|', $files.ToArray()))))
     }
     [string]::Join("`n", $lines.ToArray())
 }

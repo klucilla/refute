@@ -33,19 +33,20 @@ PINS = (
     "RequiredVersionGuid",
 )
 
-pytestmark = pytest.mark.skipif(
-    not (
-        sys.platform == "win32"
-        and os.environ.get("GITHUB_ACTIONS") == "true"
-        and os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted"
-        and os.environ.get("REFUTE_JEA_INTEGRATION") == "1"
-    ),
-    reason="runs only on GitHub-hosted Windows runners (REFUTE_JEA_INTEGRATION=1)",
+ON_RUNNER = (
+    sys.platform == "win32"
+    and os.environ.get("GITHUB_ACTIONS") == "true"
+    and os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted"
+    and os.environ.get("REFUTE_JEA_INTEGRATION") == "1"
 )
 
 
 @pytest.fixture(scope="module")
 def result() -> dict:
+    # every test that needs the endpoint uses this fixture, so it is skipped with it; the
+    # check of the entries below needs no endpoint and runs everywhere
+    if not ON_RUNNER:
+        pytest.skip("runs only on GitHub-hosted Windows runners (REFUTE_JEA_INTEGRATION=1)")
     exe = shutil.which("powershell.exe")
     assert exe, "Windows PowerShell 5.1 is part of Windows"
     out = subprocess.run(
@@ -110,12 +111,14 @@ def test_a_role_capability_in_a_version_subfolder_is_not_found(sessions):
 
 
 def _session_roots(text: str) -> list[dict]:
-    """The lines of Get-RefuteJeaModuleRoots: exists, root, error, psrc files."""
+    """The lines of Get-RefuteJeaModuleRoots: exists, the entry as written, its normalised
+    root, error, psrc files."""
     roots = []
     for line in text.split("\n"):
-        exists, path, error, files = line.split("\t")
+        exists, entry, path, error, files = line.split("\t")
         roots.append(
             {
+                "Entry": entry,
                 "Path": path,
                 "Exists": exists == "1",
                 "Error": error,
@@ -135,9 +138,10 @@ def test_the_roots_the_session_searches_are_known_to_the_registration(result, se
     known = {p.lower() for p in result["Roots"]["Registration"]}
     session = _session_roots(sessions["PathWithNetworkAccess"]["Roots"])
     assert session, "the session reported no module path"
-    # every entry is fully qualified (a drive and '\', or UNC), as the registration requires:
-    # a relative entry would depend on the session's current folder
-    relative = [r["Path"] for r in session if not FULLY_QUALIFIED.match(r["Path"])]
+    # every entry, as written and before any normalisation, is fully qualified (a drive and
+    # '\', or UNC), as the registration requires: a relative entry ('C:', 'Modules') would
+    # depend on the session's current folder (Codex review of #99, round 5)
+    relative = [r["Entry"] for r in session if not FULLY_QUALIFIED.match(r["Entry"])]
     assert relative == [], relative
     unknown = [r for r in session if r["Exists"] and r["Path"].lower() not in known]
     print("session roots outside the registration's set:", json.dumps(unknown, indent=1))
@@ -148,3 +152,23 @@ def test_the_roots_the_session_searches_are_known_to_the_registration(result, se
     assert any(
         f.lower().endswith("\\refutejeaprobe\\rolecapabilities\\probebypath.psrc") for f in listed
     )
+
+
+@pytest.mark.parametrize(
+    ("entry", "qualified"),
+    [
+        ("C:\\Program Files\\WindowsPowerShell\\Modules", True),
+        ("C:\\", True),
+        ("C:\\\\", True),
+        ("\\\\srv\\share\\Modules", True),
+        ("C:", False),
+        ("C:Modules", False),
+        ("Modules", False),
+        (".\\Modules", False),
+        ("\\Modules", False),
+    ],
+)
+def test_the_entry_check_refuses_relative_entries(entry, qualified):
+    """The check the roots test applies to each entry as written (it runs everywhere: it
+    needs no endpoint)."""
+    assert bool(FULLY_QUALIFIED.match(entry)) is qualified
