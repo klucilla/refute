@@ -696,6 +696,28 @@ declared in the claim before the lock. With no route that closes the chain, the 
   `INCONCLUSIVE`. A call site that runs once per evaluation and evaluates several epochs
   or checkpoints therefore cannot identify the selected one by itself: in v0.3 the hook
   closes the chain only when one event remains.
+
+  **The hook is observation only** (the maintainer's addition of 2026-10-16). Its
+  reference implementation is `src/refute/packs/ml/coverage_hook.py`, standard library
+  only, as it runs in the paper's container. It:
+  - calls the observed function with exactly the arguments it received, the same objects
+    and unchanged;
+  - returns exactly the object the function returned, or lets exactly the exception it
+    raised propagate;
+  - reads its first argument only after the call, and never reads an iterator, which
+    reading would consume.
+
+  **Any failure of the hook itself makes the gate `INCONCLUSIVE`**, and never changes the
+  call:
+  - an argument it cannot read gives a failure record;
+  - a sink that fails leaves no event.
+
+  `tests/test_ml_coverage_hook.py` shows that:
+  - the value returned with the hook is identical to the value without it (the same
+    object, the same type and text);
+  - the arguments are the same objects;
+  - an iterator is not consumed;
+  - each kind of hook failure leaves the call unchanged.
 - **W3.12d The link and the split.** The link is never "the last call", nearness in time,
   or an equal value. An equal value is a consistency check only: a different value is a
   conflict.
@@ -718,6 +740,13 @@ declared in the claim before the lock. With no route that closes the chain, the 
     - no other split has the same labels hash. Two splits with the same labels in the
       same order cannot be told apart by labels, and (c) and (b) do not apply to them.
   - **The other routes** identify the split by the cited code and the files it writes.
+
+  **Limitation** (the maintainer's addition of 2026-10-16). The labels hash follows the
+  order of the examples. A repository that evaluates the split in another order (a
+  shuffled loader, for example) gives a different hash. The routes that see labels, (c)
+  and (b), then cannot identify the split, and the gate is `INCONCLUSIVE` by those
+  routes: never `PASS`, and never a failure of the claim. The routes that do not see
+  labels, (d) and (a), are not affected.
 - **W3.12e Conflicting evidence.**
   - **The rule:** `conflict_rule: all_must_agree`, the only rule of v0.3, written out by
     the resolution.
@@ -787,7 +816,9 @@ declared in the claim before the lock. With no route that closes the chain, the 
   - split identity by labels, plus the named other splits with their labels and the
     cited code that defines them, not by example identifiers, which predictions files
     and metric calls usually do not carry;
-  - (c) and (b) do not apply when two splits have equal labels.
+  - (c) and (b) do not apply when two splits have equal labels;
+  - the labels hash follows the order of the examples, so a split evaluated in another
+    order is `INCONCLUSIVE` by (c) and (b) (the limitation in W3.12d).
 - **Files and selectors:**
   - `{seed}` in count files when there are several runs;
   - the selector checks (`json_path`, the regex group), which also tighten
