@@ -467,7 +467,8 @@ foreach ($pair in @(@('..\..\Mods', '\\srv\share\X', '\\srv\share\Mods'), @('C:/
 }
 Add-Case 'full path: a volume root keeps its backslash' ((ConvertTo-RefuteWindowsFullPath 'C:\a\..') -ceq 'C:\')
 Add-Case 'full path: a UNC share root' ((ConvertTo-RefuteWindowsFullPath '\\srv\share\..\x\') -ceq '\\srv\share\x')
-foreach ($bad in '\\?\C:\Mods', '\\.\C:\Mods', 'C:\Mods.\x', 'C:\Mods \x', 'Mods', 'C:Mods') {
+foreach ($bad in '\\?\C:\Mods', '\\.\C:\Mods', 'C:\Mods.\x', 'C:\Mods \x', 'Mods', 'C:Mods',
+    'C:\Modules|audit', 'C:\Modules:stream', 'C:\a<b', 'C:\a>b', 'C:\a"b', 'C:\a*b', 'C:\a?b', "C:\a`tb", '\\srv\sh:are\x') {
     $refused = $false
     try { [void](ConvertTo-RefuteWindowsFullPath $bad) } catch { $refused = $true }
     Add-Case "full path refused: '$bad'" $refused
@@ -525,6 +526,10 @@ if ($onWindows) {
     $absentProblems = @(Get-RefuteDiscoveryProblems -Roots @(Join-Path $discRoot 'absent\deeper'))
     Add-Case 'discovery problems: an absent folder is checked through its nearest existing ancestor' (
         @($absentProblems | Where-Object { $_.StartsWith("$discRoot can be written by") }).Count -ge 1) ($absentProblems -join ' | ')
+    # the folders above that ancestor are checked as ancestors (Codex review of #114, round
+    # 2): the work folder, owned by the current account, is reported
+    Add-Case 'discovery problems: the ancestors above the nearest existing one are checked too' (
+        @($absentProblems | Where-Object { $_.StartsWith("$WorkDir is owned by") }).Count -eq 1) ($absentProblems -join ' | ')
 } else {
     # Windows ACLs cannot be read here (no Get-Acl): every folder is reported as unreadable,
     # never accepted (the registration itself runs only on Windows)

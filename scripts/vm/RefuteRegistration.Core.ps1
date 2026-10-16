@@ -90,10 +90,16 @@ function ConvertTo-RefuteWindowsFullPath {
     # 'C:\' and would prefix the current folder). '/' is read as '\'; the root is a drive
     # ('C:') or a UNC share ('\\server\share'); empty and '.' segments are dropped; '..'
     # removes the previous segment and never goes above the root. A device path
-    # ('\\?\', '\\.\') and a segment ending in '.' or ' ' (which Windows would trim) are
-    # refused instead of imitated. Pure: no access to the disk.
+    # ('\\?\', '\\.\'), a segment ending in '.' or ' ' (which Windows would trim), and a
+    # character Windows does not accept in a path ('<', '>', '"', '|', '?', '*', a control
+    # character, or ':' anywhere but after the drive letter, which would name an alternate
+    # data stream) are refused instead of imitated. Pure: no access to the disk.
     param([string]$Path)
     $p = $Path.Replace('/', '\')
+    $afterRoot = if ($p -match '^[A-Za-z]:') { $p.Substring(2) } else { $p }
+    if ($afterRoot -match '[<>"|?*:\x00-\x1F]' -and -not ($p -match '^\\\\[?.]\\')) {
+        throw "the path '$Path' has a character Windows does not accept in a path"
+    }
     if ($p -match '^([A-Za-z]:)\\(.*)$') {
         $root = $Matches[1]
         $rest = $Matches[2]
@@ -273,7 +279,9 @@ function Get-RefuteDiscoveryProblems {
     # ancestor (whoever may create it could add role capabilities). Every ancestor of an
     # existing folder, up to its volume root, is checked too: no reparse point (a link or
     # junction could redirect the path), an allowed owner, and no entry that lets another
-    # account replace what is below it. Any item that is a reparse point is refused.
+    # account replace what is below it; for a folder that does not exist, the ancestors
+    # above its nearest existing one are checked the same way. Any item that is a reparse
+    # point is refused.
     # Returns one problem per finding, and one per item that cannot be read.
     param([string[]]$Roots)
     $problems = @()
@@ -301,7 +309,17 @@ function Get-RefuteDiscoveryProblems {
                 while ($ancestor -and -not (Test-Path -LiteralPath $ancestor -PathType Container -ErrorAction Stop)) {
                     $ancestor = Split-Path -Parent $ancestor
                 }
-                if ($ancestor) { $targets += $ancestor }
+                if ($ancestor) {
+                    # the nearest existing ancestor gets the full check (whoever may write
+                    # in it can create the folder), and every folder above it, up to the
+                    # volume root, the ancestor rules (Codex review of #114, round 2)
+                    $targets += $ancestor
+                    $above = Split-Path -Parent $ancestor
+                    while ($above) {
+                        $ancestors += $above
+                        $above = Split-Path -Parent $above
+                    }
+                }
             }
         } catch {
             $problems += "$root cannot be read: $($_.Exception.Message)"
