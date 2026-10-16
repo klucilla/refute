@@ -267,6 +267,7 @@ PREVIEW_FORBIDDEN = (
 PREVIEW_COMMANDS = {
     "find-refutehypervmanifest",
     "find-rolecapabilitycopies",
+    "convertto-refutemoduleroot",
     "foreach-object",
     "get-acl",
     "get-childitem",
@@ -328,6 +329,7 @@ PREVIEW_METHODS = {
 # The preview of Remove-RefuteWinRmListener.ps1 (and the core): reads of the registry,
 # the service state and the backup folder ACL, in-memory work and output.
 LISTENER_PREVIEW_COMMANDS = {
+    "convertto-refutemoduleroot",
     "foreach-object",
     "get-acl",
     "get-childitem",
