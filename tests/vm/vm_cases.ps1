@@ -28,6 +28,82 @@ foreach ($file in $scripts) {
         }
     }
 }
+# The registration preview: every command and every .NET method called before the apply
+# section of Register-RefuteVmEndpoint.ps1, and everywhere in the core it dot-sources
+# (tests/test_vm_scripts.py checks them against an allowlist).
+$register = Join-Path $vmDir 'Register-RefuteVmEndpoint.ps1'
+$coreAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'RefuteRegistration.Core.ps1'), [ref]$null, [ref]$null)
+
+function Get-PreviewSurface([object[]]$Nodes) {
+    # Named commands, .NET methods, and the two forms a name list cannot see (Codex review):
+    # a command whose name is not static (& $x, . $x), except the reviewed dot-source of
+    # the core, and any redirection to a file.
+    $commands = @($Nodes | Where-Object { $_ -is [System.Management.Automation.Language.CommandAst] })
+    [ordered]@{
+        Commands     = @($commands | ForEach-Object { $_.GetCommandName() } | Where-Object { $_ } | Sort-Object -Unique)
+        Methods      = @($Nodes | Where-Object { $_ -is [System.Management.Automation.Language.InvokeMemberExpressionAst] } |
+                ForEach-Object { [string]$_.Member } | Sort-Object -Unique)
+        Unnamed      = @($commands | Where-Object { -not $_.GetCommandName() } |
+                Where-Object { $_.Extent.Text -ne ". (Join-Path `$PSScriptRoot 'RefuteRegistration.Core.ps1')" } |
+                ForEach-Object { $_.Extent.Text })
+        Redirections = @($Nodes | Where-Object { $_ -is [System.Management.Automation.Language.FileRedirectionAst] } |
+                ForEach-Object { $_.Extent.Text })
+    }
+}
+
+function Get-ScriptPreview([string]$Path) {
+    # The preview surface of one script: everything before its "# ---- apply" comment, and
+    # the whole core it dot-sources.
+    $scriptTokens = $null
+    $scriptAst = [System.Management.Automation.Language.Parser]::ParseFile($Path, [ref]$scriptTokens, [ref]$null)
+    $applyMarker = @($scriptTokens | Where-Object { $_.Kind -eq 'Comment' -and $_.Text.StartsWith('# ---- apply') })
+    $at = if ($applyMarker.Count -eq 1) { $applyMarker[0].Extent.StartOffset } else { -1 }
+    $nodes = @($scriptAst.FindAll({ param($n) $true }, $true) | Where-Object { $_.Extent.StartOffset -lt $at }) + @($coreAst.FindAll({ param($n) $true }, $true))
+    $surface = Get-PreviewSurface $nodes
+    $surface['ApplyMarkerFound'] = ($at -ge 0)
+    return $surface
+}
+
+$out['Preview'] = Get-ScriptPreview $register
+$out['PreviewListener'] = Get-ScriptPreview (Join-Path $vmDir 'Remove-RefuteWinRmListener.ps1')
+# negative checks: the collector sees a dynamic command and a file redirection
+$probe = [System.Management.Automation.Language.Parser]::ParseInput("& `$someCommand`nWrite-Output 'probe' > `$somewhere", [ref]$null, [ref]$null)
+$probeSurface = Get-PreviewSurface @($probe.FindAll({ param($n) $true }, $true))
+$out['PreviewProbe'] = [ordered]@{ Unnamed = $probeSurface.Unnamed.Count; Redirections = $probeSurface.Redirections.Count }
+
+# Windows PowerShell 5.1 pattern (the maintainer's first preview run): a variable that
+# receives the output of a command or function without @(...) is $null when the output
+# is empty, so .Count or [i] on it fails under StrictMode. Every such use is listed.
+function Get-UnsafeListUse($Ast) {
+    $bare = @{}
+    foreach ($a in $Ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.AssignmentStatementAst] }, $true)) {
+        $isVariable = $a.Left -is [System.Management.Automation.Language.VariableExpressionAst]
+        $isCommand = $a.Right -is [System.Management.Automation.Language.PipelineAst] -and
+            $a.Right.PipelineElements[0] -is [System.Management.Automation.Language.CommandAst]
+        # New-Object writes exactly one object (a constructor), never an empty output
+        $isConstructor = $isCommand -and $a.Right.PipelineElements[0].GetCommandName() -eq 'New-Object'
+        if ($isVariable -and $isCommand -and -not $isConstructor) { $bare[$a.Left.VariablePath.UserPath.ToLowerInvariant()] = $true }
+    }
+    $uses = @()
+    foreach ($n in $Ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.MemberExpressionAst] -or $n -is [System.Management.Automation.Language.IndexExpressionAst] }, $true)) {
+        $target = if ($n -is [System.Management.Automation.Language.IndexExpressionAst]) { $n.Target } else { $n.Expression }
+        if (-not ($target -is [System.Management.Automation.Language.VariableExpressionAst])) { continue }
+        if (-not $bare.ContainsKey($target.VariablePath.UserPath.ToLowerInvariant())) { continue }
+        $isCount = $n -is [System.Management.Automation.Language.MemberExpressionAst] -and [string]$n.Member -eq 'Count'
+        if ($isCount -or $n -is [System.Management.Automation.Language.IndexExpressionAst]) { $uses += $n.Extent.Text }
+    }
+    return , @($uses | Sort-Object -Unique)
+}
+$out['UnsafeListUse'] = [ordered]@{}
+foreach ($file in $scripts) {
+    $fileAst = [System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$null, [ref]$null)
+    $name = $file.FullName.Substring($vmDir.Length + 1).Replace('\', '/')
+    $out.UnsafeListUse[$name] = Get-UnsafeListUse $fileAst
+}
+# negative check: the detector sees the pattern in a synthetic snippet
+$probeAst = [System.Management.Automation.Language.Parser]::ParseInput("function f { @() }`n`$x = f`nif (`$x.Count) { `$x[0] }", [ref]$null, [ref]$null)
+$out['UnsafeListProbe'] = Get-UnsafeListUse $probeAst
+
 foreach ($file in @(Get-ChildItem -LiteralPath $vmDir -Recurse -File | Where-Object { $_.Extension -in '.psd1', '.psrc' } | Sort-Object FullName)) {
     $name = $file.FullName.Substring($vmDir.Length + 1).Replace('\', '/')
     try { Import-PowerShellDataFile -LiteralPath $file.FullName | Out-Null; $out.Data[$name] = 'ok' } catch { $out.Data[$name] = $_.Exception.Message }
@@ -151,7 +227,9 @@ $o.Vms[0].SecureBoot = 'Off'
 Add-Case 'StartVm refused: Secure Boot off' ($null -ne (Plan 'StartVm' $o).Refusal)
 
 $sha = 'a' * 64; $other = 'b' * 64
-Add-Case 'ImportInstallIso refused: hash not configured' ((Plan 'ImportInstallIso' (New-Observed) -Media $sha).Refusal -like '*not configured*')
+$unset = Copy-Config @{ InstallIsoSha256 = '' }
+Add-Case 'ImportInstallIso refused: hash not configured' ((Plan 'ImportInstallIso' (New-Observed) $unset $sha).Refusal -like '*not configured*')
+Add-Case 'repository config: install ISO hash set (64 lowercase hex)' ($config.InstallIsoSha256 -cmatch '^[0-9a-f]{64}$')
 $cfg = Copy-Config @{ InstallIsoSha256 = $sha }
 Add-Case 'ImportInstallIso refused: another hash' ($null -ne (Plan 'ImportInstallIso' (New-Observed) $cfg $other).Refusal)
 $o = New-Observed; $o.Files.InstallIsoSourceSha256 = $other
@@ -296,10 +374,201 @@ $found = @(Find-RefuteBlockOverrides $fw)
 Add-Case 'only enabled inbound bypass rules are found' ($found.Count -eq 1 -and $found[0] -eq 'bypass-in') ($found -join ',')
 Add-Case 'no bypass rule, nothing found' (@(Find-RefuteBlockOverrides @($fw[0], $fw[2], $fw[3])).Count -eq 0)
 
-$psrc = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RoleCapabilities/RefuteVmOperator.psrc')
-$psd1 = Import-PowerShellDataFile -LiteralPath (Join-Path $moduleDir 'RefuteVm.psd1')
-$pin = $psrc.ModulesToImport[0]
-Add-Case 'role capability pins the module version and GUID' ($pin.ModuleName -eq 'RefuteVm' -and $pin.RequiredVersion -eq $psd1.ModuleVersion -and $pin.GUID -eq $psd1.GUID)
+# Hyper-V module manifest: both layouts (the maintainer's first preview did not find the
+# version subfolder of Windows 10 and 11)
+$hv = Join-Path $WorkDir 'hyperv'
+foreach ($layout in 'flat', 'versioned', 'two', 'none', 'noversion') {
+    [void][System.IO.Directory]::CreateDirectory((Join-Path $hv $layout))
+}
+[System.IO.File]::WriteAllText((Join-Path $hv 'flat\Hyper-V.psd1'), '@{}')
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'versioned\2.0.0.0'))
+[System.IO.File]::WriteAllText((Join-Path $hv 'versioned\2.0.0.0\Hyper-V.psd1'), '@{}')
+foreach ($v in '1.1', '2.0.0.0') {
+    [void][System.IO.Directory]::CreateDirectory((Join-Path $hv "two\$v"))
+    [System.IO.File]::WriteAllText((Join-Path $hv "two\$v\Hyper-V.psd1"), '@{}')
+}
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'noversion\latest'))
+[System.IO.File]::WriteAllText((Join-Path $hv 'noversion\latest\Hyper-V.psd1'), '@{}')
+Add-Case 'Hyper-V manifest: flat layout' ((Find-RefuteHyperVManifest (Join-Path $hv 'flat')) -eq (Join-Path $hv 'flat\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: version subfolder' ((Find-RefuteHyperVManifest (Join-Path $hv 'versioned')) -eq (Join-Path $hv 'versioned\2.0.0.0\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: the highest version wins' ((Find-RefuteHyperVManifest (Join-Path $hv 'two')) -eq (Join-Path $hv 'two\2.0.0.0\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: none' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'none')))
+Add-Case 'Hyper-V manifest: a folder that is not a version is ignored' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'noversion')))
+Add-Case 'Hyper-V manifest: missing module folder' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'absent')))
+
+# The role capability search of JEA: <root>\<module>\RoleCapabilities\<name>.psrc only
+# (the maintainer's diagnosis of 2026-10-16); a copy in a version subfolder is not found
+function New-RoleFile([string[]]$Parts) {
+    $dir = $WorkDir
+    foreach ($p in $Parts) { $dir = Join-Path $dir $p }
+    $dir = Join-Path $dir 'RoleCapabilities'
+    [void][System.IO.Directory]::CreateDirectory($dir)
+    $file = Join-Path $dir 'Op.psrc'
+    [System.IO.File]::WriteAllText($file, '@{}')
+    return $file
+}
+$flatRole = New-RoleFile @('jea', 'flat', 'M')
+$verRole = New-RoleFile @('jea', 'versioned', 'M', '0.1.0')
+$bothFlat = New-RoleFile @('jea', 'both', 'M')
+$bothVer = New-RoleFile @('jea', 'both', 'M', '0.1.0')
+$firstRoot = New-RoleFile @('jea', 'first', 'A')
+$secondRoot = New-RoleFile @('jea', 'second', 'B')
+[void](New-RoleFile @('jea', 'other', 'M'))
+$jea = Join-Path $WorkDir 'jea'
+$jf = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+$vf = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+Add-Case 'JEA search: a role capability at the module top is found' ($jf.Count -eq 1 -and $jf[0] -eq $flatRole -and $vf.Count -eq 0) (($jf + $vf) -join ', ')
+$jv = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+$vv = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+Add-Case 'JEA search: a version subfolder is never found, and is reported' ($jv.Count -eq 0 -and $vv.Count -eq 1 -and $vv[0] -eq $verRole) (($jv + $vv) -join ', ')
+$jb = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+$vb = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+Add-Case 'JEA search: a stale copy in a version subfolder is reported next to the found one' ($jb.Count -eq 1 -and $jb[0] -eq $bothFlat -and $vb.Count -eq 1 -and $vb[0] -eq $bothVer)
+$jo = @(Find-RefuteJeaRoleCapability -ModuleRoots @((Join-Path $jea 'second'), (Join-Path $jea 'first')) -RoleName 'Op')
+Add-Case 'JEA search: module roots are searched in order (the first found is the one loaded)' ($jo.Count -eq 2 -and $jo[0] -eq $secondRoot -and $jo[1] -eq $firstRoot)
+Add-Case 'JEA search: another role name is not found' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Other').Count -eq 0)
+Add-Case 'JEA search: a missing root is skipped' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'absent') -RoleName 'Op').Count -eq 0)
+
+# The module roots the registration searches: PSModulePath values and extra folders,
+# trimmed, without empty entries or repeats (compared without case), sorted
+$joined = @(Join-RefuteModuleRoots -PathValues @('C:\B\;C:\A;;c:\a\', $null, '') -Extra @('C:\C', 'C:\B'))
+Add-Case 'module roots: entries split, trimmed, deduplicated without case, sorted' ($joined.Count -eq 3 -and $joined[0] -eq 'C:\A' -and $joined[1] -eq 'C:\B' -and $joined[2] -eq 'C:\C') ($joined -join ', ')
+Add-Case 'module roots: nothing given gives nothing' (@(Join-RefuteModuleRoots -PathValues @() -Extra @()).Count -eq 0)
+# a volume root keeps its '\' ('C:' would be the current folder of drive C); UNC paths are
+# trimmed; relative and drive-relative entries are refused (Codex review of #102)
+$volume = @(Join-RefuteModuleRoots -PathValues @('C:\;D:\Mods\;\\srv\share\Mods\;E:\\;F:\Mods\\') -Extra @())
+Add-Case 'module roots: a volume root keeps one backslash, also after repeated ones' ($volume.Count -eq 5 -and $volume -ccontains 'C:\' -and $volume -ccontains 'D:\Mods' -and $volume -ccontains '\\srv\share\Mods' -and $volume -ccontains 'E:\' -and $volume -ccontains 'F:\Mods') ($volume -join ', ')
+foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
+    $refused = $false
+    try { [void](Join-RefuteModuleRoots -PathValues @("C:\A;$relative") -Extra @()) } catch { $refused = $true }
+    Add-Case "module roots: the relative entry '$relative' is refused" $refused
+}
+
+# The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
+# capability, an absent root, and a root that cannot be read as a folder (a file). A root
+# that cannot be read is never reported as absent (Codex review of #99).
+$probeRole = New-RoleFile @('probe-roots', 'present', 'Mod')
+$present = Join-Path (Join-Path $WorkDir 'probe-roots') 'present'
+$absent = Join-Path (Join-Path $WorkDir 'probe-roots') 'absent'
+$fileRoot = Join-Path (Join-Path $WorkDir 'probe-roots') 'a-file'
+[System.IO.File]::WriteAllText($fileRoot, 'x')
+Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+$savedModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Process')
+$savedCwd = [System.IO.Directory]::GetCurrentDirectory()
+try {
+    # a relative entry ('present') resolves against the process's current folder
+    [System.IO.Directory]::SetCurrentDirectory((Join-Path $WorkDir 'probe-roots'))
+    [Environment]::SetEnvironmentVariable('PSModulePath', "$present;$absent;$fileRoot;present", 'Process')
+    $probeText = Get-RefuteJeaModuleRoots
+} finally {
+    [System.IO.Directory]::SetCurrentDirectory($savedCwd)
+    [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+    Remove-Module JeaProbe
+}
+$probeLines = @($probeText.Split("`n"))
+$probeRows = @($probeLines[1..($probeLines.Count - 1)] | ForEach-Object { , @($_.Split("`t")) })
+Add-Case 'JEA probe: the current folder first, then one line of six fields per entry' ($probeLines[0].StartsWith("cwd`t") -and $probeRows.Count -eq 4 -and @($probeRows | Where-Object { $_.Count -ne 6 }).Count -eq 0) $probeText
+Add-Case 'JEA probe: a present root lists its role capability' ($probeRows[0][0] -eq 'present' -and $probeRows[0][1] -eq $present -and $probeRows[0][5] -eq $probeRole) ($probeRows[0] -join ' | ')
+Add-Case 'JEA probe: an absent root is confirmed absent' ($probeRows[1][0] -eq 'absent' -and $probeRows[1][4] -eq '') ($probeRows[1] -join ' | ')
+$onWindows = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+if ($onWindows) {
+    # on Windows a file read as a folder is an IOException, never DirectoryNotFound
+    Add-Case 'JEA probe: a root that cannot be read is an error, never absent' ($probeRows[2][0] -eq 'error' -and $probeRows[2][4]) ($probeRows[2] -join ' | ')
+} else {
+    Add-Case 'JEA probe: a root that cannot be read is never present' ($probeRows[2][0] -ne 'present') ($probeRows[2] -join ' | ')
+}
+Add-Case 'JEA probe: a relative entry is inspected where the process resolves it' ($probeRows[3][1] -eq 'present' -and $probeRows[3][3] -eq $present -and $probeRows[3][0] -eq 'present' -and $probeRows[3][5] -eq $probeRole) ($probeRows[3] -join ' | ')
+if ($onWindows) {
+    # a drive-relative entry ('C:') is the current folder of that drive, never its root
+    $drive = (Join-Path $WorkDir 'probe-roots').Substring(0, 2)
+    Import-Module (Join-Path (Join-Path (Join-Path $Root 'tests') 'vm') 'JeaProbe.psm1') -Force
+    try {
+        [System.IO.Directory]::SetCurrentDirectory($present)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $drive, 'Process')
+        $driveText = Get-RefuteJeaModuleRoots
+    } finally {
+        [System.IO.Directory]::SetCurrentDirectory($savedCwd)
+        [Environment]::SetEnvironmentVariable('PSModulePath', $savedModulePath, 'Process')
+        Remove-Module JeaProbe
+    }
+    $driveRow = @($driveText.Split("`n"))[1].Split("`t")
+    Add-Case "JEA probe: '$drive' resolves to the current folder of the drive, not '$drive\'" ($driveRow[1] -eq $drive -and $driveRow[3] -eq $present -and $driveRow[0] -eq 'present') ($driveRow -join ' | ')
+}
+
+# WinRM listener removal plan
+$plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'
+Add-Case 'listener: *+HTTP alone, nothing remains' ($plan1.TargetPresent -and @($plan1.Remaining).Count -eq 0 -and @($plan1.ForeignRemaining).Count -eq 0)
+$plan2 = Get-RefuteListenerRemoval -Names @('*+HTTP', 'IP:127.0.0.1+HTTP', 'IP:::1+HTTP') -Target '*+HTTP'
+Add-Case 'listener: loopback HTTP may remain' ($plan2.TargetPresent -and @($plan2.Remaining).Count -eq 2 -and @($plan2.ForeignRemaining).Count -eq 0)
+$plan3 = Get-RefuteListenerRemoval -Names @('*+HTTP', '*+HTTPS', 'IP:10.0.0.5+HTTP', 'IP:127.0.0.1+HTTPS') -Target '*+HTTP'
+Add-Case 'listener: other non-loopback or HTTPS listeners are reported' (@($plan3.ForeignRemaining).Count -eq 3)
+$plan4 = Get-RefuteListenerRemoval -Names @('IP:127.0.0.1+HTTP') -Target '*+HTTP'
+Add-Case 'listener: target absent' (-not $plan4.TargetPresent)
+$plan5 = Get-RefuteListenerRemoval -Names @() -Target '*+HTTP'
+Add-Case 'listener: no listener at all' (-not $plan5.TargetPresent -and @($plan5.ForeignRemaining).Count -eq 0)
+
+# .reg export check
+$key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Listener\*+HTTP'
+$good = "Windows Registry Editor Version 5.00`r`n`r`n[$key]`r`n`"Port`"=dword:00001761`r`n"
+Add-Case 'reg export: exactly the key' (Test-RefuteRegExport -Text $good -KeyPath $key)
+Add-Case 'reg export: a subkey of the key is allowed' (Test-RefuteRegExport -Text ($good + "[$key\sub]`r`n") -KeyPath $key)
+Add-Case 'reg export: another key is refused' (-not (Test-RefuteRegExport -Text ($good + "[HKEY_LOCAL_MACHINE\SOFTWARE\Other]`r`n") -KeyPath $key))
+Add-Case 'reg export: a sibling key is refused' (-not (Test-RefuteRegExport -Text ($good + "[$key" + "S]`r`n") -KeyPath $key))
+Add-Case 'reg export: the key missing is refused' (-not (Test-RefuteRegExport -Text "Windows Registry Editor Version 5.00`r`n" -KeyPath $key))
+
+function Get-PsrcImports([string]$Path) {
+    # The ModulesToImport entries of one role capability file: a string (a name or a
+    # path) as it is, a hashtable as its sorted key names (tests/test_vm_scripts.py refuses
+    # version and GUID keys, which make PowerShell call Get-Module in the restricted session).
+    $data = Import-PowerShellDataFile -LiteralPath $Path
+    $entries = @()
+    if ($data.ContainsKey('ModulesToImport')) { $entries = @($data.ModulesToImport) }
+    return @($entries | ForEach-Object {
+            if ($_ -is [System.Collections.IDictionary]) {
+                # "Names", not "Keys": a key named Keys would hide the dictionary's own .Keys
+                [ordered]@{ Kind = 'table'; Names = @($_.Keys | ForEach-Object { [string]$_ } | Sort-Object) }
+            } else {
+                [ordered]@{ Kind = 'string'; Value = [string]$_ }
+            }
+        })
+}
+
+# every .psrc of the repository (top-level folders starting with '.' are skipped: .git,
+# .venv, .cache), and a synthetic file with the refused keys (the detector sees them)
+$out.RoleCapabilityImports = [ordered]@{}
+$tops = @(Get-ChildItem -LiteralPath $Root -Force | Where-Object { -not $_.Name.StartsWith('.') })
+foreach ($top in $tops) {
+    $found = if ($top.PSIsContainer) { @(Get-ChildItem -LiteralPath $top.FullName -Recurse -File -Filter '*.psrc') } elseif ($top.Extension -eq '.psrc') { @($top) } else { @() }
+    foreach ($file in $found) {
+        $out.RoleCapabilityImports[$file.FullName.Substring($Root.Length + 1).Replace('\', '/')] = @(Get-PsrcImports $file.FullName)
+    }
+}
+$probe = Join-Path $WorkDir 'probe.psrc'
+[System.IO.File]::WriteAllText($probe, "@{ ModulesToImport = @('Plain', @{ ModuleName = 'X'; RequiredVersion = '1.0'; GUID = 'b2713b52-46f8-4c00-a4bf-2b940708587a' }, @{ ModuleName = 'Y'; ModuleVersion = '1.0'; MaximumVersion = '2.0' }) }")
+$out.RoleCapabilityProbe = @(Get-PsrcImports $probe)
+
+# The remoting calls of Invoke-RefuteVm.ps1 and their parameter names, from the AST: the
+# endpoint (AccessMode Local) needs -EnableNetworkAccess and implicit credentials.
+$invokeAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'Invoke-RefuteVm.ps1'), [ref]$null, [ref]$null)
+$out.InvokeRemoting = @($invokeAst.FindAll({ param($n) $n -is [System.Management.Automation.Language.CommandAst] }, $true) |
+        Where-Object { @('New-PSSession', 'Enter-PSSession', 'Invoke-Command', 'New-CimSession') -contains $_.GetCommandName() } |
+        ForEach-Object {
+            # the literal value that follows a parameter, when it is a constant
+            $values = [ordered]@{}
+            $elements = @($_.CommandElements)
+            for ($i = 0; $i -lt $elements.Count - 1; $i++) {
+                if ($elements[$i] -is [System.Management.Automation.Language.CommandParameterAst] -and
+                    $elements[$i + 1] -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+                    $values[$elements[$i].ParameterName] = $elements[$i + 1].Value
+                }
+            }
+            [ordered]@{
+                Command    = $_.GetCommandName()
+                Parameters = @($_.CommandElements | Where-Object { $_ -is [System.Management.Automation.Language.CommandParameterAst] } |
+                        ForEach-Object { $_.ParameterName } | Sort-Object)
+                Values     = $values
+            }
+        })
 
 $out.Cases = $cases.ToArray()
 ConvertTo-RefuteCanonicalJson $out

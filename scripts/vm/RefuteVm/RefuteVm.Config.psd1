@@ -28,8 +28,11 @@
     InstallIsoName          = 'ubuntu-26.04.1-live-server-amd64.iso'
     # Filled in a reviewed change after the ISO is checked against SHA256SUMS and its
     # signature (Get-RefuteMedia.ps1), before the endpoint is registered; while empty,
-    # ImportInstallIso refuses.
-    InstallIsoSha256        = ''
+    # ImportInstallIso refuses. Verified on 2026-10-15 (evidence:
+    # docs/validation/v0.3/wp6-results/media-verification.json): SHA256SUMS signed by the
+    # Ubuntu CD Image Automatic Signing Key (2012), fingerprint
+    # 843938DF228D22F7B3742BC0D94AA3F0EFE21092, and this ISO's line in it.
+    InstallIsoSha256        = 'cc8a95cde20f6ced61a322420de00f10cc3c90ced545daa46cb9c1a117f1d927'
     SeedIsoName             = 'refute-vm-seed.iso'
 
     # Hardware (plan 7.1).

@@ -66,6 +66,83 @@ def test_synthetic_cases(cases):
     assert failed == []
 
 
+INSTALLED_MANIFEST = r"C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1"
+VERSION_KEYS = {"requiredversion", "moduleversion", "maximumversion", "guid"}
+
+
+def _version_keys(entries: list[dict]) -> list[str]:
+    return sorted(
+        key
+        for entry in entries
+        if entry["Kind"] == "table"
+        for key in entry["Names"]
+        if key.lower() in VERSION_KEYS
+    )
+
+
+def test_no_role_capability_imports_a_module_by_version(cases):
+    """With RequiredVersion, ModuleVersion, MaximumVersion or GUID in ModulesToImport,
+    PowerShell resolves the module by calling Get-Module inside the restricted session,
+    which has no Get-Module: the session cannot open (the maintainer, 2026-10-16). Every
+    .psrc of the repository imports by name or path only; the probe shows the detector
+    sees every refused key."""
+    imports = cases["RoleCapabilityImports"]
+    assert "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc" in imports
+    assert {name: _version_keys(e) for name, e in imports.items() if _version_keys(e)} == {}
+    assert _version_keys(cases["RoleCapabilityProbe"]) == [
+        "GUID",
+        "MaximumVersion",
+        "ModuleVersion",
+        "RequiredVersion",
+    ]
+
+
+def test_the_role_capability_imports_the_installed_manifest_by_path(cases):
+    """The module is pinned by the absolute path of its manifest in the folder the
+    registration installs it to (no version subfolder), writable by administrators only."""
+    entries = cases["RoleCapabilityImports"][
+        "scripts/vm/RefuteVm/RoleCapabilities/RefuteVmOperator.psrc"
+    ]
+    assert entries == [{"Kind": "string", "Value": INSTALLED_MANIFEST}]
+
+
+def test_the_registration_installs_without_a_version_subfolder():
+    """JEA finds <module path>\\<module>\\RoleCapabilities\\<name>.psrc only (the maintainer's
+    diagnosis of 2026-10-16): the module goes to RefuteVm itself, the apply checks the JEA
+    search and refuses a copy in a version subfolder, and the preview checks that the role
+    capability imports the installed manifest."""
+    text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    assert "$ModuleDestination = $ModuleBase\n" in text.replace("\r\n", "\n")
+    assert "ModuleManifest.ModuleVersion" not in text
+    apply = text[text.index("# ---- apply") :]
+    assert "Find-RefuteJeaRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    assert (
+        "Find-RefuteVersionedRoleCapability -ModuleRoots $moduleRoots -RoleName $RoleName" in apply
+    )
+    preview = text[: text.index("# ---- apply")]
+    assert "the role capability must import exactly $InstalledManifest" in preview
+    assert "$InstalledManifest = Join-Path $ModuleBase 'RefuteVm.psd1'" in text
+
+
+def test_the_endpoint_is_called_as_a_loopback_session(cases):
+    """The endpoint is registered with AccessMode Local: a session to localhost is a
+    loopback session only with implicit credentials and -EnableNetworkAccess
+    (https://learn.microsoft.com/powershell/module/microsoft.powershell.core/disable-psremoting,
+    accessed 2026-10-16); without it the maintainer's session was refused (2026-10-16).
+    From the AST of Invoke-RefuteVm.ps1, read by Windows PowerShell 5.1 on Windows."""
+    calls = cases["InvokeRemoting"]
+    sessions = [c for c in calls if c["Command"] == "New-PSSession"]
+    assert len(sessions) == 1, calls
+    params = {p.lower() for p in sessions[0]["Parameters"]}
+    assert {"computername", "configurationname", "enablenetworkaccess"} <= params
+    assert "credential" not in params
+    values = {k.lower(): v for k, v in sessions[0]["Values"].items()}
+    assert values["computername"] == "localhost" and values["configurationname"] == "RefuteVm"
+    others = [c for c in calls if c["Command"] != "New-PSSession"]
+    assert {c["Command"] for c in others} <= {"Invoke-Command"}
+    assert all({p.lower() for p in c["Parameters"]} == {"scriptblock", "session"} for c in others)
+
+
 def test_operation_lists_agree(cases):
     table = cases["OperationTable"]
     assert cases["ValidateSets"]["RefuteVm/RefuteVm.psm1"] == table
@@ -171,6 +248,351 @@ def test_registration_blocks_winrm_before_starting_it():
     assert apply.index("Get-NetFirewallSecurityFilter") < start
     assert "Test-RefuteRightsWrite" in text
     assert "-PreviewSha256" in text and "the change list differs from the previewed one" in text
+
+
+# Commands that change the machine, or may (the WSMan provider can offer to start WinRM;
+# module discovery can write the module analysis cache). None may run in the preview.
+PREVIEW_FORBIDDEN = (
+    "Get-PSSessionConfiguration",
+    "Get-Module",
+    "Import-Module",
+    "WSMan:",
+    "Get-WSManInstance",
+    "Set-Service",
+    "Start-Service",
+    "Set-Acl",
+    "Copy-Item",
+    "New-Item",
+    "New-NetFirewallRule",
+    "Set-NetFirewall",
+    "New-PSSessionConfigurationFile",
+    "Register-PSSessionConfiguration",
+    "CreateDirectory",
+    "WriteAllText",
+    "Out-File",
+    "Set-Content",
+    "Add-Content",
+    "Set-ItemProperty",
+    "New-ItemProperty",
+    "Add-LocalGroupMember",
+)
+
+
+# Every command and .NET method the preview may call (before the apply section of
+# Register-RefuteVmEndpoint.ps1, and in the core it dot-sources), from the PowerShell
+# AST: reads, in-memory work and output only. A new command fails this test until it is
+# reviewed. The ACL methods (SetOwner, SetAccessRuleProtection, AddAccessRule) act on an
+# in-memory DirectorySecurity that only Set-Acl, in the apply section, writes.
+PREVIEW_COMMANDS = {
+    "find-refutehypervmanifest",
+    "find-rolecapabilitycopies",
+    "convertto-refutemoduleroot",
+    "foreach-object",
+    "get-acl",
+    "get-childitem",
+    "get-filehash",
+    "get-itemproperty",
+    "get-localgroupmember",
+    "get-modulepathroots",
+    "get-netfirewallrule",
+    "get-refuteregistrationmoduleroots",
+    "get-refutewriterightsmask",
+    "get-registrylisteners",
+    "get-service",
+    "get-sidaccount",
+    "get-treehashes",
+    "import-powershelldatafile",
+    "join-path",
+    "join-refutemoduleroots",
+    "new-object",
+    "resolve-path",
+    "set-strictmode",
+    "sort-object",
+    "test-listenersloopbackonly",
+    "test-path",
+    "test-refuterightswrite",
+    "test-targetexists",
+    "where-object",
+    "write-output",
+}
+PREVIEW_METHODS = {
+    "add",
+    "addaccessrule",
+    "close",
+    "computehash",
+    "containskey",
+    "create",
+    "dispose",
+    "endswith",
+    "expandenvironmentvariables",
+    "getbytes",
+    "getcurrent",
+    "getenvironmentvariable",
+    "isinrole",
+    "lastindexof",
+    "max",
+    "opensubkey",
+    "replace",
+    "setaccessruleprotection",
+    "setowner",
+    "split",
+    "startswith",
+    "substring",
+    "tolowerinvariant",
+    "tostring",
+    "translate",
+    "trimend",
+    "tryparse",
+}
+
+# The preview of Remove-RefuteWinRmListener.ps1 (and the core): reads of the registry,
+# the service state and the backup folder ACL, in-memory work and output.
+LISTENER_PREVIEW_COMMANDS = {
+    "convertto-refutemoduleroot",
+    "foreach-object",
+    "get-acl",
+    "get-childitem",
+    "get-itemproperty",
+    "get-refutebackupproblems",
+    "get-refutelistenerremoval",
+    "get-refutewriterightsmask",
+    "get-service",
+    "join-path",
+    "join-refutemoduleroots",
+    "new-object",
+    "read-refutelisteners",
+    "set-strictmode",
+    "sort-object",
+    "test-path",
+    "where-object",
+    "write-output",
+}
+LISTENER_PREVIEW_METHODS = {
+    "add",
+    "close",
+    "computehash",
+    "containskey",
+    "create",
+    "dispose",
+    "endswith",
+    "expandenvironmentvariables",
+    "getbytes",
+    "getcurrent",
+    "getenvironmentvariable",
+    "getsubkeynames",
+    "getvalue",
+    "getvaluenames",
+    "isinrole",
+    "lastindexof",
+    "max",
+    "opensubkey",
+    "split",
+    "startswith",
+    "substring",
+    "tolowerinvariant",
+    "tostring",
+    "translate",
+    "trimend",
+    "tryparse",
+}
+
+
+def test_the_listener_removal_preview_only_reads(cases):
+    """The preview of the listener removal: allowlisted commands and methods only, no
+    dynamic command, no redirection; the registry keys are opened read-only; the WinRM
+    service is never started, stopped or set anywhere in the script."""
+    preview = cases["PreviewListener"]
+    assert preview["ApplyMarkerFound"]
+    assert {c.lower() for c in preview["Commands"]} - LISTENER_PREVIEW_COMMANDS == set()
+    assert {m.lower() for m in preview["Methods"]} - LISTENER_PREVIEW_METHODS == set()
+    assert preview["Unnamed"] == [] and preview["Redirections"] == []
+    text = (VM / "Remove-RefuteWinRmListener.ps1").read_text(encoding="utf-8")
+    before = text[: text.index("# ---- apply")]
+    assert (
+        ".OpenSubKey($ListenerRoot)" in before and ".OpenSubKey($ListenerRoot, $true)" not in before
+    )
+    for command in ("Start-Service", "Stop-Service", "Restart-Service", "Set-Service", "WSMan:"):
+        assert command.lower() not in text.lower(), command
+    # the apply opens the listener root writable once, to delete exactly the target key
+    apply = text[text.index("# ---- apply") :]
+    assert apply.count(".OpenSubKey($ListenerRoot, $true)") == 1
+    assert "DeleteSubKeyTree($Target)" in apply
+
+
+def test_the_registration_preview_only_reads(cases):
+    """Codex review of the preview: everything the preview can run is on the allowlist
+    (case-insensitive, from the AST, comments excluded, core included); no command that
+    changes the machine, or may, appears in it."""
+    preview = cases["Preview"]
+    assert preview["ApplyMarkerFound"]
+    commands = {c.lower() for c in preview["Commands"]}
+    methods = {m.lower() for m in preview["Methods"]}
+    assert commands - PREVIEW_COMMANDS == set()
+    assert methods - PREVIEW_METHODS == set()
+    # nothing a name list cannot see: no dynamic command (the dot-source of the reviewed
+    # core is the only exception) and no redirection to a file
+    assert preview["Unnamed"] == [] and preview["Redirections"] == []
+    # the collector does see both forms (synthetic probe)
+    assert cases["PreviewProbe"] == {"Unnamed": 1, "Redirections": 1}
+    assert not {c.lower() for c in PREVIEW_FORBIDDEN} & commands
+    text = (VM / "Register-RefuteVmEndpoint.ps1").read_text(encoding="utf-8")
+    before = text[: text.index("# ---- apply")]
+    # the registry key is opened read-only (one argument), and every path without -Apply
+    # ends before the apply section: problems exit 1, a clean preview exits 0
+    assert (
+        '.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\Plugin\\$EndpointName")'
+        in before
+    )
+    tail = [line.strip() for line in before.strip().splitlines()[-8:]]
+    assert any(line.startswith("if ($problems.Count)") for line in tail)
+    assert "exit 1" in "\n".join(tail)
+    assert tail[-1].startswith("if (-not $Apply)") and tail[-1].endswith("exit 0 }")
+
+
+def test_no_command_output_is_counted_or_indexed_without_an_array(cases):
+    """Windows PowerShell 5.1 under StrictMode: `$x = f` with an empty output leaves $null,
+    so `$x.Count` or `$x[0]` fails (the maintainer's first preview run). Every script must
+    wrap such output in @(...); the detector is checked on a synthetic snippet."""
+    found = {
+        (name, use)
+        for name, uses in cases["UnsafeListUse"].items()
+        for use in uses
+        if (name, use) not in REVIEWED_SINGLE_OBJECTS
+    }
+    assert found == set()
+    assert sorted(cases["UnsafeListProbe"]) == ["$x.Count", "$x[0]"]
+
+
+# Uses the detector lists that are not lists at all, reviewed one by one: the command
+# always returns exactly one object, and .Count or [k] is that object's own member.
+REVIEWED_SINGLE_OBJECTS = {
+    # Get-VMProcessor returns one VMProcessor; Count is its number of virtual processors
+    ("RefuteVm/RefuteVm.HyperV.ps1", "$processor.Count"),
+    # Get-TreeHashes returns one ordered dictionary; [$k] reads a key
+    ("Register-RefuteVmEndpoint.ps1", "$sourceHashes[$k]"),
+    # Test-RefuteVmConfig returns its array with the comma operator (", $x.ToArray()"),
+    # so an empty list arrives as one empty array, never $null; @(...) around it would
+    # instead give an array holding that empty array (Count 1)
+    ("RefuteVm/RefuteVm.Core.ps1", "$problems.Count"),
+    ("RefuteVm/RefuteVm.psm1", "$problems.Count"),
+    # Read-RefuteListeners returns one ordered dictionary (empty or not); a dictionary is
+    # never unrolled by the pipeline, so .Count and [$name] are its own members
+    ("Remove-RefuteWinRmListener.ps1", "$listeners.Count"),
+    ("Remove-RefuteWinRmListener.ps1", "$listeners[$name]"),
+}
+
+
+def test_the_config_check_returns_an_array_even_when_empty(cases):
+    """The reviewed exception above, checked: a valid configuration gives an empty array
+    (the first synthetic case), not $null."""
+    first = cases["Cases"][0]
+    assert first["Name"] == "config of the repository is valid" and first["Ok"], first
+
+
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="the registration runs in Windows PowerShell 5.1"
+)
+def test_the_registration_preview_runs_to_its_end_in_windows_powershell(tmp_path):
+    """The preview itself, in powershell.exe (Windows PowerShell 5.1, StrictMode 2.0), on
+    a machine with no RefuteVmOperator role capability anywhere (the maintainer's first
+    run stopped there: a function returning an empty list gives $null, and .Count on
+    $null is an error under StrictMode). Without -Apply nothing changes; as a normal
+    user, or on a host without Hyper-V, the preview lists its problems and exits 1."""
+    import os
+
+    exe = shutil.which("powershell.exe")
+    assert exe, "Windows PowerShell 5.1 is part of Windows"
+    account = f"{os.environ['COMPUTERNAME']}\\{os.environ['USERNAME']}"
+    argv = [
+        exe,
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        str(VM / "Register-RefuteVmEndpoint.ps1"),
+        "-OperatorAccount",
+        account,
+    ]
+    # the module analysis cache is disabled only by the environment the process starts
+    # with (Codex review); without it the script refuses before reading anything
+    plain = {k: v for k, v in os.environ.items() if k.upper() != "PSMODULEANALYSISCACHEPATH"}
+    refused = subprocess.run(
+        argv, cwd=tmp_path, env=plain, capture_output=True, text=True, timeout=600
+    )
+    assert refused.returncode == 1 and "PSModuleAnalysisCachePath=nul" in refused.stdout
+    assert "Mode:" not in refused.stdout
+    out = subprocess.run(
+        argv,
+        cwd=tmp_path,
+        env={**plain, "PSModuleAnalysisCachePath": "nul"},
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
+    text = out.stdout + out.stderr
+    assert "PropertyNotFoundStrict" not in text and "Count" not in out.stderr, text
+    assert "Mode: preview (no change)" in out.stdout, text
+    assert "PreviewSha256: " in out.stdout, text
+    # on a CI runner no role capability exists, so none is reported (a host where the
+    # endpoint is registered reports its copy, which is correct there)
+    if os.environ.get("CI"):
+        assert "a role capability named RefuteVmOperator already exists" not in out.stdout
+    # exit 0 only on a ready host as Administrator; otherwise 1 with the problems listed
+    assert out.returncode in (0, 1), text
+    if out.returncode == 1:
+        assert "Problems (nothing was changed):" in out.stdout, text
+
+
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="the listener removal runs in Windows PowerShell 5.1"
+)
+def test_the_listener_removal_preview_runs_and_never_applies_without_its_hash(tmp_path):
+    """The preview of Remove-RefuteWinRmListener.ps1 in powershell.exe: it refuses without
+    PSModuleAnalysisCachePath=nul in its launch environment, otherwise prints the listener
+    keys and a PreviewSha256 and changes nothing; -Apply without -PreviewSha256 is refused
+    before the apply section."""
+    import os
+
+    exe = shutil.which("powershell.exe")
+    assert exe
+    argv = [
+        exe,
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        str(VM / "Remove-RefuteWinRmListener.ps1"),
+    ]
+    plain = {k: v for k, v in os.environ.items() if k.upper() != "PSMODULEANALYSISCACHEPATH"}
+    env = {**plain, "PSModuleAnalysisCachePath": "nul"}
+
+    def run(*extra, environment=env):
+        return subprocess.run(
+            [*argv, *extra],
+            cwd=tmp_path,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+
+    refused = run(environment=plain)
+    assert refused.returncode == 1 and "PSModuleAnalysisCachePath=nul" in refused.stdout
+    assert "Mode:" not in refused.stdout
+    out = run()
+    text = out.stdout + out.stderr
+    assert "PropertyNotFoundStrict" not in text, text
+    assert "Mode: preview (no change)" in out.stdout and "PreviewSha256: " in out.stdout, text
+    assert "Listener keys under HKLM" in out.stdout, text
+    assert out.returncode in (0, 1), text
+    if out.returncode == 1:
+        assert "Problems (nothing was changed):" in out.stdout, text
+    no_hash = run("-Apply")
+    assert no_hash.returncode == 1, no_hash.stdout + no_hash.stderr
+    assert "-Apply needs -PreviewSha256 from a preview run" in no_hash.stdout
+    assert "Already done" not in no_hash.stdout and "Done:" not in no_hash.stdout
 
 
 def _iso_files(data: bytes) -> tuple[str, str, dict[str, bytes]]:
