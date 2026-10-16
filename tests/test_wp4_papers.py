@@ -21,8 +21,10 @@ from refute.packs.ml.schema import MlClaimSchema, MlTarget, MlTestPlan
 from synthetic_harness import fixture
 from test_ml_integration import (
     ALL_RUNGS,
+    SPLITS,
     dataset_evidence,
     plan_dict,
+    split_sha256,
     value_target,
 )
 from wp4_papers import BASE_CONFIG, PAPERS, PHASES, SyntheticPaper
@@ -30,8 +32,17 @@ from wp4_papers import BASE_CONFIG, PAPERS, PHASES, SyntheticPaper
 N = {"n_train": 2000, "n_val": 500, "n_test": 4000}
 
 
-def _target(paper: SyntheticPaper, key_number: int = 1) -> dict:
-    target = value_target(dict.fromkeys(paper.attacks, True))
+def _target(paper: SyntheticPaper, data: bytes, key_number: int = 1) -> dict:
+    target = value_target(
+        dict.fromkeys(paper.attacks, True), recompute=paper.recompute, routes=list(paper.routes)
+    )
+    # the split's identity from this paper's own dataset (a leak changes the splits)
+    identity = target["coverage_evidence"]["method"].get("split_identity")
+    if identity is not None:
+        identity["labels_sha256"] = split_sha256("test", data)
+        identity["other_splits"] = [
+            {"name": s, "labels_sha256": split_sha256(s, data)} for s in SPLITS if s != "test"
+        ]
     target["metric"]["reported"] = paper.reported
     target["key"] = target["key"][:-1] + str(key_number)
     target["inventory"]["position"] = key_number
@@ -40,7 +51,8 @@ def _target(paper: SyntheticPaper, key_number: int = 1) -> dict:
         target["run"]["seed_argument"] = None
         target["metric"]["reported_n_seeds"] = None
         target["seeds"] = {"base": [0], "base_cap": 1, "base_source": "documented"}
-        target["metric_recompute"]["predictions"]["file"] = "preds/base.npy"
+        if paper.recompute:
+            target["metric_recompute"]["predictions"]["file"] = "preds/base.npy"
     for entry in target["attacks"]:
         if entry["name"] in paper.not_applicable:
             entry["reason"] = paper.not_applicable[entry["name"]]
@@ -71,7 +83,7 @@ def _config(paper: SyntheticPaper, claim: dict, extra: dict) -> dict:
 def build(paper: SyntheticPaper, claims: int = 1) -> tuple[bytes, dict]:
     """The paper's dataset and its resolved claim file (both deterministic)."""
     data = dataset_bytes(seed=7, leak=paper.leak, **N)
-    targets = [_target(paper, k) for k in range(1, claims + 1)]
+    targets = [_target(paper, data, k) for k in range(1, claims + 1)]
     return data, _claim_file(paper, data, targets)
 
 
@@ -253,3 +265,12 @@ def test_the_definitions_cover_the_verdict_paths():
         "INCONCLUSIVE",
     }
     assert set(ALL_RUNGS) == set(PAPERS[0].ladder)
+
+
+def test_each_coverage_route_has_papers_on_both_sides():
+    """1.5a: every route shows the examples in one paper (REPRODUCED) and fails to close
+    the chain, or finds a conflict, in another (metric_extracted INCONCLUSIVE)."""
+    for name in ("saved_predictions", "sufficient_statistics", "printed_count", "hook"):
+        alone = [p for p in PAPERS if p.routes == (name,)]
+        sides = {p.expected_checks.get("metric_extracted") for p in alone}
+        assert {"PASS", "INCONCLUSIVE"} <= sides, (name, sides)
