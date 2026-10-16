@@ -436,8 +436,8 @@ Add-Case 'module roots: entries split, trimmed, deduplicated without case, sorte
 Add-Case 'module roots: nothing given gives nothing' (@(Join-RefuteModuleRoots -PathValues @() -Extra @()).Count -eq 0)
 # a volume root keeps its '\' ('C:' would be the current folder of drive C); UNC paths are
 # trimmed; relative and drive-relative entries are refused (Codex review of #102)
-$volume = @(Join-RefuteModuleRoots -PathValues @('C:\;D:\Mods\;\\srv\share\Mods\') -Extra @())
-Add-Case 'module roots: a volume root keeps its backslash' ($volume.Count -eq 3 -and $volume -ccontains 'C:\' -and $volume -ccontains 'D:\Mods' -and $volume -ccontains '\\srv\share\Mods') ($volume -join ', ')
+$volume = @(Join-RefuteModuleRoots -PathValues @('C:\;D:\Mods\;\\srv\share\Mods\;E:\\;F:\Mods\\') -Extra @())
+Add-Case 'module roots: a volume root keeps one backslash, also after repeated ones' ($volume.Count -eq 5 -and $volume -ccontains 'C:\' -and $volume -ccontains 'D:\Mods' -and $volume -ccontains '\\srv\share\Mods' -and $volume -ccontains 'E:\' -and $volume -ccontains 'F:\Mods') ($volume -join ', ')
 foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
     $refused = $false
     try { [void](Join-RefuteModuleRoots -PathValues @("C:\A;$relative") -Extra @()) } catch { $refused = $true }
