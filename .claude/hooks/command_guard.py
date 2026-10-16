@@ -1,11 +1,25 @@
-"""PreToolUse hook: refuse shell commands that break two project rules.
+"""PreToolUse hook: refuse shell commands that break the project rules below.
 
 1. Excerpts are read with the Read tool, never with ``sed``, ``awk`` (or ``gsed``,
-   ``gawk``, ``mawk``, ``nawk``) or PowerShell's ``Select-String`` (alias ``sls``).
+   ``gawk``, ``mawk``, ``nawk``) or PowerShell's ``Select-String`` (alias ``sls``); in
+   Bash, never with ``head`` or ``tail``, nor with ``cat`` given a file (a ``cat`` fed
+   only by a here-document or here-string writes text and passes).
 2. pytest runs only through ``scripts/run_tests_affinity.ps1``, which sets the CPU
    affinity to threads 8 to 31 and writes a JUnit XML file (CLAUDE.md). Any command
    that itself starts pytest is refused; calling that script does not start pytest in
    the command, so it passes.
+3. A backslash never appears in an inline PowerShell command (the PowerShell tool, or
+   code given to ``powershell``/``pwsh -Command``), not even inside a quoted string:
+   paths are written with ``/``, and code that needs a backslash or a regular
+   expression goes into a saved script, which this hook never reads.
+4. A commit runs only after ruff passes on the staged Python files: a direct
+   ``git commit`` is refused, and so is any git command that would commit on its own
+   (``git merge`` without ``--no-commit``, ``--squash``, ``--abort`` or ``--quit``;
+   ``git cherry-pick`` and ``git revert`` without ``-n``/``--no-commit`` or a sequencer
+   option; ``git pull`` without ``--ff-only``). The way to commit is
+   ``scripts/commit_checked.py``, which runs ``ruff check`` and ``ruff format --check``
+   on the staged Python files and commits only when both exit with code 0 (the
+   maintainer's rule of 2026-10-16).
 
 Claude Code sends the tool call as JSON on stdin (``tool_name``,
 ``tool_input.command``). A refused command exits with code 2 and the reason on stderr;
@@ -63,6 +77,18 @@ import sys
 from dataclasses import dataclass, field
 
 READ_TOOLS = {"sed", "gsed", "awk", "gawk", "mawk", "nawk", "select-string", "sls"}
+BASH_READ_TOOLS = {"head", "tail"}  # cat is refused only when it is given a file
+GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--super-prefix"}
+BACKSLASH_REASON = (
+    "a backslash is not allowed in an inline PowerShell command: write paths with '/', "
+    "and put code that needs a backslash or a regular expression in a saved script "
+    "(CLAUDE.md, the maintainer's rules)"
+)
+COMMIT_REASON = (
+    "commit through scripts/commit_checked.py, which runs ruff on the staged Python files "
+    "and commits only if ruff exits 0 (for a merge: git merge --no-commit, then "
+    "scripts/commit_checked.py --no-edit)"
+)
 PYTEST_WORDS = {"pytest", "py.test"}
 SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 POWERSHELLS = {"powershell", "pwsh"}
@@ -463,6 +489,56 @@ def _refuse_read(word: str) -> str:
     )
 
 
+def _cat_reads_a_file(args: list[str]) -> bool:
+    """True when ``cat`` reads a file: a file operand or an input redirection from a file.
+    Here-documents and here-strings (``<<EOF``, ``<<<``), output redirections, options and
+    ``-`` (standard input) do not read a file."""
+    k = 0
+    while k < len(args):
+        arg = args[k]
+        if arg in ("<<", "<<-", "<<<", ">", ">>", "1>", "2>", "&>", "1>>", "2>>"):
+            k += 2  # the marker or the target is the next word
+            continue
+        if arg.startswith("<<"):
+            k += 1
+            continue
+        if arg.startswith("<"):
+            return True  # cat < file, cat <file
+        if arg.startswith((">", "1>", "2>", "&>")):
+            k += 1
+            continue
+        if arg == "-" or (arg.startswith("-") and len(arg) > 1):
+            k += 1
+            continue
+        return True
+    return False
+
+
+def _git_commit_reason(args: list[str]) -> str | None:
+    """COMMIT_REASON when the git command would create a commit by itself."""
+    k = 0
+    while k < len(args) and args[k].startswith("-"):
+        k += 2 if args[k] in GIT_VALUE_OPTIONS else 1
+    if k >= len(args):
+        return None
+    sub, rest = args[k].lower(), [a.lower() for a in args[k + 1 :]]
+    if sub == "commit":
+        return COMMIT_REASON
+    if sub == "merge" and not {"--no-commit", "--squash", "--abort", "--quit"} & set(rest):
+        return COMMIT_REASON
+    if sub in ("cherry-pick", "revert") and not {
+        "-n",
+        "--no-commit",
+        "--abort",
+        "--quit",
+        "--skip",
+    } & set(rest):
+        return COMMIT_REASON
+    if sub == "pull" and "--ff-only" not in rest:
+        return COMMIT_REASON
+    return None
+
+
 PYTEST_REASON = (
     "pytest runs only through scripts/run_tests_affinity.ps1 (affinity 8-31, JUnit XML): "
     "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_tests_affinity.ps1 "
@@ -480,6 +556,14 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
     lowered = [a.lower() for a in args]
     if name in READ_TOOLS:
         return _refuse_read(name)
+    if shell == BASH and name in BASH_READ_TOOLS:
+        return _refuse_read(name)
+    if shell == BASH and name == "cat" and _cat_reads_a_file(args):
+        return _refuse_read(name)
+    if name == "git":
+        reason = _git_commit_reason(args)
+        if reason:
+            return reason
     if name in PYTEST_WORDS:
         return PYTEST_REASON
     if _is_python(name):
@@ -568,6 +652,8 @@ def check(command: str, depth: int = 0, shell: str = BASH) -> str | None:
     """The reason to refuse ``command``, or None when it may run."""
     if depth > 8:
         return "the command nests shells too deeply to be checked"
+    if shell == POWERSHELL and "\\" in command:
+        return BACKSLASH_REASON
     lexed = lex(command, shell)
     for words in lexed.segments:
         reason = _check_segment(words, depth, shell)
