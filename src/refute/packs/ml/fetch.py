@@ -55,9 +55,9 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
-from refute.core.paper import FailureCause, GateFailure
+from refute.core.paper import ABSENT_HTTP_STATUSES, ABSENT_STATUSES, FailureCause, GateFailure
 
-ABSENT_STATUS = frozenset({404, 410})
+ABSENT_STATUS = ABSENT_STATUSES  # 404 and 410, the same set the WP2 core accepts
 CHUNK = 1 << 20
 TIMEOUT_S = 60.0
 
@@ -297,3 +297,12 @@ def fetch_artifact(
             GateFailure(FailureCause.ARTIFACT_ABSENT, attempts, attempts),
         )
     return failed(FailureCause.TRANSIENT_NETWORK)
+
+
+def absence_evidence(result: FetchResult) -> dict[str, list[int]]:
+    """The evidence a ``data_present`` gate records for a proven absence: one HTTP status
+    per attempt, for the procedural coverage rule of the WP2 core
+    (``refute.core.paper.proven_absence``). Empty unless the cause is ``artifact_absent``."""
+    if result.failure is None or result.failure.known_cause is not FailureCause.ARTIFACT_ABSENT:
+        return {}
+    return {ABSENT_HTTP_STATUSES: [a.http_status for a in result.attempts]}

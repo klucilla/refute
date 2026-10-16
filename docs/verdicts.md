@@ -83,7 +83,8 @@ cause that applies to the gate:
 - a build-ladder failure applies to `environment_build`;
 - a failure of the documented command applies to `data_present`, `run_completed` and
   `metric_extracted`;
-- an absent artifact applies to every gate.
+- an absent artifact applies to every gate, and only with its evidence: one recorded
+  HTTP status per attempt, each 404 or 410, whatever the gate's coverage.
 
 Anything else is `INCONCLUSIVE`.
 
@@ -129,6 +130,13 @@ lock, separately for a positive and for a negative conclusion (for example, the 
 reproduction must complete the number of seeds declared in the claim). Coverage below
 the minimum gives no conclusion: it never yields a pass, and it yields a negative
 conclusion only where the valid evidence already obtained establishes it.
+
+**Proven absence of a declared artifact** (decided by the maintainer on 2026-10-16): a
+gate that failed because a declared artifact answered HTTP 404 or 410 in **all** of the N
+attempts fixed before the lock, with one recorded status per attempt, has examined no
+example but its evidence is complete. It is decided by its attribution
+(`NOT_REPRODUCIBLE`, section "Attribution") before the zero-coverage rule. Any other zero
+coverage stays `INCONCLUSIVE`.
 
 | Check | Coverage unit | Zero coverage means |
 |---|---|---|
