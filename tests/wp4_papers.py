@@ -15,6 +15,16 @@ Not in this first set (listed in the pull request): the comparison papers (they 
 predictions saved per method), the coverage papers of #15 that need other datasets, the
 holdout and uncertainty papers of W4.3b and W4.3c, the reply draft, the seal and the
 dossier verification of W4.4.
+
+The detailed expectations (``expected_counts``, ``interrupted``, ``flags``, ``incomplete``,
+``not_applicable``) were added after the first runs, asked by the Codex review of #111.
+They restate what each case's text already fixed in the first commit of this file (for
+example "2 of 5 seeds") or what the WP2 core gives for that case; no expected verdict
+changed.
+
+``no-seed-option`` is the claim's declaration: the claim has no seed argument and records
+the ``seeds`` attack as not applicable, with its reason. The cataloged trainer itself still
+accepts ``--seed``; the runs simply never receive it.
 """
 
 from __future__ import annotations
@@ -50,6 +60,16 @@ class SyntheticPaper:
     leak: int = 0  # test examples copied into train
     expected_checks: dict = field(default_factory=dict)  # check or attack name -> status
     expected_failures: dict = field(default_factory=dict)  # gate -> failure cause
+    # attack -> (valid runs, valid failures) of the attack's own result
+    expected_counts: dict = field(default_factory=dict)
+    # runs of the seeds attack a guard must stop, named by the claim's seed list ("attack[2]")
+    interrupted: tuple[str, ...] = ()
+    # the claim's status flags (W4.4): (basic reproduction obtained, incomplete coverage)
+    flags: tuple[bool, bool] = (True, False)
+    # attacks recorded as incomplete (a result below the attack's expected coverage)
+    incomplete: tuple[str, ...] = ()
+    # attack -> the reason the claim records for it not applying
+    not_applicable: dict = field(default_factory=dict)
 
 
 PAPERS = [
@@ -67,6 +87,7 @@ PAPERS = [
         attacks=("seeds",),
         config={"bad_seeds": "attack[:2]", "seed_penalty": 8},
         expected_checks={"seeds": "FAIL"},
+        expected_counts={"seeds": (5, 2)},
     ),
     SyntheticPaper(
         "split-fragile",
@@ -75,6 +96,7 @@ PAPERS = [
         attacks=("data_split",),
         config={"bad_split_seeds": "data_split[:1]", "split_penalty": 7},
         expected_checks={"data_split": "FAIL"},
+        expected_counts={"data_split": (3, 1)},
     ),
     SyntheticPaper(
         "leaky",
@@ -90,6 +112,7 @@ PAPERS = [
         NOT_REPRODUCED,
         config={"print_bias": 0.5},
         expected_checks={"metric_recompute": "FAIL"},
+        flags=(False, False),
     ),
     SyntheticPaper(
         "not-reproducible",
@@ -98,6 +121,7 @@ PAPERS = [
         ladder={r: "procedure_error" for r in RUNGS},
         expected_checks={"environment_build": "FAIL"},
         expected_failures={"environment_build": "artifact_build_ladder"},
+        flags=(False, False),
     ),
     SyntheticPaper(
         "not-reproducible-twin",
@@ -107,6 +131,7 @@ PAPERS = [
         stages={"build": {"active_time_limit_hours": 0.001, "no_progress_hours": 0.0008}},
         expected_checks={"environment_build": "INCONCLUSIVE"},
         expected_failures={"environment_build": "operational_guard"},
+        flags=(False, True),
     ),
     SyntheticPaper(
         "failed-run",
@@ -115,6 +140,7 @@ PAPERS = [
         config={"exit_code": 3},
         expected_checks={"run_completed": "FAIL"},
         expected_failures={"run_completed": "undetermined"},
+        flags=(False, False),
     ),
     SyntheticPaper(
         "interrupted-attack",
@@ -125,6 +151,8 @@ PAPERS = [
         step_config={"data_split": {"sleep_s": 60}},
         stages={"attack_run": {"active_time_limit_hours": 0.01, "no_progress_hours": 0.001}},
         expected_checks={"seeds": "FAIL", "data_split": "INCONCLUSIVE"},
+        expected_counts={"seeds": (5, 2)},
+        flags=(True, True),
     ),
     SyntheticPaper(
         "seeds-interrupted-established",
@@ -136,6 +164,10 @@ PAPERS = [
         seed_config={"attack[2]": {"sleep_s": 60}},
         stages={"attack_run": {"active_time_limit_hours": 0.01, "no_progress_hours": 0.001}},
         expected_checks={"seeds": "FAIL"},
+        expected_counts={"seeds": (4, 2)},
+        interrupted=("attack[2]",),
+        flags=(True, True),
+        incomplete=("seeds",),
     ),
     SyntheticPaper(
         "seeds-interrupted-insufficient",
@@ -146,6 +178,10 @@ PAPERS = [
         seed_config={"attack[2]": {"sleep_s": 60}},
         stages={"attack_run": {"active_time_limit_hours": 0.01, "no_progress_hours": 0.001}},
         expected_checks={"seeds": "INCONCLUSIVE"},
+        expected_counts={"seeds": (4, 0)},
+        interrupted=("attack[2]",),
+        flags=(True, True),
+        incomplete=("seeds",),
     ),
     SyntheticPaper(
         "ablation-fragile",
@@ -169,6 +205,7 @@ PAPERS = [
         "W4.3a: a repository with no seed option (one base run; seeds not applicable)",
         REPRODUCED,
         seed_argument=False,
+        not_applicable={"seeds": "the repository has no seed option"},
     ),
     SyntheticPaper(
         "no-attack",
