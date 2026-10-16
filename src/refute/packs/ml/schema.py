@@ -741,7 +741,8 @@ class SplitIdentity(_Model):
     split of the dataset the repository can evaluate, by name, with the same hash; and the
     cited code where the repository defines the splits it can evaluate, which justifies the
     list (empty only when that code evaluates the claim's split alone). Every split the
-    claim's dataset declares in test_plan must be in the list (checked across sections). A
+    claim's dataset declares in test_plan, except the claim's own, must be in the list
+    (checked across sections). A
     split whose labels equal another's cannot be identified by its labels: the routes that
     see labels do not apply to it."""
 
@@ -824,12 +825,14 @@ class CoverageEvidence(_Model):
         return next((r for r in self.routes if r.route == name), None)
 
 
-def _evidence_key(route: CoverageRoute) -> str:
+def _evidence_key(route: CoverageRoute, evaluation: SelectedEvaluation) -> str:
     """What a route reads, without the text of its citations: its selectors, or the hook's
-    patch, function and call site (file and lines)."""
+    patch, function, call site (file and lines) and selected evaluation (one call site can
+    evaluate two checkpoints: two events, Codex review of #120)."""
     data = route.model_dump(mode="json", by_alias=True, exclude={"link"})
     if data.get("call_site") is not None:
         data["call_site"] = {k: data["call_site"][k] for k in ("file", "lines")}
+        data["selected_evaluation"] = evaluation.model_dump(mode="json")
     return json.dumps(data, sort_keys=True)
 
 
@@ -1096,9 +1099,15 @@ class MlTarget(_Model):
         # resolved file, token or event. Separate runs may use the same selector on their
         # own logs and files.
         if cov.reference is not None and isinstance(self.comparison.reference_run, SameRuns):
-            keys = {_evidence_key(r) for r in cov.method.routes if r.route != "saved_predictions"}
+            keys = {
+                _evidence_key(r, cov.method.selected_evaluation)
+                for r in cov.method.routes
+                if r.route != "saved_predictions"
+            }
             if keys & {
-                _evidence_key(r) for r in cov.reference.routes if r.route != "saved_predictions"
+                _evidence_key(r, cov.reference.selected_evaluation)
+                for r in cov.reference.routes
+                if r.route != "saved_predictions"
             }:
                 raise ValueError(
                     "coverage_evidence.method and .reference read the same evidence of the same "

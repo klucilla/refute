@@ -644,7 +644,8 @@ declared in the claim before the lock. With no route that closes the chain, the 
   actually resolve to (the file, the token or the event) and refuses one piece of
   evidence counted for both. When the reference value comes from the same runs, the
   schema already refuses a route declared alike for both: the same selectors, or the
-  same hook call. This is a necessary check only: two different selectors can still read
+  same hook call for the same selected evaluation (one call site may compute two
+  checkpoints). This is a necessary check only: two different selectors can still read
   one token. Separate runs may use the same selector on their own logs and files.
 
   The split's declared size (`expected_examples`, equal to `metric.n_examples`) is
@@ -711,7 +712,8 @@ declared in the claim before the lock. With no route that closes the chain, the 
       evaluates the claim's split alone.
 
     The schema checks that:
-    - every split the claim's dataset declares in `test_plan` is in the list;
+    - every split the claim's dataset declares in `test_plan`, except the claim's own,
+      is in the list;
     - the claim's own split is not in it;
     - no other split has the same labels hash. Two splits with the same labels in the
       same order cannot be told apart by labels, and (c) and (b) do not apply to them.
@@ -1036,8 +1038,10 @@ aggregation is this `applies`.
     that is not in `test_plan.build.allowed_patches`, or without its `link`;
   - **methods:** no `reference` evidence for a comparison claim, or one for a value
     claim; with the same runs, a route declared alike for the method and the reference
-    (the same selector, or the same hook call with another role text). The case **must
-    pass** with separate runs and the same selector on their own logs.
+    (the same selector, or the same hook call for the same selected evaluation, with
+    another role text). **Must pass:**
+    - separate runs with the same selector on their own logs;
+    - the same hook call for two different selected checkpoints.
 - 1.0.11:
   - a transcribed value that differs from the published value, as decimals: a value
     claim, a comparison, and `91.20000000000000001` against `91.2`;

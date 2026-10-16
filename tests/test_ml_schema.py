@@ -1436,6 +1436,30 @@ def test_separate_reference_runs_may_read_their_own_logs_with_the_same_selector(
     load(tmp_path, separate)
 
 
+def test_the_same_hook_call_may_serve_two_selected_evaluations(tmp_path):
+    """Codex review of #120, round 3: with the same runs, one evaluation helper may compute
+    the method's and the reference's values from two different checkpoints; the hook
+    declarations differ by their selected evaluation, so the schema accepts them and the
+    gate checks that the events are distinct."""
+
+    def two_checkpoints(claim):
+        (tmp_path / "hook.patch").write_text("--- a\n+++ b\n")
+        claim["attachments"].append({"path": "hook.patch", "role": "allowed-patch"})
+        claim["test_plan"]["build"]["allowed_patches"] = [
+            {"attachment": "hook.patch", "reason": "observes accuracy_score in the container"}
+        ]
+        cov = target(claim, "c2")["coverage_evidence"]
+        cov["method"] = hook_evidence("sklearn.metrics.accuracy_score")
+        cov["reference"] = hook_evidence("sklearn.metrics.accuracy_score")
+        cov["method"]["selected_evaluation"] = {"kind": "checkpoint", "value": "ours_{seed}.pt"}
+        cov["reference"]["selected_evaluation"] = {
+            "kind": "checkpoint",
+            "value": "baseline_{seed}.pt",
+        }
+
+    load(tmp_path, two_checkpoints)
+
+
 def test_selectors_accept_the_grammar_and_groups_they_can_read(tmp_path):
     """Positive limits of the selector checks: a json_path with name and index steps, a
     regular expression's group 0 and an existing named group, in metric_extraction and in
