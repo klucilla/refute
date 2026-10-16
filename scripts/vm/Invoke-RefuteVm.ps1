@@ -55,7 +55,12 @@ function Get-RefuteVmCommandText {
 }
 
 $commandText = Get-RefuteVmCommandText -Bound $PSBoundParameters -Set $PSCmdlet.ParameterSetName
-$session = New-PSSession -ComputerName localhost -ConfigurationName RefuteVm
+# The endpoint is registered with -AccessMode Local: a connection to localhost is a
+# loopback connection only with the implicit credentials of the caller (no -Credential)
+# and -EnableNetworkAccess; otherwise it goes through the network stack and is denied
+# (https://learn.microsoft.com/powershell/module/microsoft.powershell.core/disable-psremoting,
+# accessed 2026-10-16). tests/test_vm_scripts.py fails if this parameter is removed.
+$session = New-PSSession -ComputerName localhost -ConfigurationName RefuteVm -EnableNetworkAccess
 try {
     Invoke-Command -Session $session -ScriptBlock ([scriptblock]::Create($commandText))
 } finally {
