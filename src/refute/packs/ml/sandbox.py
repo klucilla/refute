@@ -137,7 +137,9 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
     last_usage, last_size, last_progress = -1, -1, start
     stopped = None
     detection = latency = None
-    planned = start  # the planned instant of the next reading: every poll_s from the start
+    # the planned instant of the next reading: poll_s after the previous reading ended (the
+    # cadence of the loop is unchanged; a late wake-up counts in D)
+    planned = start
     try:
         while True:
             exit_code = tracker.poll()
@@ -163,8 +165,8 @@ def _supervise(spec: RunSpec, tracker: _Tracker) -> RunResult:
                 latency = time.monotonic() - requested
                 exit_code = None
                 break
-            planned += spec.poll_s
-            time.sleep(max(0.0, planned - time.monotonic()))
+            planned = time.monotonic() + spec.poll_s
+            time.sleep(spec.poll_s)
         # exact on both platforms: the job's total after its last process ended, or the
         # supervisor's sum over every waited process
         final = tracker.final_usage_usec()
