@@ -45,13 +45,15 @@ function Find-RefuteHyperVManifest {
 }
 
 function Find-RefuteJeaRoleCapability {
-    # The role capability files JEA can load for RoleName, in the order JEA looks for them:
-    # for each module folder root, each folder directly under it, then
+    # The role capability files JEA can load for RoleName, with the structure of the search
+    # JEA makes: for each module folder root, each folder directly under it, then
     # <root>\<folder>\RoleCapabilities\<RoleName>.psrc; JEA takes the first one found
     # (GetRoleCapabilityPath in
     # https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/remoting/fanin/InitialSessionStateProvider.cs,
-    # accessed 2026-10-16). A copy in a version subfolder (<folder>\<version>\RoleCapabilities)
-    # is never found by this search. Read-only.
+    # accessed 2026-10-16). Unlike JEA, it returns every match (folders sorted by name), so
+    # that the caller can require a single one; the roots it is given are a superset of
+    # the service's (Get-ModulePathRoots). A copy in a version subfolder
+    # (<folder>\<version>\RoleCapabilities) is never found by this search. Read-only.
     param([string[]]$ModuleRoots, [string]$RoleName)
     $found = @()
     foreach ($root in $ModuleRoots) {

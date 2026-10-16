@@ -104,10 +104,14 @@ function Get-TreeHashes([string]$Root) {
 }
 
 function Get-ModulePathRoots {
-    # Every folder Windows PowerShell searches for modules for a service session: the
-    # machine PSModulePath, Program Files and System32. Enumeration errors stop the script.
+    # A superset of the folders Windows PowerShell searches for modules for a service
+    # session: the machine PSModulePath, this process's PSModulePath, Program Files,
+    # System32 and $PSHOME\Modules. The integration test on a real endpoint (#99) checks
+    # that every existing root a JEA session reports, outside the user profiles, is in this
+    # set. Enumeration errors stop the script.
     $roots = @([Environment]::GetEnvironmentVariable('PSModulePath', 'Machine').Split(';')) +
-        @((Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules'), (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules'))
+        @([Environment]::GetEnvironmentVariable('PSModulePath', 'Process').Split(';')) +
+        @((Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules'), (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\Modules'), (Join-Path $PSHOME 'Modules'))
     return @($roots | Where-Object { $_ } | ForEach-Object { $_.TrimEnd('\') } | Sort-Object -Unique | Where-Object { Test-Path -LiteralPath $_ })
 }
 

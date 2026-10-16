@@ -144,11 +144,14 @@ order:
    by the maintainer on 2026-10-16; `GetRoleCapabilityPath` in
    https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/remoting/fanin/InitialSessionStateProvider.cs,
    accessed 2026-10-16). It checks the copied hashes, that only SYSTEM, Administrators,
-   TrustedInstaller and CREATOR OWNER can write there, that the same search JEA makes
-   (machine `PSModulePath`, Program Files and System32) finds exactly
+   TrustedInstaller and CREATOR OWNER can write there, that a search with the structure
+   of JEA's, over a superset of its module roots (machine and process `PSModulePath`,
+   Program Files, System32, `$PSHOME\Modules`), finds exactly one role capability,
    `RefuteVm\RoleCapabilities\RefuteVmOperator.psrc`, that no other copy exists (none in
    a version subfolder), and, already in the preview, that the role capability imports
-   exactly `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`;
+   exactly `C:\Program Files\WindowsPowerShell\Modules\RefuteVm\RefuteVm.psd1`. That the
+   roots a JEA session searches are within this set is checked on a real endpoint in CI
+   (tests/test_vm_jea_integration.py);
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
