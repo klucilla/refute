@@ -28,6 +28,14 @@ expectation.
 ``no-seed-option`` is the claim's declaration: the claim has no seed argument and records
 the ``seeds`` attack as not applicable, with its reason. The cataloged trainer itself still
 accepts ``--seed``; the runs simply never receive it.
+
+**The coverage routes of ``metric_extracted``** (wp3-acceptance.md 1.5a, implemented in
+#110): the papers ``route-*`` and ``routes-*`` put each route on both sides, the side where
+it shows the examples (the claim reproduces) and the side where it does not close the
+chain or finds a conflict (``metric_extracted`` is INCONCLUSIVE, so the claim is). Their
+expectations are fixed here, in their own commit, before the runner supports them. A paper
+declares its routes (``routes``) and whether ``metric_recompute`` applies (``recompute``);
+every other paper keeps the saved predictions route with ``metric_recompute``.
 """
 
 from __future__ import annotations
@@ -75,6 +83,9 @@ class SyntheticPaper:
     incomplete: tuple[str, ...] = ()
     # attack -> the reason the claim records for it not applying
     not_applicable: dict = field(default_factory=dict)
+    # the coverage routes the claim declares (1.5a), and whether metric_recompute applies
+    routes: tuple[str, ...] = ("saved_predictions",)
+    recompute: bool = True
 
 
 PAPERS = [
@@ -222,6 +233,122 @@ PAPERS = [
         "no-attack",
         "W4.3: n_attack = 0 (no applicable attack)",
         REPRODUCED,
+    ),
+    # ---- the coverage routes of metric_extracted (1.5a), on both sides ----
+    SyntheticPaper(
+        "route-c-shown",
+        "1.5a (c): the saved predictions show the split's examples, in its order",
+        REPRODUCED,
+        expected_checks={"metric_extracted": "PASS", "metric_recompute": "PASS"},
+    ),
+    SyntheticPaper(
+        "route-c-other-order",
+        "1.5a (c), W3.12d limitation: the predictions saved in another order keep the "
+        "accuracy but do not identify the split",
+        INCONCLUSIVE,
+        config={"shuffle_preds": True},
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "route-d-shown",
+        "1.5a (d): correct and total give the printed value",
+        REPRODUCED,
+        config={"stats": True},
+        routes=("sufficient_statistics",),
+        recompute=False,
+        expected_checks={"metric_extracted": "PASS"},
+    ),
+    SyntheticPaper(
+        "route-d-conflict",
+        "1.5a (d): correct and total that do not give the printed value (a conflict)",
+        INCONCLUSIVE,
+        config={"stats": True, "stats_bias": 8},
+        routes=("sufficient_statistics",),
+        recompute=False,
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "route-a-shown",
+        "1.5a (a): the printed count is the split's size",
+        REPRODUCED,
+        config={"print_count": True},
+        routes=("printed_count",),
+        recompute=False,
+        expected_checks={"metric_extracted": "PASS"},
+    ),
+    SyntheticPaper(
+        "route-a-other-count",
+        "1.5a (a): a printed count that is not the split's declared size",
+        INCONCLUSIVE,
+        config={"print_count": True, "count_bias": -1},
+        routes=("printed_count",),
+        recompute=False,
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "route-a-absent",
+        "1.5a: no route closes the chain (the declared count is never printed)",
+        INCONCLUSIVE,
+        routes=("printed_count",),
+        recompute=False,
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "route-b-shown",
+        "1.5a (b): one hook event bound to the metric, the split, the run and the call site",
+        REPRODUCED,
+        config={"hook": True},
+        routes=("hook",),
+        recompute=False,
+        expected_checks={"metric_extracted": "PASS"},
+    ),
+    SyntheticPaper(
+        "route-b-two-events",
+        "1.5a (b), W3.12c: two events at the cited call site (not exactly one)",
+        INCONCLUSIVE,
+        config={"hook": True, "hook_calls": 2},
+        routes=("hook",),
+        recompute=False,
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "route-b-other-split",
+        "1.5a (b): the cited call evaluates another split (its labels are not the split's)",
+        INCONCLUSIVE,
+        config={"hook": True, "hook_split": "validation"},
+        routes=("hook",),
+        recompute=False,
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "routes-disagree",
+        "1.5a W3.12e: (c) shows 4000 examples, (a) prints 4001; all_must_agree, no route wins",
+        INCONCLUSIVE,
+        config={"print_count": True, "count_bias": 1},
+        routes=("saved_predictions", "printed_count"),
+        expected_checks={"metric_extracted": "INCONCLUSIVE"},
+        expected_failures={"metric_extracted": "undetermined"},
+        flags=(False, True),
+    ),
+    SyntheticPaper(
+        "routes-all-agree",
+        "1.5a: every route together, all agreeing",
+        REPRODUCED,
+        config={"print_count": True, "stats": True, "hook": True},
+        routes=("saved_predictions", "sufficient_statistics", "printed_count", "hook"),
+        expected_checks={"metric_extracted": "PASS", "metric_recompute": "PASS"},
     ),
 ]
 
