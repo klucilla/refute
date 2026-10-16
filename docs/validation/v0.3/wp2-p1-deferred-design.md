@@ -1,7 +1,9 @@
 # Deferred design: positive attribution of a missing documented script (P1)
 
-Status: **deferred, not in v0.3.** Nothing here is implemented or in force. This document
-records a design so that it can be picked up later; it is not an acceptance criterion.
+Status: **deferred, not in v0.3.** The positive attribution path P1 described here is
+neither implemented nor in force, and it is not an acceptance criterion. This document
+records its design so that it can be picked up later. The paths listed as in force in the
+decision below are not affected.
 
 ## Decision (the maintainer, 2026-10-16)
 
@@ -66,7 +68,7 @@ runs only: the metric, the attacks and the build are not reached. It would apply
        - the build of a local project, which runs in the project folder and can leave artifacts there (https://pip.pypa.io/en/stable/topics/local-project-installs/#build-artifacts). Both pages were accessed on 2026-10-16.
 
        Conda is out of P1, because a conda package can carry post-link scripts.
-     - **A download with an explicit destination**, which is not the script path nor one of its ancestors. An extraction must declare its destination folder, which must not be an ancestor of the script either.
+     - **A download with an explicit destination**, which is not the script path nor one of its ancestors, and with no extraction that writes outside that destination. An extraction must declare its destination folder, which must not be an ancestor of the script either.
 
      Any other step excludes P1, **even if it does not name the script**: code of the repository (a script, `make`, `setup.py`, `pip install .`, `bash prepare.sh`), a generation, a build of the tree itself, or an uncertain destination.
    - **(b) A `.gitignore` covers the path.**
@@ -128,11 +130,14 @@ script. Condition 9 narrows this window but does not close it.
 - **Claude's proposal, condition 10 (not reviewed by Codex: it was written after the fifth and last round):**
   - in the effective environment, before the attempts, list every `sitecustomize.py` and `usercustomize.py` on `sys.path`, and every executable `.pth` line (one that starts with `import`);
   - accept only what is on a closed list of SHA-256 hashes fixed before the lock (for example the `distutils-precedence.pth` of setuptools, in the locked versions);
-  - anything else excludes P1.
+  - anything else excludes P1;
+  - the list and the result go into the dossier.
+
+  **Its cost:** the list has to be maintained, and an environment with an executable `.pth` outside it loses P1, staying `INCONCLUSIVE`, which is conservative.
 - **The three exits considered:**
-  1. Codex's: no P1 without evidence such as condition 10.
-  2. Claude's: conditions 9 and 10, with 10 reviewed by Codex.
-  3. Condition 9 only, accepting the trust limit. Not recommended.
+  1. Codex's: without verifiable evidence of the start-up, such cases stay `INCONCLUSIVE`. In practice, there is no P1 until a condition such as 10 is approved and reviewed.
+  2. Claude's: conditions 9 and 10, with 10 reviewed by Codex. **This was Claude's recommendation.**
+  3. Condition 9 only, accepting the trust limit explicitly. Least conservative; not recommended.
 
 The maintainer deferred the whole path instead (decision above).
 
