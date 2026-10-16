@@ -516,6 +516,25 @@ PASS_PR115 = [
 ]
 
 
+BLOCK_PR115 += [
+    # Codex round 2: a here-string before the command, array subexpressions that run
+    ("<<< 'git commit -m msg' bash", B),
+    ("<<<'git commit -m msg' sh", B),
+    ("<<< 'import pytest' .venv/Scripts/python.exe", B),
+    ("Write-Output @(git commit -m x)", P),
+    ("Write-Output @('a'; git commit -m x)", P),
+]
+
+PASS_PR115 += [
+    # Codex round 2: a here-string that is data, and literal strings in an array
+    ("bash -c 'wc -l' <<< 'git commit -m msg'", B),
+    (".venv/Scripts/python.exe scripts/x.py <<< 'import pytest'", B),
+    ("Write-Output @('pytest')", P),
+    ("Start-Process notepad -ArgumentList @('pytest')", P),
+    ("'git commit' | Out-Null", P),
+]
+
+
 @pytest.mark.parametrize(("command", "shell"), BLOCK_PR115)
 def test_refused_pr115(command, shell):
     assert guard.check(command, shell=shell) is not None

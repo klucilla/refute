@@ -552,10 +552,15 @@ def _reads_python_stdin(words: list[Word]) -> bool:
     start = _command_index(words)
     if start is None or not _is_python(_name(words[start].text)):
         return False
-    args = [w.text for w in words[start + 1 :]]
+    rest = words[start + 1 :]
+    args = [w.text for w in rest]
     k = 0
     while k < len(args):
         arg = args[k]
+        redirection = _redirection(rest[k])
+        if redirection:  # <<< code, < file: not a script operand
+            k += 1 if redirection[1] else 2
+            continue
         if arg == "-":
             return True
         if not arg.startswith("-"):
@@ -895,6 +900,12 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
             return reason
     if start is None:
         return None
+    if (
+        shell == POWERSHELL
+        and words[start].quoted
+        and (start == 0 or words[start - 1].text not in ("&", "."))
+    ):
+        return None  # a string at the start of a PowerShell statement is a value, not a call
     rest = words[start:]
     name = _name(rest[0].text)
     args = [w.text for w in rest[1:]]
@@ -913,13 +924,15 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
         reason = _git_commit_reason(args, depth)
         if reason:
             return reason
-    if name in SHELLS or _is_python(name):  # a <<< here-string is the program
-        for k, word in enumerate(rest[1:], start=1):
+    shell_program = name in SHELLS and _reads_code_from_stdin(words)
+    if shell_program or _reads_python_stdin(words):  # a <<< here-string is the program
+        around = _leading_redirections(words, start) + rest[1:]  # before or after the name
+        for k, word in enumerate(around):
             redirection = _redirection(word)
             if not redirection or redirection[0] != "<<<":
                 continue
-            body = redirection[1] or (rest[k + 1].text if k + 1 < len(rest) else "")
-            if name in SHELLS:
+            body = redirection[1] or (around[k + 1].text if k + 1 < len(around) else "")
+            if shell_program:
                 reason = check(body, depth + 1, BASH)
                 if reason:
                     return reason
@@ -1017,7 +1030,7 @@ def _check_segment(words: list[Word], depth: int, shell: str) -> str | None:
             # the target is one word even with blanks; the argument list is lexed
             # again, so a quoted argument (for example the code of -c) stays whole
             words = [w for seg in lex(arglist, POWERSHELL).segments for w in seg]
-            return _check_segment([Word(target, quoted=True), *words], depth + 1, shell)
+            return _check_segment([Word("&"), Word(target, quoted=True), *words], depth + 1, shell)
     for k, arg in enumerate(args):  # find -exec <command> ...
         if arg in ("-exec", "-execdir", "-ok") and k + 1 < len(args):
             found = _check_segment(rest[k + 2 :], depth, shell)

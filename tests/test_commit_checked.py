@@ -119,21 +119,64 @@ def test_options_that_could_commit_unchecked_content_are_refused(repo, args):
 LONG_LINE = "x = " + "1 + " * 21 + "1\n"  # 90 columns: fine at 100, too long at 80
 
 
-@pytest.mark.parametrize(
-    ("staged", "work"),
-    [
-        (
-            "import os\n",
-            "x = 1\n",
-        ),  # ruff would read a passing file, git would commit a failing one
-        ("x = 1\n", "import os\n"),  # ruff would read a failing file for a passing commit
-    ],
-)
-def test_a_python_file_whose_work_tree_differs_from_the_index_is_refused(repo, staged, work):
-    stage(repo, "mod.py", staged)
-    (repo / "mod.py").write_text(work, encoding="utf-8")
+def test_ruff_reads_the_staged_bytes_not_the_work_tree(repo):
+    """Codex review: a failing staged file with a passing work tree is refused."""
+    stage(repo, "mod.py", "import os\n")
+    (repo / "mod.py").write_text("x = 1\n", encoding="utf-8")
     out = commit(repo, "-m", "x")
-    assert out.returncode == 2 and "mod.py" in out.stderr and "differs" in out.stderr
+    assert out.returncode != 0 and "staged mod.py" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_a_partial_commit_of_a_passing_staged_file_commits_the_staged_bytes(repo):
+    stage(repo, "mod.py", "x = 1\n")
+    (repo / "mod.py").write_text("import os\n", encoding="utf-8")  # not staged
+    out = commit(repo, "-q", "-m", "x")
+    assert out.returncode == 0, out.stdout + out.stderr
+    assert git(repo, "show", "HEAD:mod.py").stdout == "x = 1\n"
+
+
+def test_a_clean_filter_cannot_hide_the_committed_bytes(repo, tmp_path):
+    """Codex review: with a clean filter the work tree and the blob differ although
+    ``git hash-object`` of the work tree equals the blob; ruff reads the blob."""
+    filt = tmp_path / "clean.py"
+    filt.write_text(
+        "import sys\nsys.stdin.buffer.read()\nsys.stdout.buffer.write(b'import os\\n')\n",
+        encoding="utf-8",
+    )
+    command = f'"{Path(sys.executable).as_posix()}" "{filt.as_posix()}"'
+    assert git(repo, "config", "filter.bad.clean", command).returncode == 0
+    stage(repo, ".gitattributes", "mod.py filter=bad\n")
+    stage(repo, "mod.py", "x = 1\n")
+    assert git(repo, "show", ":mod.py").stdout == "import os\n"
+    out = commit(repo, "-m", "x")
+    assert out.returncode != 0 and "staged mod.py" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_an_extended_configuration_must_be_staged_too(repo):
+    stage(repo, "ruff.toml", 'extend = "base.toml"\n')
+    stage(repo, "base.toml", "line-length = 100\n")
+    stage(repo, "long.py", LONG_LINE)
+    (repo / "base.toml").write_text("line-length = 80\n", encoding="utf-8")
+    out = commit(repo, "-m", "x")
+    assert out.returncode == 2 and "base.toml" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_an_extended_configuration_outside_the_repository_is_refused(repo):
+    stage(repo, "ruff.toml", 'extend = "../base.toml"\n')
+    stage(repo, "good.py", "x = 1\n")
+    out = commit(repo, "-m", "x")
+    assert out.returncode == 2 and "outside the repository" in out.stderr
+    assert commits(repo) == 0
+
+
+def test_a_ruff_other_than_the_locked_one_is_refused(repo):
+    stage(repo, "uv.lock", 'version = 1\n\n[[package]]\nname = "ruff"\nversion = "0.0.1"\n')
+    stage(repo, "good.py", "x = 1\n")
+    out = commit(repo, "-m", "x")
+    assert out.returncode == 2 and "uv.lock" in out.stderr
     assert commits(repo) == 0
 
 
