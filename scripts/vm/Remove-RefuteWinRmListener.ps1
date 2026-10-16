@@ -73,14 +73,14 @@ function Get-RefuteBackupProblems {
     # The backup folder, when it exists, must be owned by Administrators and give access to
     # SYSTEM and Administrators only, with inheritance removed.
     if (-not (Test-Path -LiteralPath $BackupRoot)) { return @() }
+    # owner and entries compared by SID (ConvertTo-RefuteAclEntries), never by name
     $acl = Get-Acl -LiteralPath $BackupRoot
+    $sids = ConvertTo-RefuteAclEntries $acl
     $found = @()
-    $owner = (New-Object System.Security.Principal.NTAccount $acl.Owner).Translate([System.Security.Principal.SecurityIdentifier]).Value
-    if ($owner -ne $SidAdmins) { $found += "$BackupRoot is not owned by Administrators" }
+    if ($sids.Owner -ne $SidAdmins) { $found += "$BackupRoot is not owned by Administrators" }
     if (-not $acl.AreAccessRulesProtected) { $found += "$BackupRoot inherits permissions" }
-    foreach ($rule in $acl.Access) {
-        $sid = $rule.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
-        if (@($SidAdmins, $SidSystem) -notcontains $sid) { $found += "$BackupRoot gives access to $($rule.IdentityReference)" }
+    foreach ($entry in $sids.Entries) {
+        if (@($SidAdmins, $SidSystem) -notcontains $entry.Sid) { $found += "$BackupRoot gives access to $($entry.Sid)" }
     }
     return $found
 }

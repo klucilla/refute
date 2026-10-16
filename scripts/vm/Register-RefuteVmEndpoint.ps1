@@ -163,12 +163,12 @@ function New-FolderAcl {
 
 function Get-NonAdminWriters([string]$Path) {
     # Accounts other than SYSTEM, Administrators, TrustedInstaller and CREATOR OWNER whose
-    # allow entry on Path grants any change (read and execute entries do not count).
+    # allow entry on Path grants any change (read and execute entries do not count),
+    # compared by SID (ConvertTo-RefuteAclEntries), shown with their account names.
     $allowed = @($SidSystem, $SidAdmins, $SidTrustedInstaller, $SidCreatorOwner)
-    return @((Get-Acl -LiteralPath $Path).Access | Where-Object {
-            $_.AccessControlType -eq 'Allow' -and (Test-RefuteRightsWrite ([int]$_.FileSystemRights)) -and
-            $allowed -notcontains $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
-        } | ForEach-Object { [string]$_.IdentityReference })
+    return @((ConvertTo-RefuteAclEntries (Get-Acl -LiteralPath $Path)).Entries | Where-Object {
+            $_.Type -eq 'Allow' -and (Test-RefuteRightsWrite $_.Rights) -and $allowed -notcontains $_.Sid
+        } | ForEach-Object { Get-SidAccount $_.Sid })
 }
 
 $FolderAcls = [ordered]@{
