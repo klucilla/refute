@@ -417,12 +417,12 @@ def test_a_synthetic_paper_on_the_subprocess_backend(tmp_path):
     body = textwrap.dedent(
         f"""
         import pathlib, sys, time
-        start = time.time_ns()
+        start = time.monotonic_ns()
         end = time.process_time() + 0.05
         while time.process_time() < end:
             pass
         name = sys.argv[1].replace("/", "_")
-        pathlib.Path({str(marks)!r}, name).write_text(f"{{start}} {{time.time_ns()}}")
+        pathlib.Path({str(marks)!r}, name).write_text(f"{{start}} {{time.monotonic_ns()}}")
         """
     )
     path = tmp_path / "job.py"
