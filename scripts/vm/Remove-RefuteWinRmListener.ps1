@@ -98,7 +98,11 @@ try { $listeners = Read-RefuteListeners } catch { $problems.Add("cannot read the
 $removal = Get-RefuteListenerRemoval -Names @($listeners.Keys) -Target $Target
 if (-not $removal.TargetPresent) { $problems.Add("there is no listener key $Target") }
 if (@($removal.ForeignRemaining).Count) { $problems.Add('other listeners are not HTTP on loopback and would remain: ' + ($removal.ForeignRemaining -join ', ') + ' (the maintainer decides; this script removes only ' + $Target + ')') }
-if (Test-Path -LiteralPath $BackupFile) { $problems.Add("$BackupFile already exists (never overwritten)") }
+# a backup folder that only administrators can read, met by a preview run as a normal
+# user, is a listed problem instead of an error that stops the preview
+try {
+    if (Test-Path -LiteralPath $BackupFile -ErrorAction Stop) { $problems.Add("$BackupFile already exists (never overwritten)") }
+} catch { $problems.Add("$BackupFile cannot be read: $($_.Exception.Message)") }
 $backupProblems = @()
 try { $backupProblems = @(Get-RefuteBackupProblems) } catch { $problems.Add("cannot read the ACL of $BackupRoot : $($_.Exception.Message)") }
 foreach ($p in $backupProblems) { $problems.Add($p) }

@@ -396,6 +396,54 @@ Add-Case 'Hyper-V manifest: none' ($null -eq (Find-RefuteHyperVManifest (Join-Pa
 Add-Case 'Hyper-V manifest: a folder that is not a version is ignored' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'noversion')))
 Add-Case 'Hyper-V manifest: missing module folder' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'absent')))
 
+# The role capability search of JEA: <root>\<module>\RoleCapabilities\<name>.psrc only
+# (the maintainer's diagnosis of 2026-10-16); a copy in a version subfolder is not found
+function New-RoleFile([string[]]$Parts) {
+    $dir = $WorkDir
+    foreach ($p in $Parts) { $dir = Join-Path $dir $p }
+    $dir = Join-Path $dir 'RoleCapabilities'
+    [void][System.IO.Directory]::CreateDirectory($dir)
+    $file = Join-Path $dir 'Op.psrc'
+    [System.IO.File]::WriteAllText($file, '@{}')
+    return $file
+}
+$flatRole = New-RoleFile @('jea', 'flat', 'M')
+$verRole = New-RoleFile @('jea', 'versioned', 'M', '0.1.0')
+$bothFlat = New-RoleFile @('jea', 'both', 'M')
+$bothVer = New-RoleFile @('jea', 'both', 'M', '0.1.0')
+$firstRoot = New-RoleFile @('jea', 'first', 'A')
+$secondRoot = New-RoleFile @('jea', 'second', 'B')
+[void](New-RoleFile @('jea', 'other', 'M'))
+$jea = Join-Path $WorkDir 'jea'
+$jf = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+$vf = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Op')
+Add-Case 'JEA search: a role capability at the module top is found' ($jf.Count -eq 1 -and $jf[0] -eq $flatRole -and $vf.Count -eq 0) (($jf + $vf) -join ', ')
+$jv = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+$vv = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'versioned') -RoleName 'Op')
+Add-Case 'JEA search: a version subfolder is never found, and is reported' ($jv.Count -eq 0 -and $vv.Count -eq 1 -and $vv[0] -eq $verRole) (($jv + $vv) -join ', ')
+$jb = @(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+$vb = @(Find-RefuteVersionedRoleCapability -ModuleRoots @(Join-Path $jea 'both') -RoleName 'Op')
+Add-Case 'JEA search: a stale copy in a version subfolder is reported next to the found one' ($jb.Count -eq 1 -and $jb[0] -eq $bothFlat -and $vb.Count -eq 1 -and $vb[0] -eq $bothVer)
+$jo = @(Find-RefuteJeaRoleCapability -ModuleRoots @((Join-Path $jea 'second'), (Join-Path $jea 'first')) -RoleName 'Op')
+Add-Case 'JEA search: module roots are searched in order (the first found is the one loaded)' ($jo.Count -eq 2 -and $jo[0] -eq $secondRoot -and $jo[1] -eq $firstRoot)
+Add-Case 'JEA search: another role name is not found' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'flat') -RoleName 'Other').Count -eq 0)
+Add-Case 'JEA search: a missing root is skipped' (@(Find-RefuteJeaRoleCapability -ModuleRoots @(Join-Path $jea 'absent') -RoleName 'Op').Count -eq 0)
+
+# The module roots the registration searches: PSModulePath values and extra folders,
+# trimmed, without empty entries or repeats (compared without case), sorted
+$joined = @(Join-RefuteModuleRoots -PathValues @('C:\B\;C:\A;;c:\a\', $null, '') -Extra @('C:\C', 'C:\B'))
+Add-Case 'module roots: entries split, trimmed, deduplicated without case, sorted' ($joined.Count -eq 3 -and $joined[0] -eq 'C:\A' -and $joined[1] -eq 'C:\B' -and $joined[2] -eq 'C:\C') ($joined -join ', ')
+Add-Case 'module roots: nothing given gives nothing' (@(Join-RefuteModuleRoots -PathValues @() -Extra @()).Count -eq 0)
+# a volume root keeps its '\' ('C:' would be the current folder of drive C); UNC paths are
+# trimmed; relative and drive-relative entries are refused (Codex review of #102)
+$volume = @(Join-RefuteModuleRoots -PathValues @('C:\;D:\Mods\;\\srv\share\Mods\;E:\\;F:\Mods\\') -Extra @())
+Add-Case 'module roots: a volume root keeps one backslash, also after repeated ones' ($volume.Count -eq 5 -and $volume -ccontains 'C:\' -and $volume -ccontains 'D:\Mods' -and $volume -ccontains '\\srv\share\Mods' -and $volume -ccontains 'E:\' -and $volume -ccontains 'F:\Mods') ($volume -join ', ')
+foreach ($relative in 'Modules', 'C:Modules', '.\Modules', '\Modules') {
+    $refused = $false
+    try { [void](Join-RefuteModuleRoots -PathValues @("C:\A;$relative") -Extra @()) } catch { $refused = $true }
+    Add-Case "module roots: the relative entry '$relative' is refused" $refused
+}
+
 # WinRM listener removal plan
 $plan1 = Get-RefuteListenerRemoval -Names @('*+HTTP') -Target '*+HTTP'
 Add-Case 'listener: *+HTTP alone, nothing remains' ($plan1.TargetPresent -and @($plan1.Remaining).Count -eq 0 -and @($plan1.ForeignRemaining).Count -eq 0)
