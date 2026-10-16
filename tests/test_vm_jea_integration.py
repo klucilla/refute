@@ -336,7 +336,7 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
             _summary(attempt["Real"]) if attempt["Real"] else attempt["Error"],
         )
         record_property(f"{name}_root_after", json.dumps(attempt["RootAfter"]))
-        for way in ("HostAfter", "HostAfterNewProcess", "HostAfterModule", "Restored"):
+        for way in ("Baseline", "Restored", "HostAfter", "HostAfterNewProcess", "HostAfterModule"):
             record_property(f"{name}_{way}", json.dumps(attempt[way]))
     before = set(_as_list(host_paths["MembersBefore"]))
     for attempt in attempts.values():
@@ -344,10 +344,20 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
         assert attempt["TreeProblems"] == [], attempt
         assert attempt["Error"] == "" and attempt["Simulate"]["Ok"], attempt
         assert attempt["Real"] is not None, attempt
-        # the positive control of the empty-group check of Set-RefuteVmTreeAcl.ps1: while
-        # a session is open, Hyper-V Administrators lists one more member, its virtual account
-        during = set(_as_list(attempt["MembersDuringSession"]))
-        assert before < during and len(during - before) == 1, (before, during)
+        # the positive control of the open-session check of Set-RefuteVmTreeAcl.ps1: while
+        # a session is open, at least one wsmprovhost.exe runs. The members of Hyper-V
+        # Administrators are recorded only: in run 38982160054 the session's virtual
+        # account was not listed there, so a member check cannot find a session.
+        hosts_before = set(_as_list(attempt["SessionHostsBefore"]))
+        hosts_during = set(_as_list(attempt["SessionHostsDuringSession"]))
+        assert hosts_during - hosts_before, attempt
+        record_property(
+            f"{attempt['Tree']}_members",
+            json.dumps([sorted(before), sorted(_as_list(attempt["MembersDuringSession"]))]),
+        )
+        # each attempt starts from the original host paths, both read through CIM
+        for key in ("VirtualMachinePath", "VirtualHardDiskPath"):
+            assert _norm(attempt["Baseline"][key]) == _norm(original[key]), attempt
     # version 1: the module's own failure of SetHostPaths, with the access denied of
     # 2026-10-16 (0x80070005), and nothing changed
     denied = v1["Real"]["Error"]
@@ -357,10 +367,7 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
     assert _norm(v1["HostAfter"]["VirtualHardDiskPath"]) == _norm(
         original["VirtualHardDiskPath"]
     ), v1
-    # version 2: done, from the original paths, and the host paths are the tree
-    assert _norm(
-        v2["Restored"]["VirtualMachinePath"] if v2["Restored"] else original["VirtualMachinePath"]
-    ) == _norm(original["VirtualMachinePath"]), v2
+    # version 2: done, and the host paths are the tree
     assert v2["Real"]["Ok"], v2
     assert json.loads(v2["Real"]["Output"])["Outcome"] == "done", v2
     assert _norm(v2["HostAfter"]["VirtualMachinePath"]) == "c:\\hyper-v", v2

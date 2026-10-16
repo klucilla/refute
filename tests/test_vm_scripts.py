@@ -598,6 +598,8 @@ VMTREE_PREVIEW_COMMANDS = (
     "compare-refutevmtreebelow",
     "get-hypervadminmembers",
     "get-localgroupmember",
+    "get-openremotingsessions",
+    "get-process",
     "get-refutevmtreeaclspec",
     "get-sidname",
     "get-statehash",

@@ -35,14 +35,14 @@ nothing to do), when a folder below is a link, has explicit entries or inherits 
 other than what C:\Hyper-V passes down, when a file exists anywhere under C:\Hyper-V, when a
 folder other than the three of the registration exists there, when C:\, C:\ProgramData or
 C:\ProgramData\RefuteVm lets another account delete, change permissions or take ownership,
-when the Log folder does not hold exactly the ACL of the registration, or when Hyper-V
-Administrators has any member (an open session of the endpoint): the maintainer decides
-those cases. The members of that group can delete C:\Hyper-V (Modify), so no session of
-the endpoint and no other writer may run during the whole apply: a premise the maintainer
-accepts. The empty-group check supports it but does not prove it (whether an open session
-always shows in the group is checked on the CI runner only), and it does not close the
-short window between the last read and the change. It never deletes anything, and it does
-not touch the Hyper-V host settings.
+when the Log folder does not hold exactly the ACL of the registration, when Hyper-V
+Administrators has any member, or when a PowerShell remoting session is open
+(wsmprovhost.exe; a session of the endpoint has the group in its token without being
+listed as a member): the maintainer decides those cases. That group can delete C:\Hyper-V
+(Modify), so no session of the endpoint and no other writer may run during the whole
+apply: a premise the maintainer accepts. The checks support it but do not prove it, and
+they do not close the short window between the last read and the change. It never deletes
+anything, and it does not touch the Hyper-V host settings.
 #>
 [CmdletBinding()]
 param(
@@ -79,6 +79,15 @@ $LogAclSpec = @(
 
 . (Join-Path $PSScriptRoot 'RefuteRegistration.Core.ps1')
 
+function Get-OpenRemotingSessions {
+    # The process IDs of wsmprovhost.exe, the process that hosts every open PowerShell
+    # remoting session, a session of the endpoint included. A JEA session's virtual account
+    # does not show among the members of Hyper-V Administrators (CI run 38982160054), so
+    # open sessions are found by their host process; the CI test checks that a session of
+    # its endpoint shows here while it is open.
+    return @(Get-Process -Name 'wsmprovhost' -ErrorAction SilentlyContinue | ForEach-Object { [string]$_.Id } | Sort-Object)
+}
+
 function Get-HyperVAdminMembers {
     # The SIDs of the members of Hyper-V Administrators (S-1-5-32-578), by SID (never by a
     # localized name). If the group cannot be read, that is reported as a member, so the
@@ -97,12 +106,12 @@ function Get-SidName([string]$Sid) {
     }
 }
 
-function Get-TreeState([string[]]$Members) {
+function Get-TreeState([string[]]$Members, [string[]]$Sessions) {
     # The state the change depends on, as lines: for C:\Hyper-V, every item below it, and
     # the evidence folders: the path, creation time, attributes, owner, protection and every
     # access entry (explicit and inherited, by SID); then the members of Hyper-V
-    # Administrators, the one sample the caller read and checked for this state.
-    # Unreadable items give a line saying so.
+    # Administrators and the open remoting sessions, the one sample of each the caller read
+    # and checked for this state. Unreadable items give a line saying so.
     $paths = New-Object System.Collections.Generic.List[string]
     $paths.Add($TreeRoot)
     try {
@@ -121,6 +130,7 @@ function Get-TreeState([string[]]$Members) {
         } catch { $state.Add("$p | cannot be read: $($_.Exception.Message)") }
     }
     $state.Add('Hyper-V Administrators members: ' + $(if (@($Members).Count) { @($Members) -join ', ' } else { 'none' }))
+    $state.Add('Open remoting sessions (wsmprovhost.exe): ' + $(if (@($Sessions).Count) { @($Sessions) -join ', ' } else { 'none' }))
     return $state
 }
 
@@ -193,20 +203,23 @@ try {
     foreach ($rule in $logActual) { if ($logWanted -notcontains $rule) { $problems.Add("$EvidenceFolder has an unexpected entry: $rule") } }
     foreach ($rule in $logWanted) { if ($logActual -notcontains $rule) { $problems.Add("$EvidenceFolder misses the entry: $rule") } }
 } catch { $problems.Add("$EvidenceFolder cannot be read: $($_.Exception.Message)") }
-# Hyper-V Administrators: Modify includes Delete, so a member could rename C:\Hyper-V and put
-# something else in its place between the last read and the change. The maintainer's account
-# is not a member. One sample of the group is read for each state, and the state is accepted
-# only when that sample is empty: here and when the state is read again before the change.
-# Whether an open JEA session always shows in this list is checked on the CI runner only;
-# that no session and no other writer runs during the whole apply is a premise the
-# maintainer accepts, apart from this check.
+# Hyper-V Administrators: Modify includes Delete, so a member, or a session of the endpoint
+# (whose virtual account has the group in its token without being listed as a member, CI run
+# 38982160054), could rename C:\Hyper-V and put something else in its place between the last
+# read and the change. The maintainer's account is not a member. For each state one sample
+# of the group's members and one of the open remoting sessions (wsmprovhost.exe) are read,
+# and the state is accepted only when both are empty: here and when the state is read again
+# before the change. That no session and no other writer runs during the whole apply stays
+# a premise the maintainer accepts; these checks support it.
 $hyperVMembers = @(Get-HyperVAdminMembers)
-if ($hyperVMembers.Count) { $problems.Add("Hyper-V Administrators has members (close every session of the endpoint first): $($hyperVMembers -join ', ')") }
+if ($hyperVMembers.Count) { $problems.Add("Hyper-V Administrators has members (the maintainer decides): $($hyperVMembers -join ', ')") }
+$openSessions = @(Get-OpenRemotingSessions)
+if ($openSessions.Count) { $problems.Add("PowerShell remoting sessions are open (wsmprovhost.exe, process IDs $($openSessions -join ', ')); close every session of the endpoint first") }
 
 # ---- the state and the change list (preview) --------------------------------------------
 $lines = New-Object System.Collections.Generic.List[string]
 $lines.Add("State now (C:\Hyper-V is $state):")
-$treeState = @(Get-TreeState -Members $hyperVMembers)
+$treeState = @(Get-TreeState -Members $hyperVMembers -Sessions $openSessions)
 foreach ($line in $treeState) { $lines.Add("  $line") }
 $lines.Add("1. Create the evidence file $EvidenceFolder\vmtree-acl-evidence-<UTC time>.json, a new file only SYSTEM and Administrators can change (Users read)")
 $lines.Add('2. Read the state again; stop if it differs from this preview')
@@ -267,9 +280,11 @@ try {
     # 2. the state again, just before the change
     $membersAgain = @(Get-HyperVAdminMembers)
     if ($membersAgain.Count) { throw "Hyper-V Administrators has members now: $($membersAgain -join ', '); nothing on the tree was changed" }
+    $sessionsAgain = @(Get-OpenRemotingSessions)
+    if ($sessionsAgain.Count) { throw "remoting sessions are open now (wsmprovhost.exe, process IDs $($sessionsAgain -join ', ')); nothing on the tree was changed" }
     $again = New-Object System.Collections.Generic.List[string]
     $again.Add("State now (C:\Hyper-V is $state):")
-    foreach ($line in @(Get-TreeState -Members $membersAgain)) { $again.Add("  $line") }
+    foreach ($line in @(Get-TreeState -Members $membersAgain -Sessions $sessionsAgain)) { $again.Add("  $line") }
     foreach ($line in @($lines | Select-Object -Skip ($treeState.Count + 1))) { $again.Add($line) }
     if ((Get-StateHash $again) -cne $previewHash) { throw 'the state changed after the preview; nothing on the tree was changed' }
     # 3. the new ACL; the folders below inherit it

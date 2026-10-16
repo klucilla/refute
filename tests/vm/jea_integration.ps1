@@ -333,16 +333,21 @@ try {
             Version2              = @(Get-RefuteVmTreeAclSpec -Version 2)
         }
         foreach ($name in @($trees.Keys)) {
-            $attempt = [ordered]@{ Tree = $name; Restored = $null; RootBefore = @(); TreeProblems = @(); Simulate = $null; Real = $null; Error = ''; MembersDuringSession = @(); HostAfter = $null; HostAfterNewProcess = $null; HostAfterModule = $null; RootAfter = @() }
+            $attempt = [ordered]@{ Tree = $name; Restored = $null; Baseline = $null; RootBefore = @(); TreeProblems = @(); Simulate = $null; Real = $null; Error = ''; MembersDuringSession = @(); SessionHostsBefore = @(); SessionHostsDuringSession = @(); HostAfter = $null; HostAfterNewProcess = $null; HostAfterModule = $null; RootAfter = @() }
             $spec = $trees[$name]
             # each attempt starts from the original host paths: the harness, as Administrator,
             # puts them back if an earlier attempt changed them, and checks it through CIM
+            $original = $out.RefuteVm.HostPaths.Original
             $now = Get-HostPathsCim
-            if ($now.VirtualMachinePath -ne $out.RefuteVm.HostPaths.Original.VirtualMachinePath -or $now.VirtualHardDiskPath -ne $out.RefuteVm.HostPaths.Original.VirtualHardDiskPath) {
-                Set-VMHost -VirtualMachinePath $out.RefuteVm.HostPaths.Original.VirtualMachinePath -VirtualHardDiskPath $out.RefuteVm.HostPaths.Original.VirtualHardDiskPath -ErrorAction Stop
+            if ($now.VirtualMachinePath -ne $original.VirtualMachinePath -or $now.VirtualHardDiskPath -ne $original.VirtualHardDiskPath) {
+                Set-VMHost -VirtualMachinePath $original.VirtualMachinePath -VirtualHardDiskPath $original.VirtualHardDiskPath -ErrorAction Stop
                 $now = Get-HostPathsCim
                 $attempt.Restored = $now
-                if ($now.VirtualMachinePath -ne $out.RefuteVm.HostPaths.Original.VirtualMachinePath) { throw 'the host paths could not be put back' }
+            }
+            # the baseline of this attempt, read through CIM: both paths must be the original ones
+            $attempt.Baseline = $now
+            if ($now.VirtualMachinePath -ne $original.VirtualMachinePath -or $now.VirtualHardDiskPath -ne $original.VirtualHardDiskPath) {
+                throw "the host paths could not be put back before the attempt $name"
             }
             Set-Acl -LiteralPath $vmTree -AclObject (New-RefuteFolderAcl $spec)
             $attempt.RootBefore = @(ConvertTo-RefuteAclRules (Get-Acl -LiteralPath $vmTree))
@@ -353,12 +358,19 @@ try {
             foreach ($below in @(@('C:\Hyper-V\Virtual Hard Disks', 1), @('C:\Hyper-V\refute-vm', 1), @('C:\Hyper-V\refute-vm\media', 2))) {
                 $attempt.TreeProblems += @(Compare-RefuteVmTreeBelow -Acl (Get-Acl -LiteralPath $below[0]) -Spec $spec -Depth $below[1] | ForEach-Object { "$($below[0]): $_" })
             }
+            # the wsmprovhost.exe processes before this attempt's session (earlier sessions may
+            # still be closing): the session must add one
+            $attempt.SessionHostsBefore = @(Get-Process -Name 'wsmprovhost' -ErrorAction SilentlyContinue | ForEach-Object { [string]$_.Id })
             try {
                 $hostSession = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
                 try {
-                    # a positive control for the empty-group check of Set-RefuteVmTreeAcl.ps1:
-                    # the members of Hyper-V Administrators while this session is open
-                    try { $attempt.MembersDuringSession = @(Get-HyperVAdminSids) } catch { $attempt.MembersDuringSession = @("(cannot be read: $($_.Exception.Message))") }
+                    # while this session is open: the members of Hyper-V Administrators
+                    # (recorded; run 38982160054 showed the virtual account is not listed),
+                    # and the wsmprovhost.exe processes, the positive control of the
+                    # open-session check of Set-RefuteVmTreeAcl.ps1 (a failure to read either
+                    # goes to the attempt's Error, never into a list)
+                    $attempt.MembersDuringSession = @(Get-HyperVAdminSids)
+                    $attempt.SessionHostsDuringSession = @(Get-Process -Name 'wsmprovhost' -ErrorAction Stop | ForEach-Object { [string]$_.Id })
                     $attempt.Simulate = Invoke-Literal $hostSession 'Invoke-RefuteVmOperation -Operation SetHostPaths -Simulate'
                     if ($attempt.Simulate.Ok) {
                         $planSha = [string](ConvertFrom-Json $attempt.Simulate.Output).PlanSha256
