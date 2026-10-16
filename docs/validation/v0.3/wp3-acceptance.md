@@ -189,6 +189,11 @@ attack, and the prerequisites of each applicable attack (`<attack>:run`,
   `data_split` require their fixed number of valid runs (WP2), `metric_recompute`
   requires all the examples of each run.
 
+These values are floors (decided by the maintainer on 2026-10-16): a claim may give a
+higher minimum for any name, never a lower one. A given value below the written default,
+for a positive or a negative conclusion and for any name (`base_reproduction` and
+`metric_recompute` included), is refused at validation.
+
 #### 1.0.8 Tolerance defaults and their concession
 
 `abs_floor` 0.5 for `percent` and 0.005 for `fraction` are the same floor in two
@@ -213,7 +218,17 @@ An uncertainty record (`reported_uncertainty`, `uncertainty_method`,
 - `n`: the number of runs the published uncertainty is over, as the paper states it
   (≥ 2), or absent when the paper does not state it;
 - `unit` as printed (`percent`, `fraction` or `native`), `location` and `quote` in
-  the paper.
+  the paper; a `none` record has none of them (below).
+
+**`kind: none`** (decided by the maintainer on 2026-10-16). It means that the paper does
+**not publish** an uncertainty for that value; it does **not** mean an unknown
+uncertainty. There is no uncertainty to locate or quote, so a `none` record takes no
+unit, location or quote, and one given is refused; the claim's value keeps its own quote
+(`source.quote`). The claim uses the default tolerances without a `k_sd` term (plan line
+420), and it **can** produce a `FAIL` by the normal rules. This differs from a reported
+uncertainty that is not convertible (below): there, in the value modes, a `FAIL` under
+the lower tolerance becomes `INCONCLUSIVE`; for the other predicates, the table below
+says what stands.
 
 **Provenance.** Every number of an uncertainty record comes from the paper, transcribed
 with its location and quote and approved with the inventory (plan section 5.2). None
@@ -303,8 +318,8 @@ uncertainty not convertible". By predicate:
 - **Wider tolerance.** The claim's predicate (the same mode) is applied to the value
   measured on the holdout, with the claim's tolerance multiplied by
   `factor = max(1, sqrt(n_examples / m))`, where `n_examples` is the size of the split
-  the claim reports on (`metric.n_examples`). The factor and `m` are written out in the
-  resolved claim.
+  the claim reports on (`metric.n_examples`). The factor is computed by the binary64
+  definition of 1.0.11. The factor and `m` are written out in the resolved claim.
 - **Why this factor: an operational convention, under stated assumptions.** For a
   mean of per-example values, the standard error of the estimate is the per-example
   standard deviation divided by the square root of the number of examples (NIST
@@ -326,6 +341,98 @@ uncertainty not convertible". By predicate:
 - **Fixed before the lock.** The fraction 0.1, the factor rule and every value derived
   from them are fixed before the lock and are never adjusted because of results on
   the sample, the pilot or the development papers.
+
+#### 1.0.11 Implementation decisions (maintainer, 2026-10-15, PR #85)
+
+The schema PR raised points that 1.0.1 to 1.0.10 do not fix. The maintainer decided them
+on 2026-10-15:
+
+- **Transcribed value and command (1.0.3, `inventory`).** The claim's
+  `inventory.transcription` is a copy of the inventory's, and must equal it. In
+  addition, the transcription is tied to the claim's own fields:
+  - **location, metric and split:** each equals the claim's `source.location`,
+    `metric.name` and `metric.split`;
+  - **value:** the printed number. A value claim has one decimal; a comparison has
+    `"<method> vs <reference>"`, two decimals. Each number must equal the claim's
+    `metric.reported`, or `comparison.reported_method` and
+    `comparison.reported_reference`, as **decimals written in the claim file**: the file
+    is read again with its numbers kept as decimals, never passed through a float.
+    `91.2` and `91.20` are equal; `91.2` and `91.20000000000000001` are not, although
+    they are the same float;
+  - **command:** a JSON array of argument strings. It must equal `run.argv` followed by
+    `run.seed_argument` (when there is one), **compared as argument lists**, so that
+    `["a b"]` and `["a", "b"]` differ.
+- **`trivial_baseline.params.task`:** `single_label_classification`, the only accepted
+  value. The baseline stays limited to the metrics and tasks of 1.0.6.
+- **`reference_run`:** either a full `run` block, or
+  `{same: true, metric_extraction: {...}}`. The second means the same runs as the
+  method's, read with the reference's **own** extraction.
+- **Claim draw record:** format `refute-ml-claim-draw-1` (`selection/inventory.py`).
+  The `claim-inventory` and `claim-draw` attachments are stored in canonical JSON, so the
+  SHA-256 of the file is the hash of its content, the one the approval names. The record
+  must agree with its inventory: the same paper and the same comparison requirement; the
+  shuffled list holds exactly the drawable candidates; the draw holds a comparison when
+  one is required.
+- **Derived values written at validation.** The derived seed lists of 1.0.4 and the
+  holdout's fraction, size and factor of 1.0.10 need both a claim and `test_plan`, so
+  `validate_claim` writes them into the resolved claim before the lock hashes it. The
+  core schema and its canonicalization do not change. Three conditions apply:
+  - **Revalidation.** Every validation recomputes each derived value from the claim's
+    own inputs, and requires equality with the written one (`verify_derived`). This
+    covers the build ladder, the budget of the profile, the derived seed lists, the
+    holdout values, and each uncertainty's status, SD and quantile. A difference, or a
+    missing value, is refused.
+  - **Stability.** The same inputs give the same derived values, with no dependence on
+    order or clock:
+    - the seeds come from SHA-256 and `random.Random` with an integer seed;
+    - the holdout factor follows the definition below;
+    - the quantiles and converted SDs are rounded to 12 significant digits, so the last
+      bits of a platform's floating-point library do not reach the claim;
+    - the key order of the YAML does not change the hash.
+
+    The recorded-value tests run on every CI job: Python 3.12 and 3.13, on Ubuntu and
+    Windows.
+  - **Holdout factor: the normative definition** (decided by the maintainer on
+    2026-10-16). The factor of 1.0.10 is defined in IEEE-754 binary64, with **two
+    rounding steps**:
+    1. `q = fl(float(n_examples) / float(m))`: the division, rounded to the nearest
+       binary64;
+    2. `f = max(1, fl(sqrt(q)))`: the square root of `q`, rounded to the nearest
+       binary64.
+
+    This is the definition; it is not the correctly rounded root of the exact ratio
+    `n_examples / m`, from which it differs by one unit in the last place for some pairs
+    (for `n_examples = 108`, `m = 100`: `0x1.0a0b02501c79ap+0`, against
+    `0x1.0a0b02501c799p+0` for the exact ratio). Reference cases, with `n_examples`, `m`
+    and the expected result in hexadecimal (`float.hex`), checked with exact rational
+    arithmetic and tested in CI (`tests/test_ml_schema.py`,
+    `test_holdout_factor_reference_values`):
+
+    | `n_examples` | `m` | `f` |
+    |---|---|---|
+    | 50 | 100 | `0x1.0000000000000p+0` |
+    | 100 | 100 | `0x1.0000000000000p+0` |
+    | 400 | 100 | `0x1.0000000000000p+1` |
+    | 4000 | 199 | `0x1.1eef580e6f51bp+2` |
+    | 10000 | 1000 | `0x1.94c583ada5b53p+1` |
+    | 108 | 100 | `0x1.0a0b02501c79ap+0` |
+    | 5000 | 1999 | `0x1.94df6df17465ep+0` |
+    | 109 | 101 | `0x1.09f20785dfe41p+0` |
+    | 106 | 102 | `0x1.04f8a99a17336p+0` |
+
+    No determinism on every platform is promised: this is the normative definition, and
+    CI checks it on the platforms of CI.
+  - **Tests.** Each written derived value is altered in a test, and the alteration must
+    be refused.
+- **Smaller points:**
+  - `datasets[].size_tolerance` is a non-negative integer number of examples;
+  - the budget values may be omitted and are filled from the profile; a given value
+    that differs from the profile is refused;
+  - `named_ref` and `named_ref_location` given with `version_basis: latest_at_draw` are
+    refused explicitly.
+- **Units.** `percent` and `fraction`, with their default floors, are for the closed list
+  of bounded rates: accuracy, error_rate, precision, recall, f1 and auroc. Any other
+  metric uses `native` and states its tolerance with a reason (1.0.8).
 
 ### 1.1 Schema
 
@@ -723,6 +830,16 @@ aggregation is this `applies`.
   or `level` outside (0, 1); a negative `sd` or `se`; a record without `location` and
   `quote`;
 - coverage: a `coverage_minimum` name WP2 would refuse for this claim.
+- 1.0.11:
+  - a transcribed value that differs from the published value, as decimals: a value
+    claim, a comparison, and `91.20000000000000001` against `91.2`;
+  - a transcribed command that differs from `run.argv` and `seed_argument`, including
+    the same words split into other arguments;
+  - a command that is not a JSON array, and a value that is not a printed decimal;
+  - a draw record that names another paper, states the comparison requirement wrongly,
+    or shuffled other candidates;
+  - each written derived value altered, or missing;
+  - a metric outside the bounded rates in `percent` or `fraction`.
 
 **Schema, must pass:** the run seed of 1.0.2 for a fixed `claim_seed_bytes` and arXiv
 ID equals a value recorded in the test, and differs from the claim-draw seed; the
