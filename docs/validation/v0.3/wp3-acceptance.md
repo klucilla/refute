@@ -408,6 +408,66 @@ uncertainty not convertible". By predicate:
     rootless BuildKit.
   - The choice is checked by WP6 tests V7, V8 and V21.
 
+### 1.4a Reading interval, stopping margin and completeness tolerance (W3.10; WP2 W2.10 and W2.10a)
+
+Provisional revision of 2026-10-16, taken during the maintainer's absence under the
+night delegation of 2026-10-15 with the agreement of Codex, choosing at each point the
+option that leads to `INCONCLUSIVE` rather than to a false failure or a false pass; it
+waits for the maintainer's ratification. It fixes the values that W3.10 requires
+before the runner code. They decide when a run or the accounting of a paper is invalid
+(a Refute error, `INCONCLUSIVE`), never a verdict about the paper.
+
+- **Reading interval Δ = 1 s.** While a container runs, the docker backend reads the
+  cumulative usage of its cgroup (`cpu.stat`, `usage_usec`) every Δ and stops the
+  container when a reading reaches F, its threshold (W2.10a). The subprocess backend
+  (CI and local tests only, never a real paper's budget) polls at most every Δ; tests
+  may use a shorter interval.
+- **CPU limit required.** Every container of a paper runs with a CPU quota in
+  `cpu.max` (quota and period; https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files,
+  accessed 2026-10-14). The runner refuses to start a container whose `cpu.max` quota
+  is `max` (no limit) or whose limit exceeds the C used to derive M.
+- **Stopping margin M, derived, not assumed:** `M = 2 × C × (P + Δ + D + S)`, in
+  CPU-seconds, converted to integer microseconds and rounded up, where:
+  - `C` is the largest CPU limit (quota / period) any container of the paper may get,
+    at most the 24 vCPU of the VM; one M per paper, given to the WP2 accountant;
+  - `P` is the `cpu.max` period, since a whole period can be used at once (the burst
+    case of W2.10a);
+  - `D` is the largest delay of one reading measured on the VM in WP6 V22: from the
+    planned reading instant to the value being available;
+  - `S` is the largest stop latency measured on the VM in V22: from the stop request
+    to the container's cgroup reporting no further usage;
+  - the factor 2 covers variation around the measured maxima.
+
+  Example only, not a decision: C = 24, P = 0.1 s, D = 0.1 s, S = 1 s give
+  M = 2 × 24 × 2.2 = 105.6 CPU-s, about 0.03 CPU-hour.
+- **Run-time check of D and S.** For every container the runner records the delay of
+  each reading and the stop latency. If one exceeds the recorded maximum D or S, the
+  accounting of the paper is invalid (`INCONCLUSIVE`, Refute error), even when the
+  usage stayed within R = F + M. A usage above R is a breach (W2.10a), also invalid.
+  Neither is ever absorbed.
+- **Completeness tolerance T:** `T = 1 CPU-s × (n_containers + 1)`, in microseconds,
+  where `n_containers` is the number of containers of the paper. The accounting is
+  complete when `|parent − Σ records| ≤ T`, `parent` being the usage of the paper's
+  parent cgroup and the records the final reading of each container (W2.10). The term
+  per container covers the usage between a container's final reading and its removal;
+  there is no term proportional to the total, so a missing record (for example a
+  builder left out) larger than T is never hidden by the size of the paper. Measured
+  in V22 on runs of known synthetic containers, the difference must stay below T/2;
+  otherwise T is revised with the maintainer before the lock.
+- **Fixed before the lock, never after.** Δ, the formula of M, the measured maxima D
+  and S, the values C and P, and T are written in the protocol before the lock and are
+  never adjusted because of a run of the sample, the pilot or the development papers.
+- **Subprocess backend.** It has no parent cgroup, so the completeness check is
+  recorded as not applicable there; this backend never runs a real paper (PR #87).
+- **Synthetic cases (WP3):**
+  - **must pass:** a container stopped at F with a final usage ≤ F + M; a difference
+    between the parent and the records of exactly T;
+  - **must give `INCONCLUSIVE` (accounting invalid):** a final usage above R = F + M;
+    a reading delay above D, or a stop latency above S, with a usage within R; a
+    difference between the parent and the records of T + 1 µs; a missing builder record;
+  - **must be refused before the start:** a container without a CPU quota, or with a
+    limit above C.
+
 ### 1.5 Metric extraction
 
 - **W3.11** Deterministic extraction (JSON path, CSV column, or a regular expression on
