@@ -515,15 +515,22 @@ $discRoot = Join-Path $WorkDir 'discovery'
 [void][System.IO.Directory]::CreateDirectory((Join-Path $discRoot 'NoRoles'))
 [System.IO.File]::WriteAllText((Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), '@{}')
 $discProblems = @(Get-RefuteDiscoveryProblems -Roots @($discRoot))
-foreach ($level in @($discRoot, (Join-Path $discRoot 'SomeModule'), (Join-Path $discRoot 'SomeModule\RoleCapabilities'),
-        (Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), (Join-Path $discRoot 'NoRoles'))) {
-    Add-Case "discovery problems: '$($level.Substring($WorkDir.Length + 1))' writable by the current account is reported" (
-        @($discProblems | Where-Object { $_.StartsWith("$level can be written by") }).Count -ge 1) ($discProblems -join ' | ')
+if ($onWindows) {
+    foreach ($level in @($discRoot, (Join-Path $discRoot 'SomeModule'), (Join-Path $discRoot 'SomeModule\RoleCapabilities'),
+            (Join-Path $discRoot 'SomeModule\RoleCapabilities\Op.psrc'), (Join-Path $discRoot 'NoRoles'))) {
+        Add-Case "discovery problems: '$($level.Substring($WorkDir.Length + 1))' writable by the current account is reported" (
+            @($discProblems | Where-Object { $_.StartsWith("$level can be written by") }).Count -ge 1) ($discProblems -join ' | ')
+    }
+    Add-Case 'discovery problems: a root owned by the current account is reported' (@($discProblems | Where-Object { $_.StartsWith("$discRoot is owned by") }).Count -eq 1) ($discProblems -join ' | ')
+    $absentProblems = @(Get-RefuteDiscoveryProblems -Roots @(Join-Path $discRoot 'absent\deeper'))
+    Add-Case 'discovery problems: an absent folder is checked through its nearest existing ancestor' (
+        @($absentProblems | Where-Object { $_.StartsWith("$discRoot can be written by") }).Count -ge 1) ($absentProblems -join ' | ')
+} else {
+    # Windows ACLs cannot be read here (no Get-Acl): every folder is reported as unreadable,
+    # never accepted (the registration itself runs only on Windows)
+    Add-Case 'discovery problems: without Windows ACLs every level is reported, never accepted' (
+        @($discProblems | Where-Object { $_.StartsWith("$discRoot cannot be read") }).Count -ge 1) ($discProblems -join ' | ')
 }
-Add-Case 'discovery problems: a root owned by the current account is reported' (@($discProblems | Where-Object { $_.StartsWith("$discRoot is owned by") }).Count -eq 1) ($discProblems -join ' | ')
-$absentProblems = @(Get-RefuteDiscoveryProblems -Roots @(Join-Path $discRoot 'absent\deeper'))
-Add-Case 'discovery problems: an absent folder is checked through its nearest existing ancestor' (
-    @($absentProblems | Where-Object { $_.StartsWith("$discRoot can be written by") }).Count -ge 1) ($absentProblems -join ' | ')
 
 # The JEA session probe (tests/vm/JeaProbe.psm1) on synthetic roots: a root holding a role
 # capability, an absent root, and a root that cannot be read as a folder (a file). A root
