@@ -845,6 +845,19 @@ declared in the claim before the lock. With no route that closes the chain, the 
     and on the value within the printed rounding.
   - **Disagreement:** any disagreement is `INCONCLUSIVE`. The coverage is never taken
     from the most convenient route.
+  - **Record of 2026-10-16 (#110, the maintainer's condition for its merge):**
+    - **No known rounding:** when `metric_recompute` does not apply, or declares
+      `printed_rounding: unknown`, two routes agree on the value only when their values
+      are numerically identical. Any difference is a conflict, and the gate is
+      `INCONCLUSIVE`; an unknown rounding never loosens `all_must_agree`.
+    - **The link of one route's value to the printed value** keeps the `unknown`
+      interval of section 1.7.
+    - **An attempt discarded:** intersecting the `nearest` and `truncate` intervals for
+      that link refused correct values. For example, 3567/4000 = 89.175, printed "89.18"
+      by rounding, falls outside the truncation interval of "89.18". The attempt was
+      reverted before the merge, with no other code change.
+    - **The test:** `test_with_no_rounding_known_only_identical_values_agree` (89.200
+      against 89.2001 is `INCONCLUSIVE`; 89.200 against 89.2, the same number, passes).
 - **W3.12f Schema** (`coverage_evidence` of each claim, `src/refute/packs/ml/schema.py`):
 
   ```yaml
