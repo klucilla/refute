@@ -1500,6 +1500,83 @@ def test_a_metric_outside_the_bounded_rates_is_native(tmp_path, metric):
         load(tmp_path, mae_in_percent)
 
 
+# ---- trivial_baseline and the claim's unit (#59; the maintainer's approval, 2026-10-17) ------
+
+
+def _metric_in(metric, unit, baseline):
+    """c1 as a claim on ``metric`` in ``unit``, with trivial_baseline applying or not. The
+    reported value and its transcription follow the unit; the uncertainty and
+    metric_recompute are set aside, so only the unit and the attack differ."""
+
+    def mutate(claim):
+        t = target(claim, "c1")
+        value = {"percent": "91.2", "fraction": "0.912", "native": "0.912"}[unit]
+        t["metric"]["name"] = metric
+        t["metric"]["unit"] = unit
+        t["metric"]["higher_is_better"] = metric == "accuracy"
+        t["metric"]["reported"] = float(value)
+        t["metric"]["reported_uncertainty"] = {"kind": "none"}
+        t["run"]["metric_extraction"]["unit"] = unit
+        t["metric_recompute"] = {"applies": False, "reason": "set aside in this test"}
+        # the saved_predictions route needs metric_recompute: the printed count stays
+        t["coverage_evidence"]["method"]["routes"] = [printed_count()]
+        t["coverage_evidence"]["method"].pop("split_identity")
+        if unit == "native":
+            t["tolerance"] = {"abs_floor": 0.005, "override_reason": "a native unit"}
+        if not baseline:
+            attack(t, "trivial_baseline").update(applies=False)
+            attack(t, "trivial_baseline").pop("params")
+
+    return mutate
+
+
+def _transcribe(monkeypatch, metric, unit):
+    """The inventory's transcription of c1 for ``metric`` in ``unit``: the claim's own
+    transcription, the inventory attachment and its hash all follow it."""
+    value = {"percent": "91.2", "fraction": "0.912", "native": "0.912"}[unit]
+    monkeypatch.setitem(
+        TRANSCRIPTIONS, "c1", dict(TRANSCRIPTIONS["c1"], metric=metric, value=value)
+    )
+
+
+@pytest.mark.parametrize("unit", ["percent", "fraction"])
+@pytest.mark.parametrize("metric", ["accuracy", "error_rate"])
+def test_trivial_baseline_in_percent_or_fraction_resolves_and_runs(
+    tmp_path, monkeypatch, metric, unit
+):
+    """From the schema to trivial_baseline_value: a claim the schema accepts with the attack
+    applying gives a baseline in its own unit (the attack can run)."""
+    from refute.packs.ml.attacks import trivial_baseline_value
+
+    _transcribe(monkeypatch, metric, unit)
+    claim = load(tmp_path, _metric_in(metric, unit, baseline=True)).canonical()
+    t = target(claim, "c1")
+    params = attack(t, "trivial_baseline")["params"]
+    baseline = trivial_baseline_value(
+        params["kind"], params["labels"], t["metric"]["name"], t["metric"]["unit"]
+    )
+    expected = {"accuracy": 0.1, "error_rate": 0.9}[metric] * (100 if unit == "percent" else 1)
+    assert float(baseline.strongest) == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("metric", ["accuracy", "error_rate"])
+def test_trivial_baseline_with_a_native_unit_is_refused(tmp_path, monkeypatch, metric):
+    """Before this check, the schema accepted the combination and the attack raised at run
+    time ("trivial_baseline needs a claim in percent or fraction")."""
+    _transcribe(monkeypatch, metric, "native")
+    with pytest.raises(ClaimError, match="trivial_baseline needs a claim in percent or fraction"):
+        load(tmp_path, _metric_in(metric, "native", baseline=True))
+
+
+@pytest.mark.parametrize("metric", ["accuracy", "error_rate"])
+def test_a_native_unit_without_the_baseline_attack_is_valid(tmp_path, monkeypatch, metric):
+    _transcribe(monkeypatch, metric, "native")
+    claim = load(tmp_path, _metric_in(metric, "native", baseline=False)).canonical()
+    t = target(claim, "c1")
+    assert t["metric"]["unit"] == "native"
+    assert attack(t, "trivial_baseline")["applies"] is False
+
+
 def test_a_reason_may_accompany_the_default_tolerance(tmp_path):
     load(tmp_path, _set(["c1", "tolerance"], {"override_reason": "defaults kept on purpose"}))
 

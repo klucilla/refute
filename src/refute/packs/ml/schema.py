@@ -1035,6 +1035,11 @@ class MlTarget(_Model):
         baseline = self.attack("trivial_baseline")
         if baseline.applies and self.metric.name not in rules.BASELINE_METRICS:
             raise ValueError(f"trivial_baseline applies only to {rules.BASELINE_METRICS}")
+        # the baseline is computed in percent or fraction (attacks.trivial_baseline_value):
+        # a claim in another unit could pass the schema with an attack that cannot run
+        # (issue #59; the maintainer's approval of 2026-10-17)
+        if baseline.applies and self.metric.unit not in ("percent", "fraction"):
+            raise ValueError("trivial_baseline needs a claim in percent or fraction")
 
     def _metric_recompute(self) -> None:
         mr = self.metric_recompute
