@@ -152,61 +152,56 @@ First pack: exoplanet transits (TESS).
 
 ## GitHub operations
 
-- The agent has GitHub access and may perform git and GitHub operations
-  (commit, push, tags, releases, issues, labels, repository description,
-  topics, social preview) only after the maintainer explicitly approves in
-  chat. Before acting, list the exact actions and wait for approval.
-- Always ask individually, even if a batch was approved: force push,
-  history rewrite, branch deletion, changing repository visibility,
-  deleting releases or the repository.
-- Pre-registration checkpoints (lock before calibrate) still require an
-  explicit stop and approval at each step.
+- The agent has GitHub access. Which git and GitHub operations need the maintainer is
+  decided by the working mode below ("Working mode (v0.3)"), decided by the maintainer on
+  2026-10-17. It replaces the per-action approval and the standing approval of 2026-10-14
+  and 2026-10-15.
+- Always asked individually: force push, history rewrite, deleting a branch (except those
+  the maintainer approves), changing repository visibility, deleting releases or the
+  repository.
+- Pre-registration checkpoints (lock before calibrate) still require an explicit stop and
+  approval at each step.
 
-### Standing approval (v0.3)
+### Working mode (v0.3)
 
-The maintainer gave this standing approval in chat on 2026-10-14 and extended it on
-2026-10-15, for phase v0.3. It replaces the per-action approval above only for what it
-lists.
+Decided by the maintainer on 2026-10-17. It replaces the earlier rules of pull requests
+and review (the standing approval of 2026-10-14 and 2026-10-15).
 
-- **Allowed without asking each time:**
-  - commits, pushes and pull requests for the work the maintainer assigned;
-  - merging a pull request that contains only acceptance documents, WP1 documents
-    other than README, or code with synthetic tests;
-  - recording minor follow-ups in the "v0.3 follow-ups" issue (#59). Recording an
-    item does not authorize implementing it.
-- **Conditions for that merge:**
-  - a merge commit, pinned to the head that was checked;
-  - CI green, or skipped as expected by the paths-ignore list;
-  - every acceptance criterion checked one by one in the pull request;
-  - the Codex review resolved, with question, answer, verdict and reason recorded in
-    the pull request.
-- **After every merge:** the agent checks the CI run of the merge commit on main until
-  its final result. If it fails, the agent stops and tells the maintainer. When the
-  paths-ignore list skips the run (documentation only), the agent records that no run
-  was expected; a run missing for any other reason is treated as a failure.
-- **Never under the standing approval:**
-  - README, the site or any other public communication about the project; the
-    acceptance and WP1 documents listed above are the only documentation it covers;
-  - locks, drand rounds, and any change to a lock, a locked hash or a published
-    dossier;
-  - any change to the claim schema, claim serialization or canonicalization, the
-    lock format or lock verification, or to acceptance criteria; these need the
-    maintainer's explicit approval, also when the pull request is otherwise in scope
-    (see "Acceptance documents and schemas" below);
-  - running third-party code, and the VM;
-  - sending email;
-  - changes to `ci.yml` that loosen checks;
-  - deletions outside `.cache/`.
-- The items that are always asked individually (list above) stay so.
-- **Acceptance documents and schemas** (clarified by the maintainer on 2026-10-15):
-  - a **new** acceptance document that only translates the plan into criteria for one
-    work package is under the standing approval;
-  - a **change** to a criterion already merged (loosening, replacing or removing it)
-    needs the maintainer;
-  - a criterion that touches a schema, serialization, canonicalization, a
-    lock, lock verification, a verdict or security needs the maintainer;
-  - when the maintainer approves the design of a schema in an acceptance document,
-    code that implements exactly that design is under the standing approval.
+1. **Do, decide, go on.** Changes to code, tests, scripts, configuration and documentation
+   go as **direct commits to main** (the branch `main` and the full SHA checked before and
+   after), with no pull request and no wait for CI. Before each commit: ruff exits 0, and
+   the affected tests pass through `scripts/run_tests_affinity.ps1` (not the whole suite,
+   unless the change is broad). Corrections are batched into **one push per batch**, never
+   one push per correction: each push triggers CI. CI on main runs by itself; if it turns
+   red, fix forward and go on with the rest.
+2. **Codex** (read only, sandbox read-only, CPU affinity 8 to 31) is consulted on design
+   and security decisions; the two reach a verdict and go on. At the end of each round,
+   **one** Codex review of all the round's commits; its findings become a direct fix or an
+   item of #59. Decisions the maintainer already took are not reopened with Codex; it only
+   checks their implementation.
+3. **Ask the maintainer only before:**
+   - running third-party code for the first time;
+   - creating or changing locks, drand rounds or published dossiers;
+   - publishing or changing public text (the root README, the site, a release, a new public
+     announcement issue);
+   - deleting anything outside `.cache/`;
+   - a force push, a history rewrite, or deleting a branch (except those the maintainer
+     approves);
+   - any step on the VM, in Hyper-V or as Administrator. The maintainer runs these; the
+     agent prepares the exact commands, in plain text, one line per command, with what to
+     check.
+
+   Everything else, the agent decides and does.
+4. Free research on the internet; an external fact in a document carries its URL and the
+   date it was read.
+5. Claude subagents of any kind need the maintainer's approval first (purpose, number and
+   cost). The "second agent" is Codex.
+6. Cleanup only inside the project folder, by literal path with a prefix guard; anything of
+   value is archived to the Drive first (a script and a checked SHA-256 manifest). The
+   forbidden deletion roots of the operating rules above stay forbidden. Private keys and
+   keyrings never enter generic archiving and are never deleted automatically.
+7. CI waits, when there are any, run in the background with a time limit. A **short**
+   status summary at the end of each round.
 
 ## Tech standards
 
@@ -240,7 +235,7 @@ Only files in use, or planned for use in an open task, stay in the project folde
   path is listed in the report of that round.
 - **How:** deletion only by full literal path, with a guard that the path is inside the
   project folder; never from a broad root and never with `git clean -x`. A deletion
-  outside `.cache/` still needs the maintainer's approval (see "Standing approval
+  outside `.cache/` still needs the maintainer's approval (see "Working mode
   (v0.3)"). Nothing outside the project folder is ever deleted, and the forbidden
   deletion roots of the operating rules above stay forbidden.
 - At the end of each work package, the agent reports what fell out of use and archives
