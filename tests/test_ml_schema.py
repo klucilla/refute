@@ -1930,3 +1930,154 @@ def test_draw_record_round_trip():
     bad["format"] = "other"
     with pytest.raises(inv.InventoryError):
         inv.read_draw_record(bad)
+
+
+# ---- #59, the items of the Codex review of #85 (the maintainer's approval of 2026-10-17) ----
+
+
+def _paired_ci(center, half=0.3):
+    return {
+        "kind": "ci",
+        "lower": center - half,
+        "upper": center + half,
+        "level": 0.95,
+        "method": "t",
+        "n": 3,
+        "unit": "percent",
+        "location": "Table 3",
+        "quote": "paired difference with its 95% interval",
+    }
+
+
+def _mode(mode, center_value):
+    """The comparison claim c2 in ``mode``: margin keeps g_pub, magnitude takes d_pub, and
+    direction takes neither (and no holdout attack, which a direction claim refuses)."""
+    steps = [_set(["c2", "comparison_mode"], mode)]
+    if mode != "margin":
+        steps.append(_drop(["c2", "comparison", "g_pub"]))
+    if mode == "magnitude":
+        steps.append(_set(["c2", "comparison", "d_pub"], center_value))
+    if mode == "direction":
+        steps.append(_set(["c2", "attacks"], attacks(seeds=True)))
+    return steps
+
+
+# the declared centre (3.0) differs from the raw difference of the published values
+# (91.2 - 89.0 = 2.2), so each case shows which one the symmetry is checked around
+@pytest.mark.parametrize(
+    ("mode", "ci_center", "status"),
+    [
+        # around g_pub in margin mode, never around the raw difference
+        ("margin", 3.0, "converted"),
+        ("margin", 2.2, "not_convertible"),
+        # around d_pub in magnitude mode
+        ("magnitude", 3.0, "converted"),
+        ("magnitude", 2.2, "not_convertible"),
+        # direction has no centre: never convertible, even when symmetric around the gap
+        ("direction", 2.2, "not_convertible"),
+        ("direction", 3.0, "not_convertible"),
+    ],
+)
+def test_the_paired_ci_centre_of_each_comparison_mode(tmp_path, mode, ci_center, status):
+    steps = _mode(mode, 3.0)
+    if mode == "margin":
+        steps.append(_set(["c2", "comparison", "g_pub"], 3.0))
+    mutate = _apply(
+        *steps,
+        _set(["c2", "comparison", "paired_uncertainty"], _paired_ci(ci_center)),
+    )
+    claim = load(tmp_path, mutate).canonical()
+    paired = target(claim, "c2")["comparison"]["paired_uncertainty"]
+    assert paired["status"] == status
+    if status == "converted":
+        # se = width / (2 t(0.975, 2)), sd = se * sqrt(3)
+        assert paired["quantile"] == pytest.approx(4.302652729749, rel=1e-9)
+        assert paired["sd"] == pytest.approx(0.6 / (2 * paired["quantile"]) * math.sqrt(3))
+    else:
+        assert paired["sd"] is None and paired["quantile"] is None
+
+
+@pytest.mark.parametrize("level", [1e-17, 1 - 1e-16])
+def test_a_ci_level_whose_quantile_rounds_is_refused(level):
+    """1 - (1 - level)/2 rounds to 0.5 or to 1: the quantile would be 0 or infinite."""
+    with pytest.raises(ValueError, match="no usable quantile"):
+        unc(kind="ci", lower=90.0, upper=92.0, level=level, method="normal", n=5)
+
+
+def test_a_ci_level_near_but_not_at_the_rounding_is_still_accepted():
+    for level in (1e-6, 0.999999):
+        out = resolve_uncertainty(
+            unc(kind="ci", lower=90.0, upper=92.0, level=level, method="normal", n=5),
+            "percent",
+            91.0,
+        )
+        assert out["status"] == "converted"
+        assert math.isfinite(out["quantile"]) and out["quantile"] > 0
+
+
+def test_a_ci_level_whose_quantile_rounds_is_refused_in_a_claim(tmp_path):
+    record = dict(_paired_ci(2.2), level=1 - 1e-16)
+    with pytest.raises(ClaimError, match="no usable quantile"):
+        load(tmp_path, _set(["c2", "comparison", "paired_uncertainty"], record))
+
+
+def test_an_infinite_interval_is_refused_at_validation(tmp_path):
+    mutate = _set(["test_plan", "absent_artifact", "interval_minutes"], float("inf"))
+    with pytest.raises(ClaimError, match="absent_artifact.interval_minutes must be finite"):
+        load(tmp_path, mutate)
+
+
+@pytest.mark.parametrize("name", ["reported_sd_full", "reported_sd_ablated"])
+def test_an_infinite_published_sd_of_an_ablation_is_refused(name):
+    from refute.packs.ml.schema import AblationParams
+
+    margin = {
+        "disable": {"argv": ["--no-aug"]},
+        "orientation": "full_minus_ablated",
+        "mode": "margin",
+        "reported_full": 91.2,
+        "reported_ablated": 90.0,
+        "reported_sd_full": 0.3,
+        "reported_sd_ablated": 0.4,
+        "g_abl": 1.2,
+    }
+    AblationParams.model_validate(margin)  # the finite record is valid
+    with pytest.raises(ValueError, match=f"ablation.{name} must be finite"):
+        AblationParams.model_validate(dict(margin, **{name: float("inf")}))
+
+
+@pytest.mark.parametrize(
+    "record",
+    [
+        dict(kind="ci", lower=-1e300, upper=1e300, level=1e-15, method="normal", n=5),
+        dict(kind="ci", lower=-1e308, upper=1e308, level=0.95, method="normal", n=5),
+        dict(kind="se", value=1e308, n=1000),
+    ],
+)
+def test_a_standard_deviation_that_overflows_is_refused(record):
+    """Finite inputs can still give an infinite sd; an infinite tolerance would accept
+    any result (Codex review of the #85 items)."""
+    with pytest.raises(ValueError, match="standard deviation that is not finite"):
+        resolve_uncertainty(unc(**record), "percent", 0.0)
+
+
+@pytest.mark.parametrize(
+    ("value", "message"),
+    [
+        (float("inf"), "must be finite"),
+        ({"lr": float("-inf")}, "must be finite"),
+        ([1, {"x": float("nan")}], "must be finite"),
+        # Codex review, round 2: a set or a non-text key would also change silently
+        ({float("inf")}, "must be JSON data"),
+        ({float("inf"): 0}, "every map key must be text"),
+        ((1, 2), "must be JSON data"),
+    ],
+)
+def test_an_ablation_config_value_must_be_finite_json_data(value, message):
+    """A non-finite float would be serialized as null, a set or a non-text key changed."""
+    from refute.packs.ml.schema import ConfigDisable
+
+    good = {"lr": 0.5, "steps": [1, 2], "on": True, "name": "aug", "none": None}
+    ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": good})
+    with pytest.raises(ValueError, match=message):
+        ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": value})

@@ -104,6 +104,26 @@ def _finite(value: float | None, what: str) -> None:
         raise ValueError(f"{what} must be finite")
 
 
+def _finite_tree(value: Any, what: str) -> None:
+    """``value`` is JSON data: null, a boolean, a finite number, a text, a list, or a map
+    with text keys, recursively. A non-finite float would be serialized as null, a set or
+    a non-text key changed silently (#59, Codex review of the #85 items)."""
+    if value is None or isinstance(value, bool | int | str):
+        return
+    if isinstance(value, float):
+        _finite(value, what)
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            _finite_tree(item, f"{what}[{index}]")
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            if not isinstance(key, str):
+                raise ValueError(f"{what}: every map key must be text")
+            _finite_tree(item, f"{what}.{key}")
+    else:
+        raise ValueError(f"{what} must be JSON data, not {type(value).__name__}")
+
+
 # ---- test_plan (1.0.2) -------------------------------------------------------------------
 
 
@@ -250,6 +270,12 @@ class Stages(_Model):
 class AbsentArtifact(_Model):
     attempts: int = Field(ge=1)
     interval_minutes: float = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _finite_interval(self) -> AbsentArtifact:
+        # refused at validation, not first at canonicalization (#59, Codex review of #85)
+        _finite(self.interval_minutes, "absent_artifact.interval_minutes")
+        return self
 
 
 class Threads(_Model):
@@ -475,6 +501,12 @@ class ConfigDisable(_Model):
     def _file(cls, value: str) -> str:
         return _relative(value, "ablation.disable.config_file")
 
+    @field_validator("value")
+    @classmethod
+    def _finite_value(cls, value: Any) -> Any:
+        _finite_tree(value, "ablation.disable.value")
+        return value
+
 
 class DataSplitParams(_Model):
     original_proportions: list[float] = Field(min_length=2)
@@ -508,7 +540,14 @@ class AblationParams(_Model):
     @model_validator(mode="after")
     def _margin(self) -> AblationParams:
         published = (self.reported_full, self.reported_ablated, self.g_abl)
-        for name in ("reported_full", "reported_ablated", "g_abl"):
+        # the published standard deviations too (#59, Codex review of #85)
+        for name in (
+            "reported_full",
+            "reported_ablated",
+            "g_abl",
+            "reported_sd_full",
+            "reported_sd_ablated",
+        ):
             _finite(getattr(self, name), f"ablation.{name}")
         if self.mode == "direction":
             if (

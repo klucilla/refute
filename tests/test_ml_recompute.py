@@ -159,6 +159,25 @@ def test_r2_of_a_constant_target_is_undefined():
         dict(metric="f1", scale="fraction", labels=L01, average="macro"),
         dict(metric="auroc", scale="fraction", labels=L012, pos_label=1),
         dict(metric="auroc", scale="fraction", labels=L01, pos_label=7),
+        # #59, Codex review of the #85 items: a float pos_label matched a label by its text
+        dict(
+            metric="f1",
+            scale="fraction",
+            labels=("inf", "negative"),
+            average="binary",
+            pos_label=float("inf"),
+            zero_division="0",
+        ),
+        dict(metric="auroc", scale="fraction", labels=("1", "0"), pos_label=1.0),
+        dict(metric="auroc", scale="fraction", labels=(1, 0), pos_label=True),
+        # round 2: a label that is not an integer or a string
+        dict(
+            metric="f1",
+            scale="fraction",
+            labels=({"nested": float("inf")}, "negative"),
+            average="macro",
+            zero_division="0",
+        ),
     ],
 )
 def test_unsupported_conventions_are_refused(bad):
