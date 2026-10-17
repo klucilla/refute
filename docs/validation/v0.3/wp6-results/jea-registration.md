@@ -388,4 +388,55 @@ Each of these is known only when it runs, one operation at a time with the maint
   - the network isolation of the real installation: the test enables PowerShell remoting on the runner with `Enable-PSRemoting` (a listener on every address and a firewall exception), which the real installation never does; this is acceptable only on a runner discarded after the job.
 - **The limits:** the runner is Windows Server 2025, not the maintainer's Windows 11. It demonstrates the cause there; it does not replace the attempt on the host. It covers SetHostPaths only, not the other operations. The attempts share one tree, so the whole tree is checked against each version before its call.
 
-**Status of W6.4:** no operation has succeeded; operation 1 is pending the corrected ACL and the maintainer's new attempt.
+**Status of W6.4 at the end of this section:** no operation had succeeded; operation 1 was pending the corrected ACL and the maintainer's new attempt (section 10).
+
+## 10. Version 2 applied, and operation 1 done on the host (2026-10-16)
+
+Run by the maintainer on 2026-10-16 (Brasília time; UTC below). As the maintainer reports,
+the main folder was at `ca91f9103c1e7e6eef3ea44bf8abd18af0f63dcd` (the merge of #126) the
+whole time, and the agent was idle meanwhile. Account names are replaced by `<operator-account>`
+and `<virtual-account>`; no security descriptor is published.
+
+### 10.1 Version 2 of the tree ACL (`scripts/vm/Set-RefuteVmTreeAcl.ps1`, as Administrator)
+
+| Step | Result |
+|---|---|
+| a) The hashes, before running | `Set-RefuteVmTreeAcl.ps1` `AD0C5D0CF87EE93C8D115F31AEDA25E52D04B6BE174409B1B45115EDFAF7430F`, `RefuteRegistration.Core.ps1` `E22A61A96FC88EDE07697CD6D0A6B3221DCCF8FA31770BEC7DAA6012170AE2E0`, equal to the blobs of `ca91f91` |
+| b) The preview, with `PSModuleAnalysisCachePath=nul` | `State now (C:\Hyper-V is version 1)`; `C:\Hyper-V` owned by Administrators, protected, exactly the three entries of version 1; the three folders below with inherited entries only, and no other file or folder; the evidence folders with the registration's ACL; `Hyper-V Administrators members: none`; `Open remoting sessions (wsmprovhost.exe): none`; `Preconditions hold`; `PreviewSha256` `f71782d0876fc7aa4f93c2b896bd840fad20be5d8bac6e1ebe573d608e78a776` |
+| c) The apply, with that `PreviewSha256` | `Done: evidence file created: C:\ProgramData\RefuteVm\Log\vmtree-acl-evidence-20261017T015022354Z.json; ACL of C:\Hyper-V set to version 2; checks passed`. The evidence file `vmtree-acl-evidence-20261017T015022354Z.json` (created at 01:50:22.354 UTC) has SHA-256 `8b1b3a62c2e4c04b9b4b4a69db1a29fdd91bba84737169accb5c60ea5a723845` |
+| d) The post-check, the same script without `-Apply` | `State now (C:\Hyper-V is version 2)`; on the root exactly SYSTEM (2032127), Administrators (2032127), Hyper-V Administrators (1507775, inherited by folders and files), and the Virtual Machines group with two entries (1179785 inherit-only on files, 1179791 on the folder and the folders below); the three folders with those entries inherited only; `Nothing to do: C:\Hyper-V already holds version 2.`; `PreviewSha256` `4f2a777f60e59d2ef13e4ba67d076b449d8dac433efe5c10b2039a8ec5cbba18` |
+
+### 10.2 Operation 1, SetHostPaths, through the endpoint (a normal window)
+
+From `C:\ProgramData\RefuteVm\Log\operations.jsonl`, read on 2026-10-16 (read only). The two
+failed attempts of section 9 are still recorded before these lines: `intent` at
+22:08:38.514 UTC and `result` failed at 22:08:38.651 UTC (VA 9), `intent` at
+22:09:29.935 UTC and `result` failed at 22:09:30.029 UTC (VA 12), both with the
+`PlanSha256` below.
+
+| Step | Log record (UTC, 2026-10-17) | Result |
+|---|---|---|
+| e) `-Operation SetHostPaths -Simulate` | `simulated` at 01:51:43.946, `<virtual-account>` VA 15 | the same as before the ACL change: `AlreadyDone` false, the same two changes, `ConfigSha256` `fa27a08622297aa2615cf48d09d584fed6b4ab25b1862ce2f5d0d91c728208ff`, `PlanSha256` `3976d96a09c23d1a6ca1cd858a16087810c4ecb814af3384a219b6041cffd304` |
+| e) `-Operation SetHostPaths -PlanSha256 <that hash>` | `intent` at 01:52:13.830 and `result` at 01:52:13.920, VA 16 | `Mode` result, `Outcome` done, `Error` null |
+| f) A new `-Simulate` | `simulated` at 01:52:18.029, VA 18 | `AlreadyDone` true, no change, the host paths `C:\Hyper-V` and `C:\Hyper-V\Virtual Hard Disks` (`PlanSha256` `173d31a354123dea75a715d791968a6032b887f4e8ce7fed295fc735cd31da6c`) |
+| f) `-Status` | (read only, no record) | `VirtualMachinePath` `C:\Hyper-V`, `VirtualHardDiskPath` `C:\Hyper-V\Virtual Hard Disks`, `EnableEnhancedSessionMode` true, no VM |
+| f) The post-check of the ACL again, as Administrator | (no record) | version 2, `Nothing to do`, and the **same** `PreviewSha256` `4f2a777f…cbba18` as in d) |
+
+### 10.3 Conclusion
+
+- **The cause is confirmed on the maintainer's Windows 11, for SetHostPaths.** On the same
+  host, with the same plan (`PlanSha256` `3976d96a…d304`), the operation was denied twice
+  under version 1 and done under version 2. With the CI runner (section 9), the cause is
+  now shown on both.
+- **The tree was the same after the paths were adopted.** The `PreviewSha256` of the
+  post-check is the same before and after SetHostPaths. It covers the list of items under
+  `C:\Hyper-V` and, for each item and for the evidence folders, its creation time,
+  attributes, owner, protection and every access entry. So no difference in what the
+  preview covers was left between the two checks: the service left no entry and no item
+  in `C:\Hyper-V` when it adopted the folder as its default. Two observations of the state
+  cannot exclude a change made and undone between them.
+- **The other operations remain hypotheses, not tested** (section 9.2): each is known only
+  when it runs, one operation at a time with the maintainer's OK.
+
+**Status of W6.4:** operation 1, `SetHostPaths`, is validated on the host. Every other
+operation is not validated yet.
