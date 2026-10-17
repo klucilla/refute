@@ -34,9 +34,11 @@ Limits:
     every call refuses). Recovery: run -Apply again with -InstalledSha256 set to the hash
     of the incomplete file, as the preview prints it.
 
-It prints no security descriptor and no path (the files are named by their role; a user
-profile folder or account name in an error message is masked), never deletes anything,
-and changes no file but the installed RefuteVm.Config.psd1.
+It prints no security descriptor and no path of its own (the files are named by their role).
+Error messages pass through Format-RefuteReason, which masks every path under a user
+profile folder (X:\Users\<name>, in any case) and the current account name (in any case);
+a name that appears elsewhere in a message from Windows is not detected. It never deletes
+anything, and changes no file but the installed RefuteVm.Config.psd1.
 
 Reversal: -SourcePath <the previous RefuteVm.Config.psd1, saved in a folder only
 administrators can write>, -InstalledSha256 <the new hash>, -SourceSha256 <the previous hash>.
@@ -74,10 +76,11 @@ function Get-RefuteFileSha256Upper([string]$Path) {
 }
 
 function Format-RefuteReason([string]$Text) {
-    # an error message with the user profile folder and the account name masked
-    $out = $Text
-    if ($env:USERPROFILE) { $out = $out.Replace($env:USERPROFILE, '%USERPROFILE%') }
-    if ($env:USERNAME) { $out = $out.Replace($env:USERNAME, '<account>') }
+    # an error message with every user profile folder (any drive, any account, any case)
+    # and the current account name masked, case-insensitively
+    $ignore = [System.Text.RegularExpressions.RegexOptions]::IgnoreCase
+    $out = [regex]::Replace($Text, '[A-Za-z]:\\Users\\[^\\/:*?"<>|\r\n]+', '%USERPROFILE%', $ignore)
+    if ($env:USERNAME) { $out = [regex]::Replace($out, [regex]::Escape($env:USERNAME), '<account>', $ignore) }
     return $out
 }
 

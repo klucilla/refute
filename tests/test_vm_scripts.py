@@ -1092,8 +1092,13 @@ def test_a_finding_after_the_write_is_reported_as_such(update_cases):
 
 
 def test_the_config_update_masks_the_profile_and_the_account(update_cases):
+    """Codex review of #134, round 5: the current profile and account in another case, and
+    another account's profile on another drive, are masked too (checked inside the harness,
+    so the account name never reaches the test output)."""
     masked = update_cases["Masked"]
-    assert "%USERPROFILE%" in masked and "<account>" in masked
+    assert update_cases["NoAccountLeft"] is True, masked
+    assert all("%USERPROFILE%" in m for m in masked), masked
+    assert "<account>" in masked[0] and "<account>" in masked[1], masked
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="the script runs in Windows PowerShell 5.1")

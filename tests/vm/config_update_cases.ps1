@@ -77,7 +77,13 @@ Reset-Fake
 $none = @(Get-RefuteTargetProblems $dir $installed)
 $script:Fake.Discovery = @('a', 'b')
 $two = @(Get-RefuteTargetProblems $dir $installed)
-$masked = Format-RefuteReason "denied: $env:USERPROFILE\x and $env:USERNAME"
+$masked = @(
+    (Format-RefuteReason "denied: $env:USERPROFILE\x and $env:USERNAME"),
+    (Format-RefuteReason ("denied: " + $env:USERPROFILE.ToUpperInvariant() + "\x and " + $env:USERNAME.ToUpperInvariant())),
+    (Format-RefuteReason 'denied: d:\users\Some.Other\file.txt'))
+# checked here, so the account name never reaches the test output
+$noAccountLeft = -not @($masked | Where-Object { $_.IndexOf($env:USERNAME, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or $_.IndexOf('\Users\', [System.StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count
+$maskedForOutput = @($masked | ForEach-Object { $_.Replace($env:USERNAME, '') })
 # whether the real owner check accepts the temporary file (an elevated runner can make
 # Administrators the owner of what it creates)
 $ownerAllowed = [bool](& $realOwner (Get-Acl -LiteralPath $installed).GetOwner([System.Security.Principal.SecurityIdentifier]).Value)
@@ -89,5 +95,6 @@ $ownerAllowed = [bool](& $realOwner (Get-Acl -LiteralPath $installed).GetOwner([
     Cases          = $cases.ToArray()
     NoFindingCount = $none.Count
     TwoFindings    = $two
-    Masked         = $masked
+    Masked         = $maskedForOutput
+    NoAccountLeft  = [bool]$noAccountLeft
 } | ConvertTo-Json -Depth 6
