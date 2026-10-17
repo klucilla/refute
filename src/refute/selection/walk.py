@@ -11,6 +11,7 @@ already shuffled (``refute.drand.shuffled``).
 
 from __future__ import annotations
 
+import urllib.error
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -38,6 +39,11 @@ REJECTION_REASONS = (
 ACCEPTED = "accepted"
 REJECTED = "rejected"
 STOPPED = "stopped_transient"
+# How a walk ended (#59, Codex review of #82): the sample was filled, the input ran out
+# with fewer acceptances than needed, or a transient error stopped it.
+SAMPLE_FILLED = "sample_filled"
+INPUT_EXHAUSTED = "input_exhausted"
+OUTCOMES = (SAMPLE_FILLED, INPUT_EXHAUSTED, STOPPED)
 
 
 class WalkError(Exception):
@@ -46,6 +52,26 @@ class WalkError(Exception):
 
 class TransientError(Exception):
     """A query failed for a reason that may pass (timeout, HTTP 5xx, connection error)."""
+
+
+def transient_query(query: Callable[[], Any], context: str) -> Any:
+    """Runs one query of an adapter (arXiv, GitHub, Hugging Face) and turns a failure that
+    may pass into ``TransientError``, keeping the query's context in its message: a
+    timeout, a connection error, an HTTP 5xx answer, or a URL error whose reason is one of
+    those. Any other failure (an HTTP 4xx answer, a parse error) propagates unchanged: it
+    is not retried and never becomes a rejection by itself (#59, Codex review of #82)."""
+    try:
+        return query()
+    except urllib.error.HTTPError as exc:
+        if 500 <= exc.code <= 599:
+            raise TransientError(f"{context}: HTTP {exc.code}") from exc
+        raise
+    except urllib.error.URLError as exc:
+        if isinstance(exc.reason, OSError):
+            raise TransientError(f"{context}: {type(exc.reason).__name__}") from exc
+        raise
+    except (TimeoutError, ConnectionError) as exc:
+        raise TransientError(f"{context}: {type(exc).__name__}") from exc
 
 
 @dataclass(frozen=True)
@@ -126,10 +152,19 @@ class WalkLog:
     entries: list[WalkEntry]
     accepted: list[str]
     stopped: bool
+    needed: int
+
+    @property
+    def outcome(self) -> str:
+        if self.stopped:
+            return STOPPED
+        return SAMPLE_FILLED if len(self.accepted) == self.needed else INPUT_EXHAUSTED
 
     @property
     def complete(self) -> bool:
-        return not self.stopped
+        """True only when the sample was filled: a walk that ran out of input with fewer
+        acceptances than needed is not complete, and the maintainer decides."""
+        return self.outcome == SAMPLE_FILLED
 
 
 def walk(
@@ -142,7 +177,10 @@ def walk(
 ) -> WalkLog:
     """Walks the candidates in the given order until ``needed`` are accepted. ``triage``
     may raise ``TransientError``; after the policy's retries the walk stops at that
-    candidate (decision ``stopped_transient``), for the maintainer."""
+    candidate (decision ``stopped_transient``), for the maintainer. The policy wraps the
+    whole triage of a candidate: a retry repeats every query of that candidate, which the
+    triage only reads, so a repeat changes nothing; its adapters raise ``TransientError``
+    through ``transient_query``."""
     if needed < 1:
         raise WalkError("needed must be at least 1")
     entries: list[WalkEntry] = []
@@ -161,7 +199,7 @@ def walk(
                     exc.attempts,
                 )
             )
-            return WalkLog(entries, accepted, stopped=True)
+            return WalkLog(entries, accepted, stopped=True, needed=needed)
         if not isinstance(result, TriageResult):
             raise WalkError("triage must return a TriageResult")
         entries.append(
@@ -170,8 +208,8 @@ def walk(
         if result.decision == ACCEPTED:
             accepted.append(arxiv_id)
             if len(accepted) == needed:
-                return WalkLog(entries, accepted, stopped=False)
-    return WalkLog(entries, accepted, stopped=False)
+                return WalkLog(entries, accepted, stopped=False, needed=needed)
+    return WalkLog(entries, accepted, stopped=False, needed=needed)
 
 
 def rejection_profile(log: WalkLog) -> dict[str, int]:
@@ -193,9 +231,14 @@ def log_markdown(log: WalkLog, labels: Sequence[str] = ()) -> str:
         attempts = "; ".join(f"{a.utc} {a.error}" for a in e.transient_attempts) or "-"
         cells = [str(e.position), e.arxiv_id, e.decision, e.reason, e.evidence or "-", attempts]
         lines.append("| " + " | ".join(cells) + " |")
+    lines.append("")
+    lines.append(f"Outcome: {log.outcome} ({len(log.accepted)} of {log.needed} accepted).")
     if log.stopped:
-        lines.append("")
         lines.append(
             "The walk stopped on transient errors; the maintainer decides how to continue."
+        )
+    elif log.outcome == INPUT_EXHAUSTED:
+        lines.append(
+            "The input ran out with fewer acceptances than needed; the maintainer decides."
         )
     return "\n".join([*labels, *lines]) + "\n"

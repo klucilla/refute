@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from refute.core.canonical import canonical_sha256
+from refute.selection.publication import PublicationProof
 
 FORMAT = "refute-ml-inventory-1"
 K = 3
@@ -114,8 +115,24 @@ class ClaimDraw:
         return not self.comparison_required
 
 
+def draw_published_claims(
+    inv: dict[str, Any], claim_seed_bytes: bytes, proof: PublicationProof
+) -> ClaimDraw:
+    """The claim draw of the WP7 flow: only after ``check_publication`` has given its
+    proof, and only for an inventory whose SHA-256 is one the proof covers (#59, Codex
+    review of #82). The inventory files are stored in canonical JSON, so the hash of the
+    file in the commit is ``inventory_sha256``."""
+    if not isinstance(proof, PublicationProof):
+        raise InventoryError("the claim draw needs the publication proof of check_publication")
+    digest = inventory_sha256(inv)
+    if digest not in {d for _, d in proof.inventory_hashes}:
+        raise InventoryError("this inventory is not one the publication proof covers")
+    return draw_claims(inv, claim_seed_bytes)
+
+
 def draw_claims(inv: dict[str, Any], claim_seed_bytes: bytes) -> ClaimDraw:
-    """The claim draw of plan section 5.2, item 4."""
+    """The claim draw of plan section 5.2, item 4. The WP7 flow calls it only through
+    ``draw_published_claims``, after the publication proof."""
     digest = inventory_sha256(inv)
     arxiv_id = inv["paper"]["arxiv_id"]
     by_id = {c["candidate_id"]: c for c in inv["candidates"]}

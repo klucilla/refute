@@ -8,10 +8,20 @@ the GitHub API. The inventories live in a path that the CI ``paths-ignore`` list
 not skip, so that the push starts a run.
 
 The proof holds only when that run exists, is for that exact SHA, was started by a
-push, and was created before the claim round's publication time by at least the margin
-fixed in the protocol; and when the working tree was clean and every inventory file in
-that commit has the published hash. Anything else makes the round unusable for those
-inventories: the draw is refused and the maintainer decides.
+push, belongs to the expected repository and workflow file, and was created before the
+claim round's publication time by at least the margin fixed in the protocol; and when
+the working tree was clean and every inventory file in that commit has the published
+hash. Anything else makes the round unusable for those inventories: the draw is refused
+and the maintainer decides.
+
+**Re-runs.** A re-run of a workflow keeps the run's ``id`` and ``created_at`` and raises
+its ``run_attempt``; ``run_started_at`` changes (observed on this repository's run
+38896912610 on 2026-10-17: ``created_at`` 2026-10-16T11:54:40Z, ``run_attempt`` 2,
+``run_started_at`` 2026-10-16T12:31:11Z). So the proof uses ``created_at`` only, records
+the attempt, and a re-run is never a new publication (#59, Codex review of #82).
+
+**Paging.** The runs are listed with ``per_page=100`` and every page is read until the
+API's ``total_count`` is reached; a short or inconsistent listing is refused.
 """
 
 from __future__ import annotations
@@ -21,6 +31,10 @@ from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
+
+PER_PAGE = 100
+REPOSITORY = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
+WORKFLOW_PATH = re.compile(r"\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml")
 
 
 class PublicationError(Exception):
@@ -40,6 +54,29 @@ class PublicationProof:
     run_created_at: str
     round_published_at: str  # converted to UTC
     margin_seconds: float
+    repository: str
+    workflow_path: str
+    run_attempt: int
+    # the published SHA-256 of each required inventory, sorted by name
+    inventory_hashes: tuple[tuple[str, str], ...] = ()
+
+
+def _full_name(value: Any) -> str | None:
+    return value.get("full_name") if isinstance(value, Mapping) else None
+
+
+def _check_identity(run: Mapping[str, Any], repository: str, workflow_path: str) -> None:
+    """A run counts only for the expected repository (its own and its head repository,
+    so a fork's run is never evidence) and the expected workflow file."""
+    if _full_name(run.get("repository")) != repository:
+        raise PublicationError(f"run {run.get('id')}: not a run of {repository}")
+    if _full_name(run.get("head_repository")) != repository:
+        raise PublicationError(f"run {run.get('id')}: its head repository is not {repository}")
+    if run.get("path") != workflow_path:
+        raise PublicationError(f"run {run.get('id')}: not a run of the workflow {workflow_path}")
+    attempt = run.get("run_attempt")
+    if not isinstance(attempt, int) or isinstance(attempt, bool) or attempt < 1:
+        raise PublicationError(f"run {run.get('id')}: run_attempt must be a positive integer")
 
 
 def check_publication(
@@ -51,13 +88,23 @@ def check_publication(
     files_in_commit: Mapping[str, str],
     published_hashes: Mapping[str, str],
     required_inventories: Collection[str],
+    *,
+    repository: str,
+    workflow_path: str,
 ) -> PublicationProof:
-    """``runs``: the GitHub API ``workflow_runs`` for ``head_sha = commit_sha``.
-    ``files_in_commit``: SHA-256 of each inventory file as stored in that commit;
-    ``published_hashes``: the hashes published with the inventories, one per required
-    inventory (never empty: every inventory the draw needs must be covered)."""
+    """``runs``: the GitHub API ``workflow_runs`` for ``head_sha = commit_sha``
+    (``fetch_push_runs``). ``files_in_commit``: SHA-256 of each inventory file as stored
+    in that commit; ``published_hashes``: the hashes published with the inventories, one
+    per required inventory (never empty: every inventory the draw needs must be covered).
+    ``repository`` (``owner/name``) and ``workflow_path`` (for example
+    ``.github/workflows/ci.yml``) are fixed in the protocol: a run of another repository,
+    of a fork or of another workflow is never evidence."""
     if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
         raise PublicationError("the commit SHA must be 40 lowercase hex digits")
+    if not REPOSITORY.fullmatch(repository):
+        raise PublicationError("repository must be owner/name")
+    if not WORKFLOW_PATH.fullmatch(workflow_path):
+        raise PublicationError("workflow_path must be .github/workflows/<file>.yml")
     if round_published_at.tzinfo is None:
         raise PublicationError("the round time must be timezone-aware (UTC)")
     if margin < timedelta(0):
@@ -83,11 +130,18 @@ def check_publication(
             raise PublicationError(f"inventory {name} is not in the commit of the evidence")
         if files_in_commit[name] != digest:
             raise PublicationError(f"inventory {name} differs from its published hash")
-    pushes = [r for r in runs if r.get("event") == "push" and r.get("head_sha") == commit_sha]
     if any(r.get("head_sha") != commit_sha for r in runs):
         raise PublicationError("evidence for another SHA")
+    pushes = [r for r in runs if r.get("event") == "push"]
     if not pushes:
         raise PublicationError("no GitHub Actions run started by the push of that commit")
+    ids = [r.get("id") for r in pushes]
+    if len(set(ids)) != len(ids):
+        raise PublicationError("the listing repeats a run")
+    for r in pushes:
+        _check_identity(r, repository, workflow_path)
+    # the earliest creation among the push runs of this SHA and workflow; created_at, never
+    # run_started_at, so a re-run (same id, a higher run_attempt) never moves the time
     first = min(pushes, key=lambda r: _utc(r.get("created_at", "")))
     created = _utc(first["created_at"])
     if created + margin > round_published_at:
@@ -101,21 +155,45 @@ def check_publication(
         first["created_at"],
         round_published_at.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         margin.total_seconds(),
+        repository,
+        workflow_path,
+        int(first["run_attempt"]),
+        tuple(sorted((name, str(digest)) for name, digest in published_hashes.items())),
     )
 
 
 def fetch_push_runs(
     repository: str, commit_sha: str, get_json: Callable[[str], Mapping[str, Any]]
 ) -> list[Mapping[str, Any]]:
-    """The workflow runs of ``commit_sha`` from the GitHub API (network through
-    ``get_json``, so tests run offline). Errors propagate: missing evidence is never
-    assumed."""
-    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
+    """Every workflow run of ``commit_sha`` started by a push, from the GitHub API (network
+    through ``get_json``, so tests run offline), reading every page. Errors propagate:
+    missing evidence is never assumed."""
+    if not REPOSITORY.fullmatch(repository):
         raise PublicationError("repository must be owner/name")
-    data = get_json(
-        f"https://api.github.com/repos/{repository}/actions/runs?head_sha={commit_sha}&event=push"
-    )
-    runs = data.get("workflow_runs")
-    if not isinstance(runs, list):
-        raise PublicationError("the API answer has no workflow_runs")
+    if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
+        raise PublicationError("the commit SHA must be 40 lowercase hex digits")
+    runs: list[Mapping[str, Any]] = []
+    total: int | None = None
+    page = 1
+    while True:
+        data = get_json(
+            f"https://api.github.com/repos/{repository}/actions/runs"
+            f"?head_sha={commit_sha}&event=push&per_page={PER_PAGE}&page={page}"
+        )
+        batch = data.get("workflow_runs")
+        count = data.get("total_count")
+        if not isinstance(batch, list):
+            raise PublicationError("the API answer has no workflow_runs")
+        if not isinstance(count, int) or isinstance(count, bool) or count < 0:
+            raise PublicationError("the API answer has no total_count")
+        if total is None:
+            total = count
+        elif count != total:
+            raise PublicationError("total_count changed while the pages were read")
+        runs.extend(batch)
+        if len(runs) >= total or not batch:
+            break
+        page += 1
+    if len(runs) != total:
+        raise PublicationError(f"read {len(runs)} runs, the API counts {total}")
     return runs
