@@ -114,6 +114,15 @@ def _verify_structure_problems(lock: dict[str, Any]) -> list[str]:
     code = lock.get("code")
     if not isinstance(code, dict) or not isinstance(code.get("sha256"), str):
         problems.append("the lock file has no string 'code.sha256'")
+    records = lock.get("attachments")
+    if not isinstance(records, list) or not all(
+        isinstance(a, dict) and isinstance(a.get("path"), str) and isinstance(a.get("sha256"), str)
+        for a in records
+    ):
+        problems.append(
+            "the lock file's 'attachments' is not a list of objects with a string 'path' "
+            "and 'sha256'"
+        )
     return problems
 
 

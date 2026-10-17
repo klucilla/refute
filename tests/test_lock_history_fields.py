@@ -279,6 +279,40 @@ def test_a_repeated_field_that_is_not_shared_is_a_difference_too(tmp_path, line)
     assert any(f"writes '{name}' more than once" in m for m in result.messages), result.messages
 
 
+@pytest.mark.parametrize(
+    "change",
+    ["not a list", "path missing", "sha256 missing", "path a number", "sha256 null"],
+)
+def test_malformed_attachments_in_the_lock_file_are_fail_not_an_error(tmp_path, change):
+    notes = tmp_path / "notes.txt"
+    notes.write_text("notes\n", encoding="utf-8")
+    claim = write_yaml(
+        tmp_path / "claim.yaml",
+        replicate_claim(
+            [target_entry(1, "planet", 3.7)], attachments=[{"path": "notes.txt", "role": "notes"}]
+        ),
+    )
+    create_lock(claim)
+    data = json.loads(lock_path_for(claim).read_text(encoding="utf-8"))
+    record = data["attachments"][0]
+    if change == "not a list":
+        data["attachments"] = "notes.txt"
+    elif change == "path missing":
+        del record["path"]
+    elif change == "sha256 missing":
+        del record["sha256"]
+    elif change == "path a number":
+        record["path"] = 7
+    else:
+        record["sha256"] = None
+    lock_path_for(claim).write_text(json.dumps(data), encoding="utf-8")
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.FAIL
+    assert any("'attachments' is not a list of objects" in m for m in result.messages), (
+        result.messages
+    )
+
+
 def test_create_lock_still_reads_a_malformed_previous_lock_as_before(tmp_path):
     """read_lock is not stricter: a previous lock without claim_path still gives its
     claim_sha256 to a forced re-lock (the Codex review of #130, round 2)."""
