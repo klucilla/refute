@@ -95,10 +95,52 @@ of this file is the evidence of when each lock happened.
 Recomputes the claim hash, every attachment hash and the code hash, and checks
 that the lock is the latest `LOCK_HISTORY.md` entry for that claim.
 
+### What verify compares with the history (issue #65)
+
+The latest entry for the claim (selected by its `claim_path`) must record exactly the
+lock: every field the entry shares with the lock file is compared, each by its rule.
+There is no normalization of case, whitespace, Unicode or paths: the lock's value is
+turned into the text `refute lock` writes, and the two texts must be equal.
+
+| Entry field | Lock file field | Rule |
+|---|---|---|
+| `locked_at_utc` (the heading) | `locked_at_utc` | a string, as is |
+| `claim_id` | `claim_id` | a string, as is |
+| `claim_sha256` | `claim_sha256` | a string, as is (lowercase hex as written) |
+| `attachments` | `attachments` | a list of objects with a string `path` and `sha256`, written `path=sha256` joined by `, ` in the lock's order; `none` when empty |
+| `code_sha256` | `code.sha256` | a string, as is |
+| `git_commit` | `git_commit` | a string, or null; null or an empty string is written `none` |
+| `git_dirty` | `git_dirty` | `true`, `false` or null, written `true`, `false` or `none` |
+| `refute_version` | `refute_version` | a string, as is |
+
+`action`, `previous_claim_sha256` and `reason` have no counterpart in the lock file and
+are not compared. **A missing field is never skipped:** a field missing from the lock
+file, from the entry, or from both is a difference (one per missing side), and so is a
+lock value of a type its rule does not accept. Any difference makes `verify` `FAIL`, and
+its message names each field.
+
+- **The history is read literally.** No whitespace is removed from a value or from the
+  heading; any field written twice in an entry, shared or not (a bullet that repeats the
+  heading's `locked_at_utc` or `claim`, and a second `reason`, included), is a
+  difference, never replaced by another value.
+- **Ambiguous attachments.** When an attachment path in the lock file holds `, `, `=` or a
+  line break, two different lists could give the same text, so the comparison reports a
+  difference for `attachments`. `refute lock` still writes such a lock as before.
+- **The lock file itself.** For `verify`, a lock file without a string `claim_path` or
+  `code.sha256`, or whose `attachments` or `code.files` (when present) is not a list of
+  objects with a string `path` and `sha256`, is `FAIL`, with the field named. `refute
+  lock` reads an existing lock as before.
+- **An unreadable `LOCK_HISTORY.md`** (not UTF-8, or a read error) is `FAIL` with the
+  reason; `TAMPERED` still takes precedence.
+
+This comparison only reads the lock file and `LOCK_HISTORY.md`; it never rewrites
+either. The two historical locks (v0.1 and v0.2) match every shared field of their
+entries (`tests/test_lock_history_fields.py`).
+
 | Exit code | Status | Meaning |
 |---|---|---|
-| 0 | `PASS` | Every hash matches and the lock is the latest history entry. |
-| 1 | `FAIL` | No lock, unreadable lock, invalid claim, missing attachment, or lock not recorded as the latest history entry. |
+| 0 | `PASS` | Every hash matches and the lock is the latest history entry, which records every shared field exactly. |
+| 1 | `FAIL` | No lock, unreadable lock, invalid claim, missing attachment, lock not recorded as the latest history entry, or a shared field of that entry that differs or is missing. |
 | 2 | `TAMPERED` | The claim, an attachment or the code differs from the lock. The output names the component and the changed files. |
 
 `TAMPERED` takes precedence over `FAIL`. `refute replicate` and `refute calibrate`

@@ -66,6 +66,7 @@ function Get-ScriptPreview([string]$Path) {
 
 $out['Preview'] = Get-ScriptPreview $register
 $out['PreviewListener'] = Get-ScriptPreview (Join-Path $vmDir 'Remove-RefuteWinRmListener.ps1')
+$out['PreviewVmTree'] = Get-ScriptPreview (Join-Path $vmDir 'Set-RefuteVmTreeAcl.ps1')
 # negative checks: the collector sees a dynamic command and a file redirection
 $probe = [System.Management.Automation.Language.Parser]::ParseInput("& `$someCommand`nWrite-Output 'probe' > `$somewhere", [ref]$null, [ref]$null)
 $probeSurface = Get-PreviewSurface @($probe.FindAll({ param($n) $true }, $true))
@@ -405,6 +406,98 @@ $fw = @(
 $found = @(Find-RefuteBlockOverrides $fw)
 Add-Case 'only enabled inbound bypass rules are found' ($found.Count -eq 1 -and $found[0] -eq 'bypass-in') ($found -join ',')
 Add-Case 'no bypass rule, nothing found' (@(Find-RefuteBlockOverrides @($fw[0], $fw[2], $fw[3])).Count -eq 0)
+
+# The ACL of the VM tree: SetHostPaths failed through the endpoint with version 1 on
+# 2026-10-16 (access denied); version 2 lets Hyper-V Administrators change permissions and
+# gives the Virtual Machines group the entries of the default folder of Windows. Windows
+# only: PowerShell on Linux has no DirectorySecurity (the Windows jobs run these cases).
+if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+$tree1 = @(Get-RefuteVmTreeAclSpec -Version 1)
+$tree2 = @(Get-RefuteVmTreeAclSpec -Version 2)
+$acl1 = New-RefuteFolderAcl $tree1
+$acl2 = New-RefuteFolderAcl $tree2
+Add-Case 'VM tree ACL: version 2 matches its spec' (@(Compare-RefuteVmTreeAcl -Acl $acl2 -Spec $tree2).Count -eq 0) (@(Compare-RefuteVmTreeAcl -Acl $acl2 -Spec $tree2) -join '; ')
+Add-Case 'VM tree ACL: version 1 matches its spec' (@(Compare-RefuteVmTreeAcl -Acl $acl1 -Spec $tree1).Count -eq 0)
+Add-Case 'VM tree ACL: version 1 is not version 2' (@(Compare-RefuteVmTreeAcl -Acl $acl1 -Spec $tree2).Count -gt 0)
+$fsr = [System.Security.AccessControl.FileSystemRights]
+$changePermissions = [int]$fsr::ChangePermissions
+$takeOwnership = [int]$fsr::TakeOwnership
+function Get-RuleRights([string]$Rule) { return [int]($Rule.Split(' ')[2]) }
+$hv1 = @(ConvertTo-RefuteAclRules $acl1 | Where-Object { $_ -like 'Allow S-1-5-32-578 *' })
+$hv2 = @(ConvertTo-RefuteAclRules $acl2 | Where-Object { $_ -like 'Allow S-1-5-32-578 *' })
+Add-Case 'VM tree ACL: version 1 gives Hyper-V Administrators no ChangePermissions (the cause)' ($hv1.Count -eq 1 -and ((Get-RuleRights $hv1[0]) -band $changePermissions) -eq 0) ($hv1 -join '; ')
+Add-Case 'VM tree ACL: version 2 gives Hyper-V Administrators ChangePermissions, inherited by folders and files, and no TakeOwnership' (
+    $hv2.Count -eq 1 -and ((Get-RuleRights $hv2[0]) -band $changePermissions) -ne 0 -and ((Get-RuleRights $hv2[0]) -band $takeOwnership) -eq 0 -and
+    $hv2[0].EndsWith(' ContainerInherit, ObjectInherit None explicit')) ($hv2 -join '; ')
+$vmGroup = @(ConvertTo-RefuteAclRules $acl2 | Where-Object { $_ -like 'Allow S-1-5-83-0 *' })
+$replace = [int]($fsr::Delete -bor $fsr::DeleteSubdirectoriesAndFiles -bor $fsr::ChangePermissions -bor $fsr::TakeOwnership -bor $fsr::WriteAttributes -bor $fsr::WriteExtendedAttributes)
+# .NET merges the entry of the folder and the one inherited by the folders below (same
+# rights) into one entry that applies to both: two entries in all, the same effect
+Add-Case 'VM tree ACL: the Virtual Machines group lists and creates in folders, reads files, and can never delete, rewrite attributes or change permissions' (
+    $vmGroup.Count -eq 2 -and @($vmGroup | Where-Object { ((Get-RuleRights $_) -band $replace) -ne 0 }).Count -eq 0 -and
+    @($vmGroup | Where-Object { $_.EndsWith(' ContainerInherit None explicit') -and ((Get-RuleRights $_) -band [int]$fsr::CreateFiles) -ne 0 }).Count -eq 1 -and
+    @($vmGroup | Where-Object { $_.EndsWith(' ObjectInherit InheritOnly explicit') -and ((Get-RuleRights $_) -band [int]($fsr::CreateFiles -bor $fsr::AppendData)) -eq 0 }).Count -eq 1) ($vmGroup -join '; ')
+Add-Case 'VM tree ACL: only SYSTEM, Administrators, Hyper-V Administrators and Virtual Machines' (
+    @(ConvertTo-RefuteAclRules $acl2 | Where-Object { @('S-1-5-18', 'S-1-5-32-544', 'S-1-5-32-578', 'S-1-5-83-0') -notcontains $_.Split(' ')[1] }).Count -eq 0)
+$otherOwner = New-RefuteFolderAcl $tree2
+$otherOwner.SetOwner((New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-545'))
+Add-Case 'VM tree ACL: another owner is a difference' (@(@(Compare-RefuteVmTreeAcl -Acl $otherOwner -Spec $tree2) -like '*owner*').Count -eq 1)
+$unprotected = New-RefuteFolderAcl $tree2
+$unprotected.SetAccessRuleProtection($false, $false)
+Add-Case 'VM tree ACL: an inheriting DACL is a difference' (@(@(Compare-RefuteVmTreeAcl -Acl $unprotected -Spec $tree2) -like '*inherits*').Count -eq 1)
+$widened = New-RefuteFolderAcl $tree2
+$widened.AddAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule(
+            (New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-545'), 'Modify',
+            [System.Security.AccessControl.InheritanceFlags]'ContainerInherit, ObjectInherit',
+            [System.Security.AccessControl.PropagationFlags]::None, [System.Security.AccessControl.AccessControlType]::Allow)))
+Add-Case 'VM tree ACL: an extra entry is a difference' (@(@(Compare-RefuteVmTreeAcl -Acl $widened -Spec $tree2) -like 'unexpected entry: Allow S-1-5-32-545 *').Count -eq 1)
+
+# The folders below C:\Hyper-V (Codex review of #126): each must inherit exactly what the
+# tree's ACL passes down, compared by effect. The synthetic ACLs are written as Windows
+# writes inherited entries (the ID flag): SYSTEM and Administrators full control; Hyper-V
+# Administrators Modify (0x1301bf), or Modify and ChangePermissions (0x1701bf); the Virtual
+# Machines group list and create on folders (0x12008f) and read on files (0x120089).
+function New-BelowAcl([string]$Aces, [bool]$Protected = $false) {
+    $acl = New-Object System.Security.AccessControl.DirectorySecurity
+    $acl.SetSecurityDescriptorSddlForm('O:BAD:' + $(if ($Protected) { 'P' } else { 'AI' }) + $Aces)
+    return $acl
+}
+$below1 = '(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;0x1301bf;;;S-1-5-32-578)'
+$below2 = '(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;0x1701bf;;;S-1-5-32-578)(A;CIID;0x12008f;;;S-1-5-83-0)(A;OIIOID;0x120089;;;S-1-5-83-0)'
+foreach ($depth in 1, 2) {
+    $d1 = @(Compare-RefuteVmTreeBelow -Acl (New-BelowAcl $below1) -Spec $tree1 -Depth $depth)
+    Add-Case "VM tree below: a folder inheriting version 1 matches version 1 at depth $depth" ($d1.Count -eq 0) ($d1 -join '; ')
+    $d2 = @(Compare-RefuteVmTreeBelow -Acl (New-BelowAcl $below2) -Spec $tree2 -Depth $depth)
+    Add-Case "VM tree below: a folder inheriting version 2 matches version 2 at depth $depth" ($d2.Count -eq 0) ($d2 -join '; ')
+}
+$old = @(Compare-RefuteVmTreeBelow -Acl (New-BelowAcl $below1) -Spec $tree2 -Depth 1)
+Add-Case 'VM tree below: a folder still inheriting version 1 is not version 2 (the post-check fails)' (
+    @($old -like 'missing effect: Allow S-1-5-32-578 *').Count -gt 0 -and @($old -like 'missing effect: Allow S-1-5-83-0 *').Count -gt 0) ($old -join '; ')
+$wider = @(Compare-RefuteVmTreeBelow -Acl (New-BelowAcl ($below1 + '(A;OICIID;0x1301bf;;;BU)')) -Spec $tree1 -Depth 1)
+Add-Case 'VM tree below: an extra inherited entry is a difference (the pre-check fails)' (@($wider -like 'unexpected effect: Allow S-1-5-32-545 *').Count -eq 3) ($wider -join '; ')
+$own = @(Compare-RefuteVmTreeBelow -Acl (New-BelowAcl ('(A;OICI;0x1301bf;;;BU)' + $below1)) -Spec $tree1 -Depth 1)
+Add-Case 'VM tree below: an explicit entry is a difference' (@($own -like 'explicit entry: Allow S-1-5-32-545 *').Count -eq 1) ($own -join '; ')
+$cut = @(Compare-RefuteVmTreeBelow -Acl (New-BelowAcl '(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1301bf;;;S-1-5-32-578)' $true) -Spec $tree1 -Depth 1)
+Add-Case 'VM tree below: a folder that does not inherit is a difference' (@($cut -like '*does not inherit*').Count -eq 1 -and @($cut -like 'explicit entry: *').Count -eq 3) ($cut -join '; ')
+$narrower = @(Compare-RefuteVmTreeBelow -Acl (New-BelowAcl '(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;CIID;0x1301bf;;;S-1-5-32-578)') -Spec $tree1 -Depth 1)
+Add-Case 'VM tree below: an entry that no longer reaches the files is a difference' (@($narrower -like 'missing effect: Allow S-1-5-32-578 files *').Count -eq 1) ($narrower -join '; ')
+# the effect does not depend on how the entries are split
+$split = @(ConvertTo-RefuteAclEffect @((New-BelowAcl '(A;;0x12008f;;;S-1-5-83-0)(A;CIIO;0x12008f;;;S-1-5-83-0)').GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier])))
+$merged = @(ConvertTo-RefuteAclEffect @((New-BelowAcl '(A;CI;0x12008f;;;S-1-5-83-0)').GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier])))
+Add-Case 'ACL effect: split and merged entries with the same rights have the same effect' (($split -join '|') -ceq ($merged -join '|') -and $split.Count -eq 2) (($split -join '; ') + ' / ' + ($merged -join '; '))
+# NoPropagateInherit: the entry reaches the first level only
+$sid578 = New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-578'
+$np = [pscustomobject]@{ AccessControlType = 'Allow'; IdentityReference = $sid578; FileSystemRights = 0x1301bf
+    InheritanceFlags = [System.Security.AccessControl.InheritanceFlags]'ContainerInherit, ObjectInherit'; PropagationFlags = [System.Security.AccessControl.PropagationFlags]::NoPropagateInherit }
+$npEffect = @(ConvertTo-RefuteAclEffect @($np))
+Add-Case 'ACL effect: NoPropagateInherit is shown as the first level only' (($npEffect -join '|') -ceq 'Allow S-1-5-32-578 child-files 1245631|Allow S-1-5-32-578 child-folders 1245631|Allow S-1-5-32-578 folder 1245631') ($npEffect -join '; ')
+$npChild = @(ConvertTo-RefuteAclEffect @(Get-RefuteChildRules @($np)))
+Add-Case 'ACL effect: a child of a NoPropagateInherit entry gets it on itself only' (($npChild -join '|') -ceq 'Allow S-1-5-32-578 folder 1245631') ($npChild -join '; ')
+$oiOnly = [pscustomobject]@{ AccessControlType = 'Allow'; IdentityReference = $sid578; FileSystemRights = 0x120089
+    InheritanceFlags = [System.Security.AccessControl.InheritanceFlags]::ObjectInherit; PropagationFlags = [System.Security.AccessControl.PropagationFlags]::None }
+$oiChild = @(ConvertTo-RefuteAclEffect @(Get-RefuteChildRules @($oiOnly)))
+Add-Case 'ACL effect: a files-only entry passes to a child folder for its files only' (($oiChild -join '|') -ceq 'Allow S-1-5-32-578 files 1179785') ($oiChild -join '; ')
+}
 
 # Hyper-V module manifest: both layouts (the maintainer's first preview did not find the
 # version subfolder of Windows 10 and 11)

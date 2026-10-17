@@ -180,7 +180,11 @@ $FolderAcls = [ordered]@{
     (Join-Path $DataRoot 'State')       = @(@($SidSystem, 'FullControl', $true), @($SidAdmins, 'FullControl', $true),
                                             @($SidHyperVAdmins, 'Modify', $true), @($SidUsers, 'ReadAndExecute', $true))
 }
-$VmTreeAcl = @(@($SidSystem, 'FullControl', $true), @($SidAdmins, 'FullControl', $true), @($SidHyperVAdmins, 'Modify', $true))
+# The VM tree (version 2 of Get-RefuteVmTreeAclSpec): Hyper-V Administrators may also change
+# permissions, and the Virtual Machines group gets the entries of the Windows default
+# folder, since the Hyper-V management service changes permissions with the identity of
+# its caller (SetHostPaths failed with version 1 on 2026-10-16; jea-registration.md).
+$VmTreeAcl = @(Get-RefuteVmTreeAclSpec -Version 2)
 
 # ---- preconditions ------------------------------------------------------------------
 $problems = New-Object System.Collections.Generic.List[string]
@@ -305,7 +309,7 @@ foreach ($folder in $FolderAcls.Keys) {
     foreach ($e in $FolderAcls[$folder]) { $lines.Add(("       {0} {1}{2}" -f (Get-SidAccount $e[0]), $e[1], $(if ($e[2]) { '' } else { ' (this folder only)' }))) }
 }
 $lines.Add("     $($VmFolders -join ', ') (ACL on C:\Hyper-V, inherited below):")
-foreach ($e in $VmTreeAcl) { $lines.Add(("       {0} {1}" -f (Get-SidAccount $e[0]), $e[1])) }
+foreach ($e in $VmTreeAcl) { $lines.Add(("       {0} {1} ({2}; {3})" -f (Get-SidAccount $e.Sid), $e.Rights, $e.Inheritance, $e.Propagation)) }
 $lines.Add("3. Firewall rule $FirewallRuleName : inbound, block, TCP 5985 and 5986, all profiles, remote addresses $($NotLoopback -join ', ') (before WinRM starts)")
 $lines.Add("4. WinRM listeners in the registry now: " + $(if ($listeners.Count) { ($listeners | ForEach-Object { $_.Name }) -join ', ' } else { 'none' }))
 $lines.Add("5. WinRM service: startup $($winrm.StartType) -> Automatic; status $($winrm.Status) -> Running; add HTTP listeners (if missing): $($LoopbackListeners -join ', ')")
@@ -362,8 +366,17 @@ try {
         Set-Acl -LiteralPath $folder -AclObject (New-FolderAcl $FolderAcls[$folder])
     }
     [void][System.IO.Directory]::CreateDirectory($VmFolders[0])
-    Set-Acl -LiteralPath $VmFolders[0] -AclObject (New-FolderAcl $VmTreeAcl)
-    foreach ($folder in $VmFolders[1..($VmFolders.Count - 1)]) { [void][System.IO.Directory]::CreateDirectory($folder) }
+    Set-Acl -LiteralPath $VmFolders[0] -AclObject (New-RefuteFolderAcl $VmTreeAcl)
+    $treeProblems = @(Compare-RefuteVmTreeAcl -Acl (Get-Acl -LiteralPath $VmFolders[0]) -Spec $VmTreeAcl)
+    if ($treeProblems.Count) { throw ('the ACL of the VM tree differs from its spec: ' + ($treeProblems -join '; ')) }
+    foreach ($folder in $VmFolders[1..($VmFolders.Count - 1)]) {
+        [void][System.IO.Directory]::CreateDirectory($folder)
+        # each folder below inherits exactly what the tree's ACL passes down (compared by
+        # effect, Compare-RefuteVmTreeBelow), with no entry of its own
+        $depth = @($folder.Substring($VmFolders[0].Length).Split('\') | Where-Object { $_ }).Count
+        $belowProblems = @(Compare-RefuteVmTreeBelow -Acl (Get-Acl -LiteralPath $folder) -Spec $VmTreeAcl -Depth $depth)
+        if ($belowProblems.Count) { throw ("$folder does not inherit the ACL of the VM tree: " + ($belowProblems -join '; ')) }
+    }
     $done.Add('folders created')
     # 3. firewall, before WinRM starts
     New-NetFirewallRule -Name $FirewallRuleName -DisplayName 'Refute JEA: block WinRM from the network' `

@@ -9,14 +9,16 @@ passes. In phase 1 the VM has no network.
 **Not validated in operation yet.** What has been checked so far, and where:
 
 - **Synthetic tests:** the scripts are tested with synthetic inputs, without Windows administrator rights and without Hyper-V (tests/test_vm_scripts.py).
-- **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py).
+- **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py). Where the runner has the Hyper-V management service, `SetHostPaths` also runs for real through it, under each version of the `C:\Hyper-V` ACL; the runner is Windows Server, not the maintainer's host.
+  - **The test's remoting is wider than the real installation's.** On the runner the test runs `Enable-PSRemoting -Force -SkipNetworkProfileCheck`, which configures a listener on every address and a firewall exception, while the real installation keeps WinRM on loopback only, behind a block rule. That is acceptable only because the runner is discarded after the job; whether the runner was reachable from outside during the job was not measured. **The CI does not validate the network isolation of the real installation.**
+  - **The CI builds the ACLs itself** and checks the applier's preview only: it does not run a complete apply of `Set-RefuteVmTreeAcl.ps1`, nor the writing of its protected evidence.
 - **The maintainer's machine:**
   - the WinRM listener removal and the endpoint registration were run once, from `main` at `627842d`, with a first read-only check from the operator account. On 2026-10-16 the maintainer then:
     - repaired the installed module by hand: copied it to `RefuteVm\`, with no version subfolder, and removed `RefuteVm\0.1.0` (sections 5 and 6 of the record);
     - replaced the installed `RefuteVmOperator.psrc` with the one of `main` at `46fe0c2` (H.5). The session then opened from the operator account, ran as a virtual account and showed exactly the ten visible commands (section 7).
   - On 2026-10-16 the maintainer reinstalled the files changed by #118 (the role capability and two module files) from `main` at `57812ca`, with the hashes checked before and after, the same ACL and 6 files. The session then opened from the operator account with exactly the ten visible commands, and `Invoke-RefuteVm.ps1 -Status` completed: the configuration loaded, the six module hashes equal to `57812ca`, no VM, no base disk and no imported media (section 8 of the record).
   - The record is [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md).
-  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6). No VM operation has run yet.
+  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6). No VM operation has succeeded on the host yet: `SetHostPaths` was tried twice on 2026-10-16 and failed with access denied, with no change to the host (section 9 of the record).
 
 ## Who can do what
 
@@ -72,6 +74,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 | `RefuteVm/` | the endpoint | module: `RefuteVm.Core.ps1` (pure logic: configuration checks, plans, plan hash), `RefuteVm.HyperV.ps1` (observed state and the one mutation), `RefuteVm.psm1`, `RefuteVm.Config.psd1`, `RoleCapabilities/RefuteVmOperator.psrc` |
 | `Register-RefuteVmEndpoint.ps1` | the maintainer, as Administrator | registers the endpoint; without `-Apply`, only shows what would change |
 | `Remove-RefuteWinRmListener.ps1` | the maintainer, as Administrator | removes the WinRM listener `*+HTTP`, with a `.reg` backup in `C:\ProgramData\RefuteVm-backup`, with WinRM stopped; without `-Apply`, only shows the listener keys and what would change |
+| `Set-RefuteVmTreeAcl.ps1` | the maintainer, as Administrator | replaces the ACL of `C:\Hyper-V` set by the registration of 2026-10-15 with version 2 (after the failure of SetHostPaths, [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md) section 9); without `-Apply`, only shows the state of the tree and of the evidence folders and the ACL it would set; the evidence goes to a new file in `C:\ProgramData\RefuteVm\Log` that only SYSTEM and Administrators can change |
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |
@@ -189,7 +192,12 @@ order:
 2. creates `C:\ProgramData\RefuteVm\{Transcripts,Log,State}` and the `C:\Hyper-V`
    tree, owner Administrators, explicit ACLs (Transcripts: SYSTEM and Administrators
    only; Log and State: also Hyper-V Administrators modify, Users read; `C:\Hyper-V`:
-   SYSTEM and Administrators full control, Hyper-V Administrators modify);
+   version 2 of `Get-RefuteVmTreeAclSpec`, that is SYSTEM and Administrators full
+   control, Hyper-V Administrators modify and change permissions, and NT VIRTUAL
+   MACHINE\Virtual Machines as on the default folder of Windows: list and create in
+   folders, read files. The Hyper-V management service changes permissions with the
+   identity of its caller, so modify alone made SetHostPaths fail; a host registered
+   before this change gets version 2 with `Set-RefuteVmTreeAcl.ps1`);
 3. adds the firewall rule `Refute-JEA-Block-WinRM-Inbound` (inbound TCP 5985 and 5986
    blocked from every address except loopback, on every profile) **before WinRM is
    started**, and checks that it is in the active policy, that every profile is
