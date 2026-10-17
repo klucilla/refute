@@ -183,6 +183,11 @@ By the maintainer's decision of 2026-10-17, the battery of section 3 (V1 to V22)
 W6.1 to W6.6 are replaced by **one isolation test**, run once at the end of phase 2:
 `scripts/vm/isolation/run_isolation.py` (host side, from a saved `-Status`) and
 `scripts/vm/isolation/guest_checks.sh` (guest side, through SSH with the checked host key).
+Every SSH of Refute to its VMs uses the client options of `SSH_OPTIONS` in
+`run_isolation.py`: the key exchange pinned to `curve25519-sha256` (the host's
+OpenSSH_for_Windows 9.5p2 fails the default one with OpenSSH 10.2p1), no user or system
+configuration, the checked known_hosts file only, ED25519 host keys, and no forwarding
+(decided with Codex on 2026-10-17; jea-registration.md section 21).
 **Its approval is the condition for running third-party code.** It needs no state with
 fewer ACLs than a profile: an allowed port and a listening port outside the list on the
 same target show that the block comes from the port ACLs.

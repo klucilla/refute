@@ -32,6 +32,29 @@ HERE = Path(__file__).resolve().parent
 KEY = Path(r"C:\Projetos\refute\.cache\vm\ssh\refute_vm_ed25519")
 VM = "refute@10.231.71.2"
 GSI_NAMES = ("Guest Service Interface", "Interface de Servi\u00e7o de Convidado")
+# The client options of every SSH of Refute to its VMs. The host's client
+# (OpenSSH_for_Windows 9.5p2, LibreSSL 3.8.2) fails the default key exchange with the
+# guests' OpenSSH 10.2p1 ("choose_kex: unsupported KEX method
+# sntrup761x25519-sha512@openssh.com", observed by the maintainer on 2026-10-17); the key
+# exchange is pinned to curve25519-sha256 (RFC 8731). That client offers neither SNTRUP
+# nor ML-KEM (`ssh -Q kex`; PowerShell/Win32-OpenSSH issue 2140, read 2026-10-17), so the
+# post-quantum risk is accepted, reduced (not removed) by a switch that only the host and
+# the VMs share. Codex review of 2026-10-17: no user or system configuration (-F none), the
+# checked known_hosts file only, the host key type pinned to ED25519 (the identity comes
+# from that file), the given key file only, and no agent, X11 or port forwarding to a VM
+# that runs third-party code.
+SSH_OPTIONS = (
+    "-F", "none",
+    "-o", "KexAlgorithms=curve25519-sha256",
+    "-o", "HostKeyAlgorithms=ssh-ed25519",
+    "-o", "StrictHostKeyChecking=yes",
+    "-o", "GlobalKnownHostsFile=none",
+    "-o", "BatchMode=yes",
+    "-o", "IdentitiesOnly=yes",
+    "-o", "ForwardAgent=no",
+    "-o", "ForwardX11=no",
+    "-o", "ClearAllForwardings=yes",
+)  # fmt: skip
 
 
 def build_profile() -> list[dict]:
@@ -112,8 +135,7 @@ def host_checks(status: dict) -> list[tuple[str, bool, str]]:
 def guest_checks(known_hosts: Path, image: str) -> tuple[list[tuple[str, bool, str]], str]:
     script = (HERE / "guest_checks.sh").read_bytes()
     cmd = [
-        "ssh", "-i", str(KEY), "-o", f"UserKnownHostsFile={known_hosts}",
-        "-o", "StrictHostKeyChecking=yes", "-o", "BatchMode=yes", VM,
+        "ssh", "-i", str(KEY), "-o", f"UserKnownHostsFile={known_hosts}", *SSH_OPTIONS, VM,
         f"ISOLATION_IMAGE='{image}' bash -s",
     ]  # fmt: skip
     out = subprocess.run(cmd, input=script, capture_output=True, timeout=900)
