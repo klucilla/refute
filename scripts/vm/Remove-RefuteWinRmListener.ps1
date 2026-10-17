@@ -14,9 +14,11 @@ it recomputes the list, refuses if it differs from the preview, and then, in thi
 order, stopping at the first problem:
 
   1. creates C:\ProgramData\RefuteVm-backup (owner Administrators; only SYSTEM and
-     Administrators have access), unless it exists with that protection;
-  2. exports the key "*+HTTP" with reg.exe to a .reg file there (the file must not exist)
-     and checks that the export holds exactly that key;
+     Administrators have access, each with full control of the folder and its files),
+     unless it exists with that protection;
+  2. exports the key "*+HTTP" with reg.exe to a new file of a unique name there, checks
+     that the export holds exactly that key, and moves it to the backup name, which must
+     not exist: nothing is overwritten and reg.exe never asks;
   3. checks again that the WinRM service is stopped, and deletes only the key "*+HTTP";
   4. checks that the key is gone, that every remaining listener is HTTP on 127.0.0.1 or
      ::1, and that the WinRM service is still stopped.
@@ -69,20 +71,42 @@ function Read-RefuteListeners {
     } finally { $root.Close() }
 }
 
-function Get-RefuteBackupProblems {
-    # The backup folder, when it exists, must be owned by Administrators and give access to
-    # SYSTEM and Administrators only, with inheritance removed.
-    if (-not (Test-Path -LiteralPath $BackupRoot)) { return @() }
-    # owner and entries compared by SID (ConvertTo-RefuteAclEntries), never by name
-    $acl = Get-Acl -LiteralPath $BackupRoot
-    $sids = ConvertTo-RefuteAclEntries $acl
+function Get-RefuteBackupAclProblems {
+    # The ACL of the backup folder, read in memory: owned by Administrators, inheritance
+    # removed, access for SYSTEM and Administrators only and no deny entry, and each of the
+    # two with full control applied to the folder and inherited by its files and subfolders.
+    # A folder that is too restrictive would make the export of reg.exe fail; the check says
+    # why first (#59, Codex review of #90).
+    param($Acl, [string]$Path)
     $found = @()
-    if ($sids.Owner -ne $SidAdmins) { $found += "$BackupRoot is not owned by Administrators" }
-    if (-not $acl.AreAccessRulesProtected) { $found += "$BackupRoot inherits permissions" }
-    foreach ($entry in $sids.Entries) {
-        if (@($SidAdmins, $SidSystem) -notcontains $entry.Sid) { $found += "$BackupRoot gives access to $($entry.Sid)" }
+    $owner = [string]$Acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
+    if ($owner -ne $SidAdmins) { $found += "$Path is not owned by Administrators" }
+    if (-not $Acl.AreAccessRulesProtected) { $found += "$Path inherits permissions" }
+    $full = @{}
+    foreach ($rule in @($Acl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]))) {
+        $sid = [string]$rule.IdentityReference.Value
+        if (@($SidAdmins, $SidSystem) -notcontains $sid) { $found += "$Path gives access to $sid"; continue }
+        if ([string]$rule.AccessControlType -ne 'Allow') { $found += "$Path has a deny entry for $sid"; continue }
+        $rights = [int]$rule.FileSystemRights
+        $flags = [string]$rule.InheritanceFlags
+        $isFull = ($rights -band 2032127) -eq 2032127
+        $inherited = $flags -match 'ContainerInherit' -and $flags -match 'ObjectInherit'
+        $onFolder = [string]$rule.PropagationFlags -notmatch 'InheritOnly'
+        if ($isFull -and $inherited -and $onFolder) { $full[$sid] = $true }
+    }
+    foreach ($sid in $SidAdmins, $SidSystem) {
+        if (-not $full.ContainsKey($sid)) {
+            $found += "$Path does not give $sid full control of the folder and its files (the export would fail)"
+        }
     }
     return $found
+}
+
+function Get-RefuteBackupProblems {
+    # The backup folder, when it exists, must be owned by Administrators and give access to
+    # SYSTEM and Administrators only, with inheritance removed (Get-RefuteBackupAclProblems).
+    if (-not (Test-Path -LiteralPath $BackupRoot)) { return @() }
+    return @(Get-RefuteBackupAclProblems -Acl (Get-Acl -LiteralPath $BackupRoot) -Path $BackupRoot)
 }
 
 # ---- preconditions ------------------------------------------------------------------
@@ -118,7 +142,7 @@ if ($listeners.Count) {
     }
 } else { $lines.Add('  none') }
 $lines.Add("1. Backup folder $BackupRoot : " + $(if (Test-Path -LiteralPath $BackupRoot) { 'exists, protected (checked)' } else { 'create, owner Administrators, access SYSTEM and Administrators only, inheritance removed' }))
-$lines.Add("2. Export $TargetRegPath with reg.exe to $BackupFile (must not exist) and check the export holds exactly that key")
+$lines.Add("2. Export $TargetRegPath with reg.exe to a new file of a unique name in $BackupRoot, check the export holds exactly that key, and move it to $BackupFile, which must not exist (never overwritten, no prompt)")
 $lines.Add("3. Check the WinRM service is stopped, then delete only the key $Target")
 $lines.Add('4. Check the key is gone, every remaining listener is HTTP on 127.0.0.1 or ::1 (remaining: ' + $(if (@($removal.Remaining).Count) { $removal.Remaining -join ', ' } else { 'none' }) + '), and WinRM is still stopped')
 $sha = [System.Security.Cryptography.SHA256]::Create()
@@ -138,6 +162,14 @@ if ($problems.Count) {
 if (-not $Apply) { Write-Output "Preconditions hold. To apply: -Apply -PreviewSha256 $previewHash"; exit 0 }
 
 # ---- apply ------------------------------------------------------------------------------
+function Move-RefuteNewFile {
+    # Moves Source to Destination, which must not exist: File.Move refuses an existing
+    # destination, so nothing is overwritten, whoever created it meanwhile; Source then
+    # stays where it is, for the maintainer (#59, Codex review of #90).
+    param([string]$Source, [string]$Destination)
+    [System.IO.File]::Move($Source, $Destination)
+}
+
 $done = New-Object System.Collections.Generic.List[string]
 try {
     # 1. backup folder
@@ -157,12 +189,16 @@ try {
     }
     $check = @(Get-RefuteBackupProblems)
     if ($check.Count) { throw ('the backup folder is not protected: ' + ($check -join '; ')) }
-    # 2. export
-    $exportOutput = & $RegExe export $TargetRegPath $BackupFile 2>&1
+    # 2. export: to a new file of a unique name (reg.exe never meets an existing file, so it
+    # never asks), checked, then moved to the backup name, which must not exist
+    $partial = Join-Path $BackupRoot ('WSMAN-Listener-star-HTTP.' + [guid]::NewGuid().ToString('N') + '.partial')
+    if (Test-Path -LiteralPath $partial) { throw "$partial already exists" }
+    $exportOutput = & $RegExe export $TargetRegPath $partial 2>&1
     if ($LASTEXITCODE -ne 0) { throw "reg.exe export failed with exit code $LASTEXITCODE : $exportOutput" }
+    $exported = [System.IO.File]::ReadAllText($partial)
+    if (-not (Test-RefuteRegExport -Text $exported -KeyPath $TargetRegPath)) { throw "the export $partial does not hold exactly the key $TargetRegPath" }
+    Move-RefuteNewFile -Source $partial -Destination $BackupFile
     $done.Add("key exported to $BackupFile")
-    $exported = [System.IO.File]::ReadAllText($BackupFile)
-    if (-not (Test-RefuteRegExport -Text $exported -KeyPath $TargetRegPath)) { throw "the export $BackupFile does not hold exactly the key $TargetRegPath" }
     # 3. delete only the target key, with WinRM stopped
     if ([string](Get-Service -Name WinRM).Status -ne 'Stopped') { throw 'the WinRM service is no longer stopped' }
     $root = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($ListenerRoot, $true)

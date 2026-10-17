@@ -499,6 +499,8 @@ LISTENER_PREVIEW_COMMANDS = {
     "get-itemproperty",
     "get-refuteacewriters",
     "get-refuteancestorwriters",
+    # the backup folder's ACL, read in memory (#59, Codex review of #90)
+    "get-refutebackupaclproblems",
     "get-refutebackupproblems",
     "get-refutediscoveryproblems",
     "get-refuteitemproblems",
@@ -588,6 +590,7 @@ def test_the_listener_removal_preview_only_reads(cases):
 VMTREE_PREVIEW_COMMANDS = (
     LISTENER_PREVIEW_COMMANDS
     - {
+        "get-refutebackupaclproblems",
         "get-refutebackupproblems",
         "get-refutelistenerremoval",
         "read-refutelisteners",
