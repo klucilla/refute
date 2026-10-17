@@ -18,7 +18,9 @@ order, stopping at the first problem:
      unless it exists with that protection;
   2. exports the key "*+HTTP" with reg.exe to a new file of a unique name there, checks
      that the export holds exactly that key, and moves it to the backup name, which must
-     not exist: nothing is overwritten and reg.exe never asks;
+     not exist: nothing is overwritten, and reg.exe, whose input is empty, never waits on a
+     question. The whole apply holds a named mutex, so two instances never write the
+     folder at the same time;
   3. checks again that the WinRM service is stopped, and deletes only the key "*+HTTP";
   4. checks that the key is gone, that every remaining listener is HTTP on 127.0.0.1 or
      ::1, and that the WinRM service is still stopped.
@@ -91,7 +93,9 @@ function Get-RefuteBackupAclProblems {
         $flags = [string]$rule.InheritanceFlags
         $isFull = ($rights -band 2032127) -eq 2032127
         $inherited = $flags -match 'ContainerInherit' -and $flags -match 'ObjectInherit'
-        $onFolder = [string]$rule.PropagationFlags -notmatch 'InheritOnly'
+        # propagation None: the entry applies to the folder and to everything below it
+        # (neither InheritOnly nor NoPropagateInherit)
+        $onFolder = [string]$rule.PropagationFlags -eq 'None'
         if ($isFull -and $inherited -and $onFolder) { $full[$sid] = $true }
     }
     foreach ($sid in $SidAdmins, $SidSystem) {
@@ -170,8 +174,41 @@ function Move-RefuteNewFile {
     [System.IO.File]::Move($Source, $Destination)
 }
 
+function Enter-RefuteExclusive {
+    # The concurrency model (#59, Codex review of #154): instances of this script take one
+    # named mutex, held from the start of the apply to its end, so two of them never write
+    # the backup folder at the same time; a second instance stops at once. The folder admits
+    # SYSTEM and Administrators only, so a process that does not take the mutex has
+    # administrator rights, and the script cannot defend against it.
+    param([string]$Name)
+    $mutex = New-Object System.Threading.Mutex($false, $Name)
+    $owned = $false
+    try {
+        $owned = $mutex.WaitOne(0)
+    } catch {
+        # an instance that ended without releasing it: the mutex is now ours
+        $inner = $_.Exception
+        while ($inner -and -not ($inner -is [System.Threading.AbandonedMutexException])) { $inner = $inner.InnerException }
+        if (-not $inner) { $mutex.Dispose(); throw }
+        $owned = $true
+    }
+    if (-not $owned) { $mutex.Dispose(); throw "another listener removal is running (mutex $Name)" }
+    return $mutex
+}
+
+function Invoke-RefuteRegExport {
+    # reg.exe export of Key to Path, with an empty pipe as its standard input: a question
+    # (reg.exe asks before it overwrites a file) reads the end of the input and never waits
+    # for an answer. Returns the exit code and the output.
+    param([string]$RegExe, [string]$Key, [string]$Path)
+    $output = @() | & $RegExe export $Key $Path 2>&1
+    return [ordered]@{ ExitCode = $LASTEXITCODE; Output = (@($output) -join ' ') }
+}
+
 $done = New-Object System.Collections.Generic.List[string]
+$mutex = $null
 try {
+    $mutex = Enter-RefuteExclusive -Name 'Global\RefuteWinRmListenerRemoval'
     # 1. backup folder
     if (-not (Test-Path -LiteralPath $BackupRoot)) {
         $acl = New-Object System.Security.AccessControl.DirectorySecurity
@@ -189,12 +226,13 @@ try {
     }
     $check = @(Get-RefuteBackupProblems)
     if ($check.Count) { throw ('the backup folder is not protected: ' + ($check -join '; ')) }
-    # 2. export: to a new file of a unique name (reg.exe never meets an existing file, so it
-    # never asks), checked, then moved to the backup name, which must not exist
+    # 2. export: under the mutex, to a new file of a random name, so reg.exe meets no existing
+    # file; its input is empty, so it could not wait on a question either. The export is
+    # checked, then moved to the backup name, which must not exist
     $partial = Join-Path $BackupRoot ('WSMAN-Listener-star-HTTP.' + [guid]::NewGuid().ToString('N') + '.partial')
     if (Test-Path -LiteralPath $partial) { throw "$partial already exists" }
-    $exportOutput = & $RegExe export $TargetRegPath $partial 2>&1
-    if ($LASTEXITCODE -ne 0) { throw "reg.exe export failed with exit code $LASTEXITCODE : $exportOutput" }
+    $export = Invoke-RefuteRegExport -RegExe $RegExe -Key $TargetRegPath -Path $partial
+    if ($export.ExitCode -ne 0) { throw "reg.exe export failed with exit code $($export.ExitCode) : $($export.Output)" }
     $exported = [System.IO.File]::ReadAllText($partial)
     if (-not (Test-RefuteRegExport -Text $exported -KeyPath $TargetRegPath)) { throw "the export $partial does not hold exactly the key $TargetRegPath" }
     Move-RefuteNewFile -Source $partial -Destination $BackupFile
@@ -214,6 +252,8 @@ try {
     Write-Output "STOPPED: $($_.Exception.Message)"
     Write-Output ('Already done: ' + $(if ($done.Count) { $done -join '; ' } else { 'nothing' }))
     exit 2
+} finally {
+    if ($mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
 }
 Write-Output ('Done: ' + ($done -join '; '))
 Write-Output ('Remaining listener keys: ' + $(if (@($left.Remaining).Count) { $left.Remaining -join ', ' } else { 'none' }))

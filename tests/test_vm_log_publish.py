@@ -235,6 +235,24 @@ def test_the_copy_of_the_tool_passes_the_checker():
             ),
             "holds an account SID",
         ),
+        # Codex review of #154: a SID of another authority, a local host name, a path
+        # outside the allowed roots, a module map that is not one
+        (
+            lambda c: c[2].update(Error="S-1-12-1-100-200-300-400 <host-identifier>"),
+            "holds an account SID",
+        ),
+        (
+            lambda c: c[2].update(Error="remotehost.internal <host-identifier>"),
+            "holds a local host name",
+        ),
+        (
+            lambda c: c[2].update(Error="C:\\Temp\\<host-identifier>.log"),
+            "holds a path outside the allowed roots",
+        ),
+        (
+            lambda c: c[0]["Module"].update({"../other.ps1": "0" * 64}),
+            ".Module: not file names of the module",
+        ),
     ],
 )
 def test_the_checker_refuses_a_copy_that_differs_or_leaks(change, reason):
@@ -243,6 +261,61 @@ def test_the_checker_refuses_a_copy_that_differs_or_leaks(change, reason):
     change(bad)
     problems = pub.check(recs, bad, _names())
     assert any(reason in p for p in problems), problems
+
+
+def test_a_text_changed_beyond_the_replaced_names_is_refused():
+    """Codex review of #154: a copy that rewrites a text and leaves a placeholder in it is
+    not a copy; each placeholder must stand where the source held a known name."""
+    recs, out = _good()
+    out[2]["Error"] = "everything succeeded <host-identifier>"
+    problems = pub.check(recs, out, _names())
+    assert any(".Error: differs from the source beyond the replaced names" in p for p in problems)
+    # a placeholder where the source held another text than a known name
+    recs, out = _good()
+    out[1]["Reason"] = out[1]["Reason"].replace("Network Adapter", "<host-identifier>")
+    assert any("beyond the replaced names" in p for p in pub.check(recs, out, _names()))
+
+
+def test_a_known_name_shaped_as_a_hash_in_free_text_is_refused_not_kept():
+    """Codex review of #154: a host name made of hex digits, in a free text or a key, is not
+    a hash; the copy leaves a text of hash shape alone, and the checker refuses it."""
+    name = "deadbeef" * 4
+    recs = records()
+    recs[2]["Error"] = name
+    recs[2]["Extra"] = {name: 1}
+    names = _names() | {name}
+    problems = pub.check(recs, pub.anonymize(recs, names), names)
+    assert any(".Error: holds a host identifier" in p for p in problems), problems
+    assert any(f".Extra.{name} (key): holds a host identifier" in p for p in problems), problems
+
+
+def test_the_host_part_of_a_virtual_account_is_learned():
+    """Codex review of #154: with a domain account, the virtual account's name holds the
+    connecting host, not the domain; it is learned alone, and replaced."""
+    recs = records()
+    recs[0]["Caller"] = {
+        "ConnectedUser": "CORP\\opsuser",
+        "RunAsUser": "WinRM Virtual Users\\WinRM VA_31_machinehost_opsuser",
+    }
+    recs[1]["Reason"] = "the switch 'machinehost-sw' is refused"
+    names = pub.caller_identifiers(recs)
+    assert {"CORP", "opsuser", "machinehost_opsuser", "machinehost"} <= names
+    out = pub.anonymize(recs, names)
+    assert out[1]["Reason"] == "the switch '<host-identifier>-sw' is refused"
+    assert pub.check(recs, out, names) == []
+
+
+def test_a_name_inside_a_placeholder_is_not_a_leak():
+    """Codex review of #154: an identifier such as "host" is inside "<host-identifier>"; the
+    placeholders are masked before the scan, and the copy replaces in one pass, so a
+    placeholder is never replaced again."""
+    recs = records()
+    names = _names() | {"host"}
+    out = pub.anonymize(recs, names)
+    assert pub.check(recs, out, names) == []
+    assert "<<host-identifier>" not in json.dumps(out)
+    # the key "Host" of the preconditions was replaced, and accepted as a replacement
+    assert "<host-identifier>" in out[0]["Plan"]["Preconditions"]
 
 
 def test_times_hashes_and_paths_of_the_configuration_are_not_leaks():

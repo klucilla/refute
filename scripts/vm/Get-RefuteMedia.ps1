@@ -22,14 +22,22 @@ registered.
 No GnuPG daemon is started (#59, Codex review; the first run of 2026-10-15 left dirmngr
 and gpg-agent running). The key is fetched over HTTPS by curl from the keyserver's HKP
 lookup ("get" with options "mr": https://datatracker.ietf.org/doc/html/draft-shaw-openpgp-hkp-00,
-section 3), not by gpg --recv-keys, which uses dirmngr. The key file is listed with gpg
---no-autostart --import-options show-only ("Do not start the gpg-agent or the dirmngr";
-"Show a listing of the key ... right before it is stored": the GnuPG manual, GPG
-Configuration Options and GPG Input and Output, accessed 2026-10-17) and must hold
-exactly one primary key, with the expected fingerprint; it is then converted to a
-keyring with gpg --dearmor, and the signature is verified with gpgv against that keyring
-only. gpgv "assumes that all keys in the keyring are trustworthy" (the gpgv page of the
-same manual), which is why the keyring holds the checked key and nothing else.
+section 3), not by gpg --recv-keys, which uses dirmngr. Every gpg call has --no-autostart
+("Do not start the gpg-agent or the dirmngr": the GnuPG manual, GPG Configuration Options,
+accessed 2026-10-17); it does not stop a daemon that is already running from answering.
+
+The keyring gpgv reads is the output of gpg's own import processing of the key file
+(--import-options import-export: "Run the entire import code but instead of storing the
+key to the local keyring write it to the output ... can for example be used to remove all
+invalid parts from a key", GPG Input and Output, same date), not a plain --dearmor of it
+(Codex review of #154: a listing shows what the import keeps, --dearmor keeps every
+packet). That keyring itself is then checked twice: listed with --import-options
+show-only, it must hold exactly one primary key, with the expected fingerprint
+(Test-RefuteKeyListing); and its packets, listed with --list-packets ("List only the
+sequence of packets", Operational GPG Commands, same date; the format "may change with new
+releases", so the gpg version is recorded), must hold exactly one public key packet
+(Test-RefuteKeyPackets). gpgv "assumes that all keys in the keyring are trustworthy" (the
+gpgv page of the same manual), which is why the keyring must hold that key only.
 #>
 [CmdletBinding()]
 param(
@@ -88,12 +96,17 @@ $ringDir = ConvertTo-RefuteMsysPath $GnupgHome
 Invoke-Checked $Curl @('--fail', '--location', '--proto', '=https', '--silent', '--show-error',
     '--output', $KeyFile, $KeyUrl) | Out-Null
 $keyPath = ConvertTo-RefuteMsysPath $KeyFile
-$listing = Invoke-Checked $GpgPath @('--homedir', $ringDir, '--no-autostart', '--batch', '--with-colons',
-    '--import-options', 'show-only', '--import', $keyPath)
-Test-RefuteKeyListing -Lines $listing -Fingerprint $Fingerprint | Out-Null
 $ringPath = ConvertTo-RefuteMsysPath $Keyring
-Invoke-Checked $GpgPath @('--homedir', $ringDir, '--no-autostart', '--batch', '--output', $ringPath,
-    '--dearmor', $keyPath) | Out-Null
+# the keyring is what gpg's import processing keeps of the key file; nothing is stored
+Invoke-Checked $GpgPath @('--homedir', $ringDir, '--no-autostart', '--batch', '--import-options', 'import-export',
+    '--output', $ringPath, '--import', $keyPath) | Out-Null
+# the keyring gpgv will read, checked as it is: one primary key, the expected one, and one
+# public key packet
+$listing = Invoke-Checked $GpgPath @('--homedir', $ringDir, '--no-autostart', '--batch', '--with-colons',
+    '--import-options', 'show-only', '--import', $ringPath)
+Test-RefuteKeyListing -Lines $listing -Fingerprint $Fingerprint | Out-Null
+$packets = Invoke-Checked $GpgPath @('--homedir', $ringDir, '--no-autostart', '--batch', '--list-packets', $ringPath)
+Test-RefuteKeyPackets -Lines $packets | Out-Null
 
 $sums = ConvertTo-RefuteMsysPath (Join-Path $MediaDir 'SHA256SUMS')
 $status = Invoke-Checked $GpgvPath @('--homedir', $ringDir, '--keyring', $ringPath, '--status-fd', '1', "$sums.gpg", $sums)
@@ -112,6 +125,8 @@ $evidence = [ordered]@{
     GpgvVersion        = @(Invoke-Checked $GpgvPath @('--version'))[0]
     KeyUrl             = $KeyUrl
     KeyFileSha256      = (Get-FileHash -LiteralPath $KeyFile -Algorithm SHA256).Hash.ToLowerInvariant()
+    KeyringSha256      = (Get-FileHash -LiteralPath $Keyring -Algorithm SHA256).Hash.ToLowerInvariant()
+    KeyringPackets     = @($packets | Where-Object { $_.StartsWith(':') })
     Sha256SumsSha256   = (Get-FileHash -LiteralPath (Join-Path $MediaDir 'SHA256SUMS') -Algorithm SHA256).Hash.ToLowerInvariant()
     SignatureSha256    = (Get-FileHash -LiteralPath (Join-Path $MediaDir 'SHA256SUMS.gpg') -Algorithm SHA256).Hash.ToLowerInvariant()
     IsoName            = $IsoName

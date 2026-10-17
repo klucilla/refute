@@ -41,6 +41,17 @@ function Test-RefuteKeyListing {
     throw 'the key file lists no fingerprint for its primary key'
 }
 
+function Test-RefuteKeyPackets {
+    # From the lines of `gpg --list-packets <keyring>`: exactly one public key packet (a
+    # primary key; subkeys are "public sub key" packets), so the keyring gpgv reads holds one
+    # primary key, whatever the listing of the import showed (#59, Codex review of #154).
+    # Returns the number of packets listed.
+    param([string[]]$Lines)
+    $primary = @($Lines | Where-Object { $_.StartsWith(':public key packet:') })
+    if ($primary.Count -ne 1) { throw "expected one public key packet in the keyring, found $($primary.Count)" }
+    return @($Lines | Where-Object { $_.StartsWith(':') }).Count
+}
+
 function Get-RefuteSumsHash {
     # The SHA-256 of Name in the lines of a SHA256SUMS file: exactly one line
     # "<64 hex> <space or *><Name>".

@@ -12,35 +12,49 @@ The copy (``anonymize``):
 - ``Caller.RunAsUser`` becomes ``<virtual-account> VA <n>``, with the number of the WinRM
   virtual account read from its name (``WinRM VA_<n>_...``), or ``<account>`` for a call
   outside a remote session;
-- in every other text, each host identifier becomes ``<host-identifier>``, compared without
-  regard to case. The identifiers are those given with ``--identifier``, the computer, user
-  and domain names of the environment that runs the script, and the names read from the
-  ``Caller`` fields of the whole log (the account, its domain and the part of a virtual
-  account's name after its number). A text that is a hash, a GUID or a time is left as it
-  is: a name inside one is a coincidence of its digits.
+- in every other text and key, each host identifier becomes ``<host-identifier>``,
+  compared without regard to case, in one pass (longest name first). The identifiers are
+  those given with ``--identifier``, the computer, user and domain names of the
+  environment that runs the script, and the names read from the ``Caller`` fields of the
+  whole log: each part of ``DOMAIN\\user``, the part of a virtual account's name after its
+  number, that part without the connecting user's name at its end, and its parts between
+  underscores. A text shaped as a hash, a GUID or a time is never changed.
 
 Everything else is kept as it is, including ``PlanSha256``: the hash of the plan in the
 local log, which the anonymized plan of the copy no longer has when a text in it changed.
 
-The checker (``check``), which the copy must pass before it is written:
+The checker (``check``) must pass before the copy is written. Its reasons are its own: it
+does not trust the copy to have been made by ``anonymize``.
 
-- the copy has the same records as the source, in the same order, with the same keys and
-  the same numbers, booleans and nulls; a text differs only in a ``Caller`` field, or where
-  it now holds ``<host-identifier>``;
-- every ``Caller`` field is one of the placeholders above;
-- no text (keys included; a hash, a GUID or a time aside, for the identifiers) holds a
-  host identifier, a user profile path, a UNC path, an IPv4
-  or IPv6 address, a MAC address, an e-mail address or a machine or domain account SID.
+- **Same records.** The copy has the source's records, in order, with the same keys, list
+  lengths, numbers, booleans and nulls. A text (or a key) of the copy differs from the
+  source's only where the source held a host identifier: with each ``<host-identifier>`` of
+  the copy put back as one of the identifiers, the source's text must match exactly. The
+  two ``Caller`` fields are the exception, checked next.
+- **Placeholders.** Each ``Caller`` field is ``""`` or its placeholder.
+- **Module.** ``Module`` maps file names of the module to SHA-256 hashes, nothing else.
+- **Nothing of the host.** With the placeholders masked, no text or key holds a host
+  identifier (except a typed field: a ``...Sha256`` hash, a GUID of ``OperationId``,
+  ``VmId``, ``RecordedVmId``, ``ServiceGuid`` or ``Id``, the ``Utc`` time, or a ``Module``
+  hash, where a name would be a coincidence of digits), a Windows path outside the allowed
+  roots (``C:\\Hyper-V``, ``C:\\ProgramData\\RefuteVm`` and the project folder, unless
+  others are given), a user profile or UNC path, an IPv4 or IPv6 address, a MAC address, an
+  e-mail address, a local host name (``.internal``, ``.local``, ``.lan``, ``.home``,
+  ``.corp``, ``.localdomain``, ``.intranet``) or an account SID with three or more
+  sub-authorities.
 
-A pattern can refuse a text that is not a host value (a four-part version number reads as
-an IPv4 address): the checker then refuses the copy, and the record is published by hand,
-never by loosening the checker.
+**What it cannot see:** a name it does not know and that matches no pattern (for example a
+switch name chosen on the host). The maintainer still reads the copy before it is
+published. A pattern can also refuse a text that is no host value (a four-part version
+number reads as an IPv4 address): the copy is then refused, and the record is published by
+hand, never by loosening the checker.
 
 Usage (Python from the project's virtual environment)::
 
     .venv/Scripts/python.exe scripts/vm/publish_operation_log.py
         --source C:/ProgramData/RefuteVm/Log/operations.jsonl
         --output <new file> [--from-utc <time>] [--to-utc <time>] [--identifier <name> ...]
+        [--allowed-root <folder> ...]
 
 ``--output`` must not exist (the copy never overwrites) and must not be the source. The
 script prints the SHA-256 of the source and of the copy, and the number of records.
@@ -63,14 +77,23 @@ VIRTUAL = "<virtual-account>"
 # the account a call outside a remote session runs as (no virtual account)
 ACCOUNT = "<account>"
 IDENTIFIER = "<host-identifier>"
+PLACEHOLDERS = (OPERATOR, VIRTUAL, ACCOUNT, IDENTIFIER)
 # the shortest identifier the copy replaces: a shorter one would match inside ordinary words
 MIN_IDENTIFIER = 3
+ALLOWED_ROOTS = ("C:\\Hyper-V", "C:\\ProgramData\\RefuteVm", "C:\\Projetos\\refute")
 
 UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
-HASH = re.compile(r"^[0-9a-fA-F]{32,}$")
-GUID = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+HASH = re.compile(r"^[0-9a-f]{64}$")
+GUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+# a text of this shape is never changed by the copy
+SHAPED = re.compile(r"(?i)^(?:[0-9a-f]{32,}|[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12})$")
+GUID_KEYS = frozenset({"OperationId", "VmId", "RecordedVmId", "ServiceGuid", "Id"})
+MODULE_FILE = re.compile(
+    r"^[A-Za-z][A-Za-z0-9.]*(?:/[A-Za-z][A-Za-z0-9.]*)*\.(?:ps1|psm1|psd1|psrc)$"
+)
 VA_NUMBER = re.compile(r"WinRM VA_(\d+)_(.+)$")
-RUN_AS_PLACEHOLDER = re.compile(r"^(<virtual-account> VA \d+|<account>)$")
+RUN_AS_PLACEHOLDER = re.compile(r"^(?:<virtual-account> VA \d+|<account>)$")
+WINDOWS_PATH = re.compile(r"(?i)\b[a-z]:\\[^\s'\"<>|,;]*")
 
 LEAKS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("a user profile path", re.compile(r"(?i)\b[a-z]:[\\/]+users[\\/]")),
@@ -94,7 +117,13 @@ LEAKS: tuple[tuple[str, re.Pattern[str]], ...] = (
         re.compile(r"(?i)(?<![0-9a-f])(?:[0-9a-f]{2}[:-]){5}[0-9a-f]{2}(?![0-9a-f])"),
     ),
     ("an e-mail address", re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")),
-    ("an account SID", re.compile(r"(?i)\bS-1-5-21-\d+-\d+-\d+")),
+    (
+        "a local host name",
+        re.compile(
+            r"(?i)\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:internal|local|lan|home|corp|localdomain|intranet)\b"
+        ),
+    ),
+    ("an account SID", re.compile(r"(?i)\bS-1-\d+(?:-\d+){3,}")),
 )
 
 
@@ -149,23 +178,34 @@ def select(
 
 
 def caller_identifiers(records: Iterable[dict[str, Any]]) -> set[str]:
-    """The names the log itself holds in its ``Caller`` fields: each part of
-    ``DOMAIN\\user``, and the part of a virtual account's name after its number."""
+    """The names the log itself holds in its ``Caller`` fields (see the module docstring)."""
     found: set[str] = set()
     for record in records:
         caller = record.get("Caller")
         if not isinstance(caller, dict):
             continue
+        users: list[str] = []
+        rests: list[str] = []
         for key in ("ConnectedUser", "RunAsUser"):
             value = caller.get(key)
             if not isinstance(value, str) or not value:
                 continue
-            for part in re.split(r"[\\/]", value):
+            parts = [p for p in re.split(r"[\\/]", value) if p]
+            for part in parts:
                 match = VA_NUMBER.match(part)
                 if match:
-                    found.add(match.group(2))
+                    rests.append(match.group(2))
                 elif part != "WinRM Virtual Users":
                     found.add(part)
+            if key == "ConnectedUser" and parts:
+                users.append(parts[-1])
+        for rest in rests:
+            found.add(rest)
+            for user in users:
+                # "<host or domain>_<user>": the host or domain alone, too
+                if rest.casefold().endswith("_" + user.casefold()):
+                    found.add(rest[: -len(user) - 1])
+            found.update(p for p in rest.split("_") if len(p) >= MIN_IDENTIFIER)
     return found
 
 
@@ -194,21 +234,24 @@ def usable_identifiers(identifiers: Iterable[str]) -> list[str]:
     return sorted(result, key=lambda n: (-len(n), n.casefold()))
 
 
+def _alternation(names: list[str]) -> str:
+    return "|".join(re.escape(n) for n in names)
+
+
 # ---- the copy ---------------------------------------------------------------------------
 
 
-def _structural(text: str) -> bool:
-    # a hash, a GUID or a time: a host name inside one of them is a coincidence of its
-    # digits, so it is neither replaced (the hash would change) nor reported
-    return bool(HASH.match(text) or GUID.match(text) or UTC.match(text))
+def _replacer(names: list[str]):
+    if not names:
+        return lambda text: text
+    pattern = re.compile(_alternation(names), re.IGNORECASE)
 
+    def replace(text: str) -> str:
+        if SHAPED.match(text) or UTC.match(text):
+            return text
+        return pattern.sub(IDENTIFIER, text)
 
-def _replace(text: str, identifiers: list[str]) -> str:
-    if _structural(text):
-        return text
-    for name in identifiers:
-        text = re.sub(re.escape(name), IDENTIFIER, text, flags=re.IGNORECASE)
-    return text
+    return replace
 
 
 def _run_as(value: str) -> str:
@@ -216,15 +259,13 @@ def _run_as(value: str) -> str:
     return f"{VIRTUAL} VA {match.group(1)}" if match else ACCOUNT
 
 
-def _anonymize_value(value: Any, identifiers: list[str]) -> Any:
+def _anonymize_value(value: Any, replace) -> Any:
     if isinstance(value, str):
-        return _replace(value, identifiers)
+        return replace(value)
     if isinstance(value, list):
-        return [_anonymize_value(v, identifiers) for v in value]
+        return [_anonymize_value(v, replace) for v in value]
     if isinstance(value, dict):
-        return {
-            _replace(k, identifiers): _anonymize_value(v, identifiers) for k, v in value.items()
-        }
+        return {replace(k): _anonymize_value(v, replace) for k, v in value.items()}
     return value
 
 
@@ -232,22 +273,18 @@ def anonymize(
     records: Iterable[dict[str, Any]], identifiers: Iterable[str]
 ) -> list[dict[str, Any]]:
     """The publishable copy of the records (see the module docstring)."""
-    names = usable_identifiers(identifiers)
+    replace = _replacer(usable_identifiers(identifiers))
     copy = []
     for record in records:
-        out = _anonymize_value(record, names)
+        out = _anonymize_value(record, replace)
         caller = record.get("Caller")
         if isinstance(caller, dict):
-            out["Caller"] = {
-                k: (
-                    (OPERATOR if v else "")
-                    if k == "ConnectedUser"
-                    else (_run_as(v) if v else "")
-                    if k == "RunAsUser"
-                    else _anonymize_value(v, names)
-                )
-                for k, v in caller.items()
-            }
+            fields = dict(out["Caller"])
+            if isinstance(caller.get("ConnectedUser"), str):
+                fields["ConnectedUser"] = OPERATOR if caller["ConnectedUser"] else ""
+            if isinstance(caller.get("RunAsUser"), str):
+                fields["RunAsUser"] = _run_as(caller["RunAsUser"]) if caller["RunAsUser"] else ""
+            out["Caller"] = fields
         copy.append(out)
     return copy
 
@@ -255,71 +292,140 @@ def anonymize(
 # ---- the checker ------------------------------------------------------------------------
 
 
-def _strings(value: Any, path: str = "") -> Iterable[tuple[str, str]]:
+def _typed(path: tuple, text: str) -> bool:
+    """A text whose key says it is a hash, a GUID or a time, and which has that shape."""
+    key = path[-1] if path else None
+    if path[:1] == ("Module",) and len(path) == 2:
+        return bool(HASH.match(text))
+    if isinstance(key, str) and key.endswith("Sha256"):
+        return bool(HASH.match(text))
+    if key in GUID_KEYS:
+        return bool(GUID.match(text))
+    if key == "Utc":
+        return bool(UTC.match(text))
+    return False
+
+
+def _render(path: tuple) -> str:
+    return "".join(f"[{p}]" if isinstance(p, int) else f".{p}" for p in path)
+
+
+def _strings(value: Any, path: tuple = ()) -> Iterable[tuple[tuple, str, bool]]:
+    """Every text of a record with its path, and whether it is a key."""
     if isinstance(value, str):
-        yield path, value
+        yield path, value, False
     elif isinstance(value, list):
         for i, v in enumerate(value):
-            yield from _strings(v, f"{path}[{i}]")
+            yield from _strings(v, (*path, i))
     elif isinstance(value, dict):
         for k, v in value.items():
-            yield f"{path}.{k} (key)", k
-            yield from _strings(v, f"{path}.{k}")
+            yield (*path, k), k, True
+            yield from _strings(v, (*path, k))
 
 
-def _compare(source: Any, copy: Any, path: str, problems: list[str]) -> None:
+def _substituted(source: str, copy: str, alternation: str) -> bool:
+    """Whether copy is source with some host identifiers replaced, and nothing else."""
+    segments = copy.split(IDENTIFIER)
+    if len(segments) == 1 or not alternation:
+        return False
+    pattern = f"(?i:{alternation})".join(re.escape(s) for s in segments)
+    return re.fullmatch(pattern, source) is not None
+
+
+def _compare(source: Any, copy: Any, path: tuple, alternation: str, problems: list[str]) -> None:
+    where = _render(path) or "the record"
     if isinstance(source, dict):
         if not isinstance(copy, dict) or len(copy) != len(source):
-            problems.append(f"{path}: not the same object as the source")
+            problems.append(f"{where}: not the same object as the source")
             return
         for (sk, sv), (ck, cv) in zip(source.items(), copy.items(), strict=True):
-            if sk != ck and IDENTIFIER not in ck:
-                problems.append(f"{path}: key {ck!r} is not the source's key")
-            _compare(sv, cv, f"{path}.{ck}", problems)
+            if sk != ck and not _substituted(sk, ck, alternation):
+                problems.append(f"{where}: key {ck!r} is not the source's key")
+            _compare(sv, cv, (*path, sk), alternation, problems)
     elif isinstance(source, list):
         if not isinstance(copy, list) or len(copy) != len(source):
-            problems.append(f"{path}: not the same list as the source")
+            problems.append(f"{where}: not the same list as the source")
             return
         for i, (s, c) in enumerate(zip(source, copy, strict=True)):
-            _compare(s, c, f"{path}[{i}]", problems)
+            _compare(s, c, (*path, i), alternation, problems)
     elif isinstance(source, str):
         if not isinstance(copy, str):
-            problems.append(f"{path}: not a text, as in the source")
-        elif copy != source and IDENTIFIER not in copy and not path.startswith(".Caller."):
-            problems.append(f"{path}: differs from the source")
+            problems.append(f"{where}: not a text, as in the source")
+        elif copy == source or path in (("Caller", "ConnectedUser"), ("Caller", "RunAsUser")):
+            return
+        elif not _substituted(source, copy, alternation):
+            problems.append(f"{where}: differs from the source beyond the replaced names")
     elif type(copy) is not type(source) or copy != source:
-        problems.append(f"{path}: differs from the source")
+        problems.append(f"{where}: differs from the source")
+
+
+def _outside_roots(text: str, roots: tuple[str, ...]) -> list[str]:
+    found = []
+    for path in WINDOWS_PATH.findall(text):
+        folded = path.casefold().rstrip("\\")
+        if not any(
+            folded == r.casefold() or folded.startswith(r.casefold().rstrip("\\") + "\\")
+            for r in roots
+        ):
+            found.append(path)
+    return found
+
+
+def _mask(text: str) -> str:
+    for placeholder in PLACEHOLDERS:
+        text = text.replace(placeholder, "\0")
+    return text
 
 
 def check(
-    source: list[dict[str, Any]], copy: list[dict[str, Any]], identifiers: Iterable[str]
+    source: list[dict[str, Any]],
+    copy: list[dict[str, Any]],
+    identifiers: Iterable[str],
+    roots: Iterable[str] = ALLOWED_ROOTS,
 ) -> list[str]:
     """The reasons to refuse the copy; an empty list means it may be published."""
     names = usable_identifiers(identifiers)
-    problems: list[str] = []
+    alternation = _alternation(names)
+    allowed = tuple(roots)
     if len(copy) != len(source):
         return [f"the copy has {len(copy)} records, the source {len(source)}"]
+    problems: list[str] = []
     for number, (s, c) in enumerate(zip(source, copy, strict=True), start=1):
-        record_problems: list[str] = []
-        _compare(s, c, "", record_problems)
+        found: list[str] = []
+        _compare(s, c, (), alternation, found)
         caller = c.get("Caller") if isinstance(c, dict) else None
         if isinstance(caller, dict):
-            connected = caller.get("ConnectedUser")
-            if connected not in ("", OPERATOR):
-                record_problems.append(".Caller.ConnectedUser: not a placeholder")
+            if caller.get("ConnectedUser") not in ("", OPERATOR):
+                found.append(".Caller.ConnectedUser: not a placeholder")
             run_as = caller.get("RunAsUser")
             if run_as != "" and not (isinstance(run_as, str) and RUN_AS_PLACEHOLDER.match(run_as)):
-                record_problems.append(".Caller.RunAsUser: not a placeholder")
-        for path, text in _strings(c):
-            folded = text.casefold()
-            if not _structural(text):
-                for name in names:
-                    if name.casefold() in folded:
-                        record_problems.append(f"{path}: holds a host identifier")
+                found.append(".Caller.RunAsUser: not a placeholder")
+        module = c.get("Module") if isinstance(c, dict) else None
+        if module is not None and not (
+            isinstance(module, dict)
+            and all(
+                isinstance(k, str) and MODULE_FILE.match(k) and isinstance(v, str) and HASH.match(v)
+                for k, v in module.items()
+            )
+        ):
+            found.append(".Module: not file names of the module with their SHA-256")
+        for path, text, is_key in _strings(c):
+            where = _render(path) + (" (key)" if is_key else "")
+            masked = _mask(text)
+            if is_key or not _typed(path, text):
+                folded = masked.casefold()
+                if any(name.casefold() in folded for name in names):
+                    found.append(f"{where}: holds a host identifier")
+            for outside in _outside_roots(masked, allowed):
+                found.append(
+                    f"{where}: holds a path outside the allowed roots ({len(outside)} chars)"
+                )
             for what, pattern in LEAKS:
-                if pattern.search(text):
-                    record_problems.append(f"{path}: holds {what}")
-        problems.extend(f"record {number}{p}" for p in record_problems)
+                if pattern.search(masked):
+                    found.append(f"{where}: holds {what}")
+        problems.extend(
+            f"record {number}{p}" if p.startswith(".") else f"record {number}: {p}" for p in found
+        )
     return problems
 
 
@@ -339,6 +445,7 @@ def publish(
     identifiers: Iterable[str],
     from_utc: str | None = None,
     to_utc: str | None = None,
+    roots: Iterable[str] = ALLOWED_ROOTS,
 ) -> dict[str, Any]:
     """Reads the source, makes the copy, checks it, and only then writes it to a new file."""
     if output.exists():
@@ -351,7 +458,7 @@ def publish(
     # the names the whole log holds, not only the selected records
     names = set(identifiers) | caller_identifiers(every)
     copy = anonymize(records, names)
-    problems = check(records, copy, names)
+    problems = check(records, copy, names, roots)
     if problems:
         raise LogError("the copy is refused:\n" + "\n".join(problems))
     out = dump(copy)
@@ -371,6 +478,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--from-utc")
     parser.add_argument("--to-utc")
     parser.add_argument("--identifier", action="append", default=[])
+    parser.add_argument("--allowed-root", action="append", default=[])
     args = parser.parse_args(argv)
     try:
         result = publish(
@@ -379,6 +487,7 @@ def main(argv: list[str] | None = None) -> int:
             set(args.identifier) | environment_identifiers(),
             args.from_utc,
             args.to_utc,
+            tuple(args.allowed_root) or ALLOWED_ROOTS,
         )
     except (LogError, OSError) as exc:
         print(f"refused: {exc}", file=sys.stderr)
