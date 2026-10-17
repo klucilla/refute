@@ -104,11 +104,58 @@ def read_lock(path: Path | str) -> dict[str, Any]:
     return data
 
 
+def _verify_structure_problems(lock: dict[str, Any]) -> list[str]:
+    """The fields ``verify`` reads directly that a lock file lacks (issue #65, Codex
+    review): such a lock is FAIL with the field named, never a KeyError. Kept out of
+    :func:`read_lock`, so ``create_lock`` reads an existing lock as before."""
+    problems = []
+    if not isinstance(lock.get("claim_path"), str):
+        problems.append("the lock file has no string 'claim_path'")
+    code = lock.get("code")
+    if not isinstance(code, dict) or not isinstance(code.get("sha256"), str):
+        problems.append("the lock file has no string 'code.sha256'")
+    elif "files" in code and not (
+        isinstance(code["files"], list)
+        and all(
+            isinstance(f, dict)
+            and isinstance(f.get("path"), str)
+            and isinstance(f.get("sha256"), str)
+            for f in code["files"]
+        )
+    ):
+        # an absent list stays allowed (read as no files, as before)
+        problems.append(
+            "the lock file's 'code.files' is not a list of objects with a string 'path' and "
+            "'sha256'"
+        )
+    records = lock.get("attachments")
+    if not isinstance(records, list) or not all(
+        isinstance(a, dict) and isinstance(a.get("path"), str) and isinstance(a.get("sha256"), str)
+        for a in records
+    ):
+        problems.append(
+            "the lock file's 'attachments' is not a list of objects with a string 'path' "
+            "and 'sha256'"
+        )
+    return problems
+
+
 _ENTRY_RE = re.compile(r"^## (?P<when>\S+) \| (?P<claim>.+)$")
 _FIELD_RE = re.compile(r"^- (?P<key>[a-z0-9_]+): (?P<value>.*)$")
+# In a literal read, the names of the fields an entry writes more than once (a bullet that
+# repeats the heading's locked_at_utc or claim included), comma-joined. The key holds a
+# space, so it never matches a field name.
+REPEATED_FIELDS = "repeated fields"
 
 
-def read_history(path: Path | str) -> list[dict[str, str]]:
+def read_history(path: Path | str, *, literal: bool = False) -> list[dict[str, str]]:
+    """The entries of a LOCK_HISTORY.md file, in order.
+
+    By default values are stripped of surrounding whitespace and a repeated field keeps
+    its last value. With ``literal=True`` (what ``verify`` uses, issue #65) values are
+    kept exactly as written, and every field written twice in an entry is listed under
+    :data:`REPEATED_FIELDS` instead of being silently replaced.
+    """
     history = Path(path)
     if not history.is_file():
         return []
@@ -117,12 +164,18 @@ def read_history(path: Path | str) -> list[dict[str, str]]:
     for line in history.read_text(encoding="utf-8").splitlines():
         header = _ENTRY_RE.match(line)
         if header:
-            current = {"locked_at_utc": header["when"], "claim": header["claim"].strip()}
+            claim = header["claim"] if literal else header["claim"].strip()
+            current = {"locked_at_utc": header["when"], "claim": claim}
             entries.append(current)
             continue
         item = _FIELD_RE.match(line)
         if item and current is not None:
-            current[item["key"]] = item["value"].strip()
+            key, value = item["key"], item["value"]
+            if literal and key in current:
+                repeated = [k for k in current.get(REPEATED_FIELDS, "").split(",") if k]
+                current[REPEATED_FIELDS] = ",".join([*repeated, key])
+                continue
+            current[key] = value if literal else value.strip()
     return entries
 
 
@@ -130,21 +183,159 @@ def _single_line(text: str) -> str:
     return " ".join(text.split())
 
 
+# The fields a LOCK_HISTORY.md entry shares with its lock file (issue #65), in the order
+# the entry writes them. ``action``, ``previous_claim_sha256`` and ``reason`` have no
+# counterpart in the lock file; ``claim_path`` selects the entries and is not compared.
+HISTORY_SHARED_FIELDS = (
+    "locked_at_utc",
+    "claim_id",
+    "claim_sha256",
+    "attachments",
+    "code_sha256",
+    "git_commit",
+    "git_dirty",
+    "refute_version",
+)
+
+
+class _FieldError(Exception):
+    """A shared field of a lock file is missing or has a type its rule does not accept."""
+
+
+def _string_field(lock: dict[str, Any], key: str) -> str:
+    if key not in lock:
+        raise _FieldError(f"the lock file has no '{key}'")
+    value = lock[key]
+    if not isinstance(value, str):
+        raise _FieldError(f"'{key}' in the lock file is a {type(value).__name__}, not a string")
+    return value
+
+
+def _history_value(lock: dict[str, Any], key: str) -> str:
+    """The text the history entry holds for one shared field, by that field's rule.
+
+    The rules (docs/lock-format.md, "What verify compares"): no normalization of case,
+    whitespace, Unicode or paths; the lock's value is turned into text exactly as
+    ``refute lock`` writes it, and the two texts must be equal.
+
+    - ``locked_at_utc``, ``claim_id``, ``claim_sha256``, ``refute_version``: a string,
+      written as is.
+    - ``code_sha256``: ``code.sha256`` of the lock, a string, written as is.
+    - ``attachments``: a list of objects with string ``path`` and ``sha256``, written as
+      ``path=sha256`` joined by ``", "`` in the lock's order, or ``none`` when empty.
+    - ``git_commit``: a string, or null; null or an empty string is written ``none``.
+    - ``git_dirty``: true, false or null, written ``true``, ``false`` or ``none``.
+
+    Raises :class:`_FieldError` when the lock has no such field or a value of
+    another type.
+    """
+    if key == "code_sha256":
+        code = lock.get("code")
+        if not isinstance(code, dict) or "sha256" not in code:
+            raise _FieldError("the lock file has no 'code.sha256'")
+        if not isinstance(code["sha256"], str):
+            raise _FieldError("'code.sha256' in the lock file is not a string")
+        return code["sha256"]
+    if key == "attachments":
+        if key not in lock:
+            raise _FieldError("the lock file has no 'attachments'")
+        records = lock[key]
+        if not isinstance(records, list) or not all(
+            isinstance(a, dict)
+            and isinstance(a.get("path"), str)
+            and isinstance(a.get("sha256"), str)
+            for a in records
+        ):
+            raise _FieldError(
+                "'attachments' in the lock file is not a list of objects with a string "
+                "'path' and 'sha256'"
+            )
+        return ", ".join(f"{a['path']}={a['sha256']}" for a in records) or "none"
+    if key == "git_commit":
+        if key not in lock:
+            raise _FieldError("the lock file has no 'git_commit'")
+        value = lock[key]
+        if value is not None and not isinstance(value, str):
+            raise _FieldError(
+                f"'git_commit' in the lock file is a {type(value).__name__}, not a string or null"
+            )
+        return value or "none"
+    if key == "git_dirty":
+        if key not in lock:
+            raise _FieldError("the lock file has no 'git_dirty'")
+        value = lock[key]
+        if value is not None and not isinstance(value, bool):
+            raise _FieldError(
+                f"'git_dirty' in the lock file is a {type(value).__name__}, not true, false or null"
+            )
+        return "none" if value is None else str(value).lower()
+    return _string_field(lock, key)
+
+
+def compare_history_entry(lock: dict[str, Any], entry: dict[str, str]) -> list[str]:
+    """Every difference between a lock file and its history entry, one line per field.
+
+    Each field of :data:`HISTORY_SHARED_FIELDS` is compared by its rule
+    (:func:`_history_value`). A field missing on either side is a difference, never
+    skipped: missing in the lock, in the entry, or in both gives one line per missing
+    side. A field the entry writes twice is a difference (a literal read records it,
+    :func:`read_history`). The attachments text is ambiguous when a path holds ``", "``,
+    ``"="`` or a line break (two different lists could then give the same text), so such a
+    lock is a difference too; ``refute lock`` still writes it as before. An empty list
+    means the entry records exactly this lock.
+    """
+    problems: list[str] = []
+    repeated = {k for k in entry.get(REPEATED_FIELDS, "").split(",") if k}
+    # any field written twice, shared or not (claim, reason, action included)
+    for key in sorted(repeated - set(HISTORY_SHARED_FIELDS)):
+        problems.append(f"the history entry writes '{key}' more than once")
+    for key in HISTORY_SHARED_FIELDS:
+        expected: str | None
+        try:
+            expected = _history_value(lock, key)
+        except _FieldError as exc:
+            problems.append(str(exc))
+            expected = None
+        if key == "attachments" and expected is not None:
+            ambiguous = [
+                a["path"]
+                for a in lock["attachments"]
+                if ", " in a["path"] or "=" in a["path"] or "\n" in a["path"] or "\r" in a["path"]
+            ]
+            if ambiguous:
+                problems.append(
+                    "attachments: a path in the lock file holds ', ', '=' or a line break, so "
+                    f"its history text is ambiguous: {ambiguous!r}"
+                )
+                expected = None
+        if key not in entry:
+            problems.append(f"the history entry has no '{key}'")
+            continue
+        if key in repeated:
+            problems.append(f"the history entry writes '{key}' more than once")
+            continue
+        if expected is not None and entry[key] != expected:
+            problems.append(
+                f"{key}: the lock file has {expected!r}, the history entry {entry[key]!r}"
+            )
+    return problems
+
+
 def _history_entry(lock: dict[str, Any], *, action: str, previous: str | None, reason: str) -> str:
-    attachments = ", ".join(f"{a['path']}={a['sha256']}" for a in lock["attachments"]) or "none"
+    value = {key: _history_value(lock, key) for key in HISTORY_SHARED_FIELDS}
     lines = [
         "",
-        f"## {lock['locked_at_utc']} | {lock['claim_path']}",
+        f"## {value['locked_at_utc']} | {lock['claim_path']}",
         "",
         f"- action: {action}",
-        f"- claim_id: {lock['claim_id']}",
-        f"- claim_sha256: {lock['claim_sha256']}",
+        f"- claim_id: {value['claim_id']}",
+        f"- claim_sha256: {value['claim_sha256']}",
         f"- previous_claim_sha256: {previous or 'none'}",
-        f"- attachments: {attachments}",
-        f"- code_sha256: {lock['code']['sha256']}",
-        f"- git_commit: {lock['git_commit'] or 'none'}",
-        f"- git_dirty: {str(lock['git_dirty']).lower()}",
-        f"- refute_version: {lock['refute_version']}",
+        f"- attachments: {value['attachments']}",
+        f"- code_sha256: {value['code_sha256']}",
+        f"- git_commit: {value['git_commit']}",
+        f"- git_dirty: {value['git_dirty']}",
+        f"- refute_version: {value['refute_version']}",
         f"- reason: {_single_line(reason)}",
         "",
     ]
@@ -298,6 +489,11 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
         result.status = VerifyStatus.FAIL
         result.messages.append(str(exc))
         return result
+    structure = _verify_structure_problems(lock)
+    if structure:
+        result.status = VerifyStatus.FAIL
+        result.messages.extend(f"{lock_file.name}: {p}" for p in structure)
+        return result
     result.lock = lock
 
     try:
@@ -364,21 +560,23 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
                 + ("; ".join(result.changed_files) or "file list unchanged")
             )
 
-    history = [
-        e for e in read_history(history_path_for(claim_file)) if e["claim"] == lock["claim_path"]
-    ]
-    if not history:
+    try:
+        entries = read_history(history_path_for(claim_file), literal=True)
+        readable = True
+    except (OSError, UnicodeDecodeError) as exc:
+        # an unreadable history is FAIL with the reason, never an exception
+        failures.append(f"cannot read {HISTORY_FILENAME}: {exc}")
+        entries, readable = [], False
+    history = [e for e in entries if e["claim"] == lock["claim_path"]]
+    if readable and not history:
         failures.append(f"lock is not recorded in {HISTORY_FILENAME}")
-    else:
-        latest = history[-1]
-        if (
-            latest.get("claim_sha256") != lock["claim_sha256"]
-            or latest.get("code_sha256") != lock["code"]["sha256"]
-            or latest.get("locked_at_utc") != lock["locked_at_utc"]
-        ):
+    elif history:
+        # every field the entry shares with the lock, each by its rule (issue #65)
+        differences = compare_history_entry(lock, history[-1])
+        if differences:
             failures.append(
                 f"the lock file does not match the latest {HISTORY_FILENAME} entry for "
-                f"{lock['claim_path']}"
+                f"{lock['claim_path']}: " + "; ".join(differences)
             )
 
     result.messages.extend(failures)
