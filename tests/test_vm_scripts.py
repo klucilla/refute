@@ -499,6 +499,8 @@ LISTENER_PREVIEW_COMMANDS = {
     "get-itemproperty",
     "get-refuteacewriters",
     "get-refuteancestorwriters",
+    # the backup folder's ACL, read in memory (#59, Codex review of #90)
+    "get-refutebackupaclproblems",
     "get-refutebackupproblems",
     "get-refutediscoveryproblems",
     "get-refuteitemproblems",
@@ -588,6 +590,7 @@ def test_the_listener_removal_preview_only_reads(cases):
 VMTREE_PREVIEW_COMMANDS = (
     LISTENER_PREVIEW_COMMANDS
     - {
+        "get-refutebackupaclproblems",
         "get-refutebackupproblems",
         "get-refutelistenerremoval",
         "read-refutelisteners",
@@ -1183,3 +1186,113 @@ def test_the_config_update_refuses_without_its_preconditions(tmp_path):
     assert never.returncode == 1, text
     assert "Problems (nothing was changed):" in never.stdout, text
     assert "Written:" not in never.stdout and "Done:" not in never.stdout, text
+
+
+# ---- #59 follow-ups (items 1 and 2; Codex reviews of #90 and #154) --------------------------
+
+# Each case must be in the emitted JSON: a case added after the emission (Codex review of
+# #154) is then missing here instead of passing unseen. The ACL and export cases run on
+# Windows only.
+FOLLOW_UP_CASES = {
+    "key file: one primary key with the expected fingerprint",
+    "key file refused: two primary keys",
+    "keyring packets: one public key packet, with its subkey",
+    "keyring packets refused: a second primary key",
+    "keyring packets refused: no primary key",
+    "Hyper-V manifest: a two-part version folder",
+    "Hyper-V manifest: a higher version without a manifest is skipped",
+    "Hyper-V manifest: both layouts, the version subfolder wins",
+    "backup: the four functions are read from the script",
+    "backup move: to a free name",
+    "backup move: an existing destination is never overwritten",
+    "backup mutex: a second instance stops while the first holds it",
+    "backup mutex: taken once the first released it",
+}
+FOLLOW_UP_CASES_WINDOWS = {
+    "Hyper-V manifest: a junction is found by the search",
+    "Hyper-V manifest: the registration tree check refuses the junction",
+    "backup ACL: the folder the script creates passes",
+    "backup ACL refused: full control not propagated below the first level",
+    "backup ACL refused: administrators read only (too restrictive)",
+    "backup export: the input is empty, the question is not answered",
+}
+
+
+def test_the_cases_of_the_follow_ups_are_emitted(cases):
+    names = {c["Name"] for c in cases["Cases"]}
+    expected = FOLLOW_UP_CASES | (FOLLOW_UP_CASES_WINDOWS if sys.platform == "win32" else set())
+    assert sorted(expected - names) == []
+
+
+def test_every_gpg_call_of_the_media_download_starts_no_daemon():
+    """Item 1: every gpg call but --version has --no-autostart; no keyserver, --recv-keys or
+    --dearmor is left; gpgv verifies against the keyring the import processing wrote."""
+    text = (VM / "Get-RefuteMedia.ps1").read_text(encoding="utf-8")
+    code = text[text.index("#>") :]
+    calls = [line for line in code.splitlines() if "Invoke-Checked $GpgPath" in line]
+    assert len(calls) >= 4, calls
+    for line in calls:
+        assert "'--version'" in line or "'--no-autostart'" in line, line
+    for gone in ("--recv-keys", "--dearmor", "--keyserver", "hkps://"):
+        assert gone not in code, gone
+    assert "'import-export'" in code and "'--list-packets'" in code
+    assert "Test-RefuteKeyPackets -Lines $packets" in code
+    gpgv = [
+        line
+        for line in code.splitlines()
+        if "Invoke-Checked $GpgvPath" in line and "--keyring" in line
+    ]
+    assert len(gpgv) == 1 and "$ringPath" in gpgv[0], gpgv
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="reg.exe and cmd.exe exist on Windows only")
+def test_the_backup_export_never_waits_on_a_question(tmp_path):
+    """Item 2 (Codex review of #154): Invoke-RefuteRegExport gives reg.exe an empty input.
+    Here the parent's own input is an open pipe that is never written or closed, so a child
+    that inherited it would wait; a stand-in for reg.exe asks a question, must read the end
+    of the input at once, and writes its file. The function is read from the script's AST."""
+    script = VM / "Remove-RefuteWinRmListener.ps1"
+    fake = tmp_path / "fake-reg.cmd"
+    fake.write_text(
+        "@echo off\r\nset answer=\r\nset /p answer=Overwrite (Yes/No)?\r\n"
+        'if defined answer (echo answered & exit /b 5)\r\necho eof> "%~3"\r\nexit /b 0\r\n',
+        encoding="ascii",
+    )
+    target = tmp_path / "export.reg"
+    command = (
+        "$L = 'System.Management.Automation.Language'; "
+        f"$ast = [System.Management.Automation.Language.Parser]::ParseFile('{script}', "
+        "[ref]$null, [ref]$null); "
+        '$fn = $ast.FindAll({ param($n) $n.GetType().FullName -eq "$L.FunctionDefinitionAst" '
+        "-and $n.Name -eq 'Invoke-RefuteRegExport' }, $true) | Select-Object -First 1; "
+        ". ([scriptblock]::Create($fn.Extent.Text)); "
+        f"$r = Invoke-RefuteRegExport -RegExe '{fake}' -Key 'HKLM\\SOFTWARE\\X' -Path '{target}'; "
+        "'EXIT=' + $r.ExitCode"
+    )
+    proc = subprocess.Popen(
+        [
+            POWERSHELL,
+            "-NoProfile",
+            "-NonInteractive",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            command,
+        ],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    try:
+        proc.wait(timeout=120)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.stdin.close()
+        proc.wait()
+        pytest.fail("the export waited on its input")
+    proc.stdin.close()
+    out = proc.stdout.read()
+    err = proc.stderr.read()
+    assert "EXIT=0" in out, out + err
+    assert target.read_text(encoding="ascii").strip() == "eof"

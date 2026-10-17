@@ -480,6 +480,35 @@ foreach ($bad in @(
     try { Test-RefuteGpgStatus -Lines $bad.Lines -Fingerprint $fpr | Out-Null } catch { $failed = $_.Exception.Message }
     Add-Case "gpg refused: $($bad.Name)" ($null -ne $failed) $failed
 }
+# the key file for gpgv (#59): one primary key, the expected fingerprint (a subkey's fpr
+# line after it is ignored)
+$listing = @('pub:-:4096:1:D94AA3F0EFE21092:1337899427:::-:::scSC::::::23::0:',
+    "fpr:::::::::$($fpr):", 'uid:-::::1337899427::0000::Ubuntu CD Image Automatic Signing Key (2012)::::::::::0:',
+    'sub:-:4096:1:0123456789ABCDEF:1337899427::::::s::::::23:', 'fpr:::::::::0123456789ABCDEF0123456789ABCDEF01234567:')
+Add-Case 'key file: one primary key with the expected fingerprint' ((Test-RefuteKeyListing -Lines $listing -Fingerprint $fpr) -ceq $fpr)
+foreach ($bad in @(
+        @{ Name = 'another primary key'; Lines = @($listing[0], 'fpr:::::::::FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:') },
+        @{ Name = 'two primary keys'; Lines = @($listing + $listing[0] + $listing[1]) },
+        @{ Name = 'no primary key'; Lines = @($listing[3], $listing[4]) },
+        @{ Name = 'no fingerprint'; Lines = @($listing[0], $listing[2]) })) {
+    $failed = $null
+    try { Test-RefuteKeyListing -Lines $bad.Lines -Fingerprint $fpr | Out-Null } catch { $failed = $_.Exception.Message }
+    Add-Case "key file refused: $($bad.Name)" ($null -ne $failed) $failed
+}
+# the keyring's packets (Codex review of #154): one public key packet; its subkeys, user IDs
+# and signatures do not count, a second primary key does
+$packets = @('# off=0 ctb=99 tag=6 hlen=3 plen=525', ':public key packet:', '	version 4, algo 1, created 1337899427, expires 0',
+    '# off=528 ctb=b4 tag=13 hlen=2 plen=67', ':user ID packet: "Ubuntu CD Image Automatic Signing Key (2012)"',
+    '# off=597 ctb=89 tag=2 hlen=3 plen=568', ':signature packet: algo 1, keyid D94AA3F0EFE21092',
+    '# off=1168 ctb=b9 tag=14 hlen=3 plen=525', ':public sub key packet:', '	version 4, algo 1, created 1337899427, expires 0')
+Add-Case 'keyring packets: one public key packet, with its subkey' ((Test-RefuteKeyPackets -Lines $packets) -eq 4)
+foreach ($bad in @(
+        @{ Name = 'a second primary key'; Lines = @($packets + ':public key packet:') },
+        @{ Name = 'no primary key'; Lines = @($packets | Where-Object { $_ -ne ':public key packet:' }) })) {
+    $failed = $null
+    try { Test-RefuteKeyPackets -Lines $bad.Lines | Out-Null } catch { $failed = $_.Exception.Message }
+    Add-Case "keyring packets refused: $($bad.Name)" ($null -ne $failed) $failed
+}
 $iso = 'ubuntu-26.04.1-live-server-amd64.iso'
 $sums = @("$('a' * 64) *$iso", "$('b' * 64) *$iso.zsync", "$('c' * 64)  ubuntu-26.04.1-desktop-amd64.iso")
 Add-Case 'SHA256SUMS: the exact line' ((Get-RefuteSumsHash -Lines $sums -Name $iso) -eq ('a' * 64))
@@ -639,6 +668,31 @@ Add-Case 'Hyper-V manifest: the highest version wins' ((Find-RefuteHyperVManifes
 Add-Case 'Hyper-V manifest: none' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'none')))
 Add-Case 'Hyper-V manifest: a folder that is not a version is ignored' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'noversion')))
 Add-Case 'Hyper-V manifest: missing module folder' ($null -eq (Find-RefuteHyperVManifest (Join-Path $hv 'absent')))
+# #59, the Codex review of #90: a two-part version folder; a higher version folder without a
+# manifest; both layouts together (the version subfolder wins); a junction in the module
+# folder is returned by the search (it only reads), and the registration's tree check
+# refuses it. Finding the file does not prove that the module imports.
+foreach ($layout in 'twopart', 'nomanifest', 'both') { [void][System.IO.Directory]::CreateDirectory((Join-Path $hv $layout)) }
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'twopart\2.0'))
+[System.IO.File]::WriteAllText((Join-Path $hv 'twopart\2.0\Hyper-V.psd1'), '@{}')
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'nomanifest\3.0.0.0'))
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'nomanifest\2.0.0.0'))
+[System.IO.File]::WriteAllText((Join-Path $hv 'nomanifest\2.0.0.0\Hyper-V.psd1'), '@{}')
+[System.IO.File]::WriteAllText((Join-Path $hv 'both\Hyper-V.psd1'), '@{}')
+[void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'both\2.0.0.0'))
+[System.IO.File]::WriteAllText((Join-Path $hv 'both\2.0.0.0\Hyper-V.psd1'), '@{}')
+Add-Case 'Hyper-V manifest: a two-part version folder' ((Find-RefuteHyperVManifest (Join-Path $hv 'twopart')) -eq (Join-Path $hv 'twopart\2.0\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: a higher version without a manifest is skipped' ((Find-RefuteHyperVManifest (Join-Path $hv 'nomanifest')) -eq (Join-Path $hv 'nomanifest\2.0.0.0\Hyper-V.psd1'))
+Add-Case 'Hyper-V manifest: both layouts, the version subfolder wins' ((Find-RefuteHyperVManifest (Join-Path $hv 'both')) -eq (Join-Path $hv 'both\2.0.0.0\Hyper-V.psd1'))
+if (($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)) {
+    [void][System.IO.Directory]::CreateDirectory((Join-Path $hv 'linked'))
+    New-Item -ItemType Junction -Path (Join-Path $hv 'linked\2.0.0.0') -Value (Join-Path $hv 'versioned\2.0.0.0') | Out-Null
+    $linkedManifest = Find-RefuteHyperVManifest (Join-Path $hv 'linked')
+    Add-Case 'Hyper-V manifest: a junction is found by the search' ($linkedManifest -eq (Join-Path $hv 'linked\2.0.0.0\Hyper-V.psd1')) $linkedManifest
+    $linkedProblems = @(Get-RefuteTreeProblems -Roots @(Join-Path $hv 'linked'))
+    Add-Case 'Hyper-V manifest: the registration tree check refuses the junction' (
+        @($linkedProblems | Where-Object { $_ -eq "$(Join-Path $hv 'linked\2.0.0.0') is a reparse point (a link or junction)" }).Count -eq 1) ($linkedProblems -join ' | ')
+}
 
 # The role capability search of JEA: <root>\<module>\RoleCapabilities\<name>.psrc only
 # (the maintainer's diagnosis of 2026-10-16); a copy in a version subfolder is not found
@@ -1007,6 +1061,105 @@ $out.InvokeRemoting = @($invokeAst.FindAll({ param($n) $n -is [System.Management
                 Values     = $values
             }
         })
+
+# ---- #59, the Codex reviews of #90 and #154: the backup of the listener removal ----------
+# The functions are read from the script itself (its top level runs the removal, so it is
+# not dot-sourced): the ACL check, the move that never overwrites, the mutex of the apply
+# and the export with an empty input.
+$listenerAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $vmDir 'Remove-RefuteWinRmListener.ps1'), [ref]$null, [ref]$null)
+$listenerFunctions = @('Get-RefuteBackupAclProblems', 'Move-RefuteNewFile', 'Enter-RefuteExclusive', 'Invoke-RefuteRegExport')
+$loaded = @()
+foreach ($fn in @($listenerAst.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true))) {
+    if ($listenerFunctions -contains $fn.Name) { . ([scriptblock]::Create($fn.Extent.Text)); $loaded += $fn.Name }
+}
+Add-Case 'backup: the four functions are read from the script' (@($listenerFunctions | Where-Object { $loaded -notcontains $_ }).Count -eq 0) ($loaded -join ', ')
+$onWindows = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+$SidAdmins = 'S-1-5-32-544'
+$SidSystem = 'S-1-5-18'
+function New-BackupAcl([object[]]$Rules, [string]$Owner = 'S-1-5-32-544', [bool]$Protected = $true) {
+    $acl = New-Object System.Security.AccessControl.DirectorySecurity
+    $acl.SetAccessRuleProtection($Protected, $false)
+    $acl.SetOwner((New-Object System.Security.Principal.SecurityIdentifier $Owner))
+    foreach ($r in $Rules) {
+        $acl.AddAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule(
+                    (New-Object System.Security.Principal.SecurityIdentifier $r.Sid), $r.Rights,
+                    [System.Security.AccessControl.InheritanceFlags]$r.Inherit,
+                    [System.Security.AccessControl.PropagationFlags]$r.Propagate,
+                    [System.Security.AccessControl.AccessControlType]$r.Type)))
+    }
+    return $acl
+}
+function Rule([string]$Sid, [string]$Rights = 'FullControl', [string]$Inherit = 'ContainerInherit, ObjectInherit', [string]$Propagate = 'None', [string]$Type = 'Allow') {
+    return @{ Sid = $Sid; Rights = $Rights; Inherit = $Inherit; Propagate = $Propagate; Type = $Type }
+}
+# Windows file system ACLs: Windows only
+if ($onWindows) {
+$goodRules = @((Rule $SidSystem), (Rule $SidAdmins))
+$p = @(Get-RefuteBackupAclProblems -Acl (New-BackupAcl $goodRules) -Path 'B')
+Add-Case 'backup ACL: the folder the script creates passes' ($p.Count -eq 0) ($p -join ' | ')
+foreach ($bad in @(
+        @{ Name = 'administrators read only (too restrictive)'; Acl = (New-BackupAcl @((Rule $SidSystem), (Rule $SidAdmins 'ReadAndExecute'))); Want = "does not give $SidAdmins full control" },
+        @{ Name = 'full control not inherited by files'; Acl = (New-BackupAcl @((Rule $SidSystem), (Rule $SidAdmins 'FullControl' 'None'))); Want = "does not give $SidAdmins full control" },
+        @{ Name = 'full control inherit-only'; Acl = (New-BackupAcl @((Rule $SidSystem), (Rule $SidAdmins 'FullControl' 'ContainerInherit, ObjectInherit' 'InheritOnly'))); Want = "does not give $SidAdmins full control" },
+        @{ Name = 'full control not propagated below the first level'; Acl = (New-BackupAcl @((Rule $SidSystem), (Rule $SidAdmins 'FullControl' 'ContainerInherit, ObjectInherit' 'NoPropagateInherit'))); Want = "does not give $SidAdmins full control" },
+        @{ Name = 'system missing'; Acl = (New-BackupAcl @((Rule $SidAdmins))); Want = "does not give $SidSystem full control" },
+        @{ Name = 'a deny entry'; Acl = (New-BackupAcl @((Rule $SidSystem), (Rule $SidAdmins), (Rule $SidAdmins 'Write' 'None' 'None' 'Deny'))); Want = 'has a deny entry' },
+        @{ Name = 'another account'; Acl = (New-BackupAcl @((Rule $SidSystem), (Rule $SidAdmins), (Rule 'S-1-5-32-545' 'ReadAndExecute'))); Want = 'gives access to S-1-5-32-545' },
+        @{ Name = 'inherits permissions'; Acl = (New-BackupAcl $goodRules -Protected $false); Want = 'inherits permissions' },
+        @{ Name = 'another owner'; Acl = (New-BackupAcl $goodRules -Owner 'S-1-5-32-545'); Want = 'is not owned by Administrators' })) {
+    $p = @(Get-RefuteBackupAclProblems -Acl $bad.Acl -Path 'B')
+    Add-Case "backup ACL refused: $($bad.Name)" (@($p | Where-Object { $_ -like "*$($bad.Want)*" }).Count -ge 1) ($p -join ' | ')
+}
+}
+# the move never overwrites: a destination created in between makes it fail, and both
+# files stay as they were
+$moveDir = Join-Path $WorkDir 'backup-move'
+[void][System.IO.Directory]::CreateDirectory($moveDir)
+$src = Join-Path $moveDir 'export.partial'; $dst = Join-Path $moveDir 'backup.reg'
+[System.IO.File]::WriteAllText($src, 'first')
+Move-RefuteNewFile -Source $src -Destination $dst
+Add-Case 'backup move: to a free name' ((-not (Test-Path -LiteralPath $src)) -and ([System.IO.File]::ReadAllText($dst) -ceq 'first'))
+$src2 = Join-Path $moveDir 'export2.partial'
+[System.IO.File]::WriteAllText($src2, 'second')
+$failed = $null
+try { Move-RefuteNewFile -Source $src2 -Destination $dst } catch { $failed = $_.Exception.GetType().Name }
+Add-Case 'backup move: an existing destination is never overwritten' ($null -ne $failed -and ([System.IO.File]::ReadAllText($dst) -ceq 'first') -and ([System.IO.File]::ReadAllText($src2) -ceq 'second')) $failed
+# the mutex of the apply: while another thread holds it, a second instance stops at once;
+# once released, the next one takes it (the concurrency case of the whole apply)
+$mutexName = 'Local\RefuteVmCases-' + [guid]::NewGuid().ToString('N')
+$holder = [powershell]::Create()
+[void]$holder.AddScript({
+        param($Name, $Ready, $Release)
+        $m = New-Object System.Threading.Mutex($false, $Name)
+        [void]$m.WaitOne()
+        [void]$Ready.Set()
+        [void]$Release.WaitOne(30000)
+        $m.ReleaseMutex(); $m.Dispose()
+    })
+$ready = New-Object System.Threading.ManualResetEvent($false)
+$release = New-Object System.Threading.ManualResetEvent($false)
+[void]$holder.AddArgument($mutexName).AddArgument($ready).AddArgument($release)
+$handle = $holder.BeginInvoke()
+$heldByOther = $ready.WaitOne(30000)
+$refused = $null
+try { $m2 = Enter-RefuteExclusive -Name $mutexName; $m2.ReleaseMutex(); $m2.Dispose() } catch { $refused = $_.Exception.Message }
+[void]$release.Set()
+[void]$holder.EndInvoke($handle)
+$holder.Dispose()
+Add-Case 'backup mutex: a second instance stops while the first holds it' ($heldByOther -and $refused -like '*another listener removal is running*') "$heldByOther $refused"
+$after = $null
+try { $m3 = Enter-RefuteExclusive -Name $mutexName; $after = 'taken'; $m3.ReleaseMutex(); $m3.Dispose() } catch { $after = $_.Exception.Message }
+Add-Case 'backup mutex: taken once the first released it' ($after -eq 'taken') $after
+# the export with an empty input: a stand-in for reg.exe asks a question first, reads the
+# end of the input and writes the file (tests/test_vm_scripts.py repeats this with the
+# parent's input an open pipe, where an inherited input would wait)
+if ($onWindows) {
+    $fakeReg = Join-Path $WorkDir 'fake-reg.cmd'
+    [System.IO.File]::WriteAllText($fakeReg, "@echo off`r`nset answer=`r`nset /p answer=Overwrite (Yes/No)?`r`nif defined answer (echo answered & exit /b 5)`r`necho eof> `"%~3`"`r`nexit /b 0`r`n")
+    $exportTo = Join-Path $WorkDir 'fake-export.reg'
+    $result = Invoke-RefuteRegExport -RegExe $fakeReg -Key 'HKLM\SOFTWARE\X' -Path $exportTo
+    Add-Case 'backup export: the input is empty, the question is not answered' ($result.ExitCode -eq 0 -and (Test-Path -LiteralPath $exportTo) -and ([System.IO.File]::ReadAllText($exportTo).Trim() -ceq 'eof')) "$($result.ExitCode) $($result.Output)"
+}
 
 $out.Cases = $cases.ToArray()
 ConvertTo-RefuteCanonicalJson $out
