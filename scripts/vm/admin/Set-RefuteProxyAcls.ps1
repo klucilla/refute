@@ -95,4 +95,13 @@ foreach ($pair in @(@{ Name = 'inner'; Rules = $inner }, @{ Name = 'egress'; Rul
     $read = @(Get-VMNetworkAdapterExtendedAcl -VMNetworkAdapter $adapter[0])
     Write-Output "Adapter $($pair.Name): $($read.Count) entries read back (expected $(@($pair.Rules).Count))"
     $read | Sort-Object Direction, Weight -Descending | Format-Table Direction, Action, RemoteIPAddress, Protocol, LocalPort, RemotePort, Weight, Stateful -AutoSize | Out-String -Width 200
+    # every field as the host spells it, one JSON line per entry: the first observation of
+    # the read-back form, which the module's comparison (ConvertTo-RefuteAclRule) relies on
+    foreach ($e in $read) {
+        $fields = [ordered]@{}
+        foreach ($n in 'Direction', 'Action', 'LocalIPAddress', 'RemoteIPAddress', 'Protocol', 'LocalPort', 'RemotePort', 'Weight', 'Stateful', 'IsolationID', 'IdleSessionTimeout') {
+            $fields[$n] = $(if ($e.PSObject.Properties.Name -contains $n) { [string]$e.$n } else { '<absent>' })
+        }
+        Write-Output ("  " + (New-Object psobject -Property $fields | ConvertTo-Json -Compress))
+    }
 }
