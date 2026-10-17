@@ -145,6 +145,22 @@ def test_workspaces_link_data_read_only(tmp_path, monkeypatch):
     assert not (ws["setup/build/requirements_compiled"] / "data").exists()
 
 
+def test_wait_for_run_phase(tmp_path):
+    flag = tmp_path / "run-phase-approved"
+    sleeps = []
+
+    def sleep(s):
+        sleeps.append(s)
+        if len(sleeps) == 2:
+            flag.write_text("")
+
+    pd.wait_for_run_phase(flag, timeout_s=100, sleep=sleep)()
+    assert len(sleeps) == 2 and (tmp_path / "status.txt").read_text() == "run phase\n"
+    other = tmp_path / "never"
+    with pytest.raises(pd.ProductionError, match="not approved"):
+        pd.wait_for_run_phase(other, timeout_s=20, sleep=lambda s: None)()
+
+
 def test_dossier_record(tmp_path):
     setup = pd.PaperSetup("p1", tmp_path / "run", tmp_path, {}, {}, LIMITS, TIMING)
     (setup.root / "logs").mkdir(parents=True)
