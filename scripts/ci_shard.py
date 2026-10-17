@@ -11,6 +11,12 @@ Every listed file must exist (a renamed file fails the run instead of silently m
 to ``rest`` and running twice), and the lists may not overlap. ``check`` prints nothing
 and exits 0 when the shards are consistent.
 
+Limits to review if the configuration changes (issue #59; Codex review of PR #73):
+``rest`` passes ``tests`` explicitly, so a new directory in ``testpaths`` of
+``pyproject.toml`` would not be run by it; positional paths added to ``addopts`` would
+also run in the heavy shards; and the CI splits the printed arguments on spaces, so a
+test path with spaces or glob characters would need structured arguments.
+
 Usage: python scripts/ci_shard.py heavy-a|heavy-b|rest|check
 """
 
