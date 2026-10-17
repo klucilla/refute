@@ -293,6 +293,13 @@ try {
 } catch { $records['inner'] = $_ }
 $text = Get-RefuteVmFailureText -ErrorRecord $records['denied']
 Add-Case 'failure text: the category and the codes of the message, without its text' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}; category PermissionDenied; codes 0x80070005, 0x8007000D\)$' -and $text -notlike '*SomeAccount*') $text
+# review round 4 of #142 (Codex): a number in a path that looks like a code is not a code;
+# only the reviewed list is named
+try {
+    Write-Error -Message 'Could not open C:\Users\0x1234ABCD\file.vhdx' -ErrorId 'Probe' -ErrorAction Stop
+} catch { $records['hexname'] = $_ }
+$text = Get-RefuteVmFailureText -ErrorRecord $records['hexname']
+Add-Case 'failure text: a code-like folder name is never named' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}; category NotSpecified\)$' -and $text -notlike '*1234ABCD*') $text
 $text = Get-RefuteVmFailureText -ErrorRecord $records['inner']
 Add-Case 'failure text: the HRESULT of an inner exception' ($text -cmatch '^Exception \(HRESULT 0x80131500; category OperationStopped; codes 0x80070005\)$' -and $text -notlike '*SomeAccount*') $text
 

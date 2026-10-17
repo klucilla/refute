@@ -477,10 +477,15 @@ function Get-RefuteVmFailureText {
     # the type or the error id of an error does not prove where its message comes from).
     # Hyper-V often throws a VirtualizationException with the generic HRESULT 0x80131500 and
     # the real code only in its message (access denied, 0x80070005: the CI run 39039117173 of
-    # #142), so the reason also gives the error's category (a fixed enum) and the codes of
-    # the form 0x and eight hexadecimal digits found in the message and in the inner
-    # exceptions, with their HRESULTs: numbers only, never the text around them.
+    # #142), so the reason also gives the error's category (a fixed enum), the HRESULTs of
+    # the inner exceptions, and the codes of a closed, reviewed list (below) found in the
+    # message of any of them. Any other number in a message is left out: a path can hold a
+    # folder named like a code (Codex review of #142, round 4). A code found in the text is
+    # named, not taken as the proven cause.
     param([System.Management.Automation.ErrorRecord]$ErrorRecord, [string]$ModuleReason = '')
+    # the reviewed Win32 errors as HRESULTs: access denied, file not found, path not found,
+    # sharing violation, file exists, invalid parameter, already exists, disk full, invalid data
+    $known = @('0x80070005', '0x80070002', '0x80070003', '0x80070020', '0x80070050', '0x80070057', '0x800700B7', '0x80070070', '0x8007000D')
     $e = $ErrorRecord.Exception
     if ($ModuleReason -and $e.Message -ceq $ModuleReason) { return $ModuleReason }
     $main = '0x{0:X8}' -f $e.HResult
@@ -488,8 +493,9 @@ function Get-RefuteVmFailureText {
     $x = $e
     while ($null -ne $x) {
         $found = @(('0x{0:X8}' -f $x.HResult))
-        foreach ($m in [regex]::Matches([string]$x.Message, '0x[0-9A-Fa-f]{8}(?![0-9A-Fa-f])')) {
-            $found += '0x' + $m.Value.Substring(2).ToUpperInvariant()
+        $message = [string]$x.Message
+        foreach ($code in $known) {
+            if ($message.IndexOf($code, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) { $found += $code }
         }
         foreach ($code in $found) {
             if ($code -cne $main -and -not $codes.Contains($code)) { $codes.Add($code) }
