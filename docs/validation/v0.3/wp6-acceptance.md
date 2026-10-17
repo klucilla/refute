@@ -225,6 +225,10 @@ before third-party code):
 
 ## 6. Acceptance of the package
 
+**Status: accepted by the maintainer on 2026-10-17**, on the isolation test of 20:50:21 UTC
+(33 of 33), with the condition of injected routes met by the guest half of 21:16:36 UTC
+(30 of 30); `wp6-results/jea-registration.md` section 22.
+
 **Since 2026-10-17:** WP6 is accepted when the isolation test of section 5a passes, with
 its report recorded in `wp6-results/`, and the maintainer records the result. Until then
 [docs/sandbox.md](../../sandbox.md) keeps saying "not yet validated", and no

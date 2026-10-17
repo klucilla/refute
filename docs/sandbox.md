@@ -3,10 +3,14 @@
 How Refute runs the code of a paper's repository. This document follows
 [docs/plans/v0.3-plan.md](plans/v0.3-plan.md), sections 6.1 and 7.
 
-**Not yet validated.** Everything below is a set of **requirements**. The isolation
-is validated only by the acceptance tests of the VM work package (WP6), before any
-third-party code runs. Until then no third-party code is executed, and nothing here
-describes a tested setup.
+**Validated on 2026-10-17, by the isolation test of WP6.** Everything below was written as a
+set of **requirements**. What the VM work package tested on the maintainer's host, and the
+limits of that test, are in
+[validation/v0.3/wp6-acceptance.md](validation/v0.3/wp6-acceptance.md) section 5a and
+[validation/v0.3/wp6-results/jea-registration.md](validation/v0.3/wp6-results/jea-registration.md)
+sections 21 and 22 (33 of 33 checks, then the guest half with injected routes, 30 of 30);
+the maintainer accepted WP6 on that report. A requirement below that the test does not
+cover is still a requirement, not a tested property.
 
 ## Where code runs
 
