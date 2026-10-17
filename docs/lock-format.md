@@ -120,14 +120,15 @@ lock value of a type its rule does not accept. Any difference makes `verify` `FA
 its message names each field.
 
 - **The history is read literally.** No whitespace is removed from a value or from the
-  heading; a field written twice in an entry (a bullet that repeats the heading's
-  `locked_at_utc` included) is a difference, never replaced by its last value.
+  heading; any field written twice in an entry, shared or not (a bullet that repeats the
+  heading's `locked_at_utc` or `claim`, and a second `reason`, included), is a
+  difference, never replaced by another value.
 - **Ambiguous attachments.** When an attachment path in the lock file holds `, `, `=` or a
   line break, two different lists could give the same text, so the comparison reports a
   difference for `attachments`. `refute lock` still writes such a lock as before.
-- **The lock file itself.** A lock file without a string `claim_path` or `code.sha256`
-  is unreadable for `verify` (`FAIL`, with the field named), like one without the other
-  required fields.
+- **The lock file itself.** For `verify`, a lock file without a string `claim_path` or
+  `code.sha256` is `FAIL`, with the field named. `refute lock` reads an existing lock as
+  before.
 
 This comparison only reads the lock file and `LOCK_HISTORY.md`; it never rewrites
 either. The two historical locks (v0.1 and v0.2) match every shared field of their

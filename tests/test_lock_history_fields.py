@@ -263,4 +263,27 @@ def test_the_writer_reproduces_the_historical_entries_byte_for_byte(claim):
     exactly the bytes of their entries."""
     lock = read_lock(lock_path_for(claim))
     written = _history_entry(lock, action="lock", previous=None, reason="initial lock")
-    assert written in history_path_for(claim).read_text(encoding="utf-8")
+    # each historical history file holds one entry, the last bytes of the file
+    assert history_path_for(claim).read_bytes().endswith(written.encode("utf-8"))
+
+
+@pytest.mark.parametrize("line", ["- claim: other.yaml", "- reason: another reason"])
+def test_a_repeated_field_that_is_not_shared_is_a_difference_too(tmp_path, line):
+    claim, lock, history, text = _locked(tmp_path)
+    anchor = f"- refute_version: {lock['refute_version']}"
+    # the entry already has a claim (its heading) and a reason: the added line repeats one
+    history.write_text(text.replace(anchor, anchor + "\n" + line), encoding="utf-8")
+    result = verify_claim(claim)
+    name = line[2:].split(":")[0]
+    assert result.status is VerifyStatus.FAIL
+    assert any(f"writes '{name}' more than once" in m for m in result.messages), result.messages
+
+
+def test_create_lock_still_reads_a_malformed_previous_lock_as_before(tmp_path):
+    """read_lock is not stricter: a previous lock without claim_path still gives its
+    claim_sha256 to a forced re-lock (the Codex review of #130, round 2)."""
+    claim, lock, history, text = _locked(tmp_path)
+    data = json.loads(lock_path_for(claim).read_text(encoding="utf-8"))
+    del data["claim_path"]
+    lock_path_for(claim).write_text(json.dumps(data), encoding="utf-8")
+    assert read_lock(lock_path_for(claim))["claim_sha256"] == lock["claim_sha256"]

@@ -101,13 +101,20 @@ def read_lock(path: Path | str) -> dict[str, Any]:
             raise LockError(f"lock file {lock_file} is missing '{key}'")
     if data["canonicalization"] != CANONICALIZATION:
         raise LockError(f"unsupported canonicalization '{data['canonicalization']}'")
-    # the fields verify reads directly (issue #65, Codex review): a lock without them is
-    # FAIL with this message, never a KeyError
-    if not isinstance(data.get("claim_path"), str):
-        raise LockError(f"lock file {lock_file} has no string 'claim_path'")
-    if not isinstance(data["code"], dict) or not isinstance(data["code"].get("sha256"), str):
-        raise LockError(f"lock file {lock_file} has no string 'code.sha256'")
     return data
+
+
+def _verify_structure_problems(lock: dict[str, Any]) -> list[str]:
+    """The fields ``verify`` reads directly that a lock file lacks (issue #65, Codex
+    review): such a lock is FAIL with the field named, never a KeyError. Kept out of
+    :func:`read_lock`, so ``create_lock`` reads an existing lock as before."""
+    problems = []
+    if not isinstance(lock.get("claim_path"), str):
+        problems.append("the lock file has no string 'claim_path'")
+    code = lock.get("code")
+    if not isinstance(code, dict) or not isinstance(code.get("sha256"), str):
+        problems.append("the lock file has no string 'code.sha256'")
+    return problems
 
 
 _ENTRY_RE = re.compile(r"^## (?P<when>\S+) \| (?P<claim>.+)$")
@@ -256,6 +263,9 @@ def compare_history_entry(lock: dict[str, Any], entry: dict[str, str]) -> list[s
     """
     problems: list[str] = []
     repeated = {k for k in entry.get(REPEATED_FIELDS, "").split(",") if k}
+    # any field written twice, shared or not (claim, reason, action included)
+    for key in sorted(repeated - set(HISTORY_SHARED_FIELDS)):
+        problems.append(f"the history entry writes '{key}' more than once")
     for key in HISTORY_SHARED_FIELDS:
         expected: str | None
         try:
@@ -455,6 +465,11 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
     except LockError as exc:
         result.status = VerifyStatus.FAIL
         result.messages.append(str(exc))
+        return result
+    structure = _verify_structure_problems(lock)
+    if structure:
+        result.status = VerifyStatus.FAIL
+        result.messages.extend(f"{lock_file.name}: {p}" for p in structure)
         return result
     result.lock = lock
 
