@@ -215,6 +215,10 @@ try {
     $configText = [System.IO.File]::ReadAllText((Join-Path $source 'RefuteVm.Config.psd1'))
     $testConfig = $configText.Replace("= 'refute-vm'", "= 'refute-ci-vm'")
     if ($testConfig -eq $configText) { throw 'the test configuration was not written' }
+    # 2 GiB of startup memory for the VM the test creates on the runner (it is never started)
+    $smaller = $testConfig -replace '(?m)^(\s*MemoryBytes\s*=\s*)\d+', '${1}2147483648'
+    if ($smaller -eq $testConfig) { throw 'the test configuration memory was not written' }
+    $testConfig = $smaller
     [System.IO.File]::WriteAllText((Join-Path $target 'RefuteVm.Config.psd1'), $testConfig, $utf8)
     $hyperVAdmins = (New-Object System.Security.Principal.SecurityIdentifier 'S-1-5-32-578').Translate([System.Security.Principal.NTAccount]).Value.Split('\')[-1]
     # the data folders, as Register-RefuteVmEndpoint.ps1 creates them: owner Administrators,
@@ -396,6 +400,31 @@ try {
                 $attempt.TreeProblemsAfter += @(Compare-RefuteVmTreeBelow -Acl (Get-Acl -LiteralPath $below[0]) -Spec $spec -Depth $below[1] | ForEach-Object { "$($below[0]): $_" })
             }
             $out.RefuteVm.HostPaths.Attempts[$name] = $attempt
+        }
+
+        # CreateVm for real, through the endpoint, after the version 2 attempt (the incident
+        # of operation 4 on the maintainer's host, 2026-10-17: New-VM -Path <VmRoot> stored
+        # the VM in <VmRoot>\<VmName>, and the module's check expected <VmRoot>). The
+        # simulation, the real call with its PlanSha256, a new simulation that must be
+        # already done, and the Path Get-VM reports. The VM stays on the runner, which is
+        # discarded after the job; nothing is deleted.
+        $out.RefuteVm.CreateVm = [ordered]@{ Simulate = $null; Real = $null; Again = $null; Path = ''; Count = 0; Error = '' }
+        try {
+            $vmSession = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
+            try {
+                $out.RefuteVm.CreateVm.Simulate = Invoke-Literal $vmSession 'Invoke-RefuteVmOperation -Operation CreateVm -Simulate'
+                if ($out.RefuteVm.CreateVm.Simulate.Ok) {
+                    $planSha = [string](ConvertFrom-Json $out.RefuteVm.CreateVm.Simulate.Output).PlanSha256
+                    if ($planSha -cnotmatch '^[0-9a-f]{64}$') { throw "no PlanSha256 in the CreateVm simulation: $planSha" }
+                    $out.RefuteVm.CreateVm.Real = Invoke-Literal $vmSession "Invoke-RefuteVmOperation -Operation CreateVm -PlanSha256 $planSha"
+                    $out.RefuteVm.CreateVm.Again = Invoke-Literal $vmSession 'Invoke-RefuteVmOperation -Operation CreateVm -Simulate'
+                }
+            } finally { Remove-PSSession -Session $vmSession }
+            $created = @(Get-VM -ErrorAction Stop | Where-Object { $_.Name -eq 'refute-ci-vm' })
+            $out.RefuteVm.CreateVm.Count = $created.Count
+            if ($created.Count -eq 1) { $out.RefuteVm.CreateVm.Path = [string]$created[0].Path }
+        } catch {
+            $out.RefuteVm.CreateVm.Error = (($_.Exception.Message -split "`r?`n") | Where-Object { $_ }) -join ' | '
         }
     }
 } finally {

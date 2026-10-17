@@ -177,6 +177,17 @@ function New-RefuteVmChange {
     return [ordered]@{ Item = $Item; Before = $Before; After = $After }
 }
 
+function Get-RefuteVmStoragePath {
+    # Where Hyper-V stores the VM. New-VM -Path <VmRoot> keeps the VM's files in
+    # <VmRoot>\<VmName>, and Get-VM reports that folder as its Path: observed on the
+    # maintainer's host on 2026-10-17 (jea-registration.md, the incident of operation 4); the
+    # reference page of New-VM only says -Path "specifies the directory to store the files".
+    # VmName is lowercase letters, digits and hyphens (Test-RefuteVmConfig), so the folder
+    # stays inside VmRoot.
+    param([System.Collections.IDictionary]$Config)
+    return "$($Config.VmRoot)\$($Config.VmName)"
+}
+
 function Resolve-RefuteVmTarget {
     # The VM these scripts own, or the reason it cannot be used. Divergence from what the
     # scripts set up stops the operation; nothing is corrected silently.
@@ -191,7 +202,8 @@ function Resolve-RefuteVmTarget {
     if ($vm.VmId -ine $Observed.RecordedVmId) {
         return @{ Vm = $null; Refusal = "VMId $($vm.VmId) differs from the recorded $($Observed.RecordedVmId)" }
     }
-    if ($vm.Path -ine $Config.VmRoot) { return @{ Vm = $null; Refusal = "the VM is stored in '$($vm.Path)', not in '$($Config.VmRoot)'" } }
+    $storage = Get-RefuteVmStoragePath $Config
+    if ($vm.Path -ine $storage) { return @{ Vm = $null; Refusal = "the VM is stored in '$($vm.Path)', not in '$storage'" } }
     if ($vm.Generation -ne 2) { return @{ Vm = $null; Refusal = 'the VM is not generation 2' } }
     $allowedDisks = @($Config.BaseDiskPath)
     foreach ($disk in @($vm.HardDisks)) {
@@ -298,9 +310,18 @@ function New-RefuteVmPlan {
             }
         }
         'CreateVm' {
-            if (@($Observed.Vms | Where-Object { $_.Name -ieq $Config.VmName }).Count) { return (& $refuse "a VM named '$($Config.VmName)' already exists") }
+            if (@($Observed.Vms | Where-Object { $_.Name -ieq $Config.VmName }).Count) {
+                # Already done only for exactly the VM these scripts created: the recorded
+                # VMId, stored where Hyper-V puts it, and every other check of
+                # Resolve-RefuteVmTarget. Any other VM of that name is refused, never adopted.
+                $existing = Resolve-RefuteVmTarget -Config $Config -Observed $Observed -Operation $Operation
+                if ($existing.Refusal) { return (& $refuse "a VM named '$($Config.VmName)' already exists and is not the one these scripts created: $($existing.Refusal)") }
+                $plan.Target.VmId = $existing.Vm.VmId
+                $plan.Preconditions.TargetVm = $existing.Vm
+                break
+            }
             if (-not [string]::IsNullOrEmpty($Observed.RecordedVmId)) { return (& $refuse "a VMId is already recorded: $($Observed.RecordedVmId)") }
-            $changes.Add((New-RefuteVmChange 'VM' 'absent' ("generation 2, stored in $($Config.VmRoot), no disk, network adapter not connected")))
+            $changes.Add((New-RefuteVmChange 'VM' 'absent' ("generation 2, stored in $(Get-RefuteVmStoragePath $Config), no disk, network adapter not connected")))
         }
         'SetMemory' {
             if ($vm.DynamicMemoryEnabled -ne $false) { $changes.Add((New-RefuteVmChange 'Memory.DynamicMemoryEnabled' $vm.DynamicMemoryEnabled $false)) }
@@ -392,10 +413,13 @@ function New-RefuteVmPlan {
     return $plan
 }
 
-function Test-RefuteVmPlanReached {
-    # After the mutation: whether the state the plan asked for is observed. State
-    # changes compare the VM's state; CreateVm needs the VM and its recorded VMId; every
-    # other operation must now plan as already done.
+function Get-RefuteVmPlanReachedProblem {
+    # After the mutation: why the state the plan asked for is not observed, or '' when it
+    # is. State changes compare the VM's state; CreateVm needs one VM with the recorded VMId,
+    # stored where Hyper-V puts it (Get-RefuteVmStoragePath); every other operation must
+    # now plan as already done. The reason is always given, so a "not reached" result is
+    # never empty (the incident of operation 4, 2026-10-17); it names VM fields and paths
+    # under the VM tree only.
     param(
         [System.Collections.IDictionary]$Plan,
         [System.Collections.IDictionary]$Config,
@@ -407,12 +431,36 @@ function Test-RefuteVmPlanReached {
     $targetStates = @{ StartVm = 'Running'; StopVm = 'Off'; SuspendVm = 'Paused'; ResumeVm = 'Running'; SaveVm = 'Saved' }
     if ($targetStates.ContainsKey($Plan.Operation)) {
         $vm = @($ObservedAfter.Vms | Where-Object { $_.VmId -ieq $Plan.Target.VmId })
-        return ($vm.Count -eq 1 -and $vm[0].State -eq $targetStates[$Plan.Operation])
+        if ($vm.Count -ne 1) { return "expected one VM with VMId $($Plan.Target.VmId) after the operation, found $($vm.Count)" }
+        $wanted = $targetStates[$Plan.Operation]
+        if ($vm[0].State -ne $wanted) { return "the VM is $($vm[0].State), not $wanted" }
+        return ''
     }
     if ($Plan.Operation -eq 'CreateVm') {
         $vm = @($ObservedAfter.Vms | Where-Object { $_.Name -ieq $Config.VmName })
-        return ($vm.Count -eq 1 -and $vm[0].VmId -ieq $ObservedAfter.RecordedVmId -and $vm[0].Path -ieq $Config.VmRoot)
+        if ($vm.Count -ne 1) { return "expected one VM named '$($Config.VmName)' after New-VM, found $($vm.Count)" }
+        if ($vm[0].VmId -ine $ObservedAfter.RecordedVmId) { return "the VM's VMId $($vm[0].VmId) is not the recorded '$($ObservedAfter.RecordedVmId)'" }
+        $storage = Get-RefuteVmStoragePath $Config
+        if ($vm[0].Path -ine $storage) { return "the VM is stored in '$($vm[0].Path)', not in '$storage'" }
+        return ''
     }
     $again = New-RefuteVmPlan -Operation $Plan.Operation -Config $Config -Observed $ObservedAfter -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
-    return ($null -eq $again.Refusal -and $again.AlreadyDone)
+    if ($null -ne $again.Refusal) { return "the plan after the operation is refused: $($again.Refusal)" }
+    if (-not $again.AlreadyDone) {
+        return "the plan after the operation still has $(@($again.Changes).Count) change(s): " + ((@($again.Changes) | ForEach-Object { [string]$_.Item }) -join ', ')
+    }
+    return ''
+}
+
+function Test-RefuteVmPlanReached {
+    # Whether the state the plan asked for is observed (Get-RefuteVmPlanReachedProblem).
+    param(
+        [System.Collections.IDictionary]$Plan,
+        [System.Collections.IDictionary]$Config,
+        [System.Collections.IDictionary]$ObservedAfter,
+        [string]$MediaSha256 = '',
+        [int]$Percent = 0,
+        [string]$ServiceGuid = ''
+    )
+    return ((Get-RefuteVmPlanReachedProblem -Plan $Plan -Config $Config -ObservedAfter $ObservedAfter -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid) -eq '')
 }

@@ -967,6 +967,7 @@ UPDATE_CONFIG_COMMANDS = {
     "new-object",
     "set-strictmode",
     "test-refuteallowedowner",
+    "where-object",
     "write-output",
     "write-problems",
 }
@@ -1059,12 +1060,12 @@ def test_the_config_update_apply_writes_and_checks(update_cases):
 @pytest.mark.parametrize(
     ("name", "reason"),
     [
-        ("installed hash differs", "the installed configuration is not the expected one"),
+        ("installed hash differs", "the installed file is not the expected one"),
         ("source hash differs", "the source is not the expected one"),
         ("a discovery finding", "discovery set: another finding"),
         ("a remoting session", "a remoting session is open"),
         ("seven files", "the module does not hold exactly 6 files"),
-        ("another writer", "another account can write the configuration"),
+        ("another writer", "another account can write the installed file"),
         ("missing source", "the source cannot be hashed"),
     ],
 )
@@ -1095,14 +1096,14 @@ def test_the_real_owner_check_is_wired(update_cases):
     if update_cases["OwnerAllowed"]:
         assert case["Exit"] == 0, case
     else:
-        _refused_unchanged(case, update_cases["Old"], "the configuration has another owner")
+        _refused_unchanged(case, update_cases["Old"], "the installed file has another owner")
 
 
 def test_a_finding_after_the_write_is_reported_as_such(update_cases):
     case = update_cases["ByName"]["a finding after the write"]
     assert case["Exit"] == 1 and case["Installed"] == update_cases["New"], case
     heading = (
-        "Problems after the write (the installed configuration WAS replaced; stop and inspect, "
+        "Problems after the write (the installed file WAS replaced; stop and inspect, "
         "no automatic correction):"
     )
     assert heading in case["Lines"], case
@@ -1159,6 +1160,16 @@ def test_the_config_update_refuses_without_its_preconditions(tmp_path):
     assert bad.returncode == 1, text
     assert "-SourceSha256 must be 64 hexadecimal digits" in bad.stdout, text
     assert "Audit.Other" not in text, text
+    # -File: only the six files of the module, never echoed; another file needs both hashes
+    wrong = run("-File", "Audit.Other.ps1")
+    text = wrong.stdout + wrong.stderr
+    assert wrong.returncode == 1, text
+    assert "-File must be one of the six files of the module" in wrong.stdout, text
+    assert "Audit.Other" not in text, text
+    core = run("-File", "RefuteVm.Core.ps1")
+    text = core.stdout + core.stderr
+    assert core.returncode == 1, text
+    assert "-InstalledSha256 and -SourceSha256 are required for RefuteVm.Core.ps1" in core.stdout
     never = run("-Apply", "-InstalledSha256", "0" * 64)
     text = never.stdout + never.stderr
     assert never.returncode == 1, text

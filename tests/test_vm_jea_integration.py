@@ -383,6 +383,32 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
     )
 
 
+def test_create_vm_through_the_endpoint_stores_the_vm_where_the_module_expects(
+    result, record_property
+):
+    """The incident of operation 4 on the maintainer's host (2026-10-17): New-VM -Path
+    <VmRoot> stored the VM in <VmRoot>\\<VmName>, the module's check expected <VmRoot>, and
+    the call ended "not reached" with an empty reason. On the runner, after the version 2
+    attempt, CreateVm runs for real through the endpoint with the test configuration
+    (VmName refute-ci-vm): it must be done, Get-VM must report the VM in
+    C:\\Hyper-V\\refute-vm\\refute-ci-vm, and a new simulation must be already done. Only
+    where SetHostPaths ran for real."""
+    host_paths = result["RefuteVm"]["HostPaths"]
+    if not host_paths["Ran"]:
+        pytest.skip(host_paths["Reason"])
+    create = result["RefuteVm"]["CreateVm"]
+    print(json.dumps(create, indent=1))
+    record_property("create_vm", json.dumps(create))
+    assert create["Error"] == "", create
+    assert create["Simulate"]["Ok"], create
+    assert create["Real"]["Ok"], create
+    assert json.loads(create["Real"]["Output"])["Outcome"] == "done", create
+    assert create["Count"] == 1, create
+    assert _norm(create["Path"]) == "c:\\hyper-v\\refute-vm\\refute-ci-vm", create
+    again = json.loads(create["Again"]["Output"])
+    assert again["Plan"]["AlreadyDone"] is True and again["Plan"]["Refusal"] is None, create
+
+
 PRIVATE = [
     "Get-FileHash",
     "Import-PowerShellDataFile",

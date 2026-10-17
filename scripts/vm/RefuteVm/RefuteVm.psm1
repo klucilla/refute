@@ -139,10 +139,13 @@ function Invoke-RefuteVmOperation {
             try {
                 Invoke-RefuteVmMutation -Config $config -Observed $observed -Plan $plan -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
                 $after = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
-                if (Test-RefuteVmPlanReached -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid) {
+                $notReached = Get-RefuteVmPlanReachedProblem -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+                if (-not $notReached) {
                     $outcome = 'done'
                 } else {
+                    # the reason goes to the result record and to the error (never empty)
                     $outcome = 'not reached'
+                    $failure = $notReached
                 }
             } catch {
                 $outcome = 'failed'

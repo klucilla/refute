@@ -161,7 +161,9 @@ $vmId = '0b1c2d3e-4f50-6172-8394-a5b6c7d8e9f0'
 $gsi = '0a1b2c3d-1111-2222-3333-444455556666'
 function New-Vm {
     return [ordered]@{
-        Name = 'refute-vm'; VmId = $vmId; State = 'Off'; Generation = 2; Path = 'C:\Hyper-V\refute-vm'
+        # where Hyper-V stores the VM: New-VM -Path <VmRoot> keeps it in <VmRoot>\<VmName>
+        # (the host, 2026-10-17)
+        Name = 'refute-vm'; VmId = $vmId; State = 'Off'; Generation = 2; Path = 'C:\Hyper-V\refute-vm\refute-vm'
         MemoryStartup = [long]1073741824; DynamicMemoryEnabled = $true; ProcessorCount = 1; ProcessorMaximum = 100
         SecureBoot = 'On'; SecureBootTemplate = 'MicrosoftWindows'; FirstBootDevice = 'none'
         AutomaticCheckpointsEnabled = $true; CheckpointType = 'Standard'
@@ -189,6 +191,44 @@ $o = New-Observed; $v = New-Vm; $v.Name = 'REFUTE-VM'; $o.Vms = @($v)
 Add-Case 'CreateVm refused: a VM with that name exists (any case)' ($null -ne (Plan 'CreateVm' $o).Refusal)
 $o = New-Observed; $o.RecordedVmId = $vmId
 Add-Case 'CreateVm refused: a VMId is recorded' ($null -ne (Plan 'CreateVm' $o).Refusal)
+
+# ---- the incident of operation 4 (2026-10-17): New-VM -Path <VmRoot> stores the VM in
+# <VmRoot>\<VmName>; the module now expects it there
+$storage = Get-RefuteVmStoragePath $config
+Add-Case 'the VM is stored in VmRoot\VmName' ($storage -ceq 'C:\Hyper-V\refute-vm\refute-vm') $storage
+$p = Plan 'CreateVm' (New-Observed)
+Add-Case 'CreateVm plans the VM where Hyper-V stores it' ($p.Changes.Count -eq 1 -and $p.Changes[0].After -like "*stored in $storage,*") ([string]$p.Changes[0].After)
+$o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
+$p = Plan 'CreateVm' $o
+Add-Case 'CreateVm already done for the VM it created (recorded VMId, nested folder)' ($null -eq $p.Refusal -and $p.AlreadyDone -and $p.Target.VmId -eq $vmId) ([string]$p.Refusal)
+$o = New-Observed; $o.Vms = @(New-Vm)
+Add-Case 'CreateVm refused: a VM of that name with no recorded VMId is never adopted' ((Plan 'CreateVm' $o).Refusal -like '*not the one these scripts created*not created by these scripts*')
+$o = New-Observed; $o.RecordedVmId = $vmId; $v = New-Vm; $v.Path = 'C:\Hyper-V\refute-vm'; $o.Vms = @($v)
+Add-Case 'CreateVm refused: the VM in VmRoot itself (the old expectation) is not where Hyper-V stores it' ((Plan 'CreateVm' $o).Refusal -like "*stored in 'C:\Hyper-V\refute-vm', not in '$storage'*")
+Add-Case 'SetMemory refused: the VM in VmRoot itself' ((Plan 'SetMemory' $o).Refusal -like '*stored in*')
+$o = New-Observed; $o.RecordedVmId = 'ffffffff-ffff-ffff-ffff-ffffffffffff'; $o.Vms = @(New-Vm)
+Add-Case 'CreateVm refused: a VM of that name with another VMId' ((Plan 'CreateVm' $o).Refusal -like '*differs from the recorded*')
+$o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
+Add-Case 'SetMemory plans for the VM in the nested folder (the retake of operation 5)' ($null -eq (Plan 'SetMemory' $o).Refusal)
+
+# the reason of a result that is not reached is never empty
+$p = Plan 'CreateVm' (New-Observed)
+$after = New-Observed; $after.RecordedVmId = $vmId; $after.Vms = @(New-Vm)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm reached for the VM in the nested folder' ($why -eq '' -and (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $after)) $why
+$v = New-Vm; $v.Path = 'C:\Hyper-V\refute-vm'; $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached names the folder' ($why -like "the VM is stored in 'C:\Hyper-V\refute-vm', not in '$storage'") $why
+$after.Vms = @()
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached names a missing VM' ($why -like "expected one VM named 'refute-vm' after New-VM, found 0") $why
+$after.Vms = @(New-Vm); $after.RecordedVmId = ''
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached names a VMId that was not recorded' ($why -like "*is not the recorded ''*") $why
+$o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
+$p = Plan 'SetMemory' $o
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o
+Add-Case 'SetMemory not reached names the changes left' ($why -like '*still has 2 change(s): Memory.DynamicMemoryEnabled, Memory.StartupBytes') $why
 
 Add-Case 'SetMemory refused: no VM' ($null -ne (Plan 'SetMemory' (New-Observed)).Refusal)
 $o = New-Observed; $o.Vms = @(New-Vm)
@@ -249,6 +289,8 @@ $p = Plan 'StopVm' $o
 $after = New-Observed; $after.RecordedVmId = $vmId; $v2 = New-Vm; $v2.State = 'Off'; $after.Vms = @($v2)
 Add-Case 'StopVm reached when Off' (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $after)
 Add-Case 'StopVm not reached when Running' (-not (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $o))
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o
+Add-Case 'StopVm not reached names the state' ($why -eq 'the VM is Running, not Off') $why
 
 # ---- review round 1 (Codex): preconditions, state, disks, media, lock, caller --------------
 $o = New-Observed; $o.RecordedVmId = $vmId; $v = New-Vm; $v.SecureBootTemplate = 'MicrosoftUEFICertificateAuthority'; $o.Vms = @($v)

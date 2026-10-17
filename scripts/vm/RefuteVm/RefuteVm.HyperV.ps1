@@ -220,13 +220,14 @@ function Invoke-RefuteVmMutation {
     if ($Plan.Target.VmId) { $vm = Get-VM -Id $Plan.Target.VmId -ErrorAction Stop }
     $installMedia = "$($Config.MediaRoot)\$($Config.InstallIsoName)"
     $seedMedia = "$($Config.MediaRoot)\$($Config.SeedIsoName)"
-    foreach ($p in $Config.VmRoot, $Config.BaseDiskPath, $Config.MediaRoot, $Config.HostVirtualHardDiskPath) { Assert-RefuteNoReparsePoint $p }
+    foreach ($p in $Config.VmRoot, (Get-RefuteVmStoragePath $Config), $Config.BaseDiskPath, $Config.MediaRoot, $Config.HostVirtualHardDiskPath) { Assert-RefuteNoReparsePoint $p }
 
     switch ($Plan.Operation) {
         'SetHostPaths' { Set-VMHost -VirtualMachinePath $Config.HostVirtualMachinePath -VirtualHardDiskPath $Config.HostVirtualHardDiskPath -ErrorAction Stop }
         'DisableEnhancedSessionHost' { Set-VMHost -EnableEnhancedSessionMode $false -ErrorAction Stop }
         'CreateBaseDisk' { New-VHD -Path $Config.BaseDiskPath -SizeBytes $Config.BaseDiskSizeBytes -Dynamic -ErrorAction Stop | Out-Null }
         'CreateVm' {
+            # -Path is VmRoot: Hyper-V stores the VM in VmRoot\VmName (Get-RefuteVmStoragePath)
             $created = New-VM -Name $Config.VmName -Generation 2 -Path $Config.VmRoot -MemoryStartupBytes $Config.MemoryBytes -NoVHD -ErrorAction Stop
             Write-RefuteVmState -Config $Config -VmId ([string]$created.VMId).ToLowerInvariant() -SeedIsoSha256 $Observed.RecordedSeedIsoSha256
         }
