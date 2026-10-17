@@ -77,6 +77,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 | `Register-RefuteVmEndpoint.ps1` | the maintainer, as Administrator | registers the endpoint; without `-Apply`, only shows what would change |
 | `Remove-RefuteWinRmListener.ps1` | the maintainer, as Administrator | removes the WinRM listener `*+HTTP`, with a `.reg` backup in `C:\ProgramData\RefuteVm-backup`, with WinRM stopped; without `-Apply`, only shows the listener keys and what would change |
 | `Set-RefuteVmTreeAcl.ps1` | the maintainer, as Administrator | replaces the ACL of `C:\Hyper-V` set by the registration of 2026-10-15 with version 2 (after the failure of SetHostPaths, [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md) section 9); without `-Apply`, only shows the state of the tree and of the evidence folders and the ACL it would set; the evidence goes to a new file in `C:\ProgramData\RefuteVm\Log` that only SYSTEM and Administrators can change |
+| `Update-RefuteVmConfig.ps1` | the maintainer, as Administrator | replaces only the installed `RefuteVm.Config.psd1` with the reviewed one, checking the module, its discovery set and both hashes first (the checks of the registration, loaded from a `RefuteRegistration.Core.ps1` whose hash it pins); without `-Apply`, only the preview |
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |
@@ -118,6 +119,12 @@ user name, host name or address.
    `AttachBaseDisk`, `ImportInstallIso -MediaSha256 <hash>`,
    `ImportSeedIso -MediaSha256 <hash>`, `AttachInstallMedia`,
    `SetBootFromInstallMedia`, `StartVm`.
+   **Base disk size:** 100 GiB (`BaseDiskSizeBytes` 107374182400) on `main` since
+   2026-10-17, by the maintainer's decision of 2026-10-16 (it was 200 GiB); estimate in
+   [disk-space-estimate.md](../../docs/validation/v0.3/wp6-results/disk-space-estimate.md).
+   The installed module keeps the previous configuration until the maintainer replaces
+   `RefuteVm.Config.psd1`, so `CreateBaseDisk` runs only after that replacement
+   (section 12 of the record).
 8. The maintainer opens the VM's console (Hyper-V Manager or `vmconnect`, as
    Administrator, since the maintainer's account has no Hyper-V rights) and answers
    "Continue with autoinstall?". The installer powers the VM off when it ends.

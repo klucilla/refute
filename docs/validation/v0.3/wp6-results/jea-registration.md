@@ -478,3 +478,20 @@ module hashes).
 
 **Status of W6.4:** operations 1, `SetHostPaths`, and 2, `DisableEnhancedSessionHost`, are
 validated on the host. Every other operation is not validated yet.
+
+## 12. Note: the base disk becomes 100 GiB (2026-10-17)
+
+By the maintainer's decision of 2026-10-16, `BaseDiskSizeBytes` in
+`scripts/vm/RefuteVm/RefuteVm.Config.psd1` changes on `main` from 214748364800 (200 GiB) to
+107374182400 (100 GiB); the space estimate is
+[disk-space-estimate.md](disk-space-estimate.md).
+
+| Item | Before (installed on 2026-10-15, used by operations 1 and 2) | After (`main`) |
+|---|---|---|
+| `RefuteVm.Config.psd1` SHA-256 | `2559b7348a98430f9f61ebd85f8dfcf456292fadc32e6c3ea608e8db872c6a1e` | `fe46f573c0bf49e1d6eed819cd7f8eb4c220f50b5be1bf34bea9e7d11ac11f46` |
+| `ConfigSha256` | `fa27a08622297aa2615cf48d09d584fed6b4ab25b1862ce2f5d0d91c728208ff` | `e41ee75a41e63b2314efca5d0c62a96b814564293218307d36d114a0f71e0f6e` |
+
+The installed module keeps the previous file until the maintainer replaces it, as
+Administrator; until then `-Status` and every plan show the previous `ConfigSha256`.
+Operation 3, `CreateBaseDisk`, is simulated only after that replacement, and its plan must
+show the new `ConfigSha256` and a disk of 107374182400 bytes.

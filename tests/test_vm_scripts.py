@@ -943,3 +943,224 @@ def test_seed_iso_refuses_a_key_that_is_not_ed25519(tmp_path):
         str(tmp_path / "s.iso"),
     )
     assert out.returncode != 0 and "ssh-ed25519" in out.stderr
+
+
+# Update-RefuteVmConfig.ps1 (#134): replaces only the installed RefuteVm.Config.psd1.
+UPDATE_CONFIG = VM / "Update-RefuteVmConfig.ps1"
+UPDATE_CONFIG_COMMANDS = {
+    "format-refuteerror",
+    "format-refutefinding",
+    "format-refutereason",
+    "get-acl",
+    "get-childitem",
+    "get-ciminstance",
+    "get-filehash",
+    "get-item",
+    "get-refuteacewriters",
+    "get-refutebytessha256",
+    "get-refutediscoveryproblems",
+    "get-refutefilesha256upper",
+    "get-refutejeadiscoveryroots",
+    "get-refutetargetproblems",
+    "invoke-refuteconfigupdate",
+    "join-path",
+    "new-object",
+    "set-strictmode",
+    "test-refuteallowedowner",
+    "write-output",
+    "write-problems",
+}
+
+
+def test_the_config_update_calls_only_reads_and_writes_one_file(cases):
+    """Its commands are reads and output only; the one write is WriteAllBytes over the
+    installed file, after the apply marker and after the checks of step 2; no ACL is set
+    and no security descriptor is printed."""
+    commands = {c.lower() for c in cases["Commands"]["Update-RefuteVmConfig.ps1"]}
+    assert commands - UPDATE_CONFIG_COMMANDS == set()
+    text = UPDATE_CONFIG.read_text(encoding="utf-8")
+    assert text.count("WriteAllBytes") == 1
+    apply = text[text.index("# ---- apply") :]
+    write = apply.index("[System.IO.File]::WriteAllBytes($InstalledPath, $bytes)")
+    assert apply.index("(Get-RefuteFileSha256Upper $InstalledPath) -ne $Old") < write
+    assert apply.index("(Get-RefuteBytesSha256 $bytes) -ne $New") < write
+    writers = ("Set-Acl", "Copy-Item", "Move-Item", "Remove-Item", "WriteAllText", "File]::Replace")
+    for writer in writers:
+        assert writer not in text, writer
+    for line in text.splitlines():
+        if "Sddl" in line:
+            assert "Write-" not in line, line
+    # the checker is loaded from bytes whose hash is checked first
+    load = text.index(
+        ". ([scriptblock]::Create([System.Text.Encoding]::ASCII.GetString($coreBytes)))"
+    )
+    assert text.index("if ($coreActual -ne $CoreSha256)") < load
+
+
+def _sha256_upper(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest().upper()
+
+
+def test_the_config_update_pins_the_checker_and_the_new_configuration():
+    """The pinned hash of RefuteRegistration.Core.ps1 is the file of this commit, and the
+    default -SourceSha256 is this commit's RefuteVm.Config.psd1 (both files are eol=lf, so
+    every checkout has the same bytes); a change to either needs this script reviewed."""
+    text = UPDATE_CONFIG.read_text(encoding="utf-8")
+    core = _sha256_upper(VM / "RefuteRegistration.Core.ps1")
+    config = _sha256_upper(VM / "RefuteVm" / "RefuteVm.Config.psd1")
+    assert f"$CoreSha256 = '{core}'" in text
+    assert f"[string]$SourceSha256 = '{config}'" in text
+
+
+@pytest.fixture(scope="module")
+def update_cases(tmp_path_factory) -> dict:
+    if sys.platform != "win32":
+        pytest.skip("the script runs in Windows PowerShell 5.1")
+    work = tmp_path_factory.mktemp("config_update")
+    out = _run(
+        ROOT / "tests" / "vm" / "config_update_cases.ps1", "-Root", str(ROOT), "-WorkDir", str(work)
+    )
+    assert out.returncode == 0, out.stdout + out.stderr
+    data = json.loads(out.stdout)
+    data["ByName"] = {c["Name"]: c for c in data["Cases"]}
+    return data
+
+
+def _refused_unchanged(case: dict, old: str, reason: str) -> None:
+    assert case["Exit"] == 1, case
+    assert "Problems (nothing was changed):" in case["Lines"], case
+    assert any(reason in line for line in case["Lines"]), case
+    assert case["Installed"] == old, case
+    assert not any(line.startswith(("Written:", "Done:")) for line in case["Lines"]), case
+
+
+def test_the_config_update_preview_passes_and_changes_nothing(update_cases):
+    """Codex review of #134, round 4: with every precondition met the preview succeeds (an
+    empty list of findings is no finding) and the installed file is untouched."""
+    case = update_cases["ByName"]["preview passes"]
+    assert case["Exit"] == 0 and "Preconditions hold" in case["Lines"], case
+    assert case["Installed"] == update_cases["Old"]
+    assert update_cases["NoFindingCount"] == 0
+    assert update_cases["TwoFindings"] == ["discovery set: another finding"] * 2
+
+
+def test_the_config_update_apply_writes_and_checks(update_cases):
+    case = update_cases["ByName"]["apply passes"]
+    assert case["Exit"] == 0, case
+    assert case["Installed"] == update_cases["New"]
+    assert any(line.startswith("Written:") for line in case["Lines"])
+    assert any(line.startswith("Done:") for line in case["Lines"])
+    # the checks ran in the preview, before the write and after it
+    assert case["Calls"] == 3
+
+
+@pytest.mark.parametrize(
+    ("name", "reason"),
+    [
+        ("installed hash differs", "the installed configuration is not the expected one"),
+        ("source hash differs", "the source is not the expected one"),
+        ("a discovery finding", "discovery set: another finding"),
+        ("a remoting session", "a remoting session is open"),
+        ("seven files", "the module does not hold exactly 6 files"),
+        ("another writer", "another account can write the configuration"),
+        ("missing source", "the source cannot be hashed"),
+    ],
+)
+def test_each_guard_alone_stops_the_config_update_before_the_write(update_cases, name, reason):
+    _refused_unchanged(update_cases["ByName"][name], update_cases["Old"], reason)
+
+
+def test_a_finding_of_the_checker_is_printed_as_a_category(update_cases):
+    """Codex review of #134: a real finding of RefuteRegistration.Core.ps1 holds the path
+    and the Windows message; the script prints only its category."""
+    assert update_cases["RawHadPath"] is True
+    assert update_cases["Categorized"] == "an item cannot be read"
+
+
+def test_an_error_is_reported_without_its_message(update_cases):
+    """Codex review of #134: an error gives the exception's type and HRESULT, never its
+    message, which can hold a path or an account name."""
+    lines = update_cases["ByName"]["missing source"]["Lines"]
+    reason = [line for line in lines if "the source cannot be hashed" in line]
+    assert len(reason) == 1 and "(HRESULT 0x" in reason[0], lines
+    assert not any("absent.psd1" in line or "config_update" in line for line in lines), lines
+
+
+def test_the_real_owner_check_is_wired(update_cases):
+    """With the real Test-RefuteAllowedOwner, a file owned by a plain account is refused; an
+    elevated runner can make Administrators the owner, and then the case passes."""
+    case = update_cases["ByName"]["real owner check on a user-owned file"]
+    if update_cases["OwnerAllowed"]:
+        assert case["Exit"] == 0, case
+    else:
+        _refused_unchanged(case, update_cases["Old"], "the configuration has another owner")
+
+
+def test_a_finding_after_the_write_is_reported_as_such(update_cases):
+    case = update_cases["ByName"]["a finding after the write"]
+    assert case["Exit"] == 1 and case["Installed"] == update_cases["New"], case
+    heading = (
+        "Problems after the write (the installed configuration WAS replaced; stop and inspect, "
+        "no automatic correction):"
+    )
+    assert heading in case["Lines"], case
+    assert not any(line.startswith("Done:") for line in case["Lines"])
+
+
+def test_the_config_update_masks_the_profile_and_the_account(update_cases):
+    """Codex review of #134, round 5: the current profile and account in another case, and
+    another account's profile on another drive, are masked too (checked inside the harness,
+    so the account name never reaches the test output)."""
+    masked = update_cases["Masked"]
+    assert update_cases["NoAccountLeft"] is True, masked
+    assert all("%USERPROFILE%" in m for m in masked), masked
+    assert "<account>" in masked[0] and "<account>" in masked[1], masked
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="the script runs in Windows PowerShell 5.1")
+def test_the_config_update_refuses_without_its_preconditions(tmp_path):
+    """In powershell.exe: refused without PSModuleAnalysisCachePath=nul; otherwise the
+    preview runs to a verdict, and -Apply with an installed hash that cannot match never
+    reaches the write (a non-administrator is refused before anything is read)."""
+    import os
+
+    exe = shutil.which("powershell.exe")
+    assert exe
+    argv = [exe, "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File"]
+    argv.append(str(UPDATE_CONFIG))
+    plain = {k: v for k, v in os.environ.items() if k.upper() != "PSMODULEANALYSISCACHEPATH"}
+    env = {**plain, "PSModuleAnalysisCachePath": "nul"}
+
+    def run(*extra, environment=env):
+        return subprocess.run(
+            [*argv, *extra],
+            cwd=tmp_path,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+
+    refused = run(environment=plain)
+    assert refused.returncode == 1 and "PSModuleAnalysisCachePath=nul" in refused.stdout
+    preview = run()
+    text = preview.stdout + preview.stderr
+    assert "PropertyNotFoundStrict" not in text, text
+    assert preview.returncode in (0, 1), text
+    if preview.returncode == 1:
+        assert "Problems (nothing was changed):" in preview.stdout, text
+    else:
+        assert "Preconditions hold" in preview.stdout, text
+    # a wrong hash argument is refused with a controlled message that does not echo it
+    bad = run("-SourceSha256", "Audit.Other")
+    text = bad.stdout + bad.stderr
+    assert bad.returncode == 1, text
+    assert "-SourceSha256 must be 64 hexadecimal digits" in bad.stdout, text
+    assert "Audit.Other" not in text, text
+    never = run("-Apply", "-InstalledSha256", "0" * 64)
+    text = never.stdout + never.stderr
+    assert never.returncode == 1, text
+    assert "Problems (nothing was changed):" in never.stdout, text
+    assert "Written:" not in never.stdout and "Done:" not in never.stdout, text
