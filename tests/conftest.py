@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,40 @@ import yaml
 
 from refute.core.runner import default_workers, run_processes
 from refute.packs.tess.synthetic import SCENARIOS, analyze_scenario, fast_plan_dict
+
+# The test trace: with REFUTE_TEST_TRACE set to a file, the full id of every test is
+# appended to it before the test starts ("start <id>") and after it ends ("end <id>"),
+# each line flushed at once. When a run ends without its JUnit file (pytest-timeout's
+# "thread" method on Windows ends the whole process), scripts/junit_counts.py reads the
+# trace and names the test that was running (issue #59; Codex review of 2026-10-17).
+TRACE = os.environ.get("REFUTE_TEST_TRACE", "")
+
+
+def pytest_sessionstart(session: pytest.Session) -> None:
+    # a new run starts a new trace (its folder is created), so the lines of an earlier
+    # run that ended early are never read as this one's
+    if TRACE:
+        Path(TRACE).parent.mkdir(parents=True, exist_ok=True)
+        Path(TRACE).write_text("", encoding="utf-8")
+
+
+def _trace(line: str) -> None:
+    with open(TRACE, "a", encoding="utf-8") as fh:
+        fh.write(line + "\n")
+        fh.flush()
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_logstart(nodeid: str, location: tuple) -> None:
+    if TRACE:
+        _trace(f"start {nodeid}")
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_runtest_logfinish(nodeid: str, location: tuple) -> None:
+    if TRACE:
+        _trace(f"end {nodeid}")
+
 
 SOURCE = {
     "name": "synthetic test data",

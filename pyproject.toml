@@ -45,6 +45,7 @@ calibration = [
 dev = [
   "pytest>=8.0",
   "pytest-socket>=0.7",
+  "pytest-timeout>=2.4.0,<3",
   "ruff>=0.6",
   "pre-commit>=3.7",
 ]
@@ -57,6 +58,9 @@ build-backend = "hatchling.build"
 packages = ["src/refute"]
 
 [tool.uv]
+# The uv version, the same locally and in CI (setup-uv's `version` input in ci.yml): any
+# other uv refuses to run on this project (issue #59; wp0-acceptance.md section 3.5).
+required-version = "==0.12.24"
 # The calibration group is installed by default, so the drand verification used by
 # the v0.2 selection runs (and is tested) everywhere, including CI.
 default-groups = ["dev", "calibration"]
@@ -82,3 +86,12 @@ select = ["E", "F", "I", "UP", "B", "N", "W"]
 testpaths = ["tests"]
 addopts = "--disable-socket -q"
 filterwarnings = ["ignore::DeprecationWarning:lightkurve.*"]
+# pytest-timeout: a test item (setup, call and teardown) that runs longer than this is a
+# hang, not a slow test. The largest item measured was 764 s (the module fixture of
+# tests/test_ebcatalog_own_tic_e2e.py, ubuntu-24.04, Python 3.12, main run 39033821323 of
+# 2026-10-17), so 1800 s leaves a margin of about 2.4 times. The method is the plugin's
+# default: "signal" where available (Linux: the test fails and the run goes on, the JUnit
+# file is written), "thread" on Windows (the stacks are printed and the whole process
+# ends, with no JUnit file; tests/conftest.py records the test that was running, and
+# scripts/junit_counts.py reports the run as incomplete).
+timeout = 1800
