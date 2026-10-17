@@ -61,7 +61,9 @@ from refute.packs.ml.sandbox import (
 DELTA_S = 1.0  # the reading interval of 1.4a
 PROXY_URL = "http://10.231.71.3:3128"
 WORK = "/work"
-RUN_USER = "1000:1000"
+# a run is a user that owns nothing of the engine's (the engine is uid 1000 on the VM):
+# the read-only data files hard-linked into its folder cannot be changed by it
+RUN_USER = "10001:10001"
 PAPER_ID = re.compile(r"^[a-z0-9]{1,40}$")
 IMAGE_BY_DIGEST = re.compile(r"^[a-z0-9./_-]+(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$")
 LOCAL_IMAGE = re.compile(r"^refute-local/[a-z0-9]{1,40}/[a-z0-9_-]{1,60}$")
