@@ -69,6 +69,23 @@ facts and a pointer to this file.
 | S2. `HiddenYear` detrends only the cadences outside the windows' baseline bands (a smaller input) | B1 |
 | S3. `HiddenYear` logs the detrending as an access | B1 |
 
+## Amendment 1 (2026-10-17): sabotage results
+
+After the code passed every case (commit `fd87ce1`; tests committed before it in
+`227b7b3`, which failed at collection without the code: 1 error in the JUnit file), the
+planned sabotages were run against `tests/test_holdout_report_wording.py` only. The
+implementation was staged first; each sabotage was applied to the file named, the tests ran
+through `scripts/run_tests_affinity.ps1` (threads 0-7, 6 workers), and the file was restored
+from the index; `git diff` was empty after every restore. Nothing was committed.
+
+| Sabotage | Failing cases | Planned and caught |
+|---|---|---|
+| S1. The old sentence restored in `render_report` | A1 (`test_a1_the_report_states_how_blind_the_holdout_is`) | yes |
+| S2. `HiddenYear` detrends only the cadences outside the masked windows | B1 | yes |
+| S3. `HiddenYear` logs the detrending as an access | B1, B2 | yes (B2 also, because the log has one more entry) |
+
+No criterion changes.
+
 ## Effect on locks
 
 `report.py` is under `src/`, so the code hash changes, as for every v0.2.1 change. The v0.2
