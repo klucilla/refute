@@ -246,6 +246,7 @@ class PaperRunner:
         parent_usage: Callable[[], int] | None = None,
         tolerance_usec: int | None = None,
         timing_maxima: TimingMaxima | None = None,
+        after_setup: Callable[[], None] | None = None,
     ) -> None:
         if [c.key for c in plan.claims] != list(accountant.claims):
             raise ValueError("the accountant's claims must be the plan's, in the drawn order")
@@ -263,6 +264,11 @@ class PaperRunner:
         self.parent_usage = parent_usage
         self.tolerance_usec = tolerance_usec
         self.timing_maxima = timing_maxima
+        # called once, after a setup that completed and before the first base run: the
+        # docker backend's wiring waits there for the VM's network profile to change from
+        # build to pull (the maintainer's decision (b) of 2026-10-17); an error in it stops
+        # the paper like any Refute error
+        self.after_setup = after_setup
         self.run_record = PaperRun()
 
     # -- one container, one step -------------------------------------------------------
@@ -478,6 +484,8 @@ class PaperRunner:
             return
         acc.end_setup()
         out.setup_exhausted = acc.setup_exhausted
+        if setup_ok and not out.setup_exhausted and self.after_setup is not None:
+            self.after_setup()
 
         for claim in plan.claims:
             if not setup_ok:
