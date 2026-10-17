@@ -475,10 +475,30 @@ function Get-RefuteVmFailureText {
     # is reported by type and HRESULT, never by its message, which can quote host paths or
     # account names (as in Update-RefuteVmConfig.ps1; Codex review of #142, rounds 1 and 2:
     # the type or the error id of an error does not prove where its message comes from).
+    # Hyper-V often throws a VirtualizationException with the generic HRESULT 0x80131500 and
+    # the real code only in its message (access denied, 0x80070005: the CI run 39039117173 of
+    # #142), so the reason also gives the error's category (a fixed enum) and the codes of
+    # the form 0x and eight hexadecimal digits found in the message and in the inner
+    # exceptions, with their HRESULTs: numbers only, never the text around them.
     param([System.Management.Automation.ErrorRecord]$ErrorRecord, [string]$ModuleReason = '')
     $e = $ErrorRecord.Exception
     if ($ModuleReason -and $e.Message -ceq $ModuleReason) { return $ModuleReason }
-    return ('{0} (HRESULT 0x{1:X8})' -f $e.GetType().Name, $e.HResult)
+    $main = '0x{0:X8}' -f $e.HResult
+    $codes = New-Object System.Collections.Generic.List[string]
+    $x = $e
+    while ($null -ne $x) {
+        $found = @(('0x{0:X8}' -f $x.HResult))
+        foreach ($m in [regex]::Matches([string]$x.Message, '0x[0-9A-Fa-f]{8}(?![0-9A-Fa-f])')) {
+            $found += '0x' + $m.Value.Substring(2).ToUpperInvariant()
+        }
+        foreach ($code in $found) {
+            if ($code -cne $main -and -not $codes.Contains($code)) { $codes.Add($code) }
+        }
+        $x = $x.InnerException
+    }
+    $text = '{0} (HRESULT {1}; category {2}' -f $e.GetType().Name, $main, [string]$ErrorRecord.CategoryInfo.Category
+    if ($codes.Count) { $text += '; codes ' + ($codes -join ', ') }
+    return $text + ')'
 }
 
 function Test-RefuteVmPlanReached {

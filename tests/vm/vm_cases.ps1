@@ -275,13 +275,26 @@ try {
 $text = Get-RefuteVmFailureText -ErrorRecord $records['module'] -ModuleReason 'reparse point refused: C:\Hyper-V\refute-vm'
 Add-Case 'failure text: the text the module recorded is kept' ($text -ceq 'reparse point refused: C:\Hyper-V\refute-vm') $text
 $text = Get-RefuteVmFailureText -ErrorRecord $records['module']
-Add-Case 'failure text: a thrown text the module did not record by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}\)$') $text
+Add-Case 'failure text: a thrown text the module did not record by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}; category OperationStopped\)$') $text
 $text = Get-RefuteVmFailureText -ErrorRecord $records['cmdlet'] -ModuleReason 'reparse point refused: C:\Hyper-V\refute-vm'
-Add-Case 'failure text: a cmdlet error after a recorded text by type and HRESULT' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}\)$') $text
+Add-Case 'failure text: a cmdlet error after a recorded text by type and HRESULT' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}; category NotSpecified\)$') $text
 $text = Get-RefuteVmFailureText -ErrorRecord $records['exception']
-Add-Case 'failure text: a thrown exception by type and HRESULT' ($text -cmatch '^IOException \(HRESULT 0x[0-9A-F]{8}\)$') $text
+Add-Case 'failure text: a thrown exception by type and HRESULT' ($text -cmatch '^IOException \(HRESULT 0x[0-9A-F]{8}; category OperationStopped\)$') $text
 $text = Get-RefuteVmFailureText -ErrorRecord $records['shaped']
-Add-Case 'failure text: an error shaped like a module text by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}\)$' -and $text -notlike '*SomeAccount*') $text
+Add-Case 'failure text: an error shaped like a module text by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}; category NotSpecified\)$' -and $text -notlike '*SomeAccount*') $text
+# the CI run 39039117173 of #142: Hyper-V's access denied came as a VirtualizationException
+# with the generic HRESULT 0x80131500 and 0x80070005 only in its message; the reason keeps
+# the category and the codes, never the text around them
+try {
+    Write-Error -Message 'General access denied error (0x80070005) on C:\Users\SomeAccount\x (0x8007000d).' -Category PermissionDenied -ErrorId 'Probe' -ErrorAction Stop
+} catch { $records['denied'] = $_ }
+try {
+    throw [System.Exception]::new('outer C:\Users\SomeAccount', [System.UnauthorizedAccessException]::new('inner C:\Users\SomeAccount'))
+} catch { $records['inner'] = $_ }
+$text = Get-RefuteVmFailureText -ErrorRecord $records['denied']
+Add-Case 'failure text: the category and the codes of the message, without its text' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}; category PermissionDenied; codes 0x80070005, 0x8007000D\)$' -and $text -notlike '*SomeAccount*') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['inner']
+Add-Case 'failure text: the HRESULT of an inner exception' ($text -cmatch '^Exception \(HRESULT 0x80131500; category OperationStopped; codes 0x80070005\)$' -and $text -notlike '*SomeAccount*') $text
 
 Add-Case 'SetMemory refused: no VM' ($null -ne (Plan 'SetMemory' (New-Observed)).Refusal)
 $o = New-Observed; $o.Vms = @(New-Vm)
