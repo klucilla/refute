@@ -136,17 +136,22 @@ function Invoke-RefuteVmOperation {
         $outcome = 'already done'
         $failure = $null
         if (-not $plan.AlreadyDone) {
+            # the text of a failure this module raises itself (Stop-RefuteVmOperation)
+            $script:RefuteVmFailureReason = ''
             try {
                 Invoke-RefuteVmMutation -Config $config -Observed $observed -Plan $plan -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
                 $after = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
-                if (Test-RefuteVmPlanReached -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid) {
+                $notReached = Get-RefuteVmPlanReachedProblem -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+                if (-not $notReached) {
                     $outcome = 'done'
                 } else {
+                    # the reason goes to the result record and to the error (never empty)
                     $outcome = 'not reached'
+                    $failure = $notReached
                 }
             } catch {
                 $outcome = 'failed'
-                $failure = $_.Exception.Message
+                $failure = Get-RefuteVmFailureText -ErrorRecord $_ -ModuleReason $script:RefuteVmFailureReason
             }
         }
         $result = [ordered]@{

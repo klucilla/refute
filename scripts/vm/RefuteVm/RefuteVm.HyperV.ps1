@@ -5,6 +5,20 @@
 
 Set-StrictMode -Version 2.0
 
+# The text of the last failure this module raised itself (Stop-RefuteVmOperation), for the
+# log (Get-RefuteVmFailureText); RefuteVm.psm1 clears it before each mutation.
+$script:RefuteVmFailureReason = ''
+
+function Stop-RefuteVmOperation {
+    # Fails the operation with a text of this module. The text is recorded in the module's
+    # own scope before it is thrown, so the log can tell it from an error of Hyper-V or of
+    # the system, which is reported by type and HRESULT only (Codex review of #142). Every
+    # text given here quotes configured values, operation names and hashes only.
+    param([string]$Reason)
+    $script:RefuteVmFailureReason = $Reason
+    throw $Reason
+}
+
 function Read-RefuteVmState {
     param([System.Collections.IDictionary]$Config)
     $state = @{ RecordedVmId = ''; RecordedSeedIsoSha256 = '' }
@@ -52,9 +66,9 @@ function Copy-RefuteVerifiedFile {
     param([string]$Source, [string]$Destination, [string]$Sha256)
     foreach ($p in $Source, $Destination) {
         $item = Get-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue
-        if ($item -and ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) { throw "reparse point refused: $p" }
+        if ($item -and ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) { Stop-RefuteVmOperation "reparse point refused: $p" }
     }
-    if (Test-Path -LiteralPath $Destination) { throw "the destination already exists: $Destination" }
+    if (Test-Path -LiteralPath $Destination) { Stop-RefuteVmOperation "the destination already exists: $Destination" }
     $partial = $Destination + '.partial'
     $sha = [System.Security.Cryptography.SHA256]::Create()
     $in = [System.IO.File]::Open($Source, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::Read)
@@ -71,7 +85,7 @@ function Copy-RefuteVerifiedFile {
     } finally { $in.Dispose() }
     $actual = -join ($sha.Hash | ForEach-Object { $_.ToString('x2') })
     $sha.Dispose()
-    if ($actual -cne $Sha256) { throw "the copied bytes have SHA-256 $actual, not $Sha256; left at $partial" }
+    if ($actual -cne $Sha256) { Stop-RefuteVmOperation "the copied bytes have SHA-256 $actual, not $Sha256; left at $partial" }
     [System.IO.File]::Move($partial, $Destination)
 }
 
@@ -115,7 +129,8 @@ function Get-RefuteVmHostChecked {
     } catch {
         $failure = $_
         if (-not (Test-RefuteVmmsInstalled)) {
-            throw "Hyper-V is not available on this host (the vmms service is not installed): $($failure.Exception.Message)"
+            # the error by type and HRESULT, never by its message (Get-RefuteVmFailureText)
+            Stop-RefuteVmOperation ('Hyper-V is not available on this host (the vmms service is not installed): {0} (HRESULT 0x{1:X8})' -f $failure.Exception.GetType().Name, $failure.Exception.HResult)
         }
         throw $failure
     }
@@ -200,7 +215,7 @@ function Assert-RefuteNoReparsePoint {
     while ($current -and $current.Length -gt 3) {
         if (Test-Path -LiteralPath $current) {
             $item = Get-Item -LiteralPath $current -Force
-            if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { throw "reparse point refused: $current" }
+            if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { Stop-RefuteVmOperation "reparse point refused: $current" }
         }
         $current = Split-Path -Parent $current
     }
@@ -220,13 +235,14 @@ function Invoke-RefuteVmMutation {
     if ($Plan.Target.VmId) { $vm = Get-VM -Id $Plan.Target.VmId -ErrorAction Stop }
     $installMedia = "$($Config.MediaRoot)\$($Config.InstallIsoName)"
     $seedMedia = "$($Config.MediaRoot)\$($Config.SeedIsoName)"
-    foreach ($p in $Config.VmRoot, $Config.BaseDiskPath, $Config.MediaRoot, $Config.HostVirtualHardDiskPath) { Assert-RefuteNoReparsePoint $p }
+    foreach ($p in $Config.VmRoot, (Get-RefuteVmStoragePath $Config), $Config.BaseDiskPath, $Config.MediaRoot, $Config.HostVirtualHardDiskPath) { Assert-RefuteNoReparsePoint $p }
 
     switch ($Plan.Operation) {
         'SetHostPaths' { Set-VMHost -VirtualMachinePath $Config.HostVirtualMachinePath -VirtualHardDiskPath $Config.HostVirtualHardDiskPath -ErrorAction Stop }
         'DisableEnhancedSessionHost' { Set-VMHost -EnableEnhancedSessionMode $false -ErrorAction Stop }
         'CreateBaseDisk' { New-VHD -Path $Config.BaseDiskPath -SizeBytes $Config.BaseDiskSizeBytes -Dynamic -ErrorAction Stop | Out-Null }
         'CreateVm' {
+            # -Path is VmRoot: Hyper-V stores the VM in VmRoot\VmName (Get-RefuteVmStoragePath)
             $created = New-VM -Name $Config.VmName -Generation 2 -Path $Config.VmRoot -MemoryStartupBytes $Config.MemoryBytes -NoVHD -ErrorAction Stop
             Write-RefuteVmState -Config $Config -VmId ([string]$created.VMId).ToLowerInvariant() -SeedIsoSha256 $Observed.RecordedSeedIsoSha256
         }
@@ -236,7 +252,7 @@ function Invoke-RefuteVmMutation {
         'DisableCheckpoints' { Set-VM -VM $vm -AutomaticCheckpointsEnabled $false -CheckpointType Disabled -ErrorAction Stop }
         'DisableGuestServiceInterface' {
             $service = @(Get-VMIntegrationService -VM $vm -ErrorAction Stop | Where-Object { ([string]$_.Id).Split('\')[-1] -ieq $ServiceGuid })
-            if ($service.Count -ne 1) { throw 'the integration service changed since the plan' }
+            if ($service.Count -ne 1) { Stop-RefuteVmOperation 'the integration service changed since the plan' }
             Disable-VMIntegrationService -VMIntegrationService $service[0] -ErrorAction Stop
         }
         'DisconnectNetwork' { Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | Disconnect-VMNetworkAdapter -ErrorAction Stop }
@@ -258,7 +274,7 @@ function Invoke-RefuteVmMutation {
         }
         'SetBootFromInstallMedia' {
             $dvd = @(Get-VMDvdDrive -VM $vm -ErrorAction Stop | Where-Object { [string]$_.Path -ieq $installMedia })
-            if ($dvd.Count -ne 1) { throw 'the install DVD drive changed since the plan' }
+            if ($dvd.Count -ne 1) { Stop-RefuteVmOperation 'the install DVD drive changed since the plan' }
             Set-VMFirmware -VM $vm -FirstBootDevice $dvd[0] -ErrorAction Stop
         }
         'StartVm' { Start-VM -VM $vm -ErrorAction Stop }
@@ -267,7 +283,7 @@ function Invoke-RefuteVmMutation {
         'StopVm' { Stop-VM -VM $vm -Confirm:$false -ErrorAction Stop }
         'DetachInstallMedia' {
             $disk = @(Get-VMHardDiskDrive -VM $vm -ErrorAction Stop | Where-Object { [string]$_.Path -ieq $Config.BaseDiskPath })
-            if ($disk.Count -ne 1) { throw 'the base disk changed since the plan' }
+            if ($disk.Count -ne 1) { Stop-RefuteVmOperation 'the base disk changed since the plan' }
             Set-VMFirmware -VM $vm -FirstBootDevice $disk[0] -ErrorAction Stop
             Get-VMDvdDrive -VM $vm -ErrorAction Stop | Remove-VMDvdDrive -ErrorAction Stop
         }
@@ -275,6 +291,6 @@ function Invoke-RefuteVmMutation {
         'SuspendVm' { Suspend-VM -VM $vm -ErrorAction Stop }
         'ResumeVm' { Resume-VM -VM $vm -ErrorAction Stop }
         'SaveVm' { Save-VM -VM $vm -ErrorAction Stop }
-        default { throw "no mutation for operation $($Plan.Operation)" }
+        default { Stop-RefuteVmOperation "no mutation for operation $($Plan.Operation)" }
     }
 }

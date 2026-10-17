@@ -1,8 +1,15 @@
 <#
 .SYNOPSIS
-Replaces RefuteVm.Config.psd1 of the installed RefuteVm module, and nothing else (WP6). Run
-by the maintainer, in Windows PowerShell 5.1 started as Administrator, with
-PSModuleAnalysisCachePath=nul in its environment (scripts/vm/README.md).
+Replaces ONE file of the installed RefuteVm module (-File; by default RefuteVm.Config.psd1),
+and nothing else (WP6). Run by the maintainer, in Windows PowerShell 5.1 started as
+Administrator, with PSModuleAnalysisCachePath=nul in its environment (scripts/vm/README.md).
+-File is one of the four files that hold the module's configuration and logic
+(RefuteVm.Config.psd1, RefuteVm.Core.ps1, RefuteVm.HyperV.ps1, RefuteVm.psm1); the manifest
+and the role capability, which define what the endpoint exposes, are replaced only by the
+registration (Codex review of #142). For any file but RefuteVm.Config.psd1,
+-InstalledSha256 and -SourceSha256 must be given (their defaults are the configuration's).
+The source is that file under scripts\vm\RefuteVm of this checkout, unless -SourcePath is
+given. Several files are replaced by running the script once per file.
 
 .DESCRIPTION
 The procedure reviewed with Codex in pull request #134 (steps 0 to 3), as a script.
@@ -13,7 +20,7 @@ Assert-RefuteTarget of the procedure, returning every finding instead of the fir
 checks, with its tested functions:
   - the discovery set of the JEA session (Get-RefuteDiscoveryProblems): owners, writers,
     every ancestor up to the volume root, no reparse point;
-  - the installed configuration file itself: not a reparse point, an allowed owner
+  - the installed file file itself: not a reparse point, an allowed owner
     (Test-RefuteAllowedOwner), and no other account that can write it
     (Get-RefuteAceWriters: generic rights mapped, CREATOR OWNER only inherit-only);
   - exactly 6 files in the module;
@@ -43,9 +50,9 @@ through Format-RefuteReason, which masks every path under a user profile folder
 (X:\Users\<name>, in any case) and the current account name. The hash arguments are checked
 in the body, so a wrong value is never echoed. Messages PowerShell itself prints before the
 script runs (an unknown parameter name, for example) are outside this guarantee.
-It never deletes anything, and changes no file but the installed RefuteVm.Config.psd1.
+It never deletes anything, and changes no file but the one installed file named by -File.
 
-Reversal: -SourcePath <the previous RefuteVm.Config.psd1, saved in a folder only
+Reversal: -File <the file> -SourcePath <its previous version, saved in a folder only
 administrators can write>, -InstalledSha256 <the new hash>, -SourceSha256 <the previous hash>.
 
 The tests dot-source this file (tests/vm/config_update_cases.ps1): it then only defines its
@@ -58,6 +65,8 @@ functions and runs nothing.
 [CmdletBinding()]
 param(
     [switch]$Apply,
+    # one of $UpdatableFiles, checked in the body (never echoed)
+    [string]$File = 'RefuteVm.Config.psd1',
     [string]$SourcePath = '',
     # checked in the body, with a controlled message: a ValidatePattern error would echo the
     # value given (Codex review of #134)
@@ -72,6 +81,10 @@ Set-StrictMode -Version 2.0
 # needs a reviewed change of this value
 $CoreSha256 = 'E22A61A96FC88EDE07697CD6D0A6B3221DCCF8FA31770BEC7DAA6012170AE2E0'
 $script:RefuteExitCode = 1
+# the files of the installed module this script may replace; the other two of the six the
+# registration installs (RefuteVm.psd1 and RoleCapabilities\RefuteVmOperator.psrc) define
+# what the endpoint exposes, and only the registration replaces them
+$UpdatableFiles = @('RefuteVm.Config.psd1', 'RefuteVm.Core.ps1', 'RefuteVm.HyperV.ps1', 'RefuteVm.psm1')
 
 function Get-RefuteBytesSha256([byte[]]$Bytes) {
     $sha = [System.Security.Cryptography.SHA256]::Create()
@@ -121,14 +134,14 @@ function Get-RefuteTargetProblems([string]$ModuleDir, [string]$InstalledPath) {
     $found = New-Object System.Collections.Generic.List[string]
     try {
         foreach ($p in @(Get-RefuteDiscoveryProblems -Roots @(Get-RefuteJeaDiscoveryRoots))) { $found.Add('discovery set: ' + (Format-RefuteFinding $p)) }
-        if ((Get-Item -LiteralPath $InstalledPath -Force).Attributes -band [System.IO.FileAttributes]::ReparsePoint) { $found.Add('the configuration is a reparse point') }
+        if ((Get-Item -LiteralPath $InstalledPath -Force).Attributes -band [System.IO.FileAttributes]::ReparsePoint) { $found.Add('the installed file is a reparse point') }
         $acl = Get-Acl -LiteralPath $InstalledPath
-        if (-not (Test-RefuteAllowedOwner $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value)) { $found.Add('the configuration has another owner') }
+        if (-not (Test-RefuteAllowedOwner $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value)) { $found.Add('the installed file has another owner') }
         $entries = @(foreach ($e in $acl.GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier])) {
                 [pscustomobject]@{ Sid = $e.IdentityReference.Value; Rights = [int]$e.FileSystemRights; Type = [string]$e.AccessControlType
                     InheritOnly = [bool]($e.PropagationFlags -band [System.Security.AccessControl.PropagationFlags]::InheritOnly) } })
         $writers = @(Get-RefuteAceWriters -Entries $entries)
-        if ($writers.Count) { $found.Add("another account can write the configuration ($($writers.Count) access entries)") }
+        if ($writers.Count) { $found.Add("another account can write the installed file ($($writers.Count) access entries)") }
         if (@(Get-ChildItem -LiteralPath $ModuleDir -Recurse -File -Force).Count -ne 6) { $found.Add('the module does not hold exactly 6 files') }
         # a failed query throws; an empty list means no open session at this moment
         if (@(Get-CimInstance -ClassName Win32_Process -Filter "Name = 'wsmprovhost.exe'").Count) { $found.Add('a remoting session is open') }
@@ -153,11 +166,11 @@ function Invoke-RefuteConfigUpdate {
     foreach ($p in @(Get-RefuteTargetProblems $ModuleDir $InstalledPath)) { $problems.Add($p) }
     $installedNow = ''
     $sourceNow = ''
-    try { $installedNow = Get-RefuteFileSha256Upper $InstalledPath } catch { $problems.Add("the installed configuration cannot be hashed: $(Format-RefuteError $_)") }
+    try { $installedNow = Get-RefuteFileSha256Upper $InstalledPath } catch { $problems.Add("the installed file cannot be hashed: $(Format-RefuteError $_)") }
     try { $sourceNow = Get-RefuteFileSha256Upper $Source } catch { $problems.Add("the source cannot be hashed: $(Format-RefuteError $_)") }
-    Write-Output "Installed configuration SHA-256: $installedNow (expected $Old)"
-    Write-Output "Source SHA-256:                  $sourceNow (expected $New)"
-    if ($installedNow -and $installedNow -ne $Old) { $problems.Add('the installed configuration is not the expected one') }
+    Write-Output "Installed file SHA-256: $installedNow (expected $Old)"
+    Write-Output "Source SHA-256:         $sourceNow (expected $New)"
+    if ($installedNow -and $installedNow -ne $Old) { $problems.Add('the installed file is not the expected one') }
     if ($sourceNow -and $sourceNow -ne $New) { $problems.Add('the source is not the expected one') }
     if ($problems.Count) { Write-Problems 'Problems (nothing was changed):' $problems.ToArray(); return }
     Write-Output 'Preconditions hold'
@@ -174,7 +187,7 @@ function Invoke-RefuteConfigUpdate {
         $aclFileBefore = (Get-Acl -LiteralPath $InstalledPath).Sddl
         $aclDirBefore = (Get-Acl -LiteralPath $ModuleDir).Sddl
         foreach ($p in @(Get-RefuteTargetProblems $ModuleDir $InstalledPath)) { $problems.Add($p) }
-        if (-not $problems.Count -and (Get-RefuteFileSha256Upper $InstalledPath) -ne $Old) { $problems.Add('the installed configuration changed since the preview') }
+        if (-not $problems.Count -and (Get-RefuteFileSha256Upper $InstalledPath) -ne $Old) { $problems.Add('the installed file changed since the preview') }
         if (-not $problems.Count) {
             $bytes = [System.IO.File]::ReadAllBytes($Source)
             if ((Get-RefuteBytesSha256 $bytes) -ne $New) { $problems.Add('the source changed since the preview') }
@@ -186,30 +199,30 @@ function Invoke-RefuteConfigUpdate {
     try {
         [System.IO.File]::WriteAllBytes($InstalledPath, $bytes)
     } catch {
-        Write-Problems 'Stopped during the write (the installed configuration may be incomplete; the module then refuses every call):' @(
+        Write-Problems 'Stopped during the write (the installed file may be incomplete; the module then refuses every call):' @(
             ('the write failed: ' + (Format-RefuteError $_)),
             'recovery: run the preview, then -Apply with -InstalledSha256 set to the hash it prints')
         return
     }
-    Write-Output 'Written: the installed configuration was replaced in place'
+    Write-Output 'Written: the installed file was replaced in place'
 
     # step 3: the checks after the write
     $problems = New-Object System.Collections.Generic.List[string]
     $after = ''
     try {
         $after = Get-RefuteFileSha256Upper $InstalledPath
-        if ($after -ne $New) { $problems.Add("the installed configuration has SHA-256 $after, not $New") }
-        if ((Get-Acl -LiteralPath $InstalledPath).Sddl -ne $aclFileBefore) { $problems.Add('the ACL of the installed configuration changed') }
+        if ($after -ne $New) { $problems.Add("the installed file has SHA-256 $after, not $New") }
+        if ((Get-Acl -LiteralPath $InstalledPath).Sddl -ne $aclFileBefore) { $problems.Add('the ACL of the installed file changed') }
         if ((Get-Acl -LiteralPath $ModuleDir).Sddl -ne $aclDirBefore) { $problems.Add('the ACL of the module folder changed') }
         foreach ($p in @(Get-RefuteTargetProblems $ModuleDir $InstalledPath)) { $problems.Add($p) }
     } catch {
         $problems.Add("a check after the write could not read: $(Format-RefuteError $_)")
     }
     if ($problems.Count) {
-        Write-Problems 'Problems after the write (the installed configuration WAS replaced; stop and inspect, no automatic correction):' $problems.ToArray()
+        Write-Problems 'Problems after the write (the installed file WAS replaced; stop and inspect, no automatic correction):' $problems.ToArray()
         return
     }
-    Write-Output "Done: installed configuration SHA-256 $after; the ACLs are unchanged; checks passed"
+    Write-Output "Done: installed file SHA-256 $after; the ACLs are unchanged; checks passed"
     Write-Output 'Next, from a normal window: scripts\vm\Invoke-RefuteVm.ps1 -Status'
     $script:RefuteExitCode = 0
 }
@@ -227,6 +240,12 @@ if ($env:PSModuleAnalysisCachePath -ne 'nul') {
 
 # step 0: the arguments, who runs, and the checker loaded from checked bytes
 $problems = New-Object System.Collections.Generic.List[string]
+$fileName = @($UpdatableFiles | Where-Object { $_ -ieq $File })
+if ($fileName.Count -ne 1) {
+    $problems.Add('-File must be one of the files this script replaces: ' + ($UpdatableFiles -join ', '))
+} elseif ($fileName[0] -ne 'RefuteVm.Config.psd1' -and -not ($PSBoundParameters.ContainsKey('InstalledSha256') -and $PSBoundParameters.ContainsKey('SourceSha256'))) {
+    $problems.Add("-InstalledSha256 and -SourceSha256 are required for $($fileName[0])")
+}
 foreach ($pair in @(@('-InstalledSha256', $InstalledSha256), @('-SourceSha256', $SourceSha256))) {
     if ($pair[1] -notmatch '^[0-9A-Fa-f]{64}$') { $problems.Add("$($pair[0]) must be 64 hexadecimal digits") }
 }
@@ -250,6 +269,7 @@ if ($coreActual -ne $CoreSha256) {
 
 $dir = Join-Path $env:ProgramFiles 'WindowsPowerShell\Modules\RefuteVm'
 $source = $SourcePath
-if (-not $source) { $source = Join-Path $PSScriptRoot 'RefuteVm\RefuteVm.Config.psd1' }
-Invoke-RefuteConfigUpdate -ModuleDir $dir -InstalledPath (Join-Path $dir 'RefuteVm.Config.psd1') -Source $source -Old $InstalledSha256 -New $SourceSha256 -DoApply:$Apply
+if (-not $source) { $source = Join-Path (Join-Path $PSScriptRoot 'RefuteVm') $fileName[0] }
+Write-Output "File: $($fileName[0])"
+Invoke-RefuteConfigUpdate -ModuleDir $dir -InstalledPath (Join-Path $dir $fileName[0]) -Source $source -Old $InstalledSha256 -New $SourceSha256 -DoApply:$Apply
 exit $script:RefuteExitCode

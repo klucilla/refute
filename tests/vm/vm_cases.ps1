@@ -161,7 +161,9 @@ $vmId = '0b1c2d3e-4f50-6172-8394-a5b6c7d8e9f0'
 $gsi = '0a1b2c3d-1111-2222-3333-444455556666'
 function New-Vm {
     return [ordered]@{
-        Name = 'refute-vm'; VmId = $vmId; State = 'Off'; Generation = 2; Path = 'C:\Hyper-V\refute-vm'
+        # where Hyper-V stores the VM: New-VM -Path <VmRoot> keeps it in <VmRoot>\<VmName>
+        # (the host, 2026-10-17)
+        Name = 'refute-vm'; VmId = $vmId; State = 'Off'; Generation = 2; Path = 'C:\Hyper-V\refute-vm\refute-vm'
         MemoryStartup = [long]1073741824; DynamicMemoryEnabled = $true; ProcessorCount = 1; ProcessorMaximum = 100
         SecureBoot = 'On'; SecureBootTemplate = 'MicrosoftWindows'; FirstBootDevice = 'none'
         AutomaticCheckpointsEnabled = $true; CheckpointType = 'Standard'
@@ -189,6 +191,117 @@ $o = New-Observed; $v = New-Vm; $v.Name = 'REFUTE-VM'; $o.Vms = @($v)
 Add-Case 'CreateVm refused: a VM with that name exists (any case)' ($null -ne (Plan 'CreateVm' $o).Refusal)
 $o = New-Observed; $o.RecordedVmId = $vmId
 Add-Case 'CreateVm refused: a VMId is recorded' ($null -ne (Plan 'CreateVm' $o).Refusal)
+
+# ---- the incident of operation 4 (2026-10-17): New-VM -Path <VmRoot> stores the VM in
+# <VmRoot>\<VmName>; the module now expects it there
+$storage = Get-RefuteVmStoragePath $config
+Add-Case 'the VM is stored in VmRoot\VmName' ($storage -ceq 'C:\Hyper-V\refute-vm\refute-vm') $storage
+$p = Plan 'CreateVm' (New-Observed)
+Add-Case 'CreateVm plans the VM where Hyper-V stores it' ($p.Changes.Count -eq 1 -and $p.Changes[0].After -like "*stored in $storage,*") ([string]$p.Changes[0].After)
+$o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
+$p = Plan 'CreateVm' $o
+Add-Case 'CreateVm already done for the VM it created (recorded VMId, nested folder)' ($null -eq $p.Refusal -and $p.AlreadyDone -and $p.Target.VmId -eq $vmId) ([string]$p.Refusal)
+$o = New-Observed; $o.Vms = @(New-Vm)
+Add-Case 'CreateVm refused: a VM of that name with no recorded VMId is never adopted' ((Plan 'CreateVm' $o).Refusal -like '*not the one these scripts created*not created by these scripts*')
+$o = New-Observed; $o.RecordedVmId = $vmId; $v = New-Vm; $v.Path = 'C:\Hyper-V\refute-vm'; $o.Vms = @($v)
+Add-Case 'CreateVm refused: the VM in VmRoot itself (the old expectation) is not where Hyper-V stores it' ((Plan 'CreateVm' $o).Refusal -like "*stored in 'C:\Hyper-V\refute-vm', not in '$storage'*")
+Add-Case 'SetMemory refused: the VM in VmRoot itself' ((Plan 'SetMemory' $o).Refusal -like '*stored in*')
+$o = New-Observed; $o.RecordedVmId = 'ffffffff-ffff-ffff-ffff-ffffffffffff'; $o.Vms = @(New-Vm)
+Add-Case 'CreateVm refused: a VM of that name with another VMId' ((Plan 'CreateVm' $o).Refusal -like '*differs from the recorded*')
+$o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
+Add-Case 'SetMemory plans for the VM in the nested folder (the retake of operation 5)' ($null -eq (Plan 'SetMemory' $o).Refusal)
+
+# the reason of a result that is not reached is never empty
+$p = Plan 'CreateVm' (New-Observed)
+$after = New-Observed; $after.RecordedVmId = $vmId; $after.Vms = @(New-Vm)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm reached for the VM in the nested folder' ($why -eq '' -and (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $after)) $why
+$v = New-Vm; $v.Path = 'C:\Hyper-V\refute-vm'; $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached names the expected folder only' ($why -ceq "the VM after New-VM is not the one these scripts set up: the VM is not stored in '$storage'") $why
+$after.Vms = @()
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached names a missing VM' ($why -like "expected one VM named 'refute-vm' after New-VM, found 0") $why
+$after.Vms = @(New-Vm); $after.RecordedVmId = ''
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached names a VMId that was not recorded' ($why -like '*: no recorded VMId') $why
+# review round 1 of #142 (Codex): the check after New-VM is the whole check of the target
+$after.RecordedVmId = $vmId; $v = New-Vm; $v.Generation = 1; $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached for a generation 1 VM' ($why -like '*: the VM is not generation 2') $why
+# a reason that is not reached never quotes a value read from the host
+$v = New-Vm; $v.HardDisks = @('C:\Users\SomeAccount\disk.vhdx'); $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached for a foreign disk names no path' ($why -like '*: an unexpected disk is attached' -and $why -notlike '*Users*') $why
+$v = New-Vm; $v.NetworkAdapters = @([ordered]@{ Name = 'Adapter of SomeAccount'; SwitchName = 'Switch of SomeAccount' }); $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached for a connected adapter names no switch' ($why -like '*: a network adapter is connected*' -and $why -notlike '*SomeAccount*') $why
+$o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
+$p = Plan 'SetMemory' $o
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o
+Add-Case 'SetMemory not reached names the changes left' ($why -like '*still has 2 change(s): Memory.DynamicMemoryEnabled, Memory.StartupBytes') $why
+$o2 = New-Observed; $o2.RecordedVmId = $vmId; $v = New-Vm; $v.DvdDrives = @('C:\Users\SomeAccount\other.iso'); $o2.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o2
+Add-Case 'SetMemory not reached for a refused plan names no path' ($why -ceq 'the plan after the operation is refused (simulate the operation to see the reason)') $why
+$p = Plan 'DisableGuestServiceInterface' $o -Guid $gsi
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o -ServiceGuid $gsi
+Add-Case 'DisableGuestServiceInterface not reached names the kind of item only' ($why -like '*still has 1 change(s): IntegrationService' -and $why -notlike '*Guest Service*') $why
+$o3 = New-Observed; $o3.RecordedVmId = $vmId; $v = New-Vm; $v.NetworkAdapters = @([ordered]@{ Name = 'Adapter of SomeAccount'; SwitchName = 'Switch of SomeAccount' }); $o3.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan (Plan 'DisconnectNetwork' $o3) -Config $config -ObservedAfter $o3
+Add-Case 'DisconnectNetwork not reached names the kind of item only' ($why -like '*still has 1 change(s): NetworkAdapter' -and $why -notlike '*SomeAccount*') $why
+# review round 2 of #142 (Codex): a name with a line break is still named by kind only
+foreach ($kind in 'NetworkAdapter', 'IntegrationService') {
+    $name = "Adapter`nSomeAccount"
+    $o3 = New-Observed; $o3.RecordedVmId = $vmId; $v = New-Vm
+    if ($kind -eq 'NetworkAdapter') {
+        $v.NetworkAdapters = @([ordered]@{ Name = $name; SwitchName = "Switch`r`nSomeAccount" }); $o3.Vms = @($v)
+        $why = Get-RefuteVmPlanReachedProblem -Plan (Plan 'DisconnectNetwork' $o3) -Config $config -ObservedAfter $o3
+    } else {
+        $v.IntegrationServices = @([ordered]@{ Id = "Microsoft:$vmId\$gsi"; Name = $name; Enabled = $true }); $o3.Vms = @($v)
+        $why = Get-RefuteVmPlanReachedProblem -Plan (Plan 'DisableGuestServiceInterface' $o3 -Guid $gsi) -Config $config -ObservedAfter $o3 -ServiceGuid $gsi
+    }
+    Add-Case "$kind not reached with a line break in a name names the kind only" ($why -ceq "the plan after the operation still has 1 change(s): $kind") $why
+}
+# the reason of a failure: the text the module recorded and threw is kept; any other error,
+# even one shaped like it (a RuntimeException whose error id is its message), by type and
+# HRESULT
+$records = @{}
+try { throw 'reparse point refused: C:\Hyper-V\refute-vm' } catch { $records['module'] = $_ }
+try { Write-Error -Message 'C:\Users\SomeAccount\x' -ErrorId 'Probe' -ErrorAction Stop } catch { $records['cmdlet'] = $_ }
+try { throw [System.IO.IOException]::new('C:\Users\SomeAccount\x') } catch { $records['exception'] = $_ }
+try {
+    Write-Error -Exception ([System.Management.Automation.RuntimeException]::new('C:\Users\SomeAccount\x')) -ErrorId 'C:\Users\SomeAccount\x' -ErrorAction Stop
+} catch { $records['shaped'] = $_ }
+$text = Get-RefuteVmFailureText -ErrorRecord $records['module'] -ModuleReason 'reparse point refused: C:\Hyper-V\refute-vm'
+Add-Case 'failure text: the text the module recorded is kept' ($text -ceq 'reparse point refused: C:\Hyper-V\refute-vm') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['module']
+Add-Case 'failure text: a thrown text the module did not record by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}; category OperationStopped\)$') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['cmdlet'] -ModuleReason 'reparse point refused: C:\Hyper-V\refute-vm'
+Add-Case 'failure text: a cmdlet error after a recorded text by type and HRESULT' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}; category NotSpecified\)$') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['exception']
+Add-Case 'failure text: a thrown exception by type and HRESULT' ($text -cmatch '^IOException \(HRESULT 0x[0-9A-F]{8}; category OperationStopped\)$') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['shaped']
+Add-Case 'failure text: an error shaped like a module text by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}; category NotSpecified\)$' -and $text -notlike '*SomeAccount*') $text
+# the CI run 39039117173 of #142: Hyper-V's access denied came as a VirtualizationException
+# with the generic HRESULT 0x80131500 and 0x80070005 only in its message; the reason keeps
+# the category and the codes, never the text around them
+try {
+    Write-Error -Message 'General access denied error (0x80070005) on C:\Users\SomeAccount\x (0x8007000d).' -Category PermissionDenied -ErrorId 'Probe' -ErrorAction Stop
+} catch { $records['denied'] = $_ }
+try {
+    throw [System.Exception]::new('outer C:\Users\SomeAccount', [System.UnauthorizedAccessException]::new('inner C:\Users\SomeAccount'))
+} catch { $records['inner'] = $_ }
+$text = Get-RefuteVmFailureText -ErrorRecord $records['denied']
+Add-Case 'failure text: the category and the codes of the message, without its text' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}; category PermissionDenied; codes 0x80070005, 0x8007000D\)$' -and $text -notlike '*SomeAccount*') $text
+# review round 4 of #142 (Codex): a number in a path that looks like a code is not a code;
+# only the reviewed list is named
+try {
+    Write-Error -Message 'Could not open C:\Users\0x1234ABCD\file.vhdx' -ErrorId 'Probe' -ErrorAction Stop
+} catch { $records['hexname'] = $_ }
+$text = Get-RefuteVmFailureText -ErrorRecord $records['hexname']
+Add-Case 'failure text: a code-like folder name is never named' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}; category NotSpecified\)$' -and $text -notlike '*1234ABCD*') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['inner']
+Add-Case 'failure text: the HRESULT of an inner exception' ($text -cmatch '^Exception \(HRESULT 0x80131500; category OperationStopped; codes 0x80070005\)$' -and $text -notlike '*SomeAccount*') $text
 
 Add-Case 'SetMemory refused: no VM' ($null -ne (Plan 'SetMemory' (New-Observed)).Refusal)
 $o = New-Observed; $o.Vms = @(New-Vm)
@@ -249,6 +362,8 @@ $p = Plan 'StopVm' $o
 $after = New-Observed; $after.RecordedVmId = $vmId; $v2 = New-Vm; $v2.State = 'Off'; $after.Vms = @($v2)
 Add-Case 'StopVm reached when Off' (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $after)
 Add-Case 'StopVm not reached when Running' (-not (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $o))
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o
+Add-Case 'StopVm not reached names the state' ($why -eq 'the VM is Running, not Off') $why
 
 # ---- review round 1 (Codex): preconditions, state, disks, media, lock, caller --------------
 $o = New-Observed; $o.RecordedVmId = $vmId; $v = New-Vm; $v.SecureBootTemplate = 'MicrosoftUEFICertificateAuthority'; $o.Vms = @($v)
@@ -289,8 +404,12 @@ $dst2 = Join-Path $WorkDir 'dest2.iso'
 Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha
 Add-Case 'verified copy of the right bytes' ((Get-FileHash -LiteralPath $dst2 -Algorithm SHA256).Hash.ToLowerInvariant() -eq $srcSha -and -not (Test-Path -LiteralPath "$dst2.partial"))
 $failed = $null
-try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_.Exception.Message }
-Add-Case 'verified copy never overwrites' ($failed -like '*already exists*')
+$script:RefuteVmFailureReason = ''
+try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_ }
+Add-Case 'verified copy never overwrites' ($failed.Exception.Message -like '*already exists*')
+# the module records the text it throws (Stop-RefuteVmOperation), and the log keeps it
+$text = Get-RefuteVmFailureText -ErrorRecord $failed -ModuleReason $script:RefuteVmFailureReason
+Add-Case 'a failure of the module records its own text' ($script:RefuteVmFailureReason -ceq "the destination already exists: $dst2" -and $text -ceq $script:RefuteVmFailureReason) $text
 
 # The first Hyper-V call (Codex review of #118): only a host without the vmms service gets
 # the module's own message; a command that is not recognized and any failure on a host
@@ -312,7 +431,7 @@ $denied = { throw (New-Object System.UnauthorizedAccessException 'synthetic: acc
 $noService = { throw (New-Object System.InvalidOperationException 'synthetic: no virtualization service') }
 $notFound = { throw (New-Object System.Management.Automation.CommandNotFoundException 'synthetic: Get-VMHost is not recognized') }
 $r = Get-HostCheckFailure $noService $false
-Add-Case 'Hyper-V check: no vmms service gives the own message' ($r.Message -like 'Hyper-V is not available on this host (the vmms service is not installed): synthetic: no virtualization service') ($r.Type + ': ' + $r.Message)
+Add-Case 'Hyper-V check: no vmms service gives the own message, with the error by type and HRESULT' ($r.Message -cmatch '^Hyper-V is not available on this host \(the vmms service is not installed\): InvalidOperationException \(HRESULT 0x[0-9A-F]{8}\)$' -and $r.Message -notlike '*synthetic*') ($r.Type + ': ' + $r.Message)
 $r = Get-HostCheckFailure $denied $true
 Add-Case 'Hyper-V check: access denied with the service installed keeps its error' ($r.Type -eq 'System.UnauthorizedAccessException' -and $r.Message -eq 'synthetic: access denied') ($r.Type + ': ' + $r.Message)
 $r = Get-HostCheckFailure $notFound $false
