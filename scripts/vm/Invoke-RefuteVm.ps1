@@ -21,13 +21,14 @@ param(
         'DisableGuestServiceInterface', 'DisconnectNetwork', 'AttachBaseDisk',
         'ImportInstallIso', 'ImportSeedIso', 'AttachInstallMedia', 'SetBootFromInstallMedia',
         'StartVm', 'StopVm', 'DetachInstallMedia', 'SetProcessorMaximum', 'SuspendVm',
-        'ResumeVm', 'SaveVm')]
+        'ResumeVm', 'SaveVm', 'SetPortProfile', 'ConnectNetwork')]
     [string]$Operation,
     [Parameter(ParameterSetName = 'Operation')][switch]$Simulate,
     [Parameter(ParameterSetName = 'Operation')][ValidatePattern('^[0-9a-f]{64}$')][string]$PlanSha256 = '',
     [Parameter(ParameterSetName = 'Operation')][ValidatePattern('^[0-9a-f]{64}$')][string]$MediaSha256 = '',
     [Parameter(ParameterSetName = 'Operation')][ValidateRange(1, 100)][int]$Percent = 0,
     [Parameter(ParameterSetName = 'Operation')][ValidatePattern('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')][string]$ServiceGuid = '',
+    [Parameter(ParameterSetName = 'Operation')][ValidateSet('build', 'pull')][string]$Profile = '',
     [Parameter(Mandatory = $true, ParameterSetName = 'Status')][switch]$Status,
     [Parameter(ParameterSetName = 'Status')][switch]$IncludeMedia
 )
@@ -51,6 +52,10 @@ function Get-RefuteVmCommandText {
         }
     }
     if ($Bound.ContainsKey('Percent') -and $Bound.Percent) { $text += ' -Percent ' + [int]$Bound.Percent }
+    if ($Bound.ContainsKey('Profile') -and $Bound.Profile) {
+        if (@('build', 'pull') -cnotcontains $Bound.Profile) { throw 'invalid Profile' }
+        $text += " -Profile '$($Bound.Profile)'"
+    }
     return $text
 }
 

@@ -235,7 +235,7 @@ $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $a
 Add-Case 'CreateVm not reached for a foreign disk names no path' ($why -like '*: an unexpected disk is attached' -and $why -notlike '*Users*') $why
 $v = New-Vm; $v.NetworkAdapters = @([ordered]@{ Name = 'Adapter of SomeAccount'; SwitchName = 'Switch of SomeAccount' }); $after.Vms = @($v)
 $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
-Add-Case 'CreateVm not reached for a connected adapter names no switch' ($why -like '*: a network adapter is connected*' -and $why -notlike '*SomeAccount*') $why
+Add-Case 'CreateVm not reached for a connected adapter names no switch' ($why -like '*: the network adapter is connected*' -and $why -notlike '*SomeAccount*') $why
 $o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
 $p = Plan 'SetMemory' $o
 $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o
@@ -322,9 +322,65 @@ Add-Case 'refused: unexpected DVD media' ((Plan 'SetProcessor' $o2).Refusal -lik
 $o2 = New-Observed; $o2.RecordedVmId = $vmId; $v = New-Vm; $v.Path = 'C:\Elsewhere'; $o2.Vms = @($v)
 Add-Case 'refused: VM stored elsewhere' ((Plan 'SetProcessor' $o2).Refusal -like '*stored in*')
 $o2 = New-Observed; $o2.RecordedVmId = $vmId; $v = New-Vm; $v.NetworkAdapters = @([ordered]@{ Name = 'Network Adapter'; SwitchName = 'Default Switch' }); $o2.Vms = @($v)
-Add-Case 'refused: connected network (phase 1)' ((Plan 'SetProcessor' $o2).Refusal -like '*no network*')
+Add-Case 'refused: connected network for an operation that needs it disconnected' ((Plan 'SetProcessor' $o2).Refusal -like '*needs it disconnected*')
 $p = Plan 'DisconnectNetwork' $o2
 Add-Case 'DisconnectNetwork plans the disconnection' ($null -eq $p.Refusal -and $p.Changes.Count -eq 1)
+
+# ---- phase 2 network (W6.5 as changed on 2026-10-17): profiles, connection, containment ----
+$switchId = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
+$netConfig = Copy-Config @{ NetworkSwitchId = $switchId }
+Add-Case 'config with a switch Id is valid' ((Test-RefuteVmConfig $netConfig).Count -eq 0) ((Test-RefuteVmConfig $netConfig) -join '; ')
+foreach ($bad in @(@{ HostAddress = '192.168.1.10' }, @{ VmAddress = '10.231.71.1' }, @{ NetworkSwitchId = 'AAAA' }, @{ ProxyPort = 0 }, @{ ConfigVersion = 1 })) {
+    $p = Test-RefuteVmConfig (Copy-Config $bad)
+    Add-Case ("config refused: " + (($bad.Keys | ForEach-Object { $_ }) -join ',')) ($p.Count -gt 0) ($p -join '; ')
+}
+function New-NetObserved([object[]]$Acls, [string]$SwitchIdOfAdapter = '', [string]$SwitchType = 'Internal') {
+    $o = New-Observed; $o.RecordedVmId = $vmId
+    $o['Switches'] = @([ordered]@{ Id = $switchId; Name = 'refute-internal'; SwitchType = $SwitchType })
+    $v = New-Vm
+    $name = ''; if ($SwitchIdOfAdapter) { $name = 'refute-internal' }
+    $v.NetworkAdapters = @([ordered]@{ Name = 'Network Adapter'; Id = 'Microsoft:x'; SwitchName = $name; SwitchId = $SwitchIdOfAdapter; Acls = @($Acls) })
+    $o.Vms = @($v)
+    return $o
+}
+function NetPlan([string]$Op, $Obs, [string]$Profile = '') {
+    return New-RefuteVmPlan -Operation $Op -Config $netConfig -Observed $Obs -Profile $Profile
+}
+$build = Get-RefuteVmAclProfile -Config $netConfig -Profile 'build'
+$pull = Get-RefuteVmAclProfile -Config $netConfig -Profile 'pull'
+Add-Case 'profile build: SSH in from the host, the proxy out, deny the rest both ways' (
+    $build.Count -eq 4 -and @($build | Where-Object { $_.Direction -eq 'Outbound' -and $_.Action -eq 'Allow' -and $_.RemoteIPAddress -eq '10.231.71.3' -and $_.RemotePort -eq '3128' }).Count -eq 1 -and
+    @($build | Where-Object { $_.Action -eq 'Deny' -and $_.RemoteIPAddress -eq 'ANY' }).Count -eq 2)
+Add-Case 'profile pull: no path to the proxy' ($pull.Count -eq 3 -and @($pull | Where-Object { $_.RemoteIPAddress -eq '10.231.71.3' }).Count -eq 0)
+# the host's spelling of an entry is normalized: /32, protocol number, wildcards
+$spelled = [pscustomobject]@{ Direction = 'Inbound'; Action = 'Allow'; LocalIPAddress = '*'; RemoteIPAddress = '10.231.71.1/32'; Protocol = '6'; LocalPort = '22'; RemotePort = ''; Weight = 100; Stateful = $true; IdleSessionTimeout = 0; IsolationID = 0 }
+Add-Case 'an entry read from the host is normalized' ((ConvertTo-RefuteCanonicalJson (ConvertTo-RefuteAclRule $spelled)) -ceq (ConvertTo-RefuteCanonicalJson $build[0])) (ConvertTo-RefuteCanonicalJson (ConvertTo-RefuteAclRule $spelled))
+$p = NetPlan 'SetPortProfile' (New-NetObserved @()) 'build'
+Add-Case 'SetPortProfile plans the whole profile on a disconnected adapter' ($null -eq $p.Refusal -and $p.Changes.Count -eq 1 -and $p.Changes[0].Item -eq 'PortAcl')
+Add-Case 'SetPortProfile already done when the list equals the profile' ((NetPlan 'SetPortProfile' (New-NetObserved $build) 'build').AlreadyDone)
+Add-Case 'SetPortProfile refused while connected' ((NetPlan 'SetPortProfile' (New-NetObserved $build $switchId) 'pull').Refusal -like '*disconnected*')
+Add-Case 'SetPortProfile refused for another profile name' ((NetPlan 'SetPortProfile' (New-NetObserved @()) 'open').Refusal -like 'Profile must be one of*')
+Add-Case 'a Profile is refused by another operation' ((NetPlan 'StartVm' (New-NetObserved @()) 'build').Refusal -eq 'this operation takes no Profile')
+Add-Case 'ConnectNetwork refused without a profile in force' ((NetPlan 'ConnectNetwork' (New-NetObserved @())).Refusal -like '*equal no profile*')
+$p = NetPlan 'ConnectNetwork' (New-NetObserved $build)
+Add-Case 'ConnectNetwork plans the connection with the build profile' ($null -eq $p.Refusal -and $p.Changes.Count -eq 1 -and $p.Changes[0].After -eq 'refute-internal')
+Add-Case 'ConnectNetwork already done when connected to the switch' ((NetPlan 'ConnectNetwork' (New-NetObserved $build $switchId)).AlreadyDone)
+Add-Case 'ConnectNetwork refused without a configured switch Id' ((Plan 'ConnectNetwork' (New-NetObserved $build)).Refusal -like '*NetworkSwitchId is not configured*')
+Add-Case 'ConnectNetwork refused for an external switch' ((NetPlan 'ConnectNetwork' (New-NetObserved $build '' 'External')).Refusal -like '*not internal*')
+$running = New-NetObserved $build $switchId; $running.Vms[0].State = 'Running'
+Add-Case 'StopVm accepted while connected with a profile in force' ($null -eq (NetPlan 'StopVm' $running).Refusal)
+$changed = @($build | ForEach-Object { $r = [ordered]@{}; foreach ($k in $_.Keys) { $r[$k] = $_[$k] }; $r }); $changed[1].Weight = 95
+$off = New-NetObserved $changed $switchId
+Add-Case 'StartVm refused when one entry differs from the profile' ((NetPlan 'StartVm' $off).Refusal -like '*equal no profile*')
+Add-Case 'SetMemory refused while connected, even with a profile' ((NetPlan 'SetMemory' (New-NetObserved $build $switchId)).Refusal -like '*needs it disconnected*')
+$foreign = New-NetObserved @() 'ffffffff-0000-0000-0000-000000000000'
+Add-Case 'StartVm refused on another switch' ((NetPlan 'StartVm' $foreign).Refusal -like '*not the configured one*')
+$p = NetPlan 'DisconnectNetwork' $foreign
+Add-Case 'DisconnectNetwork stays available on another switch (containment)' ($null -eq $p.Refusal -and $p.Changes.Count -eq 1)
+$two = New-NetObserved $build; $two.Vms[0].NetworkAdapters = @($two.Vms[0].NetworkAdapters[0], $two.Vms[0].NetworkAdapters[0])
+Add-Case 'a second adapter is refused' ((NetPlan 'StartVm' $two).Refusal -like '*2 network adapters*')
+$imp = New-NetObserved $build $switchId
+Add-Case 'ImportSeedIso refused while the recorded VM is connected' ((New-RefuteVmPlan -Operation 'ImportSeedIso' -Config $netConfig -Observed $imp -MediaSha256 ('a' * 64)).Refusal -like '*needs it disconnected*')
 
 $o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
 Add-Case 'DisableGuestServiceInterface refused: no ServiceGuid' ($null -ne (Plan 'DisableGuestServiceInterface' $o).Refusal)

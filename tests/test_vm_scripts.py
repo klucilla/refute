@@ -140,7 +140,8 @@ def test_every_command_the_module_calls_exists_in_the_restricted_session():
     # refusal script block, and the dot-sourcing of the module's two files. A new dynamic
     # call fails here until it is reviewed.
     assert data["Dynamic"] == {
-        "Ampersand $refuse": 28,
+        # 38 since the phase 2 network operations (2026-10-17)
+        "Ampersand $refuse": 38,
         "Dot (Join-Path $PSScriptRoot 'RefuteVm.Core.ps1')": 1,
         "Dot (Join-Path $PSScriptRoot 'RefuteVm.HyperV.ps1')": 1,
     }
@@ -265,7 +266,6 @@ FORBIDDEN = {
     "Remove-VHD",
     "Remove-VMHardDiskDrive",
     "Remove-VMNetworkAdapter",
-    "Connect-VMNetworkAdapter",
     "Enable-VMIntegrationService",
     "Invoke-Expression",
     "iex",
@@ -302,6 +302,13 @@ HYPERV_ALLOWED = {
     "Set-VM",
     "Disable-VMIntegrationService",
     "Disconnect-VMNetworkAdapter",
+    # phase 2 network (W6.5 as changed on 2026-10-17): the connection to the configured
+    # switch, the switch's identity, and the port's extended ACLs
+    "Connect-VMNetworkAdapter",
+    "Get-VMSwitch",
+    "Get-VMNetworkAdapterExtendedAcl",
+    "Add-VMNetworkAdapterExtendedAcl",
+    "Remove-VMNetworkAdapterExtendedAcl",
     "Add-VMHardDiskDrive",
     "Add-VMDvdDrive",
     "Remove-VMDvdDrive",
@@ -926,7 +933,7 @@ def test_seed_iso_is_a_cidata_volume_with_the_rendered_files(tmp_path):
     assert "somebody" not in user_data and "{{" not in user_data and "\r" not in user_data
     assert (
         files["meta-data"].decode("utf-8")
-        == "instance-id: refute-vm-1\nlocal-hostname: refute-vm\n"
+        == "instance-id: refute-vm-2\nlocal-hostname: refute-vm\n"
     )
     # nothing is overwritten
     again = _run(VM / "New-RefuteSeedIso.ps1", "-PublicKeyPath", str(key), "-OutputPath", str(iso))

@@ -81,7 +81,7 @@ function Invoke-RefuteVmOperation {
             'DisableGuestServiceInterface', 'DisconnectNetwork', 'AttachBaseDisk',
             'ImportInstallIso', 'ImportSeedIso', 'AttachInstallMedia', 'SetBootFromInstallMedia',
             'StartVm', 'StopVm', 'DetachInstallMedia', 'SetProcessorMaximum', 'SuspendVm',
-            'ResumeVm', 'SaveVm')]
+            'ResumeVm', 'SaveVm', 'SetPortProfile', 'ConnectNetwork')]
         [string]$Operation,
         [switch]$Simulate,
         [ValidatePattern('^[0-9a-f]{64}$')]
@@ -91,7 +91,9 @@ function Invoke-RefuteVmOperation {
         [ValidateRange(0, 100)]
         [int]$Percent = 0,
         [ValidatePattern('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')]
-        [string]$ServiceGuid = ''
+        [string]$ServiceGuid = '',
+        [ValidateSet('', 'build', 'pull')]
+        [string]$Profile = ''
     )
     $config = Get-RefuteVmModuleConfig
     $operationId = [guid]::NewGuid().ToString()
@@ -106,7 +108,7 @@ function Invoke-RefuteVmOperation {
     if (-not $Simulate) { $lock = Enter-RefuteVmLock -Config $config }
     try {
         $observed = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
-        $plan = New-RefuteVmPlan -Operation $Operation -Config $config -Observed $observed -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+        $plan = New-RefuteVmPlan -Operation $Operation -Config $config -Observed $observed -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid -Profile $Profile
         $planSha = Get-RefuteVmPlanSha256 $plan
         $record = [ordered]@{
             Utc         = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
@@ -139,9 +141,9 @@ function Invoke-RefuteVmOperation {
             # the text of a failure this module raises itself (Stop-RefuteVmOperation)
             $script:RefuteVmFailureReason = ''
             try {
-                Invoke-RefuteVmMutation -Config $config -Observed $observed -Plan $plan -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+                Invoke-RefuteVmMutation -Config $config -Observed $observed -Plan $plan -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid -Profile $Profile
                 $after = Get-RefuteVmObserved -Config $config -IncludeMedia:$includeMedia
-                $notReached = Get-RefuteVmPlanReachedProblem -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+                $notReached = Get-RefuteVmPlanReachedProblem -Plan $plan -Config $config -ObservedAfter $after -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid -Profile $Profile
                 if (-not $notReached) {
                     $outcome = 'done'
                 } else {

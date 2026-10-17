@@ -133,9 +133,22 @@ https://docs.docker.com/engine/install/ubuntu/ (accessed 2026-10-14). The guest 
   (source read without write sharing, hashed while copied, moved into place only if
   the hash matches, never overwriting). Every simulation, intent, refusal and result is logged.
   Every operation checks the VM's identity (the VMId recorded at creation, its name,
-  its paths, its disks and media) and refuses any divergence. No operation deletes a
-  VM or a disk, turns a VM off without a guest shutdown, connects a network adapter,
-  enables an integration service or turns Secure Boot off.
+  its paths, its disks and media) and refuses any divergence. **Network (phase 2;
+  changed by the maintainer's decision of 2026-10-17, wp6-results/
+  phase2-network-design.md):** the VM has one network adapter, identified by its Id.
+  It is connected only to the internal switch of the configuration, identified by its Id
+  and type, and only while the port's extended ACLs equal, entry by entry (IPv4 and
+  IPv6, with their weights and stateful flags), one of the reviewed profiles of the
+  configuration (`build`, `pull`). The ACLs are changed only while the adapter is
+  disconnected and are read back after each change, by one call that sets a whole
+  profile; a run starts only with the adapter disconnected. Every operation except
+  `DisconnectNetwork` refuses an adapter connected to another switch, a second adapter,
+  or a port whose ACLs differ from the profile in force; `DisconnectNetwork` stays
+  available in every such state. The media imports also need the adapter disconnected.
+  The switches, the host's addresses on them and the proxy VM are set up by the
+  maintainer as Administrator, not by the endpoint. No operation deletes a VM or a
+  disk, turns a VM off without a guest shutdown, enables an integration service or
+  turns Secure Boot off.
 - **W6.6 Synthetic tests (CI, no Hyper-V).** Every script parses; every data file
   loads; the pure logic refuses each divergence above and plans each change; the plan
   hash is deterministic and changes with the observed state; the operation lists of

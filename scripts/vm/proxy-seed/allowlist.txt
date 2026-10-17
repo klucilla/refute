@@ -1,0 +1,27 @@
+# The base allowlist of the Refute proxy (WP6 phase 2, plan 6.1: "package registries and
+# the declared data hosts"), one Squid dstdomain per line; a leading dot also matches the
+# subdomains. The data hosts a paper declares are added for that paper, recorded with its
+# approval. Comments and empty lines are dropped when the seed is built.
+# Ubuntu archive (the VM's own packages)
+archive.ubuntu.com
+security.ubuntu.com
+# Docker Engine apt repository and Docker Hub (base images pinned by digest)
+download.docker.com
+registry-1.docker.io
+auth.docker.io
+production.cloudflare.docker.com
+# PyPI and the CPU wheels of PyTorch
+pypi.org
+files.pythonhosted.org
+download.pytorch.org
+# GitHub (repositories at the recorded commit, release assets)
+github.com
+codeload.github.com
+objects.githubusercontent.com
+raw.githubusercontent.com
+release-assets.githubusercontent.com
+# Hugging Face (datasets and weights a paper declares)
+huggingface.co
+.hf.co
+cdn-lfs.huggingface.co
+cdn-lfs-us-1.huggingface.co

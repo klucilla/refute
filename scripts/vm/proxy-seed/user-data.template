@@ -1,0 +1,110 @@
+#cloud-config
+# Autoinstall configuration of the allowlist proxy VM "refute-proxy" (WP6 phase 2; the
+# maintainer's decisions of 2026-10-17, docs/validation/v0.3/wp6-results/
+# phase2-network-design.md): Ubuntu Server 26.04.1 from the same ISO, 2 vCPU, 2 GiB, a
+# dynamic disk of 20 GiB, two adapters with static MAC addresses set at creation:
+# - "inner", on the internal switch of the Refute VM: 10.231.71.3/29, no gateway; Squid
+#   listens only here, on port 3128;
+# - "egress", on the Windows "Default Switch": DHCP for the address and the route, but not
+#   for DNS (the resolvers are fixed: 1.1.1.1 and 9.9.9.9).
+# No forwarding between the two adapters (net.ipv4.ip_forward = 0). The proxy runs no
+# third-party code. Keys: https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+# and https://netplan.readthedocs.io/en/stable/netplan-yaml/ (read 2026-10-17); Squid:
+# https://www.squid-cache.org/Doc/config/ (http_access, acl; read 2026-10-17).
+# The installation fetches Squid from the Ubuntu archive through the egress adapter,
+# whose port ACLs the maintainer sets before the first start.
+autoinstall:
+  version: 1
+  interactive-sections: []
+  refresh-installer:
+    update: false
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  timezone: Etc/UTC
+  network:
+    version: 2
+    ethernets:
+      inner:
+        match:
+          macaddress: "00:15:5d:a7:71:03"
+        set-name: inner0
+        addresses: [10.231.71.3/29]
+        dhcp4: false
+        dhcp6: false
+        accept-ra: false
+        link-local: []
+      egress:
+        match:
+          macaddress: "00:15:5d:a7:72:03"
+        set-name: egress0
+        dhcp4: true
+        dhcp4-overrides:
+          use-dns: false
+        dhcp6: false
+        accept-ra: false
+        link-local: []
+        nameservers:
+          addresses: [1.1.1.1, 9.9.9.9]
+  apt:
+    geoip: false
+    mirror-selection:
+      primary:
+        - uri: "http://archive.ubuntu.com/ubuntu"
+    fallback: abort
+  storage:
+    layout:
+      name: direct
+  ssh:
+    install-server: true
+    allow-pw: false
+  packages:
+    - squid
+  updates: security
+  late-commands:
+    - curtin in-target -- systemctl mask systemd-networkd-wait-online.service
+  shutdown: poweroff
+  user-data:
+    hostname: refute-proxy
+    disable_root: true
+    ssh_pwauth: false
+    users:
+      - name: refute
+        shell: /bin/bash
+        lock_passwd: true
+        sudo: "ALL=(ALL) NOPASSWD:ALL"
+        ssh_authorized_keys:
+          - {{SSH_PUBLIC_KEY}}
+    write_files:
+      - path: /etc/sysctl.d/90-refute-no-forwarding.conf
+        content: |
+          net.ipv4.ip_forward = 0
+          net.ipv6.conf.all.forwarding = 0
+      - path: /etc/squid/refute-allowlist.txt
+        content: |
+          {{ALLOWLIST}}
+      - path: /etc/squid/squid.conf
+        content: |
+          # Squid of the Refute allowlist proxy (scripts/vm/proxy-seed/user-data.template).
+          # Rules are checked in order and the first match decides; the last is deny all.
+          http_port 10.231.71.3:3128
+          acl refute_vm src 10.231.71.2/32
+          acl SSL_ports port 443
+          acl Safe_ports port 80 443
+          acl CONNECT method CONNECT
+          # a destination written as an address never matches the allowlist (no lookup)
+          acl ip_literal dstdom_regex -n ^[0-9.]+$ ^\[?[0-9a-fA-F:]+\]?$
+          acl allowlist dstdomain -n "/etc/squid/refute-allowlist.txt"
+          http_access deny !Safe_ports
+          http_access deny CONNECT !SSL_ports
+          http_access deny ip_literal
+          http_access allow refute_vm allowlist
+          http_access deny all
+          cache deny all
+          dns_nameservers 1.1.1.1 9.9.9.9
+          forwarded_for delete
+          via off
+          access_log daemon:/var/log/squid/access.log squid
+    runcmd:
+      - [sysctl, --system]
+      - [systemctl, restart, squid]

@@ -7,8 +7,12 @@
 Set-StrictMode -Version 2.0
 
 # One administrative action per operation. VmState: the states the VM must be in
-# (empty: the operation does not need the VM). Argument: none, MediaSha256, Percent or
-# ServiceGuid; no operation takes a path or a VM name.
+# (empty: the operation does not need the VM). Argument: none, MediaSha256, Percent,
+# ServiceGuid or Profile; no operation takes a path, a VM name, an address or a rule.
+# Network: whether the operation may run with the adapter connected (to the configured
+# switch, with the port's ACLs equal to a profile; phase 2, wp6-acceptance.md W6.5).
+$script:RefuteVmConnectedOperations = @('StartVm', 'StopVm', 'SetProcessorMaximum', 'SuspendVm', 'ResumeVm', 'SaveVm', 'ConnectNetwork')
+$script:RefuteVmProfiles = @('build', 'pull')
 $script:RefuteVmOperationTable = [ordered]@{
     SetHostPaths                 = @{ VmState = @();                    Argument = 'none' }
     DisableEnhancedSessionHost   = @{ VmState = @();                    Argument = 'none' }
@@ -19,7 +23,7 @@ $script:RefuteVmOperationTable = [ordered]@{
     SetSecureBoot                = @{ VmState = @('Off');               Argument = 'none' }
     DisableCheckpoints           = @{ VmState = @('Off');               Argument = 'none' }
     DisableGuestServiceInterface = @{ VmState = @('Off');               Argument = 'ServiceGuid' }
-    DisconnectNetwork            = @{ VmState = @('Off');               Argument = 'none' }
+    DisconnectNetwork            = @{ VmState = @('Off', 'Running');    Argument = 'none' }
     AttachBaseDisk               = @{ VmState = @('Off');               Argument = 'none' }
     ImportInstallIso             = @{ VmState = @();                    Argument = 'MediaSha256' }
     ImportSeedIso                = @{ VmState = @();                    Argument = 'MediaSha256' }
@@ -32,6 +36,8 @@ $script:RefuteVmOperationTable = [ordered]@{
     SuspendVm                    = @{ VmState = @('Running');           Argument = 'none' }
     ResumeVm                     = @{ VmState = @('Paused');            Argument = 'none' }
     SaveVm                       = @{ VmState = @('Running');           Argument = 'none' }
+    SetPortProfile               = @{ VmState = @('Off', 'Running');    Argument = 'Profile' }
+    ConnectNetwork               = @{ VmState = @('Off', 'Running');    Argument = 'none' }
 }
 
 function Get-RefuteVmOperationNames {
@@ -66,7 +72,8 @@ function Test-RefuteVmConfig {
     $required = 'ConfigVersion', 'VmName', 'HostVirtualMachinePath', 'HostVirtualHardDiskPath',
         'VmRoot', 'BaseDiskPath', 'BaseDiskSizeBytes', 'MediaRoot', 'MediaSource',
         'InstallIsoName', 'InstallIsoSha256', 'SeedIsoName', 'ProcessorCount', 'MemoryBytes',
-        'SecureBootTemplate', 'StateFile', 'OperationLog'
+        'SecureBootTemplate', 'StateFile', 'OperationLog',
+        'NetworkSwitchName', 'NetworkSwitchId', 'HostAddress', 'VmAddress', 'ProxyAddress', 'ProxyPort'
     foreach ($key in $required) {
         if (-not $Config.Contains($key)) { $problems.Add("missing key: $key") }
     }
@@ -75,7 +82,16 @@ function Test-RefuteVmConfig {
     }
     if ($problems.Count) { return , $problems.ToArray() }
 
-    if ($Config.ConfigVersion -ne 1) { $problems.Add('ConfigVersion must be 1') }
+    if ($Config.ConfigVersion -ne 2) { $problems.Add('ConfigVersion must be 2') }
+    # phase 2 network (the maintainer's decisions of 2026-10-17): the internal switch, by
+    # name and by the Id the host gave it ('' until it exists), and the fixed /29
+    if ($Config.NetworkSwitchName -cnotmatch '^[a-z][a-z0-9-]{2,30}$') { $problems.Add('NetworkSwitchName must be lowercase letters, digits and hyphens') }
+    if ($Config.NetworkSwitchId -cnotmatch '^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?$') { $problems.Add('NetworkSwitchId must be empty or a lowercase GUID') }
+    foreach ($key in 'HostAddress', 'VmAddress', 'ProxyAddress') {
+        if ($Config[$key] -cnotmatch '^10\.231\.71\.[1-6]$') { $problems.Add("$key must be an address of 10.231.71.0/29") }
+    }
+    if (@($Config.HostAddress, $Config.VmAddress, $Config.ProxyAddress | Select-Object -Unique).Count -ne 3) { $problems.Add('HostAddress, VmAddress and ProxyAddress must differ') }
+    if ($Config.ProxyPort -isnot [int] -or $Config.ProxyPort -lt 1 -or $Config.ProxyPort -gt 65535) { $problems.Add('ProxyPort must be an integer from 1 to 65535') }
     if ($Config.VmName -cnotmatch '^[a-z][a-z0-9-]{2,30}$') { $problems.Add('VmName must be lowercase letters, digits and hyphens') }
     $hyperV = 'C:\Hyper-V'
     foreach ($key in 'HostVirtualMachinePath', 'HostVirtualHardDiskPath', 'VmRoot', 'BaseDiskPath', 'MediaRoot') {
@@ -177,6 +193,116 @@ function New-RefuteVmChange {
     return [ordered]@{ Item = $Item; Before = $Before; After = $After }
 }
 
+function Get-RefuteMember {
+    # A member of an observed record, or $Default when the record has none (StrictMode:
+    # records observed before phase 2, and synthetic ones, have no switch or ACL fields).
+    param($Object, [string]$Name, $Default = $null)
+    if ($null -eq $Object) { return $Default }
+    if ($Object -is [System.Collections.IDictionary]) {
+        if ($Object.Contains($Name)) { return $Object[$Name] }
+        return $Default
+    }
+    if ($Object.PSObject.Properties.Name -contains $Name) { return $Object.$Name }
+    return $Default
+}
+
+function New-RefuteVmAclRule {
+    # One extended ACL entry, every field present and normalized, so that a profile and the
+    # list read back from the host compare as text (ConvertTo-RefuteAclRule).
+    param([string]$Direction, [string]$Action, [string]$RemoteIPAddress, [string]$Protocol = 'ANY',
+        [string]$LocalPort = '', [string]$RemotePort = '', [int]$Weight, [bool]$Stateful = $false)
+    return [ordered]@{
+        Direction = $Direction; Action = $Action; LocalIPAddress = 'ANY'; RemoteIPAddress = $RemoteIPAddress
+        Protocol = $Protocol; LocalPort = $LocalPort; RemotePort = $RemotePort; Weight = $Weight; Stateful = $Stateful
+    }
+}
+
+function Get-RefuteVmAclProfile {
+    # The reviewed port ACLs of the Refute VM's adapter (phase2-network-design.md section
+    # 5.1; the maintainer's decisions of 2026-10-17). build: SSH from the host and the
+    # proxy; pull: SSH from the host only. Everything else is denied, IPv4 and IPv6 (ANY).
+    # Larger weights apply first; stateful entries let the replies of their session return.
+    param([System.Collections.IDictionary]$Config, [string]$Profile)
+    if ($script:RefuteVmProfiles -notcontains $Profile) { throw "unknown profile: $Profile" }
+    $rules = New-Object System.Collections.Generic.List[object]
+    $rules.Add((New-RefuteVmAclRule -Direction 'Inbound' -Action 'Allow' -RemoteIPAddress $Config.HostAddress -Protocol 'TCP' -LocalPort '22' -Weight 100 -Stateful $true))
+    if ($Profile -eq 'build') {
+        $rules.Add((New-RefuteVmAclRule -Direction 'Outbound' -Action 'Allow' -RemoteIPAddress $Config.ProxyAddress -Protocol 'TCP' -RemotePort ([string]$Config.ProxyPort) -Weight 90 -Stateful $true))
+    }
+    $rules.Add((New-RefuteVmAclRule -Direction 'Inbound' -Action 'Deny' -RemoteIPAddress 'ANY' -Weight 1))
+    $rules.Add((New-RefuteVmAclRule -Direction 'Outbound' -Action 'Deny' -RemoteIPAddress 'ANY' -Weight 1))
+    return , $rules.ToArray()
+}
+
+function ConvertTo-RefuteAclRule {
+    # An entry read from the host (Get-VMNetworkAdapterExtendedAcl), in the form of
+    # New-RefuteVmAclRule. Wildcards (empty, '*', 0.0.0.0/0, ::/0, ANY) become 'ANY' for
+    # addresses and protocols and '' for ports; a host address loses '/32'; protocol numbers
+    # 6 and 17 become TCP and UDP. How the host spells an entry is to be observed on it, so
+    # the comparison is tolerant of spelling and strict on meaning.
+    param($Entry)
+    function Norm-Address($a) {
+        $t = [string]$a
+        if ([string]::IsNullOrWhiteSpace($t) -or @('*', 'ANY', '0.0.0.0/0', '::/0') -icontains $t.Trim()) { return 'ANY' }
+        $t = $t.Trim()
+        if ($t.EndsWith('/32')) { $t = $t.Substring(0, $t.Length - 3) }
+        return $t
+    }
+    function Norm-Port($p) {
+        $t = [string]$p
+        if ([string]::IsNullOrWhiteSpace($t) -or @('*', 'ANY') -icontains $t.Trim()) { return '' }
+        return $t.Trim()
+    }
+    $protocol = [string]$Entry.Protocol
+    if ([string]::IsNullOrWhiteSpace($protocol) -or @('*', 'ANY') -icontains $protocol.Trim()) { $protocol = 'ANY' }
+    elseif ($protocol.Trim() -eq '6') { $protocol = 'TCP' }
+    elseif ($protocol.Trim() -eq '17') { $protocol = 'UDP' }
+    else { $protocol = $protocol.Trim().ToUpperInvariant() }
+    return [ordered]@{
+        Direction = [string]$Entry.Direction; Action = [string]$Entry.Action
+        LocalIPAddress = Norm-Address $Entry.LocalIPAddress; RemoteIPAddress = Norm-Address $Entry.RemoteIPAddress
+        Protocol = $protocol; LocalPort = Norm-Port $Entry.LocalPort; RemotePort = Norm-Port $Entry.RemotePort
+        Weight = [int]$Entry.Weight; Stateful = [bool]$Entry.Stateful
+    }
+}
+
+function Get-RefuteAclListText {
+    # A list of rules as one canonical text, independent of the order the host lists them.
+    param([object[]]$Rules)
+    $texts = @(@($Rules) | ForEach-Object { ConvertTo-RefuteCanonicalJson $_ })
+    [Array]::Sort($texts, [System.StringComparer]::Ordinal)
+    return '[' + ($texts -join ',') + ']'
+}
+
+function Get-RefuteVmProfileInForce {
+    # The profile whose list equals the adapter's ACLs, or '' when none does.
+    param([System.Collections.IDictionary]$Config, $Adapter)
+    $observed = Get-RefuteAclListText @(Get-RefuteMember $Adapter 'Acls' @())
+    foreach ($profile in $script:RefuteVmProfiles) {
+        if ($observed -ceq (Get-RefuteAclListText (Get-RefuteVmAclProfile -Config $Config -Profile $profile))) { return $profile }
+    }
+    return ''
+}
+
+function Get-RefuteVmNetworkProblem {
+    # Why the VM's network is not in a state an operation may meet ('' when it is). Every
+    # operation needs one adapter; it may be connected only for the operations allowed
+    # connected, to the configured switch (by Id, internal), with the port's ACLs equal to
+    # a profile. DisconnectNetwork accepts any state, for containment.
+    param([System.Collections.IDictionary]$Config, [System.Collections.IDictionary]$Observed, $Vm, [string]$Operation)
+    if ($Operation -eq 'DisconnectNetwork') { return '' }
+    $adapters = @($Vm.NetworkAdapters)
+    if ($adapters.Count -ne 1) { return "the VM has $($adapters.Count) network adapters, not 1" }
+    $adapter = $adapters[0]
+    if ([string]::IsNullOrEmpty($adapter.SwitchName) -and [string]::IsNullOrEmpty((Get-RefuteMember $adapter 'SwitchId'))) { return '' }
+    if ($script:RefuteVmConnectedOperations -notcontains $Operation) { return 'the network adapter is connected; this operation needs it disconnected (DisconnectNetwork first)' }
+    if ([string]::IsNullOrEmpty($Config.NetworkSwitchId) -or (Get-RefuteMember $adapter 'SwitchId') -ine $Config.NetworkSwitchId) { return 'the network adapter is connected to a switch that is not the configured one' }
+    $switch = @(Get-RefuteMember $Observed 'Switches' @() | Where-Object { $_.Id -ieq $Config.NetworkSwitchId })
+    if ($switch.Count -ne 1 -or $switch[0].SwitchType -cne 'Internal') { return 'the configured switch is missing or not internal' }
+    if (-not (Get-RefuteVmProfileInForce -Config $Config -Adapter $adapter)) { return "the port's ACLs equal no profile" }
+    return ''
+}
+
 function Get-RefuteVmStoragePath {
     # Where Hyper-V stores the VM. New-VM -Path <VmRoot> keeps the VM's files in
     # <VmRoot>\<VmName>, and Get-VM reports that folder as its Path: observed on the
@@ -218,13 +344,10 @@ function Resolve-RefuteVmTarget {
         # an empty drive ('') is allowed; it is listed, and DetachInstallMedia removes it
         if ($dvd -and $allowedMedia -inotcontains $dvd) { return @{ Vm = $null; Refusal = "unexpected DVD media: $dvd"; Category = 'unexpected DVD media' } }
     }
-    if ($Operation -ne 'DisconnectNetwork') {
-        foreach ($adapter in @($vm.NetworkAdapters)) {
-            if (-not [string]::IsNullOrEmpty($adapter.SwitchName)) {
-                return @{ Vm = $null; Refusal = "network adapter '$($adapter.Name)' is connected to '$($adapter.SwitchName)' (phase 1: no network)"; Category = 'a network adapter is connected (phase 1: no network)' }
-            }
-        }
-    }
+    # phase 2 (W6.5): one adapter; connected only to the configured internal switch, with
+    # the port's ACLs equal to a profile, and only for the operations allowed connected
+    $network = Get-RefuteVmNetworkProblem -Config $Config -Observed $Observed -Vm $vm -Operation $Operation
+    if ($network) { return @{ Vm = $null; Refusal = $network; Category = $network } }
     return @{ Vm = $vm; Refusal = $null; Category = $null }
 }
 
@@ -241,7 +364,8 @@ function New-RefuteVmPlan {
         [System.Collections.IDictionary]$Observed,
         [string]$MediaSha256 = '',
         [int]$Percent = 0,
-        [string]$ServiceGuid = ''
+        [string]$ServiceGuid = '',
+        [string]$Profile = ''
     )
     if (-not $script:RefuteVmOperationTable.Contains($Operation)) { throw "unknown operation: $Operation" }
     $spec = $script:RefuteVmOperationTable[$Operation]
@@ -249,6 +373,7 @@ function New-RefuteVmPlan {
     if ($spec.Argument -eq 'MediaSha256') { $argument = [ordered]@{ MediaSha256 = $MediaSha256 } }
     if ($spec.Argument -eq 'Percent') { $argument = [ordered]@{ Percent = $Percent } }
     if ($spec.Argument -eq 'ServiceGuid') { $argument = [ordered]@{ ServiceGuid = $ServiceGuid } }
+    if ($spec.Argument -eq 'Profile') { $argument = [ordered]@{ Profile = $Profile } }
     $plan = [ordered]@{
         Operation    = $Operation
         Argument     = $argument
@@ -259,6 +384,9 @@ function New-RefuteVmPlan {
             Files                 = $Observed.Files
             RecordedVmId          = $Observed.RecordedVmId
             RecordedSeedIsoSha256 = $Observed.RecordedSeedIsoSha256
+            # the configured switch as the host reports it (Id, name, type), so a change of
+            # it between the simulation and the call changes the plan
+            Switch                = @(Get-RefuteMember $Observed 'Switches' @() | Where-Object { $Config.NetworkSwitchId -and $_.Id -ieq $Config.NetworkSwitchId })
             TargetVm              = $null
         }
         Changes      = @()
@@ -275,6 +403,19 @@ function New-RefuteVmPlan {
     if ($spec.Argument -eq 'ServiceGuid' -and $ServiceGuid -cnotmatch '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') { return (& $refuse 'ServiceGuid must be a lowercase GUID') }
     if ($spec.Argument -eq 'MediaSha256' -and $MediaSha256 -cnotmatch '^[0-9a-f]{64}$') { return (& $refuse 'MediaSha256 must be 64 lowercase hex digits') }
     if ($spec.Argument -eq 'Percent' -and ($Percent -lt 1 -or $Percent -gt 100)) { return (& $refuse 'Percent must be from 1 to 100') }
+    if ($spec.Argument -ne 'Profile' -and $Profile) { return (& $refuse 'this operation takes no Profile') }
+    if ($spec.Argument -eq 'Profile' -and $script:RefuteVmProfiles -cnotcontains $Profile) { return (& $refuse "Profile must be one of: $($script:RefuteVmProfiles -join ', ')") }
+    # the media imports act on files, but also need the recorded VM's adapter disconnected
+    # (the maintainer's decision of 2026-10-17)
+    if (@('ImportInstallIso', 'ImportSeedIso') -contains $Operation -and $Observed.RecordedVmId) {
+        foreach ($recorded in @($Observed.Vms | Where-Object { $_.VmId -ieq $Observed.RecordedVmId })) {
+            foreach ($adapter in @($recorded.NetworkAdapters)) {
+                if (-not [string]::IsNullOrEmpty($adapter.SwitchName) -or -not [string]::IsNullOrEmpty((Get-RefuteMember $adapter 'SwitchId'))) {
+                    return (& $refuse 'the network adapter is connected; this operation needs it disconnected (DisconnectNetwork first)')
+                }
+            }
+        }
+    }
 
     $vm = $null
     if ($spec.VmState.Count) {
@@ -351,10 +492,30 @@ function New-RefuteVmPlan {
         }
         'DisconnectNetwork' {
             foreach ($adapter in @($vm.NetworkAdapters)) {
-                if (-not [string]::IsNullOrEmpty($adapter.SwitchName)) {
+                if (-not [string]::IsNullOrEmpty($adapter.SwitchName) -or -not [string]::IsNullOrEmpty((Get-RefuteMember $adapter 'SwitchId'))) {
                     $changes.Add((New-RefuteVmChange ('NetworkAdapter.' + $adapter.Name) $adapter.SwitchName ''))
                 }
             }
+        }
+        'SetPortProfile' {
+            # the whole profile in one call, only with the adapter disconnected (N12)
+            $adapters = @($vm.NetworkAdapters)
+            if ($adapters.Count -ne 1) { return (& $refuse "the VM has $($adapters.Count) network adapters, not 1") }
+            if (-not [string]::IsNullOrEmpty($adapters[0].SwitchName) -or -not [string]::IsNullOrEmpty((Get-RefuteMember $adapters[0] 'SwitchId'))) { return (& $refuse 'the network adapter is connected; the ACLs change only while it is disconnected') }
+            $wanted = Get-RefuteVmAclProfile -Config $Config -Profile $Profile
+            $before = Get-RefuteAclListText @(Get-RefuteMember $adapters[0] 'Acls' @())
+            $after = Get-RefuteAclListText $wanted
+            if ($before -cne $after) { $changes.Add((New-RefuteVmChange 'PortAcl' @(Get-RefuteMember $adapters[0] 'Acls' @()) $wanted)) }
+        }
+        'ConnectNetwork' {
+            $adapters = @($vm.NetworkAdapters)
+            if ($adapters.Count -ne 1) { return (& $refuse "the VM has $($adapters.Count) network adapters, not 1") }
+            if ([string]::IsNullOrEmpty($Config.NetworkSwitchId)) { return (& $refuse 'NetworkSwitchId is not configured yet') }
+            $switch = @(Get-RefuteMember $Observed 'Switches' @() | Where-Object { $_.Id -ieq $Config.NetworkSwitchId })
+            if ($switch.Count -ne 1) { return (& $refuse 'the configured switch does not exist') }
+            if ($switch[0].SwitchType -cne 'Internal' -or $switch[0].Name -cne $Config.NetworkSwitchName) { return (& $refuse 'the configured switch is not internal or has another name') }
+            if (-not (Get-RefuteVmProfileInForce -Config $Config -Adapter $adapters[0])) { return (& $refuse "the port's ACLs equal no profile (SetPortProfile first)") }
+            if ((Get-RefuteMember $adapters[0] 'SwitchId') -ine $Config.NetworkSwitchId) { $changes.Add((New-RefuteVmChange ('NetworkAdapter.' + $adapters[0].Name) $adapters[0].SwitchName $Config.NetworkSwitchName)) }
         }
         'AttachBaseDisk' {
             $disk = $Observed.Files.BaseDisk
@@ -433,7 +594,8 @@ function Get-RefuteVmPlanReachedProblem {
         [System.Collections.IDictionary]$ObservedAfter,
         [string]$MediaSha256 = '',
         [int]$Percent = 0,
-        [string]$ServiceGuid = ''
+        [string]$ServiceGuid = '',
+        [string]$Profile = ''
     )
     $targetStates = @{ StartVm = 'Running'; StopVm = 'Off'; SuspendVm = 'Paused'; ResumeVm = 'Running'; SaveVm = 'Saved' }
     if ($targetStates.ContainsKey($Plan.Operation)) {
@@ -450,7 +612,7 @@ function Get-RefuteVmPlanReachedProblem {
         if ($null -ne $target.Refusal) { return "the VM after New-VM is not the one these scripts set up: $($target.Category)" }
         return ''
     }
-    $again = New-RefuteVmPlan -Operation $Plan.Operation -Config $Config -Observed $ObservedAfter -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
+    $again = New-RefuteVmPlan -Operation $Plan.Operation -Config $Config -Observed $ObservedAfter -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid -Profile $Profile
     if ($null -ne $again.Refusal) { return 'the plan after the operation is refused (simulate the operation to see the reason)' }
     if (-not $again.AlreadyDone) {
         # the items of an integration service or a network adapter carry a name read from
@@ -515,7 +677,8 @@ function Test-RefuteVmPlanReached {
         [System.Collections.IDictionary]$ObservedAfter,
         [string]$MediaSha256 = '',
         [int]$Percent = 0,
-        [string]$ServiceGuid = ''
+        [string]$ServiceGuid = '',
+        [string]$Profile = ''
     )
-    return ((Get-RefuteVmPlanReachedProblem -Plan $Plan -Config $Config -ObservedAfter $ObservedAfter -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid) -eq '')
+    return ((Get-RefuteVmPlanReachedProblem -Plan $Plan -Config $Config -ObservedAfter $ObservedAfter -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid -Profile $Profile) -eq '')
 }

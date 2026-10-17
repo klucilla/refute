@@ -171,8 +171,17 @@ function Get-RefuteVmObserved {
             CheckpointType              = [string]$vm.CheckpointType
             IntegrationServices         = @(Get-VMIntegrationService -VM $vm -ErrorAction Stop | ForEach-Object {
                     [ordered]@{ Id = [string]$_.Id; Name = [string]$_.Name; Enabled = [bool]$_.Enabled } })
+            # each adapter with its Id, its switch (by name and Id) and the port's extended
+            # ACLs, normalized (phase 2, W6.5)
             NetworkAdapters             = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | ForEach-Object {
-                    [ordered]@{ Name = [string]$_.Name; SwitchName = [string]$_.SwitchName } })
+                    $adapter = $_
+                    [ordered]@{
+                        Name       = [string]$adapter.Name
+                        Id         = [string]$adapter.Id
+                        SwitchName = [string]$adapter.SwitchName
+                        SwitchId   = $(if ($adapter.SwitchId) { ([string]$adapter.SwitchId).ToLowerInvariant() } else { '' })
+                        Acls       = @(Get-VMNetworkAdapterExtendedAcl -VMNetworkAdapter $adapter -ErrorAction Stop | ForEach-Object { ConvertTo-RefuteAclRule $_ })
+                    } })
             HardDisks                   = @(Get-VMHardDiskDrive -VM $vm -ErrorAction Stop | ForEach-Object { [string]$_.Path })
             DvdDrives                   = @(Get-VMDvdDrive -VM $vm -ErrorAction Stop | ForEach-Object { [string]$_.Path })
         }
@@ -202,6 +211,10 @@ function Get-RefuteVmObserved {
             EnableEnhancedSessionMode = [bool]$vmHost.EnableEnhancedSessionMode
         }
         Vms                   = @($vms)
+        # every virtual switch of the host, by Id, name and type (Get-VMSwitch without -Name,
+        # so no wildcard is interpreted)
+        Switches              = @(Get-VMSwitch -ErrorAction Stop | ForEach-Object {
+                [ordered]@{ Id = ([string]$_.Id).ToLowerInvariant(); Name = [string]$_.Name; SwitchType = [string]$_.SwitchType } })
         Files                 = $files
         RecordedVmId          = $recorded.RecordedVmId
         RecordedSeedIsoSha256 = $recorded.RecordedSeedIsoSha256
@@ -229,7 +242,8 @@ function Invoke-RefuteVmMutation {
         [System.Collections.IDictionary]$Plan,
         [string]$MediaSha256,
         [int]$Percent,
-        [string]$ServiceGuid
+        [string]$ServiceGuid,
+        [string]$Profile = ''
     )
     $vm = $null
     if ($Plan.Target.VmId) { $vm = Get-VM -Id $Plan.Target.VmId -ErrorAction Stop }
@@ -291,6 +305,30 @@ function Invoke-RefuteVmMutation {
         'SuspendVm' { Suspend-VM -VM $vm -ErrorAction Stop }
         'ResumeVm' { Resume-VM -VM $vm -ErrorAction Stop }
         'SaveVm' { Save-VM -VM $vm -ErrorAction Stop }
+        'SetPortProfile' {
+            # with the adapter disconnected (checked by the plan): every entry removed, then the
+            # profile's entries added; the check after reads the list back
+            $adapter = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop)
+            if ($adapter.Count -ne 1 -or $adapter[0].SwitchName) { Stop-RefuteVmOperation 'the network adapter changed since the plan' }
+            Get-VMNetworkAdapterExtendedAcl -VMNetworkAdapter $adapter[0] -ErrorAction Stop | Remove-VMNetworkAdapterExtendedAcl -ErrorAction Stop
+            foreach ($rule in (Get-RefuteVmAclProfile -Config $Config -Profile $Profile)) {
+                $add = @{
+                    VMNetworkAdapter = $adapter[0]; Action = $rule.Action; Direction = $rule.Direction
+                    RemoteIPAddress = $rule.RemoteIPAddress; Weight = $rule.Weight; Stateful = $rule.Stateful
+                    ErrorAction = 'Stop'
+                }
+                if ($rule.Protocol -ne 'ANY') { $add.Protocol = $rule.Protocol }
+                if ($rule.LocalPort) { $add.LocalPort = $rule.LocalPort }
+                if ($rule.RemotePort) { $add.RemotePort = $rule.RemotePort }
+                Add-VMNetworkAdapterExtendedAcl @add | Out-Null
+            }
+        }
+        'ConnectNetwork' {
+            $adapter = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop)
+            $switch = @(Get-VMSwitch -ErrorAction Stop | Where-Object { ([string]$_.Id) -ieq $Config.NetworkSwitchId })
+            if ($adapter.Count -ne 1 -or $switch.Count -ne 1) { Stop-RefuteVmOperation 'the network adapter or the configured switch changed since the plan' }
+            Connect-VMNetworkAdapter -VMNetworkAdapter $adapter[0] -VMSwitch $switch[0] -ErrorAction Stop
+        }
         default { Stop-RefuteVmOperation "no mutation for operation $($Plan.Operation)" }
     }
 }
