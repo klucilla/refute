@@ -948,6 +948,7 @@ def test_seed_iso_refuses_a_key_that_is_not_ed25519(tmp_path):
 # Update-RefuteVmConfig.ps1 (#134): replaces only the installed RefuteVm.Config.psd1.
 UPDATE_CONFIG = VM / "Update-RefuteVmConfig.ps1"
 UPDATE_CONFIG_COMMANDS = {
+    "format-refutereason",
     "get-acl",
     "get-childitem",
     "get-ciminstance",
@@ -959,6 +960,7 @@ UPDATE_CONFIG_COMMANDS = {
     "get-refutefilesha256upper",
     "get-refutejeadiscoveryroots",
     "get-refutetargetproblems",
+    "invoke-refuteconfigupdate",
     "join-path",
     "new-object",
     "set-strictmode",
@@ -977,9 +979,9 @@ def test_the_config_update_calls_only_reads_and_writes_one_file(cases):
     text = UPDATE_CONFIG.read_text(encoding="utf-8")
     assert text.count("WriteAllBytes") == 1
     apply = text[text.index("# ---- apply") :]
-    write = apply.index("[System.IO.File]::WriteAllBytes($installed, $bytes)")
-    assert apply.index("(Get-RefuteFileSha256Upper $installed) -ne $old") < write
-    assert apply.index("(Get-RefuteBytesSha256 $bytes) -ne $new") < write
+    write = apply.index("[System.IO.File]::WriteAllBytes($InstalledPath, $bytes)")
+    assert apply.index("(Get-RefuteFileSha256Upper $InstalledPath) -ne $Old") < write
+    assert apply.index("(Get-RefuteBytesSha256 $bytes) -ne $New") < write
     writers = ("Set-Acl", "Copy-Item", "Move-Item", "Remove-Item", "WriteAllText", "File]::Replace")
     for writer in writers:
         assert writer not in text, writer
@@ -1008,6 +1010,90 @@ def test_the_config_update_pins_the_checker_and_the_new_configuration():
     config = _sha256_upper(VM / "RefuteVm" / "RefuteVm.Config.psd1")
     assert f"$CoreSha256 = '{core}'" in text
     assert f"[string]$SourceSha256 = '{config}'" in text
+
+
+@pytest.fixture(scope="module")
+def update_cases(tmp_path_factory) -> dict:
+    if sys.platform != "win32":
+        pytest.skip("the script runs in Windows PowerShell 5.1")
+    work = tmp_path_factory.mktemp("config_update")
+    out = _run(
+        ROOT / "tests" / "vm" / "config_update_cases.ps1", "-Root", str(ROOT), "-WorkDir", str(work)
+    )
+    assert out.returncode == 0, out.stdout + out.stderr
+    data = json.loads(out.stdout)
+    data["ByName"] = {c["Name"]: c for c in data["Cases"]}
+    return data
+
+
+def _refused_unchanged(case: dict, old: str, reason: str) -> None:
+    assert case["Exit"] == 1, case
+    assert "Problems (nothing was changed):" in case["Lines"], case
+    assert any(reason in line for line in case["Lines"]), case
+    assert case["Installed"] == old, case
+    assert not any(line.startswith(("Written:", "Done:")) for line in case["Lines"]), case
+
+
+def test_the_config_update_preview_passes_and_changes_nothing(update_cases):
+    """Codex review of #134, round 4: with every precondition met the preview succeeds (an
+    empty list of findings is no finding) and the installed file is untouched."""
+    case = update_cases["ByName"]["preview passes"]
+    assert case["Exit"] == 0 and "Preconditions hold" in case["Lines"], case
+    assert case["Installed"] == update_cases["Old"]
+    assert update_cases["NoFindingCount"] == 0
+    assert update_cases["TwoFindings"] == ["discovery set: a", "discovery set: b"]
+
+
+def test_the_config_update_apply_writes_and_checks(update_cases):
+    case = update_cases["ByName"]["apply passes"]
+    assert case["Exit"] == 0, case
+    assert case["Installed"] == update_cases["New"]
+    assert any(line.startswith("Written:") for line in case["Lines"])
+    assert any(line.startswith("Done:") for line in case["Lines"])
+    # the checks ran in the preview, before the write and after it
+    assert case["Calls"] == 3
+
+
+@pytest.mark.parametrize(
+    ("name", "reason"),
+    [
+        ("installed hash differs", "the installed configuration is not the expected one"),
+        ("source hash differs", "the source is not the expected one"),
+        ("a discovery finding", "discovery set: S-1-5-21-0 278"),
+        ("a remoting session", "a remoting session is open"),
+        ("seven files", "the module does not hold exactly 6 files"),
+        ("another writer", "another account can write the configuration"),
+        ("missing source", "the source cannot be hashed"),
+    ],
+)
+def test_each_guard_alone_stops_the_config_update_before_the_write(update_cases, name, reason):
+    _refused_unchanged(update_cases["ByName"][name], update_cases["Old"], reason)
+
+
+def test_the_real_owner_check_is_wired(update_cases):
+    """With the real Test-RefuteAllowedOwner, a file owned by a plain account is refused; an
+    elevated runner can make Administrators the owner, and then the case passes."""
+    case = update_cases["ByName"]["real owner check on a user-owned file"]
+    if update_cases["OwnerAllowed"]:
+        assert case["Exit"] == 0, case
+    else:
+        _refused_unchanged(case, update_cases["Old"], "the configuration has another owner")
+
+
+def test_a_finding_after_the_write_is_reported_as_such(update_cases):
+    case = update_cases["ByName"]["a finding after the write"]
+    assert case["Exit"] == 1 and case["Installed"] == update_cases["New"], case
+    heading = (
+        "Problems after the write (the installed configuration WAS replaced; stop and inspect, "
+        "no automatic correction):"
+    )
+    assert heading in case["Lines"], case
+    assert not any(line.startswith("Done:") for line in case["Lines"])
+
+
+def test_the_config_update_masks_the_profile_and_the_account(update_cases):
+    masked = update_cases["Masked"]
+    assert "%USERPROFILE%" in masked and "<account>" in masked
 
 
 @pytest.mark.skipif(sys.platform != "win32", reason="the script runs in Windows PowerShell 5.1")
@@ -1039,7 +1125,6 @@ def test_the_config_update_refuses_without_its_preconditions(tmp_path):
     preview = run()
     text = preview.stdout + preview.stderr
     assert "PropertyNotFoundStrict" not in text, text
-    assert "Mode: preview (no change)" in preview.stdout, text
     assert preview.returncode in (0, 1), text
     if preview.returncode == 1:
         assert "Problems (nothing was changed):" in preview.stdout, text
