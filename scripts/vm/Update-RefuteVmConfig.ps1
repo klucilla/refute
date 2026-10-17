@@ -36,9 +36,11 @@ Limits:
 
 It prints no security descriptor and no path of its own: the files are named by their role,
 and an error is reported by the step, the role of the file, the exception's type and its
-HRESULT (Format-RefuteError), never by the exception's message. The findings of the checker
-(discovery folders and SIDs) also pass through Format-RefuteReason, which masks every path
-under a user profile folder (X:\Users\<name>, in any case) and the current account name.
+HRESULT (Format-RefuteError), never by the exception's message. A finding of the checker is
+printed as a category (Format-RefuteFinding), without its path, SID or Windows message; the
+registration's own checks list the details. As a last guard, every printed problem passes
+through Format-RefuteReason, which masks every path under a user profile folder
+(X:\Users\<name>, in any case) and the current account name.
 It never deletes anything, and changes no file but the installed RefuteVm.Config.psd1.
 
 Reversal: -SourcePath <the previous RefuteVm.Config.psd1, saved in a folder only
@@ -92,6 +94,18 @@ function Format-RefuteError($ErrorRecord) {
     return ('{0} (HRESULT 0x{1:X8})' -f $e.GetType().Name, $e.HResult)
 }
 
+function Format-RefuteFinding([string]$Finding) {
+    # A finding of the checker as a controlled category, without its path, SID or Windows
+    # message (Codex review of #134). The registration's own checks list the details.
+    if ($Finding.Contains(' cannot be read')) { return 'an item cannot be read' }
+    if ($Finding.Contains(' is a reparse point')) { return 'an item is a reparse point (a link or junction)' }
+    if ($Finding.Contains(' is owned by ')) { return 'an item has an owner other than SYSTEM, Administrators or TrustedInstaller' }
+    if ($Finding.Contains('(an ancestor) can be changed by ')) { return 'an ancestor can be changed by another account' }
+    if ($Finding.Contains(' can be written by ')) { return 'an item can be written by another account' }
+    if ($Finding.Contains(' does not exist')) { return 'a folder of the discovery set does not exist' }
+    return 'another finding'
+}
+
 function Write-Problems([string]$Heading, [string[]]$Problems) {
     Write-Output $Heading
     foreach ($p in $Problems) { Write-Output ('  - ' + (Format-RefuteReason $p)) }
@@ -102,7 +116,7 @@ function Get-RefuteTargetProblems([string]$ModuleDir, [string]$InstalledPath) {
     # result) instead of throwing at the first; a read that fails is a finding too.
     $found = New-Object System.Collections.Generic.List[string]
     try {
-        foreach ($p in @(Get-RefuteDiscoveryProblems -Roots @(Get-RefuteJeaDiscoveryRoots))) { $found.Add("discovery set: $p") }
+        foreach ($p in @(Get-RefuteDiscoveryProblems -Roots @(Get-RefuteJeaDiscoveryRoots))) { $found.Add('discovery set: ' + (Format-RefuteFinding $p)) }
         if ((Get-Item -LiteralPath $InstalledPath -Force).Attributes -band [System.IO.FileAttributes]::ReparsePoint) { $found.Add('the configuration is a reparse point') }
         $acl = Get-Acl -LiteralPath $InstalledPath
         if (-not (Test-RefuteAllowedOwner $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value)) { $found.Add('the configuration has another owner') }
@@ -110,7 +124,7 @@ function Get-RefuteTargetProblems([string]$ModuleDir, [string]$InstalledPath) {
                 [pscustomobject]@{ Sid = $e.IdentityReference.Value; Rights = [int]$e.FileSystemRights; Type = [string]$e.AccessControlType
                     InheritOnly = [bool]($e.PropagationFlags -band [System.Security.AccessControl.PropagationFlags]::InheritOnly) } })
         $writers = @(Get-RefuteAceWriters -Entries $entries)
-        if ($writers.Count) { $found.Add('another account can write the configuration: ' + ($writers -join ', ')) }
+        if ($writers.Count) { $found.Add("another account can write the configuration ($($writers.Count) access entries)") }
         if (@(Get-ChildItem -LiteralPath $ModuleDir -Recurse -File -Force).Count -ne 6) { $found.Add('the module does not hold exactly 6 files') }
         # a failed query throws; an empty list means no open session at this moment
         if (@(Get-CimInstance -ClassName Win32_Process -Filter "Name = 'wsmprovhost.exe'").Count) { $found.Add('a remoting session is open') }

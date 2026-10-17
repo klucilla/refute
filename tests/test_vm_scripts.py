@@ -949,6 +949,7 @@ def test_seed_iso_refuses_a_key_that_is_not_ed25519(tmp_path):
 UPDATE_CONFIG = VM / "Update-RefuteVmConfig.ps1"
 UPDATE_CONFIG_COMMANDS = {
     "format-refuteerror",
+    "format-refutefinding",
     "format-refutereason",
     "get-acl",
     "get-childitem",
@@ -1042,7 +1043,7 @@ def test_the_config_update_preview_passes_and_changes_nothing(update_cases):
     assert case["Exit"] == 0 and "Preconditions hold" in case["Lines"], case
     assert case["Installed"] == update_cases["Old"]
     assert update_cases["NoFindingCount"] == 0
-    assert update_cases["TwoFindings"] == ["discovery set: a", "discovery set: b"]
+    assert update_cases["TwoFindings"] == ["discovery set: another finding"] * 2
 
 
 def test_the_config_update_apply_writes_and_checks(update_cases):
@@ -1060,7 +1061,7 @@ def test_the_config_update_apply_writes_and_checks(update_cases):
     [
         ("installed hash differs", "the installed configuration is not the expected one"),
         ("source hash differs", "the source is not the expected one"),
-        ("a discovery finding", "discovery set: S-1-5-21-0 278"),
+        ("a discovery finding", "discovery set: another finding"),
         ("a remoting session", "a remoting session is open"),
         ("seven files", "the module does not hold exactly 6 files"),
         ("another writer", "another account can write the configuration"),
@@ -1069,6 +1070,13 @@ def test_the_config_update_apply_writes_and_checks(update_cases):
 )
 def test_each_guard_alone_stops_the_config_update_before_the_write(update_cases, name, reason):
     _refused_unchanged(update_cases["ByName"][name], update_cases["Old"], reason)
+
+
+def test_a_finding_of_the_checker_is_printed_as_a_category(update_cases):
+    """Codex review of #134: a real finding of RefuteRegistration.Core.ps1 holds the path
+    and the Windows message; the script prints only its category."""
+    assert update_cases["RawHadPath"] is True
+    assert update_cases["Categorized"] == "an item cannot be read"
 
 
 def test_an_error_is_reported_without_its_message(update_cases):

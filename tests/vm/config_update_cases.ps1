@@ -84,6 +84,9 @@ $masked = @(
 # checked here, so the account name never reaches the test output
 $noAccountLeft = -not @($masked | Where-Object { $_.IndexOf($env:USERNAME, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or $_.IndexOf('\Users\', [System.StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count
 $maskedForOutput = @($masked | ForEach-Object { $_.Replace($env:USERNAME, '') })
+# a real finding of the checker (an item that cannot be read), as the script prints it
+$rawFinding = @(Get-RefuteItemProblems -Item (Join-Path $WorkDir 'Audit.Other\absent.psrc') -IsAncestor $false)[0]
+$categorized = Format-RefuteFinding $rawFinding
 # whether the real owner check accepts the temporary file (an elevated runner can make
 # Administrators the owner of what it creates)
 $ownerAllowed = [bool](& $realOwner (Get-Acl -LiteralPath $installed).GetOwner([System.Security.Principal.SecurityIdentifier]).Value)
@@ -97,4 +100,6 @@ $ownerAllowed = [bool](& $realOwner (Get-Acl -LiteralPath $installed).GetOwner([
     TwoFindings    = $two
     Masked         = $maskedForOutput
     NoAccountLeft  = [bool]$noAccountLeft
+    RawHadPath     = $rawFinding.Contains('Audit.Other')
+    Categorized    = $categorized
 } | ConvertTo-Json -Depth 6
