@@ -476,8 +476,9 @@ module hashes).
   maintainer's decision of 2026-10-16, it waits for the change of the base disk size from
   200 GiB to 100 GiB.
 
-**Status of W6.4:** operations 1, `SetHostPaths`, and 2, `DisableEnhancedSessionHost`, are
-validated on the host. Every other operation is not validated yet.
+**Status of W6.4 at the end of this section:** operations 1, `SetHostPaths`, and 2,
+`DisableEnhancedSessionHost`, are validated on the host. Every other operation is not
+validated yet.
 
 ## 12. Note: the base disk becomes 100 GiB (2026-10-17)
 
@@ -495,3 +496,75 @@ The installed module keeps the previous file until the maintainer replaces it, a
 Administrator; until then `-Status` and every plan show the previous `ConfigSha256`.
 Operation 3, `CreateBaseDisk`, is simulated only after that replacement, and its plan must
 show the new `ConfigSha256` and a disk of 107374182400 bytes.
+
+## 13. The installed configuration updated to 100 GiB (2026-10-17)
+
+Run by the maintainer on 2026-10-17, before operation 3, in Windows PowerShell started as
+Administrator with `PSModuleAnalysisCachePath=nul`, with `scripts/vm/Update-RefuteVmConfig.ps1`
+from `main` at `cfb0b3f38593cd07abf0acb25a3d470061bd7541` (#134). Nothing of this step is in
+`operations.jsonl`, which records the endpoint's calls only. Account names are replaced by
+`<operator-account>` and `<virtual-account>`; no security descriptor is published.
+
+| Step | Result |
+|---|---|
+| The hashes, before running | `Update-RefuteVmConfig.ps1` `FB9485D330A92ADFD2925E57C76B2A1E38C9B17E264F0CA48ED0CC717927E138`, `RefuteRegistration.Core.ps1` `E22A61A96FC88EDE07697CD6D0A6B3221DCCF8FA31770BEC7DAA6012170AE2E0`, the source `RefuteVm.Config.psd1` `FE46F573C0BF49E1D6EED819CD7F8EB4C220F50B5BE1BF34BEA9E7D11AC11F46` |
+| The preview | `Mode: preview (no change)`; the installed configuration `2559B734…6A1E` and the source `FE46F573…1F46`, both as expected; `Preconditions hold` |
+| `-Apply` | `Preconditions hold`; `Written: the installed configuration was replaced in place`; `Done: installed configuration SHA-256 FE46F573…1F46; the ACLs are unchanged; checks passed` |
+| `-Status`, from a normal window (the operator account) | `ConfigSha256` `e41ee75a41e63b2314efca5d0c62a96b814564293218307d36d114a0f71e0f6e`; `BaseDiskSizeBytes` 107374182400; module `RefuteVm.Config.psd1` `fe46f573…`, and the other five hashes as before (`RefuteVm.Core.ps1` `5b717a33…`, `RefuteVm.HyperV.ps1` `32de9534…`, `RefuteVm.psd1` `fcbb3416…`, `RefuteVm.psm1` `9633d81d…`, `RoleCapabilities/RefuteVmOperator.psrc` `4f828753…`) |
+
+## 14. Operation 3, CreateBaseDisk, done on the host (2026-10-17)
+
+Through the endpoint, from a normal window. From `C:\ProgramData\RefuteVm\Log\operations.jsonl`,
+read on 2026-10-17 (read only). The records carry the new configuration: `ConfigSha256`
+`e41ee75a…` and the module's `RefuteVm.Config.psd1` `fe46f573…`.
+
+| Step | Log record (UTC, 2026-10-17) | Result |
+|---|---|---|
+| a) `-Operation CreateBaseDisk -Simulate` | `simulated` at 13:17:13.036, `<virtual-account>` VA 24 | `AlreadyDone` false, `Refusal` null, one change: `BaseDisk` from `absent` to `dynamic VHDX of 107374182400 bytes at C:\Hyper-V\Virtual Hard Disks\refute-vm-base.vhdx`; `PlanSha256` `2c356e139a90928e24b8d79a5f16d615de7ace1ae21f60ce4cfd5c32f4cd1f82` |
+| b) `-Operation CreateBaseDisk -PlanSha256 <that hash>` | `intent` at 13:18:04.657 and `result` at 13:18:05.830, VA 25 | `Outcome` done, `Error` null, on the first attempt |
+| c) `-Status` | (read only, no record) | the base disk exists: `VHDX`, `Dynamic`, `SizeBytes` 107374182400 |
+| d) A new `-Simulate` | `simulated` at 13:18:10.193, VA 27 | `AlreadyDone` true, no change (`PlanSha256` `23d82d54d80ad5f5dccab99ccfbc8ec21c47b8d011f0550e9ccc98c5daf93f33`) |
+
+This is the first file created inside `C:\Hyper-V` through the endpoint, under version 2 of
+the tree ACL; the call reported no access-denied error.
+
+## 15. Operation 4, CreateVm: the VM created, the check after it failed (2026-10-17)
+
+Through the endpoint, from a normal window. From `operations.jsonl` and
+`C:\ProgramData\RefuteVm\State\vm.json`, read on 2026-10-17 (read only), and, for the state of
+the VM (step c), from the maintainer's report of the `-Status` output, which is not logged.
+
+| Step | Log record (UTC, 2026-10-17) | Result |
+|---|---|---|
+| a) `-Operation CreateVm -Simulate` | `simulated` at 13:19:39.538, VA 28 | `AlreadyDone` false, `Refusal` null, one change: `VM` from `absent` to `generation 2, stored in C:\Hyper-V\refute-vm, no disk, network adapter not connected`; preconditions: the base disk existing, no recorded VMId; `PlanSha256` `4fd1e17468cc4d08bf613f789761181200109d2d69f8f503556b18465dd6cd65` |
+| b) `-Operation CreateVm -PlanSha256 <that hash>` | `intent` at 13:20:30.243 and `result` at 13:20:31.166, VA 29 | `Outcome` `not reached`, `Error` null; the call ended with the error "CreateVm not reached:" with nothing after the colon |
+| c) `-Status`, as the maintainer reports it | (read only, not logged) | the VM exists: `refute-vm`, generation 2, `Off`, VMId `f77c8269-f6d7-4955-a37b-42a503ffe2f1`, equal to the recorded VMId; `Path` `C:\Hyper-V\refute-vm\refute-vm`; no hard disk, no DVD drive; one network adapter with no switch; dynamic memory on, startup 51539607552 bytes; 1 processor, maximum 100; Secure Boot on with the `MicrosoftWindows` template; automatic checkpoints on, type `Standard`; first boot device none; the Guest Service Interface disabled, the other five integration services enabled |
+| d) `-Operation SetMemory -Simulate` | `simulated` at 13:20:34.188, VA 31 | refused: "the VM is stored in 'C:\Hyper-V\refute-vm\refute-vm', not in 'C:\Hyper-V\refute-vm'"; no change; `PlanSha256` `0709ac3a3f3e5631c7231200e68aa9e356ba8991b427ec1e09c82384bc7126f0` |
+
+`vm.json` holds the VMId `f77c8269-f6d7-4955-a37b-42a503ffe2f1` and an empty seed hash.
+
+**What happened.**
+- `New-VM -Path C:\Hyper-V\refute-vm` stored the VM in a folder named after it,
+  `C:\Hyper-V\refute-vm\refute-vm`, and `Get-VM` reports that folder as its `Path`. The
+  reference page of `New-VM` says only that `-Path` "Specifies the directory to store the
+  files for the new virtual machine"
+  (https://learn.microsoft.com/en-us/powershell/module/hyper-v/new-vm, read 2026-10-17); the
+  subfolder is what the host showed.
+- The module's check after the mutation compared that `Path` with `VmRoot`, so the result was
+  `not reached`. For that outcome the module set no reason, which is why the log holds
+  `Error` null and the message ends after the colon.
+- The check of the target VM makes the same comparison: the SetMemory simulation that followed
+  refused the VM because of the same path mismatch (step d).
+- The VM and `vm.json` are in place: the creation itself succeeded, under version 2 of the
+  tree ACL, and the call reported no access-denied error; it returned `not reached`.
+
+**Since then:** the maintainer stopped the VM operations until a correction; the VM is off,
+with no disk and no network. The correction is pull request #142 (not merged): the module
+expects the VM in `VmRoot\VmName`, gives the reason of every "not reached", and treats
+CreateVm as already done for exactly this VM.
+
+**Status of W6.4:** operations 1, `SetHostPaths`, 2, `DisableEnhancedSessionHost`, and 3,
+`CreateBaseDisk`, are validated on the host. Operation 4, `CreateVm`, created the VM, but its
+check failed (above). The base disk and the VM were created under version 2 of the tree ACL,
+and no access-denied error was reported by these calls. Every other operation is not
+validated yet.
