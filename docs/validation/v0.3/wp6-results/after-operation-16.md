@@ -32,7 +32,7 @@ install ISO as first boot device.
 | `ssh` | server installed, no password login | |
 | `updates` | `security` | "updates that will be downloaded and installed after the system installation"; with no network nothing can be downloaded (to observe: whether the installer skips this step or reports it) |
 | `shutdown` | `poweroff` | "Request the system to power off ... automatically after the installation has finished" (the default is `reboot`) |
-| `user-data` | hostname `refute-vm`; root disabled; user `refute` with a locked password, passwordless sudo, and the VM's SSH public key | applied by cloud-init on the first boot of the installed system |
+| `user-data` | hostname `refute-vm`; root disabled; user `refute` with a locked password, passwordless sudo, and the VM's SSH public key | the installer passes it to the installed system; cloud-init applies it there on the first boot (autoinstall reference, `user-data`) |
 
 **Step by step:**
 
@@ -44,8 +44,9 @@ install ISO as first boot device.
    "Continue with autoinstall? (yes|no)", because the seed was found but `autoinstall` is
    not on the kernel command line (zero-touch page, section 7). The maintainer answers
    `yes`. This answer is what lets the installer write the disk.
-3. The installer partitions the base disk, installs from the ISO, configures the user and
-   the SSH server, and powers the VM off (`shutdown: poweroff`).
+3. The installer partitions the base disk, installs from the ISO with the SSH server,
+   writes the `user-data` for the installed system (the user is created by cloud-init at
+   the first boot, section 2), and powers the VM off (`shutdown: poweroff`).
 4. **How long:** not measured, and no source gives a duration for this machine. It is
    recorded when it happens: the time of the `StartVm` result in `operations.jsonl` and the
    time the VM is seen `Off`.
@@ -70,9 +71,12 @@ install ISO as first boot device.
    the seed it saw during the installation (user `refute`, the SSH key, hostname). Still no
    network.
 3. **What can be checked in phase 1:** the console shows the boot and a login prompt with
-   the hostname `refute-vm`. **No login is possible in phase 1, by design:** the only user
-   has a locked password and SSH needs a network path. So no command runs inside the guest
-   until phase 2; the first access to a shell is the first SSH session of phase 2.
+   the hostname `refute-vm`. The seed gives no password login (the only user has a locked
+   password, root is disabled, SSH allows no password) and SSH needs a network path, so
+   **no normal login is planned in phase 1**. This is not a guarantee that no shell can be
+   reached from the console: the installer itself offers a shell on its console (the
+   "operate the server installer" page, section 7), and recovery paths of the boot menu
+   were not examined. Refute's procedure runs no command inside the guest until phase 2.
 4. **Stopping it:** `StopVm`, a guest shutdown "through the guest operating system"
    (Stop-VM, section 7), never a power cut. Ubuntu's Linux Integration Services are built
    in (Microsoft's support page, section 7); that page lists Ubuntu up to 24.04 LTS, so
@@ -90,8 +94,9 @@ install ISO as first boot device.
 
 - Hyper-V state through the endpoint: `-Status` (state, settings, disks, integration
   services) and the operations of the roadmap.
-- The console (`vmconnect`), by the maintainer as Administrator: read-only in practice,
-  since no account can log in.
+- The console (`vmconnect`), by the maintainer as Administrator: used to watch the
+  installation and the boot, and to answer the installer's confirmation; no normal login
+  is planned (section 2).
 - Nothing else: no shared folder, Enhanced Session off, Guest Service Interface off (no
   file copy from the host), no network. Hyper-V sockets and the key/value pair exchange
   are integration features the support page lists; Refute does not use them, and no
@@ -101,10 +106,12 @@ install ISO as first boot device.
 
 - **The key already exists.** It was made in step 2 of `scripts/vm/README.md`
   (`ssh-keygen -t ed25519 -C refute-vm -f C:\Projetos\refute\.cache\vm\ssh\refute_vm_ed25519`,
-  used only for this VM), before the seed was built on 2026-10-15; its public half is in
-  the seed (`{{SSH_PUBLIC_KEY}}` of the template), so the guest receives it at the first
-  boot. **No new key is made.** The private key stays in `.cache\vm\ssh` (git-ignored), is
-  never archived by the generic cleanup and is never deleted automatically.
+  used only for this VM), before the seed was built on 2026-10-15. The `user-data` in the
+  folder the seed was written from holds that public key in place of `{{SSH_PUBLIC_KEY}}`
+  (operations-roadmap.md, section 5); **the seed ISO itself was not read back**, so what
+  the guest receives is shown only when the first SSH session succeeds. **No new key is
+  made.** The private key stays in `.cache\vm\ssh` (git-ignored), is never archived by the
+  generic cleanup and is never deleted automatically.
 - **When it is used:** only once phase 2 gives the VM a network path that lets the host
   reach port 22 of the guest. Until then the key is inert.
 - **How (to be designed and approved in phase 2):** the host connects with that key to
@@ -114,6 +121,17 @@ install ISO as first boot device.
   pulled after a run, in a separate step with the adapter connected to the restricted
   switch. The exact sequence (connect for the build, disconnect for the run, connect for
   the pull) is a phase 2 design item for the maintainer.
+- **Open before the first SSH session** (phase 2 design, for the maintainer):
+  - **the guest's network configuration.** The seed configures no interface
+    (`network: ethernets: {}`), so connecting the adapter alone gives the guest no
+    address, route or DNS. How the guest gets its first configuration (for example a
+    second, reviewed seed, or an address plan the guest can take without a shell) is
+    undecided;
+  - **the existing operations.** The module refuses every VM operation except
+    `DisconnectNetwork` when an adapter is connected (`Resolve-RefuteVmTarget`), and
+    `DisconnectNetwork` needs the VM off. Phase 2 needs that rule adapted, which also
+    concerns W6.2 and V12 (capacity control on a running job) and the build, run and pull
+    sequence.
 
 ## 4. The WP6 acceptance tests: what each needs and when it runs
 
@@ -127,7 +145,7 @@ setup outside the VM.
 | W6.5 Operations | every operation simulated, approved and logged | 1 (operations 1 to 3 validated; 4 created the VM; 5 to 16 pending) | maintainer (approves and runs), Claude (prepares) |
 | W6.6 Synthetic tests | CI | done in CI, kept green | Claude |
 | W6.1 `refute throttle`/`pause`/`resume`/`status` inside the VM | Docker in the VM, the event log | 2 | Claude (code), maintainer (runs on the VM) |
-| W6.2 VM-level control script | endpoint operations `SetProcessorMaximum`, `SuspendVm`, `ResumeVm`, `SaveVm`, `StartVm` (they exist) | 1 for the operations; 2 for a running job | maintainer approves each call |
+| W6.2 VM-level control script | the small documented script of plan 7.5 still to be written, including the translation of a number of CPUs to `-Maximum`, a percentage; it calls the existing operations `SetProcessorMaximum`, `SuspendVm`, `ResumeVm`, `SaveVm`, `StartVm` | 1 for the operations; 2 for a running job | Claude writes the script (PR); the maintainer approves each call |
 | W6.3 Synthetic tests of the event log and heartbeat | CI | any time (no VM) | Claude |
 | V1 third-party code only in the VM | runner configuration review | 2 | Claude, Codex |
 | V2 host, LAN and special ranges blocked outside the guest | vSwitch, port ACLs (new endpoint operations), listeners on the host and on a LAN machine, positive controls | 2 | maintainer (switch, listeners, approval of each ACL), Claude (scripts) |
@@ -138,11 +156,13 @@ setup outside the VM.
 | V7 container limits in run and build | Docker, synthetic fork bomb, memory hog, disk filler | 2 | Claude |
 | V8 no mounts, no credentials, sentinels | Docker, BuildKit | 2 | Claude |
 | V9 BuildKit entitlements forbidden | builder configuration file | 2 | Claude |
-| V10 differencing disk per paper | new endpoint operations to create, attach and discard a child disk | 1 or 2 (host side; the marker is written from inside the guest, so it needs SSH) | maintainer approves, Claude (operations) |
+| V10 differencing disk per paper | new endpoint operations to create and attach a child disk; discarding it conflicts with W6.5 ("No operation deletes a VM or a disk") and the code accepts only the base disk today, so this is an open design and acceptance item for the maintainer | 2 (the marker is written and checked from inside the guest, over SSH) | maintainer decides the design and approves; Claude (operations) |
 | V11 results only over SSH with the VM's key | settings recorded (phase 1) and a pull with the key (phase 2) | 1 + 2 | maintainer approves |
 | V12 capacity control | Docker and the VM-level operations on a running synthetic job | 2 | maintainer approves each VM-level call |
 | V13 pre-run memory check | the runner on the VM | 2 | Claude |
-| V14, V16 to V20 | WP3/WP2 tests (CI), plus a VM run where the row says so | CI now; VM part in 2 | Claude |
+| V14 new container per run, image by digest | WP3 runner tests (CI), and on the VM two runs of a synthetic repository | CI now; VM part in 2 | Claude |
+| V16, V17, V18, V20 | the named WP3 tests and their CI runs (no VM part) | CI | Claude |
+| V19 every run approved | the runner's test (CI), and on the VM an attempt without the approval record, refused | CI now; VM part in 2 | Claude, maintainer approves |
 | V15 builder configuration in every dossier | a synthetic paper on the VM | 2 | Claude |
 | V21 no privileged builder | Docker, BuildKit, cgroup paths | 2 | Claude |
 | V22 budget control during a run | measure first the quota period, the reading delay and the stop latency on the VM, then the stopping margin M | 2 | Claude (measurements and tests), maintainer approves |
@@ -166,10 +186,13 @@ until agreement); "maintainer OK" means an explicit decision in chat before it r
      otherwise the basic ACLs; how SSH from the host to the guest is allowed while every
      connection the guest starts toward the host and the LAN is blocked;
    - the connect, disconnect and pull sequence of section 3.
-2. **Changes to the acceptance criteria that phase 2 needs** (owner: Claude; approval:
-   maintainer OK, since they change merged criteria): W6.5 says today that no operation
-   "connects a network adapter". Phase 2 needs operations that create or select the
-   switch, set and read the ACLs, and connect or disconnect the adapter.
+2. **Changes to the acceptance criteria that phase 2 needs** (owner: Claude proposes;
+   approval: maintainer OK, since they change merged criteria): W6.5 says today that no
+   operation "connects a network adapter" and that none "deletes a VM or a disk". Phase 2
+   needs operations that create or select the switch, set and read the ACLs, and connect
+   or disconnect the adapter, and V10 needs a way to start each paper from a clean child
+   disk. Nothing here proposes a destructive operation: how a used child disk is retired
+   is part of that decision.
 3. **New endpoint operations** (owner: Claude, PR with synthetic tests; approval: the
    maintainer's OK to install them, Administrator for the module update with
    `Update-RefuteVmConfig.ps1`, and each call approved). Creating a virtual switch
@@ -204,8 +227,10 @@ until agreement); "maintainer OK" means an explicit decision in chat before it r
   "Continue with autoinstall?" (as Administrator).
 - After the installation: the record that the VM powered off; `DetachInstallMedia` and the
   first boot from the disk; the stop.
-- Phase 2: the network design (switch type, address plan, where the proxy runs), the
-  change of W6.5, the installation of the new operations, the switch creation if it is an
+- Phase 2: the network design (switch type, address plan, where the proxy runs, how the
+  guest gets its first network configuration), the adaptation of the existing operations
+  to a connected adapter, the change of W6.5 (connecting an adapter; the differencing disks
+  of V10), the installation of the new operations, the switch creation if it is an
   Administrator step, the allowlist, the V2 listeners, the first SSH session, Docker's
   installation, and the final WP6 record.
 
@@ -216,6 +241,11 @@ until agreement); "maintainer OK" means an explicit decision in chat before it r
   updates that will be downloaded and installed after the system installation"), `apt`
   `fallback` ("controls what Subiquity does when no primary mirror is usable"):
   https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+- Autoinstall reference, `user-data` (the user configuration is applied by cloud-init on
+  the installed system): same page, section `user-data`.
+- Operate the server installer, "Switching to a shell prompt" (the installer offers a
+  shell on its console):
+  https://canonical-subiquity.readthedocs-hosted.com/en/latest/tutorial/operate-server-installer.html#switching-to-a-shell-prompt
 - Zero-touch deployment with autoinstall ("Confirmation is required to continue. Add
   'autoinstall' to your kernel command line to avoid this"):
   https://canonical-subiquity.readthedocs-hosted.com/en/latest/explanation/zero-touch-autoinstall.html
