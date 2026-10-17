@@ -438,5 +438,43 @@ failed attempts of section 9 are still recorded before these lines: `intent` at
 - **The other operations remain hypotheses, not tested** (section 9.2): each is known only
   when it runs, one operation at a time with the maintainer's OK.
 
-**Status of W6.4:** operation 1, `SetHostPaths`, is validated on the host. Every other
-operation is not validated yet.
+**Status of W6.4 at the end of this section:** operation 1, `SetHostPaths`, is validated on
+the host. Every other operation is not validated yet.
+
+## 11. Operation 2, DisableEnhancedSessionHost, done on the host (2026-10-16)
+
+Run by the maintainer on 2026-10-16 (Brasília time; UTC below), through the endpoint from a
+normal window, after operation 1 (section 10). Account names are replaced by
+`<operator-account>` and `<virtual-account>`; no security descriptor is published. The last
+recorded check of the ACL of `C:\Hyper-V`, after operation 1, found version 2 (section 10.2);
+it was not checked again after operation 2.
+
+### 11.1 What was run and what the log holds
+
+From `C:\ProgramData\RefuteVm\Log\operations.jsonl`, read on 2026-10-17 (read only). The four
+records of this operation follow the records of section 10; the `simulated` and `intent`
+records carry the same module hashes as those of section 10 (a `result` record holds no
+module hashes).
+
+| Step | Log record (UTC, 2026-10-17) | Result |
+|---|---|---|
+| a) `-Operation DisableEnhancedSessionHost -Simulate` | `simulated` at 01:54:37.475, `<virtual-account>` VA 19 | `AlreadyDone` false, `Refusal` null, one change: `Host.EnableEnhancedSessionMode` from true to false; `ConfigSha256` `fa27a08622297aa2615cf48d09d584fed6b4ab25b1862ce2f5d0d91c728208ff`; preconditions: the host paths already `C:\Hyper-V` and `C:\Hyper-V\Virtual Hard Disks`, no VM, no base disk, no media; `PlanSha256` `93dffecbcce12bd78b7fea03c4c65c5cd7fa38de0b93017b084cea796b9c17d4` |
+| b) `-Operation DisableEnhancedSessionHost -PlanSha256 <that hash>` | `intent` at 01:55:25.512 and `result` at 01:55:25.613, VA 20 | `Mode` result, `Outcome` done, `Error` null, on the first attempt |
+| c) `-Status` | (read only, no record) | `EnableEnhancedSessionMode` false, `VirtualMachinePath` `C:\Hyper-V`, `VirtualHardDiskPath` `C:\Hyper-V\Virtual Hard Disks`, no VM |
+| d) A new `-Simulate` | `simulated` at 01:55:29.426, VA 22 | `AlreadyDone` true, no change (`PlanSha256` `ef6b1fd0de9294791c6ee235a438030c98c56c5ba951f1fb31860d74f52e8535`) |
+
+### 11.2 Conclusion
+
+- **Operation 2 was done with the simulated plan, on the first attempt.** The execution used
+  the `PlanSha256` of the simulation, and the new simulation found nothing left to do.
+- **It changes a host setting, not a file Refute creates.** The module calls
+  `Set-VMHost -EnableEnhancedSessionMode $false` (`RefuteVm.HyperV.ps1`); the ACL of
+  `C:\Hyper-V` was not checked after it. Its success says nothing about the ACL questions of
+  the later operations, which create disks, VMs and media under `C:\Hyper-V`; those remain
+  hypotheses, not tested (section 9.2).
+- **Not done:** operation 3, `CreateBaseDisk`, was neither simulated nor run. By the
+  maintainer's decision of 2026-10-16, it waits for the change of the base disk size from
+  200 GiB to 100 GiB.
+
+**Status of W6.4:** operations 1, `SetHostPaths`, and 2, `DisableEnhancedSessionHost`, are
+validated on the host. Every other operation is not validated yet.
