@@ -7,6 +7,8 @@
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_tests_affinity.ps1 `
 #       -Junit .cache/<task>/junit.xml [-Out .cache/<task>/out.txt] [-Tests a.py,b.py] [-K expr]
 # Without -Tests the whole suite runs. Prints "pytest exit=<code>".
+# -Junit and -Out are relative to the project root, or absolute; without -Out, the output
+# goes next to the JUnit file (<junit>.out.txt and <junit>.out.err.txt).
 param(
     [Parameter(Mandatory = $true)][string]$Junit,
     [string]$Out = '',
@@ -19,9 +21,16 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $root
 $python = Join-Path $root '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python)) { throw "project venv not found: $python" }
-if (-not $Out) { $Out = [System.IO.Path]::ChangeExtension($Junit, '.out.txt') }
+function Resolve-RunPath([string]$Path) {
+    # an absolute path is kept; a relative one is taken from the project root (Join-Path
+    # with an absolute path would join the two, and GetFullPath would then fail)
+    if ([System.IO.Path]::IsPathRooted($Path)) { return [System.IO.Path]::GetFullPath($Path) }
+    return [System.IO.Path]::GetFullPath((Join-Path $root $Path))
+}
+$Junit = Resolve-RunPath $Junit
+if ($Out) { $Out = Resolve-RunPath $Out } else { $Out = [System.IO.Path]::ChangeExtension($Junit, '.out.txt') }
 foreach ($file in @($Junit, $Out)) {
-    $dir = Split-Path -Parent ([System.IO.Path]::GetFullPath((Join-Path $root $file)))
+    $dir = Split-Path -Parent $file
     if (-not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
 }
 $files = @($Tests | ForEach-Object { $_.Split(',') } | Where-Object { $_ })  # -File passes one string

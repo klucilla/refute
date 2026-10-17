@@ -1,4 +1,9 @@
-"""Offline check of the drand verification used by the v0.2 selection (recorded beacon)."""
+"""Offline check of the drand verification used by the v0.2 selection (recorded beacon).
+
+It tests the copy in calibration/v0.2/select_targets.py on purpose: that copy is the
+published v0.2 selection code and stays tested; the shared module is tested in
+test_drand_shared.py.
+"""
 
 import importlib.util
 from pathlib import Path
