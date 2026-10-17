@@ -41,8 +41,13 @@ those fields are empty. The three media operations observe the media themselves.
 The order is the one of the README (step 7), which this roadmap follows: operations 9
 and 10 are `DisconnectNetwork`, then `DisableGuestServiceInterface`. The operation table of
 the code (`RefuteVm.Core.ps1`, `$script:RefuteVmOperationTable`) lists them the other way
-round. Both need the VM off and neither depends on the other, so the order does not change
-their plans.
+round. Both need the VM off.
+- **With the adapter already unconnected** (as `New-VM` leaves it, section 4), neither
+  depends on the other.
+- **With an adapter connected,** `DisableGuestServiceInterface` is refused until
+  `DisconnectNetwork` runs: only `DisconnectNetwork` accepts a connected adapter.
+- **Either way,** each plan holds the whole record of the VM, so it is simulated right
+  before its own call, after the previous operation.
 
 ## 3. Rules common to every operation
 
@@ -64,10 +69,13 @@ their plans.
   not take or that is malformed.
 - **Failures:** a junction or link on the paths (`Assert-RefuteNoReparsePoint`) makes the call
   fail (`Outcome` failed), not a refusal. So does an error of the Hyper-V cmdlet.
-- **Reversal.** No endpoint operation undoes operations 3 to 14, except
-  `DetachInstallMedia` (for 14 and 15) and `StopVm` (for 16). Undoing anything else is a
-  step of the maintainer, as Administrator, outside the endpoint, with a preview. It is
-  listed per operation as a hint, not as a procedure.
+- **Reversal.**
+  - No endpoint operation undoes operations 3 to 14, except `DetachInstallMedia` (for 14
+    and 15) and `StopVm` (for 16).
+  - A setting can be put back by the maintainer, as Administrator, outside the endpoint,
+    with a preview; it is listed per operation as a hint, not as a procedure.
+  - This roadmap prescribes no removal of a file or of the VM. Such a removal is the
+    maintainer's decision, as Administrator, with a preview (the rule of issue #135).
 
 ## 4. The operations
 
@@ -75,11 +83,11 @@ their plans.
 - **Simulate:** `scripts\vm\Invoke-RefuteVm.ps1 -Operation CreateBaseDisk -Simulate`
 - **Expected change:** `BaseDisk` from `absent` to `dynamic VHDX of 107374182400 bytes at C:\Hyper-V\Virtual Hard Disks\refute-vm-base.vhdx`.
 - **Preconditions:** no file at that path; `ConfigSha256` `e41ee75a…`.
-- **Refusal:** a file at the path that is not the configured disk (another format, type or size): "never overwritten". If the configured disk is already there, `AlreadyDone` true.
+- **Refusal:** a file at the path that `Get-VHD` reads as another disk (another format, type or size): "never overwritten". If the configured disk is already there, `AlreadyDone` true. If `Get-VHD` cannot read a file at the path, the observation stops with that error before any plan is made, so there is neither a refusal nor an outcome.
 - **Action:** `New-VHD -Path <base> -SizeBytes 107374182400 -Dynamic`.
 - **Then `-Status`:** `Files.BaseDisk` exists, `VHDX`, `Dynamic`, `SizeBytes` 107374182400.
 - **Writes in `C:\Hyper-V`:** yes, a new file in `C:\Hyper-V\Virtual Hard Disks`. Hypothesis: the folder's inherited version 2 entries (Hyper-V Administrators modify) let it be created, and the file inherits them.
-- **Reversal:** the maintainer deletes the file, as Administrator, while no VM uses it.
+- **Reversal:** none through the endpoint (see section 3).
 
 ### 4. CreateVm
 - **Simulate:** `scripts\vm\Invoke-RefuteVm.ps1 -Operation CreateVm -Simulate`
@@ -88,7 +96,7 @@ their plans.
 - **Action:** `New-VM -Name refute-vm -Generation 2 -Path C:\Hyper-V\refute-vm -MemoryStartupBytes 51539607552 -NoVHD`. The new VMId is written to `C:\ProgramData\RefuteVm\State\vm.json`.
 - **Then `-Status`:** one VM `refute-vm`, `Off`, generation 2, `Path` `C:\Hyper-V\refute-vm`, no hard disk, adapters with no switch; the recorded VMId equals the VM's.
 - **Writes in `C:\Hyper-V`:** yes, the VM's configuration files under `C:\Hyper-V\refute-vm`. Hypothesis: the service also gives the VM's own account access to its files, and it needs the right to change permissions there, which version 2 gives (as for SetHostPaths). Section 9 saw the service add broader entries when it adopted a folder without version 2.
-- **Reversal:** the maintainer removes the VM and the state file, as Administrator.
+- **Reversal:** none through the endpoint (see section 3).
 
 ### 5. SetMemory
 - **Simulate:** `scripts\vm\Invoke-RefuteVm.ps1 -Operation SetMemory -Simulate`
@@ -173,7 +181,7 @@ their plans.
 - **Action:** the endpoint's virtual account copies `C:\Projetos\refute\.cache\vm\media\ubuntu-26.04.1-live-server-amd64.iso` to `C:\Hyper-V\refute-vm\media\`, hashing the bytes as it copies; a copy that does not match stays as `.partial`.
 - **Then `-Status -IncludeMedia`:** `InstallIsoMediaSha256` `cc8a95…d927`.
 - **Writes in `C:\Hyper-V`:** yes, a 2.9 GB file in `C:\Hyper-V\refute-vm\media`, written by the virtual account itself (Hyper-V Administrators modify, inherited). It also reads the project folder; see section 6.
-- **Reversal:** the maintainer deletes the copy.
+- **Reversal:** none through the endpoint (see section 3).
 
 ### 13. ImportSeedIso
 - **Simulate:** `scripts\vm\Invoke-RefuteVm.ps1 -Operation ImportSeedIso -MediaSha256 476754b824ba267c14993fb864b798bd1140eeac8cd69ea97ab38645743160f9 -Simulate`
@@ -185,7 +193,7 @@ their plans.
 - **Note:** nothing in the configuration fixes the seed's hash, so the approval of this plan is what binds it. Section 5 says what is known about it.
 - **Then `-Status -IncludeMedia`:** `SeedIsoMediaSha256` and `RecordedSeedIsoSha256` both `476754b8…60f9`.
 - **Writes in `C:\Hyper-V`:** yes, the seed in `C:\Hyper-V\refute-vm\media`, and the state file in `C:\ProgramData\RefuteVm\State`.
-- **Reversal:** the maintainer deletes the copy and the seed hash from the state.
+- **Reversal:** none through the endpoint (see section 3).
 
 ### 14. AttachInstallMedia
 - **Simulate:** `scripts\vm\Invoke-RefuteVm.ps1 -Operation AttachInstallMedia -Simulate`
@@ -211,14 +219,14 @@ their plans.
 
 ### 16. StartVm
 - **Simulate:** `scripts\vm\Invoke-RefuteVm.ps1 -Operation StartVm -Simulate`
-- **Expected change:** `State` from `Off` to `Running`.
+- **Expected change:** `State` from the observed state (`Off` or `Saved`) to `Running`.
 - **Refusal:** Secure Boot not on with the configured template.
 - **Needs:** the VM `Off` or `Saved`.
 - **Then `-Status`:** `State` `Running`. Then the maintainer opens the console, as Administrator, and answers "Continue with autoinstall?" (README, step 8); the installer powers the VM off at the end.
 - **Writes in `C:\Hyper-V`:** yes. The VM's worker process, running as the VM's own account, opens the disk for writing and the ISOs for reading, and creates its runtime files in the VM's folder.
   - Hypothesis: the entries the service added at the attach operations, and the Virtual Machines group's create rights of version 2 on folders, are what this needs.
   - Not a disk question, but the start reserves 48 GiB of static memory on a host with 63.9 GB (plan 7.1), so it can fail when not enough memory is free.
-- **Reversal:** `StopVm`, an endpoint operation: a clean shutdown through the guest, never forced.
+- **Reversal:** `StopVm`, an endpoint operation: a clean shutdown through the guest, never forced. It stops the VM; it does not undo what was written to the disk while it ran.
 
 ## 5. The media (checked read only, 2026-10-17)
 
