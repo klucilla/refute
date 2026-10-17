@@ -1,9 +1,13 @@
 """Claim inventories and the claim draw (WP5 W5.9, W5.10; plan section 5.2).
 
-**Inventory** (format ``refute-ml-inventory-1``): every candidate claim of one paper, in
-the paper's reading order, with its approved transcription, its type and, for a
-comparison, its reference method and whether it is an eligible comparison. Its
-SHA-256 is computed over the canonical JSON form (``refute.core.canonical``).
+**Inventory** (format ``refute-ml-inventory-2``): every candidate claim of one paper, in
+the paper's reading order, with its approved transcription, its type, the method it
+reports, the dataset, the execution conditions and, for a comparison, its reference
+method and whether it is an eligible comparison (claim spec, section "Which claims";
+#59, Codex review of #82). The approval names the maintainer, the time, the commit and
+the URL of the approval record (a comment of the maintainer), given before the
+inventory is frozen. Its SHA-256 is computed over the canonical JSON form
+(``refute.core.canonical``).
 
 **Claim draw**: ``random.Random(int.from_bytes(sha256(claim_seed_bytes ||
 arxiv_id_utf8), "big"))`` shuffles the drawable candidates (value claims and eligible
@@ -26,10 +30,13 @@ from typing import Any
 from refute.core.canonical import canonical_sha256
 from refute.selection.publication import PublicationProof
 
-FORMAT = "refute-ml-inventory-1"
+FORMAT = "refute-ml-inventory-2"
 K = 3
 ARXIV_ID = re.compile(r"^\d{4}\.\d{4,5}$")
 TRANSCRIPTION_FIELDS = ("value", "location", "metric", "split", "command")
+# the fields every candidate names besides its transcription (claim spec, "Which claims")
+CANDIDATE_TEXT_FIELDS = ("method", "dataset", "conditions")
+APPROVAL_URL = re.compile(r"^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/\S+$")
 
 
 class InventoryError(Exception):
@@ -56,6 +63,9 @@ def validate_inventory(inv: dict[str, Any]) -> None:
     for c in candidates:
         if c.get("type") not in ("value", "comparison"):
             raise InventoryError(f"{c['candidate_id']}: type must be value or comparison")
+        for name in CANDIDATE_TEXT_FIELDS:
+            if not isinstance(c.get(name), str) or not c[name].strip():
+                raise InventoryError(f"{c['candidate_id']}: {name} is required as text")
         t = c.get("transcription") or {}
         if sorted(t) != sorted(TRANSCRIPTION_FIELDS) or any(
             not isinstance(t[f], str) or not t[f].strip() for f in TRANSCRIPTION_FIELDS
@@ -73,11 +83,17 @@ def validate_inventory(inv: dict[str, Any]) -> None:
         elif c.get("reference") is not None or "eligible_comparison" in c:
             raise InventoryError(f"{c['candidate_id']}: a value claim has no reference")
     approval = inv.get("approval") or {}
-    for key in ("approved_by", "approved_utc", "approved_commit"):
+    for key in ("approved_by", "approved_utc", "approved_commit", "approval_record"):
         if not isinstance(approval.get(key), str) or not approval[key].strip():
             raise InventoryError(f"approval.{key} is required")
     if not re.fullmatch(r"[0-9a-f]{40}", approval["approved_commit"]):
         raise InventoryError("approval.approved_commit must be 40 lowercase hex digits")
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", approval["approved_utc"]):
+        raise InventoryError("approval.approved_utc must be a UTC timestamp")
+    # the proof of the approval: the URL of the maintainer's approval record, written
+    # before the inventory is frozen
+    if not APPROVAL_URL.fullmatch(approval["approval_record"]):
+        raise InventoryError("approval.approval_record must be the https URL of a GitHub record")
 
 
 def inventory_sha256(inv: dict[str, Any]) -> str:

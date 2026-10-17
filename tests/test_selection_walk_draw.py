@@ -121,6 +121,9 @@ def candidate(i, kind="value", eligible=None, reference=None):
             "split": "test",
             "command": "python train.py",
         },
+        "method": "Ours",
+        "dataset": "CIFAR-10",
+        "conditions": "the repository's training script, default configuration, CPU",
     }
     if kind == "comparison":
         c["reference"] = reference or "Baseline"
@@ -130,13 +133,14 @@ def candidate(i, kind="value", eligible=None, reference=None):
 
 def inventory(cands):
     return {
-        "format": "refute-ml-inventory-1",
+        "format": "refute-ml-inventory-2",
         "paper": {"arxiv_id": "2401.01234", "version": 2},
         "candidates": cands,
         "approval": {
             "approved_by": "maintainer",
             "approved_utc": "2026-10-15T12:00:00Z",
             "approved_commit": "a" * 40,
+            "approval_record": "https://github.com/owner/repo/issues/1#issuecomment-1",
         },
     }
 
@@ -155,6 +159,14 @@ def test_inventory_hash_is_canonical_and_validation_refuses_bad_inventories():
         lambda x: x["candidates"][1].update(reading_order=5),
         lambda x: x["paper"].update(arxiv_id="2401.01234v2"),
         lambda x: x["approval"].update(approved_commit="abc"),
+        # #59, Codex review of #82: the candidate fields of the claim spec and the proof of
+        # the approval
+        lambda x: x["candidates"][0].pop("method"),
+        lambda x: x["candidates"][0].update(dataset=" "),
+        lambda x: x["candidates"][1].pop("conditions"),
+        lambda x: x["approval"].pop("approval_record"),
+        lambda x: x["approval"].update(approval_record="http://example.org/ok"),
+        lambda x: x["approval"].update(approved_utc="yesterday"),
     ):
         bad = copy.deepcopy(inv)
         mutate(bad)

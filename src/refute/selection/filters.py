@@ -23,7 +23,7 @@ an ordered list whose trigger fires (``choose_adjustment``).
 from __future__ import annotations
 
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from typing import Any
@@ -74,6 +74,12 @@ class FilterStep:
     conflicts: list[str] = field(default_factory=list)
     # rows removed by the step (for 0_ids_present, whose rows have no paper ID to list)
     rows_removed: int = 0
+    # rows removed while their paper stays ("<arxiv id> <repo url>"), listed and not only
+    # counted (#59, Codex review of #78)
+    removed_rows_paper_kept: list[str] = field(default_factory=list)
+    # for each deduplication conflict: the key, the row kept and the values of each other
+    # row that differ from it (#59, Codex review of #78)
+    conflict_details: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _papers(rows: Iterable[dict[str, Any]]) -> set[str]:
@@ -94,9 +100,23 @@ def apply_filters(
 
     def step(name: str, kept: list[dict[str, Any]], before: list[dict[str, Any]]) -> None:
         removed = sorted(_papers(before) - _papers(kept))
+        kept_papers = _papers(kept)
+        remaining = Counter((r["paper_arxiv_id"], r["repo_url"]) for r in kept)
+        dropped: list[str] = []
+        for r in sorted(before, key=_row_key):
+            key = (r["paper_arxiv_id"], r["repo_url"])
+            if remaining[key] > 0:
+                remaining[key] -= 1
+            elif key[0] in kept_papers:
+                dropped.append(f"{key[0]} {key[1]}")
         steps.append(
             FilterStep(
-                name, len(kept), len(_papers(kept)), removed, rows_removed=len(before) - len(kept)
+                name,
+                len(kept),
+                len(kept_papers),
+                removed,
+                rows_removed=len(before) - len(kept),
+                removed_rows_paper_kept=sorted(dropped),
             )
         )
 
@@ -124,14 +144,24 @@ def apply_filters(
     # the result never depends on the input order) and are recorded as conflicts.
     unique: dict[tuple[str, str], dict[str, Any]] = {}
     conflicts: set[str] = set()
+    differing: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for r in sorted(with_ids, key=_row_key):
         key = (r["paper_arxiv_id"], r["repo_url"])
         if key in unique and unique[key] != r:
             conflicts.add(f"{key[0]} {key[1]}")
+            kept_row = unique[key]
+            columns = sorted(set(kept_row) | set(r))
+            differing[key].append({c: r.get(c) for c in columns if kept_row.get(c) != r.get(c)})
         unique.setdefault(key, r)
     deduped = [unique[k] for k in sorted(unique)]
     step("1_deduplicate", deduped, with_ids)
     steps[-1].conflicts = sorted(conflicts)
+    # a conflict in is_official or mentioned_in_paper can change eligibility: the kept row
+    # and every differing value are recorded, not only the key
+    steps[-1].conflict_details = [
+        {"paper_arxiv_id": k[0], "repo_url": k[1], "kept": unique[k], "others": differing[k]}
+        for k in sorted(differing)
+    ]
 
     official = [
         r for r in deduped if r.get("is_official") is True and r.get("mentioned_in_paper") is True
@@ -186,12 +216,24 @@ class Alternative:
     window: Window
     categories: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.accepted_below, int) or self.accepted_below < 0:
+            raise FilterError("accepted_below must be a non-negative integer")
+
+
+def _count(value: int, what: str) -> None:
+    # a negative counter would make any trigger fire or none (#59, Codex review of #78)
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise FilterError(f"{what} must be a non-negative integer")
+
 
 def choose_adjustment(
     alternatives: Sequence[Alternative], pilot_accepted: int, adjustments_made: int
 ) -> Alternative | None:
     """The first alternative whose trigger fires, or None (W5.5). An adjustment is
     allowed at most once: a second one is refused."""
+    _count(pilot_accepted, "pilot_accepted")
+    _count(adjustments_made, "adjustments_made")
     if adjustments_made >= 1:
         raise FilterError("the frame was already adjusted once; a second adjustment is refused")
     names = [a.name for a in alternatives]
@@ -214,3 +256,48 @@ def check_adjustment(
     expected_name = expected.name if expected else None
     if chosen != expected_name:
         raise FilterError(f"the adjustment must be {expected_name!r}, not {chosen!r}")
+
+
+def adjustment_record(
+    alternatives: Sequence[Alternative], pilot_accepted: int, adjustments_made: int
+) -> dict[str, Any]:
+    """The pilot's adjustment as it goes into the selection log: the counts, the
+    alternative applied (or none) with its window and categories, and the reason, which
+    is its trigger (#59, Codex review of #78)."""
+    chosen = choose_adjustment(alternatives, pilot_accepted, adjustments_made)
+    record: dict[str, Any] = {
+        "pilot_accepted": pilot_accepted,
+        "adjustments_made_before": adjustments_made,
+        "alternatives": [a.name for a in alternatives],
+        "applied": None,
+        "reason": "no trigger fired: the frame is not adjusted",
+    }
+    if chosen is not None:
+        record.update(
+            applied=chosen.name,
+            window={"first": chosen.window.first, "last": chosen.window.last},
+            categories=list(chosen.categories),
+            reason=(
+                f"{pilot_accepted} pilot papers accepted, fewer than "
+                f"{chosen.accepted_below}: the first alternative whose trigger fires"
+            ),
+        )
+    return record
+
+
+VERSION_SUFFIX = re.compile(r"v\d+$")
+
+
+def version_suffixed_ids(rows: Iterable[dict[str, Any]]) -> list[str]:
+    """The distinct ``paper_arxiv_id`` values of the frame that end in a version suffix
+    (``vN``). The window filter removes them (and lists them); the protocol records this
+    measurement on the chosen snapshot before the draw, so that a suffix is never
+    normalized silently (#59, Codex review of #78)."""
+    return sorted(
+        {
+            r["paper_arxiv_id"]
+            for r in rows
+            if isinstance(r.get("paper_arxiv_id"), str)
+            and VERSION_SUFFIX.search(r["paper_arxiv_id"])
+        }
+    )

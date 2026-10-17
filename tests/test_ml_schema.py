@@ -109,12 +109,18 @@ def inventory():
                 "reading_order": 1,
                 "type": "value",
                 "transcription": dict(TRANSCRIPTIONS["c1"]),
+                "method": "Ours",
+                "dataset": "CIFAR-10",
+                "conditions": "the repository's training script, 3 seeds",
             },
             {
                 "candidate_id": "c2",
                 "reading_order": 2,
                 "type": "comparison",
                 "transcription": dict(TRANSCRIPTIONS["c2"]),
+                "method": "Ours",
+                "dataset": "CIFAR-10",
+                "conditions": "the repository's training script, 3 seeds",
                 "reference": "ResNet",
                 "eligible_comparison": True,
             },
@@ -123,6 +129,7 @@ def inventory():
             "approved_by": "maintainer",
             "approved_utc": STAMP,
             "approved_commit": "e" * 40,
+            "approval_record": "https://github.com/example/repo/issues/2#issuecomment-3",
         },
     }
 
