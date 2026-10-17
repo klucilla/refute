@@ -526,12 +526,17 @@ $stubCommands = 'Get-VM', 'Get-VMNetworkAdapter', 'Get-VMSwitch', 'Get-VMNetwork
 function Get-VM { [CmdletBinding()] param($Id) return 'stub-vm' }
 function Get-VMNetworkAdapter { [CmdletBinding()] param($VM) return @($script:stub.Adapter) }
 function Get-VMSwitch { [CmdletBinding()] param() return @($script:stub.Switch) }
-function Get-VMNetworkAdapterExtendedAcl { [CmdletBinding()] param($VMNetworkAdapter) return @($script:stub.Acls) }
+function Get-VMNetworkAdapterExtendedAcl {
+    [CmdletBinding()] param($VMNetworkAdapter)
+    if ($script:stub.ThrowOnReadAfterConnect -and $script:stub.Connects -gt 0) { throw 'synthetic: read failure after the connection' }
+    return @($script:stub.Acls)
+}
 function Connect-VMNetworkAdapter {
     [CmdletBinding()] param($VMNetworkAdapter, $VMSwitch)
     $script:stub.Connects++
     $script:stub.Adapter.SwitchId = [string]$VMSwitch.Id; $script:stub.Adapter.SwitchName = [string]$VMSwitch.Name
     if ($script:stub.AclsAfterConnect) { $script:stub.Acls = @() }
+    if ($script:stub.ThrowOnConnect) { throw 'synthetic: the connection failed after taking effect' }
 }
 function Disconnect-VMNetworkAdapter {
     [CmdletBinding()] param([Parameter(ValueFromPipeline = $true)]$VMNetworkAdapter)
@@ -543,6 +548,7 @@ function Invoke-ConnectScenario([hashtable]$Change) {
         Adapter = [pscustomobject]@{ Name = 'Network Adapter'; Id = 'Microsoft:x'; SwitchName = ''; SwitchId = '' }
         Switch = [pscustomobject]@{ Id = $switchId; Name = 'refute-internal'; SwitchType = 'Internal' }
         Acls = @($build | ForEach-Object { [pscustomobject]$_ }); Connects = 0; Disconnects = 0; AclsAfterConnect = $false
+        ThrowOnReadAfterConnect = $false; ThrowOnConnect = $false
     }
     foreach ($k in $Change.Keys) {
         if ($k -eq 'AdapterId') { $script:stub.Adapter.Id = $Change[$k] }
@@ -571,6 +577,10 @@ foreach ($s in @(
 }
 $r = Invoke-ConnectScenario @{ AclsAfterConnect = $true }
 Add-Case 'ConnectNetwork mutation: ACLs lost after the connection disconnect it again' ($r.Failure -like '*disconnected again*' -and $r.Connects -eq 1 -and $r.Disconnects -eq 1 -and -not $r.Connected) $r.Failure
+$r = Invoke-ConnectScenario @{ AclsAfterConnect = $true; ThrowOnReadAfterConnect = $true }
+Add-Case 'ConnectNetwork mutation: a read that fails after the connection disconnects it again' ($r.Failure -like '*read failure*' -and $r.Connects -eq 1 -and $r.Disconnects -eq 1 -and -not $r.Connected) $r.Failure
+$r = Invoke-ConnectScenario @{ ThrowOnConnect = $true }
+Add-Case 'ConnectNetwork mutation: a connection that fails after taking effect is undone' ($r.Failure -like '*connection failed*' -and $r.Disconnects -eq 1 -and -not $r.Connected) $r.Failure
 foreach ($name in $stubCommands) { Remove-Item -Path "function:$name" }
 
 $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)

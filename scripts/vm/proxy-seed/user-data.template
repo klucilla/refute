@@ -61,8 +61,9 @@ autoinstall:
   packages:
     - squid
   updates: security
-  late-commands:
-    - curtin in-target -- systemctl mask systemd-networkd-wait-online.service
+  # systemd-networkd-wait-online stays enabled here (unlike the Refute VM, whose adapter is
+  # often disconnected): both adapters of the proxy have a carrier; and Squid may bind its
+  # address before inner0 has it (ip_nonlocal_bind below), so a start order does not matter
   shutdown: poweroff
   user-data:
     hostname: refute-proxy
@@ -80,6 +81,8 @@ autoinstall:
         content: |
           net.ipv4.ip_forward = 0
           net.ipv6.conf.all.forwarding = 0
+          # Squid may bind 10.231.71.3 even if it starts before inner0 has the address
+          net.ipv4.ip_nonlocal_bind = 1
       - path: /etc/squid/refute-allowlist.txt
         content: |
           {{ALLOWLIST}}

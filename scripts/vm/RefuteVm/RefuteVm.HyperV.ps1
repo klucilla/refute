@@ -364,11 +364,21 @@ function Invoke-RefuteVmMutation {
             $adapter = Get-RefuteVmPlannedAdapter -Vm $vm -Plan $Plan
             $switch = Get-RefuteVmConfiguredSwitch -Config $Config
             if (-not (Test-RefuteVmAdapterProfile -Config $Config -Adapter $adapter)) { Stop-RefuteVmOperation "the port's ACLs equal no profile; the adapter stays disconnected" }
-            Connect-VMNetworkAdapter -VMNetworkAdapter $adapter -VMSwitch $switch -ErrorAction Stop
-            $connected = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | Where-Object { ([string]$_.Id) -ieq ([string]$adapter.Id) })
-            $held = ($connected.Count -eq 1 -and ([string]$connected[0].SwitchId) -ieq $Config.NetworkSwitchId -and (Test-RefuteVmAdapterProfile -Config $Config -Adapter $connected[0]))
+            # the connection and the check after it: unless the check ends with success (an
+            # exception included, in the connection or in a read), the adapter is disconnected
+            # again before the operation fails (Codex review of 7e43e44)
+            $held = $false
+            $failure = $null
+            try {
+                Connect-VMNetworkAdapter -VMNetworkAdapter $adapter -VMSwitch $switch -ErrorAction Stop
+                $connected = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | Where-Object { ([string]$_.Id) -ieq ([string]$adapter.Id) })
+                $held = ($connected.Count -eq 1 -and ([string]$connected[0].SwitchId) -ieq $Config.NetworkSwitchId -and (Test-RefuteVmAdapterProfile -Config $Config -Adapter $connected[0]))
+            } catch {
+                $failure = $_
+            }
             if (-not $held) {
-                Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | Disconnect-VMNetworkAdapter -ErrorAction Stop
+                Disconnect-VMNetworkAdapter -VMNetworkAdapter $adapter -ErrorAction Stop
+                if ($failure) { throw $failure }
                 Stop-RefuteVmOperation 'after the connection the adapter, its switch or its ACLs were not the planned ones; the adapter was disconnected again'
             }
         }
