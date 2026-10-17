@@ -236,7 +236,7 @@ round. Both need the VM off.
 | `refute-vm-seed.iso` | 55,296 | `476754b824ba267c14993fb864b798bd1140eeac8cd69ea97ab38645743160f9` | recorded in section 5.1 (2026-10-17); checked by operation 13 |
 
 - **The install ISO is present and equal to the configuration.** The configuration's value was itself verified against `SHA256SUMS` and its signature on 2026-10-15 (`media-verification.json`).
-- **The seed is present, but its hash is recorded nowhere in the repository.** `New-RefuteSeedIso.ps1` printed it on 2026-10-15. The ISO's content folder next to it, `refute-vm-seed.iso.content`, holds a `user-data` equal to `scripts/vm/seed/user-data.template` with the VM's SSH public key in place of `{{SSH_PUBLIC_KEY}}`, and a `meta-data` with `instance-id: refute-vm-1` and `local-hostname: refute-vm`. That folder is what the script wrote the ISO from, not a read of the ISO.
+- **The seed is present.** When this roadmap was first written, its hash was recorded nowhere in the repository; section 5.1 now records it. `New-RefuteSeedIso.ps1` printed it on 2026-10-15. The ISO's content folder next to it, `refute-vm-seed.iso.content`, holds a `user-data` equal to `scripts/vm/seed/user-data.template` with the VM's SSH public key in place of `{{SSH_PUBLIC_KEY}}`, and a `meta-data` with `instance-id: refute-vm-1` and `local-hostname: refute-vm`. That folder is what the script wrote the ISO from, not a read of the ISO.
 - **Nothing is missing.** If a medium had to be made again, `Get-RefuteMedia.ps1` downloads and verifies the ISO, and `New-RefuteSeedIso.ps1` builds the seed (README, steps 3 and 5). Neither was run.
 
 ### 5.1 The seed's hash, recorded (2026-10-17)
@@ -258,8 +258,11 @@ operation 13 has a reference in the repository.
   2026-10-15, and that output was not kept. The content folder next to the ISO matches the
   template; the ISO itself was not read back.
 - **How it is checked.** Operation 13 runs `ImportSeedIso -MediaSha256` with this value.
-  The endpoint copies the seed only if the bytes it reads have this SHA-256, and then
-  records the hash in `vm.json`, where `AttachInstallMedia` checks it again. A seed made
+  The endpoint copies the seed to a `.partial` file while it hashes the bytes; only a copy
+  whose hash is this SHA-256 is moved to its final name and recorded in `vm.json` (a copy
+  that does not match stays as `.partial`), and `AttachInstallMedia` then checks the copy
+  against `vm.json` again. This checks that the bytes are the ones of this record; it does
+  not authenticate where they came from. A seed made
   again would have another hash: this record and the command of operation 13 would then
   change together.
 
