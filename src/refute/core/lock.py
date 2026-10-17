@@ -493,6 +493,13 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
         result.status = VerifyStatus.FAIL
         result.messages.append(str(exc))
         return result
+    except ValueError as exc:
+        # json.loads raises a plain ValueError beyond Python's int conversion limit (more
+        # than 4,300 digits by default), which read_lock does not catch; verify reports it
+        # as FAIL with the reason (issue #59). read_lock stays as it is for create_lock.
+        result.status = VerifyStatus.FAIL
+        result.messages.append(f"cannot read lock file {lock_file}: {exc}")
+        return result
     structure = _verify_structure_problems(lock)
     if structure:
         result.status = VerifyStatus.FAIL
@@ -541,7 +548,13 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
         if not path.is_file():
             failures.append(f"attachment missing: {record['path']}")
             continue
-        digest = sha256_text_normalized(path)
+        try:
+            digest = sha256_text_normalized(path)
+        except OSError as exc:
+            # an attachment that cannot be read (a permission error, for example) is FAIL
+            # with the reason, never an exception; TAMPERED keeps its precedence (issue #59)
+            failures.append(f"cannot read attachment {record['path']}: {exc}")
+            continue
         if digest != record["sha256"]:
             result.tampered.append(f"attachment:{record['path']}")
             result.messages.append(
