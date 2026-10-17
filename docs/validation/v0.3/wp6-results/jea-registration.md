@@ -275,3 +275,117 @@ hash of a configuration.
   `57812ca`.
 - **Not validated yet:** every operation. The first, `SetHostPaths`, is simulated first
   (`-Simulate`), and runs only with the maintainer's OK, one operation at a time.
+
+## 9. Operation 1, SetHostPaths: failed, with no change to the host (2026-10-16)
+
+Run by the maintainer through the endpoint, from the operator account. Account names are
+replaced by `<operator-account>` and `<virtual-account>`; no security descriptor is
+published.
+
+### 9.1 What was run and what the log holds
+
+| Step | Result |
+|---|---|
+| `-Operation SetHostPaths -Simulate` | `Mode` simulated, `AlreadyDone` false, `Refusal` null, `ConfigSha256` `fa27a08622297aa2615cf48d09d584fed6b4ab25b1862ce2f5d0d91c728208ff`; exactly two changes: `Host.VirtualMachinePath` from `C:\ProgramData\Microsoft\Windows\Hyper-V` to `C:\Hyper-V`, and `Host.VirtualHardDiskPath` from `C:\ProgramData\Microsoft\Windows\Virtual Hard Disks` to `C:\Hyper-V\Virtual Hard Disks`; `PlanSha256` `3976d96a09c23d1a6ca1cd858a16087810c4ecb814af3384a219b6041cffd304` |
+| `-Operation SetHostPaths -PlanSha256 <that hash>`, twice (22:08:38 and 22:09:30 UTC; the first from an Administrator terminal by mistake, the second from a normal one) | both failed: "Failed to modify service settings. The default virtual machine configuration store cannot be changed to 'C:\Hyper-V': Access denied. (0x80070005)" (translated from the localized message) |
+| `C:\ProgramData\RefuteVm\Log\operations.jsonl`, read on 2026-10-16 | for each attempt, an `intent` record and a `result` record with `Outcome` failed, both with that `PlanSha256`; each session ran as its own `<virtual-account>`, a different WinRM virtual account (VA numbers 9 and 12 in the log) |
+| `-Status` and a new `-Simulate` afterwards | nothing changed: the same two planned changes and the same `PlanSha256` |
+| Log Microsoft-Windows-Hyper-V-VMMS-Admin | a pair of events 15110 ("Failed to modify service settings") and 18170 (the access denied) at each attempt, with no account name and no right named |
+
+### 9.2 Diagnosis
+
+**The ACL the maintainer read (as Administrator, read-only):**
+- `C:\Hyper-V`, as the registration set it:
+  - owner Administrators, protected DACL;
+  - SYSTEM and Administrators full control;
+  - Hyper-V Administrators modify;
+  - all entries inherited by folders and files.
+
+  The folders below inherit it.
+- The default folder of Windows, `C:\ProgramData\Microsoft\Windows\Hyper-V`, has:
+  - entries for CREATOR OWNER, SYSTEM and Administrators;
+  - entries for NT VIRTUAL MACHINE\Virtual Machines: read on the files below, list and create in the folder and the folders below;
+  - no entry for Hyper-V Administrators.
+
+**What the sources say** (accessed 2026-10-16):
+- **A JEA virtual account exists for one session only, under a new name each time.** "Virtual accounts are one-time, temporary local accounts that are created for the connecting user to use during the duration of their JEA session", and "each JEA user session has a unique virtual account": https://learn.microsoft.com/en-us/powershell/scripting/security/remoting/jea/security-considerations.
+- **The Hyper-V management service acts with the identity of its caller when it changes permissions.** It runs as SYSTEM, "but impersonates during this operation the current user" when it gives a VM access to an attached virtual disk: https://decoder.cloud/2020/01/20/from-hyper-v-admin-to-system/ (a security research article, not Microsoft documentation).
+- **A VM needs its own SID on its files.** Microsoft's fix for a VM that does not start is to grant `NT VIRTUAL MACHINE\<VM ID>` access to the disk and to the configuration file: https://learn.microsoft.com/en-us/troubleshoot/windows-server/virtualization/hyper-v-virtual-machine-not-start-0x80070005.
+- **The Virtual Machines group is maintained by Hyper-V.** NT VIRTUAL MACHINE\Virtual Machines is S-1-5-83-0, "created when the Hyper-V role is installed", with its membership maintained by the Hyper-V management service: https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers.
+
+**The cause: demonstrated on the CI runner `windows-2025` (runs 38978769925 to 38983528864, below); on the maintainer's Windows 11 it stays pending confirmation until the new attempt.**
+- **What it says:** to adopt a folder as a default, and to attach a disk or an ISO to a VM, the Hyper-V management service changes permissions with the caller's identity. The caller is the session's virtual account, a member of Hyper-V Administrators only. It has Modify on the tree but neither ChangePermissions nor ownership, so the change is denied.
+- **What supports it:** the error, the impersonation described above, and the default folder of Windows, which holds the Virtual Machines entries.
+- **What the runner showed for SetHostPaths:** under version 1 the call is denied with the host's message; with ChangePermissions alone, and with version 2, it succeeds.
+- **What is still pending:** no source states which right `Set-VMHost` needs, and the runner is not the maintainer's host. Only the new attempt on the host, after the corrected ACL, confirms the cause there. The evidence covers SetHostPaths only.
+- **Each session is a new account.** A file created in one session is not owned by the account of the next one.
+
+**The other operations with the ACL of the registration: hypotheses, not tested.** Only SetHostPaths was observed (denied on the host and on the runner). For the others, what follows is what the diagnosis predicts, not evidence:
+- **Expected to meet the same denial:**
+  - **AttachBaseDisk:** it gives the VM's SID access to the base disk created in another session.
+  - **AttachInstallMedia:** it gives the VM's SID access to the two ISOs copied in another session.
+- **Possibly at risk:**
+  - **CreateVm:** it gives the VM's SID access to its configuration, in a folder created in the same session.
+  - **SaveVm:** the saved state is written in the VM's folder, where the Virtual Machines group has no entry.
+- **Not expected to meet this problem:** the operations that change only VM or host settings (memory, processors, Secure Boot, checkpoints, integration services, network, boot order, start, stop, suspend, resume, the processor maximum, enhanced session mode). This is a prediction too.
+- **Another question, for ImportInstallIso and ImportSeedIso:** they read the media in the project folder, which the virtual account may not be allowed to read. That is a separate check, for the operations themselves.
+
+Each of these is known only when it runs, one operation at a time with the maintainer's OK.
+
+**The correction, not applied: version 2 of the tree ACL** (`Get-RefuteVmTreeAclSpec` in `scripts/vm/RefuteRegistration.Core.ps1`). Its design was approved by the maintainer on 2026-10-16 **as an explicit security concession**; applying it on the host is a separate decision of the maintainer.
+- **Hyper-V Administrators:** Modify plus ChangePermissions, inherited.
+- **NT VIRTUAL MACHINE\Virtual Machines:** the entries of the default folder of Windows.
+- **The concessions of version 2:**
+  - Hyper-V Administrators can change permissions on the whole tree.
+  - NT VIRTUAL MACHINE\Virtual Machines gets read **and the creation of files and subfolders** (CreateFiles and AppendData on the root, inherited by the folders below), besides read on the files.
+  - These rights apply to the VM identities of the host. The tests do **not** show that a guest system can reach the disks of the tree directly.
+- **The limit of the evidence:** it covers SetHostPaths only; it does not show the other operations.
+- **Nothing else changes.** The maintainer applies it with the new `scripts/vm/Set-RefuteVmTreeAcl.ps1`, as Administrator: a preview, then `-Apply -PreviewSha256`.
+  - **No automatic rollback:** the script does not promise one. If the post-check fails, the maintainer STOPS and presents the effective state of the ACL, with no automatic correction.
+  - The `PreviewSha256` covers the state the change depends on: every item of the tree and the evidence folders, with creation time, attributes, owner, protection and every access entry.
+  - The script reads that state again just before the change.
+  - Each folder below must inherit exactly what the tree passes down, before and after; the check compares who gets which rights on the folder, its subfolders and its files.
+  - The evidence goes to a new file, created before the change, that only SYSTEM and Administrators can change. The Log folder must hold exactly the registration's ACL, and `C:\`, `C:\ProgramData` and `C:\ProgramData\RefuteVm` must let no other account delete, change permissions or take ownership.
+  - **A premise, not a check:** Hyper-V Administrators has Delete on the tree (Modify), so a member could rename `C:\Hyper-V` and put something else in its place. That no session of the endpoint and no other writer runs during the whole apply is a premise the maintainer accepts.
+    - **What supports it:** for each state the script reads one sample of the group's members and one of the open PowerShell remoting sessions (`wsmprovhost.exe`, the process that hosts every session), and accepts the state only when both are empty, at the preview and again just before the change.
+    - **Why the sessions are found by their process:** on the CI runner (run 38982160054) a session's virtual account was not listed among the group's members while the session was open: it has the group in its token only. The CI test checks that a session of its endpoint adds a `wsmprovhost.exe` while it is open.
+    - **What it does not cover:** the short window between the last read and the change.
+- **What version 2 is not:**
+  - **Not the smallest change that worked:** ChangePermissions alone also worked for SetHostPaths on the runner (third run, below). The observed advantage of version 2 is a predictable final ACL: with ChangePermissions alone the service wrote broader entries on the root (Virtual Machines, CREATOR OWNER with full control, and a capability SID).
+  - **Not a bound on Hyper-V Administrators:** with ChangePermissions they can widen the tree's ACL. What they can do in practice stays limited by the commands the endpoint exposes.
+  - **Not limited to the Refute VM:** the Virtual Machines entries (read, and the creation of files and subfolders) apply to the VM identities of the whole host, since the group is not the Refute VM alone. Direct access from a guest system is not shown.
+
+**Could the CI have caught it? Yes, with a real call.**
+- **What the test did:** since run 38934817010 the CI endpoint test runs on a `windows-2025` runner that has the Hyper-V management service. It called only `-Status` and `SetHostPaths -Simulate`, and a simulation cannot show whether the virtual account may change the host paths.
+- **What it does now:** it makes the real call on the runner, under each version of the tree ACL, each in a new session:
+  - under version 1 the call must fail with access denied and leave the host paths unchanged;
+  - under version 2 it must succeed.
+- **First run, 38978769925 (head `3adc0a5`, 2026-10-16):**
+  - **Version 1:** the call failed with the host's message: "The default virtual machine configuration store cannot be changed to 'C:\Hyper-V': Access is denied. (0x80070005)". The host paths did not change.
+  - **Version 2:** the module reported `done`, and its own observation after the call showed the new paths. The test's `Get-VMHost`, in a process that had read the host before the attempts, still showed the old ones, so the test failed. It now reads the host paths through CIM.
+- **Second run, 38980778326 (head `5799d85`, 2026-10-16), all green:**
+  - version 1 failed again with the host's message;
+  - under version 2 the call was `done` and the host paths read through CIM were `C:\Hyper-V` and `C:\Hyper-V\Virtual Hard Disks`;
+  - the service added no entry to the root of the tree in either attempt.
+
+  So on the runner, version 2 is enough for SetHostPaths and version 1 is not. The test then also recorded `Get-VMHost` in a new process, and a third tree between the two: version 1 with ChangePermissions only, without the Virtual Machines entries.
+- **Third run, 38982160054 (head `4ce1bd2`, 2026-10-16):**
+  - **Version 1:** denied again, with the host's message.
+  - **ChangePermissions only:** the call was `done`, and CIM and a new process showed the new host paths. So for SetHostPaths on the runner, ChangePermissions is the right that was missing. The service then **added entries to the root itself**:
+    - NT VIRTUAL MACHINE\Virtual Machines, as on the default folder;
+    - CREATOR OWNER, full control, inherit-only;
+    - a capability SID, `S-1-15-3-1024-2268835264-3721307629-241982045-173645152-1490879176-104643441-2915960892-1612460704`, full control on the folder and inherit-only (its name was not resolved).
+  - **Version 2:** `done`, the new host paths through CIM and in a new process, and the service added nothing to the root.
+  - **The first run's puzzle, explained:** `Get-VMHost` in the test's own process, which had read the host before, still showed the old paths after each successful call, while CIM and a new process showed the new ones. That is a cache of the Hyper-V module in that process.
+  - **The test failed on its positive control:** while a session was open, Hyper-V Administrators listed no member, so the empty-group check of `Set-RefuteVmTreeAcl.ps1` could not find a session. The script now also refuses open remoting sessions (`wsmprovhost.exe`), and the test checks that instead.
+- **What this means for the choice of the ACL:**
+  - With ChangePermissions alone the service writes its own entries on the first default change, broader than version 2 (full control for CREATOR OWNER and for the capability SID), and the tree then no longer matches what Refute set.
+  - With version 2 the tree stays as Refute set it.
+  - Whether other operations (attaching disks and media, creating and saving the VM) need more is not known; each is tested when it runs.
+- **What the test now requires of version 2** (the WP6 package review): after the call the root still holds exactly version 2, with nothing added by the service, and every folder below still inherits exactly what it passes down.
+- **What the CI does not show:**
+  - a complete apply of `Set-RefuteVmTreeAcl.ps1` and the writing of its protected evidence (the CI builds the ACLs itself and checks the applier's preview only);
+  - the network isolation of the real installation: the test enables PowerShell remoting on the runner with `Enable-PSRemoting` (a listener on every address and a firewall exception), which the real installation never does; this is acceptable only on a runner discarded after the job.
+- **The limits:** the runner is Windows Server 2025, not the maintainer's Windows 11. It demonstrates the cause there; it does not replace the attempt on the host. It covers SetHostPaths only, not the other operations. The attempts share one tree, so the whole tree is checked against each version before its call.
+
+**Status of W6.4:** no operation has succeeded; operation 1 is pending the corrected ACL and the maintainer's new attempt.

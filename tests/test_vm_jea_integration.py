@@ -296,6 +296,93 @@ def test_the_simulation_writes_its_record_as_the_virtual_account(result, record_
     assert files <= set(record["Module"]), record["Module"]
 
 
+def _norm(path: str) -> str:
+    return path.rstrip("\\").lower()
+
+
+def _as_list(value) -> list:
+    # ConvertTo-Json writes a one-item array as the item itself, and an empty one as []
+    if value is None:
+        return []
+    return [value] if isinstance(value, str) else list(value)
+
+
+def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
+    result, record_property
+):
+    """The failure of 2026-10-16 (#126, Codex review): on the maintainer's host the first
+    real VM operation, SetHostPaths, failed through the endpoint with access denied, while
+    the simulation passed. The simulation cannot catch it, so the runner makes the real
+    call, in a new session for each version of the C:\\Hyper-V ACL: under version 1 (the
+    registration of 2026-10-15) it must fail with access denied and leave the host paths
+    as they were; under version 2 it must succeed and set them. Only where the runner has
+    the vmms service and no C:\\Hyper-V of its own. The runner is Windows Server, not the
+    maintainer's Windows 11: what it shows is evidence for the diagnosis, not a check of
+    the host. Between them, version 1 with ChangePermissions only (no Virtual Machines
+    entries) is tried and recorded, not asserted: it tells whether the maintainer's
+    preferred change is enough for this operation on the runner. Each attempt starts from
+    the original host paths, and the whole tree is checked before each. It does not show
+    the other operations."""
+    host_paths = result["RefuteVm"]["HostPaths"]
+    print(json.dumps(host_paths, indent=1))
+    if not host_paths["Ran"]:
+        pytest.skip(host_paths["Reason"])
+    original = host_paths["Original"]
+    attempts = host_paths["Attempts"]
+    v1, v2 = attempts["Version1"], attempts["Version2"]
+    for name, attempt in attempts.items():
+        record_property(
+            f"{name}_real",
+            _summary(attempt["Real"]) if attempt["Real"] else attempt["Error"],
+        )
+        record_property(f"{name}_root_after", json.dumps(attempt["RootAfter"]))
+        for way in ("Baseline", "Restored", "HostAfter", "HostAfterNewProcess", "HostAfterModule"):
+            record_property(f"{name}_{way}", json.dumps(attempt[way]))
+    before = set(_as_list(host_paths["MembersBefore"]))
+    for attempt in attempts.values():
+        # the whole tree held exactly this version before the call
+        assert attempt["TreeProblems"] == [], attempt
+        assert attempt["Error"] == "" and attempt["Simulate"]["Ok"], attempt
+        assert attempt["Real"] is not None, attempt
+        # the positive control of the open-session check of Set-RefuteVmTreeAcl.ps1: while
+        # a session is open, at least one wsmprovhost.exe runs. The members of Hyper-V
+        # Administrators are recorded only: in run 38982160054 the session's virtual
+        # account was not listed there, so a member check cannot find a session.
+        hosts_before = set(_as_list(attempt["SessionHostsBefore"]))
+        hosts_during = set(_as_list(attempt["SessionHostsDuringSession"]))
+        assert hosts_during - hosts_before, attempt
+        record_property(
+            f"{attempt['Tree']}_members",
+            json.dumps([sorted(before), sorted(_as_list(attempt["MembersDuringSession"]))]),
+        )
+        # each attempt starts from the original host paths, both read through CIM
+        for key in ("VirtualMachinePath", "VirtualHardDiskPath"):
+            assert _norm(attempt["Baseline"][key]) == _norm(original[key]), attempt
+    # version 1: the module's own failure of SetHostPaths, with the access denied of
+    # 2026-10-16 (0x80070005), and nothing changed
+    denied = v1["Real"]["Error"]
+    assert not v1["Real"]["Ok"], v1
+    assert "SetHostPaths failed:" in denied and "0x80070005" in denied, v1
+    assert _norm(v1["HostAfter"]["VirtualMachinePath"]) == _norm(original["VirtualMachinePath"]), v1
+    assert _norm(v1["HostAfter"]["VirtualHardDiskPath"]) == _norm(
+        original["VirtualHardDiskPath"]
+    ), v1
+    # version 2: done, and the host paths are the tree
+    assert v2["Real"]["Ok"], v2
+    assert json.loads(v2["Real"]["Output"])["Outcome"] == "done", v2
+    assert _norm(v2["HostAfter"]["VirtualMachinePath"]) == "c:\\hyper-v", v2
+    assert _norm(v2["HostAfter"]["VirtualHardDiskPath"]) == "c:\\hyper-v\\virtual hard disks", v2
+    # and the tree stays exactly version 2 after the call: the service adds nothing to the
+    # root, and every folder below still inherits exactly what version 2 passes down (the
+    # property that justifies version 2; Codex review of the WP6 package)
+    assert _as_list(v2["RootAfter"]) == _as_list(v2["RootBefore"]), v2
+    assert _as_list(v2["TreeProblemsAfter"]) == [], v2
+    record_property(
+        "ChangePermissionsOnly_tree_after",
+        json.dumps(_as_list(attempts["ChangePermissionsOnly"]["TreeProblemsAfter"])),
+    )
+
+
 PRIVATE = [
     "Get-FileHash",
     "Import-PowerShellDataFile",
