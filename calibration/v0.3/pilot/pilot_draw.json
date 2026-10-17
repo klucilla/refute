@@ -1,0 +1,781 @@
+{
+  "protocol": "calibration/v0.3/pilot/PROTOCOL.md",
+  "protocol_commit": "d7dfc40e5bfc621db23b6a884e7ed8a1cb9c6abe",
+  "publication_proof": {
+    "commit_sha": "d7dfc40e5bfc621db23b6a884e7ed8a1cb9c6abe",
+    "run_id": 39065024617,
+    "run_created_at": "2026-10-17T20:02:30Z",
+    "round_published_at": "2026-10-17T22:00:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/pilot/PROTOCOL.md",
+        "920cbe2d5c0ad61ffe4613ee5ad6cd7e20503df60da2465dbe125cd95a108acb"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561446,
+  "additional": null,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561446,
+    "round_time_utc": "2026-10-17T22:00:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561446",
+    "retrieved_utc": "2026-10-17T22:00:48Z",
+    "randomness": "e24db9e485abe332537f439055d878b9ff5a9d3758bf4838f676ac54d357d63c",
+    "signature": "8a083108b33ca08e33efb61e65eb3b528bdfefd97cbd084571ed238046bc265a6062008713cd21b6361afe94dc067e80049a3996eaf9bd771f99e053f00a55c1c8c91caab9fab740a467af701197433c010ad83f225f6cb8fca1f7f368deb937",
+    "previous_signature": "81844ff2ec0a84d08f68bfa8c14ef10f00bf8b1e25f632c7fc3d499e13f14983f2a81e691494167347488a45090c351510d29bbaac5a213f7eed6e4a16aedda80b2fe4ec936729863096148ee79f5374764155651c38d030b5156cd5db3f1027",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "102360033987825380932977787213953202664543908261562995389953023846577885140540",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70303,
+      "papers_after": 70303
+    }
+  ],
+  "excluded_first_round": [],
+  "papers": [
+    {
+      "position": 1,
+      "arxiv_id": "2312.01872",
+      "repo_url": "https://github.com/rp-cure/rp-cure",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2312.01872v1",
+        "primary_category": "cs.CR",
+        "title": "The CURE To Vulnerabilities in RPKI Validation",
+        "abstract": "Over recent years, the Resource Public Key Infrastructure (RPKI) has seen increasing adoption, with now 37.8% of the major networks filtering bogus BGP routes. Systems interact with the RPKI over Relying Party (RP) implementations that fetch RPKI objects and feed BGP routers with the validated prefix-ownership data. Consequently, any vulnerabilities or flaws within the RP software can substantially threaten the stability and security of Internet routing. We uncover severe flaws in all popular RP implementations, making them susceptible to path traversal attacks, remotely triggered crashes, and inherent inconsistencies, violating RPKI standards. We report a total of 18 vulnerabilities that canbe exploited to downgrade RPKI validation in border routers or, worse, enable poisoning of the validation process, resulting in malicious prefixes being wrongfully validated and legitimate RPKI-covered prefixes failing validation. Furthermore, our research discloses inconsistencies in the validation process, with two popular implementations leaving 8149 prefixes unprotected from hijacks, 6405 of which belong to Amazon. While these findings are significant in their own right, our principal contribution lies in developing CURE, the first-of-its-kind system to systematically detect bugs, vulnerabilities, and RFC compliance issues in RP implementations via automated test generation. CURE is a powerful RPKI publication point emulator that enables easy and efficient fuzzing of complex RP validation pipelines. It is designed with a set of novel techniques, utilizing differential and stateful fuzzing. We generated over 600 million test cases and tested all popular RPs on them. Following our disclosure, the vendors already assigned CVEs to the vulnerabilities we found."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rp-cure/rp-cure",
+        "exists": true,
+        "full_name": "rp-cure/rp-cure",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "5288c2c5d0ef55dffa629ab607d3c9f088581df1",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/rp-cure/rp-cure/blob/5288c2c5d0ef55dffa629ab607d3c9f088581df1/README.md",
+          "sha256": "4eb879c2ad70fd6d00a82bf803a77c7de64c649fe3e2d6820a13124e3449afdf",
+          "bytes": 423
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      }
+    },
+    {
+      "position": 2,
+      "arxiv_id": "2402.13285",
+      "repo_url": "https://github.com/paulviallard/aistats24-complexity-measures",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2402.13285v1",
+        "primary_category": "stat.ML",
+        "title": "Leveraging PAC-Bayes Theory and Gibbs Distributions for Generalization Bounds with Complexity Measures",
+        "abstract": "In statistical learning theory, a generalization bound usually involves a complexity measure imposed by the considered theoretical framework. This limits the scope of such bounds, as other forms of capacity measures or regularizations are used in algorithms. In this paper, we leverage the framework of disintegrated PAC-Bayes bounds to derive a general generalization bound instantiable with arbitrary complexity measures. One trick to prove such a result involves considering a commonly used family of distributions: the Gibbs distributions. Our bound stands in probability jointly over the hypothesis and the learning sample, which allows the complexity to be adapted to the generalization gap as it can be customized to fit both the hypothesis class and the task."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/paulviallard/aistats24-complexity-measures",
+        "exists": true,
+        "full_name": "paulviallard/AISTATS24-Complexity-Measures",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "23d19158c47c047852dbd370c2db17300d820bce",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/paulviallard/AISTATS24-Complexity-Measures/blob/23d19158c47c047852dbd370c2db17300d820bce/README.md",
+          "sha256": "7b3078cc3a2b16975c539ab9edce34eaaa5b682e0115396f1b1b25e514034f1f",
+          "bytes": 1079
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 3,
+      "arxiv_id": "2305.04397",
+      "repo_url": "https://github.com/tmrob2/hybrid-motap",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2305.04397v1",
+        "primary_category": "cs.MA",
+        "title": "Multi-Objective Task Assignment and Multiagent Planning with Hybrid GPU-CPU Acceleration",
+        "abstract": "Allocation and planning with a collection of tasks and a group of agents is an important problem in multiagent systems. One commonly faced bottleneck is scalability, as in general the multiagent model increases exponentially in size with the number of agents. We consider the combination of random task assignment and multiagent planning under multiple-objective constraints, and show that this problem can be decentralised to individual agent-task models. We present an algorithm of point-oriented Pareto computation, which checks whether a point corresponding to given cost and probability thresholds for our formal problem is feasible or not. If the given point is infeasible, our algorithm finds a Pareto-optimal point which is closest to the given point. We provide the first multi-objective model checking framework that simultaneously uses GPU and multi-core acceleration. Our framework manages CPU and GPU devices as a load balancing problem for parallel computation. Our experiments demonstrate that parallelisation achieves significant run time speed-up over sequential computation."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tmrob2/hybrid-motap",
+        "exists": true,
+        "full_name": "tmrob2/hybrid-motap",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "1b7c7188f8781ac42126c62661dcb7befcdad912",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/tmrob2/hybrid-motap/blob/1b7c7188f8781ac42126c62661dcb7befcdad912/README.md",
+          "sha256": "f0df62e069f33ca6ecf3680cc9b0813c230a952c89f6f3b96b617c6939c36339",
+          "bytes": 5484
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.MA"
+      }
+    },
+    {
+      "position": 4,
+      "arxiv_id": "2310.04225",
+      "repo_url": "https://github.com/pietg/incubationtime",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2310.04225v3",
+        "primary_category": "math.ST",
+        "title": "Estimation of the incubation time distribution in the singly and doubly interval censored model",
+        "abstract": "We analyze nonparametric estimators for the distribution function of the incubation time in the singly and doubly interval censoring model. The classical approach is to use parametric families like Weibull, log-normal or gamma distributions in the estimation procedure. We propose nonparametric estimates which stay closer to the data than the classical parametric methods. We also give explicit limit distributions for discrete versions of the models and apply this to compute confidence intervals. The methods complement the analysis of the continuous model. R scripts for computation of the estimates are provided on https://github.com/pietg/incubationtime."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/pietg/incubationtime",
+        "exists": true,
+        "full_name": "pietg/incubationtime",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "e84a0f55c182949c494c6779e7bbbdb648fb469e",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/pietg/incubationtime/blob/e84a0f55c182949c494c6779e7bbbdb648fb469e/README.md",
+          "sha256": "b9d9f00b685a4a2b921d3c5b3397d9e8205ee4b007c1376209d3972811d79566",
+          "bytes": 6059
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.ST"
+      }
+    },
+    {
+      "position": 5,
+      "arxiv_id": "2310.05701",
+      "repo_url": "https://github.com/rrze-hpc/osc-ad",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2310.05701v1",
+        "primary_category": "cs.DC",
+        "title": "Physical Oscillator Model for Supercomputing",
+        "abstract": "A parallel program together with the parallel hardware it is running on is not only a vehicle to solve numerical problems, it is also a complex system with interesting dynamical behavior: resynchronization and desynchronization of parallel processes, propagating phases of idleness, and the peculiar effects of noise and system topology are just a few examples. We propose a physical oscillator model (POM) to describe aspects of the dynamics of interacting parallel processes. Motivated by the well-known Kuramoto Model, a process with its regular compute-communicate cycles is modeled as an oscillator which is coupled to other oscillators (processes) via an interaction potential. Instead of a simple all-to-all connectivity, we employ a sparse topology matrix mapping the communication structure and thus the inter-process dependencies of the program onto the oscillator model and propose two interaction potentials that are suitable for different scenarios in parallel computing: resource-scalable and resource-bottlenecked applications. The former are not limited by a resource bottleneck such as memory bandwidth or network contention, while the latter are. Unlike the original Kuramoto model, which has a periodic sinusoidal potential that is attractive for small angles, our characteristic potentials are always attractive for large angles and only differ in the short-distance behavior. We show that the model with appropriate potentials can mimic the propagation of delays and the synchronizing and desynchronizing behavior of scalable and bottlenecked parallel programs, respectively."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rrze-hpc/osc-ad",
+        "exists": true,
+        "full_name": "RRZE-HPC/OSC-AD",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "eec4c3ac4f2b9a43a6cfbe117fbcee051acff4ab",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/RRZE-HPC/OSC-AD/blob/eec4c3ac4f2b9a43a6cfbe117fbcee051acff4ab/README.md",
+          "sha256": "a663864920b86b2c9cde82bbfb315d64b7468d181566d0f599eeba1279494d62",
+          "bytes": 15429
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.DC"
+      }
+    },
+    {
+      "position": 6,
+      "arxiv_id": "2303.13675",
+      "repo_url": "https://github.com/ahalterman/mordecai3",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2303.13675v1",
+        "primary_category": "cs.CL",
+        "title": "Mordecai 3: A Neural Geoparser and Event Geocoder",
+        "abstract": "Mordecai3 is a new end-to-end text geoparser and event geolocation system. The system performs toponym resolution using a new neural ranking model to resolve a place name extracted from a document to its entry in the Geonames gazetteer. It also performs event geocoding, the process of linking events reported in text with the place names where they are reported to occur, using an off-the-shelf question-answering model. The toponym resolution model is trained on a diverse set of existing training data, along with several thousand newly annotated examples. The paper describes the model, its training process, and performance comparisons with existing geoparsers. The system is available as an open source Python library, Mordecai 3, and replaces an earlier geoparser, Mordecai v2, one of the most widely used text geoparsers (Halterman 2017)."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ahalterman/mordecai3",
+        "exists": true,
+        "full_name": "ahalterman/mordecai3",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9602e094ca809f40069f347abec0deb768a21f46",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ahalterman/mordecai3/blob/9602e094ca809f40069f347abec0deb768a21f46/README.md",
+          "sha256": "868d228ebfaa8590997e343750c73069b34a5947342c498d6112e2a2bc217c17",
+          "bytes": 12747
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    },
+    {
+      "position": 7,
+      "arxiv_id": "2310.08130",
+      "repo_url": "https://github.com/starrYYxuan/IPS",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2310.08130v4",
+        "primary_category": "cs.CL",
+        "title": "Fine-grained Conversational Decoding via Isotropic and Proximal Search",
+        "abstract": "General-purpose text decoding approaches are usually adopted for dialogue response generation. Although the quality of the generated responses can be improved with dialogue-specific encoding methods, conversational decoding methods are still under-explored. Inspired by \\citet{wu2023learning} that a good dialogue feature space should follow the rules of locality and isotropy, we present a fine-grained conversational decoding method, termed \\textit{isotropic and proximal search (IPS)}. Our method is designed to generate the semantic-concentrated response, while still maintaining informativeness and discrimination against the context. Experiments show that our approach outperforms existing decoding strategies in the dialogue field across both automatic and human evaluation metrics. More in-depth analyses further confirm the effectiveness of our approach."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/starrYYxuan/IPS",
+        "exists": true,
+        "full_name": "starrYYxuan/IPS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "58cdb5e037b5e125efc84d961e881cfd88930ac5",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/starrYYxuan/IPS/blob/58cdb5e037b5e125efc84d961e881cfd88930ac5/README.md",
+          "sha256": "10d120f4642456f4518109dc305c22aaaa3c7261f9224d56ab0135c232dd1686",
+          "bytes": 1666
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    },
+    {
+      "position": 8,
+      "arxiv_id": "2505.18568",
+      "repo_url": "https://github.com/chenzk202212/lwi",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2505.18568v1",
+        "primary_category": "cs.LG",
+        "title": "Learning without Isolation: Pathway Protection for Continual Learning",
+        "abstract": "Deep networks are prone to catastrophic forgetting during sequential task learning, i.e., losing the knowledge about old tasks upon learning new tasks. To this end, continual learning(CL) has emerged, whose existing methods focus mostly on regulating or protecting the parameters associated with the previous tasks. However, parameter protection is often impractical, since the size of parameters for storing the old-task knowledge increases linearly with the number of tasks, otherwise it is hard to preserve the parameters related to the old-task knowledge. In this work, we bring a dual opinion from neuroscience and physics to CL: in the whole networks, the pathways matter more than the parameters when concerning the knowledge acquired from the old tasks. Following this opinion, we propose a novel CL framework, learning without isolation(LwI), where model fusion is formulated as graph matching and the pathways occupied by the old tasks are protected without being isolated. Thanks to the sparsity of activation channels in a deep network, LwI can adaptively allocate available pathways for a new task, realizing pathway protection and addressing catastrophic forgetting in a parameter-efficient manner. Experiments on popular benchmark datasets demonstrate the superiority of the proposed LwI."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/chenzk202212/lwi",
+        "exists": true,
+        "full_name": "chenzk202212/LwI",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e310f5b926b8dda4991b8240dc008e7accd40bdd",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/chenzk202212/LwI/blob/e310f5b926b8dda4991b8240dc008e7accd40bdd/README.md",
+          "sha256": "7383fdb8fcfd986376e79ee64cadd279f4892007d1e66ffab944bb87e1680be5",
+          "bytes": 1229
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 9,
+      "arxiv_id": "2411.07705",
+      "repo_url": "https://github.com/itsdawei/dpvis",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2411.07705v1",
+        "primary_category": "cs.CY",
+        "title": "dpvis: A Visual and Interactive Learning Tool for Dynamic Programming",
+        "abstract": "Dynamic programming (DP) is a fundamental and powerful algorithmic paradigm taught in most undergraduate (and many graduate) algorithms classes. DP problems are challenging for many computer science students because they require identifying unique problem structures and a refined understanding of recursion. In this paper, we present dpvis, a Python library that helps students understand DP through a frame-by-frame animation of dynamic programs. dpvis can easily generate animations of dynamic programs with as little as two lines of modifications compared to a standard Python implementation. For each frame, dpvis highlight the cells that have been read from and written to during an iteration. Moreover, dpvis allows users to test their understanding by prompting them with questions about the next operation performed by the algorithm. We deployed dpvis as a learning tool in an undergraduate algorithms class, and report on the results of a survey. The survey results suggest that dpvis is especially helpful for visualizing the recursive structure of DP. Although some students struggled with the installation of the tool (which has been simplified since the reported deployment), essentially all other students found the tool to be useful for understanding dynamic programs. dpvis is available at https://github.com/itsdawei/dpvis."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/itsdawei/dpvis",
+        "exists": true,
+        "full_name": "itsdawei/dpvis",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "fbe0f305bec13f9fc873425c7c1cc82198e882e2",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/itsdawei/dpvis/blob/fbe0f305bec13f9fc873425c7c1cc82198e882e2/README.md",
+          "sha256": "c0cca20692f989496c370e36a18ca69e29203a94e45ec77b175f1035a8d98f46",
+          "bytes": 3320
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CY"
+      }
+    },
+    {
+      "position": 10,
+      "arxiv_id": "2402.02430",
+      "repo_url": "https://github.com/zhouhuan-hust/lfd-roadseg",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2402.02430v2",
+        "primary_category": "cs.CV",
+        "title": "Exploiting Low-level Representations for Ultra-Fast Road Segmentation",
+        "abstract": "Achieving real-time and accuracy on embedded platforms has always been the pursuit of road segmentation methods. To this end, they have proposed many lightweight networks. However, they ignore the fact that roads are \"stuff\" (background or environmental elements) rather than \"things\" (specific identifiable objects), which inspires us to explore the feasibility of representing roads with low-level instead of high-level features. Surprisingly, we find that the primary stage of mainstream network models is sufficient to represent most pixels of the road for segmentation. Motivated by this, we propose a Low-level Feature Dominated Road Segmentation network (LFD-RoadSeg). Specifically, LFD-RoadSeg employs a bilateral structure. The spatial detail branch is firstly designed to extract low-level feature representation for the road by the first stage of ResNet-18. To suppress texture-less regions mistaken as the road in the low-level feature, the context semantic branch is then designed to extract the context feature in a fast manner. To this end, in the second branch, we asymmetrically downsample the input image and design an aggregation module to achieve comparable receptive fields to the third stage of ResNet-18 but with less time consumption. Finally, to segment the road from the low-level feature, a selective fusion module is proposed to calculate pixel-wise attention between the low-level representation and context feature, and suppress the non-road low-level response by this attention. On KITTI-Road, LFD-RoadSeg achieves a maximum F1-measure (MaxF) of 95.21% and an average precision of 93.71%, while reaching 238 FPS on a single TITAN Xp and 54 FPS on a Jetson TX2, all with a compact model size of just 936k parameters. The source code is available at https://github.com/zhouhuan-hust/LFD-RoadSeg."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zhouhuan-hust/lfd-roadseg",
+        "exists": true,
+        "full_name": "zhouhuan-hust/LFD_RoadSeg",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "513ca4f91949a6f1f02456ecdb5d8b18fc6f2223",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/zhouhuan-hust/LFD_RoadSeg/blob/513ca4f91949a6f1f02456ecdb5d8b18fc6f2223/README.md",
+          "sha256": "bc9947b325d1e676c2c214a2e21c587218d46709c16ecd1ed666cda7a26c851c",
+          "bytes": 4332
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      }
+    },
+    {
+      "position": 11,
+      "arxiv_id": "2412.02323",
+      "repo_url": "https://github.com/utibetnlp/tsattacker",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2412.02323v2",
+        "primary_category": "cs.CL",
+        "title": "Pay Attention to the Robustness of Chinese Minority Language Models! Syllable-level Textual Adversarial Attack on Tibetan Script",
+        "abstract": "The textual adversarial attack refers to an attack method in which the attacker adds imperceptible perturbations to the original texts by elaborate design so that the NLP (natural language processing) model produces false judgments. This method is also used to evaluate the robustness of NLP models. Currently, most of the research in this field focuses on English, and there is also a certain amount of research on Chinese. However, to the best of our knowledge, there is little research targeting Chinese minority languages. Textual adversarial attacks are a new challenge for the information processing of Chinese minority languages. In response to this situation, we propose a Tibetan syllable-level black-box textual adversarial attack called TSAttacker based on syllable cosine distance and scoring mechanism. And then, we conduct TSAttacker on six models generated by fine-tuning two PLMs (pre-trained language models) for three downstream tasks. The experiment results show that TSAttacker is effective and generates high-quality adversarial samples. In addition, the robustness of the involved models still has much room for improvement."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/utibetnlp/tsattacker",
+        "exists": true,
+        "full_name": "UTibetNLP/TSAttacker",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "19ae84af8133fb6845578f63b6ff2040f11bf7b6",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/UTibetNLP/TSAttacker/blob/19ae84af8133fb6845578f63b6ff2040f11bf7b6/README.md",
+          "sha256": "4cba048abcff2716054bf9a441c0b76733dd6d04d6f9c066a2011304306829a2",
+          "bytes": 1446
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    },
+    {
+      "position": 12,
+      "arxiv_id": "2501.14486",
+      "repo_url": "https://github.com/jakemclaughlin6/vlma",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2501.14486v2",
+        "primary_category": "cs.RO",
+        "title": "Visual-Lidar Map Alignment for Infrastructure Inspections",
+        "abstract": "Routine and repetitive infrastructure inspections present safety, efficiency, and consistency challenges as they are performed manually, often in challenging or hazardous environments. They can also introduce subjectivity and errors into the process, resulting in undesirable outcomes. Simultaneous localization and mapping (SLAM) presents an opportunity to generate high-quality 3D maps that can be used to extract accurate and objective inspection data. Yet, many SLAM algorithms are limited in their ability to align 3D maps from repeated inspections in GPS-denied settings automatically. This limitation hinders practical long-term asset health assessments by requiring tedious manual alignment for data association across scans from previous inspections. This paper introduces a versatile map alignment algorithm leveraging both visual and lidar data for improved place recognition robustness and presents an infrastructure-focused dataset tailored for consecutive inspections. By detaching map alignment from SLAM, our approach enhances infrastructure inspection pipelines, supports monitoring asset degradation over time, and invigorates SLAM research by permitting exploration beyond existing multi-session SLAM algorithms."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jakemclaughlin6/vlma",
+        "exists": true,
+        "full_name": "jakemclaughlin6/vlma",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "5fe582d832df291fa68607c0ba0b5dda18247366",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jakemclaughlin6/vlma/blob/5fe582d832df291fa68607c0ba0b5dda18247366/README.md",
+          "sha256": "c6ebf96aada2690a326fb37ce5da7c987ac31d0d25c06cfb766db61bf45b7ef2",
+          "bytes": 1309
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.RO"
+      }
+    },
+    {
+      "position": 13,
+      "arxiv_id": "2504.11478",
+      "repo_url": "https://github.com/bytedance/latentunfold",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2504.11478v2",
+        "primary_category": "cs.CV",
+        "title": "Flux Already Knows -- Activating Subject-Driven Image Generation without Training",
+        "abstract": "We propose a simple yet effective zero-shot framework for subject-driven image generation using a vanilla Flux model. By framing the task as grid-based image completion and simply replicating the subject image(s) in a mosaic layout, we activate strong identity-preserving capabilities without any additional data, training, or inference-time fine-tuning. This \"free lunch\" approach is further strengthened by a novel cascade attention design and meta prompting technique, boosting fidelity and versatility. Experimental results show that our method outperforms baselines across multiple key metrics in benchmarks and human preference studies, with trade-offs in certain aspects. Additionally, it supports diverse edits, including logo insertion, virtual try-on, and subject replacement or insertion. These results demonstrate that a pre-trained foundational text-to-image model can enable high-quality, resource-efficient subject-driven generation, opening new possibilities for lightweight customization in downstream applications."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/bytedance/latentunfold",
+        "exists": true,
+        "full_name": "bytedance/LatentUnfold",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b6856207b3a35ff9871c259b450e4426f492b690",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/bytedance/LatentUnfold/blob/b6856207b3a35ff9871c259b450e4426f492b690/README.md",
+          "sha256": "2306c6aa9f16f352d2688aa63b4d95342a420fe20a05bb53de155990cd62fe4d",
+          "bytes": 2973
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      }
+    },
+    {
+      "position": 14,
+      "arxiv_id": "2407.03261",
+      "repo_url": "https://github.com/chandratue/magnetic_hysteresis_neural_operator",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2407.03261v2",
+        "primary_category": "cs.LG",
+        "title": "Magnetic Hysteresis Modeling with Neural Operators",
+        "abstract": "Hysteresis modeling is crucial to comprehend the behavior of magnetic devices, facilitating optimal designs. Hitherto, deep learning-based methods employed to model hysteresis, face challenges in generalizing to novel input magnetic fields. This paper addresses the generalization challenge by proposing neural operators for modeling constitutive laws that exhibit magnetic hysteresis by learning a mapping between magnetic fields. In particular, three neural operators-deep operator network, Fourier neural operator, and wavelet neural operator-are employed to predict novel first-order reversal curves and minor loops, where novel means they are not used to train the model. In addition, a rate-independent Fourier neural operator is proposed to predict material responses at sampling rates different from those used during training to incorporate the rate-independent characteristics of magnetic hysteresis. The presented numerical experiments demonstrate that neural operators efficiently model magnetic hysteresis, outperforming the traditional neural recurrent methods on various metrics and generalizing to novel magnetic fields. The findings emphasize the advantages of using neural operators for modeling hysteresis under varying magnetic conditions, underscoring their importance in characterizing magnetic material based devices. The codes related to this paper are at github.com/chandratue/magnetic_hysteresis_neural_operator."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/chandratue/magnetic_hysteresis_neural_operator",
+        "exists": true,
+        "full_name": "chandratue/magnetic_hysteresis_neural_operator",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "38f46cc7f0a8002e3fac74ef45a28fd242ec6d79",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/chandratue/magnetic_hysteresis_neural_operator/blob/38f46cc7f0a8002e3fac74ef45a28fd242ec6d79/README.md",
+          "sha256": "d9f5f586f1558ef0bde4fdd0ae5cca7509fa69b1694e130065d23aee88639796",
+          "bytes": 2639
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 15,
+      "arxiv_id": "2407.11381",
+      "repo_url": "https://github.com/yunyagaotree/sam-adapter-for-refugee-dwelling-extraction",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2407.11381v1",
+        "primary_category": "cs.CV",
+        "title": "Leveraging Segment Anything Model in Identifying Buildings within Refugee Camps (SAM4Refugee) from Satellite Imagery for Humanitarian Operations",
+        "abstract": "Updated building footprints with refugee camps from high-resolution satellite imagery can support related humanitarian operations. This study explores the utilization of the \"Segment Anything Model\" (SAM) and one of its branches, SAM-Adapter, for semantic segmentation tasks in the building extraction from satellite imagery. SAM-Adapter is a lightweight adaptation of the SAM and emerges as a powerful tool for this extraction task across diverse refugee camps. Our research proves that SAM-Adapter excels in scenarios where data availability is limited compared to other classic (e.g., U-Net) or advanced semantic segmentation models (e.g., Transformer). Furthermore, the impact of upscaling techniques on model performance is highlighted, with methods like super-resolution (SR) models proving invaluable for improving model performance. Additionally, the study unveils intriguing phenomena, including the model's rapid convergence in the first training epoch when using upscaled image data for training, suggesting opportunities for future research. The codes covering each step from data preparation, model training, model inferencing, and the generation of Shapefiles for predicted masks are available on a GitHub repository to benefit the extended scientific community and humanitarian operations."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/yunyagaotree/sam-adapter-for-refugee-dwelling-extraction",
+        "exists": true,
+        "full_name": "YunyaGaoTree/SAM-Adapter-For-Refugee-Dwelling-Extraction",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c538022035b7f4a523afd9111085ddcb68cf3857",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/YunyaGaoTree/SAM-Adapter-For-Refugee-Dwelling-Extraction/blob/c538022035b7f4a523afd9111085ddcb68cf3857/README.md",
+          "sha256": "9e84b03ef8504697d26e7207bda18fe43457751c4e5c4460f2db17ed404844f4",
+          "bytes": 5800
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      }
+    },
+    {
+      "position": 16,
+      "arxiv_id": "2505.15008",
+      "repo_url": "https://github.com/clear-nus/sc-likelihood-ratios",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2505.15008v3",
+        "primary_category": "cs.LG",
+        "title": "Know When to Abstain: Optimal Selective Classification with Likelihood Ratios",
+        "abstract": "Selective classification enhances the reliability of predictive models by allowing them to abstain from making uncertain predictions. In this work, we revisit the design of optimal selection functions through the lens of the Neyman--Pearson lemma, a classical result in statistics that characterizes the optimal rejection rule as a likelihood ratio test. We show that this perspective not only unifies the behavior of several post-hoc selection baselines, but also motivates new approaches to selective classification which we propose here. A central focus of our work is the setting of covariate shift, where the input distribution at test time differs from that at training. This realistic and challenging scenario remains relatively underexplored in the context of selective classification. We evaluate our proposed methods across a range of vision and language tasks, including both supervised learning and vision-language models. Our experiments demonstrate that our Neyman--Pearson-informed methods consistently outperform existing baselines, indicating that likelihood ratio-based selection offers a robust mechanism for improving selective classification under covariate shifts. Our code is publicly available at https://github.com/clear-nus/sc-likelihood-ratios."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/clear-nus/sc-likelihood-ratios",
+        "exists": true,
+        "full_name": "clear-nus/sc-likelihood-ratios",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "89aa91b711798674751ebdafde1394bab6ee0e1e",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/clear-nus/sc-likelihood-ratios/blob/89aa91b711798674751ebdafde1394bab6ee0e1e/README.md",
+          "sha256": "0b2aae29ece51f1ce143c794688e316ca50870f52540c22481edfd37dae90803",
+          "bytes": 4183
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 17,
+      "arxiv_id": "2401.08819",
+      "repo_url": "https://github.com/czp16/cde-offline-rl",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2401.08819v2",
+        "primary_category": "cs.LG",
+        "title": "Learning from Sparse Offline Datasets via Conservative Density Estimation",
+        "abstract": "Offline reinforcement learning (RL) offers a promising direction for learning policies from pre-collected datasets without requiring further interactions with the environment. However, existing methods struggle to handle out-of-distribution (OOD) extrapolation errors, especially in sparse reward or scarce data settings. In this paper, we propose a novel training algorithm called Conservative Density Estimation (CDE), which addresses this challenge by explicitly imposing constraints on the state-action occupancy stationary distribution. CDE overcomes the limitations of existing approaches, such as the stationary distribution correction method, by addressing the support mismatch issue in marginal importance sampling. Our method achieves state-of-the-art performance on the D4RL benchmark. Notably, CDE consistently outperforms baselines in challenging tasks with sparse rewards or insufficient data, demonstrating the advantages of our approach in addressing the extrapolation error problem in offline RL."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/czp16/cde-offline-rl",
+        "exists": true,
+        "full_name": "czp16/cde-offline-rl",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2e0def649c17f74a87a5d75a89f0a92b03e8390f",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "Readme.md",
+          "url": "https://github.com/czp16/cde-offline-rl/blob/2e0def649c17f74a87a5d75a89f0a92b03e8390f/Readme.md",
+          "sha256": "1f725d82c1fba4bae94d1c999753edf6e430332d20fd975f29f877d06e014b3a",
+          "bytes": 1900
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 18,
+      "arxiv_id": "2406.19434",
+      "repo_url": "https://github.com/plumpuddings/lpgs",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2406.19434v1",
+        "primary_category": "cs.GR",
+        "title": "Lightweight Predictive 3D Gaussian Splats",
+        "abstract": "Recent approaches representing 3D objects and scenes using Gaussian splats show increased rendering speed across a variety of platforms and devices. While rendering such representations is indeed extremely efficient, storing and transmitting them is often prohibitively expensive. To represent large-scale scenes, one often needs to store millions of 3D Gaussians, occupying gigabytes of disk space. This poses a very practical limitation, prohibiting widespread adoption.Several solutions have been proposed to strike a balance between disk size and rendering quality, noticeably reducing the visual quality. In this work, we propose a new representation that dramatically reduces the hard drive footprint while featuring similar or improved quality when compared to the standard 3D Gaussian splats. When compared to other compact solutions, ours offers higher quality renderings with significantly reduced storage, being able to efficiently run on a mobile device in real-time. Our key observation is that nearby points in the scene can share similar representations. Hence, only a small ratio of 3D points needs to be stored. We introduce an approach to identify such points which are called parent points. The discarded points called children points along with attributes can be efficiently predicted by tiny MLPs."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/plumpuddings/lpgs",
+        "exists": true,
+        "full_name": "plumpuddings/LPGS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "00e9e6859e1a24883fa264721eb7eeb98a2767ac",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/plumpuddings/LPGS/blob/00e9e6859e1a24883fa264721eb7eeb98a2767ac/README.md",
+          "sha256": "e2a12ce0373bf3a19f4fb50577e713ea1e359444555223759f1220658a018cbd",
+          "bytes": 103
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.GR"
+      }
+    },
+    {
+      "position": 19,
+      "arxiv_id": "2306.15460",
+      "repo_url": "https://github.com/Mrazi09/LQ_collider_project",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2306.15460v2",
+        "primary_category": "hep-ph",
+        "title": "Exploring mixed lepton-quark interactions in non-resonant leptoquark production at the LHC",
+        "abstract": "Searches for new physics (NP) at particle colliders typically involve multivariate analysis of kinematic distributions of final state particles produced in a decay of a hypothetical NP resonance. Since the pair-production cross-sections mediated by such resonances are strongly suppressed by the NP scale, this analysis becomes less relevant for NP searches for masses of the BSM resonance above 1 TeV. On the other hand, $t$-channel processes are less sensitive to the mass of the virtual mediator and therefore larger phase-space can be potentially probed as well as the couplings between the NP particles and the Standard Model fields. The fact that transitions between different generations of quarks and leptons may exist, the potential of the search presented in this article can be used, as a reference guide, to enlarge significantly the scope of searches performed at the LHC to flavour off-diagonal channels, in a theoretically consistent approach. In this work, we study non-resonant production of scalar leptoquarks which have been proposed in the literature to provide a potential avenue for radiative generation of neutrino masses, accommodating as well the existing flavour physics data. Final states involving just two muons at the LHC ($μ^+, μ^-$), are used as a well-motivated case study."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/Mrazi09/LQ_collider_project",
+        "exists": true,
+        "full_name": "Mrazi09/LQ_collider_project",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "031e2f31a3f503be8d5bef5e78a424820085fb33",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Mrazi09/LQ_collider_project/blob/031e2f31a3f503be8d5bef5e78a424820085fb33/README.md",
+          "sha256": "1b3d28978890d1cc67d7d583d0939e4bb6462f5dc32547e615c6511061749d68",
+          "bytes": 2819
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category hep-ph"
+      }
+    },
+    {
+      "position": 20,
+      "arxiv_id": "2406.04984",
+      "repo_url": "https://github.com/currentf/meft",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2406.04984v1",
+        "primary_category": "cs.CL",
+        "title": "MEFT: Memory-Efficient Fine-Tuning through Sparse Adapter",
+        "abstract": "Parameter-Efficient Fine-tuning (PEFT) facilitates the fine-tuning of Large Language Models (LLMs) under limited resources. However, the fine-tuning performance with PEFT on complex, knowledge-intensive tasks is limited due to the constrained model capacity, which originates from the limited number of additional trainable parameters. To overcome this limitation, we introduce a novel mechanism that fine-tunes LLMs with adapters of larger size yet memory-efficient. This is achieved by leveraging the inherent activation sparsity in the Feed-Forward Networks (FFNs) of LLMs and utilizing the larger capacity of Central Processing Unit (CPU) memory compared to Graphics Processing Unit (GPU). We store and update the parameters of larger adapters on the CPU. Moreover, we employ a Mixture of Experts (MoE)-like architecture to mitigate unnecessary CPU computations and reduce the communication volume between the GPU and CPU. This is particularly beneficial over the limited bandwidth of PCI Express (PCIe). Our method can achieve fine-tuning results comparable to those obtained with larger memory capacities, even when operating under more limited resources such as a 24GB memory single GPU setup, with acceptable loss in training efficiency. Our codes are available at https://github.com/CURRENTF/MEFT."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/currentf/meft",
+        "exists": true,
+        "full_name": "CURRENTF/MEFT",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7733810fb237a28eadfa091bf2f4dc0596e0a5ae",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/CURRENTF/MEFT/blob/7733810fb237a28eadfa091bf2f4dc0596e0a5ae/README.md",
+          "sha256": "77f2f33a67e278f75810fd34dc94eec0cf7168e733cd8e6b5b4138d18882cc8d",
+          "bytes": 668
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    }
+  ],
+  "drawn_utc": "2026-10-17T22:03:45Z"
+}
