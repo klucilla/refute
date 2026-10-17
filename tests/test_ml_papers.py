@@ -8,7 +8,6 @@ import importlib.util
 import io
 import subprocess
 import sys
-import time
 
 import numpy as np
 import pytest
@@ -104,12 +103,11 @@ def test_bad_seeds_and_bad_splits_lose_exactly_their_penalty(tmp_path, data):
     assert unaffected == 0.0
 
 
-def test_the_sleep_delays_the_run(tmp_path, data, monkeypatch):
+def test_the_script_asks_for_its_sleep(tmp_path, data, monkeypatch):
     repo, _ = build_repo(tmp_path / "repo", {"sleep_s": 0.5}, data)
-    start = time.monotonic()
     assert run(repo, "--seed=1").returncode == 0
-    assert time.monotonic() - start >= 0.5
-    # and the script itself asks for that sleep (Codex review): run in this process
+    # no bound on a real clock (the maintainer's rule of 2026-10-16, #59): the script asks
+    # for that sleep (Codex review), checked in this process
     spec = importlib.util.spec_from_file_location("synthetic_train", repo / "train.py")
     trainer = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(trainer)

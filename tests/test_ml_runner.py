@@ -4,6 +4,7 @@
 interpreter (the project's virtual environment); the backend refuses anything else."""
 
 import json
+import math
 import os
 import sys
 import time
@@ -187,7 +188,8 @@ def test_the_threshold_stops_the_whole_run(probe):
     result = backend.run(spec(auth, probe_argv("wait", "busy", "30"), threshold_usec=400_000))
     assert result.stopped == sb.STOP_THRESHOLD and result.exit_code is None
     assert 400_000 <= result.usage_usec < 10_000_000
-    assert result.elapsed_s < 20
+    # no bound on a real clock (the maintainer's rule of 2026-10-16, #59): present and finite
+    assert math.isfinite(result.elapsed_s)
 
 
 def test_no_process_of_the_run_survives_the_stop(probe):
@@ -198,9 +200,11 @@ def test_no_process_of_the_run_survives_the_stop(probe):
     argv = probe_argv("wait", "beat", "out/beat.txt", "30")
     result = backend.run(spec(auth, argv, threshold_usec=300_000))
     assert result.stopped == sb.STOP_THRESHOLD
-    size = beat.stat().st_size
+    # the size is read from the bytes, not from stat (#59: a stat that lagged the last
+    # write is the recorded hypothesis for a flake on Windows with Python 3.12)
+    size = len(beat.read_bytes())
     time.sleep(1.0)
-    assert beat.stat().st_size == size  # the grandchild no longer writes
+    assert len(beat.read_bytes()) == size  # the grandchild no longer writes
 
 
 def test_a_finished_run_leaves_no_descendant(probe):
@@ -210,15 +214,15 @@ def test_a_finished_run_leaves_no_descendant(probe):
     # the first process starts a child and exits at once, leaving it behind
     result = backend.run(spec(auth, probe_argv("detach", "tick", "out/tick.txt")))
     assert result.exit_code == 0
-    size = beat.stat().st_size if beat.exists() else 0
+    size = len(beat.read_bytes()) if beat.exists() else 0
     time.sleep(1.0)
-    assert (beat.stat().st_size if beat.exists() else 0) == size
+    assert (len(beat.read_bytes()) if beat.exists() else 0) == size
 
 
 def test_no_progress_stops_a_silent_idle_run(probe):
     auth, backend = probe
     result = backend.run(spec(auth, probe_argv("idle", "30"), no_progress_s=1.0))
-    assert result.stopped == sb.STOP_NO_PROGRESS and result.elapsed_s < 15
+    assert result.stopped == sb.STOP_NO_PROGRESS and math.isfinite(result.elapsed_s)
 
 
 def test_the_active_time_limit_stops_a_run_that_keeps_printing(probe):
@@ -226,7 +230,7 @@ def test_the_active_time_limit_stops_a_run_that_keeps_printing(probe):
     result = backend.run(
         spec(auth, probe_argv("chatty"), active_time_limit_s=1.5, no_progress_s=1.0)
     )
-    assert result.stopped == sb.STOP_ACTIVE_TIME and result.elapsed_s < 15
+    assert result.stopped == sb.STOP_ACTIVE_TIME and math.isfinite(result.elapsed_s)
 
 
 @pytest.mark.parametrize(

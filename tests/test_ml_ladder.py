@@ -6,8 +6,8 @@ import hashlib
 
 import pytest
 
-from refute.core.paper import FailureCause, aggregate_claim
-from refute.core.verdict import PaperVerdict, TestStatus
+from refute.core.paper import BASE_GATES, FailureCause, aggregate_claim
+from refute.core.verdict import PaperVerdict, Severity, TestResult, TestStatus
 from refute.packs.ml import ladder as ld
 from refute.packs.ml.orchestrate import Outcome
 
@@ -86,6 +86,31 @@ def test_the_first_rung_that_builds_is_used():
 
 
 RUNGS_FIRST_TWO = ["own_environment", "requirements_compiled"]
+
+
+def test_a_built_gate_with_every_other_check_complete_gives_the_claims_own_verdict():
+    """#59 (Codex, round 1 of #94): the gate of a ladder that built, next to the other base
+    gates and the fatal check, all complete, leaves the verdict to the claim itself:
+    REPRODUCED when the base reproduction passes, NOT_REPRODUCED when it fails."""
+    build, _ = runner(PROCEDURE, BUILT)
+    result = ld.run_ladder(full_ladder(), build)
+    assert result.gate.status is TestStatus.PASS
+    others = [
+        TestResult(name, TestStatus.PASS, Severity.GATE, "", coverage=1, coverage_unit="items")
+        for name in BASE_GATES
+        if name != ld.GATE
+    ]
+
+    def claim(status):
+        fatal = TestResult(
+            "base_reproduction", status, Severity.FATAL, "", coverage=1, coverage_unit="items"
+        )
+        return aggregate_claim(
+            [result.gate, *others, fatal], [], [], metric_recompute_applies=False
+        ).verdict
+
+    assert claim(TestStatus.PASS) is PaperVerdict.REPRODUCED
+    assert claim(TestStatus.FAIL) is PaperVerdict.NOT_REPRODUCED
 
 
 def test_a_rung_that_does_not_apply_is_logged_and_skipped():
