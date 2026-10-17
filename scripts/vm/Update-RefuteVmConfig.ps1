@@ -71,7 +71,7 @@ param(
     # checked in the body, with a controlled message: a ValidatePattern error would echo the
     # value given (Codex review of #134)
     [string]$InstalledSha256 = '6A2D2949C8E79C6F3614F5BF2E7A139D968FF7504B77214D5C2F0BC76513D575',
-    [string]$SourceSha256 = 'BC9B42250323B28490000D6199EEB68C727ADBC7ED13D17B6D532DC82095E7D8'
+    [string]$SourceSha256 = '05F09F1952FCE4AFCF27759C263ADD9CF7D9899770651622294BC804159C30FC'
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0

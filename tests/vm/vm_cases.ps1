@@ -365,7 +365,8 @@ Add-Case 'ConnectNetwork refused without a profile in force' ((NetPlan 'ConnectN
 $p = NetPlan 'ConnectNetwork' (New-NetObserved $build)
 Add-Case 'ConnectNetwork plans the connection with the build profile' ($null -eq $p.Refusal -and $p.Changes.Count -eq 1 -and $p.Changes[0].After -eq 'refute-internal')
 Add-Case 'ConnectNetwork already done when connected to the switch' ((NetPlan 'ConnectNetwork' (New-NetObserved $build $switchId)).AlreadyDone)
-Add-Case 'ConnectNetwork refused without a configured switch Id' ((Plan 'ConnectNetwork' (New-NetObserved $build)).Refusal -like '*NetworkSwitchId is not configured*')
+Add-Case 'ConnectNetwork refused without a configured switch Id' ((New-RefuteVmPlan -Operation 'ConnectNetwork' -Config (Copy-Config @{ NetworkSwitchId = '' }) -Observed (New-NetObserved $build)).Refusal -like '*NetworkSwitchId is not configured*')
+Add-Case 'repository config: the switch Id of the maintainer''s host (2026-10-17)' ($config.NetworkSwitchId -ceq '9a27f54d-3435-4ff4-b442-06862e708657')
 Add-Case 'ConnectNetwork refused for an external switch' ((NetPlan 'ConnectNetwork' (New-NetObserved $build '' 'External')).Refusal -like '*not internal*')
 $running = New-NetObserved $build $switchId; $running.Vms[0].State = 'Running'
 Add-Case 'StopVm accepted while connected with a profile in force' ($null -eq (NetPlan 'StopVm' $running).Refusal)

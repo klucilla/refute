@@ -55,7 +55,7 @@
     # then: ConnectNetwork refuses), and the fixed /29. The port ACL profiles are built from
     # these values (RefuteVm.Core.ps1, Get-RefuteVmAclProfile).
     NetworkSwitchName       = 'refute-internal'
-    NetworkSwitchId         = ''
+    NetworkSwitchId         = '9a27f54d-3435-4ff4-b442-06862e708657'
     HostAddress             = '10.231.71.1'
     VmAddress               = '10.231.71.2'
     ProxyAddress            = '10.231.71.3'
