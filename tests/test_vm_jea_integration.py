@@ -372,6 +372,15 @@ def test_set_host_paths_through_the_endpoint_needs_version_2_of_the_tree_acl(
     assert json.loads(v2["Real"]["Output"])["Outcome"] == "done", v2
     assert _norm(v2["HostAfter"]["VirtualMachinePath"]) == "c:\\hyper-v", v2
     assert _norm(v2["HostAfter"]["VirtualHardDiskPath"]) == "c:\\hyper-v\\virtual hard disks", v2
+    # and the tree stays exactly version 2 after the call: the service adds nothing to the
+    # root, and every folder below still inherits exactly what version 2 passes down (the
+    # property that justifies version 2; Codex review of the WP6 package)
+    assert _as_list(v2["RootAfter"]) == _as_list(v2["RootBefore"]), v2
+    assert _as_list(v2["TreeProblemsAfter"]) == [], v2
+    record_property(
+        "ChangePermissionsOnly_tree_after",
+        json.dumps(_as_list(attempts["ChangePermissionsOnly"]["TreeProblemsAfter"])),
+    )
 
 
 PRIVATE = [

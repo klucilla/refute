@@ -382,6 +382,10 @@ Each of these is known only when it runs, one operation at a time with the maint
   - With ChangePermissions alone the service writes its own entries on the first default change, broader than version 2 (full control for CREATOR OWNER and for the capability SID), and the tree then no longer matches what Refute set.
   - With version 2 the tree stays as Refute set it.
   - Whether other operations (attaching disks and media, creating and saving the VM) need more is not known; each is tested when it runs.
+- **What the test now requires of version 2** (the WP6 package review): after the call the root still holds exactly version 2, with nothing added by the service, and every folder below still inherits exactly what it passes down.
+- **What the CI does not show:**
+  - a complete apply of `Set-RefuteVmTreeAcl.ps1` and the writing of its protected evidence (the CI builds the ACLs itself and checks the applier's preview only);
+  - the network isolation of the real installation: the test enables PowerShell remoting on the runner with `Enable-PSRemoting` (a listener on every address and a firewall exception), which the real installation never does; this is acceptable only on a runner discarded after the job.
 - **The limits:** the runner is Windows Server 2025, not the maintainer's Windows 11. It demonstrates the cause there; it does not replace the attempt on the host. It covers SetHostPaths only, not the other operations. The attempts share one tree, so the whole tree is checked against each version before its call.
 
 **Status of W6.4:** no operation has succeeded; operation 1 is pending the corrected ACL and the maintainer's new attempt.

@@ -333,7 +333,7 @@ try {
             Version2              = @(Get-RefuteVmTreeAclSpec -Version 2)
         }
         foreach ($name in @($trees.Keys)) {
-            $attempt = [ordered]@{ Tree = $name; Restored = $null; Baseline = $null; RootBefore = @(); TreeProblems = @(); Simulate = $null; Real = $null; Error = ''; MembersDuringSession = @(); SessionHostsBefore = @(); SessionHostsDuringSession = @(); HostAfter = $null; HostAfterNewProcess = $null; HostAfterModule = $null; RootAfter = @() }
+            $attempt = [ordered]@{ Tree = $name; Restored = $null; Baseline = $null; RootBefore = @(); TreeProblems = @(); Simulate = $null; Real = $null; Error = ''; MembersDuringSession = @(); SessionHostsBefore = @(); SessionHostsDuringSession = @(); HostAfter = $null; HostAfterNewProcess = $null; HostAfterModule = $null; RootAfter = @(); TreeProblemsAfter = @() }
             $spec = $trees[$name]
             # each attempt starts from the original host paths: the harness, as Administrator,
             # puts them back if an earlier attempt changed them, and checks it through CIM
@@ -387,8 +387,14 @@ try {
             $attempt.HostAfterNewProcess = Get-HostPathsNewProcess
             $vmHost = Get-VMHost
             $attempt.HostAfterModule = [ordered]@{ Utc = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ'); VirtualMachinePath = [string]$vmHost.VirtualMachinePath; VirtualHardDiskPath = [string]$vmHost.VirtualHardDiskPath }
-            # what the Hyper-V management service left on the tree (entries by SID)
+            # what the Hyper-V management service left on the tree (entries by SID), and
+            # whether the root still holds exactly this tree and every folder below still
+            # inherits exactly what it passes down (Codex review of the WP6 package)
             $attempt.RootAfter = @(ConvertTo-RefuteAclRules (Get-Acl -LiteralPath $vmTree))
+            $attempt.TreeProblemsAfter = @(Compare-RefuteVmTreeAcl -Acl (Get-Acl -LiteralPath $vmTree) -Spec $spec)
+            foreach ($below in @(@('C:\Hyper-V\Virtual Hard Disks', 1), @('C:\Hyper-V\refute-vm', 1), @('C:\Hyper-V\refute-vm\media', 2))) {
+                $attempt.TreeProblemsAfter += @(Compare-RefuteVmTreeBelow -Acl (Get-Acl -LiteralPath $below[0]) -Spec $spec -Depth $below[1] | ForEach-Object { "$($below[0]): $_" })
+            }
             $out.RefuteVm.HostPaths.Attempts[$name] = $attempt
         }
     }

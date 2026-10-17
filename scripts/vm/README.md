@@ -10,13 +10,15 @@ passes. In phase 1 the VM has no network.
 
 - **Synthetic tests:** the scripts are tested with synthetic inputs, without Windows administrator rights and without Hyper-V (tests/test_vm_scripts.py).
 - **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py). Where the runner has the Hyper-V management service, `SetHostPaths` also runs for real through it, under each version of the `C:\Hyper-V` ACL; the runner is Windows Server, not the maintainer's host.
+  - **The test's remoting is wider than the real installation's.** On the runner the test runs `Enable-PSRemoting -Force -SkipNetworkProfileCheck`, which configures a listener on every address and a firewall exception, while the real installation keeps WinRM on loopback only, behind a block rule. That is acceptable only because the runner is discarded after the job; whether the runner was reachable from outside during the job was not measured. **The CI does not validate the network isolation of the real installation.**
+  - **The CI builds the ACLs itself** and checks the applier's preview only: it does not run a complete apply of `Set-RefuteVmTreeAcl.ps1`, nor the writing of its protected evidence.
 - **The maintainer's machine:**
   - the WinRM listener removal and the endpoint registration were run once, from `main` at `627842d`, with a first read-only check from the operator account. On 2026-10-16 the maintainer then:
     - repaired the installed module by hand: copied it to `RefuteVm\`, with no version subfolder, and removed `RefuteVm\0.1.0` (sections 5 and 6 of the record);
     - replaced the installed `RefuteVmOperator.psrc` with the one of `main` at `46fe0c2` (H.5). The session then opened from the operator account, ran as a virtual account and showed exactly the ten visible commands (section 7).
   - On 2026-10-16 the maintainer reinstalled the files changed by #118 (the role capability and two module files) from `main` at `57812ca`, with the hashes checked before and after, the same ACL and 6 files. The session then opened from the operator account with exactly the ten visible commands, and `Invoke-RefuteVm.ps1 -Status` completed: the configuration loaded, the six module hashes equal to `57812ca`, no VM, no base disk and no imported media (section 8 of the record).
   - The record is [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md).
-  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6). No VM operation has run yet.
+  - the endpoint's restrictions in operation (NoLanguage, the virtual account's groups, the loopback-only WinRM, the transcripts) and every Hyper-V operation remain unvalidated until they are tested on Windows and Hyper-V, with the evidence recorded (wp6-acceptance.md, W6.4 to W6.6). No VM operation has succeeded on the host yet: `SetHostPaths` was tried twice on 2026-10-16 and failed with access denied, with no change to the host (section 9 of the record).
 
 ## Who can do what
 
