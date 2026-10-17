@@ -445,14 +445,16 @@ the host. Every other operation is not validated yet.
 
 Run by the maintainer on 2026-10-16 (Brasília time; UTC below), through the endpoint from a
 normal window, after operation 1 (section 10). Account names are replaced by
-`<operator-account>` and `<virtual-account>`; no security descriptor is published. The ACL of
-`C:\Hyper-V` was not changed: it is still version 2 (section 10.1).
+`<operator-account>` and `<virtual-account>`; no security descriptor is published. The last
+recorded check of the ACL of `C:\Hyper-V`, after operation 1, found version 2 (section 10.2);
+it was not checked again after operation 2.
 
 ### 11.1 What was run and what the log holds
 
 From `C:\ProgramData\RefuteVm\Log\operations.jsonl`, read on 2026-10-17 (read only). The four
-records of this operation follow the records of section 10, and every record carries the
-same module hashes as those of section 10.
+records of this operation follow the records of section 10; the `simulated` and `intent`
+records carry the same module hashes as those of section 10 (a `result` record holds no
+module hashes).
 
 | Step | Log record (UTC, 2026-10-17) | Result |
 |---|---|---|
@@ -470,8 +472,9 @@ same module hashes as those of section 10.
   `C:\Hyper-V` was not checked after it. Its success says nothing about the ACL questions of
   the later operations, which create disks, VMs and media under `C:\Hyper-V`; those remain
   hypotheses, not tested (section 9.2).
-- **Not done:** operation 3, `CreateBaseDisk`, was neither simulated nor run; it waits for the
-  change of the base disk size and the update of the installed configuration.
+- **Not done:** operation 3, `CreateBaseDisk`, was neither simulated nor run. By the
+  maintainer's decision of 2026-10-16, it waits for the change of the base disk size from
+  200 GiB to 100 GiB.
 
 **Status of W6.4:** operations 1, `SetHostPaths`, and 2, `DisableEnhancedSessionHost`, are
 validated on the host. Every other operation is not validated yet.
