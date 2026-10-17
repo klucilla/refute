@@ -170,6 +170,14 @@ def test_r2_of_a_constant_target_is_undefined():
         ),
         dict(metric="auroc", scale="fraction", labels=("1", "0"), pos_label=1.0),
         dict(metric="auroc", scale="fraction", labels=(1, 0), pos_label=True),
+        # round 2: a label that is not an integer or a string
+        dict(
+            metric="f1",
+            scale="fraction",
+            labels=({"nested": float("inf")}, "negative"),
+            average="macro",
+            zero_division="0",
+        ),
     ],
 )
 def test_unsupported_conventions_are_refused(bad):

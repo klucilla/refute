@@ -89,7 +89,7 @@ class Convention:
         labels = self.labels or ()
         if len(labels) < 2 or len({_key(v) for v in labels}) != len(labels):
             raise ValueError("labels must be at least 2 distinct classes")
-        if any(isinstance(v, bool | float) for v in labels):
+        if any(isinstance(v, bool) or not isinstance(v, int | str) for v in labels):
             raise ValueError("labels must be integers or strings")
         # a float pos_label could match a label by its text ("inf") and be serialized as
         # null (#59, Codex review of the #85 items)

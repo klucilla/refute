@@ -2027,11 +2027,23 @@ def test_a_standard_deviation_that_overflows_is_refused(record):
         resolve_uncertainty(unc(**record), "percent", 0.0)
 
 
-@pytest.mark.parametrize("value", [float("inf"), {"lr": float("-inf")}, [1, {"x": float("nan")}]])
-def test_a_non_finite_number_in_an_ablation_config_value_is_refused(value):
-    """It would be serialized as null, changing the value silently."""
+@pytest.mark.parametrize(
+    ("value", "message"),
+    [
+        (float("inf"), "must be finite"),
+        ({"lr": float("-inf")}, "must be finite"),
+        ([1, {"x": float("nan")}], "must be finite"),
+        # Codex review, round 2: a set or a non-text key would also change silently
+        ({float("inf")}, "must be JSON data"),
+        ({float("inf"): 0}, "every map key must be text"),
+        ((1, 2), "must be JSON data"),
+    ],
+)
+def test_an_ablation_config_value_must_be_finite_json_data(value, message):
+    """A non-finite float would be serialized as null, a set or a non-text key changed."""
     from refute.packs.ml.schema import ConfigDisable
 
-    ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": 0.5})
-    with pytest.raises(ValueError, match="must be finite"):
+    good = {"lr": 0.5, "steps": [1, 2], "on": True, "name": "aug", "none": None}
+    ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": good})
+    with pytest.raises(ValueError, match=message):
         ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": value})

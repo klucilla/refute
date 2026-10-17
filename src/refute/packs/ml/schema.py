@@ -105,16 +105,23 @@ def _finite(value: float | None, what: str) -> None:
 
 
 def _finite_tree(value: Any, what: str) -> None:
-    """Every number inside ``value`` (a JSON-like tree) is finite: a non-finite float
-    would be serialized as null, changing the value silently (#59, Codex review)."""
+    """``value`` is JSON data: null, a boolean, a finite number, a text, a list, or a map
+    with text keys, recursively. A non-finite float would be serialized as null, a set or
+    a non-text key changed silently (#59, Codex review of the #85 items)."""
+    if value is None or isinstance(value, bool | int | str):
+        return
     if isinstance(value, float):
         _finite(value, what)
-    elif isinstance(value, dict):
-        for key, item in value.items():
-            _finite_tree(item, f"{what}.{key}")
-    elif isinstance(value, list | tuple):
+    elif isinstance(value, list):
         for index, item in enumerate(value):
             _finite_tree(item, f"{what}[{index}]")
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            if not isinstance(key, str):
+                raise ValueError(f"{what}: every map key must be text")
+            _finite_tree(item, f"{what}.{key}")
+    else:
+        raise ValueError(f"{what} must be JSON data, not {type(value).__name__}")
 
 
 # ---- test_plan (1.0.2) -------------------------------------------------------------------
