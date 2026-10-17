@@ -40,7 +40,9 @@ HRESULT (Format-RefuteError), never by the exception's message. A finding of the
 printed as a category (Format-RefuteFinding), without its path, SID or Windows message; the
 registration's own checks list the details. As a last guard, every printed problem passes
 through Format-RefuteReason, which masks every path under a user profile folder
-(X:\Users\<name>, in any case) and the current account name.
+(X:\Users\<name>, in any case) and the current account name. The hash arguments are checked
+in the body, so a wrong value is never echoed. Messages PowerShell itself prints before the
+script runs (an unknown parameter name, for example) are outside this guarantee.
 It never deletes anything, and changes no file but the installed RefuteVm.Config.psd1.
 
 Reversal: -SourcePath <the previous RefuteVm.Config.psd1, saved in a folder only
@@ -57,8 +59,10 @@ functions and runs nothing.
 param(
     [switch]$Apply,
     [string]$SourcePath = '',
-    [ValidatePattern('^[0-9A-Fa-f]{64}$')][string]$InstalledSha256 = '2559B7348A98430F9F61EBD85F8DFCF456292FADC32E6C3EA608E8DB872C6A1E',
-    [ValidatePattern('^[0-9A-Fa-f]{64}$')][string]$SourceSha256 = 'FE46F573C0BF49E1D6EED819CD7F8EB4C220F50B5BE1BF34BEA9E7D11AC11F46'
+    # checked in the body, with a controlled message: a ValidatePattern error would echo the
+    # value given (Codex review of #134)
+    [string]$InstalledSha256 = '2559B7348A98430F9F61EBD85F8DFCF456292FADC32E6C3EA608E8DB872C6A1E',
+    [string]$SourceSha256 = 'FE46F573C0BF49E1D6EED819CD7F8EB4C220F50B5BE1BF34BEA9E7D11AC11F46'
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
@@ -221,8 +225,11 @@ if ($env:PSModuleAnalysisCachePath -ne 'nul') {
     exit 1
 }
 
-# step 0: who runs, and the checker loaded from checked bytes
+# step 0: the arguments, who runs, and the checker loaded from checked bytes
 $problems = New-Object System.Collections.Generic.List[string]
+foreach ($pair in @(@('-InstalledSha256', $InstalledSha256), @('-SourceSha256', $SourceSha256))) {
+    if ($pair[1] -notmatch '^[0-9A-Fa-f]{64}$') { $problems.Add("$($pair[0]) must be 64 hexadecimal digits") }
+}
 $isAdmin = ([System.Security.Principal.WindowsPrincipal][System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) { $problems.Add('run in Windows PowerShell started as Administrator') }
 if ($PSVersionTable.PSEdition -ne 'Desktop' -or $PSVersionTable.PSVersion.Major -ne 5) { $problems.Add('run in Windows PowerShell 5.1 (powershell.exe)') }

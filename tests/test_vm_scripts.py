@@ -1153,6 +1153,12 @@ def test_the_config_update_refuses_without_its_preconditions(tmp_path):
         assert "Problems (nothing was changed):" in preview.stdout, text
     else:
         assert "Preconditions hold" in preview.stdout, text
+    # a wrong hash argument is refused with a controlled message that does not echo it
+    bad = run("-SourceSha256", "Audit.Other")
+    text = bad.stdout + bad.stderr
+    assert bad.returncode == 1, text
+    assert "-SourceSha256 must be 64 hexadecimal digits" in bad.stdout, text
+    assert "Audit.Other" not in text, text
     never = run("-Apply", "-InstalledSha256", "0" * 64)
     text = never.stdout + never.stderr
     assert never.returncode == 1, text
