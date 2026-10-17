@@ -16,9 +16,11 @@
     # Explicit paths of this VM, also passed to New-VM and New-VHD.
     VmRoot                  = 'C:\Hyper-V\refute-vm'
     BaseDiskPath            = 'C:\Hyper-V\Virtual Hard Disks\refute-vm-base.vhdx'
-    # Dynamic VHDX, maximum size. Disk budget (C: had 344.0 GB free on 2026-10-14, plan
-    # 7.1): 200 GB base at most, plus up to 48 GB of saved memory state (Save-VM).
-    BaseDiskSizeBytes       = 214748364800
+    # Dynamic VHDX, maximum size: 100 GiB, decided by the maintainer on 2026-10-16 (it was
+    # 200 GiB). Disk budget (C: had 378 GB free on 2026-10-16, plan 7.1): 100 GiB base at
+    # most, plus up to 48 GiB of saved memory state (Save-VM). Space estimate:
+    # docs/validation/v0.3/wp6-results/disk-space-estimate.md.
+    BaseDiskSizeBytes       = 107374182400
 
     # Install media: verified copies, read by the VM from MediaRoot. The endpoint copies
     # them from MediaSource (inside the project, written by the maintainer's account)

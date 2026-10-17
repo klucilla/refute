@@ -118,6 +118,12 @@ user name, host name or address.
    `AttachBaseDisk`, `ImportInstallIso -MediaSha256 <hash>`,
    `ImportSeedIso -MediaSha256 <hash>`, `AttachInstallMedia`,
    `SetBootFromInstallMedia`, `StartVm`.
+   **Base disk size:** 100 GiB (`BaseDiskSizeBytes` 107374182400) on `main` since
+   2026-10-17, by the maintainer's decision of 2026-10-16 (it was 200 GiB); estimate in
+   [disk-space-estimate.md](../../docs/validation/v0.3/wp6-results/disk-space-estimate.md).
+   The installed module keeps the previous configuration until the maintainer replaces
+   `RefuteVm.Config.psd1`, so `CreateBaseDisk` runs only after that replacement
+   (section 12 of the record).
 8. The maintainer opens the VM's console (Hyper-V Manager or `vmconnect`, as
    Administrator, since the maintainer's account has no Hyper-V rights) and answers
    "Continue with autoinstall?". The installer powers the VM off when it ends.
