@@ -1,0 +1,165 @@
+{
+  "utc": "20261017T214010Z",
+  "paper_slice": "refute-vmtest261017214010.slice",
+  "image": "ubuntu@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944",
+  "limits": {
+    "cpus": 2,
+    "period_us": 100000,
+    "memory_bytes": 1073741824,
+    "pids": 256
+  },
+  "checks": [
+    {
+      "name": "cpu_counted",
+      "pass": true,
+      "detail": "11765257 usec in 7.1 s wall"
+    },
+    {
+      "name": "threshold_stop",
+      "pass": true,
+      "detail": "10 stops at F=3000000; max final 3867170; M=5351119; D max 0.000 s, S max 0.207 s"
+    },
+    {
+      "name": "network_none",
+      "pass": true,
+      "detail": "closed 10.231.71.3/3128 closed 1.1.1.1/443 interfaces lo,"
+    },
+    {
+      "name": "completeness",
+      "pass": true,
+      "detail": "parent 50335760, sum 50335754, T 13000000"
+    }
+  ],
+  "results": {
+    "cpu": {
+      "exit_code": 0,
+      "usage_usec": 11765257,
+      "stopped": null,
+      "elapsed_s": 7.0231703370000105,
+      "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w00.log",
+      "detection_delay_s": null,
+      "stop_latency_s": null,
+      "measurement_clock": "perf_counter",
+      "measurement_resolution_s": null,
+      "wall_s": 7.13439937000021
+    },
+    "stops": [
+      {
+        "exit_code": null,
+        "usage_usec": 3841590,
+        "stopped": "threshold",
+        "elapsed_s": 2.215983074000178,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w01.log",
+        "detection_delay_s": 0.000334652,
+        "stop_latency_s": 0.207433948,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3854322,
+        "stopped": "threshold",
+        "elapsed_s": 2.11414807500023,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w02.log",
+        "detection_delay_s": 0.000299296,
+        "stop_latency_s": 0.105772985,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3857633,
+        "stopped": "threshold",
+        "elapsed_s": 2.123787309999898,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w03.log",
+        "detection_delay_s": 0.00028499,
+        "stop_latency_s": 0.115449969,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3850054,
+        "stopped": "threshold",
+        "elapsed_s": 2.138041956000052,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w04.log",
+        "detection_delay_s": 0.000290961,
+        "stop_latency_s": 0.129520381,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3828356,
+        "stopped": "threshold",
+        "elapsed_s": 2.1291065949999393,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w05.log",
+        "detection_delay_s": 0.000289969,
+        "stop_latency_s": 0.120420503,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3858458,
+        "stopped": "threshold",
+        "elapsed_s": 2.12456958499979,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w06.log",
+        "detection_delay_s": 0.000300429,
+        "stop_latency_s": 0.116002811,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3867170,
+        "stopped": "threshold",
+        "elapsed_s": 2.130911171999742,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w07.log",
+        "detection_delay_s": 0.000302683,
+        "stop_latency_s": 0.122359911,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3857288,
+        "stopped": "threshold",
+        "elapsed_s": 2.1266491399996994,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w08.log",
+        "detection_delay_s": 0.00030115,
+        "stop_latency_s": 0.11815638,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3853373,
+        "stopped": "threshold",
+        "elapsed_s": 2.1251776150002115,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w09.log",
+        "detection_delay_s": 0.000345783,
+        "stop_latency_s": 0.11662959,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      },
+      {
+        "exit_code": null,
+        "usage_usec": 3851410,
+        "stopped": "threshold",
+        "elapsed_s": 2.147279441000137,
+        "log_path": "/home/refute/refute-run/vmtest/vmtest261017214010/logs/w10.log",
+        "detection_delay_s": 0.000292533,
+        "stop_latency_s": 0.138688646,
+        "measurement_clock": "perf_counter",
+        "measurement_resolution_s": null
+      }
+    ],
+    "v22": {
+      "D_max_s": 0.000345783,
+      "S_max_s": 0.207433948,
+      "M_usec": 5351119,
+      "sigma_us": 5000
+    }
+  }
+}
