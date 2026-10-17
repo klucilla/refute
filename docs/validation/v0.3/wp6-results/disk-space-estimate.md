@@ -46,7 +46,7 @@ does not exist yet. Every external fact gives its source and the date it was rea
 | Item | Estimate | Source |
 |---|---|---|
 | Ubuntu Server 26.04 installed | **10 GB** budgeted. The official page gives "Minimum storage: 5 GB (ISO installs)" and a suggested minimum of 25 GB for the whole machine, for 24.04 LTS amd64 ("Other releases and architectures might differ slightly") | https://ubuntu.com/server/docs/reference/installation/system-requirements/ (read 2026-10-17) |
-| Swap file made by the installer | **8 GiB** at most. The seed (`scripts/vm/seed/user-data.template`) does not set `swap`, so curtin suggests the size: half the memory up to 64 GiB of RAM (24 GiB for 48 GiB), capped at the lesser of 8 GiB and 25% of the free space | https://raw.githubusercontent.com/canonical/curtin/master/curtin/swap.py, `suggested_swapsize` (read 2026-10-17) |
+| Swap file made by the installer | **8 GiB** at most. The seed (`scripts/vm/seed/user-data.template`) does not set `swap`, so curtin suggests the size: half the memory up to 64 GiB of RAM (8 GiB for the 16 GiB of 2026-10-17; it was 24 GiB for 48 GiB), capped at the lesser of 8 GiB and 25% of the free space | https://raw.githubusercontent.com/canonical/curtin/master/curtin/swap.py, `suggested_swapsize` (read 2026-10-17) |
 | Docker Engine and containerd | **0.3 GB**. Ubuntu 26.04 (`resolute`), amd64: `docker.io` 29.1.3, installed size 134,196 kB; `containerd` 2.2.2, installed size 100,946 kB | https://packages.ubuntu.com/resolute/docker.io and https://packages.ubuntu.com/resolute/containerd (read 2026-10-17) |
 | Pinned base images of the build ladder | **2 GB** budgeted for up to 3 Python images. `python:3.12-slim` for linux/amd64 is 41.26 MB compressed. With Docker Engine 29 on a fresh install the default store is the containerd image store, which "uses more disk space than the legacy storage drivers" because it keeps images "in both compressed and uncompressed formats" | https://hub.docker.com/_/python/tags?name=3.12-slim and https://docs.docker.com/engine/storage/containerd/ (read 2026-10-17) |
 | Shared caches (package indexes, tools) | **10 GB** budgeted | assumption |
@@ -100,14 +100,19 @@ C: had 378 GB free on 2026-10-16 (the maintainer), and 403.7 GB on 2026-10-17 at
 | Item | Estimate | Upper bound |
 |---|---|---|
 | Base disk file (dynamic VHDX: it grows with what is written) | 30.9 GB | 107.4 GB (100 GiB) |
-| Saved memory state (`Save-VM`) | | 51.5 GB (48 GiB) |
+| Saved memory state (`Save-VM`) | | 17.2 GB (16 GiB, since 2026-10-17; it was 51.5 GB for 48 GiB) |
 | Media copies in `C:\Hyper-V\refute-vm\media` | 2.9 GB (the ISO is 2,927,861,760 bytes; the seed 55,296 bytes) | 2.9 GB |
 | One differencing disk | 8 GB typical, 48 GB heavy, 60 GB stacked | 107.4 GB |
 
-- **One child at a time:** 30.9 + 51.5 + 2.9 + 60 = 145 GB in the stacked case, and 269 GB
-  with every upper bound; both fit in 378 GB.
-- **Seven children kept at once:** typical, 30.9 + 51.5 + 2.9 + 7 × 8 = 141 GB, which fits;
-  heavy, 421 GB, and stacked, 505 GB, which do **not** fit.
+**Update of 2026-10-17 (the maintainer's decision: 16 GiB of static memory).** The base disk
+measured **6.50 GB** after the installation (the maintainer), below the 30.9 GB budgeted;
+the figures below keep the budget.
+
+- **One child at a time:** 30.9 + 17.2 + 2.9 + 60 = 111.0 GB in the stacked case, and
+  234.9 GB with every upper bound; both fit in 378 GB. (With 48 GiB: 145 GB and 269 GB.)
+- **Seven children kept at once:** typical, 30.9 + 17.2 + 2.9 + 7 × 8 = 107.0 GB, which
+  fits; heavy, 387.0 GB, and stacked, 471.0 GB, which do **not** fit in 378 GB. (With
+  48 GiB: 141, 421 and 505 GB.)
 - **How many children are kept at once is still to be decided**, with the operation that
   creates them; it does not depend on the base being 100 GiB.
 - **The maximum size costs nothing until it is written.** A dynamic VHDX takes on the host

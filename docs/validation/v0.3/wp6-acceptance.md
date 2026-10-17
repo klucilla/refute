@@ -36,7 +36,8 @@ the result.
 ## 2. VM configuration (plan 7.1, lines 496-522)
 
 - **Hardware:** generation 2; Secure Boot with the "Microsoft UEFI Certificate
-  Authority" template; 24 virtual processors; 48 GB of static memory.
+  Authority" template; 24 virtual processors; 16 GiB of static memory (the maintainer's
+  decision of 2026-10-17; it was 48 GB, plan 7.1).
 - **Disks:** one VHDX for the system, images and cache, and a differencing disk per
   paper on a clean base.
 - **Host integration:** no shared folders; Enhanced Session off; Guest Service

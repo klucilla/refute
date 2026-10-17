@@ -14,7 +14,7 @@ describes a tested setup.
   with Docker inside. Docker Desktop on Windows is used only for Refute's own tests.
   Third-party code never runs on any other server of the maintainer.
 - The VM: generation 2, Ubuntu Server LTS from the official image (SHA-256 checked),
-  24 virtual processors, 48 GB of static memory, one VHDX for the system, images and
+  24 virtual processors, 16 GiB of static memory (48 GB until 2026-10-17), one VHDX for the system, images and
   cache, and a differencing disk per paper so that every paper starts from the same
   clean state. No shared folders; Enhanced Session off; Guest Service Interface off.
   Results are pulled by the host over SSH with a key used only for this VM.
