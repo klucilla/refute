@@ -258,6 +258,10 @@ class VerifyResult:
     claim_projection: str | None = None
     projected_claim_sha256: str | None = None
     verified_at_utc: str = field(default_factory=utc_now)
+    # the FAIL-level problems (missing attachment, history, unreadable code); kept apart so
+    # code_only_note can tell whether the code is the only problem. Not in to_dict: the
+    # JSON output does not change (issue #66).
+    failures: list[str] = field(default_factory=list)
 
     @property
     def exit_code(self) -> int:
@@ -382,6 +386,7 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
             )
 
     result.messages.extend(failures)
+    result.failures = list(failures)
     if result.tampered:
         result.status = VerifyStatus.TAMPERED
     elif failures:
@@ -392,3 +397,25 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
             f"{len(lock['attachments'])} attachment(s): all hashes match the lock"
         )
     return result
+
+
+CODE_ONLY_NOTE = (
+    "only the code component differs from the lock; the claim (directly or by its "
+    "historical projection), every attachment and the LOCK_HISTORY.md entry match it. "
+    "This names the component that differs; it does not say whether the change is "
+    'legitimate or harmless (docs/lock-format.md, "When only the code differs").'
+)
+
+
+def code_only_note(result: VerifyResult) -> str | None:
+    """The note the text output of ``refute verify`` adds when the code is the ONLY
+    problem (issue #66): status TAMPERED with the code as the only tampered component,
+    and no FAIL-level problem. Otherwise None. The status, the exit code and the JSON
+    output never change; the note only names the component that differs."""
+    if (
+        result.status is VerifyStatus.TAMPERED
+        and result.tampered == ["code"]
+        and not result.failures
+    ):
+        return CODE_ONLY_NOTE
+    return None

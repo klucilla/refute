@@ -15,7 +15,7 @@ import typer
 import refute
 from refute.core.claim import ClaimError, load_claim
 from refute.core.dossier import check_dossier, write_archive
-from refute.core.lock import LockError, create_lock, verify_claim
+from refute.core.lock import LockError, code_only_note, create_lock, verify_claim
 from refute.core.pack import PackError, available_packs, load_pack
 from refute.core.review import ReviewError, attach_review
 
@@ -95,6 +95,10 @@ def verify_command(
         typer.echo(result.status.value)
         for message in result.messages:
             typer.echo(f"  {message}")
+        # text output only, and only when the code is the only problem (issue #66)
+        note = code_only_note(result)
+        if note:
+            typer.echo(f"  note: {note}")
     raise typer.Exit(result.exit_code)
 
 
