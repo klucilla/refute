@@ -115,17 +115,23 @@ jobs:
       # On the Windows runners (ephemeral, Administrator) the JEA integration test registers
       # disposable endpoints and opens real WinRM sessions to localhost
       # (tests/test_vm_jea_integration.py); it is skipped everywhere else.
+      # pytest-timeout (pyproject.toml) ends a hung test; tests/conftest.py writes the id of
+      # every test to test-trace.txt before it starts, so a run that ends without its JUnit
+      # file still names the test that was running (next step).
       - name: Tests (no network)
         shell: bash
         env:
           REFUTE_JEA_INTEGRATION: ${{ runner.os == 'Windows' && '1' || '0' }}
+          REFUTE_TEST_TRACE: test-trace.txt
         run: |
           args="$(uv run python scripts/ci_shard.py ${{ matrix.shard }})"
           uv run pytest --durations=25 --junitxml=junit.xml $args
       # Test counts come from the JUnit file, never from the console line (CLAUDE.md); the
       # outcome of each JEA integration test is listed too. Runs also when the tests fail.
+      # Without a readable JUnit file the run is reported as incomplete, with no counts and
+      # with the test the trace shows as started and not ended, and the step fails.
       - name: Test counts (JUnit)
         if: always()
         shell: bash
         run: |
-          uv run python scripts/junit_counts.py junit.xml --show test_vm_jea_integration
+          uv run python scripts/junit_counts.py junit.xml --trace test-trace.txt --show test_vm_jea_integration

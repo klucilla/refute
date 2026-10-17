@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +14,63 @@ import yaml
 
 from refute.core.runner import default_workers, run_processes
 from refute.packs.tess.synthetic import SCENARIOS, analyze_scenario, fast_plan_dict
+
+# The test trace: with REFUTE_TEST_TRACE set to a file, the full id of every test is
+# appended to it before the test starts ("start <id>") and after it ends ("end <id>"),
+# each line flushed at once. When a run ends without its JUnit file (pytest-timeout's
+# "thread" method on Windows ends the whole process), scripts/junit_counts.py reads the
+# trace and names the test that was running (issue #59; Codex review of 2026-10-17).
+TRACE = os.environ.get("REFUTE_TEST_TRACE", "")
+# The trace belongs to the pytest process that started it: its PID goes into the
+# environment, so a pytest that a test starts as a child (it inherits REFUTE_TEST_TRACE)
+# leaves the trace alone (Codex review of #148).
+TRACE_OWNER = "REFUTE_TEST_TRACE_OWNER"
+_active = False
+
+
+def pytest_sessionstart(session: pytest.Session) -> None:
+    # a new run starts a new trace (its folder is created), so the lines of an earlier
+    # run that ended early are never read as this one's
+    global _active
+    if not TRACE or os.environ.get(TRACE_OWNER, str(os.getpid())) != str(os.getpid()):
+        return
+    os.environ[TRACE_OWNER] = str(os.getpid())
+    _active = True
+    try:
+        Path(TRACE).parent.mkdir(parents=True, exist_ok=True)
+        Path(TRACE).write_text("", encoding="utf-8")
+    except OSError as error:
+        _stop_trace(error)
+
+
+def _stop_trace(error: OSError) -> None:
+    # the trace is a diagnostic aid, not a check: an error writing it turns it off with a
+    # warning instead of ending the run
+    global _active
+    _active = False
+    sys.stderr.write(f"test trace turned off: {type(error).__name__}\n")
+
+
+def _trace(line: str) -> None:
+    if not (_active and TRACE):
+        return
+    try:
+        with open(TRACE, "a", encoding="utf-8") as fh:
+            fh.write(line + "\n")
+            fh.flush()
+    except OSError as error:
+        _stop_trace(error)
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_logstart(nodeid: str, location: tuple) -> None:
+    _trace(f"start {nodeid}")
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_runtest_logfinish(nodeid: str, location: tuple) -> None:
+    _trace(f"end {nodeid}")
+
 
 SOURCE = {
     "name": "synthetic test data",

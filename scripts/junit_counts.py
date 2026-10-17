@@ -5,7 +5,12 @@ test whose name contains a given text, with the properties the test recorded
 The house rule (CLAUDE.md) takes test counts from a JUnit file, never from the console
 summary; the CI prints them with this script after the test step.
 
-Usage: python scripts/junit_counts.py <junit.xml> [--show <text>]...
+A run that left no JUnit file (or an unreadable one) is reported as incomplete, with no
+counts, never invented ones; with --trace, the tests the trace of tests/conftest.py shows
+as started and not ended are named (the test that was running when the process ended).
+The exit code is then 1.
+
+Usage: python scripts/junit_counts.py <junit.xml> [--trace <trace.txt>] [--show <text>]...
 """
 
 from __future__ import annotations
@@ -38,19 +43,55 @@ def outcomes(path: Path, text: str) -> list[str]:
     return out
 
 
+def unfinished(trace: Path) -> list[str]:
+    """The tests the trace shows as started and not ended, in the order they started."""
+    open_tests: dict[str, None] = {}
+    for line in trace.read_text(encoding="utf-8", errors="replace").splitlines():
+        kind, _, nodeid = line.partition(" ")
+        if kind == "start":
+            open_tests[nodeid] = None
+        elif kind == "end":
+            open_tests.pop(nodeid, None)
+    return list(open_tests)
+
+
+def incomplete(path: Path, why: str, trace: Path | None) -> int:
+    print(f"incomplete run: {why} ({path}); no test counts")
+    if trace is None:
+        return 1
+    if not trace.is_file():
+        print(f"no test trace at {trace}")
+        return 1
+    running = unfinished(trace)
+    if running:
+        for nodeid in running:
+            print(f"started and not ended: {nodeid}")
+    else:
+        print("every test in the trace ended")
+    return 1
+
+
 def main(argv: list[str]) -> int:
     if not argv:
         print(__doc__)
         return 2
-    path, shows = Path(argv[0]), []
+    path, shows, trace = Path(argv[0]), [], None
     rest = argv[1:]
     while rest:
-        if rest[0] != "--show" or len(rest) < 2:
+        if rest[0] not in ("--show", "--trace") or len(rest) < 2:
             print(__doc__)
             return 2
-        shows.append(rest[1])
+        if rest[0] == "--show":
+            shows.append(rest[1])
+        else:
+            trace = Path(rest[1])
         rest = rest[2:]
-    c = counts(path)
+    if not path.is_file():
+        return incomplete(path, "no JUnit file", trace)
+    try:
+        c = counts(path)
+    except ET.ParseError:
+        return incomplete(path, "the JUnit file cannot be read", trace)
     print(" ".join(f"{k}={v}" for k, v in c.items()))
     for text in shows:
         for line in outcomes(path, text):
