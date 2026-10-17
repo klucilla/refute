@@ -37,9 +37,10 @@ permissions:
 
 # A newer run on the same pull request branch cancels the one in progress. Runs on
 # main are never cancelled; a push to main is tested unless every changed file is in
-# the paths-ignore list above.
+# the paths-ignore list above. On main each commit has its own group, so a newer push
+# never replaces a pending run either, and every merge commit gets its own run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
