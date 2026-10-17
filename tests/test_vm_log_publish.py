@@ -253,6 +253,24 @@ def test_the_copy_of_the_tool_passes_the_checker():
             lambda c: c[0]["Module"].update({"../other.ps1": "0" * 64}),
             ".Module: not file names of the module",
         ),
+        # Codex review of #154, round 2: the other separator, a root left by "..", and a
+        # placeholder that does not match the source's value
+        (
+            lambda c: c[2].update(Error="C:/Temp/<host-identifier>.log"),
+            "holds a path outside the allowed roots",
+        ),
+        (
+            lambda c: c[2].update(Error="C:\\Hyper-V\\..\\Private\\<host-identifier>.log"),
+            "holds a path outside the allowed roots",
+        ),
+        (
+            lambda c: c[0]["Caller"].update(RunAsUser="<virtual-account> VA 999"),
+            "RunAsUser: not the placeholder of the source's value",
+        ),
+        (
+            lambda c: c[0]["Caller"].update(ConnectedUser=""),
+            "ConnectedUser: not the placeholder of the source's value",
+        ),
     ],
 )
 def test_the_checker_refuses_a_copy_that_differs_or_leaks(change, reason):
@@ -316,6 +334,13 @@ def test_a_name_inside_a_placeholder_is_not_a_leak():
     assert "<<host-identifier>" not in json.dumps(out)
     # the key "Host" of the preconditions was replaced, and accepted as a replacement
     assert "<host-identifier>" in out[0]["Plan"]["Preconditions"]
+
+
+def test_a_path_below_an_allowed_root_passes_with_either_separator():
+    recs = records()
+    recs[2]["Error"] = "copied to C:/Hyper-V/refute-vm/media and C:\\Hyper-V\\.\\refute-vm"
+    names = _names()
+    assert pub.check(recs, pub.anonymize(recs, names), names) == []
 
 
 def test_times_hashes_and_paths_of_the_configuration_are_not_leaks():

@@ -31,17 +31,19 @@ does not trust the copy to have been made by ``anonymize``.
   source's only where the source held a host identifier: with each ``<host-identifier>`` of
   the copy put back as one of the identifiers, the source's text must match exactly. The
   two ``Caller`` fields are the exception, checked next.
-- **Placeholders.** Each ``Caller`` field is ``""`` or its placeholder.
+- **Placeholders.** Each ``Caller`` field is the placeholder its source value calls for:
+  the operator for a connecting account, the virtual account with the same number, the
+  account of a call outside a remote session, or ``""`` for an empty value.
 - **Module.** ``Module`` maps file names of the module to SHA-256 hashes, nothing else.
 - **Nothing of the host.** With the placeholders masked, no text or key holds a host
   identifier (except a typed field: a ``...Sha256`` hash, a GUID of ``OperationId``,
   ``VmId``, ``RecordedVmId``, ``ServiceGuid`` or ``Id``, the ``Utc`` time, or a ``Module``
   hash, where a name would be a coincidence of digits), a Windows path outside the allowed
   roots (``C:\\Hyper-V``, ``C:\\ProgramData\\RefuteVm`` and the project folder, unless
-  others are given), a user profile or UNC path, an IPv4 or IPv6 address, a MAC address, an
-  e-mail address, a local host name (``.internal``, ``.local``, ``.lan``, ``.home``,
-  ``.corp``, ``.localdomain``, ``.intranet``) or an account SID with three or more
-  sub-authorities.
+  others are given; either separator, normalized lexically, so ``..`` cannot leave a
+  root), a user profile or UNC path, an IPv4 or IPv6 address, a MAC address, an e-mail
+  address, a local host name (``.internal``, ``.local``, ``.lan``, ``.home``, ``.corp``,
+  ``.localdomain``, ``.intranet``) or an account SID with three or more sub-authorities.
 
 **What it cannot see:** a name it does not know and that matches no pattern (for example a
 switch name chosen on the host). The maintainer still reads the copy before it is
@@ -65,6 +67,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import ntpath
 import os
 import re
 import sys
@@ -93,7 +96,7 @@ MODULE_FILE = re.compile(
 )
 VA_NUMBER = re.compile(r"WinRM VA_(\d+)_(.+)$")
 RUN_AS_PLACEHOLDER = re.compile(r"^(?:<virtual-account> VA \d+|<account>)$")
-WINDOWS_PATH = re.compile(r"(?i)\b[a-z]:\\[^\s'\"<>|,;]*")
+WINDOWS_PATH = re.compile(r"(?i)\b[a-z]:[\\/][^\s'\"<>|,;]*")
 
 LEAKS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("a user profile path", re.compile(r"(?i)\b[a-z]:[\\/]+users[\\/]")),
@@ -360,15 +363,41 @@ def _compare(source: Any, copy: Any, path: tuple, alternation: str, problems: li
 
 
 def _outside_roots(text: str, roots: tuple[str, ...]) -> list[str]:
+    """The Windows paths of a text that are not a root or below one. Paths and roots are
+    normalized lexically with Windows rules (both separators, "." and ".."; the file system
+    is never read), so C:/Temp and C:\\Hyper-V\\..\\Other are seen for what they are (Codex
+    review of #154)."""
+    allowed = [ntpath.normcase(ntpath.normpath(r)).rstrip("\\") for r in roots]
     found = []
     for path in WINDOWS_PATH.findall(text):
-        folded = path.casefold().rstrip("\\")
-        if not any(
-            folded == r.casefold() or folded.startswith(r.casefold().rstrip("\\") + "\\")
-            for r in roots
-        ):
+        folded = ntpath.normcase(ntpath.normpath(path)).rstrip("\\")
+        if not any(folded == r or folded.startswith(r + "\\") for r in allowed):
             found.append(path)
     return found
+
+
+def _caller_problems(source: Any, copy: Any) -> list[str]:
+    """Each Caller field of the copy is the placeholder its source value calls for: the
+    operator for a connecting account, the virtual account with the same number, or the
+    account of a call outside a remote session; an empty value stays empty (Codex review of
+    #154: the format alone let VA 31 become VA 999)."""
+    problems = []
+    if not isinstance(copy, dict):
+        return problems
+    if "ConnectedUser" in copy:
+        value = source.get("ConnectedUser") if isinstance(source, dict) else None
+        expected = (OPERATOR if value else "") if isinstance(value, str) else None
+        if copy["ConnectedUser"] != expected:
+            problems.append(".Caller.ConnectedUser: not the placeholder of the source's value")
+    if "RunAsUser" in copy:
+        value = source.get("RunAsUser") if isinstance(source, dict) else None
+        expected = None
+        if isinstance(value, str):
+            number = VA_NUMBER.search(value)
+            expected = "" if not value else f"{VIRTUAL} VA {number.group(1)}" if number else ACCOUNT
+        if copy["RunAsUser"] != expected:
+            problems.append(".Caller.RunAsUser: not the placeholder of the source's value")
+    return problems
 
 
 def _mask(text: str) -> str:
@@ -400,6 +429,7 @@ def check(
             run_as = caller.get("RunAsUser")
             if run_as != "" and not (isinstance(run_as, str) and RUN_AS_PLACEHOLDER.match(run_as)):
                 found.append(".Caller.RunAsUser: not a placeholder")
+            found.extend(_caller_problems(s.get("Caller") if isinstance(s, dict) else None, caller))
         module = c.get("Module") if isinstance(c, dict) else None
         if module is not None and not (
             isinstance(module, dict)
