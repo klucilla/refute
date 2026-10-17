@@ -101,14 +101,31 @@ def read_lock(path: Path | str) -> dict[str, Any]:
             raise LockError(f"lock file {lock_file} is missing '{key}'")
     if data["canonicalization"] != CANONICALIZATION:
         raise LockError(f"unsupported canonicalization '{data['canonicalization']}'")
+    # the fields verify reads directly (issue #65, Codex review): a lock without them is
+    # FAIL with this message, never a KeyError
+    if not isinstance(data.get("claim_path"), str):
+        raise LockError(f"lock file {lock_file} has no string 'claim_path'")
+    if not isinstance(data["code"], dict) or not isinstance(data["code"].get("sha256"), str):
+        raise LockError(f"lock file {lock_file} has no string 'code.sha256'")
     return data
 
 
 _ENTRY_RE = re.compile(r"^## (?P<when>\S+) \| (?P<claim>.+)$")
 _FIELD_RE = re.compile(r"^- (?P<key>[a-z0-9_]+): (?P<value>.*)$")
+# In a literal read, the names of the fields an entry writes more than once (a bullet that
+# repeats the heading's locked_at_utc or claim included), comma-joined. The key holds a
+# space, so it never matches a field name.
+REPEATED_FIELDS = "repeated fields"
 
 
-def read_history(path: Path | str) -> list[dict[str, str]]:
+def read_history(path: Path | str, *, literal: bool = False) -> list[dict[str, str]]:
+    """The entries of a LOCK_HISTORY.md file, in order.
+
+    By default values are stripped of surrounding whitespace and a repeated field keeps
+    its last value. With ``literal=True`` (what ``verify`` uses, issue #65) values are
+    kept exactly as written, and every field written twice in an entry is listed under
+    :data:`REPEATED_FIELDS` instead of being silently replaced.
+    """
     history = Path(path)
     if not history.is_file():
         return []
@@ -117,12 +134,18 @@ def read_history(path: Path | str) -> list[dict[str, str]]:
     for line in history.read_text(encoding="utf-8").splitlines():
         header = _ENTRY_RE.match(line)
         if header:
-            current = {"locked_at_utc": header["when"], "claim": header["claim"].strip()}
+            claim = header["claim"] if literal else header["claim"].strip()
+            current = {"locked_at_utc": header["when"], "claim": claim}
             entries.append(current)
             continue
         item = _FIELD_RE.match(line)
         if item and current is not None:
-            current[item["key"]] = item["value"].strip()
+            key, value = item["key"], item["value"]
+            if literal and key in current:
+                repeated = [k for k in current.get(REPEATED_FIELDS, "").split(",") if k]
+                current[REPEATED_FIELDS] = ",".join([*repeated, key])
+                continue
+            current[key] = value if literal else value.strip()
     return entries
 
 
@@ -225,9 +248,14 @@ def compare_history_entry(lock: dict[str, Any], entry: dict[str, str]) -> list[s
     Each field of :data:`HISTORY_SHARED_FIELDS` is compared by its rule
     (:func:`_history_value`). A field missing on either side is a difference, never
     skipped: missing in the lock, in the entry, or in both gives one line per missing
-    side. An empty list means the entry records exactly this lock.
+    side. A field the entry writes twice is a difference (a literal read records it,
+    :func:`read_history`). The attachments text is ambiguous when a path holds ``", "``,
+    ``"="`` or a line break (two different lists could then give the same text), so such a
+    lock is a difference too; ``refute lock`` still writes it as before. An empty list
+    means the entry records exactly this lock.
     """
     problems: list[str] = []
+    repeated = {k for k in entry.get(REPEATED_FIELDS, "").split(",") if k}
     for key in HISTORY_SHARED_FIELDS:
         expected: str | None
         try:
@@ -235,8 +263,23 @@ def compare_history_entry(lock: dict[str, Any], entry: dict[str, str]) -> list[s
         except _FieldError as exc:
             problems.append(str(exc))
             expected = None
+        if key == "attachments" and expected is not None:
+            ambiguous = [
+                a["path"]
+                for a in lock["attachments"]
+                if ", " in a["path"] or "=" in a["path"] or "\n" in a["path"] or "\r" in a["path"]
+            ]
+            if ambiguous:
+                problems.append(
+                    "attachments: a path in the lock file holds ', ', '=' or a line break, so "
+                    f"its history text is ambiguous: {ambiguous!r}"
+                )
+                expected = None
         if key not in entry:
             problems.append(f"the history entry has no '{key}'")
+            continue
+        if key in repeated:
+            problems.append(f"the history entry writes '{key}' more than once")
             continue
         if expected is not None and entry[key] != expected:
             problems.append(
@@ -480,7 +523,9 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
             )
 
     history = [
-        e for e in read_history(history_path_for(claim_file)) if e["claim"] == lock["claim_path"]
+        e
+        for e in read_history(history_path_for(claim_file), literal=True)
+        if e["claim"] == lock["claim_path"]
     ]
     if not history:
         failures.append(f"lock is not recorded in {HISTORY_FILENAME}")

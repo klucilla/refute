@@ -119,6 +119,16 @@ file, from the entry, or from both is a difference (one per missing side), and s
 lock value of a type its rule does not accept. Any difference makes `verify` `FAIL`, and
 its message names each field.
 
+- **The history is read literally.** No whitespace is removed from a value or from the
+  heading; a field written twice in an entry (a bullet that repeats the heading's
+  `locked_at_utc` included) is a difference, never replaced by its last value.
+- **Ambiguous attachments.** When an attachment path in the lock file holds `, `, `=` or a
+  line break, two different lists could give the same text, so the comparison reports a
+  difference for `attachments`. `refute lock` still writes such a lock as before.
+- **The lock file itself.** A lock file without a string `claim_path` or `code.sha256`
+  is unreadable for `verify` (`FAIL`, with the field named), like one without the other
+  required fields.
+
 This comparison only reads the lock file and `LOCK_HISTORY.md`; it never rewrites
 either. The two historical locks (v0.1 and v0.2) match every shared field of their
 entries (`tests/test_lock_history_fields.py`).

@@ -4,6 +4,7 @@ its lock file, each by an explicit rule, and never skips a missing field."""
 from __future__ import annotations
 
 import copy
+import json
 from pathlib import Path
 
 import pytest
@@ -12,6 +13,7 @@ from conftest import replicate_claim, target_entry, write_yaml
 from refute.core.lock import (
     HISTORY_SHARED_FIELDS,
     VerifyStatus,
+    _history_entry,
     compare_history_entry,
     create_lock,
     history_path_for,
@@ -29,8 +31,13 @@ HISTORICAL = [
 
 
 def _pair(claim: Path) -> tuple[dict, dict]:
+    # the literal read verify uses
     lock = read_lock(lock_path_for(claim))
-    entries = [e for e in read_history(history_path_for(claim)) if e["claim"] == lock["claim_path"]]
+    entries = [
+        e
+        for e in read_history(history_path_for(claim), literal=True)
+        if e["claim"] == lock["claim_path"]
+    ]
     return lock, entries[-1]
 
 
@@ -175,3 +182,85 @@ def test_verify_fails_when_the_entry_lacks_a_field(tmp_path):
     assert any("the history entry has no 'git_dirty'" in m for m in result.messages), (
         result.messages
     )
+
+
+# ---- Codex review of #130, round 1 ---------------------------------------------------
+
+
+def _locked(tmp_path: Path) -> tuple[Path, dict, Path, str]:
+    claim = write_yaml(tmp_path / "claim.yaml", replicate_claim([target_entry(1, "planet", 3.7)]))
+    lock = create_lock(claim)
+    history = history_path_for(claim)
+    return claim, lock, history, history.read_text(encoding="utf-8")
+
+
+def test_whitespace_around_a_value_is_a_difference_through_the_parser(tmp_path):
+    """The history is read literally: spaces around a value are not removed."""
+    claim, lock, history, text = _locked(tmp_path)
+    line = f"- refute_version: {lock['refute_version']}"
+    history.write_text(text.replace(line, line + "  "), encoding="utf-8")
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.FAIL
+    assert any("refute_version: the lock file has" in m for m in result.messages), result.messages
+
+
+def test_a_field_written_twice_is_a_difference(tmp_path):
+    claim, lock, history, text = _locked(tmp_path)
+    line = f"- refute_version: {lock['refute_version']}"
+    history.write_text(text.replace(line, line + "\n" + line), encoding="utf-8")
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.FAIL
+    assert any("writes 'refute_version' more than once" in m for m in result.messages), (
+        result.messages
+    )
+
+
+def test_a_bullet_repeating_the_heading_time_is_a_difference(tmp_path):
+    claim, lock, history, text = _locked(tmp_path)
+    line = f"- refute_version: {lock['refute_version']}"
+    extra = f"- locked_at_utc: {lock['locked_at_utc']}"
+    history.write_text(text.replace(line, line + "\n" + extra), encoding="utf-8")
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.FAIL
+    assert any("writes 'locked_at_utc' more than once" in m for m in result.messages), (
+        result.messages
+    )
+
+
+def test_two_attachment_lists_with_the_same_text_are_not_confused():
+    """The collision the review found: [a=H, b=H] and the one path 'a=H, b' with H give
+    the same text; a path holding ', ', '=' or a line break is a difference."""
+    lock, entry = _pair(HISTORICAL[0])
+    sha = "a" * 64
+    two = {**lock, "attachments": [{"path": "a", "sha256": sha}, {"path": "b", "sha256": sha}]}
+    one = {**lock, "attachments": [{"path": f"a={sha}, b", "sha256": sha}]}
+    text = f"a={sha}, b={sha}"
+    assert compare_history_entry(two, {**entry, "attachments": text}) == []
+    problems = compare_history_entry(one, {**entry, "attachments": text})
+    assert len(problems) == 1 and problems[0].startswith("attachments: a path"), problems
+    for path in ("x=y.txt", "a, b.txt", "a\nb.txt"):
+        odd = {**lock, "attachments": [{"path": path, "sha256": sha}]}
+        assert [p.split(":")[0] for p in compare_history_entry(odd, entry)] == ["attachments"]
+
+
+@pytest.mark.parametrize("drop", ["claim_path", "code.sha256"])
+def test_a_lock_file_without_a_field_verify_reads_is_fail_not_an_error(tmp_path, drop):
+    claim, lock, history, text = _locked(tmp_path)
+    data = json.loads(lock_path_for(claim).read_text(encoding="utf-8"))
+    if drop == "claim_path":
+        del data["claim_path"]
+    else:
+        del data["code"]["sha256"]
+    lock_path_for(claim).write_text(json.dumps(data), encoding="utf-8")
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.FAIL
+    assert any(f"no string '{drop}'" in m for m in result.messages), result.messages
+
+
+@pytest.mark.parametrize("claim", HISTORICAL, ids=["v0.1", "v0.2"])
+def test_the_writer_reproduces_the_historical_entries_byte_for_byte(claim):
+    """The writer now uses the comparison's rules; for both historical locks it writes
+    exactly the bytes of their entries."""
+    lock = read_lock(lock_path_for(claim))
+    written = _history_entry(lock, action="lock", previous=None, reason="initial lock")
+    assert written in history_path_for(claim).read_text(encoding="utf-8")
