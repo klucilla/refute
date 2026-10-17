@@ -813,3 +813,22 @@ list reads as `000` (the CONNECT tunnel refused with 403; curl reports no HTTP c
 the block outside the guest is shown by the same-target pair on the proxy (3128 open, its
 listening SSH closed). Acceptance of WP6 (section 6) waits for the maintainer to record the
 result.
+
+**WP6 accepted by the maintainer** on 2026-10-17 (about 21:15 UTC), on the report above
+(33 of 33), with one condition before the first run of third-party code: add to the test,
+and run its guest half, routes injected by root in the guest (to 1.1.1.1:443 and to
+192.168.0.1:80, each through the host and through the proxy), and record for every
+"closed" check how it failed, so that the port ACL is told apart from a missing route; if
+anything passed, stop, disconnect the network and tell the maintainer.
+
+**The guest half again, with those checks** (`run_isolation.py --guest-only`, 21:16:36
+UTC): **every check passed**, 30 of 30.
+[isolation/isolation-2026-10-17T211636Z.md](isolation/isolation-2026-10-17T211636Z.md)
+(SHA-256 `0bdf1259…6a19`, LF) and
+[isolation/isolation-2026-10-17T211636Z-guest.txt](isolation/isolation-2026-10-17T211636Z-guest.txt)
+(`3cd0fb9a…8cb5`). The four injected routes were added, the attempt **timed out** each time
+(packets dropped, not refused) and each route was removed. The forms of failure separate the
+two causes: the addresses on the link (the host's ports, the proxy's SSH) and every injected
+route time out, which is the port ACL dropping the packets; the addresses with no route in
+the guest (the LAN, 169.254.169.254, 1.1.1.1, 9.9.9.9 without an injected route) fail as
+"network unreachable" inside the guest, before any packet leaves it.

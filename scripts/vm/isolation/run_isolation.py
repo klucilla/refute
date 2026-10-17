@@ -154,20 +154,31 @@ def guest_checks(known_hosts: Path, image: str) -> tuple[list[tuple[str, bool, s
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--status", type=Path, required=True)
+    parser.add_argument("--status", type=Path)
+    parser.add_argument(
+        "--guest-only",
+        action="store_true",
+        help="run the guest half only (a rerun of the guest checks after the full test)",
+    )
     parser.add_argument("--known-hosts", type=Path, required=True)
     parser.add_argument("--image", required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     if "@sha256:" not in args.image:
         raise SystemExit("the image must be pinned by digest")
-    status = json.loads(args.status.read_text(encoding="utf-8-sig"))
-    host = host_checks(status)
+    if args.guest_only:
+        host = []
+    elif args.status is None:
+        raise SystemExit("--status is required unless --guest-only")
+    else:
+        host = host_checks(json.loads(args.status.read_text(encoding="utf-8-sig")))
     guest, raw = guest_checks(args.known_hosts, args.image)
     when = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    stamp = when.replace(":", "")
     args.out.mkdir(parents=True, exist_ok=True)
+    title = "Isolation test, guest half only" if args.guest_only else "Isolation test"
     lines = [
-        f"# Isolation test, {when}",
+        f"# {title}, {when}",
         "",
         "| Side | Check | Result | Detail |",
         "|---|---|---|---|",
@@ -177,9 +188,11 @@ def main(argv: list[str] | None = None) -> int:
             lines.append(f"| {side} | `{name}` | {'PASS' if ok else 'FAIL'} | {detail} |")
     passed = all(ok for _, ok, _ in host + guest)
     lines += ["", f"Result: **{'every check passed' if passed else 'at least one check failed'}**."]
-    with (args.out / f"isolation-{when[:10]}.md").open("x", encoding="utf-8") as f:
+    # LF line endings on every platform, so the hash of the file is the hash of what git
+    # stores; the name carries the time, so a second run the same day gets its own file
+    with (args.out / f"isolation-{stamp}.md").open("x", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(lines) + "\n")
-    with (args.out / f"isolation-{when[:10]}-guest.txt").open("x", encoding="utf-8") as f:
+    with (args.out / f"isolation-{stamp}-guest.txt").open("x", encoding="utf-8", newline="\n") as f:
         f.write(raw)
     print("\n".join(lines))
     return 0 if passed else 1

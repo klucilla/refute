@@ -13,9 +13,33 @@ IFACE=$(ip -o link show | awk -F': ' '$2 != "lo" {print $2; exit}')
 pass() { echo "CHECK $1 PASS $2"; }
 fail() { echo "CHECK $1 FAIL $2"; }
 # tcp <name> <host> <port> <expect: open|closed>
+# A closed result records how the attempt failed (the maintainer's condition of
+# 2026-10-17): "timeout" (packets dropped, as by a port ACL), "refused" (a reset: something
+# answered), "unreachable" (no route in the guest), or the error text otherwise.
 tcp() {
-  if timeout 5 bash -c "exec 3<>/dev/tcp/$2/$3" 2>/dev/null; then got=open; else got=closed; fi
-  if [ "$got" = "$4" ]; then pass "$1" "$2:$3 $got"; else fail "$1" "$2:$3 $got, expected $4"; fi
+  err=$(timeout 5 bash -c "exec 3<>/dev/tcp/$2/$3" 2>&1); rc=$?
+  if [ $rc -eq 0 ]; then got=open; how=""
+  else
+    got=closed
+    case "$err" in
+      *"Connection refused"*) how="refused" ;;
+      *"Network is unreachable"*|*"No route to host"*) how="unreachable" ;;
+      *) if [ $rc -eq 124 ]; then how="timeout"; else how="error($(echo "$err" | tr ' \n' '__'))"; fi ;;
+    esac
+  fi
+  if [ "$got" = "$4" ]; then pass "$1" "$2:$3 $got $how"; else fail "$1" "$2:$3 $got $how, expected $4"; fi
+}
+# route_injection <name> <target> <port> <gateway>: as root, a host route to the target
+# through a gateway on the link, then the attempt, then the route removed. The port ACLs
+# must still drop it: a route in the guest is something code inside the VM could add.
+route_injection() {
+  if sudo ip route add "$2/32" via "$4" dev "$IFACE" 2>/dev/null; then
+    tcp "$1" "$2" "$3" closed
+    sudo ip route del "$2/32" via "$4" dev "$IFACE" 2>/dev/null
+    if ip route show "$2/32" | grep -q .; then fail "${1}_route_removed" "the route to $2 is still there"; fi
+  else
+    fail "$1" "the route to $2 via $4 could not be added"
+  fi
 }
 
 echo "INFO interface $IFACE"
@@ -41,6 +65,13 @@ done
 tcp direct_tcp_1.1.1.1_443_blocked 1.1.1.1 443 closed
 tcp direct_tcp_9.9.9.9_53_blocked 9.9.9.9 53 closed
 if timeout 5 getent hosts pypi.org >/dev/null 2>&1; then fail no_dns "pypi.org resolved"; else pass no_dns "no name resolution in the guest"; fi
+
+# 4a. routes injected by root in the guest (the maintainer's condition of 2026-10-17): an
+#     internet address and a LAN address, each through the host and through the proxy
+route_injection route_injection_via_host_1.1.1.1_443 1.1.1.1 443 "$HOST"
+route_injection route_injection_via_proxy_1.1.1.1_443 1.1.1.1 443 "$PROXY"
+route_injection route_injection_via_host_192.168.0.1_80 192.168.0.1 80 "$HOST"
+route_injection route_injection_via_proxy_192.168.0.1_80 192.168.0.1 80 "$PROXY"
 
 # 5. the proxy lets the allowlist through and nothing else
 code() { curl -s -o /dev/null -w '%{http_code}' --max-time 20 -x "http://$PROXY:3128" "$1" 2>/dev/null; }
