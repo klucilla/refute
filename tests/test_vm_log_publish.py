@@ -19,7 +19,13 @@ spec = importlib.util.spec_from_file_location(
 )
 pub = importlib.util.module_from_spec(spec)
 sys.modules["publish_operation_log"] = pub
-spec.loader.exec_module(pub)
+# no __pycache__ inside scripts/vm: test_scripts_are_ascii reads every file there
+_write_bytecode = sys.dont_write_bytecode
+sys.dont_write_bytecode = True
+try:
+    spec.loader.exec_module(pub)
+finally:
+    sys.dont_write_bytecode = _write_bytecode
 
 HOST = "LABHOST7"
 USER = "opsuser"
