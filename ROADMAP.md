@@ -39,6 +39,11 @@ scope decision, and no gate review was run
 This exception applies only to the transition from v0.2.1 to v0.3; gate
 requirements for subsequent phases remain unchanged.
 
+**Order of the next phases (decided by the maintainer on 2026-10-17):** after v0.3 closes,
+the next phase is **v0.2.1 Gauntlet fixes** (the TESS fixes, the project's focus), and
+**v0.4 Discover** comes after it. The order of the sections below is unchanged, and no exit
+criterion of any phase changes.
+
 ---
 
 ## v0.1 Calibration
