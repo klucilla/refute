@@ -43,6 +43,10 @@ listed as a member): the maintainer decides those cases. That group can delete C
 apply: a premise the maintainer accepts. The checks support it but do not prove it, and
 they do not close the short window between the last read and the change. It never deletes
 anything, and it does not touch the Hyper-V host settings.
+
+There is NO automatic rollback. If a step stops after the ACL was set, or the post-check
+fails, the script reports what was done and writes the evidence; the maintainer then STOPS
+and presents the effective state of the ACL, with no automatic correction.
 #>
 [CmdletBinding()]
 param(

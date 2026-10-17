@@ -478,11 +478,19 @@ function Get-RefuteVmTreeAclSpec {
     # with the identity of its caller (it grants each VM access to its files, and a folder
     # that becomes the default gets the entries of the Virtual Machines group).
     #
-    # Version 2 adds what that needs and nothing more: ChangePermissions for Hyper-V
-    # Administrators, and the entries of NT VIRTUAL MACHINE\Virtual Machines (S-1-5-83-0)
-    # that the default folder of Windows (C:\ProgramData\Microsoft\Windows\Hyper-V) gives
-    # it, as observed by the maintainer on 2026-10-16: list and create on the folder, read
-    # on the files below, list and create on the folders below.
+    # Version 2 adds ChangePermissions for Hyper-V Administrators, and the entries of NT
+    # VIRTUAL MACHINE\Virtual Machines (S-1-5-83-0) that the default folder of Windows
+    # (C:\ProgramData\Microsoft\Windows\Hyper-V) gives it, as observed by the maintainer on
+    # 2026-10-16: read and the creation of files and subfolders (CreateFiles, AppendData)
+    # on the folder and the folders below, read on the files below. It is NOT the smallest
+    # change that worked: on the CI runner ChangePermissions alone was enough for
+    # SetHostPaths, but the service then wrote broader entries on the root (Virtual
+    # Machines, CREATOR OWNER with full control, a capability SID); with version 2 it wrote
+    # none, so the final ACL is predictable. Approved by the maintainer on 2026-10-16 as an
+    # explicit security concession: Hyper-V Administrators can change permissions on the
+    # whole tree, and the Virtual Machines entries apply to every VM identity of the host
+    # (direct access from a guest system is not shown). The evidence covers SetHostPaths
+    # only (docs/validation/v0.3/wp6-results/jea-registration.md, section 9).
     param([ValidateSet(1, 2)][int]$Version = 2)
     $all = 'ContainerInherit, ObjectInherit'
     $spec = @(
