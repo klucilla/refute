@@ -115,7 +115,8 @@ function Get-RefuteVmHostChecked {
     } catch {
         $failure = $_
         if (-not (Test-RefuteVmmsInstalled)) {
-            throw "Hyper-V is not available on this host (the vmms service is not installed): $($failure.Exception.Message)"
+            # by type and HRESULT, never by the message (Get-RefuteVmFailureText)
+            throw ('Hyper-V is not available on this host (the vmms service is not installed): {0} (HRESULT 0x{1:X8})' -f $failure.Exception.GetType().Name, $failure.Exception.HResult)
         }
         throw $failure
     }

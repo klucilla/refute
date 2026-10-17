@@ -218,17 +218,48 @@ $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $a
 Add-Case 'CreateVm reached for the VM in the nested folder' ($why -eq '' -and (Test-RefuteVmPlanReached -Plan $p -Config $config -ObservedAfter $after)) $why
 $v = New-Vm; $v.Path = 'C:\Hyper-V\refute-vm'; $after.Vms = @($v)
 $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
-Add-Case 'CreateVm not reached names the folder' ($why -like "the VM is stored in 'C:\Hyper-V\refute-vm', not in '$storage'") $why
+Add-Case 'CreateVm not reached names the expected folder only' ($why -ceq "the VM after New-VM is not the one these scripts set up: the VM is not stored in '$storage'") $why
 $after.Vms = @()
 $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
 Add-Case 'CreateVm not reached names a missing VM' ($why -like "expected one VM named 'refute-vm' after New-VM, found 0") $why
 $after.Vms = @(New-Vm); $after.RecordedVmId = ''
 $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
-Add-Case 'CreateVm not reached names a VMId that was not recorded' ($why -like "*is not the recorded ''*") $why
+Add-Case 'CreateVm not reached names a VMId that was not recorded' ($why -like '*: no recorded VMId') $why
+# review round 1 of #142 (Codex): the check after New-VM is the whole check of the target
+$after.RecordedVmId = $vmId; $v = New-Vm; $v.Generation = 1; $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached for a generation 1 VM' ($why -like '*: the VM is not generation 2') $why
+# a reason that is not reached never quotes a value read from the host
+$v = New-Vm; $v.HardDisks = @('C:\Users\SomeAccount\disk.vhdx'); $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached for a foreign disk names no path' ($why -like '*: an unexpected disk is attached' -and $why -notlike '*Users*') $why
+$v = New-Vm; $v.NetworkAdapters = @([ordered]@{ Name = 'Adapter of SomeAccount'; SwitchName = 'Switch of SomeAccount' }); $after.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $after
+Add-Case 'CreateVm not reached for a connected adapter names no switch' ($why -like '*: a network adapter is connected*' -and $why -notlike '*SomeAccount*') $why
 $o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
 $p = Plan 'SetMemory' $o
 $why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o
 Add-Case 'SetMemory not reached names the changes left' ($why -like '*still has 2 change(s): Memory.DynamicMemoryEnabled, Memory.StartupBytes') $why
+$o2 = New-Observed; $o2.RecordedVmId = $vmId; $v = New-Vm; $v.DvdDrives = @('C:\Users\SomeAccount\other.iso'); $o2.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o2
+Add-Case 'SetMemory not reached for a refused plan names no path' ($why -ceq 'the plan after the operation is refused (simulate the operation to see the reason)') $why
+$p = Plan 'DisableGuestServiceInterface' $o -Guid $gsi
+$why = Get-RefuteVmPlanReachedProblem -Plan $p -Config $config -ObservedAfter $o -ServiceGuid $gsi
+Add-Case 'DisableGuestServiceInterface not reached names the kind of item only' ($why -like '*still has 1 change(s): IntegrationService' -and $why -notlike '*Guest Service*') $why
+$o3 = New-Observed; $o3.RecordedVmId = $vmId; $v = New-Vm; $v.NetworkAdapters = @([ordered]@{ Name = 'Adapter of SomeAccount'; SwitchName = 'Switch of SomeAccount' }); $o3.Vms = @($v)
+$why = Get-RefuteVmPlanReachedProblem -Plan (Plan 'DisconnectNetwork' $o3) -Config $config -ObservedAfter $o3
+Add-Case 'DisconnectNetwork not reached names the kind of item only' ($why -like '*still has 1 change(s): NetworkAdapter' -and $why -notlike '*SomeAccount*') $why
+# the reason of a failure: a text of the module is kept; any other error by type and HRESULT
+$records = @{}
+try { throw 'reparse point refused: C:\Hyper-V\refute-vm' } catch { $records['module'] = $_ }
+try { Write-Error -Message 'C:\Users\SomeAccount\x' -ErrorId 'Probe' -ErrorAction Stop } catch { $records['cmdlet'] = $_ }
+try { throw [System.IO.IOException]::new('C:\Users\SomeAccount\x') } catch { $records['exception'] = $_ }
+$text = Get-RefuteVmFailureText $records['module']
+Add-Case 'failure text: a text of the module is kept' ($text -ceq 'reparse point refused: C:\Hyper-V\refute-vm') $text
+$text = Get-RefuteVmFailureText $records['cmdlet']
+Add-Case 'failure text: a cmdlet error by type and HRESULT' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}\)$') $text
+$text = Get-RefuteVmFailureText $records['exception']
+Add-Case 'failure text: a thrown exception by type and HRESULT' ($text -cmatch '^IOException \(HRESULT 0x[0-9A-F]{8}\)$') $text
 
 Add-Case 'SetMemory refused: no VM' ($null -ne (Plan 'SetMemory' (New-Observed)).Refusal)
 $o = New-Observed; $o.Vms = @(New-Vm)
@@ -354,7 +385,7 @@ $denied = { throw (New-Object System.UnauthorizedAccessException 'synthetic: acc
 $noService = { throw (New-Object System.InvalidOperationException 'synthetic: no virtualization service') }
 $notFound = { throw (New-Object System.Management.Automation.CommandNotFoundException 'synthetic: Get-VMHost is not recognized') }
 $r = Get-HostCheckFailure $noService $false
-Add-Case 'Hyper-V check: no vmms service gives the own message' ($r.Message -like 'Hyper-V is not available on this host (the vmms service is not installed): synthetic: no virtualization service') ($r.Type + ': ' + $r.Message)
+Add-Case 'Hyper-V check: no vmms service gives the own message, with the error by type and HRESULT' ($r.Message -cmatch '^Hyper-V is not available on this host \(the vmms service is not installed\): InvalidOperationException \(HRESULT 0x[0-9A-F]{8}\)$' -and $r.Message -notlike '*synthetic*') ($r.Type + ': ' + $r.Message)
 $r = Get-HostCheckFailure $denied $true
 Add-Case 'Hyper-V check: access denied with the service installed keeps its error' ($r.Type -eq 'System.UnauthorizedAccessException' -and $r.Message -eq 'synthetic: access denied') ($r.Type + ': ' + $r.Message)
 $r = Get-HostCheckFailure $notFound $false

@@ -3,7 +3,10 @@
 Replaces ONE file of the installed RefuteVm module (-File; by default RefuteVm.Config.psd1),
 and nothing else (WP6). Run by the maintainer, in Windows PowerShell 5.1 started as
 Administrator, with PSModuleAnalysisCachePath=nul in its environment (scripts/vm/README.md).
--File is one of the six files of the module; for any file but RefuteVm.Config.psd1,
+-File is one of the four files that hold the module's configuration and logic
+(RefuteVm.Config.psd1, RefuteVm.Core.ps1, RefuteVm.HyperV.ps1, RefuteVm.psm1); the manifest
+and the role capability, which define what the endpoint exposes, are replaced only by the
+registration (Codex review of #142). For any file but RefuteVm.Config.psd1,
 -InstalledSha256 and -SourceSha256 must be given (their defaults are the configuration's).
 The source is that file under scripts\vm\RefuteVm of this checkout, unless -SourcePath is
 given. Several files are replaced by running the script once per file.
@@ -62,7 +65,7 @@ functions and runs nothing.
 [CmdletBinding()]
 param(
     [switch]$Apply,
-    # one of $ModuleFiles, checked in the body (never echoed)
+    # one of $UpdatableFiles, checked in the body (never echoed)
     [string]$File = 'RefuteVm.Config.psd1',
     [string]$SourcePath = '',
     # checked in the body, with a controlled message: a ValidatePattern error would echo the
@@ -78,8 +81,10 @@ Set-StrictMode -Version 2.0
 # needs a reviewed change of this value
 $CoreSha256 = 'E22A61A96FC88EDE07697CD6D0A6B3221DCCF8FA31770BEC7DAA6012170AE2E0'
 $script:RefuteExitCode = 1
-# the six files of the installed module (the registration installs exactly these)
-$ModuleFiles = @('RefuteVm.Config.psd1', 'RefuteVm.Core.ps1', 'RefuteVm.HyperV.ps1', 'RefuteVm.psd1', 'RefuteVm.psm1', 'RoleCapabilities\RefuteVmOperator.psrc')
+# the files of the installed module this script may replace; the other two of the six the
+# registration installs (RefuteVm.psd1 and RoleCapabilities\RefuteVmOperator.psrc) define
+# what the endpoint exposes, and only the registration replaces them
+$UpdatableFiles = @('RefuteVm.Config.psd1', 'RefuteVm.Core.ps1', 'RefuteVm.HyperV.ps1', 'RefuteVm.psm1')
 
 function Get-RefuteBytesSha256([byte[]]$Bytes) {
     $sha = [System.Security.Cryptography.SHA256]::Create()
@@ -235,9 +240,9 @@ if ($env:PSModuleAnalysisCachePath -ne 'nul') {
 
 # step 0: the arguments, who runs, and the checker loaded from checked bytes
 $problems = New-Object System.Collections.Generic.List[string]
-$fileName = @($ModuleFiles | Where-Object { $_ -ieq $File })
+$fileName = @($UpdatableFiles | Where-Object { $_ -ieq $File })
 if ($fileName.Count -ne 1) {
-    $problems.Add('-File must be one of the six files of the module: ' + ($ModuleFiles -join ', '))
+    $problems.Add('-File must be one of the files this script replaces: ' + ($UpdatableFiles -join ', '))
 } elseif ($fileName[0] -ne 'RefuteVm.Config.psd1' -and -not ($PSBoundParameters.ContainsKey('InstalledSha256') -and $PSBoundParameters.ContainsKey('SourceSha256'))) {
     $problems.Add("-InstalledSha256 and -SourceSha256 are required for $($fileName[0])")
 }

@@ -149,7 +149,7 @@ function Invoke-RefuteVmOperation {
                 }
             } catch {
                 $outcome = 'failed'
-                $failure = $_.Exception.Message
+                $failure = Get-RefuteVmFailureText $_
             }
         }
         $result = [ordered]@{

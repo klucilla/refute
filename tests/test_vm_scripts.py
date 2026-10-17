@@ -1160,12 +1160,20 @@ def test_the_config_update_refuses_without_its_preconditions(tmp_path):
     assert bad.returncode == 1, text
     assert "-SourceSha256 must be 64 hexadecimal digits" in bad.stdout, text
     assert "Audit.Other" not in text, text
-    # -File: only the six files of the module, never echoed; another file needs both hashes
+    # -File: only the four files of configuration and logic, never echoed; the manifest and
+    # the role capability are the registration's (Codex review of #142); another file than
+    # the configuration needs both hashes
     wrong = run("-File", "Audit.Other.ps1")
     text = wrong.stdout + wrong.stderr
     assert wrong.returncode == 1, text
-    assert "-File must be one of the six files of the module" in wrong.stdout, text
+    assert "-File must be one of the files this script replaces" in wrong.stdout, text
     assert "Audit.Other" not in text, text
+    for exposed in ("RefuteVm.psd1", "RoleCapabilities\\RefuteVmOperator.psrc"):
+        refused = run("-File", exposed, "-InstalledSha256", "0" * 64, "-SourceSha256", "0" * 64)
+        text = refused.stdout + refused.stderr
+        assert refused.returncode == 1, text
+        assert "-File must be one of the files this script replaces" in refused.stdout, text
+        assert "Written:" not in refused.stdout, text
     core = run("-File", "RefuteVm.Core.ps1")
     text = core.stdout + core.stderr
     assert core.returncode == 1, text

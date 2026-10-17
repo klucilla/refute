@@ -405,10 +405,12 @@ try {
         # CreateVm for real, through the endpoint, after the version 2 attempt (the incident
         # of operation 4 on the maintainer's host, 2026-10-17: New-VM -Path <VmRoot> stored
         # the VM in <VmRoot>\<VmName>, and the module's check expected <VmRoot>). The
-        # simulation, the real call with its PlanSha256, a new simulation that must be
-        # already done, and the Path Get-VM reports. The VM stays on the runner, which is
-        # discarded after the job; nothing is deleted.
-        $out.RefuteVm.CreateVm = [ordered]@{ Simulate = $null; Real = $null; Again = $null; Path = ''; Count = 0; Error = '' }
+        # simulation, the real call with its PlanSha256, and the Path Get-VM reports; then, in
+        # a new session as the retake on the host would be (Codex review of #142), a CreateVm
+        # simulation that must be already done and a SetMemory simulation that must plan
+        # without a refusal (simulated only). The VM stays on the runner, which is discarded
+        # after the job; nothing is deleted.
+        $out.RefuteVm.CreateVm = [ordered]@{ Simulate = $null; Real = $null; Again = $null; SetMemory = $null; Path = ''; Count = 0; Error = '' }
         try {
             $vmSession = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
             try {
@@ -417,9 +419,15 @@ try {
                     $planSha = [string](ConvertFrom-Json $out.RefuteVm.CreateVm.Simulate.Output).PlanSha256
                     if ($planSha -cnotmatch '^[0-9a-f]{64}$') { throw "no PlanSha256 in the CreateVm simulation: $planSha" }
                     $out.RefuteVm.CreateVm.Real = Invoke-Literal $vmSession "Invoke-RefuteVmOperation -Operation CreateVm -PlanSha256 $planSha"
-                    $out.RefuteVm.CreateVm.Again = Invoke-Literal $vmSession 'Invoke-RefuteVmOperation -Operation CreateVm -Simulate'
                 }
             } finally { Remove-PSSession -Session $vmSession }
+            if ($null -ne $out.RefuteVm.CreateVm.Real) {
+                $retake = New-PSSession -ComputerName localhost -ConfigurationName 'RefuteVmCi' -EnableNetworkAccess -ErrorAction Stop
+                try {
+                    $out.RefuteVm.CreateVm.Again = Invoke-Literal $retake 'Invoke-RefuteVmOperation -Operation CreateVm -Simulate'
+                    $out.RefuteVm.CreateVm.SetMemory = Invoke-Literal $retake 'Invoke-RefuteVmOperation -Operation SetMemory -Simulate'
+                } finally { Remove-PSSession -Session $retake }
+            }
             $created = @(Get-VM -ErrorAction Stop | Where-Object { $_.Name -eq 'refute-ci-vm' })
             $out.RefuteVm.CreateVm.Count = $created.Count
             if ($created.Count -eq 1) { $out.RefuteVm.CreateVm.Path = [string]$created[0].Path }

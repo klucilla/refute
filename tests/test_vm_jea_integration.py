@@ -391,8 +391,9 @@ def test_create_vm_through_the_endpoint_stores_the_vm_where_the_module_expects(
     the call ended "not reached" with an empty reason. On the runner, after the version 2
     attempt, CreateVm runs for real through the endpoint with the test configuration
     (VmName refute-ci-vm): it must be done, Get-VM must report the VM in
-    C:\\Hyper-V\\refute-vm\\refute-ci-vm, and a new simulation must be already done. Only
-    where SetHostPaths ran for real."""
+    C:\\Hyper-V\\refute-vm\\refute-ci-vm; then, in a new session (the retake on the host;
+    Codex review of #142), a CreateVm simulation must be already done and a SetMemory
+    simulation must plan without a refusal. Only where SetHostPaths ran for real."""
     host_paths = result["RefuteVm"]["HostPaths"]
     if not host_paths["Ran"]:
         pytest.skip(host_paths["Reason"])
@@ -405,8 +406,13 @@ def test_create_vm_through_the_endpoint_stores_the_vm_where_the_module_expects(
     assert json.loads(create["Real"]["Output"])["Outcome"] == "done", create
     assert create["Count"] == 1, create
     assert _norm(create["Path"]) == "c:\\hyper-v\\refute-vm\\refute-ci-vm", create
+    assert create["Again"]["Ok"], create
     again = json.loads(create["Again"]["Output"])
     assert again["Plan"]["AlreadyDone"] is True and again["Plan"]["Refusal"] is None, create
+    assert create["SetMemory"]["Ok"], create
+    set_memory = json.loads(create["SetMemory"]["Output"])
+    assert set_memory["Mode"] == "simulated", create
+    assert set_memory["Plan"]["Refusal"] is None, create
 
 
 PRIVATE = [

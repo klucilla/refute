@@ -59,7 +59,9 @@ round. Both need the VM off.
   `Resolve-RefuteVmTarget`:
   - no VM named `refute-vm`, or more than one;
   - no recorded VMId, or a VMId different from the recorded one;
-  - the VM stored outside `C:\Hyper-V\refute-vm`;
+  - the VM stored elsewhere than `C:\Hyper-V\refute-vm\refute-vm`, the folder where
+    `New-VM -Path C:\Hyper-V\refute-vm` stores it (`Get-RefuteVmStoragePath`; the incident
+    of operation 4, `jea-registration.md` section 15);
   - not generation 2;
   - a disk other than the base disk attached;
   - DVD media other than the two ISOs;
@@ -69,6 +71,11 @@ round. Both need the VM off.
   not take or that is malformed.
 - **Failures:** a junction or link on the paths (`Assert-RefuteNoReparsePoint`) makes the call
   fail (`Outcome` failed), not a refusal. So does an error of the Hyper-V cmdlet.
+- **Reasons.** A failure records the module's own text, or the error's type and HRESULT,
+  never the message of a Hyper-V or system error (`Get-RefuteVmFailureText`). A result
+  `not reached` always records why, with fixed texts, configured values, VMIds, states,
+  counts and change items only (`Get-RefuteVmPlanReachedProblem`); the simulation shows
+  the full refusal.
 - **Reversal.**
   - No endpoint operation undoes operations 3 to 14, except `DetachInstallMedia` (for 14
     and 15) and `StopVm` (for 16).
@@ -91,11 +98,11 @@ round. Both need the VM off.
 
 ### 4. CreateVm
 - **Simulate:** `scripts\vm\Invoke-RefuteVm.ps1 -Operation CreateVm -Simulate`
-- **Expected change:** `VM` from `absent` to `generation 2, stored in C:\Hyper-V\refute-vm, no disk, network adapter not connected`.
-- **Refusals:** a VM named `refute-vm` already exists; a VMId is already recorded.
-- **Action:** `New-VM -Name refute-vm -Generation 2 -Path C:\Hyper-V\refute-vm -MemoryStartupBytes 51539607552 -NoVHD`. The new VMId is written to `C:\ProgramData\RefuteVm\State\vm.json`.
-- **Then `-Status`:** one VM `refute-vm`, `Off`, generation 2, `Path` `C:\Hyper-V\refute-vm`, no hard disk, adapters with no switch; the recorded VMId equals the VM's.
-- **Writes in `C:\Hyper-V`:** yes, the VM's configuration files under `C:\Hyper-V\refute-vm`. Hypothesis: the service also gives the VM's own account access to its files, and it needs the right to change permissions there, which version 2 gives (as for SetHostPaths). Section 9 saw the service add broader entries when it adopted a folder without version 2.
+- **Expected change:** `VM` from `absent` to `generation 2, stored in C:\Hyper-V\refute-vm\refute-vm, no disk, network adapter not connected`.
+- **Refusals:** a VMId is recorded but no VM has it; a VM named `refute-vm` exists that is not the one these scripts created (no recorded VMId, another VMId, or any other check of `Resolve-RefuteVmTarget` fails). The VM with the recorded VMId that passes those checks gives `AlreadyDone` true: the retake after the incident of operation 4.
+- **Action:** `New-VM -Name refute-vm -Generation 2 -Path C:\Hyper-V\refute-vm -MemoryStartupBytes 51539607552 -NoVHD`, which stores the VM in `C:\Hyper-V\refute-vm\refute-vm`. The new VMId is written to `C:\ProgramData\RefuteVm\State\vm.json`.
+- **Then `-Status`:** one VM `refute-vm`, `Off`, generation 2, `Path` `C:\Hyper-V\refute-vm\refute-vm`, no hard disk, adapters with no switch; the recorded VMId equals the VM's.
+- **Writes in `C:\Hyper-V`:** yes, the VM's configuration files under `C:\Hyper-V\refute-vm\refute-vm`. Hypothesis: the service also gives the VM's own account access to its files, and it needs the right to change permissions there, which version 2 gives (as for SetHostPaths). Section 9 saw the service add broader entries when it adopted a folder without version 2.
 - **Reversal:** none through the endpoint (see section 3).
 
 ### 5. SetMemory

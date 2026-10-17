@@ -190,38 +190,42 @@ function Get-RefuteVmStoragePath {
 
 function Resolve-RefuteVmTarget {
     # The VM these scripts own, or the reason it cannot be used. Divergence from what the
-    # scripts set up stops the operation; nothing is corrected silently.
+    # scripts set up stops the operation; nothing is corrected silently. Refusal may quote
+    # values read from the host (a path, a switch name); Category is a fixed text that
+    # quotes none, for the reason of a result that is not reached.
     param([System.Collections.IDictionary]$Config, [System.Collections.IDictionary]$Observed, [string]$Operation)
     $named = @($Observed.Vms | Where-Object { $_.Name -ieq $Config.VmName })
-    if ($named.Count -eq 0) { return @{ Vm = $null; Refusal = "no VM named '$($Config.VmName)'" } }
-    if ($named.Count -gt 1) { return @{ Vm = $null; Refusal = "more than one VM named '$($Config.VmName)'" } }
+    if ($named.Count -eq 0) { return @{ Vm = $null; Refusal = "no VM named '$($Config.VmName)'"; Category = 'no VM of that name' } }
+    if ($named.Count -gt 1) { return @{ Vm = $null; Refusal = "more than one VM named '$($Config.VmName)'"; Category = 'more than one VM of that name' } }
     $vm = $named[0]
     if ([string]::IsNullOrEmpty($Observed.RecordedVmId)) {
-        return @{ Vm = $null; Refusal = 'the VM was not created by these scripts (no recorded VMId)' }
+        return @{ Vm = $null; Refusal = 'the VM was not created by these scripts (no recorded VMId)'; Category = 'no recorded VMId' }
     }
     if ($vm.VmId -ine $Observed.RecordedVmId) {
-        return @{ Vm = $null; Refusal = "VMId $($vm.VmId) differs from the recorded $($Observed.RecordedVmId)" }
+        return @{ Vm = $null; Refusal = "VMId $($vm.VmId) differs from the recorded $($Observed.RecordedVmId)"; Category = 'the VMId differs from the recorded one' }
     }
     $storage = Get-RefuteVmStoragePath $Config
-    if ($vm.Path -ine $storage) { return @{ Vm = $null; Refusal = "the VM is stored in '$($vm.Path)', not in '$storage'" } }
-    if ($vm.Generation -ne 2) { return @{ Vm = $null; Refusal = 'the VM is not generation 2' } }
+    if ($vm.Path -ine $storage) {
+        return @{ Vm = $null; Refusal = "the VM is stored in '$($vm.Path)', not in '$storage'"; Category = "the VM is not stored in '$storage'" }
+    }
+    if ($vm.Generation -ne 2) { return @{ Vm = $null; Refusal = 'the VM is not generation 2'; Category = 'the VM is not generation 2' } }
     $allowedDisks = @($Config.BaseDiskPath)
     foreach ($disk in @($vm.HardDisks)) {
-        if ($allowedDisks -inotcontains $disk) { return @{ Vm = $null; Refusal = "unexpected disk attached: $disk" } }
+        if ($allowedDisks -inotcontains $disk) { return @{ Vm = $null; Refusal = "unexpected disk attached: $disk"; Category = 'an unexpected disk is attached' } }
     }
     $allowedMedia = @("$($Config.MediaRoot)\$($Config.InstallIsoName)", "$($Config.MediaRoot)\$($Config.SeedIsoName)")
     foreach ($dvd in @($vm.DvdDrives)) {
         # an empty drive ('') is allowed; it is listed, and DetachInstallMedia removes it
-        if ($dvd -and $allowedMedia -inotcontains $dvd) { return @{ Vm = $null; Refusal = "unexpected DVD media: $dvd" } }
+        if ($dvd -and $allowedMedia -inotcontains $dvd) { return @{ Vm = $null; Refusal = "unexpected DVD media: $dvd"; Category = 'unexpected DVD media' } }
     }
     if ($Operation -ne 'DisconnectNetwork') {
         foreach ($adapter in @($vm.NetworkAdapters)) {
             if (-not [string]::IsNullOrEmpty($adapter.SwitchName)) {
-                return @{ Vm = $null; Refusal = "network adapter '$($adapter.Name)' is connected to '$($adapter.SwitchName)' (phase 1: no network)" }
+                return @{ Vm = $null; Refusal = "network adapter '$($adapter.Name)' is connected to '$($adapter.SwitchName)' (phase 1: no network)"; Category = 'a network adapter is connected (phase 1: no network)' }
             }
         }
     }
-    return @{ Vm = $vm; Refusal = $null }
+    return @{ Vm = $vm; Refusal = $null; Category = $null }
 }
 
 function New-RefuteVmPlan {
@@ -415,11 +419,14 @@ function New-RefuteVmPlan {
 
 function Get-RefuteVmPlanReachedProblem {
     # After the mutation: why the state the plan asked for is not observed, or '' when it
-    # is. State changes compare the VM's state; CreateVm needs one VM with the recorded VMId,
-    # stored where Hyper-V puts it (Get-RefuteVmStoragePath); every other operation must
-    # now plan as already done. The reason is always given, so a "not reached" result is
-    # never empty (the incident of operation 4, 2026-10-17); it names VM fields and paths
-    # under the VM tree only.
+    # is. State changes compare the VM's state; CreateVm needs one VM of that name that
+    # passes every check of Resolve-RefuteVmTarget (recorded VMId, stored where Hyper-V puts
+    # it, generation 2, no foreign disk, media or network); every other operation must now
+    # plan as already done. The reason is always given, so a "not reached" result is never
+    # empty (the incident of operation 4, 2026-10-17). It is built from fixed texts,
+    # configured values, VMIds, VM states, counts and change item names only: it never
+    # quotes a path, a name or a message read from the host (Codex review of #142); the
+    # simulation of the operation shows the full refusal.
     param(
         [System.Collections.IDictionary]$Plan,
         [System.Collections.IDictionary]$Config,
@@ -439,17 +446,33 @@ function Get-RefuteVmPlanReachedProblem {
     if ($Plan.Operation -eq 'CreateVm') {
         $vm = @($ObservedAfter.Vms | Where-Object { $_.Name -ieq $Config.VmName })
         if ($vm.Count -ne 1) { return "expected one VM named '$($Config.VmName)' after New-VM, found $($vm.Count)" }
-        if ($vm[0].VmId -ine $ObservedAfter.RecordedVmId) { return "the VM's VMId $($vm[0].VmId) is not the recorded '$($ObservedAfter.RecordedVmId)'" }
-        $storage = Get-RefuteVmStoragePath $Config
-        if ($vm[0].Path -ine $storage) { return "the VM is stored in '$($vm[0].Path)', not in '$storage'" }
+        $target = Resolve-RefuteVmTarget -Config $Config -Observed $ObservedAfter -Operation 'CreateVm'
+        if ($null -ne $target.Refusal) { return "the VM after New-VM is not the one these scripts set up: $($target.Category)" }
         return ''
     }
     $again = New-RefuteVmPlan -Operation $Plan.Operation -Config $Config -Observed $ObservedAfter -MediaSha256 $MediaSha256 -Percent $Percent -ServiceGuid $ServiceGuid
-    if ($null -ne $again.Refusal) { return "the plan after the operation is refused: $($again.Refusal)" }
+    if ($null -ne $again.Refusal) { return 'the plan after the operation is refused (simulate the operation to see the reason)' }
     if (-not $again.AlreadyDone) {
-        return "the plan after the operation still has $(@($again.Changes).Count) change(s): " + ((@($again.Changes) | ForEach-Object { [string]$_.Item }) -join ', ')
+        # the items of an integration service or a network adapter carry a name read from
+        # the host; only their kind is named here
+        $items = @($again.Changes) | ForEach-Object { [string]$_.Item -replace '^(IntegrationService|NetworkAdapter)\..*$', '$1' }
+        return "the plan after the operation still has $(@($again.Changes).Count) change(s): " + ($items -join ', ')
     }
     return ''
+}
+
+function Get-RefuteVmFailureText {
+    # The reason of a failed operation, for the log and the caller. A text this module
+    # throws (throw '<text>': a RuntimeException whose error id is the text itself) is kept:
+    # it quotes configured values only. Any other error, from Hyper-V or the system, is
+    # reported by type and HRESULT, never by its message, which can quote host paths or
+    # account names (as in Update-RefuteVmConfig.ps1; Codex review of #142).
+    param([System.Management.Automation.ErrorRecord]$ErrorRecord)
+    $e = $ErrorRecord.Exception
+    if ($e.GetType() -eq [System.Management.Automation.RuntimeException] -and $ErrorRecord.FullyQualifiedErrorId -ceq $e.Message) {
+        return $e.Message
+    }
+    return ('{0} (HRESULT 0x{1:X8})' -f $e.GetType().Name, $e.HResult)
 }
 
 function Test-RefuteVmPlanReached {
