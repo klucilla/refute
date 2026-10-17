@@ -6,7 +6,7 @@ These scripts build the Hyper-V VM in which third-party paper code will run
 does not validate its isolation**: no paper code runs until every WP6 acceptance test
 passes. In phase 1 the VM has no network.
 
-**Operations 1 to 3 validated on the host; every other operation not validated in operation yet.** What has been checked so far, and where:
+**Phase 1 concluded on 2026-10-17: operations 1 to 16 done on the host through the endpoint; Ubuntu 26.04.1 installed, the VM off with no network.** What has been checked so far, and where:
 
 - **Synthetic tests:** the scripts are tested with synthetic inputs, without Windows administrator rights and without Hyper-V (tests/test_vm_scripts.py).
 - **CI integration:** a real JEA endpoint is registered on the GitHub Windows runner, and its sessions and module discovery are checked there (tests/test_vm_jea_integration.py). Where the runner has the Hyper-V management service, `SetHostPaths` also runs for real through it, under each version of the `C:\Hyper-V` ACL; the runner is Windows Server, not the maintainer's host.
@@ -22,7 +22,8 @@ passes. In phase 1 the VM has no network.
   - **Operation 1, `SetHostPaths`, validated on the host on 2026-10-16:** tried twice under the first version of the `C:\Hyper-V` ACL, it failed with access denied, with no change (section 9 of the record). After the maintainer applied version 2 with `Set-RefuteVmTreeAcl.ps1`, it was done through the endpoint with the same plan, and the post-check of the tree gave the same result before and after the paths were adopted (section 10).
   - **Operation 2, `DisableEnhancedSessionHost`, validated on the host on 2026-10-16:** done through the endpoint on the first attempt, with the simulated plan (section 11).
   - **Operation 3, `CreateBaseDisk`, validated on the host on 2026-10-17:** done through the endpoint on the first attempt, with the simulated plan, after the installed configuration was updated to the base disk of 100 GiB (sections 13 and 14).
-  - **Operation 4, `CreateVm`, on 2026-10-17: the VM was created, but the check after it failed.** Hyper-V stored the VM in `C:\Hyper-V\refute-vm\refute-vm`, while the module expected `C:\Hyper-V\refute-vm`, and the result was "not reached" with an empty reason (section 15). The VM operations are stopped until the correction. Every other operation is not validated yet.
+  - **Operation 4, `CreateVm`, on 2026-10-17: the VM was created, but the check after it failed.** Hyper-V stored the VM in `C:\Hyper-V\refute-vm\refute-vm`, while the module expected `C:\Hyper-V\refute-vm`, and the result was "not reached" with an empty reason (section 15). Corrected by #142 (the module reinstalled, section 16).
+  - **Operations 4 to 16, and the first boot, on 2026-10-17:** each simulated and then run with the simulated plan; two calls with a plan that differed were refused; `StartVm` with 48 GiB failed for lack of host memory and the VM went to 16 GiB; the automatic installation ran, then `DetachInstallMedia`, a boot from the disk and `StopVm` through the integration (sections 16 to 20). Version 2 of the `C:\Hyper-V` ACL gave no access-denied error.
 
 ## Who can do what
 

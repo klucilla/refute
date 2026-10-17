@@ -568,3 +568,115 @@ CreateVm as already done for exactly this VM.
 check failed (above). The base disk and the VM were created under version 2 of the tree ACL,
 and no access-denied error was reported by these calls. Every other operation is not
 validated yet.
+
+## 16. The module updated with the correction of #142, and to 16 GiB (2026-10-17)
+
+Run by the maintainer as Administrator with `Update-RefuteVmConfig.ps1` (one file per call,
+both hashes checked before and after; the ACLs of the files unchanged). From the
+maintainer's report of the outputs; nothing of this step is in `operations.jsonl`, which
+records the endpoint's calls only.
+
+| File | Before | After |
+|---|---|---|
+| `RefuteVm.Core.ps1` | `5b717a33…` | `a732629c…` (#142) |
+| `RefuteVm.HyperV.ps1` | `32de9534…` | `6abe2f2e…` (#142) |
+| `RefuteVm.psm1` | `9633d81d…` | `3b6011d5…` (#142) |
+| `RefuteVm.Config.psd1` | `fe46f573…` | `6a2d2949…d575` (16 GiB of static memory, the maintainer's decision; the file is versioned byte for byte in commit `a6e2c68`) |
+
+The plans of the log show the change of configuration: `ConfigSha256` `e41ee75a…` up to
+16:52:09 UTC, `24ac9a06…` from 17:04:08 UTC.
+
+## 17. Operations 4 to 15 through the endpoint (2026-10-17)
+
+From a checked copy of `C:\ProgramData\RefuteVm\Log\operations.jsonl` (read only), made by
+`scripts/vm/publish_operation_log.py` for the records from 13:19:00 UTC: 55 records; source
+SHA-256 `677879c8588f01e4988fb402dd79bbd5186bc95023a3fec5c703e814e596f639`, copy SHA-256
+`db55d28a5d45575dee256bf22275a102ac51c58c5a5bff8479a2e88c68794690`. Account names are
+`<virtual-account>` with the number of the WinRM virtual account. Times are UTC. The
+maintainer ran each operation with two local functions of his window: `Sim` (the
+simulation) and `Run`, which checks the operation, `AlreadyDone` and `Refusal` of the
+simulation before it runs.
+
+| # | Operation | Simulation | Call | Result | `PlanSha256` | Change |
+|---|---|---|---|---|---|---|
+| 4 | `CreateVm` | 16:35:19.236, VA 2 | — | `AlreadyDone` (the module of #142 recognizes the VM stored in `VmRoot\VmName`) | `169d6170…` | none |
+| 5 | `SetMemory` | 16:35:34.899, VA 3 | intent 16:36:25.253, VA 4 | done 16:36:25.441 | `0078e2e3…` | `Memory.DynamicMemoryEnabled` true to false (the startup memory was set by `New-VM`) |
+| 6 | `SetProcessor` | 16:36:37.966, VA 5 | intent 16:38:16.430, VA 8 | done 16:38:16.592 | `955d8313…` | `Processor.Count` 1 to 24 |
+| 7 | `SetSecureBoot` | 16:38:36.252, VA 9 (an earlier simulation at 16:36:57.824, VA 6, with another plan) | intent 16:38:47.662, VA 10 | done 16:38:47.986 | `07622144…` | template `MicrosoftWindows` to `MicrosoftUEFICertificateAuthority` |
+| 8 | `DisableCheckpoints` | 16:39:47.943, VA 13 | intent 16:39:53.371, VA 14 | done 16:39:53.635 | `30a5f8d0…` | automatic checkpoints off, type `Disabled` |
+| 9 | `DisconnectNetwork` | 16:42:33.227, VA 16 | — | `AlreadyDone` | `16a73b9e…` | none |
+| 10 | `DisableGuestServiceInterface` | 16:42:42.442, VA 17 | — | `AlreadyDone` | `a8b5beda…` | none |
+| 11 | `AttachBaseDisk` | 16:42:50.290, VA 18 | intent 16:43:06.439, VA 19 | done 16:43:06.980 | `13018d5c…` | the base disk attached |
+| 12 | `ImportInstallIso` | 16:43:31.192, VA 20 | intent 16:43:42.133, VA 21 | done 16:43:51.472 | `f3c8ccef…` | `Media.InstallIso` absent to `cc8a95cd…d927` |
+| 13 | `ImportSeedIso` | 16:44:06.205, VA 22 | intent 16:44:26.947, VA 23 | done 16:44:33.623 | `d1e6454d…` | `Media.SeedIso` absent to `476754b8…60f9` |
+| 14 | `AttachInstallMedia` | 16:44:49.637, VA 24 | intent 16:44:59.602, VA 25 | done 16:45:07.265 | `a8c5f1ed…` | two DVD drives: the install ISO and the seed |
+| 15 | `SetBootFromInstallMedia` | 16:45:11.006, VA 26 | intent 16:45:16.562, VA 27 | done 16:45:16.810 | `a8437762…` | first boot device: the install ISO |
+
+**Two refusals, both correct:**
+- `SetMemory` at 16:37:23.446 (VA 7): `refused`, "the plan differs from the simulated one
+  (state or configuration changed); simulate again". The current plan was `AlreadyDone`
+  (`08c27a15…`) after operation 5; no change was made.
+- `DisableCheckpoints` at 16:38:59.193 (VA 11): `refused` with the same reason; the call
+  carried the `PlanSha256` of operation 7 (the maintainer's report), not that of operation
+  8's simulation (`30a5f8d0…`). No change was made; operation 8 was then simulated and done.
+
+A call of operation 6 with a text in place of the hash was stopped by the `ValidatePattern`
+of `Invoke-RefuteVm.ps1` before it reached the endpoint (the maintainer's report; nothing is
+logged for it).
+
+## 18. Operation 16, StartVm, with 48 GiB: failed for lack of memory (2026-10-17)
+
+| Step | Log record (UTC) | Result |
+|---|---|---|
+| Simulation | `simulated` 16:51:23.273, VA 29 | `State` Off to Running, `PlanSha256` `1f90fc80…` |
+| Call | `intent` 16:51:35.322, VA 30 | |
+| Result | `result` 16:52:09.196, VA 30 | `Outcome` **failed**, `Error` "VirtualizationException (HRESULT 0x80131500; category NotSpecified)" |
+
+The host had 42.2 GB of memory free (the maintainer), less than the 48 GiB of static memory
+the VM needs to start. The module records the error by type and HRESULT, never by its
+message (#142). By the maintainer's decision the VM's memory became 16 GiB (section 16;
+plan 7.1).
+
+## 19. SetMemory to 16 GiB, StartVm, and the automatic installation (2026-10-17)
+
+| Step | Log record (UTC) | Result |
+|---|---|---|
+| `SetMemory` | simulated 17:04:08.819 (VA 32); intent 17:04:20.521 and done 17:04:20.737 (VA 33) | `Memory.StartupBytes` 51539607552 to 17179869184; `PlanSha256` `d849fb25…` |
+| `StartVm` | simulated 17:04:29.671 (VA 34); intent 17:04:34.782 and done 17:04:35.540 (VA 35) | `PlanSha256` `5c8543d6…` |
+| Console (not logged) | | the maintainer answered "yes" to "Continue with autoinstall?" at 14:07 Brasília time (17:07 UTC); the VM was `Off` at 14:09 (17:09 UTC); the base disk then held **6.50 GB** |
+
+## 20. First boot from the disk and the stop; end of phase 1 (2026-10-17)
+
+| Step | Log record (UTC) | Result |
+|---|---|---|
+| `DetachInstallMedia` | simulated 17:13:26.749 (VA 37); intent 17:13:32.341 and done 17:13:33.062 (VA 38) | both DVD drives removed (one already empty); first boot device the base disk; `PlanSha256` `65da3bda…` |
+| `StartVm` | simulated 17:13:39.681 (VA 39); intent 17:13:45.591 and done 17:13:46.136 (VA 40) | `PlanSha256` `a5d6ed17…` |
+| Console (not logged) | | "Ubuntu 26.04.1 LTS refute-vm tty1" and "refute-vm login:". The boot waits about 2 minutes on `systemd-networkd-wait-online`, since there is no network |
+| `StopVm` | simulated 17:17:21.183 (VA 41); intent 17:17:29.020 and done 17:17:32.859 (VA 42) | `State` Running to Off: the shutdown through Hyper-V's integration works on Ubuntu 26.04 (the open point of after-operation-16.md, section 2) |
+
+**SSH host keys of this installation**, as cloud-init printed them on the console. They are
+read from the maintainer's screenshot (`.cache\vm\evidence\first-boot-login.png`, local,
+SHA-256 `9cbab183823588ff0cf1f09dd03037f2a6314f4d7749c4c7bc3e510ffc8c40c3`), enlarged
+3 times; the RSA key had scrolled off the screen:
+
+- ECDSA 256: `SHA256:2PWVLbYMQeIBh+TInZcIAUdEb/tlji0flTTeNQjV918`
+- ED25519 256: `SHA256:fTK5QmODPIoJeKWWBlHd2fMdOwpKFDbW6k6YRKj5kck`
+
+Transcribed by eye: in the console font the zero is slashed, so `0` in `tlji0f` and `O` in
+`QmODP` and `MdOwp` are read as such; `l` and `I` (as in `flTTe`, `IBh`, `BlHd2`) are told
+apart by shape only. **These keys will not be used:** the VM is reinstalled for phase 2
+with a seed that brings its network (phase2-network-design.md, the maintainer's decision of
+2026-10-17), which generates new host keys; the first SSH session checks the keys of that
+installation.
+
+**ACL of `C:\Hyper-V`:** version 2 gave no access-denied error in any operation of sections
+14 to 20, including those that create files under `C:\Hyper-V` (the base disk, the VM, the
+media copies), which were hypotheses 11 and 14 of section 9.2.
+
+**Status of W6.4 and W6.5 at the end of phase 1:** operations 1 to 16 of the roadmap are
+done through the endpoint, each simulated and then run with the simulated plan, plus
+`DetachInstallMedia`, a `StartVm` from the disk and a `StopVm`; the endpoint refused each
+call whose plan differed. **Phase 1 of the VM is concluded**: Ubuntu 26.04.1 is installed on
+the base disk, the VM is off, with no network. The endpoint's other restrictions (NoLanguage,
+the virtual account's groups, the loopback-only WinRM, the transcripts) were exercised by
+every session but not tested on their own.
