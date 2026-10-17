@@ -320,15 +320,17 @@ published.
 - **What is still pending:** no source states which right `Set-VMHost` needs, and the runner is not the maintainer's host. Only the new attempt on the host, after the corrected ACL, confirms the cause there. The evidence covers SetHostPaths only.
 - **Each session is a new account.** A file created in one session is not owned by the account of the next one.
 
-**Operations that would meet the same denial with the ACL of the registration:**
-- **SetHostPaths:** failed, as observed.
-- **AttachBaseDisk:** gives the VM's SID access to the base disk created in another session.
-- **AttachInstallMedia:** gives the VM's SID access to the two ISOs copied in another session.
-- **At risk:**
-  - **CreateVm:** gives the VM's SID access to its configuration, in a folder created in the same session.
+**The other operations with the ACL of the registration: hypotheses, not tested.** Only SetHostPaths was observed (denied on the host and on the runner). For the others, what follows is what the diagnosis predicts, not evidence:
+- **Expected to meet the same denial:**
+  - **AttachBaseDisk:** it gives the VM's SID access to the base disk created in another session.
+  - **AttachInstallMedia:** it gives the VM's SID access to the two ISOs copied in another session.
+- **Possibly at risk:**
+  - **CreateVm:** it gives the VM's SID access to its configuration, in a folder created in the same session.
   - **SaveVm:** the saved state is written in the VM's folder, where the Virtual Machines group has no entry.
-- **Not concerned:** the operations that change only VM or host settings (memory, processors, Secure Boot, checkpoints, integration services, network, boot order, start, stop, suspend, resume, the processor maximum, enhanced session mode).
+- **Not expected to meet this problem:** the operations that change only VM or host settings (memory, processors, Secure Boot, checkpoints, integration services, network, boot order, start, stop, suspend, resume, the processor maximum, enhanced session mode). This is a prediction too.
 - **Another question, for ImportInstallIso and ImportSeedIso:** they read the media in the project folder, which the virtual account may not be allowed to read. That is a separate check, for the operations themselves.
+
+Each of these is known only when it runs, one operation at a time with the maintainer's OK.
 
 **The correction, not applied: version 2 of the tree ACL** (`Get-RefuteVmTreeAclSpec` in `scripts/vm/RefuteRegistration.Core.ps1`). Its design was approved by the maintainer on 2026-10-16 **as an explicit security concession**; applying it on the host is a separate decision of the maintainer.
 - **Hyper-V Administrators:** Modify plus ChangePermissions, inherited.
