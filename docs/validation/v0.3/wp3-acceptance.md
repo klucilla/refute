@@ -853,8 +853,9 @@ declared in the claim before the lock. With no route that closes the chain, the 
     - **The link of one route's value to the printed value** keeps the `unknown`
       interval of section 1.7.
     - **An attempt discarded:** intersecting the `nearest` and `truncate` intervals for
-      that link refused correct values. For example, 3567/4000 = 89.175, printed "89.18"
-      by rounding, falls outside the truncation interval of "89.18". The attempt was
+      that link refused correct values. For example, an accuracy of 3567 of 4000
+      examples is 89.175 (in percent), printed "89.18" by rounding, and falls outside the
+      truncation interval of "89.18", `[89.18, 89.19)`. The attempt was
       reverted before the merge, with no other code change.
     - **The test:** `test_with_no_rounding_known_only_identical_values_agree` (89.200
       against 89.2001 is `INCONCLUSIVE`; 89.200 against 89.2, the same number, passes).
