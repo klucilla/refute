@@ -52,8 +52,14 @@ cover is still a requirement, not a tested property.
   internet only through a controlled intermediary (a forwarding proxy) with an
   allowlist of declared destinations: package registries and the declared data hosts.
   There is no direct connection to the internet.
-- **Run phase without network:** `--network none`, and the VM's network adapter
-  disconnected.
+- **Run phase without network:** `--network none` for every run container. **Changed by
+  the maintainer on 2026-10-17:** during a run the VM's adapter stays connected in the
+  port profile `pull` (SSH from the host to the VM only, no proxy, every other packet
+  denied in both directions), instead of disconnected. Reason: to follow a run from the
+  host while it goes on (a night run included). Risk accepted: a process that escaped a
+  container could reach the VM's SSH server's replies only, never start a connection to
+  the host, the proxy or anything else, as the port ACLs of the profile allow only the
+  host's inbound SSH (stateful); the containers themselves have no network.
 
 ## Inputs
 

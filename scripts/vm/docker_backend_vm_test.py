@@ -1,6 +1,6 @@
 """The real test of the docker backend on the Refute VM (the maintainer's decision of
-2026-10-17: "um teste real na VM com um repositório sintético do catálogo, provando a
-contagem de CPU pelo cgroup, a parada no limiar e o --network none").
+2026-10-17: a real test on the VM that proves the CPU count by the cgroup, the stop at the
+threshold and --network none).
 
 Run on the VM, from the Refute checkout:
     .venv/bin/python scripts/vm/docker_backend_vm_test.py --image <ubuntu@sha256:...> --out <dir>

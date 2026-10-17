@@ -223,6 +223,16 @@ before third-party code):
 - **V22** (the stopping margin of the budget): measured on the first real run, not before.
 - **W6.4 and W6.6:** recorded in `wp6-results/jea-registration.md` and kept green in CI.
 
+**Network during a run, changed by the maintainer on 2026-10-17:** the run containers keep
+`--network none`; the VM's adapter is no longer disconnected during a run but stays in
+the port profile `pull` (inbound SSH from the host only, no path to the proxy, everything
+else denied). Reason: to follow a run from the host. Risk accepted: inside the VM, only
+the replies of the SSH sessions the host opens leave the port; nothing the VM starts
+reaches the host, the proxy, the LAN or the internet (the profile's port ACLs, tested by
+the isolation test for the `build` profile, which adds only the proxy path). The profile
+changes with the adapter disconnected (`DisconnectNetwork`, `SetPortProfile -Profile pull`,
+`ConnectNetwork`), through the endpoint, between the build and the runs.
+
 ## 6. Acceptance of the package
 
 **Status: accepted by the maintainer on 2026-10-17**, on the isolation test of 20:50:21 UTC
