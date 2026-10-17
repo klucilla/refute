@@ -803,10 +803,11 @@ was appended to `/etc/squid/refute-allowlist.txt` on the running proxy (SHA-256 
 **The isolation test (V3, wp6-acceptance.md section 5a)**, run at 20:50:21 UTC with that
 image, from the status saved at that moment: **every check passed** (7 on the host side, 26
 in the guest). Report and raw guest lines in
-[isolation/isolation-2026-10-17.md](isolation/isolation-2026-10-17.md) (SHA-256
-`3e369c93…1786`) and
+[isolation/isolation-2026-10-17.md](isolation/isolation-2026-10-17.md) (SHA-256 of the
+committed file, LF line endings: `d2dcd4b8…3210`) and
 [isolation/isolation-2026-10-17-guest.txt](isolation/isolation-2026-10-17-guest.txt)
-(`486514d9…8538`). Limits of what it shows: a refused proxy request to a domain outside the
+(`6ebeaf54…6fc3`); the copies the script wrote on the host have CRLF line endings
+(`3e369c93…1786` and `486514d9…8538`). Limits of what it shows: a refused proxy request to a domain outside the
 list reads as `000` (the CONNECT tunnel refused with 403; curl reports no HTTP code), not as
 `403`; "closed" on the host's ports does not tell the port ACL from the host's firewall, so
 the block outside the guest is shown by the same-target pair on the proxy (3128 open, its
