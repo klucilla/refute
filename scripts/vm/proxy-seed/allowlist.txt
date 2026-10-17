@@ -10,6 +10,10 @@ download.docker.com
 registry-1.docker.io
 auth.docker.io
 production.cloudflare.docker.com
+# the blobs of image pulls come from here (the first pull, 2026-10-17, was refused without
+# it); listed as "Docker Pull/Push" in https://docs.docker.com/desktop/enterprise/allow-list/
+# (read 2026-10-17). Added on the running proxy by hand, not by a new seed
+production.cloudfront.docker.com
 # PyPI and the CPU wheels of PyTorch
 pypi.org
 files.pythonhosted.org

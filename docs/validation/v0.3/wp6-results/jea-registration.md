@@ -736,3 +736,79 @@ sntrup761x25519-sha512@openssh.com"; `ssh-keyscan` fails too. With
 `-o KexAlgorithms=curve25519-sha256` it works. Every SSH of Refute to its VMs pins the
 client options (`scripts/vm/isolation/run_isolation.py`, `SSH_OPTIONS`); the Windows
 client is not updated without the maintainer.
+
+## 22. Phase 2, parts B and C, Docker Engine and the isolation test (2026-10-17)
+
+**Part B** (the maintainer, as Administrator): `Update-RefuteVmConfig.ps1 -Apply` for
+`RefuteVm.Core.ps1` (`51b7c2a2…07b8`), `RefuteVm.HyperV.ps1` (`814ee02d…4c82`),
+`RefuteVm.psm1` (`1d4a1a60…8bab`) and `RefuteVm.Config.psd1` (`05f09f19…30fc`), each
+"Done … checks passed". `-Status` afterwards: `ConfigVersion` 2, `NetworkSwitchId`
+`9a27f54d-3435-4ff4-b442-06862e708657`, `SeedIsoName` `refute-vm-seed-2.iso`,
+`ConfigSha256` `e1c3c8a5a97a4936642ed6ee0b0fd9d01de0f9345d255ef8a1c5da000afe95bb`; the
+Refute VM off, its adapter on no switch, no port ACL.
+
+**Another switch on the host.** The status also lists an External switch, "Internet
+Direta" (Id `79ecadf7-06d7-4b3e-bcb5-4bed9ccccd1a`), older than Refute and used by no
+Refute VM. The module accepts only the configured switch by Id: an adapter connected to
+any other switch makes every operation but `DisconnectNetwork` refuse (synthetic case
+"StartVm refused on another switch"), and `ConnectNetwork` connects only to the configured
+Id, internal, with its name.
+
+**Part C** through the endpoint, from the maintainer's ordinary window (each simulated,
+then run with the simulated plan; the maintainer answered "yes" to the autoinstall):
+
+| Step | `PlanSha256` | Result |
+|---|---|---|
+| `ImportSeedIso` `52fe6366…caa3` | `9f1d5c77…` | done |
+| `AttachInstallMedia` | `c87804bb…` | done: the Ubuntu ISO and `refute-vm-seed-2.iso` |
+| `SetBootFromInstallMedia` | `f1f24735…` | done |
+| `StartVm` | `1dcaf97c…` | done; the installation ran without network; the VM was off at 20:39:43 UTC |
+| `DetachInstallMedia` | `d8c35fd8…` | done: the Ubuntu drive was already empty (the installer ejected it) and the seed drive; both removed by controller and location; boot from the base disk |
+| `SetPortProfile -Profile build` | `f913627a…` | done: the 4 entries of the profile |
+| `ConnectNetwork` | `730263e3…` | done: the adapter on `refute-internal` |
+| `StartVm` | `a30c7531…` | done; port 22 of 10.231.71.2 open at 20:42 UTC |
+
+**SSH host keys of the reinstalled Refute VM** (new keys; those of section 20 are history),
+read over the internal network as in section 21, fingerprints recomputed with
+`ssh-keygen -lf`:
+
+- ED25519 256: `SHA256:OuvKp79loNdsCwFOA/e7Dl8fqMETUeFrtx0QGy4Qtuc`
+  (`.cache\vm\evidence\refute-vm-known_hosts`, SHA-256 `8f51f6c0…8be1`)
+- ECDSA 256: `SHA256:q+YsR20VHHMEzX+D25Ay0KZOEakCjlz0vJYM6yYcjSI`
+  (`.cache\vm\evidence\refute-vm-known_hosts-ecdsa`, SHA-256 `4406d090…3f04`)
+
+The first SSH session used that ED25519 file only, with `StrictHostKeyChecking=yes` and the
+pinned client options. The guest: Ubuntu 26.04.1 LTS, kernel 7.0.0-30-generic, one
+interface with 10.231.71.2/29 only (no IPv6 address, no default route), apt through the
+proxy, `systemd-networkd-wait-online` masked, 24 CPUs, 15 GiB of memory, 97 GB root.
+
+**Docker Engine** through the proxy, following https://docs.docker.com/engine/install/ubuntu/
+(read 2026-10-17; it lists Ubuntu Resolute 26.04). The repository key was checked before it
+was trusted: fingerprint `9DC858229FC7DD38854AE2D88D81803C0EBFCD88`, the one Docker
+published for this key (https://github.com/docker/docs/issues/3457, read 2026-10-17).
+Installed: `docker-ce` and `docker-ce-cli` 5:29.9.1, `containerd.io` 2.4.2,
+`docker-buildx-plugin` 0.38.0; storage overlayfs, cgroup v2 with the systemd driver; the
+daemon pulls through the proxy (`/etc/docker/daemon.json`, `proxies`). Log:
+`.cache\vm\evidence\docker-install.log`.
+
+**One domain added to the proxy's allowlist.** The first image pull was refused: Docker Hub
+serves the blobs from `production.cloudfront.docker.com`, which Docker lists as "Docker
+Pull/Push" (https://docs.docker.com/desktop/enterprise/allow-list/, read 2026-10-17). It
+was appended to `/etc/squid/refute-allowlist.txt` on the running proxy (SHA-256 before
+`52695eda…23ca2`, after `d33c43d1…6e60e`; `squid -k parse`, then a reload) and to
+`scripts/vm/proxy-seed/allowlist.txt`. Then `ubuntu:26.04` was pulled:
+`ubuntu@sha256:c098726dd9b9733f3e885f8de0ef375206a311b0a317eadc40d347b1115fb944`, created
+2026-10-06T21:23:49Z.
+
+**The isolation test (V3, wp6-acceptance.md section 5a)**, run at 20:50:21 UTC with that
+image, from the status saved at that moment: **every check passed** (7 on the host side, 26
+in the guest). Report and raw guest lines in
+[isolation/isolation-2026-10-17.md](isolation/isolation-2026-10-17.md) (SHA-256
+`3e369c93…1786`) and
+[isolation/isolation-2026-10-17-guest.txt](isolation/isolation-2026-10-17-guest.txt)
+(`486514d9…8538`). Limits of what it shows: a refused proxy request to a domain outside the
+list reads as `000` (the CONNECT tunnel refused with 403; curl reports no HTTP code), not as
+`403`; "closed" on the host's ports does not tell the port ACL from the host's firewall, so
+the block outside the guest is shown by the same-target pair on the proxy (3128 open, its
+listening SSH closed). Acceptance of WP6 (section 6) waits for the maintainer to record the
+result.

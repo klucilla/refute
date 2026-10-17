@@ -1,0 +1,30 @@
+INFO interface eth0
+INFO addresses inet 10.231.71.2/29 
+INFO routes 10.231.71.0/29 dev eth0 proto kernel scope link src 10.231.71.2 ;172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown ;
+CHECK proxy_port_open PASS 10.231.71.3:3128 open
+CHECK proxy_ssh_blocked PASS 10.231.71.3:22 closed
+CHECK host_22_blocked PASS 10.231.71.1:22 closed
+CHECK host_135_blocked PASS 10.231.71.1:135 closed
+CHECK host_139_blocked PASS 10.231.71.1:139 closed
+CHECK host_445_blocked PASS 10.231.71.1:445 closed
+CHECK host_3389_blocked PASS 10.231.71.1:3389 closed
+CHECK host_5985_blocked PASS 10.231.71.1:5985 closed
+CHECK host_5986_blocked PASS 10.231.71.1:5986 closed
+CHECK host_80_blocked PASS 10.231.71.1:80 closed
+CHECK host_443_blocked PASS 10.231.71.1:443 closed
+CHECK private_192.168.0.1_blocked PASS 192.168.0.1:80 closed
+CHECK private_192.168.1.1_blocked PASS 192.168.1.1:80 closed
+CHECK private_10.0.0.1_blocked PASS 10.0.0.1:80 closed
+CHECK private_172.16.0.1_blocked PASS 172.16.0.1:80 closed
+CHECK private_169.254.169.254_blocked PASS 169.254.169.254:80 closed
+CHECK direct_tcp_1.1.1.1_443_blocked PASS 1.1.1.1:443 closed
+CHECK direct_tcp_9.9.9.9_53_blocked PASS 9.9.9.9:53 closed
+CHECK no_dns PASS no name resolution in the guest
+CHECK proxy_allows_pypi PASS 200
+CHECK proxy_refuses_example_com PASS 000
+CHECK proxy_refuses_ip_literal PASS 403
+CHECK proxy_refuses_other_port PASS 000
+CHECK no_ipv6_address PASS none configured
+CHECK ipv6_blocked PASS only the guest itself answers
+CHECK container_network_none PASS closed 10.231.71.3/3128 closed 1.1.1.1/443 interfaces lo, 
+END

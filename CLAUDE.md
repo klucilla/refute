@@ -187,9 +187,16 @@ and review (the standing approval of 2026-10-14 and 2026-10-15).
    - deleting anything outside `.cache/`;
    - a force push, a history rewrite, or deleting a branch (except those the maintainer
      approves);
-   - any step on the VM, in Hyper-V or as Administrator. The maintainer runs these; the
-     agent prepares the exact commands, in plain text, one line per command, with what to
-     check.
+   - any step as Administrator, and the console answers of an installation ("yes" to the
+     autoinstall). The maintainer runs these; the agent prepares the exact commands, in
+     plain text, one line per command, with what to check.
+
+   Since 2026-10-17 (the maintainer's decision), the agent runs itself, from the
+   maintainer's machine and without Administrator: the endpoint's operations in an
+   ordinary window (`-Status`, and each operation simulated before it is run with the
+   simulated plan), network checks, and SSH to the VMs with the checked host keys. Endpoint
+   steps are delivered in a form a script can run (for example
+   `.cache\vm\refute-step.ps1 -Op <operation> -Args1 '<arguments>' -Mode Sim|Run`).
 
    Everything else, the agent decides and does.
 4. Free research on the internet; an external fact in a document carries its URL and the
