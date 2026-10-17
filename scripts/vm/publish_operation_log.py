@@ -99,12 +99,16 @@ RUN_AS_PLACEHOLDER = re.compile(r"^(?:<virtual-account> VA \d+|<account>)$")
 # where a drive path starts, and a ".." step in a path (in a text whose "/" became "\")
 DRIVE = re.compile(r"(?i)\b[a-z]:\\")
 DOTDOT = re.compile(r"(?:^|\\|(?<=[\s'\"]))\.\.(?=$|[\\\s'\"])")
-# what may follow an allowed root: a separator, or a character that ends a path
-PATH_END = "\\ '\"<>|,;)\0"
+# what may follow an allowed root: a separator, or a character no folder name can hold
+# (a space, a comma, a parenthesis or a single quote can be part of a sibling folder's
+# name, Codex review of #154; the masked placeholder is "\0")
+PATH_END = '\\"<>|\0'
 
 LEAKS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("a user profile path", re.compile(r"(?i)\b[a-z]:[\\/]+users[\\/]")),
-    ("a UNC path", re.compile(r"\\\\[^\\\s]+\\")),
+    # \\host\share, //host/share and their mixtures (Codex review of #154); a URL's "//host/"
+    # is refused as well, since it names a host
+    ("a UNC path or a URL", re.compile(r"[\\/]{2}[^\\/\s]+[\\/]")),
     (
         "an IPv4 address",
         re.compile(

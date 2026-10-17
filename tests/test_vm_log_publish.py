@@ -225,6 +225,9 @@ def test_the_copy_of_the_tool_passes_the_checker():
             "holds a user profile path",
         ),
         (lambda c: c[2].update(Error="\\\\server\\share <host-identifier>"), "holds a UNC path"),
+        # Codex review of #154, round 4: the other separator and a mixture
+        (lambda c: c[2].update(Error="//remotehost/share/<host-identifier>"), "holds a UNC path"),
+        (lambda c: c[2].update(Error="\\/remotehost\\share <host-identifier>"), "holds a UNC path"),
         (
             lambda c: c[2].update(Error="ops@example.org <host-identifier>"),
             "holds an e-mail address",
@@ -343,6 +346,11 @@ def test_a_name_inside_a_placeholder_is_not_a_leak():
         "C:\\Hyper-V\\Virtual Hard Disks\\..\\..\\Private\\<host-identifier>.log",
         "'C:/Hyper-V/Virtual Hard Disks/../../Private/<host-identifier>.log'",
         "C:\\Hyper-Vx\\<host-identifier>.log",
+        # Codex review of #154, round 4: sibling folders whose names start with the root's
+        "C:\\Hyper-V Private\\<host-identifier>.log",
+        "C:\\Hyper-V,private\\<host-identifier>.log",
+        "C:\\Hyper-V)private\\<host-identifier>.log",
+        "C:\\Hyper-V'private\\<host-identifier>.log",
         "c:\\temp\\<host-identifier>",
     ],
 )
