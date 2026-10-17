@@ -13,11 +13,13 @@ from refute.selection.filters import (
     Alternative,
     FilterError,
     Window,
+    adjustment_record,
     apply_filters,
     category_allowed,
     check_adjustment,
     choose_adjustment,
     keyword_hits,
+    version_suffixed_ids,
 )
 from refute.selection.frame import FRAME_COLUMNS, FrameError, FrameSnapshot, file_sha256, load_frame
 
@@ -194,3 +196,80 @@ def test_frame_missing_a_column_is_refused(tmp_path):
     _write_frame(path, FRAME[:2], columns=FRAME_COLUMNS[:-1])
     with pytest.raises(FrameError, match="framework"):
         load_frame(FrameSnapshot("u", "r", file_sha256(path), path))
+
+
+# ---- #59, the Codex review of #78 (the maintainer's approval of 2026-10-17) -------------------
+
+
+def test_a_deduplication_conflict_records_the_kept_row_and_the_differing_values():
+    rows = [
+        row("2301.00001", "https://github.com/a/one", official=True),
+        row("2301.00001", "https://github.com/a/one", official=False),
+        row("2301.00002", "https://github.com/b/two"),
+    ]
+    _, steps = apply_filters(rows)
+    dedup = steps[1]
+    assert dedup.conflicts == ["2301.00001 https://github.com/a/one"]
+    (detail,) = dedup.conflict_details
+    assert detail["paper_arxiv_id"] == "2301.00001"
+    # the fixed order keeps False before True (repr), and the other value is recorded
+    assert detail["kept"]["is_official"] is False
+    assert detail["others"] == [{"is_official": True}]
+    # the duplicate row is listed as removed while its paper stays
+    assert dedup.removed_rows_paper_kept == ["2301.00001 https://github.com/a/one"]
+
+
+def test_a_row_removed_while_its_paper_stays_is_listed():
+    rows = [
+        row("2301.00001", "https://github.com/a/official"),
+        row("2301.00001", "https://github.com/a/unofficial", official=False),
+    ]
+    papers, steps = apply_filters(rows)
+    official = steps[2]
+    assert official.name == "2_official_and_mentioned"
+    assert official.removed_papers == [] and official.rows_removed == 1
+    assert official.removed_rows_paper_kept == ["2301.00001 https://github.com/a/unofficial"]
+    assert [p["repo_url"] for p in papers] == ["https://github.com/a/official"]
+
+
+ADJUSTMENTS = [
+    Alternative("wider_window", 5, Window("2022-01", "2025-06"), ("cs.LG", "stat.ML")),
+    Alternative("more_categories", 3, Window("2023-01", "2025-06"), ("cs.LG", "stat.ML", "cs.CV")),
+]
+
+
+@pytest.mark.parametrize(("accepted", "made"), [(-1, 0), (2, -1), (True, 0), (2, 1.0)])
+def test_negative_or_non_integer_counters_are_refused(accepted, made):
+    with pytest.raises(FilterError, match="non-negative integer"):
+        choose_adjustment(ADJUSTMENTS, accepted, made)
+
+
+@pytest.mark.parametrize("threshold", [-1, True, 2.0])
+def test_an_alternative_needs_a_non_negative_integer_threshold(threshold):
+    with pytest.raises(FilterError, match="accepted_below"):
+        Alternative("bad", threshold, DEFAULT_WINDOW, ("cs.LG",))
+
+
+def test_the_adjustment_record_names_the_alternative_and_its_reason():
+    record = adjustment_record(ADJUSTMENTS, 2, 0)
+    assert record["applied"] == "wider_window"
+    assert record["window"] == {"first": "2022-01", "last": "2025-06"}
+    assert record["categories"] == ["cs.LG", "stat.ML"]
+    assert "2 pilot papers accepted, fewer than 5" in record["reason"]
+    none = adjustment_record(ADJUSTMENTS, 6, 0)
+    assert none["applied"] is None and "no trigger fired" in none["reason"]
+    with pytest.raises(FilterError, match="already adjusted once"):
+        adjustment_record(ADJUSTMENTS, 2, 1)
+
+
+def test_version_suffixed_ids_are_measured():
+    rows = [
+        row("2301.00001", "https://github.com/a/one"),
+        row("2301.00002v3", "https://github.com/b/two"),
+        row("2301.00002v3", "https://github.com/b/three"),
+        {"paper_arxiv_id": None, "repo_url": "https://github.com/c/x"},
+    ]
+    assert version_suffixed_ids(rows) == ["2301.00002v3"]
+    # the window filter removes such rows; this measurement lists them for the protocol
+    papers, _ = apply_filters(rows)
+    assert [p["paper_arxiv_id"] for p in papers] == ["2301.00001"]

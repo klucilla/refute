@@ -1353,6 +1353,13 @@ class MlClaimSchema:
                     raise ValueError(f"{t.key}: the transcribed {what} differs from the claim's")
             if t.type == "comparison" and candidate.get("reference") != t.comparison.reference:
                 raise ValueError(f"{t.key}: the inventory names another reference method")
+            # the identity of the candidate (#59, Codex review of the WP5 hardening): the
+            # dataset by the identifier the claim uses, and for a comparison its method;
+            # the execution conditions are text the maintainer approves with the inventory
+            if candidate.get("dataset") != t.dataset:
+                raise ValueError(f"{t.key}: the inventory names another dataset")
+            if t.type == "comparison" and candidate.get("method") != t.comparison.method:
+                raise ValueError(f"{t.key}: the inventory names another method")
         return digest
 
     @staticmethod

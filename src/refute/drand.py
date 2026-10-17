@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import platform
 import random
 import urllib.request
 from collections.abc import Callable, Iterable
@@ -119,3 +120,16 @@ def shuffled[T](items: Iterable[T], seed: int, key: Callable[[T], Any]) -> list[
         raise ValueError("the sort key is not unique, so the order would depend on the input")
     random.Random(seed).shuffle(ordered)
     return ordered
+
+
+def interpreter_record() -> dict[str, str]:
+    """The interpreter that ran a shuffle, for the selection log of every draw (the paper
+    draw and each claim draw). Python guarantees the same ``random()`` sequence for a
+    compatible seeder, not the same ``shuffle`` across versions
+    (https://docs.python.org/3.13/library/random.html#notes-on-reproducibility, accessed
+    2026-10-15), so a draw is replayed with the version it records (#59, Codex review of
+    #78); the recorded orders of tests/test_selection_frame.py stay as regression checks."""
+    return {
+        "python_version": platform.python_version(),
+        "python_implementation": platform.python_implementation(),
+    }

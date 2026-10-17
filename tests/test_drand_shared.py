@@ -164,8 +164,9 @@ def test_the_recorded_v02_beacon_gives_the_logged_seed():
     assert f"- seed = int(randomness, 16) = {seed}" in log
 
 
-def test_the_v02_pools_shuffle_into_the_logged_order():
-    seed = int(_recorded_v02_beacon()["seed"])
+def _rebuilt_pools() -> tuple[list[dict], list[dict]]:
+    """The two pools of the v0.2 selection, rebuilt by this test from the recorded
+    snapshot with the predicates of ``main()``, before the shuffle."""
     known = v02.load_known_targets()
 
     planets = []
@@ -207,7 +208,15 @@ def test_the_v02_pools_shuffle_into_the_logged_order():
         if tic in known:
             continue
         fps.append({**row, "_tic": tic, "_name": f"TOI-{row['TOI']}"})
+    return planets, fps
 
+
+def test_the_v02_pools_shuffle_into_the_logged_order():
+    """Only the prefix the log holds is compared with the log (the first 13 planets and
+    40 false positives the walk read): the log has no reference for the rest of the
+    475 and 456 rows, and this test claims nothing about them (#59, Codex review of #78)."""
+    seed = int(_recorded_v02_beacon()["seed"])
+    planets, fps = _rebuilt_pools()
     assert (len(planets), len(fps)) == (475, 456)  # selection_log.md, line 31
     order_p = drand.shuffled(planets, seed, key=lambda r: (r["_tic"], r["_name"]))
     order_f = drand.shuffled(fps, seed, key=lambda r: (r["_tic"], float(r["TOI"])))
@@ -216,3 +225,62 @@ def test_the_v02_pools_shuffle_into_the_logged_order():
         assert logged, pool
         got = [(i, r["_tic"], r["_name"]) for i, r in enumerate(order[: len(logged)], start=1)]
         assert got == logged, pool
+
+
+class _PoolsCapturedError(Exception):
+    """Stops ``main()`` after it has built both pools."""
+
+
+def test_main_itself_builds_the_pools_the_test_rebuilds(monkeypatch, tmp_path):
+    """The pools ``main()`` of calibration/v0.2/select_targets.py builds itself, captured
+    in memory (network and writes replaced; the walk stopped before any query), equal the
+    rebuilt pools of this test in full, shuffled in the same order, so that the
+    re-implementation cannot drift from the published code (#59, Codex review of #78)."""
+    seed = int(_recorded_v02_beacon()["seed"])
+    names = ("pscomppars_planet_pool.csv", "pscomppars_host_tic_ids.csv", "exofop_toi.csv")
+    data = {name: _snapshot(name) for name in names}
+
+    def snapshot(name, url):
+        return data[name], {
+            "file": f"pool_snapshot/{name}",
+            "sha256": hashlib.sha256(data[name]).hexdigest(),
+        }
+
+    captured = []
+
+    def walk(pool, needed, label, log):
+        captured.append((label, list(pool)))
+        if len(captured) == 2:
+            raise _PoolsCapturedError
+        return []
+
+    def no_network(*args, **kwargs):  # pragma: no cover - must not be called
+        raise AssertionError("main() reached the network")
+
+    monkeypatch.setattr(v02, "drand_seed", lambda number: (seed, {}))
+    monkeypatch.setattr(v02, "snapshot", snapshot)
+    monkeypatch.setattr(v02, "download", no_network)
+    monkeypatch.setattr(v02, "walk", walk)
+    monkeypatch.setattr(v02, "SNAPSHOT_DIR", tmp_path)  # retrieval.json goes here
+    with pytest.raises(_PoolsCapturedError):
+        v02.main()
+    (label_p, main_planets), (label_f, main_fps) = captured
+    assert (label_p, label_f) == ("planet", "false_positive")
+    planets, fps = _rebuilt_pools()
+    order_p = drand.shuffled(planets, seed, key=lambda r: (r["_tic"], r["_name"]))
+    order_f = drand.shuffled(fps, seed, key=lambda r: (r["_tic"], float(r["TOI"])))
+    assert [(r["_tic"], r["_name"]) for r in main_planets] == [
+        (r["_tic"], r["_name"]) for r in order_p
+    ]
+    assert [(r["_tic"], r["_name"]) for r in main_fps] == [(r["_tic"], r["_name"]) for r in order_f]
+    assert (len(main_planets), len(main_fps)) == (475, 456)
+
+
+def test_the_interpreter_of_a_draw_is_recorded():
+    record = drand.interpreter_record()
+    import platform
+
+    assert record == {
+        "python_version": platform.python_version(),
+        "python_implementation": platform.python_implementation(),
+    }
