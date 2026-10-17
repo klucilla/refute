@@ -1,0 +1,805 @@
+{
+  "protocol": "calibration/v0.3/pilot/PROTOCOL.md",
+  "protocol_commit": "d7dfc40e5bfc621db23b6a884e7ed8a1cb9c6abe",
+  "publication_proof": {
+    "commit_sha": "d7dfc40e5bfc621db23b6a884e7ed8a1cb9c6abe",
+    "run_id": 39065024617,
+    "run_created_at": "2026-10-17T20:02:30Z",
+    "round_published_at": "2026-10-17T22:00:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/pilot/PROTOCOL.md",
+        "920cbe2d5c0ad61ffe4613ee5ad6cd7e20503df60da2465dbe125cd95a108acb"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561628,
+  "additional": {
+    "triage_commit": "2f0146ae108e82d0885df145b18700fa2bd23c70",
+    "push_run_created_at": "2026-10-17T22:30:57Z"
+  },
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561628,
+    "round_time_utc": "2026-10-17T23:31:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561628",
+    "retrieved_utc": "2026-10-17T23:31:57Z",
+    "randomness": "0a1ce7fe99111082bb698324090c1aae9e8d3fb7233b7fbe7c52fc8f075e320a",
+    "signature": "b739b353bacdd0218e5a18ba8f158336da1e3316067e0b263783343e131b34652c17bb8c2f44855cb99368422648e2a608e03f1255ef7e124ea06a65ade0f47301f901735a16ab5711102e4e55f366db2d0dde7248eae1b3935bce9df60e7d3b",
+    "previous_signature": "95a37c33eeb20a536f88fc31b1c88e8e1b23664e7369be6127b0704300cee922fe52855fec1ea84dfeafbc1180bbeb1c0df0b2657c49d12f9bb7d7c13195607dcc46561cc5e96ae3533beb4872863b1fde94a7ca2435ace06fe7537f93965256",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "4574201370998821272744110366364507222633818309561395125313280659029946675722",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70303,
+      "papers_after": 70303
+    }
+  ],
+  "excluded_first_round": [
+    "2303.13675",
+    "2305.04397",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.13285",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.11381",
+    "2411.07705",
+    "2412.02323",
+    "2501.14486",
+    "2504.11478",
+    "2505.15008",
+    "2505.18568"
+  ],
+  "papers": [
+    {
+      "position": 1,
+      "arxiv_id": "2402.18152",
+      "repo_url": "https://github.com/xinjie-q/boosting-nerv",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2402.18152v3",
+        "primary_category": "eess.IV",
+        "title": "Boosting Neural Representations for Videos with a Conditional Decoder",
+        "abstract": "Implicit neural representations (INRs) have emerged as a promising approach for video storage and processing, showing remarkable versatility across various video tasks. However, existing methods often fail to fully leverage their representation capabilities, primarily due to inadequate alignment of intermediate features during target frame decoding. This paper introduces a universal boosting framework for current implicit video representation approaches. Specifically, we utilize a conditional decoder with a temporal-aware affine transform module, which uses the frame index as a prior condition to effectively align intermediate features with target frames. Besides, we introduce a sinusoidal NeRV-like block to generate diverse intermediate features and achieve a more balanced parameter distribution, thereby enhancing the model's capacity. With a high-frequency information-preserving reconstruction loss, our approach successfully boosts multiple baseline INRs in the reconstruction quality and convergence speed for video regression, and exhibits superior inpainting and interpolation results. Further, we integrate a consistent entropy minimization technique and develop video codecs based on these boosted INRs. Experiments on the UVG dataset confirm that our enhanced codecs significantly outperform baseline INRs and offer competitive rate-distortion performance compared to traditional and learning-based codecs. Code is available at https://github.com/Xinjie-Q/Boosting-NeRV."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/xinjie-q/boosting-nerv",
+        "exists": true,
+        "full_name": "Xinjie-Q/Boosting-NeRV",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d59ca91e7bae284a8970db007e5b2c7f804b0b46",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Xinjie-Q/Boosting-NeRV/blob/d59ca91e7bae284a8970db007e5b2c7f804b0b46/README.md",
+          "sha256": "c1200a20c40300e40b40f11ffb6ecc74cd88d653482dfeaee0ec1e1947650808",
+          "bytes": 6377
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      }
+    },
+    {
+      "position": 2,
+      "arxiv_id": "2304.13989",
+      "repo_url": "https://github.com/kkirsteinhansen/elder-scrolls-fandom",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2304.13989v1",
+        "primary_category": "cs.CL",
+        "title": "Cross-Domain Evaluation of POS Taggers: From Wall Street Journal to Fandom Wiki",
+        "abstract": "The Wall Street Journal section of the Penn Treebank has been the de-facto standard for evaluating POS taggers for a long time, and accuracies over 97\\% have been reported. However, less is known about out-of-domain tagger performance, especially with fine-grained label sets. Using data from Elder Scrolls Fandom, a wiki about the \\textit{Elder Scrolls} video game universe, we create a modest dataset for qualitatively evaluating the cross-domain performance of two POS taggers: the Stanford tagger (Toutanova et al. 2003) and Bilty (Plank et al. 2016), both trained on WSJ. Our analyses show that performance on tokens seen during training is almost as good as in-domain performance, but accuracy on unknown tokens decreases from 90.37% to 78.37% (Stanford) and 87.84\\% to 80.41\\% (Bilty) across domains. Both taggers struggle with proper nouns and inconsistent capitalization."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kkirsteinhansen/elder-scrolls-fandom",
+        "exists": true,
+        "full_name": "kkirsteinhansen/elder-scrolls-fandom",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7287c97b245fcb0846967dde195ea30b54cc3ef7",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/kkirsteinhansen/elder-scrolls-fandom/blob/7287c97b245fcb0846967dde195ea30b54cc3ef7/README.md",
+          "sha256": "3c37ef9b0eb80d352b4811a47d9d63f802ed04e1ac5ef7f664c39265221d14b6",
+          "bytes": 1014
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    },
+    {
+      "position": 3,
+      "arxiv_id": "2403.17692",
+      "repo_url": "https://github.com/amartyamukherjee/minimal-diffusion",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2403.17692v1",
+        "primary_category": "cs.CV",
+        "title": "Manifold-Guided Lyapunov Control with Diffusion Models",
+        "abstract": "This paper presents a novel approach to generating stabilizing controllers for a large class of dynamical systems using diffusion models. The core objective is to develop stabilizing control functions by identifying the closest asymptotically stable vector field relative to a predetermined manifold and adjusting the control function based on this finding. To achieve this, we employ a diffusion model trained on pairs consisting of asymptotically stable vector fields and their corresponding Lyapunov functions. Our numerical results demonstrate that this pre-trained model can achieve stabilization over previously unseen systems efficiently and rapidly, showcasing the potential of our approach in fast zero-shot control and generalizability."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/amartyamukherjee/minimal-diffusion",
+        "exists": true,
+        "full_name": "amartyamukherjee/minimal-diffusion",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a179adc2233275fce25e59dc5933e1b5fda18f0c",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/amartyamukherjee/minimal-diffusion/blob/a179adc2233275fce25e59dc5933e1b5fda18f0c/README.md",
+          "sha256": "c937704f9437b3fcc12d50079b93d2e83f44cb818620fb481835c2aa0b5a00a2",
+          "bytes": 12268
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      }
+    },
+    {
+      "position": 4,
+      "arxiv_id": "2402.11922",
+      "repo_url": "https://github.com/tsinghua-fib-lab/gpd",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2402.11922v3",
+        "primary_category": "cs.LG",
+        "title": "Spatio-Temporal Few-Shot Learning via Diffusive Neural Network Generation",
+        "abstract": "Spatio-temporal modeling is foundational for smart city applications, yet it is often hindered by data scarcity in many cities and regions. To bridge this gap, we propose a novel generative pre-training framework, GPD, for spatio-temporal few-shot learning with urban knowledge transfer. Unlike conventional approaches that heavily rely on common feature extraction or intricate few-shot learning designs, our solution takes a novel approach by performing generative pre-training on a collection of neural network parameters optimized with data from source cities. We recast spatio-temporal few-shot learning as pre-training a generative diffusion model, which generates tailored neural networks guided by prompts, allowing for adaptability to diverse data distributions and city-specific characteristics. GPD employs a Transformer-based denoising diffusion model, which is model-agnostic to integrate with powerful spatio-temporal neural networks. By addressing challenges arising from data gaps and the complexity of generalizing knowledge across cities, our framework consistently outperforms state-of-the-art baselines on multiple real-world datasets for tasks such as traffic speed prediction and crowd flow prediction. The implementation of our approach is available: https://github.com/tsinghua-fib-lab/GPD."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tsinghua-fib-lab/gpd",
+        "exists": true,
+        "full_name": "tsinghua-fib-lab/GPD",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "eed712f3e4f9da0236031a5e28a9023d39f0004e",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/tsinghua-fib-lab/GPD/blob/eed712f3e4f9da0236031a5e28a9023d39f0004e/README.md",
+          "sha256": "0d7ddcab5ffe35ace821822bac29c84644795ddafd23741b96ffe0137e96210f",
+          "bytes": 6886
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 5,
+      "arxiv_id": "2312.00507",
+      "repo_url": "https://github.com/systemsecuritystorm/awesome-binary-similarity",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2312.00507v2",
+        "primary_category": "cs.PL",
+        "title": "VEXIR2Vec: An Architecture-Neutral Embedding Framework for Binary Similarity",
+        "abstract": "Binary similarity involves determining whether two binary programs exhibit similar functionality, often originating from the same source code. In this work, we propose VexIR2Vec, an approach for binary similarity using VEX-IR, an architecture-neutral Intermediate Representation (IR). We extract the embeddings from sequences of basic blocks, termed peepholes, derived by random walks on the control-flow graph. The peepholes are normalized using transformations inspired by compiler optimizations. The VEX-IR Normalization Engine mitigates, with these transformations, the architectural and compiler-induced variations in binaries while exposing semantic similarities. We then learn the vocabulary of representations at the entity level of the IR using the knowledge graph embedding techniques in an unsupervised manner. This vocabulary is used to derive function embeddings for similarity assessment using VexNet, a feed-forward Siamese network designed to position similar functions closely and separate dissimilar ones in an n-dimensional space. This approach is amenable for both diffing and searching tasks, ensuring robustness against Out-Of-Vocabulary (OOV) issues. We evaluate VexIR2Vec on a dataset comprising 2.7M functions and 15.5K binaries from 7 projects compiled across 12 compilers targeting x86 and ARM architectures. In diffing experiments, VexIR2Vec outperforms the nearest baselines by $40\\%$, $18\\%$, $21\\%$, and $60\\%$ in cross-optimization, cross-compilation, cross-architecture, and obfuscation settings, respectively. In the searching experiment, VexIR2Vec achieves a mean average precision of $0.76$, outperforming the nearest baseline by $46\\%$. Our framework is highly scalable and is built as a lightweight, multi-threaded, parallel library using only open-source tools. VexIR2Vec is $3.1$-$3.5 \\times$ faster than the closest baselines and orders-of-magnitude faster than other tools."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/systemsecuritystorm/awesome-binary-similarity",
+        "exists": true,
+        "full_name": "SystemSecurityStorm/Awesome-Binary-Similarity",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "a800872318f202a0d726143acb378935d1dee311",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/SystemSecurityStorm/Awesome-Binary-Similarity/blob/a800872318f202a0d726143acb378935d1dee311/README.md",
+          "sha256": "24f76cadd50aba7e749d675df7f4303d171cc0ab05a2aae5ffcaa3b13035139e",
+          "bytes": 76630
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.PL"
+      }
+    },
+    {
+      "position": 6,
+      "arxiv_id": "2407.05244",
+      "repo_url": "https://github.com/bfitzgerald3132/moralstoriescontrastset",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2407.05244v1",
+        "primary_category": "cs.AI",
+        "title": "Some Issues in Predictive Ethics Modeling: An Annotated Contrast Set of \"Moral Stories\"",
+        "abstract": "Models like Delphi have been able to label ethical dilemmas as moral or immoral with astonishing accuracy. This paper challenges accuracy as a holistic metric for ethics modeling by identifying issues with translating moral dilemmas into text-based input. It demonstrates these issues with contrast sets that substantially reduce the performance of classifiers trained on the dataset Moral Stories. Ultimately, we obtain concrete estimates for how much specific forms of data misrepresentation harm classifier accuracy. Specifically, label-changing tweaks to the descriptive content of a situation (as small as 3-5 words) can reduce classifier accuracy to as low as 51%, almost half the initial accuracy of 99.8%. Associating situations with a misleading social norm lowers accuracy to 98.8%, while adding textual bias (i.e. an implication that a situation already fits a certain label) lowers accuracy to 77%. These results suggest not only that many ethics models have substantially overfit, but that several precautions are required to ensure that input accurately captures a moral dilemma. This paper recommends re-examining the structure of a social norm, training models to ask for context with defeasible reasoning, and filtering input for textual bias. Doing so not only gives us the first concrete estimates of the average cost to accuracy of misrepresenting ethics data, but gives researchers practical tips for considering these estimates in research."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/bfitzgerald3132/moralstoriescontrastset",
+        "exists": true,
+        "full_name": "bfitzgerald3132/MoralStoriesContrastSet",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "97106b7fb390f4883edb9501478ba78406768e98",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/bfitzgerald3132/MoralStoriesContrastSet/blob/97106b7fb390f4883edb9501478ba78406768e98/README.md",
+          "sha256": "77e8e4a9db5287d7315e1285e9d85ad004e8ec00e119b7437544b152cb47ec0e",
+          "bytes": 1590
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.AI"
+      }
+    },
+    {
+      "position": 7,
+      "arxiv_id": "2506.07982",
+      "repo_url": "https://github.com/sierra-research/tau2-bench",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2506.07982v1",
+        "primary_category": "cs.AI",
+        "title": "$τ^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment",
+        "abstract": "Existing benchmarks for conversational AI agents simulate single-control environments, where only the AI agent can use tools to interact with the world, while the user remains a passive information provider. This differs from real-world scenarios like technical support, where users need to actively participate in modifying the state of the (shared) world. In order to address this gap, we introduce $τ^2$-bench, with four key contributions: 1) A novel Telecom dual-control domain modeled as a Dec-POMDP, where both agent and user make use of tools to act in a shared, dynamic environment that tests both agent coordination and communication, 2) A compositional task generator that programmatically creates diverse, verifiable tasks from atomic components, ensuring domain coverage and controlled complexity, 3) A reliable user simulator tightly coupled with the environment, whose behavior is constrained by tools and observable states, improving simulation fidelity, 4) Fine-grained analysis of agent performance through multiple ablations including separating errors arising from reasoning vs communication/coordination. In particular, our experiments show significant performance drops when agents shift from no-user to dual-control, highlighting the challenges of guiding users. Overall, $τ^2$-bench provides a controlled testbed for agents that must both reason effectively and guide user actions."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sierra-research/tau2-bench",
+        "exists": true,
+        "full_name": "sierra-research/tau2-bench",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "96a3ef92329baf908ffe9dfe188cea34e8701d2a",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sierra-research/tau2-bench/blob/96a3ef92329baf908ffe9dfe188cea34e8701d2a/README.md",
+          "sha256": "ed39688aa5d40bd73007355df65f4e41a6c250960642e56764c3ad44da1df8d2",
+          "bytes": 10443
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.AI"
+      }
+    },
+    {
+      "position": 8,
+      "arxiv_id": "2505.13307",
+      "repo_url": "https://github.com/lightchen233/reasoning-boundary",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2505.13307v1",
+        "primary_category": "cs.CL",
+        "title": "RBF++: Quantifying and Optimizing Reasoning Boundaries across Measurable and Unmeasurable Capabilities for Chain-of-Thought Reasoning",
+        "abstract": "Chain-of-Thought (CoT) reasoning has proven effective in enhancing large language models (LLMs) on complex tasks, spurring research into its underlying mechanisms. However, two primary challenges remain for real-world applications: (1) the lack of quantitative metrics and actionable guidelines for evaluating and optimizing measurable boundaries of CoT capability, and (2) the absence of methods to assess boundaries of unmeasurable CoT capability, such as multimodal perception. To address these gaps, we introduce the Reasoning Boundary Framework++ (RBF++). To tackle the first challenge, we define the reasoning boundary (RB) as the maximum limit of CoT performance. We also propose a combination law for RBs, enabling quantitative analysis and offering actionable guidance across various CoT tasks. For the second challenge, particularly in multimodal scenarios, we introduce a constant assumption, which replaces unmeasurable RBs with scenario-specific constants. Additionally, we propose the reasoning boundary division mechanism, which divides unmeasurable RBs into two sub-boundaries, facilitating the quantification and optimization of both unmeasurable domain knowledge and multimodal perception capabilities. Extensive experiments involving 38 models across 13 tasks validate the feasibility of our framework in cross-modal settings. Additionally, we evaluate 10 CoT strategies, offer insights into optimization and decay from two complementary perspectives, and expand evaluation benchmarks for measuring RBs in LLM reasoning. We hope this work advances the understanding of RBs and optimization strategies in LLMs. Code and data are available at https://github.com/LightChen233/reasoning-boundary."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lightchen233/reasoning-boundary",
+        "exists": true,
+        "full_name": "LightChen233/reasoning-boundary",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ee1f1fccbebf50b2ece8a3d20e3fdae0d3bda6b4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/LightChen233/reasoning-boundary/blob/ee1f1fccbebf50b2ece8a3d20e3fdae0d3bda6b4/README.md",
+          "sha256": "448ed9605ebe2f7cbdc1ed7f7b14171d04a917f24058ebe183d32823c1951939",
+          "bytes": 6663
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    },
+    {
+      "position": 9,
+      "arxiv_id": "2301.11916",
+      "repo_url": "https://github.com/wangxinyilinda/concept-based-demonstration-selection",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2301.11916v4",
+        "primary_category": "cs.CL",
+        "title": "Large Language Models Are Latent Variable Models: Explaining and Finding Good Demonstrations for In-Context Learning",
+        "abstract": "In recent years, pre-trained large language models (LLMs) have demonstrated remarkable efficiency in achieving an inference-time few-shot learning capability known as in-context learning. However, existing literature has highlighted the sensitivity of this capability to the selection of few-shot demonstrations. Current understandings of the underlying mechanisms by which this capability arises from regular language model pretraining objectives remain disconnected from the real-world LLMs. This study aims to examine the in-context learning phenomenon through a Bayesian lens, viewing real-world LLMs as latent variable models. On this premise, we propose an algorithm to select optimal demonstrations from a set of annotated data with a small LM, and then directly generalize the selected demonstrations to larger LMs. We demonstrate significant improvement over baselines, averaged over eight GPT models on eight real-world text classification datasets. We also demonstrate the real-world usefulness of our algorithm on GSM8K, a math word problem dataset. Our empirical findings support our hypothesis that LLMs implicitly infer a latent variable containing task information."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wangxinyilinda/concept-based-demonstration-selection",
+        "exists": true,
+        "full_name": "WANGXinyiLinda/concept-based-demonstration-selection",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6deccbc04d1a5b4f37eae38ca0f6f3fa85f3f187",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/WANGXinyiLinda/concept-based-demonstration-selection/blob/6deccbc04d1a5b4f37eae38ca0f6f3fa85f3f187/README.md",
+          "sha256": "006149f669492dd2cd821bebe044c2f9b32d7c6959771d4ae6f5712d2dc74e96",
+          "bytes": 2617
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    },
+    {
+      "position": 10,
+      "arxiv_id": "2310.14870",
+      "repo_url": "https://github.com/jpwahle/emnlp23-citation-field-influence",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2310.14870v3",
+        "primary_category": "cs.CL",
+        "title": "We are Who We Cite: Bridges of Influence Between Natural Language Processing and Other Academic Fields",
+        "abstract": "Natural Language Processing (NLP) is poised to substantially influence the world. However, significant progress comes hand-in-hand with substantial risks. Addressing them requires broad engagement with various fields of study. Yet, little empirical work examines the state of such engagement (past or current). In this paper, we quantify the degree of influence between 23 fields of study and NLP (on each other). We analyzed ~77k NLP papers, ~3.1m citations from NLP papers to other papers, and ~1.8m citations from other papers to NLP papers. We show that, unlike most fields, the cross-field engagement of NLP, measured by our proposed Citation Field Diversity Index (CFDI), has declined from 0.58 in 1980 to 0.31 in 2022 (an all-time low). In addition, we find that NLP has grown more insular -- citing increasingly more NLP papers and having fewer papers that act as bridges between fields. NLP citations are dominated by computer science; Less than 8% of NLP citations are to linguistics, and less than 3% are to math and psychology. These findings underscore NLP's urgent need to reflect on its engagement with various fields."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jpwahle/emnlp23-citation-field-influence",
+        "exists": true,
+        "full_name": "jpwahle/emnlp23-citation-field-influence",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1fcc7c2f3fd64ca489a983ad0c5ae8beda0e74da",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jpwahle/emnlp23-citation-field-influence/blob/1fcc7c2f3fd64ca489a983ad0c5ae8beda0e74da/README.md",
+          "sha256": "c32fe6cb79c5d25ba1fbe010987a564027e3369d8d06326dc2245fa4c3f2fd1f",
+          "bytes": 4746
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      }
+    },
+    {
+      "position": 11,
+      "arxiv_id": "2412.17210",
+      "repo_url": "https://github.com/guijiejie/dcmd-main",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2412.17210v2",
+        "primary_category": "cs.CV",
+        "title": "Dual Conditioned Motion Diffusion for Pose-Based Video Anomaly Detection",
+        "abstract": "Video Anomaly Detection (VAD) is essential for computer vision research. Existing VAD methods utilize either reconstruction-based or prediction-based frameworks. The former excels at detecting irregular patterns or structures, whereas the latter is capable of spotting abnormal deviations or trends. We address pose-based video anomaly detection and introduce a novel framework called Dual Conditioned Motion Diffusion (DCMD), which enjoys the advantages of both approaches. The DCMD integrates conditioned motion and conditioned embedding to comprehensively utilize the pose characteristics and latent semantics of observed movements, respectively. In the reverse diffusion process, a motion transformer is proposed to capture potential correlations from multi-layered characteristics within the spectrum space of human motion. To enhance the discriminability between normal and abnormal instances, we design a novel United Association Discrepancy (UAD) regularization that primarily relies on a Gaussian kernel-based time association and a self-attention-based global association. Finally, a mask completion strategy is introduced during the inference stage of the reverse diffusion process to enhance the utilization of conditioned motion for the prediction branch of anomaly detection. Extensive experiments on four datasets demonstrate that our method dramatically outperforms state-of-the-art methods and exhibits superior generalization performance."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/guijiejie/dcmd-main",
+        "exists": true,
+        "full_name": "guijiejie/Dual-Conditioned-Motion-Diffusion",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "cb9a0f3b0a0cf0dd7cc17cc2d5bb034cd760f2fc",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/guijiejie/Dual-Conditioned-Motion-Diffusion/blob/cb9a0f3b0a0cf0dd7cc17cc2d5bb034cd760f2fc/README.md",
+          "sha256": "d83227258265536158cd02cef222e1c83f285f709aabbb809fd07f7e1cea190e",
+          "bytes": 4061
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      }
+    },
+    {
+      "position": 12,
+      "arxiv_id": "2403.10289",
+      "repo_url": "https://github.com/angeella/powerpls",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2403.10289v1",
+        "primary_category": "stat.ME",
+        "title": "Towards a power analysis for PLS-based methods",
+        "abstract": "In recent years, power analysis has become widely used in applied sciences, with the increasing importance of the replicability issue. When distribution-free methods, such as Partial Least Squares (PLS)-based approaches, are considered, formulating power analysis turns out to be challenging. In this study, we introduce the methodological framework of a new procedure for performing power analysis when PLS-based methods are used. Data are simulated by the Monte Carlo method, assuming the null hypothesis of no effect is false and exploiting the latent structure estimated by PLS in the pilot data. In this way, the complex correlation data structure is explicitly considered in power analysis and sample size estimation. The paper offers insights into selecting statistical tests for the power analysis procedure, comparing accuracy-based tests and those based on continuous parameters estimated by PLS. Simulated and real datasets are investigated to show how the method works in practice."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/angeella/powerpls",
+        "exists": true,
+        "full_name": "angeella/powerPLS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "966ae2223825169499fd983539acc9a1b3579d07",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/angeella/powerPLS/blob/966ae2223825169499fd983539acc9a1b3579d07/README.md",
+          "sha256": "e6a1f1036046f93475b0080546b0621ada2a0d798ca5b85da7eac4c36d88c822",
+          "bytes": 1168
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category stat.ME"
+      }
+    },
+    {
+      "position": 13,
+      "arxiv_id": "2504.04537",
+      "repo_url": "https://github.com/salab/iccheck",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2504.04537v2",
+        "primary_category": "cs.SE",
+        "title": "ICCheck: A Portable, Language-Agnostic Tool for Synchronizing Code Clones",
+        "abstract": "Inconsistent modifications to code clones can lead to software defects. Many approaches exist to support consistent modifications based on clone detection and/or change pattern extraction. However, no tool currently supports synchronization of code clones across diverse programming languages and development environments. We propose ICCheck, a tool designed to be language-agnostic and portable across various environments. By leveraging an existing language-agnostic clone search technique and limiting the tool's external dependency to an existing Git repository, we developed a tool that can assist in synchronizing code clones in diverse environments. We validated the tool's functionality in multiple open-source repositories, where ICCheck was able to detect overlooked clone modifications in over 30 programming and domain-specific languages and delivered interactive suggestions within a median of 0.27 seconds in editor environments, demonstrating its language independence and responsiveness. Furthermore, by supporting the Language Server Protocol, we confirmed that ICCheck can be integrated into multiple development environments with minimal effort. ICCheck is available at https://github.com/salab/iccheck"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/salab/iccheck",
+        "exists": true,
+        "full_name": "salab/iccheck",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "5a32bf146819df7fddffcacb503c2c959a6cfec8",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/salab/iccheck/blob/5a32bf146819df7fddffcacb503c2c959a6cfec8/README.md",
+          "sha256": "da92a3a67e00b88eaaadec4c446bcd0bc1fd33404141ac84a33417cf6dc2eeac",
+          "bytes": 11057
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SE"
+      }
+    },
+    {
+      "position": 14,
+      "arxiv_id": "2306.03651",
+      "repo_url": "https://github.com/leonardopellegrina/centra",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2306.03651v1",
+        "primary_category": "cs.SI",
+        "title": "Efficient Centrality Maximization with Rademacher Averages",
+        "abstract": "The identification of the set of k most central nodes of a graph, or centrality maximization, is a key task in network analysis, with various applications ranging from finding communities in social and biological networks to understanding which seed nodes are important to diffuse information in a graph. As the exact computation of centrality measures does not scale to modern-sized networks, the most practical solution is to resort to rigorous, but efficiently computable, randomized approximations. In this work we present CentRA, the first algorithm based on progressive sampling to compute high-quality approximations of the set of k most central nodes. CentRA is based on a novel approach to efficiently estimate Monte Carlo Rademacher Averages, a powerful tool from statistical learning theory to compute sharp data-dependent approximation bounds. Then, we study the sample complexity of centrality maximization using the VC-dimension, a key concept from statistical learning theory. We show that the number of random samples required to compute high-quality approximations scales with finer characteristics of the graph, such as its vertex diameter, or of the centrality of interest, significantly improving looser bounds derived from standard techniques. We apply CentRA to analyze large real-world networks, showing that it significantly outperforms the state-of-the-art approximation algorithm in terms of number of samples, running times, and accuracy."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/leonardopellegrina/centra",
+        "exists": true,
+        "full_name": "leonardopellegrina/CentRA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9b2abd710932c21a27937afd2af13d24f0e59cd8",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/leonardopellegrina/CentRA/blob/9b2abd710932c21a27937afd2af13d24f0e59cd8/README.md",
+          "sha256": "56b9e18383a41fe96b5ea8ad77fed9d29017c6960d55f345832e6d23e5b703f8",
+          "bytes": 2632
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SI"
+      }
+    },
+    {
+      "position": 15,
+      "arxiv_id": "2504.05490",
+      "repo_url": "https://github.com/sasanvakili/Bayesian4Wiener",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2504.05490v2",
+        "primary_category": "cs.LG",
+        "title": "Optimal Bayesian Affine Estimator and Active Learning for the Wiener Model",
+        "abstract": "This paper presents a Bayesian estimation framework for Wiener models, focusing on learning nonlinear output functions under known linear state dynamics. We derive a closed-form optimal affine estimator for the unknown parameters, characterized by the so-called \"dynamic basis statistics\" (DBS). Several features of the proposed estimator are studied, including Bayesian unbiasedness, closed-form posterior statistics, error monotonicity in trajectory length, and consistency condition (also known as persistent excitation). In the special case of Fourier basis functions, we demonstrate that the closed-form description is computationally available, as the Fourier DBS enjoys explicit expressions. Furthermore, we identify an inherent inconsistency in the Fourier bases for single-trajectory measurements, regardless of the input excitation. Leveraging the closed-form estimation error, we develop an active learning algorithm synthesizing input signals to minimize estimation error. Numerical experiments validate the efficacy of our approach, showing significant improvements over traditional regularized least-squares methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sasanvakili/Bayesian4Wiener",
+        "exists": true,
+        "full_name": "sasanvakili/Bayesian4Wiener",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "89eab43955551a8c78dcb4d1bd5f6af4eedfa0a0",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sasanvakili/Bayesian4Wiener/blob/89eab43955551a8c78dcb4d1bd5f6af4eedfa0a0/README.md",
+          "sha256": "885ae369e325f81000340622e90286eb627f436f270036b8ead6669d56bcc723",
+          "bytes": 18723
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 16,
+      "arxiv_id": "2403.14514",
+      "repo_url": "https://github.com/rs1909/invariantmodels",
+      "framework": "none",
+      "arxiv": {
+        "versioned_id": "2403.14514v1",
+        "primary_category": "math.DS",
+        "title": "Machine-learning invariant foliations in forced systems for reduced order modelling",
+        "abstract": "We identify reduced order models (ROM) of forced systems from data using invariant foliations. The forcing can be external, parametric, periodic or quasi-periodic. The process has four steps: 1. identify an approximate invariant torus and the linear dynamics about the torus; 2. identify a globally defined invariant foliation about the torus; 3. identify a local foliation about an invariant manifold that complements the global foliation 4. extract the invariant manifold as the leaf going through the torus and interpret the result. We combine steps 2 and 3, so that we can track the location of the invariant torus and scale the invariance equations appropriately. We highlight some fundamental limitations of invariant manifolds and foliations when fitting them to data, that require further mathematics to resolve."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rs1909/invariantmodels",
+        "exists": true,
+        "full_name": "rs1909/InvariantModels",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b55732bcfb588be21a8125627009a1b12026425a",
+        "license_spdx": "BSD-3-Clause",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/rs1909/InvariantModels/blob/b55732bcfb588be21a8125627009a1b12026425a/README.md",
+          "sha256": "89fedd61f42462999b0f5a7118de21a47ac7a711e8d0af7d1078536ab507d046",
+          "bytes": 2678
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.DS"
+      }
+    },
+    {
+      "position": 17,
+      "arxiv_id": "2410.20483",
+      "repo_url": "https://github.com/williamsyy/multiplesev",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2410.20483v2",
+        "primary_category": "cs.LG",
+        "title": "Improving Decision Sparsity",
+        "abstract": "Sparsity is a central aspect of interpretability in machine learning. Typically, sparsity is measured in terms of the size of a model globally, such as the number of variables it uses. However, this notion of sparsity is not particularly relevant for decision-making; someone subjected to a decision does not care about variables that do not contribute to the decision. In this work, we dramatically expand a notion of decision sparsity called the Sparse Explanation Value(SEV) so that its explanations are more meaningful. SEV considers movement along a hypercube towards a reference point. By allowing flexibility in that reference and by considering how distances along the hypercube translate to distances in feature space, we can derive sparser and more meaningful explanations for various types of function classes. We present cluster-based SEV and its variant tree-based SEV, introduce a method that improves credibility of explanations, and propose algorithms that optimize decision sparsity in machine learning models."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/williamsyy/multiplesev",
+        "exists": true,
+        "full_name": "williamsyy/MultipleSEV",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "31bc78a749cb821f04098f5b7c0cb060fc95ba38",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/williamsyy/MultipleSEV/blob/31bc78a749cb821f04098f5b7c0cb060fc95ba38/README.md",
+          "sha256": "775cfced62b1842b39eb4e94d3303df757a56c575ea0300acee930f9ea623bd4",
+          "bytes": 2835
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 18,
+      "arxiv_id": "2501.08049",
+      "repo_url": "https://github.com/ieveresthd/sastc",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2501.08049v1",
+        "primary_category": "cs.AI",
+        "title": "Self-Attentive Spatio-Temporal Calibration for Precise Intermediate Layer Matching in ANN-to-SNN Distillation",
+        "abstract": "Spiking Neural Networks (SNNs) are promising for low-power computation due to their event-driven mechanism but often suffer from lower accuracy compared to Artificial Neural Networks (ANNs). ANN-to-SNN knowledge distillation can improve SNN performance, but previous methods either focus solely on label information, missing valuable intermediate layer features, or use a layer-wise approach that neglects spatial and temporal semantic inconsistencies, leading to performance degradation.To address these limitations, we propose a novel method called self-attentive spatio-temporal calibration (SASTC). SASTC uses self-attention to identify semantically aligned layer pairs between ANN and SNN, both spatially and temporally. This enables the autonomous transfer of relevant semantic information. Extensive experiments show that SASTC outperforms existing methods, effectively solving the mismatching problem. Superior accuracy results include 95.12% on CIFAR-10, 79.40% on CIFAR-100 with 2 time steps, and 68.69% on ImageNet with 4 time steps for static datasets, and 97.92% on DVS-Gesture and 83.60% on DVS-CIFAR10 for neuromorphic datasets. This marks the first time SNNs have outperformed ANNs on both CIFAR-10 and CIFAR-100, shedding the new light on the potential applications of SNNs."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ieveresthd/sastc",
+        "exists": true,
+        "full_name": "ieveresthd/SASTC",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c42b286991f6c6b074e0822be2c8060c2f80b0a4",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ieveresthd/SASTC/blob/c42b286991f6c6b074e0822be2c8060c2f80b0a4/README.md",
+          "sha256": "83af664144d92a1849028c07171b00478add1d8a782d17b450076d401a27ddee",
+          "bytes": 1873
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.AI"
+      }
+    },
+    {
+      "position": 19,
+      "arxiv_id": "2412.20193",
+      "repo_url": "https://github.com/f-god6/ilmar",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2412.20193v1",
+        "primary_category": "cs.LG",
+        "title": "Imitation Learning from Suboptimal Demonstrations via Meta-Learning An Action Ranker",
+        "abstract": "A major bottleneck in imitation learning is the requirement of a large number of expert demonstrations, which can be expensive or inaccessible. Learning from supplementary demonstrations without strict quality requirements has emerged as a powerful paradigm to address this challenge. However, previous methods often fail to fully utilize their potential by discarding non-expert data. Our key insight is that even demonstrations that fall outside the expert distribution but outperform the learned policy can enhance policy performance. To utilize this potential, we propose a novel approach named imitation learning via meta-learning an action ranker (ILMAR). ILMAR implements weighted behavior cloning (weighted BC) on a limited set of expert demonstrations along with supplementary demonstrations. It utilizes the functional of the advantage function to selectively integrate knowledge from the supplementary demonstrations. To make more effective use of supplementary demonstrations, we introduce meta-goal in ILMAR to optimize the functional of the advantage function by explicitly minimizing the distance between the current policy and the expert policy. Comprehensive experiments using extensive tasks demonstrate that ILMAR significantly outperforms previous methods in handling suboptimal demonstrations. Code is available at https://github.com/F-GOD6/ILMAR."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/f-god6/ilmar",
+        "exists": true,
+        "full_name": "F-GOD6/ILMAR",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "79deff87c840a8950c6c8440c9ba527e18a37add",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/F-GOD6/ILMAR/blob/79deff87c840a8950c6c8440c9ba527e18a37add/README.md",
+          "sha256": "13d1ed7d7b773c5df223410c82d985e1e20e48ddc61f31e250900baa653fd998",
+          "bytes": 3032
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      }
+    },
+    {
+      "position": 20,
+      "arxiv_id": "2501.03765",
+      "repo_url": "https://github.com/aryan-at-ul/electronic-imaging-2025-paper-4492",
+      "framework": "pytorch",
+      "arxiv": {
+        "versioned_id": "2501.03765v2",
+        "primary_category": "cs.CV",
+        "title": "Image Segmentation: Inducing graph-based learning",
+        "abstract": "This study explores the potential of graph neural networks (GNNs) to enhance semantic segmentation across diverse image modalities. We evaluate the effectiveness of a novel GNN-based U-Net architecture on three distinct datasets: PascalVOC, a standard benchmark for natural image segmentation, WoodScape, a challenging dataset of fisheye images commonly used in autonomous driving, introducing significant geometric distortions; and ISIC2016, a dataset of dermoscopic images for skin lesion segmentation. We compare our proposed UNet-GNN model against established convolutional neural networks (CNNs) based segmentation models, including U-Net and U-Net++, as well as the transformer-based SwinUNet. Unlike these methods, which primarily rely on local convolutional operations or global self-attention, GNNs explicitly model relationships between image regions by constructing and operating on a graph representation of the image features. This approach allows the model to capture long-range dependencies and complex spatial relationships, which we hypothesize will be particularly beneficial for handling geometric distortions present in fisheye imagery and capturing intricate boundaries in medical images. Our analysis demonstrates the versatility of GNNs in addressing diverse segmentation challenges and highlights their potential to improve segmentation accuracy in various applications, including autonomous driving and medical image analysis."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/aryan-at-ul/electronic-imaging-2025-paper-4492",
+        "exists": true,
+        "full_name": "aryan-at-ul/Electronic-Imaging-2025-paper-4492",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6129bc7eb99488d867e10d9f83b00205d680aadc",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/aryan-at-ul/Electronic-Imaging-2025-paper-4492/blob/6129bc7eb99488d867e10d9f83b00205d680aadc/README.md",
+          "sha256": "67220d754dba3877f6931315730b0f52733f69ef3c8d377a14d9e275e20e58c5",
+          "bytes": 2346
+        }
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      }
+    }
+  ],
+  "drawn_utc": "2026-10-17T23:33:29Z"
+}
