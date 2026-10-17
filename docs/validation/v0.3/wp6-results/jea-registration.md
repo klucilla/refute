@@ -392,9 +392,9 @@ Each of these is known only when it runs, one operation at a time with the maint
 
 ## 10. Version 2 applied, and operation 1 done on the host (2026-10-16)
 
-Run by the maintainer on 2026-10-16 (Brasília time; UTC below), with the main folder at
-`ca91f9103c1e7e6eef3ea44bf8abd18af0f63dcd` (the merge of #126) the whole time; no agent
-ran anything on the host meanwhile. Account names are replaced by `<operator-account>`
+Run by the maintainer on 2026-10-16 (Brasília time; UTC below). As the maintainer reports,
+the main folder was at `ca91f9103c1e7e6eef3ea44bf8abd18af0f63dcd` (the merge of #126) the
+whole time, and the agent was idle meanwhile. Account names are replaced by `<operator-account>`
 and `<virtual-account>`; no security descriptor is published.
 
 ### 10.1 Version 2 of the tree ACL (`scripts/vm/Set-RefuteVmTreeAcl.ps1`, as Administrator)
@@ -428,11 +428,13 @@ failed attempts of section 9 are still recorded before these lines: `intent` at
   host, with the same plan (`PlanSha256` `3976d96a…d304`), the operation was denied twice
   under version 1 and done under version 2. With the CI runner (section 9), the cause is
   now shown on both.
-- **Adopting the paths did not change the tree.** The `PreviewSha256` of the post-check is
-  the same before and after SetHostPaths. It covers the owner, the protection and every
-  entry of each item, and the list of items under `C:\Hyper-V`. So the Hyper-V management
-  service wrote no entry and created nothing in `C:\Hyper-V` when it adopted the folder as
-  its default.
+- **The tree was the same after the paths were adopted.** The `PreviewSha256` of the
+  post-check is the same before and after SetHostPaths. It covers the list of items under
+  `C:\Hyper-V` and, for each item and for the evidence folders, its creation time,
+  attributes, owner, protection and every access entry. So no difference in what the
+  preview covers was left between the two checks: the service left no entry and no item
+  in `C:\Hyper-V` when it adopted the folder as its default. Two observations of the state
+  cannot exclude a change made and undone between them.
 - **The other operations remain hypotheses, not tested** (section 9.2): each is known only
   when it runs, one operation at a time with the maintainer's OK.
 
