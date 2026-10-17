@@ -313,6 +313,65 @@ def test_malformed_attachments_in_the_lock_file_are_fail_not_an_error(tmp_path, 
     )
 
 
+def _code_root(tmp_path: Path) -> Path:
+    root = tmp_path / "code"
+    (root / "src" / "pkg").mkdir(parents=True)
+    (root / "src" / "pkg" / "mod.py").write_text("X = 1\n", encoding="utf-8")
+    (root / "pyproject.toml").write_text("[project]\nname = 'x'\n", encoding="utf-8")
+    (root / "uv.lock").write_text("version = 1\n", encoding="utf-8")
+    return root
+
+
+@pytest.mark.parametrize(
+    "files",
+    [None, [{"sha256": "0" * 64}], [{"path": "src/pkg/mod.py"}], [{"path": 7, "sha256": "0"}], "x"],
+    ids=["null", "no path", "no sha256", "path a number", "a string"],
+)
+def test_malformed_code_files_are_fail_not_an_error(tmp_path, files):
+    """With the code changed, verify would compare the file lists: a malformed
+    code.files is FAIL with the field named (an absent list stays allowed)."""
+    root = _code_root(tmp_path)
+    claim = write_yaml(tmp_path / "claim.yaml", replicate_claim([target_entry(1, "planet", 3.7)]))
+    create_lock(claim, code_root=root)
+    data = json.loads(lock_path_for(claim).read_text(encoding="utf-8"))
+    data["code"]["files"] = files
+    lock_path_for(claim).write_text(json.dumps(data), encoding="utf-8")
+    (root / "src" / "pkg" / "mod.py").write_text("X = 2\n", encoding="utf-8")
+    result = verify_claim(claim, code_root=root)
+    assert result.status is VerifyStatus.FAIL
+    assert any("'code.files' is not a list of objects" in m for m in result.messages), (
+        result.messages
+    )
+
+
+def test_an_absent_code_files_list_is_still_allowed(tmp_path):
+    root = _code_root(tmp_path)
+    claim = write_yaml(tmp_path / "claim.yaml", replicate_claim([target_entry(1, "planet", 3.7)]))
+    create_lock(claim, code_root=root)
+    data = json.loads(lock_path_for(claim).read_text(encoding="utf-8"))
+    del data["code"]["files"]
+    lock_path_for(claim).write_text(json.dumps(data), encoding="utf-8")
+    assert verify_claim(claim, code_root=root).status is VerifyStatus.PASS
+
+
+def test_a_history_that_is_not_utf8_is_fail_not_an_error(tmp_path):
+    claim, lock, history, text = _locked(tmp_path)
+    history.write_bytes(text.encode("utf-8") + b"\xff\n")
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.FAIL
+    assert any("cannot read LOCK_HISTORY.md" in m for m in result.messages), result.messages
+
+
+def test_an_unreadable_history_keeps_tampered_first(tmp_path):
+    """TAMPERED still takes precedence over the FAIL of an unreadable history."""
+    claim, lock, history, text = _locked(tmp_path)
+    history.write_bytes(b"\xff")
+    claim.write_text(claim.read_text(encoding="utf-8").replace("3.7", "3.8"), encoding="utf-8")
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.TAMPERED
+    assert any("cannot read LOCK_HISTORY.md" in m for m in result.messages), result.messages
+
+
 def test_create_lock_still_reads_a_malformed_previous_lock_as_before(tmp_path):
     """read_lock is not stricter: a previous lock without claim_path still gives its
     claim_sha256 to a forced re-lock (the Codex review of #130, round 2)."""

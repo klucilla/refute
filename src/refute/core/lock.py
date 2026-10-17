@@ -114,6 +114,20 @@ def _verify_structure_problems(lock: dict[str, Any]) -> list[str]:
     code = lock.get("code")
     if not isinstance(code, dict) or not isinstance(code.get("sha256"), str):
         problems.append("the lock file has no string 'code.sha256'")
+    elif "files" in code and not (
+        isinstance(code["files"], list)
+        and all(
+            isinstance(f, dict)
+            and isinstance(f.get("path"), str)
+            and isinstance(f.get("sha256"), str)
+            for f in code["files"]
+        )
+    ):
+        # an absent list stays allowed (read as no files, as before)
+        problems.append(
+            "the lock file's 'code.files' is not a list of objects with a string 'path' and "
+            "'sha256'"
+        )
     records = lock.get("attachments")
     if not isinstance(records, list) or not all(
         isinstance(a, dict) and isinstance(a.get("path"), str) and isinstance(a.get("sha256"), str)
@@ -546,14 +560,17 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
                 + ("; ".join(result.changed_files) or "file list unchanged")
             )
 
-    history = [
-        e
-        for e in read_history(history_path_for(claim_file), literal=True)
-        if e["claim"] == lock["claim_path"]
-    ]
-    if not history:
+    try:
+        entries = read_history(history_path_for(claim_file), literal=True)
+        readable = True
+    except (OSError, UnicodeDecodeError) as exc:
+        # an unreadable history is FAIL with the reason, never an exception
+        failures.append(f"cannot read {HISTORY_FILENAME}: {exc}")
+        entries, readable = [], False
+    history = [e for e in entries if e["claim"] == lock["claim_path"]]
+    if readable and not history:
         failures.append(f"lock is not recorded in {HISTORY_FILENAME}")
-    else:
+    elif history:
         # every field the entry shares with the lock, each by its rule (issue #65)
         differences = compare_history_entry(lock, history[-1])
         if differences:

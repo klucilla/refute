@@ -127,9 +127,11 @@ its message names each field.
   line break, two different lists could give the same text, so the comparison reports a
   difference for `attachments`. `refute lock` still writes such a lock as before.
 - **The lock file itself.** For `verify`, a lock file without a string `claim_path` or
-  `code.sha256`, or whose `attachments` is not a list of objects with a string `path`
-  and `sha256`, is `FAIL`, with the field named. `refute lock` reads an existing lock as
-  before.
+  `code.sha256`, or whose `attachments` or `code.files` (when present) is not a list of
+  objects with a string `path` and `sha256`, is `FAIL`, with the field named. `refute
+  lock` reads an existing lock as before.
+- **An unreadable `LOCK_HISTORY.md`** (not UTF-8, or a read error) is `FAIL` with the
+  reason; `TAMPERED` still takes precedence.
 
 This comparison only reads the lock file and `LOCK_HISTORY.md`; it never rewrites
 either. The two historical locks (v0.1 and v0.2) match every shared field of their
