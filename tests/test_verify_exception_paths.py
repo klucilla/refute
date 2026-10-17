@@ -96,6 +96,23 @@ def test_read_lock_itself_is_unchanged(tmp_path, int_limit):
     assert not isinstance(caught.value, LockError)
 
 
+def test_a_lock_nested_too_deep_is_fail_with_the_reason(tmp_path):
+    # json.loads raises RecursionError on very deep nesting (Codex review of #138)
+    claim, root = _locked(tmp_path)
+    lock_file = lock_path_for(claim)
+    depth = 100_000
+    text = lock_file.read_text(encoding="utf-8")
+    lock_file.write_text(
+        text.replace("{", '{"padding": ' + "[" * depth + "]" * depth + ", ", 1),
+        encoding="utf-8",
+    )
+    result = verify_claim(claim, code_root=root)
+    assert result.status is VerifyStatus.FAIL and result.exit_code == 1
+    assert len(result.messages) == 1
+    assert result.messages[0].startswith(f"cannot read lock file {lock_file}: ")
+    assert result.lock is None
+
+
 def test_the_cli_reports_fail_for_the_too_long_integer(tmp_path, int_limit, monkeypatch):
     from typer.testing import CliRunner
 
@@ -126,6 +143,42 @@ def _unreadable(monkeypatch, name: str) -> None:
         return original(path)
 
     monkeypatch.setattr(lock_module, "sha256_text_normalized", fake)
+
+
+def _unexaminable(monkeypatch, name: str) -> None:
+    """Make examining the attachment called `name` fail as a permission error would:
+    Path.stat raises, so Path.is_file raises too (it ignores only "not found" errors).
+    Every other path is examined as usual."""
+    original = Path.stat
+
+    def fake(self, *args, **kwargs):
+        if self.name == name:
+            raise PermissionError(13, "Permission denied", str(self))
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "stat", fake)
+
+
+def test_an_attachment_that_cannot_be_examined_is_fail_with_the_reason(tmp_path, monkeypatch):
+    (tmp_path / "notes.txt").write_text("notes\n", encoding="utf-8")
+    claim, root = _locked(tmp_path, attachments=[{"path": "notes.txt", "role": "notes"}])
+    _unexaminable(monkeypatch, "notes.txt")
+    result = verify_claim(claim, code_root=root)
+    assert result.status is VerifyStatus.FAIL and result.tampered == []
+    reasons = [m for m in result.failures if m.startswith("cannot read attachment notes.txt: ")]
+    assert len(reasons) == 1 and "Permission denied" in reasons[0]
+
+
+def test_tampered_claim_keeps_precedence_over_an_attachment_that_cannot_be_examined(
+    tmp_path, monkeypatch
+):
+    (tmp_path / "notes.txt").write_text("notes\n", encoding="utf-8")
+    claim, root = _locked(tmp_path, attachments=[{"path": "notes.txt", "role": "notes"}])
+    claim.write_text(claim.read_text(encoding="utf-8").replace("3.7", "3.8"), encoding="utf-8")
+    _unexaminable(monkeypatch, "notes.txt")
+    result = verify_claim(claim, code_root=root)
+    assert result.status is VerifyStatus.TAMPERED and result.tampered == ["claim"]
+    assert any(m.startswith("cannot read attachment notes.txt: ") for m in result.failures)
 
 
 def test_an_unreadable_attachment_is_fail_with_the_reason(tmp_path, monkeypatch):

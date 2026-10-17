@@ -133,8 +133,8 @@ its message names each field.
 - **An unreadable `LOCK_HISTORY.md`** (not UTF-8, or a read error) is `FAIL` with the
   reason; `TAMPERED` still takes precedence.
 - **A lock file whose JSON cannot be converted** (an integer longer than Python's limit for
-  converting a string to an integer, 4,300 digits by default) and **an attachment that
-  cannot be read**
+  converting a string to an integer, 4,300 digits by default, or nesting too deep for the
+  parser) and **an attachment that cannot be read or examined**
   (a permission error, for example) are `FAIL` with the reason, never an exception. For the
   attachment, `TAMPERED` from another component still takes precedence.
 
