@@ -71,8 +71,9 @@ round. Both need the VM off.
   not take or that is malformed.
 - **Failures:** a junction or link on the paths (`Assert-RefuteNoReparsePoint`) makes the call
   fail (`Outcome` failed), not a refusal. So does an error of the Hyper-V cmdlet.
-- **Reasons.** A failure records the module's own text, or the error's type and HRESULT,
-  never the message of a Hyper-V or system error (`Get-RefuteVmFailureText`). A result
+- **Reasons.** A failure records the text the module raised itself (recorded in its own
+  scope by `Stop-RefuteVmOperation`), or the error's type and HRESULT, never the message of
+  a Hyper-V or system error (`Get-RefuteVmFailureText`). A result
   `not reached` always records why, with fixed texts, configured values, VMIds, states,
   counts and change items only (`Get-RefuteVmPlanReachedProblem`); the simulation shows
   the full refusal.

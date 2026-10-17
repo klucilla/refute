@@ -249,17 +249,39 @@ Add-Case 'DisableGuestServiceInterface not reached names the kind of item only' 
 $o3 = New-Observed; $o3.RecordedVmId = $vmId; $v = New-Vm; $v.NetworkAdapters = @([ordered]@{ Name = 'Adapter of SomeAccount'; SwitchName = 'Switch of SomeAccount' }); $o3.Vms = @($v)
 $why = Get-RefuteVmPlanReachedProblem -Plan (Plan 'DisconnectNetwork' $o3) -Config $config -ObservedAfter $o3
 Add-Case 'DisconnectNetwork not reached names the kind of item only' ($why -like '*still has 1 change(s): NetworkAdapter' -and $why -notlike '*SomeAccount*') $why
-# the reason of a failure: a text of the module is kept; any other error by type and HRESULT
+# review round 2 of #142 (Codex): a name with a line break is still named by kind only
+foreach ($kind in 'NetworkAdapter', 'IntegrationService') {
+    $name = "Adapter`nSomeAccount"
+    $o3 = New-Observed; $o3.RecordedVmId = $vmId; $v = New-Vm
+    if ($kind -eq 'NetworkAdapter') {
+        $v.NetworkAdapters = @([ordered]@{ Name = $name; SwitchName = "Switch`r`nSomeAccount" }); $o3.Vms = @($v)
+        $why = Get-RefuteVmPlanReachedProblem -Plan (Plan 'DisconnectNetwork' $o3) -Config $config -ObservedAfter $o3
+    } else {
+        $v.IntegrationServices = @([ordered]@{ Id = "Microsoft:$vmId\$gsi"; Name = $name; Enabled = $true }); $o3.Vms = @($v)
+        $why = Get-RefuteVmPlanReachedProblem -Plan (Plan 'DisableGuestServiceInterface' $o3 -Guid $gsi) -Config $config -ObservedAfter $o3 -ServiceGuid $gsi
+    }
+    Add-Case "$kind not reached with a line break in a name names the kind only" ($why -ceq "the plan after the operation still has 1 change(s): $kind") $why
+}
+# the reason of a failure: the text the module recorded and threw is kept; any other error,
+# even one shaped like it (a RuntimeException whose error id is its message), by type and
+# HRESULT
 $records = @{}
 try { throw 'reparse point refused: C:\Hyper-V\refute-vm' } catch { $records['module'] = $_ }
 try { Write-Error -Message 'C:\Users\SomeAccount\x' -ErrorId 'Probe' -ErrorAction Stop } catch { $records['cmdlet'] = $_ }
 try { throw [System.IO.IOException]::new('C:\Users\SomeAccount\x') } catch { $records['exception'] = $_ }
-$text = Get-RefuteVmFailureText $records['module']
-Add-Case 'failure text: a text of the module is kept' ($text -ceq 'reparse point refused: C:\Hyper-V\refute-vm') $text
-$text = Get-RefuteVmFailureText $records['cmdlet']
-Add-Case 'failure text: a cmdlet error by type and HRESULT' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}\)$') $text
-$text = Get-RefuteVmFailureText $records['exception']
+try {
+    Write-Error -Exception ([System.Management.Automation.RuntimeException]::new('C:\Users\SomeAccount\x')) -ErrorId 'C:\Users\SomeAccount\x' -ErrorAction Stop
+} catch { $records['shaped'] = $_ }
+$text = Get-RefuteVmFailureText -ErrorRecord $records['module'] -ModuleReason 'reparse point refused: C:\Hyper-V\refute-vm'
+Add-Case 'failure text: the text the module recorded is kept' ($text -ceq 'reparse point refused: C:\Hyper-V\refute-vm') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['module']
+Add-Case 'failure text: a thrown text the module did not record by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}\)$') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['cmdlet'] -ModuleReason 'reparse point refused: C:\Hyper-V\refute-vm'
+Add-Case 'failure text: a cmdlet error after a recorded text by type and HRESULT' ($text -cmatch '^WriteErrorException \(HRESULT 0x[0-9A-F]{8}\)$') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['exception']
 Add-Case 'failure text: a thrown exception by type and HRESULT' ($text -cmatch '^IOException \(HRESULT 0x[0-9A-F]{8}\)$') $text
+$text = Get-RefuteVmFailureText -ErrorRecord $records['shaped']
+Add-Case 'failure text: an error shaped like a module text by type and HRESULT' ($text -cmatch '^RuntimeException \(HRESULT 0x[0-9A-F]{8}\)$' -and $text -notlike '*SomeAccount*') $text
 
 Add-Case 'SetMemory refused: no VM' ($null -ne (Plan 'SetMemory' (New-Observed)).Refusal)
 $o = New-Observed; $o.Vms = @(New-Vm)
@@ -362,8 +384,12 @@ $dst2 = Join-Path $WorkDir 'dest2.iso'
 Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha
 Add-Case 'verified copy of the right bytes' ((Get-FileHash -LiteralPath $dst2 -Algorithm SHA256).Hash.ToLowerInvariant() -eq $srcSha -and -not (Test-Path -LiteralPath "$dst2.partial"))
 $failed = $null
-try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_.Exception.Message }
-Add-Case 'verified copy never overwrites' ($failed -like '*already exists*')
+$script:RefuteVmFailureReason = ''
+try { Copy-RefuteVerifiedFile -Source $src -Destination $dst2 -Sha256 $srcSha } catch { $failed = $_ }
+Add-Case 'verified copy never overwrites' ($failed.Exception.Message -like '*already exists*')
+# the module records the text it throws (Stop-RefuteVmOperation), and the log keeps it
+$text = Get-RefuteVmFailureText -ErrorRecord $failed -ModuleReason $script:RefuteVmFailureReason
+Add-Case 'a failure of the module records its own text' ($script:RefuteVmFailureReason -ceq "the destination already exists: $dst2" -and $text -ceq $script:RefuteVmFailureReason) $text
 
 # The first Hyper-V call (Codex review of #118): only a host without the vmms service gets
 # the module's own message; a command that is not recognized and any failure on a host

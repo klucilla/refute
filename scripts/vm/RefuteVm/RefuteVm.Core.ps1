@@ -454,24 +454,30 @@ function Get-RefuteVmPlanReachedProblem {
     if ($null -ne $again.Refusal) { return 'the plan after the operation is refused (simulate the operation to see the reason)' }
     if (-not $again.AlreadyDone) {
         # the items of an integration service or a network adapter carry a name read from
-        # the host; only their kind is named here
-        $items = @($again.Changes) | ForEach-Object { [string]$_.Item -replace '^(IntegrationService|NetworkAdapter)\..*$', '$1' }
+        # the host (which may hold any character, a line break included); only their kind
+        # is named here
+        $items = @($again.Changes) | ForEach-Object {
+            $item = [string]$_.Item
+            if ($item.StartsWith('IntegrationService.', [System.StringComparison]::Ordinal)) { 'IntegrationService' }
+            elseif ($item.StartsWith('NetworkAdapter.', [System.StringComparison]::Ordinal)) { 'NetworkAdapter' }
+            else { $item }
+        }
         return "the plan after the operation still has $(@($again.Changes).Count) change(s): " + ($items -join ', ')
     }
     return ''
 }
 
 function Get-RefuteVmFailureText {
-    # The reason of a failed operation, for the log and the caller. A text this module
-    # throws (throw '<text>': a RuntimeException whose error id is the text itself) is kept:
-    # it quotes configured values only. Any other error, from Hyper-V or the system, is
-    # reported by type and HRESULT, never by its message, which can quote host paths or
-    # account names (as in Update-RefuteVmConfig.ps1; Codex review of #142).
-    param([System.Management.Automation.ErrorRecord]$ErrorRecord)
+    # The reason of a failed operation, for the log and the caller. ModuleReason is the
+    # text this module raised itself (Stop-RefuteVmOperation records it in the module's own
+    # scope before it throws it; it quotes configured values and hashes only): it is kept
+    # when the error carries exactly that text. Any other error, from Hyper-V or the system,
+    # is reported by type and HRESULT, never by its message, which can quote host paths or
+    # account names (as in Update-RefuteVmConfig.ps1; Codex review of #142, rounds 1 and 2:
+    # the type or the error id of an error does not prove where its message comes from).
+    param([System.Management.Automation.ErrorRecord]$ErrorRecord, [string]$ModuleReason = '')
     $e = $ErrorRecord.Exception
-    if ($e.GetType() -eq [System.Management.Automation.RuntimeException] -and $ErrorRecord.FullyQualifiedErrorId -ceq $e.Message) {
-        return $e.Message
-    }
+    if ($ModuleReason -and $e.Message -ceq $ModuleReason) { return $ModuleReason }
     return ('{0} (HRESULT 0x{1:X8})' -f $e.GetType().Name, $e.HResult)
 }
 
