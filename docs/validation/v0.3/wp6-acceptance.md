@@ -167,3 +167,12 @@ built VM, or by the named WP2 or WP3 tests where the row says so), W6.1 to W6.3 
 and the maintainer records the result. Until then
 [docs/sandbox.md](../../sandbox.md) keeps saying "not yet validated", and no
 third-party code runs.
+
+## 7. Closing task: decommission the VM (issue #135)
+
+Decided by the maintainer on 2026-10-16: the Refute VM is removed when the v0.3 tests end,
+as a closing task of WP6. This is a task, not an acceptance criterion; the list of what
+goes and the rules are in issue #135. In short: nothing is deleted automatically; the
+maintainer does the removal as Administrator, with a preview; the records in
+`C:\ProgramData\RefuteVm` are archived, with a checked SHA-256 manifest, before any
+deletion there. No removal script is written before that task.
