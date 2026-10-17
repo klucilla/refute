@@ -132,6 +132,11 @@ its message names each field.
   lock` reads an existing lock as before.
 - **An unreadable `LOCK_HISTORY.md`** (not UTF-8, or a read error) is `FAIL` with the
   reason; `TAMPERED` still takes precedence.
+- **A lock file whose JSON cannot be converted** (an integer longer than Python's limit for
+  converting a string to an integer, 4,300 digits by default, or nesting too deep for the
+  parser) and **an attachment that cannot be read or examined**
+  (a permission error, for example) are `FAIL` with the reason, never an exception. For the
+  attachment, `TAMPERED` from another component still takes precedence.
 
 This comparison only reads the lock file and `LOCK_HISTORY.md`; it never rewrites
 either. The two historical locks (v0.1 and v0.2) match every shared field of their
@@ -140,7 +145,7 @@ entries (`tests/test_lock_history_fields.py`).
 | Exit code | Status | Meaning |
 |---|---|---|
 | 0 | `PASS` | Every hash matches and the lock is the latest history entry, which records every shared field exactly. |
-| 1 | `FAIL` | No lock, unreadable lock, invalid claim, missing attachment, lock not recorded as the latest history entry, or a shared field of that entry that differs or is missing. |
+| 1 | `FAIL` | No lock, unreadable lock, invalid claim, missing or unreadable attachment, lock not recorded as the latest history entry, or a shared field of that entry that differs or is missing. |
 | 2 | `TAMPERED` | The claim, an attachment or the code differs from the lock. The output names the component and the changed files. |
 
 `TAMPERED` takes precedence over `FAIL`. `refute replicate` and `refute calibrate`
