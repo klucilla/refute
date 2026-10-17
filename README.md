@@ -400,7 +400,7 @@ AI agents take part in the work in this repository. A human maintainer decides.
   the work the maintainer approved;
 - every message to the authors of a paper: agents never send email, and nothing is
   ever submitted to a scientific body by an agent;
-- the machine where third-party code runs.
+- the machine where third-party paper code will run: a local Hyper-V VM managed through versioned scripts (scripts/vm/). Hyper-V operations use a restricted local endpoint, with each operation previewed and approved by the maintainer before execution; no third-party paper code runs until every WP6 acceptance test passes.
 
 **What the agents never do: decide the verdict on a claim.** Claim verdicts come only
 from deterministic, versioned code, with the claim and its thresholds locked before the
