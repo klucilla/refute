@@ -483,7 +483,15 @@ def verify_claim(claim_path: Path | str, *, code_root: Path | None = None) -> Ve
     failures: list[str] = []
 
     lock_file = lock_path_for(claim_file)
-    if not lock_file.is_file():
+    try:
+        has_lock = lock_file.is_file()
+    except OSError as exc:
+        # a failed stat of the lock file (a permission error, for example) is FAIL with
+        # the reason, never an exception (issue #59)
+        result.status = VerifyStatus.FAIL
+        result.messages.append(f"cannot read lock file {lock_file}: {exc}")
+        return result
+    if not has_lock:
         result.status = VerifyStatus.FAIL
         result.messages.append(f"no lock file: {lock_file.name} (run `refute lock` first)")
         return result
