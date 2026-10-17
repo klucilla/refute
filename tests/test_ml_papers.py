@@ -103,7 +103,7 @@ def test_bad_seeds_and_bad_splits_lose_exactly_their_penalty(tmp_path, data):
     assert unaffected == 0.0
 
 
-def test_the_sleep_delays_the_run(tmp_path, data, monkeypatch):
+def test_the_script_asks_for_its_sleep(tmp_path, data, monkeypatch):
     repo, _ = build_repo(tmp_path / "repo", {"sleep_s": 0.5}, data)
     assert run(repo, "--seed=1").returncode == 0
     # no bound on a real clock (the maintainer's rule of 2026-10-16, #59): the script asks
