@@ -180,14 +180,18 @@ def test_the_cpu_of_children_and_grandchildren_is_counted(probe):
     # a child that starts a busy grandchild, then a second busy child
     result = backend.run(spec(auth, probe_argv("tree", "0.6")))
     assert result.exit_code == 0 and result.stopped is None
-    assert result.usage_usec >= 1_000_000  # at least the two busy descendants
+    # by construction (the timing rule of 2026-10-16, #59): each busy descendant runs until
+    # its own CPU time (process_time) reaches 0.6 s, so complete accounting is at least 1.2 s
+    assert result.usage_usec >= 1_000_000
 
 
 def test_the_threshold_stops_the_whole_run(probe):
     auth, backend = probe
     result = backend.run(spec(auth, probe_argv("wait", "busy", "30"), threshold_usec=400_000))
     assert result.stopped == sb.STOP_THRESHOLD and result.exit_code is None
-    assert 400_000 <= result.usage_usec < 10_000_000
+    # both bounds by construction (#59): the stop comes only at the threshold, and the
+    # probe, left alone, would end by itself at 30 s of its own CPU time
+    assert 400_000 <= result.usage_usec < 30_000_000
     # no bound on a real clock (the maintainer's rule of 2026-10-16, #59): present and finite
     assert math.isfinite(result.elapsed_s)
 

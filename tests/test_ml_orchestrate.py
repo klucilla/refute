@@ -459,6 +459,7 @@ def test_a_synthetic_paper_on_the_subprocess_backend(tmp_path):
     attacks_c2 = [times["C2/s1"], times["C2/s2"]]
     assert times["C2/run"][1] <= min(s for s, _ in attacks_c1)
     assert max(e for _, e in attacks_c1) <= min(s for s, _ in attacks_c2)
+    # positive by construction (#59): each job uses 0.05 s of its own CPU time (probe.py job)
     assert all(
         type(c.result.usage_usec) is int and c.result.usage_usec > 0
         for s in run.steps
