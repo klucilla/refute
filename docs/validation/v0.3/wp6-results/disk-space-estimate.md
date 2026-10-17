@@ -87,8 +87,8 @@ last column subtracts it. The EFI partition and file system metadata are left ou
   (how much a dataset expands, the outputs of the attacks, the build caches). Each of them
   could exceed its assumption.
 - **So the estimate does not show that 100 GiB fits every case of v0.3 with margin.** That
-  margin depends on rules still to be written: removing the layers of a failed rung before
-  the next, and the value of the disk quota per container (plan 6.1).
+  margin depends on rules still to be defined: a control of the space that failed rungs
+  occupy, and the value of the disk quota per container (plan 6.1).
 - Since each paper starts from a new child of the clean base, the 7 papers never add up in
   the guest.
 
