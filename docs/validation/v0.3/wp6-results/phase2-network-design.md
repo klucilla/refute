@@ -258,9 +258,12 @@ A complete, versioned list belongs to the implementation PR; its shape:
     and IPv6), the host's own addresses, and **every prefix of the maintainer's LAN**,
     including any that is not RFC 1918 (the LAN prefixes are recorded on the host, not
     published);
-  - allow outbound TCP 80 and 443 to any other address, stateful (the replies return);
-  - allow outbound TCP and UDP 53 to the two resolvers only, stateful;
-  - deny the rest, IPv4 and IPv6 (the egress network is set up with an IPv4 prefix only).
+  - allow outbound TCP 80 and 443 to any other **IPv4** address (`0.0.0.0/0`, never `ANY`),
+    stateful (the replies return);
+  - allow outbound TCP and UDP 53 to the two resolvers' IPv4 addresses only, stateful;
+  - deny every IPv6 packet (`::/0`) in both directions, at a weight above the allows; an
+    egress network set up with an IPv4 prefix only does not replace this rule;
+  - deny the rest.
 
 ## 6. What changes in the current operations
 
@@ -343,9 +346,12 @@ operation deletes ... a disk"); it is a separate decision and is not part of thi
 >   [by one call that sets a whole profile | by one call per rule]; a run starts only with
 >   the adapter disconnected. Every operation except `DisconnectNetwork` refuses an adapter
 >   connected to another switch, a second adapter, or a port whose ACLs differ from the
->   profile in force; `DisconnectNetwork` stays available in every such state. A state with
->   fewer ACLs than a profile (the positive controls of V2 and V4) exists only during those
->   tests, with the maintainer's approval of each, before any paper code runs. The
+>   profile in force; `DisconnectNetwork` stays available in every such state. **Exception
+>   for validation:** the positive controls of V2 and V4 need a port with fewer ACLs than a
+>   profile. That state is set and undone only by the maintainer as Administrator,
+>   following a written procedure approved for each test, before any paper code runs;
+>   while it lasts the endpoint admits only `-Status` and `DisconnectNetwork`, and the
+>   test ends with the adapter disconnected and the port back to a profile, read back. The
 >   switches, the host's addresses on them, the NAT and the proxy VM are set up by the
 >   maintainer as Administrator, not by the endpoint. No operation deletes a VM or a disk,
 >   turns a VM off without a guest shutdown, enables an integration service or turns
@@ -358,7 +364,9 @@ operation deletes ... a disk"); it is a separate decision and is not part of thi
 - the ACL changes become operations, with a granularity still to decide (N12), including
   the behavior when a change fails midway (section 5.4);
 - `DisconnectNetwork` stays available whatever the state, for containment;
-- a test state with fewer ACLs is allowed only during the positive controls, each approved.
+- a test state with fewer ACLs is an explicit exception: set and undone by the maintainer as
+  Administrator under a procedure approved for each test, with only `-Status` and
+  `DisconnectNetwork` admitted by the endpoint meanwhile.
 
 Codex agrees that W6.5 must change and that the change needs the maintainer; it does not
 yet agree with the whole text (the granularity of N12). The proposal takes effect only with
