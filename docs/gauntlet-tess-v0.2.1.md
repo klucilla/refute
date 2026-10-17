@@ -85,6 +85,28 @@ eclipsing-binary test.
 
 Acceptance criteria and validation: `docs/validation/v0.2.1/H4-acceptance.md`.
 
+## How blind the holdout is (issue #23)
+
+Earlier reports said that "the hidden year is read only inside the predicted windows".
+That overstates it. What the code does (`HiddenYear` in `src/refute/packs/tess/holdout.py`):
+
+1. The train-only ephemeris and the hidden sectors' time spans (metadata) give the
+   predicted windows.
+2. Before any logged read, the **whole** raw hidden year is detrended once, with the
+   predicted windows masked. Every hidden cadence enters this step, and it is **not
+   logged**.
+3. After it, only the registered windows are read: the transit windows, the phase-0.5
+   control windows and their baseline bands. Every such read is logged in the round's
+   access log, and a read of any other window is refused.
+
+So the hidden year is not invisible to the code: its out-of-window flux shapes the trend
+removed inside the windows. What the test guarantees is narrower: no decision taken
+before the windows are read depends on hidden-year flux (H4, blindness tests), and every
+read after the detrending is a registered, logged window. From v0.2.1 the per-target
+report says this in the section "Blind holdout by year".
+
+Acceptance criteria and validation: `docs/validation/v0.2.1/reopen/issue-23-acceptance.md`.
+
 ## eb_catalog: own-TIC matches in a same-photometry catalog (H9a)
 
 Before v0.2.1 any catalog entry matching the target (by TIC ID, or within

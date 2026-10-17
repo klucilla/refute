@@ -19,6 +19,15 @@ EB_CATALOG_DOWNGRADE_NOTE = (
     "TESS photometry, so it is not evidence independent of the light curve: from v0.2.1 "
     "such a match is a warning, not a fatal failure."
 )
+# v0.2.1, issue #23: how blind the holdout is, stated as the code does it (the whole
+# hidden year is detrended, windows masked, before any logged read).
+HOLDOUT_BLINDNESS_NOTE = (
+    "Each year is hidden in turn, and the ephemeris is fitted on the other years only. "
+    "Before any logged read, the whole hidden year is detrended once, with the predicted "
+    "windows masked; that step is not logged. After it, the test reads only the predicted "
+    "transit windows, the phase-0.5 control windows and their baseline bands, and every "
+    "such read is logged."
+)
 NOT_A_DISCOVERY = (
     "A verdict is about a claim, never about its authors. Refute produces candidates and "
     "verdicts only: nothing here is a confirmed discovery, and nothing has been submitted "
@@ -116,8 +125,7 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
         lines += [
             "## Blind holdout by year",
             "",
-            "Each year is hidden in turn. The ephemeris is fitted on the other years only;",
-            "the hidden year is read only inside the predicted windows.",
+            HOLDOUT_BLINDNESS_NOTE,
             "",
             "| Hidden year | Status | Windows with data | Hidden SNR | Control SNR (phase 0.5) |",
             "|---|---|---|---|---|",
