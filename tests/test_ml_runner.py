@@ -189,9 +189,10 @@ def test_the_threshold_stops_the_whole_run(probe):
     auth, backend = probe
     result = backend.run(spec(auth, probe_argv("wait", "busy", "30"), threshold_usec=400_000))
     assert result.stopped == sb.STOP_THRESHOLD and result.exit_code is None
-    # both bounds by construction (#59): the stop comes only at the threshold, and the
-    # probe, left alone, would end by itself at 30 s of its own CPU time
-    assert 400_000 <= result.usage_usec < 30_000_000
+    # the lower bound holds by construction (the stop comes only at the threshold); no upper
+    # bound on real CPU time (#59, Codex review): the stop reason above shows the run was
+    # stopped, and the quantities are checked on a simulated clock (tests/test_ml_timing.py)
+    assert result.usage_usec >= 400_000
     # no bound on a real clock (the maintainer's rule of 2026-10-16, #59): present and finite
     assert math.isfinite(result.elapsed_s)
 
