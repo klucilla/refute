@@ -267,16 +267,21 @@ A complete, versioned list belongs to the implementation PR; its shape:
 
 ## 6. What changes in the current operations
 
-Today every operation except `DisconnectNetwork` refuses a connected adapter
-(`Resolve-RefuteVmTarget`, `RefuteVm.Core.ps1`), and `DisconnectNetwork` needs the VM off.
-The observed state holds only each adapter's name and switch name (`RefuteVm.HyperV.ps1`).
+Today every operation that checks the target VM (those with a required VM state in the
+operation table of `RefuteVm.Core.ps1`) refuses a connected adapter, except
+`DisconnectNetwork` (`Resolve-RefuteVmTarget`), and `DisconnectNetwork` needs the VM off.
+The operations that check no VM, among them the media imports `ImportInstallIso` and
+`ImportSeedIso`, check files and hashes only, not the adapter (Codex review of the
+package). The observed state holds only each adapter's name and switch name
+(`RefuteVm.HyperV.ps1`).
 
 | Item | Today | Proposed |
 |---|---|---|
 | Observed state and plan | adapter name and switch name | the adapter's stable identity (its Id), the switch's identity (its Id) and type, the number of adapters, and the port's complete extended ACL list (direction, addresses, protocol, ports, weight, stateful), in the preconditions and in the check after each call |
 | Target check | any connected adapter is refused | an adapter is accepted connected only to the configured switch (by Id and type), with one adapter only, and with the port's ACLs equal, entry by entry, to the profile in force; anything else is refused |
 | `DisconnectNetwork` | VM off | **always available** for the recorded VM's identified adapter, also with the VM running and also when the switch or the ACLs diverge, so that a divergence can be contained; whether Hyper-V disconnects a running VM's adapter without a stop is **to observe** |
-| Installation operations (media, boot order, base disk, `StartVm` for the installation) | adapter disconnected | unchanged: they keep requiring the adapter disconnected |
+| Installation operations that check the VM (attaching media, boot order, base disk, `StartVm` for the installation) | adapter disconnected | unchanged: they keep requiring the adapter disconnected |
+| Media imports (`ImportInstallIso`, `ImportSeedIso`) | no adapter check (they act on files, not on the VM) | unchanged; whether they should also require the adapter disconnected is a **new** requirement, for the maintainer to decide, not a current protection |
 | Capacity control (W6.2, V12: `SetProcessorMaximum`, `SuspendVm`, `ResumeVm`, `SaveVm`) | adapter disconnected | accepted in `run` (disconnected, as today) and in `build` or `pull` with the profile verified |
 | Logging | every simulation, intent, refusal and result | unchanged; the ACL list is part of the plan, so its hash covers it |
 
