@@ -1,5 +1,6 @@
 """scripts/junit_counts.py: the CI prints test counts from a JUnit file (CLAUDE.md)."""
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -90,8 +91,11 @@ def test_the_conftest_hooks_write_the_trace(tmp_path, monkeypatch):
 
     trace = tmp_path / "new" / "trace.txt"
     monkeypatch.setattr(conftest, "TRACE", str(trace))
-    # the session creates the folder and starts an empty trace
+    monkeypatch.setattr(conftest, "_active", False)
+    monkeypatch.delenv(conftest.TRACE_OWNER, raising=False)
+    # the session creates the folder and starts an empty trace, and owns it
     conftest.pytest_sessionstart(None)
+    assert os.environ[conftest.TRACE_OWNER] == str(os.getpid())
     assert trace.read_text(encoding="utf-8") == ""
     conftest.pytest_runtest_logstart("tests/test_a.py::test_one", ("tests/test_a.py", 1, ""))
     conftest.pytest_runtest_logfinish("tests/test_a.py::test_one", ("tests/test_a.py", 1, ""))
@@ -106,3 +110,34 @@ def test_the_conftest_hooks_write_the_trace(tmp_path, monkeypatch):
     monkeypatch.setattr(conftest, "TRACE", "")
     conftest.pytest_runtest_logstart("tests/test_a.py::test_three", ("tests/test_a.py", 9, ""))
     assert "test_three" not in trace.read_text(encoding="utf-8")
+
+
+def test_a_child_pytest_leaves_the_parent_trace_alone(tmp_path, monkeypatch):
+    """A pytest started by a test inherits REFUTE_TEST_TRACE and the owner's PID: its
+    session neither empties the trace nor writes to it (Codex review of #148)."""
+    import conftest
+
+    trace = tmp_path / "trace.txt"
+    trace.write_text("start tests/test_parent.py::test_running\n", encoding="utf-8")
+    monkeypatch.setattr(conftest, "TRACE", str(trace))
+    monkeypatch.setattr(conftest, "_active", False)
+    monkeypatch.setenv(conftest.TRACE_OWNER, str(os.getpid() + 1))
+    conftest.pytest_sessionstart(None)
+    conftest.pytest_runtest_logstart("tests/test_child.py::test_c", ("tests/test_child.py", 1, ""))
+    assert trace.read_text(encoding="utf-8") == "start tests/test_parent.py::test_running\n"
+
+
+def test_an_error_writing_the_trace_turns_it_off(tmp_path, monkeypatch, capsys):
+    """The trace is a diagnostic aid: a path it cannot write turns it off with a warning
+    instead of ending the run."""
+    import conftest
+
+    folder = tmp_path / "a-folder"
+    folder.mkdir()
+    monkeypatch.setattr(conftest, "TRACE", str(folder))
+    monkeypatch.setattr(conftest, "_active", False)
+    monkeypatch.delenv(conftest.TRACE_OWNER, raising=False)
+    conftest.pytest_sessionstart(None)
+    conftest.pytest_runtest_logstart("tests/test_a.py::test_one", ("tests/test_a.py", 1, ""))
+    assert conftest._active is False
+    assert "test trace turned off:" in capsys.readouterr().err
