@@ -214,6 +214,10 @@ function New-RefuteVmAclRule {
     return [ordered]@{
         Direction = $Direction; Action = $Action; LocalIPAddress = 'ANY'; RemoteIPAddress = $RemoteIPAddress
         Protocol = $Protocol; LocalPort = $LocalPort; RemotePort = $RemotePort; Weight = $Weight; Stateful = $Stateful
+        # no isolation (VLAN or network virtualization): the entry applies to all the
+        # adapter's traffic (Codex review of c3c06db: an entry for another isolated network
+        # is not the same entry)
+        IsolationID = 0
     }
 }
 
@@ -229,21 +233,25 @@ function Get-RefuteVmAclProfile {
     if ($Profile -eq 'build') {
         $rules.Add((New-RefuteVmAclRule -Direction 'Outbound' -Action 'Allow' -RemoteIPAddress $Config.ProxyAddress -Protocol 'TCP' -RemotePort ([string]$Config.ProxyPort) -Weight 90 -Stateful $true))
     }
-    $rules.Add((New-RefuteVmAclRule -Direction 'Inbound' -Action 'Deny' -RemoteIPAddress 'ANY' -Weight 1))
+    # every weight differs within the adapter: the reference page does not say whether two
+    # entries may share one, so none do
+    $rules.Add((New-RefuteVmAclRule -Direction 'Inbound' -Action 'Deny' -RemoteIPAddress 'ANY' -Weight 2))
     $rules.Add((New-RefuteVmAclRule -Direction 'Outbound' -Action 'Deny' -RemoteIPAddress 'ANY' -Weight 1))
     return , $rules.ToArray()
 }
 
 function ConvertTo-RefuteAclRule {
     # An entry read from the host (Get-VMNetworkAdapterExtendedAcl), in the form of
-    # New-RefuteVmAclRule. Wildcards (empty, '*', 0.0.0.0/0, ::/0, ANY) become 'ANY' for
-    # addresses and protocols and '' for ports; a host address loses '/32'; protocol numbers
-    # 6 and 17 become TCP and UDP. How the host spells an entry is to be observed on it, so
+    # New-RefuteVmAclRule. An address that matches both families (empty, '*', ANY) becomes
+    # 'ANY'; 0.0.0.0/0 and ::/0 stay as they are, since each matches one family only (Codex
+    # review of c3c06db: a deny of one family is not a deny of both); a host address loses
+    # '/32'; ports given as a wildcard become ''; protocol numbers 6 and 17 become TCP and
+    # UDP; the isolation ID is kept. How the host spells an entry is to be observed on it, so
     # the comparison is tolerant of spelling and strict on meaning.
     param($Entry)
     function Norm-Address($a) {
         $t = [string]$a
-        if ([string]::IsNullOrWhiteSpace($t) -or @('*', 'ANY', '0.0.0.0/0', '::/0') -icontains $t.Trim()) { return 'ANY' }
+        if ([string]::IsNullOrWhiteSpace($t) -or @('*', 'ANY') -icontains $t.Trim()) { return 'ANY' }
         $t = $t.Trim()
         if ($t.EndsWith('/32')) { $t = $t.Substring(0, $t.Length - 3) }
         return $t
@@ -263,6 +271,7 @@ function ConvertTo-RefuteAclRule {
         LocalIPAddress = Norm-Address $Entry.LocalIPAddress; RemoteIPAddress = Norm-Address $Entry.RemoteIPAddress
         Protocol = $protocol; LocalPort = Norm-Port $Entry.LocalPort; RemotePort = Norm-Port $Entry.RemotePort
         Weight = [int]$Entry.Weight; Stateful = [bool]$Entry.Stateful
+        IsolationID = [int](Get-RefuteMember $Entry 'IsolationID' 0)
     }
 }
 

@@ -381,6 +381,25 @@ $two = New-NetObserved $build; $two.Vms[0].NetworkAdapters = @($two.Vms[0].Netwo
 Add-Case 'a second adapter is refused' ((NetPlan 'StartVm' $two).Refusal -like '*2 network adapters*')
 $imp = New-NetObserved $build $switchId
 Add-Case 'ImportSeedIso refused while the recorded VM is connected' ((New-RefuteVmPlan -Operation 'ImportSeedIso' -Config $netConfig -Observed $imp -MediaSha256 ('a' * 64)).Refusal -like '*needs it disconnected*')
+# the address family is kept (Codex review of c3c06db): 0.0.0.0/0 and ::/0 match one family
+# each, ANY and '*' both; a deny of one family is not the profile's deny
+function Copy-Rules($Rules) { return @($Rules | ForEach-Object { $r = [ordered]@{}; foreach ($k in $_.Keys) { $r[$k] = $_[$k] }; $r }) }
+$read = { param($a) (ConvertTo-RefuteAclRule ([pscustomobject]@{ Direction = 'Inbound'; Action = 'Deny'; LocalIPAddress = '*'; RemoteIPAddress = $a; Protocol = 'ANY'; LocalPort = ''; RemotePort = ''; Weight = 1; Stateful = $false; IsolationID = 0 })).RemoteIPAddress }
+Add-Case 'address read: 0.0.0.0/0 stays IPv4 only' ((& $read '0.0.0.0/0') -ceq '0.0.0.0/0')
+Add-Case 'address read: ::/0 stays IPv6 only' ((& $read '::/0') -ceq '::/0')
+Add-Case "address read: '*' is both families" ((& $read '*') -ceq 'ANY')
+foreach ($family in '0.0.0.0/0', '::/0') {
+    $one = Copy-Rules $build; $one[2].RemoteIPAddress = $family; $one[3].RemoteIPAddress = $family
+    Add-Case "ConnectNetwork refused when the denies cover $family only" ((NetPlan 'ConnectNetwork' (New-NetObserved $one)).Refusal -like '*equal no profile*')
+    Add-Case "SetPortProfile not already done when the denies cover $family only" (-not (NetPlan 'SetPortProfile' (New-NetObserved $one) 'build').AlreadyDone)
+}
+# the isolation ID is compared: an entry for another isolated network is not the profile's
+$isolated = Copy-Rules $build; foreach ($r in $isolated) { $r.IsolationID = 42 }
+Add-Case 'ConnectNetwork refused when the entries carry another isolation ID' ((NetPlan 'ConnectNetwork' (New-NetObserved $isolated)).Refusal -like '*equal no profile*')
+Add-Case 'StartVm refused when the entries carry another isolation ID' ((NetPlan 'StartVm' (New-NetObserved $isolated $switchId)).Refusal -like '*equal no profile*')
+Add-Case 'every profile entry has isolation ID 0' (@($build + $pull | Where-Object { $_.IsolationID -ne 0 }).Count -eq 0)
+$spelledIso = [pscustomobject]@{ Direction = 'Inbound'; Action = 'Deny'; LocalIPAddress = 'ANY'; RemoteIPAddress = 'ANY'; Protocol = 'ANY'; LocalPort = ''; RemotePort = ''; Weight = 1; Stateful = $false; IsolationID = 7 }
+Add-Case 'an entry read from the host keeps its isolation ID' ((ConvertTo-RefuteAclRule $spelledIso).IsolationID -eq 7)
 
 $o = New-Observed; $o.RecordedVmId = $vmId; $o.Vms = @(New-Vm)
 Add-Case 'DisableGuestServiceInterface refused: no ServiceGuid' ($null -ne (Plan 'DisableGuestServiceInterface' $o).Refusal)
@@ -498,6 +517,61 @@ $r = Get-HostCheckFailure { 'synthetic host' } $false
 Add-Case 'Hyper-V check: a host that answers is returned' ($r.Value -eq 'synthetic host' -and $r.Type -eq '') ($r.Type + ': ' + $r.Message)
 Remove-Item -Path function:Test-RefuteVmmsInstalled
 . (Join-Path $moduleDir 'RefuteVm.HyperV.ps1')
+
+# The ConnectNetwork mutation reads everything again right before the connection (Codex
+# review of c3c06db). The Hyper-V commands are replaced by functions here; each scenario
+# changes the host after the plan and checks whether Connect-VMNetworkAdapter ran and whether
+# the adapter ends disconnected.
+$stubCommands = 'Get-VM', 'Get-VMNetworkAdapter', 'Get-VMSwitch', 'Get-VMNetworkAdapterExtendedAcl', 'Connect-VMNetworkAdapter', 'Disconnect-VMNetworkAdapter'
+function Get-VM { [CmdletBinding()] param($Id) return 'stub-vm' }
+function Get-VMNetworkAdapter { [CmdletBinding()] param($VM) return @($script:stub.Adapter) }
+function Get-VMSwitch { [CmdletBinding()] param() return @($script:stub.Switch) }
+function Get-VMNetworkAdapterExtendedAcl { [CmdletBinding()] param($VMNetworkAdapter) return @($script:stub.Acls) }
+function Connect-VMNetworkAdapter {
+    [CmdletBinding()] param($VMNetworkAdapter, $VMSwitch)
+    $script:stub.Connects++
+    $script:stub.Adapter.SwitchId = [string]$VMSwitch.Id; $script:stub.Adapter.SwitchName = [string]$VMSwitch.Name
+    if ($script:stub.AclsAfterConnect) { $script:stub.Acls = @() }
+}
+function Disconnect-VMNetworkAdapter {
+    [CmdletBinding()] param([Parameter(ValueFromPipeline = $true)]$VMNetworkAdapter)
+    process { $script:stub.Disconnects++; $VMNetworkAdapter.SwitchId = ''; $VMNetworkAdapter.SwitchName = '' }
+}
+function Invoke-ConnectScenario([hashtable]$Change) {
+    $plan = NetPlan 'ConnectNetwork' (New-NetObserved $build)
+    $script:stub = @{
+        Adapter = [pscustomobject]@{ Name = 'Network Adapter'; Id = 'Microsoft:x'; SwitchName = ''; SwitchId = '' }
+        Switch = [pscustomobject]@{ Id = $switchId; Name = 'refute-internal'; SwitchType = 'Internal' }
+        Acls = @($build | ForEach-Object { [pscustomobject]$_ }); Connects = 0; Disconnects = 0; AclsAfterConnect = $false
+    }
+    foreach ($k in $Change.Keys) {
+        if ($k -eq 'AdapterId') { $script:stub.Adapter.Id = $Change[$k] }
+        elseif ($k -eq 'AdapterSwitchId') { $script:stub.Adapter.SwitchId = $Change[$k]; $script:stub.Adapter.SwitchName = 'other' }
+        elseif ($k -eq 'SwitchType') { $script:stub.Switch.SwitchType = $Change[$k] }
+        else { $script:stub[$k] = $Change[$k] }
+    }
+    # the paths the mutation checks for reparse points are synthetic ones under WorkDir
+    $mutConfig = Copy-Config @{ NetworkSwitchId = $switchId; VmRoot = (Join-Path $WorkDir 'vms'); BaseDiskPath = (Join-Path $WorkDir 'base.vhdx')
+        MediaRoot = (Join-Path $WorkDir 'media'); HostVirtualHardDiskPath = (Join-Path $WorkDir 'disks') }
+    $failure = ''
+    try { Invoke-RefuteVmMutation -Config $mutConfig -Observed (New-NetObserved $build) -Plan $plan } catch { $failure = $_.Exception.Message }
+    return @{ Failure = $failure; Connects = $script:stub.Connects; Disconnects = $script:stub.Disconnects; Connected = [bool]$script:stub.Adapter.SwitchId }
+}
+$r = Invoke-ConnectScenario @{}
+Add-Case 'ConnectNetwork mutation: connects when everything still holds' ($r.Failure -eq '' -and $r.Connects -eq 1 -and $r.Disconnects -eq 0 -and $r.Connected) $r.Failure
+foreach ($s in @(
+        @{ Name = 'another adapter Id'; Change = @{ AdapterId = 'Microsoft:y' }; Text = '*not the one of the plan*' },
+        @{ Name = 'the adapter got connected'; Change = @{ AdapterSwitchId = 'ffffffff-0000-0000-0000-000000000000' }; Text = '*must be disconnected*' },
+        @{ Name = 'the ACLs were removed'; Change = @{ Acls = @() }; Text = '*equal no profile*' },
+        @{ Name = 'the switch became external'; Change = @{ SwitchType = 'External' }; Text = '*not internal*' },
+        @{ Name = 'the switch is gone'; Change = @{ Switch = @() }; Text = '*does not exist*' })) {
+    $r = Invoke-ConnectScenario $s.Change
+    $keptOff = ($r.Connects -eq 0 -and ($s.Name -eq 'the adapter got connected' -or -not $r.Connected))
+    Add-Case "ConnectNetwork mutation refused before connecting: $($s.Name)" ($r.Failure -like $s.Text -and $keptOff) $r.Failure
+}
+$r = Invoke-ConnectScenario @{ AclsAfterConnect = $true }
+Add-Case 'ConnectNetwork mutation: ACLs lost after the connection disconnect it again' ($r.Failure -like '*disconnected again*' -and $r.Connects -eq 1 -and $r.Disconnects -eq 1 -and -not $r.Connected) $r.Failure
+foreach ($name in $stubCommands) { Remove-Item -Path "function:$name" }
 
 $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)
 if ($onWindows) {

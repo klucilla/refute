@@ -87,9 +87,12 @@ local and remote IP address (IPv4 and IPv6, host, subnet or wildcard), protocol 
 ports, with a weight. Larger weights apply first, and the first matching entry decides.
 Source: https://learn.microsoft.com/en-us/powershell/module/hyper-v/add-vmnetworkadapterextendedacl
 (accessed 2026-10-14). That page is published for Windows Server; **whether the cmdlet
-works under Hyper-V on Windows 11 is verified on the machine first**. If it does not,
-the basic `Add-VMNetworkAdapterAcl` (IP address ACLs) is used, and V2 states which one
-was used.
+works under Hyper-V on Windows 11 is verified on the machine first**. Only extended ACLs
+are used, with no fallback (the maintainer's decision of 2026-10-17, which replaced the
+earlier fallback to the basic `Add-VMNetworkAdapterAcl`): if they do not work, phase 2
+stops for the maintainer's decision. The same page distinguishes `0.0.0.0/0` (all IPv4),
+`::/0` (all IPv6) and `ANY` (both); the module keeps them distinct, and compares the
+`IsolationID` of each entry (0, no isolation).
 
 **Note B, Docker and the guest firewall.** Docker Engine creates its rules with
 iptables by default and also supports nftables, selected with the daemon option
@@ -174,13 +177,54 @@ https://docs.docker.com/engine/install/ubuntu/ (accessed 2026-10-14). The guest 
     host-side ACLs, rows V2 to V9, V21 and V22 are run again before any third-party
     code runs, with the new results recorded.
 
+## 5a. Isolation test (V3), replacing the battery V1 to V22 (2026-10-17)
+
+By the maintainer's decision of 2026-10-17, the battery of section 3 (V1 to V22) and
+W6.1 to W6.6 are replaced by **one isolation test**, run once at the end of phase 2:
+`scripts/vm/isolation/run_isolation.py` (host side, from a saved `-Status`) and
+`scripts/vm/isolation/guest_checks.sh` (guest side, through SSH with the checked host key).
+**Its approval is the condition for running third-party code.** It needs no state with
+fewer ACLs than a profile: an allowed port and a listening port outside the list on the
+same target show that the block comes from the port ACLs.
+
+| Check | What it shows | Old items it covers |
+|---|---|---|
+| `proxy_port_open`, `proxy_ssh_blocked` | on the proxy, port 3128 answers and its listening SSH is blocked | V2 (blocks enforced outside the guest, with a positive control on the same target), V4 |
+| `host_<port>_blocked` (22, 80, 135, 139, 443, 445, 3389, 5985, 5986) | nothing the guest starts reaches the Windows host | V2 |
+| `private_<address>_blocked` | private and link-local targets are not reached | V2 (LAN and special ranges) |
+| `direct_tcp_*_blocked`, `no_dns` | no direct path to the internet, no name resolution in the guest | V4 (no bypass of the proxy) |
+| `proxy_allows_pypi`, `proxy_refuses_example_com`, `proxy_refuses_ip_literal`, `proxy_refuses_other_port` | the proxy passes the allowlist only | V4 |
+| `no_ipv6_address`, `ipv6_blocked` | no IPv6 address, and with a temporary link-local address no other node answers | V2 and V4 (IPv6) |
+| `container_network_none` | a container with `--network none` has only `lo` and reaches neither the proxy nor the internet (the image needs only bash: the Ubuntu image, pinned by digest) | V6 |
+| host: `one_adapter`, `adapter_on_configured_switch`, `switch_internal`, `port_acls_equal_build` | the network as W6.5 requires, the ACLs read back equal to the profile | V2 (recorded rules), W6.5 |
+| host: `guest_service_interface_off`, `enhanced_session_off`, `no_dvd_drive` | no host integration channel | V11 (settings), section 2 (no shared folders, Enhanced Session off, Guest Service Interface off) |
+
+**No longer tested by WP6, and why** (the maintainer's decision: test the essential once,
+before third-party code):
+- **V1, V5, V7, V8, V9, V13 to V21:** properties of Refute's runner and builder, covered by
+  the synthetic tests of WP2 and WP3 in CI; the container limits, mounts, entitlements and
+  the builder configuration of each real run are recorded in its dossier.
+- **V3** (the guest firewall only a second layer): no guest firewall is configured; every
+  block of the test is on the host side by construction (port ACLs).
+- **V2's LAN machine as a positive control:** the guest has no route to the LAN; the port
+  ACLs deny every address but the two allowed ones, and the same-target check shows that
+  they block.
+- **V10** (a differencing disk per paper): not built; the development papers run on the
+  base disk, and the maintainer decides before the main sample.
+- **V12** (capacity control on a running job) and **W6.1 to W6.3** (`refute throttle`,
+  `pause`, `resume`): the endpoint's `SetProcessorMaximum`, `SuspendVm`, `ResumeVm`,
+  `SaveVm` and `StopVm` are available and tested when used; the guest-side commands are
+  not built.
+- **V22** (the stopping margin of the budget): measured on the first real run, not before.
+- **W6.4 and W6.6:** recorded in `wp6-results/jea-registration.md` and kept green in CI.
+
 ## 6. Acceptance of the package
 
-WP6 is accepted when **every row V1 to V22** passes with its evidence recorded (on the
-built VM, or by the named WP2 or WP3 tests where the row says so), W6.1 to W6.3 pass,
-and the maintainer records the result. Until then
+**Since 2026-10-17:** WP6 is accepted when the isolation test of section 5a passes, with
+its report recorded in `wp6-results/`, and the maintainer records the result. Until then
 [docs/sandbox.md](../../sandbox.md) keeps saying "not yet validated", and no
-third-party code runs.
+third-party code runs. (Before 2026-10-17 the condition was every row V1 to V22 and W6.1
+to W6.3.)
 
 ## 7. Closing task: decommission the VM (issue #135)
 

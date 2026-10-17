@@ -234,6 +234,37 @@ function Assert-RefuteNoReparsePoint {
     }
 }
 
+function Get-RefuteVmPlannedAdapter {
+    # The VM's one network adapter, read again: the one the plan observed (by Id) and still
+    # disconnected, or the operation fails without a change.
+    param($Vm, [System.Collections.IDictionary]$Plan)
+    $planned = @(Get-RefuteMember $Plan.Preconditions.TargetVm 'NetworkAdapters' @())
+    $nowAdapters = @(Get-VMNetworkAdapter -VM $Vm -ErrorAction Stop)
+    if ($planned.Count -ne 1 -or $nowAdapters.Count -ne 1) { Stop-RefuteVmOperation 'the VM does not have the one network adapter of the plan' }
+    $plannedId = [string](Get-RefuteMember $planned[0] 'Id' '')
+    if ([string]::IsNullOrEmpty($plannedId) -or ([string]$nowAdapters[0].Id) -ine $plannedId) { Stop-RefuteVmOperation 'the network adapter is not the one of the plan' }
+    if (-not [string]::IsNullOrEmpty([string]$nowAdapters[0].SwitchName) -or $nowAdapters[0].SwitchId) { Stop-RefuteVmOperation 'the network adapter is connected; it must be disconnected' }
+    return $nowAdapters[0]
+}
+
+function Get-RefuteVmConfiguredSwitch {
+    # The configured switch, read again by Id: it must exist once, be internal and have the
+    # configured name.
+    param([System.Collections.IDictionary]$Config)
+    if ([string]::IsNullOrEmpty($Config.NetworkSwitchId)) { Stop-RefuteVmOperation 'NetworkSwitchId is not configured' }
+    $found = @(Get-VMSwitch -ErrorAction Stop | Where-Object { ([string]$_.Id) -ieq $Config.NetworkSwitchId })
+    if ($found.Count -ne 1) { Stop-RefuteVmOperation 'the configured switch does not exist' }
+    if ([string]$found[0].SwitchType -cne 'Internal' -or [string]$found[0].Name -cne $Config.NetworkSwitchName) { Stop-RefuteVmOperation 'the configured switch is not internal or has another name' }
+    return $found[0]
+}
+
+function Test-RefuteVmAdapterProfile {
+    # True when the adapter's extended ACLs, read now, equal one of the profiles.
+    param([System.Collections.IDictionary]$Config, $Adapter)
+    $acls = @(Get-VMNetworkAdapterExtendedAcl -VMNetworkAdapter $Adapter -ErrorAction Stop | ForEach-Object { ConvertTo-RefuteAclRule $_ })
+    return [bool](Get-RefuteVmProfileInForce -Config $Config -Adapter @{ Acls = $acls })
+}
+
 function Invoke-RefuteVmMutation {
     # The single administrative action of the plan. No other action is taken here.
     param(
@@ -306,14 +337,14 @@ function Invoke-RefuteVmMutation {
         'ResumeVm' { Resume-VM -VM $vm -ErrorAction Stop }
         'SaveVm' { Save-VM -VM $vm -ErrorAction Stop }
         'SetPortProfile' {
-            # with the adapter disconnected (checked by the plan): every entry removed, then the
-            # profile's entries added; the check after reads the list back
-            $adapter = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop)
-            if ($adapter.Count -ne 1 -or $adapter[0].SwitchName) { Stop-RefuteVmOperation 'the network adapter changed since the plan' }
-            Get-VMNetworkAdapterExtendedAcl -VMNetworkAdapter $adapter[0] -ErrorAction Stop | Remove-VMNetworkAdapterExtendedAcl -ErrorAction Stop
+            # with the adapter disconnected (checked by the plan, and again here): every entry
+            # removed, then the profile's entries added; the check after reads the list back
+            $adapter = Get-RefuteVmPlannedAdapter -Vm $vm -Plan $Plan
+            Get-VMNetworkAdapterExtendedAcl -VMNetworkAdapter $adapter -ErrorAction Stop | Remove-VMNetworkAdapterExtendedAcl -ErrorAction Stop
             foreach ($rule in (Get-RefuteVmAclProfile -Config $Config -Profile $Profile)) {
+                # IsolationID 0 (no isolation) is the default and is not passed
                 $add = @{
-                    VMNetworkAdapter = $adapter[0]; Action = $rule.Action; Direction = $rule.Direction
+                    VMNetworkAdapter = $adapter; Action = $rule.Action; Direction = $rule.Direction
                     RemoteIPAddress = $rule.RemoteIPAddress; Weight = $rule.Weight; Stateful = $rule.Stateful
                     ErrorAction = 'Stop'
                 }
@@ -324,10 +355,22 @@ function Invoke-RefuteVmMutation {
             }
         }
         'ConnectNetwork' {
-            $adapter = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop)
-            $switch = @(Get-VMSwitch -ErrorAction Stop | Where-Object { ([string]$_.Id) -ieq $Config.NetworkSwitchId })
-            if ($adapter.Count -ne 1 -or $switch.Count -ne 1) { Stop-RefuteVmOperation 'the network adapter or the configured switch changed since the plan' }
-            Connect-VMNetworkAdapter -VMNetworkAdapter $adapter[0] -VMSwitch $switch[0] -ErrorAction Stop
+            # Everything the plan checked is read again right before the connection (Codex
+            # review of c3c06db: the module's lock does not stop a change made outside it): the
+            # same adapter, still disconnected, its ACLs equal to a profile, and the configured
+            # switch by Id, internal, with the configured name. A failure here leaves the
+            # adapter disconnected. After the connection the ACLs and the switch are read once
+            # more; if they no longer hold, the adapter is disconnected again before failing.
+            $adapter = Get-RefuteVmPlannedAdapter -Vm $vm -Plan $Plan
+            $switch = Get-RefuteVmConfiguredSwitch -Config $Config
+            if (-not (Test-RefuteVmAdapterProfile -Config $Config -Adapter $adapter)) { Stop-RefuteVmOperation "the port's ACLs equal no profile; the adapter stays disconnected" }
+            Connect-VMNetworkAdapter -VMNetworkAdapter $adapter -VMSwitch $switch -ErrorAction Stop
+            $connected = @(Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | Where-Object { ([string]$_.Id) -ieq ([string]$adapter.Id) })
+            $held = ($connected.Count -eq 1 -and ([string]$connected[0].SwitchId) -ieq $Config.NetworkSwitchId -and (Test-RefuteVmAdapterProfile -Config $Config -Adapter $connected[0]))
+            if (-not $held) {
+                Get-VMNetworkAdapter -VM $vm -ErrorAction Stop | Disconnect-VMNetworkAdapter -ErrorAction Stop
+                Stop-RefuteVmOperation 'after the connection the adapter, its switch or its ACLs were not the planned ones; the adapter was disconnected again'
+            }
         }
         default { Stop-RefuteVmOperation "no mutation for operation $($Plan.Operation)" }
     }
