@@ -177,6 +177,31 @@ The verification at each lock's tag, in its own environment, remains the complet
 (see the README and
 [validation/v0.3/lock-compat-record.md](validation/v0.3/lock-compat-record.md)).
 
+## When only the code differs (issue #66)
+
+Any code change after a lock makes `verify` `TAMPERED` (exit code 2), and that does not
+change: the status, the exit code and the JSON output (`--json`) stay as above.
+
+When the code is the **only** problem (the code is the only tampered component, and there
+is no missing attachment, history problem or unreadable code), the text output adds one
+line after the messages:
+
+> note: only the code component differs from the lock; the claim (directly or by its
+> historical projection), every attachment and the LOCK_HISTORY.md entry match it. This
+> names the component that differs; it does not say whether the change is legitimate or
+> harmless.
+
+The note names the component; it does not judge the change. In every other case (the
+claim or an attachment tampered, or a `FAIL`-level problem next to the code) there is
+no note.
+
+**The historical locks.** The v0.1 and v0.2 calibration locks are `TAMPERED` with the
+current code, because the code changed after them, and their claim matches by the
+historical projection. The complete check of such a lock is `refute verify` at the
+lock's own tag, in its own environment: `scripts/verify_locked_tags.py` does it, and
+[validation/v0.3/lock-compat-record.md](validation/v0.3/lock-compat-record.md) records
+the result (`PASS` at both tags).
+
 ## Interoperability
 
 The format is deliberately small (one JSON file, one Markdown log, SHA-256 and a
