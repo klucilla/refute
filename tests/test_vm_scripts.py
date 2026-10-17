@@ -943,3 +943,110 @@ def test_seed_iso_refuses_a_key_that_is_not_ed25519(tmp_path):
         str(tmp_path / "s.iso"),
     )
     assert out.returncode != 0 and "ssh-ed25519" in out.stderr
+
+
+# Update-RefuteVmConfig.ps1 (#134): replaces only the installed RefuteVm.Config.psd1.
+UPDATE_CONFIG = VM / "Update-RefuteVmConfig.ps1"
+UPDATE_CONFIG_COMMANDS = {
+    "get-acl",
+    "get-childitem",
+    "get-ciminstance",
+    "get-filehash",
+    "get-item",
+    "get-refuteacewriters",
+    "get-refutebytessha256",
+    "get-refutediscoveryproblems",
+    "get-refutefilesha256upper",
+    "get-refutejeadiscoveryroots",
+    "get-refutetargetproblems",
+    "join-path",
+    "new-object",
+    "set-strictmode",
+    "test-refuteallowedowner",
+    "write-output",
+    "write-problems",
+}
+
+
+def test_the_config_update_calls_only_reads_and_writes_one_file(cases):
+    """Its commands are reads and output only; the one write is WriteAllBytes over the
+    installed file, after the apply marker and after the checks of step 2; no ACL is set
+    and no security descriptor is printed."""
+    commands = {c.lower() for c in cases["Commands"]["Update-RefuteVmConfig.ps1"]}
+    assert commands - UPDATE_CONFIG_COMMANDS == set()
+    text = UPDATE_CONFIG.read_text(encoding="utf-8")
+    assert text.count("WriteAllBytes") == 1
+    apply = text[text.index("# ---- apply") :]
+    write = apply.index("[System.IO.File]::WriteAllBytes($installed, $bytes)")
+    assert apply.index("(Get-RefuteFileSha256Upper $installed) -ne $old") < write
+    assert apply.index("(Get-RefuteBytesSha256 $bytes) -ne $new") < write
+    writers = ("Set-Acl", "Copy-Item", "Move-Item", "Remove-Item", "WriteAllText", "File]::Replace")
+    for writer in writers:
+        assert writer not in text, writer
+    for line in text.splitlines():
+        if "Sddl" in line:
+            assert "Write-" not in line, line
+    # the checker is loaded from bytes whose hash is checked first
+    load = text.index(
+        ". ([scriptblock]::Create([System.Text.Encoding]::ASCII.GetString($coreBytes)))"
+    )
+    assert text.index("if ($coreActual -ne $CoreSha256)") < load
+
+
+def _sha256_upper(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest().upper()
+
+
+def test_the_config_update_pins_the_checker_and_the_new_configuration():
+    """The pinned hash of RefuteRegistration.Core.ps1 is the file of this commit, and the
+    default -SourceSha256 is this commit's RefuteVm.Config.psd1 (both files are eol=lf, so
+    every checkout has the same bytes); a change to either needs this script reviewed."""
+    text = UPDATE_CONFIG.read_text(encoding="utf-8")
+    core = _sha256_upper(VM / "RefuteRegistration.Core.ps1")
+    config = _sha256_upper(VM / "RefuteVm" / "RefuteVm.Config.psd1")
+    assert f"$CoreSha256 = '{core}'" in text
+    assert f"[string]$SourceSha256 = '{config}'" in text
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="the script runs in Windows PowerShell 5.1")
+def test_the_config_update_refuses_without_its_preconditions(tmp_path):
+    """In powershell.exe: refused without PSModuleAnalysisCachePath=nul; otherwise the
+    preview runs to a verdict, and -Apply with an installed hash that cannot match never
+    reaches the write (a non-administrator is refused before anything is read)."""
+    import os
+
+    exe = shutil.which("powershell.exe")
+    assert exe
+    argv = [exe, "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File"]
+    argv.append(str(UPDATE_CONFIG))
+    plain = {k: v for k, v in os.environ.items() if k.upper() != "PSMODULEANALYSISCACHEPATH"}
+    env = {**plain, "PSModuleAnalysisCachePath": "nul"}
+
+    def run(*extra, environment=env):
+        return subprocess.run(
+            [*argv, *extra],
+            cwd=tmp_path,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+
+    refused = run(environment=plain)
+    assert refused.returncode == 1 and "PSModuleAnalysisCachePath=nul" in refused.stdout
+    preview = run()
+    text = preview.stdout + preview.stderr
+    assert "PropertyNotFoundStrict" not in text, text
+    assert "Mode: preview (no change)" in preview.stdout, text
+    assert preview.returncode in (0, 1), text
+    if preview.returncode == 1:
+        assert "Problems (nothing was changed):" in preview.stdout, text
+    else:
+        assert "Preconditions hold" in preview.stdout, text
+    never = run("-Apply", "-InstalledSha256", "0" * 64)
+    text = never.stdout + never.stderr
+    assert never.returncode == 1, text
+    assert "Problems (nothing was changed):" in never.stdout, text
+    assert "Written:" not in never.stdout and "Done:" not in never.stdout, text

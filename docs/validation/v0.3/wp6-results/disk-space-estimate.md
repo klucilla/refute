@@ -148,3 +148,18 @@ maintainer's OK. It runs as Administrator, with the VM off.
    uses "the size of the partition"
    (https://manpages.ubuntu.com/manpages/resolute/man8/resize2fs.8.html, both read
    2026-10-17).
+
+## 8. Decision, and the rules still open
+
+**Decided by the maintainer on 2026-10-17:** the base disk stays at 100 GiB (option A), with
+the margin of sections 5 and 6 as it is. Three rules remain open. Each is **decided before
+any paper runs**, with the operation or work package it belongs to; none is implemented
+here.
+
+1. **The space that failed rungs of the build ladder occupy** (sections 4 and 5): how it is
+   controlled, so that the stacked case cannot happen unnoticed.
+2. **The value of the disk quota per container** (plan 6.1, "Limits per container"): the
+   plan names the quota but gives no value.
+3. **How many differencing disks are kept at the same time** (section 6). The maintainer's
+   preference: one at a time, with the evidence extracted to the dossier before the child is
+   removed. It is decided with the operation that creates the children.
