@@ -521,6 +521,18 @@ on 2026-10-15:
     (`docker` driver) with the build steps placed under the paper's cgroup, and
     rootless BuildKit.
   - The choice is checked by WP6 tests V7, V8 and V21.
+  - **Decided by the maintainer on 2026-10-17 (version 1 of the docker backend):** a
+    build is an ordinary `docker run` (not privileged, `--cap-drop ALL`,
+    `no-new-privileges`, inside the paper's slice, reaching the internet only through
+    the allowlist proxy) followed by `docker commit` of the container when it exits 0;
+    neither BuildKit nor the `docker-container` driver is used, so no builder
+    configuration or entitlement applies. **Limits of version 1**, declared in the
+    triage and in every report: a repository whose environment can be built only from
+    its own Dockerfile is not built (version 2); there is no disk quota per container,
+    since the VM's storage (overlayfs on ext4) does not support `--storage-opt size`
+    (https://docs.docker.com/reference/cli/docker/container/run/#set-storage-driver-options-per-container---storage-opt,
+    read 2026-10-17). Implemented in `src/refute/packs/ml/docker_backend.py`; the engine
+    runs on the VM next to it (design decided with Codex on 2026-10-17).
 
 ### 1.4a Reading interval, stopping margin and completeness tolerance (W3.10; WP2 W2.10 and W2.10a)
 
