@@ -40,10 +40,11 @@ does not trust the copy to have been made by ``anonymize``.
   ``VmId``, ``RecordedVmId``, ``ServiceGuid`` or ``Id``, the ``Utc`` time, or a ``Module``
   hash, where a name would be a coincidence of digits), a Windows path outside the allowed
   roots (``C:\\Hyper-V``, ``C:\\ProgramData\\RefuteVm`` and the project folder, unless
-  others are given; either separator, normalized lexically, so ``..`` cannot leave a
-  root), a user profile or UNC path, an IPv4 or IPv6 address, a MAC address, an e-mail
-  address, a local host name (``.internal``, ``.local``, ``.lan``, ``.home``, ``.corp``,
-  ``.localdomain``, ``.intranet``) or an account SID with three or more sub-authorities.
+  others are given; with either separator, every drive path in a text must start with a
+  root, and no ``..`` step is accepted), a user profile or UNC path, an IPv4 or IPv6
+  address, a MAC address, an e-mail address, a local host name (``.internal``,
+  ``.local``, ``.lan``, ``.home``, ``.corp``, ``.localdomain``, ``.intranet``) or an
+  account SID with three or more sub-authorities.
 
 **What it cannot see:** a name it does not know and that matches no pattern (for example a
 switch name chosen on the host). The maintainer still reads the copy before it is
@@ -67,7 +68,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import ntpath
 import os
 import re
 import sys
@@ -96,7 +96,11 @@ MODULE_FILE = re.compile(
 )
 VA_NUMBER = re.compile(r"WinRM VA_(\d+)_(.+)$")
 RUN_AS_PLACEHOLDER = re.compile(r"^(?:<virtual-account> VA \d+|<account>)$")
-WINDOWS_PATH = re.compile(r"(?i)\b[a-z]:[\\/][^\s'\"<>|,;]*")
+# where a drive path starts, and a ".." step in a path (in a text whose "/" became "\")
+DRIVE = re.compile(r"(?i)\b[a-z]:\\")
+DOTDOT = re.compile(r"(?:^|\\|(?<=[\s'\"]))\.\.(?=$|[\\\s'\"])")
+# what may follow an allowed root: a separator, or a character that ends a path
+PATH_END = "\\ '\"<>|,;)\0"
 
 LEAKS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("a user profile path", re.compile(r"(?i)\b[a-z]:[\\/]+users[\\/]")),
@@ -363,16 +367,26 @@ def _compare(source: Any, copy: Any, path: tuple, alternation: str, problems: li
 
 
 def _outside_roots(text: str, roots: tuple[str, ...]) -> list[str]:
-    """The Windows paths of a text that are not a root or below one. Paths and roots are
-    normalized lexically with Windows rules (both separators, "." and ".."; the file system
-    is never read), so C:/Temp and C:\\Hyper-V\\..\\Other are seen for what they are (Codex
-    review of #154)."""
-    allowed = [ntpath.normcase(ntpath.normpath(r)).rstrip("\\") for r in roots]
+    """Why the paths of a text are not below an allowed root, conservatively (Codex review of
+    #154): where a path ends in free text is ambiguous (names hold spaces), so no path is cut
+    out of the text. Instead, wherever a drive path starts (``X:\\`` or ``X:/``), the text
+    from there must start with an allowed root, followed by a separator or by a character
+    that ends a path; and no text may hold a ``..`` step in a path, which could leave a root
+    whatever follows it."""
+    allowed = [r.replace("/", "\\").rstrip("\\").casefold() for r in roots]
+    norm = text.replace("/", "\\").casefold()
     found = []
-    for path in WINDOWS_PATH.findall(text):
-        folded = ntpath.normcase(ntpath.normpath(path)).rstrip("\\")
-        if not any(folded == r or folded.startswith(r + "\\") for r in allowed):
-            found.append(path)
+    if DOTDOT.search(norm):
+        found.append("a '..' step")
+    for match in DRIVE.finditer(norm):
+        rest = norm[match.start() :]
+        inside = False
+        for root in allowed:
+            if rest.startswith(root):
+                after = rest[len(root) :]
+                inside = inside or not after or after[0] in PATH_END
+        if not inside:
+            found.append("a drive path")
     return found
 
 
@@ -447,9 +461,7 @@ def check(
                 if any(name.casefold() in folded for name in names):
                     found.append(f"{where}: holds a host identifier")
             for outside in _outside_roots(masked, allowed):
-                found.append(
-                    f"{where}: holds a path outside the allowed roots ({len(outside)} chars)"
-                )
+                found.append(f"{where}: holds a path outside the allowed roots ({outside})")
             for what, pattern in LEAKS:
                 if pattern.search(masked):
                     found.append(f"{where}: holds {what}")

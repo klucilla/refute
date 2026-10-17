@@ -336,9 +336,30 @@ def test_a_name_inside_a_placeholder_is_not_a_leak():
     assert "<host-identifier>" in out[0]["Plan"]["Preconditions"]
 
 
+@pytest.mark.parametrize(
+    "text",
+    [
+        # Codex review of #154, round 3: a path with spaces that leaves the root after them
+        "C:\\Hyper-V\\Virtual Hard Disks\\..\\..\\Private\\<host-identifier>.log",
+        "'C:/Hyper-V/Virtual Hard Disks/../../Private/<host-identifier>.log'",
+        "C:\\Hyper-Vx\\<host-identifier>.log",
+        "c:\\temp\\<host-identifier>",
+    ],
+)
+def test_a_path_that_leaves_or_misses_the_roots_is_refused(text):
+    recs, out = _good()
+    recs[2]["Error"] = text.replace("<host-identifier>", HOST)
+    out = pub.anonymize(recs, _names())
+    problems = pub.check(recs, out, _names())
+    assert any(".Error: holds a path outside the allowed roots" in p for p in problems), problems
+
+
 def test_a_path_below_an_allowed_root_passes_with_either_separator():
     recs = records()
-    recs[2]["Error"] = "copied to C:/Hyper-V/refute-vm/media and C:\\Hyper-V\\.\\refute-vm"
+    recs[2]["Error"] = (
+        "copied to C:/Hyper-V/refute-vm/media and C:\\Hyper-V\\.\\refute-vm, "
+        "and 'C:\\Hyper-V\\Virtual Hard Disks\\refute-vm-base.vhdx'"
+    )
     names = _names()
     assert pub.check(recs, pub.anonymize(recs, names), names) == []
 
