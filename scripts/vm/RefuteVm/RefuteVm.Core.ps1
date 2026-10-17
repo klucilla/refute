@@ -90,7 +90,9 @@ function Test-RefuteVmConfig {
     foreach ($key in 'HostAddress', 'VmAddress', 'ProxyAddress') {
         if ($Config[$key] -cnotmatch '^10\.231\.71\.[1-6]$') { $problems.Add("$key must be an address of 10.231.71.0/29") }
     }
-    if (@($Config.HostAddress, $Config.VmAddress, $Config.ProxyAddress | Select-Object -Unique).Count -ne 3) { $problems.Add('HostAddress, VmAddress and ProxyAddress must differ') }
+    # compared pairwise: the JEA session's Select-Object is a proxy without -Unique (the CI
+    # run of a3ad26a)
+    if ($Config.HostAddress -eq $Config.VmAddress -or $Config.HostAddress -eq $Config.ProxyAddress -or $Config.VmAddress -eq $Config.ProxyAddress) { $problems.Add('HostAddress, VmAddress and ProxyAddress must differ') }
     if ($Config.ProxyPort -isnot [int] -or $Config.ProxyPort -lt 1 -or $Config.ProxyPort -gt 65535) { $problems.Add('ProxyPort must be an integer from 1 to 65535') }
     if ($Config.VmName -cnotmatch '^[a-z][a-z0-9-]{2,30}$') { $problems.Add('VmName must be lowercase letters, digits and hyphens') }
     $hyperV = 'C:\Hyper-V'

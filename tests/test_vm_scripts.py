@@ -333,6 +333,33 @@ def test_the_module_calls_only_the_listed_hyperv_cmdlets(cases):
     assert module <= HYPERV_ALLOWED, sorted(module - HYPERV_ALLOWED)
 
 
+# The helper commands a RestrictedRemoteServer session keeps are proxies with a reduced set
+# of parameters (Select-Object without -Unique, for example), and the module's functions
+# run inside that session: the CI run of a3ad26a failed on `Select-Object -Unique` in
+# Test-RefuteVmConfig. The module does not call them; the integration test on a real
+# endpoint (tests/test_vm_jea_integration.py) needs an administrator, so this check runs
+# everywhere.
+RESTRICTED_HELPERS = {
+    "Clear-Host",
+    "Exit-PSSession",
+    "Get-Command",
+    "Get-FormatData",
+    "Get-Help",
+    "Measure-Object",
+    "Out-Default",
+    "Select-Object",
+}
+
+
+def test_the_module_calls_no_restricted_session_helper(cases):
+    used = {
+        name: sorted(set(cmds) & RESTRICTED_HELPERS)
+        for name, cmds in cases["Commands"].items()
+        if name.startswith("RefuteVm/")
+    }
+    assert {name: cmds for name, cmds in used.items() if cmds} == {}
+
+
 def test_scripts_are_ascii():
     # Windows PowerShell 5.1 reads a file without BOM in the ANSI code page.
     for path in [*VM.rglob("*"), ROOT / "tests" / "vm" / "vm_cases.ps1"]:
