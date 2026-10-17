@@ -172,6 +172,7 @@ def test_inventory_hash_is_canonical_and_validation_refuses_bad_inventories():
         # or pull request comment
         lambda x: x["approval"].update(approved_utc="2026-02-30T12:00:00Z"),
         lambda x: x["approval"].update(approved_utc="2026-10-15T25:00:00Z"),
+        lambda x: x["approval"].update(approved_utc="2026-1-2T3:4:5Z"),
         lambda x: x["approval"].update(approval_record="https://github.com/owner/repo/issues/1"),
         lambda x: x["approval"].update(
             approval_record="https://github.com/owner/repo/blob/main/x.md#issuecomment-1"

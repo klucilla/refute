@@ -94,6 +94,9 @@ def validate_inventory(inv: dict[str, Any]) -> None:
             raise InventoryError(f"approval.{key} is required")
     if not re.fullmatch(r"[0-9a-f]{40}", approval["approved_commit"]):
         raise InventoryError("approval.approved_commit must be 40 lowercase hex digits")
+    # the fixed width first (strptime alone accepts 2026-1-2T3:4:5Z), then a real date
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", approval["approved_utc"]):
+        raise InventoryError("approval.approved_utc must be a UTC timestamp")
     try:
         datetime.strptime(approval["approved_utc"], "%Y-%m-%dT%H:%M:%SZ")
     except ValueError:
