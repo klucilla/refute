@@ -233,11 +233,35 @@ round. Both need the VM off.
 | File in `C:\Projetos\refute\.cache\vm\media` | Bytes | SHA-256 | Checked against |
 |---|---|---|---|
 | `ubuntu-26.04.1-live-server-amd64.iso` | 2,927,861,760 | `cc8a95cde20f6ced61a322420de00f10cc3c90ced545daa46cb9c1a117f1d927` | `InstallIsoSha256` of the configuration: **equal** |
-| `refute-vm-seed.iso` | 55,296 | `476754b824ba267c14993fb864b798bd1140eeac8cd69ea97ab38645743160f9` | no record in the repository (see below) |
+| `refute-vm-seed.iso` | 55,296 | `476754b824ba267c14993fb864b798bd1140eeac8cd69ea97ab38645743160f9` | recorded in section 5.1 (2026-10-17); checked by operation 13 |
 
 - **The install ISO is present and equal to the configuration.** The configuration's value was itself verified against `SHA256SUMS` and its signature on 2026-10-15 (`media-verification.json`).
 - **The seed is present, but its hash is recorded nowhere in the repository.** `New-RefuteSeedIso.ps1` printed it on 2026-10-15. The ISO's content folder next to it, `refute-vm-seed.iso.content`, holds a `user-data` equal to `scripts/vm/seed/user-data.template` with the VM's SSH public key in place of `{{SSH_PUBLIC_KEY}}`, and a `meta-data` with `instance-id: refute-vm-1` and `local-hostname: refute-vm`. That folder is what the script wrote the ISO from, not a read of the ISO.
 - **Nothing is missing.** If a medium had to be made again, `Get-RefuteMedia.ps1` downloads and verifies the ISO, and `New-RefuteSeedIso.ps1` builds the seed (README, steps 3 and 5). Neither was run.
+
+### 5.1 The seed's hash, recorded (2026-10-17)
+
+By the maintainer's decision of 2026-10-17, the seed ISO's hash is recorded here, so that
+operation 13 has a reference in the repository.
+
+| Field | Value |
+|---|---|
+| File | `C:\Projetos\refute\.cache\vm\media\refute-vm-seed.iso` |
+| SHA-256 | `476754b824ba267c14993fb864b798bd1140eeac8cd69ea97ab38645743160f9` |
+| Size | 55,296 bytes |
+| Last written (UTC) | 2026-10-15 19:05:10 |
+| Read (UTC, read only, `Get-FileHash`) | 2026-10-17 11:58, the same hash as the first reading earlier that day |
+| Where it came from | built on 2026-10-15 by `scripts/vm/New-RefuteSeedIso.ps1` from `scripts/vm/seed/user-data.template`, with the VM's SSH public key in place of `{{SSH_PUBLIC_KEY}}` (README, step 5) |
+
+- **What this hash binds.** It is the hash of the file as it is in the project folder now.
+  The repository holds no earlier record of it: `New-RefuteSeedIso.ps1` printed it on
+  2026-10-15, and that output was not kept. The content folder next to the ISO matches the
+  template; the ISO itself was not read back.
+- **How it is checked.** Operation 13 runs `ImportSeedIso -MediaSha256` with this value.
+  The endpoint copies the seed only if the bytes it reads have this SHA-256, and then
+  records the hash in `vm.json`, where `AttachInstallMedia` checks it again. A seed made
+  again would have another hash: this record and the command of operation 13 would then
+  change together.
 
 ## 6. Can the endpoint's virtual account read the media in the project folder?
 
