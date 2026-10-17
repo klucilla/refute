@@ -136,7 +136,8 @@ its message names each field.
   converting a string to an integer, 4,300 digits by default, or nesting too deep for the
   parser) and **an attachment that cannot be read or examined**
   (a permission error, for example) are `FAIL` with the reason, never an exception. For the
-  attachment, `TAMPERED` from another component still takes precedence.
+  attachment, `TAMPERED` from another component still takes precedence. So is **a lock file
+  that cannot be examined** (its `stat` fails, for example with a permission error).
 
 This comparison only reads the lock file and `LOCK_HISTORY.md`; it never rewrites
 either. The two historical locks (v0.1 and v0.2) match every shared field of their

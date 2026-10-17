@@ -113,6 +113,38 @@ def test_a_lock_nested_too_deep_is_fail_with_the_reason(tmp_path):
     assert result.lock is None
 
 
+def test_a_lock_file_that_cannot_be_examined_is_fail_with_the_reason(tmp_path, monkeypatch):
+    # #59: the stat of the lock file itself fails (Path.is_file ignores only "not found"
+    # errors, so a permission error used to escape verify_claim)
+    claim, root = _locked(tmp_path)
+    lock_name = lock_path_for(claim).name
+    original = Path.stat
+
+    def fake(self, *args, **kwargs):
+        if self.name == lock_name:
+            raise PermissionError(13, "Permission denied", str(self))
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "stat", fake)
+    result = verify_claim(claim, code_root=root)
+    assert result.status is VerifyStatus.FAIL and result.exit_code == 1
+    assert len(result.messages) == 1
+    assert result.messages[0].startswith(f"cannot read lock file {lock_path_for(claim)}: ")
+    assert "Permission denied" in result.messages[0]
+    assert result.lock is None
+
+
+def test_a_missing_lock_file_is_still_reported_as_missing(tmp_path):
+    # the control: a lock that does not exist keeps its own message
+    claim, root = _locked(tmp_path)
+    lock_path_for(claim).unlink()
+    result = verify_claim(claim, code_root=root)
+    assert result.status is VerifyStatus.FAIL
+    assert result.messages == [
+        f"no lock file: {lock_path_for(claim).name} (run `refute lock` first)"
+    ]
+
+
 def test_the_cli_reports_fail_for_the_too_long_integer(tmp_path, int_limit, monkeypatch):
     from typer.testing import CliRunner
 
