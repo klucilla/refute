@@ -83,6 +83,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |
+| `publish_operation_log.py` | the maintainer, with the project's Python | makes the publishable copy of records of `operations.jsonl`: account and host names replaced, then checked (same records, no name, address, profile path or SID left) before it is written to a new file; the local log is only read |
 
 Data written by the endpoint, outside the project:
 `C:\ProgramData\RefuteVm\Log\operations.jsonl` (one JSON line per simulation,
@@ -90,7 +91,8 @@ intent, refusal and result), `C:\ProgramData\RefuteVm\State\vm.json` (the VMId
 recorded at creation and the seed ISO hash), and the JEA transcripts in
 `C:\ProgramData\RefuteVm\Transcripts` (written by Local System, readable by
 administrators only). Evidence copied to `docs/validation/v0.3/wp6-results/` holds no
-user name, host name or address.
+user name, host name or address. The local log stays whole; records of it are published
+only as a copy made and checked by `publish_operation_log.py` (#59, item 5).
 
 ## Order of the steps
 
