@@ -584,6 +584,35 @@ $r = Invoke-ConnectScenario @{ ThrowOnConnect = $true }
 Add-Case 'ConnectNetwork mutation: a connection that fails after taking effect is undone' ($r.Failure -like '*connection failed*' -and $r.Disconnects -eq 1 -and -not $r.Connected) $r.Failure
 foreach ($name in $stubCommands) { Remove-Item -Path "function:$name" }
 
+# DetachInstallMedia removes each DVD drive by controller and location, never through the
+# pipe from Get-VMDvdDrive (the proxy VM, 2026-10-17: the pipe failed and left a drive).
+# The stub's Get-VMDvdDrive without a slot returns a lazy pipeline over the live list, as
+# the failing case did; removing while it is enumerated would skip a drive.
+$dvdCommands = 'Get-VM', 'Get-VMHardDiskDrive', 'Set-VMFirmware', 'Get-VMDvdDrive', 'Remove-VMDvdDrive'
+function Get-VM { [CmdletBinding()] param($Id) return 'stub-vm' }
+function Get-VMHardDiskDrive { [CmdletBinding()] param($VM) return [pscustomobject]@{ Path = $script:dvdConfig.BaseDiskPath } }
+function Set-VMFirmware { [CmdletBinding()] param($VM, $FirstBootDevice) $script:dvd.Boot = $FirstBootDevice.Path }
+function Get-VMDvdDrive {
+    [CmdletBinding()] param($VM, $ControllerNumber = -1, $ControllerLocation = -1)
+    if ($ControllerNumber -ge 0) { return @($script:dvd.Drives | Where-Object { $_.ControllerNumber -eq $ControllerNumber -and $_.ControllerLocation -eq $ControllerLocation }) }
+    foreach ($d in $script:dvd.Drives) { $d }
+}
+function Remove-VMDvdDrive {
+    [CmdletBinding()] param([Parameter(ValueFromPipeline = $true)]$VMDvdDrive)
+    process {
+        $script:dvd.Removed += "$($VMDvdDrive.ControllerNumber)/$($VMDvdDrive.ControllerLocation)"
+        $script:dvd.Drives = @($script:dvd.Drives | Where-Object { $_ -ne $VMDvdDrive })
+    }
+}
+$script:dvdConfig = Copy-Config @{ VmRoot = (Join-Path $WorkDir 'vms'); BaseDiskPath = (Join-Path $WorkDir 'base.vhdx'); MediaRoot = (Join-Path $WorkDir 'media'); HostVirtualHardDiskPath = (Join-Path $WorkDir 'disks') }
+$script:dvd = @{ Boot = ''; Removed = @(); Drives = @(
+        [pscustomobject]@{ ControllerNumber = 0; ControllerLocation = 0; Path = 'install.iso' },
+        [pscustomobject]@{ ControllerNumber = 0; ControllerLocation = 1; Path = 'seed.iso' }) }
+$failure = ''
+try { Invoke-RefuteVmMutation -Config $script:dvdConfig -Observed (New-Observed) -Plan @{ Operation = 'DetachInstallMedia'; Target = @{ VmId = $vmId } } } catch { $failure = $_.Exception.Message }
+Add-Case 'DetachInstallMedia removes every DVD drive by controller and location' ($failure -eq '' -and @($script:dvd.Drives).Count -eq 0 -and ($script:dvd.Removed -join ',') -eq '0/0,0/1' -and $script:dvd.Boot -eq $script:dvdConfig.BaseDiskPath) ($failure + ' removed ' + ($script:dvd.Removed -join ','))
+foreach ($name in $dvdCommands) { Remove-Item -Path "function:$name" }
+
 $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or ((Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)
 if ($onWindows) {
     # FileShare.None is enforced by Windows; the endpoint runs only there.

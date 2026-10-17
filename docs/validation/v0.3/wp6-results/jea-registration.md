@@ -680,3 +680,59 @@ call whose plan differed. **Phase 1 of the VM is concluded**: Ubuntu 26.04.1 is 
 the base disk, the VM is off, with no network. The endpoint's other restrictions (NoLanguage,
 the virtual account's groups, the loopback-only WinRM, the transcripts) were exercised by
 every session but not tested on their own.
+
+## 21. Phase 2, part A: the internal switch, the host address and the proxy VM (2026-10-17)
+
+Run by the maintainer as Administrator, outside the endpoint (the endpoint manages the
+Refute VM only), from the command list of the maintainer's decisions of 2026-10-17. From
+the maintainer's report; none of it is in `operations.jsonl`.
+
+| Step | Result |
+|---|---|
+| A1, `New-VMSwitch -Name refute-internal -SwitchType Internal` | Id `9a27f54d-3435-4ff4-b442-06862e708657`, SwitchType Internal; committed in the configuration (`2e2185f`) |
+| A2, host address | `vEthernet (refute-internal)` 10.231.71.1/29; forwarding disabled for IPv4 and IPv6; no route 0.0.0.0/0 on the interface |
+| A3, Default Switch | the host's address on `vEthernet (Default Switch)` is 172.20.32.1/20, used as the DHCP server of the proxy's egress rules |
+| A4 and A5, the proxy VM `refute-proxy` | generation 2, 2 vCPU, 2 GiB static, dynamic 20 GiB disk, Secure Boot with the Microsoft UEFI CA template, checkpoints off, adapters `inner` 00155DA77103 and `egress` 00155DA77203 with MAC spoofing off and DHCP and router guards on; Guest Service Interface off; the seed `refute-proxy-seed-1.iso` copied with SHA-256 `4e7b0de0…4fbc` |
+| A6, `scripts/vm/admin/Set-RefuteProxyAcls.ps1 -DhcpServer 172.20.32.1 -Apply` (script SHA-256 `78e4c965…47ac`) | "inner: 4 entries read back (expected 4)", "egress: 31 entries read back (expected 31)" |
+| A7, installation | the maintainer answered "yes" to the autoinstall; the VM powered off by itself |
+| A8, boot from the disk | see below; then "Ubuntu 26.04.1 LTS refute-proxy tty1" and "refute-proxy login:" |
+
+**How the host spells the extended ACLs read back** (A6). The first observation on the
+maintainer's host, transcribed by hand from screenshots into
+`.cache\vm\evidence\a6-proxy-acl-readback.transcribed.jsonl` (local, SHA-256
+`f0c2af825855815f78f743d197e8b745bf02eaebf75d34e9ada76b71d2943885`; not machine output):
+a wildcard port reads back as `ANY`, a protocol as `TCP`, `UDP` or `ANY`, the address
+wildcards as `ANY`, `0.0.0.0/0` and `::/0` (three different values), a host address with
+no `/32`; `IsolationID` 0; `IdleSessionTimeout` 255 on the stateful entries and 0 on the
+others. This is the form `ConvertTo-RefuteAclRule` normalizes.
+
+**A8, the removal of the DVD drives.** `Get-VMDvdDrive -VMName refute-proxy |
+Remove-VMDvdDrive` failed in the pipe ("cannot be found") and left an empty drive at
+controller 0, location 1. The maintainer stopped the VM, removed it with
+`Remove-VMDvdDrive -ControllerNumber 0 -ControllerLocation 1`, checked that no drive was
+left and started the VM again. From then on every removal of a drive is by controller and
+location, never through the pipe; the module's `DetachInstallMedia` was changed the same
+way before it was installed (it had worked through the pipe in section 20).
+
+**SSH host keys of the proxy VM, read over the internal network, not from the console**
+(the console did not print them). The maintainer connected from the host with
+`ssh -o KexAlgorithms=curve25519-sha256 -o HostKeyAlgorithms=<type>
+-o StrictHostKeyChecking=accept-new -o BatchMode=yes` to an account that does not exist
+(the refusal "Permission denied (publickey)" is expected), once per key type, on the switch
+that only the host and the proxy shared then. Fingerprints recomputed with `ssh-keygen -lf`
+from the saved files:
+
+- ED25519 256: `SHA256:FKalc1KpB3WYjQMCWoJgrxgQaRyGZ2LMwo0Mq5K5V3U`
+  (`.cache\vm\evidence\refute-proxy-known_hosts`, SHA-256 `c66fcc8b…8cb5`)
+- ECDSA 256: `SHA256:tTQ7kP0qVvWRK4hgSDlOR1LOVnttYSzEv16dNT6R3/U`
+  (`.cache\vm\evidence\refute-proxy-known_hosts-ecdsa`, SHA-256 `c6855e2c…1aff`)
+
+The banner was "SSH-2.0-OpenSSH_10.2p1 Ubuntu-2ubuntu3.8": the host reaches the proxy's
+port 22 through the internal switch and the `inner` port ACL (TCP 22 from 10.231.71.1).
+
+**The key exchange.** The host's client, OpenSSH_for_Windows 9.5p2 (LibreSSL 3.8.2), fails
+the default negotiation with OpenSSH 10.2p1: "choose_kex: unsupported KEX method
+sntrup761x25519-sha512@openssh.com"; `ssh-keyscan` fails too. With
+`-o KexAlgorithms=curve25519-sha256` it works. Every SSH of Refute to its VMs pins the
+client options (`scripts/vm/isolation/run_isolation.py`, `SSH_OPTIONS`); the Windows
+client is not updated without the maintainer.

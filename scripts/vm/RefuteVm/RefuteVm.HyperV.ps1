@@ -330,7 +330,16 @@ function Invoke-RefuteVmMutation {
             $disk = @(Get-VMHardDiskDrive -VM $vm -ErrorAction Stop | Where-Object { [string]$_.Path -ieq $Config.BaseDiskPath })
             if ($disk.Count -ne 1) { Stop-RefuteVmOperation 'the base disk changed since the plan' }
             Set-VMFirmware -VM $vm -FirstBootDevice $disk[0] -ErrorAction Stop
-            Get-VMDvdDrive -VM $vm -ErrorAction Stop | Remove-VMDvdDrive -ErrorAction Stop
+            # each drive by its controller and location, read once before any removal and
+            # read again right before its own: removing through the pipe from Get-VMDvdDrive
+            # failed on the maintainer's host ("cannot be found") and left an empty drive at
+            # 0/1 (the proxy VM, 2026-10-17)
+            $slots = @(Get-VMDvdDrive -VM $vm -ErrorAction Stop | ForEach-Object { @{ Controller = [int]$_.ControllerNumber; Location = [int]$_.ControllerLocation } })
+            foreach ($slot in $slots) {
+                $drive = @(Get-VMDvdDrive -VM $vm -ControllerNumber $slot.Controller -ControllerLocation $slot.Location -ErrorAction Stop)
+                if ($drive.Count -ne 1) { Stop-RefuteVmOperation 'a DVD drive changed during the removal' }
+                Remove-VMDvdDrive -VMDvdDrive $drive[0] -ErrorAction Stop
+            }
         }
         'SetProcessorMaximum' { Set-VMProcessor -VM $vm -Maximum $Percent -ErrorAction Stop }
         'SuspendVm' { Suspend-VM -VM $vm -ErrorAction Stop }
