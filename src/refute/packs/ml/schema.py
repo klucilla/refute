@@ -251,6 +251,12 @@ class AbsentArtifact(_Model):
     attempts: int = Field(ge=1)
     interval_minutes: float = Field(gt=0)
 
+    @model_validator(mode="after")
+    def _finite_interval(self) -> AbsentArtifact:
+        # refused at validation, not first at canonicalization (#59, Codex review of #85)
+        _finite(self.interval_minutes, "absent_artifact.interval_minutes")
+        return self
+
 
 class Threads(_Model):
     OMP_NUM_THREADS: int = Field(ge=1)
@@ -508,7 +514,14 @@ class AblationParams(_Model):
     @model_validator(mode="after")
     def _margin(self) -> AblationParams:
         published = (self.reported_full, self.reported_ablated, self.g_abl)
-        for name in ("reported_full", "reported_ablated", "g_abl"):
+        # the published standard deviations too (#59, Codex review of #85)
+        for name in (
+            "reported_full",
+            "reported_ablated",
+            "g_abl",
+            "reported_sd_full",
+            "reported_sd_ablated",
+        ):
             _finite(getattr(self, name), f"ablation.{name}")
         if self.mode == "direction":
             if (

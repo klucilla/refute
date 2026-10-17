@@ -102,6 +102,11 @@ class Uncertainty(StrictModel):
             raise ValueError("a CI needs lower < upper")
         if self.level is None or not 0 < self.level < 1:
             raise ValueError("a CI needs a level in (0, 1)")
+        # the quantile is taken at 1 - (1 - level)/2: a level so close to 0 or to 1 that this
+        # probability rounds to 0.5 or to 1 in floating point gives a quantile of 0 (a
+        # division by zero in the resolution) or an infinite one (#59, Codex review of #85)
+        if not 0.5 < 1 - (1 - self.level) / 2 < 1:
+            raise ValueError("a CI level this close to 0 or 1 gives no usable quantile")
         if self.method is None:
             raise ValueError("a CI needs its method: t, normal or other_or_unknown")
         return self
@@ -166,6 +171,10 @@ def resolve_uncertainty(
         out.update(status="not_convertible", sd=None, quantile=None)
         return out
     q = _quantile(record.method, record.level, record.n)
+    if not (math.isfinite(q) and q > 0):
+        # the validation refuses the levels that give this; kept as a last guard, so a
+        # tolerance is never built on a zero or infinite quantile
+        raise ValueError(f"the CI level {record.level} gives the quantile {q}, not usable")
     se = width / (2 * q)
     out.update(status="converted", sd=_stable(se * math.sqrt(record.n)), quantile=q)
     return out
