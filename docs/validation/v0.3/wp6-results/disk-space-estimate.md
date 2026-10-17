@@ -50,36 +50,47 @@ does not exist yet. Every external fact gives its source and the date it was rea
 | Docker Engine and containerd | **0.3 GB**. Ubuntu 26.04 (`resolute`), amd64: `docker.io` 29.1.3, installed size 134,196 kB; `containerd` 2.2.2, installed size 100,946 kB | https://packages.ubuntu.com/resolute/docker.io and https://packages.ubuntu.com/resolute/containerd (read 2026-10-17) |
 | Pinned base images of the build ladder | **2 GB** budgeted for up to 3 Python images. `python:3.12-slim` for linux/amd64 is 41.26 MB compressed. With Docker Engine 29 on a fresh install the default store is the containerd image store, which "uses more disk space than the legacy storage drivers" because it keeps images "in both compressed and uncompressed formats" | https://hub.docker.com/_/python/tags?name=3.12-slim and https://docs.docker.com/engine/storage/containerd/ (read 2026-10-17) |
 | Shared caches (package indexes, tools) | **10 GB** budgeted | assumption |
-| **Base, total** | **about 30 GB** | |
+| **Base, total** | **about 31 GB** (10 + 8.6 + 0.3 + 2 + 10; the swap file of 8 GiB is 8.6 GB) | |
 
 ## 4. One paper (in its differencing disk)
 
-| Item | Worst case | Typical | Basis |
-|---|---|---|---|
-| Image of the paper | **12 GB** | 3 GB | A repository that installs `torch` from PyPI on Linux also gets its CUDA packages, which the wheel declares for Linux with no GPU check: `torch` 2.14.1 for cp312 manylinux x86_64 is 554.6 MB, and five of its CUDA dependencies measured 1,423 MB together (`nvidia-cudnn-cu13` 553.1 MB, `nvidia-cublas` 423.1 MB, `nvidia-nccl-cu13` 216.0 MB, `nvidia-cusparselt-cu13` 170.1 MB, `nvidia-nvshmem-cu13` 60.4 MB), so 1,977 MB of wheels for six packages, before the other CUDA packages (`cuda-toolkit` components, `triton`). Budget: about 3 GB downloaded, about 8 GB installed with the Python stack, plus the compressed copy the containerd store keeps. The typical case is a repository on a CPU-only stack | https://pypi.org/pypi/torch/2.14.1/json and the JSON pages of each package on pypi.org (read 2026-10-17) |
-| Build ladder | **12 GB** more | 0 | Up to 3 rungs (plan 6.1); a failed rung can leave layers; budgeted as one more full image |
-| Declared data and weights | **14 GB** | 3 GB | At most 5 GB plus 2 GB (triage caps), counted twice for the archive and its extracted copy |
-| Outputs, logs, predictions | **5 GB** | 1 GB | assumption (CPU-scale experiments, at most 192 CPU-hours in the base reproduction) |
-| Build caches | **5 GB** | 1 GB | assumption |
-| **One paper, total** | **48 GB** | **8 GB** | |
+Three cases: **typical**, a **heavy** case, and a **stacked** case that piles up every
+large item at once. Several items are assumptions with no cap in the plan; they are marked.
+
+| Item | Stacked | Heavy | Typical | Basis |
+|---|---|---|---|---|
+| Image of the paper | **12 GB** | 12 GB | 3 GB | A repository that installs `torch` from PyPI on Linux also gets its CUDA packages, which the wheel declares for Linux with no GPU check: `torch` 2.14.1 for cp312 manylinux x86_64 is 554.6 MB, and five of its CUDA dependencies measured 1,423 MB together (`nvidia-cudnn-cu13` 553.1 MB, `nvidia-cublas` 423.1 MB, `nvidia-nccl-cu13` 216.0 MB, `nvidia-cusparselt-cu13` 170.1 MB, `nvidia-nvshmem-cu13` 60.4 MB), so 1,977 MB of wheels for six packages, before the other CUDA packages (`cuda-toolkit` components, `triton`). Budget: about 3 GB downloaded, about 8 GB installed with the Python stack, plus the compressed copy the containerd store keeps. The installed size is an estimate, not a measurement. The typical case is a repository on a CPU-only stack | https://pypi.org/pypi/torch/2.14.1/json and the JSON pages of each package on pypi.org (read 2026-10-17) |
+| Build ladder | **24 GB** more | 12 GB more | 0 | Up to 3 rungs (plan 6.1). A rung that fails late can leave almost a whole image; nothing in the plan removes it before the next rung. Stacked: two failed rungs before the one that builds; heavy: one |
+| Declared data and weights | **14 GB** | 14 GB | 3 GB | At most 5 GB plus 2 GB (triage caps), counted twice for the archive and its extracted copy. **Assumption:** a dataset that expands more when extracted is not bounded by the caps |
+| Outputs, logs, predictions | **5 GB** | 5 GB | 1 GB | **Assumption.** The attacks rerun experiments (5 extra seeds, up to 3 re-splits; plan 6.3) within the paper's 384 CPU-hours, so the outputs can be several times those of the base runs. The plan gives each container a disk quota (plan 6.1) but no value yet |
+| Build caches | **5 GB** | 5 GB | 1 GB | **Assumption** |
+| **One paper, total** | **60 GB** | **48 GB** | **8 GB** | |
 
 ## 5. Against 100 GiB (107.4 GB)
 
-| Case | Base | One paper | Total | Free in the guest |
-|---|---|---|---|---|
-| Worst case | 30 GB | 48 GB | 78 GB | **29 GB (27%)** |
-| Typical | 30 GB | 8 GB | 38 GB | 69 GB |
-
 ext4 reserves 5% of the blocks for the super-user by default ("The default percentage is
 5%", https://manpages.ubuntu.com/manpages/resolute/man8/mke2fs.8.html, read 2026-10-17),
-about 5.4 GB of a 100 GiB disk, so a non-root writer has about 102 GB. The worst case
-still leaves about 24 GB free for non-root writers.
+about 5.4 GB of a 100 GiB disk; the containers write as a non-root user (plan 6.1), so the
+last column subtracts it. The EFI partition and file system metadata are left out.
 
-**Conclusion for the guest: 100 GiB fits v0.3 with margin.** Even the worst case, which
-stacks every cap at once (a CUDA build of `torch`, two full images, the largest data
-allowed counted twice), uses about three quarters of the disk; a typical paper uses about
-a third. Since each paper starts from a new child of the clean base, the 7 papers never add
-up in the guest.
+| Case | Base | One paper | Total | Free in the guest | Free for non-root writers |
+|---|---|---|---|---|---|
+| Typical | 30.9 GB | 8 GB | 38.9 GB | 68.5 GB | about 63 GB |
+| Heavy | 30.9 GB | 48 GB | 78.9 GB | 28.5 GB | about 23 GB |
+| Stacked | 30.9 GB | 60 GB | 90.9 GB | 16.5 GB | about 11 GB |
+
+**Conclusion for the guest.**
+- **Under the assumptions of sections 3 and 4, 100 GiB fits:** a typical paper uses about a
+  third of the disk, and even the stacked case fits.
+- **The margin of the heavy and stacked cases is not established.** The stacked case leaves
+  about 11 GB for non-root writers, and several of its items have no cap in the plan
+  (how much a dataset expands, the outputs of the attacks, the build caches). Each of them
+  could exceed its assumption.
+- **So the estimate does not show that 100 GiB fits every case of v0.3 with margin.** That
+  margin depends on rules still to be written: removing the layers of a failed rung before
+  the next, and the value of the disk quota per container (plan 6.1).
+- Since each paper starts from a new child of the clean base, the 7 papers never add up in
+  the guest.
 
 ## 6. On the host (C:)
 
@@ -88,20 +99,20 @@ C: had 378 GB free on 2026-10-16 (the maintainer), and 403.7 GB on 2026-10-17 at
 
 | Item | Estimate | Upper bound |
 |---|---|---|
-| Base disk file (dynamic VHDX: it grows with what is written) | 30 GB | 107.4 GB (100 GiB) |
+| Base disk file (dynamic VHDX: it grows with what is written) | 30.9 GB | 107.4 GB (100 GiB) |
 | Saved memory state (`Save-VM`) | | 51.5 GB (48 GiB) |
 | Media copies in `C:\Hyper-V\refute-vm\media` | 2.9 GB (the ISO is 2,927,861,760 bytes; the seed 55,296 bytes) | 2.9 GB |
-| One differencing disk | 8 GB typical, 48 GB worst | 107.4 GB |
+| One differencing disk | 8 GB typical, 48 GB heavy, 60 GB stacked | 107.4 GB |
 
-- **One child at a time:** 30 + 51.5 + 2.9 + 48 = 132 GB in the worst case of section 4,
-  and 269 GB with every upper bound; both fit in 378 GB.
-- **Seven children kept at once,** worst case: 30 + 51.5 + 2.9 + 7 × 48 = 420 GB, which does
-  **not** fit; typical: 140 GB, which fits.
-- So the host needs a retention rule for the differencing disks (for example, a child is
-  removed once its results are pulled and recorded, and the free space of C: is checked
-  before each paper). That rule belongs to the operation that creates the children, not to
-  phase 1, and it does not depend on the base being 100 GiB: a larger base only raises
-  each child's upper bound.
+- **One child at a time:** 30.9 + 51.5 + 2.9 + 60 = 145 GB in the stacked case, and 269 GB
+  with every upper bound; both fit in 378 GB.
+- **Seven children kept at once:** typical, 30.9 + 51.5 + 2.9 + 7 × 8 = 141 GB, which fits;
+  heavy, 421 GB, and stacked, 505 GB, which do **not** fit.
+- **How many children are kept at once is still to be decided**, with the operation that
+  creates them; it does not depend on the base being 100 GiB.
+- **The maximum size costs nothing until it is written.** A dynamic VHDX takes on the host
+  about what the guest has written (and does not give it back, see below), so a smaller maximum lowers the upper bound of a disk that
+  fills up; it does not lower the typical use.
 - A dynamic VHDX does not give space back by itself: `Resize-VHD` "does not remove empty
   blocks from a dynamically-expanding virtual hard disk file"; `Optimize-VHD` does
   (https://learn.microsoft.com/en-us/powershell/module/hyper-v/resize-vhd, read
@@ -110,17 +121,19 @@ C: had 378 GB free on 2026-10-16 (the maintainer), and 403.7 GB on 2026-10-17 at
 ## 7. If the disk is too small later (recorded, not implemented)
 
 Growing a disk is a **new operation**, outside operations 1 to 16, and needs the
-maintainer's OK. It runs as Administrator, with the VM off. It also needs a reviewed change
-of `BaseDiskSizeBytes` and the update of the installed configuration, because
-`CreateBaseDisk` and `AttachBaseDisk` refuse a base disk whose size differs from the
-configuration (`RefuteVm.Core.ps1`).
+maintainer's OK. It runs as Administrator, with the VM off.
+- **Growing the base** also needs a reviewed change of `BaseDiskSizeBytes` and the update of
+  the installed configuration, because `CreateBaseDisk` and `AttachBaseDisk` refuse a base
+  disk whose size differs from the configuration (`RefuteVm.Core.ps1`).
+- **Growing one child** does not change `BaseDiskSizeBytes`, which describes the parent; how
+  a child's size is checked belongs to the operation that creates the children.
 
 1. **On the host:** `Resize-VHD -Path <disk> -SizeBytes <new size>`. The cmdlet "can expand
    both VHD and VHDX files"; a disk on a SCSI chain can even be resized online, but the VM
    stays off here (https://learn.microsoft.com/en-us/powershell/module/hyper-v/resize-vhd,
    read 2026-10-17).
-   - **The base, only while no child depends on it.** Growing a parent with children is
-     not described by the reference page; it is treated as unsafe. Grow the base before any
+   - **The base, only while no child depends on it.** The reference page does not describe
+     growing a parent that has children; this record treats it as unsafe. Grow the base before any
      child exists, or create the children again afterwards.
    - **Or one child alone.** A differencing VHDX can be expanded "without impacting the
      base or parent hard disk or any siblings" (Microsoft, 2012-10-09,
