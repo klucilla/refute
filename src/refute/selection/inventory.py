@@ -25,8 +25,10 @@ import random
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 
+from refute import drand
 from refute.core.canonical import canonical_sha256
 from refute.selection.publication import PublicationProof
 
@@ -36,7 +38,11 @@ ARXIV_ID = re.compile(r"^\d{4}\.\d{4,5}$")
 TRANSCRIPTION_FIELDS = ("value", "location", "metric", "split", "command")
 # the fields every candidate names besides its transcription (claim spec, "Which claims")
 CANDIDATE_TEXT_FIELDS = ("method", "dataset", "conditions")
-APPROVAL_URL = re.compile(r"^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/\S+$")
+# a comment on a GitHub issue or pull request (its author, text and time are read by the
+# WP7 flow before the inventory is frozen)
+APPROVAL_URL = re.compile(
+    r"^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/(issues|pull)/\d+#issuecomment-\d+$"
+)
 
 
 class InventoryError(Exception):
@@ -88,12 +94,17 @@ def validate_inventory(inv: dict[str, Any]) -> None:
             raise InventoryError(f"approval.{key} is required")
     if not re.fullmatch(r"[0-9a-f]{40}", approval["approved_commit"]):
         raise InventoryError("approval.approved_commit must be 40 lowercase hex digits")
-    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", approval["approved_utc"]):
-        raise InventoryError("approval.approved_utc must be a UTC timestamp")
-    # the proof of the approval: the URL of the maintainer's approval record, written
-    # before the inventory is frozen
+    try:
+        datetime.strptime(approval["approved_utc"], "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        raise InventoryError("approval.approved_utc must be a UTC timestamp") from None
+    # the reference of the approval: the URL of the maintainer's comment; whether that
+    # comment is the maintainer's, approves this inventory and precedes its freezing is
+    # checked by the WP7 flow, which reads it through the GitHub API
     if not APPROVAL_URL.fullmatch(approval["approval_record"]):
-        raise InventoryError("approval.approval_record must be the https URL of a GitHub record")
+        raise InventoryError(
+            "approval.approval_record must be the URL of a GitHub issue or pull request comment"
+        )
 
 
 def inventory_sha256(inv: dict[str, Any]) -> str:
@@ -132,18 +143,31 @@ class ClaimDraw:
 
 
 def draw_published_claims(
-    inv: dict[str, Any], claim_seed_bytes: bytes, proof: PublicationProof
+    inv: dict[str, Any], proof: PublicationProof, round_number: int, beacon: dict[str, Any]
 ) -> ClaimDraw:
-    """The claim draw of the WP7 flow: only after ``check_publication`` has given its
-    proof, and only for an inventory whose SHA-256 is one the proof covers (#59, Codex
-    review of #82). The inventory files are stored in canonical JSON, so the hash of the
-    file in the commit is ``inventory_sha256``."""
+    """The claim draw of the WP7 flow (#59, Codex review of #82): only after
+    ``check_publication`` has given its proof, only for an inventory whose SHA-256 the proof
+    covers, and only with the seed of the drand round the proof was made for: the round's
+    time must be the proof's ``round_published_at``, and the seed is the randomness of that
+    round's beacon, verified here (``refute.drand.verify_beacon``), never bytes passed in.
+    The inventory files are stored in canonical JSON, so the hash of the file in the commit
+    is ``inventory_sha256``."""
     if not isinstance(proof, PublicationProof):
         raise InventoryError("the claim draw needs the publication proof of check_publication")
+    round_time = drand.round_time(round_number).strftime("%Y-%m-%dT%H:%M:%SZ")
+    if round_time != proof.round_published_at:
+        raise InventoryError(
+            f"drand round {round_number} is at {round_time}, not at the proof's round "
+            f"{proof.round_published_at}"
+        )
+    try:
+        seed = drand.verify_beacon(round_number, beacon)
+    except (RuntimeError, KeyError, TypeError, ValueError) as exc:
+        raise InventoryError(f"the beacon of round {round_number} does not verify: {exc}") from None
     digest = inventory_sha256(inv)
     if digest not in {d for _, d in proof.inventory_hashes}:
         raise InventoryError("this inventory is not one the publication proof covers")
-    return draw_claims(inv, claim_seed_bytes)
+    return draw_claims(inv, seed.to_bytes(32, "big"))
 
 
 def draw_claims(inv: dict[str, Any], claim_seed_bytes: bytes) -> ClaimDraw:

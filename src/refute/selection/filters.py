@@ -217,7 +217,11 @@ class Alternative:
     categories: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        if not isinstance(self.accepted_below, int) or self.accepted_below < 0:
+        if (
+            isinstance(self.accepted_below, bool)
+            or not isinstance(self.accepted_below, int)
+            or self.accepted_below < 0
+        ):
             raise FilterError("accepted_below must be a non-negative integer")
 
 

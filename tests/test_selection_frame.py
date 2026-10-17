@@ -244,9 +244,10 @@ def test_negative_or_non_integer_counters_are_refused(accepted, made):
         choose_adjustment(ADJUSTMENTS, accepted, made)
 
 
-def test_an_alternative_needs_a_non_negative_threshold():
+@pytest.mark.parametrize("threshold", [-1, True, 2.0])
+def test_an_alternative_needs_a_non_negative_integer_threshold(threshold):
     with pytest.raises(FilterError, match="accepted_below"):
-        Alternative("bad", -1, DEFAULT_WINDOW, ("cs.LG",))
+        Alternative("bad", threshold, DEFAULT_WINDOW, ("cs.LG",))
 
 
 def test_the_adjustment_record_names_the_alternative_and_its_reason():

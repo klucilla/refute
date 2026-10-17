@@ -110,7 +110,9 @@ def inventory():
                 "type": "value",
                 "transcription": dict(TRANSCRIPTIONS["c1"]),
                 "method": "Ours",
-                "dataset": "CIFAR-10",
+                # the dataset by the identifier the claim uses (#59, Codex review of the
+                # WP5 hardening)
+                "dataset": "cifar10",
                 "conditions": "the repository's training script, 3 seeds",
             },
             {
@@ -119,7 +121,7 @@ def inventory():
                 "type": "comparison",
                 "transcription": dict(TRANSCRIPTIONS["c2"]),
                 "method": "Ours",
-                "dataset": "CIFAR-10",
+                "dataset": "cifar10",
                 "conditions": "the repository's training script, 3 seeds",
                 "reference": "ResNet",
                 "eligible_comparison": True,
@@ -1372,6 +1374,31 @@ def test_invalid_claims_are_refused(tmp_path, case):
     with pytest.raises(ClaimError) as error:
         load(tmp_path, FAILS[case])
     assert REASONS[case] in str(error.value), str(error.value)
+
+
+@pytest.mark.parametrize(
+    "cid, field, value, reason",
+    [
+        ("c1", "dataset", "cifar100", "another dataset"),
+        # the paper's display name is not the claim's identifier
+        ("c2", "dataset", "CIFAR-10", "another dataset"),
+        ("c2", "method", "Theirs", "another method"),
+    ],
+)
+def test_the_inventory_must_name_the_dataset_and_method_of_the_claim(
+    tmp_path, monkeypatch, cid, field, value, reason
+):
+    original = inventory
+
+    def changed():
+        record = original()
+        next(c for c in record["candidates"] if c["candidate_id"] == cid)[field] = value
+        return record
+
+    # the inventory, its hash in the approvals and the draw all come from the changed record
+    monkeypatch.setitem(globals(), "inventory", changed)
+    with pytest.raises(ClaimError, match=reason):
+        load(tmp_path)
 
 
 def test_the_inventory_must_be_stored_in_canonical_json(tmp_path):

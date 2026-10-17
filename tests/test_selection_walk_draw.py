@@ -7,6 +7,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from refute import drand
 from refute.selection import inventory as inv_mod
 from refute.selection.inventory import InventoryError, draw_claims, replace_claim
 from refute.selection.publication import PublicationError, check_publication, fetch_push_runs
@@ -167,6 +168,17 @@ def test_inventory_hash_is_canonical_and_validation_refuses_bad_inventories():
         lambda x: x["approval"].pop("approval_record"),
         lambda x: x["approval"].update(approval_record="http://example.org/ok"),
         lambda x: x["approval"].update(approved_utc="yesterday"),
+        # #59, Codex review of the WP5 hardening: a real UTC date, and the URL of an issue
+        # or pull request comment
+        lambda x: x["approval"].update(approved_utc="2026-02-30T12:00:00Z"),
+        lambda x: x["approval"].update(approved_utc="2026-10-15T25:00:00Z"),
+        lambda x: x["approval"].update(approval_record="https://github.com/owner/repo/issues/1"),
+        lambda x: x["approval"].update(
+            approval_record="https://github.com/owner/repo/blob/main/x.md#issuecomment-1"
+        ),
+        lambda x: x["approval"].update(
+            approval_record="https://github.com/owner/repo/issues/1#issuecomment-1 x"
+        ),
     ):
         bad = copy.deepcopy(inv)
         mutate(bad)
@@ -558,25 +570,60 @@ def test_transient_query_classifies_adapter_failures():
     assert transient_query(lambda: 7, "arXiv listing") == 7
 
 
+# drand mainnet, default chain, round 1000 (the same record as tests/test_drand.py).
+BEACON_1000 = {
+    "round": 1000,
+    "randomness": "a40d3e0e7e3c71f28b7da2fd339f47f0bcf10910309f5253d7c323ec8cea3212",
+    "signature": (
+        "99bf96de133c3d3937293cfca10c8152b18ab2d034ccecf115658db324d2edc00a16a2044cd04a8a"
+        "38e2a307e5ecff3511315be8d282079faf24098f283e0ed2c199663b334d2e84c55c032fe469b212"
+        "c5c2087ebb83a5b25155c3283f5b79ac"
+    ),
+    "previous_signature": (
+        "af0d93299a363735fe847f5ea241442c65843dc1bd3a7b79646b3b10072e908bf034d35cd69d378e"
+        "3341f139100cd4cd03030399864ef8803a5a4f5e64fccc20bbae36d1ca22a6ddc43d2630c41105e9"
+        "0598fab11e5c7456df3925d4b577b113"
+    ),
+}
+
+
+def _proof_for_round(number, files):
+    published = drand.round_time(number)
+    created = (published - timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return check(
+        SHA, [run(created)], published, timedelta(hours=1), True, files, files, list(files)
+    )
+
+
 def test_the_claim_draw_of_the_flow_needs_the_publication_proof():
     inv = inventory([candidate(i) for i in range(1, 6)])
     digest = inv_mod.inventory_sha256(inv)
     files = {"inventories/2401.01234.json": digest}
-    proof = check(
-        SHA,
-        [run("2026-10-30T10:00:00Z")],
-        ROUND,
-        timedelta(hours=1),
-        True,
-        files,
-        files,
-        list(files),
-    )
-    assert inv_mod.draw_published_claims(inv, SEED, proof) == draw_claims(inv, SEED)
-    other = check(
-        SHA, [run("2026-10-30T10:00:00Z")], ROUND, timedelta(hours=1), True, FILES, FILES, REQ
-    )
+    proof = _proof_for_round(1000, files)
+    # the seed is the verified randomness of the proof's round, never bytes passed in
+    seed = int(BEACON_1000["randomness"], 16).to_bytes(32, "big")
+    assert inv_mod.draw_published_claims(inv, proof, 1000, BEACON_1000) == draw_claims(inv, seed)
+    other = _proof_for_round(1000, FILES)
     with pytest.raises(InventoryError, match="not one the publication proof covers"):
-        inv_mod.draw_published_claims(inv, SEED, other)
+        inv_mod.draw_published_claims(inv, other, 1000, BEACON_1000)
     with pytest.raises(InventoryError, match="needs the publication proof"):
-        inv_mod.draw_published_claims(inv, SEED, {"inventory_hashes": [("x", digest)]})
+        inv_mod.draw_published_claims(inv, {"inventory_hashes": [("x", digest)]}, 1000, BEACON_1000)
+
+
+def test_the_claim_draw_refuses_another_round_or_a_beacon_that_does_not_verify():
+    inv = inventory([candidate(i) for i in range(1, 6)])
+    files = {"inventories/2401.01234.json": inv_mod.inventory_sha256(inv)}
+    proof = _proof_for_round(1000, files)
+    # a genuine beacon of another round than the proof's
+    later = _proof_for_round(1001, files)
+    with pytest.raises(InventoryError, match="not at the proof's round"):
+        inv_mod.draw_published_claims(inv, later, 1000, BEACON_1000)
+    for change in (
+        {"randomness": "00" + BEACON_1000["randomness"][2:]},
+        {"signature": BEACON_1000["signature"][:-2] + "ad"},
+        {"round": 1001},
+    ):
+        with pytest.raises(InventoryError, match="does not verify"):
+            inv_mod.draw_published_claims(inv, proof, 1000, {**BEACON_1000, **change})
+    with pytest.raises(InventoryError, match="does not verify"):
+        inv_mod.draw_published_claims(inv, proof, 1000, {"round": 1000})
