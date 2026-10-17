@@ -948,6 +948,7 @@ def test_seed_iso_refuses_a_key_that_is_not_ed25519(tmp_path):
 # Update-RefuteVmConfig.ps1 (#134): replaces only the installed RefuteVm.Config.psd1.
 UPDATE_CONFIG = VM / "Update-RefuteVmConfig.ps1"
 UPDATE_CONFIG_COMMANDS = {
+    "format-refuteerror",
     "format-refutereason",
     "get-acl",
     "get-childitem",
@@ -1068,6 +1069,15 @@ def test_the_config_update_apply_writes_and_checks(update_cases):
 )
 def test_each_guard_alone_stops_the_config_update_before_the_write(update_cases, name, reason):
     _refused_unchanged(update_cases["ByName"][name], update_cases["Old"], reason)
+
+
+def test_an_error_is_reported_without_its_message(update_cases):
+    """Codex review of #134: an error gives the exception's type and HRESULT, never its
+    message, which can hold a path or an account name."""
+    lines = update_cases["ByName"]["missing source"]["Lines"]
+    reason = [line for line in lines if "the source cannot be hashed" in line]
+    assert len(reason) == 1 and "(HRESULT 0x" in reason[0], lines
+    assert not any("absent.psd1" in line or "config_update" in line for line in lines), lines
 
 
 def test_the_real_owner_check_is_wired(update_cases):

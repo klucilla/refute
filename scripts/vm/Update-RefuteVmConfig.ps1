@@ -34,11 +34,12 @@ Limits:
     every call refuses). Recovery: run -Apply again with -InstalledSha256 set to the hash
     of the incomplete file, as the preview prints it.
 
-It prints no security descriptor and no path of its own (the files are named by their role).
-Error messages pass through Format-RefuteReason, which masks every path under a user
-profile folder (X:\Users\<name>, in any case) and the current account name (in any case);
-a name that appears elsewhere in a message from Windows is not detected. It never deletes
-anything, and changes no file but the installed RefuteVm.Config.psd1.
+It prints no security descriptor and no path of its own: the files are named by their role,
+and an error is reported by the step, the role of the file, the exception's type and its
+HRESULT (Format-RefuteError), never by the exception's message. The findings of the checker
+(discovery folders and SIDs) also pass through Format-RefuteReason, which masks every path
+under a user profile folder (X:\Users\<name>, in any case) and the current account name.
+It never deletes anything, and changes no file but the installed RefuteVm.Config.psd1.
 
 Reversal: -SourcePath <the previous RefuteVm.Config.psd1, saved in a folder only
 administrators can write>, -InstalledSha256 <the new hash>, -SourceSha256 <the previous hash>.
@@ -84,6 +85,13 @@ function Format-RefuteReason([string]$Text) {
     return $out
 }
 
+function Format-RefuteError($ErrorRecord) {
+    # a controlled diagnostic of an error: the exception's type and HRESULT, never its
+    # message, which can hold a path or an account name (Codex review of #134)
+    $e = $ErrorRecord.Exception
+    return ('{0} (HRESULT 0x{1:X8})' -f $e.GetType().Name, $e.HResult)
+}
+
 function Write-Problems([string]$Heading, [string[]]$Problems) {
     Write-Output $Heading
     foreach ($p in $Problems) { Write-Output ('  - ' + (Format-RefuteReason $p)) }
@@ -107,7 +115,7 @@ function Get-RefuteTargetProblems([string]$ModuleDir, [string]$InstalledPath) {
         # a failed query throws; an empty list means no open session at this moment
         if (@(Get-CimInstance -ClassName Win32_Process -Filter "Name = 'wsmprovhost.exe'").Count) { $found.Add('a remoting session is open') }
     } catch {
-        $found.Add("a check could not read: $($_.Exception.Message)")
+        $found.Add("a check could not read: $(Format-RefuteError $_)")
     }
     # enumerated, so that no finding gives an empty result for @(...) at the caller
     return $found.ToArray()
@@ -127,8 +135,8 @@ function Invoke-RefuteConfigUpdate {
     foreach ($p in @(Get-RefuteTargetProblems $ModuleDir $InstalledPath)) { $problems.Add($p) }
     $installedNow = ''
     $sourceNow = ''
-    try { $installedNow = Get-RefuteFileSha256Upper $InstalledPath } catch { $problems.Add("the installed configuration cannot be hashed: $($_.Exception.Message)") }
-    try { $sourceNow = Get-RefuteFileSha256Upper $Source } catch { $problems.Add("the source cannot be hashed: $($_.Exception.Message)") }
+    try { $installedNow = Get-RefuteFileSha256Upper $InstalledPath } catch { $problems.Add("the installed configuration cannot be hashed: $(Format-RefuteError $_)") }
+    try { $sourceNow = Get-RefuteFileSha256Upper $Source } catch { $problems.Add("the source cannot be hashed: $(Format-RefuteError $_)") }
     Write-Output "Installed configuration SHA-256: $installedNow (expected $Old)"
     Write-Output "Source SHA-256:                  $sourceNow (expected $New)"
     if ($installedNow -and $installedNow -ne $Old) { $problems.Add('the installed configuration is not the expected one') }
@@ -154,14 +162,14 @@ function Invoke-RefuteConfigUpdate {
             if ((Get-RefuteBytesSha256 $bytes) -ne $New) { $problems.Add('the source changed since the preview') }
         }
     } catch {
-        $problems.Add("a check before the write could not read: $($_.Exception.Message)")
+        $problems.Add("a check before the write could not read: $(Format-RefuteError $_)")
     }
     if ($problems.Count) { Write-Problems 'Problems (nothing was changed):' $problems.ToArray(); return }
     try {
         [System.IO.File]::WriteAllBytes($InstalledPath, $bytes)
     } catch {
         Write-Problems 'Stopped during the write (the installed configuration may be incomplete; the module then refuses every call):' @(
-            $_.Exception.Message,
+            ('the write failed: ' + (Format-RefuteError $_)),
             'recovery: run the preview, then -Apply with -InstalledSha256 set to the hash it prints')
         return
     }
@@ -177,7 +185,7 @@ function Invoke-RefuteConfigUpdate {
         if ((Get-Acl -LiteralPath $ModuleDir).Sddl -ne $aclDirBefore) { $problems.Add('the ACL of the module folder changed') }
         foreach ($p in @(Get-RefuteTargetProblems $ModuleDir $InstalledPath)) { $problems.Add($p) }
     } catch {
-        $problems.Add("a check after the write could not read: $($_.Exception.Message)")
+        $problems.Add("a check after the write could not read: $(Format-RefuteError $_)")
     }
     if ($problems.Count) {
         Write-Problems 'Problems after the write (the installed configuration WAS replaced; stop and inspect, no automatic correction):' $problems.ToArray()
@@ -209,7 +217,7 @@ if ($problems.Count) { Write-Problems 'Problems (nothing was changed):' $problem
 try {
     $coreBytes = [System.IO.File]::ReadAllBytes((Join-Path $PSScriptRoot 'RefuteRegistration.Core.ps1'))
 } catch {
-    Write-Problems 'Problems (nothing was changed):' @("RefuteRegistration.Core.ps1 cannot be read: $($_.Exception.Message)")
+    Write-Problems 'Problems (nothing was changed):' @("RefuteRegistration.Core.ps1 cannot be read: $(Format-RefuteError $_)")
     exit 1
 }
 $coreActual = Get-RefuteBytesSha256 $coreBytes
