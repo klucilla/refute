@@ -104,6 +104,19 @@ def _finite(value: float | None, what: str) -> None:
         raise ValueError(f"{what} must be finite")
 
 
+def _finite_tree(value: Any, what: str) -> None:
+    """Every number inside ``value`` (a JSON-like tree) is finite: a non-finite float
+    would be serialized as null, changing the value silently (#59, Codex review)."""
+    if isinstance(value, float):
+        _finite(value, what)
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            _finite_tree(item, f"{what}.{key}")
+    elif isinstance(value, list | tuple):
+        for index, item in enumerate(value):
+            _finite_tree(item, f"{what}[{index}]")
+
+
 # ---- test_plan (1.0.2) -------------------------------------------------------------------
 
 
@@ -480,6 +493,12 @@ class ConfigDisable(_Model):
     @classmethod
     def _file(cls, value: str) -> str:
         return _relative(value, "ablation.disable.config_file")
+
+    @field_validator("value")
+    @classmethod
+    def _finite_value(cls, value: Any) -> Any:
+        _finite_tree(value, "ablation.disable.value")
+        return value
 
 
 class DataSplitParams(_Model):

@@ -91,6 +91,12 @@ class Convention:
             raise ValueError("labels must be at least 2 distinct classes")
         if any(isinstance(v, bool | float) for v in labels):
             raise ValueError("labels must be integers or strings")
+        # a float pos_label could match a label by its text ("inf") and be serialized as
+        # null (#59, Codex review of the #85 items)
+        if self.pos_label is not None and (
+            isinstance(self.pos_label, bool) or not isinstance(self.pos_label, int | str)
+        ):
+            raise ValueError("pos_label must be an integer or a string")
         if self.metric in ("accuracy", "error_rate"):
             if self.average or self.pos_label is not None or self.zero_division is not None:
                 raise ValueError(f"{self.metric} takes no average, pos_label or zero_division")

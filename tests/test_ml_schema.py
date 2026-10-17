@@ -1928,22 +1928,28 @@ def _mode(mode, center_value):
     return steps
 
 
+# the declared centre (3.0) differs from the raw difference of the published values
+# (91.2 - 89.0 = 2.2), so each case shows which one the symmetry is checked around
 @pytest.mark.parametrize(
     ("mode", "ci_center", "status"),
     [
-        # the paired CI is checked for symmetry around g_pub in margin mode
-        ("margin", 2.2, "converted"),
-        ("margin", 5.0, "not_convertible"),
+        # around g_pub in margin mode, never around the raw difference
+        ("margin", 3.0, "converted"),
+        ("margin", 2.2, "not_convertible"),
         # around d_pub in magnitude mode
-        ("magnitude", 2.2, "converted"),
-        ("magnitude", 5.0, "not_convertible"),
+        ("magnitude", 3.0, "converted"),
+        ("magnitude", 2.2, "not_convertible"),
         # direction has no centre: never convertible, even when symmetric around the gap
         ("direction", 2.2, "not_convertible"),
+        ("direction", 3.0, "not_convertible"),
     ],
 )
 def test_the_paired_ci_centre_of_each_comparison_mode(tmp_path, mode, ci_center, status):
+    steps = _mode(mode, 3.0)
+    if mode == "margin":
+        steps.append(_set(["c2", "comparison", "g_pub"], 3.0))
     mutate = _apply(
-        *_mode(mode, 2.2),
+        *steps,
         _set(["c2", "comparison", "paired_uncertainty"], _paired_ci(ci_center)),
     )
     claim = load(tmp_path, mutate).canonical()
@@ -2004,3 +2010,28 @@ def test_an_infinite_published_sd_of_an_ablation_is_refused(name):
     AblationParams.model_validate(margin)  # the finite record is valid
     with pytest.raises(ValueError, match=f"ablation.{name} must be finite"):
         AblationParams.model_validate(dict(margin, **{name: float("inf")}))
+
+
+@pytest.mark.parametrize(
+    "record",
+    [
+        dict(kind="ci", lower=-1e300, upper=1e300, level=1e-15, method="normal", n=5),
+        dict(kind="ci", lower=-1e308, upper=1e308, level=0.95, method="normal", n=5),
+        dict(kind="se", value=1e308, n=1000),
+    ],
+)
+def test_a_standard_deviation_that_overflows_is_refused(record):
+    """Finite inputs can still give an infinite sd; an infinite tolerance would accept
+    any result (Codex review of the #85 items)."""
+    with pytest.raises(ValueError, match="standard deviation that is not finite"):
+        resolve_uncertainty(unc(**record), "percent", 0.0)
+
+
+@pytest.mark.parametrize("value", [float("inf"), {"lr": float("-inf")}, [1, {"x": float("nan")}]])
+def test_a_non_finite_number_in_an_ablation_config_value_is_refused(value):
+    """It would be serialized as null, changing the value silently."""
+    from refute.packs.ml.schema import ConfigDisable
+
+    ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": 0.5})
+    with pytest.raises(ValueError, match="must be finite"):
+        ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": value})

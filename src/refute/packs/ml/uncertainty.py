@@ -137,6 +137,15 @@ def _quantile(method: str, level: float, n: int) -> float:
     return _stable(float(stats.norm.ppf(q)))
 
 
+def _finite_sd(sd: float) -> float:
+    """A converted standard deviation is finite: finite inputs can still overflow (a CI
+    of ±1e300 at a tiny level), and an infinite tolerance would accept any result (#59,
+    Codex review of the #85 items)."""
+    if not math.isfinite(sd):
+        raise ValueError("the uncertainty gives a standard deviation that is not finite")
+    return sd
+
+
 def resolve_uncertainty(
     record: Uncertainty, metric_unit: str, center: float | None
 ) -> dict[str, Any]:
@@ -150,7 +159,7 @@ def resolve_uncertainty(
         return out
     factor = unit_factor(record.unit or "", metric_unit)
     if record.kind == "sd":
-        out.update(status="converted", sd=_stable(record.value * factor), quantile=None)
+        out.update(status="converted", sd=_finite_sd(_stable(record.value * factor)), quantile=None)
         return out
     if record.n is None:
         out.update(status="not_convertible", sd=None, quantile=None)
@@ -158,7 +167,7 @@ def resolve_uncertainty(
     if record.kind == "se":
         out.update(
             status="converted",
-            sd=_stable(record.value * factor * math.sqrt(record.n)),
+            sd=_finite_sd(_stable(record.value * factor * math.sqrt(record.n))),
             quantile=None,
         )
         return out
@@ -176,5 +185,5 @@ def resolve_uncertainty(
         # tolerance is never built on a zero or infinite quantile
         raise ValueError(f"the CI level {record.level} gives the quantile {q}, not usable")
     se = width / (2 * q)
-    out.update(status="converted", sd=_stable(se * math.sqrt(record.n)), quantile=q)
+    out.update(status="converted", sd=_finite_sd(_stable(se * math.sqrt(record.n))), quantile=q)
     return out
