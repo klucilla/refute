@@ -54,6 +54,38 @@ sectors each, seeds 0 to 49) is within 1 ± 0.1 (white noise) and within 15% of 
 to 10% at `n_T` for a two-orbit sector) is recorded as a property of the estimator: its consequence
 on the errors is what the K conditions of the calibration test.
 
+## Amendment 2 (2026-10-18, before the tests of piece 2): the propagation of A1
+
+Declared before any test or code of piece 2.
+
+- **`CorrectionsParams`** (`gauntlet.corrections`): `enabled` (default `false`) and the settings of
+  revision 3, 9.2, with the values of M4-c1 as defaults (`b_min` 20, `gap_split` 5, `fap_max` 1e-4,
+  `max_components` 3, `k_clip` 2.5, `h_min` 0.90, `m_beta` 1.2) and revision 4's `r_min` 20. The freeze
+  sets them to the chosen configuration (section "The switch").
+- **The scales of σ_r²** in the per-event variance (revision 3, 2.2,
+  `σ_w² (1/n_in + 1/n_base) + σ_r²(n_in) + σ_r²(n_base)`): `σ_w` and the counts `n_in`, `n_base` are
+  the event's own; `σ_r²` is estimated once per sector at the **nominal** scales of the measurement,
+  `n_T = round(duration / cadence)` for the box and `n_B = round(2 (outer − inner) / cadence)` for the
+  baseline bands, on the flattened curve with the candidate's transits masked. The estimator needs
+  bins of a fixed size; the per-event counts differ only by gaps.
+- **Events in an excluded sector** (few bins at `n_T` or `n_B`) are dropped and reported; with no
+  sector left the noise model is undetermined and the `snr` test is **INCONCLUSIVE** ("noise model
+  undetermined"), never PASS or FAIL.
+- **Events sharing cadences:** when two events' spans (event plus baseline bands) share cadences, the
+  later one is dropped and reported.
+- **The gate** reads `depth / e`, with `e` the stacked error of the primary events at the candidate's
+  ephemeris on the flattened curve (the prewhitened curve once piece 7 exists); the BLS `depth_snr` is
+  reported beside it as `bls_depth_snr`. `odd_even` and `secondary_eclipse` use the corrected
+  per-event errors too.
+- **"White noise: the gate unchanged within 5%"** (revision 3, 10, row A1) is read as: on white-noise
+  `planet` light curves (seeds 0 to 9), the median of (corrected SNR / BLS `depth_snr`) is within
+  [0.95, 1.05]. Declared now, before any run.
+- **The holdout's train candidate** keeps its SNR until pieces 4 and 5, which change the holdout as a
+  whole; piece 2 touches the global analysis only.
+- **With the switch off** every analysis is the M3 code path: checked on Windows against digests of
+  analysis records computed before the code of piece 2 (bound to the platform, as G1 of the
+  correlated-noise record), and on every platform by the unchanged suite.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after
