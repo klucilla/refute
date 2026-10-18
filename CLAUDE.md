@@ -187,9 +187,10 @@ and review (the standing approval of 2026-10-14 and 2026-10-15).
    - deleting anything outside `.cache/`;
    - a force push, a history rewrite, or deleting a branch (except those the maintainer
      approves);
-   - any step as Administrator or in Hyper-V, or with sudo on a VM, and the console answers
-     of an installation ("yes" to the autoinstall). The maintainer runs these; the agent
-     prepares the exact commands, in plain text, one line per command, with what to check.
+   - any step as Administrator or in Hyper-V; on a VM, changing the sudoers or the proxy's
+     configuration, or any interactive sudo; and the console answers of an installation
+     ("yes" to the autoinstall). The maintainer runs these; the agent prepares the exact
+     commands, in plain text, one line per command, with what to check.
 
    Since 2026-10-17 (the maintainer's decision), the agent runs itself, from the
    maintainer's machine and without Administrator: the endpoint's operations in an
@@ -201,6 +202,9 @@ and review (the standing approval of 2026-10-14 and 2026-10-15).
    Since 2026-10-18 (the maintainer's decision), the agent itself executes every step on
    the VM through the JEA endpoint and by SSH, without elevation, and never hands such a
    step to the maintainer; steps as Administrator or in Hyper-V stay with the maintainer.
+   The commands the VM's sudoers already allows without a password (`sudo -n`), inside
+   approved scripts (`scripts/vm/launch-paper.sh`, the stop of a paper by `systemctl`), stay
+   with the agent.
 
    Everything else, the agent decides and does.
 4. Free research on the internet; an external fact in a document carries its URL and the
