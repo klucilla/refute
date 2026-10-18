@@ -246,3 +246,26 @@ measured and recorded, never assumed.
 The generator and the helpers are under `src/`, so the code hash changes, as for every v0.2.1
 change. No locked claim uses the synthetic generator; the v0.2 calibration is verified at its
 locked tag `v0.2.0-calibration-lock`.
+
+## Amendment 1 (2026-10-17): the generator, its sabotages and one wording correction
+
+**Order.** This file `b8371d6`; the reference of the old generator `ff5d7d4` (two runs, identical
+digests); the tests `9922198` (before the code: 52 tests, 11 failures, every case that needs the
+new mode); the code `0cc8063` (52 passed, 0 failures, from the JUnit file).
+
+**Sabotages SG1 to SG4**, against `tests/test_synthetic_correlated_noise.py` only, the
+implementation staged, each file restored from the index with an empty `git diff`; nothing
+committed:
+
+| Sabotage | Failing cases | Planned and caught |
+|---|---|---|
+| SG1. The AR(1) series drawn from the white generator | G2 (3 seeds), G2b (3 seeds), G5 correlated | yes |
+| SG2. The AR(1) state not restarted per sector (the last value of a sector carried into the next) | G2 (3 seeds) | yes |
+| SG3. `scenario_data` ignores the noise mode for `blend` | G4 | yes |
+| SG4. The white mode creates the second generator | G5 white | yes |
+
+**Wording correction (no criterion changes).** The definition said the correlated profile is
+"600 ppm white (the scenarios' value) plus 600 ppm AR(1)". The white noise is each scenario's
+own value, unchanged: 600 ppm for every scenario except `blend`, whose `make_blend` uses
+300 ppm (as before). The profile adds the 600 ppm AR(1) to that white noise; the code
+(`CORRELATED_PROFILE` in `synthetic.py`) and G4 follow this, and nothing else was assumed.
