@@ -279,6 +279,66 @@ tails are heavier than normal. On the first 210 transits (the declared size): 0.
 injected template gives 0.680 and 0.953. These numbers are recorded, not judged here; K4 judges
 the extrapolated timing on the population.
 
+## Amendment 6 (2026-10-18): the readings of pieces 4 and 5 (before their tests), and two points for the maintainer
+
+Revision 3, 4.1 to 4.6, and revision 4, 1 and 2, leave some operational points open. Codex was
+consulted read-only (`.cache/v021/codex/p45-design/` in the worktree); Claude agrees with its
+readings below. Declared before any test or code of pieces 4 and 5.
+
+**Readings (fixed now):**
+
+1. **The period-correction scan stays** (`holdout.py`, `_measure`): at each `dP` of a grid fixed
+   before the read, the windows **and the replicas** get the same center shift
+   (`(n − n_ref) dP`), box, baseline model and degeneracy rules; `var_rep(dP)` from the replicas,
+   the stacked error and `SNR(dP)`; the measured SNR is the maximum over the grid, and the FAIL rule
+   (revision 3, 4.5, with `d_train`, not `d_c`) uses the depth and error **of that same `dP`**. The
+   grid always contains `dP = 0` (an odd number of points, symmetric); ties go to the smaller
+   `|dP|`, then to the negative side; a box is valid at a `dP` only if its own coverage rule holds
+   there. Maximizing `d/e` does **not** only make FAIL rarer (Codex's counterexample: with varying
+   `e`, the chosen point can satisfy the inconsistency when `dP = 0` does not); `var_rep(dP)`
+   measures the operation at that `dP`, not the coverage after the maximum, which the full
+   operation's pulls (revision 4, 1, unit criteria) and K5 to K8 check.
+2. **Decision 1:** `d_c = d_train − k e_train`, with `d_train` the BLS depth of the train candidate
+   and `e_train` its A1 stacked error at its own ephemeris on the train data (piece 2's estimator,
+   now applied to the train candidate, before the train validity gate);
+   `e_pred,1 = m_β sqrt(var_rep,train / N_pred)` with `N_pred` the number of predicted transit
+   windows whose box and baseline are covered by the hidden sectors' spans (metadata; never the
+   windows that survive the read). With the scan, `e_pred` is the **largest** over the grid
+   (a conservative reading of a gap; the error at the transits' best `dP` would make the decision
+   depend on the flux).
+3. **Decision 2:** `e_pred,2 = sqrt(var_rep,hidden / N_pred)` (no `m_β`), the largest over the grid;
+   the order of a round: windows, controls and replicas fixed from the train and the metadata;
+   decision 1 (if not met, the round ends with an empty hidden access log); `HiddenYear` built
+   with every registered mask; the replicas (and what remains of 4.2, below) read and decision 2
+   taken; only then the transit and control windows measured. Changing the flux inside the
+   windows changes neither decision (row N).
+4. **The threshold:** `min_snr − b + Φ⁻¹(1 − α_round) s`, `α_round = 0.005 / R`, `R` the planned
+   rounds (the observing years, fixed before any result, never reduced). `b` and `s` are
+   configuration settings whose values come from the selection part; until then the unit tests
+   give them explicit values; no value is presented as calibrated.
+5. **Other points:** the phase-0.5 control keeps the same operation and the replicas' variance,
+   as a diagnostic, never a gate, and the replicas avoid its span; windows whose measurement spans
+   share cadences: the later is dropped with its reason; "valid windows" are counted after
+   coverage, baseline, degeneracy and sharing, and fewer than `min_predicted_transits` is
+   INCONCLUSIVE (`N_valid` and `N_pred` are distinct numbers); a replica in a segment with no
+   unmasked cadence does not feed decision 2; a non-finite error or an unusable variance is
+   INCONCLUSIVE with its reason (today a non-finite SNR falls into FAIL, `holdout.py`).
+
+**For the maintainer (nothing of pieces 4 and 5 is coded before the answers):**
+
+- **(A) The noise bands of revision 3, 4.2 and the replicas of revision 4, 1 occupy the same
+  phases** (0.25 and 0.75), and the hidden detrending masks the replicas out to `baseline_inner`,
+  so the A1 estimate in the noise bands loses most of its support. Options: keep 4.2 as written
+  (bands registered and read; if their `B_min` is not met, decision 2 INCONCLUSIVE, which may make
+  most rounds inconclusive); or take `σ_w,hidden` and the `B_min` check from the residuals of the
+  replicas' baseline bands (which are read anyway); or make the replicas avoid the noise bands
+  (fewer replicas). Each changes a row that revision 4 keeps closed (B2) or its replica rule.
+- **(B) Which `S_pred` estimates `b` and `s`** (revision 3, 4.6; revision 4, 2): the train one
+  (decision 1) or the hidden-noise one (decision 2). Codex and Claude recommend recording both and
+  fixing one before the selection runs. Also: to estimate `b` and `s` without the rule selecting
+  its own sample, the harness must obtain `S_meas` for rounds that decision 1 would stop; the
+  official round keeps its status and empty log, and the harness collects the measurement apart.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after
