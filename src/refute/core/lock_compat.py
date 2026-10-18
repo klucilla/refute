@@ -51,8 +51,8 @@ _UNRELIABLE = ["SPLIT", "DUPLICATE", "ARTIFACT"]
 # of the v0.2.1 corrections, at exactly its defaults (switch off). A literal, not read from the
 # code, so a later change of any default makes the projection refuse and the claim TAMPERED.
 _CORRECTIONS_OFF = {
-    # Extension 3 (2026-10-18; M4 piece 6, map Amendment 21; a package for the maintainer's
-    # approval, item 6 of that day's decisions): the thresholds of period_alias at their defaults.
+    # Extension 3 (2026-10-18; M4 piece 6, map Amendment 21; approved by the maintainer on
+    # 2026-10-18 as the package described): the thresholds of period_alias at their defaults.
     "alias_f": 0.5,
     "alias_z_f": 18.47,
     "b_min": 20,

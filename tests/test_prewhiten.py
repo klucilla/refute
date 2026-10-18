@@ -122,6 +122,19 @@ def test_d3_a_pure_box_is_not_removed_and_a_rejection_ends(noise, seed, monkeypa
     assert len(built) == 2  # L0 and L1 of the one iteration
 
 
+def test_the_fap_guard_rejects_a_frequency_at_or_above_fap_max(monkeypatch):
+    # written after the sabotage SW2 escaped (map Amendment 24): in white noise h >= h_min
+    # already needs an SNR that makes the FAP tiny, so no construction makes the FAP decide; this
+    # direct case routes a FAP of 0.5 through the guard
+    import astropy.timeseries as ts
+
+    monkeypatch.setattr(ts.LombScargle, "false_alarm_probability", lambda self, *a, **k: 0.5)
+    lc = _bare(6141, "white")
+    pw = _pw()(_with(lc, _sine(lc.time)), _plan())
+    assert pw.components == [] and pw.reason == "fap_above_max"
+    assert pw.rejected["fap"] == 0.5 and pw.rejected["h"] >= 0.9
+
+
 def test_d4_several_components_and_the_limit():
     lc = _bare(6106, "white")
     two = _with(lc, _sine(lc.time) + _sine(lc.time, period=0.43, amp=2500e-6, t0=1325.9))

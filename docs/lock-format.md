@@ -220,8 +220,8 @@ with its date, the paths and frozen values it adds, and the full resolved hashes
    `27213d9406ed419ae12ea445e0ef2b8ad09507c5399c6400627dd6f70f9a04be`. The cases and sabotages of
    extension 1 cover it (a non-default value, the version 2 among them, is refused).
 3. **The thresholds of `period_alias` in the corrections section (2026-10-18; branch
-   `claude/v0-2-1-reopen` only, until its merge; proposed as a package for the maintainer's
-   approval, item 6 of the decisions of 2026-10-18).** Piece 6 of M4 (`period_alias` of revision
+   `claude/v0-2-1-reopen` only, until its merge; proposed as a package, item 6 of the decisions of
+   2026-10-18, and approved by the maintainer on 2026-10-18 as described).** Piece 6 of M4 (`period_alias` of revision
    3, 5; `docs/validation/v0.2.1/reopen/m4-implementation-map.md`, Amendment 21) adds two settings
    to the section, `alias_z_f` (default 18.47) and `alias_f` (default 0.5). This extension adds
    them, at those defaults, to the frozen value of extensions 1 and 2 (the same path,

@@ -674,6 +674,21 @@ correlated parameter only, naming this amendment: a green suite then means no un
 and an XPASS would turn it red and call for an investigation, not an acceptance. It is **not** an
 acceptance (the maintainer's rule: xfails do not count as acceptance).
 
+**Sabotages of piece 7** (`.cache`-only spec, never committed, each restored with `git diff` empty
+after, run with no full suite running), on `400f1aa`: SW1 no clipping (D5 fails); SW3 the
+few-harmonic test not checked (7 cases fail); SW4 a bin kept with 2 cadences and SW5 39 bins
+accepted (B1/B2); SW6 the clipped cadences not subtracted and SW7 the per-sector constants
+subtracted (D5); SW8 the refit ignoring the mask (R1, N1); SW9 the search on Amendment 22's `L1 −
+S` (I2 white, In); SW10 the reanalysis without the subtraction (I1, N1, N2); SW11 the train
+frequencies not passed (H); SW12 the marker not recorded (In); SW13 the prewhitening for an inactive
+block (Off). (Under SW8 and SW10 the expected failure of I2 correlated also turned into an XPASS,
+which the strict marker reports as a failure.) **SW2, the FAP not checked, escaped**: no case
+failed. The mechanism: in white noise `h ≥ h_min` already needs a signal-to-noise ratio that makes
+the FAP tiny, so in every construction the few-harmonic test decides before the FAP could. A direct
+case was written after the escape (declared as such): D2's sinusoid with astropy's
+`false_alarm_probability` replaced by 0.5, required to be rejected with `fap_above_max` while
+`h ≥ 0.9` (seed 6141); SW2 run again on it made that case fail.
+
 ## Amendment 23 (2026-10-18, declared after the first run of piece 7): the results, four failures and their mechanisms, and the subtraction before the detrending
 
 **The first run** (`62293af`'s tests on the first code of piece 7; JUnit: 26 tests, 4 failures),

@@ -36,8 +36,8 @@ CLAIMS = {
 # claude/v0-2-1-reopen), with the code of 676b076: v0.1 05ec2b63...a8b48f, v0.2 a68d2bac...e4b75.
 # From extension 2 (the version key of the section, the version rule of the maintainer's decision
 # of 2026-10-18), with the code of the commit that adds it: v0.1 045a980e...4fe6936, v0.2
-# 27213d94...f9a04be. From extension 3 (the thresholds of period_alias, map Amendment 21; a package
-# for the maintainer's approval), with the code of the commit that adds it (docs/lock-format.md,
+# 27213d94...f9a04be. From extension 3 (the thresholds of period_alias, map Amendment 21; approved
+# by the maintainer on 2026-10-18), with the code of the commit that adds it (docs/lock-format.md,
 # "Extensions of the table"):
 FULL_RESOLVED = {
     "tess-calibration-v0.1": "71cfc632ca84006b8149669bdf76d19d710c758193ada04300b643f9cb4f12b5",
