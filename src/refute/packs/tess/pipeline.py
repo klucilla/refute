@@ -47,6 +47,7 @@ from refute.packs.tess.holdout import HoldoutOutcome, run_holdout
 from refute.packs.tess.params import TessTestPlan
 from refute.packs.tess.rednoise import EventNoise, event_noise
 from refute.packs.tess.search import SearchResult, finalize_candidate, search_period
+from refute.packs.tess.timing import corrected_transit_times
 from refute.packs.tess.types import BTJD_OFFSET, Candidate, LightCurveData, TessData
 
 SearchFn = Callable[[LightCurveData, Any], SearchResult]
@@ -191,17 +192,23 @@ def attack_candidate(
         check_plausibility(final, data.star, gp.plausibility),
         *battery_tests(data, final, plan, catalogs, catalog_scan),
     ]
-    times = measure_transit_times(
-        flat,
-        final.period,
-        final.t0,
-        final.duration,
-        final.depth,
-        sigma,
-        cadence_days=cadence,
-        step_minutes=gp.holdout_by_year.timing_step_minutes,
-        scan_half_width_durations=gp.holdout_by_year.timing_scan_half_width_durations,
-    )
+    if gp.corrections.enabled:
+        # M4 piece 3: the trapezoid template, the scan and the error times beta(n_tau).
+        times = corrected_transit_times(
+            flat, final.period, final.t0, final.duration, sigma, plan
+        ).times
+    else:
+        times = measure_transit_times(
+            flat,
+            final.period,
+            final.t0,
+            final.duration,
+            final.depth,
+            sigma,
+            cadence_days=cadence,
+            step_minutes=gp.holdout_by_year.timing_step_minutes,
+            scan_half_width_durations=gp.holdout_by_year.timing_scan_half_width_durations,
+        )
     ephemeris = fit_linear_ephemeris(times) if len(times) >= 2 else None
     return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris)
 

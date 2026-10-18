@@ -61,6 +61,7 @@ from refute.packs.tess.events import per_point_sigma, transit_mask
 from refute.packs.tess.gauntlet import check_snr
 from refute.packs.tess.params import HoldoutParams, TessTestPlan
 from refute.packs.tess.search import search_period
+from refute.packs.tess.timing import corrected_transit_times
 from refute.packs.tess.types import Candidate, LightCurveData, SectorInfo
 
 TEST_NAME = "holdout_by_year"
@@ -479,17 +480,23 @@ def plan_round(
     sigma = per_point_sigma(
         train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
     )
-    times = measure_transit_times(
-        train_flat2,
-        train.period,
-        train.t0,
-        train.duration,
-        train.depth,
-        sigma,
-        cadence_days=cadence,
-        step_minutes=params.timing_step_minutes,
-        scan_half_width_durations=params.timing_scan_half_width_durations,
-    )
+    if plan.gauntlet.corrections.enabled:
+        # M4 piece 3: the train timing with the trapezoid template of the train candidate.
+        times = corrected_transit_times(
+            train_flat2, train.period, train.t0, train.duration, sigma, plan
+        ).times
+    else:
+        times = measure_transit_times(
+            train_flat2,
+            train.period,
+            train.t0,
+            train.duration,
+            train.depth,
+            sigma,
+            cadence_days=cadence,
+            step_minutes=params.timing_step_minutes,
+            scan_half_width_durations=params.timing_scan_half_width_durations,
+        )
     train_info: dict[str, Any] = {
         "train_candidate": train.to_dict(),
         "n_transit_times": len(times),
