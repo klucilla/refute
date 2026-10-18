@@ -34,6 +34,7 @@ from pydantic import (
     ConfigDict,
     Discriminator,
     Field,
+    StrictInt,
     Tag,
     ValidationError,
     field_validator,
@@ -593,12 +594,21 @@ class RegexExtraction(_Model):
         return self
 
 
+class TensorBoardExtraction(_Model):
+    """The one scalar of ``tag`` at ``step`` (or ``"last"``, the greatest step) of a
+    TensorBoard event file (W3.11b, wp3-tensorboard-acceptance.md)."""
+
+    tag: str = Field(min_length=1)
+    step: Annotated[StrictInt, Field(ge=0)] | Literal["last"]
+
+
 class Extraction(_Model):
     from_: Literal["file", "log"] = Field(alias="from")
     file: str | None = None
     json_path: str | None = None
     csv: CsvExtraction | None = None
     regex: RegexExtraction | None = None
+    tensorboard: TensorBoardExtraction | None = None
     unit: Literal["percent", "fraction", "native"]
 
     @model_validator(mode="after")
@@ -608,11 +618,26 @@ class Extraction(_Model):
             _file_pattern(self.file or "", "metric_extraction.file")
         elif self.file is not None:
             raise ValueError("metric_extraction.file is only for 'from: file'")
-        ways = [w for w in (self.json_path, self.csv, self.regex) if w is not None]
+        if self.tensorboard is not None and self.from_ != "file":
+            raise ValueError("metric_extraction.tensorboard is only for 'from: file'")
+        ways = [
+            w for w in (self.json_path, self.csv, self.regex, self.tensorboard) if w is not None
+        ]
         if len(ways) != 1:
-            raise ValueError("metric_extraction takes exactly one of json_path, csv, regex")
+            raise ValueError(
+                "metric_extraction takes exactly one of json_path, csv, regex, tensorboard"
+            )
         _json_path(self.json_path, "metric_extraction.json_path")
         return self
+
+    @model_serializer(mode="wrap")
+    def _omit_absent(self, handler: Any) -> dict[str, Any]:
+        # an absent tensorboard is not written, so an existing claim resolves to the same
+        # hash (wp3-tensorboard-acceptance.md)
+        out = handler(self)
+        if out.get("tensorboard") is None:
+            out.pop("tensorboard", None)
+        return out
 
 
 class Run(_Model):

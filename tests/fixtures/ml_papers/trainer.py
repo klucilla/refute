@@ -48,15 +48,88 @@ The coverage routes of ``metric_extracted`` (wp3-acceptance.md, 1.5a), all off b
   makes that call evaluate the validation split instead;
 - ``shuffle_preds``: save the predictions in a shuffled order (both fields alike), which
   keeps the accuracy and changes the order of the labels.
+
+A TensorBoard event file (wp3-tensorboard-acceptance.md, W3.11b), off by default:
+
+- ``tensorboard``: ``"tensor"`` (as ``tf.summary.scalar`` of TensorFlow 2 writes it) or
+  ``"simple"`` (``simple_value``): write ``runs/<name>/events.out.tfevents.<name>`` with
+  the accuracy as a fraction (a float32) under the tag ``test/accuracy`` at step 2, after
+  a value 0.1 lower at step 1, and an image under another tag.
 """
 
 import importlib.util
 import json
+import struct
 import sys
 import time
 from pathlib import Path
 
 import numpy as np
+
+
+def _crc32c(data):
+    crc = 0xFFFFFFFF
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            crc = (crc >> 1) ^ 0x82F63B78 if crc & 1 else crc >> 1
+    return crc ^ 0xFFFFFFFF
+
+
+def _masked(data):
+    crc = _crc32c(data)
+    return ((((crc >> 15) | (crc << 17)) & 0xFFFFFFFF) + 0xA282EAD8) & 0xFFFFFFFF
+
+
+def _varint(n):
+    out = b""
+    while True:
+        low, n = n & 0x7F, n >> 7
+        out += bytes([low | (0x80 if n else 0)])
+        if not n:
+            return out
+
+
+def _field(number, wire, payload):
+    key = _varint(number << 3 | wire)
+    if wire == 2:
+        return key + _varint(len(payload)) + payload
+    return key + payload
+
+
+def _record(event):
+    length = struct.pack("<Q", len(event))
+    return length + struct.pack("<I", _masked(length)) + event + struct.pack("<I", _masked(event))
+
+
+def _scalar_event(step, tag, value, kind):
+    if kind == "tensor":  # dtype DT_FLOAT, an empty (rank 0) shape, 4 bytes of content
+        tensor = (
+            _field(1, 0, _varint(1)) + _field(2, 2, b"") + _field(4, 2, struct.pack("<f", value))
+        )
+        content = _field(8, 2, tensor)
+    else:
+        content = _field(2, 5, struct.pack("<f", value))
+    summary = _field(1, 2, _field(1, 2, tag.encode()) + content)
+    return (
+        _field(1, 1, struct.pack("<d", 1.0 + step))
+        + _field(2, 0, _varint(step))
+        + _field(5, 2, summary)
+    )
+
+
+def _write_events(name, fraction, kind):
+    folder = Path("runs") / name
+    folder.mkdir(parents=True, exist_ok=True)
+    image = _field(1, 2, _field(1, 2, b"images/sample") + _field(4, 2, b"\x08\x01"))
+    events = [
+        _field(1, 1, struct.pack("<d", 1.0)) + _field(3, 2, b"brain.Event:2"),
+        _scalar_event(1, "test/accuracy", fraction - 0.1, kind),
+        _field(2, 0, _varint(1)) + _field(5, 2, image),
+        _scalar_event(2, "test/accuracy", fraction, kind),
+    ]
+    data = b"".join(_record(e) for e in events)
+    (folder / f"events.out.tfevents.{name}").write_bytes(data)
 
 
 def accuracy_score(y_true, y_pred):
@@ -173,6 +246,8 @@ def main(argv):
         correct = int((y_pred == y_eval).sum()) + int(config.get("stats_bias", 0))
         stats = {"correct": correct, "total": int(len(y_eval))}
         (Path("preds") / f"stats-{name}.json").write_text(json.dumps(stats), encoding="utf-8")
+    if config.get("tensorboard"):
+        _write_events(name, printed / 100.0, config["tensorboard"])
     print(f"acc={printed:.2f}")
     if config.get("print_count"):
         print(f"evaluated={len(y_eval) + int(config.get('count_bias', 0))}")

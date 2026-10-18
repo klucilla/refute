@@ -441,7 +441,7 @@ def _read(ctx: ClaimContext, record: orc.ContainerRecord | None, workdir: Path, 
         try:
             got = ex.extract(extraction, workdir, log, seed)
             value = _convert(got.value, extraction["unit"], unit)
-            out.tokens[name] = ex.Extracted(got.token, value, got.source)
+            out.tokens[name] = ex.Extracted(got.token, value, got.source, got.binary)
         except ex.ExtractionError as exc:
             out.errors[name] = str(exc)
     return out
@@ -750,6 +750,9 @@ def _count(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | Non
     return int(got.token), _piece(selector, source, text)
 
 
+NO_INTERVAL = "a value read from a binary float has no printed interval"
+
+
 def _interval(token: str, rounding: str) -> tuple[Decimal, Decimal]:
     """The values that print as ``token`` (section 1.7), in the token's unit: the link of
     one route's value to the printed value. ``unknown`` is section 1.7's interval, which
@@ -827,6 +830,8 @@ def _route_reading(
                 return RouteReading(name, note=f"correct {correct} of total {total}", blocking=True)
             right = correct if ctx.claim["metric"]["name"] == "accuracy" else total - correct
             fraction = Decimal(right) / Decimal(total)
+            if run.token is not None and run.token.binary:
+                return RouteReading(name, note=NO_INTERVAL, blocking=True)
             if run.token is not None and not _inside(
                 fraction, run.token.token, run.token_unit, rounding
             ):
@@ -904,6 +909,8 @@ def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> Rou
     event = matching[0]
     value = None
     if event["result"] != "unread" and run.token is not None:
+        if run.token.binary:
+            return RouteReading("hook", note=NO_INTERVAL, blocking=True)
         try:
             returned = Decimal(event["result"])
             agrees = _inside(returned, run.token.token, run.token_unit, rounding)
@@ -927,10 +934,11 @@ class RunCoverage:
 
     readings: list[RouteReading]
     interval: tuple[Decimal, Decimal] | None
+    binary: bool = False  # the token is a binary float: no interval (W3.11b)
 
 
 def _printed(ctx: ClaimContext, run: _RunEvidence) -> tuple[Decimal, Decimal] | None:
-    if run.token is None:
+    if run.token is None or run.token.binary:
         return None
     lower, upper = _interval(run.token.token, _rounding(ctx))
     factor = rc.unit_factor(run.token_unit, ctx.claim["metric"]["unit"])
@@ -970,6 +978,7 @@ def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records,
             out[(seed, role)] = RunCoverage(
                 [_route_reading(ctx, r, evidence, run, mine) for r in evidence["routes"]],
                 _printed(ctx, run),
+                run.token is not None and bool(run.token.binary),
             )
     return out
 
@@ -1012,7 +1021,9 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
         # with two routes or more that give a value, each must print as the token (W3.12e);
         # with (c) alone, its value against the printed one is metric_recompute (1.7, fatal)
         given = {r.route: r.value for r in found if r.count is not None and r.value is not None}
-        if len(given) > 1 and run.interval is not None:
+        if len(given) > 1 and run.binary:
+            problems.append(f"{where}: the routes' values cannot be judged: {NO_INTERVAL}")
+        elif len(given) > 1 and run.interval is not None:
             lower, upper = run.interval
             outside = {
                 k: str(v)
@@ -1115,6 +1126,9 @@ def _recompute(
             token = holder.tokens.get(role)
             if token is None:
                 continue  # no printed value: not recomputed (INCONCLUSIVE by the rule)
+            if token.binary:
+                outcomes.append(rc.RunOutcome(label, TestStatus.INCONCLUSIVE, NO_INTERVAL))
+                continue
             cid = ids[
                 (seed, "reference" if role == "reference" and ctx.separate_reference else "method")
             ]

@@ -1067,3 +1067,48 @@ def test_a_missing_reference_value_leaves_its_seed_without_a_difference():
         ctx, {1: {"method": ok, "reference": ref}, 2: {"method": ok, "reference": missing}}
     )
     assert series == [Decimal(10), None]
+
+
+# ---- a value read from a TensorBoard event file (wp3-tensorboard-acceptance.md) ---------------
+
+
+def _board_target(routes, recompute=False) -> dict:
+    target = value_target({}, recompute=recompute, routes=routes)
+    target["run"]["metric_extraction"] = {
+        "from": "file",
+        "file": "runs/{seed}/*",
+        "tensorboard": {"tag": "test/accuracy", "step": "last"},
+        "unit": "fraction",
+    }
+    return target
+
+
+def test_a_value_read_from_an_event_file_enters_the_verdict(tmp_path):
+    for kind in ("tensor", "simple"):
+        claim_file = resolved(DATA, _board_target(["printed_count"]))
+        config = {**CONFIG, "print_count": True, "tensorboard": kind}
+        (tmp_path / kind).mkdir()
+        claim, base = checks(Paper(tmp_path / kind, claim_file, config).run(), KEY)
+        gate = base["metric_extracted"]
+        assert gate.status is TestStatus.PASS, gate.message
+        assert claim.verdict.verdict is PaperVerdict.REPRODUCED, claim.verdict.reason
+
+
+def test_a_binary_value_is_never_judged_by_a_printed_interval(tmp_path):
+    """The binary mark survives the reading (and its unit conversion): the checks that
+    would derive an interval from the token are INCONCLUSIVE with the fixed reason."""
+    claim_file = resolved(DATA, _board_target(["saved_predictions"], recompute=True))
+    config = {**CONFIG, "tensorboard": "tensor"}
+    (tmp_path / "c").mkdir()
+    claim, base = checks(Paper(tmp_path / "c", claim_file, config).run(), KEY)
+    assert base["metric_recompute"].status is TestStatus.INCONCLUSIVE
+    assert ig.NO_INTERVAL in str(base["metric_recompute"].metrics)  # each run's reason
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+    claim_file = resolved(DATA, _board_target(["sufficient_statistics"]))
+    config = {**CONFIG, "stats": True, "tensorboard": "tensor"}
+    (tmp_path / "d").mkdir()
+    claim, base = checks(Paper(tmp_path / "d", claim_file, config).run(), KEY)
+    assert base["metric_extracted"].status is TestStatus.INCONCLUSIVE
+    assert ig.NO_INTERVAL in base["metric_extracted"].message
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE

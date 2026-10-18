@@ -11,7 +11,10 @@ created: ``read_output``, wp3-extraction-pattern-acceptance.md) or from the run'
 - ``csv``: the value of ``column`` in the single row whose ``row.column`` equals
   ``row.equals`` (both compared as text);
 - ``regex``: a regular expression searched in the text; it must match exactly once,
-  and the value is its ``group`` (number or name).
+  and the value is its ``group`` (number or name);
+- ``tensorboard`` (``from: file`` only): the one scalar of a ``tag`` at a ``step`` (or the
+  ``"last"``, greatest, step) of a TensorBoard event file (``tbevents``, W3.11b); the
+  token is the exact expansion of the binary float, marked ``binary``.
 
 A JSON object with a repeated key, and a CSV header with a repeated column, are refused:
 the value would depend on which copy a parser keeps. The result is the **token as
@@ -40,6 +43,7 @@ from typing import Any
 _NUMBER = re.compile(r"^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$")
 _STEP = re.compile(r"\.([A-Za-z_][A-Za-z0-9_-]*)|\[(\d+)\]")
 MAX_BYTES = 64 * 1024 * 1024
+_TEXT_WAYS = ("json_path", "csv", "regex")
 
 
 class ExtractionError(Exception):
@@ -51,6 +55,9 @@ class Extracted:
     token: str  # the number as written
     value: Decimal
     source: str  # "file:<path>" or "log"
+    # "float32" or "float64" when the token is the exact expansion of a binary float read
+    # from an event file (W3.11b): such a token has no printed interval
+    binary: str | None = None
 
 
 def _number(token: str, where: str) -> Extracted:
@@ -351,6 +358,16 @@ def extract(
 ) -> Extracted:
     """The metric of one run, by the claim's resolved ``metric_extraction`` block."""
     origin = extraction.get("from")
+    board = extraction.get("tensorboard")
+    if board is not None:
+        from refute.packs.ml import tbevents  # noqa: PLC0415 - tbevents imports this module
+
+        if origin != "file" or any(extraction.get(k) is not None for k in _TEXT_WAYS):
+            raise ExtractionError("tensorboard is read from a file, and alone")
+        data, where, _ = read_output_bytes(workdir, str(extraction["file"]), seed)
+        found = tbevents.select(data, str(board["tag"]), board["step"], where)
+        token = tbevents.token(found.value, where)
+        return Extracted(token, Decimal(token), where, found.width)
     if origin == "file":
         text, where, _ = read_output(workdir, str(extraction["file"]), seed)
     elif origin == "log":
@@ -362,7 +379,9 @@ def extract(
 
 def parse(extraction: dict[str, Any], text: str, where: str) -> Extracted:
     """The value a selector names in a text already read (one file or the log)."""
-    ways = [k for k in ("json_path", "csv", "regex") if extraction.get(k) is not None]
+    if extraction.get("tensorboard") is not None:
+        raise ExtractionError("tensorboard reads the bytes of an event file, not a text")
+    ways = [k for k in _TEXT_WAYS if extraction.get(k) is not None]
     if len(ways) != 1:
         raise ExtractionError("metric_extraction takes exactly one of json_path, csv, regex")
     if ways == ["json_path"]:

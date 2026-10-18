@@ -91,7 +91,7 @@ CATALOG: Mapping[str, Fixture] = MappingProxyType(
             Fixture(
                 "ml-paper",
                 {
-                    "train.py": "e9da85d49bf5d0ccfcbd70e6f312d80c88e73ff698d7eea533ff5892e6235325",
+                    "train.py": "5ab4ab5dfed408e1e1f0d03bcec929911320feb513b00c0b1c3d3d7b8bc9a084",
                     # the coverage hook, as an allowed patch would install it (1.5a, route
                     # (b)): the bytes of src/refute/packs/ml/coverage_hook.py
                     "coverage_hook.py": (
