@@ -511,10 +511,11 @@ left decision 2 is INCONCLUSIVE ("hidden noise undetermined"). This changes row 
 in that one respect, by the maintainer's decision.
 
 **A finding for the maintainer (not a change):** with `R_min = 20` (revision 4, fixed for every
-configuration), 81 of the 133 rounds (61%) have fewer than 20 usable replicas in every option: the
-hidden year of this population is one 27-day sector, while revision 4's example (about 28
-replicas) has two. Together with the 107 rounds ended earlier, about 78% of these planets' rounds
-would be INCONCLUSIVE under O2. Revision 4, 1 already says that this "enters the conclusive
+configuration), 81 of the 133 rounds (61%) have fewer than 20 usable replicas under O1 and O2, 102
+under O3, and 75 under all three (avoiding the bands changes the greedy order, so a few rounds
+gain replicas under O3) (correction of the Codex end-of-stage review): the hidden year of this
+population is one 27-day sector, while revision 4's example (about 28 replicas) has two. With the
+107 rounds ended earlier, 188 of 240 rounds (78%) of these planets would be INCONCLUSIVE under O2. Revision 4, 1 already says that this "enters the conclusive
 fractions of the sizing"; the sizing of `calc/calibration_sizing_rev4.py` used declared reference
 rates, and whether the T1 denominators (at least 725 conclusive targets per condition) are
 reachable is a question for the maintainer before the selection.
@@ -523,7 +524,14 @@ reachable is a question for the maintainer before the selection.
 platform and the numpy version; CI showed that CPython 3.12 on Windows gives other digests than
 the 3.13 that computed them (run 39127066658; the same failure was already in the CI of the
 piece-2 push, 39094858224, and was missed, read as the lock failures only). P1 now also requires
-the Python minor version of the reference (3.13); the reference record is unchanged.
+the Python minor version of the reference (3.13); the reference record is unchanged. **Provenance
+of 3.13, reconstructed** (the reference record stores the commit, the platform and numpy, not the
+interpreter): the reference was computed with the worktree's virtual environment, whose
+`pyvenv.cfg` reads `implementation = CPython`, `version_info = 3.13.16`, created
+2026-10-17T23:46:41Z and not modified since, before the reference commit `ba42037`
+(2026-10-18T03:22:14Z). Consequence: on CPython 3.12 the historical comparison with M3 is skipped;
+the equality of the default plan and an explicit switch off still runs there, and does not replace
+it.
 
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their

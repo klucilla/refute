@@ -204,7 +204,9 @@ with its date, the paths and frozen values it adds, and the full resolved hashes
    `78822a7`: `6f54b834…365dc` and `5fe1a3de…6d502`). Tests: `tests/test_lock_compat.py`
    (the projection still reaches both locked hashes; six non-default values and a changed
    default are refused; the section written in the claim file, even at its defaults, is
-   refused), each checked by a sabotage. Every later field or default of the section changes
+   refused). Sabotages: skipping the frozen-value comparison, removing the section whatever its
+   value, leaving the path out of the v0.2 entry, and skipping the guard against a field written
+   in the claim file each make cases fail. Every later field or default of the section changes
    this frozen value, so it needs a new extension, approved before it is made.
 
 ## When only the code differs (issue #66)
