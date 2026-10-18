@@ -143,6 +143,13 @@ def build(spec: dict, root: Path) -> dict:
     return record
 
 
+def run_paper_id(spec: dict) -> str:
+    """One slice id per timing run (a slice of a finished run stays until systemd drops
+    it, and the backend refuses an existing one): [a-z0-9] only."""
+    digest = hashlib.sha256(f"{spec['name']}/{spec['run_id']}".encode()).hexdigest()
+    return f"m{digest[:20]}"
+
+
 def keep_timing(raw: str, patterns: list[str]) -> list[str]:
     """Only the text the timing patterns match, line by line (a progress bar redraws with
     carriage returns: each redraw is a line here)."""
@@ -172,7 +179,7 @@ def measure(spec: dict, root: Path) -> dict:
     work.chmod(0o1777)
     mounts = tuple((str(Path(s["path"]).resolve()), t) for t, s in spec["data"].items())
     backend = DockerBackend(
-        f"meas{spec['name']}r", LIMITS, {work: ContainerPlan(built["image"], data_mounts=mounts)}
+        run_paper_id(spec), LIMITS, {work: ContainerPlan(built["image"], data_mounts=mounts)}
     )
     argv = list(spec["argv"])  # as production runs it: PATH starts with the build's venv
     log = root / "logs" / f"run-{spec['run_id']}.log"
@@ -183,9 +190,11 @@ def measure(spec: dict, root: Path) -> dict:
     # the raw log and the run's folder may hold metric outputs: never kept (decision 2c)
     log.unlink()
     shutil.rmtree(work, ignore_errors=True)
-    if work.exists():
-        subprocess.run(["docker", "run", "--rm", "--network", "none", "-v", f"{work}:/w",
-                        built["image"], "rm", "-rf", "/w"], check=False)  # fmt: skip
+    if work.exists():  # files the run's uid wrote: emptied from a container, then removed
+        clean = ["docker", "run", "--rm", "--network", "none", "-v", f"{work}:/w",
+                 built["image"], "find", "/w", "-mindepth", "1", "-delete"]  # fmt: skip
+        subprocess.run(clean, check=False)
+        shutil.rmtree(work, ignore_errors=True)
     return {
         "phase": "run",
         "started_utc": started,
