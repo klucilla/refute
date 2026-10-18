@@ -712,7 +712,63 @@ largest over a non-trivial grid; a non-finite statistic is INCONCLUSIVE; `b` and
 threshold as declared; the calibration-only measurement leaves `run_holdout` unchanged; with the
 switch off the holdout is the M3 one (P1). Each case in white and, where it matters, correlated
 noise. The case of row 4.1 with a train-found sinusoid needs the frequencies of piece 7 and is
-written with piece 7.
+written with piece 7 (pending).
+
+**Addendum: the Codex design review of this amendment, taken in before the tests**
+(`.cache/v021/codex/amend12/`):
+
+- **The train fit and its gate:** with the switch on, the train candidate is refitted by
+  `finalize_candidate` on the masked train curve (as the global path does) before `_bls_gate`,
+  so the BLS depth, its error and the weights of `β_D` belong to one fit. **A train gate that is
+  INCONCLUSIVE** (noise undetermined, no in-transit cadence) makes the round INCONCLUSIVE
+  `train_noise_undetermined`; the original SNR is never used in its place. The H4 rules then use
+  the corrected candidate.
+- **`R_min` in the train** is an adopted reading (revision 4 states it for the hidden year and the
+  "same estimator" for the train), with its own reason `train_replicas_below_r_min`, distinct from
+  `insufficient_capacity_train` (the numeric decision).
+- **`N_pred`** counts only complete measurement spans inside one hidden sector; `N_pred = 0` is
+  INCONCLUSIVE `no_predicted_window` before any division. Later drops change `N_valid`, never
+  `N_pred`.
+- **`m_β` only in decision 1**; both `e_pred` are the maximum over the whole grid; the threshold is
+  met with equality.
+- **The FAIL rule, exactly:** `Z = (d_train − d_hidden) / sqrt(e_train² + e_hidden²)`, signed
+  (one-sided), with `d_hidden` and `e_hidden` (the complete stacked error, with its scatter floor) of
+  the `dP` that maximizes the SNR; `SNR = min_snr` PASSES; `Z = 3` does not FAIL; zero or
+  non-finite errors, or a non-finite `Z` or SNR, are INCONCLUSIVE with the reason. This replaces,
+  on the corrected path only, the absolute difference of `depth_consistency_sigma`.
+- **`calibration_measurement`** measures **despite** decision 1 and decision 2 (records both, the
+  thresholds and `S_pred,1`, `S_pred,2`), but does not overcome a measurement impediment (hidden
+  noise undetermined, fewer than `R_min` replicas, too few windows): then `S_meas` is absent with the
+  reason. It builds its own `HiddenYear` and log, never modifies the official round or its inputs,
+  and covers the rounds stopped at decision 1 **and** at decision 2. In the official round stopped
+  by decision 1, `S_pred,2` and `S_meas` are absent with the reason (the hidden year is not read).
+- **Integration:** the new results reach `run_holdout`'s rounds and its coverage, not a key that
+  the aggregation ignores.
+- **Added cases:** the corrected train SNR below 7.1 while the BLS one is above (H4 now
+  INCONCLUSIVE); an undetermined train correction with a strong BLS SNR (INCONCLUSIVE, not
+  valid); 19 against 20 train replicas, and a shortage at one `dP` only; a window whose center is
+  inside a sector but whose span is not (not in `N_pred`); `N_pred = 0`; a gap that lowers `N_valid`
+  without changing `N_pred`; `m_β` only in decision 1; the maximum over the grid; equality at the
+  threshold; `R` kept when other rounds stop early; `SNR = 5`, `Z = 3`, a one-sided difference, the
+  same `dP` for depth and error, zero variance and non-finite values; the calibration measurement
+  for a round stopped at decision 2, a real measurement impediment, and the official result and
+  inputs unchanged (compared whole); the coverage reaching `run_holdout`.
+- **Constructions:** a noisy hidden year is the hidden part of a second curve with the same times,
+  signal, seeds and white noise and a larger AR(1) amplitude, joined to the train of the first
+  (the train identical bit for bit); a weaker but consistent signal reduces only the hidden
+  transits' depth. Each case states its preconditions (decision 1 passed, the hidden noise
+  determined, `R_min` met, the expected decision); a seed whose preconditions fail makes the case
+  incompatible with the design (no search for another seed). The algebra of the FAIL rule is also
+  tested on given numbers (for example `d_train` 600, `e_train` 50, `e_pred` 100, `d_hidden` 480,
+  `e_hidden` 100 ppm: both capacities pass, SNR 4.8, `Z` ≈ 1.07, INCONCLUSIVE).
+
+**For the maintainer (a consequence known now, not a change):** the freeze sets
+`corrections.enabled` to `true` by default (section "The switch"); the historical projection
+freezes the whole section at `enabled: false`, so from the freeze the two historical calibration
+claims resolve with the corrections on and their claim component becomes `TAMPERED`. Moving `b` and
+`s` into the plan at the freeze does not change that. The freeze package will need the maintainer's
+decision on the historical behaviour intended (keep `TAMPERED` as the honest state, or an extension
+whose justification the maintainer approves).
 
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
