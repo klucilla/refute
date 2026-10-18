@@ -15,7 +15,8 @@ result ``TAMPERED``.
 The table is frozen. Its provenance is the fixtures in
 ``tests/fixtures/locked_canonical/`` (built by ``scripts/lock_compat_snapshot.py`` from
 each lock commit's own code; each hashes to its locked ``claim_sha256``). Extending it
-changes lock verification and needs the maintainer's approval (CLAUDE.md).
+changes lock verification and needs the maintainer's approval (CLAUDE.md). Extensions so
+far are listed in docs/lock-format.md, "Extensions of the table".
 """
 
 from __future__ import annotations
@@ -44,6 +45,22 @@ IDENTITY_FIELDS = (
 
 _SYSTEMATIC_PERIODS = [13.7, 6.85, 4.566666666666666, 3.425, 1.0]
 _UNRELIABLE = ["SPLIT", "DUPLICATE", "ARTIFACT"]
+
+# Extension 1 (Phase I, v0.2.1; approved by the maintainer on 2026-10-18, branch
+# claude/v0-2-1-reopen only; docs/lock-format.md, "Extensions of the table"): the plan section
+# of the v0.2.1 corrections, at exactly its defaults (switch off). A literal, not read from the
+# code, so a later change of any default makes the projection refuse and the claim TAMPERED.
+_CORRECTIONS_OFF = {
+    "b_min": 20,
+    "enabled": False,
+    "fap_max": 0.0001,
+    "gap_split": 5.0,
+    "h_min": 0.9,
+    "k_clip": 2.5,
+    "m_beta": 1.2,
+    "max_components": 3,
+    "r_min": 20,
+}
 
 
 @dataclass(frozen=True)
@@ -90,6 +107,7 @@ HISTORICAL_LOCKS: tuple[HistoricalLock, ...] = (
                 "period_tolerance": 0.01,
                 "same_photometry_catalogs": ["TESS-EB"],
             },
+            ("test_plan", "gauntlet", "corrections"): _CORRECTIONS_OFF,
             ("test_plan", "gauntlet", "holdout_by_year", "hidden_detrend_window_factor"): 3.0,
             ("test_plan", "gauntlet", "holdout_by_year", "max_hidden_window_fraction"): 0.5,
             ("test_plan", "gauntlet", "holdout_by_year", "max_timing_sigma_durations"): 1.0,
@@ -137,6 +155,7 @@ HISTORICAL_LOCKS: tuple[HistoricalLock, ...] = (
         added={
             ("pass_criteria", "flag_requires_signal_recovery"): False,
             ("pass_criteria", "flag_signal_period_factors"): [1.0, 2.0, 0.5],
+            ("test_plan", "gauntlet", "corrections"): _CORRECTIONS_OFF,
             ("test_plan", "gauntlet", "eb_catalog", "same_photometry_catalogs"): ["TESS-EB"],
             ("test_plan", "gauntlet", "holdout_by_year", "max_hidden_window_fraction"): 0.5,
             ("test_plan", "gauntlet", "holdout_by_year", "max_train_duration_period_ratio"): 0.2,

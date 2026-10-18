@@ -29,11 +29,17 @@ CLAIMS = {
     "tess-calibration-v0.1": ROOT / "calibration" / "self_claim.yaml",
     "tess-calibration-v0.2": ROOT / "calibration" / "v0.2" / "self_claim.yaml",
 }
-# L10.2: full resolved hashes with the code of main 78822a7 (2026-10-15).
+# L10.2: full resolved hashes. Until extension 1 of the table, with the code of main 78822a7
+# (2026-10-15): v0.1 6f54b8348a90ee0d53e0ab2f45c90707c64a4286de559f61c2285b4ec1a365dc, v0.2
+# 5fe1a3de767c45e0b294073c77cf8d3c93f559bd1f94b06a6a5a98718af6d502. From extension 1 (the
+# section gauntlet.corrections of v0.2.1, approved by the maintainer on 2026-10-18, branch
+# claude/v0-2-1-reopen), with the code of 676b076 (docs/lock-format.md, "Extensions of the
+# table"):
 FULL_RESOLVED = {
-    "tess-calibration-v0.1": "6f54b8348a90ee0d53e0ab2f45c90707c64a4286de559f61c2285b4ec1a365dc",
-    "tess-calibration-v0.2": "5fe1a3de767c45e0b294073c77cf8d3c93f559bd1f94b06a6a5a98718af6d502",
+    "tess-calibration-v0.1": "05ec2b63b9b94874e393bb46884ab152b74ed3ad235ff46798bcbed1a1b8a48f",
+    "tess-calibration-v0.2": "a68d2bac0663b035e979b17147e9234a7246233abdb5af0a201cdc3df4e64b75",
 }
+CORRECTIONS = ("test_plan", "gauntlet", "corrections")
 
 
 def fixture(claim_id):
@@ -178,6 +184,75 @@ def test_listed_field_with_another_value_is_refused():
     projection = project(changed, loaded.raw, lock)
     assert not projection.applied
     assert "differs from its frozen value" in projection.reason
+
+
+# Extension 1: the corrections section is removed only at exactly its defaults ----------------
+
+NOT_DEFAULT = [
+    ("enabled", True),
+    ("b_min", 21),
+    ("gap_split", 5),  # an int where the frozen value is the float 5.0
+    ("fap_max", 0.001),
+    ("m_beta", 1.25),
+    ("r_min", 19),
+]
+
+
+def test_the_corrections_section_is_listed_at_its_current_defaults():
+    from refute.packs.tess.params import CorrectionsParams
+
+    for claim_id in CLAIMS:
+        frozen = entry_for(claim_id).added[CORRECTIONS]
+        assert frozen == CorrectionsParams().model_dump(mode="json")
+        assert frozen["enabled"] is False
+
+
+@pytest.mark.parametrize("claim_id", CLAIMS)
+@pytest.mark.parametrize(("key", "value"), NOT_DEFAULT)
+def test_a_corrections_value_other_than_the_default_is_not_removed(claim_id, key, value):
+    loaded = load_claim(CLAIMS[claim_id])
+    lock = read_lock(lock_path_for(CLAIMS[claim_id]))
+    changed = with_value(loaded.canonical(), (*CORRECTIONS, key), value)
+    projection = project(changed, loaded.raw, lock)
+    assert not projection.applied
+    assert "test_plan.gauntlet.corrections differs from its frozen value" in projection.reason
+
+
+@pytest.mark.parametrize("claim_id", CLAIMS)
+@pytest.mark.parametrize(("key", "value"), NOT_DEFAULT[:2])
+def test_verify_is_tampered_when_a_corrections_default_changes(claim_id, key, value, monkeypatch):
+    """As if a later release changed a default of the section: the claim is TAMPERED."""
+    from refute.core.claim import LoadedClaim
+
+    original = LoadedClaim.canonical
+    monkeypatch.setattr(
+        LoadedClaim,
+        "canonical",
+        lambda self: with_value(original(self), (*CORRECTIONS, key), value),
+    )
+    result = verify_claim(CLAIMS[claim_id])
+    assert result.status is VerifyStatus.TAMPERED
+    assert "claim" in result.tampered
+    assert result.claim_projection is None
+    assert any("differs from its frozen value" in m for m in result.messages)
+
+
+def test_the_corrections_section_written_in_the_claim_file_is_refused(tmp_path):
+    """Even at its defaults, the section written explicitly is refused (L3)."""
+    from refute.packs.tess.params import CorrectionsParams
+
+    claim = copy_v02(tmp_path)
+    defaults = CorrectionsParams().model_dump(mode="json")
+    edit_claim(
+        claim,
+        lambda d: (
+            d.setdefault("test_plan", {}).setdefault("gauntlet", {}).update(corrections=defaults)
+        ),
+    )
+    result = verify_claim(claim)
+    assert result.status is VerifyStatus.TAMPERED
+    assert "claim" in result.tampered
+    assert any("written in the claim file" in m for m in result.messages)
 
 
 @pytest.mark.parametrize("value", [1, 1.0, "true"])

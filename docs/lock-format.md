@@ -183,6 +183,30 @@ The verification at each lock's tag, in its own environment, remains the complet
 (see the README and
 [validation/v0.3/lock-compat-record.md](validation/v0.3/lock-compat-record.md)).
 
+### Extensions of the table
+
+Each extension of the table is approved by the maintainer before it is made, is recorded here
+with its date, the paths and frozen values it adds, and the full resolved hashes it records
+(L10.2 of the acceptance), and keeps every safeguard above. Extensions so far:
+
+1. **The corrections section of v0.2.1 (2026-10-18; Phase I, branch `claude/v0-2-1-reopen`
+   only, until its merge).** Approved by the maintainer on 2026-10-18. Adds, to both historical
+   entries, the path `test_plan.gauntlet.corrections` with its frozen value: the section at
+   exactly its defaults, `enabled: false` (`b_min` 20, `enabled` false, `fap_max` 0.0001,
+   `gap_split` 5.0, `h_min` 0.9, `k_clip` 2.5, `m_beta` 1.2, `max_components` 3, `r_min` 20),
+   written in the table as a literal, not read from the code. The section is removed from the
+   projection only when its resolved value equals that literal as canonical JSON (so `5` and
+   `5.0` differ) and it is not written in the claim file; any other value, or a later change of
+   a default, leaves it in and the claim is `TAMPERED`. Full resolved hashes from this extension,
+   with the code of `676b076`: v0.1
+   `05ec2b63b9b94874e393bb46884ab152b74ed3ad235ff46798bcbed1a1b8a48f`, v0.2
+   `a68d2bac0663b035e979b17147e9234a7246233abdb5af0a201cdc3df4e64b75` (before it, with main
+   `78822a7`: `6f54b834…365dc` and `5fe1a3de…6d502`). Tests: `tests/test_lock_compat.py`
+   (the projection still reaches both locked hashes; six non-default values and a changed
+   default are refused; the section written in the claim file, even at its defaults, is
+   refused), each checked by a sabotage. Every later field or default of the section changes
+   this frozen value, so it needs a new extension, approved before it is made.
+
 ## When only the code differs (issue #66)
 
 Any code change after a lock makes `verify` `TAMPERED` (exit code 2), and that does not
