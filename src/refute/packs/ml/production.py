@@ -71,6 +71,7 @@ from refute.packs.ml import ladder as ld
 from refute.packs.ml import orchestrate as orc
 from refute.packs.ml import readers as rd
 from refute.packs.ml import repository
+from refute.packs.ml import schema as sch
 from refute.packs.ml.docker_backend import ContainerPlan, DockerBackend, Limits
 from refute.packs.ml.fetch import ArtifactSpec, fetch_artifact
 from refute.packs.ml.sandbox import (
@@ -520,6 +521,13 @@ def prepare_inputs(
     absent = plan["absent_artifact"]
     datasets: dict[str, ig.DatasetEvidence] = {}
     for d in plan["datasets"]:
+        origin = sch.dataset_origin(d)
+        if origin == sch.GENERATED:
+            continue  # nothing to fetch or count: data_present does not apply
+        if origin == sch.REPOSITORY_FILE:
+            # the verified copy and its mount (wp3-data-sources-acceptance.md, section 1)
+            # come with the container readers (section 4.2), in their own commit
+            raise ProductionError(f"dataset {d['name']}: repository_file is not supported yet")
         spec = ArtifactSpec(d["name"], d["url"], d["sha256"], int(d["size_bytes"]))
         result = fetch_artifact(
             spec,

@@ -87,6 +87,7 @@ from refute.packs.ml import orchestrate as orc
 from refute.packs.ml import predicates as pr
 from refute.packs.ml import recompute as rc
 from refute.packs.ml import reproduction as rp
+from refute.packs.ml import schema as sch
 from refute.packs.ml.fetch import FetchResult, absence_evidence
 from refute.packs.ml.sandbox import RunResult, RunSpec, TimingMaxima
 
@@ -230,6 +231,25 @@ class ClaimContext:
             name: CoverageMinimum(v["positive"], v["negative"])
             for name, v in self.claim["coverage_minimum"].items()
         }
+
+    @property
+    def dataset(self) -> dict[str, Any]:
+        return next(d for d in self.plan["datasets"] if d["name"] == self.claim["dataset"])
+
+    def not_applicable(self) -> dict[str, str]:
+        """The gates the resolution declared not applicable (only ``data_present``, only for
+        generated data; wp3-data-sources-acceptance.md, section 3). The map and the
+        dataset's origin must agree: a claim or dossier where they differ is an error,
+        never a verdict."""
+        given = self.claim.get("not_applicable")
+        generated = sch.dataset_origin(self.dataset) == sch.GENERATED
+        want = {BASE_GATES[1]: sch.GENERATED_REASON} if generated else None
+        if given != want:
+            raise ValueError(
+                f"{self.key}: not_applicable {given!r} does not match the dataset's origin "
+                f"({sch.dataset_origin(self.dataset)})"
+            )
+        return dict(want or {})
 
     def stage(self, name: str) -> tuple[float, float]:
         s = self.plan["stages"][name]
@@ -433,12 +453,9 @@ def data_present(ctx: ClaimContext, evidence: DatasetEvidence | None):
         return gate, GateFailure(FailureCause.UNDETERMINED)
     declared = next(d for d in ctx.plan["datasets"] if d["name"] == name)
     spec = evidence.fetch.spec
-    if (spec.name, spec.url, spec.sha256, spec.size_bytes) != (
-        declared["name"],
-        declared["url"],
-        declared["sha256"],
-        declared["size_bytes"],
-    ):
+    # a fetched artifact, or a file of the repository copied and checked by Refute
+    # (wp3-data-sources-acceptance.md, section 1)
+    if (spec.name, spec.url, spec.sha256, spec.size_bytes) != sch.artifact_identity(declared):
         gate = _gate(
             "data_present",
             TestStatus.INCONCLUSIVE,
@@ -475,7 +492,11 @@ def data_present(ctx: ClaimContext, evidence: DatasetEvidence | None):
         if count is None or count < 1 or abs(count - spec["expected_examples"]) > tolerance:
             wrong.append(f"{split}: {count} examples, expected {spec['expected_examples']}")
     counts = {s: evidence.split_counts.get(s) for s in declared["splits"]}
-    own = evidence.split_counts.get(ctx.claim["metric"]["split"]) or 0
+    # every split of the file was checked above; the coverage is the claim's split, or for
+    # a derived split the sum of the splits it comes from (section 2)
+    derived = (declared.get("derived_splits") or {}).get(ctx.claim["metric"]["split"])
+    sources = derived["derived_from"] if derived else [ctx.claim["metric"]["split"]]
+    own = sum(evidence.split_counts.get(s) or 0 for s in sources)
     if wrong:
         gate = _gate(
             "data_present", TestStatus.FAIL, "; ".join(wrong), own, "examples", {"splits": counts}
@@ -1349,10 +1370,13 @@ class PaperIntegration:
         checks: list[TestResult] = [ladder.gate]
         if ladder.failure is not None:
             failures["environment_build"] = ladder.failure
-        gate, failure = data_present(ctx, self.harness.datasets.get(ctx.claim["dataset"]))
-        checks.append(gate)
-        if failure is not None:
-            failures["data_present"] = failure
+        # data_present is not computed when the resolution declared it not applicable
+        # (generated data); the map is checked against the dataset's origin first
+        if BASE_GATES[1] not in ctx.not_applicable():
+            gate, failure = data_present(ctx, self.harness.datasets.get(ctx.claim["dataset"]))
+            checks.append(gate)
+            if failure is not None:
+                failures["data_present"] = failure
         gate, failure = run_completed(flat)
         checks.append(gate)
         if failure is not None:
@@ -1392,6 +1416,7 @@ class PaperIntegration:
             metric_recompute_applies=ctx.claim["metric_recompute"]["applies"],
             failures=failures,
             minimums={k: v for k, v in ctx.minimums().items() if k in base_names},
+            not_applicable=ctx.not_applicable(),
         )
         return verdict.basic_reproduction_obtained
 
@@ -1537,12 +1562,15 @@ class PaperIntegration:
                 metric_recompute_applies=ctx.claim["metric_recompute"]["applies"],
                 failures=failures,
                 minimums=ctx.minimums(),
+                not_applicable=ctx.not_applicable(),
             )
             computed = verdict.verdict
             if run is not None and not run.accounting_valid:
                 reasons = "; ".join(run.invalid_reasons) or "unknown"
                 verdict = ClaimVerdict(
-                    PaperVerdict.INCONCLUSIVE, f"{ACCOUNTING_INVALID}: {reasons}"
+                    PaperVerdict.INCONCLUSIVE,
+                    f"{ACCOUNTING_INVALID}: {reasons}",
+                    gates_not_applicable=dict(verdict.gates_not_applicable),
                 )
             outcomes.append(
                 ClaimOutcome(ctx.key, verdict, checks, attacks, failures, computed, notes)

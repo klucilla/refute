@@ -12,8 +12,16 @@ form ``reader:<format>:<selector>``; any other text is not read by Refute (the g
 - ``jsonl:<rows>``: the number of non-empty lines;
 - ``parquet:<rows>``: the row count of a Parquet file (pyarrow, already a dependency of
   the selection);
+- ``lines:rows``: the number of non-empty lines (whitespace-separated text);
+  ``lines:rows-1`` excludes one header line;
+- ``arff:rows``: the number of non-empty, non-comment (``%``) lines after the ``@data``
+  line (case insensitive); with no ``@data`` line the file gives no count;
 - ``zip:<member>``: one of these formats inside a zip archive, as
   ``zip:<member>!<format>:<selector>``.
+
+``lines`` and ``arff`` were added by docs/validation/v0.3/wp3-data-sources-acceptance.md
+(section 4.1). Formats that need a library or run code (CIFAR python archives, Excel, DGL)
+are counted in the paper's own container (section 4.2), never here.
 
 A file that cannot be read gives no count (``None``), never a guess. Reading never runs
 code from the file: ``numpy.load`` with ``allow_pickle=False``.
@@ -57,6 +65,21 @@ def _count(data: bytes, fmt: str, selector: str) -> int:
         import pyarrow.parquet as pq
 
         return int(pq.ParquetFile(io.BytesIO(data)).metadata.num_rows)
+    if fmt == "lines":
+        if selector not in ("rows", "rows-1"):
+            raise ValueError("lines counts rows or rows-1")
+        rows = sum(1 for line in data.decode("utf-8-sig").splitlines() if line.strip())
+        return max(rows - 1, 0) if selector == "rows-1" else rows
+    if fmt == "arff":
+        if selector != "rows":
+            raise ValueError("arff counts rows")
+        lines = data.decode("utf-8-sig").splitlines()
+        start = next((i for i, line in enumerate(lines) if line.strip().lower() == "@data"), None)
+        if start is None:
+            raise ValueError("an ARFF file with no @data line")
+        return sum(
+            1 for line in lines[start + 1 :] if line.strip() and not line.lstrip().startswith("%")
+        )
     raise ValueError(f"unknown format {fmt!r}")
 
 

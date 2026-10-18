@@ -26,10 +26,20 @@ import math
 import re
 from decimal import Context, Decimal, Inexact, InvalidOperation, Rounded
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Annotated, Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Discriminator,
+    Field,
+    Tag,
+    ValidationError,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 
 from refute.core.canonical import canonical_bytes
 from refute.core.hashing import sha256_bytes
@@ -240,9 +250,186 @@ class Artifact(_Model):
         return _text(value, "artifact field")
 
 
+class CodeCitation(_Model):
+    """A place in the paper's repository at ``source.repository_commit``: a relative file,
+    an inclusive range of 1-based lines, and what that code does (for coverage: in the
+    chain from the counter, or the call, to the value ``metric_extraction`` reads)."""
+
+    file: str
+    lines: list[int] = Field(min_length=2, max_length=2)
+    role: str
+
+    @model_validator(mode="after")
+    def _check(self) -> CodeCitation:
+        _relative(self.file, "citation file")
+        first, last = self.lines
+        if not 1 <= first <= last:
+            raise ValueError("citation lines are [first, last], 1-based, first <= last")
+        _text(self.role, "citation role")
+        return self
+
+
+# The origins of a dataset (docs/validation/v0.3/wp3-data-sources-acceptance.md, section 1).
+DOWNLOADED, REPOSITORY_FILE, GENERATED = "downloaded", "repository_file", "generated"
+# the reason the resolution writes for a claim on generated data (section 3)
+GENERATED_REASON = "generated_by_repository_code"
+
+
+class DerivedSplit(_Model):
+    """A population the repository's code derives from splits of the file (section 2):
+    ``data_present`` counts the file's splits; this one is checked by the coverage routes
+    against ``expected_examples``."""
+
+    expected_examples: int = Field(ge=1)
+    derived_from: list[str] = Field(min_length=1)
+    rule: str
+    code: list[CodeCitation] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _check(self) -> DerivedSplit:
+        _text(self.rule, "derived split rule")
+        if len(set(self.derived_from)) != len(self.derived_from):
+            raise ValueError("derived_from names a split twice")
+        return self
+
+
+def _check_derived(splits: dict[str, Any], derived: dict[str, DerivedSplit] | None) -> None:
+    for name, d in (derived or {}).items():
+        if name in splits:
+            raise ValueError(f"derived split {name} repeats a split name")
+        unknown = sorted(set(d.derived_from) - set(splits))
+        if unknown:
+            raise ValueError(f"derived split {name} derives from undeclared splits {unknown}")
+
+
 class Dataset(Artifact):
+    """A dataset Refute fetches (``origin`` absent or ``downloaded``). An absent ``origin``
+    and absent ``derived_splits`` are not written by the resolution, so an existing claim
+    resolves to the same hash."""
+
+    origin: Literal["downloaded"] | None = None
     splits: dict[str, Split] = Field(min_length=1)
     size_tolerance: int = Field(default=0, ge=0)
+    derived_splits: dict[str, DerivedSplit] | None = None
+
+    @model_validator(mode="after")
+    def _derived(self) -> Dataset:
+        _check_derived(self.splits, self.derived_splits)
+        return self
+
+    @model_serializer(mode="wrap")
+    def _omit_absent(self, handler: Any) -> dict[str, Any]:
+        out = handler(self)
+        for key in ("origin", "derived_splits"):
+            if out.get(key) is None:
+                out.pop(key, None)
+        return out
+
+
+class RepositoryFileDataset(_Model):
+    """A dataset that is a file of the repository at the pinned commit (section 1)."""
+
+    name: str
+    origin: Literal["repository_file"]
+    path: str
+    sha256: str = Field(pattern=HEX64)
+    size_bytes: int = Field(ge=1)
+    splits: dict[str, Split] = Field(min_length=1)
+    size_tolerance: int = Field(default=0, ge=0)
+    derived_splits: dict[str, DerivedSplit] | None = None
+
+    @model_validator(mode="after")
+    def _check(self) -> RepositoryFileDataset:
+        _text(self.name, "dataset name")
+        _relative(self.path, "repository_file path")
+        _check_derived(self.splits, self.derived_splits)
+        return self
+
+
+class GeneratedSplit(_Model):
+    """A population of data the repository's code generates: its size, what one example is
+    (``unit``), and where the paper or the repository states the number (``source``)."""
+
+    expected_examples: int = Field(ge=1)
+    unit: str
+    source: str
+
+    @model_validator(mode="after")
+    def _check(self) -> GeneratedSplit:
+        _text(self.unit, "generated split unit")
+        _text(self.source, "generated split source")
+        return self
+
+
+class GeneratedDataset(_Model):
+    """Data the repository's code creates from its configuration, its seeds and the
+    declared ``inputs`` only (section 1); ``data_present`` does not apply (section 3)."""
+
+    name: str
+    origin: Literal["generated"]
+    generator: list[CodeCitation] = Field(min_length=1)
+    configuration: str
+    inputs: list[str]
+    splits: dict[str, GeneratedSplit] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _check(self) -> GeneratedDataset:
+        _text(self.name, "dataset name")
+        _text(self.configuration, "generated dataset configuration")
+        if len(set(self.inputs)) != len(self.inputs):
+            raise ValueError("generated dataset inputs name a weights entry twice")
+        return self
+
+
+def _origin_of(value: Any) -> str:
+    if isinstance(value, dict):
+        return value.get("origin") or DOWNLOADED
+    return getattr(value, "origin", None) or DOWNLOADED
+
+
+AnyDataset = Annotated[
+    Annotated[Dataset, Tag(DOWNLOADED)]
+    | Annotated[RepositoryFileDataset, Tag(REPOSITORY_FILE)]
+    | Annotated[GeneratedDataset, Tag(GENERATED)],
+    Discriminator(_origin_of),
+]
+
+
+def dataset_origin(dataset: Any) -> str:
+    """The origin of a dataset entry (a model or its resolved dict)."""
+    return _origin_of(dataset)
+
+
+REPOSITORY_URL_PREFIX = "repository:"
+
+
+def artifact_identity(dataset: dict[str, Any]) -> tuple[str, str, str, int]:
+    """(name, url, sha256, size) of a resolved dataset entry Refute reads from a file: the
+    fetched artifact, or a file of the repository, named ``repository:<path>``."""
+    origin = dataset_origin(dataset)
+    if origin == GENERATED:
+        raise ValueError(f"dataset {dataset['name']} is generated: there is no file")
+    url = REPOSITORY_URL_PREFIX + dataset["path"] if origin == REPOSITORY_FILE else dataset["url"]
+    return dataset["name"], url, dataset["sha256"], int(dataset["size_bytes"])
+
+
+def populations(dataset: Any) -> dict[str, int]:
+    """Every population a claim on this dataset may name: its splits and its derived
+    splits, with their expected sizes (a model or its resolved dict)."""
+    if isinstance(dataset, dict):
+        splits = dataset["splits"]
+        derived = dataset.get("derived_splits") or {}
+        out = {k: v["expected_examples"] for k, v in splits.items()}
+        out.update({k: v["expected_examples"] for k, v in derived.items()})
+        return out
+    out = {k: v.expected_examples for k, v in dataset.splits.items()}
+    out.update(
+        {
+            k: v.expected_examples
+            for k, v in (getattr(dataset, "derived_splits", None) or {}).items()
+        }
+    )
+    return out
 
 
 class Stage(_Model):
@@ -290,7 +477,7 @@ class MlTestPlan(_Model):
     budget: Budget
     repository: Repository
     build: Build
-    datasets: list[Dataset] = Field(min_length=1)
+    datasets: list[AnyDataset] = Field(min_length=1)
     weights: list[Artifact] = Field(default_factory=list)
     stages: Stages
     absent_artifact: AbsentArtifact
@@ -302,6 +489,14 @@ class MlTestPlan(_Model):
             names = [i.name for i in items]
             if len(set(names)) != len(names):
                 raise ValueError(f"two {what} entries share a name")
+        weights = {w.name for w in self.weights}
+        for d in self.datasets:
+            if isinstance(d, GeneratedDataset):
+                unknown = sorted(set(d.inputs) - weights)
+                if unknown:
+                    raise ValueError(
+                        f"generated dataset {d.name} names inputs that are not weights: {unknown}"
+                    )
         return self
 
 
@@ -702,25 +897,6 @@ _ROUTE_FIELDS = {
 LABEL_ROUTES = ("saved_predictions", "hook")
 
 
-class CodeCitation(_Model):
-    """A place in the paper's repository at ``source.repository_commit``: a relative file,
-    an inclusive range of 1-based lines, and what that code does in the chain from the
-    counter (or the call) to the value ``metric_extraction`` reads."""
-
-    file: str
-    lines: list[int] = Field(min_length=2, max_length=2)
-    role: str
-
-    @model_validator(mode="after")
-    def _check(self) -> CodeCitation:
-        _relative(self.file, "citation file")
-        first, last = self.lines
-        if not 1 <= first <= last:
-            raise ValueError("citation lines are [first, last], 1-based, first <= last")
-        _text(self.role, "citation role")
-        return self
-
-
 class CountSelector(_Model):
     """A deterministic reader of one integer count, as ``metric_extraction`` reads a value
     (W3.11): a JSON path, a CSV cell or a regular expression, on a file or the log."""
@@ -938,6 +1114,16 @@ class MlTarget(_Model):
     metric_recompute: MetricRecompute
     coverage_evidence: Coverage
     approvals: Approvals
+    # written by the resolution only, for a claim on generated data (wp3-data-sources-
+    # acceptance.md, section 3); absent otherwise, and then not written
+    not_applicable: dict[str, str] | None = None
+
+    @model_serializer(mode="wrap")
+    def _omit_absent(self, handler: Any) -> dict[str, Any]:
+        out = handler(self)
+        if out.get("not_applicable") is None:
+            out.pop("not_applicable", None)
+        return out
 
     @model_validator(mode="after")
     def _check(self) -> MlTarget:
@@ -1182,6 +1368,10 @@ class MlTarget(_Model):
 
     def resolved(self) -> dict[str, Any]:
         """The claim with every default written out (step 1 of the module docstring)."""
+        if self.not_applicable is not None:
+            raise ValueError(
+                "not_applicable is written by the resolution for generated data, never by hand"
+            )
         names = self.coverage_names()
         unknown = sorted(set(self.coverage_minimum) - set(names))
         if unknown:
@@ -1450,10 +1640,11 @@ class MlClaimSchema:
         dataset = datasets.get(t.dataset)
         if dataset is None:
             raise ValueError(f"{t.key}: dataset {t.dataset} is not declared in test_plan")
-        split = dataset.splits.get(t.metric.split)
-        if split is None:
+        # a split of the file or a derived split (wp3-data-sources-acceptance.md, section 2)
+        sizes = populations(dataset)
+        if t.metric.split not in sizes:
             raise ValueError(f"{t.key}: split {t.metric.split} is not declared for {t.dataset}")
-        if t.metric.n_examples != split.expected_examples:
+        if t.metric.n_examples != sizes[t.metric.split]:
             raise ValueError(
                 f"{t.key}: metric.n_examples differs from the split's expected_examples"
             )
@@ -1478,7 +1669,8 @@ class MlClaimSchema:
                     raise ValueError(
                         f"{t.key}: split_identity.other_splits names the claim's own split"
                     )
-                missing = sorted(set(dataset.splits) - {t.metric.split} - others)
+                # every split and derived split but the claim's own (section 2)
+                missing = sorted(set(sizes) - {t.metric.split} - others)
                 if missing:
                     raise ValueError(
                         f"{t.key}: split_identity.other_splits leaves out the declared "
@@ -1515,9 +1707,9 @@ class MlClaimSchema:
             if given is not None and given != want:
                 raise ValueError(f"{t.key}: seeds.{name} differs from the derivation of 1.0.4")
             out["seeds"][name] = want
+        dataset = next(d for d in plan.datasets if d.name == t.dataset)
         holdout = t.attack("holdout")
         if holdout.applies:
-            dataset = next(d for d in plan.datasets if d.name == t.dataset)
             m = rules.holdout_size(dataset.splits["train"].expected_examples)
             entry = next(a for a in out["attacks"] if a["name"] == "holdout")
             entry["params"].update(
@@ -1525,6 +1717,20 @@ class MlClaimSchema:
                 m=m,
                 factor=rules.holdout_factor(t.metric.n_examples, m),
             )
+        # data_present is not applicable for generated data, and only then (wp3-data-
+        # sources-acceptance.md, section 3): the map is written here, and the gate's
+        # minimum is not written; one given by hand (other than the default) is refused
+        if dataset_origin(dataset) == GENERATED:
+            given = out.get("coverage_minimum", {}).get(BASE_GATES[1])
+            if given is not None and given != {"positive": 1, "negative": 1}:
+                raise ValueError(
+                    f"{t.key}: a minimum coverage of data_present is given for generated data, "
+                    "where the gate does not apply"
+                )
+            out.get("coverage_minimum", {}).pop(BASE_GATES[1], None)
+            out["not_applicable"] = {BASE_GATES[1]: GENERATED_REASON}
+        elif raw.get("not_applicable") is not None:
+            raise ValueError(f"{t.key}: not_applicable is only for generated data")
         return out
 
 
@@ -1629,6 +1835,14 @@ def verify_derived(claim: dict[str, Any]) -> None:
         ):
             if name not in s or s[name] != seeds.derived_seeds(run_seed, domain, count, base):
                 raise ValueError(f"derived value differs: {key} seeds.{name}")
+        # the exemption of data_present iff the data are generated (wp3-data-sources-
+        # acceptance.md, section 3): the map and the absent minimum, nothing else
+        generated = dataset_origin(datasets[t["dataset"]]) == GENERATED
+        want_map = {BASE_GATES[1]: GENERATED_REASON} if generated else None
+        if t.get("not_applicable") != want_map:
+            raise ValueError(f"derived value differs: {key} not_applicable")
+        if (BASE_GATES[1] in t.get("coverage_minimum", {})) == generated:
+            raise ValueError(f"derived value differs: {key} coverage_minimum.data_present")
         holdout = next(a for a in t["attacks"] if a["name"] == "holdout")
         if holdout["applies"]:
             n_train = datasets[t["dataset"]]["splits"]["train"]["expected_examples"]
@@ -1700,6 +1914,7 @@ def _target_input(target: dict[str, Any]) -> dict[str, Any]:
     for record in _uncertainty_records(out):
         for key in ("status", "sd", "quantile"):
             record.pop(key, None)
+    out.pop("not_applicable", None)  # written again by _derive from the dataset's origin
     return out
 
 
