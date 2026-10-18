@@ -53,14 +53,34 @@ def analyze_with(task):
 
 # --- P1: the switch off is the M3 code path ------------------------------------------------
 
-# The reference records the platform and the numpy version; it was computed with the worktree's
-# CPython 3.13 (3.13.16), and CI showed that 3.12 on the same platform gives other digests (map
-# Amendment 10), so the Python minor version is part of the binding too.
+# The reference records the platform and the numpy version; it was computed on the maintainer's
+# machine with the worktree's CPython 3.13 (3.13.16). CI then gave other digests on some Windows
+# runners, with 3.12 and later also with 3.13.16 (map Amendment 15, which corrects Amendment 10's
+# attribution to the Python version): the cause is the machine, whose CPU features select
+# numpy's SIMD code paths. The binding is therefore also the set of CPU features that numpy
+# enables on the reference machine (reconstructed on that machine, 2026-10-18), and the Python
+# minor version is kept as a conservative condition.
 REFERENCE_PYTHON = (3, 13)
+REFERENCE_CPU_FEATURES = (
+    "AVX", "AVX2", "BMI", "BMI2", "CX16", "F16C", "FMA3", "LAHF", "LZCNT", "MMX", "MOVBE",
+    "POPCNT", "SSE", "SSE2", "SSE3", "SSE41", "SSE42", "SSSE3", "VAES", "VPCLMULQDQ", "X86_V2",
+    "X86_V3",
+)  # fmt: skip
+
+
+def _cpu_features():
+    try:
+        from numpy._core._multiarray_umath import __cpu_features__
+    except ImportError:  # another numpy layout: not the reference machine
+        return ()
+    return tuple(sorted(k for k, v in __cpu_features__.items() if v))
+
+
 SAME_PLATFORM = (
     sys.platform == REFERENCE["platform"]
     and np.__version__ == REFERENCE["numpy"]
     and sys.version_info[:2] == REFERENCE_PYTHON
+    and _cpu_features() == REFERENCE_CPU_FEATURES
 )
 
 

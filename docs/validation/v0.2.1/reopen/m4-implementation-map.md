@@ -630,6 +630,41 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 15 (2026-10-18): the end-of-stage review of pieces 4 and 5 (Codex), its fixes, and a correction of Amendment 10
+
+Codex reviewed d88c968..2f016df read-only (`.cache/v021/codex/stage-p45/`) and recommended
+**WEAKENED with explicit open points** for the stage: the order replicas → decision 2 → windows,
+`N_pred`, `R_min` in the train, the train refit and gate, and the numbers of piece 4 were confirmed.
+Its objections and what was done:
+
+- **A deviation:** `fail_rule` rejected a zero hidden error but accepted a zero train error
+  (`SNR 4, e_train 0` gave FAIL), against Amendment 12's addendum. Fixed: a zero train error is
+  INCONCLUSIVE `non_finite_statistic`; two cases added.
+- **Coverage lost by Amendment 14, item 2:** the integrated "weaker consistent" case no longer
+  showed a measured round ending INCONCLUSIVE. Added: a case whose measurement is replaced by one
+  with SNR 4 and a hidden depth two errors below the train one, which must stay INCONCLUSIVE
+  `not_detected_not_inconsistent` through the integration.
+- **Integrated cases promised by the addendum and missing:** the threshold met with equality; `R`
+  kept when other rounds stop early (three years, one of them two days long); a gap that lowers
+  `N_valid` and leaves `N_pred`; fewer than two valid windows (INCONCLUSIVE `too_few_windows`);
+  the reported depth and error of the same `dP`. Added, all written after the code.
+- **A wrong sentence of Amendment 14:** "never of a seed": the H4 case moved from seed 3506 to the
+  strong-signal fixture (seed 3500) when it became the deterministic replacement of the train
+  gate. Corrected here.
+- **Recorded, not changed:** the physical H4 case (a synthetic curve with BLS SNR above 7.1 and a
+  corrected one below, by the real computation) remains without an integrated test; the H4 wiring
+  is covered by the deterministic case. The records' JSON files should also carry the interpreter
+  and the commit (future records will).
+
+**A correction of Amendment 10 (its "CI binding"):** P1's other digests on CI were attributed to
+CPython 3.12. CI then gave the same other digests on a Windows runner with 3.13.16 (run
+39136076878), after a 3.13 runner had matched (39130668665): the cause is the runner machine,
+whose CPU features select numpy's SIMD paths (the reference machine enables up to `X86_V3`, without
+AVX-512). P1 is now bound also to the set of CPU features numpy enables on the reference machine
+(reconstructed there on 2026-10-18); the Python condition stays as a conservative one. P1 then runs
+on the reference machine only, and CI checks the switch-off path by the rest of the suite. P1 must
+select the switch-off path explicitly once the freeze changes the default (section "The switch").
+
 ## Amendment 14 (2026-10-18): the results of piece 5, and its test changes after the first runs
 
 Tests committed before the code (6ccaa8c); the code in the next commit. After the code, the 28

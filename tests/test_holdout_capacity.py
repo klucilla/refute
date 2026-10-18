@@ -115,6 +115,9 @@ def test_replicas_are_enough_only_if_every_dp_reaches_r_min():
         # sabotage SC5-3 was not caught: map Amendment 14)
         (4.0, 100e-6, 10e-6, 700e-6, 100e-6, "INCONCLUSIVE", "not_detected_not_inconsistent"),
         (4.0, 600e-6, 50e-6, 400e-6, 0.0, "INCONCLUSIVE", "non_finite_statistic"),
+        # a zero train error too (added after the Codex review of the stage: it gave FAIL)
+        (4.0, 600e-6, 0.0, 0.0, 100e-6, "INCONCLUSIVE", "non_finite_statistic"),
+        (5.0, 600e-6, 0.0, 500e-6, 100e-6, "INCONCLUSIVE", "non_finite_statistic"),
         (float("nan"), 600e-6, 50e-6, 400e-6, 1e-4, "INCONCLUSIVE", "non_finite_statistic"),
         (4.0, 600e-6, float("inf"), 400e-6, 1e-4, "INCONCLUSIVE", "non_finite_statistic"),
     ],
@@ -341,6 +344,90 @@ def test_the_corrected_train_snr_is_the_one_the_h4_gate_reads(monkeypatch, stron
     assert "train_snr_below_gate" in validity["reasons"]
     assert r.status.value == "INCONCLUSIVE"
     assert r.access_log == []
+
+
+# --- integrated cases added after the Codex review of the stage (map Amendment 15) -------------
+
+
+def test_a_measured_round_judged_not_inconsistent_stays_inconclusive(monkeypatch, strong):
+    """The integration keeps INCONCLUSIVE after a measurement: the measurement is replaced by one
+    returning SNR 4 and a hidden depth two errors below the train one (Z below 2)."""
+    lc, sectors, outcome = strong
+    d_train = _round(outcome, 2020).metrics["capacity"]["d_train"]
+    real = holdout.measure_with_replicas
+
+    def weaker(*args, **kwargs):
+        result = real(*args, **kwargs)
+        if result.get("status") == "ok":
+            e = d_train / 6.0
+            result.update(depth=d_train - 2.0 * e, error=e, snr=(d_train - 2.0 * e) / e)
+        return result
+
+    monkeypatch.setattr(holdout, "measure_with_replicas", weaker)
+    r = _round(run_holdout(lc, sectors, _plan()), 2020)
+    assert r.metrics["capacity"]["decision_2"] == "pass"  # precondition
+    assert r.metrics["hidden_snr"] == pytest.approx(4.0)
+    assert r.status.value == "INCONCLUSIVE"
+    assert r.metrics["reason"] == "not_detected_not_inconsistent"
+    assert r.metrics["z_inconsistency"] < 3.0
+
+
+def test_the_capacity_threshold_is_met_with_equality(monkeypatch, strong):
+    lc, sectors, outcome = strong
+    s1 = _round(outcome, 2020).metrics["capacity"]["s_pred_1"]
+    monkeypatch.setattr(holdout, "capacity_threshold", lambda *a, **k: s1)
+    r = _round(run_holdout(lc, sectors, _plan()), 2020)
+    assert r.metrics["capacity"]["s_pred_1"] == s1  # precondition: the same S_pred,1
+    assert r.metrics["capacity"]["decision_1"] == "pass"
+
+
+def test_r_is_the_number_of_observing_years_even_when_other_rounds_stop_early():
+    lc, sectors = synthetic.make_lightcurve(
+        _spec(0.002), sector_starts=(1325.0, 1353.0, 1500.0, 1528.0, 2061.0), seed=3508
+    )
+    keep = (lc.year != 2020) | (lc.time < 2063.0)  # 2020: two days only
+    short = lc.select(keep)
+    outcome = run_holdout(short, sectors, _plan())
+    assert len(outcome.rounds) == 3
+    with_capacity = [r for r in outcome.rounds if "capacity" in r.metrics]
+    assert with_capacity  # precondition
+    assert any(r.status.value == "INCONCLUSIVE" for r in outcome.rounds)  # precondition
+    assert all(r.metrics["capacity"]["n_years"] == 3 for r in with_capacity)
+
+
+def _hidden_centers(lc, year):
+    t = lc.time[lc.year == year]
+    n0 = math.ceil((t.min() - PLANET.t0) / PLANET.period)
+    n1 = math.floor((t.max() - PLANET.t0) / PLANET.period)
+    return [PLANET.t0 + n * PLANET.period for n in range(n0, n1 + 1)]
+
+
+def test_a_gap_lowers_n_valid_and_leaves_n_pred(strong):
+    lc, sectors, outcome = strong
+    before = _round(outcome, 2020)
+    center = _hidden_centers(lc, 2020)[3]
+    cut = lc.select(~((lc.year == 2020) & (np.abs(lc.time - center) <= 0.2)))
+    after = _round(run_holdout(cut, sectors, _plan()), 2020)
+    assert after.metrics["capacity"]["n_pred"] == before.metrics["capacity"]["n_pred"]
+    assert after.metrics["n_windows_with_data"] < before.metrics["n_windows_with_data"]
+
+
+def test_fewer_than_two_valid_windows_is_inconclusive(strong):
+    lc, sectors, _ = strong
+    centers = _hidden_centers(lc, 2020)
+    drop = np.zeros(len(lc), bool)
+    for c in centers[1:]:
+        drop |= (lc.year == 2020) & (np.abs(lc.time - c) <= 0.06)
+    r = _round(run_holdout(lc.select(~drop), sectors, _plan()), 2020)
+    assert r.metrics["capacity"]["decision_2"] == "pass"  # precondition: the barrier passed
+    assert r.status.value == "INCONCLUSIVE"
+    assert r.metrics["reason"] == "too_few_windows"
+
+
+def test_the_reported_depth_and_error_belong_to_the_same_dp(strong):
+    _, _, outcome = strong
+    m = _round(outcome, 2020).metrics
+    assert m["hidden_snr"] == pytest.approx(m["hidden_depth_ppm"] / m["hidden_depth_err_ppm"])
 
 
 # --- the calibration-only measurement -----------------------------------------------------------

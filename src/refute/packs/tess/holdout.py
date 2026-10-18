@@ -1171,7 +1171,7 @@ def fail_rule(
     - d_hidden) / sqrt(e_train^2 + e_hidden^2) > 3`` (signed); otherwise INCONCLUSIVE
     ``not_detected_not_inconsistent``. A zero or non-finite error or statistic: INCONCLUSIVE."""
     values = (snr, d_train, e_train, d_hidden, e_hidden)
-    if not all(math.isfinite(v) for v in values) or not e_hidden > 0 or e_train < 0:
+    if not all(math.isfinite(v) for v in values) or not e_hidden > 0 or not e_train > 0:
         return "INCONCLUSIVE", "non_finite_statistic", float("nan")
     z = (d_train - d_hidden) / math.sqrt(e_train**2 + e_hidden**2)
     if not math.isfinite(z):
