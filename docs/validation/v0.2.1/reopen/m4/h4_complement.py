@@ -23,7 +23,7 @@ from pathlib import Path
 
 import numpy as np
 
-from refute.packs.tess import synthetic
+from refute.packs.tess import rednoise, synthetic
 from refute.packs.tess.detrend import detrend
 from refute.packs.tess.events import per_point_sigma, transit_mask
 from refute.packs.tess.holdout import train_validity
@@ -123,17 +123,29 @@ def first_construction_mechanism():
     out["gate"] = gate
     cadence = plan.data.exptime_seconds / 86400.0
     n_t = max(1, int(round(gate["duration_hours"] / 24.0 / cadence)))
+    duration = gate["duration_hours"] / 24.0
+    half = plan.detrend.transit_mask_half_width_durations * duration
     for name, lc in (("detrended_masked", flat), ("raw_normalized", train_raw)):
-        noise = event_noise(
-            lc, None, gate["period"], gate["t0"], gate["duration_hours"] / 24.0, plan
-        )
+        noise = event_noise(lc, None, gate["period"], gate["t0"], duration, plan)
+        # the same estimate with the plain standard deviation in place of the robust one, for
+        # sigma_w and for the spread of the bin means alike, on the same kept cadences (the
+        # Codex stage review: the first version compared samples that differed)
+        robust = rednoise.robust_sigma
+        rednoise.robust_sigma = lambda x: float(np.std(np.asarray(x, dtype=float)))
+        try:
+            plain = event_noise(lc, None, gate["period"], gate["t0"], duration, plan)
+        finally:
+            rednoise.robust_sigma = robust
+        keep = ~transit_mask(lc.time, gate["period"], gate["t0"], half)
         sectors = {}
         for s, v in sorted(noise.box.sectors.items()):
-            resid = lc.flux[lc.sector == s] - 1.0
+            resid = lc.flux[(lc.sector == s) & keep] - 1.0
             sectors[str(s)] = {
                 "beta": v.beta,
+                "beta_plain_std": plain.box.sectors[s].beta,
                 "sigma_w_robust_ppm": v.sigma_w * 1e6,
-                "std_ppm": float(np.std(resid)) * 1e6,
+                "sigma_w_plain_std_ppm": plain.box.sectors[s].sigma_w * 1e6,
+                "std_kept_ppm": float(np.std(resid)) * 1e6,
                 "n_bins": v.n_bins,
             }
         out[name] = {"n_t": noise.box.n, "sectors": sectors}

@@ -630,6 +630,145 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 21 (2026-10-18): piece 6, `period_alias` (revision 3, 5; revision 4, 3), before its tests
+
+Declared before the tests and the code of piece 6. It adds no criterion; it fixes how revision 3,
+section 5, and revision 4, section 3, are computed, and the unit cases of revision 3, section 10,
+row 5. The design was reviewed by Codex (read only) before any test ran: four rounds, ending in
+agreement; the first version was rewritten on its objections (the sectors excluded by A1 leave the
+test, `H` = 2 fixed, `D_F` computed exactly, the boxes of the cases built by a rule, the covariance
+by the singular value decomposition, `σ_d` checked by the non-finite guard). The agreement does not
+show that the tests pass or that the method is calibrated.
+
+**The path.** Only with the corrections active (`version` 2 and `enabled`); otherwise the BIC test
+of v0.2, byte for byte (version 1 with `enabled` true and version 2 with `enabled` false included).
+The function keeps its signature; its input is the raw normalized light curve `data.lc` (revision
+4, 3, which corrects revision 3's "L1"), followed by the test's own long-window detrending, as
+today; no prewhitening reaches it. The marker of Amendment 17 records `period_alias_m4` whenever the
+M4 path ran, including an exit by one of its guards: the pipeline derives it from the result's
+`thresholds_m4` metric, which every exit of the M4 path writes and the legacy test never does.
+
+**The computation** (the guards in this order of precedence: the first that applies decides the
+reason).
+
+1. *Detrending*, as today: window `max(window_days, detrend_window_periods · P)`, the candidate's
+   transits masked to `transit_mask_half_width_durations · T14`.
+2. *Noise (A1)*: `event_noise(...).box` (the `n_T` scale only) on the detrended curve with the same
+   mask. **The sectors excluded by the few-bins rule at `n_T` leave the test** (A1: excluded from
+   every measurement that needs that noise): their cadences are not in the fits, in `N` or in the
+   coverage. No sector left: INCONCLUSIVE `noise_undetermined`. In the sectors used, the weight is
+   `w_s = 1/σ_w,s²` and `β̄` is the median of `β_s(n_T)`; a weight or `β̄` that is not finite and
+   positive: INCONCLUSIVE `non_finite_statistic`.
+3. *Coverage* on the cadences used: fewer than one transit's worth of in-transit cadences
+   (`events.min_coverage` of one transit), or fewer than 10 outside: INCONCLUSIVE
+   `too_few_cadences`.
+4. *Models* (weighted least squares, `y` = detrended flux − 1): `const`; `F` = const plus
+   `cos(2πkφ)`, `sin(2πkφ)` for `k = 1, 2` (**`H` = 2 fixed on this path**, revision 3's `H`;
+   `sine_harmonics` stays the setting of the legacy test only); `F+box` = `F` plus the box column (1
+   inside `|phase offset| ≤ T14/2`, as today), `φ = ((t − t0) mod P)/P`. `χ²_M = Σ w (y − X_M c)²`.
+   *Singular design*: each column divided by its weighted norm `sqrt(Σ w x²)` (a zero norm is
+   singular), then the condition number of `sqrt(w) X` above `1e10`, for `const`, `F` or `F+box`:
+   INCONCLUSIVE `singular_design`. The fits, the condition numbers and the covariance come from the
+   singular value decomposition of that weighted, scaled design (`(XᵀWX)⁻¹ = V S⁻² Vᵀ`, rescaled),
+   never from inverting `XᵀWX`, whose condition is the square.
+5. *Statistics*: `Z_F = (χ²_const − χ²_F)/β̄²`; `d_box` = minus the box coefficient of `F+box`
+   (positive for a dip); its operational error `σ_d = β̄ sqrt([(XᵀWX)⁻¹]_bb)` of `F+box`, with no
+   rescaling by the reduced chi-square (an operational error whose calibration is not shown here);
+   `D_F`, the mean of the fitted `F` model (the fit of `F` alone) over the phases outside the box
+   minus its mean over the phases inside it, uniformly in phase (so it depends on the model, not on
+   the sampling), computed exactly: with `q = T14/P` (`0 < q < 1`) and `a_k` the cosine
+   coefficients of `F`, `D_F = −Σ_k a_k sin(πkq) / (πkq (1 − q))` (the sine terms and the
+   constant cancel); with `q` outside `(0, 1)`, `D_F` is not finite; `f = D_F / d_box`; `G = (χ²_F − χ²_F+box)/β̄² − ln N`, `N` the cadences used.
+   `d_box ≤ 0`: INCONCLUSIVE `box_depth_not_positive`; any of `Z_F`, `f`, `G`, `σ_d` not finite:
+   INCONCLUSIVE `non_finite_statistic` (in this order of precedence).
+6. *Outcome* (revision 3, 5): FAIL, fatal, if `Z_F ≥ z_F*`, `f ≥ f*` and `G < g*`; INCONCLUSIVE if
+   `G < g*` and not (`Z_F ≥ z_F*` and `f ≥ f*`) (`box_gain_small_dip_not_explained`); PASS if `G ≥
+   g*`. The known-systematic-period warning is kept as today: when the fatal outcome is PASS and
+   the period is within `systematic_tolerance` of a listed period, the result is FAIL with severity
+   WARNING; in every outcome the near periods stay in the metrics.
+7. *Thresholds*: `g*` is `period_alias.min_box_delta_bic` (10, unchanged). `z_F*` and `f*` are two
+   new settings of the configuration block, `alias_z_f` and `alias_f`, with defaults 18.47 and 0.5
+   (the first pair of revision 3's declared order); the model accepts only the six declared pairs.
+   They are chosen per configuration on the selection part by revision 3's rule, and every new
+   claim writes them (so `m4-configurations/m4-c1.json`, which the harness version 3 requires to
+   write every setting, gains them at the defaults).
+8. *Metrics*: `Z_F`, `D_F`, `d_box`, `σ_d`, `f`, `G`, `N`, `β̄`, the sectors used and excluded, the
+   condition numbers of the three designs, the reason of an INCONCLUSIVE; coverage: the in-transit
+   cadences used.
+
+**The historical projection (the maintainer's package, item 6 of 2026-10-18).** The two settings
+enter the corrections block, which the projection of the historical locks removes only when it
+equals its declared literal exactly; so the literal needs them at their defaults: **extension 3**
+of the table, with the proof that both historical claims still reach their locked claim hash (the
+claim component; `verify` stays `TAMPERED` in the code component, as Amendment 17 records) and its
+sabotages. Piece 6 is not pushed before the maintainer approves that package.
+
+**The unit cases** (revision 3, 10, row 5; each regime in white noise, 600 ppm, and in correlated
+noise, 600 ppm white plus AR(1) 400 ppm with `τ` = 1 h; the two-year layout of `synthetic`; the
+candidate is given, at the injected period 3.7 d, `T14` 2.5 h; new seeds 6000 to 6099, one per case
+and noise model, in the order of the list). **The boxes are built by a rule fixed here:** the depth
+is `S_target` times `σ_d,0`, the error that the test itself reports on the same noise realization
+without the box, with `S_target` = 2.5 for a weak box and 20 for a strong one; no other amplitude
+and no other seed is tried, and the residual depth of the bare realization is not cancelled. (A
+fixed 1000 ppm box is not a strong box under A1 with the variability: `event_noise` estimates the
+noise from the detrended flux, variability included, so `σ_w` and `β` grow with it; the Codex
+design review estimated a significance near 2 for 1000 ppm.) The realized significance is
+`S = d_box/σ_d` of the final curve, and `G = S² − ln N` holds for its fit, so a weak box gives
+`G < g*` when `S` is below `sqrt(10 + ln N)` ≈ 4.5 and `d_box > 0` when `S > 0`; the construction
+does not guarantee beforehand how far `S` lands from `S_target` (the error's calibration is not
+shown), which is why the preconditions are checked. A case whose construction does not give its preconditions is
+recorded as incompatible: the unit criterion is then **not shown**, which is not an approval, and no
+other seed or amplitude is tried.
+
+| Case | Construction | Required |
+|---|---|---|
+| R1 | variability `−a cos(2πφ)`, `a` = 2000 ppm, its minimum at the transit phase, plus a weak box | preconditions `d_box > 0`, `Z_F ≥ 18.47`, `f ≥ 0.5`, `G < 10`; FAIL fatal |
+| R2 | the same variability with its minimum at quadrature (`φ` = 0.25), plus a weak box | `d_box > 0`, `Z_F ≥ 18.47`, `f < 0.5`, `G < 10`; INCONCLUSIVE |
+| R3 | no variability, a weak box | `d_box > 0`, `Z_F < 18.47`, `G < 10`; INCONCLUSIVE |
+| R4a, R4b | a strong box, without and with the variability of R1 | `G ≥ 10`; PASS fatal |
+| U1 | a bump (a negative box of `S` = 20), no variability | INCONCLUSIVE `box_depth_not_positive` |
+| U2 | `t0` at the first cadence and a period of two cadences (4 min), `T14` 1 min: cadences inside and outside the box, `cos(4πφ)` equal to the constant column | INCONCLUSIVE `singular_design` |
+| U3 | the decision function `alias_m4_decision` given each of `Z_F`, `f`, `G`, `σ_d` not finite in turn (a direct case: no light curve reaches this guard reliably, since the detrending leaves residuals of about 1e-16 even on a constant sector, and A1 excludes a sector of zero scatter before the statistics) | INCONCLUSIVE `non_finite_statistic` |
+| U4 | `b_min` larger than any sector's bins | INCONCLUSIVE `noise_undetermined` |
+| W | a strong box at `13.7/4` d with the corrections on | `G ≥ 10`; FAIL, severity WARNING (the warning kept) |
+| Off | version 1 with `enabled` true and version 2 with `enabled` false | byte-equal to the legacy test |
+| In | the pipeline with the switch on | the test receives the very object `data.lc`; the marker `period_alias_m4` |
+
+U1 to U4 are single cases (white noise); they check the routing of each undefined statistic, not
+a rate.
+
+**Two risks recorded before any number (predictions, not changes).**
+
+- *L1.* For a dip made entirely by the variability, the box adds nothing, so `d_box` is noise
+  around 0 in the idealized case (fixed weights, a nested fit, the model of the detrended curve
+  inside `F`, no selection): revision 4's rule makes the case INCONCLUSIVE when `d_box ≤ 0`, and FAIL
+  needs `0 < S < ~4.5`, so about half of such light curves would FAIL, not the 0.80 of L1. The
+  population's L1 group injects a sinusoid plus a trend (`population_v2.py`), so the differences
+  that matter there are the trend, the transformation by the detrending, the identity at `P/2` or
+  `2P`, and the selection of the candidate by the search (which favours a positive box). L1 is
+  measured on the selection part (revision 3, 8), and its result is recorded as found.
+- *T2b.* For a real transit on a variable star, the variability inflates `σ_w` and `β̄` (A1 sees
+  it as noise), which lowers `G`; a real transit then falls more easily under `g*`, and FAILs when
+  the variability also explains enough of the dip. T2b (FAIL upper bound ≤ 0.02) is measured on the
+  selection part and recorded as found.
+
+The specification is not changed here.
+
+**Results (written after the first run of the tests; numbers by `m4/piece6_numbers.py`, in
+`m4/piece6-numbers.json`).** Every case passed on its first run (`tests/test_period_alias_rev4.py`,
+JUnit: 23 tests, 0 failures), with every precondition met; no construction was changed. The
+regimes, white / correlated: R1 FAIL (`Z_F` 289 / 288, `f` 1.92 / 1.60, `G` −6.3 / −4.6); R2
+INCONCLUSIVE (`Z_F` 217 / 223, `f` 0.17 / 0.21); R3 INCONCLUSIVE (`Z_F` 1.6 / 15.1, `G` −0.4 /
+−6.9); R4a PASS (`G` 230 / 274); R4b PASS (`G` 276 / 278). Two observations, recorded for the
+population measurement and not acted on: (1) with the variability, `β̄` is about 8.7 against 1.0
+(white) and 3.3 to 3.7 (correlated) without it, which confirms the inflation behind the T2b risk;
+(2) in R3 correlated, `Z_F` is 15.1, near `z_F*` = 18.47 with no variability at all: `β̄` is
+measured at the box's scale `n_T`, while the harmonics live at the period's scale, where the AR(1)
+noise is larger, so the null `Z_F` in correlated noise may exceed `z_F*` more often than its white
+reference suggests (it matters only together with `f ≥ f*` and `G < g*`). The tests affected by the
+piece (the lock projection with extension 3, the battery, the activation, the harness version 3,
+the schema and the dossier): 153 tests, 0 failures.
+
 ## Amendment 20 (2026-10-18): the end-of-stage review of Amendments 16 to 19 (Codex), and its fixes
 
 The single end-of-stage review (Codex, read only, of the commits after `b448800` up to `b05cfe7`)
@@ -829,19 +968,28 @@ That variant, and the physical case on a real curve, stay recorded as pending.
 
 - **The mechanism of the first construction's incompatibility, confirmed.** On the same train
   curve (seed 3509) and at the candidate's ephemeris (P = 0.84 d, 3.8 h), `β` at `n_T` is 4.89 and
-  5.30 on the raw normalized curve but 2.67 and 3.06 on the detrended, masked curve the gate reads:
-  the detrending removes most of the slow correlated noise, which is the main reason for the
-  smaller `β`. The robust `σ_w` is not: it differs from the plain standard deviation by about 7 to
-  9% (895 against 961 ppm and 914 against 999 ppm). The a priori estimate also assumed `n_T` = 75
+  5.30 on the raw normalized curve but 2.67 and 3.06 on the detrended, masked curve the gate reads.
+  On the same kept cadences, with the plain standard deviation in place of the robust one (for
+  `σ_w` and for the spread of the bin means alike), `β` is 5.09 and 5.51 raw and 3.17 and 3.70
+  detrended: the detrending, which removes most of the slow correlated noise, is the main reason
+  (a factor of about 1.6); the robust spread of the bin means lowers `β` by about a further 16 to
+  17%; the robust `σ_w` itself differs from the plain one by less than 1% (895 against 896 ppm, 914
+  against 918 ppm). (The first version of this paragraph compared the robust `σ_w` of the kept
+  cadences with the plain deviation of the whole sector, and attributed nothing to the bin means;
+  corrected after the Codex stage review, with the numbers of the corrected script.) The a priori
+  estimate also assumed `n_T` = 75
   (a 2.5 h event), but the candidate was a 3.8 h box with `n_T` = 114; at 114 the estimate gives
   `β` 6.1, so it overestimated the detrended `β` by about a factor of 2.
 - **The injected planet on the same curve as the second construction** (seed 3510, AR(1) 400 ppm,
   270 ppm, the round with 2020 hidden). **Detected?** No: the train search returns the red-noise
   box at P = 0.50 d, and none of its ten refined candidates is within 1% of the planet's period or
-  of its half or double (`planet_among_refined` false). **Its SNRs**, by the same computation as
-  the H4 gate at the planet's own period and duration: BLS SNR **13.84**, corrected SNR **4.75**
+  of its half or double (`planet_among_refined` false; a recovery diagnostic by period, not the
+  full signal-identity rule). **Its SNRs**, by the same computation as the H4 gate, a local refit
+  started at the planet's injected period and duration (it ends at P = 3.6988 d, 2.63 h): BLS SNR
+  **13.84**, corrected SNR **4.75**
   (`β_D` 2.91; sectors 3.06 and 2.76), depth 301 ppm. **Would it pass the threshold?** By the BLS
-  SNR alone yes; by the corrected SNR no (below 7.1, `train_snr_below_gate`).
+  SNR alone yes; by the corrected SNR no (below 7.1, `train_snr_below_gate`: in the H4 flow the
+  round ends INCONCLUSIVE, which is not a refutation of the planet).
 - **Reading: result (c).** In this construction the correction stops the false candidate and
   would stop the true planet too; the case does **not** show that the correction removes the false
   and keeps the true. This is recorded as a result and enters the evaluation of the method before
