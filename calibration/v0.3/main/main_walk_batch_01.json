@@ -1,0 +1,1325 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T00:51:54Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 1,
+  "candidates": [
+    {
+      "position": 1,
+      "arxiv_id": "2305.19518",
+      "repo_url": "https://github.com/puar-playground/lra-diffusion",
+      "arxiv": {
+        "versioned_id": "2305.19518v2",
+        "primary_category": "cs.LG",
+        "title": "Label-Retrieval-Augmented Diffusion Models for Learning from Noisy Labels",
+        "abstract": "Learning from noisy labels is an important and long-standing problem in machine learning for real applications. One of the main research lines focuses on learning a label corrector to purify potential noisy labels. However, these methods typically rely on strict assumptions and are limited to certain types of label noise. In this paper, we reformulate the label-noise problem from a generative-model perspective, $\\textit{i.e.}$, labels are generated by gradually refining an initial random guess. This new perspective immediately enables existing powerful diffusion models to seamlessly learn the stochastic generative process. Once the generative uncertainty is modeled, we can perform classification inference using maximum likelihood estimation of labels. To mitigate the impact of noisy labels, we propose the $\\textbf{L}$abel-$\\textbf{R}$etrieval-$\\textbf{A}$ugmented (LRA) diffusion model, which leverages neighbor consistency to effectively construct pseudo-clean labels for diffusion training. Our model is flexible and general, allowing easy incorporation of different types of conditional information, $\\textit{e.g.}$, use of pre-trained models, to further boost model performance. Extensive experiments are conducted for evaluation. Our model achieves new state-of-the-art (SOTA) results on all the standard real-world benchmark datasets. Remarkably, by incorporating conditional information from the powerful CLIP model, our method can boost the current SOTA accuracy by 10-20 absolute points in many cases."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/puar-playground/lra-diffusion",
+        "exists": true,
+        "full_name": "puar-playground/LRA-diffusion",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "231e587f3569ce413d40d96b9cce5a3c08ee361f",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/puar-playground/LRA-diffusion/blob/231e587f3569ce413d40d96b9cce5a3c08ee361f/README.md",
+          "sha256": "8dcdd48abf3c786cf7ee2fee3b36f383ae2040022bb395a6689718cbcc2ccb18",
+          "bytes": 3454
+        },
+        "root_names": [
+          "Clothing1M",
+          "Food101N",
+          "ILSVRC2012",
+          "KNN_test.py",
+          "LICENSE",
+          "README.md",
+          "WebVision",
+          "model",
+          "model_diffusion.py",
+          "noise_label",
+          "requirements.txt",
+          "test_ILSVRC2012.py",
+          "train_CIFAR.py",
+          "train_Clothing1M.py",
+          "train_Food101N.py",
+          "train_WebVision.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 2,
+      "arxiv_id": "2310.05250",
+      "repo_url": "https://github.com/lucianoavinas/lowrank-gnn-kernels",
+      "arxiv": {
+        "versioned_id": "2310.05250v2",
+        "primary_category": "cs.LG",
+        "title": "Simple GNNs with Low Rank Non-parametric Aggregators",
+        "abstract": "We revisit recent spectral GNN approaches to semi-supervised node classification (SSNC). We posit that state-of-the-art (SOTA) GNN architectures may be over-engineered for common SSNC benchmark datasets (citation networks, page-page networks, etc.). By replacing feature aggregation with a non-parametric learner we are able to streamline the GNN design process and avoid many of the engineering complexities associated with SOTA hyperparameter selection (GNN depth, non-linearity choice, feature dropout probability, etc.). Our empirical experiments suggest conventional methods such as non-parametric regression are well suited for semi-supervised learning on sparse, directed networks and a variety of other graph types commonly found in SSNC benchmarks. Additionally, we bring attention to recent changes in evaluation conventions for SSNC benchmarking and how this may have partially contributed to rising performances over time."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lucianoavinas/lowrank-gnn-kernels",
+        "exists": true,
+        "full_name": "lucianoAvinas/lowrank-gnn-kernels",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "475ee6f7171cc15eebdab600c0060b65d320e49b",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/lucianoAvinas/lowrank-gnn-kernels/blob/475ee6f7171cc15eebdab600c0060b65d320e49b/README.md",
+          "sha256": "5be518758af57ba43dbf3c7a99ef1f373e81aefefa6f8677420516ea8a383103",
+          "bytes": 475
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "acm_gnn",
+          "datasets.py",
+          "eval_conventions.py",
+          "gpr_gnn",
+          "graph_data",
+          "isvd_errors.py",
+          "jacobi_conv",
+          "kernels.py",
+          "low_rank_sweep.py",
+          "method_sweep.py",
+          "mlp_run.py",
+          "model_interfaces.py",
+          "models.py",
+          "optimize.py",
+          "sparse_sweep.py",
+          "spectral_data",
+          "sweep_results"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 3,
+      "arxiv_id": "2506.00577",
+      "repo_url": "https://github.com/masterzhou1/recon",
+      "arxiv": {
+        "versioned_id": "2506.00577v1",
+        "primary_category": "cs.AI",
+        "title": "Reasoning Like an Economist: Post-Training on Economic Problems Induces Strategic Generalization in LLMs",
+        "abstract": "Directly training Large Language Models (LLMs) for Multi-Agent Systems (MAS) remains challenging due to intricate reward modeling, dynamic agent interactions, and demanding generalization requirements. This paper explores whether post-training techniques, specifically Supervised Fine-Tuning (SFT) and Reinforcement Learning with Verifiable Rewards (RLVR), can effectively $\\textit{generalize}$ to multi-agent scenarios. We use economic reasoning as a testbed, leveraging its strong foundations in mathematics and game theory, its demand for structured analytical reasoning, and its relevance to real-world applications such as market design, resource allocation, and policy analysis. We introduce $\\textbf{Recon}$ ($\\textbf{R}$easoning like an $\\textbf{ECON}$omist), a 7B-parameter open-source LLM post-trained on a hand-curated dataset of 2,100 high-quality economic reasoning problems. Comprehensive evaluation on economic reasoning benchmarks and multi-agent games reveals clear improvements in structured reasoning and economic rationality. These results underscore the promise of domain-aligned post-training for enhancing reasoning and agent alignment, shedding light on the roles of SFT and RL in shaping model behavior. Code is available at https://github.com/MasterZhou1/Recon ."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/masterzhou1/recon",
+        "exists": true,
+        "full_name": "MasterZhou1/Recon",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "039772cca16c0eee0c8fe7179866eec7966e1c36",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MasterZhou1/Recon/blob/039772cca16c0eee0c8fe7179866eec7966e1c36/README.md",
+          "sha256": "8fe1ef1d21ba0938445e225dff02a0e3cc66dc54192c5371456127f38797b2e7",
+          "bytes": 4425
+        },
+        "root_names": [
+          "GRPO_Training.ipynb",
+          "README.md",
+          "Recon.pdf",
+          "SFT_Training.ipynb",
+          "data",
+          "data_curation.ipynb",
+          "images",
+          "vllm_evaluate.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 4,
+      "arxiv_id": "2506.13710",
+      "repo_url": "https://github.com/epfml/grad-norm-smooth",
+      "arxiv": {
+        "versioned_id": "2506.13710v1",
+        "primary_category": "math.OC",
+        "title": "Gradient-Normalized Smoothness for Optimization with Approximate Hessians",
+        "abstract": "In this work, we develop new optimization algorithms that use approximate second-order information combined with the gradient regularization technique to achieve fast global convergence rates for both convex and non-convex objectives. The key innovation of our analysis is a novel notion called Gradient-Normalized Smoothness, which characterizes the maximum radius of a ball around the current point that yields a good relative approximation of the gradient field. Our theory establishes a natural intrinsic connection between Hessian approximation and the linearization of the gradient. Importantly, Gradient-Normalized Smoothness does not depend on the specific problem class of the objective functions, while effectively translating local information about the gradient field and Hessian approximation into the global behavior of the method. This new concept equips approximate second-order algorithms with universal global convergence guarantees, recovering state-of-the-art rates for functions with Hölder-continuous Hessians and third derivatives, quasi-self-concordant functions, as well as smooth classes in first-order optimization. These rates are achieved automatically and extend to broader classes, such as generalized self-concordant functions. We demonstrate direct applications of our results for global linear rates in logistic regression and softmax problems with approximate Hessians, as well as in non-convex optimization using Fisher and Gauss-Newton approximations."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/epfml/grad-norm-smooth",
+        "exists": true,
+        "full_name": "epfml/grad-norm-smooth",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9f4ca00029f0b17fb9d48eb393d77bc8af153edc",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/epfml/grad-norm-smooth/blob/9f4ca00029f0b17fb9d48eb393d77bc8af153edc/README.md",
+          "sha256": "35906e63a43f93c42e9839e35ac4b8f57bd8fef443d5204613e905b065222dda",
+          "bytes": 5105
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "assets",
+          "notebooks",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.OC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 5,
+      "arxiv_id": "2305.00604",
+      "repo_url": "https://github.com/felix-petersen/isaac",
+      "arxiv": {
+        "versioned_id": "2305.00604v1",
+        "primary_category": "cs.LG",
+        "title": "ISAAC Newton: Input-based Approximate Curvature for Newton's Method",
+        "abstract": "We present ISAAC (Input-baSed ApproximAte Curvature), a novel method that conditions the gradient using selected second-order information and has an asymptotically vanishing computational overhead, assuming a batch size smaller than the number of neurons. We show that it is possible to compute a good conditioner based on only the input to a respective layer without a substantial computational overhead. The proposed method allows effective training even in small-batch stochastic regimes, which makes it competitive to first-order as well as second-order methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/felix-petersen/isaac",
+        "exists": true,
+        "full_name": "Felix-Petersen/isaac",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "04b1245d8a752d052e245823369d52aab9bca9e1",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Felix-Petersen/isaac/blob/04b1245d8a752d052e245823369d52aab9bca9e1/README.md",
+          "sha256": "91d8c1c1ae83964d8c3b4edf0d7f0a61d30fb28e8b3d4196fd002af76b12b51f",
+          "bytes": 2667
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "examples",
+          "isaac",
+          "isaac_newton_logo.png",
+          "setup.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 6,
+      "arxiv_id": "2504.03305",
+      "repo_url": "https://github.com/chenyangyao/dwarf_assembly_bias",
+      "arxiv": {
+        "versioned_id": "2504.03305v2",
+        "primary_category": "astro-ph.CO",
+        "title": "Unexpected clustering pattern in dwarf galaxies challenges formation models",
+        "abstract": "The galaxy correlation function serves as a fundamental tool for studying cosmology, galaxy formation, and the nature of dark matter. It is well established that more massive, redder and more compact galaxies tend to have stronger clustering in space. These results can be understood in terms of galaxy formation in Cold Dark Matter (CDM) halos of different mass and assembly history. Here, we report an unexpectedly strong large-scale clustering for isolated, diffuse and blue dwarf galaxies, comparable to that seen for massive galaxy groups but much stronger than that expected from their halo mass. Our analysis indicates that the strong clustering aligns with the halo assembly bias seen in simulations with the standard $Λ$CDM cosmology only if more diffuse dwarfs formed in low-mass halos of older ages. This pattern is not reproduced by existing models of galaxy evolution in a $Λ$CDM framework, and our finding provides new clues for the search of more viable models. Our results can be explained well by assuming self-interacting dark matter, suggesting that such a scenario should be considered seriously."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/chenyangyao/dwarf_assembly_bias",
+        "exists": true,
+        "full_name": "ChenYangyao/dwarf_assembly_bias",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "512d0f50c36fd613584379dc8d38ed69002edc53",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ChenYangyao/dwarf_assembly_bias/blob/512d0f50c36fd613584379dc8d38ed69002edc53/README.md",
+          "sha256": "7ff5e74655eb61b8cfe990413e0ef36772b7918002524396e5e259b052c9f7ce",
+          "bytes": 7970
+        },
+        "root_names": [
+          ".github",
+          ".gitignore",
+          "LICENSE",
+          "MANIFEST.in",
+          "README.md",
+          "docs",
+          "out.pdf",
+          "pyproject.toml",
+          "requirements.txt",
+          "src",
+          "tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.CO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 7,
+      "arxiv_id": "2504.01550",
+      "repo_url": "https://github.com/aim-intelligence/repbend",
+      "arxiv": {
+        "versioned_id": "2504.01550v3",
+        "primary_category": "cs.LG",
+        "title": "Representation Bending for Large Language Model Safety",
+        "abstract": "Large Language Models (LLMs) have emerged as powerful tools, but their inherent safety risks - ranging from harmful content generation to broader societal harms - pose significant challenges. These risks can be amplified by the recent adversarial attacks, fine-tuning vulnerabilities, and the increasing deployment of LLMs in high-stakes environments. Existing safety-enhancing techniques, such as fine-tuning with human feedback or adversarial training, are still vulnerable as they address specific threats and often fail to generalize across unseen attacks, or require manual system-level defenses. This paper introduces RepBend, a novel approach that fundamentally disrupts the representations underlying harmful behaviors in LLMs, offering a scalable solution to enhance (potentially inherent) safety. RepBend brings the idea of activation steering - simple vector arithmetic for steering model's behavior during inference - to loss-based fine-tuning. Through extensive evaluation, RepBend achieves state-of-the-art performance, outperforming prior methods such as Circuit Breaker, RMU, and NPO, with up to 95% reduction in attack success rates across diverse jailbreak benchmarks, all with negligible reduction in model usability and general capabilities."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/aim-intelligence/repbend",
+        "exists": true,
+        "full_name": "AIM-Intelligence/RepBend",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4f497767cf402790cce4fa3350add8e1c8106bcd",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AIM-Intelligence/RepBend/blob/4f497767cf402790cce4fa3350add8e1c8106bcd/README.md",
+          "sha256": "66b095929bebfb233a20fb71e7d8621e143a6d133116f00883ec9b8e8af89e57",
+          "bytes": 5252
+        },
+        "root_names": [
+          "README.md",
+          "activation",
+          "configs",
+          "evaluate.sh",
+          "github_assets",
+          "harmbench_test.json",
+          "harmbench_test_ctx.json",
+          "methods",
+          "safety_evaluation",
+          "scripts",
+          "train.sh"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 8,
+      "arxiv_id": "2506.03237",
+      "repo_url": "https://github.com/quanlin-wu/unisite",
+      "arxiv": {
+        "versioned_id": "2506.03237v3",
+        "primary_category": "q-bio.QM",
+        "title": "UniSite: The First Cross-Structure Dataset and Learning Framework for End-to-End Ligand Binding Site Detection",
+        "abstract": "The detection of ligand binding sites for proteins is a fundamental step in Structure-Based Drug Design. Despite notable advances in recent years, existing methods, datasets, and evaluation metrics are confronted with several key challenges: (1) current datasets and methods are centered on individual protein-ligand complexes and neglect that diverse binding sites may exist across multiple complexes of the same protein, introducing significant statistical bias; (2) ligand binding site detection is typically modeled as a discontinuous workflow, employing binary segmentation and subsequent clustering algorithms; (3) traditional evaluation metrics do not adequately reflect the actual performance of different binding site prediction methods. To address these issues, we first introduce UniSite-DS, the first UniProt (Unique Protein)-centric ligand binding site dataset, which contains 4.81 times more multi-site data and 2.08 times more overall data compared to the previously most widely used datasets. We then propose UniSite, the first end-to-end ligand binding site detection framework supervised by set prediction loss with bijective matching. In addition, we introduce Average Precision based on Intersection over Union (IoU) as a more accurate evaluation metric for ligand binding site prediction. Extensive experiments on UniSite-DS and several representative benchmark datasets demonstrate that IoU-based Average Precision provides a more accurate reflection of prediction quality, and that UniSite outperforms current state-of-the-art methods in ligand binding site detection. The dataset and codes will be made publicly available at https://github.com/quanlin-wu/unisite."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/quanlin-wu/unisite",
+        "exists": true,
+        "full_name": "quanlin-wu/unisite",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c7638d6ff8ebf978cd5015b6fe3848ef4b083c43",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/quanlin-wu/unisite/blob/c7638d6ff8ebf978cd5015b6fe3848ef4b083c43/README.md",
+          "sha256": "27bbbb9973c66e5da64718130cc699f034d42c5f95949cbdff878d43d62536e2",
+          "bytes": 8278
+        },
+        "root_names": [
+          ".gitignore",
+          "DATASETS.md",
+          "EVALUATION.md",
+          "README.md",
+          "_assets",
+          "config",
+          "predict.sh",
+          "requirements.txt",
+          "scripts",
+          "setup.py",
+          "test",
+          "unisite"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.QM"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 9,
+      "arxiv_id": "2408.05591",
+      "repo_url": "https://github.com/hypermania/cosmic-fields-lite",
+      "arxiv": {
+        "versioned_id": "2408.05591v3",
+        "primary_category": "astro-ph.CO",
+        "title": "Free Streaming in Warm Wave Dark Matter",
+        "abstract": "We provide a framework for numerically computing the effects of free-streaming in scalar fields produced after inflation. First, we provide a detailed prescription for setting up initial conditions in the field. This prescription allows us to specify the power spectra of the fields (peaked on subhorizon length scales and without a homogeneous field mode), and importantly, also correctly reproduces the behaviour of density perturbations on large length scales consistent with superhorizon adiabatic perturbations. We then evolve the fields using a spatially inhomogeneous Klein-Gordon equation, including the effects of expansion and radiation-sourced metric perturbations. We show how gravity enhances, and how free streaming erases the initially adiabatic density perturbations of the field, revealing more of the underlying, non-evolving, white-noise isocurvature density contrast. Furthermore, we explore the effect of non-gravitational self-interactions of the field, including oscillon formation, on the suppression dynamics. As part of this paper, we make our code, ${\\sf{Cosmic-Fields-Lite}}$ (${\\sf{CFL}}$), publicly available. For observationally accessible signatures, our work is particularly relevant for structure formation in light/ultralight dark matter fields."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hypermania/cosmic-fields-lite",
+        "exists": true,
+        "full_name": "hypermania/Cosmic-Fields-Lite",
+        "archived": false,
+        "default_branch": "release",
+        "head_commit": "907a366ab7a6db5e0a14004511ea2adb169f325a",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hypermania/Cosmic-Fields-Lite/blob/907a366ab7a6db5e0a14004511ea2adb169f325a/README.md",
+          "sha256": "05c43812bb3690a0a2e5bf13792001eb9c1b1f7f9b99310621f06269eef72c1b",
+          "bytes": 11422
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "Makefile",
+          "README.md",
+          "doc",
+          "documentation.pdf",
+          "doxygen.config",
+          "external",
+          "ic_analysis.py",
+          "output",
+          "plot_util.py",
+          "snapshots.nb",
+          "spectra.nb",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.CO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 10,
+      "arxiv_id": "2501.18768",
+      "repo_url": "https://github.com/michael-s-yao/dynamo",
+      "arxiv": {
+        "versioned_id": "2501.18768v2",
+        "primary_category": "cs.LG",
+        "title": "Diversity By Design: Leveraging Distribution Matching for Offline Model-Based Optimization",
+        "abstract": "The goal of offline model-based optimization (MBO) is to propose new designs that maximize a reward function given only an offline dataset. However, an important desiderata is to also propose a diverse set of final candidates that capture many optimal and near-optimal design configurations. We propose Diversity in Adversarial Model-based Optimization (DynAMO) as a novel method to introduce design diversity as an explicit objective into any MBO problem. Our key insight is to formulate diversity as a distribution matching problem where the distribution of generated designs captures the inherent diversity contained within the offline dataset. Extensive experiments spanning multiple scientific domains show that DynAMO can be used with common optimization methods to significantly improve the diversity of proposed designs while still discovering high-quality candidates."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/michael-s-yao/dynamo",
+        "exists": true,
+        "full_name": "michael-s-yao/DynAMO",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "52dfc8fe4cb4de6374635bc5f971974f027d4d1f",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/michael-s-yao/DynAMO/blob/52dfc8fe4cb4de6374635bc5f971974f027d4d1f/README.md",
+          "sha256": "c7ca181a2c66b4e9113697424a332471ce963833f48349d813fd2a91c65907d5",
+          "bytes": 2875
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          "LICENSE",
+          "MANIFEST.in",
+          "README.md",
+          "batch.sh",
+          "bounds.yaml",
+          "evaluate_optimizer.py",
+          "latent-diffusion-for-language",
+          "main.py",
+          "process",
+          "pyproject.toml",
+          "setup.cfg",
+          "setup.sh",
+          "src",
+          "surrogate.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 11,
+      "arxiv_id": "2305.19533",
+      "repo_url": "https://github.com/zhuhanqing/lightening-transformer",
+      "arxiv": {
+        "versioned_id": "2305.19533v3",
+        "primary_category": "cs.ET",
+        "title": "Lightening-Transformer: A Dynamically-operated Optically-interconnected Photonic Transformer Accelerator",
+        "abstract": "The wide adoption and significant computing resource of attention-based transformers, e.g., Vision Transformers and large language models (LLM), have driven the demand for efficient hardware accelerators. There is a growing interest in exploring photonics as an alternative technology to digital electronics due to its high energy efficiency and ultra-fast processing speed. Photonic accelerators have shown promising results for CNNs, which mainly rely on weight-static linear operations. However, they encounter issues when efficiently supporting Transformer architectures, questioning the applicability of photonics to advanced ML tasks. The primary hurdle lies in their inefficiency in handling unique workloads in Transformers, i.e., dynamic and full-range tensor multiplication. In this work, we propose Lightening-Transformer, the first light-empowered, high-performance, and energy-efficient photonic Transformer accelerator. To overcome prior designs' fundamental limitations, we introduce a novel dynamically-operated photonic tensor core, DPTC, a crossbar array of interference-based optical vector dot-product engines supporting highly parallel, dynamic, and full-range matrix multiplication. Furthermore, we design a dedicated accelerator that integrates our novel photonic computing cores with photonic interconnects for inter-core data broadcast, fully unleashing the power of optics. Comprehensive evaluations show that ours achieves >2.6x energy and >12x latency reductions compared to prior photonic accelerators and delivers the lowest energy cost and 2 to 3 orders of magnitude lower energy-delay product compared to electronic Transformer accelerators, all while maintaining digital-comparable accuracy. Our work highlights the immense potential of photonics for advanced ML workloads, such as Transformer-backboned LLM. Our work is available at https://github.com/zhuhanqing/Lightening-Transformer."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zhuhanqing/lightening-transformer",
+        "exists": true,
+        "full_name": "zhuhanqing/Lightening-Transformer",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "7c3d4ad8839a61e42a5475c7f89cef515e104f87",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "readme.md",
+          "url": "https://github.com/zhuhanqing/Lightening-Transformer/blob/7c3d4ad8839a61e42a5475c7f89cef515e104f87/readme.md",
+          "sha256": "bbfb7e4466d46dffac011e4c2eba193657ea5b68c2f0771de6c15aa7d32d1717",
+          "bytes": 3004
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "hardware_simulator",
+          "profile",
+          "readme.md",
+          "software_model"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.ET"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 12,
+      "arxiv_id": "2405.15969",
+      "repo_url": "https://github.com/liqiao19/md-aircomp",
+      "arxiv": {
+        "versioned_id": "2405.15969v2",
+        "primary_category": "cs.IT",
+        "title": "Massive Digital Over-the-Air Computation for Communication-Efficient Federated Edge Learning",
+        "abstract": "Over-the-air computation (AirComp) is a promising technology converging communication and computation over wireless networks, which can be particularly effective in model training, inference, and more emerging edge intelligence applications. AirComp relies on uncoded transmission of individual signals, which are added naturally over the multiple access channel thanks to the superposition property of the wireless medium. Despite significantly improved communication efficiency, how to accommodate AirComp in the existing and future digital communication networks, that are based on discrete modulation schemes, remains a challenge. This paper proposes a massive digital AirComp (MD-AirComp) scheme, that leverages an unsourced massive access protocol, to enhance compatibility with both current and next-generation wireless networks. MD-AirComp utilizes vector quantization to reduce the uplink communication overhead, and employs shared quantization and modulation codebooks. At the receiver, we propose a near-optimal approximate message passing-based algorithm to compute the model aggregation results from the superposed sequences, which relies on estimating the number of devices transmitting each code sequence, rather than trying to decode the messages of individual transmitters. We apply MD-AirComp to the federated edge learning (FEEL), and show that it significantly accelerates FEEL convergence compared to state-of-the-art while using the same amount of communication resources. To support further research and ensure reproducibility, we have made our code available at https://github.com/liqiao19/MD-AirComp."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/liqiao19/md-aircomp",
+        "exists": true,
+        "full_name": "liqiao19/MD-AirComp",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "812cbef57cc33c5f2f9c0b7af5f3d7d7efc128f8",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/liqiao19/MD-AirComp/blob/812cbef57cc33c5f2f9c0b7af5f3d7d7efc128f8/README.md",
+          "sha256": "40b7f32aaa3149089f15c2f269f26deb11a202860162edc123e57df0c22fb4e5",
+          "bytes": 1905
+        },
+        "root_names": [
+          "LICENSE",
+          "MD_AirComp_FEEL",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IT"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 13,
+      "arxiv_id": "2505.08932",
+      "repo_url": "https://github.com/garrulus-project/sam_peft",
+      "arxiv": {
+        "versioned_id": "2505.08932v1",
+        "primary_category": "cs.RO",
+        "title": "Parameter-Efficient Fine-Tuning of Vision Foundation Model for Forest Floor Segmentation from UAV Imagery",
+        "abstract": "Unmanned Aerial Vehicles (UAVs) are increasingly used for reforestation and forest monitoring, including seed dispersal in hard-to-reach terrains. However, a detailed understanding of the forest floor remains a challenge due to high natural variability, quickly changing environmental parameters, and ambiguous annotations due to unclear definitions. To address this issue, we adapt the Segment Anything Model (SAM), a vision foundation model with strong generalization capabilities, to segment forest floor objects such as tree stumps, vegetation, and woody debris. To this end, we employ parameter-efficient fine-tuning (PEFT) to fine-tune a small subset of additional model parameters while keeping the original weights fixed. We adjust SAM's mask decoder to generate masks corresponding to our dataset categories, allowing for automatic segmentation without manual prompting. Our results show that the adapter-based PEFT method achieves the highest mean intersection over union (mIoU), while Low-rank Adaptation (LoRA), with fewer parameters, offers a lightweight alternative for resource-constrained UAV platforms."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/garrulus-project/sam_peft",
+        "exists": true,
+        "full_name": "garrulus-project/sam_peft",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "af4b0e4ce1a106c706507734831703785b80b565",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/garrulus-project/sam_peft/blob/af4b0e4ce1a106c706507734831703785b80b565/README.md",
+          "sha256": "832c09cd5e541948b704281d5f536df8ace704819a7ab0bf9735800a2959467a",
+          "bytes": 3620
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "config",
+          "dataset",
+          "evaluate.py",
+          "models",
+          "requirements.txt",
+          "train.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.RO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 14,
+      "arxiv_id": "2409.05033",
+      "repo_url": "https://github.com/chiangel/awesome-diffusion-for-recsys",
+      "arxiv": {
+        "versioned_id": "2409.05033v2",
+        "primary_category": "cs.IR",
+        "title": "A Survey on Diffusion Models for Recommender Systems",
+        "abstract": "While traditional recommendation techniques have made significant strides in the past decades, they still suffer from limited generalization performance caused by factors like inadequate collaborative signals, weak latent representations, and noisy data. In response, diffusion models (DMs) have emerged as promising solutions for recommender systems due to their robust generative capabilities, solid theoretical foundations, and improved training stability. To this end, in this paper, we present the first comprehensive survey on diffusion models for recommendation, and draw a bird's-eye view from the perspective of the whole pipeline in real-world recommender systems. We systematically categorize existing research works into three primary domains: (1) diffusion for data engineering & encoding, focusing on data augmentation and representation enhancement; (2) diffusion as recommender models, employing diffusion models to directly estimate user preferences and rank items; and (3) diffusion for content presentation, utilizing diffusion models to generate personalized content such as fashion and advertisement creatives. Our taxonomy highlights the unique strengths of diffusion models in capturing complex data distributions and generating high-quality, diverse samples that closely align with user preferences. We also summarize the core characteristics of the adapting diffusion models for recommendation, and further identify key areas for future exploration, which helps establish a roadmap for researchers and practitioners seeking to advance recommender systems through the innovative application of diffusion models. To further facilitate the research community of recommender systems based on diffusion models, we actively maintain a GitHub repository for papers and other related resources in this rising direction https://github.com/CHIANGEL/Awesome-Diffusion-for-RecSys."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/chiangel/awesome-diffusion-for-recsys",
+        "exists": true,
+        "full_name": "CHIANGEL/Awesome-Diffusion-for-RecSys",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "954c913b0e7d3707d227e2504d44d57b72a42fb3",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/CHIANGEL/Awesome-Diffusion-for-RecSys/blob/954c913b0e7d3707d227e2504d44d57b72a42fb3/README.md",
+          "sha256": "6c3b93c7a11cf30a8283c0a9430c634d74a0fa2aa0cdef9a51ded7aea345fc27",
+          "bytes": 8986
+        },
+        "root_names": [
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 15,
+      "arxiv_id": "2304.09067",
+      "repo_url": "https://github.com/cis-ncbj/covid19-stylegan-augmentation",
+      "arxiv": {
+        "versioned_id": "2304.09067v2",
+        "primary_category": "eess.IV",
+        "title": "Performance of GAN-based augmentation for deep learning COVID-19 image classification",
+        "abstract": "The biggest challenge in the application of deep learning to the medical domain is the availability of training data. Data augmentation is a typical methodology used in machine learning when confronted with a limited data set. In a classical approach image transformations i.e. rotations, cropping and brightness changes are used. In this work, a StyleGAN2-ADA model of Generative Adversarial Networks is trained on the limited COVID-19 chest X-ray image set. After assessing the quality of generated images they are used to increase the training data set improving its balance between classes. We consider the multi-class classification problem of chest X-ray images including the COVID-19 positive class that hasn't been yet thoroughly explored in the literature. Results of transfer learning-based classification of COVID-19 chest X-ray images are presented. The performance of several deep convolutional neural network models is compared. The impact on the detection performance of classical image augmentations i.e. rotations, cropping, and brightness changes are studied. Furthermore, classical image augmentation is compared with GAN-based augmentation. The most accurate model is an EfficientNet-B0 with an accuracy of 90.2 percent, trained on a dataset with a simple class balancing. The GAN augmentation approach is found to be subpar to classical methods for the considered dataset."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/cis-ncbj/covid19-stylegan-augmentation",
+        "exists": true,
+        "full_name": "cis-ncbj/covid19-stylegan-augmentation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6af424781d270422e6ea56e078b1629ced17ff26",
+        "license_spdx": "BSD-3-Clause",
+        "readme": null,
+        "root_names": [
+          "LICENSE"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 16,
+      "arxiv_id": "2309.04172",
+      "repo_url": "https://github.com/yeonghwansong/uolwrps",
+      "arxiv": {
+        "versioned_id": "2309.04172v1",
+        "primary_category": "cs.CV",
+        "title": "Unsupervised Object Localization with Representer Point Selection",
+        "abstract": "We propose a novel unsupervised object localization method that allows us to explain the predictions of the model by utilizing self-supervised pre-trained models without additional finetuning. Existing unsupervised and self-supervised object localization methods often utilize class-agnostic activation maps or self-similarity maps of a pre-trained model. Although these maps can offer valuable information for localization, their limited ability to explain how the model makes predictions remains challenging. In this paper, we propose a simple yet effective unsupervised object localization method based on representer point selection, where the predictions of the model can be represented as a linear combination of representer values of training points. By selecting representer points, which are the most important examples for the model predictions, our model can provide insights into how the model predicts the foreground object by providing relevant examples as well as their importance. Our method outperforms the state-of-the-art unsupervised and self-supervised object localization methods on various datasets with significant margins and even outperforms recent weakly supervised and few-shot methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/yeonghwansong/uolwrps",
+        "exists": true,
+        "full_name": "yeonghwansong/UOLwRPS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "991b9755e8dd80b154b6bd72233fdfabc89f3332",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/yeonghwansong/UOLwRPS/blob/991b9755e8dd80b154b6bd72233fdfabc89f3332/README.md",
+          "sha256": "95d5f9cbef658bded18f6f87e784e66f11bbea698b0c90cba975d42b57be0031",
+          "bytes": 4137
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "datasets",
+          "func.py",
+          "images",
+          "main.py",
+          "models",
+          "validation.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 17,
+      "arxiv_id": "2308.03821",
+      "repo_url": "https://github.com/penfever/vlhub",
+      "arxiv": {
+        "versioned_id": "2308.03821v1",
+        "primary_category": "cs.CV",
+        "title": "Distributionally Robust Classification on a Data Budget",
+        "abstract": "Real world uses of deep learning require predictable model behavior under distribution shifts. Models such as CLIP show emergent natural distributional robustness comparable to humans, but may require hundreds of millions of training samples. Can we train robust learners in a domain where data is limited? To rigorously address this question, we introduce JANuS (Joint Annotations and Names Set), a collection of four new training datasets with images, labels, and corresponding captions, and perform a series of carefully controlled investigations of factors contributing to robustness in image classification, then compare those results to findings derived from a large-scale meta-analysis. Using this approach, we show that standard ResNet-50 trained with the cross-entropy loss on 2.4 million image samples can attain comparable robustness to a CLIP ResNet-50 trained on 400 million samples. To our knowledge, this is the first result showing (near) state-of-the-art distributional robustness on limited data budgets. Our dataset is available at \\url{https://huggingface.co/datasets/penfever/JANuS_dataset}, and the code used to reproduce our experiments can be found at \\url{https://github.com/penfever/vlhub/}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/penfever/vlhub",
+        "exists": true,
+        "full_name": "penfever/vlhub",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "fe468a444dcf215d0b647924aa518f777f792759",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/penfever/vlhub/blob/fe468a444dcf215d0b647924aa518f777f792759/README.md",
+          "sha256": "85c897b3217cfc6c662308ef67a35328005e46b48c3c01b96a0649c600170598",
+          "bytes": 8398
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "debug",
+          "docs",
+          "eval_to_run.txt",
+          "metadata",
+          "requirements.txt",
+          "requirements_notorch.txt",
+          "requirements_ray.txt",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 18,
+      "arxiv_id": "2405.07414",
+      "repo_url": "https://github.com/kyungeun-lee/tabularbinning",
+      "arxiv": {
+        "versioned_id": "2405.07414v2",
+        "primary_category": "cs.LG",
+        "title": "Binning as a Pretext Task: Improving Self-Supervised Learning in Tabular Domains",
+        "abstract": "The ability of deep networks to learn superior representations hinges on leveraging the proper inductive biases, considering the inherent properties of datasets. In tabular domains, it is critical to effectively handle heterogeneous features (both categorical and numerical) in a unified manner and to grasp irregular functions like piecewise constant functions. To address the challenges in the self-supervised learning framework, we propose a novel pretext task based on the classical binning method. The idea is straightforward: reconstructing the bin indices (either orders or classes) rather than the original values. This pretext task provides the encoder with an inductive bias to capture the irregular dependencies, mapping from continuous inputs to discretized bins, and mitigates the feature heterogeneity by setting all features to have category-type targets. Our empirical investigations ascertain several advantages of binning: capturing the irregular function, compatibility with encoder architecture and additional modifications, standardizing all features into equal sets, grouping similar values within a feature, and providing ordering information. Comprehensive evaluations across diverse tabular datasets corroborate that our method consistently improves tabular representation learning performance for a wide range of downstream tasks. The codes are available in https://github.com/kyungeun-lee/tabularbinning."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kyungeun-lee/tabularbinning",
+        "exists": true,
+        "full_name": "kyungeun-lee/tabularbinning",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b036294963b5170a39d628483e856659cb12d867",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/kyungeun-lee/tabularbinning/blob/b036294963b5170a39d628483e856659cb12d867/README.md",
+          "sha256": "4559f8f3a2aa4720853dae8ea5ee5772be2f7f724b0314a5fce4ba98beddd7f6",
+          "bytes": 3219
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "config.yaml",
+          "dataset",
+          "figures",
+          "libs",
+          "main_eval.py",
+          "main_ssl.py",
+          "requirements.txt",
+          "results"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 19,
+      "arxiv_id": "2310.00775",
+      "repo_url": "https://github.com/umar-hashmi/inter-refional-energy-arbitrage",
+      "arxiv": {
+        "versioned_id": "2310.00775v1",
+        "primary_category": "math.OC",
+        "title": "Multi-market Optimal Energy Storage Arbitrage with Capacity Blocking for Emergency Services",
+        "abstract": "The future power system is increasingly interconnected via both AC and DC interconnectors. These interconnectors establish links between previously decoupled energy markets. In this paper, we propose an optimal multi-market energy storage arbitrage model that includes emergency service provisions for system operator(s). The model considers battery ramping and capacity constraints and utilizes operating envelopes calculated based on interconnector capacity, efficiency, dynamic energy injection and offshore wind generation in the day-ahead market. The arbitrage model considers two separate electricity prices for buying and selling of electricity in the two regions, connected via an interconnector. Using disjunctive linearization of nonlinear terms, we exactly reformulate the inter-regional energy arbitrage optimization as a mixed integer linear programming problem. We propose two capacity limit selection models for storage owners providing emergency services. The numerical analyses focus on two interconnections linking Belgium and the UK. The results are assessed based on revenue, operational cycles, payback period, shelf life and computation times."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/umar-hashmi/inter-refional-energy-arbitrage",
+        "exists": true,
+        "full_name": "umar-hashmi/Inter-Refional-Energy-Arbitrage",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7e302866db2171618c95400572689852ed75d31d",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/umar-hashmi/Inter-Refional-Energy-Arbitrage/blob/7e302866db2171618c95400572689852ed75d31d/README.md",
+          "sha256": "f2b54158336762fe1d34e575469f797477c05e8bd94173df915a72c818e298f0",
+          "bytes": 26
+        },
+        "root_names": [
+          "BE_UK_interconFlow_2019.mat",
+          "MILP_formulation_inter_regional_arbitrage.m",
+          "README.md",
+          "calculate_cycles.m"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.OC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 20,
+      "arxiv_id": "2505.11298",
+      "repo_url": "https://github.com/rpaolino/genvsexp",
+      "arxiv": {
+        "versioned_id": "2505.11298v2",
+        "primary_category": "cs.LG",
+        "title": "Graph Representational Learning: When Does More Expressivity Hurt Generalization?",
+        "abstract": "Graph Neural Networks (GNNs) are powerful tools for learning on structured data, yet the relationship between their expressivity and predictive performance remains unclear. We introduce a family of premetrics that capture different degrees of structural similarity between graphs and relate these similarities to generalization, and consequently, the performance of expressive GNNs. By considering a setting where graph labels are correlated with structural features, we derive generalization bounds that depend on the distance between training and test graphs, model complexity, and training set size. These bounds reveal that more expressive GNNs may generalize worse unless their increased complexity is balanced by a sufficiently large training set or reduced distance between training and test graphs. Our findings relate expressivity and generalization, offering theoretical insights supported by empirical results."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rpaolino/genvsexp",
+        "exists": true,
+        "full_name": "RPaolino/GenVsExp",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "15b95864803183b102fd358e33fdaaf77db8dffe",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/RPaolino/GenVsExp/blob/15b95864803183b102fd358e33fdaaf77db8dffe/README.md",
+          "sha256": "3113abf36231cea42d0b60a4faa1b1944169d5cd72cd69af494d4f9b1e3db16a",
+          "bytes": 3999
+        },
+        "root_names": [
+          ".gitignore",
+          "CITATION.cff",
+          "README.md",
+          "imgs",
+          "job.sh",
+          "real.py",
+          "results",
+          "src",
+          "synthetic.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 21,
+      "arxiv_id": "2409.15568",
+      "repo_url": "https://github.com/aa-samra/cd-imf",
+      "arxiv": {
+        "versioned_id": "2409.15568v1",
+        "primary_category": "cs.IR",
+        "title": "Cross-Domain Latent Factors Sharing via Implicit Matrix Factorization",
+        "abstract": "Data sparsity has been one of the long-standing problems for recommender systems. One of the solutions to mitigate this issue is to exploit knowledge available in other source domains. However, many cross-domain recommender systems introduce a complex architecture that makes them less scalable in practice. On the other hand, matrix factorization methods are still considered to be strong baselines for single-domain recommendations. In this paper, we introduce the CDIMF, a model that extends the standard implicit matrix factorization with ALS to cross-domain scenarios. We apply the Alternating Direction Method of Multipliers to learn shared latent factors for overlapped users while factorizing the interaction matrix. In a dual-domain setting, experiments on industrial datasets demonstrate a competing performance of CDIMF for both cold-start and warm-start. The proposed model can outperform most other recent cross-domain and single-domain models. We also provide the code to reproduce experiments on GitHub."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/aa-samra/cd-imf",
+        "exists": true,
+        "full_name": "aa-samra/cd-imf",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "10dd39d5c245c1e2d3c711a1652f7b7567c334f7",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/aa-samra/cd-imf/blob/10dd39d5c245c1e2d3c711a1652f7b7567c334f7/README.md",
+          "sha256": "ca6d6c92c55d24ac98d9ab74f88d44e74e9aa937322465cc2b454e8374385df0",
+          "bytes": 4734
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "cdimf.py",
+          "datasets",
+          "default_params.csv",
+          "model_analysis.ipynb",
+          "run_cdimf.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 22,
+      "arxiv_id": "2311.11309",
+      "repo_url": "https://github.com/agaif/triangulations-like-op2",
+      "arxiv": {
+        "versioned_id": "2311.11309v2",
+        "primary_category": "math.CO",
+        "title": "New examples and partial classification of 15-vertex triangulations of the quaternionic projective plane",
+        "abstract": "Brehm and Kühnel (1992) constructed three 15-vertex combinatorial 8-manifolds `like the quaternionic projective plane' with symmetry groups $\\mathrm{A}_5$, $\\mathrm{A}_4$, and $\\mathrm{S}_3$, respectively. Gorodkov (2016) proved that these three manifolds are in fact PL homeomorphic to $\\mathbb{HP}^2$. Note that 15 is the minimal number of vertices of a combinatorial 8-manifold that is not PL homeomorphic to $S^8$. In the present paper we construct a lot of new 15-vertex triangulations of $\\mathbb{HP}^2$. A surprising fact is that such examples are found for very different symmetry groups, including those not in any way related to the group $\\mathrm{A}_5$. Namely, we find 19 triangulations with symmetry group $\\mathrm{C}_7$, one triangulation with symmetry group $\\mathrm{C}_6\\times\\mathrm{C}_2$, 14 triangulations with symmetry group $\\mathrm{C}_6$, 26 triangulations with symmetry group $\\mathrm{C}_5$, one new triangulation with symmetry group $\\mathrm{A}_4$, and 11 new triangulations with symmetry group $\\mathrm{S}_3$. Further, we obtain the following classification result. We prove that, up to isomorphism, there are exactly 75 triangulations of $\\mathbb{HP}^2$ with 15 vertices and symmetry group of order at least 4: the three Brehm-Kühnel triangulations and the 72 new triangulations listed above. On the other hand, we show that there are plenty of triangulations with symmetry groups $\\mathrm{C}_3$ and $\\mathrm{C}_2$, as well as the trivial symmetry group."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/agaif/triangulations-like-op2",
+        "exists": true,
+        "full_name": "agaif/Triangulations-like-OP2",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3aac5e2ecc420a669033ba9e6f4be0f7cd70efb4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/agaif/Triangulations-like-OP2/blob/3aac5e2ecc420a669033ba9e6f4be0f7cd70efb4/README.md",
+          "sha256": "e67ca274c62dc7693d40e039b18fd8c86dddc88668d148208d8a69aecead47ad",
+          "bytes": 47391
+        },
+        "root_names": [
+          "HP2_15_A4.dat",
+          "HP2_15_C5.dat",
+          "HP2_15_C6.dat",
+          "HP2_15_C6xC2.dat",
+          "HP2_15_C7.dat",
+          "HP2_15_G-component.dat",
+          "HP2_15_S3.dat",
+          "README.md",
+          "_config.yml",
+          "allsimp",
+          "check",
+          "common",
+          "docs",
+          "find",
+          "fvect",
+          "isomorphism_groups",
+          "like_OP2_27_K1.dat",
+          "like_OP2_27_K2.dat",
+          "like_OP2_27_K3.dat",
+          "like_OP2_27_K4.dat",
+          "num_neighbors",
+          "num_neighbors_pairs",
+          "operations",
+          "permute",
+          "symm_group",
+          "triple_flip_graph",
+          "triple_flip_graph_random",
+          "triples"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.CO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 23,
+      "arxiv_id": "2504.15057",
+      "repo_url": "https://github.com/jin530/link",
+      "arxiv": {
+        "versioned_id": "2504.15057v1",
+        "primary_category": "cs.IR",
+        "title": "Linear Item-Item Model with Neural Knowledge for Session-based Recommendation",
+        "abstract": "Session-based recommendation (SBR) aims to predict users' subsequent actions by modeling short-term interactions within sessions. Existing neural models primarily focus on capturing complex dependencies for sequential item transitions. As an alternative solution, linear item-item models mainly identify strong co-occurrence patterns across items and support faster inference speed. Although each paradigm has been actively studied in SBR, their fundamental differences in capturing item relationships and how to bridge these distinct modeling paradigms effectively remain unexplored. In this paper, we propose a novel SBR model, namely Linear Item-Item model with Neural Knowledge (LINK), which integrates both types of knowledge into a unified linear framework. Specifically, we design two specialized components of LINK: (i) Linear knowledge-enhanced Item-item Similarity model (LIS), which refines the item similarity correlation via self-distillation, and (ii) Neural knowledge-enhanced Item-item Transition model (NIT), which seamlessly incorporates complicated neural knowledge distilled from the off-the-shelf neural model. Extensive experiments demonstrate that LINK outperforms state-of-the-art linear SBR models across six real-world datasets, achieving improvements of up to 14.78% and 11.04% in Recall@20 and MRR@20 while showing up to 813x fewer inference FLOPs. Our code is available at https://github.com/jin530/LINK."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jin530/link",
+        "exists": true,
+        "full_name": "jin530/LINK",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "fa8663a82b69be70d1a3f5e4ba993a467c2f85a3",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jin530/LINK/blob/fa8663a82b69be70d1a3f5e4ba993a467c2f85a3/README.md",
+          "sha256": "394f9455e214b3d370bdd2c4a49048677ff5c5b247cca4d5aa7472b8447e566a",
+          "bytes": 1234
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "core_ave.py",
+          "core_trm.py",
+          "link.py",
+          "main.py",
+          "props",
+          "requirements.txt",
+          "run_core.sh",
+          "run_linear.sh",
+          "run_link.sh",
+          "slist.py",
+          "swalk.py",
+          "utils.py",
+          "utils_seq.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 24,
+      "arxiv_id": "2308.09714",
+      "repo_url": "https://github.com/jagannathan-divya/rk4mrg",
+      "arxiv": {
+        "versioned_id": "2308.09714v2",
+        "primary_category": "physics.flu-dyn",
+        "title": "Explicit Runge-Kutta algorithm to solve non-local equations with memory effects: case of the Maxey-Riley-Gatignol equation",
+        "abstract": "A standard approach to solve ordinary differential equations, when they describe dynamical systems, is to adopt a Runge-Kutta or related scheme. Such schemes, however, are not applicable to the large class of equations which do not constitute dynamical systems. In several physical systems, we encounter integro-differential equations with memory terms where the time derivative of a state variable at a given time depends on all past states of the system. Secondly, there are equations whose solutions do not have well-defined Taylor series expansion. The Maxey-Riley-Gatignol equation, which describes the dynamics of an inertial particle in nonuniform and unsteady flow, displays both challenges. We use it as a test bed to address the questions we raise, but our method may be applied to all equations of this class. We show that the Maxey-Riley-Gatignol equation can be embedded into an extended Markovian system which is constructed by introducing a new dynamical co-evolving state variable that encodes memory of past states. We develop a Runge-Kutta algorithm for the resultant Markovian system. The form of the kernels involved in deriving the Runge-Kutta scheme necessitates the use of an expansion in powers of $t^{1/2}$. Our approach naturally inherits the benefits of standard time-integrators, namely a constant memory storage cost, a linear growth of operational effort with simulation time, and the ability to restart a simulation with the final state as the new initial condition."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jagannathan-divya/rk4mrg",
+        "exists": true,
+        "full_name": "jagannathan-divya/rk4mrg2023",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6b73bcb2e8a462e8e9d65de2a7573e6c75b292cb",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jagannathan-divya/rk4mrg2023/blob/6b73bcb2e8a462e8e9d65de2a7573e6c75b292cb/README.md",
+          "sha256": "36e43a34914d3b88f92e84d549aab9d104050eb10f2138ba348e5a20fcdd4d2a",
+          "bytes": 1703
+        },
+        "root_names": [
+          "Lmat.m",
+          "README.md",
+          "example1_rkxtd.f",
+          "example2_rkxtd.f",
+          "example3_main.m",
+          "expMat.m",
+          "forcing.m",
+          "fvec.m",
+          "hermiteFunction.m"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category physics.flu-dyn"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 25,
+      "arxiv_id": "2504.04707",
+      "repo_url": "https://github.com/jingxiaolun/tc-mgc",
+      "arxiv": {
+        "versioned_id": "2504.04707v1",
+        "primary_category": "cs.IR",
+        "title": "TC-MGC: Text-Conditioned Multi-Grained Contrastive Learning for Text-Video Retrieval",
+        "abstract": "Motivated by the success of coarse-grained or fine-grained contrast in text-video retrieval, there emerge multi-grained contrastive learning methods which focus on the integration of contrasts with different granularity. However, due to the wider semantic range of videos, the text-agnostic video representations might encode misleading information not described in texts, thus impeding the model from capturing precise cross-modal semantic correspondence. To this end, we propose a Text-Conditioned Multi-Grained Contrast framework, dubbed TC-MGC. Specifically, our model employs a language-video attention block to generate aggregated frame and video representations conditioned on the word's and text's attention weights over frames. To filter unnecessary similarity interactions and decrease trainable parameters in the Interactive Similarity Aggregation (ISA) module, we design a Similarity Reorganization (SR) module to identify attentive similarities and reorganize cross-modal similarity vectors and matrices. Next, we argue that the imbalance problem among multigrained similarities may result in over- and under-representation issues. We thereby introduce an auxiliary Similarity Decorrelation Regularization (SDR) loss to facilitate cooperative relationship utilization by similarity variance minimization on matching text-video pairs. Finally, we present a Linear Softmax Aggregation (LSA) module to explicitly encourage the interactions between multiple similarities and promote the usage of multi-grained information. Empirically, TC-MGC achieves competitive results on multiple text-video retrieval benchmarks, outperforming X-CLIP model by +2.8% (+1.3%), +2.2% (+1.0%), +1.5% (+0.9%) relative (absolute) improvements in text-to-video retrieval R@1 on MSR-VTT, DiDeMo and VATEX, respectively. Our code is publicly available at https://github.com/JingXiaolun/TC-MGC."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jingxiaolun/tc-mgc",
+        "exists": true,
+        "full_name": "JingXiaolun/TC-MGC",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "5879ee39569ec8c7098d00050ff4c560999ded12",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/JingXiaolun/TC-MGC/blob/5879ee39569ec8c7098d00050ff4c560999ded12/README.md",
+          "sha256": "9b822db52da3ec8713b6ce5149315f6745d8c148d1480c337f085db97871d007",
+          "bytes": 8214
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "dataloaders",
+          "index.html",
+          "main_tcmgc.py",
+          "main_tcmgc_inference.py",
+          "metrics.py",
+          "modules",
+          "preprocess",
+          "requirements.txt",
+          "static",
+          "util.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IR"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T00:53:55Z"
+}
