@@ -31,12 +31,24 @@ HOLDOUT_BLINDNESS_NOTE = (
     "control windows and their baseline bands, and every such read is logged."
 )
 # Issue #23 after M4 pieces 4 and 5 (docs/validation/v0.2.1/reopen/m4-implementation-map.md,
-# Amendment 17): only for reports with a round of the corrections' holdout.
+# Amendment 17): only for reports with a round whose access log shows a replica read (the
+# Codex stage review of 2026-10-18: a round of the corrections' holdout can stop before it).
 HOLDOUT_REPLICA_NOTE = (
-    "With the v0.2.1 corrections switched on, replica spans placed from the same metadata away "
-    "from the windows are masked in that detrending too and are read, logged, before any window, "
-    "to measure the hidden year's noise."
+    "In rounds that reach hidden-noise estimation (v0.2.1 corrections switched on), replica "
+    "spans placed from the same metadata away from the windows are masked in that detrending "
+    "too and are read, logged, before any window, to measure the hidden year's noise."
 )
+
+
+def _read_replicas(rounds: list[dict]) -> bool:
+    """Whether any round's access log shows a read of a replica span."""
+    return any(
+        str(entry.get("kind", "")).startswith("replica-")
+        for r in rounds
+        for entry in (r.get("access_log") or [])
+    )
+
+
 NOT_A_DISCOVERY = (
     "A verdict is about a claim, never about its authors. Refute produces candidates and "
     "verdicts only: nothing here is a confirmed discovery, and nothing has been submitted "
@@ -131,11 +143,11 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
 
     rounds = result.get("holdout_rounds") or []
     if rounds:
-        corrected = any("corrections_path" in (r.get("metrics") or {}) for r in rounds)
+        replicas = _read_replicas(rounds)
         lines += [
             "## Blind holdout by year",
             "",
-            HOLDOUT_BLINDNESS_NOTE + (" " + HOLDOUT_REPLICA_NOTE if corrected else ""),
+            HOLDOUT_BLINDNESS_NOTE + (" " + HOLDOUT_REPLICA_NOTE if replicas else ""),
             "",
             "| Hidden year | Status | Windows with data | Hidden SNR | Control SNR (phase 0.5) |",
             "|---|---|---|---|---|",

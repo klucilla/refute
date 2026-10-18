@@ -630,6 +630,35 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 20 (2026-10-18): the end-of-stage review of Amendments 16 to 19 (Codex), and its fixes
+
+The single end-of-stage review (Codex, read only, of the commits after `b448800` up to `b05cfe7`)
+returned WEAKENED with three open points and one suggestion; Amendments 16, 18 and 19 were found
+correct as written (the decomposition recounted from the source record: 107, 81, 52 rounds; 22 and
+78 targets). The fixes, written after the review:
+
+1. **The configuration contract of the harness version 3.** `load_configuration()` accepted a block
+   with `version` and `enabled` only, leaving the other settings to the defaults, and the worker
+   compared only the keys given. Now the block must write every field of `CorrectionsParams`
+   (no field missing, none extra), each value is validated when the file is loaded, and each
+   analysis checks that its plan carries the whole resolved block. Test: a block with only
+   `version` and `enabled` is refused.
+2. **The probe's evidence.** The probe used a placeholder identity and did not validate the record.
+   Now it writes a complete identity of version 2's schema, validates the record it produced with
+   version 2's `validate_record` (no problem), checks that the record's `identity.origin` names
+   version 3's SHA-256, and runs twice: with `m4-c1.json` and with a configuration whose
+   `r_min`, `m_beta` and `b_min` differ from the defaults, the record's block equal to the file's
+   in both. The campaign declaration, its binding to the configuration file and its hash, and the
+   transport of `b` and `s` stay pending, as Amendment 17 declares.
+3. **The README text** (`docs/plans/v0.2.1-texts-for-phase-h.md`, 1a): "A real periodic signal
+   passes. Noise rarely does." promised a performance not shown here; it is replaced by "The test
+   checks whether the predicted signal recurs in the hidden year. Insufficient validity or
+   capacity makes a round inconclusive."
+4. **The report's replica note** appeared for any round of the corrections' holdout, also one that
+   stopped (H4, decision 1) before any hidden read. Now it appears only when a round's access log
+   shows a read of a replica span (`replica-window` or `replica-baseline`), and it starts "In rounds
+   that reach hidden-noise estimation". Test `a3` is rewritten for this, after the code.
+
 ## Amendment 19 (2026-10-18): the design of the `R_min` study (design only; it runs after pieces 6 and 7)
 
 The maintainer's item 4 of 2026-10-18 approves the design only. **What this is:** changing

@@ -8,11 +8,12 @@ version 2 as a module, checks its bytes, and replaces in it only:
 
 - ``_plan()``: ``FAST_PLAN`` plus the corrections block of the **configuration file** named by the
   environment variable ``REFUTE_M4_CONFIGURATION`` (``refute-m4-configuration/1``: a name and a
-  ``corrections`` block with ``version`` 2 and ``enabled`` true, checked when loaded);
+  ``corrections`` block with ``version`` 2, ``enabled`` true and every setting written, each
+  valid, checked when loaded; added after the Codex stage review);
 - ``analyze_task``: the same function, defined in this module, so that the spawned workers import
   this module (and so apply the same replacement, with the same configuration, which they inherit
   through the environment) before analyzing; each analysis checks that its plan carries the
-  configuration's block;
+  configuration's whole block (every setting, resolved);
 - the harness identity: ``HARNESS_PATH`` and ``HARNESS_SHA256`` become this file's, so a campaign
   declaration names version 3, and the records' ``origin.harness_sha256`` is this file;
 - R2 (``harness_problems``): this file, version 2 and the configuration file must each be the file
@@ -72,6 +73,15 @@ def load_configuration(path: str | os.PathLike | None = None) -> tuple[dict, str
         raise SystemExit(f"{path}: not a {CONFIGURATION_FORMAT} file with a name")
     if block.get("version") != 2 or block.get("enabled") is not True:
         raise SystemExit(f"{path}: the corrections block must have version 2 and enabled true")
+    from refute.packs.tess.params import CorrectionsParams
+
+    fields = set(CorrectionsParams.model_fields)
+    if set(block) != fields:
+        missing, extra = sorted(fields - set(block)), sorted(set(block) - fields)
+        raise SystemExit(
+            f"{path}: the block must write every setting (missing {missing}, extra {extra})"
+        )
+    CorrectionsParams.model_validate(block)  # every value valid
     return config, hashlib.sha256(data).hexdigest(), path.resolve()
 
 
@@ -96,9 +106,11 @@ _V2_ANALYZE_TASK = pv2.analyze_task
 def analyze_task(task):
     """Version 2's ``analyze_task``, defined here so that a spawned worker imports this module
     (and its replacements) first; the plan is checked against the configuration's block."""
-    want = dict(CONFIGURATION["corrections"])
+    from refute.packs.tess.params import CorrectionsParams
+
+    want = CorrectionsParams.model_validate(CONFIGURATION["corrections"]).model_dump(mode="json")
     got = pv2._plan().gauntlet.corrections.model_dump(mode="json")
-    if {k: got.get(k) for k in want} != want:
+    if got != want:
         raise RuntimeError("the plan of this process does not carry the configuration's block")
     return _V2_ANALYZE_TASK(task)
 

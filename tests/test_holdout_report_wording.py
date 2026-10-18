@@ -58,15 +58,24 @@ def test_a1_the_note_names_the_unlogged_detrending_and_the_logged_reads():
     assert OLD_SENTENCE not in HOLDOUT_BLINDNESS_NOTE
 
 
-def test_a3_rounds_of_the_corrections_add_the_replica_note():
+def test_a3_rounds_that_read_replicas_add_the_replica_note():
     """Issue #23 after M4 pieces 4 and 5 (map Amendment 17): with the corrections on, the hidden
-    year also masks and reads the replica spans, first; the report says so only then."""
+    year also masks and reads the replica spans, first; the report says so only when a round's
+    access log shows a replica read (rewritten after the code, on the Codex stage review of
+    2026-10-18: a round of the corrections' holdout can stop before any hidden read)."""
     from refute.packs.tess.report import HOLDOUT_REPLICA_NOTE
 
-    m4 = [{"hidden_year": 2020, "status": "PASS", "metrics": {"corrections_path": "m4_holdout"}}]
-    text = render_report(_result(m4), {"claim_kind": "calibration"})
+    m4 = {"corrections_path": "m4_holdout"}
+    read = [{"kind": "replica-window", "t_lo": 1.0, "t_hi": 1.1}]
+    rounds = [{"hidden_year": 2020, "status": "PASS", "metrics": m4, "access_log": read}]
+    text = render_report(_result(rounds), {"claim_kind": "calibration"})
     assert HOLDOUT_BLINDNESS_NOTE in text and HOLDOUT_REPLICA_NOTE in text
     assert "replica spans" in HOLDOUT_REPLICA_NOTE and "before any window" in HOLDOUT_REPLICA_NOTE
+    assert HOLDOUT_REPLICA_NOTE.startswith("In rounds that reach hidden-noise estimation")
+    stopped = [{"hidden_year": 2020, "status": "INCONCLUSIVE", "metrics": m4, "access_log": []}]
+    assert HOLDOUT_REPLICA_NOTE not in render_report(
+        _result(stopped), {"claim_kind": "calibration"}
+    )
     m3 = [{"hidden_year": 2020, "status": "PASS", "metrics": {"hidden_snr": 9.0}}]
     assert HOLDOUT_REPLICA_NOTE not in render_report(_result(m3), {"claim_kind": "calibration"})
 

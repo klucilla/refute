@@ -29,19 +29,45 @@ def _probe(mode, work, config=CONFIG):
     return res
 
 
-def test_the_harness_v3_runs_m4_in_a_spawned_worker():
+def _plain(block):
+    """The record's typed floats ({"dec": ...}) back to plain values."""
+    return {
+        k: float(v["dec"]) if isinstance(v, dict) and "dec" in v else v for k, v in block.items()
+    }
+
+
+@pytest.mark.parametrize("which", ["m4-c1", "non-default"])
+def test_the_harness_v3_runs_m4_in_a_spawned_worker(which):
     # the harness writes only inside the project, so the work folder is under .cache/
     import uuid
 
     work = ROOT / ".cache" / "test-population-v3" / uuid.uuid4().hex
-    res = _probe("v3", work)
+    config = CONFIG
+    if which == "non-default":  # added after the Codex stage review: every setting reaches the plan
+        work.mkdir(parents=True)
+        doc = json.loads(CONFIG.read_text(encoding="utf-8"))
+        doc["name"] = "probe-non-default"
+        doc["corrections"].update(r_min=15, m_beta=1.3, b_min=25)
+        config = work / "non-default.json"
+        config.write_text(json.dumps(doc), encoding="utf-8")
+    res = _probe("v3", work / "run", config=config)
     assert res.returncode == 0, res.stderr[-2000:]
     out = json.loads(res.stdout.strip().splitlines()[-1])
     assert out["error"] is None and out["status"] == "analyzed"
     assert out["worker_pid"] != out["main_pid"]  # the analysis ran in a spawned worker
-    assert out["block"]["version"] == 2 and out["block"]["enabled"] is True
+    assert _plain(out["block"]) == out["configuration"]  # the whole block, in the worker's plan
     assert {"a1_noise", "bls_beta_gate", "trapezoid_timing"} <= set(out["marker"]["executed"])
     assert out["harness_sha256"] == out["v3_sha256"]  # the campaign names version 3
+    assert out["record_origin"]["harness_sha256"] == out["v3_sha256"]
+    assert out["schema_problems"] == []  # the record fits version 2's closed schema
+
+
+def test_the_harness_v3_refuses_an_incomplete_block(tmp_path):
+    doc = json.loads(CONFIG.read_text(encoding="utf-8"))
+    doc["corrections"] = {"version": 2, "enabled": True}  # the other settings left implicit
+    config = tmp_path / "incomplete.json"
+    config.write_text(json.dumps(doc), encoding="utf-8")
+    assert _probe("import", tmp_path, config=config).returncode != 0
 
 
 def test_version_2_alone_still_measures_m3(tmp_path):

@@ -41,7 +41,24 @@ def main() -> None:
     (run_dir / "cases").mkdir(parents=True)
     cache.mkdir()
     (cache / f"{entry['id']}.rpc").write_bytes(blob)
-    identity = {"probe": True}
+    # a complete identity of version 2's schema, with version 3's origin (Codex stage review)
+    identity = {
+        "campaign_id": "probe",
+        "campaign_declaration_sha256": "0" * 64,
+        "chain": "development",
+        "set": 1,
+        "point": "probe",
+        "lot": 1,
+        "slot": 1,
+        "execution_id": "probe",
+        "attempt": 1,
+        "eligibility": "diagnostic",
+        "origin": {
+            "mode": "analyze",
+            "harness_sha256": pv2.HARNESS_SHA256,
+            "harness_commit": pv2.git(v3.V3_PATH.parent, "rev-parse", "HEAD"),
+        },
+    }
     declared = {
         "environment": {pv2.DISPATCH_VARIABLE: os.environ.get(pv2.DISPATCH_VARIABLE)},
         "table": pv2.dispatch_table(),
@@ -71,6 +88,9 @@ def main() -> None:
                 "block": scientific["test_plan"]["gauntlet"]["corrections"],
                 "harness_sha256": pv2.HARNESS_SHA256,
                 "v3_sha256": v3.V3_SHA256,
+                "record_origin": record["identity"]["origin"],
+                "schema_problems": pv2.validate_record(record, entry, {}),
+                "configuration": v3.CONFIGURATION["corrections"],
             }
         )
     )
