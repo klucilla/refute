@@ -160,6 +160,19 @@ through CARE-GNN (Apache-2.0), an intermediate repository, and their original so
 (McAuley and Leskovec 2013; Rayana and Akoglu 2015) state no licence; the JODIE/SNAP page
 (Reddit) states none; the source of the Facebook dataset (Xu et al. 2022) was not located.
 
+**Corrections of 2026-10-18 (after the end-of-round review; the text above is kept as
+approved).**
+- *Unconfirmed statement.* That the original sources of Amazon and YelpChi (McAuley and
+  Leskovec 2013; Rayana and Akoglu 2015) state no licence has no recorded check in
+  `sources/`: it is **unconfirmed**. What is recorded is the intermediate repository
+  (CARE-GNN), the paper's list of sources and the JODIE/SNAP page. The decision on 101 stays
+  as the maintainer approved it; the check of the two original sources is recorded before
+  the final report, or the statement stays marked unconfirmed there.
+- *Time of the decision.* The maintainer's message labelled "about 09:50" Brasília time (the
+  label is the maintainer's) reached the agent at 2026-10-18T12:40:18Z (09:40 Brasília),
+  before commit 4b06b3d (12:43:10Z), which records it. `PROTOCOL-clarifications.md` keeps
+  its version 4 text with the label.
+
 | Pos | arXiv | Repository (commit) | Decision | Evidence |
 |---|---|---|---|---|
 | 308 | 2406.11016 | dwgnr/optimized-speculative-sampling (823428f) | rejected: `requires_gpu` (a) | the method is a custom CUDA kernel compiled with nvcc (`--use_custom_sampler`); the times are per-step GPU profiles (Table 6) |
