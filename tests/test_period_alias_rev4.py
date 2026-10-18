@@ -221,6 +221,38 @@ def test_the_thresholds_reach_the_decision(monkeypatch):
 
 
 @pytest.mark.parametrize(
+    ("z_star", "f_star", "status"),
+    [
+        (18.47, 0.5, TestStatus.FAIL),
+        (30.0, 0.5, TestStatus.INCONCLUSIVE),  # Z_F = 25 below z_F*
+        (18.47, 0.7, TestStatus.INCONCLUSIVE),  # f = 0.6 below f*
+    ],
+)
+def test_the_two_thresholds_each_decide(z_star, f_star, status):
+    # added after the Codex stage review: a direct case in which the pairs differ
+    from refute.packs.tess.battery import alias_m4_decision
+
+    got = alias_m4_decision(25.0, 0.6, 0.0, 1e-4, 4e-5, z_star=z_star, f_star=f_star, g_star=G_STAR)
+    assert got[0] is status
+
+
+def test_a_sector_excluded_by_a1_leaves_the_fits_and_the_coverage():
+    # added after the Codex stage review: one sector valid and one excluded side by side
+    lc = _curve(1000e-6, 6016, "white")
+    second = lc.sector == lc.sector.max()
+    short = second & (lc.time < lc.time[second].min() + 1.0)  # one day: too few bins at n_T
+    lc = lc.select(~second | short)
+    r = _run(lc)
+    m = r.metrics
+    assert m["sectors_excluded"] == [int(lc.sector.max())]
+    assert m["sectors_used"] == [int(lc.sector.min())]
+    assert m["n_cadences"] == int(np.sum(lc.sector == lc.sector.min()))
+    used = lc.sector == lc.sector.min()
+    box = np.abs(((lc.time[used] - T0 + 0.5 * P) % P) - 0.5 * P) <= T14 / 2
+    assert r.coverage == int(box.sum())
+
+
+@pytest.mark.parametrize(
     "block", [{"version": 1, "enabled": True}, {"version": 2, "enabled": False}]
 )
 def test_off_an_inactive_block_runs_the_bic_test_byte_for_byte(block):

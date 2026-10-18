@@ -762,10 +762,13 @@ INCONCLUSIVE (`Z_F` 217 / 223, `f` 0.17 / 0.21); R3 INCONCLUSIVE (`Z_F` 1.6 / 15
 −6.9); R4a PASS (`G` 230 / 274); R4b PASS (`G` 276 / 278). Two observations, recorded for the
 population measurement and not acted on: (1) with the variability, `β̄` is about 8.7 against 1.0
 (white) and 3.3 to 3.7 (correlated) without it, which confirms the inflation behind the T2b risk;
-(2) in R3 correlated, `Z_F` is 15.1, near `z_F*` = 18.47 with no variability at all: `β̄` is
-measured at the box's scale `n_T`, while the harmonics live at the period's scale, where the AR(1)
-noise is larger, so the null `Z_F` in correlated noise may exceed `z_F*` more often than its white
-reference suggests (it matters only together with `f ≥ f*` and `G < g*`). The tests affected by the
+(2) in R3 correlated, `Z_F` is 15.1, near `z_F*` = 18.47 with no variability injected. A
+hypothesis to be checked, not a demonstrated cause (corrected after the Codex stage review): `β̄`
+is measured at the box's scale `n_T`, while the harmonics live at the period's scale, where the
+AR(1) noise is larger, so the null `Z_F` in correlated noise may exceed `z_F*` more often than its
+white reference suggests; this one realization also holds a weak box, which projects onto the
+harmonics too, so it neither separates the two contributions nor measures a rate of exceedance (it
+matters only together with `f ≥ f*` and `G < g*`). The tests affected by the
 piece (the lock projection with extension 3, the battery, the activation, the harness version 3,
 the schema and the dossier): 153 tests, 0 failures.
 
@@ -782,6 +785,15 @@ no guard for `d_box ≤ 0` (U1); SP3 the sectors excluded by A1 kept (U4); SP4 `
 pairs test); SP9 the decision with constant thresholds (the thresholds test); SP10 extension 3 left
 out of the literal (10 lock cases); SP11 extension 3 with another default (12 lock cases). Each
 made at least one test fail.
+
+**The end-of-stage review (Codex, read only, of `78ba6d5`, `8a68254` and `dbe5804`)** found no
+deviation of the implementation from this amendment and the extension 3 package technically
+correct (it recomputed both full resolved hashes). Written after it: observation (2) of the results
+stated as a hypothesis, and two cases added (27 tests, 0 failures): a direct case in which the
+declared pairs give different decisions (`Z_F` 25, `f` 0.6: FAIL at (18.47, 0.5), INCONCLUSIVE at
+(30, 0.5) and at (18.47, 0.7)), and a curve with one sector used and one excluded by A1 side by
+side (the fits, `N` and the coverage on the used sector only). Full suite at `dbe5804`: 2990 tests,
+0 failures, 0 errors, 55 skipped (JUnit).
 
 ## Amendment 20 (2026-10-18): the end-of-stage review of Amendments 16 to 19 (Codex), and its fixes
 
