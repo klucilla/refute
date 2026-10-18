@@ -738,13 +738,15 @@ def _file_source(path: Path) -> str:
 def _count(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | None):
     """One count, read like ``metric_extraction`` reads a value (W3.11), and the piece it
     read. The token must be a non-negative integer."""
-    got = ex.extract(dict(selector), workdir, log, seed)
+    # one read of the one file the selector names: the count and the piece of evidence come
+    # from the same resolved path and bytes (wp3-extraction-pattern-acceptance.md)
+    text, where, source = log, "log", "log"
+    if selector["from"] == "file":
+        text, where, path = ex.read_output(workdir, str(selector["file"]), seed)
+        source = _file_source(path)
+    got = ex.parse(dict(selector), text, where)
     if not _COUNT.match(got.token):
         raise ex.ExtractionError(f"{got.source}: {got.token!r} is not a count of examples")
-    text, source = log, "log"
-    if selector["from"] == "file":
-        path = workdir.joinpath(*_relative_file(selector["file"], seed).parts)
-        text, source = path.read_text(encoding="utf-8"), _file_source(path)
     return int(got.token), _piece(selector, source, text)
 
 
@@ -841,7 +843,7 @@ def _route_reading(
             method_name = (ctx.comparison or {}).get(run.role)
             if method_name is not None:
                 file = file.replace("{method}", str(method_name))
-            path = run.workdir.joinpath(*_relative_file(file, run.seed).parts)
+            path = ex.checked_path(run.workdir, file, run.seed)
             data = rc.read_predictions(
                 path, mr["predictions"]["format"], mr["predictions"]["fields"]
             )
@@ -1118,12 +1120,12 @@ def _recompute(
             file = mr["predictions"]["file"].replace("{seed}", str(seed))
             if names[role] is not None:
                 file = file.replace("{method}", str(names[role]))
-            path = harness.workspaces[cid] / file
             try:
+                path = ex.checked_path(harness.workspaces[cid], file, seed)
                 data = rc.read_predictions(
                     path, mr["predictions"]["format"], mr["predictions"]["fields"]
                 )
-            except (rc.RecomputeError, OSError, ValueError) as exc:
+            except (rc.RecomputeError, ex.ExtractionError, OSError, ValueError) as exc:
                 outcomes.append(
                     rc.RunOutcome(label, TestStatus.INCONCLUSIVE, f"predictions: {exc}")
                 )
@@ -1295,8 +1297,11 @@ class PaperIntegration:
         def make(threshold: int) -> RunSpec:
             # the outputs this run is read from must not exist before it starts, so every
             # value read afterwards was written by this run (requirement 10)
+            # a fixed path, or any match of a '*' (wp3-extraction-pattern-acceptance.md)
             stale = [
-                p for p in self._outputs.get(cid, []) if (self.harness.workspaces[cid] / p).exists()
+                p
+                for p in self._outputs.get(cid, [])
+                if ex.output_present(self.harness.workspaces[cid], p)
             ]
             if stale:
                 raise ValueError(f"{cid}: outputs present before the run: {stale}")

@@ -45,7 +45,7 @@ from refute.core.canonical import canonical_bytes
 from refute.core.hashing import sha256_bytes
 from refute.core.paper import BASE_GATES, BASE_REPRODUCTION, METRIC_RECOMPUTE, prerequisite_names
 from refute.packs.ml import readers, recompute, rules, seeds
-from refute.packs.ml.extract import ExtractionError, parse_json_path
+from refute.packs.ml.extract import ExtractionError, check_pattern, parse_json_path
 from refute.packs.ml.uncertainty import Uncertainty, resolve_uncertainty
 from refute.selection import inventory as inv
 
@@ -96,6 +96,15 @@ def _relative(value: str, what: str, placeholders: tuple[str, ...] = ()) -> str:
         if name not in placeholders:
             raise ValueError(f"{what} has an unknown placeholder {{{name}}}")
     return value
+
+
+def _file_pattern(value: str, what: str) -> None:
+    """At most one path component that is exactly '*' (wp3-extraction-pattern-acceptance.md,
+    W3.11a); no other pattern."""
+    try:
+        check_pattern(value)
+    except ValueError as exc:
+        raise ValueError(f"{what}: {exc}") from None
 
 
 def _json_path(value: str | None, what: str) -> None:
@@ -596,6 +605,7 @@ class Extraction(_Model):
     def _check(self) -> Extraction:
         if self.from_ == "file":
             _relative(self.file or "", "metric_extraction.file", ("seed",))
+            _file_pattern(self.file or "", "metric_extraction.file")
         elif self.file is not None:
             raise ValueError("metric_extraction.file is only for 'from: file'")
         ways = [w for w in (self.json_path, self.csv, self.regex) if w is not None]
@@ -840,6 +850,9 @@ class Predictions(_Model):
     @field_validator("file")
     @classmethod
     def _file(cls, value: str) -> str:
+        if any(c in value for c in "*?[]"):
+            # a predictions file is a fixed path (wp3-extraction-pattern-acceptance.md)
+            raise ValueError("metric_recompute.predictions.file holds no pattern")
         return _relative(value, "metric_recompute.predictions.file", ("seed", "method"))
 
 
@@ -914,6 +927,7 @@ class CountSelector(_Model):
     def _check(self) -> CountSelector:
         if self.from_ == "file":
             _relative(self.file or "", "coverage count file", ("seed",))
+            _file_pattern(self.file or "", "coverage count file")
         elif self.file is not None:
             raise ValueError("a coverage count file is only for 'from: file'")
         ways = [w for w in (self.json_path, self.csv, self.regex) if w is not None]

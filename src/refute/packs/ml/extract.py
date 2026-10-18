@@ -1,7 +1,9 @@
 """Deterministic metric extraction (WP3 W3.11, W3.12; design 1.0.3 ``run.metric_extraction``).
 
 The value is read from a file the run wrote (``from: file``, the path may hold
-``{seed}``) or from the run's log (``from: log``), by exactly one of:
+``{seed}`` and one component that is exactly ``*``, resolved to exactly one path the run
+created: ``read_output``, wp3-extraction-pattern-acceptance.md) or from the run's log
+(``from: log``), by exactly one of:
 
 - ``json_path``: a JSON document and a path in a small, fixed grammar:
   ``$`` followed by ``.name`` or ``[index]`` steps (``$.test.acc``, ``$.runs[0].acc``).
@@ -25,7 +27,9 @@ from __future__ import annotations
 import csv
 import io
 import json
+import os
 import re
+import stat
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path, PurePosixPath
@@ -168,14 +172,149 @@ def _from_regex(text: str, pattern: str, group: int | str, where: str) -> Extrac
     return _number(token, where)
 
 
-def _read(path: Path, where: str) -> str:
+# ---- the file a run wrote (W3.11; wp3-extraction-pattern-acceptance.md, W3.11a) -----------
+
+WILDCARD = "*"
+
+
+def check_pattern(path: str) -> None:
+    """A file path may hold one component that is exactly ``*`` and no other pattern:
+    ValueError otherwise."""
+    parts = PurePosixPath(path).parts
+    if any(c in part for part in parts for c in "?[]"):
+        raise ValueError(f"a file path holds no '?', '[' or ']': {path!r}")
+    stars = [part for part in parts if "*" in part]
+    if any(part != WILDCARD for part in stars) or len(stars) > 1:
+        raise ValueError(f"a file path holds at most one component that is exactly '*': {path!r}")
+
+
+def _relative(spec: str, seed: int | None) -> PurePosixPath:
+    relative = str(spec)
+    if "{seed}" in relative:
+        if seed is None:
+            raise ExtractionError("the file names {seed} but the run has no seed")
+        relative = relative.replace("{seed}", str(seed))
+    posix = PurePosixPath(relative)
+    if posix.is_absolute() or ".." in posix.parts or "\\" in relative or not posix.parts:
+        raise ExtractionError(f"a file must be relative, without '..': {relative!r}")
     try:
-        if path.stat().st_size > MAX_BYTES:
+        check_pattern(relative)
+    except ValueError as exc:
+        raise ExtractionError(str(exc)) from None
+    return posix
+
+
+def _is_link(path: Path, st: os.stat_result) -> bool:
+    return stat.S_ISLNK(st.st_mode) or (hasattr(path, "is_junction") and path.is_junction())
+
+
+def _lexists(workdir: Path, parts: tuple[str, ...]) -> bool:
+    """Whether the path exists, without following any link; an error while inspecting a
+    component is an ExtractionError, never read as absence."""
+    try:
+        os.lstat(workdir.joinpath(*parts))
+    except FileNotFoundError:
+        return False
+    except OSError as exc:
+        raise ExtractionError(f"cannot inspect {'/'.join(parts)}: {exc}") from None
+    return True
+
+
+def _matches(workdir: Path, posix: PurePosixPath) -> list[tuple[str, ...]]:
+    """Every existing path the file names: itself, or with a name in place of ``*``. Only
+    names are listed and compared; no content is read."""
+    parts = posix.parts
+    if WILDCARD not in parts:
+        return [parts] if _lexists(workdir, parts) else []
+    at = parts.index(WILDCARD)
+    parent = workdir.joinpath(*parts[:at])
+    try:
+        names = sorted(os.listdir(parent))
+    except FileNotFoundError:
+        return []
+    except OSError as exc:
+        raise ExtractionError(f"cannot list {'/'.join(parts[:at]) or '.'}: {exc}") from None
+    out = []
+    for name in names:
+        candidate = (*parts[:at], name, *parts[at + 1 :])
+        if _lexists(workdir, candidate):
+            out.append(candidate)
+    return out
+
+
+def output_present(workdir: Path, spec: str, seed: int | None = None) -> bool:
+    """Whether anything the file names (a fixed path, or a match of its ``*``) exists:
+    the check that a run's outputs are absent before it starts."""
+    return bool(_matches(workdir, _relative(spec, seed)))
+
+
+def checked_path(workdir: Path, spec: str, seed: int | None) -> Path:
+    """The path of the one file ``spec`` names, with every check of ``read_output`` but the
+    read itself (for the predictions file, which its own reader opens)."""
+    posix = _relative(spec, seed)
+    found = _matches(workdir, posix)
+    if len(found) != 1:
+        raise ExtractionError(
+            f"{posix.as_posix()}: {len(found)} paths match; exactly one is needed"
+        )
+    current = workdir
+    for part in found[0]:
+        current = current / part
+        try:
+            st = os.lstat(current)
+        except OSError as exc:
+            raise ExtractionError(f"{posix.as_posix()}: cannot inspect: {exc}") from None
+        if _is_link(current, st):
+            raise ExtractionError(f"{posix.as_posix()}: a symbolic link on the path: {part}")
+    if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+        raise ExtractionError(f"{posix.as_posix()}: not a regular file with a single link")
+    return current
+
+
+def read_output(workdir: Path, spec: str, seed: int | None) -> tuple[str, str, Path]:
+    """The text of the one file a run wrote that ``spec`` names, the ``where`` recorded with
+    a value read from it (``file:<the resolved path>``), and its path. Exactly one match
+    (counted before any content is read); every component a real folder or file, no
+    symbolic link; a regular file with a single link, checked again on the open handle.
+    Anything else is an ExtractionError."""
+    posix = _relative(spec, seed)
+    found = _matches(workdir, posix)
+    if not found and WILDCARD not in posix.parts:
+        raise ExtractionError(f"file:{posix.as_posix()}: cannot read: no such file")
+    if len(found) != 1:
+        raise ExtractionError(
+            f"{posix.as_posix()}: {len(found)} paths match; exactly one is needed"
+        )
+    parts = found[0]
+    where = "file:" + "/".join(parts)
+    current = workdir
+    for part in parts:
+        current = current / part
+        try:
+            st = os.lstat(current)
+        except OSError as exc:
+            raise ExtractionError(f"{where}: cannot inspect: {exc}") from None
+        if _is_link(current, st):
+            raise ExtractionError(f"{where}: a symbolic link on the path: {part}")
+    if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+        raise ExtractionError(f"{where}: not a regular file with a single link")
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    try:
+        fd = os.open(current, flags)
+    except OSError as exc:
+        raise ExtractionError(f"{where}: cannot open: {exc}") from None
+    with os.fdopen(fd, "rb") as handle:
+        st = os.fstat(handle.fileno())
+        if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+            raise ExtractionError(f"{where}: not a regular file with a single link")
+        if st.st_size > MAX_BYTES:
             raise ExtractionError(f"{where}: larger than {MAX_BYTES} bytes")
-        return path.read_text(encoding="utf-8")
-    except ExtractionError:
-        raise
-    except (OSError, UnicodeDecodeError) as exc:
+        data = handle.read(MAX_BYTES + 1)
+    if len(data) > MAX_BYTES:
+        raise ExtractionError(f"{where}: larger than {MAX_BYTES} bytes")
+    try:
+        return data.decode("utf-8"), where, current
+    except UnicodeDecodeError as exc:
         raise ExtractionError(f"{where}: cannot read: {exc}") from None
 
 
@@ -185,20 +324,16 @@ def extract(
     """The metric of one run, by the claim's resolved ``metric_extraction`` block."""
     origin = extraction.get("from")
     if origin == "file":
-        relative = str(extraction["file"])
-        if "{seed}" in relative:
-            if seed is None:
-                raise ExtractionError("the extraction file names {seed} but the run has no seed")
-            relative = relative.replace("{seed}", str(seed))
-        posix = PurePosixPath(relative)
-        if posix.is_absolute() or ".." in posix.parts or "\\" in relative:
-            raise ExtractionError(f"extraction file must be relative, without '..': {relative!r}")
-        where = f"file:{relative}"
-        text = _read(workdir.joinpath(*posix.parts), where)
+        text, where, _ = read_output(workdir, str(extraction["file"]), seed)
     elif origin == "log":
         where, text = "log", log_text
     else:
         raise ExtractionError(f"metric_extraction.from must be file or log, got {origin!r}")
+    return parse(extraction, text, where)
+
+
+def parse(extraction: dict[str, Any], text: str, where: str) -> Extracted:
+    """The value a selector names in a text already read (one file or the log)."""
     ways = [k for k in ("json_path", "csv", "regex") if extraction.get(k) is not None]
     if len(ways) != 1:
         raise ExtractionError("metric_extraction takes exactly one of json_path, csv, regex")
