@@ -367,7 +367,7 @@ def hidden_window_fraction(
 # --- M4 piece 4: replica spans and the hidden-window variance by empirical replicas -------------
 # Revision 4 of the corrections plan, section 1, with the readings of
 # docs/validation/v0.2.1/reopen/m4-implementation-map.md, Amendments 6, 10 and 11. Used only with
-# gauntlet.corrections.enabled; the M3 path above is unchanged.
+# gauntlet.corrections.active; the M3 path above is unchanged.
 
 REPLICA_PHASE_DENOMINATORS = (4, 8, 16, 32, 64)
 MIN_BASELINE_PER_PARAMETER = 20
@@ -884,7 +884,7 @@ def plan_round(
             )
         )
 
-    corrections_on = plan.gauntlet.corrections.enabled
+    corrections_on = plan.gauntlet.corrections.active
     extra: dict[str, Any] = {}
     if corrections_on:
         # M4 piece 5 (map Amendment 12 and its addendum): the train candidate refitted on the
@@ -904,7 +904,12 @@ def plan_round(
         )
         noise = event_noise(train_flat2, None, refit.period, refit.t0, refit.duration, plan)
         corrected, gate = _bls_gate(refit, train_flat2, sigma, noise, None, plan.gauntlet)
-        extra = {"train_bls_snr": refit.snr, "train_gate": gate.to_dict()}
+        extra = {
+            "train_bls_snr": refit.snr,
+            "train_gate": gate.to_dict(),
+            # the marker of map Amendment 17: this round ran the M4 holdout path
+            "corrections_path": "m4_holdout",
+        }
         if gate.status is TestStatus.INCONCLUSIVE:
             return RoundPlan(
                 RoundResult(
@@ -939,7 +944,7 @@ def plan_round(
             train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
         )
     train_timing = None
-    if plan.gauntlet.corrections.enabled:
+    if plan.gauntlet.corrections.active:
         # M4 piece 3: the train timing with the trapezoid template of the train candidate.
         corrected = corrected_transit_times(
             train_flat2, train.period, train.t0, train.duration, sigma, plan
@@ -1045,7 +1050,7 @@ def _round(
     prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)
     if prepared.decided is not None:
         return prepared.decided
-    if plan.gauntlet.corrections.enabled:
+    if plan.gauntlet.corrections.active:
         return _round_corrected(raw, sectors, hidden_year, plan, prepared, enforce=True)[0]
     train, ephemeris, windows = prepared.train, prepared.ephemeris, prepared.windows
     assert train is not None and ephemeris is not None
@@ -1432,7 +1437,7 @@ def calibration_measurement(
     round measured despite the two capacity decisions (recorded), with its own ``HiddenYear``;
     a measurement impediment leaves ``s_meas`` absent with its reason. Returns a record marked
     ``calibration_only``; nothing of an official result is touched."""
-    if not plan.gauntlet.corrections.enabled:
+    if not plan.gauntlet.corrections.active:
         raise ValueError("the calibration measurement needs the corrections switch on")
     spans = [(s.t_start, s.t_end) for s in sectors if s.year == hidden_year]
     prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)

@@ -36,7 +36,7 @@ SIGMA = 600e-6
 
 def _plan(**corrections):
     plan = synthetic.fast_plan_dict()
-    plan["gauntlet"] = {"corrections": {"enabled": True, **corrections}}
+    plan["gauntlet"] = {"corrections": {"version": 2, "enabled": True, **corrections}}
     return TessTestPlan.model_validate(plan)
 
 

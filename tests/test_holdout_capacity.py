@@ -44,7 +44,7 @@ THREE_BY_TWO = (1325.0, 1353.0, 1381.0, 1500.0, 1528.0)  # 2018: three; 2019: tw
 
 def _plan(**corrections):
     plan = synthetic.fast_plan_dict()
-    plan["gauntlet"] = {"corrections": {"enabled": True, **corrections}}
+    plan["gauntlet"] = {"corrections": {"version": 2, "enabled": True, **corrections}}
     return TessTestPlan.model_validate(plan)
 
 

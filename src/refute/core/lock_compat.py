@@ -60,6 +60,9 @@ _CORRECTIONS_OFF = {
     "m_beta": 1.2,
     "max_components": 3,
     "r_min": 20,
+    # Extension 2 (2026-10-18; the version rule of the maintainer's decision of that day, map
+    # Amendment 17): the legacy version of the block, 1, the M3 path.
+    "version": 1,
 }
 
 

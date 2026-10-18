@@ -630,6 +630,72 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 17 (2026-10-18): the explicit, versioned activation of M4 across the flow
+
+The maintainer's decision of 2026-10-18 (14:00), item 2; Codex reviewed the design before the code
+(`.cache/v021/codex/activation/`). It replaces the section "The switch" above where they differ
+(the freeze no longer changes any default).
+
+- **The version rule.** `CorrectionsParams.version` (1, the default: the legacy block; 2: M4 of
+  revision 4) and the property `active` (`version == 2 and enabled`), read everywhere the code used
+  `enabled`. A claim without the block, or with version 1 (whatever `enabled` says), or with version
+  2 and `enabled` false, resolves on the M3 path. **No default of the block ever changes**; new
+  claims write `version: 2`, `enabled: true` and the chosen configuration explicitly.
+- **The marker.** The verdict record gains `corrections: {version, executed}` **only when some M4 part
+  ran**; `executed` lists the parts that actually ran (`a1_noise`, `bls_beta_gate`,
+  `trapezoid_timing` in the global analysis; `m4_holdout` from any holdout round that ran the M4
+  train gate), never what the plan asked for. Legacy records keep their keys (their `test_plan`
+  shows the block with `version` 1).
+- **The historical locks.** Extension 2 of the projection table adds `"version": 1` to the frozen
+  value of the corrections section (`docs/lock-format.md`, "Extensions of the table"): both historical
+  claims still reach their locked hash by the projection; `verify` stays `TAMPERED` in the code
+  component only, as before (the "PASS" of the decision is read as the claim component; a
+  `verify` status of PASS is impossible for any lock whose code changed).
+- **The configuration files.** A configuration is a file `population/m4-configurations/<name>.json`,
+  format `refute-m4-configuration/1`, with its name and its complete corrections block (version 2,
+  enabled true, every setting written); identified by its SHA-256. The first is `m4-c1.json`
+  (revision 3, 9.2's first configuration: the settings of `CorrectionsParams`).
+- **The population harness, version 3** (`population/population_v3.py`, a new file; version 2 is
+  never edited and its SHA-256 is pinned): it loads version 2 and replaces `_plan()` (the fast plan
+  plus the configuration's block, refused unless active), `analyze_task` (the same function in
+  this module, so the spawned workers import version 3 and apply the same plan; each analysis checks
+  that its plan carries the block), the harness identity (`HARNESS_PATH`, `HARNESS_SHA256`: a
+  campaign declaration then names version 3) and R2 (version 3, version 2 and the configuration file
+  each the file of HEAD and unchanged since the start). The configuration file is named by
+  `REFUTE_M4_CONFIGURATION`, which the workers inherit. Version 2 alone still measures M3.
+- **How each part of the flow receives the configuration:**
+  - *The selection of the estimators and the reserves* (the calibration driver of revision 3, 8.2,
+    a new script still to be written): it reads a configuration file, builds its plan with that
+    block, records the file's SHA-256 with every result, and calls `calibration_measurement` for the
+    `S_meas` of the rounds stopped by a capacity decision (Amendment 9).
+  - *M4 and M5 campaigns of the development population:* the harness version 3 with the point's
+    configuration file; one configuration per campaign run; the configuration file and its SHA-256
+    are named in the campaign's declaration by the campaign amendment written before the first
+    version-3 campaign (pending; version 2's declaration schema is not changed). M5 candidates are
+    configurations whose markers list their own parts.
+  - *`b` and `s`* stay module settings of `holdout.py` (Amendment 12) until the freeze; the driver and
+    the harness set them from the configuration file's `capacity` entry once it exists (pending, with
+    the freeze package: whether they become plan fields, which would need a new table extension, is
+    the maintainer's).
+  - *The confirmation set:* a new claim with the frozen configuration written explicitly in its
+    plan (the block with version 2), checked against the configuration file's SHA-256; no selection
+    or adjustment there; the counters and limits inherited unchanged.
+  - *The parameters of piece 6* (the `period_alias` thresholds chosen per configuration) and any new
+    setting of pieces 6 and 7 are new plan fields, which change the resolved claims: a table
+    extension for the maintainer, brought with piece 6.
+- **Records already committed** (`m4/amendment7_retests.py`, `calc/option_a_geometry.py`) switched M4
+  on with `enabled: true` alone; they are records of their commits and stay as they are (rerun with
+  the version rule, their `analyze_data` parts would take the M3 path, while the parts that call the
+  M4 functions directly would not). New records use version 2.
+- **Tests** (`tests/test_corrections_activation.py`, `tests/test_population_v3.py`, and the lock tests):
+  the version matrix; no default changes; a claim of the new version runs the corrected path (the
+  marker, and the gate's `beta_d`); the M3 box scan and M3 holdout never run on it, and do run with
+  version 1; a claim without the block stays on M3; the historical projections reach their locked
+  hashes; the harness version 3 runs M4 in a spawned worker of version 2's pool, version 2 alone
+  measures M3, and version 3 refuses a missing or legacy configuration. Sabotages: SV1 the M3 path
+  forced with the new version; SV2 a projected default changed; SV3 the harness without the worker
+  propagation.
+
 ## Amendment 16 (2026-10-18): the decomposition of the interrupted rounds, per round and per target
 
 The maintainer's item 3 of 2026-10-18 (14:00). Computed only from the record already examined,

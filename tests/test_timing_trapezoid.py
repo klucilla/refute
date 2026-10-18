@@ -29,7 +29,7 @@ PLANET = synthetic.PLANET
 TAU = PLANET.ingress_fraction * PLANET.duration
 SIGMA_W = 600e-6
 CARTER = (SIGMA_W / PLANET.depth) * np.sqrt(TAU * CADENCE / 2.0)
-ON = {"enabled": True}
+ON = {"version": 2, "enabled": True}
 
 
 def _plan(corrections=None):

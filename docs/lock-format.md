@@ -208,6 +208,17 @@ with its date, the paths and frozen values it adds, and the full resolved hashes
    value, leaving the path out of the v0.2 entry, and skipping the guard against a field written
    in the claim file each make cases fail. Every later field or default of the section changes
    this frozen value, so it needs a new extension, approved before it is made.
+2. **The version key of the corrections section (2026-10-18; branch `claude/v0-2-1-reopen` only,
+   until its merge).** The maintainer's decision of 2026-10-18 (14:00) set a version rule for the
+   section: `version` 1 is the legacy block, always on the M3 path; version 2 is M4, written
+   explicitly in new claims; no default of the section changes. This extension adds `"version": 1`
+   to the frozen value of extension 1 (the same path, `test_plan.gauntlet.corrections`, for both
+   historical entries); every other frozen value is unchanged. With it, both historical claims still
+   reach their locked `claim_sha256` by the projection (the claim component matches; `verify` stays
+   `TAMPERED` in the code component only, as before). Full resolved hashes from this extension: v0.1
+   `045a980e55e7427902405e8c4cfc6b6786aa2417c84a1f4f432d00c314fe6936`, v0.2
+   `27213d9406ed419ae12ea445e0ef2b8ad09507c5399c6400627dd6f70f9a04be`. The cases and sabotages of
+   extension 1 cover it (a non-default value, the version 2 among them, is refused).
 
 ## When only the code differs (issue #66)
 

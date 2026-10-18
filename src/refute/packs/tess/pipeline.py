@@ -67,6 +67,8 @@ class GauntletOutcome:
     # M4 piece 3, with the corrections switch on: the template, the drops and the A1 estimate
     # at n_tau of the global transit times (TemplateTimes.to_dict); None with the switch off.
     timing: dict | None = None
+    # The M4 parts that actually ran in the global analysis (map Amendment 17); empty on M3.
+    executed: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -178,9 +180,11 @@ def attack_candidate(
         flat, candidate.period, candidate.duration, plan.search, candidate.sde, sigma
     )
     noise = None
-    if gp.corrections.enabled:
+    executed: list[str] = []  # the M4 parts that actually ran (map Amendment 17, the marker)
+    if gp.corrections.active:
         # M4 piece 2: the A1 noise model for every per-event measurement and the gate.
         noise = event_noise(flat, None, final.period, final.t0, final.duration, plan)
+        executed.append("a1_noise")
     primary = per_event_depths(
         flat, final.period, final.t0, final.duration, cadence, gp.events, 0.0, sigma, noise
     )
@@ -191,6 +195,7 @@ def attack_candidate(
         snr_test = check_snr(final, gp.snr)
     else:
         final, snr_test = _bls_gate(final, flat, sigma, noise, primary, gp)
+        executed.append("bls_beta_gate")
     tests = [
         snr_test,
         check_odd_even(primary, gp.odd_even),
@@ -199,12 +204,13 @@ def attack_candidate(
         *battery_tests(data, final, plan, catalogs, catalog_scan),
     ]
     timing = None
-    if gp.corrections.enabled:
+    if gp.corrections.active:
         # M4 piece 3: the trapezoid template, the scan and the error times beta(n_tau).
         corrected = corrected_transit_times(
             flat, final.period, final.t0, final.duration, sigma, plan
         )
         times, timing = corrected.times, corrected.to_dict()
+        executed.append("trapezoid_timing")
     else:
         times = measure_transit_times(
             flat,
@@ -218,7 +224,7 @@ def attack_candidate(
             scan_half_width_durations=gp.holdout_by_year.timing_scan_half_width_durations,
         )
     ephemeris = fit_linear_ephemeris(times) if len(times) >= 2 else None
-    return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris, timing)
+    return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris, timing, executed)
 
 
 def _bls_gate(
@@ -511,6 +517,20 @@ def build_result(
     if analysis.gauntlet.timing is not None:
         # M4 piece 3 (switch on only, so records with the switch off keep their keys).
         record["global_timing"] = analysis.gauntlet.timing
+    executed = list(analysis.gauntlet.executed)
+    executed += sorted(
+        {
+            r.metrics["corrections_path"]
+            for r in analysis.holdout.rounds
+            if "corrections_path" in r.metrics
+        }
+    )
+    if executed:
+        # The marker of map Amendment 17: what ran, not what the plan asked for; absent on M3.
+        record["corrections"] = {
+            "version": plan.gauntlet.corrections.version,
+            "executed": executed,
+        }
     return record
 
 

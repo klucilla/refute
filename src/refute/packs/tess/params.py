@@ -207,6 +207,11 @@ class CorrectionsParams(_Model):
     m4-implementation-map.md). ``enabled: false`` is the M3 code path; the settings are those of
     a configuration (revision 3, 9.2; the defaults are M4-c1's until the M4 freeze)."""
 
+    # The version rule (map Amendment 17, the maintainer's decision of 2026-10-18): 1 is the
+    # legacy block (always the M3 path, whatever ``enabled`` says); 2 is M4 of revision 4. A claim
+    # without the block, or with version 1, resolves on the M3 path. New claims write version 2,
+    # enabled true and the chosen configuration explicitly. No default here ever changes.
+    version: int = Field(1, ge=1, le=2)
     enabled: bool = False
     b_min: int = Field(20, ge=1)
     gap_split: float = Field(5.0, gt=0)
@@ -216,6 +221,11 @@ class CorrectionsParams(_Model):
     h_min: float = Field(0.90, gt=0, le=1)
     m_beta: float = Field(1.2, ge=1)
     r_min: int = Field(20, ge=1)
+
+    @property
+    def active(self) -> bool:
+        """The M4 path runs only with version 2 and enabled true (map Amendment 17)."""
+        return self.version == 2 and self.enabled
 
 
 class GauntletParams(_Model):

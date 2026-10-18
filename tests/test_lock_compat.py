@@ -33,11 +33,13 @@ CLAIMS = {
 # (2026-10-15): v0.1 6f54b8348a90ee0d53e0ab2f45c90707c64a4286de559f61c2285b4ec1a365dc, v0.2
 # 5fe1a3de767c45e0b294073c77cf8d3c93f559bd1f94b06a6a5a98718af6d502. From extension 1 (the
 # section gauntlet.corrections of v0.2.1, approved by the maintainer on 2026-10-18, branch
-# claude/v0-2-1-reopen), with the code of 676b076 (docs/lock-format.md, "Extensions of the
-# table"):
+# claude/v0-2-1-reopen), with the code of 676b076: v0.1 05ec2b63...a8b48f, v0.2 a68d2bac...e4b75.
+# From extension 2 (the version key of the section, the version rule of the maintainer's decision
+# of 2026-10-18), with the code of the commit that adds it (docs/lock-format.md, "Extensions of
+# the table"):
 FULL_RESOLVED = {
-    "tess-calibration-v0.1": "05ec2b63b9b94874e393bb46884ab152b74ed3ad235ff46798bcbed1a1b8a48f",
-    "tess-calibration-v0.2": "a68d2bac0663b035e979b17147e9234a7246233abdb5af0a201cdc3df4e64b75",
+    "tess-calibration-v0.1": "045a980e55e7427902405e8c4cfc6b6786aa2417c84a1f4f432d00c314fe6936",
+    "tess-calibration-v0.2": "27213d9406ed419ae12ea445e0ef2b8ad09507c5399c6400627dd6f70f9a04be",
 }
 CORRECTIONS = ("test_plan", "gauntlet", "corrections")
 
@@ -189,6 +191,7 @@ def test_listed_field_with_another_value_is_refused():
 # Extension 1: the corrections section is removed only at exactly its defaults ----------------
 
 NOT_DEFAULT = [
+    ("version", 2),  # extension 2: the version rule
     ("enabled", True),
     ("b_min", 21),
     ("gap_split", 5),  # an int where the frozen value is the float 5.0

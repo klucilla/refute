@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REF_DIR = ROOT / "docs" / "validation" / "v0.2.1" / "reopen" / "m4"
 REFERENCE = json.loads((REF_DIR / "analysis-reference.json").read_text(encoding="utf-8"))
 CADENCE = 120.0 / 86400.0
-ON = {"enabled": True}
+ON = {"version": 2, "enabled": True}
 
 
 def _reference_module():
@@ -353,7 +353,7 @@ def test_p5_correlated_noise_never_lowers_the_per_event_error():
 
 def test_p6_an_undetermined_noise_model_makes_the_gate_inconclusive():
     data = synthetic.scenario_data("planet", 0)
-    analysis = analyze_data(data, _plan({"enabled": True, "b_min": 100_000}))
+    analysis = analyze_data(data, _plan({**ON, "b_min": 100_000}))
     snr = _test(analysis, "snr")
     assert snr.status.value == "INCONCLUSIVE"
     assert "noise model undetermined" in snr.message
