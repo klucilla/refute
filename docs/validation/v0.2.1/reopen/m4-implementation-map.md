@@ -630,6 +630,73 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 23 (2026-10-18, declared after the first run of piece 7): the results, four failures and their mechanisms, and the subtraction before the detrending
+
+**The first run** (`62293af`'s tests on the first code of piece 7; JUnit: 26 tests, 4 failures),
+recorded as found:
+
+| Case | Result | Mechanism (diagnosed by `.cache` scripts that change nothing, on the same curves) |
+|---|---|---|
+| D5 | FAIL: 947 of the 1050 box cadences in `C_last` | a defect of the construction: the box is the synthetic trapezoid (ingress 15% of `T14`), so its ingress and egress cadences are shallower than `k_clip σ_w`; all 742 flat-bottom cadences are clipped |
+| Q2 | FAIL of a precondition: 31 bins at `f*`, not 30 | a defect of the construction: `f*` is the grid frequency nearest 1/0.7 d, not 1/0.7 d itself, so over 40 cycles the phase drifts into one more bin; the purpose of the precondition (fewer than 40 bins at `f*`) holds |
+| H | FAIL of a precondition: 6 calls of `measure_windows`, not 2 | a defect of the test: the spies counted the calls of the three rounds of the holdout, each with its own train frequencies, not the 2020 round's only |
+| I2 white | **FAIL of the criterion**: after the prewhitening, a pure sinusoid leaves a final candidate passing the gate (SNR 59.5, `P` 4.665 d, 3558 ppm, 6.3 h) | **a defect of the design with an identified mechanism**, below; I2 correlated, I1 (both) and the other cases passed |
+
+**The mechanism of I2.** The prewhitening accepted the sinusoid (1/0.7 d, 2746 ppm on `L1`, `h`
+0.999) and two side components of about 110 ppm (1.570 and 1.639 per day); the residual rms on
+`L1 − S` is 656 ppm against 600 ppm of noise. The search on `L1 − S` found a candidate at 4.665 d
+(430 ppm, 4.2 h, SNR 24.8), and the reanalysis made it 3558 ppm. On the same curve and the same
+search candidate, the final candidate measured on three reanalysis curves:
+
+| Reanalysis curve | Depth | BLS SNR |
+|---|---:|---:|
+| `L1m − S′(L1m)` (Amendment 22 as written) | 3558 ppm | 220 |
+| `L1 − S′(L1)` (a literal reading of revision 3's table 1.4) | 431 ppm | 25.1 |
+| `detrend_masked(raw − S′(raw))`: the components refitted on the raw curve, subtracted, then the masked detrending | **60 ppm** | **3.1** |
+| M3, `L1m` with no prewhitening | 3790 ppm | 61.3 |
+
+The detrending (a robust local quadratic on a 1 d window) cannot follow a variability whose period
+is comparable to its window: it turns the 0.7 d sinusoid into a distorted, attenuated signal on
+`L1` (whose residual, after two harmonics, makes the search's spurious candidate), and with the
+candidate's transits masked it interpolates the trend across each masked span, leaving there a dip
+of the order of the variability's amplitude (the 3558 and 3790 ppm). Removing the components from
+the raw curve **before** the detrending removes both: the detrending then works on a curve without
+the variability. This is the reason for the change below; it was found by the result, so it is
+declared after it, and it is retested on new seeds with the same criteria and the same number of
+curves per case.
+
+**The change (piece 7, the M4 path only).** The components are still **found** by `prewhiten` on
+`L1` (revision 3, 7: the detrended curve; the frequencies and their order do not change). They are
+**subtracted from the raw normalized curve before each detrending**, refitted there:
+
+| Operation | Curve on the M4 path (from this amendment) |
+|---|---|
+| global search | `detrend(raw − S_raw)`, `S_raw = refit(raw, components, no mask)` |
+| the reanalysis (`finalize_candidate`, gate, per-event depths, timing) | `detrend_masked(raw − S′_raw)`, `S′_raw = refit(raw, components, the search candidate's mask on the raw cadences)`, the same masked detrending as today |
+| holdout train search | `detrend(train_raw − S_train,raw)`, components by `prewhiten` on the train curve detrended without a mask |
+| holdout train refit, gate and timing | `detrend_masked(train_raw − S′_train,raw)` |
+| holdout train replicas | the masked train detrending **without** the subtraction (as in Amendment 22), with the train fundamentals in the baseline |
+| hidden windows | unchanged (Amendment 22): the train fundamentals in each window's baseline |
+
+`refit` is unchanged (one joint weighted fit, per-sector constants and amplitudes, no clipping, the
+mask's cadences without weight); on the raw curve its `σ_w` is A1's at `n` = 1 on the raw curve.
+With no component accepted, every curve is bit-equal to the M3 one, as before. A singular raw refit
+gives `S_raw` (or `S′_raw`) = 0 and its reason is recorded. *A risk recorded:* the raw curve keeps
+the slow trends that the detrending would remove; the refit does not model them, so they can bias
+the refitted amplitudes and inflate the raw `σ_w`; the cases measure the consequence.
+
+**The test corrections, each declared here after the result.**
+
+- D5: "every box cadence" becomes **every flat-bottom cadence** (`|offset| ≤ T14/2 − ingress`),
+  the cadences that are at the full depth; a new seed (6130).
+- Q2: the precondition becomes its purpose: **fewer than 40 bins** with at least 3 kept cadences
+  at the chosen `f*` (and `f*` within one grid step of 1/0.7 d); a new seed (6131).
+- H: the spies record the calls of the **2020 round only** (the round run by itself through the
+  holdout's round function), and the scenario is generated with a new seed (6132).
+- I2: the same criterion and the same two curves (white, correlated), new seeds (6133, 6134).
+
+The cases that passed keep their seeds and run again on the changed code.
+
 ## Amendment 22 (2026-10-18): piece 7, the prewhitening (revision 3, 7; revision 4, 4), before its tests
 
 Declared before the tests and the code of piece 7. It adds no criterion and no plan field (the

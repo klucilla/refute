@@ -850,9 +850,13 @@ class RoundPlan:
     ephemeris: Ephemeris | None = None
     windows: list[PredictedWindow] = field(default_factory=list)
     train_info: dict[str, Any] = field(default_factory=dict)
-    # M4 piece 5 (switch on): the masked train curve and its per-point sigma, for the replicas.
+    # M4 piece 5 (switch on): the masked train curve and its per-point sigma, for the replicas
+    # (from piece 7 the masked train curve without S'_train: map Amendment 22).
     train_flat: LightCurveData | None = None
     train_sigma: np.ndarray | None = None
+    # M4 piece 7: the train fundamentals in decreasing train amplitude, for every window's
+    # baseline (the hidden replicas, the transit and control windows, the train replicas).
+    frequencies: list[float] = field(default_factory=list)
 
 
 def plan_round(
@@ -871,8 +875,25 @@ def plan_round(
             RoundResult(hidden_year, TestStatus.INCONCLUSIVE, "no training data", metrics=empty)
         )
 
+    corrections_on = plan.gauntlet.corrections.active
     train_flat = detrend(train_raw, plan.detrend)
-    search = search_period(train_flat, plan.search)
+    search_curve = train_flat
+    pw_train = None
+    if corrections_on:
+        # M4 piece 7 (map Amendment 22): the train search on the train curve minus its own S
+        from refute.packs.tess.prewhiten import prewhiten
+
+        pw_train = prewhiten(train_flat, plan)
+        empty = {**empty, "prewhitening": pw_train.to_dict()}
+        if pw_train.components:
+            search_curve = LightCurveData(
+                train_flat.time,
+                train_flat.flux - pw_train.model,
+                train_flat.flux_err,
+                train_flat.sector,
+                train_flat.year,
+            )
+    search = search_period(search_curve, plan.search)
     train: Candidate | None = search.candidate
     if train is None or not (train.depth > 0):
         return RoundPlan(
@@ -884,18 +905,31 @@ def plan_round(
             )
         )
 
-    corrections_on = plan.gauntlet.corrections.active
     extra: dict[str, Any] = {}
     if corrections_on:
         # M4 piece 5 (map Amendment 12 and its addendum): the train candidate refitted on the
         # masked train curve, then the gate of Amendment 7; an undetermined gate ends the round.
         from refute.packs.tess.pipeline import _bls_gate
+        from refute.packs.tess.prewhiten import refit as refit_components
         from refute.packs.tess.rednoise import event_noise
         from refute.packs.tess.search import finalize_candidate
 
         mask_half = plan.detrend.transit_mask_half_width_durations * train.duration
         train_mask = transit_mask(train_raw.time, train.period, train.t0, mask_half)
         train_flat2 = detrend(train_raw, plan.detrend, mask=train_mask)
+        replicas_curve = train_flat2  # the train replicas: without S'_train (Amendment 22)
+        pw_record = pw_train.to_dict() if pw_train is not None else {}
+        if pw_train is not None and pw_train.components:
+            on_curve = transit_mask(train_flat2.time, train.period, train.t0, mask_half)
+            fitted = refit_components(train_flat2, pw_train.components, on_curve, plan)
+            pw_record["refit_reason"] = fitted.reason
+            train_flat2 = LightCurveData(
+                train_flat2.time,
+                train_flat2.flux - fitted.model,
+                train_flat2.flux_err,
+                train_flat2.sector,
+                train_flat2.year,
+            )
         sigma = per_point_sigma(
             train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
         )
@@ -909,6 +943,7 @@ def plan_round(
             "train_gate": gate.to_dict(),
             # the marker of map Amendment 17: this round ran the M4 holdout path
             "corrections_path": "m4_holdout",
+            "prewhitening": pw_record,
         }
         if gate.status is TestStatus.INCONCLUSIVE:
             return RoundPlan(
@@ -1034,7 +1069,8 @@ def plan_round(
             windows=windows,
         )
     if corrections_on:
-        return RoundPlan(None, train, ephemeris, windows, train_info, train_flat2, sigma)
+        freqs = pw_train.fundamentals if pw_train is not None else []
+        return RoundPlan(None, train, ephemeris, windows, train_info, replicas_curve, sigma, freqs)
     return RoundPlan(None, train, ephemeris, windows, train_info)
 
 
@@ -1204,9 +1240,11 @@ def train_replica_stats(
     cadence: float,
     plan: TessTestPlan,
     grid: np.ndarray,
+    frequencies: Sequence[float] = (),
 ) -> tuple[list[int], list[float]]:
     """The train replicas' depths on the masked train curve (Amendment 12), at every dP:
-    ``(n_rep(dP), var_rep(dP))``."""
+    ``(n_rep(dP), var_rep(dP))``; from piece 7 the window baseline carries the train
+    fundamentals, as the hidden windows' does (Amendment 22)."""
     params = plan.gauntlet.holdout_by_year
     reads = []
     for r in replicas:
@@ -1228,6 +1266,7 @@ def train_replica_stats(
                 in_window,
                 center,
                 duration / 2.0,
+                frequencies,
                 cadence=cadence,
                 coverage=params.min_window_coverage,
             )
@@ -1313,8 +1352,9 @@ def _round_corrected(
     train_spans = _train_spans(prepared.train_flat)
     train_windows = _predict_windows(eph, train.duration, train_spans, params)
     train_reps = register_replicas(eph, train_windows, train_spans)
+    freqs = list(prepared.frequencies)  # M4 piece 7: the train fundamentals (Amendment 22)
     counts, variances = train_replica_stats(
-        prepared.train_flat, train_reps, eph, train.duration, cadence, plan, grid
+        prepared.train_flat, train_reps, eph, train.duration, cadence, plan, grid, frequencies=freqs
     )
     cap["train_n_rep"] = counts
     cap["train_var_rep"] = variances
@@ -1357,7 +1397,17 @@ def _round_corrected(
         return None
 
     result = measure_with_replicas(
-        hidden, transit, replicas, eph, train.duration, cadence, plan, hidden_sectors, grid, barrier
+        hidden,
+        transit,
+        replicas,
+        eph,
+        train.duration,
+        cadence,
+        plan,
+        hidden_sectors,
+        grid,
+        barrier,
+        frequencies=freqs,
     )
     if "hidden_n_rep" not in cap and result.get("stats") is not None:
         record_hidden(result["stats"])
@@ -1399,6 +1449,7 @@ def _round_corrected(
             hidden_sectors,
             grid,
             result["stats"],
+            frequencies=freqs,
         )
         metrics["control_phase05_snr"] = ctl.get("snr")
         metrics["control_phase05_depth_ppm"] = (

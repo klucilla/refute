@@ -48,6 +48,7 @@ from refute.packs.tess.gauntlet import (
 )
 from refute.packs.tess.holdout import HoldoutOutcome, run_holdout
 from refute.packs.tess.params import TessTestPlan
+from refute.packs.tess.prewhiten import Prewhitening, prewhiten, refit
 from refute.packs.tess.rednoise import EventNoise, bls_beta, event_noise
 from refute.packs.tess.search import SearchResult, finalize_candidate, search_period
 from refute.packs.tess.timing import corrected_transit_times
@@ -69,6 +70,25 @@ class GauntletOutcome:
     timing: dict | None = None
     # The M4 parts that actually ran in the global analysis (map Amendment 17); empty on M3.
     executed: list[str] = field(default_factory=list)
+    # M4 piece 7 (map Amendment 22): the global components and the reason of a failed refit S'.
+    prewhitening: Prewhitening | None = None
+    refit_reason: str | None = None
+
+
+def _minus(curve: LightCurveData, model: np.ndarray) -> LightCurveData:
+    return LightCurveData(curve.time, curve.flux - model, curve.flux_err, curve.sector, curve.year)
+
+
+def global_prewhitening(data: TessData, plan: TessTestPlan) -> Prewhitening | None:
+    """The global components of M4 piece 7 on ``L1`` (the corrections active only)."""
+    if not plan.gauntlet.corrections.active:
+        return None
+    return prewhiten(detrend(data.lc, plan.detrend), plan)
+
+
+def search_curve(flat: LightCurveData, pw: Prewhitening | None) -> LightCurveData:
+    """``L1 − S`` (``L1`` itself when nothing was accepted, so the curve is bit-equal)."""
+    return _minus(flat, pw.model) if pw is not None and pw.components else flat
 
 
 @dataclass
@@ -150,13 +170,21 @@ def attack_candidate(
     plan: TessTestPlan,
     catalogs: list[EbEntry] | None = None,
     catalog_scan: dict | None = None,
+    prewhitening: Prewhitening | None = None,
 ) -> GauntletOutcome:
     """Gauntlet tests a-d and the v0.2 battery against a candidate found on all data.
 
     ``catalogs`` is None when the claim has no eclipsing-binary catalog attached;
     the ``eb_catalog`` test is then not part of the gauntlet (the report says so).
+    With the corrections active, ``prewhitening`` is the global operation of M4 piece 7; when it
+    is not given (the adapters), it is computed here by the same call (map Amendment 22).
     """
     gp = plan.gauntlet
+    pw = prewhitening
+    if gp.corrections.active and pw is None:
+        pw = global_prewhitening(data, plan)
+    # the M4 parts that actually ran (map Amendment 17, the marker)
+    executed: list[str] = ["prewhitening"] if pw is not None else []
     if candidate is None:
         tests = [
             check_snr(None, gp.snr),
@@ -167,12 +195,22 @@ def attack_candidate(
         ]
         if catalogs is not None:
             tests.append(_not_run("eb_catalog", Severity.FATAL, "no candidate"))
-        return GauntletOutcome(None, None, None, None, tests, None)
+        return GauntletOutcome(
+            None, None, None, None, tests, None, executed=executed, prewhitening=pw
+        )
 
     cadence = plan.data.exptime_seconds / 86400.0
     mask_half = plan.detrend.transit_mask_half_width_durations * candidate.duration
     mask = transit_mask(data.lc.time, candidate.period, candidate.t0, mask_half)
     flat = detrend(data.lc, plan.detrend, mask=mask)
+    refit_reason = None
+    if pw is not None and pw.components:
+        # M4 piece 7: L2 = L1m − S', the global frequencies refitted with the search candidate's
+        # transits masked, the mask evaluated on L1m's own cadences (map Amendment 22)
+        on_l1m = transit_mask(flat.time, candidate.period, candidate.t0, mask_half)
+        fitted = refit(flat, pw.components, on_l1m, plan)
+        refit_reason = fitted.reason
+        flat = _minus(flat, fitted.model)
     sigma = per_point_sigma(
         flat, transit_mask(flat.time, candidate.period, candidate.t0, mask_half)
     )
@@ -180,7 +218,6 @@ def attack_candidate(
         flat, candidate.period, candidate.duration, plan.search, candidate.sde, sigma
     )
     noise = None
-    executed: list[str] = []  # the M4 parts that actually ran (map Amendment 17, the marker)
     if gp.corrections.active:
         # M4 piece 2: the A1 noise model for every per-event measurement and the gate.
         noise = event_noise(flat, None, final.period, final.t0, final.duration, plan)
@@ -226,7 +263,9 @@ def attack_candidate(
             scan_half_width_durations=gp.holdout_by_year.timing_scan_half_width_durations,
         )
     ephemeris = fit_linear_ephemeris(times) if len(times) >= 2 else None
-    return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris, timing, executed)
+    return GauntletOutcome(
+        final, flat, primary, secondary, tests, ephemeris, timing, executed, pw, refit_reason
+    )
 
 
 def _bls_gate(
@@ -311,8 +350,9 @@ def analyze_data(
     catalog_scan: dict | None = None,
 ) -> Analysis:
     flat = detrend(data.lc, plan.detrend)
-    search = search_fn(flat, plan.search)
-    gauntlet = attack_candidate(data, search.candidate, plan, catalogs, catalog_scan)
+    pw = prewhiten(flat, plan) if plan.gauntlet.corrections.active else None  # M4 piece 7
+    search = search_fn(search_curve(flat, pw), plan.search)
+    gauntlet = attack_candidate(data, search.candidate, plan, catalogs, catalog_scan, pw)
     # Blind holdout: raw data and sector metadata only. Never the global candidate.
     holdout = run_holdout(data.lc, data.sectors, plan)
     return conclude_analysis(search, flat, gauntlet, holdout, catalogs is not None)
@@ -533,13 +573,21 @@ def build_result(
             "version": plan.gauntlet.corrections.version,
             "executed": executed,
         }
+        pw = analysis.gauntlet.prewhitening
+        if pw is not None:  # M4 piece 7 (map Amendment 22); the trains are in the rounds
+            record["corrections"]["prewhitening"] = {
+                "global": pw.to_dict(),
+                "refit_reason": analysis.gauntlet.refit_reason,
+            }
     return record
 
 
 class TessSearch:
     def run(self, data: TessData, params: dict[str, Any]) -> SearchResult:
         plan = TessTestPlan.model_validate(params)
-        return search_period(detrend(data.lc, plan.detrend), plan.search)
+        flat = detrend(data.lc, plan.detrend)
+        pw = prewhiten(flat, plan) if plan.gauntlet.corrections.active else None  # M4 piece 7
+        return search_period(search_curve(flat, pw), plan.search)
 
 
 class TessGauntlet:
