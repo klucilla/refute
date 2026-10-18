@@ -52,6 +52,7 @@ import math
 import os
 import re
 import shutil
+import signal
 import stat
 import subprocess
 import sys
@@ -60,7 +61,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import UTC, datetime
 from enum import Enum
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from refute.core.canonical import canonical_bytes
@@ -118,8 +119,20 @@ BASE_ENV = {
 _NETWORK = re.compile(
     r"(Tunnel connection failed|403 Forbidden|CONNECT tunnel failed|Could not resolve host|"
     r"Temporary failure in name resolution|Connection (?:reset|refused|timed out)|"
-    r"Read timed out|ConnectTimeoutError|NewConnectionError|Network is unreachable)",
+    r"Read timed out|ConnectTimeoutError|NewConnectionError|Network is unreachable|"
+    r"CERTIFICATE_VERIFY_FAILED|SSLError|SSL: |certificate verify failed|"
+    r"Failed to fetch|failed to download|HTTP error 5\d\d)",
     re.IGNORECASE,
+)
+# the only build failures counted as an error of the procedure itself (an artifact cause,
+# plan 8.2): the declared environment cannot be resolved (Codex review of 3dd85e2: reserve
+# artifact_build_ladder for a failure positively identified as the procedure's)
+_PROCEDURE = re.compile(
+    r"(No solution found when resolving|Because .+ we can conclude that .+ unsatisfiable|"
+    r"ResolutionImpossible|Could not find a version that satisfies the requirement|"
+    r"No matching distribution found for|Could not solve for environment specs|"
+    r"LibMambaUnsatisfiableError|nothing provides .+ needed by|"
+    r"does not exist \(os error 2\)|No such file or directory: '/work/)",
 )
 
 
@@ -238,16 +251,27 @@ def classify_build(rung: ld.Rung, result: RunResult | None) -> ld.RungResult:
         return ld.RungResult(orc.Outcome.OPERATIONAL_GUARD, None, f"stopped: {result.stopped}")
     if result.exit_code == 0:
         return ld.RungResult(orc.Outcome.COMPLETED)
-    text = result.log_path.read_text(encoding="utf-8", errors="replace")[-200_000:]
+    text = result.log_path.read_text(encoding="utf-8", errors="replace")
     if result.exit_code == EXIT_NOT_SUPPORTED and "version 1 does not build" in text:
         return ld.RungResult(orc.Outcome.REFUTE_ERROR, None, "a Dockerfile: not built by version 1")
-    match = _NETWORK.search(text)
-    if match:
+    if result.exit_code in (137, -9):
+        # killed: out of memory or a signal, never the artifact's (Codex review of 3dd85e2)
+        return ld.RungResult(orc.Outcome.OPERATIONAL_GUARD, None, "the build was killed (137)")
+    network = _NETWORK.search(text)
+    if network:
         return ld.RungResult(
-            orc.Outcome.FAILED, FailureCause.TRANSIENT_NETWORK, f"network: {match.group(0)}"
+            orc.Outcome.FAILED, FailureCause.TRANSIENT_NETWORK, f"network: {network.group(0)}"
         )
+    procedure = _PROCEDURE.search(text)
+    if procedure:
+        # an error of the procedure itself, positively identified: the declared
+        # environment cannot be resolved
+        return ld.RungResult(
+            orc.Outcome.FAILED, FailureCause.BUILD_LADDER, f"procedure: {procedure.group(0)}"
+        )
+    # anything else is undetermined: it stops the ladder and is never the artifact's cause
     return ld.RungResult(
-        orc.Outcome.FAILED, FailureCause.BUILD_LADDER, f"exit code {result.exit_code}"
+        orc.Outcome.FAILED, FailureCause.UNDETERMINED, f"exit code {result.exit_code}"
     )
 
 
@@ -258,25 +282,43 @@ def _safe(cid: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]", "_", cid)
 
 
+def _inside(root: Path, path: Path) -> bool:
+    r = os.path.realpath(root)
+    return os.path.commonpath([r, os.path.realpath(path)]) == r
+
+
 def _copy_repo(repo: Path, dest: Path) -> None:
+    """A copy of the repository (no .git). A symbolic link of the repository that resolves
+    outside it is refused before any run (Codex review of 3dd85e2): the paper cannot run,
+    on Refute's side."""
     shutil.copytree(repo, dest, ignore=shutil.ignore_patterns(".git"), symlinks=True)
     for p in [dest, *dest.rglob("*")]:
         if p.is_symlink():
+            if not _inside(dest, p):
+                raise ProductionError(
+                    f"the repository has a link that leaves it: {p.relative_to(dest)}"
+                )
             continue
         mode = p.stat().st_mode
         # a run (another uid) may write its outputs anywhere in its own copy
         p.chmod(mode | stat.S_IRWXO if p.is_dir() else mode | stat.S_IROTH | stat.S_IWOTH)
 
 
-def _link_data(fetched: Path, target: Path) -> None:
-    target.parent.mkdir(parents=True, exist_ok=True)
-    fetched.chmod(0o444)  # the canonical file: read only for everyone, owned by the engine
-    if target.exists() or target.is_symlink():
-        raise ProductionError(f"{target} exists in the repository copy: the data path collides")
-    os.link(fetched, target)
+def check_data_layout(layout: Mapping[str, str]) -> None:
+    """Each dataset's path in a run's folder: relative, no '..', not under .refute."""
+    for name, rel in layout.items():
+        posix = PurePosixPath(rel)
+        if posix.is_absolute() or not posix.parts or ".." in posix.parts or "\\" in rel:
+            raise ProductionError(f"data path of {name} must be relative, without '..': {rel!r}")
+        if posix.parts[0] == ".refute":
+            raise ProductionError(f"data path of {name} is under .refute: {rel!r}")
 
 
 def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict[str, Path]:
+    """One copy of the repository per container. The datasets are not copied: a run gets
+    them as read-only bind mounts (``data_mounts``), so it can neither change nor replace
+    them (Codex review of 3dd85e2)."""
+    check_data_layout(setup.data_layout)
     ws_root = setup.root / "ws"
     ws_root.mkdir(parents=True)
     workspaces = {}
@@ -284,13 +326,25 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
         folder = ws_root / _safe(cid)
         _copy_repo(setup.repo, folder)
         if not cid.startswith("setup/"):
-            for name, rel in setup.data_layout.items():
-                evidence = setup.datasets[name]
-                if evidence.fetch.path is None:
-                    continue  # absent: the data_present gate records it
-                _link_data(Path(evidence.fetch.path), folder / rel)
+            for rel in setup.data_layout.values():
+                target = folder / PurePosixPath(rel)
+                if target.exists() or target.is_symlink():
+                    raise ProductionError(f"{rel} exists in the repository: the data path collides")
+                if not _inside(folder, target.parent):
+                    raise ProductionError(f"the data path {rel} leaves the run's folder")
         workspaces[cid] = folder
     return workspaces
+
+
+def data_mounts(setup: PaperSetup) -> tuple[tuple[str, str], ...]:
+    mounts = []
+    for name, rel in setup.data_layout.items():
+        path = setup.datasets[name].fetch.path
+        if path is None:
+            continue  # absent: the data_present gate records it
+        Path(path).chmod(0o444)  # the canonical file: read only for everyone
+        mounts.append((str(Path(path).resolve()), rel))
+    return tuple(mounts)
 
 
 # ---- the harness ----------------------------------------------------------------------------
@@ -321,7 +375,7 @@ def build_harness(
                 base = setup.micromamba_image
             plans[folder] = ContainerPlan(base, network="proxy", commit_as=image, read_only=False)
         else:
-            plans[folder] = ContainerPlan(image)
+            plans[folder] = ContainerPlan(image, data_mounts=data_mounts(setup))
     backend = DockerBackend(setup.paper, setup.limits, plans)
     rung_by_name: dict[str, ld.Rung] = {}
 
@@ -342,7 +396,8 @@ def build_harness(
         timing_maxima=setup.timing,
         base_env={**BASE_ENV, **setup.extra_env},
         parent_usage=backend.parent_usage,
-        tolerance_usec=tolerance_usec(len(workspaces)),
+        # T from the containers that actually started (Codex review of 3dd85e2)
+        tolerance_usec=tolerance_usec,
         after_setup=after_setup,
     )
     return harness, backend
@@ -399,9 +454,20 @@ def write_dossier(
 def run_production(
     setup: PaperSetup, claim_file: Mapping[str, Any], out: Path,
     image_digests: Mapping[str, str], after_setup: Callable[[], None] | None = None,
+    stop_on_sigterm: bool = False,
 ) -> ig.PaperOutcome:  # fmt: skip
     started = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    harness, _backend = build_harness(setup, claim_file, after_setup)
+    harness, backend = build_harness(setup, claim_file, after_setup)
+    if stop_on_sigterm:
+        # systemctl stop sends SIGTERM to the engine: its own containers (by id) are killed
+        # first, so stopping the paper's unit stops every container of the paper (Codex
+        # review of 3dd85e2: the containers live in another slice than the unit)
+        def stop(signum: int, frame: Any) -> None:
+            killed = backend.kill_active()
+            print(f"SIGTERM: killed {len(killed)} container(s); the paper stops", flush=True)
+            raise SystemExit(143)
+
+        signal.signal(signal.SIGTERM, stop)
     outcome = ig.run_paper(claim_file, harness)
     write_dossier(out, setup, claim_file, outcome, image_digests, started)
     return outcome
@@ -523,7 +589,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "micromamba": args.micromamba_image,
         "base": claim_file["test_plan"]["build"]["base_image"],
     }
-    outcome = run_production(setup, claim_file, args.out, images, hook)
+    outcome = run_production(setup, claim_file, args.out, images, hook, stop_on_sigterm=True)
     print(outcome_summary(outcome), flush=True)
     return 0
 

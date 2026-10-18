@@ -244,7 +244,7 @@ class PaperRunner:
         accountant: bg.Accountant,
         *,
         parent_usage: Callable[[], int] | None = None,
-        tolerance_usec: int | None = None,
+        tolerance_usec: int | Callable[[int], int] | None = None,
         timing_maxima: TimingMaxima | None = None,
         after_setup: Callable[[], None] | None = None,
     ) -> None:
@@ -254,7 +254,13 @@ class PaperRunner:
             raise ValueError("the accountant must be new")
         if (parent_usage is None) != (tolerance_usec is None):
             raise ValueError("parent_usage and tolerance_usec are given together")
-        if tolerance_usec is not None and (type(tolerance_usec) is not int or tolerance_usec < 0):
+        # T is a number, or a function of the number of containers that started (1.4a:
+        # n_containers; Codex review of 3dd85e2: never the planned ones that did not run)
+        if (
+            tolerance_usec is not None
+            and not callable(tolerance_usec)
+            and (type(tolerance_usec) is not int or tolerance_usec < 0)
+        ):
             raise ValueError("tolerance_usec must be a non-negative integer of microseconds")
         self.plan = plan
         self.backend = backend
@@ -540,7 +546,13 @@ class PaperRunner:
             complete = False
             if not out.stopped:
                 try:
-                    complete = acc.check_completeness(self.parent_usage(), self.tolerance_usec)
+                    tolerance = self.tolerance_usec
+                    if callable(tolerance):
+                        started = sum(len(s.containers) for s in out.steps)
+                        tolerance = tolerance(started)
+                        if type(tolerance) is not int or tolerance < 0:
+                            raise ValueError("the tolerance function gave no valid T")
+                    complete = acc.check_completeness(self.parent_usage(), tolerance)
                 except Exception as exc:
                     self._stop("the completeness check failed: " + _error(exc))
             out.completeness = COMPLETENESS_COMPLETE if complete else COMPLETENESS_INVALID

@@ -5,8 +5,9 @@
 # fixed by the paper id). Run by the agent over SSH, after the maintainer's approval of the
 # paper's run (the first run of third-party code needs that approval, V4).
 #   scripts/vm/launch-paper.sh <paper> <claim.json> [--data name=path ...] [--micromamba-image img]
-# Stop: sudo systemctl stop refute-<paper>.service (its containers are killed with their
-# slice), or the whole VM with .cache/vm/stop-all.ps1 on the host.
+# Stop: sudo systemctl stop refute-<paper>.service (the engine gets SIGTERM and kills its
+# own running containers by id before it exits: production.run_production), or the whole
+# VM with .cache/vm/stop-all.ps1 on the host.
 set -euo pipefail
 PAPER=${1:?paper id}; CLAIM=${2:?resolved claim file}; shift 2
 BASE=/home/refute/refute-run/papers/$PAPER

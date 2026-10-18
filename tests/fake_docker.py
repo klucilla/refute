@@ -56,7 +56,8 @@ if command == "create":
     # the image is the first argument that is not an option or an option's value
     flags_with_value = set(
         "--name --cgroup-parent --cpu-period --cpu-quota --memory --memory-swap --pids-limit "
-        "--cap-drop --security-opt --mount --workdir --network --env --tmpfs --user".split()
+        "--cap-drop --security-opt --mount --workdir --network --env --tmpfs --user "
+        "--entrypoint".split()
     )
     i = 0
     while i < len(rest):
@@ -105,6 +106,10 @@ elif command == "start":
     rec["exit"] = 137 if killed.exists() else code
     (state / f"{cid}.json").write_text(json.dumps(rec), encoding="utf-8")
     sys.exit(rec["exit"])
+elif command == "image":
+    # image inspect --format '{{json .Config.Volumes}}' <image>: an image named "...volume..."
+    # plays one that declares a VOLUME
+    print('{"/data":{}}' if "volume" in args[-1] else "null")
 elif command == "kill":
     (state / f"{args[-1]}.killed").write_text("", encoding="ascii")
 elif command == "inspect":

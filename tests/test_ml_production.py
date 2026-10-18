@@ -108,6 +108,13 @@ def test_classify_build(tmp_path):
     )
     assert proc.cause is FailureCause.BUILD_LADDER
     assert pd.classify_build(rung, None).outcome is orc.Outcome.REFUTE_ERROR
+    # Codex review of 3dd85e2: only a positively identified procedure error is the artifact's
+    killed = pd.classify_build(rung, result(tmp_path, 137, log="Killed\n"))
+    assert killed.outcome is orc.Outcome.OPERATIONAL_GUARD
+    tls = pd.classify_build(rung, result(tmp_path, 1, log="SSL: CERTIFICATE_VERIFY_FAILED"))
+    assert tls.cause is FailureCause.TRANSIENT_NETWORK
+    other = pd.classify_build(rung, result(tmp_path, 1, log="gcc: command not found\n"))
+    assert other.outcome is orc.Outcome.FAILED and other.cause is FailureCause.UNDETERMINED
 
 
 def test_margin_and_tolerance():
@@ -121,28 +128,55 @@ def test_base_env_turns_trackers_off():
     assert pd.BASE_ENV["HF_HUB_OFFLINE"] == "1"
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="hard links and modes as on the VM (Linux)")
-def test_workspaces_link_data_read_only(tmp_path, monkeypatch):
+def _setup(tmp_path, files, layout):
     from refute.packs.ml import integration as ig
     from refute.packs.ml.fetch import ArtifactSpec, FetchResult
 
-    r = repo(tmp_path, {"train.py": "print(1)\n", "requirements.txt": "numpy\n"})
+    r = repo(tmp_path, files)
     data = tmp_path / "fetched.npz"
     data.write_bytes(b"data")
     spec = ArtifactSpec("d", "https://example.org/d", "0" * 64, 4)
     evidence = ig.DatasetEvidence(FetchResult(spec, data, False, (), None), {"test": 1})
-    setup = pd.PaperSetup(
-        "p1", tmp_path / "run", r, {"d": evidence}, {"d": "data/dataset.npz"}, LIMITS, TIMING
-    )
+    return pd.PaperSetup("p1", tmp_path / "run", r, {"d": evidence}, layout, LIMITS, TIMING), data
+
+
+def test_datasets_are_mounted_read_only_not_copied(tmp_path, monkeypatch):
+    from refute.packs.ml import integration as ig
+
+    setup, data = _setup(tmp_path, {"train.py": "print(1)\n"}, {"d": "data/dataset.npz"})
     monkeypatch.setattr(
         ig, "plan_container_ids", lambda cf: ["setup/build/requirements_compiled", "k1/base/s0"]
     )
     ws = pd.prepare_workspaces(setup, {})
     assert not (ws["k1/base/s0"] / ".git").exists()
-    linked = ws["k1/base/s0"] / "data" / "dataset.npz"
-    assert linked.read_bytes() == b"data" and os.stat(linked).st_ino == os.stat(data).st_ino
-    assert oct(os.stat(data).st_mode & 0o777) == "0o444"
-    assert not (ws["setup/build/requirements_compiled"] / "data").exists()
+    assert not (ws["k1/base/s0"] / "data" / "dataset.npz").exists()  # a mount, not a file
+    mounts = pd.data_mounts(setup)
+    assert mounts == ((str(data.resolve()), "data/dataset.npz"),)
+    if sys.platform != "win32":
+        assert oct(os.stat(data).st_mode & 0o777) == "0o444"
+
+
+def test_data_layout_must_stay_in_the_folder(tmp_path, monkeypatch):
+    from refute.packs.ml import integration as ig
+
+    monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ["k1/base/s0"])
+    for bad in ("../x.npz", "/etc/x", ".refute/x", "a\\b"):
+        setup, _ = _setup(
+            tmp_path / bad.replace("/", "_").replace("\\", "_"), {"t.py": ""}, {"d": bad}
+        )
+        with pytest.raises(pd.ProductionError):
+            pd.prepare_workspaces(setup, {})
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="symbolic links as on the VM (Linux)")
+def test_a_repository_link_that_leaves_it_is_refused(tmp_path, monkeypatch):
+    from refute.packs.ml import integration as ig
+
+    monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ["k1/base/s0"])
+    setup, _ = _setup(tmp_path, {"train.py": "print(1)\n"}, {})
+    (setup.repo / "secrets").symlink_to("/etc")
+    with pytest.raises(pd.ProductionError, match="leaves it"):
+        pd.prepare_workspaces(setup, {})
 
 
 def test_wait_for_run_phase(tmp_path):
