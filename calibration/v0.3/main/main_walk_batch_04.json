@@ -1,0 +1,1344 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:15:07Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 4,
+  "candidates": [
+    {
+      "position": 76,
+      "arxiv_id": "2405.20441",
+      "repo_url": "https://github.com/aiforsec/secure",
+      "arxiv": {
+        "versioned_id": "2405.20441v4",
+        "primary_category": "cs.CR",
+        "title": "SECURE: Benchmarking Large Language Models for Cybersecurity",
+        "abstract": "Large Language Models (LLMs) have demonstrated potential in cybersecurity applications but have also caused lower confidence due to problems like hallucinations and a lack of truthfulness. Existing benchmarks provide general evaluations but do not sufficiently address the practical and applied aspects of LLM performance in cybersecurity-specific tasks. To address this gap, we introduce the SECURE (Security Extraction, Understanding \\& Reasoning Evaluation), a benchmark designed to assess LLMs performance in realistic cybersecurity scenarios. SECURE includes six datasets focussed on the Industrial Control System sector to evaluate knowledge extraction, understanding, and reasoning based on industry-standard sources. Our study evaluates seven state-of-the-art models on these tasks, providing insights into their strengths and weaknesses in cybersecurity contexts, and offer recommendations for improving LLMs reliability as cyber advisory tools."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/aiforsec/secure",
+        "exists": true,
+        "full_name": "aiforsec/SECURE",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a2412e8ab4b6051ba7381d4f590cb48d9743c7c8",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/aiforsec/SECURE/blob/a2412e8ab4b6051ba7381d4f590cb48d9743c7c8/README.md",
+          "sha256": "3c193debb05d7147580b556aefb6ec1307fc836d45cf48039711be695445d2ed",
+          "bytes": 766
+        },
+        "root_names": [
+          "Dataset",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 77,
+      "arxiv_id": "2501.13662",
+      "repo_url": "https://github.com/adammoss/axicamb",
+      "arxiv": {
+        "versioned_id": "2501.13662v1",
+        "primary_category": "astro-ph.CO",
+        "title": "A Fast and Accurate Implementation of the Effective Fluid Approximation for Ultralight Axions",
+        "abstract": "We present a numerically efficient and accurate implementation of the Passaglia-Hu effective fluid approximation for ultralight axions (ULAs) within the Boltzmann code CAMB. This method is specifically designed to evolve the axion field accurately across cosmological timescales, mitigating the challenges associated with its rapid oscillations. Our implementation is based on the latest version of CAMB, ensuring compatibility with other cosmological codes., e.g. for calculating cosmological parameter constraints. Compared to exact solutions of the Klein-Gordon equation, our method achieves sub-percent accuracy in the CMB power spectrum across a broad range of axion masses, from $10^{-28}\\,\\mathrm{eV}$ to $10^{-24}\\,\\mathrm{eV}$. We perform Markov Chain Monte Carlo (MCMC) analyses incorporating our implementation, and find improved constraints on the axion mass and abundance compared to previous, simpler fluid-based approximations. For example, using \\Planck\\ PR4 and DESI BAO data, we find $2σ$ upper limits on the axion fraction $f_{\\rm ax} < 0.0082$ and physical density $Ω_{\\rm ax}h^2 < 0.0010$ for $m=10^{-28}$ eV. The code is publicly available at \\url{https://github.com/adammoss/AxiCAMB}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/adammoss/axicamb",
+        "exists": true,
+        "full_name": "adammoss/AxiCAMB",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "d94118d8a49cac8b44b0a27b5db02d087c9742b1",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.rst",
+          "url": "https://github.com/adammoss/AxiCAMB/blob/d94118d8a49cac8b44b0a27b5db02d087c9742b1/README.rst",
+          "sha256": "7029d6e277139de9dff61d997ff1f28da25b6368f39f57ed2b5c6467b38fb693",
+          "bytes": 3928
+        },
+        "root_names": [
+          ".gitattributes",
+          ".github",
+          ".gitignore",
+          ".gitmodules",
+          ".readthedocs.yml",
+          ".travis.yml",
+          "Dockerfile",
+          "LICENCE.txt",
+          "MANIFEST.in",
+          "README.rst",
+          "camb",
+          "docs",
+          "fortran",
+          "forutils",
+          "inifiles",
+          "pyproject.toml",
+          "requirements.txt",
+          "scripts",
+          "setup.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.CO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 78,
+      "arxiv_id": "2402.08946",
+      "repo_url": "https://github.com/jackmiller2003/tiny-gen",
+      "arxiv": {
+        "versioned_id": "2402.08946v1",
+        "primary_category": "cs.LG",
+        "title": "Measuring Sharpness in Grokking",
+        "abstract": "Neural networks sometimes exhibit grokking, a phenomenon where perfect or near-perfect performance is achieved on a validation set well after the same performance has been obtained on the corresponding training set. In this workshop paper, we introduce a robust technique for measuring grokking, based on fitting an appropriate functional form. We then use this to investigate the sharpness of transitions in training and validation accuracy under two settings. The first setting is the theoretical framework developed by Levi et al. (2023) where closed form expressions are readily accessible. The second setting is a two-layer MLP trained to predict the parity of bits, with grokking induced by the concealment strategy of Miller et al. (2023). We find that trends between relative grokking gap and grokking sharpness are similar in both settings when using absolute and relative measures of sharpness. Reflecting on this, we make progress toward explaining some trends and identify the need for further study to untangle the various mechanisms which influence the sharpness of grokking."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jackmiller2003/tiny-gen",
+        "exists": true,
+        "full_name": "jackmiller2003/tiny-gen",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9bf15d5f1a2eb51aaaee0e8589c60a02f7afdca2",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jackmiller2003/tiny-gen/blob/9bf15d5f1a2eb51aaaee0e8589c60a02f7afdca2/README.md",
+          "sha256": "3c512291d7c0b96c29b1284d0925f72b149c5211aea255a75f8d242147056064",
+          "bytes": 1682
+        },
+        "root_names": [
+          ".gitignore",
+          ".vscode",
+          "README.md",
+          "images",
+          "src",
+          "tests.py",
+          "tiny-gen.py",
+          "tools.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 79,
+      "arxiv_id": "2409.19342",
+      "repo_url": "https://github.com/pinxueguo/x-prompt",
+      "arxiv": {
+        "versioned_id": "2409.19342v1",
+        "primary_category": "cs.CV",
+        "title": "X-Prompt: Multi-modal Visual Prompt for Video Object Segmentation",
+        "abstract": "Multi-modal Video Object Segmentation (VOS), including RGB-Thermal, RGB-Depth, and RGB-Event, has garnered attention due to its capability to address challenging scenarios where traditional VOS methods struggle, such as extreme illumination, rapid motion, and background distraction. Existing approaches often involve designing specific additional branches and performing full-parameter fine-tuning for fusion in each task. However, this paradigm not only duplicates research efforts and hardware costs but also risks model collapse with the limited multi-modal annotated data. In this paper, we propose a universal framework named X-Prompt for all multi-modal video object segmentation tasks, designated as RGB+X. The X-Prompt framework first pre-trains a video object segmentation foundation model using RGB data, and then utilize the additional modality of the prompt to adapt it to downstream multi-modal tasks with limited data. Within the X-Prompt framework, we introduce the Multi-modal Visual Prompter (MVP), which allows prompting foundation model with the various modalities to segment objects precisely. We further propose the Multi-modal Adaptation Experts (MAEs) to adapt the foundation model with pluggable modality-specific knowledge without compromising the generalization capacity. To evaluate the effectiveness of the X-Prompt framework, we conduct extensive experiments on 3 tasks across 4 benchmarks. The proposed universal X-Prompt framework consistently outperforms the full fine-tuning paradigm and achieves state-of-the-art performance. Code: https://github.com/PinxueGuo/X-Prompt.git"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/pinxueguo/x-prompt",
+        "exists": true,
+        "full_name": "PinxueGuo/X-Prompt",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "01024c75542c16573fb27b66f9722513b014af3e",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/PinxueGuo/X-Prompt/blob/01024c75542c16573fb27b66f9722513b014af3e/README.md",
+          "sha256": "362600ee2310e7393b15e93d854f28a693fe585a83d9c72427e676ff0a78e2d0",
+          "bytes": 3133
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "configs",
+          "dataloaders",
+          "exp_arkittrack.sh",
+          "exp_rgbt.sh",
+          "exp_visevent.sh",
+          "lib",
+          "networks",
+          "requirements.txt",
+          "tools",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 80,
+      "arxiv_id": "2409.16546",
+      "repo_url": "https://github.com/AlignedQuant/AlignedKV",
+      "arxiv": {
+        "versioned_id": "2409.16546v2",
+        "primary_category": "cs.LG",
+        "title": "AlignedKV: Reducing Memory Access of KV-Cache with Precision-Aligned Quantization",
+        "abstract": "Model quantization has become a crucial technique to address the issues of large memory consumption and long inference times associated with LLMs. Mixed-precision quantization, which distinguishes between important and unimportant parameters, stands out among numerous quantization schemes as it achieves a balance between precision and compression rate. However, existing approaches can only identify important parameters through qualitative analysis and manual experiments without quantitatively analyzing how their importance is determined. We propose a new criterion, so-called 'precision alignment', to build a quantitative framework to holistically evaluate the importance of parameters in mixed-precision quantization. Our observations on floating point addition under various real-world scenarios suggest that two addends should have identical precision, otherwise the information in the higher-precision number will be wasted. Such an observation offers an essential principle to determine the precision of each parameter in matrix multiplication operation. As the first step towards applying the above discovery to large model inference, we develop a dynamic KV-Cache quantization technique to effectively reduce memory access latency. Different from existing quantization approaches that focus on memory saving, this work directly aims to accelerate LLM inference through quantifying floating numbers. The proposed technique attains a 25% saving of memory access and delivers up to 1.3x speedup in the computation of attention in the decoding phase of LLM, with almost no loss of precision."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/AlignedQuant/AlignedKV",
+        "exists": true,
+        "full_name": "AlignedQuant/AlignedKV",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "0f13217e7f14b0dc80efe85b874556f8e901b2ec",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AlignedQuant/AlignedKV/blob/0f13217e7f14b0dc80efe85b874556f8e901b2ec/README.md",
+          "sha256": "5e82d9ef66c85bb5aa68861f6a4ce3317b5f4d7d2054f811e4ec9323fb8e70dd",
+          "bytes": 2539
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "RULER.md",
+          "example.py",
+          "model",
+          "new_extension",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 81,
+      "arxiv_id": "2305.03395",
+      "repo_url": "https://github.com/larselund/sparsifying-bnns-with-lrt-and-nf",
+      "arxiv": {
+        "versioned_id": "2305.03395v1",
+        "primary_category": "stat.ML",
+        "title": "Sparsifying Bayesian neural networks with latent binary variables and normalizing flows",
+        "abstract": "Artificial neural networks (ANNs) are powerful machine learning methods used in many modern applications such as facial recognition, machine translation, and cancer diagnostics. A common issue with ANNs is that they usually have millions or billions of trainable parameters, and therefore tend to overfit to the training data. This is especially problematic in applications where it is important to have reliable uncertainty estimates. Bayesian neural networks (BNN) can improve on this, since they incorporate parameter uncertainty. In addition, latent binary Bayesian neural networks (LBBNN) also take into account structural uncertainty by allowing the weights to be turned on or off, enabling inference in the joint space of weights and structures. In this paper, we will consider two extensions to the LBBNN method: Firstly, by using the local reparametrization trick (LRT) to sample the hidden units directly, we get a more computationally efficient algorithm. More importantly, by using normalizing flows on the variational posterior distribution of the LBBNN parameters, the network learns a more flexible variational posterior distribution than the mean field Gaussian. Experimental results show that this improves predictive power compared to the LBBNN method, while also obtaining more sparse networks. We perform two simulation studies. In the first study, we consider variable selection in a logistic regression setting, where the more flexible variational distribution leads to improved results. In the second study, we compare predictive uncertainty based on data generated from two-dimensional Gaussian distributions. Here, we argue that our Bayesian methods lead to more realistic estimates of predictive uncertainty."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/larselund/sparsifying-bnns-with-lrt-and-nf",
+        "exists": true,
+        "full_name": "LarsELund/Sparsifying-BNNs-with-LRT-and-NF",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "82584ee134e1f61e4bffa2178b27b2b502bce89b",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/LarsELund/Sparsifying-BNNs-with-LRT-and-NF/blob/82584ee134e1f61e4bffa2178b27b2b502bce89b/README.md",
+          "sha256": "4a8358fcf54354643ba245d8690b663b882c7a9b5b792028372c7368a3a12635",
+          "bytes": 172
+        },
+        "root_names": [
+          "ANN classification",
+          "CNN classification",
+          "Extra simulation experiments",
+          "README.md",
+          "Tabular data with ECE WAIC",
+          "Tabular data",
+          "variable selection simulation"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: cancer, diagnostics"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 82,
+      "arxiv_id": "2307.08986",
+      "repo_url": "https://github.com/iiduka-researches/202307-memoryless",
+      "arxiv": {
+        "versioned_id": "2307.08986v3",
+        "primary_category": "math.NA",
+        "title": "Modified memoryless spectral-scaling Broyden family on Riemannian manifolds",
+        "abstract": "This paper presents modified memoryless quasi-Newton methods based on the spectral-scaling Broyden family on Riemannian manifolds. The method involves adding one parameter to the search direction of the memoryless self-scaling Broyden family on the manifold. Moreover, it uses a general map instead of vector transport. This idea has already been proposed within a general framework of Riemannian conjugate gradient methods where one can use vector transport, scaled vector transport, or an inverse retraction. We show that the search direction satisfies the sufficient descent condition under some assumptions on the parameters. In addition, we show global convergence of the proposed method under the Wolfe conditions. We numerically compare it with existing methods, including Riemannian conjugate gradient methods and the memoryless spectral-scaling Broyden family. The numerical results indicate that the proposed method with the BFGS formula is suitable for solving an off-diagonal cost function minimization problem on an oblique manifold."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/iiduka-researches/202307-memoryless",
+        "exists": true,
+        "full_name": "iiduka-researches/202307-memoryless",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "87f7a86fdd4e1739f3dc03dcc1716f0b715f668b",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/iiduka-researches/202307-memoryless/blob/87f7a86fdd4e1739f3dc03dcc1716f0b715f668b/README.md",
+          "sha256": "f8c649ec051ce91a9de6aae29953d8e691a69beb38ca38da75eb3e0aa139486b",
+          "bytes": 799
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "Pipfile",
+          "Pipfile.lock",
+          "README.md",
+          "results",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.NA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 83,
+      "arxiv_id": "2312.03298",
+      "repo_url": "https://github.com/tyraeldlee/diffpmae",
+      "arxiv": {
+        "versioned_id": "2312.03298v3",
+        "primary_category": "cs.CV",
+        "title": "DiffPMAE: Diffusion Masked Autoencoders for Point Cloud Reconstruction",
+        "abstract": "Point cloud streaming is increasingly getting popular, evolving into the norm for interactive service delivery and the future Metaverse. However, the substantial volume of data associated with point clouds presents numerous challenges, particularly in terms of high bandwidth consumption and large storage capacity. Despite various solutions proposed thus far, with a focus on point cloud compression, upsampling, and completion, these reconstruction-related methods continue to fall short in delivering high fidelity point cloud output. As a solution, in DiffPMAE, we propose an effective point cloud reconstruction architecture. Inspired by self-supervised learning concepts, we combine Masked Auto-Encoding and Diffusion Model mechanism to remotely reconstruct point cloud data. By the nature of this reconstruction process, DiffPMAE can be extended to many related downstream tasks including point cloud compression, upsampling and completion. Leveraging ShapeNet-55 and ModelNet datasets with over 60000 objects, we validate the performance of DiffPMAE exceeding many state-of-the-art methods in-terms of auto-encoding and downstream tasks considered."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tyraeldlee/diffpmae",
+        "exists": true,
+        "full_name": "TyraelDLee/DiffPMAE",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "25a2c4e03eca1d99756937493249795a38a90aa4",
+        "license_spdx": null,
+        "readme": {
+          "path": "readme.md",
+          "url": "https://github.com/TyraelDLee/DiffPMAE/blob/25a2c4e03eca1d99756937493249795a38a90aa4/readme.md",
+          "sha256": "417dac6b50e73f485ec242cbe72a35930477d9781b92fdb73c5d0ff1b7039a14",
+          "bytes": 10522
+        },
+        "root_names": [
+          ".gitignore",
+          ".idea",
+          "assets",
+          "dataset",
+          "eval_compression.py",
+          "eval_cop.py",
+          "eval_diffpmae.py",
+          "eval_upsampling.py",
+          "metrics",
+          "model",
+          "pretrain_model",
+          "readme.md",
+          "requirements.txt",
+          "train_decoder.py",
+          "train_encoder.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 84,
+      "arxiv_id": "2303.15509",
+      "repo_url": "https://github.com/urdshals/QEdark-EFT",
+      "arxiv": {
+        "versioned_id": "2303.15509v1",
+        "primary_category": "hep-ph",
+        "title": "Direct searches for general dark matter-electron interactions with graphene detectors: Part II. Sensitivity studies",
+        "abstract": "We use a formalism that describes electron ejections from graphene-like targets by dark matter (DM) scattering for general forms of scalar and spin 1/2 DM-electron interactions in combination with state-of-the-art density functional calculations to produce predictions and reach estimates for various possible carbon-based detector designs. Our results indicate the importance of a proper description of the target electronic structure. In addition, we find a strong dependence of the predicted observed signal for different DM candidate masses and interaction types on the detailed geometry and design of the detector. Combined with directional background vetoing, these dependencies will enable the identification of DM particle properties once a signal has been established."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/urdshals/QEdark-EFT",
+        "exists": true,
+        "full_name": "urdshals/QEdark-EFT",
+        "archived": false,
+        "default_branch": "Graphene",
+        "head_commit": "fa6833767ff0a740e0432ef7a0666149a90a3fdd",
+        "license_spdx": "GPL-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/urdshals/QEdark-EFT/blob/fa6833767ff0a740e0432ef7a0666149a90a3fdd/README.md",
+          "sha256": "0b80ea685152f9819b8abf9d8dae15f67e8dd8ee4bff0ce4d8c439c30cfad169",
+          "bytes": 5283
+        },
+        "root_names": [
+          "LICENSE",
+          "Monte Carlo Integrator",
+          "QEdark-EFT",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category hep-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 85,
+      "arxiv_id": "2408.03572",
+      "repo_url": "https://github.com/yifansun99/2d-oob-joint-valuation",
+      "arxiv": {
+        "versioned_id": "2408.03572v2",
+        "primary_category": "cs.LG",
+        "title": "2D-OOB: Attributing Data Contribution Through Joint Valuation Framework",
+        "abstract": "Data valuation has emerged as a powerful framework for quantifying each datum's contribution to the training of a machine learning model. However, it is crucial to recognize that the quality of cells within a single data point can vary greatly in practice. For example, even in the case of an abnormal data point, not all cells are necessarily noisy. The single scalar score assigned by existing data valuation methods blurs the distinction between noisy and clean cells of a data point, making it challenging to interpret the data values. In this paper, we propose 2D-OOB, an out-of-bag estimation framework for jointly determining helpful (or detrimental) samples as well as the particular cells that drive them. Our comprehensive experiments demonstrate that 2D-OOB achieves state-of-the-art performance across multiple use cases while being exponentially faster. Specifically, 2D-OOB shows promising results in detecting and rectifying fine-grained outliers at the cell level, and localizing backdoor triggers in data poisoning attacks."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/yifansun99/2d-oob-joint-valuation",
+        "exists": true,
+        "full_name": "yifansun99/2D-OOB-Joint-Valuation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "5ad2997291722a32b6c747563e57dd29b7dafd5b",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/yifansun99/2D-OOB-Joint-Valuation/blob/5ad2997291722a32b6c747563e57dd29b7dafd5b/README.md",
+          "sha256": "bdc189d4b4fb065ea097e8c130aed65b5ec36e25887ab07ab2f8a56f29e68f48",
+          "bytes": 213
+        },
+        "root_names": [
+          "README.md",
+          "backdoor_attack_detection.py",
+          "bagging_DV_core.py",
+          "configs.py",
+          "data_approach.py",
+          "data_valuation.py",
+          "datasets.py",
+          "ensemble_DV_core_original.py",
+          "ensemble_DV_core_subset.py",
+          "feature_approach.py",
+          "knn_2d.py",
+          "mc_2d.py",
+          "run_experiment.py",
+          "utils_eval.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 86,
+      "arxiv_id": "2410.22480",
+      "repo_url": "https://github.com/leililab/osca",
+      "arxiv": {
+        "versioned_id": "2410.22480v1",
+        "primary_category": "cs.CL",
+        "title": "Scaling LLM Inference with Optimized Sample Compute Allocation",
+        "abstract": "Sampling is a basic operation in many inference-time algorithms of large language models (LLMs). To scale up inference efficiently with a limited compute, it is crucial to find an optimal allocation for sample compute budgets: Which sampling configurations (model, temperature, language, etc.) do we use? How many samples do we generate in each configuration? We formulate these choices as a learning problem and propose OSCA, an algorithm that Optimizes Sample Compute Allocation by finding an optimal mix of different inference configurations. Our experiments show that with our learned mixed allocation, we can achieve accuracy better than the best single configuration with 128x less compute on code generation and 25x less compute on 4 reasoning tasks. OSCA is also shown to be effective in agentic workflows beyond single-turn tasks, achieving a better accuracy on SWE-Bench with 3x less compute than the default configuration. Our code and generations are released at https://github.com/LeiLiLab/OSCA."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/leililab/osca",
+        "exists": true,
+        "full_name": "LeiLiLab/OSCA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d85561726721aa01fc438f200781ef0396e195f4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/LeiLiLab/OSCA/blob/d85561726721aa01fc438f200781ef0396e195f4/README.md",
+          "sha256": "36c58d83998c29f99ec675450d661e6aec49d2dda50a7ee63c332f2ec3e819e9",
+          "bytes": 887
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "bcb.ipynb",
+          "bcb.png",
+          "bcb_results.json",
+          "eval_swe.ipynb",
+          "osca.py",
+          "swe.png",
+          "swebench_agentless.json"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 87,
+      "arxiv_id": "2311.12229",
+      "repo_url": "https://github.com/intellabs/multimodal_cognitive_ai",
+      "arxiv": {
+        "versioned_id": "2311.12229v2",
+        "primary_category": "cs.AI",
+        "title": "NeuroPrompts: An Adaptive Framework to Optimize Prompts for Text-to-Image Generation",
+        "abstract": "Despite impressive recent advances in text-to-image diffusion models, obtaining high-quality images often requires prompt engineering by humans who have developed expertise in using them. In this work, we present NeuroPrompts, an adaptive framework that automatically enhances a user's prompt to improve the quality of generations produced by text-to-image models. Our framework utilizes constrained text decoding with a pre-trained language model that has been adapted to generate prompts similar to those produced by human prompt engineers. This approach enables higher-quality text-to-image generations and provides user control over stylistic features via constraint set specification. We demonstrate the utility of our framework by creating an interactive application for prompt enhancement and image generation using Stable Diffusion. Additionally, we conduct experiments utilizing a large dataset of human-engineered prompts for text-to-image generation and show that our approach automatically produces enhanced prompts that result in superior image quality. We make our code and a screencast video demo of NeuroPrompts publicly available."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/intellabs/multimodal_cognitive_ai",
+        "exists": true,
+        "full_name": "IntelLabs/multimodal_cognitive_ai",
+        "archived": true,
+        "default_branch": "main",
+        "head_commit": "c8519655a98040b307d739aea5caa241691bc18d",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/IntelLabs/multimodal_cognitive_ai/blob/c8519655a98040b307d739aea5caa241691bc18d/README.md",
+          "sha256": "27e0556ee6505bbd955606159e8a1d2ef0227b934babb2fd4f7a86d1a3ccc439",
+          "bytes": 515
+        },
+        "root_names": [
+          "CLIP-InterpreT",
+          "COCO-Counterfactuals",
+          "Demos",
+          "FiVL",
+          "Fusing_Temporal_Graphs",
+          "ICSVR",
+          "LICENSE",
+          "LLaVA-Gemma",
+          "NeuroComparatives",
+          "README.md",
+          "SK-VQA",
+          "Security.md",
+          "Semi-Structured-CoT",
+          "SocialCounterfactuals",
+          "Uncovering_LVLM_Bias",
+          "Video-Zeroshot"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "repository_unavailable",
+        "evidence": "the repository is archived on GitHub"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 88,
+      "arxiv_id": "2304.04029",
+      "repo_url": "https://github.com/tosingithub/bipol",
+      "arxiv": {
+        "versioned_id": "2304.04029v2",
+        "primary_category": "cs.CL",
+        "title": "Bipol: A Novel Multi-Axes Bias Evaluation Metric with Explainability for NLP",
+        "abstract": "We introduce bipol, a new metric with explainability, for estimating social bias in text data. Harmful bias is prevalent in many online sources of data that are used for training machine learning (ML) models. In a step to address this challenge we create a novel metric that involves a two-step process: corpus-level evaluation based on model classification and sentence-level evaluation based on (sensitive) term frequency (TF). After creating new models to detect bias along multiple axes using SotA architectures, we evaluate two popular NLP datasets (COPA and SQUAD). As additional contribution, we created a large dataset (with almost 2 million labelled samples) for training models in bias detection and make it publicly available. We also make public our codes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tosingithub/bipol",
+        "exists": true,
+        "full_name": "tosingithub/Bipol",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "5db74814b0e1a7a4e267eff5e07693932d3b2738",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/tosingithub/Bipol/blob/5db74814b0e1a7a4e267eff5e07693932d3b2738/README.md",
+          "sha256": "4563e81d95fa880b6dd130b7202d7c42aef32382c39918188119ebb37dba7f13",
+          "bytes": 961
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "axes",
+          "bipol.py",
+          "bipol2.py",
+          "bipol_test.py",
+          "ij_test.py",
+          "lib64",
+          "mt5.py",
+          "utility.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 89,
+      "arxiv_id": "2411.06116",
+      "repo_url": "https://github.com/saveski-lab/supernotes",
+      "arxiv": {
+        "versioned_id": "2411.06116v1",
+        "primary_category": "cs.SI",
+        "title": "Supernotes: Driving Consensus in Crowd-Sourced Fact-Checking",
+        "abstract": "X's Community Notes, a crowd-sourced fact-checking system, allows users to annotate potentially misleading posts. Notes rated as helpful by a diverse set of users are prominently displayed below the original post. While demonstrably effective at reducing misinformation's impact when notes are displayed, there is an opportunity for notes to appear on many more posts: for 91% of posts where at least one note is proposed, no notes ultimately achieve sufficient support from diverse users to be shown on the platform. This motivates the development of Supernotes: AI-generated notes that synthesize information from several existing community notes and are written to foster consensus among a diverse set of users. Our framework uses an LLM to generate many diverse Supernote candidates from existing proposed notes. These candidates are then evaluated by a novel scoring model, trained on millions of historical Community Notes ratings, selecting candidates that are most likely to be rated helpful by a diverse set of users. To test our framework, we ran a human subjects experiment in which we asked participants to compare the Supernotes generated by our framework to the best existing community notes for 100 sample posts. We found that participants rated the Supernotes as significantly more helpful, and when asked to choose between the two, preferred the Supernotes 75.2% of the time. Participants also rated the Supernotes more favorably than the best existing notes on quality, clarity, coverage, context, and argumentativeness. Finally, in a follow-up experiment, we asked participants to compare the Supernotes against LLM-generated summaries and found that the participants rated the Supernotes significantly more helpful, demonstrating that both the LLM-based candidate generation and the consensus-driven scoring play crucial roles in creating notes that effectively build consensus among diverse users."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/saveski-lab/supernotes",
+        "exists": true,
+        "full_name": "Saveski-Lab/supernotes",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "0257e92c7cbb1c9aa5c6cb4d4510a0d8def29bb1",
+        "license_spdx": "CC-BY-4.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Saveski-Lab/supernotes/blob/0257e92c7cbb1c9aa5c6cb4d4510a0d8def29bb1/README.md",
+          "sha256": "0ff05ec34672e7673101f46612ade952fbdb7e6d32ed4fb596be547c0fd80045",
+          "bytes": 4935
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "analysis",
+          "requirements.txt",
+          "run_mf.py",
+          "supernotes"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SI"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 90,
+      "arxiv_id": "2407.06423",
+      "repo_url": "https://github.com/servicenow/insight-bench",
+      "arxiv": {
+        "versioned_id": "2407.06423v4",
+        "primary_category": "cs.AI",
+        "title": "InsightBench: Evaluating Business Analytics Agents Through Multi-Step Insight Generation",
+        "abstract": "Data analytics is essential for extracting valuable insights from data that can assist organizations in making effective decisions. We introduce InsightBench, a benchmark dataset with three key features. First, it consists of 100 datasets representing diverse business use cases such as finance and incident management, each accompanied by a carefully curated set of insights planted in the datasets. Second, unlike existing benchmarks focusing on answering single queries, InsightBench evaluates agents based on their ability to perform end-to-end data analytics, including formulating questions, interpreting answers, and generating a summary of insights and actionable steps. Third, we conducted comprehensive quality assurance to ensure that each dataset in the benchmark had clear goals and included relevant and meaningful questions and analysis. Furthermore, we implement a two-way evaluation mechanism using LLaMA-3 as an effective, open-source evaluator to assess agents' ability to extract insights. We also propose AgentPoirot, our baseline data analysis agent capable of performing end-to-end data analytics. Our evaluation on InsightBench shows that AgentPoirot outperforms existing approaches (such as Pandas Agent) that focus on resolving single queries. We also compare the performance of open- and closed-source LLMs and various evaluation strategies. Overall, this benchmark serves as a testbed to motivate further development in comprehensive automated data analytics and can be accessed here: https://github.com/ServiceNow/insight-bench."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/servicenow/insight-bench",
+        "exists": true,
+        "full_name": "ServiceNow/insight-bench",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "33c27c1282cb7ed73267d36fb84e27b6ea8aac2b",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ServiceNow/insight-bench/blob/33c27c1282cb7ed73267d36fb84e27b6ea8aac2b/README.md",
+          "sha256": "d334008b86e96e609e4b9063341232feffae7bfc23b5bb93ed34c94027d8e7b3",
+          "bytes": 2715
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "data",
+          "insightbench",
+          "main.py",
+          "minimal.py",
+          "requirements.txt",
+          "scripts",
+          "setup.py",
+          "tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 91,
+      "arxiv_id": "2505.20176",
+      "repo_url": "https://github.com/koudounasalkis/slu-kan",
+      "arxiv": {
+        "versioned_id": "2505.20176v1",
+        "primary_category": "cs.CL",
+        "title": "\"KAN you hear me?\" Exploring Kolmogorov-Arnold Networks for Spoken Language Understanding",
+        "abstract": "Kolmogorov-Arnold Networks (KANs) have recently emerged as a promising alternative to traditional neural architectures, yet their application to speech processing remains under explored. This work presents the first investigation of KANs for Spoken Language Understanding (SLU) tasks. We experiment with 2D-CNN models on two datasets, integrating KAN layers in five different configurations within the dense block. The best-performing setup, which places a KAN layer between two linear layers, is directly applied to transformer-based models and evaluated on five SLU datasets with increasing complexity. Our results show that KAN layers can effectively replace the linear layers, achieving comparable or superior performance in most cases. Finally, we provide insights into how KAN and linear layers on top of transformers differently attend to input regions of the raw waveforms."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/koudounasalkis/slu-kan",
+        "exists": true,
+        "full_name": "koudounasalkis/SLU-KAN",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3e0f8b407ebce1c12c2e8fe22ccb3b1aefcf300e",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/koudounasalkis/SLU-KAN/blob/3e0f8b407ebce1c12c2e8fe22ccb3b1aefcf300e/README.md",
+          "sha256": "04b3d04eb896ceb31925d4284fde4ef966a786ad34862b8f6267711d2858bcd8",
+          "bytes": 3111
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 92,
+      "arxiv_id": "2411.04443",
+      "repo_url": "https://github.com/whnhch/accio",
+      "arxiv": {
+        "versioned_id": "2411.04443v1",
+        "primary_category": "cs.CL",
+        "title": "ACCIO: Table Understanding Enhanced via Contrastive Learning with Aggregations",
+        "abstract": "The attention to table understanding using recent natural language models has been growing. However, most related works tend to focus on learning the structure of the table directly. Just as humans improve their understanding of sentences by comparing them, they can also enhance their understanding by comparing tables. With this idea, in this paper, we introduce ACCIO, tAble understanding enhanCed via Contrastive learnIng with aggregatiOns, a novel approach to enhancing table understanding by contrasting original tables with their pivot summaries through contrastive learning. ACCIO trains an encoder to bring these table pairs closer together. Through validation via column type annotation, ACCIO achieves competitive performance with a macro F1 score of 91.1 compared to state-of-the-art methods. This work represents the first attempt to utilize pairs of tables for table embedding, promising significant advancements in table comprehension. Our code is available at https://github.com/whnhch/ACCIO/."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/whnhch/accio",
+        "exists": true,
+        "full_name": "whnhch/ACCIO",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1f828e99a29d513db6ae5dae29abec4e7d4a3960",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/whnhch/ACCIO/blob/1f828e99a29d513db6ae5dae29abec4e7d4a3960/README.md",
+          "sha256": "b698c4c0ddc5d688c6eb102d0a007d18e2b379c6eec627eacc90a6f9c88a95f9",
+          "bytes": 1188
+        },
+        "root_names": [
+          "README.md",
+          "__pycache__",
+          "accio",
+          "eval_viznet.ipynb",
+          "paper.pdf",
+          "sato_cv_0.csv",
+          "sato_cv_1.csv",
+          "sato_cv_2.csv",
+          "sato_cv_3.csv",
+          "sato_cv_4.csv",
+          "train_accio.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 93,
+      "arxiv_id": "2502.14866",
+      "repo_url": "https://github.com/mit-han-lab/omniserve",
+      "arxiv": {
+        "versioned_id": "2502.14866v2",
+        "primary_category": "cs.CL",
+        "title": "LServe: Efficient Long-sequence LLM Serving with Unified Sparse Attention",
+        "abstract": "Large language models (LLMs) have shown remarkable potential in processing long sequences and complex reasoning tasks, yet efficiently serving these models remains challenging due to the quadratic computational complexity of attention in the prefilling stage and the large memory footprint of the KV cache in the decoding stage. To address these issues, we introduce LServe, an efficient system that accelerates long-sequence LLM serving via hybrid sparse attention. This method unifies different hardware-friendly, structured sparsity patterns for both prefilling and decoding attention into a single framework, where computations on less important tokens are skipped block-wise. LServe demonstrates the compatibility of static and dynamic sparsity in long-context LLM attention. This design enables multiplicative speedups by combining these optimizations. Specifically, we convert half of the attention heads to nearly free streaming heads in both the prefilling and decoding stages. Additionally, we find that only a constant number of KV pages is required to preserve long-context and reasoning capabilities, irrespective of context length. We then design a hierarchical KV page selection policy that dynamically prunes KV pages based on query-centric similarity. On average, LServe accelerates LLM prefilling by up to 2.9x and decoding by 1.3-2.1x over vLLM, maintaining long-context accuracy. Code is released at https://github.com/mit-han-lab/omniserve."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mit-han-lab/omniserve",
+        "exists": true,
+        "full_name": "mit-han-lab/omniserve",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "02b2925aa6fa3b92b06316a1524b7f38922cd9c8",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/mit-han-lab/omniserve/blob/02b2925aa6fa3b92b06316a1524b7f38922cd9c8/README.md",
+          "sha256": "5c11000e8cedb9c55045ae81b5e3a66efa686b58c0f2d507c41707e0cecdd324",
+          "bytes": 33513
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "assets",
+          "attn_patterns",
+          "eval",
+          "kernels",
+          "lserve_benchmark.py",
+          "lserve_e2e_generation.py",
+          "omniserve",
+          "pyproject.toml",
+          "qserve_benchmark.py",
+          "qserve_e2e_generation.py",
+          "scripts",
+          "unit_tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 94,
+      "arxiv_id": "2505.19779",
+      "repo_url": "https://github.com/sajjad-sh33/medical-transfer-learning",
+      "arxiv": {
+        "versioned_id": "2505.19779v1",
+        "primary_category": "eess.IV",
+        "title": "Advancements in Medical Image Classification through Fine-Tuning Natural Domain Foundation Models",
+        "abstract": "Using massive datasets, foundation models are large-scale, pre-trained models that perform a wide range of tasks. These models have shown consistently improved results with the introduction of new methods. It is crucial to analyze how these trends impact the medical field and determine whether these advancements can drive meaningful change. This study investigates the application of recent state-of-the-art foundation models, DINOv2, MAE, VMamba, CoCa, SAM2, and AIMv2, for medical image classification. We explore their effectiveness on datasets including CBIS-DDSM for mammography, ISIC2019 for skin lesions, APTOS2019 for diabetic retinopathy, and CHEXPERT for chest radiographs. By fine-tuning these models and evaluating their configurations, we aim to understand the potential of these advancements in medical image classification. The results indicate that these advanced models significantly enhance classification outcomes, demonstrating robust performance despite limited labeled data. Based on our results, AIMv2, DINOv2, and SAM2 models outperformed others, demonstrating that progress in natural domain training has positively impacted the medical domain and improved classification outcomes. Our code is publicly available at: https://github.com/sajjad-sh33/Medical-Transfer-Learning."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sajjad-sh33/medical-transfer-learning",
+        "exists": true,
+        "full_name": "sajjad-sh33/Medical-Transfer-Learning",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "17ef22a592f09849db8dd018ab6f26989d847296",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sajjad-sh33/Medical-Transfer-Learning/blob/17ef22a592f09849db8dd018ab6f26989d847296/README.md",
+          "sha256": "79578ca41cbcb0f3f7e372d5d1ff35e8c283e9ccad6aa17124702c4f593cd298",
+          "bytes": 2999
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE.txt",
+          "README.md",
+          "classification.py",
+          "defaults",
+          "images",
+          "params.json",
+          "sam2",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 95,
+      "arxiv_id": "2402.01923",
+      "repo_url": "https://github.com/noblemathews/fuzzsliceicse",
+      "arxiv": {
+        "versioned_id": "2402.01923v1",
+        "primary_category": "cs.SE",
+        "title": "FuzzSlice: Pruning False Positives in Static Analysis Warnings Through Function-Level Fuzzing",
+        "abstract": "Manual confirmation of static analysis reports is a daunting task. This is due to both the large number of warnings and the high density of false positives among them. Fuzzing techniques have been proposed to verify static analysis warnings. However, a major limitation is that fuzzing the whole project to reach all static analysis warnings is not feasible. This can take several days and exponential machine time to increase code coverage linearly. Therefore, we propose FuzzSlice, a novel framework that automatically prunes possible false positives among static analysis warnings. Unlike prior work that mostly focuses on confirming true positives among static analysis warnings, which requires end-to-end fuzzing, FuzzSlice focuses on ruling out potential false positives, which are the majority in static analysis reports. The key insight that we base our work on is that a warning that does not yield a crash when fuzzed at the function level in a given time budget is a possible false positive. To achieve this, FuzzSlice first aims to generate compilable code slices at the function level and then fuzzes these code slices instead of the entire binary. FuzzSlice is also unlikely to misclassify a true bug as a false positive because the crashing input can be reproduced by a fuzzer at the function level as well. We evaluate FuzzSlice on the Juliet synthetic dataset and real-world complex C projects. Our evaluation shows that the ground truth in the Juliet dataset had 864 false positives which were all detected by FuzzSlice. For the open-source repositories, we were able to get the developers from two of these open-source repositories to independently label these warnings. FuzzSlice automatically identifies 33 out of 53 false positives confirmed by developers in these two repositories. Thus FuzzSlice reduces false positives by 62.26% in the open-source repositories and by 100% in the Juliet dataset."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/noblemathews/fuzzsliceicse",
+        "exists": true,
+        "full_name": "NobleMathews/FuzzSliceICSE",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f7e3861d1127ca45aca7cf256ea8b39dab673095",
+        "license_spdx": "BSD-3-Clause",
+        "readme": {
+          "path": "readme.md",
+          "url": "https://github.com/NobleMathews/FuzzSliceICSE/blob/f7e3861d1127ca45aca7cf256ea8b39dab673095/readme.md",
+          "sha256": "686ae7e50804dfdf53e4e3514ab660b94ac551b7e2824767e522b167a4c8b6a2",
+          "bytes": 9978
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          ".isort.cfg",
+          "AUTHORS",
+          "Dockerfile",
+          "FuzzSlice_ICSE_2024.pdf",
+          "FuzzSlice_Technical_Documentation.pdf",
+          "LICENSE",
+          "build_log_parser.py",
+          "clang-format-all",
+          "config.yaml",
+          "expand_var.py",
+          "fuzz.py",
+          "fuzz_gen.py",
+          "info_lib",
+          "init_submodules.sh",
+          "juliet_confusion_matrix.py",
+          "main.py",
+          "readme.md",
+          "requirements.txt",
+          "srcml.py",
+          "test_lib",
+          "tools"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 96,
+      "arxiv_id": "2308.08746",
+      "repo_url": "https://github.com/wenxi-yue/surgicalsam",
+      "arxiv": {
+        "versioned_id": "2308.08746v2",
+        "primary_category": "cs.CV",
+        "title": "SurgicalSAM: Efficient Class Promptable Surgical Instrument Segmentation",
+        "abstract": "The Segment Anything Model (SAM) is a powerful foundation model that has revolutionised image segmentation. To apply SAM to surgical instrument segmentation, a common approach is to locate precise points or boxes of instruments and then use them as prompts for SAM in a zero-shot manner. However, we observe two problems with this naive pipeline: (1) the domain gap between natural objects and surgical instruments leads to inferior generalisation of SAM; and (2) SAM relies on precise point or box locations for accurate segmentation, requiring either extensive manual guidance or a well-performing specialist detector for prompt preparation, which leads to a complex multi-stage pipeline. To address these problems, we introduce SurgicalSAM, a novel end-to-end efficient-tuning approach for SAM to effectively integrate surgical-specific information with SAM's pre-trained knowledge for improved generalisation. Specifically, we propose a lightweight prototype-based class prompt encoder for tuning, which directly generates prompt embeddings from class prototypes and eliminates the use of explicit prompts for improved robustness and a simpler pipeline. In addition, to address the low inter-class variance among surgical instrument categories, we propose contrastive prototype learning, further enhancing the discrimination of the class prototypes for more accurate class prompting. The results of extensive experiments on both EndoVis2018 and EndoVis2017 datasets demonstrate that SurgicalSAM achieves state-of-the-art performance while only requiring a small number of tunable parameters. The source code is available at https://github.com/wenxi-yue/SurgicalSAM."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wenxi-yue/surgicalsam",
+        "exists": true,
+        "full_name": "wenxi-yue/SurgicalSAM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4b4c655b380b2398ad1c38c5ed7e710397ef2818",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/wenxi-yue/SurgicalSAM/blob/4b4c655b380b2398ad1c38c5ed7e710397ef2818/README.md",
+          "sha256": "a07d9aebcc7cc86d7a1221d51672785d27cfb2b5d5f033f788049b03c45ae63f",
+          "bytes": 11161
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "assets",
+          "requirements.txt",
+          "segment_anything",
+          "surgicalSAM"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 97,
+      "arxiv_id": "2306.04475",
+      "repo_url": "https://github.com/cosmo-ufes/navanalysis",
+      "arxiv": {
+        "versioned_id": "2306.04475v1",
+        "primary_category": "gr-qc",
+        "title": "Palatini $f(R)$ gravity tests in the weak field limit: Solar System, seismology and galaxies",
+        "abstract": "Palatini $f(R)$ gravity is probably the simplest extension of general relativity (GR) and the simplest realization of a metric-affine theory. It has the same number of degrees of freedom as GR and, in vacuum, it is straightforwardly mapped into GR with a cosmological constant. The mapping between GR and Palatini $f(R)$ inside matter is possible but at the expense of reinterpreting the meaning of the matter fields. The physical meaning and consequences of such mapping will depend on the physical context. Here we consider three such cases within the weak field limit: Solar System dynamics, planetary internal dynamics (seismology), and galaxies. After revising our previous results on the Solar System and Earth's seismology, we consider here the possibility of $f(R)$ Palatini as a dark matter candidate. For any $f(R)$ that admits a polynomial approximation in the weak field limit, we show here, using SPARC data and a recent method that we proposed, that the theory cannot be used to replace dark matter in galaxies. We also show that the same result applies to the Eddington-inspired Born-Infeld gravity. Differently from the metric $f(R)$ case, the rotation curve data are sufficient for this conclusion. This result does not exclude a combination of modified gravity and dark matter."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/cosmo-ufes/navanalysis",
+        "exists": true,
+        "full_name": "cosmo-ufes/NAVanalysis",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "53b0a28ed657ccc8f914aeda8e6bb78a7d639bc7",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/cosmo-ufes/NAVanalysis/blob/53b0a28ed657ccc8f914aeda8e6bb78a7d639bc7/README.md",
+          "sha256": "c3da3355384bee8e048b03ecf713247f5d6e37a38f697de3c2373aab60343780",
+          "bytes": 4371
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "AuxiliaryData",
+          "CITATION.cff",
+          "ExportTables.wl",
+          "LICENSE",
+          "NAVanalysis.m",
+          "NAVanalysis.nb",
+          "NAVauxiliaryFunctions.wl",
+          "NAVbaseCode.wl",
+          "NAVobservational.wl",
+          "NAVoptions.wl",
+          "Output",
+          "README.md",
+          "readmeImages"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category gr-qc"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 98,
+      "arxiv_id": "2502.14767",
+      "repo_url": "https://github.com/pkargupta/tree-of-debate",
+      "arxiv": {
+        "versioned_id": "2502.14767v2",
+        "primary_category": "cs.CL",
+        "title": "Tree-of-Debate: Multi-Persona Debate Trees Elicit Critical Thinking for Scientific Comparative Analysis",
+        "abstract": "With the exponential growth of research facilitated by modern technology and improved accessibility, scientific discoveries have become increasingly fragmented within and across fields. This makes it challenging to assess the significance, novelty, incremental findings, and equivalent ideas between related works, particularly those from different research communities. Large language models (LLMs) have recently demonstrated strong quantitative and qualitative reasoning abilities, and multi-agent LLM debates have shown promise in handling complex reasoning tasks by exploring diverse perspectives and reasoning paths. Inspired by this, we introduce Tree-of-Debate (ToD), a framework which converts scientific papers into LLM personas that debate their respective novelties. To emphasize structured, critical reasoning rather than focusing solely on outcomes, ToD dynamically constructs a debate tree, enabling fine-grained analysis of independent novelty arguments within scholarly articles. Through experiments on scientific literature across various domains, evaluated by expert researchers, we demonstrate that ToD generates informative arguments, effectively contrasts papers, and supports researchers in their literature review."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/pkargupta/tree-of-debate",
+        "exists": true,
+        "full_name": "pkargupta/tree-of-debate",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1f096c8f5a4519d5b9377c7c140cd0685444650b",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/pkargupta/tree-of-debate/blob/1f096c8f5a4519d5b9377c7c140cd0685444650b/README.md",
+          "sha256": "e32f77436265815f69fa05303fbedf341d8b36a5814ae0ebb58d61e1be55890f",
+          "bytes": 3209
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "baselines",
+          "data_pairer.py",
+          "dataset",
+          "debate.py",
+          "evaluation",
+          "figs",
+          "moderator.py",
+          "no_delib",
+          "no_tree",
+          "paper_details.py",
+          "persona.py",
+          "requirements.txt",
+          "retrieval",
+          "run.py",
+          "run.sh",
+          "tod_no_deliberation",
+          "tree_of_debate.py",
+          "tree_of_debate_no_delib.py",
+          "tree_of_debate_no_tree.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 99,
+      "arxiv_id": "2502.03662",
+      "repo_url": "https://github.com/illinois-or-research-analytics/ec-sbm",
+      "arxiv": {
+        "versioned_id": "2502.03662v1",
+        "primary_category": "cs.SI",
+        "title": "EC-SBM Synthetic Network Generator",
+        "abstract": "Generating high-quality synthetic networks with realistic community structure is vital to effectively evaluate community detection algorithms. In this study, we propose a new synthetic network generator called the Edge-Connected Stochastic Block Model (EC-SBM). The goal of EC-SBM is to take a given clustered real-world network and produce a synthetic network that resembles the clustered real-world network with respect to both network and community-specific criteria. In particular, we focus on simulating the internal edge connectivity of the clusters in the reference clustered network. Our extensive performance study on large real-world networks shows that EC-SBM has high accuracy in both network and community-specific criteria, and is generally more accurate than current alternative approaches for this problem. Furthermore, EC-SBM is fast enough to scale to real-world networks with millions of nodes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/illinois-or-research-analytics/ec-sbm",
+        "exists": true,
+        "full_name": "illinois-or-research-analytics/ec-sbm",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e090562dbe07480ccbf628770881f373aa144102",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/illinois-or-research-analytics/ec-sbm/blob/e090562dbe07480ccbf628770881f373aa144102/README.md",
+          "sha256": "701b93447ebcca23438801811121d3d723ab154cf88e2a04b06305bf8c41f7e4",
+          "bytes": 8023
+        },
+        "root_names": [
+          ".gitignore",
+          "INSTALL.md",
+          "README.md",
+          "examples",
+          "scripts",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SI"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 100,
+      "arxiv_id": "2308.01547",
+      "repo_url": "https://github.com/innerlee/gcr",
+      "arxiv": {
+        "versioned_id": "2308.01547v1",
+        "primary_category": "cs.CV",
+        "title": "Get the Best of Both Worlds: Improving Accuracy and Transferability by Grassmann Class Representation",
+        "abstract": "We generalize the class vectors found in neural networks to linear subspaces (i.e.~points in the Grassmann manifold) and show that the Grassmann Class Representation (GCR) enables the simultaneous improvement in accuracy and feature transferability. In GCR, each class is a subspace and the logit is defined as the norm of the projection of a feature onto the class subspace. We integrate Riemannian SGD into deep learning frameworks such that class subspaces in a Grassmannian are jointly optimized with the rest model parameters. Compared to the vector form, the representative capability of subspaces is more powerful. We show that on ImageNet-1K, the top-1 error of ResNet50-D, ResNeXt50, Swin-T and Deit3-S are reduced by 5.6%, 4.5%, 3.0% and 3.5%, respectively. Subspaces also provide freedom for features to vary and we observed that the intra-class feature variability grows when the subspace dimension increases. Consequently, we found the quality of GCR features is better for downstream tasks. For ResNet50-D, the average linear transfer accuracy across 6 datasets improves from 77.98% to 79.70% compared to the strong baseline of vanilla softmax. For Swin-T, it improves from 81.5% to 83.4% and for Deit3, it improves from 73.8% to 81.4%. With these encouraging results, we believe that more applications could benefit from the Grassmann class representation. Code is released at https://github.com/innerlee/GCR."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/innerlee/gcr",
+        "exists": true,
+        "full_name": "innerlee/gcr",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "6e614850eed64ab5b0b82f7aa0a956e6b9a0d419",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/innerlee/gcr/blob/6e614850eed64ab5b0b82f7aa0a956e6b9a0d419/README.md",
+          "sha256": "09ba6ce57a6d2476de3571efe523f55b0db5755a79c6280126f07c2e5d4b18a7",
+          "bytes": 10951
+        },
+        "root_names": [
+          ".gitignore",
+          ".pre-commit-config.yaml",
+          "README.md",
+          "configs",
+          "gcr",
+          "resource",
+          "setup.cfg",
+          "setup.py",
+          "tools"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T03:17:10Z"
+}
