@@ -199,12 +199,25 @@ def test_the_thresholds_are_one_of_the_six_declared_pairs():
             CorrectionsParams(alias_z_f=z, alias_f=f)
 
 
-def test_the_thresholds_reach_the_decision():
+def test_the_thresholds_reach_the_decision(monkeypatch):
+    import refute.packs.tess.battery as battery
+
     lc = _weak(SEEDS[("R1", "white")], "white", 0.0)
     m = _run(lc).metrics
     assert m["thresholds_m4"] == {"z_f": Z_STAR, "f": F_STAR, "g": G_STAR}
+    # the configured pair is the one the decision receives (added before the sabotages: with
+    # these curves every declared pair gives the same outcome, so only a spy shows the wiring)
+    seen = []
+    real = battery.alias_m4_decision
+
+    def spy(*args, **kwargs):
+        seen.append(kwargs)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(battery, "alias_m4_decision", spy)
     strict = _run(lc, alias_z_f=50.0, alias_f=0.7).metrics["thresholds_m4"]
     assert strict == {"z_f": 50.0, "f": 0.7, "g": G_STAR}
+    assert seen == [{"z_star": 50.0, "f_star": 0.7, "g_star": G_STAR}]
 
 
 @pytest.mark.parametrize(

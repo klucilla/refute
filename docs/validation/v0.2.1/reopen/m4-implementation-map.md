@@ -769,6 +769,20 @@ reference suggests (it matters only together with `f ≥ f*` and `G < g*`). The 
 piece (the lock projection with extension 3, the battery, the activation, the harness version 3,
 the schema and the dossier): 153 tests, 0 failures.
 
+**A test strengthened before the sabotages (declared as such).** With these curves every declared
+pair `(z_F*, f*)` gives the same outcome, so no case would notice a decision that used constant
+thresholds instead of the configured ones; the thresholds test now also spies on
+`alias_m4_decision` and requires it to receive the configured pair.
+
+**Sabotages** (`.cache`-only spec, never committed; each restored, `git diff` empty after each;
+run with no full suite running): SP1 the FAIL rule without `f` (R2, both noise models, fail); SP2
+no guard for `d_box ≤ 0` (U1); SP3 the sectors excluded by A1 kept (U4); SP4 `Z_F` not divided by
+`β̄²` (R3 correlated); SP5 the warning dropped on the M4 path (W); SP6 the marker not recorded
+(In); SP7 the M4 path for any enabled block (Off, version 1); SP8 any threshold pair accepted (the
+pairs test); SP9 the decision with constant thresholds (the thresholds test); SP10 extension 3 left
+out of the literal (10 lock cases); SP11 extension 3 with another default (12 lock cases). Each
+made at least one test fail.
+
 ## Amendment 20 (2026-10-18): the end-of-stage review of Amendments 16 to 19 (Codex), and its fixes
 
 The single end-of-stage review (Codex, read only, of the commits after `b448800` up to `b05cfe7`)
