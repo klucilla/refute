@@ -315,3 +315,24 @@ and no other test changes. Full suite after the marks: 489 passed, 16 xfailed,
 with `strict=True` an unexpected pass is a failure, so 3b must remove the marks in
 the same commit, and its suite run must show the 16 cases as passed, not xfailed.
 Nothing else in sections E, F, S or T changes.
+
+## Amendment 4 (2026-10-17, before the code of 3b): 3b is completed for E0 and E1
+
+Written on branch `claude/v0-2-1-reopen` (Phase I, the reopening of v0.2.1), before the code
+of commit 3b. Commit 3a (the refactor: `eb_catalog_test` and `conclude_analysis` in
+`pipeline.py`) exists; commit 3b was never made, and the 16 cases E0, E1 and the E1 premise
+are still `xfail(strict=True)` (the mark `RED_UNTIL_3B` in
+`tests/test_ebcatalog_own_tic_e2e.py`).
+
+**What happened to the time target.** The 15-minute target was reached by another option,
+not recorded in this document until now: the three CI shards of `scripts/ci_shard.py`
+(pull request #73, "CI: split the test suite into three parallel shards per OS and Python",
+merged on 2026-10-15). In run 39075388034 (commit `2f0146a`, 2026-10-17) the largest job
+took 14:36 (`windows-2025 / Python 3.13.16 / rest`).
+
+**Decision.** Commit 3b is completed now, as written in this document (sections "Definition
+of option D", E, F and S), **to close the functional pending item** (E0, E1 and the E1
+premise, red by design), not as a further time option. Its effect on time is measured
+separately from the correlated-noise cases that come after it
+(`reopen/correlated-noise-acceptance.md`), and recorded; the decision rule of section T is not
+used to justify it. Nothing in sections E, F or S changes.
