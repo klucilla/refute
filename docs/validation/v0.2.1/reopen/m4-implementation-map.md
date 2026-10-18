@@ -630,6 +630,48 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 16 (2026-10-18): the decomposition of the interrupted rounds, per round and per target
+
+The maintainer's item 3 of 2026-10-18 (14:00). Computed only from the record already examined,
+`calc/option-a-geometry.json` (Amendment 10: 100 planets of the bands near and measurable; only
+metadata and synthetic training data), by `calc/interruptions_decomposition.py`
+(`calc/interruptions-decomposition.json`), under O2. That record was made with the code of its
+commit, before pieces 4 and 5 changed the train gate; these are counts of that record's rounds and
+targets, **not a C3 rate of planets**.
+
+**Per round** (240 rounds): 107 end before the geometry, 81 at the geometry, 52 reach the
+measurement. Each reason counted separately (a round may have two):
+
+| Reason | Rounds |
+|---|---|
+| timing uncertainty above one duration (issue #2) | 54 |
+| duration / period above 0.2 (H4 b) | 43 |
+| train SNR below 7.1 (H4 a) | 10 |
+| fewer than `R_min` = 20 usable replicas | 81 |
+| hidden noise undetermined (always together with the previous one) | 32 |
+
+| Mechanism (rounds) | before the geometry | at the geometry | reach the measurement |
+|---|---|---|---|
+| two_years (80) | 38 | 42 | **0** |
+| few_train (40) | 24 | 16 | **0** |
+| three_years (60) | 4 | 12 | 44 |
+| variability_some_years (60) | 41 (40 of them duration / period) | 11 | 8 |
+
+By noise model: white 65 / 26 / 29, correlated 42 / 55 / 23; by band: near 73 / 24 / 23,
+measurable 34 / 57 / 29 (before / at the geometry / reach).
+
+**Per target** (100 targets): 22 have at least one round that reaches the measurement; 78 have
+every round interrupted. Among those 78, the reasons present in their rounds: fewer than `R_min`
+replicas 45, timing uncertainty 38, hidden noise undetermined 27, duration / period 15, train SNR
+8. By mechanism, targets with at least one round reaching the measurement: two_years **0 of 40**,
+few_train **0 of 20**, three_years 16 of 20, variability_some_years 6 of 20.
+
+**Where to invest (a reading of the counts, not a decision):** in this structure a hidden year of
+the two_years and few_train mechanisms is one sector, which never reaches `R_min` = 20 usable
+replicas here, and many of their rounds also stop at the timing rule; the variability mechanism is
+stopped mostly by the duration / period rule (the train candidate is long). These are the
+bottlenecks the `R_min` study (item 4) and the pieces 6 and 7 bear on.
+
 ## Amendment 15 (2026-10-18): the end-of-stage review of pieces 4 and 5 (Codex), its fixes, and a correction of Amendment 10
 
 Codex reviewed d88c968..2f016df read-only (`.cache/v021/codex/stage-p45/`) and recommended

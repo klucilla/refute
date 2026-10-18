@@ -1,0 +1,4343 @@
+{
+  "note": "counts of rounds and of targets of the examined record; not a C3 rate",
+  "option": "O2",
+  "per_round": {
+    "all": {
+      "by_stage": {
+        "before_geometry": 107,
+        "geometry": 81,
+        "reaches_measurement": 52
+      },
+      "each_reason": {
+        "duration_period_ratio_above_max": 43,
+        "hidden_noise_undetermined": 32,
+        "replicas_below_r_min": 81,
+        "timing_uncertainty_above_one_duration": 54,
+        "train_snr_below_gate": 10
+      },
+      "reason_combinations": {
+        "duration_period_ratio_above_max": 43,
+        "none": 52,
+        "replicas_below_r_min": 49,
+        "replicas_below_r_min + hidden_noise_undetermined": 32,
+        "timing_uncertainty_above_one_duration": 54,
+        "train_snr_below_gate": 10
+      },
+      "rounds": 240
+    },
+    "band=measurable": {
+      "by_stage": {
+        "before_geometry": 34,
+        "geometry": 57,
+        "reaches_measurement": 29
+      },
+      "each_reason": {
+        "duration_period_ratio_above_max": 16,
+        "hidden_noise_undetermined": 17,
+        "replicas_below_r_min": 57,
+        "timing_uncertainty_above_one_duration": 18
+      },
+      "reason_combinations": {
+        "duration_period_ratio_above_max": 16,
+        "none": 29,
+        "replicas_below_r_min": 40,
+        "replicas_below_r_min + hidden_noise_undetermined": 17,
+        "timing_uncertainty_above_one_duration": 18
+      },
+      "rounds": 120
+    },
+    "band=near": {
+      "by_stage": {
+        "before_geometry": 73,
+        "geometry": 24,
+        "reaches_measurement": 23
+      },
+      "each_reason": {
+        "duration_period_ratio_above_max": 27,
+        "hidden_noise_undetermined": 15,
+        "replicas_below_r_min": 24,
+        "timing_uncertainty_above_one_duration": 36,
+        "train_snr_below_gate": 10
+      },
+      "reason_combinations": {
+        "duration_period_ratio_above_max": 27,
+        "none": 23,
+        "replicas_below_r_min": 9,
+        "replicas_below_r_min + hidden_noise_undetermined": 15,
+        "timing_uncertainty_above_one_duration": 36,
+        "train_snr_below_gate": 10
+      },
+      "rounds": 120
+    },
+    "mechanism=few_train": {
+      "by_stage": {
+        "before_geometry": 24,
+        "geometry": 16
+      },
+      "each_reason": {
+        "hidden_noise_undetermined": 13,
+        "replicas_below_r_min": 16,
+        "timing_uncertainty_above_one_duration": 23,
+        "train_snr_below_gate": 1
+      },
+      "reason_combinations": {
+        "replicas_below_r_min": 3,
+        "replicas_below_r_min + hidden_noise_undetermined": 13,
+        "timing_uncertainty_above_one_duration": 23,
+        "train_snr_below_gate": 1
+      },
+      "rounds": 40
+    },
+    "mechanism=three_years": {
+      "by_stage": {
+        "before_geometry": 4,
+        "geometry": 12,
+        "reaches_measurement": 44
+      },
+      "each_reason": {
+        "duration_period_ratio_above_max": 3,
+        "replicas_below_r_min": 12,
+        "train_snr_below_gate": 1
+      },
+      "reason_combinations": {
+        "duration_period_ratio_above_max": 3,
+        "none": 44,
+        "replicas_below_r_min": 12,
+        "train_snr_below_gate": 1
+      },
+      "rounds": 60
+    },
+    "mechanism=two_years": {
+      "by_stage": {
+        "before_geometry": 38,
+        "geometry": 42
+      },
+      "each_reason": {
+        "hidden_noise_undetermined": 17,
+        "replicas_below_r_min": 42,
+        "timing_uncertainty_above_one_duration": 30,
+        "train_snr_below_gate": 8
+      },
+      "reason_combinations": {
+        "replicas_below_r_min": 25,
+        "replicas_below_r_min + hidden_noise_undetermined": 17,
+        "timing_uncertainty_above_one_duration": 30,
+        "train_snr_below_gate": 8
+      },
+      "rounds": 80
+    },
+    "mechanism=variability_some_years": {
+      "by_stage": {
+        "before_geometry": 41,
+        "geometry": 11,
+        "reaches_measurement": 8
+      },
+      "each_reason": {
+        "duration_period_ratio_above_max": 40,
+        "hidden_noise_undetermined": 2,
+        "replicas_below_r_min": 11,
+        "timing_uncertainty_above_one_duration": 1
+      },
+      "reason_combinations": {
+        "duration_period_ratio_above_max": 40,
+        "none": 8,
+        "replicas_below_r_min": 9,
+        "replicas_below_r_min + hidden_noise_undetermined": 2,
+        "timing_uncertainty_above_one_duration": 1
+      },
+      "rounds": 60
+    },
+    "noise=correlated": {
+      "by_stage": {
+        "before_geometry": 42,
+        "geometry": 55,
+        "reaches_measurement": 23
+      },
+      "each_reason": {
+        "duration_period_ratio_above_max": 19,
+        "hidden_noise_undetermined": 15,
+        "replicas_below_r_min": 55,
+        "timing_uncertainty_above_one_duration": 23
+      },
+      "reason_combinations": {
+        "duration_period_ratio_above_max": 19,
+        "none": 23,
+        "replicas_below_r_min": 40,
+        "replicas_below_r_min + hidden_noise_undetermined": 15,
+        "timing_uncertainty_above_one_duration": 23
+      },
+      "rounds": 120
+    },
+    "noise=white": {
+      "by_stage": {
+        "before_geometry": 65,
+        "geometry": 26,
+        "reaches_measurement": 29
+      },
+      "each_reason": {
+        "duration_period_ratio_above_max": 24,
+        "hidden_noise_undetermined": 17,
+        "replicas_below_r_min": 26,
+        "timing_uncertainty_above_one_duration": 31,
+        "train_snr_below_gate": 10
+      },
+      "reason_combinations": {
+        "duration_period_ratio_above_max": 24,
+        "none": 29,
+        "replicas_below_r_min": 9,
+        "replicas_below_r_min + hidden_noise_undetermined": 17,
+        "timing_uncertainty_above_one_duration": 31,
+        "train_snr_below_gate": 10
+      },
+      "rounds": 120
+    }
+  },
+  "per_target": {
+    "all": {
+      "every_round_interrupted": 78,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "duration_period_ratio_above_max": 15,
+        "hidden_noise_undetermined": 27,
+        "replicas_below_r_min": 45,
+        "timing_uncertainty_above_one_duration": 38,
+        "train_snr_below_gate": 8
+      },
+      "targets": 100,
+      "with_at_least_one_round_reaching_measurement": 22
+    },
+    "band=measurable": {
+      "every_round_interrupted": 38,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "duration_period_ratio_above_max": 6,
+        "hidden_noise_undetermined": 15,
+        "replicas_below_r_min": 31,
+        "timing_uncertainty_above_one_duration": 14
+      },
+      "targets": 50,
+      "with_at_least_one_round_reaching_measurement": 12
+    },
+    "band=near": {
+      "every_round_interrupted": 40,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "duration_period_ratio_above_max": 9,
+        "hidden_noise_undetermined": 12,
+        "replicas_below_r_min": 14,
+        "timing_uncertainty_above_one_duration": 24,
+        "train_snr_below_gate": 8
+      },
+      "targets": 50,
+      "with_at_least_one_round_reaching_measurement": 10
+    },
+    "mechanism=few_train": {
+      "every_round_interrupted": 20,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "hidden_noise_undetermined": 12,
+        "replicas_below_r_min": 13,
+        "timing_uncertainty_above_one_duration": 16,
+        "train_snr_below_gate": 1
+      },
+      "targets": 20,
+      "with_at_least_one_round_reaching_measurement": 0
+    },
+    "mechanism=three_years": {
+      "every_round_interrupted": 4,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "duration_period_ratio_above_max": 1,
+        "replicas_below_r_min": 3
+      },
+      "targets": 20,
+      "with_at_least_one_round_reaching_measurement": 16
+    },
+    "mechanism=two_years": {
+      "every_round_interrupted": 40,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "hidden_noise_undetermined": 14,
+        "replicas_below_r_min": 25,
+        "timing_uncertainty_above_one_duration": 22,
+        "train_snr_below_gate": 7
+      },
+      "targets": 40,
+      "with_at_least_one_round_reaching_measurement": 0
+    },
+    "mechanism=variability_some_years": {
+      "every_round_interrupted": 14,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "duration_period_ratio_above_max": 14,
+        "hidden_noise_undetermined": 1,
+        "replicas_below_r_min": 4
+      },
+      "targets": 20,
+      "with_at_least_one_round_reaching_measurement": 6
+    },
+    "noise=correlated": {
+      "every_round_interrupted": 39,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "duration_period_ratio_above_max": 6,
+        "hidden_noise_undetermined": 14,
+        "replicas_below_r_min": 29,
+        "timing_uncertainty_above_one_duration": 16
+      },
+      "targets": 50,
+      "with_at_least_one_round_reaching_measurement": 11
+    },
+    "noise=white": {
+      "every_round_interrupted": 39,
+      "reasons_among_targets_with_every_round_interrupted": {
+        "duration_period_ratio_above_max": 9,
+        "hidden_noise_undetermined": 13,
+        "replicas_below_r_min": 16,
+        "timing_uncertainty_above_one_duration": 22,
+        "train_snr_below_gate": 8
+      },
+      "targets": 50,
+      "with_at_least_one_round_reaching_measurement": 11
+    }
+  },
+  "rounds": [
+    {
+      "band": "near",
+      "case": "planet-near-white-0000",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0000",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0010",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0010",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0020",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0020",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0030",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0030",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0040",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0040",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0050",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0050",
+      "mechanism": "two_years",
+      "n_replicas": 6,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0060",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0060",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0070",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0070",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0080",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0080",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0090",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0090",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0100",
+      "mechanism": "three_years",
+      "n_replicas": 35,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0100",
+      "mechanism": "three_years",
+      "n_replicas": 34,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0100",
+      "mechanism": "three_years",
+      "n_replicas": 35,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0110",
+      "mechanism": "three_years",
+      "n_replicas": 34,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0110",
+      "mechanism": "three_years",
+      "n_replicas": 32,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0110",
+      "mechanism": "three_years",
+      "n_replicas": 32,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0120",
+      "mechanism": "three_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0120",
+      "mechanism": "three_years",
+      "n_replicas": 47,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0120",
+      "mechanism": "three_years",
+      "n_replicas": 18,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0130",
+      "mechanism": "three_years",
+      "n_replicas": 29,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0130",
+      "mechanism": "three_years",
+      "n_replicas": 29,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0130",
+      "mechanism": "three_years",
+      "n_replicas": 28,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0140",
+      "mechanism": "three_years",
+      "n_replicas": 26,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0140",
+      "mechanism": "three_years",
+      "n_replicas": 80,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0140",
+      "mechanism": "three_years",
+      "n_replicas": 27,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0150",
+      "mechanism": "few_train",
+      "n_replicas": 2,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0150",
+      "mechanism": "few_train",
+      "n_replicas": 7,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0160",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0160",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0170",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0170",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0180",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0180",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0190",
+      "mechanism": "few_train",
+      "n_replicas": 5,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0190",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "train_snr_below_gate"
+      ],
+      "stage": "before_geometry",
+      "year": 2021
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0000",
+      "mechanism": "two_years",
+      "n_replicas": 13,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0000",
+      "mechanism": "two_years",
+      "n_replicas": 12,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0010",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0010",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0020",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0020",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0030",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0030",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0040",
+      "mechanism": "two_years",
+      "n_replicas": 10,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0040",
+      "mechanism": "two_years",
+      "n_replicas": 6,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0050",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0050",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0060",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0060",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0070",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0070",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0080",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0080",
+      "mechanism": "two_years",
+      "n_replicas": 6,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0090",
+      "mechanism": "two_years",
+      "n_replicas": 9,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0090",
+      "mechanism": "two_years",
+      "n_replicas": 11,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0100",
+      "mechanism": "three_years",
+      "n_replicas": 21,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0100",
+      "mechanism": "three_years",
+      "n_replicas": 21,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0100",
+      "mechanism": "three_years",
+      "n_replicas": 21,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0110",
+      "mechanism": "three_years",
+      "n_replicas": 26,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0110",
+      "mechanism": "three_years",
+      "n_replicas": 27,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0110",
+      "mechanism": "three_years",
+      "n_replicas": 27,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0120",
+      "mechanism": "three_years",
+      "n_replicas": 10,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0120",
+      "mechanism": "three_years",
+      "n_replicas": 32,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0120",
+      "mechanism": "three_years",
+      "n_replicas": 32,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0130",
+      "mechanism": "three_years",
+      "n_replicas": 20,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0130",
+      "mechanism": "three_years",
+      "n_replicas": 21,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0130",
+      "mechanism": "three_years",
+      "n_replicas": 20,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0140",
+      "mechanism": "three_years",
+      "n_replicas": 28,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0140",
+      "mechanism": "three_years",
+      "n_replicas": 30,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0140",
+      "mechanism": "three_years",
+      "n_replicas": 28,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0150",
+      "mechanism": "few_train",
+      "n_replicas": 15,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0150",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0160",
+      "mechanism": "few_train",
+      "n_replicas": 5,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0160",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0170",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0170",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0180",
+      "mechanism": "few_train",
+      "n_replicas": 3,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0180",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0190",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0190",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2021
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": 14,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": 14,
+      "noise": "white",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": 28,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": 30,
+      "noise": "white",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "white",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0000",
+      "mechanism": "two_years",
+      "n_replicas": 9,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0000",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0010",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0010",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0020",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0020",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0030",
+      "mechanism": "two_years",
+      "n_replicas": 8,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0030",
+      "mechanism": "two_years",
+      "n_replicas": 12,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0040",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0040",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0050",
+      "mechanism": "two_years",
+      "n_replicas": 10,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0050",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0060",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0060",
+      "mechanism": "two_years",
+      "n_replicas": 11,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0070",
+      "mechanism": "two_years",
+      "n_replicas": 0,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0070",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0080",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0080",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0090",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0090",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0100",
+      "mechanism": "three_years",
+      "n_replicas": 18,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0100",
+      "mechanism": "three_years",
+      "n_replicas": 18,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0100",
+      "mechanism": "three_years",
+      "n_replicas": 18,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0110",
+      "mechanism": "three_years",
+      "n_replicas": 42,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0110",
+      "mechanism": "three_years",
+      "n_replicas": 42,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0110",
+      "mechanism": "three_years",
+      "n_replicas": 42,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0120",
+      "mechanism": "three_years",
+      "n_replicas": 13,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0120",
+      "mechanism": "three_years",
+      "n_replicas": 36,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0120",
+      "mechanism": "three_years",
+      "n_replicas": 36,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0130",
+      "mechanism": "three_years",
+      "n_replicas": 22,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0130",
+      "mechanism": "three_years",
+      "n_replicas": 23,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0130",
+      "mechanism": "three_years",
+      "n_replicas": 22,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0140",
+      "mechanism": "three_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0140",
+      "mechanism": "three_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0140",
+      "mechanism": "three_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0150",
+      "mechanism": "few_train",
+      "n_replicas": 6,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0150",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0160",
+      "mechanism": "few_train",
+      "n_replicas": 7,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0160",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0170",
+      "mechanism": "few_train",
+      "n_replicas": 7,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0170",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0180",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0180",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0190",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0190",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2021
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": 10,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": 30,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": 23,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0000",
+      "mechanism": "two_years",
+      "n_replicas": 12,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0000",
+      "mechanism": "two_years",
+      "n_replicas": 11,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0010",
+      "mechanism": "two_years",
+      "n_replicas": 11,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0010",
+      "mechanism": "two_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0020",
+      "mechanism": "two_years",
+      "n_replicas": 15,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0020",
+      "mechanism": "two_years",
+      "n_replicas": 15,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0030",
+      "mechanism": "two_years",
+      "n_replicas": 11,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0030",
+      "mechanism": "two_years",
+      "n_replicas": 12,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0040",
+      "mechanism": "two_years",
+      "n_replicas": 13,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0040",
+      "mechanism": "two_years",
+      "n_replicas": 12,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0050",
+      "mechanism": "two_years",
+      "n_replicas": 5,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0050",
+      "mechanism": "two_years",
+      "n_replicas": 12,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0060",
+      "mechanism": "two_years",
+      "n_replicas": 17,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0060",
+      "mechanism": "two_years",
+      "n_replicas": 17,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0070",
+      "mechanism": "two_years",
+      "n_replicas": 13,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0070",
+      "mechanism": "two_years",
+      "n_replicas": 13,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0080",
+      "mechanism": "two_years",
+      "n_replicas": 14,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0080",
+      "mechanism": "two_years",
+      "n_replicas": 14,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0090",
+      "mechanism": "two_years",
+      "n_replicas": 10,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0090",
+      "mechanism": "two_years",
+      "n_replicas": 12,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0100",
+      "mechanism": "three_years",
+      "n_replicas": 20,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0100",
+      "mechanism": "three_years",
+      "n_replicas": 20,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0100",
+      "mechanism": "three_years",
+      "n_replicas": 20,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0110",
+      "mechanism": "three_years",
+      "n_replicas": 16,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0110",
+      "mechanism": "three_years",
+      "n_replicas": 17,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0110",
+      "mechanism": "three_years",
+      "n_replicas": 16,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0120",
+      "mechanism": "three_years",
+      "n_replicas": 40,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0120",
+      "mechanism": "three_years",
+      "n_replicas": 40,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0120",
+      "mechanism": "three_years",
+      "n_replicas": 38,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0130",
+      "mechanism": "three_years",
+      "n_replicas": 15,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0130",
+      "mechanism": "three_years",
+      "n_replicas": 15,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0130",
+      "mechanism": "three_years",
+      "n_replicas": 17,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0140",
+      "mechanism": "three_years",
+      "n_replicas": 54,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0140",
+      "mechanism": "three_years",
+      "n_replicas": 54,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0140",
+      "mechanism": "three_years",
+      "n_replicas": 54,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0150",
+      "mechanism": "few_train",
+      "n_replicas": 18,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0150",
+      "mechanism": "few_train",
+      "n_replicas": 8,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0160",
+      "mechanism": "few_train",
+      "n_replicas": 17,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0160",
+      "mechanism": "few_train",
+      "n_replicas": 8,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0170",
+      "mechanism": "few_train",
+      "n_replicas": 5,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0170",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0180",
+      "mechanism": "few_train",
+      "n_replicas": 5,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0180",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0190",
+      "mechanism": "few_train",
+      "n_replicas": 6,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min",
+        "hidden_noise_undetermined"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0190",
+      "mechanism": "few_train",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "stage": "before_geometry",
+      "year": 2021
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": 21,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0200",
+      "mechanism": "variability_some_years",
+      "n_replicas": 21,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": 18,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": 23,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0210",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": 31,
+      "noise": "correlated",
+      "reasons": [],
+      "stage": "reaches_measurement",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0220",
+      "mechanism": "variability_some_years",
+      "n_replicas": 10,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": 16,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0230",
+      "mechanism": "variability_some_years",
+      "n_replicas": 14,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": null,
+      "noise": "correlated",
+      "reasons": [
+        "duration_period_ratio_above_max"
+      ],
+      "stage": "before_geometry",
+      "year": 2018
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": 17,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2019
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0240",
+      "mechanism": "variability_some_years",
+      "n_replicas": 17,
+      "noise": "correlated",
+      "reasons": [
+        "replicas_below_r_min"
+      ],
+      "stage": "geometry",
+      "year": 2020
+    }
+  ],
+  "source": "option-a-geometry.json",
+  "targets": [
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0000",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0010",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0020",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0030",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0040",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0050",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0060",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0070",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0080",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0090",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0100",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0110",
+      "every_round_interrupted": true,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0120",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0130",
+      "every_round_interrupted": true,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0140",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0150",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0160",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0170",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0180",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0190",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0200",
+      "every_round_interrupted": false,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 2
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0210",
+      "every_round_interrupted": false,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 1
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0220",
+      "every_round_interrupted": false,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 1
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0230",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-correlated-0240",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0000",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0010",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0020",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0030",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0040",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0050",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0060",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0070",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0080",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0090",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0100",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0110",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0120",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 2
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0130",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0140",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0150",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0160",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0170",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0180",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0190",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0200",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0210",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0220",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0230",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "measurable",
+      "case": "planet-measurable-white-0240",
+      "every_round_interrupted": false,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 2
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0000",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0010",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0020",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0030",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0040",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0050",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0060",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0070",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0080",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0090",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0100",
+      "every_round_interrupted": true,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0110",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0120",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 2
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0130",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0140",
+      "every_round_interrupted": true,
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0150",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0160",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0170",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0180",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0190",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0200",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0210",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0220",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0230",
+      "every_round_interrupted": false,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 1
+    },
+    {
+      "band": "near",
+      "case": "planet-near-correlated-0240",
+      "every_round_interrupted": false,
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 1
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0000",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration",
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0010",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0020",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0030",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration",
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0040",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0050",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0060",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration",
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0070",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration",
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0080",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration",
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0090",
+      "every_round_interrupted": true,
+      "mechanism": "two_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration",
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0100",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0110",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0120",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "replicas_below_r_min",
+        "train_snr_below_gate"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 1
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0130",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0140",
+      "every_round_interrupted": false,
+      "mechanism": "three_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [],
+      "rounds": 3,
+      "rounds_reaching_measurement": 3
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0150",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0160",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0170",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0180",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "timing_uncertainty_above_one_duration"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0190",
+      "every_round_interrupted": true,
+      "mechanism": "few_train",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "hidden_noise_undetermined",
+        "replicas_below_r_min",
+        "train_snr_below_gate"
+      ],
+      "rounds": 2,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0200",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0210",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0220",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max",
+        "hidden_noise_undetermined",
+        "replicas_below_r_min"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0230",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    },
+    {
+      "band": "near",
+      "case": "planet-near-white-0240",
+      "every_round_interrupted": true,
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "reasons_of_its_rounds": [
+        "duration_period_ratio_above_max"
+      ],
+      "rounds": 3,
+      "rounds_reaching_measurement": 0
+    }
+  ]
+}
