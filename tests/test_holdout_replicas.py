@@ -135,14 +135,25 @@ def test_replicas_never_overlap_a_window_and_keep_the_masked_fraction(period, ti
     for i, (a0, a1) in enumerate(spans_r):
         for b0, b1 in spans_r[i + 1 :]:
             assert not _closed_overlap(a0, a1, b0, b1)
+    # Revision 4, 1: a replica is accepted only if the sector's masked fraction stays at most 0.5
+    # once it is added. (Corrected after the first run: the windows alone can mask more than half
+    # of a sector, at short periods with a large timing error; then no replica is accepted there.)
     for lo, hi in spans:
-        masks = [(w.t_pred - w.baseline_inner, w.t_pred + w.baseline_inner) for w in windows]
-        masks += [(r.t_pred - r.baseline_inner, r.t_pred + r.baseline_inner) for r in replicas]
         grid = np.linspace(lo, hi, 200001)
-        masked = np.zeros(grid.size, bool)
-        for a0, a1 in masks:
-            masked |= (grid >= a0) & (grid <= a1)
-        assert masked.mean() <= 0.5 + 1e-4
+
+        def fraction(intervals, grid=grid):
+            masked = np.zeros(grid.size, bool)
+            for a0, a1 in intervals:
+                masked |= (grid >= a0) & (grid <= a1)
+            return masked.mean()
+
+        own = [(w.t_pred - w.baseline_inner, w.t_pred + w.baseline_inner) for w in windows]
+        here = [r for r in replicas if lo <= r.t_pred <= hi]
+        reps = [(r.t_pred - r.baseline_inner, r.t_pred + r.baseline_inner) for r in here]
+        if here:
+            assert fraction(own + reps) <= 0.5 + 1e-4
+        if fraction(own) > 0.5 + 1e-4:
+            assert not here
 
 
 def test_the_same_metadata_gives_the_same_replicas():
@@ -267,13 +278,15 @@ def test_best_dp_ties_go_to_the_smaller_magnitude_then_the_negative_side():
 
 def test_a_non_trivial_grid_measures_the_replicas_at_the_shifted_centers():
     lc, infos = _hidden_lc(3000)
-    eph, windows, replicas, plan = _geometry(infos, period_err=2e-5)
+    # 2e-4 (after the sabotage SR7 was not caught at 2e-5, whose shifts stayed below a cadence):
+    # the shifts at the far epochs reach several cadences
+    eph, windows, replicas, plan = _geometry(infos, period_err=2e-4)
     grid = period_grid(eph, windows, T14, plan.gauntlet.holdout_by_year)
     assert grid.size >= 3
     hidden = HiddenYear(lc, windows + replicas, plan)
     stats = replica_stats(hidden, replicas, eph, T14, CADENCE, plan, infos, grid)
     assert [p.dp for p in stats.per_dp] == grid.tolist()
-    i, r = next((i, r) for i, r in enumerate(replicas) if r.epoch != eph.n_ref)
+    i, r = max(enumerate(replicas), key=lambda item: abs(item[1].epoch - eph.n_ref))
     t_in, f_in = hidden.window(r.t_pred, r.half_width)
     t_b, f_b = hidden.local_baseline(r.t_pred, r.half_width)
     t = np.concatenate([t_in, t_b])
@@ -282,6 +295,8 @@ def test_a_non_trivial_grid_measures_the_replicas_at_the_shifted_centers():
     k = grid.size - 1
     center = r.t_pred + (r.epoch - eph.n_ref) * grid[k]
     expected = window_depth(t, f, in_window, center, T14 / 2, cadence=CADENCE).depth
+    unshifted = window_depth(t, f, in_window, r.t_pred, T14 / 2, cadence=CADENCE).depth
+    assert unshifted != expected  # the shift moves the box by at least one cadence
     assert stats.per_dp[k].depths[i] == pytest.approx(expected, rel=1e-12)
     transit = [w for w in windows if w.kind == "transit"]
     result = measure_with_replicas(hidden, transit, replicas, eph, T14, CADENCE, plan, infos, grid)
@@ -294,7 +309,8 @@ def test_a_non_trivial_grid_measures_the_replicas_at_the_shifted_centers():
 
 def test_too_few_replicas_is_inconclusive_and_no_transit_window_is_read():
     lc, infos = _hidden_lc(3001)
-    eph, windows, replicas, plan = _geometry(infos, period_err=6e-3)  # sigma_t near 0.8 T14
+    # sigma_t above T14 at the far epochs (6e-3, first written, still left 22 replicas)
+    eph, windows, replicas, plan = _geometry(infos, period_err=1.2e-2)
     assert len(replicas) < 20
     hidden = HiddenYear(lc, windows + replicas, plan)
     grid = period_grid(eph, windows, T14, plan.gauntlet.holdout_by_year)
@@ -312,11 +328,16 @@ def test_a_sector_without_bins_drops_its_windows_and_none_left_is_inconclusive()
     keep = (lc.sector == 1) | (lc.time < 1353.0 + 4.0)  # sector 2 cut to 4 days
     short = lc.select(keep)
     infos2 = [infos[0], replace(infos[1], t_end=float(short.time.max()))]
-    eph, windows, replicas, plan = _geometry(infos2)
+    # r_min lowered so that the barrier does not stop the case before the sector rule is reached
+    eph, windows, replicas, plan = _geometry(infos2, plan=_plan(r_min=5))
     hidden = HiddenYear(short, windows + replicas, plan)
     grid = period_grid(eph, windows, T14, plan.gauntlet.holdout_by_year)
     stats = replica_stats(hidden, replicas, eph, T14, CADENCE, plan, infos2, grid)
     assert 2 in stats.excluded_sectors and 1 not in stats.excluded_sectors
+    # added after the sabotage SR5 was not caught: no replica of the excluded sector is counted
+    in_two = [i for i, r in enumerate(replicas) if r.t_pred > infos2[1].t_start]
+    assert in_two
+    assert all(stats.per_dp[0].depths[i] is None for i in in_two)
     transit = [w for w in windows if w.kind == "transit"]
     result = measure_with_replicas(hidden, transit, replicas, eph, T14, CADENCE, plan, infos2, grid)
     assert result["dropped"].get("excluded_sector", 0) >= 1
@@ -324,6 +345,33 @@ def test_a_sector_without_bins_drops_its_windows_and_none_left_is_inconclusive()
     hidden2 = HiddenYear(short, windows + replicas, plan_none)
     stats2 = replica_stats(hidden2, replicas, eph, T14, CADENCE, plan_none, infos2, grid)
     assert stats2.status == "hidden_noise_undetermined"
+
+
+def test_overlap_is_tested_on_closed_intervals():
+    """Added after the sabotage SR2 was not caught: spans that only touch overlap."""
+    from refute.packs.tess.holdout import _closed_overlap
+
+    assert _closed_overlap(0.0, 1.0, [(1.0, 2.0)])
+    assert _closed_overlap(1.0, 2.0, [(0.0, 1.0)])
+    assert not _closed_overlap(0.0, 1.0, [(1.0 + 1e-9, 2.0)])
+
+
+def test_a_replica_with_a_poorly_covered_band_is_not_used():
+    """Added after the sabotage SR6 was not caught: 60% of one replica's bands removed."""
+    lc, infos = _hidden_lc(3003)
+    eph, windows, replicas, plan = _geometry(infos)
+    r = replicas[0]
+    dt = np.abs(lc.time - r.t_pred)
+    band = (dt > r.baseline_inner) & (dt <= r.baseline_outer)
+    idx = np.flatnonzero(band)
+    drop = np.zeros(len(lc), bool)
+    drop[idx[: int(0.6 * idx.size)]] = True
+    cut = lc.select(~drop)
+    hidden = HiddenYear(cut, windows + replicas, plan)
+    grid = period_grid(eph, windows, T14, plan.gauntlet.holdout_by_year)
+    stats = replica_stats(hidden, replicas, eph, T14, CADENCE, plan, infos, grid)
+    assert stats.per_dp[0].depths[0] is None
+    assert stats.dropped.get("band_coverage", 0) >= 1
 
 
 def test_windows_sharing_cadences_keep_only_the_earlier():

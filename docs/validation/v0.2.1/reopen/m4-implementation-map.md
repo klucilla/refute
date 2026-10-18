@@ -630,6 +630,90 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 13 (2026-10-18): the results of piece 4
+
+Tests committed before the code (70a5d1a); the code in the next commit. The numeric criteria
+(`m4/piece4_numbers.py`, `m4/piece4-numbers.json`, the helpers of the test file):
+
+| Criterion (Amendment 11) | Result |
+|---|---|
+| white, median of `sqrt(var_rep)` / analytic error, 200 light curves, in [0.85, 1.15] | **1.094**: met (9% high, within the declared limit of the reference, which ignores the hidden detrending) |
+| AR(1), median of `var_rep / var_MC` (400 realizations), 200 light curves, in [0.85, 1.15] | **0.941**: met |
+| pulls of the full operation, 200 AR(1) years without signal | \|pull\| ≤ 1: **0.705**; ≤ 2: **0.960**; median **0.00007**: met |
+| known depth (1000 ppm) | recovered within 5%: met |
+
+With the geometry of the cases (`σ_t` = 0, two sectors) 87 replicas are accepted.
+
+**Test changes after the first runs, declared:** (1) the masked-fraction case read the rule as
+"windows and replicas together at most 0.5", which fails when the windows alone mask more than half
+of a sector (short periods, large timing error); the rule of revision 4, 1 is about accepting a
+replica, so the case now checks that a sector with replicas stays at most 0.5 and that a sector
+whose windows alone exceed it gets none. (2) The too-few-replicas case needed a larger period error
+(its precondition caught it). (3) The O2 sector case lowers `r_min` to 5 so that the barrier does
+not stop it before the sector rule. (4) After the sabotages SR2, SR5, SR6 and SR7 were not caught,
+four cases were strengthened or added (closed overlap, the excluded sector's replicas not counted,
+a replica with a poorly covered band, a grid whose shifts exceed a cadence); all seven sabotages
+then fail at least one case.
+
+## Amendment 12 (2026-10-18): piece 5, the capacity decisions and the FAIL rule (before its tests)
+
+Declared before any test or code of piece 5, with Amendments 6, 7, 9, 10 and 11.
+
+- **The train candidate** (switch on): after the train search, the train curve is detrended with
+  the train transits masked (as today) and the train candidate goes through the gate of
+  Amendment 7 (`_bls_gate`, A1 at `n_T` on the train curve); the **train validity rules** (H4)
+  then use the corrected candidate. `d_train` is its BLS depth and `e_train` its corrected
+  `depth_err` (`depth_err_BLS × β_D`): Amendment 6, item 2 wrote "the A1 stacked error", the
+  estimator of piece 2 at that time; Amendment 7 replaced that estimator for the gate, and
+  `e_train` follows it.
+- **The train replicas:** the windows of the train ephemeris in the train sectors (transit and
+  control, `_predict_windows` on the train spans), the replicas of `register_replicas` there, and
+  their depths on the train curve (the train detrending, which masks the train transits) by
+  `window_depth`, with the band coverage, at every `dP` of the round's grid;
+  `var_rep,train(dP)` as for the hidden year. Fewer than `R_min` at any `dP`: decision 1 is
+  INCONCLUSIVE `insufficient_capacity_train` (no train variance, no capacity).
+- **`N_pred`:** the transit windows whose measurement span `[t_pred ± baseline_outer]` lies
+  inside one hidden sector span (metadata).
+- **Decision 1:** `S_pred,1 = d_c / e_pred,1`, `d_c = d_train − k e_train` (`k` = 1),
+  `e_pred,1 = m_β max_dP sqrt(var_rep,train(dP) / N_pred)`; conclusive only if
+  `S_pred,1 ≥ min_snr − b + Φ⁻¹(1 − α_round) s` (`min_snr` the holdout's 5.0, `α_round = 0.005 / R`,
+  `R` the number of observing years of the light curve); otherwise INCONCLUSIVE
+  `insufficient_capacity_train` and `HiddenYear` is never built (empty hidden access log).
+- **Decision 2** (the barrier of `measure_with_replicas`, after the hidden replicas and before any
+  transit window): `S_pred,2 = d_c / e_pred,2`, `e_pred,2 = max_dP sqrt(var_rep,hidden(dP) /
+  N_pred)`; the same threshold; otherwise INCONCLUSIVE `insufficient_capacity_hidden_noise`.
+- **`b` and `s`:** until the freeze they are module settings of `holdout.py`
+  (`CAPACITY_B = 0.0`, `CAPACITY_S = 0.0`), not plan fields, so that no new plan field reaches the
+  historical locks before the freeze (whose commit moves them into the plan together with the
+  table extension it will need, a package for the maintainer); the unit tests set them
+  explicitly. No value is presented as calibrated.
+- **The FAIL rule** (revision 3, 4.5): a round measured with `N_valid ≥ min_predicted_transits`
+  PASSES if the hidden SNR ≥ `min_snr`; FAILS if the SNR < `min_snr` **and**
+  `(d_train − d_hidden) / sqrt(e_train² + e_hidden²) > 3`; otherwise INCONCLUSIVE
+  `not_detected_not_inconsistent`. A non-finite statistic is INCONCLUSIVE with its reason (never
+  FAIL).
+- **Recorded per round:** `S_pred,1`, `S_pred,2`, `S_meas` (the hidden SNR), the threshold, `R`,
+  both decisions with their inputs, and the access log (Amendment 9).
+- **`S_meas` apart** (Amendment 9): `calibration_measurement(raw, sectors, year, plan)`, used only
+  by the population harness, never by `run_holdout`: for a round that decision 1 stops, it builds
+  the hidden year and measures it as a conclusive round would, and returns a record marked
+  `calibration_only` with `S_pred,1`, `S_pred,2` and `S_meas`; `run_holdout`'s result for the same
+  data is unchanged.
+
+**The cases** (`tests/test_holdout_capacity.py`, revision 3, 10, rows 4.1, 4.2 to 4.4, 4.5 and N):
+a strong signal in a quiet hidden year: conclusive and PASS; a weak signal: INCONCLUSIVE
+`insufficient_capacity_train` with an empty hidden access log; a noisy hidden year (a larger
+AR(1) amplitude in that year only): INCONCLUSIVE `insufficient_capacity_hidden_noise`; row N: two
+hidden years equal outside the windows and different inside give the same decision 2 and the same
+hidden noise, bit for bit; no signal in the hidden year with high capacity: FAIL; a signal
+slightly weaker than predicted with a consistent depth: INCONCLUSIVE
+`not_detected_not_inconsistent`; fewer than two valid windows: INCONCLUSIVE; `e_pred` is the
+largest over a non-trivial grid; a non-finite statistic is INCONCLUSIVE; `b` and `s` enter the
+threshold as declared; the calibration-only measurement leaves `run_holdout` unchanged; with the
+switch off the holdout is the M3 one (P1). Each case in white and, where it matters, correlated
+noise. The case of row 4.1 with a train-found sinusoid needs the frequencies of piece 7 and is
+written with piece 7.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after

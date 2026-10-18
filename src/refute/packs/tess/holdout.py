@@ -363,6 +363,424 @@ def hidden_window_fraction(
     return covered / total
 
 
+# --- M4 piece 4: replica spans and the hidden-window variance by empirical replicas -------------
+# Revision 4 of the corrections plan, section 1, with the readings of
+# docs/validation/v0.2.1/reopen/m4-implementation-map.md, Amendments 6, 10 and 11. Used only with
+# gauntlet.corrections.enabled; the M3 path above is unchanged.
+
+REPLICA_PHASE_DENOMINATORS = (4, 8, 16, 32, 64)
+MIN_BASELINE_PER_PARAMETER = 20
+MAX_CONDITION = 1e6
+MAD_SCALE = 1.4826
+
+
+def replica_phases() -> list[float]:
+    """0.25, 0.75, then each dyadic level in increasing phase, down to a spacing of 1/64."""
+    out: list[float] = []
+    for d in REPLICA_PHASE_DENOMINATORS:
+        out += [j / d for j in range(1, d, 2)]
+    return out
+
+
+def _closed_overlap(a0: float, a1: float, intervals: Sequence[tuple[float, float]]) -> bool:
+    return any(a0 <= b1 and b0 <= a1 for b0, b1 in intervals)
+
+
+def _union_length(intervals: Sequence[tuple[float, float]], lo: float, hi: float) -> float:
+    pieces = sorted((max(lo, a), min(hi, b)) for a, b in intervals if min(hi, b) > max(lo, a))
+    total, start, end = 0.0, None, None
+    for a, b in pieces:
+        if end is None or a > end:
+            if end is not None:
+                total += end - start
+            start, end = a, b
+        else:
+            end = max(end, b)
+    if end is not None:
+        total += end - start
+    return total
+
+
+def register_replicas(
+    ephemeris: Ephemeris,
+    windows: Sequence[PredictedWindow],
+    spans: Sequence[tuple[float, float]],
+) -> list[PredictedWindow]:
+    """The replica spans of revision 4, 1, from metadata only (Amendment 11): ``L = 2
+    max(baseline_outer)``, the mask ``max(baseline_inner)`` and the box half-width
+    ``max(half_width)`` over the transit windows; closed intervals for every overlap."""
+    transit = [w for w in windows if w.kind == "transit"]
+    if not transit or not ephemeris.period > 0:
+        return []
+    outer = max(w.baseline_outer for w in transit)
+    inner = max(w.baseline_inner for w in transit)
+    half = max(w.half_width for w in transit)
+    measured = [(w.t_pred - w.baseline_outer, w.t_pred + w.baseline_outer) for w in windows]
+    masks = [
+        [(w.t_pred - w.baseline_inner, w.t_pred + w.baseline_inner) for w in windows] for _ in spans
+    ]
+    accepted: list[PredictedWindow] = []
+    taken: list[tuple[float, float]] = []
+    for phase in replica_phases():
+        centers = []
+        for i, (lo, hi) in enumerate(spans):
+            m0 = math.ceil((lo - ephemeris.t_ref) / ephemeris.period - phase)
+            m1 = math.floor((hi - ephemeris.t_ref) / ephemeris.period - phase)
+            for m in range(m0, m1 + 1):
+                centers.append((ephemeris.t_ref + (m + phase) * ephemeris.period, i, m))
+        for center, i, m in sorted(centers):
+            lo, hi = spans[i]
+            a0, a1 = center - outer, center + outer
+            if a0 < lo or a1 > hi:
+                continue
+            if _closed_overlap(a0, a1, measured) or _closed_overlap(a0, a1, taken):
+                continue
+            trial = [*masks[i], (center - inner, center + inner)]
+            if _union_length(trial, lo, hi) / (hi - lo) > 0.5:
+                continue
+            masks[i] = trial
+            taken.append((a0, a1))
+            accepted.append(
+                PredictedWindow("replica", ephemeris.n_ref + m, float(center), half, inner, outer)
+            )
+    return accepted
+
+
+def period_grid(
+    ephemeris: Ephemeris, windows: Sequence[PredictedWindow], duration: float, params: HoldoutParams
+) -> np.ndarray:
+    """The period-correction grid, from metadata before any read (Amendment 6): the extent and
+    step of ``_measure``, odd, exactly symmetric, containing 0."""
+    transit = [w for w in windows if w.kind == "transit"]
+    lever = max((abs(w.epoch - ephemeris.n_ref) for w in transit), default=0)
+    span = params.timing_sigma * ephemeris.period_err
+    if not (span > 0 and lever > 0):
+        return np.zeros(1)
+    n = int(min(1001, np.ceil(2.0 * span * lever / (duration / 8.0)) + 1))
+    n = max(n, 3)
+    if n % 2 == 0:
+        n += 1
+    side = np.linspace(0.0, span, n // 2 + 1)
+    return np.concatenate([-side[:0:-1], side])
+
+
+def best_dp_index(snr: np.ndarray, grid: np.ndarray) -> int | None:
+    """The index of the largest finite SNR; ties to the smaller |dP|, then the negative side."""
+    snr = np.asarray(snr, dtype=float)
+    finite = np.isfinite(snr)
+    if not finite.any():
+        return None
+    top = np.max(snr[finite])
+    candidates = [i for i in range(snr.size) if finite[i] and snr[i] == top]
+    return min(candidates, key=lambda i: (abs(grid[i]), grid[i] > 0))
+
+
+@dataclass(frozen=True)
+class WindowDepth:
+    depth: float | None
+    n_in: int
+    n_base: int
+    n_params: int
+    reason: str | None
+
+
+def window_depth(
+    t: np.ndarray,
+    f: np.ndarray,
+    in_window: np.ndarray,
+    center: float,
+    half: float,
+    frequencies: Sequence[float] = (),
+    *,
+    cadence: float,
+    coverage: float = 0.5,
+) -> WindowDepth:
+    """Revision 3, 4.1 at one center (Amendment 11): the box ``|t - c| <= half`` within the
+    window's cadences, the baseline model fitted to every other cadence (a line plus the given
+    frequencies, in decreasing train amplitude), the degeneracy rule and its fallback, and
+    ``d = mean over the box of (model - flux)``. With one noise level per window, the weights
+    1/sigma_w,hidden^2 are equal, so the fit is the unweighted one."""
+    t = np.asarray(t, dtype=float)
+    f = np.asarray(f, dtype=float)
+    box = np.asarray(in_window, dtype=bool) & (np.abs(t - center) <= half)
+    base = ~box
+    n_in, n_base = int(box.sum()), int(base.sum())
+    if n_in < coverage * 2.0 * half / cadence or n_in == 0:
+        return WindowDepth(None, n_in, n_base, 0, "box_coverage")
+    x = t - center
+
+    def design(n_freq: int, line: bool) -> np.ndarray:
+        cols = [np.ones_like(x)]
+        if line:
+            cols.append(x)
+        for nu in list(frequencies)[:n_freq]:
+            cols += [np.sin(2 * np.pi * nu * t), np.cos(2 * np.pi * nu * t)]
+        return np.column_stack(cols)
+
+    options = [(k, True) for k in range(len(frequencies), -1, -1)] + [(0, False)]
+    for n_freq, line in options:
+        full = design(n_freq, line)
+        k = full.shape[1]
+        if n_base < MIN_BASELINE_PER_PARAMETER * k:
+            continue
+        xb = full[base]
+        scale = np.linalg.norm(xb, axis=0)
+        if not np.all(scale > 0):
+            continue
+        normal = (xb / scale).T @ (xb / scale)
+        if not np.linalg.cond(normal) <= MAX_CONDITION:
+            continue
+        coef, *_ = np.linalg.lstsq(xb, f[base], rcond=None)
+        model = full[box] @ coef
+        return WindowDepth(float(np.mean(model - f[box])), n_in, n_base, k, None)
+    return WindowDepth(None, n_in, n_base, 0, "degenerate_baseline")
+
+
+@dataclass
+class ReplicaPoint:
+    dp: float
+    depths: list[float | None]
+    n_rep: int
+    var_rep: float
+
+
+@dataclass
+class ReplicaStats:
+    status: str  # "ok" or "hidden_noise_undetermined"
+    per_dp: list[ReplicaPoint]
+    noise: Any
+    excluded_sectors: list[int]
+    dropped: dict[str, int]
+
+
+def _sector_of(t: float, sectors: Sequence[SectorInfo]) -> int | None:
+    for s in sectors:
+        if s.t_start <= t <= s.t_end:
+            return int(s.sector)
+    return None
+
+
+def _read(hidden: HiddenYear, w: PredictedWindow):
+    t_in, f_in = hidden.window(w.t_pred, w.half_width)
+    t_b, f_b = hidden.local_baseline(w.t_pred, w.half_width)
+    t = np.concatenate([t_in, t_b])
+    f = np.concatenate([f_in, f_b])
+    order = np.argsort(t, kind="stable")
+    in_window = np.concatenate([np.ones(t_in.size, bool), np.zeros(t_b.size, bool)])
+    return t[order], f[order], in_window[order], t_b, f_b
+
+
+def _band_covered(w: PredictedWindow, n_band: int, cadence: float, coverage: float) -> bool:
+    return n_band >= coverage * 2.0 * (w.baseline_outer - w.baseline_inner) / cadence
+
+
+def _robust_var(values: Sequence[float]) -> float:
+    v = np.asarray(values, dtype=float)
+    if v.size == 0:
+        return float("nan")
+    return float((MAD_SCALE * np.median(np.abs(v - np.median(v)))) ** 2)
+
+
+def replica_stats(
+    hidden: HiddenYear,
+    replicas: Sequence[PredictedWindow],
+    ephemeris: Ephemeris,
+    duration: float,
+    cadence: float,
+    plan: TessTestPlan,
+    sectors: Sequence[SectorInfo],
+    grid: np.ndarray,
+    frequencies: Sequence[float] = (),
+) -> ReplicaStats:
+    """The hidden noise of O2 (Amendment 10) and the replica depths at every dP of the grid
+    (Amendment 11). Reads the replicas only."""
+    from refute.packs.tess.rednoise import estimate
+
+    c = plan.gauntlet.corrections
+    params = plan.gauntlet.holdout_by_year
+    dropped: dict[str, int] = {}
+    reads = []
+    band_t, band_f, band_s = [], [], []
+    for r in replicas:
+        t, f, in_window, t_b, f_b = _read(hidden, r)
+        sector = _sector_of(r.t_pred, sectors)
+        ok = _band_covered(r, t_b.size, cadence, params.min_window_coverage)
+        if not ok:
+            dropped["band_coverage"] = dropped.get("band_coverage", 0) + 1
+        reads.append((r, t, f, in_window, sector, ok))
+        if ok and sector is not None:
+            band_t.append(t_b)
+            band_f.append(f_b)
+            band_s.append(np.full(t_b.size, sector))
+    noise = None
+    excluded: list[int] = []
+    if band_t:
+        tt = np.concatenate(band_t)
+        order = np.argsort(tt, kind="stable")
+        tt = tt[order]
+        ff = np.concatenate(band_f)[order]
+        ss = np.concatenate(band_s)[order]
+        n_t = max(1, int(round(duration / cadence)))
+        noise = estimate(
+            tt, ff - 1.0, ss, np.ones(tt.size, bool), n_t, c.gap_split, cadence, c.b_min
+        )
+        excluded = noise.excluded_sectors
+    undetermined = noise is None or noise.undetermined
+    per_dp: list[ReplicaPoint] = []
+    for dp in grid:
+        depths: list[float | None] = []
+        for r, t, f, in_window, sector, ok in reads:
+            if not ok or sector is None or sector in excluded or undetermined:
+                depths.append(None)
+                continue
+            center = r.t_pred + (r.epoch - ephemeris.n_ref) * dp
+            d = window_depth(
+                t,
+                f,
+                in_window,
+                center,
+                duration / 2.0,
+                frequencies,
+                cadence=cadence,
+                coverage=params.min_window_coverage,
+            )
+            depths.append(d.depth)
+        values = [d for d in depths if d is not None]
+        per_dp.append(ReplicaPoint(float(dp), depths, len(values), _robust_var(values)))
+    if not undetermined and any(p.n_rep < c.r_min for p in per_dp):
+        undetermined = True
+    for _, _, _, _, sector, ok in reads:
+        if ok and sector in excluded:
+            dropped["excluded_sector"] = dropped.get("excluded_sector", 0) + 1
+    status = "hidden_noise_undetermined" if undetermined else "ok"
+    return ReplicaStats(status, per_dp, noise, excluded, dropped)
+
+
+def measure_windows(
+    hidden: HiddenYear,
+    windows: Sequence[PredictedWindow],
+    ephemeris: Ephemeris,
+    duration: float,
+    cadence: float,
+    plan: TessTestPlan,
+    sectors: Sequence[SectorInfo],
+    grid: np.ndarray,
+    stats: ReplicaStats,
+    frequencies: Sequence[float] = (),
+) -> dict[str, Any]:
+    """The windows' stack at every dP with the replicas' variance (revision 4, 1; Amendment 11).
+    Called only after ``replica_stats`` (and, from piece 5, decision 2)."""
+    params = plan.gauntlet.holdout_by_year
+    static: dict[str, int] = {}
+    kept = []
+    last_span: tuple[float, float] | None = None
+    for w in sorted(windows, key=lambda w: w.t_pred):
+        sector = _sector_of(w.t_pred, sectors)
+        if sector is None or sector in stats.excluded_sectors:
+            static["excluded_sector"] = static.get("excluded_sector", 0) + 1
+            continue
+        span = (w.t_pred - w.baseline_outer, w.t_pred + w.baseline_outer)
+        if last_span is not None and _closed_overlap(span[0], span[1], [last_span]):
+            static["shared_cadences"] = static.get("shared_cadences", 0) + 1
+            continue
+        t, f, in_window, t_b, _ = _read(hidden, w)
+        if not _band_covered(w, t_b.size, cadence, params.min_window_coverage):
+            static["band_coverage"] = static.get("band_coverage", 0) + 1
+            continue
+        last_span = span
+        kept.append((w, t, f, in_window))
+    per_dp = []
+    reasons_at = []
+    for k, dp in enumerate(grid):
+        depths, reasons = [], {}
+        for w, t, f, in_window in kept:
+            center = w.t_pred + (w.epoch - ephemeris.n_ref) * dp
+            d = window_depth(
+                t,
+                f,
+                in_window,
+                center,
+                duration / 2.0,
+                frequencies,
+                cadence=cadence,
+                coverage=params.min_window_coverage,
+            )
+            if d.depth is None:
+                reasons[d.reason] = reasons.get(d.reason, 0) + 1
+            else:
+                depths.append(d.depth)
+        n = len(depths)
+        var_rep = stats.per_dp[k].var_rep
+        row = {"dp": float(dp), "n_valid": n, "depth": None, "error": None, "snr": float("nan")}
+        if n >= params.min_predicted_transits and var_rep > 0:
+            mean = float(np.mean(depths))
+            error = math.sqrt(var_rep / n)
+            if n >= 3:
+                error = max(error, float(np.std(depths, ddof=1)) / math.sqrt(n))
+            row.update(depth=mean, error=error, snr=mean / error)
+        per_dp.append(row)
+        reasons_at.append(reasons)
+    best = best_dp_index(np.array([r["snr"] for r in per_dp]), grid)
+    if best is None:
+        dropped = dict(static)
+        for key, value in reasons_at[0].items():
+            dropped[key] = dropped.get(key, 0) + value
+        return {
+            "status": "too_few_windows",
+            "depth": None,
+            "n_valid": per_dp[0]["n_valid"],
+            "per_dp": per_dp,
+            "dropped": dropped,
+        }
+    dropped = dict(static)
+    for key, value in reasons_at[best].items():
+        dropped[key] = dropped.get(key, 0) + value
+    row = per_dp[best]
+    return {
+        "status": "ok",
+        "dp": row["dp"],
+        "depth": row["depth"],
+        "error": row["error"],
+        "snr": row["snr"],
+        "n_valid": row["n_valid"],
+        "n_rep": stats.per_dp[best].n_rep,
+        "var_rep": stats.per_dp[best].var_rep,
+        "per_dp": per_dp,
+        "dropped": dropped,
+    }
+
+
+def measure_with_replicas(
+    hidden: HiddenYear,
+    windows: Sequence[PredictedWindow],
+    replicas: Sequence[PredictedWindow],
+    ephemeris: Ephemeris,
+    duration: float,
+    cadence: float,
+    plan: TessTestPlan,
+    sectors: Sequence[SectorInfo],
+    grid: np.ndarray,
+    barrier=None,
+    frequencies: Sequence[float] = (),
+) -> dict[str, Any]:
+    """Replicas first (the whole grid), then the barrier (``barrier(stats)`` returns a reason to
+    stop, piece 5's decision 2), and only then the windows (Amendment 11)."""
+    stats = replica_stats(
+        hidden, replicas, ephemeris, duration, cadence, plan, sectors, grid, frequencies
+    )
+    if stats.status != "ok":
+        return {"status": stats.status, "depth": None, "stats": stats, "dropped": stats.dropped}
+    if barrier is not None:
+        reason = barrier(stats)
+        if reason is not None:
+            return {"status": reason, "depth": None, "stats": stats, "dropped": stats.dropped}
+    result = measure_windows(
+        hidden, windows, ephemeris, duration, cadence, plan, sectors, grid, stats, frequencies
+    )
+    result["stats"] = stats
+    return result
+
+
 def _empty_validity(plan: TessTestPlan) -> dict[str, Any]:
     params = plan.gauntlet.holdout_by_year
     return {
