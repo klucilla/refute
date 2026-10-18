@@ -1,0 +1,1422 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "073692ba2e6f6cc7c836d8b69d68f08c9902feef",
+  "original_protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "amendment": {
+    "file": "calibration/v0.3/main/AMENDMENT-1.md",
+    "commit_sha": "073692ba2e6f6cc7c836d8b69d68f08c9902feef",
+    "run_id": 39126300864,
+    "run_created_at": "2026-10-18T12:12:04Z",
+    "round_published_at": "2026-10-18T12:12:28Z",
+    "margin_seconds": 0.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/AMENDMENT-1.md",
+        "5d453092a8f5f581944e116ffda9bb224e35e5c9f393de31514c7b5dabb4e867"
+      ],
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "904c425af35aa22c1f7ae5399738e80b1f65c8ad4f4d9c2b505bcecd9a508247"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T12:12:38Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 13,
+  "candidates": [
+    {
+      "position": 301,
+      "arxiv_id": "2305.13043",
+      "repo_url": "https://github.com/lanasina/nca_self_replication",
+      "arxiv": {
+        "versioned_id": "2305.13043v1",
+        "primary_category": "cs.NE",
+        "title": "Self-Replication, Spontaneous Mutations, and Exponential Genetic Drift in Neural Cellular Automata",
+        "abstract": "This paper reports on patterns exhibiting self-replication with spontaneous, inheritable mutations and exponential genetic drift in Neural Cellular Automata. Despite the models not being explicitly trained for mutation or inheritability, the descendant patterns exponentially drift away from ancestral patterns, even when the automaton is deterministic. While this is far from being the first instance of evolutionary dynamics in a cellular automaton, it is the first to do so by exploiting the power and convenience of Neural Cellular Automata, arguably increasing the space of variations and the opportunity for Open Ended Evolution."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lanasina/nca_self_replication",
+        "exists": true,
+        "full_name": "LanaSina/NCA_self_replication",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "88c5b4a9d29eeeda139caf14758925de04f7de20",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/LanaSina/NCA_self_replication/blob/88c5b4a9d29eeeda139caf14758925de04f7de20/README.md",
+          "sha256": "3d5291a12eddf8cb565c872ee9767dee6ce40eff7273248324a033351f19f705",
+          "bytes": 1185
+        },
+        "root_names": [
+          "Evolution_in_Neural_Cellular_Automata_ALife_2023.ipynb",
+          "NCA_analysis.Rmd",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.NE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 302,
+      "arxiv_id": "2305.06014",
+      "repo_url": "https://github.com/giovannipicogna/observability-td",
+      "arxiv": {
+        "versioned_id": "2305.06014v1",
+        "primary_category": "astro-ph.EP",
+        "title": "Observability of Photoevaporation Signatures in the Dust Continuum Emission of Transition Discs",
+        "abstract": "Photoevaporative disc winds play a key role in our understanding of circumstellar disc evolution, especially in the final stages, and they might affect the planet formation process and the final location of planets. The study of transition discs (i.e. discs with a central dust cavity) is central for our understanding of the photoevaporation process and disc dispersal. However, we need to distinguish cavities created by photoevaporation from those created by giant planets. Theoretical models are necessary to identify possible observational signatures of the two different processes, and models to find the differences between the two processes are still lacking. In this paper we study a sample of transition discs obtained from radiation-hydrodynamic simulations of internally photoevaporated discs, and focus on the dust dynamics relevant for current ALMA observations. We then compared our results with gaps opened by super Earths/giant planets, finding that the photoevaporated cavity steepness depends mildly on gap size, and it is similar to that of a 1 Jupiter mass planet. However, the dust density drops less rapidly inside the photoevaporated cavity compared to the planetary case due to the less efficient dust filtering. This effect is visible in the resulting spectral index, which shows a larger spectral index at the cavity edge and a shallower increase inside it with respect to the planetary case. The combination of cavity steepness and spectral index might reveal the true nature of transition discs."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/giovannipicogna/observability-td",
+        "exists": true,
+        "full_name": "GiovanniPicogna/observability-td",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e359ab2c358f495cb4148bda22b1189d993ec722",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/GiovanniPicogna/observability-td/blob/e359ab2c358f495cb4148bda22b1189d993ec722/README.md",
+          "sha256": "d2971a8a42b2ad8df07fb2e92256b8d619c1a4b1259f0d2fc0a4efe371faa5ec",
+          "bytes": 1626
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "data",
+          "figures",
+          "lib.bib",
+          "main.pdf",
+          "main.tex",
+          "mnras.bst",
+          "mnras.cls",
+          "referee_report",
+          "scripts"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.EP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 303,
+      "arxiv_id": "2309.01562",
+      "repo_url": "https://github.com/SKopecz/locstabMPRK22",
+      "arxiv": {
+        "versioned_id": "2309.01562v1",
+        "primary_category": "math.NA",
+        "title": "On the non-global linear stability and spurious fixed points of MPRK schemes with negative RK parameters",
+        "abstract": "Recently, a stability theory has been developed to study the linear stability of modified Patankar--Runge--Kutta (MPRK) schemes. This stability theory provides sufficient conditions for a fixed point of an MPRK scheme to be stable as well as for the convergence of an MPRK scheme towards the steady state of the corresponding initial value problem, whereas the main assumption is that the initial value is sufficiently close to the steady state. Initially, numerical experiments in several publications indicated that these linear stability properties are not only local, but even global, as is the case for general linear methods. Recently, however, it was discovered that the linear stability of the MPDeC(8) scheme is indeed only local in nature. Our conjecture is that this is a result of negative Runge--Kutta (RK) parameters of MPDeC(8) and that linear stability is indeed global, if the RK parameters are nonnegative. To support this conjecture, we examine the family of MPRK22($α$) methods with negative RK parameters and show that even among these methods there are methods for which the stability properties are only local. However, this local linear stability is not observed for MPRK22($α$) schemes with nonnegative Runge-Kutta parameters."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/SKopecz/locstabMPRK22",
+        "exists": true,
+        "full_name": "SKopecz/locstabMPRK22",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "8db52e06eef4747b07ec38c2c97bfa9185450245",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/SKopecz/locstabMPRK22/blob/8db52e06eef4747b07ec38c2c97bfa9185450245/README.md",
+          "sha256": "f1b9dfdd622c3c0c5e8620f5f4b46deb7009f98b9ef8f08c92c607fd47426e3e",
+          "bytes": 307
+        },
+        "root_names": [
+          "LICENSE",
+          "MPRK22.m",
+          "README.md",
+          "locstabMPRK22.m"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.NA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 304,
+      "arxiv_id": "2307.12090",
+      "repo_url": "https://github.com/molecularmodelinglab/plantain",
+      "arxiv": {
+        "versioned_id": "2307.12090v2",
+        "primary_category": "q-bio.QM",
+        "title": "PLANTAIN: Diffusion-inspired Pose Score Minimization for Fast and Accurate Molecular Docking",
+        "abstract": "Molecular docking aims to predict the 3D pose of a small molecule in a protein binding site. Traditional docking methods predict ligand poses by minimizing a physics-inspired scoring function. Recently, a diffusion model has been proposed that iteratively refines a ligand pose. We combine these two approaches by training a pose scoring function in a diffusion-inspired manner. In our method, PLANTAIN, a neural network is used to develop a very fast pose scoring function. We parameterize a simple scoring function on the fly and use L-BFGS minimization to optimize an initially random ligand pose. Using rigorous benchmarking practices, we demonstrate that our method achieves state-of-the-art performance while running ten times faster than the next-best method. We release PLANTAIN publicly and hope that it improves the utility of virtual screening workflows."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/molecularmodelinglab/plantain",
+        "exists": true,
+        "full_name": "molecularmodelinglab/plantain",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "920d6087fd80a3ef11e3712a43c664fe8bbb3aa2",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/molecularmodelinglab/plantain/blob/920d6087fd80a3ef11e3712a43c664fe8bbb3aa2/README.md",
+          "sha256": "6fb7c7ee6ebde0553d5c74c7ef9ef2855cbc601d0f7823c77c57bc084e8a626b",
+          "bytes": 4908
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE.txt",
+          "README.md",
+          "analysis",
+          "baselines",
+          "common",
+          "configs",
+          "create_env.sh",
+          "data",
+          "data_formats",
+          "datasets",
+          "dev_requirements.txt",
+          "inference.py",
+          "models",
+          "outputs",
+          "prior_work",
+          "requirements.txt",
+          "scripts",
+          "train.py",
+          "training",
+          "validation"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.QM"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 305,
+      "arxiv_id": "2312.02576",
+      "repo_url": "https://github.com/idt-iti/ca-sum-360",
+      "arxiv": {
+        "versioned_id": "2312.02576v1",
+        "primary_category": "cs.CV",
+        "title": "An Integrated System for Spatio-Temporal Summarization of 360-degrees Videos",
+        "abstract": "In this work, we present an integrated system for spatiotemporal summarization of 360-degrees videos. The video summary production mainly involves the detection of salient events and their synopsis into a concise summary. The analysis relies on state-of-the-art methods for saliency detection in 360-degrees video (ATSal and SST-Sal) and video summarization (CA-SUM). It also contains a mechanism that classifies a 360-degrees video based on the use of static or moving camera during recording and decides which saliency detection method will be used, as well as a 2D video production component that is responsible to create a conventional 2D video containing the salient events in the 360-degrees video. Quantitative evaluations using two datasets for 360-degrees video saliency detection (VR-EyeTracking, Sports-360) show the accuracy and positive impact of the developed decision mechanism, and justify our choice to use two different methods for detecting the salient events. A qualitative analysis using content from these datasets, gives further insights about the functionality of the decision mechanism, shows the pros and cons of each used saliency detection method and demonstrates the advanced performance of the trained summarization method against a more conventional approach."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/idt-iti/ca-sum-360",
+        "exists": true,
+        "full_name": "IDT-ITI/CA-SUM-360",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "8af1bd3694cfafa316ef17715bbf3390d2b6fa88",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/IDT-ITI/CA-SUM-360/blob/8af1bd3694cfafa316ef17715bbf3390d2b6fa88/README.md",
+          "sha256": "78e1941206054f7b73dff08399f14b622c75ef5fec867db0317d94b2e8b29329",
+          "bytes": 22716
+        },
+        "root_names": [
+          "2D_Video_Production",
+          "Camera_Motion_Detection",
+          "Preprocessing_scripts",
+          "README.md",
+          "Saliency_Detection",
+          "Video_Summarization",
+          "data"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 306,
+      "arxiv_id": "2306.00400",
+      "repo_url": "https://github.com/jmcrego/bisync",
+      "arxiv": {
+        "versioned_id": "2306.00400v1",
+        "primary_category": "cs.CL",
+        "title": "BiSync: A Bilingual Editor for Synchronized Monolingual Texts",
+        "abstract": "In our globalized world, a growing number of situations arise where people are required to communicate in one or several foreign languages. In the case of written communication, users with a good command of a foreign language may find assistance from computer-aided translation (CAT) technologies. These technologies often allow users to access external resources, such as dictionaries, terminologies or bilingual concordancers, thereby interrupting and considerably hindering the writing process. In addition, CAT systems assume that the source sentence is fixed and also restrict the possible changes on the target side. In order to make the writing process smoother, we present BiSync, a bilingual writing assistant that allows users to freely compose text in two languages, while maintaining the two monolingual texts synchronized. We also include additional functionalities, such as the display of alternative prefix translations and paraphrases, which are intended to facilitate the authoring of texts. We detail the model architecture used for synchronization and evaluate the resulting tool, showing that high accuracy can be attained with limited computational resources. The interface and models are publicly available at https://github.com/jmcrego/BiSync and a demonstration video can be watched on YouTube at https://youtu.be/_l-ugDHfNgU ."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jmcrego/bisync",
+        "exists": true,
+        "full_name": "jmcrego/BiSync",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ce3e908696ad2dc08bcf60b9f7000a6f888c6458",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jmcrego/BiSync/blob/ce3e908696ad2dc08bcf60b9f7000a6f888c6458/README.md",
+          "sha256": "2f54e281c052567474615c63fdd55216099ff2d527e4f38945b11758378f147c",
+          "bytes": 2802
+        },
+        "root_names": [
+          "README.md",
+          "bisync.css",
+          "bisync.html",
+          "bisync.js",
+          "bisync.py",
+          "logos",
+          "pics",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 307,
+      "arxiv_id": "2505.19806",
+      "repo_url": "https://github.com/OpenCausaLab/Awesome-LLM-Consciousness",
+      "arxiv": {
+        "versioned_id": "2505.19806v1",
+        "primary_category": "cs.CL",
+        "title": "Exploring Consciousness in LLMs: A Systematic Survey of Theories, Implementations, and Frontier Risks",
+        "abstract": "Consciousness stands as one of the most profound and distinguishing features of the human mind, fundamentally shaping our understanding of existence and agency. As large language models (LLMs) develop at an unprecedented pace, questions concerning intelligence and consciousness have become increasingly significant. However, discourse on LLM consciousness remains largely unexplored territory. In this paper, we first clarify frequently conflated terminologies (e.g., LLM consciousness and LLM awareness). Then, we systematically organize and synthesize existing research on LLM consciousness from both theoretical and empirical perspectives. Furthermore, we highlight potential frontier risks that conscious LLMs might introduce. Finally, we discuss current challenges and outline future directions in this emerging field. The references discussed in this paper are organized at https://github.com/OpenCausaLab/Awesome-LLM-Consciousness."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/OpenCausaLab/Awesome-LLM-Consciousness",
+        "exists": true,
+        "full_name": "OpenCausaLab/Awesome-LLM-Consciousness",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a26ccd155f65b0125b9e9ae09abbd7f892d3054f",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/OpenCausaLab/Awesome-LLM-Consciousness/blob/a26ccd155f65b0125b9e9ae09abbd7f892d3054f/README.md",
+          "sha256": "f9a2b396d7ee36abc026afcc00ac9e14fa912d95091599322e76ce5b10eb276b",
+          "bytes": 26995
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 308,
+      "arxiv_id": "2406.11016",
+      "repo_url": "https://github.com/dwgnr/optimized-speculative-sampling",
+      "arxiv": {
+        "versioned_id": "2406.11016v2",
+        "primary_category": "cs.LG",
+        "title": "Optimized Speculative Sampling for GPU Hardware Accelerators",
+        "abstract": "In this work, we optimize speculative sampling for parallel hardware accelerators to improve sampling speed. We notice that substantial portions of the intermediate matrices necessary for speculative sampling can be computed concurrently. This allows us to distribute the workload across multiple GPU threads, enabling simultaneous operations on matrix segments within thread blocks. This results in profiling time improvements ranging from 6% to 13% relative to the baseline implementation, without compromising accuracy. To further accelerate speculative sampling, probability distributions parameterized by softmax are approximated by sigmoid. This approximation approach results in significantly greater relative improvements in profiling time, ranging from 37% to 94%, with a minor decline in accuracy. We conduct extensive experiments on both automatic speech recognition and summarization tasks to validate the effectiveness of our optimization methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/dwgnr/optimized-speculative-sampling",
+        "exists": true,
+        "full_name": "dwgnr/optimized-speculative-sampling",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "823428fefc2ac256975ab023d327a92dcd811ebf",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/dwgnr/optimized-speculative-sampling/blob/823428fefc2ac256975ab023d327a92dcd811ebf/README.md",
+          "sha256": "ae5294c345520ea007e05e0d68699156242c233a2ebe047178c7b48f15824e75",
+          "bytes": 5984
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "custom_model",
+          "main.cpp",
+          "requirements.txt",
+          "run_asr.py",
+          "run_llm.py",
+          "speculative_sampling_fp32.cu",
+          "speculative_sampling_fp32_sigmoid.cu",
+          "speculative_sampling_half.cu",
+          "speculative_sampling_half_sigmoid.cu"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 309,
+      "arxiv_id": "2309.15704",
+      "repo_url": "https://github.com/antoinedemathelin/maxwent-expe",
+      "arxiv": {
+        "versioned_id": "2309.15704v2",
+        "primary_category": "cs.LG",
+        "title": "Deep Out-of-Distribution Uncertainty Quantification via Weight Entropy Maximization",
+        "abstract": "This paper deals with uncertainty quantification and out-of-distribution detection in deep learning using Bayesian and ensemble methods. It proposes a practical solution to the lack of prediction diversity observed recently for standard approaches when used out-of-distribution (Ovadia et al., 2019; Liu et al., 2021). Considering that this issue is mainly related to a lack of weight diversity, we claim that standard methods sample in \"over-restricted\" regions of the weight space due to the use of \"over-regularization\" processes, such as weight decay and zero-mean centered Gaussian priors. We propose to solve the problem by adopting the maximum entropy principle for the weight distribution, with the underlying idea to maximize the weight diversity. Under this paradigm, the epistemic uncertainty is described by the weight distribution of maximal entropy that produces neural networks \"consistent\" with the training observations. Considering stochastic neural networks, a practical optimization is derived to build such a distribution, defined as a trade-off between the average empirical risk and the weight distribution entropy. We develop a novel weight parameterization for the stochastic model, based on the singular value decomposition of the neural network's hidden representations, which enables a large increase of the weight entropy for a small empirical risk penalization. We provide both theoretical and numerical results to assess the efficiency of the approach. In particular, the proposed algorithm appears in the top three best methods in all configurations of an extensive out-of-distribution detection benchmark including more than thirty competitors."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/antoinedemathelin/maxwent-expe",
+        "exists": true,
+        "full_name": "antoinedemathelin/maxwent-expe",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c67aa620a64e139d8599613e24cc57b34af5b67f",
+        "license_spdx": "BSD-2-Clause",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/antoinedemathelin/maxwent-expe/blob/c67aa620a64e139d8599613e24cc57b34af5b67f/README.md",
+          "sha256": "032956930fac9e84435b46a0963b2322dbfcbee92133c83aa6c6350df23caecb",
+          "bytes": 6794
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "configs",
+          "datasets.py",
+          "images",
+          "methods",
+          "networks.py",
+          "notebooks",
+          "preprocessing_citycam.py",
+          "requirements.txt",
+          "run.py",
+          "train.py",
+          "uci_datasets.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 310,
+      "arxiv_id": "2306.05024",
+      "repo_url": "https://github.com/petros-stougiannidis/quantum-rotation-compiler",
+      "arxiv": {
+        "versioned_id": "2306.05024v1",
+        "primary_category": "quant-ph",
+        "title": "Approximative lookup-tables and arbitrary function rotations for facilitating NISQ-implementations of the HHL and beyond",
+        "abstract": "Many promising applications of quantum computing with a provable speedup center around the HHL algorithm. Due to restrictions on the hardware and its significant demand on qubits and gates in known implementations, its execution is prohibitive on near-term quantum computers. Aiming to facilitate such NISQ-implementations, we propose a novel circuit approximation technique that enhances the arithmetic subroutines in the HHL, which resemble a particularly resource-demanding component in small-scale settings. For this, we provide a description of the algorithmic implementation of space-efficient rotations of polynomial functions that do not demand explicit arithmetic calculations inside the quantum circuit. We show how these types of circuits can be reduced in depth by providing a simple and powerful approximation technique. Moreover, we provide an algorithm that converts lookup-tables for arbitrary function rotations into a structure that allows an application of the approximation technique. This allows implementing approximate rotation circuits for many polynomial and non-polynomial functions. Experimental results obtained for realistic early-application dimensions show significant improvements compared to the state-of-the-art, yielding small circuits while achieving good approximations."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/petros-stougiannidis/quantum-rotation-compiler",
+        "exists": true,
+        "full_name": "petros-stougiannidis/quantum-rotation-compiler",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a865fe3414fb1f5c4f7a88f41f1e2acef737829a",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/petros-stougiannidis/quantum-rotation-compiler/blob/a865fe3414fb1f5c4f7a88f41f1e2acef737829a/README.md",
+          "sha256": "e7382cfbd1ea089f66f02fbf9eb7ff799302581b41078312fb0853326220fe7a",
+          "bytes": 3035
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "RotationCompiler.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category quant-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 311,
+      "arxiv_id": "2503.12511",
+      "repo_url": "https://github.com/qsdrqs/sactor",
+      "arxiv": {
+        "versioned_id": "2503.12511v3",
+        "primary_category": "cs.SE",
+        "title": "SACTOR: LLM-Driven Correct and Idiomatic C to Rust Translation with Static Analysis and FFI-Based Verification",
+        "abstract": "Translating software written in C to Rust has significant benefits in improving memory safety. However, manual translation is cumbersome, error-prone, and often produces unidiomatic code. Large language models (LLMs) have demonstrated promise in producing idiomatic translations, but offer no correctness guarantees. We propose SACTOR, an LLM-driven C-to-Rust translation tool that employs a two-step process: an initial \"unidiomatic\" translation to preserve semantics, followed by an \"idiomatic\" refinement to align with Rust standards. To validate correctness of our function-wise incremental translation that mixes C and Rust, we use end-to-end testing via the foreign function interface. We evaluate SACTOR on 200 programs from two public datasets and on two more real-world scenarios (a 50-sample subset of CRust-Bench and the libogg library), comparing multiple LLMs. Across datasets, SACTOR delivers high end-to-end correctness and produces safe, idiomatic Rust with up to 7 times fewer Clippy warnings; On CRust-Bench, SACTOR achieves an average (across samples) of 85% unidiomatic and 52% idiomatic success, and on libogg it attains full unidiomatic and up to 78% idiomatic coverage on GPT-5."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/qsdrqs/sactor",
+        "exists": true,
+        "full_name": "qsdrqs/sactor",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "577c3d2b8074d5fed7c47b988c0acd175e498f98",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/qsdrqs/sactor/blob/577c3d2b8074d5fed7c47b988c0acd175e498f98/README.md",
+          "sha256": "a75775fac8672a6fda64dccf84e9a54769d1555bbd740bfc7f537728ef9e58c9",
+          "bytes": 6418
+        },
+        "root_names": [
+          ".dockerignore",
+          ".gitignore",
+          ".python-version",
+          ".vscode",
+          "Cargo.lock",
+          "Cargo.toml",
+          "Dockerfile",
+          "LICENSE",
+          "README.md",
+          "flake.lock",
+          "flake.nix",
+          "pyproject.toml",
+          "rust-toolchain.toml",
+          "rust_ast_parser",
+          "sactor.default.toml",
+          "sactor",
+          "sactor_proc_macros",
+          "tests",
+          "update_rust_ast_parser.sh",
+          "uv.lock"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 312,
+      "arxiv_id": "2310.07187",
+      "repo_url": "https://github.com/rongyaohua/reggkm",
+      "arxiv": {
+        "versioned_id": "2310.07187v1",
+        "primary_category": "stat.ML",
+        "title": "Kernel Cox partially linear regression: building predictive models for cancer patients' survival",
+        "abstract": "Wide heterogeneity exists in cancer patients' survival, ranging from a few months to several decades. To accurately predict clinical outcomes, it is vital to build an accurate predictive model that relates patients' molecular profiles with patients' survival. With complex relationships between survival and high-dimensional molecular predictors, it is challenging to conduct non-parametric modeling and irrelevant predictors removing simultaneously. In this paper, we build a kernel Cox proportional hazards semi-parametric model and propose a novel regularized garrotized kernel machine (RegGKM) method to fit the model. We use the kernel machine method to describe the complex relationship between survival and predictors, while automatically removing irrelevant parametric and non-parametric predictors through a LASSO penalty. An efficient high-dimensional algorithm is developed for the proposed method. Comparison with other competing methods in simulation shows that the proposed method always has better predictive accuracy. We apply this method to analyze a multiple myeloma dataset and predict patients' death burden based on their gene expressions. Our results can help classify patients into groups with different death risks, facilitating treatment for better clinical outcomes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rongyaohua/reggkm",
+        "exists": true,
+        "full_name": "rongyaohua/RegGKM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "667e0caa17428c9b58ba355795806336c6312fa4",
+        "license_spdx": null,
+        "readme": null,
+        "root_names": [
+          "Functions for RegGKM.r"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: cancer, clinical, molecular, patients"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 313,
+      "arxiv_id": "2310.10651",
+      "repo_url": "https://github.com/wty-ustc/hairclipv2",
+      "arxiv": {
+        "versioned_id": "2310.10651v1",
+        "primary_category": "cs.CV",
+        "title": "HairCLIPv2: Unifying Hair Editing via Proxy Feature Blending",
+        "abstract": "Hair editing has made tremendous progress in recent years. Early hair editing methods use well-drawn sketches or masks to specify the editing conditions. Even though they can enable very fine-grained local control, such interaction modes are inefficient for the editing conditions that can be easily specified by language descriptions or reference images. Thanks to the recent breakthrough of cross-modal models (e.g., CLIP), HairCLIP is the first work that enables hair editing based on text descriptions or reference images. However, such text-driven and reference-driven interaction modes make HairCLIP unable to support fine-grained controls specified by sketch or mask. In this paper, we propose HairCLIPv2, aiming to support all the aforementioned interactions with one unified framework. Simultaneously, it improves upon HairCLIP with better irrelevant attributes (e.g., identity, background) preservation and unseen text descriptions support. The key idea is to convert all the hair editing tasks into hair transfer tasks, with editing conditions converted into different proxies accordingly. The editing effects are added upon the input image by blending the corresponding proxy features within the hairstyle or hair color feature spaces. Besides the unprecedented user interaction mode support, quantitative and qualitative experiments demonstrate the superiority of HairCLIPv2 in terms of editing effects, irrelevant attribute preservation and visual naturalness. Our code is available at \\url{https://github.com/wty-ustc/HairCLIPv2}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wty-ustc/hairclipv2",
+        "exists": true,
+        "full_name": "wtybest/HairCLIPv2",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "5b7772524a37298ce56e7db06dac6807bb0f64c9",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/wtybest/HairCLIPv2/blob/5b7772524a37298ce56e7db06dac6807bb0f64c9/README.md",
+          "sha256": "cd7f64da7987ad8486795cbdcaedecd087bf0a4daedec5c401daaa268c56c9f0",
+          "bytes": 4636
+        },
+        "root_names": [
+          "README.md",
+          "assets",
+          "criteria",
+          "hairclip_v2_demo.ipynb",
+          "models",
+          "pretrained_models",
+          "scripts",
+          "test_images",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 314,
+      "arxiv_id": "2506.21091",
+      "repo_url": "https://github.com/m2219/esmstereo",
+      "arxiv": {
+        "versioned_id": "2506.21091v2",
+        "primary_category": "cs.CV",
+        "title": "ESMStereo: Enhanced ShuffleMixer Disparity Upsampling for Real-Time and Accurate Stereo Matching",
+        "abstract": "Stereo matching has become an increasingly important component of modern autonomous systems. Developing deep learning-based stereo matching models that deliver high accuracy while operating in real-time continues to be a major challenge in computer vision. In the domain of cost-volume-based stereo matching, accurate disparity estimation depends heavily on large-scale cost volumes. However, such large volumes store substantial redundant information and also require computationally intensive aggregation units for processing and regression, making real-time performance unattainable. Conversely, small-scale cost volumes followed by lightweight aggregation units provide a promising route for real-time performance, but lack sufficient information to ensure highly accurate disparity estimation. To address this challenge, we propose the Enhanced Shuffle Mixer (ESM) to mitigate information loss associated with small-scale cost volumes. ESM restores critical details by integrating primary features into the disparity upsampling unit. It quickly extracts features from the initial disparity estimation and fuses them with image features. These features are mixed by shuffling and layer splitting then refined through a compact feature-guided hourglass network to recover more detailed scene geometry. The ESM focuses on local contextual connectivity with a large receptive field and low computational cost, leading to the reconstruction of a highly accurate disparity map at real-time. The compact version of ESMStereo achieves an inference speed of 116 FPS on high-end GPUs and 91 FPS on the AGX Orin."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/m2219/esmstereo",
+        "exists": true,
+        "full_name": "M2219/ESMStereo",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "670e074912a5ba340e45cf22344f797487ccfc93",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/M2219/ESMStereo/blob/670e074912a5ba340e45cf22344f797487ccfc93/README.md",
+          "sha256": "1a724dc2e10d35df346986b68ffd1dc04a2c8583fbeff3ba3d066e44f8c44e28",
+          "bytes": 8985
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "datasets",
+          "filenames",
+          "imgs",
+          "kitti_publisher",
+          "kitti_publisher_conf",
+          "kitti_publisher_ess",
+          "models",
+          "onnx_transformed.py",
+          "onnx_transformed_confidence.py",
+          "save_disp.py",
+          "save_vid.py",
+          "test_eth3d.py",
+          "test_kitti.py",
+          "test_mid.py",
+          "train_kitti.py",
+          "train_sceneflow.py",
+          "utils",
+          "virtual_kitti_publisher"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 315,
+      "arxiv_id": "2405.13049",
+      "repo_url": "https://github.com/nustm/semeval-2024_ecac",
+      "arxiv": {
+        "versioned_id": "2405.13049v3",
+        "primary_category": "cs.CL",
+        "title": "SemEval-2024 Task 3: Multimodal Emotion Cause Analysis in Conversations",
+        "abstract": "The ability to understand emotions is an essential component of human-like artificial intelligence, as emotions greatly influence human cognition, decision making, and social interactions. In addition to emotion recognition in conversations, the task of identifying the potential causes behind an individual's emotional state in conversations, is of great importance in many application scenarios. We organize SemEval-2024 Task 3, named Multimodal Emotion Cause Analysis in Conversations, which aims at extracting all pairs of emotions and their corresponding causes from conversations. Under different modality settings, it consists of two subtasks: Textual Emotion-Cause Pair Extraction in Conversations (TECPE) and Multimodal Emotion-Cause Pair Extraction in Conversations (MECPE). The shared task has attracted 143 registrations and 216 successful submissions. In this paper, we introduce the task, dataset and evaluation settings, summarize the systems of the top teams, and discuss the findings of the participants."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/nustm/semeval-2024_ecac",
+        "exists": true,
+        "full_name": "NUSTM/SemEval-2024_ECAC",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f6054366e358a9803fcd1ab92ae9921132816eb5",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/NUSTM/SemEval-2024_ECAC/blob/f6054366e358a9803fcd1ab92ae9921132816eb5/README.md",
+          "sha256": "bd22e2f3fb4511e5721e7ea09ece6b2ca3902ac27c1b698d01ee44968822c1b3",
+          "bytes": 7303
+        },
+        "root_names": [
+          "CodaLab",
+          "LICENSE.txt",
+          "README.md",
+          "_config.yml",
+          "data",
+          "example.png"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 316,
+      "arxiv_id": "2501.00794",
+      "repo_url": "https://github.com/skirdey/voicerestore",
+      "arxiv": {
+        "versioned_id": "2501.00794v1",
+        "primary_category": "eess.AS",
+        "title": "VoiceRestore: Flow-Matching Transformers for Speech Recording Quality Restoration",
+        "abstract": "We present VoiceRestore, a novel approach to restoring the quality of speech recordings using flow-matching Transformers trained in a self-supervised manner on synthetic data. Our method tackles a wide range of degradations frequently found in both short and long-form speech recordings, including background noise, reverberation, compression artifacts, and bandwidth limitations - all within a single, unified model. Leveraging conditional flow matching and classifier free guidance, the model learns to map degraded speech to high quality recordings without requiring paired clean and degraded datasets. We describe the training process, the conditional flow matching framework, and the model's architecture. We also demonstrate the model's generalization to real-world speech restoration tasks, including both short utterances and extended monologues or dialogues. Qualitative and quantitative evaluations show that our approach provides a flexible and effective solution for enhancing the quality of speech recordings across varying lengths and degradation types."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/skirdey/voicerestore",
+        "exists": true,
+        "full_name": "skirdey/voicerestore",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "bfda753c0c923c96777773c839a5a1664de36efb",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/skirdey/voicerestore/blob/bfda753c0c923c96777773c839a5a1664de36efb/README.md",
+          "sha256": "ac7b0799072bbda5f40b0961e06f273537a67d34f5a90d060f33b087580edc38",
+          "bytes": 5159
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          "BigVGAN",
+          "LICENSE",
+          "README.md",
+          "audio",
+          "imgs",
+          "inference_long.py",
+          "inference_short.py",
+          "model.py",
+          "requirements.txt",
+          "tensor_typing.py",
+          "voice_restore.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.AS"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 317,
+      "arxiv_id": "2310.01224",
+      "repo_url": "https://github.com/yukayo/mobgt",
+      "arxiv": {
+        "versioned_id": "2310.01224v1",
+        "primary_category": "cs.LG",
+        "title": "Revisiting Mobility Modeling with Graph: A Graph Transformer Model for Next Point-of-Interest Recommendation",
+        "abstract": "Next Point-of-Interest (POI) recommendation plays a crucial role in urban mobility applications. Recently, POI recommendation models based on Graph Neural Networks (GNN) have been extensively studied and achieved, however, the effective incorporation of both spatial and temporal information into such GNN-based models remains challenging. Extracting distinct fine-grained features unique to each piece of information is difficult since temporal information often includes spatial information, as users tend to visit nearby POIs. To address the challenge, we propose \\textbf{\\underline{Mob}}ility \\textbf{\\underline{G}}raph \\textbf{\\underline{T}}ransformer (MobGT) that enables us to fully leverage graphs to capture both the spatial and temporal features in users' mobility patterns. MobGT combines individual spatial and temporal graph encoders to capture unique features and global user-location relations. Additionally, it incorporates a mobility encoder based on Graph Transformer to extract higher-order information between POIs. To address the long-tailed problem in spatial-temporal data, MobGT introduces a novel loss function, Tail Loss. Experimental results demonstrate that MobGT outperforms state-of-the-art models on various datasets and metrics, achieving 24\\% improvement on average. Our codes are available at \\url{https://github.com/Yukayo/MobGT}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/yukayo/mobgt",
+        "exists": true,
+        "full_name": "Yukayo/MobGT",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "43ec7b6180fde92cea37e981e27ca426d40d0648",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Yukayo/MobGT/blob/43ec7b6180fde92cea37e981e27ca426d40d0648/README.md",
+          "sha256": "baa989e9b6d0dbf2061e7de8a8a48355130a5e27f43d77e151364e9a74726529",
+          "bytes": 10200
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "README1.md",
+          "baseline_models",
+          "framework.png",
+          "gowalla_nevda.7z",
+          "graphormer",
+          "poi_data.7z",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 318,
+      "arxiv_id": "2302.12936",
+      "repo_url": "https://github.com/gwusec/2023-usenix-educator-perspectives-of-exam-proctoring",
+      "arxiv": {
+        "versioned_id": "2302.12936v1",
+        "primary_category": "cs.CY",
+        "title": "Educators' Perspectives of Using (or Not Using) Online Exam Proctoring",
+        "abstract": "The onset of the COVID-19 pandemic changed the landscape of education and led to increased usage of remote proctoring tools that are designed to monitor students when they take assessments outside the classroom. While prior work has explored students' privacy and security concerns regarding online proctoring tools, the perspective of educators is under explored. Notably, educators are the decision makers in the classrooms and choose which remote proctoring services and the level of observations they deem appropriate. To explore how educators balance the security and privacy of their students with the requirements of remote exams, we sent survey requests to over 3,400 instructors at a large private university that taught online classes during the 2020/21 academic year. We had n=125 responses: 21% of the educators surveyed used online exam proctoring services during the remote learning period, and of those, 35% plan to continue using the tools even when there is a full return to in-person learning. Educators who use exam proctoring services are often comfortable with their monitoring capabilities. However, educators are concerned about students sharing certain types of information with exam proctoring companies, particularly when proctoring services collect identifiable information to validate students' identities. Our results suggest that many educators developed alternative assessments that did not require online proctoring and that those who did use online proctoring services often considered the tradeoffs between the potential risks to student privacy and the utility or necessity of exam proctoring services."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/gwusec/2023-usenix-educator-perspectives-of-exam-proctoring",
+        "exists": true,
+        "full_name": "gwusec/2023-USENIX-Educator-Perspectives-of-Exam-Proctoring",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "10b55097bd807eb0cf3e6a41b154fe4e4e235f43",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/gwusec/2023-USENIX-Educator-Perspectives-of-Exam-Proctoring/blob/10b55097bd807eb0cf3e6a41b154fe4e4e235f43/README.md",
+          "sha256": "3e43a85e91772f17f6f96fcd5952b54b35311ba8ad1e521b9bbb906ab2feda8d",
+          "bytes": 1997
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "data",
+          "figures",
+          "pdfs",
+          "scripts",
+          "survey-instruments",
+          "tables"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CY"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 319,
+      "arxiv_id": "2310.17146",
+      "repo_url": "https://github.com/mld3/counterfactualannot-semiope",
+      "arxiv": {
+        "versioned_id": "2310.17146v1",
+        "primary_category": "cs.LG",
+        "title": "Counterfactual-Augmented Importance Sampling for Semi-Offline Policy Evaluation",
+        "abstract": "In applying reinforcement learning (RL) to high-stakes domains, quantitative and qualitative evaluation using observational data can help practitioners understand the generalization performance of new policies. However, this type of off-policy evaluation (OPE) is inherently limited since offline data may not reflect the distribution shifts resulting from the application of new policies. On the other hand, online evaluation by collecting rollouts according to the new policy is often infeasible, as deploying new policies in these domains can be unsafe. In this work, we propose a semi-offline evaluation framework as an intermediate step between offline and online evaluation, where human users provide annotations of unobserved counterfactual trajectories. While tempting to simply augment existing data with such annotations, we show that this naive approach can lead to biased results. Instead, we design a new family of OPE estimators based on importance sampling (IS) and a novel weighting scheme that incorporate counterfactual annotations without introducing additional bias. We analyze the theoretical properties of our approach, showing its potential to reduce both bias and variance compared to standard IS estimators. Our analyses reveal important practical considerations for handling biased, noisy, or missing annotations. In a series of proof-of-concept experiments involving bandits and a healthcare-inspired simulator, we demonstrate that our approach outperforms purely offline IS estimators and is robust to imperfect annotations. Our framework, combined with principled human-centered design of annotation solicitation, can enable the application of RL in high-stakes domains."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mld3/counterfactualannot-semiope",
+        "exists": true,
+        "full_name": "MLD3/CounterfactualAnnot-SemiOPE",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d0428d96642a825d7654b380fb5ffc9a91ef250d",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MLD3/CounterfactualAnnot-SemiOPE/blob/d0428d96642a825d7654b380fb5ffc9a91ef250d/README.md",
+          "sha256": "3f4a68356b7339e66daa0cbab094475cd3278bd0abd4b6ce611bcfdd47c1be2c",
+          "bytes": 2785
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "sepsisSim",
+          "synthetic"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: healthcare"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 320,
+      "arxiv_id": "2412.14587",
+      "repo_url": "https://github.com/biclab/spike2former",
+      "arxiv": {
+        "versioned_id": "2412.14587v1",
+        "primary_category": "cs.CV",
+        "title": "Spike2Former: Efficient Spiking Transformer for High-performance Image Segmentation",
+        "abstract": "Spiking Neural Networks (SNNs) have a low-power advantage but perform poorly in image segmentation tasks. The reason is that directly converting neural networks with complex architectural designs for segmentation tasks into spiking versions leads to performance degradation and non-convergence. To address this challenge, we first identify the modules in the architecture design that lead to the severe reduction in spike firing, make targeted improvements, and propose Spike2Former architecture. Second, we propose normalized integer spiking neurons to solve the training stability problem of SNNs with complex architectures. We set a new state-of-the-art for SNNs in various semantic segmentation datasets, with a significant improvement of +12.7% mIoU and 5.0 efficiency on ADE20K, +14.3% mIoU and 5.2 efficiency on VOC2012, and +9.1% mIoU and 6.6 efficiency on CityScapes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/biclab/spike2former",
+        "exists": true,
+        "full_name": "BICLab/Spike2Former",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7885dc83b2fa76caa17611b5efb2f488eb1b9f96",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/BICLab/Spike2Former/blob/7885dc83b2fa76caa17611b5efb2f488eb1b9f96/README.md",
+          "sha256": "947ef947fa83f5a35536e34d7a495c332a5a4e7156a7b75d55e6d3a5a120898b",
+          "bytes": 5719
+        },
+        "root_names": [
+          ".gitignore",
+          "Figure",
+          "README.md",
+          "Segmentation",
+          "detection"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 321,
+      "arxiv_id": "2305.18824",
+      "repo_url": "https://github.com/briansidp/espnet",
+      "arxiv": {
+        "versioned_id": "2305.18824v1",
+        "primary_category": "cs.CL",
+        "title": "Graph Neural Networks for Contextual ASR with the Tree-Constrained Pointer Generator",
+        "abstract": "The incorporation of biasing words obtained through contextual knowledge is of paramount importance in automatic speech recognition (ASR) applications. This paper proposes an innovative method for achieving end-to-end contextual ASR using graph neural network (GNN) encodings based on the tree-constrained pointer generator method. GNN node encodings facilitate lookahead for future word pieces in the process of ASR decoding at each tree node by incorporating information about all word pieces on the tree branches rooted from it. This results in a more precise prediction of the generation probability of the biasing words. The study explores three GNN encoding techniques, namely tree recursive neural networks, graph convolutional network (GCN), and GraphSAGE, along with different combinations of the complementary GCN and GraphSAGE structures. The performance of the systems was evaluated using the Librispeech and AMI corpus, following the visual-grounded contextual ASR pipeline. The findings indicate that using GNN encodings achieved consistent and significant reductions in word error rate (WER), particularly for words that are rare or have not been seen during the training process. Notably, the most effective combination of GNN encodings obtained more than 60% WER reduction for rare and unseen words compared to standard end-to-end systems."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/briansidp/espnet",
+        "exists": true,
+        "full_name": "BriansIDP/espnet",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "4bdef285d177ab1d835e3669d10b55f58d4aa916",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/BriansIDP/espnet/blob/4bdef285d177ab1d835e3669d10b55f58d4aa916/README.md",
+          "sha256": "c1828910cfa63ffb987f91c3d2b9159314cba2e6b61490db7dbead5880e8b626",
+          "bytes": 57850
+        },
+        "root_names": [
+          ".coveragerc",
+          ".dockerignore",
+          ".github",
+          ".gitignore",
+          ".gitmodules",
+          ".mergify.yml",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "README.md",
+          "ci",
+          "codecov.yml",
+          "doc",
+          "docker",
+          "egs",
+          "egs2",
+          "espnet",
+          "espnet2",
+          "setup.cfg",
+          "setup.py",
+          "test",
+          "test_utils",
+          "tools",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 322,
+      "arxiv_id": "2501.05873",
+      "repo_url": "https://github.com/nvsclub/SpringerSoccerChallengeCode",
+      "arxiv": {
+        "versioned_id": "2501.05873v1",
+        "primary_category": "stat.AP",
+        "title": "Forecasting Soccer Matches through Distributions",
+        "abstract": "Forecasting sporting events encapsulate a compelling intellectual endeavor, underscored by the substantial financial activity of an estimated $80 billion wagered in global sports betting during 2022, a trend that grows yearly. Motivated by the challenges set forth in the Springer Soccer Prediction Challenge, this study presents a method for forecasting soccer match outcomes by forecasting the shot quantity and quality distributions. The methodology integrates established ELO ratings with machine learning models. The empirical findings reveal that, despite the constraints of the challenge, this approach yields positive returns, taking advantage of the established market odds."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/nvsclub/SpringerSoccerChallengeCode",
+        "exists": true,
+        "full_name": "nvsclub/SpringerSoccerChallengeCode",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e20aea78eb5c7b92bec1cb84052b0efd585f9bdd",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/nvsclub/SpringerSoccerChallengeCode/blob/e20aea78eb5c7b92bec1cb84052b0efd585f9bdd/README.md",
+          "sha256": "ee1fb45ea237493c61e546cd87e84d07df10410b0673af155524a54a5c1f9b7b",
+          "bytes": 343
+        },
+        "root_names": [
+          "4002 Prediction Pipeline.ipynb",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category stat.AP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 323,
+      "arxiv_id": "2310.05590",
+      "repo_url": "https://github.com/open-mmlab/mmsegmentation",
+      "arxiv": {
+        "versioned_id": "2310.05590v1",
+        "primary_category": "cs.CV",
+        "title": "Perceptual Artifacts Localization for Image Synthesis Tasks",
+        "abstract": "Recent advancements in deep generative models have facilitated the creation of photo-realistic images across various tasks. However, these generated images often exhibit perceptual artifacts in specific regions, necessitating manual correction. In this study, we present a comprehensive empirical examination of Perceptual Artifacts Localization (PAL) spanning diverse image synthesis endeavors. We introduce a novel dataset comprising 10,168 generated images, each annotated with per-pixel perceptual artifact labels across ten synthesis tasks. A segmentation model, trained on our proposed dataset, effectively localizes artifacts across a range of tasks. Additionally, we illustrate its proficiency in adapting to previously unseen models using minimal training samples. We further propose an innovative zoom-in inpainting pipeline that seamlessly rectifies perceptual artifacts in the generated images. Through our experimental analyses, we elucidate several practical downstream applications, such as automated artifact rectification, non-referential image quality evaluation, and abnormal region detection in images. The dataset and code are released."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/open-mmlab/mmsegmentation",
+        "exists": true,
+        "full_name": "open-mmlab/mmsegmentation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b040e147adfa027bbc071b624bedf0ae84dfc922",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/open-mmlab/mmsegmentation/blob/b040e147adfa027bbc071b624bedf0ae84dfc922/README.md",
+          "sha256": "28878eab8405acca90bc0720a653cd2ae612b7c32b02bf0d599128e6cbf7d5b2",
+          "bytes": 26159
+        },
+        "root_names": [
+          ".circleci",
+          ".dev_scripts",
+          ".github",
+          ".gitignore",
+          ".owners.yml",
+          ".pre-commit-config.yaml",
+          "CITATION.cff",
+          "LICENSE",
+          "MANIFEST.in",
+          "README.md",
+          "README_zh-CN.md",
+          "configs",
+          "dataset-index.yml",
+          "demo",
+          "docker",
+          "docs",
+          "mmseg",
+          "model-index.yml",
+          "projects",
+          "requirements.txt",
+          "requirements",
+          "resources",
+          "setup.cfg",
+          "setup.py",
+          "tests",
+          "tools"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 324,
+      "arxiv_id": "2404.17673",
+      "repo_url": "https://github.com/hariharan20/mldenv",
+      "arxiv": {
+        "versioned_id": "2404.17673v1",
+        "primary_category": "cs.LG",
+        "title": "Learning Manipulation Tasks in Dynamic and Shared 3D Spaces",
+        "abstract": "Automating the segregation process is a need for every sector experiencing a high volume of materials handling, repetitive and exhaustive operations, in addition to risky exposures. Learning automated pick-and-place operations can be efficiently done by introducing collaborative autonomous systems (e.g. manipulators) in the workplace and among human operators. In this paper, we propose a deep reinforcement learning strategy to learn the place task of multi-categorical items from a shared workspace between dual-manipulators and to multi-goal destinations, assuming the pick has been already completed. The learning strategy leverages first a stochastic actor-critic framework to train an agent's policy network, and second, a dynamic 3D Gym environment where both static and dynamic obstacles (e.g. human factors and robot mate) constitute the state space of a Markov decision process. Learning is conducted in a Gazebo simulator and experiments show an increase in cumulative reward function for the agent further away from human factors. Future investigations will be conducted to enhance the task performance for both agents simultaneously."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hariharan20/mldenv",
+        "exists": true,
+        "full_name": "hariharan20/MLDEnv",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "d8596c5e46b5afe3c0f093cf8218c26d2f028e27",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hariharan20/MLDEnv/blob/d8596c5e46b5afe3c0f093cf8218c26d2f028e27/README.md",
+          "sha256": "210f80c6823c70427bb350307d2aa9f5ead37a06e1f23951e82b64f0736ee663",
+          "bytes": 2611
+        },
+        "root_names": [
+          ".vscode",
+          "README.md",
+          "gazebo_models",
+          "images",
+          "multi_robot",
+          "pointnet",
+          "programs",
+          "universal_robot"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 325,
+      "arxiv_id": "2302.12465",
+      "repo_url": "https://github.com/amazon-science/page-link-path-based-gnn-explanation",
+      "arxiv": {
+        "versioned_id": "2302.12465v3",
+        "primary_category": "cs.LG",
+        "title": "PaGE-Link: Path-based Graph Neural Network Explanation for Heterogeneous Link Prediction",
+        "abstract": "Transparency and accountability have become major concerns for black-box machine learning (ML) models. Proper explanations for the model behavior increase model transparency and help researchers develop more accountable models. Graph neural networks (GNN) have recently shown superior performance in many graph ML problems than traditional methods, and explaining them has attracted increased interest. However, GNN explanation for link prediction (LP) is lacking in the literature. LP is an essential GNN task and corresponds to web applications like recommendation and sponsored search on web. Given existing GNN explanation methods only address node/graph-level tasks, we propose Path-based GNN Explanation for heterogeneous Link prediction (PaGE-Link) that generates explanations with connection interpretability, enjoys model scalability, and handles graph heterogeneity. Qualitatively, PaGE-Link can generate explanations as paths connecting a node pair, which naturally captures connections between the two nodes and easily transfer to human-interpretable explanations. Quantitatively, explanations generated by PaGE-Link improve AUC for recommendation on citation and user-item graphs by 9 - 35% and are chosen as better by 78.79% of responses in human evaluation."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/amazon-science/page-link-path-based-gnn-explanation",
+        "exists": true,
+        "full_name": "amazon-science/page-link-path-based-gnn-explanation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c",
+        "license_spdx": "MIT-0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/amazon-science/page-link-path-based-gnn-explanation/blob/cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c/README.md",
+          "sha256": "a561259b23f18783f9ba70a9f26398fa3a1ea015d3c9c3c0025a8da0e739e642",
+          "bytes": 4107
+        },
+        "root_names": [
+          "CODE_OF_CONDUCT.md",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "README.md",
+          "baselines",
+          "config.yaml",
+          "data_processing.py",
+          "datasets",
+          "eval_explanations.py",
+          "explainer.py",
+          "imgs",
+          "model.py",
+          "pagelink.py",
+          "plotting_example.ipynb",
+          "requirements.txt",
+          "saved_models",
+          "train_linkpred.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T12:14:39Z"
+}
