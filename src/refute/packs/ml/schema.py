@@ -66,6 +66,10 @@ COMPARISON_MODES = ("direction", "margin", "magnitude")
 DEFAULT_REL_TOL = 0.02
 DEFAULT_K_SD = 2.0
 DEFAULT_ABS_FLOOR = {"percent": 0.5, "fraction": 0.005}
+# the engine's single base image of the requirements_compiled rungs
+# (wp3-run-resources-acceptance.md, section 3): python:3.12-slim-bookworm, glibc 2.36,
+# pushed 2026-10-06 (Docker Hub API, read 2026-10-18); never a choice per paper
+ENGINE_BASE_IMAGE = "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258"
 # 1.0.11 (maintainer, 2026-10-15): the bounded rates that may use percent or fraction
 BOUNDED_RATES = ("accuracy", "error_rate", "precision", "recall", "f1", "auroc")
 INVENTORY_ROLE = "claim-inventory"
@@ -219,6 +223,11 @@ class Build(_Model):
     def _check(self) -> Build:
         if self.ladder is not None:
             raise ValueError("build.ladder is fixed and is never given (plan lines 392-399)")
+        if self.base_image != ENGINE_BASE_IMAGE:
+            raise ValueError(
+                f"build.base_image is the engine's pinned image {ENGINE_BASE_IMAGE}, "
+                "never a choice of the claim (wp3-run-resources-acceptance.md, section 3)"
+            )
         self.ladder = list(BUILD_LADDER)
         versions = []
         for v in self.python_ladder:

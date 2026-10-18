@@ -25,7 +25,7 @@ from refute.packs.ml import sandbox as sb
 from refute.packs.ml import seeds
 from refute.packs.ml import synthetic as sy
 from refute.packs.ml.fetch import ArtifactSpec, FetchAttempt, FetchResult
-from refute.packs.ml.schema import MlClaimSchema, MlTarget, MlTestPlan
+from refute.packs.ml.schema import ENGINE_BASE_IMAGE, MlClaimSchema, MlTarget, MlTestPlan
 from synthetic_harness import SOURCES, fixture
 
 ARXIV = "2401.01234"
@@ -54,7 +54,7 @@ def plan_dict(data: bytes) -> dict:
         "build": {
             "python_ladder": ["3.12", "3.13"],
             "exclude_newer": "2026-01-01",
-            "base_image": "python@sha256:" + "c" * 64,
+            "base_image": ENGINE_BASE_IMAGE,  # the engine's pinned image
             "allowed_patches": [{"attachment": HOOK_PATCH, "reason": "the coverage hook"}],
         },
         "datasets": [

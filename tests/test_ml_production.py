@@ -117,6 +117,17 @@ def test_classify_build(tmp_path):
         rung, result(tmp_path, 1, "out_of_memory", log="ERROR: No matching distribution found")
     )
     assert oom.outcome is orc.Outcome.OPERATIONAL_GUARD
+    # a resolver failure that names the platform: the engine's image, never the procedure
+    platform = pd.classify_build(
+        rung,
+        result(
+            tmp_path,
+            1,
+            log="No solution found when resolving: torch has no wheels with a matching "
+            "platform tag (e.g., `manylinux_2_36_x86_64`)",
+        ),
+    )
+    assert platform.outcome is orc.Outcome.REFUTE_ERROR and platform.cause is None
     tls = pd.classify_build(rung, result(tmp_path, 1, log="SSL: CERTIFICATE_VERIFY_FAILED"))
     assert tls.cause is FailureCause.TRANSIENT_NETWORK
     other = pd.classify_build(rung, result(tmp_path, 1, log="gcc: command not found\n"))

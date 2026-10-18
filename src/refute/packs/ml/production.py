@@ -133,6 +133,14 @@ _NETWORK = re.compile(
     r"Failed to fetch|failed to download|HTTP error 5\d\d)",
     re.IGNORECASE,
 )
+# a resolver failure that names the platform: the engine's base image (glibc 2.36) has no
+# matching wheel, a limitation of Refute, never the procedure's
+# (wp3-run-resources-acceptance.md, section 3)
+_PLATFORM = re.compile(
+    r"(no wheels with a matching platform tag|"
+    r"Wheels are available for .+ on the following platform)",
+    re.IGNORECASE,
+)
 # the only build failures counted as an error of the procedure itself (an artifact cause,
 # plan 8.2): the declared environment cannot be resolved (Codex review of 3dd85e2: reserve
 # artifact_build_ladder for a failure positively identified as the procedure's)
@@ -285,6 +293,11 @@ def classify_build(rung: ld.Rung, result: RunResult | None) -> ld.RungResult:
     if network:
         return ld.RungResult(
             orc.Outcome.FAILED, FailureCause.TRANSIENT_NETWORK, f"network: {network.group(0)}"
+        )
+    platform = _PLATFORM.search(text)
+    if platform:
+        return ld.RungResult(
+            orc.Outcome.REFUTE_ERROR, None, f"the engine's platform: {platform.group(0)}"
         )
     procedure = _PROCEDURE.search(text)
     if procedure:

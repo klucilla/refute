@@ -14,7 +14,7 @@ from refute.core.claim import ClaimError, load_claim
 from refute.core.hashing import sha256_bytes
 from refute.core.pack import DomainPack
 from refute.packs.ml import rules, seeds
-from refute.packs.ml.schema import MlClaimSchema
+from refute.packs.ml.schema import ENGINE_BASE_IMAGE, MlClaimSchema
 from refute.packs.ml.uncertainty import Uncertainty, resolve_uncertainty
 from refute.selection import inventory as inv
 
@@ -157,7 +157,7 @@ def test_plan():
         "build": {
             "python_ladder": ["3.10", "3.11"],
             "exclude_newer": "2024-01-15",
-            "base_image": "python@sha256:" + "c" * 64,
+            "base_image": ENGINE_BASE_IMAGE,  # the engine's pinned image
             "allowed_patches": [],
         },
         "datasets": [
@@ -2081,3 +2081,16 @@ def test_an_ablation_config_value_must_be_finite_json_data(value, message):
     ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": good})
     with pytest.raises(ValueError, match=message):
         ConfigDisable.model_validate({"config_file": "conf.yaml", "key": "aug", "value": value})
+
+
+def test_the_base_image_is_the_engines_pinned_image():
+    """wp3-run-resources-acceptance.md, section 3: never a choice of the claim."""
+    from refute.packs.ml.schema import Build
+
+    good = {"python_ladder": ["3.10"], "exclude_newer": "2025-01-01", "allowed_patches": []}
+    assert Build.model_validate({**good, "base_image": ENGINE_BASE_IMAGE})
+    for other in ("python@sha256:" + "c" * 64, "python@sha256:" + "a6" * 32):
+        with pytest.raises(ValueError, match="engine's pinned image"):
+            Build.model_validate({**good, "base_image": other})
+    with pytest.raises(ValueError):
+        Build.model_validate(good)
