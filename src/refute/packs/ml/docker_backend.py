@@ -197,6 +197,7 @@ class DockerBackend:
         self._cgroups = _Cgroups(Path(self.cgroup_root))
         self._plans = {Path(k).resolve(): v for k, v in self.plans.items()}
         self._active: set[str] = set()  # containers created and not yet removed
+        self._stopping = False  # set by kill_active: no container starts afterwards
         self._lock = threading.Lock()
 
     # -- the paper's total, for the completeness check of W2.10
@@ -213,6 +214,7 @@ class DockerBackend:
         """Kills every container of this backend still running (the paper's unit is
         stopped): by their ids only."""
         with self._lock:
+            self._stopping = True  # under the lock: no container is registered after this
             active = sorted(self._active)
         for cid in active:
             self._kill(cid)
@@ -294,15 +296,25 @@ class DockerBackend:
         if _Cgroups.usage_usec(own) is not None:
             raise DockerRefusedError(f"the slice {slice_name} already exists")
         self._check_image(plan.image)
-        cid = self._docker(*self._create_args(spec, plan, slice_name, label))
         with self._lock:
-            self._active.add(cid)
+            if self._stopping:
+                raise DockerRefusedError("the paper is stopping: no container starts")
+        cid = self._docker(*self._create_args(spec, plan, slice_name, label))
         spec.log_path.parent.mkdir(parents=True, exist_ok=True)
         try:
             with spec.log_path.open("wb") as log:
-                attached = subprocess.Popen(
-                    [*self.docker, "start", "--attach", cid], stdout=log, stderr=subprocess.STDOUT
-                )
+                with self._lock:
+                    # registered and started under the lock: a stop either comes before
+                    # (nothing starts) or sees this container (Codex review of 6755d61); the
+                    # supervision also checks the stop at every reading
+                    if self._stopping:
+                        raise DockerRefusedError("the paper is stopping: no container starts")
+                    self._active.add(cid)
+                    attached = subprocess.Popen(
+                        [*self.docker, "start", "--attach", cid],
+                        stdout=log,
+                        stderr=subprocess.STDOUT,
+                    )
                 try:
                     result = self._supervise(spec, cid, own, attached)
                 finally:
@@ -327,7 +339,13 @@ class DockerBackend:
         value that a removed file carried is then simply missing (the run's own doing)."""
         root = os.path.realpath(workdir)
         removed = []
-        for dirpath, dirnames, filenames in os.walk(workdir, followlinks=False):
+
+        def unreadable(error: OSError) -> None:
+            # a folder the run made unlistable could hide a link: the run's outputs are not
+            # read at all (Codex review of 6755d61)
+            raise RuntimeError(f"the run's folder cannot be checked: {error}") from error
+
+        for dirpath, dirnames, filenames in os.walk(workdir, followlinks=False, onerror=unreadable):
             for name in [*dirnames, *filenames]:
                 p = os.path.join(dirpath, name)
                 st = os.lstat(p)
@@ -376,6 +394,14 @@ class DockerBackend:
         poll_ns = round(self.poll_s * 1_000_000_000)
         planned_ns = self.clock_ns()
         while True:
+            if self._stopping:
+                # the paper is stopping (SIGTERM): this container is killed and the run fails
+                # as a Refute error; it never ends as the artifact's result
+                self._kill(cid)
+                deadline = time.monotonic() + KILL_WAIT_S
+                while _Cgroups.populated(own) and time.monotonic() < deadline:
+                    self.sleep(0.01)
+                raise RuntimeError(f"the paper was stopped while {cid} ran")
             code = attached.poll()
             usage = _Cgroups.usage_usec(own) or 0
             now = time.monotonic()

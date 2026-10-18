@@ -86,7 +86,10 @@ cover is still a requirement, not a tested property.
   filesystem with a writable work volume.
 - **No mounts and no credentials.** No folder of the Windows host and no folder of
   the guest is mounted into a container, except one output directory of that
-  container. Never mounted or passed: the Docker socket, devices (`--device`),
+  container, and, for a run, each declared dataset fetched by Refute as a **read-only**
+  bind mount of that one file (added on 2026-10-18 after the Codex review of the docker
+  backend: a copy in the writable folder could be replaced by the run; the folders above
+  a data path are sticky, so the run cannot swap them either). Never mounted or passed: the Docker socket, devices (`--device`),
   `--privileged`, an SSH agent, credentials, git configuration or host environment
   variables.
 - **Builder configuration, verifiable.** The BuildKit entitlements `network.host`,

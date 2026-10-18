@@ -101,6 +101,44 @@ def test_an_image_with_a_volume_is_refused(tmp_path):
         b.run(spec(tmp_path, work, ["work", "0.1", "0"]))
 
 
+def test_no_container_starts_after_a_stop(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    assert b.kill_active() == []
+    with pytest.raises(DockerRefusedError, match="stopping"):
+        b.run(spec(tmp_path, work, ["work", "0.1", "0"]))
+    assert not list((tmp_path / "state").glob("*.json"))  # nothing was even created
+
+
+def test_a_stop_during_a_run_kills_it_as_a_refute_error(tmp_path):
+    import threading
+
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    timer = threading.Timer(0.3, b.kill_active)
+    timer.start()
+    with pytest.raises(RuntimeError, match="the paper was stopped"):
+        b.run(spec(tmp_path, work, ["work", "60", "0"]))
+    timer.join()
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="modes as on the VM (Linux)")
+def test_an_unlistable_folder_stops_the_reading(tmp_path):
+    work = tmp_path / "w1"
+    hidden = work / "out"
+    hidden.mkdir(parents=True)
+    (hidden / "metric.json").write_text("{}")
+    hidden.chmod(0o111)
+    log = tmp_path / "r.log"
+    try:
+        with pytest.raises(RuntimeError, match="cannot be checked"):
+            DockerBackend._sanitize(work, log)
+    finally:
+        hidden.chmod(0o755)
+
+
 def test_a_missing_parent_slice_is_an_error_not_zero(tmp_path):
     b = backend(tmp_path, {})
     with pytest.raises(RuntimeError, match="no cpu.stat"):

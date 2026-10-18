@@ -117,7 +117,9 @@ BASE_ENV = {
 }  # fmt: skip
 # a build's log line that means the network or the proxy, not the artifact
 _NETWORK = re.compile(
-    r"(Tunnel connection failed|403 Forbidden|CONNECT tunnel failed|Could not resolve host|"
+    r"(Retrying \(Retry\(|too many \d{3} error responses|50\d (?:Server Error|Service Unavailable)|"
+    r"status code 5\d\d|Tunnel connection failed|403 Forbidden|CONNECT tunnel failed|"
+    r"Could not resolve host|"
     r"Temporary failure in name resolution|Connection (?:reset|refused|timed out)|"
     r"Read timed out|ConnectTimeoutError|NewConnectionError|Network is unreachable|"
     r"CERTIFICATE_VERIFY_FAILED|SSLError|SSL: |certificate verify failed|"
@@ -330,8 +332,18 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
                 target = folder / PurePosixPath(rel)
                 if target.exists() or target.is_symlink():
                     raise ProductionError(f"{rel} exists in the repository: the data path collides")
+                target.parent.mkdir(parents=True, exist_ok=True)
                 if not _inside(folder, target.parent):
                     raise ProductionError(f"the data path {rel} leaves the run's folder")
+                # the run's folder and every folder above a data path are sticky: the run
+                # (another uid) may add files there but can neither rename nor remove what
+                # the engine owns, so the mounted file cannot be swapped by renaming one of
+                # its folders (Codex review of 6755d61)
+                for d in [target.parent, *target.parent.parents]:
+                    if not _inside(folder, d):
+                        break
+                    d.chmod(0o1777)
+            folder.chmod(0o1777)
         workspaces[cid] = folder
     return workspaces
 

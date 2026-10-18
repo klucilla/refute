@@ -115,6 +115,16 @@ def test_classify_build(tmp_path):
     assert tls.cause is FailureCause.TRANSIENT_NETWORK
     other = pd.classify_build(rung, result(tmp_path, 1, log="gcc: command not found\n"))
     assert other.outcome is orc.Outcome.FAILED and other.cause is FailureCause.UNDETERMINED
+    # Codex review of 6755d61: retries of 5xx answers before a resolution error are network
+    log = (
+        "WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None))"
+        " after connection broken by 'ResponseError('too many 503 error responses')'\n"
+        "ERROR: No matching distribution found for numpy\n"
+    )
+    assert (
+        pd.classify_build(rung, result(tmp_path, 1, log=log)).cause
+        is FailureCause.TRANSIENT_NETWORK
+    )
 
 
 def test_margin_and_tolerance():
@@ -154,6 +164,9 @@ def test_datasets_are_mounted_read_only_not_copied(tmp_path, monkeypatch):
     assert mounts == ((str(data.resolve()), "data/dataset.npz"),)
     if sys.platform != "win32":
         assert oct(os.stat(data).st_mode & 0o777) == "0o444"
+        # the run's folder and the folder above the data path are sticky (Codex review)
+        for d in (ws["k1/base/s0"], ws["k1/base/s0"] / "data"):
+            assert os.stat(d).st_mode & 0o7777 == 0o1777
 
 
 def test_data_layout_must_stay_in_the_folder(tmp_path, monkeypatch):
