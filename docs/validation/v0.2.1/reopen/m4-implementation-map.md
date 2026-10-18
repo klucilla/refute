@@ -660,6 +660,15 @@ peaks), and a planet of **270 ppm** (a BLS SNR near 12 over the 2018 transits at
 about 720 ppm per cadence), so a corrected SNR near 5.7. The same preconditions and requirement. If
 it also fails, it is recorded and brought to the maintainer; no third construction is tried.
 
+**Result of the second construction: the case passes** (654ba9c's test, JUnit 1 test, 0
+failures): train BLS SNR **10.79**, corrected SNR **4.58** (`β_D` 2.35; sectors 2.36 and 2.35), the
+round INCONCLUSIVE by `train_snr_below_gate`, the hidden year not read. **What it shows and what it
+does not:** the candidate of the train search is again a red-noise box (P = 0.50 d, 98 ppm), not the
+injected 270 ppm planet; so the case shows, by the real computation end to end, the H4 gate reading
+the corrected SNR and stopping a train candidate that the BLS SNR alone would pass (the case of a
+correlated-noise false candidate); it does not show it with the injected planet as the candidate.
+That variant, and the physical case on a real curve, stay recorded as pending.
+
 ## Amendment 17 (2026-10-18): the explicit, versioned activation of M4 across the flow
 
 The maintainer's decision of 2026-10-18 (14:00), item 2; Codex reviewed the design before the code
