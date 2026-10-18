@@ -68,6 +68,8 @@ def test_a_run_counts_its_slice_and_exits(tmp_path):
     assert args[args.index("--network") + 1] == "none"
     assert args[args.index("--cgroup-parent") + 1] == "refute-p1-c0001.slice"
     assert args[args.index("--memory-swap") + 1] == args[args.index("--memory") + 1]
+    # /dev/shm of a quarter of the memory limit (PyTorch data loaders), inside the limit
+    assert int(args[args.index("--shm-size") + 1]) == LIMITS.memory_bytes // 4
     # the image's own entry point, health check and user never apply (Codex review)
     assert args[args.index("--entrypoint") + 1] == "" and "--no-healthcheck" in args
     assert args[args.index("--user") + 1] == "10001:10001"

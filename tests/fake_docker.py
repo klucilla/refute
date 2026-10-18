@@ -55,8 +55,8 @@ if command == "create":
     rest = args[1:]
     # the image is the first argument that is not an option or an option's value
     flags_with_value = set(
-        "--name --cgroup-parent --cpu-period --cpu-quota --memory --memory-swap --pids-limit "
-        "--cap-drop --security-opt --mount --workdir --network --env --tmpfs --user "
+        "--name --cgroup-parent --cpu-period --cpu-quota --memory --memory-swap --shm-size "
+        "--pids-limit --cap-drop --security-opt --mount --workdir --network --env --tmpfs --user "
         "--entrypoint".split()
     )
     i = 0

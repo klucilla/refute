@@ -251,6 +251,10 @@ class DockerBackend:
             "--cpu-quota", str(self.limits.quota_us),
             "--memory", str(self.limits.memory_bytes),
             "--memory-swap", str(self.limits.memory_bytes),
+            # /dev/shm of a quarter of the memory limit: Docker's 64 MiB default kills the
+            # data-loader workers of PyTorch (bus error; 2305.19518's measurement run of
+            # 2026-10-18); shm pages count in the memory limit, which stays the bound
+            "--shm-size", str(self.limits.memory_bytes // 4),
             "--pids-limit", str(self.limits.pids),
             "--cap-drop", "ALL",
             "--security-opt", "no-new-privileges",
