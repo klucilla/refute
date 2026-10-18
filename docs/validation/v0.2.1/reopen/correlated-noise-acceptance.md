@@ -269,3 +269,33 @@ committed:
 own value, unchanged: 600 ppm for every scenario except `blend`, whose `make_blend` uses
 300 ppm (as before). The profile adds the 600 ppm AR(1) to that white noise; the code
 (`CORRELATED_PROFILE` in `synthetic.py`) and G4 follow this, and nothing else was assumed.
+
+## Amendment 2 (2026-10-17, before the tests of the changes): the maintainer's decision, and two definitions
+
+**The maintainer's decision (2026-10-17).** Exit criterion 1 is **accepted as a prospective
+regularization, with an explicit historical exception**. On the record:
+
+- (a) **The historical absence.** The changes H7, H4, H9(a), workers equivalence and CI option D
+  were accepted (their records, tests and code, 2026-10-10 and 2026-10-11) **without** any
+  correlated-noise case; these cases were added on 2026-10-17, by this file.
+- (b) **The decision.** The maintainer accepts this prospective regularization as the way to meet
+  criterion 1 for those changes.
+- (c) **The order.** The criteria of this file were committed (`b8371d6`, this amendment) before the
+  respective tests and code; the git history shows it.
+- (d) **The results**, complete, including every expectation that keeps failing, are recorded in a
+  later amendment, with the numbers. An `xfail` keeps a pending item visible; it **does not**
+  satisfy the acceptance: a change whose correlated expectation fails stays pending under
+  criterion 1.
+
+The AR(1) component is a **synthetic scenario of correlated noise**, comparable with the population
+study; it is never presented as a validated reproduction of the real noise of TESS data.
+
+**Two definitions made before the tests.**
+
+1. **The holdout helper carries the mode too.** `holdout_scenario_seed` (the helper of the H4 and
+   blindness tests, which runs the blind holdout alone) reads `task["noise"]` (default `"white"`),
+   like the two analysis helpers named in section G. Without it the H4 cases could not run in the
+   correlated profile.
+2. **Where H4-M5 lives.** H4-M5 (blindness in the correlated profile) is placed in
+   `tests/test_holdout_blindness.py`, beside C1 of the H4 record whose helpers it uses, not in
+   `tests/test_holdout_train_validity_e2e.py`. Its definition does not change.
