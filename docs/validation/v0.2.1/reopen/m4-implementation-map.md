@@ -824,6 +824,31 @@ the corrected SNR and stopping a train candidate that the BLS SNR alone would pa
 correlated-noise false candidate); it does not show it with the injected planet as the candidate.
 That variant, and the physical case on a real curve, stay recorded as pending.
 
+**Complement (2026-10-18, the maintainer's items 2 and 3, written after the results of
+`m4/h4_complement.py`, numbers in `m4/h4-complement.json`; the construction is not changed).**
+
+- **The mechanism of the first construction's incompatibility, confirmed.** On the same train
+  curve (seed 3509) and at the candidate's ephemeris (P = 0.84 d, 3.8 h), `β` at `n_T` is 4.89 and
+  5.30 on the raw normalized curve but 2.67 and 3.06 on the detrended, masked curve the gate reads:
+  the detrending removes most of the slow correlated noise, which is the main reason for the
+  smaller `β`. The robust `σ_w` is not: it differs from the plain standard deviation by about 7 to
+  9% (895 against 961 ppm and 914 against 999 ppm). The a priori estimate also assumed `n_T` = 75
+  (a 2.5 h event), but the candidate was a 3.8 h box with `n_T` = 114; at 114 the estimate gives
+  `β` 6.1, so it overestimated the detrended `β` by about a factor of 2.
+- **The injected planet on the same curve as the second construction** (seed 3510, AR(1) 400 ppm,
+  270 ppm, the round with 2020 hidden). **Detected?** No: the train search returns the red-noise
+  box at P = 0.50 d, and none of its ten refined candidates is within 1% of the planet's period or
+  of its half or double (`planet_among_refined` false). **Its SNRs**, by the same computation as
+  the H4 gate at the planet's own period and duration: BLS SNR **13.84**, corrected SNR **4.75**
+  (`β_D` 2.91; sectors 3.06 and 2.76), depth 301 ppm. **Would it pass the threshold?** By the BLS
+  SNR alone yes; by the corrected SNR no (below 7.1, `train_snr_below_gate`).
+- **Reading: result (c).** In this construction the correction stops the false candidate and
+  would stop the true planet too; the case does **not** show that the correction removes the false
+  and keeps the true. This is recorded as a result and enters the evaluation of the method before
+  the freeze (with Amendment 19's study and the population); the construction is not adjusted to
+  avoid it. Whether a corrected SNR of 4.75 is the honest significance of a 270 ppm planet in this
+  noise, or the gate is too strict, is not decided by this one curve.
+
 ## Amendment 17 (2026-10-18): the explicit, versioned activation of M4 across the flow
 
 The maintainer's decision of 2026-10-18 (14:00), item 2; Codex reviewed the design before the code
