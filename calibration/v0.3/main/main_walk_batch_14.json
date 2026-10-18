@@ -1,0 +1,1402 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "073692ba2e6f6cc7c836d8b69d68f08c9902feef",
+  "original_protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "amendment": {
+    "file": "calibration/v0.3/main/AMENDMENT-1.md",
+    "commit_sha": "073692ba2e6f6cc7c836d8b69d68f08c9902feef",
+    "run_id": 39126300864,
+    "run_created_at": "2026-10-18T12:12:04Z",
+    "round_published_at": "2026-10-18T12:14:43Z",
+    "margin_seconds": 0.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/AMENDMENT-1.md",
+        "5d453092a8f5f581944e116ffda9bb224e35e5c9f393de31514c7b5dabb4e867"
+      ],
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "904c425af35aa22c1f7ae5399738e80b1f65c8ad4f4d9c2b505bcecd9a508247"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T12:14:53Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 14,
+  "candidates": [
+    {
+      "position": 326,
+      "arxiv_id": "2306.12159",
+      "repo_url": "https://github.com/renxiaolong/informationpopularityprediction",
+      "arxiv": {
+        "versioned_id": "2306.12159v1",
+        "primary_category": "cs.SI",
+        "title": "Predicting the popularity of information on social platforms without underlying network structure",
+        "abstract": "The ability to predict the size of information cascades in online social networks is crucial for various applications, including decision-making and viral marketing. However, traditional methods either rely on complicated time-varying features that are challenging to extract from multilingual and cross-platform content, or on network structures and properties that are often difficult to obtain. To address these issues, we conducted empirical research using data from two well-known social networking platforms, WeChat and Weibo. Our findings suggest that the information-cascading process is best described as an activate-decay dynamical process. Building on these insights, we developed an Activate-Decay (AD)-based algorithm that can accurately predict the long-term popularity of online content based solely on its early repost amount. We tested our algorithm using data from WeChat and Weibo, demonstrating that we could fit the evolution trend of content propagation and predict the longer-term dynamics of message forwarding from earlier data. We also discovered a close correlation between the peak forwarding amount of information and the total amount of dissemination. Finding the peak of the amount of information dissemination can significantly improve the prediction accuracy of our model. Our method also outperformed existing baseline methods for predicting the popularity of information."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/renxiaolong/informationpopularityprediction",
+        "exists": true,
+        "full_name": "renxiaolong/InformationPopularityPrediction",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "8f390d611a9196f7581505b4f8fd0542338b2c4b",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/renxiaolong/InformationPopularityPrediction/blob/8f390d611a9196f7581505b4f8fd0542338b2c4b/README.md",
+          "sha256": "602b840c5b1b4100ae45e4633bc5e0823b4036f163462941cfdc74acd9c07653",
+          "bytes": 2271
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "Weibo Data Sets"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SI"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 327,
+      "arxiv_id": "2409.14485",
+      "repo_url": "https://github.com/vectorspacelab/video-xl",
+      "arxiv": {
+        "versioned_id": "2409.14485v4",
+        "primary_category": "cs.CV",
+        "title": "Video-XL: Extra-Long Vision Language Model for Hour-Scale Video Understanding",
+        "abstract": "Long video understanding poses a significant challenge for current Multi-modal Large Language Models (MLLMs). Notably, the MLLMs are constrained by their limited context lengths and the substantial costs while processing long videos. Although several existing methods attempt to reduce visual tokens, their strategies encounter severe bottleneck, restricting MLLMs' ability to perceive fine-grained visual details. In this work, we propose Video-XL, a novel approach that leverages MLLMs' inherent key-value (KV) sparsification capacity to condense the visual input. Specifically, we introduce a new special token, the Visual Summarization Token (VST), for each interval of the video, which summarizes the visual information within the interval as its associated KV. The VST module is trained by instruction fine-tuning, where two optimizing strategies are offered. 1.Curriculum learning, where VST learns to make small (easy) and large compression (hard) progressively. 2. Composite data curation, which integrates single-image, multi-image, and synthetic data to overcome the scarcity of long-video instruction data. The compression quality is further improved by dynamic compression, which customizes compression granularity based on the information density of different video intervals. Video-XL's effectiveness is verified from three aspects. First, it achieves a superior long-video understanding capability, outperforming state-of-the-art models of comparable sizes across multiple popular benchmarks. Second, it effectively preserves video information, with minimal compression loss even at 16x compression ratio. Third, it realizes outstanding cost-effectiveness, enabling high-quality processing of thousands of frames on a single A100 GPU."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/vectorspacelab/video-xl",
+        "exists": true,
+        "full_name": "VectorSpaceLab/Video-XL",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6e3dc89dad54f9322496dcb13494891ce558d243",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/VectorSpaceLab/Video-XL/blob/6e3dc89dad54f9322496dcb13494891ce558d243/README.md",
+          "sha256": "bfb75ee2cec25c629c5ecc3692439c6a49b6d9b335200b80e73a567871362967",
+          "bytes": 2140
+        },
+        "root_names": [
+          ".gitattributes",
+          "LICENSE",
+          "README.md",
+          "Video-XL-2",
+          "Video-XL-Pro",
+          "Video-XL"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 328,
+      "arxiv_id": "2404.08785",
+      "repo_url": "https://github.com/ethz-asl/analog_gauge_reader",
+      "arxiv": {
+        "versioned_id": "2404.08785v1",
+        "primary_category": "cs.CV",
+        "title": "Under pressure: learning-based analog gauge reading in the wild",
+        "abstract": "We propose an interpretable framework for reading analog gauges that is deployable on real world robotic systems. Our framework splits the reading task into distinct steps, such that we can detect potential failures at each step. Our system needs no prior knowledge of the type of gauge or the range of the scale and is able to extract the units used. We show that our gauge reading algorithm is able to extract readings with a relative reading error of less than 2%."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ethz-asl/analog_gauge_reader",
+        "exists": true,
+        "full_name": "ethz-asl/analog_gauge_reader",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "518cdfaab1e9c7cdabb1ef957e45311fe3f6a47a",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ethz-asl/analog_gauge_reader/blob/518cdfaab1e9c7cdabb1ef957e45311fe3f6a47a/README.md",
+          "sha256": "ae97661f61d90efeb2437956acc7c79c4c513bd02f989721999334edd39507cb",
+          "bytes": 3630
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          ".pre-commit-config.yaml",
+          ".pylintrc",
+          "CMakeLists.txt",
+          "LICENSE.md",
+          "README.md",
+          "angle_reading_fit",
+          "dependencies",
+          "evaluation",
+          "evaluations.sh",
+          "experiments.sh",
+          "full_evaluations.sh",
+          "gauge_detection",
+          "geometry",
+          "key_point_detection",
+          "launch",
+          "method_overview.png",
+          "models",
+          "msg",
+          "ocr",
+          "package.xml",
+          "pipeline.py",
+          "plots.py",
+          "poetry.lock",
+          "pyproject.toml",
+          "ros_node.py",
+          "scripts",
+          "segmentation",
+          "setup.py",
+          "srv"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 329,
+      "arxiv_id": "2303.12660",
+      "repo_url": "https://github.com/papachristoumarios/supply-chain-resilience",
+      "arxiv": {
+        "versioned_id": "2303.12660v4",
+        "primary_category": "cs.SI",
+        "title": "Structural Measures of Resilience for Supply Chains",
+        "abstract": "Modern production systems are increasingly defined by dense networks of multi-tier sourcing dependencies, where localized upstream disruptions can cascade into system-wide collapses. While supply chain resilience has garnered significant managerial attention, we still lack theoretically-grounded, reliable, analytical metrics that can distinguish inherently resilient architectures from fragile ones. This paper addresses this gap by developing a structural resilience framework and a novel metric, defined as the maximum supplier failure rate that a network can sustain while maintaining an aggregate production level. Using node percolation theory and branching processes, we identify four critical structural determinants of resilience: the number of raw materials, the number of finished goods, sourcing requirements, and sourcing influence. Our analysis reveals two distinct regimes: \"top hat\" architectures, which are characterized by excessive raw materials and high centralization, making them inherently fragile; and \"rolling pin\" structures, which maintain controlled input/output widths and sparsity, allowing them to absorb non-trivial shocks. To operationalize these insights, we formulate resilience computation as a scalable linear program that approximates cascading failure sizes in large-scale networks with cycles, heterogeneous suppliers, and structural decoupling. Furthermore, we extend our framework to account for exogenous failure correlations, such as those arising from geographic or geopolitical factors that can undermine traditional supplier and input diversification strategies. We validate our theoretical results using multi-echelon supply chain data. These tools can inform network design, supplier diversification, and inventory planning to proactively reduce systemic risk."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/papachristoumarios/supply-chain-resilience",
+        "exists": true,
+        "full_name": "papachristoumarios/supply-chain-resilience",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4920910d5d1e45012dd1783002f723d2fe4d43a9",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/papachristoumarios/supply-chain-resilience/blob/4920910d5d1e45012dd1783002f723d2fe4d43a9/README.md",
+          "sha256": "6bb40d5661a4d2e2c1445b3a07e8120a473a4055d11328cb5e5cece1bec548fd",
+          "bytes": 25
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "correlations.ipynb",
+          "import_matrices.xlsx",
+          "main.py",
+          "msom-willems.xls",
+          "power_law.py",
+          "wiot.xlsb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SI"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 330,
+      "arxiv_id": "2410.05295",
+      "repo_url": "https://github.com/safolab-wisc/autodan-turbo",
+      "arxiv": {
+        "versioned_id": "2410.05295v4",
+        "primary_category": "cs.CR",
+        "title": "AutoDAN-Turbo: A Lifelong Agent for Strategy Self-Exploration to Jailbreak LLMs",
+        "abstract": "In this paper, we propose AutoDAN-Turbo, a black-box jailbreak method that can automatically discover as many jailbreak strategies as possible from scratch, without any human intervention or predefined scopes (e.g., specified candidate strategies), and use them for red-teaming. As a result, AutoDAN-Turbo can significantly outperform baseline methods, achieving a 74.3% higher average attack success rate on public benchmarks. Notably, AutoDAN-Turbo achieves an 88.5 attack success rate on GPT-4-1106-turbo. In addition, AutoDAN-Turbo is a unified framework that can incorporate existing human-designed jailbreak strategies in a plug-and-play manner. By integrating human-designed strategies, AutoDAN-Turbo can even achieve a higher attack success rate of 93.4 on GPT-4-1106-turbo."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/safolab-wisc/autodan-turbo",
+        "exists": true,
+        "full_name": "SaFo-Lab/AutoDAN-Turbo",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "389df844439888fc44ea7f5e8e95fd2b5c82ea64",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/SaFo-Lab/AutoDAN-Turbo/blob/389df844439888fc44ea7f5e8e95fd2b5c82ea64/README.md",
+          "sha256": "02912b27d7540992916c3dea9f68d4581f53c83b3f20cea7cdd1c38ca28cfea5",
+          "bytes": 8568
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE.txt",
+          "README.md",
+          "data",
+          "figures",
+          "framework",
+          "framework_r",
+          "llm",
+          "logs_r",
+          "main.py",
+          "main_r.py",
+          "pipeline.py",
+          "requirements.txt",
+          "test.py",
+          "test_r.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 331,
+      "arxiv_id": "2412.09842",
+      "repo_url": "https://github.com/uzn36/dp-syngen",
+      "arxiv": {
+        "versioned_id": "2412.09842v1",
+        "primary_category": "cs.LG",
+        "title": "Leveraging Programmatically Generated Synthetic Data for Differentially Private Diffusion Training",
+        "abstract": "Programmatically generated synthetic data has been used in differential private training for classification to enhance performance without privacy leakage. However, as the synthetic data is generated from a random process, the distribution of real data and the synthetic data are distinguishable and difficult to transfer. Therefore, the model trained with the synthetic data generates unrealistic random images, raising challenges to adapt the synthetic data for generative models. In this work, we propose DP-SynGen, which leverages programmatically generated synthetic data in diffusion models to address this challenge. By exploiting the three stages of diffusion models(coarse, context, and cleaning) we identify stages where synthetic data can be effectively utilized. We theoretically and empirically verified that cleaning and coarse stages can be trained without private data, replacing them with synthetic data to reduce the privacy budget. The experimental results show that DP-SynGen improves the quality of generative data by mitigating the negative impact of privacy-induced noise on the generation process."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/uzn36/dp-syngen",
+        "exists": true,
+        "full_name": "uzn36/DP-SynGen",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "fc0fee27273b39e52f64f9e17e7a1bf656d23733",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/uzn36/DP-SynGen/blob/fc0fee27273b39e52f64f9e17e7a1bf656d23733/README.md",
+          "sha256": "345de4917327f6f07825b0bea94a1954999c1527466b223203890dbdf9ac8bb1",
+          "bytes": 594
+        },
+        "root_names": [
+          ".gitattributes",
+          "README.md",
+          "compute_fid.py",
+          "compute_fid_statistics.py",
+          "configs",
+          "dataset_tool.py",
+          "denoiser.py",
+          "dnnlib",
+          "main.py",
+          "model",
+          "precompute_data_mnist_fid_statistics.py",
+          "samplers.py",
+          "torch_utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 332,
+      "arxiv_id": "2412.11560",
+      "repo_url": "https://github.com/compnet/splice",
+      "arxiv": {
+        "versioned_id": "2412.11560v1",
+        "primary_category": "cs.CL",
+        "title": "The Role of Natural Language Processing Tasks in Automatic Literary Character Network Construction",
+        "abstract": "The automatic extraction of character networks from literary texts is generally carried out using natural language processing (NLP) cascading pipelines. While this approach is widespread, no study exists on the impact of low-level NLP tasks on their performance. In this article, we conduct such a study on a literary dataset, focusing on the role of named entity recognition (NER) and coreference resolution when extracting co-occurrence networks. To highlight the impact of these tasks' performance, we start with gold-standard annotations, progressively add uniformly distributed errors, and observe their impact in terms of character network quality. We demonstrate that NER performance depends on the tested novel and strongly affects character detection. We also show that NER-detected mentions alone miss a lot of character co-occurrences, and that coreference resolution is needed to prevent this. Finally, we present comparison points with 2 methods based on large language models (LLMs), including a fully end-to-end one, and show that these models are outperformed by traditional NLP pipelines in terms of recall."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/compnet/splice",
+        "exists": true,
+        "full_name": "CompNet/Splice",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d706b64da8220518538a24a3be2e564c539e6702",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/CompNet/Splice/blob/d706b64da8220518538a24a3be2e564c539e6702/README.md",
+          "sha256": "2bb358c38d0712d61925dfdc1930f20b33f8043663d62b16fdcebc8f55fde8a3",
+          "bytes": 3810
+        },
+        "root_names": [
+          ".gitignore",
+          ".projectile",
+          "README.md",
+          "dataset_ingredients.py",
+          "flatten_litbank_ner.py",
+          "gold_nocoref_vs_coref.py",
+          "plot_coref_degradation_metrics.py",
+          "plot_degradation_metrics.py",
+          "plot_ner_degradation_metrics.py",
+          "poetry.lock",
+          "print_e2e_graph_results.py",
+          "print_main_graph_results.py",
+          "print_main_task_results.py",
+          "pyproject.toml",
+          "requirements.txt",
+          "splice",
+          "tests",
+          "xp.py",
+          "xp_e2e_coref.py",
+          "xp_e2e_llm_coref.py",
+          "xp_e2e_llm_graphml.py",
+          "xp_metrics_over_degradation.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 333,
+      "arxiv_id": "2401.05379",
+      "repo_url": "https://github.com/amirrezahmi/video-inpainting-and-voice-cloning",
+      "arxiv": {
+        "versioned_id": "2401.05379v2",
+        "primary_category": "cs.CV",
+        "title": "AutoVisual Fusion Suite: A Comprehensive Evaluation of Image Segmentation and Voice Conversion Tools on HuggingFace Platform",
+        "abstract": "This study presents a comprehensive evaluation of tools available on the HuggingFace platform for two pivotal applications in artificial intelligence: image segmentation and voice conversion. The primary objective was to identify the top three tools within each category and subsequently install and configure these tools on Linux systems. We leveraged the power of pre-trained segmentation models such as SAM and DETR Model with ResNet-50 backbone for image segmentation, and the so-vits-svc-fork model for voice conversion. This paper delves into the methodologies and challenges encountered during the implementation process, and showcases the successful combination of video segmentation and voice conversion in a unified project named AutoVisual Fusion Suite."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/amirrezahmi/video-inpainting-and-voice-cloning",
+        "exists": true,
+        "full_name": "Amirrezahmi/AudioVisual-Fusion-Suite",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ad7d08521a9988000654969944732efa04090c20",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Amirrezahmi/AudioVisual-Fusion-Suite/blob/ad7d08521a9988000654969944732efa04090c20/README.md",
+          "sha256": "04ba0e89d2d85fcca3eb89aa2fae1961dfd4e8de67bada877fb66a7dc918de6a",
+          "bytes": 3347
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "Project_latex.pdf",
+          "Project_latex.zip",
+          "README.md",
+          "combination of vi & vc",
+          "video inpainting",
+          "voice cloning"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 334,
+      "arxiv_id": "2312.14670",
+      "repo_url": "https://github.com/idsia-papers/causal-llms",
+      "arxiv": {
+        "versioned_id": "2312.14670v1",
+        "primary_category": "cs.AI",
+        "title": "Zero-shot Causal Graph Extrapolation from Text via LLMs",
+        "abstract": "We evaluate the ability of large language models (LLMs) to infer causal relations from natural language. Compared to traditional natural language processing and deep learning techniques, LLMs show competitive performance in a benchmark of pairwise relations without needing (explicit) training samples. This motivates us to extend our approach to extrapolating causal graphs through iterated pairwise queries. We perform a preliminary analysis on a benchmark of biomedical abstracts with ground-truth causal graphs validated by experts. The results are promising and support the adoption of LLMs for such a crucial step in causal inference, especially in medical domains, where the amount of scientific text to analyse might be huge, and the causal statements are often implicit."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/idsia-papers/causal-llms",
+        "exists": true,
+        "full_name": "IDSIA-papers/causal-llms",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "fde8e0855b4d73c4e766b400b9147f3aed0dbc20",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/IDSIA-papers/causal-llms/blob/fde8e0855b4d73c4e766b400b9147f3aed0dbc20/README.md",
+          "sha256": "a744a7a39234964b5c0bfd3449131859c113c8fc4899aeabf674eb7db02fbf9e",
+          "bytes": 903
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "data",
+          "results",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: medical"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 335,
+      "arxiv_id": "2304.14390",
+      "repo_url": "https://github.com/jzenn/dsmcs",
+      "arxiv": {
+        "versioned_id": "2304.14390v1",
+        "primary_category": "stat.ML",
+        "title": "Resampling Gradients Vanish in Differentiable Sequential Monte Carlo Samplers",
+        "abstract": "Annealed Importance Sampling (AIS) moves particles along a Markov chain from a tractable initial distribution to an intractable target distribution. The recently proposed Differentiable AIS (DAIS) (Geffner and Domke, 2021; Zhang et al., 2021) enables efficient optimization of the transition kernels of AIS and of the distributions. However, we observe a low effective sample size in DAIS, indicating degenerate distributions. We thus propose to extend DAIS by a resampling step inspired by Sequential Monte Carlo. Surprisingly, we find empirically-and can explain theoretically-that it is not necessary to differentiate through the resampling step which avoids gradient variance issues observed in similar approaches for Particle Filters (Maddison et al., 2017; Naesseth et al., 2018; Le et al., 2018)."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jzenn/dsmcs",
+        "exists": true,
+        "full_name": "jzenn/DSMCS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "72f9ebe5fb652b376c96c031a5a95808e07e86e9",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jzenn/DSMCS/blob/72f9ebe5fb652b376c96c031a5a95808e07e86e9/README.md",
+          "sha256": "5f0914efc83c6bb42177a2bc2becc5201e6f1a85c8423cd91b24f3b244c6d292",
+          "bytes": 3776
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE.MIT",
+          "README.md",
+          "requirements.txt",
+          "src",
+          "train_static_target.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 336,
+      "arxiv_id": "2405.02379",
+      "repo_url": "https://github.com/JCurran-Sebastian/CMJ_Branching",
+      "arxiv": {
+        "versioned_id": "2405.02379v2",
+        "primary_category": "q-bio.PE",
+        "title": "Modelling the Stochastic Importation Dynamics and Establishment of Novel Pathogenic Strains using a General Branching Processes Framework",
+        "abstract": "The importation and subsequent establishment of novel pathogenic strains in a population is subject to a large degree of uncertainty due to the stochastic nature of the disease dynamics. Mathematical models need to take this stochasticity in the early phase of an outbreak in order to adequately capture the uncertainty in disease forecasts. We propose a general branching process model of disease spread that includes host-level heterogeneity, and that can be straightforwardly tailored to capture the salient aspects of a particular disease outbreak. We combine this with a model of case importation that occurs via an independent marked Poisson process. We use this framework to investigate the impact of different control strategies, particularly on the time to establishment of an invading, exogenous strain, using parameters taken from the literature for COVID-19 as an example. We also demonstrate how to combine our model with a deterministic approximation, such that longer term projections can be generated that still incorporate the uncertainty from the early growth phase of the epidemic. Our approach produces meaningful short- and medium-term projections of the course of a disease outbreak when model parameters are still uncertain and when stochasticity still has a large effect on the population dynamics."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/JCurran-Sebastian/CMJ_Branching",
+        "exists": true,
+        "full_name": "JCurran-Sebastian/CMJ_Branching",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "14be080bf4a7b6a49e2d50f16a7fc6c1d06661d2",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/JCurran-Sebastian/CMJ_Branching/blob/14be080bf4a7b6a49e2d50f16a7fc6c1d06661d2/README.md",
+          "sha256": "c36362d3df888e1eb785d5c086e84dcc0b8f13842c337cd71df279bfb8c670f9",
+          "bytes": 40
+        },
+        "root_names": [
+          "Branching_Process.py",
+          "Disease_Outbreak.ipynb",
+          "Figures",
+          "Outbreak_immigration_scenarios.ipynb",
+          "Outbreak_scenarios.ipynb",
+          "Outbreak_with_immigration.ipynb",
+          "README.md",
+          "Scenarios_heatmap.ipynb",
+          "simulate_cmj.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.PE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 337,
+      "arxiv_id": "2410.13500",
+      "repo_url": "https://github.com/thedodo/sada-net",
+      "arxiv": {
+        "versioned_id": "2410.13500v1",
+        "primary_category": "cs.CV",
+        "title": "SAda-Net: A Self-Supervised Adaptive Stereo Estimation CNN For Remote Sensing Image Data",
+        "abstract": "Stereo estimation has made many advancements in recent years with the introduction of deep-learning. However the traditional supervised approach to deep-learning requires the creation of accurate and plentiful ground-truth data, which is expensive to create and not available in many situations. This is especially true for remote sensing applications, where there is an excess of available data without proper ground truth. To tackle this problem, we propose a self-supervised CNN with self-improving adaptive abilities. In the first iteration, the created disparity map is inaccurate and noisy. Leveraging the left-right consistency check, we get a sparse but more accurate disparity map which is used as an initial pseudo ground-truth. This pseudo ground-truth is then adapted and updated after every epoch in the training step of the network. We use the sum of inconsistent points in order to track the network convergence. The code for our method is publicly available at: https://github.com/thedodo/SAda-Net}{https://github.com/thedodo/SAda-Net"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/thedodo/sada-net",
+        "exists": true,
+        "full_name": "thedodo/SAda-Net",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "573f0a4bb7c210d18887425407a54c0c1e8f7ade",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/thedodo/SAda-Net/blob/573f0a4bb7c210d18887425407a54c0c1e8f7ade/README.md",
+          "sha256": "0cfff9ece9bbbc3549bc5cdbebd76ca6ad598251e16da776a31b6a30400c8e34",
+          "bytes": 3639
+        },
+        "root_names": [
+          "Out",
+          "README.md",
+          "SAda-Net_train.ipynb",
+          "docs",
+          "sadanet_demo.py",
+          "sadanet_train.py",
+          "sample",
+          "weights"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 338,
+      "arxiv_id": "2407.20299",
+      "repo_url": "https://github.com/ggflow123/ddrl",
+      "arxiv": {
+        "versioned_id": "2407.20299v3",
+        "primary_category": "cs.LG",
+        "title": "Dataset Distillation for Offline Reinforcement Learning",
+        "abstract": "Offline reinforcement learning often requires a quality dataset that we can train a policy on. However, in many situations, it is not possible to get such a dataset, nor is it easy to train a policy to perform well in the actual environment given the offline data. We propose using data distillation to train and distill a better dataset which can then be used for training a better policy model. We show that our method is able to synthesize a dataset where a model trained on it achieves similar performance to a model trained on the full dataset or a model trained using percentile behavioral cloning. Our project site is available at https://datasetdistillation4rl.github.io . We also provide our implementation at https://github.com/ggflow123/DDRL ."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ggflow123/ddrl",
+        "exists": true,
+        "full_name": "ggflow123/DDRL",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6ffb0860a270c324d81698dce3428489660f0f3e",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ggflow123/DDRL/blob/6ffb0860a270c324d81698dce3428489660f0f3e/README.md",
+          "sha256": "a34bb21529f0c76482ff0e0bf91f553114d834d2999c51686d65233595500134",
+          "bytes": 2918
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "configs",
+          "data",
+          "models",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 339,
+      "arxiv_id": "2305.06221",
+      "repo_url": "https://github.com/wangyiqi/pmpo",
+      "arxiv": {
+        "versioned_id": "2305.06221v4",
+        "primary_category": "cs.CV",
+        "title": "Multi-Prompt with Depth Partitioned Cross-Modal Learning",
+        "abstract": "In recent years, soft prompt learning methods have been proposed to fine-tune large-scale vision-language pre-trained models for various downstream tasks. These methods typically combine learnable textual tokens with class tokens as input for models with frozen parameters. However, they often employ a single prompt to describe class contexts, failing to capture categories' diverse attributes adequately. This study introduces the Partitioned Multi-modal Prompt (PMPO), a multi-modal prompting technique that extends the soft prompt from a single learnable prompt to multiple prompts. Our method divides the visual encoder depths and connects learnable prompts to the separated visual depths, enabling different prompts to capture the hierarchical contextual depths of visual representations. Furthermore, to maximize the advantages of multi-prompt learning, we incorporate prior information from manually designed templates and learnable multi-prompts, thus improving the generalization capabilities of our approach. We evaluate the effectiveness of our approach on three challenging tasks: new class generalization, cross-dataset evaluation, and domain generalization. For instance, our method achieves a $79.28$ harmonic mean, averaged over 11 diverse image recognition datasets ($+7.62$ compared to CoOp), demonstrating significant competitiveness compared to state-of-the-art prompting methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wangyiqi/pmpo",
+        "exists": true,
+        "full_name": "Yi-Qi638/PMPO",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "db9e699f0cf12ce7c5bf4228cf07536a8cf300c5",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Yi-Qi638/PMPO/blob/db9e699f0cf12ce7c5bf4228cf07536a8cf300c5/README.md",
+          "sha256": "7ae5efe78936ed5fbc33b8e34e3aab7328d5894d64afe92d93feebd091f99385",
+          "bytes": 110
+        },
+        "root_names": [
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 340,
+      "arxiv_id": "2402.02851",
+      "repo_url": "https://github.com/haoxiang-wang/compositional-feature-alignment",
+      "arxiv": {
+        "versioned_id": "2402.02851v2",
+        "primary_category": "cs.CV",
+        "title": "Enhancing Compositional Generalization via Compositional Feature Alignment",
+        "abstract": "Real-world applications of machine learning models often confront data distribution shifts, wherein discrepancies exist between the training and test data distributions. In the common multi-domain multi-class setup, as the number of classes and domains scales up, it becomes infeasible to gather training data for every domain-class combination. This challenge naturally leads the quest for models with Compositional Generalization (CG) ability, where models can generalize to unseen domain-class combinations. To delve into the CG challenge, we develop CG-Bench, a suite of CG benchmarks derived from existing real-world image datasets, and observe that the prevalent pretraining-finetuning paradigm on foundational models, such as CLIP and DINOv2, struggles with the challenge. To address this challenge, we propose Compositional Feature Alignment (CFA), a simple two-stage finetuning technique that i) learns two orthogonal linear heads on a pretrained encoder with respect to class and domain labels, and ii) fine-tunes the encoder with the newly learned head frozen. We theoretically and empirically justify that CFA encourages compositional feature learning of pretrained models. We further conduct extensive experiments on CG-Bench for CLIP and DINOv2, two powerful pretrained vision foundation models. Experiment results show that CFA outperforms common finetuning techniques in compositional generalization, corroborating CFA's efficacy in compositional feature learning."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/haoxiang-wang/compositional-feature-alignment",
+        "exists": true,
+        "full_name": "Haoxiang-Wang/Compositional-Feature-Alignment",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "70a12c1d5014fffd8b277db3cfaa023c75af28dc",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Haoxiang-Wang/Compositional-Feature-Alignment/blob/70a12c1d5014fffd8b277db3cfaa023c75af28dc/README.md",
+          "sha256": "13e0d5eb2dc28ae8f852dc51543acc2b36625db47a0dc690a21b63fcfea75b49",
+          "bytes": 1210
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "__init__.py",
+          "clip_finetune",
+          "configs",
+          "data",
+          "datacreation_scripts",
+          "interpolate.py",
+          "launch_exp.py",
+          "linear_probe_exps.py",
+          "main.py",
+          "requirements.txt",
+          "zeroshot_env_pred.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 341,
+      "arxiv_id": "2407.12415",
+      "repo_url": "https://github.com/zh-xy22/fredf",
+      "arxiv": {
+        "versioned_id": "2407.12415v3",
+        "primary_category": "cs.LG",
+        "title": "Not All Frequencies Are Created Equal:Towards a Dynamic Fusion of Frequencies in Time-Series Forecasting",
+        "abstract": "Long-term time series forecasting is a long-standing challenge in various applications. A central issue in time series forecasting is that methods should expressively capture long-term dependency. Furthermore, time series forecasting methods should be flexible when applied to different scenarios. Although Fourier analysis offers an alternative to effectively capture reusable and periodic patterns to achieve long-term forecasting in different scenarios, existing methods often assume high-frequency components represent noise and should be discarded in time series forecasting. However, we conduct a series of motivation experiments and discover that the role of certain frequencies varies depending on the scenarios. In some scenarios, removing high-frequency components from the original time series can improve the forecasting performance, while in others scenarios, removing them is harmful to forecasting performance. Therefore, it is necessary to treat the frequencies differently according to specific scenarios. To achieve this, we first reformulate the time series forecasting problem as learning a transfer function of each frequency in the Fourier domain. Further, we design Frequency Dynamic Fusion (FreDF), which individually predicts each Fourier component, and dynamically fuses the output of different frequencies. Moreover, we provide a novel insight into the generalization ability of time series forecasting and propose the generalization bound of time series forecasting. Then we prove FreDF has a lower bound, indicating that FreDF has better generalization ability. Extensive experiments conducted on multiple benchmark datasets and ablation studies demonstrate the effectiveness of FreDF. The code is available at https://github.com/Zh-XY22/FreDF."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zh-xy22/fredf",
+        "exists": true,
+        "full_name": "Zh-XY22/FreDF",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "43ba9576f8ef7ccc75e046c8deca08baa7eb0384",
+        "license_spdx": null,
+        "readme": null,
+        "root_names": [
+          ".idea",
+          "data_provider",
+          "exp",
+          "layers",
+          "models",
+          "run.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 342,
+      "arxiv_id": "2303.15065",
+      "repo_url": "https://github.com/jqmcginnis/multi_contrast_inr",
+      "arxiv": {
+        "versioned_id": "2303.15065v3",
+        "primary_category": "eess.IV",
+        "title": "Single-subject Multi-contrast MRI Super-resolution via Implicit Neural Representations",
+        "abstract": "Clinical routine and retrospective cohorts commonly include multi-parametric Magnetic Resonance Imaging; however, they are mostly acquired in different anisotropic 2D views due to signal-to-noise-ratio and scan-time constraints. Thus acquired views suffer from poor out-of-plane resolution and affect downstream volumetric image analysis that typically requires isotropic 3D scans. Combining different views of multi-contrast scans into high-resolution isotropic 3D scans is challenging due to the lack of a large training cohort, which calls for a subject-specific framework. This work proposes a novel solution to this problem leveraging Implicit Neural Representations (INR). Our proposed INR jointly learns two different contrasts of complementary views in a continuous spatial function and benefits from exchanging anatomical information between them. Trained within minutes on a single commodity GPU, our model provides realistic super-resolution across different pairs of contrasts in our experiments with three datasets. Using Mutual Information (MI) as a metric, we find that our model converges to an optimum MI amongst sequences, achieving anatomically faithful reconstruction. Code is available at: https://github.com/jqmcginnis/multi_contrast_inr/"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jqmcginnis/multi_contrast_inr",
+        "exists": true,
+        "full_name": "jqmcginnis/multi_contrast_inr",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "151b95c956d3701cdf4331e7801d8f06847d1db0",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jqmcginnis/multi_contrast_inr/blob/151b95c956d3701cdf4331e7801d8f06847d1db0/README.md",
+          "sha256": "73e9a3945b5a0113d5d1b9e289ef4a62c37c4bca0ad782a20062f6d77bcbd352",
+          "bytes": 4805
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "config",
+          "dataset.py",
+          "dataset_utils.py",
+          "environment.yaml",
+          "figures",
+          "loss_functions.py",
+          "main.py",
+          "model.py",
+          "preprocessing",
+          "utils.py",
+          "visualization_utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 343,
+      "arxiv_id": "2503.16477",
+      "repo_url": "https://github.com/sisl/leraat",
+      "arxiv": {
+        "versioned_id": "2503.16477v1",
+        "primary_category": "cs.HC",
+        "title": "LeRAAT: LLM-Enabled Real-Time Aviation Advisory Tool",
+        "abstract": "In aviation emergencies, high-stakes decisions must be made in an instant. Pilots rely on quick access to precise, context-specific information -- an area where emerging tools like large language models (LLMs) show promise in providing critical support. This paper introduces LeRAAT, a framework that integrates LLMs with the X-Plane flight simulator to deliver real-time, context-aware pilot assistance. The system uses live flight data, weather conditions, and aircraft documentation to generate recommendations aligned with aviation best practices and tailored to the particular situation. It employs a Retrieval-Augmented Generation (RAG) pipeline that extracts and synthesizes information from aircraft type-specific manuals, including performance specifications and emergency procedures, as well as aviation regulatory materials, such as FAA directives and standard operating procedures. We showcase the framework in both a virtual reality and traditional on-screen simulation, supporting a wide range of research applications such as pilot training, human factors research, and operational decision support."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sisl/leraat",
+        "exists": true,
+        "full_name": "sisl/LeRAAT",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9db39aed30b404b803bd056109341e449d793992",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sisl/LeRAAT/blob/9db39aed30b404b803bd056109341e449d793992/README.md",
+          "sha256": "17cf195eedf730c2687f96185a1e58126222ed3165625317aaf05b211752d87b",
+          "bytes": 16453
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "RelayServer",
+          "XPPlugin",
+          "figures"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.HC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 344,
+      "arxiv_id": "2501.01046",
+      "repo_url": "https://github.com/mcrl/fed",
+      "arxiv": {
+        "versioned_id": "2501.01046v4",
+        "primary_category": "cs.CL",
+        "title": "SEDD: Scalable and Efficient Dataset Deduplication with GPUs",
+        "abstract": "Dataset deduplication is widely recognized as a crucial preprocessing step that enhances data quality and improves the performance of large language models. A commonly used method for this process is the MinHash Locality-Sensitive Hashing (LSH) algorithm. Recently, GPU-accelerated frameworks such as NVIDIA NeMo Curator have been introduced to handle large-scale corpora; however, they remain suboptimal due to high communication overhead from physical data shuffling and underutilization of GPU resources. In this paper, we propose SEDD, a high-performance GPU-accelerated deduplication framework optimized for distributed cluster environments. SEDD introduces a computationally efficient, partially reusable hash function, alongside highly optimized GPU kernels and a hardware-aware automatic parameter selection mechanism. By replacing traditional data shuffling with a streaming-based approach, SEDD significantly mitigates communication bottlenecks. Our framework outperforms the CPU-based deduplication tool in SlimPajama by up to 158$\\times$ and the GPU-based tool in NVIDIA NeMo Curator by up to 7.8$\\times$ when processing 30 million documents on a node with four GPUs. Notably, SEDD dramatically accelerates the previously time-consuming MinHash signature generation phase, achieving speedups of up to 375$\\times$ over the CPU baseline. Despite these gains in efficiency, SEDD maintains high deduplication fidelity, with duplicate document sets achieving Jaccard similarities of over 0.95 compared to those identified by the standard MinHash algorithm. In large-scale experiments, the deduplication of 1.2 trillion tokens is completed in just 3 hours on an 8-node 32-GPU V100 cluster. The related code is publicly available on GitHub (https://github.com/mcrl/SEDD)."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mcrl/fed",
+        "exists": false,
+        "root_names": null
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 345,
+      "arxiv_id": "2308.04836",
+      "repo_url": "https://github.com/thaihungle/sm",
+      "arxiv": {
+        "versioned_id": "2308.04836v2",
+        "primary_category": "cs.LG",
+        "title": "Beyond Surprise: Improving Exploration Through Surprise Novelty",
+        "abstract": "We present a new computing model for intrinsic rewards in reinforcement learning that addresses the limitations of existing surprise-driven explorations. The reward is the novelty of the surprise rather than the surprise norm. We estimate the surprise novelty as retrieval errors of a memory network wherein the memory stores and reconstructs surprises. Our surprise memory (SM) augments the capability of surprise-based intrinsic motivators, maintaining the agent's interest in exciting exploration while reducing unwanted attraction to unpredictable or noisy observations. Our experiments demonstrate that the SM combined with various surprise predictors exhibits efficient exploring behaviors and significantly boosts the final performance in sparse reward environments, including Noisy-TV, navigation and challenging Atari games."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/thaihungle/sm",
+        "exists": true,
+        "full_name": "thaihungle/SM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b46d3765865d6418b2d07ee6841cc3560cd7cd46",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/thaihungle/SM/blob/b46d3765865d6418b2d07ee6841cc3560cd7cd46/README.md",
+          "sha256": "5848ed470630f8f0b6b181722bc11bf08fe1e60e68605f12275ca4a0f0591863",
+          "bytes": 1011
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "agents.py",
+          "dist.py",
+          "envs.py",
+          "main.py",
+          "model.py",
+          "requirements.txt",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 346,
+      "arxiv_id": "2502.16680",
+      "repo_url": "https://github.com/lironui/aeroreformer",
+      "arxiv": {
+        "versioned_id": "2502.16680v2",
+        "primary_category": "cs.CV",
+        "title": "AeroReformer: Aerial Referring Transformer for UAV-based Referring Image Segmentation",
+        "abstract": "As a novel and challenging task, referring segmentation combines computer vision and natural language processing to localize and segment objects based on textual descriptions. While referring image segmentation (RIS) has been extensively studied in natural images, little attention has been given to aerial imagery, particularly from unmanned aerial vehicles (UAVs). The unique challenges of UAV imagery, including complex spatial scales, occlusions, and varying object orientations, render existing RIS approaches ineffective. A key limitation has been the lack of UAV-specific datasets, as manually annotating pixel-level masks and generating textual descriptions is labour-intensive and time-consuming. To address this gap, we design an automatic labelling pipeline that leverages pre-existing UAV segmentation datasets and Multimodal Large Language Models (MLLM) for generating textual descriptions. Furthermore, we propose Aerial Referring Transformer (AeroReformer), a novel framework for UAV referring image segmentation (UAV-RIS), featuring a Vision-Language Cross-Attention Module (VLCAM) for effective cross-modal understanding and a Rotation-Aware Multi-Scale Fusion (RAMSF) decoder to enhance segmentation accuracy in aerial scenes. Extensive experiments on two newly developed datasets demonstrate the superiority of AeroReformer over existing methods, establishing a new benchmark for UAV-RIS. The datasets and code will be publicly available at: https://github.com/lironui/AeroReformer."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lironui/aeroreformer",
+        "exists": true,
+        "full_name": "lironui/AeroReformer",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "76785b0dee6ae79fdd86e4ef387c53c415450e09",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/lironui/AeroReformer/blob/76785b0dee6ae79fdd86e4ef387c53c415450e09/README.md",
+          "sha256": "94172d2ad445341ee4135b1753b23cbe23e1ea945e2aeadac3a3696df462f1b8",
+          "bytes": 6522
+        },
+        "root_names": [
+          "AeroReformer.PNG",
+          "README.md",
+          "arc",
+          "args.py",
+          "bert",
+          "data",
+          "demo",
+          "lib",
+          "loss",
+          "refer",
+          "requirements.txt",
+          "test.py",
+          "tool",
+          "train.py",
+          "transforms.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 347,
+      "arxiv_id": "2306.04695",
+      "repo_url": "https://github.com/conceptbed/evaluations",
+      "arxiv": {
+        "versioned_id": "2306.04695v2",
+        "primary_category": "cs.CV",
+        "title": "ConceptBed: Evaluating Concept Learning Abilities of Text-to-Image Diffusion Models",
+        "abstract": "The ability to understand visual concepts and replicate and compose these concepts from images is a central goal for computer vision. Recent advances in text-to-image (T2I) models have lead to high definition and realistic image quality generation by learning from large databases of images and their descriptions. However, the evaluation of T2I models has focused on photorealism and limited qualitative measures of visual understanding. To quantify the ability of T2I models in learning and synthesizing novel visual concepts (a.k.a. personalized T2I), we introduce ConceptBed, a large-scale dataset that consists of 284 unique visual concepts, and 33K composite text prompts. Along with the dataset, we propose an evaluation metric, Concept Confidence Deviation (CCD), that uses the confidence of oracle concept classifiers to measure the alignment between concepts generated by T2I generators and concepts contained in target images. We evaluate visual concepts that are either objects, attributes, or styles, and also evaluate four dimensions of compositionality: counting, attributes, relations, and actions. Our human study shows that CCD is highly correlated with human understanding of concepts. Our results point to a trade-off between learning the concepts and preserving the compositionality which existing approaches struggle to overcome. The data, code, and interactive demo is available at: https://conceptbed.github.io/"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/conceptbed/evaluations",
+        "exists": true,
+        "full_name": "ConceptBed/evaluations",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "57799dfbac3b62ab24d3d22e208f0ced1566f22d",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ConceptBed/evaluations/blob/57799dfbac3b62ab24d3d22e208f0ced1566f22d/README.md",
+          "sha256": "66945730d14564dbc98fefb8bf2150de755daa4f1c83de721f85b0cb8a0af14c",
+          "bytes": 4590
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "assets",
+          "configs",
+          "extras",
+          "requirements.txt",
+          "scripts",
+          "setup.cfg",
+          "src",
+          "test.py",
+          "train.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 348,
+      "arxiv_id": "2302.05705",
+      "repo_url": "https://github.com/uniprjrc/fsdapapers",
+      "arxiv": {
+        "versioned_id": "2302.05705v1",
+        "primary_category": "stat.ME",
+        "title": "A practically efficient fixed-pivot selection algorithm and its extensible MATLAB suite",
+        "abstract": "Many statistical problems and applications require repeated computation of order statistics, such as the median, but most statistical and programming environments do not offer in their main distribution linear selection algorithms. We introduce one, formally equivalent to quickselect, which keeps the position of the pivot fixed. This makes the implementation simpler and much practical compared with the best known solutions. It also enables an \"oracular\" pivot position option that can reduce a lot the convergence time of certain statistical applications. We have extended the algorithm to weighted percentiles such as the weighted median, applicable to data associated with varying precision measurements, image filtering, descriptive statistics like the medcouple and for combining multiple predictors in boosting algorithms. We provide the new functions in MATLAB, C and R. We have packaged them in a broad MATLAB toolbox addressing robust statistical methods, many of which can be now optimised by means of efficient (weighted) selections."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/uniprjrc/fsdapapers",
+        "exists": true,
+        "full_name": "UniprJRC/FSDApapers",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c815cc0a53b96ced6e715bde8f887f0dd8608322",
+        "license_spdx": null,
+        "readme": {
+          "path": "readme.md",
+          "url": "https://github.com/UniprJRC/FSDApapers/blob/c815cc0a53b96ced6e715bde8f887f0dd8608322/readme.md",
+          "sha256": "f67793b3263d4e46547404a44bad4d920a956c47da0acae91efbf6aa517236c9",
+          "bytes": 4672
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "ARC2020",
+          "ARC2021",
+          "LTSts",
+          "RAC2022",
+          "RATC",
+          "RAVAS",
+          "Simpleselect",
+          "readme.md",
+          "txmerge2023"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category stat.ME"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 349,
+      "arxiv_id": "2403.18461",
+      "repo_url": "https://github.com/lishaoxu1994/diffstyler",
+      "arxiv": {
+        "versioned_id": "2403.18461v3",
+        "primary_category": "cs.CV",
+        "title": "An Efficient and Harmonized Framework for Balanced Cross-Domain Feature Integration",
+        "abstract": "Despite significant advancements in image generation using advanced generative frameworks, cross-image integration of content and style remains a key challenge. Current generative models, while powerful, frequently depend on vague textual prompts to define styles--creating difficulties in balancing content semantics and style preservation. We propose a novel framework that utilizes customized models to learn style representations. It enhances content preservation through cross-model feature and attention modulation, leveraging the inherent semantic consistency across models. Additionally, we introduce fixed feature and adaptive attention fusion to achieve the desired balance between content and style. We further develop spatial (mask-guided localized) and temporal (multi-style compositional) multi-model combinations, enabling flexible fusion of models and styles. Extensive experiments demonstrate that our method outperforms state-of-the-art approaches in balancing content preservation and stylistic coherence."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lishaoxu1994/diffstyler",
+        "exists": true,
+        "full_name": "lishaoxu1994/DiffStyler",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6f1165d5b962f85fb9f45bc05813501824f1d6a9",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/lishaoxu1994/DiffStyler/blob/6f1165d5b962f85fb9f45bc05813501824f1d6a9/README.md",
+          "sha256": "3013658785820ab3f387345d5669c4cb12b0f3c5cbf9fd2e03b6a40bcf096d57",
+          "bytes": 1655
+        },
+        "root_names": [
+          "README.md",
+          "configs",
+          "data",
+          "demo1.sh",
+          "demo2.sh",
+          "diffstyler.py",
+          "lora_train.py",
+          "mask",
+          "pnp_utils_combine.py",
+          "preprocess.py",
+          "requirements.txt",
+          "teaser.png"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 350,
+      "arxiv_id": "2408.12517",
+      "repo_url": "https://github.com/tomwagg/lsst-neocp-predictions",
+      "arxiv": {
+        "versioned_id": "2408.12517v1",
+        "primary_category": "astro-ph.EP",
+        "title": "Expected Impact of Rubin Observatory LSST on NEO Follow-up",
+        "abstract": "We simulate and analyse the contribution of the Rubin Observatory Legacy Survey of Space and Time (LSST) to the rate of discovery of Near Earth Object (NEO) candidates, their submission rates to the NEO Confirmation page (NEOCP), and the resulting demands on the worldwide NEO follow-up observation system. We find that, when using current NEOCP listing criteria, Rubin will typically contribute ~129 new objects to the NEOCP each night in the first year, an increase of ~8x relative to present day. Only 8.3% of the objects listed for follow-up will be NEOs, with the primary contaminant being a background of yet undiscovered, faint, main belt asteroids (MBAs). We consider follow-up prioritisation strategies to lessen the impact on the NEO follow-up system. We develop an algorithm that predicts (with 68% accuracy) whether Rubin itself will self recover any given tracklet; external follow-up of such candidates can be de-prioritised. With this algorithm enabled, the follow-up list would be reduced to 64 NEO candidates per night (with ~8.4% purity). We propose additional criteria based on trailing, apparent magnitude, and ecliptic latitude to further prioritise follow-up. We hope observation planners and brokers will adopt some of these open-source algorithms, enabling the follow-up community to effectively keep up with the NEOCP in the early years of LSST."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tomwagg/lsst-neocp-predictions",
+        "exists": true,
+        "full_name": "TomWagg/lsst-neocp-predictions",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a7db0b5d0d395252058ac93098098afa3736af79",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/TomWagg/lsst-neocp-predictions/blob/a7db0b5d0d395252058ac93098098afa3736af79/README.md",
+          "sha256": "8d8f4f5f075d0ef4fd6e0e45e953f0c3aca6a12333fc539b755011eea673bdd5",
+          "bytes": 839
+        },
+        "root_names": [
+          ".flake8",
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "environment.yml",
+          "header_img.png",
+          "notebooks",
+          "output",
+          "paper",
+          "pipeline",
+          "slurm",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.EP"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T12:17:03Z"
+}
