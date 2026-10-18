@@ -152,7 +152,8 @@ def build(spec: dict, root: Path) -> dict:
 def run_paper_id(spec: dict) -> str:
     """One slice id per timing run (a slice of a finished run stays until systemd drops
     it, and the backend refuses an existing one): [a-z0-9] only."""
-    digest = hashlib.sha256(f"{spec['name']}/{spec['run_id']}".encode()).hexdigest()
+    unique = f"{spec['name']}/{spec['run_id']}/{datetime.now(UTC).isoformat()}"  # a rerun too
+    digest = hashlib.sha256(unique.encode()).hexdigest()
     return f"m{digest[:20]}"
 
 
