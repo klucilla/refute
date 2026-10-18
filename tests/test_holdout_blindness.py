@@ -95,6 +95,46 @@ def test_c1_the_replacement_reaches_the_hidden_year(outcomes):
     assert replaced.metrics["hidden_snr"] != read[0].metrics["hidden_snr"]
 
 
+# --- Correlated noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, H4-M5) --
+
+CN_SCENARIOS = ("planet", "vanishing")
+
+
+@pytest.fixture(scope="module")
+def correlated():
+    tasks = []
+    for name in CN_SCENARIOS:
+        for seed in SEEDS:
+            base = {"name": name, "seed": seed, "holdout": {}, "noise": "correlated"}
+            tasks.append(base)
+            years = synthetic.scenario_data(name, seed, "correlated").lc.years
+            for year in years:
+                for variant in VARIANTS:
+                    tasks.append({**base, "replace": (year, variant)})
+    workers = max(1, min(len(tasks), default_workers()))
+    results = run_processes(synthetic.holdout_scenario_seed, tasks, workers)
+    return {
+        (t["name"], t["seed"], t.get("replace")): r for t, r in zip(tasks, results, strict=True)
+    }
+
+
+@pytest.mark.parametrize("variant", VARIANTS)
+@pytest.mark.parametrize("seed", SEEDS)
+@pytest.mark.parametrize("name", CN_SCENARIOS)
+def test_cn_h4_m5_replacing_a_correlated_hidden_year_changes_no_pre_read_decision(
+    correlated, name, seed, variant
+):
+    original = correlated[(name, seed, None)]
+    for year in [r.hidden_year for r in original.rounds]:
+        before = _round(original, year)
+        after = _round(correlated[(name, seed, (year, variant))], year)
+        assert _pre_read(after) == _pre_read(before), (name, seed, year, variant)
+        if not before.access_log:
+            assert before.status is TestStatus.INCONCLUSIVE
+            assert after.access_log == []
+            assert _canonical(after.to_dict()) == _canonical(before.to_dict())
+
+
 def test_c2_the_pre_read_step_receives_no_hidden_flux():
     params = list(inspect.signature(holdout.plan_round).parameters)
     assert params == ["train_raw", "hidden_spans", "hidden_year", "plan"]

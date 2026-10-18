@@ -8,7 +8,7 @@ from refute.packs.tess import holdout
 from refute.packs.tess.holdout import HiddenYear, HoldoutAccessError, PredictedWindow
 from refute.packs.tess.params import TessTestPlan
 from refute.packs.tess.report import HOLDOUT_BLINDNESS_NOTE, render_report
-from refute.packs.tess.synthetic import PLANET, make_lightcurve
+from refute.packs.tess.synthetic import CORRELATED_PROFILE, PLANET, make_lightcurve
 
 OLD_SENTENCE = "read only inside the predicted windows"
 
@@ -23,8 +23,8 @@ def _result(rounds):
     }
 
 
-def _hidden_year():
-    lc, _ = make_lightcurve(PLANET, seed=2, trend_amplitude=0.002)
+def _hidden_year(**noise):
+    lc, _ = make_lightcurve(PLANET, seed=2, trend_amplitude=0.002, **noise)
     hidden = lc.select(lc.year == 2020)
     epoch = 200
     t0 = PLANET.t0 + epoch * PLANET.period
@@ -67,8 +67,13 @@ def test_a2_no_rounds_no_holdout_section():
 # --- B. The sentence is true of the code -------------------------------------------------
 
 
-def test_b1_every_hidden_cadence_reaches_the_detrending_and_nothing_is_logged(monkeypatch):
-    hidden, windows = _hidden_year()
+@pytest.mark.parametrize(
+    "noise",
+    [{}, CORRELATED_PROFILE],
+    ids=["white", "correlated"],  # correlated: R-M1 of correlated-noise-acceptance.md
+)
+def test_b1_every_hidden_cadence_reaches_the_detrending_and_nothing_is_logged(monkeypatch, noise):
+    hidden, windows = _hidden_year(**noise)
     calls = []
     real = holdout.detrend
 

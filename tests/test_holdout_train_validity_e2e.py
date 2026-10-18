@@ -172,3 +172,123 @@ def test_d_guard_never_creates_a_pass_or_a_fail(outcomes, name):
         # D2: a holdout FAIL with the guard is a FAIL without it.
         if on.test.status is TestStatus.FAIL:
             assert off.test.status is TestStatus.FAIL
+
+
+# --- Correlated noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, H4) -----
+
+CN_SEEDS = tuple(range(5))
+CN_VANISHING_SEEDS = tuple(range(10))
+
+
+@pytest.fixture(scope="module")
+def correlated():
+    keys = [(name, seed) for name in SCENARIOS for seed in CN_SEEDS]
+    keys += [("vanishing", seed) for seed in CN_VANISHING_SEEDS if seed not in CN_SEEDS]
+    tasks = [
+        {"name": name, "seed": seed, "holdout": guard, "noise": "correlated"}
+        for name, seed in keys
+        for guard in (ON, OFF)
+    ]
+    workers = max(1, min(len(tasks), default_workers()))
+    results = run_processes(synthetic.holdout_scenario_seed, tasks, workers)
+    return {
+        (t["name"], t["seed"], "on" if t["holdout"] == ON else "off"): r
+        for t, r in zip(tasks, results, strict=True)
+    }
+
+
+@pytest.mark.parametrize("name", SCENARIOS)
+def test_cn_h4_m1_guard_never_creates_a_pass_or_a_fail(correlated, name):
+    for seed in CN_SEEDS:
+        on, off = correlated[(name, seed, "on")], correlated[(name, seed, "off")]
+        assert [r.hidden_year for r in on.rounds] == [r.hidden_year for r in off.rounds]
+        for after in on.rounds:
+            before = _round(off, after.hidden_year)
+            assert after.status in (before.status, TestStatus.INCONCLUSIVE), (seed, after)
+        if on.test.status is TestStatus.FAIL:
+            assert off.test.status is TestStatus.FAIL, seed
+
+
+def _cn_m2_premise(correlated, seed):
+    before = _round(correlated[("variability_train_only", seed, "off")], 2020)
+    return _train(before)["period"] == pytest.approx(synthetic.SINUSOID_PERIOD, rel=1e-2)
+
+
+def test_cn_h4_m2_variability_in_train_only_is_inconclusive(correlated):
+    looked = 0
+    for seed in CN_SEEDS:
+        if not _cn_m2_premise(correlated, seed):
+            continue
+        looked += 1
+        after = _round(correlated[("variability_train_only", seed, "on")], 2020)
+        assert after.status is TestStatus.INCONCLUSIVE, seed
+        assert REASON_DURATION_RATIO in _reasons(after), seed
+        assert after.access_log == [], seed
+    assert looked >= 1, "non-empty: the premise holds on no seed"
+
+
+@pytest.mark.parametrize("name", ["sinusoid", "fp_variability_dominates"])
+def test_cn_h4_m3_long_train_boxes_are_inconclusive(correlated, name):
+    looked = 0
+    for seed in CN_SEEDS:
+        on, off = correlated[(name, seed, "on")], correlated[(name, seed, "off")]
+        for before in off.rounds:
+            train = _train(before)
+            if train is None or train["duration"] / train["period"] <= 0.2:
+                continue
+            looked += 1
+            after = _round(on, before.hidden_year)
+            assert after.status is TestStatus.INCONCLUSIVE, (seed, before.hidden_year)
+            assert REASON_DURATION_RATIO in _reasons(after), (seed, before.hidden_year)
+            assert after.access_log == [], (seed, before.hidden_year)
+    assert looked >= 1, "non-empty: no round trained a box above duration/period 0.2"
+
+
+def _cn_m4_premise(correlated, seed):
+    before = _round(correlated[("vanishing", seed, "off")], 2020)
+    return before.status is TestStatus.FAIL and _reasons(before) == []
+
+
+def test_cn_h4_m4_a_valid_fail_stays_a_fail(correlated):
+    looked = 0
+    for seed in CN_VANISHING_SEEDS:
+        if not _cn_m4_premise(correlated, seed):
+            continue
+        looked += 1
+        after = _round(correlated[("vanishing", seed, "on")], 2020)
+        assert after.status is TestStatus.FAIL, seed
+        assert _reasons(after) == [], seed
+    assert looked >= 1, "non-empty: no valid failing round"
+
+
+@pytest.mark.parametrize("seed", CN_SEEDS)
+@pytest.mark.parametrize("name", ["planet", "planet_three_years"])
+def test_cn_h4_e1_planets_are_unchanged(correlated, name, seed):
+    on, off = correlated[(name, seed, "on")], correlated[(name, seed, "off")]
+    assert on.test.status is off.test.status
+    for after in on.rounds:
+        assert _reasons(after) == []
+        assert after.status is _round(off, after.hidden_year).status
+
+
+@pytest.mark.parametrize("name", SCENARIOS)
+def test_cn_h4_e2_reasons_only_where_expected(correlated, name):
+    for seed in CN_SEEDS:
+        on, off = correlated[(name, seed, "on")], correlated[(name, seed, "off")]
+        for after in on.rounds:
+            if _reasons(after):
+                assert name in WITH_REASONS, (seed, after.hidden_year, _reasons(after))
+                if name in ("noise", "vanishing"):
+                    assert _round(off, after.hidden_year).status is TestStatus.INCONCLUSIVE
+
+
+@pytest.mark.parametrize("seed", CN_SEEDS)
+def test_cn_h4_e3_premise_variability_train_only(correlated, seed):
+    train = _train(_round(correlated[("variability_train_only", seed, "off")], 2020))
+    assert _cn_m2_premise(correlated, seed), f"the 2020 round trained on {train['period']} d"
+
+
+@pytest.mark.parametrize("seed", CN_VANISHING_SEEDS)
+def test_cn_h4_e3_premise_vanishing_fails_with_a_valid_train(correlated, seed):
+    before = _round(correlated[("vanishing", seed, "off")], 2020)
+    assert _cn_m4_premise(correlated, seed), (before.status, _reasons(before))

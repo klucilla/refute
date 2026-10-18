@@ -1,5 +1,6 @@
 """v0.2.1 workers equivalence: the same locked synthetic calibration run with
-``--workers 3``, ``--workers 1`` (also with BLAS thread variables preset to 4) and the
+``--workers N`` (one worker per target: four targets, three in legacy mode),
+``--workers 1`` (also with BLAS thread variables preset to 4) and the
 per-target REPRODUCE.md command, each in a new independent process. Criteria E0-E3 of
 docs/validation/v0.2.1/workers-equivalence-acceptance.md (with Amendments 1 and 2).
 
@@ -29,8 +30,20 @@ TARGETS = {
     11: ("planet", "planet", 3.7),
     12: ("eb_secondary", "false_positive", 2.9),
     13: ("vanishing", "planet", 3.7),
+    # W-M1 of docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md: the planet in
+    # the correlated profile of the synthetic generator.
+    14: ("planet", "planet", 3.7),
 }
+NOISE = {14: "correlated"}
+# Legacy mode, only for the declared one-off run against cc9d104 (Amendment 2, item 2):
+# E2 then requires the record to be ABSENT and the code under test to have the code hash
+# locked in cc9d104; anything else fails. That code has no correlated-noise mode, so
+# TIC-14 is left out there.
+LEGACY = os.environ.get("REFUTE_EQUIVALENCE_LEGACY_CODE") == "1"
+if LEGACY:
+    TARGETS = {tic: spec for tic, spec in TARGETS.items() if tic not in NOISE}
 KEYS = [f"TIC-{tic}" for tic in TARGETS]
+N_PLANETS = sum(1 for _s, kind, _p in TARGETS.values() if kind == "planet")
 THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS")
 PRESET = {"OMP_NUM_THREADS": "4", "OPENBLAS_NUM_THREADS": "4", "MKL_NUM_THREADS": "4"}
 RUNTIME_FILE = "environment/numeric_runtime.json"
@@ -38,10 +51,6 @@ MARKER = "<RUN_DIR>"
 # Literal, not imported: the test must also run against the v0.2 lock (cc9d104), which
 # predates REFUTE_WORKERS.
 WORKERS_ENV = "REFUTE_WORKERS"
-# Legacy mode, only for the declared one-off run against cc9d104 (Amendment 2, item 2):
-# E2 then requires the record to be ABSENT and the code under test to have the code hash
-# locked in cc9d104; anything else fails.
-LEGACY = os.environ.get("REFUTE_EQUIVALENCE_LEGACY_CODE") == "1"
 ROOT = Path(__file__).resolve().parents[1]
 V02_LOCK = ROOT / "calibration" / "v0.2" / "self_claim.lock.json"
 V02_CODE_SHA256 = "2cd8b5c16c9ded3e32335cd95d8b68f46e0676d5183f3129a6cef4e8dfbd1752"
@@ -96,14 +105,19 @@ def runs(tmp_path_factory):
     git(repo, "init", "-q")
     cache = tmp / "cache"
     for tic, (scenario, _kind, _period) in TARGETS.items():
-        data = scenario_data(scenario, 0)
+        noise = NOISE.get(tic)
+        data = scenario_data(scenario, 0, noise) if noise else scenario_data(scenario, 0)
         write_synthetic_cache(cache, tic, data.lc, data.star, aux=data.aux)
     targets = [target_entry(tic, kind, period) for tic, (_s, kind, period) in TARGETS.items()]
     write_yaml(repo / "calibration" / "targets.yaml", targets_file(targets))
     claim = write_yaml(
         repo / "calibration" / "claim.yaml",
         calibration_claim(
-            2, 1, min_recovered_planets=0, min_flagged_false_positives=0, max_refuted_planets=2
+            N_PLANETS,
+            1,
+            min_recovered_planets=0,
+            min_flagged_false_positives=0,
+            max_refuted_planets=N_PLANETS,
         ),
     )
     git(repo, "add", "-A")
@@ -112,7 +126,7 @@ def runs(tmp_path_factory):
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "lock")
     out = tmp / "out"
-    runs = {"O": _execute(claim, repo, out, "O", 3, cache)}
+    runs = {"O": _execute(claim, repo, out, "O", len(TARGETS), cache)}
     _check_premises(runs["O"])
     runs |= {
         "F": _execute(claim, repo, out, "F", 1, cache),
@@ -128,8 +142,9 @@ def _verdict(dossier: Path) -> dict:
 
 
 def _check_premises(original: Path) -> None:
-    """E0: the scenarios represent what they should, in O, before any comparison."""
-    planet, fp, vanishing = (_verdict(original / key) for key in KEYS)
+    """E0: the scenarios represent what they should, in O, before any comparison (per
+    target key; TIC-14 has no premise here, see W-E1)."""
+    planet, fp, vanishing = (_verdict(original / key) for key in ("TIC-11", "TIC-12", "TIC-13"))
 
     def holdout(verdict):
         return next(t for t in verdict["tests"] if t["name"] == "holdout_by_year")
@@ -149,6 +164,14 @@ def _dossiers(runs):
             yield name, key, runs[name] / key
     for key in KEYS:
         yield f"R{key[4:]}", key, runs[f"R{key[4:]}"] / key
+
+
+def test_cn_w_e1_the_correlated_planet_has_a_round_that_reads(runs):
+    # W-E1 (expectation): the equivalence of TIC-14 covers a round that read its hidden year.
+    if LEGACY:
+        pytest.skip("legacy mode against cc9d104: no correlated-noise target")
+    verdict = _verdict(runs["runs"]["O"] / "TIC-14")
+    assert any(r["access_log"] for r in verdict["holdout_rounds"]), "no round read"
 
 
 # --- E1: level (a), the REPRODUCE.md contract --------------------------------------------
