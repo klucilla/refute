@@ -152,9 +152,12 @@ CASES = {
         # runs of 2026-10-18: dgl 2.x on Python 3.12 needs torchdata.datapipes, whose only
         # Python 3.12 wheel (0.8.0) needs the system's libcurl; dgl 1.1.3 has neither
         # graphbolt nor torchdata, and Linux wheels for Python 3.11 on PyPI. dgl imports
-        # setuptools.extern.packaging without declaring it; torch 2.1 is built for numpy 1
+        # setuptools.extern.packaging and packaging without declaring them; torch 2.1 is
+        # built for numpy 1
         "python": "3.11",
-        "requirements": "dgl==1.1.3\ntorch==2.1.2\nnumpy==1.26.4\nsetuptools==69.5.1\n",
+        "requirements": (
+            "dgl==1.1.3\ntorch==2.1.2\nnumpy==1.26.4\nsetuptools==69.5.1\npackaging==24.0\n"
+        ),
         "module": "dgl",
         "file": "graph.bin",
         "source": "reader:container:dgl:#a,b,c",
