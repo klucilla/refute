@@ -16,7 +16,7 @@ with ``#`` are ignored. Whether each justification was committed *before* the ch
 checked with git history, not by this script.
 
 Usage:
-    python scripts/check_test_baseline.py <junit.xml> [--baseline <file>]
+    uv run python scripts/check_test_baseline.py <junit.xml> [--baseline <file>]
         [--justifications <file>] [--json <out.json>]
 
 Exit code 0 when there is no unjustified regression, 1 otherwise, 2 on a usage error.

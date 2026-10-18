@@ -9,7 +9,7 @@ point or a number other than 0, 1 and 2 (indices and small counts are left out),
 file and new line number. Comments are kept: a threshold explained in a comment is still a
 threshold. The output is a JSON file (sorted keys); the script refuses to overwrite it.
 
-Usage: python docs/validation/v0.2.1/reopen/audit_thresholds.py <out.json> [<rev>]
+Usage: uv run python docs/validation/v0.2.1/reopen/audit_thresholds.py <out.json> [<rev>]
 (<rev> defaults to HEAD).
 """
 

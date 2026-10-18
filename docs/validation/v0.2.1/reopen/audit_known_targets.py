@@ -14,7 +14,7 @@ threshold or a check on a known target), ``scripts``, ``docs/validation/v0.2.1``
 files. The script reads files only; it writes only its output, whose path it refuses to
 overwrite.
 
-Usage: python docs/validation/v0.2.1/reopen/audit_known_targets.py <out.json>
+Usage: uv run python docs/validation/v0.2.1/reopen/audit_known_targets.py <out.json>
 """
 
 from __future__ import annotations

@@ -19,14 +19,16 @@ EB_CATALOG_DOWNGRADE_NOTE = (
     "TESS photometry, so it is not evidence independent of the light curve: from v0.2.1 "
     "such a match is a warning, not a fatal failure."
 )
-# v0.2.1, issue #23: how blind the holdout is, stated as the code does it (the whole
-# hidden year is detrended, windows masked, before any logged read).
+# v0.2.1, issue #23: how blind the holdout is, stated as the code does it (in a round that
+# reaches the measurement, the whole hidden year is detrended, each window masked out to
+# the inner edge of its baseline band, before any logged read).
 HOLDOUT_BLINDNESS_NOTE = (
     "Each year is hidden in turn, and the ephemeris is fitted on the other years only. "
-    "Before any logged read, the whole hidden year is detrended once, with the predicted "
-    "windows masked; that step is not logged. After it, the test reads only the predicted "
-    "transit windows, the phase-0.5 control windows and their baseline bands, and every "
-    "such read is logged."
+    "In each round that reaches the measurement, the whole hidden year is detrended once "
+    "before any logged read, with each predicted window masked out to the inner edge of "
+    "its baseline band; that step is not logged, and its outlier clipping can drop hidden "
+    "cadences. After it, the test reads only the predicted transit windows, the phase-0.5 "
+    "control windows and their baseline bands, and every such read is logged."
 )
 NOT_A_DISCOVERY = (
     "A verdict is about a claim, never about its authors. Refute produces candidates and "

@@ -2,7 +2,8 @@
 
 Status: **evaluation for the maintainer's decision.** It changes no file of the v0.2
 calibration, no lock and no retrieval procedure. Sources, with URL, date and literal
-excerpts: [`sources/issue-33-sources.md`](sources/issue-33-sources.md) (S1 to S5). Nothing
+excerpts: [`sources/issue-33-sources.md`](sources/issue-33-sources.md) (S1 to S6; S6 and the
+corrections marked below were added after the end-of-stage Codex review of 2026-10-17). Nothing
 here is legal advice.
 
 ## The question
@@ -27,28 +28,34 @@ whether a snapshot can be redistributed, from VizieR or from another source.
 3. **The catalog has other homes.** The abstract points to tessEBs.villanova.edu and MAST
    (S1), and MAST holds it as a high-level science product with the DOI
    10.17909/t9-9gm4-fx30, which Crossref records as a supplement of the article (S1, S5).
-   MAST says the catalog will continue to be updated (S5), so it is not a fixed snapshot of
-   the article's table. **No license statement was found on the MAST DOI page (S5):
-   unconfirmed.**
+   *(Corrected after the end-of-stage review.)* The product page of MAST states that its data
+   products are licensed under **CC BY 4.0**, and it serves a versioned file, v1.0
+   (`hlsp_tess-ebs_tess_lcf-ffi_s0001-s0026_tess_v1.0_cat.csv`), whose name changes with
+   each future release (S6). The narrower DOI page (S5) shows no license; the product page
+   does. MAST says the catalog will continue to be updated (S5, S6): a later release is a new
+   file, so a snapshot must name its version and its SHA-256.
 4. **Not checked:** whether the article itself carries a machine-readable table of the
-   catalog (the page read did not show one), and the terms of tessEBs.villanova.edu.
+   catalog (the page read did not show one); the terms of tessEBs.villanova.edu; whether the
+   VizieR table `J/ApJS/258/16/tess-ebs` used by v0.2 has the same rows and values as MAST
+   v1.0; and from which file VizieR built its table (so this evaluation does not say that the
+   VizieR values come from the CC BY article).
 
 ## Options
 
 | Option | What it means | Open points |
 |---|---|---|
-| A. Keep as in v0.2 | download from VizieR on every run, check the SHA-256, redistribute nothing but the identifiers | none new; reproduction depends on VizieR staying online with the same content |
-| B. Redistribute only the rows a calibration uses | the few rows matched to the targets, with citation, as the four rows already published in the v0.2 dossiers | whether those rows from a VizieR file carry CDS metadata (the values themselves come from the CC BY article) |
-| C. Take the table from a CC BY source and redistribute it | a snapshot from the article's own data (if it exists) or from MAST, with a new retrieval and hash procedure | the license of the MAST product is unconfirmed; MAST's catalog is updated, so its version must be pinned; the article's machine-readable table was not found |
+| A. Keep as in v0.2 | download from VizieR on every run and check the SHA-256; redistribute only identifiers in the claim's files, as v0.2 did (the four matched records published in the v0.2 dossiers and the values of the published search record stay as they are, `calibration/v0.2/eb_snapshot/DATA_LICENSE.md`) | none new; reproduction depends on VizieR staying online with the same content |
+| B. Redistribute only the rows a calibration uses | the few rows matched to the targets, with citation | whether those rows, taken from a VizieR file, carry CDS metadata; their provenance from the article is not shown (point 4) |
+| C. Take the table from MAST v1.0 and redistribute it | the v1.0 CSV of S6, under CC BY 4.0 with attribution, pinned by its file name and SHA-256, with a new retrieval and hash procedure for the claim's attachment | the attribution text; whether v1.0 matches what the gauntlet expects (columns, the TIC key, the period); the change of source changes the v0.2.1 claim's attachments, so it is decided before the protocol |
 
 ## Recommendation
 
-For the v0.2.1 calibration: **option A**, unchanged. It needs no new license statement,
-keeps the v0.2 procedure that the dossiers already describe, and leaves the question open
-without blocking anything. Option C becomes possible if a CC BY statement for a fixed file
-is found and stored as a source; it would have to be decided **before** the v0.2.1 protocol,
-because it changes the claim's attachments and their hashes. The v0.2 lock and its files do
-not change in any option.
+For the v0.2.1 calibration, the choice is between **A** (no change, no new statement) and
+**C** (MAST v1.0 under CC BY 4.0, now sourced in S6, which would let the snapshot be
+redistributed and the dossiers be reproduced without VizieR). C needs a small plan of its
+own (retrieval, hash, attribution, a check that the gauntlet reads it as it reads the VizieR
+table) and has to be decided **before** the v0.2.1 protocol, because it changes the claim's
+attachments and their hashes. The v0.2 lock and its files do not change in either option.
 
 Decision: the maintainer's (a license statement and public files). Until then, nothing
 changes.

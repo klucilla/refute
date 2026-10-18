@@ -91,19 +91,24 @@ Earlier reports said that "the hidden year is read only inside the predicted win
 That overstates it. What the code does (`HiddenYear` in `src/refute/packs/tess/holdout.py`):
 
 1. The train-only ephemeris and the hidden sectors' time spans (metadata) give the
-   predicted windows.
-2. Before any logged read, the **whole** raw hidden year is detrended once, with the
-   predicted windows masked. Every hidden cadence enters this step, and it is **not
-   logged**.
+   predicted windows. `plan_round` takes every decision of this stage (the train
+   candidate, the train-validity rules of H4, the timing rule, the windows) without
+   receiving any hidden-year flux; a round it decides ends here, and the hidden year is
+   not touched.
+2. In a round that reaches the measurement, before any logged read, the **whole** raw
+   hidden year is detrended once, with each predicted window masked out to the inner edge
+   of its baseline band (the mask is wider than the window that is later read). Every
+   hidden cadence enters this step, it is **not logged**, and its outlier clipping
+   (`detrend`, `upper_clip_sigma`) drops cadences according to the hidden flux itself.
 3. After it, only the registered windows are read: the transit windows, the phase-0.5
    control windows and their baseline bands. Every such read is logged in the round's
    access log, and a read of any other window is refused.
 
 So the hidden year is not invisible to the code: its out-of-window flux shapes the trend
-removed inside the windows. What the test guarantees is narrower: no decision taken
-before the windows are read depends on hidden-year flux (H4, blindness tests), and every
-read after the detrending is a registered, logged window. From v0.2.1 the per-target
-report says this in the section "Blind holdout by year".
+removed inside the windows, and the clipping decides which hidden cadences remain. What the
+test guarantees is narrower: the decisions of `plan_round` do not depend on hidden-year flux
+(H4, blindness tests), and every read after the detrending is a registered, logged window.
+From v0.2.1 the per-target report says this in the section "Blind holdout by year".
 
 Acceptance criteria and validation: `docs/validation/v0.2.1/reopen/issue-23-acceptance.md`.
 

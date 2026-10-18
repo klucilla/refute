@@ -46,4 +46,15 @@ rule of issue #34). Nothing here is legal advice.
 - Excerpt: "TESS Eclipsing Binaries (\"TESS-EBs\")"; date 2022-06-29.
 - Excerpt: "The catalog will continue to be updated with new sectors of data as they become
   available."
-- Not found on this page: a license statement for the data files. **Unconfirmed.**
+- Not found on this page: a license statement for the data files (see S6, the product's own
+  page, which has one).
+
+## S6. MAST, the product page of TESS-EBs (added after the end-of-stage review)
+
+- URL: https://archive.stsci.edu/hlsp/tess-ebs (read on 2026-10-17)
+- Excerpt: "These HLSP data products are licensed for use under CC BY 4.0."
+- Excerpt: "The current version on MAST (v1.0) contains about 4580 eclipsing binary stars"
+- Excerpt: the catalog file of v1.0 is named
+  `hlsp_tess-ebs_tess_lcf-ffi_s0001-s0026_tess_v1.0_cat.csv` (download link of the page); the
+  page says the name "will change in future data releases" following a pattern with the
+  version.

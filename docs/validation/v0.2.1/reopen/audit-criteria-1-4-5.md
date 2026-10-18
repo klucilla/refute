@@ -84,6 +84,11 @@ each TIC number and each name (`name` and the catalog `hostname`). Output:
 
 The H7 use is declared in its record (case A4: "fabricated values of the TOI-1481.01 type").
 
+**Limitation of the search.** Names are matched literally and with case: a variant spelling
+(another spacing, "TOI 244" for "TOI-244") would escape it; TIC numbers are matched as whole
+numbers, with or without a prefix. The end-of-stage Codex review (2026-10-17) searched the same
+text files with normalized names and found no further occurrence.
+
 **Thresholds.** `audit_thresholds.py` lists every line added to `src/refute/packs/tess` and
 `src/refute/core/verdict.py` since tag `v0.2.0` that holds a number other than 0, 1 and 2
 (output: `audit-thresholds.json`, 23 lines at `80abc00`). The decision thresholds among them:
@@ -95,8 +100,11 @@ The H7 use is declared in its record (case A4: "fabricated values of the TOI-148
 | signal factors P, 2P, P/2 | `params.py` (H7) | the definition of signal identity (H7 record) | none; the tolerance is the claim's existing one |
 | alias names P, 2P, P/2, 3P, P/3 | `pipeline.py` | reporting only (`period_comparison`); no decision | — |
 
-Every other line is a unit conversion (24 h, 86400 s), a display format, or a parameter of a
-synthetic scenario (`synthetic.py`). No threshold of v0.2.1 was set, tuned or checked on a known
+Every other line is a unit conversion (24 h, 86400 s), a display format, an arithmetic
+constant of the window-fraction computation of H4 rule (c) (`0.0` as the initial sum and the
+floor of a span length, `holdout.py`), or a parameter of a synthetic scenario
+(`synthetic.py`). *(Corrected after the end-of-stage Codex review: the first version omitted
+the `0.0` constants.)* No threshold of v0.2.1 was set, tuned or checked on a known
 target or on real data, as far as these records and the declarations of
 `../pre-document-runs.md` show. The development runs on real targets mentioned by the closure
 are none: `../pre-document-runs.md` states that every run it declares was on synthetic data.

@@ -48,6 +48,11 @@ def test_a1_the_report_states_how_blind_the_holdout_is():
 
 def test_a1_the_note_names_the_unlogged_detrending_and_the_logged_reads():
     assert "whole hidden year is detrended once" in HOLDOUT_BLINDNESS_NOTE
+    # Amendment 2: only rounds that reach the measurement build HiddenYear; the mask
+    # reaches the inner edge of each baseline band; the clipping can drop hidden cadences.
+    assert "In each round that reaches the measurement" in HOLDOUT_BLINDNESS_NOTE
+    assert "inner edge of its baseline band" in HOLDOUT_BLINDNESS_NOTE
+    assert "outlier clipping can drop hidden cadences" in HOLDOUT_BLINDNESS_NOTE
     assert "not logged" in HOLDOUT_BLINDNESS_NOTE
     assert "every such read is logged" in HOLDOUT_BLINDNESS_NOTE
     assert OLD_SENTENCE not in HOLDOUT_BLINDNESS_NOTE

@@ -11,7 +11,7 @@ order), lists and tuples item by item, dicts by sorted key, NumPy arrays by dtyp
 their bytes in C order and little-endian, and other values by their JSON form. It hashes the
 walk with SHA-256.
 
-Usage: python docs/validation/v0.2.1/reopen/correlated/white_reference.py [<out.json>]
+Usage: uv run python docs/validation/v0.2.1/reopen/correlated/white_reference.py [<out.json>]
 (the default output is white-reference.json next to this file; an existing file is never
 overwritten).
 """

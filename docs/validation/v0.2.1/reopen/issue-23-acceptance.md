@@ -50,7 +50,8 @@ facts and a pointer to this file.
 - B1. Constructing `HiddenYear` on a synthetic hidden year passes **every** hidden cadence
   to the detrending (checked by wrapping `refute.packs.tess.holdout.detrend` and recording
   the length of the light curve it receives), and the mask it receives covers only the
-  registered windows; after construction `access_log` is empty.
+  registered windows *(corrected by Amendment 2: each registered window out to the inner edge
+  of its baseline band, and nothing else)*; after construction `access_log` is empty.
 - B2. A read of a registered transit window and of its baseline band adds one logged entry
   each; a read of an unregistered window raises `HoldoutAccessError` and logs nothing.
 
@@ -85,6 +86,39 @@ from the index; `git diff` was empty after every restore. Nothing was committed.
 | S3. `HiddenYear` logs the detrending as an access | B1, B2 | yes (B2 also, because the log has one more entry) |
 
 No criterion changes.
+
+## Amendment 2 (2026-10-17): the sentence was still too broad (end-of-stage Codex review)
+
+The read-only Codex review of the stage (2026-10-17) found three inaccuracies, each checked in
+the code before this amendment:
+
+1. **Not every round detrends the hidden year.** `HiddenYear` is built only in a round that
+   `plan_round` did not decide (`holdout.py`, `_round`: `if prepared.decided is not None:
+   return prepared.decided` comes before `HiddenYear(...)`).
+2. **The mask is wider than the window.** It covers each window out to `baseline_inner`, the
+   inner edge of its baseline band (`HiddenYear.__init__`), including the gap between the
+   window and the band; that gap is never returned by a logged read. B1 already checks this
+   geometry (`baseline_inner`), but the text of B1 said "covers only the registered windows".
+3. **The detrending decides which hidden cadences remain.** `detrend` drops cadences above
+   `upper_clip_sigma` times a robust sigma of the hidden flux itself (`detrend.py`), before any
+   logged read. So "no decision taken before the windows are read depends on hidden-year flux"
+   in `docs/gauntlet-tess-v0.2.1.md` was false; what holds is that the decisions of
+   `plan_round` do not.
+
+**Corrections.** `HOLDOUT_BLINDNESS_NOTE` becomes:
+
+> Each year is hidden in turn, and the ephemeris is fitted on the other years only. In each
+> round that reaches the measurement, the whole hidden year is detrended once before any logged
+> read, with each predicted window masked out to the inner edge of its baseline band; that step
+> is not logged, and its outlier clipping can drop hidden cadences. After it, the test reads
+> only the predicted transit windows, the phase-0.5 control windows and their baseline bands,
+> and every such read is logged.
+
+The section "How blind the holdout is" of `docs/gauntlet-tess-v0.2.1.md` is corrected the same
+way. B1 reads: "the mask it receives covers each registered window out to the inner edge of its
+baseline band (`baseline_inner`), and nothing else". A1 gains three assertions on the new
+sentence (the round condition, the mask edge, the clipping). These corrections make the
+criteria stricter; none is weakened.
 
 ## Effect on locks
 
