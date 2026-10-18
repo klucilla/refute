@@ -203,6 +203,8 @@ def attack_candidate(
         check_plausibility(final, data.star, gp.plausibility),
         *battery_tests(data, final, plan, catalogs, catalog_scan),
     ]
+    if any(t.name == "period_alias" and "thresholds_m4" in t.metrics for t in tests):
+        executed.append("period_alias_m4")  # M4 piece 6 ran (map Amendment 21)
     timing = None
     if gp.corrections.active:
         # M4 piece 3: the trapezoid template, the scan and the error times beta(n_tau).

@@ -219,6 +219,21 @@ with its date, the paths and frozen values it adds, and the full resolved hashes
    `045a980e55e7427902405e8c4cfc6b6786aa2417c84a1f4f432d00c314fe6936`, v0.2
    `27213d9406ed419ae12ea445e0ef2b8ad09507c5399c6400627dd6f70f9a04be`. The cases and sabotages of
    extension 1 cover it (a non-default value, the version 2 among them, is refused).
+3. **The thresholds of `period_alias` in the corrections section (2026-10-18; branch
+   `claude/v0-2-1-reopen` only, until its merge; proposed as a package for the maintainer's
+   approval, item 6 of the decisions of 2026-10-18).** Piece 6 of M4 (`period_alias` of revision
+   3, 5; `docs/validation/v0.2.1/reopen/m4-implementation-map.md`, Amendment 21) adds two settings
+   to the section, `alias_z_f` (default 18.47) and `alias_f` (default 0.5). This extension adds
+   them, at those defaults, to the frozen value of extensions 1 and 2 (the same path,
+   `test_plan.gauntlet.corrections`, for both historical entries); every other frozen value is
+   unchanged. With it, both historical claims still reach their locked `claim_sha256` by the
+   projection (the claim component matches; `verify` stays `TAMPERED` in the code component only).
+   Full resolved hashes from this extension: v0.1
+   `71cfc632ca84006b8149669bdf76d19d710c758193ada04300b643f9cb4f12b5`, v0.2
+   `57f8f2a38157076c6df0a43ffa95da8d3b3a7b5a876a1521da5af417923f4973`. Tests: the cases of
+   extension 1, with two more non-default values (`alias_z_f` 30.0 and `alias_f` 0.7) refused.
+   Sabotages: the new keys left out of the literal, and a literal with another default, each make
+   cases fail.
 
 ## When only the code differs (issue #66)
 

@@ -568,6 +568,229 @@ def _bic(design: np.ndarray, y: np.ndarray) -> float:
     return n * math.log(rss / n) + design.shape[1] * math.log(n)
 
 
+# M4 piece 6 (m4-implementation-map.md, Amendment 21; revision 3, 5, and revision 4, 3).
+ALIAS_HARMONICS = 2  # revision 3, 5: H = 2, fixed on the M4 path
+ALIAS_MAX_CONDITION = 1e10
+
+
+class _SingularDesignError(Exception):
+    pass
+
+
+def _wls(
+    design: np.ndarray, y: np.ndarray, w: np.ndarray
+) -> tuple[float, np.ndarray, np.ndarray, float]:
+    """Weighted least squares with each column scaled to unit weighted norm: chi-square, the
+    coefficients, their covariance ``(XᵀWX)⁻¹`` and the condition number of the scaled design. A
+    zero column or a condition number above ``ALIAS_MAX_CONDITION`` is singular."""
+    scale = np.sqrt(np.sum(w[:, None] * design**2, axis=0))
+    if not np.all(np.isfinite(scale)) or np.any(scale <= 0):
+        raise _SingularDesignError(float("inf"))
+    root = np.sqrt(w)
+    a = root[:, None] * (design / scale)
+    # the SVD of the weighted, scaled design: the condition, the coefficients and the covariance
+    # (V S^-2 V^T, never the inverse of A^T A, whose condition is the square; Codex design review)
+    u, s, vt = np.linalg.svd(a, full_matrices=False)
+    cond = float(s[0] / s[-1]) if s[-1] > 0 else float("inf")
+    if not cond <= ALIAS_MAX_CONDITION:
+        raise _SingularDesignError(cond)
+    coef = vt.T @ ((u.T @ (root * y)) / s)
+    chi2 = float(np.sum((root * y - a @ coef) ** 2))
+    cov = (vt.T / s**2) @ vt / np.outer(scale, scale)
+    return chi2, coef / scale, cov, cond
+
+
+def _harmonics(phase: np.ndarray) -> list[np.ndarray]:
+    columns = [np.ones(phase.size)]
+    for k in range(1, ALIAS_HARMONICS + 1):
+        columns += [np.cos(2 * np.pi * k * phase), np.sin(2 * np.pi * k * phase)]
+    return columns
+
+
+def alias_m4_decision(
+    z_f: float,
+    f: float,
+    g: float,
+    d_box: float,
+    d_box_err: float,
+    *,
+    z_star: float,
+    f_star: float,
+    g_star: float,
+) -> tuple[TestStatus, str | None]:
+    """The outcome of revision 3, 5, with the undefined cases of revision 4, 3: the status and
+    the reason of an INCONCLUSIVE (None for PASS or FAIL)."""
+    if math.isfinite(d_box) and d_box <= 0:
+        return TestStatus.INCONCLUSIVE, "box_depth_not_positive"
+    if not all(math.isfinite(v) for v in (z_f, f, g, d_box, d_box_err)):
+        return TestStatus.INCONCLUSIVE, "non_finite_statistic"
+    if g >= g_star:
+        return TestStatus.PASS, None
+    if z_f >= z_star and f >= f_star:
+        return TestStatus.FAIL, None
+    return TestStatus.INCONCLUSIVE, "box_gain_small_dip_not_explained"
+
+
+def _period_alias_m4(lc: LightCurveData, candidate: Candidate, plan: TessTestPlan) -> TestResult:
+    """``period_alias`` of M4 (m4-implementation-map.md, Amendment 21): ``Z_F``, ``f`` and ``G``
+    on the raw curve with the test's own long-window detrending, weights ``1/σ_w²`` and ``β̄``
+    from A1 at ``n_T``, the sectors that A1 excludes left out."""
+    from refute.packs.tess.rednoise import event_noise
+
+    params: AliasParams = plan.gauntlet.period_alias
+    c = plan.gauntlet.corrections
+    m4 = {"z_f": c.alias_z_f, "f": c.alias_f, "g": params.min_box_delta_bic}
+    thresholds = {**params.model_dump(mode="json"), "m4": m4}
+    unit = "in-transit cadences"
+    window = max(plan.detrend.window_days, params.detrend_window_periods * candidate.period)
+    detrend_params = plan.detrend.model_copy(update={"window_days": window})
+    half = plan.detrend.transit_mask_half_width_durations * candidate.duration
+    mask = transit_mask(lc.time, candidate.period, candidate.t0, half)
+    flat = detrend(lc, detrend_params, mask=mask)
+    near = [
+        p
+        for p in params.systematic_periods_days
+        if abs(candidate.period - p) / p <= params.systematic_tolerance
+    ]
+    metrics: dict[str, Any] = {
+        "detrend_window_days": window,
+        "near_systematic_periods_days": near,
+        "period_days": candidate.period,
+        "thresholds_m4": m4,
+    }
+    coverage = {"n": 0}
+
+    def result(status: TestStatus, message: str, severity=Severity.FATAL) -> TestResult:
+        return TestResult(
+            "period_alias",
+            status,
+            severity,
+            message,
+            metrics=metrics,
+            thresholds=thresholds,
+            coverage=coverage["n"],
+            coverage_unit=unit,
+        )
+
+    def undecided(reason: str, message: str) -> TestResult:
+        metrics["reason"] = reason
+        return result(TestStatus.INCONCLUSIVE, f"{reason}: {message}")
+
+    flat_mask = transit_mask(flat.time, candidate.period, candidate.t0, half)
+    noise = event_noise(flat, flat_mask, candidate.period, candidate.t0, candidate.duration, plan)
+    used = sorted(s for s, v in noise.box.sectors.items() if not v.excluded)
+    metrics["noise"] = noise.box.to_dict()
+    metrics["sectors_used"] = used
+    metrics["sectors_excluded"] = noise.box.excluded_sectors
+    if not used:
+        return undecided("noise_undetermined", "no sector has enough bins for A1 at n_T")
+    keep = np.isin(flat.sector, used)
+    time, y, sector = flat.time[keep], flat.flux[keep] - 1.0, flat.sector[keep]
+    sigma_w = np.full(y.size, np.nan)
+    for s in used:
+        sigma_w[sector == s] = noise.box.sectors[s].sigma_w
+    with np.errstate(divide="ignore", invalid="ignore"):
+        w = 1.0 / sigma_w**2
+    beta_bar = float(np.median([noise.box.sectors[s].beta for s in used]))
+    metrics["beta_bar"] = beta_bar
+    if not (np.all(np.isfinite(w)) and np.all(w > 0) and math.isfinite(beta_bar) and beta_bar > 0):
+        return undecided("non_finite_statistic", "a weight or the median beta is not finite")
+    phase = np.mod(time - candidate.t0, candidate.period) / candidate.period
+    box = (
+        np.abs(phase_offset_days(time, candidate.period, candidate.t0)) <= candidate.duration / 2
+    ).astype(float)
+    n_box = int(box.sum())
+    coverage["n"] = n_box
+    metrics["n_in_transit_cadences"] = n_box
+    cadence = plan.data.exptime_seconds / 86400.0
+    needed = plan.gauntlet.events.min_coverage * candidate.duration / cadence
+    if n_box < needed or y.size - n_box < 10:
+        return undecided(
+            "too_few_cadences",
+            f"only {n_box} in-transit cadences (< {needed:.0f}, one transit's worth): the box "
+            "and the variability cannot be compared",
+        )
+    columns = _harmonics(phase)
+    conditions: dict[str, float] = {}
+    metrics["design_conditions"] = conditions
+    try:
+        for name, design in (
+            ("const", np.column_stack(columns[:1])),
+            ("f", np.column_stack(columns)),
+            ("f_box", np.column_stack([*columns, box])),
+        ):
+            fit = _wls(design, y, w)
+            conditions[name] = fit[3]
+            if name == "const":
+                chi2_c = fit[0]
+            elif name == "f":
+                chi2_f, coef_f = fit[0], fit[1]
+            else:
+                chi2_fb, coef_fb, cov_fb = fit[0], fit[1], fit[2]
+    except _SingularDesignError as exc:
+        conditions[name] = exc.args[0]
+        return undecided(
+            "singular_design",
+            f"the {name} design is singular (condition > {ALIAS_MAX_CONDITION:g})",
+        )
+    n = int(y.size)
+    q = candidate.duration / candidate.period
+    d_box = float(-coef_fb[-1])
+    var_box = float(cov_fb[-1, -1])
+    d_box_err = beta_bar * math.sqrt(var_box) if var_box >= 0 else float("nan")
+    if 0 < q < 1:
+        # the cosine coefficients of F are at 1, 3, ... (const, cos k, sin k, ...)
+        d_f = float(
+            -sum(
+                coef_f[2 * k - 1] * math.sin(math.pi * k * q) / (math.pi * k * q * (1.0 - q))
+                for k in range(1, ALIAS_HARMONICS + 1)
+            )
+        )
+    else:
+        d_f = float("nan")
+    z_f = (chi2_c - chi2_f) / beta_bar**2
+    g = (chi2_f - chi2_fb) / beta_bar**2 - math.log(n)
+    f = d_f / d_box if d_box > 0 else float("nan")
+    metrics.update(
+        {
+            "chi2_const": chi2_c,
+            "chi2_f": chi2_f,
+            "chi2_f_box": chi2_fb,
+            "n_cadences": n,
+            "d_box": d_box,
+            "d_box_err": d_box_err,
+            "d_f": d_f,
+            "z_f": z_f,
+            "f": f,
+            "g": g,
+        }
+    )
+    status, reason = alias_m4_decision(
+        z_f, f, g, d_box, d_box_err, z_star=m4["z_f"], f_star=m4["f"], g_star=m4["g"]
+    )
+    stats = f"Z_F {z_f:.1f}, f {f:.2f}, G {g:.1f}"
+    if reason is not None:
+        return undecided(reason, stats)
+    if status is TestStatus.FAIL:
+        return result(
+            TestStatus.FAIL,
+            "the variability at the found period explains the dip and the box adds little "
+            f"({stats})",
+        )
+    if near:
+        return result(
+            TestStatus.FAIL,
+            f"period within {params.systematic_tolerance:.0%} of a known systematic period "
+            f"({', '.join(f'{p:.3f} d' for p in near)})",
+            Severity.WARNING,
+        )
+    return result(
+        TestStatus.PASS,
+        f"the dip needs a box on top of the variability ({stats}); not near a known systematic "
+        "period",
+    )
+
+
 def check_period_alias(lc: LightCurveData, candidate: Candidate, plan: TessTestPlan) -> TestResult:
     """Fatal if a sinusoid at the found period explains the dip; warning near the
     period of a known systematic.
@@ -585,6 +808,8 @@ def check_period_alias(lc: LightCurveData, candidate: Candidate, plan: TessTestP
     (``events.min_coverage`` of the cadences of one transit) the test is
     INCONCLUSIVE, never a refutation.
     """
+    if plan.gauntlet.corrections.active:
+        return _period_alias_m4(lc, candidate, plan)
     params: AliasParams = plan.gauntlet.period_alias
     thresholds = params.model_dump(mode="json")
     unit = "in-transit cadences"

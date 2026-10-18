@@ -201,6 +201,10 @@ class HoldoutParams(_Model):
     max_hidden_window_fraction: float = Field(0.5, gt=0, le=1)
 
 
+# Revision 3, 5: the declared order of the (z_F*, f*) pairs of period_alias.
+ALIAS_PAIRS = ((18.47, 0.5), (18.47, 0.7), (30.0, 0.5), (30.0, 0.7), (50.0, 0.5), (50.0, 0.7))
+
+
 class CorrectionsParams(_Model):
     """M4 of v0.2.1: the TESS corrections of revision 4 of the corrections plan
     (docs/validation/v0.2.1/reopen/corrections-plan-rev4.md; the map of the code,
@@ -221,6 +225,17 @@ class CorrectionsParams(_Model):
     h_min: float = Field(0.90, gt=0, le=1)
     m_beta: float = Field(1.2, ge=1)
     r_min: int = Field(20, ge=1)
+    # M4 piece 6 (map Amendment 21; revision 3, 5): the thresholds (z_F*, f*) of period_alias,
+    # chosen per configuration on the selection part among the six declared pairs; the default is
+    # the first pair of the declared order.
+    alias_z_f: float = 18.47
+    alias_f: float = 0.5
+
+    @model_validator(mode="after")
+    def _alias_pair(self) -> CorrectionsParams:
+        if (self.alias_z_f, self.alias_f) not in ALIAS_PAIRS:
+            raise ValueError(f"(alias_z_f, alias_f) must be a declared pair: {ALIAS_PAIRS}")
+        return self
 
     @property
     def active(self) -> bool:
