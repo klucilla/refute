@@ -630,6 +630,25 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 18 (2026-10-18): the integrated H4 case, by the true computation (declared before its run)
+
+The maintainer's item 5 of 2026-10-18: a synthetic curve whose train BLS SNR is above 7.1 and whose
+corrected SNR (the gate of Amendment 7) is below it, by the real computation end to end; the
+deterministic case of Amendment 14 stays. **The construction, fixed before any run, from a
+computation and not from a search:** the two-by-two layout (2018 and 2020, two sectors each), seed
+**3509** (new), white 600 ppm plus AR(1) 800 ppm with `τ` = 1 h (the generator's correlated mode
+at a larger amplitude), a planet of `synthetic.PLANET`'s ephemeris with depth **300 ppm**. The
+reasoning: for AR(1) with `τ` = 30 cadences, the binned-rms estimate at `n_T` = 75 gives
+`σ_r²(n_T) ≈ 0.49 A²` and `β² ≈ 1 + 75 · 0.49 A² / (σ_white² + A²)`, about 25 (`β` ≈ 5) for `A` = 800 ppm;
+the run of Amendment 14 (500 ppm, the same noise) gave a corrected SNR of 8.7, so a BLS SNR near 43;
+at 300 ppm the BLS SNR is expected near 26 and the corrected one near 5.2. **Preconditions** (each a
+condition of the case, not a target): the train gate is determined; the train BLS SNR is at least
+7.1; the corrected one is below 7.1. The case then requires the H4 gate to read the corrected SNR
+(`train_snr_below_gate`, the round INCONCLUSIVE, the hidden year not read). If a precondition fails,
+the case is recorded as incompatible with its construction and no other seed or amplitude is tried
+here; the physical case on a real curve stays pending (covered if it exists in the development
+population).
+
 ## Amendment 17 (2026-10-18): the explicit, versioned activation of M4 across the flow
 
 The maintainer's decision of 2026-10-18 (14:00), item 2; Codex reviewed the design before the code

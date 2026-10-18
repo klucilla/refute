@@ -430,6 +430,22 @@ def test_the_reported_depth_and_error_belong_to_the_same_dp(strong):
     assert m["hidden_snr"] == pytest.approx(m["hidden_depth_ppm"] / m["hidden_depth_err_ppm"])
 
 
+def test_the_h4_gate_reads_the_corrected_train_snr_by_the_true_computation():
+    """Map Amendment 18 (declared before its run): white 600 ppm plus AR(1) 800 ppm, a 300 ppm
+    planet, seed 3509: the train BLS SNR above 7.1 and the corrected one below it, end to end."""
+    lc, sectors = synthetic.make_lightcurve(
+        _spec(300e-6), sector_starts=TWO_BY_TWO, seed=3509, red_noise_ppm=800.0
+    )
+    r = _round(run_holdout(lc, sectors, _plan()), 2020)
+    assert r.metrics.get("reason") != "train_noise_undetermined", r.message  # precondition
+    validity = r.metrics["train_validity"]
+    assert r.metrics["train_bls_snr"] >= 7.1, r.metrics["train_bls_snr"]  # precondition
+    assert validity["train_snr"] < 7.1, validity["train_snr"]  # precondition
+    assert "train_snr_below_gate" in validity["reasons"]
+    assert r.status.value == "INCONCLUSIVE"
+    assert r.access_log == []
+
+
 # --- the calibration-only measurement -----------------------------------------------------------
 
 
