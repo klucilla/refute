@@ -21,9 +21,12 @@ Neither file is committed (they are in the worktree's `.cache/`); the hashes abo
 
 ## The comparison
 
-`compare_tess_eb.py` (read-only; SHA-256
-`598063b53c8a51e4e0c39f0131d6c83430e7792d304d5e7974e3b3bff83bcd6d`) wrote `compare-output.json`
-(SHA-256 `7e103ab595fc8d62b17e5cf52a44afeaaab95af4e2ed192ef89572e8127ad85c`).
+`compare_tess_eb.py` (read-only) wrote `compare-output.json` (SHA-256
+`7e103ab595fc8d62b17e5cf52a44afeaaab95af4e2ed192ef89572e8127ad85c`). The run used the script with
+SHA-256 `598063b53c8a51e4e0c39f0131d6c83430e7792d304d5e7974e3b3bff83bcd6d`; `ruff format` then
+reflowed four long lines before the commit, with no change of logic, so the committed script has
+SHA-256 `e606d1934df50820a24f7d6caa65b77e65d8f9b6044a60a2e9d8ed13b035239b`. A rerun of the
+committed script on the two files above gives the same output.
 
 | Check | Result |
 |---|---|
