@@ -1,0 +1,1309 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:31:19Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 11,
+  "candidates": [
+    {
+      "position": 251,
+      "arxiv_id": "2412.12716",
+      "repo_url": "https://github.com/lianghanfang/UnLiDAR-UAV-Est",
+      "arxiv": {
+        "versioned_id": "2412.12716v5",
+        "primary_category": "cs.CV",
+        "title": "Unsupervised UAV 3D Trajectories Estimation with Sparse Point Clouds",
+        "abstract": "Compact UAV systems, while advancing delivery and surveillance, pose significant security challenges due to their small size, which hinders detection by traditional methods. This paper presents a cost-effective, unsupervised UAV detection method using spatial-temporal sequence processing to fuse multiple LiDAR scans for accurate UAV tracking in real-world scenarios. Our approach segments point clouds into foreground and background, analyzes spatial-temporal data, and employs a scoring mechanism to enhance detection accuracy. Tested on a public dataset, our solution placed 4th in the CVPR 2024 UG2+ Challenge, demonstrating its practical effectiveness. We plan to open-source all designs, code, and sample data for the research community github.com/lianghanfang/UnLiDAR-UAV-Est."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lianghanfang/UnLiDAR-UAV-Est",
+        "exists": true,
+        "full_name": "lianghanfang/UnLiDAR-UAV-Est",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2b8e7ba10c2e6883899adc88f4b6455bfd3e5bc9",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/lianghanfang/UnLiDAR-UAV-Est/blob/2b8e7ba10c2e6883899adc88f4b6455bfd3e5bc9/README.md",
+          "sha256": "3e8e67add3074f249715d7e76eacd2c9a233b3ecdc0395af1a2a303074b4a64c",
+          "bytes": 89
+        },
+        "root_names": [
+          "README.md",
+          "includes",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 252,
+      "arxiv_id": "2303.08889",
+      "repo_url": "https://github.com/claws-lab/social-correction-twitter",
+      "arxiv": {
+        "versioned_id": "2303.08889v1",
+        "primary_category": "cs.SI",
+        "title": "Characterizing and Predicting Social Correction on Twitter",
+        "abstract": "Online misinformation has been a serious threat to public health and society. Social media users are known to reply to misinformation posts with counter-misinformation messages, which have been shown to be effective in curbing the spread of misinformation. This is called social correction. However, the characteristics of tweets that attract social correction versus those that do not remain unknown. To close the gap, we focus on answering the following two research questions: (1) ``Given a tweet, will it be countered by other users?'', and (2) ``If yes, what will be the magnitude of countering it?''. This exploration will help develop mechanisms to guide users' misinformation correction efforts and to measure disparity across users who get corrected. In this work, we first create a novel dataset with 690,047 pairs of misinformation tweets and counter-misinformation replies. Then, stratified analysis of tweet linguistic and engagement features as well as tweet posters' user attributes are conducted to illustrate the factors that are significant in determining whether a tweet will get countered. Finally, predictive classifiers are created to predict the likelihood of a misinformation tweet to get countered and the degree to which that tweet will be countered. The code and data is accessible on https://github.com/claws-lab/social-correction-twitter."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/claws-lab/social-correction-twitter",
+        "exists": true,
+        "full_name": "claws-lab/social-correction-twitter",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e5f60e9dc6867de9e1fede2bd40357db80ce0d68",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/claws-lab/social-correction-twitter/blob/e5f60e9dc6867de9e1fede2bd40357db80ce0d68/README.md",
+          "sha256": "72a8027849ebfeea60511c4120bef3ff9b4f5aa5bb25d0d17b68de3e93acf84c",
+          "bytes": 2528
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "code",
+          "data"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SI"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 253,
+      "arxiv_id": "2401.01651",
+      "repo_url": "https://github.com/benchcouncil/aigcbench",
+      "arxiv": {
+        "versioned_id": "2401.01651v3",
+        "primary_category": "cs.CV",
+        "title": "AIGCBench: Comprehensive Evaluation of Image-to-Video Content Generated by AI",
+        "abstract": "The burgeoning field of Artificial Intelligence Generated Content (AIGC) is witnessing rapid advancements, particularly in video generation. This paper introduces AIGCBench, a pioneering comprehensive and scalable benchmark designed to evaluate a variety of video generation tasks, with a primary focus on Image-to-Video (I2V) generation. AIGCBench tackles the limitations of existing benchmarks, which suffer from a lack of diverse datasets, by including a varied and open-domain image-text dataset that evaluates different state-of-the-art algorithms under equivalent conditions. We employ a novel text combiner and GPT-4 to create rich text prompts, which are then used to generate images via advanced Text-to-Image models. To establish a unified evaluation framework for video generation tasks, our benchmark includes 11 metrics spanning four dimensions to assess algorithm performance. These dimensions are control-video alignment, motion effects, temporal consistency, and video quality. These metrics are both reference video-dependent and video-free, ensuring a comprehensive evaluation strategy. The evaluation standard proposed correlates well with human judgment, providing insights into the strengths and weaknesses of current I2V algorithms. The findings from our extensive experiments aim to stimulate further research and development in the I2V field. AIGCBench represents a significant step toward creating standardized benchmarks for the broader AIGC landscape, proposing an adaptable and equitable framework for future assessments of video generation tasks. We have open-sourced the dataset and evaluation code on the project website: https://www.benchcouncil.org/AIGCBench."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/benchcouncil/aigcbench",
+        "exists": true,
+        "full_name": "BenchCouncil/AIGCBench",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "cc230c8474fdd1af8a7a0749981aa1d09198eaf3",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/BenchCouncil/AIGCBench/blob/cc230c8474fdd1af8a7a0749981aa1d09198eaf3/README.md",
+          "sha256": "fbf70d9c8fff618623474c64209278600888466b5ede292ee94900155939ecf2",
+          "bytes": 8137
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "eval.py",
+          "metrics",
+          "source",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 254,
+      "arxiv_id": "2412.07472",
+      "repo_url": "https://github.com/tsinghua-fib-lab/smartagent",
+      "arxiv": {
+        "versioned_id": "2412.07472v3",
+        "primary_category": "cs.AI",
+        "title": "SmartAgent: Chain-of-User-Thought for Embodied Personalized Agent in Cyber World",
+        "abstract": "Recent advances in embodied agents with multimodal perception and reasoning capabilities based on large vision-language models (LVLMs), excel in autonomously interacting either real or cyber worlds, helping people make intelligent decisions in complex environments. However, the current works are normally optimized by golden action trajectories or ideal task-oriented solutions toward a definitive goal. This paradigm considers limited user-oriented factors, which could be the reason for their performance reduction in a wide range of personal assistant applications. To address this, we propose Chain-of-User-Thought (COUT), a novel embodied reasoning paradigm that takes a chain of thought from basic action thinking to explicit and implicit personalized preference thought to incorporate personalized factors into autonomous agent learning. To target COUT, we introduce SmartAgent, an agent framework perceiving cyber environments and reasoning personalized requirements as 1) interacting with GUI to access an item pool, 2) generating users' explicit requirements implied by previous actions, and 3) recommending items to fulfill users' implicit requirements. To demonstrate SmartAgent's capabilities, we also create a brand-new dataset SmartSpot that offers a full-stage personalized action-involved environment. To our best knowledge, our work is the first to formulate the COUT process, serving as a preliminary attempt towards embodied personalized agent learning. Our extensive experiments on SmartSpot illuminate SmartAgent's functionality among a series of embodied and personalized sub-tasks. We will release code and data upon paper notification at https://github.com/tsinghua-fib-lab/SmartAgent."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tsinghua-fib-lab/smartagent",
+        "exists": true,
+        "full_name": "tsinghua-fib-lab/SmartAgent",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2f2e11eb9e5716a3391de1217816029587aeed4c",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/tsinghua-fib-lab/SmartAgent/blob/2f2e11eb9e5716a3391de1217816029587aeed4c/README.md",
+          "sha256": "b2a298e9ac66aa95b4231d68f629f909c296726e0b8473f02d170ec16bf6818b",
+          "bytes": 3756
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "assets",
+          "code"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 255,
+      "arxiv_id": "2411.02291",
+      "repo_url": "https://github.com/Empyreal092/SWQGp1_freedecay_BCIjets_Public",
+      "arxiv": {
+        "versioned_id": "2411.02291v4",
+        "primary_category": "physics.ao-ph",
+        "title": "Emergent vorticity asymmetry of one and two-layer shallow water system captured by a next-order balanced model",
+        "abstract": "The turbulent evolution of the shallow water system exhibits asymmetry in vorticity. This emergent phenomenon can be classified as \"balanced\", that is, it is not due to the inertial-gravity wave modes. The Quasi-Geostrophic (QG) system, the canonical model for balanced motion, has a symmetric evolution of vorticity, thus misses this phenomenon. Here we present a next-order-in-Rossby extension of QG, QG$^{+1}$, in the shallow water context. We recapitulate the derivation of the model in one-layer shallow water grounded in physical principles and provide a new formulation using \"potentials\". Then, the multi-layer extension of the SWQG$^{+1}$ model is formulated for the first time. The SWQG$^{+1}$ system is still balanced in the sense that there is only one prognostic variable, potential vorticity (PV), and all other variables are diagnosed from PV. It filters out inertial gravity waves by design. This feature is attractive for modeling the dynamics of balanced motions that dominate transport in geophysical systems. The diagnostic relations connect ageostrophic physical variables and extend the massively useful geostrophic balance. Simulations of these systems in classical set-ups provide evidence that SWQG$^{+1}$ captures the vorticity asymmetry in the shallow water system. Simulations of freely decaying turbulence in one-layer show that SWQG$^{+1}$ can capture the negatively skewed vorticity, and simulations of the nonlinear evolution of a baroclinically unstable jet show that it can capture vorticity asymmetry and finite divergence of strain-driven fronts."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/Empyreal092/SWQGp1_freedecay_BCIjets_Public",
+        "exists": true,
+        "full_name": "Empyreal092/SWQGp1_freedecay_BCIjets_Public",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7d0273f0cd813743103cee7d0d38ac41b1f0e65c",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Empyreal092/SWQGp1_freedecay_BCIjets_Public/blob/7d0273f0cd813743103cee7d0d38ac41b1f0e65c/README.md",
+          "sha256": "2f91a1e89fb7c14ecfe9eba3efd2b690f4b0627d426db40c9352783a7733dd5d",
+          "bytes": 595
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "2Layer_BCI",
+          "LICENSE",
+          "README.md",
+          "free_decay"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category physics.ao-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 256,
+      "arxiv_id": "2411.07948",
+      "repo_url": "https://github.com/prauns/electronmhdpublic",
+      "arxiv": {
+        "versioned_id": "2411.07948v2",
+        "primary_category": "astro-ph.HE",
+        "title": "Numerical simulation of electron magnetohydrodynamics with Landau-quantized electrons in magnetar crusts",
+        "abstract": "In magnetar crusts, magnetic fields are sufficiently strong to confine electrons into a small to moderate number of quantized Landau levels. This can have a dramatic effect on the crust's thermodynamic properties, generating field-dependent de Haas--van Alphen oscillations. We previously argued that the large-amplitude oscillations of the magnetic susceptibility could enhance the Ohmic dissipation of the magnetic field by continuously generating small-scale, rapidly dissipating field features. This could be important to magnetar field evolution and contribute to their observed higher temperatures. To study this, we performed quasi-3D numerical simulations of electron MHD in a representative volume of neutron star crust matter, for the first time including the magnetization and magnetic susceptibility resulting from Landau quantization. We find that the potential enhancement in the Ohmic dissipation rate due to this effect can be a factor $\\sim 3$ for temperatures of the order of $10^8$ K and $\\sim 4.5$ for temperatures of the order of $5\\times10^7$ K, depending on the magnetic field configuration. The nonlinear Hall term is crucial to this amplification: without it the magnetic field decay is only enhanced by a factor $\\lesssim 2$ even at $5\\times10^7$ K. These effects generate a high wavenumber plateau in the magnetic energy spectrum associated with the small-scale de Haas--van Alphen oscillations. Our results suggest that this mechanism could help explain the magnetar heating problem, though due to the effect's temperature-dependence, full magneto-thermal evolution simulations in a realistic stellar model are needed to judge whether it is viable explanation."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/prauns/electronmhdpublic",
+        "exists": true,
+        "full_name": "PRauNS/ElectronMHDpublic",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "0969de7ffb9068c12d961e51f7c87f74e0f51e44",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/PRauNS/ElectronMHDpublic/blob/0969de7ffb9068c12d961e51f7c87f74e0f51e44/README.md",
+          "sha256": "22e4e4750752383edc22c5b3ed603c65e7d68190261c9d72652ddc44cc62f4e8",
+          "bytes": 452
+        },
+        "root_names": [
+          "LogG1.pkl",
+          "LogG2.pkl",
+          "LogI1.pkl",
+          "LogNH2.pkl",
+          "LogNI2.pkl",
+          "MagEvoFourier.py",
+          "PL1_2.pkl",
+          "PL3_2.pkl",
+          "PL5_2.pkl",
+          "PL7_2.pkl",
+          "PLN1_2.pkl",
+          "README.md",
+          "h1.pkl",
+          "h2.pkl"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.HE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 257,
+      "arxiv_id": "2503.07315",
+      "repo_url": "https://github.com/qiaoruiyt/gsr",
+      "arxiv": {
+        "versioned_id": "2503.07315v1",
+        "primary_category": "cs.LG",
+        "title": "Group-robust Sample Reweighting for Subpopulation Shifts via Influence Functions",
+        "abstract": "Machine learning models often have uneven performance among subpopulations (a.k.a., groups) in the data distributions. This poses a significant challenge for the models to generalize when the proportions of the groups shift during deployment. To improve robustness to such shifts, existing approaches have developed strategies that train models or perform hyperparameter tuning using the group-labeled data to minimize the worst-case loss over groups. However, a non-trivial amount of high-quality labels is often required to obtain noticeable improvements. Given the costliness of the labels, we propose to adopt a different paradigm to enhance group label efficiency: utilizing the group-labeled data as a target set to optimize the weights of other group-unlabeled data. We introduce Group-robust Sample Reweighting (GSR), a two-stage approach that first learns the representations from group-unlabeled data, and then tinkers the model by iteratively retraining its last layer on the reweighted data using influence functions. Our GSR is theoretically sound, practically lightweight, and effective in improving the robustness to subpopulation shifts. In particular, GSR outperforms the previous state-of-the-art approaches that require the same amount or even more group labels."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/qiaoruiyt/gsr",
+        "exists": true,
+        "full_name": "qiaoruiyt/GSR",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "d6f48e598ccc968864381760958f271a944e2297",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/qiaoruiyt/GSR/blob/d6f48e598ccc968864381760958f271a944e2297/README.md",
+          "sha256": "a3288a664664227221b7caccbec866332df56fae32a3a6cd1034b1a82b2223ed",
+          "bytes": 3206
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "baselines.py",
+          "data_utils.py",
+          "datasets.py",
+          "gsr.py",
+          "gsr_retraining.py",
+          "models.py",
+          "prepare_dataset.py",
+          "requirements.txt",
+          "reweight_utils.py",
+          "torch_influence",
+          "train_basemodel.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 258,
+      "arxiv_id": "2304.06211",
+      "repo_url": "https://github.com/wenguanwang/vos_correspondence",
+      "arxiv": {
+        "versioned_id": "2304.06211v1",
+        "primary_category": "cs.CV",
+        "title": "Boosting Video Object Segmentation via Space-time Correspondence Learning",
+        "abstract": "Current top-leading solutions for video object segmentation (VOS) typically follow a matching-based regime: for each query frame, the segmentation mask is inferred according to its correspondence to previously processed and the first annotated frames. They simply exploit the supervisory signals from the groundtruth masks for learning mask prediction only, without posing any constraint on the space-time correspondence matching, which, however, is the fundamental building block of such regime. To alleviate this crucial yet commonly ignored issue, we devise a correspondence-aware training framework, which boosts matching-based VOS solutions by explicitly encouraging robust correspondence matching during network learning. Through comprehensively exploring the intrinsic coherence in videos on pixel and object levels, our algorithm reinforces the standard, fully supervised training of mask segmentation with label-free, contrastive correspondence learning. Without neither requiring extra annotation cost during training, nor causing speed delay during deployment, nor incurring architectural modification, our algorithm provides solid performance gains on four widely used benchmarks, i.e., DAVIS2016&2017, and YouTube-VOS2018&2019, on the top of famous matching-based VOS solutions."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wenguanwang/vos_correspondence",
+        "exists": true,
+        "full_name": "wenguanwang/VOS_Correspondence",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "37b98c8414066ee7f1268872933fa7fec314e0cd",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/wenguanwang/VOS_Correspondence/blob/37b98c8414066ee7f1268872933fa7fec314e0cd/README.md",
+          "sha256": "0efc41cae15bea3f8d59115d8b852c56ca4a8288b83a7882af5577defdcd8bb5",
+          "bytes": 2272
+        },
+        "root_names": [
+          ".DS_Store",
+          "README.md",
+          "dataset",
+          "davis2017",
+          "eval_davis.py",
+          "eval_davis_2016.py",
+          "eval_generic.py",
+          "eval_youtube.py",
+          "evaluation_method.py",
+          "inference_core.py",
+          "inference_core_yv.py",
+          "inference_memory_bank.py",
+          "model",
+          "scripts",
+          "train.py",
+          "util"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 259,
+      "arxiv_id": "2311.02057",
+      "repo_url": "https://github.com/dustindnguyen/2023_neurips_neuralodes_m82",
+      "arxiv": {
+        "versioned_id": "2311.02057v2",
+        "primary_category": "astro-ph.GA",
+        "title": "Neural ODEs as a discovery tool to characterize the structure of the hot galactic wind of M82",
+        "abstract": "Dynamic astrophysical phenomena are predominantly described by differential equations, yet our understanding of these systems is constrained by our incomplete grasp of non-linear physics and scarcity of comprehensive datasets. As such, advancing techniques in solving non-linear inverse problems becomes pivotal to addressing numerous outstanding questions in the field. In particular, modeling hot galactic winds is difficult because of unknown structure for various physical terms, and the lack of \\textit{any} kinematic observational data. Additionally, the flow equations contain singularities that lead to numerical instability, making parameter sweeps non-trivial. We leverage differentiable programming, which enables neural networks to be embedded as individual terms within the governing coupled ordinary differential equations (ODEs), and show that this method can adeptly learn hidden physics. We robustly discern the structure of a mass-loading function which captures the physical effects of cloud destruction and entrainment into the hot superwind. Within a supervised learning framework, we formulate our loss function anchored on the astrophysical entropy ($K \\propto P/ρ^{5/3}$). Our results demonstrate the efficacy of this approach, even in the absence of kinematic data $v$. We then apply these models to real Chandra X-Ray observations of starburst galaxy M82, providing the first systematic description of mass-loading within the superwind. This work further highlights neural ODEs as a useful discovery tool with mechanistic interpretability in non-linear inverse problems. We make our code public at this GitHub repository (https://github.com/dustindnguyen/2023_NeurIPS_NeuralODEs_M82)."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/dustindnguyen/2023_neurips_neuralodes_m82",
+        "exists": true,
+        "full_name": "dustindnguyen/2023_NeurIPS_NeuralODEs_M82",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1f0ae11ae1a8afdfde371fe6d93d5cfb9b944c56",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/dustindnguyen/2023_NeurIPS_NeuralODEs_M82/blob/1f0ae11ae1a8afdfde371fe6d93d5cfb9b944c56/README.md",
+          "sha256": "5563c234d7f856f60d48a39d061a9c2403a70db146f54d751a5b68257b9e9d8f",
+          "bytes": 1870
+        },
+        "root_names": [
+          ".DS_Store",
+          "README.md",
+          "m82",
+          "mocktest"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.GA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 260,
+      "arxiv_id": "2406.15216",
+      "repo_url": "https://github.com/blanchap/tempmigration_scidata",
+      "arxiv": {
+        "versioned_id": "2406.15216v1",
+        "primary_category": "cs.CY",
+        "title": "A Highly Granular Temporary Migration Dataset Derived From Mobile Phone Data in Senegal",
+        "abstract": "Understanding temporary migration is crucial for addressing various socio-economic and environmental challenges in developing countries. However, traditional surveys often fail to capture such movements effectively, leading to a scarcity of reliable data, particularly in sub-Saharan Africa. This article introduces a detailed and open-access dataset that leverages mobile phone data to capture temporary migration in Senegal with unprecedented spatio-temporal detail. The dataset provides measures of migration flows and stock across 151 locations across the country and for each half-month period from 2013 to 2015, with a specific focus on movements lasting between 20 and 180 days. The article presents a suite of methodological tools that not only include algorithmic methods for the detection of temporary migration events in digital traces, but also addresses key challenges in aggregating individual trajectories into coherent migration statistics. These methodological advancements are not only pivotal for the intrinsic value of the dataset but also adaptable for generating systematic migration statistics from other digital trace datasets in other contexts."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/blanchap/tempmigration_scidata",
+        "exists": true,
+        "full_name": "blanchap/TempMigration_SciData",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d91a87544efe6b6f199c85f1319f472ae1b089a4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/blanchap/TempMigration_SciData/blob/d91a87544efe6b6f199c85f1319f472ae1b089a4/README.md",
+          "sha256": "d3bed881c33a8bab0df9d78e2af5e987f1082b67becbaf0f12a327e4083ea96a",
+          "bytes": 9625
+        },
+        "root_names": [
+          "1-MigrationDetection_part0.py",
+          "2-MigrationDetection_part1.py",
+          "3-MigrationDetection_part2.py",
+          "4-ObservationGapDetection.py",
+          "5-MigrationStatistics_TimeDisaggregated_part1.py",
+          "6-MigrationStatistics_TimeDisaggregated_part2.py",
+          "7-MigrationStatistics_TimeDisaggregated_part3.py",
+          "8-MigrationDatasetBuilder.R",
+          "README.md",
+          "spatial_units_SciData.gpkg"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CY"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 261,
+      "arxiv_id": "2309.10400",
+      "repo_url": "https://github.com/dwzhu-pku/pose",
+      "arxiv": {
+        "versioned_id": "2309.10400v3",
+        "primary_category": "cs.CL",
+        "title": "PoSE: Efficient Context Window Extension of LLMs via Positional Skip-wise Training",
+        "abstract": "Large Language Models (LLMs) are trained with a pre-defined context length, restricting their use in scenarios requiring long inputs. Previous efforts for adapting LLMs to a longer length usually requires fine-tuning with this target length (Full-length fine-tuning), suffering intensive training cost. To decouple train length from target length for efficient context window extension, we propose Positional Skip-wisE (PoSE) training that smartly simulates long inputs using a fixed context window. This is achieved by first dividing the original context window into several chunks, then designing distinct skipping bias terms to manipulate the position indices of each chunk. These bias terms and the lengths of each chunk are altered for every training example, allowing the model to adapt to all positions within target length. Experimental results show that PoSE greatly reduces memory and time overhead compared with Full-length fine-tuning, with minimal impact on performance. Leveraging this advantage, we have successfully extended the LLaMA model to 128k tokens using a 2k training context window. Furthermore, we empirically confirm that PoSE is compatible with all RoPE-based LLMs and position interpolation strategies. Notably, our method can potentially support infinite length, limited only by memory usage in inference. With ongoing progress for efficient inference, we believe PoSE can further scale the context window beyond 128k."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/dwzhu-pku/pose",
+        "exists": true,
+        "full_name": "dwzhu-pku/PoSE",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "a3d4ba8bd38e6615ba778d9a1061e380c8e69647",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/dwzhu-pku/PoSE/blob/a3d4ba8bd38e6615ba778d9a1061e380c8e69647/README.md",
+          "sha256": "4fe89322c9bd6738628fb917af221a296b4a9bf906ff11c566cd067f4234cf00",
+          "bytes": 7254
+        },
+        "root_names": [
+          ".gitignore",
+          ".vscode",
+          "LICENSE",
+          "README.md",
+          "helper",
+          "imgs",
+          "paper",
+          "requirements.txt",
+          "script",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 262,
+      "arxiv_id": "2406.02540",
+      "repo_url": "https://github.com/a-suozhang/vidit-q",
+      "arxiv": {
+        "versioned_id": "2406.02540v3",
+        "primary_category": "cs.CV",
+        "title": "ViDiT-Q: Efficient and Accurate Quantization of Diffusion Transformers for Image and Video Generation",
+        "abstract": "Diffusion transformers have demonstrated remarkable performance in visual generation tasks, such as generating realistic images or videos based on textual instructions. However, larger model sizes and multi-frame processing for video generation lead to increased computational and memory costs, posing challenges for practical deployment on edge devices. Post-Training Quantization (PTQ) is an effective method for reducing memory costs and computational complexity. When quantizing diffusion transformers, we find that existing quantization methods face challenges when applied to text-to-image and video tasks. To address these challenges, we begin by systematically analyzing the source of quantization error and conclude with the unique challenges posed by DiT quantization. Accordingly, we design an improved quantization scheme: ViDiT-Q (Video & Image Diffusion Transformer Quantization), tailored specifically for DiT models. We validate the effectiveness of ViDiT-Q across a variety of text-to-image and video models, achieving W8A8 and W4A8 with negligible degradation in visual quality and metrics. Additionally, we implement efficient GPU kernels to achieve practical 2-2.5x memory saving and a 1.4-1.7x end-to-end latency speedup."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/a-suozhang/vidit-q",
+        "exists": true,
+        "full_name": "A-suozhang/ViDiT-Q",
+        "archived": false,
+        "default_branch": "viditq",
+        "head_commit": "a8add8be17ad91069aba7a7209aa88e04b2fe41e",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/A-suozhang/ViDiT-Q/blob/a8add8be17ad91069aba7a7209aa88e04b2fe41e/README.md",
+          "sha256": "b615a8c093c4d32e325998d9555db58bf069b8c6cdcf480e57669442ef92501b",
+          "bytes": 12144
+        },
+        "root_names": [
+          "README.md",
+          "assets",
+          "config.yaml",
+          "eval",
+          "examples",
+          "kernels",
+          "quant_utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 263,
+      "arxiv_id": "2305.15000",
+      "repo_url": "https://github.com/bergerch/mercury",
+      "arxiv": {
+        "versioned_id": "2305.15000v2",
+        "primary_category": "cs.DC",
+        "title": "Chasing the Speed of Light: Low-Latency Planetary-Scale Adaptive Byzantine Consensus",
+        "abstract": "Blockchain technology sparked renewed interest in planetary-scale Byzantine fault-tolerant (BFT) state machine replication (SMR). While recent works predominantly focused on improving the scalability and throughput of these protocols, few of them addressed latency. We present Mercury, a novel transformation to autonomously optimize the latency of quorum-based BFT consensus. Mercury employs a dual resilience threshold that enables faster transaction ordering when the system contains few faulty replicas. Mercury allows forming compact quorums that substantially accelerate consensus using a smaller resilience threshold. Nevertheless, Mercury upholds standard SMR safety and liveness guarantees with optimal resilience, thanks to its judicious use of a dual operation mode and BFT forensics techniques. Our experiments spread tens of replicas across continents and reveal that Mercury can order transactions with finality in less than 0.4 seconds, half the time of a PBFT-like protocol (optimal in terms of number of communication steps and resilience) in the same network. Furthermore, Mercury matches the latency of running its base protocol on theoretically optimal internet links (transmitting at 67% of the speed of light)."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/bergerch/mercury",
+        "exists": true,
+        "full_name": "bergerch/Mercury",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9dc9b5ea95aa789e565cbc7f5ded47eb3a2235fd",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/bergerch/Mercury/blob/9dc9b5ea95aa789e565cbc7f5ded47eb3a2235fd/README.md",
+          "sha256": "bc2236bf8c376504baa3aade3f605a11268ecb4c9c81fec369f3a0a0bc3be61a",
+          "bytes": 10525
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "build.gradle",
+          "config",
+          "data",
+          "doc",
+          "gradle",
+          "gradlew",
+          "gradlew.bat",
+          "img",
+          "lib",
+          "runscripts",
+          "settings.gradle",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.DC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 264,
+      "arxiv_id": "2406.16301",
+      "repo_url": "https://github.com/meiyutingg/ubiss",
+      "arxiv": {
+        "versioned_id": "2406.16301v1",
+        "primary_category": "cs.CV",
+        "title": "UBiSS: A Unified Framework for Bimodal Semantic Summarization of Videos",
+        "abstract": "With the surge in the amount of video data, video summarization techniques, including visual-modal(VM) and textual-modal(TM) summarization, are attracting more and more attention. However, unimodal summarization inevitably loses the rich semantics of the video. In this paper, we focus on a more comprehensive video summarization task named Bimodal Semantic Summarization of Videos (BiSSV). Specifically, we first construct a large-scale dataset, BIDS, in (video, VM-Summary, TM-Summary) triplet format. Unlike traditional processing methods, our construction procedure contains a VM-Summary extraction algorithm aiming to preserve the most salient content within long videos. Based on BIDS, we propose a Unified framework UBiSS for the BiSSV task, which models the saliency information in the video and generates a TM-summary and VM-summary simultaneously. We further optimize our model with a list-wise ranking-based objective to improve its capacity to capture highlights. Lastly, we propose a metric, $NDCG_{MS}$, to provide a joint evaluation of the bimodal summary. Experiments show that our unified framework achieves better performance than multi-stage summarization pipelines. Code and data are available at https://github.com/MeiYutingg/UBiSS."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/meiyutingg/ubiss",
+        "exists": true,
+        "full_name": "MeiYutingg/UBiSS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e41317ac7dfa83f572ffebf081bec63fac7c7ca5",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MeiYutingg/UBiSS/blob/e41317ac7dfa83f572ffebf081bec63fac7c7ca5/README.md",
+          "sha256": "573eceefcaff2d9b6164c3c019b4b05326b42fb8953d0a7cba0910a6cabd317f",
+          "bytes": 5703
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "config",
+          "data",
+          "dataset",
+          "environment.yml",
+          "evaluation",
+          "inference.py",
+          "main.py",
+          "model",
+          "tokenizer"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 265,
+      "arxiv_id": "2302.07191",
+      "repo_url": "https://github.com/STEllAR-GROUP/parallelnumericalintegration",
+      "arxiv": {
+        "versioned_id": "2302.07191v3",
+        "primary_category": "cs.DC",
+        "title": "Shared memory parallelism in Modern C++ and HPX",
+        "abstract": "Parallel programming remains a daunting challenge, from the struggle to express a parallel algorithm without cluttering the underlying synchronous logic, to describing which devices to employ in a calculation, to correctness. Over the years, numerous solutions have arisen, many of them requiring new programming languages, extensions to programming languages, or the addition of pragmas. Support for these various tools and extensions is available to a varying degree. In recent years, the C++ standards committee has worked to refine the language features and libraries needed to support parallel programming on a single computational node. Eventually, all major vendors and compilers will provide robust and performant implementations of these standards. Until then, the HPX library and runtime provides cutting edge implementations of the standards, as well as proposed standards and extensions. Because of these advances, it is now possible to write high performance parallel code without custom extensions to C++. We provide an overview of modern parallel programming in C++, describing the language and library features, and providing brief examples of how to use them."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/STEllAR-GROUP/parallelnumericalintegration",
+        "exists": true,
+        "full_name": "STEllAR-GROUP/parallelnumericalintegration",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ec8d1d234f25b28ebecfcb43d8e41918274dde37",
+        "license_spdx": "BSL-1.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/STEllAR-GROUP/parallelnumericalintegration/blob/ec8d1d234f25b28ebecfcb43d8e41918274dde37/README.md",
+          "sha256": "52748356e4ca5870a734cbd98606d67d8853b5681f64b8453337d0fb6c12b6e7",
+          "bytes": 1468
+        },
+        "root_names": [
+          ".circleci",
+          ".gitignore",
+          "AUTHORS",
+          "CMakeLists.txt",
+          "LICENSE",
+          "README.md",
+          "arm-hpx.sbatch",
+          "benchmark.sh",
+          "benchmark2.sh",
+          "data",
+          "format.sh",
+          "hifiveu-hpx.sbatch",
+          "intel-hpx.sbatch",
+          "plot-data.py",
+          "src",
+          "star64-hpx.sbatch"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.DC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 266,
+      "arxiv_id": "2502.09330",
+      "repo_url": "https://github.com/moldis-group/triangulenes12",
+      "arxiv": {
+        "versioned_id": "2502.09330v4",
+        "primary_category": "physics.chem-ph",
+        "title": "Leveraging the Bias-Variance Tradeoff in Quantum Chemistry for Accurate Negative Singlet-Triplet Gap Predictions: A Case for Double-Hybrid DFT",
+        "abstract": "Molecules that have been suggested to violate the Hund's rule, having a first excited singlet state (S$_1$) energetically below the triplet state (T$_1$), are rare. Yet, they hold the promise to be efficient light emitters. Their high-throughput identification demands exceptionally accurate excited-state modeling to minimize qualitatively wrong predictions. We benchmark twelve S$_1$-T$_1$ energy gaps to find that the local-correlated versions of ADC(2) and CC2 excited state methods deliver excellent accuracy and speed for screening medium-sized molecules. Notably, we find that double-hybrid DFT approximations (e.g., B2GP-PLYP and PBE-QIDH) exhibit high mean absolute errors ($>100$ meV) despite very low standard deviations ($\\approx10$ meV). Exploring their parameter space reveals that a configuration with 75% exchange and 55% correlation, which reduces the mean absolute error to below 5 meV, but with an increased variance. Using this low-bias parameterization as an internal reference, we correct the systematic error while maintaining low variance, effectively combining the strengths of both low-bias and low-variance DFT parameterizations to enhance overall accuracy. Our findings suggest that low-variance DFT methods, often overlooked due to their high bias, can serve as reliable tools for predictive modeling in first-principles molecular design. The bias-correction data-fitting procedure can be applied to any general problem where two flavors of a method, one with low bias and another with low variance, have been identified a priori."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/moldis-group/triangulenes12",
+        "exists": true,
+        "full_name": "moldis-group/triangulenes12",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "eed96cafbfe6c68c1d0c44a13263b51270f965d1",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/moldis-group/triangulenes12/blob/eed96cafbfe6c68c1d0c44a13263b51270f965d1/README.md",
+          "sha256": "d999ca26c715cd12cfe5ff999b5db5e8d9f48fd20321b0e732a7c291ca3a4f10",
+          "bytes": 1501
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "TABLE-IV",
+          "TABLE-V",
+          "XYZ",
+          "csv_files"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category physics.chem-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 267,
+      "arxiv_id": "2410.16719",
+      "repo_url": "https://github.com/evansh666/evogen",
+      "arxiv": {
+        "versioned_id": "2410.16719v2",
+        "primary_category": "cs.CV",
+        "title": "Progressive Compositionality in Text-to-Image Generative Models",
+        "abstract": "Despite the impressive text-to-image (T2I) synthesis capabilities of diffusion models, they often struggle to understand compositional relationships between objects and attributes, especially in complex settings. Existing solutions have tackled these challenges by optimizing the cross-attention mechanism or learning from the caption pairs with minimal semantic changes. However, can we generate high-quality complex contrastive images that diffusion models can directly discriminate based on visual representations? In this work, we leverage large-language models (LLMs) to compose realistic, complex scenarios and harness Visual-Question Answering (VQA) systems alongside diffusion models to automatically curate a contrastive dataset, ConPair, consisting of 15k pairs of high-quality contrastive images. These pairs feature minimal visual discrepancies and cover a wide range of attribute categories, especially complex and natural scenarios. To learn effectively from these error cases, i.e., hard negative images, we propose EvoGen, a new multi-stage curriculum for contrastive learning of diffusion models. Through extensive experiments across a wide range of compositional scenarios, we showcase the effectiveness of our proposed framework on compositional T2I benchmarks."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/evansh666/evogen",
+        "exists": true,
+        "full_name": "evansh666/EvoGen",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d2c49cad2fa20011b4b120816125ab8fb16b89ed",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/evansh666/EvoGen/blob/d2c49cad2fa20011b4b120816125ab8fb16b89ed/README.md",
+          "sha256": "0fd822a4c9f8b9518b64da117b229e6be55c065a050724bc1551a065be886c38",
+          "bytes": 6249
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "arguments.py",
+          "assets",
+          "data_construction",
+          "dataset",
+          "eval",
+          "finetune.py",
+          "models",
+          "requirements.txt",
+          "utils.py",
+          "warning.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 268,
+      "arxiv_id": "2312.04780",
+      "repo_url": "https://github.com/allenanzifeng/deeplearning282",
+      "arxiv": {
+        "versioned_id": "2312.04780v1",
+        "primary_category": "cs.CV",
+        "title": "Fine-Tuning InstructPix2Pix for Advanced Image Colorization",
+        "abstract": "This paper presents a novel approach to human image colorization by fine-tuning the InstructPix2Pix model, which integrates a language model (GPT-3) with a text-to-image model (Stable Diffusion). Despite the original InstructPix2Pix model's proficiency in editing images based on textual instructions, it exhibits limitations in the focused domain of colorization. To address this, we fine-tuned the model using the IMDB-WIKI dataset, pairing black-and-white images with a diverse set of colorization prompts generated by ChatGPT. This paper contributes by (1) applying fine-tuning techniques to stable diffusion models specifically for colorization tasks, and (2) employing generative models to create varied conditioning prompts. After finetuning, our model outperforms the original InstructPix2Pix model on multiple metrics quantitatively, and we produce more realistically colored images qualitatively. The code for this project is provided on the GitHub Repository https://github.com/AllenAnZifeng/DeepLearning282."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/allenanzifeng/deeplearning282",
+        "exists": true,
+        "full_name": "AllenAnZifeng/DeepLearning282",
+        "archived": true,
+        "default_branch": "main",
+        "head_commit": "803077b8b7e917a3440255c231e934cbd5b318e5",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AllenAnZifeng/DeepLearning282/blob/803077b8b7e917a3440255c231e934cbd5b318e5/README.md",
+          "sha256": "3593806ddf369879f88ca3f4970df4c7eefe7976fafd7d64c828747796b3d767",
+          "bytes": 2357
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "W&B Chart 2023_11_29 23_04_53.png",
+          "W&B Chart 2023_11_29 23_05_08.png",
+          "arguments.py",
+          "dataset.py",
+          "export_to_hub.py",
+          "finetune.py",
+          "finetune_instruct_pix2pix.py",
+          "generate_dataset.py",
+          "ori_instructpix2pix.py",
+          "prompt.txt",
+          "requirements.txt",
+          "run_finetune.bat",
+          "run_finetune.sh",
+          "sample.py",
+          "stages.png",
+          "test.m",
+          "test_data",
+          "train_dreambooth_lora.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 269,
+      "arxiv_id": "2409.06097",
+      "repo_url": "https://github.com/ygan/clarq-llm",
+      "arxiv": {
+        "versioned_id": "2409.06097v2",
+        "primary_category": "cs.CL",
+        "title": "ClarQ-LLM: A Benchmark for Models Clarifying and Requesting Information in Task-Oriented Dialog",
+        "abstract": "We introduce ClarQ-LLM, an evaluation framework consisting of bilingual English-Chinese conversation tasks, conversational agents and evaluation metrics, designed to serve as a strong benchmark for assessing agents' ability to ask clarification questions in task-oriented dialogues. The benchmark includes 31 different task types, each with 10 unique dialogue scenarios between information seeker and provider agents. The scenarios require the seeker to ask questions to resolve uncertainty and gather necessary information to complete tasks. Unlike traditional benchmarks that evaluate agents based on fixed dialogue content, ClarQ-LLM includes a provider conversational agent to replicate the original human provider in the benchmark. This allows both current and future seeker agents to test their ability to complete information gathering tasks through dialogue by directly interacting with our provider agent. In tests, LLAMA3.1 405B seeker agent managed a maximum success rate of only 60.05\\%, showing that ClarQ-LLM presents a strong challenge for future research."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ygan/clarq-llm",
+        "exists": true,
+        "full_name": "ygan/ClarQ-LLM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e3bc7c80173f01d0a04fa42f6b24efd9266fd081",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ygan/ClarQ-LLM/blob/e3bc7c80173f01d0a04fa42f6b24efd9266fd081/README.md",
+          "sha256": "68c2a0e6e28222fd197b3e00c5038f103832bba68969e4c3509bd391d9c7014f",
+          "bytes": 9001
+        },
+        "root_names": [
+          "ALL_KEYS.py",
+          "LICENSE",
+          "README.md",
+          "agents",
+          "data",
+          "evaluation.py",
+          "evaluation.sh",
+          "l2l.py",
+          "l2l_GPT4o_seeker_GPT4o_multi_info_provider.sh",
+          "l2l_GPT4o_seeker_GPT4o_provider.sh",
+          "l2l_GPT4o_seeker_LLAMA3.1_provider.sh",
+          "l2l_LLAMA3.1_seeker_GPT4o_provider.sh",
+          "log",
+          "requirement.txt",
+          "results",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 270,
+      "arxiv_id": "2501.17854",
+      "repo_url": "https://github.com/cyberneticscl/pietools",
+      "arxiv": {
+        "versioned_id": "2501.17854v2",
+        "primary_category": "math.OC",
+        "title": "PIETOOLS 2025: User Manual",
+        "abstract": "The PIETOOLS 2025 User Manual describes all the features of version 2025 of the MATLAB toolbox PIETOOLS for the analysis and control of Partial Integral Equations (PIEs). The manual is aimed to guide, with examples, first-time users to four fundamental features of PIETOOLS: converting coupled ODE-PDEs, DDEs, DDFs, etc., to PIE representation; analysis of stability and input-output properties of PIEs; design of optimal observers and controllers for PIEs; simulation of open- and closed-loop PIE systems. The use of PIETOOLS is not limited to the features described above. However, the manual focuses on these features to provide a holistic understanding of the workflow of PIETOOLS, which will serve as a foundation to develop more complicated programs, for example, the design of boundary feedback controllers, robust observers, robust controllers, etc.."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/cyberneticscl/pietools",
+        "exists": true,
+        "full_name": "CyberneticSCL/PIETOOLS",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "998a68cc5b7ba4c9a638e9083e9f43125697c760",
+        "license_spdx": "GPL-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/CyberneticSCL/PIETOOLS/blob/998a68cc5b7ba4c9a638e9083e9f43125697c760/README.md",
+          "sha256": "19c8a40fa86991aacec2c27a90bc488ae8a07e1605d05f66b96a2a5f94c2a3f5",
+          "bytes": 985
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "LICENSE",
+          "PIETOOLS",
+          "README.md",
+          "Readme.m"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.OC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 271,
+      "arxiv_id": "2406.13925",
+      "repo_url": "https://github.com/zeronlp/genderalign",
+      "arxiv": {
+        "versioned_id": "2406.13925v3",
+        "primary_category": "cs.CL",
+        "title": "GenderAlign: An Alignment Dataset for Mitigating Gender Bias in Large Language Models",
+        "abstract": "Large Language Models (LLMs) are prone to generating content that exhibits gender biases, raising significant ethical concerns. Alignment, the process of fine-tuning LLMs to better align with desired behaviors, is recognized as an effective approach to mitigate gender biases. Although proprietary LLMs have made significant strides in mitigating gender bias, their alignment datasets are not publicly available. The commonly used and publicly available alignment dataset, HH-RLHF, still exhibits gender bias to some extent. There is a lack of publicly available alignment datasets specifically designed to address gender bias. Hence, we developed a new dataset named GenderAlign, aiming at mitigating a comprehensive set of gender biases in LLMs. This dataset comprises 8k single-turn dialogues, each paired with a \"chosen\" and a \"rejected\" response. Compared to the \"rejected\" responses, the \"chosen\" responses demonstrate lower levels of gender bias and higher quality. Furthermore, we categorized the gender biases in the \"rejected\" responses of GenderAlign into 4 principal categories. The experimental results show the effectiveness of GenderAlign in reducing gender bias in LLMs."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zeronlp/genderalign",
+        "exists": true,
+        "full_name": "ZeroNLP/GenderAlign",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "8e69122a4bd7d4c1bdc71ce54a428677af2458bf",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ZeroNLP/GenderAlign/blob/8e69122a4bd7d4c1bdc71ce54a428677af2458bf/README.md",
+          "sha256": "ea9765542109a0ffb34243af584dca1dd72506aecfbe1fd5394cdddf1f2f8498",
+          "bytes": 958
+        },
+        "root_names": [
+          "GenderAlign.json",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 272,
+      "arxiv_id": "2505.12968",
+      "repo_url": "https://github.com/laraauth12/lara",
+      "arxiv": {
+        "versioned_id": "2505.12968v1",
+        "primary_category": "cs.CR",
+        "title": "Lara: Lightweight Anonymous Authentication with Asynchronous Revocation Auditability",
+        "abstract": "Anonymous authentication is a technique that allows to combine access control with privacy preservation. Typically, clients use different pseudonyms for each access, hindering providers from correlating their activities. To perform the revocation of pseudonyms in a privacy preserving manner is notoriously challenging. When multiple pseudonyms are revoked together, an adversary may infer that these pseudonyms belong to the same client and perform privacy breaking correlations, in particular if these pseudonyms have already been used. Backward unlinkability and revocation auditability are two properties that address this problem. Most systems that offer these properties rely on some sort of time slots, which assume a common reference of time that must be shared among clients and providers; for instance, the client must be aware that it should not use a pseudonym after a certain time or should be able to assess the freshness of a revocation list prior to perform authentication. In this paper we propose Lara, a Lightweight Anonymous Authentication with Asynchronous Revocation Auditability that does not require parties to agree on the current time slot and it is not affected by the clock skew. Prior to disclosing a pseudonym, clients are provided with a revocation list (RL) and can check that the pseudonym has not been revoked. Then, they provide a proof on non-revocation that cannot be used against any other (past or future) RL, avoiding any dependency of timing assumptions. Lara can be implemented using efficient public-key primitives and space-efficient data structures. We have implemented a prototype of Lara and have assessed experimentally its efficiency."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/laraauth12/lara",
+        "exists": true,
+        "full_name": "LaraAuth12/LARA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "cf7cd880056933c51d8abf3a1d6a7dd7c81aba3e",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/LaraAuth12/LARA/blob/cf7cd880056933c51d8abf3a1d6a7dd7c81aba3e/README.md",
+          "sha256": "9a22671e41b4372c0f481ade56706ee473a4b4d0041285e9d4d3ee36dd8de88e",
+          "bytes": 7
+        },
+        "root_names": [
+          "HBFA RL generation time",
+          "Lara_HBFA",
+          "Lara_RS",
+          "README.md",
+          "RS RL generation time"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 273,
+      "arxiv_id": "2303.17977",
+      "repo_url": "https://github.com/apwbs/martsia-ethereum",
+      "arxiv": {
+        "versioned_id": "2303.17977v3",
+        "primary_category": "cs.CR",
+        "title": "MARTSIA: Enabling Data Confidentiality for Blockchain-based Process Execution",
+        "abstract": "Multi-party business processes rely on the collaboration of various players in a decentralized setting. Blockchain technology can facilitate the automation of these processes, even in cases where trust among participants is limited. Transactions are stored in a ledger, a replica of which is retained by every node of the blockchain network. The operations saved thereby are thus publicly accessible. While this enhances transparency, reliability, and persistence, it hinders the utilization of public blockchains for process automation as it violates typical confidentiality requirements in corporate settings. In this paper, we propose MARTSIA: A Multi-Authority Approach to Transaction Systems for Interoperating Applications. MARTSIA enables precise control over process data at the level of message parts. Based on Multi-Authority Attribute-Based Encryption (MA-ABE), MARTSIA realizes a number of desirable properties, including confidentiality, transparency, and auditability. We implemented our approach in proof-of-concept prototypes, with which we conduct a case study in the area of supply chain management. Also, we show the integration of MARTSIA with a state-of-the-art blockchain-based process execution engine to secure the data flow."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/apwbs/martsia-ethereum",
+        "exists": true,
+        "full_name": "apwbs/MARTSIA-Ethereum",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "45a653e46718e73c9011264e8f749e3d7088ebc9",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/apwbs/MARTSIA-Ethereum/blob/45a653e46718e73c9011264e8f749e3d7088ebc9/README.md",
+          "sha256": "79afdb569212b7ff2790593edefbc6c9ecf3505e57e37a308f421989a0c8bf64",
+          "bytes": 1145
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "architecture",
+          "caterpillar-interaction",
+          "tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 274,
+      "arxiv_id": "2306.13349",
+      "repo_url": "https://github.com/wilfongguo/moncp",
+      "arxiv": {
+        "versioned_id": "2306.13349v1",
+        "primary_category": "cs.NE",
+        "title": "Multi-objective optimization based network control principles for identifying personalized drug targets with cancer",
+        "abstract": "It is a big challenge to develop efficient models for identifying personalized drug targets (PDTs) from high-dimensional personalized genomic profile of individual patients. Recent structural network control principles have introduced a new approach to discover PDTs by selecting an optimal set of driver genes in personalized gene interaction network (PGIN). However, most of current methods only focus on controlling the system through a minimum driver-node set and ignore the existence of multiple candidate driver-node sets for therapeutic drug target identification in PGIN. Therefore, this paper proposed multi-objective optimization-based structural network control principles (MONCP) by considering minimum driver nodes and maximum prior-known drug-target information. To solve MONCP, a discrete multi-objective optimization problem is formulated with many constrained variables, and a novel evolutionary optimization model called LSCV-MCEA was developed by adapting a multi-tasking framework and a rankings-based fitness function method. With genomics data of patients with breast or lung cancer from The Cancer Genome Atlas database, the effectiveness of LSCV-MCEA was validated. The experimental results indicated that compared with other advanced methods, LSCV-MCEA can more effectively identify PDTs with the highest Area Under the Curve score for predicting clinically annotated combinatorial drugs. Meanwhile, LSCV-MCEA can more effectively solve MONCP than other evolutionary optimization methods in terms of algorithm convergence and diversity. Particularly, LSCV-MCEA can efficiently detect disease signals for individual patients with BRCA cancer. The study results show that multi-objective optimization can solve structural network control principles effectively and offer a new perspective for understanding tumor heterogeneity in cancer precision medicine."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wilfongguo/moncp",
+        "exists": true,
+        "full_name": "WilfongGuo/MONCP",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4c5bdc56c37b4a23f66d918ddbe507bc1c9ba4e5",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/WilfongGuo/MONCP/blob/4c5bdc56c37b4a23f66d918ddbe507bc1c9ba4e5/README.md",
+          "sha256": "a2dc36062c904d9b33d3cd36628822d56b0a12da5dde1249e4d35b93acee51c8",
+          "bytes": 2827
+        },
+        "root_names": [
+          "AdditionalFiles",
+          "Code_construct_PGIN",
+          "Data",
+          "LSCV_MCEA_code",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.NE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 275,
+      "arxiv_id": "2310.07160",
+      "repo_url": "https://github.com/spotify-research/llark",
+      "arxiv": {
+        "versioned_id": "2310.07160v3",
+        "primary_category": "cs.SD",
+        "title": "LLark: A Multimodal Instruction-Following Language Model for Music",
+        "abstract": "Music has a unique and complex structure which is challenging for both expert humans and existing AI systems to understand, and presents unique challenges relative to other forms of audio. We present LLark, an instruction-tuned multimodal model for \\emph{music} understanding. We detail our process for dataset creation, which involves augmenting the annotations of diverse open-source music datasets and converting them to a unified instruction-tuning format. We propose a multimodal architecture for LLark, integrating a pretrained generative model for music with a pretrained language model. In evaluations on three types of tasks (music understanding, captioning, reasoning), we show that LLark matches or outperforms existing baselines in music understanding, and that humans show a high degree of agreement with its responses in captioning and reasoning tasks. LLark is trained entirely from open-source music data and models, and we make our training code available along with the release of this paper. Additional results and audio examples are at https://bit.ly/llark, and our source code is available at https://github.com/spotify-research/llark ."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/spotify-research/llark",
+        "exists": true,
+        "full_name": "spotify-research/llark",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a933b94bfe219ac7f25bb9e10c6bb5593530a906",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/spotify-research/llark/blob/a933b94bfe219ac7f25bb9e10c6bb5593530a906/README.md",
+          "sha256": "c293200c9f41c972db018b9367d1989daae8a228b5ceb4870f9b748d085ed53e",
+          "bytes": 5959
+        },
+        "root_names": [
+          ".gitignore",
+          "CODE_OF_CONDUCT.md",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "README.md",
+          "SECURITY.md",
+          "dataflow-requirements.txt",
+          "docker",
+          "jukebox",
+          "m2t",
+          "notebooks",
+          "requirements.txt",
+          "scripts",
+          "train-requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SD"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T03:33:22Z"
+}
