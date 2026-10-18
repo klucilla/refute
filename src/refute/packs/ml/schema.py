@@ -44,7 +44,7 @@ from pydantic import (
 from refute.core.canonical import canonical_bytes
 from refute.core.hashing import sha256_bytes
 from refute.core.paper import BASE_GATES, BASE_REPRODUCTION, METRIC_RECOMPUTE, prerequisite_names
-from refute.packs.ml import recompute, rules, seeds
+from refute.packs.ml import readers, recompute, rules, seeds
 from refute.packs.ml.extract import ExtractionError, parse_json_path
 from refute.packs.ml.uncertainty import Uncertainty, resolve_uncertainty
 from refute.selection import inventory as inv
@@ -230,7 +230,10 @@ class Split(_Model):
     @field_validator("source")
     @classmethod
     def _source(cls, value: str) -> str:
-        return _text(value, "split source")
+        _text(value, "split source")
+        if readers.is_container_source(value):
+            readers.container_place(value)  # an unknown reader or a bad selector is refused
+        return value
 
 
 class Artifact(_Model):
@@ -1474,6 +1477,7 @@ class MlClaimSchema:
         self._check_patches(loaded, plan)
         for target in targets:
             self._check_target(plan, target)
+        self._check_exempt_minimums(loaded, plan, targets)
         inventory = _attachment_record(loaded, INVENTORY_ROLE)
         draw_record = _attachment_record(loaded, DRAW_ROLE)
         inventory_hash = self._check_inventory(plan, targets, inventory)
@@ -1487,6 +1491,25 @@ class MlClaimSchema:
         # the written derived values must equal a fresh derivation (maintainer's
         # condition on item e, 2026-10-15)
         verify_derived(loaded.canonical())
+
+    @staticmethod
+    def _check_exempt_minimums(
+        loaded: LoadedClaim, plan: MlTestPlan, targets: list[MlTarget]
+    ) -> None:
+        """A minimum coverage of data_present written by hand for generated data is refused,
+        whatever its value (wp3-data-sources-acceptance.md, section 3): read in the claim
+        file as written, before the resolution fills the defaults (Codex review)."""
+        raw_targets = _read_decimal_claim(loaded.path).get("targets") or []
+        if len(raw_targets) != len(targets):
+            raise ValueError("the claim file changed while it was being read")
+        origins = {d.name: dataset_origin(d) for d in plan.datasets}
+        for t, raw in zip(targets, raw_targets, strict=True):
+            given = raw.get("coverage_minimum") or {}
+            if origins[t.dataset] == GENERATED and BASE_GATES[1] in given:
+                raise ValueError(
+                    f"{t.key}: a minimum coverage of data_present is given for generated data, "
+                    "where the gate does not apply"
+                )
 
     @staticmethod
     def _check_transcribed_numbers(loaded: LoadedClaim, targets: list[MlTarget]) -> None:

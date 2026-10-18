@@ -6,17 +6,27 @@ synthetic paper of test_ml_integration."""
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import io
+import json
+import os
+import pickle
+import subprocess
+import sys
+import tarfile
 import zipfile
 
 import pytest
 
 from refute.core.claim import ClaimError
+from refute.core.paper import FailureCause
 from refute.core.verdict import PaperVerdict, TestStatus
 from refute.packs.ml import integration as ig
 from refute.packs.ml import production as prod
 from refute.packs.ml import readers as rd
+from refute.packs.ml import sandbox as sb
 from refute.packs.ml.schema import MlClaimSchema, MlTarget, MlTestPlan, verify_derived
+from synthetic_harness import fixture
 from test_ml_integration import (
     CONFIG,
     DATA,
@@ -109,12 +119,12 @@ def test_a_minimum_of_data_present_given_for_generated_data_is_refused(tmp_path)
         load(tmp_path, chain(with_datasets(generated()), minimum))
 
 
-def test_a_minimum_equal_to_the_default_cannot_be_told_apart_and_is_not_written(tmp_path):
+def test_a_minimum_equal_to_the_default_given_by_hand_is_refused_too(tmp_path):
     def minimum(claim):
         claim["targets"][0]["coverage_minimum"] = {"data_present": {"positive": 1, "negative": 1}}
 
-    claim = load(tmp_path, chain(with_datasets(generated()), minimum)).canonical()
-    assert all("data_present" not in t["coverage_minimum"] for t in claim["targets"])
+    with pytest.raises(ClaimError, match="minimum coverage of data_present"):
+        load(tmp_path, chain(with_datasets(generated()), minimum))
 
 
 def test_verify_derived_refuses_an_exemption_that_does_not_match_the_origin(tmp_path):
@@ -384,6 +394,200 @@ def test_a_wrong_file_split_fails_the_gate_whatever_the_derived_split(tmp_path):
     assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
 
 
+# ---- container readers (section 4.2) ---------------------------------------------------------
+
+CIFAR_SOURCE = "reader:container:cifar_python:batches/test_batch"
+HOST_COUNTS = {"train": SPLITS["train"], "validation": SPLITS["validation"]}
+
+
+def cifar_archive(n_labels=SPLITS["test"], twice=False, key=b"labels") -> bytes:
+    """A CIFAR-like tar.gz: one pickled batch in the real format, a label list and the
+    images as a NumPy uint8 array (unpickling it imports numpy: the maintainer's check of
+    2026-10-18 on the reader under -I -S)."""
+    import numpy as np
+
+    buffer = io.BytesIO()
+    images = np.zeros((n_labels, 3072), dtype=np.uint8)
+    batch = pickle.dumps({key: [0] * n_labels, b"data": images, b"batch_label": b"test"}, 2)
+    with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
+        for _ in range(2 if twice else 1):
+            info = tarfile.TarInfo("batches/test_batch")
+            info.size = len(batch)
+            archive.addfile(info, io.BytesIO(batch))
+    return buffer.getvalue()
+
+
+def _reader_entry(source=CIFAR_SOURCE):
+    entry = plan_dict(DATA)["datasets"][0]
+    entry["splits"]["test"]["source"] = source
+    return entry
+
+
+PLANTED = b'open("out/planted", "w").close()\n'
+
+
+def run_with_reader(tmp_path, archive, command=True, host=None, stale=False, planted=False):
+    claim_file = claim_file_with(_reader_entry(), value_target({}, recompute=False))
+    paper = Paper(tmp_path, claim_file, {**CONFIG, "print_count": True})
+    data = {"data/archive.tar.gz": archive}
+    if planted:  # modules named like the reader's imports, in its working folder
+        data.update({name: PLANTED for name in ("json.py", "tarfile.py", "sitecustomize.py")})
+    reader = fixture("data-reader", tmp_path / "reader", data)
+    if stale:  # a well-formed answer left before the reader runs
+        (reader.root / "out").mkdir()
+        (reader.root / rd.ANSWER).write_bytes(b'{"test": 4000}')
+    authorized = paper.harness.backend._authorized  # noqa: SLF001 - the test's own backend
+    path = paper.harness.datasets["synthetic"].fetch.path
+    harness = dataclasses.replace(
+        paper.harness,
+        backend=sb.SubprocessBackend([*authorized.values(), reader]),
+        workspaces={**paper.harness.workspaces, "setup/data/synthetic": reader.root},
+        datasets={"synthetic": dataset_evidence(path, DATA, counts=host or dict(HOST_COUNTS))},
+        reader_command=(
+            lambda rung, request, env: [sys.executable, "-I", "-S", "reader.py", request]
+        )
+        if command
+        else None,
+        data_paths={"synthetic": "data/archive.tar.gz"},
+    )
+    outcome = ig.run_paper(claim_file, harness)
+    return outcome, *checks(outcome, KEY)
+
+
+def test_a_container_reader_counts_its_split_after_the_build(tmp_path):
+    outcome, claim, base = run_with_reader(tmp_path, cifar_archive())
+    assert base["data_present"].status is TestStatus.PASS, base["data_present"].message
+    assert base["data_present"].metrics["splits"] == SPLITS
+    assert claim.verdict.verdict is PaperVerdict.REPRODUCED, claim.verdict.reason
+    ids = [c.container_id for s in outcome.run.steps for c in s.containers]
+    assert ids.index("setup/data/synthetic") > ids.index("setup/build/own_environment")
+    assert ids.index("setup/data/synthetic") < ids.index(f"{KEY}/base/method/s1")
+
+
+def test_a_container_count_of_another_size_fails_the_gate(tmp_path):
+    _, claim, base = run_with_reader(tmp_path, cifar_archive(n_labels=SPLITS["test"] - 1))
+    assert base["data_present"].status is TestStatus.FAIL
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def test_with_no_reader_command_the_split_has_no_count(tmp_path):
+    outcome, claim, base = run_with_reader(tmp_path, cifar_archive(), command=False)
+    assert base["data_present"].status is TestStatus.INCONCLUSIVE
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+    ids = [c.container_id for s in outcome.run.steps for c in s.containers]
+    assert "setup/data/synthetic" not in ids
+
+
+@pytest.mark.parametrize("case", ["two_members", "no_labels"])
+def test_a_reader_that_fails_gives_no_count_and_does_not_stop_the_runs(tmp_path, case):
+    archive = cifar_archive(twice=True) if case == "two_members" else cifar_archive(key=b"other")
+    outcome, claim, base = run_with_reader(tmp_path, archive)
+    assert base["data_present"].status is TestStatus.INCONCLUSIVE
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+    ids = [c.container_id for s in outcome.run.steps for c in s.containers]
+    assert f"{KEY}/base/method/s1" in ids  # the base runs still ran
+
+
+def test_an_answer_present_before_the_reader_runs_is_never_read(tmp_path):
+    outcome, claim, base = run_with_reader(tmp_path, cifar_archive(), stale=True)
+    assert outcome.run.stopped  # a Refute error: the reader's folder was not fresh
+    assert base["data_present"].status is not TestStatus.PASS
+    assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+def _answer(tmp_path, text: bytes):
+    path = tmp_path / "counts.json"
+    path.write_bytes(text)
+    return rd.read_answer(path, {"test", "train"})
+
+
+def test_a_well_formed_answer_is_read(tmp_path):
+    assert _answer(tmp_path, b'{"test": 4000, "train": 0}') == {"test": 4000, "train": 0}
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "boolean",
+        "duplicate",
+        "float",
+        "negative",
+        "missing",
+        "extra",
+        "trailing",
+        "nan",
+        "truncated",
+        "list",
+        "too_large",
+    ],
+)
+def test_an_answer_of_any_other_form_gives_no_count(tmp_path, case):
+    text = {
+        "boolean": b'{"test": true, "train": 1}',
+        "duplicate": b'{"test": 1, "test": 2, "train": 1}',
+        "float": b'{"test": 1.0, "train": 1}',
+        "negative": b'{"test": -1, "train": 1}',
+        "missing": b'{"test": 1}',
+        "extra": b'{"test": 1, "train": 1, "other": 1}',
+        "trailing": b'{"test": 1, "train": 1} []',
+        "nan": b'{"test": 1, "train": NaN}',
+        "truncated": b'{"test": 1, "train": 1',
+        "list": b"[1, 2]",
+        # well formed, but above the size limit
+        "too_large": b'{"test": 1, "train": 1' + b" " * (64 * 1024) + b"}",
+    }[case]
+    assert _answer(tmp_path, text) is None
+
+
+def test_an_answer_that_is_a_link_gives_no_count(tmp_path):
+    target = tmp_path / "real.json"
+    target.write_bytes(b'{"test": 1, "train": 1}')
+    link = tmp_path / "counts.json"
+    try:
+        link.symlink_to(target)
+    except OSError:
+        pytest.skip("symbolic links cannot be created here")
+    assert rd.read_answer(link, {"test", "train"}) is None
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "reader:container:pickle:x",  # not in the closed list
+        "reader:container:cifar_python:",  # no member
+        "reader:container:cifar_python:a+",  # an empty member
+        "reader:container:cifar_python:a#x",  # an argument it does not take
+        "reader:container:cifar_python:../a",  # a member that climbs
+        "reader:container:excel:table.xlsx",  # no sheet
+        "reader:container:dgl:graph.bin#a,b,c",  # dgl takes no member
+        "reader:container:dgl:#a,b",  # not a canonical edge type
+    ],
+)
+def test_container_selectors_are_checked_before_the_lock(tmp_path, source):
+    with pytest.raises(ValueError):
+        rd.container_place(source)
+    entry = _reader_entry(source)
+    with pytest.raises(ValueError):
+        MlTestPlan.model_validate({**plan_dict(DATA), "datasets": [entry]})
+
+
+def test_container_requests_name_each_split_s_reader():
+    splits = {
+        "a": {"source": "reader:container:excel:Concrete.xls#0"},
+        "b": {"source": "reader:container:dgl:#user,buys,item"},
+        "c": {"source": "reader:npy"},
+    }
+    request = json.loads(rd.container_request("data/f", splits))
+    assert request == {
+        "path": "data/f",
+        "splits": {
+            "a": {"reader": "excel", "member": "Concrete.xls", "arg": "0"},
+            "b": {"reader": "dgl", "member": "", "arg": "user,buys,item"},
+        },
+    }
+    assert rd.container_request("data/f", {"c": splits["c"]}) is None
+
+
 # ---- production inputs ---------------------------------------------------------------------
 
 
@@ -402,11 +606,195 @@ def test_generated_data_are_neither_fetched_nor_counted(monkeypatch, tmp_path):
     assert datasets == {} and fetched == []
 
 
-def test_a_repository_file_is_refused_before_the_runs_until_it_is_supported(monkeypatch, tmp_path):
-    entry = {**repository_file(), "name": "synthetic"}
-    _, prepare = _offline_inputs(monkeypatch, tmp_path, entry)
-    with pytest.raises(prod.ProductionError, match="not supported yet"):
-        prepare()
+def test_declared_weights_are_refused_before_anything_runs(monkeypatch, tmp_path):
+    """Weights (inputs of generated data, checkpoints) are not fetched by this version:
+    the paper does not run rather than skip their check (Codex review)."""
+    weights = {
+        "name": "teacher",
+        "url": "https://example.org/teacher.pt",
+        "reference": "teacher models",
+        "version": "1",
+        "license": "Apache-2.0",
+        "retrieved_utc": "2026-10-15T00:00:00Z",
+        "sha256": "e" * 64,
+        "size_bytes": 10,
+        "local_copy_allowed": False,
+    }
+    cloned = []
+    monkeypatch.setattr(prod.repository, "clone", lambda url, dest: cloned.append(dest))
+    plan = {**plan_dict(DATA), "datasets": [_generated_entry()], "weights": [weights]}
+    with pytest.raises(prod.ProductionError, match="teacher"):
+        prod.prepare_inputs({"test_plan": plan}, tmp_path, tmp_path / "cache")
+    assert cloned == []
+
+
+GRAPH = b"\n".join(b"%d %d" % (i, i + 1) for i in range(50)) + b"\n"
+
+
+def _repo_entry(path="data/graph.txt", content=GRAPH):
+    return {
+        "name": "graph",
+        "origin": "repository_file",
+        "path": path,
+        "sha256": hashlib.sha256(content).hexdigest(),
+        "size_bytes": len(content),
+        "splits": {"all": {"expected_examples": 50, "source": "reader:lines:rows"}},
+    }
+
+
+def _clone(tmp_path, content=GRAPH):
+    repo = tmp_path / "clone"
+    (repo / "data").mkdir(parents=True)
+    (repo / "data" / "graph.txt").write_bytes(content)
+    return repo
+
+
+def test_a_repository_file_is_copied_checked_and_counted_before_any_build(tmp_path):
+    repo = _clone(tmp_path)
+    evidence = prod.repository_file(repo, _repo_entry(), tmp_path / "cache")
+    assert evidence.fetch.ok and evidence.split_counts == {"all": 50}
+    assert evidence.fetch.spec.url == "repository:data/graph.txt"
+    copy = evidence.fetch.path
+    assert copy.parent == tmp_path / "cache" / "repository-files"
+    assert copy.read_bytes() == GRAPH
+    # the clone's file changing afterwards (a build, a run) does not touch the copy
+    (repo / "data" / "graph.txt").write_bytes(b"changed\n")
+    assert copy.read_bytes() == GRAPH
+
+
+def test_other_bytes_in_a_repository_file_fail_with_no_cause_of_the_artifact(tmp_path):
+    repo = _clone(tmp_path)
+    (repo / "data" / "graph.txt").write_bytes(GRAPH + b"1 2\n")
+    evidence = prod.repository_file(repo, _repo_entry(), tmp_path / "cache")
+    assert not evidence.fetch.ok and evidence.fetch.path is None
+    assert evidence.fetch.failure.cause is FailureCause.UNDETERMINED
+
+
+@pytest.mark.parametrize("case", ["missing", "outside", "folder"])
+def test_a_repository_file_that_is_not_there_gives_no_evidence(tmp_path, case):
+    repo = _clone(tmp_path)
+    if case == "missing":
+        entry = _repo_entry(path="data/none.txt")
+    elif case == "outside":
+        (tmp_path / "graph.txt").write_bytes(GRAPH)
+        entry = _repo_entry(path="../graph.txt")
+    else:
+        entry = _repo_entry(path="data")
+    assert prod.repository_file(repo, entry, tmp_path / "cache") is None
+
+
+def test_a_repository_file_reached_through_a_link_gives_no_evidence(tmp_path):
+    repo = _clone(tmp_path)
+    try:
+        (repo / "linked").symlink_to(repo / "data", target_is_directory=True)
+    except OSError:
+        pytest.skip("symbolic links cannot be created here")
+    entry = _repo_entry(path="linked/graph.txt")
+    assert prod.repository_file(repo, entry, tmp_path / "cache") is None
+
+
+def test_with_no_verified_copy_the_workspaces_are_prepared_and_nothing_is_mounted(
+    tmp_path, monkeypatch
+):
+    repo = _clone(tmp_path)
+    (repo / "data" / "graph.txt").unlink()  # the declared file is missing
+    limits = prod.Limits(cpus=1.0, period_us=100_000, memory_bytes=1 << 30, pids=256)
+    setup = prod.PaperSetup(
+        "p1", tmp_path / "run", repo, {}, {"graph": "data/graph.txt"}, limits, prod.V22_MAXIMA
+    )
+    monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ["k1/base/s0"])
+    claim_file = {"test_plan": {"datasets": [_repo_entry()]}}
+    ws = prod.prepare_workspaces(setup, claim_file)  # no ProductionError
+    assert "k1/base/s0" in ws and prod.data_mounts(setup) == ()
+
+
+def _production_setup(tmp_path, layout):
+    repo = _clone(tmp_path)
+    (repo / "train.py").write_text("print(1)\n", encoding="utf-8")
+    evidence = prod.repository_file(repo, _repo_entry(), tmp_path / "cache")
+    limits = prod.Limits(cpus=1.0, period_us=100_000, memory_bytes=1 << 30, pids=256)
+    setup = prod.PaperSetup(
+        "p1", tmp_path / "run", repo, {"graph": evidence}, layout, limits, prod.V22_MAXIMA
+    )
+    entry = _repo_entry()
+    entry["splits"]["all"]["source"] = "reader:container:dgl:#a,b,c"
+    claim_file = {"test_plan": {"datasets": [entry]}, "targets": []}
+    return setup, claim_file, evidence
+
+
+def test_the_runs_mount_the_verified_copy_in_place_of_the_clone_s_file(tmp_path, monkeypatch):
+    setup, claim_file, evidence = _production_setup(tmp_path, {"graph": "data/graph.txt"})
+    ids = ["setup/build/requirements_compiled", "setup/data/graph", "k1/base/s0"]
+    monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ids)
+    ws = prod.prepare_workspaces(setup, claim_file)
+    run = ws["k1/base/s0"]
+    assert (run / "train.py").is_file()
+    assert not (run / "data" / "graph.txt").exists()  # left for the mount
+    assert prod.data_mounts(setup) == ((str(evidence.fetch.path.resolve()), "data/graph.txt"),)
+    # the build sees the clone as it is
+    assert (ws["setup/build/requirements_compiled"] / "data" / "graph.txt").is_file()
+    # the reader's folder holds Refute's script only, never the clone
+    reader = ws["setup/data/graph"]
+    files = sorted(p.relative_to(reader).as_posix() for p in reader.rglob("*") if p.is_file())
+    assert files == [prod.READER_SCRIPT]
+    assert (reader / prod.READER_SCRIPT).read_bytes() == prod.READER_SOURCE.read_bytes()
+
+
+def test_a_repository_file_must_be_mounted_at_its_own_path(tmp_path, monkeypatch):
+    setup, claim_file, _ = _production_setup(tmp_path, {"graph": "elsewhere/graph.txt"})
+    monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ["k1/base/s0"])
+    with pytest.raises(prod.ProductionError, match="must be that path"):
+        prod.prepare_workspaces(setup, claim_file)
+
+
+@pytest.mark.parametrize(
+    "rung, python",
+    [
+        ("own_environment", "/opt/conda/envs/env/bin/python"),
+        ("requirements_compiled", "/opt/venv/bin/python"),
+        ("requirements_compiled_next_python", "/opt/venv/bin/python"),
+    ],
+)
+def test_the_reader_command_starts_the_built_interpreter_isolated(rung, python):
+    env = {"OMP_NUM_THREADS": "2", "MKL_NUM_THREADS": "2"}
+    assert prod.reader_argv(rung, '{"x":1}', env) == [
+        "/usr/bin/env",
+        "-i",
+        "MKL_NUM_THREADS=2",
+        "OMP_NUM_THREADS=2",
+        python,
+        "-I",
+        "-S",
+        "reader.py",
+        '{"x":1}',
+    ]
+
+
+def test_planted_modules_in_the_reader_s_folder_never_run(tmp_path):
+    _, claim, base = run_with_reader(tmp_path, cifar_archive(), planted=True)
+    assert base["data_present"].status is TestStatus.PASS, base["data_present"].message
+    assert not (tmp_path / "reader" / "out" / "planted").exists()
+
+
+def test_the_reader_finds_the_venv_s_libraries_without_site_processing(tmp_path):
+    """Python 3.12 and 3.13 keep sys.prefix at the base installation under -S: the reader
+    finds the venv's site-packages from the interpreter's path (Codex review)."""
+    pytest.importorskip("pandas")
+    script = tmp_path / "probe.py"
+    script.write_text(
+        "import sys\n"
+        f"sys.argv = ['reader.py']\n"
+        f"exec(open({str(prod.READER_SOURCE)!r}, encoding='utf-8').read().split('READERS =')[0])\n"
+        "_library_paths()\n"
+        "import pandas\n"
+        "print(pandas.__file__)\n",
+        encoding="utf-8",
+    )
+    out = subprocess.run(
+        [sys.executable, "-I", "-S", str(script)], capture_output=True, text=True, check=True
+    )
+    venv = os.path.dirname(os.path.dirname(os.path.abspath(sys.executable)))
+    assert out.stdout.strip().lower().startswith(venv.lower()), (venv, out.stdout)
 
 
 # ---- host readers (section 4.1) ----------------------------------------------------------------

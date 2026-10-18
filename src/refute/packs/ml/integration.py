@@ -57,7 +57,7 @@ import json
 import os
 import re
 from collections.abc import Callable, Hashable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -85,6 +85,7 @@ from refute.packs.ml import extract as ex
 from refute.packs.ml import ladder as ld
 from refute.packs.ml import orchestrate as orc
 from refute.packs.ml import predicates as pr
+from refute.packs.ml import readers as rd
 from refute.packs.ml import recompute as rc
 from refute.packs.ml import reproduction as rp
 from refute.packs.ml import schema as sch
@@ -146,6 +147,12 @@ class Harness:
     tolerance_usec: int | Callable[[int], int] | None = None
     # called once between a completed setup and the first base run (orchestrate.PaperRunner)
     after_setup: Callable[[], None] | None = None
+    # the readers in the paper's container (wp3-data-sources-acceptance.md, section 4.2):
+    # the command of a reader from the rung that built the image (None: none built) and
+    # the request; and where each dataset lies in the reader's folder. With no command, no
+    # reader runs and those splits have no count (data_present INCONCLUSIVE).
+    reader_command: Callable[[str | None, str, Mapping[str, str]], list[str]] | None = None
+    data_paths: Mapping[str, str] = field(default_factory=dict)
 
 
 # ---- the claims ---------------------------------------------------------------------------
@@ -356,10 +363,25 @@ def _outputs(ctx: ClaimContext, role: str, seed: int | None) -> list[str]:
     return sorted(set(out))
 
 
+READER_PREFIX = "setup/data/"
+
+
+def container_datasets(plan: Mapping[str, Any]) -> list[str]:
+    """The datasets with a split counted in the paper's container, in declaration order."""
+    return [
+        d["name"]
+        for d in plan["datasets"]
+        if sch.dataset_origin(d) != sch.GENERATED
+        and any(rd.is_container_source(str(s["source"])) for s in d["splits"].values())
+    ]
+
+
 def plan_container_ids(claim_file: Mapping[str, Any]) -> list[str]:
     """Every container id of the paper, for the harness to prepare one fresh folder each
-    (the ladder's rungs are named ``setup/build/<rung>``)."""
+    (the ladder's rungs are named ``setup/build/<rung>``, the container readers
+    ``setup/data/<dataset>``)."""
     ids = [f"setup/build/{name}" for name in ld.RUNGS]
+    ids += [READER_PREFIX + name for name in container_datasets(claim_file["test_plan"])]
     for target in claim_file["targets"]:
         ctx = ClaimContext(target, claim_file["test_plan"])
         ids += [cid for cid, *_ in _runs(ctx, "base")]
@@ -1259,6 +1281,9 @@ class PaperIntegration:
             for step in ["base", *[n for n in ctx.applicable() if n in CONTAINER_ATTACKS]]:
                 for cid, role, seed, _ in _runs(ctx, step):
                     self._outputs[cid] = _outputs(ctx, role, seed)
+        # a reader's answer must not exist before it runs (section 4.2)
+        for name in container_datasets(self.plan):
+            self._outputs[READER_PREFIX + name] = [rd.ANSWER]
 
     # -- specs
 
@@ -1314,6 +1339,78 @@ class PaperIntegration:
 
         return orc.Step("build", containers, fallback=fallback)
 
+    def _built_rung(self) -> str | None:
+        """The rung whose build completed (its image is the one the runs use), or None."""
+        for rung in self.rungs:
+            result = self._rung_results.get(f"setup/build/{rung.name}")
+            if result is not None and result.outcome is orc.Outcome.COMPLETED:
+                return rung.name
+        return None
+
+    def _reader_steps(self) -> list[orc.Step]:
+        """One setup step per dataset with splits counted in the paper's container, after
+        the build (section 4.2). Its outcome never stops the setup: a reader that fails
+        gives no count, and data_present is then INCONCLUSIVE; a stop on Refute's side
+        (threshold, guard) keeps its own outcome."""
+        command = self.harness.reader_command
+        if command is None:
+            return []
+        steps = []
+        stage = self.plan["stages"]["build"]  # the build stage's limits (section 4.2)
+        env = {k: str(v) for k, v in self.plan["threads"].items()}  # nothing else
+        for name in container_datasets(self.plan):
+            path = self.harness.data_paths.get(name)
+            dataset = next(d for d in self.plan["datasets"] if d["name"] == name)
+            request = rd.container_request(path, dataset["splits"]) if path else None
+            if request is None:
+                continue
+            cid = READER_PREFIX + name
+            safe = re.sub(r"[^A-Za-z0-9_.-]", "_", cid)
+
+            def make(threshold: int, cid=cid, request=request, safe=safe) -> RunSpec:
+                folder = self.harness.workspaces[cid]
+                if (folder / rd.ANSWER).exists() or (folder / rd.ANSWER).is_symlink():
+                    raise ValueError(f"{cid}: the reader's answer exists before it runs")
+                return RunSpec(
+                    argv=command(self._built_rung(), request, dict(env)),
+                    workdir=folder,
+                    env=dict(env),
+                    log_path=self.harness.logs / f"{safe}.log",
+                    threshold_usec=threshold,
+                    active_time_limit_s=stage["active_time_limit_hours"] * HOUR_S,
+                    no_progress_s=stage["no_progress_hours"] * HOUR_S,
+                )
+
+            steps.append(
+                orc.Step(
+                    f"data/{name}", [orc.Container(cid, make)], fallback=lambda record: "completed"
+                )
+            )
+        return steps
+
+    def _evidence(self, name: str, records: Mapping[str, orc.ContainerRecord]):
+        """The evidence of a dataset: the host's counts, joined with those its container
+        reader wrote (section 4.2); a reader that did not run to exit 0, or whose answer is
+        not exactly what was asked, leaves the dataset with no counts."""
+        evidence = self.harness.datasets.get(name)
+        if evidence is None or name not in container_datasets(self.plan):
+            return evidence
+        dataset = next(d for d in self.plan["datasets"] if d["name"] == name)
+        asked = {
+            s
+            for s, spec in dataset["splits"].items()
+            if rd.is_container_source(str(spec["source"]))
+        }
+        cid = READER_PREFIX + name
+        record = records.get(cid)
+        counts = None
+        result = record.result if record is not None else None
+        if result is not None and result.exit_code == 0 and not result.stopped:
+            counts = rd.read_answer(self.harness.workspaces[cid] / rd.ANSWER, asked)
+        if counts is None or evidence.split_counts is None:
+            return replace(evidence, split_counts=None)
+        return replace(evidence, split_counts={**evidence.split_counts, **counts})
+
     def _step(self, ctx: ClaimContext, step: str, stage: str) -> orc.Step:
         containers = [
             self._spec(cid, _argv(ctx, role, seed, extra), ctx.stage(stage))
@@ -1344,7 +1441,7 @@ class PaperIntegration:
                     lambda records, ctx=ctx: self._base_obtained(ctx, records),
                 )
             )
-        return orc.PaperPlan([setup], claims)
+        return orc.PaperPlan([setup, *self._reader_steps()], claims)
 
     # -- evaluation
 
@@ -1373,7 +1470,7 @@ class PaperIntegration:
         # data_present is not computed when the resolution declared it not applicable
         # (generated data); the map is checked against the dataset's origin first
         if BASE_GATES[1] not in ctx.not_applicable():
-            gate, failure = data_present(ctx, self.harness.datasets.get(ctx.claim["dataset"]))
+            gate, failure = data_present(ctx, self._evidence(ctx.claim["dataset"], records))
             checks.append(gate)
             if failure is not None:
                 failures["data_present"] = failure
@@ -1406,7 +1503,9 @@ class PaperIntegration:
             if s.phase == orc.SETUP
             for c in s.containers
         }
-        by_id = {c.container_id: c for s in records for c in s.containers}
+        # the setup's records too: a dataset counted in the container is read from its
+        # reader's record (section 4.2)
+        by_id = {**setup, **{c.container_id: c for s in records for c in s.containers}}
         checks, failures, _, _ = self._base_checks(ctx, by_id, self._ladder_result(setup))
         base_names = set(BASE_GATES) | {BASE_REPRODUCTION, METRIC_RECOMPUTE}
         verdict = aggregate_claim(
@@ -1443,7 +1542,7 @@ class PaperIntegration:
         return ld.run_ladder(self.rungs, build)
 
     def _attack(self, ctx, name, records, base_values, base_series) -> tuple[Attack, str]:
-        evidence = self.harness.datasets.get(ctx.claim["dataset"])
+        evidence = self._evidence(ctx.claim["dataset"], records)
         if name == "leakage":
             if evidence is None or evidence.example_hashes is None:
                 return Attack(name), "the examples could not be hashed"

@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 import zipfile
 from collections.abc import Mapping
 from pathlib import Path
@@ -102,11 +103,101 @@ def count_split(path: Path, source: str) -> int | None:
 
 
 def split_counts(path: Path, splits: Mapping[str, Mapping[str, Any]]) -> dict[str, int] | None:
-    """Every declared split's count, or None when any of them cannot be read."""
+    """Every declared split's count, or None when any of them cannot be read. Splits counted
+    in the paper's container (``container_place``) are left out: they are read after the
+    build (``read_answer``)."""
     out = {}
     for name, split in splits.items():
+        if is_container_source(str(split["source"])):
+            continue
         n = count_split(path, str(split["source"]))
         if n is None:
             return None
         out[name] = n
     return out
+
+
+# ---- readers in the paper's container (wp3-data-sources-acceptance.md, section 4.2) ----------
+
+CONTAINER_PREFIX = PREFIX + "container:"
+CONTAINER_READERS = ("cifar_python", "excel", "dgl")
+# the reader's answer, in its own folder, and its largest size
+ANSWER = "out/counts.json"
+ANSWER_MAX_BYTES = 64 * 1024
+
+
+def is_container_source(source: str) -> bool:
+    return source.startswith(CONTAINER_PREFIX)
+
+
+def container_place(source: str) -> dict[str, str]:
+    """``reader:container:<reader>:<member>#<arg>`` as the request of one split: the reader
+    (closed list), the member of an archive (exact name; empty for a bare file; members
+    joined by ``+`` for ``cifar_python``) and the argument (a sheet for ``excel``, a canonical
+    edge type ``src,etype,dst`` for ``dgl``). ValueError for anything else."""
+    if not is_container_source(source):
+        raise ValueError(f"not a container reader: {source!r}")
+    reader, sep, selector = source[len(CONTAINER_PREFIX) :].partition(":")
+    if not sep or reader not in CONTAINER_READERS:
+        raise ValueError(f"unknown container reader in {source!r} (known: {CONTAINER_READERS})")
+    member, _, arg = selector.partition("#")
+    if "\\" in member or member.startswith("/") or ".." in member.split("/"):
+        raise ValueError(f"a member is a plain relative name: {member!r}")
+    if reader == "cifar_python" and (not member or arg or "" in member.split("+")):
+        raise ValueError("cifar_python names one or more members joined by '+', no argument")
+    if reader == "excel" and not arg:
+        raise ValueError("excel names its sheet after '#'")
+    if reader == "dgl" and (member or len(arg.split(",")) != 3 or "" in arg.split(",")):
+        raise ValueError("dgl takes no member and a canonical edge type src,etype,dst")
+    return {"reader": reader, "member": member, "arg": arg}
+
+
+def container_request(path: str, splits: Mapping[str, Mapping[str, Any]]) -> str | None:
+    """The request of a dataset's container reader (canonical JSON text), for the splits
+    counted in the container, or None when there is none. ``path`` is where the dataset is
+    mounted in the reader's folder."""
+    places = {
+        name: container_place(str(split["source"]))
+        for name, split in splits.items()
+        if is_container_source(str(split["source"]))
+    }
+    if not places:
+        return None
+    return json.dumps({"path": path, "splits": places}, sort_keys=True, separators=(",", ":"))
+
+
+def _refuse_duplicates(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    keys = [k for k, _ in pairs]
+    if len(set(keys)) != len(keys):
+        raise ValueError("a key appears twice")
+    return dict(pairs)
+
+
+def _refuse_constant(name: str) -> Any:
+    raise ValueError(f"{name} is not a count")
+
+
+def read_answer(path: Path, splits: set[str]) -> dict[str, int] | None:
+    """The counts a container reader wrote, or None: a regular file (not a link) of at most
+    ``ANSWER_MAX_BYTES``, holding one JSON object with exactly ``splits`` as keys, each a
+    non-negative integer (no boolean, no float, no duplicate key, nothing after it)."""
+    try:
+        if path.is_symlink() or not path.is_file():
+            return None
+        with path.open("rb") as handle:  # never more than the limit in memory
+            data = handle.read(ANSWER_MAX_BYTES + 1)
+        if len(data) > ANSWER_MAX_BYTES:
+            return None
+        answer = json.loads(
+            data.decode("utf-8"),
+            object_pairs_hook=_refuse_duplicates,
+            parse_float=lambda text: _refuse_constant(text),
+            parse_constant=_refuse_constant,
+        )
+    except (OSError, UnicodeDecodeError, ValueError, RecursionError):
+        return None
+    if not isinstance(answer, dict) or set(answer) != set(splits):
+        return None
+    if any(type(v) is not int or v < 0 for v in answer.values()):
+        return None
+    return dict(answer)

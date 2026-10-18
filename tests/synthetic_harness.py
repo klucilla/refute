@@ -10,10 +10,12 @@ from refute.packs.ml import synthetic
 
 FIXTURES = Path(__file__).parent / "fixtures"
 HOOK = Path(__file__).parent.parent / "src" / "refute" / "packs" / "ml" / "coverage_hook.py"
+READER = Path(__file__).parent.parent / "src" / "refute" / "packs" / "ml" / "container_reader.py"
 SOURCES = {
     "sandbox-probe": {"probe.py": FIXTURES / "sandbox" / "probe.py"},
     "ml-paper": {"train.py": FIXTURES / "ml_papers" / "trainer.py", "coverage_hook.py": HOOK},
     "ladder-build": {"build.py": FIXTURES / "ladder" / "build.py"},
+    "data-reader": {"reader.py": READER},
 }
 
 

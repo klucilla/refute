@@ -64,7 +64,11 @@ text below; it closed with agreement.
   new for such an entry, so the resolved hash of every existing claim is unchanged.
 - `name` is unique across the list, whatever the origin. A `generated` entry lists every
   name of `inputs` in `test_plan.weights`; those weights are fetched and checked as any
-  weights entry (the exemption of section 3 covers `data_present` only).
+  weights entry (the exemption of section 3 covers `data_present` only). **Until the
+  production fetches, checks and mounts declared weights** (not done by the current
+  version, for any weights entry), a claim file with weights is refused before anything
+  runs, never run with its weights unchecked (added after the end-of-round review of
+  2026-10-18).
 - **What `generated` means.** Data the repository's code creates from nothing but its
   configuration, its seeds and the declared `inputs`. Loading, transforming, filtering or
   splitting an existing file never makes it `generated`: that file is `downloaded` or
@@ -176,13 +180,17 @@ Both also work inside a zip (`zip:<member>!lines:rows`).
 
 ### 4.2 In the paper's container (closed catalogue)
 
-A split's `source` may be `reader:container:<reader>:<selector>`, with `<reader>` one of:
+A split's `source` may be `reader:container:<reader>:<member>#<argument>`, with `<reader>`
+one of the closed list below. The file read is always the dataset itself, where it is
+mounted in the reader's folder (its data path); `<member>` names a member of that file
+when it is an archive (exact name, empty for a bare file) and `<argument>` what the
+reader needs (corrected on 2026-10-18 after the end-of-round review, to match the code):
 
-| Reader | Selector | Count |
-|---|---|---|
-| `cifar_python` | the member of the tar.gz (`cifar-10-batches-py/test_batch`, ...), or several joined by `+` | the length of the `labels` (CIFAR-10) or `fine_labels` (CIFAR-100) list of each pickled batch, summed |
-| `excel` | `<member or path>!<sheet>`; the sheet by name or 0-based index | the data rows `pandas.read_excel` returns for that sheet (header row excluded) |
-| `dgl` | `<path>!<edge type>` | the number of edges of that canonical edge type in the first graph `dgl.load_graphs` returns |
+| Reader | `<member>` | `<argument>` | Count |
+|---|---|---|---|
+| `cifar_python` | the member of the tar.gz (`cifar-10-batches-py/test_batch`, ...), or several joined by `+` | none | the length of the `labels` (CIFAR-10) or `fine_labels` (CIFAR-100) list of each pickled batch, summed |
+| `excel` | a member of a zip, or empty for a bare Excel file | the sheet, by name or 0-based index | the data rows `pandas.read_excel` returns for that sheet (header row excluded) |
+| `dgl` | empty (a bare file) | a canonical edge type `src,etype,dst` | the number of edges of that edge type in the first graph `dgl.load_graphs` returns |
 
 - **Where it runs.** After the build, as one more container of the setup step
   (`setup/data/<dataset>`), in the image the ladder built, under the same sandbox as every
@@ -197,8 +205,13 @@ A split's `source` may be `reader:container:<reader>:<selector>`, with `<reader>
   (no shell), so `PYTHONPATH`, the user site, the script's folder and the `site`
   processing (`.pth` files and `sitecustomize` installed by the build) are not used; the
   script adds to `sys.path` only the library folders of that interpreter
-  (`sysconfig.get_paths()["purelib"]` and `["platlib"]`), without processing `.pth`
-  files; the environment is the claim's fixed thread variables and nothing else. A library
+  (`sysconfig.get_paths()["purelib"]` and `["platlib"]`; for a venv, whose `sys.prefix`
+  Python 3.12 and 3.13 leave at the base installation under `-S`, computed from the folder
+  above the interpreter's own path when it holds `pyvenv.cfg`), without processing `.pth`
+  files; the command starts with `/usr/bin/env -i` and the claim's thread variables, so no
+  other variable of the image reaches the reader. The loader configuration of the image
+  (for example a `/etc/ld.so.preload` written by the build) is not controlled: it is part
+  of the residual trust below. A library
   that cannot be imported that way gives no count (`INCONCLUSIVE`), never a fallback to
   the normal start-up. Sources: https://docs.python.org/3.12/using/cmdline.html#cmdoption-I
   and https://docs.python.org/3.12/library/site.html, read 2026-10-18.
