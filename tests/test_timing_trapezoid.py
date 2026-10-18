@@ -92,12 +92,21 @@ def test_no_template_without_a_dip():
 # --- the two numeric criteria (white, the declared case) ---------------------------------------
 
 
+# The first run of these criteria (seeds 0 to 14, linear crossings) FAILED the 2-sigma fraction:
+# 0.919 of 210 (map Amendment 4). By map Amendment 7 (declared after that result) the crossings are
+# parabolic; this is the retest, on the fixed new seeds 2000 to 2014, which must give exactly the
+# 210 transits of the declared case (a different count makes the retest incompatible: no
+# acceptance, no seed added), with the same criteria and without an expected-failure mark.
+
+RETEST_SEEDS = tuple(range(2000, 2015))
+RETEST_SIZE = 210
+
+
 @pytest.fixture(scope="module")
 def seeded_transits():
     plan = _plan(ON)
     rows = []  # (error, pull)
-    seed = 0
-    while len(rows) < 200:
+    for seed in RETEST_SEEDS:
         lc, _ = synthetic.make_lightcurve(PLANET, seed=seed)
         result = corrected_transit_times(
             lc, PLANET.period, PLANET.t0, PLANET.duration, _sigma(lc), plan
@@ -105,40 +114,133 @@ def seeded_transits():
         for t in result.times:
             truth = PLANET.t0 + t.epoch * PLANET.period
             rows.append((t.error, (t.time - truth) / t.error))
-        seed += 1
     return np.array(rows)
 
 
+def _compatible(rows):
+    assert rows.shape[0] == RETEST_SIZE, f"retest incompatible: {rows.shape[0]} transits"
+
+
+def test_the_retest_has_the_size_of_the_declared_case(seeded_transits):
+    _compatible(seeded_transits)
+
+
 def test_the_per_transit_error_is_within_30_percent_of_carter(seeded_transits):
+    _compatible(seeded_transits)
     ratio = float(np.median(seeded_transits[:, 0] / CARTER))
     assert 0.7 <= ratio <= 1.3, (ratio, CARTER * 1440)
 
 
-# The K margins of the pulls, split after the Codex review of the stage (Amendment 5): the parts
-# that pass stay plain tests, so a new failure of one of them is not hidden by the expected
-# failure of the 2-sigma part.
-
-
-def test_the_pulls_of_200_seeded_transits_one_sigma_and_median(seeded_transits):
+def test_the_pulls_of_the_seeded_transits_one_sigma_and_median(seeded_transits):
+    _compatible(seeded_transits)
     pulls = seeded_transits[:, 1]
-    assert pulls.size >= 200
     one = float(np.mean(np.abs(pulls) <= 1.0))
     median = float(np.median(pulls))
     assert 0.60 <= one <= 0.76, (one, median)
     assert abs(median) <= 0.2, (one, median)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="m4-implementation-map.md, Amendment 4: |pull| <= 2 in 0.919 of 210 at the declared "
-    "case; the criterion is not met (option (c)); the mark does not satisfy it",
-)
-def test_the_pulls_of_200_seeded_transits_two_sigma(seeded_transits):
+def test_the_pulls_of_the_seeded_transits_two_sigma(seeded_transits):
+    _compatible(seeded_transits)
     pulls = seeded_transits[:, 1]
-    assert pulls.size >= 200
     two = float(np.mean(np.abs(pulls) <= 2.0))
     assert 0.92 <= two <= 0.98, two
+
+
+# --- the parabolic crossing (map Amendment 7), direct cases ------------------------------------
+
+
+def _parabola_root(xs, ys, level, lo, hi):
+    a, b, c = np.polyfit(xs, ys, 2)
+    roots = np.roots([a, b, c - level])
+    roots = roots[np.isreal(roots)].real
+    inside = roots[(roots >= lo - 1e-9) & (roots <= hi + 1e-9)]
+    assert inside.size == 1
+    return float(inside[0])
+
+
+def test_the_crossing_is_exact_on_a_parabolic_delta_chi2():
+    from refute.packs.tess.timing import crossings
+
+    step = 1.0 / 1440.0
+    shifts = np.arange(-60, 61) * step
+    s0, a = 0.3 * step, 1.0 / (1.42 * step) ** 2
+    delta = a * (shifts - s0) ** 2 - 50.0
+    best = int(np.argmin(delta))
+    x_left, x_right, linear = crossings(delta, shifts, best)
+    level = delta[best] + 1.0
+    exact = np.sqrt((level + 50.0) / a)
+    assert x_left == pytest.approx(s0 - exact, abs=1e-9 * step)
+    assert x_right == pytest.approx(s0 + exact, abs=1e-9 * step)
+    assert linear == 0
+
+
+def test_the_crossing_uses_the_declared_triples():
+    """On a non-parabolic delta-chi2 each side's root is that of its own declared triple."""
+    from refute.packs.tess.timing import crossings
+
+    step = 1.0 / 1440.0
+    shifts = np.arange(-60, 61) * step
+    u = shifts / step
+    delta = np.abs(u - 0.2) ** 3 / 8.0 + 0.05 * u
+    best = int(np.argmin(delta))
+    level = delta[best] + 1.0
+    left = best
+    while delta[left - 1] <= level:
+        left -= 1
+    right = best
+    while delta[right + 1] <= level:
+        right += 1
+    x_left, x_right, linear = crossings(delta, shifts, best)
+    tl = [left - 1, left, left + 1]
+    tr = [right - 1, right, right + 1]
+    assert x_left / step == pytest.approx(
+        _parabola_root(u[tl], delta[tl], level, u[left - 1], u[left]), abs=1e-9
+    )
+    assert x_right / step == pytest.approx(
+        _parabola_root(u[tr], delta[tr], level, u[right], u[right + 1]), abs=1e-9
+    )
+    assert linear == 0
+
+
+def test_a_single_point_region_uses_the_triple_around_the_minimum_on_both_sides():
+    from refute.packs.tess.timing import crossings
+
+    step = 1.0 / 1440.0
+    shifts = np.arange(-10, 11) * step
+    delta = 40.0 * (shifts / step) ** 2  # only the minimum is within 1 of itself
+    best = int(np.argmin(delta))
+    x_left, x_right, linear = crossings(delta, shifts, best)
+    exact = step * np.sqrt(1.0 / 40.0)
+    assert x_left == pytest.approx(-exact, abs=1e-9 * step)
+    assert x_right == pytest.approx(exact, abs=1e-9 * step)
+    assert linear == 0
+
+
+def test_a_degenerate_triple_falls_back_to_the_linear_crossing_and_is_counted():
+    from refute.packs.tess.timing import crossings
+
+    step = 1.0 / 1440.0
+    shifts = np.arange(-10, 11) * step
+    delta = 0.4 * np.abs(shifts / step)  # straight lines: every triple off the minimum is collinear
+    best = int(np.argmin(delta))
+    x_left, x_right, linear = crossings(delta, shifts, best)
+    assert linear == 2
+    assert x_left == pytest.approx(-2.5 * step, abs=1e-12)
+    assert x_right == pytest.approx(2.5 * step, abs=1e-12)
+
+
+def test_a_region_reaching_the_edge_keeps_the_edge():
+    from refute.packs.tess.timing import crossings
+
+    step = 1.0 / 1440.0
+    shifts = np.arange(-10, 11) * step
+    delta = 0.005 * (shifts / step - 3.0) ** 2  # the region reaches both edges of the scan
+    best = int(np.argmin(delta))
+    x_left, x_right, linear = crossings(delta, shifts, best)
+    assert x_left == shifts[0]
+    assert x_right == shifts[-1]
+    assert linear == 0
 
 
 # --- mechanisms ---------------------------------------------------------------------------------

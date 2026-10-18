@@ -75,21 +75,23 @@ def test_p1_an_explicit_switch_off_equals_the_default_plan():
 
 
 # --- P2: in white noise the gate changes by at most 5% (median) ----------------------------
+#
+# The first P2 (seeds 0 to 9, the gate on the stacked per-event error of revision 3, 2.2) FAILED:
+# median 0.812 (map Amendment 3). By map Amendment 7 (declared after that result) the gate reads
+# the BLS depth error times beta_D; this is the retest, on new seeds 5000 to 5009, with the same
+# criterion and the same size, without an expected-failure mark.
+
+P2_SEEDS = tuple(range(5000, 5010))
 
 
 @pytest.fixture(scope="module")
 def white_planets():
-    tasks = [("planet", seed, "white", ON) for seed in range(10)]
+    tasks = [("planet", seed, "white", ON) for seed in P2_SEEDS]
     return run_processes(analyze_with, tasks, max(1, min(len(tasks), default_workers())))
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="m4-implementation-map.md, Amendment 3: the median is 0.812; the acceptance of piece 2 "
-    "is not met (option (c)); the mark does not satisfy it",
-)
 def test_p2_white_noise_gate_unchanged_within_5_percent(white_planets):
+    assert len(white_planets) == 10
     ratios = []
     for analysis in white_planets:
         snr = _test(analysis, "snr")
@@ -98,20 +100,124 @@ def test_p2_white_noise_gate_unchanged_within_5_percent(white_planets):
     assert 0.95 <= median <= 1.05, (median, ratios)
 
 
-def test_p2b_the_corrected_snr_is_the_bls_depth_over_the_stacked_error():
-    """Added after the Codex review of the stage (map Amendment 5): P2 is an expected failure, so a
-    positive check of the gate's identity is needed (a wrong factor would stay hidden)."""
-    from refute.packs.tess.events import group_mean
+def _beta_d(sectors):
+    w_in = sum(v["w_in"] for v in sectors.values())
+    w_out = sum(v["w_out"] for v in sectors.values())
+    num = sum(
+        v["beta"] ** 2 * (v["w_in"] / w_in**2 + v["w_out"] / w_out**2) for v in sectors.values()
+    )
+    return float(np.sqrt(num / (1.0 / w_in + 1.0 / w_out)))
 
+
+def test_p2b_the_gate_is_the_bls_depth_over_the_bls_error_times_beta_d():
+    """The identity of the gate of map Amendment 7 (a wrong factor would not show in P2 alone)."""
     analysis = analyze_with(("planet", 0, "white", ON))
     snr = _test(analysis, "snr")
-    primary = analysis.gauntlet.primary
-    stacked = group_mean(primary.depths, primary.errors)
     candidate = analysis.gauntlet.candidate
-    assert snr.metrics["stacked_error_ppm"] == pytest.approx(stacked.error * 1e6, rel=1e-12)
-    assert candidate.depth_err == pytest.approx(stacked.error, rel=1e-12)
-    assert snr.metrics["snr"] == pytest.approx(candidate.depth / stacked.error, rel=1e-12)
+    beta_d = snr.metrics["beta_d"]
+    assert beta_d == pytest.approx(_beta_d(snr.metrics["sectors"]), rel=1e-12)
+    bls_err = candidate.depth / snr.metrics["bls_depth_snr"]
+    assert candidate.depth_err == pytest.approx(bls_err * beta_d, rel=1e-12)
+    assert snr.metrics["snr"] == pytest.approx(snr.metrics["bls_depth_snr"] / beta_d, rel=1e-12)
+    primary = analysis.gauntlet.primary
     assert snr.metrics["events"] == len(primary)
+    assert snr.metrics["stacked_error_ppm"] is not None  # a diagnostic only
+
+
+# --- the combination beta_D (map Amendment 7), direct cases ---------------------------------
+
+
+def test_bls_beta_equals_the_hand_computation():
+    from refute.packs.tess.rednoise import bls_beta
+
+    betas = {1: 1.0, 2: 3.0}
+    w_in = {1: 4.0e8, 2: 1.0e8}
+    w_out = {1: 2.0e9, 2: 6.0e9}
+    sectors = {s: {"beta": betas[s], "w_in": w_in[s], "w_out": w_out[s]} for s in betas}
+    assert bls_beta(betas, w_in, w_out) == pytest.approx(_beta_d(sectors), rel=1e-12)
+    # equal betas give that beta; the out-of-transit term matters on its own
+    assert bls_beta({1: 2.0, 2: 2.0}, w_in, w_out) == pytest.approx(2.0, rel=1e-12)
+    only_out = bls_beta({1: 1.0, 2: 3.0}, {1: 4.0e8, 2: 0.0}, w_out)
+    assert only_out > 1.0
+    assert only_out < bls_beta(betas, w_in, w_out)
+
+
+def _gate_inputs(excluded=(), extra_sector=None, base_excluded=False):
+    """A flattened white light curve with a planet, its final candidate and a hand-made A1
+    estimate (sector 3, when asked, is a short stretch with no transit)."""
+    from refute.packs.tess.search import finalize_candidate
+
+    lc = synthetic.scenario_data("planet", 0).lc
+    if extra_sector is not None:
+        t = np.arange(1500.4, 1501.4, CADENCE)  # no transit of PLANET in this day (checked)
+        lc = LightCurveData(
+            np.concatenate([lc.time, t]),
+            np.concatenate([lc.flux, 1.0 + np.zeros(t.size)]),
+            np.concatenate([lc.flux_err, np.full(t.size, 600e-6)]),
+            np.concatenate([lc.sector, np.full(t.size, 3)]),
+            np.concatenate([lc.year, np.full(t.size, 2019)]),
+        )
+    plan = _plan(ON)
+    sigma = np.full(len(lc), 600e-6)
+    final = finalize_candidate(lc, synthetic.PLANET.period, 2.5 / 24, plan.search, 10.0, sigma)
+    sectors = tuple(int(s) for s in np.unique(lc.sector))
+
+    def est(n, excl):
+        return NoiseEstimate(
+            n,
+            {
+                s: SectorNoise(s, n, 100, 600e-6, float("nan"), 0.0, 1.5, s in excl, None)
+                for s in sectors
+            },
+        )
+
+    noise = EventNoise(box=est(75, excluded), base=est(108, sectors if base_excluded else ()))
+    return lc, sigma, final, noise, plan
+
+
+def test_a_sector_excluded_with_in_transit_weight_makes_the_gate_inconclusive():
+    from refute.packs.tess.pipeline import _bls_gate
+
+    lc, sigma, final, noise, plan = _gate_inputs(excluded=(2,))
+    _, test = _bls_gate(final, lc, sigma, noise, None, plan.gauntlet)
+    assert test.status.value == "INCONCLUSIVE"
+    assert "noise model undetermined" in test.message
+
+
+def test_a_sector_excluded_with_out_of_transit_weight_only_makes_the_gate_inconclusive():
+    from astropy.timeseries import BoxLeastSquares
+
+    from refute.packs.tess.pipeline import _bls_gate
+
+    lc, sigma, final, noise, plan = _gate_inputs(excluded=(3,), extra_sector=True)
+    in_transit = BoxLeastSquares(lc.time, lc.flux, dy=sigma).transit_mask(
+        lc.time, final.period, final.duration, final.t0
+    )
+    assert not np.any(in_transit & (lc.sector == 3))  # sector 3 has out-of-transit weight only
+    _, test = _bls_gate(final, lc, sigma, noise, None, plan.gauntlet)
+    assert test.status.value == "INCONCLUSIVE"
+
+
+def test_no_in_transit_cadence_makes_the_gate_inconclusive():
+    from dataclasses import replace
+
+    from refute.packs.tess.pipeline import _bls_gate
+
+    lc, sigma, final, noise, plan = _gate_inputs()
+    far = replace(final, period=5000.0, t0=float(lc.time.max()) + 100.0)
+    _, test = _bls_gate(far, lc, sigma, noise, None, plan.gauntlet)
+    assert test.status.value == "INCONCLUSIVE"
+
+
+def test_the_gate_does_not_need_the_per_event_stack():
+    from refute.packs.tess.pipeline import _bls_gate
+
+    lc, sigma, final, noise, plan = _gate_inputs(base_excluded=True)
+    corrected, test = _bls_gate(final, lc, sigma, noise, None, plan.gauntlet)
+    assert test.status.value in ("PASS", "FAIL")
+    assert test.metrics["stacked_error_ppm"] is None
+    assert test.metrics["beta_d"] == pytest.approx(1.5, rel=1e-12)
+    assert corrected.depth_err == pytest.approx(final.depth_err * 1.5, rel=1e-12)
 
 
 # --- P3, P4, P7: the per-event variance, shared cadences, excluded sectors ------------------
