@@ -1,0 +1,17 @@
+{
+  "baseline": 225,
+  "ok": true,
+  "regressions": [
+    {
+      "justification": "docs/plans/v0.3-plan.md, decision B-10 (\"Worker count = CPUs allowed by the affinity mask minus 2\", rejected alternative \"os.cpu_count() - 2\"), committed in b4d48bb (2026-10-14T14:00:34-03:00) before the rename in 314a420 (2026-10-14T22:12:30-03:00) to tests/test_runner.py::test_default_workers_is_usable_cpus_minus_two",
+      "node": "tests/test_runner.py::test_default_workers_is_cpu_count_minus_two",
+      "outcome": "missing"
+    }
+  ],
+  "totals": {
+    "missing": 1,
+    "passed": 224
+  },
+  "unjustified": [],
+  "unused_justifications": []
+}

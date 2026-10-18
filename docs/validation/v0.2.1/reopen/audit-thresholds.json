@@ -1,0 +1,221 @@
+{
+  "added_lines_with_numbers": [
+    {
+      "file": "src/refute/packs/tess/holdout.py",
+      "line": 340,
+      "numbers": [
+        "0.0"
+      ],
+      "text": "    total = sum(max(0.0, end - start) for start, end in spans)"
+    },
+    {
+      "file": "src/refute/packs/tess/holdout.py",
+      "line": 342,
+      "numbers": [
+        "0.0"
+      ],
+      "text": "        return 0.0"
+    },
+    {
+      "file": "src/refute/packs/tess/holdout.py",
+      "line": 343,
+      "numbers": [
+        "0.0"
+      ],
+      "text": "    covered = 0.0"
+    },
+    {
+      "file": "src/refute/packs/tess/holdout.py",
+      "line": 524,
+      "numbers": [
+        "24"
+      ],
+      "text": "                f\"train-only timing uncertainty in the hidden year ({max_sigma_t * 24:.2f} h) \""
+    },
+    {
+      "file": "src/refute/packs/tess/holdout.py",
+      "line": 526,
+      "numbers": [
+        "24"
+      ],
+      "text": "                f\"({train.duration * 24:.2f} h)\","
+    },
+    {
+      "file": "src/refute/packs/tess/holdout.py",
+      "line": 568,
+      "numbers": [
+        "86400.0"
+      ],
+      "text": "    cadence = plan.data.exptime_seconds / 86400.0"
+    },
+    {
+      "file": "src/refute/packs/tess/params.py",
+      "line": 200,
+      "numbers": [
+        "0.2"
+      ],
+      "text": "    max_train_duration_period_ratio: float = Field(0.2, gt=0, le=1)"
+    },
+    {
+      "file": "src/refute/packs/tess/params.py",
+      "line": 201,
+      "numbers": [
+        "0.5"
+      ],
+      "text": "    max_hidden_window_fraction: float = Field(0.5, gt=0, le=1)"
+    },
+    {
+      "file": "src/refute/packs/tess/params.py",
+      "line": 271,
+      "numbers": [
+        "1.0",
+        "2.0",
+        "0.5"
+      ],
+      "text": "DEFAULT_SIGNAL_PERIOD_FACTORS = (1.0, 2.0, 0.5)"
+    },
+    {
+      "file": "src/refute/packs/tess/pipeline.py",
+      "line": 232,
+      "numbers": [
+        "1.0",
+        "2.0",
+        "0.5",
+        "3.0",
+        "3",
+        "1.0",
+        "3.0"
+      ],
+      "text": "ALIAS_FACTORS = ((\"P\", 1.0), (\"2P\", 2.0), (\"P/2\", 0.5), (\"3P\", 3.0), (\"P/3\", 1.0 / 3.0))"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 565,
+      "numbers": [
+        "2.9",
+        "0.7"
+      ],
+      "text": "# (2.9 / 0.7 is not commensurate), so the search finds the variability, not the eclipse."
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 567,
+      "numbers": [
+        "2.9"
+      ],
+      "text": "FP_VARIABILITY_PERIOD = 2.9"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 569,
+      "numbers": [
+        "2018",
+        "2019",
+        "2020."
+      ],
+      "text": "# transit plus a SINUSOID_PERIOD sinusoid present in 2018 and 2019 and absent in 2020."
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 570,
+      "numbers": [
+        "2018",
+        "2019"
+      ],
+      "text": "VARIABILITY_TRAIN_YEARS = (2018, 2019)"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 632,
+      "numbers": [
+        "0.004",
+        "1325.3"
+      ],
+      "text": "        wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 633,
+      "numbers": [
+        "0.0"
+      ],
+      "text": "        wave = np.where(np.isin(lc.year, VARIABILITY_TRAIN_YEARS), wave, 0.0)"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 636,
+      "numbers": [
+        "1326.1",
+        "0.001",
+        "3",
+        "24"
+      ],
+      "text": "        spec = SignalSpec(period=FP_VARIABILITY_PERIOD, t0=1326.1, depth=0.001, duration=3 / 24)"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 638,
+      "numbers": [
+        "0.004",
+        "1325.3"
+      ],
+      "text": "        wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 647,
+      "numbers": [
+        "3"
+      ],
+      "text": "    return analyze_scenario_seed((name, 3))"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 676,
+      "numbers": [
+        "120.0"
+      ],
+      "text": "        \"radius_arcsec\": 120.0,"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 677,
+      "numbers": [
+        "64"
+      ],
+      "text": "        \"snapshots\": [{\"file\": \"synthetic.csv\", \"sha256\": \"0\" * 64, \"rows\": max(1, len(rows))}],"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 700,
+      "numbers": [
+        "1.0",
+        "0.0",
+        "600e-6"
+      ],
+      "text": "        new = 1.0 + rng.normal(0.0, 600e-6, time.size)"
+    },
+    {
+      "file": "src/refute/packs/tess/synthetic.py",
+      "line": 702,
+      "numbers": [
+        "1.3",
+        "1325.2",
+        "0.02",
+        "2.0",
+        "24",
+        "0.15"
+      ],
+      "text": "            new -= trapezoid(time, 1.3, 1325.2, 0.02, 2.0 / 24, 0.15)"
+    }
+  ],
+  "base": {
+    "commit": "f4798230f1bca607bcc0e98fe47711a26ec4ee59",
+    "ref": "v0.2.0"
+  },
+  "paths": [
+    "src/refute/packs/tess",
+    "src/refute/core/verdict.py"
+  ],
+  "rev": "80abc0058442810602be2e5d66e5a27225aa3049"
+}
