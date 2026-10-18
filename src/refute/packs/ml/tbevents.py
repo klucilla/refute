@@ -240,6 +240,8 @@ def scalars(data: bytes, tag: str, where: str) -> list[Scalar]:
                 out.append(Scalar(step, number, width))
             else:
                 raise ExtractionError(f"{at}: the value of tag {tag!r} is not a scalar")
+            if not math.isfinite(out[-1].value):  # at every step, selected or not
+                raise ExtractionError(f"{at}: a value of tag {tag!r} is not finite")
     return out
 
 

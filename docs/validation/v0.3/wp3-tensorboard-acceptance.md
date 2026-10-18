@@ -121,7 +121,8 @@ extraction, not a change made to obtain a conclusion on a paper.
   without it the check is `INCONCLUSIVE`.
 - **The token.** The value is a binary float; it is written as its exact decimal
   expansion, with no exponent (`Decimal(float)`, formatted with `f`; a negative zero is
-  `-0`), and checked as every other token. NaN and infinities are an `ExtractionError`.
+  `-0`), and checked as every other token. A NaN or an infinity among the values of the
+  tag, at any step, selected or not, is an `ExtractionError`.
   `Extracted` records that the token comes from a binary float, and of which width
   (`float32` or `float64`).
 - **No printed interval for a binary value.** `metric_recompute` and the coverage routes
@@ -145,7 +146,19 @@ extraction, not a change made to obtain a conclusion on a paper.
   numbers (`one_number`, `widen`). A square-root tolerance (`sqrt(a² + b²)`, in
   `difference_tolerance` and `ablation_tolerance`) keeps its exact square, and a predicate
   decides `l <= sqrt(S)` as `l <= 0 or l² <= S`; the record shows the root rounded down to
-  50 digits, which decides nothing. This applies to every token, not only to binary ones.
+  50 digits (checked against the exact square), which decides nothing. This applies to
+  every token, not only to binary ones.
+- **Where the exact values travel** (Codex review of the round, 2026-10-18). A predicate's
+  `Outcome` carries the exact square of a square-root tolerance, and the guard of
+  `reproduction.decide_on_mean` (a passing set narrower than the bracket of a mean that
+  is not a finite decimal) compares `4 S` with the bracket's square, never the rounded
+  record. The trivial baselines are kept as exact fractions (`1/3` for a random guess
+  among 3 classes) and compared as fractions; their 50-digit values are records only.
+- **A budget for exact arithmetic.** An extracted token with more than 4,096 significant
+  digits, or a decimal exponent beyond ±4,096 (`1e999999999` is a short token), is an
+  `ExtractionError` "outside the exact-arithmetic budget of Refute (a limitation of
+  Refute)": exact arithmetic on it would expand millions of digits. Every float32 and
+  float64 expansion fits (at most 767 digits, exponent -1074).
 - **The source.** `Extracted.source` is `file:<the resolved path>`, as for every file, so
   W3.12a compares the resolved paths unchanged; the claim holds the tag and the step.
 - **What the rule shows, and what it does not.** It shows that the value was written under
@@ -154,6 +167,18 @@ extraction, not a change made to obtain a conclusion on a paper.
   of W3.12. For 2407.11735 the event file holds no count of the test examples, so unless
   another coverage route of the claim proves it, the AUROC claim is `INCONCLUSIVE` by
   coverage. The reader is not changed to avoid that.
+- **2407.11735, checked with Codex on 2026-10-18** (the maintainer's decision 4). None of
+  the coverage routes the engine offers shows the test examples with the frozen command:
+  no count of the evaluation is printed (`printed_count`; the `%d records found` of
+  `scripts/create_split.py` counts the training file); `sufficient_statistics` does not
+  apply to AUROC and the accuracy's `correct/total` is not written; no test predictions
+  are saved (`saved_predictions`; `savestats` is off by default and covers the unlabeled
+  training set); the hook observes `sklearn.metrics.roc_auc_score` and
+  `accuracy_score`, while the paper computes AUROC with its own TensorFlow function
+  (`utils.py`, `auroc_rank_calculation`) and accuracy with
+  `tf.keras.metrics.SparseCategoricalAccuracy`. A drawn claim of 2407.11735, AUROC or
+  accuracy, is therefore `INCONCLUSIVE` by coverage, a limitation of Refute recorded as
+  such; it stays in the draw.
 
 ## 3. Synthetic cases
 
@@ -243,6 +268,20 @@ approved it on 2026-10-18, only to make these fixtures, with these conditions:
   committed, and the test reads them offline;
 - if the real writer omits `tensor_shape` or leaves the supported profile otherwise, this
   criterion is revised before the code is accepted, with the reason recorded.
+
+**Result (2026-10-18,
+[`wp3-results/tensorboard-vm-fixtures-20261018.json`](wp3-results/tensorboard-vm-fixtures-20261018.json)).**
+`tensorflow-cpu==2.14.0` (wheel cp311 SHA-256
+`8886642da74839b6cadcbc2f748ebdfc20e83b71f2069686485f9a186bff1b07`, uploaded
+2023-09-26) on the pinned Python 3.11 image, with `numpy<2` added: the first build
+resolved numpy 2.4.6 and `import tensorflow` failed (its binaries need numpy 1). The lock
+used `--exclude-newer 2026-10-11`; every wheel was uploaded on or before that date. Both
+writers stay within the supported profile, so the criterion is not revised:
+`tf.summary.scalar` writes a `DT_FLOAT` tensor with a present, empty `tensor_shape` and
+4 bytes of `tensor_content`; the TensorFlow 1 writer writes `simple_value`; both omit the
+step 0; the image is a `DT_STRING` tensor under its own tag, ignored. The two files
+(`tests/fixtures/tensorboard/`) are read offline by `tests/test_ml_tbevents.py`, with the
+values equal to the float32 of the values written.
 
 ## 5. Regression
 

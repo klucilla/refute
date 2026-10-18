@@ -7,8 +7,11 @@ and the encoder would show."""
 
 from __future__ import annotations
 
+import hashlib
+import json
 import struct
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
@@ -472,3 +475,60 @@ def test_an_extraction_without_tensorboard_is_written_as_before():
     assert "tensorboard" not in dumped
     board = Extraction.model_validate(_spec()).model_dump(mode="json", by_alias=True)
     assert board["tensorboard"] == {"tag": TAG, "step": "last"}
+
+
+@pytest.mark.parametrize(("bad", "selected"), [(1, 2), (2, 1)])
+def test_a_value_that_is_not_finite_at_a_step_not_selected_refuses_the_file(bad, selected):
+    """Codex review of 3843fde: every value of the tag is checked, selected or not."""
+    values = {1: 0.5, 2: 0.5}
+    values[bad] = float("nan") if bad == 1 else float("inf")
+    data = events_file(*(event(step, simple(v)) for step, v in sorted(values.items())))
+    with pytest.raises(ex.ExtractionError, match="not finite"):
+        read(data, selected)
+
+
+@pytest.mark.parametrize("token", ["1e999999999", "1e-5000", "1" * 4097])
+def test_a_token_outside_the_exact_arithmetic_budget_gives_no_value(token):
+    spec = {"from": "log", "regex": {"pattern": r"v=(\S+)", "group": 1}, "unit": "native"}
+    with pytest.raises(ex.ExtractionError, match="budget"):
+        ex.extract(spec, None, f"v={token}", None)
+
+
+def test_every_float64_expansion_fits_the_budget():
+    for value in (5e-324, 1.7976931348623157e308, 0.1):
+        assert ex.within_budget(Decimal(tb.token(value, "f")))
+
+
+# ---- event files written by real TensorFlow 2.14 (section 4, the VM proof) --------------------
+
+FIXTURES = Path(__file__).with_name("fixtures") / "tensorboard"
+RECORD = (
+    Path(__file__).parents[1]
+    / "docs/validation/v0.3/wp3-results/tensorboard-vm-fixtures-20261018.json"
+)
+
+
+@pytest.mark.parametrize("writer", ["tf2", "tf1"])
+def test_files_written_by_tensorflow_are_read_offline(writer, tmp_path):
+    record = json.loads(RECORD.read_text(encoding="utf-8"))
+    (path,) = sorted((FIXTURES / writer).iterdir())
+    data = path.read_bytes()
+    name = f"{writer}/{path.name}"
+    assert hashlib.sha256(data).hexdigest() == record["fixtures_sha256"][name]
+    assert record["write"][writer]["generated"]["tf"] == "2.14.0"
+    values = {int(k): v for k, v in record["write"]["values"].items()}
+    found = tb.scalars(data, record["write"]["tag"], name)
+    assert [s.step for s in found] == sorted(values)  # step 0 written by omitting the field
+    assert all(s.value == as_float32(values[s.step]) and s.width == "float32" for s in found)
+    # through the extraction, with the file named by the run
+    run = tmp_path / "out" / writer
+    run.mkdir(parents=True)
+    (run / path.name).write_bytes(data)
+    spec = {
+        "from": "file",
+        "file": f"out/{writer}/*",
+        "tensorboard": {"tag": record["write"]["tag"], "step": "last"},
+        "unit": "fraction",
+    }
+    got = ex.extract(spec, tmp_path, "", None)
+    assert Decimal(got.token) == Decimal(as_float32(values[2])) and got.binary == "float32"
