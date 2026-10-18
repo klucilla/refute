@@ -630,6 +630,176 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 22 (2026-10-18): piece 7, the prewhitening (revision 3, 7; revision 4, 4), before its tests
+
+Declared before the tests and the code of piece 7. It adds no criterion and no plan field (the
+settings `fap_max`, `max_components`, `k_clip`, `h_min` exist); it fixes how revision 3, section 7
+(with its table 1.4 of which curve each operation uses), and revision 4, section 4, are computed,
+and the unit cases of revision 3, section 10, row 7. The first version of this amendment was
+rewritten on the objections of the Codex design review, before any test or code (the readings
+marked "a choice" below are implementation choices declared here, not consequences of the text);
+the review ended in agreement at its fifth round. The agreement covers the design and the declared
+cases; it does not show that the tests pass, that the implementation conforms, or that the method
+is calibrated.
+
+**The path.** Only with the corrections active (version 2 and `enabled`); otherwise every input is
+the M3 one, byte for byte. With the corrections active and no frequency accepted, every curve is the
+one it would be without the prewhitening (`S` = `S′` = 0), bit for bit. The marker of Amendment 17
+records `prewhitening` when the global operation ran (also when it accepted nothing); the verdict
+record carries, per operation (the global one and each holdout train), the accepted components,
+the stop reason and any failure of the refit `S′`.
+
+**Two functions, no class, no truth, no candidate in the first** (a new module `prewhiten.py`):
+
+- `prewhiten(curve, plan) -> Prewhitening`: finds the components on a detrended curve.
+- `refit(curve, components, mask, plan) -> Refit`: refits given components with a mask (`S′`).
+
+**`prewhiten(curve, plan)`.**
+
+1. *Residual, weights and the few-bins rule*: `r = flux − 1`; `σ_w` per sector by A1
+   (`rednoise.estimate` at `n` = 1, every cadence kept: `σ_w` does not depend on the bin scale),
+   computed **once**, on the curve given, before any subtraction (revision 3, 7.1). A sector that A1
+   excludes (fewer than `b_min` bins, i.e. cadences, at `n` = 1) or whose `σ_w` is not finite and
+   positive leaves the operation: its cadences are not in the periodograms, the fits or the bins,
+   and `S` is 0 on them. No sector left: nothing accepted, reason `noise_undetermined`.
+   `dy` = the cadence's sector `σ_w`.
+2. *Grid*: `f_lo = 1 / (half the longest segment)`, a segment being a run of the used cadences
+   without a gap longer than `detrend.segment_gap_days` (the detrending's segments,
+   `detrend.segment_slices`; a choice: revision 3 says "segment" without naming which; not the
+   segments of A1, which split at `gap_split` cadences); `f_hi = 1 / (2 h)`; the grid is
+   `L0.autofrequency(samples_per_peak=10, minimum_frequency=f_lo, maximum_frequency=f_hi)` of the
+   first iteration's `L0`, kept for every iteration of this call (each call, the global one and each
+   train, has its own grid). `f_lo ≥ f_hi`: nothing accepted, reason `no_frequency_grid`.
+3. *One iteration* (revision 4, 4):
+   1. `L0 = LombScargle(t, r, dy, fit_mean=True, center_data=True, nterms=1,
+      normalization="standard")` on every used cadence of the current residual; `f*` = the grid
+      frequency of the highest finite power (the first on ties); no finite power on the grid:
+      nothing more accepted, reason `non_finite_statistic`.
+   2. *The robust asymmetric fit* (revision 3, 7.3): per sector a constant, plus `cos` and `sin` at
+      `f*` and `2f*` with per-sector amplitudes (frequencies common), by weighted least squares
+      (`1/σ_w²`; the column scaling, the SVD and the condition limit `1e10` of Amendment 21). Fit 1
+      uses every cadence; after fit `j` the clip set `C_j` is the cadences more than `k_clip σ_w`
+      **below** fit `j`'s model (computed afresh each time, so a cadence can regain its weight);
+      fit `j+1` gives zero weight to `C_j`. Stop when `C_j = C_{j−1}` or after fit 10. The model and
+      the clip set returned are those of the **last fit**, `C_last` computed against that model (so
+      the clip set always matches the returned model). A singular design: nothing more accepted,
+      reason `singular_design`.
+   3. `L1`: the constructor of 3.1 on the used cadences not in `C_last` (their own `dy`);
+      `p1 = L1.power(f*)`.
+   4. `FAP = L1.false_alarm_probability(p1, method="baluev", minimum_frequency=f_lo,
+      maximum_frequency=f_hi, samples_per_peak=10)`.
+   5. *Few-harmonic test* on the used cadences not in `C_last`: phase `(t f*) mod 1` (origin `t` =
+      0), 50 equal bins; a bin with fewer than 3 such cadences is dropped; fewer than 40 bins left:
+      not accepted, reason `too_few_phase_bins`. Otherwise `h = 1 − Σ_b (m_b − μ_b)² / Σ_b (m_b − m̄)²`,
+      `m_b` the mean residual of the bin's cadences, `μ_b` the mean of the returned model's
+      predictions at the same cadences (no new fit), `m̄` the mean of the `m_b` (bins unweighted).
+      `Σ_b (m_b − m̄)² = 0`, or `h`, `p1` or the FAP not finite: not accepted, reason
+      `non_finite_statistic`.
+   6. Accept `f*` if `FAP < fap_max` and `h ≥ h_min`. Then subtract the returned model's
+      sinusoidal terms (at `f*` and `2f*`; a choice: the per-sector constants are fitted, so that
+      the amplitudes are not biased, and not subtracted) from **every** used cadence, the clipped
+      ones included, and iterate from 3.1. Otherwise stop with the reason (`fap_above_max`,
+      `few_harmonics_fail`, `too_few_phase_bins`, `non_finite_statistic`). At most `max_components`
+      accepted (reason `max_components`; with `max_components` = 0 nothing is computed, reason
+      `max_components`).
+   *Precedence* when several conditions fail in one iteration, the first decides the reason: no
+   finite power in `L0`; `singular_design`; `too_few_phase_bins`; `non_finite_statistic` (`h`,
+   `p1`, the FAP, or a zero variance of the bin means); `fap_above_max`; `few_harmonics_fail`. A
+   rejection ends the operation (no other peak of the same periodogram is tried). The bin rule and
+   `h` are one helper, `few_harmonic_test(t, y, fitted, f)`, which the unit cases call directly.
+4. *Output*: the components in the order accepted (frequency, FAP, `h`, `p1`, the per-sector
+   coefficients, the clip-set size, the amplitude `A = median over sectors of sqrt(a₁² + b₁²)` of
+   the fundamental), the stop reason, the sectors used and left out, and `S` on every cadence.
+
+**`refit(curve, components, mask, plan)`** (`S′`, revision 3, 1.4: "the same frequencies refitted
+with the candidate's transits masked"; a choice: one joint fit, no clipping). `σ_w` by step 1 of
+`prewhiten` on the curve given (the same definition, estimated once on that curve, on all its
+cadences, the masked ones included); the sectors it leaves out get `S′` = 0. One joint weighted
+least-squares fit, on the used cadences outside `mask`, of a per-sector constant plus, for every
+given frequency, `cos`, `sin` at `f` and `2f` with per-sector amplitudes; no clipping (the transits
+are masked); `S′` = the sinusoidal terms on every used cadence. No frequency given: `S′` = 0. A
+singular design: `S′` = 0, reason `singular_design` recorded (a declared concession: the search
+then saw a prewhitened curve and the reanalysis does not; the record shows it).
+
+**The flow** (revision 3, table 1.4; the contracts the Codex review asked for).
+
+| Operation | Curve on the M4 path |
+|---|---|
+| global search | `L1 − S`, `S` by `prewhiten` on `L1` = `detrend(data.lc, plan.detrend)` (no mask) |
+| `finalize_candidate`, `snr` (the gate of Amendment 7), `odd_even`, `secondary_eclipse`, `plausibility`, per-event depths, transit times | `L2 = L1m − S′`, `L1m` the curve detrended with the search candidate's transits masked (as today), `S′ = refit(L1m, global components, mask)` with `mask` the same time region (the search candidate's transits to `transit_mask_half_width_durations · T14`) evaluated on `L1m`'s own cadences (the detrending can drop cadences, so the raw curve's boolean vector is never reused) |
+| `period_alias` | `data.lc` with its own detrending (Amendment 21; no prewhitening) |
+| pixel tests, `nearby_contamination`, `systematics`, `eb_catalog` | unchanged |
+| holdout train search | `train_L1 − S_train`, `S_train` by `prewhiten` on the train curve detrended without a mask (train data only) |
+| holdout train refit, gate and timing | `train_L1m − S′_train`, the train components refitted with the train search candidate's mask |
+| holdout train replicas (decision 1) | `train_L1m` **without** `S′_train`, measured with the same window baseline as the hidden windows (the train fundamentals), so the train and the hidden estimators are the same (a choice) |
+| holdout hidden replicas, transit windows and control windows | the baseline of 4.1 (`window_depth`) with the train fundamentals, in decreasing amplitude `A` of `prewhiten`'s output on the train curve |
+
+- *The components travel*: `analyze_data` computes the global `prewhiten` once and hands its
+  output to `attack_candidate`; `attack_candidate` given none (the adapters `TessSearch` and
+  `TessGauntlet`, which pass only a candidate) computes it itself from `data.lc` by the same call
+  (deterministic, so the same components); `TessSearch` searches `L1 − S` too. The reanalysis never
+  selects new frequencies on `L1m`.
+- *The search candidate and the final candidate stay distinct*: the search candidate gives the mask
+  and the seed of `finalize_candidate` on `L2`; the final candidate feeds the gate and the
+  measurements; its refined period, epoch or duration start no new mask, prewhitening or refit.
+- *The holdout*: `RoundPlan` carries the train components (and their fundamentals in order) from
+  `plan_round`, before any hidden read; `_round_corrected` passes the fundamentals to the hidden
+  replicas, the transit windows and the control windows, and to the train replicas. Each window's
+  record gives the frequencies requested and the number of terms its baseline used (the degeneracy
+  fallback can drop sinusoids).
+
+**Unit cases** (revision 3, 10, row 7, and revision 4, 4; white noise 600 ppm and, where marked,
+correlated noise: in the direct cases 600 ppm white plus AR(1) 400 ppm with `τ` = 1 h; in the
+integrated cases I1 and I2, which use the suite's `sinusoid` scenario, that scenario's own
+correlated profile, AR(1) 600 ppm with `τ` = 1 h (an exception, declared); new seeds 6100 to 6199,
+one per case and noise model in the order of the list). Two kinds: *direct* cases give `prewhiten` a curve
+built as already detrended (flux = 1 + signal + noise, no detrending), so the injected amplitudes
+reach it; *integrated* cases run the pipeline on raw data, and state as a precondition the amplitude
+that reaches `prewhiten` (the default detrending, a 1 d window, absorbs slow variability: a
+sinusoid at 2.9 d would mostly not reach it, so the integrated variability is at `SINUSOID_PERIOD`
+0.7 d, as in the suite's `sinusoid` scenario).
+
+| Case | Kind | Construction | Required |
+|---|---|---|---|
+| D1 | direct, both noises | `A` = 1 + a 4000 ppm sinusoid at 0.7 d + a 600 ppm box (P 3.7 d, 2.5 h) + noise; `B` = the same without the sinusoid, the same noise realization; the two-year layout | the first component of `A` within one grid step of 1/0.7 d, accepted; paired preservation: with the box depth `d(x)` = the mean of `x − 1` over the cadences outside the box minus its mean over the box (a dip positive), `|d(A − S) − d(B)| ≤ 60 ppm` (10% of the injected depth) |
+| D2 | direct, both | the same sinusoid alone | accepted; the residual amplitude at the injected frequency, `sqrt(a² + b²)` of an unweighted least-squares sinusoid (with a constant) fitted to `A − S`, at most 5% of the injected 4000 ppm |
+| D3 | direct, both | a pure 2000 ppm box, no variability | nothing accepted (`few_harmonics_fail` or `fap_above_max`); `S` = 0; **the rejection ends the operation**: the statistics of the rejected `f*` recorded once, and exactly two periodogram objects built (`L0` and `L1` of that one iteration) |
+| D4 | direct, white | two sinusoids (4000 ppm at 0.7 d, 2500 ppm at 0.43 d) | two components accepted, in that order; with `max_components` = 1, one; with 0, none and no periodogram built, reason `max_components` |
+| D5 | direct, white | a 4000 ppm sinusoid at 0.7 d, per-sector constants +300 ppm and −200 ppm, and a box of depth 8 `σ_w`, `σ_w` the A1 estimate (step 1) of the same curve without the box (the sinusoid and the constants included, so the scale is the one the operation uses); precondition: the depth at least `2 k_clip` times the largest `σ_w` the operation reports on the final curve | every box cadence in `C_last`; the fundamental's amplitude within 5% of 4000 ppm; the subtraction applied on the clipped cadences too (`S` non-zero there); the per-sector constants not subtracted (the per-sector mean of `x − 1 − S` outside the box within 20 ppm of +300 and −200) |
+| Q1 | direct, white | D1's curve `A` | recomputed independently in the test with astropy and numpy: `f*` = the argmax of `L0` on the grid; `C_last` = the cadences more than `k_clip σ_w` below the returned model; `p1` = `L1.power(f*)` on the kept cadences; the Baluev FAP with the declared limits; `h` from the 50 bins with the 3-cadence rule |
+| Q2 | direct, white | times by formula: the sinusoid of D2 (period `P_v` = 0.7 d) sampled at `t = t₀ + k P_v + (b + 0.5 + j/8) P_v/50` for `k` = 0..39 (40 cycles), `j` = 0..3 (four cadences per bin and cycle), and `b` = 0..29 (30 of the 50 bins); one segment (no gap above 0.5 d) of `Δt = max(t) − min(t)`, slightly under 28 d, so `f_lo = 2/Δt` and 1/0.7 d lies within the searched limits | not accepted, reason `too_few_phase_bins`; preconditions: `f*` within one grid step of 1/0.7 d, and after the clipping 30 bins with at least 3 kept cadences at that `f*` |
+| B1, B2 | direct | the bin rule of the few-harmonic helper `few_harmonic_test(t, y, fitted, f)`, given cadences by formula: 40 bins with exactly 3 cadences (B1), then one of them with 2 (B2) | B1: 40 bins counted, `h` computed; B2: 39 bins, reason `too_few_phase_bins` |
+| B3 | direct | the same helper, 50 bins each with four cadences `+a, −a, +a, −a` (every bin eligible, non-constant cadences, `σ_w` irrelevant), the model 0 | the bin means' variance is 0: reason `non_finite_statistic` |
+| B4 | direct | `prewhiten` on a curve of exactly constant residual | reason `noise_undetermined` (A1 leaves the sector out: `σ_w` = 0) |
+| R1 | direct, white | `refit` given two components at 1/0.70 d and 1/0.75 d (close frequencies, so that over the masked curve the joint solution differs from fits made one frequency at a time), a curve with both sinusoids and a box, the box masked | `S′` equal (to 1e-9) to an independent joint least-squares solution computed in the test on the unmasked cadences; precondition: that joint solution differs from the sum of separate one-frequency fits by more than 1% of the amplitude; the masked cadences have no weight in the fit |
+| I1 | integrated, both | the suite's `sinusoid` scenario plus a 1500 ppm transit at 3.7 d, 2.5 h (1500, not 600: an estimate, not a measurement, that in the scenario's correlated profile, AR(1) 600 ppm, the gate of Amendment 7 could put a 600 ppm transit near 7.1; the H4 complement of Amendment 18 measured a different case, a 270 ppm planet under AR(1) 400 ppm with a corrected SNR of 4.75, which supports the concern without showing this number; declared before any test ran) | precondition: the sinusoid's amplitude at the input of `prewhiten` at least half the injected (by the unweighted fit of D2); the final candidate passes the SNR gate and has signal identity (P, 2P or P/2 within 0.001 of 3.7 d; revision 4, 4's "found") |
+| I2 | integrated, both | the `sinusoid` scenario alone | precondition as I1; no final candidate passes the SNR gate |
+| Z | integrated, white | the corrections active on a box with no variability (D3's raw analogue) | precondition: **no component accepted** (otherwise the case is incompatible, not passed); `L1 − S` and `L2` bit-equal to the curves without the operation |
+| Sig | — | the signature of `prewhiten` | no parameter for a class, a truth or a candidate |
+| In | integrated, white | I1 with spies | `period_alias` receives `data.lc`; the search receives `L1 − S`; `finalize_candidate` receives `L2`; the marker `prewhitening` and the components in the record |
+| Ad | integrated, white | the adapters `TessSearch` and `TessGauntlet` | the same components and the same tests as `analyze_data` |
+| Off | integrated, white | version 1 with `enabled` true and version 2 with `enabled` false | the M3 inputs, byte for byte |
+| H | integrated, white | the suite's `variability_train_only` scenario (three years, white noise, a sinusoid in 2018 and 2019; an exception to the two-year layout, declared) with the corrections active, the round with 2020 hidden | preconditions: the train components not empty, **decision 2 = pass**, and the transit and control windows measured; then the train fundamentals reach (spies) `train_replica_stats`, `replica_stats` (the hidden replicas) and both calls of `measure_windows` (transit and control) |
+
+A case whose construction does not give its precondition is recorded as incompatible: the unit
+criterion is then not shown, which is not an approval, and no other seed or amplitude is tried.
+
+**Risks recorded before any number (predictions, not changes).**
+
+1. *`σ_w` on `L1`, the variability included.* Scaling every `dy` by one factor changes neither the
+   normalized power nor the Baluev FAP (astropy's standard normalization), so the inflation does not
+   by itself lower the significance; it raises the clipping threshold `k_clip σ_w` (a transit's
+   cadences may stay in the fit), changes the relative weights of the sectors when the inflation
+   differs between them, and through the clip set changes `L1` and its FAP. (The first version of
+   this risk stated a wrong mechanism; corrected after the Codex review.)
+2. *The FAP is operational* (revision 4, 4): not valid for the clipped, iterated procedure;
+   calibrated by T6w and T6r.
+3. *The hidden windows' degeneracy*: a sinusoid per train frequency in a window's baseline can make
+   the fallback drop terms, or the window; M5-3's trigger counts dropped windows and the conclusive
+   fraction, not every lost term, so each window's record gives the terms used.
+4. *`S′` singular*: the reanalysis then works on `L1m` with its variability while the search saw it
+   removed; recorded per case.
+
 ## Amendment 21 (2026-10-18): piece 6, `period_alias` (revision 3, 5; revision 4, 3), before its tests
 
 Declared before the tests and the code of piece 6. It adds no criterion; it fixes how revision 3,
