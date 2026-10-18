@@ -86,6 +86,82 @@ Declared before any test or code of piece 2.
   analysis records computed before the code of piece 2 (bound to the platform, as G1 of the
   correlated-noise record), and on every platform by the unchanged suite.
 
+## Amendment 3 (2026-10-18): piece 2 does not meet "the gate unchanged within 5%"; the readings of piece 3
+
+**Piece 2, the result.** With the code of piece 2, P2 (white `planet`, seeds 0 to 9, the median of
+corrected SNR / BLS `depth_snr`) is **0.812**, outside [0.95, 1.05]: the acceptance of revision 3,
+10, row A1 ("white noise: ... the gate unchanged within 5%") is **not met**. Every other case of
+piece 2 passes (P1 with the 13 reference analyses byte for byte, P3 to P7).
+
+**Diagnosis** (read-only, `.cache/v021/m4/diagnose_p2.py` in the worktree; checked by Codex, which
+recalculated the ratios from its output):
+
+| Comparison (white `planet`, seeds 0 to 9) | Median ratio |
+|---|---|
+| stacked per-event SNR with the per-point white errors (A1 off) / BLS | 0.806 |
+| the same with the A1 errors / BLS | 0.806 |
+| A1 stack / the same stack without A1 (paired) | 1.000 (0.9996 to 1.0002) |
+| the white term of the stack alone / BLS | 0.855 (Codex's prediction with the BLS's finite global baseline: 0.8553) |
+
+The A1 terms do not change the gate materially in white noise (β(n_T) = 1.00 in 19 of 20 sectors,
+1.066 in one). The fall comes from **the estimator that revision 3, 2.2 itself prescribes** for the
+gate: the stacked error of the per-event depths, with a local baseline (`n_base / n_in ≈ 2.5`) and the
+term `max(white, scatter / sqrt(n))` (the scatter dominates in 6 of 10), instead of the BLS
+`depth_err` with its global baseline. The source of the extra scatter is not isolated (sampling,
+residual trend after the detrending, coverage). Codex's wording, adopted: the change of estimator
+introduces a structural fall of the SNR in this design, even without the red term; the P2 declared
+fails; β near 1 does not make the two estimators equal.
+
+**Verdict (Codex and Claude): option (c) holds today:** the method and the criterion stand, and the
+acceptance of piece 2 is **not satisfied**. P2 is kept, with its numbers, and marked
+`xfail(strict=True, raises=AssertionError)` citing this amendment so CI stays green; the mark does
+not satisfy the acceptance. **Two other options exist and belong to the maintainer**, each a bounded
+amendment of revision 4 with the exposure to this result stated:
+
+- **(a)** change the method: the gate reads `depth / (BLS depth_err × a β of the candidate's
+  sectors)`, white noise unchanged by construction as far as β is 1; the combination of the sectors'
+  β is to be defined and validated, and K1 and K2 would not certify that new error (they calibrate
+  the stacked depth);
+- **(b)** keep the method and compare the A1 stack with the same stack without A1 (1.000 here): a
+  change of the declared comparator after the result, with the original P2 failure kept on record.
+
+Nothing of piece 2 is changed until the maintainer decides. The pieces that do not depend on the
+gate go on.
+
+**Piece 3, the readings (declared before its tests).** Revision 3, 10, row "timing (3)":
+
+- "per-transit error within 30% of the Carter reference" is read as the **median** of (measured
+  per-transit error / Carter `σ_tc`) over the seeded transits, within [0.7, 1.3] (the per-transit
+  scatter of an error estimate is not the criterion's object, as for A1 in Amendment 1);
+- "pulls of 200 seeded transits within the K margins" is read on the **point fractions**: of
+  |pull| ≤ 1 inside [0.60, 0.76], of |pull| ≤ 2 inside [0.92, 0.98], and the median within ± 0.2. The
+  K conditions' interval form cannot pass at n = 200: no count passes the 2σ condition (computed
+  before the tests: the Clopper-Pearson interval of any count of 200 leaves [0.92, 0.98]), as
+  revision 3, 8.3 already found for 90 and 120;
+- the timing template and the β scaling are used by the global ephemeris and by the holdout's train
+  timing when the switch is on (the holdout's other changes are pieces 4 and 5).
+
+**Piece 3, the case and the implementation readings (declared before its tests).**
+
+- **The case of the two numeric criteria:** the canonical synthetic planet `synthetic.PLANET`
+  (depth 2000 ppm, T14 2.5 h, ingress fraction 0.15, so τ = 22.5 min), white noise 600 ppm, 2-minute
+  cadence, the two default sectors, at the injected ephemeris (an E1 measurement, revision 3, 8.2),
+  without detrending (the curve has no trend); seeds 0, 1, 2, ... in order until at least 200
+  transits are measured, all of them used. The Carter reference uses the injected values:
+  `σ_C = (600 ppm / 2000 ppm) · sqrt(τ · cadence / 2)` (about 1.4 min). The pulls are against the
+  injected centers.
+- **The template fit:** depth linear (weighted least squares for a fixed shape); T14 and τ by a grid,
+  T14 in [0.5, 1.5] of the candidate's duration and τ in [one cadence, T14 / 2], then a finer grid
+  around the best cell; the same folded cadences for every cell (within 1.5 times the largest T14
+  of the grid of the center), weights 1/σ² of the per-point noise. A fit with depth ≤ 0 gives no template and so no transit times.
+- **The width of the region within 1 of the minimum** is measured with its two crossings located by
+  linear interpolation between the scan steps (the quantity of revision 3, 3, measured below the
+  step: with σ_C near 1.4 min, counting whole steps of 1 minute biases the width low by about half a
+  step); the center stays the scan minimum; the floor is half a cadence, as revision 3, 3 states.
+- **The transit's sector** is the sector of its cadence nearest to the center; a transit whose
+  sector is excluded at `n_τ` is dropped and counted (no borrowing, 2.1); with the estimate
+  undetermined there are no transit times.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after

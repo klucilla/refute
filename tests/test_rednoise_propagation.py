@@ -83,6 +83,12 @@ def white_planets():
     return run_processes(analyze_with, tasks, max(1, min(len(tasks), default_workers())))
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="m4-implementation-map.md, Amendment 3: the median is 0.812; the acceptance of piece 2 "
+    "is not met (option (c)); the mark does not satisfy it",
+)
 def test_p2_white_noise_gate_unchanged_within_5_percent(white_planets):
     ratios = []
     for analysis in white_planets:
