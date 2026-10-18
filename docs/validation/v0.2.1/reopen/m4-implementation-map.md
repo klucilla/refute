@@ -457,6 +457,74 @@ ten here). P2 then measures how often white noise inflates the gate spuriously (
 most 0.9%); it does not test the error's calibration under correlated noise, which K1 to K8 and
 the calibration conditions address (and the gate's own error is not among them, Amendment 7).
 
+## Amendment 9 (2026-10-18): point (B), which `S_pred` estimates `b` and `s` (before any number)
+
+The maintainer's item 5 of 2026-10-18: both are recorded, one is fixed before the selection with a
+justification based only on synthetic data, and `S_meas` is obtained apart for the rounds that
+decision 1 stops.
+
+- **Both recorded.** Every round that reaches the capacity rule records `S_pred,1` (decision 1,
+  train noise and replicas, revision 3, 4.3 with Amendment 6) and `S_pred,2` (decision 2, the
+  hidden replicas, revision 3, 4.4 with Amendment 6), and, when measured, `S_meas`.
+- **The rule that fixes one (declared now, before any value is computed):** on a synthetic lot of
+  the development structure under the new prefix `refute-v0.2.1-bs-choice` (never used; not the
+  selection part, not the development population), with the code of pieces 4 and 5, take every
+  round of an injected constant signal with `S_pred,k ≥ min_snr` for each `k`; compute
+  `1.4826 MAD(S_meas − S_pred,k)` pooled over both noise models (revision 4, 2); **fix the `k` with
+  the smaller value** (the residual the rule can bound more tightly); a tie within 5% of the larger
+  value goes to `k = 2`, the last capacity decision before the measurement, made with the noise of
+  the year measured. The lot, its size (the planets of the bands near and measurable, every tenth
+  index, as the lot of point (A)) and the result are committed before the selection part is
+  generated; the chosen `k` and its `b`, `s` estimation procedure enter the freeze commit.
+- **`S_meas` apart for rounds stopped by decision 1.** The official round keeps its status
+  (INCONCLUSIVE, `insufficient_capacity_train`) and an empty hidden access log. A separate
+  function, used only by the population harness and never by `run_holdout`, measures such a round
+  in the same way (decision 2 recorded, the measurement made) and returns its `S_meas`, `S_pred,1`
+  and `S_pred,2` in a record marked `calibration_only`; it never changes a verdict.
+
+## Amendment 10 (2026-10-18): point (A) decided by the objective criterion; a CI binding
+
+**Point (A) of Amendment 6**, by the maintainer's item 4 of 2026-10-18: the option with the
+smallest expected fraction of INCONCLUSIVE rounds that respects `R_min`, computed only from metadata
+and synthetic training data; a tie goes to "the replicas avoid the noise bands". Decided before any
+result of pieces 4 and 5. The calculation: `calc/option_a_geometry.py` and its output
+`calc/option-a-geometry.json` (a new lot, prefix `refute-v0.2.1-option-a-geometry`, 100 planets of
+the bands near and measurable; 240 rounds, 107 ended before the hidden year by the existing train
+rules, 133 reach the geometry). Codex checked it read-only (`.cache/v021/codex/option-a/`): the
+replica rule, the bands, the bins and the three options were correct; it found that the first run
+counted **registered** replicas and predicted windows, not **usable** ones (covered by the
+cadences, the rule of `holdout._measure`). The coverage was added and the calculation rerun; the
+first run's output is kept in the worktree's `.cache/v021/m4/option-a-geometry.run1.json` (its
+fractions: 0.767, 0.609, 0.722; the order of O2 first did not change).
+
+| Option | INCONCLUSIVE of 133 (usable replicas and windows) | Median usable replicas |
+|---|---|---|
+| O1, revision 3, 4.2 as written | 0.767 | 16 |
+| **O2, `σ_w,hidden` and the `B_min` check from the replicas' baseline bands** | **0.609** | 16 |
+| O3, the replicas avoid the noise bands | 0.767 | 0 |
+
+**Chosen: O2.** The noise bands of revision 3, 4.2 are not registered; `σ_w,hidden` (the weights of
+the baseline fit of revision 3, 4.1) and the few-bins check at `n_T` (`B_min` bins per sector) come
+from the residuals of the accepted replicas' baseline bands, which are read through `HiddenYear`
+anyway; a sector without `B_min` bins there is excluded (its windows dropped), and with no sector
+left decision 2 is INCONCLUSIVE ("hidden noise undetermined"). This changes row B2 of revision 3
+in that one respect, by the maintainer's decision.
+
+**A finding for the maintainer (not a change):** with `R_min = 20` (revision 4, fixed for every
+configuration), 81 of the 133 rounds (61%) have fewer than 20 usable replicas in every option: the
+hidden year of this population is one 27-day sector, while revision 4's example (about 28
+replicas) has two. Together with the 107 rounds ended earlier, about 78% of these planets' rounds
+would be INCONCLUSIVE under O2. Revision 4, 1 already says that this "enters the conclusive
+fractions of the sizing"; the sizing of `calc/calibration_sizing_rev4.py` used declared reference
+rates, and whether the T1 denominators (at least 725 conclusive targets per condition) are
+reachable is a question for the maintainer before the selection.
+
+**A CI binding (deviation recorded).** P1's digests of the switch-off analyses are bound to the
+platform and the numpy version; CI showed that CPython 3.12 on Windows gives other digests than
+the 3.13 that computed them (run 39127066658; the same failure was already in the CI of the
+piece-2 push, 39094858224, and was missed, read as the lock failures only). P1 now also requires
+the Python minor version of the reference (3.13); the reference record is unchanged.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after

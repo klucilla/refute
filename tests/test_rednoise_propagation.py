@@ -53,7 +53,15 @@ def analyze_with(task):
 
 # --- P1: the switch off is the M3 code path ------------------------------------------------
 
-SAME_PLATFORM = sys.platform == REFERENCE["platform"] and np.__version__ == REFERENCE["numpy"]
+# The reference records the platform and the numpy version; it was computed with the worktree's
+# CPython 3.13 (3.13.16), and CI showed that 3.12 on the same platform gives other digests (map
+# Amendment 10), so the Python minor version is part of the binding too.
+REFERENCE_PYTHON = (3, 13)
+SAME_PLATFORM = (
+    sys.platform == REFERENCE["platform"]
+    and np.__version__ == REFERENCE["numpy"]
+    and sys.version_info[:2] == REFERENCE_PYTHON
+)
 
 
 @pytest.mark.skipif(not SAME_PLATFORM, reason="the analysis digests are bound to their platform")
