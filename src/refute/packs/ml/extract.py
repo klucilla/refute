@@ -44,6 +44,8 @@ _NUMBER = re.compile(r"^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$")
 _STEP = re.compile(r"\.([A-Za-z_][A-Za-z0-9_-]*)|\[(\d+)\]")
 MAX_BYTES = 64 * 1024 * 1024
 _TEXT_WAYS = ("json_path", "csv", "regex")
+DIGIT_BUDGET = 4096
+BUDGET_REASON = "the exact-arithmetic budget of Refute (a limitation of Refute)"
 
 
 class ExtractionError(Exception):
@@ -60,11 +62,27 @@ class Extracted:
     binary: str | None = None
 
 
+def within_budget(value: Decimal) -> bool:
+    """Whether exact arithmetic on ``value`` stays bounded: at most ``DIGIT_BUDGET``
+    significant digits and decimal exponents within ``±DIGIT_BUDGET`` (a token such as
+    ``1e999999999`` would make the exact predicates expand millions of digits). The exact
+    expansion of any float64 fits (at most 767 digits, exponent -1074)."""
+    _, digits, exponent = value.as_tuple()
+    return (
+        len(digits) <= DIGIT_BUDGET
+        and -DIGIT_BUDGET <= int(exponent)
+        and value.adjusted() <= DIGIT_BUDGET
+    )
+
+
 def _number(token: str, where: str) -> Extracted:
     text = token.strip()
     if not _NUMBER.match(text):
         raise ExtractionError(f"{where}: {token!r} is not a finite decimal number")
-    return Extracted(text, Decimal(text), where)
+    value = Decimal(text)
+    if not within_budget(value):
+        raise ExtractionError(f"{where}: {token!r} is outside {BUDGET_REASON}")
+    return Extracted(text, value, where)
 
 
 def parse_json_path(path: str) -> list[str | int]:
@@ -367,6 +385,8 @@ def extract(
         data, where, _ = read_output_bytes(workdir, str(extraction["file"]), seed)
         found = tbevents.select(data, str(board["tag"]), board["step"], where)
         token = tbevents.token(found.value, where)
+        if not within_budget(Decimal(token)):  # never for a float32 or float64
+            raise ExtractionError(f"{where}: the value is outside {BUDGET_REASON}")
         return Extracted(token, Decimal(token), where, found.width)
     if origin == "file":
         text, where, _ = read_output(workdir, str(extraction["file"]), seed)

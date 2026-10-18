@@ -155,6 +155,9 @@ class Outcome:
     status: TestStatus
     reason: str
     tolerance: Decimal | None = None
+    # the exact square of a square-root tolerance (``tolerance`` is then its record only):
+    # reproduction.decide_on_mean decides with it (Codex review of 84473de)
+    squared: Fraction | None = None
 
 
 def one_number(x: Number, params: ToleranceParams, uncertainty: PublishedUncertainty) -> Tolerance:
@@ -188,12 +191,17 @@ def difference_tolerance(
 
 
 def _root(squared: Fraction) -> Decimal:
-    """The 50-digit square root of an exact square, rounded down (for the record only)."""
+    """The 50-digit square root of an exact square, rounded down (for the record only):
+    a candidate whose exact square is above ``squared`` steps down until it is not, since
+    the 60-digit steps before the floor may have rounded up (Codex review of 84473de)."""
     with localcontext() as ctx:
         ctx.prec = PRECISION + 10
         root = (Decimal(squared.numerator) / Decimal(squared.denominator)).sqrt()
         ctx.prec, ctx.rounding = PRECISION, ROUND_FLOOR
-        return ctx.plus(root)
+        root = ctx.plus(root)
+        while root > 0 and Fraction(root) ** 2 > squared:
+            root = ctx.next_minus(root)
+        return root
 
 
 def _hypot(a: Decimal, b: Decimal, lower_bound: bool = False) -> Tolerance:
@@ -207,14 +215,15 @@ def _easier(
 ) -> Outcome:
     """A predicate that a larger tolerance makes easier to pass."""
     if holds:
-        return Outcome(TestStatus.PASS, f"{what} holds", tol.value)
+        return Outcome(TestStatus.PASS, f"{what} holds", tol.value, tol.squared)
     if tol.lower_bound and not fails_for_every_tolerance:
         return Outcome(
             TestStatus.INCONCLUSIVE,
             f"{what} fails only under the lower tolerance: {NOT_CONVERTIBLE}",
             tol.value,
+            tol.squared,
         )
-    return Outcome(TestStatus.FAIL, f"{what} does not hold", tol.value)
+    return Outcome(TestStatus.FAIL, f"{what} does not hold", tol.value, tol.squared)
 
 
 def value_predicate(
@@ -310,25 +319,33 @@ def _sd(value: Number | None) -> PublishedUncertainty:
 
 def trivial_baseline_predicate(
     x_rep: Number,
-    baseline: Number,
+    baseline: Number | Fraction,
     higher_is_better: bool,
     tol: Tolerance,
 ) -> Outcome:
     """The claim must beat the baseline by more than its tolerance (1.0.6). A larger
     tolerance makes it harder to pass: under a lower bound a FAIL stands and a PASS
-    becomes INCONCLUSIVE."""
-    x, b = dec(x_rep, "the reproduced value"), dec(baseline, "the baseline")
-    advantage = _exact(x, b, "-") if higher_is_better else _exact(b, x, "-")
-    what = f"advantage {advantage} over the baseline > {tol.value}"
-    if _within(Fraction(advantage), tol):
-        return Outcome(TestStatus.FAIL, f"{what} does not hold", tol.value)
+    becomes INCONCLUSIVE. The baseline may be an exact fraction (``1/3`` for a random
+    guess among 3 classes), compared as it is (Codex review of 84473de)."""
+    x = dec(x_rep, "the reproduced value")
+    if isinstance(baseline, Fraction):
+        exact = Fraction(x) - baseline if higher_is_better else baseline - Fraction(x)
+        shown = f"{exact.numerator}/{exact.denominator}"
+    else:
+        b = dec(baseline, "the baseline")
+        advantage = _exact(x, b, "-") if higher_is_better else _exact(b, x, "-")
+        exact, shown = Fraction(advantage), str(advantage)
+    what = f"advantage {shown} over the baseline > {tol.value}"
+    if _within(exact, tol):
+        return Outcome(TestStatus.FAIL, f"{what} does not hold", tol.value, tol.squared)
     if tol.lower_bound:
         return Outcome(
             TestStatus.INCONCLUSIVE,
             f"{what} holds only under the lower tolerance: {NOT_CONVERTIBLE}",
             tol.value,
+            tol.squared,
         )
-    return Outcome(TestStatus.PASS, f"{what} holds", tol.value)
+    return Outcome(TestStatus.PASS, f"{what} holds", tol.value, tol.squared)
 
 
 def widen(tol: Tolerance, factor: Number) -> Tolerance:

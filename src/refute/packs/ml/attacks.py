@@ -202,16 +202,26 @@ class Baseline:
     tied: tuple[tuple[str, str], ...]
     coverage: int
     coverage_unit: str
+    # the same baselines as exact fractions, which the predicate compares (``weakest`` and
+    # ``strongest`` are their 50-digit records; Codex review of 84473de)
+    weakest_exact: Fraction | None = None
+    strongest_exact: Fraction | None = None
 
 
-def _in_unit(accuracy: Fraction, metric: str, unit: str) -> Decimal:
+def _exact_in_unit(accuracy: Fraction, metric: str, unit: str) -> Fraction:
     value = accuracy if metric == "accuracy" else 1 - accuracy
     scale = {"percent": 100, "fraction": 1}.get(unit)
     if scale is None:
         raise ValueError("trivial_baseline needs a claim in percent or fraction")
+    return value * scale
+
+
+def _in_unit(accuracy: Fraction, metric: str, unit: str) -> Decimal:
+    """The 50-digit record of the baseline (the exact one is ``_exact_in_unit``)."""
+    value = _exact_in_unit(accuracy, metric, unit)
     with localcontext() as ctx:
         ctx.prec = pr.PRECISION
-        return Decimal(value.numerator * scale) / Decimal(value.denominator)
+        return Decimal(value.numerator) / Decimal(value.denominator)
 
 
 def trivial_baseline_value(
@@ -239,7 +249,8 @@ def trivial_baseline_value(
         raise ValueError("trivial_baseline needs at least 2 distinct declared labels")
     if kind == "random":
         value = _in_unit(Fraction(1, len(declared)), metric, unit)
-        return Baseline(kind, value, value, (), 1, "exact expectation")
+        exact = _exact_in_unit(Fraction(1, len(declared)), metric, unit)
+        return Baseline(kind, value, value, (), 1, "exact expectation", exact, exact)
     if kind != "majority":
         raise ValueError(f"unknown baseline kind {kind!r}")
     if not train_labels or not test_labels:
@@ -263,7 +274,16 @@ def trivial_baseline_value(
         if len(accuracies) > 1
         else ()
     )
-    return Baseline(kind, weakest, strongest, tied, len(test_labels), "test examples")
+    return Baseline(
+        kind,
+        weakest,
+        strongest,
+        tied,
+        len(test_labels),
+        "test examples",
+        _exact_in_unit(low, metric, unit),
+        _exact_in_unit(high, metric, unit),
+    )
 
 
 def trivial_baseline(
@@ -284,8 +304,10 @@ def trivial_baseline(
         return attack_result(
             "trivial_baseline", TestStatus.INCONCLUSIVE, 0, "no test label was examined"
         )
-    strong = pr.trivial_baseline_predicate(x_rep, baseline.strongest, higher_is_better, tol)
-    weak = pr.trivial_baseline_predicate(x_rep, baseline.weakest, higher_is_better, tol)
+    strongest = baseline.strongest if baseline.strongest_exact is None else baseline.strongest_exact
+    weakest = baseline.weakest if baseline.weakest_exact is None else baseline.weakest_exact
+    strong = pr.trivial_baseline_predicate(x_rep, strongest, higher_is_better, tol)
+    weak = pr.trivial_baseline_predicate(x_rep, weakest, higher_is_better, tol)
     if strong.status is TestStatus.PASS:
         status, reason = TestStatus.PASS, strong.reason
     elif weak.status is TestStatus.FAIL:

@@ -297,3 +297,45 @@ def test_a_square_root_tolerance_decides_by_its_exact_square():
     wider = pr.widen(root, 3)
     assert wider.squared == 18
     assert pr.value_predicate(times(3, inside), 0, "two_sided", wider).status is TestStatus.PASS
+
+
+def test_the_recorded_root_is_never_above_the_exact_root():
+    from fractions import Fraction
+
+    for squared in (Fraction(2), Fraction(1, 3), Fraction(10) ** 40 + 1, Fraction(7, 10**60)):
+        root = pr._root(squared)  # noqa: SLF001
+        assert Fraction(root) ** 2 <= squared
+        with localcontext() as ctx:
+            ctx.prec = pr.PRECISION
+            assert Fraction(ctx.next_plus(root)) ** 2 > squared
+
+
+def test_a_mean_near_a_root_tolerance_is_never_decided_by_the_rounded_record():
+    """Codex review of 84473de: the mean 1/3 lies between its 50-digit roundings; a
+    root tolerance just below the bracket's half-width must not give FAIL by its record."""
+    from refute.packs.ml import reproduction as rp
+
+    with localcontext() as ctx:
+        ctx.prec = pr.PRECISION
+        ctx.rounding = "ROUND_FLOOR"
+        low = Decimal(1) / Decimal(3)
+    center = plus(low, Decimal("5e-51"))
+    a = plus(Decimal("5e-51"), Decimal("-1e-131"))
+    tol = pr._hypot(a, Decimal(0))  # noqa: SLF001
+    outcome, _ = rp.decide_on_mean(
+        [Decimal(0), Decimal(0), Decimal(1)],
+        lambda x: pr.value_predicate(x, center, "two_sided", tol),
+    )
+    assert outcome.status is TestStatus.INCONCLUSIVE  # never FAIL (the exact mean passes)
+
+
+def test_trivial_baseline_compares_an_exact_fraction():
+    from fractions import Fraction
+
+    below = "0." + "3" * 50 + "1"  # just below 1/3
+    outcome = pr.trivial_baseline_predicate(below, Fraction(1, 3), True, Tolerance(0))
+    assert outcome.status is TestStatus.FAIL
+    above = "0." + "3" * 60 + "4"
+    assert pr.trivial_baseline_predicate(above, Fraction(1, 3), True, Tolerance(0)).status is (
+        TestStatus.PASS
+    )
