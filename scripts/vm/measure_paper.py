@@ -88,7 +88,7 @@ def build(spec: dict, root: Path) -> dict:
     _, req, _ = pd.ladder_inputs(repo)
     rungs = ld.ladder_rungs(None, req, [spec["python"]])
     rung = next(r for r in rungs if r.name == "requirements_compiled")
-    image = f"refute-local/meas-{spec['name']}/env"
+    image = f"refute-local/meas{spec['name']}/env"  # [a-z0-9] only (LOCAL_IMAGE)
     backend = DockerBackend(
         f"meas{spec['name']}b",
         LIMITS,
