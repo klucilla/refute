@@ -339,6 +339,99 @@ readings below. Declared before any test or code of pieces 4 and 5.
   its own sample, the harness must obtain `S_meas` for rounds that decision 1 would stop; the
   official round keeps its status and empty log, and the harness collects the measurement apart.
 
+## Amendment 7 (2026-10-18, declared after the results): the gate by method (a), and the parabolic crossing
+
+**Declared after the results of Amendments 3 and 4, by the maintainer's decisions of 2026-10-18
+(items 2 and 3).** Those results stay as they are: P2 failed (median 0.812, seeds 0 to 9), and
+the 2σ pulls of piece 3 failed (0.919 of 210, seeds 0 to 14). The principle applied (maintainer,
+2026-10-18): a correction enters only for a defect with an identified mechanism or a contradiction
+of the specification, declared after the result with its reason and a Codex design review, and is
+retested on **new seeds never used**, with the **same criterion** and the **same sample size**.
+The earlier test cases keep their record here; the retests replace their seeds.
+
+**1. The gate by method (a)** (maintainer's item 2). **Reason:** a contradiction of the
+specification: revision 3, 2.2 prescribed for the gate an estimator (the stacked per-event error)
+that cannot meet revision 3, 10, row A1 ("white noise: the gate unchanged within 5%"), as the
+diagnosis of Amendment 3 shows (local baseline and scatter term, about −19% in white noise);
+option (b) would have hidden that change of sensitivity. **The method:** the β factor of red
+noise (Pont, Zucker and Queloz 2006, "The effect of red noise on planetary transit detection",
+MNRAS 373, 217-230, doi:10.1111/j.1365-2966.2006.11012.x, https://arxiv.org/abs/astro-ph/0608597,
+read 2026-10-18) applied to the BLS depth error:
+
+- `snr = depth_BLS / (depth_err_BLS × β_D)`, with `depth_err_BLS` the error of the final BLS fit
+  (`finalize_candidate`, unchanged). The BLS error is `e² = 1/W_I + 1/W_O` (astropy, the in-transit
+  and out-of-transit weight sums), so both terms are inflated (Codex design review, which showed
+  that inflating the whole error by an in-box β alone underestimates when the baseline has the
+  larger inflation):
+  `β_D² = Σ_s β_s(n_T)² (W_{I,s} / W_I² + W_{O,s} / W_O²) / (1/W_I + 1/W_O)`, where `W_{I,s}` and
+  `W_{O,s}` are the sums of `w_i = 1/σ_i²` (the per-point σ of the final fit) over the in-transit and
+  out-of-transit cadences of sector `s`, `W_I = Σ_s W_{I,s}`, `W_O = Σ_s W_{O,s}`, and `β_s(n_T)` the
+  A1 estimate of sector `s` at `n_T = round(duration / cadence)` (the `box` estimate of piece 2).
+  In transit means astropy's own `BoxLeastSquares.transit_mask(t, P, duration, t0)` at the final
+  candidate (strict `<`); it approximates the phase-binned set of the fast method, and enters only
+  through the sector shares. **Declared assumptions:** the sectors' contributions are independent,
+  each sector's in-transit and out-of-transit means have their white variances inflated by
+  `β_s(n_T)²`, and `β_s` at `n_T` is used for the out-of-transit term too (an approximation, not a
+  bound for every temporal covariance). In white noise `β_D ≈ 1`.
+- **Conditions of the gate, its own:** a sector with positive weight (checked before the
+  normalization) in the in-transit **or** the out-of-transit set and excluded at `n_T` makes the gate
+  INCONCLUSIVE ("noise model undetermined"; no borrowing, revision 3, 2.1, kept strict even for a
+  small weight); no in-transit cadence: INCONCLUSIVE. The gate no longer needs the `n_B` estimate or
+  measurable per-event depths.
+- Reported: `bls_depth_snr`, `beta_d`, per sector `β_s`, `W_{I,s}`, `W_{O,s}`, and the stacked
+  per-event error of piece 2 as a diagnostic (`stacked_error_ppm`, `None` when the stack is not
+  available; it never vetoes the gate). The candidate's `depth_err` becomes
+  `depth_err_BLS × β_D`. `odd_even` and `secondary_eclipse` keep the corrected per-event errors of
+  piece 2 (Amendment 2).
+- **What K1 and K2 do not cover:** they calibrate the stacked per-event depth, not this gate's
+  error (Codex, Amendment 3). Whether a calibration condition for the gate's error is needed is a
+  question of the calibration protocol, recorded for the maintainer; nothing here changes it.
+- **Retest:** P2 as declared in Amendment 2 (white `planet`, the median of corrected SNR / BLS
+  `depth_snr` within [0.95, 1.05], ten light curves), on seeds **5000 to 5009**, without an `xfail`.
+  (1000 to 1009, first written here, were replaced before any run: `scenario_data` seeds the
+  auxiliary data with `seed + 1000`, so they reuse RNG states of the old seeds 0 to 9, Codex. The
+  effective states of 5000 to 5009 are the flux at 5000 to 5009 and the auxiliaries at 6000 to 6009,
+  none used by any test of the TESS pack.)
+- **Direct mechanism cases** (Codex): the combination with different `β_s` per sector against a
+  hand computation; a sector excluded with in-transit weight, and one with out-of-transit weight
+  only; no in-transit cadence; the gate computed when the per-event stack is unavailable.
+
+**2. The parabolic crossing** (maintainer's item 3). **Reason:** a defect with an identified
+mechanism: the linear interpolation of Amendment 3 places each crossing of the convex Δχ² inward,
+biasing the error low (−5.3% on the noiseless case, addendum of Amendment 4). **The method:** with
+`level = Δχ²[best] + 1` (the sampled minimum; the minimum is not replaced by a continuous one),
+each crossing is located on the parabola through three scan points, in local coordinates measured
+in scan steps: the left crossing uses `(left − 1, left, left + 1)` and its root in the closed
+interval `[x[left − 1], x[left]]`; the right one uses `(right − 1, right, right + 1)` and its root in
+`[x[right], x[right + 1]]`. When the region is a single point (`left = right = best`), both sides use
+`(best − 1, best, best + 1)`, each in its own interval. The parabola is degenerate when the
+magnitude of its quadratic coefficient is below 1e-12 (Δχ² units per step²); a root is accepted
+when it is real, finite and inside the interval to 1e-9 steps (clipped to it), and unique there;
+otherwise that crossing uses the linear interpolation and a counter `linear_crossings` (per
+crossing, so up to two per transit) records it. A region that reaches the edge of the scan keeps
+the edge, as before (no triple is taken on that side). The center stays the scan minimum; the floor
+stays half a cadence. On an exactly parabolic Δχ² the crossing is exact for that level.
+
+- **Retest:** the case of Amendment 3 unchanged (`synthetic.PLANET`, white 600 ppm, the injected
+  ephemeris, no detrending, `make_lightcurve` as before) on the fixed seeds **2000 to 2014** (15
+  light curves, never used), without an `xfail`, which must give **exactly 210 measured transits**,
+  the size of the declared case. If the count differs, the retest is recorded as incompatible with
+  the design (no acceptance, no seed added). The same criteria: the median of error / Carter within
+  [0.7, 1.3]; |pull| ≤ 1 in [0.60, 0.76]; |pull| ≤ 2 in [0.92, 0.98]; the median pull within
+  ± 0.2. The 980-transit result stays a recorded diagnosis only; no larger sample decides.
+- **Direct mechanism cases** (Codex): a single-point region; the fallback to the linear crossing
+  (a degenerate triple); a region at the edge of the scan; the exactness on a parabolic Δχ².
+- The width case (addendum of Amendment 4) keeps its 10%; it is a regression guard.
+
+Both changes: the tests are changed and committed before the code; the sabotages are planned
+with the tests; Codex reviewed the design before the tests (`.cache/v021/codex/amend7/`; its
+objections are taken into the text above: the out-of-transit term, the reused seeds, the fixed
+size, the conditions of the gate, the box identity, the declared crossing rules and the direct
+cases).
+
+Also corrected here: the citation in `rednoise.py` read "MNRAS 373, 231"; the article is MNRAS 373,
+217-230 (the arXiv record above).
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after
