@@ -1,0 +1,206 @@
+{
+ "finished_utc": "20261018T141055Z",
+ "format": "refute-reader-vm-test-1",
+ "reader_sha256": "4b64c5edda6bd940aa392d02a193a0e0547f8b4ddc30f5bb96bf879ad41cb733",
+ "records": [
+  {
+   "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+   "build": {
+    "exit_code": 0,
+    "stopped": null
+   },
+   "file": {
+    "name": "cifar-10-python.tar.gz",
+    "sha256": "076f2059c437cea6a9a34c709e1d5760edc0b756922fe7a17af7e4daffbc8bfc",
+    "size": 12477
+   },
+   "image_id": "sha256:2ed40a707ac08ac8f09fafc7bc92f865034c64648a5050927268f5539cb6c3d7",
+   "passed": true,
+   "probe": {
+    "argv_prefix": [
+     "/usr/bin/env",
+     "-i",
+     "MKL_NUM_THREADS=2",
+     "NUMEXPR_NUM_THREADS=2",
+     "OMP_NUM_THREADS=2",
+     "OPENBLAS_NUM_THREADS=2",
+     "/opt/venv/bin/python",
+     "-I",
+     "-S"
+    ],
+    "exit_code": 0,
+    "log_tail": null,
+    "seen": {
+     "cwd": "/work",
+     "env": {
+      "LC_CTYPE": "C.UTF-8",
+      "MKL_NUM_THREADS": "2",
+      "NUMEXPR_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2"
+     },
+     "executable": "/opt/venv/bin/python",
+     "files": [
+      "./data/cifar-10-python.tar.gz",
+      "./reader.py"
+     ],
+     "flags": {
+      "isolated": 1,
+      "no_site": 1
+     },
+     "library": "/opt/venv/lib/python3.12/site-packages/numpy/__init__.py",
+     "mounts": [
+      [
+       "/home/refute/refute-run/readers/20261018T140753Z/cifar_python/probe",
+       "/work"
+      ],
+      [
+       "/home/refute/refute-run/readers/20261018T140753Z/cifar_python/fetched/cifar-10-python.tar.gz",
+       "/work/data/cifar-10-python.tar.gz"
+      ]
+     ],
+     "path": [
+      "/usr/local/lib/python312.zip",
+      "/usr/local/lib/python3.12",
+      "/usr/local/lib/python3.12/lib-dynload",
+      "/opt/venv/lib/python3.12/site-packages"
+     ],
+     "prefix": "/usr/local"
+    }
+   },
+   "reader": "cifar_python",
+   "reader_run": {
+    "answer": {
+     "test": 4000
+    },
+    "argv": [
+     "/usr/bin/env",
+     "-i",
+     "MKL_NUM_THREADS=2",
+     "NUMEXPR_NUM_THREADS=2",
+     "OMP_NUM_THREADS=2",
+     "OPENBLAS_NUM_THREADS=2",
+     "/opt/venv/bin/python",
+     "-I",
+     "-S",
+     "reader.py",
+     "{\"path\":\"data/cifar-10-python.tar.gz\",\"splits\":{\"test\":{\"arg\":\"\",\"member\":\"cifar-10-batches-py/test_batch\",\"reader\":\"cifar_python\"}}}"
+    ],
+    "exit_code": 0,
+    "expected": {
+     "test": 4000
+    },
+    "log_tail": "",
+    "stopped": null
+   },
+   "requirements": "numpy\n"
+  },
+  {
+   "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+   "build": {
+    "exit_code": 0,
+    "stopped": null
+   },
+   "generator": {
+    "exit_code": 1,
+    "log_tail": " .backend import backend_name, load_backend  # usort: skip\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/backend/__init__.py\", line 122, in <module>\n    load_backend(get_preferred_backend())\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/backend/__init__.py\", line 57, in load_backend\n    mod = importlib.import_module(\".%s\" % mod_name, __name__)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/backend/pytorch/__init__.py\", line 1, in <module>\n    from .sparse import *\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/backend/pytorch/sparse.py\", line 24, in <module>\n    from ...heterograph_index import create_unitgraph_from_csr\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/heterograph_index.py\", line 10, in <module>\n    from . import backend as F, utils\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/utils/__init__.py\", line 14, in <module>\n    from setuptools.extern.packaging import version\nModuleNotFoundError: No module named 'setuptools'\nSetting the default backend to \"pytorch\". You can change it in the ~/.dgl/config.json file or export the DGLBACKEND environment variable.  Valid options are: pytorch, mxnet, tensorflow (all lowercase)\n"
+   },
+   "image_id": "sha256:445be85c49eac16c82ef811246c7b7f1763d87110e4176c624f71b9d0047d494",
+   "reader": "dgl",
+   "requirements": "dgl==2.1.0\ntorch==2.2.2\n"
+  },
+  {
+   "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+   "build": {
+    "exit_code": 0,
+    "stopped": null
+   },
+   "file": {
+    "name": "table.xlsx",
+    "sha256": "dcf577f6b258741495c3cca69bfb81c82dbe3503289c98e7fd1a772b8a0fcacd",
+    "size": 2393
+   },
+   "image_id": "sha256:263be0f886b4bc157a6aa29038e4ab90ffee32216cd43d84df6f2eca5c4cdb23",
+   "passed": true,
+   "probe": {
+    "argv_prefix": [
+     "/usr/bin/env",
+     "-i",
+     "MKL_NUM_THREADS=2",
+     "NUMEXPR_NUM_THREADS=2",
+     "OMP_NUM_THREADS=2",
+     "OPENBLAS_NUM_THREADS=2",
+     "/opt/venv/bin/python",
+     "-I",
+     "-S"
+    ],
+    "exit_code": 0,
+    "log_tail": null,
+    "seen": {
+     "cwd": "/work",
+     "env": {
+      "LC_CTYPE": "C.UTF-8",
+      "MKL_NUM_THREADS": "2",
+      "NUMEXPR_NUM_THREADS": "2",
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2"
+     },
+     "executable": "/opt/venv/bin/python",
+     "files": [
+      "./data/table.xlsx",
+      "./reader.py"
+     ],
+     "flags": {
+      "isolated": 1,
+      "no_site": 1
+     },
+     "library": "/opt/venv/lib/python3.12/site-packages/pandas/__init__.py",
+     "mounts": [
+      [
+       "/home/refute/refute-run/readers/20261018T140753Z/excel/probe",
+       "/work"
+      ],
+      [
+       "/home/refute/refute-run/readers/20261018T140753Z/excel/fetched/table.xlsx",
+       "/work/data/table.xlsx"
+      ]
+     ],
+     "path": [
+      "/usr/local/lib/python312.zip",
+      "/usr/local/lib/python3.12",
+      "/usr/local/lib/python3.12/lib-dynload",
+      "/opt/venv/lib/python3.12/site-packages"
+     ],
+     "prefix": "/usr/local"
+    }
+   },
+   "reader": "excel",
+   "reader_run": {
+    "answer": {
+     "test": 123
+    },
+    "argv": [
+     "/usr/bin/env",
+     "-i",
+     "MKL_NUM_THREADS=2",
+     "NUMEXPR_NUM_THREADS=2",
+     "OMP_NUM_THREADS=2",
+     "OPENBLAS_NUM_THREADS=2",
+     "/opt/venv/bin/python",
+     "-I",
+     "-S",
+     "reader.py",
+     "{\"path\":\"data/table.xlsx\",\"splits\":{\"test\":{\"arg\":\"0\",\"member\":\"\",\"reader\":\"excel\"}}}"
+    ],
+    "exit_code": 0,
+    "expected": {
+     "test": 123
+    },
+    "log_tail": "",
+    "stopped": null
+   },
+   "requirements": "pandas\nopenpyxl\n"
+  }
+ ],
+ "started_utc": "20261018T140753Z"
+}
