@@ -139,6 +139,66 @@ The other candidates of batches 4 to 12 were rejected mechanically (their batch 
 **Accepted so far, in walk order:** 2305.19518 (1), 2502.16782 (112), 2407.11735 (230);
 each with the cells confirmed in its inventory.
 
+## Amendment 1 walk (protocol commit 073692b) and the decisions of 2026-10-18 (about 09:50)
+
+| Batch | Positions | Commit | Note |
+|---|---|---|---|
+| 13 | 301-325 | 1d03bd1 | the first batch read from the amendment's commit |
+| 14 | 326-350 | b95c01d | the 7th acceptance (by the agent's proposals) is position 338 |
+| 15 | 351-375 | 2e0c815 | read before the stop; the agent then stopped starting batches (AMENDMENT-1 item 7); batch 16 was started and stopped before it wrote anything |
+
+The maintainer's message labelled about 09:50 Brasília time decided C4 to C9
+(`PROTOCOL-clarifications.md`) after positions 1 to 375 had been triaged and the inventories
+drafted, and approved the following decisions.
+
+**Strict order of the reasons (approved).** 32 keeps `requires_gpu` (a): the original
+source of MPTP2078 (github.com/JUrban/MPTP2078, `COPYING`) allows GPL-3.0 or CC BY-SA 3.0
+and the paper states no total compute above the budget. 257 keeps `requires_gpu` (b):
+CivilComments is CC0 (WILDS), so C1 does not reject. **101 changes** to
+`data_license_incompatible`, with `requires_gpu` (a) also noted: Amazon and YelpChi come
+through CARE-GNN (Apache-2.0), an intermediate repository, and their original sources
+(McAuley and Leskovec 2013; Rayana and Akoglu 2015) state no licence; the JODIE/SNAP page
+(Reddit) states none; the source of the Facebook dataset (Xu et al. 2022) was not located.
+
+| Pos | arXiv | Repository (commit) | Decision | Evidence |
+|---|---|---|---|---|
+| 308 | 2406.11016 | dwgnr/optimized-speculative-sampling (823428f) | rejected: `requires_gpu` (a) | the method is a custom CUDA kernel compiled with nvcc (`--use_custom_sampler`); the times are per-step GPU profiles (Table 6) |
+| 309 | 2309.15704 | antoinedemathelin/maxwent-expe (c67aa62) | **accepted** | Table 2 (C9); UCI data CC BY 4.0, kin8nm from DELVE (C5) |
+| 317 | 2310.01224 | Yukayo/MobGT | rejected: `no_license` | no licence reported by GitHub, none at the root, none in the README |
+| 324 | 2404.17673 | hariharan20/MLDEnv | rejected: `no_license` | as 317 |
+| 325 | 2302.12465 | amazon-science/page-link-path-based-gnn-explanation (cdb7160) | **accepted** | Table 4, UserItemAttr cells (the authors' synthetic graph, repository MIT-0); AugCitation leaves (C2) |
+| 331 | 2412.09842 | uzn36/DP-SynGen | rejected: `no_license` | as 317 |
+| 335 | 2304.14390 | jzenn/DSMCS (72f9ebe) | **accepted** | Tables 1 to 3; synthetic targets; CPU path |
+| 338 | 2407.20299 | ggflow123/DDRL (6ffb086) | **accepted** | Tables 2 and 3 (Procgen); teacher models on Hugging Face (apache-2.0); CPU path |
+| 341 | 2407.12415 | Zh-XY22/FreDF | rejected: `no_license` | as 317 (no README) |
+| 345 | 2308.04836 | thaihungle/SM (b46d376) | rejected: `requires_gpu` (b) | "On our Nvidia A100 GPUs ... 11h 38m and 12h 10m"; no CPU figure |
+| 358 | 2407.19421 | PanChengN/I-PINN | rejected: `no_license` | as 317 |
+| 372 | 2412.08310 | MatthiasKohn/ES-MLP | rejected: `no_license` | as 317 |
+| 373 | 2402.04898 | Sentient-Sports/Strain-of-Success | rejected: `no_license` | as 317 |
+| 374 | 2305.18246 | hmishfaq/LMC-LSVI (b987709) | rejected: `outside_v03_experimental_scope` | the Atari results are in figures only; Table 1 holds theoretical bounds |
+
+The other candidates of batches 13 to 15 were rejected mechanically (their batch files).
+
+**Sample (decided 2026-10-18):** main sample 2305.19518 (1), 2502.16782 (112),
+2407.11735 (230), 2309.15704 (309), 2302.12465 (325); development papers 2304.14390 (335)
+and 2407.20299 (338). If C5 or C7 leaves a main paper with no valid cell, amendment 1
+applies: the 6th accepted moves up and the walk goes on.
+
+**C5 applied.** CIFAR-10/100 (www.cs.toronto.edu/~kriz/cifar.html: "If you're going to use
+this dataset, please cite the tech report"): accepted for 2305.19518 and 2407.11735.
+kin8nm (original source DELVE, whose copyright notice grants use "for non-commercial
+purposes only"): accepted for 2309.15704. Tiny ImageNet (cs231n.stanford.edu download, no
+terms found at the source): its cells of 2407.11735 are `data_license_incompatible`.
+Refute does not redistribute data: the run fetches each dataset into a cache on the VM and
+mounts it read only; the dossier holds the claim file, the canonical record with the
+hashes, the logs and the requirements lock (`src/refute/packs/ml/production.py`,
+`write_dossier`), never a dataset. The logs are copied whole, so output that a repository
+prints itself would be in them.
+
+**C7 measured.** The BOLT weights bundles (Google Drive folder linked from
+cmu-cryptosystems/BOLT, read 2026-10-18): `bolt_word_elimination.zip` 779.8 MB, `bolt.zip`
+779.8 MB, `iron.zip` 1.07 GB; each communication cell needs one bundle, under 2 GB.
+
 ## Versions of PROTOCOL-clarifications.md
 
 SHA-256 of the file's bytes as committed. Any later version is added here in the commit
@@ -148,4 +208,5 @@ that changes the file.
 |---|---|---|---|
 | 1 | 0b1e63f | C1, C2 | `8c08ac5b4407dd76d2b3ede276fdf20374efd610d252e572002e2e1c610a1958` |
 | 2 | 9ec21de | C1, C2 (Codex review) | `0d8ca4a89e1fcc3507d2c943e20ae04f94b2178ec4dd16321fc182de4bbb0f02` |
-| 3 | the commit that adds this row | C1, C2, C3 | `df5efa365eca21a9dc197b4f49b58363137965366e51f1ff949e9fedb101c025` |
+| 3 | acb5ec3 | C1, C2, C3 | `df5efa365eca21a9dc197b4f49b58363137965366e51f1ff949e9fedb101c025` |
+| 4 | the commit that adds this row | C1 to C9 | `62f17c049bf64615222bb38deb7eb1106641b4f9c1c02b24c0311000b0bfa96e` |
