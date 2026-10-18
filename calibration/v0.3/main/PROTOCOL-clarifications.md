@@ -4,8 +4,10 @@
 protocol commit b01bc78 before every batch and before the claim draw ("Files covered").
 Its text is therefore never edited after that commit. Clarifications decided by the
 maintainer after the protocol commit are recorded here, dated, and also in
-`selection_log.md`. They do not change the frame, the round, the walk order or the
-closed list of reasons; they fix how two reasons of the triage are read.
+`selection_log.md`, which records the SHA-256 of each version of this file. The
+maintainer accepted on 2026-10-18 that this separate file carries the notes on the
+protocol. They do not change the frame, the round, the walk order or the closed list of
+reasons; they fix how reasons of the triage are read.
 
 ## C1 and C2: decided on 2026-10-18, after candidates were seen
 
@@ -40,6 +42,26 @@ looks for the original source and records its URL, the date it was read and a sh
 literal excerpt (a `sources/` record). Original source with a compatible license: the
 dataset is accepted, with its source recorded. Original source with no known license, or
 with an incompatible one: `data_license_incompatible` (read at the level fixed by C1).
+
+## C3: decided on 2026-10-18, after candidates were seen
+
+**When and why.** Decided by the maintainer on 2026-10-18 (message labelled about 09:30
+Brasília time), **after** the agent had triaged all 300 candidates of batches 1 to 12, and
+specifically after candidates 2305.19518 (position 1), 2502.16782 (position 112) and
+2407.11735 (position 230) raised the question. It applies in the same way to every
+candidate of the main walk, including those already triaged.
+
+**C3: the size thresholds take the reading of C1.** `dataset_over_budget` (declared
+datasets above 5 GB in total) and `pretrained_download_over_budget` (declared model
+weights above 2 GB in total) reject a candidate only if **no** candidate cell of the main
+results tables can be produced within **all** the limits. The cells that depend on data or
+weights above a limit leave the inventory with that reason. `requires_gpu` stays at the
+level of the paper, by the definition (a)/(b) of the protocol.
+
+The final report gives the rejection profile in both readings, side by side: the literal
+reading of the thresholds (the whole paper) and the per-cell reading of C1 to C3.
+
+## The pilot
 
 **The pilot.** In the pilot (`calibration/v0.3/pilot/pilot_triage.md`, candidate #16,
 `data_requires_registration_or_terms`) the reading used was the whole paper. The pilot is closed and
