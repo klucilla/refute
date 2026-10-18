@@ -8,8 +8,9 @@ decisions are entered here; proposals not yet approved are not.
 
 Source records: the licence GitHub reports, the names at the repository's root and the
 README (URL, commit and SHA-256) of each candidate are in its batch file, read by
-`select_main.py` at the time of the batch; other external facts carry their URL and the date
-they were read.
+`select_main.py` at the time of the batch. Every licence statement of this log has its
+source URL, read time and literal value in `sources/triage-sources.md`; other external
+facts carry their URL and the date they were read.
 
 ## Walk record
 
@@ -18,7 +19,7 @@ they were read.
 | 1 | 1-25 | 703dece | |
 | 2 | 26-50 | 551a91f | |
 | 3 | 51-75 | d848259 | |
-| 4 | 76-100 | 9b0795a | The first attempt stopped at position 100 on an arXiv HTTP 429 (a 4xx, not retried by the protocol); nothing was written. Rerun approved by the maintainer on 2026-10-18 and recorded in issue #156 before it ran, with the reason and the exact procedure; code, seed, round and pause unchanged. |
+| 4 | 76-100 | 9b0795a | The first attempt stopped at position 100 on an arXiv HTTP 429 (a 4xx, not retried by the protocol); nothing was written. Rerun approved by the maintainer on 2026-10-18 and recorded in issue #156 (comment of 2026-10-18T03:14:48Z) before it ran, with the reason and the exact procedure; the rerun started after 03:15Z, more than 60 minutes after the 429 (about 01:01Z), and its output was written at 03:17:10Z; code, seed, round and pause unchanged. |
 | 5 | 101-125 | b5a0df5 | |
 | 6 | 126-150 | ee38121 | |
 | 7 | 151-175 | 57e5dcc | |
@@ -30,15 +31,18 @@ they were read.
 
 **Stop rule.** The walk read 300 candidates (12 batches). The protocol stops the walk when
 it passes 300 candidates without 7 accepted (5 main and 2 development); `select_main.py`
-refuses a 13th batch. At the end of batch 12 no candidate has an approved acceptance, and
-the proposals still awaiting the maintainer's decisions admit at most 4 acceptances, so the
+refuses a 13th batch. At the end of batch 12 no candidate has an approved acceptance, and,
+by the agent's proposals still awaiting the maintainer's decisions, at most 4 candidates
+could be accepted, so the
 condition cannot be met: the walk stops and the maintainer decides (rates by reason and the
 options are reported to the maintainer).
 
 ## Clarifications decided after candidates were seen (2026-10-18)
 
-The maintainer decided two clarifications of the triage on 2026-10-18 (about 00:20
-Brasília time), **after** positions 1 to 75 had been triaged and after candidates
+The maintainer decided two clarifications of the triage on 2026-10-18, in the message that
+also approved the rerun of batch 4 (labelled "about 00:20" Brasília time; received by the
+agent before 2026-10-18T03:14:48Z), **after** positions 1 to 75 had been triaged and after
+candidates
 2305.19518 (position 1) and 2407.17459 (position 37) raised the questions. They apply in the
 same way to every candidate, including those triaged before the decision. Their full text
 is in `PROTOCOL-clarifications.md` (C1 and C2); `PROTOCOL.md` is not edited, because
@@ -57,7 +61,7 @@ is in `PROTOCOL-clarifications.md` (C1 and C2); `PROTOCOL.md` is not edited, bec
 
 ## Decisions approved on 2026-10-18 (positions 1 to 75)
 
-Approved by the maintainer on 2026-10-18 (about 00:20 Brasília time).
+Approved by the maintainer on 2026-10-18, in the same message as C1 and C2.
 
 | Pos | arXiv | Repository (commit) | Decision | Evidence | Effect of C1 and C2 |
 |---|---|---|---|---|---|
@@ -68,7 +72,7 @@ Approved by the maintainer on 2026-10-18 (about 00:20 Brasília time).
 | 10 | 2501.18768 | michael-s-yao/dynamo (MIT) | rejected: `out_of_scope` | `setup.sh` trains surrogates for TFBind8 (DNA), UTR (RNA), ChEMBL and PenalizedLogP (molecules): dual-use biology and chemistry (CLAUDE.md; "dna", "rna", "molecules" are in the protocol's keyword list) | none |
 | 18 | 2405.07414 | kyungeun-lee/tabularbinning | rejected: `no_license` | the README's table of contents lists "License" but there is no such section; no licence file | none |
 | 20 | 2505.11298 | rpaolino/genvsexp | rejected: `no_license` | as #2 | none |
-| 32 | 2305.08676 | IBM/TRAIL (Apache-2.0) | rejected: `requires_gpu` (a) | README "TRAIL requires a GPU for training"; `code/game/gpu_server.py:153` asserts `torch.cuda.is_available()` | none for the decision; the data source (plcop, MPTP2078) has no licence, so `data_license_incompatible` may also apply and would come first in the order |
+| 32 | 2305.08676 | IBM/TRAIL (Apache-2.0) | rejected: `requires_gpu` (a) | README "TRAIL requires a GPU for training"; `code/game/gpu_server.py:153` asserts `torch.cuda.is_available()` | none for the decision; the data source github.com/zsoltzombori/plcop (MPTP2078, M2K) has no licence reported by GitHub and no licence file at its root (`sources/triage-sources.md`); the licence of the original MPTP2078 source was not checked, so `data_license_incompatible` may also apply and would then come first in the order |
 | 41 | 2305.16886 | eliacunegatti/mge-snn (Apache-2.0) | rejected: `no_reproduction_instructions` | the README points to `graph_data/paper_results` for sections 4.2.1-4.2.3, absent from the tree; no script for the regression, feature-importance or ranking results | none |
 | 44 | 2301.13139 | c-alfano/approximate-mirror-policy-optimization | rejected: `no_license` | as #2 | none |
 | 72 | 2401.15973 | hamedhemati/omsi | rejected: `no_license` | the repository holds a README only ("SOURCE CODE TBA") | none |

@@ -9,8 +9,10 @@ closed list of reasons; they fix how two reasons of the triage are read.
 
 ## C1 and C2: decided on 2026-10-18, after candidates were seen
 
-**When and why.** Both were decided by the maintainer on 2026-10-18 (about 00:20 Brasília
-time), **after** the agent had seen and triaged walk positions 1 to 75, and specifically
+**When and why.** Both were decided by the maintainer on 2026-10-18, in the message that
+also approved the rerun of batch 4 (the message is labelled "about 00:20" Brasília time;
+the agent received it before 2026-10-18T03:14:48Z, when it recorded that approval in issue
+#156), **after** the agent had seen and triaged walk positions 1 to 75, and specifically
 after the candidates 2305.19518 (position 1) and 2407.17459 (position 37) raised the
 questions. They are applied in the same way to **every** candidate of the main walk,
 including those already triaged before the decision; `selection_log.md` records, for each
@@ -21,8 +23,10 @@ candidate triaged before 2026-10-18, whether its decision changed.
 `needs_paid_api_or_credentials` apply at the level of the **main results tables** (the
 universe of claims of plan 5.2). A candidate is rejected for one of these reasons only if
 **no** candidate cell of those tables can be produced without the restricted data or the
-paid API. Otherwise it is accepted, and the cells that depend on the restricted data or
-the paid API leave the inventory with that reason. An optional step that uses a paid API
+paid API. Otherwise these four reasons do not reject it (the other reasons of the closed
+list still apply, and every decision still needs the maintainer's approval), and the
+cells that depend on the restricted data or the paid API leave the inventory with that
+reason. An optional step that uses a paid API
 does not count when the results of the main tables do not depend on it.
 
 C1 names these four reasons. The thresholds `dataset_over_budget` (declared datasets
@@ -38,5 +42,5 @@ dataset is accepted, with its source recorded. Original source with no known lic
 with an incompatible one: `data_license_incompatible` (read at the level fixed by C1).
 
 **The pilot.** In the pilot (`calibration/v0.3/pilot/pilot_triage.md`, candidate #16,
-`data_requires_registration`) the reading used was the whole paper. The pilot is closed and
+`data_requires_registration_or_terms`) the reading used was the whole paper. The pilot is closed and
 none of its papers enters the main sample (filter 7); its decisions are not revisited.
