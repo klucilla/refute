@@ -201,6 +201,23 @@ class HoldoutParams(_Model):
     max_hidden_window_fraction: float = Field(0.5, gt=0, le=1)
 
 
+class CorrectionsParams(_Model):
+    """M4 of v0.2.1: the TESS corrections of revision 4 of the corrections plan
+    (docs/validation/v0.2.1/reopen/corrections-plan-rev4.md; the map of the code,
+    m4-implementation-map.md). ``enabled: false`` is the M3 code path; the settings are those of
+    a configuration (revision 3, 9.2; the defaults are M4-c1's until the M4 freeze)."""
+
+    enabled: bool = False
+    b_min: int = Field(20, ge=1)
+    gap_split: float = Field(5.0, gt=0)
+    fap_max: float = Field(1e-4, gt=0, lt=1)
+    max_components: int = Field(3, ge=0)
+    k_clip: float = Field(2.5, gt=0)
+    h_min: float = Field(0.90, gt=0, le=1)
+    m_beta: float = Field(1.2, ge=1)
+    r_min: int = Field(20, ge=1)
+
+
 class GauntletParams(_Model):
     snr: SnrParams = Field(default_factory=SnrParams)
     odd_even: OddEvenParams = Field(default_factory=OddEvenParams)
@@ -214,6 +231,7 @@ class GauntletParams(_Model):
     period_alias: AliasParams = Field(default_factory=AliasParams)
     systematics: SystematicsParams = Field(default_factory=SystematicsParams)
     eb_catalog: EbCatalogParams = Field(default_factory=EbCatalogParams)
+    corrections: CorrectionsParams = Field(default_factory=CorrectionsParams)
 
 
 class TessTestPlan(_Model):

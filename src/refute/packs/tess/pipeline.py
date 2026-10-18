@@ -8,7 +8,7 @@ auxiliary columns, neighbors or catalogs used by the v0.2 battery.
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -29,7 +29,13 @@ from refute.packs.tess.ebcatalog import (
     resolve_references,
 )
 from refute.packs.tess.ephemeris import Ephemeris, fit_linear_ephemeris, measure_transit_times
-from refute.packs.tess.events import EventDepths, per_event_depths, per_point_sigma, transit_mask
+from refute.packs.tess.events import (
+    EventDepths,
+    group_mean,
+    per_event_depths,
+    per_point_sigma,
+    transit_mask,
+)
 from refute.packs.tess.gauntlet import (
     check_odd_even,
     check_plausibility,
@@ -39,6 +45,7 @@ from refute.packs.tess.gauntlet import (
 )
 from refute.packs.tess.holdout import HoldoutOutcome, run_holdout
 from refute.packs.tess.params import TessTestPlan
+from refute.packs.tess.rednoise import EventNoise, event_noise
 from refute.packs.tess.search import SearchResult, finalize_candidate, search_period
 from refute.packs.tess.types import BTJD_OFFSET, Candidate, LightCurveData, TessData
 
@@ -163,14 +170,22 @@ def attack_candidate(
     final = finalize_candidate(
         flat, candidate.period, candidate.duration, plan.search, candidate.sde, sigma
     )
+    noise = None
+    if gp.corrections.enabled:
+        # M4 piece 2: the A1 noise model for every per-event measurement and the gate.
+        noise = event_noise(flat, None, final.period, final.t0, final.duration, plan)
     primary = per_event_depths(
-        flat, final.period, final.t0, final.duration, cadence, gp.events, 0.0, sigma
+        flat, final.period, final.t0, final.duration, cadence, gp.events, 0.0, sigma, noise
     )
     secondary = per_event_depths(
-        flat, final.period, final.t0, final.duration, cadence, gp.events, 0.5, sigma
+        flat, final.period, final.t0, final.duration, cadence, gp.events, 0.5, sigma, noise
     )
+    if noise is None:
+        snr_test = check_snr(final, gp.snr)
+    else:
+        final, snr_test = _corrected_gate(final, primary, noise, gp)
     tests = [
-        check_snr(final, gp.snr),
+        snr_test,
         check_odd_even(primary, gp.odd_even),
         check_secondary_eclipse(primary, secondary, gp.secondary_eclipse),
         check_plausibility(final, data.star, gp.plausibility),
@@ -189,6 +204,37 @@ def attack_candidate(
     )
     ephemeris = fit_linear_ephemeris(times) if len(times) >= 2 else None
     return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris)
+
+
+def _corrected_gate(
+    final: Candidate, primary: EventDepths, noise: EventNoise, gp
+) -> tuple[Candidate, TestResult]:
+    """M4 piece 2 (m4-implementation-map.md, Amendment 2): the gate reads the BLS depth over
+    the stacked error of the primary events under the A1 model; the BLS ``depth_snr`` is
+    reported beside it. An undetermined noise model, or no measurable event, is INCONCLUSIVE."""
+    noise_record = noise.to_dict()
+    if noise.undetermined or len(primary) == 0:
+        why = "noise model undetermined" if noise.undetermined else "no measurable event"
+        return final, TestResult(
+            "snr",
+            TestStatus.INCONCLUSIVE,
+            Severity.GATE,
+            f"{why}: the corrected SNR cannot be computed",
+            metrics={"bls_depth_snr": final.snr, "noise": noise_record},
+            thresholds={"min_snr": gp.snr.min_snr},
+        )
+    stacked = group_mean(primary.depths, primary.errors)
+    corrected = replace(final, snr=final.depth / stacked.error, depth_err=stacked.error)
+    test = check_snr(corrected, gp.snr)
+    metrics = {
+        **test.metrics,
+        "bls_depth_snr": final.snr,
+        "stacked_error_ppm": stacked.error * 1e6,
+        "events": len(primary),
+        "events_dropped": dict(primary.dropped),
+        "noise": noise_record,
+    }
+    return corrected, replace(test, metrics=metrics)
 
 
 def expected_tests(catalogs_configured: bool) -> list[str]:

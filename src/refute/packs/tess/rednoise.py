@@ -74,6 +74,50 @@ class NoiseEstimate:
         }
 
 
+@dataclass(frozen=True)
+class EventNoise:
+    """The estimates at the two nominal scales of a per-event measurement (M4 piece 2): ``box``
+    at ``n_T`` (the in-event cadences) and ``base`` at ``n_B`` (the baseline bands)."""
+
+    box: NoiseEstimate
+    base: NoiseEstimate
+
+    def usable(self, sector: int) -> bool:
+        a, b = self.box.sectors.get(sector), self.base.sectors.get(sector)
+        return a is not None and b is not None and not a.excluded and not b.excluded
+
+    @property
+    def undetermined(self) -> bool:
+        return not any(self.usable(s) for s in self.box.sectors)
+
+    def to_dict(self) -> dict:
+        return {"box": self.box.to_dict(), "base": self.base.to_dict()}
+
+
+def event_noise(flat, mask, period: float, t0: float, duration: float, plan) -> EventNoise:
+    """A1 on a flattened light curve for the per-event measurements of a candidate: the
+    candidate's transits masked (``mask``, or the detrending mask of the plan when None), the
+    estimate at ``n_T = round(duration / cadence)`` and ``n_B = round(2 (outer - inner) /
+    cadence)`` (m4-implementation-map.md, Amendment 2)."""
+    from refute.packs.tess.events import transit_mask
+
+    c = plan.gauntlet.corrections
+    ev = plan.gauntlet.events
+    cadence = plan.data.exptime_seconds / 86400.0
+    if mask is None:
+        half = plan.detrend.transit_mask_half_width_durations * duration
+        mask = transit_mask(flat.time, period, t0, half)
+    keep = ~np.asarray(mask, dtype=bool)
+    resid = flat.flux - 1.0
+    inner = duration / 2.0 + ev.baseline_gap_durations * duration
+    outer = duration / 2.0 + ev.baseline_outer_durations * duration
+    n_t = max(1, int(round(duration / cadence)))
+    n_b = max(1, int(round(2.0 * (outer - inner) / cadence)))
+    box = estimate(flat.time, resid, flat.sector, keep, n_t, c.gap_split, cadence, c.b_min)
+    base = estimate(flat.time, resid, flat.sector, keep, n_b, c.gap_split, cadence, c.b_min)
+    return EventNoise(box, base)
+
+
 def segments(
     time: np.ndarray, keep: np.ndarray, gap_split: float, cadence_days: float
 ) -> list[np.ndarray]:
