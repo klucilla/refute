@@ -12,7 +12,10 @@ Run from a clean checkout of main. Two commands:
   the mechanical rejections (category, keywords, repository unavailable) and the
   ``no_license`` signal (GitHub reports no license and no license-like file is at the root;
   a signal only: the agent proposes the decision after reading the README). Batch N needs
-  batch N - 1 committed; at most 12 batches (300 candidates, the stop rule).
+  batch N - 1 committed; at most 48 batches (1,200 candidates, the cap of AMENDMENT-1.md).
+  Batches 13 to 48 run from the amendment's commit: the paper round stays the round of the
+  original protocol commit (fixed below and checked against its publication proof), and
+  the amendment's own push run must exist before the batch is read.
 - ``--claims-after COMMIT``: after the claim round. The claim round is the first round
   published at least one hour after the push run of the first commit of main after the
   protocol commit that adds ``inventories/SHA256SUMS``; ``COMMIT`` must be that commit.
@@ -30,7 +33,7 @@ import re
 import subprocess
 import sys
 import urllib.error
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -56,7 +59,15 @@ CACHE = ROOT / ".cache" / "round6" / "main"
 WINDOW = Window("2023-01", "2025-06")
 CATEGORIES = ("cs.LG", "stat.ML", "cs.AI")
 BATCH = 25
-MAX_BATCHES = 12  # 300 candidates: the stop rule of the protocol
+# AMENDMENT-1.md (the maintainer's decision of 2026-10-18): the same walk goes on to 1,200
+# candidates; the original stop rule was 12 batches (300 candidates)
+MAX_BATCHES = 48
+FIRST_AMENDED_BATCH = 13
+# the original protocol commit and its paper round, fixed by the amendment: the round is
+# never derived again from another commit
+ORIGINAL_PROTOCOL = "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d"
+PAPER_ROUND = 6561788
+AMENDMENT = "calibration/v0.3/main/AMENDMENT-1.md"
 PILOT_DRAWS = (
     "calibration/v0.3/pilot/pilot_draw.json",
     "calibration/v0.3/pilot/pilot_draw_additional.json",
@@ -66,7 +77,8 @@ INVENTORY_SUMS = "calibration/v0.3/main/inventories/SHA256SUMS"
 # arXiv IDs, in walk order); the claim draw needs exactly their 5 inventories
 MAIN_SAMPLE = "calibration/v0.3/main/main_sample.json"
 LICENSE_LIKE = ("licen", "copying", "notice")
-PROTOCOL_FILES = (
+# the files of the original protocol commit (its publication proof covers them)
+ORIGINAL_PROTOCOL_FILES = (
     "calibration/v0.3/main/PROTOCOL.md",
     "calibration/v0.3/main/select_main.py",
     "calibration/v0.3/pilot/select_pilot.py",
@@ -85,6 +97,9 @@ PROTOCOL_FILES = (
     "pyproject.toml",
     "uv.lock",
 )
+# the files the running code must match byte for byte in the commit given on the command
+# line (the amendment's commit for batches 13 to 48)
+PROTOCOL_FILES = (*ORIGINAL_PROTOCOL_FILES, AMENDMENT)
 
 
 class MainError(Exception):
@@ -129,8 +144,37 @@ def walk_order(rows: list[dict[str, Any]], seed: int, exclude: set[str]) -> list
 
 def batch_slice(n: int) -> slice:
     if not 1 <= n <= MAX_BATCHES:
-        raise MainError(f"batch {n}: batches are 1 to {MAX_BATCHES} (the stop rule)")
+        raise MainError(
+            f"batch {n}: batches are 1 to {MAX_BATCHES} (the cap of the stop rule, AMENDMENT-1.md)"
+        )
     return slice(BATCH * (n - 1), BATCH * n)
+
+
+def check_protocol_commit(n: int, protocol_commit: str) -> None:
+    """Batches 1 to 12 were read from the original protocol commit; batches 13 to 48 are
+    read only from the amendment's commit, never from the original one."""
+    if n >= FIRST_AMENDED_BATCH and protocol_commit == ORIGINAL_PROTOCOL:
+        raise MainError(
+            f"batch {n} is read from the commit of {AMENDMENT}, not from the original protocol"
+        )
+
+
+def check_amendment_commit(protocol_commit: str, adding: list[str]) -> None:
+    """For batches 13 to 48 the protocol commit must be the one commit that added
+    ``AMENDMENT`` (Codex review of the amendment: a later commit that changed the reading
+    code would otherwise be accepted as its own reference). ``adding``: the commits of the
+    checked-out history that add the file."""
+    if adding != [protocol_commit]:
+        raise MainError(
+            f"the protocol commit of batches {FIRST_AMENDED_BATCH} to {MAX_BATCHES} must be "
+            f"the one commit that adds {AMENDMENT}; the history has {adding}"
+        )
+
+
+def check_round(number: int) -> None:
+    """The round derived from the original protocol's push run must be the fixed one."""
+    if number != PAPER_ROUND:
+        raise MainError(f"the original protocol gives round {number}, not {PAPER_ROUND}")
 
 
 def first_with_file(commits: list[str], has) -> str | None:
@@ -199,21 +243,54 @@ def _push_created(commit: str) -> tuple[list, str]:
     return runs, min(r["created_at"] for r in runs)
 
 
-def paper_round(protocol_commit: str) -> tuple[int, Any]:
-    """The paper round, by the protocol's rule, and its publication proof."""
+def _ancestor(older: str, newer: str) -> bool:
+    command = ["git", "merge-base", "--is-ancestor", older, newer]
+    return not subprocess.run(command, cwd=ROOT).returncode
+
+
+def paper_round(protocol_commit: str) -> tuple[int, Any, Any]:
+    """The paper round, by the original protocol's rule, its publication proof, and the
+    publication proof of the amendment (None when the original commit is given). The code
+    that runs must match the given commit byte for byte; the round is always the one of the
+    original protocol commit, and must be ``PAPER_ROUND`` (AMENDMENT-1.md)."""
     _clean()
-    if subprocess.run(
-        ["git", "merge-base", "--is-ancestor", protocol_commit, "HEAD"], cwd=ROOT
-    ).returncode:
+    if not _ancestor(protocol_commit, "HEAD"):
         raise MainError("the protocol commit is not in the checked-out history")
-    files = _files_unchanged(protocol_commit)
-    runs, created = _push_created(protocol_commit)
+    if not _ancestor(ORIGINAL_PROTOCOL, protocol_commit):
+        raise MainError("the original protocol commit is not an ancestor of the given commit")
+    amended = protocol_commit != ORIGINAL_PROTOCOL
+    if amended:
+        adding = sp._git("log", "--diff-filter=A", "--format=%H", "HEAD", "--", AMENDMENT).split()
+        check_amendment_commit(protocol_commit, adding)
+    files = _files_unchanged(protocol_commit) if amended else None
+    # the original protocol's files as published in its commit (with the original commit
+    # given, the running code must also match them on disk)
+    original = (
+        {
+            p: hashlib.sha256(sp._in_commit(ORIGINAL_PROTOCOL, p)).hexdigest()
+            for p in ORIGINAL_PROTOCOL_FILES
+        }
+        if amended
+        else _files_unchanged(ORIGINAL_PROTOCOL)
+    )
+    runs, created = _push_created(ORIGINAL_PROTOCOL)
     number = sp.round_after(created)
+    check_round(number)
     proof = check_publication(
-        protocol_commit, runs, drand.round_time(number), sp.MARGIN, True, files, files,
-        list(PROTOCOL_FILES), repository=sp.REPOSITORY, workflow_path=sp.WORKFLOW,
+        ORIGINAL_PROTOCOL, runs, drand.round_time(number), sp.MARGIN, True, original,
+        original, list(ORIGINAL_PROTOCOL_FILES), repository=sp.REPOSITORY,
+        workflow_path=sp.WORKFLOW,
     )  # fmt: skip
-    return number, proof
+    amendment = None
+    if amended:
+        # the amendment's push run exists before this batch is read (no margin: the
+        # amendment fixes no new randomness; it only has to be published first)
+        a_runs, _ = _push_created(protocol_commit)
+        amendment = check_publication(
+            protocol_commit, a_runs, datetime.now(UTC), timedelta(0), True, files, files,
+            list(PROTOCOL_FILES), repository=sp.REPOSITORY, workflow_path=sp.WORKFLOW,
+        )  # fmt: skip
+    return number, proof, amendment
 
 
 def root_names(full_name: str, commit: str) -> tuple[list[str] | None, list]:
@@ -235,11 +312,12 @@ def root_names(full_name: str, commit: str) -> tuple[list[str] | None, list]:
 
 def run_batch(protocol_commit: str, frame: Path, n: int) -> None:
     span = batch_slice(n)
+    check_protocol_commit(n, protocol_commit)
     if n > 1:
         previous = f"calibration/v0.3/main/main_walk_batch_{n - 1:02d}.json"
         if subprocess.run(["git", "cat-file", "-e", f"HEAD:{previous}"], cwd=ROOT).returncode:
             raise MainError(f"batch {n - 1} is not committed")
-    number, proof = paper_round(protocol_commit)
+    number, proof, amendment = paper_round(protocol_commit)
     if datetime.now(UTC) < drand.round_time(number):
         raise MainError(f"round {number} is not published yet")
     out_json = HERE / f"main_walk_batch_{n:02d}.json"
@@ -283,7 +361,11 @@ def run_batch(protocol_commit: str, frame: Path, n: int) -> None:
     record = {
         "protocol": "calibration/v0.3/main/PROTOCOL.md",
         "protocol_commit": protocol_commit,
+        "original_protocol_commit": ORIGINAL_PROTOCOL,
         "publication_proof": proof_record(proof),
+        "amendment": (
+            None if amendment is None else {"file": AMENDMENT} | proof_record(amendment)
+        ),
         "round": number,
         "beacon": beacon,
         "seed": str(seed),
@@ -304,9 +386,19 @@ def run_batch(protocol_commit: str, frame: Path, n: int) -> None:
     lines = [
         f"# Main walk, batch {n} (positions {span.start + 1} to {span.stop})",
         "",
-        f"Round {number}; seed `{seed}`; protocol commit `{protocol_commit}`; push run "
+        f"Round {number}; seed `{seed}`; protocol commit `{ORIGINAL_PROTOCOL}`; push run "
         f"{proof.run_id} created {proof.run_created_at}; "
         f"round published {proof.round_published_at}.",
+        *(
+            []
+            if amendment is None
+            else [
+                "",
+                f"Read from the commit of `{AMENDMENT}` (`{protocol_commit}`, push run "
+                f"{amendment.run_id} created {amendment.run_created_at}); the round is the "
+                f"original protocol's (`{ORIGINAL_PROTOCOL}`).",
+            ]
+        ),
         "",
         "| # | arXiv | Category | Repository | Mechanical | no_license signal |",
         "|---|---|---|---|---|---|",
