@@ -160,6 +160,49 @@ through CARE-GNN (Apache-2.0), an intermediate repository, and their original so
 (McAuley and Leskovec 2013; Rayana and Akoglu 2015) state no licence; the JODIE/SNAP page
 (Reddit) states none; the source of the Facebook dataset (Xu et al. 2022) was not located.
 
+**Records added on 2026-10-18, from the maintainer's decisions of about 11:10 Brasília time
+(received 14:00:11Z).**
+- *2502.16782 (option 1).* The paper stays in the main sample, neither rejected nor
+  replaced. Its claims are `INCONCLUSIVE` by an unsupported capability (a C++/CMake/SEAL
+  build and a run in two communicating processes, server and client), by the Dockerfile
+  precedent of `PROTOCOL.md`. A native build is a generic future improvement (#59), not done
+  now.
+- *DELVE (kin8nm, position 309).* The terms allow use for non-commercial purposes only
+  (`sources/`). Refute's use is non-commercial in fact, not only because it is research:
+  - the project is open research under Apache-2.0;
+  - it sells nothing and charges no fee;
+  - it offers no paid service and has no revenue;
+  - it publishes its results openly;
+  - it does not redistribute the data (only their hashes; the copy lives in the VM's cache
+    for the run).
+
+  The notice the terms require (the copyright notice and the permission notice, in
+  `sources/`) goes with the documentation of every claim that uses kin8nm, and the name of
+  the University of Toronto is not used in any advertising or publicity.
+- *BOLT bundles (position 112, for the inventory).* Exact sizes by HEAD request
+  (`sources/`):
+
+  | Bundle | Bytes |
+  |---|---|
+  | `bolt.zip` | 817,672,642 |
+  | `bolt_word_elimination.zip` | 817,634,523 |
+  | `iron.zip` | 1,150,213,940 |
+  | all three | 2,785,521,105 |
+
+  A CipherPrune cell needs the linear part of BOLT with word elimination
+  (817,634,523 bytes). With the reference of a comparison, the sums are:
+  - with BOLT w/o W.E.: 1,635,307,165 bytes;
+  - with IRON: 1,967,848,463 bytes.
+
+  Each is under 2 GB.
+- *Transparency of the selection.* The sample is not fully determined by rules fixed
+  before the selection: C1 to C9 were decided after candidates were seen. They are applied
+  in the same way to every candidate already examined, with their versions and approvals
+  recorded here. The final report compares the original reading with the revised one. The
+  justification of each clarification does not rest on obtaining more conclusive results.
+  A new capability of the engine before the lock serves a generic contract, never a number
+  of conclusive results.
+
 **Corrections of 2026-10-18 (after the end-of-round review; the text above is kept as
 approved).**
 - *Unconfirmed statement.* That the original sources of Amazon and YelpChi (McAuley and
