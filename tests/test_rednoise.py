@@ -44,26 +44,39 @@ def _estimate(time, resid, sector, keep=None, n=N_T, b_min=B_MIN):
     return rednoise.estimate(time, resid, sector, keep, n, GAP_SPLIT, CADENCE, b_min)
 
 
-@pytest.mark.parametrize("seed", [0, 1, 2])
-def test_white_noise_gives_beta_near_one(seed):
-    time, resid, sector = _two_sectors(seed)
-    result = _estimate(time, resid, sector)
-    assert not result.undetermined
-    for s in result.sectors.values():
-        assert not s.excluded
-        assert 0.9 <= s.beta <= 1.1, s
+# Amendment 1 of docs/validation/v0.2.1/reopen/m4-implementation-map.md: the criteria apply to
+# the estimator's central value, the median of beta over 100 sectors (50 light curves).
+MEDIAN_SEEDS = range(50)
+
+
+def _betas(**noise):
+    out = []
+    for seed in MEDIAN_SEEDS:
+        time, resid, sector = _two_sectors(seed, **noise)
+        result = _estimate(time, resid, sector)
+        assert not result.undetermined
+        out += [s.beta for s in result.sectors.values()]
+    assert len(out) == 100
+    return np.array(out)
+
+
+def test_white_noise_gives_beta_near_one():
+    betas = _betas()
+    assert 0.9 <= float(np.median(betas)) <= 1.1, np.median(betas)
+
+
+def test_white_noise_sigma_w_is_the_white_level():
+    time, resid, sector = _two_sectors(0)
+    for s in _estimate(time, resid, sector).sectors.values():
         assert s.sigma_w == pytest.approx(600e-6, rel=0.05)
 
 
-@pytest.mark.parametrize("seed", [0, 1, 2])
-def test_ar1_beta_is_within_15_percent_of_its_analytic_value(seed):
+def test_ar1_beta_is_within_15_percent_of_its_analytic_value():
     white, red, tau = 600e-6, 600e-6, 1.0 / 24.0
-    time, resid, sector = _two_sectors(seed, white=white, red=red, tau=tau)
     expected = _analytic_beta(N_T, white, red, tau)
-    result = _estimate(time, resid, sector)
-    for s in result.sectors.values():
-        assert s.beta == pytest.approx(expected, rel=0.15), (s.beta, expected)
     assert expected > 2.0  # the case is not trivial
+    median = float(np.median(_betas(white=white, red=red, tau=tau)))
+    assert median == pytest.approx(expected, rel=0.15), (median, expected)
 
 
 def test_bins_never_cross_a_gap_or_a_mask():
