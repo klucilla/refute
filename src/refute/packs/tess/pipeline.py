@@ -61,6 +61,9 @@ class GauntletOutcome:
     secondary: EventDepths | None
     tests: list[TestResult]
     ephemeris: Ephemeris | None
+    # M4 piece 3, with the corrections switch on: the template, the drops and the A1 estimate
+    # at n_tau of the global transit times (TemplateTimes.to_dict); None with the switch off.
+    timing: dict | None = None
 
 
 @dataclass
@@ -192,11 +195,13 @@ def attack_candidate(
         check_plausibility(final, data.star, gp.plausibility),
         *battery_tests(data, final, plan, catalogs, catalog_scan),
     ]
+    timing = None
     if gp.corrections.enabled:
         # M4 piece 3: the trapezoid template, the scan and the error times beta(n_tau).
-        times = corrected_transit_times(
+        corrected = corrected_transit_times(
             flat, final.period, final.t0, final.duration, sigma, plan
-        ).times
+        )
+        times, timing = corrected.times, corrected.to_dict()
     else:
         times = measure_transit_times(
             flat,
@@ -210,7 +215,7 @@ def attack_candidate(
             scan_half_width_durations=gp.holdout_by_year.timing_scan_half_width_durations,
         )
     ephemeris = fit_linear_ephemeris(times) if len(times) >= 2 else None
-    return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris)
+    return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris, timing)
 
 
 def _corrected_gate(
@@ -419,7 +424,7 @@ def build_result(
     for round_ in analysis.holdout.rounds:
         key_values[f"holdout_{round_.hidden_year}_snr"] = round_.metrics.get("hidden_snr")
     ephemeris = analysis.gauntlet.ephemeris
-    return {
+    record = {
         "schema": "refute-tess-verdict-1",
         "target_key": target["key"],
         "tic_id": int(target["tic_id"]),
@@ -466,6 +471,10 @@ def build_result(
             )
         },
     }
+    if analysis.gauntlet.timing is not None:
+        # M4 piece 3 (switch on only, so records with the switch off keep their keys).
+        record["global_timing"] = analysis.gauntlet.timing
+    return record
 
 
 class TessSearch:

@@ -219,6 +219,66 @@ the result. The case keeps a tolerance of 10%, which detects whole steps (about 
 (both sabotages caught). A crossing located on a parabola instead of a chord would remove the bias;
 it would change an Amendment 3 reading after the pulls result, so it is the maintainer's decision.
 
+## Amendment 5 (2026-10-18): the end-of-stage review of pieces 2 and 3 (Codex), and its fixes
+
+Codex reviewed 42e4184 to 5b624a1 read-only (`.cache/v021/codex/stage-m4-p23/` in the worktree).
+It found **no undeclared deviation** in pieces 2 and 3 and upheld option (c) for both criteria not
+met. Its objections, and what was done:
+
+- **Traceability.** The callers kept only the transit times, so the sectors excluded at `n_τ`
+  (revision 3, 2.1, "the report lists it") were lost. Fixed: with the switch on, the template, the
+  drops and the estimate at `n_τ` are kept in `GauntletOutcome.timing` (and the verdict record's
+  `global_timing`) and in each round's `train_timing`; with the switch off nothing changes.
+- **Positive checks** (cases added after the code, declared as such):
+  `test_p2b_the_corrected_snr_is_the_bls_depth_over_the_stacked_error` (P2 is an expected failure,
+  so a wrong factor in the gate would stay hidden); the wiring case now checks that each round uses
+  the times it received; `test_the_floor_is_half_a_cadence_not_the_step` (at a 2-minute cadence and
+  a 1-minute step the two floors coincide, so the earlier cases could not tell them apart). Each was
+  checked by a sabotage (SF1 a wrong factor in the corrected SNR, SF2 the holdout dropping a
+  returned time, SF3 the step floor restored): each fails its case.
+- **The expected failure hid the passing parts.** The pulls case is split: the 1σ fraction and the
+  median are a plain case (they pass); only the 2σ fraction keeps the `xfail` of Amendment 4.
+- **Correlated noise.** The cases of piece 3 were all white. Added a mechanism case
+  (`test_correlated_noise_raises_the_timing_errors_by_beta`: in the correlated mode the stated errors
+  of the same seeds rise by β(n_τ), median ratio > 1.5) and a diagnosis on correlated light curves,
+  recorded below as a measurement, not as a criterion (revision 3, 10 states the timing criteria for
+  white noise; K4 is the correlated condition of the calibration).
+- **Corrections of earlier wording** (the earlier text stays; these lines take precedence):
+  - P1 compares the **analysis records** of `m4/analysis_reference.py` (verdict, tests, holdout
+    rounds, candidate), not every byte of an analysis: the global ephemeris and the event arrays are
+    not in the record. With the switch off the serialized plan gains the `corrections` section
+    (structural; the numbers of the M3 path are unchanged).
+  - Amendment 4, "the measured offsets are whole minutes and the median pull is exactly 0": the
+    scan grid is `−0.5 T14 + k × step` with the **fitted** T14, so zero is on the grid only when
+    `0.5 T14 / step` is an integer (true for the injected template, 150 min; not in general for the
+    fitted ones, median 150.19 min). The median of 0 is observed; its cause and the claimed
+    insensitivity to biases below half a step are **withdrawn as not shown**.
+  - Amendment 4, "a sampling fluctuation of the declared size, not a defect of the mechanism": read
+    as "compatible with a sampling fluctuation"; the causes of the 7% excess are not all isolated,
+    and the interpolation bias of the addendum is one systematic part of it.
+  - The width case's 10% was chosen after its 3% failed; it is a regression guard against whole
+    steps and a box, not an independent validation of the precision.
+
+**The historical locks (found by CI, pending the maintainer).** The new plan section
+`gauntlet.corrections` (piece 2, 42e4184) is part of the resolved claim, so the two historical
+calibration claims (v0.1 and v0.2) no longer reach their locked `claim_sha256` by the historical
+projection (`src/refute/core/lock_compat.py`): 9 cases of `tests/test_lock_compat.py` fail (CI run
+39094858224, and locally). A read-only probe (`.cache/v021/m4/lockcompat_probe.py`) shows that the
+path `test_plan.gauntlet.corrections`, at its resolved defaults (`enabled: false`), is the only
+cause: with the table extended by that one path, both projections equal the locked hashes. The
+table is frozen and extending it changes lock verification, so it is **the maintainer's decision**;
+nothing is changed. **Deviation:** the map promises the full suite unchanged after each piece; the
+suite was not run after piece 2 (only the affected tests), so this was found by CI only after the
+push of pieces 2 and 3. From now on the suite runs before each push.
+
+**Correlated diagnosis** (`.cache/v021/m4/diagnose_p3.py` with `correlated`, seeds 0 to 69):
+978 transits; the fitted template gives |pull| ≤ 1 in 0.692, |pull| ≤ 2 in 0.957, median pull
+−0.048, standard deviation of the pulls 1.148; the stated errors are 3.48 times the white Carter
+reference (the β of the sectors), the scatter of the times 4.91 times it (robust: 3.68), so the
+tails are heavier than normal. On the first 210 transits (the declared size): 0.733 and 0.967. The
+injected template gives 0.680 and 0.953. These numbers are recorded, not judged here; K4 judges
+the extrapolated timing on the population.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after

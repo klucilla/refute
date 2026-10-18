@@ -59,6 +59,12 @@ def _template():
     return TimingTemplate(PLANET.depth, PLANET.duration, TAU)
 
 
+def _json(value):
+    from refute.core.io import dumps_json, to_jsonable
+
+    return dumps_json(to_jsonable(value))
+
+
 # --- the template -----------------------------------------------------------------------------
 
 
@@ -108,21 +114,31 @@ def test_the_per_transit_error_is_within_30_percent_of_carter(seeded_transits):
     assert 0.7 <= ratio <= 1.3, (ratio, CARTER * 1440)
 
 
+# The K margins of the pulls, split after the Codex review of the stage (Amendment 5): the parts
+# that pass stay plain tests, so a new failure of one of them is not hidden by the expected
+# failure of the 2-sigma part.
+
+
+def test_the_pulls_of_200_seeded_transits_one_sigma_and_median(seeded_transits):
+    pulls = seeded_transits[:, 1]
+    assert pulls.size >= 200
+    one = float(np.mean(np.abs(pulls) <= 1.0))
+    median = float(np.median(pulls))
+    assert 0.60 <= one <= 0.76, (one, median)
+    assert abs(median) <= 0.2, (one, median)
+
+
 @pytest.mark.xfail(
     strict=True,
     raises=AssertionError,
     reason="m4-implementation-map.md, Amendment 4: |pull| <= 2 in 0.919 of 210 at the declared "
     "case; the criterion is not met (option (c)); the mark does not satisfy it",
 )
-def test_the_pulls_of_200_seeded_transits_are_within_the_k_margins(seeded_transits):
+def test_the_pulls_of_200_seeded_transits_two_sigma(seeded_transits):
     pulls = seeded_transits[:, 1]
     assert pulls.size >= 200
-    one = float(np.mean(np.abs(pulls) <= 1.0))
     two = float(np.mean(np.abs(pulls) <= 2.0))
-    median = float(np.median(pulls))
-    assert 0.60 <= one <= 0.76, (one, two, median)
-    assert 0.92 <= two <= 0.98, (one, two, median)
-    assert abs(median) <= 0.2, (one, two, median)
+    assert 0.92 <= two <= 0.98, two
 
 
 # --- mechanisms ---------------------------------------------------------------------------------
@@ -245,6 +261,45 @@ def test_an_undetermined_estimate_gives_no_transit_times():
     assert result.times == []
 
 
+def test_the_floor_is_half_a_cadence_not_the_step():
+    """Added after the Codex review of the stage (Amendment 5): at a 20-second cadence and a
+    1-minute step the two floors differ; a precise transit gets half a cadence."""
+    cadence = 20.0 / 86400.0
+    time = 1326.3 + np.arange(-0.4, 0.4, cadence)
+    deficit = synthetic.trapezoid(time, 100.0, 1326.3, PLANET.depth, PLANET.duration, 0.15)
+    n = time.size
+    lc = LightCurveData(time, 1.0 - deficit, np.full(n, 50e-6), np.full(n, 1), np.full(n, 2018))
+    result = measure_template_times(
+        lc, 100.0, 1326.3, _template(), np.full(n, 50e-6), _noise((1,)), cadence_days=cadence
+    )
+    assert len(result.times) == 1
+    assert result.times[0].error == pytest.approx(0.5 * cadence, rel=1e-12)
+    assert result.times[0].error < 1.0 / 1440.0
+
+
+def test_correlated_noise_raises_the_timing_errors_by_beta():
+    """The correlated mode of the generator (AR(1), 600 ppm, tau = 1 h): the stated errors of the
+    same seeds are larger than in white noise, by beta(n_tau) of the sectors (median ratio > 1.5);
+    added after the Codex review of the stage (Amendment 5), a mechanism case."""
+    plan = _plan(ON)
+    ratios, betas = [], []
+    for seed in range(3):
+        white, _ = synthetic.make_lightcurve(PLANET, seed=seed)
+        red, _ = synthetic.make_lightcurve(PLANET, seed=seed, **synthetic.CORRELATED_PROFILE)
+        a = corrected_transit_times(
+            white, PLANET.period, PLANET.t0, PLANET.duration, _sigma(white), plan
+        )
+        b = corrected_transit_times(
+            red, PLANET.period, PLANET.t0, PLANET.duration, _sigma(red), plan
+        )
+        common = {t.epoch: t.error for t in a.times}
+        ratios += [t.error / common[t.epoch] for t in b.times if t.epoch in common]
+        betas += [s.beta for s in b.noise.sectors.values() if not s.excluded]
+    assert len(ratios) > 20
+    assert np.median(betas) > 1.5
+    assert np.median(ratios) > 1.5
+
+
 def test_the_scale_of_beta_is_n_tau():
     lc, _ = synthetic.make_lightcurve(PLANET, seed=3)
     result = corrected_transit_times(
@@ -287,7 +342,16 @@ def test_with_the_switch_on_the_ephemerides_come_from_the_template_times(monkeyp
     result = calls["pipeline"][0]
     expected = fit_linear_ephemeris(result.times)
     assert analysis.gauntlet.ephemeris == expected
+    assert _json(analysis.gauntlet.timing) == _json(result.to_dict())
     assert len(calls["holdout"]) >= 1
+    # Added after the Codex review of the stage (Amendment 5): each round uses the times it got.
+    timed = [r for r in analysis.holdout.rounds if "train_timing" in r.metrics]
+    assert len(timed) == len(calls["holdout"])
+    for round_, got in zip(timed, calls["holdout"], strict=True):
+        assert _json(round_.metrics["train_timing"]) == _json(got.to_dict())
+        assert round_.metrics["n_transit_times"] == len(got.times)
+        if round_.train_ephemeris is not None:
+            assert round_.train_ephemeris == fit_linear_ephemeris(got.times).to_dict()
 
     calls["pipeline"].clear()
     calls["holdout"].clear()

@@ -480,11 +480,13 @@ def plan_round(
     sigma = per_point_sigma(
         train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
     )
+    train_timing = None
     if plan.gauntlet.corrections.enabled:
         # M4 piece 3: the train timing with the trapezoid template of the train candidate.
-        times = corrected_transit_times(
+        corrected = corrected_transit_times(
             train_flat2, train.period, train.t0, train.duration, sigma, plan
-        ).times
+        )
+        times, train_timing = corrected.times, corrected.to_dict()
     else:
         times = measure_transit_times(
             train_flat2,
@@ -502,6 +504,8 @@ def plan_round(
         "n_transit_times": len(times),
         "train_validity": validity,
     }
+    if train_timing is not None:
+        train_info["train_timing"] = train_timing  # switch on only (M4 piece 3)
     if len(times) < params.min_train_transits:
         return RoundPlan(
             RoundResult(

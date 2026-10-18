@@ -98,6 +98,22 @@ def test_p2_white_noise_gate_unchanged_within_5_percent(white_planets):
     assert 0.95 <= median <= 1.05, (median, ratios)
 
 
+def test_p2b_the_corrected_snr_is_the_bls_depth_over_the_stacked_error():
+    """Added after the Codex review of the stage (map Amendment 5): P2 is an expected failure, so a
+    positive check of the gate's identity is needed (a wrong factor would stay hidden)."""
+    from refute.packs.tess.events import group_mean
+
+    analysis = analyze_with(("planet", 0, "white", ON))
+    snr = _test(analysis, "snr")
+    primary = analysis.gauntlet.primary
+    stacked = group_mean(primary.depths, primary.errors)
+    candidate = analysis.gauntlet.candidate
+    assert snr.metrics["stacked_error_ppm"] == pytest.approx(stacked.error * 1e6, rel=1e-12)
+    assert candidate.depth_err == pytest.approx(stacked.error, rel=1e-12)
+    assert snr.metrics["snr"] == pytest.approx(candidate.depth / stacked.error, rel=1e-12)
+    assert snr.metrics["events"] == len(primary)
+
+
 # --- P3, P4, P7: the per-event variance, shared cadences, excluded sectors ------------------
 
 
