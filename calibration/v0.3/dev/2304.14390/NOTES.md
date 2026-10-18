@@ -27,8 +27,12 @@ bound the code computes (the paper's "log-likelihood bound" of Tables 2 and 3).
 - **What the code does.** `--seed` is parsed (`src/arguments.py`, default 2023) and
   `set_seed` exists (`src/utils/experiment.py`), but `train_static_target.py` never calls it.
   The run's randomness therefore comes from the libraries' own state at start: torch's
-  default generator starts from torch's built-in default seed unless the program reseeds it,
-  and numpy's global generator is seeded from the operating system.
+  default CPU generator is seeded non-deterministically when it is created
+  (`getNonDeterministicRandom()` in torch 1.13.1,
+  https://github.com/pytorch/pytorch/blob/v1.13.1/aten/src/ATen/CPUGeneratorImpl.cpp#L52,
+  cited by the end-of-round review of 2026-10-18; this note first said, wrongly, that it
+  starts from a fixed default seed), and numpy's global generator is seeded from the
+  operating system.
 - **What Refute fixes and records without editing the authors' code.** The command, the
   image (by digest), the locked requirements, the thread variables (22) and the environment
   of every run, all written into the dossier. It records the claim's base seed (2023) only

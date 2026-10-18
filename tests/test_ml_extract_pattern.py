@@ -146,6 +146,48 @@ def test_a_predictions_file_holds_no_pattern():
         )
 
 
+def test_a_predictions_path_that_becomes_a_pattern_is_refused(tmp_path):
+    """A method named '*' put into {method} must not turn the predictions file into a
+    pattern (Codex review): the final path is checked, after its placeholders."""
+    (tmp_path / "preds").mkdir()
+    (tmp_path / "preds" / "a.csv").write_bytes(b"t,p\n1,1\n")
+    with pytest.raises(ex.ExtractionError, match="no pattern"):
+        ex.read_output_bytes(tmp_path, "preds/*.csv", None, pattern=False)
+    raw, where, _ = ex.read_output_bytes(tmp_path, "preds/a.csv", None, pattern=False)
+    assert raw == b"t,p\n1,1\n" and where == "file:preds/a.csv"
+
+
+def test_one_read_per_file_in_a_session(tmp_path, monkeypatch):
+    """Every reader of one file of one run shares one resolution and one read."""
+    write(tmp_path, "a")
+    calls = []
+    real = ex._read_bytes  # noqa: SLF001
+
+    def counting(*args):
+        calls.append(args)
+        return real(*args)
+
+    monkeypatch.setattr(ex, "_read_bytes", counting)
+    with ex.read_session():
+        first = ex.extract(selector(), tmp_path, "", None)
+        write(tmp_path, "b")  # a second match afterwards changes nothing in the session
+        second = ex.extract(selector(), tmp_path, "", None)
+    assert first == second and len(calls) == 1
+    with pytest.raises(ex.ExtractionError, match="2 paths match"):  # outside the session
+        ex.extract(selector(), tmp_path, "", None)
+
+
+def test_a_failing_read_is_an_extraction_error(tmp_path, monkeypatch):
+    write(tmp_path, "a")
+
+    def broken(fd):
+        raise OSError(5, "input/output error")
+
+    monkeypatch.setattr(ex.os, "fstat", broken)
+    with pytest.raises(ex.ExtractionError, match="cannot read"):
+        ex.extract(selector(), tmp_path, "", None)
+
+
 def test_a_count_and_its_evidence_come_from_the_one_resolved_file(tmp_path):
     path = tmp_path / "out" / "results" / "exp" / "r1" / "models" / "count.json"
     path.parent.mkdir(parents=True)

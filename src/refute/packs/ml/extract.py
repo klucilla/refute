@@ -24,6 +24,8 @@ not pass (W3.12). No LLM reads outputs; nothing is guessed.
 
 from __future__ import annotations
 
+import contextlib
+import contextvars
 import csv
 import io
 import json
@@ -248,35 +250,52 @@ def output_present(workdir: Path, spec: str, seed: int | None = None) -> bool:
     return bool(_matches(workdir, _relative(spec, seed)))
 
 
-def checked_path(workdir: Path, spec: str, seed: int | None) -> Path:
-    """The path of the one file ``spec`` names, with every check of ``read_output`` but the
-    read itself (for the predictions file, which its own reader opens)."""
-    posix = _relative(spec, seed)
-    found = _matches(workdir, posix)
-    if len(found) != 1:
-        raise ExtractionError(
-            f"{posix.as_posix()}: {len(found)} paths match; exactly one is needed"
-        )
-    current = workdir
-    for part in found[0]:
-        current = current / part
-        try:
-            st = os.lstat(current)
-        except OSError as exc:
-            raise ExtractionError(f"{posix.as_posix()}: cannot inspect: {exc}") from None
-        if _is_link(current, st):
-            raise ExtractionError(f"{posix.as_posix()}: a symbolic link on the path: {part}")
-    if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
-        raise ExtractionError(f"{posix.as_posix()}: not a regular file with a single link")
-    return current
+_SESSION: contextvars.ContextVar[dict | None] = contextvars.ContextVar("reads", default=None)
 
 
-def read_output(workdir: Path, spec: str, seed: int | None) -> tuple[str, str, Path]:
-    """The text of the one file a run wrote that ``spec`` names, the ``where`` recorded with
+@contextlib.contextmanager
+def read_session():
+    """Within one evaluation, every reader of one file spec of one run (the metric, the
+    coverage counts) shares a single resolution and a single read: the same resolved path
+    and the same bytes (wp3-extraction-pattern-acceptance.md, "One resolution for every
+    reader"). A failure is shared too."""
+    token = _SESSION.set({})
+    try:
+        yield
+    finally:
+        _SESSION.reset(token)
+
+
+def read_output_bytes(
+    workdir: Path, spec: str, seed: int | None, *, pattern: bool = True
+) -> tuple[bytes, str, Path]:
+    """The bytes of the one file a run wrote that ``spec`` names, the ``where`` recorded with
     a value read from it (``file:<the resolved path>``), and its path. Exactly one match
     (counted before any content is read); every component a real folder or file, no
     symbolic link; a regular file with a single link, checked again on the open handle.
-    Anything else is an ExtractionError."""
+    With ``pattern=False`` (the predictions file) the final path may hold no pattern, even
+    after its placeholders are filled. Anything else is an ExtractionError."""
+    if not pattern and any(c in str(spec) for c in "*?[]"):
+        raise ExtractionError(f"the file holds no pattern: {spec!r}")
+    reads = _SESSION.get()
+    key = (os.path.realpath(workdir), str(spec), seed, pattern)
+    if reads is not None and key in reads:
+        cached = reads[key]
+        if isinstance(cached, ExtractionError):
+            raise cached
+        return cached
+    try:
+        result = _read_bytes(workdir, spec, seed)
+    except ExtractionError as exc:
+        if reads is not None:
+            reads[key] = exc
+        raise
+    if reads is not None:
+        reads[key] = result
+    return result
+
+
+def _read_bytes(workdir: Path, spec: str, seed: int | None) -> tuple[bytes, str, Path]:
     posix = _relative(spec, seed)
     found = _matches(workdir, posix)
     if not found and WILDCARD not in posix.parts:
@@ -303,15 +322,24 @@ def read_output(workdir: Path, spec: str, seed: int | None) -> tuple[str, str, P
         fd = os.open(current, flags)
     except OSError as exc:
         raise ExtractionError(f"{where}: cannot open: {exc}") from None
-    with os.fdopen(fd, "rb") as handle:
-        st = os.fstat(handle.fileno())
-        if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
-            raise ExtractionError(f"{where}: not a regular file with a single link")
-        if st.st_size > MAX_BYTES:
-            raise ExtractionError(f"{where}: larger than {MAX_BYTES} bytes")
-        data = handle.read(MAX_BYTES + 1)
+    try:
+        with os.fdopen(fd, "rb") as handle:
+            st = os.fstat(handle.fileno())
+            if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+                raise ExtractionError(f"{where}: not a regular file with a single link")
+            if st.st_size > MAX_BYTES:
+                raise ExtractionError(f"{where}: larger than {MAX_BYTES} bytes")
+            data = handle.read(MAX_BYTES + 1)
+    except OSError as exc:  # a failure of fstat or of the read is no value, never a crash
+        raise ExtractionError(f"{where}: cannot read: {exc}") from None
     if len(data) > MAX_BYTES:
         raise ExtractionError(f"{where}: larger than {MAX_BYTES} bytes")
+    return data, where, current
+
+
+def read_output(workdir: Path, spec: str, seed: int | None) -> tuple[str, str, Path]:
+    """``read_output_bytes``, decoded as UTF-8."""
+    data, where, current = read_output_bytes(workdir, spec, seed)
     try:
         return data.decode("utf-8"), where, current
     except UnicodeDecodeError as exc:

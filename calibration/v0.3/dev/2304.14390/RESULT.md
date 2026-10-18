@@ -17,6 +17,17 @@ The development verdict is computed and recorded but does not count (plan 4.5).
 **Logs.** The logs are not published here: the publication rule for logs is fixed before
 any seal (#59). The VM keeps them, whole, in the run's dossier.
 
+**What can be checked here, and what is the operator's account.** The published
+`dossier.json` holds the verdicts, the checks, the extracted token and the accounting. Some
+statements above come from the agent's operational record and have no proof in what is
+published:
+- the unit, the start time and the Refute commit the run used;
+- the switch to the pull profile;
+- the resolved path and the bytes of the file read;
+- the digest of the built image.
+
+The dossier's contract does not record them yet, an item of #59.
+
 ## What it showed
 
 | Part | Outcome |

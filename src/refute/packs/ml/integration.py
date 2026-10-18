@@ -843,9 +843,10 @@ def _route_reading(
             method_name = (ctx.comparison or {}).get(run.role)
             if method_name is not None:
                 file = file.replace("{method}", str(method_name))
-            path = ex.checked_path(run.workdir, file, run.seed)
+            # the bytes checked on the open handle are the bytes parsed (no pattern here)
+            raw, where, path = ex.read_output_bytes(run.workdir, file, run.seed, pattern=False)
             data = rc.read_predictions(
-                path, mr["predictions"]["format"], mr["predictions"]["fields"]
+                raw, mr["predictions"]["format"], mr["predictions"]["fields"], name=where
             )
             labels = data["y_true"].tolist()
             digest = _labels_sha256(labels)
@@ -1121,9 +1122,11 @@ def _recompute(
             if names[role] is not None:
                 file = file.replace("{method}", str(names[role]))
             try:
-                path = ex.checked_path(harness.workspaces[cid], file, seed)
+                raw, where, _ = ex.read_output_bytes(
+                    harness.workspaces[cid], file, seed, pattern=False
+                )
                 data = rc.read_predictions(
-                    path, mr["predictions"]["format"], mr["predictions"]["fields"]
+                    raw, mr["predictions"]["format"], mr["predictions"]["fields"], name=where
                 )
             except (rc.RecomputeError, ex.ExtractionError, OSError, ValueError) as exc:
                 outcomes.append(
@@ -1502,6 +1505,10 @@ class PaperIntegration:
     def _base_obtained(self, ctx: ClaimContext, records: Sequence[orc.StepRecord]) -> bool:
         """Asked by the runner after the claim's base step: the base reproduction is
         obtained when its gates and fatal checks pass (the attacks then run)."""
+        with ex.read_session():  # one resolution and one read per file (W3.11a)
+            return self._base_obtained_in_session(ctx, records)
+
+    def _base_obtained_in_session(self, ctx: ClaimContext, records) -> bool:
         setup = {
             c.container_id: c
             for s in (self._runner.run_record.steps if self._runner else [])
@@ -1644,6 +1651,11 @@ class PaperIntegration:
         return Attack(name, run, metric, result), ""
 
     def evaluate(self, run: orc.PaperRun | None) -> PaperOutcome:
+        # one resolution and one read per file of a run, for every reader of it (W3.11a)
+        with ex.read_session():
+            return self._evaluate(run)
+
+    def _evaluate(self, run: orc.PaperRun | None) -> PaperOutcome:
         records = self._records(run)
         ladder = self._ladder_result(records)
         outcomes = []

@@ -55,7 +55,8 @@ PROBE = (
     "import json, os, sys\n" + LIBRARY_STEP + "_library_paths()\n"
     "module = __import__(sys.argv[1])\n"
     "files = sorted(os.path.join(d, f) for d, _, fs in os.walk('.') for f in fs)\n"
-    "mounts = [l.split(' ')[3:5] for l in open('/proc/self/mountinfo') if ' /work' in l]\n"
+    # root, mount point and the mount's own options (ro or rw) of every mount under /work
+    "mounts = [l.split(' ')[3:6] for l in open('/proc/self/mountinfo') if ' /work' in l]\n"
     "print('PROBE ' + json.dumps({'cwd': os.getcwd(), 'files': files, 'env': dict(os.environ),"
     " 'executable': sys.executable, 'prefix': sys.prefix, 'path': sys.path,"
     " 'flags': {'isolated': sys.flags.isolated, 'no_site': sys.flags.no_site},"
@@ -282,7 +283,18 @@ def prove(name: str, case: dict, base_image: str, root: Path, stamp: str) -> dic
         "seen": json.loads(seen[-1][len("PROBE ") :]) if seen else None,
         "log_tail": None if seen else log[-1500:],
     }
-    record["passed"] = answer == {"test": case["expected"]}
+    seen_record = record["probe"]["seen"] or {}
+    data_mount = [m for m in seen_record.get("mounts", []) if m[1] == f"/work/{target}"]
+    checks = {
+        "count": answer == {"test": case["expected"]},
+        "reader_exit_0": record["reader_run"]["exit_code"] == 0
+        and not record["reader_run"]["stopped"],
+        "probe_ran": result.exit_code == 0 and bool(seen),
+        "isolated_no_site": seen_record.get("flags") == {"isolated": 1, "no_site": 1},
+        "data_mount_read_only": len(data_mount) == 1 and "ro" in data_mount[0][2].split(","),
+    }
+    record["checks"] = checks
+    record["passed"] = all(checks.values())
     return record
 
 
