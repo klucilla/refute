@@ -274,8 +274,18 @@ approved it on 2026-10-18, only to make these fixtures, with these conditions:
 `tensorflow-cpu==2.14.0` (wheel cp311 SHA-256
 `8886642da74839b6cadcbc2f748ebdfc20e83b71f2069686485f9a186bff1b07`, uploaded
 2023-09-26) on the pinned Python 3.11 image, with `numpy<2` added: the first build
-resolved numpy 2.4.6 and `import tensorflow` failed (its binaries need numpy 1). The lock
-used `--exclude-newer 2026-10-11`; every wheel was uploaded on or before that date. Both
+resolved numpy 2.4.6 and `import tensorflow` failed (its binaries need numpy 1). The
+numpy installed is exactly 1.26.4 (wheel
+`numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl`, SHA-256
+`666dbfb6ec68962c033a450943ded891bed2d54e6755e35e5835d63f4f6931d5`, uploaded
+2024-02-05, well over 7 days before). The lock used `--exclude-newer 2026-10-11`; every
+wheel was uploaded on or before that date.
+
+**Profiles actually used.** The install ran in the endpoint's profile build (the
+allowlist proxy). The event files were written with the VM's port in the profile
+**pull** (SSH from the host only, no proxy entry; read back from the endpoint's status),
+which is the profile the engine's run phase uses, and with the container's network
+`none`: outbound isolation was kept. The maintainer accepted this on 2026-10-18. Both
 writers stay within the supported profile, so the criterion is not revised:
 `tf.summary.scalar` writes a `DT_FLOAT` tensor with a present, empty `tensor_shape` and
 4 bytes of `tensor_content`; the TensorFlow 1 writer writes `simple_value`; both omit the
