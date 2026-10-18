@@ -432,6 +432,31 @@ cases).
 Also corrected here: the citation in `rednoise.py` read "MNRAS 373, 231"; the article is MNRAS 373,
 217-230 (the arXiv record above).
 
+## Amendment 8 (2026-10-18): the retests of Amendment 7
+
+Run once with the code of the commit that records them (tests committed before the code, 68cbb43),
+`scripts/run_tests_affinity.ps1` on threads 0 to 7; the numbers by
+`m4/amendment7_retests.py` (`m4/amendment7-retests.json`; run twice, identical output):
+
+| Retest | Criterion | Result |
+|---|---|---|
+| P2, white `planet`, seeds 5000 to 5009 | median of corrected SNR / BLS `depth_snr` in [0.95, 1.05] | **1.000** (eight light curves exactly 1, two 0.994 and 0.991): **met** |
+| timing, `synthetic.PLANET`, seeds 2000 to 2014 | exactly 210 transits | **210**: compatible |
+| | median error / Carter in [0.7, 1.3] | **1.020**: met |
+| | \|pull\| ≤ 1 in [0.60, 0.76] | **0.667**: met |
+| | \|pull\| ≤ 2 in [0.92, 0.98] | **0.938**: met |
+| | median pull within ± 0.2 | **−0.074**: met |
+
+The first results stay as recorded (Amendments 3 and 4); these are the retests of the corrected
+methods, on new seeds, with the same criteria and sizes.
+
+**What the P2 retest shows, and what it does not.** In white noise the A1 estimate gives
+`β_s = 1` exactly whenever its `σ_r²` estimate is not positive (revision 3, 2.1, `max(0, …)`), so
+under method (a) the gate equals the BLS SNR by construction in most white light curves (eight of
+ten here). P2 then measures how often white noise inflates the gate spuriously (two of ten, by at
+most 0.9%); it does not test the error's calibration under correlated noise, which K1 to K8 and
+the calibration conditions address (and the gate's own error is not among them, Amendment 7).
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after

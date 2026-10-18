@@ -15,7 +15,9 @@ off the box scan of ``ephemeris.py`` is unchanged.
   ±``scan_half_width_durations`` T14 in steps of ``step_minutes``; a minimum on the edge of the scan
   is discarded; the coverage rule of ``ephemeris.py``.
 - **Error:** half the width of the region where chi-square is within 1 of its minimum, with the two
-  crossings located by linear interpolation between the steps, times β(n_τ) of the transit's sector
+  crossings located on the parabola of a declared triple of scan points (``crossings``; Amendment 7
+  of the map, which replaced the linear interpolation of Amendment 3 after its result), with a
+  counted linear fallback, times β(n_τ) of the transit's sector
   (``rednoise.py``, n_τ = max(1, round(τ / cadence))), floored at half a cadence. A transit whose
   sector is excluded at n_τ is dropped and counted; with the estimate undetermined there are no
   transit times.
@@ -62,11 +64,13 @@ class TemplateTimes:
     dropped: dict[str, int] = field(default_factory=dict)
     template: TimingTemplate | None = None
     noise: NoiseEstimate | None = None
+    linear_crossings: int = 0  # crossings that fell back to the linear interpolation
 
     def to_dict(self) -> dict:
         return {
             "n_times": len(self.times),
             "dropped": dict(self.dropped),
+            "linear_crossings": self.linear_crossings,
             "template": None if self.template is None else self.template.to_dict(),
             "noise": None if self.noise is None else self.noise.to_dict(),
         }
@@ -147,6 +151,7 @@ def measure_template_times(
     window = half + scan + t14
     expected = 2.0 * t14 / cadence_days
     times: list[TransitTime] = []
+    linear = 0
     for epoch in event_epochs(lc.time, period, t0):
         center = t0 + epoch * period
         lo = np.searchsorted(lc.time, center - window, side="left")
@@ -170,22 +175,71 @@ def measure_template_times(
         if best == 0 or best == shifts.size - 1:
             dropped["edge_minimum"] = dropped.get("edge_minimum", 0) + 1
             continue
-        level = delta[best] + 1.0
-        left = best
-        while left - 1 >= 0 and delta[left - 1] <= level:
-            left -= 1
-        right = best
-        while right + 1 < shifts.size and delta[right + 1] <= level:
-            right += 1
-        x_left = shifts[left]
-        if left > 0:
-            x_left -= step * (level - delta[left]) / (delta[left - 1] - delta[left])
-        x_right = shifts[right]
-        if right < shifts.size - 1:
-            x_right += step * (level - delta[right]) / (delta[right + 1] - delta[right])
+        x_left, x_right, n_linear = crossings(delta, shifts, best)
+        linear += n_linear
         error = max(0.5 * (x_right - x_left) * sector_noise.beta, 0.5 * cadence_days)
         times.append(TransitTime(int(epoch), float(center + shifts[best]), float(error)))
-    return TemplateTimes(times, dropped, template, noise)
+    return TemplateTimes(times, dropped, template, noise, linear)
+
+
+QUADRATIC_MIN = 1e-12  # |a| below this (delta-chi2 per step squared): a degenerate parabola
+ROOT_TOLERANCE = 1e-9  # in scan steps
+
+
+def _parabolic_root(y: np.ndarray, level: float, lo: float, hi: float) -> float | None:
+    """The root of ``a u² + b u + c = level`` through ``(-1, y0), (0, y1), (1, y2)`` in
+    ``[lo, hi]`` (scan steps from the middle point), or None if degenerate, absent or not
+    unique."""
+    a = 0.5 * (y[0] - 2.0 * y[1] + y[2])
+    b = 0.5 * (y[2] - y[0])
+    c = y[1] - level
+    if not (abs(a) >= QUADRATIC_MIN and np.isfinite(a) and np.isfinite(b) and np.isfinite(c)):
+        return None
+    disc = b * b - 4.0 * a * c
+    if not (np.isfinite(disc) and disc >= 0.0):
+        return None
+    root = np.sqrt(disc)
+    found = [
+        u
+        for u in ((-b - root) / (2.0 * a), (-b + root) / (2.0 * a))
+        if np.isfinite(u) and lo - ROOT_TOLERANCE <= u <= hi + ROOT_TOLERANCE
+    ]
+    if len(found) != 1 and not (len(found) == 2 and found[0] == found[1]):
+        return None
+    return float(min(max(found[0], lo), hi))
+
+
+def crossings(delta: np.ndarray, shifts: np.ndarray, best: int) -> tuple[float, float, int]:
+    """The two crossings of ``delta[best] + 1`` around the scan minimum ``best`` (Amendment 7 of
+    the map): each on the parabola of its declared triple, ``(left - 1, left, left + 1)`` in
+    ``[x[left - 1], x[left]]`` and ``(right - 1, right, right + 1)`` in
+    ``[x[right], x[right + 1]]``; the linear interpolation when the parabola gives no single root
+    (counted); the edge of the scan when the region reaches it. Returns
+    ``(x_left, x_right, linear_count)``."""
+    step = float(shifts[1] - shifts[0])
+    level = delta[best] + 1.0
+    left = best
+    while left - 1 >= 0 and delta[left - 1] <= level:
+        left -= 1
+    right = best
+    while right + 1 < shifts.size and delta[right + 1] <= level:
+        right += 1
+    linear = 0
+    x_left = float(shifts[left])
+    if left > 0:
+        u = _parabolic_root(delta[left - 1 : left + 2], level, -1.0, 0.0)
+        if u is None:
+            linear += 1
+            u = -(level - delta[left]) / (delta[left - 1] - delta[left])
+        x_left = float(shifts[left] + u * step)
+    x_right = float(shifts[right])
+    if right < shifts.size - 1:
+        u = _parabolic_root(delta[right - 1 : right + 2], level, 0.0, 1.0)
+        if u is None:
+            linear += 1
+            u = (level - delta[right]) / (delta[right + 1] - delta[right])
+        x_right = float(shifts[right] + u * step)
+    return x_left, x_right, linear
 
 
 def corrected_transit_times(

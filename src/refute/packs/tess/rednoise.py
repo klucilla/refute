@@ -10,7 +10,7 @@ docs/validation/v0.2.1/reopen/m4-implementation-map.md (piece 1).
   every masked cadence (masked cadences are removed and split the run).
 - **Bins:** each segment is cut into consecutive, non-overlapping bins of ``n`` cadences;
   incomplete bins are dropped. Bins never cross a gap or a mask.
-- **Per sector** (Pont, Zucker and Queloz 2006, MNRAS 373, 231): ``σ_w`` the robust per-cadence
+- **Per sector** (Pont, Zucker and Queloz 2006, MNRAS 373, 217-230): ``σ_w`` the robust per-cadence
   standard deviation of the kept residuals; ``σ_n`` the robust standard deviation of the bin means;
   ``σ_r²(n) = max(0, σ_n² − σ_w² / n)``; ``β(n) = sqrt(1 + n σ_r²(n) / σ_w²)``.
 - **Few bins:** a sector with fewer than ``b_min`` bins at scale ``n`` is excluded (no borrowing, no
@@ -22,6 +22,7 @@ Nothing here knows the generation of the data: it receives residuals, times, sec
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -116,6 +117,25 @@ def event_noise(flat, mask, period: float, t0: float, duration: float, plan) -> 
     box = estimate(flat.time, resid, flat.sector, keep, n_t, c.gap_split, cadence, c.b_min)
     base = estimate(flat.time, resid, flat.sector, keep, n_b, c.gap_split, cadence, c.b_min)
     return EventNoise(box, base)
+
+
+def bls_beta(
+    betas: Mapping[int, float], w_in: Mapping[int, float], w_out: Mapping[int, float]
+) -> float:
+    """β of the BLS depth error (m4-implementation-map.md, Amendment 7): with the BLS variance
+    ``1/W_I + 1/W_O`` and each sector's in-transit and out-of-transit means inflated by
+    ``β_s²``, ``β_D² = Σ_s β_s² (W_I,s / W_I² + W_O,s / W_O²) / (1/W_I + 1/W_O)``. The sectors
+    are those of ``w_in`` and ``w_out``; every one needs a β."""
+    sectors = sorted(set(w_in) | set(w_out))
+    total_in = float(sum(w_in.get(s, 0.0) for s in sectors))
+    total_out = float(sum(w_out.get(s, 0.0) for s in sectors))
+    if not (total_in > 0 and total_out > 0):
+        raise ValueError("both the in-transit and the out-of-transit weights must be positive")
+    num = sum(
+        betas[s] ** 2 * (w_in.get(s, 0.0) / total_in**2 + w_out.get(s, 0.0) / total_out**2)
+        for s in sectors
+    )
+    return float(np.sqrt(num / (1.0 / total_in + 1.0 / total_out)))
 
 
 def segments(

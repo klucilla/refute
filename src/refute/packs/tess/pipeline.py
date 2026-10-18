@@ -12,6 +12,9 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+from astropy.timeseries import BoxLeastSquares
+
 from refute.core.verdict import Severity, TestResult, TestStatus, aggregate, enforce_coverage
 from refute.packs.tess.battery import (
     check_aperture_depth,
@@ -45,7 +48,7 @@ from refute.packs.tess.gauntlet import (
 )
 from refute.packs.tess.holdout import HoldoutOutcome, run_holdout
 from refute.packs.tess.params import TessTestPlan
-from refute.packs.tess.rednoise import EventNoise, event_noise
+from refute.packs.tess.rednoise import EventNoise, bls_beta, event_noise
 from refute.packs.tess.search import SearchResult, finalize_candidate, search_period
 from refute.packs.tess.timing import corrected_transit_times
 from refute.packs.tess.types import BTJD_OFFSET, Candidate, LightCurveData, TessData
@@ -187,7 +190,7 @@ def attack_candidate(
     if noise is None:
         snr_test = check_snr(final, gp.snr)
     else:
-        final, snr_test = _corrected_gate(final, primary, noise, gp)
+        final, snr_test = _bls_gate(final, flat, sigma, noise, primary, gp)
     tests = [
         snr_test,
         check_odd_even(primary, gp.odd_even),
@@ -218,15 +221,41 @@ def attack_candidate(
     return GauntletOutcome(final, flat, primary, secondary, tests, ephemeris, timing)
 
 
-def _corrected_gate(
-    final: Candidate, primary: EventDepths, noise: EventNoise, gp
+def _bls_gate(
+    final: Candidate,
+    flat: LightCurveData,
+    sigma: np.ndarray,
+    noise: EventNoise,
+    primary: EventDepths | None,
+    gp,
 ) -> tuple[Candidate, TestResult]:
-    """M4 piece 2 (m4-implementation-map.md, Amendment 2): the gate reads the BLS depth over
-    the stacked error of the primary events under the A1 model; the BLS ``depth_snr`` is
-    reported beside it. An undetermined noise model, or no measurable event, is INCONCLUSIVE."""
+    """M4 piece 2, the gate by method (a) (m4-implementation-map.md, Amendment 7): the BLS depth
+    over the BLS depth error times ``β_D`` (``rednoise.bls_beta``), with the in-transit and
+    out-of-transit weights of each sector from astropy's own transit mask. A sector with weight
+    that is excluded at ``n_T``, or no in-transit cadence, is INCONCLUSIVE. The stacked per-event
+    error of the primary events is reported as a diagnostic only."""
     noise_record = noise.to_dict()
-    if noise.undetermined or len(primary) == 0:
-        why = "noise model undetermined" if noise.undetermined else "no measurable event"
+    in_transit = BoxLeastSquares(flat.time, flat.flux, dy=sigma).transit_mask(
+        flat.time, final.period, final.duration, final.t0
+    )
+    weight = 1.0 / np.square(sigma)
+    w_in: dict[int, float] = {}
+    w_out: dict[int, float] = {}
+    for s in np.unique(flat.sector):
+        sel = flat.sector == s
+        w_in[int(s)] = float(np.sum(weight[sel & in_transit]))
+        w_out[int(s)] = float(np.sum(weight[sel & ~in_transit]))
+    why = None
+    if not sum(w_in.values()) > 0:
+        why = "no in-transit cadence"
+    else:
+        for s in sorted(w_in):
+            if w_in[s] > 0 or w_out[s] > 0:
+                estimate = noise.box.sectors.get(s)
+                if estimate is None or estimate.excluded:
+                    why = "noise model undetermined"
+                    break
+    if why is not None:
         return final, TestResult(
             "snr",
             TestStatus.INCONCLUSIVE,
@@ -235,15 +264,23 @@ def _corrected_gate(
             metrics={"bls_depth_snr": final.snr, "noise": noise_record},
             thresholds={"min_snr": gp.snr.min_snr},
         )
-    stacked = group_mean(primary.depths, primary.errors)
-    corrected = replace(final, snr=final.depth / stacked.error, depth_err=stacked.error)
+    betas = {s: noise.box.sectors[s].beta for s in w_in if w_in[s] > 0 or w_out[s] > 0}
+    beta_d = bls_beta(betas, w_in, w_out)
+    corrected = replace(final, snr=final.snr / beta_d, depth_err=final.depth_err * beta_d)
     test = check_snr(corrected, gp.snr)
+    stacked = None
+    if primary is not None and len(primary) > 0:
+        stacked = group_mean(primary.depths, primary.errors).error * 1e6
     metrics = {
         **test.metrics,
         "bls_depth_snr": final.snr,
-        "stacked_error_ppm": stacked.error * 1e6,
-        "events": len(primary),
-        "events_dropped": dict(primary.dropped),
+        "beta_d": beta_d,
+        "sectors": {
+            str(s): {"beta": betas[s], "w_in": w_in[s], "w_out": w_out[s]} for s in sorted(betas)
+        },
+        "stacked_error_ppm": stacked,
+        "events": 0 if primary is None else len(primary),
+        "events_dropped": {} if primary is None else dict(primary.dropped),
         "noise": noise_record,
     }
     return corrected, replace(test, metrics=metrics)
