@@ -1,0 +1,1318 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:19:47Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 6,
+  "candidates": [
+    {
+      "position": 126,
+      "arxiv_id": "2404.07130",
+      "repo_url": "https://github.com/hvonwah/conserv-eulerian-moving-domian-repro",
+      "arxiv": {
+        "versioned_id": "2404.07130v2",
+        "primary_category": "math.NA",
+        "title": "A conservative Eulerian finite element method for transport and diffusion in moving domains",
+        "abstract": "The paper introduces a finite element method for an Eulerian formulation of partial differential equations governing the transport and diffusion of a scalar quantity in a time-dependent domain. The method follows the idea from Lehrenfeld & Olshanskii [ESAIM: M2AN, 53(2): 585-614, 2019] of a solution extension to realise the Eulerian time-stepping scheme. However, a reformulation of the partial differential equation is suggested to derive a scheme which conserves the quantity under consideration exactly on the discrete level. For the spatial discretisation, the paper considers an unfitted finite element method. Ghost-penalty stabilisation is used to realise the discrete solution extension and gives a scheme robust against arbitrary intersections between the mesh and geometry interface. The stability is analysed for both first- and second-order backward differentiation formula versions of the scheme. Several numerical examples in two and three spatial dimensions are included to illustrate the potential of this method."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hvonwah/conserv-eulerian-moving-domian-repro",
+        "exists": true,
+        "full_name": "hvonwah/conserv-eulerian-moving-domian-repro",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "32dedcbb5fa64764c27a2998f0370fba34d137f8",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hvonwah/conserv-eulerian-moving-domian-repro/blob/32dedcbb5fa64764c27a2998f0370fba34d137f8/README.md",
+          "sha256": "dedc7f113925980ab5ef3fe149ac97f52afe0524654cc647e3bb9d42a7be04a8",
+          "bytes": 1651
+        },
+        "root_names": [
+          "LICENCE",
+          "README.md",
+          "convergence_study.py",
+          "eulerian_moving_domain.py",
+          "example_colliding.py",
+          "example_colliding3d.py",
+          "example_kite.py",
+          "example_translation_circle.py",
+          "install.txt",
+          "run_examples.bash"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.NA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 127,
+      "arxiv_id": "2411.02840",
+      "repo_url": "https://github.com/yinan-xia/ttd",
+      "arxiv": {
+        "versioned_id": "2411.02840v1",
+        "primary_category": "cs.CV",
+        "title": "Test-Time Dynamic Image Fusion",
+        "abstract": "The inherent challenge of image fusion lies in capturing the correlation of multi-source images and comprehensively integrating effective information from different sources. Most existing techniques fail to perform dynamic image fusion while notably lacking theoretical guarantees, leading to potential deployment risks in this field. Is it possible to conduct dynamic image fusion with a clear theoretical justification? In this paper, we give our solution from a generalization perspective. We proceed to reveal the generalized form of image fusion and derive a new test-time dynamic image fusion paradigm. It provably reduces the upper bound of generalization error. Specifically, we decompose the fused image into multiple components corresponding to its source data. The decomposed components represent the effective information from the source data, thus the gap between them reflects the Relative Dominability (RD) of the uni-source data in constructing the fusion image. Theoretically, we prove that the key to reducing generalization error hinges on the negative correlation between the RD-based fusion weight and the uni-source reconstruction loss. Intuitively, RD dynamically highlights the dominant regions of each source and can be naturally converted to the corresponding fusion weight, achieving robust results. Extensive experiments and discussions with in-depth analysis on multiple benchmarks confirm our findings and superiority. Our code is available at https://github.com/Yinan-Xia/TTD."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/yinan-xia/ttd",
+        "exists": true,
+        "full_name": "Yinan-Xia/TTD",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "aada566a55dd36f716ccdcf28bddb0985dd23ee7",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Yinan-Xia/TTD/blob/aada566a55dd36f716ccdcf28bddb0985dd23ee7/README.md",
+          "sha256": "1039254b4c2843f645d01b94d9fb003df5e0215c266a452800966d81ce30a06b",
+          "bytes": 2444
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "__pycache__",
+          "dataprocessing.py",
+          "frame.png",
+          "models",
+          "net.py",
+          "requirements.txt",
+          "test_IVF.py",
+          "test_img",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 128,
+      "arxiv_id": "2308.16075",
+      "repo_url": "https://github.com/babangain/indicmmt",
+      "arxiv": {
+        "versioned_id": "2308.16075v2",
+        "primary_category": "cs.CL",
+        "title": "Impact of Visual Context on Noisy Multimodal NMT: An Empirical Study for English to Indian Languages",
+        "abstract": "Neural Machine Translation (NMT) has made remarkable progress using large-scale textual data, but the potential of incorporating multimodal inputs, especially visual information, remains underexplored in high-resource settings. While prior research has focused on using multimodal data in low-resource scenarios, this study examines how image features impact translation when added to a large-scale, pre-trained unimodal NMT system. Surprisingly, the study finds that images might be redundant in this context. Additionally, the research introduces synthetic noise to assess whether images help the model handle textual noise. Multimodal models slightly outperform text-only models in noisy settings, even when random images are used. The study's experiments translate from English to Hindi, Bengali, and Malayalam, significantly outperforming state-of-the-art benchmarks. Interestingly, the effect of visual context varies with the level of source text noise: no visual context works best for non-noisy translations, cropped image features are optimal for low noise, and full image features perform better in high-noise scenarios. This sheds light on the role of visual context, especially in noisy settings, and opens up a new research direction for Noisy Neural Machine Translation in multimodal setups. The research emphasizes the importance of combining visual and textual information to improve translation across various environments. Our code is publicly available at https://github.com/babangain/indicMMT."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/babangain/indicmmt",
+        "exists": true,
+        "full_name": "babangain/indicMMT",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6797d91a6967463f37fab2f014f23a1b7456e1f2",
+        "license_spdx": null,
+        "readme": {
+          "path": "readme.md",
+          "url": "https://github.com/babangain/indicMMT/blob/6797d91a6967463f37fab2f014f23a1b7456e1f2/readme.md",
+          "sha256": "4255a150665c5db3e6638a34780787398605a27bd786f05036a4a1e7ccc8223c",
+          "bytes": 2384
+        },
+        "root_names": [
+          "codes",
+          "datasets",
+          "readme.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 129,
+      "arxiv_id": "2412.16511",
+      "repo_url": "https://github.com/airou-lab/3d_multi_bird_tracking",
+      "arxiv": {
+        "versioned_id": "2412.16511v1",
+        "primary_category": "cs.CV",
+        "title": "Context-Aware Outlier Rejection for Robust Multi-View 3D Tracking of Similar Small Birds in An Outdoor Aviary",
+        "abstract": "This paper presents a novel approach for robust 3D tracking of multiple birds in an outdoor aviary using a multi-camera system. Our method addresses the challenges of visually similar birds and their rapid movements by leveraging environmental landmarks for enhanced feature matching and 3D reconstruction. In our approach, outliers are rejected based on their nearest landmark. This enables precise 3D-modeling and simultaneous tracking of multiple birds. By utilizing environmental context, our approach significantly improves the differentiation between visually similar birds, a key obstacle in existing tracking systems. Experimental results demonstrate the effectiveness of our method, showing a $20\\%$ elimination of outliers in the 3D reconstruction process, with a $97\\%$ accuracy in matching. This remarkable accuracy in 3D modeling translates to robust and reliable tracking of multiple birds, even in challenging outdoor conditions. Our work not only advances the field of computer vision but also provides a valuable tool for studying bird behavior and movement patterns in natural settings. We also provide a large annotated dataset of 80 birds residing in four enclosures for 20 hours of footage which provides a rich testbed for researchers in computer vision, ornithologists, and ecologists. Code and the link to the dataset is available at https://github.com/airou-lab/3D_Multi_Bird_Tracking"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/airou-lab/3d_multi_bird_tracking",
+        "exists": true,
+        "full_name": "airou-lab/3D_Multi_Bird_Tracking",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2b3456ef27bf2722ff5a7b257431096b7fa22ba5",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/airou-lab/3D_Multi_Bird_Tracking/blob/2b3456ef27bf2722ff5a7b257431096b7fa22ba5/README.md",
+          "sha256": "243b637ae6b19e594275d797a2d1a32abfb5f46c2e692fca2c04d78a07125d61",
+          "bytes": 13177
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "pipeline"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 130,
+      "arxiv_id": "2310.14166",
+      "repo_url": "https://github.com/wongzhenhao/elgnn",
+      "arxiv": {
+        "versioned_id": "2310.14166v1",
+        "primary_category": "cs.LG",
+        "title": "Ensemble Learning for Graph Neural Networks",
+        "abstract": "Graph Neural Networks (GNNs) have shown success in various fields for learning from graph-structured data. This paper investigates the application of ensemble learning techniques to improve the performance and robustness of Graph Neural Networks (GNNs). By training multiple GNN models with diverse initializations or architectures, we create an ensemble model named ELGNN that captures various aspects of the data and uses the Tree-Structured Parzen Estimator algorithm to determine the ensemble weights. Combining the predictions of these models enhances overall accuracy, reduces bias and variance, and mitigates the impact of noisy data. Our findings demonstrate the efficacy of ensemble learning in enhancing GNN capabilities for analyzing complex graph-structured data. The code is public at https://github.com/wongzhenhao/ELGNN."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wongzhenhao/elgnn",
+        "exists": true,
+        "full_name": "wongzhenhao/ELGNN",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "abc51e18edc089850380a7410429c63510910bb5",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/wongzhenhao/ELGNN/blob/abc51e18edc089850380a7410429c63510910bb5/README.md",
+          "sha256": "03097f3b8d9d83a1435667d1864e1736ceef607178fe8fb6b99031c6db1f8138",
+          "bytes": 675
+        },
+        "root_names": [
+          ".gitignore",
+          "ELGNN-Technical report.pdf",
+          "LICENSE",
+          "README.md",
+          "code",
+          "requirement.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 131,
+      "arxiv_id": "2503.02819",
+      "repo_url": "https://github.com/martaskrt/fkc-diffusion",
+      "arxiv": {
+        "versioned_id": "2503.02819v2",
+        "primary_category": "cs.LG",
+        "title": "Feynman-Kac Correctors in Diffusion: Annealing, Guidance, and Product of Experts",
+        "abstract": "While score-based generative models are the model of choice across diverse domains, there are limited tools available for controlling inference-time behavior in a principled manner, e.g. for composing multiple pretrained models. Existing classifier-free guidance methods use a simple heuristic to mix conditional and unconditional scores to approximately sample from conditional distributions. However, such methods do not approximate the intermediate distributions, necessitating additional `corrector' steps. In this work, we provide an efficient and principled method for sampling from a sequence of annealed, geometric-averaged, or product distributions derived from pretrained score-based models. We derive a weighted simulation scheme which we call Feynman-Kac Correctors (FKCs) based on the celebrated Feynman-Kac formula by carefully accounting for terms in the appropriate partial differential equations (PDEs). To simulate these PDEs, we propose Sequential Monte Carlo (SMC) resampling algorithms that leverage inference-time scaling to improve sampling quality. We empirically demonstrate the utility of our methods by proposing amortized sampling via inference-time temperature annealing, improving multi-objective molecule generation using pretrained models, and improving classifier-free guidance for text-to-image generation. Our code is available at https://github.com/martaskrt/fkc-diffusion."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/martaskrt/fkc-diffusion",
+        "exists": true,
+        "full_name": "martaskrt/fkc-diffusion",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "aa6f5ed4a0ebb91329d4cd5823cc7e77c5e196e6",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/martaskrt/fkc-diffusion/blob/aa6f5ed4a0ebb91329d4cd5823cc7e77c5e196e6/README.md",
+          "sha256": "65a720b62a06f31b9cd760fbc51fa2b7881198982527281feeb2ad3332336a07",
+          "bytes": 3826
+        },
+        "root_names": [
+          "README.md",
+          "applications",
+          "assets",
+          "notebooks"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: molecule"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 132,
+      "arxiv_id": "2412.17601",
+      "repo_url": "https://github.com/jarch-ma/AFANet",
+      "arxiv": {
+        "versioned_id": "2412.17601v2",
+        "primary_category": "cs.CV",
+        "title": "AFANet: Adaptive Frequency-Aware Network for Weakly-Supervised Few-Shot Semantic Segmentation",
+        "abstract": "Few-shot learning aims to recognize novel concepts by leveraging prior knowledge learned from a few samples. However, for visually intensive tasks such as few-shot semantic segmentation, pixel-level annotations are time-consuming and costly. Therefore, in this paper, we utilize the more challenging image-level annotations and propose an adaptive frequency-aware network (AFANet) for weakly-supervised few-shot semantic segmentation (WFSS). Specifically, we first propose a cross-granularity frequency-aware module (CFM) that decouples RGB images into high-frequency and low-frequency distributions and further optimizes semantic structural information by realigning them. Unlike most existing WFSS methods using the textual information from the multi-modal language-vision model, e.g., CLIP, in an offline learning manner, we further propose a CLIP-guided spatial-adapter module (CSM), which performs spatial domain adaptive transformation on textual information through online learning, thus providing enriched cross-modal semantic information for CFM. Extensive experiments on the Pascal-5\\textsuperscript{i} and COCO-20\\textsuperscript{i} datasets demonstrate that AFANet has achieved state-of-the-art performance. The code is available at https://github.com/jarch-ma/AFANet."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jarch-ma/AFANet",
+        "exists": true,
+        "full_name": "jarch-ma/AFANet",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d9a8164662d20e4bfb527635c39ed18169fc86db",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jarch-ma/AFANet/blob/d9a8164662d20e4bfb527635c39ed18169fc86db/README.md",
+          "sha256": "dd7a1f4702bf3f5c3d55a145472bd078fa866916990861e65f6f22235dd1c2bb",
+          "bytes": 8522
+        },
+        "root_names": [
+          "README.md",
+          "__pycache__",
+          "assets",
+          "bpe_simple_vocab_16e6.txt.gz",
+          "clip.py",
+          "common",
+          "data",
+          "generate_cam_coco.py",
+          "generate_cam_voc.py",
+          "model",
+          "model_clip.py",
+          "pytorch_grad_cam",
+          "simple_tokenizer.py",
+          "test.py",
+          "train.py",
+          "vis"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 133,
+      "arxiv_id": "2504.18847",
+      "repo_url": "https://github.com/hidayetersindursun/Imitation-Learning-for-Autonomous-Driving-Insights-from-Real-World-Testing",
+      "arxiv": {
+        "versioned_id": "2504.18847v1",
+        "primary_category": "cs.RO",
+        "title": "Imitation Learning for Autonomous Driving: Insights from Real-World Testing",
+        "abstract": "This work focuses on the design of a deep learning-based autonomous driving system deployed and tested on the real-world MIT Racecar to assess its effectiveness in driving scenarios. The Deep Neural Network (DNN) translates raw image inputs into real-time steering commands in an end-to-end learning fashion, following the imitation learning framework. The key design challenge is to ensure that DNN predictions are accurate and fast enough, at a high sampling frequency, and result in smooth vehicle operation under different operating conditions. In this study, we design and compare various DNNs, to identify the most effective approach for real-time autonomous driving. In designing the DNNs, we adopted an incremental design approach that involved enhancing the model capacity and dataset to address the challenges of real-world driving scenarios. We designed a PD system, CNN, CNN-LSTM, and CNN-NODE, and evaluated their performance on the real-world MIT Racecar. While the PD system handled basic lane following, it struggled with sharp turns and lighting variations. The CNN improved steering but lacked temporal awareness, which the CNN-LSTM addressed as it resulted in smooth driving performance. The CNN-NODE performed similarly to the CNN-LSTM in handling driving dynamics, yet with slightly better driving performance. The findings of this research highlight the importance of iterative design processes in developing robust DNNs for autonomous driving applications. The experimental video is available at https://www.youtube.com/watch?v=FNNYgU--iaY."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hidayetersindursun/Imitation-Learning-for-Autonomous-Driving-Insights-from-Real-World-Testing",
+        "exists": true,
+        "full_name": "hidayetersindursun/Imitation-Learning-for-Autonomous-Driving-Insights-from-Real-World-Testing",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c9e85844c81848abe08f5c052fb071fc61fbefeb",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hidayetersindursun/Imitation-Learning-for-Autonomous-Driving-Insights-from-Real-World-Testing/blob/c9e85844c81848abe08f5c052fb071fc61fbefeb/README.md",
+          "sha256": "5a807133e7568a2e99b93d12585935ef0c2ae83ab34e432adf8fafbba6ee35d7",
+          "bytes": 3589
+        },
+        "root_names": [
+          ".DS_Store",
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "cnn-lstm",
+          "cnn-node",
+          "cnn",
+          "line_following"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.RO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 134,
+      "arxiv_id": "2404.15714",
+      "repo_url": "https://github.com/taylor-xy0827/Ada-DF",
+      "arxiv": {
+        "versioned_id": "2404.15714v1",
+        "primary_category": "cs.CV",
+        "title": "Ada-DF: An Adaptive Label Distribution Fusion Network For Facial Expression Recognition",
+        "abstract": "Facial expression recognition (FER) plays a significant role in our daily life. However, annotation ambiguity in the datasets could greatly hinder the performance. In this paper, we address FER task via label distribution learning paradigm, and develop a dual-branch Adaptive Distribution Fusion (Ada-DF) framework. One auxiliary branch is constructed to obtain the label distributions of samples. The class distributions of emotions are then computed through the label distributions of each emotion. Finally, those two distributions are adaptively fused according to the attention weights to train the target branch. Extensive experiments are conducted on three real-world datasets, RAF-DB, AffectNet and SFEW, where our Ada-DF shows advantages over the state-of-the-art works."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/taylor-xy0827/Ada-DF",
+        "exists": true,
+        "full_name": "taylor-xy0827/Ada-DF",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1f033a503c5eb18736eaf918444b250c5874e565",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/taylor-xy0827/Ada-DF/blob/1f033a503c5eb18736eaf918444b250c5874e565/README.md",
+          "sha256": "8e5aa73022da13b8c1c0bbca687bb0733c842038c04fb7788519f2207a7a1fc6",
+          "bytes": 4326
+        },
+        "root_names": [
+          "README.md",
+          "auto_augment.py",
+          "dataset.py",
+          "datasets",
+          "model.py",
+          "pretrain",
+          "train.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 135,
+      "arxiv_id": "2501.07157",
+      "repo_url": "https://github.com/jinlin2021/curegraph",
+      "arxiv": {
+        "versioned_id": "2501.07157v1",
+        "primary_category": "cs.AI",
+        "title": "CureGraph: Contrastive Multi-Modal Graph Representation Learning for Urban Living Circle Health Profiling and Prediction",
+        "abstract": "The early detection and prediction of health status decline among the elderly at the neighborhood level are of great significance for urban planning and public health policymaking. While existing studies affirm the connection between living environments and health outcomes, most rely on single data modalities or simplistic feature concatenation of multi-modal information, limiting their ability to comprehensively profile the health-oriented urban environments. To fill this gap, we propose CureGraph, a contrastive multi-modal representation learning framework for urban health prediction that employs graph-based techniques to infer the prevalence of common chronic diseases among the elderly within the urban living circles of each neighborhood. CureGraph leverages rich multi-modal information, including photos and textual reviews of residential areas and their surrounding points of interest, to generate urban neighborhood embeddings. By integrating pre-trained visual and textual encoders with graph modeling techniques, CureGraph captures cross-modal spatial dependencies, offering a comprehensive understanding of urban environments tailored to elderly health considerations. Extensive experiments on real-world datasets demonstrate that CureGraph improves the best baseline by $28\\%$ on average in terms of $R^2$ across elderly disease risk prediction tasks. Moreover, the model enables the identification of stage-wise chronic disease progression and supports comparative public health analysis across neighborhoods, offering actionable insights for sustainable urban development and enhanced quality of life. The code is publicly available at https://github.com/jinlin2021/CureGraph."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jinlin2021/curegraph",
+        "exists": true,
+        "full_name": "jinlin2021/CureGraph",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "0fdb86670bcc96679ea5d1a9d23864a5e7d83117",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jinlin2021/CureGraph/blob/0fdb86670bcc96679ea5d1a9d23864a5e7d83117/README.md",
+          "sha256": "98f64c10d6fd3b29ffb4dd34375325435f9af6982307327126d348738275bed1",
+          "bytes": 1502
+        },
+        "root_names": [
+          "CureGraph_framework.png",
+          "README.md",
+          "dataloader.py",
+          "gcn.py",
+          "mm_TOP.py",
+          "model_TOP.py",
+          "multimodal encoder",
+          "tasks.py",
+          "train.py",
+          "train.sh"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: disease, diseases"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 136,
+      "arxiv_id": "2306.11341",
+      "repo_url": "https://github.com/willyfh/msvd-indonesian",
+      "arxiv": {
+        "versioned_id": "2306.11341v2",
+        "primary_category": "cs.MM",
+        "title": "MSVD-Indonesian: A Benchmark for Multimodal Video-Text Tasks in Indonesian",
+        "abstract": "Multimodal learning on video and text has seen significant progress, particularly in tasks like text-to-video retrieval, video-to-text retrieval, and video captioning. However, most existing methods and datasets focus exclusively on English. Despite Indonesian being one of the most widely spoken languages, multimodal research in Indonesian remains under-explored, largely due to the lack of benchmark datasets. To address this gap, we introduce the first public Indonesian video-text dataset by translating the English captions in the MSVD dataset into Indonesian. Using this dataset, we evaluate neural network models which were developed for the English video-text dataset on three tasks, i.e., text-to-video retrieval, video-to-text retrieval, and video captioning. Most existing models rely on feature extractors pretrained on English vision-language datasets, raising concerns about their applicability to Indonesian, given the scarcity of large-scale pretraining resources in the language. We apply a cross-lingual transfer learning approach by leveraging English-pretrained extractors and fine-tuning models on our Indonesian dataset. Experimental results demonstrate that this strategy improves performance across all tasks and metrics. We release our dataset publicly to support future research and hope it will inspire further progress in Indonesian multimodal learning."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/willyfh/msvd-indonesian",
+        "exists": true,
+        "full_name": "willyfh/msvd-indonesian",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "00454581a3561e37204c04671a6190404e691515",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/willyfh/msvd-indonesian/blob/00454581a3561e37204c04671a6190404e691515/README.md",
+          "sha256": "52140462c25a8b282e4e771d0919d99c1c78540ce9843dba91589bfc564b316e",
+          "bytes": 2873
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "data",
+          "figures"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.MM"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 137,
+      "arxiv_id": "2305.11476",
+      "repo_url": "https://github.com/jackory/rpbt",
+      "arxiv": {
+        "versioned_id": "2305.11476v2",
+        "primary_category": "cs.LG",
+        "title": "Learning Diverse Risk Preferences in Population-based Self-play",
+        "abstract": "Among the great successes of Reinforcement Learning (RL), self-play algorithms play an essential role in solving competitive games. Current self-play algorithms optimize the agent to maximize expected win-rates against its current or historical copies, making it often stuck in the local optimum and its strategy style simple and homogeneous. A possible solution is to improve the diversity of policies, which helps the agent break the stalemate and enhances its robustness when facing different opponents. However, enhancing diversity in the self-play algorithms is not trivial. In this paper, we aim to introduce diversity from the perspective that agents could have diverse risk preferences in the face of uncertainty. Specifically, we design a novel reinforcement learning algorithm called Risk-sensitive Proximal Policy Optimization (RPPO), which smoothly interpolates between worst-case and best-case policy learning and allows for policy learning with desired risk preferences. Seamlessly integrating RPPO with population-based self-play, agents in the population optimize dynamic risk-sensitive objectives with experiences from playing against diverse opponents. Empirical results show that our method achieves comparable or superior performance in competitive games and that diverse modes of behaviors emerge. Our code is public online at \\url{https://github.com/Jackory/RPBT}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jackory/rpbt",
+        "exists": true,
+        "full_name": "Jackory/RPBT",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "dbf3696e9d68d51bd7e3683a2f41515bb98e0453",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Jackory/RPBT/blob/dbf3696e9d68d51bd7e3683a2f41515bb98e0453/README.md",
+          "sha256": "681f7691cc7242ca6bb4ab07ff52c8c58eb89be165a4a174e8d244fe9b7cafe8",
+          "bytes": 1680
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "config.py",
+          "envs",
+          "main_pbt_selfplay.py",
+          "main_selfplay_test.py",
+          "ppo",
+          "render",
+          "requirements.txt",
+          "toyexample",
+          "train_sumo.sh",
+          "train_vb.sh",
+          "util"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 138,
+      "arxiv_id": "2305.12751",
+      "repo_url": "https://github.com/matteobiagiola/drl-testing-experiments",
+      "arxiv": {
+        "versioned_id": "2305.12751v2",
+        "primary_category": "cs.SE",
+        "title": "Testing of Deep Reinforcement Learning Agents with Surrogate Models",
+        "abstract": "Deep Reinforcement Learning (DRL) has received a lot of attention from the research community in recent years. As the technology moves away from game playing to practical contexts, such as autonomous vehicles and robotics, it is crucial to evaluate the quality of DRL agents. In this paper, we propose a search-based approach to test such agents. Our approach, implemented in a tool called Indago, trains a classifier on failure and non-failure environment (i.e., pass) configurations resulting from the DRL training process. The classifier is used at testing time as a surrogate model for the DRL agent execution in the environment, predicting the extent to which a given environment configuration induces a failure of the DRL agent under test. The failure prediction acts as a fitness function, guiding the generation towards failure environment configurations, while saving computation time by deferring the execution of the DRL agent in the environment to those configurations that are more likely to expose failures. Experimental results show that our search-based approach finds 50% more failures of the DRL agent than state-of-the-art techniques. Moreover, such failures are, on average, 78% more diverse; similarly, the behaviors of the DRL agent induced by failure configurations are 74% more diverse."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/matteobiagiola/drl-testing-experiments",
+        "exists": true,
+        "full_name": "matteobiagiola/drl-testing-experiments",
+        "archived": false,
+        "default_branch": "ts",
+        "head_commit": "b1afed834f2a82d6f8a267217b31f8e375855ed1",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/matteobiagiola/drl-testing-experiments/blob/b1afed834f2a82d6f8a267217b31f8e375855ed1/README.md",
+          "sha256": "1afd4d7d0f2f224fa1dac5f73c75df724e65e49b88d8261fc58a0b49f61c2ed0",
+          "bytes": 21247
+        },
+        "root_names": [
+          ".gitignore",
+          "Dockerfile",
+          "LICENSE",
+          "README.md",
+          "env_variables.py",
+          "hyperparams",
+          "indago",
+          "log.py",
+          "logs",
+          "requirements.txt",
+          "run_smoke_test.sh",
+          "stats"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 139,
+      "arxiv_id": "2301.05755",
+      "repo_url": "https://github.com/wilrop/pure-strategy-equivalence",
+      "arxiv": {
+        "versioned_id": "2301.05755v2",
+        "primary_category": "cs.GT",
+        "title": "Bridging the Gap Between Single and Multi Objective Games",
+        "abstract": "A classic model to study strategic decision making in multi-agent systems is the normal-form game. This model can be generalised to allow for an infinite number of pure strategies leading to continuous games. Multi-objective normal-form games are another generalisation that model settings where players receive separate payoffs in more than one objective. We bridge the gap between the two models by providing a theoretical guarantee that a game from one setting can always be transformed to a game in the other. We extend the theoretical results to include guaranteed equivalence of Nash equilibria. The mapping makes it possible to apply algorithms from one field to the other. We demonstrate this by introducing a fictitious play algorithm for multi-objective games and subsequently applying it to two well-known continuous games. We believe the equivalence relation will lend itself to new insights by translating the theoretical guarantees from one formalism to another. Moreover, it may lead to new computational approaches for continuous games when a problem is more naturally solved in the succinct format of multi-objective games."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wilrop/pure-strategy-equivalence",
+        "exists": true,
+        "full_name": "wilrop/pure-strategy-equivalence",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "37832773ec77f89c9fefdb058274d6c3f535c378",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/wilrop/pure-strategy-equivalence/blob/37832773ec77f89c9fefdb058274d6c3f535c378/README.md",
+          "sha256": "f86e17a2344163c9dc229976cc6c999e94fc15339856c1575491b7772a22223d",
+          "bytes": 1633
+        },
+        "root_names": [
+          ".gitignore",
+          "IBR.py",
+          "Player.py",
+          "README.md",
+          "bertrand_pricing_game.py",
+          "best_response.py",
+          "experiments.py",
+          "fictitious_play.py",
+          "identity_game.py",
+          "plots.py",
+          "polynomial_game.py",
+          "pricing_game.py",
+          "strategy_bijections.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.GT"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 140,
+      "arxiv_id": "2501.06118",
+      "repo_url": "https://github.com/trawler0/Port-Hamilton-System-Identification-with-PINNS",
+      "arxiv": {
+        "versioned_id": "2501.06118v3",
+        "primary_category": "eess.SY",
+        "title": "Nonlinear port-Hamiltonian system identification from input-state-output data (ISO-pHNN)",
+        "abstract": "In this paper, we introduce a framework called ISO-pHNN for identifying nonlinear port-Hamiltonian systems using input-state-output data. The framework utilizes neural networks' universal approximation capacity to effectively represent complex dynamics in a structured way. We explore different architectures based on MLPs, KANs, and using prior information. The identification technique is validated through examples featuring nonlinearities in either the skew-symmetric terms, the dissipative terms, or the Hamiltonian. We show that incorporating a port-Hamiltonian structure does not lower the accuracy and that using additional prior information improves long-term predictions."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/trawler0/Port-Hamilton-System-Identification-with-PINNS",
+        "exists": true,
+        "full_name": "trawler0/ISO-pHNN",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "3c32a6289558ed3ea4607bd6ffcbed197d1b5797",
+        "license_spdx": null,
+        "readme": {
+          "path": "readme.md",
+          "url": "https://github.com/trawler0/ISO-pHNN/blob/3c32a6289558ed3ea4607bd6ffcbed197d1b5797/readme.md",
+          "sha256": "806b93c09c5d454814dd93645005f78a192d365fc53ae99692b457ef1aa682ee",
+          "bytes": 4760
+        },
+        "root_names": [
+          ".gitignore",
+          "data.py",
+          "kan.py",
+          "main.py",
+          "model.py",
+          "readme.md",
+          "results.py",
+          "scripts",
+          "train.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SY"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 141,
+      "arxiv_id": "2304.04688",
+      "repo_url": "https://github.com/webber2933/iclip",
+      "arxiv": {
+        "versioned_id": "2304.04688v4",
+        "primary_category": "cs.CV",
+        "title": "Interaction-Aware Prompting for Zero-Shot Spatio-Temporal Action Detection",
+        "abstract": "The goal of spatial-temporal action detection is to determine the time and place where each person's action occurs in a video and classify the corresponding action category. Most of the existing methods adopt fully-supervised learning, which requires a large amount of training data, making it very difficult to achieve zero-shot learning. In this paper, we propose to utilize a pre-trained visual-language model to extract the representative image and text features, and model the relationship between these features through different interaction modules to obtain the interaction feature. In addition, we use this feature to prompt each label to obtain more appropriate text features. Finally, we calculate the similarity between the interaction feature and the text feature for each label to determine the action category. Our experiments on J-HMDB and UCF101-24 datasets demonstrate that the proposed interaction module and prompting make the visual-language features better aligned, thus achieving excellent accuracy for zero-shot spatio-temporal action detection. The code will be available at https://github.com/webber2933/iCLIP."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/webber2933/iclip",
+        "exists": true,
+        "full_name": "webber2933/iCLIP",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "2cf317bc4697a487cdfcfdeb4d779209975f95bd",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/webber2933/iCLIP/blob/2cf317bc4697a487cdfcfdeb4d779209975f95bd/README.md",
+          "sha256": "6bfcad98d54a88ae7db4830123d13dcc23d573e987d6a71c6cc9f1817637fc36",
+          "bytes": 1768
+        },
+        "root_names": [
+          ".gitignore",
+          "DATA.md",
+          "GETTING_STARTED.md",
+          "INSTALL.md",
+          "MODEL_ZOO.md",
+          "README.md",
+          "clip",
+          "config_files",
+          "detector",
+          "evaluation",
+          "iCLIP",
+          "prompt.py",
+          "setup.py",
+          "test_net.py",
+          "train_net.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 142,
+      "arxiv_id": "2306.12465",
+      "repo_url": "https://github.com/emi-group/mixer-snn",
+      "arxiv": {
+        "versioned_id": "2306.12465v3",
+        "primary_category": "cs.NE",
+        "title": "Efficient Deep Spiking Multi-Layer Perceptrons with Multiplication-Free Inference",
+        "abstract": "Advancements in adapting deep convolution architectures for Spiking Neural Networks (SNNs) have significantly enhanced image classification performance and reduced computational burdens. However, the inability of Multiplication-Free Inference (MFI) to align with attention and transformer mechanisms, which are critical to superior performance on high-resolution vision tasks, imposing limitations on these gains. To address this, our research explores a new pathway, drawing inspiration from the progress made in Multi-Layer Perceptrons (MLPs). We propose an innovative spiking MLP architecture that uses batch normalization to retain MFI compatibility and introducing a spiking patch encoding layer to enhance local feature extraction capabilities. As a result, we establish an efficient multi-stage spiking MLP network that blends effectively global receptive fields with local feature extraction for comprehensive spike-based computation. Without relying on pre-training or sophisticated SNN training techniques, our network secures a top-1 accuracy of 66.39% on the ImageNet-1K dataset, surpassing the directly trained spiking ResNet-34 by 2.67%. Furthermore, we curtail computational costs, model parameters, and simulation steps. An expanded version of our network compares with the performance of the spiking VGG-16 network with a 71.64% top-1 accuracy, all while operating with a model capacity 2.1 times smaller. Our findings highlight the potential of our deep SNN architecture in effectively integrating global and local learning abilities. Interestingly, the trained receptive field in our network mirrors the activity patterns of cortical cells. Source codes are publicly accessible at https://github.com/EMI-Group/mixer-snn."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/emi-group/mixer-snn",
+        "exists": true,
+        "full_name": "EMI-Group/mixer-snn",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "e23e763682f7c14e5e00166e349b5da7380f8224",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/EMI-Group/mixer-snn/blob/e23e763682f7c14e5e00166e349b5da7380f8224/README.md",
+          "sha256": "eed0a0fbce89eb28187935421e5b332acbe4dadd2475e66cc55ee4866721711e",
+          "bytes": 5632
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "assets",
+          "models",
+          "requirements.txt",
+          "samplers.py",
+          "terminal.sh",
+          "train.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.NE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 143,
+      "arxiv_id": "2406.03285",
+      "repo_url": "https://github.com/thomas-bouvier/distributed-continual-learning",
+      "arxiv": {
+        "versioned_id": "2406.03285v1",
+        "primary_category": "cs.DC",
+        "title": "Efficient Data-Parallel Continual Learning with Asynchronous Distributed Rehearsal Buffers",
+        "abstract": "Deep learning has emerged as a powerful method for extracting valuable information from large volumes of data. However, when new training data arrives continuously (i.e., is not fully available from the beginning), incremental training suffers from catastrophic forgetting (i.e., new patterns are reinforced at the expense of previously acquired knowledge). Training from scratch each time new training data becomes available would result in extremely long training times and massive data accumulation. Rehearsal-based continual learning has shown promise for addressing the catastrophic forgetting challenge, but research to date has not addressed performance and scalability. To fill this gap, we propose an approach based on a distributed rehearsal buffer that efficiently complements data-parallel training on multiple GPUs, allowing us to achieve short runtime and scalability while retaining high accuracy. It leverages a set of buffers (local to each GPU) and uses several asynchronous techniques for updating these local buffers in an embarrassingly parallel fashion, all while handling the communication overheads necessary to augment input mini-batches (groups of training samples fed to the model) using unbiased, global sampling. In this paper we explore the benefits of this approach for classification models. We run extensive experiments on up to 128 GPUs of the ThetaGPU supercomputer to compare our approach with baselines representative of training-from-scratch (the upper bound in terms of accuracy) and incremental training (the lower bound). Results show that rehearsal-based continual learning achieves a top-5 classification accuracy close to the upper bound, while simultaneously exhibiting a runtime close to the lower bound."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/thomas-bouvier/distributed-continual-learning",
+        "exists": true,
+        "full_name": "thomas-bouvier/distributed-continual-learning",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f3289b3b6ee55a282f985e62c8bd5b31bb4c90c6",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/thomas-bouvier/distributed-continual-learning/blob/f3289b3b6ee55a282f985e62c8bd5b31bb4c90c6/README.md",
+          "sha256": "83659c83d7f7f7bbd8f8680a4cb5288312c1ab5e41e1881292964cb0d6e2a2fa",
+          "bytes": 7680
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          ".pre-commit-config.yaml",
+          ".rsync-filter",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "README.md",
+          "backbone",
+          "config.yaml.dist",
+          "cross_entropy.py",
+          "data",
+          "data_regime.py",
+          "evaluate",
+          "main.py",
+          "models",
+          "modules",
+          "optimizer_regime.py",
+          "regime.py",
+          "requirements-dev.txt",
+          "requirements.txt",
+          "sweep.py",
+          "sweep.yaml.dist",
+          "sweep_launcher.sh",
+          "train",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.DC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 144,
+      "arxiv_id": "2404.08364",
+      "repo_url": "https://github.com/junyimei/flowwalker-artifact",
+      "arxiv": {
+        "versioned_id": "2404.08364v3",
+        "primary_category": "cs.DC",
+        "title": "FlowWalker: A Memory-efficient and High-performance GPU-based Dynamic Graph Random Walk Framework",
+        "abstract": "Dynamic graph random walk (DGRW) emerges as a practical tool for capturing structural relations within a graph. Effectively executing DGRW on GPU presents certain challenges. First, existing sampling methods demand a pre-processing buffer, causing substantial space complexity. Moreover, the power-law distribution of graph vertex degrees introduces workload imbalance issues, rendering DGRW embarrassed to parallelize. In this paper, we propose FlowWalker, a GPU-based dynamic graph random walk framework. FlowWalker implements an efficient parallel sampling method to fully exploit the GPU parallelism and reduce space complexity. Moreover, it employs a sampler-centric paradigm alongside a dynamic scheduling strategy to handle the huge amounts of walking queries. FlowWalker stands as a memory-efficient framework that requires no auxiliary data structures in GPU global memory. We examine the performance of FlowWalker extensively on ten datasets, and experiment results show that FlowWalker achieves up to 752.2x, 72.1x, and 16.4x speedup compared with existing CPU, GPU, and FPGA random walk frameworks, respectively. Case study shows that FlowWalker diminishes random walk time from 35% to 3% in a pipeline of ByteDance friend recommendation GNN training."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/junyimei/flowwalker-artifact",
+        "exists": true,
+        "full_name": "junyimei/flowwalker-artifact",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "51b4400738407502d69bccf9b4f54b145bffacf9",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/junyimei/flowwalker-artifact/blob/51b4400738407502d69bccf9b4f54b145bffacf9/README.md",
+          "sha256": "5fc71d6c1190e801afafd87eee983fe7e69932b27d0204371fd4c97648bf5512",
+          "bytes": 7015
+        },
+        "root_names": [
+          ".clang-format",
+          "CMakeLists.txt",
+          "FlowWalker-VLDB24.pdf",
+          "LICENSE",
+          "README.md",
+          "data",
+          "include",
+          "lint",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.DC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 145,
+      "arxiv_id": "2303.05774",
+      "repo_url": "https://github.com/bszek213/nfl_combine",
+      "arxiv": {
+        "versioned_id": "2303.05774v1",
+        "primary_category": "cs.LG",
+        "title": "NFL Career Success as Predicted by NFL Scouting Combine",
+        "abstract": "The National Football League (NFL) Scouting Combine serves as a tool to evaluate the skills of prospective players and assess their readiness to play in the NFL. The development of machine learning brings new opportunities in assessing the utility of the Scouting Combine. Using machine and statistical learning, it may be possible to predict future success of prospective athletes, as well as predict which Scouting Combine tests are the most important. Results from statistical learning research have been contradicting whether the Scouting combine is a useful metric for player success. In this study, we investigate if machine learning can be used to determine matriculation and future success in the NFL. Using Scouting Combine data, we evaluate six different algorithms' ability to predict whether a potential draft pick will play a single NFL snap (matriculation). If a player is drafted, we predict how many snaps they go on to play (success). We are able to predict matriculation with 83% accuracy; however, we are unable to predict later success. Our best performing algorithm returns large error and low explained variance (RMSE=1,210 snaps; ${R}^2$=0.17). These findings indicate that while the Scouting Combine can predict NFL matriculation, it may not be a reliable predictor of long-term player success."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/bszek213/nfl_combine",
+        "exists": true,
+        "full_name": "bszek213/nfl_combine",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "97b2da405cd18ac84f23cd76604b0fb8baf8a213",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/bszek213/nfl_combine/blob/97b2da405cd18ac84f23cd76604b0fb8baf8a213/README.md",
+          "sha256": "e3a0ce60e74ec0246f9912732dd7aed25f56b249be14f33a2097dd9aa90ac2c2",
+          "bytes": 852
+        },
+        "root_names": [
+          "README.md",
+          "nfl_combine.yaml",
+          "nfl_combine_classify.py",
+          "nfl_combine_regressor.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 146,
+      "arxiv_id": "2408.06053",
+      "repo_url": "https://github.com/ytsrt66589/pyneuralfx",
+      "arxiv": {
+        "versioned_id": "2408.06053v1",
+        "primary_category": "cs.SD",
+        "title": "PyNeuralFx: A Python Package for Neural Audio Effect Modeling",
+        "abstract": "We present PyNeuralFx, an open-source Python toolkit designed for research on neural audio effect modeling. The toolkit provides an intuitive framework and offers a comprehensive suite of features, including standardized implementation of well-established model architectures, loss functions, and easy-to-use visualization tools. As such, it helps promote reproducibility for research on neural audio effect modeling, and enable in-depth performance comparison of different models, offering insight into the behavior and operational characteristics of models through DSP methodology. The toolkit can be found at https://github.com/ytsrt66589/pyneuralfx."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ytsrt66589/pyneuralfx",
+        "exists": true,
+        "full_name": "ytsrt66589/pyneuralfx",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "53f65363189085a44ee9826b70b6cc395cda88a5",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ytsrt66589/pyneuralfx/blob/53f65363189085a44ee9826b70b6cc395cda88a5/README.md",
+          "sha256": "a1091ddc508a0febf21ee338512ac6061dc29ae7b8fc4a062cbec9e24b69aa65",
+          "bytes": 9757
+        },
+        "root_names": [
+          ".gitignore",
+          ".readthedocs.yml",
+          "CHANGELOG.md",
+          "CONDUCT.md",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "README.md",
+          "assets",
+          "dev.py",
+          "docs",
+          "frame_work",
+          "poetry.lock",
+          "pyproject.toml",
+          "src",
+          "tests",
+          "tutorials"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SD"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 147,
+      "arxiv_id": "2404.19330",
+      "repo_url": "https://github.com/zhanwei-z/g2ltraj",
+      "arxiv": {
+        "versioned_id": "2404.19330v1",
+        "primary_category": "cs.CV",
+        "title": "G2LTraj: A Global-to-Local Generation Approach for Trajectory Prediction",
+        "abstract": "Predicting future trajectories of traffic agents accurately holds substantial importance in various applications such as autonomous driving. Previous methods commonly infer all future steps of an agent either recursively or simultaneously. However, the recursive strategy suffers from the accumulated error, while the simultaneous strategy overlooks the constraints among future steps, resulting in kinematically infeasible predictions. To address these issues, in this paper, we propose G2LTraj, a plug-and-play global-to-local generation approach for trajectory prediction. Specifically, we generate a series of global key steps that uniformly cover the entire future time range. Subsequently, the local intermediate steps between the adjacent key steps are recursively filled in. In this way, we prevent the accumulated error from propagating beyond the adjacent key steps. Moreover, to boost the kinematical feasibility, we not only introduce the spatial constraints among key steps but also strengthen the temporal constraints among the intermediate steps. Finally, to ensure the optimal granularity of key steps, we design a selectable granularity strategy that caters to each predicted trajectory. Our G2LTraj significantly improves the performance of seven existing trajectory predictors across the ETH, UCY and nuScenes datasets. Experimental results demonstrate its effectiveness. Code will be available at https://github.com/Zhanwei-Z/G2LTraj."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zhanwei-z/g2ltraj",
+        "exists": true,
+        "full_name": "Zhanwei-Z/G2LTraj",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "59f94f61ab02c15e9bec91c14e957579642ddae7",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Zhanwei-Z/G2LTraj/blob/59f94f61ab02c15e9bec91c14e957579642ddae7/README.md",
+          "sha256": "8c69e13b07ccd9d1a7287460cb86c3d3b45e9a076bec24b91fed2cb06d0d4fba",
+          "bytes": 3796
+        },
+        "root_names": [
+          ".DS_Store",
+          ".gitattributes",
+          ".idea",
+          "CurveModel",
+          "EigenTrajectory",
+          "README.md",
+          "baseline",
+          "checkpoints",
+          "config",
+          "img",
+          "script",
+          "trainval.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 148,
+      "arxiv_id": "2506.17147",
+      "repo_url": "https://github.com/condmatr/robust_superconductivity",
+      "arxiv": {
+        "versioned_id": "2506.17147v1",
+        "primary_category": "cond-mat.supr-con",
+        "title": "Unraveling the Robust Superconductivity Phenomenon of High-Entropy Alloy",
+        "abstract": "Recent experiments demonstrate a \"robust superconductivity phenomenon\" in niobium-based alloys, where the superconducting state remains intact and the critical temperature ($T_c$) is largely unaffected by external pressure well above tens of gigapascal (GPa) into the megabar regime ($\\ge 100 GPa$). Motivated by these observations, we perform first-principles electron-phonon calculations for body-centered cubic Nb and NbTi crystals, as well as for special quasi-random structures of Nb$_{0.5}$Ti$_{0.5}$ and (NbTa)$_{0.7}$(HfZrTi)$_{0.3}$ high-entropy alloy (HEA). The calculations unravel the underlying mechanism of robust superconductivity, stemming from a compensation effect between varying electronic and phonon properties under pressure. The results also reveal how structural and chemical disorders modify the superconducting state. The first-principles $T_c$ values agree quantitatively with the experiments throughout the entire pressure range under study. Our work thereby paves the way for exploring superconducting HEAs under pressure via advanced first-principles simulations."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/condmatr/robust_superconductivity",
+        "exists": true,
+        "full_name": "condmatr/Robust_Superconductivity",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "125e7f43417981df8ea58fb0c7aec8c8152299ed",
+        "license_spdx": "CC0-1.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/condmatr/Robust_Superconductivity/blob/125e7f43417981df8ea58fb0c7aec8c8152299ed/README.md",
+          "sha256": "4d1ed54d47623be57a62bea0bda118c4ce9e393322967da2fbe9164afb990fe1",
+          "bytes": 1694
+        },
+        "root_names": [
+          ".gitignore",
+          "HEA",
+          "LICENSE",
+          "Nb",
+          "NbTi_SQS",
+          "NbTi_crystal",
+          "README.md",
+          "interface_example.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cond-mat.supr-con"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 149,
+      "arxiv_id": "2505.05001",
+      "repo_url": "https://github.com/nie-lang/stabstitch2",
+      "arxiv": {
+        "versioned_id": "2505.05001v1",
+        "primary_category": "cs.CV",
+        "title": "StabStitch++: Unsupervised Online Video Stitching with Spatiotemporal Bidirectional Warps",
+        "abstract": "We retarget video stitching to an emerging issue, named warping shake, which unveils the temporal content shakes induced by sequentially unsmooth warps when extending image stitching to video stitching. Even if the input videos are stable, the stitched video can inevitably cause undesired warping shakes and affect the visual experience. To address this issue, we propose StabStitch++, a novel video stitching framework to realize spatial stitching and temporal stabilization with unsupervised learning simultaneously. First, different from existing learning-based image stitching solutions that typically warp one image to align with another, we suppose a virtual midplane between original image planes and project them onto it. Concretely, we design a differentiable bidirectional decomposition module to disentangle the homography transformation and incorporate it into our spatial warp, evenly spreading alignment burdens and projective distortions across two views. Then, inspired by camera paths in video stabilization, we derive the mathematical expression of stitching trajectories in video stitching by elaborately integrating spatial and temporal warps. Finally, a warp smoothing model is presented to produce stable stitched videos with a hybrid loss to simultaneously encourage content alignment, trajectory smoothness, and online collaboration. Compared with StabStitch that sacrifices alignment for stabilization, StabStitch++ makes no compromise and optimizes both of them simultaneously, especially in the online mode. To establish an evaluation benchmark and train the learning framework, we build a video stitching dataset with a rich diversity in camera motions and scenes. Experiments exhibit that StabStitch++ surpasses current solutions in stitching performance, robustness, and efficiency, offering compelling advancements in this field by building a real-time online video stitching system."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/nie-lang/stabstitch2",
+        "exists": true,
+        "full_name": "nie-lang/StabStitch2",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "646dad01f2f1159aeca10bcef2fbb1416d658df7",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/nie-lang/StabStitch2/blob/646dad01f2f1159aeca10bcef2fbb1416d658df7/README.md",
+          "sha256": "78f1b3c452fac1f909108df924c99065548bfdda81ae7a4b7d785a0829507434",
+          "bytes": 5235
+        },
+        "root_names": [
+          "Full_model_inference",
+          "LICENSE",
+          "README.md",
+          "SmoothWarp",
+          "SpatialWarp",
+          "TemporalWarp",
+          "environment.yml",
+          "figure.jpg"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 150,
+      "arxiv_id": "2402.07191",
+      "repo_url": "https://github.com/dingfangyu/gsina",
+      "arxiv": {
+        "versioned_id": "2402.07191v2",
+        "primary_category": "cs.LG",
+        "title": "GSINA: Improving Subgraph Extraction for Graph Invariant Learning via Graph Sinkhorn Attention",
+        "abstract": "Graph invariant learning (GIL) seeks invariant relations between graphs and labels under distribution shifts. Recent works try to extract an invariant subgraph to improve out-of-distribution (OOD) generalization, yet existing approaches either lack explicit control over compactness or rely on hard top-$k$ selection that shrinks the solution space and is only partially differentiable. In this paper, we provide an in-depth analysis of the drawbacks of some existing works and propose a few general principles for invariant subgraph extraction: 1) separability, as encouraged by our sparsity-driven mechanism, to filter out the irrelevant common features; 2) softness, for a broader solution space; and 3) differentiability, for a soundly end-to-end optimization pipeline. Specifically, building on optimal transport, we propose Graph Sinkhorn Attention (GSINA), a fully differentiable, cardinality-constrained attention mechanism that assigns sparse-yet-soft edge weights via Sinkhorn iterations and induces node attention. GSINA provides explicit controls for separability and softness, and uses a Gumbel reparameterization to stabilize training. It convergence behavior is also theoretically studied. Extensive empirical experimental results on both synthetic and real-world"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/dingfangyu/gsina",
+        "exists": true,
+        "full_name": "dingfangyu/GSINA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3cf4c12812494f4781102da3d0fde01bd738709c",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/dingfangyu/GSINA/blob/3cf4c12812494f4781102da3d0fde01bd738709c/README.md",
+          "sha256": "31a776681d63a293929a31067a64018877a14e76638af3e4335fb8f3c7e06b40",
+          "bytes": 138
+        },
+        "root_names": [
+          "README.md",
+          "code",
+          "vis"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    }
+  ],
+  "read_utc": "2026-10-18T03:21:47Z"
+}
