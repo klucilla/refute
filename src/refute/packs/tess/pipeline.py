@@ -79,16 +79,26 @@ def _minus(curve: LightCurveData, model: np.ndarray) -> LightCurveData:
     return LightCurveData(curve.time, curve.flux - model, curve.flux_err, curve.sector, curve.year)
 
 
-def global_prewhitening(data: TessData, plan: TessTestPlan) -> Prewhitening | None:
-    """The global components of M4 piece 7 on ``L1`` (the corrections active only)."""
+def global_prewhitening(
+    data: TessData, plan: TessTestPlan, flat: LightCurveData | None = None
+) -> tuple[Prewhitening | None, LightCurveData]:
+    """M4 piece 7 (map Amendments 22 and 23): the global components found on ``L1``, and the
+    curve the search receives, ``detrend(raw − S_raw)`` with ``S_raw`` their joint refit on the
+    raw curve (``L1`` itself when nothing was accepted, so the curve is bit-equal). The search
+    refit's reason and left-out sectors are recorded on the returned operation."""
+    if flat is None:
+        flat = detrend(data.lc, plan.detrend)
     if not plan.gauntlet.corrections.active:
-        return None
-    return prewhiten(detrend(data.lc, plan.detrend), plan)
-
-
-def search_curve(flat: LightCurveData, pw: Prewhitening | None) -> LightCurveData:
-    """``L1 − S`` (``L1`` itself when nothing was accepted, so the curve is bit-equal)."""
-    return _minus(flat, pw.model) if pw is not None and pw.components else flat
+        return None, flat
+    pw = prewhiten(flat, plan)
+    if not pw.components:
+        return pw, flat
+    fitted = refit(data.lc, pw.components, np.zeros(data.lc.time.size, bool), plan)
+    pw.search_refit_reason = fitted.reason
+    pw.search_left_out = list(fitted.sectors_left_out)
+    if fitted.reason is not None:
+        return pw, flat
+    return pw, detrend(_minus(data.lc, fitted.model), plan.detrend)
 
 
 @dataclass
@@ -182,7 +192,7 @@ def attack_candidate(
     gp = plan.gauntlet
     pw = prewhitening
     if gp.corrections.active and pw is None:
-        pw = global_prewhitening(data, plan)
+        pw, _ = global_prewhitening(data, plan)
     # the M4 parts that actually ran (map Amendment 17, the marker)
     executed: list[str] = ["prewhitening"] if pw is not None else []
     if candidate is None:
@@ -202,15 +212,16 @@ def attack_candidate(
     cadence = plan.data.exptime_seconds / 86400.0
     mask_half = plan.detrend.transit_mask_half_width_durations * candidate.duration
     mask = transit_mask(data.lc.time, candidate.period, candidate.t0, mask_half)
-    flat = detrend(data.lc, plan.detrend, mask=mask)
     refit_reason = None
+    raw = data.lc
     if pw is not None and pw.components:
-        # M4 piece 7: L2 = L1m − S', the global frequencies refitted with the search candidate's
-        # transits masked, the mask evaluated on L1m's own cadences (map Amendment 22)
-        on_l1m = transit_mask(flat.time, candidate.period, candidate.t0, mask_half)
-        fitted = refit(flat, pw.components, on_l1m, plan)
+        # M4 piece 7 (map Amendment 23): S'_raw, the global frequencies refitted on the raw curve
+        # with the search candidate's transits masked, subtracted before the masked detrending
+        fitted = refit(data.lc, pw.components, mask, plan)
         refit_reason = fitted.reason
-        flat = _minus(flat, fitted.model)
+        if fitted.reason is None:
+            raw = _minus(data.lc, fitted.model)
+    flat = detrend(raw, plan.detrend, mask=mask)
     sigma = per_point_sigma(
         flat, transit_mask(flat.time, candidate.period, candidate.t0, mask_half)
     )
@@ -350,8 +361,8 @@ def analyze_data(
     catalog_scan: dict | None = None,
 ) -> Analysis:
     flat = detrend(data.lc, plan.detrend)
-    pw = prewhiten(flat, plan) if plan.gauntlet.corrections.active else None  # M4 piece 7
-    search = search_fn(search_curve(flat, pw), plan.search)
+    pw, searched = global_prewhitening(data, plan, flat)  # M4 piece 7; L1 itself without it
+    search = search_fn(searched, plan.search)
     gauntlet = attack_candidate(data, search.candidate, plan, catalogs, catalog_scan, pw)
     # Blind holdout: raw data and sector metadata only. Never the global candidate.
     holdout = run_holdout(data.lc, data.sectors, plan)
@@ -577,6 +588,8 @@ def build_result(
         if pw is not None:  # M4 piece 7 (map Amendment 22); the trains are in the rounds
             record["corrections"]["prewhitening"] = {
                 "global": pw.to_dict(),
+                "search_refit_reason": pw.search_refit_reason,
+                "search_left_out": pw.search_left_out,
                 "refit_reason": analysis.gauntlet.refit_reason,
             }
     return record
@@ -585,9 +598,8 @@ def build_result(
 class TessSearch:
     def run(self, data: TessData, params: dict[str, Any]) -> SearchResult:
         plan = TessTestPlan.model_validate(params)
-        flat = detrend(data.lc, plan.detrend)
-        pw = prewhiten(flat, plan) if plan.gauntlet.corrections.active else None  # M4 piece 7
-        return search_period(search_curve(flat, pw), plan.search)
+        _, searched = global_prewhitening(data, plan)  # M4 piece 7; L1 itself without it
+        return search_period(searched, plan.search)
 
 
 class TessGauntlet:

@@ -841,6 +841,10 @@ def _invalid_message(validity: dict[str, Any]) -> str:
     return "the train-only candidate is not a valid basis for a prediction: " + "; ".join(parts)
 
 
+def _minus_raw(curve: LightCurveData, model: np.ndarray) -> LightCurveData:
+    return LightCurveData(curve.time, curve.flux - model, curve.flux_err, curve.sector, curve.year)
+
+
 @dataclass
 class RoundPlan:
     """Everything a round decides before the hidden year is read."""
@@ -879,20 +883,23 @@ def plan_round(
     train_flat = detrend(train_raw, plan.detrend)
     search_curve = train_flat
     pw_train = None
+    pw_record: dict[str, Any] = {}
     if corrections_on:
-        # M4 piece 7 (map Amendment 22): the train search on the train curve minus its own S
+        # M4 piece 7 (map Amendments 22 and 23): the train components found on the train curve,
+        # refitted on the raw train curve and subtracted before its detrending, for the search
         from refute.packs.tess.prewhiten import prewhiten
+        from refute.packs.tess.prewhiten import refit as refit_components
 
         pw_train = prewhiten(train_flat, plan)
-        empty = {**empty, "prewhitening": pw_train.to_dict()}
+        pw_record = pw_train.to_dict()
         if pw_train.components:
-            search_curve = LightCurveData(
-                train_flat.time,
-                train_flat.flux - pw_train.model,
-                train_flat.flux_err,
-                train_flat.sector,
-                train_flat.year,
-            )
+            no_mask = np.zeros(train_raw.time.size, bool)
+            fitted = refit_components(train_raw, pw_train.components, no_mask, plan)
+            pw_record["search_refit_reason"] = fitted.reason
+            pw_record["search_left_out"] = list(fitted.sectors_left_out)
+            if fitted.reason is None:
+                search_curve = detrend(_minus_raw(train_raw, fitted.model), plan.detrend)
+        empty = {**empty, "prewhitening": pw_record}
     search = search_period(search_curve, plan.search)
     train: Candidate | None = search.candidate
     if train is None or not (train.depth > 0):
@@ -910,7 +917,6 @@ def plan_round(
         # M4 piece 5 (map Amendment 12 and its addendum): the train candidate refitted on the
         # masked train curve, then the gate of Amendment 7; an undetermined gate ends the round.
         from refute.packs.tess.pipeline import _bls_gate
-        from refute.packs.tess.prewhiten import refit as refit_components
         from refute.packs.tess.rednoise import event_noise
         from refute.packs.tess.search import finalize_candidate
 
@@ -918,18 +924,16 @@ def plan_round(
         train_mask = transit_mask(train_raw.time, train.period, train.t0, mask_half)
         train_flat2 = detrend(train_raw, plan.detrend, mask=train_mask)
         replicas_curve = train_flat2  # the train replicas: without S'_train (Amendment 22)
-        pw_record = pw_train.to_dict() if pw_train is not None else {}
         if pw_train is not None and pw_train.components:
-            on_curve = transit_mask(train_flat2.time, train.period, train.t0, mask_half)
-            fitted = refit_components(train_flat2, pw_train.components, on_curve, plan)
+            # Amendment 23: S'_train refitted on the raw train curve with the train candidate's
+            # mask, subtracted before the masked detrending
+            fitted = refit_components(train_raw, pw_train.components, train_mask, plan)
             pw_record["refit_reason"] = fitted.reason
-            train_flat2 = LightCurveData(
-                train_flat2.time,
-                train_flat2.flux - fitted.model,
-                train_flat2.flux_err,
-                train_flat2.sector,
-                train_flat2.year,
-            )
+            pw_record["refit_left_out"] = list(fitted.sectors_left_out)
+            if fitted.reason is None:
+                train_flat2 = detrend(
+                    _minus_raw(train_raw, fitted.model), plan.detrend, mask=train_mask
+                )
         sigma = per_point_sigma(
             train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
         )

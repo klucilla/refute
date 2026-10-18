@@ -66,6 +66,9 @@ class Prewhitening:
     dy: np.ndarray | None = None  # sigma_w on the used cadences
     grid: np.ndarray | None = None
     f_lo: float | None = None
+    # Amendment 23: the joint raw refit for the search (its failure, the sectors it left out)
+    search_refit_reason: str | None = None
+    search_left_out: list[int] = field(default_factory=list)
 
     @property
     def fundamentals(self) -> list[float]:
