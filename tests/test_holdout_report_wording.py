@@ -58,6 +58,19 @@ def test_a1_the_note_names_the_unlogged_detrending_and_the_logged_reads():
     assert OLD_SENTENCE not in HOLDOUT_BLINDNESS_NOTE
 
 
+def test_a3_rounds_of_the_corrections_add_the_replica_note():
+    """Issue #23 after M4 pieces 4 and 5 (map Amendment 17): with the corrections on, the hidden
+    year also masks and reads the replica spans, first; the report says so only then."""
+    from refute.packs.tess.report import HOLDOUT_REPLICA_NOTE
+
+    m4 = [{"hidden_year": 2020, "status": "PASS", "metrics": {"corrections_path": "m4_holdout"}}]
+    text = render_report(_result(m4), {"claim_kind": "calibration"})
+    assert HOLDOUT_BLINDNESS_NOTE in text and HOLDOUT_REPLICA_NOTE in text
+    assert "replica spans" in HOLDOUT_REPLICA_NOTE and "before any window" in HOLDOUT_REPLICA_NOTE
+    m3 = [{"hidden_year": 2020, "status": "PASS", "metrics": {"hidden_snr": 9.0}}]
+    assert HOLDOUT_REPLICA_NOTE not in render_report(_result(m3), {"claim_kind": "calibration"})
+
+
 def test_a2_no_rounds_no_holdout_section():
     text = render_report(_result([]), {"claim_kind": "calibration"})
     assert "Blind holdout by year" not in text
