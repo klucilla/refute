@@ -659,9 +659,12 @@ The detrending (a robust local quadratic on a 1 d window) cannot follow a variab
 is comparable to its window: it turns the 0.7 d sinusoid into a distorted, attenuated signal on
 `L1` (whose residual, after two harmonics, makes the search's spurious candidate), and with the
 candidate's transits masked it interpolates the trend across each masked span, leaving there a dip
-of the order of the variability's amplitude (the 3558 and 3790 ppm). Removing the components from
-the raw curve **before** the detrending removes both: the detrending then works on a curve without
-the variability. This is the reason for the change below; it was found by the result, so it is
+of the order of the variability's amplitude (the 3558 and 3790 ppm). On that curve and for **that
+search candidate**, removing the components from the raw curve before the masked detrending
+removed the artificial dip (60 ppm, SNR 3.1; the Codex review also measured the corrected SNR: 13.09
+for `L1 − S′(L1)`, a gate PASS, and 3.07 for the raw subtraction, a FAIL). Whether the new search,
+which runs on another curve and may find another candidate, satisfies I2 is not shown by this
+diagnosis; the retest decides it. This is the reason for the change below; it was found by the result, so it is
 declared after it, and it is retested on new seeds with the same criteria and the same number of
 curves per case.
 
@@ -681,21 +684,68 @@ curves per case.
 `refit` is unchanged (one joint weighted fit, per-sector constants and amplitudes, no clipping, the
 mask's cadences without weight); on the raw curve its `σ_w` is A1's at `n` = 1 on the raw curve.
 With no component accepted, every curve is bit-equal to the M3 one, as before. A singular raw refit
-gives `S_raw` (or `S′_raw`) = 0 and its reason is recorded. *A risk recorded:* the raw curve keeps
-the slow trends that the detrending would remove; the refit does not model them, so they can bias
-the refitted amplitudes and inflate the raw `σ_w`; the cases measure the consequence.
+gives `S_raw` (or `S′_raw`) = 0 and its reason is recorded, separately for the search refit
+(`search_refit_reason`) and for the masked refit (`refit_reason`), with the sectors each left out.
+
+**What this substitutes in the specification** (declared explicitly, after the result):
+
+- *Revision 3, table 1.4 and section 7 ("where")*: the global search's curve `L1 − S` becomes
+  `detrend(raw − S_raw)`, and the reanalysis' `L2 = L1 − S′` becomes `detrend_masked(raw − S′_raw)`
+  (the same substitution for the holdout train). The order (subtract, then detrend) and the domain
+  (the raw curve) change.
+- *Revision 4, section 4 (the subtraction model)*: the robust asymmetric fit still selects and
+  accepts each component (its frequency, its order, its clip set, the FAP and the few-harmonic test
+  are unchanged), but the curve searched receives a **joint refit on the raw curve without clipping
+  and without a mask**, not the robust fit's model; the reanalysis receives the joint raw refit with
+  the candidate's mask. So the change goes beyond moving the subtraction earlier: the estimator of
+  the subtracted amplitudes changes.
+- *Revision 4, section 5 (the twin protocol)*: for the prewhitening, frozen from the noisy analysis:
+  the accepted frequencies, their order, the clip sets, and the masks; estimated again on the twin:
+  the per-sector amplitudes and phases of `S_raw` and `S′_raw`, by the same joint raw refit (no
+  clipping, the mask's cadences without weight) on the raw twin; the detrending row then applies to
+  the twin minus its refit (the twin divided by the noisy curve's trend of `detrend(raw − S_raw)`,
+  or of the masked one).
+
+*Risks recorded:* the raw curve keeps the slow trends that the detrending would remove; the refit
+does not model them, so their projection on the sinusoids can bias the refitted amplitudes (a
+separate matter from `σ_w`: within a sector the weight is constant and each sector has its own
+constant and amplitudes, so the coefficients are independent per sector and a finite, positive
+inflation of `σ_w`, in one sector or between sectors, does not change them; `σ_w` matters only
+through its validity, which decides whether a sector is used). Case N2 measures the consequence of
+the trend.
 
 **The test corrections, each declared here after the result.**
 
-- D5: "every box cadence" becomes **every flat-bottom cadence** (`|offset| ≤ T14/2 − ingress`),
-  the cadences that are at the full depth; a new seed (6130).
+- D5: the criterion stays literal ("every box cadence in `C_last`"); the construction is
+  corrected to a **rectangular** box (`ingress_fraction` 0, so the generator's minimum ingress of
+  1e-6 d, under one second), every cadence of which is at the full depth; the trapezoid of the first
+  run stays recorded as an incompatible construction; a new seed (6130).
 - Q2: the precondition becomes its purpose: **fewer than 40 bins** with at least 3 kept cadences
   at the chosen `f*` (and `f*` within one grid step of 1/0.7 d); a new seed (6131).
 - H: the spies record the calls of the **2020 round only** (the round run by itself through the
   holdout's round function), and the scenario is generated with a new seed (6132).
 - I2: the same criterion and the same two curves (white, correlated), new seeds (6133, 6134).
 
-The cases that passed keep their seeds and run again on the changed code.
+The cases that passed keep their seeds and run again on the changed code, as regressions (not as
+an independent confirmation of the changed design). The design of this amendment was reviewed by
+Codex before the retest: three rounds, ending in agreement (which covers the proposal, not the
+implementation's conformity or the retest's result).
+
+**Three new cases for the changed design** (declared before any run; separate from the retest, so
+they add nothing to its denominators; new seeds: N1 white 6135, N1 correlated 6136, N2 6137, N3
+singular 6138, N3 short sector 6139). **Preconditions**, each a condition of the case (a failed one
+makes it incompatible, recorded, no other seed tried): in N1 and N2, the injected frequency among
+`A`'s accepted components (within one grid step), both raw refits of `A` (the search's and the
+masked one) executed without failure, a search candidate, and nothing accepted on `B`; in N3
+singular, the input fixed (seed 6138), a search candidate, both operations executed and the
+singularity found by the numerical guard; in N3 short sector, at least one usable sector and
+non-empty components.
+
+| Case | Construction | Required |
+|---|---|---|
+| N1 | integrated, white and correlated (the scenario's profile): `A` = raw `sinusoid`-like curve with a 4000 ppm sinusoid at **0.74 d** and a 1500 ppm transit at 3.7 d = 5 × 0.74 d (so the box and the accepted components project on each other: the transit's harmonics fall on the variability's); `B` = the same raw curve without the sinusoid, the same noise realization | paired preservation on the reanalysis curve of the full path: with `d(x)` of Amendment 22 at the injected ephemeris, `|d(L2_A) − d(L2_B)| ≤ 60 ppm`, `L2` each run's reanalysis curve (`detrend_masked(raw − S′_raw)` for `A`; for `B`, with nothing accepted, the masked detrending itself) |
+| N2 | integrated, white: N1's `A` and `B` (0.7 d, not commensurate) plus the suite's slow trend (`trend_amplitude` 0.002 at 6 d, the generator's phase) on both | the paired preservation of N1 (`≤ 60 ppm`) and the final candidate of `A` passing the SNR gate with signal identity |
+| N3 | integrated, white: the pipeline with the global `prewhiten` replaced (a monkeypatch) by one returning a component at 720 per day (the cadence's frequency: `cos(2πft)` constant on the cadences, so the raw refit's design is singular), and, separately, a curve with one sector of fewer than `b_min` cadences | the search refit and the masked refit each record `singular_design` (`S_raw` and `S′_raw` = 0, the curves equal to the M3 ones); the short sector is reported among the sectors left out of the raw refit |
 
 ## Amendment 22 (2026-10-18): piece 7, the prewhitening (revision 3, 7; revision 4, 4), before its tests
 

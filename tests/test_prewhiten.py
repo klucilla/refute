@@ -151,7 +151,7 @@ def test_d5_the_asymmetric_fit_clips_the_box_and_keeps_the_constants():
 
     plan = _plan()
     c = plan.gauntlet.corrections
-    bare = _bare(6108, "white")
+    bare = _bare(6130, "white")
     s1, s2 = sorted(np.unique(bare.sector))
     offsets = np.where(bare.sector == s1, 300e-6, -200e-6)
     no_box = _with(
@@ -168,8 +168,13 @@ def test_d5_the_asymmetric_fit_clips_the_box_and_keeps_the_constants():
         c.b_min,
     )
     sigma_w = float(np.median([v.sigma_w for v in est.sectors.values()]))
-    spec = SignalSpec(period=3.7, t0=1326.3, depth=8 * sigma_w, duration=2.5 / 24)
-    lc = _with(_bare(6108, "white", spec), _sine(bare.time) + offsets)
+    spec = SignalSpec(
+        period=3.7, t0=1326.3, depth=8 * sigma_w, duration=2.5 / 24, ingress_fraction=0.0
+    )
+    lc = _with(_bare(6130, "white", spec), _sine(bare.time) + offsets)
+    deficit = 1.0 - synthetic.signal_model(lc.time, spec)
+    full = np.isclose(deficit[_in_box(lc.time)], spec.depth, rtol=1e-9, atol=0.0)
+    assert np.all(full)  # precondition: every masked cadence at the full depth
     pw = _pw()(lc, plan)
     assert spec.depth >= 2 * c.k_clip * float(np.max(pw.dy)), (spec.depth, np.max(pw.dy))
     assert pw.components, pw.reason
@@ -235,11 +240,13 @@ def _q2_curve(bins, seed):
 
 
 def test_q2_too_few_phase_bins_at_the_chosen_frequency():
-    lc = _q2_curve(range(30), 6110)
+    # Amendment 23: the precondition is its purpose, fewer than 40 bins at the chosen f* (the
+    # first run, seed 6110, gave 31 bins, not exactly 30: f* is the nearest grid frequency)
+    lc = _q2_curve(range(30), 6131)
     pw = _pw()(lc, _plan())
     rej = pw.rejected
     assert rej is not None and abs(rej["frequency"] - 1 / P_V) <= _grid_step(lc), rej  # precond.
-    assert rej["bins"] == 30  # precondition: the occupancy after the clipping at f*
+    assert rej["bins"] < 40  # precondition: the occupancy after the clipping at f*
     assert pw.reason == "too_few_phase_bins" and pw.components == []
 
 
@@ -376,8 +383,10 @@ def test_i1_a_transit_under_variability_is_found(noise, seed):
     assert any(abs(final.period - f * 3.7) / (f * 3.7) <= 0.001 for f in (1.0, 2.0, 0.5))
 
 
-@pytest.mark.parametrize(("noise", "seed"), [("white", 6116), ("correlated", 6117)])
+@pytest.mark.parametrize(("noise", "seed"), [("white", 6133), ("correlated", 6134)])
 def test_i2_a_pure_sinusoid_leaves_no_candidate_passing_the_gate(noise, seed):
+    # Amendment 23: new seeds, the same criterion and the same two curves (the first run, seeds
+    # 6116 and 6117, FAILED in white noise: recorded)
     from refute.packs.tess.pipeline import analyze_data
 
     plan = _plan()
@@ -441,8 +450,14 @@ def test_in_the_curves_reach_their_consumers(monkeypatch):
     pw = analysis.gauntlet.prewhitening
     assert pw.components  # precondition: a component was accepted
     assert all(lc is data.lc for lc in seen["alias"])
-    l1 = detrend(data.lc, plan.detrend)
-    assert np.array_equal(seen["search"][0].flux, l1.flux - pw.model)
+    # Amendment 23: the search receives detrend(raw - S_raw), S_raw the joint raw refit
+    from refute.packs.tess.prewhiten import refit
+
+    s_raw = refit(data.lc, pw.components, np.zeros(data.lc.time.size, bool), plan).model
+    raw_minus = LightCurveData(
+        data.lc.time, data.lc.flux - s_raw, data.lc.flux_err, data.lc.sector, data.lc.year
+    )
+    assert np.array_equal(seen["search"][0].flux, detrend(raw_minus, plan.detrend).flux)
     assert seen["finalize"] and seen["finalize"][0] is analysis.gauntlet.flattened
     target = {"key": "synthetic", "tic_id": 1, "kind": "planet", "name": "planet-0"}
     record = pipeline.build_result(target, data, plan, analysis, {"pass_criteria": {}})
@@ -493,9 +508,10 @@ def test_h_the_train_fundamentals_reach_every_window_of_the_round(monkeypatch):
             return _real(*args, **kwargs)
 
         monkeypatch.setattr(holdout, name, spy)
-    data = synthetic.scenario_data("variability_train_only")
-    outcome = holdout.run_holdout(data.lc, data.sectors, _plan())
-    r = next(r for r in outcome.rounds if r.hidden_year == 2020)
+    # Amendment 23: the spies see the 2020 round only (the first run counted the three rounds),
+    # and the scenario has a new seed
+    data = synthetic.scenario_data("variability_train_only", 6132)
+    r = holdout._round(data.lc, data.sectors, 2020, _plan())
     comps = r.metrics.get("prewhitening", {}).get("components", [])
     assert comps, r.message  # precondition: train components
     assert r.metrics["capacity"].get("decision_2") == "pass", r.message  # precondition
@@ -503,3 +519,114 @@ def test_h_the_train_fundamentals_reach_every_window_of_the_round(monkeypatch):
     want = r.metrics["prewhitening"]["fundamentals"]
     for name, got in calls.items():
         assert got and all(list(g) == want for g in got), (name, got, want)
+
+
+# --- the new cases of Amendment 23 (separate from the retest) -------------------------------
+
+
+def _raw_data(spec, seed, noise, variability=None, trend=0.0):
+    red = {"red_noise_ppm": 600.0, "red_tau_days": 1.0 / 24.0} if noise == "correlated" else {}
+    lc, sectors = make_lightcurve(spec, seed=seed, trend_amplitude=trend, **red)
+    if variability is not None:
+        lc = _with(lc, _sine(lc.time, period=variability))
+    return synthetic.make_data(lc, sectors, synthetic.make_star(), aux=synthetic.make_aux(lc))
+
+
+TRANSIT = SignalSpec(period=3.7, t0=1326.3, depth=1500e-6, duration=2.5 / 24)
+
+
+def _full_path_ran(analysis, data, plan, period):
+    """The preconditions of N1 and N2: the injected frequency among the accepted components, and
+    both raw refits of the full path executed without failure."""
+    from refute.packs.tess.pipeline import build_result
+
+    pw = analysis.gauntlet.prewhitening
+    step = _grid_step(data.lc)
+    assert any(abs(c.frequency - 1 / period) <= step for c in pw.components), pw.reason
+    target = {"key": "synthetic", "tic_id": 1, "kind": "planet", "name": "planet-0"}
+    pre = build_result(target, data, plan, analysis, {"pass_criteria": {}})["corrections"]
+    assert pre["prewhitening"]["search_refit_reason"] is None
+    assert analysis.gauntlet.candidate is not None
+    assert pre["prewhitening"]["refit_reason"] is None
+
+
+@pytest.mark.parametrize(("noise", "seed"), [("white", 6135), ("correlated", 6136)])
+def test_n1_the_full_path_preserves_the_depth_when_the_box_projects_on_the_components(noise, seed):
+    from refute.packs.tess.pipeline import analyze_data
+
+    plan = _plan()
+    a_data = _raw_data(TRANSIT, seed, noise, variability=0.74)
+    a = analyze_data(a_data, plan)
+    b = analyze_data(_raw_data(TRANSIT, seed, noise), plan)
+    _full_path_ran(a, a_data, plan, 0.74)  # preconditions
+    assert b.gauntlet.prewhitening.components == []  # precondition: nothing accepted on B
+    d_a = _depth(a.gauntlet.flattened, spec=TRANSIT)
+    d_b = _depth(b.gauntlet.flattened, spec=TRANSIT)
+    assert abs(d_a - d_b) <= 60e-6, (d_a, d_b)
+
+
+def test_n2_a_slow_unmodelled_trend_keeps_the_depth_and_the_gate():
+    from refute.packs.tess.pipeline import analyze_data
+
+    plan = _plan()
+    a_data = _raw_data(TRANSIT, 6137, "white", variability=P_V, trend=0.002)
+    a = analyze_data(a_data, plan)
+    b = analyze_data(_raw_data(TRANSIT, 6137, "white", trend=0.002), plan)
+    _full_path_ran(a, a_data, plan, P_V)  # preconditions
+    assert b.gauntlet.prewhitening.components == []  # precondition: nothing accepted on B
+    d_a = _depth(a.gauntlet.flattened, spec=TRANSIT)
+    d_b = _depth(b.gauntlet.flattened, spec=TRANSIT)
+    assert abs(d_a - d_b) <= 60e-6, (d_a, d_b)
+    final = a.gauntlet.candidate
+    snr = next(t for t in a.tests if t.name == "snr")
+    assert final is not None and snr.status.value == "PASS", snr.message
+    assert any(abs(final.period - f * 3.7) / (f * 3.7) <= 0.001 for f in (1.0, 2.0, 0.5))
+
+
+def test_n3_a_singular_raw_refit_is_recorded_for_the_search_and_the_reanalysis(monkeypatch):
+    import refute.packs.tess.pipeline as pipeline
+    from refute.packs.tess.detrend import detrend
+    from refute.packs.tess.events import transit_mask
+    from refute.packs.tess.prewhiten import Component
+
+    real = pipeline.prewhiten
+
+    def at_the_cadence(curve, p):
+        pw = real(curve, p)
+        pw.components = [Component(720.0, 0.0, 1.0, 1.0, 1e-3, 0, {})]  # cos(2 pi f t) constant
+        return pw
+
+    monkeypatch.setattr(pipeline, "prewhiten", at_the_cadence)
+    plan = _plan()
+    data = _raw_data(TRANSIT, 6138, "white")
+    analysis = pipeline.analyze_data(data, plan)
+    target = {"key": "synthetic", "tic_id": 1, "kind": "planet", "name": "planet-0"}
+    record = pipeline.build_result(target, data, plan, analysis, {"pass_criteria": {}})
+    pre = record["corrections"]["prewhitening"]
+    assert analysis.search.candidate is not None  # precondition: the reanalysis ran
+    assert pre["search_refit_reason"] == "singular_design"
+    assert pre["refit_reason"] == "singular_design"
+    assert np.array_equal(analysis.flattened_search.flux, detrend(data.lc, plan.detrend).flux)
+    cand = analysis.search.candidate
+    half = plan.detrend.transit_mask_half_width_durations * cand.duration
+    mask = transit_mask(data.lc.time, cand.period, cand.t0, half)
+    m3 = detrend(data.lc, plan.detrend, mask=mask)
+    assert np.array_equal(analysis.gauntlet.flattened.flux, m3.flux)
+
+
+def test_n3_a_short_sector_is_reported_as_left_out_of_the_raw_refit():
+    from refute.packs.tess.pipeline import analyze_data, build_result
+
+    plan = _plan(b_min=15000)  # sector 1 (18720 cadences) used, the shortened sector 2 not
+    data = _raw_data(TRANSIT, 6139, "white", variability=P_V)
+    lc = data.lc
+    second = int(lc.sector.max())
+    keep = (lc.sector != second) | (np.cumsum(lc.sector == second) <= 10000)
+    short = lc.select(keep)
+    data = synthetic.make_data(short, data.sectors, data.star, aux=synthetic.make_aux(short))
+    analysis = analyze_data(data, plan)
+    pw = analysis.gauntlet.prewhitening
+    assert pw.components and pw.sectors_left_out == [second], (pw.reason, pw.sectors_left_out)
+    target = {"key": "synthetic", "tic_id": 1, "kind": "planet", "name": "planet-0"}
+    record = build_result(target, data, plan, analysis, {"pass_criteria": {}})
+    assert record["corrections"]["prewhitening"]["search_left_out"] == [second]
