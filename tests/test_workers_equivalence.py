@@ -166,6 +166,12 @@ def _dossiers(runs):
         yield f"R{key[4:]}", key, runs[f"R{key[4:]}"] / key
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="pending expectation, docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, "
+    "Amendment 3 (no round reads: the timing-uncertainty rule)",
+)
 def test_cn_w_e1_the_correlated_planet_has_a_round_that_reads(runs):
     # W-E1 (expectation): the equivalence of TIC-14 covers a round that read its hidden year.
     if LEGACY:

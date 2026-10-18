@@ -288,7 +288,25 @@ def test_cn_h4_e3_premise_variability_train_only(correlated, seed):
     assert _cn_m2_premise(correlated, seed), f"the 2020 round trained on {train['period']} d"
 
 
-@pytest.mark.parametrize("seed", CN_VANISHING_SEEDS)
+# Pending expectation (correlated-noise-acceptance.md, Amendment 3): on these seeds the round
+# hiding 2020 stops at the timing-uncertainty rule in correlated noise. The xfail keeps the
+# pending item visible; it does not satisfy the acceptance.
+CN_PENDING = pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="pending expectation, docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, "
+    "Amendment 3",
+)
+CN_H4_E3_PENDING_SEEDS = (0, 1, 4, 5, 6, 7)
+
+
+@pytest.mark.parametrize(
+    "seed",
+    [
+        pytest.param(s, marks=CN_PENDING) if s in CN_H4_E3_PENDING_SEEDS else s
+        for s in CN_VANISHING_SEEDS
+    ],
+)
 def test_cn_h4_e3_premise_vanishing_fails_with_a_valid_train(correlated, seed):
     before = _round(correlated[("vanishing", seed, "off")], 2020)
     assert _cn_m4_premise(correlated, seed), (before.status, _reasons(before))

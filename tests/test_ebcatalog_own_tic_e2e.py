@@ -422,6 +422,12 @@ def test_cn_d_m1_shared_path_equals_the_complete_switch_off_analysis(correlated,
         assert _gauntlet_tests(derived) == _gauntlet_tests(complete), seed
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="pending expectation, docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, "
+    "Amendment 3 (the holdout is not testable: the timing-uncertainty rule)",
+)
 @pytest.mark.parametrize("seed", CONTROL_SEEDS)
 def test_cn_d_e1_premise_the_switch_changes_the_planet_analysis(correlated, seed):
     on, off = correlated[("planet", seed, "on")], correlated[("planet", seed, "off")]

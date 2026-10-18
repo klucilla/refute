@@ -299,3 +299,73 @@ study; it is never presented as a validated reproduction of the real noise of TE
 2. **Where H4-M5 lives.** H4-M5 (blindness in the correlated profile) is placed in
    `tests/test_holdout_blindness.py`, beside C1 of the H4 record whose helpers it uses, not in
    `tests/test_holdout_train_validity_e2e.py`. Its definition does not change.
+
+## Amendment 3 (2026-10-17): results, complete
+
+**Order in git:** this file `b8371d6` and Amendment 2 `fc0e43d`; the tests `e64eb72`; the code of
+the holdout helper `65b593e` (the generator and the analysis helpers earlier, `0cc8063`; option D
+3b `9a5c21f`).
+
+**Run.** The six modules (`test_calibration_signal_identity_e2e.py`,
+`test_holdout_train_validity_e2e.py`, `test_holdout_blindness.py`,
+`test_ebcatalog_own_tic_e2e.py`, `test_workers_equivalence.py`,
+`test_holdout_report_wording.py`), white and correlated cases together, logical processors 0 to 7,
+6 workers: **316 tests, 9 failures, 0 errors, 0 skipped** (JUnit). Every white case passes.
+
+| Case | Kind | Result |
+|---|---|---|
+| H7-M1 (6), H7-M2, H7-M3, H7-M4 (2) | mechanism | pass |
+| H7-E1 (3), H7-E2 (6) | expectation | pass |
+| H4-M1 (13 scenarios), H4-M2, H4-M3 (2), H4-M4 | mechanism | pass (H4-M2, H4-M3 and H4-M4 non-empty) |
+| H4-M5 (18) | mechanism | pass |
+| H4-E1 (10), H4-E2 (13), H4-E3 premise of H4-M2 (5) | expectation | pass |
+| **H4-E3 premise of H4-M4 (10 seeds)** | expectation | **4 pass, 6 fail** (seeds 0, 1, 4, 5, 6, 7) |
+| H9-M1 (13), H9-M2, H9-M3 | mechanism | pass (non-empty) |
+| H9-E1 (5 + 5), H9-E2 (10) | expectation | pass |
+| D-M1 (2) | mechanism | pass |
+| **D-E1 (2 seeds)** | expectation | **fail** (both) |
+| W-M1 (level (a) and the full-run summaries with the fourth, correlated target) | mechanism | pass |
+| **W-E1** | expectation | **fail** |
+| R-M1 | mechanism | pass |
+
+**What fails, with numbers** (a read-only diagnosis of the same cases, guard off for the holdout,
+`.cache/v021/cn/diagnose.json` in the worktree):
+
+- **H4-E3, `vanishing` seeds 0, 1, 4, 5, 6, 7:** the round hiding 2020 is INCONCLUSIVE with no
+  train-validity reason, because "train-only timing uncertainty in the hidden year exceeds 1
+  transit duration(s)": the ratio of the timing uncertainty to the duration is 2.47, 1.50, 1.36,
+  1.03, 1.10 and 1.30. On seeds 2, 3, 8 and 9 (ratios 0.63, 0.89, 0.69, 0.84) the round reads and
+  FAILs, so H4-M4 holds and is non-empty.
+- **D-E1, `planet` seeds 0 and 1:** with the default rule the verdict is INCONCLUSIVE (not WEAKENED)
+  because `holdout_by_year` is INCONCLUSIVE ("no hidden year could be tested"): both rounds stop at
+  the same timing rule (ratios 1.87 and 2.47; 1.30 and 1.50). The switch-off verdict is REFUTED, as
+  expected.
+- **W-E1, `TIC-14` (`planet`, seed 0, correlated):** no round read its hidden year, for the same
+  reason (seed 0 above).
+- In the white profile the same scenarios read their hidden years (the white cases pass); the AR(1)
+  component inflates the train-only timing uncertainty (the ephemeris fit's reduced chi-square, for
+  example 17.8 in `planet` seed 0) until the round cannot be tested.
+
+**Reading.** No **mechanism** of a change fails: H7, H4, H9(a), the workers equivalence, option D
+and #23 do what their records define, in correlated noise too. What fails are **expectations about
+the rest of the engine**: in this synthetic correlated scenario the blind holdout is often not
+testable. **Suspected association, not shown:** this is the behavior that the timing correction of
+revision 4 (transit times with an ingress model, the error scaled by β) and the capacity rules are
+meant to address; it is not attributed to them until the corrections are measured.
+
+**State of exit criterion 1 for the changes already made (correlated noise):**
+
+| Change | State |
+|---|---|
+| H7 | met: every mechanism and expectation case passes |
+| H9(a) | met: every mechanism and expectation case passes |
+| #23 | met |
+| H4 | **pending**: H4-E3 (6 of 10 seeds) |
+| CI option D | **pending**: D-E1 |
+| workers equivalence | **pending**: W-E1 |
+
+The nine failing expectation instances are marked `xfail(strict=True, raises=AssertionError)`,
+each citing this amendment, so that CI stays green while the pending items stay visible; the
+marks are on those parameter values only (the passing seeds of H4-E3 stay unmarked), never on a
+mechanism case. **An `xfail` does not satisfy the acceptance**: these three changes stay pending
+under criterion 1 until the expectations pass, or the maintainer decides otherwise.
