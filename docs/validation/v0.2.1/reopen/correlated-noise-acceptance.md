@@ -270,6 +270,23 @@ own value, unchanged: 600 ppm for every scenario except `blend`, whose `make_ble
 300 ppm (as before). The profile adds the 600 ppm AR(1) to that white noise; the code
 (`CORRELATED_PROFILE` in `synthetic.py`) and G4 follow this, and nothing else was assumed.
 
+## Amendment 4 (2026-10-18, after the first CI run): G1 is bound to the reference's platform
+
+*(Placed here, after Amendment 1, because it concerns the generator; written after Amendment 3.)*
+
+The first CI run of the branch (pull request #157, run 39085740367) failed G1 for all 39 cases on
+both Ubuntu jobs and passed it on all Windows jobs. The reference digests (`white-reference.json`)
+were computed on Windows (numpy recorded in the file); the light curves, pixels and auxiliary
+columns go through `sin`, `erf`, `exp` and BLAS, whose last bits differ between the platforms'
+math libraries, so a digest of the bytes cannot be portable. On Windows, where the reference was
+made, G1 passed both locally and in CI.
+
+**From now on:** G1 runs when the platform is Windows and the numpy version equals the reference's;
+elsewhere it is skipped, with that reason. The portable evidence that the default mode is the old
+generator is G5 (the white mode creates no second generator, so it draws exactly as before) and G2
+(the correlated mode is the white curve of the same seed plus the AR(1) series), which run and pass
+on every platform. No other case changes.
+
 ## Amendment 2 (2026-10-17, before the tests of the changes): the maintainer's decision, and two definitions
 
 **The maintainer's decision (2026-10-17).** Exit criterion 1 is **accepted as a prospective

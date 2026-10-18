@@ -3,6 +3,7 @@ docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md."""
 
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -56,6 +57,16 @@ def _expected_ar1(lc, seed):
 # --- G1. The white mode is the old generator ---------------------------------------------
 
 
+# Amendment 4 of the acceptance record: the digests were made on Windows with the numpy version
+# recorded in the reference; the bytes are not portable across math libraries.
+SAME_PLATFORM_AS_REFERENCE = sys.platform == "win32" and np.__version__ == REFERENCE["numpy"]
+
+
+@pytest.mark.skipif(
+    not SAME_PLATFORM_AS_REFERENCE,
+    reason="the white-reference digests are bound to Windows and their numpy version "
+    "(correlated-noise-acceptance.md, Amendment 4); G2 and G5 are the portable checks",
+)
 @pytest.mark.parametrize("key", sorted(REFERENCE["digests"]))
 def test_g1_the_default_mode_equals_the_old_generator(key):
     digest = _reference_module().digest
