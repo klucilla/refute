@@ -533,6 +533,101 @@ interpreter): the reference was computed with the worktree's virtual environment
 the equality of the default plan and an explicit switch off still runs there, and does not replace
 it.
 
+## Amendment 11 (2026-10-18): piece 4, its cases and its interface (before its tests)
+
+Declared before any test or code of piece 4, with the readings of Amendments 6 and 10.
+
+**Interface** (`holdout.py`, used only with the switch on; Codex design review taken in,
+`.cache/v021/codex/amend11/`):
+
+- `register_replicas(ephemeris, windows, spans) -> list[PredictedWindow]`: the rule of revision
+  4, 1 from metadata, with `L = 2 max(baseline_outer)`, the mask `max(baseline_inner)` and the box
+  half-width `max(half_width)` over the transit windows (the readings of
+  `calc/option_a_geometry.py`); returns windows of kind `replica` (epoch `n_ref + m` for the
+  center `t_ref + (m + phase) P`). Overlap is tested on **closed** intervals (spans that only touch
+  overlap), because the accessors include their end points.
+- `period_grid(ephemeris, windows, duration, params) -> ndarray`: the `dP` grid, fixed from the
+  ephemeris and the windows' metadata before any read (odd, symmetric, containing 0; the current
+  rule of `_measure` for its extent and step).
+- `HiddenYear` receives the windows and the replicas: the detrending masks both out to
+  `baseline_inner`; both are read only through `window()` and `local_baseline()`, logged with their
+  kind.
+- `window_depth(t, f, in_window, center, half, frequencies=()) -> WindowDepth` (fields `depth`,
+  `n_in`, `n_base`, `n_params`, `reason`): revision 3, 4.1 at one center: the box
+  `|t − c| ≤ half` within the window's cadences (`in_window`); the baseline model fitted to every
+  other cadence (the rest of the window and its bands): a line plus the given frequencies (none
+  until piece 7); the degeneracy rule (at least 20 baseline cadences per parameter; the condition
+  number of the column-scaled normal matrix at most 1e6; the fallback: sinusoids dropped in reverse
+  order of their train amplitude, then the line becomes a constant, then `depth = None` with its
+  reason); `d = mean over the box of (model − flux)`; a box with fewer than `min_window_coverage`
+  of its expected cadences (`2 half / cadence`) is `box_coverage`. The bands' coverage is checked
+  once per window, as in `_measure` (at least `min_window_coverage` of `2 (outer − inner) /
+  cadence`), and a window or replica failing it is not used at any `dP`.
+- `replica_stats(hidden, replicas, ephemeris, duration, cadence, plan, sector_spans, grid) ->
+  ReplicaStats`: (1) the hidden noise of O2 (Amendment 10): A1 at `n_T` per sector on the residuals
+  (`flux − 1`, flattened) of the replicas' baseline bands, `B_min` bins; replicas of an excluded
+  sector do not count; (2) the replica depths at **every** `dP` of the grid, `var_rep(dP) =
+  (1.4826 MAD)²` and `n_rep(dP)` over the usable replicas. If any `dP` of the grid has
+  `n_rep < R_min`, or no sector is left, the result is `hidden_noise_undetermined`.
+- `measure_windows(hidden, windows, ephemeris, duration, cadence, plan, sector_spans, grid,
+  stats) -> dict`: called only after `replica_stats` and the barrier of decision 2 (piece 5; in
+  piece 4 the barrier is the `hidden_noise_undetermined` check alone); windows of an excluded
+  sector dropped; windows whose measurement spans share cadences: the later dropped; `N_valid`
+  counted after every drop (fewer than `min_predicted_transits`: INCONCLUSIVE); the stack and its
+  error as revision 4, 1 at each `dP`; the maximum SNR, ties to the smaller `|dP|`, then the
+  negative side. Returned: the best `dP`, its depth, error, SNR, `N_valid`, `n_rep`, `var_rep`, and
+  every drop with its reason.
+
+**The cases of the numeric unit criteria of revision 4, 1** (`tests/test_holdout_replicas.py`):
+
+- **Geometry:** the ephemeris of `synthetic.PLANET` (`P` = 3.7 d, `t0` = 1326.3, `T14` = 2.5 h) with
+  zero timing error (so the `dP` grid is `{0}` and the replicas are the most numerous); a hidden
+  year of two sectors, `synthetic.make_lightcurve(None, sector_starts=(1325.0, 1353.0))`, 2-minute
+  cadence, the windows of `_predict_windows` and the replicas of `register_replicas`; the fast plan
+  with the switch on. The full operation includes the hidden detrending of `HiddenYear`.
+- **Seeds:** only `make_lightcurve` (no auxiliary data, so the `seed + 1000` of `make_aux` plays no
+  part); no reuse of these seeds was found in the examined paths (a search, not a proof that they
+  were never used anywhere).
+- **White:** light curves of seeds 3000 to 3199 (200), white 600 ppm, no signal. The analytic error
+  of the **local measurement** at a position is `σ sqrt(1/n_in + g′(X′X)⁻¹g)` for the line fitted to
+  its out-of-box cadences (`σ` = 600 ppm, `g` the mean of the design rows over the box); per light
+  curve, `sqrt(var_rep)` over the median of that analytic error over its replicas; **the median over
+  the 200 light curves within [0.85, 1.15]** (revision 4, 1: the deviation). **Declared limit:** the
+  formula ignores the hidden detrending (a trend fitted on the data, which the masks keep out of
+  the boxes but not out of the bands), so for the full operation it is an approximation; a failure
+  of this criterion would be recorded as a result whether its cause is the code or the reference.
+  A separate mechanism case checks `window_depth` alone against the formula on white noise
+  without detrending.
+- **AR(1):** the same seeds in the correlated mode (`CORRELATED_PROFILE`: 600 ppm white plus 600
+  ppm AR(1), `τ` = 1 h). The Monte Carlo variance: the same operation on 400 independent
+  realizations of the same composite noise on the same cadences (seeds 4000 to 4399), at the fixed
+  replica positions of the metadata; at each position the sample variance (`ddof = 1`) over the
+  realizations where the position was usable, then the median over the positions; per light curve,
+  `var_rep / var_MC`; **the median over the 200 light curves within [0.85, 1.15]** (revision 4, 1:
+  the variance, not its square root).
+- **The full operation's pulls:** 200 AR(1) hidden years without signal (seeds 3200 to 3399), the
+  measurement operation at the given geometry (not a search, which could stop before it), the
+  stacked depth over the transit windows divided by its error, **over all 200** (a year whose
+  measurement is not made fails the case as incompatible, it is not left out); **|pull| ≤ 1 in
+  [0.60, 0.76], |pull| ≤ 2 in [0.92, 0.98], the median within ± 0.2**. This is the unit reading of
+  point fractions (as for piece 3): at n = 200 no count can satisfy the interval form of the K
+  conditions of revision 3, 8.3, which the calibration applies.
+- **Known depth:** a box signal of known depth in the transit windows of a low-noise hidden year:
+  the stacked depth equals it within 5% (sign and scale, which the Monte Carlo of the same operation
+  cannot check).
+- **A non-trivial grid:** a geometry with a period error, so the grid has several points: the
+  replicas are measured at the shifted centers of every `dP`, the reported `dP` maximizes the SNR,
+  the declared ties hold, and `e_pred` uses the largest predicted error over the grid.
+- **Mechanisms:** too few replicas (a timing error that leaves fewer than `R_min`): INCONCLUSIVE
+  `hidden_noise_undetermined`, no transit window in the access log; no accepted replica span
+  overlaps a window's measurement span, and no sector's masked time fraction exceeds 0.5, on a
+  grid of geometries (`P` in 1.5 to 5.5 d, timing error 0 to 0.9 `T14`); the same metadata gives the
+  same replicas; a sector without `B_min` bins in the replicas' bands drops its windows, and with
+  no sector left the measurement is INCONCLUSIVE; with the switch off the holdout is the M3 one
+  (P1).
+- **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
+  already AR(1)).
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after
