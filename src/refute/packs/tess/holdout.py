@@ -46,6 +46,7 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from statistics import NormalDist
 from typing import Any
 
 import numpy as np
@@ -849,6 +850,9 @@ class RoundPlan:
     ephemeris: Ephemeris | None = None
     windows: list[PredictedWindow] = field(default_factory=list)
     train_info: dict[str, Any] = field(default_factory=dict)
+    # M4 piece 5 (switch on): the masked train curve and its per-point sigma, for the replicas.
+    train_flat: LightCurveData | None = None
+    train_sigma: np.ndarray | None = None
 
 
 def plan_round(
@@ -880,24 +884,60 @@ def plan_round(
             )
         )
 
+    corrections_on = plan.gauntlet.corrections.enabled
+    extra: dict[str, Any] = {}
+    if corrections_on:
+        # M4 piece 5 (map Amendment 12 and its addendum): the train candidate refitted on the
+        # masked train curve, then the gate of Amendment 7; an undetermined gate ends the round.
+        from refute.packs.tess.pipeline import _bls_gate
+        from refute.packs.tess.rednoise import event_noise
+        from refute.packs.tess.search import finalize_candidate
+
+        mask_half = plan.detrend.transit_mask_half_width_durations * train.duration
+        train_mask = transit_mask(train_raw.time, train.period, train.t0, mask_half)
+        train_flat2 = detrend(train_raw, plan.detrend, mask=train_mask)
+        sigma = per_point_sigma(
+            train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
+        )
+        refit = finalize_candidate(
+            train_flat2, train.period, train.duration, plan.search, train.sde, sigma
+        )
+        noise = event_noise(train_flat2, None, refit.period, refit.t0, refit.duration, plan)
+        corrected, gate = _bls_gate(refit, train_flat2, sigma, noise, None, plan.gauntlet)
+        extra = {"train_bls_snr": refit.snr, "train_gate": gate.to_dict()}
+        if gate.status is TestStatus.INCONCLUSIVE:
+            return RoundPlan(
+                RoundResult(
+                    hidden_year,
+                    TestStatus.INCONCLUSIVE,
+                    f"train_noise_undetermined: {gate.message}",
+                    metrics={**empty, **extra, "reason": "train_noise_undetermined"},
+                )
+            )
+        train = corrected
+
     validity = train_validity(train, plan)
     if validity["reasons"] and params.require_valid_train:
+        metrics = {"train_candidate": train.to_dict(), "train_validity": validity, **extra}
+        if corrections_on:
+            metrics["reason"] = validity["reasons"][0]
         return RoundPlan(
             RoundResult(
                 hidden_year,
                 TestStatus.INCONCLUSIVE,
                 _invalid_message(validity),
-                metrics={"train_candidate": train.to_dict(), "train_validity": validity},
+                metrics=metrics,
             ),
             train=train,
         )
 
-    mask_half = plan.detrend.transit_mask_half_width_durations * train.duration
-    train_mask = transit_mask(train_raw.time, train.period, train.t0, mask_half)
-    train_flat2 = detrend(train_raw, plan.detrend, mask=train_mask)
-    sigma = per_point_sigma(
-        train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
-    )
+    if not corrections_on:
+        mask_half = plan.detrend.transit_mask_half_width_durations * train.duration
+        train_mask = transit_mask(train_raw.time, train.period, train.t0, mask_half)
+        train_flat2 = detrend(train_raw, plan.detrend, mask=train_mask)
+        sigma = per_point_sigma(
+            train_flat2, transit_mask(train_flat2.time, train.period, train.t0, mask_half)
+        )
     train_timing = None
     if plan.gauntlet.corrections.enabled:
         # M4 piece 3: the train timing with the trapezoid template of the train candidate.
@@ -924,6 +964,7 @@ def plan_round(
     }
     if train_timing is not None:
         train_info["train_timing"] = train_timing  # switch on only (M4 piece 3)
+    train_info.update(extra)  # switch on only (M4 piece 5); empty otherwise
     if len(times) < params.min_train_transits:
         return RoundPlan(
             RoundResult(
@@ -968,22 +1009,27 @@ def plan_round(
     validity = train_validity(train, plan, windows, hidden_spans)
     train_info["train_validity"] = validity
     if validity["reasons"] and params.require_valid_train:
+        metrics = {
+            **train_info,
+            "max_timing_sigma_days": max_sigma_t,
+            "n_predicted_transits": len(transit_windows),
+        }
+        if corrections_on:
+            metrics["reason"] = validity["reasons"][0]
         return RoundPlan(
             RoundResult(
                 hidden_year,
                 TestStatus.INCONCLUSIVE,
                 _invalid_message(validity),
-                metrics={
-                    **train_info,
-                    "max_timing_sigma_days": max_sigma_t,
-                    "n_predicted_transits": len(transit_windows),
-                },
+                metrics=metrics,
                 train_ephemeris=ephemeris.to_dict(),
             ),
             train=train,
             ephemeris=ephemeris,
             windows=windows,
         )
+    if corrections_on:
+        return RoundPlan(None, train, ephemeris, windows, train_info, train_flat2, sigma)
     return RoundPlan(None, train, ephemeris, windows, train_info)
 
 
@@ -999,6 +1045,8 @@ def _round(
     prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)
     if prepared.decided is not None:
         return prepared.decided
+    if plan.gauntlet.corrections.enabled:
+        return _round_corrected(raw, sectors, hidden_year, plan, prepared, enforce=True)[0]
     train, ephemeris, windows = prepared.train, prepared.ephemeris, prepared.windows
     assert train is not None and ephemeris is not None
     train_info = prepared.train_info
@@ -1068,6 +1116,338 @@ def _round(
             f"{params.min_snr})"
         )
     return result
+
+
+# --- M4 piece 5: the capacity decisions and the FAIL rule -------------------------------------
+# Revision 3, 4.3 to 4.6, with revision 4, 1 and 2; map Amendment 12 and its addendum.
+
+# Until the M4 freeze, b and s are module settings, not plan fields (map Amendment 12): no new
+# plan field reaches the historical locks before the freeze. Not calibrated values.
+CAPACITY_B = 0.0
+CAPACITY_S = 0.0
+CAPACITY_K = 1.0
+ALPHA_RULE = 0.005
+
+
+def capacity_threshold(min_snr: float, b: float, s: float, n_years: int) -> float:
+    """``min_snr - b + Phi^-1(1 - alpha_round) s``, ``alpha_round = 0.005 / R``."""
+    z = NormalDist().inv_cdf(1.0 - ALPHA_RULE / n_years)
+    return float(min_snr - b + z * s)
+
+
+def count_n_pred(windows: Sequence[PredictedWindow], spans: Sequence[tuple[float, float]]) -> int:
+    """The transit windows whose measurement span lies inside one hidden sector span (closed)."""
+    n = 0
+    for w in windows:
+        if w.kind != "transit":
+            continue
+        a0, a1 = w.t_pred - w.baseline_outer, w.t_pred + w.baseline_outer
+        if any(lo <= a0 and a1 <= hi for lo, hi in spans):
+            n += 1
+    return n
+
+
+def predicted_error(var_rep: Sequence[float], n_pred: int, margin: float = 1.0) -> float:
+    """``margin * max over the grid of sqrt(var_rep(dP) / N_pred)``; NaN if undefined."""
+    v = np.asarray(var_rep, dtype=float)
+    if v.size == 0 or n_pred <= 0 or not np.all(np.isfinite(v)) or np.any(v < 0):
+        return float("nan")
+    return float(margin * np.sqrt(np.max(v) / n_pred))
+
+
+def replicas_enough(counts: Sequence[int], r_min: int) -> bool:
+    return len(counts) > 0 and all(c >= r_min for c in counts)
+
+
+def fail_rule(
+    snr: float,
+    min_snr: float,
+    d_train: float,
+    e_train: float,
+    d_hidden: float,
+    e_hidden: float,
+) -> tuple[str, str | None, float]:
+    """Revision 3, 4.5 (Amendment 12): PASS if ``snr >= min_snr``; FAIL if not and ``Z = (d_train
+    - d_hidden) / sqrt(e_train^2 + e_hidden^2) > 3`` (signed); otherwise INCONCLUSIVE
+    ``not_detected_not_inconsistent``. A zero or non-finite error or statistic: INCONCLUSIVE."""
+    values = (snr, d_train, e_train, d_hidden, e_hidden)
+    if not all(math.isfinite(v) for v in values) or not e_hidden > 0 or e_train < 0:
+        return "INCONCLUSIVE", "non_finite_statistic", float("nan")
+    z = (d_train - d_hidden) / math.sqrt(e_train**2 + e_hidden**2)
+    if not math.isfinite(z):
+        return "INCONCLUSIVE", "non_finite_statistic", float("nan")
+    if snr >= min_snr:
+        return "PASS", None, z
+    if z > 3.0:
+        return "FAIL", "inconsistent_with_train", z
+    return "INCONCLUSIVE", "not_detected_not_inconsistent", z
+
+
+def _train_spans(flat: LightCurveData) -> list[tuple[float, float]]:
+    out = []
+    for s in np.unique(flat.sector):
+        t = flat.time[flat.sector == s]
+        out.append((float(t.min()), float(t.max())))
+    return out
+
+
+def train_replica_stats(
+    flat: LightCurveData,
+    replicas: Sequence[PredictedWindow],
+    ephemeris: Ephemeris,
+    duration: float,
+    cadence: float,
+    plan: TessTestPlan,
+    grid: np.ndarray,
+) -> tuple[list[int], list[float]]:
+    """The train replicas' depths on the masked train curve (Amendment 12), at every dP:
+    ``(n_rep(dP), var_rep(dP))``."""
+    params = plan.gauntlet.holdout_by_year
+    reads = []
+    for r in replicas:
+        dt = np.abs(flat.time - r.t_pred)
+        in_w = dt <= r.half_width
+        band = (dt > r.baseline_inner) & (dt <= r.baseline_outer)
+        if not _band_covered(r, int(band.sum()), cadence, params.min_window_coverage):
+            continue
+        sel = in_w | band
+        reads.append((r, flat.time[sel], flat.flux[sel], in_w[sel]))
+    counts, variances = [], []
+    for dp in grid:
+        values = []
+        for r, t, f, in_window in reads:
+            center = r.t_pred + (r.epoch - ephemeris.n_ref) * dp
+            d = window_depth(
+                t,
+                f,
+                in_window,
+                center,
+                duration / 2.0,
+                cadence=cadence,
+                coverage=params.min_window_coverage,
+            )
+            if d.depth is not None:
+                values.append(d.depth)
+        counts.append(len(values))
+        variances.append(_robust_var(values))
+    return counts, variances
+
+
+def _round_corrected(
+    raw: LightCurveData,
+    sectors: Sequence[SectorInfo],
+    hidden_year: int,
+    plan: TessTestPlan,
+    prepared: RoundPlan,
+    enforce: bool,
+) -> tuple[RoundResult, dict[str, Any]]:
+    """A round with the switch on (pieces 4 and 5). With ``enforce`` false (the calibration-only
+    measurement) the two capacity decisions are recorded but do not stop the measurement."""
+    params = plan.gauntlet.holdout_by_year
+    c = plan.gauntlet.corrections
+    cadence = plan.data.exptime_seconds / 86400.0
+    train, eph, windows = prepared.train, prepared.ephemeris, prepared.windows
+    assert train is not None and eph is not None and prepared.train_flat is not None
+    hidden_sectors = [s for s in sectors if s.year == hidden_year]
+    spans = [(s.t_start, s.t_end) for s in hidden_sectors]
+    transit = [w for w in windows if w.kind == "transit"]
+    control = [w for w in windows if w.kind == "control"]
+    n_years = len(raw.years)
+    threshold = capacity_threshold(params.min_snr, CAPACITY_B, CAPACITY_S, n_years)
+    replicas = register_replicas(eph, windows, spans)
+    grid = period_grid(eph, windows, train.duration, params)
+    n_pred = count_n_pred(transit, spans)
+    d_c = train.depth - CAPACITY_K * train.depth_err
+    cap: dict[str, Any] = {
+        "d_train": train.depth,
+        "e_train": train.depth_err,
+        "k": CAPACITY_K,
+        "d_c": d_c,
+        "n_pred": n_pred,
+        "threshold": threshold,
+        "n_years": n_years,
+        "b": CAPACITY_B,
+        "s": CAPACITY_S,
+        "m_beta": c.m_beta,
+        "grid": grid.tolist(),
+        "n_replicas_hidden": len(replicas),
+    }
+    metrics: dict[str, Any] = {
+        **prepared.train_info,
+        "capacity": cap,
+        "n_predicted_transits": len(transit),
+    }
+    record: dict[str, Any] = {
+        "calibration_only": True,
+        "hidden_year": hidden_year,
+        "decision_1": None,
+        "decision_2": None,
+        "s_pred_1": None,
+        "s_pred_2": None,
+        "s_meas": None,
+        "threshold": threshold,
+        "reason": None,
+    }
+
+    def stop(reason: str, access_log=None) -> tuple[RoundResult, dict[str, Any]]:
+        metrics["reason"] = reason
+        record["reason"] = reason
+        result = RoundResult(
+            hidden_year,
+            TestStatus.INCONCLUSIVE,
+            reason,
+            metrics=metrics,
+            train_ephemeris=eph.to_dict(),
+            access_log=access_log or [],
+        )
+        return result, record
+
+    if n_pred == 0:
+        cap["decision_1"] = record["decision_1"] = "no_predicted_window"
+        return stop("no_predicted_window")
+    train_spans = _train_spans(prepared.train_flat)
+    train_windows = _predict_windows(eph, train.duration, train_spans, params)
+    train_reps = register_replicas(eph, train_windows, train_spans)
+    counts, variances = train_replica_stats(
+        prepared.train_flat, train_reps, eph, train.duration, cadence, plan, grid
+    )
+    cap["train_n_rep"] = counts
+    cap["train_var_rep"] = variances
+    if not replicas_enough(counts, c.r_min):
+        cap["decision_1"] = record["decision_1"] = "train_replicas_below_r_min"
+        return stop("train_replicas_below_r_min")
+    e_pred_1 = predicted_error(variances, n_pred, c.m_beta)
+    s_pred_1 = d_c / e_pred_1 if e_pred_1 > 0 else float("nan")
+    decision_1 = (
+        "pass"
+        if math.isfinite(s_pred_1) and s_pred_1 >= threshold
+        else "insufficient_capacity_train"
+    )
+    cap.update(e_pred_1=e_pred_1, s_pred_1=s_pred_1, decision_1=decision_1)
+    record.update(decision_1=decision_1, s_pred_1=s_pred_1)
+    if decision_1 != "pass" and enforce:
+        return stop("insufficient_capacity_train")
+
+    hidden = HiddenYear(raw.select(raw.year == hidden_year), windows + replicas, plan)
+
+    def record_hidden(stats: ReplicaStats) -> None:
+        cap["hidden_n_rep"] = [p.n_rep for p in stats.per_dp]
+        cap["hidden_var_rep"] = [p.var_rep for p in stats.per_dp]
+        cap["hidden_noise"] = None if stats.noise is None else stats.noise.to_dict()
+        cap["hidden_excluded_sectors"] = list(stats.excluded_sectors)
+
+    def barrier(stats: ReplicaStats) -> str | None:
+        record_hidden(stats)
+        e_pred_2 = predicted_error(cap["hidden_var_rep"], n_pred)
+        s_pred_2 = d_c / e_pred_2 if e_pred_2 > 0 else float("nan")
+        decision_2 = (
+            "pass"
+            if math.isfinite(s_pred_2) and s_pred_2 >= threshold
+            else "insufficient_capacity_hidden_noise"
+        )
+        cap.update(e_pred_2=e_pred_2, s_pred_2=s_pred_2, decision_2=decision_2)
+        record.update(decision_2=decision_2, s_pred_2=s_pred_2)
+        if decision_2 != "pass" and enforce:
+            return decision_2
+        return None
+
+    result = measure_with_replicas(
+        hidden, transit, replicas, eph, train.duration, cadence, plan, hidden_sectors, grid, barrier
+    )
+    if "hidden_n_rep" not in cap and result.get("stats") is not None:
+        record_hidden(result["stats"])
+    if result["status"] != "ok":
+        return stop(result["status"], hidden.access_log)
+
+    status, reason, z = fail_rule(
+        result["snr"],
+        params.min_snr,
+        train.depth,
+        train.depth_err,
+        result["depth"],
+        result["error"],
+    )
+    record["s_meas"] = result["snr"]
+    metrics.update(
+        {
+            "n_windows_with_data": result["n_valid"],
+            "hidden_depth_ppm": result["depth"] * 1e6,
+            "hidden_depth_err_ppm": result["error"] * 1e6,
+            "hidden_snr": result["snr"],
+            "best_period_correction_days": result["dp"],
+            "n_replicas_used": result["n_rep"],
+            "var_rep": result["var_rep"],
+            "windows_dropped": result["dropped"],
+            "z_inconsistency": z,
+            "train_depth_ppm": train.depth * 1e6,
+            "hidden_detrend_window_days": hidden.detrend_window_days,
+        }
+    )
+    if control:
+        ctl = measure_windows(
+            hidden,
+            control,
+            eph,
+            train.duration,
+            cadence,
+            plan,
+            hidden_sectors,
+            grid,
+            result["stats"],
+        )
+        metrics["control_phase05_snr"] = ctl.get("snr")
+        metrics["control_phase05_depth_ppm"] = (
+            None if ctl.get("depth") is None else ctl["depth"] * 1e6
+        )
+    if reason is not None:
+        metrics["reason"] = reason
+    record["reason"] = reason
+    message = {
+        "PASS": f"transits found at {result['n_valid']} predicted windows, SNR {result['snr']:.1f}",
+        "FAIL": (
+            f"no significant signal at {result['n_valid']} predicted windows (SNR "
+            f"{result['snr']:.1f} < {params.min_snr}) and the hidden depth is inconsistent "
+            f"with the train one (Z = {z:.1f} > 3)"
+        ),
+    }.get(status, reason or "")
+    round_result = RoundResult(
+        hidden_year,
+        TestStatus(status),
+        message,
+        metrics=metrics,
+        train_ephemeris=eph.to_dict(),
+        windows=[
+            {"kind": w.kind, "epoch": w.epoch, "t_pred": w.t_pred, "half_width": w.half_width}
+            for w in transit
+        ],
+        access_log=hidden.access_log,
+    )
+    return round_result, record
+
+
+def calibration_measurement(
+    raw: LightCurveData, sectors: Sequence[SectorInfo], hidden_year: int, plan: TessTestPlan
+) -> dict[str, Any]:
+    """Map Amendments 9 and 12: for the population harness only, never for ``run_holdout``. The
+    round measured despite the two capacity decisions (recorded), with its own ``HiddenYear``;
+    a measurement impediment leaves ``s_meas`` absent with its reason. Returns a record marked
+    ``calibration_only``; nothing of an official result is touched."""
+    if not plan.gauntlet.corrections.enabled:
+        raise ValueError("the calibration measurement needs the corrections switch on")
+    spans = [(s.t_start, s.t_end) for s in sectors if s.year == hidden_year]
+    prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)
+    if prepared.decided is not None:
+        return {
+            "calibration_only": True,
+            "hidden_year": hidden_year,
+            "decision_1": None,
+            "decision_2": None,
+            "s_pred_1": None,
+            "s_pred_2": None,
+            "s_meas": None,
+            "reason": prepared.decided.metrics.get("reason", prepared.decided.message),
+        }
+    return _round_corrected(raw, sectors, hidden_year, plan, prepared, enforce=False)[1]
 
 
 def run_holdout(

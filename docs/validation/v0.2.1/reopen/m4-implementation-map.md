@@ -630,6 +630,39 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 14 (2026-10-18): the results of piece 5, and its test changes after the first runs
+
+Tests committed before the code (6ccaa8c); the code in the next commit. After the code, the 28
+cases pass (`tests/test_holdout_capacity.py`, JUnit 28, 0 failures). **Changes to the tests after
+their first runs, declared** (each a change of the construction of a mechanism case whose
+precondition failed, never of a criterion or of a seed):
+
+1. The weak-signal case and the calibration cases used a 2020 hidden year about 700 days from the
+   train: the rounds stopped at the timing-uncertainty rule (issue #2) before the capacity rule.
+   They now use a hidden year next to the train (2019, sector starting at BTJD 1500, three train
+   sectors in 2018).
+2. The weaker-but-consistent case: its first construction (2020 hidden year) stopped at the timing
+   rule; in the 2019 layout, with the hidden depth `d_train − 3 e_pred,2`, the hidden signal was not
+   detected but `Z` came out above 3 (FAIL). For any construction the outcome of `Z` near 3 rests on
+   about one standard deviation of the noise, so the integrated case now checks that the round's
+   status, reason and `Z` are those of `fail_rule` on its recorded values (with both capacities
+   passed and the signal not detected); the INCONCLUSIVE outcome itself is the algebra case (Amendment
+   12's example), which passes.
+3. The case "the H4 gate reads the corrected train SNR": a strong AR(1) in the train missed its
+   precondition twice (2000 ppm: a spurious long box whose mask left no bins, so the gate was
+   undetermined; 800 ppm: the corrected SNR stayed at 8.7, above 7.1). It now replaces the train gate
+   by one returning a corrected SNR of 5 on the strong-signal curve, which checks the wiring
+   deterministically.
+4. The one-sided case of the FAIL rule had `|Z|` = 2.98, below 3 whether `Z` is signed or
+   absolute, so the sabotage SC5-3 (an absolute difference) was not caught; its hidden depth is now
+   700 ppm (`|Z|` about 6), and SC5-3 fails it.
+
+Sabotages (`.cache/v021/tools/sabotage-p5.json`, `sabotage-p5b.json`): SC5-1 `m_β` in decision 2
+too; SC5-2 the predicted error at `dP = 0` only; SC5-3 the absolute difference; SC5-4 the hidden
+transit windows read before decision 2; SC5-5 the original train SNR when the correction is
+undetermined; SC5-6 the calibration measurement writing into its input; SC5-7 `N_pred` from the
+window centers: each makes at least one case fail.
+
 ## Amendment 13 (2026-10-18): the results of piece 4
 
 Tests committed before the code (70a5d1a); the code in the next commit. The numeric criteria

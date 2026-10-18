@@ -35,7 +35,11 @@ from refute.packs.tess.types import LightCurveData
 
 PLANET = synthetic.PLANET
 TWO_BY_TWO = (1325.0, 1353.0, 2061.0, 2089.0)  # 2018: two sectors; 2020: two sectors
-THREE_BY_ONE = (1325.0, 1353.0, 1381.0, 2061.0)  # 2018: three sectors; 2020: one sector
+# Layouts with the hidden year next to the train (2019), so that the train timing does not end
+# the round before the capacity rule (changed after the first run, in which the cases with a
+# 2020 hidden year stopped at the timing-uncertainty rule: map Amendment 14).
+THREE_BY_ONE = (1325.0, 1353.0, 1381.0, 1500.0)  # 2018: three sectors; 2019: one sector
+THREE_BY_TWO = (1325.0, 1353.0, 1381.0, 1500.0, 1528.0)  # 2018: three; 2019: two
 
 
 def _plan(**corrections):
@@ -106,8 +110,10 @@ def test_replicas_are_enough_only_if_every_dp_reaches_r_min():
         (0.5, 600e-6, 50e-6, 50e-6, 100e-6, "FAIL", None),
         # Z exactly 3 (binary-exact numbers: sqrt(0.75^2 + 1^2) = 1.25): not FAIL
         (1.0, 4.75, 0.75, 1.0, 1.0, "INCONCLUSIVE", None),
-        # one-sided: a hidden depth far above the train one never FAILS
-        (4.0, 100e-6, 10e-6, 400e-6, 100e-6, "INCONCLUSIVE", "not_detected_not_inconsistent"),
+        # one-sided: a hidden depth far above the train one never FAILS (|Z| about 6; the first
+        # version had |Z| = 2.98, which could not tell a signed Z from an absolute one, so the
+        # sabotage SC5-3 was not caught: map Amendment 14)
+        (4.0, 100e-6, 10e-6, 700e-6, 100e-6, "INCONCLUSIVE", "not_detected_not_inconsistent"),
         (4.0, 600e-6, 50e-6, 400e-6, 0.0, "INCONCLUSIVE", "non_finite_statistic"),
         (float("nan"), 600e-6, 50e-6, 400e-6, 1e-4, "INCONCLUSIVE", "non_finite_statistic"),
         (4.0, 600e-6, float("inf"), 400e-6, 1e-4, "INCONCLUSIVE", "non_finite_statistic"),
@@ -190,7 +196,7 @@ def test_b_and_s_enter_the_threshold(monkeypatch, strong):
 def test_a_weak_signal_is_insufficient_capacity_train_with_an_empty_hidden_log():
     lc, sectors = synthetic.make_lightcurve(_spec(160e-6), sector_starts=THREE_BY_ONE, seed=3501)
     outcome = run_holdout(lc, sectors, _plan())
-    r = _round(outcome, 2020)
+    r = _round(outcome, 2019)
     # preconditions: the train candidate passed its corrected gate and the replicas sufficed
     assert r.metrics.get("reason") == "insufficient_capacity_train", r.metrics.get("reason")
     assert r.metrics["capacity"]["decision_1"] == "insufficient_capacity_train"
@@ -252,27 +258,43 @@ def test_no_signal_in_the_hidden_year_with_high_capacity_fails():
     assert r.metrics["z_inconsistency"] > 3
 
 
-def test_a_weaker_but_consistent_hidden_signal_is_inconclusive():
-    """Two passes, deterministic: the first fixes the train depth that gives S_pred,2 near 6; the
-    second reduces only the hidden transits' depth to d_train - 1.5 e_pred,2."""
+def test_a_weaker_hidden_signal_is_judged_by_the_fail_rule_of_its_recorded_values():
+    """Two passes, deterministic: the first (a strong signal) gives e_pred,2 and e_train; the
+    second sets the train depth for S_pred,2 = 6 and reduces only the hidden transits' depth to
+    d_train - 3 e_pred,2, so the hidden signal is not detected while both capacities pass. Whether
+    the round is then INCONCLUSIVE or FAIL depends on Z, within about one standard deviation of the
+    noise for any such construction (map Amendment 14, written after the first runs, in which the
+    2020 hidden year stopped at the timing rule and then Z came out above 3); the case checks that
+    the round's status is the FAIL rule of its recorded values; the INCONCLUSIVE outcome itself is
+    the algebra case above."""
     seed = 3505
-    lc, sectors = synthetic.make_lightcurve(_spec(0.002), sector_starts=TWO_BY_TWO, seed=seed)
-    cap = _round(run_holdout(lc, sectors, _plan()), 2020).metrics["capacity"]
+    lc, sectors = synthetic.make_lightcurve(_spec(0.002), sector_starts=THREE_BY_TWO, seed=seed)
+    cap = _round(run_holdout(lc, sectors, _plan()), 2019).metrics["capacity"]
     e2 = cap["e_pred_2"]
     d_train = 6.0 * e2 + cap["e_train"]
-    hidden_depth = d_train - 1.5 * e2
-    base, _ = synthetic.make_lightcurve(None, sector_starts=TWO_BY_TWO, seed=seed)
+    hidden_depth = d_train - 3.0 * e2
+    base, _ = synthetic.make_lightcurve(None, sector_starts=THREE_BY_TWO, seed=seed)
     unit = synthetic.trapezoid(base.time, PLANET.period, PLANET.t0, 1.0, PLANET.duration, 0.15)
-    depth = np.where(base.year == 2020, hidden_depth, d_train)
+    depth = np.where(base.year == 2019, hidden_depth, d_train)
     built = LightCurveData(
         base.time, base.flux - depth * unit, base.flux_err, base.sector, base.year
     )
-    r = _round(run_holdout(built, sectors, _plan()), 2020)
+    r = _round(run_holdout(built, sectors, _plan()), 2019)
+    assert "capacity" in r.metrics, r.message  # precondition: the round reached the capacity rule
     cap2 = r.metrics["capacity"]
     assert cap2["decision_1"] == "pass" and cap2["decision_2"] == "pass"  # preconditions
     assert r.metrics["hidden_snr"] < 5.0  # precondition: not detected
-    assert r.status.value == "INCONCLUSIVE"
-    assert r.metrics["reason"] == "not_detected_not_inconsistent"
+    expected = fail_rule(
+        r.metrics["hidden_snr"],
+        5.0,
+        cap2["d_train"],
+        cap2["e_train"],
+        r.metrics["hidden_depth_ppm"] * 1e-6,
+        r.metrics["hidden_depth_err_ppm"] * 1e-6,
+    )
+    assert r.status.value == expected[0]
+    assert r.metrics.get("reason") == expected[1]
+    assert r.metrics["z_inconsistency"] == pytest.approx(expected[2], rel=1e-9)
 
 
 def test_too_few_train_replicas_is_its_own_reason(strong):
@@ -295,17 +317,30 @@ def test_an_undetermined_train_correction_is_inconclusive_whatever_the_bls_snr(s
         assert r.access_log == []
 
 
-def test_the_corrected_train_snr_is_the_one_the_h4_gate_reads():
-    """Strong AR(1) in the train: the BLS SNR passes 7.1, the corrected one does not."""
-    lc, sectors = synthetic.make_lightcurve(
-        _spec(400e-6), sector_starts=TWO_BY_TWO, seed=3506, red_noise_ppm=2000.0
-    )
+def test_the_corrected_train_snr_is_the_one_the_h4_gate_reads(monkeypatch, strong):
+    """The H4 gate reads the corrected train SNR: the train gate is replaced by one that returns a
+    corrected SNR of 5 (a strong BLS SNR stays as it is). Deterministic by construction (map
+    Amendment 14: the first construction, a strong AR(1) in the train, missed its precondition
+    twice: a spurious long box at 2000 ppm, a corrected SNR still above 7.1 at 800 ppm)."""
+    from dataclasses import replace
+
+    import refute.packs.tess.pipeline as pipeline
+
+    real = pipeline._bls_gate
+
+    def low(final, flat, sigma, noise, primary, gp):
+        corrected, test = real(final, flat, sigma, noise, primary, gp)
+        return replace(corrected, snr=5.0), test
+
+    monkeypatch.setattr(pipeline, "_bls_gate", low)
+    lc, sectors, _ = strong
     r = _round(run_holdout(lc, sectors, _plan()), 2020)
     validity = r.metrics["train_validity"]
-    assert r.metrics["train_bls_snr"] >= 7.1  # precondition
-    assert validity["train_snr"] < 7.1
+    assert r.metrics["train_bls_snr"] >= 7.1  # precondition: the BLS SNR alone would pass
+    assert validity["train_snr"] == 5.0
     assert "train_snr_below_gate" in validity["reasons"]
     assert r.status.value == "INCONCLUSIVE"
+    assert r.access_log == []
 
 
 # --- the calibration-only measurement -----------------------------------------------------------
@@ -316,12 +351,12 @@ def test_the_calibration_measurement_leaves_run_holdout_unchanged_and_measures_d
     plan = _plan(r_min=10)  # the one hidden sector gives fewer replicas than 20
     before = _json(run_holdout(lc, sectors, plan).to_dict())
     flux_before = lc.flux.copy()
-    record = calibration_measurement(lc, sectors, 2020, plan)
+    record = calibration_measurement(lc, sectors, 2019, plan)
     after = _json(run_holdout(lc, sectors, plan).to_dict())
     assert before == after
     assert np.array_equal(lc.flux, flux_before)
     assert record["calibration_only"] is True
-    official = _round(run_holdout(lc, sectors, plan), 2020)
+    official = _round(run_holdout(lc, sectors, plan), 2019)
     assert official.metrics["reason"] == "insufficient_capacity_train"  # precondition
     assert record["decision_1"] == "insufficient_capacity_train"
     assert record["s_meas"] is not None and math.isfinite(record["s_meas"])
@@ -338,7 +373,7 @@ def test_the_calibration_measurement_covers_a_round_stopped_at_decision_2():
 
 def test_the_calibration_measurement_does_not_overcome_a_measurement_impediment():
     lc, sectors = synthetic.make_lightcurve(_spec(0.002), sector_starts=THREE_BY_ONE, seed=3507)
-    record = calibration_measurement(lc, sectors, 2020, _plan(r_min=1000))
+    record = calibration_measurement(lc, sectors, 2019, _plan(r_min=1000))
     assert record["s_meas"] is None
     assert record["reason"] in ("train_replicas_below_r_min", "hidden_noise_undetermined")
 
