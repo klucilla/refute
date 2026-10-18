@@ -630,6 +630,132 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 19 (2026-10-18): the design of the `R_min` study (design only; it runs after pieces 6 and 7)
+
+The maintainer's item 4 of 2026-10-18 approves the design only. **What this is:** changing
+`R_min = 20`, which revision 4 fixed expressly, is a design amendment **motivated by the observed
+diagnosis** (Amendments 10 and 16, synthetic): it is not a choice untouched by results. No number or
+distribution of the study is chosen from data now; everything below is fixed before any run.
+
+- **The search:** closed, `R_min ∈ {8, 10, 12, 15, 20}`; nothing outside it.
+*(Revision 2 of this design, after Codex's design review, `.cache/v021/codex/rmin-design/`; the
+first draft was never committed nor run.)*
+
+- **The unit, the eligibility and the aggregation.** The unit is the **target** (a light curve), as T1.
+  A target is **eligible** when at least one of its rounds is conclusive by the capacity decisions 1
+  and 2 (revision 3, 4.6's T1 definition; a measured round that ends INCONCLUSIVE
+  `not_detected_not_inconsistent` stays eligible). The target's outcome is the aggregation of
+  `run_holdout`: any FAIL round gives FAIL; otherwise any PASS gives PASS; otherwise INCONCLUSIVE.
+  The controlled error is the **false FAIL** (an eligible constant-signal target whose outcome is
+  FAIL). Per-round counts are reported, never used as the unit.
+- **The groups:** four, as T1 in revision 4, 2: noise (white; AR(1), the generator's correlated
+  mode) × variability (planets without variability; with `variability_some_years`). Every criterion
+  holds in each group; nothing is pooled across them.
+- **The lots:** the development structure's generator (`population_v2.build_case`) under new
+  prefixes `refute-v0.2.1-rmin-study-<k>` (k = 1, 2, ...; each prefix gives the 500 planets of the bands
+  near and measurable per noise model), taken whole and in order of `k` until each group has its
+  declared size (below); no case is chosen by its content. **Three scenarios of the same targets**,
+  each a separate light curve used in **all** rounds of its `run_holdout`:
+  *constant* (as generated); *disappearing* and *weakened*: the target's **last observing year** (a
+  rule fixed now) altered to `flux + (1 − s) · D(t) · trend(t)`, with `D` the injected transit deficit
+  and `trend` the generator's trend computed from the case's **recorded final parameters**, `s = 0`
+  (disappearing) or `s = 0.3` (weakened); the noise realization is the case's own, untouched by
+  construction (no RNG is rerun; nothing passes through the generator's sizing again). The
+  evaluator keeps the parameters and the scenario on its side; the tool receives only the light
+  curve and the metadata. A unit test checks that the alteration changes only the last year's
+  transits.
+- **The procedure, complete, run once in measurement mode, at `R_min = 8`.** Every round of every
+  target goes through the complete procedure of the code after pieces 6 and 7 with a version-2
+  configuration fixed before the study (its file and SHA-256 named in the study's commit) **whose
+  `r_min` is 8** (the smallest of the set, so every larger value can be derived), **measuring despite
+  the capacity decisions** (`calibration_measurement`, Amendment 12, whose returned record is extended
+  before the study, with tests, to carry every field below): each round records its replica counts
+  (train and hidden, over the grid), `S_pred,1`, `S_pred,2`, `S_meas`, `d_train`, `e_train`,
+  `d_hidden`, `e_hidden` at the `dP` it chose, and every other impediment. **For each `R` the outcome is then
+  derived, in this order:** the impediments before the capacity rule as recorded; the train counts
+  over the whole grid against `R` (`train_replicas_below_r_min`); decision 1; the hidden counts over
+  the whole grid against `R` (`hidden_noise_undetermined`), with the other hidden-noise impediments
+  as recorded; decision 2; the measurement's impediments as recorded; the FAIL rule; then the
+  aggregation of the target's rounds. `R_min` changes nothing else in the implemented procedure (the
+  registration, the variances, the `dP` choice and the errors use every usable replica whatever
+  `R`: checked in `holdout.py` by Codex); a unit test compares, on cases at each `R`, the direct run
+  with the derivation (with the same `b_R`, `s_R` in both), on the code after pieces 6 and 7, before
+  the study.
+- **`k`, `b` and `s`, from a lot of their own (not the evaluated one).** `k` is the single one fixed
+  by the rule of Amendment 9 on its lot (prefix `refute-v0.2.1-bs-choice`), recorded before the study.
+  For each `R`, `b_R` and `s_R` are estimated on **that same separate lot** as revision 4, 2
+  prescribes (the median and `1.4826 MAD` of `S_meas − S_pred,k`, pooled over both noise models,
+  over its constant rounds with `S_pred,k ≥ min_snr` and `R` met), and recorded before the study's
+  lots are generated. The study's lots are then evaluated with these fixed values: the fitting and
+  the evaluation never share a sample, so the bounds below keep their binomial meaning.
+- **The coverage reference:** the operation on the **noiseless twin** (revision 4, 5): the hidden
+  year's injected model divided by the noisy curve's hidden trend, measured with the same windows,
+  replicas, `dP`, cadences and baseline form, the coefficients estimated again; the pull is
+  `(d_hidden − d_twin) / e_hidden`. The bias against the injected depth is reported apart.
+- **The weakening criterion's eligibility, by pre-measurement quantities only:** a weakened target
+  qualifies when **its round that hides the last observing year** (the only altered year) passes
+  decisions 1 and 2 and has `0.3 · S_pred,2 ≤ 3` (an expected hidden SNR at most 3, so the rule can
+  tell), decided before the outcome is read; the criterion reads the target's aggregated outcome,
+  and that round's own result is reported beside it. The disappearing targets qualify the same way
+  (their round hiding the last year passes decisions 1 and 2).
+- **The criteria, simultaneous, per `R` and per group.** Confidence: the binomial criteria use
+  one-sided Clopper-Pearson bounds at `1 − 0.05 / 5` = 0.99 (Bonferroni over the five values, for not
+  approving a wrong value; this does not make all the intervals jointly 95%, and the point fractions
+  of criterion 3 have no inferential control):
+  1. *False FAIL:* the upper bound of the FAIL fraction of the eligible constant targets ≤ **0.02**
+     (α_H of revision 3, 4.6);
+  2. *Denominators:* at least **n₁** eligible constant targets (`n₁ ≥ m₁ = 725`, the T1 minimum of
+     revision 4, 2, raised by the sizing below; 228 would be the arithmetic minimum for zero FAIL, with
+     little power), and the minima m₄, m₅ of the power criteria below;
+  3. *Coverage:* over the first eligible round of each constant target in increasing year (a
+     denominator of its own), |twin pull| ≤ 1 in [0.60, 0.76], ≤ 2 in [0.92, 0.98], the median
+     within ± 0.2 (the unit reading of point fractions; the K conditions of the calibration keep their
+     interval form);
+  4. *Power, disappearance:* the lower bound of the FAIL fraction of the eligible disappearing
+     targets ≥ **0.80**, with at least **m₄** of them;
+  5. *Power, incompatible weakening:* the lower bound of the FAIL fraction of the weakened targets
+     with a round eligible for this criterion ≥ **0.50**, with at least **m₅** of them;
+  6. the INCONCLUSIVE fractions (per target and per round, with every reason) are recorded for
+     every `R` (not a criterion).
+- **The sizes, from a sizing computation committed before any lot is generated**
+  (`calc/rmin_sizing.py`): from declared reference rates (design assumptions, not measurements: the
+  eligible fraction 0.15 **in each scenario**, the weakening filter included; the true false-FAIL rate
+  0.005; the disappearance FAIL rate 0.95; the weakening FAIL rate 0.70), (i) the smallest eligible
+  counts `n₁ ≥ m₁ = 725`, `m₄`, `m₅` for which each binomial criterion (criterion 1 included: at 725
+  its pass probability is only 0.925) passes with probability at least 0.95 at its reference rate,
+  and (ii) the number of generated targets per group for which the probability that **every**
+  minimum is reached is at least 0.999, the three scenarios being dependent (the same targets): the
+  failure probabilities are combined by the union bound, never multiplied. The script and its output
+  are committed with the study's configuration; the cost they imply goes to the maintainer before any
+  lot is generated (below).
+- **The choice and the stop:** the smallest `R` of the set that meets criteria 1 to 5 in all four
+  groups. The study runs once; it is never extended or rerun to change its outcome. **If no value
+  meets them, that is the result (option (c))**: `R_min = 20` is **not** validated by being the former
+  default, and the result goes to the maintainer with its effect on the denominators.
+- **Small samples:** no correction is assumed (no `t` with `R − 1`). The variance is
+  `(1.4826 MAD)²` of the replicas with the correlation, the shared detrending, the selection on the
+  `dP` grid and the combination of the train and hidden errors as implemented; criterion 3 measures
+  the consequence. If a correction turns out to be needed, it is derived or calibrated by
+  simulation for the procedure as implemented, by a further amendment with a Codex design review,
+  and the study is then evaluated again on **new** seeds (the principle for failed criteria).
+- **The reserve:** after the choice, the chosen value is validated once on a reserve whose seeds
+  come from a **future drand round** declared in the commit of the choice (the rule of revision 4, 6;
+  its prefix `refute-v0.2.1-rmin-reserve-<randomness>`; the round itself is the maintainer's, a
+  package), with the same composition and sizes and the same five criteria at the chosen value only,
+  at one-sided 95%; `b` and `s` are those of the study for that value. **A failure on the reserve ends
+  this selection** (no other value is tried on it) and is a result for the maintainer.
+- **Budget, sizing and ceiling:** the study and its reserve are **one look of their own** in the
+  configuration budget (revision 3, 9.1; recorded as the `R_min` study, not on the selection part);
+  their worst-case compute (the sizes of `calc/rmin_sizing.py` × 3 scenarios, the complete procedure,
+  timed by the timing lot) is computed before any lot is generated and brought to the maintainer
+  with the ceiling of 397 h (`calibration-ceiling-decision.md`): the ceiling stops a run, it never
+  reduces a size or skips a condition. The chosen `R_min` enters the calibration sizing's eligible
+  fractions before the selection part is generated.
+- **Nothing here touches hidden data of a real target**, the development population, the selection
+  part or the confirmation set; C1 to C6 and the earlier results stay as they are.
+- **Order:** this design is committed now (with Codex's review); its execution waits for pieces 6
+  and 7, which change the noise and the replicas.
+
 ## Amendment 18 (2026-10-18): the integrated H4 case, by the true computation (declared before its run)
 
 The maintainer's item 5 of 2026-10-18: a synthetic curve whose train BLS SNR is above 7.1 and whose
