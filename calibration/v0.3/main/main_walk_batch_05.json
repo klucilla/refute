@@ -1,0 +1,1338 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:17:21Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 5,
+  "candidates": [
+    {
+      "position": 101,
+      "arxiv_id": "2502.13308",
+      "repo_url": "https://github.com/campanulabells/huge-gad",
+      "arxiv": {
+        "versioned_id": "2502.13308v3",
+        "primary_category": "cs.LG",
+        "title": "A Label-Free Heterophily-Guided Approach for Unsupervised Graph Fraud Detection",
+        "abstract": "Graph fraud detection (GFD) has rapidly advanced in protecting online services by identifying malicious fraudsters. Recent supervised GFD research highlights that heterophilic connections between fraudsters and users can greatly impact detection performance, since fraudsters tend to camouflage themselves by building more connections to benign users. Despite the promising performance of supervised GFD methods, the reliance on labels limits their applications to unsupervised scenarios; Additionally, accurately capturing complex and diverse heterophily patterns without labels poses a further challenge. To fill the gap, we propose a Heterophily-guided Unsupervised Graph fraud dEtection approach (HUGE) for unsupervised GFD, which contains two essential components: a heterophily estimation module and an alignment-based fraud detection module. In the heterophily estimation module, we design a novel label-free heterophily metric called HALO, which captures the critical graph properties for GFD, enabling its outstanding ability to estimate heterophily from node attributes. In the alignment-based fraud detection module, we develop a joint MLP-GNN architecture with ranking loss and asymmetric alignment loss. The ranking loss aligns the predicted fraud score with the relative order of HALO, providing an extra robustness guarantee by comparing heterophily among non-adjacent nodes. Moreover, the asymmetric alignment loss effectively utilizes structural information while alleviating the feature-smooth effects of GNNs. Extensive experiments on 6 datasets demonstrate that HUGE significantly outperforms competitors, showcasing its effectiveness and robustness."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/campanulabells/huge-gad",
+        "exists": true,
+        "full_name": "CampanulaBells/HUGE-GAD",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "bdf8d2aec6455b48d7322c0713e31d2f6fecc1b7",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/CampanulaBells/HUGE-GAD/blob/bdf8d2aec6455b48d7322c0713e31d2f6fecc1b7/README.md",
+          "sha256": "0067d67949eb071feb9f3d5b0b51f67c5db22dc93bf7486dc8c5e60a49151bc5",
+          "bytes": 1472
+        },
+        "root_names": [
+          ".gitignore",
+          "Appendix HUGE.pdf",
+          "LICENSE",
+          "README.md",
+          "assets",
+          "datasets",
+          "main.py",
+          "modules"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 102,
+      "arxiv_id": "2304.06710",
+      "repo_url": "https://github.com/mustansarfiaz/scratchformer",
+      "arxiv": {
+        "versioned_id": "2304.06710v1",
+        "primary_category": "cs.CV",
+        "title": "Remote Sensing Change Detection With Transformers Trained from Scratch",
+        "abstract": "Current transformer-based change detection (CD) approaches either employ a pre-trained model trained on large-scale image classification ImageNet dataset or rely on first pre-training on another CD dataset and then fine-tuning on the target benchmark. This current strategy is driven by the fact that transformers typically require a large amount of training data to learn inductive biases, which is insufficient in standard CD datasets due to their small size. We develop an end-to-end CD approach with transformers that is trained from scratch and yet achieves state-of-the-art performance on four public benchmarks. Instead of using conventional self-attention that struggles to capture inductive biases when trained from scratch, our architecture utilizes a shuffled sparse-attention operation that focuses on selected sparse informative regions to capture the inherent characteristics of the CD data. Moreover, we introduce a change-enhanced feature fusion (CEFF) module to fuse the features from input image pairs by performing a per-channel re-weighting. Our CEFF module aids in enhancing the relevant semantic changes while suppressing the noisy ones. Extensive experiments on four CD datasets reveal the merits of the proposed contributions, achieving gains as high as 14.27\\% in intersection-over-union (IoU) score, compared to the best-published results in the literature. Code is available at \\url{https://github.com/mustansarfiaz/ScratchFormer}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mustansarfiaz/scratchformer",
+        "exists": true,
+        "full_name": "mustansarfiaz/ScratchFormer",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ba510444c8861abe423dd6ca99d57f39e8283cc4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/mustansarfiaz/ScratchFormer/blob/ba510444c8861abe423dd6ca99d57f39e8283cc4/README.md",
+          "sha256": "a46ac5840921ef044077e81f9f6b225e36e9a23698c2ecd74d9b21708284f87f",
+          "bytes": 4545
+        },
+        "root_names": [
+          "README.md",
+          "data_config.py",
+          "datasets",
+          "demo",
+          "eval_cd.py",
+          "main_cd.py",
+          "misc",
+          "models",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 103,
+      "arxiv_id": "2301.13770",
+      "repo_url": "https://github.com/tobyvg/ecncm_1d",
+      "arxiv": {
+        "versioned_id": "2301.13770v5",
+        "primary_category": "math.NA",
+        "title": "Energy-Conserving Neural Network for Turbulence Closure Modeling",
+        "abstract": "In turbulence modeling, we are concerned with finding closure models that represent the effect of the subgrid scales on the resolved scales. Recent approaches gravitate towards machine learning techniques to construct such models. However, the stability of machine-learned closure models and their abidance by physical structure (e.g. symmetries, conservation laws) are still open problems. To tackle both issues, we take the `discretize first, filter next' approach. In this approach we apply a spatial averaging filter to existing fine-grid discretizations. The main novelty is that we introduce an additional set of equations which dynamically model the energy of the subgrid scales. Having an estimate of the energy of the subgrid scales, we can use the concept of energy conservation to derive stability. The subgrid energy containing variables are determined via a data-driven technique. The closure model is used to model the interaction between the filtered quantities and the subgrid energy. Therefore the total energy should be conserved. Abiding by this conservation law yields guaranteed stability of the system. In this work, we propose a novel skew-symmetric convolutional neural network architecture that satisfies this law. The result is that stability is guaranteed, independent of the weights and biases of the network. Importantly, as our framework allows for energy exchange between resolved and subgrid scales it can model backscatter. To model dissipative systems (e.g. viscous flows), the framework is extended with a diffusive component. The introduced neural network architecture is constructed such that it also satisfies momentum conservation. We apply the new methodology to both the viscous Burgers' equation and the Korteweg-De Vries equation in 1D. The novel architecture displays superior stability properties when compared to a vanilla convolutional neural network."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tobyvg/ecncm_1d",
+        "exists": true,
+        "full_name": "tobyvg/ECNCM_1D",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "604be37e8d9bfec6233e126f3683b02991c3cd1a",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/tobyvg/ECNCM_1D/blob/604be37e8d9bfec6233e126f3683b02991c3cd1a/README.md",
+          "sha256": "4d20b9280383a7e24af27d9e328b0662a2d38efff7829d1413b4fff55220d880",
+          "bytes": 2767
+        },
+        "root_names": [
+          "LICENSE",
+          "Manifest.toml",
+          "Project.toml",
+          "README.md",
+          "Tutorial.ipynb",
+          "docs",
+          "src",
+          "test"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.NA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 104,
+      "arxiv_id": "2305.19092",
+      "repo_url": "https://github.com/livnlp/npms",
+      "arxiv": {
+        "versioned_id": "2305.19092v1",
+        "primary_category": "cs.CL",
+        "title": "Together We Make Sense -- Learning Meta-Sense Embeddings from Pretrained Static Sense Embeddings",
+        "abstract": "Sense embedding learning methods learn multiple vectors for a given ambiguous word, corresponding to its different word senses. For this purpose, different methods have been proposed in prior work on sense embedding learning that use different sense inventories, sense-tagged corpora and learning methods. However, not all existing sense embeddings cover all senses of ambiguous words equally well due to the discrepancies in their training resources. To address this problem, we propose the first-ever meta-sense embedding method -- Neighbour Preserving Meta-Sense Embeddings, which learns meta-sense embeddings by combining multiple independently trained source sense embeddings such that the sense neighbourhoods computed from the source embeddings are preserved in the meta-embedding space. Our proposed method can combine source sense embeddings that cover different sets of word senses. Experimental results on Word Sense Disambiguation (WSD) and Word-in-Context (WiC) tasks show that the proposed meta-sense embedding method consistently outperforms several competitive baselines."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/livnlp/npms",
+        "exists": true,
+        "full_name": "LivNLP/Neighbourhood-Preserving-Meta-Sense-Embeddings--NPMS-",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ef6e311e586fe66da3e37082921763cd41c01d81",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/LivNLP/Neighbourhood-Preserving-Meta-Sense-Embeddings--NPMS-/blob/ef6e311e586fe66da3e37082921763cd41c01d81/README.md",
+          "sha256": "8e7227e3bddd86ce0f0f6408d8dccada41dab9fe754dbd35dc6c88248a4eec2c",
+          "bytes": 1980
+        },
+        "root_names": [
+          "README.md",
+          "base_method.py",
+          "environment.yml",
+          "eval_wsd",
+          "neighbor",
+          "requirements.txt",
+          "wic"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 105,
+      "arxiv_id": "2310.07784",
+      "repo_url": "https://github.com/atomychan/sn2022jli",
+      "arxiv": {
+        "versioned_id": "2310.07784v1",
+        "primary_category": "astro-ph.HE",
+        "title": "A 12.4 day periodicity in a close binary system after a supernova",
+        "abstract": "Neutron stars and stellar-mass black holes are the remnants of massive star explosions. Most massive stars reside in close binary systems, and the interplay between the companion star and the newly formed compact object has been theoretically explored, but signatures for binarity or evidence for the formation of a compact object during a supernova explosion are still lacking. Here we report a stripped-envelope supernova, SN 2022jli, which shows 12.4-day periodic undulations during the declining light curve. Narrow H$α$ emission is detected in late-time spectra with concordant periodic velocity shifts, likely arising from hydrogen gas stripped from a companion and accreted onto the compact remnant. A new Fermi/LAT $γ$-ray source is temporally and positionally consistent with SN 2022jli. The observed properties of SN 2022jli, including periodic undulations in the optical light curve, coherent H$α$ emission shifting, and evidence for association with a $γ$-ray source, point to the explosion of a massive star in a binary system leaving behind a bound compact remnant. Mass accretion from the companion star onto the compact object powers the light curve of the supernova and generates the $γ$-ray emission."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/atomychan/sn2022jli",
+        "exists": true,
+        "full_name": "AtomyChan/SN2022jli",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "cb7f09369a007c82f5b8ec492161887d6f014ba2",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AtomyChan/SN2022jli/blob/cb7f09369a007c82f5b8ec492161887d6f014ba2/README.md",
+          "sha256": "5764e31f9a5e5b92e40bf97914e696f9b94310223fcb996c7a0bcb3651596998",
+          "bytes": 109
+        },
+        "root_names": [
+          ".DS_Store",
+          ".ipynb_checkpoints",
+          "README.md",
+          "calculation_output",
+          "code",
+          "data",
+          "plots"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.HE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 106,
+      "arxiv_id": "2412.15365",
+      "repo_url": "https://github.com/bang23333/lisa",
+      "arxiv": {
+        "versioned_id": "2412.15365v1",
+        "primary_category": "cs.LG",
+        "title": "LISA: Learning-Integrated Space Partitioning Framework for Traffic Accident Forecasting on Heterogeneous Spatiotemporal Data",
+        "abstract": "Traffic accident forecasting is an important task for intelligent transportation management and emergency response systems. However, this problem is challenging due to the spatial heterogeneity of the environment. Existing data-driven methods mostly focus on studying homogeneous areas with limited size (e.g. a single urban area such as New York City) and fail to handle the heterogeneous accident patterns over space at different scales. Recent advances (e.g. spatial ensemble) utilize pre-defined space partitions and learn multiple models to improve prediction accuracy. However, external knowledge is required to define proper space partitions before training models and pre-defined partitions may not necessarily reduce the heterogeneity. To address this issue, we propose a novel Learning-Integrated Space Partition Framework (LISA) to simultaneously learn partitions while training models, where the partitioning process and learning process are integrated in a way that partitioning is guided explicitly by prediction accuracy rather than other factors. Experiments using real-world datasets, demonstrate that our work can capture underlying heterogeneous patterns in a self-guided way and substantially improve baseline networks by an average of 13.0%."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/bang23333/lisa",
+        "exists": true,
+        "full_name": "BANG23333/LISA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4cbc3941e049cf06102ad41a2280f82044de6d35",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/BANG23333/LISA/blob/4cbc3941e049cf06102ad41a2280f82044de6d35/README.md",
+          "sha256": "ce0f9f9aafdb5ffc156a3cdc453fbb5fd0fc663044c26fb88deadbaaf31a2348",
+          "bytes": 3502
+        },
+        "root_names": [
+          "GearyC.py",
+          "LISA.py",
+          "LisaNet.py",
+          "README.md",
+          "Test.py",
+          "base",
+          "bases",
+          "convlstm.py",
+          "img",
+          "layers.py",
+          "lib",
+          "notes"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 107,
+      "arxiv_id": "2310.16301",
+      "repo_url": "https://github.com/lxchtan/chatmpc",
+      "arxiv": {
+        "versioned_id": "2310.16301v1",
+        "primary_category": "cs.CL",
+        "title": "Is ChatGPT a Good Multi-Party Conversation Solver?",
+        "abstract": "Large Language Models (LLMs) have emerged as influential instruments within the realm of natural language processing; nevertheless, their capacity to handle multi-party conversations (MPCs) -- a scenario marked by the presence of multiple interlocutors involved in intricate information exchanges -- remains uncharted. In this paper, we delve into the potential of generative LLMs such as ChatGPT and GPT-4 within the context of MPCs. An empirical analysis is conducted to assess the zero-shot learning capabilities of ChatGPT and GPT-4 by subjecting them to evaluation across three MPC datasets that encompass five representative tasks. The findings reveal that ChatGPT's performance on a number of evaluated MPC tasks leaves much to be desired, whilst GPT-4's results portend a promising future. Additionally, we endeavor to bolster performance through the incorporation of MPC structures, encompassing both speaker and addressee architecture. This study provides an exhaustive evaluation and analysis of applying generative LLMs to MPCs, casting a light upon the conception and creation of increasingly effective and robust MPC agents. Concurrently, this work underscores the challenges implicit in the utilization of LLMs for MPCs, such as deciphering graphical information flows and generating stylistically consistent responses."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lxchtan/chatmpc",
+        "exists": true,
+        "full_name": "lxchtan/ChatMPC",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "bc940576b1bef48439c6c1f9925be7eb0c039b07",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/lxchtan/ChatMPC/blob/bc940576b1bef48439c6c1f9925be7eb0c039b07/README.md",
+          "sha256": "9af8274203641606ff573f1656f8b99e6938df6db98266203b350253da970994",
+          "bytes": 2559
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "emorynlp",
+          "image",
+          "meld",
+          "requirements.txt",
+          "run.sh",
+          "templates",
+          "ubuntu_mpc",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 108,
+      "arxiv_id": "2308.02682",
+      "repo_url": "https://bitbucket.org/gsudmlab/explainingfulldisk",
+      "arxiv": {
+        "versioned_id": "2308.02682v1",
+        "primary_category": "cs.LG",
+        "title": "Explainable Deep Learning-based Solar Flare Prediction with post hoc Attention for Operational Forecasting",
+        "abstract": "This paper presents a post hoc analysis of a deep learning-based full-disk solar flare prediction model. We used hourly full-disk line-of-sight magnetogram images and selected binary prediction mode to predict the occurrence of $\\geq$M1.0-class flares within 24 hours. We leveraged custom data augmentation and sample weighting to counter the inherent class-imbalance problem and used true skill statistic and Heidke skill score as evaluation metrics. Recent advancements in gradient-based attention methods allow us to interpret models by sending gradient signals to assign the burden of the decision on the input features. We interpret our model using three post hoc attention methods: (i) Guided Gradient-weighted Class Activation Mapping, (ii) Deep Shapley Additive Explanations, and (iii) Integrated Gradients. Our analysis shows that full-disk predictions of solar flares align with characteristics related to the active regions. The key findings of this study are: (1) We demonstrate that our full disk model can tangibly locate and predict near-limb solar flares, which is a critical feature for operational flare forecasting, (2) Our candidate model achieves an average TSS=0.51$\\pm$0.05 and HSS=0.38$\\pm$0.08, and (3) Our evaluation suggests that these models can learn conspicuous features corresponding to active regions from full-disk magnetograms."
+      },
+      "repository": {
+        "host": "other",
+        "url": "https://bitbucket.org/gsudmlab/explainingfulldisk",
+        "root_names": null
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 109,
+      "arxiv_id": "2408.15242",
+      "repo_url": "https://github.com/sainingzhang/uc-gs",
+      "arxiv": {
+        "versioned_id": "2408.15242v1",
+        "primary_category": "cs.CV",
+        "title": "Drone-assisted Road Gaussian Splatting with Cross-view Uncertainty",
+        "abstract": "Robust and realistic rendering for large-scale road scenes is essential in autonomous driving simulation. Recently, 3D Gaussian Splatting (3D-GS) has made groundbreaking progress in neural rendering, but the general fidelity of large-scale road scene renderings is often limited by the input imagery, which usually has a narrow field of view and focuses mainly on the street-level local area. Intuitively, the data from the drone's perspective can provide a complementary viewpoint for the data from the ground vehicle's perspective, enhancing the completeness of scene reconstruction and rendering. However, training naively with aerial and ground images, which exhibit large view disparity, poses a significant convergence challenge for 3D-GS, and does not demonstrate remarkable improvements in performance on road views. In order to enhance the novel view synthesis of road views and to effectively use the aerial information, we design an uncertainty-aware training method that allows aerial images to assist in the synthesis of areas where ground images have poor learning outcomes instead of weighting all pixels equally in 3D-GS training like prior work did. We are the first to introduce the cross-view uncertainty to 3D-GS by matching the car-view ensemble-based rendering uncertainty to aerial images, weighting the contribution of each pixel to the training process. Additionally, to systematically quantify evaluation metrics, we assemble a high-quality synthesized dataset comprising both aerial and ground images for road scenes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sainingzhang/uc-gs",
+        "exists": true,
+        "full_name": "SainingZhang/UC-GS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3d7e9e3d1952f3f469e4177cc8c55d53e95d524e",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/SainingZhang/UC-GS/blob/3d7e9e3d1952f3f469e4177cc8c55d53e95d524e/README.md",
+          "sha256": "ebf6fd11209916309f2bffa1bef9970019efab2bb5d1a17d1623993320642745",
+          "bytes": 2560
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE.md",
+          "README.md",
+          "SIBR_viewers",
+          "arguments",
+          "assets",
+          "convert.py",
+          "environment.yml",
+          "gaussian_renderer",
+          "lpipsPyTorch",
+          "metrics.py",
+          "render.py",
+          "scene",
+          "single_train.sh",
+          "submodules",
+          "train.py",
+          "train.sh",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 110,
+      "arxiv_id": "2505.08085",
+      "repo_url": "https://github.com/ieeta-pt/fed_rf",
+      "arxiv": {
+        "versioned_id": "2505.08085v1",
+        "primary_category": "cs.LG",
+        "title": "A Federated Random Forest Solution for Secure Distributed Machine Learning",
+        "abstract": "Privacy and regulatory barriers often hinder centralized machine learning solutions, particularly in sectors like healthcare where data cannot be freely shared. Federated learning has emerged as a powerful paradigm to address these concerns; however, existing frameworks primarily support gradient-based models, leaving a gap for more interpretable, tree-based approaches. This paper introduces a federated learning framework for Random Forest classifiers that preserves data privacy and provides robust performance in distributed settings. By leveraging PySyft for secure, privacy-aware computation, our method enables multiple institutions to collaboratively train Random Forest models on locally stored data without exposing sensitive information. The framework supports weighted model averaging to account for varying data distributions, incremental learning to progressively refine models, and local evaluation to assess performance across heterogeneous datasets. Experiments on two real-world healthcare benchmarks demonstrate that the federated approach maintains competitive predictive accuracy - within a maximum 9\\% margin of centralized methods - while satisfying stringent privacy requirements. These findings underscore the viability of tree-based federated learning for scenarios where data cannot be centralized due to regulatory, competitive, or technical constraints. The proposed solution addresses a notable gap in existing federated learning libraries, offering an adaptable tool for secure distributed machine learning tasks that demand both transparency and reliable performance. The tool is available at https://github.com/ieeta-pt/fed_rf."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ieeta-pt/fed_rf",
+        "exists": true,
+        "full_name": "ieeta-pt/fed_rf",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "117e5d5f85963e08846748eaf49db55edc4b174e",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ieeta-pt/fed_rf/blob/117e5d5f85963e08846748eaf49db55edc4b174e/README.md",
+          "sha256": "d731f9ace093917e27b482f4eb4f19d6c835b46156faa6247542f5ec6f38be72",
+          "bytes": 12341
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "examples",
+          "fed_rf_mk",
+          "setup.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: healthcare"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 111,
+      "arxiv_id": "2405.03003",
+      "repo_url": "https://github.com/chaos96/fourierft",
+      "arxiv": {
+        "versioned_id": "2405.03003v1",
+        "primary_category": "cs.LG",
+        "title": "Parameter-Efficient Fine-Tuning with Discrete Fourier Transform",
+        "abstract": "Low-rank adaptation~(LoRA) has recently gained much interest in fine-tuning foundation models. It effectively reduces the number of trainable parameters by incorporating low-rank matrices $A$ and $B$ to represent the weight change, i.e., $ΔW=BA$. Despite LoRA's progress, it faces storage challenges when handling extensive customization adaptations or larger base models. In this work, we aim to further compress trainable parameters by enjoying the powerful expressiveness of the Fourier transform. Specifically, we introduce FourierFT, which treats $ΔW$ as a matrix in the spatial domain and learns only a small fraction of its spectral coefficients. With the trained spectral coefficients, we implement the inverse discrete Fourier transform to recover $ΔW$. Empirically, our FourierFT method shows comparable or better performance with fewer parameters than LoRA on various tasks, including natural language understanding, natural language generation, instruction tuning, and image classification. For example, when performing instruction tuning on the LLaMA2-7B model, FourierFT surpasses LoRA with only 0.064M trainable parameters, compared to LoRA's 33.5M. Our code is released at \\url{https://github.com/Chaos96/fourierft}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/chaos96/fourierft",
+        "exists": true,
+        "full_name": "Chaos96/fourierft",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "98c7893abbc204ae34b0c4fe59d5ae1fe2b45bce",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Chaos96/fourierft/blob/98c7893abbc204ae34b0c4fe59d5ae1fe2b45bce/README.md",
+          "sha256": "b8eac33742bfab5a5eea7daaeefbb4acf8137d849069e8069e55df6aac8fbb58",
+          "bytes": 874
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "assets"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 112,
+      "arxiv_id": "2502.16782",
+      "repo_url": "https://github.com/ucf-lou-lab-pet/cipher-prune-inference",
+      "arxiv": {
+        "versioned_id": "2502.16782v2",
+        "primary_category": "cs.LG",
+        "title": "CipherPrune: Efficient and Scalable Private Transformer Inference",
+        "abstract": "Private Transformer inference using cryptographic protocols offers promising solutions for privacy-preserving machine learning; however, it still faces significant runtime overhead (efficiency issues) and challenges in handling long-token inputs (scalability issues). We observe that the Transformer's operational complexity scales quadratically with the number of input tokens, making it essential to reduce the input token length. Notably, each token varies in importance, and many inputs contain redundant tokens. Additionally, prior private inference methods that rely on high-degree polynomial approximations for non-linear activations are computationally expensive. Therefore, reducing the polynomial degree for less important tokens can significantly accelerate private inference. Building on these observations, we propose \\textit{CipherPrune}, an efficient and scalable private inference framework that includes a secure encrypted token pruning protocol, a polynomial reduction protocol, and corresponding Transformer network optimizations. At the protocol level, encrypted token pruning adaptively removes unimportant tokens from encrypted inputs in a progressive, layer-wise manner. Additionally, encrypted polynomial reduction assigns lower-degree polynomials to less important tokens after pruning, enhancing efficiency without decryption. At the network level, we introduce protocol-aware network optimization via a gradient-based search to maximize pruning thresholds and polynomial reduction conditions while maintaining the desired accuracy. Our experiments demonstrate that CipherPrune reduces the execution overhead of private Transformer inference by approximately $6.1\\times$ for 128-token inputs and $10.6\\times$ for 512-token inputs, compared to previous methods, with only a marginal drop in accuracy. The code is publicly available at https://github.com/UCF-Lou-Lab-PET/cipher-prune-inference."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ucf-lou-lab-pet/cipher-prune-inference",
+        "exists": true,
+        "full_name": "UCF-Lou-Lab-PET/cipher-prune-inference",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "69a0f972cd1b5e26a140a88d3749cb5788fceef8",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/UCF-Lou-Lab-PET/cipher-prune-inference/blob/69a0f972cd1b5e26a140a88d3749cb5788fceef8/README.md",
+          "sha256": "a4c71ebcb50383db88e57883e2d9b04c5020a33dee2b7b3399abc218fbe5233f",
+          "bytes": 7028
+        },
+        "root_names": [
+          ".github",
+          ".gitignore",
+          ".gitmodules",
+          ".vscode",
+          "Aramis",
+          "Athos",
+          "Beacon",
+          "Dockerfile",
+          "Dockerfile_AI_Validation",
+          "EzPC",
+          "FSS",
+          "LICENSE",
+          "OnnxBridge",
+          "Porthos",
+          "README.md",
+          "READMEm.md",
+          "SCI",
+          "SIRNN",
+          "log",
+          "misc",
+          "setup_env_and_build.sh",
+          "sytorch"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 113,
+      "arxiv_id": "2410.00404",
+      "repo_url": "https://github.com/windrise/3dgr-car",
+      "arxiv": {
+        "versioned_id": "2410.00404v1",
+        "primary_category": "eess.IV",
+        "title": "3DGR-CAR: Coronary artery reconstruction from ultra-sparse 2D X-ray views with a 3D Gaussians representation",
+        "abstract": "Reconstructing 3D coronary arteries is important for coronary artery disease diagnosis, treatment planning and operation navigation. Traditional reconstruction techniques often require many projections, while reconstruction from sparse-view X-ray projections is a potential way of reducing radiation dose. However, the extreme sparsity of coronary arteries in a 3D volume and ultra-limited number of projections pose significant challenges for efficient and accurate 3D reconstruction. To this end, we propose 3DGR-CAR, a 3D Gaussian Representation for Coronary Artery Reconstruction from ultra-sparse X-ray projections. We leverage 3D Gaussian representation to avoid the inefficiency caused by the extreme sparsity of coronary artery data and propose a Gaussian center predictor to overcome the noisy Gaussian initialization from ultra-sparse view projections. The proposed scheme enables fast and accurate 3D coronary artery reconstruction with only 2 views. Experimental results on two datasets indicate that the proposed approach significantly outperforms other methods in terms of voxel accuracy and visual quality of coronary arteries. The code will be available in https://github.com/windrise/3DGR-CAR."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/windrise/3dgr-car",
+        "exists": true,
+        "full_name": "windrise/3DGR-CAR",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f482e19f60f54ea3079ff505d1d819427fbeb545",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/windrise/3DGR-CAR/blob/f482e19f60f54ea3079ff505d1d819427fbeb545/README.md",
+          "sha256": "9566aa1dbda44fb9ab5952ccb59e48724d5e6af66b84f095842748868e906355",
+          "bytes": 4222
+        },
+        "root_names": [
+          "3dgs-car",
+          "LICENSE",
+          "Pic",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 114,
+      "arxiv_id": "2505.03451",
+      "repo_url": "https://github.com/fouadtrad/detecting-quishing-attacks-with-machine-learning-techniques-through-qr-code-analysis",
+      "arxiv": {
+        "versioned_id": "2505.03451v2",
+        "primary_category": "cs.CR",
+        "title": "Detecting Quishing Attacks with Machine Learning Techniques Through QR Code Analysis",
+        "abstract": "The rise of QR code-based phishing (\"Quishing\") poses a growing cybersecurity threat, as attackers increasingly exploit QR codes to bypass traditional phishing defenses. Existing detection methods predominantly focus on URL analysis, which requires the extraction of the QR code payload, and may inadvertently expose users to malicious content. Moreover, QR codes can encode various types of data beyond URLs, such as Wi-Fi credentials and payment information, making URL-based detection insufficient for broader security concerns. To address these gaps, we propose the first framework for quishing detection that directly analyzes QR code structure and pixel patterns without extracting the embedded content. We generated a dataset of phishing and benign QR codes and we used it to train and evaluate multiple machine learning models, including Logistic Regression, Decision Trees, Random Forest, Naïve Bayes, LightGBM, and XGBoost. Our best-performing model (XGBoost) achieves an AUC of 0.9106, demonstrating the feasibility of QR-centric detection. Through feature importance analysis, we identify key visual patterns correlated with phishing labels and refine our feature set by removing non-informative pixels, improving performance to an AUC of 0.9133 with a reduced feature space. Our findings reveal that the structural features of QR code correlate strongly with phishing risk. This work establishes a foundation for quishing mitigation and highlights the potential of direct QR analysis as a critical layer in modern phishing defenses."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/fouadtrad/detecting-quishing-attacks-with-machine-learning-techniques-through-qr-code-analysis",
+        "exists": true,
+        "full_name": "fouadtrad/Detecting-Quishing-Attacks-with-Machine-Learning-Techniques-Through-QR-Code-Analysis",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b56a4d7950c520cf6852164080a3bf65d000d112",
+        "license_spdx": "CC-BY-4.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/fouadtrad/Detecting-Quishing-Attacks-with-Machine-Learning-Techniques-Through-QR-Code-Analysis/blob/b56a4d7950c520cf6852164080a3bf65d000d112/README.md",
+          "sha256": "e53112e11979a6a7d908f60d101544145dfb78fb36b4a6325f1af3aff10d0e70",
+          "bytes": 3700
+        },
+        "root_names": [
+          "LICENSE",
+          "Loading the Dataset.ipynb",
+          "QuishingDataset.zip",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 115,
+      "arxiv_id": "2312.12856",
+      "repo_url": "https://github.com/wangzhecheng/skyscript",
+      "arxiv": {
+        "versioned_id": "2312.12856v1",
+        "primary_category": "cs.CV",
+        "title": "SkyScript: A Large and Semantically Diverse Vision-Language Dataset for Remote Sensing",
+        "abstract": "Remote sensing imagery, despite its broad applications in helping achieve Sustainable Development Goals and tackle climate change, has not yet benefited from the recent advancements of versatile, task-agnostic vision language models (VLMs). A key reason is that the large-scale, semantically diverse image-text dataset required for developing VLMs is still absent for remote sensing images. Unlike natural images, remote sensing images and their associated text descriptions cannot be efficiently collected from the public Internet at scale. In this work, we bridge this gap by using geo-coordinates to automatically connect open, unlabeled remote sensing images with rich semantics covered in OpenStreetMap, and thus construct SkyScript, a comprehensive vision-language dataset for remote sensing images, comprising 2.6 million image-text pairs covering 29K distinct semantic tags. With continual pre-training on this dataset, we obtain a VLM that surpasses baseline models with a 6.2% average accuracy gain in zero-shot scene classification across seven benchmark datasets. It also demonstrates the ability of zero-shot transfer for fine-grained object attribute classification and cross-modal retrieval. We hope this dataset can support the advancement of VLMs for various multi-modal tasks in remote sensing, such as open-vocabulary classification, retrieval, captioning, and text-to-image synthesis."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wangzhecheng/skyscript",
+        "exists": true,
+        "full_name": "wangzhecheng/SkyScript",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b16d2e76c5a0cdd644e2422a4446fb092d2dc1e4",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/wangzhecheng/SkyScript/blob/b16d2e76c5a0cdd644e2422a4446fb092d2dc1e4/README.md",
+          "sha256": "711277bd8a0c925672627be713ac00775623c768b52384cf554fa27263afd3de",
+          "bytes": 14864
+        },
+        "root_names": [
+          ".ipynb_checkpoints",
+          "LICENSE",
+          "README.md",
+          "__pycache__",
+          "benchmark_dataset_info.py",
+          "cross_modal_retrieval.ipynb",
+          "customized_train_and_test.py",
+          "image_sources.py",
+          "params.py",
+          "prompt_templates.py",
+          "requirements-test.txt",
+          "requirements-training.txt",
+          "requirements.txt",
+          "src",
+          "test_scene_and_fine_grained_classification.ipynb",
+          "test_zero_shot_classification.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 116,
+      "arxiv_id": "2402.19186",
+      "repo_url": "https://github.com/berenslab/disentangling-retinal-images",
+      "arxiv": {
+        "versioned_id": "2402.19186v3",
+        "primary_category": "cs.CV",
+        "title": "Disentangling representations of retinal images with generative models",
+        "abstract": "Retinal fundus images play a crucial role in the early detection of eye diseases. However, the impact of technical factors on these images can pose challenges for reliable AI applications in ophthalmology. For example, large fundus cohorts are often confounded by factors like camera type, bearing the risk of learning shortcuts rather than the causal relationships behind the image generation process. Here, we introduce a population model for retinal fundus images that effectively disentangles patient attributes from camera effects, enabling controllable and highly realistic image generation. To achieve this, we propose a disentanglement loss based on distance correlation. Through qualitative and quantitative analyses, we show that our models encode desired information in disentangled subspaces and enable controllable image generation based on the learned subspaces, demonstrating the effectiveness of our disentanglement loss. The project's code is publicly available: https://github.com/berenslab/disentangling-retinal-images."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/berenslab/disentangling-retinal-images",
+        "exists": true,
+        "full_name": "berenslab/disentangling-retinal-images",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d249eab9395f3f69832d36fe6eae2213369ff975",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/berenslab/disentangling-retinal-images/blob/d249eab9395f3f69832d36fe6eae2213369ff975/README.md",
+          "sha256": "1269c53b366ccbff2a7e94175a5b1c8d001988c9d66269d20acd5e1eee767540",
+          "bytes": 5810
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "configs",
+          "figures",
+          "requirements.txt",
+          "scripts",
+          "setup.py",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 117,
+      "arxiv_id": "2411.12764",
+      "repo_url": "https://github.com/hwq0726/sefd",
+      "arxiv": {
+        "versioned_id": "2411.12764v1",
+        "primary_category": "cs.CL",
+        "title": "SEFD: Semantic-Enhanced Framework for Detecting LLM-Generated Text",
+        "abstract": "The widespread adoption of large language models (LLMs) has created an urgent need for robust tools to detect LLM-generated text, especially in light of \\textit{paraphrasing} techniques that often evade existing detection methods. To address this challenge, we present a novel semantic-enhanced framework for detecting LLM-generated text (SEFD) that leverages a retrieval-based mechanism to fully utilize text semantics. Our framework improves upon existing detection methods by systematically integrating retrieval-based techniques with traditional detectors, employing a carefully curated retrieval mechanism that strikes a balance between comprehensive coverage and computational efficiency. We showcase the effectiveness of our approach in sequential text scenarios common in real-world applications, such as online forums and Q\\&A platforms. Through comprehensive experiments across various LLM-generated texts and detection methods, we demonstrate that our framework substantially enhances detection accuracy in paraphrasing scenarios while maintaining robustness for standard LLM-generated content."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hwq0726/sefd",
+        "exists": true,
+        "full_name": "hwq0726/SEFD",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c166dc516eaa329f8da70cfd4606ed8605623e69",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hwq0726/SEFD/blob/c166dc516eaa329f8da70cfd4606ed8605623e69/README.md",
+          "sha256": "952c136abf96051d5d948c111c373e119486b7a93b0eb7e24cb28c15f7e0440f",
+          "bytes": 2738
+        },
+        "root_names": [
+          ".idea",
+          "README.md",
+          "data",
+          "dipper_paraphrases",
+          "paraphrase_text.py",
+          "recursive_paraphrase.py",
+          "requirements.txt",
+          "sequence_ID.py",
+          "sequence_detectgpt.py",
+          "sequence_detectgpt_rep.py",
+          "sequence_prob.py",
+          "sequence_watermarking.py",
+          "slurm_scripts",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 118,
+      "arxiv_id": "2307.08417",
+      "repo_url": "https://github.com/ga1i13o/divide-and-classify",
+      "arxiv": {
+        "versioned_id": "2307.08417v2",
+        "primary_category": "cs.CV",
+        "title": "Divide&Classify: Fine-Grained Classification for City-Wide Visual Place Recognition",
+        "abstract": "Visual Place recognition is commonly addressed as an image retrieval problem. However, retrieval methods are impractical to scale to large datasets, densely sampled from city-wide maps, since their dimension impact negatively on the inference time. Using approximate nearest neighbour search for retrieval helps to mitigate this issue, at the cost of a performance drop. In this paper we investigate whether we can effectively approach this task as a classification problem, thus bypassing the need for a similarity search. We find that existing classification methods for coarse, planet-wide localization are not suitable for the fine-grained and city-wide setting. This is largely due to how the dataset is split into classes, because these methods are designed to handle a sparse distribution of photos and as such do not consider the visual aliasing problem across neighbouring classes that naturally arises in dense scenarios. Thus, we propose a partitioning scheme that enables a fast and accurate inference, preserving a simple learning procedure, and a novel inference pipeline based on an ensemble of novel classifiers that uses the prototypes learned via an angular margin loss. Our method, Divide&Classify (D&C), enjoys the fast inference of classification solutions and an accuracy competitive with retrieval methods on the fine-grained, city-wide setting. Moreover, we show that D&C can be paired with existing retrieval pipelines to speed up computations by over 20 times while increasing their recall, leading to new state-of-the-art results."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ga1i13o/divide-and-classify",
+        "exists": true,
+        "full_name": "ga1i13o/Divide-and-Classify",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e7b777c7c4928d6d9d46ca307f2a789ed2032ad5",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ga1i13o/Divide-and-Classify/blob/e7b777c7c4928d6d9d46ca307f2a789ed2032ad5/README.md",
+          "sha256": "406f02124609315b3656c877b5ff6e1b240e4292d2ac9bfcb8f373f5328e2b76",
+          "bytes": 3429
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "classifiers.py",
+          "commons.py",
+          "datasets.py",
+          "eval.py",
+          "models.py",
+          "parser.py",
+          "requirements.txt",
+          "test.py",
+          "train.py",
+          "util.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 119,
+      "arxiv_id": "2305.06555",
+      "repo_url": "https://github.com/alibabaresearch/damo-convai",
+      "arxiv": {
+        "versioned_id": "2305.06555v1",
+        "primary_category": "cs.CL",
+        "title": "Domain Incremental Lifelong Learning in an Open World",
+        "abstract": "Lifelong learning (LL) is an important ability for NLP models to learn new tasks continuously. Architecture-based approaches are reported to be effective implementations for LL models. However, it is non-trivial to extend previous approaches to domain incremental LL scenarios since they either require access to task identities in the testing phase or cannot handle samples from unseen tasks. In this paper, we propose \\textbf{Diana}: a \\underline{d}ynam\\underline{i}c \\underline{a}rchitecture-based lifelo\\underline{n}g le\\underline{a}rning model that tries to learn a sequence of tasks with a prompt-enhanced language model. Four types of hierarchically organized prompts are used in Diana to capture knowledge from different granularities. Specifically, we dedicate task-level prompts to capture task-specific knowledge to retain high LL performances and maintain instance-level prompts to learn knowledge shared across input samples to improve the model's generalization performance. Moreover, we dedicate separate prompts to explicitly model unseen tasks and introduce a set of prompt key vectors to facilitate knowledge sharing between tasks. Extensive experiments demonstrate that Diana outperforms state-of-the-art LL models, especially in handling unseen tasks. We release the code and data at \\url{https://github.com/AlibabaResearch/DAMO-ConvAI/tree/main/diana}."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/alibabaresearch/damo-convai",
+        "exists": true,
+        "full_name": "AlibabaResearch/DAMO-ConvAI",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "188835d4f9948563a6b9c8ac50cd0f3ae4021ed6",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AlibabaResearch/DAMO-ConvAI/blob/188835d4f9948563a6b9c8ac50cd0f3ae4021ed6/README.md",
+          "sha256": "797f26a237de6912148171d60765529767d85b247b4ec21cc256a7b3a6295c5e",
+          "bytes": 2666
+        },
+        "root_names": [
+          ".DS_Store",
+          ".github",
+          ".gitignore",
+          "Awesome-Self-Evolution-of-LLM",
+          "EPO",
+          "EvoTrainer",
+          "FlowBench",
+          "IOPO",
+          "LICENSE",
+          "Loong",
+          "MMLatentAction",
+          "MaskedThought",
+          "OmniCharacter",
+          "OpenOmni",
+          "PRO",
+          "README.md",
+          "RPM-Generalization",
+          "SDPO",
+          "VibeMemBench",
+          "WideDeep",
+          "acl23doc2dial",
+          "api-bank",
+          "attention-buckets",
+          "bird",
+          "cats",
+          "cgodial",
+          "dater",
+          "deep-thinking",
+          "dial-start",
+          "dial2vec",
+          "dialogue-cse",
+          "diana",
+          "doc2bot",
+          "dstc11-simmc",
+          "graphix",
+          "metaretriever",
+          "mmevol",
+          "oltqa",
+          "pace",
+          "pcll",
+          "proton",
+          "r2sql",
+          "rlp",
+          "s2sql",
+          "sdsql",
+          "space-1",
+          "space-2",
+          "space-3",
+          "spectra",
+          "spokenwoz",
+          "ssll",
+          "star",
+          "sunsql",
+          "tkk",
+          "unid2t"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 120,
+      "arxiv_id": "2502.17468",
+      "repo_url": "https://github.com/ziyuey/cssstn",
+      "arxiv": {
+        "versioned_id": "2502.17468v1",
+        "primary_category": "eess.SP",
+        "title": "CSSSTN: A Class-sensitive Subject-to-subject Semantic Style Transfer Network for EEG Classification in RSVP Tasks",
+        "abstract": "The Rapid Serial Visual Presentation (RSVP) paradigm represents a promising application of electroencephalography (EEG) in Brain-Computer Interface (BCI) systems. However, cross-subject variability remains a critical challenge, particularly for BCI-illiterate users who struggle to effectively interact with these systems. To address this issue, we propose the Class-Sensitive Subject-to-Subject Semantic Style Transfer Network (CSSSTN), which incorporates a class-sensitive approach to align feature distributions between golden subjects (BCI experts) and target (BCI-illiterate) users on a class-by-class basis. Building on the SSSTN framework, CSSSTN incorporates three key components: (1) subject-specific classifier training, (2) a unique style loss to transfer class-discriminative features while preserving semantic information through a modified content loss, and (3) an ensemble approach to integrate predictions from both source and target domains. We evaluated CSSSTN using both a publicly available dataset and a self-collected dataset. Experimental results demonstrate that CSSSTN outperforms state-of-the-art methods, achieving mean balanced accuracy improvements of 6.4\\% on the Tsinghua dataset and 3.5\\% on the HDU dataset, with notable benefits for BCI-illiterate users. Ablation studies confirm the effectiveness of each component, particularly the class-sensitive transfer and the use of lower-layer features, which enhance transfer performance and mitigate negative transfer. Additionally, CSSSTN achieves competitive results with minimal target data, reducing calibration time and effort. These findings highlight the practical potential of CSSSTN for real-world BCI applications, offering a robust and scalable solution to improve the performance of BCI-illiterate users while minimizing reliance on extensive training data. Our code is available at https://github.com/ziyuey/CSSSTN."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ziyuey/cssstn",
+        "exists": true,
+        "full_name": "ziyuey/CSSSTN",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b1307318ba16708199e2d5fafbe38f6d70917935",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ziyuey/CSSSTN/blob/b1307318ba16708199e2d5fafbe38f6d70917935/README.md",
+          "sha256": "fd58559c4feda94f2690bdfae262f1ec9bd1451c3693ddb3149032e5d7f772e4",
+          "bytes": 865
+        },
+        "root_names": [
+          "CNN.py",
+          "CSSSTN.py",
+          "G_D.py",
+          "README.md",
+          "README_CN.md",
+          "data_process.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 121,
+      "arxiv_id": "2306.01353",
+      "repo_url": "https://gitlab.com/milidris/shapley-effects-and-pme-for-ct-scans",
+      "arxiv": {
+        "versioned_id": "2306.01353v1",
+        "primary_category": "stat.AP",
+        "title": "Shapley effects and proportional marginal effects for global sensitivity analysis: application to computed tomography scan organ dose estimation",
+        "abstract": "Concerns have been raised about possible cancer risks after exposure to computed tomography (CT) scans in childhood. The health effects of ionizing radiation are then estimated from the absorbed dose to the organs of interest which is calculated, for each CT scan, from dosimetric numerical models, like the one proposed in the NCICT software. Given that a dosimetric model depends on input parameters which are most often uncertain, the calculation of absorbed doses is inherently uncertain. A current methodological challenge in radiation epidemiology is thus to be able to account for dose uncertainty in risk estimation. A preliminary important step can be to identify the most influential input parameters implied in dose estimation, before modelling and accounting for their related uncertainty in radiation-induced health risks estimates. In this work, a variance-based global sensitivity analysis was performed to rank by influence the uncertain input parameters of the NCICT software implied in brain and red bone marrow doses estimation, for four classes of CT examinations. Two recent sensitivity indices, especially adapted to the case of dependent input parameters, were estimated, namely: the Shapley effects and the Proportional Marginal Effects (PME). This provides a first comparison of the respective behavior and usefulness of these two indices on a real medical application case. The conclusion is that Shapley effects and PME are intrinsically different, but complementary. Interestingly, we also observed that the proportional redistribution property of the PME allowed for a clearer importance hierarchy between the input parameters."
+      },
+      "repository": {
+        "host": "other",
+        "url": "https://gitlab.com/milidris/shapley-effects-and-pme-for-ct-scans",
+        "root_names": null
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category stat.AP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 122,
+      "arxiv_id": "2304.05306",
+      "repo_url": "https://github.com/kuleuven-cosic/optimizing-linear-correctors",
+      "arxiv": {
+        "versioned_id": "2304.05306v3",
+        "primary_category": "cs.CR",
+        "title": "Optimizing Linear Correctors: A Tight Output Min-Entropy Bound and Selection Technique",
+        "abstract": "Post-processing of the raw bits produced by a true random number generator (TRNG) is always necessary when the entropy per bit is insufficient for security applications. In this paper, we derive a tight bound on the output min-entropy of the algorithmic post-processing module based on linear codes, known as linear correctors. Our bound is based on the codes' weight distributions, and we prove that it holds even for the real-world noise sources that produce independent but not identically distributed bits. Additionally, we present a method for identifying the optimal linear corrector for a given input min-entropy rate that maximizes the throughput of the post-processed bits while simultaneously achieving the needed security level. Our findings show that for an output min-entropy rate of $0.999$, the extraction efficiency of the linear correctors with the new bound can be up to $130.56\\%$ higher when compared to the old bound, with an average improvement of $41.2\\%$ over the entire input min-entropy range. On the other hand, the required min-entropy of the raw bits for the individual correctors can be reduced by up to $61.62\\%$."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kuleuven-cosic/optimizing-linear-correctors",
+        "exists": true,
+        "full_name": "KULeuven-COSIC/Optimizing-Linear-Correctors",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3c3dcdee74d1fe6d9834d07c569671fb63c5d6a9",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/KULeuven-COSIC/Optimizing-Linear-Correctors/blob/3c3dcdee74d1fe6d9834d07c569671fb63c5d6a9/README.md",
+          "sha256": "b1c58cee1b8cf55ff15db3cf9f0d27fe66899d07274a8b82756dbd8628aeec01",
+          "bytes": 7072
+        },
+        "root_names": [
+          "Code",
+          "LICENSE",
+          "Modified_generator_matrices_OBC_NBC.zip",
+          "NBCCYC_set.txt",
+          "NBC_set.zip",
+          "OBCCYC_set.txt",
+          "OBC_set.txt",
+          "Optimal_Area_NBCCYC.txt",
+          "Optimal_NBC.txt",
+          "Optimal_NBCCYC.txt",
+          "Optimal_OBC.txt",
+          "Optimal_OBCCYC.txt",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 123,
+      "arxiv_id": "2405.09101",
+      "repo_url": "https://github.com/rajpal9/adaptive-koopman",
+      "arxiv": {
+        "versioned_id": "2405.09101v2",
+        "primary_category": "cs.RO",
+        "title": "Adaptive Koopman Embedding for Robust Control of Complex Nonlinear Dynamical Systems",
+        "abstract": "The discovery of linear embedding is the key to the synthesis of linear control techniques for nonlinear systems. In recent years, while Koopman operator theory has become a prominent approach for learning these linear embeddings through data-driven methods, these algorithms often exhibit limitations in generalizability beyond the distribution captured by training data and are not robust to changes in the nominal system dynamics induced by intrinsic or environmental factors. To overcome these limitations, this study presents an adaptive Koopman architecture capable of responding to the changes in system dynamics online. The proposed framework initially employs an autoencoder-based neural network that utilizes input-output information from the nominal system to learn the corresponding Koopman embedding offline. Subsequently, we augment this nominal Koopman architecture with a feed-forward neural network that learns to modify the nominal dynamics in response to any deviation between the predicted and observed lifted states, leading to improved generalization and robustness to a wide range of uncertainties and disturbances compared to contemporary methods. Extensive tracking control simulations, which are undertaken by integrating the proposed scheme within a Model Predictive Control framework, are used to highlight its robustness against measurement noise, disturbances, and parametric variations in system dynamics."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rajpal9/adaptive-koopman",
+        "exists": true,
+        "full_name": "Rajpal9/Adaptive-koopman",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "89d7951121e9188673285db92485f952129d52c7",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Rajpal9/Adaptive-koopman/blob/89d7951121e9188673285db92485f952129d52c7/README.md",
+          "sha256": "d9a8897683025bf357540de7d4bed7c0e2f44580559e7fb1ddd45f2dc541212b",
+          "bytes": 1594
+        },
+        "root_names": [
+          ".idea",
+          ".ipynb_checkpoints",
+          "Coupled_pendulum_Bilinear_Adaptive_Koopman_MPC.ipynb",
+          "Coupled_pendulum_Linear_Adaptive_Koopman_MPC.ipynb",
+          "Planar_Quadrotor_Linear_Adaptive_Koopman_MPC.ipynb",
+          "README.md",
+          "Serial_Manipulators_Linear_Adaptive_Koopman_MPC.ipynb",
+          "__pycache__",
+          "control_files",
+          "core",
+          "datasets",
+          "dynamics",
+          "models",
+          "paths",
+          "saved_models",
+          "tutorial.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.RO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 124,
+      "arxiv_id": "2306.01324",
+      "repo_url": "https://github.com/facebookresearch/how-to-autorl",
+      "arxiv": {
+        "versioned_id": "2306.01324v1",
+        "primary_category": "cs.LG",
+        "title": "Hyperparameters in Reinforcement Learning and How To Tune Them",
+        "abstract": "In order to improve reproducibility, deep reinforcement learning (RL) has been adopting better scientific practices such as standardized evaluation metrics and reporting. However, the process of hyperparameter optimization still varies widely across papers, which makes it challenging to compare RL algorithms fairly. In this paper, we show that hyperparameter choices in RL can significantly affect the agent's final performance and sample efficiency, and that the hyperparameter landscape can strongly depend on the tuning seed which may lead to overfitting. We therefore propose adopting established best practices from AutoML, such as the separation of tuning and testing seeds, as well as principled hyperparameter optimization (HPO) across a broad search space. We support this by comparing multiple state-of-the-art HPO tools on a range of RL algorithms and environments to their hand-tuned counterparts, demonstrating that HPO approaches often have higher performance and lower compute overhead. As a result of our findings, we recommend a set of best practices for the RL community, which should result in stronger empirical results with fewer computational costs, better reproducibility, and thus faster progress. In order to encourage the adoption of these practices, we provide plug-and-play implementations of the tuning algorithms used in this paper at https://github.com/facebookresearch/how-to-autorl."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/facebookresearch/how-to-autorl",
+        "exists": true,
+        "full_name": "facebookresearch/how-to-autorl",
+        "archived": true,
+        "default_branch": "main",
+        "head_commit": "da9ecf831f3357d54efaf9f06e04cc34d0b5a9f4",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/facebookresearch/how-to-autorl/blob/da9ecf831f3357d54efaf9f06e04cc34d0b5a9f4/README.md",
+          "sha256": "a91acd7cbf506f5f3ffe4d868bb5ad1698d19f66390d0b7a495c89e1c029c4a2",
+          "bytes": 3295
+        },
+        "root_names": [
+          ".flake8",
+          ".gitignore",
+          "CITATION.cff",
+          "CODE_OF_CONDUCT.md",
+          "CONTRIBUTING.md",
+          "LICENSE.txt",
+          "MANIFEST.in",
+          "Makefile",
+          "README.md",
+          "checklist.pdf",
+          "checklist.tex",
+          "docs",
+          "examples",
+          "hydra_plugins",
+          "pyproject.toml",
+          "setup.py",
+          "tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "repository_unavailable",
+        "evidence": "the repository is archived on GitHub"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 125,
+      "arxiv_id": "2401.09786",
+      "repo_url": "https://github.com/rlqja1107/torch-st-sgg",
+      "arxiv": {
+        "versioned_id": "2401.09786v5",
+        "primary_category": "cs.CV",
+        "title": "Adaptive Self-training Framework for Fine-grained Scene Graph Generation",
+        "abstract": "Scene graph generation (SGG) models have suffered from inherent problems regarding the benchmark datasets such as the long-tailed predicate distribution and missing annotation problems. In this work, we aim to alleviate the long-tailed problem of SGG by utilizing unannotated triplets. To this end, we introduce a Self-Training framework for SGG (ST-SGG) that assigns pseudo-labels for unannotated triplets based on which the SGG models are trained. While there has been significant progress in self-training for image recognition, designing a self-training framework for the SGG task is more challenging due to its inherent nature such as the semantic ambiguity and the long-tailed distribution of predicate classes. Hence, we propose a novel pseudo-labeling technique for SGG, called Class-specific Adaptive Thresholding with Momentum (CATM), which is a model-agnostic framework that can be applied to any existing SGG models. Furthermore, we devise a graph structure learner (GSL) that is beneficial when adopting our proposed self-training framework to the state-of-the-art message-passing neural network (MPNN)-based SGG models. Our extensive experiments verify the effectiveness of ST-SGG on various SGG models, particularly in enhancing the performance on fine-grained predicate classes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rlqja1107/torch-st-sgg",
+        "exists": true,
+        "full_name": "rlqja1107/torch-ST-SGG",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2dd1f6bd5bfb8e6a8d544480e485b951ab5c2ac9",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/rlqja1107/torch-ST-SGG/blob/2dd1f6bd5bfb8e6a8d544480e485b951ab5c2ac9/README.md",
+          "sha256": "cc975ed883152f183739a5e0c8998849e4d2b30d04f3c284ded968f4c33a813a",
+          "bytes": 7097
+        },
+        "root_names": [
+          ".gitignore",
+          "DATASET.md",
+          "Figure.png",
+          "INSTALL.md",
+          "MODEL.md",
+          "README.md",
+          "configs",
+          "datasets",
+          "initial_data",
+          "maskrcnn_benchmark",
+          "run_shell",
+          "setup.py",
+          "tools"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T03:19:36Z"
+}
