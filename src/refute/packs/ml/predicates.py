@@ -26,16 +26,21 @@ for ``direction`` or for the ``d > 0`` part of ``margin`` (plan section 6.2).
 decimal numbers; in binary floats ``61.2 − 60`` is ``1.2000000000000028``, which would
 move a value at the limit across it (Codex review). Every number is therefore taken as
 a ``Decimal``: a ``Decimal`` or a decimal text as given, an int exactly, and a float by
-its shortest representation (``repr``, which reads back as the same float), and the
-predicates compute in decimal arithmetic with 50 significant digits. The runner passes
-the reproduced value as the exact decimal mean of the extracted tokens.
+its shortest representation (``repr``, which reads back as the same float). The
+predicates decide **exactly**, whatever the number of digits (a token read from a binary
+float has up to hundreds, wp3-tensorboard-acceptance.md): comparisons on exact
+fractions, tolerances as exact sums, products and maxima, and a square-root tolerance
+kept as its exact square and compared by squares; only the record shows a square root
+rounded down to 50 digits. The runner passes the reproduced value as the exact decimal
+mean of the extracted tokens.
 """
 
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from decimal import Decimal, localcontext
+from decimal import ROUND_FLOOR, Decimal, Inexact, localcontext
+from fractions import Fraction
 from typing import Literal
 
 from refute.core.verdict import TestStatus
@@ -106,17 +111,43 @@ NONE = PublishedUncertainty("none")
 
 @dataclass(frozen=True)
 class Tolerance:
-    """A tolerance, or only its lower bound when an uncertainty was not convertible."""
+    """A tolerance, or only its lower bound when an uncertainty was not convertible.
+
+    A tolerance that is a square root (``sqrt(a² + b²)``) keeps its exact square in
+    ``squared``: the predicates then decide by comparing squares, and ``value`` is only its
+    50-digit approximation for the record (wp3-tensorboard-acceptance.md, Codex review)."""
 
     value: Decimal
     lower_bound: bool = False
+    squared: Fraction | None = None
 
-    def __init__(self, value: Number, lower_bound: bool = False):
+    def __init__(self, value: Number, lower_bound: bool = False, squared: Fraction | None = None):
         number = dec(value, "a tolerance")
-        if number < 0:
+        if number < 0 or (squared is not None and squared < 0):
             raise ValueError("a tolerance is at least 0")
         object.__setattr__(self, "value", number)
         object.__setattr__(self, "lower_bound", lower_bound)
+        object.__setattr__(self, "squared", squared)
+
+
+def _within(lhs: Fraction, tol: Tolerance) -> bool:
+    """``lhs <= tol``, exactly (by squares for a square-root tolerance)."""
+    if tol.squared is not None:
+        return lhs <= 0 or lhs * lhs <= tol.squared
+    return lhs <= Fraction(tol.value)
+
+
+def _exact(a: Decimal, b: Decimal, op: str) -> Decimal:
+    """``a + b``, ``a - b`` or ``a * b`` with no rounding: the precision covers every digit
+    of the result, and any rounding would raise (Inexact is trapped)."""
+    with localcontext() as ctx:
+        ctx.traps[Inexact] = True
+        if op == "*":
+            ctx.prec = max(PRECISION, len(a.as_tuple().digits) + len(b.as_tuple().digits) + 1)
+            return a * b
+        low = min(a.as_tuple().exponent, b.as_tuple().exponent)
+        ctx.prec = max(PRECISION, max(a.adjusted(), b.adjusted()) - int(low) + 2)
+        return a + b if op == "+" else a - b
 
 
 @dataclass(frozen=True)
@@ -127,13 +158,13 @@ class Outcome:
 
 
 def one_number(x: Number, params: ToleranceParams, uncertainty: PublishedUncertainty) -> Tolerance:
-    """``max(abs_floor, rel_tol · |x|, k_sd · sd)`` (plan line 415; 1.0.9)."""
-    with localcontext() as ctx:
-        ctx.prec = PRECISION
-        base = max(params.abs_floor, params.rel_tol * abs(dec(x, "the published value")))
-        if uncertainty.status == "converted":
-            return Tolerance(max(base, params.k_sd * uncertainty.sd))
-        return Tolerance(base, lower_bound=uncertainty.status == "not_convertible")
+    """``max(abs_floor, rel_tol · |x|, k_sd · sd)`` (plan line 415; 1.0.9), exactly."""
+    # copy_abs, not abs(): abs() rounds to the context's precision
+    relative = _exact(params.rel_tol, dec(x, "the published value").copy_abs(), "*")
+    base = max(params.abs_floor, relative)
+    if uncertainty.status == "converted":
+        return Tolerance(max(base, _exact(params.k_sd, uncertainty.sd, "*")))
+    return Tolerance(base, lower_bound=uncertainty.status == "not_convertible")
 
 
 def difference_tolerance(
@@ -153,15 +184,22 @@ def difference_tolerance(
         return one_number(p, params, paired)
     tol_m = one_number(reported_method, params, uncertainty_method)
     tol_b = one_number(reported_reference, params, uncertainty_reference)
-    return Tolerance(
-        _hypot(tol_m.value, tol_b.value), lower_bound=tol_m.lower_bound or tol_b.lower_bound
-    )
+    return _hypot(tol_m.value, tol_b.value, tol_m.lower_bound or tol_b.lower_bound)
 
 
-def _hypot(a: Decimal, b: Decimal) -> Decimal:
+def _root(squared: Fraction) -> Decimal:
+    """The 50-digit square root of an exact square, rounded down (for the record only)."""
     with localcontext() as ctx:
-        ctx.prec = PRECISION
-        return (a * a + b * b).sqrt()
+        ctx.prec = PRECISION + 10
+        root = (Decimal(squared.numerator) / Decimal(squared.denominator)).sqrt()
+        ctx.prec, ctx.rounding = PRECISION, ROUND_FLOOR
+        return ctx.plus(root)
+
+
+def _hypot(a: Decimal, b: Decimal, lower_bound: bool = False) -> Tolerance:
+    """``sqrt(a² + b²)``, kept as its exact square (``Tolerance.squared``)."""
+    squared = Fraction(a) ** 2 + Fraction(b) ** 2
+    return Tolerance(_root(squared), lower_bound, squared)
 
 
 def _easier(
@@ -187,16 +225,15 @@ def value_predicate(
 ) -> Outcome:
     """The value modes (plan section 6.2)."""
     x, r, t = dec(x_rep, "the reproduced value"), dec(reported, "the published value"), tol.value
-    with localcontext() as ctx:
-        ctx.prec = PRECISION
-        if mode == "two_sided":
-            holds, what = abs(x - r) <= t, f"|{x} - {r}| <= {t}"
-        elif mode == "one_sided_at_least":
-            holds, what = x >= r - t, f"{x} >= {r} - {t}"
-        elif mode == "one_sided_at_most":
-            holds, what = x <= r + t, f"{x} <= {r} + {t}"
-        else:
-            raise ValueError(f"unknown value mode {mode!r}")
+    fx, fr = Fraction(x), Fraction(r)
+    if mode == "two_sided":
+        holds, what = _within(abs(fx - fr), tol), f"|{x} - {r}| <= {t}"
+    elif mode == "one_sided_at_least":
+        holds, what = _within(fr - fx, tol), f"{x} >= {r} - {t}"
+    elif mode == "one_sided_at_most":
+        holds, what = _within(fx - fr, tol), f"{x} <= {r} + {t}"
+    else:
+        raise ValueError(f"unknown value mode {mode!r}")
     return _easier(holds, tol, what)
 
 
@@ -218,23 +255,23 @@ def comparison_predicate(
         )
     if tol is None:
         raise ValueError(f"{mode} needs tol_d")
-    with localcontext() as ctx:
-        ctx.prec = PRECISION
-        if mode == "margin":
-            if g_pub is None:
-                raise ValueError("margin needs g_pub")
-            g = dec(g_pub, "g_pub")
-            return _easier(
-                d >= g - tol.value and d > 0,
-                tol,
-                f"d_rep = {d} >= {g} - {tol.value} and d_rep > 0",
-                fails_for_every_tolerance=d <= 0,
-            )
-        if mode == "magnitude":
-            if d_pub is None:
-                raise ValueError("magnitude needs d_pub")
-            p = dec(d_pub, "d_pub")
-            return _easier(abs(d - p) <= tol.value, tol, f"|{d} - {p}| <= {tol.value}")
+    if mode == "margin":
+        if g_pub is None:
+            raise ValueError("margin needs g_pub")
+        g = dec(g_pub, "g_pub")
+        return _easier(
+            _within(Fraction(g) - Fraction(d), tol) and d > 0,
+            tol,
+            f"d_rep = {d} >= {g} - {tol.value} and d_rep > 0",
+            fails_for_every_tolerance=d <= 0,
+        )
+    if mode == "magnitude":
+        if d_pub is None:
+            raise ValueError("magnitude needs d_pub")
+        p = dec(d_pub, "d_pub")
+        return _easier(
+            _within(abs(Fraction(d) - Fraction(p)), tol), tol, f"|{d} - {p}| <= {tol.value}"
+        )
     raise ValueError(f"unknown comparison mode {mode!r}")
 
 
@@ -264,7 +301,7 @@ def ablation_tolerance(
     ``k_sd`` term without one)."""
     full = one_number(reported_full, params, _sd(sd_full))
     ablated = one_number(reported_ablated, params, _sd(sd_ablated))
-    return Tolerance(_hypot(full.value, ablated.value))
+    return _hypot(full.value, ablated.value)
 
 
 def _sd(value: Number | None) -> PublishedUncertainty:
@@ -281,11 +318,9 @@ def trivial_baseline_predicate(
     tolerance makes it harder to pass: under a lower bound a FAIL stands and a PASS
     becomes INCONCLUSIVE."""
     x, b = dec(x_rep, "the reproduced value"), dec(baseline, "the baseline")
-    with localcontext() as ctx:
-        ctx.prec = PRECISION
-        advantage = x - b if higher_is_better else b - x
+    advantage = _exact(x, b, "-") if higher_is_better else _exact(b, x, "-")
     what = f"advantage {advantage} over the baseline > {tol.value}"
-    if advantage <= tol.value:
+    if _within(Fraction(advantage), tol):
         return Outcome(TestStatus.FAIL, f"{what} does not hold", tol.value)
     if tol.lower_bound:
         return Outcome(
@@ -302,6 +337,7 @@ def widen(tol: Tolerance, factor: Number) -> Tolerance:
     f = dec(factor, "the holdout factor")
     if f < 1:
         raise ValueError("the holdout factor is at least 1")
-    with localcontext() as ctx:
-        ctx.prec = PRECISION
-        return Tolerance(tol.value * f, tol.lower_bound)
+    if tol.squared is not None:
+        squared = tol.squared * Fraction(f) ** 2
+        return Tolerance(_root(squared), tol.lower_bound, squared)
+    return Tolerance(_exact(tol.value, f, "*"), tol.lower_bound)
