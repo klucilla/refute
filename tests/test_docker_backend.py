@@ -125,7 +125,7 @@ def test_a_stop_during_a_run_kills_it_as_a_refute_error(tmp_path):
     started = threading.Event()
 
     def stop_once_started():
-        deadline = time.monotonic() + 50  # far below the run's 60 s
+        deadline = time.monotonic() + 20  # below the run's active-time limit (30 s)
         while time.monotonic() < deadline:
             try:
                 if "started" in run.log_path.read_text():
@@ -138,9 +138,11 @@ def test_a_stop_during_a_run_kills_it_as_a_refute_error(tmp_path):
 
     stopper = threading.Thread(target=stop_once_started)
     stopper.start()
-    with pytest.raises(RuntimeError, match="the paper was stopped"):
-        b.run(run)
-    stopper.join()
+    try:
+        with pytest.raises(RuntimeError, match="the paper was stopped"):
+            b.run(run)
+    finally:
+        stopper.join()
     assert started.is_set()
 
 
