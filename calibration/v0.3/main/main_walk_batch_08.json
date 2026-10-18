@@ -1,0 +1,1261 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:24:10Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 8,
+  "candidates": [
+    {
+      "position": 176,
+      "arxiv_id": "2311.04772",
+      "repo_url": "https://github.com/Windbelll/Prognosis-analysis-of-cerebral-hemorrhage",
+      "arxiv": {
+        "versioned_id": "2311.04772v1",
+        "primary_category": "eess.IV",
+        "title": "GCS-ICHNet: Assessment of Intracerebral Hemorrhage Prognosis using Self-Attention with Domain Knowledge Integration",
+        "abstract": "Intracerebral Hemorrhage (ICH) is a severe condition resulting from damaged brain blood vessel ruptures, often leading to complications and fatalities. Timely and accurate prognosis and management are essential due to its high mortality rate. However, conventional methods heavily rely on subjective clinician expertise, which can lead to inaccurate diagnoses and delays in treatment. Artificial intelligence (AI) models have been explored to assist clinicians, but many prior studies focused on model modification without considering domain knowledge. This paper introduces a novel deep learning algorithm, GCS-ICHNet, which integrates multimodal brain CT image data and the Glasgow Coma Scale (GCS) score to improve ICH prognosis. The algorithm utilizes a transformer-based fusion module for assessment. GCS-ICHNet demonstrates high sensitivity 81.03% and specificity 91.59%, outperforming average clinicians and other state-of-the-art methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/Windbelll/Prognosis-analysis-of-cerebral-hemorrhage",
+        "exists": true,
+        "full_name": "Windbelll/Prognosis-analysis-of-cerebral-hemorrhage",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4f402c37b6053b04734d59a17441f19079550112",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Windbelll/Prognosis-analysis-of-cerebral-hemorrhage/blob/4f402c37b6053b04734d59a17441f19079550112/README.md",
+          "sha256": "0bf42d93328aed6c79488e0244f9ed2abdb6c372ff8cadc9463cfbcdbfaa5594",
+          "bytes": 2416
+        },
+        "root_names": [
+          ".idea",
+          "README.md",
+          "cam_test.py",
+          "check.py",
+          "check_gcs.py",
+          "data",
+          "data_pretreatment",
+          "example",
+          "net",
+          "requirement.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 177,
+      "arxiv_id": "2307.12392",
+      "repo_url": "https://github.com/cv516buaa/ir-vg",
+      "arxiv": {
+        "versioned_id": "2307.12392v1",
+        "primary_category": "cs.CV",
+        "title": "Iterative Robust Visual Grounding with Masked Reference based Centerpoint Supervision",
+        "abstract": "Visual Grounding (VG) aims at localizing target objects from an image based on given expressions and has made significant progress with the development of detection and vision transformer. However, existing VG methods tend to generate false-alarm objects when presented with inaccurate or irrelevant descriptions, which commonly occur in practical applications. Moreover, existing methods fail to capture fine-grained features, accurate localization, and sufficient context comprehension from the whole image and textual descriptions. To address both issues, we propose an Iterative Robust Visual Grounding (IR-VG) framework with Masked Reference based Centerpoint Supervision (MRCS). The framework introduces iterative multi-level vision-language fusion (IMVF) for better alignment. We use MRCS to ahieve more accurate localization with point-wised feature supervision. Then, to improve the robustness of VG, we also present a multi-stage false-alarm sensitive decoder (MFSD) to prevent the generation of false-alarm objects when presented with inaccurate expressions. The proposed framework is evaluated on five regular VG datasets and two newly constructed robust VG datasets. Extensive experiments demonstrate that IR-VG achieves new state-of-the-art (SOTA) results, with improvements of 25\\% and 10\\% compared to existing SOTA approaches on the two newly proposed robust VG datasets. Moreover, the proposed framework is also verified effective on five regular VG datasets. Codes and models will be publicly at https://github.com/cv516Buaa/IR-VG."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/cv516buaa/ir-vg",
+        "exists": true,
+        "full_name": "cv516Buaa/IR-VG",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1a76048a2de4acb237fbcada602291b2a505a70a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/cv516Buaa/IR-VG/blob/1a76048a2de4acb237fbcada602291b2a505a70a/README.md",
+          "sha256": "f6c4accac4185fdd67ded04f1825cbceed252590acd5425e6c1eefe94d505975",
+          "bytes": 3301
+        },
+        "root_names": [
+          "README.md",
+          "assets",
+          "configs",
+          "datasets",
+          "engine_kp.py",
+          "models",
+          "requirements.txt",
+          "test.py",
+          "test.sh",
+          "train.py",
+          "train.sh",
+          "util"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 178,
+      "arxiv_id": "2409.01990",
+      "repo_url": "https://github.com/noakliu/efficient-foundation-models-survey",
+      "arxiv": {
+        "versioned_id": "2409.01990v5",
+        "primary_category": "cs.DC",
+        "title": "Designing Large Foundation Models for Efficient Training and Inference: A Survey",
+        "abstract": "This paper focuses on modern efficient training and inference technologies on foundation models and illustrates them from two perspectives: model and system design. Model and System Design optimize LLM training and inference from different aspects to save computational resources, making LLMs more efficient, affordable, and more accessible. The paper list repository is available at https://github.com/NoakLiu/Efficient-Foundation-Models-Survey."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/noakliu/efficient-foundation-models-survey",
+        "exists": true,
+        "full_name": "NoakLiu/Awesome-Efficient-Foundation-Models-Design",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2f1fb25e1695d179e2c9c911b7a63b937188bd95",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/NoakLiu/Awesome-Efficient-Foundation-Models-Design/blob/2f1fb25e1695d179e2c9c911b7a63b937188bd95/README.md",
+          "sha256": "ee2c98776db3b92541effc4482859b7802babd52e8b1358221fa7223d5686512",
+          "bytes": 49241
+        },
+        "root_names": [
+          "README.md",
+          "assets"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.DC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 179,
+      "arxiv_id": "2312.09814",
+      "repo_url": "https://github.com/ark93-cosmo/coll.-on-spt3g-analysis",
+      "arxiv": {
+        "versioned_id": "2312.09814v3",
+        "primary_category": "astro-ph.CO",
+        "title": "Review of Hubble tension solutions with new SH0ES and SPT-3G data",
+        "abstract": "We present an updated analysis of eleven cosmological models that may help reduce the Hubble tension, which now reaches the $6σ$ level when considering the latest SH0ES measurement versus recent CMB and BAO data, assuming $Λ$CDM. Specifically, we look at five classical extensions of $Λ$CDM (with massive neutrinos, spatial curvature, free-streaming or self-interacting relativistic relics, or dynamical dark energy) and six elaborate models featuring either a time-varying electron mass, early dark energy or some non-trivial interactions in the neutrino sector triggered by a light Majoron. We improve over previous works in several ways. We include the latest data from the South Pole Telescope as well as the most recent measurement of the Hubble rate by the SH0ES collaboration. We treat the summed neutrino mass as a free parameter in most of our models, which reveals interesting degeneracies and constraints. We define additional metrics to assess the potential of a model to reduce or even solve the Hubble tension. We validate an emulator that uses active learning to train itself during each parameter inference run for any arbitrary model. We find that the time-varying electron mass and the Majoron models are now ruled out at more than $3σ$. Models with a time-varying electron mass and spatial curvature or with early dark energy reduce the tension to $1.0-2.9σ$. Nevertheless, none of the models considered in this work is favored with enough statistical significance to become the next concordance model of Cosmology."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ark93-cosmo/coll.-on-spt3g-analysis",
+        "exists": true,
+        "full_name": "ark93-cosmo/Supplementary-material-for-arXiv-2312.09814",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "14d8c7135c52a05428d0871c3e4cc0fb019c9f6b",
+        "license_spdx": null,
+        "readme": null,
+        "root_names": [
+          "CITATION.cff",
+          "EDE",
+          "LCDM+Mnu+CPL",
+          "LCDM+Mnu+N_SIDR",
+          "LCDM+Mnu+N_eff",
+          "LCDM+Mnu+Omega_K",
+          "LCDM+Mnu",
+          "LCDM",
+          "Majoron",
+          "Me+Mnu",
+          "Me+Omega_K",
+          "S_8_GT_Table.png",
+          "Varying me+Mnu+Omk",
+          "Varying_Me"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.CO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 180,
+      "arxiv_id": "2410.03424",
+      "repo_url": "https://github.com/josephjwilson/cayley_graph_propagation",
+      "arxiv": {
+        "versioned_id": "2410.03424v2",
+        "primary_category": "cs.LG",
+        "title": "Cayley Graph Propagation",
+        "abstract": "In spite of the plethora of success stories with graph neural networks (GNNs) on modelling graph-structured data, they are notoriously vulnerable to over-squashing, whereby tasks necessitate the mixing of information between distance pairs of nodes. To address this problem, prior work suggests rewiring the graph structure to improve information flow. Alternatively, a significant body of research has dedicated itself to discovering and precomputing bottleneck-free graph structures to ameliorate over-squashing. One well regarded family of bottleneck-free graphs within the mathematical community are expander graphs, with prior work -- Expander Graph Propagation (EGP) -- proposing the use of a well-known expander graph family -- the Cayley graphs of the $\\mathrm{SL}(2,\\mathbb{Z}_n)$ special linear group -- as a computational template for GNNs. However, in EGP the computational graphs used are truncated to align with a given input graph. In this work, we show that truncation is detrimental to the coveted expansion properties. Instead, we propose CGP, a method to propagate information over a complete Cayley graph structure, thereby ensuring it is bottleneck-free to better alleviate over-squashing. Our empirical evidence across several real-world datasets not only shows that CGP recovers significant improvements as compared to EGP, but it is also akin to or outperforms computationally complex graph rewiring techniques."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/josephjwilson/cayley_graph_propagation",
+        "exists": true,
+        "full_name": "josephjwilson/cayley_graph_propagation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "73a2c7ce27d18f41a1745d3bb6aa7b4e196afa61",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/josephjwilson/cayley_graph_propagation/blob/73a2c7ce27d18f41a1745d3bb6aa7b4e196afa61/README.md",
+          "sha256": "c3fbb36d8acb2944627c8255fd5d5157fab8d2b8552f031e9838fcb4ac4f38cd",
+          "bytes": 2550
+        },
+        "root_names": [
+          ".gitignore",
+          "Cayley_Graph_Propagation.ipynb",
+          "LICENSE",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 181,
+      "arxiv_id": "2402.04845",
+      "repo_url": "https://github.com/bjing2016/alphaflow",
+      "arxiv": {
+        "versioned_id": "2402.04845v2",
+        "primary_category": "q-bio.BM",
+        "title": "AlphaFold Meets Flow Matching for Generating Protein Ensembles",
+        "abstract": "The biological functions of proteins often depend on dynamic structural ensembles. In this work, we develop a flow-based generative modeling approach for learning and sampling the conformational landscapes of proteins. We repurpose highly accurate single-state predictors such as AlphaFold and ESMFold and fine-tune them under a custom flow matching framework to obtain sequence-conditoned generative models of protein structure called AlphaFlow and ESMFlow. When trained and evaluated on the PDB, our method provides a superior combination of precision and diversity compared to AlphaFold with MSA subsampling. When further trained on ensembles from all-atom MD, our method accurately captures conformational flexibility, positional distributions, and higher-order ensemble observables for unseen proteins. Moreover, our method can diversify a static PDB structure with faster wall-clock convergence to certain equilibrium properties than replicate MD trajectories, demonstrating its potential as a proxy for expensive physics-based simulations. Code is available at https://github.com/bjing2016/alphaflow."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/bjing2016/alphaflow",
+        "exists": true,
+        "full_name": "bjing2016/alphaflow",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "0408d7c89dac444a43a9089d7427ce470b0a5e67",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/bjing2016/alphaflow/blob/0408d7c89dac444a43a9089d7427ce470b0a5e67/README.md",
+          "sha256": "67ca277d1504f3e7ffb6d53945ab7d0e346b4dae0ea4b2a2d0d6c72df6c6a7b5",
+          "bytes": 14225
+        },
+        "root_names": [
+          "Dockerfile",
+          "LICENSE",
+          "README.md",
+          "alphaflow",
+          "assets",
+          "predict.py",
+          "scripts",
+          "splits",
+          "train.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.BM"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 182,
+      "arxiv_id": "2401.07819",
+      "repo_url": "https://github.com/zjhurug/codes-for-contraction-paper",
+      "arxiv": {
+        "versioned_id": "2401.07819v4",
+        "primary_category": "eess.SY",
+        "title": "Enforcing contraction via data",
+        "abstract": "We present data-based conditions for enforcing contractivity via feedback control and obtain desired asymptotic properties of the closed-loop system. We focus on unknown nonlinear control systems whose vector fields are expressible via a dictionary of functions and derive data-dependent semidefinite programs whose solution returns the controller that guarantees contractivity. When data are perturbed by disturbances that are linear combinations of sinusoids of known frequencies (but unknown amplitude and phase) and constants, we remarkably obtain conditions for contractivity that do not depend on the magnitude of the disturbances, with imaginable positive consequences for the synthesis of the controller. Finally, we show how to design from data an integral controller for nonlinear systems that achieves constant reference tracking and constant disturbance rejection."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zjhurug/codes-for-contraction-paper",
+        "exists": true,
+        "full_name": "zjhurug/codes-for-contraction-paper",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "19a4b0c45f502ea3544930233d6fb395a33891f7",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/zjhurug/codes-for-contraction-paper/blob/19a4b0c45f502ea3544930233d6fb395a33891f7/README.md",
+          "sha256": "b917e63637cb8a1799c675f720f31a6465beb2f13ffbf824c2ceb2281fe52c26",
+          "bytes": 1304
+        },
+        "root_names": [
+          "Ex1_one_link_robot_arm",
+          "Ex2_chemical_reactor",
+          "Ex3_one_link_robot_arm_integral_control",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SY"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 183,
+      "arxiv_id": "2502.17345",
+      "repo_url": "https://github.com/LABORA-INF-UFG/plusTour",
+      "arxiv": {
+        "versioned_id": "2502.17345v2",
+        "primary_category": "cs.NI",
+        "title": "+Tour: Recommending personalized itineraries for smart tourism",
+        "abstract": "Next-generation touristic services will rely on the advanced mobile networks' high bandwidth and low latency and the Multi-access Edge Computing (MEC) paradigm to provide fully immersive mobile experiences. As an integral part of travel planning systems, recommendation algorithms devise personalized tour itineraries for individual users considering the popularity of a city's Points of Interest (POIs) as well as the tourist preferences and constraints. However, in the context of next-generation touristic services, recommendation algorithms should also consider the applications (e.g., social network, mobile video streaming, mobile augmented reality) the tourist will consume in the POIs and the quality in which the MEC infrastructure will deliver such applications. In this paper, we address the joint problem of recommending personalized tour itineraries for tourists and efficiently allocating MEC resources for advanced touristic applications. We formulate an optimization problem that maximizes the itinerary of individual tourists while optimizing the resource allocation at the network edge. We then propose an exact algorithm that quickly solves the problem optimally, considering instances of realistic size. Using a real-world location-based photo-sharing database, we conduct and present an exploratory analysis to understand preferences and users' visiting patterns. Using this understanding, we propose a methodology to identify user interest in applications. Finally, we evaluate our algorithm using this dataset. Results show that our algorithm outperforms a modified version of a state-of-the-art solution for personalized tour itinerary recommendation, demonstrating gains up to 11% for resource allocation efficiency and 40% for user experience. In addition, our algorithm performs similarly to the modified state-of-the-art solution regarding traditional itinerary recommendation metrics."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/LABORA-INF-UFG/plusTour",
+        "exists": true,
+        "full_name": "LABORA-INF-UFG/plusTour",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7e0aed638b2cf670661ca67fe6e2792641ae580d",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/LABORA-INF-UFG/plusTour/blob/7e0aed638b2cf670661ca67fe6e2792641ae580d/README.md",
+          "sha256": "b58df9aaa770474f7f4ff7e7f2665ab46825fd6d015f3e1107d944d9f09ae1b2",
+          "bytes": 12157
+        },
+        "root_names": [
+          "Analysis",
+          "Datasets",
+          "LICENSE",
+          "README.md",
+          "plusTour"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.NI"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 184,
+      "arxiv_id": "2505.02393",
+      "repo_url": "https://github.com/eavnjeong/ief-vad",
+      "arxiv": {
+        "versioned_id": "2505.02393v3",
+        "primary_category": "cs.CV",
+        "title": "Uncertainty-Weighted Fusion of Image and Synthetic Event for Video Anomaly Detection",
+        "abstract": "Most existing video anomaly detectors rely on RGB frames alone, which limit their ability to capture abrupt or transient motion cues that are critical for identifying anomalous events. We propose Uncertainty Weighted Image Event Fusion (IEF-VAD), a framework that integrates complementary RGB and synthetic motion information through a principled weighting mechanism. The method models the high variance and heavy tailed characteristics of synthetic motion cues with a Student's t likelihood, computes value level inverse variance weights using a Laplace approximation to prevent the image modality from overshadowing motion information, and performs iterative refinement to suppress residual cross modal noise. This formulation provides a more balanced and reliable fusion process compared to cross attention or gating based approaches that often suffer from modality dominance. Without requiring an event camera or frame level annotations, IEF-VAD achieves new state of the art performance on multiple real world anomaly detection benchmarks and remains stable under degradation applied to individual modalities. The results indicate that extracting and integrating complementary motion cues is an effective direction for robust video understanding across diverse environments."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/eavnjeong/ief-vad",
+        "exists": true,
+        "full_name": "EavnJeong/IEF-VAD",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "ba744709a36bcdf65b557473e4430e151e0e00da",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/EavnJeong/IEF-VAD/blob/ba744709a36bcdf65b557473e4430e151e0e00da/README.md",
+          "sha256": "5b2b2f378c38c4df26dd69487c54cfa1e22cf33b289dddcd3284b0358ea20f28",
+          "bytes": 4365
+        },
+        "root_names": [
+          "README.md",
+          "configs",
+          "data",
+          "env.yaml",
+          "extracting",
+          "figure",
+          "list",
+          "main.py",
+          "model",
+          "parser.py",
+          "test.py",
+          "test2.py",
+          "train"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 185,
+      "arxiv_id": "2506.21294",
+      "repo_url": "https://github.com/willemsenbram/mention-detection-vgd",
+      "arxiv": {
+        "versioned_id": "2506.21294v1",
+        "primary_category": "cs.CL",
+        "title": "Detecting Referring Expressions in Visually Grounded Dialogue with Autoregressive Language Models",
+        "abstract": "In this paper, we explore the use of a text-only, autoregressive language modeling approach for the extraction of referring expressions from visually grounded dialogue. More specifically, the aim is to investigate the extent to which the linguistic context alone can inform the detection of mentions that have a (visually perceivable) referent in the visual context of the conversation. To this end, we adapt a pretrained large language model (LLM) to perform a relatively course-grained annotation of mention spans in unfolding conversations by demarcating mention span boundaries in text via next-token prediction. Our findings indicate that even when using a moderately sized LLM, relatively small datasets, and parameter-efficient fine-tuning, a text-only approach can be effective, highlighting the relative importance of the linguistic context for this task. Nevertheless, we argue that the task represents an inherently multimodal problem and discuss limitations fundamental to unimodal approaches."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/willemsenbram/mention-detection-vgd",
+        "exists": true,
+        "full_name": "willemsenbram/mention-detection-vgd",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "09af1936aff9c89e4ed466de2521826e0cd62ad5",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/willemsenbram/mention-detection-vgd/blob/09af1936aff9c89e4ed466de2521826e0cd62ad5/README.md",
+          "sha256": "8209ec6a6ea127c9deaf04625d11beaf6e24d49b6dcaf53b2917790ddb897385",
+          "bytes": 5860
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "mention_detection_diagram.png",
+          "paper.pdf",
+          "reference.bib"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 186,
+      "arxiv_id": "2402.10381",
+      "repo_url": "https://github.com/oysterqaq/umair-fps",
+      "arxiv": {
+        "versioned_id": "2402.10381v2",
+        "primary_category": "cs.IR",
+        "title": "UMAIR-FPS: User-aware Multi-modal Animation Illustration Recommendation Fusion with Painting Style",
+        "abstract": "The rapid advancement of high-quality image generation models based on AI has generated a deluge of anime illustrations. Recommending illustrations to users within massive data has become a challenging and popular task. However, existing anime recommendation systems have focused on text features but still need to integrate image features. In addition, most multi-modal recommendation research is constrained by tightly coupled datasets, limiting its applicability to anime illustrations. We propose the User-aware Multi-modal Animation Illustration Recommendation Fusion with Painting Style (UMAIR-FPS) to tackle these gaps. In the feature extract phase, for image features, we are the first to combine image painting style features with semantic features to construct a dual-output image encoder for enhancing representation. For text features, we obtain text embeddings based on fine-tuning Sentence-Transformers by incorporating domain knowledge that composes a variety of domain text pairs from multilingual mappings, entity relationships, and term explanation perspectives, respectively. In the multi-modal fusion phase, we novelly propose a user-aware multi-modal contribution measurement mechanism to weight multi-modal features dynamically according to user features at the interaction level and employ the DCN-V2 module to model bounded-degree multi-modal crosses effectively. UMAIR-FPS surpasses the stat-of-the-art baselines on large real-world datasets, demonstrating substantial performance enhancements."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/oysterqaq/umair-fps",
+        "exists": true,
+        "full_name": "OysterQAQ/UMAIR-FPS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "daa5b316d7eaf232c8cf424700eb763867b0d174",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/OysterQAQ/UMAIR-FPS/blob/daa5b316d7eaf232c8cf424700eb763867b0d174/README.md",
+          "sha256": "ba50d8a3150f808fac1915dc0b8c06108d8338f4a83be9397700442c3b63407b",
+          "bytes": 100
+        },
+        "root_names": [
+          "README.md",
+          "experiment",
+          "model"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 187,
+      "arxiv_id": "2308.11903",
+      "repo_url": "https://github.com/zhenzhao/dpms",
+      "arxiv": {
+        "versioned_id": "2308.11903v1",
+        "primary_category": "cs.CV",
+        "title": "Rethinking Data Perturbation and Model Stabilization for Semi-supervised Medical Image Segmentation",
+        "abstract": "Studies on semi-supervised medical image segmentation (SSMIS) have seen fast progress recently. Due to the limited labelled data, SSMIS methods mainly focus on effectively leveraging unlabeled data to enhance the segmentation performance. However, despite their promising performance, current state-of-the-art methods often prioritize integrating complex techniques and loss terms rather than addressing the core challenges of semi-supervised scenarios directly. We argue that the key to SSMIS lies in generating substantial and appropriate prediction disagreement on unlabeled data. To this end, we emphasize the crutiality of data perturbation and model stabilization in semi-supervised segmentation, and propose a simple yet effective approach to boost SSMIS performance significantly, dubbed DPMS. Specifically, we first revisit SSMIS from three distinct perspectives: the data, the model, and the loss, and conduct a comprehensive study of corresponding strategies to examine their effectiveness. Based on these examinations, we then propose DPMS, which adopts a plain teacher-student framework with a standard supervised loss and unsupervised consistency loss. To produce appropriate prediction disagreements, DPMS perturbs the unlabeled data via strong augmentations to enlarge prediction disagreements considerably. On the other hand, using EMA teacher when strong augmentation is applied does not necessarily improve performance. DPMS further utilizes a forwarding-twice and momentum updating strategies for normalization statistics to stabilize the training on unlabeled data effectively. Despite its simplicity, DPMS can obtain new state-of-the-art performance on the public 2D ACDC and 3D LA datasets across various semi-supervised settings, e.g. obtaining a remarkable 22.62% improvement against previous SOTA on ACDC with 5% labels."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zhenzhao/dpms",
+        "exists": true,
+        "full_name": "ZhenZHAO/DPMS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7a5be2243ed14b986c9cad6fe92fbd0384a2e9dd",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ZhenZHAO/DPMS/blob/7a5be2243ed14b986c9cad6fe92fbd0384a2e9dd/README.md",
+          "sha256": "38267ab7952b257478723b6b090f1f44b44b1f72457e029aa2f724e6bd27f060",
+          "bytes": 4504
+        },
+        "root_names": [
+          "README.md",
+          "training-codes",
+          "training-logs"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 188,
+      "arxiv_id": "2301.08792",
+      "repo_url": "https://github.com/stevewillowby/link_prediction_limits",
+      "arxiv": {
+        "versioned_id": "2301.08792v3",
+        "primary_category": "cs.SI",
+        "title": "Inherent Limits on Topology-Based Link Prediction",
+        "abstract": "Link prediction systems (e.g. recommender systems) typically use graph topology as one of their main sources of information. However, automorphisms and related properties of graphs beget inherent limits in predictability. We calculate hard upper bounds on how well graph topology alone enables link prediction for a wide variety of real-world graphs. We find that in the sparsest of these graphs the upper bounds are surprisingly low, thereby demonstrating that prediction systems on sparse graph data are inherently limited and require information in addition to the graph topology."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/stevewillowby/link_prediction_limits",
+        "exists": true,
+        "full_name": "JustusHibshman/Link_Prediction_Limits",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "e1878fdc37da8aa6fea2049f85d5f70b903ecda0",
+        "license_spdx": null,
+        "readme": {
+          "path": "Readme.md",
+          "url": "https://github.com/JustusHibshman/Link_Prediction_Limits/blob/e1878fdc37da8aa6fea2049f85d5f70b903ecda0/Readme.md",
+          "sha256": "eb8e4934ebc31f8340813f553191ccca1a9370b2517d49d35af496449ff9fcb9",
+          "bytes": 847
+        },
+        "root_names": [
+          ".gitignore",
+          "Nauty_n_Traces",
+          "Readme.md",
+          "graph_generation.py",
+          "graph_loader.py",
+          "graph_metadata.py",
+          "link_pred_class_info.py",
+          "link_pred_comparison.py",
+          "link_pred_comparison_runner.py",
+          "max_score_functions.py",
+          "node_pred_class_info.py",
+          "plot_results.py",
+          "py_NT_session.py",
+          "pynauty_code",
+          "ram_friendly_NT_session.py",
+          "real_world_graphs",
+          "runners",
+          "state_network_properties.py",
+          "test_local_graphs.py",
+          "test_results"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SI"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 189,
+      "arxiv_id": "2402.00904",
+      "repo_url": "https://github.com/skyorca/awesome-graph-domain-adaptation-papers",
+      "arxiv": {
+        "versioned_id": "2402.00904v1",
+        "primary_category": "cs.LG",
+        "title": "Graph Domain Adaptation: Challenges, Progress and Prospects",
+        "abstract": "As graph representation learning often suffers from label scarcity problems in real-world applications, researchers have proposed graph domain adaptation (GDA) as an effective knowledge-transfer paradigm across graphs. In particular, to enhance model performance on target graphs with specific tasks, GDA introduces a bunch of task-related graphs as source graphs and adapts the knowledge learnt from source graphs to the target graphs. Since GDA combines the advantages of graph representation learning and domain adaptation, it has become a promising direction of transfer learning on graphs and has attracted an increasing amount of research interest in recent years. In this paper, we comprehensively overview the studies of GDA and present a detailed survey of recent advances. Specifically, we outline the research status and challenges, propose a taxonomy, introduce the details of representative works, and discuss the prospects. To the best of our knowledge, this paper is the first survey for graph domain adaptation. A detailed paper list is available at https://github.com/Skyorca/Awesome-Graph-Domain-Adaptation-Papers."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/skyorca/awesome-graph-domain-adaptation-papers",
+        "exists": true,
+        "full_name": "Skyorca/Awesome-Graph-Domain-Adaptation-Papers",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "dfc68e0a4e8634fe6891041453ab9bb719390f03",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Skyorca/Awesome-Graph-Domain-Adaptation-Papers/blob/dfc68e0a4e8634fe6891041453ab9bb719390f03/README.md",
+          "sha256": "1077b655c0083a4048bd12e0b8323a70e53ee24a00af75ebd233e05bd23e630f",
+          "bytes": 18502
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 190,
+      "arxiv_id": "2406.18850",
+      "repo_url": "https://bitbucket.org/unizg-fer-lamor/rave",
+      "arxiv": {
+        "versioned_id": "2406.18850v1",
+        "primary_category": "cs.RO",
+        "title": "RAVE: A Framework for Radar Ego-Velocity Estimation",
+        "abstract": "State estimation is an essential component of autonomous systems, usually relying on sensor fusion that integrates data from cameras, LiDARs and IMUs. Recently, radars have shown the potential to improve the accuracy and robustness of state estimation and perception, especially in challenging environmental conditions such as adverse weather and low-light scenarios. In this paper, we present a framework for ego-velocity estimation, which we call RAVE, that relies on 3D automotive radar data and encompasses zero velocity detection, outlier rejection, and velocity estimation. In addition, we propose a simple filtering method to discard infeasible ego-velocity estimates. We also conduct a systematic analysis of how different existing outlier rejection techniques and optimization loss functions impact estimation accuracy. Our evaluation on three open-source datasets demonstrates the effectiveness of the proposed filter and a significant positive impact of RAVE on the odometry accuracy. Furthermore, we release an open-source implementation of the proposed framework for radar ego-velocity estimation accompanied with a ROS interface."
+      },
+      "repository": {
+        "host": "other",
+        "url": "https://bitbucket.org/unizg-fer-lamor/rave",
+        "root_names": null
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.RO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 191,
+      "arxiv_id": "2310.18496",
+      "repo_url": "https://github.com/craymichael/PostHocExplainerEvaluation",
+      "arxiv": {
+        "versioned_id": "2310.18496v1",
+        "primary_category": "cs.LG",
+        "title": "How Well Do Feature-Additive Explainers Explain Feature-Additive Predictors?",
+        "abstract": "Surging interest in deep learning from high-stakes domains has precipitated concern over the inscrutable nature of black box neural networks. Explainable AI (XAI) research has led to an abundance of explanation algorithms for these black boxes. Such post hoc explainers produce human-comprehensible explanations, however, their fidelity with respect to the model is not well understood - explanation evaluation remains one of the most challenging issues in XAI. In this paper, we ask a targeted but important question: can popular feature-additive explainers (e.g., LIME, SHAP, SHAPR, MAPLE, and PDP) explain feature-additive predictors? Herein, we evaluate such explainers on ground truth that is analytically derived from the additive structure of a model. We demonstrate the efficacy of our approach in understanding these explainers applied to symbolic expressions, neural networks, and generalized additive models on thousands of synthetic and several real-world tasks. Our results suggest that all explainers eventually fail to correctly attribute the importance of features, especially when a decision-making process involves feature interactions."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/craymichael/PostHocExplainerEvaluation",
+        "exists": true,
+        "full_name": "craymichael/PostHocExplainerEvaluation",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "888005d2b880e353f7a12e426890b457f99d9fa6",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/craymichael/PostHocExplainerEvaluation/blob/888005d2b880e353f7a12e426890b457f99d9fa6/README.md",
+          "sha256": "460c3fa232808a5a482830f6aee5f6310e0613c1daa75bfc84604a14ccd6f838",
+          "bytes": 11523
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "README.md",
+          "aggregate_metrics.py",
+          "benchmark_backends.py",
+          "compute_explainer_metrics.py",
+          "data",
+          "evaluate_explainers.py",
+          "figures",
+          "generate_data.py",
+          "generate_expressions.py",
+          "posthoceval",
+          "real_world_experiments.ipynb",
+          "requirements.txt",
+          "tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 192,
+      "arxiv_id": "2502.01179",
+      "repo_url": "https://github.com/wenlai-lavine/jola",
+      "arxiv": {
+        "versioned_id": "2502.01179v4",
+        "primary_category": "cs.CL",
+        "title": "Joint Localization and Activation Editing for Low-Resource Fine-Tuning",
+        "abstract": "Parameter-efficient fine-tuning (PEFT) methods, such as LoRA, are commonly used to adapt LLMs. However, the effectiveness of standard PEFT methods is limited in low-resource scenarios with only a few hundred examples. Recent advances in interpretability research have inspired the emergence of activation editing (or steering) techniques, which modify the activations of specific model components. Due to their extremely small parameter counts, these methods show promise for small datasets. However, their performance is highly dependent on identifying the correct modules to edit and often lacks stability across different datasets. In this paper, we propose Joint Localization and Activation Editing (JoLA), a method that jointly learns (1) which heads in the Transformer to edit (2) whether the intervention should be additive, multiplicative, or both and (3) the intervention parameters themselves - the vectors applied as additive offsets or multiplicative scalings to the head output. Through evaluations on three benchmarks spanning commonsense reasoning, natural language understanding, and natural language generation, we demonstrate that JoLA consistently outperforms existing methods. The code for the method is released at https://github.com/wenlai-lavine/jola."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wenlai-lavine/jola",
+        "exists": true,
+        "full_name": "wenlai-lavine/jola",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "87b9c8d3e102c71c68b8024b41c5c14eb793b264",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/wenlai-lavine/jola/blob/87b9c8d3e102c71c68b8024b41c5c14eb793b264/README.md",
+          "sha256": "54bc6015d52a7a5be9bcada5c2e791dff93a1d54882ff62541cccf95972d12d4",
+          "bytes": 5582
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "examples",
+          "images",
+          "jola",
+          "requirements.txt",
+          "setup.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 193,
+      "arxiv_id": "2412.12428",
+      "repo_url": "https://github.com/basverkennis/flight-sim-cognitive-workload-eeg-prediction",
+      "arxiv": {
+        "versioned_id": "2412.12428v2",
+        "primary_category": "cs.HC",
+        "title": "Predicting Workload in Virtual Flight Simulations using EEG Features (Including Post-hoc Analysis in Appendix)",
+        "abstract": "Effective cognitive workload management has a major impact on the safety and performance of pilots. Integrating brain-computer interfaces (BCIs) presents an opportunity for real-time workload assessment. Leveraging cognitive workload data from high-fidelity virtual reality (VR) flight simulations allows for dynamic adjustments to training scenarios. While prior studies have predominantly concentrated on EEG spectral power for workload prediction, delving into intra-brain connectivity may yield deeper insights. This study assessed the predictive value of EEG spectral and connectivity features in distinguishing high vs. low workload periods during simulated flight in VR and Desktop conditions. Using an ensemble approach, a stacked classifier was trained to predict workload from the EEG signals of 52 participants. Results showed that the mean accuracy of the model incorporating both spectral and connectivity features improved by 28% compared to the model that solely relied on spectral features. Further research on other connectivity metrics and deep learning models in a large sample of pilots is essential to validate the potential of a real-time workload-prediction BCI. This could contribute to the development of an adaptive training system for safety-critical operational environments."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/basverkennis/flight-sim-cognitive-workload-eeg-prediction",
+        "exists": true,
+        "full_name": "basverkennis/Flight-Sim-Cognitive-Workload-EEG-Prediction",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "114e960824bf3204cf7f8c3fb8502eb7f0a62b79",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/basverkennis/Flight-Sim-Cognitive-Workload-EEG-Prediction/blob/114e960824bf3204cf7f8c3fb8502eb7f0a62b79/README.md",
+          "sha256": "43baf70c73af81ea6d4667fe492bb7c011a93ec16e73bf9b718ad1f376b2f951",
+          "bytes": 3439
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "code",
+          "logo.jpeg",
+          "results"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.HC"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 194,
+      "arxiv_id": "2410.07295",
+      "repo_url": "https://github.com/uiuc-arc/itergen",
+      "arxiv": {
+        "versioned_id": "2410.07295v2",
+        "primary_category": "cs.SE",
+        "title": "IterGen: Iterative Semantic-aware Structured LLM Generation with Backtracking",
+        "abstract": "Large Language Models (LLMs) are widely used for tasks such as natural language and code generation, but their outputs often suffer from issues like hallucination, toxicity, and incorrect results. Current libraries for structured LLM generation rely on left-to-right decoding without support for backtracking, limiting the ability to correct or refine outputs mid-generation. To address this, we introduce IterGen, a user-friendly library for iterative, grammar-guided LLM generation that enables users to move both forward and backward within the generated output based on grammar symbols. By leveraging a symbol-to-position mapping and maintaining the key-value (KV) cache state, IterGen ensures efficient and structured generation while allowing for corrections during the process. We demonstrate IterGen's effectiveness in two important applications: reducing privacy leakage in LLM outputs and improving the accuracy of LLM-generated SQL and Vega-Lite queries. Our code and additional resources are available at https://structuredllm.com."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/uiuc-arc/itergen",
+        "exists": true,
+        "full_name": "structuredllm/itergen",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "52d42129f36d0d272336f33e4c67b1ae3f3b51a2",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/structuredllm/itergen/blob/52d42129f36d0d272336f33e4c67b1ae3f3b51a2/README.md",
+          "sha256": "1cb1d47bdace5f42bf57a0edfd04544d67496b8594d6c6887d3d2d887c50fee9",
+          "bytes": 7129
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          "LICENSE",
+          "README.md",
+          "case_studies",
+          "itergen",
+          "requirements.txt",
+          "tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 195,
+      "arxiv_id": "2401.09840",
+      "repo_url": "https://github.com/airi-institute/ffreed",
+      "arxiv": {
+        "versioned_id": "2401.09840v1",
+        "primary_category": "q-bio.BM",
+        "title": "FREED++: Improving RL Agents for Fragment-Based Molecule Generation by Thorough Reproduction",
+        "abstract": "A rational design of new therapeutic drugs aims to find a molecular structure with desired biological functionality, e.g., an ability to activate or suppress a specific protein via binding to it. Molecular docking is a common technique for evaluating protein-molecule interactions. Recently, Reinforcement Learning (RL) has emerged as a promising approach to generating molecules with the docking score (DS) as a reward. In this work, we reproduce, scrutinize and improve the recent RL model for molecule generation called FREED (arXiv:2110.01219). Extensive evaluation of the proposed method reveals several limitations and challenges despite the outstanding results reported for three target proteins. Our contributions include fixing numerous implementation bugs and simplifying the model while increasing its quality, significantly extending experiments, and conducting an accurate comparison with current state-of-the-art methods for protein-conditioned molecule generation. We show that the resulting fixed model is capable of producing molecules with superior docking scores compared to alternative approaches."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/airi-institute/ffreed",
+        "exists": true,
+        "full_name": "AIRI-Institute/FFREED",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3563989d45c7ad55373377b8f5d60cecf9776073",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AIRI-Institute/FFREED/blob/3563989d45c7ad55373377b8f5d60cecf9776073/README.md",
+          "sha256": "a40cb3a359dcfd9fb3fa2dd96f8704b1aa05b0fcaae541a27bb3645fa075ce96",
+          "bytes": 3554
+        },
+        "root_names": [
+          ".gitignore",
+          "Dockerfile",
+          "LICENSE",
+          "README.md",
+          "assets",
+          "docker",
+          "environment.yml",
+          "ffreed"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.BM"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 196,
+      "arxiv_id": "2411.16089",
+      "repo_url": "https://github.com/michaeldalbrow/cmdfitter",
+      "arxiv": {
+        "versioned_id": "2411.16089v1",
+        "primary_category": "astro-ph.GA",
+        "title": "The Frequency and Mass-Ratio Distribution of Binaries in Clusters -- III: Probabilistic Generative Modelling of Six Young Open Clusters",
+        "abstract": "We apply probabilistic generative modelling of colour-magnitude diagrams to six young Galactic open star clusters and determine their mass functions, binary mass-ratio distributions, and the frequencies of binary stars. We find that younger clusters tend to exhibit a higher incidence of binaries than their older counterparts. The mass-ratio distribution is fairly flat for the clusters with one exception that exhibits a sharp increase for $q\\gtrsim0.9$. The ratio of the number of cluster binaries for which $q>0.75$ to the number of binaries for which $q>0.5$ (referred to as $FQ_{75}$) ranges from $\\sim0.4 - 0.8$. This metric increases with the binary-star frequency of a cluster, but declines with cluster age. This may be due to non-ionizing 3-body dynamical processing of a primordial population of close binaries with initial mass ratios, $q \\simeq 1$."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/michaeldalbrow/cmdfitter",
+        "exists": true,
+        "full_name": "MichaelDAlbrow/CMDFitter",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "96a97be9c7d8a457c9bb73a36952b14064beae0a",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MichaelDAlbrow/CMDFitter/blob/96a97be9c7d8a457c9bb73a36952b14064beae0a/README.md",
+          "sha256": "16a9f31294ebae4e18617dda0e6562d0a95f7072c7fb888227fb012a090ef21d",
+          "bytes": 604
+        },
+        "root_names": [
+          "Data",
+          "License",
+          "README.md",
+          "code",
+          "scripts"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.GA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 197,
+      "arxiv_id": "2411.15368",
+      "repo_url": "https://github.com/20001lastorder/icse2025-type4py",
+      "arxiv": {
+        "versioned_id": "2411.15368v2",
+        "primary_category": "cs.SE",
+        "title": "The Power of Types: Exploring the Impact of Type Checking on Neural Bug Detection in Dynamically Typed Languages",
+        "abstract": "Motivation: Automated bug detection in dynamically typed languages such as Python is essential for maintaining code quality. The lack of mandatory type annotations in such languages can lead to errors that are challenging to identify early with traditional static analysis tools. Recent progress in deep neural networks has led to increased use of neural bug detectors. In statically typed languages, a type checker is integrated into the compiler and thus taken into consideration when the neural bug detector is designed for these languages. Problem: However, prior studies overlook this aspect during the training and testing of neural bug detectors for dynamically typed languages. When an optional type checker is used, assessing existing neural bug detectors on bugs easily detectable by type checkers may impact their performance estimation. Moreover, including these bugs in the training set of neural bug detectors can shift their detection focus toward the wrong type of bugs. Contribution: We explore the impact of type checking on various neural bug detectors for variable misuse bugs, a common type targeted by neural bug detectors. Existing synthetic and real-world datasets are type-checked to evaluate the prevalence of type-related bugs. Then, we investigate how type-related bugs influence the training and testing of the neural bug detectors. Findings: Our findings indicate that existing bug detection datasets contain a significant proportion of type-related bugs. Building on this insight, we discover integrating the neural bug detector with a type checker can be beneficial, especially when the code is annotated with types. Further investigation reveals neural bug detectors perform better on type-related bugs than other bugs. Moreover, removing type-related bugs from the training data helps improve neural bug detectors' ability to identify bugs beyond the scope of type checkers."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/20001lastorder/icse2025-type4py",
+        "exists": true,
+        "full_name": "20001LastOrder/icse2025-type4py",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2cf3bd15906bbd26b6d976ec7eb2bd7b3ae2be7b",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/20001LastOrder/icse2025-type4py/blob/2cf3bd15906bbd26b6d976ec7eb2bd7b3ae2be7b/README.md",
+          "sha256": "7211b00c028bb916d88b1b2446efd2ea76094aa436940e33ad01bec1b937146f",
+          "bytes": 6406
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "finetuning",
+          "great_tf",
+          "measurements"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 198,
+      "arxiv_id": "2505.21850",
+      "repo_url": "https://github.com/yanbeijiang/multistar",
+      "arxiv": {
+        "versioned_id": "2505.21850v2",
+        "primary_category": "cs.CV",
+        "title": "Beyond Perception: Evaluating Abstract Visual Reasoning through Multi-Stage Task",
+        "abstract": "Current Multimodal Large Language Models (MLLMs) excel in general visual reasoning but remain underexplored in Abstract Visual Reasoning (AVR), which demands higher-order reasoning to identify abstract rules beyond simple perception. Existing AVR benchmarks focus on single-step reasoning, emphasizing the end result but neglecting the multi-stage nature of reasoning process. Past studies found MLLMs struggle with these benchmarks, but it doesn't explain how they fail. To address this gap, we introduce MultiStAR, a Multi-Stage AVR benchmark, based on RAVEN, designed to assess reasoning across varying levels of complexity. Additionally, existing metrics like accuracy only focus on the final outcomes while do not account for the correctness of intermediate steps. Therefore, we propose a novel metric, MSEval, which considers the correctness of intermediate steps in addition to the final outcomes. We conduct comprehensive experiments on MultiStAR using 17 representative close-source and open-source MLLMs. The results reveal that while existing MLLMs perform adequately on basic perception tasks, they continue to face challenges in more complex rule detection stages."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/yanbeijiang/multistar",
+        "exists": true,
+        "full_name": "YanbeiJiang/MultiStAR",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "eea9cbe119f5cfc66cfcd1225001b7b5a936c5c7",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/YanbeiJiang/MultiStAR/blob/eea9cbe119f5cfc66cfcd1225001b7b5a936c5c7/README.md",
+          "sha256": "735fa740269e54ca62538fe1499f832444494c48411f4b893f8e2541b3f6574d",
+          "bytes": 4225
+        },
+        "root_names": [
+          "Direct_Answer_templates_LR",
+          "Direct_Answer_templates_TD",
+          "Direct_Answer_templates_in_out",
+          "Direct_Answer_templates_normal",
+          "README.md",
+          "__pycache__",
+          "figures",
+          "generate_dataset.sh",
+          "generate_direct_answer_questions.py",
+          "generate_logical_chain_questions.py",
+          "metadata.json",
+          "question_engine.py",
+          "synonyms.json"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 199,
+      "arxiv_id": "2503.15699",
+      "repo_url": "https://github.com/nkondapa/RSVC",
+      "arxiv": {
+        "versioned_id": "2503.15699v2",
+        "primary_category": "cs.CV",
+        "title": "Representational Similarity via Interpretable Visual Concepts",
+        "abstract": "How do two deep neural networks differ in how they arrive at a decision? Measuring the similarity of deep networks has been a long-standing open question. Most existing methods provide a single number to measure the similarity of two networks at a given layer, but give no insight into what makes them similar or dissimilar. We introduce an interpretable representational similarity method (RSVC) to compare two networks. We use RSVC to discover shared and unique visual concepts between two models. We show that some aspects of model differences can be attributed to unique concepts discovered by one model that are not well represented in the other. Finally, we conduct extensive evaluation across different vision model architectures and training protocols to demonstrate its effectiveness."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/nkondapa/RSVC",
+        "exists": true,
+        "full_name": "nkondapa/RSVC",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "0bd150fd6be71a21123ce1dec39c075403647245",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/nkondapa/RSVC/blob/0bd150fd6be71a21123ce1dec39c075403647245/README.md",
+          "sha256": "fcf1011134a0404f06c11c6c2d70f30a9d95f8be5b449d8530af2009657c32c1",
+          "bytes": 2070
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "checkpoints",
+          "compare_models.py",
+          "compare_rn18_v_rn50.sh",
+          "comparison_configs",
+          "concept_integrated_gradients.py",
+          "datasets",
+          "download_imagenet.sh",
+          "evaluate_regression.py",
+          "extract_concepts.py",
+          "extract_model_activations.py",
+          "models",
+          "pymf",
+          "replacement_test.py",
+          "requirements.txt",
+          "selected_samples",
+          "setup.py",
+          "setup.sh",
+          "src",
+          "toy_concept_experiment.sh",
+          "visualize_concept_comparison.py",
+          "visualize_layerwise_comparisons.py",
+          "visualize_similarity_vs_importance.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 200,
+      "arxiv_id": "2306.16544",
+      "repo_url": "https://github.com/KUIS-AI-Tekalp-Research-Group/video-compression",
+      "arxiv": {
+        "versioned_id": "2306.16544v1",
+        "primary_category": "eess.IV",
+        "title": "Multi-Scale Deformable Alignment and Content-Adaptive Inference for Flexible-Rate Bi-Directional Video Compression",
+        "abstract": "The lack of ability to adapt the motion compensation model to video content is an important limitation of current end-to-end learned video compression models. This paper advances the state-of-the-art by proposing an adaptive motion-compensation model for end-to-end rate-distortion optimized hierarchical bi-directional video compression. In particular, we propose two novelties: i) a multi-scale deformable alignment scheme at the feature level combined with multi-scale conditional coding, ii) motion-content adaptive inference. In addition, we employ a gain unit, which enables a single model to operate at multiple rate-distortion operating points. We also exploit the gain unit to control bit allocation among intra-coded vs. bi-directionally coded frames by fine tuning corresponding models for truly flexible-rate learned video coding. Experimental results demonstrate state-of-the-art rate-distortion performance exceeding those of all prior art in learned video coding."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/KUIS-AI-Tekalp-Research-Group/video-compression",
+        "exists": true,
+        "full_name": "KUIS-AI-Tekalp-Research-Group/video-compression",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "ecaf22f3c202a3980c7561e0c4cde9e46a3f7618",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/KUIS-AI-Tekalp-Research-Group/video-compression/blob/ecaf22f3c202a3980c7561e0c4cde9e46a3f7618/README.md",
+          "sha256": "4a446bb36eb90619313f7ca6824ef826b9a2b80b24ded6d67f704d1e696d6472",
+          "bytes": 1097
+        },
+        "root_names": [
+          "Flex-Rate-Hier-Bidir-Video-Compression",
+          "ICIP2023",
+          "ICIP2024",
+          "LHBDC",
+          "OJSP2025",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T03:26:15Z"
+}
