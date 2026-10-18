@@ -383,7 +383,24 @@ def test_i1_a_transit_under_variability_is_found(noise, seed):
     assert any(abs(final.period - f * 3.7) / (f * 3.7) <= 0.001 for f in (1.0, 2.0, 0.5))
 
 
-@pytest.mark.parametrize(("noise", "seed"), [("white", 6133), ("correlated", 6134)])
+class SpuriousCandidatePassedGateError(Exception):
+    """Raised only by I2's final predicate, so that its expected failure covers nothing else."""
+
+
+I2_CORRELATED_FAILED = pytest.mark.xfail(
+    strict=True,
+    raises=SpuriousCandidatePassedGateError,
+    reason=(
+        "map Amendment 24: the retest FAILED in correlated noise (a red-noise box passes the gate, "
+        "with or without the prewhitening); recorded, NOT an acceptance"
+    ),
+)
+
+
+@pytest.mark.parametrize(
+    ("noise", "seed"),
+    [("white", 6133), pytest.param("correlated", 6134, marks=I2_CORRELATED_FAILED)],
+)
 def test_i2_a_pure_sinusoid_leaves_no_candidate_passing_the_gate(noise, seed):
     # Amendment 23: new seeds, the same criterion and the same two curves (the first run, seeds
     # 6116 and 6117, FAILED in white noise: recorded)
@@ -394,7 +411,8 @@ def test_i2_a_pure_sinusoid_leaves_no_candidate_passing_the_gate(noise, seed):
     assert _input_amplitude(data, plan) >= 0.5 * 0.004  # precondition
     analysis = analyze_data(data, plan)
     snr = next(t for t in analysis.tests if t.name == "snr")
-    assert snr.status.value != "PASS", snr.message
+    if snr.status.value == "PASS":
+        raise SpuriousCandidatePassedGateError(snr.message)
 
 
 def _box_data(seed):

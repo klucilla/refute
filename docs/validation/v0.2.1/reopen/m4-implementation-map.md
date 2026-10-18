@@ -630,6 +630,50 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 24 (2026-10-18, declared after the retest of piece 7): the retest's result, and I2 correlated failed
+
+**The retest** (the tests of `9925c56` on the code of Amendment 23, committed as `159b929`; JUnit
+`.cache/v021/piece7/retest1.xml`: 31 tests, 1 failure, 0 errors, 0 skipped), recorded as found: D5
+(rectangular box, seed 6130), Q2 (seed 6131), H (the 2020 round, seed 6132), I2 white (seed 6133),
+the three new cases N1 to N3 and every regression passed; **I2 correlated (seed 6134) FAILED its
+criterion**: a final candidate passes the SNR gate (`P` 0.53697 d, `t0` 1325.2454, 3.8 h, 129 ppm,
+corrected SNR 9.4, `β_D` 1.59). The first run's FAIL of I2 white (seed 6116) stays recorded.
+
+**What the diagnosis shows, and what it does not** (`.cache` scripts that change nothing, on the
+same noise realization; not a retest).
+
+| Curve (M4 active) | Components accepted | Final candidate | Gate |
+|---|---|---|---|
+| the failing curve, with the sinusoid | 1/0.7 d (2735 ppm), 1.7221/d (161 ppm), 2.2748/d (138 ppm) | 0.53697 d, `t0` 1325.2454, 3.8 h, 129 ppm, SNR 9.4, `β_D` 1.59 | PASS |
+| the same noise without the sinusoid | 2.0855/d (123 ppm, FAP 4.5e-93, `h` 0.906), then `few_harmonics_fail` | 0.53477 d, `t0` 1325.0825, 3.6 h, 160 ppm, SNR 9.9, `β_D` 1.85 | PASS |
+| the same noise without the sinusoid, the prewhitening accepting nothing | none | 0.53478 d, `t0` 1325.0687, 3.3 h, 173 ppm, SNR 8.4, `β_D` 2.24 | PASS |
+
+So on this realization the correlated noise (AR(1) 600 ppm, `τ` = 1 h, the scenario's profile)
+produces boxes near 0.535 d that the gate of Amendment 7 does not stop, **with or without the
+prewhitening and with or without the sinusoid**: neither the injected sinusoid nor the prewhitening
+is necessary for a spurious candidate to pass the gate here. The diagnosis does **not** show that
+the failing curve's candidate is the same set of dips (its period and epoch differ), nor that the
+prewhitening contributes nothing to it; no other change of piece 7 is prescribed by it, and none is
+made. The prewhitening also accepted, on noise only, a 123 ppm component at 2.0855/d with an
+operational FAP of 4.5e-93: under correlated noise the FAP is not a calibrated probability (the risk
+recorded in Amendment 22).
+
+**The population questions it raises** (measured there, recorded as found): false alarms on light
+curves without a transit, by the final verdict `SURVIVED` or `WEAKENED` (C4; a gate PASS alone is
+not a false alarm in C4's sense), and T6r (null correlated light curves passing the gate **only
+with** the prewhitening, by the paired comparison of revision 3, 8), which this diagnosis does not
+provide.
+
+**What this means for piece 7's acceptance.** Revision 3, 10, row 7's criterion "a pure sinusoid:
+removed, no spurious candidate passing the gate" **remains unsatisfied**: it passed in white noise
+(seed 6133) and failed in correlated noise (seed 6134); it is not replaced by a white-only
+requirement, and no other seed is tried. The failing case stays in the suite as a strict expected
+failure **restricted to its final predicate** (a specific exception raised only when the final
+candidate passes the gate; the precondition and any other error still fail normally), on the
+correlated parameter only, naming this amendment: a green suite then means no unexpected regression,
+and an XPASS would turn it red and call for an investigation, not an acceptance. It is **not** an
+acceptance (the maintainer's rule: xfails do not count as acceptance).
+
 ## Amendment 23 (2026-10-18, declared after the first run of piece 7): the results, four failures and their mechanisms, and the subtraction before the detrending
 
 **The first run** (`62293af`'s tests on the first code of piece 7; JUnit: 26 tests, 4 failures),
