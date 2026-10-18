@@ -42,6 +42,12 @@ from refute.packs.ml.sandbox import RunSpec
 
 LIMITS = Limits(cpus=22, period_us=100_000, memory_bytes=12 << 30, pids=4096)  # production
 HOUR_USEC = 3600 * 1_000_000
+ERROR_PATTERNS = [
+    r"^Traceback \(most recent call last\):$",
+    r'^\s+File "[^"]+", line \d+, in \S+$',
+    r"^[A-Za-z_.]*(Error|Exception|Interrupt)(: .{0,300})?$",
+    r"^(sh|/bin/sh): .{0,300}$",
+]
 PROXY = "http://10.231.71.3:3128"
 
 
@@ -187,6 +193,9 @@ def measure(spec: dict, root: Path) -> dict:
     result, seconds = run(backend, work, argv, log, spec["active_minutes"])
     raw = log.read_text(encoding="utf-8", errors="replace")
     timing = keep_timing(raw, spec["timing_patterns"])
+    # a failed run keeps its error lines only (a traceback and its exception), never a
+    # metric output: the reason the run could not be timed
+    errors = keep_timing(raw, ERROR_PATTERNS)[-60:] if result.exit_code != 0 else []
     # the raw log and the run's folder may hold metric outputs: never kept (decision 2c)
     log.unlink()
     shutil.rmtree(work, ignore_errors=True)
@@ -206,6 +215,7 @@ def measure(spec: dict, root: Path) -> dict:
         "usage_usec": result.usage_usec,
         "wall_s": seconds,
         "timing_lines": timing,
+        "error_lines": errors,
         "raw_log_and_outputs": "deleted on the VM; only the timing lines above were kept",
     }
 
