@@ -801,14 +801,15 @@ def replace_year_flux(lc: LightCurveData, year: int, variant: str, seed: int) ->
 def holdout_scenario_seed(task: dict):
     """Top-level (picklable) helper: the blind holdout alone for ``task["name"]`` and
     ``task["seed"]`` with the fast plan, ``task["holdout"]`` overriding
-    ``holdout_by_year`` and an optional ``task["replace"] = (year, variant)``
-    (see :func:`replace_year_flux`)."""
+    ``holdout_by_year``, an optional ``task["replace"] = (year, variant)``
+    (see :func:`replace_year_flux`) and an optional ``task["noise"]`` (default
+    ``"white"``, the noise mode of ``scenario_data``)."""
     from refute.packs.tess.holdout import run_holdout
     from refute.packs.tess.params import TessTestPlan
 
     plan = fast_plan_dict()
     plan["gauntlet"] = {"holdout_by_year": dict(task.get("holdout") or {})}
-    data = scenario_data(task["name"], task["seed"])
+    data = scenario_data(task["name"], task["seed"], task.get("noise", "white"))
     lc = data.lc
     if task.get("replace") is not None:
         year, variant = task["replace"]
