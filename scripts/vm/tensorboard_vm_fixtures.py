@@ -40,7 +40,10 @@ from refute.packs.ml import production as pd
 from refute.packs.ml.docker_backend import ContainerPlan, DockerBackend, Limits
 from refute.packs.ml.sandbox import RunSpec
 
-REQUIREMENTS = "tensorflow-cpu==2.14.0\n"
+# numpy<2: tensorflow-cpu 2.14.0 declares numpy>=1.23.5 with no upper bound, but its
+# binaries are built for numpy 1 (the run of 2026-10-18 with numpy 2.4.6 failed at
+# `import tensorflow`: "A module that was compiled using NumPy 1.x cannot be run in NumPy 2")
+REQUIREMENTS = "tensorflow-cpu==2.14.0\nnumpy<2\n"
 THREADS = {"OMP_NUM_THREADS": "2", "TF_NUM_INTEROP_THREADS": "1", "TF_NUM_INTRAOP_THREADS": "2"}
 HOUR_USEC = 3600 * 1_000_000
 LIMITS = Limits(cpus=4, period_us=100_000, memory_bytes=8 << 30, pids=2048)
