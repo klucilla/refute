@@ -108,6 +108,12 @@ def test_the_per_transit_error_is_within_30_percent_of_carter(seeded_transits):
     assert 0.7 <= ratio <= 1.3, (ratio, CARTER * 1440)
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="m4-implementation-map.md, Amendment 4: |pull| <= 2 in 0.919 of 210 at the declared "
+    "case; the criterion is not met (option (c)); the mark does not satisfy it",
+)
 def test_the_pulls_of_200_seeded_transits_are_within_the_k_margins(seeded_transits):
     pulls = seeded_transits[:, 1]
     assert pulls.size >= 200

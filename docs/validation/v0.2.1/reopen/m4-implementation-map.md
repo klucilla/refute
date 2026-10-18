@@ -162,6 +162,51 @@ gate go on.
   sector is excluded at `n_τ` is dropped and counted (no borrowing, 2.1); with the estimate
   undetermined there are no transit times.
 
+## Amendment 4 (2026-10-18): the pulls of piece 3 at the declared case
+
+**The order of the record.** The tests of piece 3 (2330360) were first run before their commit,
+with a first version of `timing.py` not yet committed nor wired. The readings and the case had been
+written in Amendment 3 before that run.
+
+**The result.** At the declared case (210 transits, seeds 0 to 14): the median of error / Carter is
+0.990 (passes); |pull| ≤ 1 in 0.657 (passes); the median pull −0.131 (passes); **|pull| ≤ 2 in 0.919
+(193 of 210), outside [0.92, 0.98]: the criterion "pulls of 200 seeded transits within the K
+margins" is not met.** Every mechanism case passes.
+
+**Diagnosis** (read-only, `.cache/v021/m4/diagnose_p3.py` in the worktree, seeds 0 to 69, 980
+transits):
+
+| Quantity | Fitted template | Injected template |
+|---|---|---|
+| \|pull\| ≤ 1 | 0.655 | 0.708 |
+| \|pull\| ≤ 2 | 0.937 | 0.931 |
+| median error / Carter | 0.985 | 0.983 |
+| std of (time − truth) / Carter | 1.077 | 1.074 |
+| robust std of (time − truth) / Carter | 1.042 | 1.042 |
+| std of the pulls | 1.074 | 1.078 |
+
+- The stated error is the Carter reference within 2%; the scatter of the times is about 7% above
+  it, so the 2σ coverage is near 0.93 to 0.94 instead of 0.954; the fitted template is not the cause
+  (the injected template gives the same).
+- Part of the excess is the 1-minute grid of the centers (revision 3, 3 keeps the center at the
+  scan minimum): a uniform rounding adds step²/12 to the variance, about 2% of the standard
+  deviation here; the rest is not isolated.
+- On 980 transits both fractions fall inside the margins; on the declared 210 the 2σ fraction is
+  about one standard error (0.017) below its 980-transit value. Read as a sampling fluctuation of
+  the declared size, not as a defect of the mechanism; the declared criterion is nevertheless not
+  met, and the larger sample is not substituted for it after the result.
+- **The median condition is insensitive here:** the injected centers lie on the scan grid, so the
+  measured offsets are whole minutes and the median pull is exactly 0 on 980 transits. It cannot
+  detect a bias smaller than half a step in this case.
+
+**Verdict (Claude; Codex checks it in the end-of-stage review):** as for piece 2, option (c): the
+method and the criterion stand, and the pulls criterion of piece 3 is not satisfied at the declared
+case. The case is kept and marked `xfail(strict=True, raises=AssertionError)` citing this amendment;
+the mark does not satisfy it. A rerun with another sample size or other seeds, or a sub-step center
+(a change of revision 3, 3), belongs to the maintainer. K3 and K4 (the calibration's timing
+conditions, 1000 light curves each) are unchanged and will measure the same quantity on the
+population.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after
