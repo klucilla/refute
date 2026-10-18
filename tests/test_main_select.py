@@ -57,10 +57,44 @@ def test_walk_order_removes_the_pilot_papers_and_is_deterministic():
 def test_batches_and_the_stop_rule():
     assert sm.batch_slice(1) == slice(0, 25)
     assert sm.batch_slice(12) == slice(275, 300)
+    assert sm.batch_slice(13) == slice(300, 325)
+    # AMENDMENT-1.md: the cap is 1,200 candidates (48 batches)
+    assert sm.batch_slice(48) == slice(1175, 1200)
     with pytest.raises(sm.MainError, match="stop rule"):
-        sm.batch_slice(13)
+        sm.batch_slice(49)
     with pytest.raises(sm.MainError):
         sm.batch_slice(0)
+
+
+def test_amended_batches_need_the_amendment_commit():
+    sm.check_protocol_commit(12, sm.ORIGINAL_PROTOCOL)
+    sm.check_protocol_commit(13, "a" * 40)
+    with pytest.raises(sm.MainError, match="AMENDMENT-1"):
+        sm.check_protocol_commit(13, sm.ORIGINAL_PROTOCOL)
+    with pytest.raises(sm.MainError, match="AMENDMENT-1"):
+        sm.check_protocol_commit(48, sm.ORIGINAL_PROTOCOL)
+
+
+def test_the_protocol_commit_must_be_the_one_that_adds_the_amendment():
+    a, b = "a" * 40, "b" * 40
+    sm.check_amendment_commit(a, [a])
+    for adding in ([], [b], [a, b], [b, a]):
+        with pytest.raises(sm.MainError, match="adds calibration/v0.3/main/AMENDMENT-1.md"):
+            sm.check_amendment_commit(a, adding)
+
+
+def test_the_round_is_fixed_by_the_amendment():
+    assert sm.PAPER_ROUND == 6561788
+    assert sm.ORIGINAL_PROTOCOL == "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d"
+    sm.check_round(6561788)
+    with pytest.raises(sm.MainError, match="not 6561788"):
+        sm.check_round(6561789)
+
+
+def test_the_amendment_keeps_the_original_files_and_adds_its_own():
+    assert set(sm.ORIGINAL_PROTOCOL_FILES) < set(sm.PROTOCOL_FILES)
+    assert set(sm.PROTOCOL_FILES) - set(sm.ORIGINAL_PROTOCOL_FILES) == {sm.AMENDMENT}
+    assert (ROOT / sm.AMENDMENT).is_file()
 
 
 def test_claim_round_commit_and_sums():

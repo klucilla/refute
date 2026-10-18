@@ -112,16 +112,38 @@ def test_no_container_starts_after_a_stop(tmp_path):
 
 
 def test_a_stop_during_a_run_kills_it_as_a_refute_error(tmp_path):
+    """The stop is sent once the container has started (its log says so), not after a fixed
+    delay: under load a fixed 0.3 s could fall before the start, and the run would then be
+    refused instead of stopped (#59)."""
     import threading
+    import time
 
     work = tmp_path / "w1"
     work.mkdir()
     b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
-    timer = threading.Timer(0.3, b.kill_active)
-    timer.start()
-    with pytest.raises(RuntimeError, match="the paper was stopped"):
-        b.run(spec(tmp_path, work, ["work", "60", "0"]))
-    timer.join()
+    run = spec(tmp_path, work, ["work", "60", "0"])
+    started = threading.Event()
+
+    def stop_once_started():
+        deadline = time.monotonic() + 20  # below the run's active-time limit (30 s)
+        while time.monotonic() < deadline:
+            try:
+                if "started" in run.log_path.read_text():
+                    started.set()
+                    break
+            except OSError:
+                pass  # the log does not exist yet
+            time.sleep(0.05)
+        b.kill_active()
+
+    stopper = threading.Thread(target=stop_once_started)
+    stopper.start()
+    try:
+        with pytest.raises(RuntimeError, match="the paper was stopped"):
+            b.run(run)
+    finally:
+        stopper.join()
+    assert started.is_set()
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="modes as on the VM (Linux)")

@@ -1,0 +1,22 @@
+{
+ "finished_utc": "20261018T141734Z",
+ "format": "refute-reader-vm-test-1",
+ "reader_sha256": "4b64c5edda6bd940aa392d02a193a0e0547f8b4ddc30f5bb96bf879ad41cb733",
+ "records": [
+  {
+   "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+   "build": {
+    "exit_code": 0,
+    "stopped": null
+   },
+   "generator": {
+    "exit_code": 1,
+    "log_tail": " _ARRAY_API not found (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:84.)\n  device: torch.device = torch.device(torch._C._get_default_device()),  # torch.device('cpu'),\nTraceback (most recent call last):\n  File \"<string>\", line 4, in <module>\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/__init__.py\", line 16, in <module>\n    from . import (\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/dataloading/__init__.py\", line 13, in <module>\n    from .dataloader import *\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/dataloading/dataloader.py\", line 27, in <module>\n    from ..distributed import DistGraph\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/distributed/__init__.py\", line 5, in <module>\n    from .dist_graph import DistGraph, DistGraphServer, edge_split, node_split\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/distributed/dist_graph.py\", line 11, in <module>\n    from .. import backend as F, graphbolt as gb, heterograph_index\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/graphbolt/__init__.py\", line 8, in <module>\n    from .base import *\n  File \"/opt/venv/lib/python3.12/site-packages/dgl/graphbolt/base.py\", line 8, in <module>\n    from torchdata.datapipes.iter import IterDataPipe\nModuleNotFoundError: No module named 'torchdata.datapipes'\nSetting the default backend to \"pytorch\". You can change it in the ~/.dgl/config.json file or export the DGLBACKEND environment variable.  Valid options are: pytorch, mxnet, tensorflow (all lowercase)\n"
+   },
+   "image_id": "sha256:f08a8fe9c1a73520cbd308490a0d5aaf776ed58571e76d2300e604d8b4c8c1a6",
+   "reader": "dgl",
+   "requirements": "dgl==2.1.0\ntorch==2.2.2\nsetuptools==69.5.1\n"
+  }
+ ],
+ "started_utc": "20261018T141455Z"
+}

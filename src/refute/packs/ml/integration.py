@@ -57,7 +57,7 @@ import json
 import os
 import re
 from collections.abc import Callable, Hashable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -85,8 +85,10 @@ from refute.packs.ml import extract as ex
 from refute.packs.ml import ladder as ld
 from refute.packs.ml import orchestrate as orc
 from refute.packs.ml import predicates as pr
+from refute.packs.ml import readers as rd
 from refute.packs.ml import recompute as rc
 from refute.packs.ml import reproduction as rp
+from refute.packs.ml import schema as sch
 from refute.packs.ml.fetch import FetchResult, absence_evidence
 from refute.packs.ml.sandbox import RunResult, RunSpec, TimingMaxima
 
@@ -145,6 +147,12 @@ class Harness:
     tolerance_usec: int | Callable[[int], int] | None = None
     # called once between a completed setup and the first base run (orchestrate.PaperRunner)
     after_setup: Callable[[], None] | None = None
+    # the readers in the paper's container (wp3-data-sources-acceptance.md, section 4.2):
+    # the command of a reader from the rung that built the image (None: none built) and
+    # the request; and where each dataset lies in the reader's folder. With no command, no
+    # reader runs and those splits have no count (data_present INCONCLUSIVE).
+    reader_command: Callable[[str | None, str, Mapping[str, str]], list[str]] | None = None
+    data_paths: Mapping[str, str] = field(default_factory=dict)
 
 
 # ---- the claims ---------------------------------------------------------------------------
@@ -230,6 +238,25 @@ class ClaimContext:
             name: CoverageMinimum(v["positive"], v["negative"])
             for name, v in self.claim["coverage_minimum"].items()
         }
+
+    @property
+    def dataset(self) -> dict[str, Any]:
+        return next(d for d in self.plan["datasets"] if d["name"] == self.claim["dataset"])
+
+    def not_applicable(self) -> dict[str, str]:
+        """The gates the resolution declared not applicable (only ``data_present``, only for
+        generated data; wp3-data-sources-acceptance.md, section 3). The map and the
+        dataset's origin must agree: a claim or dossier where they differ is an error,
+        never a verdict."""
+        given = self.claim.get("not_applicable")
+        generated = sch.dataset_origin(self.dataset) == sch.GENERATED
+        want = {BASE_GATES[1]: sch.GENERATED_REASON} if generated else None
+        if given != want:
+            raise ValueError(
+                f"{self.key}: not_applicable {given!r} does not match the dataset's origin "
+                f"({sch.dataset_origin(self.dataset)})"
+            )
+        return dict(want or {})
 
     def stage(self, name: str) -> tuple[float, float]:
         s = self.plan["stages"][name]
@@ -336,10 +363,25 @@ def _outputs(ctx: ClaimContext, role: str, seed: int | None) -> list[str]:
     return sorted(set(out))
 
 
+READER_PREFIX = "setup/data/"
+
+
+def container_datasets(plan: Mapping[str, Any]) -> list[str]:
+    """The datasets with a split counted in the paper's container, in declaration order."""
+    return [
+        d["name"]
+        for d in plan["datasets"]
+        if sch.dataset_origin(d) != sch.GENERATED
+        and any(rd.is_container_source(str(s["source"])) for s in d["splits"].values())
+    ]
+
+
 def plan_container_ids(claim_file: Mapping[str, Any]) -> list[str]:
     """Every container id of the paper, for the harness to prepare one fresh folder each
-    (the ladder's rungs are named ``setup/build/<rung>``)."""
+    (the ladder's rungs are named ``setup/build/<rung>``, the container readers
+    ``setup/data/<dataset>``)."""
     ids = [f"setup/build/{name}" for name in ld.RUNGS]
+    ids += [READER_PREFIX + name for name in container_datasets(claim_file["test_plan"])]
     for target in claim_file["targets"]:
         ctx = ClaimContext(target, claim_file["test_plan"])
         ids += [cid for cid, *_ in _runs(ctx, "base")]
@@ -399,7 +441,7 @@ def _read(ctx: ClaimContext, record: orc.ContainerRecord | None, workdir: Path, 
         try:
             got = ex.extract(extraction, workdir, log, seed)
             value = _convert(got.value, extraction["unit"], unit)
-            out.tokens[name] = ex.Extracted(got.token, value, got.source)
+            out.tokens[name] = ex.Extracted(got.token, value, got.source, got.binary)
         except ex.ExtractionError as exc:
             out.errors[name] = str(exc)
     return out
@@ -433,12 +475,9 @@ def data_present(ctx: ClaimContext, evidence: DatasetEvidence | None):
         return gate, GateFailure(FailureCause.UNDETERMINED)
     declared = next(d for d in ctx.plan["datasets"] if d["name"] == name)
     spec = evidence.fetch.spec
-    if (spec.name, spec.url, spec.sha256, spec.size_bytes) != (
-        declared["name"],
-        declared["url"],
-        declared["sha256"],
-        declared["size_bytes"],
-    ):
+    # a fetched artifact, or a file of the repository copied and checked by Refute
+    # (wp3-data-sources-acceptance.md, section 1)
+    if (spec.name, spec.url, spec.sha256, spec.size_bytes) != sch.artifact_identity(declared):
         gate = _gate(
             "data_present",
             TestStatus.INCONCLUSIVE,
@@ -475,7 +514,11 @@ def data_present(ctx: ClaimContext, evidence: DatasetEvidence | None):
         if count is None or count < 1 or abs(count - spec["expected_examples"]) > tolerance:
             wrong.append(f"{split}: {count} examples, expected {spec['expected_examples']}")
     counts = {s: evidence.split_counts.get(s) for s in declared["splits"]}
-    own = evidence.split_counts.get(ctx.claim["metric"]["split"]) or 0
+    # every split of the file was checked above; the coverage is the claim's split, or for
+    # a derived split the sum of the splits it comes from (section 2)
+    derived = (declared.get("derived_splits") or {}).get(ctx.claim["metric"]["split"])
+    sources = derived["derived_from"] if derived else [ctx.claim["metric"]["split"]]
+    own = sum(evidence.split_counts.get(s) or 0 for s in sources)
     if wrong:
         gate = _gate(
             "data_present", TestStatus.FAIL, "; ".join(wrong), own, "examples", {"splits": counts}
@@ -695,14 +738,19 @@ def _file_source(path: Path) -> str:
 def _count(selector: Mapping[str, Any], workdir: Path, log: str, seed: int | None):
     """One count, read like ``metric_extraction`` reads a value (W3.11), and the piece it
     read. The token must be a non-negative integer."""
-    got = ex.extract(dict(selector), workdir, log, seed)
+    # one read of the one file the selector names: the count and the piece of evidence come
+    # from the same resolved path and bytes (wp3-extraction-pattern-acceptance.md)
+    text, where, source = log, "log", "log"
+    if selector["from"] == "file":
+        text, where, path = ex.read_output(workdir, str(selector["file"]), seed)
+        source = _file_source(path)
+    got = ex.parse(dict(selector), text, where)
     if not _COUNT.match(got.token):
         raise ex.ExtractionError(f"{got.source}: {got.token!r} is not a count of examples")
-    text, source = log, "log"
-    if selector["from"] == "file":
-        path = workdir.joinpath(*_relative_file(selector["file"], seed).parts)
-        text, source = path.read_text(encoding="utf-8"), _file_source(path)
     return int(got.token), _piece(selector, source, text)
+
+
+NO_INTERVAL = "a value read from a binary float has no printed interval"
 
 
 def _interval(token: str, rounding: str) -> tuple[Decimal, Decimal]:
@@ -782,6 +830,8 @@ def _route_reading(
                 return RouteReading(name, note=f"correct {correct} of total {total}", blocking=True)
             right = correct if ctx.claim["metric"]["name"] == "accuracy" else total - correct
             fraction = Decimal(right) / Decimal(total)
+            if run.token is not None and run.token.binary:
+                return RouteReading(name, note=NO_INTERVAL, blocking=True)
             if run.token is not None and not _inside(
                 fraction, run.token.token, run.token_unit, rounding
             ):
@@ -798,9 +848,10 @@ def _route_reading(
             method_name = (ctx.comparison or {}).get(run.role)
             if method_name is not None:
                 file = file.replace("{method}", str(method_name))
-            path = run.workdir.joinpath(*_relative_file(file, run.seed).parts)
+            # the bytes checked on the open handle are the bytes parsed (no pattern here)
+            raw, where, path = ex.read_output_bytes(run.workdir, file, run.seed, pattern=False)
             data = rc.read_predictions(
-                path, mr["predictions"]["format"], mr["predictions"]["fields"]
+                raw, mr["predictions"]["format"], mr["predictions"]["fields"], name=where
             )
             labels = data["y_true"].tolist()
             digest = _labels_sha256(labels)
@@ -858,6 +909,8 @@ def _hook_reading(ctx, route, identity, run: _RunEvidence, rounding: str) -> Rou
     event = matching[0]
     value = None
     if event["result"] != "unread" and run.token is not None:
+        if run.token.binary:
+            return RouteReading("hook", note=NO_INTERVAL, blocking=True)
         try:
             returned = Decimal(event["result"])
             agrees = _inside(returned, run.token.token, run.token_unit, rounding)
@@ -881,10 +934,11 @@ class RunCoverage:
 
     readings: list[RouteReading]
     interval: tuple[Decimal, Decimal] | None
+    binary: bool = False  # the token is a binary float: no interval (W3.11b)
 
 
 def _printed(ctx: ClaimContext, run: _RunEvidence) -> tuple[Decimal, Decimal] | None:
-    if run.token is None:
+    if run.token is None or run.token.binary:
         return None
     lower, upper = _interval(run.token.token, _rounding(ctx))
     factor = rc.unit_factor(run.token_unit, ctx.claim["metric"]["unit"])
@@ -924,6 +978,7 @@ def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records,
             out[(seed, role)] = RunCoverage(
                 [_route_reading(ctx, r, evidence, run, mine) for r in evidence["routes"]],
                 _printed(ctx, run),
+                run.token is not None and bool(run.token.binary),
             )
     return out
 
@@ -966,7 +1021,9 @@ def metric_extracted(ctx: ClaimContext, values: Sequence[Value], readings):
         # with two routes or more that give a value, each must print as the token (W3.12e);
         # with (c) alone, its value against the printed one is metric_recompute (1.7, fatal)
         given = {r.route: r.value for r in found if r.count is not None and r.value is not None}
-        if len(given) > 1 and run.interval is not None:
+        if len(given) > 1 and run.binary:
+            problems.append(f"{where}: the routes' values cannot be judged: {NO_INTERVAL}")
+        elif len(given) > 1 and run.interval is not None:
             lower, upper = run.interval
             outside = {
                 k: str(v)
@@ -1069,18 +1126,23 @@ def _recompute(
             token = holder.tokens.get(role)
             if token is None:
                 continue  # no printed value: not recomputed (INCONCLUSIVE by the rule)
+            if token.binary:
+                outcomes.append(rc.RunOutcome(label, TestStatus.INCONCLUSIVE, NO_INTERVAL))
+                continue
             cid = ids[
                 (seed, "reference" if role == "reference" and ctx.separate_reference else "method")
             ]
             file = mr["predictions"]["file"].replace("{seed}", str(seed))
             if names[role] is not None:
                 file = file.replace("{method}", str(names[role]))
-            path = harness.workspaces[cid] / file
             try:
-                data = rc.read_predictions(
-                    path, mr["predictions"]["format"], mr["predictions"]["fields"]
+                raw, where, _ = ex.read_output_bytes(
+                    harness.workspaces[cid], file, seed, pattern=False
                 )
-            except (rc.RecomputeError, OSError, ValueError) as exc:
+                data = rc.read_predictions(
+                    raw, mr["predictions"]["format"], mr["predictions"]["fields"], name=where
+                )
+            except (rc.RecomputeError, ex.ExtractionError, OSError, ValueError) as exc:
                 outcomes.append(
                     rc.RunOutcome(label, TestStatus.INCONCLUSIVE, f"predictions: {exc}")
                 )
@@ -1238,6 +1300,9 @@ class PaperIntegration:
             for step in ["base", *[n for n in ctx.applicable() if n in CONTAINER_ATTACKS]]:
                 for cid, role, seed, _ in _runs(ctx, step):
                     self._outputs[cid] = _outputs(ctx, role, seed)
+        # a reader's answer must not exist before it runs (section 4.2)
+        for name in container_datasets(self.plan):
+            self._outputs[READER_PREFIX + name] = [rd.ANSWER]
 
     # -- specs
 
@@ -1249,8 +1314,11 @@ class PaperIntegration:
         def make(threshold: int) -> RunSpec:
             # the outputs this run is read from must not exist before it starts, so every
             # value read afterwards was written by this run (requirement 10)
+            # a fixed path, or any match of a '*' (wp3-extraction-pattern-acceptance.md)
             stale = [
-                p for p in self._outputs.get(cid, []) if (self.harness.workspaces[cid] / p).exists()
+                p
+                for p in self._outputs.get(cid, [])
+                if ex.output_present(self.harness.workspaces[cid], p)
             ]
             if stale:
                 raise ValueError(f"{cid}: outputs present before the run: {stale}")
@@ -1293,6 +1361,78 @@ class PaperIntegration:
 
         return orc.Step("build", containers, fallback=fallback)
 
+    def _built_rung(self) -> str | None:
+        """The rung whose build completed (its image is the one the runs use), or None."""
+        for rung in self.rungs:
+            result = self._rung_results.get(f"setup/build/{rung.name}")
+            if result is not None and result.outcome is orc.Outcome.COMPLETED:
+                return rung.name
+        return None
+
+    def _reader_steps(self) -> list[orc.Step]:
+        """One setup step per dataset with splits counted in the paper's container, after
+        the build (section 4.2). Its outcome never stops the setup: a reader that fails
+        gives no count, and data_present is then INCONCLUSIVE; a stop on Refute's side
+        (threshold, guard) keeps its own outcome."""
+        command = self.harness.reader_command
+        if command is None:
+            return []
+        steps = []
+        stage = self.plan["stages"]["build"]  # the build stage's limits (section 4.2)
+        env = {k: str(v) for k, v in self.plan["threads"].items()}  # nothing else
+        for name in container_datasets(self.plan):
+            path = self.harness.data_paths.get(name)
+            dataset = next(d for d in self.plan["datasets"] if d["name"] == name)
+            request = rd.container_request(path, dataset["splits"]) if path else None
+            if request is None:
+                continue
+            cid = READER_PREFIX + name
+            safe = re.sub(r"[^A-Za-z0-9_.-]", "_", cid)
+
+            def make(threshold: int, cid=cid, request=request, safe=safe) -> RunSpec:
+                folder = self.harness.workspaces[cid]
+                if (folder / rd.ANSWER).exists() or (folder / rd.ANSWER).is_symlink():
+                    raise ValueError(f"{cid}: the reader's answer exists before it runs")
+                return RunSpec(
+                    argv=command(self._built_rung(), request, dict(env)),
+                    workdir=folder,
+                    env=dict(env),
+                    log_path=self.harness.logs / f"{safe}.log",
+                    threshold_usec=threshold,
+                    active_time_limit_s=stage["active_time_limit_hours"] * HOUR_S,
+                    no_progress_s=stage["no_progress_hours"] * HOUR_S,
+                )
+
+            steps.append(
+                orc.Step(
+                    f"data/{name}", [orc.Container(cid, make)], fallback=lambda record: "completed"
+                )
+            )
+        return steps
+
+    def _evidence(self, name: str, records: Mapping[str, orc.ContainerRecord]):
+        """The evidence of a dataset: the host's counts, joined with those its container
+        reader wrote (section 4.2); a reader that did not run to exit 0, or whose answer is
+        not exactly what was asked, leaves the dataset with no counts."""
+        evidence = self.harness.datasets.get(name)
+        if evidence is None or name not in container_datasets(self.plan):
+            return evidence
+        dataset = next(d for d in self.plan["datasets"] if d["name"] == name)
+        asked = {
+            s
+            for s, spec in dataset["splits"].items()
+            if rd.is_container_source(str(spec["source"]))
+        }
+        cid = READER_PREFIX + name
+        record = records.get(cid)
+        counts = None
+        result = record.result if record is not None else None
+        if result is not None and result.exit_code == 0 and not result.stopped:
+            counts = rd.read_answer(self.harness.workspaces[cid] / rd.ANSWER, asked)
+        if counts is None or evidence.split_counts is None:
+            return replace(evidence, split_counts=None)
+        return replace(evidence, split_counts={**evidence.split_counts, **counts})
+
     def _step(self, ctx: ClaimContext, step: str, stage: str) -> orc.Step:
         containers = [
             self._spec(cid, _argv(ctx, role, seed, extra), ctx.stage(stage))
@@ -1323,7 +1463,7 @@ class PaperIntegration:
                     lambda records, ctx=ctx: self._base_obtained(ctx, records),
                 )
             )
-        return orc.PaperPlan([setup], claims)
+        return orc.PaperPlan([setup, *self._reader_steps()], claims)
 
     # -- evaluation
 
@@ -1349,10 +1489,13 @@ class PaperIntegration:
         checks: list[TestResult] = [ladder.gate]
         if ladder.failure is not None:
             failures["environment_build"] = ladder.failure
-        gate, failure = data_present(ctx, self.harness.datasets.get(ctx.claim["dataset"]))
-        checks.append(gate)
-        if failure is not None:
-            failures["data_present"] = failure
+        # data_present is not computed when the resolution declared it not applicable
+        # (generated data); the map is checked against the dataset's origin first
+        if BASE_GATES[1] not in ctx.not_applicable():
+            gate, failure = data_present(ctx, self._evidence(ctx.claim["dataset"], records))
+            checks.append(gate)
+            if failure is not None:
+                failures["data_present"] = failure
         gate, failure = run_completed(flat)
         checks.append(gate)
         if failure is not None:
@@ -1376,13 +1519,19 @@ class PaperIntegration:
     def _base_obtained(self, ctx: ClaimContext, records: Sequence[orc.StepRecord]) -> bool:
         """Asked by the runner after the claim's base step: the base reproduction is
         obtained when its gates and fatal checks pass (the attacks then run)."""
+        with ex.read_session():  # one resolution and one read per file (W3.11a)
+            return self._base_obtained_in_session(ctx, records)
+
+    def _base_obtained_in_session(self, ctx: ClaimContext, records) -> bool:
         setup = {
             c.container_id: c
             for s in (self._runner.run_record.steps if self._runner else [])
             if s.phase == orc.SETUP
             for c in s.containers
         }
-        by_id = {c.container_id: c for s in records for c in s.containers}
+        # the setup's records too: a dataset counted in the container is read from its
+        # reader's record (section 4.2)
+        by_id = {**setup, **{c.container_id: c for s in records for c in s.containers}}
         checks, failures, _, _ = self._base_checks(ctx, by_id, self._ladder_result(setup))
         base_names = set(BASE_GATES) | {BASE_REPRODUCTION, METRIC_RECOMPUTE}
         verdict = aggregate_claim(
@@ -1392,6 +1541,7 @@ class PaperIntegration:
             metric_recompute_applies=ctx.claim["metric_recompute"]["applies"],
             failures=failures,
             minimums={k: v for k, v in ctx.minimums().items() if k in base_names},
+            not_applicable=ctx.not_applicable(),
         )
         return verdict.basic_reproduction_obtained
 
@@ -1418,7 +1568,7 @@ class PaperIntegration:
         return ld.run_ladder(self.rungs, build)
 
     def _attack(self, ctx, name, records, base_values, base_series) -> tuple[Attack, str]:
-        evidence = self.harness.datasets.get(ctx.claim["dataset"])
+        evidence = self._evidence(ctx.claim["dataset"], records)
         if name == "leakage":
             if evidence is None or evidence.example_hashes is None:
                 return Attack(name), "the examples could not be hashed"
@@ -1515,6 +1665,11 @@ class PaperIntegration:
         return Attack(name, run, metric, result), ""
 
     def evaluate(self, run: orc.PaperRun | None) -> PaperOutcome:
+        # one resolution and one read per file of a run, for every reader of it (W3.11a)
+        with ex.read_session():
+            return self._evaluate(run)
+
+    def _evaluate(self, run: orc.PaperRun | None) -> PaperOutcome:
         records = self._records(run)
         ladder = self._ladder_result(records)
         outcomes = []
@@ -1537,12 +1692,15 @@ class PaperIntegration:
                 metric_recompute_applies=ctx.claim["metric_recompute"]["applies"],
                 failures=failures,
                 minimums=ctx.minimums(),
+                not_applicable=ctx.not_applicable(),
             )
             computed = verdict.verdict
             if run is not None and not run.accounting_valid:
                 reasons = "; ".join(run.invalid_reasons) or "unknown"
                 verdict = ClaimVerdict(
-                    PaperVerdict.INCONCLUSIVE, f"{ACCOUNTING_INVALID}: {reasons}"
+                    PaperVerdict.INCONCLUSIVE,
+                    f"{ACCOUNTING_INVALID}: {reasons}",
+                    gates_not_applicable=dict(verdict.gates_not_applicable),
                 )
             outcomes.append(
                 ClaimOutcome(ctx.key, verdict, checks, attacks, failures, computed, notes)

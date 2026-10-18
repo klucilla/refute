@@ -96,7 +96,12 @@ def decide_on_mean(values: Sequence[Decimal], predicate: Predicate) -> tuple[pr.
         return first, mean
     bracket = Fraction(high) - Fraction(low)
     for outcome in (first, second):
-        if outcome.tolerance is not None and 2 * Fraction(outcome.tolerance) < bracket:
+        # a square-root tolerance by its exact square, never by its rounded record
+        if outcome.squared is not None:
+            narrow = 4 * outcome.squared < bracket * bracket
+        else:
+            narrow = outcome.tolerance is not None and 2 * Fraction(outcome.tolerance) < bracket
+        if narrow:
             return undecided, mean
     return first, mean
 

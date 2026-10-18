@@ -91,7 +91,7 @@ CATALOG: Mapping[str, Fixture] = MappingProxyType(
             Fixture(
                 "ml-paper",
                 {
-                    "train.py": "e9da85d49bf5d0ccfcbd70e6f312d80c88e73ff698d7eea533ff5892e6235325",
+                    "train.py": "5ab4ab5dfed408e1e1f0d03bcec929911320feb513b00c0b1c3d3d7b8bc9a084",
                     # the coverage hook, as an allowed patch would install it (1.5a, route
                     # (b)): the bytes of src/refute/packs/ml/coverage_hook.py
                     "coverage_hook.py": (
@@ -105,6 +105,25 @@ CATALOG: Mapping[str, Fixture] = MappingProxyType(
                 "ladder-build",
                 {"build.py": "f686c16e19e70a85fc63bf17515c2d947382dd8b65c3d22f2fd28d29120bdb1a"},
                 data=frozenset({"ladder.json", "Dockerfile", "requirements.txt"}),
+                outputs=("out",),
+            ),
+            Fixture(
+                # the container reader (wp3-data-sources-acceptance.md, section 4.2): the
+                # bytes of src/refute/packs/ml/container_reader.py, on a test's own file
+                "data-reader",
+                {"reader.py": "4b64c5edda6bd940aa392d02a193a0e0547f8b4ddc30f5bb96bf879ad41cb733"},
+                # a test may also plant modules named like those the reader imports, in its
+                # working folder; none of them may run (section 6)
+                data=frozenset(
+                    {
+                        "data/archive.tar.gz",
+                        "data/table.xlsx",
+                        "data/graph.bin",
+                        "json.py",
+                        "tarfile.py",
+                        "sitecustomize.py",
+                    }
+                ),
                 outputs=("out",),
             ),
         )
@@ -273,7 +292,8 @@ def check_run(
 ) -> Launch:
     """The command and environment to launch for a run, or ``SyntheticRefusedError``
     before anything starts. ``argv`` must be ``[<this interpreter>, '-I', <code file as
-    cataloged>, *arguments]``; the returned command uses this interpreter's absolute path
+    cataloged>, *arguments]``, or the same with ``'-S'`` after ``'-I'`` (the container
+    reader); the returned command uses this interpreter's absolute path
     and the code file's absolute path, so what was checked is what runs, and the returned
     environment holds only ``LAUNCH_ENV_KEYS``."""
     workdir = Path(workdir)
@@ -289,19 +309,23 @@ def check_run(
         log = Path(log).resolve()
         if log == auth.root or auth.root in log.parents:
             raise SyntheticRefusedError(f"the log {log} must be outside the fixture's folder")
-    if len(argv) < 3 or not _same_file(argv[0], sys.executable) or argv[1] != "-I":
+    # isolated mode, and optionally no site processing (the container reader's -I -S,
+    # wp3-data-sources-acceptance.md 4.2): no other flag is accepted
+    flags = ["-I", "-S"] if list(argv[1:3]) == ["-I", "-S"] else ["-I"]
+    n = 1 + len(flags)
+    if len(argv) <= n or not _same_file(argv[0], sys.executable) or argv[1] != "-I":
         raise SyntheticRefusedError(
             "a synthetic run is this interpreter in isolated mode running a fixture's code "
-            f"file: [{sys.executable!r}, '-I', <file>, ...], got {list(argv[:3])!r}"
+            f"file: [{sys.executable!r}, '-I', ('-S',) <file>, ...], got {list(argv[:4])!r}"
         )
-    if argv[2] not in auth.fixture.code:
+    if argv[n] not in auth.fixture.code:
         raise SyntheticRefusedError(
-            f"{argv[2]!r} is not a code file of {auth.fixture.name!r} "
+            f"{argv[n]!r} is not a code file of {auth.fixture.name!r} "
             f"({sorted(auth.fixture.code)}, named as in the catalog)"
         )
     verify_tree(auth)
-    script = auth.root.joinpath(*_relative(argv[2]).parts)
-    return Launch([sys.executable, "-I", str(script), *argv[3:]], launch_env(env))
+    script = auth.root.joinpath(*_relative(argv[n]).parts)
+    return Launch([sys.executable, *flags, str(script), *argv[n + 1 :]], launch_env(env))
 
 
 # ---- the build ladder under the subprocess backend (A') --------------------------------------

@@ -1,0 +1,1260 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:21:59Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 7,
+  "candidates": [
+    {
+      "position": 151,
+      "arxiv_id": "2403.07569",
+      "repo_url": "https://github.com/caglarmert/mage",
+      "arxiv": {
+        "versioned_id": "2403.07569v2",
+        "primary_category": "eess.SP",
+        "title": "Exploring Challenges in Deep Learning of Single-Station Ground Motion Records",
+        "abstract": "Contemporary deep learning models have demonstrated promising results across various applications within seismology and earthquake engineering. These models rely primarily on utilizing ground motion records for tasks such as earthquake event classification, localization, earthquake early warning systems, and structural health monitoring. However, the extent to which these models truly extract meaningful patterns from these complex time-series signals remains underexplored. In this study, our objective is to evaluate the degree to which auxiliary information, such as seismic phase arrival times or seismic station distribution within a network, dominates the process of deep learning from ground motion records, potentially hindering its effectiveness. Our experimental results reveal a strong dependence on the highly correlated Primary (P) and Secondary (S) phase arrival times. These findings expose a critical gap in the current research landscape, highlighting the lack of robust methodologies for deep learning from single-station ground motion recordings that do not rely on auxiliary inputs."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/caglarmert/mage",
+        "exists": true,
+        "full_name": "caglarmert/mage",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "69cbd18b2db5dede5ad350d54b639a7b2971fca4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/caglarmert/mage/blob/69cbd18b2db5dede5ad350d54b639a7b2971fca4/README.md",
+          "sha256": "1918a470df477cb40b6d72044c7a3aa772d47ff0df3d8f2a94a70097979968f0",
+          "bytes": 6881
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "STEAD_test.zip",
+          "figs",
+          "requirements.txt",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 152,
+      "arxiv_id": "2310.01970",
+      "repo_url": "https://github.com/wcxstat/maflqr",
+      "arxiv": {
+        "versioned_id": "2310.01970v2",
+        "primary_category": "math.ST",
+        "title": "Functional Data-Driven Quantile Model Averaging with Application to Cryptocurrencies",
+        "abstract": "Given the high volatility and susceptibility to extreme events in the cryptocurrency market, forecasting tail risk is of paramount importance. Value-at-Risk (VaR), a quantile-based risk measure, is widely used for assessing tail risk and is central to monitoring financial market stability. In data-rich environments, functional data from various domains are employed to forecast conditional quantiles. However, the infinite-dimensional nature of functional data introduces uncertainty. This paper addresses this uncertainty problem by proposing a novel data-driven conditional quantile model averaging (MA) approach. With a set of candidate models varying by the number of components, MA assigns weights to each model determined by a K-fold cross-validation criterion. We prove the asymptotic optimality of the selected weights in terms of minimizing the excess final prediction error when all candidate models are misspecified. Additionally, when the true regression relationship belongs to the set of candidate models, we provide consistency results for the averaged estimators. Numerical studies indicate that, in most cases, the proposed method outperforms other model selection and averaging methods, particularly for extreme quantiles in cryptocurrency markets."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/wcxstat/maflqr",
+        "exists": true,
+        "full_name": "wcxstat/MAFLQR",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7c7577c37b6bfda2835c3e6225e26425a1398f66",
+        "license_spdx": null,
+        "readme": null,
+        "root_names": [
+          "FLQR.m",
+          "MACV.m",
+          "MAFLQR.m",
+          "quanloss.m",
+          "quantreg.m"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.ST"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 153,
+      "arxiv_id": "2505.11383",
+      "repo_url": "https://github.com/mrzihan/dynam3d",
+      "arxiv": {
+        "versioned_id": "2505.11383v1",
+        "primary_category": "cs.CV",
+        "title": "Dynam3D: Dynamic Layered 3D Tokens Empower VLM for Vision-and-Language Navigation",
+        "abstract": "Vision-and-Language Navigation (VLN) is a core task where embodied agents leverage their spatial mobility to navigate in 3D environments toward designated destinations based on natural language instructions. Recently, video-language large models (Video-VLMs) with strong generalization capabilities and rich commonsense knowledge have shown remarkable performance when applied to VLN tasks. However, these models still encounter the following challenges when applied to real-world 3D navigation: 1) Insufficient understanding of 3D geometry and spatial semantics; 2) Limited capacity for large-scale exploration and long-term environmental memory; 3) Poor adaptability to dynamic and changing environments.To address these limitations, we propose Dynam3D, a dynamic layered 3D representation model that leverages language-aligned, generalizable, and hierarchical 3D representations as visual input to train 3D-VLM in navigation action prediction. Given posed RGB-D images, our Dynam3D projects 2D CLIP features into 3D space and constructs multi-level 3D patch-instance-zone representations for 3D geometric and semantic understanding with a dynamic and layer-wise update strategy. Our Dynam3D is capable of online encoding and localization of 3D instances, and dynamically updates them in changing environments to provide large-scale exploration and long-term memory capabilities for navigation. By leveraging large-scale 3D-language pretraining and task-specific adaptation, our Dynam3D sets new state-of-the-art performance on VLN benchmarks including R2R-CE, REVERIE-CE and NavRAG-CE under monocular settings. Furthermore, experiments for pre-exploration, lifelong memory, and real-world robot validate the effectiveness of practical deployment."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mrzihan/dynam3d",
+        "exists": true,
+        "full_name": "MrZihan/Dynam3D",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ca7295ec40300a4d2d248610fddb6a409e999069",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MrZihan/Dynam3D/blob/ca7295ec40300a4d2d248610fddb6a409e999069/README.md",
+          "sha256": "6de69bb7bdc9e97592ab70e339ea4c3a9056aee95e603443114f578e4a238a38",
+          "bytes": 5028
+        },
+        "root_names": [
+          "Dynam3D_Pretrain",
+          "Dynam3D_VLN",
+          "README.md",
+          "demos",
+          "discrete_to_CE",
+          "environment.yml"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 154,
+      "arxiv_id": "2404.09732",
+      "repo_url": "https://github.com/algolzw/daclip-uir",
+      "arxiv": {
+        "versioned_id": "2404.09732v1",
+        "primary_category": "cs.CV",
+        "title": "Photo-Realistic Image Restoration in the Wild with Controlled Vision-Language Models",
+        "abstract": "Though diffusion models have been successfully applied to various image restoration (IR) tasks, their performance is sensitive to the choice of training datasets. Typically, diffusion models trained in specific datasets fail to recover images that have out-of-distribution degradations. To address this problem, this work leverages a capable vision-language model and a synthetic degradation pipeline to learn image restoration in the wild (wild IR). More specifically, all low-quality images are simulated with a synthetic degradation pipeline that contains multiple common degradations such as blur, resize, noise, and JPEG compression. Then we introduce robust training for a degradation-aware CLIP model to extract enriched image content features to assist high-quality image restoration. Our base diffusion model is the image restoration SDE (IR-SDE). Built upon it, we further present a posterior sampling strategy for fast noise-free image generation. We evaluate our model on both synthetic and real-world degradation datasets. Moreover, experiments on the unified image restoration task illustrate that the proposed posterior sampling improves image generation quality for various degradations."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/algolzw/daclip-uir",
+        "exists": true,
+        "full_name": "Algolzw/daclip-uir",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c2cc14146faac85680b4cb39ece4ef9e2a7c7c24",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Algolzw/daclip-uir/blob/c2cc14146faac85680b4cb39ece4ef9e2a7c7c24/README.md",
+          "sha256": "f302fc6db3e09a9544ca234d3f8137c603db24e526ed1290252edaadb1517846",
+          "bytes": 16890
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "cog.yaml",
+          "da-clip",
+          "figs",
+          "images",
+          "predict.py",
+          "requirements.txt",
+          "scripts",
+          "universal-image-restoration"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 155,
+      "arxiv_id": "2308.08525",
+      "repo_url": "https://github.com/chenqi008/leica",
+      "arxiv": {
+        "versioned_id": "2308.08525v1",
+        "primary_category": "cs.CV",
+        "title": "Likelihood-Based Text-to-Image Evaluation with Patch-Level Perceptual and Semantic Credit Assignment",
+        "abstract": "Text-to-image synthesis has made encouraging progress and attracted lots of public attention recently. However, popular evaluation metrics in this area, like the Inception Score and Fr'echet Inception Distance, incur several issues. First of all, they cannot explicitly assess the perceptual quality of generated images and poorly reflect the semantic alignment of each text-image pair. Also, they are inefficient and need to sample thousands of images to stabilise their evaluation results. In this paper, we propose to evaluate text-to-image generation performance by directly estimating the likelihood of the generated images using a pre-trained likelihood-based text-to-image generative model, i.e., a higher likelihood indicates better perceptual quality and better text-image alignment. To prevent the likelihood of being dominated by the non-crucial part of the generated image, we propose several new designs to develop a credit assignment strategy based on the semantic and perceptual significance of the image patches. In the experiments, we evaluate the proposed metric on multiple popular text-to-image generation models and datasets in accessing both the perceptual quality and the text-image alignment. Moreover, it can successfully assess the generation ability of these models with as few as a hundred samples, making it very efficient in practice."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/chenqi008/leica",
+        "exists": true,
+        "full_name": "chenqi008/LEICA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2044438059979aac61c675a5694efd43f7cd0000",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/chenqi008/LEICA/blob/2044438059979aac61c675a5694efd43f7cd0000/README.md",
+          "sha256": "b00dc05b662cdceff6a3cee4778800d85bc4f874b316d4420c846a1bf8ad97a7",
+          "bytes": 1005
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "clip",
+          "data",
+          "evaluate.py",
+          "fairseq",
+          "meta_evaluation.py",
+          "models",
+          "myevaluation.py",
+          "ofa_module",
+          "run.sh",
+          "run_indicator.sh",
+          "run_phx.sh",
+          "run_scripts",
+          "tasks",
+          "test.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 156,
+      "arxiv_id": "2410.04452",
+      "repo_url": "https://github.com/2279072142/mindscope",
+      "arxiv": {
+        "versioned_id": "2410.04452v1",
+        "primary_category": "cs.CL",
+        "title": "MindScope: Exploring cognitive biases in large language models through Multi-Agent Systems",
+        "abstract": "Detecting cognitive biases in large language models (LLMs) is a fascinating task that aims to probe the existing cognitive biases within these models. Current methods for detecting cognitive biases in language models generally suffer from incomplete detection capabilities and a restricted range of detectable bias types. To address this issue, we introduced the 'MindScope' dataset, which distinctively integrates static and dynamic elements. The static component comprises 5,170 open-ended questions spanning 72 cognitive bias categories. The dynamic component leverages a rule-based, multi-agent communication framework to facilitate the generation of multi-round dialogues. This framework is flexible and readily adaptable for various psychological experiments involving LLMs. In addition, we introduce a multi-agent detection method applicable to a wide range of detection tasks, which integrates Retrieval-Augmented Generation (RAG), competitive debate, and a reinforcement learning-based decision module. Demonstrating substantial effectiveness, this method has shown to improve detection accuracy by as much as 35.10% compared to GPT-4. Codes and appendix are available at https://github.com/2279072142/MindScope."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/2279072142/mindscope",
+        "exists": true,
+        "full_name": "mindhunter01/MindScope",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "d65f6ac92b4bfc86173f570b89fe88839b58685a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/mindhunter01/MindScope/blob/d65f6ac92b4bfc86173f570b89fe88839b58685a/README.md",
+          "sha256": "ca4b927cc8661ca951fa62bb13299cbce3966d5b294d996cdd01e159304ed275",
+          "bytes": 5501
+        },
+        "root_names": [
+          "Appendix.pdf",
+          "Code",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 157,
+      "arxiv_id": "2405.09782",
+      "repo_url": "https://github.com/ferry-li/si-sod",
+      "arxiv": {
+        "versioned_id": "2405.09782v2",
+        "primary_category": "cs.CV",
+        "title": "Size-invariance Matters: Rethinking Metrics and Losses for Imbalanced Multi-object Salient Object Detection",
+        "abstract": "This paper explores the size-invariance of evaluation metrics in Salient Object Detection (SOD), especially when multiple targets of diverse sizes co-exist in the same image. We observe that current metrics are size-sensitive, where larger objects are focused, and smaller ones tend to be ignored. We argue that the evaluation should be size-invariant because bias based on size is unjustified without additional semantic information. In pursuit of this, we propose a generic approach that evaluates each salient object separately and then combines the results, effectively alleviating the imbalance. We further develop an optimization framework tailored to this goal, achieving considerable improvements in detecting objects of different sizes. Theoretically, we provide evidence supporting the validity of our new metrics and present the generalization analysis of SOD. Extensive experiments demonstrate the effectiveness of our method. The code is available at https://github.com/Ferry-Li/SI-SOD."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ferry-li/si-sod",
+        "exists": true,
+        "full_name": "Ferry-Li/SI-SOD",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6c0d798a2729c0903e5c1ec459d87f81db9d0390",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Ferry-Li/SI-SOD/blob/6c0d798a2729c0903e5c1ec459d87f81db9d0390/README.md",
+          "sha256": "3a068837df599b3a73a356d40ad8fd162f97727c786085010fa719e5ca768ee6",
+          "bytes": 6280
+        },
+        "root_names": [
+          "README.md",
+          "dataset",
+          "figs",
+          "requirements.txt",
+          "scripts",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 158,
+      "arxiv_id": "2505.19313",
+      "repo_url": "https://github.com/martaaparod/concept_reachability",
+      "arxiv": {
+        "versioned_id": "2505.19313v1",
+        "primary_category": "cs.LG",
+        "title": "Concept Reachability in Diffusion Models: Beyond Dataset Constraints",
+        "abstract": "Despite significant advances in quality and complexity of the generations in text-to-image models, prompting does not always lead to the desired outputs. Controlling model behaviour by directly steering intermediate model activations has emerged as a viable alternative allowing to reach concepts in latent space that may otherwise remain inaccessible by prompt. In this work, we introduce a set of experiments to deepen our understanding of concept reachability. We design a training data setup with three key obstacles: scarcity of concepts, underspecification of concepts in the captions, and data biases with tied concepts. Our results show: (i) concept reachability in latent space exhibits a distinct phase transition, with only a small number of samples being sufficient to enable reachability, (ii) where in the latent space the intervention is performed critically impacts reachability, showing that certain concepts are reachable only at certain stages of transformation, and (iii) while prompting ability rapidly diminishes with a decrease in quality of the dataset, concepts often remain reliably reachable through steering. Model providers can leverage this to bypass costly retraining and dataset curation and instead innovate with user-facing control mechanisms."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/martaaparod/concept_reachability",
+        "exists": true,
+        "full_name": "martaaparod/concept_reachability",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3f0171b6e0449d82866779301b23e6e0aaf4d508",
+        "license_spdx": "BSD-3-Clause",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/martaaparod/concept_reachability/blob/3f0171b6e0449d82866779301b23e6e0aaf4d508/README.md",
+          "sha256": "1e67b7dfbdb531c1fe34a1f4c8fbb09864bfa92e831d1e9637d5d1d1d5ed2d2d",
+          "bytes": 2517
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "classifier.py",
+          "classifiers",
+          "concept_directions.py",
+          "conditional_unet.py",
+          "config_dicts",
+          "dataset.py",
+          "evaluate_images.py",
+          "experiment_3.py",
+          "experiments.py",
+          "generate_dataset.py",
+          "images",
+          "main.py",
+          "text_to_image_model.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 159,
+      "arxiv_id": "2506.04100",
+      "repo_url": "https://github.com/pavelkuspro/uldm-binarypulsars-dnn",
+      "arxiv": {
+        "versioned_id": "2506.04100v2",
+        "primary_category": "astro-ph.HE",
+        "title": "Deep Neural Networks Hunting Ultra-Light Dark Matter",
+        "abstract": "Ultra-light dark matter (ULDM) is a compelling candidate for cosmological dark matter. If ULDM interacts with ordinary matter, it can induce measurable, characteristic signals in pulsar-timing data because it causes the orbits of pulsars in binary systems to osculate. In this work, we investigate the potential of machine learning (ML) techniques to detect such ULDM signals. To this end, we construct three types of neural networks: an autoencoder, a binary classifier, and a multiclass classifier. We apply these methods to four theoretically well-motivated ULDM models: a linearly coupled scalar field, a quadratically coupled scalar field, a vector field and a tensor field. We show that the sensitivity achieved using ML methods is comparable to that of a semi-analytical Bayesian approach, which to date has only been applied to the linear scalar case. The ML approach is readily applicable to all four ULDM models and, in the case of the multiclass classifier, can distinguish between them. Our results, derived from simulated data, lay the foundation for future applications to real pulsar-timing observations."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/pavelkuspro/uldm-binarypulsars-dnn",
+        "exists": true,
+        "full_name": "pavelkuspro/ULDM-BinaryPulsars-DNN",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "749223f813d48cb96e53a5795931d5a826119bde",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/pavelkuspro/ULDM-BinaryPulsars-DNN/blob/749223f813d48cb96e53a5795931d5a826119bde/README.md",
+          "sha256": "7a60f0d79c7f58c8592ff24d3a8e49cb1e845c7401383aabf026205d934aacfd",
+          "bytes": 1156
+        },
+        "root_names": [
+          "Code",
+          "LICENSE",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.HE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 160,
+      "arxiv_id": "2407.11637",
+      "repo_url": "https://github.com/hanniewhu/remm",
+      "arxiv": {
+        "versioned_id": "2407.11637v1",
+        "primary_category": "cs.CV",
+        "title": "REMM:Rotation-Equivariant Framework for End-to-End Multimodal Image Matching",
+        "abstract": "We present REMM, a rotation-equivariant framework for end-to-end multimodal image matching, which fully encodes rotational differences of descriptors in the whole matching pipeline. Previous learning-based methods mainly focus on extracting modal-invariant descriptors, while consistently ignoring the rotational invariance. In this paper, we demonstrate that our REMM is very useful for multimodal image matching, including multimodal feature learning module and cyclic shift module. We first learn modal-invariant features through the multimodal feature learning module. Then, we design the cyclic shift module to rotationally encode the descriptors, greatly improving the performance of rotation-equivariant matching, which makes them robust to any angle. To validate our method, we establish a comprehensive rotation and scale-matching benchmark for evaluating the anti-rotation performance of multimodal images, which contains a combination of multi-angle and multi-scale transformations from four publicly available datasets. Extensive experiments show that our method outperforms existing methods in benchmarking and generalizes well to independent datasets. Additionally, we conducted an in-depth analysis of the key components of the REMM to validate the improvements brought about by the cyclic shift module. Code and dataset at https://github.com/HanNieWHU/REMM."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hanniewhu/remm",
+        "exists": true,
+        "full_name": "HanNieWHU/REMM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b74cf03e81d235f311d57dac903842daec4ada8a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/HanNieWHU/REMM/blob/b74cf03e81d235f311d57dac903842daec4ada8a/README.md",
+          "sha256": "2fb16b6ee1172669dbc3dec8c659cba084d1070ccc3143592c6f5a47b51531e7",
+          "bytes": 2684
+        },
+        "root_names": [
+          "Pretrained",
+          "README.md",
+          "all_base.py",
+          "assets",
+          "data",
+          "demo.py",
+          "lib"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 161,
+      "arxiv_id": "2303.06335",
+      "repo_url": "https://github.com/minjae-lulu/just-flip",
+      "arxiv": {
+        "versioned_id": "2303.06335v3",
+        "primary_category": "cs.RO",
+        "title": "Just Flip: Flipped Observation Generation and Optimization for Neural Radiance Fields to Cover Unobserved View",
+        "abstract": "With the advent of Neural Radiance Field (NeRF), representing 3D scenes through multiple observations has shown remarkable improvements in performance. Since this cutting-edge technique is able to obtain high-resolution renderings by interpolating dense 3D environments, various approaches have been proposed to apply NeRF for the spatial understanding of robot perception. However, previous works are challenging to represent unobserved scenes or views on the unexplored robot trajectory, as these works do not take into account 3D reconstruction without observation information. To overcome this problem, we propose a method to generate flipped observation in order to cover unexisting observation for unexplored robot trajectory. To achieve this, we propose a data augmentation method for 3D reconstruction using NeRF by flipping observed images, and estimating flipped camera 6DOF poses. Our technique exploits the property of objects being geometrically symmetric, making it simple but fast and powerful, thereby making it suitable for robotic applications where real-time performance is important. We demonstrate that our method significantly improves three representative perceptual quality measures on the NeRF synthetic dataset."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/minjae-lulu/just-flip",
+        "exists": true,
+        "full_name": "sibaek-lee/Just-Flip",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1f8696a2b1d2c5646f0bb7fa84b40afde7c7c6e6",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sibaek-lee/Just-Flip/blob/1f8696a2b1d2c5646f0bb7fa84b40afde7c7c6e6/README.md",
+          "sha256": "6dd4471dfc577331c5d909ff2641677d31ba109109b1f9bc58432e04e3b570ab",
+          "bytes": 5463
+        },
+        "root_names": [
+          ".DS_Store",
+          "LICENSE",
+          "README.md",
+          "__pycache__",
+          "camera.py",
+          "data",
+          "evaluate.py",
+          "external",
+          "extract_mesh.py",
+          "figs",
+          "generate_flip_information.py",
+          "model",
+          "options.py",
+          "options",
+          "requirements.yaml",
+          "train.py",
+          "util.py",
+          "util_vis.py",
+          "warp.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.RO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 162,
+      "arxiv_id": "2304.12067",
+      "repo_url": "https://github.com/awslabs/renate",
+      "arxiv": {
+        "versioned_id": "2304.12067v1",
+        "primary_category": "cs.LG",
+        "title": "Renate: A Library for Real-World Continual Learning",
+        "abstract": "Continual learning enables the incremental training of machine learning models on non-stationary data streams.While academic interest in the topic is high, there is little indication of the use of state-of-the-art continual learning algorithms in practical machine learning deployment. This paper presents Renate, a continual learning library designed to build real-world updating pipelines for PyTorch models. We discuss requirements for the use of continual learning algorithms in practice, from which we derive design principles for Renate. We give a high-level description of the library components and interfaces. Finally, we showcase the strengths of the library by presenting experimental results. Renate may be found at https://github.com/awslabs/renate."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/awslabs/renate",
+        "exists": true,
+        "full_name": "awslabs/Renate",
+        "archived": true,
+        "default_branch": "main",
+        "head_commit": "aa858dd38cf508c5ae69b7b590c27db159f72e98",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.rst",
+          "url": "https://github.com/awslabs/Renate/blob/aa858dd38cf508c5ae69b7b590c27db159f72e98/README.rst",
+          "sha256": "f4ca2d5002e53e74a083bc16c68825cc250093856311387582b925ac107820e1",
+          "bytes": 6652
+        },
+        "root_names": [
+          ".github",
+          ".readthedocs.yml",
+          "CODE_OF_CONDUCT.md",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "NOTICE",
+          "README.rst",
+          "SECURITY.md",
+          "benchmarks",
+          "dev_setup.sh",
+          "doc",
+          "examples",
+          "pyproject.toml",
+          "requirements.txt",
+          "src",
+          "test"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "repository_unavailable",
+        "evidence": "the repository is archived on GitHub"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 163,
+      "arxiv_id": "2304.07254",
+      "repo_url": "https://github.com/ysj9909/dmf",
+      "arxiv": {
+        "versioned_id": "2304.07254v1",
+        "primary_category": "cs.CV",
+        "title": "Dynamic Mobile-Former: Strengthening Dynamic Convolution with Attention and Residual Connection in Kernel Space",
+        "abstract": "We introduce Dynamic Mobile-Former(DMF), maximizes the capabilities of dynamic convolution by harmonizing it with efficient operators.Our Dynamic MobileFormer effectively utilizes the advantages of Dynamic MobileNet (MobileNet equipped with dynamic convolution) using global information from light-weight attention.A Transformer in Dynamic Mobile-Former only requires a few randomly initialized tokens to calculate global features, making it computationally efficient.And a bridge between Dynamic MobileNet and Transformer allows for bidirectional integration of local and global features.We also simplify the optimization process of vanilla dynamic convolution by splitting the convolution kernel into an input-agnostic kernel and an input-dependent kernel.This allows for optimization in a wider kernel space, resulting in enhanced capacity.By integrating lightweight attention and enhanced dynamic convolution, our Dynamic Mobile-Former achieves not only high efficiency, but also strong performance.We benchmark the Dynamic Mobile-Former on a series of vision tasks, and showcase that it achieves impressive performance on image classification, COCO detection, and instanace segmentation.For example, our DMF hits the top-1 accuracy of 79.4% on ImageNet-1K, much higher than PVT-Tiny by 4.3% with only 1/4 FLOPs.Additionally,our proposed DMF-S model performed well on challenging vision datasets such as COCO, achieving a 39.0% mAP,which is 1% higher than that of the Mobile-Former 508M model, despite using 3 GFLOPs less computations.Code and models are available at https://github.com/ysj9909/DMF"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ysj9909/dmf",
+        "exists": true,
+        "full_name": "ysj9909/DMF",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "929ae6db0e91a4fe58fcb5d500cb9f49911b4734",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ysj9909/DMF/blob/929ae6db0e91a4fe58fcb5d500cb9f49911b4734/README.md",
+          "sha256": "2b07034e86d0b8940f24b9692598ca0d683e1fbc14c8bb461bf80c9b5b3338a8",
+          "bytes": 153
+        },
+        "root_names": [
+          "README.md",
+          "datasets.py",
+          "dmf_final.py",
+          "engine.py",
+          "main.py",
+          "object_detection",
+          "optim_factory.py",
+          "requirements.txt",
+          "sampler.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 164,
+      "arxiv_id": "2310.13583",
+      "repo_url": "https://github.com/ofirarviv/ud-based-word-reordering",
+      "arxiv": {
+        "versioned_id": "2310.13583v1",
+        "primary_category": "cs.CL",
+        "title": "Improving Cross-Lingual Transfer through Subtree-Aware Word Reordering",
+        "abstract": "Despite the impressive growth of the abilities of multilingual language models, such as XLM-R and mT5, it has been shown that they still face difficulties when tackling typologically-distant languages, particularly in the low-resource setting. One obstacle for effective cross-lingual transfer is variability in word-order patterns. It can be potentially mitigated via source- or target-side word reordering, and numerous approaches to reordering have been proposed. However, they rely on language-specific rules, work on the level of POS tags, or only target the main clause, leaving subordinate clauses intact. To address these limitations, we present a new powerful reordering method, defined in terms of Universal Dependencies, that is able to learn fine-grained word-order patterns conditioned on the syntactic context from a small amount of annotated data and can be applied at all levels of the syntactic tree. We conduct experiments on a diverse set of tasks and show that our method consistently outperforms strong baselines over different language pairs and model architectures. This performance advantage holds true in both zero-shot and few-shot scenarios."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ofirarviv/ud-based-word-reordering",
+        "exists": true,
+        "full_name": "OfirArviv/ud-based-word-reordering",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "49a7b2a29514f1765698e3d4d71fced42e84ed13",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/OfirArviv/ud-based-word-reordering/blob/49a7b2a29514f1765698e3d4d71fced42e84ed13/README.md",
+          "sha256": "82e61beb316cadfd99dacca7816043102ebe23ce8dd0f60c519da1c563648229",
+          "bytes": 6373
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "reordering_package",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 165,
+      "arxiv_id": "2311.08077",
+      "repo_url": "https://github.com/vbmaq/et-sam",
+      "arxiv": {
+        "versioned_id": "2311.08077v2",
+        "primary_category": "cs.CV",
+        "title": "Zero-Shot Segmentation of Eye Features Using the Segment Anything Model (SAM)",
+        "abstract": "The advent of foundation models signals a new era in artificial intelligence. The Segment Anything Model (SAM) is the first foundation model for image segmentation. In this study, we evaluate SAM's ability to segment features from eye images recorded in virtual reality setups. The increasing requirement for annotated eye-image datasets presents a significant opportunity for SAM to redefine the landscape of data annotation in gaze estimation. Our investigation centers on SAM's zero-shot learning abilities and the effectiveness of prompts like bounding boxes or point clicks. Our results are consistent with studies in other domains, demonstrating that SAM's segmentation effectiveness can be on-par with specialized models depending on the feature, with prompts improving its performance, evidenced by an IoU of 93.34% for pupil segmentation in one dataset. Foundation models like SAM could revolutionize gaze estimation by enabling quick and easy image segmentation, reducing reliance on specialized models and extensive manual annotation."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/vbmaq/et-sam",
+        "exists": true,
+        "full_name": "vbmaq/ET-SAM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b30f23b12f3708e4771c4fc09335163553213c6d",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/vbmaq/ET-SAM/blob/b30f23b12f3708e4771c4fc09335163553213c6d/README.md",
+          "sha256": "f75687cb5b68e6eb811e61b04f4dc82af6388fe3c54b64e32cb9c577459dc399",
+          "bytes": 603
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "evaluate_SAM_VITB.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 166,
+      "arxiv_id": "2302.04862",
+      "repo_url": "https://github.com/stevenygd/pnf",
+      "arxiv": {
+        "versioned_id": "2302.04862v1",
+        "primary_category": "cs.CV",
+        "title": "Polynomial Neural Fields for Subband Decomposition and Manipulation",
+        "abstract": "Neural fields have emerged as a new paradigm for representing signals, thanks to their ability to do it compactly while being easy to optimize. In most applications, however, neural fields are treated like black boxes, which precludes many signal manipulation tasks. In this paper, we propose a new class of neural fields called polynomial neural fields (PNFs). The key advantage of a PNF is that it can represent a signal as a composition of a number of manipulable and interpretable components without losing the merits of neural fields representation. We develop a general theoretical framework to analyze and design PNFs. We use this framework to design Fourier PNFs, which match state-of-the-art performance in signal representation tasks that use neural fields. In addition, we empirically demonstrate that Fourier PNFs enable signal manipulation applications such as texture transfer and scale-space interpolation. Code is available at https://github.com/stevenygd/PNF."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/stevenygd/pnf",
+        "exists": true,
+        "full_name": "stevenygd/PNF",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3eb6255bbc62549ea3f7b1adbcc63f581a4b6a6c",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/stevenygd/PNF/blob/3eb6255bbc62549ea3f7b1adbcc63f581a4b6a6c/README.md",
+          "sha256": "7165decdeabb2c316052cff0fe5f5b5da905caa65b03c37410d4d329a5eb6f48",
+          "bytes": 3199
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "configs",
+          "data",
+          "datasets",
+          "docs",
+          "environment.yml",
+          "models",
+          "train.py",
+          "trainers",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 167,
+      "arxiv_id": "2306.06360",
+      "repo_url": "https://github.com/kshitijkarnawat/structure-from-motion",
+      "arxiv": {
+        "versioned_id": "2306.06360v1",
+        "primary_category": "cs.CV",
+        "title": "3D reconstruction using Structure for Motion",
+        "abstract": "We are working towards 3D reconstruction of indoor spaces using a pair of HDR cameras in a stereo vision configuration mounted on an indoor mobile floor robot that captures various textures and spatial features as 2D images and this data is simultaneously utilized as a feed to our algorithm which will allow us to visualize the depth map."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kshitijkarnawat/structure-from-motion",
+        "exists": true,
+        "full_name": "KshitijKarnawat/Structure-from-Motion",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "002d302dd2db409e6b0218df1ba421982872ca1c",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/KshitijKarnawat/Structure-from-Motion/blob/002d302dd2db409e6b0218df1ba421982872ca1c/README.md",
+          "sha256": "922e6e8a559b1ff80a57ea88acbc12d6161d8935836c509e66f08184d4c51cee",
+          "bytes": 2793
+        },
+        "root_names": [
+          ".gitignore",
+          "Data",
+          "LICENSE",
+          "README.md",
+          "chess",
+          "models",
+          "requirements.txt",
+          "scripts"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 168,
+      "arxiv_id": "2404.18001",
+      "repo_url": "https://github.com/zeyang919/llmparser",
+      "arxiv": {
+        "versioned_id": "2404.18001v1",
+        "primary_category": "cs.SE",
+        "title": "LLMParser: An Exploratory Study on Using Large Language Models for Log Parsing",
+        "abstract": "Logs are important in modern software development with runtime information. Log parsing is the first step in many log-based analyses, that involve extracting structured information from unstructured log data. Traditional log parsers face challenges in accurately parsing logs due to the diversity of log formats, which directly impacts the performance of downstream log-analysis tasks. In this paper, we explore the potential of using Large Language Models (LLMs) for log parsing and propose LLMParser, an LLM-based log parser based on generative LLMs and few-shot tuning. We leverage four LLMs, Flan-T5-small, Flan-T5-base, LLaMA-7B, and ChatGLM-6B in LLMParsers. Our evaluation of 16 open-source systems shows that LLMParser achieves statistically significantly higher parsing accuracy than state-of-the-art parsers (a 96% average parsing accuracy). We further conduct a comprehensive empirical analysis on the effect of training size, model size, and pre-training LLM on log parsing accuracy. We find that smaller LLMs may be more effective than more complex LLMs; for instance where Flan-T5-base achieves comparable results as LLaMA-7B with a shorter inference time. We also find that using LLMs pre-trained using logs from other systems does not always improve parsing accuracy. While using pre-trained Flan-T5-base shows an improvement in accuracy, pre-trained LLaMA results in a decrease (decrease by almost 55% in group accuracy). In short, our study provides empirical evidence for using LLMs for log parsing and highlights the limitations and future research direction of LLM-based log parsers."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zeyang919/llmparser",
+        "exists": true,
+        "full_name": "zeyang919/LLMParser",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "142068b53b3bff3369f8dd86ec4767aa5a76f891",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/zeyang919/LLMParser/blob/142068b53b3bff3369f8dd86ec4767aa5a76f891/README.md",
+          "sha256": "5225c8af58925a5961ae91ac8b7bacc2d7185ab1c6800005f4398ede765bedf6",
+          "bytes": 4888
+        },
+        "root_names": [
+          "LLMs",
+          "README.md",
+          "chatglm",
+          "data_sampling.py",
+          "docs",
+          "env_init.sh",
+          "evaluate",
+          "flan-t5",
+          "llama",
+          "logs",
+          "output",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 169,
+      "arxiv_id": "2303.16761",
+      "repo_url": "https://github.com/lyuchenyang/dialogue-to-video-retrieval",
+      "arxiv": {
+        "versioned_id": "2303.16761v1",
+        "primary_category": "cs.IR",
+        "title": "Dialogue-to-Video Retrieval",
+        "abstract": "Recent years have witnessed an increasing amount of dialogue/conversation on the web especially on social media. That inspires the development of dialogue-based retrieval, in which retrieving videos based on dialogue is of increasing interest for recommendation systems. Different from other video retrieval tasks, dialogue-to-video retrieval uses structured queries in the form of user-generated dialogue as the search descriptor. We present a novel dialogue-to-video retrieval system, incorporating structured conversational information. Experiments conducted on the AVSD dataset show that our proposed approach using plain-text queries improves over the previous counterpart model by 15.8% on R@1. Furthermore, our approach using dialogue as a query, improves retrieval performance by 4.2%, 6.2%, 8.6% on R@1, R@5 and R@10 and outperforms the state-of-the-art model by 0.7%, 3.6% and 6.0% on R@1, R@5 and R@10 respectively."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lyuchenyang/dialogue-to-video-retrieval",
+        "exists": true,
+        "full_name": "lyuchenyang/Dialogue-to-Video-Retrieval",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a1c7059456a18abdb8ddaa5c7c7f0cd57572e891",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/lyuchenyang/Dialogue-to-Video-Retrieval/blob/a1c7059456a18abdb8ddaa5c7c7f0cd57572e891/README.md",
+          "sha256": "3794c8b308d6d5274dd8803ba9c37dad3bcc7863fe08f5f62164b8879386afbd",
+          "bytes": 4228
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "data",
+          "data_preprocess.py",
+          "modeling.py",
+          "run_dialogue_to_video_retrieval.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 170,
+      "arxiv_id": "2303.08625",
+      "repo_url": "https://github.com/andruekonst/hrbm",
+      "arxiv": {
+        "versioned_id": "2303.08625v1",
+        "primary_category": "cs.LG",
+        "title": "Interpretable Ensembles of Hyper-Rectangles as Base Models",
+        "abstract": "A new extremely simple ensemble-based model with the uniformly generated axis-parallel hyper-rectangles as base models (HRBM) is proposed. Two types of HRBMs are studied: closed rectangles and corners. The main idea behind HRBM is to consider and count training examples inside and outside each rectangle. It is proposed to incorporate HRBMs into the gradient boosting machine (GBM). Despite simplicity of HRBMs, it turns out that these simple base models allow us to construct effective ensemble-based models and avoid overfitting. A simple method for calculating optimal regularization parameters of the ensemble-based model, which can be modified in the explicit way at each iteration of GBM, is considered. Moreover, a new regularization called the \"step height penalty\" is studied in addition to the standard L1 and L2 regularizations. An extremely simple approach to the proposed ensemble-based model prediction interpretation by using the well-known method SHAP is proposed. It is shown that GBM with HRBM can be regarded as a model extending a set of interpretable models for explaining black-box models. Numerical experiments with real datasets illustrate the proposed GBM with HRBMs for regression and classification problems. Experiments also illustrate computational efficiency of the proposed SHAP modifications. The code of proposed algorithms implementing GBM with HRBM is publicly available."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/andruekonst/hrbm",
+        "exists": true,
+        "full_name": "andruekonst/HRBM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "eeb5395446ff50f4a17732074fa770a8df54c84a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/andruekonst/HRBM/blob/eeb5395446ff50f4a17732074fa770a8df54c84a/README.md",
+          "sha256": "2d46ccaa3b2a43ac63f27b42c75cfe79625c2941c62cfa5abb31fe13b53ece99",
+          "bytes": 2293
+        },
+        "root_names": [
+          "README.md",
+          "hrbm",
+          "notebooks",
+          "requirements.txt",
+          "setup.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 171,
+      "arxiv_id": "2405.09843",
+      "repo_url": "https://gitlab.com/ComputationalScience/multiwinner-selection",
+      "arxiv": {
+        "versioned_id": "2405.09843v1",
+        "primary_category": "econ.TH",
+        "title": "Organizational Selection of Innovation",
+        "abstract": "Budgetary constraints force organizations to pursue only a subset of possible innovation projects. Identifying which subset is most promising is an error-prone exercise, and involving multiple decision makers may be prudent. This raises the question of how to most effectively aggregate their collective nous. Our model of organizational portfolio selection provides some first answers. We show that portfolio performance can vary widely. Delegating evaluation makes sense when organizations employ the relevant experts and can assign projects to them. In most other settings, aggregating the impressions of multiple agents leads to better performance than delegation. In particular, letting agents rank projects often outperforms alternative aggregation rules -- including averaging agents' project scores as well as counting their approval votes -- especially when organizations have tight budgets and can select only a few project alternatives out of many."
+      },
+      "repository": {
+        "host": "other",
+        "url": "https://gitlab.com/ComputationalScience/multiwinner-selection",
+        "root_names": null
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category econ.TH"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 172,
+      "arxiv_id": "2410.23425",
+      "repo_url": "https://github.com/pivlab/annual_review_of_biomedical_data_science",
+      "arxiv": {
+        "versioned_id": "2410.23425v1",
+        "primary_category": "q-bio.MN",
+        "title": "Genetic studies through the lens of gene networks",
+        "abstract": "Understanding the genetic basis of complex traits is a longstanding challenge in the field of genomics. Genome-wide association studies (GWAS) have identified thousands of variant-trait associations, but most of these variants are located in non-coding regions, making the link to biological function elusive. While traditional approaches, such as transcriptome-wide association studies (TWAS), have advanced our understanding by linking genetic variants to gene expression, they often overlook gene-gene interactions. Here, we review current approaches to integrate different molecular data, leveraging machine learning methods to identify gene modules based on co-expression and functional relationships. These integrative approaches, like PhenoPLIER, combine TWAS and drug-induced transcriptional profiles to effectively capture biologically meaningful gene networks. This integration provides a context-specific understanding of disease processes while highlighting both core and peripheral genes. These insights pave the way for novel therapeutic targets and enhance the interpretability of genetic studies in personalized medicine."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/pivlab/annual_review_of_biomedical_data_science",
+        "exists": true,
+        "full_name": "pivlab/annual_review_of_biomedical_data_science",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c4cb0c6958c022c451e3e04e17581813a3cb424e",
+        "license_spdx": "CC-BY-4.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/pivlab/annual_review_of_biomedical_data_science/blob/c4cb0c6958c022c451e3e04e17581813a3cb424e/README.md",
+          "sha256": "4727c801bbfd24f8e1eb8f360094f1630fc2cbd03f032a9560133a18827e17e8",
+          "bytes": 7204
+        },
+        "root_names": [
+          ".github",
+          ".gitignore",
+          "LICENSE-CC0.md",
+          "LICENSE.md",
+          "README.md",
+          "SETUP.md",
+          "USAGE.md",
+          "build",
+          "ci",
+          "content",
+          "output",
+          "setup.bash",
+          "webpage"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.MN"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 173,
+      "arxiv_id": "2405.17879",
+      "repo_url": "https://github.com/langfengq/tree-diffusion-planner",
+      "arxiv": {
+        "versioned_id": "2405.17879v2",
+        "primary_category": "cs.LG",
+        "title": "Resisting Stochastic Risks in Diffusion Planners with the Trajectory Aggregation Tree",
+        "abstract": "Diffusion planners have shown promise in handling long-horizon and sparse-reward tasks due to the non-autoregressive plan generation. However, their inherent stochastic risk of generating infeasible trajectories presents significant challenges to their reliability and stability. We introduce a novel approach, the Trajectory Aggregation Tree (TAT), to address this issue in diffusion planners. Compared to prior methods that rely solely on raw trajectory predictions, TAT aggregates information from both historical and current trajectories, forming a dynamic tree-like structure. Each trajectory is conceptualized as a branch and individual states as nodes. As the structure evolves with the integration of new trajectories, unreliable states are marginalized, and the most impactful nodes are prioritized for decision-making. TAT can be deployed without modifying the original training and sampling pipelines of diffusion planners, making it a training-free, ready-to-deploy solution. We provide both theoretical analysis and empirical evidence to support TAT's effectiveness. Our results highlight its remarkable ability to resist the risk from unreliable trajectories, guarantee the performance boosting of diffusion planners in $100\\%$ of tasks, and exhibit an appreciable tolerance margin for sample quality, thereby enabling planning with a more than $3\\times$ acceleration."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/langfengq/tree-diffusion-planner",
+        "exists": true,
+        "full_name": "langfengQ/tree-diffusion-planner",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "cebcc002167279d9ae2689861eff726b2c0fd214",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/langfengQ/tree-diffusion-planner/blob/cebcc002167279d9ae2689861eff726b2c0fd214/README.md",
+          "sha256": "6ca96f317e73b9cca49ca18c5fc7f851da7d83e63a25029e5cce50e9cac78743",
+          "bytes": 3709
+        },
+        "root_names": [
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 174,
+      "arxiv_id": "2308.02129",
+      "repo_url": "https://github.com/msinghal10/yelp-unfairness",
+      "arxiv": {
+        "versioned_id": "2308.02129v2",
+        "primary_category": "cs.CY",
+        "title": "Auditing Yelp's Business Ranking and Review Recommendation Through the Lens of Fairness",
+        "abstract": "Auditing is critical to ensuring the fairness and reliability of decision-making systems. However, auditing a black-box system for bias can be challenging due to the lack of transparency in the model's internal workings. In many web applications, such as Yelp, it is challenging, if not impossible, to manipulate their inputs systematically to identify bias in the output. Yelp connects users and businesses, where users identify new businesses and simultaneously express their experiences through reviews. Yelp recommendation software moderates user-provided content by categorizing it into recommended and not-recommended sections. The recommended reviews, among other attributes, are used by Yelp's ranking algorithm to rank businesses in a neighborhood. Due to Yelp's substantial popularity and its high impact on local businesses' success, understanding the bias of its algorithms is crucial. This data-driven study, for the first time, investigates the bias of Yelp's business ranking and review recommendation system. We examine three hypotheses to assess if Yelp's recommendation software shows bias against reviews of less established users with fewer friends and reviews and if Yelp's business ranking algorithm shows bias against restaurants located in specific neighborhoods, particularly in hotspot regions, with specific demographic compositions. Our findings show that reviews of less-established users are disproportionately categorized as not-recommended. We also find a positive association between restaurants' location in hotspot regions and their average exposure. Furthermore, we observed some cases of severe disparity bias in cities where the hotspots are in neighborhoods with less demographic diversity or higher affluence and education levels."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/msinghal10/yelp-unfairness",
+        "exists": true,
+        "full_name": "msinghal10/Yelp-Unfairness",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "c98e9e9ade096e4ac0bd71f329bfac10b6236b0a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/msinghal10/Yelp-Unfairness/blob/c98e9e9ade096e4ac0bd71f329bfac10b6236b0a/README.md",
+          "sha256": "1cb15ae3c8413319837d06c10de01f39c77a3b5a945ebd6dac83cf37fe97f108",
+          "bytes": 1002
+        },
+        "root_names": [
+          ".DS_Store",
+          "Auditing Yelp's Business Ranking and Review Recommendation Through the Lens of Fairness [Scalable Data Science] -Supplimentary.pdf",
+          "Not-Recommended-Reviews",
+          "README.md",
+          "ranking",
+          "recommendation"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CY"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 175,
+      "arxiv_id": "2505.05156",
+      "repo_url": "https://github.com/kavyarsaxena/me_reg_taslp",
+      "arxiv": {
+        "versioned_id": "2505.05156v2",
+        "primary_category": "eess.AS",
+        "title": "Uncertainty Quantification in Melody Estimation using Histogram Representation",
+        "abstract": "Confidence estimation can improve the reliability of melody estimation by indicating which predictions are likely incorrect. The existing classification-based approach provides confidence for predicted pitch classes but fails to capture the magnitude of deviation from the ground truth. To address this limitation, we reformulate melody estimation as a regression problem and propose a novel approach to estimate uncertainty directly from the histogram representation of the pitch values, which correlates well with the deviation between the prediction and the ground-truth. We design three methods to model pitch on a continuous support range of histogram, which introduces the challenge of handling the discontinuity of unvoiced from the voiced pitch values. The first two methods address the abrupt discontinuity by mapping the pitch values to a continuous range, while the third adopts a fully Bayesian formulation, which models voicing detection as a classification and voiced pitch estimation as a regression task. Experimental results demonstrate that regression-based formulations yield more reliable uncertainty estimates compared to classification-based approaches in identifying incorrect pitch predictions. Comparing the proposed methods with a state-of-the-art regression model, it is observed that the Bayesian method performs the best at estimating both the melody and its associated uncertainty."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kavyarsaxena/me_reg_taslp",
+        "exists": true,
+        "full_name": "KavyaRSaxena/me_unc_reg",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "66ca1ef518791dd0671bf23a2bc0b3304726daa8",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/KavyaRSaxena/me_unc_reg/blob/66ca1ef518791dd0671bf23a2bc0b3304726daa8/README.md",
+          "sha256": "32a2265a98a395d2c87240ab9b345d5f9bbabd7bfd756107a8e23e96a562a21c",
+          "bytes": 1019
+        },
+        "root_names": [
+          "LICENSE.txt",
+          "README.md",
+          "model_weights",
+          "requirements.txt",
+          "testing_codes",
+          "total_mean.npy",
+          "total_std.npy",
+          "training_codes"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.AS"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T03:23:59Z"
+}

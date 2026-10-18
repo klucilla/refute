@@ -1,0 +1,1310 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:26:26Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 9,
+  "candidates": [
+    {
+      "position": 201,
+      "arxiv_id": "2402.09178",
+      "repo_url": "https://github.com/dxomark-research/piq2023",
+      "arxiv": {
+        "versioned_id": "2402.09178v1",
+        "primary_category": "cs.CV",
+        "title": "Generalized Portrait Quality Assessment",
+        "abstract": "Automated and robust portrait quality assessment (PQA) is of paramount importance in high-impact applications such as smartphone photography. This paper presents FHIQA, a learning-based approach to PQA that introduces a simple but effective quality score rescaling method based on image semantics, to enhance the precision of fine-grained image quality metrics while ensuring robust generalization to various scene settings beyond the training dataset. The proposed approach is validated by extensive experiments on the PIQ23 benchmark and comparisons with the current state of the art. The source code of FHIQA will be made publicly available on the PIQ23 GitHub repository at https://github.com/DXOMARK-Research/PIQ2023."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/dxomark-research/piq2023",
+        "exists": true,
+        "full_name": "DXOMARK-Research/PIQ2023",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "4a20fa824c7d082c00277229238b71a78067af3f",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/DXOMARK-Research/PIQ2023/blob/4a20fa824c7d082c00277229238b71a78067af3f/README.md",
+          "sha256": "90116c408def6b7cbb51ad6e82c9948522858323d72c80468a41f856a6260f24",
+          "bytes": 13381
+        },
+        "root_names": [
+          "Imgs",
+          "Metadata",
+          "NTIRE24",
+          "README.md",
+          "Scores",
+          "Test split example.ipynb",
+          "Test split",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 202,
+      "arxiv_id": "2312.13961",
+      "repo_url": "https://github.com/raydentseng/generated_opinions",
+      "arxiv": {
+        "versioned_id": "2312.13961v1",
+        "primary_category": "cs.CL",
+        "title": "ChatGPT as a commenter to the news: can LLMs generate human-like opinions?",
+        "abstract": "ChatGPT, GPT-3.5, and other large language models (LLMs) have drawn significant attention since their release, and the abilities of these models have been investigated for a wide variety of tasks. In this research we investigate to what extent GPT-3.5 can generate human-like comments on Dutch news articles. We define human likeness as `not distinguishable from human comments', approximated by the difficulty of automatic classification between human and GPT comments. We analyze human likeness across multiple prompting techniques. In particular, we utilize zero-shot, few-shot and context prompts, for two generated personas. We found that our fine-tuned BERT models can easily distinguish human-written comments from GPT-3.5 generated comments, with none of the used prompting methods performing noticeably better. We further analyzed that human comments consistently showed higher lexical diversity than GPT-generated comments. This indicates that although generative LLMs can generate fluent text, their capability to create human-like opinionated comments is still limited."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/raydentseng/generated_opinions",
+        "exists": true,
+        "full_name": "raydentseng/generated_opinions",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b535fc4d9322d69000c198c607cdb5d5096b5085",
+        "license_spdx": null,
+        "readme": null,
+        "root_names": [
+          "article_1",
+          "article_10",
+          "article_2",
+          "article_3",
+          "article_4",
+          "article_5",
+          "article_6",
+          "article_7",
+          "article_8",
+          "article_9",
+          "article_urls.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 203,
+      "arxiv_id": "2412.20878",
+      "repo_url": "https://github.com/mabdula/isabelle-graph-library",
+      "arxiv": {
+        "versioned_id": "2412.20878v3",
+        "primary_category": "cs.LO",
+        "title": "A Formal Correctness Proof of Edmonds' Blossom Shrinking Algorithm",
+        "abstract": "We present the first formal correctness proof of Edmonds' blossom shrinking algorithm for maximum cardinality matching in general graphs. We focus on formalising the mathematical structures and properties that allow the algorithm to run in worst-case polynomial running time. We formalise Berge's lemma, blossoms and their properties, and a mathematical model of the algorithm, showing that it is totally correct. We provide the first detailed proofs of many of the facts underlying the algorithm's correctness."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mabdula/isabelle-graph-library",
+        "exists": true,
+        "full_name": "mabdula/Isabelle-Graph-Library",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "49f0962ad6b7752d5555fc6b748f45b89e1df169",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/mabdula/Isabelle-Graph-Library/blob/49f0962ad6b7752d5555fc6b748f45b89e1df169/README.md",
+          "sha256": "88781978a33d80f3e284979863fdcb0b5c35f272cc8ffd78b31e06658600da18",
+          "bytes": 3930
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          "Alternating_Lists",
+          "Basic_Matching",
+          "Berge_Formula",
+          "Data_Structures",
+          "Dinic",
+          "Edmonds_Blossom_Algorithm",
+          "Flow_Theory",
+          "Greedoids",
+          "Hungarian_Method",
+          "Imperative",
+          "Matching_LPs",
+          "Matroid_Intersection",
+          "Matroids_Greedy",
+          "Mincost_Flow_Algorithms",
+          "Primal_Dual_Bipartite_Matching",
+          "RANKING",
+          "README.md",
+          "ROOTS",
+          "Set_Graphs",
+          "Spanning_Trees",
+          "TODO.md",
+          "Tutte_Theorem"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.LO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 204,
+      "arxiv_id": "2305.02715",
+      "repo_url": "https://github.com/daandelabie/acousticsimulationframework",
+      "arxiv": {
+        "versioned_id": "2305.02715v2",
+        "primary_category": "eess.AS",
+        "title": "An Acoustic Simulation Framework to Support Indoor Positioning and Data Driven Signal Processing Assessments",
+        "abstract": "We present an indoor acoustic simulation framework that supports both ultrasonic and audible signaling. The framework opens the opportunity for fast indoor acoustic data generation and positioning development. The improved Pyroomacoustics-based physical model includes both an image-source model (ISM) and ray tracing method to simulate acoustic signaling in geometric spaces that extend typical shoe-box rooms. Moreover, it offers the convenience to facilitate multiple speakers and microphones with different directivity patterns. In addition to temperature and air absorption, the room reverberation is taken into account characterized by the RT60 value or the combination of building materials. Additional noise sources can be added by means of post processing and/or extra speakers. Indoor positioning methods assessed in simulation are compared with real measurements in a testbed, called 'Techtile'. This analysis confirms that the simulation results are close to the measurements and form a realistic representation of the reality. The simulation framework is constructed in a modular way, and parts can be replaced or modified to support different application domains. The code is made available open source."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/daandelabie/acousticsimulationframework",
+        "exists": true,
+        "full_name": "DaanDelabie/AcousticSimulationFramework",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2ef5ae6aedcbd0e54211ebedcf5ddc41dfa25069",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/DaanDelabie/AcousticSimulationFramework/blob/2ef5ae6aedcbd0e54211ebedcf5ddc41dfa25069/README.md",
+          "sha256": "18a6223c9cac172a4e98badd1e1e5393cf8d2468b809dc89cbe67cb8d328f7c2",
+          "bytes": 1097
+        },
+        "root_names": [
+          "PHY.py",
+          "Positioning_engine.py",
+          "PostProcessing.py",
+          "README.md",
+          "analysis.py",
+          "config.json",
+          "localFunctions.py",
+          "materials.json",
+          "room.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.AS"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 205,
+      "arxiv_id": "2406.11210",
+      "repo_url": "https://github.com/kyusik-cho/zsscd",
+      "arxiv": {
+        "versioned_id": "2406.11210v3",
+        "primary_category": "cs.CV",
+        "title": "Zero-Shot Scene Change Detection",
+        "abstract": "We present a novel, training-free approach to scene change detection. Our method leverages tracking models, which inherently perform change detection between consecutive frames of video by identifying common objects and detecting new or missing objects. Specifically, our method takes advantage of the change detection effect of the tracking model by inputting reference and query images instead of consecutive frames. Furthermore, we focus on the content gap and style gap between two input images in change detection, and address both issues by proposing adaptive content threshold and style bridging layers, respectively. Finally, we extend our approach to video, leveraging rich temporal information to enhance the performance of scene change detection. We compare our approach and baseline through various experiments. While existing train-based baseline tend to specialize only in the trained domain, our method shows consistent performance across various domains, proving the competitiveness of our approach."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kyusik-cho/zsscd",
+        "exists": true,
+        "full_name": "kyusik-cho/ZSSCD",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "fec8cdbfcb3338e128c3c0b7dcf093253327e142",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/kyusik-cho/ZSSCD/blob/fec8cdbfcb3338e128c3c0b7dcf093253327e142/README.md",
+          "sha256": "6ddc7af4511f0416dace2d7e065ff3accf34997e2e4c3746cb98018ecf75d311",
+          "bytes": 4153
+        },
+        "root_names": [
+          "LICENSE.md",
+          "README.md",
+          "assets",
+          "dataset",
+          "deva",
+          "environment.yml",
+          "eval_utils.py",
+          "funcs.py",
+          "main.py",
+          "model",
+          "utils_funcs.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 206,
+      "arxiv_id": "2406.18731",
+      "repo_url": "https://github.com/zhu00121/wavrx",
+      "arxiv": {
+        "versioned_id": "2406.18731v1",
+        "primary_category": "eess.AS",
+        "title": "WavRx: a Disease-Agnostic, Generalizable, and Privacy-Preserving Speech Health Diagnostic Model",
+        "abstract": "Speech is known to carry health-related attributes, which has emerged as a novel venue for remote and long-term health monitoring. However, existing models are usually tailored for a specific type of disease, and have been shown to lack generalizability across datasets. Furthermore, concerns have been raised recently towards the leakage of speaker identity from health embeddings. To mitigate these limitations, we propose WavRx, a speech health diagnostics model that captures the respiration and articulation related dynamics from a universal speech representation. Our in-domain and cross-domain experiments on six pathological speech datasets demonstrate WavRx as a new state-of-the-art health diagnostic model. Furthermore, we show that the amount of speaker identity entailed in the WavRx health embeddings is significantly reduced without extra guidance during training. An in-depth analysis of the model was performed, thus providing physiological interpretation of its improved generalizability and privacy-preserving ability."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zhu00121/wavrx",
+        "exists": true,
+        "full_name": "zhu00121/WavRx",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "ecd63a0fbdc48d954d7630d927f97222d134ccdd",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/zhu00121/WavRx/blob/ecd63a0fbdc48d954d7630d927f97222d134ccdd/README.md",
+          "sha256": "c252ab238ac9af1f3c042b8853660bbca07c03c5a2405c437f3b9004125a6219",
+          "bytes": 7524
+        },
+        "root_names": [
+          "README.md",
+          "data_og",
+          "data_prep.md",
+          "demos",
+          "exps",
+          "model",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.AS"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 207,
+      "arxiv_id": "2403.02237",
+      "repo_url": "https://github.com/souvik5151/appell_lauricella_saran_functions",
+      "arxiv": {
+        "versioned_id": "2403.02237v2",
+        "primary_category": "hep-ph",
+        "title": "Analytic continuations and numerical evaluation of the Appell $F_1$, $F_3$, Lauricella $F_D^{(3)}$ and Lauricella-Saran $F_S^{(3)}$ and their Application to Feynman Integrals",
+        "abstract": "We present our investigation of the study of two variable hypergeometric series, namely Appell $F_{1}$ and $F_{3}$ series, and obtain a comprehensive list of its analytic continuations enough to cover the whole real $(x,y)$ plane, except on their singular loci. We also derive analytic continuations of their 3-variable generalization, the Lauricella $F_{D}^{(3)}$ series and the Lauricella-Saran $F_{S}^{(3)}$ series, leveraging the analytic continuations of $F_{1}$ and $F_{3}$, which ensures that the whole real $(x,y,z)$ space is covered, except on the singular loci of these functions. While these studies are motivated by the frequent occurrence of these multivariable hypergeometric functions in Feynman integral evaluation, they can also be used whenever they appear in other branches of mathematical physics. To facilitate their practical use, we provide four packages: AppellF1$.$wl, AppellF3$.$wl, LauricellaFD$.$wl, and LauricellaSaranFS$.$wl in MATHEMATICA. These packages are applicable for generic as well as non-generic values of parameters, keeping in mind their utilities in the evaluation of the Feynman integrals. We explicitly present various physical applications of these packages in the context of Feynman integral evaluation and compare the results using other packages such as FIESTA. Upon applying the appropriate conventions for numerical evaluation, we find that the results obtained from our packages are consistent. Various Mathematica notebooks demonstrating different numerical results are also provided along with this paper."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/souvik5151/appell_lauricella_saran_functions",
+        "exists": true,
+        "full_name": "souvik5151/Appell_Lauricella_Saran_functions",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "cba69029f9568867643597e945c56ea7f74a7ad5",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/souvik5151/Appell_Lauricella_Saran_functions/blob/cba69029f9568867643597e945c56ea7f74a7ad5/README.md",
+          "sha256": "a42c8fd0b83d2b0b0e5488c53a4d21c60fcb1bd362ba3eada8d4824f150d3a47",
+          "bytes": 1232
+        },
+        "root_names": [
+          "Appell F1",
+          "Appell F3",
+          "LICENSE",
+          "Lauricella FD",
+          "Lauricells-Saran FS",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category hep-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 208,
+      "arxiv_id": "2505.22756",
+      "repo_url": "https://github.com/cfpark00/rl-wall",
+      "arxiv": {
+        "versioned_id": "2505.22756v1",
+        "primary_category": "cs.AI",
+        "title": "Decomposing Elements of Problem Solving: What \"Math\" Does RL Teach?",
+        "abstract": "Mathematical reasoning tasks have become prominent benchmarks for assessing the reasoning capabilities of LLMs, especially with reinforcement learning (RL) methods such as GRPO showing significant performance gains. However, accuracy metrics alone do not support fine-grained assessment of capabilities and fail to reveal which problem-solving skills have been internalized. To better understand these capabilities, we propose to decompose problem solving into fundamental capabilities: Plan (mapping questions to sequences of steps), Execute (correctly performing solution steps), and Verify (identifying the correctness of a solution). Empirically, we find that GRPO mainly enhances the execution skill-improving execution robustness on problems the model already knows how to solve-a phenomenon we call temperature distillation. More importantly, we show that RL-trained models struggle with fundamentally new problems, hitting a 'coverage wall' due to insufficient planning skills. To explore RL's impact more deeply, we construct a minimal, synthetic solution-tree navigation task as an analogy for mathematical problem-solving. This controlled setup replicates our empirical findings, confirming RL primarily boosts execution robustness. Importantly, in this setting, we identify conditions under which RL can potentially overcome the coverage wall through improved exploration and generalization to new solution paths. Our findings provide insights into the role of RL in enhancing LLM reasoning, expose key limitations, and suggest a path toward overcoming these barriers. Code is available at https://github.com/cfpark00/RL-Wall."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/cfpark00/rl-wall",
+        "exists": true,
+        "full_name": "cfpark00/RL-Wall",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4f1ed958b883f9e8dff81590fda068f3fc68dd06",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/cfpark00/RL-Wall/blob/4f1ed958b883f9e8dff81590fda068f3fc68dd06/README.md",
+          "sha256": "73592aa17c3b3129bcd0c66d5953d555e8537b676b01aaa15b377d50558cee12",
+          "bytes": 7438
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          "LICENSE",
+          "README.md",
+          "eval",
+          "math_rl",
+          "synthetic",
+          "tree_vis"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 209,
+      "arxiv_id": "2309.17143",
+      "repo_url": "https://github.com/5k5000/cldetection2023",
+      "arxiv": {
+        "versioned_id": "2309.17143v1",
+        "primary_category": "cs.CV",
+        "title": "Revisiting Cephalometric Landmark Detection from the view of Human Pose Estimation with Lightweight Super-Resolution Head",
+        "abstract": "Accurate localization of cephalometric landmarks holds great importance in the fields of orthodontics and orthognathics due to its potential for automating key point labeling. In the context of landmark detection, particularly in cephalometrics, it has been observed that existing methods often lack standardized pipelines and well-designed bias reduction processes, which significantly impact their performance. In this paper, we revisit a related task, human pose estimation (HPE), which shares numerous similarities with cephalometric landmark detection (CLD), and emphasize the potential for transferring techniques from the former field to benefit the latter. Motivated by this insight, we have developed a robust and adaptable benchmark based on the well-established HPE codebase known as MMPose. This benchmark can serve as a dependable baseline for achieving exceptional CLD performance. Furthermore, we introduce an upscaling design within the framework to further enhance performance. This enhancement involves the incorporation of a lightweight and efficient super-resolution module, which generates heatmap predictions on high-resolution features and leads to further performance refinement, benefiting from its ability to reduce quantization bias. In the MICCAI CLDetection2023 challenge, our method achieves 1st place ranking on three metrics and 3rd place on the remaining one. The code for our method is available at https://github.com/5k5000/CLdetection2023."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/5k5000/cldetection2023",
+        "exists": true,
+        "full_name": "5k5000/CLdetection2023",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "18d17d1934970016e7610c4849311900b8d1f191",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/5k5000/CLdetection2023/blob/18d17d1934970016e7610c4849311900b8d1f191/README.md",
+          "sha256": "51dbb6b76befdbef76cb4e1763dc68be5071607276da957feea0a67a04a4c136",
+          "bytes": 4746
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "Pictures_for_Github_only",
+          "README.md",
+          "cldetection_utils.py",
+          "configs",
+          "inference_single_image.py",
+          "install_env.sh",
+          "mmpose_package",
+          "requirements.txt",
+          "step1_test_mmpose.py",
+          "step2_prepare_coco_dataset.py",
+          "step3_train_and_evaluation.py",
+          "step4_test_and_visualize.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 210,
+      "arxiv_id": "2401.07126",
+      "repo_url": "https://github.com/technioncomputationalmrilab/qdwi-morph",
+      "arxiv": {
+        "versioned_id": "2401.07126v3",
+        "primary_category": "eess.IV",
+        "title": "IVIM-Morph: Motion-compensated quantitative Intra-voxel Incoherent Motion (IVIM) analysis for functional fetal lung maturity assessment from diffusion-weighted MRI data",
+        "abstract": "Quantitative analysis of pseudo-diffusion in diffusion-weighted magnetic resonance imaging (DWI) data shows potential for assessing fetal lung maturation and generating valuable imaging biomarkers. Yet, the clinical utility of DWI data is hindered by unavoidable fetal motion during acquisition. We present IVIM-morph, a self-supervised deep neural network model for motion-corrected quantitative analysis of DWI data using the Intra-voxel Incoherent Motion (IVIM) model. IVIM-morph combines two sub-networks, a registration sub-network, and an IVIM model fitting sub-network, enabling simultaneous estimation of IVIM model parameters and motion. To promote physically plausible image registration, we introduce a biophysically informed loss function that effectively balances registration and model-fitting quality. We validated the efficacy of IVIM-morph by establishing a correlation between the predicted IVIM model parameters of the lung and gestational age (GA) using fetal DWI data of 39 subjects. IVIM-morph exhibited a notably improved correlation with gestational age (GA) when performing in-vivo quantitative analysis of fetal lung DWI data during the canalicular phase. IVIM-morph shows potential in developing valuable biomarkers for non-invasive assessment of fetal lung maturity with DWI data. Moreover, its adaptability opens the door to potential applications in other clinical contexts where motion compensation is essential for quantitative DWI analysis. The IVIM-morph code is readily available at: https://github.com/TechnionComputationalMRILab/qDWI-Morph."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/technioncomputationalmrilab/qdwi-morph",
+        "exists": true,
+        "full_name": "TechnionComputationalMRILab/IVIM-Morph",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1d5e194dccb778516e8e48eb51b11396bf3b2522",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/TechnionComputationalMRILab/IVIM-Morph/blob/1d5e194dccb778516e8e48eb51b11396bf3b2522/README.md",
+          "sha256": "e6000f45f4f3ce5063b3c1911eb0793f2141c726d4ee0020358150c285ab06df",
+          "bytes": 691
+        },
+        "root_names": [
+          ".gitignore",
+          "ECCV2023",
+          "IVIM_Morph",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.IV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 211,
+      "arxiv_id": "2307.15997",
+      "repo_url": "https://github.com/neu-datamining/rocar",
+      "arxiv": {
+        "versioned_id": "2307.15997v2",
+        "primary_category": "cs.CL",
+        "title": "RoCar: A Relationship Network-based Evaluation Method for Large Language Models",
+        "abstract": "Large language models (LLMs) have received increasing attention. However, due to the complexity of its capabilities, how to rationally evaluate the capabilities of LLMs is still a task to be solved. We propose the RoCar method, which utilizes the defined basic schemas to randomly construct a task graph and generates natural language evaluation tasks based on the task graph to evaluate the reasoning and memory abilities of LLMs respectively. Due to the very large randomness of the task construction process, it is possible to ensure that none of the LLMs to be tested has directly learned the evaluation tasks, guaranteeing the fairness of the evaluation method."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/neu-datamining/rocar",
+        "exists": true,
+        "full_name": "NEU-DataMining/RoCar",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2afb9999bec23ccc15b910c8591edac53b1306f3",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/NEU-DataMining/RoCar/blob/2afb9999bec23ccc15b910c8591edac53b1306f3/README.md",
+          "sha256": "889af4ac27c74748f6e483b8fab45aaf4c907553f1a60dc3715224f711e26bdb",
+          "bytes": 2452
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "antonomasia.csv",
+          "derivation_rules.txt",
+          "figures",
+          "memory.txt",
+          "pre_prompts.txt",
+          "reasoning.txt",
+          "task_graph.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 212,
+      "arxiv_id": "2407.04241",
+      "repo_url": "https://github.com/crispyfeso4/anysr",
+      "arxiv": {
+        "versioned_id": "2407.04241v2",
+        "primary_category": "cs.CV",
+        "title": "AnySR: Realizing Image Super-Resolution as Any-Scale, Any-Resource",
+        "abstract": "In an effort to improve the efficiency and scalability of single-image super-resolution (SISR) applications, we introduce AnySR, to rebuild existing arbitrary-scale SR methods into any-scale, any-resource implementation. As a contrast to off-the-shelf methods that solve SR tasks across various scales with the same computing costs, our AnySR innovates in: 1) building arbitrary-scale tasks as any-resource implementation, reducing resource requirements for smaller scales without additional parameters; 2) enhancing any-scale performance in a feature-interweaving fashion, inserting scale pairs into features at regular intervals and ensuring correct feature/scale processing. The efficacy of our AnySR is fully demonstrated by rebuilding most existing arbitrary-scale SISR methods and validating on five popular SISR test datasets. The results show that our AnySR implements SISR tasks in a computing-more-efficient fashion, and performs on par with existing arbitrary-scale SISR methods. For the first time, we realize SISR tasks as not only any-scale in literature, but also as any-resource. Code is available at https://github.com/CrispyFeSo4/AnySR."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/crispyfeso4/anysr",
+        "exists": true,
+        "full_name": "CrispyFeSo4/AnySR",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "201f773fc29764ee8f98b4f4de51a20607c6eaea",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/CrispyFeSo4/AnySR/blob/201f773fc29764ee8f98b4f4de51a20607c6eaea/README.md",
+          "sha256": "1c722e647b50829234b97efb5df89edc14216e40039e47591fa9ced556c87370",
+          "bytes": 2230
+        },
+        "root_names": [
+          "Adam.py",
+          "LICENSE",
+          "README.md",
+          "configs",
+          "datasets",
+          "demo.py",
+          "models",
+          "scheduler.py",
+          "test-benchmark.sh",
+          "test.py",
+          "train.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 213,
+      "arxiv_id": "2312.11176",
+      "repo_url": "https://github.com/ningliu-iga/clawno",
+      "arxiv": {
+        "versioned_id": "2312.11176v3",
+        "primary_category": "cs.LG",
+        "title": "Harnessing the Power of Neural Operators with Automatically Encoded Conservation Laws",
+        "abstract": "Neural operators (NOs) have emerged as effective tools for modeling complex physical systems in scientific machine learning. In NOs, a central characteristic is to learn the governing physical laws directly from data. In contrast to other machine learning applications, partial knowledge is often known a priori about the physical system at hand whereby quantities such as mass, energy and momentum are exactly conserved. Currently, NOs have to learn these conservation laws from data and can only approximately satisfy them due to finite training data and random noise. In this work, we introduce conservation law-encoded neural operators (clawNOs), a suite of NOs that endow inference with automatic satisfaction of such conservation laws. ClawNOs are built with a divergence-free prediction of the solution field, with which the continuity equation is automatically guaranteed. As a consequence, clawNOs are compliant with the most fundamental and ubiquitous conservation laws essential for correct physical consistency. As demonstrations, we consider a wide variety of scientific applications ranging from constitutive modeling of material deformation, incompressible fluid dynamics, to atmospheric simulation. ClawNOs significantly outperform the state-of-the-art NOs in learning efficacy, especially in small-data regimes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ningliu-iga/clawno",
+        "exists": true,
+        "full_name": "ningliu-iga/clawNO",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1c549dbf1d06dc35a8a5df2b897c62aa2f9db186",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ningliu-iga/clawNO/blob/1c549dbf1d06dc35a8a5df2b897c62aa2f9db186/README.md",
+          "sha256": "17dc983c16c12f1006f08b8cbf67ce1c948bfdea3d7f03db92506b1fa8d6208d",
+          "bytes": 3801
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "assets",
+          "clawINO_lps_cir.py",
+          "data_gen",
+          "egcl_mat_cir.py",
+          "experiments_baseline_sw3d.py",
+          "experiments_clawNO.py",
+          "experiments_clawNO_sw3d.py",
+          "models",
+          "models_sw",
+          "setup.sh",
+          "utils.py",
+          "utils_mat_cir.py",
+          "utils_sw.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 214,
+      "arxiv_id": "2410.22376",
+      "repo_url": "https://github.com/krafton-ai/rare-to-frequent",
+      "arxiv": {
+        "versioned_id": "2410.22376v4",
+        "primary_category": "cs.LG",
+        "title": "Rare-to-Frequent: Unlocking Compositional Generation Power of Diffusion Models on Rare Concepts with LLM Guidance",
+        "abstract": "State-of-the-art text-to-image (T2I) diffusion models often struggle to generate rare compositions of concepts, e.g., objects with unusual attributes. In this paper, we show that the compositional generation power of diffusion models on such rare concepts can be significantly enhanced by the Large Language Model (LLM) guidance. We start with empirical and theoretical analysis, demonstrating that exposing frequent concepts relevant to the target rare concepts during the diffusion sampling process yields more accurate concept composition. Based on this, we propose a training-free approach, R2F, that plans and executes the overall rare-to-frequent concept guidance throughout the diffusion inference by leveraging the abundant semantic knowledge in LLMs. Our framework is flexible across any pre-trained diffusion models and LLMs, and can be seamlessly integrated with the region-guided diffusion approaches. Extensive experiments on three datasets, including our newly proposed benchmark, RareBench, containing various prompts with rare compositions of concepts, R2F significantly surpasses existing models including SD3.0 and FLUX by up to 28.1%p in T2I alignment. Code is available at https://github.com/krafton-ai/Rare-to-Frequent."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/krafton-ai/rare-to-frequent",
+        "exists": true,
+        "full_name": "krafton-ai/Rare-to-Frequent",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "834f459aa9ae90a7b653abc4bf0ad8a230056bc1",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/krafton-ai/Rare-to-Frequent/blob/834f459aa9ae90a7b653abc4bf0ad8a230056bc1/README.md",
+          "sha256": "469a8ad750e4af1e27a21e0fcbd286ceac13a2a1ad6dfb5b09c5676a1904c85d",
+          "bytes": 9848
+        },
+        "root_names": [
+          ".gitignore",
+          "ComposableDiffusion_sd3.py",
+          "R2F_Diffusion_flux.py",
+          "R2F_Diffusion_sd3.py",
+          "R2F_Diffusion_xl.py",
+          "R2Fplus_Diffusion_sd3.py",
+          "README.md",
+          "asset",
+          "cross_attention.py",
+          "eval",
+          "gpt",
+          "images",
+          "pipeline_output_flux.py",
+          "playground.py",
+          "prompt_to_prompt_pipeline.py",
+          "requirements.txt",
+          "script",
+          "test"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 215,
+      "arxiv_id": "2310.18349",
+      "repo_url": "https://github.com/mhtang1995/bopn",
+      "arxiv": {
+        "versioned_id": "2310.18349v1",
+        "primary_category": "cs.CL",
+        "title": "A Boundary Offset Prediction Network for Named Entity Recognition",
+        "abstract": "Named entity recognition (NER) is a fundamental task in natural language processing that aims to identify and classify named entities in text. However, span-based methods for NER typically assign entity types to text spans, resulting in an imbalanced sample space and neglecting the connections between non-entity and entity spans. To address these issues, we propose a novel approach for NER, named the Boundary Offset Prediction Network (BOPN), which predicts the boundary offsets between candidate spans and their nearest entity spans. By leveraging the guiding semantics of boundary offsets, BOPN establishes connections between non-entity and entity spans, enabling non-entity spans to function as additional positive samples for entity detection. Furthermore, our method integrates entity type and span representations to generate type-aware boundary offsets instead of using entity types as detection targets. We conduct experiments on eight widely-used NER datasets, and the results demonstrate that our proposed BOPN outperforms previous state-of-the-art methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mhtang1995/bopn",
+        "exists": true,
+        "full_name": "mhtang1995/BOPN",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7bc0fb9e88f034c9a331b6ec7b99dc9f079df055",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/mhtang1995/BOPN/blob/7bc0fb9e88f034c9a331b6ec7b99dc9f079df055/README.md",
+          "sha256": "ce9534d8bbc1c3f3c6a6bd9a99e2ec7b1e0cc183c445a1d4d179850e1335f47e",
+          "bytes": 73
+        },
+        "root_names": [
+          "README.md",
+          "config",
+          "main.py",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 216,
+      "arxiv_id": "2301.13258",
+      "repo_url": "https://github.com/akasha98/pulsar_nulling",
+      "arxiv": {
+        "versioned_id": "2301.13258v2",
+        "primary_category": "astro-ph.HE",
+        "title": "A Pilot Study of Nulling in 22 Pulsars Using Mixture Modeling",
+        "abstract": "The phenomenon of pulsar nulling, observed as the temporary inactivity of a pulsar, remains poorly understood both observationally and theoretically. Most observational studies that quantify nulling employ a variant of Ritchings (1976)'s algorithm which can suffer significant biases for pulsars where the emission is weak. Using a more robust mixture model method, we study pulsar nulling in a sample of 22 recently discovered pulsars, for which we publish the nulling fractions for the first time. These data clearly demonstrate biases of the former approach and show how an otherwise non-nulling pulsar can be classified as having significant nulls. We show that the population-wide studies that find a positive correlation of nulling with pulsar period/characteristic age can similarly be biased because of the bias in estimating the nulling fraction. We use our probabilistic approach to find the evidence for periodicity in the nulls in a subset of three pulsars in our sample. In addition, we also provide improved timing parameters for 17 of the 22 pulsars that had no prior follow-up."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/akasha98/pulsar_nulling",
+        "exists": true,
+        "full_name": "AkashA98/pulsar_nulling",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "94167beb2fa43c2ea9c9ac541de3829a6ea33f67",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AkashA98/pulsar_nulling/blob/94167beb2fa43c2ea9c9ac541de3829a6ea33f67/README.md",
+          "sha256": "a06bd5b1573c9bf2c869418c5c94aea328e97aa5a13a754c087d99a32dce86f6",
+          "bytes": 3249
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "setup.py",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.HE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 217,
+      "arxiv_id": "2406.15283",
+      "repo_url": "https://github.com/acoursey3/freeway-anomaly-data",
+      "arxiv": {
+        "versioned_id": "2406.15283v2",
+        "primary_category": "cs.LG",
+        "title": "FT-AED: Benchmark Dataset for Early Freeway Traffic Anomalous Event Detection",
+        "abstract": "Early and accurate detection of anomalous events on the freeway, such as accidents, can improve emergency response and clearance. However, existing delays and errors in event identification and reporting make it a difficult problem to solve. Current large-scale freeway traffic datasets are not designed for anomaly detection and ignore these challenges. In this paper, we introduce the first large-scale lane-level freeway traffic dataset for anomaly detection. Our dataset consists of a month of weekday radar detection sensor data collected in 4 lanes along an 18-mile stretch of Interstate 24 heading toward Nashville, TN, comprising over 3.7 million sensor measurements. We also collect official crash reports from the Nashville Traffic Management Center and manually label all other potential anomalies in the dataset. To show the potential for our dataset to be used in future machine learning and traffic research, we benchmark numerous deep learning anomaly detection models on our dataset. We find that unsupervised graph neural network autoencoders are a promising solution for this problem and that ignoring spatial relationships leads to decreased performance. We demonstrate that our methods can reduce reporting delays by over 10 minutes on average while detecting 75% of crashes. Our dataset and all preprocessing code needed to get started are publicly released at https://vu.edu/ft-aed/ to facilitate future research."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/acoursey3/freeway-anomaly-data",
+        "exists": true,
+        "full_name": "acoursey3/freeway-anomaly-data",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b10c34bac46f57dadf5b19316aacf6281ca7279d",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/acoursey3/freeway-anomaly-data/blob/b10c34bac46f57dadf5b19316aacf6281ca7279d/README.md",
+          "sha256": "256c43477ee0e16507b34969273c4376bfc3883f352480b6f9b0c570ff6eb935",
+          "bytes": 4372
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "Demo.ipynb",
+          "LICENSE",
+          "README.md",
+          "nashville_freeway_anomaly.csv"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 218,
+      "arxiv_id": "2505.05901",
+      "repo_url": "https://github.com/hzzzzzhappy/mc4ad",
+      "arxiv": {
+        "versioned_id": "2505.05901v2",
+        "primary_category": "cs.CV",
+        "title": "Examining the Source of Defects from a Mechanical Perspective for 3D Anomaly Detection",
+        "abstract": "In this paper, we explore a novel approach to 3D anomaly detection (AD) that goes beyond merely identifying anomalies based on structural characteristics. Our primary perspective is that most anomalies arise from unpredictable defective forces originating from both internal and external sources. To address these anomalies, we seek out opposing forces that can help correct them. Therefore, we introduce the Mechanics Complementary Model-based Framework for the 3D-AD task (MC4AD), which generates internal and external corrective forces for each point. We first propose a Diverse Anomaly-Generation (DA-Gen) module designed to simulate various types of anomalies. Next, we present the Corrective Force Prediction Network (CFP-Net), which uses complementary representations for point-level analysis to simulate the different contributions from internal and external corrective forces. To ensure the corrective forces are constrained effectively, we have developed a combined loss function that includes a new symmetric loss and an overall loss. Notably, we implement a Hierarchical Quality Control (HQC) strategy based on a three-way decision process and contribute a dataset titled Anomaly-IntraVariance, which incorporates intraclass variance to evaluate our model. As a result, the proposed MC4AD has been proven effective through theory and experimentation. The experimental results demonstrate that our approach yields nine state-of-the-art performances, achieving optimal results with minimal parameters and the fastest inference speed across five existing datasets, in addition to the proposed Anomaly-IntraVariance dataset. The source is available at https://github.com/hzzzzzhappy/MC4AD"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hzzzzzhappy/mc4ad",
+        "exists": true,
+        "full_name": "hzzzzzhappy/MC4AD",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "0900a99bcdda82f74c4e7d2f47e12a90d0faf9ca",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hzzzzzhappy/MC4AD/blob/0900a99bcdda82f74c4e7d2f47e12a90d0faf9ca/README.md",
+          "sha256": "b6f51e5d3e8fcd787ced3f3df6251f0b6b098a1544a570d16134671c83920147",
+          "bytes": 7510
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "code.zip",
+          "overview.png"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 219,
+      "arxiv_id": "2305.13669",
+      "repo_url": "https://github.com/shuozhangxjtu/mixalign",
+      "arxiv": {
+        "versioned_id": "2305.13669v3",
+        "primary_category": "cs.CL",
+        "title": "The Knowledge Alignment Problem: Bridging Human and External Knowledge for Large Language Models",
+        "abstract": "Large language models often necessitate grounding on external knowledge to generate faithful and reliable answers. Yet even with the correct groundings in the reference, they can ignore them and rely on wrong groundings or their inherent biases to hallucinate when users, being largely unaware of the specifics of the stored information, pose questions that might not directly correlate with the retrieved groundings. In this work, we formulate this knowledge alignment problem and introduce MixAlign, a framework that interacts with both the human user and the knowledge base to obtain and integrate clarifications on how the user question relates to the stored information. MixAlign employs a language model to achieve automatic knowledge alignment and, if necessary, further enhances this alignment through human user clarifications. Experimental results highlight the crucial role of knowledge alignment in boosting model performance and mitigating hallucination, with improvements noted up to 22.2% and 27.1% respectively. We also demonstrate the effectiveness of MixAlign in improving knowledge alignment by producing high-quality, user-centered clarifications."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/shuozhangxjtu/mixalign",
+        "exists": true,
+        "full_name": "ShuoZhangXJTU/MixAlign",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c1ea62612247ac62fe02e5f40b7f60bf0fe02bb8",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ShuoZhangXJTU/MixAlign/blob/c1ea62612247ac62fe02e5f40b7f60bf0fe02bb8/README.md",
+          "sha256": "a2b4736287833be057e5ac51542ceb307823ebced9d1fe1919aca52abee4ae60",
+          "bytes": 906
+        },
+        "root_names": [
+          "README.md",
+          "args.py",
+          "dataset",
+          "evaluation_pipeline.py",
+          "evaluator.py",
+          "machines",
+          "models",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 220,
+      "arxiv_id": "2402.17907",
+      "repo_url": "https://github.com/merlresearch/neural-iir-field",
+      "arxiv": {
+        "versioned_id": "2402.17907v1",
+        "primary_category": "eess.AS",
+        "title": "NIIRF: Neural IIR Filter Field for HRTF Upsampling and Personalization",
+        "abstract": "Head-related transfer functions (HRTFs) are important for immersive audio, and their spatial interpolation has been studied to upsample finite measurements. Recently, neural fields (NFs) which map from sound source direction to HRTF have gained attention. Existing NF-based methods focused on estimating the magnitude of the HRTF from a given sound source direction, and the magnitude is converted to a finite impulse response (FIR) filter. We propose the neural infinite impulse response filter field (NIIRF) method that instead estimates the coefficients of cascaded IIR filters. IIR filters mimic the modal nature of HRTFs, thus needing fewer coefficients to approximate them well compared to FIR filters. We find that our method can match the performance of existing NF-based methods on multiple datasets, even outperforming them when measurements are sparse. We also explore approaches to personalize the NF to a subject and experimentally find low-rank adaptation to be effective."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/merlresearch/neural-iir-field",
+        "exists": true,
+        "full_name": "merlresearch/neural-IIR-field",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f527da2ad16e41087ef8319e6273345a94c09b08",
+        "license_spdx": "AGPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/merlresearch/neural-IIR-field/blob/f527da2ad16e41087ef8319e6273345a94c09b08/README.md",
+          "sha256": "5f7ef9e4b44676680bc5f17c4f0c02443bed24de4c47f83b128b9c6dec1dfd57",
+          "bytes": 6300
+        },
+        "root_names": [
+          ".github",
+          ".gitignore",
+          ".pre-commit-config.yaml",
+          "CONTRIBUTING.md",
+          "LICENSE.md",
+          "LICENSES",
+          "README.md",
+          "exp_example",
+          "pyscripts",
+          "requirements-dev.txt",
+          "requirements.txt",
+          "run_cipic.sh",
+          "run_hutubs.sh",
+          "scripts",
+          "tests"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.AS"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 221,
+      "arxiv_id": "2402.14131",
+      "repo_url": "https://github.com/aminmoradixl/magnav",
+      "arxiv": {
+        "versioned_id": "2402.14131v1",
+        "primary_category": "eess.SP",
+        "title": "Random forests for detecting weak signals and extracting physical information: a case study of magnetic navigation",
+        "abstract": "It was recently demonstrated that two machine-learning architectures, reservoir computing and time-delayed feed-forward neural networks, can be exploited for detecting the Earth's anomaly magnetic field immersed in overwhelming complex signals for magnetic navigation in a GPS-denied environment. The accuracy of the detected anomaly field corresponds to a positioning accuracy in the range of 10 to 40 meters. To increase the accuracy and reduce the uncertainty of weak signal detection as well as to directly obtain the position information, we exploit the machine-learning model of random forests that combines the output of multiple decision trees to give optimal values of the physical quantities of interest. In particular, from time-series data gathered from the cockpit of a flying airplane during various maneuvering stages, where strong background complex signals are caused by other elements of the Earth's magnetic field and the fields produced by the electronic systems in the cockpit, we demonstrate that the random-forest algorithm performs remarkably well in detecting the weak anomaly field and in filtering the position of the aircraft. With the aid of the conventional inertial navigation system, the positioning error can be reduced to less than 10 meters. We also find that, contrary to the conventional wisdom, the classic Tolles-Lawson model for calibrating and removing the magnetic field generated by the body of the aircraft is not necessary and may even be detrimental for the success of the random-forest method."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/aminmoradixl/magnav",
+        "exists": true,
+        "full_name": "AminMoradiXL/magnav",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6d5539bf95fd5f0cf975ab85eb015eeb54cac458",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AminMoradiXL/magnav/blob/6d5539bf95fd5f0cf975ab85eb015eeb54cac458/README.md",
+          "sha256": "e4905172f6525b573ab0c39142e880fddff4d265da3bb66772b41ce9dff17974",
+          "bytes": 206
+        },
+        "root_names": [
+          "Data",
+          "README.md",
+          "data_temp.py",
+          "features_correlation_pairplots.py",
+          "features_importance.py",
+          "features_low_variance.py",
+          "features_reduction.py",
+          "features_selection.py",
+          "lstm_pretrain_slg.py",
+          "lstm_pretrain_xyz.py",
+          "regressor_comparison.py",
+          "regressor_comparison_pca.py",
+          "regressor_comparison_slg.py",
+          "regressor_depth_comparison.py",
+          "regressor_depth_comparison_plot.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 222,
+      "arxiv_id": "2308.10855",
+      "repo_url": "https://github.com/thukelab/lateval",
+      "arxiv": {
+        "versioned_id": "2308.10855v3",
+        "primary_category": "cs.CL",
+        "title": "LatEval: An Interactive LLMs Evaluation Benchmark with Incomplete Information from Lateral Thinking Puzzles",
+        "abstract": "With the continuous evolution and refinement of LLMs, they are endowed with impressive logical reasoning or vertical thinking capabilities. But can they think out of the box? Do they possess proficient lateral thinking abilities? Following the setup of Lateral Thinking Puzzles, we propose a novel evaluation benchmark, LatEval, which assesses the model's lateral thinking within an interactive framework. In our benchmark, we challenge LLMs with 2 aspects: the quality of questions posed by the model and the model's capability to integrate information for problem-solving. We find that nearly all LLMs struggle with employing lateral thinking during interactions. For example, even the most advanced model, GPT-4, exhibits the advantage to some extent, yet still maintain a noticeable gap when compared to human. This evaluation benchmark provides LLMs with a highly challenging and distinctive task that is crucial to an effective AI assistant."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/thukelab/lateval",
+        "exists": true,
+        "full_name": "THUKElab/LatEval",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1d36f364181f81a1f23e428d9ccd087a32f1b21b",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/THUKElab/LatEval/blob/1d36f364181f81a1f23e428d9ccd087a32f1b21b/README.md",
+          "sha256": "f7d9c9d3fb8f12d72790266947e4051fd90e0f966b8b131f9c46474072bb86fd",
+          "bytes": 2396
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "assets",
+          "chat_api",
+          "data",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 223,
+      "arxiv_id": "2312.12144",
+      "repo_url": "https://github.com/sranc3/m-bev",
+      "arxiv": {
+        "versioned_id": "2312.12144v1",
+        "primary_category": "cs.CV",
+        "title": "M-BEV: Masked BEV Perception for Robust Autonomous Driving",
+        "abstract": "3D perception is a critical problem in autonomous driving. Recently, the Bird-Eye-View (BEV) approach has attracted extensive attention, due to low-cost deployment and desirable vision detection capacity. However, the existing models ignore a realistic scenario during the driving procedure, i.e., one or more view cameras may be failed, which largely deteriorates the performance. To tackle this problem, we propose a generic Masked BEV (M-BEV) perception framework, which can effectively improve robustness to this challenging scenario, by random masking and reconstructing camera views in the end-to-end training. More specifically, we develop a novel Masked View Reconstruction (MVR) module for M-BEV. It mimics various missing cases by randomly masking features of different camera views, then leverages the original features of these views as self-supervision, and reconstructs the masked ones with the distinct spatio-temporal context across views. Via such a plug-and-play MVR, our M-BEV is capable of learning the missing views from the resting ones, and thus well generalized for robust view recovery and accurate perception in the testing. We perform extensive experiments on the popular NuScenes benchmark, where our framework can significantly boost 3D perception performance of the state-of-the-art models on various missing view cases, e.g., for the absence of back view, our M-BEV promotes the PETRv2 model with 10.3% mAP gain."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sranc3/m-bev",
+        "exists": true,
+        "full_name": "Sranc3/M-BEV",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "48b6ecf35c37ba78ba4570d15093a9d403b2e018",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Sranc3/M-BEV/blob/48b6ecf35c37ba78ba4570d15093a9d403b2e018/README.md",
+          "sha256": "1898284037773061b8eae2485954677cdd125f458c574d070b1ea11d8d6a2be6",
+          "bytes": 2237
+        },
+        "root_names": [
+          "M-BEV",
+          "README.md",
+          "ckpts",
+          "projects",
+          "tools",
+          "work_dirs"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 224,
+      "arxiv_id": "2502.06101",
+      "repo_url": "https://github.com/jianxu95/rallrec",
+      "arxiv": {
+        "versioned_id": "2502.06101v2",
+        "primary_category": "cs.IR",
+        "title": "RALLRec: Improving Retrieval Augmented Large Language Model Recommendation with Representation Learning",
+        "abstract": "Large Language Models (LLMs) have been integrated into recommendation systems to enhance user behavior comprehension. The Retrieval Augmented Generation (RAG) technique is further incorporated into these systems to retrieve more relevant items and improve system performance. However, existing RAG methods rely primarily on textual semantics and often fail to incorporate the most relevant items, limiting the effectiveness of the systems. In this paper, we propose Representation learning for retrieval-Augmented Large Language model Recommendation (RALLRec). Specifically, we enhance textual semantics by prompting LLMs to generate more detailed item descriptions, followed by joint representation learning of textual and collaborative semantics, which are extracted by the LLM and recommendation models, respectively. Considering the potential time-varying characteristics of user interest, a simple yet effective reranking method is further introduced to capture the dynamics of user preference. We conducted extensive experiments on three real-world datasets, and the evaluation results validated the effectiveness of our method. Code is made public at https://github.com/JianXu95/RALLRec."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jianxu95/rallrec",
+        "exists": true,
+        "full_name": "JianXu95/RALLRec",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f994b1b3380ac2f2153f81eabf3023facbf937cb",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/JianXu95/RALLRec/blob/f994b1b3380ac2f2153f81eabf3023facbf937cb/README.md",
+          "sha256": "d535bb2e4b6352f04199366d2fc3c6632d844d0887c1c5e9c70ddaa28698ea73",
+          "bytes": 83
+        },
+        "root_names": [
+          "README.md",
+          "data_preprocess",
+          "finetune.py",
+          "inference.py",
+          "prompts",
+          "rag",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.IR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 225,
+      "arxiv_id": "2312.09961",
+      "repo_url": "https://github.com/jaayala/risk_aware_contextual_bandit",
+      "arxiv": {
+        "versioned_id": "2312.09961v1",
+        "primary_category": "cs.LG",
+        "title": "Risk-Aware Continuous Control with Neural Contextual Bandits",
+        "abstract": "Recent advances in learning techniques have garnered attention for their applicability to a diverse range of real-world sequential decision-making problems. Yet, many practical applications have critical constraints for operation in real environments. Most learning solutions often neglect the risk of failing to meet these constraints, hindering their implementation in real-world contexts. In this paper, we propose a risk-aware decision-making framework for contextual bandit problems, accommodating constraints and continuous action spaces. Our approach employs an actor multi-critic architecture, with each critic characterizing the distribution of performance and constraint metrics. Our framework is designed to cater to various risk levels, effectively balancing constraint satisfaction against performance. To demonstrate the effectiveness of our approach, we first compare it against state-of-the-art baseline methods in a synthetic environment, highlighting the impact of intrinsic environmental noise across different risk configurations. Finally, we evaluate our framework in a real-world use case involving a 5G mobile network where only our approach consistently satisfies the system constraint (a signal processing reliability target) with a small performance toll (8.5% increase in power consumption)."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jaayala/risk_aware_contextual_bandit",
+        "exists": true,
+        "full_name": "jaayala/risk_aware_contextual_bandit",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7d72eff64b58e5b4193eb2de7a4b1da0ee1ed8d7",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jaayala/risk_aware_contextual_bandit/blob/7d72eff64b58e5b4193eb2de7a4b1da0ee1ed8d7/README.md",
+          "sha256": "362124a5e7c0d493fde02fd5fda3b89add75e5dccec00a346fd6611042464a3c",
+          "bytes": 537
+        },
+        "root_names": [
+          "README.md",
+          "datasets",
+          "env_syn.py",
+          "eval_learning_alg_syn.py",
+          "eval_learning_bayes_alg_syn.py",
+          "learning_algorithms",
+          "plot",
+          "run_all.sh"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    }
+  ],
+  "read_utc": "2026-10-18T03:28:51Z"
+}

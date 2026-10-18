@@ -65,14 +65,15 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from refute.core.canonical import canonical_bytes
-from refute.core.paper import FailureCause
+from refute.core.paper import FailureCause, GateFailure
 from refute.packs.ml import integration as ig
 from refute.packs.ml import ladder as ld
 from refute.packs.ml import orchestrate as orc
 from refute.packs.ml import readers as rd
 from refute.packs.ml import repository
+from refute.packs.ml import schema as sch
 from refute.packs.ml.docker_backend import ContainerPlan, DockerBackend, Limits
-from refute.packs.ml.fetch import ArtifactSpec, fetch_artifact
+from refute.packs.ml.fetch import ArtifactSpec, FetchResult, fetch_artifact
 from refute.packs.ml.sandbox import (
     STOP_ACTIVE_TIME,
     STOP_NO_PROGRESS,
@@ -98,6 +99,10 @@ RUN_PHASE_FLAG = "run-phase-approved"
 RUN_PHASE_WAIT_S = 12 * 3600
 VENV = "/opt/venv"
 CONDA_ENV = "/opt/conda/envs/env"
+# the container reader (wp3-data-sources-acceptance.md, section 4.2): Refute's script,
+# written into the reader's own folder, run by the image's interpreter with -I -S
+READER_SOURCE = Path(__file__).with_name("container_reader.py")
+READER_SCRIPT = "reader.py"
 ENV_FILES = ("environment.yml", "environment.yaml")
 REQUIREMENTS_FILES = ("requirements.txt",)
 BASE_ENV = {
@@ -244,6 +249,17 @@ def build_script(rung: ld.Rung, repo: Path, exclude_newer: str) -> list[str]:
     return ["sh", "-c", script]
 
 
+def reader_argv(rung: str | None, request: str, env: Mapping[str, str]) -> list[str]:
+    """The command of a container reader (wp3-data-sources-acceptance.md, section 4.2):
+    ``env -i`` with the given variables only (the image's other variables do not reach the
+    reader), then the interpreter of the environment the ladder built, by its path, with
+    -I -S, so no PYTHONPATH, user site, .pth file or sitecustomize is used, and the request
+    as one argument."""
+    python = f"{CONDA_ENV}/bin/python" if rung == ld.RUNGS[0] else f"{VENV}/bin/python"
+    variables = [f"{k}={v}" for k, v in sorted(env.items())]
+    return ["/usr/bin/env", "-i", *variables, python, "-I", "-S", READER_SCRIPT, request]
+
+
 def classify_build(rung: ld.Rung, result: RunResult | None) -> ld.RungResult:
     if result is None:
         return ld.RungResult(orc.Outcome.REFUTE_ERROR, None, "the build container did not run")
@@ -324,14 +340,39 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
     ws_root = setup.root / "ws"
     ws_root.mkdir(parents=True)
     workspaces = {}
+    # the files of the repository that are datasets: each run and reader mounts the copy
+    # Refute verified before the build in their place (wp3-data-sources-acceptance.md, 1)
+    repository_files, unverified = set(), set()
+    for d in (claim_file.get("test_plan") or {}).get("datasets", []):
+        if sch.dataset_origin(d) == sch.REPOSITORY_FILE:
+            if setup.data_layout.get(d["name"]) != d["path"]:
+                # mounted anywhere else, the runs would read the clone's unverified copy
+                raise ProductionError(
+                    f"dataset {d['name']} is the repository file {d['path']}: its data path "
+                    "must be that path"
+                )
+            evidence = setup.datasets.get(d["name"])
+            if evidence is not None and evidence.fetch.ok:
+                repository_files.add(d["path"])  # a verified copy replaces the clone's
+            else:
+                # no verified copy: nothing is mounted there, the runs see the clone as it
+                # is, and data_present is not a pass (section 1)
+                unverified.add(d["path"])
     for cid in ig.plan_container_ids(claim_file):
         folder = ws_root / _safe(cid)
-        _copy_repo(setup.repo, folder)
-        if not cid.startswith("setup/"):
+        if cid.startswith(ig.READER_PREFIX):
+            # a container reader runs in a fresh folder of its own, never in the clone,
+            # with only Refute's reader script (section 4.2)
+            folder.mkdir()
+            (folder / READER_SCRIPT).write_bytes(READER_SOURCE.read_bytes())
+            (folder / READER_SCRIPT).chmod(0o444)
+        else:
+            _copy_repo(setup.repo, folder)
+        if not cid.startswith("setup/build/"):
             for rel in setup.data_layout.values():
+                if rel in unverified:
+                    continue
                 target = folder / PurePosixPath(rel)
-                if target.exists() or target.is_symlink():
-                    raise ProductionError(f"{rel} exists in the repository: the data path collides")
                 # no component of a data path may be a link: the sticky folders below are
                 # then the real ancestors of the mount (Codex review of 6289608)
                 component = folder
@@ -339,6 +380,13 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
                     component = component / part
                     if component.is_symlink():
                         raise ProductionError(f"the data path {rel} goes through a link: {part}")
+                if rel in repository_files and not cid.startswith(ig.READER_PREFIX):
+                    # the clone's own copy leaves; the verified copy is mounted there
+                    if target.is_symlink() or not target.is_file():
+                        raise ProductionError(f"{rel} is not a regular file of the repository")
+                    target.unlink()
+                if target.exists() or target.is_symlink():
+                    raise ProductionError(f"{rel} exists in the repository: the data path collides")
                 target.parent.mkdir(parents=True, exist_ok=True)
                 if not _inside(folder, target.parent):
                     raise ProductionError(f"the data path {rel} leaves the run's folder")
@@ -358,7 +406,8 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
 def data_mounts(setup: PaperSetup) -> tuple[tuple[str, str], ...]:
     mounts = []
     for name, rel in setup.data_layout.items():
-        path = setup.datasets[name].fetch.path
+        evidence = setup.datasets.get(name)
+        path = evidence.fetch.path if evidence is not None else None
         if path is None:
             continue  # absent: the data_present gate records it
         Path(path).chmod(0o444)  # the canonical file: read only for everyone
@@ -418,6 +467,8 @@ def build_harness(
         # T from the containers that actually started (Codex review of 3dd85e2)
         tolerance_usec=tolerance_usec,
         after_setup=after_setup,
+        reader_command=reader_argv,
+        data_paths=dict(setup.data_layout),
     )
     return harness, backend
 
@@ -507,6 +558,62 @@ def dump(value: Any) -> str:
 # ---- the inputs: the repository and the declared datasets (W3.6, W3.7) ----------------------
 
 
+@dataclass(frozen=True)
+class RepositoryFileSpec(ArtifactSpec):
+    """The identity of a repository file read by Refute (never fetched): its ``url`` is
+    ``repository:<path>``, so the fetcher's https rule does not apply to it."""
+
+    def __post_init__(self) -> None:
+        if not self.url.startswith(sch.REPOSITORY_URL_PREFIX):
+            raise ValueError(f"{self.name}: a repository file is named repository:<path>")
+        if len(self.sha256) != 64 or any(c not in "0123456789abcdef" for c in self.sha256):
+            raise ValueError(f"{self.name}: sha256 is 64 lowercase hex digits")
+        if type(self.size_bytes) is not int or self.size_bytes < 1:
+            raise ValueError(f"{self.name}: size_bytes is a positive integer")
+
+
+def repository_file(
+    repo: Path, dataset: Mapping[str, Any], cache: Path
+) -> ig.DatasetEvidence | None:
+    """A dataset that is a file of the repository (wp3-data-sources-acceptance.md, section
+    1), read once after the checkout and before any build or code of the repository runs:
+    a regular file inside the clone, reached through no link, copied into Refute's cache
+    where its SHA-256 and size are checked. Every count and every run reads that copy. A
+    missing file, a link or a path that leaves the clone gives no evidence (data_present
+    INCONCLUSIVE); other bytes give a failed result with no cause of the artifact (data_present
+    FAIL, the claim INCONCLUSIVE)."""
+    name, url, sha256, size = sch.artifact_identity(dict(dataset))
+    spec = RepositoryFileSpec(name, url, sha256, size)
+
+    def refused() -> ig.DatasetEvidence:
+        failure = GateFailure(FailureCause.UNDETERMINED)
+        return ig.DatasetEvidence(FetchResult(spec, None, False, (), failure), None)
+
+    rel = PurePosixPath(dataset["path"])
+    current = repo
+    for part in rel.parts:
+        current = current / part
+        if current.is_symlink():
+            return None  # no file: data_present INCONCLUSIVE (section 1)
+    if not _inside(repo, current) or not current.is_file():
+        return None
+    data = current.read_bytes()
+    if hashlib.sha256(data).hexdigest() != sha256 or len(data) != size:
+        return refused()
+    folder = cache / "repository-files"
+    folder.mkdir(parents=True, exist_ok=True)
+    copy = folder / sha256
+    if not copy.exists():
+        partial = folder / f".{sha256}.partial"
+        partial.write_bytes(data)
+        partial.replace(copy)
+    copy.chmod(0o444)
+    if hashlib.sha256(copy.read_bytes()).hexdigest() != sha256:
+        return refused()
+    counts = rd.split_counts(copy, dataset["splits"])
+    return ig.DatasetEvidence(FetchResult(spec, copy, True, (), None), counts)
+
+
 def prepare_inputs(
     claim_file: Mapping[str, Any], root: Path, cache: Path
 ) -> tuple[Path, dict[str, ig.DatasetEvidence]]:
@@ -515,11 +622,25 @@ def prepare_inputs(
     allowlist proxy). The splits are counted by ``readers``; an unreadable split gives no
     count, so ``data_present`` is ``INCONCLUSIVE``, never a pass."""
     plan = claim_file["test_plan"]
+    if plan.get("weights"):
+        # declared weights (checkpoint evaluation, inputs of generated data) are not
+        # fetched, checked and mounted by this version: refused before anything runs,
+        # never skipped (wp3-data-sources-acceptance.md, section 1; Codex review)
+        names = [w["name"] for w in plan["weights"]]
+        raise ProductionError(f"declared weights are not fetched by this version yet: {names}")
     repo = repository.clone(plan["repository"]["url"], root / "source")
     repository.checkout(repo, plan["repository"]["commit"])
     absent = plan["absent_artifact"]
     datasets: dict[str, ig.DatasetEvidence] = {}
     for d in plan["datasets"]:
+        origin = sch.dataset_origin(d)
+        if origin == sch.GENERATED:
+            continue  # nothing to fetch or count: data_present does not apply
+        if origin == sch.REPOSITORY_FILE:
+            evidence = repository_file(repo, d, cache)
+            if evidence is not None:
+                datasets[d["name"]] = evidence
+            continue
         spec = ArtifactSpec(d["name"], d["url"], d["sha256"], int(d["size_bytes"]))
         result = fetch_artifact(
             spec,

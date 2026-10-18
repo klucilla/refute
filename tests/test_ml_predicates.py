@@ -3,7 +3,7 @@
 out by hand in the comments."""
 
 import math
-from decimal import Decimal
+from decimal import Decimal, localcontext
 
 import pytest
 
@@ -226,3 +226,116 @@ def test_non_finite_inputs_are_refused():
         pr.value_predicate(math.nan, 91.2, "two_sided", Tolerance(1.0))
     with pytest.raises(ValueError):
         pr.comparison_predicate(math.inf, "direction")
+
+
+# ---- exact arithmetic with long tokens (wp3-tensorboard-acceptance.md) ------------------------
+
+TENTH64 = Decimal(0.1)  # the float64 of 0.1, exactly: 55 significant digits
+ULP = Decimal("1e-55")
+
+
+def plus(a, b) -> Decimal:
+    with localcontext() as ctx:
+        ctx.prec = 500
+        return Decimal(a) + Decimal(b)
+
+
+def times(a, b) -> Decimal:
+    with localcontext() as ctx:
+        ctx.prec = 500
+        return Decimal(a) * Decimal(b)
+
+
+@pytest.mark.parametrize("mode", ["two_sided", "one_sided_at_least", "one_sided_at_most"])
+def test_a_long_token_compared_with_itself_at_tolerance_zero_passes(mode):
+    assert len(TENTH64.as_tuple().digits) == 55
+    assert pr.value_predicate(TENTH64, TENTH64, mode, Tolerance(0)).status is TestStatus.PASS
+
+
+def test_one_unit_of_the_last_digit_outside_the_bound_fails_in_every_mode():
+    tol = Tolerance(0)
+    assert (
+        pr.value_predicate(plus(TENTH64, ULP), TENTH64, "two_sided", tol).status is TestStatus.FAIL
+    )
+    above = pr.value_predicate(plus(TENTH64, ULP), TENTH64, "one_sided_at_most", tol)
+    below = pr.value_predicate(plus(TENTH64, -ULP), TENTH64, "one_sided_at_least", tol)
+    assert above.status is TestStatus.FAIL and below.status is TestStatus.FAIL
+    margin = pr.comparison_predicate(plus(TENTH64, -ULP), "margin", tol, g_pub=TENTH64)
+    magnitude = pr.comparison_predicate(plus(TENTH64, ULP), "magnitude", tol, d_pub=TENTH64)
+    assert margin.status is TestStatus.FAIL and magnitude.status is TestStatus.FAIL
+    assert pr.comparison_predicate(TENTH64, "margin", tol, g_pub=TENTH64).status is TestStatus.PASS
+
+
+def test_trivial_baseline_decides_exactly_at_its_tolerance():
+    above = pr.trivial_baseline_predicate(TENTH64, 0, True, Tolerance(plus(TENTH64, -ULP)))
+    equal = pr.trivial_baseline_predicate(TENTH64, 0, True, Tolerance(TENTH64))
+    assert above.status is TestStatus.PASS and equal.status is TestStatus.FAIL
+
+
+def test_a_bound_that_needs_more_than_50_digits_is_exact():
+    big = Decimal(10) ** 49  # 50 digits
+    outcome = pr.value_predicate(big, Decimal("-0.1"), "two_sided", Tolerance(big))
+    assert outcome.status is TestStatus.FAIL
+
+
+def test_the_tolerance_of_a_product_and_a_maximum_is_exact():
+    params = ToleranceParams("0.02", "2", "0")
+    tol = pr.one_number(TENTH64, params, PublishedUncertainty("converted", TENTH64))
+    assert tol.value == times(2, TENTH64) and tol.squared is None
+    relative = pr.one_number(TENTH64, params, NONE)
+    assert relative.value == times(Decimal("0.02"), TENTH64)  # exact at any length
+    assert len(relative.value.as_tuple().digits) > 50
+
+
+def test_a_square_root_tolerance_decides_by_its_exact_square():
+    root = pr._hypot(Decimal(1), Decimal(1))  # noqa: SLF001 - sqrt(2)
+    assert root.squared == 2 and times(root.value, root.value) < 2  # rounded down
+    inside, outside = plus(root.value, Decimal("1e-51")), plus(root.value, Decimal("1e-49"))
+    assert times(inside, inside) < 2 < times(outside, outside)
+    assert pr.value_predicate(inside, 0, "two_sided", root).status is TestStatus.PASS
+    assert pr.value_predicate(outside, 0, "two_sided", root).status is TestStatus.FAIL
+    wider = pr.widen(root, 3)
+    assert wider.squared == 18
+    assert pr.value_predicate(times(3, inside), 0, "two_sided", wider).status is TestStatus.PASS
+
+
+def test_the_recorded_root_is_never_above_the_exact_root():
+    from fractions import Fraction
+
+    for squared in (Fraction(2), Fraction(1, 3), Fraction(10) ** 40 + 1, Fraction(7, 10**60)):
+        root = pr._root(squared)  # noqa: SLF001
+        assert Fraction(root) ** 2 <= squared
+        with localcontext() as ctx:
+            ctx.prec = pr.PRECISION
+            assert Fraction(ctx.next_plus(root)) ** 2 > squared
+
+
+def test_a_mean_near_a_root_tolerance_is_never_decided_by_the_rounded_record():
+    """Codex review of 84473de: the mean 1/3 lies between its 50-digit roundings; a
+    root tolerance just below the bracket's half-width must not give FAIL by its record."""
+    from refute.packs.ml import reproduction as rp
+
+    with localcontext() as ctx:
+        ctx.prec = pr.PRECISION
+        ctx.rounding = "ROUND_FLOOR"
+        low = Decimal(1) / Decimal(3)
+    center = plus(low, Decimal("5e-51"))
+    a = plus(Decimal("5e-51"), Decimal("-1e-131"))
+    tol = pr._hypot(a, Decimal(0))  # noqa: SLF001
+    outcome, _ = rp.decide_on_mean(
+        [Decimal(0), Decimal(0), Decimal(1)],
+        lambda x: pr.value_predicate(x, center, "two_sided", tol),
+    )
+    assert outcome.status is TestStatus.INCONCLUSIVE  # never FAIL (the exact mean passes)
+
+
+def test_trivial_baseline_compares_an_exact_fraction():
+    from fractions import Fraction
+
+    below = "0." + "3" * 50 + "1"  # just below 1/3
+    outcome = pr.trivial_baseline_predicate(below, Fraction(1, 3), True, Tolerance(0))
+    assert outcome.status is TestStatus.FAIL
+    above = "0." + "3" * 60 + "4"
+    assert pr.trivial_baseline_predicate(above, Fraction(1, 3), True, Tolerance(0)).status is (
+        TestStatus.PASS
+    )

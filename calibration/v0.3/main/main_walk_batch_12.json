@@ -1,0 +1,1324 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T03:33:34Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 12,
+  "candidates": [
+    {
+      "position": 276,
+      "arxiv_id": "2306.09996",
+      "repo_url": "https://github.com/rabiulcste/vqazero",
+      "arxiv": {
+        "versioned_id": "2306.09996v3",
+        "primary_category": "cs.CV",
+        "title": "Investigating Prompting Techniques for Zero- and Few-Shot Visual Question Answering",
+        "abstract": "In this paper, we explore effective prompting techniques to enhance zero- and few-shot Visual Question Answering (VQA) performance in contemporary Vision-Language Models (VLMs). Central to our investigation is the role of question templates in guiding VLMs to generate accurate answers. We identify that specific templates significantly influence VQA outcomes, underscoring the need for strategic template selection. Another pivotal aspect of our study is augmenting VLMs with image captions, providing them with additional visual cues alongside direct image features in VQA tasks. Surprisingly, this augmentation significantly improves the VLMs' performance in many cases, even though VLMs \"see\" the image directly! We explore chain-of-thought (CoT) reasoning and find that while standard CoT reasoning causes drops in performance, advanced methods like self-consistency can help recover it. Furthermore, we find that text-only few-shot examples enhance VLMs' alignment with the task format, particularly benefiting models prone to verbose zero-shot answers. Lastly, to mitigate the challenges associated with evaluating free-form open-ended VQA responses using string-matching based VQA metrics, we introduce a straightforward LLM-guided pre-processing technique to adapt the model responses to the expected ground-truth answer distribution. In summary, our research sheds light on the intricacies of prompting strategies in VLMs for VQA, emphasizing the synergistic use of captions, templates, and pre-processing to enhance model efficacy."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rabiulcste/vqazero",
+        "exists": true,
+        "full_name": "rabiulcste/vqazero",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3fe8adc469902a8f48a48220554d8d61bb13918a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/rabiulcste/vqazero/blob/3fe8adc469902a8f48a48220554d8d61bb13918a/README.md",
+          "sha256": "44816d1dcde36cb855fdc086643f5c48be021ea29bd4a806e2583f1261f4b5dd",
+          "bytes": 8017
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "__init__.py",
+          "dataset_zoo",
+          "docs",
+          "evals",
+          "explanation_quality_eval.py",
+          "lavis_blip",
+          "main.py",
+          "prompts",
+          "requirements.txt",
+          "utils",
+          "vqa_zero"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 277,
+      "arxiv_id": "2312.05688",
+      "repo_url": "https://github.com/nl2g/quaterly-arxiv",
+      "arxiv": {
+        "versioned_id": "2312.05688v1",
+        "primary_category": "cs.DL",
+        "title": "NLLG Quarterly arXiv Report 09/23: What are the most influential current AI Papers?",
+        "abstract": "Artificial Intelligence (AI) has witnessed rapid growth, especially in the subfields Natural Language Processing (NLP), Machine Learning (ML) and Computer Vision (CV). Keeping pace with this rapid progress poses a considerable challenge for researchers and professionals in the field. In this arXiv report, the second of its kind, which covers the period from January to September 2023, we aim to provide insights and analysis that help navigate these dynamic areas of AI. We accomplish this by 1) identifying the top-40 most cited papers from arXiv in the given period, comparing the current top-40 papers to the previous report, which covered the period January to June; 2) analyzing dataset characteristics and keyword popularity; 3) examining the global sectoral distribution of institutions to reveal differences in engagement across geographical areas. Our findings highlight the continued dominance of NLP: while only 16% of all submitted papers have NLP as primary category (more than 25% have CV and ML as primary category), 50% of the most cited papers have NLP as primary category, 90% of which target LLMs. Additionally, we show that i) the US dominates among both top-40 and top-9k papers, followed by China; ii) Europe clearly lags behind and is hardly represented in the top-40 most cited papers; iii) US industry is largely overrepresented in the top-40 most influential papers."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/nl2g/quaterly-arxiv",
+        "exists": true,
+        "full_name": "NL2G/Quarterly-Arxiv",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1b42d8254f4530eb755a5d02df53c37ff3dac346",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/NL2G/Quarterly-Arxiv/blob/1b42d8254f4530eb755a5d02df53c37ff3dac346/README.md",
+          "sha256": "c2ba48d4610b306062b96a9b87bb8a020c69481552b2279f7bcaad30158676d0",
+          "bytes": 2113
+        },
+        "root_names": [
+          "README.md",
+          "September_2023",
+          "jan_2024",
+          "june_2023",
+          "september_2024"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.DL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 278,
+      "arxiv_id": "2305.19068",
+      "repo_url": "https://github.com/hkust-knowcomp/ceqa",
+      "arxiv": {
+        "versioned_id": "2305.19068v2",
+        "primary_category": "cs.CL",
+        "title": "Complex Query Answering on Eventuality Knowledge Graph with Implicit Logical Constraints",
+        "abstract": "Querying knowledge graphs (KGs) using deep learning approaches can naturally leverage the reasoning and generalization ability to learn to infer better answers. Traditional neural complex query answering (CQA) approaches mostly work on entity-centric KGs. However, in the real world, we also need to make logical inferences about events, states, and activities (i.e., eventualities or situations) to push learning systems from System I to System II, as proposed by Yoshua Bengio. Querying logically from an EVentuality-centric KG (EVKG) can naturally provide references to such kind of intuitive and logical inference. Thus, in this paper, we propose a new framework to leverage neural methods to answer complex logical queries based on an EVKG, which can satisfy not only traditional first-order logic constraints but also implicit logical constraints over eventualities concerning their occurrences and orders. For instance, if we know that \"Food is bad\" happens before \"PersonX adds soy sauce\", then \"PersonX adds soy sauce\" is unlikely to be the cause of \"Food is bad\" due to implicit temporal constraint. To facilitate consistent reasoning on EVKGs, we propose Complex Eventuality Query Answering (CEQA), a more rigorous definition of CQA that considers the implicit logical constraints governing the temporal order and occurrence of eventualities. In this manner, we propose to leverage theorem provers for constructing benchmark datasets to ensure the answers satisfy implicit logical constraints. We also propose a Memory-Enhanced Query Encoding (MEQE) approach to significantly improve the performance of state-of-the-art neural query encoders on the CEQA task."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hkust-knowcomp/ceqa",
+        "exists": true,
+        "full_name": "HKUST-KnowComp/CEQA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b4eca1bb4907f3dbf3da0bd0bfccaf2edadfbea5",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/HKUST-KnowComp/CEQA/blob/b4eca1bb4907f3dbf3da0bd0bfccaf2edadfbea5/README.md",
+          "sha256": "7d5191a53ab5562d08d2b92cf9694425205bd156d9ce503fd87a9880639adae5",
+          "bytes": 2690
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "filter_explanation.py",
+          "graph_matcher.py",
+          "model",
+          "sample.py",
+          "sample_all_types_aser_test.py",
+          "sample_all_types_aser_train.py",
+          "sample_all_types_aser_validation.py",
+          "test_generated_formula_anchor_node=2.csv",
+          "test_generated_formula_anchor_node=3.csv",
+          "verifier.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 279,
+      "arxiv_id": "2412.11970",
+      "repo_url": "https://github.com/masterai-eam/darwin",
+      "arxiv": {
+        "versioned_id": "2412.11970v3",
+        "primary_category": "cs.CL",
+        "title": "DARWIN 1.5: Large Language Models as Materials Science Adapted Learners",
+        "abstract": "Materials discovery and design aim to find compositions and structures with desirable properties over highly complex and diverse physical spaces. Traditional solutions, such as high-throughput simulations or machine learning, often rely on complex descriptors, which hinder generalizability and transferability across different material systems. Moreover, These descriptors may inadequately represent macro-scale material properties, which are influenced by structural imperfections and compositional variations in real-world samples, thus limiting their practical applicability. To address these challenges, we propose DARWIN 1.5, the largest open-source large language model tailored for materials science. By leveraging natural language as input, DARWIN eliminates the need for task-specific descriptors and enables a flexible, unified approach to material property prediction and discovery. Our approach integrates 6M material domain papers and 21 experimental datasets from 49,256 materials across modalities while enabling cross-task knowledge transfer. The enhanced model achieves up to 59.1% improvement in prediction accuracy over the base LLaMA-7B architecture and outperforms SOTA machine learning approaches across 8 materials design tasks. These results establish LLMs as a promising foundation for developing versatile and scalable models in materials science."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/masterai-eam/darwin",
+        "exists": true,
+        "full_name": "MasterAI-EAM/Darwin",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "543c75398db1f866b6473e685efda82f5e12fb89",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MasterAI-EAM/Darwin/blob/543c75398db1f866b6473e685efda82f5e12fb89/README.md",
+          "sha256": "7dee8c8112f2f2320f44400058ee06b4aee703c3003cae24390a27fe7033ea57",
+          "bytes": 10697
+        },
+        "root_names": [
+          ".DS_Store",
+          ".gitignore",
+          "2325_nouns.json",
+          "LICENSE",
+          "README.md",
+          "SII_MDP",
+          "assets",
+          "dataset",
+          "evaluate_matbench.py",
+          "example.ipynb",
+          "inference.ipynb",
+          "inference.py",
+          "requirements.txt",
+          "train.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 280,
+      "arxiv_id": "2303.07310",
+      "repo_url": "https://github.com/stanfordcbcl/grom",
+      "arxiv": {
+        "versioned_id": "2303.07310v1",
+        "primary_category": "cs.LG",
+        "title": "Learning Reduced-Order Models for Cardiovascular Simulations with Graph Neural Networks",
+        "abstract": "Reduced-order models based on physics are a popular choice in cardiovascular modeling due to their efficiency, but they may experience reduced accuracy when working with anatomies that contain numerous junctions or pathological conditions. We develop one-dimensional reduced-order models that simulate blood flow dynamics using a graph neural network trained on three-dimensional hemodynamic simulation data. Given the initial condition of the system, the network iteratively predicts the pressure and flow rate at the vessel centerline nodes. Our numerical results demonstrate the accuracy and generalizability of our method in physiological geometries comprising a variety of anatomies and boundary conditions. Our findings demonstrate that our approach can achieve errors below 2% and 3% for pressure and flow rate, respectively, provided there is adequate training data. As a result, our method exhibits superior performance compared to physics-based one-dimensional models, while maintaining high efficiency at inference time."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/stanfordcbcl/grom",
+        "exists": true,
+        "full_name": "StanfordCBCL/gROM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "687481eefe2d2dfa897e72543c6ffc512ed730f3",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/StanfordCBCL/gROM/blob/687481eefe2d2dfa897e72543c6ffc512ed730f3/README.md",
+          "sha256": "4dbd1a1ac889b5d6e28559c54d89a059a2d2ca3bcf1c1943673caedff273996f",
+          "bytes": 1843
+        },
+        "root_names": [
+          ".github",
+          ".gitignore",
+          "LICENSE.txt",
+          "README.md",
+          "create_venv.sh",
+          "data_location_example.txt",
+          "graph1d",
+          "network1d",
+          "test",
+          "tools"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 281,
+      "arxiv_id": "2411.09209",
+      "repo_url": "https://github.com/jdh-algo/JoyVASA",
+      "arxiv": {
+        "versioned_id": "2411.09209v5",
+        "primary_category": "cs.CV",
+        "title": "JoyVASA: Portrait and Animal Image Animation with Diffusion-Based Audio-Driven Facial Dynamics and Head Motion Generation",
+        "abstract": "Audio-driven portrait animation has made significant advances with diffusion-based models, improving video quality and lipsync accuracy. However, the increasing complexity of these models has led to inefficiencies in training and inference, as well as constraints on video length and inter-frame continuity. In this paper, we propose JoyVASA, a diffusion-based method for generating facial dynamics and head motion in audio-driven facial animation. Specifically, in the first stage, we introduce a decoupled facial representation framework that separates dynamic facial expressions from static 3D facial representations. This decoupling allows the system to generate longer videos by combining any static 3D facial representation with dynamic motion sequences. Then, in the second stage, a diffusion transformer is trained to generate motion sequences directly from audio cues, independent of character identity. Finally, a generator trained in the first stage uses the 3D facial representation and the generated motion sequences as inputs to render high-quality animations. With the decoupled facial representation and the identity-independent motion generation process, JoyVASA extends beyond human portraits to animate animal faces seamlessly. The model is trained on a hybrid dataset of private Chinese and public English data, enabling multilingual support. Experimental results validate the effectiveness of our approach. Future work will focus on improving real-time performance and refining expression control, further expanding the applications in portrait animation. The code is available at: https://github.com/jdh-algo/JoyVASA."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jdh-algo/JoyVASA",
+        "exists": true,
+        "full_name": "jdh-algo/JoyVASA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "916a90f8de490e8648fee460c1200bd5d9a795af",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jdh-algo/JoyVASA/blob/916a90f8de490e8648fee460c1200bd5d9a795af/README.md",
+          "sha256": "ad71d31729870672bf19fd4548de887cbb4f74e770b1aca915f651c06f42db17",
+          "bytes": 11163
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "__init__.py",
+          "app.py",
+          "assets",
+          "data",
+          "inference.py",
+          "requirements.txt",
+          "src",
+          "train.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 282,
+      "arxiv_id": "2407.03856",
+      "repo_url": "https://github.com/mansicer/Q-Adapter",
+      "arxiv": {
+        "versioned_id": "2407.03856v4",
+        "primary_category": "cs.LG",
+        "title": "Q-Adapter: Customizing Pre-trained LLMs to New Preferences with Forgetting Mitigation",
+        "abstract": "Large Language Models (LLMs), trained on a large amount of corpus, have demonstrated remarkable abilities. However, it may not be sufficient to directly apply open-source LLMs like Llama to certain real-world scenarios, since most of them are trained for \\emph{general} purposes. Thus, the demands for customizing publicly available LLMs emerge, but are currently under-studied. In this work, we consider customizing pre-trained LLMs with new human preferences. Specifically, the LLM should not only meet the new preference but also preserve its original capabilities after customization. Drawing inspiration from the observation that human preference can be expressed as a reward model, we propose to cast LLM customization as optimizing the sum of two reward functions, one of which (denoted as $r_1$) was used to pre-train the LLM while the other (denoted as $r_2$) characterizes the new human preference. The obstacle here is that both reward functions are unknown, making the application of modern reinforcement learning methods infeasible. Thanks to the residual Q-learning framework, we can restore the customized LLM with the pre-trained LLM and the \\emph{residual Q-function} without the reward function $r_1$. Moreover, we find that for a fixed pre-trained LLM, the reward function $r_2$ can be derived from the residual Q-function, enabling us to directly learn the residual Q-function from the new human preference data upon the Bradley-Terry model. We name our method Q-Adapter as it introduces an adapter module to approximate the residual Q-function for customizing the pre-trained LLM towards the new preference. Experiments based on the Llama-3.1 model on the DSP dataset and HH-RLHF dataset illustrate the superior effectiveness of Q-Adapter on both retaining existing knowledge and learning new preferences. Code is available at https://github.com/mansicer/Q-Adapter."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mansicer/Q-Adapter",
+        "exists": true,
+        "full_name": "mansicer/Q-Adapter",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "991ac8bc5613f0eb01479db613b674c13f1442d0",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/mansicer/Q-Adapter/blob/991ac8bc5613f0eb01479db613b674c13f1442d0/README.md",
+          "sha256": "33b88956a2df110af5f1e9406b0bf7b695ef4202aef664ccf7adb6b06f14f740",
+          "bytes": 6391
+        },
+        "root_names": [
+          ".dockerignore",
+          ".gitignore",
+          "DATA_LICENSE",
+          "LICENSE",
+          "README.md",
+          "data",
+          "dpo_train.py",
+          "lm-evaluation-harness",
+          "make_replay_data.py",
+          "ppo_train.py",
+          "prompts",
+          "qadapter_train.py",
+          "requirements.txt",
+          "rm_train.py",
+          "sft_train.py",
+          "templates",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 283,
+      "arxiv_id": "2407.08148",
+      "repo_url": "https://github.com/rm-zhang/scpnet",
+      "arxiv": {
+        "versioned_id": "2407.08148v1",
+        "primary_category": "cs.CV",
+        "title": "SCPNet: Unsupervised Cross-modal Homography Estimation via Intra-modal Self-supervised Learning",
+        "abstract": "We propose a novel unsupervised cross-modal homography estimation framework based on intra-modal Self-supervised learning, Correlation, and consistent feature map Projection, namely SCPNet. The concept of intra-modal self-supervised learning is first presented to facilitate the unsupervised cross-modal homography estimation. The correlation-based homography estimation network and the consistent feature map projection are combined to form the learnable architecture of SCPNet, boosting the unsupervised learning framework. SCPNet is the first to achieve effective unsupervised homography estimation on the satellite-map image pair cross-modal dataset, GoogleMap, under [-32,+32] offset on a 128x128 image, leading the supervised approach MHN by 14.0% of mean average corner error (MACE). We further conduct extensive experiments on several cross-modal/spectral and manually-made inconsistent datasets, on which SCPNet achieves the state-of-the-art (SOTA) performance among unsupervised approaches, and owns 49.0%, 25.2%, 36.4%, and 10.7% lower MACEs than the supervised approach MHN. Source code is available at https://github.com/RM-Zhang/SCPNet."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rm-zhang/scpnet",
+        "exists": true,
+        "full_name": "RM-Zhang/SCPNet",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "574a5cf07a86861a6ad63aa5648217dd157c83a4",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/RM-Zhang/SCPNet/blob/574a5cf07a86861a6ad63aa5648217dd157c83a4/README.md",
+          "sha256": "d85509749583ff8f3d5719413332e6a2821b1a2f9010d9c656b54e4253718e5c",
+          "bytes": 2451
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "ckpt",
+          "dataloader",
+          "docs",
+          "example",
+          "network",
+          "test_SCPNet.py",
+          "test_example.py",
+          "train_SCPNet.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 284,
+      "arxiv_id": "2303.00329",
+      "repo_url": "https://github.com/fzj-pgi-12/mean-field-approximate-optimization-algorithm",
+      "arxiv": {
+        "versioned_id": "2303.00329v2",
+        "primary_category": "quant-ph",
+        "title": "Mean-Field Approximate Optimization Algorithm",
+        "abstract": "The Quantum Approximate Optimization Algorithm (QAOA) is suggested as a promising application on early quantum computers. Here, a quantum-inspired classical algorithm, the mean-field Approximate Optimization Algorithm (mean-field AOA), is developed by replacing the quantum evolution of the QAOA with classical spin dynamics through the mean-field approximation. Due to the alternating structure of the QAOA, this classical dynamics can be found exactly for any number of QAOA layers. We benchmark its performance against the QAOA on the Sherrington-Kirkpatrick (SK) model and the partition problem, and find that the mean-field AOA outperforms the QAOA in both cases for most instances. Our algorithm can thus serve as a tool to delineate optimization problems that can be solved classically from those that cannot, i.e. we believe that it will help to identify instances where a true quantum advantage can be expected from the QAOA. To quantify quantum fluctuations around the mean-field trajectories, we solve an effective scattering problem in time, which is characterized by a spectrum of time-dependent Lyapunov exponents. These provide an indicator for the hardness of a given optimization problem relative to the mean-field AOA."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/fzj-pgi-12/mean-field-approximate-optimization-algorithm",
+        "exists": true,
+        "full_name": "FZJ-PGI-12/Mean-Field-Approximate-Optimization-Algorithm",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b8c46ef298223adfa46672975c6786c9041a7e75",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/FZJ-PGI-12/Mean-Field-Approximate-Optimization-Algorithm/blob/b8c46ef298223adfa46672975c6786c9041a7e75/README.md",
+          "sha256": "ed2507836f04e5a23b0138ea6f8a617614296fca82941034e2e8e7944fd1fd67",
+          "bytes": 2393
+        },
+        "root_names": [
+          ".gitattributes",
+          "LICENSE",
+          "README.md",
+          "data",
+          "notebooks",
+          "pyproject.toml",
+          "src",
+          "test"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category quant-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 285,
+      "arxiv_id": "2505.24327",
+      "repo_url": "https://github.com/jason011212/star-net",
+      "arxiv": {
+        "versioned_id": "2505.24327v1",
+        "primary_category": "cs.CV",
+        "title": "STAR-Net: An Interpretable Model-Aided Network for Remote Sensing Image Denoising",
+        "abstract": "Remote sensing image (RSI) denoising is an important topic in the field of remote sensing. Despite the impressive denoising performance of RSI denoising methods, most current deep learning-based approaches function as black boxes and lack integration with physical information models, leading to limited interpretability. Additionally, many methods may struggle with insufficient attention to non-local self-similarity in RSI and require tedious tuning of regularization parameters to achieve optimal performance, particularly in conventional iterative optimization approaches. In this paper, we first propose a novel RSI denoising method named sparse tensor-aided representation network (STAR-Net), which leverages a low-rank prior to effectively capture the non-local self-similarity within RSI. Furthermore, we extend STAR-Net to a sparse variant called STAR-Net-S to deal with the interference caused by non-Gaussian noise in original RSI for the purpose of improving robustness. Different from conventional iterative optimization, we develop an alternating direction method of multipliers (ADMM)-guided deep unrolling network, in which all regularization parameters can be automatically learned, thus inheriting the advantages of both model-based and deep learning-based approaches and successfully addressing the above-mentioned shortcomings. Comprehensive experiments on synthetic and real-world datasets demonstrate that STAR-Net and STAR-Net-S outperform state-of-the-art RSI denoising methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jason011212/star-net",
+        "exists": false,
+        "root_names": null
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 286,
+      "arxiv_id": "2503.15731",
+      "repo_url": "https://github.com/kunzhan/semihsi",
+      "arxiv": {
+        "versioned_id": "2503.15731v1",
+        "primary_category": "cs.CV",
+        "title": "Graph-Weighted Contrastive Learning for Semi-Supervised Hyperspectral Image Classification",
+        "abstract": "Most existing graph-based semi-supervised hyperspectral image classification methods rely on superpixel partitioning techniques. However, they suffer from misclassification of certain pixels due to inaccuracies in superpixel boundaries, \\ie, the initial inaccuracies in superpixel partitioning limit overall classification performance. In this paper, we propose a novel graph-weighted contrastive learning approach that avoids the use of superpixel partitioning and directly employs neural networks to learn hyperspectral image representation. Furthermore, while many approaches require all graph nodes to be available during training, our approach supports mini-batch training by processing only a subset of nodes at a time, reducing computational complexity and improving generalization to unseen nodes. Experimental results on three widely-used datasets demonstrate the effectiveness of the proposed approach compared to baselines relying on superpixel partitioning."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kunzhan/semihsi",
+        "exists": true,
+        "full_name": "kunzhan/semiHSI",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "639afdfebb5d04b0c5082424db8284beff98b456",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/kunzhan/semiHSI/blob/639afdfebb5d04b0c5082424db8284beff98b456/README.md",
+          "sha256": "caa46ac903130b0f7dcdd64438f0c04471121d7c19d9e227656f2bb618a65636",
+          "bytes": 2423
+        },
+        "root_names": [
+          "DR_HSI",
+          "HSI_GWCL",
+          "README.md",
+          "assets"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 287,
+      "arxiv_id": "2310.12700",
+      "repo_url": "https://github.com/francescocalvanese/fcseqtools.jl",
+      "arxiv": {
+        "versioned_id": "2310.12700v1",
+        "primary_category": "q-bio.BM",
+        "title": "Towards Parsimonious Generative Modeling of RNA Families",
+        "abstract": "Generative probabilistic models emerge as a new paradigm in data-driven, evolution-informed design of biomolecular sequences. This paper introduces a novel approach, called Edge Activation Direct Coupling Analysis (eaDCA), tailored to the characteristics of RNA sequences, with a strong emphasis on simplicity, efficiency, and interpretability. eaDCA explicitly constructs sparse coevolutionary models for RNA families, achieving performance levels comparable to more complex methods while utilizing a significantly lower number of parameters. Our approach demonstrates efficiency in generating artificial RNA sequences that closely resemble their natural counterparts in both statistical analyses and SHAPE-MaP experiments, and in predicting the effect of mutations. Notably, eaDCA provides a unique feature: estimating the number of potential functional sequences within a given RNA family. For example, in the case of cyclic di-AMP riboswitches (RF00379), our analysis suggests the existence of approximately $\\mathbf{10^{39}}$ functional nucleotide sequences. While huge compared to the known $< \\mathbf{4,000}$ natural sequences, this number represents only a tiny fraction of the vast pool of nearly $\\mathbf{10^{82}}$ possible nucleotide sequences of the same length (136 nucleotides). These results underscore the promise of sparse and interpretable generative models, such as eaDCA, in enhancing our understanding of the expansive RNA sequence space."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/francescocalvanese/fcseqtools.jl",
+        "exists": true,
+        "full_name": "FrancescoCalvanese/FCSeqTools.jl",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "2c0a32c246ab63968f5875ef1746575e7c3ca173",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/FrancescoCalvanese/FCSeqTools.jl/blob/2c0a32c246ab63968f5875ef1746575e7c3ca173/README.md",
+          "sha256": "afbcb864ea8ea08650d965471c76b2f455211a35d12cb9512ae8f1983fc0060a",
+          "bytes": 680
+        },
+        "root_names": [
+          ".DS_Store",
+          ".gitignore",
+          "DATA",
+          "Example",
+          "Project.toml",
+          "README.md",
+          "src"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.BM"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 288,
+      "arxiv_id": "2405.10575",
+      "repo_url": "https://github.com/boschresearch/evidential-occupancy",
+      "arxiv": {
+        "versioned_id": "2405.10575v1",
+        "primary_category": "cs.CV",
+        "title": "Accurate Training Data for Occupancy Map Prediction in Automated Driving Using Evidence Theory",
+        "abstract": "Automated driving fundamentally requires knowledge about the surrounding geometry of the scene. Modern approaches use only captured images to predict occupancy maps that represent the geometry. Training these approaches requires accurate data that may be acquired with the help of LiDAR scanners. We show that the techniques used for current benchmarks and training datasets to convert LiDAR scans into occupancy grid maps yield very low quality, and subsequently present a novel approach using evidence theory that yields more accurate reconstructions. We demonstrate that these are superior by a large margin, both qualitatively and quantitatively, and that we additionally obtain meaningful uncertainty estimates. When converting the occupancy maps back to depth estimates and comparing them with the raw LiDAR measurements, our method yields a MAE improvement of 30% to 52% on nuScenes and 53% on Waymo over other occupancy ground-truth data. Finally, we use the improved occupancy maps to train a state-of-the-art occupancy prediction method and demonstrate that it improves the MAE by 25% on nuScenes."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/boschresearch/evidential-occupancy",
+        "exists": true,
+        "full_name": "boschresearch/evidential-occupancy",
+        "archived": true,
+        "default_branch": "main",
+        "head_commit": "764ddb9c6ea9634c7150a773a154c70132ab80f2",
+        "license_spdx": "AGPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/boschresearch/evidential-occupancy/blob/764ddb9c6ea9634c7150a773a154c70132ab80f2/README.md",
+          "sha256": "5d5c19a749498b7f83a5c8c08348f06831aa1f161d0b6387a71d79aec2963a6d",
+          "bytes": 3289
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "conf",
+          "pixi.lock",
+          "pixi.toml",
+          "pyproject.toml",
+          "scene_reconstruction"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 289,
+      "arxiv_id": "2311.09816",
+      "repo_url": "https://github.com/flair-iisc/watermark_tradeoffs",
+      "arxiv": {
+        "versioned_id": "2311.09816v2",
+        "primary_category": "cs.CL",
+        "title": "Downstream Trade-offs of a Family of Text Watermarks",
+        "abstract": "Watermarking involves implanting an imperceptible signal into generated text that can later be detected via statistical tests. A prominent family of watermarking strategies for LLMs embeds this signal by upsampling a (pseudorandomly-chosen) subset of tokens at every generation step. However, such signals alter the model's output distribution and can have unintended effects on its downstream performance. In this work, we evaluate the performance of LLMs watermarked using three different strategies over a diverse suite of tasks including those cast as k-class classification (CLS), multiple choice question answering (MCQ), short-form generation (e.g., open-ended question answering) and long-form generation (e.g., translation) tasks. We find that watermarks (under realistic hyperparameters) can cause significant drops in LLMs' effective utility across all tasks. We observe drops of 10 to 20% in CLS tasks in the average case, which shoot up to 100% in the worst case. We notice degradations of about 7% in MCQ tasks, 10-15% in short-form generation, and 5-15% in long-form generation tasks. Our findings highlight the trade-offs that users should be cognizant of when using watermarked models."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/flair-iisc/watermark_tradeoffs",
+        "exists": true,
+        "full_name": "FLAIR-IISc/watermark_tradeoffs",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "dd4d75f820e26117947bd5e0fc9267a66521eae4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/FLAIR-IISc/watermark_tradeoffs/blob/dd4d75f820e26117947bd5e0fc9267a66521eae4/README.md",
+          "sha256": "a1d2314ef6dd5f9eb94d07a1c6177ac5814ecaa3ee0529827f41fb286fd3dcbc",
+          "bytes": 5487
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "calibration",
+          "calibration_results",
+          "config",
+          "data",
+          "evaluation",
+          "exceptions",
+          "requirements.txt",
+          "utils",
+          "watermark"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 290,
+      "arxiv_id": "2304.14796",
+      "repo_url": "https://github.com/sonalsannigrahi/document_embeddings",
+      "arxiv": {
+        "versioned_id": "2304.14796v1",
+        "primary_category": "cs.CL",
+        "title": "Are the Best Multilingual Document Embeddings simply Based on Sentence Embeddings?",
+        "abstract": "Dense vector representations for textual data are crucial in modern NLP. Word embeddings and sentence embeddings estimated from raw texts are key in achieving state-of-the-art results in various tasks requiring semantic understanding. However, obtaining embeddings at the document level is challenging due to computational requirements and lack of appropriate data. Instead, most approaches fall back on computing document embeddings based on sentence representations. Although there exist architectures and models to encode documents fully, they are in general limited to English and few other high-resourced languages. In this work, we provide a systematic comparison of methods to produce document-level representations from sentences based on LASER, LaBSE, and Sentence BERT pre-trained multilingual models. We compare input token number truncation, sentence averaging as well as some simple windowing and in some cases new augmented and learnable approaches, on 3 multi- and cross-lingual tasks in 8 languages belonging to 3 different language families. Our task-based extrinsic evaluations show that, independently of the language, a clever combination of sentence embeddings is usually better than encoding the full document as a single unit, even when this is possible. We demonstrate that while a simple sentence average results in a strong baseline for classification tasks, more complex combinations are necessary for semantic tasks."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sonalsannigrahi/document_embeddings",
+        "exists": true,
+        "full_name": "sonalsannigrahi/Document_Embeddings",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7c2842777ccfd3988e7a1f92300c298a8c622c0b",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sonalsannigrahi/Document_Embeddings/blob/7c2842777ccfd3988e7a1f92300c298a8c622c0b/README.md",
+          "sha256": "b4b6daea044f014361b63fa4a4a65afd0e6c40ea2699563ab4caa4f146970ab0",
+          "bytes": 1587
+        },
+        "root_names": [
+          ".DS_Store",
+          "README.md",
+          "doc_alignment",
+          "environment.yml",
+          "icd_code",
+          "ml_doc",
+          "settings_doc_emb.png"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 291,
+      "arxiv_id": "2401.10869",
+      "repo_url": "https://github.com/alemermartinez/rplam-vs",
+      "arxiv": {
+        "versioned_id": "2401.10869v2",
+        "primary_category": "stat.ME",
+        "title": "Robust variable selection for partially linear additive models",
+        "abstract": "Among semiparametric regression models, partially linear additive models provide a useful tool to include additive nonparametric components as well as a parametric component, when explaining the relationship between the response and a set of explanatory variables. This paper concerns such models under sparsity assumptions for the covariates included in the linear component. Sparse covariates are frequent in regression problems where the task of variable selection is usually of interest. As in other settings, outliers either in the residuals or in the covariates involved in the linear component have a harmful effect. To simultaneously achieve model selection for the parametric component of the model and resistance to outliers, we combine preliminary robust estimators of the additive component, robust linear $MM-$regression estimators with a penalty such as SCAD on the coefficients in the parametric part. Under mild assumptions, consistency results and rates of convergence for the proposed estimators are derived. A Monte Carlo study is carried out to compare, under different models and contamination schemes, the performance of the robust proposal with its classical counterpart. The obtained results show the advantage of using the robust approach. Through the analysis of a real data set, we also illustrate the benefits of the proposed procedure."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/alemermartinez/rplam-vs",
+        "exists": true,
+        "full_name": "alemermartinez/rplam-vs",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "045bb269bfcb75fdc272d8941f9742b183eac83e",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/alemermartinez/rplam-vs/blob/045bb269bfcb75fdc272d8941f9742b183eac83e/README.md",
+          "sha256": "baad9d8eb79a9286c9994365a28b336d8ce29bd0a6aa403b4e36894c246ccd92",
+          "bytes": 4045
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "Plasma_Retinol.txt",
+          "R",
+          "README.Rmd",
+          "README.html",
+          "README.md",
+          "README_files",
+          "rplam-vs.Rproj"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category stat.ME"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 292,
+      "arxiv_id": "2405.11459",
+      "repo_url": "https://github.com/liulab-repository/du-in",
+      "arxiv": {
+        "versioned_id": "2405.11459v3",
+        "primary_category": "eess.SP",
+        "title": "Du-IN: Discrete units-guided mask modeling for decoding speech from Intracranial Neural signals",
+        "abstract": "Invasive brain-computer interfaces with Electrocorticography (ECoG) have shown promise for high-performance speech decoding in medical applications, but less damaging methods like intracranial stereo-electroencephalography (sEEG) remain underexplored. With rapid advances in representation learning, leveraging abundant recordings to enhance speech decoding is increasingly attractive. However, popular methods often pre-train temporal models based on brain-level tokens, overlooking that brain activities in different regions are highly desynchronized during tasks. Alternatively, they pre-train spatial-temporal models based on channel-level tokens but fail to evaluate them on challenging tasks like speech decoding, which requires intricate processing in specific language-related areas. To address this issue, we collected a well-annotated Chinese word-reading sEEG dataset targeting language-related brain networks from 12 subjects. Using this benchmark, we developed the Du-IN model, which extracts contextual embeddings based on region-level tokens through discrete codex-guided mask modeling. Our model achieves state-of-the-art performance on the 61-word classification task, surpassing all baselines. Model comparisons and ablation studies reveal that our design choices, including (i) temporal modeling based on region-level tokens by utilizing 1D depthwise convolution to fuse channels in the ventral sensorimotor cortex (vSMC) and superior temporal gyrus (STG) and (ii) self-supervision through discrete codex-guided mask modeling, significantly contribute to this performance. Overall, our approach -- inspired by neuroscience findings and capitalizing on region-level representations from specific brain regions -- is suitable for invasive brain modeling and represents a promising neuro-inspired AI approach in brain-computer interfaces."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/liulab-repository/du-in",
+        "exists": true,
+        "full_name": "liulab-repository/Du-IN",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "c2e289c353005d5ac184860909e7b5be81da31ba",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/liulab-repository/Du-IN/blob/c2e289c353005d5ac184860909e7b5be81da31ba/README.md",
+          "sha256": "48e331cf68705a309c047d0306d46f1eb445dafa435888a17d45e2e7451e5216",
+          "bytes": 4144
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "environment-torch.yml",
+          "figures",
+          "models",
+          "params",
+          "run.sh",
+          "train",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 293,
+      "arxiv_id": "2307.14502",
+      "repo_url": "https://github.com/leto19/commonvoice-demand",
+      "arxiv": {
+        "versioned_id": "2307.14502v2",
+        "primary_category": "eess.AS",
+        "title": "The Effect of Spoken Language on Speech Enhancement using Self-Supervised Speech Representation Loss Functions",
+        "abstract": "Recent work in the field of speech enhancement (SE) has involved the use of self-supervised speech representations (SSSRs) as feature transformations in loss functions. However, in prior work, very little attention has been paid to the relationship between the language of the audio used to train the self-supervised representation and that used to train the SE system. Enhancement models trained using a loss function which incorporates a self-supervised representation that shares exactly the language of the noisy data used to train the SE system show better performance than those which do not match exactly. This may lead to enhancement systems which are language specific and as such do not generalise well to unseen languages, unlike models trained using traditional spectrogram or time domain loss functions. In this work, SE models are trained and tested on a number of different languages, with self-supervised representations which themselves are trained using different language combinations and with differing network structures as loss function representations. These models are then tested across unseen languages and their performances are analysed. It is found that the training language of the self-supervised representation appears to have a minor effect on enhancement performance, the amount of training data of a particular language, however, greatly affects performance."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/leto19/commonvoice-demand",
+        "exists": true,
+        "full_name": "leto19/CommonVoice-DEMAND",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9964844d447132c01d59d5f179025345d2e106f4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/leto19/CommonVoice-DEMAND/blob/9964844d447132c01d59d5f179025345d2e106f4/README.md",
+          "sha256": "9af6d9c67b58a5923c79b8433aaeebb9924a8ae34ec5cd48a34e5561d2efc4f8",
+          "bytes": 3492
+        },
+        "root_names": [
+          "README.md",
+          "asl_P56.py",
+          "build_json_test.py",
+          "build_json_train.py",
+          "build_json_valid.py",
+          "create_datasets.sh",
+          "get_candidates.py",
+          "get_candidates.sh",
+          "get_duration.py",
+          "log_testset.csv",
+          "log_trainset_28spk.csv",
+          "requirements.txt",
+          "resample.sh",
+          "run.sh",
+          "speech_noise.py",
+          "test_cv_fr.json",
+          "testset_create.py",
+          "trainset_create.py",
+          "valid_cv_fr.json"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.AS"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 294,
+      "arxiv_id": "2310.00166",
+      "repo_url": "https://github.com/facebookresearch/motif",
+      "arxiv": {
+        "versioned_id": "2310.00166v1",
+        "primary_category": "cs.AI",
+        "title": "Motif: Intrinsic Motivation from Artificial Intelligence Feedback",
+        "abstract": "Exploring rich environments and evaluating one's actions without prior knowledge is immensely challenging. In this paper, we propose Motif, a general method to interface such prior knowledge from a Large Language Model (LLM) with an agent. Motif is based on the idea of grounding LLMs for decision-making without requiring them to interact with the environment: it elicits preferences from an LLM over pairs of captions to construct an intrinsic reward, which is then used to train agents with reinforcement learning. We evaluate Motif's performance and behavior on the challenging, open-ended and procedurally-generated NetHack game. Surprisingly, by only learning to maximize its intrinsic reward, Motif achieves a higher game score than an algorithm directly trained to maximize the score itself. When combining Motif's intrinsic reward with the environment reward, our method significantly outperforms existing approaches and makes progress on tasks where no advancements have ever been made without demonstrations. Finally, we show that Motif mostly generates intuitive human-aligned behaviors which can be steered easily through prompt modifications, while scaling well with the LLM size and the amount of information given in the prompt."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/facebookresearch/motif",
+        "exists": true,
+        "full_name": "facebookresearch/motif",
+        "archived": true,
+        "default_branch": "main",
+        "head_commit": "51b5f47312ef4cecab65ac3f0df384bc76fae555",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/facebookresearch/motif/blob/51b5f47312ef4cecab65ac3f0df384bc76fae555/README.md",
+          "sha256": "1857b5b028920699a18d923f195b0d91ea997a64703464f143d2802d169d7de7",
+          "bytes": 10611
+        },
+        "root_names": [
+          ".gitignore",
+          "CODE_OF_CONDUCT.md",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "README.md",
+          "motif_dataset_zipped",
+          "requirements.txt",
+          "rl_baseline",
+          "rlaif",
+          "scripts",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "repository_unavailable",
+        "evidence": "the repository is archived on GitHub"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 295,
+      "arxiv_id": "2403.18452",
+      "repo_url": "https://github.com/inhwanbae/singulartrajectory",
+      "arxiv": {
+        "versioned_id": "2403.18452v1",
+        "primary_category": "cs.CV",
+        "title": "SingularTrajectory: Universal Trajectory Predictor Using Diffusion Model",
+        "abstract": "There are five types of trajectory prediction tasks: deterministic, stochastic, domain adaptation, momentary observation, and few-shot. These associated tasks are defined by various factors, such as the length of input paths, data split and pre-processing methods. Interestingly, even though they commonly take sequential coordinates of observations as input and infer future paths in the same coordinates as output, designing specialized architectures for each task is still necessary. For the other task, generality issues can lead to sub-optimal performances. In this paper, we propose SingularTrajectory, a diffusion-based universal trajectory prediction framework to reduce the performance gap across the five tasks. The core of SingularTrajectory is to unify a variety of human dynamics representations on the associated tasks. To do this, we first build a Singular space to project all types of motion patterns from each task into one embedding space. We next propose an adaptive anchor working in the Singular space. Unlike traditional fixed anchor methods that sometimes yield unacceptable paths, our adaptive anchor enables correct anchors, which are put into a wrong location, based on a traversability map. Finally, we adopt a diffusion-based predictor to further enhance the prototype paths using a cascaded denoising process. Our unified framework ensures the generality across various benchmark settings such as input modality, and trajectory lengths. Extensive experiments on five public benchmarks demonstrate that SingularTrajectory substantially outperforms existing models, highlighting its effectiveness in estimating general dynamics of human movements. Code is publicly available at https://github.com/inhwanbae/SingularTrajectory ."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/inhwanbae/singulartrajectory",
+        "exists": true,
+        "full_name": "InhwanBae/SingularTrajectory",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f7855881976276787bc16d951a9259d1cd50c101",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/InhwanBae/SingularTrajectory/blob/f7855881976276787bc16d951a9259d1cd50c101/README.md",
+          "sha256": "e53aa4ac8cce9542efb1739e62dccab9d36bf40de542665dbfd590cfb174121c",
+          "bytes": 10395
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "SingularTrajectory",
+          "baseline",
+          "checkpoints",
+          "config",
+          "datasets",
+          "img",
+          "script",
+          "trainval.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 296,
+      "arxiv_id": "2506.20568",
+      "repo_url": "https://github.com/giannipetrella/walls-and-chambers-implementation",
+      "arxiv": {
+        "versioned_id": "2506.20568v1",
+        "primary_category": "math.AG",
+        "title": "Finding the walls for quiver moduli",
+        "abstract": "We give an effective characterisation of the walls in the variation of geometric invariant theory problem associated to a quiver and a dimension vector."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/giannipetrella/walls-and-chambers-implementation",
+        "exists": true,
+        "full_name": "giannipetrella/walls-and-chambers-implementation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "3056307c1bb87fcd0344e5f677ed03c7c902ce52",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/giannipetrella/walls-and-chambers-implementation/blob/3056307c1bb87fcd0344e5f677ed03c7c902ce52/README.md",
+          "sha256": "6f904344cd44c5d4f8eb9a8be1fde22da9730ef0a09e76c3794fa8988d04d8f0",
+          "bytes": 1771
+        },
+        "root_names": [
+          "Manifest.toml",
+          "Project.toml",
+          "README.md",
+          "examples.jl",
+          "git_equivalence.py",
+          "walls-and-chambers.jl"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.AG"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 297,
+      "arxiv_id": "2504.08173",
+      "repo_url": "https://github.com/tathagata-karmakar/optimal-paths",
+      "arxiv": {
+        "versioned_id": "2504.08173v2",
+        "primary_category": "quant-ph",
+        "title": "CDJ-Pontryagin Optimal Control for General Continuously Monitored Quantum Systems",
+        "abstract": "The Chantasri-Dressel-Jordan (CDJ) stochastic path integral formalism (Chantasri et al. 2013 and 2015) characterizes the statistics of the readouts and the most likely conditional evolution of continuously monitored quantum systems. In our work, we generalize the CDJ formalism to arbitrary continuously monitored systems by introducing a costate operator. We then prescribe a generalized Pontryagin's maximum principle for quantum systems undergoing arbitrary evolution and find conditions on optimal control protocols. We show that the CDJ formalism's most likely path can be cast as a quantum Pontryagin's maximum principle, where the cost function is the readout probabilities along a quantum trajectory. This insight allows us to derive general optimal control equations for arbitrary control parameters. We apply our results to a monitored oscillator in the presence of a parametric quadratic potential and variable quadrature measurements. We find the optimal potential strength and quadrature angle for fixed-end point problems. The optimal parametric potential is analytically shown to have a \"bang-bang\" form. We apply our protocol to three quantum oscillator examples relevant to Bosonic quantum computing. The first example considers a binomial codeword preparation from an error word, the second example looks into cooling to the ground state from an even cat state, and the third example investigates a cat state to cat state evolution. We compare the statistics of the fidelities of the final state with respect to the target state for trajectories generated under the optimal control with those generated under a sample control. Compared to the latter case, we see a 40-196% increase in the number of trajectories reaching more than 95% fidelities under the optimal control. Our work provides a systematic prescription for finding quantum optimal control for continuously monitored systems."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tathagata-karmakar/optimal-paths",
+        "exists": true,
+        "full_name": "tathagata-karmakar/Optimal-Paths",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d3431d664ce8a824ce0b744d3df4e6f127ddb0ec",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/tathagata-karmakar/Optimal-Paths/blob/d3431d664ce8a824ce0b744d3df4e6f127ddb0ec/README.md",
+          "sha256": "b08f1f9b28f11a5c84adeb1575d1e1a40dd6617f93daab61a7a9d33e1e9e5561",
+          "bytes": 2487
+        },
+        "root_names": [
+          ".DS_Store",
+          "Alternate_Control_plot.py",
+          "CITATION.cff",
+          "Control_Generation.py",
+          "Data",
+          "Deprecated",
+          "Eff_OP_Functions.py",
+          "Histogram_plot.py",
+          "Initialization.py",
+          "MathematicaNotes.nb",
+          "OP_histogram_mp.py",
+          "OP_histogram_mp_RRcheme.py",
+          "OP_optimize_JAX.py",
+          "Old Plots",
+          "Optimal_control_l1_theta_anneal.py",
+          "Optimal_control_plot.py",
+          "Optimal_control_trajectory.py",
+          "README.md",
+          "Testing",
+          "__pycache__"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category quant-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 298,
+      "arxiv_id": "2404.19341",
+      "repo_url": "https://github.com/aquillanatus/scorecampp",
+      "arxiv": {
+        "versioned_id": "2404.19341v1",
+        "primary_category": "cs.CV",
+        "title": "Reliable or Deceptive? Investigating Gated Features for Smooth Visual Explanations in CNNs",
+        "abstract": "Deep learning models have achieved remarkable success across diverse domains. However, the intricate nature of these models often impedes a clear understanding of their decision-making processes. This is where Explainable AI (XAI) becomes indispensable, offering intuitive explanations for model decisions. In this work, we propose a simple yet highly effective approach, ScoreCAM++, which introduces modifications to enhance the promising ScoreCAM method for visual explainability. Our proposed approach involves altering the normalization function within the activation layer utilized in ScoreCAM, resulting in significantly improved results compared to previous efforts. Additionally, we apply an activation function to the upsampled activation layers to enhance interpretability. This improvement is achieved by selectively gating lower-priority values within the activation layer. Through extensive experiments and qualitative comparisons, we demonstrate that ScoreCAM++ consistently achieves notably superior performance and fairness in interpreting the decision-making process compared to both ScoreCAM and previous methods."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/aquillanatus/scorecampp",
+        "exists": true,
+        "full_name": "AquillaNatus/ScoreCAMpp",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "22c2d3a2a259f67bf2d5239c6f6f866a7bce18f9",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AquillaNatus/ScoreCAMpp/blob/22c2d3a2a259f67bf2d5239c6f6f866a7bce18f9/README.md",
+          "sha256": "27debd930fa764086d7efb5608e784390c24435be3407bcfa0f18297906531c0",
+          "bytes": 1342
+        },
+        "root_names": [
+          "Example_Images",
+          "Metric_Collection.ipynb",
+          "README.md",
+          "cam",
+          "model.jpg",
+          "test_all.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 299,
+      "arxiv_id": "2412.08376",
+      "repo_url": "https://github.com/ffrivera0/reloc3r",
+      "arxiv": {
+        "versioned_id": "2412.08376v2",
+        "primary_category": "cs.CV",
+        "title": "Reloc3r: Large-Scale Training of Relative Camera Pose Regression for Generalizable, Fast, and Accurate Visual Localization",
+        "abstract": "Visual localization aims to determine the camera pose of a query image relative to a database of posed images. In recent years, deep neural networks that directly regress camera poses have gained popularity due to their fast inference capabilities. However, existing methods struggle to either generalize well to new scenes or provide accurate camera pose estimates. To address these issues, we present Reloc3r, a simple yet effective visual localization framework. It consists of an elegantly designed relative pose regression network, and a minimalist motion averaging module for absolute pose estimation. Trained on approximately eight million posed image pairs, Reloc3r achieves surprisingly good performance and generalization ability. We conduct extensive experiments on six public datasets, consistently demonstrating the effectiveness and efficiency of the proposed method. It provides high-quality camera pose estimates in real time and generalizes to novel scenes. Code: https://github.com/ffrivera0/reloc3r."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ffrivera0/reloc3r",
+        "exists": true,
+        "full_name": "ffrivera0/reloc3r",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "761fac648e9c21fd7dcda01ab2ccd4fc20058102",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ffrivera0/reloc3r/blob/761fac648e9c21fd7dcda01ab2ccd4fc20058102/README.md",
+          "sha256": "8559389b2761e6757e3224660b9134abc8bfc409106e101ab77bdfc85f0c06bc",
+          "bytes": 8389
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          "LICENSE",
+          "README.md",
+          "croco",
+          "datasets_preprocess",
+          "eval_relpose.py",
+          "eval_visloc.py",
+          "media",
+          "reloc3r",
+          "requirements.txt",
+          "requirements_optional.txt",
+          "scripts",
+          "train.py",
+          "visualization.py",
+          "wild_relpose.py",
+          "wild_visloc.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 300,
+      "arxiv_id": "2302.10248",
+      "repo_url": "https://github.com/jaesunghuh/voxsrc2022",
+      "arxiv": {
+        "versioned_id": "2302.10248v2",
+        "primary_category": "cs.SD",
+        "title": "VoxSRC 2022: The Fourth VoxCeleb Speaker Recognition Challenge",
+        "abstract": "This paper summarises the findings from the VoxCeleb Speaker Recognition Challenge 2022 (VoxSRC-22), which was held in conjunction with INTERSPEECH 2022. The goal of this challenge was to evaluate how well state-of-the-art speaker recognition systems can diarise and recognise speakers from speech obtained \"in the wild\". The challenge consisted of: (i) the provision of publicly available speaker recognition and diarisation data from YouTube videos together with ground truth annotation and standardised evaluation software; and (ii) a public challenge and hybrid workshop held at INTERSPEECH 2022. We describe the four tracks of our challenge along with the baselines, methods, and results. We conclude with a discussion on the new domain-transfer focus of VoxSRC-22, and on the progression of the challenge from the previous three editions."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jaesunghuh/voxsrc2022",
+        "exists": true,
+        "full_name": "JaesungHuh/VoxSRC2022",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b118e83048c5d6dacbb277b6cc93017a435d4a3e",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/JaesungHuh/VoxSRC2022/blob/b118e83048c5d6dacbb277b6cc93017a435d4a3e/README.md",
+          "sha256": "6567fff81565c1d0e039b326e5360ab75341115584cdbe09a9558aa43d42f687",
+          "bytes": 8605
+        },
+        "root_names": [
+          ".gitignore",
+          ".gitmodules",
+          "README.md",
+          "compute_EER.py",
+          "compute_diarisation_metrics.py",
+          "compute_min_dcf.py",
+          "data",
+          "requirements.txt",
+          "scorelib",
+          "validate_rttm.py",
+          "voxconverse"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SD"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T03:35:56Z"
+}

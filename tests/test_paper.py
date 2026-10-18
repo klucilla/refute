@@ -408,6 +408,96 @@ def test_duplicate_attack_is_rejected():
         verdict(base(), [attack("seeds", KO), attack("seeds", OK), attack("data_split", OK)])
 
 
+# data_present not applicable (wp3-data-sources-acceptance.md, section 3) ------------------
+
+GENERATED = {"data_present": "generated_by_repository_code"}
+BOTH = ("seeds", "data_split")
+
+
+def test_exempt_data_present_is_skipped_and_the_claim_can_reproduce():
+    v = verdict(base(data_present=None), [attack(n, OK) for n in BOTH], not_applicable=GENERATED)
+    assert v.verdict is PaperVerdict.REPRODUCED
+    assert v.gates_not_applicable == GENERATED
+
+
+def test_exempt_data_present_without_the_exemption_is_still_a_missing_gate():
+    v = verdict(base(data_present=None), [attack(n, OK) for n in BOTH])
+    assert v.verdict is PaperVerdict.INCONCLUSIVE
+    assert "data_present" in v.reason
+    assert v.gates_not_applicable == {}
+
+
+@pytest.mark.parametrize("gate", ["environment_build", "run_completed", "metric_extracted"])
+def test_the_other_gates_stay_required_with_the_exemption(gate):
+    v = verdict(base(data_present=None, **{gate: None}), not_applicable=GENERATED)
+    assert v.verdict is PaperVerdict.INCONCLUSIVE
+    assert f"'{gate}' missing" in v.reason
+    assert v.gates_not_applicable == GENERATED
+
+
+def test_zero_coverage_of_metric_extracted_is_never_a_pass_with_the_exemption():
+    checks = [
+        check("metric_extracted", OK, coverage=0) if c.name == "metric_extracted" else c
+        for c in base(data_present=None)
+    ]
+    v = verdict(checks, [attack(n, OK) for n in BOTH], not_applicable=GENERATED)
+    assert v.verdict is PaperVerdict.INCONCLUSIVE
+    assert v.gates_not_applicable == GENERATED
+
+
+@pytest.mark.parametrize(
+    "result", [PaperVerdict.NOT_REPRODUCED, PaperVerdict.FRAGILE, PaperVerdict.INCONCLUSIVE]
+)
+def test_every_verdict_carries_the_exemption(result):
+    checks = base(data_present=None)
+    attacks = [attack(n, OK) for n in BOTH]
+    if result is PaperVerdict.NOT_REPRODUCED:
+        checks = base(data_present=None, base_reproduction=KO)
+    elif result is PaperVerdict.FRAGILE:
+        attacks = [attack("seeds", seeds_attack([False] * 5, None)), attack("data_split", OK)]
+    else:
+        attacks = [attack("seeds", OK)]
+    v = verdict(checks, attacks, not_applicable=GENERATED)
+    assert v.verdict is result
+    assert v.gates_not_applicable == GENERATED
+
+
+@pytest.mark.parametrize("gate", ["environment_build", "run_completed", "metric_extracted"])
+def test_only_data_present_can_be_exempt(gate):
+    with pytest.raises(ValueError, match="cannot be declared not applicable"):
+        verdict(base(**{gate: None}), not_applicable={gate: "a reason"})
+
+
+@pytest.mark.parametrize("reason", ["", "   ", None, 3])
+def test_an_exemption_needs_a_reason(reason):
+    with pytest.raises(ValueError, match="no reason"):
+        verdict(base(data_present=None), not_applicable={"data_present": reason})
+
+
+def test_an_exemption_with_a_result_is_refused_even_when_an_earlier_gate_failed():
+    checks = base(environment_build=KO)
+    with pytest.raises(ValueError, match="has a result"):
+        verdict(checks, not_applicable=GENERATED)
+
+
+def test_an_exemption_with_a_failure_cause_is_refused():
+    with pytest.raises(ValueError, match="failure cause"):
+        verdict(
+            base(data_present=None),
+            not_applicable=GENERATED,
+            failures={"data_present": GateFailure(FailureCause.UNDETERMINED)},
+        )
+
+
+def test_an_exemption_with_a_minimum_is_refused():
+    with pytest.raises(ValueError, match="minimum"):
+        verdict(
+            base(data_present=None),
+            not_applicable=GENERATED,
+            minimums={"data_present": CoverageMinimum(positive=2)},
+        )
+
+
 def test_duplicate_expected_attack_is_rejected():
     with pytest.raises(ValueError, match="duplicate"):
         verdict(base(), [attack("seeds", OK)], expected=("seeds", "seeds"))

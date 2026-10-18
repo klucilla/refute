@@ -2,6 +2,7 @@
 predicates of predicates.py and the WP2 core rules."""
 
 from decimal import Decimal, localcontext
+from fractions import Fraction
 from functools import partial
 
 import pytest
@@ -315,3 +316,12 @@ def _through_core(result):
         [result.name],
         metric_recompute_applies=False,
     )
+
+
+def test_a_random_baseline_of_three_classes_is_compared_exactly():
+    """Codex review of 84473de: 1/3 rounded to 50 digits let a value below 1/3 pass."""
+    b = at.trivial_baseline_value("random", [0, 1, 2], "accuracy", "fraction")
+    assert b.weakest_exact == b.strongest_exact == Fraction(1, 3)
+    below = "0." + "3" * 50 + "1"
+    result = at.trivial_baseline(below, b, True, pr.Tolerance(0))
+    assert result.status is TestStatus.FAIL

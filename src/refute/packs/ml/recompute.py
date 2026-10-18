@@ -22,6 +22,7 @@ under ``zero_division: undefined``) is always INCONCLUSIVE, never a failure.
 from __future__ import annotations
 
 import csv
+import io
 import json
 import math
 import re
@@ -126,19 +127,38 @@ def _key(value: Any) -> str:
 # ---- readers (W3.18: they execute no stored object) ----------------------------------
 
 
-def read_predictions(path: Path, fmt: str, fields: dict[str, str]) -> dict[str, np.ndarray]:
+@dataclass(frozen=True)
+class _Named:
+    """Only a name, for the messages of ``read_predictions``."""
+
+    name: str
+
+
+def read_predictions(
+    path: Path | bytes, fmt: str, fields: dict[str, str], name: str | None = None
+) -> dict[str, np.ndarray]:
     """The declared fields of a predictions file, as arrays of equal length.
 
-    ``fields`` maps a role (``y_true``, and ``y_pred`` or ``y_score``) to the field,
-    column or key name in the file. ``npy`` is a structured array read with
-    ``allow_pickle=False``; ``csv`` is read with the standard library; ``jsonl`` with the
-    standard JSON parser, refusing NaN and infinities.
+    ``path`` is the file, or its bytes already read through the checks of
+    ``extract.read_output_bytes`` (the integration's way, so the bytes parsed are those
+    checked on the open handle); ``name`` names them in messages. ``fields`` maps a role
+    (``y_true``, and ``y_pred`` or ``y_score``) to the field, column or key name in the
+    file. ``npy`` is a structured array read with ``allow_pickle=False``; ``csv`` is read
+    with the standard library; ``jsonl`` with the standard JSON parser, refusing NaN and
+    infinities.
     """
     if fmt not in FORMATS:
         raise RecomputeError(f"unsupported predictions format: {fmt!r}")
+    if isinstance(path, bytes):
+        raw, label = path, name or "predictions"
+    else:
+        raw, label = None, path.name
     try:
+        if raw is None:
+            raw = path.read_bytes()
+        path = _Named(label)
         if fmt == "npy":
-            data = np.load(path, allow_pickle=False)
+            data = np.load(io.BytesIO(raw), allow_pickle=False)
             names = data.dtype.names or ()
             out = {}
             for role, name in fields.items():
@@ -150,7 +170,7 @@ def read_predictions(path: Path, fmt: str, fields: dict[str, str]) -> dict[str, 
                 out[role] = np.asarray(column).ravel()
             return _equal_lengths(out)
         if fmt == "csv":
-            with path.open(encoding="utf-8", newline="") as handle:
+            with io.StringIO(raw.decode("utf-8"), newline="") as handle:
                 reader = csv.DictReader(handle)
                 header = reader.fieldnames or []
                 for name in fields.values():
@@ -164,7 +184,7 @@ def read_predictions(path: Path, fmt: str, fields: dict[str, str]) -> dict[str, 
                 }
             )
         rows = []
-        with path.open(encoding="utf-8") as handle:
+        with io.StringIO(raw.decode("utf-8")) as handle:
             for line in handle:
                 if line.strip():
                     # numbers keep their text (Decimal), so a lossy conversion is seen

@@ -1,0 +1,22 @@
+{
+ "finished_utc": "20261018T142351Z",
+ "format": "refute-reader-vm-test-1",
+ "reader_sha256": "4b64c5edda6bd940aa392d02a193a0e0547f8b4ddc30f5bb96bf879ad41cb733",
+ "records": [
+  {
+   "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+   "build": {
+    "exit_code": 0,
+    "stopped": null
+   },
+   "generator": {
+    "exit_code": 1,
+    "log_tail": " 9, in <module>\n    from torchdata import _extension  # noqa: F401\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venv/lib/python3.12/site-packages/torchdata/__init__.py\", line 29, in __getattr__\n    return importlib.import_module(\".\" + name, __name__)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/venv/lib/python3.12/site-packages/torchdata/_extension.py\", line 34, in <module>\n    _init_extension()\n  File \"/opt/venv/lib/python3.12/site-packages/torchdata/_extension.py\", line 31, in _init_extension\n    from torchdata import _torchdata as _torchdata\n  File \"/opt/venv/lib/python3.12/site-packages/torchdata/__init__.py\", line 29, in __getattr__\n    return importlib.import_module(\".\" + name, __name__)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nImportError: libcurl.so.4: cannot open shared object file: No such file or directory\nSetting the default backend to \"pytorch\". You can change it in the ~/.dgl/config.json file or export the DGLBACKEND environment variable.  Valid options are: pytorch, mxnet, tensorflow (all lowercase)\n"
+   },
+   "image_id": "sha256:978e713eec8966a76778f7f24a9399270f9c3a3630e551dedff66a33c6aa6696",
+   "reader": "dgl",
+   "requirements": "dgl==2.1.0\ntorch==2.2.2\ntorchdata==0.8.0\nnumpy==1.26.4\nsetuptools==69.5.1\n"
+  }
+ ],
+ "started_utc": "20261018T142111Z"
+}
