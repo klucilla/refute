@@ -612,12 +612,14 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
   [0.60, 0.76], |pull| ≤ 2 in [0.92, 0.98], the median within ± 0.2**. This is the unit reading of
   point fractions (as for piece 3): at n = 200 no count can satisfy the interval form of the K
   conditions of revision 3, 8.3, which the calibration applies.
-- **Known depth:** a box signal of known depth in the transit windows of a low-noise hidden year:
-  the stacked depth equals it within 5% (sign and scale, which the Monte Carlo of the same operation
-  cannot check).
+- **Known depth:** a box signal of known depth (1000 ppm, ingress fraction 0.001) in the transit
+  windows of a low-noise hidden year (50 ppm white, seed 3400): the stacked depth equals it within
+  5% (sign and scale, which the Monte Carlo of the same operation cannot check). The mechanism
+  cases use seeds 3000 to 3004 (they decide no numeric criterion).
 - **A non-trivial grid:** a geometry with a period error, so the grid has several points: the
   replicas are measured at the shifted centers of every `dP`, the reported `dP` maximizes the SNR,
-  the declared ties hold, and `e_pred` uses the largest predicted error over the grid.
+  the declared ties hold (that `e_pred` uses the largest predicted error over the grid is a case of
+  piece 5).
 - **Mechanisms:** too few replicas (a timing error that leaves fewer than `R_min`): INCONCLUSIVE
   `hidden_noise_undetermined`, no transit window in the access log; no accepted replica span
   overlaps a window's measurement span, and no sector's masked time fraction exceeds 0.5, on a
