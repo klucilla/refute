@@ -182,6 +182,17 @@ def test_data_layout_must_stay_in_the_folder(tmp_path, monkeypatch):
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="symbolic links as on the VM (Linux)")
+def test_a_data_path_through_an_internal_link_is_refused(tmp_path, monkeypatch):
+    from refute.packs.ml import integration as ig
+
+    monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ["k1/base/s0"])
+    setup, _ = _setup(tmp_path, {"mutable/real/keep.txt": "x"}, {"d": "data/d.npz"})
+    (setup.repo / "data").symlink_to("mutable/real")
+    with pytest.raises(pd.ProductionError, match="goes through a link"):
+        pd.prepare_workspaces(setup, {})
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="symbolic links as on the VM (Linux)")
 def test_a_repository_link_that_leaves_it_is_refused(tmp_path, monkeypatch):
     from refute.packs.ml import integration as ig
 

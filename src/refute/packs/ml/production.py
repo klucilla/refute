@@ -332,6 +332,13 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
                 target = folder / PurePosixPath(rel)
                 if target.exists() or target.is_symlink():
                     raise ProductionError(f"{rel} exists in the repository: the data path collides")
+                # no component of a data path may be a link: the sticky folders below are
+                # then the real ancestors of the mount (Codex review of 6289608)
+                component = folder
+                for part in PurePosixPath(rel).parts[:-1]:
+                    component = component / part
+                    if component.is_symlink():
+                        raise ProductionError(f"the data path {rel} goes through a link: {part}")
                 target.parent.mkdir(parents=True, exist_ok=True)
                 if not _inside(folder, target.parent):
                     raise ProductionError(f"the data path {rel} leaves the run's folder")
