@@ -207,6 +207,18 @@ the mark does not satisfy it. A rerun with another sample size or other seeds, o
 conditions, 1000 light curves each) are unchanged and will measure the same quantity on the
 population.
 
+**Addendum (after the code and its sabotages, 31888f2).** The sabotages ST3 (a box in the scan) and
+ST4 (whole steps, no interpolation) were caught only through the floor of the β case, not by the
+Carter criterion. A direct mechanism case was added after the code, declared as such: on a noiseless
+transit of the declared case, the tool's half-width against the one found on a scan 1000 times
+finer. Its first run, at a tolerance of 3%, failed: **the declared linear interpolation places each
+crossing of the convex Δχ² inward, and the error comes out 5.3% below the exact half-width** (1.363
+against 1.439 min). This is a property of the reading declared in Amendment 3, and a part of the 7%
+gap between the scatter of the times and the stated errors above; the reading is not changed after
+the result. The case keeps a tolerance of 10%, which detects whole steps (about −30%) and the box
+(both sabotages caught). A crossing located on a parabola instead of a chord would remove the bias;
+it would change an Amendment 3 reading after the pulls result, so it is the maintainer's decision.
+
 Every piece: its tests are committed before its code; the tests are run on white and on correlated
 noise (the generator's correlated mode); its sabotages are planned in the test commit and their
 results recorded after the code. With the switch off, the full suite is unchanged (checked after

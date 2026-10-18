@@ -184,6 +184,36 @@ def test_the_error_is_scaled_by_beta_of_the_transit_sector():
     assert checked > 5
 
 
+def test_the_width_is_measured_below_the_step_on_a_noiseless_transit():
+    """Added after the code and its sabotages (ST3, ST4 were caught only through the floor of the
+    beta case): the half-width of the region within 1 of the minimum, on a noiseless transit, is
+    within 10% of the one found on a scan 1000 times finer. The first run of this case used 3% and
+    failed: the linear interpolation declared in Amendment 3 places each crossing of the convex
+    delta-chi2 inward, -5.3% here (Amendment 4). Whole steps (about -30%) or a box template fail
+    the 10%."""
+    time = 1326.3 + np.arange(-0.4, 0.4, CADENCE)
+    deficit = synthetic.trapezoid(time, 100.0, 1326.3, PLANET.depth, PLANET.duration, 0.15)
+    lc = LightCurveData(
+        time,
+        1.0 - deficit,
+        np.full(time.size, SIGMA_W),
+        np.full(time.size, 1),
+        np.full(time.size, 2018),
+    )
+    sigma = np.full(time.size, SIGMA_W)
+    result = measure_template_times(
+        lc, 100.0, 1326.3, _template(), sigma, _noise((1,)), cadence_days=CADENCE
+    )
+    assert len(result.times) == 1
+    fine = np.arange(-0.05, 0.05, 0.001 / 1440.0)
+    model = _template().deficit(time[None, :] - (1326.3 + fine[:, None]))
+    delta = np.sum(np.square(model - deficit[None, :]), axis=1) / SIGMA_W**2
+    inside = fine[delta <= 1.0]
+    reference = 0.5 * (inside.max() - inside.min())
+    assert result.times[0].error == pytest.approx(reference, rel=0.10)
+    assert reference > 0.5 * CADENCE  # the floor does not bind here
+
+
 def test_transits_of_an_excluded_sector_are_dropped_and_counted():
     lc, _ = synthetic.make_lightcurve(PLANET, seed=2)
     result = measure_template_times(
