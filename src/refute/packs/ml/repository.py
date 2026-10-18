@@ -139,6 +139,14 @@ def checkout(repo: Path, commit: str) -> None:
         raise RepositoryError("tracked files differ from the commit after the checkout")
 
 
+def ls_tree(repo: Path, commit: str) -> str:
+    """``git ls-tree -r -z --full-tree`` of ``commit``: the tree the checked-out content
+    must equal (wp3-allowed-patches-acceptance.md, section 2)."""
+    if not HEX40.match(commit):
+        raise ValueError("ls_tree takes a full commit (40 hexadecimal characters)")
+    return _git(repo, "ls-tree", "-r", "-z", "--full-tree", commit)
+
+
 @dataclass(frozen=True)
 class CommitRecord:
     """The three commits of D-8, for the dossier."""

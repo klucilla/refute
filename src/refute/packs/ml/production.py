@@ -69,6 +69,7 @@ from refute.core.paper import FailureCause, GateFailure
 from refute.packs.ml import integration as ig
 from refute.packs.ml import ladder as ld
 from refute.packs.ml import orchestrate as orc
+from refute.packs.ml import patches as pt
 from refute.packs.ml import readers as rd
 from refute.packs.ml import repository
 from refute.packs.ml import schema as sch
@@ -162,9 +163,13 @@ class PaperSetup:
     micromamba_image: str = MICROMAMBA_IMAGE_DEFAULT
     exclude_newer: str = ""  # filled from the claim when empty
     extra_env: Mapping[str, str] = field(default_factory=dict)  # e.g. a data folder variable
+    # the allowed patches applied to the clone (patches.prepare, W3.9a): their bytes'
+    # SHA-256, the touched files and the manifests of the clone and of ``repo``
+    patch_record: Mapping[str, Any] = field(default_factory=dict)
 
     def record(self) -> dict[str, Any]:
         return {
+            "patches": dict(self.patch_record),
             "paper": self.paper,
             "data_layout": dict(self.data_layout),
             "limits": asdict(self.limits),
@@ -322,6 +327,68 @@ def _copy_repo(repo: Path, dest: Path) -> None:
         p.chmod(mode | stat.S_IRWXO if p.is_dir() else mode | stat.S_IROTH | stat.S_IWOTH)
 
 
+def check_copy(folder: Path, expected: Mapping[str, Mapping[str, Any]]) -> None:
+    """A repository copy, before any data path is prepared in it, against the patched
+    tree's manifest: the same entries, types and bytes, and the modes ``_copy_repo``
+    projects (a file gains o+rw, a folder o+rwx; W3.9a, section 3)."""
+    got = pt.manifest(folder)
+    if set(got) != set(expected):
+        extra, missing = sorted(set(got) - set(expected)), sorted(set(expected) - set(got))
+        raise ProductionError(f"the copy is not the patched tree: extra {extra}, missing {missing}")
+    for rel, want in expected.items():
+        have = dict(got[rel])
+        want = dict(want)
+        if want["type"] == "file":
+            want["mode"] = want["mode"] | stat.S_IROTH | stat.S_IWOTH
+        elif want["type"] == "dir":
+            want["mode"] = want["mode"] | stat.S_IRWXO
+        if have != want:
+            raise ProductionError(f"the copy differs from the patched tree at {rel}")
+
+
+def refuse_hook_routes(claim_file: Mapping[str, Any]) -> None:
+    """A claim with a ``hook`` coverage route, anywhere, is not supported by this version
+    of production (its installation contract is not written: #59): refused before the
+    preparation, a limitation of Refute (wp3-allowed-patches-acceptance.md, section 4)."""
+    for target in claim_file.get("targets", []):
+        for role, evidence in (target.get("coverage_evidence") or {}).items():
+            routes = [r.get("route") for r in (evidence or {}).get("routes", [])]
+            if "hook" in routes:
+                raise ProductionError(
+                    f"{target.get('key')}: the {role}'s hook route is not supported by this "
+                    "version of production"
+                )
+
+
+def patch_tree(
+    claim_file: Mapping[str, Any],
+    clone: Path,
+    dest: Path,
+    patch_bytes: Mapping[str, bytes],
+    data_layout: Mapping[str, str],
+) -> tuple[Path, dict[str, Any]]:
+    """The tree every build and run copies: the clone at the claim's commit, anchored on
+    the commit's tree, plus the claim's allowed patches in their listed order (W3.9a). The
+    patches given must be exactly the listed ones."""
+    plan = claim_file["test_plan"]
+    listed = [p["attachment"] for p in plan["build"]["allowed_patches"]]
+    if sorted(patch_bytes) != sorted(listed):
+        raise ProductionError(
+            f"the patches given {sorted(patch_bytes)} are not the listed {listed}"
+        )
+    commit = plan["repository"]["commit"]
+    entries = pt.commit_entries(repository.ls_tree(clone, commit))
+    data_paths = sorted(
+        {*data_layout.values()}
+        | {d["path"] for d in plan["datasets"] if sch.dataset_origin(d) == sch.REPOSITORY_FILE}
+    )
+    try:
+        record = pt.prepare(clone, dest, [(n, patch_bytes[n]) for n in listed], data_paths, entries)
+    except pt.PatchError as exc:
+        raise ProductionError(f"the allowed patches: {exc}") from None
+    return dest, record
+
+
 def check_data_layout(layout: Mapping[str, str]) -> None:
     """Each dataset's path in a run's folder: relative, no '..', not under .refute."""
     for name, rel in layout.items():
@@ -368,6 +435,9 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
             (folder / READER_SCRIPT).chmod(0o444)
         else:
             _copy_repo(setup.repo, folder)
+            if setup.patch_record:
+                # the copy is the patched tree, byte for byte (W3.9a, section 3)
+                check_copy(folder, setup.patch_record["patched_manifest"])
         if not cid.startswith("setup/build/"):
             for rel in setup.data_layout.values():
                 if rel in unverified:
@@ -704,25 +774,37 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--micromamba-image", default="")
     parser.add_argument("--run-phase-flag", type=Path, help="wait for this file after the setup")
     parser.add_argument("--min-free-gb", type=float, default=15.0)
+    parser.add_argument(
+        "--patch", action="append", default=[], help="attachment=file of an allowed patch"
+    )
     args = parser.parse_args(argv)
     claim_file = json.loads(args.claim.read_text(encoding="utf-8"))
+    refuse_hook_routes(claim_file)
+    patch_bytes = {}
+    for item in args.patch:
+        name, _, path = item.partition("=")
+        if name in patch_bytes or not path:
+            raise ProductionError(f"--patch {item!r}: attachment=file, each attachment once")
+        patch_bytes[name] = Path(path).read_bytes()
     if shutil.disk_usage(Path.home()).free < args.min_free_gb * 1e9:
         print(f"refused: less than {args.min_free_gb:g} GB free on the VM", flush=True)
         return 2
     args.root.mkdir(parents=True)
     repo, datasets = prepare_inputs(claim_file, args.root, args.cache)
     layout = dict(item.split("=", 1) for item in args.data)
+    patched, patch_record = patch_tree(claim_file, repo, args.root / "patched", patch_bytes, layout)
     limits = Limits(cpus=22, period_us=100_000, memory_bytes=12 << 30, pids=4096)
     limit_paper_slice(args.paper, 13 << 30, 22)
     setup = PaperSetup(
         paper=args.paper,
         root=args.root / "run",
-        repo=repo,
+        repo=patched,
         datasets=datasets,
         data_layout=layout,
         limits=limits,
         timing=V22_MAXIMA,
         micromamba_image=args.micromamba_image,
+        patch_record=patch_record,
     )
     hook = wait_for_run_phase(args.run_phase_flag) if args.run_phase_flag else None
     images = {
