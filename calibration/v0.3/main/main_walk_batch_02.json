@@ -1,0 +1,1316 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T00:54:07Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 2,
+  "candidates": [
+    {
+      "position": 26,
+      "arxiv_id": "2411.10701",
+      "repo_url": "https://github.com/xbyym/dlsr",
+      "arxiv": {
+        "versioned_id": "2411.10701v2",
+        "primary_category": "cs.CV",
+        "title": "Diffusion-based Layer-wise Semantic Reconstruction for Unsupervised Out-of-Distribution Detection",
+        "abstract": "Unsupervised out-of-distribution (OOD) detection aims to identify out-of-domain data by learning only from unlabeled In-Distribution (ID) training samples, which is crucial for developing a safe real-world machine learning system. Current reconstruction-based methods provide a good alternative approach by measuring the reconstruction error between the input and its corresponding generative counterpart in the pixel/feature space. However, such generative methods face a key dilemma: improving the reconstruction power of the generative model while keeping a compact representation of the ID data. To address this issue, we propose the diffusion-based layer-wise semantic reconstruction approach for unsupervised OOD detection. The innovation of our approach is that we leverage the diffusion model's intrinsic data reconstruction ability to distinguish ID samples from OOD samples in the latent feature space. Moreover, to set up a comprehensive and discriminative feature representation, we devise a multi-layer semantic feature extraction strategy. By distorting the extracted features with Gaussian noise and applying the diffusion model for feature reconstruction, the separation of ID and OOD samples is implemented according to the reconstruction errors. Extensive experimental results on multiple benchmarks built upon various datasets demonstrate that our method achieves state-of-the-art performance in terms of detection accuracy and speed. Code is available at <https://github.com/xbyym/DLSR>."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/xbyym/dlsr",
+        "exists": true,
+        "full_name": "xbyym/DLSR",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "96d8bef2818a196804da5e649c89b43e19407e4a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/xbyym/DLSR/blob/96d8bef2818a196804da5e649c89b43e19407e4a/README.md",
+          "sha256": "e1060ce53e5ff3dac8b94137fc4ad095ec0da26d9c4a6874c0ce346720f87295",
+          "bytes": 7598
+        },
+        "root_names": [
+          "5-21g1_00.png",
+          "Gen_Model.py",
+          "Pre_train_model",
+          "README.md",
+          "config",
+          "engine.py",
+          "environment.txt",
+          "ldm",
+          "main.py",
+          "test_LR.py",
+          "test_mse_mfsim.py",
+          "util"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 27,
+      "arxiv_id": "2405.18102",
+      "repo_url": "https://github.com/julianchingy/weighted-apportionment",
+      "arxiv": {
+        "versioned_id": "2405.18102v2",
+        "primary_category": "cs.GT",
+        "title": "Apportionment with Weighted Seats",
+        "abstract": "Apportionment is the task of assigning resources to entities with different entitlements in a fair manner, and specifically a manner that is as proportional as possible. The best-known application is the assignment of parliamentary seats to political parties based on their share in the popular vote. Here we enrich the standard model of apportionment by associating each seat with a weight representing the (objective) value of that seat. A seat's weight reflects the fact that different seats might come with different roles, such as chair or treasurer. We define several apportionment methods and natural fairness requirements for this new setting, and we study the extent to which our methods satisfy these requirements. Our findings show that full fairness is harder to achieve than in the standard apportionment setting. Yet, for several natural relaxations of those requirements we can achieve stronger results than in the more expressive model of fair division with entitlements, where the values of objects are subjective."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/julianchingy/weighted-apportionment",
+        "exists": true,
+        "full_name": "julianchingy/weighted-apportionment",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6309f7f1ec0f86cca5826bb2a0ce7133fb522d55",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/julianchingy/weighted-apportionment/blob/6309f7f1ec0f86cca5826bb2a0ce7133fb522d55/README.md",
+          "sha256": "11676821e9d1fa2269deb87f120c2dc9148e2897a30bbdc6467da46bd12d7903",
+          "bytes": 1453
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "bundestag_committees",
+          "election.py",
+          "experiment.py",
+          "experiment_results",
+          "main.py",
+          "rules.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.GT"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 28,
+      "arxiv_id": "2305.12831",
+      "repo_url": "https://github.com/jiang-yidi/ts-talknet",
+      "arxiv": {
+        "versioned_id": "2305.12831v3",
+        "primary_category": "eess.AS",
+        "title": "Target Active Speaker Detection with Audio-visual Cues",
+        "abstract": "In active speaker detection (ASD), we would like to detect whether an on-screen person is speaking based on audio-visual cues. Previous studies have primarily focused on modeling audio-visual synchronization cue, which depends on the video quality of the lip region of a speaker. In real-world applications, it is possible that we can also have the reference speech of the on-screen speaker. To benefit from both facial cue and reference speech, we propose the Target Speaker TalkNet (TS-TalkNet), which leverages a pre-enrolled speaker embedding to complement the audio-visual synchronization cue in detecting whether the target speaker is speaking. Our framework outperforms the popular model, TalkNet on two datasets, achieving absolute improvements of 1.6% in mAP on the AVA-ActiveSpeaker validation set, and 0.8%, 0.4%, and 0.8% in terms of AP, AUC and EER on the ASW test set, respectively. Code is available at https://github.com/Jiang-Yidi/TS-TalkNet/."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jiang-yidi/ts-talknet",
+        "exists": true,
+        "full_name": "Jiang-Yidi/TS-TalkNet",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1c0cb6e6cd07669cf1272a5aff283fd79541c36f",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Jiang-Yidi/TS-TalkNet/blob/1c0cb6e6cd07669cf1272a5aff283fd79541c36f/README.md",
+          "sha256": "0da98c34861b997f329af3b51087dc83386458b0b25ac58bc5390f77624651df",
+          "bytes": 2958
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "ava_ts_dataLoader.py",
+          "data_prep",
+          "loss.py",
+          "model",
+          "overview.pdf",
+          "overview.png",
+          "train.py",
+          "ts-talkNet.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.AS"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 29,
+      "arxiv_id": "2305.07102",
+      "repo_url": "https://github.com/demidovd98/sm-vit",
+      "arxiv": {
+        "versioned_id": "2305.07102v1",
+        "primary_category": "cs.CV",
+        "title": "Salient Mask-Guided Vision Transformer for Fine-Grained Classification",
+        "abstract": "Fine-grained visual classification (FGVC) is a challenging computer vision problem, where the task is to automatically recognise objects from subordinate categories. One of its main difficulties is capturing the most discriminative inter-class variances among visually similar classes. Recently, methods with Vision Transformer (ViT) have demonstrated noticeable achievements in FGVC, generally by employing the self-attention mechanism with additional resource-consuming techniques to distinguish potentially discriminative regions while disregarding the rest. However, such approaches may struggle to effectively focus on truly discriminative regions due to only relying on the inherent self-attention mechanism, resulting in the classification token likely aggregating global information from less-important background patches. Moreover, due to the immense lack of the datapoints, classifiers may fail to find the most helpful inter-class distinguishing features, since other unrelated but distinctive background regions may be falsely recognised as being valuable. To this end, we introduce a simple yet effective Salient Mask-Guided Vision Transformer (SM-ViT), where the discriminability of the standard ViT`s attention maps is boosted through salient masking of potentially discriminative foreground regions. Extensive experiments demonstrate that with the standard training procedure our SM-ViT achieves state-of-the-art performance on popular FGVC benchmarks among existing ViT-based approaches while requiring fewer resources and lower input image resolution."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/demidovd98/sm-vit",
+        "exists": true,
+        "full_name": "demidovd98/sm-vit",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "8a3848e8088278fb00fdf56b0d2bfdf87640ecdb",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/demidovd98/sm-vit/blob/8a3848e8088278fb00fdf56b0d2bfdf87640ecdb/README.md",
+          "sha256": "c3386f4ed18bf0a9891743ca20744bc889270945b24b6f031d52c5d78f177cb0",
+          "bytes": 9065
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "U2Net",
+          "docs",
+          "environment.yml",
+          "models",
+          "requirements.txt",
+          "train.py",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 30,
+      "arxiv_id": "2407.14505",
+      "repo_url": "https://github.com/KaiyueSun98/T2V-CompBench",
+      "arxiv": {
+        "versioned_id": "2407.14505v2",
+        "primary_category": "cs.CV",
+        "title": "T2V-CompBench: A Comprehensive Benchmark for Compositional Text-to-video Generation",
+        "abstract": "Text-to-video (T2V) generative models have advanced significantly, yet their ability to compose different objects, attributes, actions, and motions into a video remains unexplored. Previous text-to-video benchmarks also neglect this important ability for evaluation. In this work, we conduct the first systematic study on compositional text-to-video generation. We propose T2V-CompBench, the first benchmark tailored for compositional text-to-video generation. T2V-CompBench encompasses diverse aspects of compositionality, including consistent attribute binding, dynamic attribute binding, spatial relationships, motion binding, action binding, object interactions, and generative numeracy. We further carefully design evaluation metrics of multimodal large language model (MLLM)-based, detection-based, and tracking-based metrics, which can better reflect the compositional text-to-video generation quality of seven proposed categories with 1400 text prompts. The effectiveness of the proposed metrics is verified by correlation with human evaluations. We also benchmark various text-to-video generative models and conduct in-depth analysis across different models and various compositional categories. We find that compositional text-to-video generation is highly challenging for current models, and we hope our attempt could shed light on future research in this direction."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/KaiyueSun98/T2V-CompBench",
+        "exists": true,
+        "full_name": "KaiyueSun98/T2V-CompBench",
+        "archived": false,
+        "default_branch": "V2",
+        "head_commit": "dd5eff7b93af0550b9efa2bdabbb21b3b017ceda",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/KaiyueSun98/T2V-CompBench/blob/dd5eff7b93af0550b9efa2bdabbb21b3b017ceda/README.md",
+          "sha256": "a330857737d47cd261e572787ab6b101933476e9e72b48b4a6873ad5fcf2a871",
+          "bytes": 19966
+        },
+        "root_names": [
+          "Depth-Anything",
+          "Grounded-Segment-Anything",
+          "LLaVA",
+          "README.md",
+          "asset",
+          "dot",
+          "meta_data",
+          "prompts",
+          "word_list.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 31,
+      "arxiv_id": "2407.21331",
+      "repo_url": "https://github.com/manymuch/cama",
+      "arxiv": {
+        "versioned_id": "2407.21331v1",
+        "primary_category": "cs.CV",
+        "title": "CAMAv2: A Vision-Centric Approach for Static Map Element Annotation",
+        "abstract": "The recent development of online static map element (a.k.a. HD map) construction algorithms has raised a vast demand for data with ground truth annotations. However, available public datasets currently cannot provide high-quality training data regarding consistency and accuracy. For instance, the manual labelled (low efficiency) nuScenes still contains misalignment and inconsistency between the HD maps and images (e.g., around 8.03 pixels reprojection error on average). To this end, we present CAMAv2: a vision-centric approach for Consistent and Accurate Map Annotation. Without LiDAR inputs, our proposed framework can still generate high-quality 3D annotations of static map elements. Specifically, the annotation can achieve high reprojection accuracy across all surrounding cameras and is spatial-temporal consistent across the whole sequence. We apply our proposed framework to the popular nuScenes dataset to provide efficient and highly accurate annotations. Compared with the original nuScenes static map element, our CAMAv2 annotations achieve lower reprojection errors (e.g., 4.96 vs. 8.03 pixels). Models trained with annotations from CAMAv2 also achieve lower reprojection errors (e.g., 5.62 vs. 8.43 pixels)."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/manymuch/cama",
+        "exists": true,
+        "full_name": "manymuch/CAMA",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "5033cb87c99373442d6305653c6a3b292806184b",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/manymuch/CAMA/blob/5033cb87c99373442d6305653c6a3b292806184b/README.md",
+          "sha256": "c9b1616e5127a1fa4838d90a95786514e044ef8725a1152b77f20f6f40f5c72e",
+          "bytes": 3089
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "assets",
+          "cama",
+          "config.yaml",
+          "dataset",
+          "main.py",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 32,
+      "arxiv_id": "2305.08676",
+      "repo_url": "https://github.com/IBM/TRAIL",
+      "arxiv": {
+        "versioned_id": "2305.08676v1",
+        "primary_category": "cs.AI",
+        "title": "An Ensemble Approach for Automated Theorem Proving Based on Efficient Name Invariant Graph Neural Representations",
+        "abstract": "Using reinforcement learning for automated theorem proving has recently received much attention. Current approaches use representations of logical statements that often rely on the names used in these statements and, as a result, the models are generally not transferable from one domain to another. The size of these representations and whether to include the whole theory or part of it are other important decisions that affect the performance of these approaches as well as their runtime efficiency. In this paper, we present NIAGRA; an ensemble Name InvAriant Graph RepresentAtion. NIAGRA addresses this problem by using 1) improved Graph Neural Networks for learning name-invariant formula representations that is tailored for their unique characteristics and 2) an efficient ensemble approach for automated theorem proving. Our experimental evaluation shows state-of-the-art performance on multiple datasets from different domains with improvements up to 10% compared to the best learning-based approaches. Furthermore, transfer learning experiments show that our approach significantly outperforms other learning-based approaches by up to 28%."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/IBM/TRAIL",
+        "exists": true,
+        "full_name": "IBM/TRAIL",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "da0d240448814cce570b8265472011f888d5e3aa",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/IBM/TRAIL/blob/da0d240448814cce570b8265472011f888d5e3aa/README.md",
+          "sha256": "05c6b924d6f2796587c3ceead024ff6405ccaa38ea73b58251eefe1a350b78df",
+          "bytes": 10124
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "code",
+          "data",
+          "model39",
+          "scripts",
+          "spylon_fix",
+          "tcfg",
+          "teprover"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 33,
+      "arxiv_id": "2305.01628",
+      "repo_url": "https://github.com/ibm/auto-contrastive-generation",
+      "arxiv": {
+        "versioned_id": "2305.01628v1",
+        "primary_category": "cs.CL",
+        "title": "The Benefits of Bad Advice: Autocontrastive Decoding across Model Layers",
+        "abstract": "Applying language models to natural language processing tasks typically relies on the representations in the final model layer, as intermediate hidden layer representations are presumed to be less informative. In this work, we argue that due to the gradual improvement across model layers, additional information can be gleaned from the contrast between higher and lower layers during inference. Specifically, in choosing between the probable next token predictions of a generative model, the predictions of lower layers can be used to highlight which candidates are best avoided. We propose a novel approach that utilizes the contrast between layers to improve text generation outputs, and show that it mitigates degenerative behaviors of the model in open-ended generation, significantly improving the quality of generated texts. Furthermore, our results indicate that contrasting between model layers at inference time can yield substantial benefits to certain aspects of general language model capabilities, more effectively extracting knowledge during inference from a given set of model parameters."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ibm/auto-contrastive-generation",
+        "exists": true,
+        "full_name": "IBM/auto-contrastive-generation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e46ae6a51c0146918b87a59044afe97cd61bee8b",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/IBM/auto-contrastive-generation/blob/e46ae6a51c0146918b87a59044afe97cd61bee8b/README.md",
+          "sha256": "ded62870a2d8740cfc9d5d518fe88370ae4b715cd2f717fd0351bc02618a21b4",
+          "bytes": 8939
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "MANIFEST.in",
+          "README.md",
+          "autocontrastive_gen",
+          "extra_requirements.txt",
+          "requirements.txt",
+          "setup.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 34,
+      "arxiv_id": "2305.00272",
+      "repo_url": "https://github.com/iwilare/categorical-automata",
+      "arxiv": {
+        "versioned_id": "2305.00272v1",
+        "primary_category": "math.CT",
+        "title": "The semibicategory of Moore automata",
+        "abstract": "We study the semibicategory $\\textsf{Mre}$ of \"Moore automata\": an arrangement of objects, 1- and 2-cells which is inherently and irredeemably nonunital in dimension one. Between the semibicategory of Moore automata and the better behaved bicategory $\\textsf{Mly}$ of \"Mealy automata\" a plethora of adjunctions insist: the well-known essential equivalence between the two kinds of state machines that model the definitions of $\\textsf{Mre}$ and $\\textsf{Mly}$ is appreciated at the categorical level, as the equivalence induced between the fixpoints of an adjunction, in fact exhibiting $\\textsf{Mre}(A,B)$ as a coreflective subcategory of $\\textsf{Mly}(A,B)$; the comodality induced by this adjunction is but the $0$th step of a `level-like' filtration of the bicategory $\\textsf{Mre}$ in a countable family of essential bi-localizations $\\textsf{s}^n\\textsf{Mre}\\subseteq\\textsf{Mre}$. We outline a way to generate intrinsically meaningful adjunctions of this form. We mechanize some of our main results using the proof assistant Agda."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/iwilare/categorical-automata",
+        "exists": true,
+        "full_name": "iwilare/categorical-automata",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "6455e527c0fe2bd436ea8a601b79217288c8971a",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/iwilare/categorical-automata/blob/6455e527c0fe2bd436ea8a601b79217288c8971a/README.md",
+          "sha256": "778fc0862744eefcde3ad7553fdd2f80d6ccfdbdc59463bd210dcfbebd813e22",
+          "bytes": 1333
+        },
+        "root_names": [
+          ".gitignore",
+          "AsPullbacks.agda",
+          "Automata.agda",
+          "Categories",
+          "FMealy.agda",
+          "FMealy",
+          "FMoore.agda",
+          "FMoore",
+          "Mealy.agda",
+          "Mealy",
+          "Moore.agda",
+          "PullbackFiberedAdjunctions.agda",
+          "README.md",
+          "Set",
+          "categorical-automata.agda-lib",
+          "notes.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.CT"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 35,
+      "arxiv_id": "2310.09940",
+      "repo_url": "https://github.com/josemateosramos/sslisac",
+      "arxiv": {
+        "versioned_id": "2310.09940v2",
+        "primary_category": "eess.SP",
+        "title": "Semi-Supervised End-to-End Learning for Integrated Sensing and Communications",
+        "abstract": "Integrated sensing and communications (ISAC) is envisioned as one of the key enablers of next-generation wireless systems, offering improved hardware, spectral, and energy efficiencies. In this paper, we consider an ISAC transceiver with an impaired uniform linear array that performs single-target detection and position estimation, and multiple-input single-output communications. A differentiable model-based learning approach is considered, which optimizes both the transmitter and the sensing receiver in an end-to-end manner. An unsupervised loss function that enables impairment compensation without the need for labeled data is proposed. Semi-supervised learning strategies are also proposed, which use a combination of small amounts of labeled data and unlabeled data. Our results show that semi-supervised learning can achieve similar performance to supervised learning with 98.8% less required labeled data."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/josemateosramos/sslisac",
+        "exists": true,
+        "full_name": "josemateosramos/SSLISAC",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "d09a17d246d0a8a916021dfa4ac204924aa374a9",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/josemateosramos/SSLISAC/blob/d09a17d246d0a8a916021dfa4ac204924aa374a9/README.md",
+          "sha256": "62d4c42d53d6de6c3e981084f0d41f4ce270193aee1e31d952f1231e6b73b16b",
+          "bytes": 1234
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "lib",
+          "methods"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 36,
+      "arxiv_id": "2404.03251",
+      "repo_url": "https://github.com/maikwischow/noise-source-estimation",
+      "arxiv": {
+        "versioned_id": "2404.03251v1",
+        "primary_category": "cs.CV",
+        "title": "Real-time Noise Source Estimation of a Camera System from an Image and Metadata",
+        "abstract": "Autonomous machines must self-maintain proper functionality to ensure the safety of humans and themselves. This pertains particularly to its cameras as predominant sensors to perceive the environment and support actions. A fundamental camera problem addressed in this study is noise. Solutions often focus on denoising images a posteriori, that is, fighting symptoms rather than root causes. However, tackling root causes requires identifying the noise sources, considering the limitations of mobile platforms. This work investigates a real-time, memory-efficient and reliable noise source estimator that combines data- and physically-based models. To this end, a DNN that examines an image with camera metadata for major camera noise sources is built and trained. In addition, it quantifies unexpected factors that impact image noise or metadata. This study investigates seven different estimators on six datasets that include synthetic noise, real-world noise from two camera systems, and real field campaigns. For these, only the model with most metadata is capable to accurately and robustly quantify all individual noise contributions. This method outperforms total image noise estimators and can be plug-and-play deployed. It also serves as a basis to include more advanced noise sources, or as part of an automatic countermeasure feedback-loop to approach fully reliable machines."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/maikwischow/noise-source-estimation",
+        "exists": true,
+        "full_name": "MaikWischow/Noise-Source-Estimation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "7bad9edaa2c7166fda2ae8091a2ce8d528d88533",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MaikWischow/Noise-Source-Estimation/blob/7bad9edaa2c7166fda2ae8091a2ce8d528d88533/README.md",
+          "sha256": "8917ba385604a8586cd33268b9daa066e19d6dd6f80f1d258840cab7ba28489c",
+          "bytes": 5863
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "__init__.py",
+          "noise",
+          "requirements.txt",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 37,
+      "arxiv_id": "2407.17459",
+      "repo_url": "https://github.com/sewen007/hoiltr",
+      "arxiv": {
+        "versioned_id": "2407.17459v1",
+        "primary_category": "cs.LG",
+        "title": "Hidden or Inferred: Fair Learning-To-Rank with Unknown Demographics",
+        "abstract": "As learning-to-rank models are increasingly deployed for decision-making in areas with profound life implications, the FairML community has been developing fair learning-to-rank (LTR) models. These models rely on the availability of sensitive demographic features such as race or sex. However, in practice, regulatory obstacles and privacy concerns protect this data from collection and use. As a result, practitioners may either need to promote fairness despite the absence of these features or turn to demographic inference tools to attempt to infer them. Given that these tools are fallible, this paper aims to further understand how errors in demographic inference impact the fairness performance of popular fair LTR strategies. In which cases would it be better to keep such demographic attributes hidden from models versus infer them? We examine a spectrum of fair LTR strategies ranging from fair LTR with and without demographic features hidden versus inferred to fairness-unaware LTR followed by fair re-ranking. We conduct a controlled empirical investigation modeling different levels of inference errors by systematically perturbing the inferred sensitive attribute. We also perform three case studies with real-world datasets and popular open-source inference methods. Our findings reveal that as inference noise grows, LTR-based methods that incorporate fairness considerations into the learning process may increase bias. In contrast, fair re-ranking strategies are more robust to inference errors. All source code, data, and experimental artifacts of our experimental study are available here: https://github.com/sewen007/hoiltr.git"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sewen007/hoiltr",
+        "exists": true,
+        "full_name": "sewen007/hoiltr",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "cd67ee11ad6dec50782ceac83921bdbe364f27b1",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sewen007/hoiltr/blob/cd67ee11ad6dec50782ceac83921bdbe364f27b1/README.md",
+          "sha256": "a4bcc5059d22967ac8967da7f814aefd6c2bbc4b2707def898b1e7a231b21079",
+          "bytes": 7046
+        },
+        "root_names": [
+          ".gitignore",
+          ".idea",
+          "HOIRank",
+          "LICENSE",
+          "README.md",
+          "config.py",
+          "fair_rank.py",
+          "legend_case.pdf",
+          "legend_pareto.pdf",
+          "legend_synth.pdf",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 38,
+      "arxiv_id": "2408.05033",
+      "repo_url": "https://github.com/egesarac/apxdistmon",
+      "arxiv": {
+        "versioned_id": "2408.05033v1",
+        "primary_category": "cs.LO",
+        "title": "Approximate Distributed Monitoring under Partial Synchrony: Balancing Speed and Accuracy",
+        "abstract": "In distributed systems with processes that do not share a global clock, \\emph{partial synchrony} is achieved by clock synchronization that guarantees bounded clock skew among all applications. Existing solutions for distributed runtime verification under partial synchrony against temporal logic specifications are exact but suffer from significant computational overhead. In this paper, we propose an \\emph{approximate} distributed monitoring algorithm for Signal Temporal Logic (STL) that mitigates this issue by abstracting away potential interleaving behaviors. This conservative abstraction enables a significant speedup of the distributed monitors, albeit with a tradeoff in accuracy. We address this tradeoff with a methodology that combines our approximate monitor with its exact counterpart, resulting in enhanced efficiency without sacrificing precision. We evaluate our approach with multiple experiments, showcasing its efficacy in both real-world applications and synthetic examples."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/egesarac/apxdistmon",
+        "exists": true,
+        "full_name": "egesarac/ApxDistMon",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1219a9f61eb48dd7c797eafad575ea40566aa3af",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/egesarac/ApxDistMon/blob/1219a9f61eb48dd7c797eafad575ea40566aa3af/README.md",
+          "sha256": "28dc6cc528b4df9f80efbea2860723d836e03959ba373b8c999757321d8c557d",
+          "bytes": 2553
+        },
+        "root_names": [
+          ".gitignore",
+          "CMakeLists.txt",
+          "LICENSE",
+          "README.md",
+          "REPRODUCING.md",
+          "archive",
+          "benchmarks",
+          "data",
+          "include",
+          "requirements-plotting.txt",
+          "requirements-smt.txt",
+          "results",
+          "scripts",
+          "tests",
+          "visualization"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.LO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 39,
+      "arxiv_id": "2401.08326",
+      "repo_url": "https://github.com/junjie-ye/rotbench",
+      "arxiv": {
+        "versioned_id": "2401.08326v3",
+        "primary_category": "cs.CL",
+        "title": "RoTBench: A Multi-Level Benchmark for Evaluating the Robustness of Large Language Models in Tool Learning",
+        "abstract": "Tool learning has generated widespread interest as a vital means of interaction between Large Language Models (LLMs) and the physical world. Current research predominantly emphasizes LLMs' capacity to utilize tools in well-structured environments while overlooking their stability when confronted with the inevitable noise of the real world. To bridge this gap, we introduce RoTBench, a multi-level benchmark for evaluating the robustness of LLMs in tool learning. Specifically, we establish five external environments, each featuring varying levels of noise (i.e., Clean, Slight, Medium, Heavy, and Union), providing an in-depth analysis of the model's resilience across three critical phases: tool selection, parameter identification, and content filling. Experiments involving six widely-used models underscore the urgent necessity for enhancing the robustness of LLMs in tool learning. For instance, the performance of GPT-4 even drops significantly from 80.00 to 58.10 when there is no substantial change in manual accuracy. More surprisingly, the noise correction capability inherent in the GPT family paradoxically impedes its adaptability in the face of mild noise. In light of these findings, we propose RoTTuning, a strategy that enriches the diversity of training environments to bolster the robustness of LLMs in tool learning. The code and data are available at https://github.com/Junjie-Ye/RoTBench."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/junjie-ye/rotbench",
+        "exists": true,
+        "full_name": "Junjie-Ye/RoTBench",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "637e43ae9a978036774c92bb2ab11a83609e304b",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Junjie-Ye/RoTBench/blob/637e43ae9a978036774c92bb2ab11a83609e304b/README.md",
+          "sha256": "ab57748b035065332d0f29e8df018d35096893d557d463eb6fdc969bb4f1d220",
+          "bytes": 4345
+        },
+        "root_names": [
+          ".gitignore",
+          "Code",
+          "Data",
+          "Figures",
+          "LICENSE",
+          "README.md",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 40,
+      "arxiv_id": "2312.17250",
+      "repo_url": "https://github.com/chinhsuanwu/ifusion",
+      "arxiv": {
+        "versioned_id": "2312.17250v1",
+        "primary_category": "cs.CV",
+        "title": "iFusion: Inverting Diffusion for Pose-Free Reconstruction from Sparse Views",
+        "abstract": "We present iFusion, a novel 3D object reconstruction framework that requires only two views with unknown camera poses. While single-view reconstruction yields visually appealing results, it can deviate significantly from the actual object, especially on unseen sides. Additional views improve reconstruction fidelity but necessitate known camera poses. However, assuming the availability of pose may be unrealistic, and existing pose estimators fail in sparse view scenarios. To address this, we harness a pre-trained novel view synthesis diffusion model, which embeds implicit knowledge about the geometry and appearance of diverse objects. Our strategy unfolds in three steps: (1) We invert the diffusion model for camera pose estimation instead of synthesizing novel views. (2) The diffusion model is fine-tuned using provided views and estimated poses, turned into a novel view synthesizer tailored for the target object. (3) Leveraging registered views and the fine-tuned diffusion model, we reconstruct the 3D object. Experiments demonstrate strong performance in both pose estimation and novel view synthesis. Moreover, iFusion seamlessly integrates with various reconstruction methods and enhances them."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/chinhsuanwu/ifusion",
+        "exists": true,
+        "full_name": "chinhsuanwu/ifusion",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "7920da82dfd1f3c39c8461d9faa71b937e3654e0",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/chinhsuanwu/ifusion/blob/7920da82dfd1f3c39c8461d9faa71b937e3654e0/README.md",
+          "sha256": "9cf84cc76b3f09621351018f6a68f4fba1bf8372f6f0842180ae36a99f46bab8",
+          "bytes": 3263
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "asset",
+          "config",
+          "dataset",
+          "demo.py",
+          "download_data.sh",
+          "environment.yaml",
+          "eval.py",
+          "ifusion.py",
+          "ldm",
+          "main.py",
+          "model",
+          "requirements.txt",
+          "util"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 41,
+      "arxiv_id": "2305.16886",
+      "repo_url": "https://github.com/eliacunegatti/mge-snn",
+      "arxiv": {
+        "versioned_id": "2305.16886v2",
+        "primary_category": "cs.LG",
+        "title": "Understanding Sparse Neural Networks from their Topology via Multipartite Graph Representations",
+        "abstract": "Pruning-at-Initialization (PaI) algorithms provide Sparse Neural Networks (SNNs) which are computationally more efficient than their dense counterparts, and try to avoid performance degradation. While much emphasis has been directed towards \\emph{how} to prune, we still do not know \\emph{what topological metrics} of the SNNs characterize \\emph{good performance}. From prior work, we have layer-wise topological metrics by which SNN performance can be predicted: the Ramanujan-based metrics. To exploit these metrics, proper ways to represent network layers via Graph Encodings (GEs) are needed, with Bipartite Graph Encodings (BGEs) being the \\emph{de-facto} standard at the current stage. Nevertheless, existing BGEs neglect the impact of the inputs, and do not characterize the SNN in an end-to-end manner. Additionally, thanks to a thorough study of the Ramanujan-based metrics, we discover that they are only as good as the \\emph{layer-wise density} as performance predictors, when paired with BGEs. To close both gaps, we design a comprehensive topological analysis for SNNs with both linear and convolutional layers, via (i) a new input-aware Multipartite Graph Encoding (MGE) for SNNs and (ii) the design of new end-to-end topological metrics over the MGE. With these novelties, we show the following: (a) The proposed MGE allows to extract topological metrics that are much better predictors of the accuracy drop than metrics computed from current input-agnostic BGEs; (b) Which metrics are important at different sparsity levels and for different architectures; (c) A mixture of our topological metrics can rank PaI algorithms more effectively than Ramanujan-based metrics. The codebase is publicly available at https://github.com/eliacunegatti/mge-snn."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/eliacunegatti/mge-snn",
+        "exists": true,
+        "full_name": "eliacunegatti/mge-snn",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "02ba1eb7c9751ec92f3e0cfa76193b32b16cd32b",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/eliacunegatti/mge-snn/blob/02ba1eb7c9751ec92f3e0cfa76193b32b16cd32b/README.md",
+          "sha256": "2db17060eaa312198eb33ed6136ada2b8146c845db3482a0cb8f384b073ab5c2",
+          "bytes": 6528
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "deps",
+          "figures",
+          "graph_data",
+          "graph_encoding",
+          "main.py",
+          "models",
+          "multipartite_encoding.py",
+          "ramanunjan_metric.py",
+          "tinyimagenet",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 42,
+      "arxiv_id": "2406.12211",
+      "repo_url": "https://github.com/kanokphanl/ego4d_lam_internlstm",
+      "arxiv": {
+        "versioned_id": "2406.12211v1",
+        "primary_category": "cs.CV",
+        "title": "PCIE_LAM Solution for Ego4D Looking At Me Challenge",
+        "abstract": "This report presents our team's 'PCIE_LAM' solution for the Ego4D Looking At Me Challenge at CVPR2024. The main goal of the challenge is to accurately determine if a person in the scene is looking at the camera wearer, based on a video where the faces of social partners have been localized. Our proposed solution, InternLSTM, consists of an InternVL image encoder and a Bi-LSTM network. The InternVL extracts spatial features, while the Bi-LSTM extracts temporal features. However, this task is highly challenging due to the distance between the person in the scene and the camera movement, which results in significant blurring in the face image. To address the complexity of the task, we implemented a Gaze Smoothing filter to eliminate noise or spikes from the output. Our approach achieved the 1st position in the looking at me challenge with 0.81 mAP and 0.93 accuracy rate. Code is available at https://github.com/KanokphanL/Ego4D_LAM_InternLSTM"
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/kanokphanl/ego4d_lam_internlstm",
+        "exists": true,
+        "full_name": "KanokphanL/Ego4D_LAM_InternLSTM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "0aa7566c5f4d1d5f6d8d575ca0a62146b9980190",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/KanokphanL/Ego4D_LAM_InternLSTM/blob/0aa7566c5f4d1d5f6d8d575ca0a62146b9980190/README.md",
+          "sha256": "d64ebca2a2c93a6bed14ccbd3dbb2ce654de54390a128daffaa03ac8d2f08fa6",
+          "bytes": 2769
+        },
+        "root_names": [
+          "README.md",
+          "catcsv.py",
+          "common",
+          "csv_to_json.py",
+          "dataset",
+          "internfea.py",
+          "model",
+          "run.py",
+          "run_mul_traindataset.py",
+          "scripts"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 43,
+      "arxiv_id": "2305.10232",
+      "repo_url": "https://github.com/ntf229/nihao-skirt-catalog",
+      "arxiv": {
+        "versioned_id": "2305.10232v1",
+        "primary_category": "astro-ph.GA",
+        "title": "Panchromatic simulated galaxy observations from the NIHAO project",
+        "abstract": "We present simulated galaxy spectral energy distributions (SEDs) from the far ultraviolet through the far infrared, created using hydrodynamic simulations and radiative transfer calculations, suitable for the validation of SED modeling techniques. SED modeling is an essential tool for inferring star formation histories from nearby galaxy observations, but is fraught with difficulty due to our incomplete understanding of stellar populations, chemical enrichment processes, and the non-linear, geometry dependent effects of dust on our observations. Our simulated SEDs will allow us to assess the accuracy of these inferences against galaxies with known ground truth. To create the SEDs, we use simulated galaxies from the NIHAO suite and the radiative transfer code SKIRT. We explore different sub-grid post-processing recipes, using color distributions and their dependence on axis ratio of galaxies in the nearby universe to tune and validate them. We find that sub-grid post-processing recipes that mitigate limitations in the temporal and spatial resolution of the simulations are required for producing FUV to FIR photometry that statistically reproduce the colors of galaxies in the nearby universe. With this paper we release resolved photometry and spatially integrated spectra for our sample galaxies, each from a range of different viewing angles. Our simulations predict that there is a large variation in attenuation laws among galaxies, and that from any particular viewing angle that energy balance between dust attenuation and reemission can be violated by up to a factor of 3. These features are likely to affect SED modeling accuracy."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ntf229/nihao-skirt-catalog",
+        "exists": true,
+        "full_name": "ntf229/NIHAO-SKIRT-Catalog",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e6208ca2d015572bc8dae1bbbdcf9f5682fc996f",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ntf229/NIHAO-SKIRT-Catalog/blob/e6208ca2d015572bc8dae1bbbdcf9f5682fc996f/README.md",
+          "sha256": "4d0c8dc3ae8392089aae4c70574c0c797549dbfa48395e1aacbe6ab4f8a1e459",
+          "bytes": 4349
+        },
+        "root_names": [
+          "DustPediaData",
+          "README.md",
+          "analysis.py",
+          "resolved_analysis.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.GA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 44,
+      "arxiv_id": "2301.13139",
+      "repo_url": "https://github.com/c-alfano/approximate-mirror-policy-optimization",
+      "arxiv": {
+        "versioned_id": "2301.13139v4",
+        "primary_category": "stat.ML",
+        "title": "A Novel Framework for Policy Mirror Descent with General Parameterization and Linear Convergence",
+        "abstract": "Modern policy optimization methods in reinforcement learning, such as TRPO and PPO, owe their success to the use of parameterized policies. However, while theoretical guarantees have been established for this class of algorithms, especially in the tabular setting, the use of general parameterization schemes remains mostly unjustified. In this work, we introduce a novel framework for policy optimization based on mirror descent that naturally accommodates general parameterizations. The policy class induced by our scheme recovers known classes, e.g., softmax, and generates new ones depending on the choice of mirror map. Using our framework, we obtain the first result that guarantees linear convergence for a policy-gradient-based method involving general parameterization. To demonstrate the ability of our framework to accommodate general parameterization schemes, we provide its sample complexity when using shallow neural networks, show that it represents an improvement upon the previous best results, and empirically validate the effectiveness of our theoretical claims on classic control tasks."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/c-alfano/approximate-mirror-policy-optimization",
+        "exists": true,
+        "full_name": "c-alfano/Approximate-Mirror-Policy-Optimization",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "27f116bf9b814b0014db127c8e77c881c17d60aa",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/c-alfano/Approximate-Mirror-Policy-Optimization/blob/27f116bf9b814b0014db127c8e77c881c17d60aa/README.md",
+          "sha256": "bb2b0567e40429d233e3977eea92ad8f81cfd9c655947abdefe902e442f9e7a4",
+          "bytes": 197
+        },
+        "root_names": [
+          "AMPO.py",
+          "README.md",
+          "hyper_parameters",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 45,
+      "arxiv_id": "2401.14733",
+      "repo_url": "https://github.com/sinansonlu/motion-transfer-personality",
+      "arxiv": {
+        "versioned_id": "2401.14733v1",
+        "primary_category": "cs.CV",
+        "title": "Personality Perception in Human Videos Altered by Motion Transfer Networks",
+        "abstract": "The successful portrayal of personality in digital characters improves communication and immersion. Current research focuses on expressing personality through modifying animations using heuristic rules or data-driven models. While studies suggest motion style highly influences the apparent personality, the role of appearance can be similarly essential. This work analyzes the influence of movement and appearance on the perceived personality of short videos altered by motion transfer networks. We label the personalities in conference video clips with a user study to determine the samples that best represent the Five-Factor model's high, neutral, and low traits. We alter these videos using the Thin-Plate Spline Motion Model, utilizing the selected samples as the source and driving inputs. We follow five different cases to study the influence of motion and appearance on personality perception. Our comparative study reveals that motion and appearance influence different factors: motion strongly affects perceived extraversion, and appearance helps convey agreeableness and neuroticism."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sinansonlu/motion-transfer-personality",
+        "exists": true,
+        "full_name": "sinansonlu/motion-transfer-personality",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f8f54b74749e5b780a5c998c98ad27f76cd9e62f",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/sinansonlu/motion-transfer-personality/blob/f8f54b74749e5b780a5c998c98ad27f76cd9e62f/README.md",
+          "sha256": "82ac250a9385f1256b8bd08cc5f27fba022d5888b8eebf9fbf3ff6a40055adab",
+          "bytes": 4834
+        },
+        "root_names": [
+          "Analysis",
+          "Generated Samples",
+          "LICENSE",
+          "README.md",
+          "Selected Samples",
+          "TED-Samples-50",
+          "TED_Videos.xlsx",
+          "Thin_Plate_Spline_Motion_Model.ipynb",
+          "default_pose.png"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 46,
+      "arxiv_id": "2302.00455",
+      "repo_url": "https://github.com/dorinapetra/summarization",
+      "arxiv": {
+        "versioned_id": "2302.00455v1",
+        "primary_category": "cs.CL",
+        "title": "HunSum-1: an Abstractive Summarization Dataset for Hungarian",
+        "abstract": "We introduce HunSum-1: a dataset for Hungarian abstractive summarization, consisting of 1.14M news articles. The dataset is built by collecting, cleaning and deduplicating data from 9 major Hungarian news sites through CommonCrawl. Using this dataset, we build abstractive summarizer models based on huBERT and mT5. We demonstrate the value of the created dataset by performing a quantitative and qualitative analysis on the models' results. The HunSum-1 dataset, all models used in our experiments and our code are available open source."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/dorinapetra/summarization",
+        "exists": true,
+        "full_name": "botondbarta/HunSum",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "babfc5548dc5f6ba7ba2dfcc33b202c2d7a51cea",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/botondbarta/HunSum/blob/babfc5548dc5f6ba7ba2dfcc33b202c2d7a51cea/README.md",
+          "sha256": "b099491701df63cc62120bc6b8229f8221a5952f68d3ecbd6cad32aa02cc1b97",
+          "bytes": 6601
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "indexes_to_download.txt",
+          "kesma.txt",
+          "main.py",
+          "scripts",
+          "segments_to_download.txt",
+          "setup.py",
+          "summarization"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 47,
+      "arxiv_id": "2410.09947",
+      "repo_url": "https://github.com/ayush-umu/federated-unlearning-under-plausible-deniability",
+      "arxiv": {
+        "versioned_id": "2410.09947v1",
+        "primary_category": "cs.CR",
+        "title": "Efficient Federated Unlearning under Plausible Deniability",
+        "abstract": "Privacy regulations like the GDPR in Europe and the CCPA in the US allow users the right to remove their data ML applications. Machine unlearning addresses this by modifying the ML parameters in order to forget the influence of a specific data point on its weights. Recent literature has highlighted that the contribution from data point(s) can be forged with some other data points in the dataset with probability close to one. This allows a server to falsely claim unlearning without actually modifying the model's parameters. However, in distributed paradigms such as FL, where the server lacks access to the dataset and the number of clients are limited, claiming unlearning in such cases becomes a challenge. This paper introduces an efficient way to achieve federated unlearning, by employing a privacy model which allows the FL server to plausibly deny the client's participation in the training up to a certain extent. We demonstrate that the server can generate a Proof-of-Deniability, where each aggregated update can be associated with at least x number of client updates. This enables the server to plausibly deny a client's participation. However, in the event of frequent unlearning requests, the server is required to adopt an unlearning strategy and, accordingly, update its model parameters. We also perturb the client updates in a cluster in order to avoid inference from an honest but curious server. We show that the global model satisfies differential privacy after T number of communication rounds. The proposed methodology has been evaluated on multiple datasets in different privacy settings. The experimental results show that our framework achieves comparable utility while providing a significant reduction in terms of memory (30 times), as well as retraining time (1.6-500769 times). The source code for the paper is available."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/ayush-umu/federated-unlearning-under-plausible-deniability",
+        "exists": true,
+        "full_name": "Ayush-Umu/Federated-Unlearning-under-Plausible-Deniability",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "4c511f4cc98b62c4608a5bbc2a76c1f792c04e9c",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Ayush-Umu/Federated-Unlearning-under-Plausible-Deniability/blob/4c511f4cc98b62c4608a5bbc2a76c1f792c04e9c/README.md",
+          "sha256": "3eb832d0ccaa24d61f71334c7ba62dff28e6b3c786cde388a573e4578a2fbcfd",
+          "bytes": 1222
+        },
+        "root_names": [
+          "ConvNet",
+          "LeNet5-model",
+          "README.md",
+          "ResNet-mini"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 48,
+      "arxiv_id": "2307.03233",
+      "repo_url": "https://github.com/riverlane/h2_compilation",
+      "arxiv": {
+        "versioned_id": "2307.03233v2",
+        "primary_category": "quant-ph",
+        "title": "Compilation of a simple chemistry application to quantum error correction primitives",
+        "abstract": "A number of exciting recent results have been seen in the field of quantum error correction. These include initial demonstrations of error correction on current quantum hardware, and resource estimates which improve understanding of the requirements to run large-scale quantum algorithms for real-world applications. In this work, we bridge the gap between these two developments by performing careful estimation of the resources required to fault-tolerantly perform quantum phase estimation (QPE) on a minimal chemical example. Specifically, we describe a detailed compilation of the QPE circuit to lattice surgery operations for the rotated surface code, for a hydrogen molecule in a minimal basis set. We describe a number of optimisations at both the algorithmic and error correction levels. We find that implementing even a simple chemistry circuit requires 1,000 qubits and 2,300 quantum error correction rounds, emphasising the need for improved error correction techniques specifically targeting the early fault-tolerant regime."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/riverlane/h2_compilation",
+        "exists": true,
+        "full_name": "riverlane/h2_compilation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "5fe192f205025b3e79e5d3a386dc6ddfac3f01a3",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/riverlane/h2_compilation/blob/5fe192f205025b3e79e5d3a386dc6ddfac3f01a3/README.md",
+          "sha256": "a1da7f266b37eb494de0a13e89a5b5eef8a5ee7b003a54ba5f622c9949de9175",
+          "bytes": 2196
+        },
+        "root_names": [
+          ".devcontainer",
+          ".gitignore",
+          ".gitmodules",
+          ".isort.cfg",
+          ".pylintrc",
+          "LICENSE",
+          "Makefile",
+          "README.md",
+          "circuit_files",
+          "environment",
+          "figures",
+          "gridsynth",
+          "lattice_operations",
+          "logical_circuit",
+          "magicstates",
+          "pauli_operations",
+          "resource_estimates",
+          "tools.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category quant-ph"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 49,
+      "arxiv_id": "2310.03002",
+      "repo_url": "https://github.com/maxul/awesome-sgx-open-source",
+      "arxiv": {
+        "versioned_id": "2310.03002v1",
+        "primary_category": "cs.CR",
+        "title": "No Forking Way: Detecting Cloning Attacks on Intel SGX Applications",
+        "abstract": "Forking attacks against TEEs like Intel SGX can be carried out either by rolling back the application to a previous state, or by cloning the application and by partitioning its inputs across the cloned instances. Current solutions to forking attacks require Trusted Third Parties (TTP) that are hard to find in real-world deployments. In the absence of a TTP, many TEE applications rely on monotonic counters to mitigate forking attacks based on rollbacks; however, they have no protection mechanism against forking attack based on cloning. In this paper, we analyze 72 SGX applications and show that approximately 20% of those are vulnerable to forking attacks based on cloning - including those that rely on monotonic counters. To address this problem, we present CloneBuster, the first practical clone-detection mechanism for Intel SGX that does not rely on a TTP and, as such, can be used directly to protect existing applications. CloneBuster allows enclaves to (self-) detect whether another enclave with the same binary is running on the same platform. To do so, CloneBuster relies on a cache-based covert channel for enclaves to signal their presence to (and detect the presence of) clones on the same machine. We show that CloneBuster is robust despite a malicious OS, only incurs a marginal impact on the application performance, and adds approximately 800 LoC to the TCB. When used in conjunction with monotonic counters, CloneBuster allows applications to benefit from a comprehensive protection against forking attacks."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/maxul/awesome-sgx-open-source",
+        "exists": true,
+        "full_name": "Maxul/Awesome-SGX-Open-Source",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "4a13d442156acf0c0cc843bc44697522e5547a5c",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Maxul/Awesome-SGX-Open-Source/blob/4a13d442156acf0c0cc843bc44697522e5547a5c/README.md",
+          "sha256": "32718f829ef5fb73ded32b6ae3f150eb08b6d405e2b8a1fbda45e93ad30a558d",
+          "bytes": 60520
+        },
+        "root_names": [
+          "Academy.md",
+          "README.md",
+          "SGX-vs-TDX.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 50,
+      "arxiv_id": "2304.03199",
+      "repo_url": "https://github.com/zengbohan0217/fadm",
+      "arxiv": {
+        "versioned_id": "2304.03199v1",
+        "primary_category": "cs.CV",
+        "title": "Face Animation with an Attribute-Guided Diffusion Model",
+        "abstract": "Face animation has achieved much progress in computer vision. However, prevailing GAN-based methods suffer from unnatural distortions and artifacts due to sophisticated motion deformation. In this paper, we propose a Face Animation framework with an attribute-guided Diffusion Model (FADM), which is the first work to exploit the superior modeling capacity of diffusion models for photo-realistic talking-head generation. To mitigate the uncontrollable synthesis effect of the diffusion model, we design an Attribute-Guided Conditioning Network (AGCN) to adaptively combine the coarse animation features and 3D face reconstruction results, which can incorporate appearance and motion conditions into the diffusion process. These specific designs help FADM rectify unnatural artifacts and distortions, and also enrich high-fidelity facial details through iterative diffusion refinements with accurate animation attributes. FADM can flexibly and effectively improve existing animation videos. Extensive experiments on widely used talking-head benchmarks validate the effectiveness of FADM over prior arts."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zengbohan0217/fadm",
+        "exists": true,
+        "full_name": "zengbohan0217/FADM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "090f0ae443f8e174415c9e4aa7cd9220d54305b1",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/zengbohan0217/FADM/blob/090f0ae443f8e174415c9e4aa7cd9220d54305b1/README.md",
+          "sha256": "3c6b28742841bec921e967a0f8be796ab9144d5abcf255486eb83c79fdc096a1",
+          "bytes": 1054
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "augmentation.py",
+          "config",
+          "datasets.py",
+          "demo.py",
+          "frames_dataset.py",
+          "modules",
+          "requirements.txt",
+          "run.py",
+          "run.sh",
+          "sup-mat",
+          "sync_batchnorm",
+          "train.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T00:56:07Z"
+}

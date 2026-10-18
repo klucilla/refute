@@ -131,6 +131,39 @@ def test_containers_of_one_step_start_together(tmp_path):
     assert [c.container_id for c in record.containers] == ["C1/r1", "C1/r2"]
 
 
+def test_after_setup_runs_once_between_the_setup_and_the_first_base_run(tmp_path):
+    backend = Fake()
+    seen = []
+
+    def hook():
+        seen.append(len(backend.calls))
+
+    orc.PaperRunner(two_claims(tmp_path), backend, accountant(["C1", "C2"]), after_setup=hook).run()
+    assert seen == [1]  # after setup/build, before C1/run
+
+
+def test_after_setup_is_not_called_when_the_setup_fails(tmp_path):
+    backend = Fake({"setup/build": {"exit": 1}})
+    seen = []
+    orc.PaperRunner(
+        two_claims(tmp_path), backend, accountant(["C1", "C2"]), after_setup=lambda: seen.append(1)
+    ).run()
+    assert seen == []
+
+
+def test_an_error_in_after_setup_stops_the_paper(tmp_path):
+    backend = Fake()
+
+    def hook():
+        raise RuntimeError("the run phase was not approved")
+
+    run = orc.PaperRunner(
+        two_claims(tmp_path), backend, accountant(["C1", "C2"]), after_setup=hook
+    ).run()
+    assert "the run phase was not approved" in run.stopped
+    assert [c for c, _ in backend.calls] == ["setup/build"] and not run.accounting_valid
+
+
 # ---- how a step ends ---------------------------------------------------------------------------
 
 

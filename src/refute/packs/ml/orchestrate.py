@@ -244,8 +244,9 @@ class PaperRunner:
         accountant: bg.Accountant,
         *,
         parent_usage: Callable[[], int] | None = None,
-        tolerance_usec: int | None = None,
+        tolerance_usec: int | Callable[[int], int] | None = None,
         timing_maxima: TimingMaxima | None = None,
+        after_setup: Callable[[], None] | None = None,
     ) -> None:
         if [c.key for c in plan.claims] != list(accountant.claims):
             raise ValueError("the accountant's claims must be the plan's, in the drawn order")
@@ -253,7 +254,13 @@ class PaperRunner:
             raise ValueError("the accountant must be new")
         if (parent_usage is None) != (tolerance_usec is None):
             raise ValueError("parent_usage and tolerance_usec are given together")
-        if tolerance_usec is not None and (type(tolerance_usec) is not int or tolerance_usec < 0):
+        # T is a number, or a function of the number of containers that started (1.4a:
+        # n_containers; Codex review of 3dd85e2: never the planned ones that did not run)
+        if (
+            tolerance_usec is not None
+            and not callable(tolerance_usec)
+            and (type(tolerance_usec) is not int or tolerance_usec < 0)
+        ):
             raise ValueError("tolerance_usec must be a non-negative integer of microseconds")
         self.plan = plan
         self.backend = backend
@@ -263,6 +270,11 @@ class PaperRunner:
         self.parent_usage = parent_usage
         self.tolerance_usec = tolerance_usec
         self.timing_maxima = timing_maxima
+        # called once, after a setup that completed and before the first base run: the
+        # docker backend's wiring waits there for the VM's network profile to change from
+        # build to pull (the maintainer's decision (b) of 2026-10-17); an error in it stops
+        # the paper like any Refute error
+        self.after_setup = after_setup
         self.run_record = PaperRun()
 
     # -- one container, one step -------------------------------------------------------
@@ -478,6 +490,8 @@ class PaperRunner:
             return
         acc.end_setup()
         out.setup_exhausted = acc.setup_exhausted
+        if setup_ok and not out.setup_exhausted and self.after_setup is not None:
+            self.after_setup()
 
         for claim in plan.claims:
             if not setup_ok:
@@ -532,7 +546,13 @@ class PaperRunner:
             complete = False
             if not out.stopped:
                 try:
-                    complete = acc.check_completeness(self.parent_usage(), self.tolerance_usec)
+                    tolerance = self.tolerance_usec
+                    if callable(tolerance):
+                        started = sum(len(s.containers) for s in out.steps)
+                        tolerance = tolerance(started)
+                        if type(tolerance) is not int or tolerance < 0:
+                            raise ValueError("the tolerance function gave no valid T")
+                    complete = acc.check_completeness(self.parent_usage(), tolerance)
                 except Exception as exc:
                     self._stop("the completeness check failed: " + _error(exc))
             out.completeness = COMPLETENESS_COMPLETE if complete else COMPLETENESS_INVALID

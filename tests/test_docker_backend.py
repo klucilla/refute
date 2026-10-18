@@ -68,8 +68,97 @@ def test_a_run_counts_its_slice_and_exits(tmp_path):
     assert args[args.index("--network") + 1] == "none"
     assert args[args.index("--cgroup-parent") + 1] == "refute-p1-c0001.slice"
     assert args[args.index("--memory-swap") + 1] == args[args.index("--memory") + 1]
+    # the image's own entry point, health check and user never apply (Codex review)
+    assert args[args.index("--entrypoint") + 1] == "" and "--no-healthcheck" in args
+    assert args[args.index("--user") + 1] == "10001:10001"
+    assert "HTTPS_PROXY=" in args  # a committed build's proxy variables are cleared
     assert rec["cmd"] == ["work", "0.3", "0"]
     assert "started" in result.log_path.read_text()
+    assert b.kill_active() == []  # nothing left running
+
+
+def test_data_mounts_are_read_only(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    # the source is a path on the VM; the stand-in does not open it
+    plan = ContainerPlan(IMAGE, data_mounts=(("/home/refute/cache/fetched.npz", "data/d.npz"),))
+    b = backend(tmp_path, {work: plan})
+    b.run(spec(tmp_path, work, ["work", "0.1", "0"]))
+    (rec,) = records(tmp_path)
+    mounts = [rec["args"][i + 1] for i, a in enumerate(rec["args"]) if a == "--mount"]
+    assert any(m.endswith("target=/work/data/d.npz,readonly") for m in mounts)
+    with pytest.raises(ValueError, match="relative path in /work"):
+        ContainerPlan(IMAGE, data_mounts=(("/abs/f", "../escape"),))
+    with pytest.raises(ValueError, match="relative path in /work"):
+        ContainerPlan(IMAGE, data_mounts=(("/abs/f", "/etc/passwd"),))
+
+
+def test_an_image_with_a_volume_is_refused(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan("volumeimg@sha256:" + "d" * 64)})
+    with pytest.raises(DockerRefusedError, match="declares volumes"):
+        b.run(spec(tmp_path, work, ["work", "0.1", "0"]))
+
+
+def test_no_container_starts_after_a_stop(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    assert b.kill_active() == []
+    with pytest.raises(DockerRefusedError, match="stopping"):
+        b.run(spec(tmp_path, work, ["work", "0.1", "0"]))
+    assert not list((tmp_path / "state").glob("*.json"))  # nothing was even created
+
+
+def test_a_stop_during_a_run_kills_it_as_a_refute_error(tmp_path):
+    import threading
+
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    timer = threading.Timer(0.3, b.kill_active)
+    timer.start()
+    with pytest.raises(RuntimeError, match="the paper was stopped"):
+        b.run(spec(tmp_path, work, ["work", "60", "0"]))
+    timer.join()
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="modes as on the VM (Linux)")
+def test_an_unlistable_folder_stops_the_reading(tmp_path):
+    work = tmp_path / "w1"
+    hidden = work / "out"
+    hidden.mkdir(parents=True)
+    (hidden / "metric.json").write_text("{}")
+    hidden.chmod(0o111)
+    log = tmp_path / "r.log"
+    try:
+        with pytest.raises(RuntimeError, match="cannot be checked"):
+            DockerBackend._sanitize(work, log)
+    finally:
+        hidden.chmod(0o755)
+
+
+def test_a_missing_parent_slice_is_an_error_not_zero(tmp_path):
+    b = backend(tmp_path, {})
+    with pytest.raises(RuntimeError, match="no cpu.stat"):
+        b.parent_usage()
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="symbolic links as on the VM (Linux)")
+def test_links_leaving_the_folder_are_removed_after_a_run(tmp_path):
+    work = tmp_path / "w1"
+    (work / "out").mkdir(parents=True)
+    (work / "out" / "metric.json").symlink_to("/etc/hostname")
+    (work / "out" / "inside.json").write_text("{}")
+    (work / "out" / "alias.json").symlink_to(work / "out" / "inside.json")
+    log = tmp_path / "logs" / "r.log"
+    log.parent.mkdir()
+    log.write_text("")
+    removed = DockerBackend._sanitize(work, log)
+    assert removed == [str(Path("out") / "metric.json")]
+    assert (work / "out" / "alias.json").is_symlink()  # a link inside the folder stays
+    assert json.loads((tmp_path / "logs" / "r.log.sanitized.json").read_text()) == removed
 
 
 def test_threshold_stops_the_container_and_measures_d_and_s(tmp_path):
@@ -143,6 +232,22 @@ def test_a_quota_of_max_is_refused(tmp_path):
         return args
 
     b._create_args = no_quota
+    with pytest.raises(RuntimeError, match="refused by 1.4a"):
+        b.run(spec(tmp_path, work, ["work", "5", "0"]))
+
+
+def test_the_quota_is_checked_as_a_ratio(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)}, limits=LIMITS)
+    b._create_args_orig = b._create_args
+
+    def tiny_period(*a):  # 200000/1000 passes both separate checks and is 200 CPUs
+        args = b._create_args_orig(*a)
+        args[args.index("--cpu-period") + 1] = "1000"
+        return args
+
+    b._create_args = tiny_period
     with pytest.raises(RuntimeError, match="refused by 1.4a"):
         b.run(spec(tmp_path, work, ["work", "5", "0"]))
 

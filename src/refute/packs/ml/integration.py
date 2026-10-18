@@ -141,7 +141,10 @@ class Harness:
     # backend with a parent cgroup per paper (docker, on the VM); the subprocess backend
     # has none, so the completeness check is recorded as not applicable there
     parent_usage: Callable[[], int] | None = None
-    tolerance_usec: int | None = None
+    # T, or a function of the number of containers that started (orchestrate.PaperRunner)
+    tolerance_usec: int | Callable[[int], int] | None = None
+    # called once between a completed setup and the first base run (orchestrate.PaperRunner)
+    after_setup: Callable[[], None] | None = None
 
 
 # ---- the claims ---------------------------------------------------------------------------
@@ -1565,6 +1568,7 @@ class PaperIntegration:
             parent_usage=self.harness.parent_usage,
             tolerance_usec=self.harness.tolerance_usec,
             timing_maxima=self.harness.timing_maxima,
+            after_setup=self.harness.after_setup,
         )
         return self.evaluate(self._runner.run())
 

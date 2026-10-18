@@ -42,9 +42,12 @@ Only containers this backend created are ever stopped, by their id.
 
 from __future__ import annotations
 
+import json
 import os
 import re
+import stat
 import subprocess
+import threading
 import time
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -64,6 +67,8 @@ WORK = "/work"
 # a run is a user that owns nothing of the engine's (the engine is uid 1000 on the VM):
 # the read-only data files hard-linked into its folder cannot be changed by it
 RUN_USER = "10001:10001"
+BUILD_USER = "0:0"  # a build installs into the image as root, with no capability
+KILL_WAIT_S = 60.0  # the longest wait for a stopped container's slice to empty
 PAPER_ID = re.compile(r"^[a-z0-9]{1,40}$")
 IMAGE_BY_DIGEST = re.compile(r"^[a-z0-9./_-]+(:[A-Za-z0-9._-]+)?@sha256:[0-9a-f]{64}$")
 LOCAL_IMAGE = re.compile(r"^refute-local/[a-z0-9]{1,40}/[a-z0-9_-]{1,60}$")
@@ -104,10 +109,20 @@ class ContainerPlan:
     network: str = "none"  # "none", or "proxy" (a build: the allowlist proxy only)
     commit_as: str | None = None  # the image a build becomes when it exits 0
     read_only: bool = True  # a build writes its environment into the image: False
+    # read-only bind mounts of fetched files: (absolute source on the VM, relative path in
+    # /work); the run can neither change nor replace them (Codex review of 3dd85e2: a hard
+    # link in a folder the run can write could be replaced by another file)
+    data_mounts: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         if not (IMAGE_BY_DIGEST.match(self.image) or LOCAL_IMAGE.match(self.image)):
             raise ValueError(f"image not pinned by digest: {self.image!r}")
+        for source, target in self.data_mounts:
+            rel = PurePosixPath(target)
+            if not PurePosixPath(source).is_absolute() or "," in source or "," in target:
+                raise ValueError(f"a data mount source is an absolute path: {source!r}")
+            if rel.is_absolute() or not rel.parts or ".." in rel.parts or rel.parts[0] == ".refute":
+                raise ValueError(f"a data mount target is a relative path in /work: {target!r}")
         if self.network not in ("none", "proxy"):
             raise ValueError("network is none or proxy")
         if self.commit_as is not None and not LOCAL_IMAGE.match(self.commit_as):
@@ -181,12 +196,37 @@ class DockerBackend:
             raise ValueError("the paper id is lowercase letters and digits (a slice name)")
         self._cgroups = _Cgroups(Path(self.cgroup_root))
         self._plans = {Path(k).resolve(): v for k, v in self.plans.items()}
+        self._active: set[str] = set()  # containers created and not yet removed
+        self._stopping = False  # set by kill_active: no container starts afterwards
+        self._lock = threading.Lock()
 
     # -- the paper's total, for the completeness check of W2.10
 
     def parent_usage(self) -> int:
+        """The paper's slice's cumulative usage. A missing slice is an error, never zero
+        (Codex review of 3dd85e2: a missing meter must invalidate the accounting)."""
         value = _Cgroups.usage_usec(self._cgroups.slice_dir(self.paper))
-        return 0 if value is None else value
+        if value is None:
+            raise RuntimeError(f"the slice refute-{self.paper}.slice has no cpu.stat")
+        return value
+
+    def kill_active(self) -> list[str]:
+        """Kills every container of this backend still running (the paper's unit is
+        stopped): by their ids only."""
+        with self._lock:
+            self._stopping = True  # under the lock: no container is registered after this
+            active = sorted(self._active)
+        for cid in active:
+            self._kill(cid)
+        return active
+
+    def _check_image(self, image: str) -> None:
+        """An image's own configuration must not change the container: a VOLUME would add a
+        mount the backend did not choose (Codex review of 3dd85e2). ENTRYPOINT and
+        HEALTHCHECK are neutralized at creation, the user is always given."""
+        volumes = self._docker("image", "inspect", "--format", "{{json .Config.Volumes}}", image)
+        if volumes not in ("null", "{}", ""):
+            raise DockerRefusedError(f"the image {image} declares volumes {volumes}: refused")
 
     # -- one run
 
@@ -216,16 +256,25 @@ class DockerBackend:
             "--security-opt", "no-new-privileges",
             "--mount", f"type=bind,source={Path(spec.workdir).resolve()},target={WORK}",
             "--workdir", WORK,
+            # the image's own entry point and health check never run (Codex review)
+            "--entrypoint", "",
+            "--no-healthcheck",
         ]  # fmt: skip
+        for source, target in plan.data_mounts:
+            args += ["--mount", f"type=bind,source={source},target={WORK}/{target},readonly"]
+        proxy_names = ("HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy")
         if plan.network == "none":
             args += ["--network", "none"]
+            # a committed build keeps its proxy variables in the image: cleared in a run
+            for key in proxy_names:
+                args += ["--env", f"{key}="]
         else:
-            proxy = {"HTTP_PROXY": PROXY_URL, "HTTPS_PROXY": PROXY_URL,
-                     "http_proxy": PROXY_URL, "https_proxy": PROXY_URL}  # fmt: skip
-            for key, value in proxy.items():
-                args += ["--env", f"{key}={value}"]
+            for key in proxy_names:
+                args += ["--env", f"{key}={PROXY_URL}"]
         if plan.read_only:
             args += ["--read-only", "--tmpfs", "/tmp:rw,nosuid,nodev,size=1g", "--user", RUN_USER]
+        else:
+            args += ["--user", BUILD_USER]  # never the image's own USER
         for key, value in spec.env.items():
             if not ENV_NAME.match(key) or "\x00" in value:
                 raise DockerRefusedError(f"environment variable refused: {key!r}")
@@ -246,13 +295,26 @@ class DockerBackend:
         own = self._cgroups.slice_dir(self.paper, tag)
         if _Cgroups.usage_usec(own) is not None:
             raise DockerRefusedError(f"the slice {slice_name} already exists")
+        self._check_image(plan.image)
+        with self._lock:
+            if self._stopping:
+                raise DockerRefusedError("the paper is stopping: no container starts")
         cid = self._docker(*self._create_args(spec, plan, slice_name, label))
         spec.log_path.parent.mkdir(parents=True, exist_ok=True)
         try:
             with spec.log_path.open("wb") as log:
-                attached = subprocess.Popen(
-                    [*self.docker, "start", "--attach", cid], stdout=log, stderr=subprocess.STDOUT
-                )
+                with self._lock:
+                    # registered and started under the lock: a stop either comes before
+                    # (nothing starts) or sees this container (Codex review of 6755d61); the
+                    # supervision also checks the stop at every reading
+                    if self._stopping:
+                        raise DockerRefusedError("the paper is stopping: no container starts")
+                    self._active.add(cid)
+                    attached = subprocess.Popen(
+                        [*self.docker, "start", "--attach", cid],
+                        stdout=log,
+                        stderr=subprocess.STDOUT,
+                    )
                 try:
                     result = self._supervise(spec, cid, own, attached)
                 finally:
@@ -261,9 +323,44 @@ class DockerBackend:
                         attached.wait(timeout=60)
             if plan.commit_as is not None and result.exit_code == 0:
                 self._docker("commit", cid, plan.commit_as, timeout=1800)
+            self._sanitize(workdir, spec.log_path)
             return result
         finally:
             subprocess.run([*self.docker, "rm", "--force", cid], capture_output=True, check=False)
+            with self._lock:
+                self._active.discard(cid)
+
+    @staticmethod
+    def _sanitize(workdir: Path, log_path: Path) -> list[str]:
+        """After a run, before the engine reads anything it wrote: every symbolic link that
+        resolves outside the run's folder and every special file (FIFO, socket, device) is
+        removed, and the removals are recorded next to the log, outside the folder (Codex
+        review of 3dd85e2: the engine must never read through a link a run planted). A
+        value that a removed file carried is then simply missing (the run's own doing)."""
+        root = os.path.realpath(workdir)
+        removed = []
+
+        def unreadable(error: OSError) -> None:
+            # a folder the run made unlistable could hide a link: the run's outputs are not
+            # read at all (Codex review of 6755d61)
+            raise RuntimeError(f"the run's folder cannot be checked: {error}") from error
+
+        for dirpath, dirnames, filenames in os.walk(workdir, followlinks=False, onerror=unreadable):
+            for name in [*dirnames, *filenames]:
+                p = os.path.join(dirpath, name)
+                st = os.lstat(p)
+                if stat.S_ISLNK(st.st_mode):
+                    target = os.path.realpath(p)
+                    if os.path.commonpath([root, target]) != root:
+                        os.unlink(p)
+                        removed.append(os.path.relpath(p, workdir))
+                elif not (stat.S_ISREG(st.st_mode) or stat.S_ISDIR(st.st_mode)):
+                    os.unlink(p)
+                    removed.append(os.path.relpath(p, workdir))
+        if removed:
+            note = log_path.with_name(log_path.name + ".sanitized.json")
+            note.write_text(json.dumps(sorted(removed)) + "\n", encoding="utf-8")
+        return removed
 
     def _kill(self, cid: str) -> None:
         subprocess.run([*self.docker, "kill", cid], capture_output=True, check=False, timeout=60)
@@ -275,11 +372,14 @@ class DockerBackend:
         quota, period = _read(scope / "cpu.max").split()
         burst_file = scope / "cpu.max.burst"
         burst = _read(burst_file).strip() if burst_file.exists() else "0"
+        # the limit C is quota / period: compared as a ratio too (Codex review: 2200000/1000
+        # passes both separate checks and is 2200 CPUs)
         if (
             quota == "max"
             or burst != "0"
             or int(quota) > self.limits.quota_us
             or int(period) > self.limits.period_us
+            or int(quota) * self.limits.period_us > self.limits.quota_us * int(period)
         ):
             raise RuntimeError(f"cpu.max {quota} {period}, burst {burst}: refused by 1.4a")
 
@@ -294,6 +394,14 @@ class DockerBackend:
         poll_ns = round(self.poll_s * 1_000_000_000)
         planned_ns = self.clock_ns()
         while True:
+            if self._stopping:
+                # the paper is stopping (SIGTERM): this container is killed and the run fails
+                # as a Refute error; it never ends as the artifact's result
+                self._kill(cid)
+                deadline = time.monotonic() + KILL_WAIT_S
+                while _Cgroups.populated(own) and time.monotonic() < deadline:
+                    self.sleep(0.01)
+                raise RuntimeError(f"the paper was stopped while {cid} ran")
             code = attached.poll()
             usage = _Cgroups.usage_usec(own) or 0
             now = time.monotonic()
@@ -315,7 +423,10 @@ class DockerBackend:
                 requested_ns = self.clock_ns()
                 detection = (requested_ns - planned_ns) / 1_000_000_000
                 self._kill(cid)
+                stop_deadline = time.monotonic() + KILL_WAIT_S
                 while _Cgroups.populated(own):
+                    if time.monotonic() > stop_deadline:
+                        raise RuntimeError(f"{cid} did not stop within {KILL_WAIT_S:.0f} s")
                     self.sleep(0.01)
                 latency = (self.clock_ns() - requested_ns) / 1_000_000_000
                 attached.wait(timeout=60)
