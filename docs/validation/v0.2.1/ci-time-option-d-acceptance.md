@@ -336,3 +336,38 @@ premise, red by design), not as a further time option. Its effect on time is mea
 separately from the correlated-noise cases that come after it
 (`reopen/correlated-noise-acceptance.md`), and recorded; the decision rule of section T is not
 used to justify it. Nothing in sections E, F or S changes.
+
+## Amendment 5 (2026-10-17, after the code of 3b): results, sabotages and time
+
+**Code and tests.** The shared path is `analyze_scenario_with_catalog_shared` in
+`src/refute/packs/tess/synthetic.py`: the complete analysis with the default rule, then the
+switch-off analysis derived by `eb_catalog_test` and `conclude_analysis`, marked
+`extras["shared_path"]`. The fixture of `tests/test_ebcatalog_own_tic_e2e.py` runs 130 shared tasks,
+26 complete switch-off controls (seeds 0-1) and 5 complete neighbor-row `blend` analyses: 161
+complete analyses. The marks `RED_UNTIL_3B` are removed in the same commit. Both H9(a) modules,
+logical processors 0 to 7, 6 workers: **71 tests, 0 failures, 0 errors, 0 skipped** (JUnit); the 16
+cases E0, E1 (13 scenarios) and the E1 premise (2 seeds) pass.
+
+**Sabotages S1 to S9**, against `tests/test_ebcatalog_own_tic.py` and
+`tests/test_ebcatalog_own_tic_e2e.py` only, the implementation staged, each file restored from the
+index with an empty `git diff` afterwards; nothing committed:
+
+| Sabotage | Failing cases | Planned catches |
+|---|---|---|
+| S1. The rule is ignored | 16: A1 (6), A5, A7, B1 (5), C, E1 premise (2) | A1, B1, C2/C3 (case C): yes |
+| S2. Any TESS-EB row counts as the target's own | 8: A2, A5 (2), B3 (5) | A2, A5, B3: yes |
+| S3. Position-only matches downgraded | 1: A3 | A3: yes |
+| S4. The catalog list is ignored | 13: A4, A7 (4), B1 (5), C, E1 premise (2) | A4: yes |
+| S5. The downgrade gives PASS | 25: A1 (6), A7, B1 (5), D (11 scenarios), E1 premise (2) | A1, B1: yes |
+| S6. The switch is inverted | 30: A1 (6), A5, A7 (4), B1 (5), C, D (11 scenarios), E1 premise (2) | A1, A7: yes |
+| S7. The switch-off result fabricated from the default one | 21: B1 (5), C, E1 (13 scenarios), E1 premise (2) | E1: yes |
+| S8. The default `eb_catalog` test kept | 21: the same as S7 | E1 and its premise: yes |
+| S9. Recomputed but not concluded again | 21: the same as S7 | E1 and its premise: yes |
+
+As expected, E1 does not catch S1 to S6 (they change the production rule, which both paths run).
+
+**Time (section T, local).** The `setup` of the H9(a) fixture, read from the time of the first test
+of the module in the JUnit file, logical processors 0 to 7, 6 workers: about **295 s** before 3b (the
+full-suite run of the reopening, 265 complete analyses) and **187 s** after (161), a fall of about
+37%, close to the estimated 40%. The module took 297.5 s and 194.3 s in all. The CI times are
+measured after the push, in the draft pull request's run.

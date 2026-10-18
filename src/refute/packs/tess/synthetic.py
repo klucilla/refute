@@ -712,13 +712,25 @@ def analyze_scenario_with_catalog(task: dict):
     of ``task["rows"]`` (``refute-eb-catalog-1`` rows), scanned around the target;
     ``task["eb_catalog"]`` overrides ``gauntlet.eb_catalog``; ``task["noise"]`` (default
     ``"white"``) is the noise mode of ``scenario_data``."""
-    from refute.packs.tess.ebcatalog import COLUMNS, parse_catalog
-    from refute.packs.tess.params import TessTestPlan
     from refute.packs.tess.pipeline import analyze_data
 
-    data = scenario_data(task["name"], task["seed"], task.get("noise", "white"))
+    data, catalog, scan = _catalog_inputs(task)
+    plan = _catalog_plan(task.get("eb_catalog"))
+    return analyze_data(data, plan, catalogs=catalog, catalog_scan=scan)
+
+
+def _catalog_plan(eb_catalog: dict | None):
+    from refute.packs.tess.params import TessTestPlan
+
     plan = fast_plan_dict()
-    plan["gauntlet"] = {"eb_catalog": dict(task.get("eb_catalog") or {})}
+    plan["gauntlet"] = {"eb_catalog": dict(eb_catalog or {})}
+    return TessTestPlan.model_validate(plan)
+
+
+def _catalog_inputs(task: dict):
+    from refute.packs.tess.ebcatalog import COLUMNS, parse_catalog
+
+    data = scenario_data(task["name"], task["seed"], task.get("noise", "white"))
     rows = list(task.get("rows") or [])
     catalog = parse_catalog("\n".join([",".join(COLUMNS), *rows]) + "\n")
     scan = {
@@ -727,9 +739,40 @@ def analyze_scenario_with_catalog(task: dict):
         "snapshots": [{"file": "synthetic.csv", "sha256": "0" * 64, "rows": max(1, len(rows))}],
         "per_target": {data.target_key: {}},
     }
-    return analyze_data(
-        data, TessTestPlan.model_validate(plan), catalogs=catalog, catalog_scan=scan
+    return data, catalog, scan
+
+
+def analyze_scenario_with_catalog_shared(task: dict):
+    """Top-level (picklable) helper of CI option D
+    (docs/validation/v0.2.1/ci-time-option-d-acceptance.md): the complete analysis of
+    ``task`` with the rule ``task["eb_catalog"]`` (as ``analyze_scenario_with_catalog``),
+    and the analysis with the rule ``task["derived_eb_catalog"]`` derived from the same
+    expensive work. Only ``eb_catalog`` differs between the rules, so the derived analysis
+    recomputes that test through the production function ``eb_catalog_test`` (that is,
+    ``check_eb_catalog``) for the final candidate, puts it in place of the gauntlet's
+    ``eb_catalog`` test, and concludes again with ``conclude_analysis`` (coverage rule and
+    verdict). Without a candidate, ``eb_catalog`` is not run under either rule and only the
+    conclusion is recomputed. The derived analysis is marked ``extras["shared_path"]``.
+    Returns ``(complete, derived)``."""
+    from dataclasses import replace
+
+    from refute.packs.tess.pipeline import analyze_data, conclude_analysis, eb_catalog_test
+
+    data, catalog, scan = _catalog_inputs(task)
+    complete = analyze_data(
+        data, _catalog_plan(task.get("eb_catalog")), catalogs=catalog, catalog_scan=scan
     )
+    gauntlet = complete.gauntlet
+    if gauntlet.candidate is not None:
+        derived_plan = _catalog_plan(task.get("derived_eb_catalog"))
+        recomputed = eb_catalog_test(data, gauntlet.candidate, derived_plan, catalog, scan)
+        tests = [recomputed if t.name == "eb_catalog" else t for t in gauntlet.tests]
+        gauntlet = replace(gauntlet, tests=tests)
+    derived = conclude_analysis(
+        complete.search, complete.flattened_search, gauntlet, complete.holdout, True
+    )
+    derived.extras["shared_path"] = True
+    return complete, derived
 
 
 HIDDEN_REPLACEMENTS = ("noise", "signal", "nothing")
