@@ -149,7 +149,9 @@ CASES = {
     "dgl": {
         # dgl 2.1.0 is the last release with Linux wheels on PyPI (2.2.1 has Windows ones
         # only); its backend is torch
-        "requirements": "dgl==2.1.0\ntorch==2.2.2\n",
+        # dgl 2.1.0 imports setuptools.extern.packaging (dgl/utils/__init__.py) without
+        # declaring it; setuptools 70 still has setuptools.extern (first run, 2026-10-18)
+        "requirements": "dgl==2.1.0\ntorch==2.2.2\nsetuptools==69.5.1\n",
         "module": "dgl",
         "file": "graph.bin",
         "source": "reader:container:dgl:#a,b,c",
