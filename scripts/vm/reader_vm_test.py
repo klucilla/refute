@@ -149,13 +149,12 @@ CASES = {
     "dgl": {
         # dgl 2.1.0 is the last release with Linux wheels on PyPI (2.2.1 has Windows ones
         # only); its backend is torch
-        # dgl 2.1.0 imports setuptools.extern.packaging (dgl/utils/__init__.py) without
-        # declaring it (setuptools 69 still has setuptools.extern), and torchdata.datapipes
-        # (graphbolt), gone from the latest torchdata; 0.8.0 is the only torchdata with a
-        # Python 3.12 wheel; torch 2.2 is built for numpy 1 (runs of 2026-10-18)
-        "requirements": (
-            "dgl==2.1.0\ntorch==2.2.2\ntorchdata==0.8.0\nnumpy==1.26.4\nsetuptools==69.5.1\n"
-        ),
+        # runs of 2026-10-18: dgl 2.x on Python 3.12 needs torchdata.datapipes, whose only
+        # Python 3.12 wheel (0.8.0) needs the system's libcurl; dgl 1.1.3 has neither
+        # graphbolt nor torchdata, and Linux wheels for Python 3.11 on PyPI. dgl imports
+        # setuptools.extern.packaging without declaring it; torch 2.1 is built for numpy 1
+        "python": "3.11",
+        "requirements": "dgl==1.1.3\ntorch==2.1.2\nnumpy==1.26.4\nsetuptools==69.5.1\n",
         "module": "dgl",
         "file": "graph.bin",
         "source": "reader:container:dgl:#a,b,c",
@@ -202,7 +201,7 @@ def prove(name: str, case: dict, base_image: str, root: Path, stamp: str) -> dic
     repo = folder(root / "build", 0o777)
     (repo / "requirements.txt").write_text(case["requirements"], encoding="ascii")
     (repo / "requirements.txt").chmod(0o666)
-    rungs = ld.ladder_rungs(None, "requirements.txt", ["3.12"])
+    rungs = ld.ladder_rungs(None, "requirements.txt", [case.get("python", "3.12")])
     rung = next(r for r in rungs if r.name == "requirements_compiled")
     image = f"refute-local/{paper}/env"
     reader = folder(root / "reader")
@@ -287,6 +286,7 @@ def prove(name: str, case: dict, base_image: str, root: Path, stamp: str) -> dic
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--python-image", required=True)
+    parser.add_argument("--python-image-311", help="for the readers whose case needs 3.11")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reader", action="append", choices=sorted(CASES))
     args = parser.parse_args()
@@ -295,7 +295,11 @@ def main() -> int:
     records = []
     for name in args.reader or sorted(CASES):
         print(f"== {name}", flush=True)
-        record = prove(name, CASES[name], args.python_image, base / name, stamp)
+        case = CASES[name]
+        image = args.python_image_311 if case.get("python") == "3.11" else args.python_image
+        if image is None:
+            raise SystemExit(f"{name} needs --python-image-311")
+        record = prove(name, case, image, base / name, stamp)
         records.append(record)
         print(json.dumps({k: record.get(k) for k in ("reader", "passed", "build")}), flush=True)
     out = {
