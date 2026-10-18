@@ -49,6 +49,7 @@ from refute.core import budget as bg
 from refute.packs.ml.sandbox import (
     STOP_ACTIVE_TIME,
     STOP_NO_PROGRESS,
+    STOP_OUT_OF_MEMORY,
     STOP_THRESHOLD,
     RunResult,
     RunSpec,
@@ -71,7 +72,7 @@ COMPLETENESS_COMPLETE = "complete"
 COMPLETENESS_INVALID = "invalid"
 
 SETUP, BASE, ATTACKS = "setup", "base", "attacks"
-_KNOWN_STOPS = frozenset({STOP_THRESHOLD, STOP_ACTIVE_TIME, STOP_NO_PROGRESS})
+_KNOWN_STOPS = frozenset({STOP_THRESHOLD, STOP_ACTIVE_TIME, STOP_NO_PROGRESS, STOP_OUT_OF_MEMORY})
 
 
 class Backend(Protocol):

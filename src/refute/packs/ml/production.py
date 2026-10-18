@@ -78,6 +78,7 @@ from refute.packs.ml.fetch import ArtifactSpec, FetchResult, fetch_artifact
 from refute.packs.ml.sandbox import (
     STOP_ACTIVE_TIME,
     STOP_NO_PROGRESS,
+    STOP_OUT_OF_MEMORY,
     STOP_THRESHOLD,
     RunResult,
     TimingMaxima,
@@ -270,7 +271,7 @@ def classify_build(rung: ld.Rung, result: RunResult | None) -> ld.RungResult:
         return ld.RungResult(orc.Outcome.REFUTE_ERROR, None, "the build container did not run")
     if result.stopped == STOP_THRESHOLD:
         return ld.RungResult(orc.Outcome.BUDGET_EXHAUSTED, None, "stopped at its threshold")
-    if result.stopped in (STOP_ACTIVE_TIME, STOP_NO_PROGRESS):
+    if result.stopped in (STOP_ACTIVE_TIME, STOP_NO_PROGRESS, STOP_OUT_OF_MEMORY):
         return ld.RungResult(orc.Outcome.OPERATIONAL_GUARD, None, f"stopped: {result.stopped}")
     if result.exit_code == 0:
         return ld.RungResult(orc.Outcome.COMPLETED)

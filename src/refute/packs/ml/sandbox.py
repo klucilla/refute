@@ -56,6 +56,9 @@ from refute.packs.ml import synthetic
 STOP_THRESHOLD = "threshold"
 STOP_ACTIVE_TIME = "active_time_limit"
 STOP_NO_PROGRESS = "no_progress"
+# a kill for memory inside the container's own limit (wp3-run-resources-acceptance.md,
+# section 2): a guard of Refute, found after the run, never the artifact's failure
+STOP_OUT_OF_MEMORY = "out_of_memory"
 
 
 @dataclass(frozen=True)
@@ -87,7 +90,8 @@ class RunSpec:
 
 @dataclass(frozen=True)
 class RunResult:
-    exit_code: int | None  # None when the run was stopped
+    # None when the run was stopped; for STOP_OUT_OF_MEMORY only, the observed exit code
+    exit_code: int | None
     usage_usec: int
     stopped: str | None
     elapsed_s: float

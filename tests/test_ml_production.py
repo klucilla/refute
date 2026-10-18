@@ -111,6 +111,12 @@ def test_classify_build(tmp_path):
     # Codex review of 3dd85e2: only a positively identified procedure error is the artifact's
     killed = pd.classify_build(rung, result(tmp_path, 137, log="Killed\n"))
     assert killed.outcome is orc.Outcome.OPERATIONAL_GUARD
+    # a kill for memory found after the run (wp3-run-resources-acceptance.md, section 2),
+    # even with a resolver line in the log, is never the procedure's failure
+    oom = pd.classify_build(
+        rung, result(tmp_path, 1, "out_of_memory", log="ERROR: No matching distribution found")
+    )
+    assert oom.outcome is orc.Outcome.OPERATIONAL_GUARD
     tls = pd.classify_build(rung, result(tmp_path, 1, log="SSL: CERTIFICATE_VERIFY_FAILED"))
     assert tls.cause is FailureCause.TRANSIENT_NETWORK
     other = pd.classify_build(rung, result(tmp_path, 1, log="gcc: command not found\n"))

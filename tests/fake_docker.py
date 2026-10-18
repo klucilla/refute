@@ -5,9 +5,11 @@ Usage: fake_docker.py <state dir> <cgroup root> <docker arguments...>
 It keeps each container in ``<state dir>/<id>.json`` and plays the systemd slices of the
 VM under ``<cgroup root>``: the container's slice (``cpu.stat``, ``cgroup.events``) and its
 scope (``cpu.max``, ``cpu.max.burst``). The command of a container is
-``work <cpu seconds> <exit code> [<rate in CPUs>]``: ``start --attach`` adds usage at that
-rate until the seconds are used or the container is killed, prints a line, and exits with
-the code. ``--cpu-quota 0`` plays a container whose quota is max.
+``work <cpu seconds> <exit code> [<rate in CPUs>] [oom] [no-memory-events]``: ``start
+--attach`` adds usage at that rate until the seconds are used or the container is killed,
+prints a line, and exits with the code; the slice's ``memory.events`` reports ``oom_kill 1``
+with ``oom`` (a kill for memory), ``0`` otherwise, and is absent with ``no-memory-events``.
+``--cpu-quota 0`` plays a container whose quota is max.
 """
 
 from __future__ import annotations
@@ -88,7 +90,10 @@ elif command == "start":
     write(scope / "cpu.max", f"{quota} {rec['period']}\n")
     write(scope / "cpu.max.burst", "0\n")
     seconds, code = float(rec["cmd"][1]), int(rec["cmd"][2])
-    rate = float(rec["cmd"][3]) if len(rec["cmd"]) > 3 else 1.0
+    extra = rec["cmd"][3:]
+    rate = float(extra[0]) if extra and extra[0].replace(".", "", 1).isdigit() else 1.0
+    if "no-memory-events" not in extra:
+        write(own / "memory.events", "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\n")
     usage = 0
     write(own / "cgroup.events", "populated 1\nfrozen 0\n")
     write(own / "cpu.stat", f"usage_usec {usage}\n")
@@ -102,6 +107,8 @@ elif command == "start":
         usage += int(rate * step * 1_000_000)
         write(own / "cpu.stat", f"usage_usec {usage}\n")
         write(parent, f"usage_usec {base + usage}\n")
+    if "oom" in extra:
+        write(own / "memory.events", "low 0\nhigh 0\nmax 3\noom 1\noom_kill 1\n")
     write(own / "cgroup.events", "populated 0\nfrozen 0\n")
     rec["exit"] = 137 if killed.exists() else code
     (state / f"{cid}.json").write_text(json.dumps(rec), encoding="utf-8")

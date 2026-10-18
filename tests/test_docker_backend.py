@@ -293,3 +293,49 @@ def test_refusals(tmp_path):
     bad = RunSpec(["work", "1", "0"], work, {"BAD NAME": "x"}, tmp_path / "l.log", None, 5, 5)
     with pytest.raises(DockerRefusedError, match="environment variable"):
         b.run(bad)
+
+
+# ---- a kill for memory (wp3-run-resources-acceptance.md, section 2) ---------------------------
+
+
+@pytest.mark.parametrize("code", [137, 1])
+def test_a_kill_for_memory_is_refutes_guard_with_the_exit_code_kept(tmp_path, code):
+    from refute.packs.ml.orchestrate import Outcome, _outcome
+    from refute.packs.ml.sandbox import STOP_OUT_OF_MEMORY
+
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    result = b.run(spec(tmp_path, work, ["work", "0.1", str(code), "oom"]))
+    assert result.stopped == STOP_OUT_OF_MEMORY and result.exit_code == code
+    assert result.detection_delay_s is None and result.stop_latency_s is None
+
+    class Record:  # the orchestrator's view of one container
+        container_id, error = "c1", None
+
+    Record.result = result
+    assert _outcome([Record()])[0] is Outcome.OPERATIONAL_GUARD
+
+
+def test_a_non_zero_exit_without_a_kill_for_memory_stays_the_runs_failure(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    result = b.run(spec(tmp_path, work, ["work", "0.1", "1"]))
+    assert result.stopped is None and result.exit_code == 1
+
+
+def test_an_exit_zero_after_a_kill_for_memory_stays_completed(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    result = b.run(spec(tmp_path, work, ["work", "0.1", "0", "oom"]))
+    assert result.stopped is None and result.exit_code == 0
+
+
+def test_an_unreadable_memory_events_after_a_failure_is_a_refute_error(tmp_path):
+    work = tmp_path / "w1"
+    work.mkdir()
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
+    with pytest.raises(RuntimeError, match="memory.events"):
+        b.run(spec(tmp_path, work, ["work", "0.1", "1", "no-memory-events"]))

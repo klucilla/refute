@@ -56,6 +56,7 @@ from pathlib import Path, PurePosixPath
 from refute.packs.ml.sandbox import (
     STOP_ACTIVE_TIME,
     STOP_NO_PROGRESS,
+    STOP_OUT_OF_MEMORY,
     STOP_THRESHOLD,
     RunResult,
     RunSpec,
@@ -165,6 +166,23 @@ class _Cgroups:
             if key == "usage_usec":
                 return int(value)
         raise RuntimeError(f"no usage_usec in {directory / 'cpu.stat'}")
+
+    @staticmethod
+    def oom_kills(directory: Path) -> int:
+        """``oom_kill`` of the slice's ``memory.events`` (which aggregates its descendants:
+        the container's scope). Unreadable, missing or invalid is a Refute error, never 0
+        (wp3-run-resources-acceptance.md, section 2)."""
+        try:
+            text = _read(directory / "memory.events")
+        except OSError as exc:
+            raise RuntimeError(f"cannot read {directory / 'memory.events'}: {exc}") from None
+        for line in text.splitlines():
+            key, _, value = line.partition(" ")
+            if key == "oom_kill":
+                if not value.isdigit():
+                    raise RuntimeError(f"invalid oom_kill {value!r} in {directory}")
+                return int(value)
+        raise RuntimeError(f"no oom_kill in {directory / 'memory.events'}")
 
     @staticmethod
     def populated(directory: Path) -> bool:
@@ -451,6 +469,10 @@ class DockerBackend:
             if stopped
             else int(self._docker("inspect", "--format", "{{.State.ExitCode}}", cid))
         )
+        if exit_code not in (None, 0) and _Cgroups.oom_kills(own) > 0:
+            # killed for memory inside the container's own limit: Refute's guard, the exit
+            # code kept, no D or S (the stop was not Refute's request)
+            stopped = STOP_OUT_OF_MEMORY
         return RunResult(
             exit_code,
             final,
