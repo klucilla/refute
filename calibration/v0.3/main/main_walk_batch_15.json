@@ -1,0 +1,1446 @@
+{
+  "protocol": "calibration/v0.3/main/PROTOCOL.md",
+  "protocol_commit": "073692ba2e6f6cc7c836d8b69d68f08c9902feef",
+  "original_protocol_commit": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+  "publication_proof": {
+    "commit_sha": "b01bc78ccc0dcad63f083fc3d527f9a1ff5f869d",
+    "run_id": 39080559633,
+    "run_created_at": "2026-10-17T23:50:45Z",
+    "round_published_at": "2026-10-18T00:51:00Z",
+    "margin_seconds": 3600.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "a3f17b44101319fddde6faf74adf1f11578a828a9791e634df9f2adfc733a908"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "amendment": {
+    "file": "calibration/v0.3/main/AMENDMENT-1.md",
+    "commit_sha": "073692ba2e6f6cc7c836d8b69d68f08c9902feef",
+    "run_id": 39126300864,
+    "run_created_at": "2026-10-18T12:12:04Z",
+    "round_published_at": "2026-10-18T12:17:07Z",
+    "margin_seconds": 0.0,
+    "repository": "klucilla/refute",
+    "workflow_path": ".github/workflows/ci.yml",
+    "run_attempt": 1,
+    "inventory_hashes": [
+      [
+        "calibration/v0.3/main/AMENDMENT-1.md",
+        "5d453092a8f5f581944e116ffda9bb224e35e5c9f393de31514c7b5dabb4e867"
+      ],
+      [
+        "calibration/v0.3/main/PROTOCOL.md",
+        "1a8c0cba5b3cfeb4eb3377dda431ee9a108991c0ae8426ce7420caa7c5b2b958"
+      ],
+      [
+        "calibration/v0.3/main/select_main.py",
+        "904c425af35aa22c1f7ae5399738e80b1f65c8ad4f4d9c2b505bcecd9a508247"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw.json",
+        "37906cf0bf943d6c814898c459c62d742e62ac82d349d35a933cbdff88b0a35d"
+      ],
+      [
+        "calibration/v0.3/pilot/pilot_draw_additional.json",
+        "ad83fea45d42fe52092b34ebf454f47328d1415f34210a4fa45c3330759bdba6"
+      ],
+      [
+        "calibration/v0.3/pilot/select_pilot.py",
+        "48f297c408ed82c7808eb3103ce2b7e030141a141cb9a5136702baded8748fb2"
+      ],
+      [
+        "pyproject.toml",
+        "d04e1ce646717fe68791869a02bbadc3ad7801ee98909155f15285e8ee621254"
+      ],
+      [
+        "src/refute/__init__.py",
+        "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      ],
+      [
+        "src/refute/core/__init__.py",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ],
+      [
+        "src/refute/core/canonical.py",
+        "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      ],
+      [
+        "src/refute/core/hashing.py",
+        "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      ],
+      [
+        "src/refute/drand.py",
+        "8afbb7222c78abbb572f1fbf989327204f1f408e4d74550245651f5a67b2d650"
+      ],
+      [
+        "src/refute/selection/__init__.py",
+        "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      ],
+      [
+        "src/refute/selection/filters.py",
+        "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      ],
+      [
+        "src/refute/selection/frame.py",
+        "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      ],
+      [
+        "src/refute/selection/inventory.py",
+        "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      ],
+      [
+        "src/refute/selection/publication.py",
+        "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      ],
+      [
+        "src/refute/selection/walk.py",
+        "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      ],
+      [
+        "uv.lock",
+        "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a"
+      ]
+    ]
+  },
+  "round": 6561788,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6561788,
+    "round_time_utc": "2026-10-18T00:51:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6561788",
+    "retrieved_utc": "2026-10-18T12:17:17Z",
+    "randomness": "0d400b469b922d0ffa3b3b1e42abf370b58fbb9a494081004b5abdfdda8059cb",
+    "signature": "b267005a8bf2c5845b2bcb339f356975fa48faa6819e2da431af9f30c826810e96755864ecf03258aae28a3235cdf6250f523070ee5908712d7da5ed1221219d95b8f92bbfbddbf5bc993440d6ffb810b2117e1ad1c1cd85206dcc2a4db05547",
+    "previous_signature": "a057bed5f88f4422995c77bf78e52991199a937ea47aaf817b952f59b3136366daed5ae2984a0db7d845703b6bcc0f200848003ee5e712b8930f75369c722d49ea0cdf0aa1b0b2437a224a17c57ada837701c35d441a9d3260324c8d92946af8",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "seed": "5993223066517899580165753535120988045729320334887610863538719181714990586315",
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "frame": {
+    "url": "https://huggingface.co/datasets/pwc-archive/links-between-paper-and-code/resolve/56cc5c1938678c33dedebf5f74fc4e62e2c35381/data/train-00000-of-00001.parquet",
+    "revision": "56cc5c1938678c33dedebf5f74fc4e62e2c35381",
+    "sha256": "c845ff642112a345f6271bf954d007c6698088d7de525f3f8d5f7d975f142c76"
+  },
+  "window": {
+    "first": "2023-01",
+    "last": "2025-06"
+  },
+  "categories": [
+    "cs.LG",
+    "stat.ML",
+    "cs.AI"
+  ],
+  "filters": [
+    {
+      "name": "0_ids_present",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "1_deduplicate",
+      "rows_after": 287453,
+      "papers_after": 207415
+    },
+    {
+      "name": "2_official_and_mentioned",
+      "rows_after": 157528,
+      "papers_after": 151743
+    },
+    {
+      "name": "3_window",
+      "rows_after": 75017,
+      "papers_after": 72557
+    },
+    {
+      "name": "5_one_repository",
+      "rows_after": 70303,
+      "papers_after": 70303
+    },
+    {
+      "name": "7_not_in_pilot",
+      "rows_after": 70263,
+      "papers_after": 70263
+    }
+  ],
+  "pilot_papers_removed": [
+    "2301.11916",
+    "2303.13675",
+    "2304.13989",
+    "2305.04397",
+    "2306.03651",
+    "2306.15460",
+    "2310.04225",
+    "2310.05701",
+    "2310.08130",
+    "2310.14870",
+    "2312.00507",
+    "2312.01872",
+    "2401.08819",
+    "2402.02430",
+    "2402.11922",
+    "2402.13285",
+    "2402.18152",
+    "2403.10289",
+    "2403.14514",
+    "2403.17692",
+    "2406.04984",
+    "2406.19434",
+    "2407.03261",
+    "2407.05244",
+    "2407.11381",
+    "2410.20483",
+    "2411.07705",
+    "2412.02323",
+    "2412.17210",
+    "2412.20193",
+    "2501.03765",
+    "2501.08049",
+    "2501.14486",
+    "2504.04537",
+    "2504.05490",
+    "2504.11478",
+    "2505.13307",
+    "2505.15008",
+    "2505.18568",
+    "2506.07982"
+  ],
+  "walk_length": 70263,
+  "batch": 15,
+  "candidates": [
+    {
+      "position": 351,
+      "arxiv_id": "2303.00005",
+      "repo_url": "https://github.com/McWilliamsCenter/halo_cnn",
+      "arxiv": {
+        "versioned_id": "2303.00005v2",
+        "primary_category": "astro-ph.CO",
+        "title": "Benchmarks and Explanations for Deep Learning Estimates of X-ray Galaxy Cluster Masses",
+        "abstract": "We evaluate the effectiveness of deep learning (DL) models for reconstructing the masses of galaxy clusters using X-ray photometry data from next-generation surveys. We establish these constraints using a catalogue of realistic mock eROSITA X-ray observations which use hydrodynamical simulations to model realistic cluster morphology, background emission, telescope response, and AGN sources. Using bolometric X-ray photon maps as input, DL models achieve a predictive mass scatter of $σ_{\\ln M_\\mathrm{500c}} = 17.8\\%$, a factor of two improvements on scalar observables such as richness $N_\\mathrm{gal}$, 1D velocity dispersion $σ_\\mathrm{v,1D}$, and photon count $N_\\mathrm{phot}$ as well as a $32\\%$ improvement upon idealised, volume-integrated measurements of the bolometric X-ray luminosity $L_X$. We then show that extending this model to handle multichannel X-ray photon maps, separated in low, medium, and high energy bands, further reduces the mass scatter to $16.2\\%$. We also tested a multimodal DL model incorporating both dynamical and X-ray cluster probes and achieved marginal gains at a mass scatter of $15.9\\%$. Finally, we conduct a quantitative interpretability study of our DL models and find that they greatly down-weight the importance of pixels in the centres of clusters and at the location of AGN sources, validating previous claims of DL modelling improvements and suggesting practical and theoretical benefits for using DL in X-ray mass inference."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/McWilliamsCenter/halo_cnn",
+        "exists": true,
+        "full_name": "McWilliamsCenter/halo_cnn",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "4d85bf3a819845851fbea789428399ce707dad5b",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/McWilliamsCenter/halo_cnn/blob/4d85bf3a819845851fbea789428399ce707dad5b/README.md",
+          "sha256": "5c5c693f73bdfc607648eaa3d237f465505ffb9d28cf1d7ff630366a1262312f",
+          "bytes": 1592
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "halo_cnn",
+          "mocks",
+          "notebooks",
+          "tools"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.CO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 352,
+      "arxiv_id": "2301.11061",
+      "repo_url": "https://github.com/fjaellet/oc_binary_fraction",
+      "arxiv": {
+        "versioned_id": "2301.11061v2",
+        "primary_category": "astro-ph.GA",
+        "title": "The multiplicity fraction in 202 open clusters from Gaia",
+        "abstract": "In this study, we estimate the fraction of binaries with high mass ratios for 202 open clusters in the extended solar neighbourhood (closer than 1.5 kpc from the Sun). This is one of the largest homogeneous catalogues of multiplicity fractions in open clusters to date, including the unresolved and total (close-binary) multiplicity fractions of main-sequence systems with mass ratio larger than $0.6_{-0.15}^{+0.05}$. The unresolved multiplicity fractions are estimated applying a flexible mixture model to the observed Gaia colour-magnitude diagrams of the open clusters. Then we use custom Gaia simulations to account for the resolved systems and derive the total multiplicity fractions. The studied open clusters have ages between 6.6 Myr and 3.0 Gyr and total high-mass-ratio multiplicity fractions between 6% and 80%, with a median of 18%. The multiplicity fractions increase with the mass of the primary star, as expected. The average multiplicity fraction per cluster displays an overall decreasing trend with the open cluster age up to ages about 100 Myr, above which the trend increases. Our simulations show that most of this trend is caused by complex selection effects (introduced by the mass dependence of the multiplicity fraction and the magnitude limit of our sample). Furthermore, the multiplicity fraction is not significantly correlated with the clusters' position in the Galaxy. The spread in multiplicity fraction decreases significantly with the number of cluster members (used as a proxy for cluster mass). We also find that the multiplicity fraction decreases with metallicity, in line with recent studies using field stars."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/fjaellet/oc_binary_fraction",
+        "exists": true,
+        "full_name": "fjaellet/oc_binary_fraction",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "73675992335e8b632c8caaaa4fc12914ffcc94c0",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/fjaellet/oc_binary_fraction/blob/73675992335e8b632c8caaaa4fc12914ffcc94c0/README.md",
+          "sha256": "80c867ded805dd95153d7f42da15077cb61a4e407c2c6cdcd3cfb8d8caed0d97",
+          "bytes": 1315
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "binary_fraction_analysis.ipynb",
+          "binary_fraction_analysis_old.ipynb",
+          "compute_binaryfraction.ipynb",
+          "compute_total_binaryfraction.ipynb",
+          "data",
+          "extinction.py",
+          "extra_figures.ipynb",
+          "im",
+          "literature_comparison.ipynb",
+          "mcmc_binarity.py",
+          "parsec20_tools.py",
+          "plot_cmd_cut_example.ipynb",
+          "simulated_cmd_ngc6494.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category astro-ph.GA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 353,
+      "arxiv_id": "2506.11546",
+      "repo_url": "https://github.com/intellabs/cgvqm",
+      "arxiv": {
+        "versioned_id": "2506.11546v1",
+        "primary_category": "cs.GR",
+        "title": "CGVQM+D: Computer Graphics Video Quality Metric and Dataset",
+        "abstract": "While existing video and image quality datasets have extensively studied natural videos and traditional distortions, the perception of synthetic content and modern rendering artifacts remains underexplored. We present a novel video quality dataset focused on distortions introduced by advanced rendering techniques, including neural supersampling, novel-view synthesis, path tracing, neural denoising, frame interpolation, and variable rate shading. Our evaluations show that existing full-reference quality metrics perform sub-optimally on these distortions, with a maximum Pearson correlation of 0.78. Additionally, we find that the feature space of pre-trained 3D CNNs aligns strongly with human perception of visual quality. We propose CGVQM, a full-reference video quality metric that significantly outperforms existing metrics while generating both per-pixel error maps and global quality scores. Our dataset and metric implementation is available at https://github.com/IntelLabs/CGVQM."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/intellabs/cgvqm",
+        "exists": true,
+        "full_name": "IntelLabs/cgvqm",
+        "archived": true,
+        "default_branch": "main",
+        "head_commit": "38d8467c62864fca741dd3e3d8e272fa88f8fde2",
+        "license_spdx": "Apache-2.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/IntelLabs/cgvqm/blob/38d8467c62864fca741dd3e3d8e272fa88f8fde2/README.md",
+          "sha256": "185383dfe5085befe747d5c826036f8010d9afdf7ffa6ee5be47f9ab8a5f725b",
+          "bytes": 3602
+        },
+        "root_names": [
+          ".github",
+          ".gitignore",
+          "CODE_OF_CONDUCT.md",
+          "CONTRIBUTING.md",
+          "LICENSE",
+          "README.md",
+          "SECURITY.md",
+          "cgvqm.py",
+          "media",
+          "requirements.txt",
+          "train.py",
+          "utils",
+          "weights"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.GR"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 354,
+      "arxiv_id": "2310.14393",
+      "repo_url": "https://github.com/yunx-z/combo",
+      "arxiv": {
+        "versioned_id": "2310.14393v1",
+        "primary_category": "cs.CL",
+        "title": "Merging Generated and Retrieved Knowledge for Open-Domain QA",
+        "abstract": "Open-domain question answering (QA) systems are often built with retrieval modules. However, retrieving passages from a given source is known to suffer from insufficient knowledge coverage. Alternatively, prompting large language models (LLMs) to generate contextual passages based on their parametric knowledge has been shown to improve QA performance. Yet, LLMs tend to \"hallucinate\" content that conflicts with the retrieved knowledge. Based on the intuition that answers supported by both sources are more likely to be correct, we propose COMBO, a Compatibility-Oriented knowledge Merging for Better Open-domain QA framework, to effectively leverage the two sources of information. Concretely, we match LLM-generated passages with retrieved counterparts into compatible pairs, based on discriminators trained with silver compatibility labels. Then a Fusion-in-Decoder-based reader model handles passage pairs to arrive at the final answer. Experiments show that COMBO outperforms competitive baselines on three out of four tested open-domain QA benchmarks. Further analysis reveals that our proposed framework demonstrates greater efficacy in scenarios with a higher degree of knowledge conflicts."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/yunx-z/combo",
+        "exists": true,
+        "full_name": "yunx-z/COMBO",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "5824d476bf935abee1a47dfbcaf6cd49dc32fd80",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/yunx-z/COMBO/blob/5824d476bf935abee1a47dfbcaf6cd49dc32fd80/README.md",
+          "sha256": "3f0801f4db9a926fade1a610c3038c361159a5d783028746102f4497d78f4245",
+          "bytes": 1347
+        },
+        "root_names": [
+          "README.md",
+          "framework_v4_combo.jpg",
+          "passage_matching",
+          "training"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 355,
+      "arxiv_id": "2312.14053",
+      "repo_url": "https://github.com/rashaalshawi/dual-attention-u-net-with-feature-infusion-pushing-the-boundaries-of-multiclass-defect-segmentation",
+      "arxiv": {
+        "versioned_id": "2312.14053v1",
+        "primary_category": "cs.CV",
+        "title": "Dual Attention U-Net with Feature Infusion: Pushing the Boundaries of Multiclass Defect Segmentation",
+        "abstract": "The proposed architecture, Dual Attentive U-Net with Feature Infusion (DAU-FI Net), addresses challenges in semantic segmentation, particularly on multiclass imbalanced datasets with limited samples. DAU-FI Net integrates multiscale spatial-channel attention mechanisms and feature injection to enhance precision in object localization. The core employs a multiscale depth-separable convolution block, capturing localized patterns across scales. This block is complemented by a spatial-channel squeeze and excitation (scSE) attention unit, modeling inter-dependencies between channels and spatial regions in feature maps. Additionally, additive attention gates refine segmentation by connecting encoder-decoder pathways. To augment the model, engineered features using Gabor filters for textural analysis, Sobel and Canny filters for edge detection are injected guided by semantic masks to expand the feature space strategically. Comprehensive experiments on a challenging sewer pipe and culvert defect dataset and a benchmark dataset validate DAU-FI Net's capabilities. Ablation studies highlight incremental benefits from attention blocks and feature injection. DAU-FI Net achieves state-of-the-art mean Intersection over Union (IoU) of 95.6% and 98.8% on the defect test set and benchmark respectively, surpassing prior methods by 8.9% and 12.6%, respectively. Ablation studies highlight incremental benefits from attention blocks and feature injection. The proposed architecture provides a robust solution, advancing semantic segmentation for multiclass problems with limited training data. Our sewer-culvert defects dataset, featuring pixel-level annotations, opens avenues for further research in this crucial domain. Overall, this work delivers key innovations in architecture, attention, and feature engineering to elevate semantic segmentation efficacy."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/rashaalshawi/dual-attention-u-net-with-feature-infusion-pushing-the-boundaries-of-multiclass-defect-segmentation",
+        "exists": true,
+        "full_name": "RashaAlshawi/DAU-Net-for-Automated-Infrastructure-Inspection",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "ca0dc6d4deb42b95f7ba379956f253f9b661b63f",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/RashaAlshawi/DAU-Net-for-Automated-Infrastructure-Inspection/blob/ca0dc6d4deb42b95f7ba379956f253f9b661b63f/README.md",
+          "sha256": "ed0f5d231c61247f3e24950117a384f2454c487c46132d2a84aeabadac4a82f4",
+          "bytes": 1531
+        },
+        "root_names": [
+          "ALLModelsP1ToP6.ipynb",
+          "DAU_FI_2 (2) (1).png",
+          "DAU_FI_2.png",
+          "DAU_FI_NetOldVersion.ipynb",
+          "DAU_FI_Net_.ipynb",
+          "Filters_FeatureExtractor.ipynb",
+          "NLP_BasedPasswordMemorabilityAid.ipynb",
+          "README.md",
+          "Update_Filters_FeatureExtractor.ipynb"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 356,
+      "arxiv_id": "2308.12845",
+      "repo_url": "https://github.com/xwaiyy123/object-navigation",
+      "arxiv": {
+        "versioned_id": "2308.12845v1",
+        "primary_category": "cs.CV",
+        "title": "Implicit Obstacle Map-driven Indoor Navigation Model for Robust Obstacle Avoidance",
+        "abstract": "Robust obstacle avoidance is one of the critical steps for successful goal-driven indoor navigation tasks.Due to the obstacle missing in the visual image and the possible missed detection issue, visual image-based obstacle avoidance techniques still suffer from unsatisfactory robustness. To mitigate it, in this paper, we propose a novel implicit obstacle map-driven indoor navigation framework for robust obstacle avoidance, where an implicit obstacle map is learned based on the historical trial-and-error experience rather than the visual image. In order to further improve the navigation efficiency, a non-local target memory aggregation module is designed to leverage a non-local network to model the intrinsic relationship between the target semantic and the target orientation clues during the navigation process so as to mine the most target-correlated object clues for the navigation decision. Extensive experimental results on AI2-Thor and RoboTHOR benchmarks verify the excellent obstacle avoidance and navigation efficiency of our proposed method. The core source code is available at https://github.com/xwaiyy123/object-navigation."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/xwaiyy123/object-navigation",
+        "exists": true,
+        "full_name": "Xie-Nav/object-navigation",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9074c9ceb235abf9c123ab483dd9755608a32266",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Xie-Nav/object-navigation/blob/9074c9ceb235abf9c123ab483dd9755608a32266/README.md",
+          "sha256": "098ca552df6377963db8b852f29c4f0d345252bfc726e5dfa868f843a2b94f2c",
+          "bytes": 271
+        },
+        "root_names": [
+          "README.md",
+          "REDME"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 357,
+      "arxiv_id": "2310.10221",
+      "repo_url": "https://github.com/longkukuhi/armbench",
+      "arxiv": {
+        "versioned_id": "2310.10221v2",
+        "primary_category": "cs.RO",
+        "title": "RoboLLM: Robotic Vision Tasks Grounded on Multimodal Large Language Models",
+        "abstract": "Robotic vision applications often necessitate a wide range of visual perception tasks, such as object detection, segmentation, and identification. While there have been substantial advances in these individual tasks, integrating specialized models into a unified vision pipeline presents significant engineering challenges and costs. Recently, Multimodal Large Language Models (MLLMs) have emerged as novel backbones for various downstream tasks. We argue that leveraging the pre-training capabilities of MLLMs enables the creation of a simplified framework, thus mitigating the need for task-specific encoders. Specifically, the large-scale pretrained knowledge in MLLMs allows for easier fine-tuning to downstream robotic vision tasks and yields superior performance. We introduce the RoboLLM framework, equipped with a BEiT-3 backbone, to address all visual perception tasks in the ARMBench challenge-a large-scale robotic manipulation dataset about real-world warehouse scenarios. RoboLLM not only outperforms existing baselines but also substantially reduces the engineering burden associated with model selection and tuning. The source code is publicly available at https://github.com/longkukuhi/armbench."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/longkukuhi/armbench",
+        "exists": true,
+        "full_name": "longkukuhi/RoboLLM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "704828a61d49e00412192c778b9235e6431ea46f",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/longkukuhi/RoboLLM/blob/704828a61d49e00412192c778b9235e6431ea46f/README.md",
+          "sha256": "93223e1a8ef29a242829760a2e0afffa2bdd22fdca243b4a7752c4a4e7d4a034",
+          "bytes": 5906
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "armbench",
+          "beit3.spm",
+          "beit3_scripts",
+          "beit3_tools",
+          "requirements.txt"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.RO"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 358,
+      "arxiv_id": "2407.19421",
+      "repo_url": "https://github.com/panchengn/i-pinn",
+      "arxiv": {
+        "versioned_id": "2407.19421v1",
+        "primary_category": "cs.LG",
+        "title": "Improved physics-informed neural network in mitigating gradient related failures",
+        "abstract": "Physics-informed neural networks (PINNs) integrate fundamental physical principles with advanced data-driven techniques, driving significant advancements in scientific computing. However, PINNs face persistent challenges with stiffness in gradient flow, which limits their predictive capabilities. This paper presents an improved PINN (I-PINN) to mitigate gradient-related failures. The core of I-PINN is to combine the respective strengths of neural networks with an improved architecture and adaptive weights containingupper bounds. The capability to enhance accuracy by at least one order of magnitude and accelerate convergence, without introducing extra computational complexity relative to the baseline model, is achieved by I-PINN. Numerical experiments with a variety of benchmarks illustrate the improved accuracy and generalization of I-PINN. The supporting data and code are accessible at https://github.com/PanChengN/I-PINN.git, enabling broader research engagement."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/panchengn/i-pinn",
+        "exists": true,
+        "full_name": "PanChengN/I-PINN",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "53ccb60505ee72095cbb553a2cd8d4c0da9eb320",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/PanChengN/I-PINN/blob/53ccb60505ee72095cbb553a2cd8d4c0da9eb320/README.md",
+          "sha256": "be7536a9847166355ff97655843c3b6dfd0f141e25704a2160a34eb4e12f4624",
+          "bytes": 3626
+        },
+        "root_names": [
+          ".gitattributes",
+          "Helmholtz_comparative_test_with_or_without_gamma",
+          "Helmholtz_different_networks",
+          "Helmholtz_with_different_values_of_k",
+          "Klein_Gordon_different_networks",
+          "Klein_Gordon_with_different_gamma",
+          "Lid_driven_Cavity",
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 359,
+      "arxiv_id": "2309.17093",
+      "repo_url": "https://github.com/leolee99/pau",
+      "arxiv": {
+        "versioned_id": "2309.17093v3",
+        "primary_category": "cs.CV",
+        "title": "Prototype-based Aleatoric Uncertainty Quantification for Cross-modal Retrieval",
+        "abstract": "Cross-modal Retrieval methods build similarity relations between vision and language modalities by jointly learning a common representation space. However, the predictions are often unreliable due to the Aleatoric uncertainty, which is induced by low-quality data, e.g., corrupt images, fast-paced videos, and non-detailed texts. In this paper, we propose a novel Prototype-based Aleatoric Uncertainty Quantification (PAU) framework to provide trustworthy predictions by quantifying the uncertainty arisen from the inherent data ambiguity. Concretely, we first construct a set of various learnable prototypes for each modality to represent the entire semantics subspace. Then Dempster-Shafer Theory and Subjective Logic Theory are utilized to build an evidential theoretical framework by associating evidence with Dirichlet Distribution parameters. The PAU model induces accurate uncertainty and reliable predictions for cross-modal retrieval. Extensive experiments are performed on four major benchmark datasets of MSR-VTT, MSVD, DiDeMo, and MS-COCO, demonstrating the effectiveness of our method. The code is accessible at https://github.com/leolee99/PAU."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/leolee99/pau",
+        "exists": true,
+        "full_name": "leolee99/PAU",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "278b2e61f0a26f4d4240a3a5a3f907f1cd86f6ef",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/leolee99/PAU/blob/278b2e61f0a26f4d4240a3a5a3f907f1cd86f6ef/README.md",
+          "sha256": "8cb2ae5519eb9d3362e6ff59d3e707b6e4c8cf15e38d81760b23f5e6d2a071e2",
+          "bytes": 4289
+        },
+        "root_names": [
+          ".gitignore",
+          "Image-Text-Retrieval",
+          "LICENSE",
+          "README.md",
+          "__pycache__",
+          "assets",
+          "dataloaders",
+          "log",
+          "main_pau.py",
+          "metrics.py",
+          "modules",
+          "preprocess",
+          "requirements.txt",
+          "scripts",
+          "util.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 360,
+      "arxiv_id": "2305.12423",
+      "repo_url": "https://github.com/hlidmhkust/VCCIB",
+      "arxiv": {
+        "versioned_id": "2305.12423v3",
+        "primary_category": "eess.SP",
+        "title": "Task-Oriented Communication with Out-of-Distribution Detection: An Information Bottleneck Framework",
+        "abstract": "Task-oriented communication is an emerging paradigm for next-generation communication networks, which extracts and transmits task-relevant information, instead of raw data, for downstream applications. Most existing deep learning (DL)-based task-oriented communication systems adopt a closed-world scenario, assuming either the same data distribution for training and testing, or the system could have access to a large out-of-distribution (OoD) dataset for retraining. However, in practical open-world scenarios, task-oriented communication systems need to handle unknown OoD data. Under such circumstances, the powerful approximation ability of learning methods may force the task-oriented communication systems to overfit the training data (i.e., in-distribution data) and provide overconfident judgments when encountering OoD data. Based on the information bottleneck (IB) framework, we propose a class conditional IB (CCIB) approach to address this problem in this paper, supported by information-theoretical insights. The idea is to extract distinguishable features from in-distribution data while keeping their compactness and informativeness. This is achieved by imposing the class conditional latent prior distribution and enforcing the latent of different classes to be far away from each other. Simulation results shall demonstrate that the proposed approach detects OoD data more efficiently than the baselines and state-of-the-art approaches, without compromising the rate-distortion tradeoff."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hlidmhkust/VCCIB",
+        "exists": true,
+        "full_name": "hlidmhkust/VCCIB",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "a13254e02938b058bef132c53a67c0ce53829513",
+        "license_spdx": "GPL-3.0",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hlidmhkust/VCCIB/blob/a13254e02938b058bef132c53a67c0ce53829513/README.md",
+          "sha256": "b6b7da7233ab72594b055a343310c010e68ee8ef86238915c490ae11ccba02e7",
+          "bytes": 1419
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "data",
+          "dynamic_plot.py",
+          "kl.py",
+          "losses",
+          "main.py",
+          "main_change_position.sh",
+          "main_semantic.py",
+          "main_semantic_JSCC.py",
+          "main_semantic_VIB.py",
+          "main_semantic_temp.py",
+          "main_semantic_temp.sh",
+          "main_semantic_temp_change_position.py",
+          "main_semantic_temp_earlyexit.py",
+          "models",
+          "plot_figure.py",
+          "test.py",
+          "test_change_position.sh",
+          "test_early_exit.sh",
+          "test_semantic.py",
+          "test_semantic_JSCC.py",
+          "test_semantic_JSCC.sh",
+          "test_semantic_VIB.py",
+          "test_semantic_VIB.sh",
+          "test_semantic_temp.py",
+          "test_semantic_temp.sh",
+          "test_semantic_temp_change_position.py",
+          "test_semantic_temp_earlyexit.py",
+          "test_time.sh"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category eess.SP"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 361,
+      "arxiv_id": "2501.04819",
+      "repo_url": "https://github.com/AnthonyDeschenes/PlaningItByEarDataset",
+      "arxiv": {
+        "versioned_id": "2501.04819v1",
+        "primary_category": "cs.SD",
+        "title": "Planing It by Ear: Convolutional Neural Networks for Acoustic Anomaly Detection in Industrial Wood Planers",
+        "abstract": "In recent years, the wood product industry has been facing a skilled labor shortage. The result is more frequent sudden failures, resulting in additional costs for these companies already operating in a very competitive market. Moreover, sawmills are challenging environments for machinery and sensors. Given that experienced machine operators may be able to diagnose defects or malfunctions, one possible way of assisting novice operators is through acoustic monitoring. As a step towards the automation of wood-processing equipment and decision support systems for machine operators, in this paper, we explore using a deep convolutional autoencoder for acoustic anomaly detection of wood planers on a new real-life dataset. Specifically, our convolutional autoencoder with skip connections (Skip-CAE) and our Skip-CAE transformer outperform the DCASE autoencoder baseline, one-class SVM, isolation forest and a published convolutional autoencoder architecture, respectively obtaining an area under the ROC curve of 0.846 and 0.875 on a dataset of real-factory planer sounds. Moreover, we show that adding skip connections and attention mechanism under the form of a transformer encoder-decoder helps to further improve the anomaly detection capabilities."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/AnthonyDeschenes/PlaningItByEarDataset",
+        "exists": true,
+        "full_name": "AnthonyDeschenes/PlaningItByEarDataset",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "dd738a07456ea48d7b2fdfa66278144f807d03a8",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/AnthonyDeschenes/PlaningItByEarDataset/blob/dd738a07456ea48d7b2fdfa66278144f807d03a8/README.md",
+          "sha256": "74a652d1c2fc334fcdc33c14d38d109f0601fdee5b74e89add7116e4e41214d6",
+          "bytes": 1643
+        },
+        "root_names": [
+          ".gitattributes",
+          ".gitignore",
+          "README.md",
+          "data.zip",
+          "models",
+          "requirements.txt",
+          "train_and_evaluate.py",
+          "trainer"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.SD"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 362,
+      "arxiv_id": "2411.16694",
+      "repo_url": "https://github.com/willhua127/genzyme",
+      "arxiv": {
+        "versioned_id": "2411.16694v1",
+        "primary_category": "q-bio.BM",
+        "title": "Reaction-conditioned De Novo Enzyme Design with GENzyme",
+        "abstract": "The introduction of models like RFDiffusionAA, AlphaFold3, AlphaProteo, and Chai1 has revolutionized protein structure modeling and interaction prediction, primarily from a binding perspective, focusing on creating ideal lock-and-key models. However, these methods can fall short for enzyme-substrate interactions, where perfect binding models are rare, and induced fit states are more common. To address this, we shift to a functional perspective for enzyme design, where the enzyme function is defined by the reaction it catalyzes. Here, we introduce \\textsc{GENzyme}, a \\textit{de novo} enzyme design model that takes a catalytic reaction as input and generates the catalytic pocket, full enzyme structure, and enzyme-substrate binding complex. \\textsc{GENzyme} is an end-to-end, three-staged model that integrates (1) a catalytic pocket generation and sequence co-design module, (2) a pocket inpainting and enzyme inverse folding module, and (3) a binding and screening module to optimize and predict enzyme-substrate complexes. The entire design process is driven by the catalytic reaction being targeted. This reaction-first approach allows for more accurate and biologically relevant enzyme design, potentially surpassing structure-based and binding-focused models in creating enzymes capable of catalyzing specific reactions. We provide \\textsc{GENzyme} code at https://github.com/WillHua127/GENzyme."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/willhua127/genzyme",
+        "exists": true,
+        "full_name": "WillHua127/GENzyme",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "cecb370345e063df2e9082c4e50eb0f0cbc4aa70",
+        "license_spdx": "NOASSERTION",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/WillHua127/GENzyme/blob/cecb370345e063df2e9082c4e50eb0f0cbc4aa70/README.md",
+          "sha256": "65b6b3c967d20074901c6466970a259b5869e56cd1df601352f092a39059855a",
+          "bytes": 5736
+        },
+        "root_names": [
+          "LICENSE",
+          "README.md",
+          "binding",
+          "configs.py",
+          "data",
+          "evaluation",
+          "flowmatch",
+          "gen_configs.py",
+          "generate.py",
+          "generated",
+          "genzyme_ckpt",
+          "image",
+          "inference.py",
+          "ligand",
+          "model",
+          "ofold",
+          "reproduce.py",
+          "train.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category q-bio.BM"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 363,
+      "arxiv_id": "2405.16544",
+      "repo_url": "https://github.com/eriksandstroem/splat-slam",
+      "arxiv": {
+        "versioned_id": "2405.16544v1",
+        "primary_category": "cs.CV",
+        "title": "Splat-SLAM: Globally Optimized RGB-only SLAM with 3D Gaussians",
+        "abstract": "3D Gaussian Splatting has emerged as a powerful representation of geometry and appearance for RGB-only dense Simultaneous Localization and Mapping (SLAM), as it provides a compact dense map representation while enabling efficient and high-quality map rendering. However, existing methods show significantly worse reconstruction quality than competing methods using other 3D representations, e.g. neural points clouds, since they either do not employ global map and pose optimization or make use of monocular depth. In response, we propose the first RGB-only SLAM system with a dense 3D Gaussian map representation that utilizes all benefits of globally optimized tracking by adapting dynamically to keyframe pose and depth updates by actively deforming the 3D Gaussian map. Moreover, we find that refining the depth updates in inaccurate areas with a monocular depth estimator further improves the accuracy of the 3D reconstruction. Our experiments on the Replica, TUM-RGBD, and ScanNet datasets indicate the effectiveness of globally optimized 3D Gaussians, as the approach achieves superior or on par performance with existing RGB-only SLAM methods methods in tracking, mapping and rendering accuracy while yielding small map sizes and fast runtimes. The source code is available at https://github.com/eriksandstroem/Splat-SLAM."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/eriksandstroem/splat-slam",
+        "exists": true,
+        "full_name": "eriksandstroem/Splat-SLAM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "52023496dd4e4f669be9b4fd4330b9f79655c518",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/eriksandstroem/Splat-SLAM/blob/52023496dd4e4f669be9b4fd4330b9f79655c518/README.md",
+          "sha256": "d80a194d07490d7605de1c1fe4c920aa9654e58f6e93961cdaaa25d370b1c686",
+          "bytes": 271
+        },
+        "root_names": [
+          "README.md"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 364,
+      "arxiv_id": "2312.01220",
+      "repo_url": "https://github.com/zpdu/dai-net",
+      "arxiv": {
+        "versioned_id": "2312.01220v2",
+        "primary_category": "cs.CV",
+        "title": "Boosting Object Detection with Zero-Shot Day-Night Domain Adaptation",
+        "abstract": "Detecting objects in low-light scenarios presents a persistent challenge, as detectors trained on well-lit data exhibit significant performance degradation on low-light data due to low visibility. Previous methods mitigate this issue by exploring image enhancement or object detection techniques with real low-light image datasets. However, the progress is impeded by the inherent difficulties about collecting and annotating low-light images. To address this challenge, we propose to boost low-light object detection with zero-shot day-night domain adaptation, which aims to generalize a detector from well-lit scenarios to low-light ones without requiring real low-light data. Revisiting Retinex theory in the low-level vision, we first design a reflectance representation learning module to learn Retinex-based illumination invariance in images with a carefully designed illumination invariance reinforcement strategy. Next, an interchange-redecomposition-coherence procedure is introduced to improve over the vanilla Retinex image decomposition process by performing two sequential image decompositions and introducing a redecomposition cohering loss. Extensive experiments on ExDark, DARK FACE, and CODaN datasets show strong low-light generalizability of our method. Our code is available at https://github.com/ZPDu/DAI-Net."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zpdu/dai-net",
+        "exists": true,
+        "full_name": "ZPDu/DAI-Net",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "f9f78ff0234c8d756a9c3b5a0dcc5b1cdf495f81",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ZPDu/DAI-Net/blob/f9f78ff0234c8d756a9c3b5a0dcc5b1cdf495f81/README.md",
+          "sha256": "db0fe973286a7eafac7b77499057429dcaf75503fb8869290bcffce0c0f4c060",
+          "bytes": 4280
+        },
+        "root_names": [
+          "README.md",
+          "assets",
+          "data",
+          "layers",
+          "models",
+          "requirements.txt",
+          "test.py",
+          "train.py",
+          "utils",
+          "yolo"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 365,
+      "arxiv_id": "2306.15561",
+      "repo_url": "https://github.com/lianqi1008/mcm",
+      "arxiv": {
+        "versioned_id": "2306.15561v1",
+        "primary_category": "cs.CV",
+        "title": "You Can Mask More For Extremely Low-Bitrate Image Compression",
+        "abstract": "Learned image compression (LIC) methods have experienced significant progress during recent years. However, these methods are primarily dedicated to optimizing the rate-distortion (R-D) performance at medium and high bitrates (> 0.1 bits per pixel (bpp)), while research on extremely low bitrates is limited. Besides, existing methods fail to explicitly explore the image structure and texture components crucial for image compression, treating them equally alongside uninformative components in networks. This can cause severe perceptual quality degradation, especially under low-bitrate scenarios. In this work, inspired by the success of pre-trained masked autoencoders (MAE) in many downstream tasks, we propose to rethink its mask sampling strategy from structure and texture perspectives for high redundancy reduction and discriminative feature representation, further unleashing the potential of LIC methods. Therefore, we present a dual-adaptive masking approach (DA-Mask) that samples visible patches based on the structure and texture distributions of original images. We combine DA-Mask and pre-trained MAE in masked image modeling (MIM) as an initial compressor that abstracts informative semantic context and texture representations. Such a pipeline can well cooperate with LIC networks to achieve further secondary compression while preserving promising reconstruction quality. Consequently, we propose a simple yet effective masked compression model (MCM), the first framework that unifies MIM and LIC end-to-end for extremely low-bitrate image compression. Extensive experiments have demonstrated that our approach outperforms recent state-of-the-art methods in R-D performance, visual quality, and downstream applications, at very low bitrates. Our code is available at https://github.com/lianqi1008/MCM.git."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/lianqi1008/mcm",
+        "exists": true,
+        "full_name": "lianqi1008/MCM",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "06d04b4169d01df33cd415ffb926ea8d68515e5a",
+        "license_spdx": null,
+        "readme": {
+          "path": "readme.md",
+          "url": "https://github.com/lianqi1008/MCM/blob/06d04b4169d01df33cd415ffb926ea8d68515e5a/readme.md",
+          "sha256": "d226b52cf7d06c5c4b6c8e0e877596720bdc028f2376d31f1886d9d8d86b5c82",
+          "bytes": 5933
+        },
+        "root_names": [
+          "assets",
+          "compressai",
+          "engine_compress.py",
+          "main_compress.py",
+          "readme.md",
+          "requirements.txt",
+          "setup.py",
+          "third_party",
+          "util"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 366,
+      "arxiv_id": "2406.09217",
+      "repo_url": "https://github.com/jwsiegel2510/consistent-pinns",
+      "arxiv": {
+        "versioned_id": "2406.09217v2",
+        "primary_category": "math.NA",
+        "title": "Convergence and error control of consistent PINNs for elliptic PDEs",
+        "abstract": "We provide an a priori analysis of collocation methods for solving elliptic boundary value problems. They begin with information in the form of point values of the data and utilize only this information to numerically approximate the solution u of the PDE. For such a method to provide an approximation with guaranteed error bounds, additional assumptions on the data, called model class assumptions, are needed. We determine the best error of approximating u in the energy norm, in terms of the total number of point samples, under all Besov class model assumptions for the right hand side and boundary data. We then turn to the study of numerical procedures and analyze whether a proposed numerical procedure achieves the optimal recovery error. We analyze numerical methods which generate the numerical approximation to $u$ by minimizing specified data driven loss functions over a set $Σ$ which is either a finite dimensional linear space, or more generally, a finite dimensional manifold. We show that the success of such a procedure depends critically on choosing a data driven loss function that is consistent with the PDE and provides sharp error control. Based on this analysis a new loss function is proposed. We also address the recent methods of Physics Informed Neural Networks. We prove that minimization of the new loss over restricted neural network spaces $Σ$ provides an optimal recovery of the solution $u$, provided that the optimization problem can be numerically executed and $Σ$ has sufficient approximation capabilities. We also analyze variants of the new loss function which are more practical for implementation. Finally, numerical examples illustrating the benefits of the proposed loss functions are given."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/jwsiegel2510/consistent-pinns",
+        "exists": true,
+        "full_name": "jwsiegel2510/consistent-PINNs",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9b6dca05c6733adec1a7c9be4d302ad19bc6b32b",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/jwsiegel2510/consistent-PINNs/blob/9b6dca05c6733adec1a7c9be4d302ad19bc6b32b/README.md",
+          "sha256": "189892c453f6a174c56f47a0e4053e310cdfaf3ae02e744f5411474caadef5be",
+          "bytes": 2146
+        },
+        "root_names": [
+          "README.md",
+          "implementation",
+          "poisson-2d-gd.py",
+          "poisson-2d-nat-grad.py",
+          "poisson-3d-gd.py",
+          "poisson-3d-nat-grad.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category math.NA"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 367,
+      "arxiv_id": "2309.14032",
+      "repo_url": "https://github.com/henry-yeh/DeepACO",
+      "arxiv": {
+        "versioned_id": "2309.14032v2",
+        "primary_category": "cs.NE",
+        "title": "DeepACO: Neural-enhanced Ant Systems for Combinatorial Optimization",
+        "abstract": "Ant Colony Optimization (ACO) is a meta-heuristic algorithm that has been successfully applied to various Combinatorial Optimization Problems (COPs). Traditionally, customizing ACO for a specific problem requires the expert design of knowledge-driven heuristics. In this paper, we propose DeepACO, a generic framework that leverages deep reinforcement learning to automate heuristic designs. DeepACO serves to strengthen the heuristic measures of existing ACO algorithms and dispense with laborious manual design in future ACO applications. As a neural-enhanced meta-heuristic, DeepACO consistently outperforms its ACO counterparts on eight COPs using a single neural architecture and a single set of hyperparameters. As a Neural Combinatorial Optimization method, DeepACO performs better than or on par with problem-specific methods on canonical routing problems. Our code is publicly available at https://github.com/henry-yeh/DeepACO."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/henry-yeh/DeepACO",
+        "exists": true,
+        "full_name": "henry-yeh/DeepACO",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "9a756a3fe6cf9627ecc166110a02fdbb61f2a0d7",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/henry-yeh/DeepACO/blob/9a756a3fe6cf9627ecc166110a02fdbb61f2a0d7/README.md",
+          "sha256": "1c115230e11ac3b7c510794f03706107d9daa92df018fabceb70a000185f5243",
+          "bytes": 3536
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "bpp",
+          "cvrp",
+          "cvrp_nls",
+          "data",
+          "diagram.png",
+          "mkp",
+          "mkp_transformer",
+          "op",
+          "pctsp",
+          "pretrained",
+          "rcpsp",
+          "smtwtp",
+          "sop",
+          "tsp",
+          "tsp_nls"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.NE"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 368,
+      "arxiv_id": "2410.23743",
+      "repo_url": "https://github.com/mingliiii/layer_gradient",
+      "arxiv": {
+        "versioned_id": "2410.23743v2",
+        "primary_category": "cs.CL",
+        "title": "What Happened in LLMs Layers when Trained for Fast vs. Slow Thinking: A Gradient Perspective",
+        "abstract": "What makes a difference in the post-training of LLMs? We investigate the training patterns of different layers in large language models (LLMs) through the lens of the gradient. We are specifically interested in how fast vs. slow thinking affects the layer-wise gradients, given the recent popularity of training LLMs on reasoning paths such as chain-of-thoughts (CoT) and process rewards. In our study, fast thinking without CoT leads to larger gradients and larger differences of gradients across layers than slow thinking (Detailed CoT), indicating the learning stability brought by the latter. Additionally, we study whether the gradient patterns can reflect the correctness of responses when training different LLMs using slow vs. fast thinking paths. The results show that the gradients of slow thinking can distinguish correct and irrelevant reasoning paths. As a comparison, we conduct similar gradient analyses on non-reasoning knowledge learning tasks, on which, however, trivially increasing the response length does not lead to similar behaviors of slow thinking. Our study strengthens fundamental understandings of LLM training and sheds novel insights on its efficiency and stability, which pave the way towards building a generalizable System-2 agent. Our code, data, and gradient statistics can be found in: https://github.com/MingLiiii/Layer_Gradient."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/mingliiii/layer_gradient",
+        "exists": true,
+        "full_name": "MingLiiii/Layer_Gradient",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e2072e8daa9f250cea025b2d3fa9590a901ca766",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MingLiiii/Layer_Gradient/blob/e2072e8daa9f250cea025b2d3fa9590a901ca766/README.md",
+          "sha256": "15ce81df2c54ce4b6de60336209cd7f21830213b7c601051a2dcc75b6559861d",
+          "bytes": 9060
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "code_gradient",
+          "code_vis",
+          "data",
+          "images",
+          "requirements.txt",
+          "scripts"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 369,
+      "arxiv_id": "2412.17561",
+      "repo_url": "https://github.com/zixiliang/s-inf",
+      "arxiv": {
+        "versioned_id": "2412.17561v2",
+        "primary_category": "cs.CV",
+        "title": "S-INF: Towards Realistic Indoor Scene Synthesis via Scene Implicit Neural Field",
+        "abstract": "Learning-based methods have become increasingly popular in 3D indoor scene synthesis (ISS), showing superior performance over traditional optimization-based approaches. These learning-based methods typically model distributions on simple yet explicit scene representations using generative models. However, due to the oversimplified explicit representations that overlook detailed information and the lack of guidance from multimodal relationships within the scene, most learning-based methods struggle to generate indoor scenes with realistic object arrangements and styles. In this paper, we introduce a new method, Scene Implicit Neural Field (S-INF), for indoor scene synthesis, aiming to learn meaningful representations of multimodal relationships, to enhance the realism of indoor scene synthesis. S-INF assumes that the scene layout is often related to the object-detailed information. It disentangles the multimodal relationships into scene layout relationships and detailed object relationships, fusing them later through implicit neural fields (INFs). By learning specialized scene layout relationships and projecting them into S-INF, we achieve a realistic generation of scene layout. Additionally, S-INF captures dense and detailed object relationships through differentiable rendering, ensuring stylistic consistency across objects. Through extensive experiments on the benchmark 3D-FRONT dataset, we demonstrate that our method consistently achieves state-of-the-art performance under different types of ISS."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/zixiliang/s-inf",
+        "exists": true,
+        "full_name": "ZixiLiang/S-INF",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "06340d192cdf71a68e79106a17f78e300ca0b973",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/ZixiLiang/S-INF/blob/06340d192cdf71a68e79106a17f78e300ca0b973/README.md",
+          "sha256": "b16fa4fdb28b770fac5513d06b0b7afa3ba3cce2d914004bcd3e7da2b70b98ce",
+          "bytes": 851
+        },
+        "root_names": [
+          "README.md",
+          "eval",
+          "figs"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CV"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 370,
+      "arxiv_id": "2405.20948",
+      "repo_url": "https://github.com/tomvincentuk/snompy",
+      "arxiv": {
+        "versioned_id": "2405.20948v1",
+        "primary_category": "cond-mat.mtrl-sci",
+        "title": "snompy: a package for modelling scattering-type scanning near-field optical microscopy",
+        "abstract": "Scattering-type scanning near-field optical microscopy (s-SNOM) is a powerful technique for extreme subwavelength imaging and spectroscopy, with around 20 nm spatial resolution. But quantitative relationships between experiment and material properties requires modelling, which can be computationally and conceptually challenging. In this work, we present snompy an open-source Python library which contains implementations of two of the most common s-SNOM models, the finite dipole model (FDM) and the point dipole model (PDM). We show a series of typical uses for this package with demonstrations including simulating nano-Fourier transform infrared (FTIR) spectra and recovering permittivity from experimental s-SNOM data. We also discuss the challenges faced with this sort of modelling, such as competing descriptions of the models in literature, and finite size effects. We hope that snompy will make quantitative s-SNOM modelling more accessible to the wider research community, which will further empower the use of s-SNOM for investigating nanoscale material properties."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/tomvincentuk/snompy",
+        "exists": true,
+        "full_name": "TomVincentUK/snompy",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "77361a7efc543c8e67a9dc7eb753d79aaef47db4",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.rst",
+          "url": "https://github.com/TomVincentUK/snompy/blob/77361a7efc543c8e67a9dc7eb753d79aaef47db4/README.rst",
+          "sha256": "c7d78828149277118a14466d489c9851a43c5b68c7b625e44737e659fd933316",
+          "bytes": 1586
+        },
+        "root_names": [
+          ".coveragerc",
+          ".gitattributes",
+          ".github",
+          ".gitignore",
+          ".pre-commit-config.yaml",
+          ".readthedocs.yaml",
+          "LICENCE.txt",
+          "MANIFEST.in",
+          "README.rst",
+          "docs",
+          "requirements.txt",
+          "requirements_dev.txt",
+          "requirements_test.txt",
+          "setup.cfg",
+          "setup.py",
+          "snompy",
+          "versioneer.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cond-mat.mtrl-sci"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 371,
+      "arxiv_id": "2407.10666",
+      "repo_url": "https://github.com/XinPeng76/Flow_Perturbation",
+      "arxiv": {
+        "versioned_id": "2407.10666v2",
+        "primary_category": "stat.ML",
+        "title": "Flow Perturbation to Accelerate Unbiased Sampling of Boltzmann distribution",
+        "abstract": "Flow-based generative models have been employed for sampling the Boltzmann distribution, but their application to high-dimensional systems is hindered by the significant computational cost of obtaining the Jacobian of the flow. To overcome this challenge, we introduce the flow perturbation method, which incorporates optimized stochastic perturbations into the flow. By reweighting trajectories generated by the perturbed flow, our method achieves unbiased sampling of the Boltzmann distribution with orders of magnitude speedup compared to both brute force Jacobian calculations and the Hutchinson estimator. Notably, it accurately sampled the Chignolin protein with all atomic Cartesian coordinates explicitly represented, which, to our best knowledge, is the largest molecule ever Boltzmann sampled in such detail using generative models."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/XinPeng76/Flow_Perturbation",
+        "exists": true,
+        "full_name": "XinPeng76/Flow_Perturbation",
+        "archived": false,
+        "default_branch": "master",
+        "head_commit": "27cbc56e1d8da9be0a849f69d4c07401f26e221e",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/XinPeng76/Flow_Perturbation/blob/27cbc56e1d8da9be0a849f69d4c07401f26e221e/README.md",
+          "sha256": "589b51da09b9480e915392423692465fb405b299a346a93078ea90ba8589c75b",
+          "bytes": 3138
+        },
+        "root_names": [
+          ".gitignore",
+          "Flow_Perturbation",
+          "MC.py",
+          "README.md",
+          "Result",
+          "SMC.py",
+          "configs",
+          "figures",
+          "models",
+          "train.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "out_of_scope",
+        "evidence": "keywords in title or abstract: molecule, protein"
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 372,
+      "arxiv_id": "2412.08310",
+      "repo_url": "https://github.com/matthiaskohn/es-mlp",
+      "arxiv": {
+        "versioned_id": "2412.08310v1",
+        "primary_category": "cs.LG",
+        "title": "Edge-Splitting MLP: Node Classification on Homophilic and Heterophilic Graphs without Message Passing",
+        "abstract": "Message Passing Neural Networks (MPNNs) have demonstrated remarkable success in node classification on homophilic graphs. It has been shown that they do not solely rely on homophily but on neighborhood distributions of nodes, i.e., consistency of the neighborhood label distribution within the same class. MLP-based models do not use message passing, \\eg Graph-MLP incorporates the neighborhood in a separate loss function. These models are faster and more robust to edge noise. Graph-MLP maps adjacent nodes closer in the embedding space but is unaware of the neighborhood pattern of the labels, i.e., relies solely on homophily. Edge Splitting GNN (ES-GNN) is a model specialized for heterophilic graphs and splits the edges into task-relevant and task-irrelevant, respectively. To mitigate the limitations of Graph-MLP on heterophilic graphs, we propose ES-MLP that combines Graph-MLP with an edge-splitting mechanism from ES-GNN. It incorporates the edge splitting into the loss of Graph-MLP to learn two separate adjacency matrices based on relevant and irrelevant feature pairs. Our experiments on seven datasets with six baselines show that ES-MLP is on par with homophilic and heterophilic models on all datasets without using edges during inference. We show that ES-MLP is robust to multiple types of edge noise during inference and that its inference time is two to five times faster than that of commonly used MPNNs. The source code is available at https://github.com/MatthiasKohn/ES-MLP."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/matthiaskohn/es-mlp",
+        "exists": true,
+        "full_name": "MatthiasKohn/ES-MLP",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "e8f6333b6b2f9e969980aa71eddecbe27f705d15",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/MatthiasKohn/ES-MLP/blob/e8f6333b6b2f9e969980aa71eddecbe27f705d15/README.md",
+          "sha256": "857392e963c843374bdc55ba2fbb4ed4410e43dca388eed043925f41bf98842c",
+          "bytes": 1137
+        },
+        "root_names": [
+          ".gitignore",
+          "README.md",
+          "csbm.py",
+          "dataset.py",
+          "early_stopping.py",
+          "experiment_edge_noise.py",
+          "main.py",
+          "models",
+          "normalization.py",
+          "parse.py",
+          "requirements.txt",
+          "result_writer.py",
+          "utils.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 373,
+      "arxiv_id": "2402.04898",
+      "repo_url": "https://github.com/sentient-sports/strain-of-success",
+      "arxiv": {
+        "versioned_id": "2402.04898v1",
+        "primary_category": "cs.AI",
+        "title": "The Strain of Success: A Predictive Model for Injury Risk Mitigation and Team Success in Soccer",
+        "abstract": "In this paper, we present a novel sequential team selection model in soccer. Specifically, we model the stochastic process of player injury and unavailability using player-specific information learned from real-world soccer data. Monte-Carlo Tree Search is used to select teams for games that optimise long-term team performance across a soccer season by reasoning over player injury probability. We validate our approach compared to benchmark solutions for the 2018/19 English Premier League season. Our model achieves similar season expected points to the benchmark whilst reducing first-team injuries by ~13% and the money inefficiently spent on injured players by ~11% - demonstrating the potential to reduce costs and improve player welfare in real-world soccer teams."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/sentient-sports/strain-of-success",
+        "exists": true,
+        "full_name": "Sentient-Sports/Strain-of-Success",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "22eacaf37bdd3c4855eb09beaed8338f98deb2c4",
+        "license_spdx": null,
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/Sentient-Sports/Strain-of-Success/blob/22eacaf37bdd3c4855eb09beaed8338f98deb2c4/README.md",
+          "sha256": "4fed7066aaf1fe616fe21a40e56f932040d1f1dfb6c5d47195558529017dcdc2",
+          "bytes": 5688
+        },
+        "root_names": [
+          ".gitattributes",
+          "README.md",
+          "The Strain of Success - A Predictive Model for Injury Risk Mitigation and Team Success in Soccer.pdf",
+          "data",
+          "data_collection",
+          "experiments",
+          "injury_model",
+          "match_prediction",
+          "requirements.txt",
+          "team_selection_MDP",
+          "updated_injury_probs.py",
+          "util_functions.py"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": true
+    },
+    {
+      "position": 374,
+      "arxiv_id": "2305.18246",
+      "repo_url": "https://github.com/hmishfaq/lmc-lsvi",
+      "arxiv": {
+        "versioned_id": "2305.18246v2",
+        "primary_category": "cs.LG",
+        "title": "Provable and Practical: Efficient Exploration in Reinforcement Learning via Langevin Monte Carlo",
+        "abstract": "We present a scalable and effective exploration strategy based on Thompson sampling for reinforcement learning (RL). One of the key shortcomings of existing Thompson sampling algorithms is the need to perform a Gaussian approximation of the posterior distribution, which is not a good surrogate in most practical settings. We instead directly sample the Q function from its posterior distribution, by using Langevin Monte Carlo, an efficient type of Markov Chain Monte Carlo (MCMC) method. Our method only needs to perform noisy gradient descent updates to learn the exact posterior distribution of the Q function, which makes our approach easy to deploy in deep RL. We provide a rigorous theoretical analysis for the proposed method and demonstrate that, in the linear Markov decision process (linear MDP) setting, it has a regret bound of $\\tilde{O}(d^{3/2}H^{3/2}\\sqrt{T})$, where $d$ is the dimension of the feature mapping, $H$ is the planning horizon, and $T$ is the total number of steps. We apply this approach to deep RL, by using Adam optimizer to perform gradient updates. Our approach achieves better or similar results compared with state-of-the-art deep RL algorithms on several challenging exploration tasks from the Atari57 suite."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/hmishfaq/lmc-lsvi",
+        "exists": true,
+        "full_name": "hmishfaq/LMC-LSVI",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "b98770975f3a8f05eb4451f2c659ef11e78d23ef",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/hmishfaq/LMC-LSVI/blob/b98770975f3a8f05eb4451f2c659ef11e78d23ef/README.md",
+          "sha256": "d65a7650d678010a8c5d705889790bd7c4ac7c60571588a3db5701997aa401cd",
+          "bytes": 3882
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "agents",
+          "analysis.py",
+          "components",
+          "configs",
+          "envs",
+          "experiment.py",
+          "main.py",
+          "requirements.txt",
+          "results",
+          "run.sh",
+          "utils"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": null,
+        "evidence": ""
+      },
+      "no_license_signal": false
+    },
+    {
+      "position": 375,
+      "arxiv_id": "2303.13716",
+      "repo_url": "https://github.com/frankaging/recogs",
+      "arxiv": {
+        "versioned_id": "2303.13716v2",
+        "primary_category": "cs.CL",
+        "title": "ReCOGS: How Incidental Details of a Logical Form Overshadow an Evaluation of Semantic Interpretation",
+        "abstract": "Compositional generalization benchmarks for semantic parsing seek to assess whether models can accurately compute meanings for novel sentences, but operationalize this in terms of logical form (LF) prediction. This raises the concern that semantically irrelevant details of the chosen LFs could shape model performance. We argue that this concern is realized for the COGS benchmark. COGS poses generalization splits that appear impossible for present-day models, which could be taken as an indictment of those models. However, we show that the negative results trace to incidental features of COGS LFs. Converting these LFs to semantically equivalent ones and factoring out capabilities unrelated to semantic interpretation, we find that even baseline models get traction. A recent variable-free translation of COGS LFs suggests similar conclusions, but we observe this format is not semantically equivalent; it is incapable of accurately representing some COGS meanings. These findings inform our proposal for ReCOGS, a modified version of COGS that comes closer to assessing the target semantic capabilities while remaining very challenging. Overall, our results reaffirm the importance of compositional generalization and careful benchmark task design."
+      },
+      "repository": {
+        "host": "github",
+        "url": "https://github.com/frankaging/recogs",
+        "exists": true,
+        "full_name": "frankaging/ReCOGS",
+        "archived": false,
+        "default_branch": "main",
+        "head_commit": "1b6eca8ff4dca5fd2fb284a7d470998af5083beb",
+        "license_spdx": "MIT",
+        "readme": {
+          "path": "README.md",
+          "url": "https://github.com/frankaging/ReCOGS/blob/1b6eca8ff4dca5fd2fb284a7d470998af5083beb/README.md",
+          "sha256": "871e7d6248f2a15b66083d962ba96061369513da200b0d263e51e7f6075db662",
+          "bytes": 4298
+        },
+        "root_names": [
+          ".gitignore",
+          "LICENSE",
+          "README.md",
+          "_deprecated_files",
+          "analysis_results.ipynb",
+          "cogs",
+          "cogs_concat",
+          "cogs_participle_verb",
+          "cogs_participle_verb_easy",
+          "cogs_preposing+sprinkles",
+          "cogs_preposing",
+          "cogs_token_removal",
+          "logs",
+          "model",
+          "prompt_playground_public.ipynb",
+          "recogs_positional_index",
+          "recogs_v1",
+          "recogs_v2",
+          "run_cogs.py",
+          "second_looks.ipynb",
+          "utils",
+          "variable_free",
+          "verb_pp_map.json"
+        ]
+      },
+      "transient_attempts": [],
+      "mechanical": {
+        "reason": "category_outside_list",
+        "evidence": "arXiv primary category cs.CL"
+      },
+      "no_license_signal": false
+    }
+  ],
+  "read_utc": "2026-10-18T12:19:18Z"
+}
