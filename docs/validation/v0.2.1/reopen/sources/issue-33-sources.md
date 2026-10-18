@@ -58,3 +58,17 @@ rule of issue #34). Nothing here is legal advice.
   `hlsp_tess-ebs_tess_lcf-ffi_s0001-s0026_tess_v1.0_cat.csv` (download link of the page); the
   page says the name "will change in future data releases" following a pattern with the
   version.
+
+## S7. The v1.0 file and its readme (downloaded 2026-10-17, about 21:55 UTC-3)
+
+- URL: https://archive.stsci.edu/hlsps/tess-ebs/hlsp_tess-ebs_tess_lcf-ffi_s0001-s0026_tess_v1.0_cat.csv
+  (1898138 bytes, SHA-256 `97e81f6c01716a431379ab6bd37d1182b611a485107110e0eba830f817ba7a8f`)
+- URL: https://archive.stsci.edu/hlsps/tess-ebs/hlsp_tess-ebs_tess_lcf-ffi_s0001-s0026_tess_v1.0_readme.txt
+  (6214 bytes, SHA-256 `79c7731810ed86f169e295733be480f66649cb40e1c435c76ca9c5e4aaf07377`)
+- Excerpt (readme): "tess_id: (int) TESS input catalog (TIC) identification number"
+- Excerpt (readme): "ra: (float) Right ascension of the target, in decimal degrees (epoch J2000,
+  equinox J2000)"
+- Excerpt (readme): "period: (float) binary star orbital period (days)"
+- Note: the readme gives the v1.0 file name as `hlsp_tess-ebs_tess_lcf_s0001-s0026_tess_v1.0_cat.csv`
+  (without `-ffi`); the product page (S6) links the file with `lcf-ffi`, and that is the file
+  retrieved and hashed here.

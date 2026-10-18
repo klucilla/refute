@@ -10,7 +10,8 @@ on branch `claude/v0-2-1-reopen` until the maintainer approves its merge.
 |---|---|
 | `audit-criteria-1-4-5.md` | the audit of exit criteria 1, 4 and 5 at the reopening, with its read-only scripts and outputs (`audit_*.py`, `audit-*.json`) |
 | `issue-23-acceptance.md` | issue #23: the report sentence on how blind the holdout is (acceptance criteria, amendments with sabotages and the review corrections) |
-| `issue-33-evaluation.md`, `sources/issue-33-sources.md` | issue #33: can the TESS-EB snapshot be redistributed (an evaluation for the maintainer's decision, with sources) |
+| `issue-33-evaluation.md`, `sources/issue-33-sources.md` | issue #33: can the TESS-EB snapshot be redistributed (the evaluation, with sources, and the maintainer's decision: option C after semantic equivalence) |
+| `issue33/` | the semantic comparison of the MAST v1.0 file with the VizieR snapshot (`compare_tess_eb.py`, `compare-output.json`, `README.md`) |
 | `correlated-noise-acceptance.md` | correlated-noise cases for the changes already made (prospective extension of exit criterion 1), with the generator's mode |
 | `correlated/` | the digests of the white-noise generator before the change (`white_reference.py`, `white-reference.json`) |
 | `corrections-plan-rev4.md` | revision 4 of the plan of TESS corrections (M4, M5), answering the open rows of review 3; every row closed as a specification; implementation waits for the maintainer's approval of the resumption |

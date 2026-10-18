@@ -59,3 +59,30 @@ attachments and their hashes. The v0.2 lock and its files do not change in eithe
 
 Decision: the maintainer's (a license statement and public files). Until then, nothing
 changes.
+
+## Decision (maintainer, 2026-10-17)
+
+**Option C, only after a demonstration of semantic equivalence** with the VizieR snapshot the code
+uses (by `tess_id + signal_id`, never by line order or file bytes); if a scientific difference is
+unexplained, option A stays for this calibration and the difference goes to the maintainer.
+
+**Equivalence: shown** (`issue33/README.md`): the same 4584 keys and signals per TIC, the same
+two missing periods, every value equal within the rounding of the less precise copy, the same
+view for the gauntlet. No difference to explain was found.
+
+**Fixed now, before the protocol of the v0.2.1 calibration:**
+
+| Item | Value |
+|---|---|
+| File | `hlsp_tess-ebs_tess_lcf-ffi_s0001-s0026_tess_v1.0_cat.csv`, from `https://archive.stsci.edu/hlsps/tess-ebs/` (S6, S7) |
+| Version | MAST v1.0 (released and updated 2022-06-29, S5 and S6) |
+| Hash | SHA-256 `97e81f6c01716a431379ab6bd37d1182b611a485107110e0eba830f817ba7a8f`, 1898138 bytes, of the file as downloaded; a run that gets other bytes stops |
+| Transformation | each row becomes one `refute-eb-catalog-1` row: `catalog` = `TESS-EB`; `source_id` = `TIC <tess_id> (<signal_id>)`; `tic_id` = `tess_id`; `ra`, `dec` = `ra`, `dec` (degrees, J2000); `period_days` = `period` (days), empty when the file's value is empty; no other column is used, no row is dropped or merged; the catalog name `TESS-EB` keeps its place in `same_photometry_catalogs` |
+| Attribution | "TESS Eclipsing Binaries (TESS-EBs), Prša et al. 2022, ApJS 258, 16 (doi:10.3847/1538-4365/ac324a); MAST high-level science product doi:10.17909/t9-9gm4-fx30, version 1.0, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); converted to the refute-eb-catalog-1 columns (catalog, source_id, tic_id, ra, dec, period_days), with no change of values." |
+| License statement | CC BY 4.0, from the MAST product page (S6), stored with its excerpt; it applies to this file only |
+
+**Still to do before the protocol** (none of it touches a v0.2 file): the code that reads this file
+(a parser `tess-eb-mast-csv`, with its acceptance record committed before its tests and code); the
+v0.2.1 selection's snapshot record naming this file and hash; a data-license note for the new
+calibration's folder carrying the attribution above. The v0.2 lock, its snapshot record
+(`calibration/v0.2/eb_snapshot/`), its claim and its dossiers are preserved unchanged.

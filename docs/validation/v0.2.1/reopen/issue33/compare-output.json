@@ -1,0 +1,462 @@
+{
+  "coordinates": {
+    "count_above_0.1_arcsec": 0,
+    "count_above_1_arcsec": 0,
+    "largest": [
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          397679167,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          368779536,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          359497418,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          322549898,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          307907420,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          278866211,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          272839425,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          268380299,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          255586667,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          206544316,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          172171873,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          165371937,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          158561566,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          141663326,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          136732283,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          123416563,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          121122016,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          107548305,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          76658755,
+          1
+        ]
+      },
+      {
+        "arcsec": 0.00434670577101264,
+        "key": [
+          63368767,
+          1
+        ]
+      }
+    ],
+    "max_separation_arcsec": 0.00434670577101264
+  },
+  "gauntlet_view": {
+    "keys_equal": true,
+    "mast_keys": 4584,
+    "v02_reference_rows": [
+      {
+        "key": "TIC 158561566 (1)",
+        "period_relative_difference": 2.4443335582518974e-09,
+        "separation_arcsec": 0.00434670577101264
+      },
+      {
+        "key": "TIC 316916655 (1)",
+        "period_relative_difference": 1.4075974460325758e-08,
+        "separation_arcsec": 0.0
+      },
+      {
+        "key": "TIC 317507345 (1)",
+        "period_relative_difference": 7.874303564408156e-09,
+        "separation_arcsec": 0.0
+      },
+      {
+        "key": "TIC 350445771 (1)",
+        "period_relative_difference": 1.2732820076428743e-08,
+        "separation_arcsec": 0.0
+      }
+    ],
+    "vizier_keys": 4584
+  },
+  "keys": {
+    "common": 4584,
+    "only_mast": [],
+    "only_mast_count": 0,
+    "only_vizier": [],
+    "only_vizier_count": 0,
+    "tics_whose_signal_sets_differ": [],
+    "tics_whose_signal_sets_differ_count": 0,
+    "tics_with_more_than_one_signal_mast": 6,
+    "tics_with_more_than_one_signal_vizier": 6
+  },
+  "mast": {
+    "duplicate_keys": [],
+    "file": "hlsp_tess-ebs_tess_lcf-ffi_s0001-s0026_tess_v1.0_cat.csv",
+    "rows": 4584,
+    "sha256": "97e81f6c01716a431379ab6bd37d1182b611a485107110e0eba830f817ba7a8f"
+  },
+  "period": {
+    "count_relative_above_1e-3": 0,
+    "count_relative_above_1e-6": 0,
+    "largest": [
+      {
+        "absolute_days": 4.896000180276694e-08,
+        "key": [
+          611402948,
+          1
+        ],
+        "relative": 5.243674069403257e-07
+      },
+      {
+        "absolute_days": 4.973498239635443e-08,
+        "key": [
+          175402069,
+          1
+        ],
+        "relative": 4.923429437023586e-07
+      },
+      {
+        "absolute_days": 4.018588919962873e-08,
+        "key": [
+          293605127,
+          1
+        ],
+        "relative": 3.3270276380567595e-07
+      },
+      {
+        "absolute_days": 1.562501229790403e-08,
+        "key": [
+          107548305,
+          1
+        ],
+        "relative": 3.1901442073745445e-07
+      },
+      {
+        "absolute_days": 4.2318113291361925e-08,
+        "key": [
+          440666925,
+          1
+        ],
+        "relative": 2.8915958919097053e-07
+      },
+      {
+        "absolute_days": 2.736179680051798e-08,
+        "key": [
+          455206965,
+          1
+        ],
+        "relative": 2.843190922026925e-07
+      },
+      {
+        "absolute_days": 4.910852000050703e-08,
+        "key": [
+          36077464,
+          1
+        ],
+        "relative": 2.841687307596682e-07
+      },
+      {
+        "absolute_days": 4.647642920518891e-08,
+        "key": [
+          155657579,
+          1
+        ],
+        "relative": 2.524928938536537e-07
+      },
+      {
+        "absolute_days": 3.1719143200881206e-08,
+        "key": [
+          396004353,
+          1
+        ],
+        "relative": 2.411526893961282e-07
+      },
+      {
+        "absolute_days": 3.5531100506247526e-08,
+        "key": [
+          142047616,
+          1
+        ],
+        "relative": 2.389065638292889e-07
+      },
+      {
+        "absolute_days": 3.697852588024908e-08,
+        "key": [
+          341525754,
+          1
+        ],
+        "relative": 2.3596962745193698e-07
+      },
+      {
+        "absolute_days": 3.3625814299664825e-08,
+        "key": [
+          248394276,
+          1
+        ],
+        "relative": 2.2626210307626557e-07
+      },
+      {
+        "absolute_days": 3.115911889617351e-08,
+        "key": [
+          73764693,
+          1
+        ],
+        "relative": 2.236899259576191e-07
+      },
+      {
+        "absolute_days": 4.739511658136131e-08,
+        "key": [
+          95525590,
+          1
+        ],
+        "relative": 2.1739747043016908e-07
+      },
+      {
+        "absolute_days": 4.9128703910605864e-08,
+        "key": [
+          240706234,
+          1
+        ],
+        "relative": 2.1022704189925595e-07
+      },
+      {
+        "absolute_days": 4.086202978759168e-08,
+        "key": [
+          332277332,
+          1
+        ],
+        "relative": 2.077683923943575e-07
+      },
+      {
+        "absolute_days": 2.5953451610050138e-08,
+        "key": [
+          271164763,
+          1
+        ],
+        "relative": 2.0636503191620395e-07
+      },
+      {
+        "absolute_days": 2.3995377504415494e-08,
+        "key": [
+          124604724,
+          1
+        ],
+        "relative": 2.0522871521735328e-07
+      },
+      {
+        "absolute_days": 4.7205293007834825e-08,
+        "key": [
+          21174723,
+          1
+        ],
+        "relative": 2.0357564489162905e-07
+      },
+      {
+        "absolute_days": 3.627880182377474e-08,
+        "key": [
+          298498697,
+          1
+        ],
+        "relative": 2.0107373528610127e-07
+      }
+    ],
+    "max_absolute_difference_days": 4.999256830728882e-08,
+    "max_relative_difference": 5.243674069403257e-07,
+    "missing": {
+      "both": [
+        [
+          233866651,
+          1
+        ],
+        [
+          430000969,
+          1
+        ]
+      ],
+      "mast_only": [],
+      "vizier_only": []
+    },
+    "missing_counts": {
+      "both": 2,
+      "mast_only": 0,
+      "vizier_only": 0
+    }
+  },
+  "precision_decimals": {
+    "mast": {
+      "dec": {
+        "10": 3,
+        "11": 35,
+        "12": 374,
+        "13": 3725,
+        "14": 282,
+        "15": 27,
+        "16": 1,
+        "4": 14,
+        "5": 8,
+        "6": 114,
+        "8": 1
+      },
+      "period": {
+        "12": 5,
+        "13": 26,
+        "14": 255,
+        "15": 1586,
+        "16": 2676,
+        "17": 25,
+        "6": 1,
+        "8": 2,
+        "9": 6,
+        "None": 2
+      },
+      "ra": {
+        "10": 34,
+        "11": 279,
+        "12": 2846,
+        "13": 1200,
+        "14": 71,
+        "15": 12,
+        "3": 4,
+        "4": 9,
+        "5": 11,
+        "6": 112,
+        "8": 1,
+        "9": 5
+      }
+    },
+    "vizier": {
+      "dec": {
+        "10": 4584
+      },
+      "period": {
+        "7": 4582,
+        "None": 2
+      },
+      "ra": {
+        "10": 4584
+      }
+    }
+  },
+  "rounding": {
+    "differences_beyond_rounding": [],
+    "differences_beyond_rounding_count": 0,
+    "rule": "for every common key and each of ra, dec and period present in both, |vizier - mast| <= half a unit of the last decimal of the less precise copy"
+  },
+  "vizier": {
+    "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+    "duplicate_keys": [],
+    "file": "tess_ebs_prsa2022.tsv",
+    "header": [
+      "TIC",
+      "m_TIC",
+      "RAJ2000",
+      "DEJ2000",
+      "Per"
+    ],
+    "is_the_v02_snapshot": true,
+    "recorded_content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+    "rows": 4584,
+    "units": [
+      " ",
+      " ",
+      "deg",
+      "deg",
+      "d"
+    ]
+  }
+}
