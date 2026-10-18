@@ -431,10 +431,12 @@ def test_the_reported_depth_and_error_belong_to_the_same_dp(strong):
 
 
 def test_the_h4_gate_reads_the_corrected_train_snr_by_the_true_computation():
-    """Map Amendment 18 (declared before its run): white 600 ppm plus AR(1) 800 ppm, a 300 ppm
-    planet, seed 3509: the train BLS SNR above 7.1 and the corrected one below it, end to end."""
+    """Map Amendment 18: the train BLS SNR above 7.1 and the corrected one below it, end to end.
+    The first construction (AR(1) 800 ppm, 300 ppm, seed 3509) was incompatible (corrected SNR
+    7.61, beta_D 2.86); this is the one second construction declared after it: white 600 ppm plus
+    AR(1) 400 ppm, a 270 ppm planet, seed 3510."""
     lc, sectors = synthetic.make_lightcurve(
-        _spec(300e-6), sector_starts=TWO_BY_TWO, seed=3509, red_noise_ppm=800.0
+        _spec(270e-6), sector_starts=TWO_BY_TWO, seed=3510, red_noise_ppm=400.0
     )
     r = _round(run_holdout(lc, sectors, _plan()), 2020)
     assert r.metrics.get("reason") != "train_noise_undetermined", r.message  # precondition

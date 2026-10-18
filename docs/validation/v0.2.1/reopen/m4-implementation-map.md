@@ -649,6 +649,17 @@ the case is recorded as incompatible with its construction and no other seed or 
 here; the physical case on a real curve stays pending (covered if it exists in the development
 population).
 
+**Result of the first construction: incompatible.** The train gate was determined and the train
+BLS SNR was 21.8, but the corrected SNR was **7.61** (not below 7.1): the measured `β_D` was 2.86
+(sectors 2.67 and 3.06), not about 5; the estimate above ignored the detrending, which removes part
+of the slow correlated noise, and the robust `σ_w`; and the candidate found was a red-noise box (P =
+0.84 d, 3.8 h), not the planet. **One second construction, declared after that result and computed
+from its measured `β`:** the same layout, seed **3510** (new), AR(1) **400 ppm** (`β²` scaled by
+`A² / (σ_white² + A²)` from the measured 8.2 at 800 ppm: about 4.5, `β` ≈ 2.1, and smaller red-noise
+peaks), and a planet of **270 ppm** (a BLS SNR near 12 over the 2018 transits at the total noise of
+about 720 ppm per cadence), so a corrected SNR near 5.7. The same preconditions and requirement. If
+it also fails, it is recorded and brought to the maintainer; no third construction is tried.
+
 ## Amendment 17 (2026-10-18): the explicit, versioned activation of M4 across the flow
 
 The maintainer's decision of 2026-10-18 (14:00), item 2; Codex reviewed the design before the code
