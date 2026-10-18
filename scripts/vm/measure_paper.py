@@ -35,6 +35,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from refute.packs.ml import ladder as ld
+from refute.packs.ml import patches as pt
 from refute.packs.ml import production as pd
 from refute.packs.ml.docker_backend import ContainerPlan, DockerBackend, Limits
 from refute.packs.ml.sandbox import RunSpec
@@ -71,6 +72,28 @@ def run(backend: DockerBackend, work: Path, argv: list[str], log: Path, minutes:
     return result, (datetime.now(UTC) - started).total_seconds()
 
 
+def patched_source(spec: dict, clone: Path, root: Path) -> Path:
+    """The clone, or the clone plus the claim's allowed patches applied by the engine's own
+    applier (W3.9a): spec "patches" is a list of {attachment, path, sha256} on the VM."""
+    if not spec.get("patches"):
+        return clone
+    given = []
+    for p in spec["patches"]:
+        data = Path(p["path"]).read_bytes()
+        if hashlib.sha256(data).hexdigest() != p["sha256"]:
+            raise SystemExit(f"{p['path']}: SHA-256 differs from the spec")
+        given.append((p["attachment"], data))
+    tree = subprocess.run(
+        ["git", "-C", str(clone), "ls-tree", "-r", "-z", "--full-tree", spec["commit"]],
+        capture_output=True, text=True, check=True,
+    ).stdout  # fmt: skip
+    record = pt.prepare(
+        clone, root / "patched", given, sorted(spec.get("data", {})), pt.commit_entries(tree)
+    )
+    (root / "patch-record.json").write_text(json.dumps(record, indent=1), encoding="utf-8")
+    return root / "patched"
+
+
 def build(spec: dict, root: Path) -> dict:
     root.mkdir(parents=True)
     clone = root / "clone"
@@ -82,8 +105,9 @@ def build(spec: dict, root: Path) -> dict:
     ).stdout.strip()
     if head != spec["commit"]:
         raise SystemExit(f"checked out {head}, not {spec['commit']}")
+    source = patched_source(spec, clone, root)
     repo = root / "build"
-    pd._copy_repo(clone, repo)  # noqa: SLF001 - production's own copy
+    pd._copy_repo(source, repo)  # noqa: SLF001 - production's own copy
     repo.chmod(0o1777)
     _, req, _ = pd.ladder_inputs(repo)
     rungs = ld.ladder_rungs(None, req, [spec["python"]])
@@ -141,7 +165,8 @@ def measure(spec: dict, root: Path) -> dict:
         if sha256(Path(source["path"])) != source["sha256"]:
             raise SystemExit(f"{source['path']}: SHA-256 differs from the spec")
     work = root / f"run-{spec['run_id']}"
-    pd._copy_repo(root / "clone", work)  # noqa: SLF001
+    source = root / "patched" if (root / "patched").is_dir() else root / "clone"
+    pd._copy_repo(source, work)  # noqa: SLF001
     for target in spec["data"]:
         (work / target).parent.mkdir(parents=True, exist_ok=True)
     work.chmod(0o1777)
