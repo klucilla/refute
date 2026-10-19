@@ -82,6 +82,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understan
 | `Set-RefuteVmTreeAcl.ps1` | the maintainer, as Administrator | replaces the ACL of `C:\Hyper-V` set by the registration of 2026-10-15 with version 2 (after the failure of SetHostPaths, [jea-registration.md](../../docs/validation/v0.3/wp6-results/jea-registration.md) section 9); without `-Apply`, only shows the state of the tree and of the evidence folders and the ACL it would set; the evidence goes to a new file in `C:\ProgramData\RefuteVm\Log` that only SYSTEM and Administrators can change |
 | `Update-RefuteVmConfig.ps1` | the maintainer, as Administrator | replaces one installed file of the module (`-File`: `RefuteVm.Config.psd1` by default, or `RefuteVm.Core.ps1`, `RefuteVm.HyperV.ps1` or `RefuteVm.psm1` with both hashes given; the manifest and the role capability only through the registration) with the reviewed one, checking the module, its discovery set and both hashes first (the checks of the registration, loaded from a `RefuteRegistration.Core.ps1` whose hash it pins); without `-Apply`, only the preview |
 | `Invoke-RefuteVm.ps1` | Claude Code (operator account) | calls the endpoint |
+| `Test-RefuteDefaultSwitch.ps1` | Claude Code (operator account) | checks that the Default Switch's address is still the DHCP server the proxy's egress ACL allows (see "After a restart of Windows") |
 | `Get-RefuteMedia.ps1` | operator account, after approval | downloads and verifies the Ubuntu ISO |
 | `New-RefuteSeedIso.ps1`, `seed/` | operator account | builds the CIDATA seed ISO (autoinstall) |
 | `publish_operation_log.py` | the maintainer, with the project's Python | makes the publishable copy of records of `operations.jsonl`: account and host names replaced, then checked (same records, no name, address, profile path or SID left) before it is written to a new file; the local log is only read |
@@ -154,6 +155,27 @@ Removing it is the maintainer's decision (see "Reversal").
 
 Capacity control (plan section 7.5): `SetProcessorMaximum -Percent <1-100>`
 (a percentage, not a number of CPUs), `SuspendVm`, `ResumeVm`, `SaveVm`, `StartVm`.
+
+## After a restart of Windows: the Default Switch's address
+
+The proxy VM's egress ACL allows DHCP from one server only, the host's address on
+"vEthernet (Default Switch)" (`admin/Set-RefuteProxyAcls.ps1 -DhcpServer`). Windows can give
+the Default Switch another prefix when it restarts; the proxy VM then gets no address and no
+build can reach a registry. This happened after the restart of 2026-10-18: the server moved
+and the proxy VM had no address until the maintainer set the ACL again on 2026-10-19 (Stop-VM,
+`Set-RefuteProxyAcls.ps1 -DhcpServer <new> -Apply`, Start-VM; each adapter read back the
+entries expected).
+
+After each restart of Windows, and before any step that needs the network:
+
+1. `Test-RefuteDefaultSwitch.ps1` (no administrator rights) compares the adapter's address
+   with the one recorded when the ACL was last set (kept in the git-ignored `.cache`, so no
+   host address enters the repository). Exit 0: unchanged. Exit 1: changed; it prints the
+   maintainer's three commands with the new server. Exit 2: nothing recorded yet.
+2. On exit 1 the maintainer, as Administrator, runs the printed commands; then the operator
+   runs `Test-RefuteDefaultSwitch.ps1 -Record`, and checks the proxy VM by SSH (its egress
+   address in the new prefix, DNS, HTTPS) and the Refute VM through the proxy in the profile
+   build (a declared registry allowed, an undeclared host refused).
 
 ## What the registration changes
 

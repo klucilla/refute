@@ -1330,3 +1330,31 @@ def test_the_backup_export_never_waits_on_a_question(tmp_path):
     err = proc.stderr.read()
     assert "EXIT=0" in out, out + err
     assert target.read_text(encoding="ascii").strip() == "eof"
+
+
+def test_the_default_switch_check_reports_a_changed_dhcp_server(tmp_path):
+    """Test-RefuteDefaultSwitch.ps1 (the maintainer's decision of 2026-10-19): nothing
+    recorded is 2; -Record writes the address; the same address is 0; another one is 1 and
+    prints the maintainer's commands with the new server. The adapter's reading is replaced
+    by -Observed, so the host's address is never read here."""
+    script = VM / "Test-RefuteDefaultSwitch.ps1"
+    state = str(tmp_path / "state" / "default-switch.json")
+
+    def run(*extra):
+        return _run(script, "-StatePath", state, *extra)
+
+    first = run("-Observed", "10.9.8.1")
+    assert first.returncode == 2 and "Nothing recorded yet" in first.stdout, first.stdout
+    assert run("-Observed", "10.9.8.1", "-Record").returncode == 0
+    assert (
+        json.loads((tmp_path / "state" / "default-switch.json").read_text())["dhcp_server"]
+        == "10.9.8.1"
+    )
+    same = run("-Observed", "10.9.8.1")
+    assert same.returncode == 0 and "Unchanged" in same.stdout, same.stdout
+    changed = run("-Observed", "10.9.7.1")
+    assert changed.returncode == 1, changed.stdout + changed.stderr
+    assert "Set-RefuteProxyAcls.ps1 -DhcpServer 10.9.7.1 -Apply" in changed.stdout
+    assert "allows 10.9.8.1" in changed.stdout
+    bad = run("-Observed", "not-an-address")
+    assert bad.returncode == 2, bad.stdout
