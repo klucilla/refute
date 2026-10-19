@@ -31,6 +31,9 @@ from refute.packs.ml import seeds
 from refute.packs.ml.schema import ENGINE_BASE_IMAGE
 from refute.selection import inventory as inv
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import transcription_time as tt  # noqa: E402 - the shared correction of the approval time
+
 ROOT = Path(__file__).resolve().parents[5]
 HERE = Path(__file__).resolve().parent
 ARXIV, VERSION = "2302.12465", 3
@@ -77,6 +80,40 @@ NAMES = {  # the candidate, its explainer name in eval_explanations.py, its meth
     "T4/UserItemAttr/PGExp-Link": "pgexp",
 }
 PLACEHOLDER = "pending: the maintainer's approval of the claims package (draft only)"
+# the repository's trained link predictor, a file of the pinned commit, which every
+# explainer and the evaluator load and keep frozen (wp3-repository-weights-acceptance.md);
+# its bytes read with git from the commit's tree (blob cc6c067a67d6194867660c2793928b9b62c09c6b)
+WEIGHTS = {
+    "name": "synthetic_model",
+    "origin": "repository_file",
+    "path": "saved_models/synthetic_model.pth",
+    "commit": COMMIT,
+    "sha256": "a9446dca4857d6c43f7e95d2641541bf24b94600e1f2a3d83e98b0bfd1b442c2",
+    "size_bytes": 272468,
+    "license": "MIT-0 (MIT No Attribution), the repository's LICENSE at the pinned commit; "
+    "the repository states no other licence for saved_models/ "
+    "(calibration/v0.3/main/sources/2302.12465-data-sources.md)",
+}
+PREDICTOR = (
+    "with the repository's trained link predictor (saved_models/synthetic_model.pth of the "
+    "pinned commit, loaded frozen; the run does not train it)"
+)
+DEFINITIONS = {
+    "scope": "Every claim is full_training (plan section 5: full training, or evaluation of "
+    "a released checkpoint): each run optimizes the explainer's masks from the start "
+    "(pagelink.py, baselines/gnnexplainer_link.py or baselines/pgexplainer_link.py) and "
+    "eval_explanations.py scores those masks. The repository's trained link predictor, "
+    "saved_models/synthetic_model.pth of the pinned commit, is a pre-trained input loaded "
+    "frozen, declared as weights that are a file of the repository; it is never trained by "
+    "the run, and these claims do not test its training (wp3-repository-weights-acceptance.md, "
+    "reviewed by Codex on 2026-10-19).",
+    "verdict_paths": "No attack applies to these claims (the seed and the split are fixed in "
+    "the code, with no argument), so the verdict of each claim rests on its base reproduction "
+    "alone: when the base run completes it is REPRODUCED or NOT_REPRODUCED, never FRAGILE; "
+    "NOT_REPRODUCIBLE or INCONCLUSIVE remain possible when the base reproduction cannot be "
+    "obtained (the maintainer's decision of 2026-10-19).",
+    "transcription_approval_time": tt.DEFINITION,
+}
 
 
 def cite(file: str, first: int, last: int, role: str) -> dict:
@@ -219,6 +256,7 @@ def plan(run_seed: str, likes_edges: int, k: int) -> dict:
             ],
         },  # fmt: skip
         "datasets": [dataset_entry(kind, likes_edges, k) for kind in ("value", "comparison")],
+        "weights": [dict(WEIGHTS)],
         "stages": {
             name: dict(stage)
             for name in ("build", "data", "base_run", "metric_recompute", "attack_run")
@@ -295,8 +333,10 @@ def value_target(candidate_id: str, position: int, reported: float, statement: s
         "metric": metric(k, reported),
         "comparison_mode": "two_sided",
         # the explainer runs on the repository's own checkpoint (inventory decisions of
-        # 2026-10-18: follow the README literally; the checkpoint is a file of the commit)
+        # 2026-10-18: follow the README literally; the checkpoint is a file of the commit),
+        # declared as weights of the repository (DEFINITIONS["scope"])
         "scope": "full_training",
+        "weights": WEIGHTS["name"],
         "run": run_of(candidate_id),
         "seeds": {"base": [0], "base_cap": 1, "base_source": "documented"},
         "attacks": attacks(),
@@ -312,8 +352,9 @@ def comparison_target(position: int, k: int, approvals: dict) -> dict:
     return {
         "key": f"arXiv-{ARXIV}v{VERSION}-C{position}",
         "type": "comparison",
-        "statement": "On UserItemAttr, the explanations of PaGE-Link have a higher ROC-AUC "
-        "against the ground-truth paths than those of PGExp-Link (0.954 against 0.578).",
+        "statement": f"On UserItemAttr, {PREDICTOR}, the explanations of PaGE-Link have a "
+        "higher ROC-AUC against the ground-truth paths than those of PGExp-Link (0.954 "
+        "against 0.578).",
         "source": source(t["location"], "PaGE-Link outperforms both baseline explainers"),
         "inventory": {"candidate_id": cid, "position": position, "transcription": t},
         "dataset": DATASETS["comparison"]["name"],
@@ -331,6 +372,7 @@ def comparison_target(position: int, k: int, approvals: dict) -> dict:
             "reference_run": run_of("T4/UserItemAttr/PGExp-Link"),
         },
         "scope": "full_training",
+        "weights": WEIGHTS["name"],
         "run": run_of("T4/UserItemAttr/PaGE-Link"),
         "seeds": {"base": [0], "base_cap": 1, "base_source": "documented"},
         "attacks": attacks(),
@@ -411,7 +453,7 @@ def main() -> int:
     approvals = {
         "transcription": {
             "approved_by": approval["approved_by"],
-            "approved_utc": approval["approved_utc"],
+            "approved_utc": tt.approved_utc(approval),  # DEFINITIONS, the decision of 10-19
             "approved_commit": approval["approved_commit"],
             "inventory_sha256": inv.inventory_sha256(inventory),
         },
@@ -420,12 +462,12 @@ def main() -> int:
     builders = {
         "T4/UserItemAttr/PaGE-Link": lambda pos: value_target(
             "T4/UserItemAttr/PaGE-Link", pos, 0.954,
-            "On UserItemAttr, the explanations of PaGE-Link reach a ROC-AUC of 0.954 against "
-            "the ground-truth paths.", k, approvals),
+            f"On UserItemAttr, {PREDICTOR}, the explanations of PaGE-Link reach a ROC-AUC of "
+            "0.954 against the ground-truth paths.", k, approvals),
         "T4/UserItemAttr/GNNExp-Link": lambda pos: value_target(
             "T4/UserItemAttr/GNNExp-Link", pos, 0.608,
-            "On UserItemAttr, the explanations of GNNExp-Link reach a ROC-AUC of 0.608 against "
-            "the ground-truth paths.", k, approvals),
+            f"On UserItemAttr, {PREDICTOR}, the explanations of GNNExp-Link reach a ROC-AUC of "
+            "0.608 against the ground-truth paths.", k, approvals),
         "T4/UserItemAttr/PaGE-Link>PGExp-Link": lambda pos: comparison_target(pos, k, approvals),
     }  # fmt: skip
     targets = [builders[cid](i) for i, cid in enumerate(draw.drawn, start=1)]
@@ -436,9 +478,10 @@ def main() -> int:
         "title": "PaGE-Link: Path-based Graph Neural Network Explanation for Heterogeneous "
         "Link Prediction (arXiv 2302.12465v3), the three drawn claims",
         "hypothesis": "The drawn claims of Table 4 (UserItemAttr) reproduce from the "
-        "repository at the pinned commit.",
+        "repository at the pinned commit, with its saved link predictor.",
         "created": READ[:10],
         "authors": ["refute"],
+        "definitions": dict(DEFINITIONS),
         "attachments": attachments,
         "test_plan": plan(seeds.run_seed(claim_seed, ARXIV), a.likes_edges, k),
         "targets": targets,

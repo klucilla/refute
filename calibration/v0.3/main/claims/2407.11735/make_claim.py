@@ -36,6 +36,9 @@ from refute.packs.ml import seeds
 from refute.packs.ml.schema import ENGINE_BASE_IMAGE
 from refute.selection import inventory as inv
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import transcription_time as tt  # noqa: E402 - the shared correction of the approval time
+
 ROOT = Path(__file__).resolve().parents[5]
 ARXIV, VERSION = "2407.11735", 2
 REPO = "https://github.com/walline/prosub"
@@ -373,7 +376,7 @@ def main() -> int:
     approvals = {
         "transcription": {
             "approved_by": approval["approved_by"],
-            "approved_utc": approval["approved_utc"],
+            "approved_utc": tt.approved_utc(approval),  # the definition, the decision of 10-19
             "approved_commit": approval["approved_commit"],
             "inventory_sha256": inv.inventory_sha256(inventory),
         },
@@ -389,6 +392,7 @@ def main() -> int:
         "the repository at the pinned commit.",
         "created": READ[:10],
         "authors": ["refute"],
+        "definitions": {"transcription_approval_time": tt.DEFINITION},
         "attachments": attachments,
         "test_plan": plan(run_seed, a.draft),
         "targets": [
