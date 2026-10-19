@@ -75,6 +75,10 @@ BOUNDED_RATES = ("accuracy", "error_rate", "precision", "recall", "f1", "auroc")
 INVENTORY_ROLE = "claim-inventory"
 DRAW_ROLE = "claim-draw"
 PATCH_ROLE = "allowed-patch"
+# an approved errata of the frozen inventory (wp3-population-count-acceptance.md, section 2)
+ERRATA_ROLE = "inventory-errata"
+ERRATA_FORMAT = "refute-ml-inventory-errata-1"
+ERRATA_FIELDS = ("command",)  # the closed list of fields an errata may change
 _DECIMAL_TEXT = re.compile(r"^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$")
 
 
@@ -1487,6 +1491,73 @@ def _attachment_record(loaded: LoadedClaim, role: str) -> dict[str, Any]:
     return record
 
 
+def _attachment_records(loaded: LoadedClaim, role: str) -> list[dict[str, Any]]:
+    """The JSON records of every attachment with ``role`` (possibly none), each checked
+    like ``_attachment_record``."""
+    out = []
+    for attachment in [a for a in loaded.claim.attachments if a.role == role]:
+        if attachment.sha256 is None or not re.fullmatch(HEX64, attachment.sha256):
+            raise ValueError(f"the '{role}' attachment {attachment.path} needs its sha256")
+        try:
+            data = loaded.attachment_path(attachment).read_bytes()
+        except OSError as exc:
+            raise ValueError(f"cannot read the '{role}' attachment: {exc}") from None
+        if sha256_bytes(data) != attachment.sha256:
+            raise ValueError(f"the '{role}' attachment {attachment.path} differs from its sha256")
+        try:
+            record = json.loads(data.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"the '{role}' attachment is not JSON: {exc}") from None
+        if canonical_bytes(record) != data:
+            raise ValueError(f"the '{role}' attachment must be stored in canonical JSON")
+        out.append(record)
+    return out
+
+
+def errata_corrections(
+    erratas: list[dict[str, Any]], inventory: dict[str, Any], inventory_hash: str
+) -> tuple[dict[str, dict[str, str]], dict[str, list[str]]]:
+    """The approved corrections of the inventory, by candidate: {candidate: {field: new}},
+    and the comparisons each corrected candidate is the reference of (``also_used_by``).
+    Only ``ERRATA_FIELDS`` may change; each entry's ``old`` must be the inventory's; a
+    candidate is corrected once (wp3-population-count-acceptance.md, section 2)."""
+    by_id = {c["candidate_id"]: c for c in inventory["candidates"]}
+    corrections: dict[str, dict[str, str]] = {}
+    uses: dict[str, list[str]] = {}
+    for errata in erratas:
+        if errata.get("format") != ERRATA_FORMAT:
+            raise ValueError(f"an inventory errata has the format {ERRATA_FORMAT}")
+        if (errata.get("inventory") or {}).get("sha256") != inventory_hash:
+            raise ValueError("an inventory errata names another inventory")
+        approval = errata.get("approval") or {}
+        for key in ("approved_by", "approved_utc", "approval_record"):
+            if not isinstance(approval.get(key), str) or not approval[key].strip():
+                raise ValueError(f"an inventory errata needs approval.{key}")
+        if not inv.APPROVAL_URL.fullmatch(approval["approval_record"]):
+            raise ValueError("an errata's approval_record is a GitHub issue or PR comment URL")
+        entries = errata.get("entries")
+        if not isinstance(entries, list) or not entries:
+            raise ValueError("an inventory errata lists at least one entry")
+        for entry in entries:
+            cid, field = entry.get("candidate_id"), entry.get("field")
+            if cid not in by_id:
+                raise ValueError(f"an errata corrects candidate {cid!r}, not in the inventory")
+            if field not in ERRATA_FIELDS:
+                raise ValueError(f"an errata may change only {ERRATA_FIELDS}, not {field!r}")
+            if cid in corrections:
+                raise ValueError(f"candidate {cid} is corrected twice")
+            if by_id[cid]["transcription"].get(field) != entry.get("old"):
+                raise ValueError(f"{cid}: the errata's old {field} is not the inventory's")
+            if not isinstance(entry.get("new"), str) or not entry["new"]:
+                raise ValueError(f"{cid}: the errata's new {field} is empty")
+            corrections[cid] = {field: entry["new"]}
+        for comparison in errata.get("also_used_by") or {}:
+            uses.setdefault(comparison, [])
+            for cid in corrections:
+                uses[comparison].append(cid)
+    return corrections, uses
+
+
 class MlClaimSchema:
     """The ``ClaimSchema`` of the ML pack."""
 
@@ -1528,7 +1599,14 @@ class MlClaimSchema:
         self._check_exempt_minimums(loaded, plan, targets)
         inventory = _attachment_record(loaded, INVENTORY_ROLE)
         draw_record = _attachment_record(loaded, DRAW_ROLE)
-        inventory_hash = self._check_inventory(plan, targets, inventory)
+        try:
+            inventory_hash = inv.inventory_sha256(inventory)
+        except inv.InventoryError as exc:
+            raise ValueError(f"claim inventory: {exc}") from None
+        corrections, uses = errata_corrections(
+            _attachment_records(loaded, ERRATA_ROLE), inventory, inventory_hash
+        )
+        self._check_inventory(plan, targets, inventory, corrections, uses)
         self._check_draw(targets, draw_record, inventory, inventory_hash)
         self._check_transcribed_numbers(loaded, targets)
         resolved = [
@@ -1618,7 +1696,11 @@ class MlClaimSchema:
 
     @staticmethod
     def _check_inventory(
-        plan: MlTestPlan, targets: list[MlTarget], inventory: dict[str, Any]
+        plan: MlTestPlan,
+        targets: list[MlTarget],
+        inventory: dict[str, Any],
+        corrections: dict[str, dict[str, str]] | None = None,
+        uses: dict[str, list[str]] | None = None,
     ) -> str:
         try:
             digest = inv.inventory_sha256(inventory)
@@ -1640,8 +1722,16 @@ class MlClaimSchema:
                 raise ValueError(
                     f"{t.key}: the inventory lists this candidate as {candidate['type']}"
                 )
-            if candidate["transcription"] != t.inventory.transcription.model_dump(mode="json"):
+            # the inventory's transcription, with an approved errata's correction (the
+            # approval and the draw stay bound to the original inventory)
+            expected = {
+                **candidate["transcription"],
+                **(corrections or {}).get(t.inventory.candidate_id, {}),
+            }
+            if expected != t.inventory.transcription.model_dump(mode="json"):
                 raise ValueError(f"{t.key}: the transcription differs from the inventory's")
+            if t.type == "comparison" and isinstance(t.comparison.reference_run, Run):
+                MlClaimSchema._check_reference_command(t, candidate, by_id, corrections, uses)
             text = t.inventory.transcription
             pairs = (
                 (text.location, t.source.location, "location"),
@@ -1661,6 +1751,34 @@ class MlClaimSchema:
             if t.type == "comparison" and candidate.get("method") != t.comparison.method:
                 raise ValueError(f"{t.key}: the inventory names another method")
         return digest
+
+    @staticmethod
+    def _check_reference_command(
+        t: MlTarget,
+        candidate: dict[str, Any],
+        by_id: dict[str, dict[str, Any]],
+        corrections: dict[str, dict[str, str]] | None,
+        uses: dict[str, list[str]] | None,
+    ) -> None:
+        """A comparison whose reference method is a candidate an errata corrects runs the
+        reference with the corrected command: the value candidate of the same table and row
+        named by the reference, listed in the errata's ``also_used_by`` for this comparison
+        (wp3-population-count-acceptance.md, section 2)."""
+        prefix = candidate["candidate_id"].rsplit("/", 1)[0]
+        reference_id = f"{prefix}/{candidate.get('reference')}"
+        fix = (corrections or {}).get(reference_id)
+        if fix is None or "command" not in fix:
+            return
+        if reference_id not in (uses or {}).get(candidate["candidate_id"], []):
+            raise ValueError(f"{t.key}: the errata of {reference_id} does not list this comparison")
+        run = t.comparison.reference_run
+        argv = list(run.argv) + ([run.seed_argument] if run.seed_argument else [])
+        if json.loads(fix["command"]) != argv:
+            raise ValueError(
+                f"{t.key}: the reference run's command is not the errata's corrected command"
+            )
+        if reference_id not in by_id:
+            raise ValueError(f"{t.key}: {reference_id} is not in the inventory")
 
     @staticmethod
     def _check_draw(

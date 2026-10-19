@@ -2094,3 +2094,134 @@ def test_the_base_image_is_the_engines_pinned_image():
             Build.model_validate({**good, "base_image": other})
     with pytest.raises(ValueError):
         Build.model_validate(good)
+
+
+# ---- an errata of the inventory (wp3-population-count-acceptance.md, section 2) ---------------
+
+NEW_C1 = '["python", "train2.py", "--seed={seed}"]'
+
+
+def errata(**changes):
+    record = {
+        "format": "refute-ml-inventory-errata-1",
+        "inventory": {"file": "inventory.json", "sha256": inv.inventory_sha256(inventory())},
+        "entries": [
+            {
+                "candidate_id": "c1",
+                "field": "command",
+                "old": TRANSCRIPTIONS["c1"]["command"],
+                "new": NEW_C1,
+            }
+        ],
+        "approval": {
+            "approved_by": "maintainer",
+            "approved_utc": "2026-10-18T23:58:29Z",
+            "approval_record": "https://github.com/o/r/issues/158#issuecomment-1",
+        },
+    }
+    record.update(changes)
+    return record
+
+
+def with_errata(tmp_path, record, corrected=True):
+    data = canonical_bytes(record)
+    (tmp_path / "errata.json").write_bytes(data)
+
+    def mutate(claim):
+        claim["attachments"].append(
+            {"path": "errata.json", "role": "inventory-errata", "sha256": sha256_bytes(data)}
+        )
+        if corrected:
+            c1 = target(claim, "c1")
+            c1["inventory"]["transcription"]["command"] = NEW_C1
+            c1["run"]["argv"] = ["python", "train2.py"]
+
+    return mutate
+
+
+def test_an_approved_errata_corrects_the_transcribed_command(tmp_path):
+    loaded = load(tmp_path, with_errata(tmp_path, errata()))
+    c1 = target(loaded.claim.model_dump(), "c1")
+    assert c1["run"]["argv"] == ["python", "train2.py"]
+
+
+def test_the_old_command_is_refused_when_an_errata_is_attached(tmp_path):
+    with pytest.raises(ClaimError, match="transcription differs"):
+        load(tmp_path, with_errata(tmp_path, errata(), corrected=False))
+
+
+@pytest.mark.parametrize(
+    ("changes", "match"),
+    [
+        ({"inventory": {"file": "x", "sha256": "0" * 64}}, "another inventory"),
+        ({"format": "x"}, "format"),
+        ({"approval": {}}, "approval"),
+        ({"entries": []}, "at least one entry"),
+        (
+            {"entries": [{"candidate_id": "c9", "field": "command", "old": "", "new": "x"}]},
+            "not in the inventory",
+        ),
+        (
+            {"entries": [{"candidate_id": "c1", "field": "value", "old": "x", "new": "y"}]},
+            "only",
+        ),
+        (
+            {"entries": [{"candidate_id": "c1", "field": "command", "old": "x", "new": NEW_C1}]},
+            "old command is not the inventory",
+        ),
+    ],
+)
+def test_an_invalid_errata_is_refused(tmp_path, changes, match):
+    with pytest.raises(ClaimError, match=match):
+        load(tmp_path, with_errata(tmp_path, errata(**changes)))
+
+
+def test_a_candidate_corrected_twice_is_refused():
+    from refute.packs.ml.schema import errata_corrections
+
+    record = errata()
+    twice = [record, errata()]
+    with pytest.raises(ValueError, match="corrected twice"):
+        errata_corrections(twice, inventory(), inv.inventory_sha256(inventory()))
+
+
+def test_a_comparisons_reference_run_must_use_the_corrected_command():
+    """The reference of a comparison is the value candidate of the same table and row named
+    by the reference; the errata lists the comparison in also_used_by."""
+    from types import SimpleNamespace
+
+    from refute.packs.ml.schema import MlClaimSchema as S
+    from refute.packs.ml.schema import Run
+
+    new = '["sh", "-c", "baseline --fixed"]'
+    comparison = {"candidate_id": "T4/Row/A>B", "reference": "B"}
+    by_id = {"T4/Row/B": {"candidate_id": "T4/Row/B"}, "T4/Row/A>B": comparison}
+    corrections = {"T4/Row/B": {"command": new}}
+    uses = {"T4/Row/A>B": ["T4/Row/B"]}
+
+    def claim_with(argv):
+        run = Run.model_validate(
+            {
+                "argv": argv,
+                "workdir": ".",
+                "seed_argument": None,
+                "metric_extraction": {
+                    "from": "log",
+                    "regex": {"pattern": "v=(\\S+)", "group": 1},
+                    "unit": "fraction",
+                },
+            }
+        )
+        return SimpleNamespace(key="k", comparison=SimpleNamespace(reference_run=run))
+
+    S._check_reference_command(
+        claim_with(["sh", "-c", "baseline --fixed"]), comparison, by_id, corrections, uses
+    )
+    with pytest.raises(ValueError, match="not the errata's corrected command"):
+        S._check_reference_command(
+            claim_with(["sh", "-c", "baseline"]), comparison, by_id, corrections, uses
+        )
+    with pytest.raises(ValueError, match="does not list this comparison"):
+        S._check_reference_command(
+            claim_with(["sh", "-c", "baseline --fixed"]), comparison, by_id, corrections, {}
+        )
