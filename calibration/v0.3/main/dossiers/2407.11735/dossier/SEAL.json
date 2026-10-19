@@ -1,0 +1,30 @@
+{
+  "algorithm": "refute-seal-1",
+  "core_sha256": "dc84b305a59e2a3ea8ede04d0702412ed565f834ef616fdd2c20c896e43fb9cb",
+  "files": [
+    {
+      "path": "MANIFEST.sha256",
+      "sha256": "d1d8243102d7bb1fdc049a6d8e438a3e532125f49e61a6613114551f50f59d0b"
+    },
+    {
+      "path": "claim_file.json",
+      "sha256": "dcea7ed105a99f336a124db706d1683d058b12fb8b1a2979bc838ede9a25a34f"
+    },
+    {
+      "path": "claim_input.json",
+      "sha256": "dcea7ed105a99f336a124db706d1683d058b12fb8b1a2979bc838ede9a25a34f"
+    },
+    {
+      "path": "dossier.json",
+      "sha256": "a2b3252c63fe7eb5331cb8c74bda6c1efca0a2954de4f907d4c9d0742607a023"
+    },
+    {
+      "path": "logs/setup_build_own_environment.log",
+      "sha256": "9776dc013564925ed35e9d1b576375b0695ae6c5279851702eaab96a5f997a7b"
+    },
+    {
+      "path": "profiles/build.json",
+      "sha256": "bb82f461b55df4c40ad3b4363759e3acad035986064626e0d62ac70171406366"
+    }
+  ]
+}

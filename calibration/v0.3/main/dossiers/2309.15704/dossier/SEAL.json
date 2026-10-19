@@ -1,0 +1,70 @@
+{
+  "algorithm": "refute-seal-1",
+  "core_sha256": "314ec1920c6fb593c4ecdb6b8582b891e0436d5fb522af265f7845b2541e7d3f",
+  "files": [
+    {
+      "path": "MANIFEST.sha256",
+      "sha256": "3215fb9316d211717e672c731bfe3a655c9f3f7c719a43d831df8ada2e30fb4e"
+    },
+    {
+      "path": "claim_file.json",
+      "sha256": "598543893374b9c4742d44f25bbaf7fa89cbc3f2faf7f4e857c2359a91b34957"
+    },
+    {
+      "path": "claim_input.json",
+      "sha256": "598543893374b9c4742d44f25bbaf7fa89cbc3f2faf7f4e857c2359a91b34957"
+    },
+    {
+      "path": "dossier.json",
+      "sha256": "1ab56f999fadc7d82682246392e729a7b0590688cfd76d747d48440220b90aab"
+    },
+    {
+      "path": "logs/arXiv-2309.15704v2-C1_base_method_s-.log",
+      "sha256": "ee46f486a3af62f8a256bd53895968393b61d92d35872f1a543ad21f58f897d2"
+    },
+    {
+      "path": "logs/arXiv-2309.15704v2-C2_base_method_s-.log",
+      "sha256": "a5ed26011f0cb86916f2d139ea8e198a203b4339f9ec34b4a4b3ac159995306d"
+    },
+    {
+      "path": "logs/arXiv-2309.15704v2-C3_base_method_s-.log",
+      "sha256": "f747ba18ad9b849c2c200dd1ea3d9a9f442c59c233a1d46327b28f57598ac026"
+    },
+    {
+      "path": "logs/setup_build_requirements_compiled.log",
+      "sha256": "ac7d39eb0fff5983c65c39cebc5cc56c38fc7a725815ed7c257dfcc7ae20641f"
+    },
+    {
+      "path": "logs/setup_data_UCI_concrete.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/setup_data_UCI_energy__downloaded_by_uci_datasets.py_from_archive.ics.uci.edu__CC_BY_4.0_.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/setup_data_UCI_power.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "profiles/build.json",
+      "sha256": "d99c1a1c29ba416240225a66dc7ebc4b86cfa76e559ccd4b4e4631ab7a56cdfc"
+    },
+    {
+      "path": "profiles/run.json",
+      "sha256": "a57c759ec02645e03b23798057bb5540f9e124778366c49c828620dc0d66c212"
+    },
+    {
+      "path": "pyvenv.cfg",
+      "sha256": "6195a31fae13fbc7e50c4d7cc5802920effa2aa5aaa95647ae5d3f1f3d7d316d"
+    },
+    {
+      "path": "requirements.lock",
+      "sha256": "96e67809e2bdbeb1d74d14e3840b7ef7f5f47077dc03783d209bd7b2d43a13c9"
+    },
+    {
+      "path": "sources/3332505bcada7f17281d5aa0a2f9703b483258806384ce204e4bddf982290317",
+      "sha256": "3332505bcada7f17281d5aa0a2f9703b483258806384ce204e4bddf982290317"
+    }
+  ]
+}
