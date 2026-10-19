@@ -258,7 +258,10 @@ def build_script(rung: ld.Rung, repo: Path, exclude_newer: str) -> list[str]:
         f"uv venv --python {rung.python} {VENV}; "
         f"uv pip compile --python {VENV}/bin/python --exclude-newer {exclude_newer} "
         f"/work/{req} -o /work/.refute/requirements.lock; "
-        f"uv pip install --python {VENV}/bin/python -r /work/.refute/requirements.lock"
+        f"uv pip install --python {VENV}/bin/python -r /work/.refute/requirements.lock; "
+        # the interpreter's identity (implementation, full version, uv): the environment
+        # a count before the lock is bound to (wp3-population-count-acceptance.md, 1)
+        f"cp {VENV}/pyvenv.cfg /work/.refute/pyvenv.cfg"
     )  # fmt: skip
     return ["sh", "-c", script]
 
@@ -737,6 +740,66 @@ def prepare_inputs(
     return repo, datasets
 
 
+# ---- a population counted before the lock (W3.12f) ------------------------------------------
+
+
+def counted_records(
+    claim_file: Mapping[str, Any], record_bytes: Mapping[str, bytes]
+) -> list[dict[str, Any]]:
+    """The records of the claim's populations counted before the lock, each given once
+    (``--count-record attachment=file``) and equal to its attachment's sha256
+    (wp3-population-count-acceptance.md, section 1)."""
+    by_path = {a["path"]: a for a in claim_file.get("attachments") or []}
+    wanted = [
+        split["counted_before_lock"]["record"]
+        for d in claim_file["test_plan"]["datasets"]
+        for split in (d.get("derived_splits") or {}).values()
+        if split.get("counted_before_lock")
+    ]
+    if sorted(record_bytes) != sorted(wanted):
+        raise ProductionError(f"the count records given {sorted(record_bytes)} are not {wanted}")
+    records = []
+    for path in wanted:
+        data = record_bytes[path]
+        if path not in by_path or hashlib.sha256(data).hexdigest() != by_path[path].get("sha256"):
+            raise ProductionError(f"the count record {path} differs from its attachment")
+        records.append(json.loads(data.decode("utf-8")))
+    return records
+
+
+def _file_sha256(path: Path) -> str | None:
+    if path.is_symlink() or not path.is_file():
+        return None
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def check_counted_environment(setup: PaperSetup, records: Sequence[Mapping[str, Any]]) -> None:
+    """After the build and before the first base run, each count's environment must be this
+    run's: the rung the record names built the image (its resolved lock and its venv's
+    ``pyvenv.cfg``, the interpreter's identity, have the record's sha256, and no later rung
+    ran), and the configuration files the selection reads have the record's sha256 in the
+    patched tree. Otherwise the count does not apply: a Refute error, the paper stops before
+    its runs, never an adjusted K (wp3-population-count-acceptance.md, section 1)."""
+    ws = setup.root / "ws"
+    for record in records:
+        where = f"the count of {record.get('dataset')}/{record.get('split')}"
+        env = record.get("environment") or {}
+        rung = env.get("rung")
+        if rung not in ld.RUNGS[1:]:
+            raise ProductionError(f"{where}: the rung {rung!r} is not a rung with a resolved lock")
+        built = ws / _safe(f"setup/build/{rung}") / ".refute"
+        for name, key in (("requirements.lock", "lock_sha256"), ("pyvenv.cfg", "pyvenv_sha256")):
+            if _file_sha256(built / name) != env.get(key):
+                raise ProductionError(f"{where} does not apply: {name} of {rung} differs")
+        for later in ld.RUNGS[ld.RUNGS.index(rung) + 1 :]:
+            if (ws / _safe(f"setup/build/{later}") / ".refute" / "requirements.lock").exists():
+                raise ProductionError(f"{where} does not apply: the rung {later} ran after {rung}")
+        for item in record.get("configuration") or []:
+            path = setup.repo / PurePosixPath(item["path"])
+            if not _inside(setup.repo, path) or _file_sha256(path) != item.get("sha256"):
+                raise ProductionError(f"{where} does not apply: {item['path']} differs")
+
+
 # ---- the paper's slice and the run phase ----------------------------------------------------
 
 
@@ -791,6 +854,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--patch", action="append", default=[], help="attachment=file of an allowed patch"
     )
+    parser.add_argument(
+        "--count-record", action="append", default=[],
+        help="attachment=file of a population counted before the lock",
+    )  # fmt: skip
     args = parser.parse_args(argv)
     claim_file = json.loads(args.claim.read_text(encoding="utf-8"))
     refuse_hook_routes(claim_file)
@@ -800,6 +867,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         if name in patch_bytes or not path:
             raise ProductionError(f"--patch {item!r}: attachment=file, each attachment once")
         patch_bytes[name] = Path(path).read_bytes()
+    count_bytes = {}
+    for item in args.count_record:
+        name, _, path = item.partition("=")
+        if name in count_bytes or not path:
+            raise ProductionError(f"--count-record {item!r}: attachment=file, each once")
+        count_bytes[name] = Path(path).read_bytes()
+    records = counted_records(claim_file, count_bytes)
     if shutil.disk_usage(Path.home()).free < args.min_free_gb * 1e9:
         print(f"refused: less than {args.min_free_gb:g} GB free on the VM", flush=True)
         return 2
@@ -820,7 +894,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         micromamba_image=args.micromamba_image,
         patch_record=patch_record,
     )
-    hook = wait_for_run_phase(args.run_phase_flag) if args.run_phase_flag else None
+    wait = wait_for_run_phase(args.run_phase_flag) if args.run_phase_flag else None
+
+    def hook() -> None:
+        # the count's environment first: a mismatch stops the paper before its runs
+        check_counted_environment(setup, records)
+        if wait is not None:
+            wait()
+
     images = {
         "micromamba": args.micromamba_image,
         "base": claim_file["test_plan"]["build"]["base_image"],
@@ -836,7 +917,9 @@ __all__: Sequence[str] = (
     "ProductionError",
     "build_harness",
     "build_script",
+    "check_counted_environment",
     "classify_build",
+    "counted_records",
     "ladder_inputs",
     "margin_usec",
     "prepare_inputs",

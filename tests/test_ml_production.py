@@ -75,6 +75,7 @@ def test_build_scripts(tmp_path):
     script = pd.build_script(req, r, "2024-01-01")[2]
     assert "--exclude-newer 2024-01-01" in script and "uv venv --python 3.10 /opt/venv" in script
     assert f"uv=={pd.UV_VERSION}" in script
+    assert script.endswith("cp /opt/venv/pyvenv.cfg /work/.refute/pyvenv.cfg")
 
 
 def test_a_dockerfile_only_is_not_built_by_version_1(tmp_path):
@@ -255,3 +256,99 @@ def test_dossier_record(tmp_path):
     assert (out / "logs" / "a.log").exists() and (out / "claim_file.json").exists()
     with pytest.raises(FileExistsError):
         pd.write_dossier(tmp_path / "dossier", setup, {}, Outcome(), {}, "t")
+
+
+# ---- a population counted before the lock (wp3-population-count-acceptance.md, section 1) -----
+
+
+def _count_claim(record_sha):
+    return {
+        "attachments": [{"path": "count.json", "role": "population-count-record",
+                         "sha256": record_sha}],
+        "test_plan": {"datasets": [{"name": "d", "derived_splits": {"selected": {
+            "counted_before_lock": {"script": "count.py", "record": "count.json"}}}}]},
+    }  # fmt: skip
+
+
+def test_the_count_records_are_given_once_and_equal_their_attachment():
+    import hashlib
+
+    data = b'{"count":7}'
+    claim = _count_claim(hashlib.sha256(data).hexdigest())
+    assert pd.counted_records(claim, {"count.json": data}) == [{"count": 7}]
+    with pytest.raises(pd.ProductionError, match="are not"):
+        pd.counted_records(claim, {})
+    with pytest.raises(pd.ProductionError, match="differs from its attachment"):
+        pd.counted_records(claim, {"count.json": b'{"count":8}'})
+    assert pd.counted_records({"test_plan": {"datasets": [{"name": "d"}]}}, {}) == []
+
+
+def _built(tmp_path, rung, lock=b"lock", pyvenv=b"pyvenv"):
+    folder = tmp_path / "run" / "ws" / f"setup_build_{rung}" / ".refute"
+    folder.mkdir(parents=True)
+    (folder / "requirements.lock").write_bytes(lock)
+    (folder / "pyvenv.cfg").write_bytes(pyvenv)
+
+
+def _count_setup(tmp_path):
+    patched = tmp_path / "patched"
+    (patched / "conf").mkdir(parents=True)
+    (patched / "conf" / "c.yaml").write_bytes(b"conf")
+    return pd.PaperSetup(
+        paper="p", root=tmp_path / "run", repo=patched, datasets={}, data_layout={},
+        limits=LIMITS, timing=TIMING,
+    )  # fmt: skip
+
+
+def _env_record(**env):
+    import hashlib
+
+    def h(b):
+        return hashlib.sha256(b).hexdigest()
+
+    environment = {"rung": "requirements_compiled", "lock_sha256": h(b"lock"),
+                   "pyvenv_sha256": h(b"pyvenv")}  # fmt: skip
+    environment.update(env)
+    return {
+        "dataset": "d", "split": "selected", "environment": environment,
+        "configuration": [{"path": "conf/c.yaml", "sha256": h(b"conf")}],
+    }  # fmt: skip
+
+
+def test_the_counts_environment_is_the_runs(tmp_path):
+    setup = _count_setup(tmp_path)
+    _built(tmp_path, "requirements_compiled")
+    pd.check_counted_environment(setup, [_env_record()])
+    pd.check_counted_environment(setup, [])
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        ({"lock_sha256": "0" * 64}, "requirements.lock"),
+        ({"pyvenv_sha256": "0" * 64}, "pyvenv.cfg"),  # same lock, another interpreter
+        ({"rung": "own_environment"}, "not a rung"),
+        ({"rung": "requirements_compiled_next_python"}, "requirements.lock"),
+    ],
+)
+def test_another_environment_than_the_counts_stops_the_paper(tmp_path, change, match):
+    setup = _count_setup(tmp_path)
+    _built(tmp_path, "requirements_compiled")
+    with pytest.raises(pd.ProductionError, match=match):
+        pd.check_counted_environment(setup, [_env_record(**change)])
+
+
+def test_a_later_rung_that_ran_stops_the_paper(tmp_path):
+    setup = _count_setup(tmp_path)
+    _built(tmp_path, "requirements_compiled")
+    _built(tmp_path, "requirements_compiled_next_python", lock=b"other")
+    with pytest.raises(pd.ProductionError, match="ran after"):
+        pd.check_counted_environment(setup, [_env_record()])
+
+
+def test_another_configuration_than_the_counts_stops_the_paper(tmp_path):
+    setup = _count_setup(tmp_path)
+    _built(tmp_path, "requirements_compiled")
+    (setup.repo / "conf" / "c.yaml").write_bytes(b"changed")
+    with pytest.raises(pd.ProductionError, match="c.yaml differs"):
+        pd.check_counted_environment(setup, [_env_record()])

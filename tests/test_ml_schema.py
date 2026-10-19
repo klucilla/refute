@@ -2242,7 +2242,12 @@ def count_record(**changes):
         "commit": COMMIT,
         "patches": [],
         "configuration": [],
-        "environment": {"base_image": ENGINE_BASE_IMAGE, "lock_sha256": "e" * 64},
+        "environment": {
+            "base_image": ENGINE_BASE_IMAGE,
+            "rung": "requirements_compiled",
+            "lock_sha256": "e" * 64,
+            "pyvenv_sha256": "f" * 64,
+        },
         "exit_code": 0,
     }
     record.update(changes)
@@ -2299,6 +2304,34 @@ def test_a_population_counted_before_the_lock_is_bound_to_its_record(tmp_path):
             "base image",
         ),
         ({"environment": {"base_image": ENGINE_BASE_IMAGE}}, "resolved lock"),
+        (
+            {
+                "environment": {
+                    "base_image": ENGINE_BASE_IMAGE,
+                    "rung": "requirements_compiled",
+                    "lock_sha256": "e" * 64,
+                }
+            },
+            "pyvenv.cfg",
+        ),
+        (
+            {
+                "environment": {
+                    "base_image": ENGINE_BASE_IMAGE,
+                    "rung": "own_environment",
+                    "lock_sha256": "e" * 64,
+                    "pyvenv_sha256": "f" * 64,
+                }
+            },
+            "rung",
+        ),
+        ({"configuration": [{"path": "../c.yaml", "sha256": "a" * 64}]}, "configuration"),
+        ({"configuration": [{"path": "c.yaml", "sha256": "x"}]}, "configuration"),
+        (
+            {"configuration": [{"path": "c.yaml", "sha256": "a" * 64}] * 2},
+            "configuration",
+        ),
+        ({"configuration": None}, "configuration"),
         ({"exit_code": 1}, "exit code"),
         ({"dataset": "other"}, "dataset"),
         ({"split": "test"}, "split"),
@@ -2327,3 +2360,15 @@ def test_a_derived_split_without_a_count_keeps_its_canonical_form():
         }
     )
     assert "counted_before_lock" not in split.model_dump(mode="json")
+
+
+def test_the_counted_rungs_are_the_ladders_rungs_with_a_resolved_lock():
+    from refute.packs.ml import ladder
+    from refute.packs.ml.schema import COUNTED_RUNGS
+
+    assert COUNTED_RUNGS == ladder.RUNGS[1:]
+
+
+def test_a_count_record_with_configuration_files_is_accepted(tmp_path):
+    record = count_record(configuration=[{"path": "conf/c.yaml", "sha256": "a" * 64}])
+    load(tmp_path, with_count(tmp_path, record))

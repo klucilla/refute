@@ -83,6 +83,8 @@ ERRATA_FIELDS = ("command",)  # the closed list of fields an errata may change
 POPULATION_SCRIPT_ROLE = "population-count"
 POPULATION_RECORD_ROLE = "population-count-record"
 POPULATION_RECORD_FORMAT = "refute-ml-population-count-1"
+# the ladder's rungs that write a resolved lock (ladder.RUNGS[1:])
+COUNTED_RUNGS = ("requirements_compiled", "requirements_compiled_next_python")
 _DECIMAL_TEXT = re.compile(r"^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$")
 
 
@@ -1517,6 +1519,27 @@ def _attachment_record(loaded: LoadedClaim, role: str) -> dict[str, Any]:
     return record
 
 
+def _configuration_ok(items: Any) -> bool:
+    """A count record's configuration: a list of {path, sha256}, each path relative, without
+    '..', listed once (the files the selection reads, checked again in the run's tree)."""
+    if not isinstance(items, list):
+        return False
+    seen = set()
+    for item in items:
+        if not isinstance(item, dict) or set(item) != {"path", "sha256"}:
+            return False
+        path, digest = item["path"], item["sha256"]
+        if not isinstance(path, str) or not isinstance(digest, str) or path in seen:
+            return False
+        posix = PurePosixPath(path)
+        if posix.is_absolute() or ".." in posix.parts or "\\" in path or not posix.parts:
+            return False
+        if not re.fullmatch(HEX64, digest):
+            return False
+        seen.add(path)
+    return True
+
+
 def _record_at(loaded: LoadedClaim, attachment: Any) -> dict[str, Any]:
     """The canonical JSON record of one attachment, checked against its sha256."""
     if attachment.sha256 is None or not re.fullmatch(HEX64, attachment.sha256):
@@ -1795,6 +1818,17 @@ class MlClaimSchema:
                             "lock_sha256", ""))) is not None,
                         "resolved lock's sha256",
                     ),
+                    (
+                        re.fullmatch(HEX64, str((record.get("environment") or {}).get(
+                            "pyvenv_sha256", ""))) is not None,
+                        "interpreter's pyvenv.cfg sha256",
+                    ),
+                    (
+                        (record.get("environment") or {}).get("rung")
+                        in COUNTED_RUNGS,
+                        "rung (one with a resolved lock)",
+                    ),
+                    (_configuration_ok(record.get("configuration")), "configuration"),
                     (record.get("exit_code") == 0, "exit code 0"),
                 )  # fmt: skip
                 for ok, what in checks:
