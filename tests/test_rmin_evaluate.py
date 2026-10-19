@@ -175,6 +175,12 @@ def test_the_outcome_aggregates_and_reads_the_last_year_from_the_metadata(ev):
     assert out["first_eligible"]["hidden_year"] == 2018
 
 
+def test_a_missing_last_year_round_is_not_taken_from_the_records(ev):
+    t = target(0, years=(2018, 2020), rounds=[rnd(2018)])
+    out = ev.target_outcomes(t, 8, 0.0, 0.0, MIN_SNR)
+    assert out["last_year"] == 2020 and out["last_round"] is None
+
+
 def _constant_group(n, n_fail, group=GROUPS[0]):
     out = []
     for i in range(n):

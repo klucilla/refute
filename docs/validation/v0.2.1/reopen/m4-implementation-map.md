@@ -708,6 +708,17 @@ incomplete lot goes to the maintainer), 4 (an empty set of a `k` stops the study
 twin depth makes criterion 3 not evaluable) are readings of the approved text where it lacks a
 rule.
 
+**Implemented.** The twin's status in the record (`096a6ca`, item 8). The evaluator: tests
+`be3a604` (`tests/test_rmin_evaluate.py`, on built records), then
+`docs/validation/v0.2.1/population/rmin_evaluate.py`. The tie of item 4 is read on the unscaled
+MADs (the factor 1.4826 is positive and cancels, so the rule is the same and its edge exact). One
+case was added before the sabotages (a missing last-year round is not replaced by the records'
+largest year). Sabotages SE1 (the tie strict), SE2 (an empty set falls back to the other `k`), SE3
+(`R` met without the hidden noise), SE4 (the coverage on the available twins), SE5 (the last year
+from the records), SE6 (the power denominators intersected with the eligibility), SE7 (the
+weakening filter strict) and SE8 (a duplicated round accepted): all caught. JUnit: 15 tests, 0
+failures.
+
 ## Amendment 26 (2026-10-19): the implementation of the `R_min` study's prerequisites, and its timing lot (declared before any lot)
 
 Amendment 19's design is approved and is not reopened. This amendment fixes the implementation
