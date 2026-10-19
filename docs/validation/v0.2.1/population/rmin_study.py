@@ -511,16 +511,26 @@ def _spawn_pool(workers: int):
     return ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context("spawn"))
 
 
-def run_lot(lot: str, run_dir: Path, workers: int = TIMING_WORKERS, executor=None) -> dict:
+def run_lot(
+    lot: str,
+    run_dir: Path,
+    workers: int = TIMING_WORKERS,
+    executor=None,
+    deadline_hours: float | None = None,
+    clock=None,
+) -> dict:
     """Generate and record a lot (bs-choice, or the study) on 6 spawned workers on logical
     processors 0 to 7 (Amendment 27, 3). The manifest is written first; targets whose records all
     exist are not run again (a record is never replaced); a failed target is reported, never
     retried here; the run ends with the lot's integrity check and a dated run report (never
     replaced). Resuming an interrupted lot is a rerun: its approval is recorded first
-    (CLAUDE.md)."""
+    (CLAUDE.md). ``deadline_hours``: the study's own ceiling left (the maintainer's decision
+    of 2026-10-19); no target is submitted once the run's elapsed time reaches it, those in
+    flight end, and the lot is then incomplete."""
     import json
     import os
-    from concurrent.futures import as_completed
+    import time
+    from concurrent.futures import FIRST_COMPLETED, wait
     from datetime import UTC, datetime
 
     if v3.STATE["problem"] is not None:
@@ -555,26 +565,42 @@ def run_lot(lot: str, run_dir: Path, workers: int = TIMING_WORKERS, executor=Non
     failures = []
     dispatch_error = None
     submitted: list[str] = []
+    clock = time.monotonic if clock is None else clock
+    t0 = clock()
+    deadline_reached = False
+    in_flight_max = 4 * workers
+
+    def collect(done) -> None:
+        for fut in done:
+            prefix, case = futures.pop(fut)[:2]
+            try:
+                records = fut.result()
+            except Exception as exc:  # noqa: BLE001 - every failure is reported, none retried
+                failures.append({"target": f"{prefix}/{case['id']}", "error": repr(exc)})
+                continue
+            for rec in records:
+                if not record_path(run_dir, rec["target"], rec["scenario"]).exists():
+                    write_record(run_dir, rec)
+
+    futures: dict = {}
     try:
         pool = _spawn_pool(workers) if executor is None else executor
         with pool:
-            futures = {}
             try:
                 for task in todo:
+                    if deadline_hours is not None and clock() - t0 >= deadline_hours * 3600.0:
+                        deadline_reached = True
+                        break
+                    while len(futures) >= in_flight_max:
+                        done, _ = wait(futures, return_when=FIRST_COMPLETED)
+                        collect(done)
                     futures[pool.submit(_record_task, task)] = task
                     submitted.append(f"{task[0]}/{task[1]['id']}")
             except Exception as exc:  # noqa: BLE001 - the dispatch stops, reported, not retried
                 dispatch_error = f"submission: {exc!r}"
-            for fut in as_completed(futures):
-                prefix, case = futures[fut][0], futures[fut][1]
-                try:
-                    records = fut.result()
-                except Exception as exc:  # noqa: BLE001 - every failure is reported, none retried
-                    failures.append({"target": f"{prefix}/{case['id']}", "error": repr(exc)})
-                    continue
-                for rec in records:
-                    if not record_path(run_dir, rec["target"], rec["scenario"]).exists():
-                        write_record(run_dir, rec)
+            while futures:
+                done, _ = wait(futures, return_when=FIRST_COMPLETED)
+                collect(done)
     except Exception as exc:  # noqa: BLE001 - the pool itself failed: reported, not retried
         dispatch_error = (dispatch_error or "") + f" pool: {exc!r}"
     integrity = lot_problems(run_dir, lot, configuration)
@@ -586,9 +612,14 @@ def run_lot(lot: str, run_dir: Path, workers: int = TIMING_WORKERS, executor=Non
         "submitted": len(submitted),
         "not_submitted": [f"{t[0]}/{t[1]['id']}" for t in todo][len(submitted) :],
         "dispatch_error": dispatch_error,
+        "deadline_hours": deadline_hours,
+        "deadline_reached": deadline_reached,
+        "elapsed_hours": (clock() - t0) / 3600.0,
         "failures": failures,
         "integrity_problems": integrity,
-        "complete": dispatch_error is None and not failures and not integrity,
+        "complete": (
+            dispatch_error is None and not deadline_reached and not failures and not integrity
+        ),
     }
     with open(run_dir / f"run-report-{started}.json", "x", encoding="utf-8", newline="\n") as fh:
         fh.write(json.dumps(report, indent=1) + "\n")
@@ -745,6 +776,7 @@ if __name__ == "__main__":
     lo.add_argument("--lot", choices=("bs-choice", "study"), required=True)
     lo.add_argument("--run", required=True)
     lo.add_argument("--workers", type=int, default=6)
+    lo.add_argument("--deadline-hours", type=float, help="the study's own ceiling left")
     eb = sub.add_parser("evaluate-bs-choice", help="k and the pairs from bs-choice")
     eb.add_argument("--run", required=True)
     eb.add_argument("--out", required=True)
@@ -757,7 +789,7 @@ if __name__ == "__main__":
     if args.mode == "timing":
         run_timing_lot(Path(args.out), args.workers)
     elif args.mode == "lot":
-        print(run_lot(args.lot, Path(args.run), args.workers))
+        print(run_lot(args.lot, Path(args.run), args.workers, deadline_hours=args.deadline_hours))
     else:
         import json
 

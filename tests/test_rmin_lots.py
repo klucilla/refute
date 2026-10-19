@@ -282,6 +282,26 @@ def test_a_broken_pool_ends_with_a_report(study, monkeypatch):
     assert len(list((run / "records").rglob("*.json"))) == 1
 
 
+def test_the_ceiling_stops_the_submissions(study, monkeypatch):
+    """The study's own ceiling (the maintainer's decision of 2026-10-19, map Amendment 27): the run
+    stops submitting targets when its elapsed time reaches the deadline; those in flight end; the
+    lot is incomplete and the report says why."""
+    _lot_env(study, monkeypatch)
+    ticks = iter(range(10_000))
+    clock = lambda: float(next(ticks)) * 3600.0  # noqa: E731 - one hour per reading
+    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    report = study.run_lot(
+        "bs-choice", run, executor=study._InlineExecutor(), deadline_hours=5.0, clock=clock
+    )
+    assert report["complete"] is False and report["deadline_reached"] is True
+    assert 0 < report["submitted"] < 100
+    assert len(report["not_submitted"]) == 100 - report["submitted"]
+    assert report["deadline_hours"] == 5.0
+    run2 = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    report = study.run_lot("bs-choice", run2, executor=study._InlineExecutor(), deadline_hours=1e6)
+    assert report["complete"] is True and report["deadline_reached"] is False
+
+
 def test_a_foreign_lot_or_configuration_is_not_evaluated(study):
     records = [_rec(i, 10.0, 10.0, 10.0) for i in range(3)]
     run = _built_run(study, "bs-choice", records)
