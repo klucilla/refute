@@ -630,6 +630,98 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 26 (2026-10-19): the implementation of the `R_min` study's prerequisites, and its timing lot (declared before any lot)
+
+Amendment 19's design is approved and is not reopened. This amendment fixes the implementation
+choices its text leaves open, after a Codex consultation (read only,
+`.cache/v021/codex/rmin-impl/`, two rounds: its objections were accepted and it found the result
+defined enough to implement). Two of them are **readings of the approved text**, recorded as
+readings and brought to the maintainer with the cost package for decision; nothing below generates
+a lot of the study or of `refute-v0.2.1-bs-choice`.
+
+1. **The lots, read per group** (a reading, for the maintainer). Each prefix
+   `refute-v0.2.1-rmin-study-<k>` gives, per noise model, the 500 planets of the bands near and
+   measurable: 400 without variability (`two_years`, `three_years`, `few_train`) and 100 with
+   (`variability_some_years`). "Taken whole and in order of `k` until each group has its declared
+   size" is read **per group**: for each of the four groups, that group's cases of each prefix,
+   whole and in order of `k`, until the group reaches its size; the cases of a group already full
+   are neither generated nor evaluated (a case's seed depends only on its prefix, class, band, noise
+   and index, so a subset changes no case). Whole blocks give a **realized size of 6400 per group**
+   (16 prefixes × 400; 64 × 100), above the probabilistic minimum of 6350: 25 600 targets and 76 800
+   evaluated light curves, before the reserve. The other reading (whole prefixes, the four groups
+   together) would take 64 prefixes for every group: 64 000 targets. A study target's identity
+   carries its prefix (`refute-v0.2.1-rmin-study-<k>/<case id>`): the case id alone repeats across
+   prefixes.
+2. **The minima, read uniformly** (a reading, for the maintainer). The pass probability of a
+   binomial criterion is not monotone in the count (the steps of the bound), and the realized count
+   is any count at or above the minimum, so each minimum is the smallest count **from which** the pass
+   probability at the reference rate stays at least 0.95 for every count up to the realized group
+   size (6400). `calc/rmin_sizing.py`: `n₁` = 866, `m₄` = 83, `m₅` = 101 (the lowest pass probability
+   over that range 0.952, 0.968, 0.954); the pointwise smallest counts (796, 76, 96) are recorded
+   beside them. Codex recomputed both independently (by inverting the binomial tails) and found the
+   same values.
+3. **The measurement record and the derivation by `R`.** `calibration_measurement` records, for each
+   round: the train and hidden replica counts over the grid; the hidden noise status before the
+   `R` rule (an undetermined noise estimate, apart from the counts); `n_years`; `d_train`, `e_train`;
+   `d_hidden`, `e_hidden`, `S_meas` and the `dP` chosen; the measurement status; and the reason of
+   every impediment. A function `derive_round(record, R, b, s)` (in `holdout.py`, calibration only)
+   applies, in Amendment 19's order: the impediments before the capacity rule; the train counts
+   against `R`; decision 1 (`capacity_threshold(min_snr, b, s, n_years)` on the recorded `S_pred,1`);
+   an undetermined hidden noise, else the hidden counts against `R`; decision 2; the measurement's
+   impediments; the FAIL rule. **A round is eligible** when decisions 1 and 2 pass at `R` and the
+   measurement is made and read by the FAIL rule: PASS, FAIL, or INCONCLUSIVE
+   `not_detected_not_inconsistent` (Amendment 19's parenthesis: "a measured round"); a round whose
+   measurement is impeded after decision 2 (too few windows, a non-finite statistic) is not
+   eligible, the reading that keeps the denominator of the false FAIL to rounds that could fail.
+   `r_min` is read in two places only (`replica_stats`, the hidden
+   counts; `replicas_enough`, the train counts): checked by Codex. **Two checks, before the study:**
+   (a) the invariance of the measured fields (`d_train`, `e_train`, `d_hidden`, `e_hidden`, `dP`,
+   `S_pred,1`, `S_pred,2`, `S_meas`, the counts) between records made at `r_min` 8 and at `r_min` `R`
+   where both measure; (b) `derive_round` of the record made at 8 against the official round of
+   `run_holdout` (the decisions enforced) with `r_min` = `R` and the same `b`, `s`: the status, the
+   reason, decisions 1 and 2 and the eligibility, on cases built to exercise each impediment and
+   their precedence (the train counts below `R` where decision 1 would also fail; the hidden counts
+   below `R`; decision 2 failing; too few windows).
+4. **The noiseless twin.** `HiddenYear` keeps, privately, the effective trend and the indexes the
+   noisy detrending kept; the twin uses those cadences (the clipping included), the train
+   frequencies, the same baseline form, and the replica statistics cut and re-indexed to the `dP`
+   chosen; the window coefficients are estimated again. `twin_model` is the scenario's complete
+   noiseless model (the signal times the trend, plus the variability; with the last year's
+   alteration where it applies), given only by the evaluator to the calibration function, never to
+   `run_holdout`. The pull is `(d_hidden − d_twin) / e_hidden`. **Isolation test:** with no twin, a
+   twin and another twin, every field of the noisy analysis and the official result are equal.
+5. **The last year's alteration** `flux + (1 − s) · D(t) · trend(t)`, `D = 1 − signal_model` from the
+   recorded final parameters, `trend` the generator's (`1` for `pure_noise`, a mechanism of no study
+   planet; no study planet is a blend). The unit test checks the expected increment inside the last
+   year's transits, zero outside them and in the other years, and that `s = 1` changes nothing; the
+   altered curve is used in every round of its scenario.
+6. **The timing lot of the study** (declared now, before it exists; a complement of the calibration
+   timing lot of `calibration-ceiling-decision.md`, which it neither replaces nor reuses).
+   - *What it measures:* only time, in seconds per light curve and worker: the generation, the
+     alteration, every round of `calibration_measurement`, the twin and the aggregation, on logical
+     processors 0 to 7 with 6 workers. No outcome, pull, rate or count of the lot is examined or
+     recorded beyond the timing, and nothing is chosen with it.
+   - *Its configuration:* a version-2 configuration of its own (`m4-configurations/rmin-timing.json`,
+     never a campaign configuration) with `r_min` 8 and the provisional pair `capacity_b` 0,
+     `capacity_s` 0 (the measurement mode records the decisions without stopping, so the pair does
+     not change the work done); its file and SHA-256 named in the lot's record.
+   - *Cases:* prefix `refute-v0.2.1-rmin-timing` (never used, never reused); 20 targets per group,
+     by a rule fixed now: per group without variability, `two_years` indexes 0–4 of the band near
+     and 0–4 of measurable, `three_years` 100–102 of near and 100–101 of measurable, `few_train`
+     150–151 of near and 150–152 of measurable (10 near, 10 measurable; the mechanisms in the
+     study's proportion 2 : 1 : 1); per group with variability, indexes 200–209 of each band; the
+     three scenarios: 240 light curves.
+   - *Record:* a dated file with the code commit, the configuration, the per-curve times, their
+     median and maximum per group and scenario.
+   - *The projection, declared now:* each group and scenario is costed at **1.25 times the largest
+     per-curve time observed** in it (a sample maximum is not a bound; the factor is the margin), for
+     every curve of the study (76 800), the reserve (76 800) and the lot `bs-choice`, plus the
+     generation the same way and the lot overhead 1.2 of campaign 1; machine time is that worker time
+     divided by 6 (the summed worker hours are shown apart). The package to the maintainer gives the
+     timing lot, `bs-choice`, the study and the reserve separately, against the 397 h ceiling.
+   - *Rule:* nothing of the study or of `bs-choice` is generated before the maintainer decides on
+     the cost and on the readings 1 and 2.
+
 ## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
 
 The maintainer's item 5 of 2026-10-18: the campaign declaration of the harness version 3, with its
