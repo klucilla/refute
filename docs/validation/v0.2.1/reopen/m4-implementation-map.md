@@ -630,6 +630,84 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 27 (2026-10-19): the evaluation of the `R_min` study and of its lot `bs-choice` (declared before any lot)
+
+Amendment 19's design and Amendment 26's readings (approved on 2026-10-19) are not reopened. This
+amendment fixes, before any lot of the study or of `refute-v0.2.1-bs-choice` is generated, how the
+recorded rounds are read, after a Codex design review (read only, `.cache/v021/codex/rmin-eval/`;
+its objections to a first draft were accepted: no minimum of rounds, no tolerance for a missing
+twin and no fallback of `k` that the approved text does not state). No rule below adds a criterion:
+where the approved computation lacks its inputs, the result is **not evaluable**, never a pass.
+
+1. **Order.** The configuration (item 2) and the evaluator (item 11), with their tests, are
+   committed first; then `bs-choice` is generated and recorded, `k` and the pairs `b_R`, `s_R` are
+   computed and committed; only then are the study's lots generated. The pairs are never computed
+   from the study's records, and the study's records never from another configuration.
+2. **The configuration of the study and of `bs-choice`:** `m4-configurations/rmin-study.json`
+   (`M4-rmin-study`, never a campaign configuration), the block of `M4-rmin-timing` (`r_min` 8, the
+   pair 0, 0: in the measurement mode the pair changes no work, and `derive_round` applies `b_R`,
+   `s_R`); its file and SHA-256 named in the commit that adds it.
+3. **The records and their completeness.** One record file per target and scenario (never replaced,
+   no two with one name), holding the target's identity (`<prefix>/<case id>`), its group, the
+   scenario, the configuration identity, the light curve's observing years from its metadata, and
+   one `calibration_measurement` record per observing year (with the scenario's twin). A manifest
+   lists the expected targets and scenarios before the lot is analyzed. Completeness: every expected
+   target and scenario has one record file, each with one round per observing year and no other;
+   a missing, duplicated or extra file or round makes the lot **incomplete**: it is never evaluated
+   by dropping it from a denominator, and goes to the maintainer. An impediment of a round is a
+   recorded round, not a missing one.
+4. **`k` (Amendment 9's rule, on `bs-choice`, the constant scenario).** For each `k` separately, the
+   set of rounds with `S_meas` and `S_pred,k` finite and `S_pred,k ≥ min_snr` (the records at
+   `r_min` 8; no other `R` filter: `k` is one choice); `a_k = 1.4826 MAD(S_meas − S_pred,k)` pooled
+   over both noise models. `k = 2` when `|a_1 − a_2| ≤ 0.05 · max(a_1, a_2)` (both zero included),
+   otherwise the `k` with the smaller `a_k`; the values are not rounded. **If either set is empty**,
+   the comparison Amendment 9 prescribes does not exist: the study stops and goes to the maintainer.
+5. **`b_R` and `s_R`, for each `R` of the set:** the median and `1.4826 MAD` of `S_meas − S_pred,k`
+   over the rounds of item 4's set for the chosen `k` that also **meet `R`**: the train and the hidden
+   replica counts at least `R` at every `dP` of the grid, and the hidden noise determined (the
+   decisions are not read, so the residuals that fix the pair are not selected by it). No minimum
+   number of rounds: with **none**, the pair of that `R` does not exist and that `R` is not
+   evaluable; otherwise the pair exists, with the number of rounds and of distinct targets
+   recorded. A MAD of zero gives `s_R = 0`.
+6. **Statistics.** The median of an even number of values is the mean of the two middle ones
+   (`numpy.median`); `MAD(x) = median(|x − median(x)|)`; the factor is the literal `1.4826`. Every
+   comparison uses unrounded values and the approved bounds inclusively: the upper bound of
+   criterion 1 `≤ 0.02`, the lower bounds of criteria 4 and 5 `≥ 0.80` and `≥ 0.50`, the counts `≥`
+   their minima (866, 83, 101), the coverage fractions in the closed intervals `[0.60, 0.76]` and
+   `[0.92, 0.98]` and `|median| ≤ 0.2`; the Clopper-Pearson bounds one-sided at `0.99`. A zero
+   denominator never passes.
+7. **Eligibility and outcomes** by `derive_round(record, R, b_R, s_R, min_snr)` and the aggregation
+   of `run_holdout` (FAIL, then PASS, then INCONCLUSIVE); a target is eligible for criteria 1 to 3
+   when one of its rounds is eligible (Amendment 26, 3).
+8. **Criterion 3, the coverage.** Over the first eligible round, in increasing year, of each eligible
+   constant target (no other year sought), the pull `(d_hidden − d_twin) / e_hidden`. The record keeps
+   the twin's status (its measurement's reason when it has no depth). If any of these rounds has no
+   finite twin depth, criterion 3 is **not evaluable** for that `R` and group (reported apart from a
+   coverage outside its margins); the fractions are never computed on the available twins only.
+9. **The disappearance and weakening criteria.** The round hiding the target's last observing year
+   (the largest year of the light curve's metadata, never of the records found) "passes decisions 1
+   and 2" when `derive_round` gives `decision_1` and `decision_2` both `pass` at `R`, whatever its
+   measurement then; the weakening filter `0.3 · S_pred,2 ≤ 3` reads that round's `S_pred,2` in the
+   weakened scenario. These denominators are not intersected with item 7's eligibility: a qualified
+   target whose aggregated outcome is INCONCLUSIVE stays in the denominator and is not a FAIL. The
+   criterion reads the target's aggregated outcome; that round's own status is reported beside it.
+10. **The choice:** the smallest `R` of the set whose pair exists and that meets criteria 1 to 5 in
+    all four groups (a criterion not evaluable is not met); otherwise option (c), the result for the
+    maintainer. An incomplete lot (item 3) or a stopped `k` (item 4) is not a scientific result and
+    is reported as such. Every `R` and group is reported: counts, bounds, fractions, the pull's
+    statistics, the INCONCLUSIVE fractions by reason per target and per round.
+11. **The evaluator** (`rmin_evaluate.py`, pure functions over the records): `choose_k`, `pair_for_r`,
+    `completeness_problems`, `target_outcomes`, `criteria`, `choose_r_min`. Its tests, before any
+    lot, on built records: the tie exactly at 5%, both MADs zero, an empty set of one `k`, a missing
+    pair, a missing twin depth, a missing last-year round, a target without records, a duplicated
+    round, a qualified target whose decisions pass and whose measurement is impeded, and each bound
+    at its edge.
+
+**For the maintainer** (with the decision on the ceiling and the drand round): items 3 (an
+incomplete lot goes to the maintainer), 4 (an empty set of a `k` stops the study) and 8 (a missing
+twin depth makes criterion 3 not evaluable) are readings of the approved text where it lacks a
+rule.
+
 ## Amendment 26 (2026-10-19): the implementation of the `R_min` study's prerequisites, and its timing lot (declared before any lot)
 
 Amendment 19's design is approved and is not reopened. This amendment fixes the implementation
