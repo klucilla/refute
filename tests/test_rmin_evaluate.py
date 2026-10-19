@@ -210,7 +210,8 @@ def test_criterion_1_at_its_edges(ev):
 def _pulls(pulls, group=GROUPS[0]):
     out = []
     for i, p in enumerate(pulls):
-        r = rnd(2018, d_hidden=1e-3, e_hidden=1e-4, d_twin=1e-3 - p * 1e-4)
+        # the pull exactly p: (p - 0) / 1
+        r = rnd(2018, d_hidden=p, e_hidden=1.0, d_twin=0.0)
         out.append(target(i, group=group, years=(2018,), rounds=[r]))
     return out
 
@@ -229,6 +230,47 @@ def test_the_coverage_at_its_edges_and_not_evaluable_without_a_twin(ev):
     cov = ev.criteria(recs, 8, {"b": 0.0, "s": 0.0}, MIN_SNR)[GROUPS[0]]["coverage"]
     assert cov["evaluable"] is False and cov["passed"] is False
     assert cov["missing_twin"] == 1
+
+
+@pytest.mark.parametrize(
+    "pulls,passed",
+    [
+        # added after the Codex review of the round: the upper edges and the median's edge
+        ([0.0] * 76 + [1.5] * 22 + [3.0] * 2, True),  # 0.76 within 1, 0.98 within 2
+        ([0.0] * 77 + [1.5] * 21 + [3.0] * 2, False),  # 0.77 within 1
+        ([0.0] * 70 + [1.5] * 29 + [3.0] * 1, False),  # 0.99 within 2
+        ([-0.5] * 30 + [0.2] * 40 + [1.5] * 26 + [3.0] * 4, True),  # median 0.2 (inclusive)
+        ([-0.5] * 30 + [0.25] * 40 + [1.5] * 26 + [3.0] * 4, False),  # median 0.25
+    ],
+)
+def test_the_coverage_at_its_upper_and_median_edges(ev, pulls, passed):
+    cov = ev.criteria(_pulls(pulls), 8, {"b": 0.0, "s": 0.0}, MIN_SNR)[GROUPS[0]]["coverage"]
+    assert cov["passed"] is passed, cov
+
+
+def test_the_inconclusive_fractions_per_target_and_round(ev):
+    recs = [
+        target(0, rounds=[rnd(2018, s_pred_1=3.0, s_pred_2=3.0), rnd(2020)]),  # PASS
+        target(1, rounds=[rnd(2018, s_pred_1=3.0, s_pred_2=3.0)] * 1 + [rnd(2020, s_pred_1=3.0)]),
+        target(
+            2,
+            rounds=[
+                rnd(2018, s_pred_1=3.0),
+                rnd(2020, measurement_status="too_few_windows", s_meas=None),
+            ],
+        ),
+    ]
+    out = ev.criteria(recs, 8, {"b": 0.0, "s": 0.0}, MIN_SNR)[GROUPS[0]]["inconclusive"]["constant"]
+    assert out["targets"] == 3 and out["inconclusive_targets"] == 2
+    assert out["inconclusive_target_fraction"] == pytest.approx(2 / 3)
+    combos = out["targets_by_reasons"]
+    assert combos["insufficient_capacity_train"]["count"] == 1
+    assert combos["insufficient_capacity_train+too_few_windows"]["count"] == 1
+    assert sum(v["count"] for v in combos.values()) == out["inconclusive_targets"]
+    assert out["rounds"] == 6 and out["inconclusive_rounds"] == 5
+    assert out["rounds_by_reason"]["insufficient_capacity_train"]["count"] == 4
+    empty = ev.criteria([], 8, {"b": 0.0, "s": 0.0}, MIN_SNR)[GROUPS[0]]["inconclusive"]
+    assert empty["constant"]["inconclusive_target_fraction"] is None  # not evaluable
 
 
 def _power(scenario, n, n_fail, impeded=0, s2=12.0):

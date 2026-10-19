@@ -735,6 +735,27 @@ lot evaluated): all caught. JUnit: the study module's four test files 45 tests, 
 of `bs-choice` or of the study is generated before the maintainer's decision on the ceiling and the
 drand round, and on the readings of items 3, 4 and 8.
 
+**The end-of-round review** (Codex, read only, of `b6a38e6` to `441b1d9`,
+`.cache/v021/codex/stage-rmin2/`) returned WEAKENED: the evaluator's rules conform; before the lots
+it found (P1) the resume refusing its own manifest (the tuples written are lists read back), (P1)
+the evaluations dropping the manifest's lot and configuration (a foreign lot, configuration or
+record was evaluated as complete; the output of `bs-choice` did not name its source and
+`evaluate-study` took any pairs), (P2) no final integrity check in `run_lot`, (P2) a worker's
+failure ending the run without a report, (P2) the INCONCLUSIVE fractions and the reasons per target
+missing, and the coverage's upper and median edges untested. Corrected, each with its case: the
+manifest (with a format, `refute-v0.2.1-rmin-lot/1`) is compared as read back; `lot_problems`
+checks the manifest's format, lot and configuration and every record's configuration, then the
+completeness; `bs-choice`'s output names its source (lot, configuration, the SHA-256 of the
+manifest and of the records' digests) and `evaluate_study` refuses pairs of another source,
+configuration or `min_snr`; `run_lot` reports each failed target (never retried there), ends with
+the integrity check and writes a dated run report (never replaced); resuming an interrupted lot is
+a rerun, so its approval is recorded first (CLAUDE.md). **Criterion 6** reports the fractions per
+target and per round with every reason; a target is counted once, under the combination of the
+distinct reasons of its INCONCLUSIVE rounds, and a zero denominator is not evaluable. Sabotages SV2
+(the manifest compared as written), SV3 (a record of another configuration accepted), SV4 (the
+pairs' source not checked), SV5 (a worker's failure not caught) and SV6 (a target counted once per
+reason): all caught. JUnit: the study module's four test files 55 tests, 0 failures.
+
 ## Amendment 26 (2026-10-19): the implementation of the `R_min` study's prerequisites, and its timing lot (declared before any lot)
 
 Amendment 19's design is approved and is not reopened. This amendment fixes the implementation

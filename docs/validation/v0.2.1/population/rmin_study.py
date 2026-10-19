@@ -463,14 +463,65 @@ def _record_task(task: tuple[str, dict, tuple[str, ...], dict]) -> list[dict]:
     return record_target(case, prefix, scenarios, expected)
 
 
-def run_lot(lot: str, run_dir: Path, workers: int = TIMING_WORKERS) -> dict:
-    """Generate and record a lot (bs-choice, or the study) on 6 spawned workers on logical
-    processors 0 to 7. The manifest is written first; targets whose records all exist are not run
-    again (a record is never replaced); the lot ends with its completeness check."""
+LOT_FORMAT = "refute-v0.2.1-rmin-lot/1"
+
+
+def _canonical(obj):
+    """The value as JSON reads it back (tuples become lists), for comparisons with a file."""
     import json
+
+    return json.loads(json.dumps(obj))
+
+
+def manifest_payload(lot: str, configuration: dict) -> dict:
+    return _canonical(
+        {
+            "format": LOT_FORMAT,
+            "lot": lot,
+            "configuration": configuration,
+            "expected": lot_manifest(lot),
+        }
+    )
+
+
+class _InlineExecutor:
+    """Runs the tasks in this process (tests only)."""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def submit(self, fn, *args):
+        from concurrent.futures import Future
+
+        fut = Future()
+        try:
+            fut.set_result(fn(*args))
+        except Exception as exc:  # noqa: BLE001 - delivered to the caller as the pool would
+            fut.set_exception(exc)
+        return fut
+
+
+def _spawn_pool(workers: int):
     import multiprocessing
-    import os
     from concurrent.futures import ProcessPoolExecutor
+
+    return ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context("spawn"))
+
+
+def run_lot(lot: str, run_dir: Path, workers: int = TIMING_WORKERS, executor=None) -> dict:
+    """Generate and record a lot (bs-choice, or the study) on 6 spawned workers on logical
+    processors 0 to 7 (Amendment 27, 3). The manifest is written first; targets whose records all
+    exist are not run again (a record is never replaced); a failed target is reported, never
+    retried here; the run ends with the lot's integrity check and a dated run report (never
+    replaced). Resuming an interrupted lot is a rerun: its approval is recorded first
+    (CLAUDE.md)."""
+    import json
+    import os
+    from concurrent.futures import as_completed
+    from datetime import UTC, datetime
 
     if v3.STATE["problem"] is not None:
         raise SystemExit(f"the M4 configuration is not loaded: {v3.STATE['problem']}")
@@ -484,76 +535,160 @@ def run_lot(lot: str, run_dir: Path, workers: int = TIMING_WORKERS) -> dict:
         raise SystemExit(f"the affinity is {affinity}, not {TIMING_AFFINITY} (processors 0 to 7)")
     os.environ.update(THREAD_ENV)
     run_dir = Path(run_dir)
+    configuration = v3.STATE["identity"]
     targets, scenarios = _lot(lot)
-    manifest = lot_manifest(lot)
+    payload = manifest_payload(lot, configuration)
     manifest_path = run_dir / "manifest.json"
-    payload = {"lot": lot, "configuration": v3.STATE["identity"], "expected": manifest}
     if manifest_path.exists():
         if json.loads(manifest_path.read_text(encoding="utf-8")) != payload:
-            raise SystemExit("the run folder holds another lot's manifest")
+            raise SystemExit("the run folder holds another lot's or configuration's manifest")
     else:
         run_dir.mkdir(parents=True, exist_ok=True)
-        manifest_path.write_text(json.dumps(payload, indent=1) + "\n", encoding="utf-8")
+        with open(manifest_path, "x", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(payload, indent=1) + "\n")
     todo = [
-        (prefix, case, scenarios, v3.STATE["identity"])
+        (prefix, case, scenarios, configuration)
         for prefix, case in targets
         if not all(record_path(run_dir, f"{prefix}/{case['id']}", sc).exists() for sc in scenarios)
     ]
-    ctx = multiprocessing.get_context("spawn")
-    with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as pool:
-        for records in pool.map(_record_task, todo, chunksize=1):
+    started = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+    failures = []
+    pool = _spawn_pool(workers) if executor is None else executor
+    with pool:
+        futures = {pool.submit(_record_task, task): task for task in todo}
+        for fut in as_completed(futures):
+            prefix, case = futures[fut][0], futures[fut][1]
+            try:
+                records = fut.result()
+            except Exception as exc:  # noqa: BLE001 - every failure is reported, none retried
+                failures.append({"target": f"{prefix}/{case['id']}", "error": repr(exc)})
+                continue
             for rec in records:
                 if not record_path(run_dir, rec["target"], rec["scenario"]).exists():
                     write_record(run_dir, rec)
-    return {"lot": lot, "run": str(run_dir), "ran": len(todo), "expected": len(manifest)}
+    integrity = lot_problems(run_dir, lot, configuration)
+    report = {
+        "lot": lot,
+        "run": str(run_dir),
+        "started_utc": started,
+        "dispatched": len(todo),
+        "failures": failures,
+        "integrity_problems": integrity,
+        "complete": not failures and not integrity,
+    }
+    with open(run_dir / f"run-report-{started}.json", "x", encoding="utf-8", newline="\n") as fh:
+        fh.write(json.dumps(report, indent=1) + "\n")
+    return report
 
 
-def load_records(run_dir: Path) -> tuple[list[tuple[str, str]], list[dict]]:
+def load_lot(run_dir: Path) -> dict:
+    """The manifest, the records and the SHA-256 of every record file of a run folder."""
+    import hashlib
     import json
 
     run_dir = Path(run_dir)
     manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
-    records = [
-        json.loads(p.read_text(encoding="utf-8"))
-        for p in sorted((run_dir / "records").rglob("*.json"))
-    ]
-    return [tuple(m) for m in manifest["expected"]], records
+    files = sorted((run_dir / "records").rglob("*.json")) if (run_dir / "records").exists() else []
+    records, digests = [], {}
+    for p in files:
+        data = p.read_bytes()
+        digests[p.relative_to(run_dir).as_posix()] = hashlib.sha256(data).hexdigest()
+        records.append(json.loads(data.decode("utf-8")))
+    return {"manifest": manifest, "records": records, "files": digests}
 
 
-def evaluate_bs_choice(run_dir: Path, min_snr: float) -> dict:
+def lot_problems(run_dir: Path, lot: str, configuration: dict, loaded: dict | None = None) -> list:
+    """The integrity of a lot (Amendment 27, 1 and 3): the manifest's format, lot and
+    configuration; every record's configuration that of the manifest; the completeness."""
+    import rmin_evaluate as ev
+
+    data = load_lot(run_dir) if loaded is None else loaded
+    manifest = data["manifest"]
+    problems = []
+    if manifest.get("format") != LOT_FORMAT:
+        problems.append(f"manifest format {manifest.get('format')!r}")
+    if manifest.get("lot") != lot:
+        problems.append(f"the manifest's lot is {manifest.get('lot')!r}, not {lot!r}")
+    if _canonical(manifest.get("configuration")) != _canonical(configuration):
+        problems.append("the manifest names another configuration")
+    for rec in data["records"]:
+        if _canonical(rec.get("configuration")) != _canonical(manifest.get("configuration")):
+            problems.append(f"{rec.get('target')} {rec.get('scenario')}: another configuration")
+    expected = [tuple(m) for m in manifest.get("expected", [])]
+    problems += ev.completeness_problems(expected, data["records"])
+    return problems
+
+
+def _source(lot: str, data: dict) -> dict:
+    import hashlib
+    import json
+
+    manifest_bytes = json.dumps(data["manifest"], sort_keys=True).encode("utf-8")
+    files = json.dumps(data["files"], sort_keys=True).encode("utf-8")
+    return {
+        "lot": lot,
+        "configuration": data["manifest"].get("configuration"),
+        "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
+        "records_sha256": hashlib.sha256(files).hexdigest(),
+        "records": len(data["files"]),
+    }
+
+
+def evaluate_bs_choice(run_dir: Path, min_snr: float, configuration: dict) -> dict:
     """``k`` and the pairs ``b_R``, ``s_R`` from the records of ``bs-choice`` (Amendment 27, 4 and
-    5); an incomplete lot is not evaluated, an empty set of a ``k`` stops the study."""
+    5), with their source; an incomplete or foreign lot is not evaluated, an empty set of a ``k``
+    stops the study."""
     import rmin_evaluate as ev
 
-    manifest, records = load_records(run_dir)
-    problems = ev.completeness_problems(manifest, records)
+    data = load_lot(run_dir)
+    problems = lot_problems(run_dir, "bs-choice", configuration, data)
+    source = _source("bs-choice", data)
     if problems:
-        return {"complete": False, "problems": problems}
+        return {"complete": False, "problems": problems, "source": source}
     try:
-        k = ev.choose_k(records, min_snr)
+        k = ev.choose_k(data["records"], min_snr)
     except ev.StudyStoppedError as exc:
-        return {"complete": True, "stopped": str(exc)}
-    pairs = {str(r): ev.pair_for_r(records, k["k"], r, min_snr) for r in ev.R_VALUES}
-    return {"complete": True, "k": k, "pairs": pairs, "min_snr": min_snr}
+        return {"complete": True, "stopped": str(exc), "source": source}
+    pairs = {str(r): ev.pair_for_r(data["records"], k["k"], r, min_snr) for r in ev.R_VALUES}
+    return {"complete": True, "k": k, "pairs": pairs, "min_snr": min_snr, "source": source}
 
 
-def evaluate_study(run_dir: Path, pairs: dict, min_snr: float) -> dict:
-    """Criteria 1 to 5 per ``R`` and group with the pairs of ``bs-choice``, and the choice
-    (Amendment 27, 6 to 10); an incomplete lot is not evaluated."""
+def evaluate_study(run_dir: Path, bs: dict, min_snr: float, configuration: dict) -> dict:
+    """Criteria 1 to 5 per ``R`` and group with the pairs of ``bs-choice`` and the choice (Amendment
+    27, 6 to 10). The pairs must come from a complete bs-choice of the same configuration and
+    ``min_snr``; an incomplete or foreign study lot is not evaluated."""
     import rmin_evaluate as ev
 
-    manifest, records = load_records(run_dir)
-    problems = ev.completeness_problems(manifest, records)
+    src = bs.get("source") or {}
+    refusals = []
+    if src.get("lot") != "bs-choice" or not bs.get("complete") or "pairs" not in bs:
+        refusals.append("the pairs do not come from a complete evaluation of bs-choice")
+    if _canonical(src.get("configuration")) != _canonical(configuration):
+        refusals.append("the pairs come from another configuration")
+    if bs.get("min_snr") != min_snr:
+        refusals.append("the pairs were computed with another min_snr")
+    data = load_lot(run_dir)
+    source = _source("study", data)
+    if refusals:
+        return {"complete": False, "problems": refusals, "source": source}
+    problems = lot_problems(run_dir, "study", configuration, data)
     if problems:
-        return {"complete": False, "problems": problems}
+        return {"complete": False, "problems": problems, "source": source}
+    pairs = bs["pairs"]
     results = {
-        r: (None if pairs[str(r)] is None else ev.criteria(records, r, pairs[str(r)], min_snr))
+        r: (
+            None
+            if pairs[str(r)] is None
+            else ev.criteria(data["records"], r, pairs[str(r)], min_snr)
+        )
         for r in ev.R_VALUES
     }
     return {
         "complete": True,
         "results": {str(r): v for r, v in results.items()},
         "chosen_r_min": ev.choose_r_min(results),
+        "source": source,
+        "pairs_source": src,
     }
 
 
@@ -596,13 +731,12 @@ if __name__ == "__main__":
         if problems:
             raise SystemExit("the configuration is not the study's: " + "; ".join(problems))
         min_snr = plan.gauntlet.holdout_by_year.min_snr
+        configuration = v3.STATE["identity"]
         if args.mode == "evaluate-bs-choice":
-            result = evaluate_bs_choice(Path(args.run), min_snr)
+            result = evaluate_bs_choice(Path(args.run), min_snr, configuration)
         else:
             bs = json.loads(Path(args.pairs).read_text(encoding="utf-8"))
-            if "pairs" not in bs:
-                raise SystemExit("the bs-choice evaluation has no pairs (incomplete or stopped)")
-            result = evaluate_study(Path(args.run), bs["pairs"], min_snr)
+            result = evaluate_study(Path(args.run), bs, min_snr, configuration)
         out.parent.mkdir(parents=True, exist_ok=True)
         with open(out, "x", encoding="utf-8", newline="\n") as fh:
             fh.write(dumps_json(to_jsonable(result)))

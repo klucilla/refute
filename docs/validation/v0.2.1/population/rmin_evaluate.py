@@ -184,17 +184,39 @@ def _passes_decisions(last: dict | None) -> bool:
     return last is not None and last["decision_1"] == "pass" and last["decision_2"] == "pass"
 
 
+def _fraction(x: int, n: int) -> float | None:
+    """A reported fraction; ``None`` (not evaluable) with a zero denominator."""
+    return x / n if n else None
+
+
 def _inconclusive(outcomes: list[dict]) -> dict:
-    per_target = sum(o["status"] == "INCONCLUSIVE" for o in outcomes)
-    reasons = Counter(
-        d["reason"] for o in outcomes for d in o["rounds"] if d["status"] == "INCONCLUSIVE"
-    )
+    """Criterion 6 (reported, not a criterion): the INCONCLUSIVE fractions per target and per
+    round, with every reason. A target is counted once, under the combination of the distinct
+    reasons of its INCONCLUSIVE rounds (``+``-joined, sorted), so the target counts sum to the
+    INCONCLUSIVE targets (added after the Codex review of the round)."""
+    n_targets = len(outcomes)
     n_rounds = sum(len(o["rounds"]) for o in outcomes)
+    inconclusive = [o for o in outcomes if o["status"] == "INCONCLUSIVE"]
+    combos = Counter(
+        "+".join(sorted({str(d["reason"]) for d in o["rounds"] if d["status"] == "INCONCLUSIVE"}))
+        for o in inconclusive
+    )
+    rounds = Counter(
+        str(d["reason"]) for o in outcomes for d in o["rounds"] if d["status"] == "INCONCLUSIVE"
+    )
     return {
-        "targets": len(outcomes),
-        "inconclusive_targets": per_target,
+        "targets": n_targets,
+        "inconclusive_targets": len(inconclusive),
+        "inconclusive_target_fraction": _fraction(len(inconclusive), n_targets),
+        "targets_by_reasons": {
+            k: {"count": v, "fraction": _fraction(v, n_targets)} for k, v in sorted(combos.items())
+        },
         "rounds": n_rounds,
-        "inconclusive_rounds_by_reason": dict(sorted(reasons.items(), key=lambda kv: str(kv[0]))),
+        "inconclusive_rounds": sum(rounds.values()),
+        "inconclusive_round_fraction": _fraction(sum(rounds.values()), n_rounds),
+        "rounds_by_reason": {
+            k: {"count": v, "fraction": _fraction(v, n_rounds)} for k, v in sorted(rounds.items())
+        },
     }
 
 
