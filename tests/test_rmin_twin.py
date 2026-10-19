@@ -65,6 +65,19 @@ def test_without_a_twin_the_record_has_no_twin_depth(curve):
     rec = _measure(curve)
     assert rec["s_meas"] is not None  # precondition: the round is measured
     assert rec["d_twin"] is None
+    assert rec["twin_status"] is None
+
+
+def test_the_record_keeps_the_twins_status(curve, monkeypatch):
+    """Map Amendment 27, 8: the twin's status is recorded, its measurement's reason when it has no
+    depth (here the twin's windows hold no data: a model of NaN)."""
+    lc, _ = curve
+    rec = _measure(curve, twin=lc.flux.copy())
+    assert rec["twin_status"] == "ok" and rec["d_twin"] is not None
+    nan = np.full(len(lc), np.nan)
+    rec = _measure(curve, twin=nan)
+    assert rec["d_twin"] is None
+    assert rec["twin_status"] not in (None, "ok")
 
 
 def test_a_twin_equal_to_the_raw_flux_gives_the_noisy_depth_exactly(curve):
@@ -92,7 +105,9 @@ def test_the_twin_changes_nothing_of_the_noisy_analysis(curve):
     records = [_measure(curve), _measure(curve, twin=model), _measure(curve, twin=other)]
     after = _json(run_holdout(lc, sectors, plan).to_dict())
     assert before == after
-    stripped = [_json({k: v for k, v in r.items() if k != "d_twin"}) for r in records]
+    # the twin's own fields apart (twin_status from Amendment 27, 8)
+    own = ("d_twin", "twin_status")
+    stripped = [_json({k: v for k, v in r.items() if k not in own}) for r in records]
     assert stripped[0] == stripped[1] == stripped[2]
     assert records[1]["d_twin"] != records[2]["d_twin"]
 

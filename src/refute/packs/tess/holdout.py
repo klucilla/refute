@@ -1334,8 +1334,9 @@ def _twin_depth(
     sectors: Sequence[SectorInfo],
     result: dict[str, Any],
     frequencies: Sequence[float],
-) -> float | None:
-    """The noiseless twin's depth (map Amendment 26, 4): the same windows, cadences, baseline form
+) -> tuple[float | None, str]:
+    """The noiseless twin's depth and its measurement's status (map Amendment 26, 4; the status
+    from Amendment 27, 8): the same windows, cadences, baseline form
     and frequencies, the replica statistics cut and re-indexed to the ``dP`` chosen; the window
     coefficients estimated again."""
     stats = result["stats"]
@@ -1361,7 +1362,8 @@ def _twin_depth(
         one,
         frequencies,
     )
-    return measured.get("depth") if measured["status"] == "ok" else None
+    depth = measured.get("depth") if measured["status"] == "ok" else None
+    return depth, measured["status"]
 
 
 def _empty_derivation_fields() -> dict[str, Any]:
@@ -1442,6 +1444,7 @@ def _round_corrected(
         "d_train": train.depth,
         "e_train": train.depth_err,
         "d_twin": None,
+        "twin_status": None,
     }
 
     def stop(
@@ -1550,7 +1553,7 @@ def _round_corrected(
         return stop(result["status"], hidden.access_log, stage=stage)
     record.update(d_hidden=result["depth"], e_hidden=result["error"], dp=result["dp"])
     if twin_model is not None:
-        record["d_twin"] = _twin_depth(
+        record["d_twin"], record["twin_status"] = _twin_depth(
             hidden,
             twin_model,
             transit,
@@ -1691,6 +1694,7 @@ def calibration_measurement(
             **_empty_derivation_fields(),
             "stage": "before_capacity",
             "d_twin": None,
+            "twin_status": None,
             **stamp,
         }
     twin = None if twin_model is None else twin_model[raw.year == hidden_year]
