@@ -1973,6 +1973,22 @@ a strong true planet. A test case is added, with no change of the method or of t
   0 to 7, beside the `R_min` study. **If the strong planet falls too, the work stops and goes to the
   maintainer before anything else** (a defect that would affect the study in progress); no other
   depth, seed or construction is tried.
+- **Result: the criterion is met** (`tests/test_holdout_capacity.py`, the new case and the 270 ppm
+  case run together at idle priority on logical processors 0 to 7 beside the study: JUnit 2 tests,
+  0 failures). (a) The train candidate is the planet: P = 3.6997 d (injected 3.7 d), 2.31 h, depth
+  803 ppm. (b) Its BLS SNR is **34.8** and its corrected SNR **11.8** (`β_D` 2.95; sectors 2.79 and
+  3.10), above 7.1, with no train validity reason. (c) The 270 ppm case still ends INCONCLUSIVE by
+  `train_snr_below_gate`. The measured SNRs are below the declared scaling (41 and 14.1): the search
+  found the planet at 2.31 h where complement 1's local refit ended at 2.63 h, and the gate's `β_D`
+  is about that of complement 1 (2.95 against 2.91); the factor of two above the threshold was the
+  margin, and the criterion does not depend on the scaling. **What it shows:** in this red noise the
+  correction keeps a strong true planet and stops the red-noise candidate; with complement 1, a
+  270 ppm planet falls with the false candidate, so the gate's cost falls on weak planets (result
+  (c) stays as recorded). The round itself then ends INCONCLUSIVE at the train timing rule (2.79 h of
+  timing uncertainty in 2020 against a 2.31 h duration, the behaviour of this layout recorded in
+  Amendment 14), after the gate and outside the criterion; that decided round carries its reason in
+  its message, not in `metrics["reason"]` (the calibration record and `derive_round` read the
+  message in that case).
 
 ## Amendment 17 (2026-10-18): the explicit, versioned activation of M4 across the flow
 

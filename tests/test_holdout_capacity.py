@@ -450,6 +450,25 @@ def test_the_h4_gate_reads_the_corrected_train_snr_by_the_true_computation():
     assert r.access_log == []
 
 
+def test_the_h4_gate_keeps_a_strong_true_planet_in_the_same_red_noise():
+    """Map Amendment 18, complement 2 (the maintainer's decision of 2026-10-19, declared before
+    its run): the second construction's curve (seed 3510, white 600 ppm plus AR(1) 400 ppm) with an
+    800 ppm planet, an expected corrected SNR near 14.1 (4.75 x 800 / 270, complement 1). The
+    planet must be the train candidate and pass the gate; the red-noise case of the 270 ppm planet
+    (the case above) still falls."""
+    lc, sectors = synthetic.make_lightcurve(
+        _spec(800e-6), sector_starts=TWO_BY_TWO, seed=3510, red_noise_ppm=400.0
+    )
+    r = _round(run_holdout(lc, sectors, _plan()), 2020)
+    period = r.metrics["train_candidate"]["period"]
+    assert any(
+        abs(period - f * PLANET.period) <= 0.01 * f * PLANET.period for f in (1.0, 0.5, 2.0)
+    ), period  # (a) the planet is the train candidate
+    validity = r.metrics["train_validity"]
+    assert validity["train_snr"] >= 7.1, validity["train_snr"]  # (b) it passes the gate
+    assert "train_snr_below_gate" not in validity["reasons"], validity["reasons"]
+
+
 # --- the calibration-only measurement -----------------------------------------------------------
 
 
