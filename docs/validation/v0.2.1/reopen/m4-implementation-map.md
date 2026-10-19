@@ -756,6 +756,17 @@ distinct reasons of its INCONCLUSIVE rounds, and a zero denominator is not evalu
 pairs' source not checked), SV5 (a worker's failure not caught) and SV6 (a target counted once per
 reason): all caught. JUnit: the study module's four test files 55 tests, 0 failures.
 
+**The second round** of that review objected to two more points, corrected with their cases:
+(1) the manifest's expected targets were not checked against the lot's own (records of the study
+under the label `bs-choice` gave `k` and pairs), and a pairs' source without its digests was
+accepted: `lot_problems` now requires the manifest's expected targets and scenarios to be those of
+`lot_manifest(lot)`, and `evaluate_study` (`evaluate-study --bs-run`) evaluates `bs-choice` again
+from its own run folder and refuses pairs that are not exactly that evaluation; (2) a failure while
+submitting to the pool (a broken pool) ended the run without a report: the dispatch and the pool
+are now guarded too, and the report names the submitted and the not submitted targets. Sabotages
+SV7 (the manifest not checked against the lot's), SV8 (the pairs not derived again) and SV9 (a
+submission failure not caught): all caught. JUnit: 57 tests, 0 failures.
+
 ## Amendment 26 (2026-10-19): the implementation of the `R_min` study's prerequisites, and its timing lot (declared before any lot)
 
 Amendment 19's design is approved and is not reopened. This amendment fixes the implementation

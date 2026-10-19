@@ -169,9 +169,19 @@ def study_prefix():
     return "refute-v0.2.1-bs-choice"
 
 
+def _expected(run):
+    """The built run's own manifest, passed as the prescribed one (the built lots are small)."""
+    return json.loads((run / "manifest.json").read_text(encoding="utf-8"))["expected"]
+
+
+def _bs(study, run, configuration=None):
+    conf = _declared() if configuration is None else configuration
+    return study.evaluate_bs_choice(run, 5.0, conf, _expected(run))
+
+
 def test_the_bs_choice_evaluation_gives_k_and_a_pair_per_r(study):
     records = [_rec(i, 10.0, 10.0 + d, 10.0 + 2 * d) for i, d in enumerate((-1.0, 0.0, 1.0))]
-    out = study.evaluate_bs_choice(_built_run(study, "bs-choice", records), 5.0, _declared())
+    out = _bs(study, _built_run(study, "bs-choice", records))
     assert out["complete"] is True
     assert out["k"]["k"] in (1, 2)
     assert set(out["pairs"]) == {str(r) for r in (8, 10, 12, 15, 20)}
@@ -184,7 +194,7 @@ def test_an_incomplete_lot_is_not_evaluated(study):
     manifest = json.loads((run / "manifest.json").read_text(encoding="utf-8"))
     manifest["expected"].append(["refute-v0.2.1-bs-choice/missing", "constant"])
     (run / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
-    out = study.evaluate_bs_choice(run, 5.0, _declared())
+    out = _bs(study, run)
     assert out["complete"] is False and out["problems"] and "k" not in out
 
 
@@ -227,7 +237,7 @@ def test_a_lot_resumes_on_its_own_manifest_without_replacing(study, monkeypatch)
     second = study.run_lot("bs-choice", run, executor=study._InlineExecutor())
     assert second["dispatched"] == 0 and second["complete"] is True  # the manifest read back
     assert {p: p.read_bytes() for p in (run / "records").rglob("*.json")} == before
-    assert len(list(run.glob("run-report-*.json"))) >= 1
+    assert len(list(run.glob("run-report-*.json"))) == 2
 
 
 def test_a_failed_target_is_reported_and_the_lot_is_incomplete(study, monkeypatch):
@@ -241,30 +251,82 @@ def test_a_failed_target_is_reported_and_the_lot_is_incomplete(study, monkeypatc
     assert len(list((run / "records").rglob("*.json"))) == 99
 
 
+class _BreaksOnSecondSubmit:
+    """An executor whose pool breaks at the second submission (as a dead worker does)."""
+
+    def __init__(self, study):
+        self.inner = study._InlineExecutor()
+        self.n = 0
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def submit(self, fn, *args):
+        self.n += 1
+        if self.n == 2:
+            raise RuntimeError("BrokenProcessPool stand-in")
+        return self.inner.submit(fn, *args)
+
+
+def test_a_broken_pool_ends_with_a_report(study, monkeypatch):
+    # added after the second round of the Codex review
+    _lot_env(study, monkeypatch)
+    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    report = study.run_lot("bs-choice", run, executor=_BreaksOnSecondSubmit(study))
+    assert report["complete"] is False and "submission" in report["dispatch_error"]
+    assert report["submitted"] == 1 and len(report["not_submitted"]) == 99
+    assert len(list(run.glob("run-report-*.json"))) == 1
+    assert len(list((run / "records").rglob("*.json"))) == 1
+
+
 def test_a_foreign_lot_or_configuration_is_not_evaluated(study):
     records = [_rec(i, 10.0, 10.0, 10.0) for i in range(3)]
     run = _built_run(study, "bs-choice", records)
     other = {**_declared(), "sha256": "2" * 64}
-    assert study.evaluate_bs_choice(run, 5.0, other)["complete"] is False  # another configuration
+    assert _bs(study, run, other)["complete"] is False  # another configuration
     records = [_rec(i, 10.0, 10.0, 10.0) for i in range(3)]
     records[1]["configuration"] = other
     run = _built_run(study, "bs-choice", records)
-    out = study.evaluate_bs_choice(run, 5.0, _declared())
+    out = _bs(study, run)
     assert out["complete"] is False and any("another configuration" in p for p in out["problems"])
     run = _built_run(study, "study", [_rec(i, 10.0, 10.0, 10.0) for i in range(3)])
-    assert study.evaluate_bs_choice(run, 5.0, _declared())["complete"] is False  # another lot
+    assert _bs(study, run)["complete"] is False  # another lot
+
+
+def test_the_manifest_must_be_the_lots_own(study):
+    # added after the second round of the Codex review: records under the label of another lot
+    records = [_rec(i, 10.0, 10.0, 10.0) for i in range(3)]
+    run = _built_run(study, "bs-choice", records)
+    out = study.evaluate_bs_choice(run, 5.0, _declared())  # the prescribed manifest of bs-choice
+    assert out["complete"] is False
+    assert any("not those of the lot" in p for p in out["problems"])
 
 
 def test_the_study_refuses_pairs_of_another_source(study):
     records = [_rec(i, 10.0, 10.0 + d, 10.0 + 2 * d) for i, d in enumerate((-1.0, 0.0, 1.0))]
-    bs = study.evaluate_bs_choice(_built_run(study, "bs-choice", records), 5.0, _declared())
+    bs_run = _built_run(study, "bs-choice", records)
+    bs = _bs(study, bs_run)
     assert bs["source"]["lot"] == "bs-choice" and bs["source"]["records"] == 3
     run = _built_run(study, "study", [_rec(i, 10.0, 10.0, 10.0) for i in range(3)])
+
+    def study_eval(pairs, configuration=None, min_snr=5.0):
+        conf = _declared() if configuration is None else configuration
+        return study.evaluate_study(
+            run, pairs, bs_run, min_snr, conf, _expected(run), _expected(bs_run)
+        )
+
+    assert study_eval(bs)["complete"] is True  # the genuine pairs
     other = {**_declared(), "sha256": "2" * 64}
-    assert study.evaluate_study(run, bs, 5.0, other)["complete"] is False
-    assert study.evaluate_study(run, {**bs, "min_snr": 4.0}, 5.0, _declared())["complete"] is False
-    forged = {**bs, "source": {**bs["source"], "lot": "study"}}
-    assert study.evaluate_study(run, forged, 5.0, _declared())["complete"] is False
+    assert study_eval(bs, configuration=other)["complete"] is False
+    assert study_eval({**bs, "min_snr": 4.0})["complete"] is False
+    assert study_eval({**bs, "source": {**bs["source"], "lot": "study"}})["complete"] is False
+    stripped = {**bs, "source": {"lot": "bs-choice", "configuration": _declared()}}
+    assert study_eval(stripped)["complete"] is False  # no digests
+    changed = {**bs, "pairs": {**bs["pairs"], "8": {**bs["pairs"]["8"], "b": 9.0}}}
+    assert study_eval(changed)["complete"] is False  # not the evaluation of bs-choice's folder
 
 
 def test_another_configuration_records_nothing(study, monkeypatch):

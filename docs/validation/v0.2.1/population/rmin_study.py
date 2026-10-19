@@ -553,28 +553,42 @@ def run_lot(lot: str, run_dir: Path, workers: int = TIMING_WORKERS, executor=Non
     ]
     started = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     failures = []
-    pool = _spawn_pool(workers) if executor is None else executor
-    with pool:
-        futures = {pool.submit(_record_task, task): task for task in todo}
-        for fut in as_completed(futures):
-            prefix, case = futures[fut][0], futures[fut][1]
+    dispatch_error = None
+    submitted: list[str] = []
+    try:
+        pool = _spawn_pool(workers) if executor is None else executor
+        with pool:
+            futures = {}
             try:
-                records = fut.result()
-            except Exception as exc:  # noqa: BLE001 - every failure is reported, none retried
-                failures.append({"target": f"{prefix}/{case['id']}", "error": repr(exc)})
-                continue
-            for rec in records:
-                if not record_path(run_dir, rec["target"], rec["scenario"]).exists():
-                    write_record(run_dir, rec)
+                for task in todo:
+                    futures[pool.submit(_record_task, task)] = task
+                    submitted.append(f"{task[0]}/{task[1]['id']}")
+            except Exception as exc:  # noqa: BLE001 - the dispatch stops, reported, not retried
+                dispatch_error = f"submission: {exc!r}"
+            for fut in as_completed(futures):
+                prefix, case = futures[fut][0], futures[fut][1]
+                try:
+                    records = fut.result()
+                except Exception as exc:  # noqa: BLE001 - every failure is reported, none retried
+                    failures.append({"target": f"{prefix}/{case['id']}", "error": repr(exc)})
+                    continue
+                for rec in records:
+                    if not record_path(run_dir, rec["target"], rec["scenario"]).exists():
+                        write_record(run_dir, rec)
+    except Exception as exc:  # noqa: BLE001 - the pool itself failed: reported, not retried
+        dispatch_error = (dispatch_error or "") + f" pool: {exc!r}"
     integrity = lot_problems(run_dir, lot, configuration)
     report = {
         "lot": lot,
         "run": str(run_dir),
         "started_utc": started,
         "dispatched": len(todo),
+        "submitted": len(submitted),
+        "not_submitted": [f"{t[0]}/{t[1]['id']}" for t in todo][len(submitted) :],
+        "dispatch_error": dispatch_error,
         "failures": failures,
         "integrity_problems": integrity,
-        "complete": not failures and not integrity,
+        "complete": dispatch_error is None and not failures and not integrity,
     }
     with open(run_dir / f"run-report-{started}.json", "x", encoding="utf-8", newline="\n") as fh:
         fh.write(json.dumps(report, indent=1) + "\n")
@@ -597,14 +611,26 @@ def load_lot(run_dir: Path) -> dict:
     return {"manifest": manifest, "records": records, "files": digests}
 
 
-def lot_problems(run_dir: Path, lot: str, configuration: dict, loaded: dict | None = None) -> list:
+def lot_problems(
+    run_dir: Path,
+    lot: str,
+    configuration: dict,
+    loaded: dict | None = None,
+    prescribed: list | None = None,
+) -> list:
     """The integrity of a lot (Amendment 27, 1 and 3): the manifest's format, lot and
-    configuration; every record's configuration that of the manifest; the completeness."""
+    configuration; its expected targets and scenarios those prescribed for the lot
+    (``lot_manifest``; added after the second round of the Codex review: records of another lot
+    under its label were evaluated); every record's configuration that of the manifest; the
+    completeness."""
     import rmin_evaluate as ev
 
     data = load_lot(run_dir) if loaded is None else loaded
     manifest = data["manifest"]
     problems = []
+    wanted = lot_manifest(lot) if prescribed is None else prescribed
+    if _canonical(manifest.get("expected")) != _canonical(wanted):
+        problems.append(f"the manifest's targets and scenarios are not those of the lot {lot!r}")
     if manifest.get("format") != LOT_FORMAT:
         problems.append(f"manifest format {manifest.get('format')!r}")
     if manifest.get("lot") != lot:
@@ -634,14 +660,16 @@ def _source(lot: str, data: dict) -> dict:
     }
 
 
-def evaluate_bs_choice(run_dir: Path, min_snr: float, configuration: dict) -> dict:
+def evaluate_bs_choice(
+    run_dir: Path, min_snr: float, configuration: dict, prescribed: list | None = None
+) -> dict:
     """``k`` and the pairs ``b_R``, ``s_R`` from the records of ``bs-choice`` (Amendment 27, 4 and
     5), with their source; an incomplete or foreign lot is not evaluated, an empty set of a ``k``
     stops the study."""
     import rmin_evaluate as ev
 
     data = load_lot(run_dir)
-    problems = lot_problems(run_dir, "bs-choice", configuration, data)
+    problems = lot_problems(run_dir, "bs-choice", configuration, data, prescribed)
     source = _source("bs-choice", data)
     if problems:
         return {"complete": False, "problems": problems, "source": source}
@@ -653,14 +681,27 @@ def evaluate_bs_choice(run_dir: Path, min_snr: float, configuration: dict) -> di
     return {"complete": True, "k": k, "pairs": pairs, "min_snr": min_snr, "source": source}
 
 
-def evaluate_study(run_dir: Path, bs: dict, min_snr: float, configuration: dict) -> dict:
+def evaluate_study(
+    run_dir: Path,
+    bs: dict,
+    bs_run: Path,
+    min_snr: float,
+    configuration: dict,
+    prescribed: list | None = None,
+    bs_prescribed: list | None = None,
+) -> dict:
     """Criteria 1 to 5 per ``R`` and group with the pairs of ``bs-choice`` and the choice (Amendment
-    27, 6 to 10). The pairs must come from a complete bs-choice of the same configuration and
-    ``min_snr``; an incomplete or foreign study lot is not evaluated."""
+    27, 6 to 10). The pairs ``bs`` (the committed evaluation of bs-choice) must be what
+    ``evaluate_bs_choice`` gives again from bs-choice's own run folder ``bs_run`` (added after the
+    second round of the Codex review: a source without its digests was accepted), complete, of the
+    same configuration and ``min_snr``; an incomplete or foreign study lot is not evaluated."""
     import rmin_evaluate as ev
 
     src = bs.get("source") or {}
     refusals = []
+    again = evaluate_bs_choice(bs_run, min_snr, configuration, bs_prescribed)
+    if _canonical(again) != _canonical(bs):
+        refusals.append("the pairs are not the evaluation of bs-choice's run folder")
     if src.get("lot") != "bs-choice" or not bs.get("complete") or "pairs" not in bs:
         refusals.append("the pairs do not come from a complete evaluation of bs-choice")
     if _canonical(src.get("configuration")) != _canonical(configuration):
@@ -671,7 +712,7 @@ def evaluate_study(run_dir: Path, bs: dict, min_snr: float, configuration: dict)
     source = _source("study", data)
     if refusals:
         return {"complete": False, "problems": refusals, "source": source}
-    problems = lot_problems(run_dir, "study", configuration, data)
+    problems = lot_problems(run_dir, "study", configuration, data, prescribed)
     if problems:
         return {"complete": False, "problems": problems, "source": source}
     pairs = bs["pairs"]
@@ -710,6 +751,7 @@ if __name__ == "__main__":
     es = sub.add_parser("evaluate-study", help="the criteria and the choice of R_min")
     es.add_argument("--run", required=True)
     es.add_argument("--pairs", required=True, help="the output of evaluate-bs-choice")
+    es.add_argument("--bs-run", required=True, help="bs-choice's run folder")
     es.add_argument("--out", required=True)
     args = parser.parse_args()
     if args.mode == "timing":
@@ -736,7 +778,7 @@ if __name__ == "__main__":
             result = evaluate_bs_choice(Path(args.run), min_snr, configuration)
         else:
             bs = json.loads(Path(args.pairs).read_text(encoding="utf-8"))
-            result = evaluate_study(Path(args.run), bs, min_snr, configuration)
+            result = evaluate_study(Path(args.run), bs, Path(args.bs_run), min_snr, configuration)
         out.parent.mkdir(parents=True, exist_ok=True)
         with open(out, "x", encoding="utf-8", newline="\n") as fh:
             fh.write(dumps_json(to_jsonable(result)))
