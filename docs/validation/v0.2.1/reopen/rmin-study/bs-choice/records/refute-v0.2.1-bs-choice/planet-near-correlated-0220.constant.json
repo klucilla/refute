@@ -1,0 +1,156 @@
+{
+  "configuration": {
+    "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+    "format": "refute-m4-configuration/1",
+    "name": "M4-rmin-study",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+    "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+  },
+  "group": "AR(1), variability",
+  "rounds": [
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0009781098369965031,
+      "d_train": 0.0009599832047343625,
+      "d_twin": 0.0008054203748579465,
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": "insufficient_capacity_hidden_noise",
+      "dp": -4.319116250291625e-05,
+      "e_hidden": 0.00011769964143382313,
+      "e_train": 8.518884163871297e-05,
+      "hidden_n_rep": [
+        22,
+        22,
+        22,
+        22,
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2018,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 8.310219343756009,
+      "s_pred_1": 4.725628943942995,
+      "s_pred_2": 4.41112036636785,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        46,
+        46,
+        46,
+        46,
+        46,
+        46,
+        46,
+        45,
+        45
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0007016198772465392,
+      "d_train": 0.0007859417497465509,
+      "d_twin": 0.0007841206517369713,
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": "pass",
+      "dp": 6.19641609783091e-05,
+      "e_hidden": 0.00014734186724360204,
+      "e_train": 7.30288839692517e-05,
+      "hidden_n_rep": [
+        23,
+        23,
+        23
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2019,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": "not_detected_not_inconsistent",
+      "s_meas": 4.761850045557946,
+      "s_pred_1": 2.6687540536376058,
+      "s_pred_2": 5.074656210005636,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        44,
+        44,
+        44
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0006825824306309526,
+      "d_train": 0.000985582724858949,
+      "d_twin": 0.0007736781028507711,
+      "decision_1": "pass",
+      "decision_2": "insufficient_capacity_hidden_noise",
+      "dp": -3.94442640167413e-05,
+      "e_hidden": 0.0001310614619149184,
+      "e_train": 8.326431470252188e-05,
+      "hidden_n_rep": [
+        22,
+        22,
+        22,
+        22,
+        22,
+        22,
+        22
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2020,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 5.208109391256958,
+      "s_pred_1": 5.425909153247848,
+      "s_pred_2": 4.897103050841669,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        45,
+        46,
+        46,
+        46,
+        46,
+        46,
+        46
+      ],
+      "twin_status": "ok"
+    }
+  ],
+  "scenario": "constant",
+  "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0220",
+  "years": [
+    2018,
+    2019,
+    2020
+  ]
+}

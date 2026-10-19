@@ -1,0 +1,78 @@
+{
+  "configuration": {
+    "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+    "format": "refute-m4-configuration/1",
+    "name": "M4-rmin-study",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+    "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+  },
+  "group": "white, no variability",
+  "rounds": [
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": null,
+      "d_train": null,
+      "d_twin": null,
+      "decision_1": null,
+      "decision_2": null,
+      "dp": null,
+      "e_hidden": null,
+      "e_train": null,
+      "hidden_n_rep": null,
+      "hidden_noise_undetermined": null,
+      "hidden_year": 2018,
+      "measurement_status": null,
+      "n_years": null,
+      "reason": "train-only timing uncertainty in the hidden year (20.29 h) exceeds 1 transit duration(s) (2.99 h)",
+      "s_meas": null,
+      "s_pred_1": null,
+      "s_pred_2": null,
+      "stage": "before_capacity",
+      "train_n_rep": null,
+      "twin_status": null
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": null,
+      "d_train": null,
+      "d_twin": null,
+      "decision_1": null,
+      "decision_2": null,
+      "dp": null,
+      "e_hidden": null,
+      "e_train": null,
+      "hidden_n_rep": null,
+      "hidden_noise_undetermined": null,
+      "hidden_year": 2020,
+      "measurement_status": null,
+      "n_years": null,
+      "reason": "train-only timing uncertainty in the hidden year (13.28 h) exceeds 1 transit duration(s) (2.70 h)",
+      "s_meas": null,
+      "s_pred_1": null,
+      "s_pred_2": null,
+      "stage": "before_capacity",
+      "train_n_rep": null,
+      "twin_status": null
+    }
+  ],
+  "scenario": "constant",
+  "target": "refute-v0.2.1-bs-choice/planet-near-white-0040",
+  "years": [
+    2018,
+    2020
+  ]
+}

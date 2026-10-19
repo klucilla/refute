@@ -1,0 +1,144 @@
+{
+  "configuration": {
+    "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+    "format": "refute-m4-configuration/1",
+    "name": "M4-rmin-study",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+    "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+  },
+  "group": "white, variability",
+  "rounds": [
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.00035887270480483476,
+      "d_train": 0.00037631763485594373,
+      "d_twin": 0.0003647897207839278,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": 0.0,
+      "e_hidden": 3.8423310177568574e-05,
+      "e_train": 1.6783950387159276e-05,
+      "hidden_n_rep": [
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2018,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 9.339973655219943,
+      "s_pred_1": 7.613252221335273,
+      "s_pred_2": 6.686983403772577,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        42,
+        42,
+        42,
+        42,
+        42
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.00040009465217038625,
+      "d_train": 0.0003871030306198921,
+      "d_twin": 0.0003779661729806756,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -3.2402438183406015e-05,
+      "e_hidden": 3.2112648720829225e-05,
+      "e_train": 1.685205599839852e-05,
+      "hidden_n_rep": [
+        21,
+        21,
+        21
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2019,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 12.459098458324084,
+      "s_pred_1": 8.15744374966615,
+      "s_pred_2": 11.118781263062823,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        41,
+        41,
+        41
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.00029741941659917995,
+      "d_train": 0.0003989894448628475,
+      "d_twin": 0.00031079583822389074,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -3.2759902280197066e-05,
+      "e_hidden": 3.83797138009661e-05,
+      "e_train": 1.7924358062551712e-05,
+      "hidden_n_rep": [
+        21,
+        21,
+        21,
+        21,
+        21
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2020,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 7.749391205509543,
+      "s_pred_1": 8.046329861116815,
+      "s_pred_2": 6.587334284133901,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        41,
+        41,
+        41,
+        41,
+        41
+      ],
+      "twin_status": "ok"
+    }
+  ],
+  "scenario": "constant",
+  "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0210",
+  "years": [
+    2018,
+    2019,
+    2020
+  ]
+}
