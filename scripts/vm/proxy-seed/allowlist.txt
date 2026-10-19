@@ -29,3 +29,15 @@ huggingface.co
 .hf.co
 cdn-lfs.huggingface.co
 cdn-lfs-us-1.huggingface.co
+# The data hosts declared by the claims of the main sample of v0.3: CIFAR (2305.19518 and
+# 2407.11735; www.cs.toronto.edu redirects to cave.cs.toronto.edu), the UCI archive and
+# OpenML (2309.15704). Approved by the maintainer on 2026-10-19 and added on the running
+# proxy by hand, not by a new seed: the list before had SHA-256
+# d33c43d17e76c7b0d34c1e6183b5cb9772eb2df93d7b833cfdd0973b3bf6e60e (kept as
+# /etc/squid/refute-allowlist.txt.bak-20261019), the list after
+# 15a5e3531b0da2743caff579e731a68d4462ee920a77ae5d032afc1e47defcab; squid -k parse exit 0,
+# then squid -k reconfigure
+www.cs.toronto.edu
+cave.cs.toronto.edu
+archive.ics.uci.edu
+www.openml.org
