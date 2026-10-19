@@ -9,7 +9,7 @@ no AUROC).
 `population_count_record.json` (the dataset entry "UserItemAttr (synthetic,
 datasets/synthetic)") and `population_count_record_comparison.json` (the entry
 "UserItemAttr"): canonical JSON, format `refute-ml-population-count-1`, each written by
-`scripts/vm/count_population.py` at Refute `c820bb6c7405c09158e445f7be5cb648da2722a3`
+`scripts/vm/count_population.py` at Refute `5039bdc5f4e1799cbbf40d111c361783827b1d62`
 (wp3-population-count-acceptance.md; wp3-repository-weights-acceptance.md). Each ran the
 count script `../population_count.py` (SHA-256
 `edae1ced3336732c2173554019c5219c2aa7dfa46b9f7beefb2d16e824d44ee6`) twice, in independent
@@ -18,10 +18,13 @@ containers of the claim's environment, and kept only the line
 
 | Record | K | Runs (UTC) |
 |---|---|---|
-| `population_count_record.json` | 129 | 12:00:08-12:00:14 and 12:00:14-12:00:20, 2026-10-19, both 129 |
-| `population_count_record_comparison.json` | 129 | 12:00:20-12:00:27 and 12:00:27-12:00:33, 2026-10-19, both 129 |
+| `population_count_record.json` | 129 | 12:09:53-12:10:00 and 12:10:00-12:10:07, 2026-10-19, both 129 |
+| `population_count_record_comparison.json` | 129 | 12:10:08-12:10:15 and 12:10:15-12:10:22, 2026-10-19, both 129 |
 
-The two K are equal and not 0. The environment: the clone at
+The two K are equal and not 0. (A first pair of records, made at `c820bb6` at 12:00Z with the
+same K in all four runs, was replaced: Codex's review of the code asked the record to name,
+in its `weights` field, the weights the count's containers read from Refute's verified copy,
+and a claim now binds only with that field.) The environment: the clone at
 `cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c` with the two allowed patches, the engine's base
 image, the rung `requirements_compiled` (its build on the VM at 2026-10-19T11:41:31Z, exit
 0, through the allowlist proxy in the profile build), no network, the profile pull. Each
