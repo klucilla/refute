@@ -52,7 +52,7 @@ from typing import Any
 import numpy as np
 
 from refute.core.verdict import Severity, TestResult, TestStatus
-from refute.packs.tess.detrend import detrend, robust_sigma
+from refute.packs.tess.detrend import detrend, detrend_parts, robust_sigma
 from refute.packs.tess.ephemeris import (
     Ephemeris,
     fit_linear_ephemeris,
@@ -115,6 +115,28 @@ class HiddenYear:
         self.__time = flat.time
         self.__flux = flat.flux
         self.access_log: list[dict[str, Any]] = []
+        # the R_min study's twin (map Amendment 26, 4) repeats this detrending for its parts
+        self.__detrending = (raw_hidden, params, mask)
+
+    def twin(self, model_hidden: np.ndarray) -> HiddenYear:
+        """The noiseless twin (calibration only): the same registered windows, the flux
+        ``model_hidden / trend`` of this year's noisy detrending on the cadences it kept (the
+        detrending repeated by ``detrend_parts`` on the same inputs, checked identical)."""
+        raw_hidden, params, mask = self.__detrending
+        model = np.asarray(model_hidden, dtype=float)
+        if model.shape != (len(raw_hidden),):
+            raise ValueError("the twin model must have one value per cadence of the hidden year")
+        flat, trend, keep = detrend_parts(raw_hidden, params, mask=mask)
+        if not (np.array_equal(flat.time, self.__time) and np.array_equal(flat.flux, self.__flux)):
+            raise RuntimeError("the repeated detrending differs from the noisy one")
+        twin = object.__new__(HiddenYear)
+        twin._windows = dict(self._windows)
+        twin.detrend_window_days = self.detrend_window_days
+        twin._HiddenYear__time = self.__time.copy()
+        twin._HiddenYear__flux = model[keep] / trend[keep]
+        twin.access_log = []
+        twin._HiddenYear__detrending = self.__detrending
+        return twin
 
     def _registered(self, t_pred: float, half_width: float) -> PredictedWindow:
         window = self._windows.get((t_pred, half_width))
@@ -1301,6 +1323,47 @@ def train_replica_stats(
     return counts, variances
 
 
+def _twin_depth(
+    hidden: HiddenYear,
+    twin_model: np.ndarray,
+    transit: Sequence[PredictedWindow],
+    ephemeris: Ephemeris,
+    duration: float,
+    cadence: float,
+    plan: TessTestPlan,
+    sectors: Sequence[SectorInfo],
+    result: dict[str, Any],
+    frequencies: Sequence[float],
+) -> float | None:
+    """The noiseless twin's depth (map Amendment 26, 4): the same windows, cadences, baseline form
+    and frequencies, the replica statistics cut and re-indexed to the ``dP`` chosen; the window
+    coefficients estimated again."""
+    stats = result["stats"]
+    best = next(i for i, p in enumerate(stats.per_dp) if p.dp == result["dp"])
+    one = ReplicaStats(
+        stats.status,
+        [stats.per_dp[best]],
+        stats.noise,
+        stats.excluded_sectors,
+        stats.dropped,
+        {},
+        stats.noise_undetermined,
+    )
+    measured = measure_windows(
+        hidden.twin(twin_model),
+        transit,
+        ephemeris,
+        duration,
+        cadence,
+        plan,
+        sectors,
+        np.array([result["dp"]]),
+        one,
+        frequencies,
+    )
+    return measured.get("depth") if measured["status"] == "ok" else None
+
+
 def _empty_derivation_fields() -> dict[str, Any]:
     """The fields of a calibration record that ``derive_round`` reads, before they are known."""
     return {
@@ -1325,6 +1388,7 @@ def _round_corrected(
     plan: TessTestPlan,
     prepared: RoundPlan,
     enforce: bool,
+    twin_model: np.ndarray | None = None,
 ) -> tuple[RoundResult, dict[str, Any]]:
     """A round with the switch on (pieces 4 and 5). With ``enforce`` false (the calibration-only
     measurement) the two capacity decisions are recorded but do not stop the measurement."""
@@ -1377,6 +1441,7 @@ def _round_corrected(
         "n_years": n_years,
         "d_train": train.depth,
         "e_train": train.depth_err,
+        "d_twin": None,
     }
 
     def stop(
@@ -1484,6 +1549,19 @@ def _round_corrected(
         stage = "hidden_noise" if stats is not None and stats.status != "ok" else "measurement"
         return stop(result["status"], hidden.access_log, stage=stage)
     record.update(d_hidden=result["depth"], e_hidden=result["error"], dp=result["dp"])
+    if twin_model is not None:
+        record["d_twin"] = _twin_depth(
+            hidden,
+            twin_model,
+            transit,
+            eph,
+            train.duration,
+            cadence,
+            plan,
+            hidden_sectors,
+            result,
+            freqs,
+        )
 
     status, reason, z = fail_rule(
         result["snr"],
@@ -1560,13 +1638,17 @@ def calibration_measurement(
     plan: TessTestPlan,
     *,
     identity: dict[str, Any],
+    twin_model: np.ndarray | None = None,
 ) -> dict[str, Any]:
     """Map Amendments 9 and 12: for the population harness only, never for ``run_holdout``. The
     round measured despite the two capacity decisions (recorded), with its own ``HiddenYear``;
     a measurement impediment leaves ``s_meas`` absent with its reason. Returns a record marked
     ``calibration_only``; nothing of an official result is touched. From package 25 (Amendment
     25) every return carries the pair ``capacity_b``, ``capacity_s`` used and the configuration
-    ``identity`` given by the caller (its ``block_sha256`` must be the plan's resolved block)."""
+    ``identity`` given by the caller (its ``block_sha256`` must be the plan's resolved block).
+    The R_min study (Amendment 26, 4): ``twin_model``, one value per cadence of ``raw`` (the
+    evaluator's noiseless model; only the hidden year's values are read), gives ``d_twin``, the
+    twin's depth at the ``dP`` chosen, read after the measurement and never in a decision."""
     from refute.core.canonical import canonical_sha256
 
     c = plan.gauntlet.corrections
@@ -1590,6 +1672,10 @@ def calibration_measurement(
     if identity["block_sha256"] != canonical_sha256(c.model_dump(mode="json")):
         raise ValueError("the configuration identity names another corrections block")
     stamp = {"capacity_b": c.capacity_b, "capacity_s": c.capacity_s, "configuration": identity}
+    if twin_model is not None:
+        twin_model = np.asarray(twin_model, dtype=float)
+        if twin_model.shape != (len(raw),):
+            raise ValueError("the twin model must have one value per cadence of the curve")
     spans = [(s.t_start, s.t_end) for s in sectors if s.year == hidden_year]
     prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)
     if prepared.decided is not None:
@@ -1604,9 +1690,13 @@ def calibration_measurement(
             "reason": prepared.decided.metrics.get("reason", prepared.decided.message),
             **_empty_derivation_fields(),
             "stage": "before_capacity",
+            "d_twin": None,
             **stamp,
         }
-    record = _round_corrected(raw, sectors, hidden_year, plan, prepared, enforce=False)[1]
+    twin = None if twin_model is None else twin_model[raw.year == hidden_year]
+    record = _round_corrected(
+        raw, sectors, hidden_year, plan, prepared, enforce=False, twin_model=twin
+    )[1]
     return {**record, **stamp}
 
 

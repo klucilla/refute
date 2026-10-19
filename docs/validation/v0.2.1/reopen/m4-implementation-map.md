@@ -738,6 +738,29 @@ once through `b` alone and once through `s` alone, each against the official rou
 on it was caught, and so was SD6 (the threshold without `s`). JUnit: the derivation file 23 tests
 (before the edge case 21), 0 failures; the capacity, plan and holdout tests 97, 0 failures.
 
+**The twin and the alteration (items 4 and 5), implemented.** Tests `be7d181`
+(`tests/test_rmin_twin.py`, `tests/test_rmin_alteration.py`), then the code: `detrend_parts` (the
+flattened copy, the effective trend and the cadences kept; `detrend` returns its first part),
+`HiddenYear.twin`, `calibration_measurement(..., twin_model=...)` with `d_twin`, and
+`docs/validation/v0.2.1/population/rmin_study.py` (`deficit_and_trend`, `alter_last_year`,
+`noiseless_model`, from a case's recorded final parameters). The first version kept the trend and
+the cadences from a call of `detrend_parts` in `HiddenYear`'s constructor; the holdout tests then
+failed twice (B1 of `test_holdout_report_wording.py` requires one call of `detrend` there), so the
+constructor is unchanged and only `twin` repeats the detrending with `detrend_parts` on the same
+inputs, checked identical to the noisy one. Before the sabotages the clipping case was made to
+compare the flux values too (a twin equal to the raw flux reads the noisy flux itself, cadence by
+cadence). **Sabotages:** ST1 (the twin not divided by the trend), ST3 (the twin's depth written into
+a noisy field), ST4 (the cadences misaligned after a clipped one), SA1 (the alteration on every
+year), SA2 (the factor inverted) and SA3 (the increment without the trend) caught; **ST2 (the twin
+at dP = 0) escaped**: in the case's curve the dP chosen is 0. A case written after the escape moves
+the hidden year's transits by `(epoch − n_ref) g` for a non-zero grid value `g` (two deterministic
+passes), so the dP chosen is not 0; ST2 run again on it was caught. ST5 (the twin's replica
+statistics taken at the grid's first dP) was not caught and cannot be through `d_twin`: the twin's
+depth is the windows' mean and reads the replica variance only in the condition `var_rep > 0`, an
+equivalent mutation for what the record keeps. JUnit: the twin file 7 tests, the alteration file 8,
+0 failures; the detrend and holdout files with the derivation 304 tests at the first version (2
+failures, above), 24 of the affected files after the change, 0 failures.
+
 ## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
 
 The maintainer's item 5 of 2026-10-18: the campaign declaration of the harness version 3, with its

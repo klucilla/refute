@@ -120,12 +120,45 @@ def test_the_twin_reads_the_cadences_the_noisy_detrending_kept(curve):
     noisy = HiddenYear(spiked, [window], plan)
     t_noisy, _ = noisy.local_baseline(window.t_pred, window.half_width)
     assert not np.any(t_noisy == hidden.time[k])  # precondition: the outlier was clipped
-    twin = noisy.twin(np.ones(len(spiked)))
+    # a twin equal to the raw flux reads the noisy flux itself, cadence by cadence (the values
+    # checked too, so that a misaligned cadence after the clipped one is seen)
+    twin = noisy.twin(spiked.flux.copy())
     for read in ("window", "local_baseline"):
-        t_a, _ = getattr(noisy, read)(window.t_pred, window.half_width)
+        t_a, f_a = getattr(noisy, read)(window.t_pred, window.half_width)
         t_b, f_b = getattr(twin, read)(window.t_pred, window.half_width)
         assert np.array_equal(t_a, t_b), read
-        assert np.all(np.isfinite(f_b))
+        assert np.array_equal(f_a, f_b), read
+
+
+def test_the_twin_is_measured_at_the_dp_chosen_when_it_is_not_zero(curve):
+    """Added after the sabotage ST2 (the twin at dP = 0) escaped: in the curve above the dP chosen
+    is 0 (map Amendment 26's record). Two passes, deterministic: the first gives the round's grid
+    and train ephemeris; the second moves the hidden year's transits by (epoch - n_ref) g, for g
+    the grid value at three quarters of it, so that the stack peaks at dP = g."""
+    lc, sectors = curve
+    plan = _plan()
+    first = holdout._round(lc, sectors, 2020, plan)
+    grid = first.metrics["capacity"]["grid"]
+    eph = first.train_ephemeris
+    g = grid[(3 * len(grid)) // 4]
+    assert g > 0  # precondition: a non-zero grid value
+    base, _ = synthetic.make_lightcurve(None, sector_starts=TWO_BY_TWO, seed=3500)
+    k_ref = round((eph["t_ref"] - PLANET.t0) / PLANET.period)
+    train_unit = synthetic.trapezoid(
+        base.time, PLANET.period, PLANET.t0, 1.0, PLANET.duration, 0.15
+    )
+    hidden_unit = synthetic.trapezoid(
+        base.time, PLANET.period + g, PLANET.t0 - k_ref * g, 1.0, PLANET.duration, 0.15
+    )
+    unit = np.where(base.year == 2020, hidden_unit, train_unit)
+    built = LightCurveData(
+        base.time, base.flux - DEPTH * unit, base.flux_err, base.sector, base.year
+    )
+    rec = calibration_measurement(
+        built, sectors, 2020, plan, identity=_ident(plan), twin_model=built.flux.copy()
+    )
+    assert rec["dp"] is not None and rec["dp"] != 0.0, rec["dp"]  # precondition
+    assert rec["d_twin"] == rec["d_hidden"]
 
 
 def test_a_twin_of_the_wrong_length_is_refused(curve):
