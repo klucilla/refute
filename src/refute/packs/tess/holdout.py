@@ -1181,10 +1181,8 @@ def _round(
 # --- M4 piece 5: the capacity decisions and the FAIL rule -------------------------------------
 # Revision 3, 4.3 to 4.6, with revision 4, 1 and 2; map Amendment 12 and its addendum.
 
-# Until the M4 freeze, b and s are module settings, not plan fields (map Amendment 12): no new
-# plan field reaches the historical locks before the freeze. Not calibrated values.
-CAPACITY_B = 0.0
-CAPACITY_S = 0.0
+# b and s are the plan settings capacity_b and capacity_s (package 25, map Amendment 25; until
+# then module settings, Amendment 12); k = 1 stays a module constant (a decision threshold).
 CAPACITY_K = 1.0
 ALPHA_RULE = 0.005
 
@@ -1319,7 +1317,7 @@ def _round_corrected(
     transit = [w for w in windows if w.kind == "transit"]
     control = [w for w in windows if w.kind == "control"]
     n_years = len(raw.years)
-    threshold = capacity_threshold(params.min_snr, CAPACITY_B, CAPACITY_S, n_years)
+    threshold = capacity_threshold(params.min_snr, c.capacity_b, c.capacity_s, n_years)
     replicas = register_replicas(eph, windows, spans)
     grid = period_grid(eph, windows, train.duration, params)
     n_pred = count_n_pred(transit, spans)
@@ -1332,8 +1330,8 @@ def _round_corrected(
         "n_pred": n_pred,
         "threshold": threshold,
         "n_years": n_years,
-        "b": CAPACITY_B,
-        "s": CAPACITY_S,
+        "b": c.capacity_b,
+        "s": c.capacity_s,
         "m_beta": c.m_beta,
         "grid": grid.tolist(),
         "n_replicas_hidden": len(replicas),
@@ -1520,14 +1518,28 @@ def _round_corrected(
 
 
 def calibration_measurement(
-    raw: LightCurveData, sectors: Sequence[SectorInfo], hidden_year: int, plan: TessTestPlan
+    raw: LightCurveData,
+    sectors: Sequence[SectorInfo],
+    hidden_year: int,
+    plan: TessTestPlan,
+    identity: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Map Amendments 9 and 12: for the population harness only, never for ``run_holdout``. The
     round measured despite the two capacity decisions (recorded), with its own ``HiddenYear``;
     a measurement impediment leaves ``s_meas`` absent with its reason. Returns a record marked
-    ``calibration_only``; nothing of an official result is touched."""
-    if not plan.gauntlet.corrections.active:
+    ``calibration_only``; nothing of an official result is touched. From package 25 (Amendment
+    25) every return carries the pair ``capacity_b``, ``capacity_s`` used and the configuration
+    ``identity`` given by the caller (its ``block_sha256`` must be the plan's resolved block)."""
+    from refute.core.canonical import canonical_sha256
+
+    c = plan.gauntlet.corrections
+    if not c.active:
         raise ValueError("the calibration measurement needs the corrections switch on")
+    if identity is not None:
+        block = canonical_sha256(c.model_dump(mode="json"))
+        if identity.get("block_sha256") != block:
+            raise ValueError("the configuration identity names another corrections block")
+    stamp = {"capacity_b": c.capacity_b, "capacity_s": c.capacity_s, "configuration": identity}
     spans = [(s.t_start, s.t_end) for s in sectors if s.year == hidden_year]
     prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)
     if prepared.decided is not None:
@@ -1540,8 +1552,10 @@ def calibration_measurement(
             "s_pred_2": None,
             "s_meas": None,
             "reason": prepared.decided.metrics.get("reason", prepared.decided.message),
+            **stamp,
         }
-    return _round_corrected(raw, sectors, hidden_year, plan, prepared, enforce=False)[1]
+    record = _round_corrected(raw, sectors, hidden_year, plan, prepared, enforce=False)[1]
+    return {**record, **stamp}
 
 
 def run_holdout(

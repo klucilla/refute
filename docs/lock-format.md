@@ -234,6 +234,21 @@ with its date, the paths and frozen values it adds, and the full resolved hashes
    extension 1, with two more non-default values (`alias_z_f` 30.0 and `alias_f` 0.7) refused.
    Sabotages: the new keys left out of the literal, and a literal with another default, each make
    cases fail.
+4. **`b` and `s` of the capacity rule in the corrections section (2026-10-18; branch
+   `claude/v0-2-1-reopen` only, until its merge; package 25, approved by the maintainer on
+   2026-10-18).** The harness version 3 package (`docs/validation/v0.2.1/reopen/m4-implementation-map.md`,
+   Amendment 25) moves `b` and `s` of the holdout's capacity rule from module settings of
+   `holdout.py` to two settings of the section, `capacity_b` and `capacity_s` (defaults 0.0 and
+   0.0, which reproduce the threshold `min_snr`). This extension adds them, at those defaults, to the
+   frozen value of extensions 1 to 3 (the same path, both historical entries); every other frozen
+   value is unchanged. Both historical claims still reach their locked `claim_sha256` by the
+   projection (the claim component; `verify` stays `TAMPERED` in the code component). Full resolved
+   hashes from this extension: v0.1
+   `f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc`, v0.2
+   `3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514`. Tests: the cases of
+   extension 1, with two more non-default values (`capacity_b` 0.1 and `capacity_s` 0.1) refused,
+   for both claims; the section written in the claim file, even at its defaults, still refused.
+   Sabotages: the new keys left out of the literal, and a literal with another default.
 
 ## When only the code differs (issue #66)
 

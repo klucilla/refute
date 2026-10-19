@@ -230,6 +230,11 @@ class CorrectionsParams(_Model):
     # the first pair of the declared order.
     alias_z_f: float = 18.47
     alias_f: float = 0.5
+    # Package 25 (map Amendment 25, approved 2026-10-18): b and s of the capacity rule (revision
+    # 4, 2: one pair, pooled over both noise models, estimated on the selection part). The
+    # defaults reproduce the threshold min_snr; they are not a calibration.
+    capacity_b: float = Field(0.0, allow_inf_nan=False)
+    capacity_s: float = Field(0.0, ge=0, allow_inf_nan=False)
 
     @model_validator(mode="after")
     def _alias_pair(self) -> CorrectionsParams:

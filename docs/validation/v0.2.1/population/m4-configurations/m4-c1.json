@@ -14,6 +14,8 @@
     "m_beta": 1.2,
     "r_min": 20,
     "alias_z_f": 18.47,
-    "alias_f": 0.5
+    "alias_f": 0.5,
+    "capacity_b": 0.0,
+    "capacity_s": 0.0
   }
 }

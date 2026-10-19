@@ -56,6 +56,10 @@ _CORRECTIONS_OFF = {
     "alias_f": 0.5,
     "alias_z_f": 18.47,
     "b_min": 20,
+    # Extension 4 (2026-10-18; package 25, map Amendment 25; approved by the maintainer on
+    # 2026-10-18): b and s of the capacity rule at their defaults.
+    "capacity_b": 0.0,
+    "capacity_s": 0.0,
     "enabled": False,
     "fap_max": 0.0001,
     "gap_split": 5.0,
