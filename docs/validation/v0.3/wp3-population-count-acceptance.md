@@ -55,15 +55,20 @@ claim's command to be the inventory's.
 - **The record** (canonical JSON, committed before the lock): the dataset and the derived
   split it counts; the count; the script's SHA-256; the repository commit; the SHA-256 of
   each allowed patch, in order; the SHA-256 of the configuration files the selection reads;
-  the image ID of the environment and of the base image; the exit code, the CPU usage and
-  the UTC times; the Refute commit.
+  the environment: the base image's digest and the SHA-256 of the resolved lock the
+  ladder's rung wrote (`.refute/requirements.lock`); the exit code, the CPU usage and the
+  UTC times; the Refute commit. (An image ID is not used: an image committed from a build
+  container gets a new ID at every build, even with the same content.)
 - **At validation** the claim is refused unless: the record names this dataset and split;
   its count is an integer of at least 1 (a count of 0 has no valid coverage and is
   refused; never a fraction or a boolean) and equals the split's `expected_examples`; the
   script attachment's SHA-256 equals the record's; the record's commit, patches (in order)
   and configuration hashes equal the claim's; the exit code is 0.
-- **At the run** the image the run uses must be the one the record names (the same ladder
-  build), otherwise the count does not apply and the coverage is `INCONCLUSIVE`.
+- **At the run** the environment must be the record's: after the build, the base image
+  digest and the SHA-256 of the resolved lock must equal the record's, and the
+  configuration files in the patched tree must have the record's SHA-256; otherwise the
+  count does not apply, and the paper stops as a Refute error before its runs (its claims
+  `INCONCLUSIVE`), never an adjusted K.
 - **At the run, the evidence.** An allowed patch of instrumentation, minimal, prints the
   size of the population the measured value was computed on, after the value, on one line
   named by the method (for 2302.12465, `refute-population-size <explainer> <n>` with
@@ -123,8 +128,8 @@ too; a claim without `counted_before_lock` and without errata keeps its canonica
 fraction or a boolean; a script whose SHA-256 differs from the record's; a record of
 another commit, other patches or another order, another configuration, another dataset or
 split; an exit code other than 0; two lines or none in the script's output; at the run,
-another image than the record's, a printed count other than K, two matching lines, or none
-(`INCONCLUSIVE`); an errata for another inventory; an entry for a candidate that does not
+another resolved lock, base image or configuration than the record's (a Refute error before
+the runs), a printed count other than K, two matching lines, or none (`INCONCLUSIVE`); an errata for another inventory; an entry for a candidate that does not
 exist, or whose `old` is not the inventory's; a field other than `command`; a candidate in
 two entries or two erratas; an errata without approval; a claim whose command is the old
 one while an errata for its candidate is attached; a comparison whose method is right and

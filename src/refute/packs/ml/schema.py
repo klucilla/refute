@@ -79,6 +79,10 @@ PATCH_ROLE = "allowed-patch"
 ERRATA_ROLE = "inventory-errata"
 ERRATA_FORMAT = "refute-ml-inventory-errata-1"
 ERRATA_FIELDS = ("command",)  # the closed list of fields an errata may change
+# a population counted before the lock (wp3-population-count-acceptance.md, section 1)
+POPULATION_SCRIPT_ROLE = "population-count"
+POPULATION_RECORD_ROLE = "population-count-record"
+POPULATION_RECORD_FORMAT = "refute-ml-population-count-1"
 _DECIMAL_TEXT = re.compile(r"^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$")
 
 
@@ -301,15 +305,37 @@ DOWNLOADED, REPOSITORY_FILE, GENERATED = "downloaded", "repository_file", "gener
 GENERATED_REASON = "generated_by_repository_code"
 
 
+class CountedBeforeLock(_Model):
+    """The attachments of a population counted before the lock (W3.12f): the Refute script
+    and its output record (wp3-population-count-acceptance.md, section 1)."""
+
+    script: str
+    record: str
+
+    @field_validator("script", "record")
+    @classmethod
+    def _paths(cls, value: str) -> str:
+        return _relative(value, "counted_before_lock attachment")
+
+
 class DerivedSplit(_Model):
     """A population the repository's code derives from splits of the file (section 2):
     ``data_present`` counts the file's splits; this one is checked by the coverage routes
-    against ``expected_examples``."""
+    against ``expected_examples``. When the repository's own computation decides its
+    membership, it may be ``counted_before_lock`` (W3.12f); an absent one is not written."""
 
     expected_examples: int = Field(ge=1)
     derived_from: list[str] = Field(min_length=1)
     rule: str
     code: list[CodeCitation] = Field(min_length=1)
+    counted_before_lock: CountedBeforeLock | None = None
+
+    @model_serializer(mode="wrap")
+    def _omit_absent(self, handler: Any) -> dict[str, Any]:
+        out = handler(self)
+        if out.get("counted_before_lock") is None:
+            out.pop("counted_before_lock", None)
+        return out
 
     @model_validator(mode="after")
     def _check(self) -> DerivedSplit:
@@ -1491,6 +1517,27 @@ def _attachment_record(loaded: LoadedClaim, role: str) -> dict[str, Any]:
     return record
 
 
+def _record_at(loaded: LoadedClaim, attachment: Any) -> dict[str, Any]:
+    """The canonical JSON record of one attachment, checked against its sha256."""
+    if attachment.sha256 is None or not re.fullmatch(HEX64, attachment.sha256):
+        raise ValueError(f"the attachment {attachment.path} needs its sha256")
+    try:
+        data = loaded.attachment_path(attachment).read_bytes()
+    except OSError as exc:
+        raise ValueError(f"cannot read the attachment {attachment.path}: {exc}") from None
+    if sha256_bytes(data) != attachment.sha256:
+        raise ValueError(f"the attachment {attachment.path} differs from its sha256")
+    try:
+        record = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"the attachment {attachment.path} is not JSON: {exc}") from None
+    if canonical_bytes(record) != data:
+        raise ValueError(f"the attachment {attachment.path} must be stored in canonical JSON")
+    if not isinstance(record, dict):
+        raise ValueError(f"the attachment {attachment.path} is not a JSON object")
+    return record
+
+
 def _attachment_records(loaded: LoadedClaim, role: str) -> list[dict[str, Any]]:
     """The JSON records of every attachment with ``role`` (possibly none), each checked
     like ``_attachment_record``."""
@@ -1594,6 +1641,7 @@ class MlClaimSchema:
         if len(set(keys)) != len(keys):
             raise ValueError("two claims share a key")
         self._check_patches(loaded, plan)
+        self._check_population_counts(loaded, plan)
         for target in targets:
             self._check_target(plan, target)
         self._check_exempt_minimums(loaded, plan, targets)
@@ -1693,6 +1741,65 @@ class MlClaimSchema:
                     f"allowed patch {patch.attachment} is not an attachment with role "
                     f"'{PATCH_ROLE}'"
                 )
+
+    @staticmethod
+    def _check_population_counts(loaded: LoadedClaim, plan: MlTestPlan) -> None:
+        """Each population counted before the lock is bound to its claim (W3.12f): the
+        script and record attachments by path and role, the record's dataset, split, count
+        (an int of at least 1, equal to expected_examples), script hash, commit, patches in
+        order, base image and exit 0 (wp3-population-count-acceptance.md, section 1)."""
+        by_path = {a.path: a for a in loaded.claim.attachments}
+        used: set[str] = set()
+        patches = []
+        for patch in plan.build.allowed_patches:
+            attachment = by_path.get(patch.attachment)
+            patches.append(attachment.sha256 if attachment is not None else None)
+        for dataset in plan.datasets:
+            for name, split in (getattr(dataset, "derived_splits", None) or {}).items():
+                counted = split.counted_before_lock
+                if counted is None:
+                    continue
+                where = f"{dataset.name}/{name}"
+                script = by_path.get(counted.script)
+                record_attachment = by_path.get(counted.record)
+                if script is None or script.role != POPULATION_SCRIPT_ROLE:
+                    raise ValueError(f"{where}: the count script is not an attachment with role "
+                                     f"'{POPULATION_SCRIPT_ROLE}'")  # fmt: skip
+                if record_attachment is None or record_attachment.role != POPULATION_RECORD_ROLE:
+                    raise ValueError(f"{where}: the count record is not an attachment with role "
+                                     f"'{POPULATION_RECORD_ROLE}'")  # fmt: skip
+                for path in (counted.script, counted.record):
+                    if path in used:
+                        raise ValueError(f"{where}: {path} serves another counted population")
+                    used.add(path)
+                if script.sha256 is None or not re.fullmatch(HEX64, script.sha256):
+                    raise ValueError(f"{where}: the count script needs its sha256")
+                record = _record_at(loaded, record_attachment)
+                count = record.get("count")
+                checks = (
+                    (record.get("format") == POPULATION_RECORD_FORMAT, "format"),
+                    (record.get("dataset") == dataset.name, "dataset"),
+                    (record.get("split") == name, "split"),
+                    (type(count) is int and count >= 1, "count (an int of at least 1)"),
+                    (count == split.expected_examples, "count equal to expected_examples"),
+                    (record.get("script_sha256") == script.sha256, "script's sha256"),
+                    (record.get("commit") == plan.repository.commit, "repository commit"),
+                    (record.get("patches") == patches, "allowed patches in order"),
+                    (
+                        (record.get("environment") or {}).get("base_image")
+                        == plan.build.base_image,
+                        "base image",
+                    ),
+                    (
+                        re.fullmatch(HEX64, str((record.get("environment") or {}).get(
+                            "lock_sha256", ""))) is not None,
+                        "resolved lock's sha256",
+                    ),
+                    (record.get("exit_code") == 0, "exit code 0"),
+                )  # fmt: skip
+                for ok, what in checks:
+                    if not ok:
+                        raise ValueError(f"{where}: the count record's {what} does not hold")
 
     @staticmethod
     def _check_inventory(

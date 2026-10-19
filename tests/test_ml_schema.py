@@ -2225,3 +2225,105 @@ def test_a_comparisons_reference_run_must_use_the_corrected_command():
         S._check_reference_command(
             claim_with(["sh", "-c", "baseline --fixed"]), comparison, by_id, corrections, {}
         )
+
+
+# ---- a population counted before the lock (wp3-population-count-acceptance.md, section 1) -----
+
+SCRIPT = b"print('refute-population-count 77')\n"
+
+
+def count_record(**changes):
+    record = {
+        "format": "refute-ml-population-count-1",
+        "dataset": "cifar10",
+        "split": "selected",
+        "count": 77,
+        "script_sha256": sha256_bytes(SCRIPT),
+        "commit": COMMIT,
+        "patches": [],
+        "configuration": [],
+        "environment": {"base_image": ENGINE_BASE_IMAGE, "lock_sha256": "e" * 64},
+        "exit_code": 0,
+    }
+    record.update(changes)
+    return record
+
+
+def with_count(tmp_path, record, expected=77, script=SCRIPT):
+    data = canonical_bytes(record)
+    (tmp_path / "count.py").write_bytes(script)
+    (tmp_path / "count.json").write_bytes(data)
+
+    def mutate(claim):
+        claim["attachments"] += [
+            {"path": "count.py", "role": "population-count", "sha256": sha256_bytes(script)},
+            {"path": "count.json", "role": "population-count-record", "sha256": sha256_bytes(data)},
+        ]
+        claim["test_plan"]["datasets"][0]["derived_splits"] = {
+            "selected": {
+                "expected_examples": expected,
+                "derived_from": ["test"],
+                "rule": "the test examples the repository's model selects",
+                "code": [{"file": "eval.py", "lines": [1, 2], "role": "the selection"}],
+                "counted_before_lock": {"script": "count.py", "record": "count.json"},
+            }
+        }
+        # every declared split is named by the claims' split identities
+        for target_ in claim["targets"]:
+            for evidence in target_["coverage_evidence"].values():
+                identity = evidence.get("split_identity")
+                if identity is not None:
+                    identity["other_splits"].append({"name": "selected", "labels_sha256": "d" * 64})
+
+    return mutate
+
+
+def test_a_population_counted_before_the_lock_is_bound_to_its_record(tmp_path):
+    loaded = load(tmp_path, with_count(tmp_path, count_record()))
+    derived = loaded.claim.test_plan["datasets"][0]["derived_splits"]["selected"]
+    assert derived["counted_before_lock"] == {"script": "count.py", "record": "count.json"}
+
+
+@pytest.mark.parametrize(
+    ("changes", "match"),
+    [
+        ({"count": 76}, "count equal to expected_examples"),
+        ({"count": 0}, "count"),
+        ({"count": True}, "count"),
+        ({"count": 77.0}, "count"),
+        ({"script_sha256": "0" * 64}, "script's sha256"),
+        ({"commit": "9" * 40}, "repository commit"),
+        ({"patches": ["0" * 64]}, "allowed patches"),
+        (
+            {"environment": {"base_image": "python@sha256:" + "c" * 64, "lock_sha256": "e" * 64}},
+            "base image",
+        ),
+        ({"environment": {"base_image": ENGINE_BASE_IMAGE}}, "resolved lock"),
+        ({"exit_code": 1}, "exit code"),
+        ({"dataset": "other"}, "dataset"),
+        ({"split": "test"}, "split"),
+        ({"format": "x"}, "format"),
+    ],
+)
+def test_a_count_record_that_does_not_bind_is_refused(tmp_path, changes, match):
+    with pytest.raises(ClaimError, match=match):
+        load(tmp_path, with_count(tmp_path, count_record(**changes)))
+
+
+def test_a_count_record_of_another_size_than_expected_is_refused(tmp_path):
+    with pytest.raises(ClaimError, match="expected_examples"):
+        load(tmp_path, with_count(tmp_path, count_record(), expected=78))
+
+
+def test_a_derived_split_without_a_count_keeps_its_canonical_form():
+    from refute.packs.ml.schema import DerivedSplit
+
+    split = DerivedSplit.model_validate(
+        {
+            "expected_examples": 5,
+            "derived_from": ["test"],
+            "rule": "a rule",
+            "code": [{"file": "a.py", "lines": [1, 1], "role": "r"}],
+        }
+    )
+    assert "counted_before_lock" not in split.model_dump(mode="json")
