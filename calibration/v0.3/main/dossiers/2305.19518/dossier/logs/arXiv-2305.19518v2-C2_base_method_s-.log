@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/work/train_CIFAR.py", line 8, in <module>
+    from utils.clip_wrapper import clip_img_wrap
+  File "/work/utils/clip_wrapper.py", line 2, in <module>
+    import clip
+  File "/opt/venv/lib/python3.9/site-packages/clip/__init__.py", line 1, in <module>
+    from .clip import *
+  File "/opt/venv/lib/python3.9/site-packages/clip/clip.py", line 6, in <module>
+    from pkg_resources import packaging
+ModuleNotFoundError: No module named 'pkg_resources'
