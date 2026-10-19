@@ -182,13 +182,15 @@ def test_the_recorded_capacity_follows_its_definitions(strong):
     assert cap["threshold"] == pytest.approx(
         capacity_threshold(5.0, cap["b"], cap["s"], 2), rel=1e-12
     )
-    assert (cap["b"], cap["s"]) == (holdout.CAPACITY_B, holdout.CAPACITY_S)
+    # package 25 (map Amendment 25): b and s are the plan's settings, here their defaults
+    c = _plan().gauntlet.corrections
+    assert (cap["b"], cap["s"]) == (c.capacity_b, c.capacity_s) == (0.0, 0.0)
 
 
-def test_b_and_s_enter_the_threshold(monkeypatch, strong):
+def test_b_and_s_enter_the_threshold(strong):
     lc, sectors, _ = strong
-    monkeypatch.setattr(holdout, "CAPACITY_B", -100.0)  # an impossible threshold
-    outcome = run_holdout(lc, sectors, _plan())
+    # an impossible threshold (from package 25 the plan's setting, before it a module setting)
+    outcome = run_holdout(lc, sectors, _plan(capacity_b=-100.0))
     r = _round(outcome, 2020)
     assert r.metrics["capacity"]["threshold"] == pytest.approx(105.0)
     assert r.metrics["reason"] == "insufficient_capacity_train"

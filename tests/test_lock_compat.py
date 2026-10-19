@@ -37,11 +37,13 @@ CLAIMS = {
 # From extension 2 (the version key of the section, the version rule of the maintainer's decision
 # of 2026-10-18), with the code of the commit that adds it: v0.1 045a980e...4fe6936, v0.2
 # 27213d94...f9a04be. From extension 3 (the thresholds of period_alias, map Amendment 21; approved
-# by the maintainer on 2026-10-18), with the code of the commit that adds it (docs/lock-format.md,
-# "Extensions of the table"):
+# by the maintainer on 2026-10-18): v0.1 71cfc632...cb4f12b5, v0.2 57f8f2a3...17923f4973. From
+# extension 4 (b and s of the capacity rule, map Amendment 25; approved by the maintainer on
+# 2026-10-18), with the code of the commit that adds it (docs/lock-format.md, "Extensions of the
+# table"):
 FULL_RESOLVED = {
-    "tess-calibration-v0.1": "71cfc632ca84006b8149669bdf76d19d710c758193ada04300b643f9cb4f12b5",
-    "tess-calibration-v0.2": "57f8f2a38157076c6df0a43ffa95da8d3b3a7b5a876a1521da5af417923f4973",
+    "tess-calibration-v0.1": "f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc",
+    "tess-calibration-v0.2": "3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514",
 }
 CORRECTIONS = ("test_plan", "gauntlet", "corrections")
 
@@ -202,6 +204,8 @@ NOT_DEFAULT = [
     ("r_min", 19),
     ("alias_z_f", 30.0),  # extension 3: the thresholds of period_alias (map Amendment 21)
     ("alias_f", 0.7),
+    ("capacity_b", 0.1),  # extension 4: b and s of the capacity rule (map Amendment 25)
+    ("capacity_s", 0.1),
 ]
 
 
