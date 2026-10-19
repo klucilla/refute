@@ -9,3 +9,5 @@ calibration/v0.2/audit/** -text
 docs/validation/v0.2.1/pre-document-runs/** -text
 docs/validation/v0.2.1/baseline/** -text
 docs/validation/v0.2.1/population/** -text
+# the sealed dossiers of v0.3, published byte for byte (wp3-dossier-provenance-acceptance.md)
+calibration/v0.3/main/dossiers/*/dossier/** -text

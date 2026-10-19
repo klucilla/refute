@@ -18,6 +18,8 @@ htmlcov/
 # never committed; archived to the maintainer's Drive (WP2 W2.13a)
 private/
 dossiers/
+# the sealed dossiers of v0.3 published by the publication rule of the logs
+!calibration/v0.3/main/dossiers/
 repro/
 
 # OS / editors
