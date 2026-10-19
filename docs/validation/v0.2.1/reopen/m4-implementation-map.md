@@ -735,6 +735,19 @@ over the rounds that meet each `R`:
 These are committed before any lot of the study is generated; the study's lots wait for the numeric
 value of its own ceiling.
 
+**The maintainer's decision (2026-10-19), in their words:** "Aprovo o teto próprio de 255 h para o
+estudo e a reserva, e os registros completos no Drive com manifesto SHA-256 e os digests no
+repositório. Pode gerar os lotes do estudo." (The study's and the reserve's own ceiling is 255 h,
+1.25 times the 204 h projected; the complete records go to the Drive with a SHA-256 manifest and
+their digests to the repository; the study's lots may be generated.) **How the ceiling acts:** the
+machine time already spent on the study's own work (the timing lot, 0.14 h; `bs-choice`) is taken
+from it, and the study's run stops submitting targets when its own elapsed time reaches what is
+left; the targets in flight end, and the lot is then incomplete and goes to the maintainer (the
+ceiling never reduces a size or skips a condition). The reserve runs on what the study leaves; if
+that is too little, it goes to the maintainer before it starts. **The records:** the study's run
+folder is kept in `.cache` and archived to the Drive with a checked SHA-256 manifest; the repository
+receives the lot's manifest, the SHA-256 of every record file, the run reports and the evaluation.
+
 **Implemented.** The twin's status in the record (`096a6ca`, item 8). The evaluator: tests
 `be3a604` (`tests/test_rmin_evaluate.py`, on built records), then
 `docs/validation/v0.2.1/population/rmin_evaluate.py`. The tie of item 4 is read on the unscaled
