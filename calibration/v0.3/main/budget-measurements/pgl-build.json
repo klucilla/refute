@@ -1,0 +1,16 @@
+{
+ "name": "pgl",
+ "repo_url": "https://github.com/amazon-science/page-link-path-based-gnn-explanation.git",
+ "commit": "cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c",
+ "python": "3.10",
+ "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+ "exclude_newer": "2023-07-25",
+ "patches": [
+  {
+   "attachment": "2302-torch-dgl.patch",
+   "path": "/home/refute/refute-run/measure-data/patches/2302-torch-dgl.patch",
+   "sha256": "4d8563a7ffbafd74acb12e19eba4eff0a3143ac55329472e667e723057c097f8"
+  }
+ ],
+ "data": {}
+}

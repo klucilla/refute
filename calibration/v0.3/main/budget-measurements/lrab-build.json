@@ -1,0 +1,8 @@
+{
+ "name": "lrab",
+ "repo_url": "https://github.com/puar-playground/LRA-diffusion.git",
+ "commit": "231e587f3569ce413d40d96b9cce5a3c08ee361f",
+ "python": "3.9",
+ "base_image": "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+ "exclude_newer": "2025-09-28"
+}

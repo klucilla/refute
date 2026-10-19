@@ -1,0 +1,145 @@
+{
+ "argv": [
+  "python",
+  "run.py",
+  "-c",
+  "configs/uci.yml",
+  "-d",
+  "energy_interpol",
+  "-m",
+  "BNN",
+  "-e",
+  "10",
+  "--n_estimators",
+  "1",
+  "-p",
+  "{'lambda_': 1.0}"
+ ],
+ "data": {
+  "data/uci/165/concrete+compressive+strength.zip": {
+   "path": "/home/refute/refute-run/measure-data/uci/concrete+compressive+strength.zip",
+   "sha256": "dad85d14de8aee4e07479daa774e6b569a313715b71a3b92c95a07cf91c2c9a7",
+   "source": "https://archive.ics.uci.edu/static/public/165/concrete+compressive+strength.zip"
+  },
+  "data/uci/186/wine+quality.zip": {
+   "path": "/home/refute/refute-run/measure-data/uci/wine+quality.zip",
+   "sha256": "3ed56667f4b828242bd732d7d1dd7f2861e54432239d7fa63877014cbb0304d4",
+   "source": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip"
+  },
+  "data/uci/242/energy+efficiency.zip": {
+   "path": "/home/refute/refute-run/measure-data/uci/energy+efficiency.zip",
+   "sha256": "499441eee27929a4b00417f58fd8c63c9cc14b8a71520cd0dd27fcb626738351",
+   "source": "https://archive.ics.uci.edu/static/public/242/energy+efficiency.zip"
+  },
+  "data/uci/243/yacht+hydrodynamics.zip": {
+   "path": "/home/refute/refute-run/measure-data/uci/yacht+hydrodynamics.zip",
+   "sha256": "aa52b68f88c4bb552187a53ef4c5753fa178f6a36035a3771c5bc04e078487ac",
+   "source": "https://archive.ics.uci.edu/static/public/243/yacht+hydrodynamics.zip"
+  },
+  "data/uci/265/physicochemical+properties+of+protein+tertiary+structure.zip": {
+   "path": "/home/refute/refute-run/measure-data/uci/physicochemical+properties+of+protein+tertiary+structure.zip",
+   "sha256": "ee6536c8cc415dc50d66bd247af7c9bc95c187ab8a4ea0f1f546b127206c1100",
+   "source": "https://archive.ics.uci.edu/static/public/265/physicochemical+properties+of+protein+tertiary+structure.zip"
+  },
+  "data/uci/294/combined+cycle+power+plant.zip": {
+   "path": "/home/refute/refute-run/measure-data/uci/combined+cycle+power+plant.zip",
+   "sha256": "cc7b2a4977c0a44e8221c91d9a7e5746b3c68186cff7e5c61c70af6432b98c7a",
+   "source": "https://archive.ics.uci.edu/static/public/294/combined+cycle+power+plant.zip"
+  },
+  "data/uci/dataset_2175_kin8nm.arff": {
+   "path": "/home/refute/refute-run/measure-data/uci/dataset_2175_kin8nm.arff",
+   "sha256": "698fb5297abde73c001b07f8fb2fe31626366cf179678aed0990737cc0689c79",
+   "source": "https://www.openml.org/data/download/3626/dataset_2175_kin8nm.arff"
+  },
+  "data/uci/naval-data.txt": {
+   "path": "/home/refute/refute-run/measure-data/uci/naval-data.txt",
+   "sha256": "de0ea69da1efaab8b9655ffed828547d10dd68c1fb8c6e0163e6a988def393a6",
+   "source": "https://raw.githubusercontent.com/trewaite/Naval-Vessel-Maintenance/15bb3ed4ba49c9b82e6648e73218232cbe1138a8/UCI%20CBM%20Dataset/data.txt"
+  }
+ },
+ "exit_code": 0,
+ "finished_utc": "2026-10-18T21:35:23Z",
+ "phase": "run",
+ "raw_log_and_outputs": "deleted on the VM; only the timing lines above were kept",
+ "spec": {
+  "active_minutes": 60,
+  "argv": [
+   "python",
+   "run.py",
+   "-c",
+   "configs/uci.yml",
+   "-d",
+   "energy_interpol",
+   "-m",
+   "BNN",
+   "-e",
+   "10",
+   "--n_estimators",
+   "1",
+   "-p",
+   "{'lambda_': 1.0}"
+  ],
+  "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+  "commit": "c67aa620a64e139d8599613e24cc57b34af5b67f",
+  "data": {
+   "data/uci/165/concrete+compressive+strength.zip": {
+    "path": "/home/refute/refute-run/measure-data/uci/concrete+compressive+strength.zip",
+    "sha256": "dad85d14de8aee4e07479daa774e6b569a313715b71a3b92c95a07cf91c2c9a7",
+    "source": "https://archive.ics.uci.edu/static/public/165/concrete+compressive+strength.zip"
+   },
+   "data/uci/186/wine+quality.zip": {
+    "path": "/home/refute/refute-run/measure-data/uci/wine+quality.zip",
+    "sha256": "3ed56667f4b828242bd732d7d1dd7f2861e54432239d7fa63877014cbb0304d4",
+    "source": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip"
+   },
+   "data/uci/242/energy+efficiency.zip": {
+    "path": "/home/refute/refute-run/measure-data/uci/energy+efficiency.zip",
+    "sha256": "499441eee27929a4b00417f58fd8c63c9cc14b8a71520cd0dd27fcb626738351",
+    "source": "https://archive.ics.uci.edu/static/public/242/energy+efficiency.zip"
+   },
+   "data/uci/243/yacht+hydrodynamics.zip": {
+    "path": "/home/refute/refute-run/measure-data/uci/yacht+hydrodynamics.zip",
+    "sha256": "aa52b68f88c4bb552187a53ef4c5753fa178f6a36035a3771c5bc04e078487ac",
+    "source": "https://archive.ics.uci.edu/static/public/243/yacht+hydrodynamics.zip"
+   },
+   "data/uci/265/physicochemical+properties+of+protein+tertiary+structure.zip": {
+    "path": "/home/refute/refute-run/measure-data/uci/physicochemical+properties+of+protein+tertiary+structure.zip",
+    "sha256": "ee6536c8cc415dc50d66bd247af7c9bc95c187ab8a4ea0f1f546b127206c1100",
+    "source": "https://archive.ics.uci.edu/static/public/265/physicochemical+properties+of+protein+tertiary+structure.zip"
+   },
+   "data/uci/294/combined+cycle+power+plant.zip": {
+    "path": "/home/refute/refute-run/measure-data/uci/combined+cycle+power+plant.zip",
+    "sha256": "cc7b2a4977c0a44e8221c91d9a7e5746b3c68186cff7e5c61c70af6432b98c7a",
+    "source": "https://archive.ics.uci.edu/static/public/294/combined+cycle+power+plant.zip"
+   },
+   "data/uci/dataset_2175_kin8nm.arff": {
+    "path": "/home/refute/refute-run/measure-data/uci/dataset_2175_kin8nm.arff",
+    "sha256": "698fb5297abde73c001b07f8fb2fe31626366cf179678aed0990737cc0689c79",
+    "source": "https://www.openml.org/data/download/3626/dataset_2175_kin8nm.arff"
+   },
+   "data/uci/naval-data.txt": {
+    "path": "/home/refute/refute-run/measure-data/uci/naval-data.txt",
+    "sha256": "de0ea69da1efaab8b9655ffed828547d10dd68c1fb8c6e0163e6a988def393a6",
+    "source": "https://raw.githubusercontent.com/trewaite/Naval-Vessel-Maintenance/15bb3ed4ba49c9b82e6648e73218232cbe1138a8/UCI%20CBM%20Dataset/data.txt"
+   }
+  },
+  "exclude_newer": "2025-02-12",
+  "name": "mwe",
+  "patches": [
+   {
+    "attachment": "2309-uci-files.patch",
+    "path": "/home/refute/refute-run/measure-data/patches/2309-uci-files.patch",
+    "sha256": "05413b6a4bd65cf26cc79c69dc0a9c1f5e7e5d0d4ee8a0d028f8e4c6e30c4a8f"
+   }
+  ],
+  "python": "3.11",
+  "repo_url": "https://github.com/antoinedemathelin/maxwent-expe.git",
+  "run_id": "energy-BNN-10",
+  "timing_patterns": []
+ },
+ "started_utc": "2026-10-18T21:34:28Z",
+ "stopped": null,
+ "timing_lines": [],
+ "usage_usec": 63820391,
+ "wall_s": 55.154843
+}

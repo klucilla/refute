@@ -1,0 +1,49 @@
+{
+ "argv": [
+  "sh",
+  "-c",
+  "python pagelink.py --dataset_name=synthetic --config_path=config.yaml --save_explanation && python eval_explanations.py --dataset_name=synthetic --emb_dim=64 --hidden_dim=64 --out_dim=64 --eval_explainer_names=pagelink"
+ ],
+ "data": {},
+ "error_lines": [
+  "Traceback (most recent call last):",
+  "  File \"/work/pagelink.py\", line 2, in <module>",
+  "  File \"/opt/venv/lib/python3.10/site-packages/torch/__init__.py\", line 202, in <module>",
+  "ImportError: libtorch_cpu.so: cannot enable executable stack as shared object requires: Invalid argument"
+ ],
+ "exit_code": 1,
+ "finished_utc": "2026-10-18T21:52:13Z",
+ "phase": "run",
+ "raw_log_and_outputs": "deleted on the VM; only the timing lines above were kept",
+ "spec": {
+  "active_minutes": 120,
+  "argv": [
+   "sh",
+   "-c",
+   "python pagelink.py --dataset_name=synthetic --config_path=config.yaml --save_explanation && python eval_explanations.py --dataset_name=synthetic --emb_dim=64 --hidden_dim=64 --out_dim=64 --eval_explainer_names=pagelink"
+  ],
+  "base_image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+  "commit": "cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c",
+  "data": {},
+  "exclude_newer": "2023-07-25",
+  "name": "pgl",
+  "patches": [
+   {
+    "attachment": "2302-torch-dgl.patch",
+    "path": "/home/refute/refute-run/measure-data/patches/2302-torch-dgl.patch",
+    "sha256": "4d8563a7ffbafd74acb12e19eba4eff0a3143ac55329472e667e723057c097f8"
+   }
+  ],
+  "python": "3.10",
+  "repo_url": "https://github.com/amazon-science/page-link-path-based-gnn-explanation.git",
+  "run_id": "pagelink",
+  "timing_patterns": [
+   "\\d+%\\|[^|\\r\\n]*\\| *\\d+/\\d+ \\[[0-9:]+<[0-9:?]+"
+  ]
+ },
+ "started_utc": "2026-10-18T21:52:12Z",
+ "stopped": null,
+ "timing_lines": [],
+ "usage_usec": 185476,
+ "wall_s": 1.157609
+}

@@ -1,0 +1,83 @@
+{
+ "argv": [
+  "sh",
+  "-c",
+  "python baselines/pgexplainer_link.py --dataset_name=synthetic --config_path=baselines/baseline_config.yaml --save_explanation && python eval_explanations.py --dataset_name=synthetic --emb_dim=64 --hidden_dim=64 --out_dim=64 --eval_explainer_names=pgexplainer-link"
+ ],
+ "data": {},
+ "error_lines": [
+  "Traceback (most recent call last):",
+  "  File \"/work/eval_explanations.py\", line 124, in <module>",
+  "FileNotFoundError: [Errno 2] No such file or directory: '/work/saved_explanations/pgexplainer-link_synthetic_model_pred_edge_to_comp_g_edge_mask'"
+ ],
+ "exit_code": 1,
+ "finished_utc": "2026-10-18T22:04:48Z",
+ "phase": "run",
+ "raw_log_and_outputs": "deleted on the VM; only the timing lines above were kept",
+ "spec": {
+  "active_minutes": 120,
+  "argv": [
+   "sh",
+   "-c",
+   "python baselines/pgexplainer_link.py --dataset_name=synthetic --config_path=baselines/baseline_config.yaml --save_explanation && python eval_explanations.py --dataset_name=synthetic --emb_dim=64 --hidden_dim=64 --out_dim=64 --eval_explainer_names=pgexplainer-link"
+  ],
+  "base_image": "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+  "commit": "cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c",
+  "data": {},
+  "exclude_newer": "2023-07-25",
+  "name": "pglb",
+  "patches": [
+   {
+    "attachment": "2302-torch-dgl.patch",
+    "path": "/home/refute/refute-run/measure-data/patches/2302-torch-dgl.patch",
+    "sha256": "4d8563a7ffbafd74acb12e19eba4eff0a3143ac55329472e667e723057c097f8"
+   }
+  ],
+  "python": "3.10",
+  "repo_url": "https://github.com/amazon-science/page-link-path-based-gnn-explanation.git",
+  "run_id": "pgexp-cfg",
+  "timing_patterns": [
+   "\\d+%\\|[^|\\r\\n]*\\| *\\d+/\\d+ \\[[0-9:]+<[0-9:?]+"
+  ]
+ },
+ "started_utc": "2026-10-18T22:04:36Z",
+ "stopped": null,
+ "timing_lines": [
+  "0%|          | 0/144 [00:00<?",
+  "6%|\u258c         | 8/144 [00:00<00:01",
+  "11%|\u2588         | 16/144 [00:00<00:01",
+  "16%|\u2588\u258c        | 23/144 [00:00<00:01",
+  "22%|\u2588\u2588\u258f       | 31/144 [00:00<00:01",
+  "27%|\u2588\u2588\u258b       | 39/144 [00:00<00:01",
+  "33%|\u2588\u2588\u2588\u258e      | 47/144 [00:00<00:01",
+  "40%|\u2588\u2588\u2588\u2589      | 57/144 [00:00<00:01",
+  "46%|\u2588\u2588\u2588\u2588\u258c     | 66/144 [00:00<00:00",
+  "51%|\u2588\u2588\u2588\u2588\u2588\u258f    | 74/144 [00:00<00:00",
+  "57%|\u2588\u2588\u2588\u2588\u2588\u258b    | 82/144 [00:01<00:00",
+  "62%|\u2588\u2588\u2588\u2588\u2588\u2588\u258e   | 90/144 [00:01<00:00",
+  "69%|\u2588\u2588\u2588\u2588\u2588\u2588\u2589   | 99/144 [00:01<00:00",
+  "75%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c  | 108/144 [00:01<00:00",
+  "81%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f | 117/144 [00:01<00:00",
+  "87%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b | 125/144 [00:01<00:00",
+  "92%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 133/144 [00:01<00:00",
+  "98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 141/144 [00:01<00:00",
+  "100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 144/144 [00:01<00:00",
+  "0%|          | 0/144 [00:00<?",
+  "8%|\u258a         | 11/144 [00:00<00:01",
+  "15%|\u2588\u258c        | 22/144 [00:00<00:01",
+  "23%|\u2588\u2588\u258e       | 33/144 [00:00<00:01",
+  "31%|\u2588\u2588\u2588       | 44/144 [00:00<00:00",
+  "39%|\u2588\u2588\u2588\u2589      | 56/144 [00:00<00:00",
+  "47%|\u2588\u2588\u2588\u2588\u258b     | 67/144 [00:00<00:00",
+  "54%|\u2588\u2588\u2588\u2588\u2588\u258d    | 78/144 [00:00<00:00",
+  "62%|\u2588\u2588\u2588\u2588\u2588\u2588\u258f   | 89/144 [00:00<00:00",
+  "69%|\u2588\u2588\u2588\u2588\u2588\u2588\u2589   | 99/144 [00:00<00:00",
+  "76%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b  | 110/144 [00:01<00:00",
+  "84%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258d | 121/144 [00:01<00:00",
+  "92%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258f| 133/144 [00:01<00:00",
+  "100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 144/144 [00:01<00:00",
+  "100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 144/144 [00:01<00:00"
+ ],
+ "usage_usec": 52623096,
+ "wall_s": 12.163308
+}
