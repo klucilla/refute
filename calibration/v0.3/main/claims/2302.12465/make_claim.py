@@ -42,7 +42,10 @@ COMMIT = "cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c"  # main_walk_batch_13.json, 
 # https://arxiv.org/html/2302.12465v3, Table 4 and section 6.3, read by the agent
 READ = "2026-10-19T01:38:45Z"
 INVENTORY = ROOT / "calibration/v0.3/main/inventories/2302.12465.json"
-ERRATA = ROOT / "calibration/v0.3/main/inventories/2302.12465-errata-1.json"
+# errata 2 carries both corrections (the engine corrects a candidate once) and replaces
+# errata 1 in the claim file: GNNExp-Link's entry is errata 1's; PGExp-Link's adds
+# --train_pgexplainer (the maintainer's decision of 2026-10-19; issue #158 comment 6267417453)
+ERRATA = ROOT / "calibration/v0.3/main/inventories/2302.12465-errata-2.json"
 DRAW = ROOT / "calibration/v0.3/main/claim_draw.json"
 PATCHES = {
     # README "Requirements": PyTorch = 1.12.1 and DGL = 0.9.1, which requirements.txt omits
@@ -113,6 +116,13 @@ DEFINITIONS = {
     "NOT_REPRODUCIBLE or INCONCLUSIVE remain possible when the base reproduction cannot be "
     "obtained (the maintainer's decision of 2026-10-19).",
     "transcription_approval_time": tt.DEFINITION,
+    "reference_pgexp_link": "The comparison's reference, PGExp-Link, runs errata 2's "
+    "command: errata 1's with --train_pgexplainer added, the repository's own training "
+    "parameters, none tuned. Without that option baselines/pgexplainer_link.py never trains "
+    "the PGExplainer's mask generator (lines 55 and 117-125). This is a reproduction with an "
+    "explicit correction of the documented procedure: neither the repository nor the paper "
+    "shows that this command produced the published 0.578 (the maintainer's decision of "
+    "2026-10-19; https://github.com/klucilla/refute/issues/158#issuecomment-6267417453).",
 }
 
 
@@ -354,7 +364,8 @@ def comparison_target(position: int, k: int, approvals: dict) -> dict:
         "type": "comparison",
         "statement": f"On UserItemAttr, {PREDICTOR}, the explanations of PaGE-Link have a "
         "higher ROC-AUC against the ground-truth paths than those of PGExp-Link (0.954 "
-        "against 0.578).",
+        "against 0.578); PGExp-Link runs with its mask generator trained, an explicit "
+        "correction of the documented command (errata 2, definitions).",
         "source": source(t["location"], "PaGE-Link outperforms both baseline explainers"),
         "inventory": {"candidate_id": cid, "position": position, "transcription": t},
         "dataset": DATASETS["comparison"]["name"],
