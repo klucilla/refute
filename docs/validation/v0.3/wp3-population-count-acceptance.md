@@ -39,7 +39,8 @@ claim's command to be the inventory's.
   2302.12465: the evaluator's split ratios and sample limit, the checkpoint, the
   dimensions 64, the prediction operation, the node and edge types, `num_hops`, the
   subgraph built by `hetero_src_tgt_khop_in_subgraph` with its remapped feature ids, the
-  `train_eval` section of the configuration, and the strict comparison `> 0.5`), applies
+  `train_eval` section of the configuration only when the command passes `--config_path`
+  (2302.12465's corrected commands do not), and the strict comparison `> 0.5`), applies
   the same selection, and counts the selected keys as the evaluator does (distinct pairs,
   as `comp_graphs`). It does not import the evaluator's executable module (which goes on to
   read masks and compute the metric). It prints exactly one line
@@ -55,20 +56,28 @@ claim's command to be the inventory's.
 - **The record** (canonical JSON, committed before the lock): the dataset and the derived
   split it counts; the count; the script's SHA-256; the repository commit; the SHA-256 of
   each allowed patch, in order; the SHA-256 of the configuration files the selection reads;
-  the environment: the base image's digest and the SHA-256 of the resolved lock the
-  ladder's rung wrote (`.refute/requirements.lock`); the exit code, the CPU usage and the
-  UTC times; the Refute commit. (An image ID is not used: an image committed from a build
-  container gets a new ID at every build, even with the same content.)
+  the environment: the base image's digest, the rung that built the image (one of the
+  rungs that write a resolved lock), the SHA-256 of the resolved lock it wrote
+  (`.refute/requirements.lock`) and the SHA-256 of its venv's `pyvenv.cfg` (the
+  interpreter's implementation and full version, and the uv version; the build copies it
+  to `.refute/pyvenv.cfg`), since two rungs with different interpreters can resolve the
+  same lock (Codex, 2026-10-18); the exit code, the CPU usage and the UTC times; the
+  Refute commit. (An image ID is not used: an image committed from a build container gets
+  a new ID at every build, even with the same content.)
 - **At validation** the claim is refused unless: the record names this dataset and split;
   its count is an integer of at least 1 (a count of 0 has no valid coverage and is
   refused; never a fraction or a boolean) and equals the split's `expected_examples`; the
-  script attachment's SHA-256 equals the record's; the record's commit, patches (in order)
-  and configuration hashes equal the claim's; the exit code is 0.
-- **At the run** the environment must be the record's: after the build, the base image
-  digest and the SHA-256 of the resolved lock must equal the record's, and the
-  configuration files in the patched tree must have the record's SHA-256; otherwise the
-  count does not apply, and the paper stops as a Refute error before its runs (its claims
-  `INCONCLUSIVE`), never an adjusted K.
+  script attachment's SHA-256 equals the record's; the record's commit and patches (in
+  order) equal the claim's, and its base image the claim's; its rung is one with a
+  resolved lock, and the lock and `pyvenv.cfg` hashes are present; its configuration is a
+  list of `{path, sha256}`, each path relative and listed once; the exit code is 0.
+- **At the run** the environment must be the record's: after the build, the record's rung
+  must be the one that built the image (its resolved lock and `pyvenv.cfg` have the
+  record's SHA-256, and no later rung ran), and the configuration files in the patched
+  tree must have the record's SHA-256 (the base image is the claim's, checked at
+  validation); otherwise the count does not apply, and the paper stops as a Refute error
+  before its runs (its claims `INCONCLUSIVE`), never an adjusted K. The record is given to
+  the run (`--count-record attachment=file`) and must equal its attachment's SHA-256.
 - **At the run, the evidence.** An allowed patch of instrumentation, minimal, prints the
   size of the population the measured value was computed on, after the value, on one line
   named by the method (for 2302.12465, `refute-population-size <explainer> <n>` with
@@ -127,9 +136,13 @@ too; a claim without `counted_before_lock` and without errata keeps its canonica
 **Must fail:** a count record whose count differs from `expected_examples`; a count of 0, a
 fraction or a boolean; a script whose SHA-256 differs from the record's; a record of
 another commit, other patches or another order, another configuration, another dataset or
-split; an exit code other than 0; two lines or none in the script's output; at the run,
-another resolved lock, base image or configuration than the record's (a Refute error before
-the runs), a printed count other than K, two matching lines, or none (`INCONCLUSIVE`); an errata for another inventory; an entry for a candidate that does not
+split; a rung without a resolved lock, a missing `pyvenv.cfg` hash, a configuration entry
+with a path outside the tree or listed twice; an exit code other than 0; two lines or none
+in the script's output; at the run, another resolved lock, another interpreter with the
+same lock, another rung, a later rung that ran, or another configuration than the
+record's (a Refute error before the runs), a printed count other than K, two matching
+lines, or none (`INCONCLUSIVE`); an errata for another inventory; an entry for a candidate
+that does not
 exist, or whose `old` is not the inventory's; a field other than `command`; a candidate in
 two entries or two erratas; an errata without approval; a claim whose command is the old
 one while an errata for its candidate is attached; a comparison whose method is right and
