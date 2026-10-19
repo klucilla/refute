@@ -689,6 +689,20 @@ case was written after the escape (declared as such): D2's sinusoid with astropy
 `false_alarm_probability` replaced by 0.5, required to be rejected with `fap_above_max` while
 `h ≥ 0.9` (seed 6141); SW2 run again on it made that case fail.
 
+**The end-of-stage review of piece 7 (Codex, read only, of `62293af` to `564e751`)** returned
+WEAKENED: no deviation of the numerical flow from Amendments 22 and 23; the full suite at
+`564e751` gave 3026 tests, 0 failures, 0 errors, 56 skipped (one of them the strict expected failure
+of I2 correlated; JUnit). Written after it: (1) the masked raw refit's left-out sectors are recorded
+(`refit_left_out`; N3 checks it); (2) each round records the frequencies requested and, per kind of
+window fit (train replicas, hidden replicas, transit windows, control windows), how many fits used
+how many baseline parameters (`window_terms`; H checks it), so a sinusoid dropped by the degeneracy
+fallback is visible; (3) Q1 recomputes `h` from the bins and the formula in the test itself (the
+first version called the production helper); (4) In requires that `period_alias` was called; (5)
+the FAP guard case also routes a FAP exactly equal to `fap_max`. Recorded, not changed: the adapter
+`TessGauntlet` recomputes the global prewhitening that `TessSearch` already ran (the same
+deterministic call, extra CPU on the adapter path only; the pipeline's `analyze_data` computes it
+once). Piece 7's unit acceptance stays incomplete while I2 correlated is unsatisfied (above).
+
 ## Amendment 23 (2026-10-18, declared after the first run of piece 7): the results, four failures and their mechanisms, and the subtraction before the detrending
 
 **The first run** (`62293af`'s tests on the first code of piece 7; JUnit: 26 tests, 4 failures),

@@ -73,6 +73,7 @@ class GauntletOutcome:
     # M4 piece 7 (map Amendment 22): the global components and the reason of a failed refit S'.
     prewhitening: Prewhitening | None = None
     refit_reason: str | None = None
+    refit_left_out: list[int] = field(default_factory=list)
 
 
 def _minus(curve: LightCurveData, model: np.ndarray) -> LightCurveData:
@@ -213,12 +214,14 @@ def attack_candidate(
     mask_half = plan.detrend.transit_mask_half_width_durations * candidate.duration
     mask = transit_mask(data.lc.time, candidate.period, candidate.t0, mask_half)
     refit_reason = None
+    refit_left_out: list[int] = []
     raw = data.lc
     if pw is not None and pw.components:
         # M4 piece 7 (map Amendment 23): S'_raw, the global frequencies refitted on the raw curve
         # with the search candidate's transits masked, subtracted before the masked detrending
         fitted = refit(data.lc, pw.components, mask, plan)
         refit_reason = fitted.reason
+        refit_left_out = list(fitted.sectors_left_out)
         if fitted.reason is None:
             raw = _minus(data.lc, fitted.model)
     flat = detrend(raw, plan.detrend, mask=mask)
@@ -275,7 +278,17 @@ def attack_candidate(
         )
     ephemeris = fit_linear_ephemeris(times) if len(times) >= 2 else None
     return GauntletOutcome(
-        final, flat, primary, secondary, tests, ephemeris, timing, executed, pw, refit_reason
+        final,
+        flat,
+        primary,
+        secondary,
+        tests,
+        ephemeris,
+        timing,
+        executed,
+        pw,
+        refit_reason,
+        refit_left_out,
     )
 
 
@@ -591,6 +604,7 @@ def build_result(
                 "search_refit_reason": pw.search_refit_reason,
                 "search_left_out": pw.search_left_out,
                 "refit_reason": analysis.gauntlet.refit_reason,
+                "refit_left_out": analysis.gauntlet.refit_left_out,
             }
     return record
 

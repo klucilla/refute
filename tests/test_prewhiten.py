@@ -122,17 +122,21 @@ def test_d3_a_pure_box_is_not_removed_and_a_rejection_ends(noise, seed, monkeypa
     assert len(built) == 2  # L0 and L1 of the one iteration
 
 
-def test_the_fap_guard_rejects_a_frequency_at_or_above_fap_max(monkeypatch):
+@pytest.mark.parametrize("fap", [0.5, "fap_max"])
+def test_the_fap_guard_rejects_a_frequency_at_or_above_fap_max(monkeypatch, fap):
     # written after the sabotage SW2 escaped (map Amendment 24): in white noise h >= h_min
     # already needs an SNR that makes the FAP tiny, so no construction makes the FAP decide; this
-    # direct case routes a FAP of 0.5 through the guard
+    # direct case routes a FAP of 0.5, and (after the Codex stage review) exactly fap_max,
+    # through the guard
     import astropy.timeseries as ts
 
-    monkeypatch.setattr(ts.LombScargle, "false_alarm_probability", lambda self, *a, **k: 0.5)
+    plan = _plan()
+    value = plan.gauntlet.corrections.fap_max if fap == "fap_max" else fap
+    monkeypatch.setattr(ts.LombScargle, "false_alarm_probability", lambda self, *a, **k: value)
     lc = _bare(6141, "white")
-    pw = _pw()(_with(lc, _sine(lc.time)), _plan())
+    pw = _pw()(_with(lc, _sine(lc.time)), plan)
     assert pw.components == [] and pw.reason == "fap_above_max"
-    assert pw.rejected["fap"] == 0.5 and pw.rejected["h"] >= 0.9
+    assert pw.rejected["fap"] == value and pw.rejected["h"] >= 0.9
 
 
 def test_d4_several_components_and_the_limit():
@@ -235,10 +239,21 @@ def test_q1_the_sequence_of_one_iteration_recomputed_independently():
     assert float(fap) == pytest.approx(comp.fap, rel=1e-9)
     h, n_bins, reason = few_harmonic_test(t[~clip], r[~clip], comp.fitted[~clip], comp.frequency)
     assert reason is None and h == pytest.approx(comp.h, rel=1e-12)
+    # h recomputed here from the bins and the formula, not by the helper (after the Codex stage
+    # review: the first version called the production helper again)
     phase = np.mod(t[~clip] * comp.frequency, 1.0)
     index = np.minimum((phase * 50).astype(int), 49)
     counts = np.bincount(index, minlength=50)
     assert n_bins == int(np.sum(counts >= 3))
+    m_b, mu_b = [], []
+    for b in range(50):
+        sel = index == b
+        if sel.sum() >= 3:
+            m_b.append(float(np.mean(r[~clip][sel])))
+            mu_b.append(float(np.mean(comp.fitted[~clip][sel])))
+    m_b, mu_b = np.asarray(m_b), np.asarray(mu_b)
+    h_here = 1.0 - np.sum((m_b - mu_b) ** 2) / np.sum((m_b - m_b.mean()) ** 2)
+    assert h_here == pytest.approx(comp.h, rel=1e-9)
 
 
 def _q2_curve(bins, seed):
@@ -480,7 +495,7 @@ def test_in_the_curves_reach_their_consumers(monkeypatch):
     analysis = pipeline.analyze_data(data, plan, search_fn=search)
     pw = analysis.gauntlet.prewhitening
     assert pw.components  # precondition: a component was accepted
-    assert all(lc is data.lc for lc in seen["alias"])
+    assert seen["alias"] and all(lc is data.lc for lc in seen["alias"])
     # Amendment 23: the search receives detrend(raw - S_raw), S_raw the joint raw refit
     from refute.packs.tess.prewhiten import refit
 
@@ -550,6 +565,12 @@ def test_h_the_train_fundamentals_reach_every_window_of_the_round(monkeypatch):
     want = r.metrics["prewhitening"]["fundamentals"]
     for name, got in calls.items():
         assert got and all(list(g) == want for g in got), (name, got, want)
+    # added after the Codex stage review: the record gives the frequencies requested and the
+    # baseline parameters each kind of window fit used
+    terms = r.metrics["window_terms"]
+    assert terms["requested_frequencies"] == want
+    for kind in ("train_replicas", "hidden_replicas", "transit", "control"):
+        assert sum(terms[kind].values()) > 0, (kind, terms)
 
 
 # --- the new cases of Amendment 23 (separate from the retest) -------------------------------
@@ -661,3 +682,4 @@ def test_n3_a_short_sector_is_reported_as_left_out_of_the_raw_refit():
     target = {"key": "synthetic", "tic_id": 1, "kind": "planet", "name": "planet-0"}
     record = build_result(target, data, plan, analysis, {"pass_criteria": {}})
     assert record["corrections"]["prewhitening"]["search_left_out"] == [second]
+    assert record["corrections"]["prewhitening"]["refit_left_out"] == [second]  # stage review

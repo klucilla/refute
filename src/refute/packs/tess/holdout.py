@@ -552,6 +552,15 @@ class ReplicaStats:
     noise: Any
     excluded_sectors: list[int]
     dropped: dict[str, int]
+    # M4 piece 7: how many window fits (over the replicas and the dP grid) used how many baseline
+    # parameters, keyed by that number (the degeneracy fallback can drop sinusoids: Amendment 22)
+    terms: dict[str, int] = field(default_factory=dict)
+
+
+def _count_terms(terms: dict[str, int], d: WindowDepth) -> None:
+    if d.depth is not None:
+        key = str(d.n_params)
+        terms[key] = terms.get(key, 0) + 1
 
 
 def _sector_of(t: float, sectors: Sequence[SectorInfo]) -> int | None:
@@ -628,6 +637,7 @@ def replica_stats(
         excluded = noise.excluded_sectors
     undetermined = noise is None or noise.undetermined
     per_dp: list[ReplicaPoint] = []
+    terms: dict[str, int] = {}
     for dp in grid:
         depths: list[float | None] = []
         for r, t, f, in_window, sector, ok in reads:
@@ -645,6 +655,7 @@ def replica_stats(
                 cadence=cadence,
                 coverage=params.min_window_coverage,
             )
+            _count_terms(terms, d)
             depths.append(d.depth)
         values = [d for d in depths if d is not None]
         per_dp.append(ReplicaPoint(float(dp), depths, len(values), _robust_var(values)))
@@ -654,7 +665,7 @@ def replica_stats(
         if ok and sector in excluded:
             dropped["excluded_sector"] = dropped.get("excluded_sector", 0) + 1
     status = "hidden_noise_undetermined" if undetermined else "ok"
-    return ReplicaStats(status, per_dp, noise, excluded, dropped)
+    return ReplicaStats(status, per_dp, noise, excluded, dropped, terms)
 
 
 def measure_windows(
@@ -692,6 +703,7 @@ def measure_windows(
         kept.append((w, t, f, in_window))
     per_dp = []
     reasons_at = []
+    terms: dict[str, int] = {}
     for k, dp in enumerate(grid):
         depths, reasons = [], {}
         for w, t, f, in_window in kept:
@@ -706,6 +718,7 @@ def measure_windows(
                 cadence=cadence,
                 coverage=params.min_window_coverage,
             )
+            _count_terms(terms, d)
             if d.depth is None:
                 reasons[d.reason] = reasons.get(d.reason, 0) + 1
             else:
@@ -732,6 +745,7 @@ def measure_windows(
             "n_valid": per_dp[0]["n_valid"],
             "per_dp": per_dp,
             "dropped": dropped,
+            "terms": terms,
         }
     dropped = dict(static)
     for key, value in reasons_at[best].items():
@@ -748,6 +762,7 @@ def measure_windows(
         "var_rep": stats.per_dp[best].var_rep,
         "per_dp": per_dp,
         "dropped": dropped,
+        "terms": terms,
     }
 
 
@@ -1245,6 +1260,7 @@ def train_replica_stats(
     plan: TessTestPlan,
     grid: np.ndarray,
     frequencies: Sequence[float] = (),
+    terms: dict[str, int] | None = None,
 ) -> tuple[list[int], list[float]]:
     """The train replicas' depths on the masked train curve (Amendment 12), at every dP:
     ``(n_rep(dP), var_rep(dP))``; from piece 7 the window baseline carries the train
@@ -1274,6 +1290,8 @@ def train_replica_stats(
                 cadence=cadence,
                 coverage=params.min_window_coverage,
             )
+            if terms is not None:
+                _count_terms(terms, d)
             if d.depth is not None:
                 values.append(d.depth)
         counts.append(len(values))
@@ -1357,8 +1375,19 @@ def _round_corrected(
     train_windows = _predict_windows(eph, train.duration, train_spans, params)
     train_reps = register_replicas(eph, train_windows, train_spans)
     freqs = list(prepared.frequencies)  # M4 piece 7: the train fundamentals (Amendment 22)
+    # the frequencies requested and the baseline parameters each kind of window fit used
+    window_terms: dict[str, Any] = {"requested_frequencies": freqs, "train_replicas": {}}
+    metrics["window_terms"] = window_terms
     counts, variances = train_replica_stats(
-        prepared.train_flat, train_reps, eph, train.duration, cadence, plan, grid, frequencies=freqs
+        prepared.train_flat,
+        train_reps,
+        eph,
+        train.duration,
+        cadence,
+        plan,
+        grid,
+        frequencies=freqs,
+        terms=window_terms["train_replicas"],
     )
     cap["train_n_rep"] = counts
     cap["train_var_rep"] = variances
@@ -1413,6 +1442,10 @@ def _round_corrected(
         barrier,
         frequencies=freqs,
     )
+    if result.get("stats") is not None:
+        window_terms["hidden_replicas"] = dict(result["stats"].terms)
+    if "terms" in result:
+        window_terms["transit"] = dict(result["terms"])
     if "hidden_n_rep" not in cap and result.get("stats") is not None:
         record_hidden(result["stats"])
     if result["status"] != "ok":
@@ -1455,6 +1488,7 @@ def _round_corrected(
             result["stats"],
             frequencies=freqs,
         )
+        window_terms["control"] = dict(ctl.get("terms", {}))
         metrics["control_phase05_snr"] = ctl.get("snr")
         metrics["control_phase05_depth_ppm"] = (
             None if ctl.get("depth") is None else ctl["depth"] * 1e6
