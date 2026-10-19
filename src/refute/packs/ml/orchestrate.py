@@ -147,6 +147,9 @@ class ClaimPlan:
     base_steps: Sequence[Step]
     attack_steps: Sequence[Step]
     base_obtained: Callable[[Sequence[StepRecord]], bool]
+    # a reason on Refute's side not to run this claim at all (declared weights in
+    # version 1): its steps are recorded as not executed, nothing is charged
+    not_run: str | None = None
 
 
 @dataclass(frozen=True)
@@ -501,6 +504,9 @@ class PaperRunner:
             elif out.setup_exhausted:
                 reason = f"{bg.BUDGET_EXHAUSTED} ({bg.Pool.SETUP})"
                 self._skip(BASE, claim.key, claim.base_steps, reason)
+                obtained = False
+            elif claim.not_run is not None:
+                self._skip(BASE, claim.key, claim.base_steps, claim.not_run)
                 obtained = False
             else:
                 done = self._run_sequence(BASE, claim.key, bg.base(claim.key), claim.base_steps)

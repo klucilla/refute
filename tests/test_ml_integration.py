@@ -1112,3 +1112,133 @@ def test_a_binary_value_is_never_judged_by_a_printed_interval(tmp_path):
     assert base["metric_extracted"].status is TestStatus.INCONCLUSIVE
     assert ig.NO_INTERVAL in base["metric_extracted"].message
     assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+
+
+# ---- declared weights in version 1 (wp3-declared-weights-acceptance.md) ----------------------
+
+
+WEIGHTS = {
+    "name": "w1",
+    "url": "https://example.org/w1.pt",
+    "reference": "a pre-trained model",
+    "version": "1",
+    "license": "MIT",
+    "retrieved_utc": STAMP,
+    "sha256": "a" * 64,
+    "size_bytes": 10,
+    "local_copy_allowed": True,
+}
+
+
+def weights_paper(tmp_path, every: bool = False, ladder=None, blocked=(2,), evidence=None):
+    """Two claims of one paper; the second names declared weights (the first too when
+    ``every``)."""
+    plan = plan_dict(DATA)
+    plan["weights"] = [dict(WEIGHTS)]
+    plan_model = MlTestPlan.model_validate(plan)
+    targets = []
+    for i in (1, 2):
+        target = value_target({})
+        target["key"] = f"arXiv-{ARXIV}v1-C{i}"
+        if i in blocked or every:
+            target["weights"] = "w1"  # full_training with a pre-trained input
+        model = MlTarget.model_validate(target)
+        targets.append(MlClaimSchema._derive(plan_model, model, model.resolved()))  # noqa: SLF001
+    claim_file = {
+        "test_plan": plan_model.model_dump(mode="json", by_alias=True),
+        "targets": targets,
+    }
+    return Paper(tmp_path, claim_file, CONFIG, ladder=ladder, evidence=evidence)
+
+
+def test_a_claim_that_needs_declared_weights_is_not_run_and_the_other_runs(tmp_path):
+    outcome = weights_paper(tmp_path).run()
+    first, base1 = checks(outcome, f"arXiv-{ARXIV}v1-C1")
+    second, base2 = checks(outcome, f"arXiv-{ARXIV}v1-C2")
+    assert first.verdict.verdict is PaperVerdict.REPRODUCED, first.verdict.reason
+    assert base2["run_completed"].status is TestStatus.INCONCLUSIVE
+    assert base2["run_completed"].message.startswith(ig.NOT_RUN_WEIGHTS)
+    assert second.verdict.verdict is PaperVerdict.INCONCLUSIVE
+    assert "artifact" not in str(second.verdict.reason).lower()
+    # no container of the second claim ran, and nothing was charged to it
+    steps = [s for s in outcome.run.steps if s.claim == f"arXiv-{ARXIV}v1-C2"]
+    assert steps and all(s.outcome.value == "not_executed" for s in steps)
+    assert all(not s.containers for s in steps)
+    assert outcome.run.accounting_valid
+    assert ig.NOT_RUN_WEIGHTS in second.notes
+
+
+def test_a_paper_whose_every_claim_needs_weights_runs_none_of_them(tmp_path):
+    outcome = weights_paper(tmp_path, every=True).run()
+    for i in (1, 2):
+        claim, base = checks(outcome, f"arXiv-{ARXIV}v1-C{i}")
+        assert claim.verdict.verdict is PaperVerdict.INCONCLUSIVE
+        assert base["run_completed"].message.startswith(ig.NOT_RUN_WEIGHTS)
+    ids = [c.container_id for s in outcome.run.steps for c in s.containers]
+    assert "setup/build/own_environment" in ids and not any("/base/" in i for i in ids)
+
+
+def test_needs_weights_reads_the_claim_and_a_generated_dataset_s_inputs():
+    plan = {"datasets": [{"name": "g", "origin": "generated", "inputs": ["w1"]},
+                         {"name": "d", "origin": "downloaded"}]}  # fmt: skip
+    assert ig.needs_weights({"dataset": "g"}, plan)
+    assert ig.needs_weights({"dataset": "d", "weights": "w1"}, plan)
+    assert not ig.needs_weights({"dataset": "d"}, plan)
+
+
+def test_an_artifact_failure_already_established_holds_for_a_claim_needing_weights(tmp_path):
+    """The core's verdict order is unchanged (Codex round 1, kept on purpose): every rung
+    failing by its procedure is the artifact's, whatever the weights; the weights' reason
+    stays in the claim's run_completed gate and notes."""
+    ladder = dict.fromkeys(ALL_RUNGS, "procedure_error")
+    outcome = weights_paper(tmp_path, ladder=ladder).run()
+    second, base = checks(outcome, f"arXiv-{ARXIV}v1-C2")
+    assert second.verdict.verdict is PaperVerdict.NOT_REPRODUCIBLE
+    assert base["run_completed"].message.startswith(ig.NOT_RUN_WEIGHTS)
+    assert ig.NOT_RUN_WEIGHTS in second.notes
+
+
+def test_a_blocked_claim_before_a_runnable_one_leaves_its_reserve(tmp_path):
+    outcome = weights_paper(tmp_path, blocked=(1,)).run()
+    first, _ = checks(outcome, f"arXiv-{ARXIV}v1-C1")
+    second, _ = checks(outcome, f"arXiv-{ARXIV}v1-C2")
+    assert first.verdict.verdict is PaperVerdict.INCONCLUSIVE
+    assert second.verdict.verdict is PaperVerdict.REPRODUCED, second.verdict.reason
+    assert outcome.run.accounting_valid
+
+
+def test_a_proven_absent_dataset_holds_for_a_claim_needing_weights(tmp_path):
+    path = tmp_path / "absent.npz"
+    evidence = dataset_evidence(path, DATA, fetch_ok=False)
+    outcome = weights_paper(tmp_path, evidence=evidence).run()
+    second, base = checks(outcome, f"arXiv-{ARXIV}v1-C2")
+    assert second.verdict.verdict is PaperVerdict.NOT_REPRODUCIBLE
+    assert base["run_completed"].message.startswith(ig.NOT_RUN_WEIGHTS)
+
+
+def test_a_claim_on_a_dataset_generated_from_weights_is_planned_not_to_run(tmp_path):
+    paper = weights_paper(tmp_path, blocked=())
+    claim_file = paper.claim_file
+    claim_file["test_plan"]["datasets"].append(
+        {"name": "made", "origin": "generated", "inputs": ["w1"]}
+    )
+    claim_file["targets"][1]["dataset"] = "made"
+    plan = ig.PaperIntegration(claim_file, paper.harness).build_plan()
+    assert [c.not_run for c in plan.claims] == [None, ig.NOT_RUN_WEIGHTS]
+
+
+def test_the_reasons_of_a_stopped_paper_are_kept_with_the_weights_reason():
+    class Step:
+        def __init__(self, phase, claim, reason):
+            self.phase, self.claim, self.reason = phase, claim, reason
+
+    class Run:
+        steps = [Step("base", "k", "the setup did not complete"), Step("base", "other", "x")]
+        stopped = "a Refute error in the setup"
+
+    gate = ig._gate("run_completed", TestStatus.INCONCLUSIVE, "not executed", 0, "runs")  # noqa: SLF001
+    out = ig._with_stop_reasons([gate], "k", Run())  # noqa: SLF001
+    assert out[0].message == (
+        f"{ig.NOT_RUN_WEIGHTS}; the setup did not complete; "
+        "the paper stopped: a Refute error in the setup"
+    )

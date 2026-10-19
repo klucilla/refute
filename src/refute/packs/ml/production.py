@@ -198,12 +198,25 @@ class PaperSetup:
     micromamba_image: str = MICROMAMBA_IMAGE_DEFAULT
     exclude_newer: str = ""  # filled from the claim when empty
     extra_env: Mapping[str, str] = field(default_factory=dict)  # e.g. a data folder variable
+    # the declared weights, recorded as not fetched, checked or mounted by version 1
+    # (wp3-declared-weights-acceptance.md)
+    weights: tuple[str, ...] = ()
     # the allowed patches applied to the clone (patches.prepare, W3.9a): their bytes'
     # SHA-256, the touched files and the manifests of the clone and of ``repo``
     patch_record: Mapping[str, Any] = field(default_factory=dict)
 
     def record(self) -> dict[str, Any]:
         return {
+            "weights": {
+                "declared": list(self.weights),
+                "fetched": False,
+                "checked": False,
+                "mounted": False,
+                "reason": "declared weights are not fetched, checked or mounted by "
+                "version 1 (an unsupported capability)",
+            }
+            if self.weights
+            else None,
             "patches": dict(self.patch_record),
             "paper": self.paper,
             "data_layout": dict(self.data_layout),
@@ -1068,12 +1081,10 @@ def prepare_inputs(
     allowlist proxy). The splits are counted by ``readers``; an unreadable split gives no
     count, so ``data_present`` is ``INCONCLUSIVE``, never a pass."""
     plan = claim_file["test_plan"]
-    if plan.get("weights"):
-        # declared weights (checkpoint evaluation, inputs of generated data) are not
-        # fetched, checked and mounted by this version: refused before anything runs,
-        # never skipped (wp3-data-sources-acceptance.md, section 1; Codex review)
-        names = [w["name"] for w in plan["weights"]]
-        raise ProductionError(f"declared weights are not fetched by this version yet: {names}")
+    # declared weights (checkpoint evaluation, a pre-trained input, inputs of generated
+    # data) are not fetched, checked or mounted by version 1: the claims that need them
+    # are not run (integration.needs_weights), the others run
+    # (wp3-declared-weights-acceptance.md, section 1)
     repo = repository.clone(plan["repository"]["url"], root / "source")
     repository.checkout(repo, plan["repository"]["commit"])
     absent = plan["absent_artifact"]
@@ -1293,6 +1304,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         timing=V22_MAXIMA,
         micromamba_image=args.micromamba_image,
         patch_record=patch_record,
+        weights=tuple(w["name"] for w in claim_file["test_plan"].get("weights", [])),
     )
 
     def check_run(data: bytes, setup_ended: str) -> None:

@@ -1258,8 +1258,10 @@ class MlTarget(_Model):
                 raise ValueError("g_pub is required in margin mode and absent otherwise")
             if (c.d_pub is not None) != (self.comparison_mode == "magnitude"):
                 raise ValueError("d_pub is required in magnitude mode and absent otherwise")
-        if (self.weights is not None) != (self.scope == "checkpoint_evaluation"):
-            raise ValueError("weights is required for checkpoint_evaluation and absent otherwise")
+        # required to evaluate a checkpoint; allowed for full training when the run loads a
+        # pre-trained model as an input (wp3-declared-weights-acceptance.md, section 1)
+        if self.scope == "checkpoint_evaluation" and self.weights is None:
+            raise ValueError("weights is required for checkpoint_evaluation")
 
     def _units(self) -> None:
         extractions = [self.run.metric_extraction]

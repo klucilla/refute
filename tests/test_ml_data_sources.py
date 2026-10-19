@@ -606,9 +606,10 @@ def test_generated_data_are_neither_fetched_nor_counted(monkeypatch, tmp_path):
     assert datasets == {} and fetched == []
 
 
-def test_declared_weights_are_refused_before_anything_runs(monkeypatch, tmp_path):
-    """Weights (inputs of generated data, checkpoints) are not fetched by this version:
-    the paper does not run rather than skip their check (Codex review)."""
+def test_declared_weights_are_not_fetched_and_the_paper_goes_on(monkeypatch, tmp_path):
+    """Weights (inputs of generated data, checkpoints, pre-trained inputs) are not
+    fetched by version 1: the paper goes on, and the claims that need them are not run
+    (wp3-declared-weights-acceptance.md; the integration tests show the claims)."""
     weights = {
         "name": "teacher",
         "url": "https://example.org/teacher.pt",
@@ -621,11 +622,16 @@ def test_declared_weights_are_refused_before_anything_runs(monkeypatch, tmp_path
         "local_copy_allowed": False,
     }
     cloned = []
-    monkeypatch.setattr(prod.repository, "clone", lambda url, dest: cloned.append(dest))
+    monkeypatch.setattr(prod.repository, "clone", lambda url, dest: cloned.append(dest) or dest)
+    monkeypatch.setattr(prod.repository, "checkout", lambda repo, commit: None)
+
+    def no_fetch(*args, **kwargs):
+        raise AssertionError("declared weights are never fetched by version 1")
+
+    monkeypatch.setattr(prod, "fetch_artifact", no_fetch)
     plan = {**plan_dict(DATA), "datasets": [_generated_entry()], "weights": [weights]}
-    with pytest.raises(prod.ProductionError, match="teacher"):
-        prod.prepare_inputs({"test_plan": plan}, tmp_path, tmp_path / "cache")
-    assert cloned == []
+    repo, datasets = prod.prepare_inputs({"test_plan": plan}, tmp_path, tmp_path / "cache")
+    assert cloned == [tmp_path / "source"] and datasets == {}
 
 
 GRAPH = b"\n".join(b"%d %d" % (i, i + 1) for i in range(50)) + b"\n"
@@ -849,3 +855,35 @@ def test_host_readers_give_no_count_rather_than_a_guess(tmp_path, content, sourc
     path = tmp_path / "file"
     path.write_bytes(content)
     assert rd.count_split(path, source) is None
+
+
+def test_with_declared_weights_a_downloaded_dataset_is_still_fetched(monkeypatch, tmp_path):
+    monkeypatch.setattr(prod.repository, "clone", lambda url, dest: dest)
+    monkeypatch.setattr(prod.repository, "checkout", lambda repo, commit: None)
+    fetched = []
+
+    def fetch(spec, cache, **kwargs):
+        fetched.append(spec.url)
+        return prod.FetchResult(spec, None, False, (), None)
+
+    monkeypatch.setattr(prod, "fetch_artifact", fetch)
+    weights = {"name": "w", "url": "https://example.org/w.pt", "reference": "r", "version": "1",
+               "license": "MIT", "retrieved_utc": "2026-10-15T00:00:00Z", "sha256": "e" * 64,
+               "size_bytes": 10, "local_copy_allowed": False}  # fmt: skip
+    plan = {**plan_dict(DATA), "weights": [weights]}
+    prod.prepare_inputs({"test_plan": plan}, tmp_path, tmp_path / "cache")
+    assert fetched == [d["url"] for d in plan["datasets"]]
+    assert "https://example.org/w.pt" not in fetched
+
+
+def test_the_setup_record_states_the_weights_not_fetched(tmp_path):
+    from refute.packs.ml.docker_backend import Limits
+    from refute.packs.ml.sandbox import TimingMaxima
+
+    setup = prod.PaperSetup(
+        "p1", tmp_path, tmp_path, {}, {}, Limits(cpus=1, period_us=100_000,
+        memory_bytes=1 << 30, pids=64), TimingMaxima(0.1, 0.1), weights=("w1",),
+    )  # fmt: skip
+    record = setup.record()["weights"]
+    assert record["declared"] == ["w1"] and record["fetched"] is False
+    assert record["mounted"] is False and "version 1" in record["reason"]

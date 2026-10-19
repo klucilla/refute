@@ -548,6 +548,44 @@ def _stop_cause(values: Sequence[Value]) -> FailureCause:
     return FailureCause.UNDETERMINED
 
 
+# a claim that needs declared weights, in version 1 (wp3-declared-weights-acceptance.md)
+NOT_RUN_WEIGHTS = (
+    "not run: declared weights are not fetched, checked or mounted by version 1 "
+    "(an unsupported capability)"
+)
+
+
+def needs_weights(claim: Mapping[str, Any], plan: Mapping[str, Any]) -> bool:
+    """Whether a claim needs declared weights: it names ``weights``, or its dataset is
+    generated with weights among its ``inputs``."""
+    if claim.get("weights"):
+        return True
+    dataset = next((d for d in plan.get("datasets", []) if d["name"] == claim["dataset"]), None)
+    return bool(dataset is not None and sch.dataset_origin(dataset) == sch.GENERATED
+                and dataset.get("inputs"))  # fmt: skip
+
+
+def _with_stop_reasons(checks: list[TestResult], key: str, run) -> list[TestResult]:
+    """The run_completed gate of a claim not run for its weights, with the reasons the run
+    recorded for its base steps and the paper's stop, if any (a setup that stopped, a
+    budget, a Refute error): both reasons kept (wp3-declared-weights-acceptance.md)."""
+    reasons = []
+    if run is not None:
+        for s in run.steps:
+            if s.claim == key and s.phase == orc.BASE and s.reason and s.reason not in reasons:
+                reasons.append(s.reason)
+        if run.stopped and f"the paper stopped: {run.stopped}" not in reasons:
+            reasons.append(f"the paper stopped: {run.stopped}")
+    others = [r for r in reasons if r != NOT_RUN_WEIGHTS]
+    text = "; ".join([NOT_RUN_WEIGHTS, *others])
+    return [
+        _gate("run_completed", TestStatus.INCONCLUSIVE, text, 0, "runs")
+        if c.name == "run_completed"
+        else c
+        for c in checks
+    ]
+
+
 def run_completed(values: Sequence[Value]):
     done = sum(1 for v in values if v.outcome is orc.Outcome.COMPLETED)
     if done == len(values):
@@ -1462,6 +1500,7 @@ class PaperIntegration:
                     [self._step(ctx, "base", "base_run")],
                     attacks,
                     lambda records, ctx=ctx: self._base_obtained(ctx, records),
+                    NOT_RUN_WEIGHTS if needs_weights(ctx.claim, self.plan) else None,
                 )
             )
         return orc.PaperPlan([setup, *self._reader_steps()], claims)
@@ -1498,6 +1537,13 @@ class PaperIntegration:
             if failure is not None:
                 failures["data_present"] = failure
         gate, failure = run_completed(flat)
+        if needs_weights(ctx.claim, self.plan):
+            # not run on Refute's side, never the artifact's failure; a stop of the setup or
+            # of the paper, if any, is kept with it (Codex review)
+            other = gate.message if gate.status is not TestStatus.PASS else ""
+            text = f"{NOT_RUN_WEIGHTS}; {other}" if other else NOT_RUN_WEIGHTS
+            gate = _gate("run_completed", TestStatus.INCONCLUSIVE, text, 0, "runs")
+            failure = GateFailure(FailureCause.REFUTE_ERROR)
         checks.append(gate)
         if failure is not None:
             failures["run_completed"] = failure
@@ -1677,6 +1723,9 @@ class PaperIntegration:
         for ctx in self.contexts:
             checks, failures, base_values, base_series = self._base_checks(ctx, records, ladder)
             attacks, notes = [], []
+            if needs_weights(ctx.claim, self.plan):
+                notes.append(NOT_RUN_WEIGHTS)
+                checks = _with_stop_reasons(checks, ctx.key, run)
             obtained = bool(run and run.base_obtained.get(ctx.key))
             for name in ctx.applicable():
                 if not obtained:
