@@ -708,6 +708,15 @@ incomplete lot goes to the maintainer), 4 (an empty set of a `k` stops the study
 twin depth makes criterion 3 not evaluable) are readings of the approved text where it lacks a
 rule.
 
+**The maintainer's decision (2026-10-19), in their words** (the message ends cut after its last
+word, read as "bs-choice"): "O estudo de R_min tem teto próprio (204 h projetadas; o teto de 397 h
+fica para a calibração). Aprovo o procedimento da rodada drand da reserva e as três leituras da
+Emenda 27 (lote incompleto vai a mim; k sem round para o estudo; gêmeo faltando torna a cobertura
+não avaliável). Pode gerar o bs-choi[ce]" (the R_min study has a ceiling of its own, 204 h
+projected, and the 397 h ceiling stays with the calibration; the procedure of the reserve's drand
+round and the three readings above approved; `bs-choice` may be generated). The numeric value of
+the study's own ceiling is asked of the maintainer before the study's lots are generated.
+
 **Implemented.** The twin's status in the record (`096a6ca`, item 8). The evaluator: tests
 `be3a604` (`tests/test_rmin_evaluate.py`, on built records), then
 `docs/validation/v0.2.1/population/rmin_evaluate.py`. The tie of item 4 is read on the unscaled
