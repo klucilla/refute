@@ -809,6 +809,13 @@ reading per group, the study 101.9 h and the reserve 101.9 h of machine time (61
 each, **461.3 h** in all, above the 397 h ceiling. Brought to the maintainer with the readings 1 and
 2; nothing of the study or of `bs-choice` is generated before the decision.
 
+**The maintainer's decision (2026-10-19), in their words:** "Aprovo a leitura por grupo (6400 alvos
+por grupo, 204 h) e os mínimos uniformes (866/83/101). Decido sobre o teto e a rodada drand a
+seguir." (I approve the reading per group, 6400 targets per group, 204 h, and the uniform minima,
+866/83/101. I will decide on the ceiling and the drand round next.) Readings 1 and 2 are therefore
+the study's; the ceiling and the reserve's drand round stay open, and no lot of the study or of
+`bs-choice` is generated before them.
+
 ## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
 
 The maintainer's item 5 of 2026-10-18: the campaign declaration of the harness version 3, with its
