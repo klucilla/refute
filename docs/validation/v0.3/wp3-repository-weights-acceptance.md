@@ -39,10 +39,10 @@ it.
   bytes at that commit; `license` the licence that applies to the file, stated as the
   repository states it (a statement written to the Refute repository also has its
   `sources/` record, issue #34). An entry without `origin` is a downloaded artifact, as
-  today, and its bytes are unchanged. No two files of the repository that the claim
-  declares (datasets and weights) share a path, compared normalized (`a/b`, `a//b` and
-  `a/./b` are one path); at the run no weights file is also a dataset's path in a run's
-  folder.
+  today, and its bytes are unchanged. A weights file shares its path with no other weights
+  entry and no dataset that is a file of the repository, compared normalized (`a/b`, `a//b`
+  and `a/./b` are one path); two dataset entries may still name one file, as before; at the
+  run no weights file is also a dataset's path in a run's folder.
 - **The scope is fixed by the approved definition, never to avoid a restriction.** Plan
   section 5: "full training, or evaluation of a released checkpoint". `checkpoint_evaluation`
   is the metric of a released model itself; `full_training` is a run that produces what it
