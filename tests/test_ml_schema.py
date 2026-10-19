@@ -702,11 +702,16 @@ def test_uncertainty_conversions():
         dict(kind="se", value=2.0),  # no n
         dict(kind="ci", lower=90.0, upper=92.0, level=0.95, method="other_or_unknown", n=5),
         dict(kind="ci", lower=89.0, upper=92.0, level=0.95, method="t", n=5),  # asymmetric
+        # a "±" whose kind and level the paper does not state
+        # (wp3-unstated-uncertainty-acceptance.md)
+        dict(kind="ci", lower=90.0, upper=92.0, method="other_or_unknown"),
+        dict(kind="ci", lower=90.0, upper=92.0, method="other_or_unknown", n=5),
     ],
 )
 def test_reported_but_not_convertible(record):
     out = resolve_uncertainty(unc(**record), "percent", 91.0)
     assert out["status"] == "not_convertible" and out["sd"] is None
+    assert out["quantile"] is None
 
 
 def test_none_means_no_uncertainty():
@@ -2372,3 +2377,9 @@ def test_the_counted_rungs_are_the_ladders_rungs_with_a_resolved_lock():
 def test_a_count_record_with_configuration_files_is_accepted(tmp_path):
     record = count_record(configuration=[{"path": "conf/c.yaml", "sha256": "a" * 64}])
     load(tmp_path, with_count(tmp_path, record))
+
+
+@pytest.mark.parametrize("method", ["t", "normal"])
+def test_a_ci_of_a_stated_method_still_needs_its_level(method):
+    with pytest.raises(ValueError, match="needs a level"):
+        unc(kind="ci", lower=90.0, upper=92.0, method=method, n=5)

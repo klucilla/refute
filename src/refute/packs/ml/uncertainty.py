@@ -100,15 +100,21 @@ class Uncertainty(StrictModel):
             raise ValueError("a CI takes lower and upper, not value")
         if self.lower is None or self.upper is None or self.lower >= self.upper:
             raise ValueError("a CI needs lower < upper")
-        if self.level is None or not 0 < self.level < 1:
+        if self.method is None:
+            raise ValueError("a CI needs its method: t, normal or other_or_unknown")
+        if self.level is None:
+            # a CI of a construction the paper does not state may not state its level either:
+            # it is not convertible anyway (wp3-unstated-uncertainty-acceptance.md)
+            if self.method != "other_or_unknown":
+                raise ValueError("a CI needs a level in (0, 1)")
+            return self
+        if not 0 < self.level < 1:
             raise ValueError("a CI needs a level in (0, 1)")
         # the quantile is taken at 1 - (1 - level)/2: a level so close to 0 or to 1 that this
         # probability rounds to 0.5 or to 1 in floating point gives a quantile of 0 (a
         # division by zero in the resolution) or an infinite one (#59, Codex review of #85)
         if not 0.5 < 1 - (1 - self.level) / 2 < 1:
             raise ValueError("a CI level this close to 0 or 1 gives no usable quantile")
-        if self.method is None:
-            raise ValueError("a CI needs its method: t, normal or other_or_unknown")
         return self
 
 
