@@ -1,0 +1,465 @@
+id: v0.3-main-2502.16782
+kind: replicate
+pack: ml
+title: 'CipherPrune: Efficient and Scalable Private Transformer Inference (arXiv 2502.16782v2),
+  the three drawn claims'
+hypothesis: The drawn claims of Table 1 (communication) reproduce from the repository
+  at the pinned commit.
+created: '2026-10-19'
+authors:
+- refute
+definitions:
+  transcription_approval_time: approvals.transcription.approved_utc is 2026-10-18T16:52:05Z,
+    the time of the maintainer's approval comment (https://github.com/klucilla/refute/issues/158#issuecomment-6252536898).
+    The frozen inventory attached carries 2026-10-18T17:05:00Z, a value derived from
+    the local time stated in the maintainer's message; the correction is recorded
+    in https://github.com/klucilla/refute/issues/158#issuecomment-6252562691, and
+    the inventory is not edited (the maintainer's decision of 2026-10-19).
+attachments:
+- path: inventory.json
+  sha256: 17999ce8fe04ef21df0179302d0d60b2b5e158e085d2700eb90c175da0a9a3e9
+  role: claim-inventory
+- path: draw.json
+  sha256: 0f0b4eee99e55363e947839efc5961db0fe8abdba2363dc4e76eefe68e039780
+  role: claim-draw
+test_plan:
+  paper:
+    arxiv_id: '2502.16782'
+    version: 2
+    run_seed_sha256: 2403cedb598aa94458e48fa75447705eda6fe60f7d980fe7143e59d84bf32045
+  budget:
+    profile: main
+  repository:
+    url: https://github.com/ucf-lou-lab-pet/cipher-prune-inference
+    commit: 69a0f972cd1b5e26a140a88d3749cb5788fceef8
+    latest_commit_at_draw: 69a0f972cd1b5e26a140a88d3749cb5788fceef8
+    version_basis: latest_at_draw
+  build:
+    python_ladder:
+    - '3.12'
+    exclude_newer: '2024-11-08'
+    base_image: python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+    allowed_patches: []
+  datasets:
+  - name: BERT Medium, 128 input tokens (README; the tokens per layer 128-55-52-49-45-24-14-5)
+    origin: generated
+    generator:
+    - file: README.md
+      lines:
+      - 99
+      - 105
+      role: the input of 128 tokens and the tokens kept in each layer of BERT-medium,
+        BERT-base and BERT-large
+    - file: README.md
+      lines:
+      - 110
+      - 125
+      role: 'CipherPrune''s communication: the per-layer tests of SCI/build/bin, server
+        and client, plus BOLT''s linear part'
+    configuration: one private inference of one input of 128 tokens, as the README
+      describes; no data file
+    inputs:
+    - bolt_word_elimination.zip
+    splits:
+      one_input:
+        expected_examples: 1
+        unit: private inference
+        source: 'README.md lines 99-105: one input of 128 tokens'
+  - name: BERT Base, 128 input tokens (README; the tokens per layer 128-55-54-52-49-45-24-14-5-2-1-1)
+    origin: generated
+    generator:
+    - file: README.md
+      lines:
+      - 99
+      - 105
+      role: the input of 128 tokens and the tokens kept in each layer of BERT-medium,
+        BERT-base and BERT-large
+    - file: README.md
+      lines:
+      - 110
+      - 125
+      role: 'CipherPrune''s communication: the per-layer tests of SCI/build/bin, server
+        and client, plus BOLT''s linear part'
+    configuration: one private inference of one input of 128 tokens, as the README
+      describes; no data file
+    inputs:
+    - bolt_word_elimination.zip
+    splits:
+      one_input:
+        expected_examples: 1
+        unit: private inference
+        source: 'README.md lines 99-105: one input of 128 tokens'
+  - name: BERT Large, 128 input tokens (README; the tokens per layer 128-55-55-55-55-55-54-43-39-35-28-21-16-10-3-3-2-2-2-1-1-1-1-1)
+    origin: generated
+    generator:
+    - file: README.md
+      lines:
+      - 99
+      - 105
+      role: the input of 128 tokens and the tokens kept in each layer of BERT-medium,
+        BERT-base and BERT-large
+    - file: README.md
+      lines:
+      - 110
+      - 125
+      role: 'CipherPrune''s communication: the per-layer tests of SCI/build/bin, server
+        and client, plus BOLT''s linear part'
+    configuration: one private inference of one input of 128 tokens, as the README
+      describes; no data file
+    inputs:
+    - bolt_word_elimination.zip
+    splits:
+      one_input:
+        expected_examples: 1
+        unit: private inference
+        source: 'README.md lines 99-105: one input of 128 tokens'
+  weights:
+  - name: bolt_word_elimination.zip
+    url: https://drive.usercontent.google.com/download?id=1cqh29kv9Cw-AabcVXoo97WQUF5z7AI5E&export=download&confirm=t
+    reference: Pang et al. 2024, BOLT (the fine-tuned BERT models with word elimination)
+    version: the bundle of the BOLT Google Drive folder, file id 1cqh29kv9Cw-AabcVXoo97WQUF5z7AI5E
+    license: none stated for the weights; the BOLT code (cmu-cryptosystems/BOLT) is
+      MIT
+    retrieved_utc: '2026-10-19T02:06:58Z'
+    sha256: 66408e4898ed52d9c3f768ee34bdfaf1b4072b0fac7dbafb179d096d2ea61356
+    size_bytes: 817634523
+    local_copy_allowed: true
+  stages:
+    build:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    data:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    base_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    metric_recompute:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    attack_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+  absent_artifact:
+    attempts: 3
+    interval_minutes: 60
+  threads:
+    OMP_NUM_THREADS: 22
+    MKL_NUM_THREADS: 22
+    OPENBLAS_NUM_THREADS: 22
+    NUMEXPR_NUM_THREADS: 22
+targets:
+- key: arXiv-2502.16782v2-C1
+  type: value
+  statement: CipherPrune runs one private inference of BERT Medium on 128 input tokens
+    with 6.7 GB of communication.
+  source:
+    arxiv_id: '2502.16782'
+    version: 2
+    location: Table 1, row 'CipherPrune', column 'BERT Medium / Comm.'
+    quote: '6.7'
+    retrieved_utc: '2026-10-19T02:24:52Z'
+    repository_url: https://github.com/ucf-lou-lab-pet/cipher-prune-inference
+    repository_commit: 69a0f972cd1b5e26a140a88d3749cb5788fceef8
+  inventory:
+    candidate_id: T1/CipherPrune/BERT Medium/Comm.
+    position: 1
+    transcription:
+      command: '["no single command: README ''Reproducing the results'' (per-layer
+        tests of SCI/build/bin, server and client, summed; BOLT''s linear part)"]'
+      location: Table 1, row 'CipherPrune', column 'BERT Medium / Comm.'
+      metric: communication_gb
+      split: one_input
+      value: '6.7'
+  dataset: BERT Medium, 128 input tokens (README; the tokens per layer 128-55-52-49-45-24-14-5)
+  metric:
+    name: communication_gb
+    split: one_input
+    unit: native
+    higher_is_better: false
+    reported: 6.7
+    reported_uncertainty:
+      kind: none
+    n_examples: 1
+  comparison_mode: two_sided
+  scope: checkpoint_evaluation
+  weights: bolt_word_elimination.zip
+  run:
+    argv:
+    - 'no single command: README ''Reproducing the results'' (per-layer tests of SCI/build/bin,
+      server and client, summed; BOLT''s linear part)'
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?m)^total communication \(GB\): ([0-9.]+)$'
+        group: 1
+      unit: native
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  tolerance:
+    rel_tol: 0.02
+    k_sd: 2.0
+    abs_floor: 0.1
+    override_reason: native unit (GB) has no default floor; 0.1 GB is the last digit
+      Table 1 prints; nothing runs in version 1 (no command, a Dockerfile, declared
+      weights)
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'no command takes a seed: the claim has no single command'
+  - name: data_split
+    applies: false
+    reason: the input is one inference, with no split
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the input is one inference, with nothing to hold out
+  - name: leakage
+    applies: false
+    reason: the input is one inference, with no train and test sets
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is a communication volume, not a classification
+  metric_recompute:
+    applies: false
+    reason: there is no run and no per-example output
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^inferences=([0-9]+)$
+            group: 1
+        link:
+        - file: README.md
+          lines:
+          - 110
+          - 125
+          role: the per-layer tests print their own communication; no command prints
+            the inference count, so this declared route finds none
+  approvals: &id001
+    transcription:
+      approved_by: maintainer
+      approved_utc: '2026-10-18T16:52:05Z'
+      approved_commit: efa9e4b11018ce3cad6e026dd4d4258e9bde7298
+      inventory_sha256: 17999ce8fe04ef21df0179302d0d60b2b5e158e085d2700eb90c175da0a9a3e9
+    claim:
+      approved_by: maintainer
+      approved_utc: '2026-10-19T13:11:54Z'
+      approved_commit: 1f68b2e6a504d59b8b2a4d107b6aa029f6c42d16
+- key: arXiv-2502.16782v2-C2
+  type: value
+  statement: CipherPrune runs one private inference of BERT Large on 128 input tokens
+    with 18.4 GB of communication.
+  source:
+    arxiv_id: '2502.16782'
+    version: 2
+    location: Table 1, row 'CipherPrune', column 'BERT Large / Comm.'
+    quote: '18.4'
+    retrieved_utc: '2026-10-19T02:24:52Z'
+    repository_url: https://github.com/ucf-lou-lab-pet/cipher-prune-inference
+    repository_commit: 69a0f972cd1b5e26a140a88d3749cb5788fceef8
+  inventory:
+    candidate_id: T1/CipherPrune/BERT Large/Comm.
+    position: 2
+    transcription:
+      command: '["no single command: README ''Reproducing the results'' (per-layer
+        tests of SCI/build/bin, server and client, summed; BOLT''s linear part)"]'
+      location: Table 1, row 'CipherPrune', column 'BERT Large / Comm.'
+      metric: communication_gb
+      split: one_input
+      value: '18.4'
+  dataset: BERT Large, 128 input tokens (README; the tokens per layer 128-55-55-55-55-55-54-43-39-35-28-21-16-10-3-3-2-2-2-1-1-1-1-1)
+  metric:
+    name: communication_gb
+    split: one_input
+    unit: native
+    higher_is_better: false
+    reported: 18.4
+    reported_uncertainty:
+      kind: none
+    n_examples: 1
+  comparison_mode: two_sided
+  scope: checkpoint_evaluation
+  weights: bolt_word_elimination.zip
+  run:
+    argv:
+    - 'no single command: README ''Reproducing the results'' (per-layer tests of SCI/build/bin,
+      server and client, summed; BOLT''s linear part)'
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?m)^total communication \(GB\): ([0-9.]+)$'
+        group: 1
+      unit: native
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  tolerance:
+    rel_tol: 0.02
+    k_sd: 2.0
+    abs_floor: 0.1
+    override_reason: native unit (GB) has no default floor; 0.1 GB is the last digit
+      Table 1 prints; nothing runs in version 1 (no command, a Dockerfile, declared
+      weights)
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'no command takes a seed: the claim has no single command'
+  - name: data_split
+    applies: false
+    reason: the input is one inference, with no split
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the input is one inference, with nothing to hold out
+  - name: leakage
+    applies: false
+    reason: the input is one inference, with no train and test sets
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is a communication volume, not a classification
+  metric_recompute:
+    applies: false
+    reason: there is no run and no per-example output
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^inferences=([0-9]+)$
+            group: 1
+        link:
+        - file: README.md
+          lines:
+          - 110
+          - 125
+          role: the per-layer tests print their own communication; no command prints
+            the inference count, so this declared route finds none
+  approvals: *id001
+- key: arXiv-2502.16782v2-C3
+  type: value
+  statement: CipherPrune runs one private inference of BERT Base on 128 input tokens
+    with 9.7 GB of communication.
+  source:
+    arxiv_id: '2502.16782'
+    version: 2
+    location: Table 1, row 'CipherPrune', column 'BERT Base / Comm.'
+    quote: '9.7'
+    retrieved_utc: '2026-10-19T02:24:52Z'
+    repository_url: https://github.com/ucf-lou-lab-pet/cipher-prune-inference
+    repository_commit: 69a0f972cd1b5e26a140a88d3749cb5788fceef8
+  inventory:
+    candidate_id: T1/CipherPrune/BERT Base/Comm.
+    position: 3
+    transcription:
+      command: '["no single command: README ''Reproducing the results'' (per-layer
+        tests of SCI/build/bin, server and client, summed; BOLT''s linear part)"]'
+      location: Table 1, row 'CipherPrune', column 'BERT Base / Comm.'
+      metric: communication_gb
+      split: one_input
+      value: '9.7'
+  dataset: BERT Base, 128 input tokens (README; the tokens per layer 128-55-54-52-49-45-24-14-5-2-1-1)
+  metric:
+    name: communication_gb
+    split: one_input
+    unit: native
+    higher_is_better: false
+    reported: 9.7
+    reported_uncertainty:
+      kind: none
+    n_examples: 1
+  comparison_mode: two_sided
+  scope: checkpoint_evaluation
+  weights: bolt_word_elimination.zip
+  run:
+    argv:
+    - 'no single command: README ''Reproducing the results'' (per-layer tests of SCI/build/bin,
+      server and client, summed; BOLT''s linear part)'
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?m)^total communication \(GB\): ([0-9.]+)$'
+        group: 1
+      unit: native
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  tolerance:
+    rel_tol: 0.02
+    k_sd: 2.0
+    abs_floor: 0.1
+    override_reason: native unit (GB) has no default floor; 0.1 GB is the last digit
+      Table 1 prints; nothing runs in version 1 (no command, a Dockerfile, declared
+      weights)
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'no command takes a seed: the claim has no single command'
+  - name: data_split
+    applies: false
+    reason: the input is one inference, with no split
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the input is one inference, with nothing to hold out
+  - name: leakage
+    applies: false
+    reason: the input is one inference, with no train and test sets
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is a communication volume, not a classification
+  metric_recompute:
+    applies: false
+    reason: there is no run and no per-example output
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^inferences=([0-9]+)$
+            group: 1
+        link:
+        - file: README.md
+          lines:
+          - 110
+          - 125
+          role: the per-layer tests print their own communication; no command prints
+            the inference count, so this declared route finds none
+  approvals: *id001

@@ -1,0 +1,586 @@
+id: v0.3-main-2407.11735
+kind: replicate
+pack: ml
+title: 'ProSub: Probabilistic Open-Set Semi-Supervised Learning with Subspace-Based
+  Out-of-Distribution Detection (arXiv 2407.11735v2), the three drawn claims'
+hypothesis: The drawn claims of Table 1 (ID CIFAR-10, OOD CIFAR-100) reproduce from
+  the repository at the pinned commit.
+created: '2026-10-19'
+authors:
+- refute
+definitions:
+  transcription_approval_time: approvals.transcription.approved_utc is 2026-10-18T16:52:05Z,
+    the time of the maintainer's approval comment (https://github.com/klucilla/refute/issues/158#issuecomment-6252536898).
+    The frozen inventory attached carries 2026-10-18T17:05:00Z, a value derived from
+    the local time stated in the maintainer's message; the correction is recorded
+    in https://github.com/klucilla/refute/issues/158#issuecomment-6252562691, and
+    the inventory is not edited (the maintainer's decision of 2026-10-19).
+attachments:
+- path: inventory.json
+  sha256: a179a618902e3491f6c961304cc13320353682328fbdc1f7771bfbdb6f45d06c
+  role: claim-inventory
+- path: draw.json
+  sha256: 2b5d6abf7a393a9b8b35ff5b8092fcc39c472ebd8d68288f8565fe46ce0a63e9
+  role: claim-draw
+- path: 2407-cifar-matlab-files.patch
+  sha256: 42c124af63e532ae8f816e2d00d2954b40d5d7c001b70749dbce9697be869a71
+  role: allowed-patch
+test_plan:
+  paper:
+    arxiv_id: '2407.11735'
+    version: 2
+    run_seed_sha256: b8e05f57747254df58278c920deb5ea2b69cf88d3dcf2bf7c14da4e1917a38f3
+  budget:
+    profile: main
+  repository:
+    url: https://github.com/walline/prosub
+    commit: 8a28cf3d2cb54250f75a3f6a542f93745d1928ce
+    latest_commit_at_draw: 8a28cf3d2cb54250f75a3f6a542f93745d1928ce
+    version_basis: latest_at_draw
+  build:
+    python_ladder:
+    - '3.11'
+    exclude_newer: '2024-09-26'
+    base_image: python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+    allowed_patches:
+    - attachment: 2407-cifar-matlab-files.patch
+      reason: 'the origin of the bytes: the two MATLAB CIFAR URLs of scripts/create_datasets.py
+        read the archives Refute downloaded, verified and mounted in the run''s folder
+        (data/cifar/), with no other change (the maintainer''s decision D3 of 2026-10-18)'
+  datasets:
+  - name: ID CIFAR10 with OOD CIFAR100 (CIFAR from www.cs.toronto.edu, downloaded
+      by scripts/create_datasets.py), 4000 labeled examples
+    url: https://www.cs.toronto.edu/~kriz/cifar-10-matlab.tar.gz
+    reference: Krizhevsky 2009, Learning Multiple Layers of Features from Tiny Images
+    version: the MATLAB version (cifar-10-matlab.tar.gz)
+    license: none stated; the CIFAR page asks users to cite the tech report (Krizhevsky
+      2009, 'Learning Multiple Layers of Features from Tiny Images')
+    retrieved_utc: '2026-10-19T01:48:27Z'
+    sha256: 7b4bd3b9c8a3592049c10ccede7e45e827b789198cf071eeb17fbfaf3246a804
+    size_bytes: 183434414
+    local_copy_allowed: true
+    splits:
+      train:
+        expected_examples: 50000
+        source: 'not read by Refute: the MATLAB version of the archive, which no reader
+          of the engine''s catalogue reads; 50000 images by the CIFAR page'
+      test:
+        expected_examples: 10000
+        source: 'not read by Refute: the MATLAB version of the archive, which no reader
+          of the engine''s catalogue reads; 10000 images by the CIFAR page'
+    derived_splits:
+      test_id_and_ood:
+        expected_examples: 20000
+        derived_from:
+        - test
+        rule: 'the CIFAR-10 test set (ID) and the CIFAR-100 test set (OOD, the entry
+          CIFAR-100 (the OOD and unseen sets of the runs, MATLAB version)): auroc_rank_calculation
+          scores the ID test set against the OOD test set, 10,000 images each'
+        code:
+        - file: data.py
+          lines:
+          - 147
+          - 158
+          role: the ID test set and the OOD test set read
+        - file: prosub_ossl.py
+          lines:
+          - 457
+          - 477
+          role: the EMA scores of both test sets
+        - file: prosub_ossl.py
+          lines:
+          - 507
+          - 517
+          role: the AUROC of each score, written as ood/auroc_<score>
+  - name: ID CIFAR10 with OOD CIFAR100 (CIFAR from www.cs.toronto.edu, downloaded
+      by scripts/create_datasets.py), 1000 labeled examples
+    url: https://www.cs.toronto.edu/~kriz/cifar-10-matlab.tar.gz
+    reference: Krizhevsky 2009, Learning Multiple Layers of Features from Tiny Images
+    version: the MATLAB version (cifar-10-matlab.tar.gz)
+    license: none stated; the CIFAR page asks users to cite the tech report (Krizhevsky
+      2009, 'Learning Multiple Layers of Features from Tiny Images')
+    retrieved_utc: '2026-10-19T01:48:27Z'
+    sha256: 7b4bd3b9c8a3592049c10ccede7e45e827b789198cf071eeb17fbfaf3246a804
+    size_bytes: 183434414
+    local_copy_allowed: true
+    splits:
+      train:
+        expected_examples: 50000
+        source: 'not read by Refute: the MATLAB version of the archive, which no reader
+          of the engine''s catalogue reads; 50000 images by the CIFAR page'
+      test:
+        expected_examples: 10000
+        source: 'not read by Refute: the MATLAB version of the archive, which no reader
+          of the engine''s catalogue reads; 10000 images by the CIFAR page'
+    derived_splits:
+      test_id_and_ood:
+        expected_examples: 20000
+        derived_from:
+        - test
+        rule: 'the CIFAR-10 test set (ID) and the CIFAR-100 test set (OOD, the entry
+          CIFAR-100 (the OOD and unseen sets of the runs, MATLAB version)): auroc_rank_calculation
+          scores the ID test set against the OOD test set, 10,000 images each'
+        code:
+        - file: data.py
+          lines:
+          - 147
+          - 158
+          role: the ID test set and the OOD test set read
+        - file: prosub_ossl.py
+          lines:
+          - 457
+          - 477
+          role: the EMA scores of both test sets
+        - file: prosub_ossl.py
+          lines:
+          - 507
+          - 517
+          role: the AUROC of each score, written as ood/auroc_<score>
+  - name: CIFAR-100 (the OOD and unseen sets of the runs, MATLAB version)
+    url: https://www.cs.toronto.edu/~kriz/cifar-100-matlab.tar.gz
+    reference: Krizhevsky 2009, Learning Multiple Layers of Features from Tiny Images
+    version: the MATLAB version (cifar-100-matlab.tar.gz)
+    license: none stated; the CIFAR page asks users to cite the tech report (Krizhevsky
+      2009, 'Learning Multiple Layers of Features from Tiny Images')
+    retrieved_utc: '2026-10-19T02:52:32Z'
+    sha256: 5fb8d16a77f63e3e417308497f2dcd58fca65b85b8c765ee02ec4e01c9f1d0d6
+    size_bytes: 184059720
+    local_copy_allowed: true
+    splits:
+      train:
+        expected_examples: 50000
+        source: 'not read by Refute: the MATLAB version of the archive, which no reader
+          of the engine''s catalogue reads; 50000 images by the CIFAR page'
+      test:
+        expected_examples: 10000
+        source: 'not read by Refute: the MATLAB version of the archive, which no reader
+          of the engine''s catalogue reads; 10000 images by the CIFAR page'
+  stages:
+    build:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    data:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    base_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    metric_recompute:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    attack_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+  absent_artifact:
+    attempts: 3
+    interval_minutes: 60
+  threads:
+    OMP_NUM_THREADS: 22
+    MKL_NUM_THREADS: 22
+    OPENBLAS_NUM_THREADS: 22
+    NUMEXPR_NUM_THREADS: 22
+targets:
+- key: arXiv-2407.11735v2-C1
+  type: value
+  statement: ProSub reaches a closed-set accuracy of 94.50% on the CIFAR-10 test set
+    with 4,000 labels and CIFAR-100 as OOD data.
+  source:
+    arxiv_id: '2407.11735'
+    version: 2
+    location: 'Table 1, row ''ProSub (ours)'' (top: closed-set accuracy), column ''ID:
+      CIFAR-10, OOD: CIFAR-100, 4,000 lab.'''
+    quote: "94.50\xB10.05"
+    retrieved_utc: '2026-10-19T01:58:15Z'
+    repository_url: https://github.com/walline/prosub
+    repository_commit: 8a28cf3d2cb54250f75a3f6a542f93745d1928ce
+  inventory:
+    candidate_id: 'T1/ProSub (ours)/closed-set accuracy/ID: CIFAR-10, OOD: CIFAR-100,
+      4,000 lab.'
+    position: 1
+    transcription:
+      command: '["sh", "-c", "export PYTHONPATH=.; python3 scripts/create_datasets.py
+        --datadir=data --repodir=. cifar10 cifar100 && python3 scripts/create_split.py
+        --seed=\"$1\" --size=4000 data/SSL2/cifar10 data/cifar10-train.tfrecord &&
+        python3 prosub_ossl.py --datadir=data --traindir=train --pretrainsteps=50000
+        --trainsteps=524288 --ws=10.0 --arch=WRN-28-2 --dataset=cifar10 --datasetood=cifar100
+        --datasetunseen=cifar100 --nlabeled=4000 --seed=\"$1\"", "sh", "{seed}"]'
+      location: 'Table 1, row ''ProSub (ours)'' (top: closed-set accuracy), column
+        ''ID: CIFAR-10, OOD: CIFAR-100, 4,000 lab.'''
+      metric: accuracy
+      split: test
+      value: '94.50'
+  dataset: ID CIFAR10 with OOD CIFAR100 (CIFAR from www.cs.toronto.edu, downloaded
+    by scripts/create_datasets.py), 4000 labeled examples
+  metric:
+    name: accuracy
+    split: test
+    unit: percent
+    higher_is_better: true
+    reported: 94.5
+    reported_uncertainty:
+      kind: sd
+      value: 0.05
+      unit: percent
+      location: 'Table 1, row ''ProSub (ours)'' (top: closed-set accuracy), column
+        ''ID: CIFAR-10, OOD: CIFAR-100, 4,000 lab.'''
+      quote: "94.50\xB10.05"
+    reported_n_seeds: 3
+    n_examples: 10000
+  comparison_mode: two_sided
+  scope: full_training
+  run:
+    argv:
+    - sh
+    - -c
+    - export PYTHONPATH=.; python3 scripts/create_datasets.py --datadir=data --repodir=.
+      cifar10 cifar100 && python3 scripts/create_split.py --seed="$1" --size=4000
+      data/SSL2/cifar10 data/cifar10-train.tfrecord && python3 prosub_ossl.py --datadir=data
+      --traindir=train --pretrainsteps=50000 --trainsteps=524288 --ws=10.0 --arch=WRN-28-2
+      --dataset=cifar10 --datasetood=cifar100 --datasetunseen=cifar100 --nlabeled=4000
+      --seed="$1"
+    - sh
+    workdir: .
+    seed_argument: '{seed}'
+    metric_extraction:
+      from: file
+      file: train/cifar10.{seed}@4000+cifar100/ProSub_archWRN-28-2_batch64_lr0.03_momentum0.9_nclass10_wd0.0005_wpl1.0_ws10.0_wsub1.0/summaries/*
+      tensorboard:
+        tag: test/accuracy_ema
+        step: last
+      unit: fraction
+  seeds:
+    base:
+    - 1150177701
+    - 1690889939
+    - 1055751461
+    base_cap: 3
+    base_source: derived
+  attacks:
+  - name: seeds
+    applies: true
+    params: {}
+    reason: 'the run takes --seed (the labeled subset of create_split.py and prosub_ossl.py):
+      other seeds can be run'
+  - name: data_split
+    applies: false
+    reason: --seed selects the labeled subset; there is no other argument for the
+      split
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test sets are the archives' own, with no argument to hold examples
+      out
+  - name: leakage
+    applies: true
+    params:
+      max_overlap_fraction: 0.01
+    reason: 'the CIFAR-10 train and test sets are files of the archive: exact duplicates
+      between them can be counted (the MATLAB files are not read by the engine''s
+      readers, so the attack has no data and is INCONCLUSIVE)'
+  - name: trivial_baseline
+    applies: true
+    reason: a closed-set accuracy over 10 classes can be compared with a random guess
+    params:
+      kind: random
+      labels:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      task: single_label_classification
+  metric_recompute:
+    applies: false
+    reason: the repository saves no per-example predictions or scores (the --savestats
+      option is off in the README's command)
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^test examples evaluated=([0-9]+)$
+            group: 1
+        link:
+        - file: prosub_ossl.py
+          lines:
+          - 423
+          - 528
+          role: 'the final evaluation writes its results as TensorBoard scalars and
+            prints the EMA accuracy, but no count of the examples it evaluates, so
+            this declared route finds none: metric_extracted is INCONCLUSIVE by coverage'
+  approvals: &id001
+    transcription:
+      approved_by: maintainer
+      approved_utc: '2026-10-18T16:52:05Z'
+      approved_commit: efa9e4b11018ce3cad6e026dd4d4258e9bde7298
+      inventory_sha256: a179a618902e3491f6c961304cc13320353682328fbdc1f7771bfbdb6f45d06c
+    claim:
+      approved_by: maintainer
+      approved_utc: '2026-10-19T13:11:54Z'
+      approved_commit: 1f68b2e6a504d59b8b2a4d107b6aa029f6c42d16
+- key: arXiv-2407.11735v2-C2
+  type: value
+  statement: ProSub separates the CIFAR-10 test set (ID) from the CIFAR-100 test set
+    (OOD) with an AUROC of 0.92, trained with 1,000 labels.
+  source:
+    arxiv_id: '2407.11735'
+    version: 2
+    location: 'Table 1, row ''ProSub (ours)'' (bottom: AUROC), column ''ID: CIFAR-10,
+      OOD: CIFAR-100, 1,000 lab.'''
+    quote: "0.92\xB10.00"
+    retrieved_utc: '2026-10-19T01:58:15Z'
+    repository_url: https://github.com/walline/prosub
+    repository_commit: 8a28cf3d2cb54250f75a3f6a542f93745d1928ce
+  inventory:
+    candidate_id: 'T1/ProSub (ours)/AUROC/ID: CIFAR-10, OOD: CIFAR-100, 1,000 lab.'
+    position: 2
+    transcription:
+      command: '["sh", "-c", "export PYTHONPATH=.; python3 scripts/create_datasets.py
+        --datadir=data --repodir=. cifar10 cifar100 && python3 scripts/create_split.py
+        --seed=\"$1\" --size=1000 data/SSL2/cifar10 data/cifar10-train.tfrecord &&
+        python3 prosub_ossl.py --datadir=data --traindir=train --pretrainsteps=50000
+        --trainsteps=524288 --ws=10.0 --arch=WRN-28-2 --dataset=cifar10 --datasetood=cifar100
+        --datasetunseen=cifar100 --nlabeled=1000 --seed=\"$1\"", "sh", "{seed}"]'
+      location: 'Table 1, row ''ProSub (ours)'' (bottom: AUROC), column ''ID: CIFAR-10,
+        OOD: CIFAR-100, 1,000 lab.'''
+      metric: auroc
+      split: test_id_and_ood
+      value: '0.92'
+  dataset: ID CIFAR10 with OOD CIFAR100 (CIFAR from www.cs.toronto.edu, downloaded
+    by scripts/create_datasets.py), 1000 labeled examples
+  metric:
+    name: auroc
+    split: test_id_and_ood
+    unit: fraction
+    higher_is_better: true
+    reported: 0.92
+    reported_uncertainty:
+      kind: sd
+      value: 0.0
+      unit: fraction
+      location: 'Table 1, row ''ProSub (ours)'' (bottom: AUROC), column ''ID: CIFAR-10,
+        OOD: CIFAR-100, 1,000 lab.'''
+      quote: "0.92\xB10.00"
+    reported_n_seeds: 3
+    n_examples: 20000
+  comparison_mode: two_sided
+  scope: full_training
+  run:
+    argv:
+    - sh
+    - -c
+    - export PYTHONPATH=.; python3 scripts/create_datasets.py --datadir=data --repodir=.
+      cifar10 cifar100 && python3 scripts/create_split.py --seed="$1" --size=1000
+      data/SSL2/cifar10 data/cifar10-train.tfrecord && python3 prosub_ossl.py --datadir=data
+      --traindir=train --pretrainsteps=50000 --trainsteps=524288 --ws=10.0 --arch=WRN-28-2
+      --dataset=cifar10 --datasetood=cifar100 --datasetunseen=cifar100 --nlabeled=1000
+      --seed="$1"
+    - sh
+    workdir: .
+    seed_argument: '{seed}'
+    metric_extraction:
+      from: file
+      file: train/cifar10.{seed}@1000+cifar100/ProSub_archWRN-28-2_batch64_lr0.03_momentum0.9_nclass10_wd0.0005_wpl1.0_ws10.0_wsub1.0/summaries/*
+      tensorboard:
+        tag: ood/auroc_subspacescore
+        step: last
+      unit: fraction
+  seeds:
+    base:
+    - 1150177701
+    - 1690889939
+    - 1055751461
+    base_cap: 3
+    base_source: derived
+  attacks:
+  - name: seeds
+    applies: true
+    params: {}
+    reason: 'the run takes --seed (the labeled subset of create_split.py and prosub_ossl.py):
+      other seeds can be run'
+  - name: data_split
+    applies: false
+    reason: --seed selects the labeled subset; there is no other argument for the
+      split
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test sets are the archives' own, with no argument to hold examples
+      out
+  - name: leakage
+    applies: true
+    params:
+      max_overlap_fraction: 0.01
+    reason: 'the CIFAR-10 train and test sets are files of the archive: exact duplicates
+      between them can be counted (the MATLAB files are not read by the engine''s
+      readers, so the attack has no data and is INCONCLUSIVE)'
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is an AUROC of OOD detection, not a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the repository saves no per-example predictions or scores (the --savestats
+      option is off in the README's command)
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^test examples evaluated=([0-9]+)$
+            group: 1
+        link:
+        - file: prosub_ossl.py
+          lines:
+          - 423
+          - 528
+          role: 'the final evaluation writes its results as TensorBoard scalars and
+            prints the EMA accuracy, but no count of the examples it evaluates, so
+            this declared route finds none: metric_extracted is INCONCLUSIVE by coverage'
+  approvals: *id001
+- key: arXiv-2407.11735v2-C3
+  type: value
+  statement: ProSub separates the CIFAR-10 test set (ID) from the CIFAR-100 test set
+    (OOD) with an AUROC of 0.93, trained with 4,000 labels.
+  source:
+    arxiv_id: '2407.11735'
+    version: 2
+    location: 'Table 1, row ''ProSub (ours)'' (bottom: AUROC), column ''ID: CIFAR-10,
+      OOD: CIFAR-100, 4,000 lab.'''
+    quote: "0.93\xB10.00"
+    retrieved_utc: '2026-10-19T01:58:15Z'
+    repository_url: https://github.com/walline/prosub
+    repository_commit: 8a28cf3d2cb54250f75a3f6a542f93745d1928ce
+  inventory:
+    candidate_id: 'T1/ProSub (ours)/AUROC/ID: CIFAR-10, OOD: CIFAR-100, 4,000 lab.'
+    position: 3
+    transcription:
+      command: '["sh", "-c", "export PYTHONPATH=.; python3 scripts/create_datasets.py
+        --datadir=data --repodir=. cifar10 cifar100 && python3 scripts/create_split.py
+        --seed=\"$1\" --size=4000 data/SSL2/cifar10 data/cifar10-train.tfrecord &&
+        python3 prosub_ossl.py --datadir=data --traindir=train --pretrainsteps=50000
+        --trainsteps=524288 --ws=10.0 --arch=WRN-28-2 --dataset=cifar10 --datasetood=cifar100
+        --datasetunseen=cifar100 --nlabeled=4000 --seed=\"$1\"", "sh", "{seed}"]'
+      location: 'Table 1, row ''ProSub (ours)'' (bottom: AUROC), column ''ID: CIFAR-10,
+        OOD: CIFAR-100, 4,000 lab.'''
+      metric: auroc
+      split: test_id_and_ood
+      value: '0.93'
+  dataset: ID CIFAR10 with OOD CIFAR100 (CIFAR from www.cs.toronto.edu, downloaded
+    by scripts/create_datasets.py), 4000 labeled examples
+  metric:
+    name: auroc
+    split: test_id_and_ood
+    unit: fraction
+    higher_is_better: true
+    reported: 0.93
+    reported_uncertainty:
+      kind: sd
+      value: 0.0
+      unit: fraction
+      location: 'Table 1, row ''ProSub (ours)'' (bottom: AUROC), column ''ID: CIFAR-10,
+        OOD: CIFAR-100, 4,000 lab.'''
+      quote: "0.93\xB10.00"
+    reported_n_seeds: 3
+    n_examples: 20000
+  comparison_mode: two_sided
+  scope: full_training
+  run:
+    argv:
+    - sh
+    - -c
+    - export PYTHONPATH=.; python3 scripts/create_datasets.py --datadir=data --repodir=.
+      cifar10 cifar100 && python3 scripts/create_split.py --seed="$1" --size=4000
+      data/SSL2/cifar10 data/cifar10-train.tfrecord && python3 prosub_ossl.py --datadir=data
+      --traindir=train --pretrainsteps=50000 --trainsteps=524288 --ws=10.0 --arch=WRN-28-2
+      --dataset=cifar10 --datasetood=cifar100 --datasetunseen=cifar100 --nlabeled=4000
+      --seed="$1"
+    - sh
+    workdir: .
+    seed_argument: '{seed}'
+    metric_extraction:
+      from: file
+      file: train/cifar10.{seed}@4000+cifar100/ProSub_archWRN-28-2_batch64_lr0.03_momentum0.9_nclass10_wd0.0005_wpl1.0_ws10.0_wsub1.0/summaries/*
+      tensorboard:
+        tag: ood/auroc_subspacescore
+        step: last
+      unit: fraction
+  seeds:
+    base:
+    - 1150177701
+    - 1690889939
+    - 1055751461
+    base_cap: 3
+    base_source: derived
+  attacks:
+  - name: seeds
+    applies: true
+    params: {}
+    reason: 'the run takes --seed (the labeled subset of create_split.py and prosub_ossl.py):
+      other seeds can be run'
+  - name: data_split
+    applies: false
+    reason: --seed selects the labeled subset; there is no other argument for the
+      split
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test sets are the archives' own, with no argument to hold examples
+      out
+  - name: leakage
+    applies: true
+    params:
+      max_overlap_fraction: 0.01
+    reason: 'the CIFAR-10 train and test sets are files of the archive: exact duplicates
+      between them can be counted (the MATLAB files are not read by the engine''s
+      readers, so the attack has no data and is INCONCLUSIVE)'
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is an AUROC of OOD detection, not a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the repository saves no per-example predictions or scores (the --savestats
+      option is off in the README's command)
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^test examples evaluated=([0-9]+)$
+            group: 1
+        link:
+        - file: prosub_ossl.py
+          lines:
+          - 423
+          - 528
+          role: 'the final evaluation writes its results as TensorBoard scalars and
+            prints the EMA accuracy, but no count of the examples it evaluates, so
+            this declared route finds none: metric_extracted is INCONCLUSIVE by coverage'
+  approvals: *id001

@@ -1,0 +1,15 @@
+diff --git a/scripts/create_datasets.py b/scripts/create_datasets.py
+index 3422e3c..1ad1c78 100644
+--- a/scripts/create_datasets.py
++++ b/scripts/create_datasets.py
+@@ -17,8 +17,8 @@ from PIL import Image
+ FLAGS = flags.FLAGS
+ 
+ URLS = {
+-    'cifar10': 'https://www.cs.toronto.edu/~kriz/cifar-10-matlab.tar.gz',
+-    'cifar100': 'https://www.cs.toronto.edu/~kriz/cifar-100-matlab.tar.gz',
++    'cifar10': 'file:///work/data/cifar/cifar-10-matlab.tar.gz',
++    'cifar100': 'file:///work/data/cifar/cifar-100-matlab.tar.gz',
+     'tinyimagenet': 'http://cs231n.stanford.edu/tiny-imagenet-200.zip',
+ }
+ 

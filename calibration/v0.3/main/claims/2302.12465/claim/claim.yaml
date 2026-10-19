@@ -1,0 +1,615 @@
+id: v0.3-main-2302.12465
+kind: replicate
+pack: ml
+title: 'PaGE-Link: Path-based Graph Neural Network Explanation for Heterogeneous Link
+  Prediction (arXiv 2302.12465v3), the three drawn claims'
+hypothesis: The drawn claims of Table 4 (UserItemAttr) reproduce from the repository
+  at the pinned commit, with its saved link predictor.
+created: '2026-10-19'
+authors:
+- refute
+definitions:
+  scope: 'Every claim is full_training (plan section 5: full training, or evaluation
+    of a released checkpoint): each run optimizes the explainer''s masks from the
+    start (pagelink.py, baselines/gnnexplainer_link.py or baselines/pgexplainer_link.py)
+    and eval_explanations.py scores those masks. The repository''s trained link predictor,
+    saved_models/synthetic_model.pth of the pinned commit, is a pre-trained input
+    loaded frozen, declared as weights that are a file of the repository; it is never
+    trained by the run, and these claims do not test its training (wp3-repository-weights-acceptance.md,
+    reviewed by Codex on 2026-10-19).'
+  verdict_paths: 'No attack applies to these claims (the seed and the split are fixed
+    in the code, with no argument), so the verdict of each claim rests on its base
+    reproduction alone: when the base run completes it is REPRODUCED or NOT_REPRODUCED,
+    never FRAGILE; NOT_REPRODUCIBLE or INCONCLUSIVE remain possible when the base
+    reproduction cannot be obtained (the maintainer''s decision of 2026-10-19).'
+  transcription_approval_time: approvals.transcription.approved_utc is 2026-10-18T16:52:05Z,
+    the time of the maintainer's approval comment (https://github.com/klucilla/refute/issues/158#issuecomment-6252536898).
+    The frozen inventory attached carries 2026-10-18T17:05:00Z, a value derived from
+    the local time stated in the maintainer's message; the correction is recorded
+    in https://github.com/klucilla/refute/issues/158#issuecomment-6252562691, and
+    the inventory is not edited (the maintainer's decision of 2026-10-19).
+  reference_pgexp_link: 'The comparison''s reference, PGExp-Link, runs errata 2''s
+    command: errata 1''s with --train_pgexplainer added, the repository''s own training
+    parameters, none tuned. Without that option baselines/pgexplainer_link.py never
+    trains the PGExplainer''s mask generator (lines 55 and 117-125). This is a reproduction
+    with an explicit correction of the documented procedure: neither the repository
+    nor the paper shows that this command produced the published 0.578 (the maintainer''s
+    decision of 2026-10-19; https://github.com/klucilla/refute/issues/158#issuecomment-6267417453).'
+attachments:
+- path: inventory.json
+  sha256: 29d29fa1775fb0cb41e741795557758bc1dbfc3b09f6c96f9970bd77b06663ff
+  role: claim-inventory
+- path: draw.json
+  sha256: 960f947b1f97cfc08afcf612230ed7ebe4608854371e0f595c96127820a76f3e
+  role: claim-draw
+- path: 2302.12465-errata-2.json
+  sha256: e2d82493c7434e869e803888c82e2d1605178590267ac57443ec68366994b841
+  role: inventory-errata
+- path: 2302-torch-dgl.patch
+  sha256: 4d8563a7ffbafd74acb12e19eba4eff0a3143ac55329472e667e723057c097f8
+  role: allowed-patch
+- path: 2302-population-size.patch
+  sha256: 9741191e660dfcef11c975c5971c13aedeb7adaf10986faac3fc734d7a469151
+  role: allowed-patch
+- path: population_count.py
+  sha256: edae1ced3336732c2173554019c5219c2aa7dfa46b9f7beefb2d16e824d44ee6
+  role: population-count
+- path: population_count_record.json
+  sha256: ec018a6f6b98e166091ac64134672bc7f6853cd04cf8ea037c2e06f8976fea4c
+  role: population-count-record
+- path: population_count_comparison.py
+  sha256: edae1ced3336732c2173554019c5219c2aa7dfa46b9f7beefb2d16e824d44ee6
+  role: population-count
+- path: population_count_record_comparison.json
+  sha256: 548bf2bfb49627db1e6d935a8d0789b4b4ae78e30a66fff3354ac454b8b08758
+  role: population-count-record
+test_plan:
+  paper:
+    arxiv_id: '2302.12465'
+    version: 3
+    run_seed_sha256: 3ed571bbb87e028f321328abd199eacb0d7dfbb9ed4c253aa9afc7550cde9d44
+  budget:
+    profile: main
+  repository:
+    url: https://github.com/amazon-science/page-link-path-based-gnn-explanation
+    commit: cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c
+    latest_commit_at_draw: cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c
+    version_basis: latest_at_draw
+  build:
+    python_ladder:
+    - '3.10'
+    exclude_newer: '2023-07-25'
+    base_image: python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+    allowed_patches:
+    - attachment: 2302-torch-dgl.patch
+      reason: the dependencies the README declares (PyTorch = 1.12.1, DGL = 0.9.1)
+        and requirements.txt omits
+    - attachment: 2302-population-size.patch
+      reason: 'instrumentation (W3.12f): prints len(mask_auc_list) after the mean
+        is printed, with no change to the computation'
+  datasets:
+  - name: UserItemAttr (synthetic, datasets/synthetic)
+    origin: repository_file
+    path: datasets/synthetic
+    sha256: a368d8f68a6bbfd7ea5cf844fe217872c79ac1f3c160f4f46823bbbb7798df9f
+    size_bytes: 93724
+    splits:
+      likes_edges:
+        expected_examples: 714
+        source: reader:container:dgl:#user,likes,item
+    derived_splits:
+      test_links:
+        expected_examples: 129
+        derived_from:
+        - likes_edges
+        rule: the test links of eids_split (validation 0.1, test 0.2, seed 0) that
+          the repository's saved model predicts as positive (sigmoid of the score
+          > 0.5 on the 2-hop subgraph of the pair), counted once per pair
+        code:
+        - file: data_processing.py
+          lines:
+          - 7
+          - 101
+          role: 'process_data: the split of the ''likes'' edges and the test graph'
+        - file: data_processing.py
+          lines:
+          - 104
+          - 147
+          role: 'load_dataset: the graph read from datasets/synthetic, then process_data'
+        - file: utils.py
+          lines:
+          - 41
+          - 89
+          role: idx_split and eids_split, seed 0
+        - file: eval_explanations.py
+          lines:
+          - 87
+          - 109
+          role: the test links, the prediction and the selection pred > 0.5, keyed
+            by the pair
+        counted_before_lock:
+          script: population_count.py
+          record: population_count_record.json
+  - name: UserItemAttr
+    origin: repository_file
+    path: datasets/synthetic
+    sha256: a368d8f68a6bbfd7ea5cf844fe217872c79ac1f3c160f4f46823bbbb7798df9f
+    size_bytes: 93724
+    splits:
+      likes_edges:
+        expected_examples: 714
+        source: reader:container:dgl:#user,likes,item
+    derived_splits:
+      test_links:
+        expected_examples: 129
+        derived_from:
+        - likes_edges
+        rule: the test links of eids_split (validation 0.1, test 0.2, seed 0) that
+          the repository's saved model predicts as positive (sigmoid of the score
+          > 0.5 on the 2-hop subgraph of the pair), counted once per pair
+        code:
+        - file: data_processing.py
+          lines:
+          - 7
+          - 101
+          role: 'process_data: the split of the ''likes'' edges and the test graph'
+        - file: data_processing.py
+          lines:
+          - 104
+          - 147
+          role: 'load_dataset: the graph read from datasets/synthetic, then process_data'
+        - file: utils.py
+          lines:
+          - 41
+          - 89
+          role: idx_split and eids_split, seed 0
+        - file: eval_explanations.py
+          lines:
+          - 87
+          - 109
+          role: the test links, the prediction and the selection pred > 0.5, keyed
+            by the pair
+        counted_before_lock:
+          script: population_count_comparison.py
+          record: population_count_record_comparison.json
+  weights:
+  - name: synthetic_model
+    origin: repository_file
+    path: saved_models/synthetic_model.pth
+    commit: cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c
+    sha256: a9446dca4857d6c43f7e95d2641541bf24b94600e1f2a3d83e98b0bfd1b442c2
+    size_bytes: 272468
+    license: MIT-0 (MIT No Attribution), the repository's LICENSE at the pinned commit;
+      the repository states no other licence for saved_models/ (calibration/v0.3/main/sources/2302.12465-data-sources.md)
+  stages:
+    build:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    data:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    base_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    metric_recompute:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    attack_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+  absent_artifact:
+    attempts: 3
+    interval_minutes: 60
+  threads:
+    OMP_NUM_THREADS: 22
+    MKL_NUM_THREADS: 22
+    OPENBLAS_NUM_THREADS: 22
+    NUMEXPR_NUM_THREADS: 22
+targets:
+- key: arXiv-2302.12465v3-C1
+  type: value
+  statement: On UserItemAttr, with the repository's trained link predictor (saved_models/synthetic_model.pth
+    of the pinned commit, loaded frozen; the run does not train it), the explanations
+    of PaGE-Link reach a ROC-AUC of 0.954 against the ground-truth paths.
+  source:
+    arxiv_id: '2302.12465'
+    version: 3
+    location: Table 4, row 'UserItemAttr', column 'PaGE-Link (ours)'
+    quote: '0.954'
+    retrieved_utc: '2026-10-19T01:38:45Z'
+    repository_url: https://github.com/amazon-science/page-link-path-based-gnn-explanation
+    repository_commit: cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c
+  inventory:
+    candidate_id: T4/UserItemAttr/PaGE-Link
+    position: 1
+    transcription:
+      command: '["sh", "-c", "python pagelink.py --dataset_name=synthetic --config_path=config.yaml
+        --save_explanation && python eval_explanations.py --dataset_name=synthetic
+        --emb_dim=64 --hidden_dim=64 --out_dim=64 --eval_explainer_names=pagelink"]'
+      location: Table 4, row 'UserItemAttr', column 'PaGE-Link (ours)'
+      metric: auroc
+      split: test_links
+      value: '0.954'
+  dataset: UserItemAttr (synthetic, datasets/synthetic)
+  metric:
+    name: auroc
+    split: test_links
+    unit: fraction
+    higher_is_better: true
+    n_examples: 129
+    reported: 0.954
+    reported_uncertainty:
+      kind: none
+  comparison_mode: two_sided
+  scope: full_training
+  weights: synthetic_model
+  run:
+    argv:
+    - sh
+    - -c
+    - python pagelink.py --dataset_name=synthetic --config_path=config.yaml --save_explanation
+      && python eval_explanations.py --dataset_name=synthetic --emb_dim=64 --hidden_dim=64
+      --out_dim=64 --eval_explainer_names=pagelink
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?m)^Average Mask-AUC: +(-?[0-9]+\.[0-9]+)$'
+        group: 1
+      unit: fraction
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'each script calls set_seed(0) with no argument: no seed can be changed
+      without editing the code'
+  - name: data_split
+    applies: false
+    reason: the split is eids_split with seed 0 fixed in the code, with no argument
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test links are fixed by the code's split, with no argument
+  - name: leakage
+    applies: false
+    reason: the metric scores explanation masks against ground-truth paths on one
+      graph; there are no train and test examples of the explainer to compare
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is a ROC-AUC of edge masks per pair, not a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the explainers save their masks as pickled tensors and no file holds the
+      per-pair AUCs; the recomputer does not average an AUC per pair
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^refute-population-size pagelink ([0-9]+)$
+            group: 1
+        link:
+        - file: eval_explanations.py
+          lines:
+          - 94
+          - 109
+          role: 'the test links kept when pred > 0.5, keyed by the pair as comp_graphs:
+            the population'
+        - file: eval_explanations.py
+          lines:
+          - 133
+          - 139
+          role: one mask AUC per pair of comp_graphs, appended to mask_auc_list
+        - file: eval_explanations.py
+          lines:
+          - 141
+          - 145
+          role: the mean over mask_auc_list, printed; the allowed patch 2302-population-size.patch
+            prints len(mask_auc_list) on the next line, named by the explainer
+  approvals: &id001
+    transcription:
+      approved_by: maintainer
+      approved_utc: '2026-10-18T16:52:05Z'
+      approved_commit: efa9e4b11018ce3cad6e026dd4d4258e9bde7298
+      inventory_sha256: 29d29fa1775fb0cb41e741795557758bc1dbfc3b09f6c96f9970bd77b06663ff
+    claim:
+      approved_by: maintainer
+      approved_utc: '2026-10-19T13:11:54Z'
+      approved_commit: 1f68b2e6a504d59b8b2a4d107b6aa029f6c42d16
+- key: arXiv-2302.12465v3-C2
+  type: value
+  statement: On UserItemAttr, with the repository's trained link predictor (saved_models/synthetic_model.pth
+    of the pinned commit, loaded frozen; the run does not train it), the explanations
+    of GNNExp-Link reach a ROC-AUC of 0.608 against the ground-truth paths.
+  source:
+    arxiv_id: '2302.12465'
+    version: 3
+    location: Table 4, row 'UserItemAttr', column 'GNNExp-Link'
+    quote: '0.608'
+    retrieved_utc: '2026-10-19T01:38:45Z'
+    repository_url: https://github.com/amazon-science/page-link-path-based-gnn-explanation
+    repository_commit: cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c
+  inventory:
+    candidate_id: T4/UserItemAttr/GNNExp-Link
+    position: 2
+    transcription:
+      command: '["sh", "-c", "python baselines/gnnexplainer_link.py --dataset_name=synthetic
+        --config_path=baselines/baseline_config.yaml --save_explanation && python
+        eval_explanations.py --dataset_name=synthetic --emb_dim=64 --hidden_dim=64
+        --out_dim=64 --eval_explainer_names=gnnexp"]'
+      location: Table 4, row 'UserItemAttr', column 'GNNExp-Link'
+      metric: auroc
+      split: test_links
+      value: '0.608'
+  dataset: UserItemAttr (synthetic, datasets/synthetic)
+  metric:
+    name: auroc
+    split: test_links
+    unit: fraction
+    higher_is_better: true
+    n_examples: 129
+    reported: 0.608
+    reported_uncertainty:
+      kind: none
+  comparison_mode: two_sided
+  scope: full_training
+  weights: synthetic_model
+  run:
+    argv:
+    - sh
+    - -c
+    - python baselines/gnnexplainer_link.py --dataset_name=synthetic --config_path=baselines/baseline_config.yaml
+      --save_explanation && python eval_explanations.py --dataset_name=synthetic --emb_dim=64
+      --hidden_dim=64 --out_dim=64 --eval_explainer_names=gnnexp
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?m)^Average Mask-AUC: +(-?[0-9]+\.[0-9]+)$'
+        group: 1
+      unit: fraction
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'each script calls set_seed(0) with no argument: no seed can be changed
+      without editing the code'
+  - name: data_split
+    applies: false
+    reason: the split is eids_split with seed 0 fixed in the code, with no argument
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test links are fixed by the code's split, with no argument
+  - name: leakage
+    applies: false
+    reason: the metric scores explanation masks against ground-truth paths on one
+      graph; there are no train and test examples of the explainer to compare
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is a ROC-AUC of edge masks per pair, not a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the explainers save their masks as pickled tensors and no file holds the
+      per-pair AUCs; the recomputer does not average an AUC per pair
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^refute-population-size gnnexp ([0-9]+)$
+            group: 1
+        link:
+        - file: eval_explanations.py
+          lines:
+          - 94
+          - 109
+          role: 'the test links kept when pred > 0.5, keyed by the pair as comp_graphs:
+            the population'
+        - file: eval_explanations.py
+          lines:
+          - 133
+          - 139
+          role: one mask AUC per pair of comp_graphs, appended to mask_auc_list
+        - file: eval_explanations.py
+          lines:
+          - 141
+          - 145
+          role: the mean over mask_auc_list, printed; the allowed patch 2302-population-size.patch
+            prints len(mask_auc_list) on the next line, named by the explainer
+  approvals: *id001
+- key: arXiv-2302.12465v3-C3
+  type: comparison
+  statement: On UserItemAttr, with the repository's trained link predictor (saved_models/synthetic_model.pth
+    of the pinned commit, loaded frozen; the run does not train it), the explanations
+    of PaGE-Link have a higher ROC-AUC against the ground-truth paths than those of
+    PGExp-Link (0.954 against 0.578); PGExp-Link runs with its mask generator trained,
+    an explicit correction of the documented command (errata 2, definitions).
+  source:
+    arxiv_id: '2302.12465'
+    version: 3
+    location: 'Table 4, row ''UserItemAttr''; text: "The results are shown in Table
+      4, where PaGE-Link outperforms both baseline explainers." (section 6.3)'
+    quote: PaGE-Link outperforms both baseline explainers
+    retrieved_utc: '2026-10-19T01:38:45Z'
+    repository_url: https://github.com/amazon-science/page-link-path-based-gnn-explanation
+    repository_commit: cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c
+  inventory:
+    candidate_id: T4/UserItemAttr/PaGE-Link>PGExp-Link
+    position: 3
+    transcription:
+      command: '["sh", "-c", "python pagelink.py --dataset_name=synthetic --config_path=config.yaml
+        --save_explanation && python eval_explanations.py --dataset_name=synthetic
+        --emb_dim=64 --hidden_dim=64 --out_dim=64 --eval_explainer_names=pagelink"]'
+      location: 'Table 4, row ''UserItemAttr''; text: "The results are shown in Table
+        4, where PaGE-Link outperforms both baseline explainers." (section 6.3)'
+      metric: auroc
+      split: test_links
+      value: 0.954 vs 0.578
+  dataset: UserItemAttr
+  metric:
+    name: auroc
+    split: test_links
+    unit: fraction
+    higher_is_better: true
+    n_examples: 129
+  comparison_mode: direction
+  comparison:
+    method: PaGE-Link
+    reference: PGExp-Link
+    orientation: method_minus_reference
+    reported_method: 0.954
+    reported_reference: 0.578
+    uncertainty_method:
+      kind: none
+    uncertainty_reference:
+      kind: none
+    paired_uncertainty:
+      kind: none
+    reference_run:
+      argv:
+      - sh
+      - -c
+      - python baselines/pgexplainer_link.py --dataset_name=synthetic --config_path=baselines/baseline_config.yaml
+        --save_explanation --train_pgexplainer && python eval_explanations.py --dataset_name=synthetic
+        --emb_dim=64 --hidden_dim=64 --out_dim=64 --eval_explainer_names=pgexp
+      workdir: .
+      seed_argument: null
+      metric_extraction:
+        from: log
+        regex:
+          pattern: '(?m)^Average Mask-AUC: +(-?[0-9]+\.[0-9]+)$'
+          group: 1
+        unit: fraction
+  scope: full_training
+  weights: synthetic_model
+  run:
+    argv:
+    - sh
+    - -c
+    - python pagelink.py --dataset_name=synthetic --config_path=config.yaml --save_explanation
+      && python eval_explanations.py --dataset_name=synthetic --emb_dim=64 --hidden_dim=64
+      --out_dim=64 --eval_explainer_names=pagelink
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?m)^Average Mask-AUC: +(-?[0-9]+\.[0-9]+)$'
+        group: 1
+      unit: fraction
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'each script calls set_seed(0) with no argument: no seed can be changed
+      without editing the code'
+  - name: data_split
+    applies: false
+    reason: the split is eids_split with seed 0 fixed in the code, with no argument
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test links are fixed by the code's split, with no argument
+  - name: leakage
+    applies: false
+    reason: the metric scores explanation masks against ground-truth paths on one
+      graph; there are no train and test examples of the explainer to compare
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is a ROC-AUC of edge masks per pair, not a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the explainers save their masks as pickled tensors and no file holds the
+      per-pair AUCs; the recomputer does not average an AUC per pair
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^refute-population-size pagelink ([0-9]+)$
+            group: 1
+        link:
+        - file: eval_explanations.py
+          lines:
+          - 94
+          - 109
+          role: 'the test links kept when pred > 0.5, keyed by the pair as comp_graphs:
+            the population'
+        - file: eval_explanations.py
+          lines:
+          - 133
+          - 139
+          role: one mask AUC per pair of comp_graphs, appended to mask_auc_list
+        - file: eval_explanations.py
+          lines:
+          - 141
+          - 145
+          role: the mean over mask_auc_list, printed; the allowed patch 2302-population-size.patch
+            prints len(mask_auc_list) on the next line, named by the explainer
+    reference:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^refute-population-size pgexp ([0-9]+)$
+            group: 1
+        link:
+        - file: eval_explanations.py
+          lines:
+          - 94
+          - 109
+          role: 'the test links kept when pred > 0.5, keyed by the pair as comp_graphs:
+            the population'
+        - file: eval_explanations.py
+          lines:
+          - 133
+          - 139
+          role: one mask AUC per pair of comp_graphs, appended to mask_auc_list
+        - file: eval_explanations.py
+          lines:
+          - 141
+          - 145
+          role: the mean over mask_auc_list, printed; the allowed patch 2302-population-size.patch
+            prints len(mask_auc_list) on the next line, named by the explainer
+  approvals: *id001

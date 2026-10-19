@@ -1,0 +1,591 @@
+id: v0.3-main-2309.15704
+kind: replicate
+pack: ml
+title: Deep Out-of-Distribution Uncertainty Quantification via Weight Entropy Maximization
+  (arXiv 2309.15704v2), the three drawn claims
+hypothesis: The drawn claims of Table 2 (UCI, interpolation) reproduce from the repository
+  at the pinned commit.
+created: '2026-10-19'
+authors:
+- refute
+definitions:
+  transcription_approval_time: approvals.transcription.approved_utc is 2026-10-18T16:52:05Z,
+    the time of the maintainer's approval comment (https://github.com/klucilla/refute/issues/158#issuecomment-6252536898).
+    The frozen inventory attached carries 2026-10-18T17:05:00Z, a value derived from
+    the local time stated in the maintainer's message; the correction is recorded
+    in https://github.com/klucilla/refute/issues/158#issuecomment-6252562691, and
+    the inventory is not edited (the maintainer's decision of 2026-10-19).
+attachments:
+- path: inventory.json
+  sha256: 3f48f1003dbfd0991e802c20de0f9479b43e6484de3ca0db0efc0c3d40fd7cb7
+  role: claim-inventory
+- path: draw.json
+  sha256: 407daecb228a061e1fa683d5f022ae8c5bca6a0840df9ecbdcd158dc7b54ccda
+  role: claim-draw
+- path: 2309-uci-files.patch
+  sha256: 05413b6a4bd65cf26cc79c69dc0a9c1f5e7e5d0d4ee8a0d028f8e4c6e30c4a8f
+  role: allowed-patch
+test_plan:
+  paper:
+    arxiv_id: '2309.15704'
+    version: 2
+    run_seed_sha256: 9daeaa9fc871c4132984a851c3aaf9333e590baa051f038a928dab8f303b1cb5
+  budget:
+    profile: main
+  repository:
+    url: https://github.com/antoinedemathelin/maxwent-expe
+    commit: c67aa620a64e139d8599613e24cc57b34af5b67f
+    latest_commit_at_draw: c67aa620a64e139d8599613e24cc57b34af5b67f
+    version_basis: latest_at_draw
+  build:
+    python_ladder:
+    - '3.11'
+    exclude_newer: '2025-02-12'
+    base_image: python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+    allowed_patches:
+    - attachment: 2309-uci-files.patch
+      reason: 'the origin of the bytes: the URLs of uci_datasets.py read the files
+        Refute downloaded, verified and mounted in the run''s folder (data/uci/),
+        with no other change (Codex, line by line)'
+  datasets:
+  - name: UCI energy (downloaded by uci_datasets.py from archive.ics.uci.edu, CC BY
+      4.0)
+    url: https://archive.ics.uci.edu/static/public/242/energy+efficiency.zip
+    reference: Dua and Graff, UCI Machine Learning Repository
+    version: UCI dataset 242
+    license: CC BY 4.0
+    retrieved_utc: '2026-10-18T21:25:14Z'
+    sha256: 499441eee27929a4b00417f58fd8c63c9cc14b8a71520cd0dd27fcb626738351
+    size_bytes: 76321
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 768
+        source: reader:container:excel:ENB2012_data.xlsx#0
+    derived_splits:
+      interpolation:
+        expected_examples: 423
+        derived_from:
+        - rows
+        rule: 'the in-distribution test set and the OOD set of uci_interpol: the rows
+          sorted along the first principal component of the standardized features;
+          OOD the middle 50% (indices int(0.25 n) to int(0.75 n)), in-distribution
+          the rest, of which train_test_split with train_size 0.9 (seed: state 0)
+          keeps the test part; auc_ood scores the test set against the OOD set'
+        code:
+        - file: datasets.py
+          lines:
+          - 208
+          - 232
+          role: 'uci_interpol: the cut and the splits'
+        - file: utils.py
+          lines:
+          - 177
+          - 234
+          role: 'results_regression: auc_ood on xtest against xood'
+        - file: utils.py
+          lines:
+          - 238
+          - 243
+          role: 'auroc_score: one label per scored example'
+  - name: UCI wine (downloaded by uci_datasets.py from archive.ics.uci.edu, CC BY
+      4.0)
+    url: https://archive.ics.uci.edu/static/public/186/wine+quality.zip
+    reference: Dua and Graff, UCI Machine Learning Repository
+    version: UCI dataset 186 (the red wine file)
+    license: CC BY 4.0
+    retrieved_utc: '2026-10-18T21:25:16Z'
+    sha256: 3ed56667f4b828242bd732d7d1dd7f2861e54432239d7fa63877014cbb0304d4
+    size_bytes: 91353
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 1599
+        source: reader:zip:winequality-red.csv!lines:rows-1
+    derived_splits:
+      interpolation:
+        expected_examples: 880
+        derived_from:
+        - rows
+        rule: 'the in-distribution test set and the OOD set of uci_interpol: the rows
+          sorted along the first principal component of the standardized features;
+          OOD the middle 50% (indices int(0.25 n) to int(0.75 n)), in-distribution
+          the rest, of which train_test_split with train_size 0.9 (seed: state 0)
+          keeps the test part; auc_ood scores the test set against the OOD set'
+        code:
+        - file: datasets.py
+          lines:
+          - 208
+          - 232
+          role: 'uci_interpol: the cut and the splits'
+        - file: utils.py
+          lines:
+          - 177
+          - 234
+          role: 'results_regression: auc_ood on xtest against xood'
+        - file: utils.py
+          lines:
+          - 238
+          - 243
+          role: 'auroc_score: one label per scored example'
+  - name: UCI naval (downloaded by uci_datasets.py from a GitHub copy (trewaite/Naval-Vessel-Maintenance
+      at 15bb3ed, 'UCI CBM Dataset/data.txt'); original source UCI dataset 316, CC
+      BY 4.0)
+    url: https://raw.githubusercontent.com/trewaite/Naval-Vessel-Maintenance/15bb3ed4ba49c9b82e6648e73218232cbe1138a8/UCI%20CBM%20Dataset/data.txt
+    reference: Dua and Graff, UCI Machine Learning Repository
+    version: the copy at 15bb3ed of trewaite/Naval-Vessel-Maintenance
+    license: CC BY 4.0 (the original source, UCI dataset 316)
+    retrieved_utc: '2026-10-18T21:25:20Z'
+    sha256: de0ea69da1efaab8b9655ffed828547d10dd68c1fb8c6e0163e6a988def393a6
+    size_bytes: 3448926
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 11934
+        source: reader:lines:rows
+    derived_splits:
+      interpolation:
+        expected_examples: 6564
+        derived_from:
+        - rows
+        rule: 'the in-distribution test set and the OOD set of uci_interpol: the rows
+          sorted along the first principal component of the standardized features;
+          OOD the middle 50% (indices int(0.25 n) to int(0.75 n)), in-distribution
+          the rest, of which train_test_split with train_size 0.9 (seed: state 0)
+          keeps the test part; auc_ood scores the test set against the OOD set'
+        code:
+        - file: datasets.py
+          lines:
+          - 208
+          - 232
+          role: 'uci_interpol: the cut and the splits'
+        - file: utils.py
+          lines:
+          - 177
+          - 234
+          role: 'results_regression: auc_ood on xtest against xood'
+        - file: utils.py
+          lines:
+          - 238
+          - 243
+          role: 'auroc_score: one label per scored example'
+  - name: UCI yacht
+    url: https://archive.ics.uci.edu/static/public/243/yacht+hydrodynamics.zip
+    reference: Dua and Graff, UCI Machine Learning Repository
+    version: UCI dataset 243
+    license: CC BY 4.0
+    retrieved_utc: '2026-10-18T21:25:13Z'
+    sha256: aa52b68f88c4bb552187a53ef4c5753fa178f6a36035a3771c5bc04e078487ac
+    size_bytes: 11633
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 308
+        source: reader:zip:yacht_hydrodynamics.data!lines:rows
+  - name: UCI concrete
+    url: https://archive.ics.uci.edu/static/public/165/concrete+compressive+strength.zip
+    reference: Dua and Graff, UCI Machine Learning Repository
+    version: UCI dataset 165
+    license: CC BY 4.0
+    retrieved_utc: '2026-10-18T21:25:14Z'
+    sha256: dad85d14de8aee4e07479daa774e6b569a313715b71a3b92c95a07cf91c2c9a7
+    size_bytes: 34444
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 1030
+        source: reader:container:excel:Concrete_Data.xls#0
+  - name: UCI power
+    url: https://archive.ics.uci.edu/static/public/294/combined+cycle+power+plant.zip
+    reference: Dua and Graff, UCI Machine Learning Repository
+    version: UCI dataset 294
+    license: CC BY 4.0
+    retrieved_utc: '2026-10-18T21:25:18Z'
+    sha256: cc7b2a4977c0a44e8221c91d9a7e5746b3c68186cff7e5c61c70af6432b98c7a
+    size_bytes: 3674852
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 9568
+        source: reader:container:excel:CCPP/Folds5x2_pp.xlsx#0
+  - name: UCI protein
+    url: https://archive.ics.uci.edu/static/public/265/physicochemical+properties+of+protein+tertiary+structure.zip
+    reference: Dua and Graff, UCI Machine Learning Repository
+    version: UCI dataset 265
+    license: CC BY 4.0
+    retrieved_utc: '2026-10-18T21:25:20Z'
+    sha256: ee6536c8cc415dc50d66bd247af7c9bc95c187ab8a4ea0f1f546b127206c1100
+    size_bytes: 3528824
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 45730
+        source: reader:zip:CASP.csv!lines:rows-1
+  - name: OpenML kin8nm
+    url: https://www.openml.org/data/download/3626/dataset_2175_kin8nm.arff
+    reference: Vanschoren et al., OpenML
+    version: OpenML data 189, file 3626
+    license: OpenML licence field 'Public' (data 189); the original source, DELVE
+      (University of Toronto), permits use and copying for non-commercial purposes
+      only
+    retrieved_utc: '2026-10-18T21:25:23Z'
+    sha256: 698fb5297abde73c001b07f8fb2fe31626366cf179678aed0990737cc0689c79
+    size_bytes: 1131204
+    local_copy_allowed: true
+    splits:
+      rows:
+        expected_examples: 8192
+        source: reader:arff:rows
+  stages:
+    build:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    data:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    base_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    metric_recompute:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    attack_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+  absent_artifact:
+    attempts: 3
+    interval_minutes: 60
+  threads:
+    OMP_NUM_THREADS: 22
+    MKL_NUM_THREADS: 22
+    OPENBLAS_NUM_THREADS: 22
+    NUMEXPR_NUM_THREADS: 22
+targets:
+- key: arXiv-2309.15704v2-C1
+  type: value
+  statement: In the interpolation setting of the UCI energy dataset, Anchored-Networks
+    (an ensemble) detects out-of-distribution inputs with an AUROC of 98.7%.
+  source:
+    arxiv_id: '2309.15704'
+    version: 2
+    location: Table 2, block 'Interpolation', row 'energy', column 'Ensemble AN'
+    quote: '98.7'
+    retrieved_utc: '2026-10-19T01:53:17Z'
+    repository_url: https://github.com/antoinedemathelin/maxwent-expe
+    repository_commit: c67aa620a64e139d8599613e24cc57b34af5b67f
+  inventory:
+    candidate_id: T2/Interpolation/energy/Ensemble/AN
+    position: 1
+    transcription:
+      command: '["python", "run.py", "--config", "configs/uci_all.yml"]'
+      location: Table 2, block 'Interpolation', row 'energy', column 'Ensemble AN'
+      metric: auroc
+      split: interpolation
+      value: '98.7'
+  dataset: UCI energy (downloaded by uci_datasets.py from archive.ics.uci.edu, CC
+    BY 4.0)
+  metric:
+    name: auroc
+    split: interpolation
+    unit: percent
+    higher_is_better: true
+    reported: 98.7
+    reported_uncertainty:
+      kind: none
+    reported_n_seeds: 1
+    n_examples: 423
+  comparison_mode: two_sided
+  scope: full_training
+  run:
+    argv:
+    - python
+    - run.py
+    - --config
+    - configs/uci_all.yml
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: file
+      file: logs/results/uci/energy_interpol_AnchoredNetwork_0.csv
+      csv:
+        column: '0'
+        row:
+          column: ''
+          equals: auc_ood
+      unit: fraction
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'run.py takes no seed: the grid runs state 0 (n_runs 1 in configs/uci_all.yml)'
+  - name: data_split
+    applies: false
+    reason: the split is uci_interpol's cut with the state of the run, with no argument
+      of its own
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the in-distribution and OOD sets are cut by the code, with no argument
+  - name: leakage
+    applies: false
+    reason: the populations are cut from one file by the code; the claim's split is
+      derived, with no train and test files to compare
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is an AUROC of OOD detection from predicted uncertainty, not
+      a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the repository saves the scores of the run, not the per-example uncertainties
+      auc_ood is computed from
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^ood examples scored=([0-9]+)$
+            group: 1
+        link:
+        - file: utils.py
+          lines:
+          - 177
+          - 234
+          role: 'results_regression scores xtest and xood and prints no count of the
+            examples it scores, so this declared route finds none: metric_extracted
+            is then INCONCLUSIVE by coverage'
+  approvals: &id001
+    transcription:
+      approved_by: maintainer
+      approved_utc: '2026-10-18T16:52:05Z'
+      approved_commit: efa9e4b11018ce3cad6e026dd4d4258e9bde7298
+      inventory_sha256: 3f48f1003dbfd0991e802c20de0f9479b43e6484de3ca0db0efc0c3d40fd7cb7
+    claim:
+      approved_by: maintainer
+      approved_utc: '2026-10-19T13:11:54Z'
+      approved_commit: 1f68b2e6a504d59b8b2a4d107b6aa029f6c42d16
+- key: arXiv-2309.15704v2-C2
+  type: value
+  statement: In the interpolation setting of the UCI wine dataset, a BNN ensemble
+    (x5) detects out-of-distribution inputs with an AUROC of 33.9%.
+  source:
+    arxiv_id: '2309.15704'
+    version: 2
+    location: Table 2, block 'Interpolation', row 'wine', column 'Bayesian Ensemble
+      BN'
+    quote: '33.9'
+    retrieved_utc: '2026-10-19T01:53:17Z'
+    repository_url: https://github.com/antoinedemathelin/maxwent-expe
+    repository_commit: c67aa620a64e139d8599613e24cc57b34af5b67f
+  inventory:
+    candidate_id: T2/Interpolation/wine/Bayesian Ensemble/BN
+    position: 2
+    transcription:
+      command: '["python", "run.py", "--config", "configs/uci_all.yml"]'
+      location: Table 2, block 'Interpolation', row 'wine', column 'Bayesian Ensemble
+        BN'
+      metric: auroc
+      split: interpolation
+      value: '33.9'
+  dataset: UCI wine (downloaded by uci_datasets.py from archive.ics.uci.edu, CC BY
+    4.0)
+  metric:
+    name: auroc
+    split: interpolation
+    unit: percent
+    higher_is_better: true
+    reported: 33.9
+    reported_uncertainty:
+      kind: none
+    reported_n_seeds: 1
+    n_examples: 880
+  comparison_mode: two_sided
+  scope: full_training
+  run:
+    argv:
+    - python
+    - run.py
+    - --config
+    - configs/uci_all.yml
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: file
+      file: logs/results/uci/wine_interpol_BNN5_0.csv
+      csv:
+        column: '0'
+        row:
+          column: ''
+          equals: auc_ood
+      unit: fraction
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'run.py takes no seed: the grid runs state 0 (n_runs 1 in configs/uci_all.yml)'
+  - name: data_split
+    applies: false
+    reason: the split is uci_interpol's cut with the state of the run, with no argument
+      of its own
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the in-distribution and OOD sets are cut by the code, with no argument
+  - name: leakage
+    applies: false
+    reason: the populations are cut from one file by the code; the claim's split is
+      derived, with no train and test files to compare
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is an AUROC of OOD detection from predicted uncertainty, not
+      a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the repository saves the scores of the run, not the per-example uncertainties
+      auc_ood is computed from
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^ood examples scored=([0-9]+)$
+            group: 1
+        link:
+        - file: utils.py
+          lines:
+          - 177
+          - 234
+          role: 'results_regression scores xtest and xood and prints no count of the
+            examples it scores, so this declared route finds none: metric_extracted
+            is then INCONCLUSIVE by coverage'
+  approvals: *id001
+- key: arXiv-2309.15704v2-C3
+  type: value
+  statement: In the interpolation setting of the UCI naval dataset, a BNN ensemble
+    (x5) detects out-of-distribution inputs with an AUROC of 46.9%.
+  source:
+    arxiv_id: '2309.15704'
+    version: 2
+    location: Table 2, block 'Interpolation', row 'naval', column 'Bayesian Ensemble
+      BN'
+    quote: '46.9'
+    retrieved_utc: '2026-10-19T01:53:17Z'
+    repository_url: https://github.com/antoinedemathelin/maxwent-expe
+    repository_commit: c67aa620a64e139d8599613e24cc57b34af5b67f
+  inventory:
+    candidate_id: T2/Interpolation/naval/Bayesian Ensemble/BN
+    position: 3
+    transcription:
+      command: '["python", "run.py", "--config", "configs/uci_all.yml"]'
+      location: Table 2, block 'Interpolation', row 'naval', column 'Bayesian Ensemble
+        BN'
+      metric: auroc
+      split: interpolation
+      value: '46.9'
+  dataset: UCI naval (downloaded by uci_datasets.py from a GitHub copy (trewaite/Naval-Vessel-Maintenance
+    at 15bb3ed, 'UCI CBM Dataset/data.txt'); original source UCI dataset 316, CC BY
+    4.0)
+  metric:
+    name: auroc
+    split: interpolation
+    unit: percent
+    higher_is_better: true
+    reported: 46.9
+    reported_uncertainty:
+      kind: none
+    reported_n_seeds: 1
+    n_examples: 6564
+  comparison_mode: two_sided
+  scope: full_training
+  run:
+    argv:
+    - python
+    - run.py
+    - --config
+    - configs/uci_all.yml
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: file
+      file: logs/results/uci/naval_interpol_BNN5_0.csv
+      csv:
+        column: '0'
+        row:
+          column: ''
+          equals: auc_ood
+      unit: fraction
+  seeds:
+    base:
+    - 0
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'run.py takes no seed: the grid runs state 0 (n_runs 1 in configs/uci_all.yml)'
+  - name: data_split
+    applies: false
+    reason: the split is uci_interpol's cut with the state of the run, with no argument
+      of its own
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the in-distribution and OOD sets are cut by the code, with no argument
+  - name: leakage
+    applies: false
+    reason: the populations are cut from one file by the code; the claim's split is
+      derived, with no train and test files to compare
+  - name: trivial_baseline
+    applies: false
+    reason: the metric is an AUROC of OOD detection from predicted uncertainty, not
+      a single-label classification
+  metric_recompute:
+    applies: false
+    reason: the repository saves the scores of the run, not the per-example uncertainties
+      auc_ood is computed from
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^ood examples scored=([0-9]+)$
+            group: 1
+        link:
+        - file: utils.py
+          lines:
+          - 177
+          - 234
+          role: 'results_regression scores xtest and xood and prints no count of the
+            examples it scores, so this declared route finds none: metric_extracted
+            is then INCONCLUSIVE by coverage'
+  approvals: *id001

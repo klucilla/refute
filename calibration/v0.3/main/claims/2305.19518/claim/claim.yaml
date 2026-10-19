@@ -1,0 +1,687 @@
+id: v0.3-main-2305.19518
+kind: replicate
+pack: ml
+title: Label-Retrieval-Augmented Diffusion Models for Learning from Noisy Labels (arXiv
+  2305.19518v2), the three drawn claims
+hypothesis: The drawn claims of Table 1 (CIFAR) reproduce from the repository at the
+  pinned commit.
+created: '2026-10-19'
+authors:
+- refute
+definitions:
+  transcription_approval_time: approvals.transcription.approved_utc is 2026-10-18T16:52:05Z,
+    the time of the maintainer's approval comment (https://github.com/klucilla/refute/issues/158#issuecomment-6252536898).
+    The frozen inventory attached carries 2026-10-18T17:05:00Z, a value derived from
+    the local time stated in the maintainer's message; the correction is recorded
+    in https://github.com/klucilla/refute/issues/158#issuecomment-6252562691, and
+    the inventory is not edited (the maintainer's decision of 2026-10-19).
+attachments:
+- path: inventory.json
+  sha256: 4735ebb57dc5c74e0903318f70bec0693180bd6c79833bb1be003e6bbaea6c6e
+  role: claim-inventory
+- path: draw.json
+  sha256: 6bc8dd58404507f420ac595485aff8cb32cde278abf7d9d7cefc53d7d859906e
+  role: claim-draw
+test_plan:
+  paper:
+    arxiv_id: '2305.19518'
+    version: 2
+    run_seed_sha256: 69284333467a24a8442aeecdfde71beb5a92f5012c8e7902f43ebfb39e12bacf
+  budget:
+    profile: main
+  repository:
+    url: https://github.com/puar-playground/lra-diffusion
+    commit: 231e587f3569ce413d40d96b9cce5a3c08ee361f
+    latest_commit_at_draw: 231e587f3569ce413d40d96b9cce5a3c08ee361f
+    version_basis: latest_at_draw
+  build:
+    python_ladder:
+    - '3.9'
+    exclude_newer: '2025-09-28'
+    base_image: python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+    allowed_patches: []
+  datasets:
+  - name: CIFAR-10, noise_label 1-0.35
+    url: https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+    reference: Krizhevsky 2009, Learning Multiple Layers of Features from Tiny Images
+    version: CIFAR-10, python version
+    license: none stated; the CIFAR page asks users to cite the tech report (Krizhevsky
+      2009)
+    retrieved_utc: '2026-10-18T22:02:26Z'
+    sha256: 6d958be074577803d12ecdefd02955f39262c83c16fe9348329d7fe0b5c001ce
+    size_bytes: 170498071
+    local_copy_allowed: true
+    splits:
+      train:
+        expected_examples: 50000
+        source: reader:container:cifar_python:cifar-10-batches-py/data_batch_1+cifar-10-batches-py/data_batch_2+cifar-10-batches-py/data_batch_3+cifar-10-batches-py/data_batch_4+cifar-10-batches-py/data_batch_5
+      test:
+        expected_examples: 10000
+        source: reader:container:cifar_python:cifar-10-batches-py/test_batch
+  - name: CIFAR-100, training labels noise_label/cifar100-1-0.35.npy (in the repository)
+    url: https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz
+    reference: Krizhevsky 2009, Learning Multiple Layers of Features from Tiny Images
+    version: CIFAR-100, python version
+    license: none stated; the CIFAR page asks users to cite the tech report (Krizhevsky
+      2009)
+    retrieved_utc: '2026-10-18T22:54:44Z'
+    sha256: 85cd44d02ba6437773c5bbd22e183051d648de2e7d6b014e1ef29b855ba677a7
+    size_bytes: 169001437
+    local_copy_allowed: true
+    splits:
+      train:
+        expected_examples: 50000
+        source: reader:container:cifar_python:cifar-100-python/train
+      test:
+        expected_examples: 10000
+        source: reader:container:cifar_python:cifar-100-python/test
+  - name: CIFAR-10, training labels noise_label/cifar10-1-0.35_U_0.6.npy (in the repository)
+    url: https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+    reference: Krizhevsky 2009, Learning Multiple Layers of Features from Tiny Images
+    version: CIFAR-10, python version
+    license: none stated; the CIFAR page asks users to cite the tech report (Krizhevsky
+      2009)
+    retrieved_utc: '2026-10-18T22:02:26Z'
+    sha256: 6d958be074577803d12ecdefd02955f39262c83c16fe9348329d7fe0b5c001ce
+    size_bytes: 170498071
+    local_copy_allowed: true
+    splits:
+      train:
+        expected_examples: 50000
+        source: reader:container:cifar_python:cifar-10-batches-py/data_batch_1+cifar-10-batches-py/data_batch_2+cifar-10-batches-py/data_batch_3+cifar-10-batches-py/data_batch_4+cifar-10-batches-py/data_batch_5
+      test:
+        expected_examples: 10000
+        source: reader:container:cifar_python:cifar-10-batches-py/test_batch
+  weights:
+  - name: CLIP ViT-L/14
+    url: https://openaipublic.azureedge.net/clip/models/b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836/ViT-L-14.pt
+    reference: Radford et al. 2021, Learning Transferable Visual Models From Natural
+      Language Supervision (openai/CLIP)
+    version: ViT-L/14
+    license: MIT (the openai/CLIP repository)
+    retrieved_utc: '2026-10-18T12:54:21Z'
+    sha256: b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836
+    size_bytes: 932768134
+    local_copy_allowed: true
+  stages:
+    build:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    data:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    base_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    metric_recompute:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+    attack_run:
+      active_time_limit_hours: 24
+      no_progress_hours: 2
+      retries: 0
+  absent_artifact:
+    attempts: 3
+    interval_minutes: 60
+  threads:
+    OMP_NUM_THREADS: 22
+    MKL_NUM_THREADS: 22
+    OPENBLAS_NUM_THREADS: 22
+    NUMEXPR_NUM_THREADS: 22
+targets:
+- key: arXiv-2305.19518v2-C1
+  source:
+    arxiv_id: '2305.19518'
+    version: 2
+    location: 'Table 1, block ''CIFAR-10'', column ''35% PMD''; text: "incorporating
+      the CLIP encoder into our method significantly improves test accuracy over our
+      LRA-diffusion (SimCLR)" (section 5.1)'
+    quote: 96.54 > 88.76
+    retrieved_utc: '2026-10-19T02:16:21Z'
+    repository_url: https://github.com/puar-playground/lra-diffusion
+    repository_commit: 231e587f3569ce413d40d96b9cce5a3c08ee361f
+  inventory:
+    candidate_id: T1/CIFAR-10/35% PMD/LRA-diffusion (CLIP)>LRA-diffusion (SimCLR)
+    position: 1
+    transcription:
+      command: '["python", "train_CIFAR.py", "--noise_type", "cifar10-1-0.35", "--fp_encoder",
+        "CLIP", "--nepoch", "200", "--warmup_epochs", "5"]'
+      location: 'Table 1, block ''CIFAR-10'', column ''35% PMD''; text: "incorporating
+        the CLIP encoder into our method significantly improves test accuracy over
+        our LRA-diffusion (SimCLR)" (section 5.1)'
+      metric: accuracy
+      split: test
+      value: 96.54 vs 88.76
+  dataset: CIFAR-10, noise_label 1-0.35
+  scope: full_training
+  run:
+    argv:
+    - python
+    - train_CIFAR.py
+    - --noise_type
+    - cifar10-1-0.35
+    - --fp_encoder
+    - CLIP
+    - --nepoch
+    - '200'
+    - --warmup_epochs
+    - '5'
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?s)Model saved, update best accuracy at Epoch [0-9]+, val acc:
+          [0-9.]+, test acc: ([0-9.]+)\n(?!.*Model saved, update best accuracy)'
+        group: 1
+      unit: percent
+  seeds:
+    base:
+    - 123
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'the script fixes its seeds (lines 20-23: 123) and takes no seed argument'
+  - name: data_split
+    applies: false
+    reason: the split is fixed in the code (train[:45000], validation train[45000:],
+      the test set), with no argument
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test set is the archive's own, with no argument to hold examples out
+  - name: leakage
+    applies: true
+    params:
+      max_overlap_fraction: 0.01
+    reason: 'the CIFAR train and test sets are files of the archive: exact duplicates
+      between them can be counted'
+  - name: trivial_baseline
+    applies: true
+    reason: a classification accuracy can be compared with a random guess over the
+      classes
+    params:
+      kind: random
+      labels:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      task: single_label_classification
+  metric_recompute:
+    applies: false
+    reason: the script saves the model, not the per-example predictions
+  approvals: &id001
+    transcription:
+      approved_by: maintainer
+      approved_utc: '2026-10-18T16:52:05Z'
+      approved_commit: efa9e4b11018ce3cad6e026dd4d4258e9bde7298
+      inventory_sha256: 4735ebb57dc5c74e0903318f70bec0693180bd6c79833bb1be003e6bbaea6c6e
+    claim:
+      approved_by: maintainer
+      approved_utc: '2026-10-19T13:11:54Z'
+      approved_commit: 1f68b2e6a504d59b8b2a4d107b6aa029f6c42d16
+  weights: CLIP ViT-L/14
+  type: comparison
+  statement: On CIFAR-10 with 35% PMD noise, LRA-diffusion with the CLIP encoder reaches
+    a higher test accuracy than with the SimCLR encoder (96.54% against 88.76%).
+  metric:
+    name: accuracy
+    split: test
+    unit: percent
+    higher_is_better: true
+    reported_n_seeds: null
+    n_examples: 10000
+  comparison_mode: direction
+  comparison:
+    method: LRA-diffusion (CLIP)
+    reference: LRA-diffusion (SimCLR)
+    orientation: method_minus_reference
+    reported_method: 96.54
+    reported_reference: 88.76
+    uncertainty_method:
+      kind: ci
+      lower: 96.41
+      upper: 96.67
+      method: other_or_unknown
+      unit: percent
+      location: 'Table 1, block ''CIFAR-10'', column ''35% PMD''; text: "incorporating
+        the CLIP encoder into our method significantly improves test accuracy over
+        our LRA-diffusion (SimCLR)" (section 5.1)'
+      quote: 96.54 ± 0.13
+    uncertainty_reference:
+      kind: ci
+      lower: 88.52
+      upper: 89.0
+      method: other_or_unknown
+      unit: percent
+      location: 'Table 1, block ''CIFAR-10'', column ''35% PMD''; text: "incorporating
+        the CLIP encoder into our method significantly improves test accuracy over
+        our LRA-diffusion (SimCLR)" (section 5.1)'
+      quote: 88.76 ± 0.24
+    paired_uncertainty:
+      kind: none
+    reference_run:
+      argv:
+      - python
+      - train_CIFAR.py
+      - --noise_type
+      - cifar10-1-0.35
+      - --fp_encoder
+      - SimCLR
+      - --nepoch
+      - '200'
+      - --warmup_epochs
+      - '5'
+      workdir: .
+      seed_argument: null
+      metric_extraction:
+        from: log
+        regex:
+          pattern: '(?s)Model saved, update best accuracy at Epoch [0-9]+, val acc:
+            [0-9.]+, test acc: ([0-9.]+)\n(?!.*Model saved, update best accuracy)'
+          group: 1
+        unit: percent
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^test examples evaluated=([0-9]+)$
+            group: 1
+        link:
+        - file: train_CIFAR.py
+          lines:
+          - 111
+          - 130
+          role: 'test() counts the test examples (all_cnt) but prints only the accuracy,
+            so this declared route finds none: metric_extracted is INCONCLUSIVE by
+            coverage'
+    reference:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^test examples evaluated=([0-9]+)$
+            group: 1
+        link:
+        - file: train_CIFAR.py
+          lines:
+          - 111
+          - 130
+          role: 'test() counts the test examples (all_cnt) but prints only the accuracy,
+            so this declared route finds none: metric_extracted is INCONCLUSIVE by
+            coverage'
+- key: arXiv-2305.19518v2-C2
+  source:
+    arxiv_id: '2305.19518'
+    version: 2
+    location: Table 1, block 'CIFAR-100', row 'LRA-diffusion (SimCLR)', column '35%
+      PMD'
+    quote: 61.39 ± 0.15
+    retrieved_utc: '2026-10-19T02:16:21Z'
+    repository_url: https://github.com/puar-playground/lra-diffusion
+    repository_commit: 231e587f3569ce413d40d96b9cce5a3c08ee361f
+  inventory:
+    candidate_id: T1/CIFAR-100/LRA-diffusion (SimCLR)/35% PMD
+    position: 2
+    transcription:
+      command: '["python", "train_CIFAR.py", "--noise_type", "cifar100-1-0.35", "--fp_encoder",
+        "SimCLR", "--nepoch", "200", "--warmup_epochs", "5"]'
+      location: Table 1, block 'CIFAR-100', row 'LRA-diffusion (SimCLR)', column '35%
+        PMD'
+      metric: accuracy
+      split: test
+      value: '61.39'
+  dataset: CIFAR-100, training labels noise_label/cifar100-1-0.35.npy (in the repository)
+  scope: full_training
+  run:
+    argv:
+    - python
+    - train_CIFAR.py
+    - --noise_type
+    - cifar100-1-0.35
+    - --fp_encoder
+    - SimCLR
+    - --nepoch
+    - '200'
+    - --warmup_epochs
+    - '5'
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?s)Model saved, update best accuracy at Epoch [0-9]+, val acc:
+          [0-9.]+, test acc: ([0-9.]+)\n(?!.*Model saved, update best accuracy)'
+        group: 1
+      unit: percent
+  seeds:
+    base:
+    - 123
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'the script fixes its seeds (lines 20-23: 123) and takes no seed argument'
+  - name: data_split
+    applies: false
+    reason: the split is fixed in the code (train[:45000], validation train[45000:],
+      the test set), with no argument
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test set is the archive's own, with no argument to hold examples out
+  - name: leakage
+    applies: true
+    params:
+      max_overlap_fraction: 0.01
+    reason: 'the CIFAR train and test sets are files of the archive: exact duplicates
+      between them can be counted'
+  - name: trivial_baseline
+    applies: true
+    reason: a classification accuracy can be compared with a random guess over the
+      classes
+    params:
+      kind: random
+      labels:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 20
+      - 21
+      - 22
+      - 23
+      - 24
+      - 25
+      - 26
+      - 27
+      - 28
+      - 29
+      - 30
+      - 31
+      - 32
+      - 33
+      - 34
+      - 35
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 41
+      - 42
+      - 43
+      - 44
+      - 45
+      - 46
+      - 47
+      - 48
+      - 49
+      - 50
+      - 51
+      - 52
+      - 53
+      - 54
+      - 55
+      - 56
+      - 57
+      - 58
+      - 59
+      - 60
+      - 61
+      - 62
+      - 63
+      - 64
+      - 65
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 84
+      - 85
+      - 86
+      - 87
+      - 88
+      - 89
+      - 90
+      - 91
+      - 92
+      - 93
+      - 94
+      - 95
+      - 96
+      - 97
+      - 98
+      - 99
+      task: single_label_classification
+  metric_recompute:
+    applies: false
+    reason: the script saves the model, not the per-example predictions
+  approvals: *id001
+  type: value
+  statement: On CIFAR-100 with 35% PMD noise, LRA-diffusion with the SimCLR encoder
+    reaches a test accuracy of 61.39%.
+  metric:
+    name: accuracy
+    split: test
+    unit: percent
+    higher_is_better: true
+    reported: 61.39
+    reported_uncertainty:
+      kind: ci
+      lower: 61.24
+      upper: 61.54
+      method: other_or_unknown
+      unit: percent
+      location: Table 1, block 'CIFAR-100', row 'LRA-diffusion (SimCLR)', column '35%
+        PMD'
+      quote: 61.39 ± 0.15
+    n_examples: 10000
+  comparison_mode: two_sided
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^test examples evaluated=([0-9]+)$
+            group: 1
+        link:
+        - file: train_CIFAR.py
+          lines:
+          - 111
+          - 130
+          role: 'test() counts the test examples (all_cnt) but prints only the accuracy,
+            so this declared route finds none: metric_extracted is INCONCLUSIVE by
+            coverage'
+- key: arXiv-2305.19518v2-C3
+  source:
+    arxiv_id: '2305.19518'
+    version: 2
+    location: Table 1, block 'CIFAR-10', row 'LRA-diffusion (CLIP)', column '35% PMD
+      + 60% U'
+    quote: 87.21 ± 0.71
+    retrieved_utc: '2026-10-19T02:16:21Z'
+    repository_url: https://github.com/puar-playground/lra-diffusion
+    repository_commit: 231e587f3569ce413d40d96b9cce5a3c08ee361f
+  inventory:
+    candidate_id: T1/CIFAR-10/LRA-diffusion (CLIP)/35% PMD + 60% U
+    position: 3
+    transcription:
+      command: '["python", "train_CIFAR.py", "--noise_type", "cifar10-1-0.35_U_0.6",
+        "--fp_encoder", "CLIP", "--nepoch", "200", "--warmup_epochs", "5"]'
+      location: Table 1, block 'CIFAR-10', row 'LRA-diffusion (CLIP)', column '35%
+        PMD + 60% U'
+      metric: accuracy
+      split: test
+      value: '87.21'
+  dataset: CIFAR-10, training labels noise_label/cifar10-1-0.35_U_0.6.npy (in the
+    repository)
+  scope: full_training
+  run:
+    argv:
+    - python
+    - train_CIFAR.py
+    - --noise_type
+    - cifar10-1-0.35_U_0.6
+    - --fp_encoder
+    - CLIP
+    - --nepoch
+    - '200'
+    - --warmup_epochs
+    - '5'
+    workdir: .
+    seed_argument: null
+    metric_extraction:
+      from: log
+      regex:
+        pattern: '(?s)Model saved, update best accuracy at Epoch [0-9]+, val acc:
+          [0-9.]+, test acc: ([0-9.]+)\n(?!.*Model saved, update best accuracy)'
+        group: 1
+      unit: percent
+  seeds:
+    base:
+    - 123
+    base_cap: 1
+    base_source: documented
+  attacks:
+  - name: seeds
+    applies: false
+    reason: 'the script fixes its seeds (lines 20-23: 123) and takes no seed argument'
+  - name: data_split
+    applies: false
+    reason: the split is fixed in the code (train[:45000], validation train[45000:],
+      the test set), with no argument
+  - name: ablation
+    applies: false
+    reason: the claim names no component to disable
+  - name: holdout
+    applies: false
+    reason: the test set is the archive's own, with no argument to hold examples out
+  - name: leakage
+    applies: true
+    params:
+      max_overlap_fraction: 0.01
+    reason: 'the CIFAR train and test sets are files of the archive: exact duplicates
+      between them can be counted'
+  - name: trivial_baseline
+    applies: true
+    reason: a classification accuracy can be compared with a random guess over the
+      classes
+    params:
+      kind: random
+      labels:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      task: single_label_classification
+  metric_recompute:
+    applies: false
+    reason: the script saves the model, not the per-example predictions
+  approvals: *id001
+  weights: CLIP ViT-L/14
+  type: value
+  statement: On CIFAR-10 with 35% PMD and 60% uniform noise, LRA-diffusion with the
+    CLIP encoder reaches a test accuracy of 87.21%.
+  metric:
+    name: accuracy
+    split: test
+    unit: percent
+    higher_is_better: true
+    reported: 87.21
+    reported_uncertainty:
+      kind: ci
+      lower: 86.5
+      upper: 87.92
+      method: other_or_unknown
+      unit: percent
+      location: Table 1, block 'CIFAR-10', row 'LRA-diffusion (CLIP)', column '35%
+        PMD + 60% U'
+      quote: 87.21 ± 0.71
+    n_examples: 10000
+  comparison_mode: two_sided
+  coverage_evidence:
+    method:
+      selected_evaluation:
+        kind: final
+      routes:
+      - route: printed_count
+        count:
+          from: log
+          regex:
+            pattern: (?m)^test examples evaluated=([0-9]+)$
+            group: 1
+        link:
+        - file: train_CIFAR.py
+          lines:
+          - 111
+          - 130
+          role: 'test() counts the test examples (all_cnt) but prints only the accuracy,
+            so this declared route finds none: metric_extracted is INCONCLUSIVE by
+            coverage'

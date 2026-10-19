@@ -1,0 +1,12 @@
+diff --git a/eval_explanations.py b/eval_explanations.py
+index 458d34f..ab4d61b 100644
+--- a/eval_explanations.py
++++ b/eval_explanations.py
+@@ -143,6 +143,7 @@ for explainer in args.eval_explainer_names:
+     # Print
+     np.set_printoptions(precision=4, suppress=True)
+     print(f'Average Mask-AUC: {avg_auc : .4f}')
++    print(f'refute-population-size {explainer} {len(mask_auc_list)}', flush=True)
+     
+     print('-'*30, '\n')
+ 

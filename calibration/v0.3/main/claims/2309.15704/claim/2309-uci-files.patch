@@ -1,0 +1,26 @@
+diff --git a/uci_datasets.py b/uci_datasets.py
+index 94206b1..1f79ae4 100644
+--- a/uci_datasets.py
++++ b/uci_datasets.py
+@@ -8,7 +8,7 @@ from zipfile import ZipFile
+ from scipy.io import arff
+ 
+ 
+-UCI_WEBSITE = "https://archive.ics.uci.edu/static/public/"
++UCI_WEBSITE = "file:///work/data/uci/"
+ 
+ 
+ data_url_dict = dict(
+@@ -17,10 +17,9 @@ data_url_dict = dict(
+     concrete=UCI_WEBSITE+"165/concrete+compressive+strength.zip",
+     wine=UCI_WEBSITE+"186/wine+quality.zip",
+     power=UCI_WEBSITE+"294/combined+cycle+power+plant.zip",
+-    naval=("https://raw.githubusercontent.com/trewaite/Naval-Vessel-Maintenance/"
+-    "15bb3ed4ba49c9b82e6648e73218232cbe1138a8/UCI%20CBM%20Dataset/data.txt"),
++    naval="file:///work/data/uci/naval-data.txt",
+     protein=UCI_WEBSITE+"265/physicochemical+properties+of+protein+tertiary+structure.zip",
+-    kin8nm="https://www.openml.org/data/download/3626/dataset_2175_kin8nm.arff"
++    kin8nm="file:///work/data/uci/dataset_2175_kin8nm.arff"
+ )
+ 
+ filename_dict = dict(
