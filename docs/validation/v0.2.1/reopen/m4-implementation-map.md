@@ -719,6 +719,22 @@ from the records), SE6 (the power denominators intersected with the eligibility)
 weakening filter strict) and SE8 (a duplicated round accepted): all caught. JUnit: 15 tests, 0
 failures.
 
+**The lots' runner.** Tests `ab97b9d` (`tests/test_rmin_lots.py`), then in `rmin_study.py`:
+`bs_choice_cases` (100 targets), `study_cases` (whole blocks per group: 16 prefixes of 400, 64 of
+100; 6400 per group), `lot_manifest`, `record_target` (one record per scenario, one round per year
+of the metadata, refusing another configuration than the study's and another worker identity),
+`write_record` (never replaces a file), `run_lot` (six workers, the affinity `0xff`, the manifest
+first, resumable without replacing), `evaluate_bs_choice` and `evaluate_study` (an incomplete lot
+not evaluated), and the commands `lot`, `evaluate-bs-choice`, `evaluate-study`. The configuration
+`m4-configurations/rmin-study.json` (`M4-rmin-study`, SHA-256
+`27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb`, block
+`c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d`, that of `M4-rmin-timing`)
+is captured by version 3 with no problem. Sabotages SL1 (every fifth index), SL2 (whole prefixes
+for every group), SL3 (a record replaced), SL4 (any configuration recorded) and SV1 (an incomplete
+lot evaluated): all caught. JUnit: the study module's four test files 45 tests, 0 failures. Nothing
+of `bs-choice` or of the study is generated before the maintainer's decision on the ceiling and the
+drand round, and on the readings of items 3, 4 and 8.
+
 ## Amendment 26 (2026-10-19): the implementation of the `R_min` study's prerequisites, and its timing lot (declared before any lot)
 
 Amendment 19's design is approved and is not reopened. This amendment fixes the implementation

@@ -115,6 +115,74 @@ def test_a_target_is_recorded_per_scenario_and_never_replaced(study, monkeypatch
         study.write_record(run, rec)
 
 
+def _built_run(study, lot, records):
+    """A run folder with the given records and their manifest (no generation)."""
+    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run.mkdir(parents=True)
+    manifest = [(r["target"], r["scenario"]) for r in records]
+    payload = {"lot": lot, "configuration": _declared(), "expected": manifest}
+    (run / "manifest.json").write_text(json.dumps(payload), encoding="utf-8")
+    for r in records:
+        study.write_record(run, r)
+    return run
+
+
+def _rec(i, s_pred_1, s_pred_2, s_meas, scenario="constant"):
+    r = {
+        "hidden_year": 2018,
+        "stage": None,
+        "reason": None,
+        "decision_1": "pass",
+        "decision_2": "pass",
+        "n_years": 2,
+        "train_n_rep": [30, 30, 30],
+        "hidden_n_rep": [30, 30, 30],
+        "hidden_noise_undetermined": False,
+        "s_pred_1": s_pred_1,
+        "s_pred_2": s_pred_2,
+        "s_meas": s_meas,
+        "d_train": 1e-3,
+        "e_train": 1e-4,
+        "d_hidden": 1e-3,
+        "e_hidden": 1e-4,
+        "dp": 0.0,
+        "measurement_status": "ok",
+        "d_twin": 1e-3,
+        "twin_status": "ok",
+    }
+    return {
+        "target": f"{study_prefix()}/planet-near-white-{i:04d}",
+        "group": "white, no variability",
+        "scenario": scenario,
+        "years": [2018],
+        "configuration": _declared(),
+        "rounds": [r],
+    }
+
+
+def study_prefix():
+    return "refute-v0.2.1-bs-choice"
+
+
+def test_the_bs_choice_evaluation_gives_k_and_a_pair_per_r(study):
+    records = [_rec(i, 10.0, 10.0 + d, 10.0 + 2 * d) for i, d in enumerate((-1.0, 0.0, 1.0))]
+    out = study.evaluate_bs_choice(_built_run(study, "bs-choice", records), 5.0)
+    assert out["complete"] is True
+    assert out["k"]["k"] in (1, 2)
+    assert set(out["pairs"]) == {str(r) for r in (8, 10, 12, 15, 20)}
+    assert all(p is not None for p in out["pairs"].values())  # counts 30 meet every R
+
+
+def test_an_incomplete_lot_is_not_evaluated(study):
+    records = [_rec(i, 10.0, 10.0, 10.0) for i in range(3)]
+    run = _built_run(study, "bs-choice", records)
+    manifest = json.loads((run / "manifest.json").read_text(encoding="utf-8"))
+    manifest["expected"].append(["refute-v0.2.1-bs-choice/missing", "constant"])
+    (run / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    out = study.evaluate_bs_choice(run, 5.0)
+    assert out["complete"] is False and out["problems"] and "k" not in out
+
+
 def test_another_configuration_records_nothing(study, monkeypatch):
     other = {**_declared(), "name": "M4-rmin-timing"}
     monkeypatch.setattr(study.v3, "STATE", {"problem": None, "identity": other})
