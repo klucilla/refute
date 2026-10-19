@@ -20,7 +20,8 @@ the files the selection reads, checked in the patched tree; empty when it reads 
 weights (optional: a list of {path, sha256, size_bytes} of the weights that are files of
 the repository; each must be in configuration, is verified as a regular blob of the commit
 and is mounted read only from Refute's verified copy in place of the tree's, as in the runs,
-wp3-repository-weights-acceptance.md) and active_minutes (a cap per run).
+and the record's weights names them; wp3-repository-weights-acceptance.md) and
+active_minutes (a cap per run).
 """
 
 from __future__ import annotations
@@ -193,6 +194,12 @@ def count(spec: dict, root: Path) -> tuple[dict, bool]:
             "lock_sha256": built["lock_sha256"],
             "pyvenv_sha256": built["pyvenv_sha256"],
         },
+        # the weights verified in the clone and mounted read only in both count containers;
+        # a claim on repository weights binds only with them listed here (Codex review)
+        "weights": [
+            {"path": rel, "sha256": hashlib.sha256(c.read_bytes()).hexdigest()}
+            for c, rel in weights
+        ],  # fmt: skip
         "exit_code": 0 if ok else 1,
         "runs": runs,
         "refute_commit": refute_commit,

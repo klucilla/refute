@@ -1915,15 +1915,23 @@ class MlClaimSchema:
             if split is None or split.counted_before_lock is None:
                 continue
             record = _record_at(loaded, by_path[split.counted_before_lock.record])
-            listed = {
-                (str(PurePosixPath(item["path"])), item["sha256"])
-                for item in record.get("configuration") or []
-            }
-            if (str(PurePosixPath(w.path)), w.sha256) not in listed:
-                raise ValueError(
-                    f"{t.key}: the count record of {t.dataset}/{t.metric.split} does not list "
-                    f"the weights {w.name} ({w.path}) with their sha256 in its configuration"
-                )
+            wanted = (str(PurePosixPath(w.path)), w.sha256)
+            # in its configuration (the files the selection reads) and in its weights (the
+            # files the count's containers read from Refute's verified copy, Codex round 2)
+            for field in ("configuration", "weights"):
+                items = record.get(field)
+                listed = {
+                    (str(PurePosixPath(item["path"])), item["sha256"])
+                    for item in (items if isinstance(items, list) else [])
+                    if isinstance(item, dict)
+                    and isinstance(item.get("path"), str)
+                    and isinstance(item.get("sha256"), str)
+                }
+                if wanted not in listed:
+                    raise ValueError(
+                        f"{t.key}: the count record of {t.dataset}/{t.metric.split} does not "
+                        f"list the weights {w.name} ({w.path}) with their sha256 in its {field}"
+                    )
 
     @staticmethod
     def _check_inventory(

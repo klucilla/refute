@@ -128,6 +128,39 @@ def test_the_count_reads_the_verified_weights_mounted_read_only(tmp_path, monkey
     assert seen["tree"] is False  # the tree's copy left for the mount
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="a container plan takes the VM's POSIX paths")
+def test_the_count_record_names_the_weights_it_mounted(tmp_path, monkeypatch):
+    """The record's weights field names the weights the two containers read from Refute's
+    verified copy (Codex review, round 2): a claim binds only with it."""
+    module = load()
+    commit = _clone(tmp_path)
+    script = b"print('refute-population-count 7')\n"
+    (tmp_path / "count.py").write_bytes(script)
+    spec = _weights_spec(commit)
+    spec["script"] = {
+        "path": str(tmp_path / "count.py"),
+        "sha256": hashlib.sha256(script).hexdigest(),
+    }
+    built = {"exit_code": 0, "lock_sha256": "1" * 64, "pyvenv_sha256": "2" * 64, "spec": spec,
+             "image": "python@sha256:" + "b" * 64, "commit": commit,
+             "rung": "requirements_compiled"}  # fmt: skip
+    (tmp_path / "build.json").write_text(json.dumps(built), encoding="utf-8")
+
+    class Result:
+        exit_code, stopped, usage_usec = 0, None, 1
+
+    def run(backend, work, argv, log, minutes):
+        log.parent.mkdir(parents=True, exist_ok=True)
+        log.write_text("refute-population-count 7\n", encoding="utf-8")
+        return Result(), 0.0
+
+    monkeypatch.setattr(module.mp, "run", run)
+    record, ok = module.count(spec, tmp_path)
+    assert ok and record["count"] == 7
+    digest = hashlib.sha256(CKPT).hexdigest()
+    assert record["weights"] == [{"path": "saved/m.pth", "sha256": digest}]
+
+
 @pytest.mark.parametrize(
     ("case", "match"),
     [("unlisted", "not listed in configuration"), ("other bytes", "not verified")],

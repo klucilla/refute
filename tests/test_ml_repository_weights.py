@@ -123,11 +123,18 @@ def test_two_repository_files_with_one_path_are_refused(alias):
     MlTestPlan.model_validate(plan)
 
 
-def _counted_c1(tmp_path, monkeypatch, configuration, name="ckpt"):
+LISTED = [{"path": "saved/m.pth", "sha256": sha(CKPT)}]
+
+
+def _counted_c1(tmp_path, monkeypatch, configuration, name="ckpt", weights=LISTED):
     """c1 measures a population counted before the lock and names the repository's
-    weights; the inventory transcribes that split."""
+    weights; the inventory transcribes that split. ``weights`` is the record's field (absent
+    when None)."""
     monkeypatch.setitem(tsch.TRANSCRIPTIONS["c1"], "split", "selected")
-    count = tsch.with_count(tmp_path, tsch.count_record(configuration=configuration))
+    record = tsch.count_record(configuration=configuration)
+    if weights is not None:
+        record["weights"] = weights
+    count = tsch.with_count(tmp_path, record)
 
     def mutate(claim):
         count(claim)
@@ -146,8 +153,7 @@ def _counted_c1(tmp_path, monkeypatch, configuration, name="ckpt"):
 
 
 def test_a_count_record_listing_the_weights_binds_them(tmp_path, monkeypatch):
-    listed = [{"path": "saved/m.pth", "sha256": sha(CKPT)}]
-    _counted_c1(tmp_path, monkeypatch, listed)
+    _counted_c1(tmp_path, monkeypatch, LISTED)
 
 
 @pytest.mark.parametrize(
@@ -159,8 +165,18 @@ def test_a_count_record_listing_the_weights_binds_them(tmp_path, monkeypatch):
     ],
 )
 def test_a_count_record_without_the_weights_is_refused(tmp_path, monkeypatch, configuration):
-    with pytest.raises(ClaimError, match="does not list the weights"):
+    with pytest.raises(ClaimError, match="does not list the weights.*configuration"):
         _counted_c1(tmp_path, monkeypatch, configuration)
+
+
+@pytest.mark.parametrize(
+    "weights", [None, [], [{"path": "saved/m.pth", "sha256": "0" * 64}], "saved/m.pth"]
+)
+def test_a_count_that_did_not_mount_the_verified_weights_is_refused(tmp_path, monkeypatch, weights):
+    """A spec without weights lets the count read the tree's file: its record names no
+    verified weights, and the claim does not bind (Codex review, round 2)."""
+    with pytest.raises(ClaimError, match="does not list the weights.*in its weights"):
+        _counted_c1(tmp_path, monkeypatch, LISTED, weights=weights)
 
 
 # ---- production: verified after the checkout -------------------------------------------------
@@ -252,6 +268,40 @@ def test_a_cache_reached_through_a_link_gives_no_copy(tmp_path):
     assert evidence.copy is None and "link" in evidence.reason
 
 
+def test_a_temporary_copy_already_in_the_cache_is_never_written_through(tmp_path):
+    repo, commit = _clone(tmp_path)
+    folder = tmp_path / "cache" / "repository-files"
+    folder.mkdir(parents=True)
+    partial = folder / f".{sha(CKPT)}.partial"
+    partial.write_bytes(b"left by an earlier run")
+    evidence = _verify(tmp_path, repo, commit)
+    assert evidence.copy is None and evidence.reason == "a partial copy is in the cache"
+    assert partial.read_bytes() == b"left by an earlier run"
+    partial.unlink()
+    target = tmp_path / "elsewhere.bin"
+    target.write_bytes(b"not to be written")
+    try:
+        partial.symlink_to(target)
+    except OSError:
+        pytest.skip("symbolic links cannot be created here")
+    evidence = _verify(tmp_path, repo, commit)
+    assert evidence.copy is None and evidence.reason == prod.LINKED_CACHE
+    assert target.read_bytes() == b"not to be written"
+
+
+def test_a_cache_below_a_linked_folder_gives_no_copy(tmp_path):
+    repo, commit = _clone(tmp_path)
+    real = tmp_path / "real"
+    real.mkdir()
+    try:
+        (tmp_path / "linked").symlink_to(real, target_is_directory=True)
+    except OSError:
+        pytest.skip("symbolic links cannot be created here")
+    plan = {"repository": {"commit": commit}, "weights": [repo_weights(commit)]}
+    out = prod.repository_weights(repo, plan, tmp_path / "linked" / "cache")["ckpt"]
+    assert out.copy is None and out.reason == prod.LINKED_CACHE
+
+
 def test_weights_from_outside_are_not_read(tmp_path):
     plan = {"repository": {"commit": "a" * 40}, "weights": [dict(EXTERNAL)]}
     # no Git call: the folder is not a repository
@@ -324,6 +374,45 @@ def test_a_weights_file_that_is_also_a_data_path_is_refused(tmp_path, monkeypatc
     monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ["k1/base/s0"])
     with pytest.raises(prod.ProductionError, match="also a data path"):
         prod.prepare_workspaces(setup, {"test_plan": {"datasets": []}})
+
+
+def _two_names(tmp_path, data=b"1 2\n3 4\n"):
+    """Two dataset entries naming one file of the repository (2302.12465's two names)."""
+    repo = tmp_path / "plain"
+    (repo / "data").mkdir(parents=True)
+    (repo / "data" / "graph.txt").write_bytes(data)
+    entry = {
+        "origin": "repository_file",
+        "path": "data/graph.txt",
+        "sha256": sha(data),
+        "size_bytes": len(data),
+        "splits": {"all": {"expected_examples": 2, "source": "reader:lines:rows"}},
+    }
+    entries = [{**entry, "name": "one"}, {**entry, "name": "two"}]
+    evidence = {e["name"]: prod.repository_file(repo, e, tmp_path / "cache") for e in entries}
+    layout = {"one": "data/graph.txt", "two": "data/graph.txt"}
+    setup = prod.PaperSetup("p1", tmp_path / "run", repo, evidence, layout, LIMITS, TIMING)
+    return setup, {"test_plan": {"datasets": entries}}
+
+
+def test_a_file_two_dataset_entries_name_is_prepared_and_mounted_once(tmp_path, monkeypatch):
+    setup, claim_file = _two_names(tmp_path)
+    monkeypatch.setattr(ig, "plan_container_ids", lambda cf: ["k1/base/s0"])
+    ws = prod.prepare_workspaces(setup, claim_file)  # no error on the second name
+    assert not (ws["k1/base/s0"] / "data" / "graph.txt").exists()
+    copy = setup.datasets["one"].fetch.path
+    assert prod.data_mounts(setup) == ((str(copy.resolve()), "data/graph.txt"),)
+
+
+def test_two_different_files_for_one_path_are_refused(tmp_path):
+    setup, _ = _two_names(tmp_path)
+    other = tmp_path / "other.txt"
+    other.write_bytes(b"5 6\n")
+    fetch = dataclasses.replace(setup.datasets["two"].fetch, path=other)
+    datasets = {**setup.datasets, "two": dataclasses.replace(setup.datasets["two"], fetch=fetch)}
+    setup = dataclasses.replace(setup, datasets=datasets)
+    with pytest.raises(prod.ProductionError, match="two different files are mounted"):
+        prod.data_mounts(setup)
 
 
 def test_no_patch_may_touch_the_weights(tmp_path, monkeypatch):

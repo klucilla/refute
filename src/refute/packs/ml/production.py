@@ -488,6 +488,8 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
     workspaces = {}
     # the files of the repository that are datasets: each run and reader mounts the copy
     # Refute verified before the build in their place (wp3-data-sources-acceptance.md, 1)
+    # every path compared normalized: a/b, a//b and a/./b are one mount target (Codex
+    # review); a path two dataset entries share is prepared once (round 2)
     repository_files, unverified = set(), set()
     for d in (claim_file.get("test_plan") or {}).get("datasets", []):
         if sch.dataset_origin(d) == sch.REPOSITORY_FILE:
@@ -499,21 +501,21 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
                 )
             evidence = setup.datasets.get(d["name"])
             if evidence is not None and evidence.fetch.ok:
-                repository_files.add(d["path"])  # a verified copy replaces the clone's
+                repository_files.add(_norm(d["path"]))  # a verified copy replaces the clone's
             else:
                 # no verified copy: nothing is mounted there, the runs see the clone as it
                 # is, and data_present is not a pass (section 1)
-                unverified.add(d["path"])
+                unverified.add(_norm(d["path"]))
+    both = sorted(repository_files & unverified)
+    if both:
+        raise ProductionError(f"two datasets name {both}: one verified, one not")
     # the weights that are files of the repository, verified: in the runs' containers only
     # (not the builds, not the readers), the clone's copy leaves and the verified copy is
     # mounted there (wp3-repository-weights-acceptance.md); unverified, nothing is mounted
     # and the claims that name them are not run
-    weights = [e.rel for e in setup.repository_weights.values() if e.copy is not None]
-    # compared as normalized paths: a/b, a//b and a/./b are one mount target (Codex review)
-    collide = sorted(
-        {str(PurePosixPath(w)) for w in weights}
-        & {str(PurePosixPath(r)) for r in setup.data_layout.values()}
-    )
+    weights = [_norm(e.rel) for e in setup.repository_weights.values() if e.copy is not None]
+    data_paths = list(dict.fromkeys(_norm(r) for r in setup.data_layout.values()))
+    collide = sorted(set(weights) & set(data_paths))
     if collide:
         raise ProductionError(f"a weights file is also a data path: {collide}")
     repository_files.update(weights)
@@ -531,7 +533,7 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
                 # the copy is the patched tree, byte for byte (W3.9a, section 3)
                 check_copy(folder, setup.patch_record["patched_manifest"])
         if not cid.startswith("setup/build/"):
-            mounted = list(setup.data_layout.values())
+            mounted = list(data_paths)
             if not cid.startswith(ig.READER_PREFIX):
                 mounted += weights
             for rel in mounted:
@@ -568,24 +570,36 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
     return workspaces
 
 
+def _norm(rel: str) -> str:
+    """A relative path in a run's folder, normalized (a//b and a/./b are a/b)."""
+    return str(PurePosixPath(rel))
+
+
 def data_mounts(setup: PaperSetup, weights: bool = True) -> tuple[tuple[str, str], ...]:
     """The read-only mounts of a container: every dataset Refute holds, and (``weights``:
-    a run's container) every verified weights file of the repository."""
-    mounts = []
+    a run's container) every verified weights file of the repository; one mount per
+    normalized path, so two dataset entries naming one file mount it once, and two
+    different sources for one path are refused (Codex review, round 2)."""
+    by_target: dict[str, str] = {}
+
+    def add(path: Path | str, rel: str) -> None:
+        Path(path).chmod(0o444)  # the canonical file: read only for everyone
+        source, target = str(Path(path).resolve()), _norm(rel)
+        if by_target.setdefault(target, source) != source:
+            raise ProductionError(f"two different files are mounted at {target}")
+
     for name, rel in setup.data_layout.items():
         evidence = setup.datasets.get(name)
         path = evidence.fetch.path if evidence is not None else None
         if path is None:
             continue  # absent: the data_present gate records it
-        Path(path).chmod(0o444)  # the canonical file: read only for everyone
-        mounts.append((str(Path(path).resolve()), rel))
+        add(path, rel)
     if weights:
         for _, e in sorted(setup.repository_weights.items()):
             if e.copy is None:
                 continue  # not verified: the claims naming it are not run
-            Path(e.copy).chmod(0o444)
-            mounts.append((str(Path(e.copy).resolve()), e.rel))
-    return tuple(mounts)
+            add(e.copy, e.rel)
+    return tuple((source, target) for target, source in by_target.items())
 
 
 # ---- the harness ----------------------------------------------------------------------------
@@ -1143,20 +1157,37 @@ def verified_copy(
     if entry is not None and pt.blob_sha1(data) != entry[1]:
         return None, "not the commit's bytes"
     folder = cache / "repository-files"
-    if any(p.is_symlink() for p in (cache, folder)):
-        return None, "Refute's cache is reached through a link"
+    if _through_link(folder):
+        return None, LINKED_CACHE
     folder.mkdir(parents=True, exist_ok=True)
     copy = folder / sha256
-    if copy.is_symlink():
-        return None, "Refute's cache is reached through a link"
+    if _through_link(folder) or copy.is_symlink():
+        return None, LINKED_CACHE
     if not copy.exists():
+        # a new temporary file, created exclusively without following a link (Codex review,
+        # round 2): an existing one, a link included, is refused rather than written through
         partial = folder / f".{sha256}.partial"
-        partial.write_bytes(data)
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+        try:
+            fd = os.open(partial, flags | getattr(os, "O_BINARY", 0), 0o600)
+        except FileExistsError:
+            return None, LINKED_CACHE if partial.is_symlink() else "a partial copy is in the cache"
+        with os.fdopen(fd, "wb") as out:
+            out.write(data)
         partial.replace(copy)
     copy.chmod(0o444)
     if copy.is_symlink() or hashlib.sha256(copy.read_bytes()).hexdigest() != sha256:
         return None, OTHER_BYTES
     return copy, ""
+
+
+LINKED_CACHE = "Refute's cache is reached through a link"
+
+
+def _through_link(path: Path) -> bool:
+    """Whether the absolute path, or a folder above it, is a symbolic link."""
+    absolute = Path(os.path.abspath(path))
+    return any(p.is_symlink() for p in (absolute, *absolute.parents))
 
 
 def repository_weights(
