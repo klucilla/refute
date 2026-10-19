@@ -453,12 +453,21 @@ def test_the_h4_gate_reads_the_corrected_train_snr_by_the_true_computation():
 # --- the calibration-only measurement -----------------------------------------------------------
 
 
+def _ident(plan):
+    """The configuration identity calibration_measurement requires from package 25 (Amendment 25;
+    the file's path and bytes stand for a probe here, the block's SHA-256 is the plan's)."""
+    from refute.core.canonical import canonical_sha256
+
+    block = canonical_sha256(plan.gauntlet.corrections.model_dump(mode="json"))
+    return {"path": "probe.json", "sha256": "0" * 64, "block_sha256": block}
+
+
 def test_the_calibration_measurement_leaves_run_holdout_unchanged_and_measures_despite_d1():
     lc, sectors = synthetic.make_lightcurve(_spec(160e-6), sector_starts=THREE_BY_ONE, seed=3501)
     plan = _plan(r_min=10)  # the one hidden sector gives fewer replicas than 20
     before = _json(run_holdout(lc, sectors, plan).to_dict())
     flux_before = lc.flux.copy()
-    record = calibration_measurement(lc, sectors, 2019, plan)
+    record = calibration_measurement(lc, sectors, 2019, plan, identity=_ident(plan))
     after = _json(run_holdout(lc, sectors, plan).to_dict())
     assert before == after
     assert np.array_equal(lc.flux, flux_before)
@@ -472,7 +481,7 @@ def test_the_calibration_measurement_leaves_run_holdout_unchanged_and_measures_d
 
 def test_the_calibration_measurement_covers_a_round_stopped_at_decision_2():
     _, lc, sectors = _noisy_hidden(3502)
-    record = calibration_measurement(lc, sectors, 2020, _plan())
+    record = calibration_measurement(lc, sectors, 2020, _plan(), identity=_ident(_plan()))
     assert record["decision_1"] == "pass"
     assert record["decision_2"] == "insufficient_capacity_hidden_noise"
     assert record["s_meas"] is not None
@@ -480,13 +489,14 @@ def test_the_calibration_measurement_covers_a_round_stopped_at_decision_2():
 
 def test_the_calibration_measurement_does_not_overcome_a_measurement_impediment():
     lc, sectors = synthetic.make_lightcurve(_spec(0.002), sector_starts=THREE_BY_ONE, seed=3507)
-    record = calibration_measurement(lc, sectors, 2019, _plan(r_min=1000))
+    plan = _plan(r_min=1000)
+    record = calibration_measurement(lc, sectors, 2019, plan, identity=_ident(plan))
     assert record["s_meas"] is None
     assert record["reason"] in ("train_replicas_below_r_min", "hidden_noise_undetermined")
 
 
 def test_the_calibration_record_is_plain_json():
     lc, sectors = synthetic.make_lightcurve(_spec(0.002), sector_starts=TWO_BY_TWO, seed=3500)
-    record = calibration_measurement(lc, sectors, 2020, _plan())
+    record = calibration_measurement(lc, sectors, 2020, _plan(), identity=_ident(_plan()))
     json.loads(_json(record))
     assert record["calibration_only"] is True

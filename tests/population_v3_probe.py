@@ -290,6 +290,162 @@ def mode_resume(work):
     _out(out)
 
 
+def _reconfirm(v3, run_dir, record, rec, pid=None):
+    """Rewrite a record and its confirmation (as the main process would for those bytes)."""
+    data = json.dumps(rec).encode("utf-8")
+    record.write_bytes(data)
+    import hashlib
+
+    (run_dir / v3.IDENTITY_JOURNAL).unlink()
+    v3.journal_append(
+        run_dir,
+        {
+            "kind": "confirmation",
+            "case": record.stem,
+            "pid": rec["operational"]["pid"] if pid is None else pid,
+            "record_sha256": hashlib.sha256(data).hexdigest(),
+            "identity": v3.STATE["identity"],
+        },
+    )
+
+
+def mode_records(work):
+    """Added after the Codex review of the package: every consumer of the records (version 2's
+    slot_records), an error record, incomplete confirmations, and the block check isolated."""
+    v3 = _import("population_v3")
+    pv2, entry, run_dir, outcome, seen = _analyze_one(v3, work)
+    case = entry["id"]
+    record = run_dir / "cases" / f"{case}.json"
+    journal = run_dir / v3.IDENTITY_JOURNAL
+    original = json.loads(record.read_bytes())
+    out = {"installed": pv2.slot_records is v3.slot_records}
+
+    def consumer():
+        _, _, problems = pv2.slot_records(run_dir, [case], {case: entry}, {}, None)
+        return [p for p in problems if p.startswith("M4 identity")]
+
+    out["consumer_confirmed"] = consumer()
+    saved = journal.read_bytes()
+    journal.unlink()
+    out["consumer_unconfirmed"] = consumer()
+    journal.write_bytes(saved)
+    # an incomplete confirmation (no PID) and a confirmation with another PID
+    rec = dict(original)
+    _reconfirm(v3, run_dir, record, rec)
+    entries = [json.loads(x) for x in journal.read_bytes().splitlines()]
+    del entries[0]["pid"]
+    journal.write_bytes(b"".join(json.dumps(e).encode() + b"\n" for e in entries))
+    out["no_pid"] = v3.resume_problems(run_dir)
+    _reconfirm(v3, run_dir, record, rec, pid=rec["operational"]["pid"] + 1)
+    out["other_pid"] = v3.resume_problems(run_dir)
+    # the block check isolated: another block, confirmed for these very bytes
+    other = json.loads(json.dumps(original))
+    block = other["conditions"]["i"]["scientific"]["test_plan"]["gauntlet"]["corrections"]
+    block["r_min"] = block["r_min"] + 1
+    _reconfirm(v3, run_dir, record, other)
+    out["other_block_confirmed"] = v3.resume_problems(run_dir)
+    # an error record (a traceback, no conditions), confirmed
+    err = {k: v for k, v in original.items() if k != "conditions"}
+    err["status"] = "error"
+    err["traceback"] = "probe"
+    _reconfirm(v3, run_dir, record, err)
+    out["error_confirmed"] = v3.resume_problems(run_dir)
+    journal.unlink()
+    out["error_unconfirmed"] = v3.resume_problems(run_dir)
+    _out(out)
+
+
+def mode_stop(work):
+    """A4: a refused result stops the dispatch (three tasks, a callback returning what version
+    2's analysis returns for an infrastructure failure)."""
+    v3 = _import("population_v3")
+    pv2 = v3.pv2
+    planets = [c for c in pv2.population_cases("selftest") if c["class"] == "planet"][:3]
+    cache, run_dir = work / "cache", work / "run"
+    (run_dir / "cases").mkdir(parents=True, exist_ok=True)
+    cache.mkdir(parents=True, exist_ok=True)
+    tasks = []
+    for case in planets:
+        blob, entry, _, _ = pv2.built_case(case)
+        (cache / f"{entry['id']}.rpc").write_bytes(blob)
+        tasks.append((entry, str(cache), str(run_dir), {"probe": True}))
+    os.environ[v3.EXPECTED_ENV] = json.dumps({**v3.STATE["identity"], "sha256": "d" * 64})
+    declared = {
+        "environment": {pv2.DISPATCH_VARIABLE: os.environ.get(pv2.DISPATCH_VARIABLE)},
+        "table": pv2.dispatch_table(),
+    }
+    outcome = pv2.run_pool(
+        v3.analyze_task,
+        tasks,
+        1,
+        declared,
+        on_worker=lambda report: None,
+        on_result=lambda i, r: "infrastructure" if "infrastructure" in r else None,
+    )
+    _out(
+        {
+            "tasks": len(tasks),
+            "results": len(outcome.results),
+            "stopped": outcome.stopped,
+            "journal": v3.journal_entries(run_dir),
+        }
+    )
+
+
+def mode_transport(work):
+    """A5: the expected identity is published only by an opening with no problem at all, and the
+    main process never keeps one it inherited."""
+    os.environ["REFUTE_M4_EXPECTED_IDENTITY"] = '{"inherited": true}'
+    v3 = _import("population_v3")
+    out = {"inherited_cleared": v3.EXPECTED_ENV not in os.environ}
+    ident = v3.STATE["identity"]
+    member = {k: ident[k] for k in ("format", "name", "path", "sha256")}
+
+    class Camp:
+        def __init__(self, problems):
+            self.declaration = {"m4_configuration": member}
+            self.problems = list(problems)
+
+    v3._V2_OPEN_CAMPAIGN = lambda root, cid: Camp([])
+    v3.open_campaign("r", "c")
+    out["clean_published"] = v3.expected_identity() == ident
+    v3._V2_OPEN_CAMPAIGN = lambda root, cid: Camp(["a version 2 problem"])
+    v3.open_campaign("r", "c")
+    out["problem_unpublished"] = v3.EXPECTED_ENV not in os.environ
+    _out(out)
+
+
+def mode_cli_capture(work):
+    """A3: the command line captures the configuration once per process."""
+    import pathlib
+    import runpy
+
+    config = Path(os.environ["REFUTE_M4_CONFIGURATION"]).resolve()
+    reads = []
+    real = pathlib.Path.read_bytes
+
+    def counting(self):
+        if Path(self).resolve() == config:
+            reads.append(1)
+        return real(self)
+
+    pathlib.Path.read_bytes = counting
+    sys.argv = [
+        "population_v3.py",
+        "dispatch-table",
+        "--out",
+        str(work / "d.json"),
+        "--cpus",
+        "0-7",
+    ]
+    sys.path.insert(0, str(POPULATION))
+    try:
+        runpy.run_path(str(POPULATION / "population_v3.py"), run_name="__main__")
+    except SystemExit:
+        pass
+    _out({"reads": len(reads)})
+
+
 def mode_close(work):
     """A5: a configuration changed during an execution invalidates its close."""
     v3 = _import("population_v3")
@@ -350,6 +506,10 @@ def main() -> None:
         "callback": mode_callback,
         "resume": mode_resume,
         "close": mode_close,
+        "records": mode_records,
+        "stop": mode_stop,
+        "transport": mode_transport,
+        "cli-capture": mode_cli_capture,
     }[mode](work)
 
 

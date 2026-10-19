@@ -6,7 +6,10 @@ hidden year), used here to check the wiring, not a rate."""
 
 from __future__ import annotations
 
+import json
 import math
+import sys
+from pathlib import Path
 from statistics import NormalDist
 
 import numpy as np
@@ -93,6 +96,56 @@ def test_b1_decision_2_follows_the_threshold():
     assert r.metrics["capacity"]["decision_2"] == "pass"
 
 
+REFERENCE = Path(__file__).resolve().parent / "fixtures" / "capacity" / "strong-rounds-4a26df7.json"
+
+
+def _cpu_features():
+    try:
+        from numpy._core._multiarray_umath import __cpu_features__
+    except ImportError:
+        return []
+    return sorted(k for k, v in __cpu_features__.items() if v)
+
+
+def _close(a, b, path=""):
+    """Numeric equality within 1e-9 (relative) through nested values; other values exactly."""
+    if isinstance(a, dict) and isinstance(b, dict):
+        assert set(a) == set(b), path
+        for k in a:
+            _close(a[k], b[k], f"{path}/{k}")
+    elif isinstance(a, list) and isinstance(b, list):
+        assert len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b, strict=True)):
+            _close(x, y, f"{path}/{i}")
+    elif isinstance(a, float) or isinstance(b, float):
+        assert a == pytest.approx(b, rel=1e-9, abs=1e-15), path
+    else:
+        assert a == b, path
+
+
+def test_b2_the_default_pair_reproduces_the_rounds_of_the_code_before_the_package():
+    # added after the Codex review of the package: a reference computed with the code of 4a26df7
+    # (tests/fixtures/capacity/make_reference.py); bit-equal on the reference machine, within 1e-9
+    # elsewhere (the floats are bound to the platform, numpy and the SIMD features)
+    from refute.core.io import dumps_json, to_jsonable
+
+    ref = json.loads(REFERENCE.read_text(encoding="utf-8"))
+    lc, sectors = _strong()
+    now = json.loads(
+        dumps_json(to_jsonable([r.to_dict() for r in run_holdout(lc, sectors, _plan()).rounds]))
+    )
+    same = (
+        ref["platform"] == sys.platform
+        and ref["numpy"] == np.__version__
+        and tuple(ref["python"]) == sys.version_info[:2]
+        and ref["cpu_features"] == _cpu_features()
+    )
+    if same:
+        assert now == ref["rounds"]
+    else:
+        _close(now, ref["rounds"])
+
+
 def test_b2_the_default_pair_leaves_the_round_records_unchanged():
     lc, sectors = _strong()
     implicit = run_holdout(lc, sectors, _plan())
@@ -163,3 +216,29 @@ def test_b5_an_identity_of_another_block_raises():
     plan = _plan(capacity_b=0.4)
     with pytest.raises(ValueError):
         calibration_measurement(lc, sectors, 2020, plan, identity=_identity(_plan()))
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        None,
+        "block-only",
+        "no-path",
+        "short-sha",
+    ],
+)
+def test_b5_the_identity_is_required_and_complete(bad):
+    # added after the Codex review of the package: no measurement without the whole identity
+    lc, sectors = _strong()
+    plan = _plan()
+    good = _identity(plan)
+    ident = {
+        None: None,
+        "block-only": {"block_sha256": good["block_sha256"]},
+        "no-path": {**good, "path": ""},
+        "short-sha": {**good, "sha256": "0" * 10},
+    }[bad]
+    with pytest.raises(ValueError):
+        calibration_measurement(lc, sectors, 2020, plan, identity=ident)
+    with pytest.raises(TypeError):
+        calibration_measurement(lc, sectors, 2020, plan)  # the identity has no default

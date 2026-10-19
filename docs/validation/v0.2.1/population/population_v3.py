@@ -43,6 +43,15 @@ import sys
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+if __name__ == "__main__":
+    # The command line runs the importable module only, so that the configuration is captured
+    # once per process and the replacements are installed once (the Codex review of the package),
+    # and so that pickled functions name ``population_v3``.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import population_v3
+
+    raise SystemExit(population_v3.main())
+
 HERE = Path(__file__).resolve().parent
 V3_PATH = Path(__file__).resolve()
 V3_BYTES = V3_PATH.read_bytes()
@@ -182,6 +191,11 @@ def _load_state() -> dict[str, Any]:
 
 STATE = _load_state()
 
+# The main process never inherits an expected identity: it publishes its own after a clean
+# opening of the campaign; a spawned worker keeps the one it inherited.
+if __import__("multiprocessing").parent_process() is None:
+    os.environ.pop(EXPECTED_ENV, None)
+
 
 def require_state() -> dict[str, Any]:
     if not STATE["ok"]:
@@ -230,10 +244,11 @@ _V2_OPEN_CAMPAIGN = pv2.open_campaign
 
 def open_campaign(root, campaign_id):
     camp = _V2_OPEN_CAMPAIGN(root, campaign_id)
-    problems = m4_declaration_problems(camp.declaration)
-    camp.problems.extend(problems)
-    if not problems:
-        # the expected identity, from the validated declaration, for every worker started later
+    camp.problems.extend(m4_declaration_problems(camp.declaration))
+    os.environ.pop(EXPECTED_ENV, None)
+    if not camp.problems:
+        # the expected identity, only from a declaration with no problem at all, for every
+        # worker started later
         os.environ[EXPECTED_ENV] = json.dumps(STATE["identity"], sort_keys=True)
     return camp
 
@@ -347,11 +362,37 @@ def _plain(value):
     return value
 
 
-def resume_problems(run_dir: str | os.PathLike, cases: list[str] | None = None) -> list[str]:
-    """Amendment 25, A.5: a persisted record of the run folder is accepted only with a
-    confirmation in the identity journal that matches its bytes and the expected identity; a
-    refusal, a missing or mismatched confirmation, or another corrections block is a problem."""
-    expected = expected_identity()
+def _is_sha256(value) -> bool:
+    return (
+        isinstance(value, str) and len(value) == 64 and all(c in "0123456789abcdef" for c in value)
+    )
+
+
+def _complete_confirmation(e: dict, expected: dict) -> bool:
+    """A confirmation with its whole schema: the kind, the case, a PID, the record's SHA-256 and
+    the expected identity (the Codex review of the package: an incomplete one is never valid)."""
+    return (
+        set(e) == {"kind", "case", "pid", "record_sha256", "identity"}
+        and e["kind"] == "confirmation"
+        and isinstance(e["case"], str)
+        and isinstance(e["pid"], int)
+        and not isinstance(e["pid"], bool)
+        and _is_sha256(e["record_sha256"])
+        and e["identity"] == expected
+    )
+
+
+def resume_problems(
+    run_dir: str | os.PathLike,
+    cases: list[str] | None = None,
+    expected: dict | None = None,
+) -> list[str]:
+    """Amendment 25, A.5: a persisted record of the run folder is accepted only with a complete
+    confirmation in the identity journal that matches its bytes, its PID and the expected
+    identity; a refusal, a missing, incomplete or mismatched confirmation, or another corrections
+    block is a problem. A record of status ``error`` (a traceback, no conditions) needs its
+    confirmation only."""
+    expected = expected if expected is not None else expected_identity()
     folder = Path(run_dir) / "cases"
     files = sorted(folder.glob("*.json")) if folder.is_dir() else []
     if cases is not None:
@@ -363,9 +404,9 @@ def resume_problems(run_dir: str | os.PathLike, cases: list[str] | None = None) 
     entries = journal_entries(run_dir)
     refused = {e.get("case") for e in entries if e.get("kind") == "refusal"}
     confirmed = {
-        (e.get("case"), e.get("record_sha256"))
+        (e["case"], e["record_sha256"]): e["pid"]
         for e in entries
-        if e.get("kind") == "confirmation" and e.get("identity") == expected
+        if isinstance(e, dict) and _complete_confirmation(e, expected)
     }
     problems = []
     for f in files:
@@ -376,16 +417,23 @@ def resume_problems(run_dir: str | os.PathLike, cases: list[str] | None = None) 
             problems.append(f"{case}: its result was refused (identity journal)")
             continue
         if (case, sha) not in confirmed:
-            problems.append(f"{case}: no confirmation of its M4 identity matches the record")
+            problems.append(
+                f"{case}: no complete confirmation of its M4 identity matches the record"
+            )
             continue
         try:
             rec = json.loads(data)
+            if (rec.get("operational") or {}).get("pid") != confirmed[(case, sha)]:
+                problems.append(f"{case}: the confirmation's PID is not the record's")
+                continue
+            if rec.get("status") == "error":
+                continue  # a permanent scientific error: its identity is the confirmation's
             block = _plain(
                 rec["conditions"]["i"]["scientific"]["test_plan"]["gauntlet"]["corrections"]
             )
             if _block_sha256(block) != expected["block_sha256"]:
                 problems.append(f"{case}: its corrections block is not the expected one")
-        except (KeyError, TypeError, ValueError) as exc:
+        except (KeyError, TypeError, ValueError, AttributeError) as exc:
             problems.append(f"{case}: its corrections block cannot be read ({exc})")
     return problems
 
@@ -394,14 +442,29 @@ _V2_MODE_ANALYZE = pv2.mode_analyze
 
 
 def mode_analyze(args) -> int:
-    camp = open_campaign(args.root, args.campaign)
-    problems = list(camp.problems)
-    if not problems:
-        run_dir = pv2.inside_project(args.out, "--out")
-        problems = resume_problems(run_dir)
+    """Version 2's analysis after the resume check of the run folder, against the captured
+    identity (the campaign is opened once, by version 2's mode, through ``open_campaign``); a
+    loading problem refuses at once."""
+    if not STATE["ok"]:
+        pv2.refuse("the M4 configuration is not loaded", [STATE["problem"]])
+    run_dir = pv2.inside_project(args.out, "--out")
+    problems = resume_problems(run_dir, expected=STATE["identity"])
     if problems:
-        pv2.refuse("existing results or the M4 identity cannot be accepted", problems)
+        pv2.refuse("existing results without a confirmed M4 identity", problems)
     return _V2_MODE_ANALYZE(args)
+
+
+_V2_SLOT_RECORDS = pv2.slot_records
+
+
+def slot_records(run_dir, lot, by_id, expect, allowed=None):
+    """Version 2's reader of a lot's records (``compare-slots``, the resume of ``orchestrate``,
+    ``metrics``), plus the M4 identity of every record it reads (the Codex review of the
+    package: every consumer, not only ``analyze``)."""
+    recs, hashes, problems = _V2_SLOT_RECORDS(run_dir, lot, by_id, expect, allowed)
+    present = [c for c in lot if (Path(run_dir) / "cases" / f"{c}.json").is_file()]
+    problems += [f"M4 identity: {p}" for p in resume_problems(run_dir, present)]
+    return recs, hashes, problems
 
 
 # --- the close (Amendment 25, A.6) and R2 ----------------------------------------------------
@@ -469,6 +532,7 @@ def install() -> None:
     pv2.analyze_task = analyze_task
     pv2.run_pool = run_pool
     pv2.mode_analyze = mode_analyze
+    pv2.slot_records = slot_records
     pv2.Execution.close = close
     pv2.harness_problems = harness_problems
     pv2.HARNESS_PATH = V3_PATH
@@ -480,11 +544,3 @@ install()
 
 def main(argv: list[str] | None = None) -> int:
     return pv2.main(argv)
-
-
-if __name__ == "__main__":
-    # Run through the importable module, so that pickled functions name ``population_v3``.
-    sys.path.insert(0, str(HERE))
-    import population_v3
-
-    raise SystemExit(population_v3.main())

@@ -766,6 +766,34 @@ without the plan's pair, without `b`, without `s`; a wrong pair recorded; extens
 the literal or with another default); **SK3, the main/worker comparison removed, escaped**: in the
 A4 case the plan's block also differed, so the block check refused alone; the same-block case was
 written after the escape (declared here), and SK3 run again on it was caught.
+
+**The end-of-stage review of the package's implementation (Codex, read only, of `34e46d9` to
+`158433c`)** returned WEAKENED; the full suite at `158433c` gave 3076 tests, 0 failures, 0 errors,
+57 skipped (JUnit), pushed with CI. Written after it, each with its case (JUnit: 101 tests, 0
+failures, 1 skip) and its sabotage (SC1 to SC6, each caught):
+
+1. *Every consumer of the records*: version 2's reader `slot_records` (behind `compare-slots`, the
+   resume of `orchestrate` and `metrics`) is replaced by one that also requires each record's M4
+   identity (SC1).
+2. *An `error` record* (a traceback, no conditions) is accepted with its confirmation alone; the
+   first version could not read its block and blocked the resume (SC2).
+3. *A complete confirmation*: its whole schema (kind, case, PID, the record's SHA-256, the
+   identity), and the PID equal to the record's (SC3).
+4. *The transport*: the main process never keeps an expected identity it inherited (a spawned
+   worker keeps its own), and `open_campaign` publishes it only when the opening has no problem at
+   all (SC4, SC5); version 3's `mode_analyze` no longer reopens the campaign (it refuses a loading
+   problem at once, and checks the resume against the captured identity).
+5. *One capture at the command line*: the script runs the importable module only; a case counts
+   the reads of the configuration file through the real entry point (one).
+6. *`calibration_measurement`*: the identity is required (no default) and complete (a path, the
+   bytes' and the block's SHA-256) (SC6).
+7. *The tests that said more than they showed*: the dispatch stop now uses three tasks and a
+   callback that stops as version 2's does; the block check is isolated (another block, confirmed
+   for its very bytes); B2 compares with a reference computed by the code of `4a26df7` (before the
+   package; `tests/fixtures/capacity/make_reference.py`), bit-equal on the reference machine and
+   within 1e-9 elsewhere; the transport of the expected identity is checked through
+   `open_campaign` with a clean and a problematic opening (a unit check: a complete valid campaign
+   declaration is not built by the tests).
 ## Amendment 24 (2026-10-18, declared after the retest of piece 7): the retest's result, and I2 correlated failed
 
 **The retest** (the tests of `9925c56` on the code of Amendment 23, committed as `159b929`; JUnit

@@ -1522,7 +1522,8 @@ def calibration_measurement(
     sectors: Sequence[SectorInfo],
     hidden_year: int,
     plan: TessTestPlan,
-    identity: dict[str, Any] | None = None,
+    *,
+    identity: dict[str, Any],
 ) -> dict[str, Any]:
     """Map Amendments 9 and 12: for the population harness only, never for ``run_holdout``. The
     round measured despite the two capacity decisions (recorded), with its own ``HiddenYear``;
@@ -1535,10 +1536,23 @@ def calibration_measurement(
     c = plan.gauntlet.corrections
     if not c.active:
         raise ValueError("the calibration measurement needs the corrections switch on")
-    if identity is not None:
-        block = canonical_sha256(c.model_dump(mode="json"))
-        if identity.get("block_sha256") != block:
-            raise ValueError("the configuration identity names another corrections block")
+    # the identity is required and complete (the Codex review of the package): the configuration
+    # file's repository path, its bytes' SHA-256 and its resolved block's SHA-256
+    hexdigits = set("0123456789abcdef")
+    if (
+        not isinstance(identity, dict)
+        or set(identity) != {"path", "sha256", "block_sha256"}
+        or not (isinstance(identity["path"], str) and identity["path"])
+        or not all(
+            isinstance(identity[k], str)
+            and len(identity[k]) == 64
+            and set(identity[k]) <= hexdigits
+            for k in ("sha256", "block_sha256")
+        )
+    ):
+        raise ValueError("the configuration identity must give path, sha256 and block_sha256")
+    if identity["block_sha256"] != canonical_sha256(c.model_dump(mode="json")):
+        raise ValueError("the configuration identity names another corrections block")
     stamp = {"capacity_b": c.capacity_b, "capacity_s": c.capacity_s, "configuration": identity}
     spans = [(s.t_start, s.t_end) for s in sectors if s.year == hidden_year]
     prepared = plan_round(raw.select(raw.year != hidden_year), spans, hidden_year, plan)

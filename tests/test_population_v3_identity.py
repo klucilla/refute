@@ -154,10 +154,59 @@ def test_a4_the_main_process_confirms_or_refuses_every_result():
 def test_a4_a5_a_resume_accepts_only_confirmed_records():
     out = _probe("resume", _work())
     assert out["as_written"] == []
-    assert out["no_confirmation"] and "no confirmation" in out["no_confirmation"][0]
+    assert out["no_confirmation"] and "confirmation" in out["no_confirmation"][0]
     assert out["refused"] and "refused" in out["refused"][0]
-    assert out["record_changed"] and "no confirmation" in out["record_changed"][0]
+    assert out["record_changed"] and "confirmation" in out["record_changed"][0]
     assert out["other_block"]  # the expected identity names another block
+
+
+# --- added after the Codex review of the package's implementation ---------------------------------
+
+
+@pytest.fixture(scope="module")
+def records():
+    return _probe("records", _work())
+
+
+def test_every_consumer_of_the_records_checks_the_identity(records):
+    # version 2's slot_records serves compare-slots, the resume of orchestrate and metrics
+    assert records["installed"] is True
+    assert records["consumer_confirmed"] == []
+    assert records["consumer_unconfirmed"], records
+
+
+def test_an_incomplete_or_mismatched_confirmation_is_refused(records):
+    assert records["no_pid"] and "no complete confirmation" in records["no_pid"][0]
+    assert records["other_pid"] and "PID" in records["other_pid"][0]
+
+
+def test_the_block_check_refuses_a_confirmed_record_of_another_block(records):
+    problems = records["other_block_confirmed"]
+    assert problems and "corrections block is not the expected one" in problems[0]
+
+
+def test_a_confirmed_error_record_is_accepted_and_an_unconfirmed_one_is_not(records):
+    assert records["error_confirmed"] == []
+    assert records["error_unconfirmed"]
+
+
+def test_a4_a_refused_result_stops_the_dispatch():
+    out = _probe("stop", _work())
+    assert out["stopped"] is not None or out["results"] < out["tasks"], out
+    assert out["journal"] and all(e["kind"] == "refusal" for e in out["journal"])
+
+
+def test_a5_the_expected_identity_comes_only_from_a_clean_opening():
+    out = _probe("transport", _work())
+    assert out == {
+        "inherited_cleared": True,
+        "clean_published": True,
+        "problem_unpublished": True,
+    }
+
+
+def test_a3_the_command_line_captures_the_configuration_once():
+    assert _probe("cli-capture", _work())["reads"] == 1
 
 
 # --- A5: the close; A6: status and the operational modes -----------------------------------------
