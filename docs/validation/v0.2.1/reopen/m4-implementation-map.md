@@ -717,6 +717,24 @@ projected, and the 397 h ceiling stays with the calibration; the procedure of th
 round and the three readings above approved; `bs-choice` may be generated). The numeric value of
 the study's own ceiling is asked of the maintainer before the study's lots are generated.
 
+**`bs-choice`, generated and evaluated (2026-10-19).** Recorded at `905bba1` (the code of
+`dc7a0da`) with `M4-rmin-study`, six workers, the affinity `0xff`: 100 targets, the constant
+scenario, no failure, no integrity problem (`rmin-study/bs-choice/`, committed in `ae2fc34` before
+its evaluation). The evaluation (`rmin-study/bs-choice-evaluation.json`, by `evaluate-bs-choice`):
+complete; **`k` = 2** (`a_1` = 4.157 over 73 rounds, `a_2` = 2.883 over 79; not a tie); the pairs,
+over the rounds that meet each `R`:
+
+| `R` | `b_R` | `s_R` | rounds | targets |
+|---|---|---|---|---|
+| 8 | 0.585 | 2.883 | 79 | 40 |
+| 10 | 0.585 | 2.883 | 79 | 40 |
+| 12 | 0.632 | 2.843 | 76 | 38 |
+| 15 | 0.799 | 2.517 | 68 | 34 |
+| 20 | 0.529 | 1.930 | 48 | 24 |
+
+These are committed before any lot of the study is generated; the study's lots wait for the numeric
+value of its own ceiling.
+
 **Implemented.** The twin's status in the record (`096a6ca`, item 8). The evaluator: tests
 `be3a604` (`tests/test_rmin_evaluate.py`, on built records), then
 `docs/validation/v0.2.1/population/rmin_evaluate.py`. The tie of item 4 is read on the unscaled
