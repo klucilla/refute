@@ -758,8 +758,8 @@ checked by `capture`). Two test fixtures sit in the authorized folder, each mark
 campaign configuration: `probe-non-default.json` (another block) and `probe-same-block.json` (the
 block of `m4-c1.json` under another name and file). One deviation from the design, declared: the
 A2 file-link case is skipped where the account cannot create a file symbolic link (Windows without
-the privilege, `WinError 1314`; the junction case runs there; the CI workflow runs on Linux, which
-does not by itself show both passed there). JUnit: part B's first run 124 tests with **4 failures**
+the privilege, `WinError 1314`; the junction case runs there; see fix 10 below on the CI
+runners). JUnit: part B's first run 124 tests with **4 failures**
 (the lock tests' old full resolved hashes, before they were updated to extension 4's; corrected here
 after the Codex review: the first version of this record said 0), then 74 tests, 0 failures; part A
 36 tests, 0 failures, 1 skip. **Sabotages** (SK1 to SK13, never committed, each restored):
@@ -797,6 +797,38 @@ failures, 1 skip) and its sabotage (SC1 to SC6, each caught):
    within 1e-9 elsewhere; the transport of the expected identity is checked through
    `open_campaign` with a clean and a problematic opening (a unit check: a complete valid campaign
    declaration is not built by the tests).
+
+**The second round of that review** found a blocker in fix 4: the main process was recognized at
+import by `multiprocessing.parent_process() is None`, which is also true while a spawned worker
+bootstraps this file as `__mp_main__` (the parent's reference is filled in later), so a worker
+started by the command line cleared the inherited identity and refused every task ("no expected M4
+identity in this worker's environment"). The tests had missed it: the command-line case ran
+`dispatch-table` without workers, and the worker cases start from the probe script, whose bootstrap
+does not run this file. The same push's CI (`158433c`) was red for another reason, in the three A6
+cases: they call the real command line with `--cpus 0-7`, which the runners refuse
+(`SetProcessAffinityMask failed: 87` on Windows; the checkout under `/home` refused by version 2's
+`home_problems` on Linux). Corrected, each with its case and sabotage:
+
+8. *The clearing at the explicit entry*: `main()` clears an inherited expected identity before
+   version 2's dispatch; the import never does (SC7: the import-time clearing put back, caught by
+   the transport case and the new command-line worker case; SC9: the clearing at the entry removed,
+   caught by the transport case).
+9. *One execution in a spawned worker*: run as `__mp_main__`, the file registers itself as
+   `population_v3`, so the pickled functions resolve to the bootstrap copy and the body (the capture
+   and the installation) runs once (the bootstrap copies the namespace into a second module object,
+   so the case counts executions by the one `STATE`). A new case starts a spawned worker through the
+   real entry point after a clean opening: the worker keeps the published identity, the body ran
+   once, the replacements are installed and `_worker_problem()` is `None` (SC8: the registration
+   removed, caught).
+10. *A6 on the runners*: one logical processor (`--cpus 0-0`), and the three cases skipped where the
+    checkout is inside the home directory (the Linux runners), so they run on the Windows runners
+    and locally. A correction of the record above: the CI workflow runs on Windows runners too, not
+    on Linux only.
+
+JUnit after these corrections (the two harness test files): 45 tests, 0 failures, 1 skip (the file
+link); SC7 to SC9 each caught. A deviation of the working rules, declared: these corrections were
+edited while the full suite of `bfef2cc` was running; that run was stopped before its end and none
+of its results is used.
 ## Amendment 24 (2026-10-18, declared after the retest of piece 7): the retest's result, and I2 correlated failed
 
 **The retest** (the tests of `9925c56` on the code of Amendment 23, committed as `159b929`; JUnit

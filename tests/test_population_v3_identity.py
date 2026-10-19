@@ -199,6 +199,7 @@ def test_a4_a_refused_result_stops_the_dispatch():
 def test_a5_the_expected_identity_comes_only_from_a_clean_opening():
     out = _probe("transport", _work())
     assert out == {
+        "import_keeps": True,
         "inherited_cleared": True,
         "clean_published": True,
         "problem_unpublished": True,
@@ -207,6 +208,18 @@ def test_a5_the_expected_identity_comes_only_from_a_clean_opening():
 
 def test_a3_the_command_line_captures_the_configuration_once():
     assert _probe("cli-capture", _work())["reads"] == 1
+
+
+def test_a4_a_worker_started_by_the_command_line_keeps_the_expected_identity():
+    # added after the second Codex review of the package: the import of a spawned worker (this
+    # file run as ``__mp_main__``) once cleared the inherited identity, so every worker refused
+    out = _probe("cli-worker", _work())
+    assert out["main_published"] is True
+    worker = out["worker"]
+    assert worker["module_name"] == "__mp_main__"  # the bootstrap copy is the module in use
+    assert worker["executions"] == 1 and worker["installed"] is True  # one capture, one install
+    assert out["env_kept"] is True
+    assert worker["problem"] is None
 
 
 # --- A5: the close; A6: status and the operational modes -----------------------------------------
@@ -221,9 +234,19 @@ def test_a5_a_changed_configuration_invalidates_the_close():
     assert out["calls"]["close"][-1].get("m4_configuration_changed") is True
 
 
+# Version 2's command line refuses a checkout inside the user's home directory by design (its
+# home_problems; the Linux runners check out under /home). One logical processor (0-0) exists on
+# every runner, where 0-7 does not (CI of 158433c: SetProcessAffinityMask failed: 87).
+_HOME = Path.home().resolve()
+_INSIDE_HOME = ROOT == _HOME or _HOME in ROOT.parents
+needs_runnable_host = pytest.mark.skipif(
+    _INSIDE_HOME, reason="version 2's command line refuses a checkout inside the home directory"
+)
+
+
 def _harness(args, config):
     return subprocess.run(
-        [sys.executable, str(HARNESS), *args, "--cpus", "0-7"],
+        [sys.executable, str(HARNESS), *args, "--cpus", "0-0"],
         capture_output=True,
         text=True,
         env=_env(config),
@@ -240,6 +263,7 @@ def campaign_root():
     return work / "campaigns"
 
 
+@needs_runnable_host
 def test_a6_status_shows_a_loading_problem_and_exits_as_version_2(campaign_root):
     res = _harness(["status", "--root", str(campaign_root), "--campaign", "probe-good"], None)
     assert res.returncode == 0, res.stderr[-2000:]
@@ -247,6 +271,7 @@ def test_a6_status_shows_a_loading_problem_and_exits_as_version_2(campaign_root)
     assert any("M4 configuration not loaded" in p for p in report["declaration_problems"])
 
 
+@needs_runnable_host
 def test_a6_status_shows_a_member_problem(campaign_root):
     res = _harness(
         ["status", "--root", str(campaign_root), "--campaign", "probe-wrong-sha256"], CONFIG
@@ -256,6 +281,7 @@ def test_a6_status_shows_a_member_problem(campaign_root):
     assert any("m4_configuration" in p for p in report["declaration_problems"])
 
 
+@needs_runnable_host
 def test_a6_an_operational_mode_refuses_with_a_loading_problem(campaign_root):
     work = _work()
     args = [

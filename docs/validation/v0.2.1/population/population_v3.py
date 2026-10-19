@@ -51,6 +51,11 @@ if __name__ == "__main__":
     import population_v3
 
     raise SystemExit(population_v3.main())
+if __name__ == "__mp_main__":
+    # A worker spawned from the command line runs this file as ``__mp_main__``: that copy is the
+    # module in use, so the pickled functions of ``population_v3`` resolve to it and the
+    # configuration is captured and the replacements installed once in the worker too.
+    sys.modules.setdefault("population_v3", sys.modules[__name__])
 
 HERE = Path(__file__).resolve().parent
 V3_PATH = Path(__file__).resolve()
@@ -190,11 +195,6 @@ def _load_state() -> dict[str, Any]:
 
 
 STATE = _load_state()
-
-# The main process never inherits an expected identity: it publishes its own after a clean
-# opening of the campaign; a spawned worker keeps the one it inherited.
-if __import__("multiprocessing").parent_process() is None:
-    os.environ.pop(EXPECTED_ENV, None)
 
 
 def require_state() -> dict[str, Any]:
@@ -543,4 +543,8 @@ install()
 
 
 def main(argv: list[str] | None = None) -> int:
+    # The main process never keeps an expected identity it inherited: it publishes its own after a
+    # clean opening of the campaign. (Done here, at the explicit entry, and not at import: a
+    # spawned worker imports this file too and must keep the identity it inherited.)
+    os.environ.pop(EXPECTED_ENV, None)
     return pv2.main(argv)

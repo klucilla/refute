@@ -397,7 +397,14 @@ def mode_transport(work):
     main process never keeps one it inherited."""
     os.environ["REFUTE_M4_EXPECTED_IDENTITY"] = '{"inherited": true}'
     v3 = _import("population_v3")
-    out = {"inherited_cleared": v3.EXPECTED_ENV not in os.environ}
+    # the import keeps it (a spawned worker imports this module too); the explicit entry clears it
+    out = {"import_keeps": v3.EXPECTED_ENV in os.environ}
+    seen = []
+    real_main = v3.pv2.main
+    v3.pv2.main = lambda argv: seen.append(v3.EXPECTED_ENV in os.environ) or 0
+    v3.main([])
+    v3.pv2.main = real_main
+    out["inherited_cleared"] = seen == [False]
     ident = v3.STATE["identity"]
     member = {k: ident[k] for k in ("format", "name", "path", "sha256")}
 
@@ -436,7 +443,7 @@ def mode_cli_capture(work):
         "--out",
         str(work / "d.json"),
         "--cpus",
-        "0-7",
+        "0-0",
     ]
     sys.path.insert(0, str(POPULATION))
     try:
@@ -444,6 +451,68 @@ def mode_cli_capture(work):
     except SystemExit:
         pass
     _out({"reads": len(reads)})
+
+
+def mode_cli_worker(work):
+    """A4 through the command line (added after the second Codex review of the package): the real
+    entry point publishes the expected identity after a clean opening and starts a spawned worker,
+    which bootstraps this file as ``__mp_main__``; the worker keeps the identity it inherited,
+    captures the configuration once and finds no identity problem."""
+    import multiprocessing
+    import runpy
+    from concurrent.futures import ProcessPoolExecutor
+
+    sys.path.insert(0, str(POPULATION))
+    v3 = _import("population_v3")
+    ident = v3.STATE["identity"]
+    member = {k: ident[k] for k in ("format", "name", "path", "sha256")}
+    out = {}
+
+    class Camp:
+        declaration = {"m4_configuration": member}
+        problems: list = []
+
+    def dispatch(argv):
+        v3._V2_OPEN_CAMPAIGN = lambda root, cid: Camp()
+        v3.open_campaign("r", "c")
+        out["main_published"] = v3.expected_identity() == ident
+        ctx = multiprocessing.get_context("spawn")
+        probe = importlib.import_module("population_v3_probe")  # picklable by its module name
+        with ProcessPoolExecutor(max_workers=1, mp_context=ctx) as pool:
+            out["worker"] = pool.submit(probe.child_report).result(timeout=600)
+        return 0
+
+    v3.pv2.main = dispatch
+    sys.argv = ["population_v3.py", "dispatch-table", "--cpus", "0-0"]
+    try:
+        runpy.run_path(str(POPULATION / "population_v3.py"), run_name="__main__")
+    except SystemExit:
+        pass
+    worker = out.get("worker") or {}
+    env = worker.get("env")
+    out["env_kept"] = env is not None and json.loads(env) == ident
+    _out(out)
+
+
+def child_report():
+    """In a spawned worker: which module is ``population_v3``, how many times the harness body ran
+    (the bootstrap runs the file in a temporary module and copies its namespace into the final
+    ``__mp_main__``: two module objects, one execution, so one ``STATE``), whether the expected
+    identity was kept, and the worker's identity check."""
+    import population_v3 as v3
+
+    executions = {
+        id(m.__dict__.get("STATE"))
+        for m in list(sys.modules.values())
+        if Path(getattr(m, "__file__", None) or ".").name == "population_v3.py"
+    }
+    return {
+        "module_name": v3.__name__,
+        "executions": len(executions),
+        "installed": v3.pv2.analyze_task is v3.analyze_task,
+        "env": os.environ.get(v3.EXPECTED_ENV),
+        "problem": v3._worker_problem(),
+    }
 
 
 def mode_close(work):
@@ -510,6 +579,7 @@ def main() -> None:
         "stop": mode_stop,
         "transport": mode_transport,
         "cli-capture": mode_cli_capture,
+        "cli-worker": mode_cli_worker,
     }[mode](work)
 
 
