@@ -106,6 +106,9 @@ class RunResult:
     # (refute.core.io serializes every field of a dataclass), these two go with it
     measurement_clock: str | None = None
     measurement_resolution_s: float | None = None
+    # the oom_kill count of the run's slice, read once it holds no process (the docker
+    # backend, wp3-run-resources-acceptance.md section 2); None where not read
+    oom_kills: int | None = None
 
 
 @dataclass(frozen=True)

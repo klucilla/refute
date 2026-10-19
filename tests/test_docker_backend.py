@@ -23,8 +23,18 @@ IMAGE = "ubuntu@sha256:" + "c" * 64
 LIMITS = Limits(cpus=2, period_us=100_000, memory_bytes=1 << 30, pids=256)
 
 
+def mounts(tmp_path: Path, options: str = "rw,nosuid,nodev,noexec,relatime,nsdelegate") -> Path:
+    """A stand-in /proc/self/mounts with the cgroup2 mount at the stand-in root."""
+    path = tmp_path / "mounts"
+    root = str(tmp_path / "cgroup").replace(" ", "\\040")
+    path.write_text(f"proc /proc proc rw 0 0\ncgroup2 {root} cgroup2 {options} 0 0\n")
+    return path
+
+
 def backend(tmp_path: Path, plans: dict[Path, ContainerPlan], **kw) -> DockerBackend:
     state, root = tmp_path / "state", tmp_path / "cgroup"
+    if "mounts" not in kw:  # written only when not given (a test may have written its own)
+        kw["mounts"] = mounts(tmp_path)
     return DockerBackend(
         "p1",
         kw.pop("limits", LIMITS),
@@ -322,7 +332,7 @@ def test_a_non_zero_exit_without_a_kill_for_memory_stays_the_runs_failure(tmp_pa
     work.mkdir()
     b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
     result = b.run(spec(tmp_path, work, ["work", "0.1", "1"]))
-    assert result.stopped is None and result.exit_code == 1
+    assert result.stopped is None and result.exit_code == 1 and result.oom_kills == 0
 
 
 def test_an_exit_zero_after_a_kill_for_memory_stays_completed(tmp_path):
@@ -331,6 +341,7 @@ def test_an_exit_zero_after_a_kill_for_memory_stays_completed(tmp_path):
     b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
     result = b.run(spec(tmp_path, work, ["work", "0.1", "0", "oom"]))
     assert result.stopped is None and result.exit_code == 0
+    assert result.oom_kills == 1  # the count recorded (section 2)
 
 
 def test_an_unreadable_memory_events_after_a_failure_is_a_refute_error(tmp_path):
@@ -339,3 +350,22 @@ def test_an_unreadable_memory_events_after_a_failure_is_a_refute_error(tmp_path)
     b = backend(tmp_path, {work: ContainerPlan(IMAGE)})
     with pytest.raises(RuntimeError, match="memory.events"):
         b.run(spec(tmp_path, work, ["work", "0.1", "1", "no-memory-events"]))
+
+
+@pytest.mark.parametrize(
+    ("options", "match"),
+    [
+        ("rw,nsdelegate,memory_localevents", "memory_localevents"),
+        (None, "0 cgroup2 mounts"),
+    ],
+)
+def test_a_cgroup_mount_whose_events_are_not_aggregated_is_refused(tmp_path, options, match):
+    work = tmp_path / "w1"
+    work.mkdir()
+    path = mounts(tmp_path, options) if options else tmp_path / "no-cgroup"
+    if options is None:
+        path.write_text("proc /proc proc rw 0 0\n")
+    b = backend(tmp_path, {work: ContainerPlan(IMAGE)}, mounts=path)
+    with pytest.raises(DockerRefusedError, match=match):
+        b.run(spec(tmp_path, work, ["work", "0.1", "0"]))
+    assert records(tmp_path) == []  # refused before any container was created

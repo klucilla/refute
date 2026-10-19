@@ -185,6 +185,33 @@ class _Cgroups:
         raise RuntimeError(f"no oom_kill in {directory / 'memory.events'}")
 
     @staticmethod
+    def check_aggregated_events(mounts: Path, root: Path) -> None:
+        """The cgroup v2 hierarchy at ``root`` must be mounted without ``memory_localevents``,
+        so a slice's ``memory.events`` aggregates its descendants (the container's scope);
+        otherwise, or when no cgroup2 mount is at ``root``, a Refute error before any run
+        (wp3-run-resources-acceptance.md, section 2)."""
+        try:
+            text = _read(mounts)
+        except OSError as exc:
+            raise DockerRefusedError(f"cannot read {mounts}: {exc}") from None
+        found = []
+        for line in text.splitlines():
+            fields = line.split()
+            if len(fields) >= 4 and fields[2] == "cgroup2":
+                point = re.sub(r"\\([0-7]{3})", lambda m: chr(int(m.group(1), 8)), fields[1])
+                if point == str(root):
+                    found.append(fields[3].split(","))
+        if len(found) != 1:
+            raise DockerRefusedError(
+                f"{len(found)} cgroup2 mounts at {root}; exactly one is needed"
+            )
+        if "memory_localevents" in found[0]:
+            raise DockerRefusedError(
+                "cgroup2 is mounted with memory_localevents: a slice's memory.events would not "
+                "count its descendants' kills for memory"
+            )
+
+    @staticmethod
     def populated(directory: Path) -> bool:
         try:
             text = _read(directory / "cgroup.events")
@@ -203,6 +230,7 @@ class DockerBackend:
     plans: Mapping[Path, ContainerPlan]
     docker: Sequence[str] = ("docker",)
     cgroup_root: Path = Path("/sys/fs/cgroup")
+    mounts: Path = Path("/proc/self/mounts")  # where the cgroup2 mount is checked
     poll_s: float = DELTA_S
     clock_ns: Callable[[], int] = time.perf_counter_ns
     sleep: Callable[[float], None] = time.sleep
@@ -217,6 +245,7 @@ class DockerBackend:
         self._active: set[str] = set()  # containers created and not yet removed
         self._stopping = False  # set by kill_active: no container starts afterwards
         self._lock = threading.Lock()
+        self._mount_checked = False
 
     # -- the paper's total, for the completeness check of W2.10
 
@@ -315,6 +344,9 @@ class DockerBackend:
         slice_name = f"refute-{self.paper}-{tag}.slice"
         label = f"refute-{self.paper}-{tag}"
         own = self._cgroups.slice_dir(self.paper, tag)
+        if not self._mount_checked:
+            _Cgroups.check_aggregated_events(Path(self.mounts), Path(self.cgroup_root))
+            self._mount_checked = True
         if _Cgroups.usage_usec(own) is not None:
             raise DockerRefusedError(f"the slice {slice_name} already exists")
         self._check_image(plan.image)
@@ -469,7 +501,13 @@ class DockerBackend:
             if stopped
             else int(self._docker("inspect", "--format", "{{.State.ExitCode}}", cid))
         )
-        if exit_code not in (None, 0) and _Cgroups.oom_kills(own) > 0:
+        try:
+            oom_kills: int | None = _Cgroups.oom_kills(own)
+        except RuntimeError:
+            if exit_code not in (None, 0):
+                raise  # after a non-zero exit, never read as 0
+            oom_kills = None
+        if exit_code not in (None, 0) and oom_kills:
             # killed for memory inside the container's own limit: Refute's guard, the exit
             # code kept, no D or S (the stop was not Refute's request)
             stopped = STOP_OUT_OF_MEMORY
@@ -483,6 +521,7 @@ class DockerBackend:
             latency,
             "perf_counter",
             None,
+            oom_kills,
         )
 
 
