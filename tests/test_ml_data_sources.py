@@ -602,8 +602,8 @@ def _offline_inputs(monkeypatch, tmp_path, dataset):
 
 def test_generated_data_are_neither_fetched_nor_counted(monkeypatch, tmp_path):
     fetched, prepare = _offline_inputs(monkeypatch, tmp_path, _generated_entry())
-    _, datasets = prepare()
-    assert datasets == {} and fetched == []
+    _, datasets, weights = prepare()
+    assert datasets == {} and fetched == [] and weights == {}
 
 
 def test_declared_weights_are_not_fetched_and_the_paper_goes_on(monkeypatch, tmp_path):
@@ -630,8 +630,9 @@ def test_declared_weights_are_not_fetched_and_the_paper_goes_on(monkeypatch, tmp
 
     monkeypatch.setattr(prod, "fetch_artifact", no_fetch)
     plan = {**plan_dict(DATA), "datasets": [_generated_entry()], "weights": [weights]}
-    repo, datasets = prod.prepare_inputs({"test_plan": plan}, tmp_path, tmp_path / "cache")
-    assert cloned == [tmp_path / "source"] and datasets == {}
+    repo, datasets, read = prod.prepare_inputs({"test_plan": plan}, tmp_path, tmp_path / "cache")
+    # a weights entry from outside the repository is not read at all
+    assert cloned == [tmp_path / "source"] and datasets == {} and read == {}
 
 
 GRAPH = b"\n".join(b"%d %d" % (i, i + 1) for i in range(50)) + b"\n"

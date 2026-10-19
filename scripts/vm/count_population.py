@@ -16,8 +16,11 @@ Two phases, run on the VM from the Refute checkout (the same profiles as measure
 The spec (JSON) is measure_paper.py's (name, repo_url, commit, python, base_image,
 exclude_newer, patches, data) plus: dataset and split (the derived split counted), script
 ({path, sha256} of the count script on the VM), configuration (a list of {path, sha256} of
-the files the selection reads, checked in the patched tree; empty when it reads none) and
-active_minutes (a cap per run).
+the files the selection reads, checked in the patched tree; empty when it reads none),
+weights (optional: a list of {path, sha256, size_bytes} of the weights that are files of
+the repository; each must be in configuration, is verified as a regular blob of the commit
+and is mounted read only from Refute's verified copy in place of the tree's, as in the runs,
+wp3-repository-weights-acceptance.md) and active_minutes (a cap per run).
 """
 
 from __future__ import annotations
@@ -36,6 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import measure_paper as mp  # noqa: E402 - the same build, isolation and timing helpers
 
 from refute.core.canonical import canonical_bytes  # noqa: E402
+from refute.packs.ml import patches as pt  # noqa: E402
 from refute.packs.ml import production as pd  # noqa: E402
 from refute.packs.ml import schema as sch  # noqa: E402
 from refute.packs.ml.docker_backend import ContainerPlan, DockerBackend  # noqa: E402
@@ -65,7 +69,33 @@ def build(spec: dict, root: Path) -> dict:
     return record
 
 
-def count_once(spec: dict, root: Path, image: str, script: bytes, n: int) -> dict:
+def verified_weights(spec: dict, root: Path) -> list[tuple[Path, str]]:
+    """The spec's weights, each listed in configuration with its SHA-256, verified in the
+    clone as a regular blob of the commit and copied read only into the count's root
+    (production.verified_copy): (copy, path) pairs."""
+    listed = {(str(PurePosixPath(c["path"])), c["sha256"]) for c in spec["configuration"]}
+    tree = subprocess.run(
+        ["git", "-C", str(root / "clone"), "ls-tree", "-r", "-z", "--full-tree", spec["commit"]],
+        capture_output=True, text=True, check=True,
+    ).stdout  # fmt: skip
+    entries = pt.commit_entries(tree)
+    out = []
+    for w in spec.get("weights", []):
+        if (str(PurePosixPath(w["path"])), w["sha256"]) not in listed:
+            raise SystemExit(f"{w['path']}: weights not listed in configuration with their sha256")
+        copy, why = pd.verified_copy(
+            root / "clone", w["path"], w["sha256"], int(w["size_bytes"]), root / "verified",
+            entries=entries,
+        )  # fmt: skip
+        if copy is None:
+            raise SystemExit(f"{w['path']}: the weights are not verified ({why})")
+        out.append((copy, w["path"]))
+    return out
+
+
+def count_once(
+    spec: dict, root: Path, image: str, script: bytes, n: int, weights: list[tuple[Path, str]]
+) -> dict:
     work = root / f"count-{n}"
     source = root / "patched" if (root / "patched").is_dir() else root / "clone"
     pd._copy_repo(source, work)  # noqa: SLF001 - production's own copy
@@ -78,8 +108,22 @@ def count_once(spec: dict, root: Path, image: str, script: bytes, n: int) -> dic
         path = work / PurePosixPath(item["path"])
         if file_sha256(path) != item["sha256"]:
             raise SystemExit(f"{item['path']}: SHA-256 differs from the spec in the patched tree")
+    mounts = [(str(Path(s["path"]).resolve()), t) for t, s in spec["data"].items()]
+    for copy, rel in weights:
+        # the tree's copy leaves and Refute's verified copy is mounted read only there; the
+        # folders above it are sticky, so the run's uid cannot swap it (as production does)
+        place = work / PurePosixPath(rel)
+        if place.is_symlink() or not place.is_file():
+            raise SystemExit(f"{rel} is not a regular file of the tree")
+        place.unlink()
+        for folder in [place.parent, *place.parent.parents]:
+            if folder == work or work not in folder.parents:
+                break
+            folder.chmod(0o1777)
+        copy.chmod(0o444)
+        mounts.append((str(copy.resolve()), rel))
     work.chmod(0o1777)
-    mounts = tuple((str(Path(s["path"]).resolve()), t) for t, s in spec["data"].items())
+    mounts = tuple(mounts)
     backend = DockerBackend(
         mp.run_paper_id({**spec, "run_id": f"count{n}"}),
         mp.LIMITS,
@@ -123,7 +167,10 @@ def count(spec: dict, root: Path) -> tuple[dict, bool]:
     for source in spec["data"].values():
         if mp.sha256(Path(source["path"])) != source["sha256"]:
             raise SystemExit(f"{source['path']}: SHA-256 differs from the spec")
-    runs = [count_once(spec, root, built["image"], script, n) for n in range(1, REPEATS + 1)]
+    weights = verified_weights(spec, root)
+    runs = [
+        count_once(spec, root, built["image"], script, n, weights) for n in range(1, REPEATS + 1)
+    ]
     counts = [r["count_lines"][0] if len(r["count_lines"]) == 1 else None for r in runs]
     ok = all(r["exit_code"] == 0 and r["stopped"] is None for r in runs)
     ok = ok and counts[0] is not None and len(set(counts)) == 1

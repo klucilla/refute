@@ -198,12 +198,15 @@ class PaperSetup:
     micromamba_image: str = MICROMAMBA_IMAGE_DEFAULT
     exclude_newer: str = ""  # filled from the claim when empty
     extra_env: Mapping[str, str] = field(default_factory=dict)  # e.g. a data folder variable
-    # the declared weights, recorded as not fetched, checked or mounted by version 1
-    # (wp3-declared-weights-acceptance.md)
+    # the declared weights from outside the repository, recorded as not fetched, checked or
+    # mounted by version 1 (wp3-declared-weights-acceptance.md)
     weights: tuple[str, ...] = ()
     # the allowed patches applied to the clone (patches.prepare, W3.9a): their bytes'
     # SHA-256, the touched files and the manifests of the clone and of ``repo``
     patch_record: Mapping[str, Any] = field(default_factory=dict)
+    # the weights that are files of the repository, verified after the checkout and
+    # mounted read only in every run container (wp3-repository-weights-acceptance.md)
+    repository_weights: Mapping[str, ig.WeightsEvidence] = field(default_factory=dict)
 
     def record(self) -> dict[str, Any]:
         return {
@@ -212,11 +215,24 @@ class PaperSetup:
                 "fetched": False,
                 "checked": False,
                 "mounted": False,
-                "reason": "declared weights are not fetched, checked or mounted by "
-                "version 1 (an unsupported capability)",
+                "reason": "declared weights from outside the repository are not fetched, "
+                "checked or mounted by version 1 (an unsupported capability)",
             }
             if self.weights
             else None,
+            "repository_weights": {
+                name: {
+                    "path": e.rel,
+                    "sha256": e.sha256,
+                    "verified": e.copy is not None,
+                    # planned for every run container; the containers created are in the
+                    # run's records
+                    "mount_planned": e.copy is not None,
+                    "reason": e.reason,
+                }
+                for name, e in sorted(self.repository_weights.items())
+            }
+            or None,
             "patches": dict(self.patch_record),
             "paper": self.paper,
             "data_layout": dict(self.data_layout),
@@ -434,9 +450,16 @@ def patch_tree(
         )
     commit = plan["repository"]["commit"]
     entries = pt.commit_entries(repository.ls_tree(clone, commit))
+    # no patch may touch a data path or a file of the repository Refute verified (datasets,
+    # weights: wp3-repository-weights-acceptance.md)
     data_paths = sorted(
         {*data_layout.values()}
         | {d["path"] for d in plan["datasets"] if sch.dataset_origin(d) == sch.REPOSITORY_FILE}
+        | {
+            w["path"]
+            for w in plan.get("weights", [])
+            if sch.weights_origin(w) == sch.REPOSITORY_FILE
+        }
     )
     try:
         record = pt.prepare(clone, dest, [(n, patch_bytes[n]) for n in listed], data_paths, entries)
@@ -481,6 +504,19 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
                 # no verified copy: nothing is mounted there, the runs see the clone as it
                 # is, and data_present is not a pass (section 1)
                 unverified.add(d["path"])
+    # the weights that are files of the repository, verified: in the runs' containers only
+    # (not the builds, not the readers), the clone's copy leaves and the verified copy is
+    # mounted there (wp3-repository-weights-acceptance.md); unverified, nothing is mounted
+    # and the claims that name them are not run
+    weights = [e.rel for e in setup.repository_weights.values() if e.copy is not None]
+    # compared as normalized paths: a/b, a//b and a/./b are one mount target (Codex review)
+    collide = sorted(
+        {str(PurePosixPath(w)) for w in weights}
+        & {str(PurePosixPath(r)) for r in setup.data_layout.values()}
+    )
+    if collide:
+        raise ProductionError(f"a weights file is also a data path: {collide}")
+    repository_files.update(weights)
     for cid in ig.plan_container_ids(claim_file):
         folder = ws_root / _safe(cid)
         if cid.startswith(ig.READER_PREFIX):
@@ -495,7 +531,10 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
                 # the copy is the patched tree, byte for byte (W3.9a, section 3)
                 check_copy(folder, setup.patch_record["patched_manifest"])
         if not cid.startswith("setup/build/"):
-            for rel in setup.data_layout.values():
+            mounted = list(setup.data_layout.values())
+            if not cid.startswith(ig.READER_PREFIX):
+                mounted += weights
+            for rel in mounted:
                 if rel in unverified:
                     continue
                 target = folder / PurePosixPath(rel)
@@ -529,7 +568,9 @@ def prepare_workspaces(setup: PaperSetup, claim_file: Mapping[str, Any]) -> dict
     return workspaces
 
 
-def data_mounts(setup: PaperSetup) -> tuple[tuple[str, str], ...]:
+def data_mounts(setup: PaperSetup, weights: bool = True) -> tuple[tuple[str, str], ...]:
+    """The read-only mounts of a container: every dataset Refute holds, and (``weights``:
+    a run's container) every verified weights file of the repository."""
     mounts = []
     for name, rel in setup.data_layout.items():
         evidence = setup.datasets.get(name)
@@ -538,6 +579,12 @@ def data_mounts(setup: PaperSetup) -> tuple[tuple[str, str], ...]:
             continue  # absent: the data_present gate records it
         Path(path).chmod(0o444)  # the canonical file: read only for everyone
         mounts.append((str(Path(path).resolve()), rel))
+    if weights:
+        for _, e in sorted(setup.repository_weights.items()):
+            if e.copy is None:
+                continue  # not verified: the claims naming it are not run
+            Path(e.copy).chmod(0o444)
+            mounts.append((str(Path(e.copy).resolve()), e.rel))
     return tuple(mounts)
 
 
@@ -569,7 +616,8 @@ def build_harness(
                 base = setup.micromamba_image
             plans[folder] = ContainerPlan(base, network="proxy", commit_as=image, read_only=False)
         else:
-            plans[folder] = ContainerPlan(image, data_mounts=data_mounts(setup))
+            run = not cid.startswith(ig.READER_PREFIX)
+            plans[folder] = ContainerPlan(image, data_mounts=data_mounts(setup, weights=run))
     backend = DockerBackend(setup.paper, setup.limits, plans)
     rung_by_name: dict[str, ld.Rung] = {}
 
@@ -595,6 +643,7 @@ def build_harness(
         after_setup=after_setup,
         reader_command=reader_argv,
         data_paths=dict(setup.data_layout),
+        weights=dict(setup.repository_weights),
     )
     return harness, backend
 
@@ -1043,50 +1092,109 @@ def repository_file(
     FAIL, the claim INCONCLUSIVE)."""
     name, url, sha256, size = sch.artifact_identity(dict(dataset))
     spec = RepositoryFileSpec(name, url, sha256, size)
-
-    def refused() -> ig.DatasetEvidence:
+    copy, why = verified_copy(repo, dataset["path"], sha256, size, cache)
+    if copy is None:
+        if why != OTHER_BYTES:
+            return None  # no file: data_present INCONCLUSIVE (section 1)
         failure = GateFailure(FailureCause.UNDETERMINED)
         return ig.DatasetEvidence(FetchResult(spec, None, False, (), failure), None)
+    counts = rd.split_counts(copy, dataset["splits"])
+    return ig.DatasetEvidence(FetchResult(spec, copy, True, (), None), counts)
 
-    rel = PurePosixPath(dataset["path"])
+
+OTHER_BYTES = "other bytes than declared"
+
+
+def verified_copy(
+    repo: Path,
+    rel_path: str,
+    sha256: str,
+    size: int,
+    cache: Path,
+    entries: Mapping[str, tuple[str, str]] | None = None,
+) -> tuple[Path | None, str]:
+    """A file of the repository read once after the checkout, before any build or code of
+    the repository runs (a dataset, wp3-data-sources-acceptance.md section 1; weights,
+    wp3-repository-weights-acceptance.md): a regular file inside the clone, reached through
+    no link in any component of its path, copied into Refute's cache (no link there either),
+    made read only and hashed again. With ``entries`` (the commit's tree,
+    ``patches.commit_entries``) the path must also be a regular blob of the commit with
+    these bytes, so a file the commit does not hold (under ``.git``, untracked) is refused.
+    Returns the copy and "", or None and why not."""
     current = repo
-    for part in rel.parts:
+    for part in PurePosixPath(rel_path).parts:
         current = current / part
         if current.is_symlink():
-            return None  # no file: data_present INCONCLUSIVE (section 1)
-    if not _inside(repo, current) or not current.is_file():
-        return None
+            return None, "reached through a link"
+    if not _inside(repo, current):
+        return None, "outside the clone"
+    entry = None
+    if entries is not None:
+        entry = entries.get(str(PurePosixPath(rel_path)))
+        if entry is None or entry[0] not in ("100644", "100755"):
+            return None, "not a regular file of the commit's tree"
+    if not current.exists():
+        return None, "missing"
+    if not current.is_file():
+        return None, "not a regular file"
     data = current.read_bytes()
     if hashlib.sha256(data).hexdigest() != sha256 or len(data) != size:
-        return refused()
+        return None, OTHER_BYTES
+    if entry is not None and pt.blob_sha1(data) != entry[1]:
+        return None, "not the commit's bytes"
     folder = cache / "repository-files"
+    if any(p.is_symlink() for p in (cache, folder)):
+        return None, "Refute's cache is reached through a link"
     folder.mkdir(parents=True, exist_ok=True)
     copy = folder / sha256
+    if copy.is_symlink():
+        return None, "Refute's cache is reached through a link"
     if not copy.exists():
         partial = folder / f".{sha256}.partial"
         partial.write_bytes(data)
         partial.replace(copy)
     copy.chmod(0o444)
-    if hashlib.sha256(copy.read_bytes()).hexdigest() != sha256:
-        return refused()
-    counts = rd.split_counts(copy, dataset["splits"])
-    return ig.DatasetEvidence(FetchResult(spec, copy, True, (), None), counts)
+    if copy.is_symlink() or hashlib.sha256(copy.read_bytes()).hexdigest() != sha256:
+        return None, OTHER_BYTES
+    return copy, ""
+
+
+def repository_weights(
+    repo: Path, plan: Mapping[str, Any], cache: Path
+) -> dict[str, ig.WeightsEvidence]:
+    """The weights entries that are files of the repository, each verified as a regular
+    blob of the commit's tree (``verified_copy`` with the tree), by entry name; the
+    downloaded ones are not read by version 1 (wp3-repository-weights-acceptance.md,
+    section 1)."""
+    wanted = [w for w in plan.get("weights", []) if sch.weights_origin(w) == sch.REPOSITORY_FILE]
+    if not wanted:
+        return {}
+    entries = pt.commit_entries(repository.ls_tree(repo, plan["repository"]["commit"]))
+    out = {}
+    for w in wanted:
+        copy, why = verified_copy(
+            repo, w["path"], w["sha256"], int(w["size_bytes"]), cache, entries=entries
+        )
+        out[w["name"]] = ig.WeightsEvidence(w["path"], w["sha256"], copy, why or None)
+    return out
 
 
 def prepare_inputs(
     claim_file: Mapping[str, Any], root: Path, cache: Path
-) -> tuple[Path, dict[str, ig.DatasetEvidence]]:
-    """Clones the repository at the claim's commit and fetches every declared dataset with
-    Refute's fetcher (with the build, the only network access of a paper run, through the
-    allowlist proxy). The splits are counted by ``readers``; an unreadable split gives no
-    count, so ``data_present`` is ``INCONCLUSIVE``, never a pass."""
+) -> tuple[Path, dict[str, ig.DatasetEvidence], dict[str, ig.WeightsEvidence]]:
+    """Clones the repository at the claim's commit, verifies the weights that are files of
+    the repository, and fetches every declared dataset with Refute's fetcher (with the
+    build, the only network access of a paper run, through the allowlist proxy). The splits
+    are counted by ``readers``; an unreadable split gives no count, so ``data_present`` is
+    ``INCONCLUSIVE``, never a pass."""
     plan = claim_file["test_plan"]
-    # declared weights (checkpoint evaluation, a pre-trained input, inputs of generated
-    # data) are not fetched, checked or mounted by version 1: the claims that need them
-    # are not run (integration.needs_weights), the others run
-    # (wp3-declared-weights-acceptance.md, section 1)
     repo = repository.clone(plan["repository"]["url"], root / "source")
     repository.checkout(repo, plan["repository"]["commit"])
+    # the weights that are files of the repository: verified right after the checkout,
+    # before the patches, the build or any code of the paper; weights from outside are not
+    # fetched, checked or mounted by version 1, and the claims that need them are not run
+    # (integration.not_run_reason; wp3-repository-weights-acceptance.md)
+    weights = repository_weights(repo, plan, cache)
     absent = plan["absent_artifact"]
     datasets: dict[str, ig.DatasetEvidence] = {}
     for d in plan["datasets"]:
@@ -1107,7 +1215,7 @@ def prepare_inputs(
         )
         counts = rd.split_counts(result.path, d["splits"]) if result.path is not None else None
         datasets[d["name"]] = ig.DatasetEvidence(result, counts)
-    return repo, datasets
+    return repo, datasets, weights
 
 
 # ---- a population counted before the lock (W3.12f) ------------------------------------------
@@ -1164,10 +1272,20 @@ def check_counted_environment(setup: PaperSetup, records: Sequence[Mapping[str, 
         for later in ld.RUNGS[ld.RUNGS.index(rung) + 1 :]:
             if (ws / _safe(f"setup/build/{later}") / ".refute" / "requirements.lock").exists():
                 raise ProductionError(f"{where} does not apply: the rung {later} ran after {rung}")
+        mounted = {
+            str(PurePosixPath(e.rel)): e.copy
+            for e in setup.repository_weights.values()
+            if e.copy is not None
+        }
         for item in record.get("configuration") or []:
             path = setup.repo / PurePosixPath(item["path"])
             if not _inside(setup.repo, path) or _file_sha256(path) != item.get("sha256"):
                 raise ProductionError(f"{where} does not apply: {item['path']} differs")
+            # a weights file the runs read from Refute's verified copy: the copy mounted is
+            # the one counted (wp3-repository-weights-acceptance.md)
+            copy = mounted.get(str(PurePosixPath(item["path"])))
+            if copy is not None and _file_sha256(Path(copy)) != item.get("sha256"):
+                raise ProductionError(f"{where} does not apply: the mounted {item['path']} differs")
 
 
 # ---- the paper's slice and the run phase ----------------------------------------------------
@@ -1289,7 +1407,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"refused: less than {args.min_free_gb:g} GB free on the VM", flush=True)
         return 2
     args.root.mkdir(parents=True)
-    repo, datasets = prepare_inputs(claim_file, args.root, args.cache)
+    repo, datasets, weights = prepare_inputs(claim_file, args.root, args.cache)
     layout = dict(item.split("=", 1) for item in args.data)
     patched, patch_record = patch_tree(claim_file, repo, args.root / "patched", patch_bytes, layout)
     limits = Limits(cpus=22, period_us=100_000, memory_bytes=12 << 30, pids=4096)
@@ -1304,7 +1422,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         timing=V22_MAXIMA,
         micromamba_image=args.micromamba_image,
         patch_record=patch_record,
-        weights=tuple(w["name"] for w in claim_file["test_plan"].get("weights", [])),
+        weights=tuple(
+            w["name"]
+            for w in claim_file["test_plan"].get("weights", [])
+            if sch.weights_origin(w) != sch.REPOSITORY_FILE
+        ),
+        repository_weights=weights,
     )
 
     def check_run(data: bytes, setup_ended: str) -> None:

@@ -435,6 +435,31 @@ class GeneratedDataset(_Model):
         return self
 
 
+class RepositoryFileWeights(_Model):
+    """Weights that are a file of the repository at the pinned commit, verified before any
+    code of the paper runs and mounted read only where the runs read them
+    (wp3-repository-weights-acceptance.md, section 1). An entry without ``origin`` is a
+    downloaded artifact, not run by version 1."""
+
+    name: str
+    origin: Literal["repository_file"]
+    path: str
+    commit: str = Field(pattern=HEX40)
+    sha256: str = Field(pattern=HEX64)
+    size_bytes: int = Field(ge=1)
+    license: str
+
+    @model_validator(mode="after")
+    def _check(self) -> RepositoryFileWeights:
+        _text(self.name, "weights name")
+        _text(self.license, "weights license")
+        _relative(self.path, "repository_file weights path")
+        parts = PurePosixPath(self.path).parts
+        if not parts or parts[0] == ".refute":
+            raise ValueError("repository_file weights path must name a file, not under .refute")
+        return self
+
+
 def _origin_of(value: Any) -> str:
     if isinstance(value, dict):
         return value.get("origin") or DOWNLOADED
@@ -449,9 +474,21 @@ AnyDataset = Annotated[
 ]
 
 
+AnyWeights = Annotated[
+    Annotated[Artifact, Tag(DOWNLOADED)] | Annotated[RepositoryFileWeights, Tag(REPOSITORY_FILE)],
+    Discriminator(_origin_of),
+]
+
+
 def dataset_origin(dataset: Any) -> str:
     """The origin of a dataset entry (a model or its resolved dict)."""
     return _origin_of(dataset)
+
+
+def weights_origin(weights: Any) -> str:
+    """The origin of a weights entry (a model or its resolved dict): ``repository_file``,
+    or ``downloaded`` when absent."""
+    return _origin_of(weights)
 
 
 REPOSITORY_URL_PREFIX = "repository:"
@@ -532,7 +569,7 @@ class MlTestPlan(_Model):
     repository: Repository
     build: Build
     datasets: list[AnyDataset] = Field(min_length=1)
-    weights: list[Artifact] = Field(default_factory=list)
+    weights: list[AnyWeights] = Field(default_factory=list)
     stages: Stages
     absent_artifact: AbsentArtifact
     threads: Threads
@@ -543,6 +580,26 @@ class MlTestPlan(_Model):
             names = [i.name for i in items]
             if len(set(names)) != len(names):
                 raise ValueError(f"two {what} entries share a name")
+        # a weights file of the repository is no other declared file of it, compared as
+        # normalized paths; two dataset entries may still name one file, as before
+        # (wp3-repository-weights-acceptance.md)
+        data_files = {
+            str(PurePosixPath(d.path))
+            for d in self.datasets
+            if isinstance(d, RepositoryFileDataset)
+        }
+        weights_files: list[str] = []
+        for w in self.weights:
+            if isinstance(w, RepositoryFileWeights):
+                if w.commit != self.repository.commit:
+                    raise ValueError(f"weights {w.name}: commit is not repository.commit")
+                path = str(PurePosixPath(w.path))
+                if path in data_files or path in weights_files:
+                    raise ValueError(
+                        f"weights {w.name}: another file of the repository (datasets, "
+                        "weights) shares its path"
+                    )
+                weights_files.append(path)
         weights = {w.name for w in self.weights}
         for d in self.datasets:
             if isinstance(d, GeneratedDataset):
@@ -1669,6 +1726,7 @@ class MlClaimSchema:
         self._check_population_counts(loaded, plan)
         for target in targets:
             self._check_target(plan, target)
+        self._check_counted_weights(loaded, plan, targets)
         self._check_exempt_minimums(loaded, plan, targets)
         inventory = _attachment_record(loaded, INVENTORY_ROLE)
         draw_record = _attachment_record(loaded, DRAW_ROLE)
@@ -1836,6 +1894,36 @@ class MlClaimSchema:
                 for ok, what in checks:
                     if not ok:
                         raise ValueError(f"{where}: the count record's {what} does not hold")
+
+    @staticmethod
+    def _check_counted_weights(
+        loaded: LoadedClaim, plan: MlTestPlan, targets: list[MlTarget]
+    ) -> None:
+        """A claim that names weights of the repository and measures a population counted
+        before the lock: the count record's configuration lists the weights' path with the
+        declared SHA-256, since the selection reads them; other bytes mean another K
+        (wp3-repository-weights-acceptance.md, section 1)."""
+        by_path = {a.path: a for a in loaded.claim.attachments}
+        weights = {w.name: w for w in plan.weights if isinstance(w, RepositoryFileWeights)}
+        datasets = {d.name: d for d in plan.datasets}
+        for t in targets:
+            w = weights.get(t.weights or "")
+            if w is None:
+                continue
+            derived = getattr(datasets[t.dataset], "derived_splits", None) or {}
+            split = derived.get(t.metric.split)
+            if split is None or split.counted_before_lock is None:
+                continue
+            record = _record_at(loaded, by_path[split.counted_before_lock.record])
+            listed = {
+                (str(PurePosixPath(item["path"])), item["sha256"])
+                for item in record.get("configuration") or []
+            }
+            if (str(PurePosixPath(w.path)), w.sha256) not in listed:
+                raise ValueError(
+                    f"{t.key}: the count record of {t.dataset}/{t.metric.split} does not list "
+                    f"the weights {w.name} ({w.path}) with their sha256 in its configuration"
+                )
 
     @staticmethod
     def _check_inventory(

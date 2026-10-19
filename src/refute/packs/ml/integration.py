@@ -126,6 +126,18 @@ class DatasetEvidence:
 
 
 @dataclass(frozen=True)
+class WeightsEvidence:
+    """A weights entry that is a file of the repository (wp3-repository-weights-acceptance.md,
+    section 1): its path in a run's folder and Refute's verified copy, read after the
+    checkout and before any code of the paper, or why there is none (``copy`` None)."""
+
+    rel: str
+    sha256: str
+    copy: Path | None
+    reason: str | None = None
+
+
+@dataclass(frozen=True)
 class Harness:
     backend: orc.Backend
     workspaces: Mapping[str, Path]  # container id -> its fresh folder
@@ -153,6 +165,9 @@ class Harness:
     # reader runs and those splits have no count (data_present INCONCLUSIVE).
     reader_command: Callable[[str | None, str, Mapping[str, str]], list[str]] | None = None
     data_paths: Mapping[str, str] = field(default_factory=dict)
+    # the weights that are files of the repository, by entry name; an entry absent here is
+    # not verified (wp3-repository-weights-acceptance.md)
+    weights: Mapping[str, WeightsEvidence] = field(default_factory=dict)
 
 
 # ---- the claims ---------------------------------------------------------------------------
@@ -548,24 +563,56 @@ def _stop_cause(values: Sequence[Value]) -> FailureCause:
     return FailureCause.UNDETERMINED
 
 
-# a claim that needs declared weights, in version 1 (wp3-declared-weights-acceptance.md)
+# a claim that needs declared weights from outside the repository, in version 1
+# (wp3-declared-weights-acceptance.md; wp3-repository-weights-acceptance.md)
 NOT_RUN_WEIGHTS = (
-    "not run: declared weights are not fetched, checked or mounted by version 1 "
-    "(an unsupported capability)"
+    "not run: declared weights from outside the repository are not fetched, checked or "
+    "mounted by version 1 (an unsupported capability)"
 )
 
 
-def needs_weights(claim: Mapping[str, Any], plan: Mapping[str, Any]) -> bool:
-    """Whether a claim needs declared weights: it names ``weights``, or its dataset is
-    generated with weights among its ``inputs``."""
-    if claim.get("weights"):
-        return True
+def _named_weights(claim: Mapping[str, Any], plan: Mapping[str, Any]) -> list[str]:
+    """The weights a claim needs: the entry it names, and the inputs of its dataset when
+    the dataset is generated."""
+    names = [claim["weights"]] if claim.get("weights") else []
     dataset = next((d for d in plan.get("datasets", []) if d["name"] == claim["dataset"]), None)
-    return bool(dataset is not None and sch.dataset_origin(dataset) == sch.GENERATED
-                and dataset.get("inputs"))  # fmt: skip
+    if dataset is not None and sch.dataset_origin(dataset) == sch.GENERATED:
+        names += list(dataset.get("inputs") or [])
+    return names
 
 
-def _with_stop_reasons(checks: list[TestResult], key: str, run) -> list[TestResult]:
+def needs_weights(claim: Mapping[str, Any], plan: Mapping[str, Any]) -> bool:
+    """Whether a claim needs declared weights that version 1 does not run: weights from
+    outside the repository that it names, or among its generated dataset's ``inputs`` (a
+    name with no entry counts as outside). Weights that are a file of the repository run
+    (wp3-repository-weights-acceptance.md)."""
+    entries = {w["name"]: w for w in plan.get("weights", [])}
+    return any(
+        n not in entries or sch.weights_origin(entries[n]) != sch.REPOSITORY_FILE
+        for n in _named_weights(claim, plan)
+    )
+
+
+def not_run_reason(
+    claim: Mapping[str, Any], plan: Mapping[str, Any], weights: Mapping[str, WeightsEvidence]
+) -> str | None:
+    """Why a claim is not run, on Refute's side, or None: weights from outside the
+    repository (NOT_RUN_WEIGHTS), or weights of the repository with no verified copy
+    (missing, through a link, other bytes: an error of the declaration, never the
+    artifact's failure)."""
+    if needs_weights(claim, plan):
+        return NOT_RUN_WEIGHTS
+    for name in _named_weights(claim, plan):
+        evidence = weights.get(name)
+        if evidence is None or evidence.copy is None:
+            why = evidence.reason if evidence is not None and evidence.reason else "not read"
+            return f"not run: the repository's weights {name} were not verified ({why})"
+    return None
+
+
+def _with_stop_reasons(
+    checks: list[TestResult], key: str, run, reason: str = NOT_RUN_WEIGHTS
+) -> list[TestResult]:
     """The run_completed gate of a claim not run for its weights, with the reasons the run
     recorded for its base steps and the paper's stop, if any (a setup that stopped, a
     budget, a Refute error): both reasons kept (wp3-declared-weights-acceptance.md)."""
@@ -576,8 +623,8 @@ def _with_stop_reasons(checks: list[TestResult], key: str, run) -> list[TestResu
                 reasons.append(s.reason)
         if run.stopped and f"the paper stopped: {run.stopped}" not in reasons:
             reasons.append(f"the paper stopped: {run.stopped}")
-    others = [r for r in reasons if r != NOT_RUN_WEIGHTS]
-    text = "; ".join([NOT_RUN_WEIGHTS, *others])
+    others = [r for r in reasons if r != reason]
+    text = "; ".join([reason, *others])
     return [
         _gate("run_completed", TestStatus.INCONCLUSIVE, text, 0, "runs")
         if c.name == "run_completed"
@@ -1479,6 +1526,9 @@ class PaperIntegration:
         ]
         return orc.Step(step, containers)
 
+    def _not_run(self, ctx: ClaimContext) -> str | None:
+        return not_run_reason(ctx.claim, self.plan, self.harness.weights)
+
     def build_plan(self) -> orc.PaperPlan | None:
         setup = self._setup()
         if setup is None:
@@ -1500,7 +1550,7 @@ class PaperIntegration:
                     [self._step(ctx, "base", "base_run")],
                     attacks,
                     lambda records, ctx=ctx: self._base_obtained(ctx, records),
-                    NOT_RUN_WEIGHTS if needs_weights(ctx.claim, self.plan) else None,
+                    self._not_run(ctx),
                 )
             )
         return orc.PaperPlan([setup, *self._reader_steps()], claims)
@@ -1537,11 +1587,12 @@ class PaperIntegration:
             if failure is not None:
                 failures["data_present"] = failure
         gate, failure = run_completed(flat)
-        if needs_weights(ctx.claim, self.plan):
+        reason = self._not_run(ctx)
+        if reason is not None:
             # not run on Refute's side, never the artifact's failure; a stop of the setup or
             # of the paper, if any, is kept with it (Codex review)
             other = gate.message if gate.status is not TestStatus.PASS else ""
-            text = f"{NOT_RUN_WEIGHTS}; {other}" if other else NOT_RUN_WEIGHTS
+            text = f"{reason}; {other}" if other else reason
             gate = _gate("run_completed", TestStatus.INCONCLUSIVE, text, 0, "runs")
             failure = GateFailure(FailureCause.REFUTE_ERROR)
         checks.append(gate)
@@ -1723,9 +1774,10 @@ class PaperIntegration:
         for ctx in self.contexts:
             checks, failures, base_values, base_series = self._base_checks(ctx, records, ladder)
             attacks, notes = [], []
-            if needs_weights(ctx.claim, self.plan):
-                notes.append(NOT_RUN_WEIGHTS)
-                checks = _with_stop_reasons(checks, ctx.key, run)
+            reason = self._not_run(ctx)
+            if reason is not None:
+                notes.append(reason)
+                checks = _with_stop_reasons(checks, ctx.key, run, reason)
             obtained = bool(run and run.base_obtained.get(ctx.key))
             for name in ctx.applicable():
                 if not obtained:

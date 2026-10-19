@@ -4,6 +4,7 @@ before any container runs. The real run is on the VM."""
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import sys
@@ -66,3 +67,77 @@ def test_a_spec_changed_after_the_build_is_refused(tmp_path, change):
     (tmp_path / "build.json").write_text(json.dumps(built), encoding="utf-8")
     with pytest.raises(SystemExit, match="differs from the build"):
         module.count({**SPEC, **change}, tmp_path)
+
+
+# ---- weights that are a file of the commit (wp3-repository-weights-acceptance.md) -------------
+
+CKPT = b"a frozen predictor" * 32
+
+
+def _clone(tmp_path):
+    from conftest import git
+
+    clone = tmp_path / "clone"
+    (clone / "saved").mkdir(parents=True)
+    git(clone, "init", "-q")
+    (clone / "saved" / "m.pth").write_bytes(CKPT)
+    (clone / "train.py").write_text("print(1)\n", encoding="utf-8")
+    git(clone, "add", "-A")
+    git(clone, "commit", "-q", "-m", "c")
+    return git(clone, "rev-parse", "HEAD").strip()
+
+
+def _weights_spec(commit, listed=True, data=CKPT):
+    digest = hashlib.sha256(data).hexdigest()
+    entry = {"path": "saved/m.pth", "sha256": digest}
+    return {
+        **SPEC,
+        "commit": commit,
+        "configuration": [entry] if listed else [],
+        "weights": [{**entry, "size_bytes": len(data)}],
+    }
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="a container plan takes the VM's POSIX paths")
+def test_the_count_reads_the_verified_weights_mounted_read_only(tmp_path, monkeypatch):
+    module = load()
+    commit = _clone(tmp_path)
+    weights = module.verified_weights(_weights_spec(commit), tmp_path)
+    ((copy, rel),) = weights
+    assert rel == "saved/m.pth" and copy.read_bytes() == CKPT
+    assert copy.parent == tmp_path / "verified" / "repository-files"
+    seen = {}
+
+    class Result:
+        exit_code, stopped, usage_usec = 0, None, 1
+
+    def run(backend, work, argv, log, minutes):
+        # the container is not started: its plan and its folder are read
+        seen["mounts"] = next(iter(backend.plans.values())).data_mounts
+        seen["tree"] = (work / "saved" / "m.pth").exists()
+        log.parent.mkdir(parents=True, exist_ok=True)
+        log.write_text("noise\nrefute-population-count 7\n", encoding="utf-8")
+        return Result(), 0.0
+
+    monkeypatch.setattr(module.mp, "run", run)
+    out = module.count_once(
+        _weights_spec(commit), tmp_path, "python@sha256:" + "b" * 64, b"print(7)\n", 1, weights
+    )
+    assert out["count_lines"] == ["7"] and out["exit_code"] == 0
+    assert seen["mounts"] == ((str(copy.resolve()), "saved/m.pth"),)
+    assert seen["tree"] is False  # the tree's copy left for the mount
+
+
+@pytest.mark.parametrize(
+    ("case", "match"),
+    [("unlisted", "not listed in configuration"), ("other bytes", "not verified")],
+)
+def test_weights_not_listed_or_not_verified_stop_the_count(tmp_path, case, match):
+    module = load()
+    commit = _clone(tmp_path)
+    if case == "unlisted":
+        spec = _weights_spec(commit, listed=False)
+    else:
+        spec = _weights_spec(commit, data=CKPT + b"x")
+    with pytest.raises(SystemExit, match=match):
+        module.verified_weights(spec, tmp_path)
