@@ -758,8 +758,11 @@ checked by `capture`). Two test fixtures sit in the authorized folder, each mark
 campaign configuration: `probe-non-default.json` (another block) and `probe-same-block.json` (the
 block of `m4-c1.json` under another name and file). One deviation from the design, declared: the
 A2 file-link case is skipped where the account cannot create a file symbolic link (Windows without
-the privilege; the junction case runs there, and CI on Linux runs both). JUnit: part B 124 and 74
-tests, part A 36 tests, 0 failures. **Sabotages** (SK1 to SK13, never committed, each restored):
+the privilege, `WinError 1314`; the junction case runs there; the CI workflow runs on Linux, which
+does not by itself show both passed there). JUnit: part B's first run 124 tests with **4 failures**
+(the lock tests' old full resolved hashes, before they were updated to extension 4's; corrected here
+after the Codex review: the first version of this record said 0), then 74 tests, 0 failures; part A
+36 tests, 0 failures, 1 skip. **Sabotages** (SK1 to SK13, never committed, each restored):
 twelve caught at once (the binding check skipped; the link check; the journal's refusals not read;
 a resume without a confirmation; the closure's check removed or not invalidating; the threshold
 without the plan's pair, without `b`, without `s`; a wrong pair recorded; extension 4 left out of
