@@ -72,9 +72,14 @@ the pixel data), period aliases, instrument systematics and eclipsing-binary cat
 
 The sharpest attack is the **blind holdout**. Hide an entire year of observations. Fit the
 orbit using only the other years. Predict when the transits should appear in the hidden
-year, each with an uncertainty window, then read the hidden year **only** inside those
-windows, their local baselines and control windows at the opposite phase. A real periodic
-signal passes. Noise rarely does.
+year, each with an uncertainty window; everything decided up to here uses only the other years
+and the hidden sectors' time spans. Then, in a round that reaches the measurement, the whole
+hidden year is detrended once, with each predicted window masked out to the inner edge of its
+baseline band; that step is not logged,
+and its outlier clipping can drop hidden cadences. After it, the test reads the hidden year only
+inside the predicted windows, their baseline bands and control windows at the opposite phase,
+and every such read is logged. The test checks whether the predicted signal recurs in the hidden
+year. Insufficient validity or capacity makes a round inconclusive.
 
 ## How a TESS signal claim moves through Refute
 
@@ -107,8 +112,11 @@ never change the verdict.</sub>
    depth, nearby contamination, period alias, systematics and catalog cross-match
    ([gauntlet v0.2](docs/gauntlet-tess-v0.2.md)).
 4. **Blind holdout.** Each observing year is hidden in turn and must be predicted from the
-   others. The code that reads the hidden year can only open the predicted windows, their
-   local baseline bands and the phase-0.5 control windows.
+   others. In a round that reaches the measurement, the whole hidden year is detrended once,
+   with each predicted window masked out to the inner edge of its baseline band (not logged;
+   its clipping can drop hidden cadences). After that, the code can only open the predicted
+   windows, their local baseline bands and the phase-0.5 control windows, and every read is
+   logged.
 5. **Independent review** *(from v0.2)*. Fresh, read-only agent sessions receive
    only the dossier and try to refute it ([protocol](docs/reviewer-protocol.md)). Their
    reports are attached to the dossier with `refute review attach`. They can raise

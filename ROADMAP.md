@@ -44,6 +44,16 @@ the next phase is **v0.2.1 Gauntlet fixes** (the TESS fixes, the project's focus
 **v0.4 Discover** comes after it. The order of the sections below is unchanged, and no exit
 criterion of any phase changes.
 
+**Parallel reopening of v0.2.1 (decided by the maintainer on 2026-10-17).** v0.2.1 Gauntlet
+fixes is reopened in parallel with v0.3, as an explicit exception to "One phase at a time".
+v0.3 stays the current phase and has priority in every shared component: the machine (v0.2.1
+runs on logical processors 0 to 7, at most 6 workers, until v0.3 is sealed), the `main`
+branch, CI, and the code hash of the v0.3 locks (nothing under `src/`, `pyproject.toml` or
+`uv.lock` reaches `main` before v0.3 is sealed). The v0.2.1 work runs on branch
+`claude/v0-2-1-reopen` and is merged into `main` only by the maintainer's approval, after the
+v0.3 seal. The v0.2.1 exit criteria do not change, and the FAIL of the v0.2 calibration stays a
+valid result. Plan: [docs/plans/v0.2.1-reopen-plan.md](docs/plans/v0.2.1-reopen-plan.md).
+
 ---
 
 ## v0.1 Calibration

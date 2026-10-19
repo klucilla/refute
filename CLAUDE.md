@@ -38,7 +38,11 @@ reproducible code.
    Keep the format simple and documented so it can interoperate with PRML later.
 3. **Gauntlet**: domain-specific falsification tests, written as deterministic code.
 4. **Blind holdout**: part of the data stays hidden; predictions are made from the
-   rest and checked only at predicted windows.
+   rest and checked at predicted windows. In a round that reaches the measurement, the
+   hidden year is detrended once before any logged read, each window masked out to the
+   inner edge of its baseline band (its
+   clipping can drop hidden cadences); after that, only the predicted windows, their
+   baseline bands and the control windows are read, and every read is logged.
 5. **Independent reviewers** (v0.2+): fresh, read-only agent sessions that receive
    only the dossier, never the original reasoning.
 6. **Evidence dossier**: verdict, scripts, data hashes, plots, environment lockfile.
