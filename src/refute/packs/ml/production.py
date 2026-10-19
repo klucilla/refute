@@ -1181,11 +1181,14 @@ def verified_copy(
     return copy, ""
 
 
-LINKED_CACHE = "Refute's cache is reached through a link"
+LINKED_CACHE = "Refute's cache is reached through a link or '..'"
 
 
 def _through_link(path: Path) -> bool:
-    """Whether the absolute path, or a folder above it, is a symbolic link."""
+    """Whether the path has a '..' component (normalizing it would hide a link before it,
+    Codex review, round 3), or the absolute path or a folder above it is a symbolic link."""
+    if ".." in Path(path).parts:
+        return True
     absolute = Path(os.path.abspath(path))
     return any(p.is_symlink() for p in (absolute, *absolute.parents))
 

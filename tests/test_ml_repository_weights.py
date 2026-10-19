@@ -302,6 +302,17 @@ def test_a_cache_below_a_linked_folder_gives_no_copy(tmp_path):
     assert out.copy is None and out.reason == prod.LINKED_CACHE
 
 
+def test_a_cache_path_with_a_parent_component_gives_no_copy(tmp_path):
+    """'..' is refused before any normalization, which would hide a link before it
+    (Codex review, round 3)."""
+    repo, commit = _clone(tmp_path)
+    (tmp_path / "a").mkdir()
+    plan = {"repository": {"commit": commit}, "weights": [repo_weights(commit)]}
+    out = prod.repository_weights(repo, plan, tmp_path / "a" / ".." / "cache")["ckpt"]
+    assert out.copy is None and out.reason == prod.LINKED_CACHE
+    assert not (tmp_path / "cache").exists()
+
+
 def test_weights_from_outside_are_not_read(tmp_path):
     plan = {"repository": {"commit": "a" * 40}, "weights": [dict(EXTERNAL)]}
     # no Git call: the folder is not a repository
