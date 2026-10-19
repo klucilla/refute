@@ -133,15 +133,56 @@ def timing_cases() -> list[dict]:
     return out
 
 
+# The timing lot's own configuration (Amendment 26, 6), checked before any generation (added after
+# the Codex review of the stage: any loaded configuration was accepted).
+TIMING_CONFIGURATION = {
+    "name": "M4-rmin-timing",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-timing.json",
+}
+TIMING_SETTINGS = {"r_min": 8, "capacity_b": 0.0, "capacity_s": 0.0}
+TIMING_WORKERS = 6
+TIMING_AFFINITY = "0xff"  # logical processors 0 to 7
+
+
 def calibration_identity() -> dict:
     ident = v3.STATE["identity"]
     return {k: ident[k] for k in ("path", "sha256", "block_sha256")}
 
 
-def time_target(case: dict) -> dict:
+def timing_configuration_problems(identity: dict | None, plan) -> list[str]:
+    """Why the loaded configuration is not the timing lot's (empty when it is)."""
+    if identity is None:
+        return ["no configuration identity"]
+    problems = [
+        f"{key} {identity.get(key)!r} is not {value!r}"
+        for key, value in TIMING_CONFIGURATION.items()
+        if identity.get(key) != value
+    ]
+    c = plan.gauntlet.corrections
+    problems += [
+        f"{key} {getattr(c, key)!r} is not {value!r}"
+        for key, value in TIMING_SETTINGS.items()
+        if getattr(c, key) != value
+    ]
+    return problems
+
+
+def aggregate(outcomes: list[dict]) -> str:
+    """``run_holdout``'s aggregation of a target's rounds: any FAIL gives FAIL; otherwise any PASS
+    gives PASS; otherwise INCONCLUSIVE."""
+    statuses = [o["status"] for o in outcomes]
+    if "FAIL" in statuses:
+        return "FAIL"
+    if "PASS" in statuses:
+        return "PASS"
+    return "INCONCLUSIVE"
+
+
+def time_target(case: dict, expected: dict | None = None) -> dict:
     """One target of the timing lot: the generation, then each scenario's rounds (with the twin)
     and its derivation and aggregation over the five R. Only times are returned: no record, count
-    or outcome leaves this function (Amendment 26, 6)."""
+    or outcome leaves this function (Amendment 26, 6). ``expected`` is the main process's
+    configuration identity; this worker's must be the same and the timing lot's."""
     import os
     import time
 
@@ -151,6 +192,11 @@ def time_target(case: dict) -> dict:
     if v3.STATE["problem"] is not None:
         raise RuntimeError(f"the M4 configuration is not loaded: {v3.STATE['problem']}")
     plan = v3._plan()
+    problems = timing_configuration_problems(v3.STATE["identity"], plan)
+    if problems:
+        raise RuntimeError("the configuration is not the timing lot's: " + "; ".join(problems))
+    if expected is None or v3.STATE["identity"] != expected:
+        raise RuntimeError("this worker's configuration has another identity than the main one")
     identity = calibration_identity()
     c = plan.gauntlet.corrections
     min_snr = plan.gauntlet.holdout_by_year.min_snr
@@ -177,7 +223,7 @@ def time_target(case: dict) -> dict:
             outcomes = [
                 derive_round(rec, r_min, c.capacity_b, c.capacity_s, min_snr) for rec in records
             ]
-            _ = (any(o["status"] == "FAIL" for o in outcomes), any(o["eligible"] for o in outcomes))
+            _ = (aggregate(outcomes), any(o["eligible"] for o in outcomes))
         t2 = time.perf_counter()
         times[scenario] = {"rounds": t1 - t0, "aggregation": t2 - t1, "total": t2 - t0}
         del records, outcomes
@@ -188,6 +234,7 @@ def time_target(case: dict) -> dict:
         "scenarios": times,
         "pid": os.getpid(),
         "identity_block_sha256": identity["block_sha256"],
+        "affinity": pv2.affinity_mask(),
     }
 
 
@@ -203,10 +250,20 @@ def run_timing_lot(out: Path, workers: int = 6) -> dict:
     from concurrent.futures import ProcessPoolExecutor
     from datetime import UTC, datetime
 
+    from functools import partial
+
     if out.exists():
         raise SystemExit(f"{out} exists; not replaced")
     if v3.STATE["problem"] is not None:
         raise SystemExit(f"the M4 configuration is not loaded: {v3.STATE['problem']}")
+    problems = timing_configuration_problems(v3.STATE["identity"], v3._plan())
+    if problems:
+        raise SystemExit("the configuration is not the timing lot's: " + "; ".join(problems))
+    if workers != TIMING_WORKERS:
+        raise SystemExit(f"the timing lot runs on {TIMING_WORKERS} workers, not {workers}")
+    affinity = pv2.affinity_mask()
+    if affinity != TIMING_AFFINITY:
+        raise SystemExit(f"the affinity is {affinity}, not {TIMING_AFFINITY} (processors 0 to 7)")
     os.environ.update(THREAD_ENV)
     cases = timing_cases()
     head = subprocess.run(
@@ -227,11 +284,14 @@ def run_timing_lot(out: Path, workers: int = 6) -> dict:
     wall = time.perf_counter()
     ctx = multiprocessing.get_context("spawn")
     with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as pool:
-        results = list(pool.map(time_target, cases))
+        results = list(pool.map(partial(time_target, expected=v3.STATE["identity"]), cases))
     wall = time.perf_counter() - wall
     expected = calibration_identity()["block_sha256"]
     if any(r["identity_block_sha256"] != expected for r in results):
         raise SystemExit("a worker measured another corrections block")
+    worker_affinities = sorted({str(r["affinity"]) for r in results})
+    if worker_affinities != [TIMING_AFFINITY]:
+        raise SystemExit(f"a worker ran with another affinity: {worker_affinities}")
     summary: dict = {}
     for group in sorted({r["group"] for r in results}):
         rows = [r for r in results if r["group"] == group]
@@ -254,6 +314,8 @@ def run_timing_lot(out: Path, workers: int = 6) -> dict:
         "code_commit": head,
         "configuration": {k: ident[k] for k in ("name", "path", "sha256", "block_sha256")},
         "workers": workers,
+        "affinity": affinity,
+        "worker_affinities": worker_affinities,
         "thread_env": THREAD_ENV,
         "wall_seconds": wall,
         "targets": len(results),

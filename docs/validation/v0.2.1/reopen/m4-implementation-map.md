@@ -772,6 +772,29 @@ and the record refuses an uncommitted checkout (it names its commit). Sabotages 
 leave with the times), SM2 (another index rule) and SM3 (no refusal without the configuration)
 caught. JUnit: the timing and alteration files 11 tests, 0 failures.
 
+**The end-of-stage review of these prerequisites** (Codex, read only, of `388afb6` to `664b0d0`,
+`.cache/v021/codex/stage-rmin1/`) found no path of the official round that the derivation fails to
+reproduce, and the twin and the alteration faithful; it objected, before the timing lot, to:
+(1) the runner accepting any loaded configuration (with `m4-c1.json` it would have measured
+`r_min` 20; Codex intercepted the call before any generation), and not checking its six workers
+and its affinity; (2) the timed aggregation being partial (only "any FAIL" and "any eligible");
+(3) the record's claim that ST5 cannot be caught through `d_twin`: with a zero replica variance at
+the grid's first dP and a positive one at the dP chosen, the mutation removes the twin's
+measurement, so it is equivalent only where the swap keeps the measurement admissible (the claim
+above is withdrawn); (4) three paths without an equivalence case against the official round
+(`no_predicted_window`, `non_finite_statistic`, an eligible `not_detected_not_inconsistent`).
+Corrected, each with its case: the runner refuses, before any generation, a configuration other
+than the timing lot's (its name, its path, `r_min` 8, the pair 0, 0) and a worker whose identity
+is not the main process's, runs on six workers only with the affinity `0xff` (logical processors 0
+to 7, read back and recorded, and each worker's too), and times the complete aggregation
+(`aggregate`: FAIL, then PASS, then INCONCLUSIVE); the twin case with the first dP's variance at 0;
+the three paths by replacing the measurement (or `count_n_pred`) for the record and the official
+round alike. Sabotages: SR1 (any configuration accepted), SR2 (another identity accepted), SR4 (PASS
+before FAIL) and ST5 on the new case caught; **SR3 (the operating conditions not checked)
+escaped**: the refusal of an uncommitted checkout also raised `SystemExit`; the case now requires
+the reason named, and SR3 run again on it was caught. JUnit: 26 tests of the new and changed cases,
+then the timing file 15 tests, 0 failures.
+
 ## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
 
 The maintainer's item 5 of 2026-10-18: the campaign declaration of the harness version 3, with its

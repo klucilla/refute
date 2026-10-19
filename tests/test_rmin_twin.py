@@ -130,6 +130,53 @@ def test_the_twin_reads_the_cadences_the_noisy_detrending_kept(curve):
         assert np.array_equal(f_a, f_b), read
 
 
+def _shifted(curve):
+    """The curve with the hidden year's transits moved by (epoch - n_ref) g (see below)."""
+    lc, sectors = curve
+    plan = _plan()
+    first = holdout._round(lc, sectors, 2020, plan)
+    grid = first.metrics["capacity"]["grid"]
+    eph = first.train_ephemeris
+    g = grid[(3 * len(grid)) // 4]
+    assert g > 0  # precondition: a non-zero grid value
+    base, _ = synthetic.make_lightcurve(None, sector_starts=TWO_BY_TWO, seed=3500)
+    k_ref = round((eph["t_ref"] - PLANET.t0) / PLANET.period)
+    train_unit = synthetic.trapezoid(
+        base.time, PLANET.period, PLANET.t0, 1.0, PLANET.duration, 0.15
+    )
+    hidden_unit = synthetic.trapezoid(
+        base.time, PLANET.period + g, PLANET.t0 - k_ref * g, 1.0, PLANET.duration, 0.15
+    )
+    unit = np.where(base.year == 2020, hidden_unit, train_unit)
+    built = LightCurveData(
+        base.time, base.flux - DEPTH * unit, base.flux_err, base.sector, base.year
+    )
+    return built, sectors, plan
+
+
+def test_the_twin_reads_the_replica_statistics_of_the_dp_chosen(curve, monkeypatch):
+    """Added after the Codex review of the stage: the twin's measurement exists only where the
+    replica variance at its dP is positive, so the statistics of another dP can remove it (the
+    sabotage ST5 is not equivalent in general; map Amendment 26's record). The variance at the
+    grid's first dP is set to 0 here (for the record and the twin alike), the dP chosen is
+    another."""
+    built, sectors, plan = _shifted(curve)
+    real = holdout.replica_stats
+
+    def first_zero(*args, **kwargs):
+        stats = real(*args, **kwargs)
+        if len(stats.per_dp) > 1:
+            stats.per_dp[0].var_rep = 0.0
+        return stats
+
+    monkeypatch.setattr(holdout, "replica_stats", first_zero)
+    rec = calibration_measurement(
+        built, sectors, 2020, plan, identity=_ident(plan), twin_model=built.flux.copy()
+    )
+    assert rec["dp"] is not None and rec["dp"] != 0.0  # precondition
+    assert rec["d_twin"] is not None and rec["d_twin"] == rec["d_hidden"]
+
+
 def test_the_twin_is_measured_at_the_dp_chosen_when_it_is_not_zero(curve):
     """Added after the sabotage ST2 (the twin at dP = 0) escaped: in the curve above the dP chosen
     is 0 (map Amendment 26's record). Two passes, deterministic: the first gives the round's grid

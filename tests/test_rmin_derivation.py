@@ -264,6 +264,64 @@ def test_the_derivation_follows_the_pair_at_the_thresholds_edges(records, name):
         assert ("pass", "insufficient_capacity_hidden_noise") in decisions
 
 
+def _patch_measurement(monkeypatch, change):
+    """Replace the hidden measurement by one changing its result (the same for the record and the
+    official round, so that the comparison stays a comparison of the two paths)."""
+    real = holdout.measure_with_replicas
+
+    def patched(*args, **kwargs):
+        result = real(*args, **kwargs)
+        if result.get("status") == "ok":
+            change(result)
+        return result
+
+    monkeypatch.setattr(holdout, "measure_with_replicas", patched)
+
+
+def _not_inconsistent(result):
+    e = abs(result["depth"]) / 6.0
+    result.update(depth=result["depth"] - 2.0 * e, error=e, snr=4.0)
+
+
+def _zero_error(result):
+    result.update(error=0.0, snr=float("inf"))
+
+
+@pytest.mark.parametrize(
+    "kind,expected",
+    [
+        ("no_predicted_window", "no_predicted_window"),
+        ("non_finite", "non_finite_statistic"),
+        ("not_inconsistent", "not_detected_not_inconsistent"),
+    ],
+)
+def test_the_derivation_equals_the_official_round_on_the_remaining_paths(
+    monkeypatch, kind, expected
+):
+    # added after the Codex review of the stage (map Amendment 26's record)
+    lc, sectors, year, extra = _case("strong")
+    if kind == "no_predicted_window":
+        monkeypatch.setattr(holdout, "count_n_pred", lambda windows, spans: 0)
+    elif kind == "non_finite":
+        _patch_measurement(monkeypatch, _zero_error)
+    else:
+        _patch_measurement(monkeypatch, _not_inconsistent)
+    plan8 = _plan(r_min=8, **extra)
+    rec = calibration_measurement(lc, sectors, year, plan8, identity=_ident(plan8))
+    seen = []
+    for r_min in (8, 20):
+        plan = _plan(r_min=r_min, **extra)
+        official = _official(holdout._round(lc, sectors, year, plan))
+        derived = derive_round(rec, r_min, 0.0, 0.0, plan.gauntlet.holdout_by_year.min_snr)
+        assert derived == official, (kind, r_min)
+        seen.append(derived)
+    assert seen[0]["reason"] == expected  # precondition: the path is reached
+    if kind == "not_inconsistent":
+        assert seen[0]["eligible"] is True and seen[0]["status"] == "INCONCLUSIVE"
+    else:
+        assert seen[0]["eligible"] is False
+
+
 @pytest.mark.parametrize("name", ("strong", "no_hidden_signal", "noisy_hidden", "weak"))
 def test_the_measured_fields_do_not_depend_on_r_min(records, name):
     lc, sectors, year, extra = _case(name)

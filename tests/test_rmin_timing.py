@@ -53,11 +53,7 @@ def test_only_times_leave_a_target(study, monkeypatch):
     plan_dict = synthetic.fast_plan_dict()
     plan_dict["gauntlet"] = {"corrections": {"version": 2, "enabled": True, "r_min": 8}}
     plan = TessTestPlan.model_validate(plan_dict)
-    monkeypatch.setattr(
-        study.v3,
-        "STATE",
-        {"problem": None, "identity": {"path": "p", "sha256": "0" * 64, "block_sha256": "1" * 64}},
-    )
+    monkeypatch.setattr(study.v3, "STATE", {"problem": None, "identity": _declared_identity()})
     monkeypatch.setattr(study.v3, "_plan", lambda: plan)
     calls = []
 
@@ -72,7 +68,7 @@ def test_only_times_leave_a_target(study, monkeypatch):
         lambda rec, r, b, s, m: {"status": "PASS", "eligible": True, "secret": 1},
     )
     case = study.timing_cases()[0]
-    out = study.time_target(case)
+    out = study.time_target(case, expected=_declared_identity())
     assert set(out) == {
         "target",
         "group",
@@ -80,6 +76,7 @@ def test_only_times_leave_a_target(study, monkeypatch):
         "scenarios",
         "pid",
         "identity_block_sha256",
+        "affinity",  # added after the Codex review of the stage: each worker's affinity
     }
     assert out["target"] == f"{study.TIMING_PREFIX}/{case['id']}"
     assert set(out["scenarios"]) == set(study.SCENARIOS)
@@ -95,3 +92,87 @@ def test_a_target_without_the_configuration_is_refused(study, monkeypatch):
     monkeypatch.setattr(study.v3, "STATE", {"problem": "not loaded", "identity": None})
     with pytest.raises(RuntimeError):
         study.time_target(study.timing_cases()[0])
+
+
+# --- added after the Codex review of the stage (map Amendment 26's record) -------------------
+
+
+def _timing_plan(**corrections):
+    from refute.packs.tess import synthetic
+    from refute.packs.tess.params import TessTestPlan
+
+    plan = synthetic.fast_plan_dict()
+    block = {"version": 2, "enabled": True, "r_min": 8, **corrections}
+    plan["gauntlet"] = {"corrections": block}
+    return TessTestPlan.model_validate(plan)
+
+
+def _declared_identity():
+    return {
+        "format": "refute-m4-configuration/1",
+        "name": "M4-rmin-timing",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-timing.json",
+        "sha256": "0" * 64,
+        "block_sha256": "1" * 64,
+    }
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"identity": {"name": "M4-c1"}},
+        {"identity": {"path": "docs/validation/v0.2.1/population/m4-configurations/m4-c1.json"}},
+        {"plan": {"r_min": 20}},
+        {"plan": {"capacity_b": 0.5}},
+        {"plan": {"capacity_s": 0.5}},
+    ],
+)
+def test_another_configuration_is_refused_before_any_generation(study, monkeypatch, change):
+    ident = {**_declared_identity(), **change.get("identity", {})}
+    plan = _timing_plan(**change.get("plan", {}))
+    monkeypatch.setattr(study.v3, "STATE", {"problem": None, "identity": ident})
+    monkeypatch.setattr(study.v3, "_plan", lambda: plan)
+
+    def never(case):
+        raise AssertionError("a case was generated")
+
+    monkeypatch.setattr(study.pv2, "build_case", never)
+    with pytest.raises(RuntimeError, match="not the timing lot's"):
+        study.time_target(study.timing_cases()[0], expected=_declared_identity())
+
+
+def test_a_worker_with_another_identity_is_refused(study, monkeypatch):
+    monkeypatch.setattr(study.v3, "STATE", {"problem": None, "identity": _declared_identity()})
+    monkeypatch.setattr(study.v3, "_plan", lambda: _timing_plan())
+    other = {**_declared_identity(), "sha256": "2" * 64}
+    with pytest.raises(RuntimeError, match="another identity"):
+        study.time_target(study.timing_cases()[0], expected=other)
+
+
+@pytest.mark.parametrize(
+    "condition", [{"workers": 5}, {"affinity": "0xffffffff"}, {"affinity": None}]
+)
+def test_the_lot_refuses_other_operating_conditions(study, monkeypatch, condition):
+    import uuid
+
+    out = ROOT / ".cache" / "test-rmin-timing" / uuid.uuid4().hex / "t.json"  # never created
+    monkeypatch.setattr(study.v3, "STATE", {"problem": None, "identity": _declared_identity()})
+    monkeypatch.setattr(study.v3, "_plan", lambda: _timing_plan())
+    monkeypatch.setattr(study.pv2, "affinity_mask", lambda: condition.get("affinity", "0xff"))
+    # the reason named (added after the sabotage SR3 escaped: the refusal of an uncommitted
+    # checkout also raises SystemExit)
+    with pytest.raises(SystemExit, match="workers|affinity"):
+        study.run_timing_lot(out, workers=condition.get("workers", 6))
+    assert not out.parent.exists()
+
+
+@pytest.mark.parametrize(
+    "statuses,expected",
+    [
+        (["PASS", "FAIL", "INCONCLUSIVE"], "FAIL"),
+        (["INCONCLUSIVE", "PASS"], "PASS"),
+        (["INCONCLUSIVE", "INCONCLUSIVE"], "INCONCLUSIVE"),
+    ],
+)
+def test_the_aggregation_is_the_holdouts(study, statuses, expected):
+    assert study.aggregate([{"status": s} for s in statuses]) == expected
