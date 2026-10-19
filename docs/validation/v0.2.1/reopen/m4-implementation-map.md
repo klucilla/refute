@@ -1951,6 +1951,29 @@ That variant, and the physical case on a real curve, stay recorded as pending.
   avoid it. Whether a corrected SNR of 4.75 is the honest significance of a 270 ppm planet in this
   noise, or the gate is too strict, is not decided by this one curve.
 
+**Complement 2: a strong true planet in the same noise (declared 2026-10-19, before its run).** The
+maintainer's decision of 2026-10-19, item 1: result (c) above stays recorded as it is; it may be the
+right behaviour under strong red noise, but the case does not yet show that the correction **keeps**
+a strong true planet. A test case is added, with no change of the method or of the pipeline.
+- **The construction:** the second construction's curve, unchanged but for the planet's depth: the
+  two-by-two layout (2018 and 2020, two sectors each), seed **3510**, white 600 ppm plus AR(1)
+  400 ppm with `τ` = 1 h, a planet of `synthetic.PLANET`'s ephemeris with depth **800 ppm**; the
+  round with 2020 hidden.
+- **The computation, before the run:** at a fixed noise and event duration the noise factor `β_D`
+  does not depend on the depth, and the BLS SNR (and so the corrected SNR, the BLS SNR divided by
+  `β_D`) grows linearly with it. Complement 1 measured, on this very curve, the 270 ppm planet at a
+  BLS SNR of 13.84 and a corrected SNR of 4.75 (`β_D` 2.91). At 800 ppm: BLS SNR ≈ 13.84 × 800 /
+  270 ≈ **41**, corrected SNR ≈ 4.75 × 800 / 270 ≈ **14.1**, twice the 7.1 threshold; and a planet
+  of BLS SNR 41 dominates the red-noise box the search found at 270 ppm (BLS SNR 10.79).
+- **The criterion:** (a) the train candidate of the round is the planet (its period within 1% of
+  the injected one, or of its half or double, the recovery diagnostic of complement 1); (b) its
+  corrected SNR is at least 7.1 and `train_snr_below_gate` is not among the train validity's
+  reasons; (c) the red-noise case still falls: the existing case of the second construction (270
+  ppm) still ends INCONCLUSIVE by `train_snr_below_gate`. Run at low priority on logical processors
+  0 to 7, beside the `R_min` study. **If the strong planet falls too, the work stops and goes to the
+  maintainer before anything else** (a defect that would affect the study in progress); no other
+  depth, seed or construction is tried.
+
 ## Amendment 17 (2026-10-18): the explicit, versioned activation of M4 across the flow
 
 The maintainer's decision of 2026-10-18 (14:00), item 2; Codex reviewed the design before the code
