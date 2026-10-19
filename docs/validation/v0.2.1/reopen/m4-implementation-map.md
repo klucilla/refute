@@ -630,6 +630,124 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
+
+The maintainer's item 5 of 2026-10-18: the campaign declaration of the harness version 3, with its
+binding to the configuration file, and the transport of `b` and `s`, are pre-registration; this is
+their design, reviewed by Codex (four rounds, ending in agreement; the first version was rewritten
+on its objections), brought to the maintainer as a package. **Nothing of it is implemented before the approval.** It changes no
+criterion, no threshold, no default of an existing setting and no existing campaign. It replaces
+the pending dispositions of Amendments 12 and 17 on `b` and `s` (module settings until the freeze; a
+`capacity` entry of the configuration file) and on the campaign declaration.
+
+**A. The identity contract of a version-3 campaign.**
+
+1. *The declaration* keeps version 2's format `refute-population-campaign/1` (version 2 is never
+   edited; it reads the whole JSON and checks named members only, so an extra member is tolerated)
+   with one more member, required by version 3:
+   `"m4_configuration": {"format": "refute-m4-configuration/1", "name": ..., "path": ..., "sha256": ...}`.
+2. *The path*: a relative, `/`-separated path, interpreted from the **root of the checkout that holds
+   the harness version 3** (never from the current directory), which must resolve, with no symbolic
+   link or junction on the way (each component checked), to a regular file directly inside the
+   authorized folder `docs/validation/v0.2.1/population/m4-configurations/`; absolute paths, `..`,
+   a missing file, a link, or a target outside that folder are refused. The comparison is on the
+   resolved target **and** the bytes' SHA-256, not on the text of the path: another file with
+   identical bytes at another path is refused.
+3. *One capture*: the configuration file is read once at start; that one byte string is parsed,
+   hashed and kept as the snapshot (the current loader reads it twice: corrected); the file named
+   by `REFUTE_M4_CONFIGURATION` must be the declaration's resolved target.
+4. *The checks*: version 3 wraps version 2's `open_campaign` and adds, after version 2's own checks,
+   a declaration problem when the member is missing or malformed, or when its `format`, `name`,
+   `path` or `sha256` does not match the captured file. Every **operational mode** (generate,
+   analyze, reconcile, resume) is then refused; the `status` mode **shows** the problem among the
+   declaration problems and exits as version 2 does (it refuses nothing). Since the declaration is
+   reopened and checked at every start, a resume with another configuration is refused.
+5. *The workers*: the main process derives the expected identity (resolved path, SHA-256, and the
+   SHA-256 of the canonical resolved corrections block) from the validated declaration and passes it
+   to the workers in the environment beside the file's location; each worker, before every
+   inherited analysis, checks its own captured file and its plan's resolved block against that
+   expected identity and refuses otherwise; every result it returns carries its identity, and the
+   main process (a wrapper of version 2's result callback) checks it for every result of every PID,
+   later-starting workers included, and treats a result with no valid identity as an
+   infrastructure error that stops the dispatch. The identity travels in the **envelope** the worker
+   returns, never in the persisted record (version 2's record schema is closed). Because the
+   inherited worker writes its record before returning, the main process keeps a version-3
+   **identity journal** in the run folder (append-only) with a positive **confirmation** for every
+   result it validated (case, PID, the persisted record's SHA-256, and the whole expected identity)
+   and a **refusal** for every result it refused (case, PID, reason). A **resume** accepts a persisted
+   record only when a confirmation exists that matches the file and the expected identity; a missing,
+   invalid or incomplete confirmation, a refusal, or a resolved corrections block that differs from
+   the expected identity's is a blocking integrity problem, never a valid record (this closes the
+   window between the inherited write and the main process's check).
+6. *The close*: the closure of an execution also checks that the configuration file still has the
+   captured bytes (R2 already checks it against HEAD at start); a difference **invalidates the
+   execution**: it cannot close as successful, and its results are not accepted.
+7. *Loading failures*: the configuration is no longer loaded at import time with an exit; a missing
+   or invalid file, invalid JSON or a missing environment variable is kept as a loading problem:
+   every operational mode refuses with it, and `status` shows it among the declaration problems.
+8. One configuration per campaign; an M5 candidate is another configuration file and another
+   campaign.
+
+**B. `b` and `s` as plan settings** (revision 4, 2: one pair, pooled over both noise models,
+estimated on the selection part as the median and `1.4826 × MAD` of `S_meas − S_pred`; revision 3,
+9.2: set within each configuration by that rule).
+
+1. Two new settings of the corrections block: `capacity_b` (finite; negative allowed; default 0.0)
+   and `capacity_s` (finite, ≥ 0; default 0.0); `holdout.py` reads them from the plan instead of
+   the module settings `CAPACITY_B`, `CAPACITY_S` (Amendment 12, both 0.0); `CAPACITY_K` = 1 stays a
+   module constant (a decision threshold). The threshold stays
+   `min_snr − b + Φ⁻¹(1 − 0.005/R) · s`; with the defaults it is `min_snr`, as today.
+2. The round's capacity record already carries `b` and `s` (then from the plan);
+   `calibration_measurement` gains an explicit identity argument (the configuration's resolved path,
+   bytes' SHA-256 and block SHA-256, given by its caller, never read from the environment), checked
+   against the plan's resolved block (a mismatch raises); its returned record carries the pair used
+   and that identity, in every return, the early one of a round decided before the hidden year
+   included (where `s_meas` stays absent).
+3. *The lifecycle*: the selection's first pass runs with a **provisional** configuration whose pair
+   is the default (0.0, 0.0), which is not a calibration; the pair estimated on the selection part by
+   revision 4, 2's rule goes into a **new configuration file with its own name and identity** (the
+   final configuration of the freeze); a file bound to a campaign is never rewritten. **The 21
+   conditions and the tolerances of the selection are evaluated with the estimated pair that will be
+   frozen, not the provisional one** (revision 4, 6); the procedure is detailed in the campaign
+   package.
+4. *The evidence of the pair*: the driver records the rounds included and excluded (each with its
+   reason), and the `S_meas − S_pred` values, enough to reproduce the median and the MAD.
+5. **Extension 4 of the historical table**: the two settings at their defaults added to the frozen
+   value of the corrections section (as extensions 1 to 3 did); the proof that both historical claims
+   still reach their locked claim hash by the projection (the claim component; `verify` stays
+   `TAMPERED` in the code component); the section written in the claim file, even at its defaults,
+   still refused; the new full resolved hashes; the sabotages.
+
+**C. The cases, declared before any code (written after the approval).**
+
+| Case | Required |
+|---|---|
+| A1 | a declaration with the right `m4_configuration` opens with no problem from version 3 (a diagnostic root under `.cache`) |
+| A2 | each a declaration problem and a refusal of the operational modes: the member missing; malformed; a wrong `format`, `name` or `sha256`; a path absolute, with `..`, missing, outside the authorized folder, through a link or a junction; another file with identical bytes at another path |
+| A3 | a declaration valid for version 2 itself (its own harness identity) gives the same problems with and without the extra member |
+| A4 | the main process with configuration A and a worker with a valid configuration B: the worker refuses before the inherited analysis; a result without a valid identity stops the dispatch and is journaled as a refusal; a worker starting late is checked too; a resume refuses the persisted record of a refused result, any persisted record whose block differs, and a record written before an interruption simulated between the inherited write and the main process's confirmation (no confirmation) |
+| A5 | a resume of a campaign with another configuration file (or the same file changed): refused at the opening; the file changed during an execution: the execution cannot close as successful and its results are not accepted |
+| A6 | `status` shows a declaration problem and exits as version 2 does; a missing or invalid configuration file, invalid JSON or no environment variable reaches `status` as a loading problem, and every operational mode refuses with it |
+| B1 | a non-default pair (`b` 0.4, `s` 0.8, and `b` negative): the threshold in the round record and the pair recorded equal values computed in the test from the formula (not by the production helper); decisions 1 and 2 change accordingly on a case built so that the threshold decides, with the hidden year read only as the access log allows |
+| B2 | with the default pair, piece 5's round results are bit-equal to today's (the round records; the resolved plan and its hashes change by the new keys, which is expected and stated) |
+| B3 | refused by the model: `capacity_s` < 0; either value NaN, +∞ or −∞; accepted: `s` = 0, `b` < 0 |
+| B4 | extension 4: both historical projections reach their locked hashes; `capacity_b` 0.1 and `capacity_s` 0.1 each refused by the projection, for both claims; the section written in the claim file refused |
+| B5 | `calibration_measurement`'s record carries the pair and the configuration identity given to it, in every return (past a capacity decision, and in the early return of a round decided before the hidden year, with `s_meas` absent); an identity whose block differs from the plan's raises |
+
+Sabotages: the binding check skipped (A2); the main/worker comparison removed (A4); the identity
+journal's refusals not read at resume, and a resume accepting a record without a confirmation (A4); the closure's configuration check removed, and kept but without
+invalidating the execution (A5); the threshold reading the module constants (B1); the right
+threshold with a wrong pair recorded (B1); `b` alone, or `s` alone, left out of the threshold (B1);
+the literal without the new keys, and with another default (B4).
+
+**For the maintainer to decide** (the package's questions): (1) the identity contract above (the
+path's root and folder, links refused, the main/worker comparison); (2) the lifecycle (a provisional
+configuration for the selection, a new final file with the estimated pair, one configuration per
+campaign); (3) the evidence of the pair (one pooled pair, the rounds and values recorded); (4) the
+limit of this approval: the design and the later implementation of these cases only; the campaign
+package itself (its point in `points.json`, its budget, its predecessor, the inherited counters,
+the selection's artifacts, the frozen configuration and the campaign's checkpoints) comes later, and
+this approval accepts no scientific criterion still unsatisfied (for example I2 correlated of piece 7).
 ## Amendment 24 (2026-10-18, declared after the retest of piece 7): the retest's result, and I2 correlated failed
 
 **The retest** (the tests of `9925c56` on the code of Amendment 23, committed as `159b929`; JUnit
