@@ -42,7 +42,10 @@ it.
   today, and its bytes are unchanged. A weights file shares its path with no other weights
   entry and no dataset that is a file of the repository, compared normalized (`a/b`, `a//b`
   and `a/./b` are one path); two dataset entries may still name one file, as before; at the
-  run no weights file is also a dataset's path in a run's folder.
+  run no weights file is also a dataset's path in a run's folder. A path two dataset
+  entries share is prepared and mounted once, from one source (the same verified bytes);
+  two different sources for one path stop the paper before its runs (Codex review, round
+  2, found that the preparation of the runs' folders did not yet handle a shared path).
 - **The scope is fixed by the approved definition, never to avoid a restriction.** Plan
   section 5: "full training, or evaluation of a released checkpoint". `checkpoint_evaluation`
   is the metric of a released model itself; `full_training` is a run that produces what it
@@ -57,8 +60,11 @@ it.
   the commit's tree (`git ls-tree`) with the same bytes (its Git blob id), so a file the
   commit does not hold (under `.git`, untracked) is refused (Codex review); its bytes are
   copied into Refute's cache, made read only, and hashed again. Refute's cache and the
-  folder of the copies are private to the engine (no container mounts them, no link is
-  followed there); between the check and the mount only the engine writes them. An allowed
+  folder of the copies are private to the engine (no container mounts them); no link is
+  followed there: the cache, its folder of copies and every folder above them are not
+  links, and the copy is written through a new temporary file created exclusively without
+  following a link (Codex review, round 2); between the check and the mount only the engine
+  writes them. An allowed
   patch may not touch the path (as for a dataset's path). The orchestrator never
   deserializes the file.
 - **Mounted read only where the run reads it.** In every container of a claim's runs (the
@@ -89,11 +95,14 @@ it.
 - **The count before the lock is bound to the file** (W3.12f). When a claim names
   repository weights and its metric's split is a population `counted_before_lock`, the count
   record's `configuration` must list the weights' path with the declared SHA-256 (the
-  selection reads them), or the claim is refused at validation. The count reads the same
-  bytes as the runs: its two containers get the weights the same way (verified in the clone
-  as a regular blob of the commit, the tree's copy removed, Refute's copy mounted read only,
-  the folders above sticky; `scripts/vm/count_population.py`, spec field `weights`, each
-  listed in `configuration`). At the run the configuration is checked again in the patched
+  selection reads them), and its `weights` must list them too, or the claim is refused at
+  validation. The count reads the same bytes as the runs: its two containers get the
+  weights the same way (verified in the clone as a regular blob of the commit, the tree's
+  copy removed, Refute's copy mounted read only, the folders above sticky;
+  `scripts/vm/count_population.py`, spec field `weights`, each listed in `configuration`),
+  and the record's `weights` (a list of `{path, sha256}`) names the weights so verified and
+  mounted, so a count that read the tree's file instead (a spec without `weights`) does
+  not bind (Codex review, round 2). At the run the configuration is checked again in the patched
   tree (as today) and, for a weights file, in Refute's copy that the runs mount. Another
   file invalidates the record: before the lock the count is made again; after the lock the
   paper stops before its runs as a Refute error (its claims `INCONCLUSIVE`), never an
@@ -118,12 +127,13 @@ its canonical bytes.
 **Must fail (refused at validation):** a path that is absolute, has `..`, a backslash or is
 under `.refute`; a commit that is not the repository's; two repository files with one path,
 also through an alias (`a//b`); a counted population whose record does not list the
-weights, or lists another SHA-256.
+weights in its `configuration` or in its `weights`, or lists another SHA-256.
 
 **Must fail (not run, `INCONCLUSIVE` on Refute's side):** a file with another SHA-256 or
 size; a missing file; a path reached through a symbolic link; a path that is a folder; a
-path the commit's tree does not hold (under `.git`, untracked); Refute's cache reached
-through a link. **Must fail (the paper stops before its runs):** at the run, a weights copy
+path the commit's tree does not hold (under `.git`, untracked); Refute's cache, a folder
+above it or the temporary file of a copy reached through a link. **Must pass:** two
+dataset entries naming one file are prepared and mounted once in a run's folder. **Must fail (the paper stops before its runs):** at the run, a weights copy
 or a tree file other than the count record's configuration; at the count, weights not
 listed in `configuration` or not verified.
 
