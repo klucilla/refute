@@ -15,7 +15,11 @@ VM = Path(__file__).resolve().parents[1] / "scripts" / "vm"
 
 
 def load():
+    # no bytecode written under scripts/vm (tests/test_vm_scripts.py keeps that folder to
+    # its ASCII sources): neither for this module nor for measure_paper, which it imports
     sys.path.insert(0, str(VM))
+    writes = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
     try:
         spec = importlib.util.spec_from_file_location(
             "count_population", VM / "count_population.py"
@@ -24,7 +28,9 @@ def load():
         spec.loader.exec_module(module)
         return module
     finally:
+        sys.dont_write_bytecode = writes
         sys.path.remove(str(VM))
+        sys.modules.pop("measure_paper", None)
 
 
 SPEC = {
