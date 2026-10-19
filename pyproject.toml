@@ -32,6 +32,7 @@ refute = "refute.cli:main"
 
 [project.entry-points."refute.packs"]
 tess = "refute.packs.tess:PACK"
+ml = "refute.packs.ml:PACK"
 
 [dependency-groups]
 # py-ecc verifies the drand signature in the v0.2 target selection (calibration/v0.2/);

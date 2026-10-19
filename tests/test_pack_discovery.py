@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from refute.core.pack import (
@@ -51,3 +53,41 @@ def test_engine_core_does_not_import_astronomy_code():
     )
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert out.stdout.strip() == ""
+
+
+def test_ml_pack_is_discovered_and_locks_through_its_schema():
+    from refute.packs.ml.schema import MlClaimSchema
+
+    assert available_packs()["ml"] == "refute.packs.ml:PACK"
+    pack = load_pack("ml")
+    assert pack.name == "ml" and isinstance(pack.schema, MlClaimSchema)
+    assert isinstance(pack.schema, ClaimSchema)
+
+
+@pytest.mark.parametrize(
+    "call",
+    [
+        lambda p: p.adapter.fetch({}, {}, None),
+        lambda p: p.adapter.load({}, {}, None),
+        lambda p: p.search.run(None, {}),
+        lambda p: p.analyzer.analyze({}, None, {}, {}, None),
+        lambda p: p.exporter.export({}, None),
+        lambda p: p.calibrator.evaluate(None, [], True),
+    ],
+)
+def test_ml_pack_runs_no_paper_through_the_core(call):
+    with pytest.raises(NotImplementedError, match="refute.packs.ml.production"):
+        call(load_pack("ml"))
+
+
+def test_an_ml_claim_locks_and_verifies_through_the_registered_pack(tmp_path):
+    """The core loads an ML claim by its pack name (no pack passed), locks it and verifies
+    it: the path of the main sample's locks (a synthetic claim of the schema tests)."""
+    from refute.core.lock import VerifyStatus, create_lock, verify_claim
+    from test_ml_schema import build_claim
+
+    path = build_claim(tmp_path)
+    record = create_lock(path, code_root=Path(__file__).resolve().parents[1])
+    assert len(record["claim_sha256"]) == 64
+    result = verify_claim(path, code_root=Path(__file__).resolve().parents[1])
+    assert result.status == VerifyStatus.PASS, result.messages
