@@ -793,7 +793,21 @@ round alike. Sabotages: SR1 (any configuration accepted), SR2 (another identity 
 before FAIL) and ST5 on the new case caught; **SR3 (the operating conditions not checked)
 escaped**: the refusal of an uncommitted checkout also raised `SystemExit`; the case now requires
 the reason named, and SR3 run again on it was caught. JUnit: 26 tests of the new and changed cases,
-then the timing file 15 tests, 0 failures.
+then the timing file 15 tests, 0 failures. The second round of the review: ACORDO (its limit, the
+full suite then missing: at `7e2eb87` 3127 + 19 = 3146 tests, 0 failures, 0 errors, 57 skipped,
+JUnit).
+
+**The timing lot, run** (2026-10-19, `rmin-timing/rmin-timing-2026-10-19.json`): the code of
+`7e2eb87`, the configuration `M4-rmin-timing` (SHA-256 `92ac414d…`, block `c5daf69a…`), 6 workers,
+the affinity `0xff` in the main process and in every worker; 80 targets, 240 light curves, 497 s of
+wall time. Only times were recorded. The largest per-curve times per group and scenario: 13.3 to
+15.1 s (white, no variability), 21.3 to 23.7 s (white, variability), 15.9 to 19.0 s (AR(1), no
+variability), 21.1 to 21.5 s (AR(1), variability); the generation at most 0.45 s per target.
+**The cost** (`calc/rmin_cost.py`, `calc/rmin-cost.json`, by the projection declared above): the
+reading per group, the study 101.9 h and the reserve 101.9 h of machine time (611 worker hours each),
+`bs-choice` 0.12 h, the timing lot 0.14 h: **204.1 h** in all; the reading by whole prefixes 230.5 h
+each, **461.3 h** in all, above the 397 h ceiling. Brought to the maintainer with the readings 1 and
+2; nothing of the study or of `bs-choice` is generated before the decision.
 
 ## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
 
