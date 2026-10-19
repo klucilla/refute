@@ -759,7 +759,18 @@ statistics taken at the grid's first dP) was not caught and cannot be through `d
 depth is the windows' mean and reads the replica variance only in the condition `var_rep > 0`, an
 equivalent mutation for what the record keeps. JUnit: the twin file 7 tests, the alteration file 8,
 0 failures; the detrend and holdout files with the derivation 304 tests at the first version (2
-failures, above), 24 of the affected files after the change, 0 failures.
+failures, above), 24 of the affected files after the change, 0 failures. The full suite at
+`daff631`: 3127 tests, 0 failures, 0 errors, 57 skipped (JUnit).
+
+**The timing lot's runner (item 6), implemented.** Tests `6c9f86a` (`tests/test_rmin_timing.py`),
+then the code `7d234d0` in `rmin_study.py` (`timing_cases`, `time_target`, `run_timing_lot`, and
+the command `rmin_study.py timing --out <file>`): the 80 targets of the declared rule; per target
+the generation, then for each scenario every round of `calibration_measurement` with the
+scenario's twin and the derivation and aggregation over the five `R`, timed; only the times, the
+target, its group and the worker's corrections block leave a target (the records are discarded),
+and the record refuses an uncommitted checkout (it names its commit). Sabotages SM1 (the records
+leave with the times), SM2 (another index rule) and SM3 (no refusal without the configuration)
+caught. JUnit: the timing and alteration files 11 tests, 0 failures.
 
 ## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
 
