@@ -1,0 +1,19 @@
+{
+ "counts": {
+  "likes_edges": 714
+ },
+ "dataset": {
+  "path": "datasets/synthetic",
+  "sha256": "a368d8f68a6bbfd7ea5cf844fe217872c79ac1f3c160f4f46823bbbb7798df9f",
+  "size_bytes": 93724
+ },
+ "exit_code": 0,
+ "finished_utc": "2026-10-19T12:02:07Z",
+ "image": "refute-local/measpgc2/env",
+ "reader": "container_reader.py dgl, user,likes,item",
+ "reader_sha256": "4b64c5edda6bd940aa392d02a193a0e0547f8b4ddc30f5bb96bf879ad41cb733",
+ "refute_commit": "c820bb6c7405c09158e445f7be5cb648da2722a3",
+ "rung": "requirements_compiled",
+ "seconds": 3.2,
+ "stopped": null
+}

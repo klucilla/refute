@@ -1,0 +1,45 @@
+{
+ "name": "pgc2",
+ "repo_url": "https://github.com/amazon-science/page-link-path-based-gnn-explanation.git",
+ "commit": "cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c",
+ "python": "3.10",
+ "base_image": "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+ "exclude_newer": "2023-07-25",
+ "patches": [
+  {
+   "attachment": "2302-torch-dgl.patch",
+   "path": "/home/refute/refute-run/count-data/2302-torch-dgl.patch",
+   "sha256": "4d8563a7ffbafd74acb12e19eba4eff0a3143ac55329472e667e723057c097f8"
+  },
+  {
+   "attachment": "2302-population-size.patch",
+   "path": "/home/refute/refute-run/count-data/2302-population-size.patch",
+   "sha256": "9741191e660dfcef11c975c5971c13aedeb7adaf10986faac3fc734d7a469151"
+  }
+ ],
+ "data": {},
+ "dataset": "UserItemAttr",
+ "split": "test_links",
+ "script": {
+  "path": "/home/refute/refute-run/count-data/population_count.py",
+  "sha256": "edae1ced3336732c2173554019c5219c2aa7dfa46b9f7beefb2d16e824d44ee6"
+ },
+ "configuration": [
+  {
+   "path": "datasets/synthetic",
+   "sha256": "a368d8f68a6bbfd7ea5cf844fe217872c79ac1f3c160f4f46823bbbb7798df9f"
+  },
+  {
+   "path": "saved_models/synthetic_model.pth",
+   "sha256": "a9446dca4857d6c43f7e95d2641541bf24b94600e1f2a3d83e98b0bfd1b442c2"
+  }
+ ],
+ "active_minutes": 60,
+ "weights": [
+  {
+   "path": "saved_models/synthetic_model.pth",
+   "sha256": "a9446dca4857d6c43f7e95d2641541bf24b94600e1f2a3d83e98b0bfd1b442c2",
+   "size_bytes": 272468
+  }
+ ]
+}
