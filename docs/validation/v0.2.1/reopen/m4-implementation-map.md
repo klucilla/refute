@@ -630,6 +630,260 @@ Declared before any test or code of piece 4, with the readings of Amendments 6 a
 - **Correlated noise** in the mechanism cases where it matters (the variance and the pulls are
   already AR(1)).
 
+## Amendment 28 (2026-10-19): the timing rule, diagnosis and design (declared before any test; for the maintainer's approval)
+
+The maintainer's decision of 2026-10-19, item 3: the timing rule is the next bottleneck; diagnosis
+and design now, from records already examined only; nothing heavy while the `R_min` study runs; the
+execution after it. No code, threshold or test changes with this amendment. The diagnosis as reviewed by Codex
+in three rounds (`.cache/v021/codex/timing-design/`); the options T0 to T3 of revision 4 are set
+aside by the maintainer's choice of T4 (below); the points that are the maintainer's decision are
+marked **(for the maintainer)**.
+
+### 1. Diagnosis (`calc/timing_diagnosis.py`, `calc/timing-diagnosis.json`)
+
+**The rule.** A round's train ephemeris is a weighted linear fit of the accepted train transit
+times (`ephemeris.fit_linear_ephemeris`, the covariance scaled by `max(1, χ²_red)`); at a hidden
+epoch `m` epochs from the fit's reference, `σ_T² = σ_t0² + 2m·cov + m²·σ_P²`; the windows are
+`T14/2 + 3σ_T` wide on each side, and the round ends INCONCLUSIVE before any measurement when the
+largest `σ_T` exceeds **one** duration (`max_timing_sigma_durations` = 1). For equal, independent
+errors `σ_t` (after the χ² inflation) at train epochs `n_i`, `σ_T = σ_t · g` with
+`g² = 1/N + m²/Σ(n_i − n̄)²`; writing `σ_t/T14 = κ √N / S` (`S` the train SNR, `κ` what the timing
+measurement adds):
+
+    σ_T / T14 = κ · (g √N) / S,     g √N = √(1 + m² / Var_pop(n)) ≈ √12 · Δt / L far from a uniform train baseline L
+
+At a fixed SNR and distribution of epochs `N` cancels: the number of transits enters through the
+SNR and the spread of the epochs, and through the stability of the estimated errors, not as a
+separate `√N`.
+
+**The records and their limits.** The geometric lot of Amendment 10 (`calc/option-a-geometry.json`,
+100 planets of the bands near and measurable, 240 rounds, the code of pieces 4 and 5) records
+`σ_T / T14` for the 133 rounds that reached the geometry and the rule's message (`σ_T` and the
+duration, rounded) for the 54 it stopped (Amendment 16: 54 of 240 rounds, 22.5%; 38 of the 78 targets
+with every round interrupted have a timing interruption): 187 rounds with a ratio; the 53 others
+were decided earlier, and the numbers describe only the 187. The geometry is **approximated** from
+the cases' metadata (rebuilt deterministically from the lot's prefix; no analysis run): the train
+epochs of the injected ephemeris with at least half of `T14` covered, their unweighted mean and
+spread, the farthest hidden epoch; the fit uses the times it accepts and their weights, so `N`, the
+centre and the spread can differ. The SNR is the generator's expected train SNR, not the measured
+corrected one.
+
+**What goes with the ratio.** Over the 187 rounds, `log(σ_T/T14)` splits by the identity above
+into `log(g√N)`, `−log S` and `log κ`; their covariances with it are **85%**, **12%** and **3%** of
+its variance. These are attributions of covariance with `κ` defined as the residual, not a causal
+separation: they say that across this lot the ratio moves with the geometry, not that the timing
+measurement matters only 3%.
+
+| Layout | rounds | stopped | `Δt/L` | `N` | `g√N` | train SNR | `σ_T/T14` | period's share of `σ_T²` |
+|---|---|---|---|---|---|---|---|---|
+| `two_years` (2018 and 2020, one sector each) | 80 | 30 | 27.7 | 7 | 96 | 16.0 | 0.82 | 99.99% |
+| `few_train` (2018 first orbit, then 1 to 3 years) | 40 | 23 | 29.5 (57.6 at 2020) | 4 | 103 | 13.7 | 1.23 | 99.99% |
+| `three_years` (2018, 2019, 2020) | 60 | 0 | 1.4 (0.03 with 2019 hidden) | 16 | 3.1 | 11.4 | 0.045 | 89 to 91% (0.3% with 2019 hidden) |
+| `variability_some_years` | 60 | 1 | 1.4 | 12.5 | 3.2 | 23.6 | 0.16 | 90% |
+
+(medians; the period's share on the approximate, unweighted geometry). By band: near 36 stopped of
+120 (train SNR 9.4), measurable 18 (25.5). By noise: white 31, correlated 23. **H4 complement 2**
+(two sectors of 2018 against 2020): `Δt/L` 13.8, `g√N` 47.8, `σ_T/T14` 1.21, `κ` 0.30 on its
+measured corrected SNR (11.8): the same mechanism; it does not show by itself that all of the
+correlated noise enters through the SNR.
+
+**The four factors, quantified on this lot:**
+- *The error of the train period:* in `two_years` and in the long extrapolations of `few_train`,
+  99.99% of `σ_T²`; in `three_years` with an outer year hidden about 90%.
+- *The distance to the hidden year:* through `Δt/L`; two years beyond a one-sector train is a lever
+  of about 28 and alone sets `two_years` apart from `three_years` (1.4 or less).
+- *The train sectors and transits:* the baseline `L` (one sector against years) is the larger part;
+  the transits enter through the SNR and the spread of the epochs.
+- *The rule's own factor:* of the 54 stopped rounds, 14 have `σ_T/T14 ≤ 1.5`, 22 `≤ 2`, 35 `≤ 3`, 48
+  `≤ 5`; a doubled train SNR would bring 22 below 1.
+
+**The examples given, examined.** *The period from every train year:* already so (each round leaves
+out only the hidden year); in `two_years` the train is one year by construction. *The hidden year
+closest to the train:* each year is hidden in turn and every round runs (the middle year of
+`three_years` already gives the smallest `σ_T`); keeping only the closest round would change the test
+and its aggregation (it could miss a disappearance in the last year), so it is not proposed.
+
+### 2. The option chosen: T4, a recovery of evidence (the maintainer's decision of 2026-10-19)
+
+The maintainer chose to **study** T4, with a PASS threshold calibrated on a lot of its own, under six
+conditions; it is not an approval to adopt it: every criterion below, power and false PASS included,
+stays required. T0 to T3 (revision 4) are not studied. Revision 7 of this part, after five rounds
+of the Codex design review of the single option (the fifth round's three points applied after it,
+the protocol's ceiling of rounds reached; Codex's last position: a proposal with reservations).
+
+**What T4 is: a recovery of evidence, not a solution of the geometry.** A round that the current
+rule stops may find evidence for a PASS; if it does not, it stays INCONCLUSIVE, **never FAIL**: not
+predicting the transit, or not detecting it, does not show that it disappeared.
+- **Its operational scope, from the engine's own quantities only** (the engine never receives a
+  synthetic layout, mechanism, band or noise label): T4 applies to a round only when (i) the light
+  curve's metadata has **exactly two observing years**, (ii) the round's train fundamentals are
+  **absent** (no prewhitening component found on the train, Amendment 22), and (iii) its largest
+  `σ_T/T14` (from its train-only ephemeris) lies in `(1, k_max]`, `k_max = 3`. Such a round is
+  *admitted*. Any other round follows the current path exactly: with `σ_T/T14 ≤ 1` its record is
+  T0's; with `σ_T/T14 > 1` and outside (i) to (iii) it stays INCONCLUSIVE by the timing rule, as
+  now. (The absence of fundamentals delimits an engine path; it does not show that the star has no
+  variability.) This scope is the validated one (item 5): T4 is never applied outside it.
+- **An admitted round** registers, before any hidden datum is read, its windows `T14/2 + 3σ_T`, the
+  phase-0.5 controls and the replicas with the same widths, and the `dP` grid over `±3σ_P` with the
+  current step; the accessible region is the union of every grid point's measurement support (box
+  and baseline band); the existing limits (`max_hidden_window_fraction`, the replicas'
+  registration, the hidden detrending's window) apply to it. It is measured as now.
+- **Its outcome: PASS** when its hidden replicas meet the chosen `R_min` at every `dP`, its hidden
+  noise is determined, its measurement is finite and its measured SNR (the maximum over the grid) is
+  **strictly above** `max(min_snr, z_cal(class))`; otherwise **INCONCLUSIVE** (`timing_wide_no_pass`
+  or the impediment's reason). **The FAIL rule is never applied to it.** The capacity decisions 1 and
+  2 are **not applied** (recorded as `not_applied_t4`; their threshold, which reads `b` and `s`, is
+  not computed); `S_pred,1` and `S_pred,2`, defined without `b` and `s`, are recorded as diagnostics;
+  the train replicas' gate (`train_replicas_below_r_min`) is not applied to it either (the train
+  replicas' variance enters only decision 1), its counts recorded.
+- **The class of the search** is `M = 12 σ_T/T14` (the scanned extent `6σ_T` over `T14/2`), in two
+  classes declared now: `(12, 24]` and `(24, 36]`.
+- **The aggregation is unchanged** (any FAIL gives FAIL; otherwise any PASS gives PASS; otherwise
+  INCONCLUSIVE), so a new PASS never erases another round's FAIL.
+
+### 3. The invariants (condition 1), checked on every target of the evaluation lot
+
+Deterministic, no confidence level: (I1) every round outside T4's admission has its record identical
+under T0 and T4 (status, reason, decisions, measured fields, access log); (I2) no admitted round
+FAILs; (I3) **per target**, the aggregated outcome under T4 equals T0's, except that a T0
+INCONCLUSIVE target may become PASS: a T0 FAIL stays FAIL and a T0 PASS stays PASS. A violation fails
+the study.
+
+### 4. The calibration of the PASS threshold (condition 2): two separate lots
+
+- **The calibration lot** (prefix `refute-v0.2.1-t4-cal-<k>`, never used): the disappearing scenario
+  of Amendment 19 (the last observing year without the planet). **Its null maxima** are those of the
+  admitted rounds that hide the altered year and **pass every gate of a PASS but the threshold**
+  (the hidden replicas meet `R_min` at every `dP`, the hidden noise determined, the measurement
+  finite): the rounds where the threshold will be read. An admitted round impeded before its maximum
+  is recorded and not counted. **The sampling:** whole blocks of the lot's prefixes, in order of
+  `k`, until each class has 1000 null maxima; the class's threshold uses its first 1000 in the order
+  of the blocks (whole blocks keep the generator's mixture of noise, band and layout).
+  `z_cal(class)` is the **996th smallest** of them, a **fixed calibration rule**. For 1000
+  independent maxima of one continuous distribution it would be an upper confidence bound of the
+  0.99 quantile at `P{Bin(1000, 0.99) ≤ 995} ≈ 0.971` (a tolerance-limit construction); the
+  selection by class, the gates and the cut at the first 1000 do not guarantee those hypotheses, so
+  0.971 is a reference only, and **the evidence of the error's control is the independent evaluation
+  lot** (E1, E1b). The PASS needs `S_meas > z_cal` (strict, so a tie never passes). The thresholds are pooled over
+  the noise models (the engine has no noise label; pooling does not guarantee 1% in each noise, which
+  the evaluation tests apart) and committed before the evaluation lot is generated. Šidák is not used.
+  If the lot reaches its ceiling before a class has 1000, that class has no threshold and its
+  admitted rounds stay INCONCLUSIVE.
+- **The evaluation lot** (prefix `refute-v0.2.1-t4-eval-<k>`, never used, independent seeds): the
+  three scenarios, the same composition, whole blocks; it never enters the threshold.
+- **The composition of both lots:** the planets of the bands near and measurable of the generator's
+  layouts with two observing years (`two_years`, `few_train`), in the generator's proportion (2 : 1):
+  each prefix gives 600 such targets (300 per noise model).
+
+### 5. The scope of the validation (condition 3)
+
+The identity of the rounds T0 already measured protects only the old path; it does not validate the
+rounds T4 admits. The statistical guarantee below is **per noise model** for every criterion
+(E1b, E2, E3, E4, E5 and, in variant B, E1), and **per class of the search only for E1 in variant
+A** (E5's 0.01 is not a guarantee per class), over the admitted rounds of light curves with two
+observing years and rounds without train fundamentals (the operational scope of item 2, so that T4 is never applied where it is not
+validated). **The variability path** (a round with train fundamentals): T4 is not applied to it;
+its specific controls are unit tests of that refusal (an admitted geometry with fundamentals, and a
+curve with three observing years and `σ_T/T14` in `(1, 3]`, each keep T0's record and outcome). The
+layouts with three or more years (`three_years`, `variability_some_years`) are outside the scope; I1
+protects their path.
+
+### 6. The criteria on the evaluation lot (fixed before any test)
+
+Each limit is one-sided Clopper-Pearson (the method of `scipy.stats.binomtest`) at `α = 0.05/L`,
+`L` the number of limits listed (**16** in variant A, **14** in variant B, below); the false FAIL on a constant signal and the false PASS on a disappeared
+signal are kept apart; a zero denominator or a minimum not reached is **not evaluable**, and a
+criterion not evaluable is not met; an incomplete lot goes to the maintainer (Amendment 27, 3).
+- **E1, false PASS by round:** among the admitted rounds hiding the altered year in the
+  disappearing scenario (with the gates of item 4), the fraction that PASS: upper bound ≤ **0.02**.
+  **(For the maintainer)** variant **A**: per noise × class of the search (4 limits; a guarantee per
+  class); variant **B**: per noise, the classes pooled (2 limits; the guarantee is on the pooled
+  classes, each class's fraction reported, no claim per class).
+- (The limits: E1 4 or 2, E1b 2, E2 2, E3 2, E4 4, E5 2.)
+- **E1b, false PASS by target** (2, per noise): among **all** disappearing targets with **any**
+  admitted round, the fraction whose aggregated outcome is PASS under T4 and was not under T0: upper
+  bound ≤ **0.02**; the absolute PASS fractions under T0 and T4 of all disappearing targets are
+  reported.
+- **E2, false FAIL on a constant signal** (2): among the constant targets eligible by Amendment 26's
+  rule, the FAIL fraction: upper bound ≤ **0.02** (I2 and I3 make it T0's; the limit is kept on this
+  lot's denominators).
+- **E3, a gain in conclusive results** (2): among all constant targets, the fraction INCONCLUSIVE
+  under T0 and PASS under T4 (the only change I3 allows, so the paired difference is this one
+  discordant fraction): lower bound ≥ **0.10**.
+- **E4, power** (2 + 2): the disappearing targets eligible by Amendment 19 (their round hiding the
+  last year passes decisions 1 and 2 under T0's path): FAIL lower bound ≥ **0.80**; the weakened
+  targets eligible by its filter: FAIL lower bound ≥ **0.50**; the weakened targets' PASS under T4 is
+  reported (a detection of the weakened signal, not a false PASS).
+- **E5, coverage of the hidden transits** (2): the synthetic truth kept by the evaluator only, the
+  constant scenario, the unit the target, the denominator the targets with at least one admitted
+  round; the **adverse event** is any observable hidden transit of an admitted round (its whole
+  `[t_c ± T14/2]` covered by data) whose interval is **not entirely covered** by the round's
+  accessible windows, or whose true mid-time is **not reached** by the model examined (the box of the
+  train duration at some point of the scanned grid); the upper bound of the fraction of targets with
+  an adverse event ≤ **0.01** (the limit is on the adverse event). Per round and per transit rates
+  are reported.
+- **The interruptions:** per target and per round, with every reason (criterion 6 of Amendment 27),
+  under T0 and T4, so that a shift to replicas below `R_min` or to the hidden noise is seen.
+
+A failed criterion or invariant is the result; T4 is not tuned on those seeds.
+
+### 7. The validity of `R_min` (condition 5)
+
+T4 changes, for admitted rounds only, the grid's extent, the replicas' widths (so their number) and
+the hidden detrending's window. The `R_min` study validated `R_min` (and `k`, `b_R`, `s_R`) on the
+current path; that validation is **not** assumed for admitted rounds. In T4, `b` and `s` take part in
+no decision of an admitted round (no capacity decision, no FAIL rule), so they need no
+recalibration for it; the chosen `R_min` is applied as a gate of the PASS; its validity on this path
+comes from the calibration and the evaluation of the complete operation (E1, E1b, E5), not from the
+`R_min` study; the twin pulls of admitted rounds are reported (descriptive, not a demonstration). If
+the design is changed so that an admitted round reads `b` or `s`, they are estimated again on a
+separate lot of their own.
+
+### 8. Sizes, compute and order (condition 6)
+
+`calc/t4_sizing.py` (`calc/t4-sizing.json`), each scenario sized apart (its targets the first ones
+of the lot's order, so the scenarios use nested sets of the same targets), from declared reference
+rates (design assumptions;
+the geometric lot's yields: an admitted last-year round in 32.5% of the `two_years` targets and 60%
+of the `few_train` ones; any admitted round in 37.5% and 70%; 63% and 37% of the admitted rounds in
+the two classes; an admitted round passes the gates of item 4 with probability 0.60 (assumed); the
+exact event of E3 (T0 INCONCLUSIVE and T4 PASS) at 0.15 per constant target (assumed); T0's
+eligible fraction of constant targets 0.15 and of disappearing and weakened targets 0.15 (as
+Amendment 19); the false PASS design rate 0.01; the adverse event 0.002), the minima reached
+**jointly** with probability 0.999 (the union bound over the minima), whole blocks of 600 targets.
+The compute uses the `R_min` timing lot's largest per-curve time (19 s, × 1.25) and a declared
+factor 1.5 for the admitted rounds' wider measurement (unmeasured). The result: the calibration
+lot **12 000 targets** (the disappearing scenario; 1000 null maxima in each class), **23.8 h**; the
+evaluation lot, variant **A**: per noise 8400 constant, 34 200 disappearing and 1200 weakened
+targets (the per-class false PASS dominates), 87 600 light curves, with the calibration and the
+timing lot **197.4 h** in all, a proposed ceiling of **247 h**; variant **B**: per noise 8100
+constant, 12 600 disappearing, 1200 weakened, 43 800 light curves, **110.7 h** in all, a proposed
+ceiling of **139 h**. **The joint probability:** the study's failure budget (every minimum reached
+with probability 0.999) is split before the sizes into seven equal parts, the calibration and each
+scenario in each noise model, each part's union bound at most 0.001/7. **A timing lot of T4's code**
+replaces that factor before the lots, declared now: prefix `refute-v0.2.1-t4-timing`, 20 targets per
+noise model (the first whole layout-ordered targets: 14 `two_years`, 6 `few_train`, half near,
+half measurable), the three scenarios; only times recorded; the same projection (1.25 times the
+largest per-curve time per group and scenario). **Order:** the code of T4 with its tests and the
+controls of item 5, and its Codex review; the timing lot; the sizes and the cost again from it, to
+the maintainer with the ceiling; then the calibration lot, its thresholds committed; then the
+evaluation lot. Everything after the `R_min` study and its reserve.
+
+### 9. The maintainer's decision on the variant (2026-10-19)
+
+In their words: "Variante A: garantia de PASS falso por ruído e por classe." With six terms: (1)
+the criteria and the two classes of the search are fixed before the lots; (2) "guarantee" means
+statistical evidence at the declared confidence level, within the population and the scope tested;
+variant A does not remove every risk, and the report says so; (3) the order stays: the `R_min` study
+and its reserve end; T4 is implemented and reviewed; its cost is measured (the timing lot of 40
+targets); the budget and the ceiling go to the maintainer again; only then the calibration and the
+evaluation run; (4) 197 h is a projection and 247 h the proposed ceiling, both until T4's cost is
+measured; (5) more processors only after the maintainer's explicit release (after the seal of
+v0.3), and the gain of more workers is measured, not assumed; (6) if variant A's measured cost is
+excessive, the alternative is variant B, with the explicit scope of a guarantee pooled per noise
+only; no rule that excludes classes by an estimate is presented as equivalent to a validation per
+class.
+
 ## Amendment 27 (2026-10-19): the evaluation of the `R_min` study and of its lot `bs-choice` (declared before any lot)
 
 Amendment 19's design and Amendment 26's readings (approved on 2026-10-19) are not reopened. This
