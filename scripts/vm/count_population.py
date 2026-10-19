@@ -44,6 +44,9 @@ RUNG = "requirements_compiled"  # the rung measure_paper.build builds
 SCRIPT_NAME = "refute_population_count.py"  # at the root: the repository's modules import
 COUNT_LINE = re.compile(r"^refute-population-count (\d+)$")
 REPEATS = 2
+# the fields of the spec the build used: the count phase must be given the same ones, and
+# the record takes them from the build (end-of-round review of 2026-10-18)
+BOUND_FIELDS = ("name", "repo_url", "commit", "python", "base_image", "exclude_newer", "patches")
 
 
 def file_sha256(path: Path) -> str | None:
@@ -110,6 +113,10 @@ def count(spec: dict, root: Path) -> tuple[dict, bool]:
     built = json.loads((root / "build.json").read_text(encoding="utf-8"))
     if built["exit_code"] != 0 or not built.get("lock_sha256") or not built.get("pyvenv_sha256"):
         raise SystemExit("the build did not succeed, or wrote no lock or pyvenv.cfg")
+    differ = [k for k in BOUND_FIELDS if spec.get(k) != built["spec"].get(k)]
+    if differ:
+        raise SystemExit(f"the spec differs from the build's in {differ}")
+    used = built["spec"]  # the identity of the environment: the build actually made
     script = Path(spec["script"]["path"]).read_bytes()
     if hashlib.sha256(script).hexdigest() != spec["script"]["sha256"]:
         raise SystemExit("the count script's SHA-256 differs from the spec")
@@ -131,10 +138,10 @@ def count(spec: dict, root: Path) -> tuple[dict, bool]:
         "count": int(counts[0]) if ok else None,
         "script_sha256": spec["script"]["sha256"],
         "commit": built["commit"],
-        "patches": [p["sha256"] for p in spec.get("patches", [])],
+        "patches": [p["sha256"] for p in used.get("patches", [])],
         "configuration": spec["configuration"],
         "environment": {
-            "base_image": spec["base_image"],
+            "base_image": used["base_image"],
             "rung": built["rung"],
             "lock_sha256": built["lock_sha256"],
             "pyvenv_sha256": built["pyvenv_sha256"],
