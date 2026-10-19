@@ -43,3 +43,7 @@ line names a metric (auc, acc, loss, rmse, nll, f1, top-1, top-5): 0 records to 
 | `pgl` | 2302.12465 | the first base image (glibc 2.41): the runs failed at import |
 | `pglb`, `pglb2` | 2302.12465 | the bookworm base image (glibc 2.36), with the dependency patch |
 | `lra`, `lra2`, `lrab` | 2305.19518 | SimCLR on CIFAR-10 and CIFAR-100, 6 epochs declared; both runs ended with exit 137 (killed) |
+| `pgc2` | 2302.12465 | the command of PGExp-Link of errata 2 (`--train_pgexplainer`, the repository's 100 epochs), measured before the lock (the maintainer's decision of 2026-10-19): exit 0, 5,996.7 CPU-seconds (1.67 CPU-hours), 531 s; its image is the count's build (`claims/2302.12465/counts/README.md`) |
+
+The record `run-pgc2-pgexp-train.json` was added on 2026-10-19 and checked the same way (135
+kept lines, each matching its spec's timing pattern, none naming a metric, no error line).
