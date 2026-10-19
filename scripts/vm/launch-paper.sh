@@ -4,7 +4,12 @@
 # restart, and a second start of the same unit is refused by systemd (the unit name is
 # fixed by the paper id). Run by the agent over SSH, after the maintainer's approval of the
 # paper's run (the first run of third-party code needs that approval, V4).
-#   scripts/vm/launch-paper.sh <paper> <claim.json> [--data name=path ...] [--micromamba-image img]
+#   scripts/vm/launch-paper.sh <paper> <claim.json> --execution-id <32 hex> \
+#       --profile-status <the host's build record> [--data name=path ...] [--patch a=file ...] \
+#       [--count-record a=file ...] [--micromamba-image img]
+# The execution id is generated on the host for this launch, before the host writes the build
+# record (scripts/vm/Switch-RefuteVmProfile.ps1); the run record is written later as the
+# run-phase flag, atomically (wp3-dossier-provenance-acceptance.md).
 # Stop: sudo systemctl stop refute-<paper>.service (the engine gets SIGTERM and kills its
 # own running containers by id before it exits: production.run_production), or the whole
 # VM with .cache/vm/stop-all.ps1 on the host.

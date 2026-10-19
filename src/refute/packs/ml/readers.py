@@ -37,6 +37,8 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from refute.packs.ml import extract
+
 PREFIX = "reader:"
 
 
@@ -177,10 +179,12 @@ def _refuse_constant(name: str) -> Any:
     raise ValueError(f"{name} is not a count")
 
 
-def read_answer(path: Path, splits: set[str]) -> dict[str, int] | None:
+def read_answer(path: Path, splits: set[str], workdir: Path | None = None) -> dict[str, int] | None:
     """The counts a container reader wrote, or None: a regular file (not a link) of at most
     ``ANSWER_MAX_BYTES``, holding one JSON object with exactly ``splits`` as keys, each a
-    non-negative integer (no boolean, no float, no duplicate key, nothing after it)."""
+    non-negative integer (no boolean, no float, no duplicate key, nothing after it). With
+    ``workdir`` (the reader's folder), the bytes read are recorded before the parsing
+    (``extract.record_reads``, the dossier's provenance)."""
     try:
         if path.is_symlink() or not path.is_file():
             return None
@@ -188,6 +192,8 @@ def read_answer(path: Path, splits: set[str]) -> dict[str, int] | None:
             data = handle.read(ANSWER_MAX_BYTES + 1)
         if len(data) > ANSWER_MAX_BYTES:
             return None
+        if workdir is not None:
+            extract.record_file(workdir, path.relative_to(workdir).as_posix(), data)
         answer = json.loads(
             data.decode("utf-8"),
             object_pairs_hook=_refuse_duplicates,

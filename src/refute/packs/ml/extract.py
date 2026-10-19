@@ -30,11 +30,13 @@ from __future__ import annotations
 import contextlib
 import contextvars
 import csv
+import hashlib
 import io
 import json
 import os
 import re
 import stat
+import threading
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path, PurePosixPath
@@ -277,6 +279,86 @@ def output_present(workdir: Path, spec: str, seed: int | None = None) -> bool:
 
 _SESSION: contextvars.ContextVar[dict | None] = contextvars.ContextVar("reads", default=None)
 
+# the provenance of the reads (wp3-dossier-provenance-acceptance.md, section 1): while a
+# recorder is open (the whole paper run), every file a value or a count is read from is
+# recorded once, from any thread, apart from the read sessions' caches
+_RECORDER_LOCK = threading.Lock()
+_RECORDER: dict[str, list[dict[str, Any]]] | None = None
+_STORE: Path | None = None
+
+
+@contextlib.contextmanager
+def record_reads(store: Path | None = None):
+    """Within the block, the files read in the runs' folders (``reads``: the run's folder,
+    the path relative to it as resolved, the SHA-256 and size of the bytes read, recorded
+    before any parsing) and the logs read (``logs``: the log's path, SHA-256 and size).
+    Each entry is kept once; a failed read is not recorded. With ``store`` (a folder of the
+    engine), the bytes of each read are kept there at the read, named by their SHA-256, so
+    every version of a file read is kept even when the file changes afterwards."""
+    global _RECORDER, _STORE
+    with _RECORDER_LOCK:
+        if _RECORDER is not None:
+            raise RuntimeError("a read recorder is already open")
+        _RECORDER = {"reads": [], "logs": []}
+        _STORE = store
+        recorded = _RECORDER
+    try:
+        yield recorded
+    finally:
+        with _RECORDER_LOCK:
+            _RECORDER, _STORE = None, None
+
+
+def _keep(digest: str, data: bytes) -> bool:
+    """The bytes in the store under their SHA-256 (written once, atomically)."""
+    if _STORE is None:
+        return False
+    target = _STORE / digest
+    if not target.exists():
+        _STORE.mkdir(parents=True, exist_ok=True)
+        partial = _STORE / f".{digest}.{threading.get_ident()}.partial"
+        partial.write_bytes(data)
+        os.replace(partial, target)
+    return True
+
+
+def _add(kind: str, entry: dict[str, Any], data: bytes | None = None) -> None:
+    """One entry in the open recorder, and, for a read, its bytes in the store: both under
+    one lock, so a recorder that closes meanwhile gets neither (Codex review)."""
+    with _RECORDER_LOCK:
+        if _RECORDER is None:
+            return
+        if data is not None:
+            entry = {**entry, "stored": _keep(entry["sha256"], data)}
+        if entry not in _RECORDER[kind]:
+            _RECORDER[kind].append(entry)
+
+
+def record_file(workdir: Path, relative: str, data: bytes) -> None:
+    """Record the bytes read from ``relative`` in a run's folder, and keep them in the
+    store (``record_reads``)."""
+    entry = {
+        "workdir": os.path.realpath(workdir),
+        "path": relative,
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "size": len(data),
+    }
+    _add("reads", entry, data)
+
+
+def read_log(path: Path) -> str:
+    """A run's log as ``Path.read_text(encoding="utf-8", errors="replace")`` gives it (its
+    newlines translated: "\r\n" and "\r" become "\n"), its raw bytes recorded
+    (``record_reads``)."""
+    data = path.read_bytes()
+    entry = {
+        "path": os.path.realpath(path),
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "size": len(data),
+    }
+    _add("logs", entry)
+    return data.decode("utf-8", errors="replace").replace("\r\n", "\n").replace("\r", "\n")
+
 
 @contextlib.contextmanager
 def read_session():
@@ -315,6 +397,7 @@ def read_output_bytes(
         if reads is not None:
             reads[key] = exc
         raise
+    record_file(workdir, result[1].removeprefix("file:"), result[0])
     if reads is not None:
         reads[key] = result
     return result

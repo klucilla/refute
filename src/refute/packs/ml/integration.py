@@ -431,7 +431,7 @@ def _read(ctx: ClaimContext, record: orc.ContainerRecord | None, workdir: Path, 
     out = Value(outcome, reason)
     if outcome is not orc.Outcome.COMPLETED:
         return out
-    log = record.result.log_path.read_text(encoding="utf-8", errors="replace")
+    log = ex.read_log(record.result.log_path)  # recorded (the dossier's provenance)
     unit = ctx.claim["metric"]["unit"]
     reads = {role: (ctx.claim["run"] if role == "method" else ctx.comparison["reference_run"])}
     if role == "method" and ctx.comparison is not None and not ctx.separate_reference:
@@ -970,7 +970,7 @@ def coverage_readings(ctx: ClaimContext, harness: Harness, values, ids, records,
                 role,
                 seed,
                 harness.workspaces[cid],
-                record.result.log_path.read_text(encoding="utf-8", errors="replace"),
+                ex.read_log(record.result.log_path),
                 value.tokens.get(role),
                 run_spec["metric_extraction"]["unit"],
             )
@@ -1428,7 +1428,8 @@ class PaperIntegration:
         counts = None
         result = record.result if record is not None else None
         if result is not None and result.exit_code == 0 and not result.stopped:
-            counts = rd.read_answer(self.harness.workspaces[cid] / rd.ANSWER, asked)
+            folder = self.harness.workspaces[cid]
+            counts = rd.read_answer(folder / rd.ANSWER, asked, folder)
         if counts is None or evidence.split_counts is None:
             return replace(evidence, split_counts=None)
         return replace(evidence, split_counts={**evidence.split_counts, **counts})

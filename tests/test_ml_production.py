@@ -246,7 +246,7 @@ def test_dossier_record(tmp_path):
         pass
 
     out = pd.write_dossier(
-        tmp_path / "dossier", setup, {"test_plan": {}}, Outcome(), {"env": "sha256:1"}, "t"
+        tmp_path / "dossier", setup, {"test_plan": {}}, Outcome(), {"env": "sha256:1"}
     )
     record = json.loads((out / "dossier.json").read_text())
     assert (
@@ -255,7 +255,7 @@ def test_dossier_record(tmp_path):
     )
     assert (out / "logs" / "a.log").exists() and (out / "claim_file.json").exists()
     with pytest.raises(FileExistsError):
-        pd.write_dossier(tmp_path / "dossier", setup, {}, Outcome(), {}, "t")
+        pd.write_dossier(tmp_path / "dossier", setup, {}, Outcome(), {})
 
 
 # ---- a population counted before the lock (wp3-population-count-acceptance.md, section 1) -----
