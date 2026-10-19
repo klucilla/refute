@@ -2,8 +2,9 @@
 
 Short timing runs of the papers' code on the VM, for the budget estimates of their claims,
 made before any claim is written (the maintainer's decision 2 of 2026-10-18). The records
-are copied here byte for byte from the VM's output of `scripts/vm/measure_paper.py`; their
-SHA-256 are in `SHA256SUMS`.
+are the VM's output of `scripts/vm/measure_paper.py`, with their content unchanged; some
+were fetched to the host with CRLF line endings, which git stores as LF. Their SHA-256 in
+`SHA256SUMS` are of the bytes stored in the repository.
 
 ## Conditions (decision 2 of 2026-10-18)
 
