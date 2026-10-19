@@ -748,6 +748,24 @@ limit of this approval: the design and the later implementation of these cases o
 package itself (its point in `points.json`, its budget, its predecessor, the inherited counters,
 the selection's artifacts, the frozen configuration and the campaign's checkpoints) comes later, and
 this approval accepts no scientific criterion still unsatisfied (for example I2 correlated of piece 7).
+
+**Approved and implemented (2026-10-18).** The maintainer approved the package as described.
+Part B: tests `34e46d9`, code `dec1637` (`tests/test_capacity_plan.py`; two piece-5 tests read the pair
+from the plan instead of the removed module settings; extension 4 with the full resolved hashes in
+`docs/lock-format.md`). Part A: tests `53c6f2d`, code `b3aa855` (`tests/test_population_v3_identity.py`;
+the harness tests follow the new loading contract: no exit at import, an incomplete or legacy block
+checked by `capture`). Two test fixtures sit in the authorized folder, each marked as never a
+campaign configuration: `probe-non-default.json` (another block) and `probe-same-block.json` (the
+block of `m4-c1.json` under another name and file). One deviation from the design, declared: the
+A2 file-link case is skipped where the account cannot create a file symbolic link (Windows without
+the privilege; the junction case runs there, and CI on Linux runs both). JUnit: part B 124 and 74
+tests, part A 36 tests, 0 failures. **Sabotages** (SK1 to SK13, never committed, each restored):
+twelve caught at once (the binding check skipped; the link check; the journal's refusals not read;
+a resume without a confirmation; the closure's check removed or not invalidating; the threshold
+without the plan's pair, without `b`, without `s`; a wrong pair recorded; extension 4 left out of
+the literal or with another default); **SK3, the main/worker comparison removed, escaped**: in the
+A4 case the plan's block also differed, so the block check refused alone; the same-block case was
+written after the escape (declared here), and SK3 run again on it was caught.
 ## Amendment 24 (2026-10-18, declared after the retest of piece 7): the retest's result, and I2 correlated failed
 
 **The retest** (the tests of `9925c56` on the code of Amendment 23, committed as `159b929`; JUnit

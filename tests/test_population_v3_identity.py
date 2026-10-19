@@ -31,12 +31,14 @@ def _env(config=CONFIG):
     return env
 
 
-def _probe(mode, work, config=CONFIG):
+def _probe(mode, work, config=CONFIG, extra_env=None):
+    env = _env(config)
+    env.update(extra_env or {})
     res = subprocess.run(
         [sys.executable, str(PROBE), mode, str(work)],
         capture_output=True,
         text=True,
-        env=_env(config),
+        env=env,
         timeout=1200,
     )
     assert res.returncode == 0, res.stderr[-3000:]
@@ -120,8 +122,17 @@ def test_a3_version_2_alone_tolerates_the_extra_member():
 # --- A4: the workers and the main process ---------------------------------------------------------
 
 
-def test_a4_a_worker_with_another_configuration_refuses_and_stops_the_dispatch():
-    out = _probe("worker-mismatch", _work())
+@pytest.mark.parametrize(
+    "other",
+    [
+        "probe-non-default.json",
+        # added after the sabotage SK3 escaped (Amendment 25's record): the same block under
+        # another name and file, so only the identity comparison can refuse it
+        "probe-same-block.json",
+    ],
+)
+def test_a4_a_worker_with_another_configuration_refuses_and_stops_the_dispatch(other):
+    out = _probe("worker-mismatch", _work(), extra_env={"PROBE_OTHER": other})
     assert out["seen"] and "m4 identity" in out["seen"][0].get("infrastructure", "")
     assert out["record_written"] is False  # refused before the inherited analysis
     assert [e["kind"] for e in out["journal"]] == ["refusal"]

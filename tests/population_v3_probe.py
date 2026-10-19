@@ -227,7 +227,11 @@ def mode_worker_mismatch(work):
     configuration B (the environment changed before the pool starts): the worker refuses before
     the inherited analysis, the dispatch stops, the journal records a refusal."""
     v3 = _import("population_v3")
-    other = POPULATION / "m4-configurations" / "probe-non-default.json"
+    # PROBE_OTHER: the worker's file (default: a different block; probe-same-block.json has the
+    # same block under another name and file, so only the identity differs)
+    other = (
+        POPULATION / "m4-configurations" / os.environ.get("PROBE_OTHER", "probe-non-default.json")
+    )
     os.environ[v3.CONFIGURATION_ENV] = str(other)
     pv2, entry, run_dir, outcome, seen = _analyze_one(v3, work)
     _out(
