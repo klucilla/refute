@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 import math
-import sys
 from pathlib import Path
 from statistics import NormalDist
 
@@ -99,14 +98,6 @@ def test_b1_decision_2_follows_the_threshold():
 REFERENCE = Path(__file__).resolve().parent / "fixtures" / "capacity" / "strong-rounds-4a26df7.json"
 
 
-def _cpu_features():
-    try:
-        from numpy._core._multiarray_umath import __cpu_features__
-    except ImportError:
-        return []
-    return sorted(k for k, v in __cpu_features__.items() if v)
-
-
 def _close(a, b, path=""):
     """Numeric equality within 1e-9 (relative) through nested values; other values exactly."""
     if isinstance(a, dict) and isinstance(b, dict):
@@ -125,8 +116,11 @@ def _close(a, b, path=""):
 
 def test_b2_the_default_pair_reproduces_the_rounds_of_the_code_before_the_package():
     # added after the Codex review of the package: a reference computed with the code of 4a26df7
-    # (tests/fixtures/capacity/make_reference.py); bit-equal on the reference machine, within 1e-9
-    # elsewhere (the floats are bound to the platform, numpy and the SIMD features)
+    # (tests/fixtures/capacity/make_reference.py), equal within 1e-9 (relative). The first version
+    # required bit equality where the platform, numpy, Python and the SIMD features matched the
+    # reference's; the CI of 127865f (windows-2025, Python 3.13) matched them all and differed in
+    # the last digit of two floats (fap, p1), so equal features do not imply equal bits (map
+    # Amendment 25's record) and bit equality is not asserted.
     from refute.core.io import dumps_json, to_jsonable
 
     ref = json.loads(REFERENCE.read_text(encoding="utf-8"))
@@ -134,16 +128,7 @@ def test_b2_the_default_pair_reproduces_the_rounds_of_the_code_before_the_packag
     now = json.loads(
         dumps_json(to_jsonable([r.to_dict() for r in run_holdout(lc, sectors, _plan()).rounds]))
     )
-    same = (
-        ref["platform"] == sys.platform
-        and ref["numpy"] == np.__version__
-        and tuple(ref["python"]) == sys.version_info[:2]
-        and ref["cpu_features"] == _cpu_features()
-    )
-    if same:
-        assert now == ref["rounds"]
-    else:
-        _close(now, ref["rounds"])
+    _close(now, ref["rounds"])
 
 
 def test_b2_the_default_pair_leaves_the_round_records_unchanged():

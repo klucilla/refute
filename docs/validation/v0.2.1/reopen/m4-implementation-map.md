@@ -722,6 +722,22 @@ a lot of the study or of `refute-v0.2.1-bs-choice`.
    - *Rule:* nothing of the study or of `bs-choice` is generated before the maintainer decides on
      the cost and on the readings 1 and 2.
 
+**The derivation (item 3), implemented.** Tests `3c14737` (`tests/test_rmin_derivation.py`), then the
+code (`calibration_measurement`'s new fields, `ReplicaStats.noise_undetermined`, `derive_round`). The
+first run: the derivation equaled the official round for every case, pair and `R` of the set, but
+the coverage case failed: every train and hidden replica count of these cases is above 20, so the
+set alone never reached the count impediments. Declared after that run, the comparison also uses,
+per case, the values at and just above each smallest count (the official round at those `r_min`
+too); with them every impediment and its precedence is reached. **Sabotages** (never committed,
+each restored): SD1 (decision 1 before the train counts), SD3 (a measurement impediment counted
+eligible), SD4 (the hidden counts before decision 1) and SD5 (the hidden counts ignored) caught;
+**SD2 (the threshold without the pair) escaped**: with the pairs (0, 0) and (0.5, 0.8) no case has an
+`S_pred` between the two thresholds. A case written after the escape builds pairs from the record
+itself, the threshold just above and just below `S_pred,1` and between `S_pred,2` and `S_pred,1`,
+once through `b` alone and once through `s` alone, each against the official round. SD2 run again
+on it was caught, and so was SD6 (the threshold without `s`). JUnit: the derivation file 23 tests
+(before the edge case 21), 0 failures; the capacity, plan and holdout tests 97, 0 failures.
+
 ## Amendment 25 (2026-10-18): the harness version 3 package (pre-registration; design only, for the maintainer's approval)
 
 The maintainer's item 5 of 2026-10-18: the campaign declaration of the harness version 3, with its
@@ -918,7 +934,13 @@ cases: they call the real command line with `--cpus 0-7`, which the runners refu
     on Linux only.
 
 JUnit after these corrections (the two harness test files): 45 tests, 0 failures, 1 skip (the file
-link); SC7 to SC9 each caught. A deviation of the working rules, declared: these corrections were
+link); SC7 to SC9 each caught. The full suite at `127865f`: 3089 tests, 0 failures, 0 errors, 57
+skipped (JUnit). **Its CI was red in one job** (windows-2025, Python 3.13, `rest`): fix 7's B2
+reference case required bit equality where the platform, numpy, Python and the SIMD features
+matched the reference's; that runner matched them all and differed in the last digit of two floats
+(`fap` 4.109641886201183e-24 against …1835e-24; `p1` 0.003392805682969292 against …2936). Equal
+features do not imply equal bits (another processor or kernel path), so the claim "bit-equal on the
+reference machine" is withdrawn: the case now compares within 1e-9 (relative) everywhere. A deviation of the working rules, declared: these corrections were
 edited while the full suite of `bfef2cc` was running; that run was stopped before its end and none
 of its results is used.
 ## Amendment 24 (2026-10-18, declared after the retest of piece 7): the retest's result, and I2 correlated failed

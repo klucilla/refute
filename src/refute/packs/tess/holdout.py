@@ -555,6 +555,9 @@ class ReplicaStats:
     # M4 piece 7: how many window fits (over the replicas and the dP grid) used how many baseline
     # parameters, keyed by that number (the degeneracy fallback can drop sinusoids: Amendment 22)
     terms: dict[str, int] = field(default_factory=dict)
+    # the R_min study (map Amendment 26, 3): the noise estimate alone undetermined, apart from the
+    # replica counts against r_min
+    noise_undetermined: bool = False
 
 
 def _count_terms(terms: dict[str, int], d: WindowDepth) -> None:
@@ -659,13 +662,14 @@ def replica_stats(
             depths.append(d.depth)
         values = [d for d in depths if d is not None]
         per_dp.append(ReplicaPoint(float(dp), depths, len(values), _robust_var(values)))
+    noise_undetermined = undetermined
     if not undetermined and any(p.n_rep < c.r_min for p in per_dp):
         undetermined = True
     for _, _, _, _, sector, ok in reads:
         if ok and sector in excluded:
             dropped["excluded_sector"] = dropped.get("excluded_sector", 0) + 1
     status = "hidden_noise_undetermined" if undetermined else "ok"
-    return ReplicaStats(status, per_dp, noise, excluded, dropped, terms)
+    return ReplicaStats(status, per_dp, noise, excluded, dropped, terms, noise_undetermined)
 
 
 def measure_windows(
@@ -1297,6 +1301,23 @@ def train_replica_stats(
     return counts, variances
 
 
+def _empty_derivation_fields() -> dict[str, Any]:
+    """The fields of a calibration record that ``derive_round`` reads, before they are known."""
+    return {
+        "stage": None,
+        "n_years": None,
+        "train_n_rep": None,
+        "hidden_n_rep": None,
+        "hidden_noise_undetermined": None,
+        "d_train": None,
+        "e_train": None,
+        "d_hidden": None,
+        "e_hidden": None,
+        "dp": None,
+        "measurement_status": None,
+    }
+
+
 def _round_corrected(
     raw: LightCurveData,
     sectors: Sequence[SectorInfo],
@@ -1351,11 +1372,19 @@ def _round_corrected(
         "s_meas": None,
         "threshold": threshold,
         "reason": None,
+        # the R_min study (map Amendment 26, 3): what derive_round reads
+        **_empty_derivation_fields(),
+        "n_years": n_years,
+        "d_train": train.depth,
+        "e_train": train.depth_err,
     }
 
-    def stop(reason: str, access_log=None) -> tuple[RoundResult, dict[str, Any]]:
+    def stop(
+        reason: str, access_log=None, stage: str | None = None
+    ) -> tuple[RoundResult, dict[str, Any]]:
         metrics["reason"] = reason
         record["reason"] = reason
+        record["stage"] = stage
         result = RoundResult(
             hidden_year,
             TestStatus.INCONCLUSIVE,
@@ -1368,7 +1397,7 @@ def _round_corrected(
 
     if n_pred == 0:
         cap["decision_1"] = record["decision_1"] = "no_predicted_window"
-        return stop("no_predicted_window")
+        return stop("no_predicted_window", stage="before_capacity")
     train_spans = _train_spans(prepared.train_flat)
     train_windows = _predict_windows(eph, train.duration, train_spans, params)
     train_reps = register_replicas(eph, train_windows, train_spans)
@@ -1389,9 +1418,10 @@ def _round_corrected(
     )
     cap["train_n_rep"] = counts
     cap["train_var_rep"] = variances
+    record["train_n_rep"] = list(counts)
     if not replicas_enough(counts, c.r_min):
         cap["decision_1"] = record["decision_1"] = "train_replicas_below_r_min"
-        return stop("train_replicas_below_r_min")
+        return stop("train_replicas_below_r_min", stage="train_counts")
     e_pred_1 = predicted_error(variances, n_pred, c.m_beta)
     s_pred_1 = d_c / e_pred_1 if e_pred_1 > 0 else float("nan")
     decision_1 = (
@@ -1407,6 +1437,8 @@ def _round_corrected(
     hidden = HiddenYear(raw.select(raw.year == hidden_year), windows + replicas, plan)
 
     def record_hidden(stats: ReplicaStats) -> None:
+        record["hidden_n_rep"] = [p.n_rep for p in stats.per_dp]
+        record["hidden_noise_undetermined"] = stats.noise_undetermined
         cap["hidden_n_rep"] = [p.n_rep for p in stats.per_dp]
         cap["hidden_var_rep"] = [p.var_rep for p in stats.per_dp]
         cap["hidden_noise"] = None if stats.noise is None else stats.noise.to_dict()
@@ -1446,8 +1478,12 @@ def _round_corrected(
         window_terms["transit"] = dict(result["terms"])
     if "hidden_n_rep" not in cap and result.get("stats") is not None:
         record_hidden(result["stats"])
+    record["measurement_status"] = result["status"]
     if result["status"] != "ok":
-        return stop(result["status"], hidden.access_log)
+        stats = result.get("stats")
+        stage = "hidden_noise" if stats is not None and stats.status != "ok" else "measurement"
+        return stop(result["status"], hidden.access_log, stage=stage)
+    record.update(d_hidden=result["depth"], e_hidden=result["error"], dp=result["dp"])
 
     status, reason, z = fail_rule(
         result["snr"],
@@ -1566,10 +1602,71 @@ def calibration_measurement(
             "s_pred_2": None,
             "s_meas": None,
             "reason": prepared.decided.metrics.get("reason", prepared.decided.message),
+            **_empty_derivation_fields(),
+            "stage": "before_capacity",
             **stamp,
         }
     record = _round_corrected(raw, sectors, hidden_year, plan, prepared, enforce=False)[1]
     return {**record, **stamp}
+
+
+ELIGIBLE_INCONCLUSIVE = "not_detected_not_inconsistent"
+
+
+def derive_round(
+    record: dict[str, Any], r_min: int, b: float, s: float, min_snr: float
+) -> dict[str, Any]:
+    """The ``R_min`` study (map Amendments 19 and 26, 3): the round at ``r_min`` and the pair
+    ``(b, s)`` derived from a calibration record made at a smaller ``r_min`` (8), in this order:
+    the impediments before the capacity rule; the train counts; decision 1; the hidden noise (the
+    estimate, then the counts); decision 2; the measurement's impediments; the FAIL rule. A round
+    is eligible when both decisions pass and the FAIL rule reads a measurement (PASS, FAIL or
+    INCONCLUSIVE ``not_detected_not_inconsistent``). For the population harness only."""
+
+    def out(status, reason, d1=None, d2=None, eligible=False):
+        return {
+            "status": status,
+            "reason": reason,
+            "decision_1": d1,
+            "decision_2": d2,
+            "eligible": eligible,
+        }
+
+    if record["stage"] == "before_capacity":
+        return out("INCONCLUSIVE", record["reason"], record.get("decision_1"))
+    if not replicas_enough(record["train_n_rep"], r_min):
+        return out("INCONCLUSIVE", "train_replicas_below_r_min", "train_replicas_below_r_min")
+    threshold = capacity_threshold(min_snr, b, s, record["n_years"])
+    s1 = record["s_pred_1"]
+    if not (s1 is not None and math.isfinite(s1) and s1 >= threshold):
+        return out("INCONCLUSIVE", "insufficient_capacity_train", "insufficient_capacity_train")
+    counts = record["hidden_n_rep"]
+    if (
+        record["stage"] == "hidden_noise"
+        or record["hidden_noise_undetermined"]
+        or not replicas_enough(counts or [], r_min)
+    ):
+        return out("INCONCLUSIVE", "hidden_noise_undetermined", "pass")
+    s2 = record["s_pred_2"]
+    if not (s2 is not None and math.isfinite(s2) and s2 >= threshold):
+        return out(
+            "INCONCLUSIVE",
+            "insufficient_capacity_hidden_noise",
+            "pass",
+            "insufficient_capacity_hidden_noise",
+        )
+    if record["measurement_status"] != "ok":
+        return out("INCONCLUSIVE", record["measurement_status"], "pass", "pass")
+    status, reason, _ = fail_rule(
+        record["s_meas"],
+        min_snr,
+        record["d_train"],
+        record["e_train"],
+        record["d_hidden"],
+        record["e_hidden"],
+    )
+    eligible = status in ("PASS", "FAIL") or reason == ELIGIBLE_INCONCLUSIVE
+    return out(status, reason, "pass", "pass", eligible)
 
 
 def run_holdout(

@@ -175,12 +175,25 @@ def test_the_record_carries_the_fields_of_the_derivation(records):
         assert isinstance(strong[key], float) and math.isfinite(strong[key]), key
 
 
+def _r_values(record):
+    """The R of the set, and (added after the first run, in which every train and hidden count of
+    these cases was above 20, so that the set alone never reached the count impediments: map
+    Amendment 26's record) the values at and just above each smallest count, so that the train and
+    the hidden counts cut the round against the official one too."""
+    extra = set()
+    for key in ("train_n_rep", "hidden_n_rep"):
+        if record[key]:
+            low = min(record[key])
+            extra |= {low, low + 1}
+    return sorted(set(R_VALUES) | {r for r in extra if r >= 8})
+
+
 @pytest.mark.parametrize("name", CASES)
 @pytest.mark.parametrize("pair", PAIRS)
 def test_the_derivation_equals_the_official_round_at_every_r(records, name, pair):
     lc, sectors, year, extra = _case(name)
     b, s = pair
-    for r_min in R_VALUES:
+    for r_min in _r_values(records[name]):
         plan = _plan(r_min=r_min, capacity_b=b, capacity_s=s, **extra)
         official = _official(holdout._round(lc, sectors, year, plan))
         derived = derive_round(records[name], r_min, b, s, plan.gauntlet.holdout_by_year.min_snr)
@@ -190,7 +203,7 @@ def test_the_derivation_equals_the_official_round_at_every_r(records, name, pair
 def test_the_cases_reach_every_impediment_and_their_precedence(records):
     reasons = set()
     for name in CASES:
-        for r_min in R_VALUES:
+        for r_min in _r_values(records[name]):
             for b, s in PAIRS:
                 reasons.add(derive_round(records[name], r_min, b, s, 5.0)["reason"])
     for expected in (
@@ -214,6 +227,41 @@ def test_the_train_counts_take_precedence_over_decision_1(records):
     out = derive_round(rec, below, 0.0, 0.0, 5.0)
     assert out["reason"] == "train_replicas_below_r_min"
     assert out["decision_1"] == "train_replicas_below_r_min" and out["eligible"] is False
+
+
+def _bracketing_pairs(record):
+    """Pairs that put the threshold just above and just below S_pred,1, and between S_pred,2 and
+    S_pred,1, once through b alone and once through s alone (added after the sabotage SD2 escaped:
+    no case had an S_pred between the thresholds of PAIRS; map Amendment 26's record)."""
+    from statistics import NormalDist
+
+    z = NormalDist().inv_cdf(1.0 - 0.005 / record["n_years"])
+    s1, s2 = record["s_pred_1"], record["s_pred_2"]
+    targets = [s1 + 0.5, s1 - 0.5]
+    if s2 < s1 - 1.0:
+        targets.append(0.5 * (s1 + s2))
+    pairs = []
+    for t in targets:
+        pairs.append((5.0 - t, 0.0))  # through b
+        pairs.append((0.0, (t - 5.0) / z) if t > 5.0 else (5.0 - t, 0.0))  # through s
+    return pairs
+
+
+@pytest.mark.parametrize("name", ("strong", "noisy_hidden"))
+def test_the_derivation_follows_the_pair_at_the_thresholds_edges(records, name):
+    lc, sectors, year, extra = _case(name)
+    rec = records[name]
+    assert rec["s_pred_1"] is not None and rec["s_pred_2"] is not None  # precondition
+    decisions = set()
+    for b, s in _bracketing_pairs(rec):
+        plan = _plan(r_min=8, capacity_b=b, capacity_s=s, **extra)
+        official = _official(holdout._round(lc, sectors, year, plan))
+        derived = derive_round(rec, 8, b, s, plan.gauntlet.holdout_by_year.min_snr)
+        assert derived == official, (name, b, s)
+        decisions.add((derived["decision_1"], derived["decision_2"]))
+    assert ("insufficient_capacity_train", None) in decisions  # precondition: the edge reached
+    if name == "noisy_hidden":
+        assert ("pass", "insufficient_capacity_hidden_noise") in decisions
 
 
 @pytest.mark.parametrize("name", ("strong", "no_hidden_signal", "noisy_hidden", "weak"))
