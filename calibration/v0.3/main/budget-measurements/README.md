@@ -25,8 +25,15 @@ line names a metric (auc, acc, loss, rmse, nll, f1, top-1, top-5): 0 records to 
 
 ## Files
 
-- `<name>-build.json`: one build of a paper's environment (the ladder's rung
-  `requirements_compiled`, the resolved lock, the exit code and the CPU usage).
+- `lra2-build.json` and `pglb2-build.json`: the records of one build of a paper's
+  environment (the ladder's rung `requirements_compiled`, the resolved lock, the exit code
+  and the CPU usage), with the spec they were built from.
+- `lra-build.json`, `lrab-build.json`, `mwe-build.json`, `pgl-build.json` and
+  `pglb-build.json`: build **specs only** (the repository, commit, Python, base image, cut-off
+  date and patches given to the build), not records of a build: the output of those builds
+  (exit code, time, resolved lock) was not kept on the host. They are what each named build
+  was asked to do; the run records below are what was measured (end-of-round review of
+  2026-10-18).
 - `run-<name>-<run>.json`: one timing run (its command with the declared epochs, the exit
   code, the CPU usage, the kept timing lines and, for a failed run, its error lines).
 
