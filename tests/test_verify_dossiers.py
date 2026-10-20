@@ -451,3 +451,46 @@ def test_a_classifier_failure_is_accepted(tmp_path):
     assert _step_findings(report, "setup build") == []
     # its consequences are still required: the stop is not recorded in this copy
     assert _has(report, "V4 run: stopped ''")
+
+
+# ---- section 4c: refusal reasons and prerequisites -----------------------------------------
+
+
+def test_an_invented_refusal_between_rungs_fails(tmp_path):
+    def change(r):
+        s = _two_rungs(r)
+        s["outcome"], s["reason"] = "refute_error", "skipped for lack of time"
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    assert _has(_verify("2302.12465", d), "V4 setup build: recorded refute_error")
+
+
+def test_base_steps_that_ran_after_a_failed_build_fail(tmp_path):
+    def change(r):
+        s = _step(r, "setup", "", "build")
+        cid = s["containers"][0]["container_id"]
+        s["containers"][0]["result"]["exit_code"] = 1
+        s["outcome"], s["reason"] = "failed", f"{cid}: exit code 1"
+        r["outcome"]["ladder"]["built_with"] = None
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    report = _verify("2302.12465", d)
+    assert _has(report, "V4 base arXiv-2302.12465v3-C1 base: ran although the setup did not")
+    assert _has(report, "V4 setup data/UserItemAttr: ran after an earlier setup step")
+
+
+def test_base_steps_that_ran_after_a_setup_refute_error_fail(tmp_path):
+    def change(r):
+        s = _step(r, "setup", "", "build")
+        s["outcome"], s["reason"] = "refute_error", "the fallback failed: OSError: x"
+        r["outcome"]["ladder"]["built_with"] = None
+        run = r["outcome"]["run"]
+        run["stopped"] = "setup build: the fallback failed: OSError: x"
+        run["accounting_valid"], run["invalid_reasons"] = False, [run["stopped"]]
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    report = _verify("2302.12465", d)
+    assert _has(report, "V4 base arXiv-2302.12465v3-C1 base: ran after the paper stopped")

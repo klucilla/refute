@@ -71,6 +71,23 @@ NOT_ELIGIBLE = "not eligible for attacks (base not obtained or no applicable att
 SETUP_INCOMPLETE = "the setup did not complete"
 NOT_SUCCESS = "the container ended but is not a success"
 RUNNER_STOPS = ("unexpected error: ", "the completeness check failed: ")
+# the refusals of the frozen accountant (budget.Accountant.authorized), kept by _refused
+ACCOUNTING_REFUSAL = "the accounting is invalid ("
+REFUSALS = (
+    ACCOUNTING_REFUSAL,
+    "unknown account ",
+    "the setup account is closed",
+    "the setup account is still open",
+    "no transfer from the attacks to the base reproduction",
+    "the attack pool is not open",
+    "claims run in the drawn order; the current claim is ",
+)
+NOT_ELIGIBLE_REFUSAL = " is not eligible for attacks"
+BUDGET_POOLS = {
+    orc.SETUP: (bg.Pool.SETUP,),
+    orc.BASE: (bg.Pool.BASE, bg.Pool.SETUP),
+    orc.ATTACKS: (bg.Pool.ATTACKS,),
+}
 _HEX = re.compile(r"`([0-9a-f]{64})`")
 
 
@@ -370,7 +387,8 @@ def _candidates(
                 exact.add(
                     (str(orc.Outcome.BUDGET_EXHAUSTED), f"{bg.BUDGET_EXHAUSTED} ({bg.Pool.SETUP})")
                 )
-                prefixes.add((str(orc.Outcome.REFUTE_ERROR), ""))
+                # the setup account's only other refusal (budget.authorized)
+                prefixes.add((str(orc.Outcome.REFUTE_ERROR), ACCOUNTING_REFUSAL))
             return exact, prefixes
     if name.startswith("data/"):
         if len(records) != 1:
@@ -522,17 +540,53 @@ def check_steps(
                 )
             continue
         if out is orc.Outcome.BUDGET_EXHAUSTED:
-            if not s["reason"].startswith(f"{bg.BUDGET_EXHAUSTED} ("):
-                findings.append(f"V4 {where}: a refused grant without the budget reason")
+            pools = BUDGET_POOLS.get(s["phase"], ())
+            if s["reason"] not in {f"{bg.BUDGET_EXHAUSTED} ({p})" for p in pools}:
+                findings.append(f"V4 {where}: a refused grant without its budget reason")
             continue
         if out is orc.Outcome.REFUTE_ERROR:
-            continue  # a refused grant or the base evaluation: its stop is checked above
+            # a refused grant (budget.authorized's reasons) or the base evaluation; its stop
+            # and accounting are checked above
+            known = REFUSALS if s["phase"] != orc.SETUP else (ACCOUNTING_REFUSAL,)
+            evaluation = s["step"] == "base_obtained" and s["phase"] == orc.BASE
+            eligible_refusal = s["phase"] == orc.ATTACKS and s["reason"].endswith(
+                NOT_ELIGIBLE_REFUSAL
+            )
+            if not evaluation and not eligible_refusal and not s["reason"].startswith(known):
+                findings.append(
+                    f"V4 {where}: a refusal the accountant never gives: {s['reason']!r}"
+                )
+            if s["reason"].startswith(ACCOUNTING_REFUSAL) and run["accounting_valid"]:
+                findings.append(f"V4 {where}: refused for invalid accounting, yet it is valid")
+            continue
         if out is not orc.Outcome.NOT_EXECUTED:
             findings.append(f"V4 {where}: {out} with no container")
             continue
         why = _not_executed_problem(s, by_id, plan_ids, run, setup_ok, contexts, plan, weights)
         if why:
             findings.append(f"V4 {where}: not executed: {why}")
+    # what a step needs before it may run (section 4c): nothing runs after the first Refute
+    # error; a setup step runs only after the earlier ones completed; the base and the attacks
+    # only after a completed setup (and the base not after an exhausted setup budget); an
+    # attack only for a claim eligible for attacks
+    seen_error = False
+    setup_broken = False
+    for s, i in zip(steps, ids, strict=True):
+        where = _where(s)
+        if s["containers"] and seen_error:
+            findings.append(f"V4 {where}: ran after the paper stopped on a Refute error")
+        if s["outcome"] == orc.Outcome.REFUTE_ERROR:
+            seen_error = True
+        if s["phase"] == orc.SETUP and i in plan_ids:
+            if s["containers"] and setup_broken:
+                findings.append(f"V4 {where}: ran after an earlier setup step did not complete")
+            if s["outcome"] != orc.Outcome.COMPLETED:
+                setup_broken = True
+        elif s["containers"]:
+            if not setup_ok:
+                findings.append(f"V4 {where}: ran although the setup did not complete")
+            if s["phase"] == orc.ATTACKS and s["claim"] not in run["attack_claims"]:
+                findings.append(f"V4 {where}: ran for a claim not eligible for attacks")
     # what each claim's base step must say when it did not run
     for key, ctx in contexts.items():
         base = by_id.get((orc.BASE, key, "base"))
