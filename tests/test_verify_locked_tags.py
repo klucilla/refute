@@ -178,7 +178,8 @@ def test_a_direct_lock_passes_only_by_a_direct_pass_with_its_own_hashes():
 
 def run_with(script, tmp_path, monkeypatch, verdict_for):
     """run_checks with a faked worktree, trust check and verify; ``verdict_for(check)`` gives
-    the verify result (dict) and exit code of each claim."""
+    the verify result (a dict, dumped as JSON, or a str, the raw output) and the exit code of
+    each claim."""
     monkeypatch.setattr(script, "worktree_problems", lambda *a: [])
     monkeypatch.setattr(script, "direct_worktree_problems", lambda *a: [])
     checks = script.expected_checks()
@@ -189,7 +190,7 @@ def run_with(script, tmp_path, monkeypatch, verdict_for):
 
     def verify(worktree, claim):
         result, code = verdict_for(by_claim[claim])
-        return json.dumps(result), code
+        return (result if isinstance(result, str) else json.dumps(result)), code
 
     out = tmp_path / "out"
     return script.run_checks(checks, out, prepare, verify), out
@@ -219,6 +220,85 @@ def test_every_claim_passing_gives_a_joint_pass(tmp_path, monkeypatch):
     assert summary["joint"] == "PASS"
     assert summary["passed"] == 7
     assert summary["tags_absent"] == []
+
+
+CLAIMS = [c.claim for c in load_script().expected_checks()]
+
+
+@pytest.mark.parametrize("bad", CLAIMS)
+def test_each_claim_failing_alone_fails_the_joint_verification(bad, tmp_path, monkeypatch):
+    script = load_script()
+
+    def verdict(check):
+        if check.claim == bad:
+            return dict(passing(script, check), status="FAIL"), 1
+        return passing(script, check), 0
+
+    summary, _ = run_with(script, tmp_path, monkeypatch, verdict)
+    assert summary["joint"] == "FAIL"
+    assert [r["claim"] for r in summary["checks"] if not r["pass"]] == [bad]
+
+
+@pytest.mark.parametrize("raw", ["null", "[]", "7", '"PASS"', "", "{not json"])
+def test_an_output_that_is_not_a_json_object_never_passes(raw, tmp_path, monkeypatch):
+    """Codex review of d1ad932, finding 1: `null` with exit 27 gave a joint PASS; finding 2:
+    `[]` raised before the summary was written."""
+    script = load_script()
+    bad = "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml"
+
+    def verdict(check):
+        if check.claim == bad:
+            return raw, 27
+        return passing(script, check), 0
+
+    summary, out = run_with(script, tmp_path, monkeypatch, verdict)
+    assert summary["joint"] == "FAIL"
+    row = next(r for r in summary["checks"] if r["claim"] == bad)
+    assert not row["pass"] and row["status"] is None
+    assert json.loads((out / "summary.json").read_text(encoding="utf-8"))["joint"] == "FAIL"
+
+
+def test_a_pass_with_a_failing_exit_code_never_passes(tmp_path, monkeypatch):
+    script = load_script()
+    summary, _ = run_with(
+        script,
+        tmp_path,
+        monkeypatch,
+        lambda c: (passing(script, c), 27 if c.kind == "direct" else 0),
+    )
+    assert summary["joint"] == "FAIL" and summary["passed"] == 2
+
+
+def test_a_verify_that_raises_is_a_recorded_failure(tmp_path, monkeypatch):
+    script = load_script()
+
+    def verdict(check):
+        if check.kind == "historical":
+            raise OSError("uv not found")
+        return passing(script, check), 0
+
+    summary, out = run_with(script, tmp_path, monkeypatch, verdict)
+    assert summary["joint"] == "FAIL" and summary["passed"] == 5
+    assert (out / "summary.json").is_file()
+
+
+def test_a_row_without_a_pass_status_never_passes_even_with_no_problems():
+    script = load_script()
+    checks = script.expected_checks()
+    good = {c.key: {"status": "PASS", "problems": []} for c in checks}
+    good[checks[0].key] = {"status": None, "problems": []}
+    assert script.summarize(checks, good)["joint"] == "FAIL"
+
+
+def test_an_output_folder_of_an_earlier_run_is_refused(tmp_path, monkeypatch):
+    """Codex review of d1ad932, finding 2: an earlier summary must never be read as current."""
+    script = load_script()
+    out = tmp_path / "out"
+    out.mkdir()
+    (out / "summary.json").write_text('{"joint": "PASS"}\n', encoding="utf-8")
+    with pytest.raises(SystemExit, match="not empty"):
+        run_with(script, tmp_path, monkeypatch, lambda c: (passing(script, c), 0))
+    assert sorted(p.name for p in out.iterdir()) == ["summary.json"]
 
 
 def test_a_tag_that_cannot_be_prepared_fails_each_of_its_claims(tmp_path, monkeypatch):
@@ -277,6 +357,17 @@ def test_a_tag_on_another_commit_is_refused_even_when_missing_tags_are_allowed(t
     prepared = script.make_prepare([], allow_missing_tags=True)("v0.3.0-main-lock", head)
     assert prepared.worktree is None
     assert "points to" in prepared.problems[0]
+
+
+def test_a_branch_of_the_same_name_is_not_the_tag(tagged):
+    """Codex review of d1ad932, finding 3: only refs/tags/<tag> counts."""
+    script, repo, head = tagged
+    git(repo, "branch", "v0.3.0-main-lock", head)
+    refused = script.make_prepare([], allow_missing_tags=False)("v0.3.0-main-lock", head)
+    assert refused.worktree is None and "does not exist" in refused.problems[0]
+    allowed = script.make_prepare([], allow_missing_tags=True)("v0.3.0-main-lock", head)
+    assert allowed.tag_state.startswith("absent")
+    git(repo, "worktree", "remove", "--force", str(allowed.worktree))
 
 
 def test_a_tag_on_its_commit_is_used(tagged):

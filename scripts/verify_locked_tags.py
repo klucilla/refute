@@ -23,9 +23,13 @@ For each tag the script:
 4. writes `<out>/summary.json`, which lists every expected (tag, claim) and passes only when all
    of them are present and PASS; prints one line per claim and the joint result.
 
-A tag that does not exist is a failure. With ``--allow-missing-tags`` a direct lock whose tag is
-not created yet is checked at its full commit instead, and the summary records the tag as absent
-(for the check before the tag is created); a tag that exists must point to its commit.
+The output folder must be new or empty (the default is a fresh folder per run), so a file of
+an earlier run is never read as current; a row passes only with a verify ``PASS`` (a JSON
+object, exit code 0). Only ``refs/tags/<tag>`` counts as the tag: a branch of the same name
+does not. A tag that does not exist is a failure. With ``--allow-missing-tags`` a direct lock
+whose tag is not created yet is checked at its full commit instead, and the summary records the
+tag as absent (for the check before the tag is created); a tag that exists must point to its
+commit.
 
 It runs by hand, never in the test suite: `uv sync` may need the network. With
 `--remove-worktrees` it removes its own worktrees afterwards (`git worktree remove`), only below
@@ -44,6 +48,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import time
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -259,6 +264,9 @@ def summarize(checks: Sequence[Check], outcomes: Mapping[str, Mapping[str, Any]]
     for check in checks:
         outcome = outcomes.get(check.key)
         problems = list(outcome.get("problems", [])) if outcome else ["no outcome"]
+        if outcome and outcome.get("status") != "PASS" and not problems:
+            # a row passes only with a verify PASS, whatever the problems list says
+            problems.append(f"verify status {outcome.get('status')}, not PASS")
         rows.append(
             {
                 "kind": check.kind,
@@ -312,11 +320,16 @@ def run_checks(checks: Sequence[Check], out: Path, prepare: Prepare, verify: Ver
 
     ``prepare(tag, commit)`` gives the tag's ``Prepared`` worktree (``commit`` is the full
     commit a direct lock's tag must point to, None for a historical tag);
-    ``verify(worktree, claim)`` gives (stdout, exit code) of ``refute verify --json``."""
-    out.mkdir(parents=True, exist_ok=True)
+    ``verify(worktree, claim)`` gives (stdout, exit code) of ``refute verify --json``.
+
+    ``out`` must not exist or be empty: a file of an earlier run can never be read as
+    current evidence (nothing is deleted; each run uses a fresh folder)."""
     names = [output_name(c.tag, c.claim) for c in checks]
     if len(set(names)) != len(names):
         raise SystemExit("two checks would write the same output file")
+    if out.exists() and (not out.is_dir() or any(out.iterdir())):
+        raise SystemExit(f"the output folder is not empty: {out}; use a new --out")
+    out.mkdir(parents=True, exist_ok=True)
     prepared: dict[str, Prepared] = {}
     outcomes: dict[str, dict] = {}
     for check, name in zip(checks, names, strict=True):
@@ -330,19 +343,26 @@ def run_checks(checks: Sequence[Check], out: Path, prepare: Prepare, verify: Ver
         if worktree is not None and not problems:
             problems += _trust_problems(check, worktree, ready.commit)
         if worktree is not None and not problems:
-            stdout, code = verify(worktree, check.claim)
+            try:
+                stdout, code = verify(worktree, check.claim)
+            except Exception as exc:  # any failure of the run is a recorded problem
+                stdout, code = "", None
+                problems.append(f"verify could not run: {exc!r}")
             out_file = out / name
             out_file.write_text(stdout, encoding="utf-8", newline="\n")
             outcome["output"] = name
             outcome["output_sha256"] = hashlib.sha256(out_file.read_bytes()).hexdigest()
             try:
-                result = json.loads(stdout)
-            except json.JSONDecodeError:
-                result = None
+                parsed = json.loads(stdout)
+            except ValueError:
+                parsed = None
                 problems.append(f"verify did not return JSON (exit {code})")
-            if result is not None:
-                outcome["status"] = result.get("status")
-                problems += result_problems(check, result, code)
+            # only a JSON object is a verify result; null, a list or a number is not
+            result = parsed if isinstance(parsed, dict) else None
+            if parsed is not None and result is None:
+                problems.append(f"verify returned JSON that is not an object (exit {code})")
+            outcome["status"] = result.get("status") if result is not None else None
+            problems += result_problems(check, result, code)
             # nothing changed during the run
             after = _trust_problems(check, worktree, ready.commit)
             problems += [f"after the run: {p}" for p in after]
@@ -357,13 +377,18 @@ def run_checks(checks: Sequence[Check], out: Path, prepare: Prepare, verify: Ver
 
 def make_prepare(python: list[str], allow_missing_tags: bool) -> Prepare:
     def prepare(tag: str, commit: str | None) -> Prepared:
-        resolved = run(["git", "rev-parse", "--verify", "--quiet", f"{tag}^{{commit}}"], ROOT)
-        found = resolved.stdout.strip() if resolved.returncode == 0 else ""
-        if found:
+        # only refs/tags/<tag> counts: a branch or another ref of the same name is not the tag
+        ref = f"refs/tags/{tag}"
+        exists = run(["git", "show-ref", "--verify", "--quiet", ref], ROOT).returncode == 0
+        if exists:
             state = "present"
+            resolved = run(["git", "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"], ROOT)
+            found = resolved.stdout.strip() if resolved.returncode == 0 else ""
+            if not found:
+                return Prepared(None, state, "", (f"tag {tag} exists but names no commit",))
             if commit is not None and found != commit:
                 return Prepared(None, state, found, (f"tag {tag} points to {found}, not {commit}",))
-            target, expected = tag, found
+            target, expected = found, found
         elif commit is not None and allow_missing_tags:
             state = "absent (checked at its commit)"
             target, expected = commit, commit
@@ -403,7 +428,12 @@ def make_verify(python: list[str]) -> Verify:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--python", help="interpreter for uv (default: uv's choice)")
-    parser.add_argument("--out", type=Path, default=WORK / "tag-verify")
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=WORK / "tag-verify" / time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()),
+        help="a new or empty folder (default: a fresh folder per run)",
+    )
     parser.add_argument("--allow-missing-tags", action="store_true")
     parser.add_argument("--remove-worktrees", action="store_true")
     args = parser.parse_args()
