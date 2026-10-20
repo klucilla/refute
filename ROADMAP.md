@@ -29,30 +29,29 @@ how later work is done.
 
 ## Current phase
 
-**v0.3 Replicate papers (ML pack)**
+**v0.2.1 Gauntlet fixes (resumed)**
 
-Opened on 2026-10-14 by the maintainer's decision, as an explicit exception to "How
-phases work" above. It is not an approved gate: none of the v0.2.1 Gauntlet fixes
-exit criteria is ticked (all are deferred), its population study was closed by a
-scope decision, and no gate review was run
-([closure record](docs/validation/v0.2.1/population/closure-record.md)).
-This exception applies only to the transition from v0.2.1 to v0.3; gate
-requirements for subsequent phases remain unchanged.
+Resumed on 2026-10-20 by the maintainer's decision, after v0.3 closed: after v0.3 the
+focus returns to TESS. **v0.4 Discover** comes after it (the order decided on 2026-10-17;
+the order of the sections below is unchanged, and no exit criterion of any phase changes).
+The v0.2.1 work continues from branch `claude/v0-2-1-reopen` and reaches `main` only by
+the maintainer's approval. Its exit criteria do not change, and the FAIL of the v0.2
+calibration stays a valid result. Plan:
+[docs/plans/v0.2.1-reopen-plan.md](docs/plans/v0.2.1-reopen-plan.md).
 
-**Order of the next phases (decided by the maintainer on 2026-10-17):** after v0.3 closes,
-the next phase is **v0.2.1 Gauntlet fixes** (the TESS fixes, the project's focus), and
-**v0.4 Discover** comes after it. The order of the sections below is unchanged, and no exit
-criterion of any phase changes.
-
-**Parallel reopening of v0.2.1 (decided by the maintainer on 2026-10-17).** v0.2.1 Gauntlet
-fixes is reopened in parallel with v0.3, as an explicit exception to "One phase at a time".
-v0.3 stays the current phase and has priority in every shared component: the machine (v0.2.1
-runs on logical processors 0 to 7, at most 6 workers, until v0.3 is sealed), the `main`
-branch, CI, and the code hash of the v0.3 locks (nothing under `src/`, `pyproject.toml` or
-`uv.lock` reaches `main` before v0.3 is sealed). The v0.2.1 work runs on branch
-`claude/v0-2-1-reopen` and is merged into `main` only by the maintainer's approval, after the
-v0.3 seal. The v0.2.1 exit criteria do not change, and the FAIL of the v0.2 calibration stays a
-valid result. Plan: [docs/plans/v0.2.1-reopen-plan.md](docs/plans/v0.2.1-reopen-plan.md).
+**History of the exception.**
+- **v0.3 opened** on 2026-10-14 by the maintainer's decision, as an explicit exception to "How
+  phases work". It was not an approved gate of v0.2.1: no v0.2.1 exit criterion was ticked,
+  its population study was closed by a scope decision, and no gate review was run
+  ([closure record](docs/validation/v0.2.1/population/closure-record.md)).
+- **v0.2.1 reopened in parallel** on 2026-10-17, with v0.3 keeping the priority until its
+  seal.
+- **v0.3 closed** on 2026-10-20 with a gate review `WEAKENED` and its issues tracked (see its
+  section). The limits that the parallel work kept while v0.3 was open ended with its seal:
+  logical processors 0 to 7, and nothing under `src/`, `pyproject.toml` or `uv.lock` reaching
+  `main`.
+- **Gate rule.** The exception applied only to the transition from v0.2.1 to v0.3; the gate
+  requirements of every later phase are unchanged.
 
 ---
 
@@ -292,12 +291,22 @@ The original "Replica" idea: re-derive published results.
 
 **Exit criteria** (changed on 2026-10-14 by the maintainer, before any selection;
 plan: [docs/plans/v0.3-plan.md](docs/plans/v0.3-plan.md))
-- [ ] 5 papers processed end to end (the main sample), with every verdict path,
+- [x] 5 papers processed end to end (the main sample), with every verdict path,
       including `NOT_REPRODUCIBLE`, shown to be handled correctly by a controlled
       test (an artifact built to be non-reproducible), whether or not the real
       sample contains one.
-- [ ] Right of reply: the notification was made and recorded; the reply period
+- [x] Right of reply: the notification was made and recorded; the reply period
       remains open.
+
+**Closed on 2026-10-20: gate review `WEAKENED`**, with every issue it named tracked
+(#47, #159, #160, #161, #162). Both criteria are met as written. The weaknesses:
+- the reviews of 2309.15704 are held until its reply period ends;
+- no reviewer checked the inventories or the triage;
+- four of the five papers were locked with claims that could not be decided;
+- some WP4 acceptance rows are not covered;
+- some deviations from the plan were recorded only at the gate.
+
+Record: [calibration/v0.3/main/gate/README.md](calibration/v0.3/main/gate/README.md).
 
 ---
 
