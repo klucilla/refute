@@ -28,6 +28,26 @@ their SHA-256: `e2e16a804a59ccd601f0027ab03617743a0c88558bc25ba6ead72a19d079e2f4
 
 Objections never change a verdict (docs/reviewer-protocol.md, "What happens with objections").
 
+## Independent reviews (section 10.3), second reviewer
+
+Reviewer: Codex (another model family, decision D-20), one fresh read-only session per dossier.
+It received the same task as the primary reviewer and nothing of the primary reviews. All five
+dossiers were reviewed, because the protocol of the main sample did not fix the rule that draws
+"1 dossier with no negative claim"; reviewing all five covers that requirement with no draw (the
+maintainer's decision of 2026-10-19). Added with
+`refute annex <dossier> review-codex <folder>` on 2026-10-20 (UTC).
+
+| Paper | Annex | `ANNEX.json` SHA-256 | Assessment |
+|---|---|---|---|
+| 2302.12465 | `annexes/review-codex/` | `16a56f56159674c50ceefb6ee7be0cd77129aa756f90e77b529fa020af3ccfdf` | OBJECTIONS (3 important) |
+| 2305.19518 | `annexes/review-codex/` | `b80995cb491cd88e2428e0da3336dfa1d3c2ac44581054e476d24a593f4795d5` | OBJECTIONS (3 important) |
+| 2407.11735 | `annexes/review-codex/` | `6c3d3dd8dc5316f9701a1b4f06c1b244c3f73e4b6e5da2d36d345523b2e5f21a` | OBJECTIONS (3 important) |
+| 2502.16782 | `annexes/review-codex/` | `8f73d42081d1f3c39e880082d3e4403f00cbb759ea3e361f7cad7ab0afce184d` | OBJECTIONS (2 important) |
+
+**2309.15704: held under the right of reply**, for the same reason as its primary review: it
+discusses the cause of the run's failure. SHA-256 of the held report (`review-codex.md`, 6,702
+bytes): `c34c8724ab14255814be8813b26b805a8a9a189b347a6ce7f6c18f9aba5c2fd0`.
+
 ## Dossier verification (section 10.2, item a)
 
 The report of `calibration/v0.3/verify_dossiers.py` at commit e5d4aed

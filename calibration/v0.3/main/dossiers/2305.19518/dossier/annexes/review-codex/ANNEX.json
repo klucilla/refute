@@ -1,0 +1,11 @@
+{
+  "annex_version": 1,
+  "core_sha256": "e4f2ca2d352f66f33b48cf014936f8270625e4994d06f4ba72fc5689f4559435",
+  "files": [
+    {
+      "path": "review-codex.md",
+      "sha256": "a9d9b1c9861bbcdf9efb664fb3af113ed675ebf9e4ba7112e350bdbe7314c341"
+    }
+  ],
+  "name": "review-codex"
+}
