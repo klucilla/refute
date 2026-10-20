@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "exit_code": 0,
+  "claim_path": "claim.yaml",
+  "messages": [
+    "claim ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424, code 3165e1417ebe1f9474145076000f14f3b561b2cdd55f8c2b6b36ffde26e17322, 2 attachment(s): all hashes match the lock"
+  ],
+  "tampered_components": [],
+  "changed_files": [],
+  "locked_claim_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+  "locked_code_sha256": "3165e1417ebe1f9474145076000f14f3b561b2cdd55f8c2b6b36ffde26e17322",
+  "current_claim_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+  "current_code_sha256": "3165e1417ebe1f9474145076000f14f3b561b2cdd55f8c2b6b36ffde26e17322",
+  "claim_projection": null,
+  "projected_claim_sha256": null,
+  "verified_at_utc": "2026-10-20T05:23:39Z"
+}

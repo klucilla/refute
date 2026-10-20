@@ -1,0 +1,86 @@
+{
+  "joint": "PASS",
+  "expected": 7,
+  "passed": 7,
+  "unexpected": [],
+  "tags_absent": [],
+  "checks": [
+    {
+      "kind": "historical",
+      "tag": "v0.1.0",
+      "claim": "calibration/self_claim.yaml",
+      "status": "PASS",
+      "output": "v0.1.0__calibration__self_claim.yaml.json",
+      "output_sha256": "d7dd98305cbe329dc21bee8bb6bfb1edf5833d85e4975e771a89eb2b7d78ba28",
+      "tag_state": "present",
+      "problems": [],
+      "pass": true
+    },
+    {
+      "kind": "historical",
+      "tag": "v0.2.0-calibration-lock",
+      "claim": "calibration/v0.2/self_claim.yaml",
+      "status": "PASS",
+      "output": "v0.2.0-calibration-lock__calibration__v0.2__self_claim.yaml.json",
+      "output_sha256": "04145dda784ed3087fa877ce9363a1cad319a8b44b6a542337880f8eb76c60c5",
+      "tag_state": "present",
+      "problems": [],
+      "pass": true
+    },
+    {
+      "kind": "direct",
+      "tag": "v0.3.0-main-lock",
+      "claim": "calibration/v0.3/main/claims/2302.12465/claim/claim.yaml",
+      "status": "PASS",
+      "output": "v0.3.0-main-lock__calibration__v0.3__main__claims__2302.12465__claim__claim.yaml.json",
+      "output_sha256": "6734ea10ec08536936108c12d1403b274d9b9f96982b8d02fb2b65a6755db5a0",
+      "tag_state": "present",
+      "problems": [],
+      "pass": true
+    },
+    {
+      "kind": "direct",
+      "tag": "v0.3.0-main-lock",
+      "claim": "calibration/v0.3/main/claims/2305.19518/claim/claim.yaml",
+      "status": "PASS",
+      "output": "v0.3.0-main-lock__calibration__v0.3__main__claims__2305.19518__claim__claim.yaml.json",
+      "output_sha256": "779fd2bd313edc5a72bfb586a7624b96cd339bc567b5f702080c7764ece4a0c2",
+      "tag_state": "present",
+      "problems": [],
+      "pass": true
+    },
+    {
+      "kind": "direct",
+      "tag": "v0.3.0-main-lock",
+      "claim": "calibration/v0.3/main/claims/2309.15704/claim/claim.yaml",
+      "status": "PASS",
+      "output": "v0.3.0-main-lock__calibration__v0.3__main__claims__2309.15704__claim__claim.yaml.json",
+      "output_sha256": "77b15018b96effc45dc1677ff8da361521c6ee48b85bc8b57460a3ca7331b5ea",
+      "tag_state": "present",
+      "problems": [],
+      "pass": true
+    },
+    {
+      "kind": "direct",
+      "tag": "v0.3.0-main-lock",
+      "claim": "calibration/v0.3/main/claims/2407.11735/claim/claim.yaml",
+      "status": "PASS",
+      "output": "v0.3.0-main-lock__calibration__v0.3__main__claims__2407.11735__claim__claim.yaml.json",
+      "output_sha256": "e6b5dd7f763e99ce962fc80fb3af9b5a4ed20ea2306ed363459348eca541c9bc",
+      "tag_state": "present",
+      "problems": [],
+      "pass": true
+    },
+    {
+      "kind": "direct",
+      "tag": "v0.3.0-main-lock",
+      "claim": "calibration/v0.3/main/claims/2502.16782/claim/claim.yaml",
+      "status": "PASS",
+      "output": "v0.3.0-main-lock__calibration__v0.3__main__claims__2502.16782__claim__claim.yaml.json",
+      "output_sha256": "ea7a58482feed2323b2d57dabc4287615b5c1aec028e3887c136c819eeb72c14",
+      "tag_state": "present",
+      "problems": [],
+      "pass": true
+    }
+  ]
+}

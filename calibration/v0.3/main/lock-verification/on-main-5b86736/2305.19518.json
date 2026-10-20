@@ -1,0 +1,32 @@
+{
+  "status": "TAMPERED",
+  "exit_code": 2,
+  "claim_path": "claim.yaml",
+  "messages": [
+    "code hash mismatch: locked 3165e1417ebe1f9474145076000f14f3b561b2cdd55f8c2b6b36ffde26e17322, now 7737b4a0d748dd4caa153e87209fab68d59e17e51403effdc50324cf6cc75076; modified: src/refute/core/lock_compat.py; modified: src/refute/packs/tess/battery.py; modified: src/refute/packs/tess/detrend.py; modified: src/refute/packs/tess/events.py; modified: src/refute/packs/tess/holdout.py; modified: src/refute/packs/tess/params.py; modified: src/refute/packs/tess/pipeline.py; added: src/refute/packs/tess/prewhiten.py; added: src/refute/packs/tess/rednoise.py; modified: src/refute/packs/tess/report.py; modified: src/refute/packs/tess/synthetic.py; added: src/refute/packs/tess/timing.py"
+  ],
+  "tampered_components": [
+    "code"
+  ],
+  "changed_files": [
+    "modified: src/refute/core/lock_compat.py",
+    "modified: src/refute/packs/tess/battery.py",
+    "modified: src/refute/packs/tess/detrend.py",
+    "modified: src/refute/packs/tess/events.py",
+    "modified: src/refute/packs/tess/holdout.py",
+    "modified: src/refute/packs/tess/params.py",
+    "modified: src/refute/packs/tess/pipeline.py",
+    "added: src/refute/packs/tess/prewhiten.py",
+    "added: src/refute/packs/tess/rednoise.py",
+    "modified: src/refute/packs/tess/report.py",
+    "modified: src/refute/packs/tess/synthetic.py",
+    "added: src/refute/packs/tess/timing.py"
+  ],
+  "locked_claim_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+  "locked_code_sha256": "3165e1417ebe1f9474145076000f14f3b561b2cdd55f8c2b6b36ffde26e17322",
+  "current_claim_sha256": "ff1ac0933507882c63178a9fa7e7d5b0c82279a7ee758b9ac6bdbec9e8403424",
+  "current_code_sha256": "7737b4a0d748dd4caa153e87209fab68d59e17e51403effdc50324cf6cc75076",
+  "claim_projection": null,
+  "projected_claim_sha256": null,
+  "verified_at_utc": "2026-10-20T03:53:50Z"
+}
