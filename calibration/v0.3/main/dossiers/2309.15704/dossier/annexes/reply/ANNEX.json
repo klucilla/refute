@@ -1,0 +1,11 @@
+{
+  "annex_version": 1,
+  "core_sha256": "314ec1920c6fb593c4ecdb6b8582b891e0436d5fb522af265f7845b2541e7d3f",
+  "files": [
+    {
+      "path": "notice.md",
+      "sha256": "1e886c947d8c079de5ccfde890707435036af26067b46c1a2453d570030dee43"
+    }
+  ],
+  "name": "reply"
+}

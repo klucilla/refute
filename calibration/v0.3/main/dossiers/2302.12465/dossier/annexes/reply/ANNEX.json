@@ -1,0 +1,15 @@
+{
+  "annex_version": 1,
+  "core_sha256": "d18e74776aa886de1ec271c3d31f40dc7f9001452b4aaca41031a674e20366f1",
+  "files": [
+    {
+      "path": "notice-body.txt",
+      "sha256": "32f3dbb868ae27a129dd08ac5ab5c757fd12c8859cd55c37560c8fdebfd82e72"
+    },
+    {
+      "path": "notice.md",
+      "sha256": "3660396e4301c126be5a7c278d6d175de92fceb113701e8c61f8c6d0f9f14c81"
+    }
+  ],
+  "name": "reply"
+}

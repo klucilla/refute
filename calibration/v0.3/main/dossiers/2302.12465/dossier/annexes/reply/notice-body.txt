@@ -1,0 +1,21 @@
+Dear authors,
+
+We are writing about your paper "PaGE-Link: Path-based Graph Neural Network Explanation for Heterogeneous Link Prediction" (arXiv:2302.12465, version 3). We tried to reproduce three of its claims with Refute, an open-source tool that re-runs published results with a procedure fixed before the run, and the three were reproduced. This is a courtesy notice; nothing in it waits for your reply.
+
+Code tested: https://github.com/amazon-science/page-link-path-based-gnn-explanation at commit cdb7160f9a2fd90bded8cefa8f591f9a0e47ee6c, with the repository's trained link predictor (saved_models/synthetic_model.pth, loaded frozen).
+
+Claims (Table 4, row "UserItemAttr", ROC-AUC of the explanations against the ground-truth paths), with the paper's value and ours:
+- PaGE-Link: 0.954 in the paper, 0.9625 in our run
+- GNNExp-Link: 0.608 in the paper, 0.6053 in our run
+- PaGE-Link above PGExp-Link (section 6.3, "PaGE-Link outperforms both baseline explainers"): 0.9625 against 0.5799 in our run. For PGExp-Link we trained its mask generator before explaining, an explicit correction of the documented command that we recorded before the run; if this does not match your procedure, we would like to know.
+
+Verdict for each of the three claims: REPRODUCED. It means that the claim was reproduced within the tolerance fixed before the run. No robustness check applied to these claims (the seed and the data split are fixed in the code), so the verdict rests on the base reproduction alone. A verdict is about the claim as we ran it, never about the people who made it.
+
+The full record of the run (the locked claims, the logs and the verdicts) is in a dossier published at
+https://github.com/klucilla/refute/tree/main/calibration/v0.3/main/dossiers/2302.12465
+Its manifest (MANIFEST.sha256) has the SHA-256 0e177c5dc2e80190b2d51f45081f72970f34444672a9243800aa96039271e700, and its experimental core is sealed (SEAL.json in the dossier) with the SHA-256 d18e74776aa886de1ec271c3d31f40dc7f9001452b4aaca41031a674e20366f1.
+
+If you wish to comment, we would be glad to hear from you within 30 days of this message (by 18 November 2026); if you reply, we offer to publish your reply next to the verdict, as you write it.
+
+Kind regards,
+Klauber Lucilla, maintainer of Refute

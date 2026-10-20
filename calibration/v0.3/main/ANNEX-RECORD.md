@@ -48,6 +48,20 @@ maintainer's decision of 2026-10-19). Added with
 discusses the cause of the run's failure. SHA-256 of the held report (`review-codex.md`, 6,702
 bytes): `c34c8724ab14255814be8813b26b805a8a9a189b347a6ce7f6c18f9aba5c2fd0`.
 
+## Notices to the authors (section 9.1, item 5)
+
+The `reply/` record of each notice sent: the subject, the time sent, the sealed core it cites
+and the reply deadline, with no address and no message id. Added with
+`refute annex <dossier> reply <folder>` on 2026-10-20 (UTC), the maintainer's approval of the
+same day. The body of the 2309.15704 notice states the analysis of the cause, so it is held
+until the reply period ends (#162): the annex records its SHA-256, and the body will be
+published unchanged with the held reviews.
+
+| Paper | Annex | `ANNEX.json` SHA-256 | Body SHA-256 |
+|---|---|---|---|
+| 2302.12465 | `annexes/reply/` | `174b47433c488f75df33139b9ed7ceed89c0942cb80b9c01d149452ee0bdf70d` | `32f3dbb868ae27a129dd08ac5ab5c757fd12c8859cd55c37560c8fdebfd82e72` (in the annex) |
+| 2309.15704 | `annexes/reply/` | `c2ac9f275d11c294fd1b0bf86eada36fc5ec7125a2f356abb6a0ac99fbe87aee` | `750c99c91cde29f5419ef2e924c2925fa10a84805fa38e409111295cee7c995c` (held) |
+
 ## Dossier verification (section 10.2, item a)
 
 The report of `calibration/v0.3/verify_dossiers.py` at commit e5d4aed

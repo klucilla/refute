@@ -17,8 +17,8 @@ passed. The weaknesses below are tracked.
 |---|---|---|
 | 1 | Attach the two held reviews of 2309.15704 after the reply period, checked against their recorded SHA-256 (condition 4) | #162 |
 | 2 | Record the deviation: dossiers and verdicts published before the gate, during the embargo | this file, "Deviations" |
-| 3 | The courtesy notices of 2305.19518, 2407.11735 and 2502.16782 | this file, "Deviations"; the maintainer's decision is pending |
-| 4 | `refute reply-draft` and `refute review attach` cannot read production dossiers; the notices have no `reply/` annex and no draft hash | this file, "Deviations"; #161 |
+| 3 | The courtesy notices of 2305.19518, 2407.11735 and 2502.16782 | this file, "Deviations": not sent, by the maintainer's decision of 2026-10-20, with its reason |
+| 4 | `refute reply-draft` and `refute review attach` cannot read production dossiers; the notices had no `reply/` annex and no draft hash | this file, "Deviations"; #161. The `reply/` annexes now hold the sent text or its hash (../ANNEX-RECORD.md) |
 | 5 | The WP4 acceptance rows not covered by the controlled tests | #47, comment 6280921763 |
 | 6 | No reviewer checked the inventories or the triage of the main sample; the verifier replays recorded check results, not logs | #159, #160, #161 stay open; this file, "Limits" |
 
@@ -32,11 +32,14 @@ passed. The weaknesses below are tracked.
 - **Courtesy notices (9.2, D-14).**
   - Sent: the notice of 2302.12465 (all claims REPRODUCED), and a notice for 2309.15704.
   - Not sent: the three papers with only INCONCLUSIVE claims (2305.19518, 2407.11735, 2502.16782). The plan gives them "the same courtesy notice".
-  - The maintainer's decision, to send them or to record that they are not sent, is pending.
+  - **Not sent, by the maintainer's decision of 2026-10-20.** In all three, the cause of the INCONCLUSIVE verdicts is a limitation of Refute: a Dockerfile it does not build, external weights it does not fetch, and an environment built without `setuptools`. Nothing in them concerns the authors' claims. If a later version of Refute decides these claims, the notice is sent then.
 - **Notices without a `reply/` annex or a draft hash (9.1, items 4 and 5).**
   - `refute reply-draft` needs `SEAL.json`, `verdict.json`, `claim.yaml` and `REPRODUCE.md` (src/refute/core/reply.py). The production dossiers have `dossier.json`, `claim_file.json` and `claim_input.json` instead. The drafts were therefore written by hand on the model of `render()`, then reviewed and sent by the maintainer.
   - `refute review attach` needs `verdict.json` and rewrites `MANIFEST.sha256`. The reviews were therefore attached with `refute annex`.
   - The send record is #158, comment 6280792481.
+  - Since 2026-10-20, with the maintainer's approval, each notice has a `reply/` annex: the subject, the time sent, the cited core and the deadline.
+  - The 2302.12465 annex holds the body exactly as sent.
+  - The 2309.15704 annex holds the body's SHA-256 only, because the body states the analysis of the cause, which is held until the period ends (#162). See [../ANNEX-RECORD.md](../ANNEX-RECORD.md).
 - **Reviewer inputs (10.3).** By the maintainer's decision, each primary reviewer received only its dossier and the reviewer protocol. No reviewer checked the inventory, the draw or the triage rejections of a paper (#161).
 - **Second reviewer on all five dossiers, with no draw.** See [../ANNEX-RECORD.md](../ANNEX-RECORD.md).
 - **Reviews of 2309.15704 held** under the right of reply: #162.
