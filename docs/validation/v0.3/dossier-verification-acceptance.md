@@ -118,6 +118,63 @@ Must fail (each on a copy in a temporary folder, with the finding named):
 - `built_with` naming a rung that did not complete (V5);
 - a malformed `dossier.json` (not JSON, a missing field): a finding, never a crash.
 
+## 4a. Corrections after the Codex review of 420c844 (2026-10-20)
+
+The review found false accepts in V4, a crash on a malformed record, and a V1 that trusts the
+seal it is given. These rules replace the matching ones above; nothing else changes.
+
+- **V1, anchored.** The core hash in the dossier's `SEAL.json` equals the one committed for that
+  paper in `calibration/v0.3/main/SEAL-RECORD.md`. The annexes in the dossier are exactly the
+  ones `calibration/v0.3/main/ANNEX-RECORD.md` lists for that paper, each with the listed
+  SHA-256 of its `ANNEX.json`.
+- **Shapes first.** Before V2, the fields the checks decide on have their recorded types:
+  booleans are JSON booleans (`accounting_valid`, `setup_exhausted`, `base_obtained` values),
+  `stopped` and reasons are strings, `steps`, `attack_claims`, `invalid_reasons` and
+  `ladder.attempts` are lists, and the ladder lists the frozen rungs (`ladder.RUNGS`) in order.
+  A record that does not have them is a finding, never a crash; any unexpected error while
+  reading is a finding too.
+- **No run.** `outcome.run` null is accepted only when the ladder lists every frozen rung, none
+  applicable, and no claim's `environment_build` check passed.
+- **Fallback steps, as the frozen code runs them.** `build` (the ladder): every container but the
+  last ended FAILED by the frozen `_outcome` (a rung classified "next"); a container with no
+  result or stopped on Refute's side is the last one and the step has its outcome and reason;
+  otherwise a last container that exited 0 gives COMPLETED with no reason or FAILED with "the
+  container ended but is not a success", and one that failed gives FAILED with its reason.
+  `data/<dataset>` (a container reader, whose fallback always answers "completed"): its outcome
+  and reason are the container's when that is a stop on Refute's side or a missing result, and
+  COMPLETED with no reason otherwise, whatever the exit code; the reader's failure shows in the
+  data evidence, not in the step. This replaces "COMPLETED only if the last container exited 0"
+  for the readers.
+- **REFUTE_ERROR, with its consequences.** A recorded REFUTE_ERROR where the containers give
+  another outcome is accepted only when its reason is the containers' reason followed by
+  rejected-record messages of the step's own containers or by entries of `invalid_reasons`. The
+  first REFUTE_ERROR step in the record sets `stopped` to `"<phase> <claim> <step>: <reason>"`;
+  a `stopped` with no REFUTE_ERROR step is one of the frozen runner's own stops (an unexpected
+  error, the completeness check); a stopped run has invalid accounting with `stopped` among
+  `invalid_reasons`. A container stopped for a cause outside the frozen known stops is a finding.
+- **NOT_EXECUTED reasons, by cause.** "the setup did not complete" only for a base step when a
+  setup step did not complete; the setup's budget reason only when `setup_exhausted` is true
+  and the setup completed, and then for every base step; the claim's not-run reason only when
+  it equals the frozen `not_run_reason` of that claim (with the repository weights the dossier
+  records), and then for that claim's base step; "step X did not complete (Y)" only when X is
+  an earlier step of the same phase and claim, recorded with outcome Y other than completed;
+  "not eligible for attacks" only for a claim outside `attack_claims`; "the paper stopped: S"
+  only with `stopped` equal to S. "not reached" is never given by a run that did not stop. A
+  base step with no containers named `base_obtained` is accepted only as REFUTE_ERROR with "the
+  base evaluation failed: ...".
+- **Attack eligibility.** In a run that did not stop, `attack_claims` is exactly the claims whose
+  base was obtained and that have an attack step.
+- **Limits.** The lock is read from the published claim folder (`claim.lock.json`); its history
+  file is not read. The five dossiers have no executed attack, so the rebuilding of attack
+  records is shown by a round-trip test on synthetic records.
+- **Tests added:** each false accept the review reproduced (a build FAILED with an exit-0 last
+  container; a REFUTE_ERROR invented on a failed base step; an unknown stop cause; each wrong
+  NOT_EXECUTED reason; `setup_exhausted` with the wrong reason; a stop with no REFUTE_ERROR; a
+  `run` of null with an empty ladder; `accounting_valid` as a string; a ladder that is not an
+  object); an order mutation; a positive case of the accounting rule (verdicts and profile
+  updated: no V2, V3 or V4 finding); a missing field with its own finding; a seal or an annex
+  that does not match the committed records; the attack round trip.
+
 ## 5. Evidence
 
 - Test counts from a JUnit XML file; ruff exits 0.
