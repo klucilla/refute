@@ -192,6 +192,21 @@ seal it is given. These rules replace the matching ones above; nothing else chan
 - **Positive tests:** a threshold stop with no exit code, a refusal between two rungs, and a
   classifier failure give no V4 finding on their steps.
 
+## 4c. Refusal reasons and what a step needs before it runs (Codex check of d5ff766, 2026-10-20)
+
+- **Refusals, by the accountant's own reasons.** A refused grant keeps the reason of the frozen
+  `Accountant.authorized`: BUDGET_EXHAUSTED with `"budget_exhausted (<pool>)"` for the pools that
+  phase can be refused from (setup: setup; base: base or setup; attacks: attacks), or
+  REFUTE_ERROR with one of its other reasons. For the setup account (the build, between rungs or
+  at the first) the only REFUTE_ERROR refusal is "the accounting is invalid (...)", and then the
+  accounting is invalid. Any other reason is a finding. This replaces "any non-empty reason" of
+  4b.
+- **Prerequisites.** No step runs a container after the first REFUTE_ERROR in the record; a setup
+  step runs only after every earlier setup step completed; a base or attack step runs only after
+  a completed setup; an attack step runs only for a claim in `attack_claims`.
+- **Tests added:** an invented refusal reason between rungs; base steps that ran after a failed
+  build; base steps that ran after a setup REFUTE_ERROR.
+
 ## 5. Evidence
 
 - Test counts from a JUnit XML file; ruff exits 0.
