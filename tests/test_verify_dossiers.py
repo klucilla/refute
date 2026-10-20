@@ -396,3 +396,58 @@ def test_attack_records_round_trip_through_the_plain_record():
     assert vd._plain(rebuilt) == vd._plain(attack)
     empty = vd._attack(json.loads(json.dumps(vd._plain(vd.Attack("holdout")))))
     assert empty.run is None and empty.metric is None and empty.result is None
+
+
+# ---- section 4b: paths of the frozen runner that must be accepted -------------------------
+
+
+def _step_findings(report: dict, where: str) -> list[str]:
+    return [f for f in report["findings"] if f.startswith(f"V4 {where}:")]
+
+
+def test_a_threshold_stop_without_an_exit_code_is_accepted(tmp_path):
+    def change(r):
+        s = _step(r, "base", "C1", "base")
+        cid = s["containers"][0]["container_id"]
+        s["containers"][0]["result"].update(exit_code=None, stopped=vd.orc.STOP_THRESHOLD)
+        s["outcome"], s["reason"] = "budget_exhausted", f"threshold reached: {cid}"
+
+    d = _copy(tmp_path, "2309.15704")
+    _edit_record(d, change)
+    report = _verify("2309.15704", d)
+    assert not _has(report, "the dossier cannot be read")
+    assert _step_findings(report, "base arXiv-2309.15704v2-C1 base") == []
+
+
+def _two_rungs(r):
+    for a in r["outcome"]["ladder"]["attempts"]:
+        if a["rung"] == "requirements_compiled_next_python":
+            a["applicable"] = True
+    s = _step(r, "setup", "", "build")
+    s["containers"][0]["result"]["exit_code"] = 1
+    r["outcome"]["ladder"]["built_with"] = None
+    return s
+
+
+def test_a_grant_refused_between_rungs_is_accepted(tmp_path):
+    def change(r):
+        s = _two_rungs(r)
+        s["outcome"], s["reason"] = "budget_exhausted", "budget_exhausted (setup)"
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    assert _step_findings(_verify("2302.12465", d), "setup build") == []
+
+
+def test_a_classifier_failure_is_accepted(tmp_path):
+    def change(r):
+        s = _step(r, "setup", "", "build")
+        s["outcome"], s["reason"] = "refute_error", "the fallback failed: OSError: unreadable log"
+        r["outcome"]["ladder"]["built_with"] = None
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    report = _verify("2302.12465", d)
+    assert _step_findings(report, "setup build") == []
+    # its consequences are still required: the stop is not recorded in this copy
+    assert _has(report, "V4 run: stopped ''")

@@ -248,8 +248,10 @@ def check_shapes(outcome: Any) -> None:
             r = c.get("result")
             _need(r is None or isinstance(r, dict), "a container result")
             if r is not None:
-                _need(type(r.get("exit_code")) is int, "a container's exit_code")
                 _need(r.get("stopped") is None or isinstance(r["stopped"], str), "a stop")
+                # a run stopped by supervision has no exit code (section 4b)
+                code = r.get("exit_code")
+                _need(type(code) is int or (code is None and r["stopped"]), "an exit_code")
 
 
 # ---- V2, V3 -------------------------------------------------------------------------------
@@ -335,9 +337,15 @@ def _records(step: Mapping[str, Any]) -> list[Any]:
     return out
 
 
-def _candidates(step: Mapping[str, Any], records: list[Any]) -> set[tuple[str, str]] | str:
-    """The (outcome, reason) pairs the frozen runner can record for a step with containers, or
-    a finding."""
+FALLBACK_FAILED = "the fallback failed: "
+
+
+def _candidates(
+    step: Mapping[str, Any], records: list[Any], rungs: int
+) -> tuple[set[tuple[str, str]], set[tuple[str, str]]] | str:
+    """What the frozen runner can record for a step with containers: exact (outcome, reason)
+    pairs and (outcome, reason prefix) pairs; or a finding. ``rungs`` is the number of
+    applicable rungs of the ladder."""
     name = step["step"]
     if name == "build":
         for i, rec in enumerate(records):
@@ -346,23 +354,33 @@ def _candidates(step: Mapping[str, Any], records: list[Any]) -> set[tuple[str, s
             if rec.result is None or out in REFUTE_SIDE:
                 if not last:
                     return "a rung after a stop on Refute's side ran"
-                return {(str(out), reason)}
+                return {(str(out), reason)}, set()
             if not last:
                 if out is not orc.Outcome.FAILED:
                     return f"rung {rec.container_id} is followed by another but did not fail"
                 continue
+            # the classifier of the last rung may raise (section 4b)
+            prefixes = {(str(orc.Outcome.REFUTE_ERROR), FALLBACK_FAILED)}
             if out is orc.Outcome.COMPLETED:
-                return {(str(orc.Outcome.COMPLETED), ""), (str(orc.Outcome.FAILED), NOT_SUCCESS)}
-            return {(str(orc.Outcome.FAILED), reason)}
+                exact = {(str(orc.Outcome.COMPLETED), ""), (str(orc.Outcome.FAILED), NOT_SUCCESS)}
+                return exact, prefixes
+            exact = {(str(orc.Outcome.FAILED), reason)}
+            if len(records) < rungs:
+                # classified "next", then the next rung's grant refused (section 4b)
+                exact.add(
+                    (str(orc.Outcome.BUDGET_EXHAUSTED), f"{bg.BUDGET_EXHAUSTED} ({bg.Pool.SETUP})")
+                )
+                prefixes.add((str(orc.Outcome.REFUTE_ERROR), ""))
+            return exact, prefixes
     if name.startswith("data/"):
         if len(records) != 1:
             return "a container reader's step has one container"
         out, reason = orc._outcome(records)
         if records[0].result is None or out in REFUTE_SIDE:
-            return {(str(out), reason)}
-        return {(str(orc.Outcome.COMPLETED), "")}
+            return {(str(out), reason)}, set()
+        return {(str(orc.Outcome.COMPLETED), "")}, set()
     out, reason = orc._outcome(records)
-    return {(str(out), reason)}
+    return {(str(out), reason)}, set()
 
 
 def _override_ok(reason: str, base: str, step, run) -> bool:
@@ -463,6 +481,7 @@ def check_steps(
         if i[0] == orc.SETUP
     )
     weights = _weights(setup)
+    rungs = sum(1 for a in attempts if a["applicable"])
     for s in steps:
         where = _where(s)
         try:
@@ -480,13 +499,21 @@ def check_steps(
                 findings.append(f"V4 {where}: container {c['container_id']} stop cause {stop!r}")
         if s["containers"]:
             records = _records(s)
-            cands = _candidates(s, records)
+            cands = _candidates(s, records, rungs)
             if isinstance(cands, str):
                 findings.append(f"V4 {where}: {cands}")
                 continue
-            ok = (str(out), s["reason"]) in cands or (
-                out is orc.Outcome.REFUTE_ERROR
-                and any(_override_ok(s["reason"], r, s, run) for _, r in cands)
+            exact, prefixes = cands
+            ok = (
+                (str(out), s["reason"]) in exact
+                or any(
+                    str(out) == o and s["reason"].startswith(p) and s["reason"] != p
+                    for o, p in prefixes
+                )
+                or (
+                    out is orc.Outcome.REFUTE_ERROR
+                    and any(_override_ok(s["reason"], r, s, run) for _, r in exact)
+                )
             )
             if not ok:
                 findings.append(
