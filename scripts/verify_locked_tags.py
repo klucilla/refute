@@ -379,8 +379,12 @@ def make_prepare(python: list[str], allow_missing_tags: bool) -> Prepare:
     def prepare(tag: str, commit: str | None) -> Prepared:
         # only refs/tags/<tag> counts: a branch or another ref of the same name is not the tag
         ref = f"refs/tags/{tag}"
-        exists = run(["git", "show-ref", "--verify", "--quiet", ref], ROOT).returncode == 0
-        if exists:
+        lookup = run(["git", "show-ref", "--verify", "--quiet", ref], ROOT).returncode
+        if lookup not in (0, 1):
+            # only exit 1 means "no such ref"; any other failure leaves existence unknown
+            why = f"cannot establish whether tag {tag} exists (git show-ref exit {lookup})"
+            return Prepared(None, "unknown", commit or "", (why,))
+        if lookup == 0:
             state = "present"
             resolved = run(["git", "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"], ROOT)
             found = resolved.stdout.strip() if resolved.returncode == 0 else ""

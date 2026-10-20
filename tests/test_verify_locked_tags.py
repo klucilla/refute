@@ -239,8 +239,9 @@ def test_each_claim_failing_alone_fails_the_joint_verification(bad, tmp_path, mo
     assert [r["claim"] for r in summary["checks"] if not r["pass"]] == [bad]
 
 
+@pytest.mark.parametrize("code", [0, 27])
 @pytest.mark.parametrize("raw", ["null", "[]", "7", '"PASS"', "", "{not json"])
-def test_an_output_that_is_not_a_json_object_never_passes(raw, tmp_path, monkeypatch):
+def test_an_output_that_is_not_a_json_object_never_passes(raw, code, tmp_path, monkeypatch):
     """Codex review of d1ad932, finding 1: `null` with exit 27 gave a joint PASS; finding 2:
     `[]` raised before the summary was written."""
     script = load_script()
@@ -248,7 +249,7 @@ def test_an_output_that_is_not_a_json_object_never_passes(raw, tmp_path, monkeyp
 
     def verdict(check):
         if check.claim == bad:
-            return raw, 27
+            return raw, code
         return passing(script, check), 0
 
     summary, out = run_with(script, tmp_path, monkeypatch, verdict)
@@ -368,6 +369,33 @@ def test_a_branch_of_the_same_name_is_not_the_tag(tagged):
     allowed = script.make_prepare([], allow_missing_tags=True)("v0.3.0-main-lock", head)
     assert allowed.tag_state.startswith("absent")
     git(repo, "worktree", "remove", "--force", str(allowed.worktree))
+
+
+def test_a_failed_tag_lookup_is_not_an_absent_tag(tagged, monkeypatch):
+    """Codex review of a12722e: a git error (exit 128) must not read as "tag absent"."""
+    script, repo, head = tagged
+    real_run = script.run
+
+    def run(args, cwd):
+        if args[:2] == ["git", "show-ref"]:
+            return subprocess.CompletedProcess(args, 128, "", "fatal: broken")
+        return real_run(args, cwd)
+
+    monkeypatch.setattr(script, "run", run)
+    prepared = script.make_prepare([], allow_missing_tags=True)("v0.3.0-main-lock", head)
+    assert prepared.worktree is None and prepared.tag_state == "unknown"
+    assert "cannot establish" in prepared.problems[0]
+    checks = script.expected_checks()
+    monkeypatch.setattr(script, "worktree_problems", lambda *a: [])
+    monkeypatch.setattr(script, "direct_worktree_problems", lambda *a: [])
+    summary = script.run_checks(
+        checks,
+        repo.parent / "out-lookup",
+        script.make_prepare([], allow_missing_tags=True),
+        lambda w, c: (json.dumps({"status": "PASS"}), 0),
+    )
+    assert summary["joint"] == "FAIL"
+    assert summary["tags_absent"] == []
 
 
 def test_a_tag_on_its_commit_is_used(tagged):
