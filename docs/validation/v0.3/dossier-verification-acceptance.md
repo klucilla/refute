@@ -175,6 +175,23 @@ seal it is given. These rules replace the matching ones above; nothing else chan
   updated: no V2, V3 or V4 finding); a missing field with its own finding; a seal or an annex
   that does not match the committed records; the attack round trip.
 
+## 4b. Three paths of the frozen runner that 4a rejected (Codex check of 2e57b81, 2026-10-20)
+
+- **A stopped container has no exit code.** Both backends record `exit_code` null when
+  supervision stops a run; the shape accepts null when the container's `stopped` is set, and an
+  integer otherwise.
+- **A refused grant between rungs.** After a rung that failed and was classified "next", the
+  grant of the next applicable rung can be refused: the build step then ends with the refusal
+  (BUDGET_EXHAUSTED with `"budget_exhausted (setup)"`, or REFUTE_ERROR with the refusal's
+  reason) and keeps the earlier containers. This is accepted when every recorded container
+  failed and fewer containers ran than the ladder has applicable rungs.
+- **The classifier failed.** When classifying a rung raises, the frozen fallback ends the step
+  with REFUTE_ERROR and `"the fallback failed: <exception>"`; this is accepted after a last
+  container that was not stopped on Refute's side. Its stop and accounting consequences are
+  checked as for every REFUTE_ERROR.
+- **Positive tests:** a threshold stop with no exit code, a refusal between two rungs, and a
+  classifier failure give no V4 finding on their steps.
+
 ## 5. Evidence
 
 - Test counts from a JUnit XML file; ruff exits 0.
