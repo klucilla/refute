@@ -1,0 +1,15 @@
+{
+  "annex_version": 1,
+  "core_sha256": "e4f2ca2d352f66f33b48cf014936f8270625e4994d06f4ba72fc5689f4559435",
+  "files": [
+    {
+      "path": "verification.json",
+      "sha256": "6684f47bc922c7f140cc024691f7113698ce6c867b18dae08f993b5de791fdd8"
+    },
+    {
+      "path": "verification.md",
+      "sha256": "4f4903a798afaedf146b0d0f5a0abb31b34a4283407220ba1a7672e12a52d9c9"
+    }
+  ],
+  "name": "verification"
+}

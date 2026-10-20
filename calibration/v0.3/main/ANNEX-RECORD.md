@@ -27,3 +27,18 @@ their SHA-256: `e2e16a804a59ccd601f0027ab03617743a0c88558bc25ba6ead72a19d079e2f4
 `review-opus.md`). It will be attached as `annexes/review-opus/` with these same bytes.
 
 Objections never change a verdict (docs/reviewer-protocol.md, "What happens with objections").
+
+## Dossier verification (section 10.2, item a)
+
+The report of `calibration/v0.3/verify_dossiers.py` at commit e5d4aed
+([docs/validation/v0.3/dossier-verification-acceptance.md](../../../docs/validation/v0.3/dossier-verification-acceptance.md),
+sections 1 to 4d), run with the frozen code of the locks on 2026-10-20 (UTC): `verification.md`
+and `verification.json`. Added with `refute annex <dossier> verification <folder>`.
+
+| Paper | Annex | `ANNEX.json` SHA-256 | Result |
+|---|---|---|---|
+| 2302.12465 | `annexes/verification/` | `0e4f199e510e8f0fc342153690b545972658dfc527d234f1bd791037466244aa` | VERIFIED |
+| 2305.19518 | `annexes/verification/` | `527ee8cca8a15440eb1143fae8d7c35532ac89b2716a8af65a1bf1700126d860` | VERIFIED |
+| 2309.15704 | `annexes/verification/` | `94f1612f96ffb79dd3c7d4aa50a609a231967c9219554aea2759e32c22b064e5` | VERIFIED |
+| 2407.11735 | `annexes/verification/` | `2723f095ac8ab85dba66b6f6c20a54d1192b4d888e41f1f702a3b2a17ea88470` | VERIFIED |
+| 2502.16782 | `annexes/verification/` | `242def66e64b5d106aada5da610de7325a73d4a88829a527071fadddb1896ee3` | VERIFIED |
