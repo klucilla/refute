@@ -1,0 +1,11 @@
+{
+  "annex_version": 1,
+  "core_sha256": "e4f2ca2d352f66f33b48cf014936f8270625e4994d06f4ba72fc5689f4559435",
+  "files": [
+    {
+      "path": "review-opus.md",
+      "sha256": "e843cacfe4395c88ea2548e8473c36cb25170c189989ddfe736b7d4eb3d15521"
+    }
+  ],
+  "name": "review-opus"
+}
