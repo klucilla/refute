@@ -275,6 +275,21 @@ lock's own tag, in its own environment: `scripts/verify_locked_tags.py` does it,
 [validation/v0.3/lock-compat-record.md](validation/v0.3/lock-compat-record.md) records
 the result (`PASS` at both tags).
 
+**The v0.3 locks.** The five locks of the v0.3 main sample are `TAMPERED` in their code
+component on any tree whose code differs from the one they froze (the code hash
+`3165e141…` of commit `b6f5346`); that status is not changed or projected for them. Their
+complete check is a direct `PASS` at that code, in its own environment. They are a separate
+list of `scripts/verify_locked_tags.py` (`DIRECT_LOCKS`, never in `HISTORICAL_LOCKS`, which
+only projects old claims): each entry gives the tag `v0.3.0-main-lock`, the full commit it
+must point to, the claim path and the expected identity of the lock. The script requires a
+clean checkout at that commit (no tracked change and no untracked file), the lock's exact
+identity, and `PASS` with no projection, with the locked and current claim and code hashes
+equal to the expected ones. It writes one output file per claim
+(`<tag>__<claim path, "/" written "__">.json`) and a `summary.json` whose joint result is
+`PASS` only when every expected claim, historical and v0.3, passes. The integrity of a
+dossier (`refute check-dossier`, `calibration/v0.3/verify_dossiers.py`) is a different check
+and does not replace `refute verify`.
+
 ## Interoperability
 
 The format is deliberately small (one JSON file, one Markdown log, SHA-256 and a
