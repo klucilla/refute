@@ -494,3 +494,22 @@ def test_base_steps_that_ran_after_a_setup_refute_error_fail(tmp_path):
     _edit_record(d, change)
     report = _verify("2302.12465", d)
     assert _has(report, "V4 base arXiv-2302.12465v3-C1 base: ran after the paper stopped")
+
+
+# ---- section 4d: reasons matched whole -------------------------------------------------------
+
+
+def test_a_breach_reason_that_holds_the_separator_is_accepted(tmp_path):
+    def change(r):
+        s = _step(r, "base", "C1", "base")
+        breach = "setup/data/UCI; synthetic: usage above its reservation"
+        s["outcome"], s["reason"] = "refute_error", f"{s['reason']}; {breach}"
+        run = r["outcome"]["run"]
+        run["stopped"] = f"base {s['claim']} base: {s['reason']}"
+        run["accounting_valid"], run["invalid_reasons"] = False, [breach, run["stopped"]]
+
+    d = _copy(tmp_path, "2309.15704")
+    _edit_record(d, change)
+    report = _verify("2309.15704", d)
+    assert _step_findings(report, "base arXiv-2309.15704v2-C1 base") == []
+    assert not _has(report, "V4 run: stopped")

@@ -402,21 +402,33 @@ def _candidates(
 
 
 def _override_ok(reason: str, base: str, step, run) -> bool:
-    """A REFUTE_ERROR closing the step (_close_step): its containers' reason, then rejected
-    records of its own containers or entries of the run's invalid reasons."""
-    parts = reason.split("; ")
+    """A REFUTE_ERROR closing the step, as _close_step joins it: "; ".join of the containers'
+    reason (when not empty), the step's rejected records, and the accountant's invalid reasons
+    at that moment (a prefix of the run's). Components are matched whole, never split, since a
+    container id or a reason may itself hold "; " (section 4d)."""
+    rest = reason
     if base:
-        if parts[: len(base.split("; "))] != base.split("; "):
+        if not rest.startswith(base + "; "):
             return False
-        parts = parts[len(base.split("; ")) :]
-    if not parts:
+        rest = rest[len(base) + 2 :]
+    if not rest:
         return False
     cids = [c["container_id"] for c in step["containers"]]
-    return all(
-        p in run["invalid_reasons"]
-        or any(p.startswith(f"{cid}: record rejected: ") for cid in cids)
-        for p in parts
-    )
+    rejected = tuple(f"{cid}: record rejected: " for cid in cids)
+    invalid = run["invalid_reasons"]
+    for k in range(len(invalid), -1, -1):
+        tail = "; ".join(invalid[:k])
+        if not tail:
+            head = rest
+        elif rest == tail:
+            return True
+        elif rest.endswith("; " + tail):
+            head = rest[: -len(tail) - 2]
+        else:
+            continue
+        if head.startswith(rejected):  # one or more rejected records of the step's containers
+            return True
+    return False
 
 
 def _where(s: Mapping[str, Any]) -> str:
