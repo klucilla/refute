@@ -188,7 +188,7 @@ def test_a_reason_the_runner_never_gives_fails(tmp_path):
         d, lambda r: _step(r, "base", "C1", "base").update(reason="skipped for lack of time")
     )
     report = _verify("2305.19518", d)
-    assert _has(report, "V4 base arXiv-2305.19518v2-C1 base: not executed with a reason")
+    assert _has(report, "V4 base arXiv-2305.19518v2-C1 base: not executed: a reason the runner")
 
 
 def test_base_obtained_for_a_failed_base_fails(tmp_path):
@@ -219,4 +219,180 @@ def test_malformed_record_is_a_finding_not_a_crash(tmp_path):
     d2 = _copy(tmp_path / "b", "2302.12465")
     _edit_record(d2, lambda r: r["outcome"].pop("claims"))
     report2 = _verify("2302.12465", d2)
-    assert report2["result"] == "NOT VERIFIED"
+    assert _has(
+        report2, "the dossier cannot be read as recorded: RecordError: outcome has no claims"
+    )
+
+
+# ---- section 4a: the false accepts of the Codex review of 420c844 -------------------------
+
+
+def test_failed_build_with_an_exit_zero_last_container_fails(tmp_path):
+    def change(r):
+        s = _step(r, "setup", "", "build")
+        s["outcome"], s["reason"] = "failed", "setup/build/requirements_compiled: exit code 1"
+        r["outcome"]["ladder"]["built_with"] = None
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    assert _has(_verify("2302.12465", d), "V4 setup build: recorded failed")
+
+
+def test_invented_refute_error_on_a_failed_base_fails(tmp_path):
+    def change(r):
+        s = _step(r, "base", "C1", "base")
+        s["outcome"] = "refute_error"
+        s["reason"] += "; the accounting was invented"
+
+    d = _copy(tmp_path, "2309.15704")
+    _edit_record(d, change)
+    report = _verify("2309.15704", d)
+    assert _has(report, "V4 base arXiv-2309.15704v2-C1 base: recorded refute_error")
+    assert _has(report, "V4 run: stopped ''")
+
+
+def test_unknown_stop_cause_fails(tmp_path):
+    def change(r):
+        _step(r, "base", "C1", "base")["containers"][0]["result"]["stopped"] = "mystery"
+
+    d = _copy(tmp_path, "2309.15704")
+    _edit_record(d, change)
+    assert _has(_verify("2309.15704", d), "V4 base arXiv-2309.15704v2-C1 base: container")
+
+
+@pytest.mark.parametrize(
+    ("arxiv", "phase", "claim", "step", "reason", "expected"),
+    [
+        ("2305.19518", "base", "C1", "base", "the setup did not complete", "the setup completed"),
+        ("2407.11735", "attacks", "C1", "seeds", "the paper stopped: invented", "a stop not"),
+        ("2407.11735", "base", "C1", "base", "step base did not complete (not_executed)", "no ear"),
+        ("2407.11735", "base", "C2", "base", "not reached", "'not reached' in a run"),
+    ],
+)
+def test_not_executed_reasons_are_checked_by_cause(
+    tmp_path, arxiv, phase, claim, step, reason, expected
+):
+    d = _copy(tmp_path, arxiv)
+    _edit_record(d, lambda r: _step(r, phase, claim, step).update(reason=reason))
+    report = _verify(arxiv, d)
+    assert any(f.startswith(f"V4 {phase} ") and expected in f for f in report["findings"])
+
+
+def test_an_invented_not_run_reason_copied_into_the_notes_fails(tmp_path):
+    def change(r):
+        text = "not run: an invented reason"
+        _step(r, "base", "C1", "base")["reason"] = text
+        r["outcome"]["claims"][0]["notes"] = [text]
+
+    d = _copy(tmp_path, "2305.19518")
+    _edit_record(d, change)
+    assert _has(_verify("2305.19518", d), "V4 base arXiv-2305.19518v2-C1 base: not executed")
+
+
+def test_setup_exhausted_with_the_wrong_reasons_fails(tmp_path):
+    d = _copy(tmp_path, "2305.19518")
+    _edit_record(d, lambda r: r["outcome"]["run"].update(setup_exhausted=True))
+    report = _verify("2305.19518", d)
+    assert _has(report, "V4 base arXiv-2305.19518v2-C2 base: ran although")
+    assert _has(report, "V4 base arXiv-2305.19518v2-C1 base: reason")
+
+
+def test_a_stop_with_no_refute_error_step_fails(tmp_path):
+    def change(r):
+        r["outcome"]["run"].update(stopped="invented", accounting_valid=False)
+        r["outcome"]["run"]["invalid_reasons"] = ["invented"]
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    assert _has(_verify("2302.12465", d), "V4 run: stopped 'invented' with no Refute error step")
+
+
+def test_no_run_with_an_empty_ladder_or_a_passed_build_fails(tmp_path):
+    def empty(r):
+        r["outcome"]["run"] = None
+        r["outcome"]["ladder"]["attempts"] = []
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, empty)
+    assert _has(_verify("2302.12465", d), "the dossier cannot be read as recorded: RecordError")
+
+    d2 = _copy(tmp_path / "b", "2302.12465")
+    _edit_record(d2, lambda r: r["outcome"].update(run=None))
+    report = _verify("2302.12465", d2)
+    assert _has(report, "V4 run: no run recorded although a rung")
+    assert _has(report, "V4 run: no run, yet arXiv-2302.12465v3-C1's environment_build passed")
+
+
+def test_accounting_valid_as_a_string_fails(tmp_path):
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, lambda r: r["outcome"]["run"].update(accounting_valid="false"))
+    assert _has(_verify("2302.12465", d), "the dossier cannot be read as recorded: RecordError")
+
+
+def test_a_ladder_that_is_not_an_object_is_a_finding_not_a_crash(tmp_path):
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, lambda r: r["outcome"].update(ladder=[]))
+    assert _has(_verify("2302.12465", d), "the dossier cannot be read as recorded")
+
+
+def test_steps_out_of_the_plans_order_fail(tmp_path):
+    def change(r):
+        steps = r["outcome"]["run"]["steps"]
+        i = next(n for n, s in enumerate(steps) if s["phase"] == "base")
+        steps[i], steps[i + 1] = steps[i + 1], steps[i]
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    assert _has(_verify("2302.12465", d), "V4 order")
+
+
+def test_the_accounting_rule_with_its_verdicts_and_profile_passes_v2_to_v5(tmp_path):
+    def change(r):
+        run = r["outcome"]["run"]
+        run["accounting_valid"], run["invalid_reasons"] = False, ["a synthetic reason"]
+        for c in r["outcome"]["claims"]:
+            verdict = vd.ClaimVerdict(
+                vd.PaperVerdict.INCONCLUSIVE, f"{vd.ig.ACCOUNTING_INVALID}: a synthetic reason"
+            )
+            c["verdict"] = vd._plain(verdict)
+        keys = [(c["key"], "INCONCLUSIVE") for c in r["outcome"]["claims"]]
+        r["outcome"]["profile"] = vd._plain(vd.paper_profile(keys))
+
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, change)
+    report = _verify("2302.12465", d)
+    assert not [f for f in report["findings"] if f[:2] in ("V2", "V3", "V4", "V5")]
+    assert _has(report, "V1")  # the copy no longer matches its manifest and seal
+
+
+def test_a_missing_field_has_its_own_finding(tmp_path):
+    d = _copy(tmp_path, "2302.12465")
+    _edit_record(d, lambda r: r["outcome"]["claims"][0].pop("computed"))
+    assert _has(_verify("2302.12465", d), "the dossier cannot be read as recorded: RecordError")
+
+
+def test_a_seal_or_annexes_unlike_the_committed_records_fail(tmp_path, monkeypatch):
+    monkeypatch.setattr(vd, "seal_record", lambda: {"2302.12465": "0" * 64})
+    assert _has(_verify("2302.12465", _copy(tmp_path, "2302.12465")), "V1 seal: core")
+    monkeypatch.undo()
+    d = _copy(tmp_path / "b", "2302.12465")
+    shutil.rmtree(d / "annexes")
+    assert _has(_verify("2302.12465", d), "V1 annexes")
+
+
+def test_attack_records_round_trip_through_the_plain_record():
+    def check(name, status, coverage):
+        return vd.TestResult(
+            name, status, vd.Severity.GATE, "m", metrics={"expected_coverage": 3}, coverage=coverage
+        )
+
+    attack = vd.Attack(
+        "seeds",
+        check("seeds:run", vd.TestStatus.PASS, 3),
+        check("seeds:metric", vd.TestStatus.PASS, 3),
+        check("seeds", vd.TestStatus.FAIL, 3),
+    )
+    rebuilt = vd._attack(json.loads(json.dumps(vd._plain(attack))))
+    assert vd._plain(rebuilt) == vd._plain(attack)
+    empty = vd._attack(json.loads(json.dumps(vd._plain(vd.Attack("holdout")))))
+    assert empty.run is None and empty.metric is None and empty.result is None

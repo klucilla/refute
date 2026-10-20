@@ -1,10 +1,11 @@
 """Dossier verification of the main sample of v0.3 (item (a) of plan section 10.2).
 
-Implements docs/validation/v0.3/dossier-verification-acceptance.md. Outside the code hash of
-the locks: it changes nothing in src/ and calls the frozen functions of the package
-(refute.core.paper.aggregate_claim and paper_profile, refute.packs.ml.orchestrate._outcome,
-the ClaimContext derivations of refute.packs.ml.integration). It reads a published dossier and
-its published claim folder, runs no experiment and opens no network connection.
+Implements docs/validation/v0.3/dossier-verification-acceptance.md (with its section 4a).
+Outside the code hash of the locks: it changes nothing in src/ and calls the frozen functions of
+the package (refute.core.paper.aggregate_claim and paper_profile, refute.packs.ml.orchestrate
+._outcome, the ClaimContext derivations and not_run_reason of refute.packs.ml.integration). It
+reads a published dossier, its published claim folder and the committed seal and annex records,
+runs no experiment and opens no network connection.
 
 Usage (from the repository root):
   uv run --frozen python calibration/v0.3/verify_dossiers.py [--out DIR] [ARXIV ...]
@@ -17,6 +18,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -34,13 +36,17 @@ from refute.core.paper import (
     aggregate_claim,
     paper_profile,
 )
+from refute.core.seal import ANNEX_DIR, ANNEX_MANIFEST, SEAL_NAME
 from refute.core.verdict import PaperVerdict, Severity, TestResult, TestStatus
 from refute.packs.ml import integration as ig
+from refute.packs.ml import ladder as ld
 from refute.packs.ml import orchestrate as orc
 from refute.packs.ml.production import _plain
 
 ROOT = Path(__file__).resolve().parents[2]
 MAIN = ROOT / "calibration/v0.3/main"
+SEAL_RECORD = MAIN / "SEAL-RECORD.md"
+ANNEX_RECORD = MAIN / "ANNEX-RECORD.md"
 SAMPLE = ("2302.12465", "2305.19518", "2309.15704", "2407.11735", "2502.16782")
 FORMAT = "refute-v03-dossier-verification-1"
 LIMITS = (
@@ -51,14 +57,21 @@ LIMITS = (
     "The completeness of the accounting is taken from the recorded status: the dossier does "
     "not record the parent cgroup's usage and the tolerance, so that comparison cannot be "
     "repeated numerically.",
-    "The lock and its history are read from the published claim folder, not from the dossier.",
+    "The lock (claim.lock.json) is read from the published claim folder, not from the "
+    "dossier; its history file is not read.",
+    "The sample has no executed attack: the rebuilding of attack records is shown by a "
+    "round-trip test on synthetic records.",
 )
-FALLBACK_STEPS = "build"  # with the data/* steps: the steps run with a fallback
 REFUTE_SIDE = (
     orc.Outcome.BUDGET_EXHAUSTED,
     orc.Outcome.OPERATIONAL_GUARD,
     orc.Outcome.REFUTE_ERROR,
 )
+NOT_ELIGIBLE = "not eligible for attacks (base not obtained or no applicable attack)"
+SETUP_INCOMPLETE = "the setup did not complete"
+NOT_SUCCESS = "the container ended but is not a success"
+RUNNER_STOPS = ("unexpected error: ", "the completeness check failed: ")
+_HEX = re.compile(r"`([0-9a-f]{64})`")
 
 
 class RecordError(Exception):
@@ -69,6 +82,34 @@ def _sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+# ---- the committed records (V1 anchors) ---------------------------------------------------
+
+
+def seal_record(path: Path = SEAL_RECORD) -> dict[str, str]:
+    """paper -> core SHA-256, from the table of SEAL-RECORD.md."""
+    out = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.split("|")]
+        if len(cells) > 4 and re.fullmatch(r"\d{4}\.\d{4,5}", cells[1]):
+            found = _HEX.findall(cells[3])
+            if found:
+                out[cells[1]] = found[0]
+    return out
+
+
+def annex_record(path: Path = ANNEX_RECORD) -> dict[str, dict[str, str]]:
+    """paper -> {annex name: ANNEX.json SHA-256}, from the tables of ANNEX-RECORD.md."""
+    out: dict[str, dict[str, str]] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.split("|")]
+        if len(cells) > 4 and re.fullmatch(r"\d{4}\.\d{4,5}", cells[1]):
+            name = re.fullmatch(rf"`{ANNEX_DIR}/([a-z0-9-]+)/`", cells[2])
+            found = _HEX.findall(cells[3])
+            if name and found:
+                out.setdefault(cells[1], {})[name.group(1)] = found[0]
+    return out
+
+
 # ---- rebuilding the frozen inputs from the record ----------------------------------------
 
 
@@ -76,6 +117,9 @@ def _test(d: Any) -> TestResult | None:
     if d is None:
         return None
     try:
+        coverage = d.get("coverage")
+        if coverage is not None and type(coverage) is not int:
+            raise TypeError(f"coverage {coverage!r} is not an integer")
         return TestResult(
             d["name"],
             TestStatus(d["status"]),
@@ -84,10 +128,10 @@ def _test(d: Any) -> TestResult | None:
             metrics=dict(d.get("metrics") or {}),
             thresholds=dict(d.get("thresholds") or {}),
             inputs=dict(d.get("inputs") or {}),
-            coverage=d.get("coverage"),
+            coverage=coverage,
             coverage_unit=d.get("coverage_unit") or "",
         )
-    except (KeyError, TypeError, ValueError) as exc:
+    except (AttributeError, KeyError, TypeError, ValueError) as exc:
         raise RecordError(f"a check record cannot be read: {type(exc).__name__}: {exc}") from None
 
 
@@ -101,14 +145,18 @@ def _failure(d: Mapping[str, Any]) -> GateFailure:
         cause = FailureCause(cause)
     except ValueError:
         pass  # an unknown cause is kept as recorded; known_cause decides
+    for field in ("attempts_completed", "attempts_required"):
+        if type(d[field]) is not int:
+            raise RecordError(f"a gate failure's {field} is not an integer")
     return GateFailure(cause, d["attempts_completed"], d["attempts_required"])
 
 
-# ---- the checks ---------------------------------------------------------------------------
+# ---- V1 -----------------------------------------------------------------------------------
 
 
-def check_hashes(dossier: Path, claim_dir: Path, findings: list[str]) -> None:
-    """V1: the manifest, the seal, the claim's bytes and the lock's hash."""
+def check_hashes(arxiv: str, dossier: Path, claim_dir: Path, findings: list[str]) -> None:
+    """V1: the manifest, the seal against the committed record, the annexes against theirs,
+    the claim's bytes and the lock's hash."""
     result = check_dossier(dossier)
     findings += [f"V1 manifest: {p}" for p in result.integrity_problems]
     if result.seal is None:
@@ -119,6 +167,20 @@ def check_hashes(dossier: Path, claim_dir: Path, findings: list[str]) -> None:
         ]
         for name, problems in result.seal.annexes.items():
             findings += [f"V1 annex {name}: {p}" for p in problems]
+    if (dossier / SEAL_NAME).is_file():
+        core = json.loads((dossier / SEAL_NAME).read_bytes()).get("core_sha256")
+        committed = seal_record().get(arxiv)
+        if committed is None or core != committed:
+            findings.append(f"V1 seal: core {core} is not the one SEAL-RECORD.md commits")
+    present = {}
+    annexes = dossier / ANNEX_DIR
+    if annexes.is_dir():
+        for entry in sorted(annexes.iterdir()):
+            manifest = entry / ANNEX_MANIFEST
+            present[entry.name] = _sha(manifest.read_bytes()) if manifest.is_file() else ""
+    listed = annex_record().get(arxiv, {})
+    if present != listed:
+        findings.append(f"V1 annexes: present {present}, ANNEX-RECORD.md lists {listed}")
     claim_file = (dossier / "claim_file.json").read_bytes()
     claim_input = (dossier / "claim_input.json").read_bytes()
     if claim_file != claim_input:
@@ -129,6 +191,68 @@ def check_hashes(dossier: Path, claim_dir: Path, findings: list[str]) -> None:
     lock = json.loads((claim_dir / "claim.lock.json").read_bytes())
     if lock.get("claim_sha256") != _sha(claim_input):
         findings.append("V1 lock: the resolved claim's SHA-256 is not the lock's claim_sha256")
+
+
+# ---- shapes -------------------------------------------------------------------------------
+
+
+def _need(cond: bool, what: str) -> None:
+    if not cond:
+        raise RecordError(what)
+
+
+def check_shapes(outcome: Any) -> None:
+    """The fields the checks decide on, with their recorded types (section 4a)."""
+    _need(isinstance(outcome, dict), "outcome is not an object")
+    for key in ("claims", "profile", "ladder"):
+        _need(key in outcome, f"outcome has no {key}")
+    _need(isinstance(outcome["claims"], list), "outcome.claims is not a list")
+    for c in outcome["claims"]:
+        _need(isinstance(c, dict), "a claim record is not an object")
+        for key in ("key", "verdict", "computed", "base", "attacks", "failures", "notes"):
+            _need(key in c, f"a claim record has no {key}")
+        _need(isinstance(c["base"], list) and isinstance(c["attacks"], list), "claim lists")
+        _need(isinstance(c["failures"], dict), "a claim's failures is not an object")
+        _need(isinstance(c["notes"], list), "a claim's notes is not a list")
+        _need(isinstance(c["verdict"], dict), "a claim's verdict is not an object")
+    _need(isinstance(outcome["profile"], dict), "outcome.profile is not an object")
+    ladder = outcome["ladder"]
+    _need(isinstance(ladder, dict), "outcome.ladder is not an object")
+    _need(isinstance(ladder.get("attempts"), list), "outcome.ladder.attempts is not a list")
+    _need(all(isinstance(a, dict) for a in ladder["attempts"]), "a ladder attempt")
+    _need(
+        [a.get("rung") for a in ladder["attempts"]] == list(ld.RUNGS),
+        f"the ladder does not list the frozen rungs {list(ld.RUNGS)}",
+    )
+    _need(all(type(a.get("applicable")) is bool for a in ladder["attempts"]), "applicable")
+    run = outcome.get("run")
+    if run is None:
+        return
+    _need(isinstance(run, dict), "outcome.run is not an object")
+    for key in ("accounting_valid", "setup_exhausted", "no_distribution"):
+        _need(type(run.get(key)) is bool, f"run.{key} is not a boolean")
+    _need(isinstance(run.get("stopped"), str), "run.stopped is not a string")
+    for key in ("steps", "attack_claims", "invalid_reasons"):
+        _need(isinstance(run.get(key), list), f"run.{key} is not a list")
+    _need(all(isinstance(r, str) for r in run["invalid_reasons"]), "an invalid reason")
+    _need(isinstance(run.get("base_obtained"), dict), "run.base_obtained is not an object")
+    _need(all(type(v) is bool for v in run["base_obtained"].values()), "base_obtained values")
+    for s in run["steps"]:
+        _need(isinstance(s, dict), "a step is not an object")
+        for key in ("phase", "claim", "step", "outcome", "reason", "containers"):
+            _need(key in s, f"a step has no {key}")
+        _need(isinstance(s["reason"], str), "a step's reason is not a string")
+        _need(isinstance(s["containers"], list), "a step's containers is not a list")
+        for c in s["containers"]:
+            _need(isinstance(c, dict) and "container_id" in c and "error" in c, "a container")
+            r = c.get("result")
+            _need(r is None or isinstance(r, dict), "a container result")
+            if r is not None:
+                _need(type(r.get("exit_code")) is int, "a container's exit_code")
+                _need(r.get("stopped") is None or isinstance(r["stopped"], str), "a stop")
+
+
+# ---- V2, V3 -------------------------------------------------------------------------------
 
 
 def check_verdicts(claim_file: Mapping[str, Any], outcome: Mapping[str, Any], findings: list[str]):
@@ -163,7 +287,7 @@ def check_verdicts(claim_file: Mapping[str, Any], outcome: Mapping[str, Any], fi
                 f"recorded computed {rec['computed']}"
             )
         expected = computed
-        if run is not None and not run["accounting_valid"]:
+        if run is not None and run["accounting_valid"] is not True:
             reasons = "; ".join(run["invalid_reasons"]) or "unknown"
             expected = ClaimVerdict(
                 PaperVerdict.INCONCLUSIVE,
@@ -177,6 +301,9 @@ def check_verdicts(claim_file: Mapping[str, Any], outcome: Mapping[str, Any], fi
     profile = paper_profile([(c["key"], c["verdict"]["verdict"]) for c in claims])
     if _plain(profile) != outcome["profile"]:
         findings.append(f"V3 profile: recomputed {_plain(profile)}, recorded {outcome['profile']}")
+
+
+# ---- V4, V5 -------------------------------------------------------------------------------
 
 
 def expected_steps(claim_file: Mapping[str, Any]) -> list[tuple[str, str | None, str]]:
@@ -208,52 +335,136 @@ def _records(step: Mapping[str, Any]) -> list[Any]:
     return out
 
 
-def _not_executed_reason_ok(step, claims_by_key, steps_by_id) -> bool:
-    reason = step["reason"]
-    if reason in ("the setup did not complete", f"{bg.BUDGET_EXHAUSTED} ({bg.Pool.SETUP})"):
-        return step["phase"] == orc.BASE
-    if reason == "not eligible for attacks (base not obtained or no applicable attack)":
-        return step["phase"] == orc.ATTACKS
-    if reason == "not reached" or reason.startswith("the paper stopped: "):
-        return True
-    if reason.startswith("step ") and " did not complete (" in reason:
-        name = reason[len("step ") : reason.index(" did not complete (")]
-        prior = steps_by_id.get((step["phase"], step["claim"], name))
-        return prior is not None and reason.endswith(f"({prior['outcome']})")
-    # the claim not run on Refute's side: the same reason is among the claim's notes
-    claim = claims_by_key.get(step["claim"])
-    return step["phase"] == orc.BASE and claim is not None and reason in claim["notes"]
+def _candidates(step: Mapping[str, Any], records: list[Any]) -> set[tuple[str, str]] | str:
+    """The (outcome, reason) pairs the frozen runner can record for a step with containers, or
+    a finding."""
+    name = step["step"]
+    if name == "build":
+        for i, rec in enumerate(records):
+            out, reason = orc._outcome([rec])
+            last = i == len(records) - 1
+            if rec.result is None or out in REFUTE_SIDE:
+                if not last:
+                    return "a rung after a stop on Refute's side ran"
+                return {(str(out), reason)}
+            if not last:
+                if out is not orc.Outcome.FAILED:
+                    return f"rung {rec.container_id} is followed by another but did not fail"
+                continue
+            if out is orc.Outcome.COMPLETED:
+                return {(str(orc.Outcome.COMPLETED), ""), (str(orc.Outcome.FAILED), NOT_SUCCESS)}
+            return {(str(orc.Outcome.FAILED), reason)}
+    if name.startswith("data/"):
+        if len(records) != 1:
+            return "a container reader's step has one container"
+        out, reason = orc._outcome(records)
+        if records[0].result is None or out in REFUTE_SIDE:
+            return {(str(out), reason)}
+        return {(str(orc.Outcome.COMPLETED), "")}
+    out, reason = orc._outcome(records)
+    return {(str(out), reason)}
 
 
-def check_steps(claim_file: Mapping[str, Any], outcome: Mapping[str, Any], findings: list[str]):
+def _override_ok(reason: str, base: str, step, run) -> bool:
+    """A REFUTE_ERROR closing the step (_close_step): its containers' reason, then rejected
+    records of its own containers or entries of the run's invalid reasons."""
+    parts = reason.split("; ")
+    if base:
+        if parts[: len(base.split("; "))] != base.split("; "):
+            return False
+        parts = parts[len(base.split("; ")) :]
+    if not parts:
+        return False
+    cids = [c["container_id"] for c in step["containers"]]
+    return all(
+        p in run["invalid_reasons"]
+        or any(p.startswith(f"{cid}: record rejected: ") for cid in cids)
+        for p in parts
+    )
+
+
+def _where(s: Mapping[str, Any]) -> str:
+    return " ".join(p for p in (s["phase"], s["claim"] or "", s["step"]) if p)
+
+
+def _weights(setup: Mapping[str, Any]) -> dict[str, ig.WeightsEvidence]:
+    out = {}
+    for name, e in (setup.get("repository_weights") or {}).items():
+        copy = Path(e["path"]) if e.get("verified") is True else None
+        out[name] = ig.WeightsEvidence(e["path"], e["sha256"], copy, e.get("reason"))
+    return out
+
+
+def check_steps(
+    claim_file: Mapping[str, Any],
+    outcome: Mapping[str, Any],
+    setup: Mapping[str, Any],
+    findings: list[str],
+) -> None:
     """V4 and V5: the execution states and the reasons of every interruption, from the step
-    records themselves."""
+    records themselves (section 4a)."""
+    plan = claim_file["test_plan"]
     run, ladder = outcome.get("run"), outcome["ladder"]
-    attempts = ladder.get("attempts") or []
+    attempts = ladder["attempts"]
     if run is None:
-        if any(a.get("applicable") for a in attempts):
+        if any(a["applicable"] for a in attempts):
             findings.append("V4 run: no run recorded although a rung of the ladder applies")
+        for c in outcome["claims"]:
+            for t in c["base"]:
+                if t.get("name") == "environment_build" and t.get("status") == "PASS":
+                    findings.append(f"V4 run: no run, yet {c['key']}'s environment_build passed")
         return
     steps = run["steps"]
     ids = [(s["phase"], s["claim"], s["step"]) for s in steps]
     plan_ids = expected_steps(claim_file)
+    contexts = {t["key"]: ig.ClaimContext(t, plan) for t in claim_file["targets"]}
     if len(set(ids)) != len(ids):
         findings.append("V4 steps: a step is recorded twice")
     missing = [i for i in plan_ids if i not in ids]
-    extra = [i for i in ids if i not in plan_ids]
+    extra = [
+        i
+        for i, s in zip(ids, steps, strict=True)
+        if i not in plan_ids
+        and not (
+            i[0] == orc.BASE
+            and i[2] == "base_obtained"
+            and i[1] in contexts
+            and s["outcome"] == orc.Outcome.REFUTE_ERROR
+            and s["reason"].startswith("the base evaluation failed: ")
+            and not s["containers"]
+        )
+    ]
     if missing:
         findings.append(f"V4 steps: missing {missing}")
     if extra:
         findings.append(f"V4 steps: not in the plan {extra}")
-    # order: the steps that ran (with containers) follow the plan's order
     ran = [i for i, s in zip(ids, steps, strict=True) if s["containers"]]
     positions = [plan_ids.index(i) for i in ran if i in plan_ids]
     if positions != sorted(positions):
         findings.append(f"V4 order: the steps that ran are not in the plan's order: {ran}")
-    claims_by_key = {c["key"]: c for c in outcome["claims"]}
-    steps_by_id = dict(zip(ids, steps, strict=True))
+    by_id = dict(zip(ids, steps, strict=True))
+    stopped = run["stopped"]
+    # the stop and its consequences
+    errors = [s for s in steps if s["outcome"] == orc.Outcome.REFUTE_ERROR]
+    if errors:
+        want = f"{_where(errors[0])}: {errors[0]['reason'] or 'Refute error'}"
+        if stopped != want:
+            findings.append(f"V4 run: stopped {stopped!r}, the first Refute error gives {want!r}")
+    elif stopped and not stopped.startswith(RUNNER_STOPS):
+        findings.append(f"V4 run: stopped {stopped!r} with no Refute error step")
+    if stopped:
+        if run["accounting_valid"]:
+            findings.append("V4 run: stopped, yet the accounting is valid")
+        if stopped not in run["invalid_reasons"]:
+            findings.append("V4 run: the stop is not among the invalid reasons")
+    setup_ok = all(
+        by_id.get(i, {}).get("outcome") == orc.Outcome.COMPLETED
+        for i in plan_ids
+        if i[0] == orc.SETUP
+    )
+    weights = _weights(setup)
     for s in steps:
-        where = " ".join(p for p in (s["phase"], s["claim"] or "", s["step"]) if p)
+        where = _where(s)
         try:
             out = orc.Outcome(s["outcome"])
         except ValueError:
@@ -263,73 +474,69 @@ def check_steps(claim_file: Mapping[str, Any], outcome: Mapping[str, Any], findi
             findings.append(f"V4 {where}: {out} with no reason")
         for c in s["containers"]:
             if c["result"] is None and not c["error"]:
+                findings.append(f"V4 {where}: container {c['container_id']} has no result or error")
+            stop = (c["result"] or {}).get("stopped")
+            if stop and stop not in orc._KNOWN_STOPS:
+                findings.append(f"V4 {where}: container {c['container_id']} stop cause {stop!r}")
+        if s["containers"]:
+            records = _records(s)
+            cands = _candidates(s, records)
+            if isinstance(cands, str):
+                findings.append(f"V4 {where}: {cands}")
+                continue
+            ok = (str(out), s["reason"]) in cands or (
+                out is orc.Outcome.REFUTE_ERROR
+                and any(_override_ok(s["reason"], r, s, run) for _, r in cands)
+            )
+            if not ok:
                 findings.append(
-                    f"V4 {where}: container {c['container_id']} has no result and no error"
-                )
-        if not s["containers"]:
-            if out not in (
-                orc.Outcome.NOT_EXECUTED,
-                orc.Outcome.BUDGET_EXHAUSTED,
-                orc.Outcome.REFUTE_ERROR,
-            ):
-                findings.append(f"V4 {where}: {out} with no container")
-            elif out is orc.Outcome.NOT_EXECUTED and not _not_executed_reason_ok(
-                s, claims_by_key, steps_by_id
-            ):
-                findings.append(
-                    f"V4 {where}: not executed with a reason the runner never gives: "
-                    f"{s['reason']!r}"
+                    f"V4 {where}: recorded {out} {s['reason']!r} does not follow from its "
+                    "containers"
                 )
             continue
-        records = _records(s)
-        if s["step"] == FALLBACK_STEPS or s["step"].startswith("data/"):
-            last, last_reason = orc._outcome(records[-1:])
-            if last in REFUTE_SIDE:
-                ok = out is last or out is orc.Outcome.REFUTE_ERROR
-            elif out is orc.Outcome.COMPLETED:
-                ok = records[-1].result.exit_code == 0
-            else:
-                ok = out in (orc.Outcome.FAILED, orc.Outcome.REFUTE_ERROR)
-            earlier = [r for r in records[:-1] if r.result is None or r.result.exit_code == 0]
-            if earlier:
-                findings.append(f"V4 {where}: an earlier rung exited 0 or has no result")
+        if out is orc.Outcome.BUDGET_EXHAUSTED:
+            if not s["reason"].startswith(f"{bg.BUDGET_EXHAUSTED} ("):
+                findings.append(f"V4 {where}: a refused grant without the budget reason")
+            continue
+        if out is orc.Outcome.REFUTE_ERROR:
+            continue  # a refused grant or the base evaluation: its stop is checked above
+        if out is not orc.Outcome.NOT_EXECUTED:
+            findings.append(f"V4 {where}: {out} with no container")
+            continue
+        why = _not_executed_problem(s, by_id, plan_ids, run, setup_ok, contexts, plan, weights)
+        if why:
+            findings.append(f"V4 {where}: not executed: {why}")
+    # what each claim's base step must say when it did not run
+    for key, ctx in contexts.items():
+        base = by_id.get((orc.BASE, key, "base"))
+        if setup_ok and run["setup_exhausted"] and base is not None and base["containers"]:
+            findings.append(f"V4 base {key} base: ran although the setup's budget was exhausted")
+        if base is None or base["outcome"] != orc.Outcome.NOT_EXECUTED or stopped:
+            continue
+        if not setup_ok:
+            want = SETUP_INCOMPLETE
+        elif run["setup_exhausted"]:
+            want = f"{bg.BUDGET_EXHAUSTED} ({bg.Pool.SETUP})"
         else:
-            want, want_reason = orc._outcome(records)
-            if out is orc.Outcome.REFUTE_ERROR and want is not orc.Outcome.REFUTE_ERROR:
-                ok = bool(s["reason"]) and (not want_reason or want_reason in s["reason"])
-            else:
-                ok = out is want and s["reason"] == want_reason
-        if not ok:
-            findings.append(
-                f"V4 {where}: recorded {out} {s['reason']!r} does not follow from its containers"
-            )
+            want = ig.not_run_reason(ctx.claim, plan, weights)
+        if base["reason"] != want:
+            findings.append(f"V4 base {key} base: reason {base['reason']!r}, expected {want!r}")
     # the run's own record
-    for key, obtained in run["base_obtained"].items():
-        base = steps_by_id.get((orc.BASE, key, "base"))
-        if obtained and (base is None or base["outcome"] != orc.Outcome.COMPLETED):
-            findings.append(
-                f"V4 run: base_obtained true for {key} whose base step did not complete"
-            )
-    if sorted(run["base_obtained"]) != sorted(claims_by_key):
+    if sorted(run["base_obtained"]) != sorted(contexts):
         findings.append("V4 run: base_obtained does not name exactly the claims")
-    if run["stopped"]:
-        if run["accounting_valid"]:
-            findings.append("V4 run: stopped, yet the accounting is valid")
-        if run["stopped"] not in run["invalid_reasons"]:
-            findings.append("V4 run: the stop is not among the invalid reasons")
+    for key, obtained in run["base_obtained"].items():
+        base = by_id.get((orc.BASE, key, "base"))
+        if obtained and (base is None or base["outcome"] != orc.Outcome.COMPLETED):
+            findings.append(f"V4 run: base_obtained true for {key}, whose base did not complete")
     has_attack = {k for (p, k, _) in plan_ids if p == orc.ATTACKS}
-    for key in run["attack_claims"]:
-        if not run["base_obtained"].get(key) or key not in has_attack:
-            findings.append(
-                f"V4 run: {key} eligible for attacks without its base or an attack step"
-            )
-    if run["setup_exhausted"]:
-        for s in steps:
-            if s["phase"] == orc.BASE and s["outcome"] != orc.Outcome.NOT_EXECUTED:
-                findings.append("V4 run: the setup budget was exhausted, yet a base step ran")
+    eligible = {k for k, v in run["base_obtained"].items() if v and k in has_attack}
+    if not stopped and set(run["attack_claims"]) != eligible:
+        findings.append(
+            f"V4 run: attack_claims {run['attack_claims']}, expected {sorted(eligible)}"
+        )
     # V5: the ladder
-    build = steps_by_id.get((orc.SETUP, None, "build"))
-    applicable = [f"setup/build/{a['rung']}" for a in attempts if a.get("applicable")]
+    build = by_id.get((orc.SETUP, None, "build"))
+    applicable = [f"setup/build/{a['rung']}" for a in attempts if a["applicable"]]
     if build is not None:
         cids = [c["container_id"] for c in build["containers"]]
         if cids != applicable[: len(cids)]:
@@ -344,35 +551,80 @@ def check_steps(claim_file: Mapping[str, Any], outcome: Mapping[str, Any], findi
             findings.append(f"V5 ladder: built_with {built!r}, yet the build did not complete")
 
 
+def _not_executed_problem(s, by_id, plan_ids, run, setup_ok, contexts, plan, weights) -> str:
+    """Why a NOT_EXECUTED reason is not one the frozen runner gives for this state, or ''."""
+    reason, phase, claim = s["reason"], s["phase"], s["claim"]
+    stopped = run["stopped"]
+    if reason.startswith("the paper stopped: "):
+        return (
+            "" if stopped and reason == f"the paper stopped: {stopped}" else "a stop not recorded"
+        )
+    if reason == "not reached":
+        return "'not reached' in a run that did not stop"
+    if reason == SETUP_INCOMPLETE:
+        return "" if phase == orc.BASE and not setup_ok else "the setup completed"
+    if reason == f"{bg.BUDGET_EXHAUSTED} ({bg.Pool.SETUP})":
+        ok = phase == orc.BASE and setup_ok and run["setup_exhausted"]
+        return "" if ok else "the setup's budget was not exhausted"
+    if reason == NOT_ELIGIBLE:
+        ok = phase == orc.ATTACKS and claim not in run["attack_claims"]
+        return "" if ok else "the claim is eligible for attacks"
+    m = re.fullmatch(r"step (.+) did not complete \((.+)\)", reason)
+    if m:
+        prior_id = (phase, claim, m.group(1))
+        prior = by_id.get(prior_id)
+        own = (phase, claim, s["step"])
+        ok = (
+            prior is not None
+            and prior_id != own
+            and prior_id in plan_ids
+            and own in plan_ids
+            and plan_ids.index(prior_id) < plan_ids.index(own)
+            and prior["outcome"] == m.group(2)
+            and prior["outcome"] != orc.Outcome.COMPLETED
+        )
+        return "" if ok else "no earlier step of its phase and claim ended so"
+    ctx = contexts.get(claim)
+    if phase == orc.BASE and ctx is not None and setup_ok and not run["setup_exhausted"]:
+        if reason == ig.not_run_reason(ctx.claim, plan, weights):
+            return ""
+    return f"a reason the runner never gives here: {reason!r}"
+
+
+# ---- one dossier ----------------------------------------------------------------------------
+
+
 def verify(
     arxiv: str, dossier: Path | None = None, claim_dir: Path | None = None
 ) -> dict[str, Any]:
     dossier = dossier or MAIN / "dossiers" / arxiv / "dossier"
     claim_dir = claim_dir or MAIN / "claims" / arxiv / "claim"
     findings: list[str] = []
+    outcome: Any = None
     try:
-        check_hashes(dossier, claim_dir, findings)
+        check_hashes(arxiv, dossier, claim_dir, findings)
         claim_file = json.loads((dossier / "claim_file.json").read_bytes())
         record = json.loads((dossier / "dossier.json").read_bytes())
-        outcome = record["outcome"]
+        outcome = record.get("outcome") if isinstance(record, dict) else None
+        check_shapes(outcome)
         check_verdicts(claim_file, outcome, findings)
-        check_steps(claim_file, outcome, findings)
-    except (OSError, ValueError, KeyError, TypeError, RecordError) as exc:
+        check_steps(claim_file, outcome, record.get("setup") or {}, findings)
+    except Exception as exc:  # any record the frozen code could not have written is a finding
         findings.append(f"the dossier cannot be read as recorded: {type(exc).__name__}: {exc}")
-        outcome = None
-    profile = (outcome or {}).get("profile") if isinstance(outcome, dict) else None
+    readable = isinstance(outcome, dict) and isinstance(outcome.get("claims"), list)
+    claims = []
+    if readable:
+        for c in outcome["claims"]:
+            if isinstance(c, dict) and isinstance(c.get("verdict"), dict):
+                claims.append({"key": c.get("key"), "verdict": c["verdict"].get("verdict")})
+    profile = outcome.get("profile") if readable else None
     return {
         "format": FORMAT,
         "paper": arxiv,
         "result": "NOT VERIFIED" if findings else "VERIFIED",
         "findings": findings,
-        "profile": profile,
-        "claims": [
-            {"key": c["key"], "verdict": c["verdict"]["verdict"]}
-            for c in (outcome or {}).get("claims", [])
-        ]
-        if isinstance(outcome, dict)
-        else [],
+        "profile": profile if isinstance(profile, dict) else None,
+        "claims": claims,
         "limits": list(LIMITS),
     }
 
@@ -394,7 +646,7 @@ def markdown(report: Mapping[str, Any], core_sha256: str | None) -> str:
     lines += ["## Claims (recomputed and recorded)", ""]
     lines += [f"- `{c['key']}`: {c['verdict']}" for c in report["claims"]]
     if report["profile"]:
-        lines += ["", f"Profile: {report['profile']['headline']}"]
+        lines += ["", f"Profile: {report['profile'].get('headline')}"]
     lines += ["", "## Findings", ""]
     lines += [f"- {f}" for f in report["findings"]] or ["None: checks V1 to V5 passed."]
     lines += ["", "## Limits", ""] + [f"- {x}" for x in report["limits"]]
@@ -414,7 +666,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.out:
             folder = args.out / arxiv
             folder.mkdir(parents=True, exist_ok=False)
-            seal = MAIN / "dossiers" / arxiv / "dossier" / "SEAL.json"
+            seal = MAIN / "dossiers" / arxiv / "dossier" / SEAL_NAME
             core = json.loads(seal.read_bytes())["core_sha256"] if seal.is_file() else None
             (folder / "verification.json").write_bytes(canonical_bytes(report))
             (folder / "verification.md").write_text(
