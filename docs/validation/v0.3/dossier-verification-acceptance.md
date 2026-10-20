@@ -207,6 +207,14 @@ seal it is given. These rules replace the matching ones above; nothing else chan
 - **Tests added:** an invented refusal reason between rungs; base steps that ran after a failed
   build; base steps that ran after a setup REFUTE_ERROR.
 
+## 4d. Reasons are matched whole (Codex check of 0b71793, 2026-10-20)
+
+A REFUTE_ERROR that closes a step is matched to `_close_step`'s own join: the containers' reason
+(when not empty), then the step's rejected records, then a prefix of the run's
+`invalid_reasons`, joined by `"; "`. Each component is matched whole, never split on `"; "`,
+because a dataset name (so a container id and a breach reason) may hold it. Positive test: a
+breach reason that holds `"; "`.
+
 ## 5. Evidence
 
 - Test counts from a JUnit XML file; ruff exits 0.
