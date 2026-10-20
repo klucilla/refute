@@ -1,0 +1,138 @@
+{
+ "reference_rates": {
+  "composition": {
+   "two_years": 0.6666666666666666,
+   "few_train": 0.3333333333333333
+  },
+  "admitted_last_year_per_target": 0.41666666666666663,
+  "admitted_any_per_target": 0.4833333333333333,
+  "M_class_shares": {
+   "(12,24]": 0.6285714285714286,
+   "(24,36]": 0.37142857142857144
+  },
+  "gates_of_a_pass (assumed)": 0.6,
+  "E3 exact event per constant target (assumed)": 0.15,
+  "T0 eligible fraction per scenario (assumed)": 0.15,
+  "false_pass": 0.01,
+  "false_fail": 0.005,
+  "disappearance_fail": 0.95,
+  "weakening_fail": 0.7,
+  "coverage_adverse": 0.002
+ },
+ "calibration": {
+  "null_maxima_per_class": 1000,
+  "order_statistic": 996,
+  "confidence_of_the_bound": 0.9713136000009954,
+  "yields_per_target": {
+   "(12,24]": 0.1571428571428571,
+   "(24,36]": 0.09285714285714285
+  },
+  "targets": 12000,
+  "union_bound_on_missing": 0.00012402346494253054
+ },
+ "evaluation": {
+  "alpha_per_limit": "0.05/16 (A) or 0.05/14 (B)",
+  "variants": {
+   "A, E1 per noise and class (16 limits)": {
+    "minima_per_noise": {
+     "E1b": 2963,
+     "E2": 1105,
+     "E3": 856,
+     "E4 disappearance": 98,
+     "E4 weakening": 119,
+     "E5": 1791,
+     "E1 (12,24]": 2963,
+     "E1 (24,36]": 2963
+    },
+    "yields_per_target": {
+     "E1b": 0.4833333333333333,
+     "E2": 0.15,
+     "E3": 1.0,
+     "E4 disappearance": 0.15,
+     "E4 weakening": 0.15,
+     "E5": 0.4833333333333333,
+     "E1 (12,24]": 0.1571428571428571,
+     "E1 (24,36]": 0.09285714285714285
+    },
+    "per_scenario": {
+     "constant": {
+      "targets_per_noise": 8400,
+      "union_bound_on_missing": 6.71899216778643e-07
+     },
+     "disappearing": {
+      "targets_per_noise": 34200,
+      "union_bound_on_missing": 3.023369898878156e-05
+     },
+     "weakened": {
+      "targets_per_noise": 1200,
+      "union_bound_on_missing": 8.057935622253777e-08
+     }
+    },
+    "targets": 68400,
+    "light_curves": 87600,
+    "evaluation_hours": 173.375,
+    "total_hours_with_timing_and_calibration": 197.3625,
+    "proposed_ceiling_hours": 247
+   },
+   "B, E1 per noise, the classes pooled (14 limits)": {
+    "minima_per_noise": {
+     "E1b": 2945,
+     "E2": 1094,
+     "E3": 836,
+     "E4 disappearance": 97,
+     "E4 weakening": 119,
+     "E5": 1762,
+     "E1": 2945
+    },
+    "yields_per_target": {
+     "E1b": 0.4833333333333333,
+     "E2": 0.15,
+     "E3": 1.0,
+     "E4 disappearance": 0.15,
+     "E4 weakening": 0.15,
+     "E5": 0.4833333333333333,
+     "E1": 0.24999999999999997
+    },
+    "per_scenario": {
+     "constant": {
+      "targets_per_noise": 8100,
+      "union_bound_on_missing": 6.37081813517324e-05
+     },
+     "disappearing": {
+      "targets_per_noise": 12600,
+      "union_bound_on_missing": 1.031802714929465e-05
+     },
+     "weakened": {
+      "targets_per_noise": 1200,
+      "union_bound_on_missing": 8.057935622253777e-08
+     }
+    },
+    "targets": 25200,
+    "light_curves": 43800,
+    "evaluation_hours": 86.6875,
+    "total_hours_with_timing_and_calibration": 110.675,
+    "proposed_ceiling_hours": 139
+   }
+  }
+ },
+ "failure_budget": {
+  "total": 0.0010000000000000009,
+  "per_part": 0.00014285714285714298,
+  "parts": 7
+ },
+ "cost_machine_hours": {
+  "timing_lot": 0.2375,
+  "calibration": 23.75
+ },
+ "cost_assumptions": {
+  "seconds_per_curve": 23.75,
+  "t4_factor (unmeasured)": 1.5,
+  "lot_overhead": 1.2,
+  "workers": 6,
+  "scenarios": {
+   "timing": 3,
+   "calibration": 1,
+   "evaluation": 3
+  }
+ }
+}

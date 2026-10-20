@@ -1,0 +1,2026 @@
+{
+ "format": "refute-v0.2.1-rmin-timing/1",
+ "note": "times only (map Amendment 26, 6): no outcome, pull, rate or count is recorded",
+ "started_utc": "2026-10-19T07:30:47+00:00",
+ "code_commit": "7e2eb8706a6bcf888f95df55da3d42834ee82b94",
+ "configuration": {
+  "name": "M4-rmin-timing",
+  "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-timing.json",
+  "sha256": "92ac414d5546ee84a7ece29acfbb32442abc04478e9137a1ce550f978c881d61",
+  "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d"
+ },
+ "workers": 6,
+ "affinity": "0xff",
+ "worker_affinities": [
+  "0xff"
+ ],
+ "thread_env": {
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1"
+ },
+ "wall_seconds": 497.1457513999994,
+ "targets": 80,
+ "light_curves": 240,
+ "per_target": [
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0000",
+   "group": "white, no variability",
+   "generation_seconds": 0.4276959999988321,
+   "scenarios": {
+    "constant": {
+     "rounds": 4.272545899999386,
+     "aggregation": 2.6500001695239916e-05,
+     "total": 4.272572400001081
+    },
+    "disappearing": {
+     "rounds": 3.668618499999866,
+     "aggregation": 1.720000000204891e-05,
+     "total": 3.668635699999868
+    },
+    "weakened": {
+     "rounds": 3.906491300000198,
+     "aggregation": 1.2399999832268804e-05,
+     "total": 3.90650370000003
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0001",
+   "group": "white, no variability",
+   "generation_seconds": 0.2819675999999163,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.8731023000000278,
+     "aggregation": 1.840000186348334e-05,
+     "total": 3.8731207000018912
+    },
+    "disappearing": {
+     "rounds": 2.903445699997974,
+     "aggregation": 1.2700002116616815e-05,
+     "total": 2.9034584000000905
+    },
+    "weakened": {
+     "rounds": 2.4459481999983836,
+     "aggregation": 1.1500000255182385e-05,
+     "total": 2.445959699998639
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0002",
+   "group": "white, no variability",
+   "generation_seconds": 0.2861407999989751,
+   "scenarios": {
+    "constant": {
+     "rounds": 4.793199200001254,
+     "aggregation": 2.7999998565064743e-05,
+     "total": 4.793227199999819
+    },
+    "disappearing": {
+     "rounds": 3.5845979000005173,
+     "aggregation": 1.729999712551944e-05,
+     "total": 3.5846151999976428
+    },
+    "weakened": {
+     "rounds": 3.174137599999085,
+     "aggregation": 1.6699999832781032e-05,
+     "total": 3.174154299998918
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0003",
+   "group": "white, no variability",
+   "generation_seconds": 0.35775619999913033,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.058089400001336,
+     "aggregation": 1.8599999748403206e-05,
+     "total": 3.0581080000010843
+    },
+    "disappearing": {
+     "rounds": 2.46810959999857,
+     "aggregation": 1.219999830937013e-05,
+     "total": 2.4681217999968794
+    },
+    "weakened": {
+     "rounds": 2.874574199999188,
+     "aggregation": 1.889999839477241e-05,
+     "total": 2.8745930999975826
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0004",
+   "group": "white, no variability",
+   "generation_seconds": 0.3617774999984249,
+   "scenarios": {
+    "constant": {
+     "rounds": 5.227957300001435,
+     "aggregation": 2.6999998226528987e-05,
+     "total": 5.227984299999662
+    },
+    "disappearing": {
+     "rounds": 4.217707399999199,
+     "aggregation": 1.80000024556648e-05,
+     "total": 4.217725400001655
+    },
+    "weakened": {
+     "rounds": 3.3847896000006585,
+     "aggregation": 1.3200002285884693e-05,
+     "total": 3.3848028000029444
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0100",
+   "group": "white, no variability",
+   "generation_seconds": 0.4489983999992546,
+   "scenarios": {
+    "constant": {
+     "rounds": 14.651623100002325,
+     "aggregation": 8.009999874047935e-05,
+     "total": 14.651703200001066
+    },
+    "disappearing": {
+     "rounds": 11.70364889999837,
+     "aggregation": 4.7900000936351717e-05,
+     "total": 11.703696799999307
+    },
+    "weakened": {
+     "rounds": 12.224039599997923,
+     "aggregation": 4.4299998990027234e-05,
+     "total": 12.224083899996913
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0101",
+   "group": "white, no variability",
+   "generation_seconds": 0.3189920999975584,
+   "scenarios": {
+    "constant": {
+     "rounds": 11.799518799998623,
+     "aggregation": 8.729999899514951e-05,
+     "total": 11.799606099997618
+    },
+    "disappearing": {
+     "rounds": 12.313239399998565,
+     "aggregation": 4.930000068270601e-05,
+     "total": 12.313288699999248
+    },
+    "weakened": {
+     "rounds": 12.354519500000606,
+     "aggregation": 3.440000000409782e-05,
+     "total": 12.35455390000061
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0102",
+   "group": "white, no variability",
+   "generation_seconds": 0.23848979999820585,
+   "scenarios": {
+    "constant": {
+     "rounds": 13.947161000000051,
+     "aggregation": 5.650000093737617e-05,
+     "total": 13.947217500000988
+    },
+    "disappearing": {
+     "rounds": 11.737704499999381,
+     "aggregation": 3.51999988197349e-05,
+     "total": 11.737739699998201
+    },
+    "weakened": {
+     "rounds": 12.73377149999942,
+     "aggregation": 3.5400000342633575e-05,
+     "total": 12.733806899999763
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0150",
+   "group": "white, no variability",
+   "generation_seconds": 0.16929760000130045,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.30566220000037,
+     "aggregation": 5.4600001021753997e-05,
+     "total": 3.3057168000013917
+    },
+    "disappearing": {
+     "rounds": 2.634143999999651,
+     "aggregation": 4.189999890513718e-05,
+     "total": 2.634185899998556
+    },
+    "weakened": {
+     "rounds": 2.226515800000925,
+     "aggregation": 3.899999865097925e-05,
+     "total": 2.226554799999576
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0151",
+   "group": "white, no variability",
+   "generation_seconds": 0.14531849999912083,
+   "scenarios": {
+    "constant": {
+     "rounds": 2.8267305999979726,
+     "aggregation": 5.8900001022266224e-05,
+     "total": 2.826789499998995
+    },
+    "disappearing": {
+     "rounds": 2.568983600001957,
+     "aggregation": 3.909999941242859e-05,
+     "total": 2.5690227000013692
+    },
+    "weakened": {
+     "rounds": 2.0436055999998644,
+     "aggregation": 3.510000169626437e-05,
+     "total": 2.0436407000015606
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0200",
+   "group": "white, variability",
+   "generation_seconds": 0.2537274999995134,
+   "scenarios": {
+    "constant": {
+     "rounds": 16.090324999997392,
+     "aggregation": 8.090000119409524e-05,
+     "total": 16.090405899998586
+    },
+    "disappearing": {
+     "rounds": 14.131497700000182,
+     "aggregation": 4.360000093583949e-05,
+     "total": 14.131541300001118
+    },
+    "weakened": {
+     "rounds": 14.749816000003193,
+     "aggregation": 4.289999924367294e-05,
+     "total": 14.749858900002437
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0201",
+   "group": "white, variability",
+   "generation_seconds": 0.3143545999992057,
+   "scenarios": {
+    "constant": {
+     "rounds": 20.020097599997825,
+     "aggregation": 5.249999958323315e-05,
+     "total": 20.02015009999741
+    },
+    "disappearing": {
+     "rounds": 21.33715579999989,
+     "aggregation": 3.6399997043190524e-05,
+     "total": 21.337192199996935
+    },
+    "weakened": {
+     "rounds": 23.70911459999843,
+     "aggregation": 5.48999996681232e-05,
+     "total": 23.709169499998097
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0202",
+   "group": "white, variability",
+   "generation_seconds": 0.3327761000000464,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.0725074999973,
+     "aggregation": 5.2200000936863944e-05,
+     "total": 18.072559699998237
+    },
+    "disappearing": {
+     "rounds": 19.717149599997356,
+     "aggregation": 3.5400000342633575e-05,
+     "total": 19.7171849999977
+    },
+    "weakened": {
+     "rounds": 19.957959300001676,
+     "aggregation": 5.029999738326296e-05,
+     "total": 19.95800959999906
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0203",
+   "group": "white, variability",
+   "generation_seconds": 0.35722379999788245,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.2997045000011,
+     "aggregation": 5.830000009154901e-05,
+     "total": 19.29976280000119
+    },
+    "disappearing": {
+     "rounds": 19.06080160000056,
+     "aggregation": 2.1400002879090607e-05,
+     "total": 19.060823000003438
+    },
+    "weakened": {
+     "rounds": 17.972261500002787,
+     "aggregation": 2.399999721092172e-05,
+     "total": 17.972285499999998
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0204",
+   "group": "white, variability",
+   "generation_seconds": 0.4510989000009431,
+   "scenarios": {
+    "constant": {
+     "rounds": 21.343610900003114,
+     "aggregation": 5.3499999921768904e-05,
+     "total": 21.343664400003036
+    },
+    "disappearing": {
+     "rounds": 18.1006632000026,
+     "aggregation": 4.8499998229090124e-05,
+     "total": 18.10071170000083
+    },
+    "weakened": {
+     "rounds": 19.00702900000033,
+     "aggregation": 6.520000169984996e-05,
+     "total": 19.00709420000203
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0205",
+   "group": "white, variability",
+   "generation_seconds": 0.27368249999926775,
+   "scenarios": {
+    "constant": {
+     "rounds": 21.233269100001053,
+     "aggregation": 6.380000195349567e-05,
+     "total": 21.233332900003006
+    },
+    "disappearing": {
+     "rounds": 17.89519509999809,
+     "aggregation": 4.8000001697801054e-05,
+     "total": 17.89524309999979
+    },
+    "weakened": {
+     "rounds": 23.168110700000398,
+     "aggregation": 3.139999898849055e-05,
+     "total": 23.168142099999386
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0206",
+   "group": "white, variability",
+   "generation_seconds": 0.30292740000004414,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.718217599998752,
+     "aggregation": 6.399999983841553e-05,
+     "total": 19.71828159999859
+    },
+    "disappearing": {
+     "rounds": 18.17313329999888,
+     "aggregation": 5.819999933009967e-05,
+     "total": 18.17319149999821
+    },
+    "weakened": {
+     "rounds": 21.19479710000087,
+     "aggregation": 3.909999941242859e-05,
+     "total": 21.19483620000028
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0207",
+   "group": "white, variability",
+   "generation_seconds": 0.3027153000002727,
+   "scenarios": {
+    "constant": {
+     "rounds": 12.583851499999582,
+     "aggregation": 2.3700002202531323e-05,
+     "total": 12.583875200001785
+    },
+    "disappearing": {
+     "rounds": 13.134087800000998,
+     "aggregation": 3.260000084992498e-05,
+     "total": 13.134120400001848
+    },
+    "weakened": {
+     "rounds": 11.76745579999988,
+     "aggregation": 2.0300001779105514e-05,
+     "total": 11.767476100001659
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0208",
+   "group": "white, variability",
+   "generation_seconds": 0.3007132000020647,
+   "scenarios": {
+    "constant": {
+     "rounds": 17.613958799996908,
+     "aggregation": 3.230000220355578e-05,
+     "total": 17.61399109999911
+    },
+    "disappearing": {
+     "rounds": 19.34965000000011,
+     "aggregation": 4.270000135875307e-05,
+     "total": 19.34969270000147
+    },
+    "weakened": {
+     "rounds": 15.944071199999598,
+     "aggregation": 3.9599999581696466e-05,
+     "total": 15.94411079999918
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-white-0209",
+   "group": "white, variability",
+   "generation_seconds": 0.39990209999814397,
+   "scenarios": {
+    "constant": {
+     "rounds": 13.644647799999802,
+     "aggregation": 3.5099998058285564e-05,
+     "total": 13.64468289999786
+    },
+    "disappearing": {
+     "rounds": 14.920385199999146,
+     "aggregation": 2.6599998818710446e-05,
+     "total": 14.920411799997964
+    },
+    "weakened": {
+     "rounds": 13.40649189999749,
+     "aggregation": 2.3700002202531323e-05,
+     "total": 13.406515599999693
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0000",
+   "group": "white, no variability",
+   "generation_seconds": 0.2993564999997034,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.541557599997759,
+     "aggregation": 1.4799999917158857e-05,
+     "total": 3.5415723999976763
+    },
+    "disappearing": {
+     "rounds": 2.8535895999993954,
+     "aggregation": 1.7300000763498247e-05,
+     "total": 2.853606900000159
+    },
+    "weakened": {
+     "rounds": 3.733688799999072,
+     "aggregation": 2.010000025620684e-05,
+     "total": 3.7337088999993284
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0001",
+   "group": "white, no variability",
+   "generation_seconds": 0.15067930000077467,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.994540399999096,
+     "aggregation": 8.349999916390516e-05,
+     "total": 3.9946238999982597
+    },
+    "disappearing": {
+     "rounds": 3.8146261000001687,
+     "aggregation": 5.8099998568650335e-05,
+     "total": 3.8146841999987373
+    },
+    "weakened": {
+     "rounds": 4.436029600001348,
+     "aggregation": 6.22000006842427e-05,
+     "total": 4.436091800002032
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0002",
+   "group": "white, no variability",
+   "generation_seconds": 0.19759500000145636,
+   "scenarios": {
+    "constant": {
+     "rounds": 4.487149099997623,
+     "aggregation": 9.91000015346799e-05,
+     "total": 4.487248199999158
+    },
+    "disappearing": {
+     "rounds": 4.2089948000029835,
+     "aggregation": 5.889999738428742e-05,
+     "total": 4.209053700000368
+    },
+    "weakened": {
+     "rounds": 4.277892999998585,
+     "aggregation": 6.910000229254365e-05,
+     "total": 4.277962100000877
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0003",
+   "group": "white, no variability",
+   "generation_seconds": 0.1552001999989443,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.987195599998813,
+     "aggregation": 1.469999915570952e-05,
+     "total": 3.987210299997969
+    },
+    "disappearing": {
+     "rounds": 3.2162950999991153,
+     "aggregation": 1.9600000086938962e-05,
+     "total": 3.2163146999992023
+    },
+    "weakened": {
+     "rounds": 4.631020500000886,
+     "aggregation": 1.6199999663513154e-05,
+     "total": 4.63103670000055
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0004",
+   "group": "white, no variability",
+   "generation_seconds": 0.1732224999977916,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.587758199999371,
+     "aggregation": 7.040000127744861e-05,
+     "total": 3.5878286000006483
+    },
+    "disappearing": {
+     "rounds": 3.716775400000188,
+     "aggregation": 5.669999882229604e-05,
+     "total": 3.71683209999901
+    },
+    "weakened": {
+     "rounds": 4.0633664000015415,
+     "aggregation": 6.289999873843044e-05,
+     "total": 4.06342930000028
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0100",
+   "group": "white, no variability",
+   "generation_seconds": 0.31132919999799924,
+   "scenarios": {
+    "constant": {
+     "rounds": 12.03383119999853,
+     "aggregation": 0.00010400000246590935,
+     "total": 12.033935200000997
+    },
+    "disappearing": {
+     "rounds": 12.457262700001593,
+     "aggregation": 5.270000110613182e-05,
+     "total": 12.457315400002699
+    },
+    "weakened": {
+     "rounds": 10.484771299998101,
+     "aggregation": 5.729999975301325e-05,
+     "total": 10.484828599997854
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0101",
+   "group": "white, no variability",
+   "generation_seconds": 0.3397170999996888,
+   "scenarios": {
+    "constant": {
+     "rounds": 13.393383800001175,
+     "aggregation": 0.00011870000162161887,
+     "total": 13.393502500002796
+    },
+    "disappearing": {
+     "rounds": 15.070868499999051,
+     "aggregation": 7.14999987394549e-05,
+     "total": 15.07093999999779
+    },
+    "weakened": {
+     "rounds": 13.31398750000153,
+     "aggregation": 9.109999882639386e-05,
+     "total": 13.314078600000357
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0150",
+   "group": "white, no variability",
+   "generation_seconds": 0.17244879999998375,
+   "scenarios": {
+    "constant": {
+     "rounds": 2.7455808999984583,
+     "aggregation": 3.35000004270114e-05,
+     "total": 2.7456143999988853
+    },
+    "disappearing": {
+     "rounds": 1.7198916999986977,
+     "aggregation": 1.8200000340584666e-05,
+     "total": 1.7199098999990383
+    },
+    "weakened": {
+     "rounds": 2.519690900000569,
+     "aggregation": 1.2700002116616815e-05,
+     "total": 2.5197036000026856
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0151",
+   "group": "white, no variability",
+   "generation_seconds": 0.16057680000085384,
+   "scenarios": {
+    "constant": {
+     "rounds": 2.9850334000002476,
+     "aggregation": 9.200000204145908e-05,
+     "total": 2.985125400002289
+    },
+    "disappearing": {
+     "rounds": 2.6355521000004956,
+     "aggregation": 5.3499999921768904e-05,
+     "total": 2.6356056000004173
+    },
+    "weakened": {
+     "rounds": 2.6475264000000607,
+     "aggregation": 4.1700001020217314e-05,
+     "total": 2.647568100001081
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0152",
+   "group": "white, no variability",
+   "generation_seconds": 0.11704800000006799,
+   "scenarios": {
+    "constant": {
+     "rounds": 2.1632506999994803,
+     "aggregation": 3.719999949680641e-05,
+     "total": 2.163287899998977
+    },
+    "disappearing": {
+     "rounds": 2.0431402000031085,
+     "aggregation": 4.4699998397845775e-05,
+     "total": 2.0431849000015063
+    },
+    "weakened": {
+     "rounds": 2.4404381000022113,
+     "aggregation": 2.8599999495781958e-05,
+     "total": 2.440466700001707
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0200",
+   "group": "white, variability",
+   "generation_seconds": 0.24229249999916647,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.897605699999986,
+     "aggregation": 6.239999856916256e-05,
+     "total": 18.897668099998555
+    },
+    "disappearing": {
+     "rounds": 17.786638700003095,
+     "aggregation": 6.479999865405262e-05,
+     "total": 17.78670350000175
+    },
+    "weakened": {
+     "rounds": 19.547290200000134,
+     "aggregation": 8.84000000951346e-05,
+     "total": 19.54737860000023
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0201",
+   "group": "white, variability",
+   "generation_seconds": 0.3024498000013409,
+   "scenarios": {
+    "constant": {
+     "rounds": 20.99925930000245,
+     "aggregation": 6.070000017643906e-05,
+     "total": 20.999320000002626
+    },
+    "disappearing": {
+     "rounds": 19.165851800000382,
+     "aggregation": 5.779999992228113e-05,
+     "total": 19.165909600000305
+    },
+    "weakened": {
+     "rounds": 23.354774800001906,
+     "aggregation": 5.7999997807201e-05,
+     "total": 23.354832799999713
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0202",
+   "group": "white, variability",
+   "generation_seconds": 0.2935761000007915,
+   "scenarios": {
+    "constant": {
+     "rounds": 20.709526200000255,
+     "aggregation": 7.969999933266081e-05,
+     "total": 20.709605899999588
+    },
+    "disappearing": {
+     "rounds": 20.708949500000017,
+     "aggregation": 7.919999916339293e-05,
+     "total": 20.70902869999918
+    },
+    "weakened": {
+     "rounds": 19.4528121000003,
+     "aggregation": 5.0099999498343095e-05,
+     "total": 19.4528621999998
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0203",
+   "group": "white, variability",
+   "generation_seconds": 0.27629500000330154,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.652614800001174,
+     "aggregation": 0.00011949999679927714,
+     "total": 18.652734299997974
+    },
+    "disappearing": {
+     "rounds": 18.79946850000124,
+     "aggregation": 9.800000043469481e-05,
+     "total": 18.799566500001674
+    },
+    "weakened": {
+     "rounds": 18.36033680000037,
+     "aggregation": 8.739999975659885e-05,
+     "total": 18.360424200000125
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0204",
+   "group": "white, variability",
+   "generation_seconds": 0.2370639000000665,
+   "scenarios": {
+    "constant": {
+     "rounds": 20.12281240000084,
+     "aggregation": 8.439999874099158e-05,
+     "total": 20.12289679999958
+    },
+    "disappearing": {
+     "rounds": 19.700127500000235,
+     "aggregation": 5.569999848376028e-05,
+     "total": 19.70018319999872
+    },
+    "weakened": {
+     "rounds": 23.041186700000253,
+     "aggregation": 9.560000034980476e-05,
+     "total": 23.041282300000603
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0205",
+   "group": "white, variability",
+   "generation_seconds": 0.30186289999983273,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.488409600002342,
+     "aggregation": 4.479999915929511e-05,
+     "total": 19.4884544000015
+    },
+    "disappearing": {
+     "rounds": 15.916754600002605,
+     "aggregation": 2.8699996619252488e-05,
+     "total": 15.916783299999224
+    },
+    "weakened": {
+     "rounds": 19.890006599998742,
+     "aggregation": 3.930000093532726e-05,
+     "total": 19.890045899999677
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0206",
+   "group": "white, variability",
+   "generation_seconds": 0.30405790000077104,
+   "scenarios": {
+    "constant": {
+     "rounds": 23.13192809999964,
+     "aggregation": 7.530000220867805e-05,
+     "total": 23.13200340000185
+    },
+    "disappearing": {
+     "rounds": 20.69479819999833,
+     "aggregation": 4.440000338945538e-05,
+     "total": 20.69484260000172
+    },
+    "weakened": {
+     "rounds": 20.002082599999994,
+     "aggregation": 8.929999967222102e-05,
+     "total": 20.002171899999666
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0207",
+   "group": "white, variability",
+   "generation_seconds": 0.30102330000227084,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.355452499999956,
+     "aggregation": 6.319999738479964e-05,
+     "total": 19.35551569999734
+    },
+    "disappearing": {
+     "rounds": 18.202970800000912,
+     "aggregation": 5.4299998737405986e-05,
+     "total": 18.20302509999965
+    },
+    "weakened": {
+     "rounds": 21.79155069999979,
+     "aggregation": 0.00010149999798159115,
+     "total": 21.79165219999777
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0208",
+   "group": "white, variability",
+   "generation_seconds": 0.2858769999984361,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.38291929999832,
+     "aggregation": 5.950000195298344e-05,
+     "total": 19.382978800000274
+    },
+    "disappearing": {
+     "rounds": 21.193114599998808,
+     "aggregation": 4.220000118948519e-05,
+     "total": 21.193156799999997
+    },
+    "weakened": {
+     "rounds": 17.83399890000146,
+     "aggregation": 4.220000118948519e-05,
+     "total": 17.83404110000265
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-white-0209",
+   "group": "white, variability",
+   "generation_seconds": 0.2933917000009387,
+   "scenarios": {
+    "constant": {
+     "rounds": 17.900086400000873,
+     "aggregation": 5.959999907645397e-05,
+     "total": 17.90014599999995
+    },
+    "disappearing": {
+     "rounds": 17.282687599999917,
+     "aggregation": 1.469999915570952e-05,
+     "total": 17.282702299999073
+    },
+    "weakened": {
+     "rounds": 19.14338449999923,
+     "aggregation": 3.609999839682132e-05,
+     "total": 19.143420599997626
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0000",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.2571642000002612,
+   "scenarios": {
+    "constant": {
+     "rounds": 5.00462449999759,
+     "aggregation": 3.8300000596791506e-05,
+     "total": 5.0046627999981865
+    },
+    "disappearing": {
+     "rounds": 3.62088600000061,
+     "aggregation": 3.469999865046702e-05,
+     "total": 3.6209206999992603
+    },
+    "weakened": {
+     "rounds": 3.688975000000937,
+     "aggregation": 3.2500000088475645e-05,
+     "total": 3.6890075000010256
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0001",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.23479620000216528,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.9513655999980983,
+     "aggregation": 2.0700001186924055e-05,
+     "total": 3.9513862999992853
+    },
+    "disappearing": {
+     "rounds": 3.488100700000359,
+     "aggregation": 1.8399998225504532e-05,
+     "total": 3.4881190999985847
+    },
+    "weakened": {
+     "rounds": 3.6124827999992704,
+     "aggregation": 1.8599999748403206e-05,
+     "total": 3.6125013999990188
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0002",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.1774334000001545,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.4224782999990566,
+     "aggregation": 6.299999949987978e-05,
+     "total": 3.4225412999985565
+    },
+    "disappearing": {
+     "rounds": 2.993669299998146,
+     "aggregation": 3.1200001103570685e-05,
+     "total": 2.9937004999992496
+    },
+    "weakened": {
+     "rounds": 3.175958499999979,
+     "aggregation": 4.439999975147657e-05,
+     "total": 3.1760028999997303
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0003",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.2316041000012774,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.906313699997554,
+     "aggregation": 5.2600000344682485e-05,
+     "total": 3.9063662999978988
+    },
+    "disappearing": {
+     "rounds": 3.077347700000246,
+     "aggregation": 1.1899999663000926e-05,
+     "total": 3.077359599999909
+    },
+    "weakened": {
+     "rounds": 2.565244299999904,
+     "aggregation": 1.340000017080456e-05,
+     "total": 2.5652577000000747
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0004",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.29020669999954407,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.823356299999432,
+     "aggregation": 2.0700001186924055e-05,
+     "total": 3.823377000000619
+    },
+    "disappearing": {
+     "rounds": 2.5487485000012384,
+     "aggregation": 1.2500000593718141e-05,
+     "total": 2.548761000001832
+    },
+    "weakened": {
+     "rounds": 3.280093000001216,
+     "aggregation": 1.7099999240599573e-05,
+     "total": 3.2801101000004564
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0100",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.30772889999934705,
+   "scenarios": {
+    "constant": {
+     "rounds": 11.931230199999845,
+     "aggregation": 3.6699999327538535e-05,
+     "total": 11.931266899999173
+    },
+    "disappearing": {
+     "rounds": 10.282616700002109,
+     "aggregation": 4.7999998059822246e-05,
+     "total": 10.282664700000169
+    },
+    "weakened": {
+     "rounds": 10.829829700000118,
+     "aggregation": 4.2100000428035855e-05,
+     "total": 10.829871800000547
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0101",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.34120489999986603,
+   "scenarios": {
+    "constant": {
+     "rounds": 11.28578909999851,
+     "aggregation": 9.380000119563192e-05,
+     "total": 11.285882899999706
+    },
+    "disappearing": {
+     "rounds": 13.471179899999697,
+     "aggregation": 5.419999797595665e-05,
+     "total": 13.471234099997673
+    },
+    "weakened": {
+     "rounds": 11.816265100002056,
+     "aggregation": 7.239999831654131e-05,
+     "total": 11.816337500000373
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0102",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.28189080000083777,
+   "scenarios": {
+    "constant": {
+     "rounds": 13.39989549999882,
+     "aggregation": 5.410000085248612e-05,
+     "total": 13.399949599999673
+    },
+    "disappearing": {
+     "rounds": 17.66890489999787,
+     "aggregation": 3.990000186604448e-05,
+     "total": 17.668944799999736
+    },
+    "weakened": {
+     "rounds": 18.999535499999183,
+     "aggregation": 0.00014110000120126642,
+     "total": 18.999676600000384
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0150",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.19307839999964926,
+   "scenarios": {
+    "constant": {
+     "rounds": 4.624756799999886,
+     "aggregation": 3.730000025825575e-05,
+     "total": 4.624794100000145
+    },
+    "disappearing": {
+     "rounds": 2.3269629000023997,
+     "aggregation": 1.2500000593718141e-05,
+     "total": 2.3269754000029934
+    },
+    "weakened": {
+     "rounds": 2.072860300002503,
+     "aggregation": 1.3399996532825753e-05,
+     "total": 2.072873699999036
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0151",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.18322389999957522,
+   "scenarios": {
+    "constant": {
+     "rounds": 1.75682279999819,
+     "aggregation": 1.880000127130188e-05,
+     "total": 1.7568415999994613
+    },
+    "disappearing": {
+     "rounds": 1.8145158000006631,
+     "aggregation": 2.0899999071843922e-05,
+     "total": 1.814536699999735
+    },
+    "weakened": {
+     "rounds": 2.2953959999977087,
+     "aggregation": 2.2700001863995567e-05,
+     "total": 2.2954186999995727
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0200",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.41956130000107805,
+   "scenarios": {
+    "constant": {
+     "rounds": 21.136528499999258,
+     "aggregation": 4.640000042854808e-05,
+     "total": 21.136574899999687
+    },
+    "disappearing": {
+     "rounds": 17.958276299999852,
+     "aggregation": 5.020000025979243e-05,
+     "total": 17.958326500000112
+    },
+    "weakened": {
+     "rounds": 20.80621930000052,
+     "aggregation": 5.249999958323315e-05,
+     "total": 20.806271800000104
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0201",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.36291909999999916,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.59580769999957,
+     "aggregation": 4.059999992023222e-05,
+     "total": 18.59584829999949
+    },
+    "disappearing": {
+     "rounds": 18.30802119999862,
+     "aggregation": 2.760000279522501e-05,
+     "total": 18.308048800001416
+    },
+    "weakened": {
+     "rounds": 16.31174589999864,
+     "aggregation": 3.840000135824084e-05,
+     "total": 16.3117843
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0202",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.3821663000016997,
+   "scenarios": {
+    "constant": {
+     "rounds": 16.146416200001113,
+     "aggregation": 3.989999822806567e-05,
+     "total": 16.14645609999934
+    },
+    "disappearing": {
+     "rounds": 17.655781299999944,
+     "aggregation": 5.869999949936755e-05,
+     "total": 17.655839999999444
+    },
+    "weakened": {
+     "rounds": 16.411441100000957,
+     "aggregation": 3.300000025774352e-05,
+     "total": 16.411474100001215
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0203",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.38870500000120956,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.588883899999928,
+     "aggregation": 5.709999823011458e-05,
+     "total": 18.588940999998158
+    },
+    "disappearing": {
+     "rounds": 18.279358399999182,
+     "aggregation": 2.2899999748915434e-05,
+     "total": 18.27938129999893
+    },
+    "weakened": {
+     "rounds": 20.36684199999945,
+     "aggregation": 3.460000152699649e-05,
+     "total": 20.366876600000978
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0204",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.4520081000009668,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.272888600000442,
+     "aggregation": 5.7199998991563916e-05,
+     "total": 19.272945799999434
+    },
+    "disappearing": {
+     "rounds": 18.02029169999878,
+     "aggregation": 4.7199999244185165e-05,
+     "total": 18.020338899998023
+    },
+    "weakened": {
+     "rounds": 19.762943499998073,
+     "aggregation": 3.360000118846074e-05,
+     "total": 19.76297709999926
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0205",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.33281780000106664,
+   "scenarios": {
+    "constant": {
+     "rounds": 20.421781699998974,
+     "aggregation": 7.619999814778566e-05,
+     "total": 20.42185789999712
+    },
+    "disappearing": {
+     "rounds": 18.888242699998955,
+     "aggregation": 4.410000110510737e-05,
+     "total": 18.88828680000006
+    },
+    "weakened": {
+     "rounds": 19.609140699998534,
+     "aggregation": 4.199999966658652e-05,
+     "total": 19.6091826999982
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0206",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.26912409999931697,
+   "scenarios": {
+    "constant": {
+     "rounds": 16.870518700001412,
+     "aggregation": 3.899999865097925e-05,
+     "total": 16.870557700000063
+    },
+    "disappearing": {
+     "rounds": 16.37512019999849,
+     "aggregation": 3.7500001781154424e-05,
+     "total": 16.375157700000273
+    },
+    "weakened": {
+     "rounds": 18.060617200000706,
+     "aggregation": 4.310000076657161e-05,
+     "total": 18.060660300001473
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0207",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.3368725000000268,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.063105199998972,
+     "aggregation": 3.870000000461005e-05,
+     "total": 18.063143899998977
+    },
+    "disappearing": {
+     "rounds": 19.349920600001496,
+     "aggregation": 2.7499998395796865e-05,
+     "total": 19.349948099999892
+    },
+    "weakened": {
+     "rounds": 17.059726300001785,
+     "aggregation": 3.51999988197349e-05,
+     "total": 17.059761500000604
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0208",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.4328650999996171,
+   "scenarios": {
+    "constant": {
+     "rounds": 20.119468099997903,
+     "aggregation": 4.439999975147657e-05,
+     "total": 20.119512499997654
+    },
+    "disappearing": {
+     "rounds": 18.479834499998105,
+     "aggregation": 5.060000330558978e-05,
+     "total": 18.47988510000141
+    },
+    "weakened": {
+     "rounds": 18.328086199999234,
+     "aggregation": 3.179999839630909e-05,
+     "total": 18.32811799999763
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-near-correlated-0209",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.2649234000018623,
+   "scenarios": {
+    "constant": {
+     "rounds": 17.147982300000876,
+     "aggregation": 6.0999998822808266e-05,
+     "total": 17.1480432999997
+    },
+    "disappearing": {
+     "rounds": 15.863214199998765,
+     "aggregation": 3.319999814266339e-05,
+     "total": 15.863247399996908
+    },
+    "weakened": {
+     "rounds": 16.979199600002175,
+     "aggregation": 4.5900000259280205e-05,
+     "total": 16.979245500002435
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0000",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.23520030000145198,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.5369582000021182,
+     "aggregation": 4.5099997805664316e-05,
+     "total": 3.537003299999924
+    },
+    "disappearing": {
+     "rounds": 3.163085799998953,
+     "aggregation": 5.6000000768108293e-05,
+     "total": 3.163141799999721
+    },
+    "weakened": {
+     "rounds": 3.780991899999208,
+     "aggregation": 3.939999805879779e-05,
+     "total": 3.7810312999972666
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0001",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.2013632999987749,
+   "scenarios": {
+    "constant": {
+     "rounds": 3.0339966000028653,
+     "aggregation": 3.5400000342633575e-05,
+     "total": 3.034032000003208
+    },
+    "disappearing": {
+     "rounds": 2.8846701000002213,
+     "aggregation": 2.8200000087963417e-05,
+     "total": 2.8846983000003092
+    },
+    "weakened": {
+     "rounds": 3.587802500001999,
+     "aggregation": 4.2100000428035855e-05,
+     "total": 3.587844600002427
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0002",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.1982157999991614,
+   "scenarios": {
+    "constant": {
+     "rounds": 4.06015920000209,
+     "aggregation": 3.819999983534217e-05,
+     "total": 4.060197400001925
+    },
+    "disappearing": {
+     "rounds": 3.7041366000012204,
+     "aggregation": 5.160000000614673e-05,
+     "total": 3.7041882000012265
+    },
+    "weakened": {
+     "rounds": 3.925812699999369,
+     "aggregation": 5.6000000768108293e-05,
+     "total": 3.9258687000001373
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0003",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.24898490000123275,
+   "scenarios": {
+    "constant": {
+     "rounds": 4.344222299998364,
+     "aggregation": 8.410000009462237e-05,
+     "total": 4.344306399998459
+    },
+    "disappearing": {
+     "rounds": 3.9566254999990633,
+     "aggregation": 4.160000025876798e-05,
+     "total": 3.956667099999322
+    },
+    "weakened": {
+     "rounds": 2.940397899998061,
+     "aggregation": 3.9999998989515007e-05,
+     "total": 2.9404378999970504
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0004",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.22204749999946216,
+   "scenarios": {
+    "constant": {
+     "rounds": 5.533453800002462,
+     "aggregation": 6.509999730042182e-05,
+     "total": 5.533518899999763
+    },
+    "disappearing": {
+     "rounds": 3.779586000000563,
+     "aggregation": 4.5900000259280205e-05,
+     "total": 3.7796319000008225
+    },
+    "weakened": {
+     "rounds": 3.743286299999454,
+     "aggregation": 4.030000127386302e-05,
+     "total": 3.743326600000728
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0100",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.37572789999831,
+   "scenarios": {
+    "constant": {
+     "rounds": 15.932056700003159,
+     "aggregation": 6.439999924623407e-05,
+     "total": 15.932121100002405
+    },
+    "disappearing": {
+     "rounds": 14.444555800000671,
+     "aggregation": 6.270000085351057e-05,
+     "total": 14.444618500001525
+    },
+    "weakened": {
+     "rounds": 12.528110299997934,
+     "aggregation": 7.050000203889795e-05,
+     "total": 12.528180799999973
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0101",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.3569016000001284,
+   "scenarios": {
+    "constant": {
+     "rounds": 13.06138650000139,
+     "aggregation": 9.850000060396269e-05,
+     "total": 13.061485000001994
+    },
+    "disappearing": {
+     "rounds": 13.06171969999923,
+     "aggregation": 0.00010750000001280569,
+     "total": 13.061827199999243
+    },
+    "weakened": {
+     "rounds": 12.111718299998756,
+     "aggregation": 7.190000178525224e-05,
+     "total": 12.111790200000542
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0150",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.18297290000191424,
+   "scenarios": {
+    "constant": {
+     "rounds": 4.045400499999232,
+     "aggregation": 3.690000085043721e-05,
+     "total": 4.045437400000083
+    },
+    "disappearing": {
+     "rounds": 2.3247515999973984,
+     "aggregation": 4.70000013592653e-05,
+     "total": 2.3247985999987577
+    },
+    "weakened": {
+     "rounds": 2.1570474000000104,
+     "aggregation": 2.7999998565064743e-05,
+     "total": 2.1570753999985754
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0151",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.1315346999981557,
+   "scenarios": {
+    "constant": {
+     "rounds": 1.8726668000017526,
+     "aggregation": 4.73000000056345e-05,
+     "total": 1.8727141000017582
+    },
+    "disappearing": {
+     "rounds": 2.340154800000164,
+     "aggregation": 1.790000169421546e-05,
+     "total": 2.340172700001858
+    },
+    "weakened": {
+     "rounds": 2.542388400001073,
+     "aggregation": 6.13999982306268e-05,
+     "total": 2.5424497999993037
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0152",
+   "group": "AR(1), no variability",
+   "generation_seconds": 0.1317985999994562,
+   "scenarios": {
+    "constant": {
+     "rounds": 2.5668798000006063,
+     "aggregation": 5.9300000430084765e-05,
+     "total": 2.5669391000010364
+    },
+    "disappearing": {
+     "rounds": 2.4753665999996883,
+     "aggregation": 4.329999865149148e-05,
+     "total": 2.47540989999834
+    },
+    "weakened": {
+     "rounds": 2.5840291999993497,
+     "aggregation": 3.270000161137432e-05,
+     "total": 2.584061900000961
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0200",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.2851435999982641,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.122714899996936,
+     "aggregation": 4.2000003304565325e-05,
+     "total": 18.12275690000024
+    },
+    "disappearing": {
+     "rounds": 19.09461530000044,
+     "aggregation": 4.8899997636908665e-05,
+     "total": 19.09466419999808
+    },
+    "weakened": {
+     "rounds": 18.690673299999617,
+     "aggregation": 5.329999839887023e-05,
+     "total": 18.690726599998015
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0201",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.35808170000018436,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.041471100001218,
+     "aggregation": 0.00011390000145183876,
+     "total": 19.04158500000267
+    },
+    "disappearing": {
+     "rounds": 21.471830500002397,
+     "aggregation": 4.999999873689376e-05,
+     "total": 21.471880500001134
+    },
+    "weakened": {
+     "rounds": 20.380020200002036,
+     "aggregation": 5.6799999583745375e-05,
+     "total": 20.38007700000162
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0202",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.3672387999977218,
+   "scenarios": {
+    "constant": {
+     "rounds": 18.69484250000096,
+     "aggregation": 7.240000195452012e-05,
+     "total": 18.694914900002914
+    },
+    "disappearing": {
+     "rounds": 20.713889200000267,
+     "aggregation": 4.709999848273583e-05,
+     "total": 20.71393629999875
+    },
+    "weakened": {
+     "rounds": 21.142735800000082,
+     "aggregation": 7.74000000092201e-05,
+     "total": 21.14281320000009
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0203",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.2846791999982088,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.190942400000495,
+     "aggregation": 7.840000034775585e-05,
+     "total": 19.191020800000842
+    },
+    "disappearing": {
+     "rounds": 19.613621599997714,
+     "aggregation": 4.260000059730373e-05,
+     "total": 19.61366419999831
+    },
+    "weakened": {
+     "rounds": 19.881446100000176,
+     "aggregation": 8.940000043367036e-05,
+     "total": 19.88153550000061
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0204",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.3094667000004847,
+   "scenarios": {
+    "constant": {
+     "rounds": 11.720410999998421,
+     "aggregation": 8.300000263261609e-05,
+     "total": 11.720494000001054
+    },
+    "disappearing": {
+     "rounds": 12.825117999997019,
+     "aggregation": 5.18000015290454e-05,
+     "total": 12.825169799998548
+    },
+    "weakened": {
+     "rounds": 12.918815699998959,
+     "aggregation": 7.60000002628658e-05,
+     "total": 12.918891699999222
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0205",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.31011639999996987,
+   "scenarios": {
+    "constant": {
+     "rounds": 20.56252400000085,
+     "aggregation": 6.800000119255856e-05,
+     "total": 20.56259200000204
+    },
+    "disappearing": {
+     "rounds": 17.461321700000553,
+     "aggregation": 5.62999994144775e-05,
+     "total": 17.461377999999968
+    },
+    "weakened": {
+     "rounds": 16.22825179999927,
+     "aggregation": 3.559999822755344e-05,
+     "total": 16.228287399997498
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0206",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.39712000000145053,
+   "scenarios": {
+    "constant": {
+     "rounds": 16.547249600000214,
+     "aggregation": 6.0200000007171184e-05,
+     "total": 16.54730980000022
+    },
+    "disappearing": {
+     "rounds": 15.909130300002289,
+     "aggregation": 6.289999873843044e-05,
+     "total": 15.909193200001027
+    },
+    "weakened": {
+     "rounds": 12.63322060000064,
+     "aggregation": 6.709999797749333e-05,
+     "total": 12.633287699998618
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0207",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.29587379999793484,
+   "scenarios": {
+    "constant": {
+     "rounds": 16.341405199997098,
+     "aggregation": 6.180000127642415e-05,
+     "total": 16.341466999998374
+    },
+    "disappearing": {
+     "rounds": 15.711645699997462,
+     "aggregation": 5.230000169831328e-05,
+     "total": 15.71169799999916
+    },
+    "weakened": {
+     "rounds": 14.277191799999855,
+     "aggregation": 5.709999823011458e-05,
+     "total": 14.277248899998085
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0208",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.39055240000016056,
+   "scenarios": {
+    "constant": {
+     "rounds": 19.083910299999843,
+     "aggregation": 4.930000068270601e-05,
+     "total": 19.083959600000526
+    },
+    "disappearing": {
+     "rounds": 13.811626799997612,
+     "aggregation": 3.190000279573724e-05,
+     "total": 13.811658700000407
+    },
+    "weakened": {
+     "rounds": 13.154090399999404,
+     "aggregation": 2.8599999495781958e-05,
+     "total": 13.1541189999989
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  },
+  {
+   "target": "refute-v0.2.1-rmin-timing/planet-measurable-correlated-0209",
+   "group": "AR(1), variability",
+   "generation_seconds": 0.38689290000183973,
+   "scenarios": {
+    "constant": {
+     "rounds": 15.734787000001234,
+     "aggregation": 6.579999899258837e-05,
+     "total": 15.734852800000226
+    },
+    "disappearing": {
+     "rounds": 14.210446699999011,
+     "aggregation": 4.740000076708384e-05,
+     "total": 14.210494099999778
+    },
+    "weakened": {
+     "rounds": 14.441255800000363,
+     "aggregation": 4.7500001528533176e-05,
+     "total": 14.441303300001891
+    }
+   },
+   "identity_block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+   "affinity": "0xff"
+  }
+ ],
+ "summary": {
+  "AR(1), no variability": {
+   "targets": 20,
+   "generation": {
+    "median": 0.23320015000172134,
+    "max": 0.37572789999831
+   },
+   "constant": {
+    "median": 4.052817400001004,
+    "max": 15.932121100002405
+   },
+   "disappearing": {
+    "median": 3.325630449999153,
+    "max": 17.668944799999736
+   },
+   "weakened": {
+    "median": 3.600173000000723,
+    "max": 18.999676600000384
+   }
+  },
+  "AR(1), variability": {
+   "targets": 20,
+   "generation": {
+    "median": 0.36050040000009176,
+    "max": 0.4520081000009668
+   },
+   "constant": {
+    "median": 18.592394649998823,
+    "max": 21.136574899999687
+   },
+   "disappearing": {
+    "median": 17.989332699999068,
+    "max": 21.471880500001134
+   },
+   "weakened": {
+    "median": 17.56021090000104,
+    "max": 21.14281320000009
+   }
+  },
+  "white, no variability": {
+   "targets": 20,
+   "generation": {
+    "median": 0.26022869999906106,
+    "max": 0.4489983999992546
+   },
+   "constant": {
+    "median": 3.9909170999981143,
+    "max": 14.651703200001066
+   },
+   "disappearing": {
+    "median": 3.6266254499987554,
+    "max": 15.07093999999779
+   },
+   "weakened": {
+    "median": 3.8201062999996793,
+    "max": 13.314078600000357
+   }
+  },
+  "white, variability": {
+   "targets": 20,
+   "generation": {
+    "median": 0.3014431000010518,
+    "max": 0.4510989000009431
+   },
+   "constant": {
+    "median": 19.369247249998807,
+    "max": 23.13200340000185
+   },
+   "disappearing": {
+    "median": 18.501295800000662,
+    "max": 21.337192199996935
+   },
+   "weakened": {
+    "median": 19.500120400000014,
+    "max": 23.709169499998097
+   }
+  }
+ }
+}

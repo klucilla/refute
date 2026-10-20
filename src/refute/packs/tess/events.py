@@ -9,13 +9,17 @@ event-to-event variation.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from refute.packs.tess.detrend import robust_sigma
 from refute.packs.tess.params import EventParams
 from refute.packs.tess.types import LightCurveData
+
+if TYPE_CHECKING:
+    from refute.packs.tess.rednoise import EventNoise
 
 
 def phase_offset_days(time: np.ndarray, period: float, t0: float) -> np.ndarray:
@@ -56,6 +60,8 @@ class EventDepths:
     depths: np.ndarray
     errors: np.ndarray
     n_in: np.ndarray
+    # M4 piece 2: events left out when the A1 noise model is used, by reason.
+    dropped: dict[str, int] = field(default_factory=dict)
 
     def __len__(self) -> int:
         return int(self.epochs.size)
@@ -79,9 +85,17 @@ def per_event_depths(
     params: EventParams,
     phase: float = 0.0,
     sigma: np.ndarray | None = None,
+    noise: EventNoise | None = None,
 ) -> EventDepths:
-    """Local box depth of every event with enough in-event and baseline coverage."""
-    if sigma is None:
+    """Local box depth of every event with enough in-event and baseline coverage.
+
+    With ``noise`` (M4 piece 2, the A1 model of ``rednoise.py``) the error of an event is
+    ``sqrt(σ_w² (1/n_in + 1/n_base) + σ_r²(n_T) + σ_r²(n_B))`` with the values of its sector; an
+    event of an excluded sector is dropped, and so is an event whose span (event plus baseline
+    bands) shares cadences with the previous kept one; ``dropped`` counts them by reason.
+    Without ``noise`` the measurement is as before.
+    """
+    if sigma is None and noise is None:
         sigma = per_point_sigma(lc, transit_mask(lc.time, period, t0, duration))
     half = duration / 2.0
     inner = half + params.baseline_gap_durations * duration
@@ -89,6 +103,8 @@ def per_event_depths(
     expected_in = 2.0 * half / cadence_days
     expected_base = 2.0 * (outer - inner) / cadence_days
     rows = []
+    dropped: dict[str, int] = {}
+    previous_hi = -1
     for epoch in event_epochs(lc.time, period, t0, phase):
         center = t0 + (epoch + phase) * period
         lo = np.searchsorted(lc.time, center - outer, side="left")
@@ -97,20 +113,35 @@ def per_event_depths(
             continue
         dt = np.abs(lc.time[lo:hi] - center)
         flux = lc.flux[lo:hi]
-        sig = sigma[lo:hi]
         in_event = dt <= half
         base = dt > inner
         n_in, n_base = int(in_event.sum()), int(base.sum())
         if n_in < params.min_coverage * expected_in or n_base < params.min_coverage * expected_base:
             continue
         depth = float(flux[base].mean() - flux[in_event].mean())
-        err = float(
-            np.sqrt(np.sum(sig[in_event] ** 2) / n_in**2 + np.sum(sig[base] ** 2) / n_base**2)
-        )
+        if noise is None:
+            sig = sigma[lo:hi]
+            err = float(
+                np.sqrt(np.sum(sig[in_event] ** 2) / n_in**2 + np.sum(sig[base] ** 2) / n_base**2)
+            )
+        else:
+            sector = int(lc.sector[lo + int(np.argmin(dt))])
+            if not noise.usable(sector):
+                dropped["excluded_sector"] = dropped.get("excluded_sector", 0) + 1
+                continue
+            if lo < previous_hi:
+                dropped["shared_cadences"] = dropped.get("shared_cadences", 0) + 1
+                continue
+            box, bands = noise.box.sectors[sector], noise.base.sectors[sector]
+            var = box.sigma_w**2 * (1.0 / n_in + 1.0 / n_base) + box.sigma_r2 + bands.sigma_r2
+            err = float(np.sqrt(var))
+            previous_hi = hi
         rows.append((int(epoch), center, depth, err, n_in))
     if not rows:
         empty = np.zeros(0)
-        return EventDepths(np.zeros(0, dtype=int), empty, empty, empty, np.zeros(0, dtype=int))
+        return EventDepths(
+            np.zeros(0, dtype=int), empty, empty, empty, np.zeros(0, dtype=int), dropped
+        )
     arr = list(zip(*rows, strict=True))
     return EventDepths(
         np.asarray(arr[0], dtype=int),
@@ -118,6 +149,7 @@ def per_event_depths(
         np.asarray(arr[2], dtype=float),
         np.asarray(arr[3], dtype=float),
         np.asarray(arr[4], dtype=int),
+        dropped,
     )
 
 

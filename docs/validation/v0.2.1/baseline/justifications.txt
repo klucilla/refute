@@ -1,0 +1,5 @@
+# Justifications for baseline tests that no longer pass (scripts/check_test_baseline.py).
+# One line per node ID: <node id> | <reference to the document, committed before the change,
+# that justifies it>. Whether the reference precedes the change is checked with git history
+# and stated in docs/validation/v0.2.1/reopen/audit-criteria-1-4-5.md.
+tests/test_runner.py::test_default_workers_is_cpu_count_minus_two | docs/plans/v0.3-plan.md, decision B-10 ("Worker count = CPUs allowed by the affinity mask minus 2", rejected alternative "os.cpu_count() - 2"), committed in b4d48bb (2026-10-14T14:00:34-03:00) before the rename in 314a420 (2026-10-14T22:12:30-03:00) to tests/test_runner.py::test_default_workers_is_usable_cpus_minus_two

@@ -19,6 +19,36 @@ EB_CATALOG_DOWNGRADE_NOTE = (
     "TESS photometry, so it is not evidence independent of the light curve: from v0.2.1 "
     "such a match is a warning, not a fatal failure."
 )
+# v0.2.1, issue #23: how blind the holdout is, stated as the code does it (in a round that
+# reaches the measurement, the whole hidden year is detrended, each window masked out to
+# the inner edge of its baseline band, before any logged read).
+HOLDOUT_BLINDNESS_NOTE = (
+    "Each year is hidden in turn, and the ephemeris is fitted on the other years only. "
+    "In each round that reaches the measurement, the whole hidden year is detrended once "
+    "before any logged read, with each predicted window masked out to the inner edge of "
+    "its baseline band; that step is not logged, and its outlier clipping can drop hidden "
+    "cadences. After it, the test reads only the predicted transit windows, the phase-0.5 "
+    "control windows and their baseline bands, and every such read is logged."
+)
+# Issue #23 after M4 pieces 4 and 5 (docs/validation/v0.2.1/reopen/m4-implementation-map.md,
+# Amendment 17): only for reports with a round whose access log shows a replica read (the
+# Codex stage review of 2026-10-18: a round of the corrections' holdout can stop before it).
+HOLDOUT_REPLICA_NOTE = (
+    "In rounds that reach hidden-noise estimation (v0.2.1 corrections switched on), replica "
+    "spans placed from the same metadata away from the windows are masked in that detrending "
+    "too and are read, logged, before any window, to measure the hidden year's noise."
+)
+
+
+def _read_replicas(rounds: list[dict]) -> bool:
+    """Whether any round's access log shows a read of a replica span."""
+    return any(
+        str(entry.get("kind", "")).startswith("replica-")
+        for r in rounds
+        for entry in (r.get("access_log") or [])
+    )
+
+
 NOT_A_DISCOVERY = (
     "A verdict is about a claim, never about its authors. Refute produces candidates and "
     "verdicts only: nothing here is a confirmed discovery, and nothing has been submitted "
@@ -113,11 +143,11 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
 
     rounds = result.get("holdout_rounds") or []
     if rounds:
+        replicas = _read_replicas(rounds)
         lines += [
             "## Blind holdout by year",
             "",
-            "Each year is hidden in turn. The ephemeris is fitted on the other years only;",
-            "the hidden year is read only inside the predicted windows.",
+            HOLDOUT_BLINDNESS_NOTE + (" " + HOLDOUT_REPLICA_NOTE if replicas else ""),
             "",
             "| Hidden year | Status | Windows with data | Hidden SNR | Control SNR (phase 0.5) |",
             "|---|---|---|---|---|",

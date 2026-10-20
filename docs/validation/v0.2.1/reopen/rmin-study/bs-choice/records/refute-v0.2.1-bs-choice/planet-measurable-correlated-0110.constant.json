@@ -1,0 +1,140 @@
+{
+  "configuration": {
+    "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+    "format": "refute-m4-configuration/1",
+    "name": "M4-rmin-study",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+    "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+  },
+  "group": "AR(1), no variability",
+  "rounds": [
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.001645180887862493,
+      "d_train": 0.0017875152304788159,
+      "d_twin": 0.0016553947311382616,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -1.944850760069973e-05,
+      "e_hidden": 0.000142955507951654,
+      "e_train": 6.597923567414381e-05,
+      "hidden_n_rep": [
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2018,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 11.508342080942242,
+      "s_pred_1": 11.012790930720541,
+      "s_pred_2": 9.883311402416407,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        64,
+        64,
+        64,
+        64,
+        64
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0017872661482079976,
+      "d_train": 0.0017934933758692322,
+      "d_twin": 0.0017023318926041166,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -2.0414161225603944e-05,
+      "e_hidden": 0.0001528816405154639,
+      "e_train": 6.31514998065934e-05,
+      "hidden_n_rep": [
+        32,
+        32,
+        32
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2019,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 11.69052177999893,
+      "s_pred_1": 12.484139691068753,
+      "s_pred_2": 11.215424745053179,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        64,
+        64,
+        64
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0013555456080157392,
+      "d_train": 0.001672618208874904,
+      "d_twin": 0.001466667598239189,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": 0.0,
+      "e_hidden": 0.00017117664540302962,
+      "e_train": 6.481162619033284e-05,
+      "hidden_n_rep": [
+        32,
+        32,
+        32
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2020,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 7.918986873613237,
+      "s_pred_1": 9.410673014415092,
+      "s_pred_2": 8.289487561860598,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        64,
+        64,
+        64
+      ],
+      "twin_status": "ok"
+    }
+  ],
+  "scenario": "constant",
+  "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0110",
+  "years": [
+    2018,
+    2019,
+    2020
+  ]
+}

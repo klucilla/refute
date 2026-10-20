@@ -201,6 +201,53 @@ class HoldoutParams(_Model):
     max_hidden_window_fraction: float = Field(0.5, gt=0, le=1)
 
 
+# Revision 3, 5: the declared order of the (z_F*, f*) pairs of period_alias.
+ALIAS_PAIRS = ((18.47, 0.5), (18.47, 0.7), (30.0, 0.5), (30.0, 0.7), (50.0, 0.5), (50.0, 0.7))
+
+
+class CorrectionsParams(_Model):
+    """M4 of v0.2.1: the TESS corrections of revision 4 of the corrections plan
+    (docs/validation/v0.2.1/reopen/corrections-plan-rev4.md; the map of the code,
+    m4-implementation-map.md). ``enabled: false`` is the M3 code path; the settings are those of
+    a configuration (revision 3, 9.2; the defaults are M4-c1's until the M4 freeze)."""
+
+    # The version rule (map Amendment 17, the maintainer's decision of 2026-10-18): 1 is the
+    # legacy block (always the M3 path, whatever ``enabled`` says); 2 is M4 of revision 4. A claim
+    # without the block, or with version 1, resolves on the M3 path. New claims write version 2,
+    # enabled true and the chosen configuration explicitly. No default here ever changes.
+    version: int = Field(1, ge=1, le=2)
+    enabled: bool = False
+    b_min: int = Field(20, ge=1)
+    gap_split: float = Field(5.0, gt=0)
+    fap_max: float = Field(1e-4, gt=0, lt=1)
+    max_components: int = Field(3, ge=0)
+    k_clip: float = Field(2.5, gt=0)
+    h_min: float = Field(0.90, gt=0, le=1)
+    m_beta: float = Field(1.2, ge=1)
+    r_min: int = Field(20, ge=1)
+    # M4 piece 6 (map Amendment 21; revision 3, 5): the thresholds (z_F*, f*) of period_alias,
+    # chosen per configuration on the selection part among the six declared pairs; the default is
+    # the first pair of the declared order.
+    alias_z_f: float = 18.47
+    alias_f: float = 0.5
+    # Package 25 (map Amendment 25, approved 2026-10-18): b and s of the capacity rule (revision
+    # 4, 2: one pair, pooled over both noise models, estimated on the selection part). The
+    # defaults reproduce the threshold min_snr; they are not a calibration.
+    capacity_b: float = Field(0.0, allow_inf_nan=False)
+    capacity_s: float = Field(0.0, ge=0, allow_inf_nan=False)
+
+    @model_validator(mode="after")
+    def _alias_pair(self) -> CorrectionsParams:
+        if (self.alias_z_f, self.alias_f) not in ALIAS_PAIRS:
+            raise ValueError(f"(alias_z_f, alias_f) must be a declared pair: {ALIAS_PAIRS}")
+        return self
+
+    @property
+    def active(self) -> bool:
+        """The M4 path runs only with version 2 and enabled true (map Amendment 17)."""
+        return self.version == 2 and self.enabled
+
+
 class GauntletParams(_Model):
     snr: SnrParams = Field(default_factory=SnrParams)
     odd_even: OddEvenParams = Field(default_factory=OddEvenParams)
@@ -214,6 +261,7 @@ class GauntletParams(_Model):
     period_alias: AliasParams = Field(default_factory=AliasParams)
     systematics: SystematicsParams = Field(default_factory=SystematicsParams)
     eb_catalog: EbCatalogParams = Field(default_factory=EbCatalogParams)
+    corrections: CorrectionsParams = Field(default_factory=CorrectionsParams)
 
 
 class TessTestPlan(_Model):

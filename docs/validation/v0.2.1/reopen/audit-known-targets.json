@@ -1,0 +1,975 @@
+{
+  "binary_files_skipped": 1,
+  "files_searched": 2540,
+  "known_targets": 35,
+  "targets": {
+    "118327550": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-244",
+        "TOI-244 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "138819293": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "GJ 436",
+        "GJ 436 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "139528693": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "WASP-78",
+        "WASP-78 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "151825527": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-672",
+        "TOI-672 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "154459165": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-611.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "158561566": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.2-codex-review.pt.md",
+          "line": 101,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 17,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 17,
+          "match": "name"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 17,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 17,
+          "match": "tic"
+        },
+        {
+          "area": "docs/validation/v0.2.1",
+          "file": "docs/validation/v0.2.1/H9a-acceptance.md",
+          "line": 21,
+          "match": "name"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [
+          "docs/validation/v0.2.1/H9a-acceptance.md"
+        ],
+        "other": [
+          "docs/gates/v0.2-codex-review.pt.md",
+          "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "Kepler-14",
+        "Kepler-14 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "158588995": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-674",
+        "TOI-674 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "158916431": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-2146.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "19028197": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "GJ 3470",
+        "GJ 3470 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "193754373": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-4487 A",
+        "TOI-4487 A b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "194736418": {
+      "hits": [
+        {
+          "area": "docs/validation/v0.2.1",
+          "file": "docs/validation/v0.2.1/H3-acceptance.md",
+          "line": 24,
+          "match": "name"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [
+          "docs/validation/v0.2.1/H3-acceptance.md"
+        ],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-6038 A",
+        "TOI-6038 A b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "197650870": {
+      "hits": [
+        {
+          "area": "docs/validation/v0.2.1",
+          "file": "docs/validation/v0.2.1/H7-acceptance.md",
+          "line": 15,
+          "match": "name"
+        },
+        {
+          "area": "docs/validation/v0.2.1",
+          "file": "docs/validation/v0.2.1/H7-acceptance.md",
+          "line": 69,
+          "match": "name"
+        },
+        {
+          "area": "tests",
+          "file": "tests/test_calibration_signal_identity.py",
+          "line": 112,
+          "match": "name"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [
+          "docs/validation/v0.2.1/H7-acceptance.md"
+        ],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": [
+          "tests/test_calibration_signal_identity.py"
+        ]
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-1481.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "207141131": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "HD 18599",
+        "HD 18599 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "207339000": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/claim-spec.md",
+          "line": 102,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/claim-spec.md",
+          "line": 103,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/claim-spec.md",
+          "line": 105,
+          "match": "name"
+        },
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 37,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/claim-spec.md",
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "development"
+      ],
+      "names": [
+        "TOI-4427",
+        "TOI-4427 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "231670397": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "WASP-73",
+        "WASP-73 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "240681314": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "development"
+      ],
+      "names": [
+        "WASP-93",
+        "WASP-93 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "283621618": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 51,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-5806",
+        "TOI-5806 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "285524410": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 27,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-2848.01"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "294179389": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-1310.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "315755496": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-2053.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "316916655": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 18,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 18,
+          "match": "name"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 18,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 18,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-441.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "317507345": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 19,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 19,
+          "match": "name"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 19,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 19,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-1615.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "33153766": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-653.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "350445771": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 20,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 20,
+          "match": "name"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 20,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md",
+          "line": 20,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/release-v0.2.0-drafts/DATA_CREDITS_v0.2_draft.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-258.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "36452991": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-2969",
+        "TOI-2969 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "36592530": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 51,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "WASP-75",
+        "WASP-75 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "369327947": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "LHS 475",
+        "LHS 475 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "374200604": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-4838.01"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "374530847": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 51,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "WASP-2",
+        "WASP-2 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "398572544": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 51,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "WASP-28",
+        "WASP-28 b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "404610583": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 51,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-5966.01"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "440872576": {
+      "hits": [
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 27,
+          "match": "tic"
+        },
+        {
+          "area": "other",
+          "file": "docs/gates/v0.1-review.md",
+          "line": 27,
+          "match": "tic"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [
+          "docs/gates/v0.1-review.md"
+        ],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "TOI-3160 A",
+        "TOI-3160 A b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "48506505": {
+      "hits": [
+        {
+          "area": "docs/validation/v0.2.1",
+          "file": "docs/validation/v0.2.1/H4-acceptance.md",
+          "line": 23,
+          "match": "name"
+        },
+        {
+          "area": "docs/validation/v0.2.1",
+          "file": "docs/validation/v0.2.1/H4-acceptance.md",
+          "line": 27,
+          "match": "name"
+        }
+      ],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [
+          "docs/validation/v0.2.1/H4-acceptance.md"
+        ],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "Kepler-447",
+        "Kepler-447 b"
+      ],
+      "sources": [
+        "calibration/v0.2/targets.yaml"
+      ]
+    },
+    "77031414": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "planet"
+      ],
+      "names": [
+        "WASP-173 A",
+        "WASP-173 A b"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    },
+    "95129101": {
+      "hits": [],
+      "hits_by_area": {
+        "docs/validation/v0.2.1": [],
+        "other": [],
+        "scripts": [],
+        "src": [],
+        "tests": []
+      },
+      "kinds": [
+        "false_positive"
+      ],
+      "names": [
+        "TOI-1704.01"
+      ],
+      "sources": [
+        "calibration/targets.yaml",
+        "calibration/v0.2/targets.yaml (excluded_known_targets)"
+      ]
+    }
+  }
+}

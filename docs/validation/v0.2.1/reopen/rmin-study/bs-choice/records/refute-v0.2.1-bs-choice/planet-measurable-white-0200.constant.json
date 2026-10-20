@@ -1,0 +1,136 @@
+{
+  "configuration": {
+    "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+    "format": "refute-m4-configuration/1",
+    "name": "M4-rmin-study",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+    "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+  },
+  "group": "white, variability",
+  "rounds": [
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.00040043606291984907,
+      "d_train": 0.0007010657325392892,
+      "d_twin": 0.0004318581984009259,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": 0.0,
+      "e_hidden": 7.478351599405005e-05,
+      "e_train": 1.9742890006646325e-05,
+      "hidden_n_rep": [
+        32,
+        32,
+        32
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2018,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 5.354603318620493,
+      "s_pred_1": 9.581190796039472,
+      "s_pred_2": 8.268329785768142,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        68,
+        68,
+        68
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.00064545239395139,
+      "d_train": 0.0006788264219117515,
+      "d_twin": 0.0006531597172297369,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": 2.56201752349805e-05,
+      "e_hidden": 9.124710095179672e-05,
+      "e_train": 2.0524101371315878e-05,
+      "hidden_n_rep": [
+        34,
+        34,
+        34
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2019,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 7.0736756260603215,
+      "s_pred_1": 11.230568656626748,
+      "s_pred_2": 6.857261206714994,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        66,
+        66,
+        66
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0006877454884813272,
+      "d_train": 0.0006441865031651955,
+      "d_twin": 0.0006301768913521844,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": 0.0,
+      "e_hidden": 6.141006932474759e-05,
+      "e_train": 1.8648128570732387e-05,
+      "hidden_n_rep": [
+        34,
+        34,
+        34
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2020,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 11.199229964135105,
+      "s_pred_1": 10.029916602806537,
+      "s_pred_2": 12.518917118678656,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        66,
+        66,
+        66
+      ],
+      "twin_status": "ok"
+    }
+  ],
+  "scenario": "constant",
+  "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0200",
+  "years": [
+    2018,
+    2019,
+    2020
+  ]
+}

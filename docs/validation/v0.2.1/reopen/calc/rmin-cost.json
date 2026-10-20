@@ -1,0 +1,89 @@
+{
+ "timing_record": {
+  "file": "rmin-timing-2026-10-19.json",
+  "code_commit": "7e2eb8706a6bcf888f95df55da3d42834ee82b94",
+  "configuration": {
+   "name": "M4-rmin-timing",
+   "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-timing.json",
+   "sha256": "92ac414d5546ee84a7ece29acfbb32442abc04478e9137a1ce550f978c881d61",
+   "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d"
+  },
+  "wall_hours": 0.1380960420555554
+ },
+ "projection": {
+  "margin_on_largest_observed": 1.25,
+  "lot_overhead": 1.2,
+  "workers": 6,
+  "affinity": "logical processors 0 to 7"
+ },
+ "seconds_per_target_and_curve": {
+  "white, no variability": {
+   "generation": 0.5612479999990683,
+   "constant": 18.314629000001332,
+   "disappearing": 18.838674999997238,
+   "weakened": 16.642598250000447
+  },
+  "white, variability": {
+   "generation": 0.5638736250011789,
+   "constant": 28.915004250002312,
+   "disappearing": 26.671490249996168,
+   "weakened": 29.63646187499762
+  },
+  "AR(1), no variability": {
+   "generation": 0.4696598749978875,
+   "constant": 19.915151375003006,
+   "disappearing": 22.08618099999967,
+   "weakened": 23.74959575000048
+  },
+  "AR(1), variability": {
+   "generation": 0.5650101250012085,
+   "constant": 26.42071862499961,
+   "disappearing": 26.839850625001418,
+   "weakened": 26.428516500000114
+  }
+ },
+ "reading_per_group": {
+  "bs_choice": {
+   "targets": 100,
+   "light_curves": 100,
+   "worker_hours": 0.7116911987500316,
+   "machine_hours": 0.11861519979167194
+  },
+  "study": {
+   "targets": 25600,
+   "light_curves": 76800,
+   "worker_hours": 611.4531501333307,
+   "machine_hours": 101.90885835555511
+  },
+  "reserve": {
+   "targets": 25600,
+   "light_curves": 76800,
+   "worker_hours": 611.4531501333307,
+   "machine_hours": 101.90885835555511
+  },
+  "total_machine_hours": 204.07442795295745
+ },
+ "reading_whole_prefixes": {
+  "bs_choice": {
+   "targets": 100,
+   "light_curves": 100,
+   "worker_hours": 0.7116911987500316,
+   "machine_hours": 0.11861519979167194
+  },
+  "study": {
+   "targets": 64000,
+   "light_curves": 192000,
+   "worker_hours": 1383.1506749333253,
+   "machine_hours": 230.52511248888754
+  },
+  "reserve": {
+   "targets": 64000,
+   "light_curves": 192000,
+   "worker_hours": 1383.1506749333253,
+   "machine_hours": 230.52511248888754
+  },
+  "total_machine_hours": 461.30693621962234
+ },
+ "ceiling_hours": 397,
+ "note": "the 397 h ceiling was decided for the calibration population of revision 4 (calibration-ceiling-decision.md); Amendment 19 brings the study's cost to the maintainer with it, and how the study counts against it is the maintainer's decision"
+}

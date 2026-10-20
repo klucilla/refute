@@ -26,9 +26,11 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def _run(tmp_path: Path, *args: str) -> subprocess.CompletedProcess:
+def _run(
+    tmp_path: Path, *args: str, body: str = "    assert True\n"
+) -> subprocess.CompletedProcess:
     probe = tmp_path / "test_probe.py"
-    probe.write_text("def test_probe():\n    assert True\n", encoding="utf-8")
+    probe.write_text("def test_probe():\n" + body, encoding="utf-8")
     command = [
         "powershell",
         "-NoProfile",
@@ -74,6 +76,34 @@ def test_a_relative_junit_path_is_taken_from_the_project_root(tmp_path):
     relative = f".cache/test-run-tests-affinity/{uuid.uuid4().hex}/junit.xml"
     done = _run(tmp_path, "-Junit", relative)
     _check(done, ROOT / relative, (ROOT / relative).with_suffix(".out.txt"))
+
+
+def test_another_thread_range_and_a_worker_count(tmp_path):
+    # -Threads 0-7 pins the run to 8 logical processors and -Workers 6 sets REFUTE_WORKERS
+    # (the v0.2.1 range while v0.3 runs on 8 to 31); the probe checks both from inside.
+    junit = tmp_path / "junit.xml"
+    body = (
+        "    import os\n"
+        "    from refute.core.runner import default_workers, usable_cpus\n"
+        "    assert usable_cpus() == 8\n"
+        "    assert os.environ['REFUTE_WORKERS'] == '6'\n"
+        "    assert default_workers() == 6\n"
+    )
+    done = _run(tmp_path, "-Junit", str(junit), "-Threads", "0-7", "-Workers", "6", body=body)
+    _check(done, junit, tmp_path / "junit.out.txt")
+
+
+def test_the_default_range_is_8_to_31(tmp_path):
+    junit = tmp_path / "junit.xml"
+    body = "    from refute.core.runner import usable_cpus\n    assert usable_cpus() == 24\n"
+    done = _run(tmp_path, "-Junit", str(junit), body=body)
+    _check(done, junit, tmp_path / "junit.out.txt")
+
+
+def test_a_thread_range_outside_the_machine_is_refused(tmp_path):
+    done = _run(tmp_path, "-Junit", str(tmp_path / "junit.xml"), "-Threads", "0-4096")
+    assert done.returncode != 0
+    assert "pytest exit=" not in done.stdout
 
 
 def test_a_relative_out_path_is_taken_from_the_project_root(tmp_path):

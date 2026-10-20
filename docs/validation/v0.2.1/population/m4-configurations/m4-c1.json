@@ -1,0 +1,21 @@
+{
+  "format": "refute-m4-configuration/1",
+  "name": "M4-c1",
+  "note": "revision 3, 9.2: the first configuration of M4 (the defaults of CorrectionsParams), with the version rule of map Amendment 17; b and s are module settings of holdout.py until the freeze; alias_z_f and alias_f (map Amendment 21) are the first pair of revision 3, 5, until the selection",
+  "corrections": {
+    "version": 2,
+    "enabled": true,
+    "b_min": 20,
+    "gap_split": 5.0,
+    "fap_max": 0.0001,
+    "max_components": 3,
+    "k_clip": 2.5,
+    "h_min": 0.9,
+    "m_beta": 1.2,
+    "r_min": 20,
+    "alias_z_f": 18.47,
+    "alias_f": 0.5,
+    "capacity_b": 0.0,
+    "capacity_s": 0.0
+  }
+}

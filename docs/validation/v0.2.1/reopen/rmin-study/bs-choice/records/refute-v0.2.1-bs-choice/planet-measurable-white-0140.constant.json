@@ -1,0 +1,136 @@
+{
+  "configuration": {
+    "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+    "format": "refute-m4-configuration/1",
+    "name": "M4-rmin-study",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+    "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+  },
+  "group": "white, no variability",
+  "rounds": [
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0005375402751519337,
+      "d_train": 0.000621735064433052,
+      "d_twin": 0.0005311567337653277,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": 0.00010855125023637521,
+      "e_hidden": 3.9568737948494356e-05,
+      "e_train": 1.8988952080275135e-05,
+      "hidden_n_rep": [
+        33,
+        33,
+        33
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2018,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 13.584973972423294,
+      "s_pred_1": 14.077008730444314,
+      "s_pred_2": 11.920675370658929,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        66,
+        66,
+        66
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0006468866061539749,
+      "d_train": 0.0006104490828124352,
+      "d_twin": 0.0006238045686164576,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -4.935522407575324e-05,
+      "e_hidden": 3.515066140515545e-05,
+      "e_train": 1.8934595140744722e-05,
+      "hidden_n_rep": [
+        32,
+        32,
+        32
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2019,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 18.403255594476462,
+      "s_pred_1": 11.310974869465783,
+      "s_pred_2": 16.862743842382365,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        67,
+        67,
+        67
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.0006309513491370061,
+      "d_train": 0.0006241859021375336,
+      "d_twin": 0.000608011509183912,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -4.651687436405822e-05,
+      "e_hidden": 3.268980434929297e-05,
+      "e_train": 1.9072845368561262e-05,
+      "hidden_n_rep": [
+        34,
+        34,
+        34
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2020,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 19.30116627175998,
+      "s_pred_1": 11.034176195638869,
+      "s_pred_2": 17.864250332196672,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        67,
+        67,
+        67
+      ],
+      "twin_status": "ok"
+    }
+  ],
+  "scenario": "constant",
+  "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0140",
+  "years": [
+    2018,
+    2019,
+    2020
+  ]
+}

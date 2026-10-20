@@ -1,0 +1,267 @@
+{
+ "seed": 20261017,
+ "simulations": 200000,
+ "conditions": {
+  "sizes_by_kind": {
+   "K": 1050,
+   "T02": 800,
+   "T01": 1450,
+   "L": 200,
+   "M": 50
+  },
+  "per_condition": {
+   "K1": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "K2": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "K3": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "K4": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "K5": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "K6": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "K7": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "K8": {
+    "n": 1050,
+    "pass": 0.99234
+   },
+   "T1a-w": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T1a-r": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T1b-w": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T1b-r": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T2a": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T2b": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T5": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T5v": {
+    "n": 800,
+    "pass": 0.9920326198758948
+   },
+   "T6w": {
+    "n": 1450,
+    "pass": 0.9879509652876929
+   },
+   "T6r": {
+    "n": 1450,
+    "pass": 0.9879509652876929
+   },
+   "L1": {
+    "n": 200,
+    "pass": 0.9904916880530268
+   },
+   "M1": {
+    "n": 50,
+    "pass": 0.99915
+   },
+   "M1v": {
+    "n": 50,
+    "pass": 0.99915
+   }
+  },
+  "steps": [
+   {
+    "sizes": {
+     "K": 1000,
+     "T02": 725,
+     "T01": 1450,
+     "L": 200,
+     "M": 50
+    },
+    "union_bound": 0.76700101189614
+   },
+   {
+    "sizes": {
+     "K": 1000,
+     "T02": 750,
+     "T01": 1450,
+     "L": 200,
+     "M": 50
+    },
+    "union_bound": 0.7459790300968349
+   },
+   {
+    "sizes": {
+     "K": 1000,
+     "T02": 775,
+     "T01": 1450,
+     "L": 200,
+     "M": 50
+    },
+    "union_bound": 0.7217319177099485
+   },
+   {
+    "sizes": {
+     "K": 1000,
+     "T02": 800,
+     "T01": 1450,
+     "L": 200,
+     "M": 50
+    },
+    "union_bound": 0.7987945776355708
+   },
+   {
+    "sizes": {
+     "K": 1050,
+     "T02": 800,
+     "T01": 1450,
+     "L": 200,
+     "M": 50
+    },
+    "union_bound": 0.8186745776355705
+   }
+  ]
+ },
+ "union_bound": {
+  "value": 0.8186745776355705,
+  "target": 0.8,
+  "alpha_den": 0.01,
+  "missing_denominators": 0.011,
+  "note": "a lower bound on joint approval conditional on the declared reference rates; not a measured power"
+ },
+ "simultaneous_budget": {
+  "configurations": 6,
+  "strata_per_condition": {
+   "T1a-w": 6,
+   "T1a-r": 6,
+   "T1b-w": 2,
+   "T1b-r": 2,
+   "T2a": 12,
+   "T2b": 4,
+   "T5": 12,
+   "T5v": 4,
+   "L1": 2,
+   "M1": 12,
+   "M1v": 4
+  },
+  "S_total": 396,
+  "looks": 2,
+  "level_per_bound": 0.9999873737373738
+ },
+ "selection_part": {
+  "T1a-w": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.5,
+   "group_size_at_0.999": 1728
+  },
+  "T1a-r": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.5,
+   "group_size_at_0.999": 1728
+  },
+  "T1b-w": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.4,
+   "group_size_at_0.999": 2177
+  },
+  "T1b-r": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.4,
+   "group_size_at_0.999": 2177
+  },
+  "T2a": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.85,
+   "group_size_at_0.999": 984
+  },
+  "T2b": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.6,
+   "group_size_at_0.999": 1432
+  },
+  "T5": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.8,
+   "group_size_at_0.999": 1055
+  },
+  "T5v": {
+   "minimum_usable": 800,
+   "reference_usable_fraction": 0.6,
+   "group_size_at_0.999": 1432
+  },
+  "L1": {
+   "minimum_usable": 200,
+   "reference_usable_fraction": 0.6,
+   "group_size_at_0.999": 383
+  },
+  "M1": {
+   "minimum_usable": 50,
+   "reference_usable_fraction": 0.75,
+   "group_size_at_0.999": 84
+  },
+  "M1v": {
+   "minimum_usable": 50,
+   "reference_usable_fraction": 0.55,
+   "group_size_at_0.999": 121
+  }
+ },
+ "reserve_rule_example": {
+  "selection_cases": 1000,
+  "observed_fraction": 0.5,
+  "f_L_at_level": 0.4332109705238559,
+  "group_size_for_minimum": 2007,
+  "cap_per_noise_model": 3000
+ },
+ "parts": {
+  "light_curves_per_noise_model": {
+   "planets_without_variability": 1728,
+   "planets_with_variability": 2177,
+   "null": 1450
+  },
+  "light_curves_per_part": 10710,
+  "paired_second_runs_per_part": 10710
+ },
+ "cost_hours_worst_case": {
+  "selection_generation": 1.149951923076923,
+  "selection_evaluations": 257.03999999999996,
+  "reserve_r4": 29.326634615384613,
+  "reserve_r5": 29.326634615384613,
+  "total": 316.8432211538461
+ },
+ "cost_assumptions": {
+  "seconds_per_case_and_worker": 12.0,
+  "new_methods_factor": 2.0,
+  "lot_overhead": 1.2,
+  "workers": 6,
+  "affinity": "logical processors 0 to 7",
+  "generation": "campaign 1 rate scaled from 24 to 6 workers",
+  "enlargement": "the selection part at most 1.5 times its size (one block)"
+ },
+ "proposed_ceiling_hours": 397
+}

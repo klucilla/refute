@@ -1,0 +1,21 @@
+{
+  "format": "refute-m4-configuration/1",
+  "name": "probe-non-default",
+  "note": "a test fixture of tests/test_population_v3.py and tests/test_population_v3_identity.py (map Amendment 25): a valid configuration whose r_min, m_beta and b_min differ from the defaults; never a campaign configuration",
+  "corrections": {
+    "version": 2,
+    "enabled": true,
+    "b_min": 25,
+    "gap_split": 5.0,
+    "fap_max": 0.0001,
+    "max_components": 3,
+    "k_clip": 2.5,
+    "h_min": 0.9,
+    "m_beta": 1.3,
+    "r_min": 15,
+    "alias_z_f": 18.47,
+    "alias_f": 0.5,
+    "capacity_b": 0.0,
+    "capacity_s": 0.0
+  }
+}

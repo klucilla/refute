@@ -113,6 +113,26 @@ def signal_model(time: np.ndarray, spec: SignalSpec) -> np.ndarray:
     return 1.0 - deficit
 
 
+def ar1_series(
+    time: np.ndarray, sigma: float, tau_days: float, rng: np.random.Generator
+) -> np.ndarray:
+    """A stationary AR(1) series of standard deviation ``sigma`` on the times of one
+    sector: a stationary start, then ``x[i] = phi x[i-1] + sigma sqrt(1 - phi^2) e[i]``
+    with ``phi = exp(-dt / tau_days)`` for the real time differences (gaps included). The
+    model of the v0.2.1 population harness (``population_v2.py``, ``_noise``)."""
+    n = time.size
+    x = np.empty(n)
+    if n == 0:
+        return x
+    x[0] = rng.normal(0.0, sigma)
+    innov = rng.normal(0.0, 1.0, n)
+    phi = np.exp(-np.diff(time) / tau_days)
+    scale = sigma * np.sqrt(1.0 - phi**2)
+    for i in range(1, n):
+        x[i] = phi[i - 1] * x[i - 1] + scale[i - 1] * innov[i]
+    return x
+
+
 def make_lightcurve(
     spec: SignalSpec | None,
     *,
@@ -123,13 +143,22 @@ def make_lightcurve(
     trend_period_days: float = 6.0,
     seed: int = 0,
     inject_years: tuple[int, ...] | None = None,
+    red_noise_ppm: float = 0.0,
+    red_tau_days: float = 1.0 / 24.0,
 ) -> tuple[LightCurveData, list[SectorInfo]]:
     """Synthetic light curve. ``spec=None`` gives pure noise.
 
     ``inject_years`` limits the injected signal to those observing years (used to
     build signals that are absent from a hidden year).
+
+    ``red_noise_ppm > 0`` adds, after the white noise, a stationary AR(1) series of that
+    standard deviation and time constant ``red_tau_days``, per sector, from a second
+    generator ``default_rng([seed, 1])``, so the white noise of a seed is the same in both
+    modes; ``flux_err`` stays the white sigma (v0.2.1,
+    docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md). With 0, nothing changes.
     """
     rng = np.random.default_rng(seed)
+    red_rng = np.random.default_rng([seed, 1]) if red_noise_ppm > 0 else None
     numbers = sector_numbers or tuple(range(1, len(sector_starts) + 1))
     times, fluxes, errors, sectors, years, infos = [], [], [], [], [], []
     sigma = noise_ppm * 1e-6
@@ -142,6 +171,8 @@ def make_lightcurve(
         if trend_amplitude:
             model = model * (1.0 + trend_amplitude * np.sin(2 * np.pi * t / trend_period_days))
         f = model + rng.normal(0.0, sigma, t.size)
+        if red_rng is not None:
+            f = f + ar1_series(t, red_noise_ppm * 1e-6, red_tau_days, red_rng)
         times.append(t)
         fluxes.append(f)
         errors.append(np.full(t.size, sigma))
@@ -346,9 +377,12 @@ def make_blend(
     noise_ppm: float = 300.0,
     trend_amplitude: float = 0.0,
     seed: int = 0,
+    red_noise_ppm: float = 0.0,
+    red_tau_days: float = 1.0 / 24.0,
 ) -> tuple[LightCurveData, list[SectorInfo], AuxData]:
     """A blend: the neighbor carries the signal; the light curve is the SPOC-like
-    crowding-corrected aperture photometry of the rendered pixels."""
+    crowding-corrected aperture photometry of the rendered pixels. The red-noise
+    parameters go to the target's series (``make_lightcurve``), which the pixels render."""
     rng = np.random.default_rng(seed)
     base, sectors = make_lightcurve(
         None,
@@ -356,6 +390,8 @@ def make_blend(
         noise_ppm=noise_ppm,
         trend_amplitude=trend_amplitude,
         seed=seed,
+        red_noise_ppm=red_noise_ppm,
+        red_tau_days=red_tau_days,
     )
     aperture = scene_aperture(scene)
     c = crowding(scene)
@@ -588,10 +624,21 @@ def fast_plan_dict() -> dict:
     return {"search": dict(FAST_SEARCH)}
 
 
-def scenario_data(name: str, seed: int = 3) -> TessData:
-    """Synthetic data for a named scenario (see ``SCENARIOS``)."""
+NOISE_MODES = ("white", "correlated")
+# v0.2.1: the correlated profile of the suite, the AR(1) of the population harness, added
+# to each scenario's white noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md).
+CORRELATED_PROFILE = {"red_noise_ppm": 600.0, "red_tau_days": 1.0 / 24.0}
+
+
+def scenario_data(name: str, seed: int = 3, noise: str = "white") -> TessData:
+    """Synthetic data for a named scenario (see ``SCENARIOS``). ``noise="correlated"``
+    adds the AR(1) component of ``CORRELATED_PROFILE`` to every scenario; ``"white"`` (the
+    default) is the generator as before."""
+    if noise not in NOISE_MODES:
+        raise ValueError(f"unknown noise mode {noise!r}; expected one of {NOISE_MODES}")
+    red = dict(CORRELATED_PROFILE) if noise == "correlated" else {}
     star = make_star()
-    trend = {"trend_amplitude": 0.002, "seed": seed}
+    trend = {"trend_amplitude": 0.002, "seed": seed, **red}
     if name == "planet":
         lc, sectors = make_lightcurve(PLANET, **trend)
     elif name == "planet_three_years":
@@ -620,11 +667,11 @@ def scenario_data(name: str, seed: int = 3) -> TessData:
         lc, sectors = make_lightcurve(PLANET, sector_starts=(1325.0, 1353.0), **trend)
     elif name == "blend":
         lc, sectors, aux = make_blend(
-            BLEND_NEIGHBOR, scene=BLEND_SCENE, trend_amplitude=0.002, seed=seed
+            BLEND_NEIGHBOR, scene=BLEND_SCENE, trend_amplitude=0.002, seed=seed, **red
         )
         return make_data(lc, sectors, star, aux=aux)
     elif name == "sinusoid":
-        lc, sectors = make_lightcurve(None, noise_ppm=600.0, seed=seed)
+        lc, sectors = make_lightcurve(None, noise_ppm=600.0, seed=seed, **red)
         wave = 0.004 * np.sin(2 * np.pi * (lc.time - 1325.3) / SINUSOID_PERIOD)
         lc = LightCurveData(lc.time, lc.flux + wave, lc.flux_err, lc.sector, lc.year)
     elif name == "variability_train_only":
@@ -647,28 +694,43 @@ def analyze_scenario(name: str):
     return analyze_scenario_seed((name, 3))
 
 
-def analyze_scenario_seed(task: tuple[str, int]):
-    """Top-level (picklable) helper: full analysis of ``(scenario name, seed)`` with the
-    fast plan."""
+def analyze_scenario_seed(task: tuple[str, int] | tuple[str, int, str]):
+    """Top-level (picklable) helper: full analysis of ``(scenario name, seed)``, or of
+    ``(scenario name, seed, noise mode)``, with the fast plan."""
     from refute.packs.tess.params import TessTestPlan
     from refute.packs.tess.pipeline import analyze_data
 
-    name, seed = task
-    return analyze_data(scenario_data(name, seed), TessTestPlan.model_validate(fast_plan_dict()))
+    name, seed = task[0], task[1]
+    noise = task[2] if len(task) > 2 else "white"
+    plan = TessTestPlan.model_validate(fast_plan_dict())
+    return analyze_data(scenario_data(name, seed, noise), plan)
 
 
 def analyze_scenario_with_catalog(task: dict):
     """Top-level (picklable) helper: full analysis of ``task["name"]`` and
     ``task["seed"]`` with the fast plan and a synthetic eclipsing-binary catalog made
     of ``task["rows"]`` (``refute-eb-catalog-1`` rows), scanned around the target;
-    ``task["eb_catalog"]`` overrides ``gauntlet.eb_catalog``."""
-    from refute.packs.tess.ebcatalog import COLUMNS, parse_catalog
-    from refute.packs.tess.params import TessTestPlan
+    ``task["eb_catalog"]`` overrides ``gauntlet.eb_catalog``; ``task["noise"]`` (default
+    ``"white"``) is the noise mode of ``scenario_data``."""
     from refute.packs.tess.pipeline import analyze_data
 
-    data = scenario_data(task["name"], task["seed"])
+    data, catalog, scan = _catalog_inputs(task)
+    plan = _catalog_plan(task.get("eb_catalog"))
+    return analyze_data(data, plan, catalogs=catalog, catalog_scan=scan)
+
+
+def _catalog_plan(eb_catalog: dict | None):
+    from refute.packs.tess.params import TessTestPlan
+
     plan = fast_plan_dict()
-    plan["gauntlet"] = {"eb_catalog": dict(task.get("eb_catalog") or {})}
+    plan["gauntlet"] = {"eb_catalog": dict(eb_catalog or {})}
+    return TessTestPlan.model_validate(plan)
+
+
+def _catalog_inputs(task: dict):
+    from refute.packs.tess.ebcatalog import COLUMNS, parse_catalog
+
+    data = scenario_data(task["name"], task["seed"], task.get("noise", "white"))
     rows = list(task.get("rows") or [])
     catalog = parse_catalog("\n".join([",".join(COLUMNS), *rows]) + "\n")
     scan = {
@@ -677,9 +739,40 @@ def analyze_scenario_with_catalog(task: dict):
         "snapshots": [{"file": "synthetic.csv", "sha256": "0" * 64, "rows": max(1, len(rows))}],
         "per_target": {data.target_key: {}},
     }
-    return analyze_data(
-        data, TessTestPlan.model_validate(plan), catalogs=catalog, catalog_scan=scan
+    return data, catalog, scan
+
+
+def analyze_scenario_with_catalog_shared(task: dict):
+    """Top-level (picklable) helper of CI option D
+    (docs/validation/v0.2.1/ci-time-option-d-acceptance.md): the complete analysis of
+    ``task`` with the rule ``task["eb_catalog"]`` (as ``analyze_scenario_with_catalog``),
+    and the analysis with the rule ``task["derived_eb_catalog"]`` derived from the same
+    expensive work. Only ``eb_catalog`` differs between the rules, so the derived analysis
+    recomputes that test through the production function ``eb_catalog_test`` (that is,
+    ``check_eb_catalog``) for the final candidate, puts it in place of the gauntlet's
+    ``eb_catalog`` test, and concludes again with ``conclude_analysis`` (coverage rule and
+    verdict). Without a candidate, ``eb_catalog`` is not run under either rule and only the
+    conclusion is recomputed. The derived analysis is marked ``extras["shared_path"]``.
+    Returns ``(complete, derived)``."""
+    from dataclasses import replace
+
+    from refute.packs.tess.pipeline import analyze_data, conclude_analysis, eb_catalog_test
+
+    data, catalog, scan = _catalog_inputs(task)
+    complete = analyze_data(
+        data, _catalog_plan(task.get("eb_catalog")), catalogs=catalog, catalog_scan=scan
     )
+    gauntlet = complete.gauntlet
+    if gauntlet.candidate is not None:
+        derived_plan = _catalog_plan(task.get("derived_eb_catalog"))
+        recomputed = eb_catalog_test(data, gauntlet.candidate, derived_plan, catalog, scan)
+        tests = [recomputed if t.name == "eb_catalog" else t for t in gauntlet.tests]
+        gauntlet = replace(gauntlet, tests=tests)
+    derived = conclude_analysis(
+        complete.search, complete.flattened_search, gauntlet, complete.holdout, True
+    )
+    derived.extras["shared_path"] = True
+    return complete, derived
 
 
 HIDDEN_REPLACEMENTS = ("noise", "signal", "nothing")
@@ -708,14 +801,15 @@ def replace_year_flux(lc: LightCurveData, year: int, variant: str, seed: int) ->
 def holdout_scenario_seed(task: dict):
     """Top-level (picklable) helper: the blind holdout alone for ``task["name"]`` and
     ``task["seed"]`` with the fast plan, ``task["holdout"]`` overriding
-    ``holdout_by_year`` and an optional ``task["replace"] = (year, variant)``
-    (see :func:`replace_year_flux`)."""
+    ``holdout_by_year``, an optional ``task["replace"] = (year, variant)``
+    (see :func:`replace_year_flux`) and an optional ``task["noise"]`` (default
+    ``"white"``, the noise mode of ``scenario_data``)."""
     from refute.packs.tess.holdout import run_holdout
     from refute.packs.tess.params import TessTestPlan
 
     plan = fast_plan_dict()
     plan["gauntlet"] = {"holdout_by_year": dict(task.get("holdout") or {})}
-    data = scenario_data(task["name"], task["seed"])
+    data = scenario_data(task["name"], task["seed"], task.get("noise", "white"))
     lc = data.lc
     if task.get("replace") is not None:
         year, variant = task["replace"]

@@ -106,6 +106,14 @@ def detrend(
     lc: LightCurveData, params: DetrendParams, mask: np.ndarray | None = None
 ) -> LightCurveData:
     """Return a flattened copy of ``lc``. ``mask`` marks points excluded from the trend."""
+    return detrend_parts(lc, params, mask)[0]
+
+
+def detrend_parts(
+    lc: LightCurveData, params: DetrendParams, mask: np.ndarray | None = None
+) -> tuple[LightCurveData, np.ndarray, np.ndarray]:
+    """``detrend`` with its parts: the flattened copy, the effective trend at every cadence of
+    ``lc`` and the cadences kept (the R_min study's noiseless twin, map Amendment 26, 4)."""
     exclude = np.zeros(len(lc), dtype=bool) if mask is None else np.asarray(mask, dtype=bool)
     if exclude.shape != (len(lc),):
         raise ValueError("mask must have one entry per cadence")
@@ -125,4 +133,5 @@ def detrend(
         sigma = robust_sigma(flat[reference] - 1.0)
         if np.isfinite(sigma) and sigma > 0:
             keep &= ~(in_sector & (flat - 1.0 > params.upper_clip_sigma * sigma))
-    return LightCurveData(lc.time[keep], flat[keep], err[keep], lc.sector[keep], lc.year[keep])
+    flat_lc = LightCurveData(lc.time[keep], flat[keep], err[keep], lc.sector[keep], lc.year[keep])
+    return flat_lc, trend, keep

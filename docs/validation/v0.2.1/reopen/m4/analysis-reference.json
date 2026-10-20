@@ -1,0 +1,21 @@
+{
+  "code_commit": "ea8127225419a6c93d4b12e58f54b35a65a0db3a",
+  "digests": {
+    "blend|0|white": "6a77b9f8d69f121138533b1df1c87499ec67ee42fe8690ca46834928d7e81058",
+    "blend|1|white": "5ae98a1c2e59542526167fad3df611ddf9defc9f724f40f72ed9c080fce873ec",
+    "eb_odd_even|0|white": "80df00243018789c642095ba9af6d59142a802ab739d4dca116b8fabfb914905",
+    "eb_odd_even|1|white": "3bd7a231abe5ef89a62c4a4bac4f7641ce7539b5f0a8802e500e6eff55832b4f",
+    "eb_secondary|0|white": "5f158b330c9a4a0e1c9d852eaf198dda466b51806ff65ea417a573a278911dfb",
+    "eb_secondary|1|white": "f6252cd7bbccb91c985cc5fd088b34cc33a3a88957ed1203b6bf2c3d0e677c6d",
+    "noise|0|white": "db5635398e739d9bbbc1f89b807b82db8a4ed148a3ad2776633104779fc5a700",
+    "noise|1|white": "b95e40e19591d8e085fbe6adf56bc1dde0dc6fbbe1248b78820a4e484116afaa",
+    "planet|0|correlated": "c77f3781508bca05486d5502b3f681d363be06c05c76415e650c49b7c85241e7",
+    "planet|0|white": "86c18e0c06924ccbf171f3608dc398dfc24088f62f9687259fbed365e9940046",
+    "planet|1|white": "9005a565bf170be2ac89481ba1e28374893e39a5d7a2a39da90b4052a3e1b09f",
+    "vanishing|0|white": "f6bbf0503f3995186c3c56f6d6c6a20a4606fc2f1cb7de3e357db9064684a1c9",
+    "vanishing|1|white": "918739444b0489a9793dffd5aade9cdb4f255b1dcbdc2ccfa902db1e23493c42"
+  },
+  "format": "refute-analysis-reference-1",
+  "numpy": "2.5.3",
+  "platform": "win32"
+}

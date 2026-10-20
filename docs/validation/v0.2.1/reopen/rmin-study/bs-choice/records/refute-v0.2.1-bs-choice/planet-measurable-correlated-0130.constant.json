@@ -1,0 +1,136 @@
+{
+  "configuration": {
+    "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+    "format": "refute-m4-configuration/1",
+    "name": "M4-rmin-study",
+    "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+    "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+  },
+  "group": "AR(1), no variability",
+  "rounds": [
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.00262276380310382,
+      "d_train": 0.0025560291470175223,
+      "d_twin": 0.002691268081978345,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -2.4062662701655956e-05,
+      "e_hidden": 0.00027503291733229875,
+      "e_train": 9.398005627574458e-05,
+      "hidden_n_rep": [
+        38,
+        38,
+        38
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2018,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 9.53618144527391,
+      "s_pred_1": 8.09074394976019,
+      "s_pred_2": 13.348401341497597,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        74,
+        74,
+        74
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.002421659407240251,
+      "d_train": 0.00262536807178852,
+      "d_twin": 0.0026437935545242943,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": -1.4852606532244012e-05,
+      "e_hidden": 0.00021025828982345113,
+      "e_train": 9.302574258517475e-05,
+      "hidden_n_rep": [
+        37,
+        37,
+        37
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2019,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 11.5175454402947,
+      "s_pred_1": 9.22496598549623,
+      "s_pred_2": 12.043959509613686,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        73,
+        73,
+        73
+      ],
+      "twin_status": "ok"
+    },
+    {
+      "calibration_only": true,
+      "capacity_b": 0.0,
+      "capacity_s": 0.0,
+      "configuration": {
+        "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+        "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+        "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+      },
+      "d_hidden": 0.002417523043894012,
+      "d_train": 0.0026380244959233854,
+      "d_twin": 0.002510711915880609,
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "dp": 2.41252045522924e-05,
+      "e_hidden": 0.00029783810660218864,
+      "e_train": 9.444023563866731e-05,
+      "hidden_n_rep": [
+        36,
+        36,
+        36
+      ],
+      "hidden_noise_undetermined": false,
+      "hidden_year": 2020,
+      "measurement_status": "ok",
+      "n_years": 3,
+      "reason": null,
+      "s_meas": 8.116903076888708,
+      "s_pred_1": 10.425298657866133,
+      "s_pred_2": 8.332481229892363,
+      "stage": null,
+      "threshold": 5.0,
+      "train_n_rep": [
+        75,
+        75,
+        75
+      ],
+      "twin_status": "ok"
+    }
+  ],
+  "scenario": "constant",
+  "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0130",
+  "years": [
+    2018,
+    2019,
+    2020
+  ]
+}

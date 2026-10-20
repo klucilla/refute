@@ -1,0 +1,60 @@
+{
+  "complete": true,
+  "k": {
+    "a": {
+      "1": 4.157131423675824,
+      "2": 2.88283308523186
+    },
+    "k": 2,
+    "n": {
+      "1": 73,
+      "2": 79
+    }
+  },
+  "min_snr": 5.0,
+  "pairs": {
+    "10": {
+      "b": 0.584691722288623,
+      "rounds": 79,
+      "s": 2.88283308523186,
+      "targets": 40
+    },
+    "12": {
+      "b": 0.6320167512196737,
+      "rounds": 76,
+      "s": 2.8432292703670456,
+      "targets": 38
+    },
+    "15": {
+      "b": 0.7990967419253647,
+      "rounds": 68,
+      "s": 2.5171807651315876,
+      "targets": 34
+    },
+    "20": {
+      "b": 0.5294476875283372,
+      "rounds": 48,
+      "s": 1.9301718923587667,
+      "targets": 24
+    },
+    "8": {
+      "b": 0.584691722288623,
+      "rounds": 79,
+      "s": 2.88283308523186,
+      "targets": 40
+    }
+  },
+  "source": {
+    "configuration": {
+      "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d",
+      "format": "refute-m4-configuration/1",
+      "name": "M4-rmin-study",
+      "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+      "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb"
+    },
+    "lot": "bs-choice",
+    "manifest_sha256": "1215ac3bce359257ba969498506e107b8a8cd86e546f634990c86487d18b0d96",
+    "records": 100,
+    "records_sha256": "87237d326b8b7309c7a3958c0e34cea66a79b280027437cfae4c5ca2f98b8dbc"
+  }
+}

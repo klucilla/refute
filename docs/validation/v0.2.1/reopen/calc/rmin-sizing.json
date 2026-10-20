@@ -1,0 +1,96 @@
+{
+ "assumptions": {
+  "R_values": [
+   8,
+   10,
+   12,
+   15,
+   20
+  ],
+  "one_sided_level_per_bound": 0.99,
+  "pass_target": 0.95,
+  "all_minima_target": 0.999,
+  "eligible_fraction_each_scenario": 0.15,
+  "m1": 725,
+  "criteria": {
+   "false_fail": {
+    "kind": "upper",
+    "threshold": 0.02,
+    "rate": 0.005,
+    "start": 725
+   },
+   "disappearance": {
+    "kind": "lower",
+    "threshold": 0.8,
+    "rate": 0.95,
+    "start": 1
+   },
+   "weakening": {
+    "kind": "lower",
+    "threshold": 0.5,
+    "rate": 0.7,
+    "start": 1
+   }
+  },
+  "note": "declared reference rates, design assumptions of Amendment 19; not measurements"
+ },
+ "criteria": {
+  "false_fail": {
+   "minimum": 866,
+   "pointwise_smallest": 796,
+   "pass_probability_at_minimum": 0.9674768335340874,
+   "lowest_pass_probability_from_minimum": 0.9517769600551766,
+   "checked_up_to": 6400
+  },
+  "disappearance": {
+   "minimum": 83,
+   "pointwise_smallest": 76,
+   "pass_probability_at_minimum": 0.9771378144865032,
+   "lowest_pass_probability_from_minimum": 0.9680759774717133,
+   "checked_up_to": 6400
+  },
+  "weakening": {
+   "minimum": 101,
+   "pointwise_smallest": 96,
+   "pass_probability_at_minimum": 0.9603010254756704,
+   "lowest_pass_probability_from_minimum": 0.9538819410112793,
+   "checked_up_to": 6400
+  }
+ },
+ "probabilistic_size_per_group": 6350,
+ "union_bound_at_probabilistic_size": 0.0009894768077996967,
+ "per_group": {
+  "white, no variability": {
+   "block_per_prefix": 400,
+   "prefixes": 16,
+   "targets": 6400,
+   "union_bound_on_missing": 0.0004029405911686995
+  },
+  "white, variability": {
+   "block_per_prefix": 100,
+   "prefixes": 64,
+   "targets": 6400,
+   "union_bound_on_missing": 0.0004029405911686995
+  },
+  "AR(1), no variability": {
+   "block_per_prefix": 400,
+   "prefixes": 16,
+   "targets": 6400,
+   "union_bound_on_missing": 0.0004029405911686995
+  },
+  "AR(1), variability": {
+   "block_per_prefix": 100,
+   "prefixes": 64,
+   "targets": 6400,
+   "union_bound_on_missing": 0.0004029405911686995
+  }
+ },
+ "targets": 25600,
+ "light_curves_study": 76800,
+ "light_curves_reserve": 76800,
+ "scenarios": [
+  "constant",
+  "disappearing",
+  "weakened"
+ ]
+}

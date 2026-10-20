@@ -38,6 +38,7 @@ PERIODS = {
 }
 ON, OFF = {}, {"same_photometry_catalogs": []}
 SEEDS = tuple(range(10))
+CONTROL_SEEDS = (0, 1)
 
 
 def _own(period):
@@ -51,19 +52,40 @@ def _neighbor(period):
 
 @pytest.fixture(scope="module")
 def analyses():
-    tasks = [
-        {"name": n, "seed": s, "rows": [_own(PERIODS[n])], "eb_catalog": g, "tag": tag}
+    # Option D (docs/validation/v0.2.1/ci-time-option-d-acceptance.md): one complete
+    # analysis with the default rule per scenario and seed, from which the switch-off
+    # analysis is derived; complete switch-off controls on seeds 0-1 only (E1); the five
+    # neighbor-row blends stay complete. 130 + 26 + 5 = 161 complete analyses.
+    shared = [
+        {
+            "name": n,
+            "seed": s,
+            "rows": [_own(PERIODS[n])],
+            "eb_catalog": ON,
+            "derived_eb_catalog": OFF,
+        }
         for n in SCENARIOS
         for s in SEEDS
-        for tag, g in (("on", ON), ("off", OFF))
     ]
-    tasks += [
+    complete = [
+        {"name": n, "seed": s, "rows": [_own(PERIODS[n])], "eb_catalog": OFF, "tag": "off_complete"}
+        for n in SCENARIOS
+        for s in CONTROL_SEEDS
+    ]
+    complete += [
         {"name": "blend", "seed": s, "rows": [_neighbor(2.3)], "eb_catalog": ON, "tag": "nb"}
         for s in range(5)
     ]
-    workers = max(1, min(len(tasks), default_workers()))
-    results = run_processes(synthetic.analyze_scenario_with_catalog, tasks, workers)
-    return {(t["name"], t["seed"], t["tag"]): r for t, r in zip(tasks, results, strict=True)}
+    workers = max(1, min(len(shared), default_workers()))
+    pairs = run_processes(synthetic.analyze_scenario_with_catalog_shared, shared, workers)
+    singles = run_processes(synthetic.analyze_scenario_with_catalog, complete, workers)
+    out = {}
+    for task, (on, off) in zip(shared, pairs, strict=True):
+        out[(task["name"], task["seed"], "on")] = on
+        out[(task["name"], task["seed"], "off")] = off
+    for task, analysis in zip(complete, singles, strict=True):
+        out[(task["name"], task["seed"], task["tag"])] = analysis
+    return out
 
 
 def _test(analysis, name):
@@ -194,15 +216,6 @@ def test_d_downgrade_never_refutes_and_changes_only_eb_catalog(analyses, name):
 
 # --- E (option D: docs/validation/v0.2.1/ci-time-option-d-acceptance.md) ----------------
 
-CONTROL_SEEDS = (0, 1)
-# Red by design until commit 3b of option D adds the shared path; strict, so that the
-# marks must be removed in 3b, when the cases pass.
-RED_UNTIL_3B = pytest.mark.xfail(
-    strict=True,
-    reason="red by design until commit 3b of option D; "
-    "see docs/validation/v0.2.1/ci-time-option-d-acceptance.md",
-)
-
 
 def _shared(analysis):
     return analysis.extras.get("shared_path") is True
@@ -219,7 +232,6 @@ def _gauntlet_tests(analysis):
     return dumps_json([t.to_dict() for t in analysis.gauntlet.tests])
 
 
-@RED_UNTIL_3B
 def test_e0_switch_off_analyses_come_from_the_shared_path(analyses):
     for name in SCENARIOS:
         for seed in SEEDS:
@@ -234,7 +246,6 @@ def test_e0_switch_off_analyses_come_from_the_shared_path(analyses):
     assert len(complete) == 161
 
 
-@RED_UNTIL_3B
 @pytest.mark.parametrize("name", SCENARIOS)
 def test_e1_shared_path_equals_the_complete_switch_off_analysis(analyses, name):
     for seed in CONTROL_SEEDS:
@@ -246,7 +257,6 @@ def test_e1_shared_path_equals_the_complete_switch_off_analysis(analyses, name):
         assert _gauntlet_tests(derived) == _gauntlet_tests(complete), seed
 
 
-@RED_UNTIL_3B
 @pytest.mark.parametrize("seed", CONTROL_SEEDS)
 def test_e1_premise_the_switch_changes_the_planet_analysis(analyses, seed):
     on, off = analyses[("planet", seed, "on")], analyses[("planet", seed, "off")]
@@ -256,3 +266,171 @@ def test_e1_premise_the_switch_changes_the_planet_analysis(analyses, seed):
     eb_off = _test(off, "eb_catalog")
     assert (eb_off.status.value, eb_off.severity.value) == ("FAIL", "fatal")
     assert eb_off.metrics["downgraded"] is False
+
+
+# --- Correlated noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, H9, D) ---
+
+CN_SEEDS = tuple(range(5))
+CN_CONTROLS = ("planet", "eb_secondary")
+
+
+@pytest.fixture(scope="module")
+def correlated():
+    shared = [
+        {
+            "name": n,
+            "seed": s,
+            "rows": [_own(PERIODS[n])],
+            "eb_catalog": ON,
+            "derived_eb_catalog": OFF,
+            "noise": "correlated",
+        }
+        for n in SCENARIOS
+        for s in CN_SEEDS
+    ]
+    complete = [
+        {
+            "name": n,
+            "seed": s,
+            "rows": [_own(PERIODS[n])],
+            "eb_catalog": OFF,
+            "noise": "correlated",
+            "tag": "off_complete",
+        }
+        for n in CN_CONTROLS
+        for s in CONTROL_SEEDS
+    ]
+    complete += [
+        {
+            "name": "blend",
+            "seed": s,
+            "rows": [_neighbor(2.3)],
+            "eb_catalog": ON,
+            "noise": "correlated",
+            "tag": "nb",
+        }
+        for s in CN_SEEDS
+    ]
+    workers = max(1, min(len(shared), default_workers()))
+    pairs = run_processes(synthetic.analyze_scenario_with_catalog_shared, shared, workers)
+    singles = run_processes(synthetic.analyze_scenario_with_catalog, complete, workers)
+    out = {}
+    for task, (on, off) in zip(shared, pairs, strict=True):
+        out[(task["name"], task["seed"], "on")] = on
+        out[(task["name"], task["seed"], "off")] = off
+    for task, analysis in zip(complete, singles, strict=True):
+        out[(task["name"], task["seed"], task["tag"])] = analysis
+    return out
+
+
+@pytest.mark.parametrize("name", SCENARIOS)
+def test_cn_h9_m1_downgrade_never_refutes_and_changes_only_eb_catalog(correlated, name):
+    for seed in CN_SEEDS:
+        on, off = correlated[(name, seed, "on")], correlated[(name, seed, "off")]
+        if on.verdict == "REFUTED":
+            assert off.verdict == "REFUTED", seed
+        assert [t.name for t in on.tests] == [t.name for t in off.tests]
+        for a, b in zip(on.tests, off.tests, strict=True):
+            assert a.status is b.status, (seed, a.name)
+            if a.name == "eb_catalog" and a.severity is not b.severity:
+                assert (b.severity.value, a.severity.value) == ("fatal", "warning")
+            else:
+                assert a.severity is b.severity, (seed, a.name)
+        if on.verdict != off.verdict:
+            assert _fatal_failures(off) == ["eb_catalog"], (seed, _fatal_failures(off))
+            assert on.verdict != "SURVIVED", seed
+
+
+def _cn_b1_premise(correlated, seed):
+    before = correlated[("planet", seed, "off")]
+    return before.verdict == "REFUTED" and _fatal_failures(before) == ["eb_catalog"]
+
+
+def test_cn_h9_m2_own_tic_entry_is_downgraded(correlated):
+    looked = 0
+    for seed in CN_SEEDS:
+        if not _cn_b1_premise(correlated, seed):
+            continue
+        looked += 1
+        after = correlated[("planet", seed, "on")]
+        assert after.verdict not in ("REFUTED", "SURVIVED"), (seed, after.verdict)
+        eb = _test(after, "eb_catalog")
+        assert eb.status.value == "FAIL" and eb.severity.value == "warning", seed
+        assert eb.metrics["downgraded"] is True, seed
+        target = target_entry(1, "planet", PERIODS["planet"], name=f"planet {seed}")
+        context = {"pass_criteria": {"period_tolerance": 0.001}}
+        data = synthetic.scenario_data("planet", seed, "correlated")
+        result = build_result(target, data, _plan(ON), after, context)
+        assert EB_CATALOG_DOWNGRADE_NOTE in render_report(result, {"claim_kind": "calibration"})
+    assert looked >= 1, "non-empty: the premise holds on no seed"
+
+
+def _cn_b3_premise(correlated, seed):
+    candidate = correlated[("blend", seed, "nb")].gauntlet.candidate
+    return candidate is not None and candidate.period == pytest.approx(2.3, rel=1e-3)
+
+
+def test_cn_h9_m3_neighbor_entry_at_the_period_stays_fatal(correlated):
+    looked = 0
+    for seed in CN_SEEDS:
+        if not _cn_b3_premise(correlated, seed):
+            continue
+        looked += 1
+        analysis = correlated[("blend", seed, "nb")]
+        eb = _test(analysis, "eb_catalog")
+        assert eb.status.value == "FAIL" and eb.severity.value == "fatal", seed
+        assert eb.metrics["downgraded"] is False, seed
+        assert analysis.verdict == "REFUTED", seed
+    assert looked >= 1, "non-empty: the premise holds on no seed"
+
+
+@pytest.mark.parametrize("seed", CN_SEEDS)
+def test_cn_h9_e1_premise_planet_refuted_only_by_its_own_entry(correlated, seed):
+    before = correlated[("planet", seed, "off")]
+    assert _cn_b1_premise(correlated, seed), (before.verdict, _fatal_failures(before))
+
+
+@pytest.mark.parametrize("seed", CN_SEEDS)
+def test_cn_h9_e1_premise_blend_found_at_the_neighbor_period(correlated, seed):
+    candidate = correlated[("blend", seed, "nb")].gauntlet.candidate
+    assert _cn_b3_premise(correlated, seed), candidate
+
+
+@pytest.mark.parametrize("seed", CN_SEEDS)
+@pytest.mark.parametrize("name", ["eb_secondary", "eb_odd_even"])
+def test_cn_h9_e2_binaries_stay_refuted_by_their_data(correlated, name, seed):
+    for tag in ("on", "off"):
+        analysis = correlated[(name, seed, tag)]
+        assert analysis.verdict == "REFUTED", tag
+        assert set(_fatal_failures(analysis)) - {"eb_catalog"}, "a data test fails"
+
+
+def _cn_record(analysis, name, seed):
+    target = target_entry(1, "planet", PERIODS[name], name=f"{name} {seed}")
+    context = {"pass_criteria": {"period_tolerance": 0.001}}
+    data = synthetic.scenario_data(name, seed, "correlated")
+    return dumps_json(build_result(target, data, _plan(OFF), analysis, context))
+
+
+@pytest.mark.parametrize("name", CN_CONTROLS)
+def test_cn_d_m1_shared_path_equals_the_complete_switch_off_analysis(correlated, name):
+    for seed in CONTROL_SEEDS:
+        complete = correlated[(name, seed, "off_complete")]
+        derived = correlated[(name, seed, "off")]
+        assert _shared(derived) and not _shared(complete), seed
+        assert _cn_record(derived, name, seed) == _cn_record(complete, name, seed), seed
+        assert _gauntlet_tests(derived) == _gauntlet_tests(complete), seed
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="pending expectation, docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, "
+    "Amendment 3 (the holdout is not testable: the timing-uncertainty rule)",
+)
+@pytest.mark.parametrize("seed", CONTROL_SEEDS)
+def test_cn_d_e1_premise_the_switch_changes_the_planet_analysis(correlated, seed):
+    on, off = correlated[("planet", seed, "on")], correlated[("planet", seed, "off")]
+    assert (on.verdict, off.verdict) == ("WEAKENED", "REFUTED")
+    assert _test(on, "eb_catalog").severity.value == "warning"
+    assert _test(off, "eb_catalog").severity.value == "fatal"

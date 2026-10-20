@@ -4,7 +4,7 @@ The test suite is split into shards that run as parallel CI jobs, on every OS an
 Python of the matrix, so that each test still runs once per matrix entry while the
 wall-clock time of a run falls (the end-to-end fixtures below take most of it).
 
-- ``heavy-a``, ``heavy-b``: fixed lists of end-to-end test files;
+- ``heavy-a``, ``heavy-b``, ``heavy-c``: fixed lists of end-to-end test files;
 - ``rest``: every other test, with ``--ignore`` for each listed file.
 
 Every listed file must exist (a renamed file fails the run instead of silently moving
@@ -17,7 +17,7 @@ Limits to review if the configuration changes (issue #59; Codex review of PR #73
 also run in the heavy shards; and the CI splits the printed arguments on spaces, so a
 test path with spaces or glob characters would need structured arguments.
 
-Usage: python scripts/ci_shard.py heavy-a|heavy-b|rest|check
+Usage: uv run python scripts/ci_shard.py heavy-a|heavy-b|heavy-c|rest|check
 """
 
 from __future__ import annotations
@@ -28,14 +28,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 # Measured on the main run of 2026-10-15 (ubuntu-24.04, Python 3.12): the fixtures of
-# these files took about 1390 of the 1557 seconds of the test step.
+# these files took about 1390 of the 1557 seconds of the test step. v0.2.1 reopening
+# (2026-10-18): the correlated-noise cases and the v0.3 tests pushed windows-2025 /
+# Python 3.13 rest to 1015 s and heavy-b to 943 s (PR #157, run 39085740367), over the
+# 15-minute target; a fourth shard, heavy-c, balances them by the local times per file.
 HEAVY = {
     "heavy-a": ["tests/test_ebcatalog_own_tic_e2e.py"],
     "heavy-b": [
         "tests/test_holdout_train_validity_e2e.py",
         "tests/test_holdout_blindness.py",
+    ],
+    "heavy-c": [
         "tests/test_workers_equivalence.py",
         "tests/test_calibration_signal_identity_e2e.py",
+        "tests/test_wp4_papers.py",
     ],
 }
 

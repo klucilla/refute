@@ -154,3 +154,123 @@ def test_b5_planets_do_not_depend_on_the_flag(analyses, name, seed):
         assert on["self_claim"]["criteria"][index] == off["self_claim"]["criteria"][index]
     assert on["targets"][0]["recovered"] == off["targets"][0]["recovered"]
     assert on["targets"][0]["signal_recovered"] is None
+
+
+# --- Correlated noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md, H7) -----
+
+CN_SCENARIOS = ("fp_variability_dominates", "eb_secondary", "eb_odd_even", "planet")
+CN_SCENARIOS = (*CN_SCENARIOS, "planet_three_years")
+CN_KIND = {
+    "fp_variability_dominates": "false_positive",
+    "eb_secondary": "false_positive",
+    "eb_odd_even": "false_positive",
+    "planet": "planet",
+    "planet_three_years": "planet",
+}
+
+
+@pytest.fixture(scope="module")
+def correlated():
+    tasks = [(name, seed, "correlated") for name in CN_SCENARIOS for seed in SEEDS]
+    workers = max(1, min(len(tasks), default_workers()))
+    results = run_processes(synthetic.analyze_scenario_seed, tasks, workers)
+    out = {}
+    for tic, ((name, seed, _), analysis) in enumerate(zip(tasks, results, strict=True), start=1):
+        criteria = {"pass_criteria": {"period_tolerance": TOLERANCE}}
+        plan = TessTestPlan.model_validate(synthetic.fast_plan_dict())
+        target = target_entry(tic, CN_KIND[name], INJECTED[name], name=f"{name} {seed}")
+        data = synthetic.scenario_data(name, seed, "correlated")
+        out[(name, seed)] = build_result(target, data, plan, analysis, criteria)
+    return out
+
+
+def _found_or_none(result):
+    return result["period_comparison"]["found_period_days"]
+
+
+def _row(summary):
+    return summary["targets"][0]
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+@pytest.mark.parametrize("name", ["planet", "planet_three_years"])
+def test_cn_h7_m1_planets_do_not_depend_on_the_flag(correlated, name, seed):
+    result = correlated[(name, seed)]
+    on, off = _summary([result], True), _summary([result], False)
+    for index in (0, 2):
+        assert on["self_claim"]["criteria"][index] == off["self_claim"]["criteria"][index]
+    assert _row(on)["recovered"] == _row(off)["recovered"]
+    assert _row(on)["signal_recovered"] is None
+
+
+def test_cn_h7_m2_flagged_with_identity_is_flagged_without_minus_not_recovered(correlated):
+    results = list(correlated.values())
+    on, off = _summary(results, True), _summary(results, False)
+    fps_on = [r for r in on["targets"] if r["kind"] == "false_positive"]
+    flagged_off = {
+        r["target"]
+        for r in off["targets"]
+        if r["kind"] == "false_positive" and r["signal_verdict"] == "REFUTED"
+    }
+    not_recovered = {r["target"] for r in fps_on if r["signal_recovered"] is False}
+    expected = len(flagged_off - not_recovered)
+    assert off["self_claim"]["criteria"][1]["value"] == len(flagged_off)
+    assert on["self_claim"]["criteria"][1]["value"] == expected
+    assert on["self_claim"]["criteria"][1]["of"] == off["self_claim"]["criteria"][1]["of"]
+    assert on["information"]["flagged_without_signal_identity"] == len(flagged_off)
+
+
+def _variability_premise(result):
+    found = _found_or_none(result)
+    name = "fp_variability_dominates"
+    return found is not None and not _matches(found, INJECTED[name], FACTORS)
+
+
+def test_cn_h7_m3_variability_found_instead_of_the_eclipse_is_not_recovered(correlated):
+    name = "fp_variability_dominates"
+    looked = 0
+    for seed in SEEDS:
+        result = correlated[(name, seed)]
+        if not _variability_premise(result):
+            continue
+        looked += 1
+        on = _summary([result], True)
+        assert _row(on)["signal_recovered"] is False, seed
+        assert on["self_claim"]["criteria"][1]["value"] == 0, seed
+    assert looked >= 1, "non-empty: the premise holds on no seed"
+
+
+def _binary_premise(result, name):
+    found = _found_or_none(result)
+    return found is not None and _matches(found, INJECTED[name], (1.0,))
+
+
+@pytest.mark.parametrize("name", ["eb_secondary", "eb_odd_even"])
+def test_cn_h7_m4_recovered_binaries_have_the_same_flag_on_and_off(correlated, name):
+    looked = 0
+    for seed in SEEDS:
+        result = correlated[(name, seed)]
+        if not _binary_premise(result, name):
+            continue
+        looked += 1
+        on, off = _summary([result], True), _summary([result], False)
+        assert _row(on)["signal_recovered"] is True, seed
+        assert (
+            on["self_claim"]["criteria"][1]["value"] == off["self_claim"]["criteria"][1]["value"]
+        ), seed
+    assert looked >= 1, "non-empty: the premise holds on no seed"
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+def test_cn_h7_e1_variability_is_found_instead_of_the_eclipse(correlated, seed):
+    result = correlated[("fp_variability_dominates", seed)]
+    assert _variability_premise(result), f"found {_found_or_none(result)} d"
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+@pytest.mark.parametrize("name", ["eb_secondary", "eb_odd_even"])
+def test_cn_h7_e2_binaries_are_found_refuted_and_flagged(correlated, name, seed):
+    result = correlated[(name, seed)]
+    assert _binary_premise(result, name), f"found {_found_or_none(result)} d"
+    assert result["verdict"] == "REFUTED"
+    assert _summary([result], True)["self_claim"]["criteria"][1]["value"] == 1

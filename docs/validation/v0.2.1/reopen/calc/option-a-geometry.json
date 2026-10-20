@@ -1,0 +1,6357 @@
+{
+  "cases": [
+    {
+      "id": "planet-near-white-0000",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 7.03 < 7.1",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (6.19 h) exceeds 1 transit duration(s) (2.70 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0010",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 5.99 < 7.1",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 6.69 < 7.1",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0020",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (7.25 h) exceeds 1 transit duration(s) (2.20 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (8.87 h) exceeds 1 transit duration(s) (2.25 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0030",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (12.32 h) exceeds 1 transit duration(s) (2.40 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 5.97 < 7.1",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0040",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (8.99 h) exceeds 1 transit duration(s) (2.00 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (8.68 h) exceeds 1 transit duration(s) (2.00 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0050",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (9.90 h) exceeds 1 transit duration(s) (2.00 h)",
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 12
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 13
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.9386278083610655,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0060",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (19.39 h) exceeds 1 transit duration(s) (1.90 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 6.63 < 7.1",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0070",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 6.21 < 7.1",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (6.00 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0080",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (5.88 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 6.86 < 7.1",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0090",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (11.92 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 6.46 < 7.1",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0100",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 35,
+            "n_replicas_registered": 36,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 70
+            },
+            "inconclusive": false,
+            "n_replicas": 35,
+            "n_replicas_registered": 36,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.1500143724197683,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 23
+            },
+            "inconclusive": false,
+            "n_replicas": 34,
+            "n_replicas_registered": 36,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 69
+            },
+            "inconclusive": false,
+            "n_replicas": 34,
+            "n_replicas_registered": 36,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 45
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.042964422178835955,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 35,
+            "n_replicas_registered": 37,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 70
+            },
+            "inconclusive": false,
+            "n_replicas": 35,
+            "n_replicas_registered": 37,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 45
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.10387169613355011,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0110",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 34,
+            "n_replicas_registered": 35,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 68
+            },
+            "inconclusive": false,
+            "n_replicas": 34,
+            "n_replicas_registered": 35,
+            "n_transit_windows_usable": 4,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": false,
+            "n_replicas": 22,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 4,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.14671566287228355,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 22
+            },
+            "inconclusive": false,
+            "n_replicas": 32,
+            "n_replicas_registered": 34,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 64
+            },
+            "inconclusive": false,
+            "n_replicas": 32,
+            "n_replicas_registered": 34,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 22,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.04534143928433359,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 32,
+            "n_replicas_registered": 34,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 64
+            },
+            "inconclusive": false,
+            "n_replicas": 32,
+            "n_replicas_registered": 34,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 22,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.12913381947454197,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0120",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 7.06 < 7.1",
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 33
+            },
+            "inconclusive": false,
+            "n_replicas": 47,
+            "n_replicas_registered": 49,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 94
+            },
+            "inconclusive": false,
+            "n_replicas": 47,
+            "n_replicas_registered": 49,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 65
+            },
+            "inconclusive": false,
+            "n_replicas": 31,
+            "n_replicas_registered": 33,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.06555013522228907,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 65
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.13791943228434603,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0130",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": false,
+            "n_replicas": 29,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 59
+            },
+            "inconclusive": false,
+            "n_replicas": 29,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": true,
+            "n_replicas": 19,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.06458751579882284,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 20
+            },
+            "inconclusive": false,
+            "n_replicas": 29,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 58
+            },
+            "inconclusive": false,
+            "n_replicas": 29,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 40
+            },
+            "inconclusive": true,
+            "n_replicas": 19,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.045340691395264233,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 57
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 38
+            },
+            "inconclusive": true,
+            "n_replicas": 19,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.23823727186959484,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0140",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 26,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 54
+            },
+            "inconclusive": false,
+            "n_replicas": 26,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 12,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 107
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.1402269300781333,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 80,
+            "n_replicas_registered": 84,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 161
+            },
+            "inconclusive": false,
+            "n_replicas": 80,
+            "n_replicas_registered": 84,
+            "n_transit_windows_usable": 14,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 106
+            },
+            "inconclusive": false,
+            "n_replicas": 54,
+            "n_replicas_registered": 56,
+            "n_transit_windows_usable": 14,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.09559209457899501,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 27,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 54
+            },
+            "inconclusive": false,
+            "n_replicas": 27,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 14,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 108
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 14,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.15229564624686517,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0150",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 12
+            },
+            "inconclusive": true,
+            "n_replicas": 2,
+            "n_replicas_registered": 2,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 4
+            },
+            "inconclusive": true,
+            "n_replicas": 2,
+            "n_replicas_registered": 2,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 18
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.8995570893932535,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 7,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 13
+            },
+            "inconclusive": true,
+            "n_replicas": 7,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 46
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.8610537375991852,
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0160",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (6.59 h) exceeds 1 transit duration(s) (2.40 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.83 h) exceeds 1 transit duration(s) (2.00 h)",
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0170",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (2.47 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (12.49 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0180",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (6.30 h) exceeds 1 transit duration(s) (2.30 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (15.11 h) exceeds 1 transit duration(s) (2.80 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0190",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 4
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 10
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6268804997058972,
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: train SNR 6.91 < 7.1",
+          "year": 2021
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0200",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.219 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.219 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.219 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0210",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.237 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.228 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.228 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0220",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.22845916333643942,
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.242 > 0.2",
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.18064644828236737,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0230",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.221 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.221 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.232 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-white-0240",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.256 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.256 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.256 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0000",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 26
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.3663565010249869,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 48
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.37678369192072675,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0010",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 46
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 46
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.975199461115325,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (4.42 h) exceeds 1 transit duration(s) (2.20 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0020",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (7.21 h) exceeds 1 transit duration(s) (1.90 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (4.70 h) exceeds 1 transit duration(s) (1.90 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0030",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 58
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 14,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 58
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 14,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.9610139803446759,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 102
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 14,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 102
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 14,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5508338546374039,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0040",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 21
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 30
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5281318375347512,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 16
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 11
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 34
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.8123792506128318,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0050",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 66
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 66
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.7659434401353665,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (4.11 h) exceeds 1 transit duration(s) (2.60 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0060",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (2.21 h) exceeds 1 transit duration(s) (1.60 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (2.03 h) exceeds 1 transit duration(s) (1.80 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0070",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 101
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 18,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 101
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 18,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.7104504658976529,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 134
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 16,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 134
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 16,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6539586540926351,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0080",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.33 h) exceeds 1 transit duration(s) (3.00 h)",
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 15
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 13
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 39
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.7879247747669639,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0090",
+      "mechanism": "two_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 12
+            },
+            "inconclusive": true,
+            "n_replicas": 9,
+            "n_replicas_registered": 10,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 19
+            },
+            "inconclusive": true,
+            "n_replicas": 9,
+            "n_replicas_registered": 10,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.7571874304638254,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 4
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 23
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6554632811964397,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0100",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 80
+            },
+            "inconclusive": true,
+            "n_replicas": 1,
+            "n_replicas_registered": 1,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.017752701540340133,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 80
+            },
+            "inconclusive": true,
+            "n_replicas": 1,
+            "n_replicas_registered": 1,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.005412583105976073,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 43
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 83
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.017263300518662292,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0110",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 56
+            },
+            "inconclusive": false,
+            "n_replicas": 26,
+            "n_replicas_registered": 27,
+            "n_transit_windows_usable": 13,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 52
+            },
+            "inconclusive": false,
+            "n_replicas": 26,
+            "n_replicas_registered": 27,
+            "n_transit_windows_usable": 13,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 108
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 13,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.06789282539577537,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 54
+            },
+            "inconclusive": false,
+            "n_replicas": 27,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 13,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 54
+            },
+            "inconclusive": false,
+            "n_replicas": 27,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 13,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 108
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 13,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.01884811606341316,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 54
+            },
+            "inconclusive": false,
+            "n_replicas": 27,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 13,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 54
+            },
+            "inconclusive": false,
+            "n_replicas": 27,
+            "n_replicas_registered": 28,
+            "n_transit_windows_usable": 13,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 109
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 13,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.0658421867898202,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0120",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 30
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.21210576992288246,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 21
+            },
+            "inconclusive": false,
+            "n_replicas": 32,
+            "n_replicas_registered": 33,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 63
+            },
+            "inconclusive": false,
+            "n_replicas": 32,
+            "n_replicas_registered": 33,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.06079865458978295,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 24
+            },
+            "inconclusive": false,
+            "n_replicas": 32,
+            "n_replicas_registered": 33,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 65
+            },
+            "inconclusive": false,
+            "n_replicas": 32,
+            "n_replicas_registered": 33,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 46
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.07885261330054542,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0130",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 80
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.14470560685592335,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 11,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 11,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 80
+            },
+            "inconclusive": true,
+            "n_replicas": 1,
+            "n_replicas_registered": 1,
+            "n_transit_windows_usable": 11,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.04169172082407062,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 4
+            },
+            "inconclusive": true,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 80
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.08821850278373128,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0140",
+      "mechanism": "three_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 19
+            },
+            "inconclusive": true,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 57
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 37
+            },
+            "inconclusive": true,
+            "n_replicas": 19,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.014468142068145015,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 19
+            },
+            "inconclusive": true,
+            "n_replicas": 30,
+            "n_replicas_registered": 31,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 59
+            },
+            "inconclusive": false,
+            "n_replicas": 30,
+            "n_replicas_registered": 31,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 29
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.004231096175885538,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 19
+            },
+            "inconclusive": true,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 57
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 28
+            },
+            "inconclusive": true,
+            "n_replicas": 19,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.014993782537922147,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0150",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 30
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 10,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.28654790661712237,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.08 h) exceeds 1 transit duration(s) (2.40 h)",
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0160",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 10
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.3733038165566063,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (8.28 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0170",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.41 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (8.42 h) exceeds 1 transit duration(s) (3.00 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0180",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 15
+            },
+            "inconclusive": true,
+            "n_replicas": 3,
+            "n_replicas_registered": 3,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 6
+            },
+            "inconclusive": true,
+            "n_replicas": 3,
+            "n_replicas_registered": 3,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 27
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.7017818952090658,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (9.48 h) exceeds 1 transit duration(s) (2.40 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0190",
+      "mechanism": "few_train",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (7.71 h) exceeds 1 transit duration(s) (2.20 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (9.98 h) exceeds 1 transit duration(s) (1.90 h)",
+          "year": 2021
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0200",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 28
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 56
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.16677034525738466,
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.231 > 0.2",
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 29
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 60
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.25645782105724485,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0210",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.322 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.322 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.322 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0220",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.448 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.449 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.450 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0230",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.278 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.280 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.278 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-white-0240",
+      "mechanism": "variability_some_years",
+      "noise": "white",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 57
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 30,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 29
+            },
+            "inconclusive": true,
+            "n_replicas": 19,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.03400319652630367,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 19
+            },
+            "inconclusive": true,
+            "n_replicas": 30,
+            "n_replicas_registered": 31,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 59
+            },
+            "inconclusive": false,
+            "n_replicas": 30,
+            "n_replicas_registered": 31,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 30
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.007052539430343632,
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.292 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0000",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 9,
+            "n_replicas_registered": 10,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 19
+            },
+            "inconclusive": true,
+            "n_replicas": 9,
+            "n_replicas_registered": 10,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 38
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5938219043443542,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.81 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0010",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.02 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.49 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0020",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (9.02 h) exceeds 1 transit duration(s) (2.20 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.73 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0030",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 16
+            },
+            "inconclusive": true,
+            "n_replicas": 8,
+            "n_replicas_registered": 8,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 16
+            },
+            "inconclusive": true,
+            "n_replicas": 8,
+            "n_replicas_registered": 8,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6893419915716615,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 25
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 49
+            },
+            "inconclusive": true,
+            "n_replicas": 1,
+            "n_replicas_registered": 1,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5427160335633561,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0040",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 94
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 94
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6686702301271601,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 84
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 84
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5908150937999351,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0050",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 10,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 10,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5401480832350858,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.91 h) exceeds 1 transit duration(s) (2.55 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0060",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 62
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 62
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.9556256387169625,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 22
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 64
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.44591863030901535,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0070",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 92
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 92
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.8746659430045569,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.72 h) exceeds 1 transit duration(s) (1.90 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0080",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (7.91 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (15.61 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0090",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (10.55 h) exceeds 1 transit duration(s) (2.40 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (7.73 h) exceeds 1 transit duration(s) (2.60 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0100",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 72
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.16533768710310373,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 72
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.04821319410410016,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 72
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.07647554099630208,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0110",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 30
+            },
+            "inconclusive": false,
+            "n_replicas": 42,
+            "n_replicas_registered": 43,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 83
+            },
+            "inconclusive": false,
+            "n_replicas": 42,
+            "n_replicas_registered": 43,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 58
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 29,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.025264383539203957,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 28
+            },
+            "inconclusive": false,
+            "n_replicas": 42,
+            "n_replicas_registered": 44,
+            "n_transit_windows_usable": 7,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 83
+            },
+            "inconclusive": false,
+            "n_replicas": 42,
+            "n_replicas_registered": 44,
+            "n_transit_windows_usable": 7,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 56
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 29,
+            "n_transit_windows_usable": 7,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.012432604491089383,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 29
+            },
+            "inconclusive": false,
+            "n_replicas": 42,
+            "n_replicas_registered": 44,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 85
+            },
+            "inconclusive": false,
+            "n_replicas": 42,
+            "n_replicas_registered": 44,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 57
+            },
+            "inconclusive": false,
+            "n_replicas": 28,
+            "n_replicas_registered": 29,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.01736952344066567,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0120",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 26
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.09461033757704013,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 24
+            },
+            "inconclusive": false,
+            "n_replicas": 36,
+            "n_replicas_registered": 38,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 72
+            },
+            "inconclusive": false,
+            "n_replicas": 36,
+            "n_replicas_registered": 38,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 36
+            },
+            "inconclusive": false,
+            "n_replicas": 24,
+            "n_replicas_registered": 25,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.005152186996884158,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 25
+            },
+            "inconclusive": false,
+            "n_replicas": 36,
+            "n_replicas_registered": 37,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 71
+            },
+            "inconclusive": false,
+            "n_replicas": 36,
+            "n_replicas_registered": 37,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 37
+            },
+            "inconclusive": false,
+            "n_replicas": 24,
+            "n_replicas_registered": 25,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.056931130377132835,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0130",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 22,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 44
+            },
+            "inconclusive": false,
+            "n_replicas": 22,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 12,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 88
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 12,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.20104607558947907,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 44
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 44
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 89
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.0554892091837223,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 22,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 44
+            },
+            "inconclusive": false,
+            "n_replicas": 22,
+            "n_replicas_registered": 23,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 88
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.15943339832511721,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0140",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.218 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.289 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.278 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0150",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 12
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.34095465948379694,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (2.58 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0160",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 7,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 14
+            },
+            "inconclusive": true,
+            "n_replicas": 7,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 21
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.2854590183460585,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (4.54 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0170",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 7,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 14
+            },
+            "inconclusive": true,
+            "n_replicas": 7,
+            "n_replicas_registered": 7,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 28
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.33896476786864677,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (7.45 h) exceeds 1 transit duration(s) (2.70 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0180",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (2.91 h) exceeds 1 transit duration(s) (2.20 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (4.83 h) exceeds 1 transit duration(s) (2.10 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0190",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (14.16 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (4.13 h) exceeds 1 transit duration(s) (2.85 h)",
+          "year": 2021
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0200",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.277 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.278 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.370 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0210",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.428 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.429 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.429 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0220",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.248 > 0.2",
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.219 > 0.2",
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.238 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0230",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 21
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.4519012815921954,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 30,
+            "n_replicas_registered": 32,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 61
+            },
+            "inconclusive": false,
+            "n_replicas": 30,
+            "n_replicas_registered": 32,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.12290614743384487,
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.499 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-near-correlated-0240",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.377 > 0.2",
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 45
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 40
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.47300933465840084,
+          "year": 2019
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.50 h) exceeds 1 transit duration(s) (2.20 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0000",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 4,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 4,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.4981383043096513,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 22
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 20,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.5337525026533956,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0010",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 23
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6789816620727052,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.04 h) exceeds 1 transit duration(s) (2.30 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0020",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 31
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 63
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.2790356305216907,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 31
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 62
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.2768716817179195,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0030",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 23
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 45
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.4213470004618663,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 3
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 46
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.3917458466637146,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0040",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 25
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 50
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.33216159747549723,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5216116609031849,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0050",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 28
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 11
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.8336617327763713,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.489265151318951,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0060",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 35
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 69
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.2471472866549121,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 35
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 69
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.26127654864040933,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0070",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 14,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 27
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 14,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 39
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.33050536261656105,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 4
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 25
+            },
+            "inconclusive": true,
+            "n_replicas": 13,
+            "n_replicas_registered": 13,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 56
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.49572902005782343,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0080",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 29
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 57
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.2866604811387079,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 28
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 56
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.28465906608465397,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0090",
+      "mechanism": "two_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 2
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 21
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.42390245417252187,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 23
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.3753683031732355,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0100",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 11,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 11,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 80
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 11,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.02415121265014639,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 41
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 82
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.0066679569660047285,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 41
+            },
+            "inconclusive": false,
+            "n_replicas": 20,
+            "n_replicas_registered": 21,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 82
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.009245331513868596,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0110",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 32
+            },
+            "inconclusive": true,
+            "n_replicas": 16,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 33
+            },
+            "inconclusive": true,
+            "n_replicas": 16,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 62
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.07940254463909657,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 31
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 34
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 62
+            },
+            "inconclusive": true,
+            "n_replicas": 1,
+            "n_replicas_registered": 1,
+            "n_transit_windows_usable": 7,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.038108466224189674,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 33
+            },
+            "inconclusive": true,
+            "n_replicas": 16,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 32
+            },
+            "inconclusive": true,
+            "n_replicas": 16,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 64
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.04330461347944027,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0120",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 28
+            },
+            "inconclusive": false,
+            "n_replicas": 40,
+            "n_replicas_registered": 41,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 80
+            },
+            "inconclusive": false,
+            "n_replicas": 40,
+            "n_replicas_registered": 41,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 56
+            },
+            "inconclusive": false,
+            "n_replicas": 26,
+            "n_replicas_registered": 27,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.008372831623300178,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 28
+            },
+            "inconclusive": false,
+            "n_replicas": 40,
+            "n_replicas_registered": 41,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 79
+            },
+            "inconclusive": false,
+            "n_replicas": 40,
+            "n_replicas_registered": 41,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 56
+            },
+            "inconclusive": false,
+            "n_replicas": 26,
+            "n_replicas_registered": 27,
+            "n_transit_windows_usable": 6,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.002301352250197964,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 25
+            },
+            "inconclusive": false,
+            "n_replicas": 38,
+            "n_replicas_registered": 40,
+            "n_transit_windows_usable": 7,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 76
+            },
+            "inconclusive": false,
+            "n_replicas": 38,
+            "n_replicas_registered": 40,
+            "n_transit_windows_usable": 7,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 49
+            },
+            "inconclusive": false,
+            "n_replicas": 26,
+            "n_replicas_registered": 27,
+            "n_transit_windows_usable": 7,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.00981931167647876,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0130",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 30
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 30
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 60
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.011678155202342878,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 31
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 31
+            },
+            "inconclusive": true,
+            "n_replicas": 15,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 61
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.00253740426263535,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 32
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 34
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 64
+            },
+            "inconclusive": true,
+            "n_replicas": 1,
+            "n_replicas_registered": 1,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.00927382845497262,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0140",
+      "mechanism": "three_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 54,
+            "n_replicas_registered": 56,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "1": 108
+            },
+            "inconclusive": false,
+            "n_replicas": 54,
+            "n_replicas_registered": 56,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 78
+            },
+            "inconclusive": false,
+            "n_replicas": 36,
+            "n_replicas_registered": 38,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.011062936623447678,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 36
+            },
+            "inconclusive": false,
+            "n_replicas": 54,
+            "n_replicas_registered": 56,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 108
+            },
+            "inconclusive": false,
+            "n_replicas": 54,
+            "n_replicas_registered": 56,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 72
+            },
+            "inconclusive": false,
+            "n_replicas": 36,
+            "n_replicas_registered": 37,
+            "n_transit_windows_usable": 8,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.0028891646770222946,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 36
+            },
+            "inconclusive": false,
+            "n_replicas": 54,
+            "n_replicas_registered": 57,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "3": 109
+            },
+            "inconclusive": false,
+            "n_replicas": 54,
+            "n_replicas_registered": 57,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 72
+            },
+            "inconclusive": false,
+            "n_replicas": 36,
+            "n_replicas_registered": 38,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.011625856001740433,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0150",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 12,
+            "n_replicas_registered": 12,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.11379374821463982,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 16
+            },
+            "inconclusive": true,
+            "n_replicas": 8,
+            "n_replicas_registered": 8,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 16
+            },
+            "inconclusive": true,
+            "n_replicas": 8,
+            "n_replicas_registered": 8,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6856661868574506,
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0160",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 34
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 17,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 24
+            },
+            "inconclusive": true,
+            "n_replicas": 11,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.23420989255133345,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 12
+            },
+            "inconclusive": true,
+            "n_replicas": 8,
+            "n_replicas_registered": 9,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 17
+            },
+            "inconclusive": true,
+            "n_replicas": 8,
+            "n_replicas_registered": 9,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 48
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 4,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.8755478040179759,
+          "year": 2019
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0170",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 10
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.33931995691376327,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (3.20 h) exceeds 1 transit duration(s) (3.00 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0180",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 3
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 10
+            },
+            "inconclusive": true,
+            "n_replicas": 5,
+            "n_replicas_registered": 5,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 18
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.6133774758782592,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (6.06 h) exceeds 1 transit duration(s) (3.00 h)",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0190",
+      "mechanism": "few_train",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 12
+            },
+            "inconclusive": true,
+            "n_replicas": 6,
+            "n_replicas_registered": 6,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 22
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 3,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.4601521357111833,
+          "year": 2018
+        },
+        {
+          "decided_before": "train-only timing uncertainty in the hidden year (5.29 h) exceeds 1 transit duration(s) (2.70 h)",
+          "year": 2021
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0200",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 11,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "1": 84
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 11,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.13668657701478387,
+          "year": 2018
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.500 > 0.2",
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 42
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 11,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "3": 84
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 11,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.09855014531533365,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0210",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "O1": {
+            "bins": {
+              "1": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "1": 36
+            },
+            "inconclusive": true,
+            "n_replicas": 18,
+            "n_replicas_registered": 19,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "1": 93
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.3604700150711648,
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 1
+            },
+            "inconclusive": true,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 46
+            },
+            "inconclusive": false,
+            "n_replicas": 23,
+            "n_replicas_registered": 24,
+            "n_transit_windows_usable": 10,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 90
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 10,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.11913406094819476,
+          "year": 2019
+        },
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.495 > 0.2",
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0220",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.466 > 0.2",
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 20
+            },
+            "inconclusive": false,
+            "n_replicas": 31,
+            "n_replicas_registered": 33,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O2": {
+            "bins": {
+              "2": 63
+            },
+            "inconclusive": false,
+            "n_replicas": 31,
+            "n_replicas_registered": 33,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "O3": {
+            "bins": {
+              "2": 40
+            },
+            "inconclusive": false,
+            "n_replicas": 21,
+            "n_replicas_registered": 22,
+            "n_transit_windows_usable": 5,
+            "reasons": []
+          },
+          "max_sigma_t_over_t14": 0.07843851672056648,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 20
+            },
+            "inconclusive": true,
+            "n_replicas": 10,
+            "n_replicas_registered": 11,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 40
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 5,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.5893508145589333,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0230",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.335 > 0.2",
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 32
+            },
+            "inconclusive": true,
+            "n_replicas": 16,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 32
+            },
+            "inconclusive": true,
+            "n_replicas": 16,
+            "n_replicas_registered": 16,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 64
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.03431244743386447,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 29
+            },
+            "inconclusive": true,
+            "n_replicas": 14,
+            "n_replicas_registered": 15,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 56
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 6,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.24893572363143895,
+          "year": 2020
+        }
+      ]
+    },
+    {
+      "id": "planet-measurable-correlated-0240",
+      "mechanism": "variability_some_years",
+      "noise": "correlated",
+      "rounds": [
+        {
+          "decided_before": "the train-only candidate is not a valid basis for a prediction: duration/period 0.367 > 0.2",
+          "year": 2018
+        },
+        {
+          "O1": {
+            "bins": {
+              "2": 34
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "2": 34
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "2": 68
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 9,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.0457846038930657,
+          "year": 2019
+        },
+        {
+          "O1": {
+            "bins": {
+              "3": 0
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 0,
+            "reasons": [
+              "replicas_below_r_min",
+              "hidden_noise_undetermined"
+            ]
+          },
+          "O2": {
+            "bins": {
+              "3": 34
+            },
+            "inconclusive": true,
+            "n_replicas": 17,
+            "n_replicas_registered": 18,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "O3": {
+            "bins": {
+              "3": 68
+            },
+            "inconclusive": true,
+            "n_replicas": 0,
+            "n_replicas_registered": 0,
+            "n_transit_windows_usable": 8,
+            "reasons": [
+              "replicas_below_r_min"
+            ]
+          },
+          "max_sigma_t_over_t14": 0.16226172594898525,
+          "year": 2020
+        }
+      ]
+    }
+  ],
+  "n_cases": 100,
+  "numpy": "2.5.3",
+  "platform": "win32",
+  "prefix": "refute-v0.2.1-option-a-geometry",
+  "summary": {
+    "O1": {
+      "fraction_inconclusive": 0.7669172932330827,
+      "inconclusive": 102,
+      "median_replicas": 16.0,
+      "reasons": {
+        "hidden_noise_undetermined": 78,
+        "replicas_below_r_min": 81
+      },
+      "rounds_reaching_the_geometry": 133
+    },
+    "O2": {
+      "fraction_inconclusive": 0.6090225563909775,
+      "inconclusive": 81,
+      "median_replicas": 16.0,
+      "reasons": {
+        "hidden_noise_undetermined": 32,
+        "replicas_below_r_min": 81
+      },
+      "rounds_reaching_the_geometry": 133
+    },
+    "O3": {
+      "fraction_inconclusive": 0.7669172932330827,
+      "inconclusive": 102,
+      "median_replicas": 0.0,
+      "reasons": {
+        "hidden_noise_undetermined": 4,
+        "replicas_below_r_min": 102
+      },
+      "rounds_reaching_the_geometry": 133
+    },
+    "cases": 100,
+    "cases_not_built": 0,
+    "rounds_decided_before": 107,
+    "rounds_total": 240
+  }
+}

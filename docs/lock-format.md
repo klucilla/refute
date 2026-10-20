@@ -183,6 +183,73 @@ The verification at each lock's tag, in its own environment, remains the complet
 (see the README and
 [validation/v0.3/lock-compat-record.md](validation/v0.3/lock-compat-record.md)).
 
+### Extensions of the table
+
+Each extension of the table is approved by the maintainer before it is made, is recorded here
+with its date, the paths and frozen values it adds, and the full resolved hashes it records
+(L10.2 of the acceptance), and keeps every safeguard above. Extensions so far:
+
+1. **The corrections section of v0.2.1 (2026-10-18; Phase I, branch `claude/v0-2-1-reopen`
+   only, until its merge).** Approved by the maintainer on 2026-10-18. Adds, to both historical
+   entries, the path `test_plan.gauntlet.corrections` with its frozen value: the section at
+   exactly its defaults, `enabled: false` (`b_min` 20, `enabled` false, `fap_max` 0.0001,
+   `gap_split` 5.0, `h_min` 0.9, `k_clip` 2.5, `m_beta` 1.2, `max_components` 3, `r_min` 20),
+   written in the table as a literal, not read from the code. The section is removed from the
+   projection only when its resolved value equals that literal as canonical JSON (so `5` and
+   `5.0` differ) and it is not written in the claim file; any other value, or a later change of
+   a default, leaves it in and the claim is `TAMPERED`. Full resolved hashes from this extension,
+   with the code of `676b076`: v0.1
+   `05ec2b63b9b94874e393bb46884ab152b74ed3ad235ff46798bcbed1a1b8a48f`, v0.2
+   `a68d2bac0663b035e979b17147e9234a7246233abdb5af0a201cdc3df4e64b75` (before it, with main
+   `78822a7`: `6f54b834…365dc` and `5fe1a3de…6d502`). Tests: `tests/test_lock_compat.py`
+   (the projection still reaches both locked hashes; six non-default values and a changed
+   default are refused; the section written in the claim file, even at its defaults, is
+   refused). Sabotages: skipping the frozen-value comparison, removing the section whatever its
+   value, leaving the path out of the v0.2 entry, and skipping the guard against a field written
+   in the claim file each make cases fail. Every later field or default of the section changes
+   this frozen value, so it needs a new extension, approved before it is made.
+2. **The version key of the corrections section (2026-10-18; branch `claude/v0-2-1-reopen` only,
+   until its merge).** The maintainer's decision of 2026-10-18 (14:00) set a version rule for the
+   section: `version` 1 is the legacy block, always on the M3 path; version 2 is M4, written
+   explicitly in new claims; no default of the section changes. This extension adds `"version": 1`
+   to the frozen value of extension 1 (the same path, `test_plan.gauntlet.corrections`, for both
+   historical entries); every other frozen value is unchanged. With it, both historical claims still
+   reach their locked `claim_sha256` by the projection (the claim component matches; `verify` stays
+   `TAMPERED` in the code component only, as before). Full resolved hashes from this extension: v0.1
+   `045a980e55e7427902405e8c4cfc6b6786aa2417c84a1f4f432d00c314fe6936`, v0.2
+   `27213d9406ed419ae12ea445e0ef2b8ad09507c5399c6400627dd6f70f9a04be`. The cases and sabotages of
+   extension 1 cover it (a non-default value, the version 2 among them, is refused).
+3. **The thresholds of `period_alias` in the corrections section (2026-10-18; branch
+   `claude/v0-2-1-reopen` only, until its merge; proposed as a package, item 6 of the decisions of
+   2026-10-18, and approved by the maintainer on 2026-10-18 as described).** Piece 6 of M4 (`period_alias` of revision
+   3, 5; `docs/validation/v0.2.1/reopen/m4-implementation-map.md`, Amendment 21) adds two settings
+   to the section, `alias_z_f` (default 18.47) and `alias_f` (default 0.5). This extension adds
+   them, at those defaults, to the frozen value of extensions 1 and 2 (the same path,
+   `test_plan.gauntlet.corrections`, for both historical entries); every other frozen value is
+   unchanged. With it, both historical claims still reach their locked `claim_sha256` by the
+   projection (the claim component matches; `verify` stays `TAMPERED` in the code component only).
+   Full resolved hashes from this extension: v0.1
+   `71cfc632ca84006b8149669bdf76d19d710c758193ada04300b643f9cb4f12b5`, v0.2
+   `57f8f2a38157076c6df0a43ffa95da8d3b3a7b5a876a1521da5af417923f4973`. Tests: the cases of
+   extension 1, with two more non-default values (`alias_z_f` 30.0 and `alias_f` 0.7) refused.
+   Sabotages: the new keys left out of the literal, and a literal with another default, each make
+   cases fail.
+4. **`b` and `s` of the capacity rule in the corrections section (2026-10-18; branch
+   `claude/v0-2-1-reopen` only, until its merge; package 25, approved by the maintainer on
+   2026-10-18).** The harness version 3 package (`docs/validation/v0.2.1/reopen/m4-implementation-map.md`,
+   Amendment 25) moves `b` and `s` of the holdout's capacity rule from module settings of
+   `holdout.py` to two settings of the section, `capacity_b` and `capacity_s` (defaults 0.0 and
+   0.0, which reproduce the threshold `min_snr`). This extension adds them, at those defaults, to the
+   frozen value of extensions 1 to 3 (the same path, both historical entries); every other frozen
+   value is unchanged. Both historical claims still reach their locked `claim_sha256` by the
+   projection (the claim component; `verify` stays `TAMPERED` in the code component). Full resolved
+   hashes from this extension: v0.1
+   `f88521edaa2bb645f2aa890dc3a0c23bcbd405611582444e983b485be13232dc`, v0.2
+   `3bfa36a392089040385c187155cae5bc1a41dece42e928a8b38654f7c37a5514`. Tests: the cases of
+   extension 1, with two more non-default values (`capacity_b` 0.1 and `capacity_s` 0.1) refused,
+   for both claims; the section written in the claim file, even at its defaults, still refused.
+   Sabotages: the new keys left out of the literal, and a literal with another default.
+
 ## When only the code differs (issue #66)
 
 Any code change after a lock makes `verify` `TAMPERED` (exit code 2), and that does not

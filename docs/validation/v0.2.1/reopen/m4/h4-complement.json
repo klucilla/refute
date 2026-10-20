@@ -1,0 +1,155 @@
+{
+  "first_construction_mechanism": {
+    "a_priori": {
+      "n_t_114": 6.062210817845252,
+      "n_t_75": 4.951767361255979
+    },
+    "candidate": {
+      "duration_hours": 3.3000000000000003,
+      "period": 0.8447065419456654
+    },
+    "detrended_masked": {
+      "n_t": 114,
+      "sectors": {
+        "1": {
+          "beta": 2.6691478199382246,
+          "beta_plain_std": 3.1683011870429056,
+          "n_bins": 91,
+          "sigma_w_plain_std_ppm": 895.9092111812487,
+          "sigma_w_robust_ppm": 894.5827960918925,
+          "std_kept_ppm": 895.9092111812487
+        },
+        "2": {
+          "beta": 3.056135175998836,
+          "beta_plain_std": 3.6958665611351025,
+          "n_bins": 93,
+          "sigma_w_plain_std_ppm": 918.0449332762191,
+          "sigma_w_robust_ppm": 913.8396426759236,
+          "std_kept_ppm": 918.0449332762191
+        }
+      }
+    },
+    "gate": {
+      "beta_d": 2.861285067565231,
+      "bls_snr": 21.762620469443213,
+      "corrected_snr": 7.605890344914776,
+      "depth_ppm": 262.3858380249519,
+      "duration_hours": 3.7950000000000004,
+      "gate_status": "PASS",
+      "passes_7_1": true,
+      "period": 0.8444953599773003,
+      "sector_betas": {
+        "1": 2.6691478199382246,
+        "2": 3.056135175998836
+      },
+      "t0": 1325.61875,
+      "validity_reasons": []
+    },
+    "raw_normalized": {
+      "n_t": 114,
+      "sectors": {
+        "1": {
+          "beta": 4.886802944219268,
+          "beta_plain_std": 5.091251675449991,
+          "n_bins": 91,
+          "sigma_w_plain_std_ppm": 989.3419219760642,
+          "sigma_w_robust_ppm": 992.228752136539,
+          "std_kept_ppm": 989.3419219760642
+        },
+        "2": {
+          "beta": 5.2963133296829294,
+          "beta_plain_std": 5.505006652448004,
+          "n_bins": 93,
+          "sigma_w_plain_std_ppm": 1013.9459071698649,
+          "sigma_w_robust_ppm": 1022.9061001911131,
+          "std_kept_ppm": 1013.9459071698649
+        }
+      }
+    }
+  },
+  "note": "for the record; the decision is the test's (map Amendment 18)",
+  "planet_on_the_same_curve": {
+    "injected": {
+      "depth_ppm": 270.0,
+      "duration_hours": 2.5,
+      "period": 3.7,
+      "t0": 1326.3
+    },
+    "planet_among_refined": false,
+    "planet_at_its_ephemeris": {
+      "beta_d": 2.9149308986440787,
+      "bls_snr": 13.837359776079609,
+      "corrected_snr": 4.747062711680833,
+      "depth_ppm": 300.7976003849481,
+      "duration_hours": 2.6250000000000004,
+      "gate_status": "FAIL",
+      "passes_7_1": false,
+      "period": 3.698832041213158,
+      "sector_betas": {
+        "1": 3.05571060142041,
+        "2": 2.759460617183389
+      },
+      "t0": 1326.3020833333333,
+      "validity_reasons": [
+        "train_snr_below_gate"
+      ]
+    },
+    "refined_candidates": [
+      {
+        "period": 0.6679522353318161
+      },
+      {
+        "period": 1.3433609969492346
+      },
+      {
+        "period": 0.9821865565769751
+      },
+      {
+        "period": 1.9816132231524355
+      },
+      {
+        "period": 0.6643570104032097
+      },
+      {
+        "period": 1.3436105703580978
+      },
+      {
+        "period": 4.097253742611067
+      },
+      {
+        "period": 2.0465457265473748
+      },
+      {
+        "period": 0.5015503678654042
+      },
+      {
+        "period": 1.0076361712550599
+      }
+    ],
+    "search_candidate": {
+      "depth_ppm": 105.29040397965478,
+      "duration_hours": 2.85,
+      "is_the_planet_or_an_alias": false,
+      "period": 0.5015693664651618,
+      "sde": 4.181765961710267
+    },
+    "search_candidate_gate": {
+      "beta_d": 2.353873211514069,
+      "bls_snr": 10.78818268931158,
+      "corrected_snr": 4.583162184157045,
+      "depth_ppm": 97.6714465856944,
+      "duration_hours": 2.2800000000000002,
+      "gate_status": "FAIL",
+      "passes_7_1": false,
+      "period": 0.5015152184048157,
+      "sector_betas": {
+        "1": 2.358629869399747,
+        "2": 2.349328629670874
+      },
+      "t0": 1325.43046875,
+      "validity_reasons": [
+        "train_snr_below_gate"
+      ]
+    }
+  }
+}
