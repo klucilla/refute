@@ -1,0 +1,15 @@
+{
+ "lot": "study",
+ "run": "C:\\Projetos\\refute\\.cache\\wt-v021\\.cache\\v021\\rmin-study-run",
+ "started_utc": "20261019T142943136714Z",
+ "dispatched": 25600,
+ "submitted": 25600,
+ "not_submitted": [],
+ "dispatch_error": null,
+ "deadline_hours": 254.815,
+ "deadline_reached": false,
+ "elapsed_hours": 45.24262257736111,
+ "failures": [],
+ "integrity_problems": [],
+ "complete": true
+}

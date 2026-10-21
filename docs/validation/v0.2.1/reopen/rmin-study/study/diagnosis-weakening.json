@@ -1,0 +1,468 @@
+{
+ "min_snr": 5.0,
+ "weakened_targets": 25600,
+ "by_r": {
+  "8": {
+   "pair": {
+    "b": 0.584691722288623,
+    "rounds": 79,
+    "s": 2.88283308523186,
+    "targets": 40
+   },
+   "capacity_threshold_by_n_years": {
+    "2": 12.50751809645598,
+    "3": 12.876998418315278,
+    "4": 13.131097008143934
+   },
+   "groups": {
+    "AR(1), no variability": {
+     "counts": {
+      "targets": 6400,
+      "decisions_pass": 1172,
+      "stops: insufficient_capacity_hidden_noise": 193,
+      "stops: train-only": 2088,
+      "stops: insufficient_capacity_train": 2362,
+      "stops: hidden_noise_undetermined": 446,
+      "stops: train_replicas_below_r_min": 41,
+      "stops: train_snr_below_gate": 27,
+      "stops: train_noise_undetermined": 55,
+      "stops: duration_period_ratio_above_max": 13,
+      "stops: only": 3
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 1172,
+      "min": 12.591033158392216,
+      "max": 63.28026481023545
+     }
+    },
+    "AR(1), variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 5396,
+      "stops: insufficient_capacity_hidden_noise": 146,
+      "decisions_pass": 210,
+      "stops: hidden_noise_undetermined": 15,
+      "stops: train_noise_undetermined": 417,
+      "stops: duration_period_ratio_above_max": 111,
+      "stops: train-only": 28,
+      "stops: train_replicas_below_r_min": 56,
+      "stops: train_snr_below_gate": 20,
+      "stops: hidden_window_fraction_above_max": 1
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 210,
+      "min": 12.92148782042092,
+      "max": 39.28300106907838
+     }
+    },
+    "white, no variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: train-only": 3407,
+      "decisions_pass": 630,
+      "stops: hidden_noise_undetermined": 442,
+      "stops: insufficient_capacity_train": 1462,
+      "stops: insufficient_capacity_hidden_noise": 69,
+      "stops: train_replicas_below_r_min": 26,
+      "stops: train_snr_below_gate": 303,
+      "stops: train_noise_undetermined": 44,
+      "stops: duration_period_ratio_above_max": 4,
+      "stops: only": 13
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 630,
+      "min": 12.518930662435865,
+      "max": 41.87591421314061
+     }
+    },
+    "white, variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 5064,
+      "stops: train_noise_undetermined": 640,
+      "stops: train_snr_below_gate": 445,
+      "stops: train_replicas_below_r_min": 76,
+      "stops: duration_period_ratio_above_max": 69,
+      "stops: insufficient_capacity_hidden_noise": 65,
+      "decisions_pass": 41
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 41,
+      "min": 13.066307217849998,
+      "max": 26.23462129623368
+     }
+    }
+   }
+  },
+  "10": {
+   "pair": {
+    "b": 0.584691722288623,
+    "rounds": 79,
+    "s": 2.88283308523186,
+    "targets": 40
+   },
+   "capacity_threshold_by_n_years": {
+    "2": 12.50751809645598,
+    "3": 12.876998418315278,
+    "4": 13.131097008143934
+   },
+   "groups": {
+    "AR(1), no variability": {
+     "counts": {
+      "targets": 6400,
+      "decisions_pass": 1141,
+      "stops: insufficient_capacity_hidden_noise": 187,
+      "stops: train-only": 2088,
+      "stops: insufficient_capacity_train": 2334,
+      "stops: hidden_noise_undetermined": 363,
+      "stops: train_replicas_below_r_min": 189,
+      "stops: train_snr_below_gate": 27,
+      "stops: train_noise_undetermined": 55,
+      "stops: duration_period_ratio_above_max": 13,
+      "stops: only": 3
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 1141,
+      "min": 12.591033158392216,
+      "max": 63.28026481023545
+     }
+    },
+    "AR(1), variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 5396,
+      "stops: insufficient_capacity_hidden_noise": 146,
+      "decisions_pass": 210,
+      "stops: hidden_noise_undetermined": 15,
+      "stops: train_noise_undetermined": 417,
+      "stops: duration_period_ratio_above_max": 111,
+      "stops: train-only": 28,
+      "stops: train_replicas_below_r_min": 56,
+      "stops: train_snr_below_gate": 20,
+      "stops: hidden_window_fraction_above_max": 1
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 210,
+      "min": 12.92148782042092,
+      "max": 39.28300106907838
+     }
+    },
+    "white, no variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: train-only": 3407,
+      "decisions_pass": 622,
+      "stops: hidden_noise_undetermined": 418,
+      "stops: insufficient_capacity_train": 1453,
+      "stops: insufficient_capacity_hidden_noise": 67,
+      "stops: train_replicas_below_r_min": 69,
+      "stops: train_snr_below_gate": 303,
+      "stops: train_noise_undetermined": 44,
+      "stops: duration_period_ratio_above_max": 4,
+      "stops: only": 13
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 622,
+      "min": 12.518930662435865,
+      "max": 40.87507040193523
+     }
+    },
+    "white, variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 5064,
+      "stops: train_noise_undetermined": 640,
+      "stops: train_snr_below_gate": 445,
+      "stops: train_replicas_below_r_min": 76,
+      "stops: duration_period_ratio_above_max": 69,
+      "stops: insufficient_capacity_hidden_noise": 65,
+      "decisions_pass": 41
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 41,
+      "min": 13.066307217849998,
+      "max": 26.23462129623368
+     }
+    }
+   }
+  },
+  "12": {
+   "pair": {
+    "b": 0.6320167512196737,
+    "rounds": 76,
+    "s": 2.8432292703670456,
+    "targets": 38
+   },
+   "capacity_threshold_by_n_years": {
+    "2": 12.34902382184416,
+    "3": 12.71342829302793,
+    "4": 12.964036124560334
+   },
+   "groups": {
+    "AR(1), no variability": {
+     "counts": {
+      "targets": 6400,
+      "decisions_pass": 945,
+      "stops: insufficient_capacity_hidden_noise": 129,
+      "stops: hidden_noise_undetermined": 629,
+      "stops: train-only": 2088,
+      "stops: insufficient_capacity_train": 2316,
+      "stops: train_replicas_below_r_min": 195,
+      "stops: train_snr_below_gate": 27,
+      "stops: train_noise_undetermined": 55,
+      "stops: duration_period_ratio_above_max": 13,
+      "stops: only": 3
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 945,
+      "min": 12.390734427973245,
+      "max": 63.28026481023545
+     }
+    },
+    "AR(1), variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 5377,
+      "stops: insufficient_capacity_hidden_noise": 146,
+      "decisions_pass": 220,
+      "stops: hidden_noise_undetermined": 24,
+      "stops: train_noise_undetermined": 417,
+      "stops: duration_period_ratio_above_max": 111,
+      "stops: train-only": 28,
+      "stops: train_replicas_below_r_min": 56,
+      "stops: train_snr_below_gate": 20,
+      "stops: hidden_window_fraction_above_max": 1
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 220,
+      "min": 12.86204347574443,
+      "max": 39.28300106907838
+     }
+    },
+    "white, no variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: train-only": 3407,
+      "decisions_pass": 477,
+      "stops: hidden_noise_undetermined": 604,
+      "stops: insufficient_capacity_train": 1431,
+      "stops: insufficient_capacity_hidden_noise": 46,
+      "stops: train_replicas_below_r_min": 71,
+      "stops: train_snr_below_gate": 303,
+      "stops: train_noise_undetermined": 44,
+      "stops: duration_period_ratio_above_max": 4,
+      "stops: only": 13
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 477,
+      "min": 12.35894756670567,
+      "max": 40.87507040193523
+     }
+    },
+    "white, variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 5052,
+      "stops: train_noise_undetermined": 640,
+      "stops: train_snr_below_gate": 445,
+      "stops: train_replicas_below_r_min": 76,
+      "stops: duration_period_ratio_above_max": 69,
+      "stops: insufficient_capacity_hidden_noise": 69,
+      "decisions_pass": 49
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 49,
+      "min": 12.723538140312776,
+      "max": 26.23462129623368
+     }
+    }
+   }
+  },
+  "15": {
+   "pair": {
+    "b": 0.7990967419253647,
+    "rounds": 68,
+    "s": 2.5171807651315876,
+    "targets": 34
+   },
+   "capacity_threshold_by_n_years": {
+    "2": 11.266714666824514,
+    "3": 11.58933090293034,
+    "4": 11.811200176611273
+   },
+   "groups": {
+    "AR(1), no variability": {
+     "counts": {
+      "targets": 6400,
+      "decisions_pass": 683,
+      "stops: hidden_noise_undetermined": 1064,
+      "stops: train-only": 2088,
+      "stops: insufficient_capacity_train": 2151,
+      "stops: insufficient_capacity_hidden_noise": 53,
+      "stops: train_replicas_below_r_min": 263,
+      "stops: train_snr_below_gate": 27,
+      "stops: train_noise_undetermined": 55,
+      "stops: duration_period_ratio_above_max": 13,
+      "stops: only": 3
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 683,
+      "min": 11.422201904988007,
+      "max": 50.8443922174961
+     }
+    },
+    "AR(1), variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 5213,
+      "stops: insufficient_capacity_hidden_noise": 170,
+      "decisions_pass": 316,
+      "stops: hidden_noise_undetermined": 66,
+      "stops: train_noise_undetermined": 417,
+      "stops: duration_period_ratio_above_max": 111,
+      "stops: train-only": 28,
+      "stops: train_replicas_below_r_min": 58,
+      "stops: train_snr_below_gate": 20,
+      "stops: hidden_window_fraction_above_max": 1
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 316,
+      "min": 11.616975533739812,
+      "max": 39.28300106907838
+     }
+    },
+    "white, no variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: train-only": 3407,
+      "decisions_pass": 370,
+      "stops: hidden_noise_undetermined": 798,
+      "stops: insufficient_capacity_train": 1341,
+      "stops: insufficient_capacity_hidden_noise": 22,
+      "stops: train_replicas_below_r_min": 98,
+      "stops: train_snr_below_gate": 303,
+      "stops: train_noise_undetermined": 44,
+      "stops: duration_period_ratio_above_max": 4,
+      "stops: only": 13
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 370,
+      "min": 11.617491136847994,
+      "max": 40.87507040193523
+     }
+    },
+    "white, variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 4957,
+      "stops: train_noise_undetermined": 640,
+      "stops: insufficient_capacity_hidden_noise": 107,
+      "stops: train_snr_below_gate": 445,
+      "stops: train_replicas_below_r_min": 76,
+      "stops: duration_period_ratio_above_max": 69,
+      "decisions_pass": 104,
+      "stops: hidden_noise_undetermined": 2
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 104,
+      "min": 11.627250125840023,
+      "max": 26.23462129623368
+     }
+    }
+   }
+  },
+  "20": {
+   "pair": {
+    "b": 0.5294476875283372,
+    "rounds": 48,
+    "s": 1.9301718923587667,
+    "targets": 24
+   },
+   "capacity_threshold_by_n_years": {
+    "2": 9.888609993030798,
+    "3": 10.135991825744544,
+    "4": 10.306120980459664
+   },
+   "groups": {
+    "AR(1), no variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: train_replicas_below_r_min": 842,
+      "decisions_pass": 482,
+      "stops: hidden_noise_undetermined": 1095,
+      "stops: train-only": 2088,
+      "stops: insufficient_capacity_train": 1776,
+      "stops: insufficient_capacity_hidden_noise": 19,
+      "stops: train_snr_below_gate": 27,
+      "stops: train_noise_undetermined": 55,
+      "stops: duration_period_ratio_above_max": 13,
+      "stops: only": 3
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 482,
+      "min": 10.209224180007805,
+      "max": 44.9939958404282
+     }
+    },
+    "AR(1), variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 4928,
+      "decisions_pass": 401,
+      "stops: hidden_noise_undetermined": 248,
+      "stops: insufficient_capacity_hidden_noise": 178,
+      "stops: train_replicas_below_r_min": 68,
+      "stops: train_noise_undetermined": 417,
+      "stops: duration_period_ratio_above_max": 111,
+      "stops: train-only": 28,
+      "stops: train_snr_below_gate": 20,
+      "stops: hidden_window_fraction_above_max": 1
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 401,
+      "min": 10.174327199804692,
+      "max": 37.58245480641344
+     }
+    },
+    "white, no variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: train-only": 3407,
+      "stops: hidden_noise_undetermined": 753,
+      "stops: train_replicas_below_r_min": 369,
+      "decisions_pass": 306,
+      "stops: insufficient_capacity_train": 1173,
+      "stops: insufficient_capacity_hidden_noise": 28,
+      "stops: train_snr_below_gate": 303,
+      "stops: train_noise_undetermined": 44,
+      "stops: duration_period_ratio_above_max": 4,
+      "stops: only": 13
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 306,
+      "min": 10.180243477389759,
+      "max": 40.80393415850943
+     }
+    },
+    "white, variability": {
+     "counts": {
+      "targets": 6400,
+      "stops: insufficient_capacity_train": 4760,
+      "stops: insufficient_capacity_hidden_noise": 141,
+      "decisions_pass": 179,
+      "stops: train_noise_undetermined": 640,
+      "stops: hidden_noise_undetermined": 88,
+      "stops: train_snr_below_gate": 445,
+      "stops: train_replicas_below_r_min": 78,
+      "stops: duration_period_ratio_above_max": 69
+     },
+     "s_pred_2_of_decision_passing": {
+      "n": 179,
+      "min": 10.15692352389017,
+      "max": 23.150697437615285
+     }
+    }
+   }
+  }
+ }
+}

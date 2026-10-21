@@ -1,0 +1,41 @@
+{
+ "code": "claude/v0-2-1-reopen 2e4ff998ca1596c281abf915222714e1276173f3 (.cache/wt-v021)",
+ "configuration_problems": [],
+ "lot_problems": [],
+ "expected": 76800,
+ "record_files": 76800,
+ "manifest_file_sha256": "61acbc6a30cc4d4abb5e55a00d834aaed75fc7c8127e4d98a0b86d8b814e899c",
+ "source": {
+  "lot": "study",
+  "configuration": {
+   "format": "refute-m4-configuration/1",
+   "name": "M4-rmin-study",
+   "path": "docs/validation/v0.2.1/population/m4-configurations/rmin-study.json",
+   "sha256": "27f2e277411d275f2cc23cdbd65b5a393751d7ba2b03b518494318d10ab44cdb",
+   "block_sha256": "c5daf69afb09fb9b1237a1bd7afd2595f85d200ed13b7e11e90005b671753a4d"
+  },
+  "manifest_sha256": "a6e1a7d6c74a46858b4dc488562b4ad3112073115550445bc8cc69e812d3b162",
+  "records_sha256": "2438020e0a4b6b3f098a341312417ecf2c862a45f8316d9d56255855e06eeeee",
+  "records": 76800
+ },
+ "run_reports": {
+  "run-report-20261019T142943136714Z.json": {
+   "sha256": "49334a5af512268a77d10ddeec648fb71ddce3bef17803b91863246ce087e7e8",
+   "content": {
+    "lot": "study",
+    "run": "C:\\Projetos\\refute\\.cache\\wt-v021\\.cache\\v021\\rmin-study-run",
+    "started_utc": "20261019T142943136714Z",
+    "dispatched": 25600,
+    "submitted": 25600,
+    "not_submitted": [],
+    "dispatch_error": null,
+    "deadline_hours": 254.815,
+    "deadline_reached": false,
+    "elapsed_hours": 45.24262257736111,
+    "failures": [],
+    "integrity_problems": [],
+    "complete": true
+   }
+  }
+ }
+}
