@@ -1,5 +1,14 @@
 # X1: the instrumentation, implemented under its acceptance record
 
+**Closed on 2026-10-21** (the maintainer's decision after X0 and X1, item 1), in the scope of the
+instrumentation, with Codex's agreement on `3ab00db`. Its limits stay part of the record:
+- AC5's exact comparison holds **only on the machine that made the snapshot**; elsewhere AC5 checks
+  the structure only. This does **not** show numerical equivalence across machines.
+- The truth's guard and the sabotages strengthen the information contract (the engine does not read
+  the evaluator's truth); they do **not** show that `e_pred` or `b`/`s` are right.
+- A future improvement, with its own acceptance and without reopening X1: compare the code before
+  and after the instrumentation on the same runner, with the same data and environment.
+
 Authorized by the maintainer on 2026-10-21 (no lot). The acceptance record:
 [instrumentation-acceptance.md](instrumentation-acceptance.md) (revision 2, committed in `c5d1287`
 before the tests and the code). **No decision of the engine changed.**

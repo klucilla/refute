@@ -85,6 +85,20 @@ byte.
 | `x0a.json` | `25fda7ae3656421e91561111fad996362d816ff40d416c12ea3dadb75237ce29` | the same |
 | `x0b.json` | `4d271dab365ef212e731d15450948fb26f4acb902ac41d91fe26d1cc39e4ebeb` | the same |
 
+## Qualifications (the maintainer's decision of 2026-10-21, item 5)
+
+Added after the results; nothing above changed:
+- **"No false PASS under B"** means none observed in this lot. B does not correct a detection by
+  noise when every year PASSes: the two last-year detections at `S_meas` 5.15 and 5.41 were removed
+  only because another year of those targets was undecided.
+- **The threshold is not raised** only to remove such cases; their control comes from the whole
+  operation, evaluated on independent data.
+- **Releasing the gates is not presumed good:** X2 and X3 can bring new PASS and new FAIL; safety
+  and utility are measured again.
+- **The false FAIL:** its fraction among the decided rises under B (2/476 → 2/36) because PASS
+  targets leave the denominator; more PASS would lower it without correcting any error. The FAIL
+  themselves are examined by X0c ([../x0c/](../x0c/)).
+
 These numbers describe this lot under the R_min study's gates (the b/s pairs of bs-choice); they
 are not a measurement of B under the corrected gates, which belongs to the pilot (experiment plan,
 X5) after its own authorization.

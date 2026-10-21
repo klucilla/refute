@@ -53,7 +53,13 @@ function serves the engine and every study's evaluator; no second implementation
 | INCONCLUSIVE, FAIL | FAIL | **FAIL** |
 | FAIL, PASS, INCONCLUSIVE | FAIL | **FAIL** |
 | INCONCLUSIVE, INCONCLUSIVE | INCONCLUSIVE | **INCONCLUSIVE** |
+| PASS, INCONCLUSIVE `no_predicted_window` (a necessary year without a predicted window) | PASS | **INCONCLUSIVE** (`necessary_years_undecided`: the second year, reason `no_predicted_window`) |
+| FAIL, INCONCLUSIVE `no_predicted_window` | FAIL | **FAIL** (a valid FAIL keeps its precedence) |
 | one year only (the engine already refuses: fewer than 2 years) | INCONCLUSIVE | **INCONCLUSIVE** (unchanged) |
+
+(The two `no_predicted_window` rows were added on 2026-10-21 at the maintainer's request, before
+the tests and the code of X1b: the X0 records never reached that reason, so B's behaviour there was
+not exercised. They follow from B2 as written; no rule changed.)
 
 ## B4. The controls, positive and negative (synthetic, fixed before the code)
 
@@ -70,6 +76,9 @@ two and with three observing years:
   other rounds PASS: **INCONCLUSIVE** (today PASS), reported as abstention, not as an error.
 - **C5, refusal:** a curve with no transit, or with a train candidate rejected before the capacity
   rule: **never PASS**.
+- **C7, a necessary year without a predicted window** (added on 2026-10-21, before the code): a
+  planet whose last-year round stops with `no_predicted_window`, the other rounds PASS:
+  **INCONCLUSIVE** (today PASS); the same with another round FAIL: **FAIL**.
 - **C6, no leak:** changing year Y's hidden flux leaves unchanged, **in the round that hides Y**,
   the train-only preparation and every decision made **before any hidden datum is read** (the train
   candidate, the ephemeris, the timing rule, the train replicas and decision 1; the existing
@@ -101,9 +110,28 @@ In a corrected study, for the **disappearing** scenario, per group in scope and 
   INCONCLUSIVE and leave that denominator; so both FAIL / decided and FAIL / total are reported,
   with the decided count, under B and under today's rule.
 
-## B6. What this needs before it counts
+## B6. What this needs before it counts: implementation is not adoption
 
-The change is a change of the engine's verdict rule: it needs its own acceptance record (tests before
-code, the controls above), its implementation reviewed, and its validation inside a corrected study
-whose criteria include B5. Until then the current rule stays in the code, and no result resting on
-the blind holdout by year is published (the containment of 2026-10-21).
+Revised on 2026-10-21 (the maintainer's decision after X0 and X1, item 2), before the tests and the
+code of X1b. The change is a change of the engine's verdict rule, in two separate steps:
+
+1. **Implementation (X1b, authorized as experimental):** one function, in the engine, used by the
+   engine and by every study's evaluator; reached **only** on the experimental M4 path and only when
+   it is asked for by name (`aggregation="spec_b_experimental"`), never by default and never from a
+   configuration file; refused outside the M4 path (the corrections switch off). The legacy rule
+   stays the default everywhere, with its outputs unchanged, and every frozen record (the R_min
+   study, the diagnosis, X0, the v0.3 dossiers) keeps its bytes and its reading. Its acceptance
+   record ([x1b-acceptance.md](x1b-acceptance.md)), the tests before the code, the controls above
+   and a Codex review are what X1b needs. Implemented, the rule is **not** adopted: no verdict, no
+   study result and no dossier uses it.
+2. **Adoption (not authorized):** only after its validation inside a corrected study whose criteria
+   include B5, with its own authorization; until then no result resting on the blind holdout by year
+   is published (the containment of 2026-10-21), and nothing is promoted to SURVIVED.
+
+**What B does not do** (the maintainer's qualification of 2026-10-21, item 5): "no false PASS under
+B" means none **observed** in the X0 lot; B does not correct a detection by noise when every year
+PASSes (the two last-year detections of X0a, `S_meas` 5.15 and 5.41, were removed only because
+another year of those targets was undecided). The threshold is not raised only to remove such cases;
+their control comes from the whole operation, evaluated on independent data. And releasing the
+gates (X2, X3) is not presumed good: it can bring new PASS and new FAIL, so safety and utility are
+measured again.
