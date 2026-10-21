@@ -1820,10 +1820,81 @@ def derive_round(
     return out(status, reason, "pass", "pass", eligible)
 
 
+AGGREGATION_LEGACY = "legacy"
+AGGREGATION_SPEC_B = "spec_b_experimental"
+_SPEC_B_STATUSES = ("PASS", "FAIL", "INCONCLUSIVE")
+
+
+class SpecBCompletenessError(ValueError):
+    """Specification B's completeness refused (B4): never an outcome, always an error."""
+
+
+def spec_b_outcome(
+    rounds: Sequence[tuple[int, str, str | None]], necessary_years: Sequence[int]
+) -> dict[str, Any]:
+    """Specification B's aggregation (docs/validation/v0.2.1/reopen/stage-1/spec-b-target-pass.md,
+    B1 and B2; experimental, X1b): ``rounds`` are ``(hidden_year, status, reason)``, one per
+    necessary year (the observing years of the curve, fixed from its metadata). Any FAIL gives FAIL;
+    otherwise PASS only when every necessary year's round is PASS; otherwise INCONCLUSIVE with the
+    undecided years. The one implementation for the engine and every study's evaluator; it does not
+    depend on the order of the rounds."""
+    years = [int(y) for y in necessary_years]
+    if len(set(years)) != len(years):
+        raise SpecBCompletenessError(f"a necessary year is listed twice: {sorted(years)}")
+    if not rounds:
+        raise SpecBCompletenessError("no round")
+    by_year: dict[int, tuple[str, str | None]] = {}
+    for year, status, reason in rounds:
+        if not (isinstance(status, str) and type(status) is str and status in _SPEC_B_STATUSES):
+            raise SpecBCompletenessError(f"year {year}: status {status!r} is not one of the three")
+        if year not in years:
+            raise SpecBCompletenessError(f"a round of year {year}, not a necessary year")
+        if year in by_year:
+            raise SpecBCompletenessError(f"two rounds of year {year}")
+        by_year[int(year)] = (status, reason)
+    missing = sorted(set(years) - set(by_year))
+    if missing:
+        raise SpecBCompletenessError(f"necessary year(s) without a round: {missing}")
+    ordered = sorted(by_year.items())
+    fail_years = [y for y, (s, _) in ordered if s == "FAIL"]
+    pass_years = [y for y, (s, _) in ordered if s == "PASS"]
+    undecided = [{"year": y, "reason": r} for y, (s, r) in ordered if s == "INCONCLUSIVE"]
+    if fail_years:
+        status, reason = "FAIL", "prediction_failed"
+    elif len(years) < 2:
+        status, reason = "INCONCLUSIVE", "fewer_than_two_observing_years"
+    elif len(pass_years) == len(years):
+        status, reason = "PASS", None
+    else:
+        status, reason = "INCONCLUSIVE", "necessary_years_undecided"
+    return {
+        "rule": AGGREGATION_SPEC_B,
+        "status": status,
+        "reason": reason,
+        "fail_years": fail_years,
+        "pass_years": pass_years,
+        "undecided": undecided,
+    }
+
+
 def run_holdout(
-    raw: LightCurveData, sectors: Sequence[SectorInfo], plan: TessTestPlan
+    raw: LightCurveData,
+    sectors: Sequence[SectorInfo],
+    plan: TessTestPlan,
+    *,
+    aggregation: str = AGGREGATION_LEGACY,
 ) -> HoldoutOutcome:
-    """Blind holdout by year. Receives raw data and metadata only; never a candidate."""
+    """Blind holdout by year. Receives raw data and metadata only; never a candidate.
+
+    ``aggregation`` is the legacy rule by default. ``"spec_b_experimental"`` (X1b) aggregates the
+    rounds by specification B (``spec_b_outcome``) and is accepted only on the M4 path (the
+    corrections switch on); it is experimental, asked for by name only, and adopted nowhere."""
+    if aggregation not in (AGGREGATION_LEGACY, AGGREGATION_SPEC_B):
+        raise ValueError(f"unknown aggregation {aggregation!r}")
+    if aggregation == AGGREGATION_SPEC_B and not (
+        isinstance(plan, TessTestPlan) and plan.gauntlet.corrections.active
+    ):
+        raise ValueError("the experimental aggregation needs the corrections switch on (M4)")
     for argument in (raw, sectors, plan):
         if isinstance(argument, Candidate):
             raise TypeError("run_holdout must not receive the global candidate")
@@ -1857,6 +1928,8 @@ def run_holdout(
         "n_fail": statuses.count(TestStatus.FAIL),
         "n_inconclusive": statuses.count(TestStatus.INCONCLUSIVE),
     }
+    if aggregation == AGGREGATION_SPEC_B:
+        return _spec_b_holdout(rounds, years, summary, thresholds)
     if TestStatus.FAIL in statuses:
         failed = [str(r.hidden_year) for r in rounds if r.status is TestStatus.FAIL]
         status, message = (
@@ -1881,6 +1954,43 @@ def run_holdout(
         Severity.FATAL,
         message,
         metrics=summary,
+        thresholds=thresholds,
+        coverage=examined,
+        coverage_unit="hidden-year windows measured in conclusive rounds",
+    )
+    return HoldoutOutcome(test, rounds)
+
+
+def _spec_b_holdout(
+    rounds: list[RoundResult], years: list[int], summary: dict[str, Any], thresholds: dict
+) -> HoldoutOutcome:
+    """``run_holdout``'s outcome under specification B (experimental, X1b): the rounds as made, the
+    target's status from ``spec_b_outcome`` with the curve's observing years as the necessary years;
+    the coverage, the windows measured in the conclusive rounds (all of them for a PASS)."""
+    b = spec_b_outcome(
+        [(r.hidden_year, r.status.value, r.metrics.get("reason")) for r in rounds], years
+    )
+    status = TestStatus(b["status"])
+    if status is TestStatus.FAIL:
+        message = "prediction failed for hidden year(s) " + ", ".join(map(str, b["fail_years"]))
+    elif status is TestStatus.PASS:
+        message = f"predictions confirmed in every one of the {len(years)} hidden years"
+    elif b["reason"] == "fewer_than_two_observing_years":
+        message = f"data from {len(years)} observing year(s); at least 2 are needed"
+    else:
+        undecided = ", ".join(f"{u['year']} ({u['reason']})" for u in b["undecided"])
+        message = "necessary year(s) undecided: " + undecided
+    examined = sum(
+        int(r.metrics.get("n_windows_with_data") or 0)
+        for r in rounds
+        if r.status is not TestStatus.INCONCLUSIVE
+    )
+    test = TestResult(
+        TEST_NAME,
+        status,
+        Severity.FATAL,
+        message,
+        metrics={**summary, "aggregation": AGGREGATION_SPEC_B, "spec_b": b},
         thresholds=thresholds,
         coverage=examined,
         coverage_unit="hidden-year windows measured in conclusive rounds",

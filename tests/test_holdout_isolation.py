@@ -83,13 +83,18 @@ def test_hidden_year_detrending_depends_only_on_the_registered_windows():
 
 
 def test_run_holdout_rejects_a_candidate_argument():
-    params = list(inspect.signature(run_holdout).parameters)
-    assert params == ["raw", "sectors", "plan"]
+    params = inspect.signature(run_holdout).parameters
+    # the data parameters are the three positional ones; X1b (2026-10-21) added only the
+    # keyword-only `aggregation` string (docs/validation/v0.2.1/reopen/stage-1/x1b-acceptance.md)
+    assert list(params) == ["raw", "sectors", "plan", "aggregation"]
+    assert params["aggregation"].kind is inspect.Parameter.KEYWORD_ONLY
     data = scenario_data("planet")
     plan = TessTestPlan.model_validate(fast_plan_dict())
     candidate_result = _wrong_search(None, None).candidate
     with pytest.raises(TypeError):
         run_holdout(data.lc, data.sectors, plan, candidate_result)  # type: ignore[call-arg]
+    with pytest.raises(ValueError):
+        run_holdout(data.lc, data.sectors, plan, aggregation=candidate_result)  # type: ignore[arg-type]
     with pytest.raises(TypeError):
         run_holdout(candidate_result, data.sectors, plan)  # type: ignore[arg-type]
     with pytest.raises(TypeError):

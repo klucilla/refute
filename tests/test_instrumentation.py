@@ -493,7 +493,12 @@ def test_the_record_stays_plain_json(results):
 
 
 def test_the_engine_signatures_are_unchanged():
-    assert list(inspect.signature(holdout.run_holdout).parameters) == ["raw", "sectors", "plan"]
+    # X1b (2026-10-21, docs/validation/v0.2.1/reopen/stage-1/x1b-acceptance.md) added one
+    # keyword-only argument, `aggregation`, whose default is the legacy rule; no truth reaches it
+    params = inspect.signature(holdout.run_holdout).parameters
+    assert list(params) == ["raw", "sectors", "plan", "aggregation"]
+    assert params["aggregation"].kind is inspect.Parameter.KEYWORD_ONLY
+    assert params["aggregation"].default == holdout.AGGREGATION_LEGACY == "legacy"
     assert list(inspect.signature(holdout.calibration_measurement).parameters) == [
         "raw",
         "sectors",

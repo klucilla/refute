@@ -17,6 +17,7 @@ from collections import Counter
 import numpy as np
 from scipy.stats import beta
 
+from refute.packs.tess import holdout as _holdout
 from refute.packs.tess.holdout import derive_round, replicas_enough
 
 R_VALUES = (8, 10, 12, 15, 20)
@@ -149,10 +150,22 @@ def aggregate(statuses: list[str]) -> str:
     return "INCONCLUSIVE"
 
 
-def target_outcomes(rec: dict, r_min: int, b: float, s: float, min_snr: float) -> dict:
+def target_outcomes(
+    rec: dict,
+    r_min: int,
+    b: float,
+    s: float,
+    min_snr: float,
+    *,
+    aggregation: str = _holdout.AGGREGATION_LEGACY,
+) -> dict:
     """The target at ``R`` and the pair: each round derived, the aggregated status, its
     eligibility, its first eligible round (in increasing year) and the round hiding its last
-    observing year (the largest year of the metadata)."""
+    observing year (the largest year of the metadata). ``aggregation="spec_b_experimental"``
+    (X1b) aggregates by specification B with the engine's ``spec_b_outcome`` and the record's
+    observing years as the necessary years, and adds ``"spec_b"``; the default is unchanged."""
+    if aggregation not in (_holdout.AGGREGATION_LEGACY, _holdout.AGGREGATION_SPEC_B):
+        raise ValueError(f"unknown aggregation {aggregation!r}")
     derived = {
         r["hidden_year"]: {**derive_round(r, r_min, b, s, min_snr), "record": r}
         for r in rec["rounds"]
@@ -160,8 +173,19 @@ def target_outcomes(rec: dict, r_min: int, b: float, s: float, min_snr: float) -
     ordered = [derived[y] for y in sorted(derived)]
     last_year = max(rec["years"])
     first = next((d for d in ordered if d["eligible"]), None)
+    extra = {}
+    if aggregation == _holdout.AGGREGATION_SPEC_B:
+        spec_b = _holdout.spec_b_outcome(
+            [(d["record"]["hidden_year"], d["status"], d["reason"]) for d in ordered],
+            rec["years"],
+        )
+        status = spec_b["status"]
+        extra = {"spec_b": spec_b}
+    else:
+        status = aggregate([d["status"] for d in ordered])
     return {
-        "status": aggregate([d["status"] for d in ordered]),
+        **extra,
+        "status": status,
         "eligible": first is not None,
         "first_eligible": (
             None if first is None else {**first, "hidden_year": first["record"]["hidden_year"]}
