@@ -9,6 +9,19 @@ again, and the residuals gave the committed `(b, s)` pairs again (checked by
 **no R_min was validated**; the lot is development evidence. The numbers below are descriptions
 (declaration, section 1): no simultaneous guarantee, nothing validated.
 
+**Summary of the failure (the maintainer's wording, 2026-10-21).** The study did not fail mainly
+by sample size. It failed by the false-FAIL minima not reached in three groups, and also by the
+incompatibility of the weakening criterion, by coverage outside its band in some configurations,
+by the disappearance criterion not met in one group, and by a gap in the control of the target's
+PASS (26 PASS among the 241 decided disappearing targets of `AR(1), variability` at R = 8; the
+fraction is of the decided targets of that group, never of the 6400).
+
+**After this delivery.** The maintainer's decisions of 2026-10-21 on it (the weakened scenario's
+definition (a), the target's PASS specified now rather than measured first, the scope rule, the
+instrumentation as the next technical step) are in [../../stage-1/README.md](../../stage-1/README.md);
+where the proposal below differs from them, they prevail (for example problem 5's correction: the
+target's PASS is specified before the pilot, not measured first).
+
 **A departure from the declaration, found and corrected.** The first run pooled the three
 scenarios in Q3 (its distributions were keyed by group, band and mechanism), while the
 declaration's default is R × group × scenario. Codex's opinion on the delivery found it. The

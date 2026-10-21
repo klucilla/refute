@@ -7,6 +7,17 @@ design of Amendment 19, readings of Amendment 26), run and evaluated with the co
 ends. Nothing here was tuned after the result; the criteria, sizes and readings are those
 committed before the lot.
 
+## Summary of the failure (the maintainer's wording, 2026-10-21)
+
+The study did not fail mainly by sample size. It failed by the minima of the false-FAIL criterion
+not reached in three of the four groups, **and also** by the incompatibility of the weakening
+criterion with the calibrated gates, by coverage outside its band in some configurations
+(`white, no variability` at R = 10; `white, variability` at R = 12), by the disappearance
+criterion not met in one group (`white, variability` at R = 8 to 12, fewer qualified targets than
+its minimum of 83), and by a gap in the control of the target's PASS (in `AR(1), variability`, 26
+PASS among the 241 decided disappearing targets at R = 8, none seen by the criteria; see
+[../diagnosis/README.md](../diagnosis/README.md)). Every record of this study uses this wording.
+
 ## Status of the result (the maintainer's decisions of 2026-10-21)
 
 1. **No `R_min` was validated by the declared protocol.** The run's integrity does not change
