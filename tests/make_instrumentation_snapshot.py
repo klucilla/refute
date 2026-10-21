@@ -48,8 +48,9 @@ def main() -> int:
     # added after Codex's review of the round (the first snapshot recorded HEAD only): the
     # engine's source must be the committed one, and its identity and the environment recorded
     dirty = subprocess.run(
-        ["git", "status", "--porcelain", "--", "src"],
-        cwd=HERE,
+        # from the repository's root (Codex's second review: cwd=tests/ checked tests/src/)
+        ["git", "status", "--porcelain", "--", ":(top)src"],
+        cwd=HERE.parent,
         capture_output=True,
         text=True,
         check=True,

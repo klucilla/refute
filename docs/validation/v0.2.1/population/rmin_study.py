@@ -411,9 +411,32 @@ def _guard() -> None:
         raise RuntimeError("the evaluator's truth was read during an engine call")
 
 
+class _GuardedIterator:
+    """An iterator over the truth guarded at its creation **and at every advance**: an iterator
+    started before an engine call and advanced during it raises (Codex's second review: a generator
+    guarded only before its loop let a resumed iterator through)."""
+
+    __slots__ = ("_values", "_i")
+
+    def __init__(self, values: tuple):
+        _guard()
+        self._values, self._i = values, 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        _guard()
+        if self._i >= len(self._values):
+            raise StopIteration
+        value = self._values[self._i]
+        self._i += 1
+        return value
+
+
 class _GuardedView:
     """A view of the truth whose consumption is guarded at the moment it is consumed (a view
-    taken before an engine call and read during it raises)."""
+    taken before an engine call and read during it raises), at every advance of its iterator."""
 
     __slots__ = ("_items", "_kind")
 
@@ -421,9 +444,8 @@ class _GuardedView:
         self._items, self._kind = items, kind
 
     def __iter__(self):
-        _guard()
-        for k, v in self._items:
-            yield {"keys": k, "values": v, "items": (k, v)}[self._kind]
+        pick = {"keys": lambda kv: kv[0], "values": lambda kv: kv[1], "items": lambda kv: kv}
+        return _GuardedIterator(tuple(pick[self._kind](kv) for kv in self._items))
 
     def __len__(self):
         _guard()
@@ -458,8 +480,7 @@ class EvaluatorTruth(Mapping):
         raise KeyError(key)
 
     def __iter__(self):
-        _guard()
-        return iter([k for k, _ in self._data])
+        return _GuardedIterator(tuple(k for k, _ in self._data))
 
     def __len__(self):
         _guard()

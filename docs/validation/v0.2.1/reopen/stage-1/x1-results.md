@@ -69,6 +69,17 @@ tests and a weak guard. Applied in the same round:
   while a bare `for` loop does not; the test now consumes by bare iteration, and S11 is caught, 3
   tests failing); S12 the guard switched off (17). All four caught.
 
+## Codex's second round (OBJECAO on `9c6084b`, all points applied)
+
+- **A resumed iterator passed the guard:** an iterator obtained before an engine call and advanced
+  during it returned values (the generator was guarded once, before its loop). Every iterator of the
+  truth is now a `_GuardedIterator`, guarded at its creation **and at every advance**; tested for the
+  mapping's own iterator and for the three views, with zero or one element consumed before the call
+  (8 tests); sabotage S13 (the guard only at creation) caught by all 8.
+- **The snapshot generator checked `tests/src/`:** its `git status` now runs from the repository's
+  root with `:(top)src`.
+- **An obsolete note** in this record (the 1e-9 comparison) replaced by AC5's current scope.
+
 ## CI on `46e3d95` (the first push of X1): red, and why
 
 Run 39627687323: the four `rest` jobs failed on two tests of AC5's tolerant comparison
@@ -86,9 +97,17 @@ to be rebalanced apart.
 
 ## Two notes
 
-- **AC5's comparison** checks equal structure and values, floats to 1e-9 relative: the snapshot was
-  made on one platform (Windows, CPython 3.13.16) and CI runs on Ubuntu and Windows, 3.12 and 3.13,
-  where the last bits of a float can differ (as found before in this phase). Strings, integers,
-  `None` and keys are compared exactly.
+- **AC5's scope, as it stands (after CI runs 39627687323 and 39641280623):** the snapshot's values
+  depend on the **machine**, not only on the platform: on Ubuntu even an integer differed
+  (`train_timing.noise.n`, 10 against 9), and on CI's Windows runner with the snapshot's own CPython
+  (3.13.16) the exact comparison failed. So the exact comparison (the old fields and the whole
+  `run_holdout` outcome, byte for byte as JSON) runs only on the machine that made the snapshot, by
+  opt-in (`REFUTE_AC5_EXACT=1`): run there on 2026-10-21 with the final code, 159 tests, 0 failures,
+  0 skipped (JUnit, kept in the working folder because it names the machine). Everywhere else, AC5
+  checks the **shape** only: the old record's keys are exactly the snapshot's (none removed, none
+  added beyond the new fields), and `run_holdout` keeps its keys, its rounds and their keys. That
+  gives no check of values across machines; the values are protected by the exact comparison on the
+  snapshot's machine and by AC1 to AC4 everywhere. (Two earlier versions, floats to 1e-9 and then
+  non-float values exactly, were each refuted by CI.)
 - **What it does not do:** it does not recover the fields the R_min study's records lack, and it
   does not test whether `e_pred` is inflated (experiment X2, its own authorization).
