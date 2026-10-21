@@ -398,6 +398,70 @@ def study_configuration_problems(identity: dict | None, plan) -> list[str]:
     return problems
 
 
+# --- the evaluator's truth (stage 1, item D: docs/validation/v0.2.1/reopen/stage-1/
+# instrumentation-acceptance.md, AL1 to AL3) -----------------------------------------------------
+
+TRUTH_KEYS = ("period", "t0", "duration", "depth", "impact", "ingress_fraction")
+_ENGINE_CALLS = [0]  # the depth of engine calls in progress (a list, so it can be updated)
+
+
+class EvaluatorTruth(dict):
+    """The case's injected parameters and the scenario's ``s``, kept by the evaluator only. Any
+    read while an engine call is in progress raises (the read witness of AL2)."""
+
+    def _guard(self) -> None:
+        if _ENGINE_CALLS[0]:
+            raise RuntimeError("the evaluator's truth was read during an engine call")
+
+    def __getitem__(self, key):
+        self._guard()
+        return super().__getitem__(key)
+
+    def __iter__(self):
+        self._guard()
+        return super().__iter__()
+
+    def keys(self):
+        self._guard()
+        return super().keys()
+
+    def items(self):
+        self._guard()
+        return super().items()
+
+    def values(self):
+        self._guard()
+        return super().values()
+
+    def get(self, key, default=None):
+        self._guard()
+        return super().get(key, default)
+
+
+class engine_call:  # noqa: N801 - used as a context manager, like a function
+    """Marks an engine call in progress (around ``calibration_measurement``)."""
+
+    def __enter__(self):
+        _ENGINE_CALLS[0] += 1
+        return self
+
+    def __exit__(self, *exc):
+        _ENGINE_CALLS[0] -= 1
+        return False
+
+
+def engine_call_active() -> bool:
+    return _ENGINE_CALLS[0] > 0
+
+
+def truth_of(case: dict, parameters: dict, s: float) -> dict:
+    """The evaluator's truth of one target and scenario: the case's recorded final parameters
+    (those of ``TRUTH_KEYS`` it has) and the scenario's ``s``."""
+    out = {k: parameters[k] for k in TRUTH_KEYS if k in parameters}
+    out["s"] = float(s)
+    return out
+
+
 def record_target(case: dict, prefix: str, scenarios, expected: dict | None) -> list[dict]:
     """One record per scenario of a target: the measurement's records, one per observing year of
     the light curve's metadata, with the scenario's twin (Amendment 27, 3). Refuses another
@@ -425,10 +489,14 @@ def record_target(case: dict, prefix: str, scenarios, expected: dict | None) -> 
         flux = alter_last_year(case, p, lc.time, lc.year, lc.flux, s)
         raw = LightCurveData(lc.time, flux, lc.flux_err, lc.sector, lc.year)
         model = noiseless_model(case, p, lc.time, lc.year, s)
-        rounds = [
-            calibration_measurement(raw, data.sectors, y, plan, identity=identity, twin_model=model)
-            for y in years
-        ]
+        truth = EvaluatorTruth(truth_of(case, p, s))  # made before, read only after the calls
+        with engine_call():
+            rounds = [
+                calibration_measurement(
+                    raw, data.sectors, y, plan, identity=identity, twin_model=model
+                )
+                for y in years
+            ]
         out.append(
             {
                 "target": f"{prefix}/{case['id']}",
@@ -437,6 +505,7 @@ def record_target(case: dict, prefix: str, scenarios, expected: dict | None) -> 
                 "years": years,
                 "configuration": v3.STATE["identity"],
                 "rounds": rounds,
+                "truth": dict(truth),
             }
         )
     return out

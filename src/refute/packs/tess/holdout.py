@@ -902,6 +902,11 @@ class RoundPlan:
     # M4 piece 7: the train fundamentals in decreasing train amplitude, for every window's
     # baseline (the hidden replicas, the transit and control windows, the train replicas).
     frequencies: list[float] = field(default_factory=list)
+    # Stage 1, item D (docs/validation/v0.2.1/reopen/stage-1/instrumentation-acceptance.md): the
+    # values known when the round stops here or goes on, for the calibration record only; never
+    # read by a decision. Keys: train_duration_days, n_transit_times, train_ephemeris,
+    # max_timing_sigma_days, each set as soon as it exists.
+    diagnostics: dict[str, Any] = field(default_factory=dict)
 
 
 def plan_round(
@@ -997,10 +1002,12 @@ def plan_round(
                     TestStatus.INCONCLUSIVE,
                     f"train_noise_undetermined: {gate.message}",
                     metrics={**empty, **extra, "reason": "train_noise_undetermined"},
-                )
+                ),
+                diagnostics={"train_duration_days": float(refit.duration)},
             )
         train = corrected
 
+    diagnostics: dict[str, Any] = {"train_duration_days": float(train.duration)}
     validity = train_validity(train, plan)
     if validity["reasons"] and params.require_valid_train:
         metrics = {"train_candidate": train.to_dict(), "train_validity": validity, **extra}
@@ -1014,6 +1021,7 @@ def plan_round(
                 metrics=metrics,
             ),
             train=train,
+            diagnostics=diagnostics,
         )
 
     if not corrections_on:
@@ -1050,6 +1058,7 @@ def plan_round(
     if train_timing is not None:
         train_info["train_timing"] = train_timing  # switch on only (M4 piece 3)
     train_info.update(extra)  # switch on only (M4 piece 5); empty otherwise
+    diagnostics["n_transit_times"] = len(times)
     if len(times) < params.min_train_transits:
         return RoundPlan(
             RoundResult(
@@ -1059,6 +1068,7 @@ def plan_round(
                 metrics=train_info,
             ),
             train=train,
+            diagnostics=diagnostics,
         )
     ephemeris = fit_linear_ephemeris(times)
 
@@ -1069,6 +1079,8 @@ def plan_round(
         ((w.half_width - train.duration / 2) / params.timing_sigma for w in transit_windows),
         default=0.0,
     )
+    diagnostics["train_ephemeris"] = ephemeris.to_dict()
+    diagnostics["max_timing_sigma_days"] = float(max_sigma_t)
     if max_sigma_t > params.max_timing_sigma_durations * train.duration:
         # Issue #2: the train-only ephemeris cannot place the hidden transits to
         # within a transit duration, so a non-detection would not be informative.
@@ -1089,6 +1101,7 @@ def plan_round(
             train=train,
             ephemeris=ephemeris,
             windows=windows,
+            diagnostics=diagnostics,
         )
 
     validity = train_validity(train, plan, windows, hidden_spans)
@@ -1112,11 +1125,22 @@ def plan_round(
             train=train,
             ephemeris=ephemeris,
             windows=windows,
+            diagnostics=diagnostics,
         )
     if corrections_on:
         freqs = pw_train.fundamentals if pw_train is not None else []
-        return RoundPlan(None, train, ephemeris, windows, train_info, replicas_curve, sigma, freqs)
-    return RoundPlan(None, train, ephemeris, windows, train_info)
+        return RoundPlan(
+            None,
+            train,
+            ephemeris,
+            windows,
+            train_info,
+            replicas_curve,
+            sigma,
+            freqs,
+            diagnostics=diagnostics,
+        )
+    return RoundPlan(None, train, ephemeris, windows, train_info, diagnostics=diagnostics)
 
 
 def _round(
@@ -1383,6 +1407,31 @@ def _empty_derivation_fields() -> dict[str, Any]:
     }
 
 
+INSTRUMENT_FIELDS = (
+    "train_duration_days",
+    "n_transit_times",
+    "train_ephemeris",
+    "max_timing_sigma_days",
+    "n_pred",
+    "grid_dp",
+    "d_c",
+    "m_beta",
+    "train_var_rep",
+    "e_pred_1",
+    "hidden_var_rep",
+    "e_pred_2",
+)
+
+
+def _instrument_fields(prepared: RoundPlan) -> dict[str, Any]:
+    """Stage 1, item D: the new fields of a calibration record, all present; those not yet known at
+    the round's stopping point are ``None`` (never absent, never guessed). Copies of values the
+    round computed; no decision reads them."""
+    out: dict[str, Any] = dict.fromkeys(INSTRUMENT_FIELDS)
+    out.update({k: v for k, v in prepared.diagnostics.items() if k in out})
+    return out
+
+
 def _round_corrected(
     raw: LightCurveData,
     sectors: Sequence[SectorInfo],
@@ -1445,6 +1494,11 @@ def _round_corrected(
         "e_train": train.depth_err,
         "d_twin": None,
         "twin_status": None,
+        **_instrument_fields(prepared),
+        "n_pred": n_pred,
+        "grid_dp": [float(x) for x in grid],
+        "d_c": d_c,
+        "m_beta": c.m_beta,
     }
 
     def stop(
@@ -1487,6 +1541,7 @@ def _round_corrected(
     cap["train_n_rep"] = counts
     cap["train_var_rep"] = variances
     record["train_n_rep"] = list(counts)
+    record["train_var_rep"] = list(variances)
     if not replicas_enough(counts, c.r_min):
         cap["decision_1"] = record["decision_1"] = "train_replicas_below_r_min"
         return stop("train_replicas_below_r_min", stage="train_counts")
@@ -1498,7 +1553,7 @@ def _round_corrected(
         else "insufficient_capacity_train"
     )
     cap.update(e_pred_1=e_pred_1, s_pred_1=s_pred_1, decision_1=decision_1)
-    record.update(decision_1=decision_1, s_pred_1=s_pred_1)
+    record.update(decision_1=decision_1, s_pred_1=s_pred_1, e_pred_1=e_pred_1)
     if decision_1 != "pass" and enforce:
         return stop("insufficient_capacity_train")
 
@@ -1507,6 +1562,7 @@ def _round_corrected(
     def record_hidden(stats: ReplicaStats) -> None:
         record["hidden_n_rep"] = [p.n_rep for p in stats.per_dp]
         record["hidden_noise_undetermined"] = stats.noise_undetermined
+        record["hidden_var_rep"] = [p.var_rep for p in stats.per_dp]
         cap["hidden_n_rep"] = [p.n_rep for p in stats.per_dp]
         cap["hidden_var_rep"] = [p.var_rep for p in stats.per_dp]
         cap["hidden_noise"] = None if stats.noise is None else stats.noise.to_dict()
@@ -1522,7 +1578,7 @@ def _round_corrected(
             else "insufficient_capacity_hidden_noise"
         )
         cap.update(e_pred_2=e_pred_2, s_pred_2=s_pred_2, decision_2=decision_2)
-        record.update(decision_2=decision_2, s_pred_2=s_pred_2)
+        record.update(decision_2=decision_2, s_pred_2=s_pred_2, e_pred_2=e_pred_2)
         if decision_2 != "pass" and enforce:
             return decision_2
         return None
@@ -1695,6 +1751,7 @@ def calibration_measurement(
             "stage": "before_capacity",
             "d_twin": None,
             "twin_status": None,
+            **_instrument_fields(prepared),
             **stamp,
         }
     twin = None if twin_model is None else twin_model[raw.year == hidden_year]
