@@ -15,14 +15,16 @@ validates specification B; it shows what B does to these records.
 | 8 | AR(1), no variability | 1 / 1172 | measured, PASS | the last year itself | 5.15 |
 | 8 | white, no variability | 1 / 630 | measured, PASS | the last year itself | 5.41 |
 | 8 | white, variability | 0 / 41 | | | |
-| 20 | AR(1), variability | 42 / 467 | decision 1: 21; decision 2: 10; hidden noise: 9; train replicas: 1; measured, PASS: 1 | one year before the last: 27; two before: 14; the last year: 1 | 13.9 (5.4 to 29.0) |
+| 20 | AR(1), variability | 42 / 467 | decision 1: 21; decision 2: 10; hidden noise: 9; train replicas: 1; measured, PASS: 1 | one year before the last: 27; two before: 14; the last year: 1 | 13.9 (5.4 to 26.2) |
 | 20 | the three other groups | 0 | | | |
 
 All the `AR(1), variability` PASS targets have **three observing years** (as all its decided
-disappearing targets do). Their last-year round was stopped by a capacity decision (or, at R = 20,
-also the hidden noise), and the PASS came from an earlier year, where the signal is unaltered and
-strongly detected (median `S_meas` 16.8 at R = 8). So these false PASS are the aggregation's: the
-altered year was never decided. The two isolated cases of the groups without variability are of
+disappearing targets do). At R = 8, every one's last-year round was stopped by a capacity
+decision, and the PASS came from an earlier year, where the signal is unaltered and strongly
+detected (median `S_meas` 16.8): these false PASS are the aggregation's, the altered year never
+decided. At R = 20 the same holds for 41 of the 42 (their last round stopped by a capacity decision,
+the hidden noise or the train replicas); the 42nd target's last-year round was measured and PASSed,
+a detection in the year without the signal. The two isolated cases of the groups without variability are of
 another kind: the last-year round was measured and PASSed just above `min_snr` (5.15 and 5.41) on a
 year without the signal, a detection by noise in the predicted windows.
 
@@ -47,21 +49,24 @@ R = 8 (R = 20 in [x0b.json](x0b.json)); "decided" = PASS or FAIL.
 
 What B does here:
 - **It removes every false PASS of the disappearing scenario**, at R = 8 and R = 20, including the
-  two last-year noise detections. That second effect comes from the other years: those two targets
-  turned INCONCLUSIVE because another year was undecided, not because of their noise detection;
-  B does not address a last-year detection by noise when every year PASSes.
+  last-year detections in the year without the signal (two at R = 8, one at R = 20). That effect
+  comes from the other years: those targets turned INCONCLUSIVE because another year was undecided,
+  not because of their last-year detection; B does not address a last-year detection when every year
+  PASSes.
 - **It costs utility, most where the yield was already lowest**: the decided constant targets fall
   by a third to a half without variability, and by more than 90% with it (`AR(1), variability`
   474 → 34 PASS; `white, variability` 81 → 3). The undecided years of the targets turned from PASS
-  to INCONCLUSIVE are mostly stopped by decision 1, by the hidden noise and by decision 2 (for
+  to INCONCLUSIVE are mostly stopped by decision 1, by decision 2 and by the hidden noise (for
   example `AR(1), variability`, constant: 570, 205 and 10 rounds), and by the timing rule in the
   weakened scenario without variability.
 - **The false FAIL's count does not change (FAIL keeps its precedence), but its fraction among the
   decided rises** as the denominator shrinks: 0.42% → 5.6% in `AR(1), variability` (2 of 36) and
   0.75% → 1.47% in `white, no variability`. Over all targets it is the same (2/6400, 6/6400).
 - **Years without a predicted transit window:** none. No round of these records stopped with
-  `no_predicted_window`, so no target is INCONCLUSIVE under B for that reason (0 everywhere, at
-  every R, in every scenario).
+  `no_predicted_window` (0 of 201 600 rounds; the reason exists in the engine and survives the
+  derivation, but this lot never reached it), so no target is INCONCLUSIVE under B for that reason
+  (0 everywhere, at every R, in every scenario). These records therefore do **not** exercise what B
+  does when such a year occurs.
 - **The weakened scenario's PASS mostly disappear** (for example 989 → 45): their weakened last year
   was not decided while the other years PASSed; under specification A this is abstention, not error.
 

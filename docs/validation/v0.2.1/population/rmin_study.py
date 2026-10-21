@@ -20,6 +20,7 @@ and the metadata.
 from __future__ import annotations
 
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
@@ -405,37 +406,95 @@ TRUTH_KEYS = ("period", "t0", "duration", "depth", "impact", "ingress_fraction")
 _ENGINE_CALLS = [0]  # the depth of engine calls in progress (a list, so it can be updated)
 
 
-class EvaluatorTruth(dict):
-    """The case's injected parameters and the scenario's ``s``, kept by the evaluator only. Any
-    read while an engine call is in progress raises (the read witness of AL2)."""
+def _guard() -> None:
+    if _ENGINE_CALLS[0]:
+        raise RuntimeError("the evaluator's truth was read during an engine call")
 
-    def _guard(self) -> None:
-        if _ENGINE_CALLS[0]:
-            raise RuntimeError("the evaluator's truth was read during an engine call")
 
-    def __getitem__(self, key):
-        self._guard()
-        return super().__getitem__(key)
+class _GuardedView:
+    """A view of the truth whose consumption is guarded at the moment it is consumed (a view
+    taken before an engine call and read during it raises)."""
+
+    __slots__ = ("_items", "_kind")
+
+    def __init__(self, items: tuple, kind: str):
+        self._items, self._kind = items, kind
 
     def __iter__(self):
-        self._guard()
-        return super().__iter__()
+        _guard()
+        for k, v in self._items:
+            yield {"keys": k, "values": v, "items": (k, v)}[self._kind]
+
+    def __len__(self):
+        _guard()
+        return len(self._items)
+
+    def __repr__(self):
+        _guard()
+        return f"{self._kind}({list(self)!r})"
+
+
+class EvaluatorTruth(Mapping):
+    """The case's injected parameters and the scenario's ``s``, kept by the evaluator only. A
+    mapping by composition (not a ``dict`` subclass, so ``dict``'s own methods do not reach its
+    values): every read through its interface (items, iteration, length, membership, views at
+    consumption, ``repr``, ``str``, copying, pickling) raises while an engine call is in progress
+    (the read witness of AL2). It does not prevent deliberate access to its private attribute;
+    the witness covers the mapping's interface."""
+
+    __slots__ = ("_data",)
+
+    def __init__(self, data: dict):
+        object.__setattr__(self, "_data", tuple(dict(data).items()))
+
+    def __setattr__(self, name, value):
+        raise AttributeError("the evaluator's truth is read only")
+
+    def __getitem__(self, key):
+        _guard()
+        for k, v in self._data:
+            if k == key:
+                return v
+        raise KeyError(key)
+
+    def __iter__(self):
+        _guard()
+        return iter([k for k, _ in self._data])
+
+    def __len__(self):
+        _guard()
+        return len(self._data)
+
+    def __contains__(self, key):
+        _guard()
+        return any(k == key for k, _ in self._data)
 
     def keys(self):
-        self._guard()
-        return super().keys()
+        return _GuardedView(self._data, "keys")
 
     def items(self):
-        self._guard()
-        return super().items()
+        return _GuardedView(self._data, "items")
 
     def values(self):
-        self._guard()
-        return super().values()
+        return _GuardedView(self._data, "values")
 
-    def get(self, key, default=None):
-        self._guard()
-        return super().get(key, default)
+    def __repr__(self):
+        _guard()
+        return f"EvaluatorTruth({dict(self._data)!r})"
+
+    __str__ = __repr__
+
+    def __reduce__(self):
+        _guard()
+        return (EvaluatorTruth, (dict(self._data),))
+
+    def __copy__(self):
+        _guard()
+        return EvaluatorTruth(dict(self._data))
+
+    def __deepcopy__(self, memo):
+        _guard()
+        return EvaluatorTruth(dict(self._data))
 
 
 class engine_call:  # noqa: N801 - used as a context manager, like a function
@@ -505,7 +564,7 @@ def record_target(case: dict, prefix: str, scenarios, expected: dict | None) -> 
                 "years": years,
                 "configuration": v3.STATE["identity"],
                 "rounds": rounds,
-                "truth": dict(truth),
+                "truth": {k: truth[k] for k in truth},
             }
         )
     return out

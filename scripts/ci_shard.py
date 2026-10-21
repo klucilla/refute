@@ -42,6 +42,9 @@ HEAVY = {
         "tests/test_workers_equivalence.py",
         "tests/test_calibration_signal_identity_e2e.py",
         "tests/test_wp4_papers.py",
+        # stage 1, item D (2026-10-21): its fixtures took 150 s in rest (run 39627687323), and
+        # heavy-c was the lightest shard (5 to 7 min)
+        "tests/test_instrumentation.py",
     ],
 }
 

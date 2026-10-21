@@ -66,6 +66,7 @@ def spies(calls):
         "replica_stats",
         "fit_linear_ephemeris",
         "corrected_transit_times",
+        "_predict_windows",
     )
     saved = {n: getattr(holdout, n) for n in names}
     saved_fin = search_module.finalize_candidate
@@ -141,8 +142,13 @@ def test_each_stopping_point_records_exactly_its_row(results, snapshot, name):
 
 
 def _same(a, b, path=""):
-    """Equal structure and values; floats to 1e-9 relative (the snapshot was made on one
-    platform, CI runs on others)."""
+    """Equal structure, keys, list lengths and every non-float value (strings, statuses, reasons,
+    integers, booleans, None); a float matches a float of the same kind (finite, NaN or infinite).
+
+    The first version compared floats to 1e-9 relative; CI (run 39627687323) showed that the
+    engine's own floats differ across platforms far more than that (a train period at 2e-6
+    relative, a BLS SNR at 2e-4), with every status and reason identical. The values themselves
+    are compared exactly in the snapshot's environment (the test above)."""
     if isinstance(a, dict) and isinstance(b, dict):
         assert set(a) == set(b), f"{path}: keys {sorted(set(a) ^ set(b))}"
         for k in a:
@@ -152,12 +158,39 @@ def _same(a, b, path=""):
         for i, (x, y) in enumerate(zip(a, b, strict=True)):
             _same(x, y, f"{path}[{i}]")
     elif isinstance(a, float) and isinstance(b, float):
-        if math.isnan(a) or math.isnan(b):
-            assert math.isnan(a) and math.isnan(b), path
-        else:
-            assert a == pytest.approx(b, rel=1e-9, abs=1e-15), path
+
+        def kind(x):
+            return "nan" if math.isnan(x) else "inf" if math.isinf(x) else "finite"
+
+        assert kind(a) == kind(b), f"{path}: {a!r} against {b!r}"
     else:
         assert a == b, f"{path}: {a!r} != {b!r}"
+
+
+# The environment the snapshot was made in (tests/make_instrumentation_snapshot.py, run on
+# 2026-10-21 in the integration worktree's venv). Recorded with the tests after Codex's review of
+# the round; the generator did not record it.
+SNAPSHOT_ENV = ("Windows", "3.13.16")
+
+
+def _exact(a, b, path=""):
+    assert json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True), path
+
+
+@pytest.mark.parametrize("name", sorted(MATRIX))
+def test_the_old_record_and_run_holdout_are_byte_identical_in_the_snapshot_s_environment(
+    results, snapshot, name
+):
+    """AC5 exactly where it can be exact: in the snapshot's own environment the old fields and the
+    whole run_holdout outcome are identical as JSON, bit for bit."""
+    import platform
+
+    if (platform.system(), platform.python_version()) != SNAPSHOT_ENV:
+        pytest.skip(f"exact only in {SNAPSHOT_ENV}; the tolerant comparison below runs everywhere")
+    old = snapshot["cases"][name]
+    record = _json(results[name]["record"])
+    _exact({k: v for k, v in record.items() if k not in ALL}, old["record"], name)
+    _exact(_json(results[name]["outcome"].to_dict()), old["run_holdout"], name)
 
 
 @pytest.mark.parametrize("name", sorted(MATRIX))
@@ -217,6 +250,25 @@ def test_the_ephemeris_and_the_timing_are_the_round_s(results, name):
     assert record["train_ephemeris"] == eph.to_dict()
     assert record["train_ephemeris"] == _round_of(outcome, year).train_ephemeris
     assert record["n_transit_times"] == len(r["calls"]["corrected_transit_times"][0].times)
+
+
+@pytest.mark.parametrize("name", [n for n, s in MATRIX.items() if "max_timing_sigma_days" in s])
+def test_the_timing_sigma_is_the_one_of_the_predicted_windows(results, name):
+    """AC2 for max_timing_sigma_days in every row that has it (added after Codex's review of the
+    round): recomputed from plan_round's predicted windows (its first _predict_windows call)."""
+    r = results[name]
+    record, plan = r["record"], r["case"].plan
+    windows = r["calls"]["_predict_windows"][0]
+    duration = record["train_duration_days"]
+    expected = max(
+        (
+            (w.half_width - duration / 2) / plan.gauntlet.holdout_by_year.timing_sigma
+            for w in windows
+            if w.kind == "transit"
+        ),
+        default=0.0,
+    )
+    assert record["max_timing_sigma_days"] == expected
 
 
 def test_the_timing_number_is_the_one_the_reason_prints(results):
@@ -302,6 +354,54 @@ def test_all_zero_variances_give_a_zero_error_and_a_nan_snr():
     assert math.isnan(rec["s_pred_1"])
 
 
+def _with_hidden_variances(transform):
+    """The measured white case with the hidden replica variances replaced by ``transform`` (the
+    hidden branches of AC1, added after Codex's review of the round)."""
+    import dataclasses
+
+    case = next(c for c in ic.cases() if c.name == "measured_white")
+    original = holdout.replica_stats
+
+    def patched(*a, **k):
+        stats = original(*a, **k)
+        values = transform([p.var_rep for p in stats.per_dp])
+        per_dp = [
+            dataclasses.replace(p, var_rep=v) for p, v in zip(stats.per_dp, values, strict=True)
+        ]
+        return dataclasses.replace(stats, per_dp=per_dp)
+
+    holdout.replica_stats = patched
+    try:
+        return holdout.calibration_measurement(
+            case.lc, case.sectors, case.hidden_year, case.plan, identity=ic.identity(case.plan)
+        )
+    finally:
+        holdout.replica_stats = original
+
+
+@pytest.mark.parametrize(
+    "transform",
+    [
+        lambda v: [float("nan")] + v[1:],
+        lambda v: [-1.0] + v[1:],
+        lambda v: [float("inf")] + v[1:],
+    ],
+    ids=["nan", "negative", "inf"],
+)
+def test_an_invalid_hidden_variance_gives_nan_as_today(transform):
+    rec = _with_hidden_variances(transform)
+    assert math.isnan(rec["e_pred_2"]) and math.isnan(rec["s_pred_2"])
+    assert rec["decision_2"] == "insufficient_capacity_hidden_noise"
+    assert rec["hidden_var_rep"] is not None
+
+
+def test_all_zero_hidden_variances_give_a_zero_error_and_a_nan_snr():
+    rec = _with_hidden_variances(lambda v: [0.0] * len(v))
+    assert rec["e_pred_2"] == 0.0
+    assert math.isnan(rec["s_pred_2"])
+    assert rec["decision_2"] == "insufficient_capacity_hidden_noise"
+
+
 # --- AC3: the decisions, from the fields, at the threshold and its neighbours --------------------
 
 
@@ -325,6 +425,33 @@ def test_decision_1_recomputed_from_the_fields_at_the_threshold(results, step):
     recomputed = "pass" if rec["s_pred_1"] >= rec["threshold"] else "insufficient_capacity_train"
     assert rec["decision_1"] == recomputed
     assert rec["decision_1"] == ("insufficient_capacity_train" if step == "up" else "pass")
+
+
+@pytest.mark.parametrize("step", ["exact", "up", "down"])
+def test_decision_2_recomputed_from_the_fields_at_the_threshold(results, step):
+    """The boundary of decision 2 (added after Codex's review of the round); the calibration
+    measurement computes decision 2 whatever decision 1 gave."""
+    case = results["measured_white"]["case"]
+    s2 = results["measured_white"]["record"]["s_pred_2"]
+    threshold = {
+        "exact": s2,
+        "up": math.nextafter(s2, math.inf),
+        "down": math.nextafter(s2, -math.inf),
+    }[step]
+    original = holdout.capacity_threshold
+    holdout.capacity_threshold = lambda *a, **k: threshold
+    try:
+        rec = holdout.calibration_measurement(
+            case.lc, case.sectors, case.hidden_year, case.plan, identity=ic.identity(case.plan)
+        )
+    finally:
+        holdout.capacity_threshold = original
+    assert rec["s_pred_2"] == s2
+    expected = "insufficient_capacity_hidden_noise" if step == "up" else "pass"
+    recomputed = (
+        "pass" if rec["s_pred_2"] >= rec["threshold"] else "insufficient_capacity_hidden_noise"
+    )
+    assert rec["decision_2"] == recomputed == expected
 
 
 @pytest.mark.parametrize("name", ["measured_white", "decision_1_failed", "decision_2_failed"])
@@ -455,3 +582,112 @@ def test_changing_the_truth_changes_no_engine_output(study, monkeypatch):
     second = study.record_target(case, study.BS_CHOICE_PREFIX, ("constant",), _declared())[0]
     assert first["rounds"] == second["rounds"]
     assert first["truth"] != second["truth"]
+
+
+# Added after Codex's review of the round: every route of the mapping's interface is guarded, an
+# engine that reads the truth is caught, and AL3 holds with the real engine, not only a stub.
+
+
+@pytest.mark.parametrize(
+    "route",
+    [
+        "getitem",
+        "get",
+        "iter",
+        "len",
+        "contains",
+        "dict",
+        "unpack",
+        "repr",
+        "str",
+        "copy",
+        "deepcopy",
+        "pickle",
+        "json",
+        "keys_view",
+        "items_view",
+        "values_view",
+    ],
+)
+def test_every_route_of_the_truth_s_interface_is_guarded(study, route):
+    import copy as copy_module
+    import pickle
+
+    truth = study.EvaluatorTruth({"depth": 0.001, "s": 1.0})
+    early = {"keys_view": truth.keys(), "items_view": truth.items(), "values_view": truth.values()}
+    reads = {
+        "getitem": lambda: truth["depth"],
+        "get": lambda: truth.get("depth"),
+        "iter": lambda: list(iter(truth)),
+        "len": lambda: len(truth),
+        "contains": lambda: "depth" in truth,
+        "dict": lambda: dict(truth),
+        "unpack": lambda: {**truth},
+        "repr": lambda: repr(truth),
+        "str": lambda: str(truth),
+        "copy": lambda: copy_module.copy(truth),
+        "deepcopy": lambda: copy_module.deepcopy(truth),
+        "pickle": lambda: pickle.dumps(truth),
+        "json": lambda: json.dumps(truth),
+        # views taken before the call and consumed during it
+        # consumed by bare iteration, which does not call __len__ (S11 escaped list(), which
+        # does, in the first run of the sabotages)
+        "keys_view": lambda: next(iter(early["keys_view"])),
+        "items_view": lambda: next(iter(early["items_view"])),
+        "values_view": lambda: next(iter(early["values_view"])),
+    }
+    if route != "json":  # json.dumps refuses a Mapping anyway; every other route works outside
+        reads[route]()
+    with study.engine_call():
+        with pytest.raises((RuntimeError, TypeError)) as caught:
+            reads[route]()
+    if route != "json":
+        assert caught.type is RuntimeError and "truth" in str(caught.value)
+
+
+def test_dict_s_own_methods_do_not_reach_the_truth(study):
+    truth = study.EvaluatorTruth({"depth": 0.001})
+    assert not isinstance(truth, dict)
+    with pytest.raises(TypeError):
+        dict.__getitem__(truth, "depth")
+
+
+def test_an_engine_that_reads_the_truth_is_caught(study, monkeypatch):
+    """A stand-in engine that obtains the truth object (as a leak would) and reads it: the read
+    raises inside the engine call, and the target is not recorded."""
+    monkeypatch.setattr(study.v3, "STATE", {"problem": None, "identity": _declared()})
+    monkeypatch.setattr(study.v3, "_plan", lambda: ic.plan())
+    made = []
+    original_class = study.EvaluatorTruth
+
+    def capture(data):
+        t = original_class(data)
+        made.append(t)
+        return t
+
+    monkeypatch.setattr(study, "EvaluatorTruth", capture)
+
+    def leaky_engine(raw, sectors, year, plan, *, identity, twin_model):
+        return {"hidden_year": year, "depth_read": made[-1]["depth"]}
+
+    monkeypatch.setattr(holdout, "calibration_measurement", leaky_engine)
+    case = study.bs_choice_cases()[0]
+    with pytest.raises(RuntimeError, match="truth"):
+        study.record_target(case, study.BS_CHOICE_PREFIX, ("constant",), _declared())
+    assert not study.engine_call_active()
+
+
+def test_changing_the_truth_changes_no_output_of_the_real_engine(study, monkeypatch):
+    """AL3 with the real calibration_measurement (a fast plan): the records' engine fields are
+    byte for byte the same whatever the truth's values."""
+    monkeypatch.setattr(study.v3, "STATE", {"problem": None, "identity": _declared()})
+    monkeypatch.setattr(study.v3, "_plan", lambda: ic.plan())
+    monkeypatch.setattr(study, "calibration_identity", lambda: ic.identity(ic.plan()))
+    case = study.bs_choice_cases()[0]
+    first = study.record_target(case, study.BS_CHOICE_PREFIX, ("constant",), _declared())[0]
+    original = study.truth_of
+    monkeypatch.setattr(study, "truth_of", lambda c, p, s: {k: -7.0 for k in original(c, p, s)})
+    second = study.record_target(case, study.BS_CHOICE_PREFIX, ("constant",), _declared())[0]
+    assert dumps_json(to_jsonable(first["rounds"])) == dumps_json(to_jsonable(second["rounds"]))
+    assert first["truth"] != second["truth"]
+    assert first["rounds"] and all(r["calibration_only"] for r in first["rounds"])
