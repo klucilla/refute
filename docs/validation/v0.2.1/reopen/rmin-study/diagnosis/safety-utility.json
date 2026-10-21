@@ -1,0 +1,2516 @@
+{
+ "8": {
+  "AR(1), no variability|constant": {
+   "total": 6400,
+   "eligible": 1344,
+   "decided": 1344,
+   "PASS": 1344,
+   "FAIL": 0,
+   "INCONCLUSIVE": 5056,
+   "decided_over_total": {
+    "x": 1344,
+    "n": 6400,
+    "fraction": 0.21
+   },
+   "eligible_over_total": {
+    "x": 1344,
+    "n": 6400,
+    "fraction": 0.21
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 1344,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 1344,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.0034206022769637553,
+   "error_upper_over_decided": 0.0034206022769637553,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "AR(1), no variability|disappearing": {
+   "total": 6400,
+   "eligible": 1172,
+   "decided": 1172,
+   "PASS": 1,
+   "FAIL": 1171,
+   "INCONCLUSIVE": 5228,
+   "decided_over_total": {
+    "x": 1172,
+    "n": 6400,
+    "fraction": 0.183125
+   },
+   "eligible_over_total": {
+    "x": 1172,
+    "n": 6400,
+    "fraction": 0.183125
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 1172,
+    "fraction": 0.0008532423208191126
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 1172,
+    "fraction": 0.0008532423208191126
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.005650517481952626,
+   "error_upper_over_decided": 0.005650517481952626,
+   "error_upper_over_total": 0.0010367857275982435,
+   "fail_correct_over_eligible": {
+    "x": 1171,
+    "n": 1172,
+    "fraction": 0.9991467576791809
+   },
+   "fail_correct_over_decided": {
+    "x": 1171,
+    "n": 1172,
+    "fraction": 0.9991467576791809
+   },
+   "fail_correct_over_total": {
+    "x": 1171,
+    "n": 6400,
+    "fraction": 0.18296875
+   },
+   "fail_lower_over_decided": 0.9943494825180473,
+   "evaluation_qualified_set": {
+    "n": 1172,
+    "FAIL": 1171,
+    "target_FAIL": 1171,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "AR(1), no variability|weakened": {
+   "total": 6400,
+   "eligible": 1173,
+   "decided": 1173,
+   "PASS": 989,
+   "FAIL": 184,
+   "INCONCLUSIVE": 5227,
+   "decided_over_total": {
+    "x": 1173,
+    "n": 6400,
+    "fraction": 0.18328125
+   },
+   "eligible_over_total": {
+    "x": 1173,
+    "n": 6400,
+    "fraction": 0.18328125
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 989,
+    "n": 1173,
+    "fraction": 0.8431372549019608
+   },
+   "fail_over_decided": {
+    "x": 184,
+    "n": 1173,
+    "fraction": 0.1568627450980392
+   }
+  },
+  "AR(1), variability|constant": {
+   "total": 6400,
+   "eligible": 477,
+   "decided": 476,
+   "PASS": 474,
+   "FAIL": 2,
+   "INCONCLUSIVE": 5924,
+   "decided_over_total": {
+    "x": 476,
+    "n": 6400,
+    "fraction": 0.074375
+   },
+   "eligible_over_total": {
+    "x": 477,
+    "n": 6400,
+    "fraction": 0.07453125
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 2,
+    "n": 477,
+    "fraction": 0.0041928721174004195
+   },
+   "error_over_decided": {
+    "x": 2,
+    "n": 476,
+    "fraction": 0.004201680672268907
+   },
+   "error_over_total": {
+    "x": 2,
+    "n": 6400,
+    "fraction": 0.0003125
+   },
+   "error_upper_over_eligible": 0.017504615461244023,
+   "error_upper_over_decided": 0.017541142501540933,
+   "error_upper_over_total": 0.0013127720538949222
+  },
+  "AR(1), variability|disappearing": {
+   "total": 6400,
+   "eligible": 241,
+   "decided": 241,
+   "PASS": 26,
+   "FAIL": 215,
+   "INCONCLUSIVE": 6159,
+   "decided_over_total": {
+    "x": 241,
+    "n": 6400,
+    "fraction": 0.03765625
+   },
+   "eligible_over_total": {
+    "x": 241,
+    "n": 6400,
+    "fraction": 0.03765625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 26,
+    "n": 241,
+    "fraction": 0.1078838174273859
+   },
+   "error_over_decided": {
+    "x": 26,
+    "n": 241,
+    "fraction": 0.1078838174273859
+   },
+   "error_over_total": {
+    "x": 26,
+    "n": 6400,
+    "fraction": 0.0040625
+   },
+   "error_upper_over_eligible": 0.16308847989224878,
+   "error_upper_over_decided": 0.16308847989224878,
+   "error_upper_over_total": 0.006326304593476003,
+   "fail_correct_over_eligible": {
+    "x": 215,
+    "n": 241,
+    "fraction": 0.8921161825726142
+   },
+   "fail_correct_over_decided": {
+    "x": 215,
+    "n": 241,
+    "fraction": 0.8921161825726142
+   },
+   "fail_correct_over_total": {
+    "x": 215,
+    "n": 6400,
+    "fraction": 0.03359375
+   },
+   "fail_lower_over_decided": 0.8369115201077513,
+   "evaluation_qualified_set": {
+    "n": 210,
+    "FAIL": 210,
+    "target_FAIL": 210
+   }
+  },
+  "AR(1), variability|weakened": {
+   "total": 6400,
+   "eligible": 261,
+   "decided": 260,
+   "PASS": 175,
+   "FAIL": 85,
+   "INCONCLUSIVE": 6140,
+   "decided_over_total": {
+    "x": 260,
+    "n": 6400,
+    "fraction": 0.040625
+   },
+   "eligible_over_total": {
+    "x": 261,
+    "n": 6400,
+    "fraction": 0.04078125
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 175,
+    "n": 260,
+    "fraction": 0.6730769230769231
+   },
+   "fail_over_decided": {
+    "x": 85,
+    "n": 260,
+    "fraction": 0.3269230769230769
+   }
+  },
+  "white, no variability|constant": {
+   "total": 6400,
+   "eligible": 802,
+   "decided": 801,
+   "PASS": 795,
+   "FAIL": 6,
+   "INCONCLUSIVE": 5599,
+   "decided_over_total": {
+    "x": 801,
+    "n": 6400,
+    "fraction": 0.12515625
+   },
+   "eligible_over_total": {
+    "x": 802,
+    "n": 6400,
+    "fraction": 0.1253125
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 6,
+    "n": 802,
+    "fraction": 0.007481296758104738
+   },
+   "error_over_decided": {
+    "x": 6,
+    "n": 801,
+    "fraction": 0.00749063670411985
+   },
+   "error_over_total": {
+    "x": 6,
+    "n": 6400,
+    "fraction": 0.0009375
+   },
+   "error_upper_over_eligible": 0.01807095600214135,
+   "error_upper_over_decided": 0.018093395596485574,
+   "error_upper_over_total": 0.002275135144818202
+  },
+  "white, no variability|disappearing": {
+   "total": 6400,
+   "eligible": 630,
+   "decided": 630,
+   "PASS": 1,
+   "FAIL": 629,
+   "INCONCLUSIVE": 5770,
+   "decided_over_total": {
+    "x": 630,
+    "n": 6400,
+    "fraction": 0.0984375
+   },
+   "eligible_over_total": {
+    "x": 630,
+    "n": 6400,
+    "fraction": 0.0984375
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 630,
+    "fraction": 0.0015873015873015873
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 630,
+    "fraction": 0.0015873015873015873
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.010490038570323648,
+   "error_upper_over_decided": 0.010490038570323648,
+   "error_upper_over_total": 0.0010367857275982435,
+   "fail_correct_over_eligible": {
+    "x": 629,
+    "n": 630,
+    "fraction": 0.9984126984126984
+   },
+   "fail_correct_over_decided": {
+    "x": 629,
+    "n": 630,
+    "fraction": 0.9984126984126984
+   },
+   "fail_correct_over_total": {
+    "x": 629,
+    "n": 6400,
+    "fraction": 0.09828125
+   },
+   "fail_lower_over_decided": 0.9895099614296764,
+   "evaluation_qualified_set": {
+    "n": 630,
+    "FAIL": 629,
+    "target_FAIL": 629,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "white, no variability|weakened": {
+   "total": 6400,
+   "eligible": 630,
+   "decided": 630,
+   "PASS": 546,
+   "FAIL": 84,
+   "INCONCLUSIVE": 5770,
+   "decided_over_total": {
+    "x": 630,
+    "n": 6400,
+    "fraction": 0.0984375
+   },
+   "eligible_over_total": {
+    "x": 630,
+    "n": 6400,
+    "fraction": 0.0984375
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 546,
+    "n": 630,
+    "fraction": 0.8666666666666667
+   },
+   "fail_over_decided": {
+    "x": 84,
+    "n": 630,
+    "fraction": 0.13333333333333333
+   }
+  },
+  "white, variability|constant": {
+   "total": 6400,
+   "eligible": 81,
+   "decided": 81,
+   "PASS": 81,
+   "FAIL": 0,
+   "INCONCLUSIVE": 6319,
+   "decided_over_total": {
+    "x": 81,
+    "n": 6400,
+    "fraction": 0.01265625
+   },
+   "eligible_over_total": {
+    "x": 81,
+    "n": 6400,
+    "fraction": 0.01265625
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 81,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 81,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.055267965347188586,
+   "error_upper_over_decided": 0.055267965347188586,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "white, variability|disappearing": {
+   "total": 6400,
+   "eligible": 41,
+   "decided": 41,
+   "PASS": 0,
+   "FAIL": 41,
+   "INCONCLUSIVE": 6359,
+   "decided_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "eligible_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 41,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 41,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.10624288489457591,
+   "error_upper_over_decided": 0.10624288489457591,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 41,
+    "n": 41,
+    "fraction": 1.0
+   },
+   "fail_correct_over_decided": {
+    "x": 41,
+    "n": 41,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "fail_lower_over_decided": 0.8937571151054241,
+   "evaluation_qualified_set": {
+    "n": 41,
+    "FAIL": 41,
+    "target_FAIL": 41
+   }
+  },
+  "white, variability|weakened": {
+   "total": 6400,
+   "eligible": 41,
+   "decided": 41,
+   "PASS": 13,
+   "FAIL": 28,
+   "INCONCLUSIVE": 6359,
+   "decided_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "eligible_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 13,
+    "n": 41,
+    "fraction": 0.3170731707317073
+   },
+   "fail_over_decided": {
+    "x": 28,
+    "n": 41,
+    "fraction": 0.6829268292682927
+   }
+  }
+ },
+ "10": {
+  "AR(1), no variability|constant": {
+   "total": 6400,
+   "eligible": 1313,
+   "decided": 1313,
+   "PASS": 1313,
+   "FAIL": 0,
+   "INCONCLUSIVE": 5087,
+   "decided_over_total": {
+    "x": 1313,
+    "n": 6400,
+    "fraction": 0.20515625
+   },
+   "eligible_over_total": {
+    "x": 1313,
+    "n": 6400,
+    "fraction": 0.20515625
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 1313,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 1313,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.003501221335329386,
+   "error_upper_over_decided": 0.003501221335329386,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "AR(1), no variability|disappearing": {
+   "total": 6400,
+   "eligible": 1141,
+   "decided": 1141,
+   "PASS": 1,
+   "FAIL": 1140,
+   "INCONCLUSIVE": 5259,
+   "decided_over_total": {
+    "x": 1141,
+    "n": 6400,
+    "fraction": 0.17828125
+   },
+   "eligible_over_total": {
+    "x": 1141,
+    "n": 6400,
+    "fraction": 0.17828125
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 1141,
+    "fraction": 0.0008764241893076249
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 1141,
+    "fraction": 0.0008764241893076249
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.005803658098613493,
+   "error_upper_over_decided": 0.005803658098613493,
+   "error_upper_over_total": 0.0010367857275982435,
+   "fail_correct_over_eligible": {
+    "x": 1140,
+    "n": 1141,
+    "fraction": 0.9991235758106923
+   },
+   "fail_correct_over_decided": {
+    "x": 1140,
+    "n": 1141,
+    "fraction": 0.9991235758106923
+   },
+   "fail_correct_over_total": {
+    "x": 1140,
+    "n": 6400,
+    "fraction": 0.178125
+   },
+   "fail_lower_over_decided": 0.9941963419013865,
+   "evaluation_qualified_set": {
+    "n": 1141,
+    "FAIL": 1140,
+    "target_FAIL": 1140,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "AR(1), no variability|weakened": {
+   "total": 6400,
+   "eligible": 1142,
+   "decided": 1142,
+   "PASS": 961,
+   "FAIL": 181,
+   "INCONCLUSIVE": 5258,
+   "decided_over_total": {
+    "x": 1142,
+    "n": 6400,
+    "fraction": 0.1784375
+   },
+   "eligible_over_total": {
+    "x": 1142,
+    "n": 6400,
+    "fraction": 0.1784375
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 961,
+    "n": 1142,
+    "fraction": 0.841506129597198
+   },
+   "fail_over_decided": {
+    "x": 181,
+    "n": 1142,
+    "fraction": 0.1584938704028021
+   }
+  },
+  "AR(1), variability|constant": {
+   "total": 6400,
+   "eligible": 477,
+   "decided": 476,
+   "PASS": 474,
+   "FAIL": 2,
+   "INCONCLUSIVE": 5924,
+   "decided_over_total": {
+    "x": 476,
+    "n": 6400,
+    "fraction": 0.074375
+   },
+   "eligible_over_total": {
+    "x": 477,
+    "n": 6400,
+    "fraction": 0.07453125
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 2,
+    "n": 477,
+    "fraction": 0.0041928721174004195
+   },
+   "error_over_decided": {
+    "x": 2,
+    "n": 476,
+    "fraction": 0.004201680672268907
+   },
+   "error_over_total": {
+    "x": 2,
+    "n": 6400,
+    "fraction": 0.0003125
+   },
+   "error_upper_over_eligible": 0.017504615461244023,
+   "error_upper_over_decided": 0.017541142501540933,
+   "error_upper_over_total": 0.0013127720538949222
+  },
+  "AR(1), variability|disappearing": {
+   "total": 6400,
+   "eligible": 241,
+   "decided": 241,
+   "PASS": 26,
+   "FAIL": 215,
+   "INCONCLUSIVE": 6159,
+   "decided_over_total": {
+    "x": 241,
+    "n": 6400,
+    "fraction": 0.03765625
+   },
+   "eligible_over_total": {
+    "x": 241,
+    "n": 6400,
+    "fraction": 0.03765625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 26,
+    "n": 241,
+    "fraction": 0.1078838174273859
+   },
+   "error_over_decided": {
+    "x": 26,
+    "n": 241,
+    "fraction": 0.1078838174273859
+   },
+   "error_over_total": {
+    "x": 26,
+    "n": 6400,
+    "fraction": 0.0040625
+   },
+   "error_upper_over_eligible": 0.16308847989224878,
+   "error_upper_over_decided": 0.16308847989224878,
+   "error_upper_over_total": 0.006326304593476003,
+   "fail_correct_over_eligible": {
+    "x": 215,
+    "n": 241,
+    "fraction": 0.8921161825726142
+   },
+   "fail_correct_over_decided": {
+    "x": 215,
+    "n": 241,
+    "fraction": 0.8921161825726142
+   },
+   "fail_correct_over_total": {
+    "x": 215,
+    "n": 6400,
+    "fraction": 0.03359375
+   },
+   "fail_lower_over_decided": 0.8369115201077513,
+   "evaluation_qualified_set": {
+    "n": 210,
+    "FAIL": 210,
+    "target_FAIL": 210
+   }
+  },
+  "AR(1), variability|weakened": {
+   "total": 6400,
+   "eligible": 261,
+   "decided": 260,
+   "PASS": 175,
+   "FAIL": 85,
+   "INCONCLUSIVE": 6140,
+   "decided_over_total": {
+    "x": 260,
+    "n": 6400,
+    "fraction": 0.040625
+   },
+   "eligible_over_total": {
+    "x": 261,
+    "n": 6400,
+    "fraction": 0.04078125
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 175,
+    "n": 260,
+    "fraction": 0.6730769230769231
+   },
+   "fail_over_decided": {
+    "x": 85,
+    "n": 260,
+    "fraction": 0.3269230769230769
+   }
+  },
+  "white, no variability|constant": {
+   "total": 6400,
+   "eligible": 794,
+   "decided": 793,
+   "PASS": 787,
+   "FAIL": 6,
+   "INCONCLUSIVE": 5607,
+   "decided_over_total": {
+    "x": 793,
+    "n": 6400,
+    "fraction": 0.12390625
+   },
+   "eligible_over_total": {
+    "x": 794,
+    "n": 6400,
+    "fraction": 0.1240625
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 6,
+    "n": 794,
+    "fraction": 0.007556675062972292
+   },
+   "error_over_decided": {
+    "x": 6,
+    "n": 793,
+    "fraction": 0.007566204287515763
+   },
+   "error_over_total": {
+    "x": 6,
+    "n": 6400,
+    "fraction": 0.0009375
+   },
+   "error_upper_over_eligible": 0.018252046812092936,
+   "error_upper_over_decided": 0.018274938674642947,
+   "error_upper_over_total": 0.002275135144818202
+  },
+  "white, no variability|disappearing": {
+   "total": 6400,
+   "eligible": 622,
+   "decided": 622,
+   "PASS": 1,
+   "FAIL": 621,
+   "INCONCLUSIVE": 5778,
+   "decided_over_total": {
+    "x": 622,
+    "n": 6400,
+    "fraction": 0.0971875
+   },
+   "eligible_over_total": {
+    "x": 622,
+    "n": 6400,
+    "fraction": 0.0971875
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 622,
+    "fraction": 0.001607717041800643
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 622,
+    "fraction": 0.001607717041800643
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.010624347668691997,
+   "error_upper_over_decided": 0.010624347668691997,
+   "error_upper_over_total": 0.0010367857275982435,
+   "fail_correct_over_eligible": {
+    "x": 621,
+    "n": 622,
+    "fraction": 0.9983922829581994
+   },
+   "fail_correct_over_decided": {
+    "x": 621,
+    "n": 622,
+    "fraction": 0.9983922829581994
+   },
+   "fail_correct_over_total": {
+    "x": 621,
+    "n": 6400,
+    "fraction": 0.09703125
+   },
+   "fail_lower_over_decided": 0.989375652331308,
+   "evaluation_qualified_set": {
+    "n": 622,
+    "FAIL": 621,
+    "target_FAIL": 621,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "white, no variability|weakened": {
+   "total": 6400,
+   "eligible": 622,
+   "decided": 622,
+   "PASS": 539,
+   "FAIL": 83,
+   "INCONCLUSIVE": 5778,
+   "decided_over_total": {
+    "x": 622,
+    "n": 6400,
+    "fraction": 0.0971875
+   },
+   "eligible_over_total": {
+    "x": 622,
+    "n": 6400,
+    "fraction": 0.0971875
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 539,
+    "n": 622,
+    "fraction": 0.8665594855305466
+   },
+   "fail_over_decided": {
+    "x": 83,
+    "n": 622,
+    "fraction": 0.13344051446945338
+   }
+  },
+  "white, variability|constant": {
+   "total": 6400,
+   "eligible": 81,
+   "decided": 81,
+   "PASS": 81,
+   "FAIL": 0,
+   "INCONCLUSIVE": 6319,
+   "decided_over_total": {
+    "x": 81,
+    "n": 6400,
+    "fraction": 0.01265625
+   },
+   "eligible_over_total": {
+    "x": 81,
+    "n": 6400,
+    "fraction": 0.01265625
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 81,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 81,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.055267965347188586,
+   "error_upper_over_decided": 0.055267965347188586,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "white, variability|disappearing": {
+   "total": 6400,
+   "eligible": 41,
+   "decided": 41,
+   "PASS": 0,
+   "FAIL": 41,
+   "INCONCLUSIVE": 6359,
+   "decided_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "eligible_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 41,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 41,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.10624288489457591,
+   "error_upper_over_decided": 0.10624288489457591,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 41,
+    "n": 41,
+    "fraction": 1.0
+   },
+   "fail_correct_over_decided": {
+    "x": 41,
+    "n": 41,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "fail_lower_over_decided": 0.8937571151054241,
+   "evaluation_qualified_set": {
+    "n": 41,
+    "FAIL": 41,
+    "target_FAIL": 41
+   }
+  },
+  "white, variability|weakened": {
+   "total": 6400,
+   "eligible": 41,
+   "decided": 41,
+   "PASS": 13,
+   "FAIL": 28,
+   "INCONCLUSIVE": 6359,
+   "decided_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "eligible_over_total": {
+    "x": 41,
+    "n": 6400,
+    "fraction": 0.00640625
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 13,
+    "n": 41,
+    "fraction": 0.3170731707317073
+   },
+   "fail_over_decided": {
+    "x": 28,
+    "n": 41,
+    "fraction": 0.6829268292682927
+   }
+  }
+ },
+ "12": {
+  "AR(1), no variability|constant": {
+   "total": 6400,
+   "eligible": 1131,
+   "decided": 1131,
+   "PASS": 1131,
+   "FAIL": 0,
+   "INCONCLUSIVE": 5269,
+   "decided_over_total": {
+    "x": 1131,
+    "n": 6400,
+    "fraction": 0.17671875
+   },
+   "eligible_over_total": {
+    "x": 1131,
+    "n": 6400,
+    "fraction": 0.17671875
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 1131,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 1131,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.004063490101371957,
+   "error_upper_over_decided": 0.004063490101371957,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "AR(1), no variability|disappearing": {
+   "total": 6400,
+   "eligible": 945,
+   "decided": 945,
+   "PASS": 1,
+   "FAIL": 944,
+   "INCONCLUSIVE": 5455,
+   "decided_over_total": {
+    "x": 945,
+    "n": 6400,
+    "fraction": 0.14765625
+   },
+   "eligible_over_total": {
+    "x": 945,
+    "n": 6400,
+    "fraction": 0.14765625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 945,
+    "fraction": 0.0010582010582010583
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 945,
+    "fraction": 0.0010582010582010583
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.00700379142183043,
+   "error_upper_over_decided": 0.00700379142183043,
+   "error_upper_over_total": 0.0010367857275982435,
+   "fail_correct_over_eligible": {
+    "x": 944,
+    "n": 945,
+    "fraction": 0.9989417989417989
+   },
+   "fail_correct_over_decided": {
+    "x": 944,
+    "n": 945,
+    "fraction": 0.9989417989417989
+   },
+   "fail_correct_over_total": {
+    "x": 944,
+    "n": 6400,
+    "fraction": 0.1475
+   },
+   "fail_lower_over_decided": 0.9929962085781696,
+   "evaluation_qualified_set": {
+    "n": 945,
+    "FAIL": 944,
+    "target_FAIL": 944,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "AR(1), no variability|weakened": {
+   "total": 6400,
+   "eligible": 947,
+   "decided": 947,
+   "PASS": 790,
+   "FAIL": 157,
+   "INCONCLUSIVE": 5453,
+   "decided_over_total": {
+    "x": 947,
+    "n": 6400,
+    "fraction": 0.14796875
+   },
+   "eligible_over_total": {
+    "x": 947,
+    "n": 6400,
+    "fraction": 0.14796875
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 790,
+    "n": 947,
+    "fraction": 0.8342133051742344
+   },
+   "fail_over_decided": {
+    "x": 157,
+    "n": 947,
+    "fraction": 0.16578669482576558
+   }
+  },
+  "AR(1), variability|constant": {
+   "total": 6400,
+   "eligible": 505,
+   "decided": 504,
+   "PASS": 501,
+   "FAIL": 3,
+   "INCONCLUSIVE": 5896,
+   "decided_over_total": {
+    "x": 504,
+    "n": 6400,
+    "fraction": 0.07875
+   },
+   "eligible_over_total": {
+    "x": 505,
+    "n": 6400,
+    "fraction": 0.07890625
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 3,
+    "n": 505,
+    "fraction": 0.005940594059405941
+   },
+   "error_over_decided": {
+    "x": 3,
+    "n": 504,
+    "fraction": 0.005952380952380952
+   },
+   "error_over_total": {
+    "x": 3,
+    "n": 6400,
+    "fraction": 0.00046875
+   },
+   "error_upper_over_eligible": 0.01975303009984585,
+   "error_upper_over_decided": 0.01979194859617636,
+   "error_upper_over_total": 0.0015686859571759767
+  },
+  "AR(1), variability|disappearing": {
+   "total": 6400,
+   "eligible": 254,
+   "decided": 254,
+   "PASS": 29,
+   "FAIL": 225,
+   "INCONCLUSIVE": 6146,
+   "decided_over_total": {
+    "x": 254,
+    "n": 6400,
+    "fraction": 0.0396875
+   },
+   "eligible_over_total": {
+    "x": 254,
+    "n": 6400,
+    "fraction": 0.0396875
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 29,
+    "n": 254,
+    "fraction": 0.1141732283464567
+   },
+   "error_over_decided": {
+    "x": 29,
+    "n": 254,
+    "fraction": 0.1141732283464567
+   },
+   "error_over_total": {
+    "x": 29,
+    "n": 6400,
+    "fraction": 0.00453125
+   },
+   "error_upper_over_eligible": 0.16873048942709115,
+   "error_upper_over_decided": 0.16873048942709115,
+   "error_upper_over_total": 0.006896445987635648,
+   "fail_correct_over_eligible": {
+    "x": 225,
+    "n": 254,
+    "fraction": 0.8858267716535433
+   },
+   "fail_correct_over_decided": {
+    "x": 225,
+    "n": 254,
+    "fraction": 0.8858267716535433
+   },
+   "fail_correct_over_total": {
+    "x": 225,
+    "n": 6400,
+    "fraction": 0.03515625
+   },
+   "fail_lower_over_decided": 0.8312695105729089,
+   "evaluation_qualified_set": {
+    "n": 220,
+    "FAIL": 220,
+    "target_FAIL": 220
+   }
+  },
+  "AR(1), variability|weakened": {
+   "total": 6400,
+   "eligible": 276,
+   "decided": 275,
+   "PASS": 184,
+   "FAIL": 91,
+   "INCONCLUSIVE": 6125,
+   "decided_over_total": {
+    "x": 275,
+    "n": 6400,
+    "fraction": 0.04296875
+   },
+   "eligible_over_total": {
+    "x": 276,
+    "n": 6400,
+    "fraction": 0.043125
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 184,
+    "n": 275,
+    "fraction": 0.6690909090909091
+   },
+   "fail_over_decided": {
+    "x": 91,
+    "n": 275,
+    "fraction": 0.33090909090909093
+   }
+  },
+  "white, no variability|constant": {
+   "total": 6400,
+   "eligible": 640,
+   "decided": 639,
+   "PASS": 636,
+   "FAIL": 3,
+   "INCONCLUSIVE": 5761,
+   "decided_over_total": {
+    "x": 639,
+    "n": 6400,
+    "fraction": 0.09984375
+   },
+   "eligible_over_total": {
+    "x": 640,
+    "n": 6400,
+    "fraction": 0.1
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 3,
+    "n": 640,
+    "fraction": 0.0046875
+   },
+   "error_over_decided": {
+    "x": 3,
+    "n": 639,
+    "fraction": 0.004694835680751174
+   },
+   "error_over_total": {
+    "x": 3,
+    "n": 6400,
+    "fraction": 0.00046875
+   },
+   "error_upper_over_eligible": 0.015609333017812137,
+   "error_upper_over_decided": 0.015633626069788967,
+   "error_upper_over_total": 0.0015686859571759767
+  },
+  "white, no variability|disappearing": {
+   "total": 6400,
+   "eligible": 477,
+   "decided": 477,
+   "PASS": 1,
+   "FAIL": 476,
+   "INCONCLUSIVE": 5923,
+   "decided_over_total": {
+    "x": 477,
+    "n": 6400,
+    "fraction": 0.07453125
+   },
+   "eligible_over_total": {
+    "x": 477,
+    "n": 6400,
+    "fraction": 0.07453125
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 477,
+    "fraction": 0.0020964360587002098
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 477,
+    "fraction": 0.0020964360587002098
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.013834914143488208,
+   "error_upper_over_decided": 0.013834914143488208,
+   "error_upper_over_total": 0.0010367857275982435,
+   "fail_correct_over_eligible": {
+    "x": 476,
+    "n": 477,
+    "fraction": 0.9979035639412998
+   },
+   "fail_correct_over_decided": {
+    "x": 476,
+    "n": 477,
+    "fraction": 0.9979035639412998
+   },
+   "fail_correct_over_total": {
+    "x": 476,
+    "n": 6400,
+    "fraction": 0.074375
+   },
+   "fail_lower_over_decided": 0.9861650858565117,
+   "evaluation_qualified_set": {
+    "n": 477,
+    "FAIL": 476,
+    "target_FAIL": 476,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "white, no variability|weakened": {
+   "total": 6400,
+   "eligible": 477,
+   "decided": 477,
+   "PASS": 407,
+   "FAIL": 70,
+   "INCONCLUSIVE": 5923,
+   "decided_over_total": {
+    "x": 477,
+    "n": 6400,
+    "fraction": 0.07453125
+   },
+   "eligible_over_total": {
+    "x": 477,
+    "n": 6400,
+    "fraction": 0.07453125
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 407,
+    "n": 477,
+    "fraction": 0.8532494758909853
+   },
+   "fail_over_decided": {
+    "x": 70,
+    "n": 477,
+    "fraction": 0.14675052410901468
+   }
+  },
+  "white, variability|constant": {
+   "total": 6400,
+   "eligible": 94,
+   "decided": 94,
+   "PASS": 94,
+   "FAIL": 0,
+   "INCONCLUSIVE": 6306,
+   "decided_over_total": {
+    "x": 94,
+    "n": 6400,
+    "fraction": 0.0146875
+   },
+   "eligible_over_total": {
+    "x": 94,
+    "n": 6400,
+    "fraction": 0.0146875
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 94,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 94,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.04781046459159215,
+   "error_upper_over_decided": 0.04781046459159215,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "white, variability|disappearing": {
+   "total": 6400,
+   "eligible": 49,
+   "decided": 49,
+   "PASS": 0,
+   "FAIL": 49,
+   "INCONCLUSIVE": 6351,
+   "decided_over_total": {
+    "x": 49,
+    "n": 6400,
+    "fraction": 0.00765625
+   },
+   "eligible_over_total": {
+    "x": 49,
+    "n": 6400,
+    "fraction": 0.00765625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 49,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 49,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.08970182200847814,
+   "error_upper_over_decided": 0.08970182200847814,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 49,
+    "n": 49,
+    "fraction": 1.0
+   },
+   "fail_correct_over_decided": {
+    "x": 49,
+    "n": 49,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 49,
+    "n": 6400,
+    "fraction": 0.00765625
+   },
+   "fail_lower_over_decided": 0.9102981779915219,
+   "evaluation_qualified_set": {
+    "n": 49,
+    "FAIL": 49,
+    "target_FAIL": 49
+   }
+  },
+  "white, variability|weakened": {
+   "total": 6400,
+   "eligible": 49,
+   "decided": 49,
+   "PASS": 17,
+   "FAIL": 32,
+   "INCONCLUSIVE": 6351,
+   "decided_over_total": {
+    "x": 49,
+    "n": 6400,
+    "fraction": 0.00765625
+   },
+   "eligible_over_total": {
+    "x": 49,
+    "n": 6400,
+    "fraction": 0.00765625
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 17,
+    "n": 49,
+    "fraction": 0.3469387755102041
+   },
+   "fail_over_decided": {
+    "x": 32,
+    "n": 49,
+    "fraction": 0.6530612244897959
+   }
+  }
+ },
+ "15": {
+  "AR(1), no variability|constant": {
+   "total": 6400,
+   "eligible": 853,
+   "decided": 853,
+   "PASS": 853,
+   "FAIL": 0,
+   "INCONCLUSIVE": 5547,
+   "decided_over_total": {
+    "x": 853,
+    "n": 6400,
+    "fraction": 0.13328125
+   },
+   "eligible_over_total": {
+    "x": 853,
+    "n": 6400,
+    "fraction": 0.13328125
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 853,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 853,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.0053842454247609575,
+   "error_upper_over_decided": 0.0053842454247609575,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "AR(1), no variability|disappearing": {
+   "total": 6400,
+   "eligible": 683,
+   "decided": 683,
+   "PASS": 0,
+   "FAIL": 683,
+   "INCONCLUSIVE": 5717,
+   "decided_over_total": {
+    "x": 683,
+    "n": 6400,
+    "fraction": 0.10671875
+   },
+   "eligible_over_total": {
+    "x": 683,
+    "n": 6400,
+    "fraction": 0.10671875
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 683,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 683,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.0067198824258306615,
+   "error_upper_over_decided": 0.0067198824258306615,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 683,
+    "n": 683,
+    "fraction": 1.0
+   },
+   "fail_correct_over_decided": {
+    "x": 683,
+    "n": 683,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 683,
+    "n": 6400,
+    "fraction": 0.10671875
+   },
+   "fail_lower_over_decided": 0.9932801175741693,
+   "evaluation_qualified_set": {
+    "n": 683,
+    "FAIL": 683,
+    "target_FAIL": 683
+   }
+  },
+  "AR(1), no variability|weakened": {
+   "total": 6400,
+   "eligible": 684,
+   "decided": 684,
+   "PASS": 528,
+   "FAIL": 156,
+   "INCONCLUSIVE": 5716,
+   "decided_over_total": {
+    "x": 684,
+    "n": 6400,
+    "fraction": 0.106875
+   },
+   "eligible_over_total": {
+    "x": 684,
+    "n": 6400,
+    "fraction": 0.106875
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 528,
+    "n": 684,
+    "fraction": 0.7719298245614035
+   },
+   "fail_over_decided": {
+    "x": 156,
+    "n": 684,
+    "fraction": 0.22807017543859648
+   }
+  },
+  "AR(1), variability|constant": {
+   "total": 6400,
+   "eligible": 688,
+   "decided": 686,
+   "PASS": 682,
+   "FAIL": 4,
+   "INCONCLUSIVE": 5714,
+   "decided_over_total": {
+    "x": 686,
+    "n": 6400,
+    "fraction": 0.1071875
+   },
+   "eligible_over_total": {
+    "x": 688,
+    "n": 6400,
+    "fraction": 0.1075
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 4,
+    "n": 688,
+    "fraction": 0.005813953488372093
+   },
+   "error_over_decided": {
+    "x": 4,
+    "n": 686,
+    "fraction": 0.0058309037900874635
+   },
+   "error_over_total": {
+    "x": 4,
+    "n": 6400,
+    "fraction": 0.000625
+   },
+   "error_upper_over_eligible": 0.016774189245809007,
+   "error_upper_over_decided": 0.016822822304854525,
+   "error_upper_over_total": 0.0018121457635862294
+  },
+  "AR(1), variability|disappearing": {
+   "total": 6400,
+   "eligible": 358,
+   "decided": 357,
+   "PASS": 34,
+   "FAIL": 323,
+   "INCONCLUSIVE": 6043,
+   "decided_over_total": {
+    "x": 357,
+    "n": 6400,
+    "fraction": 0.05578125
+   },
+   "eligible_over_total": {
+    "x": 358,
+    "n": 6400,
+    "fraction": 0.0559375
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 34,
+    "n": 358,
+    "fraction": 0.09497206703910614
+   },
+   "error_over_decided": {
+    "x": 34,
+    "n": 357,
+    "fraction": 0.09523809523809523
+   },
+   "error_over_total": {
+    "x": 34,
+    "n": 6400,
+    "fraction": 0.0053125
+   },
+   "error_upper_over_eligible": 0.1370564007948356,
+   "error_upper_over_decided": 0.13743123728308426,
+   "error_upper_over_total": 0.007835775781047799,
+   "fail_correct_over_eligible": {
+    "x": 323,
+    "n": 358,
+    "fraction": 0.9022346368715084
+   },
+   "fail_correct_over_decided": {
+    "x": 323,
+    "n": 357,
+    "fraction": 0.9047619047619048
+   },
+   "fail_correct_over_total": {
+    "x": 323,
+    "n": 6400,
+    "fraction": 0.05046875
+   },
+   "fail_lower_over_decided": 0.8625687627169157,
+   "evaluation_qualified_set": {
+    "n": 316,
+    "FAIL": 314,
+    "target_FAIL": 314,
+    "INCONCLUSIVE": 1,
+    "target_INCONCLUSIVE": 1,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "AR(1), variability|weakened": {
+   "total": 6400,
+   "eligible": 406,
+   "decided": 406,
+   "PASS": 250,
+   "FAIL": 156,
+   "INCONCLUSIVE": 5994,
+   "decided_over_total": {
+    "x": 406,
+    "n": 6400,
+    "fraction": 0.0634375
+   },
+   "eligible_over_total": {
+    "x": 406,
+    "n": 6400,
+    "fraction": 0.0634375
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 250,
+    "n": 406,
+    "fraction": 0.6157635467980296
+   },
+   "fail_over_decided": {
+    "x": 156,
+    "n": 406,
+    "fraction": 0.3842364532019704
+   }
+  },
+  "white, no variability|constant": {
+   "total": 6400,
+   "eligible": 479,
+   "decided": 478,
+   "PASS": 477,
+   "FAIL": 1,
+   "INCONCLUSIVE": 5922,
+   "decided_over_total": {
+    "x": 478,
+    "n": 6400,
+    "fraction": 0.0746875
+   },
+   "eligible_over_total": {
+    "x": 479,
+    "n": 6400,
+    "fraction": 0.07484375
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 479,
+    "fraction": 0.0020876826722338203
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 478,
+    "fraction": 0.0020920502092050207
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.01377748795495707,
+   "error_upper_over_decided": 0.013806141334760255,
+   "error_upper_over_total": 0.0010367857275982435
+  },
+  "white, no variability|disappearing": {
+   "total": 6400,
+   "eligible": 369,
+   "decided": 369,
+   "PASS": 1,
+   "FAIL": 368,
+   "INCONCLUSIVE": 6031,
+   "decided_over_total": {
+    "x": 369,
+    "n": 6400,
+    "fraction": 0.05765625
+   },
+   "eligible_over_total": {
+    "x": 369,
+    "n": 6400,
+    "fraction": 0.05765625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 369,
+    "fraction": 0.0027100271002710027
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 369,
+    "fraction": 0.0027100271002710027
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.017853284701492476,
+   "error_upper_over_decided": 0.017853284701492476,
+   "error_upper_over_total": 0.0010367857275982435,
+   "fail_correct_over_eligible": {
+    "x": 368,
+    "n": 369,
+    "fraction": 0.997289972899729
+   },
+   "fail_correct_over_decided": {
+    "x": 368,
+    "n": 369,
+    "fraction": 0.997289972899729
+   },
+   "fail_correct_over_total": {
+    "x": 368,
+    "n": 6400,
+    "fraction": 0.0575
+   },
+   "fail_lower_over_decided": 0.9821467152985075,
+   "evaluation_qualified_set": {
+    "n": 369,
+    "FAIL": 368,
+    "target_FAIL": 368,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "white, no variability|weakened": {
+   "total": 6400,
+   "eligible": 370,
+   "decided": 370,
+   "PASS": 268,
+   "FAIL": 102,
+   "INCONCLUSIVE": 6030,
+   "decided_over_total": {
+    "x": 370,
+    "n": 6400,
+    "fraction": 0.0578125
+   },
+   "eligible_over_total": {
+    "x": 370,
+    "n": 6400,
+    "fraction": 0.0578125
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 268,
+    "n": 370,
+    "fraction": 0.7243243243243244
+   },
+   "fail_over_decided": {
+    "x": 102,
+    "n": 370,
+    "fraction": 0.2756756756756757
+   }
+  },
+  "white, variability|constant": {
+   "total": 6400,
+   "eligible": 207,
+   "decided": 207,
+   "PASS": 207,
+   "FAIL": 0,
+   "INCONCLUSIVE": 6193,
+   "decided_over_total": {
+    "x": 207,
+    "n": 6400,
+    "fraction": 0.03234375
+   },
+   "eligible_over_total": {
+    "x": 207,
+    "n": 6400,
+    "fraction": 0.03234375
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 207,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 207,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.022001555037156315,
+   "error_upper_over_decided": 0.022001555037156315,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "white, variability|disappearing": {
+   "total": 6400,
+   "eligible": 104,
+   "decided": 103,
+   "PASS": 0,
+   "FAIL": 103,
+   "INCONCLUSIVE": 6297,
+   "decided_over_total": {
+    "x": 103,
+    "n": 6400,
+    "fraction": 0.01609375
+   },
+   "eligible_over_total": {
+    "x": 104,
+    "n": 6400,
+    "fraction": 0.01625
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 104,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 103,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.04331441378194216,
+   "error_upper_over_decided": 0.04372561178910923,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 103,
+    "n": 104,
+    "fraction": 0.9903846153846154
+   },
+   "fail_correct_over_decided": {
+    "x": 103,
+    "n": 103,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 103,
+    "n": 6400,
+    "fraction": 0.01609375
+   },
+   "fail_lower_over_decided": 0.9562743882108908,
+   "evaluation_qualified_set": {
+    "n": 104,
+    "FAIL": 103,
+    "target_FAIL": 103,
+    "INCONCLUSIVE": 1,
+    "target_INCONCLUSIVE": 1
+   }
+  },
+  "white, variability|weakened": {
+   "total": 6400,
+   "eligible": 104,
+   "decided": 104,
+   "PASS": 26,
+   "FAIL": 78,
+   "INCONCLUSIVE": 6296,
+   "decided_over_total": {
+    "x": 104,
+    "n": 6400,
+    "fraction": 0.01625
+   },
+   "eligible_over_total": {
+    "x": 104,
+    "n": 6400,
+    "fraction": 0.01625
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 26,
+    "n": 104,
+    "fraction": 0.25
+   },
+   "fail_over_decided": {
+    "x": 78,
+    "n": 104,
+    "fraction": 0.75
+   }
+  }
+ },
+ "20": {
+  "AR(1), no variability|constant": {
+   "total": 6400,
+   "eligible": 581,
+   "decided": 581,
+   "PASS": 581,
+   "FAIL": 0,
+   "INCONCLUSIVE": 5819,
+   "decided_over_total": {
+    "x": 581,
+    "n": 6400,
+    "fraction": 0.09078125
+   },
+   "eligible_over_total": {
+    "x": 581,
+    "n": 6400,
+    "fraction": 0.09078125
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 581,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 581,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.007894952446041884,
+   "error_upper_over_decided": 0.007894952446041884,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "AR(1), no variability|disappearing": {
+   "total": 6400,
+   "eligible": 486,
+   "decided": 486,
+   "PASS": 0,
+   "FAIL": 486,
+   "INCONCLUSIVE": 5914,
+   "decided_over_total": {
+    "x": 486,
+    "n": 6400,
+    "fraction": 0.0759375
+   },
+   "eligible_over_total": {
+    "x": 486,
+    "n": 6400,
+    "fraction": 0.0759375
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 486,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 486,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.00943090622885176,
+   "error_upper_over_decided": 0.00943090622885176,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 486,
+    "n": 486,
+    "fraction": 1.0
+   },
+   "fail_correct_over_decided": {
+    "x": 486,
+    "n": 486,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 486,
+    "n": 6400,
+    "fraction": 0.0759375
+   },
+   "fail_lower_over_decided": 0.9905690937711482,
+   "evaluation_qualified_set": {
+    "n": 482,
+    "FAIL": 482,
+    "target_FAIL": 482
+   }
+  },
+  "AR(1), no variability|weakened": {
+   "total": 6400,
+   "eligible": 488,
+   "decided": 488,
+   "PASS": 321,
+   "FAIL": 167,
+   "INCONCLUSIVE": 5912,
+   "decided_over_total": {
+    "x": 488,
+    "n": 6400,
+    "fraction": 0.07625
+   },
+   "eligible_over_total": {
+    "x": 488,
+    "n": 6400,
+    "fraction": 0.07625
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 321,
+    "n": 488,
+    "fraction": 0.6577868852459017
+   },
+   "fail_over_decided": {
+    "x": 167,
+    "n": 488,
+    "fraction": 0.3422131147540984
+   }
+  },
+  "AR(1), variability|constant": {
+   "total": 6400,
+   "eligible": 859,
+   "decided": 858,
+   "PASS": 853,
+   "FAIL": 5,
+   "INCONCLUSIVE": 5542,
+   "decided_over_total": {
+    "x": 858,
+    "n": 6400,
+    "fraction": 0.1340625
+   },
+   "eligible_over_total": {
+    "x": 859,
+    "n": 6400,
+    "fraction": 0.13421875
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 5,
+    "n": 859,
+    "fraction": 0.005820721769499418
+   },
+   "error_over_decided": {
+    "x": 5,
+    "n": 858,
+    "fraction": 0.005827505827505828
+   },
+   "error_over_total": {
+    "x": 5,
+    "n": 6400,
+    "fraction": 0.00078125
+   },
+   "error_upper_over_eligible": 0.015188273668974262,
+   "error_upper_over_decided": 0.015205891881765065,
+   "error_upper_over_total": 0.0020469034015971736
+  },
+  "AR(1), variability|disappearing": {
+   "total": 6400,
+   "eligible": 470,
+   "decided": 467,
+   "PASS": 42,
+   "FAIL": 425,
+   "INCONCLUSIVE": 5933,
+   "decided_over_total": {
+    "x": 467,
+    "n": 6400,
+    "fraction": 0.07296875
+   },
+   "eligible_over_total": {
+    "x": 470,
+    "n": 6400,
+    "fraction": 0.0734375
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 42,
+    "n": 470,
+    "fraction": 0.08936170212765958
+   },
+   "error_over_decided": {
+    "x": 42,
+    "n": 467,
+    "fraction": 0.08993576017130621
+   },
+   "error_over_total": {
+    "x": 42,
+    "n": 6400,
+    "fraction": 0.0065625
+   },
+   "error_upper_over_eligible": 0.12462027241294109,
+   "error_upper_over_decided": 0.12540505424097495,
+   "error_upper_over_total": 0.009316296800527061,
+   "fail_correct_over_eligible": {
+    "x": 425,
+    "n": 470,
+    "fraction": 0.9042553191489362
+   },
+   "fail_correct_over_decided": {
+    "x": 425,
+    "n": 467,
+    "fraction": 0.9100642398286938
+   },
+   "fail_correct_over_total": {
+    "x": 425,
+    "n": 6400,
+    "fraction": 0.06640625
+   },
+   "fail_lower_over_decided": 0.8745949457590251,
+   "evaluation_qualified_set": {
+    "n": 401,
+    "FAIL": 398,
+    "target_FAIL": 398,
+    "INCONCLUSIVE": 2,
+    "target_INCONCLUSIVE": 2,
+    "PASS": 1,
+    "target_PASS": 1
+   }
+  },
+  "AR(1), variability|weakened": {
+   "total": 6400,
+   "eligible": 542,
+   "decided": 541,
+   "PASS": 315,
+   "FAIL": 226,
+   "INCONCLUSIVE": 5859,
+   "decided_over_total": {
+    "x": 541,
+    "n": 6400,
+    "fraction": 0.08453125
+   },
+   "eligible_over_total": {
+    "x": 542,
+    "n": 6400,
+    "fraction": 0.0846875
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 315,
+    "n": 541,
+    "fraction": 0.5822550831792976
+   },
+   "fail_over_decided": {
+    "x": 226,
+    "n": 541,
+    "fraction": 0.4177449168207024
+   }
+  },
+  "white, no variability|constant": {
+   "total": 6400,
+   "eligible": 390,
+   "decided": 390,
+   "PASS": 390,
+   "FAIL": 0,
+   "INCONCLUSIVE": 6010,
+   "decided_over_total": {
+    "x": 390,
+    "n": 6400,
+    "fraction": 0.0609375
+   },
+   "eligible_over_total": {
+    "x": 390,
+    "n": 6400,
+    "fraction": 0.0609375
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 390,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 390,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.011738686327367576,
+   "error_upper_over_decided": 0.011738686327367576,
+   "error_upper_over_total": 0.0007192990218992581
+  },
+  "white, no variability|disappearing": {
+   "total": 6400,
+   "eligible": 306,
+   "decided": 306,
+   "PASS": 0,
+   "FAIL": 306,
+   "INCONCLUSIVE": 6094,
+   "decided_over_total": {
+    "x": 306,
+    "n": 6400,
+    "fraction": 0.0478125
+   },
+   "eligible_over_total": {
+    "x": 306,
+    "n": 6400,
+    "fraction": 0.0478125
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 306,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 306,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.014936896870501433,
+   "error_upper_over_decided": 0.014936896870501433,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 306,
+    "n": 306,
+    "fraction": 1.0
+   },
+   "fail_correct_over_decided": {
+    "x": 306,
+    "n": 306,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 306,
+    "n": 6400,
+    "fraction": 0.0478125
+   },
+   "fail_lower_over_decided": 0.9850631031294985,
+   "evaluation_qualified_set": {
+    "n": 306,
+    "FAIL": 306,
+    "target_FAIL": 306
+   }
+  },
+  "white, no variability|weakened": {
+   "total": 6400,
+   "eligible": 311,
+   "decided": 310,
+   "PASS": 193,
+   "FAIL": 117,
+   "INCONCLUSIVE": 6090,
+   "decided_over_total": {
+    "x": 310,
+    "n": 6400,
+    "fraction": 0.0484375
+   },
+   "eligible_over_total": {
+    "x": 311,
+    "n": 6400,
+    "fraction": 0.04859375
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 193,
+    "n": 310,
+    "fraction": 0.6225806451612903
+   },
+   "fail_over_decided": {
+    "x": 117,
+    "n": 310,
+    "fraction": 0.3774193548387097
+   }
+  },
+  "white, variability|constant": {
+   "total": 6400,
+   "eligible": 336,
+   "decided": 336,
+   "PASS": 335,
+   "FAIL": 1,
+   "INCONCLUSIVE": 6064,
+   "decided_over_total": {
+    "x": 336,
+    "n": 6400,
+    "fraction": 0.0525
+   },
+   "eligible_over_total": {
+    "x": 336,
+    "n": 6400,
+    "fraction": 0.0525
+   },
+   "error_label": "FAIL (false FAIL)",
+   "error_over_eligible": {
+    "x": 1,
+    "n": 336,
+    "fraction": 0.002976190476190476
+   },
+   "error_over_decided": {
+    "x": 1,
+    "n": 336,
+    "fraction": 0.002976190476190476
+   },
+   "error_over_total": {
+    "x": 1,
+    "n": 6400,
+    "fraction": 0.00015625
+   },
+   "error_upper_over_eligible": 0.019592046554044947,
+   "error_upper_over_decided": 0.019592046554044947,
+   "error_upper_over_total": 0.0010367857275982435
+  },
+  "white, variability|disappearing": {
+   "total": 6400,
+   "eligible": 179,
+   "decided": 179,
+   "PASS": 0,
+   "FAIL": 179,
+   "INCONCLUSIVE": 6221,
+   "decided_over_total": {
+    "x": 179,
+    "n": 6400,
+    "fraction": 0.02796875
+   },
+   "eligible_over_total": {
+    "x": 179,
+    "n": 6400,
+    "fraction": 0.02796875
+   },
+   "error_label": "PASS (false PASS)",
+   "error_over_eligible": {
+    "x": 0,
+    "n": 179,
+    "fraction": 0.0
+   },
+   "error_over_decided": {
+    "x": 0,
+    "n": 179,
+    "fraction": 0.0
+   },
+   "error_over_total": {
+    "x": 0,
+    "n": 6400,
+    "fraction": 0.0
+   },
+   "error_upper_over_eligible": 0.02539908306686408,
+   "error_upper_over_decided": 0.02539908306686408,
+   "error_upper_over_total": 0.0007192990218992581,
+   "fail_correct_over_eligible": {
+    "x": 179,
+    "n": 179,
+    "fraction": 1.0
+   },
+   "fail_correct_over_decided": {
+    "x": 179,
+    "n": 179,
+    "fraction": 1.0
+   },
+   "fail_correct_over_total": {
+    "x": 179,
+    "n": 6400,
+    "fraction": 0.02796875
+   },
+   "fail_lower_over_decided": 0.9746009169331359,
+   "evaluation_qualified_set": {
+    "n": 179,
+    "FAIL": 179,
+    "target_FAIL": 179
+   }
+  },
+  "white, variability|weakened": {
+   "total": 6400,
+   "eligible": 181,
+   "decided": 181,
+   "PASS": 42,
+   "FAIL": 139,
+   "INCONCLUSIVE": 6219,
+   "decided_over_total": {
+    "x": 181,
+    "n": 6400,
+    "fraction": 0.02828125
+   },
+   "eligible_over_total": {
+    "x": 181,
+    "n": 6400,
+    "fraction": 0.02828125
+   },
+   "note": "PASS and FAIL fractions without an error label (Q6)",
+   "pass_over_decided": {
+    "x": 42,
+    "n": 181,
+    "fraction": 0.23204419889502761
+   },
+   "fail_over_decided": {
+    "x": 139,
+    "n": 181,
+    "fraction": 0.7679558011049724
+   }
+  }
+ }
+}

@@ -1,0 +1,4020 @@
+{
+ "8": {
+  "per_target": [
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0000",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -3.323584742533505,
+     "2020": -0.6135985448468197
+    },
+    "two_round_difference": 2.7099861976866855
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0010",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 7.0887495454579685,
+     "2020": 19.382994745680186
+    },
+    "two_round_difference": 12.294245200222218
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0020",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -6.11820495133549,
+     "2020": 4.173177836499686
+    },
+    "two_round_difference": 10.291382787835175
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0030",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 13.143669593291452
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0040",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 4.690729569029589,
+     "2020": 3.517574066978101
+    },
+    "two_round_difference": -1.1731555020514879
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0060",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 3.575959933106862,
+     "2020": 9.283798954904107
+    },
+    "two_round_difference": 5.707839021797245
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0070",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 9.34974908619494,
+     "2020": -0.5683778346627406
+    },
+    "two_round_difference": -9.91812692085768
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0090",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -7.691315414030276
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.6271609346870965,
+     "2020": -1.459232013348342
+    },
+    "two_round_difference": -3.0863929480354386
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.6250306785258353,
+     "2019": 0.47509703494575106,
+     "2020": -0.37050068824736115
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0120",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -4.354026961839528,
+     "2019": -5.953843935068216,
+     "2020": -4.560398855321132
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0130",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -3.812219896223688,
+     "2019": -0.5264140693189852,
+     "2020": -0.2155781530036549
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -6.511637316868006,
+     "2019": -4.3900559017747165,
+     "2020": -0.056458448393573946
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0150",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2019": -6.724911347793011
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0200",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.9917206232622888,
+     "2019": -2.258235020012508,
+     "2020": 2.6691571576360698
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0210",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2020": 1.514268998097391
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.05060029581836467,
+     "2019": -1.816521856063031,
+     "2020": 0.584691722288623
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -6.308390556453334
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0240",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -3.3612793585577627
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0020",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2020": 4.809645005136407
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0100",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.0463170975708387,
+     "2019": -0.058679582898228055,
+     "2020": 3.8285782018511583
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0110",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.7128238314569657,
+     "2019": -7.869214385447271,
+     "2020": 2.0907295708604714
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0120",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 3.1413243958461177
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0130",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.288921032091432,
+     "2019": 1.9983629844871924,
+     "2020": -0.05909860536910827
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0140",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.664298601764365,
+     "2019": 1.5405117520940976,
+     "2020": 1.4369159395633062
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0150",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -2.8372563158207154
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0160",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -1.621187463717189
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0200",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -2.913726467147649,
+     "2019": 0.21641441934532768,
+     "2020": -1.3196871545435513
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0210",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.652990251447366,
+     "2019": 1.3403171952612603,
+     "2020": 1.1620569213756422
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0220",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.855860666956453,
+     "2019": -2.7799844558205002,
+     "2020": -0.151802104272031
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0230",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 3.3617248990762185,
+     "2019": -0.8798537466986058,
+     "2020": 2.309976678353882
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0240",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.918851703700005,
+     "2019": 1.5053310669434996,
+     "2020": 0.9460085326510068
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.24538441640689612
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.670646922889422,
+     "2019": -1.3597525548136704,
+     "2020": 2.059158211676647
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 0.5837983401109232
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0150",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": 6.742080940275607
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.31280616444769027
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.6793417801507244
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0120",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 2.515776585328357
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0130",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.0727762408429902
+    },
+    "two_round_difference": null
+   }
+  ],
+  "sorted_residuals": [
+   -7.869214385447271,
+   -7.691315414030276,
+   -6.724911347793011,
+   -6.511637316868006,
+   -6.308390556453334,
+   -6.11820495133549,
+   -5.953843935068216,
+   -4.560398855321132,
+   -4.3900559017747165,
+   -4.354026961839528,
+   -3.812219896223688,
+   -3.3612793585577627,
+   -3.323584742533505,
+   -2.913726467147649,
+   -2.8372563158207154,
+   -2.7799844558205002,
+   -2.258235020012508,
+   -1.816521856063031,
+   -1.621187463717189,
+   -1.459232013348342,
+   -1.3597525548136704,
+   -1.3196871545435513,
+   -0.9917206232622888,
+   -0.8798537466986058,
+   -0.6135985448468197,
+   -0.5683778346627406,
+   -0.5264140693189852,
+   -0.37050068824736115,
+   -0.31280616444769027,
+   -0.24538441640689612,
+   -0.2155781530036549,
+   -0.151802104272031,
+   -0.05909860536910827,
+   -0.058679582898228055,
+   -0.056458448393573946,
+   -0.05060029581836467,
+   0.21641441934532768,
+   0.47509703494575106,
+   0.5837983401109232,
+   0.584691722288623,
+   0.6793417801507244,
+   0.918851703700005,
+   0.9460085326510068,
+   1.0463170975708387,
+   1.0727762408429902,
+   1.1620569213756422,
+   1.288921032091432,
+   1.3403171952612603,
+   1.4369159395633062,
+   1.5053310669434996,
+   1.514268998097391,
+   1.5405117520940976,
+   1.6250306785258353,
+   1.6271609346870965,
+   1.664298601764365,
+   1.9983629844871924,
+   2.059158211676647,
+   2.0907295708604714,
+   2.309976678353882,
+   2.515776585328357,
+   2.652990251447366,
+   2.6691571576360698,
+   2.7128238314569657,
+   3.1413243958461177,
+   3.3617248990762185,
+   3.517574066978101,
+   3.575959933106862,
+   3.8285782018511583,
+   4.173177836499686,
+   4.670646922889422,
+   4.690729569029589,
+   4.809645005136407,
+   4.855860666956453,
+   6.742080940275607,
+   7.0887495454579685,
+   9.283798954904107,
+   9.34974908619494,
+   13.143669593291452,
+   19.382994745680186
+  ],
+  "sorted_residuals_per_regime": {
+   "band=measurable": [
+    -7.869214385447271,
+    -7.691315414030276,
+    -6.724911347793011,
+    -6.511637316868006,
+    -6.308390556453334,
+    -6.11820495133549,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -3.323584742533505,
+    -2.913726467147649,
+    -2.8372563158207154,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.621187463717189,
+    -1.459232013348342,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.584691722288623,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.517574066978101,
+    3.575959933106862,
+    3.8285782018511583,
+    4.173177836499686,
+    4.690729569029589,
+    4.809645005136407,
+    4.855860666956453,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "band=near": [
+    -1.3597525548136704,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    0.5837983401109232,
+    0.6793417801507244,
+    1.0727762408429902,
+    2.059158211676647,
+    2.515776585328357,
+    4.670646922889422,
+    6.742080940275607
+   ],
+   "group=AR(1), no variability": [
+    -7.691315414030276,
+    -6.724911347793011,
+    -6.511637316868006,
+    -6.11820495133549,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.323584742533505,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.6250306785258353,
+    1.6271609346870965,
+    2.059158211676647,
+    3.517574066978101,
+    3.575959933106862,
+    4.173177836499686,
+    4.670646922889422,
+    4.690729569029589,
+    6.742080940275607,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "group=AR(1), variability": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.258235020012508,
+    -1.816521856063031,
+    -0.9917206232622888,
+    -0.31280616444769027,
+    -0.05060029581836467,
+    0.584691722288623,
+    0.6793417801507244,
+    1.514268998097391,
+    2.6691571576360698
+   ],
+   "group=white, no variability": [
+    -7.869214385447271,
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583,
+    4.809645005136407
+   ],
+   "group=white, variability": [
+    -2.913726467147649,
+    -2.7799844558205002,
+    -1.3196871545435513,
+    -0.8798537466986058,
+    -0.151802104272031,
+    0.21641441934532768,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    2.309976678353882,
+    2.652990251447366,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "mechanism=few_train": [
+    -6.724911347793011,
+    -2.8372563158207154,
+    -1.621187463717189,
+    6.742080940275607
+   ],
+   "mechanism=three_years": [
+    -7.869214385447271,
+    -6.511637316868006,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583,
+    4.670646922889422
+   ],
+   "mechanism=two_years": [
+    -7.691315414030276,
+    -6.11820495133549,
+    -3.323584742533505,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    3.517574066978101,
+    3.575959933106862,
+    4.173177836499686,
+    4.690729569029589,
+    4.809645005136407,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "mechanism=variability_some_years": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.31280616444769027,
+    -0.151802104272031,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    1.514268998097391,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "years=2": [
+    -7.691315414030276,
+    -6.724911347793011,
+    -6.11820495133549,
+    -3.323584742533505,
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    3.517574066978101,
+    3.575959933106862,
+    4.173177836499686,
+    4.690729569029589,
+    4.809645005136407,
+    6.742080940275607,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "years=3": [
+    -7.869214385447271,
+    -6.511637316868006,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.5837983401109232,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.309976678353882,
+    2.515776585328357,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.8285782018511583,
+    4.670646922889422,
+    4.855860666956453
+   ]
+  }
+ },
+ "10": {
+  "per_target": [
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0000",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -3.323584742533505,
+     "2020": -0.6135985448468197
+    },
+    "two_round_difference": 2.7099861976866855
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0010",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 7.0887495454579685,
+     "2020": 19.382994745680186
+    },
+    "two_round_difference": 12.294245200222218
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0020",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -6.11820495133549,
+     "2020": 4.173177836499686
+    },
+    "two_round_difference": 10.291382787835175
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0030",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 13.143669593291452
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0040",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 4.690729569029589,
+     "2020": 3.517574066978101
+    },
+    "two_round_difference": -1.1731555020514879
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0060",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 3.575959933106862,
+     "2020": 9.283798954904107
+    },
+    "two_round_difference": 5.707839021797245
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0070",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 9.34974908619494,
+     "2020": -0.5683778346627406
+    },
+    "two_round_difference": -9.91812692085768
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0090",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -7.691315414030276
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.6271609346870965,
+     "2020": -1.459232013348342
+    },
+    "two_round_difference": -3.0863929480354386
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.6250306785258353,
+     "2019": 0.47509703494575106,
+     "2020": -0.37050068824736115
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0120",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -4.354026961839528,
+     "2019": -5.953843935068216,
+     "2020": -4.560398855321132
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0130",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -3.812219896223688,
+     "2019": -0.5264140693189852,
+     "2020": -0.2155781530036549
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -6.511637316868006,
+     "2019": -4.3900559017747165,
+     "2020": -0.056458448393573946
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0150",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2019": -6.724911347793011
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0200",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.9917206232622888,
+     "2019": -2.258235020012508,
+     "2020": 2.6691571576360698
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0210",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2020": 1.514268998097391
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.05060029581836467,
+     "2019": -1.816521856063031,
+     "2020": 0.584691722288623
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -6.308390556453334
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0240",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -3.3612793585577627
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0020",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2020": 4.809645005136407
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0100",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.0463170975708387,
+     "2019": -0.058679582898228055,
+     "2020": 3.8285782018511583
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0110",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.7128238314569657,
+     "2019": -7.869214385447271,
+     "2020": 2.0907295708604714
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0120",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 3.1413243958461177
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0130",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.288921032091432,
+     "2019": 1.9983629844871924,
+     "2020": -0.05909860536910827
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0140",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.664298601764365,
+     "2019": 1.5405117520940976,
+     "2020": 1.4369159395633062
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0150",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -2.8372563158207154
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0160",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -1.621187463717189
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0200",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -2.913726467147649,
+     "2019": 0.21641441934532768,
+     "2020": -1.3196871545435513
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0210",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.652990251447366,
+     "2019": 1.3403171952612603,
+     "2020": 1.1620569213756422
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0220",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.855860666956453,
+     "2019": -2.7799844558205002,
+     "2020": -0.151802104272031
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0230",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 3.3617248990762185,
+     "2019": -0.8798537466986058,
+     "2020": 2.309976678353882
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0240",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.918851703700005,
+     "2019": 1.5053310669434996,
+     "2020": 0.9460085326510068
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.24538441640689612
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.670646922889422,
+     "2019": -1.3597525548136704,
+     "2020": 2.059158211676647
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 0.5837983401109232
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0150",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": 6.742080940275607
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.31280616444769027
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.6793417801507244
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0120",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 2.515776585328357
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0130",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.0727762408429902
+    },
+    "two_round_difference": null
+   }
+  ],
+  "sorted_residuals": [
+   -7.869214385447271,
+   -7.691315414030276,
+   -6.724911347793011,
+   -6.511637316868006,
+   -6.308390556453334,
+   -6.11820495133549,
+   -5.953843935068216,
+   -4.560398855321132,
+   -4.3900559017747165,
+   -4.354026961839528,
+   -3.812219896223688,
+   -3.3612793585577627,
+   -3.323584742533505,
+   -2.913726467147649,
+   -2.8372563158207154,
+   -2.7799844558205002,
+   -2.258235020012508,
+   -1.816521856063031,
+   -1.621187463717189,
+   -1.459232013348342,
+   -1.3597525548136704,
+   -1.3196871545435513,
+   -0.9917206232622888,
+   -0.8798537466986058,
+   -0.6135985448468197,
+   -0.5683778346627406,
+   -0.5264140693189852,
+   -0.37050068824736115,
+   -0.31280616444769027,
+   -0.24538441640689612,
+   -0.2155781530036549,
+   -0.151802104272031,
+   -0.05909860536910827,
+   -0.058679582898228055,
+   -0.056458448393573946,
+   -0.05060029581836467,
+   0.21641441934532768,
+   0.47509703494575106,
+   0.5837983401109232,
+   0.584691722288623,
+   0.6793417801507244,
+   0.918851703700005,
+   0.9460085326510068,
+   1.0463170975708387,
+   1.0727762408429902,
+   1.1620569213756422,
+   1.288921032091432,
+   1.3403171952612603,
+   1.4369159395633062,
+   1.5053310669434996,
+   1.514268998097391,
+   1.5405117520940976,
+   1.6250306785258353,
+   1.6271609346870965,
+   1.664298601764365,
+   1.9983629844871924,
+   2.059158211676647,
+   2.0907295708604714,
+   2.309976678353882,
+   2.515776585328357,
+   2.652990251447366,
+   2.6691571576360698,
+   2.7128238314569657,
+   3.1413243958461177,
+   3.3617248990762185,
+   3.517574066978101,
+   3.575959933106862,
+   3.8285782018511583,
+   4.173177836499686,
+   4.670646922889422,
+   4.690729569029589,
+   4.809645005136407,
+   4.855860666956453,
+   6.742080940275607,
+   7.0887495454579685,
+   9.283798954904107,
+   9.34974908619494,
+   13.143669593291452,
+   19.382994745680186
+  ],
+  "sorted_residuals_per_regime": {
+   "band=measurable": [
+    -7.869214385447271,
+    -7.691315414030276,
+    -6.724911347793011,
+    -6.511637316868006,
+    -6.308390556453334,
+    -6.11820495133549,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -3.323584742533505,
+    -2.913726467147649,
+    -2.8372563158207154,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.621187463717189,
+    -1.459232013348342,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.584691722288623,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.517574066978101,
+    3.575959933106862,
+    3.8285782018511583,
+    4.173177836499686,
+    4.690729569029589,
+    4.809645005136407,
+    4.855860666956453,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "band=near": [
+    -1.3597525548136704,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    0.5837983401109232,
+    0.6793417801507244,
+    1.0727762408429902,
+    2.059158211676647,
+    2.515776585328357,
+    4.670646922889422,
+    6.742080940275607
+   ],
+   "group=AR(1), no variability": [
+    -7.691315414030276,
+    -6.724911347793011,
+    -6.511637316868006,
+    -6.11820495133549,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.323584742533505,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.6250306785258353,
+    1.6271609346870965,
+    2.059158211676647,
+    3.517574066978101,
+    3.575959933106862,
+    4.173177836499686,
+    4.670646922889422,
+    4.690729569029589,
+    6.742080940275607,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "group=AR(1), variability": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.258235020012508,
+    -1.816521856063031,
+    -0.9917206232622888,
+    -0.31280616444769027,
+    -0.05060029581836467,
+    0.584691722288623,
+    0.6793417801507244,
+    1.514268998097391,
+    2.6691571576360698
+   ],
+   "group=white, no variability": [
+    -7.869214385447271,
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583,
+    4.809645005136407
+   ],
+   "group=white, variability": [
+    -2.913726467147649,
+    -2.7799844558205002,
+    -1.3196871545435513,
+    -0.8798537466986058,
+    -0.151802104272031,
+    0.21641441934532768,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    2.309976678353882,
+    2.652990251447366,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "mechanism=few_train": [
+    -6.724911347793011,
+    -2.8372563158207154,
+    -1.621187463717189,
+    6.742080940275607
+   ],
+   "mechanism=three_years": [
+    -7.869214385447271,
+    -6.511637316868006,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583,
+    4.670646922889422
+   ],
+   "mechanism=two_years": [
+    -7.691315414030276,
+    -6.11820495133549,
+    -3.323584742533505,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    3.517574066978101,
+    3.575959933106862,
+    4.173177836499686,
+    4.690729569029589,
+    4.809645005136407,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "mechanism=variability_some_years": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.31280616444769027,
+    -0.151802104272031,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    1.514268998097391,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "years=2": [
+    -7.691315414030276,
+    -6.724911347793011,
+    -6.11820495133549,
+    -3.323584742533505,
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    3.517574066978101,
+    3.575959933106862,
+    4.173177836499686,
+    4.690729569029589,
+    4.809645005136407,
+    6.742080940275607,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "years=3": [
+    -7.869214385447271,
+    -6.511637316868006,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.5837983401109232,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.309976678353882,
+    2.515776585328357,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.8285782018511583,
+    4.670646922889422,
+    4.855860666956453
+   ]
+  }
+ },
+ "12": {
+  "per_target": [
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0000",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -3.323584742533505,
+     "2020": -0.6135985448468197
+    },
+    "two_round_difference": 2.7099861976866855
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0010",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 7.0887495454579685,
+     "2020": 19.382994745680186
+    },
+    "two_round_difference": 12.294245200222218
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0030",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 13.143669593291452
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0040",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 4.690729569029589,
+     "2020": 3.517574066978101
+    },
+    "two_round_difference": -1.1731555020514879
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0060",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 3.575959933106862,
+     "2020": 9.283798954904107
+    },
+    "two_round_difference": 5.707839021797245
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0070",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 9.34974908619494,
+     "2020": -0.5683778346627406
+    },
+    "two_round_difference": -9.91812692085768
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0090",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": -7.691315414030276
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.6271609346870965,
+     "2020": -1.459232013348342
+    },
+    "two_round_difference": -3.0863929480354386
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.6250306785258353,
+     "2019": 0.47509703494575106,
+     "2020": -0.37050068824736115
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0120",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -4.354026961839528,
+     "2019": -5.953843935068216,
+     "2020": -4.560398855321132
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0130",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -3.812219896223688,
+     "2019": -0.5264140693189852,
+     "2020": -0.2155781530036549
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -6.511637316868006,
+     "2019": -4.3900559017747165,
+     "2020": -0.056458448393573946
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0200",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.9917206232622888,
+     "2019": -2.258235020012508,
+     "2020": 2.6691571576360698
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0210",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2020": 1.514268998097391
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.05060029581836467,
+     "2019": -1.816521856063031,
+     "2020": 0.584691722288623
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -6.308390556453334
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0240",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -3.3612793585577627
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0020",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2020": 4.809645005136407
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0100",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.0463170975708387,
+     "2019": -0.058679582898228055,
+     "2020": 3.8285782018511583
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0110",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.7128238314569657,
+     "2019": -7.869214385447271,
+     "2020": 2.0907295708604714
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0120",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 3.1413243958461177
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0130",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.288921032091432,
+     "2019": 1.9983629844871924,
+     "2020": -0.05909860536910827
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0140",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.664298601764365,
+     "2019": 1.5405117520940976,
+     "2020": 1.4369159395633062
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0150",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -2.8372563158207154
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0160",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -1.621187463717189
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0200",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -2.913726467147649,
+     "2019": 0.21641441934532768,
+     "2020": -1.3196871545435513
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0210",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.652990251447366,
+     "2019": 1.3403171952612603,
+     "2020": 1.1620569213756422
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0220",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.855860666956453,
+     "2019": -2.7799844558205002,
+     "2020": -0.151802104272031
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0230",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 3.3617248990762185,
+     "2019": -0.8798537466986058,
+     "2020": 2.309976678353882
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0240",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.918851703700005,
+     "2019": 1.5053310669434996,
+     "2020": 0.9460085326510068
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.24538441640689612
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.670646922889422,
+     "2019": -1.3597525548136704,
+     "2020": 2.059158211676647
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 0.5837983401109232
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0150",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": 6.742080940275607
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.31280616444769027
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.6793417801507244
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0120",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 2.515776585328357
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0130",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.0727762408429902
+    },
+    "two_round_difference": null
+   }
+  ],
+  "sorted_residuals": [
+   -7.869214385447271,
+   -7.691315414030276,
+   -6.511637316868006,
+   -6.308390556453334,
+   -5.953843935068216,
+   -4.560398855321132,
+   -4.3900559017747165,
+   -4.354026961839528,
+   -3.812219896223688,
+   -3.3612793585577627,
+   -3.323584742533505,
+   -2.913726467147649,
+   -2.8372563158207154,
+   -2.7799844558205002,
+   -2.258235020012508,
+   -1.816521856063031,
+   -1.621187463717189,
+   -1.459232013348342,
+   -1.3597525548136704,
+   -1.3196871545435513,
+   -0.9917206232622888,
+   -0.8798537466986058,
+   -0.6135985448468197,
+   -0.5683778346627406,
+   -0.5264140693189852,
+   -0.37050068824736115,
+   -0.31280616444769027,
+   -0.24538441640689612,
+   -0.2155781530036549,
+   -0.151802104272031,
+   -0.05909860536910827,
+   -0.058679582898228055,
+   -0.056458448393573946,
+   -0.05060029581836467,
+   0.21641441934532768,
+   0.47509703494575106,
+   0.5837983401109232,
+   0.584691722288623,
+   0.6793417801507244,
+   0.918851703700005,
+   0.9460085326510068,
+   1.0463170975708387,
+   1.0727762408429902,
+   1.1620569213756422,
+   1.288921032091432,
+   1.3403171952612603,
+   1.4369159395633062,
+   1.5053310669434996,
+   1.514268998097391,
+   1.5405117520940976,
+   1.6250306785258353,
+   1.6271609346870965,
+   1.664298601764365,
+   1.9983629844871924,
+   2.059158211676647,
+   2.0907295708604714,
+   2.309976678353882,
+   2.515776585328357,
+   2.652990251447366,
+   2.6691571576360698,
+   2.7128238314569657,
+   3.1413243958461177,
+   3.3617248990762185,
+   3.517574066978101,
+   3.575959933106862,
+   3.8285782018511583,
+   4.670646922889422,
+   4.690729569029589,
+   4.809645005136407,
+   4.855860666956453,
+   6.742080940275607,
+   7.0887495454579685,
+   9.283798954904107,
+   9.34974908619494,
+   13.143669593291452,
+   19.382994745680186
+  ],
+  "sorted_residuals_per_regime": {
+   "band=measurable": [
+    -7.869214385447271,
+    -7.691315414030276,
+    -6.511637316868006,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -3.323584742533505,
+    -2.913726467147649,
+    -2.8372563158207154,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.621187463717189,
+    -1.459232013348342,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.584691722288623,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.517574066978101,
+    3.575959933106862,
+    3.8285782018511583,
+    4.690729569029589,
+    4.809645005136407,
+    4.855860666956453,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "band=near": [
+    -1.3597525548136704,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    0.5837983401109232,
+    0.6793417801507244,
+    1.0727762408429902,
+    2.059158211676647,
+    2.515776585328357,
+    4.670646922889422,
+    6.742080940275607
+   ],
+   "group=AR(1), no variability": [
+    -7.691315414030276,
+    -6.511637316868006,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.323584742533505,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.6250306785258353,
+    1.6271609346870965,
+    2.059158211676647,
+    3.517574066978101,
+    3.575959933106862,
+    4.670646922889422,
+    4.690729569029589,
+    6.742080940275607,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "group=AR(1), variability": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.258235020012508,
+    -1.816521856063031,
+    -0.9917206232622888,
+    -0.31280616444769027,
+    -0.05060029581836467,
+    0.584691722288623,
+    0.6793417801507244,
+    1.514268998097391,
+    2.6691571576360698
+   ],
+   "group=white, no variability": [
+    -7.869214385447271,
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583,
+    4.809645005136407
+   ],
+   "group=white, variability": [
+    -2.913726467147649,
+    -2.7799844558205002,
+    -1.3196871545435513,
+    -0.8798537466986058,
+    -0.151802104272031,
+    0.21641441934532768,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    2.309976678353882,
+    2.652990251447366,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "mechanism=few_train": [
+    -2.8372563158207154,
+    -1.621187463717189,
+    6.742080940275607
+   ],
+   "mechanism=three_years": [
+    -7.869214385447271,
+    -6.511637316868006,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583,
+    4.670646922889422
+   ],
+   "mechanism=two_years": [
+    -7.691315414030276,
+    -3.323584742533505,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    3.517574066978101,
+    3.575959933106862,
+    4.690729569029589,
+    4.809645005136407,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "mechanism=variability_some_years": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.31280616444769027,
+    -0.151802104272031,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    1.514268998097391,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "years=2": [
+    -7.691315414030276,
+    -3.323584742533505,
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.6135985448468197,
+    -0.5683778346627406,
+    3.517574066978101,
+    3.575959933106862,
+    4.690729569029589,
+    4.809645005136407,
+    6.742080940275607,
+    7.0887495454579685,
+    9.283798954904107,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "years=3": [
+    -7.869214385447271,
+    -6.511637316868006,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    -0.05060029581836467,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.5837983401109232,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.309976678353882,
+    2.515776585328357,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.8285782018511583,
+    4.670646922889422,
+    4.855860666956453
+   ]
+  }
+ },
+ "15": {
+  "per_target": [
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0010",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 7.0887495454579685,
+     "2020": 19.382994745680186
+    },
+    "two_round_difference": 12.294245200222218
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0030",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 13.143669593291452
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0040",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 4.690729569029589,
+     "2020": 3.517574066978101
+    },
+    "two_round_difference": -1.1731555020514879
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0070",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 9.34974908619494,
+     "2020": -0.5683778346627406
+    },
+    "two_round_difference": -9.91812692085768
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.6271609346870965,
+     "2020": -1.459232013348342
+    },
+    "two_round_difference": -3.0863929480354386
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.6250306785258353,
+     "2019": 0.47509703494575106,
+     "2020": -0.37050068824736115
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0120",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -4.354026961839528,
+     "2019": -5.953843935068216,
+     "2020": -4.560398855321132
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0130",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -3.812219896223688,
+     "2019": -0.5264140693189852,
+     "2020": -0.2155781530036549
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": -4.3900559017747165,
+     "2020": -0.056458448393573946
+    },
+    "two_round_difference": 4.3335974533811426
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0200",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.9917206232622888,
+     "2019": -2.258235020012508,
+     "2020": 2.6691571576360698
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0210",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2020": 1.514268998097391
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -1.816521856063031,
+     "2020": 0.584691722288623
+    },
+    "two_round_difference": 2.401213578351654
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -6.308390556453334
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0240",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -3.3612793585577627
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0100",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.0463170975708387,
+     "2019": -0.058679582898228055,
+     "2020": 3.8285782018511583
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0110",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.7128238314569657,
+     "2019": -7.869214385447271,
+     "2020": 2.0907295708604714
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0120",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 3.1413243958461177
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0130",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.288921032091432,
+     "2019": 1.9983629844871924,
+     "2020": -0.05909860536910827
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0140",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.664298601764365,
+     "2019": 1.5405117520940976,
+     "2020": 1.4369159395633062
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0150",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -2.8372563158207154
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0160",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": -1.621187463717189
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0200",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -2.913726467147649,
+     "2019": 0.21641441934532768,
+     "2020": -1.3196871545435513
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0210",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.652990251447366,
+     "2019": 1.3403171952612603,
+     "2020": 1.1620569213756422
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0220",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.855860666956453,
+     "2019": -2.7799844558205002,
+     "2020": -0.151802104272031
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0230",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 3.3617248990762185,
+     "2019": -0.8798537466986058,
+     "2020": 2.309976678353882
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0240",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.918851703700005,
+     "2019": 1.5053310669434996,
+     "2020": 0.9460085326510068
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.24538441640689612
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.670646922889422,
+     "2019": -1.3597525548136704,
+     "2020": 2.059158211676647
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 0.5837983401109232
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0150",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "few_train",
+    "years": 2,
+    "residuals": {
+     "2018": 6.742080940275607
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.31280616444769027
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.6793417801507244
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0120",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 2.515776585328357
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-white-0130",
+    "group": "white, no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.0727762408429902
+    },
+    "two_round_difference": null
+   }
+  ],
+  "sorted_residuals": [
+   -7.869214385447271,
+   -6.308390556453334,
+   -5.953843935068216,
+   -4.560398855321132,
+   -4.3900559017747165,
+   -4.354026961839528,
+   -3.812219896223688,
+   -3.3612793585577627,
+   -2.913726467147649,
+   -2.8372563158207154,
+   -2.7799844558205002,
+   -2.258235020012508,
+   -1.816521856063031,
+   -1.621187463717189,
+   -1.459232013348342,
+   -1.3597525548136704,
+   -1.3196871545435513,
+   -0.9917206232622888,
+   -0.8798537466986058,
+   -0.5683778346627406,
+   -0.5264140693189852,
+   -0.37050068824736115,
+   -0.31280616444769027,
+   -0.24538441640689612,
+   -0.2155781530036549,
+   -0.151802104272031,
+   -0.05909860536910827,
+   -0.058679582898228055,
+   -0.056458448393573946,
+   0.21641441934532768,
+   0.47509703494575106,
+   0.5837983401109232,
+   0.584691722288623,
+   0.6793417801507244,
+   0.918851703700005,
+   0.9460085326510068,
+   1.0463170975708387,
+   1.0727762408429902,
+   1.1620569213756422,
+   1.288921032091432,
+   1.3403171952612603,
+   1.4369159395633062,
+   1.5053310669434996,
+   1.514268998097391,
+   1.5405117520940976,
+   1.6250306785258353,
+   1.6271609346870965,
+   1.664298601764365,
+   1.9983629844871924,
+   2.059158211676647,
+   2.0907295708604714,
+   2.309976678353882,
+   2.515776585328357,
+   2.652990251447366,
+   2.6691571576360698,
+   2.7128238314569657,
+   3.1413243958461177,
+   3.3617248990762185,
+   3.517574066978101,
+   3.8285782018511583,
+   4.670646922889422,
+   4.690729569029589,
+   4.855860666956453,
+   6.742080940275607,
+   7.0887495454579685,
+   9.34974908619494,
+   13.143669593291452,
+   19.382994745680186
+  ],
+  "sorted_residuals_per_regime": {
+   "band=measurable": [
+    -7.869214385447271,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.8372563158207154,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.621187463717189,
+    -1.459232013348342,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.584691722288623,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.517574066978101,
+    3.8285782018511583,
+    4.690729569029589,
+    4.855860666956453,
+    7.0887495454579685,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "band=near": [
+    -1.3597525548136704,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    0.5837983401109232,
+    0.6793417801507244,
+    1.0727762408429902,
+    2.059158211676647,
+    2.515776585328357,
+    4.670646922889422,
+    6.742080940275607
+   ],
+   "group=AR(1), no variability": [
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.5683778346627406,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.6250306785258353,
+    1.6271609346870965,
+    2.059158211676647,
+    3.517574066978101,
+    4.670646922889422,
+    4.690729569029589,
+    6.742080940275607,
+    7.0887495454579685,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "group=AR(1), variability": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.258235020012508,
+    -1.816521856063031,
+    -0.9917206232622888,
+    -0.31280616444769027,
+    0.584691722288623,
+    0.6793417801507244,
+    1.514268998097391,
+    2.6691571576360698
+   ],
+   "group=white, no variability": [
+    -7.869214385447271,
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583
+   ],
+   "group=white, variability": [
+    -2.913726467147649,
+    -2.7799844558205002,
+    -1.3196871545435513,
+    -0.8798537466986058,
+    -0.151802104272031,
+    0.21641441934532768,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    2.309976678353882,
+    2.652990251447366,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "mechanism=few_train": [
+    -2.8372563158207154,
+    -1.621187463717189,
+    6.742080940275607
+   ],
+   "mechanism=three_years": [
+    -7.869214385447271,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.515776585328357,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.8285782018511583,
+    4.670646922889422
+   ],
+   "mechanism=two_years": [
+    -0.5683778346627406,
+    3.517574066978101,
+    4.690729569029589,
+    7.0887495454579685,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "mechanism=variability_some_years": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.31280616444769027,
+    -0.151802104272031,
+    0.21641441934532768,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    1.514268998097391,
+    2.309976678353882,
+    2.652990251447366,
+    2.6691571576360698,
+    3.3617248990762185,
+    4.855860666956453
+   ],
+   "years=2": [
+    -2.8372563158207154,
+    -1.621187463717189,
+    -0.5683778346627406,
+    3.517574066978101,
+    4.690729569029589,
+    6.742080940275607,
+    7.0887495454579685,
+    9.34974908619494,
+    13.143669593291452,
+    19.382994745680186
+   ],
+   "years=3": [
+    -7.869214385447271,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.459232013348342,
+    -1.3597525548136704,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.8798537466986058,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.31280616444769027,
+    -0.24538441640689612,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    -0.056458448393573946,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.5837983401109232,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.0463170975708387,
+    1.0727762408429902,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.059158211676647,
+    2.0907295708604714,
+    2.309976678353882,
+    2.515776585328357,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    3.3617248990762185,
+    3.8285782018511583,
+    4.670646922889422,
+    4.855860666956453
+   ]
+  }
+ },
+ "20": {
+  "per_target": [
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0030",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "two_years",
+    "years": 2,
+    "residuals": {
+     "2018": 13.143669593291452
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0100",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 1.6271609346870965
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.6250306785258353,
+     "2019": 0.47509703494575106,
+     "2020": -0.37050068824736115
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0120",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -4.354026961839528,
+     "2019": -5.953843935068216,
+     "2020": -4.560398855321132
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0130",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": -3.812219896223688,
+     "2019": -0.5264140693189852,
+     "2020": -0.2155781530036549
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": -4.3900559017747165
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0200",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -0.9917206232622888,
+     "2019": -2.258235020012508,
+     "2020": 2.6691571576360698
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0210",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2020": 1.514268998097391
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -1.816521856063031,
+     "2020": 0.584691722288623
+    },
+    "two_round_difference": 2.401213578351654
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -6.308390556453334
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-correlated-0240",
+    "group": "AR(1), variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -3.3612793585577627
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0100",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.058679582898228055
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0110",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.7128238314569657,
+     "2019": -7.869214385447271,
+     "2020": 2.0907295708604714
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0120",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 3.1413243958461177
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0130",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.288921032091432,
+     "2019": 1.9983629844871924,
+     "2020": -0.05909860536910827
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0140",
+    "group": "white, no variability",
+    "band": "measurable",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 1.664298601764365,
+     "2019": 1.5405117520940976,
+     "2020": 1.4369159395633062
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0200",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": -2.913726467147649,
+     "2019": 0.21641441934532768,
+     "2020": -1.3196871545435513
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0210",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 2.652990251447366,
+     "2019": 1.3403171952612603,
+     "2020": 1.1620569213756422
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0220",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.855860666956453,
+     "2019": -2.7799844558205002,
+     "2020": -0.151802104272031
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-measurable-white-0240",
+    "group": "white, variability",
+    "band": "measurable",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.918851703700005,
+     "2019": 1.5053310669434996,
+     "2020": 0.9460085326510068
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0110",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2018": 4.670646922889422,
+     "2019": -1.3597525548136704
+    },
+    "two_round_difference": -6.030399477703092
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0140",
+    "group": "AR(1), no variability",
+    "band": "near",
+    "mechanism": "three_years",
+    "years": 3,
+    "residuals": {
+     "2019": 0.5837983401109232
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0220",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2019": -0.31280616444769027
+    },
+    "two_round_difference": null
+   },
+   {
+    "target": "refute-v0.2.1-bs-choice/planet-near-correlated-0230",
+    "group": "AR(1), variability",
+    "band": "near",
+    "mechanism": "variability_some_years",
+    "years": 3,
+    "residuals": {
+     "2018": 0.6793417801507244
+    },
+    "two_round_difference": null
+   }
+  ],
+  "sorted_residuals": [
+   -7.869214385447271,
+   -6.308390556453334,
+   -5.953843935068216,
+   -4.560398855321132,
+   -4.3900559017747165,
+   -4.354026961839528,
+   -3.812219896223688,
+   -3.3612793585577627,
+   -2.913726467147649,
+   -2.7799844558205002,
+   -2.258235020012508,
+   -1.816521856063031,
+   -1.3597525548136704,
+   -1.3196871545435513,
+   -0.9917206232622888,
+   -0.5264140693189852,
+   -0.37050068824736115,
+   -0.31280616444769027,
+   -0.2155781530036549,
+   -0.151802104272031,
+   -0.05909860536910827,
+   -0.058679582898228055,
+   0.21641441934532768,
+   0.47509703494575106,
+   0.5837983401109232,
+   0.584691722288623,
+   0.6793417801507244,
+   0.918851703700005,
+   0.9460085326510068,
+   1.1620569213756422,
+   1.288921032091432,
+   1.3403171952612603,
+   1.4369159395633062,
+   1.5053310669434996,
+   1.514268998097391,
+   1.5405117520940976,
+   1.6250306785258353,
+   1.6271609346870965,
+   1.664298601764365,
+   1.9983629844871924,
+   2.0907295708604714,
+   2.652990251447366,
+   2.6691571576360698,
+   2.7128238314569657,
+   3.1413243958461177,
+   4.670646922889422,
+   4.855860666956453,
+   13.143669593291452
+  ],
+  "sorted_residuals_per_regime": {
+   "band=measurable": [
+    -7.869214385447271,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.584691722288623,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    4.855860666956453,
+    13.143669593291452
+   ],
+   "band=near": [
+    -1.3597525548136704,
+    -0.31280616444769027,
+    0.5837983401109232,
+    0.6793417801507244,
+    4.670646922889422
+   ],
+   "group=AR(1), no variability": [
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -1.3597525548136704,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.2155781530036549,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.6250306785258353,
+    1.6271609346870965,
+    4.670646922889422,
+    13.143669593291452
+   ],
+   "group=AR(1), variability": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.258235020012508,
+    -1.816521856063031,
+    -0.9917206232622888,
+    -0.31280616444769027,
+    0.584691722288623,
+    0.6793417801507244,
+    1.514268998097391,
+    2.6691571576360698
+   ],
+   "group=white, no variability": [
+    -7.869214385447271,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.7128238314569657,
+    3.1413243958461177
+   ],
+   "group=white, variability": [
+    -2.913726467147649,
+    -2.7799844558205002,
+    -1.3196871545435513,
+    -0.151802104272031,
+    0.21641441934532768,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    2.652990251447366,
+    4.855860666956453
+   ],
+   "mechanism=three_years": [
+    -7.869214385447271,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -1.3597525548136704,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.2155781530036549,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    0.47509703494575106,
+    0.5837983401109232,
+    1.288921032091432,
+    1.4369159395633062,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.7128238314569657,
+    3.1413243958461177,
+    4.670646922889422
+   ],
+   "mechanism=two_years": [
+    13.143669593291452
+   ],
+   "mechanism=variability_some_years": [
+    -6.308390556453334,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.31280616444769027,
+    -0.151802104272031,
+    0.21641441934532768,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.3403171952612603,
+    1.5053310669434996,
+    1.514268998097391,
+    2.652990251447366,
+    2.6691571576360698,
+    4.855860666956453
+   ],
+   "years=2": [
+    13.143669593291452
+   ],
+   "years=3": [
+    -7.869214385447271,
+    -6.308390556453334,
+    -5.953843935068216,
+    -4.560398855321132,
+    -4.3900559017747165,
+    -4.354026961839528,
+    -3.812219896223688,
+    -3.3612793585577627,
+    -2.913726467147649,
+    -2.7799844558205002,
+    -2.258235020012508,
+    -1.816521856063031,
+    -1.3597525548136704,
+    -1.3196871545435513,
+    -0.9917206232622888,
+    -0.5264140693189852,
+    -0.37050068824736115,
+    -0.31280616444769027,
+    -0.2155781530036549,
+    -0.151802104272031,
+    -0.05909860536910827,
+    -0.058679582898228055,
+    0.21641441934532768,
+    0.47509703494575106,
+    0.5837983401109232,
+    0.584691722288623,
+    0.6793417801507244,
+    0.918851703700005,
+    0.9460085326510068,
+    1.1620569213756422,
+    1.288921032091432,
+    1.3403171952612603,
+    1.4369159395633062,
+    1.5053310669434996,
+    1.514268998097391,
+    1.5405117520940976,
+    1.6250306785258353,
+    1.6271609346870965,
+    1.664298601764365,
+    1.9983629844871924,
+    2.0907295708604714,
+    2.652990251447366,
+    2.6691571576360698,
+    2.7128238314569657,
+    3.1413243958461177,
+    4.670646922889422,
+    4.855860666956453
+   ]
+  }
+ }
+}
