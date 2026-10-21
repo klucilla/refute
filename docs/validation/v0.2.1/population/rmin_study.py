@@ -411,7 +411,40 @@ def _guard() -> None:
         raise RuntimeError("the evaluator's truth was read during an engine call")
 
 
-class _GuardedIterator:
+class _GuardedSerialization:
+    """Serialization guarded like a read: ``pickle``, ``copy``, ``deepcopy`` and ``__getstate__``
+    raise during an engine call (Codex's third review: a view or an iterator taken before the call
+    was pickled during it, with the truth's values)."""
+
+    __slots__ = ()
+
+    def __getstate__(self):
+        _guard()
+        return {name: getattr(self, name) for name in self.__slots__}
+
+    def __reduce_ex__(self, protocol):
+        _guard()
+        return self._rebuild()
+
+    def __reduce__(self):
+        return self.__reduce_ex__(2)
+
+    def __copy__(self):
+        _guard()
+        rebuild, args = self._rebuild()
+        return rebuild(*args)
+
+    def __deepcopy__(self, memo):
+        return self.__copy__()
+
+
+def _resumed_iterator(values: tuple, i: int) -> _GuardedIterator:
+    it = _GuardedIterator(values)
+    it._i = i
+    return it
+
+
+class _GuardedIterator(_GuardedSerialization):
     """An iterator over the truth guarded at its creation **and at every advance**: an iterator
     started before an engine call and advanced during it raises (Codex's second review: a generator
     guarded only before its loop let a resumed iterator through)."""
@@ -433,8 +466,11 @@ class _GuardedIterator:
         self._i += 1
         return value
 
+    def _rebuild(self):
+        return _resumed_iterator, (self._values, self._i)
 
-class _GuardedView:
+
+class _GuardedView(_GuardedSerialization):
     """A view of the truth whose consumption is guarded at the moment it is consumed (a view
     taken before an engine call and read during it raises), at every advance of its iterator."""
 
@@ -454,6 +490,9 @@ class _GuardedView:
     def __repr__(self):
         _guard()
         return f"{self._kind}({list(self)!r})"
+
+    def _rebuild(self):
+        return _GuardedView, (self._items, self._kind)
 
 
 class EvaluatorTruth(Mapping):
@@ -504,6 +543,10 @@ class EvaluatorTruth(Mapping):
         return f"EvaluatorTruth({dict(self._data)!r})"
 
     __str__ = __repr__
+
+    def __getstate__(self):
+        _guard()
+        return {"_data": self._data}
 
     def __reduce__(self):
         _guard()

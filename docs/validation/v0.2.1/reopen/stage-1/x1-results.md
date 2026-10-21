@@ -80,6 +80,26 @@ tests and a weak guard. Applied in the same round:
   root with `:(top)src`.
 - **An obsolete note** in this record (the 1e-9 comparison) replaced by AC5's current scope.
 
+## Codex's third round (OBJECAO on `dd98d4c`, applied)
+
+- **Serialization of the derived objects passed the guard:** a view or an iterator of the truth
+  obtained before an engine call could be serialized during it (`pickle.dumps` succeeded and carried
+  the truth's values); only the mapping itself was guarded. The views and the iterators now guard
+  `pickle`, `copy`, `deepcopy` and `__getstate__` (a shared base, `_GuardedSerialization`), and the
+  mapping guards its own `__getstate__` too. Outside an engine call they still serialize, and a copy
+  yields what the original would (an iterator resumes where it was).
+- **Tests before the code:** 43 new tests (the four routes for each of the seven derived objects,
+  28; the mapping's `__getstate__`, 1; the content kept outside a call, 14, of which 3 skip, a view
+  having no position); run against the code of `dd98d4c`: 29 failures, the 29 guard tests. After the
+  code: the file's 202 tests, 0 failures, 18 skipped (the 15 opt-in exact comparisons of AC5 and the
+  3 above) (JUnit).
+- **Four more sabotages** (S14 to S17): the guard dropped from the derived objects' `__reduce_ex__`,
+  `__getstate__` and `__copy__`, and from the mapping's `__getstate__`. All four caught: S14, 7
+  tests failing (`pickle` of each derived object); S15, 7 (`__getstate__` of each); S16, 6 (`copy`
+  and `deepcopy` of the three views; an iterator's copy still raises without that guard, since it
+  is rebuilt through the guarded iterator constructor); S17, 1. The diff was empty after each.
+- **Full suite:** 3682 tests, 0 failures, 0 errors, 88 skipped (JUnit).
+
 ## CI on `46e3d95` (the first push of X1): red, and why
 
 Run 39627687323: the four `rest` jobs failed on two tests of AC5's tolerant comparison

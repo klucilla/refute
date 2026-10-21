@@ -651,6 +651,78 @@ def test_an_iterator_started_before_the_call_cannot_advance_during_it(
             next(it)
 
 
+_DERIVED = {
+    "iter": lambda t: iter(t),
+    "keys_iter": lambda t: iter(t.keys()),
+    "items_iter": lambda t: iter(t.items()),
+    "values_iter": lambda t: iter(t.values()),
+    "keys_view": lambda t: t.keys(),
+    "items_view": lambda t: t.items(),
+    "values_view": lambda t: t.values(),
+}
+
+
+def _serializations():
+    import copy as copy_module
+    import pickle
+
+    return {
+        "pickle": lambda o: pickle.dumps(o),
+        "copy": lambda o: copy_module.copy(o),
+        "deepcopy": lambda o: copy_module.deepcopy(o),
+        "getstate": lambda o: o.__getstate__(),
+    }
+
+
+@pytest.mark.parametrize("serialization", ["pickle", "copy", "deepcopy", "getstate"])
+@pytest.mark.parametrize("derived", list(_DERIVED))
+def test_a_derived_object_taken_before_the_call_cannot_be_serialized_during_it(
+    study, derived, serialization
+):
+    """Codex's third review of the round: a view or an iterator obtained before an engine call
+    serialized its truth values during it (``pickle.dumps``). Every serialization route of the
+    derived objects raises during the call."""
+    truth = study.EvaluatorTruth({"depth": 0.001, "s": 1.0, "period": 3.7})
+    obj = _DERIVED[derived](truth)
+    with study.engine_call():
+        with pytest.raises(RuntimeError, match="truth"):
+            _serializations()[serialization](obj)
+
+
+def test_the_truth_s_own_state_is_guarded(study):
+    truth = study.EvaluatorTruth({"depth": 0.001, "s": 1.0})
+    with study.engine_call():
+        with pytest.raises(RuntimeError, match="truth"):
+            truth.__getstate__()
+
+
+@pytest.mark.parametrize("consumed_before", [0, 1])
+@pytest.mark.parametrize("derived", list(_DERIVED))
+def test_a_derived_object_serialized_outside_a_call_keeps_its_content(
+    study, derived, consumed_before
+):
+    """Outside an engine call the derived objects still serialize, and a copy yields what the
+    original would (an iterator resumes where it was)."""
+    import pickle
+
+    data = {"depth": 0.001, "s": 1.0, "period": 3.7}
+    obj = _DERIVED[derived](study.EvaluatorTruth(data))
+    is_iterator = derived.endswith("iter")
+    if is_iterator:
+        for _ in range(consumed_before):
+            next(obj)
+    elif consumed_before:
+        pytest.skip("a view has no position")
+    copies = [pickle.loads(pickle.dumps(obj))] + [
+        f(obj) for name, f in _serializations().items() if name in ("copy", "deepcopy")
+    ]
+    expected = list(obj)
+    assert all(list(c) == expected for c in copies)
+    if not is_iterator:
+        kind = derived.split("_")[0]
+        assert expected == list(getattr(data, kind)())
+
+
 def test_dict_s_own_methods_do_not_reach_the_truth(study):
     truth = study.EvaluatorTruth({"depth": 0.001})
     assert not isinstance(truth, dict)
