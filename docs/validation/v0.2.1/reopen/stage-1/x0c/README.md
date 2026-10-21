@@ -36,7 +36,7 @@ none has its twin unavailable.**
 | study-57/correlated-0211 (8) | 2019 | 2.28 | 13.5 | 13.7 | −0.24 | 0.12 | 0.13 | 1.11 |
 | study-63/correlated-0247 (8, 20) | 2019 | 2.67 | 13.1 | 13.2 | −0.13 | 0.15 | 0.16 | 1.22 |
 | study-16/white-0246 (20) | 2020 | 4.81 | 5.68 | 5.24 | 0.44 | 0.49 | 0.45 | 1.10 |
-| study-4/correlated-0231 (20) | 2018 | 4.91 | 13.9 | 13.4 | 0.44 | 0.23 | 0.21 | 0.54 |
+| study-4/correlated-0231 (20) | 2018 | 4.91 | 13.9 | 13.4 | 0.44 | 0.23 | 0.21 | 0.53 |
 | study-47/correlated-0203 (20) | 2019 | 4.60 | 8.28 | 8.35 | −0.07 | 0.33 | 0.34 | 0.92 |
 | study-47/correlated-0211 (20) | 2019 | 3.28 | 14.2 | 14.9 | −0.70 | 0.12 | 0.16 | 0.61 |
 | study-58/correlated-0245 (20) | 2019 | −0.63 | 10.3 | 10.0 | 0.29 | −0.03 | −0.06 | 1.17 |
@@ -45,16 +45,21 @@ none has its twin unavailable.**
 with the decisions, the threshold, the replica counts and the ranks, is in `x0c.json`.)
 
 What the declared rules show:
-- **The hidden measurement agrees with the noiseless twin** at the windows measured: `Z_hidden`
-  lies between −2.04 and 1.18 in every case (the pull `(d_twin − d_hidden) / e_hidden` between −3.01
-  and 1.65; only `white-0080` is beyond 2 in absolute value, at the 0.7% rank of its group). These
-  FAIL are **not** a noise excursion of the hidden year's measurement.
-- **The windows measured carry far less signal than the train depth says:** `Z_train` from 5.2 to
-  27.3, `d_twin / d_train` from −0.16 to 0.49. The records cannot separate, by the declared rules, a
-  train depth above the truth from predicted windows (or a `dP`) that missed the transits (the
-  limitation declared: no injected parameter, no train ephemeris, no `σ_T` in these records).
-- **Neither more PASS nor a smaller `e_pred` would correct these errors:** the FAIL comes from the
-  depth compared, not from the capacity decisions or the hidden noise.
+- **The dominant part of `Z` is the train against the windows, not the hidden measurement:**
+  `Z_hidden` lies between −2.04 and 1.18 in every case (the pull `(d_twin − d_hidden) / e_hidden`
+  between −3.01 and 1.65; only `white-0080` is beyond 2 in absolute value, at the 0.7% rank of its
+  group), while `Z_train` runs from 5.2 to 27.3 and `d_twin / d_train` from −0.16 to 0.49. The
+  records cannot separate, by the declared rules, a train depth above the truth from predicted
+  windows (or a `dP`) that missed the transits (the limitation declared: no injected parameter, no
+  train ephemeris, no `σ_T` in these records).
+- **This decomposition of `Z` does not exclude a decisive part of the hidden noise in `S_meas < 5`**
+  (Codex's review of the round): a FAIL also needs the detection to fail, and for two cases near
+  the limit (`white-0246`, `S_meas` 4.81, and `correlated-0231`, 4.91) the hidden depth at the
+  twin's value would have given `S_meas` above 5, a PASS (Codex's algebraic probe, in
+  [exploratory.md](exploratory.md); not a declared quantity). So the hidden noise is not the main
+  cause of these FAIL, but it is not shown irrelevant to every one of them.
+- **The capacity decisions did not cause these FAIL**, and more PASS elsewhere (which lowers the
+  false FAIL's fraction among the decided) would not correct any of them.
 
 ## The context distributions (eligible constant rounds with the twin ok)
 

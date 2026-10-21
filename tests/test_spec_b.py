@@ -123,8 +123,11 @@ def test_t3_completeness_is_refused_as_an_error(rounds, years):
     assert issubclass(holdout.SpecBCompletenessError, ValueError)
 
 
-def test_t4_one_necessary_year_is_inconclusive():
-    out = holdout.spec_b_outcome([(2018, "PASS", None)], [2018])
+@pytest.mark.parametrize("status", ["PASS", "FAIL", "INCONCLUSIVE"])
+def test_t4_one_necessary_year_is_inconclusive(status):
+    # Codex's review of the round: a single FAIL year gave FAIL; the guard comes first, whatever the
+    # status (x1b-acceptance.md, 1.1)
+    out = holdout.spec_b_outcome([(2018, status, "r")], [2018])
     assert (out["status"], out["reason"]) == ("INCONCLUSIVE", "fewer_than_two_observing_years")
 
 
@@ -339,6 +342,20 @@ def test_t8_the_evaluator_calls_the_shared_function_once(ev, monkeypatch):
     assert calls == [rec["years"]]
     ev.target_outcomes(rec, 8, 0.0, 1.0, 5.0)
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize("order", [0, 1])
+def test_the_evaluator_refuses_a_duplicated_year_in_either_order(ev, order):
+    """Codex's review of the round: the evaluator keyed the rounds by year before the shared
+    check, so a duplicated year's FAIL could vanish (2018 FAIL then PASS gave PASS; the other order
+    FAIL)."""
+    rounds = [_record_round(2018, "FAIL", None), _record_round(2018, "PASS", None)]
+    if order:
+        rounds.reverse()
+    rec = {**_target((("PASS", None), ("PASS", None))), "years": [2018, 2019]}
+    rec["rounds"] = rounds + [_record_round(2019, "PASS", None)]
+    with pytest.raises(holdout.SpecBCompletenessError):
+        ev.target_outcomes(rec, 8, 0.0, 1.0, 5.0, aggregation=B)
 
 
 def test_the_evaluator_refuses_an_unknown_aggregation(ev):

@@ -44,8 +44,11 @@ so the AR(1) cells are tested, never assumed.
 ## 3. The quantities
 
 For each case `c` and hidden year `y` (a case-year), over its realizations whose measurement is ok:
-- `σ_emp(c, y)`: the scatter of `d_hidden`, both the standard deviation and 1.4826 MAD, with at least
-  **30** measured realizations (fewer: the case-year is excluded and counted);
+- `σ_emp(c, y)`: the scatter of `d_hidden`, with at least **30** measured realizations (fewer: the
+  case-year is excluded and counted). **The standard deviation decides** (it is the quantity a
+  predicted error stands for); the 1.4826 MAD is computed beside it as a check (revised before any
+  data after Codex's review of the round: the two scales can differ widely on heavy tails, and the
+  criteria below read one interval);
 - `ρ_1 = median(e_pred,1) / σ_emp`, `ρ_2 = median(e_pred,2) / σ_emp`, `ρ_h = median(e_hidden) / σ_emp`;
 - the pull `(d_hidden − d_twin) / e_hidden` over the realizations: its standard deviation and 1.4826
   MAD (1 if `e_hidden` is calibrated).
@@ -66,7 +69,10 @@ and `ρ_h`) and the cell's 95% interval `[lo, hi]`:
 - `not determined` otherwise (the interval straddles a limit).
 
 Reported for each ratio and cell, never merged; `underestimated` in any cell is reported first, as
-a safety finding.
+a safety finding. **The scale's disagreement:** each ratio's verdict is computed with the standard
+deviation (deciding) and with the MAD (the check); where the two verdicts differ, the cell's verdict
+for that ratio is `not determined`, both are reported, and that cell's ratio does not count as
+`calibrated or conservative as designed` for section 6 or for X3.
 
 ## 5. Reported apart, descriptive only
 

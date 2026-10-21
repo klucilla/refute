@@ -39,14 +39,19 @@ sets apart from the data it decides on
 
 For each regime and `R`: `T` at that regime's `n_years` (2, and 3 for `≥ 3`) and its 95% interval by
 a bootstrap over the targets (one round each), 2000 resamples, seed fixed in the execution package.
-**The precision target (proposed, for the maintainer):** the interval's half-width at most **10% of
-`T`**.
+**Each resample recomputes the whole estimator** (the choice of `k`, then `b` and `s`, then `T`); a
+resample whose set is empty for a regime and `R` gives no estimate and is counted; if more than 1% of
+the resamples give none, that regime's precision at that `R` is `not determined`. **The precision
+target (proposed, for the maintainer):** the interval's half-width at most **10% of `T`**.
 
 ## 4. The size rule (fixed now)
 
 - **Stage 1:** 1300 targets per regime (planning, from the experiment plan: about 520 rounds per
   regime in the set, if about 40% of the targets reach it).
-- If the precision target is met in every regime at the `R` the pilot will use: stop.
+- If the precision target is met in every regime **at every `R` of the set** {8, 10, 12, 15, 20}:
+  stop. (Revised before any data after Codex's review of the round: "the `R` the pilot will use" was
+  not fixed here and could be chosen after the precision was seen. No `R` is chosen by its interval;
+  a later choice of `R` reads every `R`'s precision as reported.)
 - Otherwise the size needed is computed as `n₁ · (h₁ / h*)²` (the half-width `h₁` reached, the target
   `h*`), and **requested** from the maintainer as a stage 2 with new prefixes; the final estimate
   pools both stages. There is no third stage; a regime still short after stage 2 is reported as not

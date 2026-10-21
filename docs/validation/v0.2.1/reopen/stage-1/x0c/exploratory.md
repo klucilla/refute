@@ -15,6 +15,16 @@ year about two years away), and one is `few_train` (three train transits): both 
 the train ephemeris is extrapolated far, which is compatible with the reading above. The seven
 variability cases are `variability_some_years`.
 
+## Codex's algebraic probe (the round's review, 2026-10-21; not declared, not run by the script)
+
+With `d_hidden` set to `d_twin` and every other field kept, `S_meas` would be 5.28 instead of 4.81
+for `rmin-study-16/planet-measurable-white-0246` and 5.50 instead of 4.91 for
+`rmin-study-4/planet-measurable-correlated-0231`: both PASS. (`S_meas` is the hidden depth over its
+error, so the counterfactual is `d_twin / e_hidden`; both values check against `x0c.json`.) For
+these two near-limit cases the hidden noise, although within its usual range (`Z_hidden` 0.44), was
+needed for the detection to fail. It is a counterfactual on recorded fields, not a run of the
+engine.
+
 ## Proposals (none authorized)
 
 1. **Where the predicted windows fall:** with X1's fields (`train_ephemeris`, `n_transit_times`,

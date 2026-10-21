@@ -1859,10 +1859,10 @@ def spec_b_outcome(
     fail_years = [y for y, (s, _) in ordered if s == "FAIL"]
     pass_years = [y for y, (s, _) in ordered if s == "PASS"]
     undecided = [{"year": y, "reason": r} for y, (s, r) in ordered if s == "INCONCLUSIVE"]
-    if fail_years:
-        status, reason = "FAIL", "prediction_failed"
-    elif len(years) < 2:
+    if len(years) < 2:  # first, whatever the rounds' statuses (x1b-acceptance.md, 1.1)
         status, reason = "INCONCLUSIVE", "fewer_than_two_observing_years"
+    elif fail_years:
+        status, reason = "FAIL", "prediction_failed"
     elif len(pass_years) == len(years):
         status, reason = "PASS", None
     else:
