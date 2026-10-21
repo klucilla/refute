@@ -1,0 +1,1982 @@
+{
+ "cases": [
+  {
+   "target": "refute-v0.2.1-rmin-study-12/planet-measurable-white-0080",
+   "group": "white, no variability",
+   "years": [
+    2018,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "white",
+    "index": 80,
+    "mechanism": "two_years"
+   },
+   "fail_at": [
+    8
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": -0.858986105949505
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "train-only timing uncertainty in the hidden year (4.21 h) exceeds 1 transit duration(s) (2.63 h)",
+      "gate": "G0",
+      "reason_kind": "train-only timing uncertainty in the hidden year",
+      "decision_1": null,
+      "decision_2": null,
+      "s_meas": null
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "train_replicas_below_r_min",
+      "gate": "G1",
+      "reason_kind": "train_replicas_below_r_min",
+      "decision_1": "train_replicas_below_r_min",
+      "decision_2": null,
+      "s_meas": -0.858986105949505
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "train-only timing uncertainty in the hidden year (4.21 h) exceeds 1 transit duration(s) (2.63 h)",
+      "gate": "G0",
+      "reason_kind": "train-only timing uncertainty in the hidden year",
+      "decision_1": null,
+      "decision_2": null,
+      "s_meas": null
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "s_meas": -0.858986105949505,
+      "z": 17.469192424031654,
+      "d_train": 0.000575018751292744,
+      "e_train": 2.4974151832800688e-05,
+      "d_hidden": -1.988706641318394e-05,
+      "e_hidden": 2.3151790553353828e-05,
+      "d_twin": -8.950144862376164e-05,
+      "twin_status": "ok",
+      "dp": -0.00016663355222013338,
+      "s_pred_1": 16.196118679309965,
+      "s_pred_2": 15.233270131964845,
+      "threshold_at_r": 12.50751809645598,
+      "n_years": 2,
+      "min_train_n_rep": 16,
+      "min_hidden_n_rep": 16,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0005500445994599433,
+       "e_pred_1": 3.396150709630253e-05,
+       "e_pred_2": 3.6108110385684894e-05,
+       "sigma": 3.405456893860419e-05,
+       "e_hidden_over_e_pred_2": 0.6411797877557277,
+       "e_hidden_over_e_train": 0.9270301032985073,
+       "z_train": 19.513393375043044,
+       "z_hidden": -2.0442009510113923,
+       "pull_hidden": -3.006868175061872,
+       "d_hidden_over_d_train": -0.03458507460578336,
+       "d_twin_over_d_train": -0.15564961737777513
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.006901311249137336,
+       "z_train": 0.9979296066252588,
+       "z_hidden": 0.008281573498964804
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-14/planet-measurable-white-0029",
+   "group": "white, no variability",
+   "years": [
+    2018,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "white",
+    "index": 29,
+    "mechanism": "two_years"
+   },
+   "fail_at": [
+    8
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 19.736862949478272
+     },
+     {
+      "hidden_year": 2020,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 3.192494089108646
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 19.736862949478272
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 3.192494089108646
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2020,
+      "s_meas": 3.192494089108646,
+      "z": 14.637150888670227,
+      "d_train": 0.0007392672787892373,
+      "e_train": 3.0096623512837316e-05,
+      "d_hidden": 0.00010079786860754852,
+      "e_hidden": 3.157339239919833e-05,
+      "d_twin": 0.00015235501679931271,
+      "twin_status": "ok",
+      "dp": 0.0005759510594363463,
+      "s_pred_1": 13.103270986236616,
+      "s_pred_2": 12.527668956068196,
+      "threshold_at_r": 12.50751809645598,
+      "n_years": 2,
+      "min_train_n_rep": 36,
+      "min_hidden_n_rep": 13,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0007091706552763999,
+       "e_pred_1": 5.412165069479957e-05,
+       "e_pred_2": 5.660834890858841e-05,
+       "sigma": 4.3619787418867906e-05,
+       "e_hidden_over_e_pred_2": 0.5577515155968121,
+       "e_hidden_over_e_train": 1.0490675934372211,
+       "z_train": 13.455183913529423,
+       "z_hidden": 1.181966975140804,
+       "pull_hidden": 1.6329302705233937,
+       "d_hidden_over_d_train": 0.1363483431494953,
+       "d_twin_over_d_train": 0.2060892199217012
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.9365079365079365,
+       "z_train": 0.9917184265010351,
+       "z_hidden": 0.9309868875086267
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-15/planet-measurable-white-0002",
+   "group": "white, no variability",
+   "years": [
+    2018,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "white",
+    "index": 2,
+    "mechanism": "two_years"
+   },
+   "fail_at": [
+    8
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 21.658033585714612
+     },
+     {
+      "hidden_year": 2020,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 1.1329872106709038
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 21.658033585714612
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 1.1329872106709038
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2020,
+      "s_meas": 1.1329872106709038,
+      "z": 20.580708807439674,
+      "d_train": 0.0008787787811205423,
+      "e_train": 3.173878137671482e-05,
+      "d_hidden": 2.9849676555925173e-05,
+      "e_hidden": 2.6345996031366976e-05,
+      "d_twin": 7.333636896796818e-05,
+      "twin_status": "ok",
+      "dp": -0.0006588078458684123,
+      "s_pred_1": 16.546452915521936,
+      "s_pred_2": 18.43328588961402,
+      "threshold_at_r": 12.50751809645598,
+      "n_years": 2,
+      "min_train_n_rep": 31,
+      "min_hidden_n_rep": 10,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0008470399997438274,
+       "e_pred_1": 5.119163630225751e-05,
+       "e_pred_2": 4.595165532701255e-05,
+       "sigma": 4.1248778771785526e-05,
+       "e_hidden_over_e_pred_2": 0.5733416096520805,
+       "e_hidden_over_e_train": 0.8300884560960406,
+       "z_train": 19.526454749334366,
+       "z_hidden": 1.0542540581053088,
+       "pull_hidden": 1.650599672157723,
+       "d_hidden_over_d_train": 0.0339672249685677,
+       "d_twin_over_d_train": 0.08345259414941268
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.937888198757764,
+       "z_train": 0.9986197377501725,
+       "z_hidden": 0.906832298136646
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-16/planet-measurable-white-0246",
+   "group": "white, variability",
+   "years": [
+    2018,
+    2019,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "white",
+    "index": 246,
+    "mechanism": "variability_some_years"
+   },
+   "fail_at": [
+    20
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 5.915610896959986
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 4.926784258069426
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 4.814817287499146
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_hidden_noise",
+      "gate": "G4",
+      "reason_kind": "insufficient_capacity_hidden_noise",
+      "decision_1": "pass",
+      "decision_2": "insufficient_capacity_hidden_noise",
+      "s_meas": 5.915610896959986
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 4.926784258069426
+     },
+     {
+      "hidden_year": 2020,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 4.814817287499146
+     }
+    ]
+   },
+   "fail_rounds": {
+    "20": [
+     {
+      "hidden_year": 2020,
+      "s_meas": 4.814817287499146,
+      "z": 5.680813676710015,
+      "d_train": 0.000556446400915866,
+      "e_train": 1.7175219302519792e-05,
+      "d_hidden": 0.00024800113089539313,
+      "e_hidden": 5.150790073369676e-05,
+      "d_twin": 0.0002720406314807706,
+      "twin_status": "ok",
+      "dp": 0.0,
+      "s_pred_1": 11.811930111585488,
+      "s_pred_2": 11.485328155805128,
+      "threshold_at_r": 10.135991825744544,
+      "n_years": 3,
+      "min_train_n_rep": 57,
+      "min_hidden_n_rep": 29,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0005392711816133462,
+       "e_pred_1": 4.565478939673147e-05,
+       "e_pred_2": 4.695304951655019e-05,
+       "sigma": 5.4295966664955955e-05,
+       "e_hidden_over_e_pred_2": 1.097008634456023,
+       "e_hidden_over_e_train": 2.9989661166154655,
+       "z_train": 5.238064388651144,
+       "z_hidden": 0.44274928805887137,
+       "pull_hidden": 0.46671481933742803,
+       "d_hidden_over_d_train": 0.4456873662714023,
+       "d_twin_over_d_train": 0.4888891922618488
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.6762589928057554,
+       "z_train": 0.9964028776978417,
+       "z_hidden": 0.6798561151079137
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-3/planet-measurable-white-0048",
+   "group": "white, no variability",
+   "years": [
+    2018,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "white",
+    "index": 48,
+    "mechanism": "two_years"
+   },
+   "fail_at": [
+    8
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": -1.2894840395186171
+     },
+     {
+      "hidden_year": 2020,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 25.32240445870186
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": -1.2894840395186171
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 25.32240445870186
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "s_meas": -1.2894840395186171,
+      "z": 13.267877821603022,
+      "d_train": 0.0007710190744979161,
+      "e_train": 2.9599747526370277e-05,
+      "d_hidden": -7.255955480592221e-05,
+      "e_hidden": 5.6270223269308344e-05,
+      "d_twin": -5.490506425782452e-05,
+      "twin_status": "ok",
+      "dp": -0.0006411948249807431,
+      "s_pred_1": 17.127743864074368,
+      "s_pred_2": 14.904057068641883,
+      "threshold_at_r": 12.50751809645598,
+      "n_years": 2,
+      "min_train_n_rep": 35,
+      "min_hidden_n_rep": 11,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0007414193269715459,
+       "e_pred_1": 4.3287623452069546e-05,
+       "e_pred_2": 4.974614117195587e-05,
+       "sigma": 6.358052437973969e-05,
+       "e_hidden_over_e_pred_2": 1.1311475009649672,
+       "e_hidden_over_e_train": 1.9010372713205566,
+       "z_train": 12.99020646358378,
+       "z_hidden": 0.2776713580192396,
+       "pull_hidden": 0.31374481070749616,
+       "d_hidden_over_d_train": -0.09410863778327747,
+       "d_twin_over_d_train": -0.07121103235166838
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.6514837819185645,
+       "z_train": 0.9910282953761215,
+       "z_hidden": 0.6611456176673568
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-3/planet-measurable-white-0152",
+   "group": "white, no variability",
+   "years": [
+    2018,
+    2019
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "white",
+    "index": 152,
+    "mechanism": "few_train",
+    "few_train": "train_transits=3,distance=1"
+   },
+   "fail_at": [
+    8
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": null
+     },
+     {
+      "hidden_year": 2019,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 0.08515656435348047
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": null
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "train_replicas_below_r_min",
+      "gate": "G1",
+      "reason_kind": "train_replicas_below_r_min",
+      "decision_1": "train_replicas_below_r_min",
+      "decision_2": null,
+      "s_meas": 0.08515656435348047
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2019,
+      "s_meas": 0.08515656435348047,
+      "z": 15.462082888645437,
+      "d_train": 0.0008653721771434985,
+      "e_train": 3.5108893316508605e-05,
+      "d_hidden": 3.685507700572612e-06,
+      "e_hidden": 4.327919671904871e-05,
+      "d_twin": -3.6756123101994105e-05,
+      "twin_status": "ok",
+      "dp": 0.002121039721649037,
+      "s_pred_1": 38.63792436005694,
+      "s_pred_2": 15.284341104736027,
+      "threshold_at_r": 12.50751809645598,
+      "n_years": 2,
+      "min_train_n_rep": 15,
+      "min_hidden_n_rep": 10,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0008302632838269899,
+       "e_pred_1": 2.1488299321929887e-05,
+       "e_pred_2": 5.432116949874427e-05,
+       "sigma": 5.572901630709176e-05,
+       "e_hidden_over_e_pred_2": 0.7967279997542981,
+       "e_hidden_over_e_train": 1.232713213967879,
+       "z_train": 16.18776644601733,
+       "z_hidden": -0.7256835573718954,
+       "pull_hidden": -0.9344357998393007,
+       "d_hidden_over_d_train": 0.004258870111514425,
+       "d_twin_over_d_train": -0.042474352738404594
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.18357487922705315,
+       "z_train": 0.9951690821256038,
+       "z_hidden": 0.18840579710144928
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-4/planet-measurable-correlated-0231",
+   "group": "AR(1), variability",
+   "years": [
+    2018,
+    2019,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "correlated",
+    "index": 231,
+    "mechanism": "variability_some_years"
+   },
+   "fail_at": [
+    20
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 4.9056953826392125
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 13.519534438397
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 4.800643381712598
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 4.9056953826392125
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 13.519534438397
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 4.800643381712598
+     }
+    ]
+   },
+   "fail_rounds": {
+    "20": [
+     {
+      "hidden_year": 2018,
+      "s_meas": 4.9056953826392125,
+      "z": 13.862134489965703,
+      "d_train": 0.002606338456680238,
+      "e_train": 0.00010160567888593136,
+      "d_hidden": 0.0005366717311285334,
+      "e_hidden": 0.00010939768764032178,
+      "d_twin": 0.0006021466689134754,
+      "twin_status": "ok",
+      "dp": 6.870199376081613e-05,
+      "s_pred_1": 12.469994332213705,
+      "s_pred_2": 12.24700288841921,
+      "threshold_at_r": 10.135991825744544,
+      "n_years": 3,
+      "min_train_n_rep": 41,
+      "min_hidden_n_rep": 20,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.002504732777794307,
+       "e_pred_1": 0.00020086077916842647,
+       "e_pred_2": 0.00020451801968323098,
+       "sigma": 0.00014930361028093195,
+       "e_hidden_over_e_pred_2": 0.5349048842237133,
+       "e_hidden_over_e_train": 1.076688713070243,
+       "z_train": 13.423598960505005,
+       "z_hidden": 0.43853552946069646,
+       "pull_hidden": 0.5985038550376931,
+       "d_hidden_over_d_train": 0.20591022234775538,
+       "d_twin_over_d_train": 0.23103164800800488
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.7776838546069316,
+       "z_train": 0.9991546914623838,
+       "z_hidden": 0.7345731191885038
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-47/planet-measurable-correlated-0203",
+   "group": "AR(1), variability",
+   "years": [
+    2018,
+    2019,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "correlated",
+    "index": 203,
+    "mechanism": "variability_some_years"
+   },
+   "fail_at": [
+    20
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 16.177917222200705
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_hidden_noise",
+      "gate": "G4",
+      "reason_kind": "insufficient_capacity_hidden_noise",
+      "decision_1": "pass",
+      "decision_2": "insufficient_capacity_hidden_noise",
+      "s_meas": 4.601800272747551
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 11.570083565854278
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 16.177917222200705
+     },
+     {
+      "hidden_year": 2019,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 4.601800272747551
+     },
+     {
+      "hidden_year": 2020,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 11.570083565854278
+     }
+    ]
+   },
+   "fail_rounds": {
+    "20": [
+     {
+      "hidden_year": 2019,
+      "s_meas": 4.601800272747551,
+      "z": 8.284306535961889,
+      "d_train": 0.003119296684688577,
+      "e_train": 0.00010359481393678338,
+      "d_hidden": 0.0010474807613067671,
+      "e_hidden": 0.0002276241251733766,
+      "d_twin": 0.0010303087309349605,
+      "twin_status": "ok",
+      "dp": -0.00012830159017434387,
+      "s_pred_1": 17.454641102505086,
+      "s_pred_2": 12.192722415428262,
+      "threshold_at_r": 10.135991825744544,
+      "n_years": 3,
+      "min_train_n_rep": 46,
+      "min_hidden_n_rep": 23,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0030157018707517936,
+       "e_pred_1": 0.00017277363957480515,
+       "e_pred_2": 0.00024733621975481256,
+       "sigma": 0.00025008923974361986,
+       "e_hidden_over_e_pred_2": 0.9203024344716807,
+       "e_hidden_over_e_train": 2.197254056677775,
+       "z_train": 8.352970147356809,
+       "z_hidden": -0.06866361139491885,
+       "pull_hidden": -0.07544029157158552,
+       "d_hidden_over_d_train": 0.3358067113168317,
+       "d_twin_over_d_train": 0.3303016144608329
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.4801352493660186,
+       "z_train": 0.9949281487743026,
+       "z_hidden": 0.47928994082840237
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-47/planet-measurable-correlated-0211",
+   "group": "AR(1), variability",
+   "years": [
+    2018,
+    2019,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "correlated",
+    "index": 211,
+    "mechanism": "variability_some_years"
+   },
+   "fail_at": [
+    20
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_noise_stage",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": null
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_hidden_noise",
+      "gate": "G4",
+      "reason_kind": "insufficient_capacity_hidden_noise",
+      "decision_1": "pass",
+      "decision_2": "insufficient_capacity_hidden_noise",
+      "s_meas": 3.2832761129778443
+     },
+     {
+      "hidden_year": 2020,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 21.19127485618048
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_noise_stage",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": null
+     },
+     {
+      "hidden_year": 2019,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 3.2832761129778443
+     },
+     {
+      "hidden_year": 2020,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 21.19127485618048
+     }
+    ]
+   },
+   "fail_rounds": {
+    "20": [
+     {
+      "hidden_year": 2019,
+      "s_meas": 3.2832761129778443,
+      "z": 14.205143353701835,
+      "d_train": 0.0036692901368825864,
+      "e_train": 0.00012472265163441997,
+      "d_hidden": 0.0005838554238315166,
+      "e_hidden": 0.00017782708603876,
+      "d_twin": 0.00043105143243130187,
+      "twin_status": "ok",
+      "dp": 7.508795268441663e-05,
+      "s_pred_1": 19.301454532724822,
+      "s_pred_2": 12.097171586376652,
+      "threshold_at_r": 10.135991825744544,
+      "n_years": 3,
+      "min_train_n_rep": 20,
+      "min_hidden_n_rep": 20,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0035445674852481665,
+       "e_pred_1": 0.0001836425062804722,
+       "e_pred_2": 0.00029300795313508786,
+       "sigma": 0.00021720546116467108,
+       "e_hidden_over_e_pred_2": 0.6069019087573193,
+       "e_hidden_over_e_train": 1.4257801907547376,
+       "z_train": 14.90864312106896,
+       "z_hidden": -0.7034997673671229,
+       "pull_hidden": -0.8592841214690371,
+       "d_hidden_over_d_train": 0.15911944873554146,
+       "d_twin_over_d_train": 0.11747542885707081
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.16483516483516483,
+       "z_train": 1.0,
+       "z_hidden": 0.19357565511411665
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-57/planet-measurable-correlated-0211",
+   "group": "AR(1), variability",
+   "years": [
+    2018,
+    2019,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "correlated",
+    "index": 211,
+    "mechanism": "variability_some_years"
+   },
+   "fail_at": [
+    8
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 11.519073709049662
+     },
+     {
+      "hidden_year": 2019,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 2.2817490647961693
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_hidden_noise",
+      "gate": "G4",
+      "reason_kind": "insufficient_capacity_hidden_noise",
+      "decision_1": "pass",
+      "decision_2": "insufficient_capacity_hidden_noise",
+      "s_meas": 10.24873426259438
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 11.519073709049662
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 2.2817490647961693
+     },
+     {
+      "hidden_year": 2020,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 10.24873426259438
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2019,
+      "s_meas": 2.2817490647961693,
+      "z": 13.495634214469131,
+      "d_train": 0.004273510096116915,
+      "e_train": 0.00012380316398973308,
+      "d_hidden": 0.0005606019015739936,
+      "e_hidden": 0.00024568955027667454,
+      "d_twin": 0.0004950476008506635,
+      "twin_status": "ok",
+      "dp": 0.000525344399893127,
+      "s_pred_1": 13.56185127669168,
+      "s_pred_2": 18.737755082839517,
+      "threshold_at_r": 12.876998418315278,
+      "n_years": 3,
+      "min_train_n_rep": 28,
+      "min_hidden_n_rep": 14,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.004149706932127182,
+       "e_pred_1": 0.00030598381057748,
+       "e_pred_2": 0.00022146233173511715,
+       "sigma": 0.0002751192078518389,
+       "e_hidden_over_e_pred_2": 1.1093965657804716,
+       "e_hidden_over_e_train": 1.9845175386393956,
+       "z_train": 13.733910201213876,
+       "z_hidden": -0.23827598674474726,
+       "pull_hidden": -0.2668176186146643,
+       "d_hidden_over_d_train": 0.13118066623579042,
+       "d_twin_over_d_train": 0.11584098076672004
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.37201907790143085,
+       "z_train": 0.9984101748807631,
+       "z_hidden": 0.37201907790143085
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-58/planet-measurable-correlated-0245",
+   "group": "AR(1), variability",
+   "years": [
+    2018,
+    2019,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "correlated",
+    "index": 245,
+    "mechanism": "variability_some_years"
+   },
+   "fail_at": [
+    20
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 11.810357496475214
+     },
+     {
+      "hidden_year": 2019,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": -0.6279290640581779
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 9.458144026902076
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_train",
+      "gate": "G2",
+      "reason_kind": "insufficient_capacity_train",
+      "decision_1": "insufficient_capacity_train",
+      "decision_2": null,
+      "s_meas": 11.810357496475214
+     },
+     {
+      "hidden_year": 2019,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": -0.6279290640581779
+     },
+     {
+      "hidden_year": 2020,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 9.458144026902076
+     }
+    ]
+   },
+   "fail_rounds": {
+    "20": [
+     {
+      "hidden_year": 2019,
+      "s_meas": -0.6279290640581779,
+      "z": 10.315342785011065,
+      "d_train": 0.002319534870772902,
+      "e_train": 0.00010762673484205216,
+      "d_hidden": -0.00013313047955864607,
+      "e_hidden": 0.00021201515772856705,
+      "d_twin": -6.38299200462664e-05,
+      "twin_status": "ok",
+      "dp": 0.00024344173914040904,
+      "s_pred_1": 11.527692481359436,
+      "s_pred_2": 12.18122337299613,
+      "threshold_at_r": 10.135991825744544,
+      "n_years": 3,
+      "min_train_n_rep": 40,
+      "min_hidden_n_rep": 20,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0022119081359308498,
+       "e_pred_1": 0.00019187778816164293,
+       "e_pred_2": 0.00018158341475243815,
+       "sigma": 0.0002377686715264031,
+       "e_hidden_over_e_pred_2": 1.167590983007,
+       "e_hidden_over_e_train": 1.9699116398886423,
+       "z_train": 10.02388067157328,
+       "z_hidden": 0.29146211343778383,
+       "pull_hidden": 0.32686606115729655,
+       "d_hidden_over_d_train": -0.05739533439921302,
+       "d_twin_over_d_train": -0.02751841364859385
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.6677937447168216,
+       "z_train": 0.9957734573119188,
+       "z_hidden": 0.6644125105663568
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-6/planet-measurable-white-0017",
+   "group": "white, no variability",
+   "years": [
+    2018,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "white",
+    "index": 17,
+    "mechanism": "two_years"
+   },
+   "fail_at": [
+    8
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 24.158026016099605
+     },
+     {
+      "hidden_year": 2020,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 3.1831486306327847
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 24.158026016099605
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 3.1831486306327847
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2020,
+      "s_meas": 3.1831486306327847,
+      "z": 26.94900662011721,
+      "d_train": 0.0012008404325001114,
+      "e_train": 3.5551012172624154e-05,
+      "d_hidden": 7.078546105061296e-05,
+      "e_hidden": 2.223756075020015e-05,
+      "d_twin": 5.8141004266907544e-05,
+      "twin_status": "ok",
+      "dp": 0.0008262282870506464,
+      "s_pred_1": 19.700352600241857,
+      "s_pred_2": 36.53119484168649,
+      "threshold_at_r": 12.50751809645598,
+      "n_years": 2,
+      "min_train_n_rep": 33,
+      "min_hidden_n_rep": 12,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.0011652894203274871,
+       "e_pred_1": 5.915068851677209e-05,
+       "e_pred_2": 3.18984754092344e-05,
+       "sigma": 4.193308448727464e-05,
+       "e_hidden_over_e_pred_2": 0.6971355359435932,
+       "e_hidden_over_e_train": 0.6255113255910068,
+       "z_train": 27.250545534754945,
+       "z_hidden": -0.30153891463773935,
+       "pull_hidden": -0.5686080827723703,
+       "d_hidden_over_d_train": 0.05894660034326118,
+       "d_twin_over_d_train": 0.048416927589504825
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.2898550724637681,
+       "z_train": 1.0,
+       "z_hidden": 0.34851621808143546
+      }
+     }
+    ]
+   }
+  },
+  {
+   "target": "refute-v0.2.1-rmin-study-63/planet-measurable-correlated-0247",
+   "group": "AR(1), variability",
+   "years": [
+    2018,
+    2019,
+    2020
+   ],
+   "labels": {
+    "band": "measurable",
+    "noise": "correlated",
+    "index": 247,
+    "mechanism": "variability_some_years"
+   },
+   "fail_at": [
+    8,
+    20
+   ],
+   "rounds": {
+    "8": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "insufficient_capacity_hidden_noise",
+      "gate": "G4",
+      "reason_kind": "insufficient_capacity_hidden_noise",
+      "decision_1": "pass",
+      "decision_2": "insufficient_capacity_hidden_noise",
+      "s_meas": 15.588638727121054
+     },
+     {
+      "hidden_year": 2019,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 2.6665124092948354
+     },
+     {
+      "hidden_year": 2020,
+      "status": "PASS",
+      "reason": null,
+      "gate": "G6",
+      "reason_kind": "PASS",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 19.031236942996564
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2018,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 15.588638727121054
+     },
+     {
+      "hidden_year": 2019,
+      "status": "FAIL",
+      "reason": "inconsistent_with_train",
+      "gate": "G6",
+      "reason_kind": "FAIL",
+      "decision_1": "pass",
+      "decision_2": "pass",
+      "s_meas": 2.6665124092948354
+     },
+     {
+      "hidden_year": 2020,
+      "status": "INCONCLUSIVE",
+      "reason": "hidden_noise_undetermined",
+      "gate": "G3",
+      "reason_kind": "hidden_replicas_below_r",
+      "decision_1": "pass",
+      "decision_2": null,
+      "s_meas": 19.031236942996564
+     }
+    ]
+   },
+   "fail_rounds": {
+    "8": [
+     {
+      "hidden_year": 2019,
+      "s_meas": 2.6665124092948354,
+      "z": 13.068678199186504,
+      "d_train": 0.004137128156128643,
+      "e_train": 9.753818351839609e-05,
+      "d_hidden": 0.0006600617056093902,
+      "e_hidden": 0.00024753745878270447,
+      "d_twin": 0.0006266468355561239,
+      "twin_status": "ok",
+      "dp": -0.0002988754239711351,
+      "s_pred_1": 14.278867580371305,
+      "s_pred_2": 19.93597358183342,
+      "threshold_at_r": 12.876998418315278,
+      "n_years": 3,
+      "min_train_n_rep": 36,
+      "min_hidden_n_rep": 20,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.004039589972610247,
+       "e_pred_1": 0.0002829068866892036,
+       "e_pred_2": 0.0002026281764483932,
+       "sigma": 0.00026606106581885937,
+       "e_hidden_over_e_pred_2": 1.2216339460852281,
+       "e_hidden_over_e_train": 2.5378518427710715,
+       "z_train": 13.19426917940161,
+       "z_hidden": -0.12559098021510592,
+       "pull_hidden": -0.13498914555230568,
+       "d_hidden_over_d_train": 0.15954586870401646,
+       "d_twin_over_d_train": 0.15146904130292027
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.4292527821939587,
+       "z_train": 0.9968203497615262,
+       "z_hidden": 0.4260731319554849
+      }
+     }
+    ],
+    "20": [
+     {
+      "hidden_year": 2019,
+      "s_meas": 2.6665124092948354,
+      "z": 13.068678199186504,
+      "d_train": 0.004137128156128643,
+      "e_train": 9.753818351839609e-05,
+      "d_hidden": 0.0006600617056093902,
+      "e_hidden": 0.00024753745878270447,
+      "d_twin": 0.0006266468355561239,
+      "twin_status": "ok",
+      "dp": -0.0002988754239711351,
+      "s_pred_1": 14.278867580371305,
+      "s_pred_2": 19.93597358183342,
+      "threshold_at_r": 10.135991825744544,
+      "n_years": 3,
+      "min_train_n_rep": 36,
+      "min_hidden_n_rep": 20,
+      "hidden_noise_undetermined": false,
+      "measurement_status": "ok",
+      "stage": null,
+      "record_reason": "inconsistent_with_train",
+      "derived": {
+       "capacity_k": 1.0,
+       "d_c": 0.004039589972610247,
+       "e_pred_1": 0.0002829068866892036,
+       "e_pred_2": 0.0002026281764483932,
+       "sigma": 0.00026606106581885937,
+       "e_hidden_over_e_pred_2": 1.2216339460852281,
+       "e_hidden_over_e_train": 2.5378518427710715,
+       "z_train": 13.19426917940161,
+       "z_hidden": -0.12559098021510592,
+       "pull_hidden": -0.13498914555230568,
+       "d_hidden_over_d_train": 0.15954586870401646,
+       "d_twin_over_d_train": 0.15146904130292027
+      },
+      "cause": "train or windows",
+      "rank_in_group": {
+       "pull_hidden": 0.44801352493660185,
+       "z_train": 0.9983093829247676,
+       "z_hidden": 0.44716821639898563
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "counts": {
+  "8": {
+   "white, no variability": 6,
+   "AR(1), variability": 2
+  },
+  "20": {
+   "white, variability": 1,
+   "AR(1), variability": 5
+  }
+ },
+ "causes_of_fail_rounds": {
+  "8": {
+   "train or windows": 8
+  },
+  "20": {
+   "train or windows": 6
+  }
+ },
+ "context": {
+  "8": {
+   "AR(1), no variability": {
+    "pull_hidden": {
+     "n": 2541,
+     "q1": -2.456460364385059,
+     "q5": -1.5974181309320032,
+     "q25": -0.5800371270149101,
+     "q50": 0.0008899375114225397,
+     "q75": 0.6084787948514953,
+     "q95": 1.5869376277260852,
+     "q99": 2.467462096534666
+    },
+    "pull_hidden_mad_scale": 0.8851313344231556,
+    "z_train": {
+     "n": 2541,
+     "q1": -1.5322019648684904,
+     "q5": -0.8678500873148158,
+     "q25": -0.060656082263749106,
+     "q50": 0.5610768058994665,
+     "q75": 1.5223001049521516,
+     "q95": 5.517811433451293,
+     "q99": 11.120506268299607
+    },
+    "z_hidden": {
+     "n": 2541,
+     "q1": -2.0004865645873644,
+     "q5": -1.322996582098145,
+     "q25": -0.4846716648776529,
+     "q50": 0.0007827656053925768,
+     "q75": 0.5109646955351141,
+     "q95": 1.2973060127568599,
+     "q99": 1.96516773168787
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 3,
+     "n": 2541,
+     "fraction": 0.0011806375442739079
+    },
+    "fraction_z_train_ge_3": {
+     "x": 304,
+     "n": 2541,
+     "fraction": 0.119637937819756
+    }
+   },
+   "AR(1), variability": {
+    "pull_hidden": {
+     "n": 629,
+     "q1": -2.1055558632716402,
+     "q5": -1.566606308543503,
+     "q25": -0.600606394466015,
+     "q50": -0.008284523106745986,
+     "q75": 0.5787462412026086,
+     "q95": 1.6261476021923067,
+     "q99": 2.3291316537307347
+    },
+    "pull_hidden_mad_scale": 0.8781764064772523,
+    "z_train": {
+     "n": 629,
+     "q1": -1.1418615034964859,
+     "q5": -0.5352203166613564,
+     "q25": 0.29362026165032673,
+     "q50": 0.9986208273003772,
+     "q75": 1.9202385636148855,
+     "q95": 3.8512248126728696,
+     "q99": 7.541063285854238
+    },
+    "z_hidden": {
+     "n": 629,
+     "q1": -1.808916320858387,
+     "q5": -1.4305445172314966,
+     "q25": -0.5353480162737838,
+     "q50": -0.007717587254501367,
+     "q75": 0.5242464057779928,
+     "q95": 1.4453064825952835,
+     "q99": 2.0705427061321333
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 0,
+     "n": 629,
+     "fraction": 0.0
+    },
+    "fraction_z_train_ge_3": {
+     "x": 63,
+     "n": 629,
+     "fraction": 0.10015898251192369
+    }
+   },
+   "white, no variability": {
+    "pull_hidden": {
+     "n": 1449,
+     "q1": -2.7679737694637976,
+     "q5": -1.7626281380909994,
+     "q25": -0.6966069613781724,
+     "q50": -0.03575482748365079,
+     "q75": 0.6186547745764427,
+     "q95": 1.8426553426641505,
+     "q99": 2.613977153248568
+    },
+    "pull_hidden_mad_scale": 0.975296982974417,
+    "z_train": {
+     "n": 1449,
+     "q1": -1.281397726360813,
+     "q5": -0.6432510955952367,
+     "q25": 0.18420251739879276,
+     "q50": 0.8784901513553393,
+     "q75": 2.2473644800217585,
+     "q95": 7.424441836104114,
+     "q99": 12.649628974614846
+    },
+    "z_hidden": {
+     "n": 1449,
+     "q1": -1.9908485903939428,
+     "q5": -1.3948481969256097,
+     "q25": -0.5313416370791345,
+     "q50": -0.027208182215101368,
+     "q75": 0.4983352353534342,
+     "q95": 1.3373783901542735,
+     "q99": 1.8929391263523772
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 0,
+     "n": 1449,
+     "fraction": 0.0
+    },
+    "fraction_z_train_ge_3": {
+     "x": 275,
+     "n": 1449,
+     "fraction": 0.18978605935127674
+    }
+   },
+   "white, variability": {
+    "pull_hidden": {
+     "n": 114,
+     "q1": -2.873144399719606,
+     "q5": -1.9132266977049164,
+     "q25": -0.4787212723174796,
+     "q50": 0.10073625002977513,
+     "q75": 0.675533438523496,
+     "q95": 1.9284179982723866,
+     "q99": 3.20409902847732
+    },
+    "pull_hidden_mad_scale": 0.8681059852687064,
+    "z_train": {
+     "n": 114,
+     "q1": -0.925334059747216,
+     "q5": -0.3714178364923613,
+     "q25": 0.31895238039522983,
+     "q50": 0.827517485824679,
+     "q75": 1.4255420392845273,
+     "q95": 3.1389887828532155,
+     "q99": 3.881033842305206
+    },
+    "z_hidden": {
+     "n": 114,
+     "q1": -2.540360191244996,
+     "q5": -1.6683440650015084,
+     "q25": -0.43282558004849164,
+     "q50": 0.09424997349768138,
+     "q75": 0.62038317799302,
+     "q95": 1.6152929192906345,
+     "q99": 2.8291881028577563
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 1,
+     "n": 114,
+     "fraction": 0.008771929824561403
+    },
+    "fraction_z_train_ge_3": {
+     "x": 8,
+     "n": 114,
+     "fraction": 0.07017543859649122
+    }
+   }
+  },
+  "20": {
+   "AR(1), no variability": {
+    "pull_hidden": {
+     "n": 1308,
+     "q1": -2.411892836169023,
+     "q5": -1.5396843670903622,
+     "q25": -0.6020174743348715,
+     "q50": 0.007895770128701868,
+     "q75": 0.6068389388398365,
+     "q95": 1.5221127643187127,
+     "q99": 2.1232255253605685
+    },
+    "pull_hidden_mad_scale": 0.9012448530607327,
+    "z_train": {
+     "n": 1308,
+     "q1": -1.351176157994929,
+     "q5": -0.8501563433470115,
+     "q25": -0.19954347988953267,
+     "q50": 0.26924240572366376,
+     "q75": 0.7953650126212941,
+     "q95": 1.9391247868552581,
+     "q99": 4.662137252908839
+    },
+    "z_hidden": {
+     "n": 1308,
+     "q1": -2.075808456895954,
+     "q5": -1.3597892373475378,
+     "q25": -0.5419751344641127,
+     "q50": 0.007364299667526144,
+     "q75": 0.5411736603069381,
+     "q95": 1.3263197822708084,
+     "q99": 1.8707050540769523
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 0,
+     "n": 1308,
+     "fraction": 0.0
+    },
+    "fraction_z_train_ge_3": {
+     "x": 30,
+     "n": 1308,
+     "fraction": 0.022935779816513763
+    }
+   },
+   "AR(1), variability": {
+    "pull_hidden": {
+     "n": 1183,
+     "q1": -2.199312963467363,
+     "q5": -1.6168313544119812,
+     "q25": -0.611346590559414,
+     "q50": -0.031449089766812786,
+     "q75": 0.5175097399885413,
+     "q95": 1.4964700711999117,
+     "q99": 2.2315719471807287
+    },
+    "pull_hidden_mad_scale": 0.839251470102866,
+    "z_train": {
+     "n": 1183,
+     "q1": -1.1067169744787262,
+     "q5": -0.5056648110934902,
+     "q25": 0.27049973557048324,
+     "q50": 0.9118598509164023,
+     "q75": 1.7417662801431133,
+     "q95": 3.537040679575856,
+     "q99": 6.0548187083307905
+    },
+    "z_hidden": {
+     "n": 1183,
+     "q1": -1.977815646010883,
+     "q5": -1.479594170013853,
+     "q25": -0.5546554218699722,
+     "q50": -0.026155881920673217,
+     "q75": 0.4862746626256634,
+     "q95": 1.338844209234614,
+     "q99": 1.967005087079865
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 1,
+     "n": 1183,
+     "fraction": 0.0008453085376162299
+    },
+    "fraction_z_train_ge_3": {
+     "x": 95,
+     "n": 1183,
+     "fraction": 0.08030431107354184
+    }
+   },
+   "white, no variability": {
+    "pull_hidden": {
+     "n": 939,
+     "q1": -2.4609292568267693,
+     "q5": -1.66859589559039,
+     "q25": -0.6091546334035942,
+     "q50": 0.018222924823395065,
+     "q75": 0.6267720996503514,
+     "q95": 1.579861679186309,
+     "q99": 2.3252793399399256
+    },
+    "pull_hidden_mad_scale": 0.9143859683624461,
+    "z_train": {
+     "n": 939,
+     "q1": -1.2144357292652963,
+     "q5": -0.7210143400115688,
+     "q25": -0.05939780672667906,
+     "q50": 0.4487591477703227,
+     "q75": 1.0697775716608433,
+     "q95": 2.324793646821751,
+     "q99": 4.499389528048072
+    },
+    "z_hidden": {
+     "n": 939,
+     "q1": -1.9752714051410147,
+     "q5": -1.436654198318984,
+     "q25": -0.531112869661359,
+     "q50": 0.016907558956194255,
+     "q75": 0.5463366125219474,
+     "q95": 1.3261965357563708,
+     "q99": 1.9262095816305584
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 0,
+     "n": 939,
+     "fraction": 0.0
+    },
+    "fraction_z_train_ge_3": {
+     "x": 23,
+     "n": 939,
+     "fraction": 0.024494142705005325
+    }
+   },
+   "white, variability": {
+    "pull_hidden": {
+     "n": 556,
+     "q1": -2.8255102271473707,
+     "q5": -1.7682785631138096,
+     "q25": -0.6175638936733907,
+     "q50": -0.0161891280633548,
+     "q75": 0.6294588148934959,
+     "q95": 1.7558865075130776,
+     "q99": 2.47246108136578
+    },
+    "pull_hidden_mad_scale": 0.9328834041022906,
+    "z_train": {
+     "n": 556,
+     "q1": -1.0729357470392271,
+     "q5": -0.47704141332521566,
+     "q25": 0.2347582189225283,
+     "q50": 0.6701815932663405,
+     "q75": 1.2861618276531348,
+     "q95": 3.0303805543318254,
+     "q99": 4.594797137826451
+    },
+    "z_hidden": {
+     "n": 556,
+     "q1": -2.520748954482965,
+     "q5": -1.6016881723209704,
+     "q25": -0.570693252762226,
+     "q50": -0.01536396463961979,
+     "q75": 0.5834143877934471,
+     "q95": 1.5271047259884174,
+     "q99": 2.1786109139918337
+    },
+    "fraction_z_hidden_ge_3": {
+     "x": 1,
+     "n": 556,
+     "fraction": 0.0017985611510791368
+    },
+    "fraction_z_train_ge_3": {
+     "x": 29,
+     "n": 556,
+     "fraction": 0.052158273381294966
+    }
+   }
+  }
+ }
+}
