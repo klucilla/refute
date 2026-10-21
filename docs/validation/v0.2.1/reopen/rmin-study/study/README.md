@@ -7,6 +7,21 @@ design of Amendment 19, readings of Amendment 26), run and evaluated with the co
 ends. Nothing here was tuned after the result; the criteria, sizes and readings are those
 committed before the lot.
 
+## Status of the result (the maintainer's decisions of 2026-10-21)
+
+1. **No `R_min` was validated by the declared protocol.** The run's integrity does not change
+   that. The result, the records, the parameters and the code `2e4ff99` are kept whole, and
+   `.cache/wt-v021` stays frozen until the maintainer decides the path.
+2. **No reserve and no drand round:** no `R` was chosen.
+3. **This lot is development evidence.** It never serves as the confirmation of changes chosen
+   after it.
+4. **Containment.** No negative result resting on the blind holdout by year is published until
+   there is a validation; the code is not changed for that now. No asymmetric mode (blocking FAIL
+   and keeping PASS) is adopted without its own specification and validation: blocking FAIL does
+   not control the false PASS. Historical results stay intact; nothing is promoted to `SURVIVED`.
+5. **Not now:** choosing R = 20 because some group improved; easing the population to raise the
+   approval; starting the reserve; running a new lot.
+
 ## The run
 
 - Launched on 2026-10-19 11:29 (-03:00) by [scripts/launch-study.ps1](scripts/launch-study.ps1):
@@ -43,7 +58,7 @@ was deleted.
 [study-evaluation.json](study-evaluation.json): `rmin_study.py evaluate-study` with the
 committed pairs of `bs-choice` (`bs-choice-evaluation.json`, re-derived from `bs-choice/` and
 found equal), `complete: true`, **`chosen_r_min: null`: option (c)**. No `R` of
-{8, 10, 12, 15, 20} meets criteria 1 to 5 in all four groups.
+{8, 10, 12, 15, 20} meets criteria 1 to 5 in all four groups: no `R_min` was validated.
 [study-evaluation-summary.json](study-evaluation-summary.json) and
 [scripts/summarize.py](scripts/summarize.py) give the tables below (interruption reasons grouped
 by kind, the text before their first number).
@@ -77,6 +92,44 @@ constant targets and an upper bound at most 0.02; coverage ±1 in [0.60, 0.76], 
 weakening at least 101 and a lower bound at least 0.50; one-sided Clopper-Pearson at
 1 − 0.05/5 per bound.
 
+**Why each criterion failed** ([failure-classes.json](failure-classes.json), by
+[scripts/classify.py](scripts/classify.py)), kept apart: *minimum not reached* (the denominator
+below its minimum, which is not waived after the result), *bound not met* (the one-sided bound
+beyond its limit), *observed rate beyond the limit* (the point estimate itself), for coverage
+the *observed value outside its band*, and for weakening its incompatibility (next section).
+For example, at R = 8 in `white, no variability` the false-FAIL criterion has 6 FAILs in 802
+eligible targets, an upper bound of 1.81%, below 2%: it fails only by the minimum of 866; in
+`white, variability` 0 in 81 gives an upper bound of 5.53%: the minimum is not reached and the
+bound is not met. **No criterion failed by a high observed rate** (the largest false-FAIL rate is
+6/802, 0.75%).
+
+| R | group | false FAIL | coverage | disappearance | weakening |
+|---|---|---|---|---|---|
+| 8 | white, no variability | minimum not reached (802) | met | met | incompatible |
+| 8 | white, variability | minimum not reached (81); bound not met (0.0553) | met | minimum not reached (41) | incompatible |
+| 8 | AR(1), no variability | met | met | met | incompatible |
+| 8 | AR(1), variability | minimum not reached (477) | met | met | incompatible |
+| 10 | white, no variability | minimum not reached (794) | outside its band (±2: 0.919) | met | incompatible |
+| 10 | white, variability | minimum not reached (81); bound not met (0.0553) | met | minimum not reached (41) | incompatible |
+| 10 | AR(1), no variability | met | met | met | incompatible |
+| 10 | AR(1), variability | minimum not reached (477) | met | met | incompatible |
+| 12 | white, no variability | minimum not reached (640) | met | met | incompatible |
+| 12 | white, variability | minimum not reached (94); bound not met (0.0478) | outside its band (±2: 0.915) | minimum not reached (49) | incompatible |
+| 12 | AR(1), no variability | met | met | met | incompatible |
+| 12 | AR(1), variability | minimum not reached (505) | met | met | incompatible |
+| 15 | white, no variability | minimum not reached (479) | met | met | incompatible |
+| 15 | white, variability | minimum not reached (207); bound not met (0.0220) | met | met | incompatible |
+| 15 | AR(1), no variability | minimum not reached (853) | met | met | incompatible |
+| 15 | AR(1), variability | minimum not reached (688) | met | met | incompatible |
+| 20 | white, no variability | minimum not reached (390) | met | met | narrow window, no target |
+| 20 | white, variability | minimum not reached (336) | met | met | narrow window, no target |
+| 20 | AR(1), no variability | minimum not reached (581) | met | met | narrow window, no target |
+| 20 | AR(1), variability | minimum not reached (859) | met | met | narrow window, no target |
+
+*Insufficient capacity in the train* (`insufficient_capacity_train`) and *in the hidden noise*
+are decisions of the engine (decisions 1 and 2, with their threshold), not evidence of a
+physical limitation of the data.
+
 **Interruptions at R = 8** (criterion 6, reported; INCONCLUSIVE targets and rounds of each
 scenario; the full counts per reason, per R, are in the summary):
 
@@ -97,7 +150,7 @@ scenario; the full counts per reason, per R, are in the summary):
 
 ("timing" is the rule's reason "train-only timing uncertainty in the hidden year".)
 
-## A finding after the result: the weakening criterion cannot be met
+## A finding after the result: the weakening criterion is incompatible with the gates
 
 Recorded after the result, as a result; no change, amendment or rerun follows from it here.
 [diagnosis-weakening.json](diagnosis-weakening.json) ([scripts/diag_weakening.py](scripts/diag_weakening.py),
@@ -123,6 +176,7 @@ and other criteria fail in other groups.
 |---|---|
 | `archive-MANIFEST.sha256` | `99163fac91350b2a0c11cad9edb497d4f32b9509ab9eae91bf374fc802c8678d` |
 | `diagnosis-weakening.json` | `294b08871849f7dbd9faa1c7c7787498852a21a9107654031f0fa0bfcdfc8095` |
+| `failure-classes.json` | `3cd2c9ccc86bad52f002e6a53e42000189a3b3c0b8029c7a53b51305a8a4b023` |
 | `integrity.json` | `bf23456dd3505730f273dae6a24da9b6bf955d7421d015118b3f9314db03a126` |
 | `manifest.json` | `61acbc6a30cc4d4abb5e55a00d834aaed75fc7c8127e4d98a0b86d8b814e899c` |
 | `record-digests.json` | `47837ef0fc787bb3488be96ef2e49b9a690457037b7251c9394fb6ee33a08ef6` |
@@ -130,6 +184,23 @@ and other criteria fail in other groups.
 | `study-evaluation-summary.json` | `a763ef017171c2ca64f445fe004a0a2009f7922856a0014c0289eef1c5596c0f` |
 | `study-evaluation.json` | `caa97afc1eaafa167fa80c88cf42150ebd1f379629e0e84b8927f15729141c7e` |
 
-The scripts in `scripts/` were run from `.cache/merge-v021/rmin/`; their copies here were then
-formatted by ruff (layout only). `summarize.py` as committed gives the same summary, byte for
-byte. `launch-study.ps1` is the launch script as run.
+**The scripts.** They were run from `.cache/merge-v021/rmin/` (the launch script from
+`.cache/wt-v021/.cache/v021/rmin/`); the copies here were then formatted by ruff (layout only).
+`summarize.py` and `classify.py` as committed give the same outputs, byte for byte. The copies
+as run are on the Drive, `arquivo-v0.2.1-rmin-study/scripts-as-run/`, with their
+`MANIFEST.sha256` (SHA-256 `8f2314976c68b72e6ea0019a4343f37d9bf401eb34118e7baf03f89c5f41b6ca`),
+checked from the Drive's copies; that folder also holds the read-only helpers `shape.py`,
+`sizes.py` and `diag_min.py` and the copying script `archive_scripts.py`.
+`run-with-study-code.ps1` was corrected once before its first successful use (it passed the
+arguments as one string; that first call stopped with an `IndexError` before writing anything);
+the version as run is the corrected one.
+
+| Script | SHA-256 as run | SHA-256 here (ruff-formatted) |
+|---|---|---|
+| `launch-study.ps1` | `1851d0654eb217b5c9f6ff27111d727f21d20963354c8176b295b5c1d31b829e` | the same |
+| `run-with-study-code.ps1` | `0d4ac8de083cd82a510661b748e36b2ab5dbd75620c1fbd246c51d283b1e2f40` | the same |
+| `integrity.py` | `789b1a8c6a41a1a6dd279a2a9376d06118a836e78f9f1b9d489c10bac8ca1700` | `10de7cbc9c4eb71e3bf0fd1f0fe7ce02c5ad588f4b07b852d34317084b42b73f` |
+| `archive.py` | `b8058fcb24112b9626e9d70a126901319d43c462680a329262ff520b9178492d` | `23c041bcaac78eac6311d0414a5332be984ff14cf5bd1f5ad0da6988a69e6d7f` |
+| `diag_weakening.py` | `cf2f2b3d1643c476027bc016540538ef945deaa87396aea74262754018edf29f` | `1f252f48261700c40374caecb5a79f0592e58bdd7512f5b1e8ab4e2e4a3864b2` |
+| `summarize.py` | `f21f97cfa49d804c1601066246ce6560ec6611298febb3a93f01943b8df51837` | `3d172b2bf77dc381782577e010d4985f7d39c5fa6db0bc51f1d34add324d140d` |
+| `classify.py` | `d614f20a57f434c06c6ac6fa38eae3b533a680d8de372ac78f8d5b1d8b20f978` | `04123e2ecdf368ef38707e1f3cc965f060d3831cac52d0a26ff9aadba2ec30e2` |

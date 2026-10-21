@@ -1,0 +1,220 @@
+{
+ "8": {
+  "white, no variability": {
+   "false_fail": [
+    "minimum not reached (802 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "white, variability": {
+   "false_fail": [
+    "minimum not reached (81 < 866)",
+    "bound not met (upper 0.0553 > 0.02)"
+   ],
+   "coverage": [],
+   "disappearance": [
+    "minimum not reached (41 < 83)"
+   ],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), no variability": {
+   "false_fail": [],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), variability": {
+   "false_fail": [
+    "minimum not reached (477 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  }
+ },
+ "10": {
+  "white, no variability": {
+   "false_fail": [
+    "minimum not reached (794 < 866)"
+   ],
+   "coverage": [
+    "observed value outside its band (within 2 = 0.919)"
+   ],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "white, variability": {
+   "false_fail": [
+    "minimum not reached (81 < 866)",
+    "bound not met (upper 0.0553 > 0.02)"
+   ],
+   "coverage": [],
+   "disappearance": [
+    "minimum not reached (41 < 83)"
+   ],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), no variability": {
+   "false_fail": [],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), variability": {
+   "false_fail": [
+    "minimum not reached (477 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  }
+ },
+ "12": {
+  "white, no variability": {
+   "false_fail": [
+    "minimum not reached (640 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "white, variability": {
+   "false_fail": [
+    "minimum not reached (94 < 866)",
+    "bound not met (upper 0.0478 > 0.02)"
+   ],
+   "coverage": [
+    "observed value outside its band (within 2 = 0.915)"
+   ],
+   "disappearance": [
+    "minimum not reached (49 < 83)"
+   ],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), no variability": {
+   "false_fail": [],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), variability": {
+   "false_fail": [
+    "minimum not reached (505 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  }
+ },
+ "15": {
+  "white, no variability": {
+   "false_fail": [
+    "minimum not reached (479 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "white, variability": {
+   "false_fail": [
+    "minimum not reached (207 < 866)",
+    "bound not met (upper 0.0220 > 0.02)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), no variability": {
+   "false_fail": [
+    "minimum not reached (853 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  },
+  "AR(1), variability": {
+   "false_fail": [
+    "minimum not reached (688 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "incompatible by construction (n = 0)"
+   ]
+  }
+ },
+ "20": {
+  "white, no variability": {
+   "false_fail": [
+    "minimum not reached (390 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "only the window 9.89 to 10 of two-year curves; no target (n = 0)"
+   ]
+  },
+  "white, variability": {
+   "false_fail": [
+    "minimum not reached (336 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "only the window 9.89 to 10 of two-year curves; no target (n = 0)"
+   ]
+  },
+  "AR(1), no variability": {
+   "false_fail": [
+    "minimum not reached (581 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "only the window 9.89 to 10 of two-year curves; no target (n = 0)"
+   ]
+  },
+  "AR(1), variability": {
+   "false_fail": [
+    "minimum not reached (859 < 866)"
+   ],
+   "coverage": [],
+   "disappearance": [],
+   "weakening": [
+    "only the window 9.89 to 10 of two-year curves; no target (n = 0)"
+   ]
+  }
+ }
+}
