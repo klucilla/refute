@@ -446,20 +446,21 @@ def test_a_record_is_never_replaced_and_another_manifest_is_refused(lot_env):
         x2.run_x2_lot(run, tasks=_tasks(x2)[:2], workers=1, executor=x2.rs._InlineExecutor())
 
 
-def _fake_record(x2, case, j, configuration):
+def _fake_record(x2, case, j, configuration, lot="x2"):
     """A complete record of the task without running the engine (the runner's own tests)."""
+    spec = x2.LOTS[lot]
     g = x2.rs.group_of(case)
     sectors = x2.expected_sectors(case)
     years = sorted({s["year"] for s in sectors})
     return {
-        "format": x2.RECORD_FORMAT,
-        "target": f"{x2.PREFIX}/{case['id']}",
+        "format": spec.record_format,
+        "target": f"{spec.prefix}/{case['id']}",
         "group": g,
         "case_id": case["id"],
         "mechanism": case["mechanism"],
         "band": case["band"],
         "realization": j,
-        "noise_seed": str(x2.realization_seed(g, case["id"], j)),
+        "noise_seed": str(x2.realization_seed(g, case["id"], j, spec)),
         "years": years,
         "sectors": sectors,
         "configuration": configuration,
@@ -643,6 +644,143 @@ def test_the_evaluation_orders_the_findings_and_counts_every_round(ev):
         "calibrated or conservative as designed",
         "not determined",
     )
+
+
+def test_the_ratios_keep_their_intervals_beside_their_verdicts(ev):
+    """X2's results (x2/README.md): the stored ratios had their intervals overwritten by the
+    verdict's keys `sd` and `mad`. Each ratio now keeps both intervals and both verdicts apart."""
+    rows = []
+    rng = np.random.default_rng(3)
+    for c in range(20):
+        for j in range(40):
+            rows.append(
+                {
+                    "group": "A",
+                    "mechanism": "two_years",
+                    "n_years": 2,
+                    "case_id": f"A{c}",
+                    "realization": j,
+                    "year": 2020,
+                    "has_ephemeris": True,
+                    "identity": "same",
+                    "L": 1.0,
+                    "cause": "none",
+                    "fail": False,
+                    "measured": True,
+                    "twin_ok": True,
+                    "d_twin": 1e-3,
+                    "d_hidden": 1e-3 + rng.normal(0, 1e-4),
+                    "e_hidden": 1e-4,
+                    "e_pred_1": 1.2e-4,
+                    "e_pred_2": 1e-4,
+                }
+            )
+    ratio = ev.evaluate(rows, m_beta=1.2)["x2b"]["A"]["ratios"]["rho_2"]
+    for key in ("sd_interval", "mad_interval"):
+        assert set(ratio[key]) == {"cases", "value", "lo", "hi"}
+        assert ratio[key]["lo"] <= ratio[key]["value"] <= ratio[key]["hi"]
+    assert ratio["sd_verdict"] == ev.verdict(
+        ratio["sd_interval"]["lo"], ratio["sd_interval"]["hi"], 1.0
+    )
+    assert ratio["mad_verdict"] == ev.verdict(
+        ratio["mad_interval"]["lo"], ratio["mad_interval"]["hi"], 1.0
+    )
+    assert ratio["verdict"] in (ratio["sd_verdict"], "not determined")
+    assert ratio["design"] == 1.0
+
+
+def test_x2_is_unchanged_by_the_lot_specification(x2):
+    """X2e's parameterization leaves X2 exactly as committed: its seeds (x2/x2-seeds.json), its
+    cases and its manifest's shape (no `lot` key)."""
+    import json
+
+    seeds = json.loads(
+        (ROOT / "docs/validation/v0.2.1/reopen/stage-1/x2/x2-seeds.json").read_text(
+            encoding="utf-8"
+        )
+    )["seeds"]
+    cases = x2.x2_cases()
+    assert x2.x2_cases(x2.X2) == cases
+    assert [
+        {
+            "group": x2.rs.group_of(c),
+            "case_id": c["id"],
+            "realization": j,
+            "seed": str(x2.realization_seed(x2.rs.group_of(c), c["id"], j)),
+        }
+        for c, j in x2.all_tasks()
+    ] == seeds
+    assert x2.spec_of({}) is x2.X2
+
+
+def test_x2e_is_its_declared_lot(x2):
+    """X2e (stage-1/x2e-declaration.md): the cells without variability, 20 new cases each from the
+    new prefix by X2's rule, its seeds carrying the prefix and sharing none with X2's."""
+    cases = x2.x2_cases(x2.X2E)
+    assert len(cases) == 40 and len({c["id"] for c in cases}) == 40
+    assert Counter(x2.rs.group_of(c) for c in cases) == {
+        "white, no variability": 20,
+        "AR(1), no variability": 20,
+    }
+    for g in x2.X2E.groups:
+        mech = Counter(c["mechanism"] for c in cases if x2.rs.group_of(c) == g)
+        assert mech == {"two_years": 10, "three_years": 6, "few_train": 4}
+    c = cases[0]
+    g = x2.rs.group_of(c)
+    text = f"refute/v0.2.1/stage-1/X2e/refute-v0.2.1-x2-2/{g}/{c['id']}/3"
+    assert x2.realization_seed(g, c["id"], 3, x2.X2E) == int.from_bytes(
+        hashlib.sha256(text.encode()).digest()[:8], "big"
+    )
+    e_seeds = {
+        x2.realization_seed(x2.rs.group_of(c), c["id"], j, x2.X2E) for c, j in x2.all_tasks(x2.X2E)
+    }
+    x2_seeds = {x2.realization_seed(x2.rs.group_of(c), c["id"], j) for c, j in x2.all_tasks()}
+    assert len(e_seeds) == 4000 and not (e_seeds & x2_seeds)
+
+
+def test_an_x2e_lot_names_itself_and_checks_its_own_records(lot_env, monkeypatch):
+    x2 = lot_env
+    monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
+    tasks = [(c, 0) for c in x2.x2_cases(x2.X2E)[:2]]
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    report = x2.run_x2_lot(
+        run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), spec=x2.X2E
+    )
+    assert report["complete"] is True and report["format"] == x2.X2E.lot_format
+    import json
+
+    manifest = json.loads((run / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["lot"] == "x2e" and x2.spec_of(manifest) is x2.X2E
+    rec = json.loads(x2.record_path(run, tasks[0][0]["id"], 0).read_text(encoding="utf-8"))
+    assert rec["format"] == x2.X2E.record_format
+    assert rec["target"].startswith("refute-v0.2.1-x2-2/")
+    # an X2 record in an X2e lot is refused, and so is an X2e record without its exact target
+    x2_rec = _fake_record(x2, tasks[0][0], 0, _declared())
+    assert x2.record_problems(x2_rec, tasks[0][0], 0, rec["noise_seed"], _declared(), x2.X2E)
+    good = _fake_record(x2, tasks[0][0], 0, _declared(), "x2e")
+    assert x2.record_problems(good, tasks[0][0], 0, rec["noise_seed"], _declared(), x2.X2E) == []
+    for target in (None, "refute-v0.2.1-x2-1/" + tasks[0][0]["id"]):
+        bad = (
+            {k: v for k, v in good.items() if k != "target"}
+            if target is None
+            else {
+                **good,
+                "target": target,
+            }
+        )
+        problems = x2.record_problems(bad, tasks[0][0], 0, rec["noise_seed"], _declared(), x2.X2E)
+        assert any("target" in p for p in problems)
+
+
+def test_the_pooled_rows_name_each_case_by_its_prefix(x2):
+    a = [{"group": "white, no variability", "case_id": "planet-near-white-0000", "x": 1}]
+    b = [{"group": "white, no variability", "case_id": "planet-near-white-0000", "x": 2}]
+    other = [{"group": "white, variability", "case_id": "planet-near-white-0200", "x": 3}]
+    rows = x2.pooled_rows(a + other, b)
+    assert [r["case_id"] for r in rows] == [
+        "refute-v0.2.1-x2-1/planet-near-white-0000",
+        "refute-v0.2.1-x2-2/planet-near-white-0000",
+    ]
 
 
 def test_the_counterfactual_counts_only_the_capacity_refusals(ev):

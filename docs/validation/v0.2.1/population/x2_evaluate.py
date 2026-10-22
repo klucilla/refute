@@ -480,10 +480,16 @@ def evaluate(rows: list[dict], m_beta: float) -> dict:
                     if not s.get("excluded") and _finite(v):
                         per_case[case].append(v)
                 ivs[scale] = cell_interval(dict(per_case))
+            # the intervals and the verdicts under separate keys (X2's results: spreading the
+            # verdict over the intervals overwrote them, its keys being `sd` and `mad` too)
+            v = cell_verdict(ivs["sd"], ivs["mad"], design)
             entry["ratios"][name] = {
-                **ivs,
-                **cell_verdict(ivs["sd"], ivs["mad"], design),
                 "design": design,
+                "sd_interval": ivs["sd"],
+                "mad_interval": ivs["mad"],
+                "sd_verdict": v["sd"],
+                "mad_verdict": v["mad"],
+                "verdict": v["verdict"],
             }
             findings.append((g, name, entry["ratios"][name]["verdict"]))
             sub = defaultdict(list)

@@ -49,3 +49,15 @@ acceptances.
 
 **X2 ran** on 2026-10-22 as authorized (8000 curves, 4.03 h, no failure); its results, development
 evidence only: [x2/README.md](x2/README.md).
+
+## After X2 (the maintainer's decisions of 2026-10-22)
+
+| Item | Decision | Where |
+|---|---|---|
+| 1 | The decision-2 error model: its **specification** authorized (not the code), testing the `m_β` hypothesis explicitly | [spec-c-error-model.md](spec-c-error-model.md) |
+| 2 | The extension of the cells without variability: its execution package, before the correction's code | [x2e-declaration.md](x2e-declaration.md), [x2e-execution-package.md](x2e-execution-package.md) |
+| 3 | The attenuation in the processing recorded as the next front; the hidden year's detrending read, nothing changed | [attenuation-front.md](attenuation-front.md) |
+| 4 | The evaluator's stored intervals fixed with its own test; X2's recorded results unchanged | `tests/test_x2.py`, [x2/README.md](x2/README.md) |
+| 5 | The Dependabot alerts listed and a treatment proposed; nothing changed or dismissed | [dependabot-2026-10-22.md](dependabot-2026-10-22.md) |
+| 6 | X2's lot records archived on the Drive (manifest checked), then removed from `.cache` | [x2/README.md](x2/README.md) |
+| 7 | X3 waits for the error model's correction | |

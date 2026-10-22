@@ -14,8 +14,14 @@ an error model or a configuration, and nothing is adopted.
   check (`x2_study.py check`) clean. Code `8b54384`, the manifest's code digest `2918fea5…`.
 - The run report, the manifest and the 8000 records' SHA-256: [lot-run-report-20261022T110611671408Z.json](lot-run-report-20261022T110611671408Z.json),
   [lot-manifest.json](lot-manifest.json), [lot-record-digests.json](lot-record-digests.json) (SHA-256
-  `3a5254c794c9beac750ea0358f116f850f70dbe3f4c1a5d50774978b3e2e6187`). The records themselves
-  (233 MB) stay in `.cache/x2-lot/20261022T110605Z/` until archived.
+  `3a5254c794c9beac750ea0358f116f850f70dbe3f4c1a5d50774978b3e2e6187`). **The records are archived**
+  (2026-10-22, the maintainer's decision after X2, item 6) on the maintainer's Drive, folder
+  `arquivo-v0.2.1-x2-lot`: one zip (`x2-lot-20261022T110605Z-8b54384.zip`, SHA-256
+  `7a3699d69dc6dec905f1c98034f30e290f1140a63a3d6c03addcb49c7da223ec`, 8003 members: the run folder
+  and the run's log), checked against the committed record digests before and read back from the
+  Drive after (every member's SHA-256 equal to its source); the manifest
+  [archive-MANIFEST.sha256](archive-MANIFEST.sha256) and the script
+  [scripts/archive_lot.py](scripts/archive_lot.py). The run folder was then removed from `.cache`.
 - **The evaluation**, `x2_study.py evaluate`, its identity check passed (the same code, plan,
   configuration and environment as the lot's): [x2-evaluation.json](x2-evaluation.json) (SHA-256
   `8e91fc4f1aea6bf85d05d6e3cb41ae7bbe86976f38a7645e29ce66aeffa70597`, with every round's row).
@@ -28,8 +34,10 @@ identity). [scripts/x2_intervals.py](scripts/x2_intervals.py) recomputes the int
 stored case-year statistics with the committed functions (`cell_interval`, `cell_verdict`, the
 bootstrap's fixed seed), and checks that every stored verdict is reproduced: **36 of 36, no
 mismatch** ([x2-intervals.json](x2-intervals.json), SHA-256
-`cdca9969c956e6d60a3a1395ca0286587c608f5e1b04dc34b66c45c9263503b9`). The evaluator is to be
-corrected for any later use, with its own test.
+`cdca9969c956e6d60a3a1395ca0286587c608f5e1b04dc34b66c45c9263503b9`). The evaluator was corrected
+afterwards (2026-10-22, the maintainer's decision after X2, item 4) for any later use: each ratio now
+stores `sd_interval`, `mad_interval`, `sd_verdict`, `mad_verdict` and `verdict` apart, with its own test
+(failing before the fix, passing after); X2's recorded results above are unchanged.
 
 ## X2-B: the calibration of the uncertainties (decided by the SD of `d_hidden − d_twin`)
 

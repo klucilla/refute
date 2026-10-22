@@ -26,6 +26,7 @@ import hashlib
 import json
 import os
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -51,27 +52,63 @@ LOT_FORMAT = "refute-v0.2.1-x2-lot/1"
 LOT_AFFINITY = "0xffffff00"  # logical processors 8 to 31
 
 
-def x2_cases() -> list[dict]:
-    """The 80 cases, 20 per group, in group order then (band, index) order."""
-    planets = rs._planets(PREFIX)
+@dataclass(frozen=True)
+class LotSpec:
+    """A lot of this module: X2 itself (the default, unchanged), or its extension X2e
+    (stage-1/x2e-declaration.md): the prefix, the groups, the cases per group, the realizations,
+    the seeds' root (X2e's seeds also carry the prefix, since case ids repeat across prefixes), the
+    record's and the lot's formats."""
+
+    name: str
+    prefix: str
+    groups: tuple[str, ...]
+    n_cases: int
+    n_realizations: int
+    seed_root: str
+    seed_with_prefix: bool
+    record_format: str
+    lot_format: str
+
+
+X2 = LotSpec(
+    "x2", PREFIX, GROUPS, N_CASES, N_REALIZATIONS, SEED_ROOT, False, RECORD_FORMAT, LOT_FORMAT
+)
+X2E = LotSpec(
+    "x2e",
+    "refute-v0.2.1-x2-2",
+    ("white, no variability", "AR(1), no variability"),
+    20,
+    100,
+    "refute/v0.2.1/stage-1/X2e",
+    True,
+    "refute-v0.2.1-x2e-record/1",
+    "refute-v0.2.1-x2e-lot/1",
+)
+LOTS = {s.name: s for s in (X2, X2E)}
+
+
+def x2_cases(spec: LotSpec = X2) -> list[dict]:
+    """The lot's cases, ``n_cases`` per group, in group order then (band, index) order (X2: 80)."""
+    planets = rs._planets(spec.prefix)
     out = []
-    for group in GROUPS:
+    for group in spec.groups:
         rows = sorted(
             (c for c in planets if rs.group_of(c) == group),
             key=lambda c: (BAND_ORDER.index(c["band"]), c["index"]),
         )
-        step = max(1, len(rows) // N_CASES)
-        chosen = rows[::step][:N_CASES]
-        if len(chosen) != N_CASES:
-            raise ValueError(f"{group}: {len(chosen)} cases, not {N_CASES}")
+        step = max(1, len(rows) // spec.n_cases)
+        chosen = rows[::step][: spec.n_cases]
+        if len(chosen) != spec.n_cases:
+            raise ValueError(f"{group}: {len(chosen)} cases, not {spec.n_cases}")
         for c in chosen:
             rs._check(c)
         out += chosen
     return out
 
 
-def realization_seed(group: str, case_id: str, j: int) -> int:
-    digest = hashlib.sha256(f"{SEED_ROOT}/{group}/{case_id}/{int(j)}".encode()).digest()
+def realization_seed(group: str, case_id: str, j: int, spec: LotSpec = X2) -> int:
+    middle = f"{spec.prefix}/{group}" if spec.seed_with_prefix else group
+    digest = hashlib.sha256(f"{spec.seed_root}/{middle}/{case_id}/{int(j)}".encode()).digest()
     return int.from_bytes(digest[:8], "big")
 
 
@@ -101,7 +138,7 @@ def realization(case: dict, noise_seed: int):
     return replace(data, lc=raw), p, model, meta
 
 
-def record_realization(case: dict, j: int, expected: dict | None) -> dict:
+def record_realization(case: dict, j: int, expected: dict | None, spec: LotSpec = X2) -> dict:
     """One realization's record (the declaration, section 4)."""
     from refute.packs.tess.holdout import calibration_measurement
 
@@ -114,7 +151,7 @@ def record_realization(case: dict, j: int, expected: dict | None) -> dict:
     if expected is None or v3.STATE["identity"] != expected:
         raise RuntimeError("this worker's configuration has another identity than the main one")
     group = rs.group_of(case)
-    seed = realization_seed(group, case["id"], j)
+    seed = realization_seed(group, case["id"], j, spec)
     data, p, model, _ = realization(case, seed)
     years = sorted({int(s.year) for s in data.sectors})
     truth = rs.EvaluatorTruth(rs.truth_of(case, p, 1.0))  # made before, read only after the calls
@@ -134,8 +171,8 @@ def record_realization(case: dict, j: int, expected: dict | None) -> dict:
         str(y): registered_windows(data, y, plan, rnd) for y, rnd in zip(years, rounds, strict=True)
     }
     return {
-        "format": RECORD_FORMAT,
-        "target": f"{PREFIX}/{case['id']}",
+        "format": spec.record_format,
+        "target": f"{spec.prefix}/{case['id']}",
         "group": group,
         "case_id": case["id"],
         "mechanism": case["mechanism"],
@@ -227,8 +264,8 @@ def environment() -> dict:
     }
 
 
-def all_tasks() -> list[tuple[dict, int]]:
-    return [(case, j) for case in x2_cases() for j in range(N_REALIZATIONS)]
+def all_tasks(spec: LotSpec = X2) -> list[tuple[dict, int]]:
+    return [(case, j) for case in x2_cases(spec) for j in range(spec.n_realizations)]
 
 
 def record_path(run_dir: Path, case_id: str, j: int) -> Path:
@@ -259,29 +296,39 @@ def write_record_atomic(path: Path, text: str) -> Path:
     return path
 
 
-def manifest_payload(tasks: list[tuple[dict, int]], configuration: dict) -> dict:
+def manifest_payload(
+    tasks: list[tuple[dict, int]], configuration: dict, spec: LotSpec = X2
+) -> dict:
     """The lot's identity: its tasks, the configuration, the resolved plan's SHA-256, the code's
-    digest and the numeric environment; a relaunch with any of them changed is refused."""
+    digest and the numeric environment; a relaunch with any of them changed is refused. X2's payload
+    is unchanged; another lot names itself (``lot``)."""
     from refute.core.canonical import canonical_sha256
 
-    return rs._canonical(
-        {
-            "format": LOT_FORMAT,
-            "configuration": configuration,
-            "plan_sha256": canonical_sha256(v3._plan().model_dump(mode="json")),
-            "code_sha256": code_digest(),
-            "environment": environment(),
-            "expected": [
-                [c["id"], int(j), str(realization_seed(rs.group_of(c), c["id"], j))]
-                for c, j in tasks
-            ],
-        }
-    )
+    payload = {
+        "format": spec.lot_format,
+        "configuration": configuration,
+        "plan_sha256": canonical_sha256(v3._plan().model_dump(mode="json")),
+        "code_sha256": code_digest(),
+        "environment": environment(),
+        "expected": [
+            [c["id"], int(j), str(realization_seed(rs.group_of(c), c["id"], j, spec))]
+            for c, j in tasks
+        ],
+    }
+    if spec is not X2:
+        payload = {"lot": spec.name, **payload}
+    return rs._canonical(payload)
 
 
-def _x2_task(task: tuple[dict, int, dict]) -> dict:
-    case, j, expected = task
-    return record_realization(case, j, expected)
+def spec_of(manifest: dict) -> LotSpec:
+    """The lot a manifest is of (X2's manifest names none)."""
+    return LOTS[manifest.get("lot", "x2")]
+
+
+def _x2_task(task: tuple) -> dict:
+    case, j, expected = task[:3]
+    spec = LOTS[task[3]] if len(task) > 3 else X2
+    return record_realization(case, j, expected, spec)
 
 
 def load_x2_lot(run_dir: Path) -> dict:
@@ -353,7 +400,9 @@ def expected_sectors(case: dict) -> list[dict]:
     return sorted(out, key=lambda s: s["t_start"])
 
 
-def record_problems(rec, case: dict, j: int, seed: str, configuration: dict) -> list[str]:
+def record_problems(
+    rec, case: dict, j: int, seed: str, configuration: dict, spec: LotSpec = X2
+) -> list[str]:
     """Why a record file (at the path of ``case``, ``j``) is not a complete record of that task: its
     format, its task and seed, the configuration, its sectors (exactly the case's layout) and years,
     one round per year with every calibration record field, one entry of registered windows per
@@ -363,8 +412,10 @@ def record_problems(rec, case: dict, j: int, seed: str, configuration: dict) -> 
     if not isinstance(rec, dict):
         return [f"{key}: not a record"]
     out = []
-    if rec.get("format") != RECORD_FORMAT:
+    if rec.get("format") != spec.record_format:
         out.append(f"{key}: format {rec.get('format')!r}")
+    if spec is not X2 and rec.get("target") != f"{spec.prefix}/{case_id}":
+        out.append(f"{key}: target {rec.get('target')!r}")  # exact, absent included
     if rec.get("case_id") != case_id or rec.get("realization") != int(j):
         out.append(f"{key}: names {rec.get('case_id')}/{rec.get('realization')}")
     if rec.get("noise_seed") != seed:
@@ -407,8 +458,9 @@ def x2_lot_problems(run_dir: Path) -> list[str]:
     run_dir = Path(run_dir)
     data = load_x2_lot(run_dir)
     manifest = data["manifest"]
+    spec = spec_of(manifest)
     expected = {(c, int(j)): s for c, j, s in manifest["expected"]}
-    cases = {c["id"]: c for c in x2_cases()}
+    cases = {c["id"]: c for c in x2_cases(spec)}
     canonical = {f"records/{c}/{j:03d}.json" for c, j in expected}
     problems = [
         f"{rel}: a record file not at a task's own path"
@@ -426,9 +478,9 @@ def x2_lot_problems(run_dir: Path) -> list[str]:
             problems.append(f"{case_id}/{j:03d}: not JSON")
             continue
         if case_id not in cases:
-            problems.append(f"{case_id}: not one of X2's cases")
+            problems.append(f"{case_id}: not one of the lot's cases")
             continue
-        problems += record_problems(rec, cases[case_id], j, seed, manifest["configuration"])
+        problems += record_problems(rec, cases[case_id], j, seed, manifest["configuration"], spec)
     return problems
 
 
@@ -439,8 +491,10 @@ def run_x2_lot(
     executor=None,
     deadline_hours: float | None = None,
     clock=None,
+    spec: LotSpec = X2,
 ) -> dict:
-    """Generate and record X2's lot (or the subset ``tasks``) on ``workers`` spawned workers on
+    """Generate and record X2's lot, or another of this module's lots (``spec``; or the subset
+    ``tasks``), on ``workers`` spawned workers on
     logical processors 8 to 31 (22 as authorized; never read from the environment). The manifest is
     published first (atomically, never replaced) and must match on a relaunch; a task whose record
     exists and is complete is not run again, and an existing incomplete record stops the run (it is
@@ -465,8 +519,8 @@ def run_x2_lot(
     os.environ.update(rs.THREAD_ENV)
     run_dir = Path(run_dir)
     configuration = v3.STATE["identity"]
-    tasks = all_tasks() if tasks is None else list(tasks)
-    payload = manifest_payload(tasks, configuration)
+    tasks = all_tasks(spec) if tasks is None else list(tasks)
+    payload = manifest_payload(tasks, configuration, spec)
     manifest_path = run_dir / "manifest.json"
     if manifest_path.exists():
         try:
@@ -484,14 +538,14 @@ def run_x2_lot(
     for c, j in tasks:
         path = record_path(run_dir, c["id"], j)
         if not path.exists():
-            todo.append((c, j, configuration))
+            todo.append((c, j, configuration) if spec is X2 else (c, j, configuration, spec.name))
             continue
-        seed = str(realization_seed(rs.group_of(c), c["id"], j))
+        seed = str(realization_seed(rs.group_of(c), c["id"], j, spec))
         try:
             existing = json.loads(path.read_bytes())
         except ValueError:
             existing = None
-        bad = record_problems(existing, c, j, seed, configuration)
+        bad = record_problems(existing, c, j, seed, configuration, spec)
         if bad:
             raise SystemExit("an existing record is incomplete (never replaced): " + "; ".join(bad))
     started = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
@@ -538,7 +592,7 @@ def run_x2_lot(
         dispatch_error = (dispatch_error or "") + f" pool: {exc!r}"
     integrity = x2_lot_problems(run_dir)
     report = {
-        "format": LOT_FORMAT,
+        "format": spec.lot_format,
         "run": str(run_dir),
         "started_utc": started,
         "workers": workers,
@@ -562,13 +616,13 @@ def run_x2_lot(
     return report
 
 
-def hidden_times_of():
+def hidden_times_of(spec: LotSpec = X2):
     """``f(case_id, year)``: the case's cadences in that observing year, from its layout (no noise,
     no flux), for X2-A's overlaps."""
     from refute.packs.tess import synthetic
     from refute.packs.tess.types import btjd_to_year
 
-    cases = {c["id"]: c for c in x2_cases()}
+    cases = {c["id"]: c for c in x2_cases(spec)}
     cache: dict = {}
 
     def times(case_id: str, year: int) -> np.ndarray:
@@ -583,9 +637,9 @@ def hidden_times_of():
     return times
 
 
-def evaluate_lot(run_dir: Path) -> dict:
-    """X2-A and X2-B on a complete lot, exactly as declared (``x2_evaluate``), with the very code,
-    plan, configuration and environment the lot was made with (else refused)."""
+def lot_rows(run_dir: Path) -> tuple[list[dict], dict, object]:
+    """``(rows, manifest, plan)``: every round's row (``x2_evaluate.round_rows``) of a complete lot,
+    with the very code, plan, configuration and environment the lot was made with (else refused)."""
     import x2_evaluate as ev
 
     from refute.core.canonical import canonical_sha256
@@ -595,6 +649,7 @@ def evaluate_lot(run_dir: Path) -> dict:
         raise SystemExit("the lot is not complete: " + "; ".join(problems[:5]))
     data = load_x2_lot(run_dir)
     manifest = data["manifest"]
+    spec = spec_of(manifest)
     plan = v3._plan()
     now = rs._canonical(
         {
@@ -607,28 +662,75 @@ def evaluate_lot(run_dir: Path) -> dict:
     changed = [k for k, v in now.items() if manifest.get(k) != v]
     if changed:
         raise SystemExit(f"the evaluation's {changed} differ from the lot's manifest")
-    times = hidden_times_of()
+    times = hidden_times_of(spec)
     rows = [
         row
         for rec in data["records"]
         for row in ev.round_rows(rec, times, plan.gauntlet.holdout_by_year.min_snr)
     ]
+    return rows, manifest, plan
+
+
+def evaluate_lot(run_dir: Path) -> dict:
+    """X2-A and X2-B on a complete lot, exactly as declared (``x2_evaluate``)."""
+    import x2_evaluate as ev
+
+    rows, manifest, plan = lot_rows(run_dir)
     out = ev.evaluate(rows, float(plan.gauntlet.corrections.m_beta))
-    return {"manifest_code_sha256": data["manifest"]["code_sha256"], "rounds": len(rows), **out}
+    return {"manifest_code_sha256": manifest["code_sha256"], "rounds": len(rows), **out}
 
 
-def subset_tasks(n_cases: int, n_realizations: int) -> list[tuple[dict, int]]:
+def pooled_rows(x2_rows: list[dict], x2e_rows: list[dict]) -> list[dict]:
+    """X2e's pooled analysis (stage-1/x2e-declaration.md): X2's committed rows of X2e's cells and
+    X2e's rows, each case named by its prefix (case ids repeat across prefixes)."""
+    out = []
+    for prefix, rows in ((X2.prefix, x2_rows), (X2E.prefix, x2e_rows)):
+        for r in rows:
+            if r["group"] in X2E.groups:
+                out.append({**r, "case_id": f"{prefix}/{r['case_id']}"})
+    return out
+
+
+def evaluate_pooled(x2_evaluation: Path, x2e_run_dir: Path) -> dict:
+    """X2-A and X2-B on X2e's cells, over X2's committed rows (``x2-evaluation.json``, read as
+    stored, never recomputed) and X2e's lot (its own identity checked)."""
+    import x2_evaluate as ev
+
+    stored = json.loads(Path(x2_evaluation).read_text(encoding="utf-8"))
+    rows_e, manifest, plan = lot_rows(x2e_run_dir)
+    if spec_of(manifest) is not X2E:
+        raise SystemExit("the run folder is not X2e's lot")
+    rows = pooled_rows(stored["rows"], rows_e)
+    out = ev.evaluate(rows, float(plan.gauntlet.corrections.m_beta))
+    return {
+        "x2_evaluation_code_sha256": stored["manifest_code_sha256"],
+        "x2e_manifest_code_sha256": manifest["code_sha256"],
+        "rounds": len(rows),
+        **out,
+    }
+
+
+def subset_tasks(n_cases: int, n_realizations: int, spec: LotSpec = X2) -> list[tuple[dict, int]]:
     """The first ``n_cases`` cases of each group and their first ``n_realizations`` realizations
     (the resumption check before the lot; never the lot)."""
-    cases = x2_cases()
-    chosen = [c for g in GROUPS for c in [x for x in cases if rs.group_of(x) == g][:n_cases]]
+    cases = x2_cases(spec)
+    chosen = [c for g in spec.groups for c in [x for x in cases if rs.group_of(x) == g][:n_cases]]
     return [(c, j) for c in chosen for j in range(n_realizations)]
 
 
 def main(argv: list[str]) -> int:
-    """``run <run_dir> --workers <n> [--subset <cases per group> <realizations>]
-    [--deadline-hours <h>]`` or ``check <run_dir>``."""
-    command, run_dir = argv[0], Path(argv[1])
+    """``run <run_dir> --workers <n> [--lot x2|x2e] [--subset <cases per group> <realizations>]
+    [--deadline-hours <h>]``, ``check <run_dir>``, ``evaluate <run_dir> <out>`` or
+    ``evaluate-pooled <x2-evaluation.json> <x2e run_dir> <out>``."""
+    command = argv[0]
+    if command == "evaluate-pooled":
+        out = Path(argv[3])
+        result = evaluate_pooled(Path(argv[1]), Path(argv[2]))
+        with open(out, "x", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(rs._canonical(result), indent=1) + "\n")
+        print(json.dumps(result["findings"], indent=1))
+        return 0
+    run_dir = Path(argv[1])
     if command == "check":
         problems = x2_lot_problems(run_dir)
         print(json.dumps({"problems": problems}, indent=1))
@@ -642,11 +744,14 @@ def main(argv: list[str]) -> int:
         return 0
     if command != "run":
         raise SystemExit(f"unknown command {command!r}")
-    tasks, deadline, workers = None, None, None
+    tasks, deadline, workers, spec, subset = None, None, None, X2, None
     rest = argv[2:]
     while rest:
-        if rest[0] == "--subset":
-            tasks = subset_tasks(int(rest[1]), int(rest[2]))
+        if rest[0] == "--lot":
+            spec = LOTS[rest[1]]
+            rest = rest[2:]
+        elif rest[0] == "--subset":
+            subset = (int(rest[1]), int(rest[2]))
             rest = rest[3:]
         elif rest[0] == "--deadline-hours":
             deadline = float(rest[1])
@@ -658,7 +763,9 @@ def main(argv: list[str]) -> int:
             raise SystemExit(f"unknown argument {rest[0]!r}")
     if workers is None:
         raise SystemExit("--workers is required (22 as authorized)")
-    report = run_x2_lot(run_dir, tasks=tasks, workers=workers, deadline_hours=deadline)
+    if subset is not None:
+        tasks = subset_tasks(*subset, spec)
+    report = run_x2_lot(run_dir, tasks=tasks, workers=workers, deadline_hours=deadline, spec=spec)
     print(json.dumps({k: report[k] for k in ("tasks", "dispatched", "complete")}))
     return 0 if report["complete"] else 1
 
