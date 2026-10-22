@@ -1,0 +1,230 @@
+{
+ "m_beta": 1.2,
+ "mismatches": [],
+ "cells": {
+  "AR(1), no variability": {
+   "rho_1": {
+    "design": 1.2,
+    "sd_interval": {
+     "cases": 13,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "mad_interval": {
+     "cases": 13,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   },
+   "rho_2": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 13,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "mad_interval": {
+     "cases": 13,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   },
+   "rho_h": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 13,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "mad_interval": {
+     "cases": 13,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   }
+  },
+  "AR(1), variability": {
+   "rho_1": {
+    "design": 1.2,
+    "sd_interval": {
+     "cases": 20,
+     "value": 1.3977375628124462,
+     "lo": 1.3348210396648956,
+     "hi": 1.4271914994640333
+    },
+    "mad_interval": {
+     "cases": 20,
+     "value": 1.373250535192056,
+     "lo": 1.3118430442525946,
+     "hi": 1.5226228232426615
+    },
+    "sd_verdict": "overestimated",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   },
+   "rho_2": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 20,
+     "value": 1.2478496437513953,
+     "lo": 1.1518734135695523,
+     "hi": 1.348480787580218
+    },
+    "mad_interval": {
+     "cases": 20,
+     "value": 1.2600890726223404,
+     "lo": 1.1895240740025215,
+     "hi": 1.3321013789886198
+    },
+    "sd_verdict": "overestimated",
+    "mad_verdict": "overestimated",
+    "verdict": "overestimated"
+   },
+   "rho_h": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 20,
+     "value": 1.1238902710149434,
+     "lo": 1.0791728366715354,
+     "hi": 1.163909114813757
+    },
+    "mad_interval": {
+     "cases": 20,
+     "value": 1.1470034741425779,
+     "lo": 1.061545870909649,
+     "hi": 1.2113686157048043
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   }
+  },
+  "white, no variability": {
+   "rho_1": {
+    "design": 1.2,
+    "sd_interval": {
+     "cases": 9,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "mad_interval": {
+     "cases": 9,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   },
+   "rho_2": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 9,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "mad_interval": {
+     "cases": 9,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   },
+   "rho_h": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 9,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "mad_interval": {
+     "cases": 9,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   }
+  },
+  "white, variability": {
+   "rho_1": {
+    "design": 1.2,
+    "sd_interval": {
+     "cases": 20,
+     "value": 1.3441585328035568,
+     "lo": 1.2869292561715677,
+     "hi": 1.3884226459113265
+    },
+    "mad_interval": {
+     "cases": 20,
+     "value": 1.3503749354457444,
+     "lo": 1.2731550918717067,
+     "hi": 1.416985052726531
+    },
+    "sd_verdict": "not determined",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   },
+   "rho_2": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 20,
+     "value": 1.2124065807536417,
+     "lo": 1.1623321084632485,
+     "hi": 1.277037075796978
+    },
+    "mad_interval": {
+     "cases": 20,
+     "value": 1.247078479859322,
+     "lo": 1.1273657798245647,
+     "hi": 1.3080573771035
+    },
+    "sd_verdict": "overestimated",
+    "mad_verdict": "overestimated",
+    "verdict": "overestimated"
+   },
+   "rho_h": {
+    "design": 1.0,
+    "sd_interval": {
+     "cases": 20,
+     "value": 1.0463175134779847,
+     "lo": 1.015001145305746,
+     "hi": 1.0999386476446655
+    },
+    "mad_interval": {
+     "cases": 20,
+     "value": 1.071147647033733,
+     "lo": 1.0028075374051078,
+     "hi": 1.2041340948306483
+    },
+    "sd_verdict": "calibrated or conservative as designed",
+    "mad_verdict": "not determined",
+    "verdict": "not determined"
+   }
+  }
+ }
+}

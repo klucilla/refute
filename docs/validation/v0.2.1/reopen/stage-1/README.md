@@ -46,3 +46,6 @@ acceptances.
 | 6 | Before X2 runs: the resumption condition (a lot interrupted and relaunched gives records byte for byte equal to a continuous run's); if not resumable, specified and tested first | [x2-execution-package.md](x2-execution-package.md) |
 | 7 | Then X2's execution package comes back for the maintainer's authorization, and the work stops. X3's definitive calibration waits for X2's result. No threshold or gate changes only to correct the old cases | [x2-execution-package.md](x2-execution-package.md) |
 | 8 | heavy-a's CI duration checked against the 15-minute target per job | [x2-execution-package.md](x2-execution-package.md), section 6 |
+
+**X2 ran** on 2026-10-22 as authorized (8000 curves, 4.03 h, no failure); its results, development
+evidence only: [x2/README.md](x2/README.md).
