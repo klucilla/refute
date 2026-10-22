@@ -1,0 +1,18 @@
+{
+ "format": "refute-v0.2.1-x2e-lot/1",
+ "run": "C:\\Projetos\\refute\\.cache\\wt-merge-check\\.cache\\x2e-lot\\20261022T190119Z",
+ "started_utc": "20261022T190121451603Z",
+ "workers": 22,
+ "affinity": "0xffffff00",
+ "tasks": 4000,
+ "dispatched": 4000,
+ "submitted": 4000,
+ "dispatch_error": null,
+ "deadline_hours": 3.0,
+ "deadline_reached": false,
+ "elapsed_hours": 0.9168172006666686,
+ "failures": [],
+ "leftover_temporary_files": [],
+ "integrity_problems": [],
+ "complete": true
+}

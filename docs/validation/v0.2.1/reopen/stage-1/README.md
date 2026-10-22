@@ -61,3 +61,7 @@ evidence only: [x2/README.md](x2/README.md).
 | 5 | The Dependabot alerts listed and a treatment proposed; nothing changed or dismissed | [dependabot-2026-10-22.md](dependabot-2026-10-22.md) |
 | 6 | X2's lot records archived on the Drive (manifest checked), then removed from `.cache` | [x2/README.md](x2/README.md) |
 | 7 | X3 waits for the error model's correction | |
+
+**X2e ran** on 2026-10-22 as authorized (4000 curves, 0.92 h, no failure): pooled with X2, `ρ_2` is
+overestimated in the two cells without variability too, so in all four cells; development evidence
+only: [x2/x2e/README.md](x2/x2e/README.md).
