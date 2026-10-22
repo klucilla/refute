@@ -1,0 +1,359 @@
+{
+ "note": "a reading of the committed evaluations; the per-regime intervals are not a declared decision; a median where fewer than 15 cases contribute is descriptive, not validated",
+ "eligibility_c6_x2e_alone": {
+  "AR(1), no variability": {
+   "2 years": {
+    "cases": 14,
+    "contributing_cases": 5,
+    "case_years": 28,
+    "excluded_case_years": 19,
+    "excluded_with_no_measurement": 10,
+    "eligible": false,
+    "case_contribution_rate": 0.35714285714285715,
+    "case_year_contribution_rate": 0.32142857142857145,
+    "rho_1": {
+     "cases": 5,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.2781976517360065,
+    "rho_2": {
+     "cases": 5,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.4850788567368525,
+    "rho_h": {
+     "cases": 5,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 1.0915888830664648
+   },
+   "3+ years": {
+    "cases": 6,
+    "contributing_cases": 6,
+    "case_years": 18,
+    "excluded_case_years": 0,
+    "excluded_with_no_measurement": 0,
+    "eligible": false,
+    "case_contribution_rate": 1.0,
+    "case_year_contribution_rate": 1.0,
+    "rho_1": {
+     "cases": 6,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.2136044853588968,
+    "rho_2": {
+     "cases": 6,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.1207840819653476,
+    "rho_h": {
+     "cases": 6,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 1.1167070206365124
+   }
+  },
+  "white, no variability": {
+   "2 years": {
+    "cases": 14,
+    "contributing_cases": 2,
+    "case_years": 28,
+    "excluded_case_years": 25,
+    "excluded_with_no_measurement": 9,
+    "eligible": false,
+    "case_contribution_rate": 0.14285714285714285,
+    "case_year_contribution_rate": 0.10714285714285714,
+    "rho_1": {
+     "cases": 2,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.1834449704254741,
+    "rho_2": {
+     "cases": 2,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.4091013765448528,
+    "rho_h": {
+     "cases": 2,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 0.8636006876521287
+   },
+   "3+ years": {
+    "cases": 6,
+    "contributing_cases": 6,
+    "case_years": 18,
+    "excluded_case_years": 0,
+    "excluded_with_no_measurement": 0,
+    "eligible": false,
+    "case_contribution_rate": 1.0,
+    "case_year_contribution_rate": 1.0,
+    "rho_1": {
+     "cases": 6,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.3333712426565953,
+    "rho_2": {
+     "cases": 6,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.1591450707360202,
+    "rho_h": {
+     "cases": 6,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 1.0177452889499623
+   }
+  }
+ },
+ "pooled_x2_x2e_no_variability": {
+  "AR(1), no variability": {
+   "2 years": {
+    "cases": 28,
+    "contributing_cases": 12,
+    "case_years": 56,
+    "excluded_case_years": 36,
+    "excluded_with_no_measurement": 20,
+    "eligible": false,
+    "case_contribution_rate": 0.42857142857142855,
+    "case_year_contribution_rate": 0.35714285714285715,
+    "rho_1": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.2833685836428383,
+    "rho_2": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.5006996625837852,
+    "rho_h": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 1.0740655685169604
+   },
+   "3+ years": {
+    "cases": 12,
+    "contributing_cases": 12,
+    "case_years": 36,
+    "excluded_case_years": 0,
+    "excluded_with_no_measurement": 0,
+    "eligible": false,
+    "case_contribution_rate": 1.0,
+    "case_year_contribution_rate": 1.0,
+    "rho_1": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.213218765912452,
+    "rho_2": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.120264056551692,
+    "rho_h": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 1.080976996529586
+   }
+  },
+  "white, no variability": {
+   "2 years": {
+    "cases": 28,
+    "contributing_cases": 5,
+    "case_years": 56,
+    "excluded_case_years": 49,
+    "excluded_with_no_measurement": 24,
+    "eligible": false,
+    "case_contribution_rate": 0.17857142857142858,
+    "case_year_contribution_rate": 0.125,
+    "rho_1": {
+     "cases": 5,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.3002954315174897,
+    "rho_2": {
+     "cases": 5,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.5338672060694256,
+    "rho_h": {
+     "cases": 5,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 0.9444228839048122
+   },
+   "3+ years": {
+    "cases": 12,
+    "contributing_cases": 12,
+    "case_years": 36,
+    "excluded_case_years": 0,
+    "excluded_with_no_measurement": 0,
+    "eligible": false,
+    "case_contribution_rate": 1.0,
+    "case_year_contribution_rate": 1.0,
+    "rho_1": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_1_median_descriptive": 1.3486740162108442,
+    "rho_2": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_2_median_descriptive": 1.2112811877352463,
+    "rho_h": {
+     "cases": 12,
+     "value": null,
+     "lo": null,
+     "hi": null
+    },
+    "rho_h_median_descriptive": 1.0556205424877811
+   }
+  }
+ },
+ "x2_variability": {
+  "AR(1), variability": {
+   "3+ years": {
+    "cases": 20,
+    "contributing_cases": 20,
+    "case_years": 60,
+    "excluded_case_years": 1,
+    "excluded_with_no_measurement": 0,
+    "eligible": true,
+    "case_contribution_rate": 1.0,
+    "case_year_contribution_rate": 0.9833333333333333,
+    "rho_1": {
+     "cases": 20,
+     "value": 1.3977375628124462,
+     "lo": 1.3348210396648956,
+     "hi": 1.4271914994640333
+    },
+    "rho_1_median_descriptive": 1.3977375628124462,
+    "rho_2": {
+     "cases": 20,
+     "value": 1.2478496437513953,
+     "lo": 1.1518734135695523,
+     "hi": 1.348480787580218
+    },
+    "rho_2_median_descriptive": 1.2478496437513953,
+    "rho_h": {
+     "cases": 20,
+     "value": 1.1238902710149434,
+     "lo": 1.0791728366715354,
+     "hi": 1.163909114813757
+    },
+    "rho_h_median_descriptive": 1.1238902710149434
+   }
+  },
+  "white, variability": {
+   "3+ years": {
+    "cases": 20,
+    "contributing_cases": 20,
+    "case_years": 60,
+    "excluded_case_years": 6,
+    "excluded_with_no_measurement": 0,
+    "eligible": true,
+    "case_contribution_rate": 1.0,
+    "case_year_contribution_rate": 0.9,
+    "rho_1": {
+     "cases": 20,
+     "value": 1.3441585328035568,
+     "lo": 1.2869292561715677,
+     "hi": 1.3884226459113265
+    },
+    "rho_1_median_descriptive": 1.3441585328035568,
+    "rho_2": {
+     "cases": 20,
+     "value": 1.2124065807536417,
+     "lo": 1.1623321084632485,
+     "hi": 1.277037075796978
+    },
+    "rho_2_median_descriptive": 1.2124065807536417,
+    "rho_h": {
+     "cases": 20,
+     "value": 1.0463175134779847,
+     "lo": 1.015001145305746,
+     "hi": 1.0999386476446655
+    },
+    "rho_h_median_descriptive": 1.0463175134779847
+   }
+  }
+ },
+ "fail_x2e_pooled": {
+  "AR(1), no variability": {
+   "measurement_fail_rounds": 19,
+   "of_which_both_recorded_capacity_decisions_pass": 3,
+   "wrong_candidate": 2,
+   "wrong_candidate_passing_both": 0
+  },
+  "white, no variability": {
+   "measurement_fail_rounds": 94,
+   "of_which_both_recorded_capacity_decisions_pass": 55,
+   "wrong_candidate": 72,
+   "wrong_candidate_passing_both": 51
+  }
+ },
+ "fail_x2_variability": {
+  "AR(1), variability": {
+   "measurement_fail_rounds": 138,
+   "of_which_both_recorded_capacity_decisions_pass": 30,
+   "wrong_candidate": 58,
+   "wrong_candidate_passing_both": 21
+  },
+  "white, variability": {
+   "measurement_fail_rounds": 76,
+   "of_which_both_recorded_capacity_decisions_pass": 6,
+   "wrong_candidate": 9,
+   "wrong_candidate_passing_both": 0
+  }
+ }
+}

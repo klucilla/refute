@@ -63,5 +63,18 @@ evidence only: [x2/README.md](x2/README.md).
 | 7 | X3 waits for the error model's correction | |
 
 **X2e ran** on 2026-10-22 as authorized (4000 curves, 0.92 h, no failure): pooled with X2, `ρ_2` is
-overestimated in the two cells without variability too, so in all four cells; development evidence
-only: [x2/x2e/README.md](x2/x2e/README.md).
+overestimated in the two cells without variability too, so in all four cells (cell-level, mixing the
+regimes; see below); development evidence only: [x2/x2e/README.md](x2/x2e/README.md).
+
+## After X2e (the maintainer's decisions of 2026-10-22; readings and proposals, nothing run)
+
+| Item | Decision | Where |
+|---|---|---|
+| 1 | Spec C's eligibility with the data C6 allows: no regime eligible, no model chosen; the C4/C6 amendment proposed, the scope alternatives for the maintainer | [after-x2e/README.md](after-x2e/README.md), [after-x2e/spec-c-amendment-proposal.md](after-x2e/spec-c-amendment-proposal.md) |
+| 2 | The pooled result's scope, per regime: every regime of the cells without variability unvalidated | [after-x2e/README.md](after-x2e/README.md) |
+| 3 | The grid's maximum: how to tell fluctuation from real differences; what the records allow | [after-x2e/README.md](after-x2e/README.md) |
+| 4 | Measurement FAIL and "wrong candidate" apart from the engine's false FAIL | [after-x2e/README.md](after-x2e/README.md), [x2/README.md](x2/README.md), [x2/x2e/README.md](x2/x2e/README.md) |
+| 5 | One prospective package (proposal; not authorized) | [after-x2e/prospective-package-proposal.md](after-x2e/prospective-package-proposal.md) |
+| 6 | Dependencies: reachability read, early correction and a frozen comparison environment proposed; nothing changed | [after-x2e/dependencies-reachability.md](after-x2e/dependencies-reachability.md) |
+| 7, 8 | Attenuation its own front; the historical FAIL kept; X3 waits | |
+| 9 | Joint objectives, the effort ceiling and the viability check (proposal); the ideas issue (draft, not opened) | [after-x2e/success-viability-effort-proposal.md](after-x2e/success-viability-effort-proposal.md), [after-x2e/ideas-issue-eb-variability-draft.md](after-x2e/ideas-issue-eb-variability-draft.md) |

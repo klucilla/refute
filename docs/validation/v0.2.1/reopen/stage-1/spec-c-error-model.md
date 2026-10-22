@@ -74,6 +74,12 @@ Expected coverage (Codex's review): X2e has, per cell, 14 cases with two observi
 the cells without variability cannot be eligible, and their two-year regimes only if enough of those
 cases contribute; the cells themselves (all years together) are the regimes that can decide there.
 
+> **Pending (2026-10-22):** this note relies on pooling with X2, which C6 excludes from the
+> decision, and names the cells as regimes, which the paragraph above does not. A clarifying
+> amendment and the alternatives that would change the scope are proposed in
+> [after-x2e/spec-c-amendment-proposal.md](after-x2e/spec-c-amendment-proposal.md), for the
+> maintainer's decision; this text stays as it is until then. With X2e alone no regime is eligible.
+
 ## C5. The criterion (fixed now)
 
 With `τ = 0.10` and the candidate's design value `D` (`m_β` for the candidates with the margin, 1

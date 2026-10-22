@@ -20,6 +20,17 @@ nothing is adopted; no threshold or gate changes.
   `27b5a23af95574db51cf6ea604b33ea375b16464044d6adace1be3ef19916ee1`), both with the corrected
   evaluator (intervals and verdicts stored apart); the lot's identity check passed.
 
+**Scope of these results (added after the maintainer's review of 2026-10-22,
+[../../after-x2e/README.md](../../after-x2e/README.md), items 1, 2 and 4).** The pooled verdicts below
+are **cell-level** (all years together) and use X2's rows, which spec C's C6 counts as informing only;
+they are not spec C regimes. Per regime (cell × number of years) no regime of these cells has 15
+contributing cases, neither with X2e alone nor pooled, so **every regime of these cells stays
+unvalidated**. The `ρ_2` excess is the median of the cells evaluated, dominated by three-year cases;
+it does not show that every regime is overestimated, that no case is underestimated, or that
+replacing the grid's maximum is safe. The X2-A FAIL are measurement FAIL with the capacity decisions
+not enforced, not the engine's false FAIL (of the 94 in `white, no variability`, 55 passed both
+recorded decisions; of its 72 wrong candidates, 51).
+
 ## X2-B, pooled (40 cases per cell; the deciding analysis)
 
 | cell | case-years (excluded) | cases contributing | `ρ_1` (design 1.2) | `ρ_2` (design 1) | `ρ_h` (design 1) |
@@ -30,7 +41,8 @@ nothing is adopted; no threshold or gate changes.
 - **No cell is `underestimated`.**
 - **`e_pred,2` is overestimated in these two cells too**, as in the two variability cells of X2
   (1.25 and 1.21): with X2e, **`ρ_2` is overestimated in all four cells**, between 1.21 and 1.26, both
-  scales agreeing. The excess is not specific to a regime.
+  scales agreeing. ~~The excess is not specific to a regime.~~ (Withdrawn on 2026-10-22: the cells mix
+  regimes, and no regime of these cells is eligible; see the scope note above.)
 - `e_hidden` is calibrated in `white, no variability`; elsewhere not determined.
 - **Which case-years decide:** the contributing case-years are mostly `three_years` (36 of 56 in
   AR(1), 36 of 43 in white); `two_years` contribute 18 and 5, `few_train` 2 and 2. Of the excluded
@@ -42,7 +54,11 @@ nothing is adopted; no threshold or gate changes.
 
 ## X2-A, pooled
 
-| cell | FAIL / rounds measured | the FAIL's causes |
+The FAIL here are measurement FAIL (the FAIL rule on each round's measurement, the capacity decisions
+not enforced); "wrong candidate" is X2-A's diagnostic class (the train candidate's identity not
+`same`), not a verdict.
+
+| cell | measurement FAIL / rounds measured | the FAIL's causes |
 |---|---|---|
 | AR(1), no variability | 19 / 5190 | none 11, imprecise extrapolation 3, wrong candidate 2, attenuation 2, inflated 1 |
 | white, no variability | 94 / 3894 | **wrong candidate 72**, inflated train depth 11, none 7, imprecise extrapolation 3, attenuation 1 |
@@ -63,9 +79,11 @@ of them a wrong candidate).
 ## What follows
 
 - **Specification C** ([../../spec-c-error-model.md](../../spec-c-error-model.md)) now has, in the
-  cells without variability, data never used before (X2e) and, pooled with X2, determined cells. The
-  excess of `ρ_2` in all four cells argues for a cause in the decision-2 model as a whole rather than
-  in one regime; whether one of spec C's candidates removes it is spec C's own analysis (its own
+  cells without variability, data never used before (X2e), and, pooled with X2, determined cells
+  (cell-level, not spec C regimes; with X2e alone no regime is eligible, so spec C chooses no model:
+  [../../after-x2e/README.md](../../after-x2e/README.md)). ~~The excess of `ρ_2` in all four cells
+  argues for a cause in the decision-2 model as a whole rather than in one regime;~~ (withdrawn on
+  2026-10-22, as above) whether one of spec C's candidates removes it is spec C's own analysis (its own
   authorization), on X2e's records for these cells, and on a replicate with new seeds for the cells
   with variability (spec C, C6). Not done here.
 - X3 still waits for the correction of the error model.

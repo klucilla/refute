@@ -70,6 +70,13 @@ stores `sd_interval`, `mad_interval`, `sd_verdict`, `mad_verdict` and `verdict` 
 
 **The FAIL** here is the FAIL rule on each round's measurement with the capacity decisions **not
 enforced** (as declared): it is not the study's false FAIL, which passed the gates first.
+"Wrong candidate" is X2-A's diagnostic class (the train candidate's identity not `same`), not a
+verdict. **These are not the engine's false FAIL** (added after the maintainer's review of
+2026-10-22, [../after-x2e/README.md](../after-x2e/README.md), item 4): of the measurement FAIL, those
+that passed both capacity decisions as recorded at the lot's configuration (`b = s = 0`) are 30 of 138
+(`AR(1), variability`; 21 of its 58 wrong candidates) and 6 of 76 (`white, variability`; none of its
+9); the full engine's outcome also depends on the calibrated thresholds, the other gates and spec B's
+aggregation.
 
 | cell | FAIL / rounds measured | the FAIL's causes |
 |---|---|---|

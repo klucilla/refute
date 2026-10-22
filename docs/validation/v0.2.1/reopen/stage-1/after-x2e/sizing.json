@@ -1,0 +1,74 @@
+{
+ "probability": 0.9,
+ "realizations_per_case": 100,
+ "unit_lp_seconds_per_curve": {
+  "no_variability": 18.216,
+  "variability": 61.578
+ },
+ "regimes": {
+  "AR(1), no variability | 2 years": {
+   "rates": {
+    "eligibility_c6_x2e_alone": 0.35714285714285715,
+    "pooled_x2_x2e_no_variability": 0.42857142857142855
+   },
+   "rate_used": 0.35714285714285715,
+   "cases_for_15": 54,
+   "lp_hours_for_15": 27.324,
+   "cases_for_40": 131,
+   "lp_hours_for_40": 66.286
+  },
+  "AR(1), no variability | 3+ years": {
+   "rates": {
+    "eligibility_c6_x2e_alone": 1.0,
+    "pooled_x2_x2e_no_variability": 1.0
+   },
+   "rate_used": 1.0,
+   "cases_for_15": 15,
+   "lp_hours_for_15": 7.59,
+   "cases_for_40": 40,
+   "lp_hours_for_40": 20.24
+  },
+  "AR(1), variability | 3+ years": {
+   "rates": {
+    "x2_variability": 1.0
+   },
+   "rate_used": 1.0,
+   "cases_for_15": 15,
+   "lp_hours_for_15": 25.6575,
+   "cases_for_40": 40,
+   "lp_hours_for_40": 68.42
+  },
+  "white, no variability | 2 years": {
+   "rates": {
+    "eligibility_c6_x2e_alone": 0.14285714285714285,
+    "pooled_x2_x2e_no_variability": 0.17857142857142858
+   },
+   "rate_used": 0.14285714285714285,
+   "cases_for_15": 138,
+   "lp_hours_for_15": 69.828,
+   "cases_for_40": 334,
+   "lp_hours_for_40": 169.00400000000002
+  },
+  "white, no variability | 3+ years": {
+   "rates": {
+    "eligibility_c6_x2e_alone": 1.0,
+    "pooled_x2_x2e_no_variability": 1.0
+   },
+   "rate_used": 1.0,
+   "cases_for_15": 15,
+   "lp_hours_for_15": 7.59,
+   "cases_for_40": 40,
+   "lp_hours_for_40": 20.24
+  },
+  "white, variability | 3+ years": {
+   "rates": {
+    "x2_variability": 1.0
+   },
+   "rate_used": 1.0,
+   "cases_for_15": 15,
+   "lp_hours_for_15": 25.6575,
+   "cases_for_40": 40,
+   "lp_hours_for_40": 68.42
+  }
+ }
+}
