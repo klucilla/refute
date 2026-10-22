@@ -8,7 +8,11 @@ In 6 of the 13 FAIL rounds `d_twin / d_train` is 0.08 or less, or negative (`whi
 chosen `dP`, holds almost none of the transit. A train depth above the truth would leave the twin's
 depth near the truth, so a ratio that small would need a train depth many times the injected one;
 predicted windows that missed the transits is the simpler reading. The declared rules do not make
-this distinction, and these records cannot confirm it.
+this distinction, and these records cannot confirm it. **Qualified by the maintainer (2026-10-21):**
+the twin keeps the model's variability and trend, is measured with the trend fitted to the noisy
+curve and depends on the masks, the detrending and the fit, so a small twin depth can also come
+from the processing; a much inflated train depth can also give a ratio near zero; and noise can
+cause the ephemeris or trend error itself. The reading above is not a finding.
 
 Five of the six R = 8 cases in `white, no variability` are `two_years` (one train year, the hidden
 year about two years away), and one is `few_train` (three train transits): both are layouts where

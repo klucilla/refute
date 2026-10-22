@@ -135,6 +135,28 @@ def replaced(control: Control):
             setattr(holdout, k, v)
 
 
+def summarize(outcome) -> dict:
+    """A control's outcome as plain data (to cross a process boundary)."""
+    return {
+        "status": outcome.test.status.value,
+        "spec_b": outcome.test.metrics["spec_b"],
+        "rounds": [
+            (r.hidden_year, r.status.value, r.metrics.get("reason")) for r in outcome.rounds
+        ],
+    }
+
+
+def run_control(key: str) -> dict:
+    """Run one control under specification B, with its replacements, in this process (a worker of
+    tests/test_spec_b.py's fixture)."""
+    control = next(c for c in controls() if c.key == key)
+    with replaced(control):
+        outcome = holdout.run_holdout(
+            control.lc, control.sectors, control.plan, aggregation="spec_b_experimental"
+        )
+    return summarize(outcome)
+
+
 def controls() -> list[Control]:
     out = []
     for noise in NOISES:

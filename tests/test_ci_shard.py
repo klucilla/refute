@@ -53,6 +53,15 @@ def test_every_collected_test_runs_in_exactly_one_shard():
         assert sum(f in files for files in shard.HEAVY.values()) + (f not in ignored) == 1, f
 
 
+def test_the_ci_matrix_lists_every_shard():
+    """The CI workflow's shard matrix is exactly the heavy shards and rest (a shard added here
+    but not to the matrix would never run)."""
+    text = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    line = next(s.strip() for s in text.splitlines() if s.strip().startswith("shard: ["))
+    listed = [x.strip() for x in line[len("shard: [") : line.index("]")].split(",")]
+    assert sorted(listed) == sorted([*shard.HEAVY, "rest"])
+
+
 def test_unknown_shard_is_refused():
     with pytest.raises(SystemExit):
         shard.args("nope")

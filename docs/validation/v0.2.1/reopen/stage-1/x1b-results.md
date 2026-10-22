@@ -1,5 +1,10 @@
 # X1b: specification B's experimental implementation, under its acceptance record
 
+**Accepted by the maintainer on 2026-10-21** (`acc9dda`). On C3's seed: chosen among 12 to meet the
+control's precondition, which is fit for testing the aggregation, with the selection documented. The
+other 11 seeds (FAIL in years with the signal) stay as **development and alert controls**: they do
+not estimate the population's failure rate and are not an independent confirmation of anything.
+
 Authorized by the maintainer on 2026-10-21 (decisions after X0 and X1, item 2). The acceptance
 record ([x1b-acceptance.md](x1b-acceptance.md)) and B6's revision were committed and pushed in
 `5a657fb`, before the tests and the code. **Implementation, not adoption:** the legacy rule stays the

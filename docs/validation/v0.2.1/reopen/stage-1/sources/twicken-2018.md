@@ -7,6 +7,12 @@
 - **Read on:** 2026-10-21
 - **Literal excerpt (abstract):** "A suite of diagnostic tests is performed on all candidates"
 
-**What it supports here:** the Kepler pipeline's Data Validation runs a set of diagnostic tests on
-each candidate. Used only as a general precedent for examining each failure mode apart (X0c reads
-each false FAIL round field by field; X3 keeps its regimes apart). No test of that paper is adopted.
+**The procedure and the data (from the abstract):** the Data Validation component of the Kepler
+Science Data Processing Pipeline, run on the Threshold Crossing Events found in four years of Kepler
+long-cadence (29.4 min) photometry of about 200 000 targets: transit model fits, a search for
+further planets, and a suite of diagnostic tests on every candidate.
+
+**What it supports here:** only that a pipeline examines a candidate through several separate
+tests. Used as context for examining each failure mode apart (X0c reads each false FAIL round field
+by field; X2-A separates four causes; X3 keeps its regimes apart). **It validates no gate, threshold
+or rule of Refute**; no test of that paper is adopted, and its data are not Refute's.

@@ -62,7 +62,7 @@ jobs:
         # The suite is split into shards that run in parallel (scripts/ci_shard.py):
         # every test still runs on every OS and Python above; tests/test_ci_shard.py
         # checks that each test file is in exactly one shard.
-        shard: [heavy-a, heavy-b, heavy-c, rest]
+        shard: [heavy-a, heavy-b, heavy-c, heavy-d, rest]
     steps:
       # Actions are pinned to a commit; the tag is in the comment. setup-uv
       # publishes no major-version tags since v8, so `@v10` would not resolve.

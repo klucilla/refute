@@ -33,3 +33,16 @@ their own criteria, budget and authorization.
 
 The pilot, the main study, the reserve and any scientific adoption still depend on their own
 acceptances.
+
+## After X0c and X1b (the maintainer's decisions of 2026-10-21)
+
+| Item | Decision | Where |
+|---|---|---|
+| 1 | X1b and X0c accepted (`acc9dda`). C3's seed, chosen among 12 to meet its precondition, is fit to test the aggregation, its selection documented; the other 11 (FAIL in years with the signal) stay as development and alert controls: they do not estimate the population's failure rate and are not an independent confirmation | [x1b-results.md](x1b-results.md) |
+| 2 | X0c's reading: the twin's depth far below the train's justifies investigating the train against the predicted measurement; it does **not** identify the cause (the twin keeps the model's variability and trend, uses the trend fitted to the noisy curve and depends on the masks, the detrending and the fit; a much inflated train depth can also give a ratio near zero; noise can also cause an ephemeris or trend error). Causes to separate: a wrong candidate, an imprecise extrapolation, an attenuation in the processing, an inflated depth | [x0c/README.md](x0c/README.md) |
+| 3 | X2 revised before any realization, in two blocks: X2-A, geometry and identity (evaluator only; the synthetic truth never reaches the engine), and X2-B, the calibration of the uncertainties (decided by the standard deviation); realizations with a wrong candidate stay in the denominators and the report | [x2-declaration.md](x2-declaration.md) |
+| 4 | No identity gate and no new reference given to the engine; identity is diagnosed (X2-A). Comparing the train with the global search's candidate could break the independence contract (that search may have used the hidden year); a truly independent external ephemeris would be another information contract, close to the directed mode, with its own specification and validation | [x2-declaration.md](x2-declaration.md), section 2 |
+| 5 | An external Kepler or TESS reference must name the procedure and the data it used; a general precedent validates no gate here | [sources/](sources/) |
+| 6 | Before X2 runs: the resumption condition (a lot interrupted and relaunched gives records byte for byte equal to a continuous run's); if not resumable, specified and tested first | [x2-execution-package.md](x2-execution-package.md) |
+| 7 | Then X2's execution package comes back for the maintainer's authorization, and the work stops. X3's definitive calibration waits for X2's result. No threshold or gate changes only to correct the old cases | [x2-execution-package.md](x2-execution-package.md) |
+| 8 | heavy-a's CI duration checked against the 15-minute target per job | [x2-execution-package.md](x2-execution-package.md), section 6 |

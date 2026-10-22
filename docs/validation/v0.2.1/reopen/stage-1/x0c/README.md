@@ -61,6 +61,17 @@ What the declared rules show:
 - **The capacity decisions did not cause these FAIL**, and more PASS elsewhere (which lowers the
   false FAIL's fraction among the decided) would not correct any of them.
 
+## What this does not identify (the maintainer's reading, 2026-10-21)
+
+Accepted with this reading: the twin's depth far below the train's justifies investigating the
+train against the predicted measurement, and it does **not** identify the cause. The twin keeps the
+model's variability and trend, is measured with the trend fitted to the noisy curve, and depends on
+the masks, the detrending and the fit; a much inflated train depth can also give `d_twin / d_train`
+near zero; and the noise itself can cause an ephemeris or trend error. Four causes remain to be
+separated, by X2-A ([../x2-declaration.md](../x2-declaration.md)): **a wrong candidate, an
+imprecise extrapolation, an attenuation in the processing, an inflated train depth.** No threshold
+or gate changes only to correct these cases.
+
 ## The context distributions (eligible constant rounds with the twin ok)
 
 | R | group | rounds | `Z_train ≥ 3` | `Z_hidden ≥ 3` | 1.4826 MAD of the pull |

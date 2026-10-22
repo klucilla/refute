@@ -7,7 +7,12 @@
 - **Read on:** 2026-10-21
 - **Literal excerpt (abstract):** "measured how well it was able to separate TCEs caused by noise"
 
-**What it supports here:** the DR25 catalog's automated vetting was also run on simulated data sets
-to measure its completeness and reliability. Used in X3 only as a precedent for calibrating a
-decision rule on simulated targets separate from the data it is applied to (X3's new seeds and
-targets, never the study's). None of that paper's numbers is used.
+**The procedure and the data (from the abstract):** the Robovetter, an automated vetting of the
+Threshold Crossing Events of Kepler Data Release 25 (quarters 1 to 17, four years of photometry),
+also run on simulated data sets to measure its completeness (the fraction of simulated transits
+kept as candidates) and the catalog's reliability.
+
+**What it supports here:** only that a decision rule's behaviour can be measured on simulated data
+apart from the data it decides on. Used as context for X3's design (new seeds and targets, never
+the study's). **It validates no gate, threshold or rule of Refute**; none of that paper's numbers,
+tests or simulated sets is used.

@@ -212,23 +212,51 @@ def _legacy_status(statuses: list[str]) -> str:
 
 @pytest.fixture(scope="module")
 def control_runs():
-    out = {}
-    for c in sb.controls():
-        with sb.replaced(c):
-            outcome = holdout.run_holdout(c.lc, c.sectors, c.plan, aggregation=B)
-        out[c.key] = (c, outcome)
-    return out
+    """The 32 controls, each run in its own worker process (the default worker count; CI's jobs
+    over 15 minutes with the controls run one after another, 2026-10-21), each worker applying the
+    control's own replacements (``spec_b_cases.run_control``)."""
+    from concurrent.futures import ProcessPoolExecutor
+
+    from refute.core.runner import default_workers
+
+    controls = {c.key: c for c in sb.controls()}
+    keys = list(controls)
+    with ProcessPoolExecutor(max_workers=min(len(keys), default_workers())) as pool:
+        summaries = dict(zip(keys, pool.map(sb.run_control, keys), strict=True))
+    return {k: (controls[k], summaries[k]) for k in keys}
 
 
 CONTROL_KEYS = [c.key for c in sb.controls()]
 
 
+class _Round:
+    """A round of a control's summary, read like a RoundResult."""
+
+    def __init__(self, year, status, reason):
+        self.hidden_year, self.status, self.metrics = year, TestStatus(status), {"reason": reason}
+
+
+def test_a_control_run_in_a_worker_is_the_same_as_in_process():
+    """The summary a worker returns equals the outcome of the same control run here."""
+    from concurrent.futures import ProcessPoolExecutor
+
+    c = next(c for c in sb.controls() if c.key == "C7a-white-2y")
+    with sb.replaced(c):
+        outcome = holdout.run_holdout(c.lc, c.sectors, c.plan, aggregation=B)
+    # across a real process boundary (Codex's review: the first version ran both here)
+    with ProcessPoolExecutor(max_workers=1) as pool:
+        remote = pool.submit(sb.run_control, c.key).result()
+    assert remote == sb.summarize(outcome)
+    assert remote["spec_b"]["undecided"] == [{"year": 2020, "reason": "no_predicted_window"}]
+
+
 @pytest.mark.parametrize("key", CONTROL_KEYS)
 def test_t7_each_control_has_its_outcome_under_b(control_runs, key):
-    c, outcome = control_runs[key]
-    status = outcome.test.status.value
-    spec_b = outcome.test.metrics["spec_b"]
-    rounds = {r.hidden_year: r for r in outcome.rounds}
+    c, summary = control_runs[key]
+    status = summary["status"]
+    spec_b = summary["spec_b"]
+    rounds = {y: _Round(y, s, r) for y, s, r in summary["rounds"]}
+    outcome_rounds = list(rounds.values())
     last, first = max(rounds), min(rounds)
     if c.name in ("C5", "C5r"):
         assert status != "PASS"
@@ -238,7 +266,7 @@ def test_t7_each_control_has_its_outcome_under_b(control_runs, key):
         assert [u["year"] for u in spec_b["undecided"]] == list(c.expected_undecided)
     # the preconditions, as checked on the engine before the code (probe.json)
     if c.name == "C1":
-        assert all(r.status is TestStatus.PASS for r in outcome.rounds)
+        assert all(r.status is TestStatus.PASS for r in outcome_rounds)
     if c.name in ("C2", "C7b"):
         assert rounds[last].status is TestStatus.FAIL
     if c.name in ("C3", "C4"):
@@ -253,7 +281,7 @@ def test_t7_each_control_has_its_outcome_under_b(control_runs, key):
         assert rounds[first].metrics.get("reason") == NPW
         assert spec_b["undecided"] == [{"year": first, "reason": NPW}]
     # the contrast with today's rule, from the same rounds
-    legacy = _legacy_status([r.status.value for r in outcome.rounds])
+    legacy = _legacy_status([r.status.value for r in outcome_rounds])
     if c.name in ("C4", "C7a") or (c.name == "C3" and c.n_years == 3):
         assert legacy == "PASS"  # B4: today PASS, under B INCONCLUSIVE
     if c.name == "C3" and c.n_years == 2:

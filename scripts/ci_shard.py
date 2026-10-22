@@ -4,7 +4,7 @@ The test suite is split into shards that run as parallel CI jobs, on every OS an
 Python of the matrix, so that each test still runs once per matrix entry while the
 wall-clock time of a run falls (the end-to-end fixtures below take most of it).
 
-- ``heavy-a``, ``heavy-b``, ``heavy-c``: fixed lists of end-to-end test files;
+- ``heavy-a``, ``heavy-b``, ``heavy-c``, ``heavy-d``: fixed lists of end-to-end test files;
 - ``rest``: every other test, with ``--ignore`` for each listed file.
 
 Every listed file must exist (a renamed file fails the run instead of silently moving
@@ -17,7 +17,7 @@ Limits to review if the configuration changes (issue #59; Codex review of PR #73
 also run in the heavy shards; and the CI splits the printed arguments on spaces, so a
 test path with spaces or glob characters would need structured arguments.
 
-Usage: uv run python scripts/ci_shard.py heavy-a|heavy-b|heavy-c|rest|check
+Usage: uv run python scripts/ci_shard.py heavy-a|heavy-b|heavy-c|heavy-d|rest|check
 """
 
 from __future__ import annotations
@@ -33,12 +33,11 @@ ROOT = Path(__file__).resolve().parents[1]
 # Python 3.13 rest to 1015 s and heavy-b to 943 s (PR #157, run 39085740367), over the
 # 15-minute target; a fourth shard, heavy-c, balances them by the local times per file.
 HEAVY = {
-    "heavy-a": [
-        "tests/test_ebcatalog_own_tic_e2e.py",
-        # stage 1, X1b (2026-10-21): its 32 engine controls took about 400 s locally (probe.json),
-        # too much for rest (already over target) or heavy-c (test_instrumentation.py)
-        "tests/test_spec_b.py",
-    ],
+    "heavy-a": ["tests/test_ebcatalog_own_tic_e2e.py"],
+    # stage 1, X1b (2026-10-21): the 32 engine controls of spec B pushed heavy-a to 15.6 and
+    # 22.3 min on windows-2025 (run 39696817920, from 11.9 before); they now run in parallel
+    # workers and in a shard of their own
+    "heavy-d": ["tests/test_spec_b.py", "tests/test_x2.py"],
     "heavy-b": [
         "tests/test_holdout_train_validity_e2e.py",
         "tests/test_holdout_blindness.py",
