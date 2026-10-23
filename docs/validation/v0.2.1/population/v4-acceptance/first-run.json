@@ -1,0 +1,194 @@
+{
+ "format": "refute-gate1-first-run/1",
+ "runs": [
+  {
+   "cases": [
+    {
+     "detail": "collection failure",
+     "outcome": "error",
+     "test": "::tests.test_domain"
+    }
+   ],
+   "counts": {
+    "error": 1,
+    "failure": 0,
+    "passed": 0,
+    "skipped": 0
+   },
+   "label": "both files",
+   "tests": 1
+  },
+  {
+   "cases": [
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_population_v2_and_v3_are_unchanged"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_v4_reuses_v2_objects"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_population_composition"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_allocation_is_exact"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_geometry_follows_the_position_in_the_group"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_other_populations"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_layouts_are_inside_and_deterministic"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_layout_stream"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_layout_draws_and_the_geometry"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_time_stamps_follow_the_rules"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_orbits_ends_are_kept"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_blocks_and_single_losses_on_a_constructed_layout"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_rejection_draws_again_and_records_the_reason"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_a_label_collision_is_rejected"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_built_time_stamps_are_the_layouts"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_built_cases_are_deterministic"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_variability_free_year_is_one_of_the_curve"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_built_checks_pass"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_replay_catches_an_undeclared_redraw"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_replay_catches_a_changed_parameter"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_independent_band_check_passes"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_band_check_catches_a_wrong_snr"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_band_check_catches_a_hidden_transit"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_band_check_catches_variability_in_three_years"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4_check'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_x2f_cases_are_one_point_of_the_domain"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4_check'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_zero_coverage_is_a_failure"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_coverage_catches_a_narrow_dimension"
+    },
+    {
+     "detail": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Projetos\\\\refute\\\\.cache\\\\wt-merge-check\\\\docs\\\\validation\\\\v0.2.1\\\\population\\\\band_check_v4.py'",
+     "outcome": "failure",
+     "test": "tests.test_population_v4::test_band_check_imports_only_the_standard_library_and_numpy"
+    },
+    {
+     "detail": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Projetos\\\\refute\\\\.cache\\\\wt-merge-check\\\\docs\\\\validation\\\\v0.2.1\\\\population\\\\population_v4.py'",
+     "outcome": "failure",
+     "test": "tests.test_population_v4::test_v4_imports_from_refute_only_the_data_modules"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4_check'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_v4_reads_only_declared_attributes"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_redraw_reasons_are_declared"
+    },
+    {
+     "detail": "failed on setup with \"ModuleNotFoundError: No module named 'population_v4_check'\"",
+     "outcome": "error",
+     "test": "tests.test_population_v4::test_the_order_check_rejects_an_invalid_history"
+    }
+   ],
+   "counts": {
+    "error": 30,
+    "failure": 2,
+    "passed": 0,
+    "skipped": 0
+   },
+   "label": "test_population_v4 alone",
+   "tests": 32
+  }
+ ]
+}
