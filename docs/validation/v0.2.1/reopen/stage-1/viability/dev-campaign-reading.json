@@ -1,0 +1,249 @@
+{
+ "note": "The viability check of 2026-10-23, item 1c (read only): the final verdicts of the measurable\nplanets in the v0.2.1 development campaign 1 (`population/campaigns/dev-campaign-1/`, its committed\nmetrics), per noise model and mechanism, at each of its points M0 to M3. That campaign ran the whole\nanalysis (search, gauntlet, holdout, aggregation) on the configurations of 2026-10-13, **before the\nM4 corrections**; it is not the configuration of the R_min study or of the final engine, and is\nread only for what the M4 records cannot give: the final verdicts.",
+ "points": {
+  "M0": {
+   "catalog_condition": "i",
+   "measurable": {
+    "AR(1) | 2 years": {
+     "n": 150,
+     "refuted": 4,
+     "inconclusive": 4,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 142
+    },
+    "AR(1) | 3+ years": {
+     "n": 50,
+     "refuted": 2,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 48
+    },
+    "AR(1) | 3+ years, variability": {
+     "n": 50,
+     "refuted": 50,
+     "inconclusive": 0,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 0
+    },
+    "white | 2 years": {
+     "n": 150,
+     "refuted": 9,
+     "inconclusive": 57,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 84
+    },
+    "white | 3+ years": {
+     "n": 50,
+     "refuted": 4,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 46
+    },
+    "white | 3+ years, variability": {
+     "n": 50,
+     "refuted": 50,
+     "inconclusive": 0,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 0
+    }
+   }
+  },
+  "M1": {
+   "catalog_condition": "i",
+   "measurable": {
+    "AR(1) | 2 years": {
+     "n": 150,
+     "refuted": 4,
+     "inconclusive": 4,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 142
+    },
+    "AR(1) | 3+ years": {
+     "n": 50,
+     "refuted": 2,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 48
+    },
+    "AR(1) | 3+ years, variability": {
+     "n": 50,
+     "refuted": 50,
+     "inconclusive": 0,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 0
+    },
+    "white | 2 years": {
+     "n": 150,
+     "refuted": 9,
+     "inconclusive": 57,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 84
+    },
+    "white | 3+ years": {
+     "n": 50,
+     "refuted": 4,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 46
+    },
+    "white | 3+ years, variability": {
+     "n": 50,
+     "refuted": 50,
+     "inconclusive": 0,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 0
+    }
+   }
+  },
+  "M2": {
+   "catalog_condition": "i",
+   "measurable": {
+    "AR(1) | 2 years": {
+     "n": 150,
+     "refuted": 4,
+     "inconclusive": 4,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 142
+    },
+    "AR(1) | 3+ years": {
+     "n": 50,
+     "refuted": 2,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 48
+    },
+    "AR(1) | 3+ years, variability": {
+     "n": 50,
+     "refuted": 38,
+     "inconclusive": 0,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 12
+    },
+    "white | 2 years": {
+     "n": 150,
+     "refuted": 9,
+     "inconclusive": 57,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 84
+    },
+    "white | 3+ years": {
+     "n": 50,
+     "refuted": 4,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 46
+    },
+    "white | 3+ years, variability": {
+     "n": 50,
+     "refuted": 45,
+     "inconclusive": 4,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 1
+    }
+   }
+  },
+  "M3": {
+   "catalog_condition": "i",
+   "measurable": {
+    "AR(1) | 2 years": {
+     "n": 150,
+     "refuted": 4,
+     "inconclusive": 4,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 142
+    },
+    "AR(1) | 3+ years": {
+     "n": 50,
+     "refuted": 2,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 48
+    },
+    "AR(1) | 3+ years, variability": {
+     "n": 50,
+     "refuted": 38,
+     "inconclusive": 0,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 12
+    },
+    "white | 2 years": {
+     "n": 150,
+     "refuted": 9,
+     "inconclusive": 57,
+     "mechanisms": [
+      "few_train",
+      "two_years"
+     ],
+     "survived_or_weakened": 84
+    },
+    "white | 3+ years": {
+     "n": 50,
+     "refuted": 4,
+     "inconclusive": 0,
+     "mechanisms": [
+      "three_years"
+     ],
+     "survived_or_weakened": 46
+    },
+    "white | 3+ years, variability": {
+     "n": 50,
+     "refuted": 45,
+     "inconclusive": 4,
+     "mechanisms": [
+      "variability_some_years"
+     ],
+     "survived_or_weakened": 1
+    }
+   }
+  }
+ }
+}

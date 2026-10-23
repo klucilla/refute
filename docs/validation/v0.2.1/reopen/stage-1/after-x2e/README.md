@@ -30,6 +30,17 @@ validation.
 | 6 | The ideas issue opened, no implementation | [klucilla/refute#167](https://github.com/klucilla/refute/issues/167) |
 | 7 | The stage's milestone: on independent data, the final configuration preserves a useful fraction of true planets as candidates, recognizes false positives and keeps its errors controlled; spec C alone does not resolve the attenuation, the candidates' identity or the aggregation | [success-viability-effort-proposal.md](success-viability-effort-proposal.md), section 6 |
 
+## The maintainer's decisions on the delivery `cb671a7` (2026-10-23; X2f not authorized)
+
+| Item | Decision | Where |
+|---|---|---|
+| 1 | A read-only viability check: the final aggregation confirmed in the code; the necessary condition of C1 and C3 on the holdout; the measurable band's holdout per noise and regime; the capacity blocks apart from the others; an optimistic bound; one quantification | [../viability/README.md](../viability/README.md) |
+| 2 | C6: X2f alone decides; X2 and X2e inform only | [../spec-c-error-model.md](../spec-c-error-model.md) (C4, C6); [x2f-declaration.md](x2f-declaration.md), section 1 |
+| 3 | X2f, when authorized, after the update of 2026-10-27, everything fixed before S1; a change of the numeric stack in the lock's diff stops the work | [x2f-declaration.md](x2f-declaration.md), section 7 |
+| 4 | The sizing risk accepted for discussion; the 0.95 conditional; the 0.77 exception explicit; no automatic enlargement | [x2f-declaration.md](x2f-declaration.md), section 10 |
+| 5 | G1 to G6: the direction approved; the numbers fixed after the check, before new data | [success-viability-effort-proposal.md](success-viability-effort-proposal.md), section 1 |
+| 6 | R1 preferred; the gate before X5 proposed as a further amendment (LP-h and wall time); no R2 before the check; the CI tracked, never blocked automatically | [success-viability-effort-proposal.md](success-viability-effort-proposal.md), sections 4.1 and 4.2 |
+
 ## Item 1. Spec C's eligibility with the data C6 allows for a decision
 
 Spec C's regimes are the cells × the number of observing years (C4): "2 years" is the `two_years`

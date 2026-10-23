@@ -22,6 +22,11 @@ a quantity; a number below never applies where an approved number is stricter.
 
 ## 1. The objectives by class and regime (proposed for the maintainer's decision, before the data)
 
+> **The maintainer's decision of 2026-10-23:** the direction of G1 to G6 is approved; their numbers
+> are fixed after the viability check ([../viability/README.md](../viability/README.md)) and
+> before any new data. A likely difficulty is never a reason to lower a target afterwards. The
+> numbers below stay proposals until then.
+
 **The sets.** Classes: planets, false positives, curves without a transit. Per noise model (white,
 correlated) and SNR band (below, near, measurable; `population-study.md`, section 3), and for
 planets by **layout regime**: two observing years (`two_years`, `few_train`), three
@@ -87,7 +92,7 @@ maintainer's time, **X7** (the reserve) and **T4** (map Amendment 28).
 | X2e (4000 curves, 22 workers) | 20.2 | 0.92 h | its run report (0.917) |
 | **Lots, total** | **≤ 386.2** | **≤ 51.2 h** | |
 | Local full suites and sabotages | partly recorded | | the JUnit files still kept in `.cache` add to 2860 s, at most 19.1 LP-h at 24 processors (Codex's count); the earlier ones were not kept; one full suite now takes about 41 min (2453 s), at most 16.4 LP-h; from now on, (b) above |
-| **CI** (56 runs since 2026-10-19) | **167.1 job-hours** | | [ci-minutes.json](ci-minutes.json) ([scripts/ci_minutes.py](scripts/ci_minutes.py)), from the run metadata |
+| **CI** (56 runs since 2026-10-19, read on 2026-10-22; on 2026-10-23, 57 runs and 172.1 job-hours, section 4.2) | **167.1 job-hours** | | [ci-minutes.json](ci-minutes.json) ([scripts/ci_minutes.py](scripts/ci_minutes.py)), from the run metadata |
 | Before 2026-10-19 (outside) | not counted | | D6 1456 s (`population/d6/`), the self-tests' per-process times, the dev population's generation (`population/manifest-dev.README.md`); the rest not recorded |
 
 **Remaining, estimated** (LP-h; ranges where the final configuration's cost is not measured):
@@ -122,9 +127,65 @@ Proposed: **R1**, as an explicit amendment of the viability rule, with its condi
 gate's record. Any choice is fixed before the
 next lot; none is revisited after a result.
 
-**The CI's cap (proposed):** 600 job-hours from 2026-10-19 to X6, the 15-minute job target of the
-ROADMAP unchanged; a cap reached stops pushes that run the full matrix, for the maintainer's
-decision.
+### 4.1 R1's gate before X5, without a circular dependency (2026-10-23)
+
+The maintainer prefers R1 (funding by stage) and asked which evidence lets the gate before X5 be
+crossed when X5's own projected cost may block it, without authorizing any extra run implicitly;
+R2 is not considered before the viability check.
+
+- **A further amendment, stated as such** (Codex's review): R1's row above asks, at each gate, for
+  the later steps at the best known cost; at the gate before X5 this section **replaces** the
+  projection of X6 by X6's own gate (below), because no measurement of the final configuration's
+  cost exists before X5. It is the maintainer's to adopt; it is not a clarification.
+- **The rule at that gate** uses only what exists then: the remaining budgets, in LP-h **and in
+  wall time** (4000 LP-h and 200 h less the consumed, every earlier step counted at what it actually
+  took, or at its ceiling while it is unknown), and **the highest cost per curve measured on any run
+  so far** (today 61.6 LP-s, X2's diagnostic runs). X5's declaration fixes its size `N_5` so that X5
+  at its ceiling (`N_5 × 61.6 × 1.5`, and that over 22 workers in wall time) fits both. No run is
+  made to measure a cost before X5.
+- **Today's projection:** consumed lots ≤ 386 LP-h, the suites' proxy ≤ 19 so far, X2f and its
+  confirmation at their ceilings 641 each, X3 at its ceiling 67.5 (1.5 times its high end 45, as
+  in the wall-time count below): about 1755, so `B_5` ≈ 2245 LP-h.
+  **X5 at its low size** (56 400 curves) at 61.6 LP-s and its ceiling: about 1450 LP-h, **within**;
+  **at its high size** (114 000 curves): about 2930, **not within**. So X5's own projected cost
+  blocks the gate only at the high size; at the low size the gate can be crossed.
+- **The evidence for X6** is X5's own run report (elapsed time × workers / curves on the final
+  configuration): a by-product of X5, read for its cost only, never a result. At X6's gate, X6's
+  size is fixed within what remains at that measured cost, X6 at its own ceiling (1.5 times its
+  estimate), in LP-h and in wall time. With X5 at its low size, about 800 LP-h would remain: X6 at
+  its ceiling within it is about 31 100 curves at 61.6 LP-s per curve, or about 150 800 at 12.7.
+- **The wall time binds first.** Consumed about 51.2 h; X2f and its confirmation at their ceilings
+  29.15 h each; X3 at its ceiling about 3.1 h: about 87.4 h of the 200 remain before X5 (the local
+  suites' wall time not counted). X5 at its low size and its ceiling takes about 65.8 h (within; at
+  its high size about 133 h, not within), leaving about 21.6 h: X6 at its ceiling within that is
+  about 18 500 curves at 61.6 LP-s per curve, or about 90 000 at 12.7, on 22 workers. Spending the
+  LP-h allowance instead would take about 214.6 h in all (Codex's count), beyond 200 h.
+- **If X6's minimum size does not fit both budgets, the outcome is a scope reduction or the end**
+  (section 5); neither ceiling rises.
+- This is said now, before any result: under 4000 LP-h the attempt's reach depends on the cost X5
+  measures, and at the highest cost measured today X6 would be far smaller than the scale used in
+  section 3.
+
+### 4.2 The CI: tracked, never blocked automatically (2026-10-23)
+
+The maintainer's decision: track the job-hours, the storage, any paid runners and the jobs'
+duration, with no automatic block and no reduction of the mandatory checks. The proposed cap of
+revision 2 is withdrawn. Read on 2026-10-23 ([ci-minutes.json](ci-minutes.json),
+[scripts/ci_minutes.py](scripts/ci_minutes.py), and the repository's Actions metadata through
+`gh api`, no configuration read):
+
+| What | Value |
+|---|---|
+| Runs since 2026-10-19 | 57, **172.1 job-hours** (10 326.5 job-minutes) |
+| The longest job | **47.4 min**; **51 of the 57 runs** had a job over 15 minutes |
+| Storage | 28 Actions caches, 5.43 GB; no artifact kept (recorded with its time of reading in `ci-minutes.json`, `storage`) |
+| Runners | the workflow's matrix: `ubuntu-24.04` and `windows-2025`, GitHub-hosted, on a public repository; no other runner label in the workflows |
+| Billing, paid runners | **unknown**: the account's billing was not read (not available to this token's scope) |
+
+- **The jobs' duration is above the ROADMAP's 15-minute target per job** in most runs: recorded
+  here as a finding, for the maintainer; nothing is changed, and no check is reduced.
+- Reported at the end of each round with the same script (durations and storage); the runner
+  labels from the workflow file; the billing stays unknown unless the maintainer reads it.
 
 ## 5. The viability check and its outcomes
 

@@ -85,3 +85,11 @@ objectives restated by class and regime; the ceiling reconciled as a proposal; d
 vulnerable environment suspended; the ideas issue opened
 ([klucilla/refute#167](https://github.com/klucilla/refute/issues/167)). See
 [after-x2e/README.md](after-x2e/README.md).
+
+**The maintainer's decisions on the delivery `cb671a7` (2026-10-23; X2f not authorized):** a
+read-only viability check ([viability/README.md](viability/README.md)): on the R_min study's records
+(configuration M4) and with every capacity decision counted in favour, the quota-standardized holdout
+PASS of the measurable planets stays below the 195 of 250 that C1 and C3 need in white noise (the
+final configuration's viability is not identifiable from these records); C6 now says that X2f
+alone decides; X2f, when authorized, after the update of 2026-10-27; G1 to G6's numbers fixed after
+the check; R1's gate before X5 proposed as an amendment; the CI tracked.

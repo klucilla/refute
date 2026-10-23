@@ -1,0 +1,290 @@
+{
+ "note": "The viability check of 2026-10-23, item 1c to 1f (read only): the holdout of the true planets\n(the R_min study's `constant` scenario, configuration M4-rmin-study, code 2e4ff99's records) in the\nmeasurable band, per noise model and layout regime, read from the archived records without\nextracting them (no lot, no curve, no engine run on data):",
+ "r_min": 8,
+ "pair": {
+  "b": 0.584691722288623,
+  "s": 2.88283308523186
+ },
+ "min_snr": 5.0,
+ "capacity_reasons": [
+  "insufficient_capacity_hidden_noise",
+  "insufficient_capacity_train"
+ ],
+ "reproduction_check_legacy_constant": {
+  "AR(1), no variability": {
+   "read": [
+    5056,
+    6400
+   ],
+   "committed": [
+    5056,
+    6400
+   ],
+   "equal": true
+  },
+  "AR(1), variability": {
+   "read": [
+    5924,
+    6400
+   ],
+   "committed": [
+    5924,
+    6400
+   ],
+   "equal": true
+  },
+  "white, no variability": {
+   "read": [
+    5599,
+    6400
+   ],
+   "committed": [
+    5599,
+    6400
+   ],
+   "equal": true
+  },
+  "white, variability": {
+   "read": [
+    6319,
+    6400
+   ],
+   "committed": [
+    6319,
+    6400
+   ],
+   "equal": true
+  }
+ },
+ "measurable": {
+  "AR(1) | 2 years": {
+   "targets": 2400,
+   "legacy_status": {
+    "PASS": 963,
+    "INCONCLUSIVE": 1437
+   },
+   "legacy_optimistic_status": {
+    "PASS": 1851,
+    "INCONCLUSIVE": 549
+   },
+   "spec_b_status": {
+    "PASS": 626,
+    "INCONCLUSIVE": 1774
+   },
+   "spec_b_optimistic_status": {
+    "PASS": 1168,
+    "INCONCLUSIVE": 1232
+   },
+   "inconclusive_rounds_by_kind": {
+    "hidden_noise_undetermined": 1110,
+    "insufficient_capacity_train": 1118,
+    "insufficient_capacity_hidden_noise": 312,
+    "train-only timing uncertainty in the hidden year": 644,
+    "train_replicas_below_r_min": 25,
+    "only": 2
+   },
+   "rounds": 4800,
+   "targets_inconclusive_by_kind": {
+    "capacity only": 413,
+    "capacity and other": 475,
+    "no capacity reason": 549
+   },
+   "optimistic_still_inconclusive_by_kinds": {
+    "hidden_noise_undetermined": 259,
+    "train-only timing uncertainty in the hidden year": 56,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 217,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 16,
+    "hidden_noise_undetermined + only": 1
+   }
+  },
+  "AR(1) | 3+ years": {
+   "targets": 800,
+   "legacy_status": {
+    "PASS": 381,
+    "INCONCLUSIVE": 419
+   },
+   "legacy_optimistic_status": {
+    "PASS": 800
+   },
+   "spec_b_status": {
+    "INCONCLUSIVE": 552,
+    "PASS": 248
+   },
+   "spec_b_optimistic_status": {
+    "PASS": 797,
+    "INCONCLUSIVE": 3
+   },
+   "inconclusive_rounds_by_kind": {
+    "insufficient_capacity_hidden_noise": 74,
+    "insufficient_capacity_train": 1371,
+    "train_replicas_below_r_min": 3
+   },
+   "rounds": 2400,
+   "targets_inconclusive_by_kind": {
+    "capacity only": 417,
+    "capacity and other": 2
+   },
+   "optimistic_still_inconclusive_by_kinds": {}
+  },
+  "AR(1) | 3+ years, variability": {
+   "targets": 3200,
+   "legacy_status": {
+    "INCONCLUSIVE": 2724,
+    "PASS": 474,
+    "FAIL": 2
+   },
+   "legacy_optimistic_status": {
+    "PASS": 3197,
+    "INCONCLUSIVE": 1,
+    "FAIL": 2
+   },
+   "spec_b_status": {
+    "INCONCLUSIVE": 3164,
+    "PASS": 34,
+    "FAIL": 2
+   },
+   "spec_b_optimistic_status": {
+    "PASS": 2968,
+    "INCONCLUSIVE": 230,
+    "FAIL": 2
+   },
+   "inconclusive_rounds_by_kind": {
+    "insufficient_capacity_train": 8187,
+    "hidden_noise_undetermined": 38,
+    "insufficient_capacity_hidden_noise": 490,
+    "train_replicas_below_r_min": 34,
+    "train_noise_undetermined": 161,
+    "train-only timing uncertainty in the hidden year": 49,
+    "duration_period_ratio_above_max": 10,
+    "not_detected_not_inconsistent": 3,
+    "train_snr_below_gate": 1,
+    "hidden_window_fraction_above_max": 1
+   },
+   "rounds": 9600,
+   "targets_inconclusive_by_kind": {
+    "capacity only": 2515,
+    "capacity and other": 208,
+    "no capacity reason": 1
+   },
+   "optimistic_still_inconclusive_by_kinds": {
+    "train_noise_undetermined + train_replicas_below_r_min": 1
+   }
+  },
+  "white | 2 years": {
+   "targets": 2400,
+   "legacy_status": {
+    "INCONCLUSIVE": 1884,
+    "PASS": 510,
+    "FAIL": 6
+   },
+   "legacy_optimistic_status": {
+    "INCONCLUSIVE": 1409,
+    "PASS": 985,
+    "FAIL": 6
+   },
+   "spec_b_status": {
+    "INCONCLUSIVE": 2189,
+    "PASS": 205,
+    "FAIL": 6
+   },
+   "spec_b_optimistic_status": {
+    "INCONCLUSIVE": 2113,
+    "PASS": 281,
+    "FAIL": 6
+   },
+   "inconclusive_rounds_by_kind": {
+    "train-only timing uncertainty in the hidden year": 2371,
+    "insufficient_capacity_train": 483,
+    "hidden_noise_undetermined": 1131,
+    "insufficient_capacity_hidden_noise": 69,
+    "train_replicas_below_r_min": 12,
+    "only": 7,
+    "not_detected_not_inconsistent": 2
+   },
+   "rounds": 4800,
+   "targets_inconclusive_by_kind": {
+    "no capacity reason": 1409,
+    "capacity and other": 421,
+    "capacity only": 54
+   },
+   "optimistic_still_inconclusive_by_kinds": {
+    "train-only timing uncertainty in the hidden year": 815,
+    "hidden_noise_undetermined": 238,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 345,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 7,
+    "train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 1,
+    "hidden_noise_undetermined + only": 2,
+    "hidden_noise_undetermined + not_detected_not_inconsistent": 1
+   }
+  },
+  "white | 3+ years": {
+   "targets": 800,
+   "legacy_status": {
+    "INCONCLUSIVE": 515,
+    "PASS": 285
+   },
+   "legacy_optimistic_status": {
+    "PASS": 800
+   },
+   "spec_b_status": {
+    "INCONCLUSIVE": 604,
+    "PASS": 196
+   },
+   "spec_b_optimistic_status": {
+    "PASS": 799,
+    "INCONCLUSIVE": 1
+   },
+   "inconclusive_rounds_by_kind": {
+    "insufficient_capacity_train": 1602,
+    "insufficient_capacity_hidden_noise": 75,
+    "train_replicas_below_r_min": 1
+   },
+   "rounds": 2400,
+   "targets_inconclusive_by_kind": {
+    "capacity only": 514,
+    "capacity and other": 1
+   },
+   "optimistic_still_inconclusive_by_kinds": {}
+  },
+  "white | 3+ years, variability": {
+   "targets": 3200,
+   "legacy_status": {
+    "INCONCLUSIVE": 3119,
+    "PASS": 81
+   },
+   "legacy_optimistic_status": {
+    "PASS": 3188,
+    "INCONCLUSIVE": 12
+   },
+   "spec_b_status": {
+    "INCONCLUSIVE": 3197,
+    "PASS": 3
+   },
+   "spec_b_optimistic_status": {
+    "PASS": 3014,
+    "INCONCLUSIVE": 186
+   },
+   "inconclusive_rounds_by_kind": {
+    "insufficient_capacity_train": 9066,
+    "train_noise_undetermined": 160,
+    "insufficient_capacity_hidden_noise": 176,
+    "train_snr_below_gate": 52,
+    "duration_period_ratio_above_max": 19,
+    "train_replicas_below_r_min": 13,
+    "not_detected_not_inconsistent": 1
+   },
+   "rounds": 9600,
+   "targets_inconclusive_by_kind": {
+    "capacity only": 2934,
+    "capacity and other": 173,
+    "no capacity reason": 12
+   },
+   "optimistic_still_inconclusive_by_kinds": {
+    "train_snr_below_gate": 6,
+    "train_noise_undetermined": 1,
+    "train_noise_undetermined + train_snr_below_gate": 4,
+    "train_noise_undetermined + train_replicas_below_r_min + train_snr_below_gate": 1
+   }
+  }
+ }
+}

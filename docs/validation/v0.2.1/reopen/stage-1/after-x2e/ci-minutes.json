@@ -1,7 +1,16 @@
 {
+ "read_at_utc": "2026-10-23T04:40:34Z",
+ "storage": {
+  "active_caches_count": 28,
+  "active_caches_size_in_bytes": 5427457969,
+  "artifacts": 0
+ },
+ "billing": "not read (not available to this token's scope)",
  "since": "2026-10-19",
- "runs": 56,
- "job_minutes": 10028.6,
+ "runs": 57,
+ "job_minutes": 10326.5,
+ "longest_job_minutes": 47.35,
+ "runs_with_a_job_over_15_minutes": 51,
  "rows": [
   {
    "run": 39180258805,
@@ -11,7 +20,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 197.62
+   "job_minutes": 197.62,
+   "longest_job_minutes": 30.13
   },
   {
    "run": 39184903498,
@@ -21,7 +31,8 @@
    "event": "push",
    "conclusion": "failure",
    "jobs": 12,
-   "job_minutes": 111.9
+   "job_minutes": 111.9,
+   "longest_job_minutes": 13.3
   },
   {
    "run": 39186100663,
@@ -31,7 +42,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 131.58
+   "job_minutes": 131.58,
+   "longest_job_minutes": 14.63
   },
   {
    "run": 39187170851,
@@ -41,7 +53,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 120.02
+   "job_minutes": 120.02,
+   "longest_job_minutes": 16.52
   },
   {
    "run": 39187178043,
@@ -51,7 +64,8 @@
    "event": "dynamic",
    "conclusion": "success",
    "jobs": 1,
-   "job_minutes": 0.68
+   "job_minutes": 0.68,
+   "longest_job_minutes": 0.68
   },
   {
    "run": 39191190651,
@@ -61,7 +75,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 139.48
+   "job_minutes": 139.48,
+   "longest_job_minutes": 16.83
   },
   {
    "run": 39191314899,
@@ -71,7 +86,8 @@
    "event": "pull_request",
    "conclusion": "failure",
    "jobs": 16,
-   "job_minutes": 198.53
+   "job_minutes": 198.53,
+   "longest_job_minutes": 33.22
   },
   {
    "run": 39197558170,
@@ -81,7 +97,8 @@
    "event": "pull_request",
    "conclusion": "failure",
    "jobs": 16,
-   "job_minutes": 206.07
+   "job_minutes": 206.07,
+   "longest_job_minutes": 33.73
   },
   {
    "run": 39210481231,
@@ -91,7 +108,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 246.73
+   "job_minutes": 246.73,
+   "longest_job_minutes": 45.57
   },
   {
    "run": 39216439648,
@@ -101,7 +119,8 @@
    "event": "pull_request",
    "conclusion": "cancelled",
    "jobs": 16,
-   "job_minutes": 133.12
+   "job_minutes": 133.12,
+   "longest_job_minutes": 10.28
   },
   {
    "run": 39217445357,
@@ -111,7 +130,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 232.48
+   "job_minutes": 232.48,
+   "longest_job_minutes": 32.83
   },
   {
    "run": 39249057137,
@@ -121,7 +141,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 127.27
+   "job_minutes": 127.27,
+   "longest_job_minutes": 17.2
   },
   {
    "run": 39252577042,
@@ -131,7 +152,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 107.97
+   "job_minutes": 107.97,
+   "longest_job_minutes": 16.57
   },
   {
    "run": 39253349336,
@@ -141,7 +163,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 234.32
+   "job_minutes": 234.32,
+   "longest_job_minutes": 41.53
   },
   {
    "run": 39256782878,
@@ -151,7 +174,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 134.48
+   "job_minutes": 134.48,
+   "longest_job_minutes": 17.08
   },
   {
    "run": 39258310224,
@@ -161,7 +185,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 125.95
+   "job_minutes": 125.95,
+   "longest_job_minutes": 16.98
   },
   {
    "run": 39260909250,
@@ -171,7 +196,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 132.35
+   "job_minutes": 132.35,
+   "longest_job_minutes": 17.18
   },
   {
    "run": 39261298123,
@@ -181,7 +207,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 249.55
+   "job_minutes": 249.55,
+   "longest_job_minutes": 45.32
   },
   {
    "run": 39263504216,
@@ -191,7 +218,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 131.82
+   "job_minutes": 131.82,
+   "longest_job_minutes": 16.83
   },
   {
    "run": 39266082365,
@@ -201,7 +229,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 126.13
+   "job_minutes": 126.13,
+   "longest_job_minutes": 17.35
   },
   {
    "run": 39268741273,
@@ -211,7 +240,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 126.23
+   "job_minutes": 126.23,
+   "longest_job_minutes": 17.27
   },
   {
    "run": 39269448655,
@@ -221,7 +251,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 258.15
+   "job_minutes": 258.15,
+   "longest_job_minutes": 47.35
   },
   {
    "run": 39271428895,
@@ -231,7 +262,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 133.13
+   "job_minutes": 133.13,
+   "longest_job_minutes": 17.18
   },
   {
    "run": 39271592747,
@@ -241,7 +273,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 121.28
+   "job_minutes": 121.28,
+   "longest_job_minutes": 17.72
   },
   {
    "run": 39281183081,
@@ -251,7 +284,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 118.98
+   "job_minutes": 118.98,
+   "longest_job_minutes": 13.55
   },
   {
    "run": 39283419270,
@@ -261,7 +295,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 121.62
+   "job_minutes": 121.62,
+   "longest_job_minutes": 16.93
   },
   {
    "run": 39300498042,
@@ -271,7 +306,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 248.95
+   "job_minutes": 248.95,
+   "longest_job_minutes": 46.15
   },
   {
    "run": 39304602951,
@@ -281,7 +317,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 120.23
+   "job_minutes": 120.23,
+   "longest_job_minutes": 17.25
   },
   {
    "run": 39304867397,
@@ -291,7 +328,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 116.47
+   "job_minutes": 116.47,
+   "longest_job_minutes": 17.67
   },
   {
    "run": 39329333819,
@@ -301,7 +339,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 124.87
+   "job_minutes": 124.87,
+   "longest_job_minutes": 17.32
   },
   {
    "run": 39343259703,
@@ -311,7 +350,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 133.17
+   "job_minutes": 133.17,
+   "longest_job_minutes": 17.42
   },
   {
    "run": 39344126269,
@@ -321,7 +361,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 131.75
+   "job_minutes": 131.75,
+   "longest_job_minutes": 17.95
   },
   {
    "run": 39344932602,
@@ -331,7 +372,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 132.82
+   "job_minutes": 132.82,
+   "longest_job_minutes": 17.33
   },
   {
    "run": 39345763040,
@@ -341,7 +383,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 111.35
+   "job_minutes": 111.35,
+   "longest_job_minutes": 17.8
   },
   {
    "run": 39346570927,
@@ -351,7 +394,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 116.83
+   "job_minutes": 116.83,
+   "longest_job_minutes": 16.72
   },
   {
    "run": 39347759016,
@@ -361,7 +405,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 129.18
+   "job_minutes": 129.18,
+   "longest_job_minutes": 17.87
   },
   {
    "run": 39348474506,
@@ -371,7 +416,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 139.07
+   "job_minutes": 139.07,
+   "longest_job_minutes": 17.02
   },
   {
    "run": 39351769199,
@@ -381,7 +427,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 122.95
+   "job_minutes": 122.95,
+   "longest_job_minutes": 16.98
   },
   {
    "run": 39352815669,
@@ -391,7 +438,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 12,
-   "job_minutes": 124.22
+   "job_minutes": 124.22,
+   "longest_job_minutes": 14.95
   },
   {
    "run": 39369145960,
@@ -401,7 +449,8 @@
    "event": "pull_request",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 245.38
+   "job_minutes": 245.38,
+   "longest_job_minutes": 46.02
   },
   {
    "run": 39374687941,
@@ -411,7 +460,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 233.5
+   "job_minutes": 233.5,
+   "longest_job_minutes": 46.37
   },
   {
    "run": 39374962780,
@@ -421,7 +471,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 244.22
+   "job_minutes": 244.22,
+   "longest_job_minutes": 44.97
   },
   {
    "run": 39595718450,
@@ -431,7 +482,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 230.93
+   "job_minutes": 230.93,
+   "longest_job_minutes": 39.75
   },
   {
    "run": 39601408870,
@@ -441,7 +493,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 244.03
+   "job_minutes": 244.03,
+   "longest_job_minutes": 45.13
   },
   {
    "run": 39604273603,
@@ -451,7 +504,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 236.97
+   "job_minutes": 236.97,
+   "longest_job_minutes": 45.9
   },
   {
    "run": 39627687323,
@@ -461,7 +515,8 @@
    "event": "push",
    "conclusion": "failure",
    "jobs": 16,
-   "job_minutes": 245.8
+   "job_minutes": 245.8,
+   "longest_job_minutes": 37.85
   },
   {
    "run": 39641280623,
@@ -471,7 +526,8 @@
    "event": "push",
    "conclusion": "failure",
    "jobs": 16,
-   "job_minutes": 246.15
+   "job_minutes": 246.15,
+   "longest_job_minutes": 46.07
   },
   {
    "run": 39655649105,
@@ -481,7 +537,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 257.15
+   "job_minutes": 257.15,
+   "longest_job_minutes": 46.52
   },
   {
    "run": 39665417272,
@@ -491,7 +548,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 249.65
+   "job_minutes": 249.65,
+   "longest_job_minutes": 32.03
   },
   {
    "run": 39689902110,
@@ -501,7 +559,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 268.0
+   "job_minutes": 268.0,
+   "longest_job_minutes": 30.85
   },
   {
    "run": 39696817920,
@@ -511,7 +570,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 16,
-   "job_minutes": 277.18
+   "job_minutes": 277.18,
+   "longest_job_minutes": 46.33
   },
   {
    "run": 39713012554,
@@ -521,7 +581,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 20,
-   "job_minutes": 275.35
+   "job_minutes": 275.35,
+   "longest_job_minutes": 45.25
   },
   {
    "run": 39811365772,
@@ -531,7 +592,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 20,
-   "job_minutes": 287.45
+   "job_minutes": 287.45,
+   "longest_job_minutes": 46.93
   },
   {
    "run": 39828662036,
@@ -541,7 +603,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 20,
-   "job_minutes": 273.2
+   "job_minutes": 273.2,
+   "longest_job_minutes": 46.32
   },
   {
    "run": 39851215602,
@@ -551,7 +614,8 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 20,
-   "job_minutes": 248.88
+   "job_minutes": 248.88,
+   "longest_job_minutes": 32.75
   },
   {
    "run": 39869037441,
@@ -561,7 +625,19 @@
    "event": "push",
    "conclusion": "success",
    "jobs": 20,
-   "job_minutes": 245.43
+   "job_minutes": 245.43,
+   "longest_job_minutes": 33.93
+  },
+  {
+   "run": 39883442543,
+   "workflow": "CI",
+   "sha": "cb671a7fec8a10725f299b732727e8b32e265410",
+   "created": "2026-10-23T01:20:35Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 20,
+   "job_minutes": 297.95,
+   "longest_job_minutes": 46.92
   }
  ]
 }

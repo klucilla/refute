@@ -12,13 +12,9 @@ C's question in every regime it covers, or says beforehand where it may not.
 - **The question:** spec C's choice of an error model for each capacity decision (C2 to C5 of
   [../spec-c-error-model.md](../spec-c-error-model.md), with A0), per regime (cell × number of
   observing years).
-- **The data that decide: X2f's records alone** (proposed; **a further decision of the
-  maintainer**, not implied by A0). X2e's records were evaluated and their per-regime medians read
-  before this declaration ([README.md](README.md), item 2), so they would now **inform only**, with
-  X2's; nothing is pooled across them (A0). Spec C's C6 still names X2e among the data that decide;
-  if the maintainer confirms, C6 is amended in the same commit as this declaration's approval so that
-  the two agree. The alternative, X2e and X2f together in the cells without variability, would add 14
-  and 6 cases per cell but make the decision depend on data already read; it is not proposed.
+- **The data that decide: X2f's records alone** (the maintainer's decision of 2026-10-23; spec C's
+  C6 says the same). X2's and X2e's records **inform only** (both already read); nothing is pooled
+  across them (A0).
 - **This lot chooses; it does not confirm.** The confirmation is a separate lot (section 9).
 
 ## 2. The population and the cases
@@ -149,9 +145,14 @@ part of the authorization; it is not written now.
 The lot runs in one environment fixed and recorded before S1, never changed until S3 ends: the
 interpreter, every installed distribution's version and the lock's SHA-256 (the environment record,
 [scripts/env_record.py](scripts/env_record.py)), beside the manifest (which binds the code digest,
-`uv.lock` included). Proposed: **after** the dependency update of 2026-10-27 and its checks
-([dependencies-reachability.md](dependencies-reachability.md)), so that the choice and its
-confirmation run in the same final environment. The lot is offline: no download.
+`uv.lock` included). **Decided by the maintainer (2026-10-23):** X2f, when authorized, runs
+**after** the dependency update of 2026-10-27 and its checks
+([dependencies-reachability.md](dependencies-reachability.md)), with the code, the interpreter,
+the lock and the effective environment fixed before S1 and unchanged until S3 ends; the
+confirmation uses the final environment declared. **If the lock's diff changes the numeric stack**
+(for example numpy, scipy, astropy, lightkurve or their compiled dependencies), the work
+**stops** and the diff goes to the maintainer before anything else. The lot is offline: no
+download.
 
 ## 8. Resumption (the issue's text; not opened)
 
@@ -193,6 +194,11 @@ data. Neither replaces the confirmation of false PASS, false FAIL and utility (X
 
 ## 10. Before it runs (the maintainer's)
 
-The confirmation that X2f alone decides (section 1); the environment's date (section 7); then the
-authorization with these sizes, workers, affinity, cost and ceilings, and the resumption issue opened
-with the text of section 8.
+Decided on 2026-10-23: X2f alone decides (section 1); it runs after the update of 2026-10-27
+(section 7); **the sizing risk is accepted for discussion**: the 0.95 are predictive probabilities
+conditional on the model, not a guarantee of precision or of approval; `white, no variability, 2
+years` is the stated exception (about 0.77 with every case of the prefix); no automatic enlargement
+if coverage is short (section 4). **X2f is not authorized**; the authorization, with these sizes,
+workers, affinity, cost and ceilings, and the resumption issue opened with the text of section 8,
+come only after the maintainer's review of the viability check
+([../viability/README.md](../viability/README.md)).

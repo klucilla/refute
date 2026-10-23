@@ -71,12 +71,12 @@ against a candidate.
 
 **Coverage note (amended after X2e, 2026-10-22, amendment A0 adopted by the maintainer; the reason:
 the earlier note relied on pooling with X2, which C6 excludes from the decision).** Eligibility is
-computed only on the data C6 lets decide (C6; which records those are for the choice lot X2f is
-fixed in its declaration, [after-x2e/x2f-declaration.md](after-x2e/x2f-declaration.md), before it
-runs). X2's records never count toward a regime's 15 cases. The regimes are those of the first paragraph only (cell × number of years); a cell
-with all its years together is not a regime. With X2e alone, no regime is eligible (2 years: 5 and 2
-contributing cases; 3 or more years: 6 and 6), so no candidate can be judged and the choice waits
-for new data with new seeds (the maintainer's direction A1: the regimes kept, new data required).
+computed only on the data C6 lets decide: X2f's records alone (C6, the maintainer's decision of
+2026-10-23). X2's and X2e's records never count toward a regime's 15 cases. The regimes are those
+of the first paragraph only (cell × number of years); a cell with all its years together is not a
+regime. With X2e alone, no regime was eligible (2 years: 5 and 2 contributing cases; 3 or more
+years: 6 and 6), so no candidate could be judged and the choice waits for new data with new seeds
+(the maintainer's direction A1: the regimes kept, new data required).
 
 The note it replaces, kept for the record: "Expected coverage (Codex's review): X2e has, per cell, 14
 cases with two observing years (`two_years` and `few_train`) and 6 with three; pooled with X2, 28 and
@@ -103,17 +103,18 @@ otherwise), in each determined regime: `calibrated or conservative as designed` 
 
 ## C6. The data that decide, and the data that only inform
 
-- **Decide:** data never used, with new seeds: the extension of X2's cells without variability
-  ([x2e-execution-package.md](x2e-execution-package.md)), and, for the cells with variability, a
-  replicate with new seeds (its own package, not requested here). Until both exist, a candidate can be
-  judged only in the regimes they cover, and the choice waits.
-- **Inform only:** X2's lot (already seen, its X2-B read): every candidate is computed on it and
-  reported as development evidence, never as the decision.
+- **Decide: X2f's records alone** (the choice lot, [after-x2e/x2f-declaration.md](after-x2e/x2f-declaration.md);
+  the maintainer's decision of 2026-10-23), in every regime, the cells with and without variability.
+- **Inform only: X2's and X2e's records** (both already read: X2's X2-B, X2e's evaluation and its
+  per-regime medians): every candidate may be computed on them and reported as development
+  evidence, never as the decision.
 - Data that decide are never pooled with data that inform, for eligibility or for a verdict
   (amendment A0, 2026-10-22).
-- **Pending (2026-10-22):** X2f's declaration ([after-x2e/x2f-declaration.md](after-x2e/x2f-declaration.md))
-  proposes that X2f's records alone decide and that X2e's, read before it, inform only; this is the
-  maintainer's decision, and the first bullet changes only if it is confirmed.
+- The text it replaces, kept for the record: "Decide: data never used, with new seeds: the extension
+  of X2's cells without variability (x2e-execution-package.md), and, for the cells with
+  variability, a replicate with new seeds (its own package, not requested here). Until both exist, a
+  candidate can be judged only in the regimes they cover, and the choice waits." and "Inform only:
+  X2's lot (already seen, its X2-B read)".
 
 ## C7. What is reported beside the decision (descriptive)
 
