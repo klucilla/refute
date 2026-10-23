@@ -1,0 +1,192 @@
+{
+ "all_caught": true,
+ "format": "refute-population-v4-sabotages/1",
+ "sabotages": [
+  {
+   "caught": true,
+   "control": {
+    "coverage": 9278147,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S1",
+   "reason_required": "D4 orbit gap",
+   "sabotaged": {
+    "missed": [],
+    "n_problems": 168,
+    "problems": [
+     "planet-below-white-0000: D4 orbit gap",
+     "planet-below-white-0001: D4 orbit gap",
+     "planet-below-white-0002: D4 orbit gap",
+     "planet-below-white-0003: D4 orbit gap",
+     "planet-below-white-0180: D4 orbit gap"
+    ]
+   }
+  },
+  {
+   "caught": true,
+   "control": {
+    "coverage": 5860,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S2",
+   "reason_required": "first_start",
+   "sabotaged": {
+    "n_problems": 6,
+    "problems": [
+     "false_positive/correlated first_start: thirds [450, 0, 0] of [1325.0, 1690.25)",
+     "false_positive/white first_start: thirds [450, 0, 0] of [1325.0, 1690.25)",
+     "no_transit/correlated first_start: thirds [600, 0, 0] of [1325.0, 1690.25)",
+     "no_transit/white first_start: thirds [2200, 0, 0] of [1325.0, 1690.25)",
+     "planet/correlated first_start: thirds [1080, 0, 0] of [1325.0, 1690.25)"
+    ]
+   }
+  },
+  {
+   "caught": true,
+   "control": {
+    "coverage": 5860,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S3",
+   "reason_required": "allocation",
+   "sabotaged": {
+    "n_problems": 84,
+    "problems": [
+     "('planet', 'white', 'below', 'three_years'): allocation {('G-a', None): 60, ('G-b', 'short-long'): 60, ('G-b', 'long-short'): 60}, declared {('G-a', None): 90, ('G-b', 'short-long'): 45, ('G-b', 'long-short'): 45}",
+     "planet-below-white-0002: geometry {'geometry': 'G-b', 'order': 'long-short'} at position 2",
+     "('planet', 'white', 'below', 'variability_some_years'): allocation {('G-a', None): 60, ('G-b', 'short-long'): 60, ('G-b', 'long-short'): 60}, declared {('G-a', None): 90, ('G-b', 'short-long'): 45, ('G-b', 'long-short'): 45}",
+     "planet-below-white-0182: geometry {'geometry': 'G-b', 'order': 'long-short'} at position 2",
+     "('planet', 'white', 'near', 'three_years'): allocation {('G-a', None): 60, ('G-b', 'short-long'): 60, ('G-b', 'long-short'): 60}, declared {('G-a', None): 90, ('G-b', 'short-long'): 45, ('G-b', 'long-short'): 45}"
+    ]
+   }
+  },
+  {
+   "case": "planet-below-white-0181",
+   "caught": true,
+   "control": {
+    "coverage": 54764,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S4",
+   "reason_required": "[4] var_absent_year",
+   "sabotaged": {
+    "n_problems": 5,
+    "problems": [
+     "[6] the recorded parameters are not the replayed ones",
+     "[6] primitive var_absent_year: recorded 2020, drawn 2021",
+     "[6] primitive var_absent_position: recorded None, drawn 2",
+     "[4] var_absent_year 2020 at None, labels [2018, 2019, 2021]",
+     "var_absent_year 2020 is not a label [2018, 2019, 2021]"
+    ]
+   }
+  },
+  {
+   "caught": true,
+   "control": {
+    "coverage": 108923,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S5a",
+   "reason_required": "expected SNR global",
+   "sabotaged": {
+    "n_problems": 2,
+    "problems": [
+     "expected SNR global: recorded 60698.06117231379, recomputed 60698.000474313325",
+     "expected SNR global: recorded 50831.58212968903, recomputed 50831.53129815774"
+    ]
+   }
+  },
+  {
+   "caught": true,
+   "control": {
+    "coverage": 53951,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S5b",
+   "reason_required": "the rebuilt flux differs",
+   "sabotaged": {
+    "n_problems": 1,
+    "problems": [
+     "sector 1: the rebuilt flux differs by 1.000e-03"
+    ]
+   }
+  },
+  {
+   "case": "planet-near-white-0001",
+   "caught": true,
+   "control": {
+    "coverage": 56019,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S6",
+   "reason_required": "[6] redraws",
+   "sabotaged": {
+    "n_problems": 4,
+    "problems": [
+     "[6] redraws {'band': 1}, replayed {}",
+     "[6] attempt seed 8246494267402495201, replayed 15515325776986108252",
+     "[6] the recorded parameters are not the replayed ones",
+     "[6] the recorded expected SNR is not the replayed one"
+    ]
+   }
+  },
+  {
+   "caught": true,
+   "control": {
+    "coverage": 168,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S7",
+   "reason_required": "digests differ",
+   "sabotaged": {
+    "n_problems": 1,
+    "problems": [
+     "168 of 168 digests differ"
+    ]
+   }
+  },
+  {
+   "caught": true,
+   "control": {
+    "coverage": 3,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S8",
+   "reason_required": "D5",
+   "sabotaged": {
+    "n_problems": 4,
+    "problems": [
+     "three_years: D5: separations 375.000 and 361.000 d, each must be about one year (345 to 385 d) or about two years (710 to 750 d)",
+     "three_years: separations [375.0, 361.0] not G-a",
+     "variability_some_years: D5: separations 375.000 and 361.000 d, each must be about one year (345 to 385 d) or about two years (710 to 750 d)",
+     "variability_some_years: separations [375.0, 361.0] not G-a"
+    ]
+   }
+  },
+  {
+   "caught": true,
+   "control": {
+    "coverage": 4,
+    "passed": true,
+    "problems": []
+   },
+   "id": "S9",
+   "reason_required": "order",
+   "sabotaged": {
+    "n_problems": 1,
+    "problems": [
+     "order {'record': 0, 'code': 1, 'tests': 2}: the record, the tests and the code must follow"
+    ]
+   }
+  }
+ ]
+}

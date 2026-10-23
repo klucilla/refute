@@ -1,0 +1,26 @@
+{
+ "cases": 5860,
+ "format": "refute-population-v4-determinism/1",
+ "passed": true,
+ "problems": [],
+ "runs": [
+  {
+   "generation": "1",
+   "manifest_sha256": "aee9ecac9794af9b8c957bc85bec4fe1e27023cdcf6a8edfe5976dcf21f12ce2",
+   "order": "index",
+   "workers": 22
+  },
+  {
+   "generation": "2",
+   "manifest_sha256": "aee9ecac9794af9b8c957bc85bec4fe1e27023cdcf6a8edfe5976dcf21f12ce2",
+   "order": "reverse",
+   "workers": 13
+  },
+  {
+   "generation": "3",
+   "manifest_sha256": "aee9ecac9794af9b8c957bc85bec4fe1e27023cdcf6a8edfe5976dcf21f12ce2",
+   "order": "interleaved",
+   "workers": 7
+  }
+ ]
+}

@@ -1,0 +1,1613 @@
+{
+ "cadences": 323850994,
+ "cases": 5860,
+ "cases_with_layout_redraws": 380,
+ "checks": {
+  "1_domain": {
+   "coverage": 5860,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 5860
+  },
+  "2_coverage": {
+   "coverage": 5860,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 5860
+  },
+  "3_allocation": {
+   "coverage": 5860,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 5860
+  },
+  "4_composition": {
+   "coverage": 5860,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 5860
+  },
+  "5_band": {
+   "coverage": 8696,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 8696
+  },
+  "6_replay": {
+   "coverage": 5860,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 5860
+  },
+  "6_source": {
+   "coverage": 1,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 1
+  },
+  "8_x2f": {
+   "coverage": 3,
+   "n_problems": 0,
+   "passed": true,
+   "problems": [],
+   "required": 3
+  }
+ },
+ "coverage": {
+  "false_positive/correlated": {
+   "block_count": {
+    "0": 288,
+    "1": 247,
+    "2": 271,
+    "3": 260,
+    "4": 284
+   },
+   "block_place": {
+    "interval": [
+     0.0,
+     1.0
+    ],
+    "n": 2705,
+    "outside": 0,
+    "thirds": [
+     895,
+     884,
+     926
+    ]
+   },
+   "block_seconds": {
+    "interval": [
+     600.0,
+     21600.0
+    ],
+    "n": 2705,
+    "outside": 0,
+    "thirds": [
+     916,
+     906,
+     883
+    ]
+   },
+   "first_start": {
+    "interval": [
+     1325.0,
+     1690.25
+    ],
+    "n": 450,
+    "outside": 0,
+    "thirds": [
+     152,
+     142,
+     156
+    ]
+   },
+   "jitter": {
+    "max": 0.24999999787692673,
+    "min": -0.24999998432317067,
+    "thirds": [
+     8286870,
+     8288405,
+     8288094
+    ]
+   },
+   "loss_rate": {
+    "interval": [
+     0.0,
+     0.05
+    ],
+    "n": 1350,
+    "outside": 0,
+    "thirds": [
+     471,
+     424,
+     455
+    ]
+   },
+   "orbit_days": {
+    "interval": [
+     12.5,
+     14.0
+    ],
+    "n": 2700,
+    "outside": 0,
+    "thirds": [
+     940,
+     860,
+     900
+    ]
+   },
+   "orbit_gap_days": {
+    "interval": [
+     0.5,
+     2.0
+    ],
+    "n": 1350,
+    "outside": 0,
+    "thirds": [
+     465,
+     427,
+     458
+    ]
+   },
+   "realized_coverage": {
+    "n": 1350,
+    "range": [
+     0.8631920244379951,
+     0.9785359573823555
+    ],
+    "thirds": [
+     217,
+     847,
+     286
+    ]
+   },
+   "realized_k1_count": {
+    "n": 1350,
+    "range": [
+     16143.0,
+     19815.0
+    ],
+    "thirds": [
+     289,
+     788,
+     273
+    ]
+   },
+   "realized_k2_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     904.0
+    ],
+    "thirds": [
+     472,
+     445,
+     433
+    ]
+   },
+   "realized_k3_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     53.0
+    ],
+    "thirds": [
+     857,
+     369,
+     124
+    ]
+   },
+   "realized_k4_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     7.0
+    ],
+    "thirds": [
+     1272,
+     68,
+     10
+    ]
+   },
+   "realized_orbit_days": {
+    "n": 2700,
+    "range": [
+     12.504164059775825,
+     13.998613390151624
+    ],
+    "thirds": [
+     944,
+     856,
+     900
+    ]
+   },
+   "realized_orbit_gap_days": {
+    "n": 1350,
+    "range": [
+     0.5001540718217257,
+     1.9999621234817369
+    ],
+    "thirds": [
+     465,
+     427,
+     458
+    ]
+   },
+   "realized_other_gap_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     4.0
+    ],
+    "thirds": [
+     537,
+     278,
+     535
+    ]
+   },
+   "realized_other_gap_seconds": {
+    "n": 2682,
+    "range": [
+     719.6223119040951,
+     21599.97257294599
+    ],
+    "thirds": [
+     898,
+     891,
+     893
+    ]
+   },
+   "realized_residuals": {
+    "n": 24857987,
+    "range": [
+     -0.5,
+     0.5
+    ],
+    "thirds": [
+     5512513,
+     13766362,
+     5512637
+    ]
+   },
+   "separation_one_year": {
+    "interval": [
+     345.0,
+     385.0
+    ],
+    "n": 680,
+    "outside": 0,
+    "thirds": [
+     211,
+     241,
+     228
+    ]
+   },
+   "separation_two_years": {
+    "interval": [
+     710.0,
+     750.0
+    ],
+    "n": 220,
+    "outside": 0,
+    "thirds": [
+     79,
+     73,
+     68
+    ]
+   }
+  },
+  "false_positive/white": {
+   "block_count": {
+    "0": 264,
+    "1": 266,
+    "2": 263,
+    "3": 273,
+    "4": 284
+   },
+   "block_place": {
+    "interval": [
+     0.0,
+     1.0
+    ],
+    "n": 2747,
+    "outside": 0,
+    "thirds": [
+     916,
+     937,
+     894
+    ]
+   },
+   "block_seconds": {
+    "interval": [
+     600.0,
+     21600.0
+    ],
+    "n": 2747,
+    "outside": 0,
+    "thirds": [
+     933,
+     924,
+     890
+    ]
+   },
+   "first_start": {
+    "interval": [
+     1325.0,
+     1690.25
+    ],
+    "n": 450,
+    "outside": 0,
+    "thirds": [
+     158,
+     142,
+     150
+    ]
+   },
+   "jitter": {
+    "max": 0.2499999911854226,
+    "min": -0.24999999324518912,
+    "thirds": [
+     8284420,
+     8289314,
+     8285394
+    ]
+   },
+   "loss_rate": {
+    "interval": [
+     0.0,
+     0.05
+    ],
+    "n": 1350,
+    "outside": 0,
+    "thirds": [
+     445,
+     431,
+     474
+    ]
+   },
+   "orbit_days": {
+    "interval": [
+     12.5,
+     14.0
+    ],
+    "n": 2700,
+    "outside": 0,
+    "thirds": [
+     897,
+     892,
+     911
+    ]
+   },
+   "orbit_gap_days": {
+    "interval": [
+     0.5,
+     2.0
+    ],
+    "n": 1350,
+    "outside": 0,
+    "thirds": [
+     456,
+     449,
+     445
+    ]
+   },
+   "realized_coverage": {
+    "n": 1350,
+    "range": [
+     0.8664556858802451,
+     0.9763596020176866
+    ],
+    "thirds": [
+     260,
+     801,
+     289
+    ]
+   },
+   "realized_k1_count": {
+    "n": 1350,
+    "range": [
+     16059.0,
+     19976.0
+    ],
+    "thirds": [
+     284,
+     854,
+     212
+    ]
+   },
+   "realized_k2_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     911.0
+    ],
+    "thirds": [
+     433,
+     482,
+     435
+    ]
+   },
+   "realized_k3_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     62.0
+    ],
+    "thirds": [
+     904,
+     399,
+     47
+    ]
+   },
+   "realized_k4_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     7.0
+    ],
+    "thirds": [
+     1255,
+     80,
+     15
+    ]
+   },
+   "realized_orbit_days": {
+    "n": 2700,
+    "range": [
+     12.501385587094793,
+     13.998616314303966
+    ],
+    "thirds": [
+     897,
+     891,
+     912
+    ]
+   },
+   "realized_orbit_gap_days": {
+    "n": 1350,
+    "range": [
+     0.5013796334385461,
+     1.9980710246941271
+    ],
+    "thirds": [
+     457,
+     448,
+     445
+    ]
+   },
+   "realized_other_gap_count": {
+    "n": 1350,
+    "range": [
+     0.0,
+     4.0
+    ],
+    "thirds": [
+     533,
+     267,
+     550
+    ]
+   },
+   "realized_other_gap_seconds": {
+    "n": 2726,
+    "range": [
+     719.59469087451,
+     21599.983919633087
+    ],
+    "thirds": [
+     915,
+     908,
+     903
+    ]
+   },
+   "realized_residuals": {
+    "n": 24853702,
+    "range": [
+     -0.5,
+     0.5
+    ],
+    "thirds": [
+     5510735,
+     13765179,
+     5511337
+    ]
+   },
+   "separation_one_year": {
+    "interval": [
+     345.0,
+     385.0
+    ],
+    "n": 680,
+    "outside": 0,
+    "thirds": [
+     224,
+     204,
+     252
+    ]
+   },
+   "separation_two_years": {
+    "interval": [
+     710.0,
+     750.0
+    ],
+    "n": 220,
+    "outside": 0,
+    "thirds": [
+     69,
+     86,
+     65
+    ]
+   }
+  },
+  "no_transit/correlated": {
+   "block_count": {
+    "0": 354,
+    "1": 347,
+    "2": 371,
+    "3": 388,
+    "4": 340
+   },
+   "block_place": {
+    "interval": [
+     0.0,
+     1.0
+    ],
+    "n": 3613,
+    "outside": 0,
+    "thirds": [
+     1151,
+     1250,
+     1212
+    ]
+   },
+   "block_seconds": {
+    "interval": [
+     600.0,
+     21600.0
+    ],
+    "n": 3613,
+    "outside": 0,
+    "thirds": [
+     1209,
+     1189,
+     1215
+    ]
+   },
+   "first_start": {
+    "interval": [
+     1325.0,
+     1690.25
+    ],
+    "n": 600,
+    "outside": 0,
+    "thirds": [
+     222,
+     177,
+     201
+    ]
+   },
+   "jitter": {
+    "max": 0.24999999831324715,
+    "min": -0.2499999924847306,
+    "thirds": [
+     11049883,
+     11051192,
+     11048137
+    ]
+   },
+   "loss_rate": {
+    "interval": [
+     0.0,
+     0.05
+    ],
+    "n": 1800,
+    "outside": 0,
+    "thirds": [
+     629,
+     550,
+     621
+    ]
+   },
+   "orbit_days": {
+    "interval": [
+     12.5,
+     14.0
+    ],
+    "n": 3600,
+    "outside": 0,
+    "thirds": [
+     1214,
+     1208,
+     1178
+    ]
+   },
+   "orbit_gap_days": {
+    "interval": [
+     0.5,
+     2.0
+    ],
+    "n": 1800,
+    "outside": 0,
+    "thirds": [
+     587,
+     629,
+     584
+    ]
+   },
+   "realized_coverage": {
+    "n": 1800,
+    "range": [
+     0.862506844353557,
+     0.9764473924561111
+    ],
+    "thirds": [
+     298,
+     1088,
+     414
+    ]
+   },
+   "realized_k1_count": {
+    "n": 1800,
+    "range": [
+     16089.0,
+     20124.0
+    ],
+    "thirds": [
+     450,
+     1121,
+     229
+    ]
+   },
+   "realized_k2_count": {
+    "n": 1800,
+    "range": [
+     0.0,
+     909.0
+    ],
+    "thirds": [
+     628,
+     592,
+     580
+    ]
+   },
+   "realized_k3_count": {
+    "n": 1800,
+    "range": [
+     0.0,
+     54.0
+    ],
+    "thirds": [
+     1124,
+     493,
+     183
+    ]
+   },
+   "realized_k4_count": {
+    "n": 1800,
+    "range": [
+     0.0,
+     9.0
+    ],
+    "thirds": [
+     1701,
+     95,
+     4
+    ]
+   },
+   "realized_orbit_days": {
+    "n": 3600,
+    "range": [
+     12.50000236065218,
+     13.998616310921099
+    ],
+    "thirds": [
+     1212,
+     1209,
+     1179
+    ]
+   },
+   "realized_orbit_gap_days": {
+    "n": 1800,
+    "range": [
+     0.500465133859052,
+     1.9990927409871802
+    ],
+    "thirds": [
+     587,
+     628,
+     585
+    ]
+   },
+   "realized_other_gap_count": {
+    "n": 1800,
+    "range": [
+     0.0,
+     4.0
+    ],
+    "thirds": [
+     703,
+     379,
+     718
+    ]
+   },
+   "realized_other_gap_seconds": {
+    "n": 3588,
+    "range": [
+     719.5195468506427,
+     21599.998179470276
+    ],
+    "thirds": [
+     1190,
+     1178,
+     1220
+    ]
+   },
+   "realized_residuals": {
+    "n": 33142024,
+    "range": [
+     -0.5,
+     0.5
+    ],
+    "thirds": [
+     7350839,
+     18352642,
+     7350631
+    ]
+   },
+   "separation_one_year": {
+    "interval": [
+     345.0,
+     385.0
+    ],
+    "n": 900,
+    "outside": 0,
+    "thirds": [
+     304,
+     307,
+     289
+    ]
+   },
+   "separation_two_years": {
+    "interval": [
+     710.0,
+     750.0
+    ],
+    "n": 300,
+    "outside": 0,
+    "thirds": [
+     107,
+     112,
+     81
+    ]
+   }
+  },
+  "no_transit/white": {
+   "block_count": {
+    "0": 1331,
+    "1": 1340,
+    "2": 1339,
+    "3": 1285,
+    "4": 1305
+   },
+   "block_place": {
+    "interval": [
+     0.0,
+     1.0
+    ],
+    "n": 13093,
+    "outside": 0,
+    "thirds": [
+     4324,
+     4458,
+     4311
+    ]
+   },
+   "block_seconds": {
+    "interval": [
+     600.0,
+     21600.0
+    ],
+    "n": 13093,
+    "outside": 0,
+    "thirds": [
+     4476,
+     4356,
+     4261
+    ]
+   },
+   "first_start": {
+    "interval": [
+     1325.0,
+     1690.25
+    ],
+    "n": 2200,
+    "outside": 0,
+    "thirds": [
+     726,
+     703,
+     771
+    ]
+   },
+   "jitter": {
+    "max": 0.24999999831635966,
+    "min": -0.24999999899594377,
+    "thirds": [
+     40517174,
+     40510524,
+     40524696
+    ]
+   },
+   "loss_rate": {
+    "interval": [
+     0.0,
+     0.05
+    ],
+    "n": 6600,
+    "outside": 0,
+    "thirds": [
+     2139,
+     2202,
+     2259
+    ]
+   },
+   "orbit_days": {
+    "interval": [
+     12.5,
+     14.0
+    ],
+    "n": 13200,
+    "outside": 0,
+    "thirds": [
+     4439,
+     4409,
+     4352
+    ]
+   },
+   "orbit_gap_days": {
+    "interval": [
+     0.5,
+     2.0
+    ],
+    "n": 6600,
+    "outside": 0,
+    "thirds": [
+     2170,
+     2205,
+     2225
+    ]
+   },
+   "realized_coverage": {
+    "n": 6600,
+    "range": [
+     0.86347837655907,
+     0.98059924705554
+    ],
+    "thirds": [
+     1237,
+     4167,
+     1196
+    ]
+   },
+   "realized_k1_count": {
+    "n": 6600,
+    "range": [
+     15996.0,
+     20036.0
+    ],
+    "thirds": [
+     1404,
+     4120,
+     1076
+    ]
+   },
+   "realized_k2_count": {
+    "n": 6600,
+    "range": [
+     0.0,
+     934.0
+    ],
+    "thirds": [
+     2197,
+     2446,
+     1957
+    ]
+   },
+   "realized_k3_count": {
+    "n": 6600,
+    "range": [
+     0.0,
+     60.0
+    ],
+    "thirds": [
+     4396,
+     1862,
+     342
+    ]
+   },
+   "realized_k4_count": {
+    "n": 6600,
+    "range": [
+     0.0,
+     8.0
+    ],
+    "thirds": [
+     6211,
+     384,
+     5
+    ]
+   },
+   "realized_orbit_days": {
+    "n": 13200,
+    "range": [
+     12.500000240724395,
+     13.999996752540957
+    ],
+    "thirds": [
+     4439,
+     4408,
+     4353
+    ]
+   },
+   "realized_orbit_gap_days": {
+    "n": 6600,
+    "range": [
+     0.5000068252311394,
+     1.9999589057256344
+    ],
+    "thirds": [
+     2170,
+     2205,
+     2225
+    ]
+   },
+   "realized_other_gap_count": {
+    "n": 6600,
+    "range": [
+     0.0,
+     4.0
+    ],
+    "thirds": [
+     2676,
+     1366,
+     2558
+    ]
+   },
+   "realized_other_gap_seconds": {
+    "n": 13004,
+    "range": [
+     719.5322367508197,
+     21599.9966889387
+    ],
+    "thirds": [
+     4393,
+     4311,
+     4300
+    ]
+   },
+   "realized_residuals": {
+    "n": 121526190,
+    "range": [
+     -0.5,
+     0.5
+    ],
+    "thirds": [
+     26953149,
+     67295349,
+     26953938
+    ]
+   },
+   "separation_one_year": {
+    "interval": [
+     345.0,
+     385.0
+    ],
+    "n": 3300,
+    "outside": 0,
+    "thirds": [
+     1089,
+     1097,
+     1114
+    ]
+   },
+   "separation_two_years": {
+    "interval": [
+     710.0,
+     750.0
+    ],
+    "n": 1100,
+    "outside": 0,
+    "thirds": [
+     377,
+     377,
+     346
+    ]
+   }
+  },
+  "planet/correlated": {
+   "block_count": {
+    "0": 631,
+    "1": 661,
+    "2": 690,
+    "3": 651,
+    "4": 607
+   },
+   "block_place": {
+    "interval": [
+     0.0,
+     1.0
+    ],
+    "n": 6422,
+    "outside": 0,
+    "thirds": [
+     2118,
+     2173,
+     2131
+    ]
+   },
+   "block_seconds": {
+    "interval": [
+     600.0,
+     21600.0
+    ],
+    "n": 6422,
+    "outside": 0,
+    "thirds": [
+     2147,
+     2155,
+     2120
+    ]
+   },
+   "first_start": {
+    "interval": [
+     1325.0,
+     1690.25
+    ],
+    "n": 1080,
+    "outside": 0,
+    "thirds": [
+     371,
+     351,
+     358
+    ]
+   },
+   "jitter": {
+    "max": 0.24999999866325912,
+    "min": -0.24999999897978425,
+    "thirds": [
+     19894415,
+     19899963,
+     19889036
+    ]
+   },
+   "loss_rate": {
+    "interval": [
+     0.0,
+     0.05
+    ],
+    "n": 3240,
+    "outside": 0,
+    "thirds": [
+     1063,
+     1068,
+     1109
+    ]
+   },
+   "orbit_days": {
+    "interval": [
+     12.5,
+     14.0
+    ],
+    "n": 6480,
+    "outside": 0,
+    "thirds": [
+     2119,
+     2211,
+     2150
+    ]
+   },
+   "orbit_gap_days": {
+    "interval": [
+     0.5,
+     2.0
+    ],
+    "n": 3240,
+    "outside": 0,
+    "thirds": [
+     1080,
+     1091,
+     1069
+    ]
+   },
+   "realized_coverage": {
+    "n": 3240,
+    "range": [
+     0.862610547178575,
+     0.9785834554902454
+    ],
+    "thirds": [
+     556,
+     2003,
+     681
+    ]
+   },
+   "realized_k1_count": {
+    "n": 3240,
+    "range": [
+     16178.0,
+     19954.0
+    ],
+    "thirds": [
+     797,
+     1933,
+     510
+    ]
+   },
+   "realized_k2_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     944.0
+    ],
+    "thirds": [
+     1090,
+     1194,
+     956
+    ]
+   },
+   "realized_k3_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     56.0
+    ],
+    "thirds": [
+     2084,
+     900,
+     256
+    ]
+   },
+   "realized_k4_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     6.0
+    ],
+    "thirds": [
+     2763,
+     404,
+     73
+    ]
+   },
+   "realized_orbit_days": {
+    "n": 6480,
+    "range": [
+     12.500003306829534,
+     13.998611985216504
+    ],
+    "thirds": [
+     2117,
+     2208,
+     2155
+    ]
+   },
+   "realized_orbit_gap_days": {
+    "n": 3240,
+    "range": [
+     0.5003925404751044,
+     1.9990225027177075
+    ],
+    "thirds": [
+     1079,
+     1090,
+     1071
+    ]
+   },
+   "realized_other_gap_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     4.0
+    ],
+    "thirds": [
+     1296,
+     698,
+     1246
+    ]
+   },
+   "realized_other_gap_seconds": {
+    "n": 6378,
+    "range": [
+     719.6524625134771,
+     21599.95055756299
+    ],
+    "thirds": [
+     2109,
+     2141,
+     2128
+    ]
+   },
+   "realized_residuals": {
+    "n": 59670556,
+    "range": [
+     -0.5,
+     0.5
+    ],
+    "thirds": [
+     13232477,
+     33048291,
+     13230133
+    ]
+   },
+   "separation_one_year": {
+    "interval": [
+     345.0,
+     385.0
+    ],
+    "n": 1620,
+    "outside": 0,
+    "thirds": [
+     495,
+     544,
+     581
+    ]
+   },
+   "separation_two_years": {
+    "interval": [
+     710.0,
+     750.0
+    ],
+    "n": 540,
+    "outside": 0,
+    "thirds": [
+     202,
+     171,
+     167
+    ]
+   }
+  },
+  "planet/white": {
+   "block_count": {
+    "0": 672,
+    "1": 674,
+    "2": 671,
+    "3": 617,
+    "4": 606
+   },
+   "block_place": {
+    "interval": [
+     0.0,
+     1.0
+    ],
+    "n": 6291,
+    "outside": 0,
+    "thirds": [
+     2059,
+     2116,
+     2116
+    ]
+   },
+   "block_seconds": {
+    "interval": [
+     600.0,
+     21600.0
+    ],
+    "n": 6291,
+    "outside": 0,
+    "thirds": [
+     2165,
+     2121,
+     2005
+    ]
+   },
+   "first_start": {
+    "interval": [
+     1325.0,
+     1690.25
+    ],
+    "n": 1080,
+    "outside": 0,
+    "thirds": [
+     372,
+     319,
+     389
+    ]
+   },
+   "jitter": {
+    "max": 0.24999999844034515,
+    "min": -0.24999999688461644,
+    "thirds": [
+     19917312,
+     19918280,
+     19907885
+    ]
+   },
+   "loss_rate": {
+    "interval": [
+     0.0,
+     0.05
+    ],
+    "n": 3240,
+    "outside": 0,
+    "thirds": [
+     1094,
+     1093,
+     1053
+    ]
+   },
+   "orbit_days": {
+    "interval": [
+     12.5,
+     14.0
+    ],
+    "n": 6480,
+    "outside": 0,
+    "thirds": [
+     2161,
+     2183,
+     2136
+    ]
+   },
+   "orbit_gap_days": {
+    "interval": [
+     0.5,
+     2.0
+    ],
+    "n": 3240,
+    "outside": 0,
+    "thirds": [
+     1082,
+     1105,
+     1053
+    ]
+   },
+   "realized_coverage": {
+    "n": 3240,
+    "range": [
+     0.8648942054211646,
+     0.980157841521904
+    ],
+    "thirds": [
+     574,
+     2040,
+     626
+    ]
+   },
+   "realized_k1_count": {
+    "n": 3240,
+    "range": [
+     16066.0,
+     20018.0
+    ],
+    "thirds": [
+     629,
+     2097,
+     514
+    ]
+   },
+   "realized_k2_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     910.0
+    ],
+    "thirds": [
+     1089,
+     1169,
+     982
+    ]
+   },
+   "realized_k3_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     56.0
+    ],
+    "thirds": [
+     2140,
+     893,
+     207
+    ]
+   },
+   "realized_k4_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     6.0
+    ],
+    "thirds": [
+     2825,
+     347,
+     68
+    ]
+   },
+   "realized_orbit_days": {
+    "n": 6480,
+    "range": [
+     12.50000216329615,
+     13.99861351840993
+    ],
+    "thirds": [
+     2160,
+     2178,
+     2142
+    ]
+   },
+   "realized_orbit_gap_days": {
+    "n": 3240,
+    "range": [
+     0.5001655771618516,
+     1.9999264952107296
+    ],
+    "thirds": [
+     1082,
+     1105,
+     1053
+    ]
+   },
+   "realized_other_gap_count": {
+    "n": 3240,
+    "range": [
+     0.0,
+     4.0
+    ],
+    "thirds": [
+     1348,
+     679,
+     1213
+    ]
+   },
+   "realized_other_gap_seconds": {
+    "n": 6259,
+    "range": [
+     719.5765198579466,
+     21599.99501073762
+    ],
+    "thirds": [
+     2141,
+     2100,
+     2018
+    ]
+   },
+   "realized_residuals": {
+    "n": 59730738,
+    "range": [
+     -0.5,
+     0.5
+    ],
+    "thirds": [
+     13249066,
+     33072800,
+     13248956
+    ]
+   },
+   "separation_one_year": {
+    "interval": [
+     345.0,
+     385.0
+    ],
+    "n": 1620,
+    "outside": 0,
+    "thirds": [
+     538,
+     527,
+     555
+    ]
+   },
+   "separation_two_years": {
+    "interval": [
+     710.0,
+     750.0
+    ],
+    "n": 540,
+    "outside": 0,
+    "thirds": [
+     167,
+     183,
+     190
+    ]
+   }
+  }
+ },
+ "flux_checked": 311475872,
+ "format": "refute-population-v4-acceptance/1",
+ "generation": "2",
+ "manifest_sha256": "aee9ecac9794af9b8c957bc85bec4fe1e27023cdcf6a8edfe5976dcf21f12ce2",
+ "order": "reverse",
+ "population": "acceptance",
+ "redraws": {
+  "false_positive | below | blend | layout:D1": 2,
+  "false_positive | below | blend | layout:D4": 4,
+  "false_positive | below | eb_odd_even | layout:D4": 1,
+  "false_positive | below | eb_secondary | layout:D4": 2,
+  "false_positive | below | variability_masked | commensurate_periods": 7,
+  "false_positive | below | variability_masked | layout:D1": 3,
+  "false_positive | below | variability_masked | layout:D4": 3,
+  "false_positive | measurable | blend | depth_limit": 4,
+  "false_positive | measurable | blend | layout:D1": 7,
+  "false_positive | measurable | blend | layout:D4": 9,
+  "false_positive | measurable | eb_odd_even | layout:D1": 2,
+  "false_positive | measurable | eb_odd_even | layout:D4": 4,
+  "false_positive | measurable | eb_secondary | layout:D4": 6,
+  "false_positive | measurable | variability_masked | commensurate_periods": 19,
+  "false_positive | measurable | variability_masked | layout:D1": 3,
+  "false_positive | measurable | variability_masked | layout:D4": 4,
+  "false_positive | near | blend | layout:D1": 1,
+  "false_positive | near | blend | layout:D4": 2,
+  "false_positive | near | eb_odd_even | layout:D1": 2,
+  "false_positive | near | eb_odd_even | layout:D4": 3,
+  "false_positive | near | eb_secondary | layout:D1": 1,
+  "false_positive | near | variability_masked | commensurate_periods": 3,
+  "false_positive | near | variability_masked | layout:D1": 3,
+  "false_positive | near | variability_masked | layout:D4": 2,
+  "no_transit | None | pure_noise | layout:D1": 35,
+  "no_transit | None | pure_noise | layout:D4": 49,
+  "no_transit | None | trend | layout:D1": 15,
+  "no_transit | None | trend | layout:D4": 31,
+  "no_transit | None | trend_variability | layout:D1": 18,
+  "no_transit | None | trend_variability | layout:D4": 37,
+  "planet | below | three_years | layout:D1": 14,
+  "planet | below | three_years | layout:D4": 23,
+  "planet | below | variability_some_years | layout:D1": 8,
+  "planet | below | variability_some_years | layout:D4": 15,
+  "planet | measurable | three_years | layout:D1": 13,
+  "planet | measurable | three_years | layout:D4": 17,
+  "planet | measurable | variability_some_years | layout:D1": 14,
+  "planet | measurable | variability_some_years | layout:D4": 19,
+  "planet | near | three_years | layout:D1": 4,
+  "planet | near | three_years | layout:D4": 14,
+  "planet | near | variability_some_years | layout:D1": 8,
+  "planet | near | variability_some_years | layout:D4": 10
+ },
+ "redraws_by_reason": {
+  "commensurate_periods": 29,
+  "depth_limit": 4,
+  "layout:D1": 153,
+  "layout:D4": 255
+ },
+ "replayed_attempts": 12161,
+ "snr_checked": 24480,
+ "workers": 13,
+ "x2f": {
+  "coverage": [
+   0.9629629629697092,
+   0.9629629629697092,
+   0.9629629629697092
+  ],
+  "geometry": "G-a",
+  "labels": [
+   2018,
+   2019,
+   2020
+  ],
+  "orbit_days": [
+   [
+    12.999999999810846,
+    12.999999999810846
+   ],
+   [
+    12.999999999810846,
+    12.999999999810846
+   ],
+   [
+    12.999999999810846,
+    12.999999999810846
+   ]
+  ],
+  "orbit_gap_days": [
+   1.0013888890780436,
+   1.0013888890780436,
+   1.0013888890780436
+  ],
+  "problems": [],
+  "separations_days": [
+   375.0,
+   361.0
+  ]
+ }
+}
