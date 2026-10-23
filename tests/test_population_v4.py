@@ -513,3 +513,128 @@ def test_the_order_check_rejects_an_invalid_history(chk):
     assert chk.order_problems([good[0], good[2], good[1]]) != []
     assert chk.order_problems([good[1], good[0], good[2]]) != []
     assert chk.order_problems([good[0], good[2]]) != []
+
+
+def test_the_first_run_record_must_show_every_test_failing(chk):
+    committed = (POPULATION / "v4-acceptance" / "first-run.json").read_text(encoding="utf-8")
+    assert chk.first_run_problems(committed) == []
+    record = json.loads(committed)
+    record["runs"][1]["counts"]["passed"] = 1
+    assert chk.first_run_problems(json.dumps(record)) != []
+    assert chk.first_run_problems(json.dumps({"runs": []})) != []
+    assert chk.first_run_problems(None) != []
+
+
+def test_the_sabotages_output_must_record_each_caught(chk):
+    ok = {
+        "all_caught": True,
+        "sabotages": [
+            {"id": s, "caught": True, "control": {"passed": True, "coverage": 1}}
+            for s in chk.SABOTAGE_IDS
+        ],
+    }
+    assert chk.sabotage_output_problems(json.dumps(ok)) == []
+    missing = dict(ok, sabotages=ok["sabotages"][:-1])
+    assert chk.sabotage_output_problems(json.dumps(missing)) != []
+    uncaught = json.loads(json.dumps(ok))
+    uncaught["sabotages"][0]["caught"] = False
+    assert chk.sabotage_output_problems(json.dumps(uncaught)) != []
+    assert chk.sabotage_output_problems(None) != []
+
+
+# --- review fixes (Codex, 610bc02) ---------------------------------------------------------------
+
+
+def test_the_serialized_case_must_be_the_declared_case(built, chk, v2):
+    case, blob, _ = built[4]
+    meta, arrays = v2.deserialize(blob)
+    meta["case"]["class"] = "false_positive"
+    report = chk.built_report(case, _reserialized(v2, meta, arrays))
+    assert any(p.startswith("[4] the serialized case") for p in report["problems"])
+
+
+def test_determinism_rejects_thin_or_unbound_manifests(chk, tmp_path):
+    for g in ("1", "2", "3"):
+        manifest = {"population": "acceptance", "cases": {"x": "not-a-sha256"}}
+        (tmp_path / f"manifest-{g}.json").write_text(json.dumps(manifest), encoding="utf-8")
+        run = {"population": "acceptance", "cases": 1, "workers": 1, "order": "index",
+               "checks": {"a": {"passed": True}}, "manifest_sha256": "0" * 64}  # fmt: skip
+        (tmp_path / f"population-{g}.json").write_text(json.dumps(run), encoding="utf-8")
+    _, problems = chk.determinism_problems(tmp_path)
+    text = " ".join(problems)
+    for expected in ("does not name this manifest", "cases, the 5860", "not SHA-256",
+                     "worker counts", "orders"):  # fmt: skip
+        assert expected in text, expected
+    assert chk.determinism_problems(tmp_path / "absent")[1] != []
+
+
+def test_the_band_check_cli_needs_a_case(band, capsys):
+    assert band.main([]) == 2
+
+
+def test_the_sabotage_errors_keep_no_path_or_host():
+    sab = _module("population_v4_sabotage")
+    import socket
+
+    host = socket.gethostname()
+    err = (
+        'Traceback\n  File "C:\\Users\\someone\\x.py"\n'
+        f"FileNotFoundError: [Errno 2] '\\\\{host}\\share\\dir\\case.bin' and "
+        "'C:\\Users\\Jane Doe\\a.json'"
+    )
+    assert sab._error_line(err, 1) == "FileNotFoundError (exit 1)"
+    assert sab._error_line("") == "no output"
+
+
+def test_determinism_needs_every_check_with_its_coverage(chk, tmp_path, v4):
+    ids = {c["id"]: "a" * 64 for c in v4.population_cases("acceptance")}
+    runs = ((1, "index"), (2, "reverse"), (3, "interleaved"))
+    for g, (workers, order) in zip("123", runs, strict=True):
+        blob = json.dumps({"population": "acceptance", "cases": ids}).encode()
+        (tmp_path / f"manifest-{g}.json").write_bytes(blob)
+        unrelated = {"unrelated": {"passed": True, "coverage": 0, "required": 5860}}
+        digest = hashlib.sha256(blob).hexdigest()
+        run = {"population": "acceptance", "cases": len(ids), "workers": workers, "order": order,
+               "manifest_sha256": digest, "checks": unrelated}  # fmt: skip
+        (tmp_path / f"population-{g}.json").write_text(json.dumps(run), encoding="utf-8")
+    problems = chk.determinism_problems(tmp_path)[1]
+    assert any("required" in p for p in problems)
+    assert any("with its coverage" in p for p in problems)
+
+
+def test_the_sabotages_controls_need_coverage(chk):
+    out = {
+        "all_caught": True,
+        "sabotages": [
+            {"id": s, "caught": True, "control": {"passed": True, "coverage": 0}}
+            for s in chk.SABOTAGE_IDS
+        ],
+    }
+    assert any("coverage" in p for p in chk.sabotage_output_problems(json.dumps(out)))
+
+
+def test_the_layout_draw_order(v4, v2, cases):
+    """The draws in the record's order (section 2.2), from the layout stream, by hand."""
+    case = _first(cases, **{"class": "false_positive", "geometry": "G-b", "order": "long-short"})
+    lay = v4.draw_layout(case)
+    rng = np.random.default_rng(v2.sub_seed(int(case["seed"]), "layout", lay["attempt"]))
+    d = lay["draws"]
+    assert d["first_start"] == 1325.0 + 365.25 * rng.uniform()
+    assert d["separations"] == [rng.uniform(710.0, 750.0), rng.uniform(345.0, 385.0)]
+    for s, jit in zip(d["sectors"], lay["jitter_s"], strict=True):
+        l1, gap, l2 = rng.uniform(12.5, 14.0), rng.uniform(0.5, 2.0), rng.uniform(12.5, 14.0)
+        assert s["orbit_days"] == [l1, l2] and s["orbit_gap_days"] == gap
+        n_blocks = int(rng.integers(0, 5))
+        assert len(s["blocks"]) == n_blocks
+        for b in s["blocks"]:
+            assert (b["seconds"], b["place"]) == (rng.uniform(600.0, 21600.0), rng.uniform())
+        assert s["loss_rate"] == rng.uniform(0.0, 0.05)
+        n = round(l1 / DT) + round(l2 / DT)
+        losses = rng.uniform(size=n)
+        jitter = rng.uniform(-0.25, 0.25, size=n)
+        assert s["n_nominal"] == n
+        assert (
+            np.isin(jit, jitter).all() and jit.size == n - s["n_lost_blocks"] - s["n_lost_single"]
+        )
+        eligible_losses = int(np.count_nonzero(losses < s["loss_rate"]))
+        assert s["n_lost_single"] <= eligible_losses

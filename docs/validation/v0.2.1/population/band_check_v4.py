@@ -265,6 +265,9 @@ def check(blob: bytes) -> dict:
 
 
 def main(argv: list[str]) -> int:
+    if not argv:
+        print("no case file given: nothing checked", file=sys.stderr)
+        return 2
     bad = 0
     for name in argv:
         report = check(Path(name).read_bytes())

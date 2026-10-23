@@ -56,6 +56,11 @@ MAX_BLOCKS = 4
 BLOCK_SECONDS = (600.0, 21600.0)
 LOSS_RATE = (0.0, 0.05)
 JITTER_S = 0.25
+CASE_KEYS = (
+    "id", "class", "band", "noise", "index", "mechanism", "catalog_variant", "seed", "extra",
+)  # fmt: skip
+WORKER_COUNTS_REQUIRED = 3
+ORDERS = ("index", "reverse", "interleaved")
 REDRAW_REASONS = frozenset(
     {f"layout:D{i}" for i in range(1, 6)}
     | {"band", "depth_limit", "no_transit_in_a_year", "commensurate_periods"}
@@ -444,6 +449,9 @@ def built_report(case: dict, blob: bytes, layout: dict | None = None) -> dict:
         problems.append(f"[{criterion}] {text}")
 
     meta, arrays = pv2.deserialize(blob)
+    declared = {k: case[k] for k in CASE_KEYS}
+    if _plain_json(meta.get("case")) != _plain_json(declared):
+        add(4, f"the serialized case {meta.get('case')} is not the declared case {declared}")
     lay, layout_counts, n_layout = _replay_layout(case) if layout is None else layout
     sector, t_all, years_all = arrays["lc/sector"], arrays["lc/time"], arrays["lc/year"]
     numbers = sorted(set(sector.tolist()))
@@ -564,6 +572,61 @@ def order_problems(history: list[tuple[str, list[str]]]) -> list[str]:
     return problems
 
 
+RUN_CHECKS = (
+    "1_domain", "2_coverage", "3_allocation", "4_composition", "5_band", "6_replay", "6_source",
+    "8_x2f",
+)  # fmt: skip
+SABOTAGE_IDS = ("S1", "S2", "S3", "S4", "S5a", "S5b", "S6", "S7", "S8", "S9")
+
+
+def first_run_problems(text: str | None) -> list[str]:
+    """The tests' first run: recorded, with tests, none passing, every test failing or erring."""
+    if not text:
+        return ["the first run's record cannot be read"]
+    record = json.loads(text)
+    problems = []
+    runs = record.get("runs", [])
+    if not runs:
+        problems.append("the first run's record holds no run")
+    for run in runs:
+        counts = run.get("counts", {})
+        if run.get("tests", 0) < 1:
+            problems.append(f"first run {run.get('label')}: no test")
+        if counts.get("passed", 0) or counts.get("skipped", 0):
+            problems.append(f"first run {run.get('label')}: a test passed or was skipped")
+        if counts.get("failure", 0) + counts.get("error", 0) != run.get("tests"):
+            problems.append(f"first run {run.get('label')}: not every test failed")
+    return problems
+
+
+def sabotage_output_problems(text: str | None) -> list[str]:
+    if not text:
+        return ["the sabotages' output cannot be read"]
+    out = json.loads(text)
+    got = {s.get("id"): s for s in out.get("sabotages", [])}
+    problems = [f"sabotage {sid} missing" for sid in SABOTAGE_IDS if sid not in got]
+    problems += [
+        f"sabotage {sid} not caught"
+        for sid in SABOTAGE_IDS
+        if sid in got and not (got[sid].get("caught") and got[sid].get("control", {}).get("passed"))
+    ]
+    problems += [
+        f"sabotage {sid}: its control has no positive coverage"
+        for sid in SABOTAGE_IDS
+        if sid in got and not (got[sid].get("control", {}).get("coverage") or 0) > 0
+    ]
+    if not out.get("all_caught"):
+        problems.append("the sabotages' output does not record all caught")
+    return problems
+
+
+def _git_show(commit: str, path: str) -> str | None:
+    done = subprocess.run(
+        ["git", "show", f"{commit}:{path}"], cwd=REPO, capture_output=True, text=True
+    )
+    return done.stdout if done.returncode == 0 else None
+
+
 def git_history(since: str = "c27a965") -> list[tuple[str, list[str]]]:
     text = subprocess.run(
         ["git", "log", "--reverse", "--name-only", "--format=commit %H", f"{since}..HEAD"],
@@ -633,6 +696,30 @@ def mode_run(args) -> int:
             f"{r['id']}: {p}" for r in rows for p in r["built"]["problems"] if p.startswith(tag)
         ]
 
+    n = len(rows)
+    with_transit = [r for r in rows if r["layout"]["class"] != "no_transit"]
+    not_blend = [r for r in rows if r["layout"]["mechanism"] != "blend"]
+    coverage = {
+        "1_domain": sum(r["built"]["cadences"] > 0 for r in rows),
+        "2_coverage": len(records),
+        "3_allocation": len(cases),
+        "4_composition": len(cases),
+        "5_band": sum(r["band"]["snr_checked"] > 0 for r in with_transit)
+        + sum(r["band"]["flux_checked"] > 0 for r in not_blend),
+        "6_replay": sum(r["built"]["replayed_attempts"] >= 2 for r in rows),
+        "6_source": 1,
+        "8_x2f": 3,
+    }
+    required = {
+        "1_domain": n,
+        "2_coverage": n,
+        "3_allocation": n,
+        "4_composition": n,
+        "5_band": len(with_transit) + len(not_blend),
+        "6_replay": n,
+        "6_source": 1,
+        "8_x2f": 3,
+    }
     checks = {
         "1_domain": domain_problems(records) + built(1),
         "2_coverage": coverage_problems(records, population["coverage"]),
@@ -643,6 +730,11 @@ def mode_run(args) -> int:
         "6_source": source_problems(),
         "8_x2f": x2f_report()["problems"],
     }
+    for key in checks:
+        if n == 0 or coverage[key] < required[key] or required[key] == 0:
+            checks[key].append(
+                f"coverage {coverage[key]} of the {required[key]} required (cases {n})"
+            )
     redraws: Counter = Counter()
     for r in rows:
         for reason, n in r["built"]["redraws"].items():
@@ -667,7 +759,13 @@ def mode_run(args) -> int:
             },
             "cases_with_layout_redraws": sum(r["layout"]["attempt"] > 0 for r in rows),
             "checks": {
-                k: {"passed": not v, "problems": v[:50], "n_problems": len(v)}
+                k: {
+                    "passed": not v,
+                    "problems": v[:50],
+                    "n_problems": len(v),
+                    "coverage": coverage[k],
+                    "required": required[k],
+                }
                 for k, v in checks.items()
             },
             "x2f": x2f_report(),
@@ -675,35 +773,75 @@ def mode_run(args) -> int:
     )
     manifest = {
         "format": "refute-population-v4-manifest/1",
+        "population": args.population,
         "cases": {r["id"]: r["sha256"] for r in rows},
     }
+    manifest_bytes = (json.dumps(manifest, indent=1, sort_keys=True) + "\n").encode("utf-8")
+    population["manifest_sha256"] = hashlib.sha256(manifest_bytes).hexdigest()
     (out_dir / f"population-{args.generation}.json").write_text(
         json.dumps(population, indent=1, sort_keys=True) + "\n", encoding="utf-8"
     )
-    (out_dir / f"manifest-{args.generation}.json").write_text(
-        json.dumps(manifest, indent=1, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    (out_dir / f"manifest-{args.generation}.json").write_bytes(manifest_bytes)
     failed = [k for k, v in checks.items() if v]
     print(json.dumps({"cases": len(rows), "failed": failed}))
     return 1 if failed else 0
 
 
+def determinism_problems(out_dir: Path, population: str = "acceptance") -> tuple[dict, list[str]]:
+    """Criterion 7: generations 1, 2 and 3, each a passing run over the whole population with its
+    own worker count and order, and their manifests (bound to their runs) byte-identical."""
+    expected = [c["id"] for c in v4.population_cases(population)]
+    problems: list[str] = []
+    runs = []
+    for g in ("1", "2", "3"):
+        man, pop = out_dir / f"manifest-{g}.json", out_dir / f"population-{g}.json"
+        if not man.is_file() or not pop.is_file():
+            problems.append(f"generation {g}: its manifest or its run record is missing")
+            continue
+        blob = man.read_bytes()
+        manifest, run = json.loads(blob), json.loads(pop.read_text(encoding="utf-8"))
+        digest = hashlib.sha256(blob).hexdigest()
+        if run.get("manifest_sha256") != digest:
+            problems.append(f"generation {g}: the run record does not name this manifest")
+        if run.get("population") != population or manifest.get("population") != population:
+            problems.append(f"generation {g}: not the {population} population")
+        checks = run.get("checks", {})
+        if set(checks) != set(RUN_CHECKS):
+            problems.append(f"generation {g}: checks {sorted(checks)}, {list(RUN_CHECKS)} required")
+        for name, c in checks.items():
+            req = c.get("required") or 0
+            if not c.get("passed") or req <= 0 or (c.get("coverage") or 0) < req:
+                problems.append(f"generation {g}: check {name} did not pass with its coverage")
+        ids = list(manifest.get("cases", {}))
+        if sorted(ids) != sorted(expected) or run.get("cases") != len(expected):
+            problems.append(f"generation {g}: {len(ids)} cases, the {len(expected)} expected")
+        bad = [k for k, v in manifest.get("cases", {}).items() if not _is_sha256(v)]
+        if bad:
+            problems.append(f"generation {g}: {len(bad)} digests are not SHA-256")
+        runs.append({"generation": g, "manifest_sha256": digest, "workers": run.get("workers"),
+                     "order": run.get("order")})  # fmt: skip
+    if len(runs) == 3:
+        if len({r["manifest_sha256"] for r in runs}) != 1:
+            problems.append("the manifests differ")
+        if len({r["workers"] for r in runs}) != WORKER_COUNTS_REQUIRED:
+            problems.append(f"worker counts {[r['workers'] for r in runs]}, three different")
+        if sorted(r["order"] for r in runs) != sorted(ORDERS):
+            problems.append(f"orders {[r['order'] for r in runs]}, the three declared")
+    return {"runs": runs, "cases": len(expected)}, problems
+
+
+def _is_sha256(value) -> bool:
+    return (
+        isinstance(value, str) and len(value) == 64 and all(c in "0123456789abcdef" for c in value)
+    )
+
+
 def mode_compare(args) -> int:
     out_dir = Path(args.out_dir)
-    files = sorted(out_dir.glob("manifest-*.json"))
-    digests = {f.name: hashlib.sha256(f.read_bytes()).hexdigest() for f in files}
-    cases = [json.loads(f.read_text(encoding="utf-8"))["cases"] for f in files]
-    problems = []
-    if len(files) < 3:
-        problems.append(f"{len(files)} generations, three required")
-    if len(set(digests.values())) != 1:
-        problems.append("the manifests differ")
-    if not cases or not cases[0]:
-        problems.append("no case")
+    summary, problems = determinism_problems(out_dir)
     out = {
         "format": "refute-population-v4-determinism/1",
-        "manifests": digests,
-        "cases": len(cases[0]) if cases else 0,
+        **summary,
         "passed": not problems,
         "problems": problems,
     }
@@ -720,12 +858,18 @@ def mode_order(args) -> int:
     tests_commit = next((c for c, paths in history if any(p in TEST_FILES for p in paths)), None)
     if tests_commit is None or FIRST_RUN not in dict(history)[tests_commit]:
         problems.append("the first run's record is not in the tests' commit")
+    else:
+        problems += first_run_problems(_git_show(tests_commit, FIRST_RUN))
     code_index = next(
         (i for i, (_, p) in enumerate(history) if any(x in CODE_FILES for x in p)), None
     )
     sab_index = next((i for i, (_, p) in enumerate(history) if SABOTAGES in p), None)
-    if sab_index is not None and code_index is not None and sab_index < code_index:
+    if sab_index is None:
+        problems.append("pending: the sabotages' output is not committed")
+    elif code_index is not None and sab_index < code_index:
         problems.append("the sabotages' output before the code")
+    else:
+        problems += sabotage_output_problems(_git_show(history[-1][0], SABOTAGES))
     out = {
         "format": "refute-population-v4-order/1",
         "history": [

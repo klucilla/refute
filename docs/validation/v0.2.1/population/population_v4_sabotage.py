@@ -17,6 +17,7 @@ import concurrent.futures as cf
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -140,8 +141,9 @@ def make(sid: str, work: Path) -> None:
 
 
 def _make(sid: str, work: Path) -> None:
+    """The ``make`` step in its own process; ``work`` is this sabotage's folder (``<DIR>/<id>``)."""
     subprocess.run(
-        [sys.executable, str(Path(__file__)), "make", sid, "--work", str(work)], check=True
+        [sys.executable, str(Path(__file__)), "make", sid, "--work", str(work.parent)], check=True
     )
 
 
@@ -280,6 +282,15 @@ def one(sid: str, work: Path) -> dict:
     raise SystemExit(f"unknown sabotage {sid}")
 
 
+def _error_line(stderr: str, returncode: int | None = None) -> str:
+    """Only the exception's type (and the exit code), never its free message, so that no path,
+    user, host or share name reaches the output; the full error stays in the console."""
+    lines = [x for x in stderr.strip().splitlines() if x.strip()]
+    found = re.match(r"([A-Za-z_][A-Za-z0-9_.]*)", lines[-1].strip()) if lines else None
+    kind = found.group(1) if found else "no output"
+    return f"{kind} (exit {returncode})" if returncode is not None else kind
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("mode", choices=("all", "one", "make"))
@@ -303,9 +314,9 @@ def main(argv: list[str] | None = None) -> int:
         )
         lines = [x for x in done.stdout.splitlines() if x.startswith("{")]
         if done.returncode != 0 or not lines:
-            results.append(
-                {"id": sid, "caught": False, "error": pv2.mask_user(done.stderr[-2000:])}
-            )
+            print(done.stderr, file=sys.stderr)
+            error = _error_line(done.stderr, done.returncode)
+            results.append({"id": sid, "caught": False, "error": error})
         else:
             results.append(json.loads(lines[-1]))
         print(sid, results[-1].get("caught"), flush=True)
