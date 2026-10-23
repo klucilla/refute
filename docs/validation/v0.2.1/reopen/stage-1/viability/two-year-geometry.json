@@ -1,0 +1,359 @@
+{
+ "timing_by_axis": {
+  "AR(1)": {
+   "g_sqrt_n: >= 200": {
+    "rounds": 392,
+    "stopped": 312
+   },
+   "g_sqrt_n: [100, 200)": {
+    "rounds": 1194,
+    "stopped": 107
+   },
+   "g_sqrt_n: [30, 60)": {
+    "rounds": 272,
+    "stopped": 2
+   },
+   "g_sqrt_n: [60, 100)": {
+    "rounds": 2942,
+    "stopped": 223
+   },
+   "hidden epochs: some": {
+    "rounds": 4800,
+    "stopped": 644
+   },
+   "hidden year: 2018": {
+    "rounds": 2400,
+    "stopped": 146
+   },
+   "hidden year: 2019": {
+    "rounds": 272,
+    "stopped": 19
+   },
+   "hidden year: 2020": {
+    "rounds": 1872,
+    "stopped": 247
+   },
+   "hidden year: 2021": {
+    "rounds": 256,
+    "stopped": 232
+   },
+   "layout: few_train, 1 yr": {
+    "rounds": 544,
+    "stopped": 21
+   },
+   "layout: few_train, 2 yr": {
+    "rounds": 544,
+    "stopped": 128
+   },
+   "layout: few_train, 3 yr": {
+    "rounds": 512,
+    "stopped": 248
+   },
+   "layout: two_years": {
+    "rounds": 3200,
+    "stopped": 247
+   },
+   "period (d): [1.5, 2.5)": {
+    "rounds": 800,
+    "stopped": 103
+   },
+   "period (d): [2.5, 3.5)": {
+    "rounds": 1334,
+    "stopped": 194
+   },
+   "period (d): [3.5, 4.5)": {
+    "rounds": 1510,
+    "stopped": 218
+   },
+   "period (d): [4.5, 5.5)": {
+    "rounds": 1156,
+    "stopped": 129
+   },
+   "train transits: 10": {
+    "rounds": 298,
+    "stopped": 26
+   },
+   "train transits: 11": {
+    "rounds": 109,
+    "stopped": 16
+   },
+   "train transits: 12": {
+    "rounds": 212,
+    "stopped": 29
+   },
+   "train transits: 13": {
+    "rounds": 48,
+    "stopped": 6
+   },
+   "train transits: 14": {
+    "rounds": 148,
+    "stopped": 15
+   },
+   "train transits: 15": {
+    "rounds": 44,
+    "stopped": 9
+   },
+   "train transits: 16": {
+    "rounds": 133,
+    "stopped": 19
+   },
+   "train transits: 17": {
+    "rounds": 27,
+    "stopped": 3
+   },
+   "train transits: 18": {
+    "rounds": 21,
+    "stopped": 5
+   },
+   "train transits: 3": {
+    "rounds": 400,
+    "stopped": 200
+   },
+   "train transits: 4": {
+    "rounds": 571,
+    "stopped": 184
+   },
+   "train transits: 5": {
+    "rounds": 419,
+    "stopped": 24
+   },
+   "train transits: 6": {
+    "rounds": 1018,
+    "stopped": 37
+   },
+   "train transits: 7": {
+    "rounds": 403,
+    "stopped": 22
+   },
+   "train transits: 8": {
+    "rounds": 752,
+    "stopped": 32
+   },
+   "train transits: 9": {
+    "rounds": 197,
+    "stopped": 17
+   }
+  },
+  "white": {
+   "g_sqrt_n: >= 200": {
+    "rounds": 401,
+    "stopped": 365
+   },
+   "g_sqrt_n: [100, 200)": {
+    "rounds": 1195,
+    "stopped": 580
+   },
+   "g_sqrt_n: [30, 60)": {
+    "rounds": 272,
+    "stopped": 31
+   },
+   "g_sqrt_n: [60, 100)": {
+    "rounds": 2932,
+    "stopped": 1395
+   },
+   "hidden epochs: some": {
+    "rounds": 4800,
+    "stopped": 2371
+   },
+   "hidden year: 2018": {
+    "rounds": 2400,
+    "stopped": 1019
+   },
+   "hidden year: 2019": {
+    "rounds": 272,
+    "stopped": 100
+   },
+   "hidden year: 2020": {
+    "rounds": 1872,
+    "stopped": 1005
+   },
+   "hidden year: 2021": {
+    "rounds": 256,
+    "stopped": 247
+   },
+   "layout: few_train, 1 yr": {
+    "rounds": 544,
+    "stopped": 131
+   },
+   "layout: few_train, 2 yr": {
+    "rounds": 544,
+    "stopped": 271
+   },
+   "layout: few_train, 3 yr": {
+    "rounds": 512,
+    "stopped": 360
+   },
+   "layout: two_years": {
+    "rounds": 3200,
+    "stopped": 1609
+   },
+   "period (d): [1.5, 2.5)": {
+    "rounds": 776,
+    "stopped": 481
+   },
+   "period (d): [2.5, 3.5)": {
+    "rounds": 1290,
+    "stopped": 709
+   },
+   "period (d): [3.5, 4.5)": {
+    "rounds": 1514,
+    "stopped": 719
+   },
+   "period (d): [4.5, 5.5)": {
+    "rounds": 1220,
+    "stopped": 462
+   },
+   "train transits: 10": {
+    "rounds": 301,
+    "stopped": 167
+   },
+   "train transits: 11": {
+    "rounds": 87,
+    "stopped": 55
+   },
+   "train transits: 12": {
+    "rounds": 230,
+    "stopped": 146
+   },
+   "train transits: 13": {
+    "rounds": 57,
+    "stopped": 35
+   },
+   "train transits: 14": {
+    "rounds": 134,
+    "stopped": 80
+   },
+   "train transits: 15": {
+    "rounds": 56,
+    "stopped": 34
+   },
+   "train transits: 16": {
+    "rounds": 122,
+    "stopped": 77
+   },
+   "train transits: 17": {
+    "rounds": 24,
+    "stopped": 14
+   },
+   "train transits: 18": {
+    "rounds": 24,
+    "stopped": 14
+   },
+   "train transits: 3": {
+    "rounds": 399,
+    "stopped": 261
+   },
+   "train transits: 4": {
+    "rounds": 594,
+    "stopped": 332
+   },
+   "train transits: 5": {
+    "rounds": 442,
+    "stopped": 180
+   },
+   "train transits: 6": {
+    "rounds": 1032,
+    "stopped": 377
+   },
+   "train transits: 7": {
+    "rounds": 431,
+    "stopped": 188
+   },
+   "train transits: 8": {
+    "rounds": 671,
+    "stopped": 317
+   },
+   "train transits: 9": {
+    "rounds": 196,
+    "stopped": 94
+   }
+  }
+ },
+ "stopped_ratio_bins": {
+  "AR(1)": {
+   "(1.5, 2]": 131,
+   "> 3": 75,
+   "(2, 3]": 108,
+   "(1, 1.5]": 327,
+   "<= 1": 3
+  },
+  "white": {
+   "(1.5, 2]": 432,
+   "(1, 1.5]": 715,
+   "> 3": 677,
+   "(2, 3]": 544,
+   "<= 1": 3
+  }
+ },
+ "t4_admission_of_stopped_rounds": {
+  "AR(1)": {
+   "definite": 569,
+   "excluded": 75
+  },
+  "white": {
+   "definite": 1692,
+   "excluded": 672,
+   "ambiguous": 7
+  }
+ },
+ "hidden_noise": {
+  "AR(1)": {
+   "cause": {
+    "(i) noise model undetermined": 1110
+   },
+   "cause by layout and hidden year": {
+    "(i) noise model undetermined | few_train, 1 yr | 2018": 142,
+    "(i) noise model undetermined | few_train, 1 yr | 2019": 55,
+    "(i) noise model undetermined | few_train, 2 yr | 2018": 171,
+    "(i) noise model undetermined | few_train, 2 yr | 2020": 130,
+    "(i) noise model undetermined | few_train, 3 yr | 2018": 163,
+    "(i) noise model undetermined | few_train, 3 yr | 2021": 20,
+    "(i) noise model undetermined | two_years | 2018": 220,
+    "(i) noise model undetermined | two_years | 2020": 209
+   },
+   "grid size": {
+    "(i) noise model undetermined | [1, 20)": 555,
+    "(i) noise model undetermined | [20, 40)": 408,
+    "(i) noise model undetermined | [40, 60)": 147
+   },
+   "dP points below R": {
+    "(i) noise model undetermined | >= 1": 1110
+   },
+   "every count zero": {
+    "(i) noise model undetermined | True": 1110
+   },
+   "largest count": {
+    "(i) noise model undetermined | [0, 1)": 1110
+   }
+  },
+  "white": {
+   "cause": {
+    "(i) noise model undetermined": 1131
+   },
+   "cause by layout and hidden year": {
+    "(i) noise model undetermined | few_train, 1 yr | 2018": 112,
+    "(i) noise model undetermined | few_train, 1 yr | 2019": 60,
+    "(i) noise model undetermined | few_train, 2 yr | 2018": 129,
+    "(i) noise model undetermined | few_train, 2 yr | 2020": 60,
+    "(i) noise model undetermined | few_train, 3 yr | 2018": 106,
+    "(i) noise model undetermined | few_train, 3 yr | 2021": 7,
+    "(i) noise model undetermined | two_years | 2018": 344,
+    "(i) noise model undetermined | two_years | 2020": 313
+   },
+   "grid size": {
+    "(i) noise model undetermined | [1, 20)": 172,
+    "(i) noise model undetermined | [20, 40)": 659,
+    "(i) noise model undetermined | [40, 60)": 300
+   },
+   "dP points below R": {
+    "(i) noise model undetermined | >= 1": 1131
+   },
+   "every count zero": {
+    "(i) noise model undetermined | True": 1131
+   },
+   "largest count": {
+    "(i) noise model undetermined | [0, 1)": 1131
+   }
+  }
+ }
+}

@@ -112,6 +112,20 @@ stores the clients use.
 - **The working environment** is updated and is the only one used for downloads.
 - Creating that environment and running the comparison come with the update's approval.
 
+## New alerts of 2026-10-23 (43 to 54; read from their summaries, nothing changed)
+
+Twelve alerts opened on 2026-10-23, all fixed by the versions already planned: Pillow 13.0.0
+(alerts 43 to 53) and virtualenv 21.14.9 (alert 54); each alert's number, GHSA id and link,
+summary and patched version, with the time of reading: [alerts-43-54.json](alerts-43-54.json)
+([scripts/new_alerts.py](scripts/new_alerts.py)). By their summaries: image **decoding or
+opening** (MPO, DCX, Spider, BMP, multi-frame loaders, PDF append, TarIO, PNG eXIf parsing,
+WMF/EMF, the bundled OpenJPEG through `Image.open`), and **JPEG writing**; of the paths these
+summaries name, none is the PNG encoding of the project's own figures, the one Pillow path the
+project reaches. Alert 48 (undefined behaviour in native integer operations) does not name its
+path in its summary: **its reachability is not determined**, and the conclusion above excludes it. Alert 54 (virtualenv's
+generated files following links) needs links planted in an environment's directory, as alerts 41
+and 42. The plan of the update (2026-10-27) is unchanged.
+
 ## Revision 2 (the maintainer's decisions of 2026-10-22 on the delivery `0abc6de`, item 5)
 
 **Approved by the maintainer:** downloads through the vulnerable environment are suspended, and the

@@ -1,5 +1,13 @@
 # Viability check (2026-10-23, read only)
 
+> **Follow-up (the maintainer's option 2, 2026-10-23):** the two-year barriers, declared before
+> the reading ([two-year-declaration.md](two-year-declaration.md)) and read
+> ([two-year-results.md](two-year-results.md)): on these records only capacity, timing (T4's
+> scope) and the undetermined hidden noise resolved together bring the white noise above the 195
+> under specification B; the undetermined hidden noise is, in every round, an undetermined noise
+> model with no valid replica depth counted, its sub-cause not recorded, and no committed plan
+> specifies its repair.
+
 Asked by the maintainer on 2026-10-23 after the delivery `cb671a7` (item 1). **Read only:** no lot,
 no change of a criterion, of the engine or of the environment; X2f is not authorized. Every number
 comes from committed code and records, or from the R_min study's archived records read in place
@@ -147,6 +155,9 @@ upper bound of G1 from the holdout becomes its non-FAIL fraction, **249.6 of 250
 and 2 AR(1) variability targets FAIL as read). This would change what the verdict
 asserts: a claim never tested on a hidden year would be reported as WEAKENED, a survival verdict.
 It would need its own specification and validation, and is not proposed.
+
+> **Recorded on the maintainer's decision of 2026-10-23 (item 3):** this quantification stands as
+> a **warning**: the lever empties what the verdict asserts. It is not a path proposed.
 
 ## 7. Short report
 

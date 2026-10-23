@@ -176,14 +176,17 @@ revision 2 is withdrawn. Read on 2026-10-23 ([ci-minutes.json](ci-minutes.json),
 
 | What | Value |
 |---|---|
-| Runs since 2026-10-19 | 57, **172.1 job-hours** (10 326.5 job-minutes) |
-| The longest job | **47.4 min**; **51 of the 57 runs** had a job over 15 minutes |
+| Actions runs since 2026-10-19 | 57 (56 of the CI workflow, 1 Dependency Graph), **172.1 job-hours** (10 326.5 job-minutes) |
+| The longest job | **47.4 min**; **51 of the 56 CI runs** had a job over 15 minutes |
 | Storage | 28 Actions caches, 5.43 GB; no artifact kept (recorded with its time of reading in `ci-minutes.json`, `storage`) |
 | Runners | the workflow's matrix: `ubuntu-24.04` and `windows-2025`, GitHub-hosted, on a public repository; no other runner label in the workflows |
 | Billing, paid runners | **unknown**: the account's billing was not read (not available to this token's scope) |
 
 - **The jobs' duration is above the ROADMAP's 15-minute target per job** in most runs: recorded
   here as a finding, for the maintainer; nothing is changed, and no check is reduced.
+- **Recorded as a debt (the maintainer's decision of 2026-10-23), not corrected now:** 51 of the
+  56 CI runs since 2026-10-19 (57 Actions runs with one Dependency Graph run) had a job above 15
+  minutes, the longest 47.4 minutes (read on 2026-10-23). It stays open until a correction is planned; no check is removed to meet the target.
 - Reported at the end of each round with the same script (durations and storage); the runner
   labels from the workflow file; the billing stays unknown unless the maintainer reads it.
 

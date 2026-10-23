@@ -1,0 +1,1158 @@
+{
+ "note": "The two-year barriers (two-year-declaration.md), read only: the R_min study's archived records\n(the `constant` scenario, R = 8 with bs-choice's pair, the measurable band) and the injected\ngeometry rebuilt from the frozen generator's own functions (no engine call). Items a (the timing\nrule), b (T4 at its best), c (the undetermined hidden noise) and d (the combined optimistic bound).",
+ "integrity": {
+  "archive_sha256": "51fa9b3fab62eda7ed8dee24dd521d251ea12cd7dab77d94902353e6624fba30",
+  "records_read": 25600,
+  "reproduction_check": {
+   "AR(1), no variability": true,
+   "AR(1), variability": true,
+   "white, no variability": true,
+   "white, variability": true
+  },
+  "rebuilt_years_unequal": 0,
+  "build_case_spot_check": {
+   "AR(1) | two_years": [
+    true,
+    true,
+    true
+   ],
+   "AR(1) | few_train, 1 yr": [
+    true,
+    true,
+    true
+   ],
+   "AR(1) | few_train, 2 yr": [
+    true,
+    true,
+    true
+   ],
+   "AR(1) | few_train, 3 yr": [
+    true,
+    true,
+    true
+   ],
+   "white | two_years": [
+    true,
+    true,
+    true
+   ],
+   "white | few_train, 1 yr": [
+    true,
+    true,
+    true
+   ],
+   "white | few_train, 2 yr": [
+    true,
+    true,
+    true
+   ],
+   "white | few_train, 3 yr": [
+    true,
+    true,
+    true
+   ]
+  }
+ },
+ "statuses": {
+  "AR(1) | 2 years": {
+   "as_read|legacy": {
+    "PASS": 963,
+    "INCONCLUSIVE": 1437
+   },
+   "as_read|spec_b": {
+    "PASS": 626,
+    "INCONCLUSIVE": 1774
+   },
+   "b_t4_definite|legacy": {
+    "PASS": 1481,
+    "INCONCLUSIVE": 919
+   },
+   "b_t4_definite|spec_b": {
+    "PASS": 677,
+    "INCONCLUSIVE": 1723
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "PASS": 1481,
+    "INCONCLUSIVE": 919
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "PASS": 677,
+    "INCONCLUSIVE": 1723
+   },
+   "capacity_only|legacy": {
+    "PASS": 1851,
+    "INCONCLUSIVE": 549
+   },
+   "capacity_only|spec_b": {
+    "PASS": 1168,
+    "INCONCLUSIVE": 1232
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "PASS": 2399,
+    "INCONCLUSIVE": 1
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "PASS": 2299,
+    "INCONCLUSIVE": 101
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "PASS": 2400
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "PASS": 2373,
+    "INCONCLUSIVE": 27
+   }
+  },
+  "AR(1) | 3+ years": {
+   "as_read|legacy": {
+    "PASS": 381,
+    "INCONCLUSIVE": 419
+   },
+   "as_read|spec_b": {
+    "INCONCLUSIVE": 552,
+    "PASS": 248
+   },
+   "b_t4_definite|legacy": {
+    "PASS": 381,
+    "INCONCLUSIVE": 419
+   },
+   "b_t4_definite|spec_b": {
+    "INCONCLUSIVE": 552,
+    "PASS": 248
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "PASS": 381,
+    "INCONCLUSIVE": 419
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "INCONCLUSIVE": 552,
+    "PASS": 248
+   },
+   "capacity_only|legacy": {
+    "PASS": 800
+   },
+   "capacity_only|spec_b": {
+    "PASS": 797,
+    "INCONCLUSIVE": 3
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "PASS": 800
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "PASS": 797,
+    "INCONCLUSIVE": 3
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "PASS": 800
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "PASS": 797,
+    "INCONCLUSIVE": 3
+   }
+  },
+  "AR(1) | 3+ years, variability": {
+   "as_read|legacy": {
+    "INCONCLUSIVE": 2724,
+    "PASS": 474,
+    "FAIL": 2
+   },
+   "as_read|spec_b": {
+    "INCONCLUSIVE": 3164,
+    "PASS": 34,
+    "FAIL": 2
+   },
+   "b_t4_definite|legacy": {
+    "INCONCLUSIVE": 2724,
+    "PASS": 474,
+    "FAIL": 2
+   },
+   "b_t4_definite|spec_b": {
+    "INCONCLUSIVE": 3164,
+    "PASS": 34,
+    "FAIL": 2
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "INCONCLUSIVE": 2724,
+    "PASS": 474,
+    "FAIL": 2
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "INCONCLUSIVE": 3164,
+    "PASS": 34,
+    "FAIL": 2
+   },
+   "capacity_only|legacy": {
+    "PASS": 3197,
+    "INCONCLUSIVE": 1,
+    "FAIL": 2
+   },
+   "capacity_only|spec_b": {
+    "PASS": 2968,
+    "INCONCLUSIVE": 230,
+    "FAIL": 2
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "PASS": 3197,
+    "INCONCLUSIVE": 1,
+    "FAIL": 2
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "PASS": 3000,
+    "INCONCLUSIVE": 198,
+    "FAIL": 2
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "PASS": 3197,
+    "INCONCLUSIVE": 1,
+    "FAIL": 2
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "PASS": 3041,
+    "INCONCLUSIVE": 157,
+    "FAIL": 2
+   }
+  },
+  "white | 2 years": {
+   "as_read|legacy": {
+    "INCONCLUSIVE": 1884,
+    "PASS": 510,
+    "FAIL": 6
+   },
+   "as_read|spec_b": {
+    "INCONCLUSIVE": 2189,
+    "PASS": 205,
+    "FAIL": 6
+   },
+   "b_t4_definite|legacy": {
+    "PASS": 1784,
+    "INCONCLUSIVE": 610,
+    "FAIL": 6
+   },
+   "b_t4_definite|spec_b": {
+    "PASS": 622,
+    "INCONCLUSIVE": 1772,
+    "FAIL": 6
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "PASS": 1788,
+    "INCONCLUSIVE": 606,
+    "FAIL": 6
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "PASS": 625,
+    "INCONCLUSIVE": 1769,
+    "FAIL": 6
+   },
+   "capacity_only|legacy": {
+    "INCONCLUSIVE": 1409,
+    "PASS": 985,
+    "FAIL": 6
+   },
+   "capacity_only|spec_b": {
+    "INCONCLUSIVE": 2113,
+    "PASS": 281,
+    "FAIL": 6
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "PASS": 2276,
+    "INCONCLUSIVE": 118,
+    "FAIL": 6
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "PASS": 1819,
+    "INCONCLUSIVE": 575,
+    "FAIL": 6
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "PASS": 2394,
+    "FAIL": 6
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "PASS": 2373,
+    "INCONCLUSIVE": 21,
+    "FAIL": 6
+   }
+  },
+  "white | 3+ years": {
+   "as_read|legacy": {
+    "INCONCLUSIVE": 515,
+    "PASS": 285
+   },
+   "as_read|spec_b": {
+    "INCONCLUSIVE": 604,
+    "PASS": 196
+   },
+   "b_t4_definite|legacy": {
+    "INCONCLUSIVE": 515,
+    "PASS": 285
+   },
+   "b_t4_definite|spec_b": {
+    "INCONCLUSIVE": 604,
+    "PASS": 196
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "INCONCLUSIVE": 515,
+    "PASS": 285
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "INCONCLUSIVE": 604,
+    "PASS": 196
+   },
+   "capacity_only|legacy": {
+    "PASS": 800
+   },
+   "capacity_only|spec_b": {
+    "PASS": 799,
+    "INCONCLUSIVE": 1
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "PASS": 800
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "PASS": 799,
+    "INCONCLUSIVE": 1
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "PASS": 800
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "PASS": 799,
+    "INCONCLUSIVE": 1
+   }
+  },
+  "white | 3+ years, variability": {
+   "as_read|legacy": {
+    "INCONCLUSIVE": 3119,
+    "PASS": 81
+   },
+   "as_read|spec_b": {
+    "INCONCLUSIVE": 3197,
+    "PASS": 3
+   },
+   "b_t4_definite|legacy": {
+    "INCONCLUSIVE": 3119,
+    "PASS": 81
+   },
+   "b_t4_definite|spec_b": {
+    "INCONCLUSIVE": 3197,
+    "PASS": 3
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "INCONCLUSIVE": 3119,
+    "PASS": 81
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "INCONCLUSIVE": 3197,
+    "PASS": 3
+   },
+   "capacity_only|legacy": {
+    "PASS": 3188,
+    "INCONCLUSIVE": 12
+   },
+   "capacity_only|spec_b": {
+    "PASS": 3014,
+    "INCONCLUSIVE": 186
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "PASS": 3188,
+    "INCONCLUSIVE": 12
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "PASS": 3014,
+    "INCONCLUSIVE": 186
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "PASS": 3188,
+    "INCONCLUSIVE": 12
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "PASS": 3014,
+    "INCONCLUSIVE": 186
+   }
+  }
+ },
+ "still_inconclusive_spec_b": {
+  "AR(1) | 2 years": {
+   "b_t4_definite": {
+    "hidden_noise_undetermined": 659,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 115,
+    "insufficient_capacity_train": 559,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year": 43,
+    "insufficient_capacity_hidden_noise": 125,
+    "hidden_noise_undetermined + insufficient_capacity_train": 131,
+    "train-only timing uncertainty in the hidden year": 18,
+    "insufficient_capacity_train + train_replicas_below_r_min": 9,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 16,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 11,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise": 33,
+    "insufficient_capacity_hidden_noise + train-only timing uncertainty in the hidden year": 2,
+    "hidden_noise_undetermined + only": 1,
+    "only": 1
+   },
+   "b_t4_with_ambiguous": {
+    "hidden_noise_undetermined": 659,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 115,
+    "insufficient_capacity_train": 559,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year": 43,
+    "insufficient_capacity_hidden_noise": 125,
+    "hidden_noise_undetermined + insufficient_capacity_train": 131,
+    "train-only timing uncertainty in the hidden year": 18,
+    "insufficient_capacity_train + train_replicas_below_r_min": 9,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 16,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 11,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise": 33,
+    "insufficient_capacity_hidden_noise + train-only timing uncertainty in the hidden year": 2,
+    "hidden_noise_undetermined + only": 1,
+    "only": 1
+   },
+   "capacity_only": {
+    "hidden_noise_undetermined": 617,
+    "train-only timing uncertainty in the hidden year": 371,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 217,
+    "train_replicas_below_r_min": 9,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 16,
+    "hidden_noise_undetermined + only": 1,
+    "only": 1
+   },
+   "d1_capacity_t4_hidden": {
+    "train-only timing uncertainty in the hidden year": 74,
+    "train_replicas_below_r_min": 25,
+    "only": 2
+   },
+   "d2_capacity_all_timing_hidden": {
+    "train_replicas_below_r_min": 25,
+    "only": 2
+   }
+  },
+  "AR(1) | 3+ years": {
+   "b_t4_definite": {
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 53,
+    "insufficient_capacity_train": 478,
+    "insufficient_capacity_hidden_noise": 18,
+    "train_replicas_below_r_min": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train_replicas_below_r_min": 1,
+    "insufficient_capacity_train + train_replicas_below_r_min": 1
+   },
+   "b_t4_with_ambiguous": {
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 53,
+    "insufficient_capacity_train": 478,
+    "insufficient_capacity_hidden_noise": 18,
+    "train_replicas_below_r_min": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train_replicas_below_r_min": 1,
+    "insufficient_capacity_train + train_replicas_below_r_min": 1
+   },
+   "capacity_only": {
+    "train_replicas_below_r_min": 3
+   },
+   "d1_capacity_t4_hidden": {
+    "train_replicas_below_r_min": 3
+   },
+   "d2_capacity_all_timing_hidden": {
+    "train_replicas_below_r_min": 3
+   }
+  },
+  "AR(1) | 3+ years, variability": {
+   "b_t4_definite": {
+    "insufficient_capacity_train": 2565,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise + insufficient_capacity_train": 13,
+    "hidden_noise_undetermined + insufficient_capacity_train": 15,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 298,
+    "insufficient_capacity_train + train_replicas_below_r_min": 23,
+    "insufficient_capacity_hidden_noise": 71,
+    "insufficient_capacity_train + train_noise_undetermined": 107,
+    "train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 1,
+    "duration_period_ratio_above_max + insufficient_capacity_train + train_noise_undetermined": 2,
+    "insufficient_capacity_train + not_detected_not_inconsistent": 2,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year": 35,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise + train_replicas_below_r_min": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train-only timing uncertainty in the hidden year": 2,
+    "hidden_noise_undetermined": 2,
+    "train_noise_undetermined + train_replicas_below_r_min": 1,
+    "insufficient_capacity_train + train_snr_below_gate": 1,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise": 2,
+    "insufficient_capacity_train + train_noise_undetermined + train_replicas_below_r_min": 1,
+    "insufficient_capacity_hidden_noise + train_noise_undetermined": 1,
+    "insufficient_capacity_hidden_noise + train-only timing uncertainty in the hidden year": 2,
+    "hidden_noise_undetermined + insufficient_capacity_train + train_replicas_below_r_min": 2,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year + train_noise_undetermined": 1,
+    "not_detected_not_inconsistent": 1,
+    "duration_period_ratio_above_max + insufficient_capacity_train": 8,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 3,
+    "hidden_noise_undetermined + insufficient_capacity_train + train-only timing uncertainty in the hidden year": 1,
+    "hidden_window_fraction_above_max + train-only timing uncertainty in the hidden year": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train_noise_undetermined": 1,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 1
+   },
+   "b_t4_with_ambiguous": {
+    "insufficient_capacity_train": 2565,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise + insufficient_capacity_train": 13,
+    "hidden_noise_undetermined + insufficient_capacity_train": 15,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 298,
+    "insufficient_capacity_train + train_replicas_below_r_min": 23,
+    "insufficient_capacity_hidden_noise": 71,
+    "insufficient_capacity_train + train_noise_undetermined": 107,
+    "train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 1,
+    "duration_period_ratio_above_max + insufficient_capacity_train + train_noise_undetermined": 2,
+    "insufficient_capacity_train + not_detected_not_inconsistent": 2,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year": 35,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise + train_replicas_below_r_min": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train-only timing uncertainty in the hidden year": 2,
+    "hidden_noise_undetermined": 2,
+    "train_noise_undetermined + train_replicas_below_r_min": 1,
+    "insufficient_capacity_train + train_snr_below_gate": 1,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise": 2,
+    "insufficient_capacity_train + train_noise_undetermined + train_replicas_below_r_min": 1,
+    "insufficient_capacity_hidden_noise + train_noise_undetermined": 1,
+    "insufficient_capacity_hidden_noise + train-only timing uncertainty in the hidden year": 2,
+    "hidden_noise_undetermined + insufficient_capacity_train + train_replicas_below_r_min": 2,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year + train_noise_undetermined": 1,
+    "not_detected_not_inconsistent": 1,
+    "duration_period_ratio_above_max + insufficient_capacity_train": 8,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 3,
+    "hidden_noise_undetermined + insufficient_capacity_train + train-only timing uncertainty in the hidden year": 1,
+    "hidden_window_fraction_above_max + train-only timing uncertainty in the hidden year": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train_noise_undetermined": 1,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 1
+   },
+   "capacity_only": {
+    "hidden_noise_undetermined": 32,
+    "train_replicas_below_r_min": 23,
+    "train_noise_undetermined": 109,
+    "train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 4,
+    "duration_period_ratio_above_max + train_noise_undetermined": 2,
+    "not_detected_not_inconsistent": 3,
+    "train-only timing uncertainty in the hidden year": 39,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 3,
+    "train_noise_undetermined + train_replicas_below_r_min": 2,
+    "train_snr_below_gate": 1,
+    "train-only timing uncertainty in the hidden year + train_noise_undetermined": 1,
+    "duration_period_ratio_above_max": 8,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 2,
+    "hidden_window_fraction_above_max + train-only timing uncertainty in the hidden year": 1
+   },
+   "d1_capacity_t4_hidden": {
+    "train_replicas_below_r_min": 26,
+    "train_noise_undetermined": 109,
+    "train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 4,
+    "duration_period_ratio_above_max + train_noise_undetermined": 2,
+    "not_detected_not_inconsistent": 3,
+    "train-only timing uncertainty in the hidden year": 41,
+    "train_noise_undetermined + train_replicas_below_r_min": 2,
+    "train_snr_below_gate": 1,
+    "train-only timing uncertainty in the hidden year + train_noise_undetermined": 1,
+    "duration_period_ratio_above_max": 8,
+    "hidden_window_fraction_above_max + train-only timing uncertainty in the hidden year": 1
+   },
+   "d2_capacity_all_timing_hidden": {
+    "train_replicas_below_r_min": 30,
+    "train_noise_undetermined": 110,
+    "duration_period_ratio_above_max + train_noise_undetermined": 2,
+    "not_detected_not_inconsistent": 3,
+    "train_noise_undetermined + train_replicas_below_r_min": 2,
+    "train_snr_below_gate": 1,
+    "duration_period_ratio_above_max": 8,
+    "hidden_window_fraction_above_max": 1
+   }
+  },
+  "white | 2 years": {
+   "capacity_only": {
+    "train-only timing uncertainty in the hidden year": 1209,
+    "hidden_noise_undetermined": 538,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 345,
+    "train_replicas_below_r_min": 4,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 7,
+    "train-only timing uncertainty in the hidden year + train_replicas_below_r_min": 1,
+    "only": 5,
+    "hidden_noise_undetermined + only": 2,
+    "not_detected_not_inconsistent": 1,
+    "hidden_noise_undetermined + not_detected_not_inconsistent": 1
+   },
+   "b_t4_definite": {
+    "insufficient_capacity_train": 288,
+    "train-only timing uncertainty in the hidden year": 454,
+    "hidden_noise_undetermined": 778,
+    "insufficient_capacity_hidden_noise": 40,
+    "hidden_noise_undetermined + insufficient_capacity_train": 60,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 14,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year": 72,
+    "insufficient_capacity_train + train_replicas_below_r_min": 4,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 31,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise": 14,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 7,
+    "train_replicas_below_r_min": 1,
+    "insufficient_capacity_train + only": 5,
+    "hidden_noise_undetermined + only": 2,
+    "not_detected_not_inconsistent": 1,
+    "hidden_noise_undetermined + not_detected_not_inconsistent": 1
+   },
+   "b_t4_with_ambiguous": {
+    "insufficient_capacity_train": 288,
+    "train-only timing uncertainty in the hidden year": 451,
+    "hidden_noise_undetermined": 778,
+    "insufficient_capacity_hidden_noise": 40,
+    "hidden_noise_undetermined + insufficient_capacity_train": 60,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 14,
+    "insufficient_capacity_train + train-only timing uncertainty in the hidden year": 72,
+    "insufficient_capacity_train + train_replicas_below_r_min": 4,
+    "hidden_noise_undetermined + train-only timing uncertainty in the hidden year": 31,
+    "hidden_noise_undetermined + insufficient_capacity_hidden_noise": 14,
+    "hidden_noise_undetermined + train_replicas_below_r_min": 7,
+    "train_replicas_below_r_min": 1,
+    "insufficient_capacity_train + only": 5,
+    "hidden_noise_undetermined + only": 2,
+    "not_detected_not_inconsistent": 1,
+    "hidden_noise_undetermined + not_detected_not_inconsistent": 1
+   },
+   "d1_capacity_t4_hidden": {
+    "train-only timing uncertainty in the hidden year": 554,
+    "train_replicas_below_r_min": 12,
+    "only": 7,
+    "not_detected_not_inconsistent": 2
+   },
+   "d2_capacity_all_timing_hidden": {
+    "train_replicas_below_r_min": 12,
+    "only": 7,
+    "not_detected_not_inconsistent": 2
+   }
+  },
+  "white | 3+ years": {
+   "b_t4_definite": {
+    "insufficient_capacity_train": 531,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 60,
+    "insufficient_capacity_hidden_noise": 12,
+    "insufficient_capacity_train + train_replicas_below_r_min": 1
+   },
+   "b_t4_with_ambiguous": {
+    "insufficient_capacity_train": 531,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 60,
+    "insufficient_capacity_hidden_noise": 12,
+    "insufficient_capacity_train + train_replicas_below_r_min": 1
+   },
+   "capacity_only": {
+    "train_replicas_below_r_min": 1
+   },
+   "d1_capacity_t4_hidden": {
+    "train_replicas_below_r_min": 1
+   },
+   "d2_capacity_all_timing_hidden": {
+    "train_replicas_below_r_min": 1
+   }
+  },
+  "white | 3+ years, variability": {
+   "b_t4_definite": {
+    "insufficient_capacity_train": 2861,
+    "insufficient_capacity_train + train_noise_undetermined": 122,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 130,
+    "insufficient_capacity_train + train_snr_below_gate": 16,
+    "insufficient_capacity_train + train_noise_undetermined + train_snr_below_gate": 3,
+    "insufficient_capacity_hidden_noise": 20,
+    "duration_period_ratio_above_max + insufficient_capacity_hidden_noise + train_noise_undetermined": 1,
+    "duration_period_ratio_above_max + insufficient_capacity_train": 15,
+    "duration_period_ratio_above_max + insufficient_capacity_train + train_noise_undetermined": 3,
+    "train_snr_below_gate": 6,
+    "insufficient_capacity_train + train_noise_undetermined + train_replicas_below_r_min": 2,
+    "insufficient_capacity_train + train_replicas_below_r_min + train_snr_below_gate": 1,
+    "train_noise_undetermined": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train_noise_undetermined": 1,
+    "train_noise_undetermined + train_snr_below_gate": 4,
+    "insufficient_capacity_train + train_replicas_below_r_min": 9,
+    "insufficient_capacity_train + not_detected_not_inconsistent": 1,
+    "train_noise_undetermined + train_replicas_below_r_min + train_snr_below_gate": 1
+   },
+   "b_t4_with_ambiguous": {
+    "insufficient_capacity_train": 2861,
+    "insufficient_capacity_train + train_noise_undetermined": 122,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train": 130,
+    "insufficient_capacity_train + train_snr_below_gate": 16,
+    "insufficient_capacity_train + train_noise_undetermined + train_snr_below_gate": 3,
+    "insufficient_capacity_hidden_noise": 20,
+    "duration_period_ratio_above_max + insufficient_capacity_hidden_noise + train_noise_undetermined": 1,
+    "duration_period_ratio_above_max + insufficient_capacity_train": 15,
+    "duration_period_ratio_above_max + insufficient_capacity_train + train_noise_undetermined": 3,
+    "train_snr_below_gate": 6,
+    "insufficient_capacity_train + train_noise_undetermined + train_replicas_below_r_min": 2,
+    "insufficient_capacity_train + train_replicas_below_r_min + train_snr_below_gate": 1,
+    "train_noise_undetermined": 1,
+    "insufficient_capacity_hidden_noise + insufficient_capacity_train + train_noise_undetermined": 1,
+    "train_noise_undetermined + train_snr_below_gate": 4,
+    "insufficient_capacity_train + train_replicas_below_r_min": 9,
+    "insufficient_capacity_train + not_detected_not_inconsistent": 1,
+    "train_noise_undetermined + train_replicas_below_r_min + train_snr_below_gate": 1
+   },
+   "capacity_only": {
+    "train_noise_undetermined": 124,
+    "train_snr_below_gate": 22,
+    "train_noise_undetermined + train_snr_below_gate": 7,
+    "duration_period_ratio_above_max + train_noise_undetermined": 4,
+    "duration_period_ratio_above_max": 15,
+    "train_noise_undetermined + train_replicas_below_r_min": 2,
+    "train_replicas_below_r_min + train_snr_below_gate": 1,
+    "train_replicas_below_r_min": 9,
+    "not_detected_not_inconsistent": 1,
+    "train_noise_undetermined + train_replicas_below_r_min + train_snr_below_gate": 1
+   },
+   "d1_capacity_t4_hidden": {
+    "train_noise_undetermined": 124,
+    "train_snr_below_gate": 22,
+    "train_noise_undetermined + train_snr_below_gate": 7,
+    "duration_period_ratio_above_max + train_noise_undetermined": 4,
+    "duration_period_ratio_above_max": 15,
+    "train_noise_undetermined + train_replicas_below_r_min": 2,
+    "train_replicas_below_r_min + train_snr_below_gate": 1,
+    "train_replicas_below_r_min": 9,
+    "not_detected_not_inconsistent": 1,
+    "train_noise_undetermined + train_replicas_below_r_min + train_snr_below_gate": 1
+   },
+   "d2_capacity_all_timing_hidden": {
+    "train_noise_undetermined": 124,
+    "train_snr_below_gate": 22,
+    "train_noise_undetermined + train_snr_below_gate": 7,
+    "duration_period_ratio_above_max + train_noise_undetermined": 4,
+    "duration_period_ratio_above_max": 15,
+    "train_noise_undetermined + train_replicas_below_r_min": 2,
+    "train_replicas_below_r_min + train_snr_below_gate": 1,
+    "train_replicas_below_r_min": 9,
+    "not_detected_not_inconsistent": 1,
+    "train_noise_undetermined + train_replicas_below_r_min + train_snr_below_gate": 1
+   }
+  }
+ },
+ "combined_at_quotas": {
+  "white": {
+   "as_read|legacy": {
+    "pass_of_250": 50.953125,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.2125,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.35625,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.0253125,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "as_read|spec_b": {
+    "pass_of_250": 25.109375,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.08541666666666667,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.245,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.0009375,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_definite|legacy": {
+    "pass_of_250": 130.578125,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.7433333333333333,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 0.35625,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.0253125,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_definite|spec_b": {
+    "pass_of_250": 51.171875,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.25916666666666666,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.245,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.0009375,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "pass_of_250": 130.828125,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.745,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 0.35625,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.0253125,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "pass_of_250": 51.359375,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.2604166666666667,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.245,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.0009375,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "capacity_only|legacy": {
+    "pass_of_250": 161.375,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.41041666666666665,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 1.0,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.99625,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "capacity_only|spec_b": {
+    "pass_of_250": 114.59375,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.11708333333333333,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.99875,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.941875,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "pass_of_250": 242.0625,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.9483333333333334,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 1.0,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.99625,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "pass_of_250": 210.71875,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.7579166666666667,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 0.99875,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.941875,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "pass_of_250": 249.4375,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.9975,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 1.0,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.99625,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "pass_of_250": 245.34375,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.98875,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 0.99875,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.941875,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   }
+  },
+  "AR(1)": {
+   "as_read|legacy": {
+    "pass_of_250": 91.40625,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.40125,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.47625,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.148125,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "as_read|spec_b": {
+    "pass_of_250": 55.15624999999999,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.2608333333333333,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.31,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.010625,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_definite|legacy": {
+    "pass_of_250": 123.78125,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.6170833333333333,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.47625,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.148125,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_definite|spec_b": {
+    "pass_of_250": 58.34375,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.28208333333333335,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.31,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.010625,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_with_ambiguous|legacy": {
+    "pass_of_250": 123.78125,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.6170833333333333,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.47625,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.148125,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "b_t4_with_ambiguous|spec_b": {
+    "pass_of_250": 58.34375,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.28208333333333335,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.31,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.010625,
+      "g1_count_reached_at_quota": false
+     }
+    }
+   },
+   "capacity_only|legacy": {
+    "pass_of_250": 215.640625,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.77125,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 1.0,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.9990625,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "capacity_only|spec_b": {
+    "pass_of_250": 169.1875,
+    "reaches_195": false,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.4866666666666667,
+      "g1_count_reached_at_quota": false
+     },
+     "3+ years": {
+      "pass_fraction": 0.99625,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.9275,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d1_capacity_t4_hidden|legacy": {
+    "pass_of_250": 249.890625,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.9995833333333334,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 1.0,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.9990625,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d1_capacity_t4_hidden|spec_b": {
+    "pass_of_250": 240.375,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.9579166666666666,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 0.99625,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.9375,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d2_capacity_all_timing_hidden|legacy": {
+    "pass_of_250": 249.953125,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 1.0,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 1.0,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.9990625,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   },
+   "d2_capacity_all_timing_hidden|spec_b": {
+    "pass_of_250": 245.640625,
+    "reaches_195": true,
+    "regimes": {
+     "2 years": {
+      "pass_fraction": 0.98875,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years": {
+      "pass_fraction": 0.99625,
+      "g1_count_reached_at_quota": true
+     },
+     "3+ years, variability": {
+      "pass_fraction": 0.9503125,
+      "g1_count_reached_at_quota": true
+     }
+    }
+   }
+  }
+ }
+}
