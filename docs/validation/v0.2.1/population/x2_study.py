@@ -54,10 +54,12 @@ LOT_AFFINITY = "0xffffff00"  # logical processors 8 to 31
 
 @dataclass(frozen=True)
 class LotSpec:
-    """A lot of this module: X2 itself (the default, unchanged), or its extension X2e
-    (stage-1/x2e-declaration.md): the prefix, the groups, the cases per group, the realizations,
-    the seeds' root (X2e's seeds also carry the prefix, since case ids repeat across prefixes), the
-    record's and the lot's formats."""
+    """A lot of this module: X2 itself (the default, unchanged), its extension X2e
+    (stage-1/x2e-declaration.md), or a sub-lot of spec C's choice lot X2f
+    (stage-1/after-x2e/x2f-declaration.md): the prefix, the groups, the cases per
+    group, the realizations, the seeds' root (X2e's and X2f's seeds also carry the prefix, since
+    case ids repeat across prefixes), the record's and the lot's formats; and, for X2f, the regime
+    ``selection``: ``(group, mechanisms, cases)`` entries that replace ``n_cases`` per group."""
 
     name: str
     prefix: str
@@ -68,6 +70,7 @@ class LotSpec:
     seed_with_prefix: bool
     record_format: str
     lot_format: str
+    selection: tuple[tuple[str, tuple[str, ...], int], ...] = ()
 
 
 X2 = LotSpec(
@@ -84,22 +87,70 @@ X2E = LotSpec(
     "refute-v0.2.1-x2e-record/1",
     "refute-v0.2.1-x2e-lot/1",
 )
-LOTS = {s.name: s for s in (X2, X2E)}
+X2F_PREFIX = "refute-v0.2.1-x2-3"
+TWO_YEARS = ("two_years", "few_train")
+
+
+def _x2f(part: str, groups: tuple[str, ...], selection: tuple) -> LotSpec:
+    return LotSpec(
+        f"x2f-{part}",
+        X2F_PREFIX,
+        groups,
+        0,  # the selection gives the cases
+        100,
+        "refute/v0.2.1/stage-1/X2f",
+        True,
+        f"refute-v0.2.1-x2f-{part}-record/1",
+        f"refute-v0.2.1-x2f-{part}-lot/1",
+        selection,
+    )
+
+
+NO_VARIABILITY = ("white, no variability", "AR(1), no variability")
+VARIABILITY = ("white, variability", "AR(1), variability")
+# the sizes of stage-1/after-x2e/x2f-declaration.md (its sizing rule, scripts/sizing_a.py)
+X2F_S1 = _x2f("s1", NO_VARIABILITY, tuple((g, ("three_years",), 47) for g in NO_VARIABILITY))
+X2F_S2 = _x2f("s2", VARIABILITY, tuple((g, ("variability_some_years",), 45) for g in VARIABILITY))
+X2F_S3 = _x2f(
+    "s3",
+    NO_VARIABILITY,
+    (("white, no variability", TWO_YEARS, 300), ("AR(1), no variability", TWO_YEARS, 146)),
+)
+X2F_SEQUENCE = ("x2f-s1", "x2f-s2", "x2f-s3")  # the order fixed before any result
+LOTS = {s.name: s for s in (X2, X2E, X2F_S1, X2F_S2, X2F_S3)}
+
+
+def _every_kth(rows: list[dict], n: int, what: str) -> list[dict]:
+    """X2's rule: in (band, index) order, every ``len // n``-th row, the first ``n``."""
+    rows = sorted(rows, key=lambda c: (BAND_ORDER.index(c["band"]), c["index"]))
+    step = max(1, len(rows) // n)
+    chosen = rows[::step][:n]
+    if len(chosen) != n:
+        raise ValueError(f"{what}: {len(chosen)} cases, not {n}")
+    return chosen
 
 
 def x2_cases(spec: LotSpec = X2) -> list[dict]:
-    """The lot's cases, ``n_cases`` per group, in group order then (band, index) order (X2: 80)."""
+    """The lot's cases, ``n_cases`` per group, in group order then (band, index) order (X2: 80); for
+    a lot with a regime ``selection``, each entry's cases among its group's planets of its
+    mechanisms, by the same rule, in the selection's order."""
     planets = rs._planets(spec.prefix)
+    if spec.selection:
+        parts = [
+            _every_kth(
+                [c for c in planets if rs.group_of(c) == g and c["mechanism"] in mechanisms],
+                n,
+                f"{g} {mechanisms}",
+            )
+            for g, mechanisms, n in spec.selection
+        ]
+    else:
+        parts = [
+            _every_kth([c for c in planets if rs.group_of(c) == g], spec.n_cases, g)
+            for g in spec.groups
+        ]
     out = []
-    for group in spec.groups:
-        rows = sorted(
-            (c for c in planets if rs.group_of(c) == group),
-            key=lambda c: (BAND_ORDER.index(c["band"]), c["index"]),
-        )
-        step = max(1, len(rows) // spec.n_cases)
-        chosen = rows[::step][: spec.n_cases]
-        if len(chosen) != spec.n_cases:
-            raise ValueError(f"{group}: {len(chosen)} cases, not {spec.n_cases}")
+    for chosen in parts:
         for c in chosen:
             rs._check(c)
         out += chosen
@@ -418,6 +469,13 @@ def record_problems(
         out.append(f"{key}: target {rec.get('target')!r}")  # exact, absent included
     if rec.get("case_id") != case_id or rec.get("realization") != int(j):
         out.append(f"{key}: names {rec.get('case_id')}/{rec.get('realization')}")
+    for field, value in (
+        ("group", rs.group_of(case)),
+        ("mechanism", case["mechanism"]),
+        ("band", case["band"]),
+    ):
+        if rec.get(field) != value:  # the evaluator groups by these (Codex's review)
+            out.append(f"{key}: {field} {rec.get(field)!r} is not the case's {value!r}")
     if rec.get("noise_seed") != seed:
         out.append(f"{key}: seed {rec.get('noise_seed')} is not {seed}")
     if rec.get("configuration") != configuration:
@@ -452,9 +510,11 @@ def record_problems(
     return out
 
 
-def x2_lot_problems(run_dir: Path) -> list[str]:
+def x2_lot_problems(run_dir: Path, full: bool = False) -> list[str]:
     """Every expected task has exactly one record file, at its own path, complete
-    (``record_problems``); no record file outside the manifest's tasks."""
+    (``record_problems``); no record file outside the manifest's tasks. With ``full`` (the
+    evaluation's check), the manifest's tasks must also be exactly the declared lot's, each once:
+    a diagnostic subset is not a lot."""
     run_dir = Path(run_dir)
     data = load_x2_lot(run_dir)
     manifest = data["manifest"]
@@ -467,6 +527,16 @@ def x2_lot_problems(run_dir: Path) -> list[str]:
         for rel in data["files"]
         if rel not in canonical
     ]
+    if full:
+        declared = sorted(
+            [c["id"], int(j), str(realization_seed(rs.group_of(c), c["id"], j, spec))]
+            for c, j in all_tasks(spec)
+        )
+        listed = sorted([c, int(j), str(s)] for c, j, s in manifest["expected"])
+        if listed != declared:
+            problems.append(
+                f"the manifest's {len(listed)} tasks are not the declared lot's {len(declared)}"
+            )
     for (case_id, j), seed in sorted(expected.items()):
         path = record_path(run_dir, case_id, j)
         if not path.exists():
@@ -644,7 +714,7 @@ def lot_rows(run_dir: Path) -> tuple[list[dict], dict, object]:
 
     from refute.core.canonical import canonical_sha256
 
-    problems = x2_lot_problems(run_dir)
+    problems = x2_lot_problems(run_dir, full=True)
     if problems:
         raise SystemExit("the lot is not complete: " + "; ".join(problems[:5]))
     data = load_x2_lot(run_dir)
@@ -719,8 +789,9 @@ def subset_tasks(n_cases: int, n_realizations: int, spec: LotSpec = X2) -> list[
 
 
 def main(argv: list[str]) -> int:
-    """``run <run_dir> --workers <n> [--lot x2|x2e] [--subset <cases per group> <realizations>]
-    [--deadline-hours <h>]``, ``check <run_dir>``, ``evaluate <run_dir> <out>`` or
+    """``run <run_dir> --workers <n> [--lot x2|x2e|x2f-s1|x2f-s2|x2f-s3]
+    [--subset <cases per group> <realizations>]
+    [--deadline-hours <h>]``, ``check <run_dir> [--full]``, ``evaluate <run_dir> <out>`` or
     ``evaluate-pooled <x2-evaluation.json> <x2e run_dir> <out>``."""
     command = argv[0]
     if command == "evaluate-pooled":
@@ -732,7 +803,7 @@ def main(argv: list[str]) -> int:
         return 0
     run_dir = Path(argv[1])
     if command == "check":
-        problems = x2_lot_problems(run_dir)
+        problems = x2_lot_problems(run_dir, full="--full" in argv[2:])
         print(json.dumps({"problems": problems}, indent=1))
         return 1 if problems else 0
     if command == "evaluate":

@@ -1,0 +1,567 @@
+{
+ "since": "2026-10-19",
+ "runs": 56,
+ "job_minutes": 10028.6,
+ "rows": [
+  {
+   "run": 39180258805,
+   "workflow": "CI",
+   "sha": "564e7513f4fa009481a4da69af1c04fbe36bb6b2",
+   "created": "2026-10-19T00:19:26Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 197.62
+  },
+  {
+   "run": 39184903498,
+   "workflow": "CI",
+   "sha": "03edbc2033191cb80d2b5aede2910e7a0457898e",
+   "created": "2026-10-19T01:20:23Z",
+   "event": "push",
+   "conclusion": "failure",
+   "jobs": 12,
+   "job_minutes": 111.9
+  },
+  {
+   "run": 39186100663,
+   "workflow": "CI",
+   "sha": "d31f993f0136cae4b28088c124f47c6b5c090ba4",
+   "created": "2026-10-19T01:36:06Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 131.58
+  },
+  {
+   "run": 39187170851,
+   "workflow": "CI",
+   "sha": "567038cf0e0f388207cd98bc91fcac8c373ae0d9",
+   "created": "2026-10-19T01:50:29Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 120.02
+  },
+  {
+   "run": 39187178043,
+   "workflow": "Dependency Graph",
+   "sha": "567038cf0e0f388207cd98bc91fcac8c373ae0d9",
+   "created": "2026-10-19T01:50:35Z",
+   "event": "dynamic",
+   "conclusion": "success",
+   "jobs": 1,
+   "job_minutes": 0.68
+  },
+  {
+   "run": 39191190651,
+   "workflow": "CI",
+   "sha": "eaee1da0c7d74e0ebbdf7e7d229e66e102cc8e80",
+   "created": "2026-10-19T02:42:03Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 139.48
+  },
+  {
+   "run": 39191314899,
+   "workflow": "CI",
+   "sha": "158433c492f35bdfc98776cd6403a6c5462dbbc8",
+   "created": "2026-10-19T02:43:41Z",
+   "event": "pull_request",
+   "conclusion": "failure",
+   "jobs": 16,
+   "job_minutes": 198.53
+  },
+  {
+   "run": 39197558170,
+   "workflow": "CI",
+   "sha": "127865f56356f54ff64d011b2b5c223a3e15f7c7",
+   "created": "2026-10-19T04:03:08Z",
+   "event": "pull_request",
+   "conclusion": "failure",
+   "jobs": 16,
+   "job_minutes": 206.07
+  },
+  {
+   "run": 39210481231,
+   "workflow": "CI",
+   "sha": "daff631b0d262b6f9ce15b5dfcfc156713eda2ed",
+   "created": "2026-10-19T06:32:11Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 246.73
+  },
+  {
+   "run": 39216439648,
+   "workflow": "CI",
+   "sha": "7e2eb8706a6bcf888f95df55da3d42834ee82b94",
+   "created": "2026-10-19T07:30:36Z",
+   "event": "pull_request",
+   "conclusion": "cancelled",
+   "jobs": 16,
+   "job_minutes": 133.12
+  },
+  {
+   "run": 39217445357,
+   "workflow": "CI",
+   "sha": "a104cbfc076aef2d1c8c481c6ed695d1e419c35a",
+   "created": "2026-10-19T07:39:58Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 232.48
+  },
+  {
+   "run": 39249057137,
+   "workflow": "CI",
+   "sha": "711f39cf818fedb126aa8c46a15684f9e063703d",
+   "created": "2026-10-19T12:03:02Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 127.27
+  },
+  {
+   "run": 39252577042,
+   "workflow": "CI",
+   "sha": "f7601b99120ac9dbef536202e5c3f1b4418c99b5",
+   "created": "2026-10-19T12:30:23Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 107.97
+  },
+  {
+   "run": 39253349336,
+   "workflow": "CI",
+   "sha": "dc7a0da5196be253f9c45a42d3345e6f3c474e63",
+   "created": "2026-10-19T12:36:13Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 234.32
+  },
+  {
+   "run": 39256782878,
+   "workflow": "CI",
+   "sha": "1f68b2e6a504d59b8b2a4d107b6aa029f6c42d16",
+   "created": "2026-10-19T13:02:22Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 134.48
+  },
+  {
+   "run": 39258310224,
+   "workflow": "CI",
+   "sha": "408a1d724ed7332ed78079eaa1a765449b4d3f68",
+   "created": "2026-10-19T13:13:23Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 125.95
+  },
+  {
+   "run": 39260909250,
+   "workflow": "CI",
+   "sha": "abdc9031f565aa445e912603dbb24b33a9e64c80",
+   "created": "2026-10-19T13:31:37Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 132.35
+  },
+  {
+   "run": 39261298123,
+   "workflow": "CI",
+   "sha": "0d590fce06fe42dd2c6a817ce853a3e3307871f2",
+   "created": "2026-10-19T13:34:22Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 249.55
+  },
+  {
+   "run": 39263504216,
+   "workflow": "CI",
+   "sha": "4b35d35232725063c0a611851ba3561a4a6e19c2",
+   "created": "2026-10-19T13:49:51Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 131.82
+  },
+  {
+   "run": 39266082365,
+   "workflow": "CI",
+   "sha": "8a8c586b12c0cc799ee08197e3758fdfb2901e50",
+   "created": "2026-10-19T14:07:17Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 126.13
+  },
+  {
+   "run": 39268741273,
+   "workflow": "CI",
+   "sha": "a27fd3c50dd647594858a8e9547194a6c3334b55",
+   "created": "2026-10-19T14:25:02Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 126.23
+  },
+  {
+   "run": 39269448655,
+   "workflow": "CI",
+   "sha": "371c3f515fe39ade56e3160fef3d12398a9209d8",
+   "created": "2026-10-19T14:29:44Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 258.15
+  },
+  {
+   "run": 39271428895,
+   "workflow": "CI",
+   "sha": "4e9d368b08b184094300d194a7778d68369974e8",
+   "created": "2026-10-19T14:42:48Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 133.13
+  },
+  {
+   "run": 39271592747,
+   "workflow": "CI",
+   "sha": "04054f2013d985f8d7fd47129b4d37b6cff6977d",
+   "created": "2026-10-19T14:43:52Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 121.28
+  },
+  {
+   "run": 39281183081,
+   "workflow": "CI",
+   "sha": "ca2b7f1aae647c51866a79c6b94cdada544b3aff",
+   "created": "2026-10-19T15:52:16Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 118.98
+  },
+  {
+   "run": 39283419270,
+   "workflow": "CI",
+   "sha": "3caef71290ddc18ffa1a936045a176d556cc66ff",
+   "created": "2026-10-19T16:10:50Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 121.62
+  },
+  {
+   "run": 39300498042,
+   "workflow": "CI",
+   "sha": "2e4ff998ca1596c281abf915222714e1276173f3",
+   "created": "2026-10-19T18:11:49Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 248.95
+  },
+  {
+   "run": 39304602951,
+   "workflow": "CI",
+   "sha": "ec293098ccc2170e98ac94e4a7df1ff75abe37fc",
+   "created": "2026-10-19T18:41:17Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 120.23
+  },
+  {
+   "run": 39304867397,
+   "workflow": "CI",
+   "sha": "33122ef5df83ed29fd95ec503d4c71e923fa94e1",
+   "created": "2026-10-19T18:43:10Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 116.47
+  },
+  {
+   "run": 39329333819,
+   "workflow": "CI",
+   "sha": "48682b784e120a221aebfd949abafe7e796d233b",
+   "created": "2026-10-19T21:40:31Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 124.87
+  },
+  {
+   "run": 39343259703,
+   "workflow": "CI",
+   "sha": "4d0e9c20c7058a5c1662824302f4184b6279f9c6",
+   "created": "2026-10-19T23:42:52Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 133.17
+  },
+  {
+   "run": 39344126269,
+   "workflow": "CI",
+   "sha": "bf9e369e4ef72a5a9872dffe5986ba958d0a24bd",
+   "created": "2026-10-19T23:51:27Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 131.75
+  },
+  {
+   "run": 39344932602,
+   "workflow": "CI",
+   "sha": "e3b0e8d1d866a9bd349d2da04e2a3b0f2e3e56cd",
+   "created": "2026-10-19T23:59:35Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 132.82
+  },
+  {
+   "run": 39345763040,
+   "workflow": "CI",
+   "sha": "30c6f9fab6f3962422d2f397eae9e739cfca9fc4",
+   "created": "2026-10-20T00:07:37Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 111.35
+  },
+  {
+   "run": 39346570927,
+   "workflow": "CI",
+   "sha": "2e57b814367a0f0ff73f26748b36846b55667636",
+   "created": "2026-10-20T00:15:34Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 116.83
+  },
+  {
+   "run": 39347759016,
+   "workflow": "CI",
+   "sha": "dd2313b4170f7e02f67974d5204e5964eb5765d7",
+   "created": "2026-10-20T00:27:33Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 129.18
+  },
+  {
+   "run": 39348474506,
+   "workflow": "CI",
+   "sha": "f24055553331163c81975d0715cba4d241ddfac4",
+   "created": "2026-10-20T00:34:45Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 139.07
+  },
+  {
+   "run": 39351769199,
+   "workflow": "CI",
+   "sha": "4fae1f983eae8970a0531ede504b52463f7d25d5",
+   "created": "2026-10-20T01:08:39Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 122.95
+  },
+  {
+   "run": 39352815669,
+   "workflow": "CI",
+   "sha": "b6f5346cbf2d6c5398b3da2ec37d91a6ae1c87bc",
+   "created": "2026-10-20T01:19:49Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 12,
+   "job_minutes": 124.22
+  },
+  {
+   "run": 39369145960,
+   "workflow": "CI",
+   "sha": "5b86736714a1da16ae08c8fc4a7483712a459be2",
+   "created": "2026-10-20T04:21:31Z",
+   "event": "pull_request",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 245.38
+  },
+  {
+   "run": 39374687941,
+   "workflow": "CI",
+   "sha": "5b86736714a1da16ae08c8fc4a7483712a459be2",
+   "created": "2026-10-20T05:24:02Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 233.5
+  },
+  {
+   "run": 39374962780,
+   "workflow": "CI",
+   "sha": "34bac2481f4a9ba817b01141c42833c1e3711e82",
+   "created": "2026-10-20T05:27:08Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 244.22
+  },
+  {
+   "run": 39595718450,
+   "workflow": "CI",
+   "sha": "048998f50a17a36cdb79209894da10f8e6ab5530",
+   "created": "2026-10-21T11:56:38Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 230.93
+  },
+  {
+   "run": 39601408870,
+   "workflow": "CI",
+   "sha": "254f447671d60538bac630fe3421efe503cc0342",
+   "created": "2026-10-21T12:39:57Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 244.03
+  },
+  {
+   "run": 39604273603,
+   "workflow": "CI",
+   "sha": "c45fee185afbc7ab64f2308af4e1dff82bcf49b7",
+   "created": "2026-10-21T13:00:46Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 236.97
+  },
+  {
+   "run": 39627687323,
+   "workflow": "CI",
+   "sha": "46e3d95b6eabd53c008e89cc77926f08f0d91cc5",
+   "created": "2026-10-21T15:39:43Z",
+   "event": "push",
+   "conclusion": "failure",
+   "jobs": 16,
+   "job_minutes": 245.8
+  },
+  {
+   "run": 39641280623,
+   "workflow": "CI",
+   "sha": "9c6084b41b88454f537dd8559eb26108bda7e89e",
+   "created": "2026-10-21T17:09:36Z",
+   "event": "push",
+   "conclusion": "failure",
+   "jobs": 16,
+   "job_minutes": 246.15
+  },
+  {
+   "run": 39655649105,
+   "workflow": "CI",
+   "sha": "dd98d4c84ff4a5aef13d0ee2a19f13b2fedf6b06",
+   "created": "2026-10-21T18:45:52Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 257.15
+  },
+  {
+   "run": 39665417272,
+   "workflow": "CI",
+   "sha": "3ab00dbd52f65b0915739effe101fa02de6d2be9",
+   "created": "2026-10-21T19:52:35Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 249.65
+  },
+  {
+   "run": 39689902110,
+   "workflow": "CI",
+   "sha": "9933eb13275d4b35dce059bfe5b898cc5a86e220",
+   "created": "2026-10-21T22:55:10Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 268.0
+  },
+  {
+   "run": 39696817920,
+   "workflow": "CI",
+   "sha": "acc9dda7457b51ea47a46b0b4bc5d8bd21778374",
+   "created": "2026-10-21T23:58:38Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 16,
+   "job_minutes": 277.18
+  },
+  {
+   "run": 39713012554,
+   "workflow": "CI",
+   "sha": "8b54384d800fc99beb29c3a51e83fa5ba0f95544",
+   "created": "2026-10-22T02:44:14Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 20,
+   "job_minutes": 275.35
+  },
+  {
+   "run": 39811365772,
+   "workflow": "CI",
+   "sha": "2593bfa28d97422b9d2b304e7fde6d8034f21643",
+   "created": "2026-10-22T16:08:17Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 20,
+   "job_minutes": 287.45
+  },
+  {
+   "run": 39828662036,
+   "workflow": "CI",
+   "sha": "d1929feb2cf7cd1b0a170f2804393f4674547247",
+   "created": "2026-10-22T18:07:51Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 20,
+   "job_minutes": 273.2
+  },
+  {
+   "run": 39851215602,
+   "workflow": "CI",
+   "sha": "5294c49958cfab47aabf45c481cabf00c56de112",
+   "created": "2026-10-22T20:42:50Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 20,
+   "job_minutes": 248.88
+  },
+  {
+   "run": 39869037441,
+   "workflow": "CI",
+   "sha": "0abc6de0c19c6b8874b0d2a0aca3d4778c998b67",
+   "created": "2026-10-22T23:01:37Z",
+   "event": "push",
+   "conclusion": "success",
+   "jobs": 20,
+   "job_minutes": 245.43
+  }
+ ]
+}

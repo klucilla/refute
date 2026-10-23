@@ -24,9 +24,11 @@ stores the clients use.
   (`adapter.download_checked` → lightkurve's `product.download`) and the TIC queries (astroquery
   `Catalogs`, `astroquery/query.py` with `verify=True`, the bundle by default), and pyvo.
 - **Not through certifi:** the project's own `urllib` clients (`drand.py`, `ebcatalog.py`,
-  `ml/fetch.py`, `selection/walk.py`) use the standard library's default context; on this machine it
-  loads the Windows store (no `cafile`; 104 certificates), on Linux the system's OpenSSL paths.
-  Whether those system stores trust the emSign roots was not checked.
+  `ml/fetch.py`) use the standard library's default context; on this machine it loads the Windows
+  store (no `cafile`; 104 certificates), on Linux the system's OpenSSL paths. Whether those system
+  stores trust the emSign roots was not checked. (Revision 2: `selection/walk.py`, listed here
+  before, only handles `urllib` errors; its fetches go through functions passed in. **Also through
+  certifi:** astropy's `download_file`, section "Revision 2" below.)
 - **The exposure is relevant, whatever the package's purpose:** a party holding the compromised keys
   and on the network path could serve altered MAST or TIC data over a TLS connection that `requests`
   accepts. The adapter records each file's SHA-256 **at its first fetch** and verifies offline
@@ -109,3 +111,53 @@ stores the clients use.
   difference is recorded and explained before the working environment is used for any lot.
 - **The working environment** is updated and is the only one used for downloads.
 - Creating that environment and running the comparison come with the update's approval.
+
+## Revision 2 (the maintainer's decisions of 2026-10-22 on the delivery `0abc6de`, item 5)
+
+**Approved by the maintainer:** downloads through the vulnerable environment are suspended, and the
+synthetic studies stay offline until the update. **What the suspension does and does not show:** it
+reduces the exposure identified (the certifi bundle); it does **not** show that every network path
+of the project is safe. In particular, **the system certificate stores used by the standard
+library's `urllib` were not verified** (this machine's Windows store, the VMs' and the CI's OpenSSL
+paths), nor are the tools' own stores.
+
+**The network paths of the project, outside `requests` and through it** (read from the source; no
+run; the list covers the paths found by reading `src/`, `scripts/` and the population scripts, not a
+proof that no other exists, for example inside a third-party package's code path not exercised
+here):
+
+| Path | Client | Trust store | Used for | Under the suspension |
+|---|---|---|---|---|
+| MAST products (`adapter.download_checked` → lightkurve → astroquery) | `requests` | **certifi** | real light curves | suspended |
+| TIC queries (`adapter`, astroquery `Catalogs`) | `requests` | **certifi** | target metadata | suspended |
+| pyvo (a dependency of astroquery) | `requests` | **certifi** | not called by the project | suspended with them |
+| astropy `download_file` (`astropy/utils/data.py`, lines 1266 to 1269: `certifi.where()` as `cafile` when certifi is installed) | `urllib` | **certifi** | astropy's own downloads (for example its IERS and leap-second tables) and any package that calls it; not called by the project's code; whether a real-data path triggers it was not verified | suspended (same bundle) |
+| `refute/drand.py` (`urlopen`, fixed URLs) | `urllib` | the system store | drand beacons (pre-registration) | not covered by the certifi fix; system store unverified |
+| `refute/packs/tess/ebcatalog.py` (`urlopen`, recorded URL) | `urllib` | the system store | the eclipsing-binary catalog | as above |
+| `refute/packs/ml/fetch.py` (an HTTPS-only redirect opener) | `urllib` | the system store | the ML pack's data | as above |
+| `refute/packs/ml/repository.py` (`git` in a subprocess) | git | git's own TLS backend (not verified) | the ML pack's repositories | as above |
+| `refute/packs/ml/production.py` (the paper builds, in containers on the VM with the docker backend): `micromamba create` (conda channels, default `conda-forge`), `python -m pip install uv==…`, then `uv pip compile` and `uv pip install` | micromamba, pip, uv inside the container image | the container's own stores (the micromamba image, pinned by digest; the paper's base image), not the host's certifi (not verified) | building third-party papers' environments (v0.3) | not covered by the host update; outside stage 1's synthetic work |
+| Tooling: `uv` (packages), `gh`, `git push` and `fetch`, the Codex CLI, `curl.exe` in `scripts/vm/Get-RefuteMedia.ps1`, `curl` on the VMs through the proxy | each its own | each its own (not verified) | development and the VMs | outside the science environment; not covered |
+
+**The environment declaration.** Every lot records, before it starts and beside its manifest, the
+effective environment: the interpreter's path, version and implementation, the platform, every
+installed distribution's name and version, and the SHA-256 of `uv.lock` and `pyproject.toml`
+([scripts/env_record.py](scripts/env_record.py)); after the lot, the record is made again and must
+be equal. The record of the current lock (`uv.lock` SHA-256 `79e16fa7…`, 103 distributions,
+CPython 3.13.16): [env-record-5294c49-lock.json](env-record-5294c49-lock.json), the reference of the
+frozen comparison environment.
+
+**The update of 2026-10-27, checked in full.** After `uv lock --upgrade-package …`, the **whole
+diff of `uv.lock`** is read and listed (every package whose version, source or hash changed, and
+every package added or removed), not only the four asked for: an upgrade can move dependencies too.
+Every change must satisfy the 7-day rule (`exclude-newer-span = "P7D"` in the lock); an unexpected
+change is reported before the commit. Then: `uv sync --frozen`, the environment record, the full
+suite, the comparison with the frozen environment, and a check that the running environment uses
+the corrected bundle (`certifi.__version__`, `requests.certs.where()`) on this machine and on each VM
+that downloads.
+
+**Fixed before every lot and the confirmation.** The final environment is fixed and checked (its
+record) before execution; **no dependency is updated during a lot** or between the sub-lots of one
+lot; a lot whose environment record changes while it runs is stopped and reported. Spec C's choice
+lot (X2f) and its confirmation are proposed to run in the same final environment, after the update
+([x2f-declaration.md](x2f-declaration.md), section 7).

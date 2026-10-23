@@ -1,0 +1,602 @@
+{
+ "note": "Option A, executable version (the maintainer's decisions of 2026-10-22 on the delivery 0abc6de,\nitem 2): for each regime, the cases planned within what the prefix holds (one prefix: 300 two-year\ncases per noise, 100 three_years, 100 variability_some_years), and the probability of reaching 40\nand 15 contributing cases:",
+ "regimes": [
+  {
+   "cell": "AR(1), no variability",
+   "regime": "3+ years",
+   "sub_lot": "S1",
+   "cases": 47,
+   "earlier_proposal_cases": 44,
+   "capped_by_prefix": false,
+   "available_in_prefix": 100,
+   "x2e_alone": [
+    6,
+    6
+   ],
+   "pooled_or_x2": [
+    12,
+    12
+   ],
+   "expected_contributing_pooled_rate": 47.0,
+   "p40": {
+    "plug_in_x2e_alone": 1.0,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9505558424585704,
+    "uniform_predictive": 0.8770988301707519,
+    "clopper_pearson_lower_95": 0.15476880593938527
+   },
+   "p15": {
+    "plug_in_x2e_alone": 1.0,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9999987954541282,
+    "uniform_predictive": 0.9999961178962283,
+    "clopper_pearson_lower_95": 0.9999999999973158
+   },
+   "clopper_pearson_lower_95_rate": 0.7790778080544442,
+   "by_cases": {
+    "40": {
+     "jeffreys_predictive_40": 0.4842477201628168,
+     "clopper_pearson_lower_95_40": 4.6050393733005e-05
+    },
+    "47": {
+     "jeffreys_predictive_40": 0.9505558424585704,
+     "clopper_pearson_lower_95_40": 0.15476880593938527
+    },
+    "50": {
+     "jeffreys_predictive_40": 0.9774505205177816,
+     "clopper_pearson_lower_95_40": 0.43855978342658775
+    },
+    "60": {
+     "jeffreys_predictive_40": 0.9975965692190513,
+     "clopper_pearson_lower_95_40": 0.9847439070088476
+    },
+    "70": {
+     "jeffreys_predictive_40": 0.999626217307485,
+     "clopper_pearson_lower_95_40": 0.9999701434573145
+    },
+    "80": {
+     "jeffreys_predictive_40": 0.9999250206709334,
+     "clopper_pearson_lower_95_40": 0.9999999891263722
+    },
+    "90": {
+     "jeffreys_predictive_40": 0.9999818280057448,
+     "clopper_pearson_lower_95_40": 0.999999999998735
+    },
+    "100": {
+     "jeffreys_predictive_40": 0.9999948950632542,
+     "clopper_pearson_lower_95_40": 0.9999999999999999
+    }
+   },
+   "curves": 4700,
+   "lp_hours": 23.782000000000004
+  },
+  {
+   "cell": "white, no variability",
+   "regime": "3+ years",
+   "sub_lot": "S1",
+   "cases": 47,
+   "earlier_proposal_cases": 44,
+   "capped_by_prefix": false,
+   "available_in_prefix": 100,
+   "x2e_alone": [
+    6,
+    6
+   ],
+   "pooled_or_x2": [
+    12,
+    12
+   ],
+   "expected_contributing_pooled_rate": 47.0,
+   "p40": {
+    "plug_in_x2e_alone": 1.0,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9505558424585704,
+    "uniform_predictive": 0.8770988301707519,
+    "clopper_pearson_lower_95": 0.15476880593938527
+   },
+   "p15": {
+    "plug_in_x2e_alone": 1.0,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9999987954541282,
+    "uniform_predictive": 0.9999961178962283,
+    "clopper_pearson_lower_95": 0.9999999999973158
+   },
+   "clopper_pearson_lower_95_rate": 0.7790778080544442,
+   "by_cases": {
+    "40": {
+     "jeffreys_predictive_40": 0.4842477201628168,
+     "clopper_pearson_lower_95_40": 4.6050393733005e-05
+    },
+    "47": {
+     "jeffreys_predictive_40": 0.9505558424585704,
+     "clopper_pearson_lower_95_40": 0.15476880593938527
+    },
+    "50": {
+     "jeffreys_predictive_40": 0.9774505205177816,
+     "clopper_pearson_lower_95_40": 0.43855978342658775
+    },
+    "60": {
+     "jeffreys_predictive_40": 0.9975965692190513,
+     "clopper_pearson_lower_95_40": 0.9847439070088476
+    },
+    "70": {
+     "jeffreys_predictive_40": 0.999626217307485,
+     "clopper_pearson_lower_95_40": 0.9999701434573145
+    },
+    "80": {
+     "jeffreys_predictive_40": 0.9999250206709334,
+     "clopper_pearson_lower_95_40": 0.9999999891263722
+    },
+    "90": {
+     "jeffreys_predictive_40": 0.9999818280057448,
+     "clopper_pearson_lower_95_40": 0.999999999998735
+    },
+    "100": {
+     "jeffreys_predictive_40": 0.9999948950632542,
+     "clopper_pearson_lower_95_40": 0.9999999999999999
+    }
+   },
+   "curves": 4700,
+   "lp_hours": 23.782000000000004
+  },
+  {
+   "cell": "AR(1), variability",
+   "regime": "3+ years",
+   "sub_lot": "S2",
+   "cases": 45,
+   "earlier_proposal_cases": 44,
+   "capped_by_prefix": false,
+   "available_in_prefix": 100,
+   "x2e_alone": null,
+   "pooled_or_x2": [
+    20,
+    20
+   ],
+   "expected_contributing_pooled_rate": 45.0,
+   "p40": {
+    "plug_in_x2e_alone": null,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9660480142914973,
+    "uniform_predictive": 0.9103547166741245,
+    "clopper_pearson_lower_95": 0.3902996204416915
+   },
+   "p15": {
+    "plug_in_x2e_alone": null,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9999999936487257,
+    "uniform_predictive": 0.9999999739527446,
+    "clopper_pearson_lower_95": 0.9999999999999999
+   },
+   "clopper_pearson_lower_95_rate": 0.8608916593317348,
+   "by_cases": {
+    "40": {
+     "jeffreys_predictive_40": 0.5797605508128792,
+     "clopper_pearson_lower_95_40": 0.0025000000000000053
+    },
+    "45": {
+     "jeffreys_predictive_40": 0.9660480142914973,
+     "clopper_pearson_lower_95_40": 0.3902996204416915
+    },
+    "50": {
+     "jeffreys_predictive_40": 0.9953884947152799,
+     "clopper_pearson_lower_95_40": 0.9205111524889992
+    },
+    "60": {
+     "jeffreys_predictive_40": 0.9998419659693975,
+     "clopper_pearson_lower_95_40": 0.9999670449938517
+    },
+    "70": {
+     "jeffreys_predictive_40": 0.999990860275611,
+     "clopper_pearson_lower_95_40": 0.9999999992844983
+    },
+    "80": {
+     "jeffreys_predictive_40": 0.9999992387005143,
+     "clopper_pearson_lower_95_40": 0.9999999999999973
+    },
+    "90": {
+     "jeffreys_predictive_40": 0.9999999163664971,
+     "clopper_pearson_lower_95_40": 1.0
+    },
+    "100": {
+     "jeffreys_predictive_40": 0.9999999885604506,
+     "clopper_pearson_lower_95_40": 1.0
+    }
+   },
+   "curves": 4500,
+   "lp_hours": 76.9725
+  },
+  {
+   "cell": "white, variability",
+   "regime": "3+ years",
+   "sub_lot": "S2",
+   "cases": 45,
+   "earlier_proposal_cases": 44,
+   "capped_by_prefix": false,
+   "available_in_prefix": 100,
+   "x2e_alone": null,
+   "pooled_or_x2": [
+    20,
+    20
+   ],
+   "expected_contributing_pooled_rate": 45.0,
+   "p40": {
+    "plug_in_x2e_alone": null,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9660480142914973,
+    "uniform_predictive": 0.9103547166741245,
+    "clopper_pearson_lower_95": 0.3902996204416915
+   },
+   "p15": {
+    "plug_in_x2e_alone": null,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9999999936487257,
+    "uniform_predictive": 0.9999999739527446,
+    "clopper_pearson_lower_95": 0.9999999999999999
+   },
+   "clopper_pearson_lower_95_rate": 0.8608916593317348,
+   "by_cases": {
+    "40": {
+     "jeffreys_predictive_40": 0.5797605508128792,
+     "clopper_pearson_lower_95_40": 0.0025000000000000053
+    },
+    "45": {
+     "jeffreys_predictive_40": 0.9660480142914973,
+     "clopper_pearson_lower_95_40": 0.3902996204416915
+    },
+    "50": {
+     "jeffreys_predictive_40": 0.9953884947152799,
+     "clopper_pearson_lower_95_40": 0.9205111524889992
+    },
+    "60": {
+     "jeffreys_predictive_40": 0.9998419659693975,
+     "clopper_pearson_lower_95_40": 0.9999670449938517
+    },
+    "70": {
+     "jeffreys_predictive_40": 0.999990860275611,
+     "clopper_pearson_lower_95_40": 0.9999999992844983
+    },
+    "80": {
+     "jeffreys_predictive_40": 0.9999992387005143,
+     "clopper_pearson_lower_95_40": 0.9999999999999973
+    },
+    "90": {
+     "jeffreys_predictive_40": 0.9999999163664971,
+     "clopper_pearson_lower_95_40": 1.0
+    },
+    "100": {
+     "jeffreys_predictive_40": 0.9999999885604506,
+     "clopper_pearson_lower_95_40": 1.0
+    }
+   },
+   "curves": 4500,
+   "lp_hours": 76.9725
+  },
+  {
+   "cell": "AR(1), no variability",
+   "regime": "2 years",
+   "sub_lot": "S3",
+   "cases": 146,
+   "earlier_proposal_cases": 131,
+   "capped_by_prefix": false,
+   "available_in_prefix": 300,
+   "x2e_alone": [
+    5,
+    14
+   ],
+   "pooled_or_x2": [
+    12,
+    28
+   ],
+   "expected_contributing_pooled_rate": 62.57142857142857,
+   "p40": {
+    "plug_in_x2e_alone": 0.9868510520887973,
+    "plug_in_pooled": 0.9999611408608875,
+    "jeffreys_predictive": 0.9505238934197783,
+    "uniform_predictive": 0.9552340109178389,
+    "clopper_pearson_lower_95": 0.47866068875049
+   },
+   "p15": {
+    "plug_in_x2e_alone": 0.9999999999996185,
+    "plug_in_pooled": 1.0,
+    "jeffreys_predictive": 0.9999680201156902,
+    "uniform_predictive": 0.9999770599666447,
+    "clopper_pearson_lower_95": 0.9999998138916227
+   },
+   "clopper_pearson_lower_95_rate": 0.2691109954903405,
+   "by_cases": {
+    "40": {
+     "jeffreys_predictive_40": 1.0024483465542744e-08,
+     "clopper_pearson_lower_95_40": 1.5749171458203424e-23
+    },
+    "50": {
+     "jeffreys_predictive_40": 0.0006490947943323944,
+     "clopper_pearson_lower_95_40": 7.723348556472764e-15
+    },
+    "60": {
+     "jeffreys_predictive_40": 0.021050088995676397,
+     "clopper_pearson_lower_95_40": 1.5178472366282607e-10
+    },
+    "70": {
+     "jeffreys_predictive_40": 0.11209150431981585,
+     "clopper_pearson_lower_95_40": 9.752735126894598e-08
+    },
+    "80": {
+     "jeffreys_predictive_40": 0.2767651040614947,
+     "clopper_pearson_lower_95_40": 9.334740683945398e-06
+    },
+    "90": {
+     "jeffreys_predictive_40": 0.4637298247831345,
+     "clopper_pearson_lower_95_40": 0.0002600966624356005
+    },
+    "100": {
+     "jeffreys_predictive_40": 0.6281285943595256,
+     "clopper_pearson_lower_95_40": 0.0030444948461872284
+    },
+    "110": {
+     "jeffreys_predictive_40": 0.7530069811160494,
+     "clopper_pearson_lower_95_40": 0.018784452302513997
+    },
+    "120": {
+     "jeffreys_predictive_40": 0.8400813679990311,
+     "clopper_pearson_lower_95_40": 0.07118928891255327
+    },
+    "130": {
+     "jeffreys_predictive_40": 0.8978309227714636,
+     "clopper_pearson_lower_95_40": 0.18507305529006096
+    },
+    "140": {
+     "jeffreys_predictive_40": 0.9350594947034822,
+     "clopper_pearson_lower_95_40": 0.3592749644351872
+    },
+    "146": {
+     "jeffreys_predictive_40": 0.9505238934197783,
+     "clopper_pearson_lower_95_40": 0.47866068875049
+    },
+    "150": {
+     "jeffreys_predictive_40": 0.9587072117678145,
+     "clopper_pearson_lower_95_40": 0.5578701350147016
+    },
+    "160": {
+     "jeffreys_predictive_40": 0.973638082746389,
+     "clopper_pearson_lower_95_40": 0.7342578706761635
+    },
+    "170": {
+     "jeffreys_predictive_40": 0.9830621090646545,
+     "clopper_pearson_lower_95_40": 0.8606709861729905
+    },
+    "180": {
+     "jeffreys_predictive_40": 0.9890305743165555,
+     "clopper_pearson_lower_95_40": 0.9358683003877071
+    },
+    "190": {
+     "jeffreys_predictive_40": 0.9928326602315002,
+     "clopper_pearson_lower_95_40": 0.9738616897287645
+    },
+    "200": {
+     "jeffreys_predictive_40": 0.9952726986150344,
+     "clopper_pearson_lower_95_40": 0.9904798192608365
+    },
+    "210": {
+     "jeffreys_predictive_40": 0.9968518144755696,
+     "clopper_pearson_lower_95_40": 0.9968733187874993
+    },
+    "220": {
+     "jeffreys_predictive_40": 0.997882974084814,
+     "clopper_pearson_lower_95_40": 0.9990661902002083
+    },
+    "230": {
+     "jeffreys_predictive_40": 0.9985625895822837,
+     "clopper_pearson_lower_95_40": 0.99974441706201
+    },
+    "240": {
+     "jeffreys_predictive_40": 0.9990147298418135,
+     "clopper_pearson_lower_95_40": 0.9999354417744923
+    },
+    "250": {
+     "jeffreys_predictive_40": 0.9993183597782115,
+     "clopper_pearson_lower_95_40": 0.9999848551853071
+    },
+    "260": {
+     "jeffreys_predictive_40": 0.9995241508566161,
+     "clopper_pearson_lower_95_40": 0.9999966815317407
+    },
+    "270": {
+     "jeffreys_predictive_40": 0.9996648984512995,
+     "clopper_pearson_lower_95_40": 0.9999993173615435
+    },
+    "280": {
+     "jeffreys_predictive_40": 0.9997620146977307,
+     "clopper_pearson_lower_95_40": 0.9999998675604697
+    },
+    "290": {
+     "jeffreys_predictive_40": 0.9998296030468335,
+     "clopper_pearson_lower_95_40": 0.9999999756659513
+    },
+    "300": {
+     "jeffreys_predictive_40": 0.9998770345289113,
+     "clopper_pearson_lower_95_40": 0.9999999957498762
+    }
+   },
+   "curves": 14600,
+   "lp_hours": 73.876
+  },
+  {
+   "cell": "white, no variability",
+   "regime": "2 years",
+   "sub_lot": "S3",
+   "cases": 300,
+   "earlier_proposal_cases": 334,
+   "capped_by_prefix": true,
+   "available_in_prefix": 300,
+   "x2e_alone": [
+    2,
+    14
+   ],
+   "pooled_or_x2": [
+    5,
+    28
+   ],
+   "expected_contributing_pooled_rate": 53.57142857142857,
+   "p40": {
+    "plug_in_x2e_alone": 0.7054211336587444,
+    "plug_in_pooled": 0.9856220233944727,
+    "jeffreys_predictive": 0.7654134051768642,
+    "uniform_predictive": 0.8116732579022545,
+    "clopper_pearson_lower_95": 0.00018560501012777883
+   },
+   "p15": {
+    "plug_in_x2e_alone": 0.9999999407518827,
+    "plug_in_pooled": 0.9999999999936077,
+    "jeffreys_predictive": 0.9921515421182764,
+    "uniform_predictive": 0.9955013949539783,
+    "clopper_pearson_lower_95": 0.9568826711977619
+   },
+   "clopper_pearson_lower_95_rate": 0.07311377147684749,
+   "by_cases": {
+    "40": {
+     "jeffreys_predictive_40": 4.3853809472693683e-14,
+     "clopper_pearson_lower_95_40": 3.630508680293256e-46
+    },
+    "50": {
+     "jeffreys_predictive_40": 3.9356752745689505e-08,
+     "clopper_pearson_lower_95_40": 1.779570939368722e-36
+    },
+    "60": {
+     "jeffreys_predictive_40": 8.13303654212394e-06,
+     "clopper_pearson_lower_95_40": 3.466507534336336e-31
+    },
+    "70": {
+     "jeffreys_predictive_40": 0.00017366482250691373,
+     "clopper_pearson_lower_95_40": 2.185689114762235e-27
+    },
+    "80": {
+     "jeffreys_predictive_40": 0.0012717396898893618,
+     "clopper_pearson_lower_95_40": 2.028133865239349e-24
+    },
+    "90": {
+     "jeffreys_predictive_40": 0.005097950974364496,
+     "clopper_pearson_lower_95_40": 5.397848690354696e-22
+    },
+    "100": {
+     "jeffreys_predictive_40": 0.014049548922796307,
+     "clopper_pearson_lower_95_40": 5.925381507791295e-20
+    },
+    "110": {
+     "jeffreys_predictive_40": 0.030191638975246793,
+     "clopper_pearson_lower_95_40": 3.3505546209138135e-18
+    },
+    "120": {
+     "jeffreys_predictive_40": 0.05456602523567766,
+     "clopper_pearson_lower_95_40": 1.1302720672029614e-16
+    },
+    "130": {
+     "jeffreys_predictive_40": 0.08704272482752207,
+     "clopper_pearson_lower_95_40": 2.5199443787358418e-15
+    },
+    "140": {
+     "jeffreys_predictive_40": 0.12656752288022988,
+     "clopper_pearson_lower_95_40": 4.000080777969344e-14
+    },
+    "150": {
+     "jeffreys_predictive_40": 0.17155153139055512,
+     "clopper_pearson_lower_95_40": 4.780659308099597e-13
+    },
+    "160": {
+     "jeffreys_predictive_40": 0.22022833992372992,
+     "clopper_pearson_lower_95_40": 4.491112407039833e-12
+    },
+    "170": {
+     "jeffreys_predictive_40": 0.2709077027736533,
+     "clopper_pearson_lower_95_40": 3.430831944021047e-11
+    },
+    "180": {
+     "jeffreys_predictive_40": 0.3221210282491509,
+     "clopper_pearson_lower_95_40": 2.1899839408564575e-10
+    },
+    "190": {
+     "jeffreys_predictive_40": 0.3726822508258081,
+     "clopper_pearson_lower_95_40": 1.194278103057181e-09
+    },
+    "200": {
+     "jeffreys_predictive_40": 0.4216930458589486,
+     "clopper_pearson_lower_95_40": 5.666868975040325e-09
+    },
+    "210": {
+     "jeffreys_predictive_40": 0.4685167450831278,
+     "clopper_pearson_lower_95_40": 2.37573229968649e-08
+    },
+    "220": {
+     "jeffreys_predictive_40": 0.512738152761256,
+     "clopper_pearson_lower_95_40": 8.914119724611387e-08
+    },
+    "230": {
+     "jeffreys_predictive_40": 0.5541200023891444,
+     "clopper_pearson_lower_95_40": 3.026688734029085e-07
+    },
+    "240": {
+     "jeffreys_predictive_40": 0.5925619987766713,
+     "clopper_pearson_lower_95_40": 9.388050001778794e-07
+    },
+    "250": {
+     "jeffreys_predictive_40": 0.6280652199977897,
+     "clopper_pearson_lower_95_40": 2.682012989397453e-06
+    },
+    "260": {
+     "jeffreys_predictive_40": 0.6607027417710132,
+     "clopper_pearson_lower_95_40": 7.107686941666116e-06
+    },
+    "270": {
+     "jeffreys_predictive_40": 0.690596299904792,
+     "clopper_pearson_lower_95_40": 1.7583353096634347e-05
+    },
+    "280": {
+     "jeffreys_predictive_40": 0.7178983071983003,
+     "clopper_pearson_lower_95_40": 4.083058411468709e-05
+    },
+    "290": {
+     "jeffreys_predictive_40": 0.7427783645826177,
+     "clopper_pearson_lower_95_40": 8.943630565160854e-05
+    },
+    "300": {
+     "jeffreys_predictive_40": 0.7654134051768642,
+     "clopper_pearson_lower_95_40": 0.00018560501012777883
+    }
+   },
+   "curves": 30000,
+   "lp_hours": 151.8
+  }
+ ],
+ "sub_lots": {
+  "S1": {
+   "cases": 94,
+   "curves": 9400,
+   "lp_hours": 47.56400000000001,
+   "wall_hours_22_workers": 2.1620000000000004,
+   "ceiling_hours_1_5x": 3.2430000000000003
+  },
+  "S2": {
+   "cases": 90,
+   "curves": 9000,
+   "lp_hours": 153.945,
+   "wall_hours_22_workers": 6.9975,
+   "ceiling_hours_1_5x": 10.49625
+  },
+  "S3": {
+   "cases": 446,
+   "curves": 44600,
+   "lp_hours": 225.67600000000002,
+   "wall_hours_22_workers": 10.258000000000001,
+   "ceiling_hours_1_5x": 15.387
+  }
+ },
+ "total": {
+  "cases": 630,
+  "curves": 63000,
+  "lp_hours": 427.185,
+  "wall_hours_22_workers": 19.4175
+ },
+ "unit_lp_seconds_per_curve": {
+  "no_variability": 18.216,
+  "variability": 61.578
+ }
+}

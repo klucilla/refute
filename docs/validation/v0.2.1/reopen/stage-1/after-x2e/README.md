@@ -18,6 +18,18 @@ validation.
 | 7, 8 | Attenuation stays its own front; the historical FAIL is kept; X3 waits | nothing done |
 | 9 | Scientific success, viability and the effort ceiling (proposal); the ideas issue (draft) | [success-viability-effort-proposal.md](success-viability-effort-proposal.md), [ideas-issue-eb-variability-draft.md](ideas-issue-eb-variability-draft.md) |
 
+## The maintainer's decisions on this delivery (2026-10-22), and what came back
+
+| Item | Decision | Where |
+|---|---|---|
+| 1 | Spec C: amendment A0 adopted and direction A1 (the regimes kept, new data required); item 3's readings apart, as a diagnostic | [../spec-c-error-model.md](../spec-c-error-model.md) (C4, C6) |
+| 2 | Option A to come back executable, nothing run | [x2f-declaration.md](x2f-declaration.md); the regime filter in `x2_study.py` (tests first, six sabotages caught); [x2f-seeds.json](x2f-seeds.json); [sizing-a.json](sizing-a.json) |
+| 3 | The objectives restated by class and regime, never loosening an approved criterion; the cost's run identified | [success-viability-effort-proposal.md](success-viability-effort-proposal.md), sections 1 and 2 |
+| 4 | The ceiling as an investment limit; the consumption completed, what counts said (the CI included), the ceiling reconciled with the viability rule, X7 and T4 outside | [success-viability-effort-proposal.md](success-viability-effort-proposal.md), sections 3 and 4; [ci-minutes.json](ci-minutes.json) |
+| 5 | Downloads through the vulnerable environment suspended (approved); the environment declaration; the full diff of `uv.lock` after the update; the network paths outside `requests` | [dependencies-reachability.md](dependencies-reachability.md), "Revision 2"; [env-record-5294c49-lock.json](env-record-5294c49-lock.json) |
+| 6 | The ideas issue opened, no implementation | [klucilla/refute#167](https://github.com/klucilla/refute/issues/167) |
+| 7 | The stage's milestone: on independent data, the final configuration preserves a useful fraction of true planets as candidates, recognizes false positives and keeps its errors controlled; spec C alone does not resolve the attenuation, the candidates' identity or the aggregation | [success-viability-effort-proposal.md](success-viability-effort-proposal.md), section 6 |
+
 ## Item 1. Spec C's eligibility with the data C6 allows for a decision
 
 Spec C's regimes are the cells × the number of observing years (C4): "2 years" is the `two_years`

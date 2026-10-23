@@ -1,5 +1,11 @@
 # The prospective package for spec C (proposal, not authorized)
 
+> **Superseded for its sizes and procedure (2026-10-22):** the maintainer adopted A0 and A1 and
+> asked for option A in an executable form; that is [x2f-declaration.md](x2f-declaration.md) (sizes
+> from a fixed rule within the prefix, the probabilities with the rates' uncertainty, the rules for
+> 15 to 39 and fewer than 15 contributing cases, the fixed order S1, S2, S3). Options B and C are no
+> longer proposed. This text is kept as it was reviewed.
+
 The maintainer's decision after X2e, item 5: one prospective package that covers the variability
 replicate and the insufficiency of the cells without variability. **Proposal only: nothing runs, no
 seed is drawn, no issue is opened, and no approval is assumed.** The planning numbers come from

@@ -78,3 +78,10 @@ regimes; see below); development evidence only: [x2/x2e/README.md](x2/x2e/README
 | 6 | Dependencies: reachability read, early correction and a frozen comparison environment proposed; nothing changed | [after-x2e/dependencies-reachability.md](after-x2e/dependencies-reachability.md) |
 | 7, 8 | Attenuation its own front; the historical FAIL kept; X3 waits | |
 | 9 | Joint objectives, the effort ceiling and the viability check (proposal); the ideas issue (draft, not opened) | [after-x2e/success-viability-effort-proposal.md](after-x2e/success-viability-effort-proposal.md), [after-x2e/ideas-issue-eb-variability-draft.md](after-x2e/ideas-issue-eb-variability-draft.md) |
+
+**The maintainer's decisions on that delivery (2026-10-22, nothing run):** spec C's amendment A0 and
+direction A1 adopted; option A brought back executable as X2f's declaration (not authorized); the
+objectives restated by class and regime; the ceiling reconciled as a proposal; downloads through the
+vulnerable environment suspended; the ideas issue opened
+([klucilla/refute#167](https://github.com/klucilla/refute/issues/167)). See
+[after-x2e/README.md](after-x2e/README.md).

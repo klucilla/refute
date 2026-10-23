@@ -1,10 +1,12 @@
-# Draft: ideas issue on eclipsing binaries and variability (not opened)
+# Ideas issue on eclipsing binaries and variability (opened as #167)
 
 The maintainer's decision after X2e, item 9: prepare the text of an ideas issue on eclipsing
 binaries and stellar variability as astronomical results of their own (their own analysis and
-catalogs). **Not opened, and no implementation front.** It would be opened only on the maintainer's
-decision; its place in the ROADMAP is v0.5 ("Variable stars pack: EB and pulsators, catalog
-cross-match, exporter"), after v0.2.1's gate.
+catalogs). **Opened on the maintainer's decision of 2026-10-22 as
+[klucilla/refute#167](https://github.com/klucilla/refute/issues/167)** (label `future-phase`), with
+the text below and a first paragraph saying it is ideas only; **no implementation front.** Its place
+in the ROADMAP is v0.5 ("Variable stars pack: EB and pulsators, catalog cross-match, exporter"),
+after v0.2.1's gate.
 
 ---
 

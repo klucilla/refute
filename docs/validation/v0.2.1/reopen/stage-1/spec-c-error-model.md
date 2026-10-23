@@ -69,16 +69,20 @@ least 15 cases contribute (case-years with at least 30 measured realizations wit
 reference `σ_meas` does not depend on the candidate). An ineligible regime does not count for or
 against a candidate.
 
-Expected coverage (Codex's review): X2e has, per cell, 14 cases with two observing years
-(`two_years` and `few_train`) and 6 with three; pooled with X2, 28 and 12. So the three-year regimes of
-the cells without variability cannot be eligible, and their two-year regimes only if enough of those
-cases contribute; the cells themselves (all years together) are the regimes that can decide there.
+**Coverage note (amended after X2e, 2026-10-22, amendment A0 adopted by the maintainer; the reason:
+the earlier note relied on pooling with X2, which C6 excludes from the decision).** Eligibility is
+computed only on the data C6 lets decide (C6; which records those are for the choice lot X2f is
+fixed in its declaration, [after-x2e/x2f-declaration.md](after-x2e/x2f-declaration.md), before it
+runs). X2's records never count toward a regime's 15 cases. The regimes are those of the first paragraph only (cell × number of years); a cell
+with all its years together is not a regime. With X2e alone, no regime is eligible (2 years: 5 and 2
+contributing cases; 3 or more years: 6 and 6), so no candidate can be judged and the choice waits
+for new data with new seeds (the maintainer's direction A1: the regimes kept, new data required).
 
-> **Pending (2026-10-22):** this note relies on pooling with X2, which C6 excludes from the
-> decision, and names the cells as regimes, which the paragraph above does not. A clarifying
-> amendment and the alternatives that would change the scope are proposed in
-> [after-x2e/spec-c-amendment-proposal.md](after-x2e/spec-c-amendment-proposal.md), for the
-> maintainer's decision; this text stays as it is until then. With X2e alone no regime is eligible.
+The note it replaces, kept for the record: "Expected coverage (Codex's review): X2e has, per cell, 14
+cases with two observing years (`two_years` and `few_train`) and 6 with three; pooled with X2, 28 and
+12. So the three-year regimes of the cells without variability cannot be eligible, and their
+two-year regimes only if enough of those cases contribute; the cells themselves (all years together)
+are the regimes that can decide there."
 
 ## C5. The criterion (fixed now)
 
@@ -105,6 +109,11 @@ otherwise), in each determined regime: `calibrated or conservative as designed` 
   judged only in the regimes they cover, and the choice waits.
 - **Inform only:** X2's lot (already seen, its X2-B read): every candidate is computed on it and
   reported as development evidence, never as the decision.
+- Data that decide are never pooled with data that inform, for eligibility or for a verdict
+  (amendment A0, 2026-10-22).
+- **Pending (2026-10-22):** X2f's declaration ([after-x2e/x2f-declaration.md](after-x2e/x2f-declaration.md))
+  proposes that X2f's records alone decide and that X2e's, read before it, inform only; this is the
+  maintainer's decision, and the first bullet changes only if it is confirmed.
 
 ## C7. What is reported beside the decision (descriptive)
 

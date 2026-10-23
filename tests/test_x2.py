@@ -545,7 +545,7 @@ def test_the_evaluation_refuses_another_code_than_the_lot_s(fake_lot, monkeypatc
     x2, tasks = fake_lot
     run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
     x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
-    monkeypatch.setattr(x2, "x2_lot_problems", lambda run_dir: [])  # the subset is not the lot
+    monkeypatch.setattr(x2, "x2_lot_problems", lambda run_dir, full=False: [])  # a subset
     monkeypatch.setattr(x2, "code_digest", lambda: "e" * 64)
     with pytest.raises(SystemExit, match="code_sha256"):
         x2.evaluate_lot(run)
@@ -770,6 +770,164 @@ def test_an_x2e_lot_names_itself_and_checks_its_own_records(lot_env, monkeypatch
         )
         problems = x2.record_problems(bad, tasks[0][0], 0, rec["noise_seed"], _declared(), x2.X2E)
         assert any("target" in p for p in problems)
+
+
+X2F_DECLARED = {
+    # sub-lot: {(group, mechanisms): cases}, after-x2e/x2f-declaration.md (option A, executable)
+    "x2f-s1": {
+        ("white, no variability", ("three_years",)): 47,
+        ("AR(1), no variability", ("three_years",)): 47,
+    },
+    "x2f-s2": {
+        ("white, variability", ("variability_some_years",)): 45,
+        ("AR(1), variability", ("variability_some_years",)): 45,
+    },
+    "x2f-s3": {
+        ("white, no variability", ("two_years", "few_train")): 300,
+        ("AR(1), no variability", ("two_years", "few_train")): 146,
+    },
+}
+
+
+def test_x2f_sub_lots_are_their_declared_regimes(x2):
+    """The spec C choice lot (after-x2e/x2f-declaration.md, option A executable): three sub-lots
+    run in the fixed order S1, S2, S3, each drawing its regimes' cases from the new prefix by X2's
+    rule within the regime; X2's and X2e's lots unchanged."""
+    assert x2.X2F_SEQUENCE == ("x2f-s1", "x2f-s2", "x2f-s3")
+    seen: set[tuple[str, str]] = set()
+    for name in x2.X2F_SEQUENCE:
+        spec = x2.LOTS[name]
+        assert spec.prefix == "refute-v0.2.1-x2-3" and spec.n_realizations == 100
+        assert spec.seed_root == "refute/v0.2.1/stage-1/X2f" and spec.seed_with_prefix
+        cases = x2.x2_cases(spec)
+        got = Counter(
+            (x2.rs.group_of(c), m)
+            for c in cases
+            for (g, m) in X2F_DECLARED[name]
+            if x2.rs.group_of(c) == g and c["mechanism"] in m
+        )
+        assert dict(got) == X2F_DECLARED[name]
+        assert len(cases) == sum(X2F_DECLARED[name].values())
+        assert len({c["id"] for c in cases}) == len(cases)
+        for g, _ in X2F_DECLARED[name]:
+            bands = {c["band"] for c in cases if x2.rs.group_of(c) == g}
+            assert bands == {"near", "measurable"}, (name, g, bands)
+        keys = {(x2.rs.group_of(c), c["id"]) for c in cases}
+        assert not (keys & seen), name
+        seen |= keys
+    # every white two-year case of the prefix, and no more: one prefix holds 300
+    assert sum(1 for g, _ in seen if g == "white, no variability") == 347
+
+
+def test_x2f_seeds_carry_the_prefix_and_repeat_no_earlier_lot_s(x2):
+    earlier = {
+        x2.realization_seed(x2.rs.group_of(c), c["id"], j, s)
+        for s in (x2.X2, x2.X2E)
+        for c, j in x2.all_tasks(s)
+    }
+    new: set[int] = set()
+    for name in x2.X2F_SEQUENCE:
+        spec = x2.LOTS[name]
+        c = x2.x2_cases(spec)[0]
+        g = x2.rs.group_of(c)
+        text = f"refute/v0.2.1/stage-1/X2f/refute-v0.2.1-x2-3/{g}/{c['id']}/7"
+        assert x2.realization_seed(g, c["id"], 7, spec) == int.from_bytes(
+            hashlib.sha256(text.encode()).digest()[:8], "big"
+        )
+        seeds = {
+            x2.realization_seed(x2.rs.group_of(c), c["id"], j, spec) for c, j in x2.all_tasks(spec)
+        }
+        assert len(seeds) == 100 * len(x2.x2_cases(spec))
+        assert not (seeds & earlier) and not (seeds & new)
+        new |= seeds
+
+
+def test_x2f_selection_order_matches_an_independent_oracle(x2):
+    """Codex's review: the exact ordered case ids, from the population written out here by hand
+    (index 100 to 149 is three_years, 200 to 249 variability, the rest two-year; bands near then
+    measurable; every len // n-th, the first n), not from the module's own rule."""
+
+    def oracle(noise: str, indices: list[int], n: int) -> list[str]:
+        rows = [(band, i) for band in ("near", "measurable") for i in indices]
+        step = max(1, len(rows) // n)
+        return [f"planet-{band}-{noise}-{i:04d}" for band, i in rows[::step][:n]]
+
+    three = list(range(100, 150))
+    var = list(range(200, 250))
+    two = [i for i in range(250) if i < 100 or 150 <= i < 200]
+    expected = {
+        "x2f-s1": oracle("white", three, 47) + oracle("correlated", three, 47),
+        "x2f-s2": oracle("white", var, 45) + oracle("correlated", var, 45),
+        "x2f-s3": oracle("white", two, 300) + oracle("correlated", two, 146),
+    }
+    for name in x2.X2F_SEQUENCE:
+        assert [c["id"] for c in x2.x2_cases(x2.LOTS[name])] == expected[name], name
+
+
+def test_a_record_s_group_mechanism_and_band_must_be_its_case_s(lot_env):
+    """Codex's review: a record whose metadata was changed passed the check."""
+    x2 = lot_env
+    spec = x2.LOTS["x2f-s3"]
+    case = x2.x2_cases(spec)[0]
+    good = _fake_record(x2, case, 0, _declared(), spec.name)
+    seed = good["noise_seed"]
+    assert x2.record_problems(good, case, 0, seed, _declared(), spec) == []
+    for key, value in (
+        ("group", "AR(1), variability"),
+        ("mechanism", "three_years"),
+        ("band", "below"),
+    ):
+        bad = {**good, key: value}
+        problems = x2.record_problems(bad, case, 0, seed, _declared(), spec)
+        assert any(key in p for p in problems), (key, problems)
+
+
+def test_a_full_check_requires_the_declared_task_list(lot_env, monkeypatch):
+    """Codex's review: `check` verified the manifest's tasks, not that the manifest is the whole
+    declared lot. A diagnostic subset passes the ordinary check and fails the full one, which the
+    evaluation uses."""
+    x2 = lot_env
+    spec = x2.LOTS["x2f-s1"]
+    monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
+    tasks = [(x2.x2_cases(spec)[0], 0), (x2.x2_cases(spec)[0], 1)]
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), spec=spec)
+    assert x2.x2_lot_problems(run) == []
+    full = x2.x2_lot_problems(run, full=True)
+    assert any("declared" in p for p in full)
+    with pytest.raises(SystemExit, match="not complete"):
+        x2.lot_rows(run)
+
+
+def test_a_regime_selection_larger_than_the_prefix_is_refused(x2):
+    from dataclasses import replace
+
+    s3 = x2.LOTS["x2f-s3"]
+    too_many = replace(s3, selection=(("white, no variability", ("two_years", "few_train"), 301),))
+    with pytest.raises(ValueError, match="301"):
+        x2.x2_cases(too_many)
+
+
+@pytest.mark.parametrize("name", ["x2f-s1", "x2f-s2", "x2f-s3"])
+def test_an_x2f_sub_lot_names_itself_and_checks_its_own_records(lot_env, monkeypatch, name):
+    x2 = lot_env
+    spec = x2.LOTS[name]
+    monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
+    tasks = [(x2.x2_cases(spec)[0], 0)]
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    report = x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), spec=spec)
+    assert report["complete"] is True and report["format"] == spec.lot_format
+    import json
+
+    manifest = json.loads((run / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["lot"] == name and x2.spec_of(manifest) is spec
+    rec = json.loads(x2.record_path(run, tasks[0][0]["id"], 0).read_text(encoding="utf-8"))
+    assert rec["format"] == spec.record_format and rec["target"].startswith("refute-v0.2.1-x2-3/")
+    assert x2.x2_lot_problems(run) == []
+    # a record of another sub-lot (same prefix, another lot's format) is refused
+    other = next(n for n in x2.X2F_SEQUENCE if n != name)
+    wrong = _fake_record(x2, tasks[0][0], 0, _declared(), other)
+    assert x2.record_problems(wrong, tasks[0][0], 0, rec["noise_seed"], _declared(), spec)
 
 
 def test_the_pooled_rows_name_each_case_by_its_prefix(x2):
