@@ -1,0 +1,54 @@
+{
+ "format": "refute-population-v4-order/1",
+ "history": [
+  {
+   "commit": "9bb0aaf65e629d0dccfc57d5d9a3ff5cce3d0d94",
+   "paths": [
+    "docs/validation/v0.2.1/population/population-v4-acceptance.md"
+   ]
+  },
+  {
+   "commit": "dc99a322ee9e5c36b5c1e05c210dddeddbca6e9d",
+   "paths": [
+    "docs/validation/v0.2.1/population/v4-acceptance/first-run.json",
+    "tests/test_domain.py",
+    "tests/test_population_v4.py"
+   ]
+  },
+  {
+   "commit": "610bc029487549869d35211ab77ada8c8763cbc9",
+   "paths": [
+    "docs/validation/v0.2.1/population/band_check_v4.py",
+    "docs/validation/v0.2.1/population/population_v4.py",
+    "docs/validation/v0.2.1/population/population_v4_check.py",
+    "docs/validation/v0.2.1/population/population_v4_sabotage.py",
+    "src/refute/packs/tess/domain.py"
+   ]
+  },
+  {
+   "commit": "b9d40c19aeaf115be9ab092a8b81a9b37265e350",
+   "paths": [
+    "docs/validation/v0.2.1/population/band_check_v4.py",
+    "docs/validation/v0.2.1/population/population_v4_check.py",
+    "docs/validation/v0.2.1/population/population_v4_sabotage.py",
+    "tests/test_population_v4.py"
+   ]
+  },
+  {
+   "commit": "8df842562b098cf1bf95ab434105cb56936d63f1",
+   "paths": [
+    "docs/validation/v0.2.1/population/v4-acceptance/README.md",
+    "docs/validation/v0.2.1/population/v4-acceptance/determinism.json",
+    "docs/validation/v0.2.1/population/v4-acceptance/manifest-1.json",
+    "docs/validation/v0.2.1/population/v4-acceptance/manifest-2.json",
+    "docs/validation/v0.2.1/population/v4-acceptance/manifest-3.json",
+    "docs/validation/v0.2.1/population/v4-acceptance/population-1.json",
+    "docs/validation/v0.2.1/population/v4-acceptance/population-2.json",
+    "docs/validation/v0.2.1/population/v4-acceptance/population-3.json",
+    "docs/validation/v0.2.1/population/v4-acceptance/sabotages.json"
+   ]
+  }
+ ],
+ "passed": true,
+ "problems": []
+}
