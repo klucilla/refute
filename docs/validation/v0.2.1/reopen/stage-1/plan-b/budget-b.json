@@ -1,0 +1,93 @@
+{
+ "note": "The consolidated plan's budget up to X7 (plan-b/README.md; the maintainer's decisions of\n2026-10-23 on proposal B): logical-processor hours (LP-h) and wall time on 22 workers, every step\nat its ceiling (1.5 times its estimate), the new generator's development and validation, the local\nsuites and the mandatory checks included. Planning arithmetic only: every unit cost is a\nmeasurement of another run, named, and the highest one is used where the final configuration's is\nunknown.",
+ "unit_costs_lp_s_per_curve": {
+  "x2_diagnostic": 61.578,
+  "dev_campaign_1_complete_analysis_pre_m4": 17.74978846153846
+ },
+ "b2_curves_per_study": {
+  "white": 3730,
+  "correlated": 2130
+ },
+ "consumed": {
+  "lots_lp_h": 386.2,
+  "lots_wall_h": 51.2,
+  "suites_kept_wall_h": 3.5570888888888907,
+  "suites_kept_lp_h_proxy": 85.37013333333337
+ },
+ "steps": [
+  {
+   "step": "new generator: development and validation",
+   "ceiling_lp_h": 75.34287692307693,
+   "ceiling_wall_h": 3.1392865384615387,
+   "note": "3 generations of 4 populations at the dev population's measured cost; 20 LP-h of self-tests, an allowance"
+  },
+  {
+   "step": "X2f S1 + S2 (declared ceilings 3.25 + 10.50 h)",
+   "ceiling_lp_h": 302.5,
+   "ceiling_wall_h": 13.75,
+   "note": "x2f-declaration.md, S3 removed"
+  },
+  {
+   "step": "spec C's confirmation (as S1 + S2, on the new population)",
+   "ceiling_lp_h": 302.5,
+   "ceiling_wall_h": 13.75,
+   "note": "the same sizes and cost as the choice"
+  },
+  {
+   "step": "X3 on three-year curves",
+   "curves": 1300,
+   "unit_lp_s": 61.578,
+   "estimate_lp_h": 22.236500000000003,
+   "ceiling_lp_h": 33.35475,
+   "ceiling_wall_h": 1.5161250000000002,
+   "note": "a planning assumption; its declaration sizes it"
+  },
+  {
+   "step": "X5 pilot (the complete engine; the development population)",
+   "curves": 1500,
+   "unit_lp_s": 61.578,
+   "estimate_lp_h": 25.6575,
+   "ceiling_lp_h": 38.48625,
+   "ceiling_wall_h": 1.749375,
+   "note": "a planning size; its declaration sizes it"
+  },
+  {
+   "step": "before-and-after comparisons of each change on X5's development inputs (2)",
+   "curves": 3000,
+   "unit_lp_s": 61.578,
+   "estimate_lp_h": 51.315,
+   "ceiling_lp_h": 76.9725,
+   "ceiling_wall_h": 3.49875,
+   "note": "the ROADMAP's measurement before and after each change (spec C's model, X3's b, s)"
+  },
+  {
+   "step": "X6 main study, B2 floor (the complete engine)",
+   "curves": 5860,
+   "unit_lp_s": 61.578,
+   "estimate_lp_h": 100.23530000000001,
+   "ceiling_lp_h": 150.35295000000002,
+   "ceiling_wall_h": 6.834225000000001,
+   "note": "the holdout criteria's sizes come from X5"
+  },
+  {
+   "step": "X7 reserve, as X6's floor",
+   "curves": 5860,
+   "unit_lp_s": 61.578,
+   "estimate_lp_h": 100.23530000000001,
+   "ceiling_lp_h": 150.35295000000002,
+   "ceiling_wall_h": 6.834225000000001,
+   "note": "the same composition and sizes as X6"
+  },
+  {
+   "step": "local full suites and mandatory checks ahead (20 rounds)",
+   "ceiling_lp_h": 490.67819999999995,
+   "ceiling_wall_h": 20.444924999999998,
+   "note": "24 processors x the suite's wall time (a proxy, not measured CPU), 1.5 times"
+  }
+ ],
+ "total_lp_h_at_ceilings": 2092.1106102564104,
+ "total_wall_h_at_ceilings": 126.27400042735044,
+ "left_of_4000_lp_h": 1907.8893897435896,
+ "left_of_200_h": 73.72599957264956,
+ "left_for_x6_beyond_its_floor_wall_h": 73.72599957264956
+}
