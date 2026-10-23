@@ -1,7 +1,10 @@
 """The consolidated plan's budget up to X7 (plan-b/README.md; the maintainer's decisions of
-2026-10-23 on proposal B): logical-processor hours (LP-h) and wall time on 22 workers, every step
-at its ceiling (1.5 times its estimate), the new generator's development and validation, the local
-suites and the mandatory checks included. Planning arithmetic only: every unit cost is a
+2026-10-23 on proposal B): logical-processor hours (LP-h) and wall time on 22 workers, cumulative,
+the earlier consumption included, every step at its ceiling (1.5 times its estimate) and at its
+planning (minimum) size, the new generator's development and validation, the real controls'
+availability check, the local suites and the mandatory checks included. It is **not** the budget
+of the complete phase: the real calibration of gate 13 has its own budget, and the statistically
+necessary sizes may exceed these floors. Planning arithmetic only: every unit cost is a
 measurement of another run, named, and the highest one is used where the final configuration's is
 unknown.
 
@@ -76,6 +79,12 @@ def main() -> int:
                 "3 generations of 4 populations at the dev population's measured cost; "
                 "20 LP-h of self-tests, an allowance"
             ),
+        },
+        {
+            "step": "the real controls' availability check (catalogues and metadata only)",
+            "ceiling_lp_h": 0.0,
+            "ceiling_wall_h": 2.0,
+            "note": "queries only, no light curve analysed; a wall-time allowance",
         },
         {
             "step": "X2f S1 + S2 (declared ceilings 3.25 + 10.50 h)",

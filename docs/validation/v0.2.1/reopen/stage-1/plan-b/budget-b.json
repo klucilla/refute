@@ -1,5 +1,5 @@
 {
- "note": "The consolidated plan's budget up to X7 (plan-b/README.md; the maintainer's decisions of\n2026-10-23 on proposal B): logical-processor hours (LP-h) and wall time on 22 workers, every step\nat its ceiling (1.5 times its estimate), the new generator's development and validation, the local\nsuites and the mandatory checks included. Planning arithmetic only: every unit cost is a\nmeasurement of another run, named, and the highest one is used where the final configuration's is\nunknown.",
+ "note": "The consolidated plan's budget up to X7 (plan-b/README.md; the maintainer's decisions of\n2026-10-23 on proposal B): logical-processor hours (LP-h) and wall time on 22 workers, cumulative,\nthe earlier consumption included, every step at its ceiling (1.5 times its estimate) and at its\nplanning (minimum) size, the new generator's development and validation, the real controls'\navailability check, the local suites and the mandatory checks included. It is **not** the budget\nof the complete phase: the real calibration of gate 13 has its own budget, and the statistically\nnecessary sizes may exceed these floors. Planning arithmetic only: every unit cost is a\nmeasurement of another run, named, and the highest one is used where the final configuration's is\nunknown.",
  "unit_costs_lp_s_per_curve": {
   "x2_diagnostic": 61.578,
   "dev_campaign_1_complete_analysis_pre_m4": 17.74978846153846
@@ -11,8 +11,8 @@
  "consumed": {
   "lots_lp_h": 386.2,
   "lots_wall_h": 51.2,
-  "suites_kept_wall_h": 3.5570888888888907,
-  "suites_kept_lp_h_proxy": 85.37013333333337
+  "suites_kept_wall_h": 4.372385000000002,
+  "suites_kept_lp_h_proxy": 104.93724000000006
  },
  "steps": [
   {
@@ -20,6 +20,12 @@
    "ceiling_lp_h": 75.34287692307693,
    "ceiling_wall_h": 3.1392865384615387,
    "note": "3 generations of 4 populations at the dev population's measured cost; 20 LP-h of self-tests, an allowance"
+  },
+  {
+   "step": "the real controls' availability check (catalogues and metadata only)",
+   "ceiling_lp_h": 0.0,
+   "ceiling_wall_h": 2.0,
+   "note": "queries only, no light curve analysed; a wall-time allowance"
   },
   {
    "step": "X2f S1 + S2 (declared ceilings 3.25 + 10.50 h)",
@@ -85,9 +91,9 @@
    "note": "24 processors x the suite's wall time (a proxy, not measured CPU), 1.5 times"
   }
  ],
- "total_lp_h_at_ceilings": 2092.1106102564104,
- "total_wall_h_at_ceilings": 126.27400042735044,
- "left_of_4000_lp_h": 1907.8893897435896,
- "left_of_200_h": 73.72599957264956,
- "left_for_x6_beyond_its_floor_wall_h": 73.72599957264956
+ "total_lp_h_at_ceilings": 2111.6777169230772,
+ "total_wall_h_at_ceilings": 129.08929653846155,
+ "left_of_4000_lp_h": 1888.3222830769228,
+ "left_of_200_h": 70.91070346153845,
+ "left_for_x6_beyond_its_floor_wall_h": 70.91070346153845
 }
