@@ -1228,6 +1228,128 @@ self-test of these files is `population/selftest-v2-4/` (reference cases kept; o
 `population/selftest-v2-2/` and `population/selftest-v2-3/` intermediate versions (after the
 first and the second review); all three are left as they were.
 
+## Amendment B (2026-10-23): the profile `three-observing-years/1`
+
+Adopted by the maintainer on 2026-10-23, with the ROADMAP's scope amendment B and the plan
+`reopen/stage-1/plan-b/README.md` (frozen on adoption). Nothing here changes a result already
+recorded.
+
+**Precedence.** For the profile `three-observing-years/1` only, this amendment supersedes the
+population, the sizes and the SNR bands' quotas of sections 2 and 4 and the confirmation's
+population of section 5; sections 1 (the criteria), 3 (the SNR bands' definition), 5 (the rule of
+development and confirmation) and 6 to 12 apply as written. For every earlier version, the original
+sections, records and procedures stand unchanged.
+
+**The input of the domain** (the same for the profile O2 and for the generator's check): per
+sector, the product's cadence timestamps and quality flags, the cadences kept by the plan's quality
+mask, **before any filter that reads a flux or flux-error value** (the adapter today drops
+non-finite flux before it builds the spans, `adapter.py`, lines 440 to 455; the profile's
+implementation records the pre-filter timestamps' summary per sector so that the domain never
+depends on a flux value); in the synthetic harness, the generated timestamps. Each sector is
+labelled by the year of its first kept cadence, as the adapter does (`adapter.py`, line 577).
+Definitions: a sector's **span** is its last kept timestamp minus its first plus one cadence; an
+**internal gap** is an interval between consecutive kept timestamps longer than 10 minutes; the
+**orbit gap** is the sector's longest internal gap, and the two parts on either side are its
+**orbits**; its **coverage** is the number of kept cadences times 120 s over its span.
+
+**The operational domain** (tolerances fixed here, before any result):
+- **D1, years:** exactly three observing years (the distinct year labels of the sectors; the
+  engine's count, `holdout.py`, line 1910). Never a selection of three years out of a longer curve.
+- **D2, sectors:** exactly one sector in each observing year (three sectors).
+- **D3, cadence:** the two-minute cadence (full-frame-image cadences are outside): every interval
+  between consecutive kept timestamps that is not an internal gap equals `k × 120 s` within
+  ± 0.5 s, with `k` from 1 to 4 (`k − 1` missing cadences: an isolated masked cadence gives about
+  240 s); the residual `interval − k × 120 s` is the timing tolerance; the missing cadences count
+  toward the coverage of D4.
+- **D4, each sector:** each orbit 12.5 to 14.0 d long; the orbit gap 0.5 to 2.0 d; at most four
+  other internal gaps, each at most 6 h; coverage at least 0.84.
+- **D5, spacings:** the two separations between consecutive sectors' first timestamps, each either
+  **about one year** (345 to 385 d) or **about two years** (710 to 750 d), **at most one** about two
+  years.
+
+**Why these properties and these widths.** The holdout's train ephemeris and its extrapolation to
+the hidden year depend on the times through differences: the separations (D5) set the lever of the
+timing diagnosis (`reopen/m4-implementation-map.md`, Amendment 28), the sampling (D3) and the
+orbits, gaps and coverage (D4) set the windows' and the replica bands' coverage. The widths are
+design choices, fixed before any result: ±20 d around one and two years change the extrapolation's
+lever by about 5% and 3%, inside one bin of the stopped fraction's steep dependence on the lever
+read in the two-year diagnosis (`reopen/stage-1/viability/two-year-results.md`, section a); D4
+keeps a two-orbit sector with one downlink-like gap and limited losses; D3's ±0.5 s is far below
+the windows' width (hours) and the cadence the plan assumes (`exptime_seconds` 120). **Their
+adequacy for real sectors is not claimed:** a real sector outside them is outside the domain.
+
+**The calendar date.** The timing geometry depends on differences only, but the complete engine is
+not invariant under a shift of every date: the prewhitening bins the **absolute** phase
+(`prewhiten.py`, lines 136 to 158, which decides the components it accepts), so a shift changes
+its statistic. The domain therefore names no calendar year; the generator draws the first sector's
+start uniformly over one year, which randomizes the absolute phase of every variability period it
+injects (0.3 to 5 d), so the population represents the date's effect statistically; no
+equivalence for a particular date is claimed.
+
+**The represented geometries** (the generator's primitive proposals use the uniform distributions
+listed here, followed by the declared rejection; the realized quantities, some of them derived,
+such as the coverage, or shaped by the rejection, must meet the generator's acceptance 2,
+`reopen/stage-1/plan-b/README.md`, section 3; the same available geometries for every class,
+allocated with the declared rounding): **G-a**, both separations about one year; **G-b**, one
+about one year and one about two years, in either order (50 : 50); each separation uniform in its
+interval; the first sector's start uniform over one year from 1325.0 BTJD; each orbit's length
+uniform in 12.5 to 14.0 d; the orbit gap uniform in 0.5 to 2.0 d; from 0 to 4 loss blocks
+(uniform count), each of a length uniform in 10 min to 6 h, placed uniformly inside the orbits;
+single-cadence losses at a rate uniform in 0 to 5%, never four or more adjacent; each timestamp
+jittered uniformly by ±0.25 s (so every residual of D3 stays within ±0.5 s; the residuals'
+distribution is triangular, not uniform). The coverage floor 0.84 of D4 is an acceptance floor: the
+generator's lowest coverage is about 0.844, so the floor itself is not claimed as generated. A draw
+that would fall outside D1 to D5 (for example a sector across a year boundary) is redrawn by the
+generator's own rule, recorded with its reason, never by an engine output.
+
+**The population (B2), per noise model** (white; AR(1) correlated; the noise models, mechanisms and
+proportions of section 4): planets, 360 per band (below, near, measurable), 180 without and 180 with
+variability (`three_years`-type and `variability_some_years`-type); false positives, below 100,
+near 100, measurable 250, the four mechanisms as section 4 allocates them (for 250: 63, 63, 62,
+62); curves without a transit, 2200 (white) and 600 (correlated), with section 4's mixture (40%
+pure noise, 30% trend, 30% trend with variability, rounded as section 4). **The layouts:** within
+each class, noise model, band (where the class has one) and regime or mechanism, the cases are
+split between G-a and G-b, G-a taking the extra case when the count is odd. Bands, mechanisms and
+parameters drawn as section 4 from the injected truth only. **The variability-free year**
+(`var_absent_year`) keeps its uniform draw over three positions, mapped to the curve's own three
+observing years, so that exactly two observed years carry variability in every
+`variability_some_years` planet.
+
+**The criteria:** C1 to C6 of section 1 unchanged (limits, rule, denominators), their acceptance
+counts at the new sizes: C1 at most 26 of 360 per band and noise model; C2 at least 164 of 250; C3
+at most 59 of 360 (planets) and 39 of 250 (false positives); C4 at most 14 of 2200 (white) and 20 of
+600 (correlated). **Added, per noise model and regime in the measurable band:** G1, planets
+delivered as SURVIVED or WEAKENED with signal identity, lower bound at least 0.60 (at least 120 of
+180); G2, planets refuted, upper bound at most 0.10 (at most 11 of 180). **G3 = C2, G4 = C4, G5 =
+C3**, each with its per-mechanism or per-regime publication and no added limit; G6, the cost
+measured on the pilot fits the budget. One-sided 95% exact Clopper-Pearson, each criterion judged
+individually. **The holdout criteria** of specification B (B5: the false PASS per target, upper
+bound at most 0.02) and of specification A (W1e: the false FAIL at reduced depth, upper bound at
+most 0.02) are binding acceptance criteria of the main study, their sizing rules fixed in the
+pilot's declaration, before the pilot.
+
+**The planning rates** (0.70 delivered, 0.05 refuted per regime) are hypotheses for the sizing, not
+observed performance; a criterion's chance of passing at them (G1 0.85, G2 0.81, C1 0.975) is
+**not** the chance of approving the phase. Criteria and counts are fixed before any new result and
+are never lowered afterwards. A criterion whose required coverage or minimum is not reached is not
+met.
+
+**The populations and their roles:** the **development** population (the pilot, X5, and the
+before-and-after comparisons of each change, section 6 of this protocol, on identical inputs); the
+**main confirmation** (X6: B2, seeds from a future drand round declared before, run once at the end
+on frozen code); the **independent replication** (X7: the same composition and sizes, its own drand
+round declared at its own checkpoint after X6's result and before that round is available, run only
+if X6 passes). **The configuration is chosen on development data and frozen before X6**; nothing is
+chosen on X6's or X7's data. **The synthetic study passes only if X6 and X7 both pass.** Spec C's
+confirmation is a separate lot (an error model's confirmation, not the population study).
+
+**If X7 fails after X6 passed:** the failure is a result and is never ignored; both lots are
+reported in full; neither is chosen as the more favourable one, and they are never pooled to pass;
+the synthetic study is not accepted and the profile stays proposed for validation; the calibration
+on real targets does not start; any later attempt needs the maintainer's recorded decision, under
+the rule for criterion failures (an amendment declared after the result, Codex's design review, new
+seeds, the same criteria and sizes), with its own authorization.
+
 ## Study status
 
 **Closed on 2026-10-14 by a scope decision of the maintainer**, without a demonstration that
@@ -1244,3 +1366,8 @@ approval was impossible (record: `population/closure-record.md`).
 Nothing in this document changes with the closure: the criteria, their limits, the frozen
 manifest, `points.json` and the results stay as recorded above. The conditions for a future
 resumption are in the closure record.
+
+**Resumed for the profile `three-observing-years/1` on 2026-10-23** under Amendment B (above),
+following the gates of `reopen/stage-1/plan-b/README.md`; nothing of it has run yet, and every
+execution has its own authorization. The closure's record and the results of the original
+population stay as they are.

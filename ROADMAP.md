@@ -193,6 +193,31 @@ that approval was impossible
   still open.
 - The calibration population of the corrections plan: never generated nor analyzed.
 
+**Scope amendment B (adopted on 2026-10-23, by the maintainer).** The validation of v0.2.1 is
+restricted to one **profile proposed for validation**, `three-observing-years/1`: light curves
+inside an **operational domain** defined by quantities read before any hidden flux is accessed
+(exactly three observing years, one sector in each, two-minute cadence, the sectors' coverage and
+the spacings between the years, within declared tolerances; the population study's
+[Amendment B](docs/validation/v0.2.1/population-study.md)). It becomes a validated profile only
+when its confirmation and its replication succeed; a curve's membership is not demonstrated
+performance, and a note in a dossier does not make the profile validated. Curves outside the
+domain are reported INCONCLUSIVE ("outside the validated scope") under the profile, with each
+available test result kept in the dossier as a diagnostic of no verdict value. The synthetic
+population study is run on a new population generated for this domain (`population_v4`; the
+earlier generators unchanged), with the sizes, criteria and acceptance counts of the population
+study's Amendment B, fixed before any new result. The original four-group population study and its
+FAILs (development campaign 1, M0 to M3), the R_min study, and stage 1's development readings are
+kept as results; this amendment does not make them a success, and the original claim stays not
+validated. A widening beyond the domain (the timing rule's T4, the undetermined hidden noise, other
+geometries) is future work with its own specifications. The plan, its gates and its budget:
+[plan B](docs/validation/v0.2.1/reopen/stage-1/plan-b/README.md) (frozen on adoption; optional
+improvements go to the backlog, and only a problem of validity, safety or execution reopens it).
+
+**The exit criteria under amendment B.** Their wording is unchanged. Under the amendment, the
+synthetic population study, its confirmation and the new calibration are those of the profile (the
+calibration's targets drawn inside the domain), and the phase closes only after the calibration,
+its dossier reviews and every other exit criterion.
+
 The exit criteria below are not met and none is marked done. Each pending criterion is
 **deferred**, with its reason; no gate is scheduled.
 

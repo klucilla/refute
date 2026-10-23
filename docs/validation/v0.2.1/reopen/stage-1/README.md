@@ -102,4 +102,6 @@ the check; R1's gate before X5 proposed as an amendment; the CI tracked.
 **Plan B consolidated** (the maintainer's decisions of 2026-10-23 on `23f72f8`), for adoption,
 nothing run: [plan-b/README.md](plan-b/README.md) (the amendments' texts, the boundary of exactly
 three observing years and the O2 profile, the new generator's specification and acceptance, B2,
-X2f reduced to S1 and S2, the gates, the budget up to X7 and the stop rules).
+X2f reduced to S1 and S2, the gates, the budget up to X7 and the stop rules). **Adopted and frozen
+on 2026-10-23** (`67b5a6e`), applied to the ROADMAP and the population study's Amendment B; the
+next step is gate 1 (the generator's acceptance record), nothing run.

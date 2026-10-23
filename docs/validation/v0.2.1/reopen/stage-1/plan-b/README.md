@@ -1,4 +1,10 @@
-# Plan B: the restricted validation of v0.2.1, final version for adoption (nothing run)
+# Plan B: the restricted validation of v0.2.1 (adopted and frozen on 2026-10-23; nothing run)
+
+> **Adopted by the maintainer on 2026-10-23** ("OK, adotar o plano B (67b5a6e) e congelar"):
+> sections 1.1 and 1.2 are applied, in the same commit, to `ROADMAP.md` (v0.2.1, scope amendment B)
+> and to `docs/validation/v0.2.1/population-study.md` (Amendment B). **The design is frozen:**
+> optional improvements go to the backlog; only a problem of validity, safety or execution reopens
+> it. The work follows the gates of section 7, each execution with its own authorization.
 
 The maintainer's decisions of 2026-10-23 on proposal B (`23f72f8`), consolidated in `649d4f4`,
 then one final revision (the domain, the real controls, X7's failure, the budget's label, the
