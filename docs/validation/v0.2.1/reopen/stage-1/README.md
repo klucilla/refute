@@ -93,3 +93,8 @@ PASS of the measurable planets stays below the 195 of 250 that C1 and C3 need in
 final configuration's viability is not identifiable from these records); C6 now says that X2f
 alone decides; X2f, when authorized, after the update of 2026-10-27; G1 to G6's numbers fixed after
 the check; R1's gate before X5 proposed as an amendment; the CI tracked.
+
+**The two-year diagnosis** (declared `ee262b5`, read `a56757b`):
+[viability/two-year-results.md](viability/two-year-results.md). **The maintainer's direction of
+2026-10-23: B**, a restricted, prospective validation, proposed (not adopted) in
+[scope-b/README.md](scope-b/README.md); A not authorized, C not chosen.

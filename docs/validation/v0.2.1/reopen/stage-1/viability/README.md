@@ -171,8 +171,10 @@ It would need its own specification and validation, and is not proposed.
 - **Missing information:** the final verdicts and the global candidate's identity under M4; how the
   capacity-INCONCLUSIVE rounds would split once measured; the gate and the gauntlet on true planets
   under M4; the final configuration's rates (only X5 measures them).
-- **What spec C can change:** the capacity decisions only; in the three-year and variability
-  regimes they are nearly the whole barrier; in the two-year regimes they are not.
+- **What spec C can change:** the capacity decisions only. In the three-year and variability
+  regimes, **resolving the capacity blocks favourably leaves room to meet the targets in the
+  optimistic bound** (the maintainer's wording of 2026-10-23; not "spec C suffices"); in the
+  two-year regimes it does not.
 - **The next decision (the maintainer's) and its cost:**
   1. continue to X2f knowing that, on these records, spec C's best case leaves the white-noise
      reading below the necessary condition (X2f: 427 LP-h estimated, 641 at its ceilings);

@@ -1,0 +1,194 @@
+{
+ "note": "Proposal B's planning arithmetic (scope-b/README.md; the maintainer's direction of 2026-10-23):\nfor each design of the restricted population (curves with at least three observing years), every\napproved criterion's acceptance count recomputed at its set size (one-sided 95% exact\nClopper-Pearson, as population-study.md) and its chance of passing at the protocol's reference\nrates (design assumptions, not measurements); the per-regime counts of G1 and G2; the necessary\ncondition of C1 and C3 on the holdout; and the budget's known steps under R1. Nothing here is a\ncriterion or a decision.",
+ "assumed_rates_for_the_new_objectives": {
+  "G1 delivery": 0.7,
+  "G2 refuted": 0.05
+ },
+ "designs": {
+  "B1 (a new population: 250 planets per band, 125 + 125)": {
+   "C1 refuted planets, per band and noise": {
+    "n": 250,
+    "pass_with_at_most": 16,
+    "chance_at_reference": 0.8750126298172263
+   },
+   "C2 flagged false positives, measurable, per noise": {
+    "n": 250,
+    "pass_with_at_least": 164,
+    "chance_at_reference": 0.9423238744828789
+   },
+   "C3 INCONCLUSIVE, planets, measurable, per noise": {
+    "n": 250,
+    "pass_with_at_most": 39,
+    "chance_at_reference": 0.9979474930067302
+   },
+   "C3 INCONCLUSIVE, false positives, measurable, per noise": {
+    "n": 250,
+    "pass_with_at_most": 39,
+    "chance_at_reference": 0.9979474930067302
+   },
+   "necessary holdout PASS of the measurable planets (C1 and C3 together)": {
+    "of": 250,
+    "at_least": 195
+   },
+   "C4 false alarms, white": {
+    "n": 2200,
+    "pass_with_at_most": 14,
+    "chance_at_reference": 0.8545914052282981
+   },
+   "C4 false alarms, correlated": {
+    "n": 600,
+    "pass_with_at_most": 20,
+    "chance_at_reference": 0.9196688461160972
+   },
+   "G1 delivered, measurable, no variability": {
+    "n": 125,
+    "pass_with_at_least": 85,
+    "chance_at_assumed_0.70": 0.7237007501761816
+   },
+   "G2 refuted, measurable, no variability": {
+    "n": 125,
+    "pass_with_at_most": 6,
+    "chance_at_assumed_0.05": 0.5652111983317938
+   },
+   "G1 delivered, measurable, variability": {
+    "n": 125,
+    "pass_with_at_least": 85,
+    "chance_at_assumed_0.70": 0.7237007501761816
+   },
+   "G2 refuted, measurable, variability": {
+    "n": 125,
+    "pass_with_at_most": 6,
+    "chance_at_assumed_0.05": 0.5652111983317938
+   }
+  },
+  "B2 (a new population: 360 planets per band, 180 + 180, for the per-regime objectives)": {
+   "C1 refuted planets, per band and noise": {
+    "n": 360,
+    "pass_with_at_most": 26,
+    "chance_at_reference": 0.9750258235152547
+   },
+   "C2 flagged false positives, measurable, per noise": {
+    "n": 250,
+    "pass_with_at_least": 164,
+    "chance_at_reference": 0.9423238744828789
+   },
+   "C3 INCONCLUSIVE, planets, measurable, per noise": {
+    "n": 360,
+    "pass_with_at_most": 59,
+    "chance_at_reference": 0.999936956334558
+   },
+   "C3 INCONCLUSIVE, false positives, measurable, per noise": {
+    "n": 250,
+    "pass_with_at_most": 39,
+    "chance_at_reference": 0.9979474930067302
+   },
+   "necessary holdout PASS of the measurable planets (C1 and C3 together)": {
+    "of": 360,
+    "at_least": 275
+   },
+   "C4 false alarms, white": {
+    "n": 2200,
+    "pass_with_at_most": 14,
+    "chance_at_reference": 0.8545914052282981
+   },
+   "C4 false alarms, correlated": {
+    "n": 600,
+    "pass_with_at_most": 20,
+    "chance_at_reference": 0.9196688461160972
+   },
+   "G1 delivered, measurable, no variability": {
+    "n": 180,
+    "pass_with_at_least": 120,
+    "chance_at_assumed_0.70": 0.8545676888723962
+   },
+   "G2 refuted, measurable, no variability": {
+    "n": 180,
+    "pass_with_at_most": 11,
+    "chance_at_assumed_0.05": 0.8080507241219065
+   },
+   "G1 delivered, measurable, variability": {
+    "n": 180,
+    "pass_with_at_least": 120,
+    "chance_at_assumed_0.70": 0.8545676888723962
+   },
+   "G2 refuted, measurable, variability": {
+    "n": 180,
+    "pass_with_at_most": 11,
+    "chance_at_assumed_0.05": 0.8080507241219065
+   }
+  },
+  "B0 (hypothetical: today's three-year planet quotas, 50 + 50 per band, with new three-year controls; today's population filtered to three years would have no false positive and no curve without a transit)": {
+   "C1 refuted planets, per band and noise": {
+    "n": 100,
+    "pass_with_at_most": 4,
+    "chance_at_reference": 0.43598130068571
+   },
+   "C2 flagged false positives, measurable, per noise": {
+    "n": 250,
+    "pass_with_at_least": 164,
+    "chance_at_reference": 0.9423238744828789
+   },
+   "C3 INCONCLUSIVE, planets, measurable, per noise": {
+    "n": 100,
+    "pass_with_at_most": 13,
+    "chance_at_reference": 0.8761232074006697
+   },
+   "C3 INCONCLUSIVE, false positives, measurable, per noise": {
+    "n": 250,
+    "pass_with_at_most": 39,
+    "chance_at_reference": 0.9979474930067302
+   },
+   "necessary holdout PASS of the measurable planets (C1 and C3 together)": {
+    "of": 100,
+    "at_least": 83
+   },
+   "C4 false alarms, white": {
+    "n": 2200,
+    "pass_with_at_most": 14,
+    "chance_at_reference": 0.8545914052282981
+   },
+   "C4 false alarms, correlated": {
+    "n": 600,
+    "pass_with_at_most": 20,
+    "chance_at_reference": 0.9196688461160972
+   },
+   "G1 delivered, measurable, no variability": {
+    "n": 50,
+    "pass_with_at_least": 37,
+    "chance_at_assumed_0.70": 0.32788323636251343
+   },
+   "G2 refuted, measurable, no variability": {
+    "n": 50,
+    "pass_with_at_most": 1,
+    "chance_at_assumed_0.05": 0.27943175232069517
+   },
+   "G1 delivered, measurable, variability": {
+    "n": 50,
+    "pass_with_at_least": 37,
+    "chance_at_assumed_0.70": 0.32788323636251343
+   },
+   "G2 refuted, measurable, variability": {
+    "n": 50,
+    "pass_with_at_most": 1,
+    "chance_at_assumed_0.05": 0.27943175232069517
+   }
+  }
+ },
+ "regime_size_for_0.80": {
+  "G1 at 0.70": 143,
+  "G2 at 0.05": 179
+ },
+ "budget": {
+  "x2f_s1_s2_estimate_lp_h": 201.5,
+  "x2f_s1_s2_ceiling_lp_h": 302.5,
+  "confirmation_ceiling_lp_h": 302.5,
+  "x3_three_year_ceiling_lp_h": 33.36666666666667,
+  "consumed_lots_lp_h": 386.2,
+  "suites_proxy_lp_h": 19.1,
+  "known_steps_at_ceilings_lp_h": 1043.6666666666665,
+  "known_steps_wall_h": 80.21666666666667,
+  "remaining_lp_h_of_4000": 2956.3333333333335,
+  "remaining_wall_h_of_200": 119.78333333333333,
+  "remaining_wall_as_lp_h_on_22": 2635.233333333333
+ }
+}

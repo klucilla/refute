@@ -82,6 +82,13 @@ as PASS, every other round as recorded:
   only; T4 requires the hidden noise determined for its PASS; the attenuation front concerns the
   measured depth. Indirect effects of those fronts on it are not excluded.
 
+> **Interpretation (the maintainer's record of 2026-10-23):** zero replica depths counted does
+> **not** prove that there are no windows: with the noise model undetermined the code stops
+> measuring the replicas. The records do not distinguish replica bands without coverage, sectors
+> excluded for too few bins, and the absence of a usable noise scale. "One sector has no room for
+> replicas" is a **hypothesis**. The hidden-noise front is **deferred** (its cause and its repair
+> not established), not closed as a physical limit.
+
 ## d. The combined optimistic bound
 
 Every round INCONCLUSIVE by a capacity decision, by the timing rule and by the undetermined hidden
@@ -108,3 +115,10 @@ noise counted as PASS; standardized to the population study's quotas (150, 50, 5
 - The same caveats: favourable substitutions, never an engine run; the gate, the gauntlet and the
   candidate's identity not included; a reading of the M4 configuration's records, not of the final
   configuration, whose viability is not identifiable from them.
+
+> **Interpretation (the maintainer's record of 2026-10-23):** the optimistic reading (210.7
+> against 195) shows only that, under favourable substitutions, an evident impossibility
+> disappears; it does **not** show that implementable repairs would produce it. It assumes PASS
+> in rounds blocked today and leaves out the global gate, the full battery and the candidate's
+> identity; releasing a round can reveal a FAIL. The 195 already carry the Clopper-Pearson bounds
+> of C1 and C3; the requirement is not applied twice.

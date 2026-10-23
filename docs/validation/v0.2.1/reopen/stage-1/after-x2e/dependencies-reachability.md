@@ -122,7 +122,9 @@ opening** (MPO, DCX, Spider, BMP, multi-frame loaders, PDF append, TarIO, PNG eX
 WMF/EMF, the bundled OpenJPEG through `Image.open`), and **JPEG writing**; of the paths these
 summaries name, none is the PNG encoding of the project's own figures, the one Pillow path the
 project reaches. Alert 48 (undefined behaviour in native integer operations) does not name its
-path in its summary: **its reachability is not determined**, and the conclusion above excludes it. Alert 54 (virtualenv's
+path in its summary: **its reachability is not determined**, and the conclusion above excludes it.
+**The maintainer's decision of 2026-10-23:** the twelve new alerts enter the update of 2026-10-27
+(the same versions); alert 48's reachability stays recorded as not determined. Alert 54 (virtualenv's
 generated files following links) needs links planted in an environment's directory, as alerts 41
 and 42. The plan of the update (2026-10-27) is unchanged.
 
