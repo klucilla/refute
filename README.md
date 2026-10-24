@@ -10,7 +10,7 @@
   <a href="https://github.com/klucilla/refute/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/klucilla/refute/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg"></a>
   <a href="pyproject.toml"><img alt="Python 3.12 | 3.13 (tested in CI)" src="https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB.svg"></a>
-  <a href="ROADMAP.md"><img alt="Status: v0.3 replicate papers, in progress" src="https://img.shields.io/badge/status-v0.3%20replicate%20papers-orange.svg"></a>
+  <a href="ROADMAP.md"><img alt="Status: v0.2.1 gauntlet fixes, in progress" src="https://img.shields.io/badge/status-v0.2.1%20gauntlet%20fixes-orange.svg"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
 </p>
 
@@ -352,8 +352,8 @@ SETI@home and Einstein@Home. The plan for Refute@Home
 |---|---|---|
 | v0.1 Calibration | Replicate published TESS planets, blind holdout, dossiers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.1.0) |
 | v0.2 Gauntlet | Full false-positive battery, independent reviewers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.2.0) |
-| v0.2.1 Gauntlet fixes | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![closed by scope decision, criteria deferred](https://img.shields.io/badge/-closed%20by%20scope%20decision%2C%20criteria%20deferred-lightgrey) [closure record](docs/validation/v0.2.1/population/closure-record.md) |
-| **v0.3 Replicate papers** | ML papers with public code and data, right of reply | ![in progress](https://img.shields.io/badge/-in%20progress-f59e0b) |
+| **v0.2.1 Gauntlet fixes** | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![in progress, resumed](https://img.shields.io/badge/-in%20progress%2C%20resumed-f59e0b) resumed on 2026-10-20 after v0.3 ([ROADMAP](ROADMAP.md#current-phase)) |
+| v0.3 Replicate papers | ML papers with public code and data, right of reply | ![closed, gate WEAKENED](https://img.shields.io/badge/-closed%2C%20gate%20WEAKENED-yellow) [gate record](calibration/v0.3/main/gate/README.md) |
 | v0.4 Discover | New candidates in TESS data | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.5 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.6 Mathematics | Counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
@@ -473,7 +473,7 @@ If you use Refute, please cite it via [CITATION.cff](CITATION.cff) (GitHub's "Ci
 @software{refute,
   author  = {Lucilla, Klauber},
   title   = {Refute: find signals, try to kill them, keep what survives},
-  version = {0.1.0},
+  version = {0.2.0},
   year    = {2026},
   url     = {https://github.com/klucilla/refute},
   license = {Apache-2.0}
