@@ -423,6 +423,13 @@ class TessAdapter:
         manifest = read_json(path)
         if manifest.get("schema") not in SUPPORTED_SCHEMAS:
             raise DataError(f"unsupported fetch manifest {path}")
+        # The manifest must be the requested target's: an intact manifest of another target
+        # at this path would be analysed as this one (audit of 2026-10-24, A1).
+        if manifest.get("tic_id") != tic_id or manifest.get("target_key") != f"TIC-{tic_id}":
+            raise DataError(
+                f"the cached manifest for TIC {tic_id} is of another target (tic_id "
+                f"{manifest.get('tic_id')!r}, target_key {manifest.get('target_key')!r})"
+            )
         return load_from_manifest(manifest, Path(cache_dir), plan.data)
 
 

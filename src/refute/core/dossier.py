@@ -14,13 +14,14 @@ Pack-agnostic conventions used for reproduction checks:
 from __future__ import annotations
 
 import math
+import os
 import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from refute.core.hashing import sha256_bytes, sha256_file
-from refute.core.io import read_json, write_json, write_text
+from refute.core.io import dumps_json, read_json, write_text
 
 REVIEW_DIR = "review"
 
@@ -30,27 +31,44 @@ _ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
 
 class DossierWriter:
-    """Writes files into one dossier directory."""
+    """Writes files into one dossier directory. Each file is created exclusively, once: a
+    path that already exists (a file, a directory or a link) raises ``FileExistsError`` and
+    keeps its bytes (audit of 2026-10-24, A4). ``path()`` reserves a file (creates it empty,
+    exclusively) for a producer that writes it itself, such as a plot. ``finalize()`` writes
+    the manifest, the one file it rewrites."""
 
     def __init__(self, root: Path | str):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
 
-    def path(self, relative: str) -> Path:
+    def _create(self, relative: str) -> tuple[Path, int]:
         target = self.root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0)
+        try:
+            return target, os.open(target, flags, 0o644)
+        except FileExistsError:
+            raise FileExistsError(
+                f"the dossier already has {relative}; a file is never rewritten"
+            ) from None
+
+    def path(self, relative: str) -> Path:
+        target, fd = self._create(relative)
+        os.close(fd)
+        return target
+
+    def write_bytes(self, relative: str, data: bytes) -> Path:
+        target, fd = self._create(relative)
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(data)
         return target
 
     def write_text(self, relative: str, text: str) -> Path:
-        return write_text(self.path(relative), text)
+        # the bytes of refute.core.io.write_text: UTF-8 with LF line endings
+        return self.write_bytes(relative, text.replace("\r\n", "\n").encode("utf-8"))
 
     def write_json(self, relative: str, value: Any) -> Path:
-        return write_json(self.path(relative), value)
-
-    def write_bytes(self, relative: str, data: bytes) -> Path:
-        target = self.path(relative)
-        target.write_bytes(data)
-        return target
+        return self.write_text(relative, dumps_json(value))
 
     def finalize(self) -> Path:
         return write_manifest(self.root)
@@ -77,9 +95,15 @@ def _dossier_files(root: Path, recorded: set[str] | None = None) -> list[str]:
     return sorted(out)
 
 
-def write_manifest(root: Path | str) -> Path:
+def write_manifest(root: Path | str, *, keep_recorded: bool = False) -> Path:
+    """Write ``MANIFEST.sha256``. With ``keep_recorded``, the seal-layout names that the
+    current manifest already lists stay covered, so rewriting the manifest of a dossier
+    written before v0.3 keeps it a legacy dossier (used by ``review.attach_review``)."""
     root = Path(root)
-    lines = [f"{sha256_file(root / rel)}  {rel}\n" for rel in _dossier_files(root)]
+    recorded = None
+    if keep_recorded and (root / MANIFEST_NAME).is_file():
+        recorded = set(read_manifest(root))
+    lines = [f"{sha256_file(root / rel)}  {rel}\n" for rel in _dossier_files(root, recorded)]
     return write_text(root / MANIFEST_NAME, "".join(lines))
 
 

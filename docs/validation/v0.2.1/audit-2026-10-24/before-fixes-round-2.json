@@ -1,0 +1,142 @@
+{
+ "format": "refute-first-run/1",
+ "runs": [
+  {
+   "cases": [
+    {
+     "detail": "Failed: DID NOT RAISE DataError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a1_the_adapter_refuses_another_targets_manifest"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE DataError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a1_a_wrong_target_key_alone_is_refused"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_audit_fixes::test_a1_the_matching_manifest_still_loads"
+    },
+    {
+     "detail": "AssertionError: assert ('OK' == 'ERROR'",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a1_a_run_on_another_targets_data_gives_no_verdict"
+    },
+    {
+     "detail": "AssertionError: assert 0 != 0",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a4_a_repeated_run_id_is_refused_and_the_first_run_is_intact"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE FileExistsError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a4_the_dossier_writer_never_overwrites"
+    },
+    {
+     "detail": "AssertionError: assert 0 != 0",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a5_duplicate_target_keys_are_refused_before_any_download"
+    },
+    {
+     "detail": "assert 0 != 0",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a5_fetch_refuses_duplicate_keys"
+    },
+    {
+     "detail": "KeyError: 'datasets'",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a5_the_ml_production_refuses_duplicate_keys"
+    },
+    {
+     "detail": "ImportError: cannot import name 'duplicate_target_keys' from 'refute.core.pack' (<path>/pack.py)",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a5_the_shared_check"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE DataError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a1_a_wrong_tic_id_alone_is_refused"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE FileExistsError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a4_a_path_is_reserved_once"
+    },
+    {
+     "detail": "AssertionError: assert (0 != 0)",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a4_a_run_that_loses_the_directory_is_refused"
+    },
+    {
+     "detail": "test_audit_fixes._ReachedError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a5_the_ml_main_checks_before_any_effect_and_lets_a_valid_claim_through"
+    },
+    {
+     "detail": "KeyError: 'repository'",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a5_the_ml_entries_refuse_duplicates_before_any_effect"
+    },
+    {
+     "detail": "AssertionError: assert {'SEAL.json',...ew/opus-1.md'} <= {'review/inde...verdict.json'}",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a6_a_legacy_dossier_is_not_sealed_and_still_takes_a_review"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ReviewError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a6_a_modern_seal_listed_in_the_manifest_is_still_a_seal"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ReviewError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a6_an_annex_without_a_seal_is_refused_too"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ReviewError",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a6_attach_refuses_a_sealed_dossier"
+    },
+    {
+     "detail": "assert (0 == 1)",
+     "outcome": "failure",
+     "test": "tests.test_audit_fixes::test_a6_the_cli_refuses_too"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_hook_settings::test_no_virtual_environment_blocks"
+    },
+    {
+     "detail": "AssertionError: /usr/bin/bash: line 1: <path>/python.exe: No such file or directory",
+     "outcome": "failure",
+     "test": "tests.test_hook_settings::test_a_posix_virtual_environment_is_used"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_hook_settings::test_the_guard_allows_in_this_project"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_hook_settings::test_the_guard_still_blocks_through_the_wrapper"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_hook_settings::test_a_guard_that_cannot_run_blocks"
+    }
+   ],
+   "counts": {
+    "error": 0,
+    "failure": 20,
+    "passed": 5,
+    "skipped": 0
+   },
+   "label": "before the fixes (round 2 tests on the d8c2de3 code)",
+   "tests": 25
+  }
+ ]
+}

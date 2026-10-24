@@ -64,6 +64,7 @@ from typing import Any
 
 from refute.core import budget as bg
 from refute.core.canonical import canonical_bytes
+from refute.core.pack import duplicate_target_keys
 from refute.core.paper import (
     BASE_GATES,
     BASE_REPRODUCTION,
@@ -1368,6 +1369,10 @@ class PaperIntegration:
     """Runs one resolved claim file on a harness and reads every check from the evidence."""
 
     def __init__(self, claim_file: Mapping[str, Any], harness: Harness) -> None:
+        # two claims with one key would share their records (audit of 2026-10-24, A5)
+        duplicates = duplicate_target_keys(str(t["key"]) for t in claim_file["targets"])
+        if duplicates:
+            raise ValueError(f"duplicate target key(s): {', '.join(duplicates)}")
         self.file = claim_file
         self.plan = claim_file["test_plan"]
         self.harness = harness

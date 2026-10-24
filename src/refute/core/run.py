@@ -23,7 +23,7 @@ from refute.core.dossier import DossierWriter
 from refute.core.environment import numeric_runtime, snapshot
 from refute.core.io import dumps_json, write_json, write_text
 from refute.core.lock import VerifyStatus, lock_path_for, verify_claim
-from refute.core.pack import load_pack
+from refute.core.pack import duplicate_target_keys, load_pack
 from refute.core.runner import default_workers, run_processes
 
 
@@ -173,6 +173,17 @@ def _utc_stamp() -> str:
     return datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
 
 
+def duplicate_keys_problem(loaded: LoadedClaim) -> str | None:
+    """A message when two of the claim's run targets share a key (case and spacing ignored),
+    else None: such a claim is refused before any download or dossier (audit of 2026-10-24,
+    A5), since two targets would share one dossier directory."""
+    schema = loaded.pack.schema
+    duplicates = duplicate_target_keys(schema.target_key(t) for t in schema.targets_for_run(loaded))
+    if duplicates:
+        return f"duplicate target key(s): {', '.join(duplicates)}"
+    return None
+
+
 def _select_targets(
     loaded: LoadedClaim, wanted: list[str] | None
 ) -> tuple[list[dict[str, Any]], list[str]]:
@@ -224,11 +235,28 @@ def execute_run(
             ],
         )
 
+    duplicates = duplicate_keys_problem(loaded)
+    if duplicates:
+        return RunOutcome(exit_code=1, messages=[duplicates])
     selected, missing = _select_targets(loaded, targets)
     if missing:
         return RunOutcome(exit_code=1, messages=[f"unknown target(s): {', '.join(missing)}"])
     if not selected:
         return RunOutcome(exit_code=1, messages=["the claim has no targets to run"])
+
+    lock = integrity.lock or {}
+    claim_sha = lock["claim_sha256"]
+    run_name = run_id or f"{_utc_stamp()}-{claim_sha[:8]}"
+    run_dir = Path(out_dir).resolve() / run_name
+    # A run never writes into an earlier run's directory (audit of 2026-10-24, A4): an existing
+    # one is refused here, before any download, and the directory is created exclusively below,
+    # before any target is fetched or any dossier written. A resumption, if one is ever
+    # supported, needs a contract of its own.
+    refused = RunOutcome(
+        exit_code=1, messages=[f"the run directory {run_dir} already exists; use a new --run-id"]
+    )
+    if run_dir.exists() or run_dir.is_symlink():
+        return refused
 
     pack = loaded.pack
     test_plan = loaded.claim.test_plan
@@ -237,12 +265,12 @@ def execute_run(
     claim_data_messages = prepare_claim_data(pack, loaded, cache, offline)
     if isinstance(claim_data_messages, RunOutcome):
         return claim_data_messages
-    lock = integrity.lock or {}
     run_state = git_state(claim_file.parent)
-    claim_sha = lock["claim_sha256"]
-    run_name = run_id or f"{_utc_stamp()}-{claim_sha[:8]}"
-    run_dir = Path(out_dir).resolve() / run_name
-    run_dir.mkdir(parents=True, exist_ok=True)
+    run_dir.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        run_dir.mkdir()
+    except FileExistsError:
+        return refused
 
     fetch_errors: list[str | None]
     if offline:

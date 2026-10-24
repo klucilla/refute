@@ -14,6 +14,7 @@ live in other repositories::
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from importlib.metadata import entry_points
 from pathlib import Path
@@ -29,6 +30,17 @@ ENTRY_POINT_GROUP = "refute.packs"
 
 class PackError(Exception):
     """A pack cannot be found or is invalid."""
+
+
+def duplicate_target_keys(keys: Iterable[str]) -> list[str]:
+    """The target keys that occur more than once, compared as a run selects them (stripped,
+    upper case, spaces as ``-``), so that two targets never share a dossier directory, also on
+    a case-insensitive file system; sorted (audit of 2026-10-24, A5)."""
+    seen: dict[str, int] = {}
+    for key in keys:
+        norm = str(key).strip().upper().replace(" ", "-")
+        seen[norm] = seen.get(norm, 0) + 1
+    return sorted(k for k, n in seen.items() if n > 1)
 
 
 @runtime_checkable

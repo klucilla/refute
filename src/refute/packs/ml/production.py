@@ -67,6 +67,7 @@ from typing import Any
 
 from refute.core.canonical import canonical_bytes
 from refute.core.dossier import write_manifest
+from refute.core.pack import duplicate_target_keys
 from refute.core.paper import FailureCause, GateFailure
 from refute.packs.ml import extract as ex
 from refute.packs.ml import integration as ig
@@ -418,6 +419,18 @@ def check_copy(folder: Path, expected: Mapping[str, Mapping[str, Any]]) -> None:
             raise ProductionError(f"the copy differs from the patched tree at {rel}")
 
 
+def check_target_keys(claim_file: Mapping[str, Any]) -> None:
+    """Two claims with one key (case and spacing ignored) would share their records: refused
+    at every entry that prepares or runs a paper, before any effect (audit of 2026-10-24,
+    A5): ``main``, ``prepare_inputs`` and ``build_harness`` (so ``run_production``)."""
+    targets = claim_file.get("targets") or []
+    duplicates = duplicate_target_keys(
+        str(t.get("key")) if isinstance(t, Mapping) else repr(t) for t in targets
+    )
+    if duplicates:
+        raise ProductionError(f"duplicate target key(s): {', '.join(duplicates)}")
+
+
 def refuse_hook_routes(claim_file: Mapping[str, Any]) -> None:
     """A claim with a ``hook`` coverage route, anywhere, is not supported by this version
     of production (its installation contract is not written: #59): refused before the
@@ -610,6 +623,7 @@ def build_harness(
     claim_file: Mapping[str, Any],
     after_setup: Callable[[], None] | None = None,
 ) -> tuple[ig.Harness, DockerBackend]:
+    check_target_keys(claim_file)
     plan = claim_file["test_plan"]
     if setup.root.exists() and any(setup.root.iterdir()):
         raise ProductionError(f"the run folder {setup.root} is not empty")
@@ -1221,6 +1235,7 @@ def prepare_inputs(
     build, the only network access of a paper run, through the allowlist proxy). The splits
     are counted by ``readers``; an unreadable split gives no count, so ``data_present`` is
     ``INCONCLUSIVE``, never a pass."""
+    check_target_keys(claim_file)
     plan = claim_file["test_plan"]
     repo = repository.clone(plan["repository"]["url"], root / "source")
     repository.checkout(repo, plan["repository"]["commit"])
@@ -1396,6 +1411,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     engine_started = now_utc()
     claim_bytes = args.claim.read_bytes()
     claim_file = json.loads(claim_bytes.decode("utf-8"))
+    check_target_keys(claim_file)  # before anything is prepared (A5)
     claim_sha256 = hashlib.sha256(claim_bytes).hexdigest()
     if args.execution_id and not EXECUTION_ID.fullmatch(args.execution_id):
         raise ProductionError("--execution-id: 32 lowercase hex digits")

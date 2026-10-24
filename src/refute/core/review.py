@@ -25,7 +25,13 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from refute.core.dossier import REVIEW_DIR, read_manifest, verify_manifest, write_manifest
+from refute.core.dossier import (
+    REVIEW_DIR,
+    _sealed_layout,
+    read_manifest,
+    verify_manifest,
+    write_manifest,
+)
 from refute.core.hashing import sha256_bytes, sha256_file
 from refute.core.io import read_json, write_json, write_text
 
@@ -92,6 +98,12 @@ def attach_review(
         raise ReviewError(f"report not found: {report}")
     if not (dossier / "verdict.json").is_file():
         raise ReviewError(f"not a dossier (no verdict.json): {dossier}")
+    # A sealed core never changes: a report on a sealed dossier is an annex (`refute annex`),
+    # never a review/ file and a rewritten manifest (audit of 2026-10-24, A6). The same
+    # classification as check-dossier: a v0.3 seal is a seal even if a manifest lists it; a
+    # dossier written before v0.3 whose manifest lists those names is a legacy dossier.
+    if _sealed_layout(dossier):
+        raise ReviewError("the dossier is sealed: add the report as an annex (refute annex)")
     problems = verify_manifest(dossier)
     if _index_path(dossier).is_file():
         problems += verify_reviews(dossier)
@@ -127,7 +139,7 @@ def attach_review(
     index["reviews"].append(entry)
     write_json(_index_path(dossier), index)
     write_text(dossier / REVIEW_DIR / "index.md", _index_markdown(index))
-    write_manifest(dossier)
+    write_manifest(dossier, keep_recorded=True)  # a legacy dossier stays a legacy dossier
     return entry
 
 

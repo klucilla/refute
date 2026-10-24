@@ -121,6 +121,11 @@ First pack: exoplanet transits (TESS).
   configurable. Use `ProcessPoolExecutor` or equivalent.
 - Always deliver complete files, never partial snippets.
 - Data cache lives inside the project (`.cache/`, git-ignored).
+- Raw outputs larger than 5 MB never enter git (decided by the maintainer on 2026-10-24,
+  before X2f): they are archived to the Drive with a SHA-256 manifest of source and
+  destination, checked; the repository keeps the script that produced them, a summary and
+  that manifest. Where the raw outputs are published for external reproduction is the
+  maintainer's decision.
 - Never end a process by name or by a pattern (`taskkill /IM`, `pkill`,
   `killall`, `Stop-Process -Name`, or any filter that can match other
   processes). End only a process that this session started, by the PID

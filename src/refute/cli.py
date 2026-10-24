@@ -111,13 +111,22 @@ def fetch_command(
     cache_dir: Annotated[Path | None, typer.Option("--cache-dir")] = None,
 ) -> None:
     """Download and cache the public data of a claim's targets (network)."""
-    from refute.core.run import _fetch_one, _select_targets, default_cache_dir
+    from refute.core.run import (
+        _fetch_one,
+        _select_targets,
+        default_cache_dir,
+        duplicate_keys_problem,
+    )
 
     try:
         loaded = load_claim(claim)
     except ClaimError as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
+    duplicates = duplicate_keys_problem(loaded)
+    if duplicates:
+        typer.echo(duplicates, err=True)
+        raise typer.Exit(1)
     selected, missing = _select_targets(loaded, target)
     if missing:
         typer.echo(f"unknown target(s): {', '.join(missing)}", err=True)
