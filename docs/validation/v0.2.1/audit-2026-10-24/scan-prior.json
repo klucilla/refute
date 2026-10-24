@@ -1,0 +1,12 @@
+{
+ "a1": [],
+ "a4": [],
+ "a5": [],
+ "a6": [],
+ "counts": {
+  "dossiers": 5,
+  "files_with_target_keys": 19,
+  "manifests_checked": 5,
+  "sealed": 5
+ }
+}
