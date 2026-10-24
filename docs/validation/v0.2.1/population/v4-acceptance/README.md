@@ -26,3 +26,24 @@ under its own declaration and authorization, and each generation repeats the che
 criteria 1, 3, 4 and 5 and the three-generation rule. After the dependency update of 2026-10-27
 the acceptance population's digests are generated again and compared, and any difference is
 recorded.
+
+## Acceptance and notes (2026-10-23)
+
+**Gate 1 accepted by the maintainer on 2026-10-23** ("Portão 1 aceito (7ee2b11)"). With it:
+
+- **The year-boundary reading** (the record's section 6, item 1) is ratified and recorded as
+  erratum E1 of plan B ([../../reopen/stage-1/plan-b/errata.md](../../reopen/stage-1/plan-b/errata.md)),
+  with the code read for it (the adapter and `population_v4` both label the year by sector).
+- **Declarations recorded**, as the maintainer accepted them:
+  - drafts of the two test files were written in the working tree before the record's commit
+    (`9bb0aaf`), while its first version awaited Codex's review; they were moved out of the tree
+    and committed after the record (`dc99a32`), and no code existed before that commit (the
+    record's "sequence, as it happened" paragraph). Git shows the order of the commits, not that
+    no test had been drafted before;
+  - [first-run.json](first-run.json) holds two absolute paths of the project folder (in the
+    `FileNotFoundError` details of the two import-boundary tests, lines 159 and 164), with no user
+    or machine name. **Correction of the message of
+    commit `dc99a32`**, which says the summary has no host names or paths: it has no host name
+    and no user path, but those two project paths. The commit is not rewritten;
+  - the clean-up after the gate, inside `.cache/` only (regenerable work folders): the
+    sabotages' work files (513 MB and 256 MB) and the two dry runs (1 MB and under 1 MB).

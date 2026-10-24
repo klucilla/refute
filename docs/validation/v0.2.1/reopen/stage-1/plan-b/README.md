@@ -5,6 +5,9 @@
 > and to `docs/validation/v0.2.1/population-study.md` (Amendment B). **The design is frozen:**
 > optional improvements go to the backlog; only a problem of validity, safety or execution reopens
 > it. The work follows the gates of section 7, each execution with its own authorization.
+>
+> **Errata** (text clarifications, the plan not reopened): [errata.md](errata.md) (E1, 2026-10-23:
+> the example of a sector across a year boundary).
 
 The maintainer's decisions of 2026-10-23 on proposal B (`23f72f8`), consolidated in `649d4f4`,
 then one final revision (the domain, the real controls, X7's failure, the budget's label, the
