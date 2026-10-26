@@ -7,6 +7,44 @@ runs; no authorization is assumed.** It replaces sections 3 to 7 of
 are no longer proposed. The aim is not that a candidate passes: it is that the lot can answer spec
 C's question in every regime it covers, or says beforehand where it may not.
 
+> **Revision 1 (2026-10-26): X2f is S1 + S2, without S3.** Decided by the maintainer on
+> 2026-10-26, as plan B (adopted 2026-10-23, [section 6](../plan-b/README.md)) foresaw. It
+> supersedes every mention of S3 below; nothing else of the declaration changes.
+>
+> - **The lot:** S1 (94 cases, 9400 curves) then S2 (90 cases, 9000 curves): **184 cases, 18 400
+>   curves**. The two-year regimes of S3 are not run: they lie outside the profile
+>   `three-observing-years/1`, and X2f says nothing about them.
+> - **The cost:** estimate 47.6 + 153.9 = **201.5 LP-h, 9.16 h**; ceilings 3.25 h and 10.50 h, **13.75 h
+>   in all** (302.5 LP-h at 22 workers, the figure of plan B section 8).
+> - **The order and the evaluation:** S1 → S2; no evaluation is read until **S2** has ended; the
+>   environment fixed before S1 is unchanged until S2 ends. Section 10's stated exception (`white,
+>   no variability, 2 years`) no longer applies.
+> - **The seeds:** the 18 400 seeds of S1 and S2 are among the 63 000 checked distinct in section
+>   5; [x2f-seeds.json](x2f-seeds.json) stays as the record of the earlier version (S3's seeds are
+>   never used).
+> - **The runner, after Codex's audit of 2026-10-26:** each submission is recorded before it runs
+>   (`attempts/`) and each failure at once (`failed/`); a task that failed, or whose outcome is
+>   unknown because its run was cut short, is **not submitted again** unless a decision recorded
+>   in the run folder (`retry-decisions/`) names that marker (R2). The **ceiling counts across
+>   the invocations** of one sub-lot (`consumption/`, R3): every invocation records its time and
+>   closes the record at its end; an invocation that did not close it (it was killed) stops every
+>   relaunch until a recorded decision gives its time. A relaunch therefore passes the sub-lot's
+>   own ceiling (3.25 h or 10.50 h), never a remaining budget computed by hand.
+> - **The resumption, as it stands** (it supersedes section 8 and section 6's "a relaunch would
+>   retry it"; the resumption issue is opened with this text): (1) the SHA-256 of every record
+>   present, to a dated file in `.cache`; (2) if an earlier invocation did not close its
+>   consumption record, the maintainer records a decision (`retry-decisions/<n>.json`, with its
+>   text, the invocation's time in `consumption`, and, only if the maintainer allows it, the
+>   markers of the tasks cut short in `covers`); (3) `x2_study.py run <run_dir> --lot x2f-s<n>
+>   --workers 22 --deadline-hours <the sub-lot's ceiling>` on processors 8 to 31, in the same run
+>   folder; (4) the digests of step 1 compared after the run, every one unchanged; (5)
+>   `x2_study.py check <run_dir> --full` before any evaluation. **Not covered:** a change of code,
+>   seeds, sizes, criteria, configuration, environment or order; a retry of a failed task or of
+>   one cut short without a decision naming it; re-running a task that has a record.
+> - **The code:** `x2_study.py`, `X2F_SEQUENCE = ("x2f-s1", "x2f-s2")`, `LOTS` without S3, and the
+>   command line refusing an unknown lot; the tests in `tests/test_x2.py` (written before the code,
+>   [../../../audit-2026-10-26/README.md](../../../audit-2026-10-26/README.md)).
+
 ## 1. The question and the data that decide
 
 - **The question:** spec C's choice of an error model for each capacity decision (C2 to C5 of

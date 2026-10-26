@@ -357,7 +357,7 @@ def archive_command(
     target = out or run_dir.with_name(run_dir.name + ".zip")
     try:
         path, digest = write_archive(run_dir, target)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, FileExistsError, ValueError) as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     typer.echo(f"{digest}  {path}")

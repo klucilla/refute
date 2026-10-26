@@ -15,7 +15,14 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 from refute.core.canonical import canonical_sha256
 
@@ -79,6 +86,22 @@ class Claim(StrictModel):
     targets: list[dict[str, Any]] = Field(default_factory=list)
     test_plan: dict[str, Any] = Field(default_factory=dict)
     pass_criteria: dict[str, Any] | None = None
+
+    @model_validator(mode="after")
+    def _attachments_once(self) -> Claim:
+        """One file is listed once: two attachments whose normalized paths are equal, also by
+        case (one file on a case-insensitive file system), are refused (audit of 2026-10-26,
+        R4). The paths are already normalized by ``Attachment``; this adds no field and does
+        not change the claim's canonical form."""
+        seen: dict[str, str] = {}
+        for attachment in self.attachments:
+            key = attachment.path.casefold()
+            if key in seen:
+                raise ValueError(
+                    f"the attachment {attachment.path!r} is listed twice (as {seen[key]!r})"
+                )
+            seen[key] = attachment.path
+        return self
 
 
 def format_validation_error(error: ValidationError, prefix: str = "") -> str:

@@ -67,6 +67,63 @@ def test_r1_an_archive_outside_the_tree_is_written(tmp_path):
     assert _hashes(run) == before
 
 
+def test_r1_a_destination_through_a_link_into_the_tree_is_refused(tmp_path):
+    import os
+
+    run = _run_dir(tmp_path)
+    before = _hashes(run)
+    link = tmp_path / "out"
+    try:
+        os.symlink(run / "TIC-1", link, target_is_directory=True)
+    except OSError:
+        pytest.skip("this account cannot create symbolic links")
+    with pytest.raises(ValueError, match="inside"):
+        write_archive(run, link / "run.zip")
+    assert _hashes(run) == before
+
+
+def test_r1_a_relative_root_names_the_entries_by_the_folder(tmp_path, monkeypatch):
+    import zipfile
+
+    run = _run_dir(tmp_path)
+    monkeypatch.chdir(run)
+    path, _ = write_archive(Path("."), tmp_path / "dot.zip")
+    names = zipfile.ZipFile(path).namelist()
+    assert names and all(n.startswith("run/") for n in names), names
+    monkeypatch.chdir(run / "TIC-1")
+    path, _ = write_archive(Path(".."), tmp_path / "up.zip")
+    assert all(n.startswith("run/") for n in zipfile.ZipFile(path).namelist())
+
+
+def test_r4_the_ml_production_refuses_a_repeated_attachment(tmp_path, monkeypatch):
+    import json
+
+    from refute.packs.ml import production
+
+    class ReachedError(Exception):
+        pass
+
+    def first_effect():
+        raise ReachedError
+
+    monkeypatch.setattr(production, "refute_checkout", first_effect)
+    argv = ["--paper", "p", "--root", str(tmp_path / "root"), "--out", str(tmp_path / "out"),
+            "--cache", str(tmp_path / "cache")]  # fmt: skip
+    for attachments, refused in (
+        ([{"path": "count.json"}, {"path": "./count.json"}], True),
+        ([{"path": "count.json"}, {"path": "COUNT.json"}], True),
+        ([{"path": "count.json"}, {"path": "other.json"}], False),  # the control
+    ):
+        claim = tmp_path / "claim.json"
+        claim.write_text(
+            json.dumps({"targets": [{"key": "c1"}], "attachments": attachments, "test_plan": {}}),
+            encoding="utf-8",
+        )
+        expected = production.ProductionError if refused else ReachedError
+        with pytest.raises(expected):
+            production.main(["--claim", str(claim), *argv])
+
+
 def test_r1_the_cli_refuses_with_exit_1(tmp_path):
     run = _run_dir(tmp_path)
     before = _hashes(run)

@@ -258,26 +258,39 @@ def write_archive(run_dir: Path | str, out_zip: Path | str) -> tuple[Path, str]:
     """Deterministic zip of a run directory: sorted entries, fixed timestamps and modes.
 
     Returns the zip path and its SHA-256, which is also written next to it as
-    ``<zip>.sha256``.
+    ``<zip>.sha256``. Refused before any write (audit of 2026-10-26, R1): a destination, or
+    its digest, inside the archived tree (it would be an entry, or overwrite one), and a zip or
+    digest that already exists (an archive is never rewritten).
     """
     run_dir = Path(run_dir)
     out_zip = Path(out_zip)
     if not run_dir.is_dir():
         raise FileNotFoundError(f"run directory not found: {run_dir}")
+    sidecar = out_zip.with_name(out_zip.name + ".sha256")
+    root = run_dir.resolve()
+    for target in (out_zip, sidecar):
+        resolved = target.resolve()
+        if resolved == root or resolved.is_relative_to(root):
+            raise ValueError(f"the archive {target} would be inside the archived tree {run_dir}")
+        if target.exists() or target.is_symlink():
+            raise FileExistsError(f"{target} already exists; an archive is never rewritten")
     out_zip.parent.mkdir(parents=True, exist_ok=True)
+    # the resolved root names the entries, so a path such as "." or "a/.." gives the folder's
+    # own name, never "" or ".." (Codex's review of R1)
     files = sorted(
-        (p for p in run_dir.rglob("*") if p.is_file()),
-        key=lambda p: p.relative_to(run_dir).as_posix(),
+        (p for p in root.rglob("*") if p.is_file()),
+        key=lambda p: p.relative_to(root).as_posix(),
     )
-    prefix = run_dir.name
-    with zipfile.ZipFile(out_zip, "w") as archive:
+    prefix = root.name
+    with zipfile.ZipFile(out_zip, "x") as archive:
         for path in files:
-            info = zipfile.ZipInfo(f"{prefix}/{path.relative_to(run_dir).as_posix()}")
+            info = zipfile.ZipInfo(f"{prefix}/{path.relative_to(root).as_posix()}")
             info.date_time = _ZIP_TIMESTAMP
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             info.create_system = 3
             archive.writestr(info, path.read_bytes(), compresslevel=9)
     digest = sha256_bytes(out_zip.read_bytes())
-    write_text(out_zip.with_name(out_zip.name + ".sha256"), f"{digest}  {out_zip.name}\n")
+    with open(sidecar, "x", encoding="utf-8", newline="\n") as handle:
+        handle.write(f"{digest}  {out_zip.name}\n")
     return out_zip, digest

@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import sys
 from dataclasses import dataclass
@@ -88,7 +89,6 @@ X2E = LotSpec(
     "refute-v0.2.1-x2e-lot/1",
 )
 X2F_PREFIX = "refute-v0.2.1-x2-3"
-TWO_YEARS = ("two_years", "few_train")
 
 
 def _x2f(part: str, groups: tuple[str, ...], selection: tuple) -> LotSpec:
@@ -111,13 +111,9 @@ VARIABILITY = ("white, variability", "AR(1), variability")
 # the sizes of stage-1/after-x2e/x2f-declaration.md (its sizing rule, scripts/sizing_a.py)
 X2F_S1 = _x2f("s1", NO_VARIABILITY, tuple((g, ("three_years",), 47) for g in NO_VARIABILITY))
 X2F_S2 = _x2f("s2", VARIABILITY, tuple((g, ("variability_some_years",), 45) for g in VARIABILITY))
-X2F_S3 = _x2f(
-    "s3",
-    NO_VARIABILITY,
-    (("white, no variability", TWO_YEARS, 300), ("AR(1), no variability", TWO_YEARS, 146)),
-)
-X2F_SEQUENCE = ("x2f-s1", "x2f-s2", "x2f-s3")  # the order fixed before any result
-LOTS = {s.name: s for s in (X2, X2E, X2F_S1, X2F_S2, X2F_S3)}
+# X2f is S1 + S2 (plan B, section 6; the declaration's revision of 2026-10-26): S3 removed
+X2F_SEQUENCE = ("x2f-s1", "x2f-s2")  # the order fixed before any result
+LOTS = {s.name: s for s in (X2, X2E, X2F_S1, X2F_S2)}
 
 
 def _every_kth(rows: list[dict], n: int, what: str) -> list[dict]:
@@ -554,6 +550,148 @@ def x2_lot_problems(run_dir: Path, full: bool = False) -> list[str]:
     return problems
 
 
+def failure_path(run_dir: Path, case_id: str, j: int, started: str) -> Path:
+    """The marker of a failed task, written by the run (``started``) in which it failed."""
+    return Path(run_dir) / "failed" / case_id / f"{int(j):03d}-{started}.json"
+
+
+def attempt_path(run_dir: Path, case_id: str, j: int, started: str) -> Path:
+    """The marker of a task's submission, written by the run (``started``) right before it."""
+    return Path(run_dir) / "attempts" / case_id / f"{int(j):03d}-{started}.json"
+
+
+def not_submitted_path(run_dir: Path, case_id: str, j: int, started: str) -> Path:
+    """The marker of a recorded submission that the ceiling stopped before it ran."""
+    return Path(run_dir) / "not-submitted" / case_id / f"{int(j):03d}-{started}.json"
+
+
+def _finite_hours(value) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return None
+    value = float(value)
+    return value if math.isfinite(value) and value >= 0.0 else None
+
+
+def decisions(run_dir: Path) -> tuple[set[str], dict[str, float]]:
+    """The maintainer's recorded decisions on a run folder (audit of 2026-10-26, R2 and R3):
+    files ``retry-decisions/*.json``, each with a non-empty ``decision`` text, and ``covers``
+    (the failure or attempt markers, relative to the run folder, it lets run again) and/or
+    ``consumption`` (``{started: hours}``, the reconciled time of an interrupted invocation, a
+    finite number of hours, not negative). A file that is not such a decision decides nothing."""
+    covered: set[str] = set()
+    reconciled: dict[str, float] = {}
+    folder = Path(run_dir) / "retry-decisions"
+    for path in sorted(folder.glob("*.json")) if folder.is_dir() else []:
+        try:
+            decision = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError:
+            continue  # not a decision
+        if not isinstance(decision, dict):
+            continue
+        text = decision.get("decision")
+        if not isinstance(text, str) or not text.strip():
+            continue
+        covers = decision.get("covers")
+        if isinstance(covers, list):
+            covered |= {str(c) for c in covers}
+        consumption = decision.get("consumption")
+        if isinstance(consumption, dict):
+            for started, hours in consumption.items():
+                if _finite_hours(hours) is not None:
+                    reconciled[str(started)] = float(hours)
+    return covered, reconciled
+
+
+def _markers(run_dir: Path, kind: str) -> dict[tuple[str, int], dict[str, str]]:
+    """``{(case, j): {started: marker path}}`` of ``failed/`` or ``attempts/``."""
+    out: dict[tuple[str, int], dict[str, str]] = {}
+    root = Path(run_dir) / kind
+    for path in sorted(root.rglob("*.json")) if root.exists() else []:
+        if path.name.startswith("."):
+            continue
+        number, _, started = path.stem.partition("-")
+        key = (path.parent.name, int(number))
+        out.setdefault(key, {})[started] = path.relative_to(run_dir).as_posix()
+    return out
+
+
+def task_states(run_dir: Path) -> tuple[dict[tuple[str, int], str], set[tuple[str, int]]]:
+    """For the tasks without a record: ``(blocked, retry)``. A task is blocked (never submitted
+    again) when it has a failure marker, or a submission marker with no outcome (its run was
+    interrupted before the failure could be recorded), that no decision covers; it is retried
+    when every such marker is covered (R2)."""
+    covered, _ = decisions(run_dir)
+    failed = _markers(run_dir, "failed")
+    attempts = _markers(run_dir, "attempts")
+    not_submitted = _markers(run_dir, "not-submitted")
+    blocked: dict[tuple[str, int], str] = {}
+    retry: set[tuple[str, int]] = set()
+    for key in set(failed) | set(attempts):
+        open_markers = [("failed", m) for m in failed.get(key, {}).values()]
+        open_markers += [
+            ("outcome unknown", m)
+            for started, m in attempts.get(key, {}).items()
+            if started not in failed.get(key, {}) and started not in not_submitted.get(key, {})
+        ]
+        left = [state for state, m in open_markers if m not in covered]
+        if left:
+            blocked[key] = left[0]
+        elif open_markers:
+            retry.add(key)
+    return blocked, retry
+
+
+def consumed_hours(run_dir: Path) -> float:
+    """The time already used by the lot's earlier invocations (R3): the sum of their consumption
+    records (``consumption/<started>.json``, updated at every check, after every task and at the
+    end). An invocation that did not close its record (it was interrupted) counts only through a
+    recorded decision giving its time; without one, the lot does not run. A time that is not a
+    finite, non-negative number of hours is refused."""
+    _, reconciled = decisions(run_dir)
+    root = Path(run_dir) / "consumption"
+    total, open_runs = 0.0, []
+    for path in sorted(root.glob("*.json")) if root.exists() else []:
+        if path.name.startswith("."):
+            continue
+        try:
+            record = json.loads(path.read_text(encoding="utf-8"))
+            hours = _finite_hours(record["elapsed_hours"])
+        except (ValueError, KeyError, TypeError):
+            hours, record = None, {}
+        if hours is None:
+            raise SystemExit(f"the consumption record {path.name} is not a finite, positive time")
+        started = path.stem
+        if record.get("closed") is True:
+            total += hours
+        elif started in reconciled:
+            if reconciled[started] < hours:  # a decision never gives back time already measured
+                raise SystemExit(
+                    f"the reconciled time of {started} ({reconciled[started]} h) is below the "
+                    f"time it recorded ({hours} h)"
+                )
+            total += reconciled[started]
+        else:
+            open_runs.append(started)
+    if open_runs:
+        raise SystemExit(
+            f"the invocation(s) {open_runs} did not close their consumption record (interrupted): "
+            "record a decision with their time (retry-decisions/, consumption) before a relaunch"
+        )
+    return total
+
+
+def _write_consumption(run_dir: Path, started: str, elapsed_hours: float, closed: bool) -> None:
+    path = Path(run_dir) / "consumption" / f"{started}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    temporary.write_text(
+        json.dumps({"started_utc": started, "elapsed_hours": elapsed_hours, "closed": closed})
+        + "\n",
+        encoding="utf-8",
+    )
+    os.replace(temporary, path)
+
+
 def run_x2_lot(
     run_dir: Path,
     tasks: list[tuple[dict, int]] | None = None,
@@ -568,9 +706,12 @@ def run_x2_lot(
     logical processors 8 to 31 (22 as authorized; never read from the environment). The manifest is
     published first (atomically, never replaced) and must match on a relaunch; a task whose record
     exists and is complete is not run again, and an existing incomplete record stops the run (it is
-    never replaced); a failed task is reported, never retried; ``deadline_hours`` is the ceiling,
-    checked right before every submission (none after it, those in flight end). A dated run report
-    is written (never replaced). Relaunching an interrupted lot resumes it."""
+    never replaced). A failed task is recorded at once as a terminal state (``failed/``) and is not
+    submitted again on a relaunch, unless a decision recorded in ``retry-decisions/`` names its
+    failure (R2). ``deadline_hours`` is the lot's ceiling, counted across its invocations (the
+    time of the earlier ones is read from ``consumption/``, R3) and checked right before every
+    submission (none after it, those in flight end). A dated run report is written (never
+    replaced). Relaunching an interrupted lot resumes it."""
     import time
     from concurrent.futures import FIRST_COMPLETED, wait
     from datetime import UTC, datetime
@@ -604,10 +745,22 @@ def run_x2_lot(
             )
     else:
         write_record_atomic(manifest_path, json.dumps(payload, indent=1) + "\n")
+    consumed_before = consumed_hours(run_dir)  # the earlier invocations of this lot (R3)
     todo = []
+    blocked_keys, retry_keys = task_states(run_dir)
+    terminal_failures: list[dict] = []
+    retried: list[dict] = []
     for c, j in tasks:
         path = record_path(run_dir, c["id"], j)
         if not path.exists():
+            key = (c["id"], int(j))
+            if key in blocked_keys:  # terminal without a recorded decision (R2)
+                terminal_failures.append(
+                    {"case_id": c["id"], "realization": int(j), "state": blocked_keys[key]}
+                )
+                continue
+            if key in retry_keys:
+                retried.append({"case_id": c["id"], "realization": int(j)})
             todo.append((c, j, configuration) if spec is X2 else (c, j, configuration, spec.name))
             continue
         seed = str(realization_seed(rs.group_of(c), c["id"], j, spec))
@@ -624,6 +777,7 @@ def run_x2_lot(
     submitted = 0
     clock = time.monotonic if clock is None else clock
     t0 = clock()
+    _write_consumption(run_dir, started, 0.0, closed=False)
     deadline_reached = False
     futures: dict = {}
 
@@ -633,11 +787,18 @@ def run_x2_lot(
             try:
                 record = fut.result()
             except Exception as exc:  # noqa: BLE001 - every failure is reported, none retried
-                failures.append({"case_id": case["id"], "realization": j, "error": repr(exc)})
-                continue
-            path = record_path(run_dir, case["id"], j)
-            if not path.exists():
-                write_record_atomic(path, record_text(record))
+                failure = {"case_id": case["id"], "realization": j, "error": repr(exc)}
+                failures.append(failure)
+                # recorded at once, as a terminal state (R2)
+                write_record_atomic(
+                    failure_path(run_dir, case["id"], j, started),
+                    json.dumps({**failure, "run_started_utc": started}, indent=1) + "\n",
+                )
+            else:
+                path = record_path(run_dir, case["id"], j)
+                if not path.exists():
+                    write_record_atomic(path, record_text(record))
+            _write_consumption(run_dir, started, (clock() - t0) / 3600.0, closed=False)
 
     try:
         pool = rs._spawn_pool(workers) if executor is None else executor
@@ -647,12 +808,28 @@ def run_x2_lot(
                     while len(futures) >= 4 * workers:
                         done, _ = wait(futures, return_when=FIRST_COMPLETED)
                         collect(done)
-                    # the ceiling, read right before the submission (after any wait)
-                    if deadline_hours is not None and clock() - t0 >= deadline_hours * 3600.0:
-                        deadline_reached = True
-                        break
+                    # the submission is recorded first: a run cut short leaves its outcome
+                    # unknown, never a task silently free to run again (R2)
+                    write_record_atomic(
+                        attempt_path(run_dir, task[0]["id"], task[1], started),
+                        json.dumps({"run_started_utc": started}) + "\n",
+                    )
+                    # the ceiling, read last, right before the submission (after any wait and
+                    # any write), on the time of the whole lot: the earlier invocations' and
+                    # this one's (R3); a task stopped here is recorded as not submitted
+                    if deadline_hours is not None:
+                        elapsed = (clock() - t0) / 3600.0
+                        if consumed_before + elapsed >= deadline_hours:
+                            write_record_atomic(
+                                not_submitted_path(run_dir, task[0]["id"], task[1], started),
+                                json.dumps({"run_started_utc": started}) + "\n",
+                            )
+                            deadline_reached = True
+                            break
                     futures[pool.submit(_x2_task, task)] = task
                     submitted += 1
+                    if deadline_hours is not None:
+                        _write_consumption(run_dir, started, elapsed, closed=False)
             except Exception as exc:  # noqa: BLE001 - the dispatch stops, reported, not retried
                 dispatch_error = f"submission: {exc!r}"
             while futures:
@@ -660,6 +837,8 @@ def run_x2_lot(
                 collect(done)
     except Exception as exc:  # noqa: BLE001 - the pool itself failed: reported, not retried
         dispatch_error = (dispatch_error or "") + f" pool: {exc!r}"
+    elapsed_hours = (clock() - t0) / 3600.0
+    _write_consumption(run_dir, started, elapsed_hours, closed=True)
     integrity = x2_lot_problems(run_dir)
     report = {
         "format": spec.lot_format,
@@ -673,12 +852,20 @@ def run_x2_lot(
         "dispatch_error": dispatch_error,
         "deadline_hours": deadline_hours,
         "deadline_reached": deadline_reached,
-        "elapsed_hours": (clock() - t0) / 3600.0,
+        "elapsed_hours": elapsed_hours,
+        "consumed_before_hours": consumed_before,
+        "consumed_total_hours": consumed_before + elapsed_hours,
         "failures": failures,
+        "terminal_failures": terminal_failures,
+        "retried": retried,
         "leftover_temporary_files": load_x2_lot(run_dir)["leftovers"],
         "integrity_problems": integrity,
         "complete": (
-            dispatch_error is None and not deadline_reached and not failures and not integrity
+            dispatch_error is None
+            and not deadline_reached
+            and not failures
+            and not terminal_failures
+            and not integrity
         ),
     }
     with open(run_dir / f"run-report-{started}.json", "x", encoding="utf-8", newline="\n") as fh:
@@ -819,6 +1006,8 @@ def main(argv: list[str]) -> int:
     rest = argv[2:]
     while rest:
         if rest[0] == "--lot":
+            if rest[1] not in LOTS:
+                raise SystemExit(f"unknown lot {rest[1]!r}; the lots are {sorted(LOTS)}")
             spec = LOTS[rest[1]]
             rest = rest[2:]
         elif rest[0] == "--subset":

@@ -1,0 +1,382 @@
+{
+ "format": "refute-first-run/1",
+ "runs": [
+  {
+   "cases": [
+    {
+     "detail": "Failed: DID NOT RAISE ValueError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r1_a_destination_inside_the_tree_is_refused_before_any_write[inside.zip]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ValueError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r1_a_destination_inside_the_tree_is_refused_before_any_write[TIC-1/inside.zip]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ValueError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r1_a_destination_inside_the_tree_is_refused_before_any_write[a.txt]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ValueError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r1_a_destination_inside_the_tree_is_refused_before_any_write[TIC-1/verdict.json]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE FileExistsError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r1_an_existing_archive_or_digest_is_never_overwritten"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_audit2_fixes::test_r1_an_archive_outside_the_tree_is_written"
+    },
+    {
+     "detail": "this account cannot create symbolic links",
+     "outcome": "skipped",
+     "test": "tests.test_audit2_fixes::test_r1_a_destination_through_a_link_into_the_tree_is_refused"
+    },
+    {
+     "detail": "AssertionError: ['/TIC-1/verdict.json', '/a.txt']",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r1_a_relative_root_names_the_entries_by_the_folder"
+    },
+    {
+     "detail": "test_audit2_fixes.test_r4_the_ml_production_refuses_a_repeated_attachment.<locals>.ReachedError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r4_the_ml_production_refuses_a_repeated_attachment"
+    },
+    {
+     "detail": "assert (0 == 1)",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r1_the_cli_refuses_with_exit_1"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ClaimError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r4_a_repeated_attachment_is_refused_at_validation[data/a.csv-data/a.csv]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ClaimError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r4_a_repeated_attachment_is_refused_at_validation[data/a.csv-./data/a.csv]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ClaimError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r4_a_repeated_attachment_is_refused_at_validation[data/a.csv-data//a.csv]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ClaimError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r4_a_repeated_attachment_is_refused_at_validation[data/a.csv-data/./a.csv]"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE ClaimError",
+     "outcome": "failure",
+     "test": "tests.test_audit2_fixes::test_r4_a_repeated_attachment_is_refused_at_validation[data/a.csv-Data/A.csv]"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_audit2_fixes::test_r4_distinct_attachments_still_load"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_cases_are_the_declared_rule"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_seeds_are_the_declared_rule_and_distinct"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_case_s_own_seed_gives_the_case_byte_for_byte"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_another_seed_changes_the_noise_only"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_identity_classes_and_their_tolerance"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_predicted_centers_are_the_engine_s"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_overlaps_use_every_registered_window"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_exact_ephemeris_has_no_loss"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_each_cause_is_named_by_its_largest_reduction"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_z_train_the_fail_and_the_class_counts_over_every_round"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_measurement_s_scatter_is_separated_from_the_signal_s"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_cell_interval_is_a_cluster_bootstrap_with_its_fixed_seed"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_verdicts_and_the_scale_s_disagreement"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_an_interrupted_lot_relaunched_gives_the_continuous_run_s_bytes"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_a_record_is_never_replaced_and_another_manifest_is_refused"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_an_incomplete_record_is_refused_at_the_check_and_at_the_relaunch"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_manifest_binds_the_code_and_is_published_atomically"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_evaluation_refuses_another_code_than_the_lot_s"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_ceiling_is_read_right_before_each_submission"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_workers_are_explicit"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_evaluation_orders_the_findings_and_counts_every_round"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_ratios_keep_their_intervals_beside_their_verdicts"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_x2_is_unchanged_by_the_lot_specification"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_x2e_is_its_declared_lot"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_an_x2e_lot_names_itself_and_checks_its_own_records"
+    },
+    {
+     "detail": "AssertionError: assert ('x2f-s1', 'x2f-s2', 'x2f-s3') == ('x2f-s1', 'x2f-s2')",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_x2f_sub_lots_are_their_declared_regimes"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_x2f_seeds_carry_the_prefix_and_repeat_no_earlier_lot_s"
+    },
+    {
+     "detail": "KeyError: 'x2f-s3'",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_x2f_selection_order_matches_an_independent_oracle"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_a_record_s_group_mechanism_and_band_must_be_its_case_s"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_a_full_check_requires_the_declared_task_list"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_a_regime_selection_larger_than_the_prefix_is_refused"
+    },
+    {
+     "detail": "AssertionError: Regex pattern did not match.",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_the_cli_refuses_the_removed_sub_lot"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_an_x2f_sub_lot_names_itself_and_checks_its_own_records[x2f-s1]"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_an_x2f_sub_lot_names_itself_and_checks_its_own_records[x2f-s2]"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_pooled_rows_name_each_case_by_its_prefix"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_counterfactual_counts_only_the_capacity_refusals"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_a_write_cut_short_leaves_no_record"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_x2::test_the_truth_is_never_read_during_the_engine_calls"
+    },
+    {
+     "detail": "assert 0 == 1",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_r2_a_failed_task_is_terminal_and_is_not_resubmitted_without_a_decision"
+    },
+    {
+     "detail": "StopIteration",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_r2_a_decision_without_text_or_for_another_failure_is_not_a_decision"
+    },
+    {
+     "detail": "KeyError: 'consumed_total_hours'",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_r3_the_ceiling_is_counted_across_the_invocations_of_one_lot"
+    },
+    {
+     "detail": "assert 0 == 3",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_r2_r3_a_run_cut_short_leaves_unknown_outcomes_and_an_open_consumption"
+    },
+    {
+     "detail": "Failed: DID NOT RAISE SystemExit",
+     "outcome": "failure",
+     "test": "tests.test_x2::test_r3_a_consumption_that_is_not_a_finite_time_is_refused"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_canonical_form_ignores_key_order_and_normalizes_unicode"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_canonical_form_rejects_nan"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_comments_and_key_order_do_not_change_the_claim_hash"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_lock_then_verify_pass"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_value_edit_is_tampered_and_restore_passes"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_threshold_default_change_is_tampered"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_missing_lock_is_fail"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_attachment_edit_is_tampered_and_missing_is_fail"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_attachment_hash_ignores_crlf"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_relock_requires_force_and_reason_and_appends_history"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_lock_not_latest_in_history_is_fail"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_calibration_lock_refused_without_commit"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_calibration_lock_refused_outside_git"
+    },
+    {
+     "detail": null,
+     "outcome": "passed",
+     "test": "tests.test_canonical_lock::test_calibration_lock_requires_clean_tree_and_records_commit"
+    }
+   ],
+   "counts": {
+    "error": 0,
+    "failure": 21,
+    "passed": 51,
+    "skipped": 1
+   },
+   "label": "before the fixes (round 1 tests on the 4d95826 code)",
+   "tests": 73
+  }
+ ]
+}

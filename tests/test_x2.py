@@ -1070,7 +1070,9 @@ def test_r2_a_failed_task_is_terminal_and_is_not_resubmitted_without_a_decision(
     monkeypatch.setattr(x2, "_x2_task", working)
     second = x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor())
     assert calls == [] and second["submitted"] == 0 and second["complete"] is False
-    assert second["terminal_failures"] == [{"case_id": bad_case["id"], "realization": bad_j}]
+    assert second["terminal_failures"] == [
+        {"case_id": bad_case["id"], "realization": bad_j, "state": "failed"}
+    ]
     assert not x2.record_path(run, bad_case["id"], bad_j).exists()
     # an explicit decision recorded in the run folder, naming the failure it covers
     decisions = run / "retry-decisions"
@@ -1134,3 +1136,131 @@ def test_r3_the_ceiling_is_counted_across_the_invocations_of_one_lot(fake_lot, m
     third = run_once(1.0)  # nothing left
     assert third["submitted"] == 0 and third["deadline_reached"] is True
     assert len(list((run / "records").rglob("*.json"))) == 4
+
+
+class _CrashError(BaseException):
+    """Stands for the process being killed: not an Exception, so nothing in the runner catches
+    it (a power cut or a kill gives the runner no chance to record anything either)."""
+
+
+def test_r2_r3_a_run_cut_short_leaves_unknown_outcomes_and_an_open_consumption(
+    fake_lot, monkeypatch
+):
+    """Codex's review: a run killed between a submission and its outcome left the task free to
+    run again, and its consumption counted as zero."""
+    import json
+
+    x2, tasks = fake_lot
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    cut_case, cut_j = tasks[2]
+
+    def killed(task):
+        if task[0]["id"] == cut_case["id"] and task[1] == cut_j:
+            raise _CrashError
+        return _fake_record(x2, *task)
+
+    monkeypatch.setattr(x2, "_x2_task", killed)
+    with pytest.raises(_CrashError):
+        x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor())
+    assert not list((run / "failed").rglob("*.json")) if (run / "failed").exists() else True
+    attempts = sorted(p.relative_to(run).as_posix() for p in (run / "attempts").rglob("*.json"))
+    assert len(attempts) == 3  # the submissions were recorded before they ran
+    monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
+    # the interrupted invocation's time is not known: no relaunch until it is reconciled
+    with pytest.raises(SystemExit, match="did not close"):
+        x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor())
+    started = next((run / "consumption").glob("*.json")).stem
+    decisions = run / "retry-decisions"
+    decisions.mkdir()
+    (decisions / "001.json").write_text(
+        json.dumps({"decision": "reconciled from the console log", "consumption": {started: 0.5}}),
+        encoding="utf-8",
+    )
+    report = x2.run_x2_lot(
+        run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), deadline_hours=10.0
+    )
+    assert report["consumed_before_hours"] == pytest.approx(0.5)
+    # the three submitted tasks never got their outcome recorded (the two that had finished were
+    # not yet collected when the process died): none runs again without a decision naming it
+    assert report["terminal_failures"] == [
+        {"case_id": c["id"], "realization": j, "state": "outcome unknown"} for c, j in tasks[:3]
+    ]
+    assert not x2.record_path(run, cut_case["id"], cut_j).exists()
+    assert report["submitted"] == 3 and report["complete"] is False
+    # a decision naming those submissions lets them run
+    (decisions / "002.json").write_text(
+        json.dumps({"decision": "retry the three cut short", "covers": attempts}), encoding="utf-8"
+    )
+    final = x2.run_x2_lot(
+        run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), deadline_hours=10.0
+    )
+    assert final["complete"] is True and len(final["retried"]) == 3
+
+
+def test_r3_a_reconciliation_never_gives_back_measured_time(fake_lot):
+    """Codex's second review: a decision could reconcile an open invocation below the time it had
+    already recorded."""
+    import json
+
+    x2, tasks = fake_lot
+    for given, accepted in ((0.5, False), (2.0, True), (3.0, True)):
+        run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+        (run / "consumption").mkdir(parents=True)
+        (run / "consumption" / "20261026T000000000000Z.json").write_text(
+            '{"started_utc": "20261026T000000000000Z", "elapsed_hours": 2.0, "closed": false}',
+            encoding="utf-8",
+        )
+        (run / "retry-decisions").mkdir()
+        (run / "retry-decisions" / "001.json").write_text(
+            json.dumps({"decision": "x", "consumption": {"20261026T000000000000Z": given}}),
+            encoding="utf-8",
+        )
+        if accepted:
+            assert x2.consumed_hours(run) == pytest.approx(given)
+        else:
+            with pytest.raises(SystemExit, match="below"):
+                x2.consumed_hours(run)
+
+
+def test_r3_the_ceiling_is_read_after_the_submission_is_recorded(fake_lot, monkeypatch):
+    """Codex's second review: the clock was read before the attempt's record was written, so a
+    write that crossed the ceiling still let the task be submitted."""
+    x2, tasks = fake_lot
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    now = {"h": 0.0}
+    real_write = x2.write_record_atomic
+
+    def slow_write(path, text):
+        if "attempts" in Path(path).parts:
+            now["h"] += 1.01  # writing the attempt's record crosses the ceiling
+        return real_write(path, text)
+
+    monkeypatch.setattr(x2, "write_record_atomic", slow_write)
+    report = x2.run_x2_lot(
+        run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), deadline_hours=1.0,
+        clock=lambda: now["h"] * 3600.0,
+    )  # fmt: skip
+    assert report["submitted"] == 0 and report["deadline_reached"] is True
+    assert len(list((run / "not-submitted").rglob("*.json"))) == 1
+    blocked, _ = x2.task_states(run)
+    assert blocked == {}  # a task stopped before its submission is not an unknown outcome
+
+
+def test_r3_a_consumption_that_is_not_a_finite_time_is_refused(fake_lot):
+    import json
+
+    x2, tasks = fake_lot
+    for bad in ("NaN", "Infinity", "-1.0", '"1"'):
+        run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+        (run / "consumption").mkdir(parents=True)
+        (run / "consumption" / "20261026T000000000000Z.json").write_text(
+            f'{{"started_utc": "x", "elapsed_hours": {bad}, "closed": true}}', encoding="utf-8"
+        )
+        with pytest.raises(SystemExit, match="finite"):
+            x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    (run / "retry-decisions").mkdir(parents=True)
+    (run / "retry-decisions" / "001.json").write_text(
+        json.dumps({"decision": "x", "consumption": {"a": float("nan")}}), encoding="utf-8"
+    )
+    assert x2.decisions(run)[1] == {}  # a non-finite reconciled time decides nothing

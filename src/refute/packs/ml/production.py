@@ -431,6 +431,22 @@ def check_target_keys(claim_file: Mapping[str, Any]) -> None:
         raise ProductionError(f"duplicate target key(s): {', '.join(duplicates)}")
 
 
+def check_attachments(claim_file: Mapping[str, Any]) -> None:
+    """One file is listed once (audit of 2026-10-26, R4): the claim file given to production is
+    read as JSON, not through the claim's validation, so the same rule is applied here, before
+    anything is prepared: two attachments whose paths are equal after normalizing (and by case)
+    are refused."""
+    from pathlib import PurePosixPath
+
+    seen: dict[str, str] = {}
+    for attachment in claim_file.get("attachments") or []:
+        path = str(attachment.get("path")) if isinstance(attachment, Mapping) else repr(attachment)
+        key = PurePosixPath(path).as_posix().casefold()
+        if key in seen:
+            raise ProductionError(f"the attachment {path!r} is listed twice (as {seen[key]!r})")
+        seen[key] = path
+
+
 def refuse_hook_routes(claim_file: Mapping[str, Any]) -> None:
     """A claim with a ``hook`` coverage route, anywhere, is not supported by this version
     of production (its installation contract is not written: #59): refused before the
@@ -1276,6 +1292,7 @@ def counted_records(
     """The records of the claim's populations counted before the lock, each given once
     (``--count-record attachment=file``) and equal to its attachment's sha256
     (wp3-population-count-acceptance.md, section 1)."""
+    check_attachments(claim_file)
     by_path = {a["path"]: a for a in claim_file.get("attachments") or []}
     wanted = [
         split["counted_before_lock"]["record"]
@@ -1412,6 +1429,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     claim_bytes = args.claim.read_bytes()
     claim_file = json.loads(claim_bytes.decode("utf-8"))
     check_target_keys(claim_file)  # before anything is prepared (A5)
+    check_attachments(claim_file)  # and R4
     claim_sha256 = hashlib.sha256(claim_bytes).hexdigest()
     if args.execution_id and not EXECUTION_ID.fullmatch(args.execution_id):
         raise ProductionError("--execution-id: 32 lowercase hex digits")

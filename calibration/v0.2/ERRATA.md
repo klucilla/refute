@@ -52,3 +52,32 @@ calibration dossiers were published with [release
 v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11, with
 citation (see the data credits of that release). The download-and-hash-check
 procedure of runs and reproductions is unchanged.
+
+## E2 (recorded 2026-10-26): the explanation of TOI-6038 A b's holdout FAIL is not supported by the locked code
+
+**Affected text.** `calibration/v0.2/POSTMORTEM.md` (published, **not edited**; this erratum is a
+new record): the row of TOI-6038 A b in the table of the reviewed holdout FAILs ("The train
+ephemeris uses 3 transits (1 degree of freedom), so its error is not inflated") and item 3 of the
+fixes considered ("With 3 transit times (1 degree of freedom) the ephemeris error is not
+inflated").
+
+**Correction.** The locked code does not support that explanation. In
+`src/refute/packs/tess/ephemeris.py` at tag `v0.2.0-calibration-lock` (commit `cc9d104`, the
+code of the v0.2 calibration), lines 131 to 133:
+
+```python
+dof = len(times) - 2
+chi2_red = float(np.sum(weights * resid**2) / dof) if dof > 0 else 1.0
+cov = cov * max(1.0, chi2_red)
+```
+
+With 3 transit times, `dof = 1 > 0`: the covariance **is** scaled by `max(1, chi2_red)`, so it is
+inflated whenever the reduced chi-square of the fit exceeds 1. One degree of freedom does not
+prevent the inflation; it makes `chi2_red` a very noisy estimate. Whether the error of TOI-6038 A
+b's train ephemeris was inflated depends on its fit's `chi2_red`, recorded in that target's dossier
+(release v0.2.0); it was not read for this erratum. Found by Codex's audit of 2026-10-26 on
+`ab4c233` and checked by reading the code at the tag.
+
+**Consequence.** None for the result: the v0.2 calibration's FAIL stands as published, and so does
+TOI-6038 A b's verdict (`REFUTED`, by `holdout_by_year` for the hidden year 2019). Only the
+explanation offered for that FAIL in the post-mortem is withdrawn as unsupported.
