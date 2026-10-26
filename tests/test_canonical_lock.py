@@ -175,7 +175,10 @@ def test_calibration_lock_refused_without_commit(git_repo):
         create_lock(claim)
 
 
-def test_calibration_lock_refused_outside_git(tmp_path):
+def test_calibration_lock_refused_outside_git(tmp_path, monkeypatch):
+    # git must not find a repository above the temporary folder (when the temporary folder lies
+    # inside some checkout, as in another agent's sandbox): it stops below tmp_path's parent
+    monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path.parent))
     claim = _calibration(tmp_path)
     with pytest.raises(LockError, match="git repository"):
         create_lock(claim)

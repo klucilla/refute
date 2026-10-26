@@ -782,18 +782,16 @@ X2F_DECLARED = {
         ("white, variability", ("variability_some_years",)): 45,
         ("AR(1), variability", ("variability_some_years",)): 45,
     },
-    "x2f-s3": {
-        ("white, no variability", ("two_years", "few_train")): 300,
-        ("AR(1), no variability", ("two_years", "few_train")): 146,
-    },
 }
 
 
 def test_x2f_sub_lots_are_their_declared_regimes(x2):
-    """The spec C choice lot (after-x2e/x2f-declaration.md, option A executable): three sub-lots
-    run in the fixed order S1, S2, S3, each drawing its regimes' cases from the new prefix by X2's
-    rule within the regime; X2's and X2e's lots unchanged."""
-    assert x2.X2F_SEQUENCE == ("x2f-s1", "x2f-s2", "x2f-s3")
+    """The spec C choice lot (after-x2e/x2f-declaration.md, revision of 2026-10-26: S1 + S2, no
+    S3, as plan B section 6): two sub-lots run in the fixed order S1, S2, each drawing its
+    regimes' cases from the new prefix by X2's rule within the regime; X2's and X2e's lots
+    unchanged."""
+    assert x2.X2F_SEQUENCE == ("x2f-s1", "x2f-s2")
+    assert "x2f-s3" not in x2.LOTS and not hasattr(x2, "X2F_S3")
     seen: set[tuple[str, str]] = set()
     for name in x2.X2F_SEQUENCE:
         spec = x2.LOTS[name]
@@ -815,8 +813,7 @@ def test_x2f_sub_lots_are_their_declared_regimes(x2):
         keys = {(x2.rs.group_of(c), c["id"]) for c in cases}
         assert not (keys & seen), name
         seen |= keys
-    # every white two-year case of the prefix, and no more: one prefix holds 300
-    assert sum(1 for g, _ in seen if g == "white, no variability") == 347
+    assert len(seen) == 184  # plan B section 6: 184 independent cases, 18 400 realizations
 
 
 def test_x2f_seeds_carry_the_prefix_and_repeat_no_earlier_lot_s(x2):
@@ -854,11 +851,9 @@ def test_x2f_selection_order_matches_an_independent_oracle(x2):
 
     three = list(range(100, 150))
     var = list(range(200, 250))
-    two = [i for i in range(250) if i < 100 or 150 <= i < 200]
     expected = {
         "x2f-s1": oracle("white", three, 47) + oracle("correlated", three, 47),
         "x2f-s2": oracle("white", var, 45) + oracle("correlated", var, 45),
-        "x2f-s3": oracle("white", two, 300) + oracle("correlated", two, 146),
     }
     for name in x2.X2F_SEQUENCE:
         assert [c["id"] for c in x2.x2_cases(x2.LOTS[name])] == expected[name], name
@@ -867,14 +862,14 @@ def test_x2f_selection_order_matches_an_independent_oracle(x2):
 def test_a_record_s_group_mechanism_and_band_must_be_its_case_s(lot_env):
     """Codex's review: a record whose metadata was changed passed the check."""
     x2 = lot_env
-    spec = x2.LOTS["x2f-s3"]
+    spec = x2.LOTS["x2f-s1"]
     case = x2.x2_cases(spec)[0]
     good = _fake_record(x2, case, 0, _declared(), spec.name)
     seed = good["noise_seed"]
     assert x2.record_problems(good, case, 0, seed, _declared(), spec) == []
     for key, value in (
         ("group", "AR(1), variability"),
-        ("mechanism", "three_years"),
+        ("mechanism", "two_years"),
         ("band", "below"),
     ):
         bad = {**good, key: value}
@@ -902,13 +897,20 @@ def test_a_full_check_requires_the_declared_task_list(lot_env, monkeypatch):
 def test_a_regime_selection_larger_than_the_prefix_is_refused(x2):
     from dataclasses import replace
 
-    s3 = x2.LOTS["x2f-s3"]
-    too_many = replace(s3, selection=(("white, no variability", ("two_years", "few_train"), 301),))
-    with pytest.raises(ValueError, match="301"):
+    s1 = x2.LOTS["x2f-s1"]
+    # the prefix holds 100 three_years cases per noise model (50 indexes in each of two bands)
+    too_many = replace(s1, selection=(("white, no variability", ("three_years",), 101),))
+    with pytest.raises(ValueError, match="101"):
         x2.x2_cases(too_many)
 
 
-@pytest.mark.parametrize("name", ["x2f-s1", "x2f-s2", "x2f-s3"])
+def test_the_cli_refuses_the_removed_sub_lot(x2):
+    with pytest.raises(SystemExit, match="unknown lot"):
+        x2.main(["run", str(ROOT / ".cache" / "test-x2-lots" / "none"), "--lot", "x2f-s3",
+                 "--workers", "1"])  # fmt: skip
+
+
+@pytest.mark.parametrize("name", ["x2f-s1", "x2f-s2"])
 def test_an_x2f_sub_lot_names_itself_and_checks_its_own_records(lot_env, monkeypatch, name):
     x2 = lot_env
     spec = x2.LOTS[name]
@@ -1035,3 +1037,100 @@ def test_the_truth_is_never_read_during_the_engine_calls(lot_env, monkeypatch):
     monkeypatch.setattr(holdout, "calibration_measurement", leaky)
     with pytest.raises(RuntimeError, match="truth"):
         x2.record_realization(case, j, _declared())
+
+
+# --- Codex's audit of 2026-10-26: R2 (a failed task is terminal) and R3 (one ceiling per lot) ----
+
+
+def test_r2_a_failed_task_is_terminal_and_is_not_resubmitted_without_a_decision(
+    fake_lot, monkeypatch
+):
+    import json
+
+    x2, tasks = fake_lot
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    bad_case, bad_j = tasks[1]
+
+    def crashing(task):
+        if task[0]["id"] == bad_case["id"] and task[1] == bad_j:
+            raise RuntimeError("the worker crashed")
+        return _fake_record(x2, *task)
+
+    monkeypatch.setattr(x2, "_x2_task", crashing)
+    first = x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor())
+    assert first["complete"] is False and len(first["failures"]) == 1
+    markers = sorted(p.relative_to(run).as_posix() for p in (run / "failed").rglob("*.json"))
+    assert len(markers) == 1  # the failure is recorded at once, as a terminal state
+    calls = []
+
+    def working(task):
+        calls.append(task)
+        return _fake_record(x2, *task)
+
+    monkeypatch.setattr(x2, "_x2_task", working)
+    second = x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor())
+    assert calls == [] and second["submitted"] == 0 and second["complete"] is False
+    assert second["terminal_failures"] == [{"case_id": bad_case["id"], "realization": bad_j}]
+    assert not x2.record_path(run, bad_case["id"], bad_j).exists()
+    # an explicit decision recorded in the run folder, naming the failure it covers
+    decisions = run / "retry-decisions"
+    decisions.mkdir()
+    (decisions / "001.json").write_text(
+        json.dumps({"decision": "issue #000: one retry approved", "covers": markers}),
+        encoding="utf-8",
+    )
+    third = x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor())
+    assert [(t[0]["id"], t[1]) for t in calls] == [(bad_case["id"], bad_j)]
+    assert third["retried"] == [{"case_id": bad_case["id"], "realization": bad_j}]
+    assert third["complete"] is True and x2.record_path(run, bad_case["id"], bad_j).exists()
+
+
+def test_r2_a_decision_without_text_or_for_another_failure_is_not_a_decision(fake_lot, monkeypatch):
+    import json
+
+    x2, tasks = fake_lot
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    monkeypatch.setattr(x2, "_x2_task", lambda task: (_ for _ in ()).throw(RuntimeError("x")))
+    x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
+    marker = next((run / "failed").rglob("*.json")).relative_to(run).as_posix()
+    decisions = run / "retry-decisions"
+    decisions.mkdir()
+    (decisions / "001.json").write_text(json.dumps({"decision": "", "covers": [marker]}), "utf-8")
+    (decisions / "002.json").write_text(
+        json.dumps({"decision": "approved", "covers": ["failed/other/000-x.json"]}), "utf-8"
+    )
+    monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
+    report = x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
+    assert report["submitted"] == 0 and len(report["terminal_failures"]) == 1
+
+
+def test_r3_the_ceiling_is_counted_across_the_invocations_of_one_lot(fake_lot, monkeypatch):
+    x2, tasks = fake_lot  # six tasks
+    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    now = {"h": 0.0}
+
+    def task(t):
+        now["h"] += 0.25  # each task takes a quarter of an hour
+        return _fake_record(x2, *t)
+
+    monkeypatch.setattr(x2, "_x2_task", task)
+
+    def clock():
+        return now["h"] * 3600.0
+
+    def run_once(ceiling):
+        return x2.run_x2_lot(
+            run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(),
+            deadline_hours=ceiling, clock=clock,
+        )  # fmt: skip
+
+    first = run_once(0.6)  # checks at 0, 0.25 and 0.5 h submit; 0.75 h stops
+    assert first["submitted"] == 3 and first["deadline_reached"] is True
+    assert first["consumed_total_hours"] == pytest.approx(0.75)
+    second = run_once(1.0)  # 0.25 h left: one more task, then the ceiling
+    assert second["consumed_before_hours"] == pytest.approx(0.75)
+    assert second["submitted"] == 1 and second["deadline_reached"] is True
+    assert second["consumed_total_hours"] == pytest.approx(1.0)
+    third = run_once(1.0)  # nothing left
+    assert third["submitted"] == 0 and third["deadline_reached"] is True
+    assert len(list((run / "records").rglob("*.json"))) == 4
