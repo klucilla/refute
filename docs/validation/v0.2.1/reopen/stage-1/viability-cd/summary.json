@@ -1,0 +1,690 @@
+{
+ "geometry_sha256": "4b9cd0241e855d9cb075583721dd49415b784cd93ae46780784f112b5c91c42e",
+ "states": {
+  "C": {
+   "causes": [],
+   "notes": []
+  },
+  "D": {
+   "causes": [],
+   "notes": []
+  }
+ },
+ "C": {
+  "outcome": {
+   "causes": [],
+   "outcome": "INDETERMINATE"
+  },
+  "rows": {
+   "10": 2,
+   "11": 1566,
+   "12": 1,
+   "13": 88,
+   "17": 483,
+   "3": 13,
+   "4": 3,
+   "5": 1,
+   "7": 2,
+   "8": 1
+  },
+  "barriers": {
+   "G": 13,
+   "K": 1568,
+   "N": 89,
+   "S": 4,
+   "T": 2,
+   "W": 1,
+   "decided": 483
+  },
+  "by_regime": {
+   "correlated/three_years": {
+    "INCONCLUSIVE": 129,
+    "PASS": 51
+   },
+   "correlated/variability_some_years": {
+    "INCONCLUSIVE": 178,
+    "PASS": 2
+   },
+   "white/three_years": {
+    "INCONCLUSIVE": 125,
+    "PASS": 55
+   },
+   "white/variability_some_years": {
+    "INCONCLUSIVE": 179,
+    "PASS": 1
+   }
+  },
+  "by_years": {
+   "3": {
+    "INCONCLUSIVE": 611,
+    "PASS": 109
+   }
+  },
+  "rounds_pass_by_years": {
+   "3": {
+    "pass": 483,
+    "rounds": 2160
+   }
+  },
+  "identity_flags": 4,
+  "not_identifiable_rounds": 17,
+  "per_noise": {
+   "correlated": {
+    "n": 360,
+    "missing": 0,
+    "R1_pass": 53,
+    "R1_fail": 0,
+    "R1_pass_L": 0.11736488052796341,
+    "R1_fail_U": 0.008286950875235653,
+    "legacy_pass": 118,
+    "R3_pass": 325,
+    "R2": {
+     "R2-K": {
+      "pass": 309,
+      "fail": 0,
+      "pass_L": 0.8245125106561981,
+      "pass_U": 0.8876702671884599,
+      "reaches_benchmark": true
+     },
+     "R2-KT": {
+      "pass": 309,
+      "fail": 0,
+      "pass_L": 0.8245125106561981,
+      "pass_U": 0.8876702671884599,
+      "reaches_benchmark": true
+     },
+     "R2-KTN": {
+      "pass": 356,
+      "fail": 0,
+      "pass_L": 0.9747551255931141,
+      "pass_U": 0.9961960210130487,
+      "reaches_benchmark": true
+     }
+    }
+   },
+   "white": {
+    "n": 360,
+    "missing": 0,
+    "R1_pass": 56,
+    "R1_fail": 0,
+    "R1_pass_L": 0.12494563624236514,
+    "R1_fail_U": 0.008286950875235653,
+    "legacy_pass": 108,
+    "R3_pass": 306,
+    "R2": {
+     "R2-K": {
+      "pass": 320,
+      "fail": 0,
+      "pass_L": 0.8578265145796939,
+      "pass_U": 0.9150567066400407,
+      "reaches_benchmark": true
+     },
+     "R2-KT": {
+      "pass": 320,
+      "fail": 0,
+      "pass_L": 0.8578265145796939,
+      "pass_U": 0.9150567066400407,
+      "reaches_benchmark": true
+     },
+     "R2-KTN": {
+      "pass": 350,
+      "fail": 0,
+      "pass_L": 0.9533382797804169,
+      "pass_U": 0.9848537933400991,
+      "reaches_benchmark": true
+     }
+    }
+   }
+  },
+  "non_pass_targets_by_rows": {
+   "11": 519,
+   "11+13": 60,
+   "13": 14,
+   "3+11": 9,
+   "4+11": 2,
+   "7+11+13": 1,
+   "10+11": 1,
+   "5+11": 1,
+   "11+12": 1,
+   "7+13": 1,
+   "8+10+11": 1,
+   "3+4+11": 1
+  },
+  "step": {
+   "succeeds": false,
+   "cpu_seconds": 1.015625,
+   "wall_seconds": 1.0350691999774426,
+   "pairs": {
+    "E1.dp0.nomargin+E2.dp0": {
+     "correlated": {
+      "pass": 65,
+      "fail": 0,
+      "pass_L": 0.14787035044407723,
+      "meets": false
+     },
+     "white": {
+      "pass": 81,
+      "fail": 0,
+      "pass_L": 0.18919437287200985,
+      "meets": false
+     }
+    },
+    "E1.nomargin+E2.dp0": {
+     "correlated": {
+      "pass": 65,
+      "fail": 0,
+      "pass_L": 0.14787035044407723,
+      "meets": false
+     },
+     "white": {
+      "pass": 77,
+      "fail": 0,
+      "pass_L": 0.178802695876229,
+      "meets": false
+     }
+    },
+    "E1.dp0.nomargin+E2.median": {
+     "correlated": {
+      "pass": 64,
+      "fail": 0,
+      "pass_L": 0.14531062521057703,
+      "meets": false
+     },
+     "white": {
+      "pass": 83,
+      "fail": 0,
+      "pass_L": 0.19440410508686315,
+      "meets": false
+     }
+    },
+    "E1.nomargin+E2.median": {
+     "correlated": {
+      "pass": 64,
+      "fail": 0,
+      "pass_L": 0.14531062521057703,
+      "meets": false
+     },
+     "white": {
+      "pass": 80,
+      "fail": 0,
+      "pass_L": 0.18659293359903434,
+      "meets": false
+     }
+    },
+    "E1.dp0.nomargin+E2.0": {
+     "correlated": {
+      "pass": 61,
+      "fail": 0,
+      "pass_L": 0.1376496389925989,
+      "meets": false
+     },
+     "white": {
+      "pass": 69,
+      "fail": 0,
+      "pass_L": 0.15813813362681614,
+      "meets": false
+     }
+    },
+    "E1.nomargin+E2.0": {
+     "correlated": {
+      "pass": 61,
+      "fail": 0,
+      "pass_L": 0.1376496389925989,
+      "meets": false
+     },
+     "white": {
+      "pass": 68,
+      "fail": 0,
+      "pass_L": 0.15556695592748593,
+      "meets": false
+     }
+    },
+    "E1.dp0+E2.dp0": {
+     "correlated": {
+      "pass": 55,
+      "fail": 0,
+      "pass_L": 0.12241509402522431,
+      "meets": false
+     },
+     "white": {
+      "pass": 65,
+      "fail": 0,
+      "pass_L": 0.14787035044407723,
+      "meets": false
+     }
+    },
+    "E1.dp0+E2.median": {
+     "correlated": {
+      "pass": 55,
+      "fail": 0,
+      "pass_L": 0.12241509402522431,
+      "meets": false
+     },
+     "white": {
+      "pass": 67,
+      "fail": 0,
+      "pass_L": 0.15299856696847008,
+      "meets": false
+     }
+    },
+    "E1.0+E2.dp0": {
+     "correlated": {
+      "pass": 54,
+      "fail": 0,
+      "pass_L": 0.11988814788556326,
+      "meets": false
+     },
+     "white": {
+      "pass": 58,
+      "fail": 0,
+      "pass_L": 0.130017196235519,
+      "meets": false
+     }
+    },
+    "E1.0+E2.median": {
+     "correlated": {
+      "pass": 54,
+      "fail": 0,
+      "pass_L": 0.11988814788556326,
+      "meets": false
+     },
+     "white": {
+      "pass": 61,
+      "fail": 0,
+      "pass_L": 0.1376496389925989,
+      "meets": false
+     }
+    },
+    "E1.dp0+E2.0": {
+     "correlated": {
+      "pass": 54,
+      "fail": 0,
+      "pass_L": 0.11988814788556326,
+      "meets": false
+     },
+     "white": {
+      "pass": 61,
+      "fail": 0,
+      "pass_L": 0.1376496389925989,
+      "meets": false
+     }
+    },
+    "E1.0+E2.0": {
+     "correlated": {
+      "pass": 53,
+      "fail": 0,
+      "pass_L": 0.11736488052796341,
+      "meets": false
+     },
+     "white": {
+      "pass": 56,
+      "fail": 0,
+      "pass_L": 0.12494563624236514,
+      "meets": false
+     }
+    }
+   },
+   "envelope_descriptive": {
+    "correlated": {
+     "fail_upper": 0,
+     "pass_upper": 65
+    },
+    "white": {
+     "fail_upper": 0,
+     "pass_upper": 86
+    }
+   }
+  }
+ },
+ "D": {
+  "outcome": {
+   "causes": [],
+   "outcome": "INDETERMINATE"
+  },
+  "rows": {
+   "11": 629,
+   "13": 15,
+   "17": 416
+  },
+  "barriers": {
+   "K": 629,
+   "N": 15,
+   "decided": 416
+  },
+  "by_regime": {
+   "correlated/three_years": {
+    "INCONCLUSIVE": 82,
+    "PASS": 38
+   },
+   "white/three_years": {
+    "INCONCLUSIVE": 93,
+    "PASS": 27
+   }
+  },
+  "by_years": {
+   "4": {
+    "INCONCLUSIVE": 99,
+    "PASS": 41
+   },
+   "5": {
+    "INCONCLUSIVE": 76,
+    "PASS": 24
+   }
+  },
+  "rounds_pass_by_years": {
+   "4": {
+    "pass": 227,
+    "rounds": 560
+   },
+   "5": {
+    "pass": 189,
+    "rounds": 500
+   }
+  },
+  "identity_flags": 0,
+  "not_identifiable_rounds": 0,
+  "per_noise": {
+   "correlated": {
+    "n": 120,
+    "missing": 0,
+    "R1_pass": 38,
+    "R1_fail": 0,
+    "R1_pass_L": 0.246689798013834,
+    "R1_fail_U": 0.024655401055656376,
+    "legacy_pass": 69,
+    "R3_pass": 120,
+    "R2": {
+     "R2-K": {
+      "pass": 114,
+      "fail": 0,
+      "pass_L": 0.9037036826230619,
+      "pass_U": 0.978003871731474,
+      "reaches_benchmark": true
+     },
+     "R2-KT": {
+      "pass": 114,
+      "fail": 0,
+      "pass_L": 0.9037036826230619,
+      "pass_U": 0.978003871731474,
+      "reaches_benchmark": true
+     },
+     "R2-KTN": {
+      "pass": 120,
+      "fail": 0,
+      "pass_L": 0.9753445989443437,
+      "pass_U": 1.0,
+      "reaches_benchmark": true
+     }
+    }
+   },
+   "white": {
+    "n": 120,
+    "missing": 0,
+    "R1_pass": 27,
+    "R1_fail": 0,
+    "R1_pass_L": 0.16382131260884147,
+    "R1_fail_U": 0.024655401055656376,
+    "legacy_pass": 61,
+    "R3_pass": 120,
+    "R2": {
+     "R2-K": {
+      "pass": 112,
+      "fail": 0,
+      "pass_L": 0.8829276384217002,
+      "pass_U": 0.9663978371966957,
+      "reaches_benchmark": true
+     },
+     "R2-KT": {
+      "pass": 112,
+      "fail": 0,
+      "pass_L": 0.8829276384217002,
+      "pass_U": 0.9663978371966957,
+      "reaches_benchmark": true
+     },
+     "R2-KTN": {
+      "pass": 120,
+      "fail": 0,
+      "pass_L": 0.9753445989443437,
+      "pass_U": 1.0,
+      "reaches_benchmark": true
+     }
+    }
+   }
+  },
+  "non_pass_targets_by_rows": {
+   "11": 161,
+   "13": 7,
+   "11+13": 7
+  },
+  "step": {
+   "succeeds": false,
+   "cpu_seconds": 0.5,
+   "wall_seconds": 0.5029095999780111,
+   "pairs": {
+    "E1.dp0.nomargin+E2.median": {
+     "correlated": {
+      "pass": 43,
+      "fail": 0,
+      "pass_L": 0.28544533827050433,
+      "meets": false
+     },
+     "white": {
+      "pass": 37,
+      "fail": 0,
+      "pass_L": 0.2390137473904261,
+      "meets": false
+     }
+    },
+    "E1.nomargin+E2.median": {
+     "correlated": {
+      "pass": 43,
+      "fail": 0,
+      "pass_L": 0.28544533827050433,
+      "meets": false
+     },
+     "white": {
+      "pass": 36,
+      "fail": 0,
+      "pass_L": 0.23136396329437708,
+      "meets": false
+     }
+    },
+    "E1.dp0.nomargin+E2.dp0": {
+     "correlated": {
+      "pass": 43,
+      "fail": 0,
+      "pass_L": 0.28544533827050433,
+      "meets": false
+     },
+     "white": {
+      "pass": 35,
+      "fail": 0,
+      "pass_L": 0.22374107145695118,
+      "meets": false
+     }
+    },
+    "E1.nomargin+E2.dp0": {
+     "correlated": {
+      "pass": 43,
+      "fail": 0,
+      "pass_L": 0.28544533827050433,
+      "meets": false
+     },
+     "white": {
+      "pass": 35,
+      "fail": 0,
+      "pass_L": 0.22374107145695118,
+      "meets": false
+     }
+    },
+    "E1.dp0.nomargin+E2.0": {
+     "correlated": {
+      "pass": 42,
+      "fail": 0,
+      "pass_L": 0.2776457703959209,
+      "meets": false
+     },
+     "white": {
+      "pass": 31,
+      "fail": 0,
+      "pass_L": 0.1935329050621253,
+      "meets": false
+     }
+    },
+    "E1.nomargin+E2.0": {
+     "correlated": {
+      "pass": 42,
+      "fail": 0,
+      "pass_L": 0.2776457703959209,
+      "meets": false
+     },
+     "white": {
+      "pass": 31,
+      "fail": 0,
+      "pass_L": 0.1935329050621253,
+      "meets": false
+     }
+    },
+    "E1.dp0+E2.median": {
+     "correlated": {
+      "pass": 40,
+      "fail": 0,
+      "pass_L": 0.26211843460038725,
+      "meets": false
+     },
+     "white": {
+      "pass": 29,
+      "fail": 0,
+      "pass_L": 0.17861086758523223,
+      "meets": false
+     }
+    },
+    "E1.0+E2.dp0": {
+     "correlated": {
+      "pass": 39,
+      "fail": 0,
+      "pass_L": 0.25439153795055636,
+      "meets": false
+     },
+     "white": {
+      "pass": 28,
+      "fail": 0,
+      "pass_L": 0.17119892340949958,
+      "meets": false
+     }
+    },
+    "E1.0+E2.median": {
+     "correlated": {
+      "pass": 39,
+      "fail": 0,
+      "pass_L": 0.25439153795055636,
+      "meets": false
+     },
+     "white": {
+      "pass": 28,
+      "fail": 0,
+      "pass_L": 0.17119892340949958,
+      "meets": false
+     }
+    },
+    "E1.dp0+E2.dp0": {
+     "correlated": {
+      "pass": 40,
+      "fail": 0,
+      "pass_L": 0.26211843460038725,
+      "meets": false
+     },
+     "white": {
+      "pass": 28,
+      "fail": 0,
+      "pass_L": 0.17119892340949958,
+      "meets": false
+     }
+    },
+    "E1.0+E2.0": {
+     "correlated": {
+      "pass": 38,
+      "fail": 0,
+      "pass_L": 0.246689798013834,
+      "meets": false
+     },
+     "white": {
+      "pass": 27,
+      "fail": 0,
+      "pass_L": 0.16382131260884147,
+      "meets": false
+     }
+    },
+    "E1.dp0+E2.0": {
+     "correlated": {
+      "pass": 39,
+      "fail": 0,
+      "pass_L": 0.25439153795055636,
+      "meets": false
+     },
+     "white": {
+      "pass": 27,
+      "fail": 0,
+      "pass_L": 0.16382131260884147,
+      "meets": false
+     }
+    }
+   },
+   "envelope_descriptive": {
+    "correlated": {
+     "fail_upper": 0,
+     "pass_upper": 43
+    },
+    "white": {
+     "fail_upper": 0,
+     "pass_upper": 37
+    }
+   }
+  }
+ },
+ "c_against_d": {
+  "correlated": {
+   "R1": {
+    "difference": -0.033333333333333326,
+    "hi": 0.07019437252856986,
+    "lo": -0.14012126668347374
+   },
+   "R2-KTN": {
+    "difference": 0.0,
+    "hi": 0.031019166418703392,
+    "lo": -0.02089549792161316
+   }
+  },
+  "white": {
+   "R1": {
+    "difference": 0.08055555555555557,
+    "hi": 0.17699368469658772,
+    "lo": -0.023090014002890874
+   },
+   "R2-KTN": {
+    "difference": 0.0,
+    "hi": 0.031019166418703392,
+    "lo": -0.02089549792161316
+   }
+  }
+ },
+ "destination": {
+  "abandoned": [],
+  "closures": [],
+  "ends": false,
+  "proposals": [],
+  "step_over": [
+   "C",
+   "D"
+  ]
+ },
+ "final": {
+  "closures": [],
+  "effort_ends_not_approved": true,
+  "ended": [
+   "C",
+   "D"
+  ],
+  "proposals": []
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "lot": "viability-d",
+ "tasks": [
+  "D-white-three_years-0000",
+  "D-correlated-three_years-0000",
+  "D-white-three_years-0001",
+  "D-correlated-three_years-0001",
+  "D-white-three_years-0002",
+  "D-correlated-three_years-0002",
+  "D-white-three_years-0003",
+  "D-correlated-three_years-0003",
+  "D-white-three_years-0004",
+  "D-correlated-three_years-0004",
+  "D-white-three_years-0005",
+  "D-correlated-three_years-0005"
+ ],
+ "workers": [
+  0,
+  1,
+  22
+ ],
+ "digests": [
+  "970961c476085fc5b12a5371c4e9322286698485a2b7c497c3472f0ed4a7b76b",
+  "57d4f5f56d7aca79eb57b811f4be8165a5d9c024099720636e85cad56ee8e0ab",
+  "11872197c5f930046a31141e12fb896e86cbed227e6bf396fea177ba4f8e3335",
+  "40a1bdd12765e7ca2d00ffb42bf81647505ef416ec6ef16c39523aa2efcdfdc1",
+  "07ff2a4005b15610b52ee2deb00a56077bf6f53864999e99d145ee1a75669694",
+  "e858ab915b5864f4cd66b343eeddfb239402bba6ae890a01be4b21b41b7fc1e3",
+  "4c675712b8665a8ac62875c592bed1f95b46763834acaf18ddf41e3835020456",
+  "b5634f7e17cf41e316fc3b113f6c26f68d8b4ed2153e2261d40706019f6c4894",
+  "d533bb7ba134cda26aa9a310bc6353f32c26255e6a1a8da96bfad6949d189efb",
+  "e5aa45f4a9777c1ca27c1568465cdff7a67de848df8cbe7af3135d2f800cc322",
+  "8fcb2b0d62858d58d9f8abe135312677382a6661548ba6c1b9e198934899dbac",
+  "a6b979eea602ec8a94241f7d6ab75a79885630e22456c342286b97287ab04d78"
+ ],
+ "agree": true
+}

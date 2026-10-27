@@ -1,0 +1,89 @@
+{
+ "sub_lots": {
+  "viability-c": {
+   "tasks_timed": 720,
+   "lp_hours": 8.33205714752794,
+   "mean_task_seconds": 41.660285737639704,
+   "invocations": [
+    {
+     "started_utc": "20261027T164001485454Z",
+     "elapsed_hours": 0.31338616005555703,
+     "closed": true
+    },
+    {
+     "started_utc": "20261027T165946838190Z",
+     "elapsed_hours": 0.078740419361113,
+     "closed": true
+    }
+   ],
+   "elapsed_hours": 0.39212657941667006,
+   "cost_check": {
+    "tasks_checked": 72,
+    "tasks": 720,
+    "workers": 22,
+    "mean_task_seconds": 45.95361829861375,
+    "projected_lp_hours": 9.19072365972275,
+    "projected_hours": 0.417760166351034,
+    "lp_hours_ceiling": 37.0,
+    "hours_ceiling": 1.7,
+    "stop": false,
+    "run_started_utc": "20261027T164001485454Z"
+   },
+   "manifest_sha256": "8ff1053e22dc90a8f71570a72a6a392172e0c75b98cd670b35d3fb475819329f",
+   "records_sha256": "630eb6bc73043e1faa066304b5a48683285d2f366213103ae65e8365ae52907b"
+  },
+  "viability-d": {
+   "tasks_timed": 240,
+   "lp_hours": 12.28168251463896,
+   "mean_task_seconds": 184.2252377195844,
+   "invocations": [
+    {
+     "started_utc": "20261027T170447013121Z",
+     "elapsed_hours": 0.5795588552222277,
+     "closed": true
+    }
+   ],
+   "elapsed_hours": 0.5795588552222277,
+   "cost_check": {
+    "tasks_checked": 24,
+    "tasks": 240,
+    "workers": 22,
+    "mean_task_seconds": 205.8096681291645,
+    "projected_lp_hours": 13.7206445419443,
+    "projected_hours": 0.6236656609974682,
+    "lp_hours_ceiling": 30.8,
+    "hours_ceiling": 1.4,
+    "stop": false,
+    "run_started_utc": "20261027T170447013121Z"
+   },
+   "manifest_sha256": "e590f5d38bc8208036dcb7236be3619b94dd97e00ee3cb55759a395417633f7f",
+   "records_sha256": "078084b23fe2916c3010e3c1b3540990b338372a0a7529771763c7736266481d"
+  }
+ },
+ "files": {
+  "env-before.json": {
+   "sha256": "ba45540cdcec16daa783e93fa8d8b9d03925ddd1944145dc2a1b3ce4764d81c5",
+   "bytes": 3089
+  },
+  "env-after.json": {
+   "sha256": "ba45540cdcec16daa783e93fa8d8b9d03925ddd1944145dc2a1b3ce4764d81c5",
+   "bytes": 3089
+  },
+  "determinism-viability-c.json": {
+   "sha256": "93d8b7f2737a37387331fa642acb636f31e4e624df160239dfa3b22483dd113f",
+   "bytes": 2699
+  },
+  "determinism-viability-d.json": {
+   "sha256": "05d367810865b6c7f833614cb053a0c06949832104d7d153e61e7102c0e8f555",
+   "bytes": 1337
+  },
+  "evaluation.json": {
+   "sha256": "dbe563c5a37c89358b1f224d6bfb6410ad53fa8d5cda6b684ebfaa3d3966a325",
+   "bytes": 1012021
+  },
+  "summary.json": {
+   "sha256": "78cce8f6a277e8e023b778e129aeafbe13ec554da3f2febbfa4768386701420e",
+   "bytes": 12798
+  }
+ }
+}
