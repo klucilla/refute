@@ -976,7 +976,7 @@ def subset_tasks(n_cases: int, n_realizations: int, spec: LotSpec = X2) -> list[
 
 
 def main(argv: list[str]) -> int:
-    """``run <run_dir> --workers <n> [--lot x2|x2e|x2f-s1|x2f-s2|x2f-s3]
+    """``run <run_dir> --workers <n> [--lot x2|x2e|x2f-s1|x2f-s2]
     [--subset <cases per group> <realizations>]
     [--deadline-hours <h>]``, ``check <run_dir> [--full]``, ``evaluate <run_dir> <out>`` or
     ``evaluate-pooled <x2-evaluation.json> <x2e run_dir> <out>``."""

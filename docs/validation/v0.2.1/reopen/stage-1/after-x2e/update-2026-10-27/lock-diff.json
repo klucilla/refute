@@ -1,0 +1,86 @@
+{
+ "added": [],
+ "changed": {
+  "aiohttp": {
+   "fields": {
+    "sdist": "changed",
+    "version": {
+     "after": "3.14.5",
+     "before": "3.14.3"
+    },
+    "wheels": "changed"
+   },
+   "numeric_stack": false,
+   "versions": {
+    "after": [
+     "3.14.5"
+    ],
+    "before": [
+     "3.14.3"
+    ]
+   }
+  },
+  "certifi": {
+   "fields": {
+    "sdist": "changed",
+    "version": {
+     "after": "2026.10.19",
+     "before": "2026.7.22"
+    },
+    "wheels": "changed"
+   },
+   "numeric_stack": false,
+   "versions": {
+    "after": [
+     "2026.10.19"
+    ],
+    "before": [
+     "2026.7.22"
+    ]
+   }
+  },
+  "pillow": {
+   "fields": {
+    "sdist": "changed",
+    "version": {
+     "after": "13.0.0",
+     "before": "12.3.0"
+    },
+    "wheels": "changed"
+   },
+   "numeric_stack": false,
+   "versions": {
+    "after": [
+     "13.0.0"
+    ],
+    "before": [
+     "12.3.0"
+    ]
+   }
+  },
+  "virtualenv": {
+   "fields": {
+    "sdist": "changed",
+    "version": {
+     "after": "21.14.11",
+     "before": "21.14.2"
+    },
+    "wheels": "changed"
+   },
+   "numeric_stack": false,
+   "versions": {
+    "after": [
+     "21.14.11"
+    ],
+    "before": [
+     "21.14.2"
+    ]
+   }
+  }
+ },
+ "numeric_stack_changed": [],
+ "packages_after": 108,
+ "packages_before": 108,
+ "removed": [],
+ "top_level_changes": {}
+}

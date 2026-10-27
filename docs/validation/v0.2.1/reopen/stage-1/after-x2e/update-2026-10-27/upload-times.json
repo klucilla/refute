@@ -1,0 +1,35 @@
+﻿{
+ "now_utc": "2026-10-27T03:03:01+00:00",
+ "exclude_newer": {
+  "exclude-newer": "0001-01-01T00:00:00Z",
+  "exclude-newer-span": "P7D"
+ },
+ "aiohttp": {
+  "version": "3.14.5",
+  "files": 125,
+  "newest_upload_utc": "2026-10-11T01:05:12.408Z",
+  "age_days": 16.08,
+  "seven_day_rule": true
+ },
+ "certifi": {
+  "version": "2026.10.19",
+  "files": 2,
+  "newest_upload_utc": "2026-10-20T02:24:16.604Z",
+  "age_days": 7.03,
+  "seven_day_rule": true
+ },
+ "pillow": {
+  "version": "13.0.0",
+  "files": 69,
+  "newest_upload_utc": "2026-10-16T22:18:09.718Z",
+  "age_days": 10.2,
+  "seven_day_rule": true
+ },
+ "virtualenv": {
+  "version": "21.14.11",
+  "files": 2,
+  "newest_upload_utc": "2026-10-18T07:06:34.716Z",
+  "age_days": 8.83,
+  "seven_day_rule": true
+ }
+}

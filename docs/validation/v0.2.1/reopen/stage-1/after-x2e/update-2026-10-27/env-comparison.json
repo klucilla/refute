@@ -1,0 +1,40 @@
+{
+ "lock_files": {
+  "reference": {
+   "uv.lock": "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a",
+   "pyproject.toml": "bea26d265090e7cdc95706f1d972b7df1362b86c16d5a2fd1678a261b74321de"
+  },
+  "frozen": {
+   "uv.lock": "79e16fa706c47c7896b708dcd17dbac1f927331c85a25ceca1073e3c654eca4a",
+   "pyproject.toml": "bea26d265090e7cdc95706f1d972b7df1362b86c16d5a2fd1678a261b74321de"
+  },
+  "updated": {
+   "uv.lock": "a49bfdf2596e768b24bd340e968c564e916c76b71f1a2119bf3bbde20463cdda",
+   "pyproject.toml": "bea26d265090e7cdc95706f1d972b7df1362b86c16d5a2fd1678a261b74321de"
+  }
+ },
+ "distributions": {
+  "reference": 103,
+  "frozen": 103,
+  "updated": 103
+ },
+ "frozen_vs_reference": {},
+ "updated_vs_frozen": {
+  "aiohttp": {
+   "before": "3.14.3",
+   "after": "3.14.5"
+  },
+  "certifi": {
+   "before": "2026.7.22",
+   "after": "2026.10.19"
+  },
+  "pillow": {
+   "before": "12.3.0",
+   "after": "13.0.0"
+  },
+  "virtualenv": {
+   "before": "21.14.2",
+   "after": "21.14.11"
+  }
+ }
+}
