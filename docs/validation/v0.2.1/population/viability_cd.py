@@ -248,9 +248,11 @@ def geometry_list(rows: dict, digest: str | None = None) -> dict:
 
 
 def acceptance_summary(listing: dict) -> dict:
-    """Per selected sector, the analytic per-attempt acceptance of the orbit draw, and the expected
-    number of exhausted draws over the lot (each case draws each sector of its geometry at least
-    once): a disclosed risk, computed without any of the lot's seeds."""
+    """Per selected sector, the per-attempt acceptance of the orbit draw (a numerical integral,
+    ``orbit_acceptance``), and the nominal expected number of exhausted draws over the lot,
+    counting **one pass** per sector and case (the layout redraws, which draw the sectors again, are
+    not counted, so the figure is a lower bound): a disclosed risk, computed without any of the
+    lot's seeds."""
     out = {}
     for a, part in listing["alternatives"].items():
         selected = part["selected"]
@@ -331,6 +333,11 @@ def lot_cases(
 # --- the layouts (L1 to L4) ---------------------------------------------------------------------
 
 
+class GenerationDefectError(RuntimeError):
+    """An orbit draw, a layout or a parameter draw exhausted ``MAX_ATTEMPTS``: a defect that stops
+    the lot (L2, L3, X9), never a silent replacement and never a scientific outcome."""
+
+
 def _orbits(rng: np.random.Generator, span: float) -> tuple[float, float, float, int]:
     """``(l1, l2, g, draws)``: the orbit gap and the orbits of a sector of real span ``span``."""
     for k in range(MAX_ATTEMPTS):
@@ -340,7 +347,9 @@ def _orbits(rng: np.random.Generator, span: float) -> tuple[float, float, float,
         l2 = span - g - l1
         if ORBIT_DAYS[0] <= l1 <= ORBIT_DAYS[1] and ORBIT_DAYS[0] <= l2 <= ORBIT_DAYS[1]:
             return l1, l2, g, k + 1
-    raise RuntimeError(f"no orbit draw within 12.5 to 14.0 d in {MAX_ATTEMPTS} draws (span {span})")
+    raise GenerationDefectError(
+        f"no orbit draw within 12.5 to 14.0 d in {MAX_ATTEMPTS} draws (span {span})"
+    )
 
 
 def _draw(geometry: dict, rng: np.random.Generator) -> dict:
@@ -389,7 +398,7 @@ def draw_layout(case: dict, geometry: dict) -> dict:
         if failed is None:
             return {**lay, "attempt": attempt, "redraws": redraws, "domain": result}
         redraws[failed] = redraws.get(failed, 0) + 1
-    raise RuntimeError(f"{case['id']}: no layout accepted in {MAX_ATTEMPTS} attempts")
+    raise GenerationDefectError(f"{case['id']}: no layout accepted in {MAX_ATTEMPTS} attempts")
 
 
 def map_absent_year(p: dict, labels: list[int]) -> None:
@@ -448,7 +457,7 @@ def build_curve(case: dict, geometry: dict) -> dict:
             break
         redraws[reason] = redraws.get(reason, 0) + 1
     else:
-        raise RuntimeError(f"{case['id']}: no valid draw in {MAX_ATTEMPTS} attempts")
+        raise GenerationDefectError(f"{case['id']}: no valid draw in {MAX_ATTEMPTS} attempts")
     if "var_amplitude_factor" in p:
         p["var_amplitude"] = p["var_amplitude_factor"] * p["depth"]
     rng_noise = np.random.default_rng(pv2.sub_seed(seed_k, "noise"))
@@ -656,6 +665,42 @@ def record_target(
 
 ORACLE_FIELDS = ("n_centres", "kept", "skipped", "depth", "error", "snr", "detectable", "reason")
 IDENTITY_FIELDS = ("identifiable", "period_ratio", "flag")
+STAMP_TOLERANCE_DAYS = 1.0 / 86400.0  # the first time stamp is t_min' plus at most 0.25 s jitter
+
+
+def _sector_problems(key: str, sectors, order: list[dict], alternative: str) -> list[str]:
+    """R6: the record's sectors are the geometry's, in time order, each starting at its real date
+    (within the jitter), ending before its real end, labelled by the year of its first time stamp;
+    three labels for C, four or more for D."""
+    from refute.packs.tess.types import btjd_to_year
+
+    fields = ("sector", "year", "t_start", "t_end", "n_points")
+    if not (
+        isinstance(sectors, list)
+        and len(sectors) == len(order)
+        and all(isinstance(x, dict) and all(f in x for f in fields) for x in sectors)
+    ):
+        return [f"{key}: sectors are not the geometry's"]
+    out = []
+    for x, g in zip(sectors, order, strict=True):
+        try:
+            start, end, n = float(x["t_start"]), float(x["t_end"]), int(x["n_points"])
+            label = btjd_to_year(start)
+        except (TypeError, ValueError, OverflowError):
+            out.append(f"{key}: sector {x.get('sector')} has invalid dates")
+            continue
+        if int(x["sector"]) != int(g["sector"]):
+            out.append(f"{key}: sector {x['sector']} is not the geometry's {g['sector']}")
+        elif abs(start - g["t_min_btjd"]) > STAMP_TOLERANCE_DAYS or not (
+            start < end <= g["t_max_btjd"] + STAMP_TOLERANCE_DAYS
+        ):
+            out.append(f"{key}: sector {x['sector']} is not at its real dates")
+        elif x["year"] != label or n < 1:
+            out.append(f"{key}: sector {x['sector']} label {x['year']!r} or cadences {n}")
+    labels = {x.get("year") for x in sectors}
+    if (alternative == "C" and len(labels) != 3) or (alternative == "D" and len(labels) < 4):
+        out.append(f"{key}: {len(labels)} labels for {alternative}")
+    return out
 
 
 def record_problems(
@@ -678,16 +723,40 @@ def record_problems(
     ):
         if rec.get(field) != value:
             out.append(f"{key}: {field} {rec.get(field)!r} is not {value!r}")
-    geo = rec.get("geometry")
-    if not isinstance(geo, dict) or geo.get("key") != list(geometry["key"]):
-        out.append(f"{key}: geometry is not the case's")
+    want_geo = {
+        "position": case["extra"]["geometry"],
+        "key": list(geometry["key"]),
+        "tic": geometry["tic"],
+    }
+    if rec.get("geometry") != want_geo:
+        out.append(f"{key}: geometry {rec.get('geometry')!r} is not the case's {want_geo!r}")
     if rec.get("configuration") != configuration:
         out.append(f"{key}: another configuration")
+    order = sorted(geometry["sectors"], key=lambda s: s["t_min_btjd"])
+    numbers_want = [int(x["sector"]) for x in order]
+    seed = rec.get("attempt_seed")
+    if not (isinstance(seed, str) and seed.isdigit()):
+        out.append(f"{key}: attempt_seed {seed!r}")
+    digest = rec.get("curve_sha256")
+    if not (
+        isinstance(digest, str) and len(digest) == 64 and set(digest) <= set("0123456789abcdef")
+    ):
+        out.append(f"{key}: curve_sha256 {digest!r}")
+    if not isinstance(rec.get("redraws"), dict):
+        out.append(f"{key}: redraws {rec.get('redraws')!r}")
+    lay = rec.get("layout")
+    if not (
+        isinstance(lay, dict)
+        and isinstance(lay.get("attempt"), int)
+        and isinstance(lay.get("redraws"), dict)
+        and isinstance(lay.get("sectors"), list)
+        and [x.get("sector") if isinstance(x, dict) else None for x in lay["sectors"]]
+        == numbers_want
+    ):
+        out.append(f"{key}: layout is not one entry per geometry sector")
+    out += _sector_problems(key, rec.get("sectors"), order, case["extra"]["alternative"])
     sectors = rec.get("sectors")
-    ok = isinstance(sectors, list) and all(isinstance(x, dict) and "sector" in x for x in sectors)
-    numbers = [x["sector"] for x in sectors] if ok else None
-    if numbers != [x["sector"] for x in sorted(geometry["sectors"], key=lambda s: s["t_min_btjd"])]:
-        out.append(f"{key}: sectors are not the geometry's")
+    ok = isinstance(sectors, list) and all(isinstance(x, dict) for x in sectors)
     years = rec.get("years")
     labels = sorted({x.get("year") for x in sectors}) if ok else None
     if years != labels:
@@ -803,14 +872,20 @@ def lot_problems(
     full: bool = False,
 ) -> list[str]:
     """X8: every task one complete record at its own path; no record outside the tasks; with
-    ``full`` the manifest's tasks are exactly the declared sub-lot's."""
+    ``full`` the manifest's tasks are exactly the declared sub-lot's. Never raises on a damaged
+    file: each is a problem (Codex's review)."""
     run_dir = Path(run_dir)
-    data = x2.load_x2_lot(run_dir)
-    manifest = data["manifest"]
-    expected = {c: (s, g) for c, s, g in manifest["expected"]}
+    try:
+        manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+        expected = {c: (s, g) for c, s, g in manifest["expected"]}
+        configuration = manifest["configuration"]
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        return [f"the manifest is not readable: {type(exc).__name__}"]
     canonical = {f"records/{c}/000.json" for c in expected}
     problems = [
-        f"{r}: a record file not at a task's own path" for r in data["files"] if r not in canonical
+        f"{r}: a record file not at a task's own path"
+        for r in record_files(run_dir)
+        if r not in canonical
     ]
     declared = (
         tasks if tasks is not None else lot_cases(spec.alternative, len(geometries), spec.seed_root)
@@ -818,10 +893,7 @@ def lot_problems(
     by_id = {c["id"]: c for c in declared}
     if full:
         listed = [[c, s, g] for c, s, g in manifest["expected"]]
-        want = [
-            [c["id"], c["seed"], c["extra"]["geometry"]]
-            for c in lot_cases(spec.alternative, len(geometries), spec.seed_root)
-        ]
+        want = [[c["id"], c["seed"], c["extra"]["geometry"]] for c in declared]
         if listed != want:
             problems.append(
                 f"the manifest's {len(listed)} tasks are not the declared sub-lot's {len(want)}"
@@ -833,16 +905,42 @@ def lot_problems(
             continue
         try:
             rec = json.loads(path.read_bytes())
-        except ValueError:
+        except (OSError, ValueError):
             problems.append(f"{case_id}: not JSON")
             continue
         case = by_id.get(case_id)
-        if case is None:
+        if case is None or not (0 <= case["extra"]["geometry"] < len(geometries)):
             problems.append(f"{case_id}: not one of the sub-lot's cases")
             continue
         geometry = geometries[case["extra"]["geometry"]]
-        problems += record_problems(rec, case, geometry, manifest["configuration"], spec)
+        problems += record_problems(rec, case, geometry, configuration, spec)
     return problems
+
+
+def record_files(run_dir: Path) -> list[str]:
+    """The record files of a run folder (relative paths); leftover temporary files are not
+    records."""
+    root = Path(run_dir) / "records"
+    if not root.exists():
+        return []
+    return sorted(
+        p.relative_to(run_dir).as_posix()
+        for p in root.rglob("*.json")
+        if not p.name.startswith(".")
+    )
+
+
+def load_records(run_dir: Path) -> tuple[list[dict], list[str]]:
+    """The records that parse, and the files that do not (each a problem, never an exception)."""
+    good, bad = [], []
+    for rel in record_files(run_dir):
+        try:
+            rec = json.loads((Path(run_dir) / rel).read_bytes())
+        except (OSError, ValueError):
+            bad.append(rel)
+            continue
+        (good if isinstance(rec, dict) else bad).append(rec if isinstance(rec, dict) else rel)
+    return good, bad
 
 
 def run_lot(
@@ -919,7 +1017,14 @@ def run_lot(
     cost_stop = False
     if check_path.exists():
         cost_stop = json.loads(check_path.read_text(encoding="utf-8")).get("stop") is True
+    defect_path = run_dir / "defect.json"
+    defect = defect_path.exists()  # X9: a generation defect stops the lot for good
     started = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+    # an invocation's stamp names its consumption record and its markers: never an earlier one's
+    # (two invocations within one tick of the system clock would otherwise share it)
+    while (run_dir / "consumption" / f"{started}.json").exists():
+        time.sleep(0.001)
+        started = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     failures: list[dict] = []
     dispatch_error = None
     submitted = 0
@@ -964,6 +1069,7 @@ def run_lot(
         cost_stop = stop
 
     def collect(done) -> None:
+        nonlocal defect
         for fut in done:
             case = futures.pop(fut)[0]
             try:
@@ -975,6 +1081,13 @@ def run_lot(
                     x2.failure_path(run_dir, case["id"], 0, started),
                     json.dumps({**failure, "run_started_utc": started}, indent=1) + "\n",
                 )
+                if isinstance(exc, GenerationDefectError):
+                    defect = True
+                    if not defect_path.exists():
+                        x2.write_record_atomic(
+                            defect_path,
+                            json.dumps({**failure, "run_started_utc": started}, indent=1) + "\n",
+                        )
             else:
                 # the timing first: a run cut between the two writes leaves a task without its
                 # record (blocked until a decision), never a record the cost check cannot read
@@ -996,7 +1109,7 @@ def run_lot(
                     while len(futures) >= 4 * workers:
                         done, _ = wait(futures, return_when=FIRST_COMPLETED)
                         collect(done)
-                    if cost_stop:
+                    if cost_stop or defect:
                         break
                     case_id = task[0]["id"]
                     x2.write_record_atomic(
@@ -1038,18 +1151,24 @@ def run_lot(
         "deadline_hours": spec.deadline_hours,
         "deadline_reached": deadline_reached,
         "cost_stop": cost_stop,
+        "defect": defect,
         "elapsed_hours": elapsed_hours,
         "consumed_before_hours": consumed_before,
         "consumed_total_hours": consumed_before + elapsed_hours,
         "failures": failures,
         "terminal_failures": terminal_failures,
         "retried": retried,
-        "leftover_temporary_files": x2.load_x2_lot(run_dir)["leftovers"],
+        "leftover_temporary_files": sorted(
+            p.relative_to(run_dir).as_posix() for p in (run_dir / "records").rglob(".*.tmp")
+        )
+        if (run_dir / "records").exists()
+        else [],
         "integrity_problems": integrity,
         "complete": (
             dispatch_error is None
             and not deadline_reached
             and not cost_stop
+            and not defect
             and not failures
             and not terminal_failures
             and not integrity
@@ -1060,11 +1179,38 @@ def run_lot(
     return report
 
 
+def determinism(spec: SubLot, geometries: list[dict], n: int, workers: int = WORKERS) -> dict:
+    """The generation's determinism check (the declaration, section 7): the curves of the first
+    ``n`` tasks built three times, in this process, on one spawned worker and on ``workers``
+    spawned workers; every digest must agree. Builds curves of the lot: authorization 2 only."""
+    tasks = lot_cases(spec.alternative, len(geometries), spec.seed_root)[:n]
+    args = [(c, geometries[c["extra"]["geometry"]]) for c in tasks]
+    runs = [[case_digest(c, g) for c, g in args]]
+    for w in (1, workers):
+        with rs._spawn_pool(w) as pool:
+            runs.append(list(pool.map(case_digest, *zip(*args, strict=True))))
+    return {
+        "lot": spec.name,
+        "tasks": [c["id"] for c in tasks],
+        "workers": [0, 1, workers],
+        "digests": runs[0],
+        "agree": runs[0] == runs[1] == runs[2],
+    }
+
+
 def main(argv: list[str]) -> int:
     """``geometries <out>`` (the list, from gate 3b's saved metadata; written once),
-    ``run <run_dir> --lot viability-c|viability-d`` (authorization 2 only) or
-    ``check <run_dir> --lot <name> [--full]``."""
+    ``determinism <out> --lot <name> --n <k>`` and ``run <run_dir> --lot viability-c|viability-d``
+    (authorization 2 only), or ``check <run_dir> --lot <name> [--full]``."""
     command = argv[0]
+    if command == "determinism":
+        spec = SUBLOTS[argv[argv.index("--lot") + 1]]
+        n = int(argv[argv.index("--n") + 1])
+        result = determinism(spec, selected_geometries(spec.alternative), n)
+        with open(Path(argv[1]), "x", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(result, indent=1) + "\n")
+        print(json.dumps({"agree": result["agree"], "tasks": len(result["tasks"])}))
+        return 0 if result["agree"] else 1
     if command == "geometries":
         rows, digest = load_mast_rows()
         listing = geometry_list(rows, digest)

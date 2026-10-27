@@ -8,7 +8,8 @@ test fails, the same tests passed on the unmutated code just before (the control
 afterwards byte for byte what it was and what the index holds (``git diff --quiet``). Never run at
 the same time as a full suite.
 
-``python viability_cd_sabotage.py --work DIR --out FILE`` runs S1 to S17 one after the other.
+``python viability_cd_sabotage.py --work DIR --out FILE`` runs S1 to S22 one after the other
+(S18 to S22 added after Codex's review of the round).
 """
 
 from __future__ import annotations
@@ -110,6 +111,37 @@ SABOTAGES = (
         "test_e8_the_candidate",
     ),
     ("S17", "E9", EV, 'out["ends"] = True', 'out["ends"] = False', "test_e9_"),
+    # added after Codex's review of the round (the acceptance record's amendment A)
+    (
+        "S18", "X9", VC,
+        "                    if cost_stop or defect:",
+        "                    if cost_stop:",
+        "test_x9_",
+    ),
+    (
+        "S19", "R6", VC,
+        '        "key": list(geometry["key"]),\n        "tic": geometry["tic"],',
+        '        "key": list(geometry["key"]),\n        "tic": (rec.get("geometry") or {}).get("tic"),',
+        "test_r_a_",
+    ),
+    (
+        "S20", "E10", EV,
+        'elif isinstance(check, dict) and check.get("stop") is True:',
+        "elif False:",
+        "test_e_the_evaluator",
+    ),
+    (
+        "S21", "E11", EV,
+        "        if clock() - start > cpu_seconds:",
+        "        if False:",
+        "test_e_the_step_s_ceiling",
+    ),
+    (
+        "S22", "E11", EV,
+        '    for alt in dest["step_over"]:',
+        '    for alt in ("C", "D"):',
+        "test_e_the_step_runs",
+    ),
 )  # fmt: skip
 
 

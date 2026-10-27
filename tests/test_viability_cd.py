@@ -298,6 +298,13 @@ def test_p5_the_curve_is_the_same_in_another_process(vc):
     assert here == there == vc.case_digest(case, geo)
 
 
+def test_p5_the_determinism_check_builds_the_first_tasks_three_times(vc):
+    spec = vc.SubLot("viability-test", "C", 1.0, 100.0, vc.TEST_PREFIX, vc.TEST_SEED_ROOT)
+    out = vc.determinism(spec, [_geometry(vc)], 2, workers=2)
+    assert out["agree"] is True and len(out["digests"]) == 2 and out["workers"] == [0, 1, 2]
+    assert out["tasks"] == [c["id"] for c in vc.lot_cases("C", 1, vc.TEST_SEED_ROOT)[:2]]
+
+
 # --- R1 to R6 (the real engine on a synthetic geometry) -----------------------------------------
 
 
@@ -389,9 +396,33 @@ def test_r_a_record_from_the_engine_is_complete(real_record):
             ratio = rnd["train_ephemeris"]["period"] / rec["truth"]["period"]
             assert ident["flag"] == (abs(ratio - 1) > 0.01)
         assert set(rec["oracle"][str(y)]) == set(vc.ORACLE_FIELDS)
-    for drop in ("rounds", "identity", "oracle", "truth", "sectors", "geometry"):
+    for drop in (
+        "rounds", "identity", "oracle", "truth", "sectors", "geometry", "layout", "attempt_seed",
+        "curve_sha256", "redraws",
+    ):  # fmt: skip
         bad = {k: v for k, v in rec.items() if k != drop}
         assert vc.record_problems(bad, case, geo, _declared(), _spec(vc)), drop
+
+    def tampered(change):
+        bad = json.loads(json.dumps(rec))
+        change(bad)
+        return vc.record_problems(bad, case, geo, _declared(), _spec(vc))
+
+    assert tampered(lambda r: r["geometry"].update(position=5))
+    assert tampered(lambda r: r["geometry"].update(tic=999))
+
+    def shift_years(r):  # every year moved by 100 years, consistently in every field
+        for s in r["sectors"]:
+            s["year"] += 100
+        r["years"] = [y + 100 for y in r["years"]]
+        for rnd in r["rounds"]:
+            rnd["hidden_year"] += 100
+        r["identity"] = {str(int(k) + 100): v for k, v in r["identity"].items()}
+        r["oracle"] = {str(int(k) + 100): v for k, v in r["oracle"].items()}
+
+    assert any("label" in p for p in tampered(shift_years))
+    assert any("real dates" in p for p in tampered(lambda r: r["sectors"][0].update(t_start=0.0)))
+    assert tampered(lambda r: r["layout"]["sectors"].pop())
 
 
 def test_r_the_truth_is_never_read_during_the_engine_calls(lot_env, monkeypatch):
@@ -463,7 +494,20 @@ def test_r4_the_oracle_on_a_constructed_curve(vc):
 
 
 def _fake_record(vc, case, geometry, configuration, spec):
-    years = sorted({int(x["year"]) for x in geometry["sectors"]})
+    from refute.packs.tess.types import btjd_to_year
+
+    order = sorted(geometry["sectors"], key=lambda s: s["t_min_btjd"])
+    sectors = [
+        {
+            "sector": x["sector"],
+            "year": btjd_to_year(x["t_min_btjd"]),
+            "t_start": x["t_min_btjd"],
+            "t_end": x["t_max_btjd"] - 0.01,
+            "n_points": 100,
+        }
+        for x in order
+    ]
+    years = sorted({x["year"] for x in sectors})
     return {
         "format": vc.RECORD_FORMAT,
         "target": f"{spec.prefix}/{case['id']}",
@@ -472,13 +516,22 @@ def _fake_record(vc, case, geometry, configuration, spec):
         "noise": case["noise"],
         "regime": case["mechanism"],
         "index": case["index"],
-        "geometry": {"position": case["extra"]["geometry"], "key": geometry["key"], "tic": 1},
+        "geometry": {
+            "position": case["extra"]["geometry"],
+            "key": geometry["key"],
+            "tic": geometry["tic"],
+        },
         "seed": case["seed"],
+        "attempt_seed": "1",
+        "layout": {
+            "attempt": 0,
+            "redraws": {},
+            "sectors": [{"sector": x["sector"]} for x in order],
+        },
+        "redraws": {},
+        "curve_sha256": "0" * 64,
         "years": years,
-        "sectors": [
-            {"sector": x["sector"], "year": x["year"]}
-            for x in sorted(geometry["sectors"], key=lambda s: s["t_min_btjd"])
-        ],
+        "sectors": sectors,
         "configuration": configuration,
         "rounds": [{**dict.fromkeys(vc.x2.ROUND_FIELDS), "hidden_year": y} for y in years],
         "identity": {str(y): dict.fromkeys(vc.IDENTITY_FIELDS) for y in years},
@@ -563,8 +616,30 @@ def test_x7_an_interrupted_sub_lot_resumed_gives_the_continuous_run_s_bytes(fake
         encoding="utf-8",
     )
     resumed = _run(vc, cut, geos, tasks)
-    assert resumed["complete"] is True and resumed["retried"]
+    assert resumed["complete"] is True and resumed["retried"], resumed
+    assert resumed["started_utc"] != consumption.stem
     assert _bytes(cut) == _bytes(base / "continuous")
+
+
+def test_x_an_invocation_never_reuses_an_earlier_invocation_s_stamp(fake_lot, monkeypatch):
+    """Two invocations within one tick of the clock: the second takes another stamp."""
+    import datetime as dt
+
+    vc, geos, tasks, _ = fake_lot
+    run = WORK / uuid.uuid4().hex
+    frozen = dt.datetime(2026, 10, 27, 12, 0, 0, 1, tzinfo=dt.UTC)
+    ticks = iter([frozen, frozen] + [frozen + dt.timedelta(microseconds=k) for k in range(1, 99)])
+
+    class Clock(dt.datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return next(ticks)
+
+    monkeypatch.setattr(vc, "datetime", Clock)
+    first = _run(vc, run, geos, tasks)
+    second = _run(vc, run, geos, tasks)
+    assert first["complete"] and second["complete"]
+    assert first["started_utc"] != second["started_utc"]
 
 
 def test_x5_the_cost_check_stops_the_sub_lot(fake_lot):
@@ -600,6 +675,147 @@ def test_x3_a_failed_task_is_terminal(fake_lot, monkeypatch):
     assert second["submitted"] == 0 and second["terminal_failures"][0]["case_id"] == tasks[1]["id"]
     problems = vc.lot_problems(run, _spec(vc), geos, tasks)
     assert problems == [f"{tasks[1]['id']}: no record"]
+
+
+def test_x9_a_generation_defect_stops_the_sub_lot(fake_lot, monkeypatch):
+    vc, geos, tasks, _ = fake_lot
+
+    def exhausted(task):
+        if task[0]["id"] == tasks[0]["id"]:
+            raise vc.GenerationDefectError("no orbit draw within 12.5 to 14.0 d")
+        return _fake_record(vc, *task), 1.0
+
+    monkeypatch.setattr(vc, "_task", exhausted)
+    run = WORK / uuid.uuid4().hex
+    report = _run(vc, run, geos, tasks)
+    assert report["defect"] is True and report["complete"] is False
+    assert report["submitted"] < len(tasks) and (run / "defect.json").exists()
+    again = _run(vc, run, geos, tasks)
+    assert again["submitted"] == 0 and again["defect"] is True
+    assert isinstance(vc.GenerationDefectError("x"), RuntimeError)
+    with pytest.raises(vc.GenerationDefectError):
+        vc._orbits(np.random.default_rng(1), 24.0)
+
+
+def test_x8_a_damaged_file_is_a_problem_never_an_exception(fake_lot):
+    vc, geos, tasks, _ = fake_lot
+    run = WORK / uuid.uuid4().hex
+    _run(vc, run, geos, tasks)
+    vc.record_path(run, tasks[0]["id"]).write_text('{"truncated', encoding="utf-8")
+    stray = run / "records" / "stray" / "000.json"
+    stray.parent.mkdir()
+    stray.write_text("not json", encoding="utf-8")
+    problems = vc.lot_problems(run, _spec(vc), geos, tasks)
+    assert f"{tasks[0]['id']}: not JSON" in problems
+    assert any("stray" in p and "own path" in p for p in problems)
+    good, bad = vc.load_records(run)
+    assert len(good) == len(tasks) - 1 and len(bad) == 2
+    (run / "manifest.json").write_text("{", encoding="utf-8")
+    assert vc.lot_problems(run, _spec(vc), geos, tasks)[0].startswith("the manifest is not")
+
+
+def test_e_the_evaluator_s_operational_causes_and_notes(fake_lot, ev):
+    vc, geos, tasks, _ = fake_lot
+    run = WORK / uuid.uuid4().hex
+    _run(vc, run, geos, tasks)
+    state = ev.sublot_state(run, _spec(vc), geos, "a" * 64, tasks)
+    assert state["causes"] == [] and len(state["records"]) == len(tasks)
+    assert any("the manifest's geometry_sha256" in c for c in ev.sublot_state(
+        run, _spec(vc), geos, "b" * 64, tasks
+    )["causes"])  # fmt: skip
+    other = vc.SubLot("viability-test", "C", 2.0, 100.0, vc.TEST_PREFIX, vc.TEST_SEED_ROOT)
+    assert ev.sublot_state(run, other, geos, "a" * 64, tasks)["causes"]
+    (run / "defect.json").write_text("{}", encoding="utf-8")
+    assert any(
+        "defect" in c for c in ev.sublot_state(run, _spec(vc), geos, "a" * 64, tasks)["causes"]
+    )
+    (run / "defect.json").unlink()
+    (run / "cost-check.json").write_text('{"stop": true}', encoding="utf-8")
+    assert any(
+        "cost check" in c for c in ev.sublot_state(run, _spec(vc), geos, "a" * 64, tasks)["causes"]
+    )
+    (run / "cost-check.json").unlink()
+    vc.record_path(run, tasks[1]["id"]).unlink()
+    state = ev.sublot_state(run, _spec(vc), geos, "a" * 64, tasks)
+    assert state["causes"] == [] and "1 records missing" in state["notes"]
+    vc.record_path(run, tasks[2]["id"]).write_text("[", encoding="utf-8")
+    assert ev.sublot_state(run, _spec(vc), geos, "a" * 64, tasks)["causes"]
+    assert ev.sublot_state(WORK / uuid.uuid4().hex, _spec(vc), geos, "a" * 64)["causes"]
+
+
+def _many(n, rounds_of, noise, regime="three_years", prefix="x"):
+    return [
+        _record(rounds_of(), noise=noise, regime=regime, case_id=f"{prefix}{noise}{k}")
+        for k in range(n)
+    ]
+
+
+def _listing(vc, tmp_name: str, c=True, d=True):
+    geo = _geometry(vc)
+    data = {
+        "format": vc.GEOMETRY_FORMAT,
+        "alternatives": {
+            "C": {"selected": [geo] if c else []},
+            "D": {"selected": [geo] if d else []},
+        },
+    }
+    path = WORK / uuid.uuid4().hex / tmp_name
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(data), encoding="utf-8")
+    return path
+
+
+def _evaluate_with(ev, monkeypatch, records, listing):
+    def state(run_dir, spec, geometries, sha, tasks=None):
+        return {"records": records[spec.alternative], "causes": [], "notes": []}
+
+    monkeypatch.setattr(ev, "sublot_state", state)
+    return ev.evaluate({"viability-c": None, "viability-d": None}, listing, 7.0)
+
+
+def test_e_the_step_runs_only_where_the_joint_destination_names_it(vc, ev, monkeypatch):
+    passing = lambda: [_rnd(2019), _rnd(2020)]  # noqa: E731
+    capacity = lambda: [_rnd(2019), _rnd(2020, **ROW_ROUNDS[11])]  # noqa: E731
+    c_pass = [r for noise in vc.NOISES for r in _many(360, passing, noise)]
+    d_indet = [r for noise in vc.NOISES for r in _many(120, capacity, noise, prefix="d")]
+    for r in d_indet:
+        r["alternative"] = "D"
+    out = _evaluate_with(ev, monkeypatch, {"C": c_pass, "D": d_indet}, _listing(vc, "l.json"))
+    assert out["alternatives"]["C"]["outcome"]["outcome"] == "PASS"
+    assert out["alternatives"]["D"]["outcome"]["outcome"] == "INDETERMINATE"
+    assert out["steps"] == {} and out["final"]["proposals"] == ["C executable plan"]
+    c_indet = [r for noise in vc.NOISES for r in _many(360, capacity, noise)]
+    out = _evaluate_with(ev, monkeypatch, {"C": c_indet, "D": d_indet}, _listing(vc, "l.json"))
+    assert sorted(out["steps"]) == ["C", "D"]
+    assert out["steps"]["C"]["succeeds"] is True  # today's models pass these rounds' fields
+    assert out["final"]["proposals"] == ["specification C validation proposal"]
+    nothing = _evaluate_with(ev, monkeypatch, {"C": [], "D": []}, _listing(vc, "l.json", c=False))
+    assert nothing["alternatives"]["C"]["outcome"] == {
+        "outcome": "INDETERMINATE",
+        "causes": ["no geometry"],
+    }
+    assert nothing["steps"]["C"] is None and "C" in nothing["final"]["ended"]
+
+
+def test_e_the_step_s_ceiling_is_an_operational_closure(ev):
+    ticks = iter([0.0] + [1e9] * 50)
+    records = {"white": [_record([_rnd(2019), _rnd(2020)])], "correlated": []}
+    out = ev.step(records, {"white": 1, "correlated": 0}, 7.0, clock=lambda: next(ticks))
+    assert out["closure"] is True and len(out["pairs"]) == 1
+    final = ev.final_reading(ev.destination("INDETERMINATE", "FAIL"), {"C": out})
+    assert final["closures"] == ["the step over C"] and final["effort_ends_not_approved"] is False
+
+
+def test_e8_the_reported_bounds_both_ways(ev):
+    rows = [ev.target_reading(_record([_rnd(2019), _rnd(2020, **ROW_ROUNDS[11])], case_id="a"))]
+    out = ev.alternative_summary(
+        [_record([_rnd(2019), _rnd(2020, **ROW_ROUNDS[11])], case_id="a")], "D", []
+    )
+    w = out["per_noise"]["white"]
+    assert w["missing"] == 119 and set(w["R2"]) == {"R2-K", "R2-KT", "R2-KTN"}
+    assert w["R2"]["R2-K"]["pass_bounds"]["with_missing"]["k"] == 120
+    assert w["R2"]["R2-K"]["pass_bounds"]["without_missing"]["k"] == 1
+    assert rows[0]["R2-K"] == "PASS"
 
 
 # --- E1 to E9 ------------------------------------------------------------------------------------

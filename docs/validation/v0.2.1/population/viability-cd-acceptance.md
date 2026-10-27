@@ -219,6 +219,52 @@ run at the same time as a full suite.
 | S16 | `E2.dp0` from the grid's maximum | E8 |
 | S17 | the destination of C FAIL with D FAIL not ending the investment | E9 |
 
+## Amendment A (after Codex's review of the round, 2026-10-27; the code at b5f3b34)
+
+Codex's review found that the code did not yet meet the declaration on these paths; the criteria
+below are added (or made exact) and the code, the tests and the sabotages follow them. No decided
+rule of the declaration changes.
+
+- **G8, wording.** The orbit draw's acceptance is a numerical integral (the trapezoid rule over
+  `g`), not a closed form; the expected exhausted draws count one pass per sector and case (the
+  layout redraws are not counted, so the figure is a lower bound).
+- **X9, a generation defect stops the lot.** An orbit draw, a layout or a parameter draw that
+  exhausts `MAX_ATTEMPTS` raises `GenerationDefectError`; the runner records `defect.json` (once),
+  submits nothing more in this or any later invocation, and the sub-lot's outcome is OPERATIONAL
+  CLOSURE.
+- **X10, one stamp per invocation.** An invocation's stamp (its consumption record and markers) is
+  never an earlier invocation's.
+- **X11, the determinism check** of the declaration's section 7: `determinism <out> --lot <name>
+  --n <k>`, the first `k` tasks' curves built in this process, on one worker and on 22, every digest
+  equal. It builds curves of the lot: authorization 2 only.
+- **R6, exact.** The record's geometry (position, key and representative TIC) is the case's; its
+  attempt seed, curve digest (64 hexadecimal characters), redraws and layout (one entry per
+  geometry sector) are present; each sector is the geometry's, in time order, starts within 1 s of
+  its real `t_min` (the jitter is at most 0.25 s), ends before its real `t_max` (within 1 s), is
+  labelled by the year of its first time stamp and has cadences; C has three labels, D four or
+  more; the years are the sectors' labels.
+- **X8, never an exception.** A damaged manifest or record file is a problem of the lot check,
+  never an exception before the outcome.
+- **E10, the evaluator's causes and notes.** OPERATIONAL CLOSURE causes: an unreadable manifest or
+  one that is not the sub-lot's (lot, alternative, prefix, seed root, ceilings, task list, the
+  geometry list's SHA-256, configuration, plan, code, environment); a record that does not parse,
+  is not at its path or fails R6; a round that cannot be derived; the cost check's stop; a
+  generation defect. **The submission ceiling, an interrupted invocation and failed tasks are
+  notes:** they leave records missing, and the completeness rule decides (the declaration, section
+  7: at the ceiling "what ran is evaluated as section 6 says"; section 6: more than 5% missing in a
+  noise model is OPERATIONAL CLOSURE, otherwise the worst assignment).
+- **E11, the step after the joint destination.** Both alternatives' outcomes first; then section 9's
+  table; then the step, once, only over the alternatives the table names and only where it
+  applies; its ceiling (1 LP-h, this process's CPU time, checked after each pair) exceeded is an
+  OPERATIONAL CLOSURE of the step; then the final reading (the proposals, the specification C
+  validation proposal if the step succeeded, the alternatives ended, and whether the effort ends as
+  not approved). An alternative with no selected geometry is INDETERMINATE ("no geometry").
+- **E5, the report's bounds.** Each R2 set's PASS and FAIL bounds both ways, whether it reaches
+  `L ≥ 275/360`, R3's bounds; the step's PASS and FAIL bounds both ways.
+- **Sabotages S18 to S22:** the defect not stopping the dispatch (X9); the record's TIC not checked
+  (R6); the cost check's stop ignored by the evaluator (E10); the step's ceiling not checked (E11);
+  the step run over both alternatives whatever the destination (E11).
+
 ## 10. Order
 
 This record (its own commit), then the tests (their own commit), then the code (its own commit),

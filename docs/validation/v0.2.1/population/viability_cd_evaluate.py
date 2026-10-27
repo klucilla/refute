@@ -384,10 +384,29 @@ def step_applies(alt_outcome: str, per_noise: dict, readings_by_noise: dict) -> 
     return False
 
 
-def step(records_by_noise: dict, declared: dict, min_snr: float | None = None) -> dict:
+STEP_CPU_SECONDS = 3600.0  # section 9's ceiling: 1 LP-h (one process), checked after each pair
+
+
+def both_ways(k: int, missing: int, n: int) -> dict:
+    """The bounds with the missing planets counted not and counted (section 6)."""
+    return {"without_missing": bounds(k, n), "with_missing": bounds(k + missing, n)}
+
+
+def step(
+    records_by_noise: dict,
+    declared: dict,
+    min_snr: float | None = None,
+    cpu_seconds: float = STEP_CPU_SECONDS,
+    clock=None,
+) -> dict:
     """The twelve pairs and the envelope over the records of one alternative; ``declared[noise]``
     the declared planets. Succeeds only if a single pair meets the PASS rule in both noise
-    models."""
+    models. Past ``cpu_seconds`` of this process's CPU time the step stops: OPERATIONAL CLOSURE of
+    the step, never a result."""
+    import time
+
+    clock = time.process_time if clock is None else clock
+    start = clock()
     pairs = {}
     for e1, e2 in PAIRS:
         derive = _pair_derive(e1, e2, min_snr)
@@ -399,11 +418,13 @@ def step(records_by_noise: dict, declared: dict, min_snr: float | None = None) -
                 "pass": t["PASS"],
                 "fail": t["FAIL"],
                 "missing": missing,
-                "pass_bounds": bounds(t["PASS"], n),
-                "fail_bounds": bounds(t["FAIL"] + missing, n),
+                "pass_bounds": both_ways(t["PASS"], missing, n),
+                "fail_bounds": both_ways(t["FAIL"], missing, n),
                 "meets": pass_rule(n, t["PASS"], t["FAIL"], missing),
             }
         pairs[f"{e1}+{e2}"] = {"noise": per, "meets_both": all(v["meets"] for v in per.values())}
+        if clock() - start > cpu_seconds:
+            return {"closure": True, "cpu_seconds": clock() - start, "pairs": pairs}
     envelope = {}
     derive = _envelope_derive(min_snr)
     for noise, records in records_by_noise.items():
@@ -411,6 +432,8 @@ def step(records_by_noise: dict, declared: dict, min_snr: float | None = None) -
         envelope[noise] = {"pass_upper": t["PASS"], "fail_upper": t["FAIL"]}
     meeting = [name for name, v in pairs.items() if v["meets_both"]]
     return {
+        "closure": False,
+        "cpu_seconds": clock() - start,
         "pairs": pairs,
         "envelope_descriptive": envelope,
         "pairs_meeting_the_rule": meeting,
@@ -477,12 +500,24 @@ def destination(c: str, d: str) -> dict:
 # --- the evaluation of the two sub-lots --------------------------------------------------------
 
 
+def declared_planets(alternative: str) -> dict[str, int]:
+    return {noise: sum(n for _, n in vc.REGIMES[alternative]) for noise in vc.NOISES}
+
+
 def alternative_summary(
     records: list[dict], alternative: str, operational: list[str], min_snr=None
 ):
-    """Every reading and the outcome of one alternative from its records (present ones)."""
-    readings = [target_reading(r, min_snr) for r in records]
-    declared = {noise: sum(n for _, n in vc.REGIMES[alternative]) for noise in vc.NOISES}
+    """Every reading and the outcome of one alternative from its records (present ones). A record
+    that cannot be derived (an unmapped reason, specification B's completeness) is an integrity
+    error: OPERATIONAL CLOSURE, never an exception before the outcome."""
+    operational = list(operational)
+    readings = []
+    for r in records:
+        try:
+            readings.append(target_reading(r, min_snr))
+        except Exception as exc:  # noqa: BLE001 - every such error is a cause, reported
+            operational.append(f"{r.get('case_id')}: not derivable ({type(exc).__name__}: {exc})")
+    declared = declared_planets(alternative)
     per_noise, by_noise = {}, {}
     for noise in vc.NOISES:
         rows = [r for r in readings if r["noise"] == noise]
@@ -503,6 +538,17 @@ def alternative_summary(
                 f"{name}_pass": counts(rows, name)["PASS"]
                 for name in ("legacy", "R2-K", "R2-KT", "R2-KTN", "R3")
             },
+            # the binding barriers (section 6): each R2 set's PASS and FAIL bounds both ways, and
+            # whether its PASS reaches L >= 275/360 with the missing planets counted not PASS
+            "R2": {
+                name: {
+                    "pass_bounds": both_ways(counts(rows, name)["PASS"], missing, n),
+                    "fail_bounds": both_ways(counts(rows, name)["FAIL"], missing, n),
+                    "reaches_benchmark": pv2.cp_lower(counts(rows, name)["PASS"], n) >= BENCHMARK,
+                }
+                for name in R2_SETS
+            },
+            "R3_pass_bounds": both_ways(counts(rows, "R3")["PASS"], missing, n),
         }
     result = outcome(per_noise, operational)
     out = {
@@ -541,69 +587,172 @@ def alternative_summary(
         "identity_flags": sum(r["identity_flags"] for r in readings),
         "not_identifiable_rounds": sum(r["not_identifiable"] for r in readings),
     }
-    if step_applies(result["outcome"], per_noise, by_noise):
-        out["step"] = step(
-            {noise: [r for r in records if r["noise"] == noise] for noise in vc.NOISES},
-            declared,
-            min_snr,
-        )
-    else:
-        out["step"] = None
     out["readings"] = readings
+    out["by_noise"] = by_noise
+    out["records"] = records
     return out
 
 
-def sublot_records(run_dir: Path, spec, geometries: list[dict]) -> tuple[list[dict], list[str]]:
-    """A sub-lot's present records and its operational causes: integrity problems other than a
-    missing record (those follow the completeness rule), the code, plan, configuration or
-    environment differing from the manifest's, and the cost check's stop."""
+def _read_json(path: Path):
     import json
 
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def sublot_state(
+    run_dir: Path, spec, geometries: list[dict], geometry_sha256: str, tasks=None
+) -> dict:
+    """A sub-lot's present valid records, its operational causes and its notes (never raises).
+
+    Causes (OPERATIONAL CLOSURE): an unreadable manifest, or one that is not this sub-lot's (its
+    lot, alternative, prefix, seed root, ceilings, task list, geometry list's SHA-256), or whose
+    code, plan, configuration or environment differs from the evaluation's; a record file that
+    does not parse, is not at a task's path or fails its check; the 10% cost check's stop; a
+    generation defect. Notes (the completeness rule decides, section 6 and section 7: "what ran is
+    evaluated as section 6 says"): the submission ceiling reached, an invocation interrupted,
+    failed tasks, each leaving records missing."""
     from refute.core.canonical import canonical_sha256
 
     run_dir = Path(run_dir)
-    if not (run_dir / "manifest.json").exists():
-        return [], [f"{spec.name}: no manifest (not run)"]
-    problems = vc.lot_problems(run_dir, spec, geometries, full=True)
-    causes = [p for p in problems if not p.endswith(": no record")]
-    manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
-    now = rs._canonical(
-        {
-            "configuration": vc.v3.STATE["identity"],
-            "plan_sha256": canonical_sha256(vc.v3._plan().model_dump(mode="json")),
-            "code_sha256": vc.code_digest(),
-            "environment": vc.x2.environment(),
+    manifest = _read_json(run_dir / "manifest.json")
+    if not isinstance(manifest, dict):
+        return {
+            "records": [],
+            "causes": [f"{spec.name}: no readable manifest (not run)"],
+            "notes": [],
         }
-    )
+    causes, notes = [], []
+    want = {
+        "format": vc.LOT_FORMAT,
+        "lot": spec.name,
+        "alternative": spec.alternative,
+        "prefix": spec.prefix,
+        "seed_root": spec.seed_root,
+        "deadline_hours": spec.deadline_hours,
+        "lp_hours": spec.lp_hours,
+        "geometry_sha256": geometry_sha256,
+        "configuration": rs._canonical(vc.v3.STATE["identity"]),
+        "plan_sha256": canonical_sha256(vc.v3._plan().model_dump(mode="json")),
+        "code_sha256": vc.code_digest(),
+        "environment": rs._canonical(vc.x2.environment()),
+    }
     causes += [
-        f"{spec.name}: the evaluation's {k} differs" for k, v in now.items() if manifest.get(k) != v
+        f"{spec.name}: the manifest's {k} is not the evaluation's"
+        for k, v in want.items()
+        if manifest.get(k) != v
     ]
-    check = run_dir / "cost-check.json"
-    if check.exists() and json.loads(check.read_text(encoding="utf-8")).get("stop") is True:
+    problems = vc.lot_problems(run_dir, spec, geometries, tasks, full=True)
+    missing = [p for p in problems if p.endswith(": no record")]
+    causes += [p for p in problems if not p.endswith(": no record")]
+    if (run_dir / "defect.json").exists():
+        causes.append(f"{spec.name}: a generation defect stopped the sub-lot (defect.json)")
+    check = _read_json(run_dir / "cost-check.json")
+    if (run_dir / "cost-check.json").exists() and not isinstance(check, dict):
+        causes.append(f"{spec.name}: the cost check's record is not readable")
+    elif isinstance(check, dict) and check.get("stop") is True:
         causes.append(f"{spec.name}: the 10% cost check stopped the sub-lot")
-    records = [
-        r for r in vc.x2.load_x2_lot(run_dir)["records"] if r.get("alternative") == spec.alternative
-    ]
-    return records, causes
+    reports = [_read_json(p) for p in sorted(run_dir.glob("run-report-*.json"))]
+    if any(not isinstance(r, dict) for r in reports):
+        causes.append(f"{spec.name}: a run report is not readable")
+    reports = [r for r in reports if isinstance(r, dict)]
+    if any(r.get("deadline_reached") for r in reports):
+        notes.append("the submission ceiling was reached")
+    for path in sorted((run_dir / "consumption").glob("*.json")):
+        c = _read_json(path)
+        if not isinstance(c, dict) or c.get("closed") is not True:
+            notes.append(f"the invocation {path.stem} did not close (interrupted)")
+    if any(r.get("failures") or r.get("terminal_failures") for r in reports):
+        notes.append("failed tasks")
+    if missing:
+        notes.append(f"{len(missing)} records missing")
+    records, bad = vc.load_records(run_dir)
+    causes += [f"{rel}: not a record" for rel in bad]
+    records = [r for r in records if r.get("alternative") == spec.alternative]
+    return {"records": records, "causes": causes, "notes": notes}
 
 
-def evaluate(run_dirs: dict[str, Path], listing: dict, min_snr: float | None = None) -> dict:
-    """Both sub-lots: each alternative's readings and outcome, C against D, the destination."""
-    summaries = {}
+def final_reading(destination_: dict, steps: dict) -> dict:
+    """What may follow, after the step (section 9): the proposals the table allows, the proposal of
+    specification C's validation if a step succeeded, the INDETERMINATE alternatives ended, and
+    whether the current effort ends as not approved."""
+    proposals = list(destination_["proposals"])
+    ended = list(destination_["abandoned"])
+    closures = list(destination_["closures"])
+    for alt, s in steps.items():
+        if s is None:
+            ended.append(alt)  # the step does not apply: the INDETERMINATE ends the alternative
+        elif s.get("closure"):
+            closures.append(f"the step over {alt}")
+        elif s["succeeds"]:
+            if "specification C validation proposal" not in proposals:
+                proposals.append("specification C validation proposal")
+        else:
+            ended.append(alt)
+    return {
+        "proposals": proposals,
+        "ended": sorted(set(ended)),
+        "closures": closures,
+        "effort_ends_not_approved": not proposals and not closures,
+    }
+
+
+def evaluate(run_dirs: dict[str, Path], listing_path: Path, min_snr: float | None = None) -> dict:
+    """Both sub-lots, in this order: each alternative's readings and outcome; their joint
+    destination (section 9's table); then the one investigation step, over the alternatives the
+    destination names and only where it applies, within its ceiling; then the final reading."""
+    import json
+
+    data = Path(listing_path).read_bytes()
+    geometry_sha256 = hashlib.sha256(data).hexdigest()
+    listing = json.loads(data)
+    summaries, states = {}, {}
     for name in vc.SUBLOT_ORDER:
         spec = vc.SUBLOTS[name]
         geometries = vc.selected_geometries(spec.alternative, listing)
-        records, causes = sublot_records(run_dirs[name], spec, geometries)
+        if not geometries:  # the declaration, section 1: no geometry, INDETERMINATE
+            summaries[spec.alternative] = {
+                "alternative": spec.alternative,
+                "outcome": {"outcome": "INDETERMINATE", "causes": ["no geometry"]},
+                "readings": [],
+                "by_noise": {},
+                "per_noise": {},
+                "records": [],
+            }
+            states[spec.alternative] = {"causes": [], "notes": ["no geometry"]}
+            continue
+        state = sublot_state(run_dirs[name], spec, geometries, geometry_sha256)
+        states[spec.alternative] = {k: state[k] for k in ("causes", "notes")}
         summaries[spec.alternative] = alternative_summary(
-            records, spec.alternative, causes, min_snr
+            state["records"], spec.alternative, state["causes"], min_snr
         )
     c, d = summaries["C"], summaries["D"]
+    dest = destination(c["outcome"]["outcome"], d["outcome"]["outcome"])
+    steps: dict = {}
+    budget = STEP_CPU_SECONDS
+    for alt in dest["step_over"]:
+        s = summaries[alt]
+        if not s["per_noise"] or not step_applies(
+            s["outcome"]["outcome"], s["per_noise"], s["by_noise"]
+        ):
+            steps[alt] = None
+            continue
+        records = {noise: [r for r in s["records"] if r["noise"] == noise] for noise in vc.NOISES}
+        steps[alt] = step(records, declared_planets(alt), min_snr, cpu_seconds=budget)
+        budget -= steps[alt]["cpu_seconds"]
     return {
+        "geometry_sha256": geometry_sha256,
+        "states": states,
         "alternatives": {
-            k: {x: v for x, v in s.items() if x != "readings"} for k, s in summaries.items()
+            k: {x: v for x, v in s.items() if x not in ("readings", "by_noise", "records")}
+            for k, s in summaries.items()
         },
         "c_against_d": compare(c["readings"], d["readings"]),
-        "destination": destination(c["outcome"]["outcome"], d["outcome"]["outcome"]),
+        "destination": dest,
+        "steps": steps,
+        "final": final_reading(dest, steps),
         "readings": {k: s["readings"] for k, s in summaries.items()},
     }
 
