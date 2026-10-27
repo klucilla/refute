@@ -158,8 +158,13 @@ of the declaration) is computed from gate 3b's saved metadata, which holds no fl
 - **E5, the bounds:** one-sided 95% Clopper-Pearson (`population_v2.cp_lower`, `cp_upper`); the
   missing planets assigned the worst way for each condition, and both ways in the report.
 - **E6, the outcome** per alternative, in this order: OPERATIONAL CLOSURE (more than 5% of a noise
-  model's planets without a record, an integrity error, the cost check or the ceiling before
-  completion), PASS, FAIL, INDETERMINATE, exactly as the declaration's section 6.
+  model's planets without a record, an integrity error, the cost check or a generation defect),
+  PASS, FAIL, INDETERMINATE, exactly as the declaration's section 6. *Harmonized by amendment B
+  with E10:* the submission ceiling reached before completion is not by itself a cause; the
+  records it leaves missing follow the completeness rule (the declaration's section 7). The text
+  first written here ("the ceiling before completion" a cause) is kept below for the record.
+  - *As first written (958638c):* "OPERATIONAL CLOSURE (more than 5% of a noise model's planets
+    without a record, an integrity error, the cost check or the ceiling before completion)".
 - **E7, C against D:** on the planets without variability, the difference of the spec-B PASS
   fractions (R1 and R2-KTN) per noise model with Newcombe's hybrid score (Wilson) 95% interval;
   the rounds' PASS fraction by the number of years.
@@ -264,6 +269,26 @@ rule of the declaration changes.
 - **Sabotages S18 to S22:** the defect not stopping the dispatch (X9); the record's TIC not checked
   (R6); the cost check's stop ignored by the evaluator (E10); the step's ceiling not checked (E11);
   the step run over both alternatives whatever the destination (E11).
+
+## Amendment B (after Codex's second review of the round, 2026-10-27; the code at 1f690f9)
+
+- **X8 and R6, typed.** A record whose fields have the wrong types (a sector number or label that
+  is not an integer, a date that is not a number, a round that is not a mapping) is a problem of
+  the record check, never an exception: the sectors' fields are type-checked before any
+  conversion, and any structural failure of a check is reported as a malformed record.
+- **E11, the step's ceiling exact.** Both of the declaration's limits, **1 LP-h** (this process's
+  CPU time) and **0.5 h** of wall time, shared by the step's alternatives, checked after each pair
+  **and after the envelope**; either exceeded is an OPERATIONAL CLOSURE of the step.
+- **E6 harmonized with E10** (above). **For the maintainer's confirmation in the request for
+  authorization 2:** the declaration's sections 6 and 7 can be read either way for a sub-lot that
+  reaches its submission ceiling with at most 5% of a noise model's planets missing (section 6
+  lists the ceiling among operational failures, "when the work ends because of them" OPERATIONAL
+  CLOSURE; section 7 says that at the ceiling "what ran is evaluated as section 6 says"). The code
+  follows the completeness rule (evaluated under the worst assignment); the other reading would
+  make it OPERATIONAL CLOSURE. Codex agreed the arithmetic is not in dispute and left the reading
+  to the maintainer.
+- **Sabotages S23 and S24:** the envelope not counted against the ceiling; the malformed-record
+  guard narrowed.
 
 ## 10. Order
 

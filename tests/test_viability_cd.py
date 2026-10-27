@@ -806,6 +806,32 @@ def test_e_the_step_s_ceiling_is_an_operational_closure(ev):
     assert final["closures"] == ["the step over C"] and final["effort_ends_not_approved"] is False
 
 
+def test_e_the_step_s_wall_ceiling_and_the_envelope_count(ev):
+    records = {"white": [_record([_rnd(2019), _rnd(2020)])], "correlated": []}
+    declared = {"white": 1, "correlated": 0}
+    walls = iter([0.0] + [1e9] * 50)
+    out = ev.step(records, declared, 7.0, clock=lambda: 0.0, wall_clock=lambda: next(walls))
+    assert out["closure"] is True and len(out["pairs"]) == 1
+    cpu = iter([0.0] * 13 + [1e9] * 5)  # within the ceiling after the twelve pairs, not after
+    out = ev.step(records, declared, 7.0, clock=lambda: next(cpu), wall_clock=lambda: 0.0)
+    assert out["closure"] is True and len(out["pairs"]) == 12 and "succeeds" not in out
+
+
+def test_x8_a_mistyped_record_is_a_problem_never_an_exception(real_record):
+    vc, case, geo, rec = real_record
+    for change in (
+        lambda r: r["sectors"][0].update(sector="invalid"),
+        lambda r: r["sectors"][1].update(year=str(r["sectors"][1]["year"])),
+        lambda r: r["sectors"][0].update(year=[]),
+        lambda r: r["sectors"][0].update(t_start=True),
+        lambda r: r.update(rounds=[None, 1, "x"]),
+        lambda r: r.update(geometry=[]),
+    ):
+        bad = json.loads(json.dumps(rec))
+        change(bad)
+        assert vc.record_problems(bad, case, geo, _declared(), _spec(vc))
+
+
 def test_e8_the_reported_bounds_both_ways(ev):
     rows = [ev.target_reading(_record([_rnd(2019), _rnd(2020, **ROW_ROUNDS[11])], case_id="a"))]
     out = ev.alternative_summary(

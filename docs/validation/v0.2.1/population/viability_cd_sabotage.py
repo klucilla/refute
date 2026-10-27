@@ -8,8 +8,8 @@ test fails, the same tests passed on the unmutated code just before (the control
 afterwards byte for byte what it was and what the index holds (``git diff --quiet``). Never run at
 the same time as a full suite.
 
-``python viability_cd_sabotage.py --work DIR --out FILE`` runs S1 to S22 one after the other
-(S18 to S22 added after Codex's review of the round).
+``python viability_cd_sabotage.py --work DIR --out FILE`` runs S1 to S24 one after the other
+(S18 to S24 added after Codex's reviews of the round).
 """
 
 from __future__ import annotations
@@ -121,7 +121,8 @@ SABOTAGES = (
     (
         "S19", "R6", VC,
         '        "key": list(geometry["key"]),\n        "tic": geometry["tic"],',
-        '        "key": list(geometry["key"]),\n        "tic": (rec.get("geometry") or {}).get("tic"),',
+        '        "key": list(geometry["key"]),\n'
+        '        "tic": (rec.get("geometry") or {}).get("tic"),',
         "test_r_a_",
     ),
     (
@@ -132,9 +133,22 @@ SABOTAGES = (
     ),
     (
         "S21", "E11", EV,
-        "        if clock() - start > cpu_seconds:",
-        "        if False:",
+        "        used = spent()\n        if over(used):",
+        "        used = spent()\n        if False:",
         "test_e_the_step_s_ceiling",
+    ),
+    (
+        "S23", "E11", EV,
+        "    if over(used):  # the envelope counts against the ceiling too",
+        "    if False:  # the envelope counts against the ceiling too",
+        "test_e_the_step_s_wall",
+    ),
+    (
+        "S24", "X8", VC,
+        "    except (TypeError, ValueError, KeyError, AttributeError, OverflowError, IndexError)"
+        " as",
+        "    except (KeyError,) as",
+        "test_x8_a_mistyped",
     ),
     (
         "S22", "E11", EV,

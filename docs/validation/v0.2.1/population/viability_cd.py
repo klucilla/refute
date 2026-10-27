@@ -674,13 +674,17 @@ def _sector_problems(key: str, sectors, order: list[dict], alternative: str) -> 
     three labels for C, four or more for D."""
     from refute.packs.tess.types import btjd_to_year
 
-    fields = ("sector", "year", "t_start", "t_end", "n_points")
+    def typed(x) -> bool:  # integers that are not booleans, and finite-or-not real numbers
+        ints = all(type(x.get(f)) is int for f in ("sector", "year", "n_points"))
+        reals = all(type(x.get(f)) in (int, float) for f in ("t_start", "t_end"))
+        return ints and reals
+
     if not (
         isinstance(sectors, list)
         and len(sectors) == len(order)
-        and all(isinstance(x, dict) and all(f in x for f in fields) for x in sectors)
+        and all(isinstance(x, dict) and typed(x) for x in sectors)
     ):
-        return [f"{key}: sectors are not the geometry's"]
+        return [f"{key}: sectors are not the geometry's (missing or mistyped fields)"]
     out = []
     for x, g in zip(sectors, order, strict=True):
         try:
@@ -706,7 +710,15 @@ def _sector_problems(key: str, sectors, order: list[dict], alternative: str) -> 
 def record_problems(
     rec, case: dict, geometry: dict, configuration: dict, spec: SubLot = SUBLOTS["viability-c"]
 ) -> list[str]:
-    """R6: why a record file is not a complete record of its task."""
+    """R6: why a record file is not a complete record of its task. A record whose structure makes
+    a check itself fail is a problem, never an exception (X8)."""
+    try:
+        return _record_problems(rec, case, geometry, configuration, spec)
+    except (TypeError, ValueError, KeyError, AttributeError, OverflowError, IndexError) as exc:
+        return [f"{case['id']}: a malformed record ({type(exc).__name__})"]
+
+
+def _record_problems(rec, case: dict, geometry: dict, configuration: dict, spec: SubLot) -> list:
     key = case["id"]
     if not isinstance(rec, dict):
         return [f"{key}: not a record"]

@@ -384,7 +384,10 @@ def step_applies(alt_outcome: str, per_noise: dict, readings_by_noise: dict) -> 
     return False
 
 
-STEP_CPU_SECONDS = 3600.0  # section 9's ceiling: 1 LP-h (one process), checked after each pair
+# Section 9's ceiling: 1 LP-h (this one process's CPU time) and 0.5 h of wall time, shared by the
+# step's alternatives, checked after each pair and after the envelope.
+STEP_CPU_SECONDS = 3600.0
+STEP_WALL_SECONDS = 1800.0
 
 
 def both_ways(k: int, missing: int, n: int) -> dict:
@@ -398,15 +401,25 @@ def step(
     min_snr: float | None = None,
     cpu_seconds: float = STEP_CPU_SECONDS,
     clock=None,
+    wall_seconds: float = STEP_WALL_SECONDS,
+    wall_clock=None,
 ) -> dict:
     """The twelve pairs and the envelope over the records of one alternative; ``declared[noise]``
     the declared planets. Succeeds only if a single pair meets the PASS rule in both noise
-    models. Past ``cpu_seconds`` of this process's CPU time the step stops: OPERATIONAL CLOSURE of
-    the step, never a result."""
+    models. Past ``cpu_seconds`` of this process's CPU time or ``wall_seconds`` of wall time the
+    step stops: OPERATIONAL CLOSURE of the step, never a result."""
     import time
 
     clock = time.process_time if clock is None else clock
-    start = clock()
+    wall_clock = time.monotonic if wall_clock is None else wall_clock
+    start, wall_start = clock(), wall_clock()
+
+    def spent() -> dict:
+        return {"cpu_seconds": clock() - start, "wall_seconds": wall_clock() - wall_start}
+
+    def over(used: dict) -> bool:
+        return used["cpu_seconds"] > cpu_seconds or used["wall_seconds"] > wall_seconds
+
     pairs = {}
     for e1, e2 in PAIRS:
         derive = _pair_derive(e1, e2, min_snr)
@@ -423,17 +436,21 @@ def step(
                 "meets": pass_rule(n, t["PASS"], t["FAIL"], missing),
             }
         pairs[f"{e1}+{e2}"] = {"noise": per, "meets_both": all(v["meets"] for v in per.values())}
-        if clock() - start > cpu_seconds:
-            return {"closure": True, "cpu_seconds": clock() - start, "pairs": pairs}
+        used = spent()
+        if over(used):
+            return {"closure": True, **used, "pairs": pairs}
     envelope = {}
     derive = _envelope_derive(min_snr)
     for noise, records in records_by_noise.items():
         t = _tally(records, derive, min_snr)
         envelope[noise] = {"pass_upper": t["PASS"], "fail_upper": t["FAIL"]}
+    used = spent()
+    if over(used):  # the envelope counts against the ceiling too
+        return {"closure": True, **used, "pairs": pairs}
     meeting = [name for name, v in pairs.items() if v["meets_both"]]
     return {
         "closure": False,
-        "cpu_seconds": clock() - start,
+        **used,
         "pairs": pairs,
         "envelope_descriptive": envelope,
         "pairs_meeting_the_rule": meeting,
@@ -731,7 +748,7 @@ def evaluate(run_dirs: dict[str, Path], listing_path: Path, min_snr: float | Non
     c, d = summaries["C"], summaries["D"]
     dest = destination(c["outcome"]["outcome"], d["outcome"]["outcome"])
     steps: dict = {}
-    budget = STEP_CPU_SECONDS
+    budget, wall_budget = STEP_CPU_SECONDS, STEP_WALL_SECONDS  # shared by the alternatives
     for alt in dest["step_over"]:
         s = summaries[alt]
         if not s["per_noise"] or not step_applies(
@@ -740,8 +757,15 @@ def evaluate(run_dirs: dict[str, Path], listing_path: Path, min_snr: float | Non
             steps[alt] = None
             continue
         records = {noise: [r for r in s["records"] if r["noise"] == noise] for noise in vc.NOISES}
-        steps[alt] = step(records, declared_planets(alt), min_snr, cpu_seconds=budget)
+        steps[alt] = step(
+            records,
+            declared_planets(alt),
+            min_snr,
+            cpu_seconds=budget,
+            wall_seconds=wall_budget,
+        )
         budget -= steps[alt]["cpu_seconds"]
+        wall_budget -= steps[alt]["wall_seconds"]
     return {
         "geometry_sha256": geometry_sha256,
         "states": states,
