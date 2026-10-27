@@ -27,6 +27,10 @@ at the same time.
   (dcca8dc, amendment B), S1 to S24 (S23 and S24 added; S21's literal follows the new check): 24 of
   24 caught.** `tests/test_viability_cd.py` at dcca8dc: **40 tests, 0 failures, 0 errors, 0
   skipped** (JUnit).
+- **[sabotages-5.json](sabotages-5.json), the fifth run, on the code after Codex's third review
+  (470f3f5), S1 to S25 (S25 added: the step's other alternative begun after the shared ceiling
+  was spent): 25 of 25 caught.** `tests/test_viability_cd.py` at 470f3f5: **41 tests, 0 failures,
+  0 errors, 0 skipped** (JUnit).
 
 Three tests were added after the code's commit, before the sabotages ran, because the sabotages
 S8, S9 and S11 needed a direct check: the variability-free year with two sectors in one year
