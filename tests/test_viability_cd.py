@@ -806,6 +806,25 @@ def test_e_the_step_s_ceiling_is_an_operational_closure(ev):
     assert final["closures"] == ["the step over C"] and final["effort_ends_not_approved"] is False
 
 
+def test_e_a_step_closed_by_the_shared_ceiling_does_not_begin_the_other(vc, ev, monkeypatch):
+    capacity = lambda: [_rnd(2019), _rnd(2020, **ROW_ROUNDS[11])]  # noqa: E731
+    c_indet = [r for noise in vc.NOISES for r in _many(360, capacity, noise)]
+    d_indet = [r for noise in vc.NOISES for r in _many(120, capacity, noise, prefix="d")]
+    for r in d_indet:
+        r["alternative"] = "D"
+    calls = []
+
+    def closing(records, declared, min_snr=None, cpu_seconds=0.0, wall_seconds=0.0, **_):
+        calls.append(cpu_seconds)
+        return {"closure": True, "cpu_seconds": 4001.0, "wall_seconds": 1.0, "pairs": {}}
+
+    monkeypatch.setattr(ev, "step", closing)
+    out = _evaluate_with(ev, monkeypatch, {"C": c_indet, "D": d_indet}, _listing(vc, "l.json"))
+    assert calls == [ev.STEP_CPU_SECONDS]  # D never called
+    assert out["steps"]["D"]["not_started"] is True and out["steps"]["D"]["closure"] is True
+    assert out["final"]["closures"] == ["the step over C", "the step over D"]
+
+
 def test_e_the_step_s_wall_ceiling_and_the_envelope_count(ev):
     records = {"white": [_record([_rnd(2019), _rnd(2020)])], "correlated": []}
     declared = {"white": 1, "correlated": 0}

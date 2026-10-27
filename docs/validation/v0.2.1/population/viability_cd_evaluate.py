@@ -756,6 +756,11 @@ def evaluate(run_dirs: dict[str, Path], listing_path: Path, min_snr: float | Non
         ):
             steps[alt] = None
             continue
+        if any(x and x.get("closure") for x in steps.values()) or budget <= 0 or wall_budget <= 0:
+            # the shared ceiling is spent: the step is closed, the remaining alternative not begun
+            steps[alt] = {"closure": True, "not_started": True, "cpu_seconds": 0.0,
+                          "wall_seconds": 0.0, "pairs": {}}  # fmt: skip
+            continue
         records = {noise: [r for r in s["records"] if r["noise"] == noise] for noise in vc.NOISES}
         steps[alt] = step(
             records,

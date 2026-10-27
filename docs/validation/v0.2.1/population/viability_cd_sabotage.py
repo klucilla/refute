@@ -144,6 +144,12 @@ SABOTAGES = (
         "test_e_the_step_s_wall",
     ),
     (
+        "S25", "E11", EV,
+        'if any(x and x.get("closure") for x in steps.values()) or budget <= 0 or',
+        "if False or budget <= -1e300 or",
+        "test_e_a_step_closed",
+    ),
+    (
         "S24", "X8", VC,
         "    except (TypeError, ValueError, KeyError, AttributeError, OverflowError, IndexError)"
         " as",

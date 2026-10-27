@@ -289,6 +289,9 @@ rule of the declaration changes.
   to the maintainer.
 - **Sabotages S23 and S24:** the envelope not counted against the ceiling; the malformed-record
   guard narrowed.
+- **E11, the shared ceiling spent** (Codex's third review): once the step over one alternative is
+  closed by the ceiling, or the shared budget is spent, the step over the other is **not begun**
+  and is recorded as closed. Sabotage S25: the remaining alternative begun anyway.
 
 ## 10. Order
 
