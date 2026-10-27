@@ -31,6 +31,11 @@ how later work is done.
 
 **v0.2.1 Gauntlet fixes (resumed)**
 
+**Ended as not approved on 2026-10-27, by the maintainer's decision**, with the hypotheses recorded
+([closing record](docs/validation/v0.2.1/closing-2026-10-27.md)): no gate review passed and no exit
+criterion is met or ticked. **No phase is open now:** v0.4 Discover, next in the order decided on
+2026-10-17, opens only by the maintainer's decision. The text below is kept as it was.
+
 Resumed on 2026-10-20 by the maintainer's decision, after v0.3 closed: after v0.3 the
 focus returns to TESS. **v0.4 Discover** comes after it (the order decided on 2026-10-17;
 the order of the sections below is unchanged, and no exit criterion of any phase changes).
@@ -226,6 +231,14 @@ viability diagnosis informed the next step
 ([package](docs/validation/v0.2.1/reopen/stage-1/viability-cd/README.md)); after its screening the
 maintainer chooses an executable proposal within the ceiling, or ends v0.2.1 as not approved. No
 new domain, generation, T4 or lot is authorized.
+
+**The package ran and v0.2.1 ended as not approved on 2026-10-27, by the maintainer's decision.**
+Its lot ([report](docs/validation/v0.2.1/reopen/stage-1/viability-cd/report.md); issue #173): C
+(three years) and D (four or five years) both INDETERMINATE by the rule fixed before the lot (no
+holdout FAIL); the step over specification C's twelve error-model pairs met the PASS rule with no
+pair, so by the investment rule the effort ended. The hypotheses for future research are recorded
+in the [closing record](docs/validation/v0.2.1/closing-2026-10-27.md); this is not a proof of
+infeasibility, and every result, FAIL and criterion is preserved.
 
 **The exit criteria under amendment B.** Their wording is unchanged. Under the amendment, the
 synthetic population study, its confirmation and the new calibration are those of the profile (the

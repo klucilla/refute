@@ -1,5 +1,11 @@
 # The comparative viability package C/D (for the maintainer's authorization; nothing run)
 
+> **Run and closed on 2026-10-27.** The lot ran under authorization 2 ([report.md](report.md), issue
+> #173): C and D INDETERMINATE, section 9's step without success; by the investment rule the effort
+> ended, and **the maintainer ended v0.2.1 as not approved**
+> ([closing record](../../../closing-2026-10-27.md)). This declaration is kept as it was amended
+> before the lot.
+
 **The maintainer's decision of 2026-10-27**, after plan B ended
 ([../plan-b/closing-2026-10-27.md](../plan-b/closing-2026-10-27.md)): **one** comparative viability
 package, of limited effort and with a defined output, prepared for authorization. **Nothing here
