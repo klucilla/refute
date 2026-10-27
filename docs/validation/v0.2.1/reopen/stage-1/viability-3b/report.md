@@ -1,5 +1,11 @@
 # The viability diagnosis after gate 3b: the report
 
+> **Corrected readings (2026-10-27, the maintainer's decision):**
+> [readings-corrected.md](readings-corrected.md) (the share of the two-year separations, the false
+> positives' most common pattern, TESS's alternation as a plausible explanation only, the two-year
+> timing barrier not carried over to three years or more, alternative A not discarded). Plan B
+> ended the same day ([../plan-b/closing-2026-10-27.md](../plan-b/closing-2026-10-27.md)).
+
 The round declared in [README.md](README.md) (committed and pushed in `7d0aa76` before it ran), run
 once on 2026-10-27 at 11:38 UTC on the metadata gate 3b saved: the three files' SHA-256 matched gate
 3b's record, the pools' union was the 911 TICs gate 3b searched, and the recomputed classification

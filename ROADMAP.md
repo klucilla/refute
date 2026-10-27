@@ -213,6 +213,20 @@ geometries) is future work with its own specifications. The plan, its gates and 
 [plan B](docs/validation/v0.2.1/reopen/stage-1/plan-b/README.md) (frozen on adoption; optional
 improvements go to the backlog, and only a problem of validity, safety or execution reopens it).
 
+**Plan B ended on 2026-10-27, by the maintainer's decision**
+([closing record](docs/validation/v0.2.1/reopen/stage-1/plan-b/closing-2026-10-27.md)). Its gate
+3b (the real controls' availability) did not reach its minimum: in the metadata screening, 11
+confirmed planets and 0 known false positives inside the domain D1 to D5, against 20 + 20
+([gate 3b](docs/validation/v0.2.1/reopen/stage-1/real-controls/gate-3b.md)). That result and its
+block, every FAIL and every criterion are preserved; X2f never ran, and no lot of plan B ran. A
+viability diagnosis informed the next step
+([report](docs/validation/v0.2.1/reopen/stage-1/viability-3b/report.md), with its
+[corrected readings](docs/validation/v0.2.1/reopen/stage-1/viability-3b/readings-corrected.md)).
+**Next:** one comparative viability package, prepared for the maintainer's authorization
+([package](docs/validation/v0.2.1/reopen/stage-1/viability-cd/README.md)); after its screening the
+maintainer chooses an executable proposal within the ceiling, or ends v0.2.1 as not approved. No
+new domain, generation, T4 or lot is authorized.
+
 **The exit criteria under amendment B.** Their wording is unchanged. Under the amendment, the
 synthetic population study, its confirmation and the new calibration are those of the profile (the
 calibration's targets drawn inside the domain), and the phase closes only after the calibration,

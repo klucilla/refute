@@ -1,5 +1,10 @@
 # Plan B: the restricted validation of v0.2.1 (adopted and frozen on 2026-10-23; nothing run)
 
+> **Ended on 2026-10-27 by the maintainer's decision** ([closing-2026-10-27.md](closing-2026-10-27.md)):
+> gate 3b's minimum was not reached (11 planets and 0 false positives inside D1 to D5 by metadata,
+> against 20 + 20), and this attempt is formally ended. Its result and block, every FAIL and every
+> criterion are preserved; the text below stays as adopted.
+
 > **Adopted by the maintainer on 2026-10-23** ("OK, adotar o plano B (67b5a6e) e congelar"):
 > sections 1.1 and 1.2 are applied, in the same commit, to `ROADMAP.md` (v0.2.1, scope amendment B)
 > and to `docs/validation/v0.2.1/population-study.md` (Amendment B). **The design is frozen:**

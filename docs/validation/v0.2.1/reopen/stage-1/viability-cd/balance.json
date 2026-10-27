@@ -1,0 +1,247 @@
+{
+ "format": "refute-v0.2.1-balance/1",
+ "computed_utc": "2026-10-27T09:19:37-03:00",
+ "snapshot": {
+  "source": "plan-b/budget-b.json",
+  "lp_h": 491.13724,
+  "wall_h": 55.572385000000004
+ },
+ "since_snapshot": {
+  "suites": {
+   "lp_h": 182.27251333333334,
+   "wall_h": 7.594688055555555,
+   "files": [
+    {
+     "file": ".cache/adoption/junit-full.xml",
+     "seconds": 2541.362
+    },
+    {
+     "file": ".cache/audit/after.xml",
+     "seconds": 12.695
+    },
+    {
+     "file": ".cache/audit/before.xml",
+     "seconds": 53.058
+    },
+    {
+     "file": ".cache/audit/first-run-2.xml",
+     "seconds": 27.81
+    },
+    {
+     "file": ".cache/audit/first-run-3.xml",
+     "seconds": 24.966
+    },
+    {
+     "file": ".cache/audit/first-run.xml",
+     "seconds": 43.152
+    },
+    {
+     "file": ".cache/audit/full-1.xml",
+     "seconds": 2554.708
+    },
+    {
+     "file": ".cache/audit/full-3.xml",
+     "seconds": 2499.514
+    },
+    {
+     "file": ".cache/audit/full-4.xml",
+     "seconds": 2587.54
+    },
+    {
+     "file": ".cache/audit/hook-after.xml",
+     "seconds": 1.611
+    },
+    {
+     "file": ".cache/audit/hook-first.xml",
+     "seconds": 0.352
+    },
+    {
+     "file": ".cache/audit/ml.xml",
+     "seconds": 38.6
+    },
+    {
+     "file": ".cache/audit/r1.xml",
+     "seconds": 49.921
+    },
+    {
+     "file": ".cache/audit/r1b.xml",
+     "seconds": 14.198
+    },
+    {
+     "file": ".cache/audit/r2.xml",
+     "seconds": 62.884
+    },
+    {
+     "file": ".cache/audit/targeted.xml",
+     "seconds": 52.642
+    },
+    {
+     "file": ".cache/audit-readonly-20261026/junit.xml",
+     "seconds": 2855.469
+    },
+    {
+     "file": ".cache/audit-readonly-20261026/outside-check.xml",
+     "seconds": 0.188
+    },
+    {
+     "file": ".cache/audit-readonly-20261026/vm-check.xml",
+     "seconds": 1.779
+    },
+    {
+     "file": ".cache/audit2/after.xml",
+     "seconds": 108.389
+    },
+    {
+     "file": ".cache/audit2/before.xml",
+     "seconds": 66.563
+    },
+    {
+     "file": ".cache/audit2/first-run.xml",
+     "seconds": 55.958
+    },
+    {
+     "file": ".cache/audit2/full-3.xml",
+     "seconds": 3036.406
+    },
+    {
+     "file": ".cache/audit2/full.xml",
+     "seconds": 2792.576
+    },
+    {
+     "file": ".cache/audit2/r1.xml",
+     "seconds": 148.219
+    },
+    {
+     "file": ".cache/audit2/r2.xml",
+     "seconds": 70.681
+    },
+    {
+     "file": ".cache/deps-1027/suite.xml",
+     "seconds": 2496.598
+    },
+    {
+     "file": ".cache/gate1/domain.xml",
+     "seconds": 0.195
+    },
+    {
+     "file": ".cache/gate1/first-run-v4.xml",
+     "seconds": 0.699
+    },
+    {
+     "file": ".cache/gate1/first-run.xml",
+     "seconds": 0.237
+    },
+    {
+     "file": ".cache/gate1/full.xml",
+     "seconds": 2509.523
+    },
+    {
+     "file": ".cache/gate1/v4-1.xml",
+     "seconds": 3.008
+    },
+    {
+     "file": ".cache/gate1/v4-2.xml",
+     "seconds": 3.18
+    },
+    {
+     "file": ".cache/gate1/v4-3.xml",
+     "seconds": 3.218
+    },
+    {
+     "file": ".cache/gate1/v4-4.xml",
+     "seconds": 3.341
+    },
+    {
+     "file": ".cache/gate1/v4-5.xml",
+     "seconds": 3.448
+    },
+    {
+     "file": ".cache/gate1/v4-6.xml",
+     "seconds": 3.408
+    },
+    {
+     "file": ".cache/plan-b-final/junit-full.xml",
+     "seconds": 2612.36
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/23357574f78b40b1870e3d872f2f334f/junit.xml",
+     "seconds": 0.01
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/6a999759e89748c7bb3a10af0fe1bbd9/junit.xml",
+     "seconds": 0.337
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/6ac2c0701e33409fb5c3255dca7dc148/junit.xml",
+     "seconds": 0.011
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/6e800a8a5fa943999491c72379b2326e/junit.xml",
+     "seconds": 0.011
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/72aabc7add5d4df39352e91cf2012f1a/junit.xml",
+     "seconds": 0.01
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/cf91cc818f334b02aa97431c3511cac5/junit.xml",
+     "seconds": 0.01
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/e29a6588b5c741ce87b2ad6ec0a5a6fb/junit.xml",
+     "seconds": 0.012
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/f3e52493f2a64d07879d25a4688569b7/junit.xml",
+     "seconds": 0.01
+    },
+    {
+     "file": ".cache/test-run-tests-affinity/fa9efcde3e5a4377ad139ff1c522881f/junit.xml",
+     "seconds": 0.01
+    }
+   ]
+  },
+  "x2_subsets_2026_10_27": {
+   "lp_h": 0.8328139227225134,
+   "wall_h": 0.037855178305568796,
+   "runs": [
+    {
+     "run": "x2-subset-updated",
+     "elapsed_h": 0.01876170288889423,
+     "workers": 22,
+     "lp_h": 0.41275746355567305
+    },
+    {
+     "run": "x2-subset-frozen",
+     "elapsed_h": 0.01909347541667456,
+     "workers": 22,
+     "lp_h": 0.42005645916684037
+    }
+   ]
+  },
+  "acceptance_regeneration_2026_10_27": {
+   "lp_h": 3.9734912669658664,
+   "wall_h": 0.18061323940753937,
+   "note": "from suite.xml's to the manifest's write time, 22 workers (an upper bound)"
+  },
+  "gate1_generations_estimated": {
+   "lp_h": 11.9204738008976,
+   "wall_h": 1.0539080233560814,
+   "note": "estimated: three generations at the 2026-10-27 generation's measured LP-h"
+  },
+  "gate1_sabotages_allowance": {
+   "lp_h": 12.0,
+   "wall_h": 1.0,
+   "note": "not recorded; an allowance"
+  },
+  "real_controls_check": {
+   "lp_h": 0.0,
+   "wall_h": 0.5675
+  }
+ },
+ "consumed_lp_h": 702.1365323239194,
+ "consumed_wall_h": 66.00694949662474,
+ "unspent_lp_h": 3297.8634676760807,
+ "unspent_wall_h": 133.99305050337526,
+ "plan_b_reserved_steps_now_void": "plan B ended on 2026-10-27; its reserved steps no longer hold a claim on the ceiling"
+}
