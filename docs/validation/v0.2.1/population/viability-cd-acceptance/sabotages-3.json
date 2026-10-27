@@ -1,0 +1,535 @@
+{
+ "all_caught": true,
+ "format": "refute-v0.2.1-viability-cd-sabotages/1",
+ "sabotages": [
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "G4",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S1",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_g2_to_g4_consolidation_years_and_every_reason"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "g2_to_g4"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "G5",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S2",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_g5_unique_keys_take_the_lowest_eligible_tic_s_dates"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "g5_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "G6",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S3",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_g6_the_seeded_selection_and_its_sizes"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "g6_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "K3",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S4",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_k_the_cases_seeds_assignment_and_order"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_k_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "K4",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S5",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_k_the_cases_seeds_assignment_and_order"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_k_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "L2",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S6",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_l_a_layout_s_draw_order_ranges_and_checks"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_l_a_layout"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "L3",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S7",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_l_redraws_their_reasons_and_exhaustion"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_l_redraws"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "P2",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S8",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_p2_the_absent_year_names_the_sorted_distinct_label_at_its_position"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_p2_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 2
+   },
+   "criterion": "R4",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S9",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_r4_the_oracle_s_bands_leave_out_what_lies_between_them"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 2
+   },
+   "tests": "test_r4_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "R3",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S10",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_r3_the_identity_flag"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_r3_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "X2",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S11",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_x_a_complete_run_the_manifest_s_binding_and_records_never_replaced"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_x_a_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "X5",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S12",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_x5_the_cost_check_stops_the_sub_lot"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_x5_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "E2",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S13",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e1_e3_e4_the_readings_on_constructed_records"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_e1_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 2
+   },
+   "criterion": "E3",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S14",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e2_every_row_an_unmapped_reason_raises_and_the_pinned_sources",
+     "test_e1_e3_e4_the_readings_on_constructed_records"
+    ],
+    "failures": 2,
+    "skipped": 0,
+    "tests": 2
+   },
+   "tests": "test_e1_ or test_e2_every"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "E6",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S15",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e5_e6_the_hurdle_the_worst_assignment_and_every_outcome"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_e5_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "E8",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S16",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e8_the_candidate_models"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_e8_the_candidate"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "E9",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S17",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e9_the_sixteen_destinations"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_e9_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "X9",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S18",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_x9_a_generation_defect_stops_the_sub_lot"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_x9_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "R6",
+   "file": "docs/validation/v0.2.1/population/viability_cd.py",
+   "id": "S19",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_r_a_record_from_the_engine_is_complete"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_r_a_"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "E10",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S20",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e_the_evaluator_s_operational_causes_and_notes"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_e_the_evaluator"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "E11",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S21",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e_the_step_s_ceiling_is_an_operational_closure"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_e_the_step_s_ceiling"
+  },
+  {
+   "caught": true,
+   "control": {
+    "errors": 0,
+    "failed": [],
+    "failures": 0,
+    "skipped": 0,
+    "tests": 1
+   },
+   "criterion": "E11",
+   "file": "docs/validation/v0.2.1/population/viability_cd_evaluate.py",
+   "id": "S22",
+   "restored": true,
+   "sabotaged": {
+    "errors": 0,
+    "failed": [
+     "test_e_the_step_runs_only_where_the_joint_destination_names_it"
+    ],
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+   },
+   "tests": "test_e_the_step_runs"
+  }
+ ]
+}
