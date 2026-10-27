@@ -278,6 +278,17 @@ def test_p_a_built_curve_its_absent_year_its_twin_and_its_noise(vc):
     assert absent.any() and not absent.all()
 
 
+def test_p2_the_absent_year_names_the_sorted_distinct_label_at_its_position(vc):
+    for drawn, want in ((2018, 2019), (2019, 2020), (2020, 2021)):
+        p = {"var_absent_year": drawn}
+        vc.map_absent_year(p, [2019, 2019, 2020, 2021])  # two sectors in the first year
+        assert p["var_absent_year"] == want
+        assert p["var_absent_position"] == (2018, 2019, 2020).index(drawn)
+    untouched = {"period": 3.0}
+    vc.map_absent_year(untouched, [2019, 2020, 2021])
+    assert untouched == {"period": 3.0}
+
+
 def test_p5_the_curve_is_the_same_in_another_process(vc):
     geo = _geometry(vc)
     case = _case(vc, i=5)
@@ -406,6 +417,21 @@ def test_r_the_truth_is_never_read_during_the_engine_calls(lot_env, monkeypatch)
         vc.record_target(_case(vc), _geometry(vc), _declared(), _spec(vc))
 
 
+def test_r4_the_oracle_s_bands_leave_out_what_lies_between_them(vc):
+    """Cadences between T14/2 and T14 are neither in transit nor baseline: a bump there must not
+    move the depth."""
+    dt = 120.0 / 86400.0
+    t = np.arange(3000.0, 3027.0, dt)
+    truth = {"period": 2.5, "t0": 3001.0, "duration": 0.12}
+    rng = np.random.default_rng(11)
+    flux = 1.0 + rng.normal(0, 1e-6, t.size)
+    phase = np.abs(np.mod(t - truth["t0"] + 1.25, 2.5) - 1.25)
+    flux[phase <= 0.06] -= 0.002
+    flux[(phase > 0.06) & (phase < 0.12)] += 0.01  # between the two bands
+    out = vc.oracle_year(t, flux, [(t[0], t[-1])], truth, 7.0)
+    assert out["kept"] >= 9 and abs(out["depth"] - 0.002) < 1e-5
+
+
 def test_r3_the_identity_flag(vc):
     assert vc.identity_flag({"train_ephemeris": None}, 3.0)["identifiable"] is False
     assert vc.identity_flag({"train_ephemeris": {"period": 3.0299}}, 3.0)["flag"] is False
@@ -491,6 +517,10 @@ def test_x_a_complete_run_the_manifest_s_binding_and_records_never_replaced(fake
     manifest = json.loads((run / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["geometry_sha256"] == "a" * 64 and manifest["lot"] == "viability-test"
     assert vc.lot_problems(run, _spec(vc), geos, tasks) == []
+    before = _bytes(run)
+    again = _run(vc, run, geos, tasks)  # a complete sub-lot relaunched runs nothing again
+    assert again["dispatched"] == 0 and again["submitted"] == 0 and _bytes(run) == before
+    assert again["terminal_failures"] == [] and again["complete"] is True
     with pytest.raises(FileExistsError):
         vc.x2.write_record_atomic(vc.record_path(run, tasks[0]["id"]), "{}\n")
     monkeypatch.setattr(vc, "code_digest", lambda: "f" * 64)
