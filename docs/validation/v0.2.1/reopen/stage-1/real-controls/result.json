@@ -1,0 +1,527 @@
+{
+ "format": "refute-v0.2.1-real-controls-check/1",
+ "started_utc": "2026-10-27T04:04:03+00:00",
+ "finished_utc": "2026-10-27T04:38:06+00:00",
+ "minimum_per_class": 20,
+ "sources": {
+  "pscomppars": {
+   "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select%20pl_name%2Chostname%2Ctic_id%2Ctran_flag%2Cpl_orbper%2Cpl_trandep%2Csy_tmag%2Csy_pnum%20from%20pscomppars&format=csv",
+   "retrieved_utc": "2026-10-27T04:04:05+00:00",
+   "sha256": "055b9ca07f2fedfdbf92714f06cee51f983e45ba77fe09be578860cc07f73518",
+   "bytes": 505319,
+   "cache_path": ".cache/real-controls/pscomppars.csv"
+  },
+  "exofop_toi": {
+   "url": "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv",
+   "retrieved_utc": "2026-10-27T04:04:35+00:00",
+   "sha256": "79ee6e0d9c11a6d04f8bf21c5e40cdb95cdb84a030ccb0c24386e82311d51f57",
+   "bytes": 3813611,
+   "cache_path": ".cache/real-controls/exofop_toi.csv"
+  },
+  "mast": {
+   "server": "https://mast.stsci.edu",
+   "client": "lightkurve.search._search_products (the body of search_lightcurve and search_targetpixelfile), astroquery.mast.Observations",
+   "arguments": {
+    "target": "TIC <id>",
+    "mission": "TESS",
+    "provenance_name": "SPOC",
+    "exptime": 120,
+    "filetype": [
+     "Lightcurve",
+     "Target Pixel"
+    ]
+   },
+   "match": "target_name equal to the TIC",
+   "first_search_utc": "2026-10-27T04:04:42+00:00",
+   "last_search_utc": "2026-10-27T04:36:49+00:00",
+   "rows_file": ".cache/real-controls/mast-rows.json",
+   "rows_sha256": "57fb8a014e8aacc5c0de5fc30dcbf46f6bd8315b30c5642281381fdfd46567c2"
+  }
+ },
+ "versions": {
+  "lightkurve": "2.6.0",
+  "astroquery": "0.4.11"
+ },
+ "exclusions": {
+  "by_source": {
+   "calibration/targets.yaml": [
+    36452991,
+    36592530,
+    77031414,
+    95129101,
+    138819293,
+    207141131,
+    207339000,
+    283621618,
+    285524410,
+    369327947,
+    374530847,
+    398572544,
+    404610583,
+    440872576
+   ],
+   "calibration/v0.2/targets.yaml": [
+    19028197,
+    33153766,
+    36452991,
+    36592530,
+    48506505,
+    77031414,
+    95129101,
+    118327550,
+    138819293,
+    139528693,
+    151825527,
+    154459165,
+    158561566,
+    158588995,
+    158916431,
+    193754373,
+    194736418,
+    197650870,
+    207141131,
+    207339000,
+    231670397,
+    240681314,
+    283621618,
+    285524410,
+    294179389,
+    315755496,
+    316916655,
+    317507345,
+    350445771,
+    369327947,
+    374200604,
+    374530847,
+    398572544,
+    404610583,
+    440872576
+   ],
+   "docs/validation/v0.2.1/reopen/audit-known-targets.json": [
+    19028197,
+    33153766,
+    36452991,
+    36592530,
+    48506505,
+    77031414,
+    95129101,
+    118327550,
+    138819293,
+    139528693,
+    151825527,
+    154459165,
+    158561566,
+    158588995,
+    158916431,
+    193754373,
+    194736418,
+    197650870,
+    207141131,
+    207339000,
+    231670397,
+    240681314,
+    283621618,
+    285524410,
+    294179389,
+    315755496,
+    316916655,
+    317507345,
+    350445771,
+    369327947,
+    374200604,
+    374530847,
+    398572544,
+    404610583,
+    440872576
+   ]
+  },
+  "union": [
+   19028197,
+   33153766,
+   36452991,
+   36592530,
+   48506505,
+   77031414,
+   95129101,
+   118327550,
+   138819293,
+   139528693,
+   151825527,
+   154459165,
+   158561566,
+   158588995,
+   158916431,
+   193754373,
+   194736418,
+   197650870,
+   207141131,
+   207339000,
+   231670397,
+   240681314,
+   283621618,
+   285524410,
+   294179389,
+   315755496,
+   316916655,
+   317507345,
+   350445771,
+   369327947,
+   374200604,
+   374530847,
+   398572544,
+   404610583,
+   440872576
+  ]
+ },
+ "searched_tics": 911,
+ "search_errors": {},
+ "fatal_errors": {},
+ "information_classes_only": {
+  "planets_classes_only": 3666,
+  "false_positives_classes_only": 1302
+ },
+ "pools": {
+  "planets": {
+   "candidates": 464,
+   "inside_by_metadata": 11,
+   "failing_first": {
+    "D1": 364,
+    "D2": 59,
+    "D5": 30
+   },
+   "eligible": [
+    {
+     "tic_id": 9989136,
+     "name": "TOI-5734 b",
+     "period_days": 6.1841876,
+     "sectors": [
+      20,
+      47,
+      60
+     ],
+     "t_min_mjd": [
+      58842.00768824074,
+      59579.32136084491,
+      59936.40713199074
+     ],
+     "years": [
+      2019,
+      2021,
+      2022
+     ],
+     "separations_days": [
+      737.3137,
+      357.0858
+     ],
+     "pixel_file_sectors": [
+      20,
+      47,
+      60
+     ]
+    },
+    {
+     "tic_id": 19342878,
+     "name": "WASP-149 b",
+     "period_days": 1.332813,
+     "sectors": [
+      61,
+      88,
+      99
+     ],
+     "t_min_mjd": [
+      59962.30263329861,
+      60689.65591790509,
+      61045.6263037963
+     ],
+     "years": [
+      2023,
+      2025,
+      2026
+     ],
+     "separations_days": [
+      727.3533,
+      355.9704
+     ],
+     "pixel_file_sectors": [
+      61,
+      88,
+      99
+     ]
+    },
+    {
+     "tic_id": 102713734,
+     "name": "TOI-2580 b",
+     "period_days": 3.39775,
+     "sectors": [
+      59,
+      73,
+      86
+     ],
+     "t_min_mjd": [
+      59909.778040763886,
+      60285.301536747684,
+      60635.76327707176
+     ],
+     "years": [
+      2022,
+      2023,
+      2024
+     ],
+     "separations_days": [
+      375.5235,
+      350.4617
+     ],
+     "pixel_file_sectors": [
+      59,
+      73,
+      86
+     ]
+    },
+    {
+     "tic_id": 104986789,
+     "name": "TOI-2578 b",
+     "period_days": 3.4579667,
+     "sectors": [
+      59,
+      73,
+      86
+     ],
+     "t_min_mjd": [
+      59909.78170287037,
+      60285.302426898146,
+      60635.76414476852
+     ],
+     "years": [
+      2022,
+      2023,
+      2024
+     ],
+     "separations_days": [
+      375.5207,
+      350.4617
+     ],
+     "pixel_file_sectors": [
+      59,
+      73,
+      86
+     ]
+    },
+    {
+     "tic_id": 204650483,
+     "name": "TOI-4551 b",
+     "period_days": 9.95581,
+     "sectors": [
+      63,
+      90,
+      101
+     ],
+     "t_min_mjd": [
+      60013.880280694444,
+      60746.66289753472,
+      61100.1843925
+     ],
+     "years": [
+      2023,
+      2025,
+      2026
+     ],
+     "separations_days": [
+      732.7826,
+      353.5215
+     ],
+     "pixel_file_sectors": [
+      63,
+      90,
+      101
+     ]
+    },
+    {
+     "tic_id": 256364928,
+     "name": "HD 189733 b",
+     "period_days": 2.21857567,
+     "sectors": [
+      41,
+      54,
+      81
+     ],
+     "t_min_mjd": [
+      59419.49247293981,
+      59769.4017871875,
+      60506.05532582176
+     ],
+     "years": [
+      2021,
+      2022,
+      2024
+     ],
+     "separations_days": [
+      349.9093,
+      736.6535
+     ],
+     "pixel_file_sectors": [
+      41,
+      54,
+      81
+     ]
+    },
+    {
+     "tic_id": 289661991,
+     "name": "TOI-3807 b",
+     "period_days": 2.8989727,
+     "sectors": [
+      47,
+      60,
+      74
+     ],
+     "t_min_mjd": [
+      59579.31808524305,
+      59936.40524233796,
+      60312.36636611111
+     ],
+     "years": [
+      2021,
+      2022,
+      2024
+     ],
+     "separations_days": [
+      357.0872,
+      375.9611
+     ],
+     "pixel_file_sectors": [
+      47,
+      60,
+      74
+     ]
+    },
+    {
+     "tic_id": 293607057,
+     "name": "BD-14 3065 b",
+     "period_days": 4.2889731,
+     "sectors": [
+      62,
+      89,
+      100
+     ],
+     "t_min_mjd": [
+      59987.94429130787,
+      60717.6420625463,
+      61073.50264038194
+     ],
+     "years": [
+      2023,
+      2025,
+      2026
+     ],
+     "separations_days": [
+      729.6978,
+      355.8606
+     ],
+     "pixel_file_sectors": [
+      62,
+      89,
+      100
+     ]
+    },
+    {
+     "tic_id": 371234684,
+     "name": "HAT-P-9 b",
+     "period_days": 3.92281072,
+     "sectors": [
+      20,
+      47,
+      60
+     ],
+     "t_min_mjd": [
+      58842.00771431713,
+      59579.321376608794,
+      59936.407159236114
+     ],
+     "years": [
+      2019,
+      2021,
+      2022
+     ],
+     "separations_days": [
+      737.3137,
+      357.0858
+     ],
+     "pixel_file_sectors": [
+      20,
+      47,
+      60
+     ]
+    },
+    {
+     "tic_id": 453064665,
+     "name": "HAT-P-62 b",
+     "period_days": 2.6453235,
+     "sectors": [
+      59,
+      73,
+      86
+     ],
+     "t_min_mjd": [
+      59909.77072168981,
+      60285.30262333334,
+      60635.76424185185
+     ],
+     "years": [
+      2022,
+      2023,
+      2024
+     ],
+     "separations_days": [
+      375.5319,
+      350.4616
+     ],
+     "pixel_file_sectors": [
+      59,
+      73,
+      86
+     ]
+    },
+    {
+     "tic_id": 470987100,
+     "name": "TOI-1732 b",
+     "period_days": 4.11923678339,
+     "sectors": [
+      20,
+      47,
+      60
+     ],
+     "t_min_mjd": [
+      58842.007164282404,
+      59579.32079953704,
+      59936.40660125
+     ],
+     "years": [
+      2019,
+      2021,
+      2022
+     ],
+     "separations_days": [
+      737.3136,
+      357.0858
+     ],
+     "pixel_file_sectors": [
+      20,
+      47,
+      60
+     ]
+    }
+   ]
+  },
+  "false_positives": {
+   "candidates": 447,
+   "inside_by_metadata": 0,
+   "failing_first": {
+    "D1": 395,
+    "D2": 39,
+    "D5": 13
+   },
+   "eligible": []
+  }
+ },
+ "minimum_reached": false,
+ "outcome": "short"
+}
