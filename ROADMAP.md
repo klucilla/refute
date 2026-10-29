@@ -29,12 +29,20 @@ how later work is done.
 
 ## Current phase
 
-**v0.2.1 Gauntlet fixes (resumed)**
+**v0.4 Discover (pilot with a funnel)**
+
+Opened on 2026-10-29 by the maintainer's decision, as a pilot of complete, auditable cases with
+the scope amendments recorded in its section below (amendments 1 to 4 and the funnel amendment
+of #9). Tracking: issue #177. The v0.4 exit criteria and the gate rule of "How phases work" are
+unchanged by the opening. No method is validated: every v0.4 report carries
+`method_status: not_validated`.
+
+### Previous phase record: v0.2.1 Gauntlet fixes (resumed)
 
 **Ended as not approved on 2026-10-27, by the maintainer's decision**, with the hypotheses recorded
 ([closing record](docs/validation/v0.2.1/closing-2026-10-27.md)): no gate review passed and no exit
-criterion is met or ticked. **No phase is open now:** v0.4 Discover, next in the order decided on
-2026-10-17, opens only by the maintainer's decision. The text below is kept as it was.
+criterion is met or ticked. v0.4 Discover, next in the order decided on 2026-10-17, opened on
+2026-10-29 by the maintainer's decision (above). The text below is kept as it was.
 
 Resumed on 2026-10-20 by the maintainer's decision, after v0.3 closed: after v0.3 the
 focus returns to TESS. **v0.4 Discover** comes after it (the order decided on 2026-10-17;
@@ -378,10 +386,44 @@ Search for new candidates in TESS data.
   approval. Publication path and exporter requirements: issue #18.
 - Discovery performance needs a requirement of its own; closing v0.2.1 is not enough.
 
+**Scope amendment (adopted on 2026-10-29 by the maintainer's decision; tracking #177).** v0.4
+opens as a pilot of complete, auditable cases: two known controls (one confirmed planet, one
+known false positive) and a funnel over N = 50 stars with no TOI, CTOI or confirmed planet (100
+only by a rule fixed before the selection, within the phase caps), drawn by a rule fixed before
+the selection, with at most three promoted exploration cases. Success depends on completeness,
+reproducibility and review, never on a discovery; zero promoted stars is an acceptable outcome.
+The scope items above stay listed; the amendments say which are deferred or resized.
+- **Funnel.** Stage 1 runs the light-curve tests on all N stars; tests that need pixel files are
+  reported INCONCLUSIVE with zero coverage at that stage, never PASS. Stage 2 (pixel files and
+  the full battery) runs only for promoted stars and controls, by a promotion rule fixed in the
+  protocol, with no replacement of a star that falls at stage 2. Every scanned star is recorded
+  in the case ledger, and the promotion is recorded apart from the verdict.
+- **Amendment 1.** Long-period search beyond the current reach (`period_max_days` 20 d; stage 1
+  up to half a sector) is deferred until after the pilot, with its own synthetic validation.
+- **Amendment 2.** Single-transit search is deferred until after the pilot, with its own
+  synthetic validation.
+- **Amendment 3.** The discovery-performance requirement of the pilot is the injection-recovery
+  rates and the detection counts on transformed (inverted and block-shuffled) curves, measured
+  on the pilot's real light curves and published per curve with denominators, intervals and the
+  declared scope ("these curves, this code"). Detections on transformed curves are not a real
+  false-alarm rate, and the result is not a general performance claim.
+- **Amendment 4.** Injection-recovery is resized to the pilot: injection before detrending into
+  the N funnel light curves (#175). Without pixel files it measures search, gate and stage-1
+  triage, not survival of the full battery.
+- **Funnel amendment of #9.** On the N stars, transformed curves go through the light-curve
+  tests; the full battery runs only where pixel files exist (promoted stars and controls);
+  denominators are kept separate (eligible, promoted by the cap, survivors); a missing test
+  never counts as passed.
+- The blind holdout is a diagnostic, not a decisive test, in v0.4 claims (#174): it never changes
+  a verdict; `temporal_diagnostic` and `method_status: not_validated` are reported in every
+  dossier, export and ledger entry. Earlier locks and verdicts are unchanged.
+- Every case, with or without a candidate, has a complete, reproducible dossier.
+
 **Exit criteria**
 - [ ] Injection-recovery test on real light curves (injected synthetic
-      transits) with published recovery rates.
-- [ ] Every surviving candidate has a complete, reproducible dossier.
+      transits) with published recovery rates. *(Amendment 4: on the pilot's funnel curves.)*
+- [ ] Every surviving candidate has a complete, reproducible dossier. *(Amendment: every case,
+      with or without a candidate.)*
 
 ---
 
