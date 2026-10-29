@@ -403,9 +403,11 @@ The scope items above stay listed; the amendments say which are deferred or resi
 - **Amendment 2.** Single-transit search is deferred until after the pilot, with its own
   synthetic validation.
 - **Amendment 3.** The discovery-performance requirement of the pilot is the injection-recovery
-  rates and the detection counts on transformed (inverted and block-shuffled) curves, measured
-  on the pilot's real light curves and published per curve with denominators, intervals and the
-  declared scope ("these curves, this code"). Detections on transformed curves are not a real
+  rates and the detection counts on transformed (inverted, and cyclically rotated within each
+  sector) curves, measured on the pilot's real light curves and published per curve with
+  denominators, intervals and the declared scope ("these curves, this code"). The rotation
+  within each sector replaced block shuffles at P1 (the maintainer's decision of 2026-10-29),
+  because moving data between sectors cannot keep each sector's pixel geometry and metadata. Detections on transformed curves are not a real
   false-alarm rate, and the result is not a general performance claim.
 - **Amendment 4.** Injection-recovery is resized to the pilot: injection before detrending into
   the N funnel light curves (#175). Without pixel files it measures search, gate and stage-1
