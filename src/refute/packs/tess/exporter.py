@@ -40,7 +40,7 @@ def _fields(result: dict[str, Any]) -> dict[str, Any]:
     ]
     if result.get("target_kind") in {"planet", "false_positive", "development"}:
         notes.append("Calibration target: already catalogued; it is not a new candidate.")
-    return {
+    fields = {
         "submitted": False,
         "sheet": "candidate parameters for a human; not a submission",
         "tic_id": result.get("tic_id"),
@@ -62,6 +62,32 @@ def _fields(result: dict[str, Any]) -> dict[str, Any]:
         "notes": " ".join(notes),
         "disclaimer": DISCLAIMER,
     }
+    estimate = result.get("duration_estimate")
+    if estimate is not None:
+        # v0.4 WP4 (issue #176): the value and its method, or the absence with its reason.
+        from refute.packs.tess.duration import METHOD_ACCEPTED, NOT_ACCEPTED_REASON
+
+        fields["duration_method"] = estimate.get("method")
+        if not METHOD_ACCEPTED:
+            fields["duration_note"] = "not reported: " + NOT_ACCEPTED_REASON
+        elif estimate.get("estimable"):
+            fields["duration_hours"] = estimate["duration_days"] * 24.0
+            fields["duration_err_hours"] = estimate["duration_err_days"] * 24.0
+            fields["duration_note"] = "68 % interval of the trapezoid fit"
+        else:
+            fields["duration_note"] = "not estimable: " + (estimate.get("reason") or "unknown")
+    if "method_status" in result:
+        # v0.4 discover claims (issue #174): written with every sheet, never left out.
+        temporal = result.get("temporal_diagnostic") or {}
+        fields["method_status"] = result["method_status"]
+        fields["method_status_reference"] = result.get("method_status_reference")
+        fields["temporal_diagnostic"] = temporal.get("state", "not_run")
+        fields["notes"] += (
+            f" Method status: {result['method_status']} (the method is not validated). "
+            f"Temporal diagnostic: {fields['temporal_diagnostic']} (a diagnostic, never part "
+            "of the verdict)."
+        )
+    return fields
 
 
 class CandidateParameterExporter:
@@ -79,7 +105,9 @@ class CandidateParameterExporter:
         for key, value in fields.items():
             if key == "disclaimer":
                 continue
-            shown = "not measured" if value is None and key.endswith("_err_hours") else value
+            shown = value
+            if value is None and key.endswith("_err_hours"):
+                shown = "not estimable" if "duration_note" in fields else "not measured"
             lines.append(f"| {key} | {shown} |")
         lines.append("")
         lines.append("Evidence: see `report.md`, `verdict.json` and `plots/` in this dossier.")

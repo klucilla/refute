@@ -10,7 +10,7 @@ written **before** the data are analyzed and then locked (see
 |---|---|---|
 | `schema_version` | `1` | Version of this specification. |
 | `id` | string | Identifier: letters, digits, `.`, `_`, `-`. |
-| `kind` | `replicate` or `calibration` | `replicate`: re-derive and attack published claims about the listed targets. `calibration`: a claim about Refute itself, evaluated on a target set. (`discover` arrives in v0.4.) |
+| `kind` | `replicate`, `calibration` or `discover` | `replicate`: re-derive and attack published claims about the listed targets. `calibration`: a claim about Refute itself, evaluated on a target set. `discover` (v0.4): search the targets for a signal and attack it, with a role declared for every test (see "TESS pack: discover claims"). |
 | `pack` | string | Domain pack that interprets the claim, e.g. `tess`. |
 | `title`, `hypothesis` | string | Human-readable statement of the claim. |
 | `created` | date | `YYYY-MM-DD`. |
@@ -101,7 +101,7 @@ test is `INCONCLUSIVE`.
 ```yaml
 - key: TIC-207339000          # must equal "TIC-<tic_id>"
   tic_id: 207339000
-  kind: planet                # planet | false_positive | development
+  kind: planet                # planet | false_positive | development | exploration (v0.4)
   name: TOI-4427 b
   published: {period_days: 4.6182621, period_err_days: 1.7e-06, t0_bjd: 2459598.71,
               depth_ppm: 18614.3, duration_hours: 2.655}
@@ -154,6 +154,44 @@ was added). Older calibrations are verified at their locked commit; see
 
 All criteria must hold on a complete run. The targets file must contain exactly
 `expected_planets` planets and `expected_false_positives` false positives.
+
+### Discover claims (v0.4, issue #174)
+
+A `discover` claim lists its targets in an attachment with `role: targets` (kinds `planet`
+and `false_positive` for known controls, `exploration` for funnel stars; no `development`
+targets), has no `pass_criteria`, and adds a `discovery` section to `test_plan`:
+
+```yaml
+test_plan:
+  discovery:
+    version: 1
+    decisive: [snr, odd_even, secondary_eclipse, plausibility, centroid_shift,
+               aperture_depth, nearby_contamination, period_alias, systematics]
+    diagnostic: [holdout_by_year]
+    stages: {centroid_shift: 2, aperture_depth: 2}   # 1 when not listed
+    required_diagnostics: [holdout_by_year]
+    method_status: not_validated                    # the only value in v0.4
+    method_status_reference: docs/validation/v0.2.1/closing-2026-10-27.md
+    survived_meaning: "..."                         # fixed before the lock
+    inputs: {protocol: <sha256>, frame: <sha256>}   # files outside the code (recorded)
+```
+
+- Every test of the analysis (with `eb_catalog` when the claim attaches catalogs) appears in
+  exactly one of `decisive` and `diagnostic`; the gate `snr` is decisive and runs at stage 1.
+  A claim that breaks any of these rules is refused at load time.
+- The verdict aggregates the decisive tests only, with the rules of [verdicts.md](verdicts.md)
+  unchanged, using the severity each test emits. A diagnostic never changes the verdict; a
+  diagnostic that examined nothing is `INCONCLUSIVE`, never `PASS`.
+- A run of stage *s* (`refute discover --stage s`) reports every test of a later stage as
+  `INCONCLUSIVE` with zero coverage and the reason "not run at this stage", never `PASS`.
+  Before the last stage no target pixel file is downloaded or read.
+- `verdict.json`, the report and the parameter sheet carry `method_status`,
+  `method_status_reference` and `temporal_diagnostic` (`pass`, `fail`, `inconclusive` or
+  `not_run`, with the aggregation rule and the per-year results). A required diagnostic that is
+  missing makes the case incomplete (`discovery.diagnostics_complete: false`); the verdict does
+  not change.
+- A plan without the `discovery` section resolves exactly as before it existed, so the resolved
+  hash of every earlier claim is unchanged (issue #30).
 
 ## ML pack sections (v0.3)
 

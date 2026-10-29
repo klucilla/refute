@@ -52,6 +52,18 @@ def round_time(number: int) -> datetime:
     return datetime.fromtimestamp(DRAND_GENESIS + (number - 1) * DRAND_PERIOD, UTC)
 
 
+def round_after(created_at: str, margin_seconds: int = 3600) -> int:
+    """The first round published at least ``margin_seconds`` after ``created_at``
+    (``YYYY-MM-DDTHH:MM:SSZ``): the rule of the v0.3 protocols
+    (``calibration/v0.3/pilot/select_pilot.py``), used for the v0.4 rounds (protocol section 8)."""
+    created = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    earliest = created.timestamp() + margin_seconds
+    number = -(-(int(earliest) - DRAND_GENESIS) // DRAND_PERIOD) + 1
+    while round_time(number).timestamp() < earliest:
+        number += 1
+    return number
+
+
 def verify_beacon(number: int, beacon: dict[str, Any]) -> int:
     """Verify one drand beacon of the chain and return the seed (offline).
 

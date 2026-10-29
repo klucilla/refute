@@ -15,7 +15,17 @@ from typing import Any
 import numpy as np
 from astropy.timeseries import BoxLeastSquares
 
-from refute.core.verdict import Severity, TestResult, TestStatus, aggregate, enforce_coverage
+from refute.core.verdict import (
+    RoleAggregate,
+    Severity,
+    TestResult,
+    TestStatus,
+    aggregate,
+    aggregate_roles,
+    defer_tests,
+    diagnostic_state,
+    enforce_coverage,
+)
 from refute.packs.tess.battery import (
     check_aperture_depth,
     check_centroid_shift,
@@ -47,7 +57,7 @@ from refute.packs.tess.gauntlet import (
     star_inputs,
 )
 from refute.packs.tess.holdout import HoldoutOutcome, run_holdout
-from refute.packs.tess.params import TessTestPlan
+from refute.packs.tess.params import METHOD_STATUS_REFERENCE, TessTestPlan
 from refute.packs.tess.prewhiten import Prewhitening, prewhiten, refit
 from refute.packs.tess.rednoise import EventNoise, bls_beta, event_noise
 from refute.packs.tess.search import SearchResult, finalize_candidate, search_period
@@ -112,6 +122,10 @@ class Analysis:
     verdict: str
     verdict_reason: str
     extras: dict[str, Any] = field(default_factory=dict)
+    # v0.4 (issue #174), discover claims only: the role outcome and the stage of the run.
+    roles: RoleAggregate | None = None
+    stage: int | None = None
+    deferred: list[str] = field(default_factory=list)
 
 
 def _not_run(name: str, severity: Severity, reason: str) -> TestResult:
@@ -372,6 +386,7 @@ def analyze_data(
     search_fn: SearchFn = search_period,
     catalogs: list[EbEntry] | None = None,
     catalog_scan: dict | None = None,
+    stage: int | None = None,
 ) -> Analysis:
     flat = detrend(data.lc, plan.detrend)
     pw, searched = global_prewhitening(data, plan, flat)  # M4 piece 7; L1 itself without it
@@ -379,7 +394,20 @@ def analyze_data(
     gauntlet = attack_candidate(data, search.candidate, plan, catalogs, catalog_scan, pw)
     # Blind holdout: raw data and sector metadata only. Never the global candidate.
     holdout = run_holdout(data.lc, data.sectors, plan)
-    return conclude_analysis(search, flat, gauntlet, holdout, catalogs is not None)
+    return conclude_analysis(
+        search, flat, gauntlet, holdout, catalogs is not None, plan=plan, stage=stage
+    )
+
+
+def expected_by_role(plan: TessTestPlan, catalogs_configured: bool) -> tuple[list[str], list[str]]:
+    """For a discover claim: the decisive tests a complete analysis must contain, and the
+    required diagnostics (v0.4, issue #174)."""
+    discovery = plan.discovery
+    if discovery is None:
+        raise ValueError("expected_by_role needs a plan with a discovery section")
+    names = expected_tests(catalogs_configured)
+    decisive = [n for n in names if discovery.roles.get(n) == "decisive"]
+    return decisive, list(discovery.required_diagnostics)
 
 
 def conclude_analysis(
@@ -388,12 +416,111 @@ def conclude_analysis(
     gauntlet: GauntletOutcome,
     holdout: HoldoutOutcome,
     catalogs_configured: bool,
+    *,
+    plan: TessTestPlan | None = None,
+    stage: int | None = None,
 ) -> Analysis:
-    """The end of an analysis: the coverage rule over every test, then the verdict."""
+    """The end of an analysis: the coverage rule over every test, then the verdict.
+
+    For a discover claim (a plan with a discovery section; v0.4, issue #174) the tests of a
+    later stage are reported INCONCLUSIVE with zero coverage, and the verdict aggregates the
+    decisive tests only; the diagnostics are returned apart, in ``roles``."""
     # Domain-agnostic coverage rule: a PASS that examined nothing is INCONCLUSIVE.
     tests = enforce_coverage([*gauntlet.tests, holdout.test])
-    verdict, reason = aggregate(tests, expected=expected_tests(catalogs_configured))
-    return Analysis(search, flattened, gauntlet, holdout, tests, verdict.value, reason)
+    if plan is None or plan.discovery is None:
+        verdict, reason = aggregate(tests, expected=expected_tests(catalogs_configured))
+        return Analysis(search, flattened, gauntlet, holdout, tests, verdict.value, reason)
+    discovery = plan.discovery
+    run_stage = discovery.last_stage if stage is None else int(stage)
+    tests, deferred = defer_tests(tests, dict(discovery.stages), run_stage)
+    decisive, required = expected_by_role(plan, catalogs_configured)
+    roles = aggregate_roles(tests, dict(discovery.roles), decisive, required)
+    return Analysis(
+        search,
+        flattened,
+        gauntlet,
+        holdout,
+        tests,
+        roles.verdict.value,
+        roles.reason,
+        roles=roles,
+        stage=run_stage,
+        deferred=deferred,
+    )
+
+
+def duration_record(analysis: Analysis, plan: TessTestPlan) -> dict[str, Any]:
+    """The WP4 duration estimate of the final candidate (docs/plans/v0.4-duration-method.md)."""
+    from refute.packs.tess.duration import METHOD, estimate_duration
+
+    candidate, flat = analysis.gauntlet.candidate, analysis.gauntlet.flattened
+    if candidate is None or flat is None:
+        return {"method": METHOD, "estimable": False, "reason": "no candidate"}
+    mask_half = plan.detrend.transit_mask_half_width_durations * candidate.duration
+    sigma = per_point_sigma(
+        flat, transit_mask(flat.time, candidate.period, candidate.t0, mask_half)
+    )
+    return estimate_duration(
+        flat.time,
+        flat.flux,
+        sigma,
+        candidate.period,
+        candidate.t0,
+        candidate.duration,
+        candidate.depth,
+        plan.data.exptime_seconds / 86400.0,
+    )
+
+
+TEMPORAL_AGGREGATION_RULE = (
+    "legacy rule of holdout_by_year: any hidden year FAIL gives FAIL; otherwise any PASS gives "
+    "PASS, even with inconclusive years; otherwise INCONCLUSIVE (refute.packs.tess.holdout)"
+)
+
+
+def discovery_record(analysis: Analysis, plan: TessTestPlan) -> dict[str, Any]:
+    """The v0.4 fields of ``verdict.json`` for a discover claim (issue #174)."""
+    discovery = plan.discovery
+    assert discovery is not None and analysis.roles is not None
+    holdout = analysis.roles.diagnostics.get("holdout_by_year")
+    rounds = analysis.holdout.rounds if holdout is not None else []
+    temporal = {
+        "state": diagnostic_state(holdout),
+        "test": "holdout_by_year",
+        "role": discovery.roles.get("holdout_by_year"),
+        "aggregation_rule": TEMPORAL_AGGREGATION_RULE,
+        "message": holdout.message if holdout is not None else "not run",
+        "per_year": [
+            {
+                "hidden_year": r.hidden_year,
+                "status": r.status.value,
+                "reason": r.metrics.get("reason"),
+            }
+            for r in rounds
+        ],
+        "inability_reasons": [
+            {"hidden_year": r.hidden_year, "reason": r.metrics.get("reason") or r.message}
+            for r in rounds
+            if r.status is TestStatus.INCONCLUSIVE
+        ],
+    }
+    return {
+        "method_status": discovery.method_status,
+        "method_status_reference": discovery.method_status_reference,
+        "temporal_diagnostic": temporal,
+        "discovery": {
+            "stage": analysis.stage,
+            "last_stage": discovery.last_stage,
+            "roles": dict(discovery.roles),
+            "decisive_tests": [r.name for r in analysis.roles.decisive],
+            "diagnostic_tests": sorted(analysis.roles.diagnostics),
+            "deferred_tests": list(analysis.deferred),
+            "required_diagnostics": list(discovery.required_diagnostics),
+            "missing_diagnostics": list(analysis.roles.missing_diagnostics),
+            "diagnostics_complete": analysis.roles.diagnostics_complete,
+            "survived_meaning": discovery.survived_meaning,
+        },
+    }
 
 
 ALIAS_FACTORS = (("P", 1.0), ("2P", 2.0), ("P/2", 0.5), ("3P", 3.0), ("P/3", 1.0 / 3.0))
@@ -580,6 +707,15 @@ def build_result(
             )
         },
     }
+    if plan.discovery is not None and analysis.roles is not None:
+        # v0.4, discover claims only (records of other claims keep their keys): the method
+        # status, the temporal diagnostic, the roles, the stage; the decisive expected tests.
+        decisive, required = expected_by_role(
+            plan, analysis.extras.get("eb_catalog_configured", False)
+        )
+        record["expected_tests"] = decisive
+        record["required_diagnostics"] = required
+        record.update(discovery_record(analysis, plan))
     if analysis.gauntlet.timing is not None:
         # M4 piece 3 (switch on only, so records with the switch off keep their keys).
         record["global_timing"] = analysis.gauntlet.timing
@@ -659,9 +795,14 @@ class TessAnalyzer:
             catalogs = resolve_references(
                 catalogs, catalog_scan, Path(context.get("cache_dir", "."))
             )
-        analysis = analyze_data(data, plan, catalogs=catalogs, catalog_scan=catalog_scan)
+        analysis = analyze_data(
+            data, plan, catalogs=catalogs, catalog_scan=catalog_scan, stage=context.get("stage")
+        )
         analysis.extras["eb_catalog_configured"] = catalogs is not None
         result = build_result(target, data, plan, analysis, context)
+        if plan.discovery is not None:
+            # v0.4 WP4 (issue #176): the duration with its uncertainty, or a justified absence.
+            result["duration_estimate"] = duration_record(analysis, plan)
         result["plots"] = plots.write_all(writer, data, analysis, plan)
         return result
 
@@ -669,6 +810,22 @@ class TessAnalyzer:
         self, target: dict[str, Any], error: str, context: dict[str, Any]
     ) -> dict[str, Any]:
         criteria = context.get("pass_criteria") or {}
+        record = self._error_record(target, error, context, criteria)
+        if context.get("claim_kind") == "discover":
+            # v0.4: the required fields are present on an error too (issue #174).
+            record["method_status"] = "not_validated"
+            record["method_status_reference"] = METHOD_STATUS_REFERENCE
+            record["temporal_diagnostic"] = {"state": "not_run", "test": "holdout_by_year"}
+            record["discovery"] = {"stage": context.get("stage"), "diagnostics_complete": False}
+        return record
+
+    def _error_record(
+        self,
+        target: dict[str, Any],
+        error: str,
+        context: dict[str, Any],
+        criteria: dict[str, Any],
+    ) -> dict[str, Any]:
         return {
             "schema": "refute-tess-verdict-1",
             "target_key": target["key"],

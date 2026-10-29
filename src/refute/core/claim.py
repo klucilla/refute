@@ -74,7 +74,8 @@ class Attachment(StrictModel):
 class Claim(StrictModel):
     schema_version: Literal[1] = SCHEMA_VERSION
     id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
-    kind: Literal["replicate", "calibration"]
+    # "discover" (v0.4): candidates searched in public data, with roles declared per test.
+    kind: Literal["replicate", "calibration", "discover"]
     pack: str
     title: str
     hypothesis: str

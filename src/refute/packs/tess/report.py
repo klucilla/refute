@@ -70,6 +70,47 @@ def _fmt(value: Any, digits: int = 4) -> str:
     return str(value)
 
 
+METHOD_NOT_VALIDATED_NOTE = (
+    "**Method status: `not_validated`.** No discovery method of Refute is validated: the v0.1 "
+    "and v0.2 calibrations failed, and v0.2.1 ended as not approved ({reference}). A verdict "
+    "here is the deterministic outcome of the declared tests, not a validated measurement."
+)
+
+
+def _discovery_lines(result: dict[str, Any]) -> list[str]:
+    """The v0.4 block of a discover claim's report (issue #174)."""
+    discovery = result.get("discovery") or {}
+    temporal = result.get("temporal_diagnostic") or {}
+    lines = [
+        "> " + METHOD_NOT_VALIDATED_NOTE.format(reference=result.get("method_status_reference")),
+        "",
+        "## Roles and stage",
+        "",
+        f"- Meaning of SURVIVED in this claim: {discovery.get('survived_meaning', 'n/a')}",
+        f"- Stage of this run: {discovery.get('stage')} of {discovery.get('last_stage')}",
+        "- Decisive tests (the verdict aggregates only these): "
+        + (", ".join(discovery.get("decisive_tests") or []) or "none"),
+        "- Diagnostic tests (reported, never part of the verdict): "
+        + (", ".join(discovery.get("diagnostic_tests") or []) or "none"),
+    ]
+    deferred = discovery.get("deferred_tests") or []
+    if deferred:
+        lines.append(
+            "- Not run at this stage (INCONCLUSIVE with zero coverage, never PASS): "
+            + ", ".join(deferred)
+        )
+    missing = discovery.get("missing_diagnostics") or []
+    if missing:
+        lines.append("- **Case incomplete:** required diagnostic(s) missing: " + ", ".join(missing))
+    lines += [
+        f"- Temporal diagnostic (`holdout_by_year`): **{temporal.get('state', 'not_run')}**. "
+        "It never changes the verdict; a `pass` is not a signal confirmed in time, and a `fail` "
+        "is not evidence against the signal, because the holdout is not validated.",
+        "",
+    ]
+    return lines
+
+
 def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
     lines = [
         f"# {result.get('target_key')}: {result.get('verdict')}",
@@ -81,6 +122,8 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
     ]
     if context.get("claim_kind") == "calibration":
         lines += [f"> **Scope.** {SCOPE_NOTE}", ""]
+    if "method_status" in result:
+        lines += _discovery_lines(result)
 
     lines += [
         "## Claim",

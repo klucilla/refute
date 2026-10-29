@@ -47,7 +47,8 @@ def test_defaults_are_resolved_into_the_locked_form(tmp_path):
     ("mutate", "message"),
     [
         (lambda c: c.update(unknown_field=1), "unknown_field"),
-        (lambda c: c.update(kind="discover"), "kind"),
+        # "discover" became a kind in v0.4 (issue #174); an unknown kind is still refused.
+        (lambda c: c.update(kind="survey"), "kind"),
         (lambda c: c["test_plan"].update(gauntlet={"snr": {"min_snr": "high"}}), "min_snr"),
         (lambda c: c["test_plan"].update(gauntlet={"snr": {"min_sn": 7}}), "min_sn"),
         (lambda c: c.update(attachments=[{"path": "../secret.txt"}]), ".."),

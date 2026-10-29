@@ -383,17 +383,20 @@ def create_lock(
         relative_to_toplevel(state, history_file),
     }
     dirty_paths = [p for p in state.dirty_paths if p not in ignored]
-    if loaded.claim.kind == "calibration":
+    # Calibration claims, and from v0.4 discover claims, are locked only from a clean commit.
+    clean_kinds = ("calibration", "discover")
+    if loaded.claim.kind in clean_kinds:
+        kind = loaded.claim.kind
         if not state.is_repo or state.commit is None:
             raise LockError(
-                "calibration claims can only be locked inside a git repository with at "
+                f"{kind} claims can only be locked inside a git repository with at "
                 "least one commit; commit the code, protocol and targets first"
             )
         if dirty_paths:
             shown = ", ".join(dirty_paths[:20])
             more = f" (+{len(dirty_paths) - 20} more)" if len(dirty_paths) > 20 else ""
             raise LockError(
-                "refusing to lock a calibration claim: the working tree is dirty. "
+                f"refusing to lock a {kind} claim: the working tree is dirty. "
                 f"Commit or remove these paths first: {shown}{more}"
             )
 
@@ -420,7 +423,7 @@ def create_lock(
         "refute_version": refute.__version__,
         "python_version": sys.version.split()[0],
     }
-    if loaded.claim.kind != "calibration" and dirty_paths:
+    if loaded.claim.kind not in clean_kinds and dirty_paths:
         lock["warning"] = "locked from a dirty working tree"
 
     if not history_file.exists():

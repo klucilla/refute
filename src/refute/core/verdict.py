@@ -130,6 +130,98 @@ def enforce_coverage(results: Sequence[TestResult]) -> list[TestResult]:
     return out
 
 
+class Role(enum.StrEnum):
+    """The role of a test in a claim that declares roles (v0.4, issue #174).
+
+    A *decisive* test enters the verdict through :func:`aggregate`. A *diagnostic* test is
+    measured and reported, never aggregated: it cannot change the verdict.
+    """
+
+    DECISIVE = "decisive"
+    DIAGNOSTIC = "diagnostic"
+
+
+NOT_RUN_AT_STAGE = "not run at this stage"
+
+
+def defer_tests(
+    results: Sequence[TestResult], stages: dict[str, int], stage: int
+) -> tuple[list[TestResult], list[str]]:
+    """Replace every result whose declared stage is later than ``stage`` by an INCONCLUSIVE
+    with zero coverage and the reason ``NOT_RUN_AT_STAGE`` (never a PASS). The severity is
+    kept. Returns the results and the names of the deferred tests."""
+    out, deferred = [], []
+    for result in results:
+        needed = int(stages.get(result.name, 1))
+        if needed > stage:
+            deferred.append(result.name)
+            result = TestResult(
+                result.name,
+                TestStatus.INCONCLUSIVE,
+                result.severity,
+                f"{NOT_RUN_AT_STAGE} (stage {stage}; this test runs at stage {needed})",
+                coverage=0,
+                coverage_unit=result.coverage_unit,
+            )
+        out.append(result)
+    return out, deferred
+
+
+DIAGNOSTIC_STATES = {
+    TestStatus.PASS: "pass",
+    TestStatus.FAIL: "fail",
+    TestStatus.INCONCLUSIVE: "inconclusive",
+}
+
+
+def diagnostic_state(result: TestResult | None) -> str:
+    """``pass`` / ``fail`` / ``inconclusive`` for a diagnostic result, ``not_run`` for none.
+    The names are deliberately not ``confirmed`` or ``contradicted``."""
+    return "not_run" if result is None else DIAGNOSTIC_STATES[result.status]
+
+
+@dataclass
+class RoleAggregate:
+    """The verdict of a claim with roles, and what the diagnostics showed."""
+
+    verdict: DiscoveryVerdict
+    reason: str
+    decisive: list[TestResult]
+    diagnostics: dict[str, TestResult | None]
+    missing_diagnostics: list[str]
+
+    @property
+    def diagnostics_complete(self) -> bool:
+        return not self.missing_diagnostics
+
+
+def aggregate_roles(
+    results: Sequence[TestResult],
+    roles: dict[str, str],
+    expected_decisive: Sequence[str],
+    required_diagnostics: Sequence[str],
+) -> RoleAggregate:
+    """The verdict from the decisive tests only, with the rules of :func:`aggregate` unchanged.
+
+    Every result needs a declared role. Diagnostics are returned apart (after the coverage
+    rule, so a diagnostic that examined nothing is INCONCLUSIVE, never PASS) and never reach
+    :func:`aggregate`. A required diagnostic absent from ``results`` is listed in
+    ``missing_diagnostics`` (the case is then incomplete); the verdict does not change.
+    """
+    results = enforce_coverage(results)
+    unknown = sorted({r.name for r in results} - set(roles))
+    if unknown:
+        raise ValueError("results without a declared role: " + ", ".join(unknown))
+    decisive = [r for r in results if Role(roles[r.name]) is Role.DECISIVE]
+    by_name = {r.name: r for r in results if Role(roles[r.name]) is Role.DIAGNOSTIC}
+    verdict, reason = aggregate(decisive, expected=expected_decisive)
+    diagnostics = {name: by_name.get(name) for name in required_diagnostics}
+    for name, result in by_name.items():
+        diagnostics.setdefault(name, result)
+    missing = [name for name in required_diagnostics if by_name.get(name) is None]
+    return RoleAggregate(verdict, reason, decisive, diagnostics, missing)
+
+
 def aggregate(
     results: Sequence[TestResult], expected: Sequence[str] | None = None
 ) -> tuple[DiscoveryVerdict, str]:

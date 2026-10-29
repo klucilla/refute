@@ -624,6 +624,41 @@ def fast_plan_dict() -> dict:
     return {"search": dict(FAST_SEARCH)}
 
 
+V04_SURVIVED_MEANING = (
+    "the signal survived the declared decisive battery; temporal confirmation was not "
+    "required; the method is not validated"
+)
+
+
+def discovery_section(catalogs: bool = False) -> dict:
+    """The v0.4 roles of the pilot protocol (issue #174): the v0.2 battery decisive, the
+    holdout a required diagnostic, the pixel tests at stage 2."""
+    names = [
+        "snr",
+        "odd_even",
+        "secondary_eclipse",
+        "plausibility",
+        "centroid_shift",
+        "aperture_depth",
+        "nearby_contamination",
+        "period_alias",
+        "systematics",
+        *(["eb_catalog"] if catalogs else []),
+    ]
+    return {
+        "decisive": names,
+        "diagnostic": ["holdout_by_year"],
+        "stages": {"centroid_shift": 2, "aperture_depth": 2},
+        "required_diagnostics": ["holdout_by_year"],
+        "survived_meaning": V04_SURVIVED_MEANING,
+    }
+
+
+def discovery_plan_dict(catalogs: bool = False) -> dict:
+    """The fast test plan with the v0.4 discovery section."""
+    return {**fast_plan_dict(), "discovery": discovery_section(catalogs)}
+
+
 NOISE_MODES = ("white", "correlated")
 # v0.2.1: the correlated profile of the suite, the AR(1) of the population harness, added
 # to each scenario's white noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md).

@@ -8,7 +8,14 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_serializer,
+    model_validator,
+)
 
 
 class _Model(BaseModel):
@@ -264,11 +271,118 @@ class GauntletParams(_Model):
     corrections: CorrectionsParams = Field(default_factory=CorrectionsParams)
 
 
+# v0.4 (issue #174): every test a TESS analysis can contain, in the order of expected_tests.
+DISCOVERY_TESTS = (
+    "snr",
+    "odd_even",
+    "secondary_eclipse",
+    "plausibility",
+    "centroid_shift",
+    "aperture_depth",
+    "nearby_contamination",
+    "period_alias",
+    "systematics",
+    "eb_catalog",
+    "holdout_by_year",
+)
+GATE_TEST = "snr"
+METHOD_STATUS_REFERENCE = "docs/validation/v0.2.1/closing-2026-10-27.md"
+
+
+class DiscoveryParams(_Model):
+    """The v0.4 section of a discovery claim's test plan (issue #174).
+
+    It exists only in claims of kind ``discover``: a test plan without it resolves exactly as
+    before (``TessTestPlan`` leaves the key out), so the resolved hash of every earlier claim
+    is unchanged (issue #30).
+
+    - ``decisive`` and ``diagnostic``: the role of every test the analysis contains, as two
+      lists, so a test given both roles is caught. The verdict aggregates the decisive tests
+      only.
+    - ``stages``: the stage at which a test runs (1 or 2; 1 when not listed). In a run of an
+      earlier stage the test is reported INCONCLUSIVE with zero coverage, never PASS.
+    - ``required_diagnostics``: diagnostics whose absence makes the case incomplete.
+    - ``method_status``: always ``not_validated`` in v0.4, with its reference.
+    - ``survived_meaning``: what SURVIVED means in this claim, fixed before the lock.
+    - ``inputs``: SHA-256 of the files the claim depends on outside the code (protocol,
+      frame, catalog snapshots). They are part of the resolved claim, so the lock covers
+      them; the selection and promotion steps check their files against them.
+    """
+
+    version: Literal[1] = 1
+    decisive: list[str] = Field(min_length=1)
+    diagnostic: list[str] = Field(default_factory=list)
+    stages: dict[str, Literal[1, 2]] = Field(default_factory=dict)
+    required_diagnostics: list[str] = Field(default_factory=list)
+    method_status: Literal["not_validated"] = "not_validated"
+    method_status_reference: str = METHOD_STATUS_REFERENCE
+    survived_meaning: str = Field(min_length=1)
+    inputs: dict[str, str] = Field(default_factory=dict)
+    # S_max (protocol D-9): no product of a later sector is downloaded or read.
+    max_sector: int | None = Field(None, ge=1)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> DiscoveryParams:
+        for label, names in (("decisive", self.decisive), ("diagnostic", self.diagnostic)):
+            if len(set(names)) != len(names):
+                raise ValueError(f"the {label} list names a test twice")
+        both = sorted(set(self.decisive) & set(self.diagnostic))
+        if both:
+            raise ValueError("a test cannot be both decisive and diagnostic: " + ", ".join(both))
+        unknown = sorted(set(self.roles) - set(DISCOVERY_TESTS))
+        if unknown:
+            raise ValueError("roles name unknown tests: " + ", ".join(unknown))
+        if self.roles.get(GATE_TEST) != "decisive":
+            raise ValueError(f"the gate test '{GATE_TEST}' must have the role 'decisive'")
+        if int(self.stages.get(GATE_TEST, 1)) != 1:
+            raise ValueError(f"the gate test '{GATE_TEST}' must run at stage 1")
+        unstaged = sorted(set(self.stages) - set(self.roles))
+        if unstaged:
+            raise ValueError("stages name tests without a role: " + ", ".join(unstaged))
+        for name in self.required_diagnostics:
+            if name not in self.roles:
+                raise ValueError(f"required diagnostic '{name}' is not among the claim's tests")
+            if self.roles[name] != "diagnostic":
+                raise ValueError(
+                    f"required diagnostic '{name}' does not have the role 'diagnostic'"
+                )
+        if len(set(self.required_diagnostics)) != len(self.required_diagnostics):
+            raise ValueError("required_diagnostics lists a test twice")
+        for name, digest in self.inputs.items():
+            if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+                raise ValueError(f"inputs.{name} must be a lowercase SHA-256 hex digest")
+        return self
+
+    @property
+    def roles(self) -> dict[str, str]:
+        """Test name -> ``decisive`` or ``diagnostic``."""
+        return {
+            **{name: "decisive" for name in self.decisive},
+            **{name: "diagnostic" for name in self.diagnostic},
+        }
+
+    def stage_of(self, name: str) -> int:
+        return int(self.stages.get(name, 1))
+
+    @property
+    def last_stage(self) -> int:
+        return max([1, *(int(s) for s in self.stages.values())])
+
+
 class TessTestPlan(_Model):
     data: DataParams = Field(default_factory=DataParams)
     detrend: DetrendParams = Field(default_factory=DetrendParams)
     search: SearchParams = Field(default_factory=SearchParams)
     gauntlet: GauntletParams = Field(default_factory=GauntletParams)
+    discovery: DiscoveryParams | None = None
+
+    @model_serializer(mode="wrap")
+    def _without_absent_discovery(self, handler: Any) -> dict[str, Any]:
+        """A plan without the v0.4 section dumps exactly as before it existed (issue #30)."""
+        out = handler(self)
+        if out.get("discovery", 0) is None:
+            del out["discovery"]
+        return out
 
 
 class PublishedParams(_Model):
@@ -289,7 +403,8 @@ class TargetSource(_Model):
 class TessTarget(_Model):
     key: str = Field(pattern=r"^TIC-[0-9]+$")
     tic_id: int = Field(gt=0)
-    kind: Literal["planet", "false_positive", "development"]
+    # "exploration": a v0.4 funnel star (no TOI, CTOI or confirmed planet when selected).
+    kind: Literal["planet", "false_positive", "development", "exploration"]
     name: str | None = None
     published: PublishedParams = Field(default_factory=PublishedParams)
     source: TargetSource

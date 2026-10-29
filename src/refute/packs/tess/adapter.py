@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from datetime import UTC, datetime
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -310,6 +311,28 @@ def _matching(result: Any, tic_id: int) -> Any:
     return result
 
 
+def _up_to_sector(result: Any, max_sector: int | None) -> Any:
+    """Only the products of sectors up to ``max_sector`` (v0.4: S_max, frozen before the
+    selection); every product when there is no limit. A row whose sector cannot be read is
+    kept out when there is a limit."""
+    if max_sector is None:
+        return result
+    keep = []
+    for mission in result.table["mission"]:
+        match = re.search(r"Sector (\d+)", str(mission))
+        keep.append(bool(match) and int(match.group(1)) <= max_sector)
+    return result[np.asarray(keep, dtype=bool)]
+
+
+def _limits(plan: TessTestPlan) -> tuple[int | None, bool]:
+    """(the highest sector to use, whether pixel files are read) for a plan. Both apply to
+    discover claims only (a plan with a discovery section), so every earlier claim reads its
+    data as before."""
+    if plan.discovery is None:
+        return None, True
+    return plan.discovery.max_sector, plan.data.target_pixel_files
+
+
 def product_info(data: DataParams) -> dict[str, Any]:
     return {
         "product": "TESS SPOC 2-min light curve (LC FITS)",
@@ -330,6 +353,7 @@ class TessAdapter:
 
         plan = TessTestPlan.model_validate(test_plan)
         data = plan.data
+        max_sector, _ = _limits(plan)
         tic_id = int(target["tic_id"])
         download_dir = Path(cache_dir) / "lightkurve"
         download_dir.mkdir(parents=True, exist_ok=True)
@@ -340,6 +364,7 @@ class TessAdapter:
             ),
             tic_id,
         )
+        result = _up_to_sector(result, max_sector)
         if len(result) == 0:
             raise DataError(f"no {data.author} {data.exptime_seconds}-s light curves for {query}")
         files = []
@@ -357,6 +382,7 @@ class TessAdapter:
                 ),
                 tic_id,
             )
+            tpfs = _up_to_sector(tpfs, max_sector)
             tpf_table = tpfs.table
             for index in range(len(tpfs)):
                 row = tpf_table[index]
@@ -412,7 +438,13 @@ class TessAdapter:
         scan = load_scan(loaded.attachment_path(attachment))
         return prepare_external_snapshots(scan, Path(cache_dir), offline)
 
-    def load(self, target: dict[str, Any], test_plan: dict[str, Any], cache_dir: Path) -> TessData:
+    def load(
+        self,
+        target: dict[str, Any],
+        test_plan: dict[str, Any],
+        cache_dir: Path,
+        transform: Any = None,
+    ) -> TessData:
         plan = TessTestPlan.model_validate(test_plan)
         tic_id = int(target["tic_id"])
         path = manifest_path(cache_dir, tic_id)
@@ -430,14 +462,24 @@ class TessAdapter:
                 f"the cached manifest for TIC {tic_id} is of another target (tic_id "
                 f"{manifest.get('tic_id')!r}, target_key {manifest.get('target_key')!r})"
             )
-        return load_from_manifest(manifest, Path(cache_dir), plan.data)
+        max_sector, read_pixels = _limits(plan)
+        return load_from_manifest(
+            manifest, Path(cache_dir), plan.data, transform, max_sector, read_pixels
+        )
 
 
 # --- readers -------------------------------------------------------------------------
 
 
-def read_spoc_lightcurve(path: Path, bitmask: int) -> dict[str, Any]:
-    """Read a SPOC light-curve FITS file with astropy (see the module docstring)."""
+def read_spoc_lightcurve(
+    path: Path, bitmask: int, rotate_by: int | None = None, invert: bool = False
+) -> dict[str, Any]:
+    """Read a SPOC light-curve FITS file with astropy (see the module docstring).
+
+    v0.4 transformed curves (``refute.packs.tess.discover.transforms``): ``rotate_by`` rotates
+    every per-cadence column but the time on the raw grid, before the quality mask and the
+    momentum-dump extraction; ``invert`` reflects the normalized PDCSAP and SAP flux about
+    their medians. Without them the file is read as before."""
     from astropy.io import fits
 
     with fits.open(path, memmap=False) as hdul:
@@ -453,6 +495,11 @@ def read_spoc_lightcurve(path: Path, bitmask: int) -> dict[str, Any]:
         crowd = _float_or_none(header1.get("CROWDSAP"))
         flfrc = _float_or_none(header1.get("FLFRCSAP"))
         camera, ccd = header0.get("CAMERA"), header0.get("CCD")
+    raw_time = time.copy()
+    if rotate_by:
+        flux, err, quality = (np.roll(a, rotate_by) for a in (flux, err, quality))
+        sap = np.roll(sap, rotate_by) if sap is not None else None
+        bkg = np.roll(bkg, rotate_by) if bkg is not None else None
     dumps = time[((quality & MOMENTUM_DUMP_BIT) != 0) & np.isfinite(time)]
     keep = (quality & bitmask) == 0
     keep &= np.isfinite(time) & np.isfinite(flux) & np.isfinite(err)
@@ -474,6 +521,13 @@ def read_spoc_lightcurve(path: Path, bitmask: int) -> dict[str, Any]:
         sap_median = float(np.nanmedian(sap_k)) if sap_k.size else float("nan")
         out["sap_flux"] = sap_k / sap_median
         out["sap_bkg"] = bkg_k / sap_median
+    if invert:
+        # both normalized fluxes have median 1 over the kept cadences: reflect about it
+        out["flux"] = 2.0 - out["flux"]
+        if out["sap_flux"] is not None:
+            out["sap_flux"] = 2.0 - out["sap_flux"]
+    if rotate_by is not None:
+        out["raw_time"] = raw_time
     return out
 
 
@@ -500,8 +554,19 @@ def _target_xy(hdul: Any) -> tuple[float, float] | None:
     return float(x), float(y)
 
 
-def read_spoc_tpf(path: Path, bitmask: int) -> dict[str, Any]:
-    """Read a SPOC target pixel file with astropy: flux cube, aperture and target position."""
+def read_spoc_tpf(
+    path: Path,
+    bitmask: int,
+    rotate_by: int | None = None,
+    reference_raw_time: np.ndarray | None = None,
+    invert: bool = False,
+) -> dict[str, Any]:
+    """Read a SPOC target pixel file with astropy: flux cube, aperture and target position.
+
+    v0.4 transformed curves: ``rotate_by`` rotates the flux, error and quality cadences on the
+    raw grid, before the mask; it needs the light curve's raw time grid
+    (``reference_raw_time``) to be the same, otherwise the file cannot be aligned and reading
+    fails. ``invert`` reflects each pixel's flux about its own median."""
     from astropy.io import fits
 
     with fits.open(path, memmap=False) as hdul:
@@ -512,11 +577,31 @@ def read_spoc_tpf(path: Path, bitmask: int) -> dict[str, Any]:
         quality = np.asarray(table["QUALITY"], dtype=np.int64)
         aperture = (np.asarray(hdul[2].data, dtype=np.int64) & APERTURE_OPTIMAL_BIT) != 0
         target = _target_xy(hdul)
+    if rotate_by:
+        same = (
+            reference_raw_time is not None
+            and reference_raw_time.shape == time.shape
+            and bool(
+                np.all(
+                    (np.isnan(reference_raw_time) & np.isnan(time))
+                    | (np.abs(reference_raw_time - time) <= CADENCE_MATCH_DAYS)
+                )
+            )
+        )
+        if not same:
+            raise DataError(
+                f"{path.name}: the pixel file's raw cadence grid differs from the light curve's; "
+                "it cannot be rotated with it"
+            )
+        flux, err, quality = (np.roll(a, rotate_by, axis=0) for a in (flux, err, quality))
     keep = ((quality & bitmask) == 0) & np.isfinite(time)
     keep &= np.isfinite(flux).reshape(flux.shape[0], -1).any(axis=1)
+    kept = flux[keep]
+    if invert:
+        kept = 2.0 * np.nanmedian(kept, axis=0)[np.newaxis, ...] - kept
     return {
         "time": time[keep],
-        "flux": flux[keep],
+        "flux": kept,
         "flux_err": err[keep],
         "aperture": aperture,
         "target_xy": target,
@@ -565,15 +650,62 @@ def _verified(record: dict[str, Any], cache_dir: Path) -> Path:
     return path
 
 
-def load_from_manifest(manifest: dict[str, Any], cache_dir: Path, data: DataParams) -> TessData:
-    times, fluxes, errors, sectors, years, infos = [], [], [], [], [], []
-    aux_sectors: list[SectorAux] = []
+def raw_lengths(manifest: dict[str, Any], cache_dir: Path) -> dict[int, int]:
+    """The number of raw cadences of each sector's light-curve file (v0.4 rotations)."""
+    from astropy.io import fits
+
+    out = {}
     for record in manifest["files"]:
         path = _verified(record, cache_dir)
         if record["format"] == "spoc-fits":
-            read = read_spoc_lightcurve(path, _bitmask(manifest, data))
+            with fits.open(path, memmap=False) as hdul:
+                n = int(hdul[1].header["NAXIS2"])
+        elif record["format"] == "synthetic-npz":
+            n = int(_read_npz(path)["time"].size)
+        else:
+            raise DataError(f"unknown file format {record['format']}")
+        out[int(record["sector"])] = n
+    return out
+
+
+def _transform_args(transform: Any, sector: int) -> tuple[int | None, bool]:
+    """(rotate_by, invert) for one sector of a v0.4 transformation (None: no transformation)."""
+    if transform is None:
+        return None, False
+    if transform.kind == "invert":
+        return None, True
+    return int(transform.offsets.get(sector, 0)), False
+
+
+def load_from_manifest(
+    manifest: dict[str, Any],
+    cache_dir: Path,
+    data: DataParams,
+    transform: Any = None,
+    max_sector: int | None = None,
+    read_pixels: bool = True,
+) -> TessData:
+    """The cached data of one target. v0.4 discover claims only: ``transform``
+    (``refute.packs.tess.discover.transforms.Transform``) is applied while reading; files of
+    sectors after ``max_sector`` are not read; ``read_pixels=False`` reads no pixel file."""
+    times, fluxes, errors, sectors, years, infos = [], [], [], [], [], []
+    aux_sectors: list[SectorAux] = []
+    raw_times: dict[int, np.ndarray] = {}
+    records = [r for r in manifest["files"] if max_sector is None or int(r["sector"]) <= max_sector]
+    for record in records:
+        path = _verified(record, cache_dir)
+        rotate_by, invert = _transform_args(transform, int(record["sector"]))
+        if record["format"] == "spoc-fits":
+            read = read_spoc_lightcurve(path, _bitmask(manifest, data), rotate_by, invert)
+            if rotate_by is not None:
+                raw_times[int(record["sector"])] = read["raw_time"]
         elif record["format"] == "synthetic-npz":
             read = _read_npz(path)
+            if rotate_by:
+                read["flux"] = np.roll(read["flux"], rotate_by)
+                read["flux_err"] = np.roll(read["flux_err"], rotate_by)
+            if invert:
+                read["flux"] = 2.0 * float(np.nanmedian(read["flux"])) - read["flux"]
         else:
             raise DataError(f"unknown file format {record['format']}")
         t, f, e = read["time"], read["flux"], read["flux_err"]
@@ -619,12 +751,22 @@ def load_from_manifest(manifest: dict[str, Any], cache_dir: Path, data: DataPara
         raise DataError("no usable cadences in the cached light curves")
 
     pixels: list[PixelData] = []
-    for record in manifest.get("pixel_files", []):
+    # v0.4 funnel stage 1: no pixel file is read, even if the cache holds them; and no file of a
+    # sector after S_max (both for discover claims only, see ``_limits``).
+    pixel_records = [
+        r
+        for r in (manifest.get("pixel_files", []) if read_pixels else [])
+        if max_sector is None or int(r["sector"]) <= max_sector
+    ]
+    for record in pixel_records:
         path = _verified(record, cache_dir)
         if record["format"] != "spoc-tpf":
             raise DataError(f"unknown pixel file format {record['format']}")
-        read = read_spoc_tpf(path, _bitmask(manifest, data))
         sector = int(record["sector"])
+        rotate_by, invert = _transform_args(transform, sector)
+        read = read_spoc_tpf(
+            path, _bitmask(manifest, data), rotate_by, raw_times.get(sector), invert
+        )
         lc_times = [t for t, s in zip(times, sectors, strict=True) if int(s[0]) == sector]
         keep = matching_cadences(lc_times[0] if lc_times else np.zeros(0), read["time"])
         pixels.append(

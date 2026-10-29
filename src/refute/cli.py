@@ -109,6 +109,14 @@ def fetch_command(
         list[str] | None, typer.Option("--target", help="Only this target (repeatable).")
     ] = None,
     cache_dir: Annotated[Path | None, typer.Option("--cache-dir")] = None,
+    stage: Annotated[
+        int | None,
+        typer.Option("--stage", help="Discover claims: the funnel stage whose data to fetch."),
+    ] = None,
+    promotion: Annotated[
+        Path | None,
+        typer.Option("--promotion", help="Discover claims, stage 2: the promotion record."),
+    ] = None,
 ) -> None:
     """Download and cache the public data of a claim's targets (network)."""
     from refute.core.run import (
@@ -131,7 +139,18 @@ def fetch_command(
     if missing:
         typer.echo(f"unknown target(s): {', '.join(missing)}", err=True)
         raise typer.Exit(1)
-    from refute.core.run import RunOutcome, prepare_claim_data
+    from refute.core.run import RunOutcome, _discover_stage, prepare_claim_data
+
+    test_plan = loaded.claim.test_plan
+    mode = "discover" if loaded.claim.kind == "discover" else loaded.claim.kind
+    # v0.4: stage 1 of the funnel downloads no target pixel file, and stage 2 downloads them
+    # only for controls and promoted stars (decision D12); the same checks as a run.
+    staging = _discover_stage(loaded, mode, stage, promotion, selected)
+    if isinstance(staging, RunOutcome):
+        typer.echo(staging.messages[0], err=True)
+        raise typer.Exit(1)
+    if staging is not None:
+        test_plan = loaded.pack.schema.plan_for_stage(test_plan, staging["stage"])
 
     cache = cache_dir or default_cache_dir()
     prepared = prepare_claim_data(loaded.pack, loaded, cache, offline=False)
@@ -143,7 +162,7 @@ def fetch_command(
     failures = 0
     for item in selected:
         key = loaded.pack.schema.target_key(item)
-        error = _fetch_one((loaded.pack, item, loaded.claim.test_plan, cache))
+        error = _fetch_one((loaded.pack, item, test_plan, cache))
         typer.echo(f"{key}: {'ok' if error is None else 'FAILED ' + error}")
         failures += error is not None
     raise typer.Exit(1 if failures else 0)
@@ -158,6 +177,8 @@ def _run(
     offline: bool,
     run_id: str | None,
     cache_dir: Path | None,
+    stage: int | None = None,
+    promotion: Path | None = None,
 ) -> None:
     from refute.core.run import execute_run
 
@@ -173,6 +194,8 @@ def _run(
         offline=offline,
         run_id=run_id,
         cache_dir=cache_dir,
+        stage=stage,
+        promotion=promotion,
     )
     for message in outcome.messages:
         _echo_safely(message, err=outcome.exit_code != 0)
@@ -241,6 +264,25 @@ def calibrate_command(
 ) -> None:
     """Run the locked calibration claim on every calibration target."""
     _run("calibrate", claim, target, out, workers, offline, run_id, cache_dir)
+
+
+@app.command("discover")
+def discover_command(
+    claim: Annotated[Path, typer.Argument(help="Path to a locked discover claim.")],
+    stage: Annotated[int, typer.Option("--stage", help="Funnel stage: 1 or 2.")],
+    promotion: Annotated[
+        Path | None,
+        typer.Option("--promotion", help="Committed promotion record (stage 2 of funnel stars)."),
+    ] = None,
+    target: TargetOpt = None,
+    out: OutOpt = Path("dossiers"),
+    workers: WorkersOpt = None,
+    offline: OfflineOpt = False,
+    run_id: RunIdOpt = None,
+    cache_dir: CacheOpt = None,
+) -> None:
+    """Search the claim's targets for a signal, then attack it (v0.4 funnel stages)."""
+    _run("discover", claim, target, out, workers, offline, run_id, cache_dir, stage, promotion)
 
 
 @app.command("check-dossier")

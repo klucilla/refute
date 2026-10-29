@@ -9,6 +9,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import time
 import traceback
 from dataclasses import dataclass, field
@@ -59,6 +61,10 @@ def reproduce_markdown(task: TargetTask) -> str:
     mode = ctx["mode"]
     claim_ref = ctx.get("claim_path_in_repo") or task.claim_filename
     claim_arg = f"--claim {claim_ref}" if mode == "calibrate" else claim_ref
+    if mode == "discover":
+        claim_arg += f" --stage {ctx['stage']}"
+        if ctx.get("promotion_record"):
+            claim_arg += f" --promotion {ctx['promotion_record']}"
     run_commit = ctx.get("run_git_commit")
     checkout = (
         f"git checkout {run_commit}"
@@ -209,8 +215,12 @@ def execute_run(
     run_id: str | None = None,
     cache_dir: Path | str | None = None,
     code_root: Path | None = None,
+    stage: int | None = None,
+    promotion: Path | str | None = None,
 ) -> RunOutcome:
-    """Verify, fetch, analyze and summarize. ``mode`` is ``replicate`` or ``calibrate``."""
+    """Verify, fetch, analyze and summarize. ``mode`` is ``replicate``, ``calibrate`` or
+    ``discover`` (v0.4; ``stage`` is then required, and ``promotion`` names the committed
+    promotion record that a run of a later stage needs for every non-control target)."""
     started = datetime.now(UTC).isoformat(timespec="seconds")
     claim_file = Path(claim_path).resolve()
 
@@ -225,7 +235,9 @@ def execute_run(
     except ClaimError as exc:
         return RunOutcome(exit_code=1, messages=[str(exc)])
 
-    expected_kind = {"calibrate": "calibration", "replicate": "replicate"}[mode]
+    expected_kind = {"calibrate": "calibration", "replicate": "replicate", "discover": "discover"}[
+        mode
+    ]
     if loaded.claim.kind != expected_kind:
         return RunOutcome(
             exit_code=1,
@@ -243,6 +255,9 @@ def execute_run(
         return RunOutcome(exit_code=1, messages=[f"unknown target(s): {', '.join(missing)}"])
     if not selected:
         return RunOutcome(exit_code=1, messages=["the claim has no targets to run"])
+    staging = _discover_stage(loaded, mode, stage, promotion, selected, offline)
+    if isinstance(staging, RunOutcome):
+        return staging
 
     lock = integrity.lock or {}
     claim_sha = lock["claim_sha256"]
@@ -260,6 +275,10 @@ def execute_run(
 
     pack = loaded.pack
     test_plan = loaded.claim.test_plan
+    plan_for_stage = getattr(pack.schema, "plan_for_stage", None)
+    if staging is not None and plan_for_stage is not None:
+        # v0.4: the plan this stage uses (stage 1 of the funnel reads no pixel file).
+        test_plan = plan_for_stage(test_plan, staging["stage"])
     cache = Path(cache_dir) if cache_dir is not None else default_cache_dir()
     cache.mkdir(parents=True, exist_ok=True)
     claim_data_messages = prepare_claim_data(pack, loaded, cache, offline)
@@ -301,6 +320,8 @@ def execute_run(
         "attachments": [{"path": a.path, "role": a.role} for a in loaded.claim.attachments],
         "cache_dir": str(cache),
     }
+    if staging is not None:
+        context.update(staging)
     attachments = tuple(
         (a.path, loaded.attachment_path(a).read_bytes()) for a in loaded.claim.attachments
     )
@@ -333,6 +354,9 @@ def execute_run(
     else:
         summary = _replicate_summary(loaded, results)
         summary_md = _replicate_summary_markdown(summary)
+    if staging is not None:
+        summary["stage"] = staging["stage"]
+        summary["promotion_sha256"] = staging.get("promotion_sha256")
     summary["run"] = {
         "run_id": run_name,
         "started_utc": started,
@@ -350,6 +374,74 @@ def execute_run(
     write_json(run_dir / "summary.json", summary)
     write_text(run_dir / "summary.md", summary_md + _run_footer(summary["run"]))
     return RunOutcome(exit_code=0, run_dir=run_dir, summary=summary, results=results)
+
+
+PROMOTION_SCHEMA = "refute-promotion-1"
+
+
+def _discover_stage(
+    loaded: LoadedClaim,
+    mode: str,
+    stage: int | None,
+    promotion: Path | str | None,
+    selected: list[dict[str, Any]],
+    offline: bool = False,
+) -> dict[str, Any] | RunOutcome | None:
+    """The stage of a discover run and its promotion record (v0.4), checked before anything
+    is downloaded; None for other modes. A run of a stage after the first needs a promotion
+    record listing every selected target that is not a control (``schema.is_control``); the
+    pack checks the record (``offline``: without any network query)."""
+    if mode != "discover":
+        if stage is not None or promotion is not None:
+            return RunOutcome(exit_code=1, messages=["--stage and --promotion are for discover"])
+        return None
+    if stage not in (1, 2):
+        return RunOutcome(exit_code=1, messages=["`refute discover` needs --stage 1 or 2"])
+    record: dict[str, Any] = {"stage": stage, "promotion_sha256": None}
+    if stage == 1:
+        if promotion is not None:
+            return RunOutcome(exit_code=1, messages=["stage 1 takes no --promotion record"])
+        return record
+    schema = loaded.pack.schema
+    is_control = getattr(schema, "is_control", lambda _t: False)
+    needing = [schema.target_key(t) for t in selected if not is_control(t)]
+    if not needing:
+        return record
+    if promotion is None:
+        return RunOutcome(
+            exit_code=1,
+            messages=[
+                "a stage-2 run of non-control targets needs --promotion (the committed "
+                "promotion record): " + ", ".join(needing)
+            ],
+        )
+    path = Path(promotion)
+    try:
+        content = path.read_bytes()
+        data = json.loads(content.decode("utf-8"))
+    except (OSError, UnicodeDecodeError, ValueError) as exc:
+        return RunOutcome(exit_code=1, messages=[f"cannot read the promotion record: {exc}"])
+    if not isinstance(data, dict) or data.get("schema") != PROMOTION_SCHEMA:
+        return RunOutcome(exit_code=1, messages=[f"the promotion record is not {PROMOTION_SCHEMA}"])
+    if data.get("claim_id") != loaded.claim.id:
+        return RunOutcome(exit_code=1, messages=["the promotion record is for another claim"])
+    # The pack recomputes the record from its own content (the entries, the cap, the draw), so a
+    # list that the protocol would not produce is refused.
+    verify = getattr(schema, "verify_promotion", None)
+    problems = verify(data, loaded, offline=offline) if verify is not None else []
+    if problems:
+        return RunOutcome(
+            exit_code=1, messages=["the promotion record does not verify: " + "; ".join(problems)]
+        )
+    promoted = {str(k) for k in data.get("promoted") or []}
+    absent = [k for k in needing if k not in promoted]
+    if absent:
+        return RunOutcome(
+            exit_code=1, messages=["not promoted, so not run at stage 2: " + ", ".join(absent)]
+        )
+    record["promotion_sha256"] = hashlib.sha256(content).hexdigest()
+    record["promotion_record"] = Path(promotion).as_posix()
+    return record
 
 
 def prepare_claim_data(
