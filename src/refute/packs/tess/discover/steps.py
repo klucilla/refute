@@ -1,6 +1,6 @@
 """The three steps of the v0.4 selection (calibration/v0.4/PROTOCOL.md, sections 4 and 12), so
-that every line they execute is inside the lock's code hash; ``calibration/v0.4/select.py`` only
-parses its arguments and calls these.
+that every line they execute is inside the lock's code hash;
+``calibration/v0.4/run_selection.py`` only parses its arguments and calls these.
 
 - ``freeze_step``: download the frozen inputs once (before the protocol commit), copy the small
   ones into the repository and write ``inputs.json``.
@@ -36,7 +36,7 @@ BOUND_PATHS = (
     "pyproject.toml",
     "uv.lock",
     "calibration/v0.4/PROTOCOL.md",
-    "calibration/v0.4/select.py",
+    "calibration/v0.4/run_selection.py",
     "calibration/v0.4/inputs.json",
     "calibration/v0.4/inputs",
     "calibration/targets.yaml",
@@ -361,10 +361,13 @@ def promotion_problems(
         created = provenance.get("push_run_created_at")
         if not created:
             return [*problems, "a draw needs the results commit's push run time in the record"]
-        if not offline:
-            live = (push_run or pilot.push_run_created_at)(commit)
-            if live != created:
-                return [*problems, "the recorded push run time is not the GitHub API's"]
+        if offline:
+            # the recorded time is the record's own claim; only the GitHub API can show that
+            # the round followed the results commit, so a draw is never accepted offline
+            return [*problems, "the origin of R_prom cannot be verified offline; run online"]
+        live = (push_run or pilot.push_run_created_at)(commit)
+        if live != created:
+            return [*problems, "the recorded push run time is not the GitHub API's"]
         expected_round = round_after(str(created))
     return problems + funnel.verify_promotion(
         record,

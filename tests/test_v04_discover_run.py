@@ -312,7 +312,7 @@ def test_a_decision_its_costs_do_not_give_is_refused(git_repo):
     assert any("recorded costs" in p for p in problems)
 
 
-def test_a_draw_offline_uses_the_recorded_push_run_and_makes_no_query(promoted, monkeypatch):
+def test_a_draw_is_never_accepted_offline_and_online_needs_the_api_time(promoted, monkeypatch):
     from refute.packs.tess.discover import runs, steps
 
     claim, cache, record = promoted
@@ -332,10 +332,13 @@ def test_a_draw_offline_uses_the_recorded_push_run_and_makes_no_query(promoted, 
     problems = steps.promotion_problems(record, *args, offline=True, push_run=no_network)
     assert any("push run time" in p for p in problems)
     recorded = {**record["provenance"], "push_run_created_at": "2026-11-20T10:00:00Z"}
-    problems = steps.promotion_problems(
-        {**record, "provenance": recorded}, *args, offline=True, push_run=no_network
+    with_time = {**record, "provenance": recorded}
+    problems = steps.promotion_problems(with_time, *args, offline=True, push_run=no_network)
+    assert any("cannot be verified offline" in p for p in problems)
+    other = steps.promotion_problems(
+        with_time, *args, offline=False, push_run=lambda _c: "2026-11-20T11:00:00Z"
     )
-    assert not any("push run" in p for p in problems)
+    assert any("not the GitHub API's" in p for p in other)
 
 
 @pytest.mark.parametrize(

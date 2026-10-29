@@ -1,6 +1,7 @@
 """The steps of the v0.4 pilot that touch the network (protocol sections 4.0 and 4.2 to 4.4):
 freezing the frame and the catalogs before the selection round, and the live per-star queries
-of the walk. ``calibration/v0.4/select.py`` calls these; every value comes from ``protocol.py``.
+of the walk. ``calibration/v0.4/run_selection.py`` calls these (through ``steps.py``); every
+value comes from ``protocol.py``.
 
 Frozen inputs (before the protocol commit): the target lists page and the all-targets lists of
 sectors 1 to ``S_max``, the frame built from them, the TOI, CTOI and ``pscomppars`` tables, the
@@ -82,7 +83,23 @@ def freeze(
 ) -> dict[str, Any]:
     """Download every frozen input once into ``out_dir`` and write ``inputs.json``. Without
     ``s_max`` it is found from MAST (``latest_spoc_sector``), below the highest sector on the
-    page. The Gaia EB snapshot must have its recorded SHA-256, or the freeze stops."""
+    page. The Gaia EB snapshot must have its recorded SHA-256, or the freeze stops. Every
+    download retries a transient failure (a timeout, a connection error, an HTTP 5xx answer)
+    with the protocol's policy (``sel.policy``); when the retries are exhausted the freeze
+    stops."""
+    import time
+
+    from refute.selection.walk import transient_query, with_retries
+
+    raw_fetch = fetch
+
+    def fetch(url: str) -> bytes:  # noqa: F811 - the retried download
+        return with_retries(
+            lambda: transient_query(lambda: sel.transient(lambda: raw_fetch(url), url), url),
+            sel.policy(),
+            time.sleep,
+        )[0]
+
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     records = []

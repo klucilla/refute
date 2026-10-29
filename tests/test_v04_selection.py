@@ -525,3 +525,16 @@ def test_the_catalog_indexes_check_the_snapshot_hashes(tmp_path):
         pilot.catalog_indexes(inputs_dir, inputs)
     with pytest.raises(sel.SelectionError, match="no recorded"):
         pilot.catalog_indexes(inputs_dir, {"files": []})
+
+
+def test_the_page_links_its_lists_relatively():
+    page = (
+        '<a href="2m/all_targets_S110_v1.csv">csv</a><a href="2m/all_targets_S111_v1.csv">c</a>'
+        '<a href="20s/all_targets_20s_S111_v1.csv">x</a><a href="2m/GI_targets_S111_v1.csv">g</a>'
+    )
+    assert pilot.highest_listed_sector(page) == 111
+    with pytest.raises(sel.SelectionError, match="sector 1"):
+        sel.list_urls(page, 111)
+    relative = "".join(f'<a href="2m/all_targets_S{s:03d}_v1.csv">c</a>' for s in (1, 2))
+    urls = sel.list_urls(relative, 2)
+    assert urls[2] == "https://tess.mit.edu/public/target_lists/2m/all_targets_S002_v1.csv"

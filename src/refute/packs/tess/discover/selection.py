@@ -28,7 +28,9 @@ from refute.selection.walk import RetriesExhaustedError, RetryPolicy, TransientE
 
 # --- the frame -------------------------------------------------------------------------------
 
-TARGET_LIST_LINK = re.compile(r"target_lists/2m/(all_targets_S(\d{3})_v(\d+)\.csv)")
+# The page links its lists relatively ("2m/all_targets_S111_v1.csv", read on 2026-10-29); an
+# absolute link to the same folder matches as well.
+TARGET_LIST_LINK = re.compile(r"\b2m/(all_targets_S(\d{3})_v(\d+)\.csv)")
 TARGET_LIST_BASE = "https://tess.mit.edu/public/target_lists/2m/"
 TARGET_LIST_HEADER = ["TICID", "Camera", "CCD", "Tmag", "RA", "Dec"]
 
