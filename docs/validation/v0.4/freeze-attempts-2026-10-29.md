@@ -76,3 +76,27 @@ The Gaia DR3 EB input never depended on VizieR: the freeze takes it from the ass
 v0.2.0 (the complete table queried from the ESA archive on 2026-10-08 and 2026-10-09,
 `calibration/v0.2/eb_snapshot/`); attempt 4 stopped before that step. A change of its source is
 the maintainer's decision.
+
+## The maintainer's decision (2026-10-30): the Gaia DR3 EB asset of v0.2.0
+
+The Gaia DR3 EB input stays the release asset of v0.2.0, as the freeze already planned
+(`pilot.GAIA_EB_URL`). A query of the ESA archive restricted to the frame stars had been proposed
+on 2026-10-29 on the wrong premise that the Gaia input depended on VizieR; it is not adopted, and
+its code is not committed. The freeze checks the asset against its SHA-256
+(`5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df`) and its shape (one header
+`source_id,ra,dec,frequency`, LF endings, no empty line, 2184477 data rows, the record of
+`calibration/v0.2/eb_snapshot/retrieval.json`) before use; a refused asset is kept under
+`rejected/` in its attempt folder.
+
+## Attempt 5 (2026-10-30)
+
+| # | Started (UTC) | What happened | Files left |
+|---|---|---|---|
+| 5 | 10:49:57 | the target lists page answered HTTP 502 on all 5 attempts, 120 s apart (10:50:00 to 10:58:13); stopped before any file | `.cache/v04/inputs-attempts/attempt-05/attempt.jsonl` only |
+
+Checked right after, headers only (10:58 UTC): `https://tess.mit.edu/` answered 200, while
+`https://tess.mit.edu/public/target_lists/`, the page and the lists of sectors 1 and 107
+answered 502; ExoFOP and the Gaia asset answered 200. No cause is established here. A bounded
+wait followed: a header check every 10 minutes for at most 60 minutes, and exactly one new
+attempt if the page answered 200. The page answered 502 at each of the 6 checks (10:59:11 to
+11:49:29 UTC), so no new attempt was made; the next one waits for the maintainer.
