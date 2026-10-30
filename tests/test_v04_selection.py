@@ -371,7 +371,61 @@ def test_the_freeze_checks_the_gaia_asset_hash(tmp_path):
             now=lambda: "2026-10-29T00:00:00Z",
             **_eb_kwargs(tmp_path),
         )
-    assert (tmp_path / "attempt" / "frame.csv").is_file()
+    attempt = tmp_path / "attempt"
+    assert (attempt / "frame.csv").is_file()
+    assert (attempt / "rejected" / "gaia_dr3_eb.csv").is_file()  # the refused bytes are kept
+    assert not (attempt / "gaia_dr3_eb.csv").exists() and not (attempt / "inputs.json").exists()
+    events = [json.loads(line) for line in (attempt / "attempt.jsonl").read_text().splitlines()]
+    assert events[-1]["event"] == "failure" and "SHA-256" in events[-1]["error"]
+
+
+def _fetch_with_gaia(gaia: bytes):
+    def fetch(url):
+        if url == pilot.GAIA_EB_URL:
+            return gaia
+        return _fake_fetch()(url)
+
+    return fetch
+
+
+def test_the_freeze_checks_the_gaia_asset_row_count(tmp_path, monkeypatch):
+    import hashlib
+
+    gaia = b"source_id,ra,dec,frequency\n1,0,0,1\n2,1,1,1\n"
+    monkeypatch.setattr(pilot, "GAIA_EB_SHA256", hashlib.sha256(gaia).hexdigest())
+    monkeypatch.setattr(pilot, "GAIA_EB_ROWS", 3)
+    with pytest.raises(sel.SelectionError, match="has 2 rows, not 3"):
+        pilot.freeze(
+            tmp_path / "attempt",
+            4,
+            fetch=_fetch_with_gaia(gaia),
+            sleep=lambda _s: None,
+            **_eb_kwargs(tmp_path),
+        )
+    assert (tmp_path / "attempt" / "rejected" / "gaia_dr3_eb.csv").read_bytes() == gaia
+
+
+@pytest.mark.parametrize(
+    ("data", "message"),
+    [
+        (b"source_id,ra,dec\n1,0,0\n", "header"),
+        (b"source_id,ra,dec,frequency\r\n1,0,0,1\r\n", "LF"),
+        (b"source_id,ra,dec,frequency\n1,0,0,1", "LF"),
+        (b"source_id,ra,dec,frequency\n1,0,0,1\n\n2,0,0,1\n", "empty line"),
+    ],
+)
+def test_the_gaia_asset_shape_is_checked(data, message):
+    with pytest.raises(sel.SelectionError, match=message):
+        pilot.gaia_asset_rows(data)
+
+
+def test_the_gaia_asset_constants_are_the_v02_record():
+    v02 = json.loads((ROOT / pilot.GAIA_EB_RECORD).read_text("utf-8"))
+    gaia = next(r for r in v02 if r["catalog_name"] == "Gaia-DR3-EB")
+    assert pilot.GAIA_EB_SHA256 == gaia["sha256"]
+    assert pilot.GAIA_EB_ROWS == gaia["rows"] == gaia["count"]
+    assert pilot.GAIA_EB_URL.endswith("/releases/download/v0.2.0/" + Path(gaia["file"]).name)
+    assert pilot.gaia_asset_rows(b"source_id,ra,dec,frequency\n1,0,0,1\n2,0,0,1\n") == 2
 
 
 def test_the_push_run_must_be_unique():
@@ -726,14 +780,12 @@ def test_a_complete_freeze_records_the_static_edition_and_keeps_it_out_of_git(
     monkeypatch.setattr(pilot, "TESS_EB_STATIC", _static_eb(root))
     gaia = b"source_id,ra,dec,frequency\n1,0,0,1\n"
     monkeypatch.setattr(pilot, "GAIA_EB_SHA256", hashlib.sha256(gaia).hexdigest())
-
-    def fetch(url):
-        if url == pilot.GAIA_EB_URL:
-            return gaia
-        return _fake_fetch()(url)
-
+    monkeypatch.setattr(pilot, "GAIA_EB_ROWS", 1)
     monkeypatch.setattr(steps, "exclusion_preview", lambda _root, _cache: {})
-    inputs = steps.freeze_step(root, s_max=4, fetch=fetch, sleep=lambda _s: None)
+    inputs = steps.freeze_step(root, s_max=4, fetch=_fetch_with_gaia(gaia), sleep=lambda _s: None)
+    asset = next(f for f in inputs["files"] if f["name"] == "gaia_dr3_eb.csv")
+    assert asset["url"] == pilot.GAIA_EB_URL and asset["rows"] == 1
+    assert asset["v02_record"] == pilot.GAIA_EB_RECORD and asset["in_git"] is True
     eb = next(f for f in inputs["files"] if f["name"] == "tess_eb.tsv")
     assert eb["in_git"] is False and eb["url"] == pilot.TESS_EB_URL
     assert eb["sha256"] == hashlib.sha256(STATIC_EB).hexdigest()

@@ -7,8 +7,9 @@ Frozen inputs (before the protocol commit): the target lists page and the all-ta
 sectors 1 to ``S_max``, the frame built from them, the TOI, CTOI and ``pscomppars`` tables, the
 TESS-EB table as a static edition (a local VizieR copy of 2026-10-18, checked against its raw and
 content SHA-256 before any download; never committed, #33) and the Gaia DR3 EB snapshot of v0.2
-(a release asset of v0.2.0, checked against its recorded SHA-256). Each file's URL, retrieval
-time, size and SHA-256 go into ``inputs.json``; a file above 5 MB is never committed (#172).
+(a release asset of v0.2.0, checked against its recorded SHA-256 and row count). Each file's URL,
+retrieval time, size and SHA-256 go into ``inputs.json``; a file above 5 MB is never committed
+(#172).
 """
 
 from __future__ import annotations
@@ -62,6 +63,11 @@ GAIA_EB_URL = (
     "https://github.com/klucilla/refute/releases/download/v0.2.0/gaia_dr3_vari_eclipsing_binary.csv"
 )
 GAIA_EB_SHA256 = "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df"
+# The v0.2 record of the asset (calibration/v0.2/eb_snapshot/retrieval.json): its header and its
+# data rows, equal to COUNT(*) of gaiadr3.vari_eclipsing_binary at download time (2026-10-09).
+GAIA_EB_HEADER = "source_id,ra,dec,frequency"
+GAIA_EB_ROWS = 2184477
+GAIA_EB_RECORD = "calibration/v0.2/eb_snapshot/retrieval.json"
 GIT_LIMIT_BYTES = 5 * 1000**2
 LF = "\n"
 USER_AGENT = "refute-discover/0.4"
@@ -115,6 +121,20 @@ def static_tess_eb(path: Path, expected: dict[str, Any]) -> bytes:
     return data
 
 
+def gaia_asset_rows(data: bytes) -> int:
+    """The data rows of the Gaia DR3 EB asset: one header (``GAIA_EB_HEADER``), LF endings,
+    no empty line; a different header or shape stops the freeze."""
+    text = data.decode("utf-8")
+    if "\r" in text or not text.endswith(LF):
+        raise sel.SelectionError("the Gaia DR3 EB asset is not LF-terminated text")
+    lines = text[:-1].split(LF)
+    if lines[0] != GAIA_EB_HEADER:
+        raise sel.SelectionError(f"unexpected Gaia DR3 EB header {lines[0]!r}")
+    if any(not line for line in lines[1:]):
+        raise sel.SelectionError("the Gaia DR3 EB asset has an empty line")
+    return len(lines) - 1
+
+
 def freeze(
     out_dir: Path,
     s_max: int | None = None,
@@ -131,7 +151,8 @@ def freeze(
     URL, time, size and SHA-256; a failure with every retry), so a failed attempt is documented
     too. Without ``s_max`` it is found from MAST (``latest_spoc_sector``). The TESS-EB static
     edition (``tess_eb_path``, checked against ``tess_eb``, by default ``TESS_EB_STATIC``) is
-    read and checked before any download; the Gaia EB snapshot must have its recorded SHA-256.
+    read and checked before any download; the Gaia EB snapshot must have its recorded SHA-256
+    and row count (a refused asset is kept under ``rejected/``, out of the inputs).
     Every download retries a transient failure (a timeout, a connection error, an HTTP 5xx
     answer) with the protocol's policy (``sel.policy``); when the retries are exhausted the
     attempt stops."""
@@ -219,10 +240,17 @@ def freeze(
         static_edition={k: v for k, v in edition.items() if k not in ("sha256", "source_url")},
     )
     gaia = get(GAIA_EB_URL)
-    if hashlib.sha256(gaia).hexdigest() != GAIA_EB_SHA256:
-        event({"event": "failure", "url": GAIA_EB_URL, "reason": "SHA-256 differs"})
-        raise sel.SelectionError("the Gaia DR3 EB asset does not match its recorded SHA-256")
-    keep("gaia_dr3_eb.csv", GAIA_EB_URL, gaia)
+    try:
+        if hashlib.sha256(gaia).hexdigest() != GAIA_EB_SHA256:
+            raise sel.SelectionError("the Gaia DR3 EB asset does not match its recorded SHA-256")
+        rows = gaia_asset_rows(gaia)
+        if rows != GAIA_EB_ROWS:
+            raise sel.SelectionError(f"the Gaia DR3 EB asset has {rows} rows, not {GAIA_EB_ROWS}")
+    except (UnicodeDecodeError, sel.SelectionError) as exc:
+        keep("rejected/gaia_dr3_eb.csv", GAIA_EB_URL, gaia)  # the evidence of the refusal
+        event({"event": "failure", "url": GAIA_EB_URL, "error": str(exc)})
+        raise sel.SelectionError(str(exc)) from exc
+    keep("gaia_dr3_eb.csv", GAIA_EB_URL, gaia, rows=rows, v02_record=GAIA_EB_RECORD)
     inputs = {
         "schema": "refute-tess-discover-inputs-1",
         "attempt": out_dir.name,
