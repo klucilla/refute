@@ -566,22 +566,38 @@ def verify_inputs(out_dir: Path, inputs: dict[str, Any]) -> None:
             raise sel.SelectionError(f"{item['name']} does not match its recorded SHA-256")
 
 
-def spoc_sector_count(sector: int) -> int:
-    """How many SPOC 120-s light-curve observations MAST lists for a sector (network)."""
-    from astroquery.mast import Observations
+# t_exptime is a continuous MAST column: astroquery filters it only by a [min, max] pair, and
+# skips a single value with an InputWarning (so ``t_exptime=120`` counted the 20-s light curves
+# too; found on 2026-10-30, attempt 6). The range keeps 120 s and leaves out 20 s and 200 s.
+SPOC_120S_EXPTIME = [119.5, 120.5]
 
-    return int(
-        sel.transient(
-            lambda: Observations.query_criteria_count(
+
+def spoc_sector_count(sector: int, observations: Any = None) -> int:
+    """How many SPOC 120-s light-curve observations MAST lists for a sector (network). A filter
+    that astroquery skips (an ``InputWarning``) stops the query instead of widening it."""
+    import warnings
+
+    if observations is None:
+        from astroquery.mast import Observations
+
+        observations = Observations
+
+    def query() -> Any:
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            n = observations.query_criteria_count(
                 obs_collection="TESS",
                 provenance_name="SPOC",
                 dataproduct_type="timeseries",
-                t_exptime=120,
+                t_exptime=SPOC_120S_EXPTIME,
                 sequence_number=int(sector),
-            ),
-            f"MAST sector {sector}",
-        )
-    )
+            )
+        skipped = [str(w.message) for w in caught if w.category.__name__ == "InputWarning"]
+        if skipped:
+            raise sel.SelectionError(f"MAST sector {sector}: a filter was skipped: {skipped}")
+        return n
+
+    return int(sel.transient(query, f"MAST sector {sector}"))
 
 
 def latest_spoc_sector(

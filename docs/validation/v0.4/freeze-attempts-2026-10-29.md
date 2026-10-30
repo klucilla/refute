@@ -100,3 +100,39 @@ answered 502; ExoFOP and the Gaia asset answered 200. No cause is established he
 wait followed: a header check every 10 minutes for at most 60 minutes, and exactly one new
 attempt if the page answered 200. The page answered 502 at each of the 6 checks (10:59:11 to
 11:49:29 UTC), so no new attempt was made; the next one waits for the maintainer.
+
+## Attempt 6 (2026-10-30): assembled from attempt 4
+
+By the maintainer's decision of 2026-10-30, attempt 6 was assembled from the files of attempt
+4 instead of waiting for tess.mit.edu (`pilot.assemble`, commit `fa69747`; approval recorded
+before it ran in https://github.com/klucilla/refute/issues/177#issuecomment-6523790533; Codex,
+read only: WEAKENED twice on the design and the code, then SURVIVED). It ran from 13:19:04 to
+about 13:20 UTC and completed:
+- every file of attempt 4 matched its log (whose SHA-256 is `15aacb0c…f7fc`);
+- S_max came out as 107;
+- the frame derived again had 175739 stars and the same SHA-256 as attempt 4's;
+- it wrote 114 files, 246968498 bytes;
+- 164010 stars were kept by the exclusion preview.
+
+**A defect found after it ran.** Its standard error holds astroquery's warning "t_exptime is
+continuous, and filters based on min and max values. Not enough values provided, skipping...".
+`pilot.spoc_sector_count` passed `t_exptime=120`, which astroquery skips (one value of a
+continuous column), so the counts behind S_max were of SPOC timeseries of every cadence, not of
+120-s light curves. Attempt 4 used the same code.
+
+The counts were measured again at about 13:25 UTC with the range `[119.5, 120.5]`, counts only,
+no download:
+
+| Sector | 120 s | 20 s |
+|---|---|---|
+| 111, 110, 109, 108 | 0 | 0 |
+| 107 | 13000 | 2160 |
+
+The 15160 that attempt 6 recorded for sector 107, under the label `spoc_120s_light_curves`, is
+13000 + 2160. S_max is 107 with the corrected filter too, but attempt 6's record mislabels its
+counts.
+
+The fix: `SPOC_120S_EXPTIME = [119.5, 120.5]`, and an `InputWarning` (a skipped filter) now stops
+the count instead of widening it. Codex (read only) checked the fix: SURVIVED. It recommends a
+new attempt with the fixed code, attempt 6 kept as superseded by this defect. Moving attempt 6's
+publication out of `calibration/v0.4/` is the maintainer's decision.

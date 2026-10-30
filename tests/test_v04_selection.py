@@ -802,3 +802,36 @@ def test_the_static_edition_is_the_v02_snapshot_content():
     assert pilot.TESS_EB_STATIC["content_sha256"] == tess_eb["content_sha256"]
     assert pilot.TESS_EB_STATIC["content_rule"] == tess_eb["content_rule"]
     assert pilot.TESS_EB_STATIC["source_url"] == tess_eb["url"]
+
+
+class _Observations:
+    """A fake of astroquery's Observations: records the criteria, optionally warns as
+    astroquery does when it skips a filter."""
+
+    def __init__(self, warn: bool = False) -> None:
+        self.warn = warn
+        self.criteria: dict = {}
+
+    def query_criteria_count(self, **criteria):
+        import warnings
+
+        self.criteria = criteria
+
+        class InputWarning(Warning):
+            pass
+
+        if self.warn:
+            warnings.warn("t_exptime is continuous ... skipping...", InputWarning, stacklevel=1)
+        return 13000
+
+
+def test_the_sector_count_filters_the_exposure_time_by_a_range():
+    fake = _Observations()
+    assert pilot.spoc_sector_count(107, observations=fake) == 13000
+    assert fake.criteria["t_exptime"] == [119.5, 120.5]  # a single value would be skipped
+    assert fake.criteria["sequence_number"] == 107 and fake.criteria["provenance_name"] == "SPOC"
+
+
+def test_a_filter_skipped_by_astroquery_stops_the_sector_count():
+    with pytest.raises(sel.SelectionError, match="a filter was skipped"):
+        pilot.spoc_sector_count(107, observations=_Observations(warn=True))
