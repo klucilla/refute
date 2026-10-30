@@ -99,6 +99,7 @@ def freeze_step(root: Path, **kwargs: Any) -> dict[str, Any]:
         # a copy that stopped before inputs.json: never written over; the maintainer decides
         raise sel.SelectionError(f"{published} exists without inputs.json; not written over")
     cache = next_attempt(root)
+    kwargs.setdefault("tess_eb_path", root / pilot.TESS_EB_STATIC["path"])
     inputs = pilot.freeze(cache, **kwargs)  # the download is complete when this returns
     inputs["exclusion_preview"] = exclusion_preview(root, cache)
     for item in inputs["files"]:

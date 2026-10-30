@@ -57,3 +57,22 @@ catalog edition exist, and choosing one is the maintainer's:
 
 Either needs its own record in `inputs.json` (URL or path, retrieval time, size, SHA-256) and the
 reader in `selection.tess_eb_tics` / `pilot.catalog_indexes` for its format.
+
+## The maintainer's decision (2026-10-29): option A
+
+The TESS-EB table is the VizieR copy of 2026-10-18, as a **static edition**
+(`pilot.TESS_EB_STATIC`): obtained on 2026-10-18 (the `request_date` line of its header,
+`2026-10-18T00:56:26`, VizieR 7.6.1), raw SHA-256 `61cb8749…a323`, content SHA-256
+`a31936ce…949c`, equal to the content hash of the v0.2 snapshot
+(`calibration/v0.2/eb_snapshot/retrieval.json`, retrieved 2026-10-09T02:44:20Z). The freeze
+reads it from that path and checks both hashes before any download; a missing or different
+file stops the attempt with a `failure` event. Its record in `inputs.json` carries the
+`static_edition` fields (path, obtained, content hash and rule, the v0.2 record it equals,
+`redistributed: false`, #33). It is used privately, for the exclusion and the deduplication,
+and is never redistributed: it is not copied into `calibration/v0.4/inputs/` and goes to the
+Drive archive only, like the v0.2 raw file.
+
+The Gaia DR3 EB input never depended on VizieR: the freeze takes it from the asset of release
+v0.2.0 (the complete table queried from the ESA archive on 2026-10-08 and 2026-10-09,
+`calibration/v0.2/eb_snapshot/`); attempt 4 stopped before that step. A change of its source is
+the maintainer's decision.

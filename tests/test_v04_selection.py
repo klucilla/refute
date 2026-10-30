@@ -316,6 +316,35 @@ def test_2_10_a_file_above_5_mb_is_never_in_git():
     assert len(big["sha256"]) == 64
     assert pilot.record("lists/all_targets_S001_v1.csv", "u", b"x", "t")["in_git"] is False
     assert pilot.record("frame.csv", "u", b"x", "t")["in_git"] is False
+    assert pilot.record("tess_eb.tsv", "u", b"x", "t")["in_git"] is False  # not redistributed
+
+
+STATIC_EB = (
+    b"#INFO\trequest_date=2026-10-18T00:56:26\n"
+    b"TIC\tm_TIC\tRAJ2000\tDEJ2000\tPer\n \t \tdeg\tdeg\td\n--\t-\t--\t--\t--\n"
+    b"0000000103\t1\t104.0\t00.0\t  1.0000000\n"
+)
+
+
+def _static_eb(root: Path) -> dict:
+    """A synthetic TESS-EB static edition under ``root`` and its expected hashes."""
+    import hashlib
+
+    from refute.packs.tess.ebcatalog import content_sha256
+
+    path = root / "eb" / "static.tsv"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(STATIC_EB)
+    return {
+        **pilot.TESS_EB_STATIC,
+        "path": "eb/static.tsv",
+        "sha256": hashlib.sha256(STATIC_EB).hexdigest(),
+        "content_sha256": content_sha256(STATIC_EB),
+    }
+
+
+def _eb_kwargs(root: Path) -> dict:
+    return {"tess_eb_path": root / "eb" / "static.tsv", "tess_eb": _static_eb(root)}
 
 
 def test_the_freeze_checks_the_gaia_asset_hash(tmp_path):
@@ -335,7 +364,13 @@ def test_the_freeze_checks_the_gaia_asset_hash(tmp_path):
         return b"TIC ID\n1\n"
 
     with pytest.raises(sel.SelectionError, match="Gaia"):
-        pilot.freeze(tmp_path / "attempt", 4, fetch=fetch, now=lambda: "2026-10-29T00:00:00Z")
+        pilot.freeze(
+            tmp_path / "attempt",
+            4,
+            fetch=fetch,
+            now=lambda: "2026-10-29T00:00:00Z",
+            **_eb_kwargs(tmp_path),
+        )
     assert (tmp_path / "attempt" / "frame.csv").is_file()
 
 
@@ -566,15 +601,16 @@ def test_a_failed_attempt_keeps_its_folder_and_log_and_the_next_is_new(tmp_path,
 
     monkeypatch.setattr(pilot.sel, "policy", lambda: RetryPolicy(2, 0))
     root = tmp_path / "root"
+    monkeypatch.setattr(pilot, "TESS_EB_STATIC", _static_eb(root))
     with pytest.raises(Exception, match="transient errors on all 2 attempts"):
-        steps.freeze_step(root, s_max=4, fetch=_fake_fetch("vizier"), sleep=lambda _s: None)
+        steps.freeze_step(root, s_max=4, fetch=_fake_fetch("download_ctoi"), sleep=lambda _s: None)
     first = root / steps.ATTEMPTS_DIR / "attempt-01"
     events = [json.loads(line) for line in (first / "attempt.jsonl").read_text().splitlines()]
     transient = [e for e in events if e["event"] == "transient"]
     assert [e["attempt"] for e in transient] == [1, 2]  # each logged before the next wait
-    assert events[-1]["event"] == "failure" and "vizier" in events[-1]["url"]
+    assert events[-1]["event"] == "failure" and "download_ctoi" in events[-1]["url"]
     files = [e["name"] for e in events if e["event"] == "file"]
-    assert "frame.csv" in files and "tess_eb.tsv" not in files
+    assert "toi.csv" in files and "ctoi.csv" not in files and "tess_eb.tsv" not in files
     assert not (first / "inputs.json").exists()
     before = (first / "toi.csv").read_bytes()
     assert steps.next_attempt(root).name == "attempt-02"
@@ -587,7 +623,13 @@ def test_a_failed_attempt_keeps_its_folder_and_log_and_the_next_is_new(tmp_path,
 def test_a_freeze_never_writes_into_an_existing_folder(tmp_path):
     (tmp_path / "attempt").mkdir()
     with pytest.raises(FileExistsError):
-        pilot.freeze(tmp_path / "attempt", s_max=4, fetch=_fake_fetch(), sleep=lambda _s: None)
+        pilot.freeze(
+            tmp_path / "attempt",
+            s_max=4,
+            fetch=_fake_fetch(),
+            sleep=lambda _s: None,
+            **_eb_kwargs(tmp_path),
+        )
 
 
 def test_the_selection_reads_only_the_recorded_attempt(tmp_path):
@@ -622,7 +664,9 @@ def test_a_non_transient_error_leaves_its_failure_event(tmp_path):
         raise KeyError("parse")
 
     with pytest.raises(KeyError):
-        pilot.freeze(tmp_path / "a", s_max=4, fetch=broken, sleep=lambda _s: None)
+        pilot.freeze(
+            tmp_path / "a", s_max=4, fetch=broken, sleep=lambda _s: None, **_eb_kwargs(tmp_path)
+        )
     events = [json.loads(x) for x in (tmp_path / "a" / "attempt.jsonl").read_text().splitlines()]
     assert events[-1]["event"] == "failure" and "KeyError" in events[-1]["error"]
 
@@ -635,3 +679,74 @@ def test_published_inputs_without_inputs_json_are_never_written_over(tmp_path):
     with pytest.raises(sel.SelectionError, match="not written over"):
         steps.freeze_step(root, s_max=4, fetch=_fake_fetch(), sleep=lambda _s: None)
     assert not (root / steps.ATTEMPTS_DIR).exists()  # refused before any download
+
+
+def test_the_tess_eb_static_edition_is_checked_before_any_download(tmp_path):
+    calls = []
+
+    def fetch(url):
+        calls.append(url)
+        return b""
+
+    kwargs = _eb_kwargs(tmp_path)
+    with pytest.raises(sel.SelectionError, match="raw SHA-256"):
+        pilot.freeze(
+            tmp_path / "a",
+            s_max=4,
+            fetch=fetch,
+            tess_eb_path=kwargs["tess_eb_path"],
+            tess_eb={**kwargs["tess_eb"], "sha256": "0" * 64},
+        )
+    with pytest.raises(sel.SelectionError, match="content SHA-256"):
+        pilot.freeze(
+            tmp_path / "b",
+            s_max=4,
+            fetch=fetch,
+            tess_eb_path=kwargs["tess_eb_path"],
+            tess_eb={**kwargs["tess_eb"], "content_sha256": "0" * 64},
+        )
+    with pytest.raises(FileNotFoundError):
+        pilot.freeze(tmp_path / "c", s_max=4, fetch=fetch, tess_eb_path=tmp_path / "none.tsv")
+    with pytest.raises(sel.SelectionError, match="static edition"):
+        pilot.freeze(tmp_path / "d", s_max=4, fetch=fetch)
+    assert calls == []  # nothing was downloaded
+    for name in "abcd":
+        last = (tmp_path / name / "attempt.jsonl").read_text().splitlines()[-1]
+        assert json.loads(last)["event"] == "failure"
+
+
+def test_a_complete_freeze_records_the_static_edition_and_keeps_it_out_of_git(
+    tmp_path, monkeypatch
+):
+    import hashlib
+
+    from refute.packs.tess.discover import steps
+
+    root = tmp_path / "root"
+    monkeypatch.setattr(pilot, "TESS_EB_STATIC", _static_eb(root))
+    gaia = b"source_id,ra,dec,frequency\n1,0,0,1\n"
+    monkeypatch.setattr(pilot, "GAIA_EB_SHA256", hashlib.sha256(gaia).hexdigest())
+
+    def fetch(url):
+        if url == pilot.GAIA_EB_URL:
+            return gaia
+        return _fake_fetch()(url)
+
+    monkeypatch.setattr(steps, "exclusion_preview", lambda _root, _cache: {})
+    inputs = steps.freeze_step(root, s_max=4, fetch=fetch, sleep=lambda _s: None)
+    eb = next(f for f in inputs["files"] if f["name"] == "tess_eb.tsv")
+    assert eb["in_git"] is False and eb["url"] == pilot.TESS_EB_URL
+    assert eb["sha256"] == hashlib.sha256(STATIC_EB).hexdigest()
+    edition = eb["static_edition"]
+    assert edition["obtained"] == "2026-10-18T00:56:26" and edition["redistributed"] is False
+    assert edition["path"] == "eb/static.tsv" and "retrieval.json" in edition["same_as"]
+    published = root / steps.STEP_DIR / "inputs"
+    assert not (published / "tess_eb.tsv").exists() and (published / "toi.csv").is_file()
+
+
+def test_the_static_edition_is_the_v02_snapshot_content():
+    v02 = json.loads((ROOT / "calibration/v0.2/eb_snapshot/retrieval.json").read_text("utf-8"))
+    tess_eb = next(r for r in v02 if r["catalog_name"] == "TESS-EB")
+    assert pilot.TESS_EB_STATIC["content_sha256"] == tess_eb["content_sha256"]
+    assert pilot.TESS_EB_STATIC["content_rule"] == tess_eb["content_rule"]
+    assert pilot.TESS_EB_STATIC["source_url"] == tess_eb["url"]

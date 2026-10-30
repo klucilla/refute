@@ -5,9 +5,10 @@ value comes from ``protocol.py``.
 
 Frozen inputs (before the protocol commit): the target lists page and the all-targets lists of
 sectors 1 to ``S_max``, the frame built from them, the TOI, CTOI and ``pscomppars`` tables, the
-TESS-EB table and the Gaia DR3 EB snapshot of v0.2 (a release asset of v0.2.0, checked against
-its recorded SHA-256). Each file's URL, retrieval time, size and SHA-256 go into
-``inputs.json``; a file above 5 MB is never committed (#172).
+TESS-EB table as a static edition (a local VizieR copy of 2026-10-18, checked against its raw and
+content SHA-256 before any download; never committed, #33) and the Gaia DR3 EB snapshot of v0.2
+(a release asset of v0.2.0, checked against its recorded SHA-256). Each file's URL, retrieval
+time, size and SHA-256 go into ``inputs.json``; a file above 5 MB is never committed (#172).
 """
 
 from __future__ import annotations
@@ -38,6 +39,25 @@ TESS_EB_URL = (
     "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs"
     "&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited"
 )
+# The TESS-EB table as a static edition (the maintainer's decision of 2026-10-29, option A): the
+# VizieR copy obtained on 2026-10-18, whose content is the v0.2 snapshot's. Used privately, for
+# the exclusion and the deduplication; never redistributed (#33).
+TESS_EB_STATIC = {
+    "path": ".cache/wt-v021/.cache/v021/tess-eb/vizier/tess_ebs_prsa2022.tsv",
+    "source_url": TESS_EB_URL,
+    "obtained": "2026-10-18T00:56:26",
+    "obtained_from": "the request_date line of the file's VizieR 7.6.1 header",
+    "sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323",
+    "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+    "content_rule": "non-empty lines not starting with '#', LF endings, final LF",
+    "same_as": (
+        "calibration/v0.2/eb_snapshot/retrieval.json: the TESS-EB content_sha256 of the v0.2 "
+        "snapshot (retrieved 2026-10-09T02:44:20Z)"
+    ),
+    "redistributed": False,
+    "issue": "#33",
+}
+NOT_REDISTRIBUTED = ("tess_eb.tsv",)
 GAIA_EB_URL = (
     "https://github.com/klucilla/refute/releases/download/v0.2.0/gaia_dr3_vari_eclipsing_binary.csv"
 )
@@ -60,11 +80,17 @@ def download(url: str, timeout: float = 600.0) -> bytes:
 def in_git(name: str, size: int) -> bool:
     """Whether a frozen input is committed: at most 5 MB (#172), and neither a per-sector
     target list nor the frame (about a hundred files that git would carry for nothing: the
-    frame is rebuilt from the lists, and both are archived with their hashes)."""
-    return size <= GIT_LIMIT_BYTES and not name.startswith("lists/") and name != "frame.csv"
+    frame is rebuilt from the lists, and both are archived with their hashes), nor a table that
+    is not redistributed (TESS-EB, #33)."""
+    return (
+        size <= GIT_LIMIT_BYTES
+        and not name.startswith("lists/")
+        and name != "frame.csv"
+        and name not in NOT_REDISTRIBUTED
+    )
 
 
-def record(name: str, url: str, data: bytes, retrieved: str) -> dict[str, Any]:
+def record(name: str, url: str, data: bytes, retrieved: str, **extra: Any) -> dict[str, Any]:
     return {
         "name": name,
         "url": url,
@@ -72,7 +98,21 @@ def record(name: str, url: str, data: bytes, retrieved: str) -> dict[str, Any]:
         "bytes": len(data),
         "sha256": hashlib.sha256(data).hexdigest(),
         "in_git": in_git(name, len(data)),
+        **extra,
     }
+
+
+def static_tess_eb(path: Path, expected: dict[str, Any]) -> bytes:
+    """The bytes of the TESS-EB static edition, after checking its raw and content SHA-256
+    against ``expected`` (``TESS_EB_STATIC``); a missing or different file stops the freeze."""
+    from refute.packs.tess.ebcatalog import content_sha256
+
+    data = Path(path).read_bytes()
+    if hashlib.sha256(data).hexdigest() != expected["sha256"]:
+        raise sel.SelectionError("the TESS-EB static edition does not match its raw SHA-256")
+    if content_sha256(data) != expected["content_sha256"]:
+        raise sel.SelectionError("the TESS-EB static edition does not match its content SHA-256")
+    return data
 
 
 def freeze(
@@ -82,15 +122,19 @@ def freeze(
     now: Callable[[], str] = utc_now,
     sector_count: Callable[[int], int] | None = None,
     sleep: Callable[[float], None] | None = None,
+    tess_eb_path: Path | None = None,
+    tess_eb: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """One freeze attempt: download every input once into ``out_dir``, which must not exist
     (an attempt never writes over another's files), and write ``inputs.json`` there when every
     input arrived. Each event is appended to ``attempt.jsonl`` as it happens (each file with its
     URL, time, size and SHA-256; a failure with every retry), so a failed attempt is documented
-    too. Without ``s_max`` it is found from MAST (``latest_spoc_sector``). The Gaia EB snapshot
-    must have its recorded SHA-256. Every download retries a transient failure (a timeout, a
-    connection error, an HTTP 5xx answer) with the protocol's policy (``sel.policy``); when the
-    retries are exhausted the attempt stops."""
+    too. Without ``s_max`` it is found from MAST (``latest_spoc_sector``). The TESS-EB static
+    edition (``tess_eb_path``, checked against ``tess_eb``, by default ``TESS_EB_STATIC``) is
+    read and checked before any download; the Gaia EB snapshot must have its recorded SHA-256.
+    Every download retries a transient failure (a timeout, a connection error, an HTTP 5xx
+    answer) with the protocol's policy (``sel.policy``); when the retries are exhausted the
+    attempt stops."""
     import time
 
     from refute.selection.walk import (
@@ -128,16 +172,25 @@ def freeze(
         event({"event": "failure", "url": url, "error": f"retries exhausted ({len(failures)})"})
         raise RetriesExhaustedError(failures)
 
-    def keep(name: str, url: str, data: bytes) -> bytes:
+    def keep(name: str, url: str, data: bytes, **extra: Any) -> bytes:
         path = out_dir / name
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "xb") as handle:  # never over an existing file
             handle.write(data)
-        records.append(record(name, url, data, now()))
+        records.append(record(name, url, data, now(), **extra))
         event({"event": "file", **records[-1]})
         return data
 
     event({"event": "start", "out_dir": out_dir.as_posix()})
+    edition = tess_eb or TESS_EB_STATIC
+    if tess_eb_path is None:
+        event({"event": "failure", "reason": "no path to the TESS-EB static edition"})
+        raise sel.SelectionError("the freeze needs the path of the TESS-EB static edition")
+    try:
+        eb_static = static_tess_eb(tess_eb_path, edition)
+    except (OSError, sel.SelectionError) as exc:
+        event({"event": "failure", "path": str(edition["path"]), "error": str(exc)})
+        raise
     page = keep("target_lists.html", TARGET_LISTS_PAGE, get(TARGET_LISTS_PAGE)).decode("utf-8")
     s_max_record = {"s_max": s_max, "queries": [], "given": s_max is not None}
     if s_max is None:
@@ -159,7 +212,12 @@ def freeze(
     keep("ctoi.csv", CTOI_URL, get(CTOI_URL))
     nea = f"{NEA_TAP}?{urllib.parse.urlencode({'query': PSCOMPPARS_QUERY, 'format': 'csv'})}"
     keep("pscomppars.csv", nea, get(nea))
-    keep("tess_eb.tsv", TESS_EB_URL, get(TESS_EB_URL))
+    keep(
+        "tess_eb.tsv",
+        str(edition["source_url"]),
+        eb_static,
+        static_edition={k: v for k, v in edition.items() if k not in ("sha256", "source_url")},
+    )
     gaia = get(GAIA_EB_URL)
     if hashlib.sha256(gaia).hexdigest() != GAIA_EB_SHA256:
         event({"event": "failure", "url": GAIA_EB_URL, "reason": "SHA-256 differs"})

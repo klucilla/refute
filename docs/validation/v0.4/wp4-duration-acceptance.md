@@ -30,3 +30,9 @@ curvature. This is a hypothesis, not tested.
   specification written before its code, and a **new** set of seeds, never this one.
 - Phase acceptance criterion 8 ("duration uncertainty with its method, or a justified
   absence") is met for now only by the justified absence; the decision is the maintainer's.
+
+**The maintainer's decision (2026-10-29): ROADMAP v0.4 amendment 5.** In the pilot the
+duration is exported without an uncertainty, with the justified absence that cites this
+method as not accepted (coverage 0.54 and 0.55 at SNR 20 and 40, against a band of 0.61 to
+0.74). No other method is tried in this phase. This FAIL stays recorded and visible; issue
+#176 stays open.

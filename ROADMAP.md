@@ -32,7 +32,7 @@ how later work is done.
 **v0.4 Discover (pilot with a funnel)**
 
 Opened on 2026-10-29 by the maintainer's decision, as a pilot of complete, auditable cases with
-the scope amendments recorded in its section below (amendments 1 to 4 and the funnel amendment
+the scope amendments recorded in its section below (amendments 1 to 5 and the funnel amendment
 of #9). Tracking: issue #177. The v0.4 exit criteria and the gate rule of "How phases work" are
 unchanged by the opening. No method is validated: every v0.4 report carries
 `method_status: not_validated`.
@@ -383,7 +383,8 @@ Search for new candidates in TESS data.
   uncertainties) and supporting material a human needs for the publication path. A dossier is
   never uploaded to ExoFOP directly: since 2026-08-19 ExoFOP accepts community candidates only
   after peer-reviewed publication (or an RNAAS citing a peer-reviewed methodology) and with its
-  approval. Publication path and exporter requirements: issue #18.
+  approval. Publication path and exporter requirements: issue #18. *(Amendment 5: in the pilot
+  the duration goes without an uncertainty, with a justified absence.)*
 - Discovery performance needs a requirement of its own; closing v0.2.1 is not enough.
 
 **Scope amendment (adopted on 2026-10-29 by the maintainer's decision; tracking #177).** v0.4
@@ -412,6 +413,13 @@ The scope items above stay listed; the amendments say which are deferred or resi
 - **Amendment 4.** Injection-recovery is resized to the pilot: injection before detrending into
   the N funnel light curves (#175). Without pixel files it measures search, gate and stage-1
   triage, not survival of the full battery.
+- **Amendment 5 (2026-10-29, the maintainer's decision; #176 stays open).** In the pilot the
+  exporter gives the duration without an uncertainty, with a justified absence that cites the
+  method `trapezoid-least-squares-1` as not accepted: its acceptance failed (coverage of the
+  68 % interval 0.54 and 0.55 at SNR 20 and 40, against a band of 0.61 to 0.74;
+  [record](docs/validation/v0.4/wp4-duration-acceptance.md)). The FAIL stays recorded and
+  visible; no other method is tried in this phase. Phase acceptance criterion 8
+  ([v0.4-acceptance.md](docs/plans/v0.4-acceptance.md)) is met by that justified absence.
 - **Funnel amendment of #9.** On the N stars, transformed curves go through the light-curve
   tests; the full battery runs only where pixel files exist (promoted stars and controls);
   denominators are kept separate (eligible, promoted by the cap, survivors); a missing test
