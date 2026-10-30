@@ -136,3 +136,34 @@ The fix: `SPOC_120S_EXPTIME = [119.5, 120.5]`, and an `InputWarning` (a skipped 
 the count instead of widening it. Codex (read only) checked the fix: SURVIVED. It recommends a
 new attempt with the fixed code, attempt 6 kept as superseded by this defect. Moving attempt 6's
 publication out of `calibration/v0.4/` is the maintainer's decision.
+
+## Attempt 7 (2026-10-30): the assembly again, with the cadence filter
+
+The maintainer approved option B on 2026-10-30. First, attempt 6's publication
+(`calibration/v0.4/inputs.json` and the 4 files of `calibration/v0.4/inputs/`) was copied and
+checked by SHA-256 into `.cache/v04/inputs-attempts/attempt-06/publication-withdrawn/`, with a
+`MANIFEST.json`, and only then removed from `calibration/v0.4/`. Nothing else was deleted;
+attempt 6's folder stays as the record of the defect.
+
+The rerun's approval was recorded before it ran:
+https://github.com/klucilla/refute/issues/177#issuecomment-6525660565. It used the code of
+`ef6fc6d`, which:
+- records attempt 6 as superseded, with its counts as history;
+- requires attempt 4's frame;
+- records a 20-s count per queried sector.
+
+Codex, read only, gave SURVIVED. The attempt ran from 14:50:21 to 14:50:56 UTC and completed.
+Its standard error is empty, so no filter was skipped.
+
+| Check | Result |
+|---|---|
+| Attempt 4's 112 files against its log | all match (log SHA-256 `15aacb0c…f7fc`) |
+| MAST, 120 s (`[119.5, 120.5]`), sectors 111 to 108 | 0 each |
+| MAST, 120 s, sector 107 | 13000, so S_max = 107 |
+| MAST, 20 s (`[19.5, 20.5]`), a check only | 0 for 111 to 108; 2160 for 107 |
+| The frame derived again | 175739 stars, SHA-256 `58504462…c903`, equal to the expected (attempt 4's) |
+| Files | 114, 246968498 bytes |
+| Exclusion preview | 164010 kept; the Gaia rule excludes 2875 (1621 only by it) |
+
+`calibration/v0.4/inputs.json` names attempt 7. The small inputs are copied to
+`calibration/v0.4/inputs/`: the page, TOI, CTOI and `pscomppars`.
