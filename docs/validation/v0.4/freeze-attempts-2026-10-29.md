@@ -153,7 +153,8 @@ https://github.com/klucilla/refute/issues/177#issuecomment-6525660565. It used t
 - records a 20-s count per queried sector.
 
 Codex, read only, gave SURVIVED. The attempt ran from 14:50:21 to 14:50:56 UTC and completed.
-Its standard error is empty, so no filter was skipped.
+Its standard error is empty, and the code it used refuses any count that comes with an
+`InputWarning` (a skipped filter).
 
 | Check | Result |
 |---|---|
