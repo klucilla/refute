@@ -135,6 +135,147 @@ def gaia_asset_rows(data: bytes) -> int:
     return len(lines) - 1
 
 
+class _AttemptLog:
+    """The folder and the event log of one attempt: ``out_dir`` must not exist (an attempt
+    never writes over another's files); each event is appended to ``attempt.jsonl`` as it
+    happens; ``get`` is the download with the protocol's retries; ``keep`` writes a file
+    exclusively and records its URL, time, size and SHA-256."""
+
+    def __init__(
+        self,
+        out_dir: Path,
+        fetch: Callable[[str], bytes],
+        now: Callable[[], str],
+        sleep: Callable[[float], None] | None,
+    ) -> None:
+        import time
+
+        self.out_dir = Path(out_dir)
+        self.out_dir.mkdir(parents=True, exist_ok=False)
+        self.log = self.out_dir / "attempt.jsonl"
+        self.records: list[dict[str, Any]] = []
+        self.failed = False
+        self.fetch = fetch
+        self.now = now
+        self.sleep = sleep or time.sleep
+
+    def event(self, item: dict[str, Any]) -> None:
+        self.failed = self.failed or item.get("event") == "failure"
+        with open(self.log, "a", encoding="utf-8", newline=LF) as handle:
+            handle.write(json.dumps({"utc": self.now(), **item}, sort_keys=True) + LF)
+
+    def get(self, url: str) -> bytes:
+        """The download with the protocol's retries; every transient error is logged before
+        the wait, and the terminal failure (retries exhausted, or any other error) too."""
+        from refute.selection.walk import (
+            Attempt,
+            RetriesExhaustedError,
+            TransientError,
+            transient_query,
+        )
+
+        policy = sel.policy()
+        failures: list[Attempt] = []
+        for number in range(1, policy.attempts + 1):
+            try:
+                return transient_query(lambda: sel.transient(lambda: self.fetch(url), url), url)
+            except TransientError as exc:
+                failures.append(Attempt(self.now(), str(exc)))
+                self.event({"event": "transient", "url": url, "attempt": number, "error": str(exc)})
+                if number < policy.attempts:
+                    self.sleep(policy.backoff_seconds)
+            except Exception as exc:
+                self.event(
+                    {"event": "failure", "url": url, "error": f"{type(exc).__name__}: {exc}"}
+                )
+                raise
+        self.event(
+            {"event": "failure", "url": url, "error": f"retries exhausted ({len(failures)})"}
+        )
+        raise RetriesExhaustedError(failures)
+
+    def keep(
+        self, name: str, url: str, data: bytes, retrieved: str | None = None, **extra: Any
+    ) -> bytes:
+        path = self.out_dir / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "xb") as handle:  # never over an existing file
+            handle.write(data)
+        self.records.append(record(name, url, data, retrieved or self.now(), **extra))
+        self.event({"event": "file", **self.records[-1]})
+        return data
+
+    def fail(self, error: Exception | str, **item: Any) -> sel.SelectionError:
+        """Log a terminal failure and return the error to raise."""
+        self.event({"event": "failure", **item, "error": str(error)})
+        return error if isinstance(error, sel.SelectionError) else sel.SelectionError(str(error))
+
+    def inputs(self, s_max: int, s_max_record: dict[str, Any], stars: int, **extra: Any) -> dict:
+        """``inputs.json`` of a complete attempt, written exclusively, then the last event."""
+        inputs = {
+            "schema": "refute-tess-discover-inputs-1",
+            "attempt": self.out_dir.name,
+            "s_max": s_max,
+            "s_max_record": s_max_record,
+            "frame_stars": stars,
+            **extra,
+            "files": self.records,
+            "total_bytes": sum(r["bytes"] for r in self.records),
+        }
+        with open(self.out_dir / "inputs.json", "x", encoding="utf-8", newline=LF) as handle:
+            handle.write(json.dumps(inputs, indent=2) + LF)
+        self.event({"event": "complete", "files": len(self.records)})
+        return inputs
+
+
+def _static_edition(attempt: _AttemptLog, path: Path | None, edition: dict[str, Any]) -> bytes:
+    """The TESS-EB static edition, read and checked before any download."""
+    if path is None:
+        attempt.event({"event": "failure", "reason": "no path to the TESS-EB static edition"})
+        raise sel.SelectionError("the freeze needs the path of the TESS-EB static edition")
+    try:
+        return static_tess_eb(path, edition)
+    except (OSError, sel.SelectionError) as exc:
+        attempt.event({"event": "failure", "path": str(edition["path"]), "error": str(exc)})
+        raise
+
+
+def _keep_catalog_editions(attempt: _AttemptLog, edition: dict[str, Any], eb_static: bytes) -> None:
+    """The TESS-EB static edition (already checked) and the Gaia DR3 EB asset, downloaded and
+    checked against its SHA-256 and row count; a refused asset is kept under ``rejected/``."""
+    attempt.keep(
+        "tess_eb.tsv",
+        str(edition["source_url"]),
+        eb_static,
+        static_edition={k: v for k, v in edition.items() if k not in ("sha256", "source_url")},
+    )
+    gaia = attempt.get(GAIA_EB_URL)
+    try:
+        if hashlib.sha256(gaia).hexdigest() != GAIA_EB_SHA256:
+            raise sel.SelectionError("the Gaia DR3 EB asset does not match its recorded SHA-256")
+        rows = gaia_asset_rows(gaia)
+        if rows != GAIA_EB_ROWS:
+            raise sel.SelectionError(f"the Gaia DR3 EB asset has {rows} rows, not {GAIA_EB_ROWS}")
+    except (UnicodeDecodeError, sel.SelectionError) as exc:
+        attempt.keep("rejected/gaia_dr3_eb.csv", GAIA_EB_URL, gaia)  # the evidence of the refusal
+        raise attempt.fail(exc, url=GAIA_EB_URL) from exc
+    attempt.keep(
+        "gaia_dr3_eb.csv",
+        GAIA_EB_URL,
+        gaia,
+        rows=rows,
+        v02_record=GAIA_EB_RECORD,
+        obtained_by_v02="2026-10-09T01:29:48Z (the ESA archive; the v0.2 record)",
+    )
+
+
+def nea_url() -> str:
+    return f"{NEA_TAP}?{urllib.parse.urlencode({'query': PSCOMPPARS_QUERY, 'format': 'csv'})}"
+
+
+FRAME_DERIVATION = "derived: refute.packs.tess.discover.selection.build_frame"
+
+
 def freeze(
     out_dir: Path,
     s_max: int | None = None,
@@ -156,114 +297,265 @@ def freeze(
     Every download retries a transient failure (a timeout, a connection error, an HTTP 5xx
     answer) with the protocol's policy (``sel.policy``); when the retries are exhausted the
     attempt stops."""
-    import time
-
-    from refute.selection.walk import (
-        Attempt,
-        RetriesExhaustedError,
-        TransientError,
-        transient_query,
-    )
-
-    out_dir = Path(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=False)
-    log = out_dir / "attempt.jsonl"
-    records = []
-
-    def event(item: dict[str, Any]) -> None:
-        with open(log, "a", encoding="utf-8", newline=LF) as handle:
-            handle.write(json.dumps({"utc": now(), **item}, sort_keys=True) + LF)
-
-    def get(url: str) -> bytes:
-        """The download with the protocol's retries; every transient error is logged before
-        the wait, and the terminal failure (retries exhausted, or any other error) too."""
-        policy = sel.policy()
-        failures: list[Attempt] = []
-        for number in range(1, policy.attempts + 1):
-            try:
-                return transient_query(lambda: sel.transient(lambda: fetch(url), url), url)
-            except TransientError as exc:
-                failures.append(Attempt(now(), str(exc)))
-                event({"event": "transient", "url": url, "attempt": number, "error": str(exc)})
-                if number < policy.attempts:
-                    (sleep or time.sleep)(policy.backoff_seconds)
-            except Exception as exc:
-                event({"event": "failure", "url": url, "error": f"{type(exc).__name__}: {exc}"})
-                raise
-        event({"event": "failure", "url": url, "error": f"retries exhausted ({len(failures)})"})
-        raise RetriesExhaustedError(failures)
-
-    def keep(name: str, url: str, data: bytes, **extra: Any) -> bytes:
-        path = out_dir / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "xb") as handle:  # never over an existing file
-            handle.write(data)
-        records.append(record(name, url, data, now(), **extra))
-        event({"event": "file", **records[-1]})
-        return data
-
-    event({"event": "start", "out_dir": out_dir.as_posix()})
+    attempt = _AttemptLog(out_dir, fetch, now, sleep)
+    attempt.event({"event": "start", "out_dir": attempt.out_dir.as_posix()})
     edition = tess_eb or TESS_EB_STATIC
-    if tess_eb_path is None:
-        event({"event": "failure", "reason": "no path to the TESS-EB static edition"})
-        raise sel.SelectionError("the freeze needs the path of the TESS-EB static edition")
-    try:
-        eb_static = static_tess_eb(tess_eb_path, edition)
-    except (OSError, sel.SelectionError) as exc:
-        event({"event": "failure", "path": str(edition["path"]), "error": str(exc)})
-        raise
-    page = keep("target_lists.html", TARGET_LISTS_PAGE, get(TARGET_LISTS_PAGE)).decode("utf-8")
+    eb_static = _static_edition(attempt, tess_eb_path, edition)
+    page = attempt.keep(
+        "target_lists.html", TARGET_LISTS_PAGE, attempt.get(TARGET_LISTS_PAGE)
+    ).decode("utf-8")
     s_max_record = {"s_max": s_max, "queries": [], "given": s_max is not None}
     if s_max is None:
         s_max_record = latest_spoc_sector(
             highest_listed_sector(page), sector_count or spoc_sector_count
         )
         s_max = s_max_record["s_max"]
-    event({"event": "s_max", **s_max_record})
+    attempt.event({"event": "s_max", **s_max_record})
     lists = {}
     for sector, url in sel.list_urls(page, s_max).items():
-        lists[sector] = keep(f"lists/{Path(url).name}", url, get(url)).decode("utf-8")
+        lists[sector] = attempt.keep(f"lists/{Path(url).name}", url, attempt.get(url)).decode(
+            "utf-8"
+        )
     frame = sel.build_frame(lists)
-    keep(
-        "frame.csv",
-        "derived: refute.packs.tess.discover.selection.build_frame",
-        sel.frame_csv(frame),
-    )
-    keep("toi.csv", TOI_URL, get(TOI_URL))
-    keep("ctoi.csv", CTOI_URL, get(CTOI_URL))
-    nea = f"{NEA_TAP}?{urllib.parse.urlencode({'query': PSCOMPPARS_QUERY, 'format': 'csv'})}"
-    keep("pscomppars.csv", nea, get(nea))
-    keep(
-        "tess_eb.tsv",
-        str(edition["source_url"]),
-        eb_static,
-        static_edition={k: v for k, v in edition.items() if k not in ("sha256", "source_url")},
-    )
-    gaia = get(GAIA_EB_URL)
-    try:
-        if hashlib.sha256(gaia).hexdigest() != GAIA_EB_SHA256:
-            raise sel.SelectionError("the Gaia DR3 EB asset does not match its recorded SHA-256")
-        rows = gaia_asset_rows(gaia)
-        if rows != GAIA_EB_ROWS:
-            raise sel.SelectionError(f"the Gaia DR3 EB asset has {rows} rows, not {GAIA_EB_ROWS}")
-    except (UnicodeDecodeError, sel.SelectionError) as exc:
-        keep("rejected/gaia_dr3_eb.csv", GAIA_EB_URL, gaia)  # the evidence of the refusal
-        event({"event": "failure", "url": GAIA_EB_URL, "error": str(exc)})
-        raise sel.SelectionError(str(exc)) from exc
-    keep("gaia_dr3_eb.csv", GAIA_EB_URL, gaia, rows=rows, v02_record=GAIA_EB_RECORD)
-    inputs = {
-        "schema": "refute-tess-discover-inputs-1",
-        "attempt": out_dir.name,
-        "s_max": s_max,
-        "s_max_record": s_max_record,
-        "frame_stars": len(frame),
-        "files": records,
-        "total_bytes": sum(r["bytes"] for r in records),
+    attempt.keep("frame.csv", FRAME_DERIVATION, sel.frame_csv(frame))
+    attempt.keep("toi.csv", TOI_URL, attempt.get(TOI_URL))
+    attempt.keep("ctoi.csv", CTOI_URL, attempt.get(CTOI_URL))
+    attempt.keep("pscomppars.csv", nea_url(), attempt.get(nea_url()))
+    _keep_catalog_editions(attempt, edition, eb_static)
+    return attempt.inputs(s_max, s_max_record, len(frame))
+
+
+# --- the assembled attempt (the maintainer's decision of 2026-10-30) --------------------------
+
+# Attempt 6 is assembled from the files of attempt 4 while the target lists of tess.mit.edu
+# answer HTTP 502 (docs/validation/v0.4/freeze-attempts-2026-10-29.md). Attempt 4's log was
+# reconstructed after the attempt from the files on disk, so its write times are estimates of
+# the retrieval times, and its URLs are rebuilt from the code's constants and the page's links.
+ASSEMBLY = {
+    "source": "attempt-04",
+    "s_max": 107,
+    "record": "docs/validation/v0.4/freeze-attempts-2026-10-29.md",
+    "reason": "the target lists of tess.mit.edu answered HTTP 502 (attempt 5, 2026-10-30)",
+    "decision": "the maintainer's decision of 2026-10-30",
+    "source_code": (
+        "attempt 4 ran at 2026-10-29T21:21Z, between the commits 12043a3 and 9c69745, with "
+        "uncommitted edits of the working tree (the relative links fix); its exact code was "
+        "not recorded"
+    ),
+}
+COPIED = ("target_lists.html", "toi.csv", "ctoi.csv", "pscomppars.csv")
+NOT_COPIED = ("frame.csv",)  # derived again from the copied lists, never reused
+RETRIEVED_BASIS = (
+    "estimate: the file's write time in the source attempt, whose log was reconstructed from "
+    "the files on disk after the attempt"
+)
+
+
+def _source_inventory(source_dir: Path) -> tuple[bytes, list[dict[str, Any]]]:
+    """The source attempt's log and its file and reconstruction events, checked: each name a
+    relative path inside the folder (no absolute path, no '..', no backslash, no drive, no
+    empty part), no name twice, only the names an attempt writes, every required one present
+    (``COPIED``, ``NOT_COPIED`` and at least one list), each with its size, SHA-256 and write
+    time; the files on disk exactly the names of the log, and each file's bytes those of its
+    record (the old frame too, though it is never copied)."""
+    source_dir = Path(source_dir)
+    raw = (source_dir / "attempt.jsonl").read_bytes()
+    events = [json.loads(line) for line in raw.decode("utf-8").splitlines() if line.strip()]
+    files = [e for e in events if e.get("event") == "file"]
+    names = [str(e.get("name", "")) for e in files]
+    for name in names:
+        parts = name.split("/")
+        if (
+            not name
+            or "\\" in name
+            or name.startswith("/")
+            or ":" in name
+            or any(p in ("", ".", "..") for p in parts)
+        ):
+            raise sel.SelectionError(f"the source log names an unsafe path {name!r}")
+        if not (name in COPIED or name in NOT_COPIED or name.startswith("lists/")):
+            raise sel.SelectionError(f"the source log names an unexpected file {name!r}")
+    if len(set(names)) != len(names):
+        raise sel.SelectionError("the source log names a file twice")
+    missing = [n for n in (*COPIED, *NOT_COPIED) if n not in names]
+    if missing or not any(n.startswith("lists/") for n in names):
+        raise sel.SelectionError(f"the source log lacks required files: {missing or ['lists/']}")
+    for entry in files:
+        if not isinstance(entry.get("bytes"), int) or not isinstance(entry.get("sha256"), str):
+            raise sel.SelectionError(f"{entry['name']} has no size or SHA-256 in the source log")
+        if not isinstance(entry.get("written_utc"), str) or not entry["written_utc"]:
+            raise sel.SelectionError(f"{entry['name']} has no write time in the source log")
+    on_disk = {
+        p.relative_to(source_dir).as_posix()
+        for p in source_dir.rglob("*")
+        if p.is_file() and p.name != "attempt.jsonl"
     }
-    with open(out_dir / "inputs.json", "x", encoding="utf-8", newline=LF) as handle:
-        handle.write(json.dumps(inputs, indent=2) + LF)
-    event({"event": "complete", "files": len(records)})
-    return inputs
+    if on_disk != set(names):
+        missing, extra = sorted(set(names) - on_disk), sorted(on_disk - set(names))
+        raise sel.SelectionError(f"the source folder differs from its log: {missing} {extra}")
+    for entry in files:
+        data = (source_dir / entry["name"]).read_bytes()
+        if len(data) != entry["bytes"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
+            raise sel.SelectionError(f"{entry['name']} differs from the source log")
+    return raw, [e for e in events if e.get("event") in ("file", "reconstructed")]
+
+
+def assemble(
+    out_dir: Path,
+    source_dir: Path,
+    approval: str,
+    code: dict[str, Any],
+    fetch: Callable[[str], bytes] = download,
+    now: Callable[[], str] = utc_now,
+    sector_count: Callable[[int], int] | None = None,
+    sleep: Callable[[float], None] | None = None,
+    tess_eb_path: Path | None = None,
+    tess_eb: dict[str, Any] | None = None,
+    assembly: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """An attempt assembled from a source attempt's files (``ASSEMBLY``): every file of the
+    source is checked against the size and SHA-256 of its log; the page, the lists, TOI, CTOI
+    and ``pscomppars`` are copied, never moved or changed; S_max is found from MAST now, each
+    query logged as it is answered, with the highest sector of the copied page, and must be the
+    source's (``assembly['s_max']``); the frame is derived again from the copied lists; the
+    TESS-EB static edition and the Gaia DR3 EB asset are taken as in ``freeze``. Any error
+    stops the attempt with a logged failure."""
+    attempt = _AttemptLog(out_dir, fetch, now, sleep)
+    source_dir = Path(source_dir)
+    attempt.event(
+        {
+            "event": "start",
+            "mode": "assembled",
+            "source": source_dir.name,
+            "out_dir": attempt.out_dir.as_posix(),
+            "approval": approval,
+        }
+    )
+    try:
+        return _assemble(
+            attempt,
+            source_dir,
+            approval,
+            code,
+            sector_count or spoc_sector_count,
+            tess_eb_path,
+            tess_eb or TESS_EB_STATIC,
+            assembly or ASSEMBLY,
+        )
+    except Exception as exc:
+        if not attempt.failed:  # every terminal error is logged once
+            attempt.event(
+                {"event": "failure", "step": "assemble", "error": f"{type(exc).__name__}: {exc}"}
+            )
+        raise
+
+
+def _assemble(
+    attempt: _AttemptLog,
+    source_dir: Path,
+    approval: str,
+    code: dict[str, Any],
+    sector_count: Callable[[int], int],
+    tess_eb_path: Path | None,
+    edition: dict[str, Any],
+    spec: dict[str, Any],
+) -> dict[str, Any]:
+    eb_static = _static_edition(attempt, tess_eb_path, edition)
+    try:
+        log_bytes, files = _source_inventory(source_dir)
+    except (OSError, ValueError, sel.SelectionError) as exc:
+        raise attempt.fail(exc, step="source inventory") from exc
+    by_name = {e["name"]: e for e in files if e.get("event") == "file"}
+    reconstructed = [e for e in files if e.get("event") == "reconstructed"]
+    source = {
+        "attempt": source_dir.name,
+        "log_sha256": hashlib.sha256(log_bytes).hexdigest(),
+        "log_bytes": len(log_bytes),
+        "log_reconstructed_utc": reconstructed[0].get("utc") if reconstructed else None,
+        "files": len(by_name),
+        "files_checked": "every file's size and SHA-256 against the log, the old frame included",
+        **{k: v for k, v in spec.items() if k not in ("source", "s_max")},
+    }
+    attempt.event({"event": "source", **source})
+
+    def copy(name: str, url: str, url_basis: str) -> bytes:
+        entry = by_name.get(name)
+        if entry is None:
+            raise attempt.fail(f"the source attempt has no {name}", step="copy")
+        data = (source_dir / name).read_bytes()
+        if len(data) != entry["bytes"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
+            raise attempt.fail(f"{name} differs from the source log", step="copy")
+        return attempt.keep(
+            name,
+            url,
+            data,
+            retrieved=entry["written_utc"],
+            retrieved_utc_basis=RETRIEVED_BASIS,
+            url_basis=url_basis,
+            copied_from=source_dir.name,
+            copied_utc=attempt.now(),
+        )
+
+    page = copy("target_lists.html", TARGET_LISTS_PAGE, "the code's constant").decode("utf-8")
+    highest = highest_listed_sector(page)
+    try:
+        s_max_record = latest_spoc_sector(
+            highest, sector_count, on_query=lambda q: attempt.event({"event": "mast", **q})
+        )
+    except Exception as exc:
+        raise attempt.fail(f"{type(exc).__name__}: {exc}", step="s_max") from exc
+    s_max_record["highest_listed_from"] = f"the page copied from {source_dir.name}"
+    attempt.event({"event": "s_max", **s_max_record})
+    if s_max_record["s_max"] != spec["s_max"]:
+        raise attempt.fail(
+            f"MAST gives S_max {s_max_record['s_max']}, not the source's {spec['s_max']}",
+            step="s_max",
+        )
+    s_max = s_max_record["s_max"]
+    urls = sel.list_urls(page, s_max)
+    expected = {f"lists/{Path(u).name}" for u in urls.values()}
+    listed = {n for n in by_name if n.startswith("lists/")}
+    if expected != listed:
+        raise attempt.fail(
+            f"the source lists differ from the page's: {sorted(expected ^ listed)}", step="lists"
+        )
+    lists = {
+        sector: copy(f"lists/{Path(url).name}", url, "the copied page's link").decode("utf-8")
+        for sector, url in urls.items()
+    }
+    frame = sel.build_frame(lists)
+    frame_bytes = sel.frame_csv(frame)
+    old = by_name["frame.csv"]  # its bytes were checked against the log by the inventory
+    attempt.keep(
+        "frame.csv",
+        FRAME_DERIVATION,
+        frame_bytes,
+        derived_from=sorted(expected),
+        stars=len(frame),
+        source_frame_sha256=old["sha256"],
+        same_as_source_frame=hashlib.sha256(frame_bytes).hexdigest() == old["sha256"],
+    )
+    copy("toi.csv", TOI_URL, "the code's constant")
+    copy("ctoi.csv", CTOI_URL, "the code's constant")
+    copy("pscomppars.csv", nea_url(), "the code's constants (NEA_TAP, PSCOMPPARS_QUERY)")
+    _keep_catalog_editions(attempt, edition, eb_static)
+    seed_state = {
+        "r_sel": "not yet determined for this protocol",
+        "basis": (
+            "R_sel is fixed by the CI push run of the protocol commit (PROTOCOL.md, 8 and 12), "
+            "which did not exist when these inputs were obtained or assembled"
+        ),
+        "utc": attempt.now(),
+    }
+    return attempt.inputs(
+        s_max,
+        s_max_record,
+        len(frame),
+        assembled_from=source,
+        approval=approval,
+        code=code,
+        seed_state=seed_state,
+    )
 
 
 def verify_inputs(out_dir: Path, inputs: dict[str, Any]) -> None:
@@ -293,14 +585,24 @@ def spoc_sector_count(sector: int) -> int:
 
 
 def latest_spoc_sector(
-    highest_listed: int, count: Callable[[int], int] = spoc_sector_count
+    highest_listed: int,
+    count: Callable[[int], int] = spoc_sector_count,
+    on_query: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict:
     """S_max: the highest sector, at or below the highest sector on the target lists page, for
-    which MAST lists SPOC 120-s light curves (protocol section 3, D-9). Every query is kept."""
+    which MAST lists SPOC 120-s light curves (protocol section 3, D-9). Every query is kept, and
+    passed to ``on_query`` as soon as it is answered (a failed one too, with its error)."""
     queries = []
     for sector in range(highest_listed, 0, -1):
-        n = count(sector)
+        try:
+            n = count(sector)
+        except Exception as exc:
+            if on_query:
+                on_query({"sector": sector, "error": f"{type(exc).__name__}: {exc}"})
+            raise
         queries.append({"sector": sector, "spoc_120s_light_curves": n, "utc": utc_now()})
+        if on_query:
+            on_query(queries[-1])
         if n > 0:
             return {"s_max": sector, "queries": queries}
     raise sel.SelectionError("MAST lists no SPOC 120-s light curve for any sector")

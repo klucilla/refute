@@ -4,6 +4,8 @@ that every line they execute is inside the lock's code hash;
 
 - ``freeze_step``: download the frozen inputs once (before the protocol commit), copy the small
   ones into the repository and write ``inputs.json``.
+- ``assemble_step``: instead of ``freeze_step``, an attempt assembled from an earlier attempt's
+  files (``pilot.ASSEMBLY``), with the same publication.
 - ``archive_step``: archive every input to the Drive with a checked SHA-256 manifest (#172).
 - ``select_step``: after the protocol commit is pushed, check that the code, the protocol and the
   inputs in the working tree are the bytes of that commit; then the round from its CI push run,
@@ -14,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import zipfile
@@ -87,10 +90,7 @@ def exclusion_preview(root: Path, cache: Path) -> dict[str, Any]:
     }
 
 
-def freeze_step(root: Path, **kwargs: Any) -> dict[str, Any]:
-    """One freeze attempt in a new folder; on success its record becomes ``inputs.json``. A
-    failed attempt keeps its folder and its ``attempt.jsonl``; nothing is mixed between
-    attempts."""
+def _not_frozen(root: Path) -> None:
     inputs_json = root / STEP_DIR / "inputs.json"
     if inputs_json.exists():
         raise sel.SelectionError(f"{inputs_json} exists: the inputs are frozen once")
@@ -98,9 +98,69 @@ def freeze_step(root: Path, **kwargs: Any) -> dict[str, Any]:
     if published.exists():
         # a copy that stopped before inputs.json: never written over; the maintainer decides
         raise sel.SelectionError(f"{published} exists without inputs.json; not written over")
+
+
+def freeze_step(root: Path, **kwargs: Any) -> dict[str, Any]:
+    """One freeze attempt in a new folder; on success its record becomes ``inputs.json``. A
+    failed attempt keeps its folder and its ``attempt.jsonl``; nothing is mixed between
+    attempts."""
+    _not_frozen(root)
     cache = next_attempt(root)
     kwargs.setdefault("tess_eb_path", root / pilot.TESS_EB_STATIC["path"])
     inputs = pilot.freeze(cache, **kwargs)  # the download is complete when this returns
+    return _publish(root, cache, inputs)
+
+
+# A declared reference to the maintainer's approval (its author, text and time are checked by
+# the maintainer, not by this code).
+APPROVAL_URL = re.compile(
+    r"https://github\.com/klucilla/refute/issues/[1-9]\d*#issuecomment-[1-9]\d*"
+)
+CODE_PATHS = ("src", "pyproject.toml", "uv.lock")
+
+
+def code_identity(root: Path, run: Any = subprocess.run) -> dict[str, Any]:
+    """The commit of the code that assembles, refused when ``src``, ``pyproject.toml`` or
+    ``uv.lock`` differ from it; and the SHA-256 of the selection script and of the protocol
+    (not yet committed)."""
+
+    def git(*args: str) -> str:
+        return run(
+            ["git", *args], cwd=root, capture_output=True, text=True, check=True
+        ).stdout.strip()
+
+    dirty = git("status", "--porcelain", "--", *CODE_PATHS)
+    if dirty:
+        raise sel.SelectionError("the code differs from its commit; commit it before assembling")
+    return {
+        "commit": git("rev-parse", "HEAD"),
+        "clean_paths": list(CODE_PATHS),
+        "sha256": {
+            p: _sha(root / p)
+            for p in ("calibration/v0.4/run_selection.py", "calibration/v0.4/PROTOCOL.md")
+        },
+    }
+
+
+def assemble_step(root: Path, approval: str, **kwargs: Any) -> dict[str, Any]:
+    """The assembled attempt (``pilot.ASSEMBLY``) in a new folder, with the refusals of
+    ``freeze_step``; ``approval`` is the URL of the maintainer's approval in an issue of this
+    repository, recorded before the attempt runs."""
+    if not APPROVAL_URL.fullmatch(approval):
+        raise sel.SelectionError("the approval must be an issue comment URL of this repository")
+    _not_frozen(root)
+    cache = next_attempt(root)
+    source = root / ATTEMPTS_DIR / pilot.ASSEMBLY["source"]
+    kwargs.setdefault("tess_eb_path", root / pilot.TESS_EB_STATIC["path"])
+    code = kwargs.pop("code", None) or code_identity(root)
+    inputs = pilot.assemble(cache, source, approval, code, **kwargs)
+    return _publish(root, cache, inputs)
+
+
+def _publish(root: Path, cache: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    """The exclusion preview, the copy of the small inputs and ``inputs.json``, written last."""
+    inputs_json = root / STEP_DIR / "inputs.json"
+    published = root / STEP_DIR / "inputs"
     inputs["exclusion_preview"] = exclusion_preview(root, cache)
     for item in inputs["files"]:
         if item["in_git"]:
