@@ -224,6 +224,49 @@ def within_radius(
     return [bool(h) for h in hits]
 
 
+def nearest_separation_arcsec(
+    stars: Sequence[tuple[float, float]], catalog: np.ndarray
+) -> list[float | None]:
+    """For each (RA, Dec), the separation in arcsec to the nearest catalog position (None for
+    an empty catalog)."""
+    from scipy.spatial import cKDTree
+
+    if len(stars) == 0:
+        return []
+    if catalog.size == 0:
+        return [None] * len(stars)
+    tree = cKDTree(_unit(catalog[:, 0], catalog[:, 1]))
+    points = np.array(stars, dtype=float)
+    chord, _ = tree.query(_unit(points[:, 0], points[:, 1]))
+    return [float(math.degrees(2.0 * math.asin(min(1.0, c / 2.0))) * 3600.0) for c in chord]
+
+
+GAIA_COST_BINS = ((0.0, 2.0), (2.0, 5.0), (5.0, 21.0))
+
+
+def gaia_exclusion_cost(exclusions: Exclusions, frame: Sequence[FrameStar], gaia: np.ndarray):
+    """What the 21-arcsec Gaia DR3 EB rule costs (protocol section 4.2): the stars it excludes,
+    those it alone excludes, and the latter by the separation to the nearest Gaia EB. A star
+    excluded within 2 arcsec is likely the binary itself; beyond, the rule excludes a star for a
+    nearby binary without showing that it contaminates the star's photometry."""
+    by_tic = {s.tic_id: s for s in frame}
+    gaia_tics = [t for t, why in exclusions.reasons.items() if "Gaia-DR3-EB" in why]
+    only = [t for t, why in exclusions.reasons.items() if why == ["Gaia-DR3-EB"]]
+    seps = nearest_separation_arcsec([(by_tic[t].ra_deg, by_tic[t].dec_deg) for t in only], gaia)
+    bins = {f"{lo:g}-{hi:g} arcsec": 0 for lo, hi in GAIA_COST_BINS}
+    for sep in seps:
+        for lo, hi in GAIA_COST_BINS:
+            if sep is not None and lo <= sep <= hi:
+                bins[f"{lo:g}-{hi:g} arcsec"] += 1
+                break
+    return {
+        "frame_stars": len(frame),
+        "excluded_by_gaia": len(gaia_tics),
+        "excluded_only_by_gaia": len(only),
+        "only_by_gaia_by_separation": bins,
+    }
+
+
 EXCLUSION_ORDER = ("known_target", "TOI", "CTOI", "pscomppars", "TESS-EB", "Gaia-DR3-EB")
 
 

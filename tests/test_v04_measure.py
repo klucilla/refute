@@ -60,7 +60,10 @@ def test_3_1_the_injection_reaches_the_raw_flux_and_the_sap_flux(noise_data):
 def test_3_2_an_injection_far_below_the_noise_is_not_recovered_and_counted(noise_data):
     injection = _injection(1e-5)
     out = measure.chain(inj.inject(noise_data, injection), PLAN, 1)
-    record = {"recovery": inj.recovery(injection, out["candidate"], out["gate_passed"])}
+    record = {
+        "recovery": inj.recovery(injection, out["candidate"], out["gate_passed"]),
+        "crowdsap_missing_sectors": [],
+    }
     summary = inj.summarize([record])
     assert summary["injections"] == 1 and summary["recovered"] == 0
     assert summary["recovery_wilson_95"][0] == 0.0
@@ -254,7 +257,11 @@ def test_the_stage_outcome_is_kept_apart_from_the_verdict():
 
 def test_3_8_the_injection_summary_has_rates_and_intervals():
     records = [
-        {"recovery": {"recovered": i < 7, "alias": None, "gate_passed": True}} for i in range(10)
+        {
+            "recovery": {"recovered": i < 7, "alias": None, "gate_passed": True},
+            "crowdsap_missing_sectors": [],
+        }  # fmt: skip
+        for i in range(10)
     ]
     summary = inj.summarize(records)
     assert summary["recovered"] == 7 and summary["recovery_rate"] == 0.7
@@ -300,7 +307,8 @@ def test_a_task_recorded_twice_is_refused_never_counted_twice():
     from refute.packs.tess.discover import runs
 
     record = {"kind": "injection", "target_key": "TIC-1", "index": 0, "stage": 1,
-              "recovery": {"recovered": True, "alias": None, "gate_passed": True}}  # fmt: skip
+              "recovery": {"recovered": True, "alias": None, "gate_passed": True},
+              "crowdsap_missing_sectors": []}  # fmt: skip
     with pytest.raises(ValueError, match="twice"):
         runs.summarize_records([record, dict(record)])
     other = {**record, "index": 1}
@@ -324,3 +332,65 @@ def test_the_rotation_lengths_stop_at_max_sector(cache):
     _, rotations = measure.transforms_of(TARGET, cache, 3, plan)
     sectors = {int(s) for vector in rotations.to_dict()["offsets"] for s in vector}
     assert sectors <= {s for s in [first] if s <= 1}
+
+
+def _box_depth(time, flux, injection):
+    """The mean deficit inside the flat bottom, against the median outside the transits."""
+    dt = np.mod(time - injection.t0_btjd + 0.5 * injection.period_days, injection.period_days)
+    dt = dt - 0.5 * injection.period_days
+    inside = np.abs(dt) < 0.3 * injection.duration_days
+    outside = np.abs(dt) > injection.duration_days
+    return float(np.median(flux[outside]) - np.mean(flux[inside]))
+
+
+def test_the_sap_dip_is_the_pdcsap_dip_times_crowdsap_in_every_sector(noise_data):
+    injection = _injection(0.004)
+    injected = inj.inject(noise_data, injection)
+    for before, after in zip(noise_data.aux.sectors, injected.aux.sectors, strict=True):
+        pdc = _box_depth(after.time, after.pdcsap_flux, injection) - _box_depth(
+            before.time, before.pdcsap_flux, injection
+        )
+        sap = _box_depth(after.time, after.sap_flux, injection) - _box_depth(
+            before.time, before.sap_flux, injection
+        )
+        assert pdc == pytest.approx(0.004, rel=0.05)
+        assert sap / pdc == pytest.approx(before.crowdsap, rel=0.05)
+
+
+def test_the_synthetic_generator_follows_the_same_pdcsap_sap_relation():
+    # a natural synthetic transit (scenario "planet"): the generator writes SAP = 1 + c (PDC - 1)
+    data = scenario_data("planet", seed=4)
+    from refute.packs.tess.synthetic import PLANET
+
+    spec = inj.Injection(0, PLANET.period, PLANET.depth, 0.0, PLANET.duration, PLANET.t0)
+    for sector in data.aux.sectors:
+        pdc = _box_depth(sector.time, sector.pdcsap_flux, spec)
+        sap = _box_depth(sector.time, sector.sap_flux, spec)
+        assert sap / pdc == pytest.approx(sector.crowdsap, rel=0.1)
+
+
+def test_a_missing_crowdsap_is_recorded_and_counted_apart(noise_data):
+    sectors = [
+        replace(s, crowdsap=None) if i == 0 else s for i, s in enumerate(noise_data.aux.sectors)
+    ]
+    data = replace(noise_data, aux=replace(noise_data.aux, sectors=sectors))
+    assert inj.crowdsap_missing(data) == [int(sectors[0].sector)]
+    assert inj.crowdsap_missing(noise_data) == []
+    known = {"recovery": {"recovered": True, "alias": None, "gate_passed": True},
+             "crowdsap_missing_sectors": []}  # fmt: skip
+    missing = {"recovery": {"recovered": True, "alias": None, "gate_passed": True},
+               "crowdsap_missing_sectors": [int(sectors[0].sector)]}  # fmt: skip
+    summary = inj.summarize([known, missing, dict(missing)])
+    assert summary["injections"] == 1 and summary["recovery_rate"] == 1.0
+    assert summary["crowdsap_missing"]["injections"] == 2
+    assert summary["crowdsap_missing"]["sectors"] == [int(sectors[0].sector)]
+    assert "not equivalent" in summary["crowdsap_missing"]["note"]
+
+
+def test_a_task_that_fails_before_reading_is_in_the_unknown_group(tmp_path):
+    task = measure.InjectionTask(TARGET, PLAN_DICT, str(tmp_path / "empty"), 1, 0, 1)
+    record = {"kind": "injection", **measure.run_injection(task)}
+    assert record["crowdsap_missing_sectors"] is None
+    summary = inj.summarize([record])
+    assert summary["tasks"] == 1 and summary["injections"] == 0
+    assert summary["crowdsap_unknown"]["injections"] == 1

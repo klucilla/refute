@@ -26,7 +26,9 @@ from refute.packs.tess.discover import selection as sel
 from refute.packs.tess.discover.protocol import PROTOCOL_ID
 
 STEP_DIR = Path("calibration/v0.4")
-CACHE_DIR = Path(".cache/v04/inputs")
+# Each freeze attempt has its own folder, attempt-01, attempt-02, ...; the one that delivered
+# every input is named in inputs.json ("attempt"), and only its files are ever read.
+ATTEMPTS_DIR = Path(".cache/v04/inputs-attempts")
 DRIVE = Path("K:/Meu Drive/Pessoal/Projetos/refute/arquivo-v0.4-inputs")
 ZIP_NAME = "v0.4-inputs.zip"
 # The paths whose bytes must be those of the protocol commit when the selection runs: the code,
@@ -45,18 +47,69 @@ BOUND_PATHS = (
 )
 
 
-def freeze_step(root: Path) -> dict[str, Any]:
+def next_attempt(root: Path) -> Path:
+    """The folder of the next freeze attempt (attempt-NN, one more than the highest)."""
+    base = root / ATTEMPTS_DIR
+    numbers = [
+        int(p.name.split("-")[1])
+        for p in (base.iterdir() if base.is_dir() else [])
+        if p.is_dir() and p.name.startswith("attempt-") and p.name.split("-")[1].isdigit()
+    ]
+    return base / f"attempt-{max(numbers, default=0) + 1:02d}"
+
+
+def cache_dir(root: Path, inputs: dict[str, Any]) -> Path:
+    """The folder of the attempt whose files ``inputs.json`` records."""
+    attempt = inputs.get("attempt")
+    if not attempt:
+        raise sel.SelectionError("inputs.json names no freeze attempt")
+    return root / ATTEMPTS_DIR / str(attempt)
+
+
+def exclusion_preview(root: Path, cache: Path) -> dict[str, Any]:
+    """The exclusions of the frozen frame (no seed is involved): the counts by reason and the
+    cost of the Gaia DR3 EB rule, written into ``inputs.json`` before the round."""
+    frame = sel.read_frame_csv((cache / "frame.csv").read_bytes())
+    toi = sel.toi_rows((cache / "toi.csv").read_bytes())
+    pscomppars = sel.pscomppars_rows((cache / "pscomppars.csv").read_bytes())
+    tic_sets = {
+        "TOI": {t for t in (sel.parse_tic(r["TIC ID"]) for r in toi) if t is not None},
+        "CTOI": sel.ctoi_tics((cache / "ctoi.csv").read_bytes()),
+        "pscomppars": {t for t in (sel.parse_tic(r["tic_id"]) for r in pscomppars) if t},
+        "TESS-EB": sel.tess_eb_tics((cache / "tess_eb.tsv").read_bytes()),
+    }
+    gaia = sel.gaia_eb_positions((cache / "gaia_dr3_eb.csv").read_bytes())
+    exclusions = sel.apply_exclusions(frame, set(sel.known_targets(root)), tic_sets, gaia)
+    return {
+        "kept": len(exclusions.kept),
+        "counts": exclusions.counts(),
+        "gaia_cost": sel.gaia_exclusion_cost(exclusions, frame, gaia),
+    }
+
+
+def freeze_step(root: Path, **kwargs: Any) -> dict[str, Any]:
+    """One freeze attempt in a new folder; on success its record becomes ``inputs.json``. A
+    failed attempt keeps its folder and its ``attempt.jsonl``; nothing is mixed between
+    attempts."""
     inputs_json = root / STEP_DIR / "inputs.json"
     if inputs_json.exists():
         raise sel.SelectionError(f"{inputs_json} exists: the inputs are frozen once")
-    cache = root / CACHE_DIR
-    inputs = pilot.freeze(cache)
+    published = root / STEP_DIR / "inputs"
+    if published.exists():
+        # a copy that stopped before inputs.json: never written over; the maintainer decides
+        raise sel.SelectionError(f"{published} exists without inputs.json; not written over")
+    cache = next_attempt(root)
+    inputs = pilot.freeze(cache, **kwargs)  # the download is complete when this returns
+    inputs["exclusion_preview"] = exclusion_preview(root, cache)
     for item in inputs["files"]:
         if item["in_git"]:
-            target = root / STEP_DIR / "inputs" / item["name"]
+            target = published / item["name"]
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(cache / item["name"], target)
-    inputs_json.write_text(json.dumps(inputs, indent=2) + "\n", encoding="utf-8", newline="\n")
+            with open(target, "xb") as handle:  # never over an existing file
+                handle.write((cache / item["name"]).read_bytes())
+    # inputs.json, written last and exclusively, marks the local publication as complete
+    with open(inputs_json, "x", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(inputs, indent=2) + "\n")
     return inputs
 
 
@@ -75,8 +128,8 @@ def archive_step(root: Path, drive: Path = DRIVE, script: Path | None = None) ->
     the problems (empty when every check passed)."""
     if drive.exists():
         raise sel.SelectionError(f"{drive} exists; not replaced")
-    cache = root / CACHE_DIR
     inputs = json.loads((root / STEP_DIR / "inputs.json").read_text(encoding="utf-8"))
+    cache = cache_dir(root, inputs)
     pilot.verify_inputs(cache, inputs)
     local = root / ".cache" / "v04" / "inputs-archive"
     local.mkdir(parents=True, exist_ok=False)
@@ -217,7 +270,7 @@ def select_step(root: Path, commit: str) -> dict[str, Any]:
     created = pilot.push_run_created_at(commit)
     number = round_after(created)
     seed, beacon = drand_seed(number)
-    out = pilot.run_selection(root / CACHE_DIR, inputs, beacon["randomness"], root)
+    out = pilot.run_selection(cache_dir(root, inputs), inputs, beacon["randomness"], root)
     out.update(
         {
             "protocol": PROTOCOL_ID,

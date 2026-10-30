@@ -113,11 +113,15 @@ def run_injection(task: InjectionTask) -> dict[str, Any]:
     started = time.process_time()
     record: dict[str, Any] = {"target_key": task.target["key"], "stage": task.stage}
     record["index"] = task.index
+    # None until the data are read: an injection that fails before that is in the "unknown"
+    # CROWDSAP group of the summary, never in the headline (known) group
+    record["crowdsap_missing_sectors"] = None
     try:
         test_plan = stage_plan(task.test_plan, task.stage)
         plan = TessTestPlan.model_validate(test_plan)
         cache = Path(task.cache_dir)
         data = TessAdapter().load(task.target, test_plan, cache)
+        record["crowdsap_missing_sectors"] = inj.crowdsap_missing(data)
         catalogs, scan = load_catalogs(task.catalog_paths, task.scan_path, cache)
         star = data.star
         drawn = inj.draw_injections(

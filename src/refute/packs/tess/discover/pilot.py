@@ -43,6 +43,7 @@ GAIA_EB_URL = (
 )
 GAIA_EB_SHA256 = "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df"
 GIT_LIMIT_BYTES = 5 * 1000**2
+LF = "\n"
 USER_AGENT = "refute-discover/0.4"
 
 
@@ -80,76 +81,103 @@ def freeze(
     fetch: Callable[[str], bytes] = download,
     now: Callable[[], str] = utc_now,
     sector_count: Callable[[int], int] | None = None,
+    sleep: Callable[[float], None] | None = None,
 ) -> dict[str, Any]:
-    """Download every frozen input once into ``out_dir`` and write ``inputs.json``. Without
-    ``s_max`` it is found from MAST (``latest_spoc_sector``), below the highest sector on the
-    page. The Gaia EB snapshot must have its recorded SHA-256, or the freeze stops. Every
-    download retries a transient failure (a timeout, a connection error, an HTTP 5xx answer)
-    with the protocol's policy (``sel.policy``); when the retries are exhausted the freeze
-    stops."""
+    """One freeze attempt: download every input once into ``out_dir``, which must not exist
+    (an attempt never writes over another's files), and write ``inputs.json`` there when every
+    input arrived. Each event is appended to ``attempt.jsonl`` as it happens (each file with its
+    URL, time, size and SHA-256; a failure with every retry), so a failed attempt is documented
+    too. Without ``s_max`` it is found from MAST (``latest_spoc_sector``). The Gaia EB snapshot
+    must have its recorded SHA-256. Every download retries a transient failure (a timeout, a
+    connection error, an HTTP 5xx answer) with the protocol's policy (``sel.policy``); when the
+    retries are exhausted the attempt stops."""
     import time
 
-    from refute.selection.walk import transient_query, with_retries
-
-    raw_fetch = fetch
-
-    def fetch(url: str) -> bytes:  # noqa: F811 - the retried download
-        return with_retries(
-            lambda: transient_query(lambda: sel.transient(lambda: raw_fetch(url), url), url),
-            sel.policy(),
-            time.sleep,
-        )[0]
+    from refute.selection.walk import (
+        Attempt,
+        RetriesExhaustedError,
+        TransientError,
+        transient_query,
+    )
 
     out_dir = Path(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=False)
+    log = out_dir / "attempt.jsonl"
     records = []
 
+    def event(item: dict[str, Any]) -> None:
+        with open(log, "a", encoding="utf-8", newline=LF) as handle:
+            handle.write(json.dumps({"utc": now(), **item}, sort_keys=True) + LF)
+
+    def get(url: str) -> bytes:
+        """The download with the protocol's retries; every transient error is logged before
+        the wait, and the terminal failure (retries exhausted, or any other error) too."""
+        policy = sel.policy()
+        failures: list[Attempt] = []
+        for number in range(1, policy.attempts + 1):
+            try:
+                return transient_query(lambda: sel.transient(lambda: fetch(url), url), url)
+            except TransientError as exc:
+                failures.append(Attempt(now(), str(exc)))
+                event({"event": "transient", "url": url, "attempt": number, "error": str(exc)})
+                if number < policy.attempts:
+                    (sleep or time.sleep)(policy.backoff_seconds)
+            except Exception as exc:
+                event({"event": "failure", "url": url, "error": f"{type(exc).__name__}: {exc}"})
+                raise
+        event({"event": "failure", "url": url, "error": f"retries exhausted ({len(failures)})"})
+        raise RetriesExhaustedError(failures)
+
     def keep(name: str, url: str, data: bytes) -> bytes:
-        (out_dir / name).write_bytes(data)
+        path = out_dir / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "xb") as handle:  # never over an existing file
+            handle.write(data)
         records.append(record(name, url, data, now()))
+        event({"event": "file", **records[-1]})
         return data
 
-    page = keep("target_lists.html", TARGET_LISTS_PAGE, fetch(TARGET_LISTS_PAGE)).decode("utf-8")
+    event({"event": "start", "out_dir": out_dir.as_posix()})
+    page = keep("target_lists.html", TARGET_LISTS_PAGE, get(TARGET_LISTS_PAGE)).decode("utf-8")
     s_max_record = {"s_max": s_max, "queries": [], "given": s_max is not None}
     if s_max is None:
         s_max_record = latest_spoc_sector(
             highest_listed_sector(page), sector_count or spoc_sector_count
         )
         s_max = s_max_record["s_max"]
+    event({"event": "s_max", **s_max_record})
     lists = {}
     for sector, url in sel.list_urls(page, s_max).items():
-        lists[sector] = keep(f"lists/{Path(url).name}", url, _mkdir_fetch(out_dir, url, fetch))
-        lists[sector] = lists[sector].decode("utf-8")
+        lists[sector] = keep(f"lists/{Path(url).name}", url, get(url)).decode("utf-8")
     frame = sel.build_frame(lists)
     keep(
         "frame.csv",
         "derived: refute.packs.tess.discover.selection.build_frame",
         sel.frame_csv(frame),
     )
-    keep("toi.csv", TOI_URL, fetch(TOI_URL))
-    keep("ctoi.csv", CTOI_URL, fetch(CTOI_URL))
+    keep("toi.csv", TOI_URL, get(TOI_URL))
+    keep("ctoi.csv", CTOI_URL, get(CTOI_URL))
     nea = f"{NEA_TAP}?{urllib.parse.urlencode({'query': PSCOMPPARS_QUERY, 'format': 'csv'})}"
-    keep("pscomppars.csv", nea, fetch(nea))
-    keep("tess_eb.tsv", TESS_EB_URL, fetch(TESS_EB_URL))
-    gaia = fetch(GAIA_EB_URL)
+    keep("pscomppars.csv", nea, get(nea))
+    keep("tess_eb.tsv", TESS_EB_URL, get(TESS_EB_URL))
+    gaia = get(GAIA_EB_URL)
     if hashlib.sha256(gaia).hexdigest() != GAIA_EB_SHA256:
+        event({"event": "failure", "url": GAIA_EB_URL, "reason": "SHA-256 differs"})
         raise sel.SelectionError("the Gaia DR3 EB asset does not match its recorded SHA-256")
     keep("gaia_dr3_eb.csv", GAIA_EB_URL, gaia)
     inputs = {
         "schema": "refute-tess-discover-inputs-1",
+        "attempt": out_dir.name,
         "s_max": s_max,
         "s_max_record": s_max_record,
         "frame_stars": len(frame),
         "files": records,
         "total_bytes": sum(r["bytes"] for r in records),
     }
-    (out_dir / "inputs.json").write_text(json.dumps(inputs, indent=2) + "\n", encoding="utf-8")
+    with open(out_dir / "inputs.json", "x", encoding="utf-8", newline=LF) as handle:
+        handle.write(json.dumps(inputs, indent=2) + LF)
+    event({"event": "complete", "files": len(records)})
     return inputs
-
-
-def _mkdir_fetch(out_dir: Path, url: str, fetch: Callable[[str], bytes]) -> bytes:
-    (out_dir / "lists").mkdir(parents=True, exist_ok=True)
-    return fetch(url)
 
 
 def verify_inputs(out_dir: Path, inputs: dict[str, Any]) -> None:

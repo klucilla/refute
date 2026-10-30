@@ -128,6 +128,9 @@ def inject(data: TessData, injection: Injection) -> TessData:
                 injection.duration_days,
                 INGRESS_FRACTION,
             )
+            # Without CROWDSAP the SAP dip is left undiluted (1.0). That is an assumption, not a
+            # measured value: the sector is listed by crowdsap_missing, and the injections into
+            # such a curve are counted apart (summarize), never with the known-CROWDSAP ones.
             crowd = sector.crowdsap if sector.crowdsap is not None else 1.0
             sectors.append(
                 replace(
@@ -138,6 +141,14 @@ def inject(data: TessData, injection: Injection) -> TessData:
             )
         aux = replace(aux, sectors=sectors)
     return replace(data, lc=new_lc, aux=aux)
+
+
+def crowdsap_missing(data: TessData) -> list[int]:
+    """The sectors of a curve whose light-curve file gave no CROWDSAP (none without auxiliary
+    columns: then no SAP flux is injected at all)."""
+    if data.aux is None:
+        return []
+    return sorted(int(s.sector) for s in data.aux.sectors if s.crowdsap is None)
 
 
 def recovery(
@@ -184,24 +195,48 @@ def wilson_interval(successes: int, trials: int, z: float = 1.959963984540054) -
     return [max(0.0, centre - half), min(1.0, centre + half)]
 
 
+def _counts(records: list[dict[str, Any]]) -> dict[str, Any]:
+    n = len(records)
+    recovered = sum(1 for r in records if r["recovery"]["recovered"])
+    return {
+        "injections": n,
+        "recovered": recovered,
+        "declared_aliases": sum(1 for r in records if r["recovery"]["alias"] is not None),
+        "gate_passed": sum(1 for r in records if r["recovery"]["gate_passed"]),
+        "recovery_rate": recovered / n if n else None,
+        "recovery_wilson_95": wilson_interval(recovered, n),
+    }
+
+
 def summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
     """Per-curve counts: injections, recovered (period, epoch and gate), declared aliases, gate
     passes; the recovery rate with its 95 % Wilson interval. The sampling unit is one injection
     into this curve; injections into the same curve are treated as independent, which is an
-    approximation."""
-    n = len(records)
-    recovered = sum(1 for r in records if r["recovery"]["recovered"])
-    aliases = sum(1 for r in records if r["recovery"]["alias"] is not None)
-    gates = sum(1 for r in records if r["recovery"]["gate_passed"])
+    approximation.
+
+    The headline counts are over the injections whose curve had CROWDSAP in every sector
+    (``crowdsap_missing_sectors == []``). An injection into a curve with a sector without
+    CROWDSAP (a non-empty list; the SAP dip then left undiluted) is counted apart under
+    ``crowdsap_missing``; one whose CROWDSAP is unknown (``None`` or absent: the task failed
+    before the data were read) under ``crowdsap_unknown``. Neither ever enters the headline
+    rate; every task is in exactly one group, so ``tasks`` is their total."""
+    known = [r for r in records if r.get("crowdsap_missing_sectors") == []]
+    missing = [r for r in records if r.get("crowdsap_missing_sectors")]
+    unknown = [r for r in records if r.get("crowdsap_missing_sectors") is None]
     return {
         "sampling_unit": "one injection into this curve",
         "independence": "approximate: injections into the same curve are not independent stars",
-        "injections": n,
-        "recovered": recovered,
-        "declared_aliases": aliases,
-        "gate_passed": gates,
-        "recovery_rate": recovered / n if n else None,
-        "recovery_wilson_95": wilson_interval(recovered, n),
+        "tasks": len(records),
+        **_counts(known),
+        "crowdsap_missing": {
+            **_counts(missing),
+            "sectors": sorted({s for r in missing for s in r["crowdsap_missing_sectors"]}),
+            "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+        },
+        "crowdsap_unknown": {
+            **_counts(unknown),
+            "note": "the task failed before its data were read; CROWDSAP not known",
+        },
     }
 
 

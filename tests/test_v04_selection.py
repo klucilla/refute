@@ -335,8 +335,8 @@ def test_the_freeze_checks_the_gaia_asset_hash(tmp_path):
         return b"TIC ID\n1\n"
 
     with pytest.raises(sel.SelectionError, match="Gaia"):
-        pilot.freeze(tmp_path, 4, fetch=fetch, now=lambda: "2026-10-29T00:00:00Z")
-    assert (tmp_path / "frame.csv").is_file()
+        pilot.freeze(tmp_path / "attempt", 4, fetch=fetch, now=lambda: "2026-10-29T00:00:00Z")
+    assert (tmp_path / "attempt" / "frame.csv").is_file()
 
 
 def test_the_push_run_must_be_unique():
@@ -445,9 +445,10 @@ def test_the_archive_is_checked_from_its_copies(tmp_path):
     from refute.packs.tess.discover import steps
 
     root = tmp_path / "root"
-    cache = root / steps.CACHE_DIR
+    cache = root / steps.ATTEMPTS_DIR / "attempt-01"
     cache.mkdir(parents=True)
     inputs_dir, inputs = _inputs(cache)
+    inputs["attempt"] = "attempt-01"
     (root / steps.STEP_DIR).mkdir(parents=True)
     (root / steps.STEP_DIR / "inputs.json").write_text(json.dumps(inputs), encoding="utf-8")
     drive = tmp_path / "drive"
@@ -538,3 +539,99 @@ def test_the_page_links_its_lists_relatively():
     relative = "".join(f'<a href="2m/all_targets_S{s:03d}_v1.csv">c</a>' for s in (1, 2))
     urls = sel.list_urls(relative, 2)
     assert urls[2] == "https://tess.mit.edu/public/target_lists/2m/all_targets_S002_v1.csv"
+
+
+def _fake_fetch(fail_on: str | None = None):
+    page = "".join(f'<a href="2m/all_targets_S{s:03d}_v1.csv">c</a>' for s in (1, 2, 3, 4))
+    calls = {"n": 0}
+
+    def fetch(url):
+        calls["n"] += 1
+        if fail_on and fail_on in url:
+            raise TimeoutError("timed out")
+        if url == pilot.TARGET_LISTS_PAGE:
+            return page.encode()
+        for s in (1, 2, 3, 4):
+            if url.endswith(f"S{s:03d}_v1.csv"):
+                return LISTS[s].encode()
+        if url == pilot.GAIA_EB_URL:
+            return b"source_id,ra,dec,frequency\n1,0,0,1\n"
+        return b"TIC ID\n1\n"
+
+    return fetch
+
+
+def test_a_failed_attempt_keeps_its_folder_and_log_and_the_next_is_new(tmp_path, monkeypatch):
+    from refute.packs.tess.discover import steps
+
+    monkeypatch.setattr(pilot.sel, "policy", lambda: RetryPolicy(2, 0))
+    root = tmp_path / "root"
+    with pytest.raises(Exception, match="transient errors on all 2 attempts"):
+        steps.freeze_step(root, s_max=4, fetch=_fake_fetch("vizier"), sleep=lambda _s: None)
+    first = root / steps.ATTEMPTS_DIR / "attempt-01"
+    events = [json.loads(line) for line in (first / "attempt.jsonl").read_text().splitlines()]
+    transient = [e for e in events if e["event"] == "transient"]
+    assert [e["attempt"] for e in transient] == [1, 2]  # each logged before the next wait
+    assert events[-1]["event"] == "failure" and "vizier" in events[-1]["url"]
+    files = [e["name"] for e in events if e["event"] == "file"]
+    assert "frame.csv" in files and "tess_eb.tsv" not in files
+    assert not (first / "inputs.json").exists()
+    before = (first / "toi.csv").read_bytes()
+    assert steps.next_attempt(root).name == "attempt-02"
+    with pytest.raises(sel.SelectionError, match="Gaia"):  # the fake Gaia bytes never match
+        steps.freeze_step(root, s_max=4, fetch=_fake_fetch(), sleep=lambda _s: None)
+    assert (first / "toi.csv").read_bytes() == before  # the first attempt is untouched
+    assert (root / steps.ATTEMPTS_DIR / "attempt-02" / "tess_eb.tsv").is_file()
+
+
+def test_a_freeze_never_writes_into_an_existing_folder(tmp_path):
+    (tmp_path / "attempt").mkdir()
+    with pytest.raises(FileExistsError):
+        pilot.freeze(tmp_path / "attempt", s_max=4, fetch=_fake_fetch(), sleep=lambda _s: None)
+
+
+def test_the_selection_reads_only_the_recorded_attempt(tmp_path):
+    from refute.packs.tess.discover import steps
+
+    assert steps.cache_dir(tmp_path, {"attempt": "attempt-03"}).name == "attempt-03"
+    with pytest.raises(sel.SelectionError, match="no freeze attempt"):
+        steps.cache_dir(tmp_path, {})
+
+
+def test_the_gaia_rule_cost_splits_the_stars_it_alone_excludes_by_separation():
+    frame = [
+        sel.FrameStar(1, (1, 2, 3), 10.0, 10.0, 0.0),
+        sel.FrameStar(2, (1, 2, 3), 10.0, 20.0, 0.0),
+        sel.FrameStar(3, (1, 2, 3), 10.0, 30.0, 0.0),
+        sel.FrameStar(4, (1, 2, 3), 10.0, 40.0, 0.0),
+    ]
+    gaia = np.array([[10.0, 1.0 / 3600], [20.0, 4.0 / 3600], [30.0, 15.0 / 3600]])
+    sets = {"TOI": {3}, "CTOI": set(), "pscomppars": set(), "TESS-EB": set()}
+    out = sel.apply_exclusions(frame, set(), sets, gaia)
+    cost = sel.gaia_exclusion_cost(out, frame, gaia)
+    assert cost["excluded_by_gaia"] == 3 and cost["excluded_only_by_gaia"] == 2
+    assert cost["only_by_gaia_by_separation"] == {
+        "0-2 arcsec": 1,
+        "2-5 arcsec": 1,
+        "5-21 arcsec": 0,
+    }
+
+
+def test_a_non_transient_error_leaves_its_failure_event(tmp_path):
+    def broken(url):
+        raise KeyError("parse")
+
+    with pytest.raises(KeyError):
+        pilot.freeze(tmp_path / "a", s_max=4, fetch=broken, sleep=lambda _s: None)
+    events = [json.loads(x) for x in (tmp_path / "a" / "attempt.jsonl").read_text().splitlines()]
+    assert events[-1]["event"] == "failure" and "KeyError" in events[-1]["error"]
+
+
+def test_published_inputs_without_inputs_json_are_never_written_over(tmp_path):
+    from refute.packs.tess.discover import steps
+
+    root = tmp_path / "root"
+    (root / steps.STEP_DIR / "inputs").mkdir(parents=True)
+    with pytest.raises(sel.SelectionError, match="not written over"):
+        steps.freeze_step(root, s_max=4, fetch=_fake_fetch(), sleep=lambda _s: None)
+    assert not (root / steps.ATTEMPTS_DIR).exists()  # refused before any download
