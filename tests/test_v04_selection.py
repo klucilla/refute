@@ -835,3 +835,9 @@ def test_the_sector_count_filters_the_exposure_time_by_a_range():
 def test_a_filter_skipped_by_astroquery_stops_the_sector_count():
     with pytest.raises(sel.SelectionError, match="a filter was skipped"):
         pilot.spoc_sector_count(107, observations=_Observations(warn=True))
+
+
+def test_the_sector_count_can_count_the_20_s_cadence_apart():
+    fake = _Observations()
+    pilot.spoc_sector_count(107, observations=fake, exptime=pilot.SPOC_20S_EXPTIME)
+    assert fake.criteria["t_exptime"] == [19.5, 20.5]

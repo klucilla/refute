@@ -15,7 +15,11 @@ from refute.packs.tess.discover import selection as sel
 from test_v04_selection import LISTS, STATIC_EB, _static_eb
 
 GAIA = b"source_id,ra,dec,frequency\n1,0,0,1\n"
-SPEC = {**pilot.ASSEMBLY, "source": "attempt-04", "s_max": 4}
+SPEC = {
+    **{k: v for k, v in pilot.ASSEMBLY.items() if k != "frame"},
+    "source": "attempt-04",
+    "s_max": 4,
+}
 CODE = {"commit": "0" * 40, "clean_paths": ["src"], "sha256": {}}
 APPROVAL = "https://github.com/klucilla/refute/issues/177#issuecomment-1"
 PAGE = "".join(f'<a href="2m/all_targets_S{s:03d}_v1.csv">c</a>' for s in (1, 2, 3, 4))
@@ -71,6 +75,7 @@ def _assemble(root: Path, source: Path, **kwargs):
         fetch=_fetch,
         now=lambda: "2026-10-30T12:00:00Z",
         sector_count=kwargs.pop("sector_count", lambda _s: 1),
+        cadence_count=kwargs.pop("cadence_count", lambda s: 10 * s),
         sleep=lambda _s: None,
         assembly=kwargs.pop("assembly", SPEC),
         **_eb(root),
@@ -116,6 +121,9 @@ def test_an_assembled_attempt_copies_checks_and_records_the_real_dates(tmp_path,
     assert len(frame["derived_from"]) == 4
     assert inputs["s_max"] == 4 and [q["sector"] for q in inputs["s_max_record"]["queries"]] == [4]
     assert "attempt-04" in inputs["s_max_record"]["highest_listed_from"]
+    assert inputs["s_max_record"]["exptime_range_s"] == pilot.SPOC_120S_EXPTIME
+    assert inputs["s_max_record"]["spoc_20s_light_curves"] == {"4": 40}  # recorded, not used
+    assert inputs["assembled_from"]["supersedes"]["attempt"] == "attempt-06"
     source_record = inputs["assembled_from"]
     assert (
         source_record["log_sha256"]
@@ -269,6 +277,7 @@ def test_the_assemble_step_needs_an_issue_comment_and_publishes_like_the_freeze(
         code=CODE,
         fetch=_fetch,
         sector_count=lambda _s: 1,
+        cadence_count=lambda _s: 0,
         sleep=lambda _s: None,
     )
     assert inputs["attempt"] == "attempt-05"  # the next attempt folder, never the source's
@@ -292,3 +301,35 @@ def test_the_code_identity_refuses_uncommitted_code(tmp_path):
 
     with pytest.raises(sel.SelectionError, match="commit it"):
         steps.code_identity(tmp_path, run=run)
+
+
+def test_a_failed_cadence_check_stops_the_assembly(tmp_path, patched):
+    source = _source(tmp_path)
+
+    def broken(_sector):
+        raise TimeoutError("MAST timed out")
+
+    with pytest.raises(sel.SelectionError, match="MAST timed out"):
+        _assemble(tmp_path, source, cadence_count=broken)
+    assert _events(tmp_path / "attempt-06")[-1]["step"] == "cadence check"
+
+
+def test_the_supersession_of_attempt_6_keeps_its_counts_as_history():
+    old = pilot.ASSEMBLY["supersedes"]
+    assert old["recorded_counts"]["107"] == 15160 and "InputWarning" in old["defect"]
+    assert old["publication"].startswith(".cache/v04/inputs-attempts/attempt-06/")
+
+
+def test_a_derived_frame_other_than_the_expected_stops_the_assembly(tmp_path, patched):
+    source = _source(tmp_path)
+    with pytest.raises(sel.SelectionError, match="not the expected one"):
+        _assemble(tmp_path, source, assembly={**SPEC, "frame": {"sha256": "0" * 64, "stars": 3}})
+    events = _events(tmp_path / "attempt-06")
+    assert events[-1]["step"] == "frame"
+    assert "frame.csv" not in [e.get("name") for e in events if e["event"] == "file"]
+    assert not (tmp_path / "attempt-06" / "inputs.json").exists()
+
+
+def test_the_expected_frame_is_attempt_4s():
+    assert pilot.ASSEMBLY["frame"]["stars"] == 175739
+    assert pilot.ASSEMBLY["frame"]["sha256"].startswith("58504462")

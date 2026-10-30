@@ -327,8 +327,9 @@ def freeze(
 
 # --- the assembled attempt (the maintainer's decision of 2026-10-30) --------------------------
 
-# Attempt 6 is assembled from the files of attempt 4 while the target lists of tess.mit.edu
-# answer HTTP 502 (docs/validation/v0.4/freeze-attempts-2026-10-29.md). Attempt 4's log was
+# Attempts 6 and 7 are assembled from the files of attempt 4 while the target lists of
+# tess.mit.edu answer HTTP 502 (docs/validation/v0.4/freeze-attempts-2026-10-29.md); attempt 7
+# supersedes attempt 6, whose MAST counts were of every cadence. Attempt 4's log was
 # reconstructed after the attempt from the files on disk, so its write times are estimates of
 # the retrieval times, and its URLs are rebuilt from the code's constants and the page's links.
 ASSEMBLY = {
@@ -342,6 +343,24 @@ ASSEMBLY = {
         "uncommitted edits of the working tree (the relative links fix); its exact code was "
         "not recorded"
     ),
+    # the frame derived from attempt 4's lists (checked on 2026-10-30 and by attempt 6): another
+    # frame stops the assembly before inputs.json, for the maintainer's decision
+    "frame": {
+        "sha256": "58504462715b8bc14155a62be175fcedbc32196c23b726c83520cc3212f2c903",
+        "stars": 175739,
+    },
+    "supersedes": {
+        "attempt": "attempt-06",
+        "defect": (
+            "astroquery skipped t_exptime=120 (InputWarning: 't_exptime is continuous, and "
+            "filters based on min and max values. Not enough values provided, skipping...'), so "
+            "its counts were of SPOC timeseries of every cadence; S_max was 107 with either filter"
+        ),
+        "recorded_counts": {"111": 0, "110": 0, "109": 0, "108": 0, "107": 15160},
+        "recorded_label": "spoc_120s_light_curves (mislabelled: every SPOC cadence)",
+        "publication": ".cache/v04/inputs-attempts/attempt-06/publication-withdrawn/",
+        "decision": "the maintainer's approval of 2026-10-30 (option B)",
+    },
 }
 COPIED = ("target_lists.html", "toi.csv", "ctoi.csv", "pscomppars.csv")
 NOT_COPIED = ("frame.csv",)  # derived again from the copied lists, never reused
@@ -412,13 +431,16 @@ def assemble(
     tess_eb_path: Path | None = None,
     tess_eb: dict[str, Any] | None = None,
     assembly: dict[str, Any] | None = None,
+    cadence_count: Callable[[int], int] | None = None,
 ) -> dict[str, Any]:
     """An attempt assembled from a source attempt's files (``ASSEMBLY``): every file of the
     source is checked against the size and SHA-256 of its log; the page, the lists, TOI, CTOI
     and ``pscomppars`` are copied, never moved or changed; S_max is found from MAST now, each
     query logged as it is answered, with the highest sector of the copied page, and must be the
     source's (``assembly['s_max']``); the frame is derived again from the copied lists; the
-    TESS-EB static edition and the Gaia DR3 EB asset are taken as in ``freeze``. Any error
+    TESS-EB static edition and the Gaia DR3 EB asset are taken as in ``freeze``. The 20-s
+    count of each queried sector (``cadence_count``, by default ``spoc_sector_count`` with
+    ``SPOC_20S_EXPTIME``) is recorded as a check by cadence; it never decides S_max. Any error
     stops the attempt with a logged failure."""
     attempt = _AttemptLog(out_dir, fetch, now, sleep)
     source_dir = Path(source_dir)
@@ -441,6 +463,7 @@ def assemble(
             tess_eb_path,
             tess_eb or TESS_EB_STATIC,
             assembly or ASSEMBLY,
+            cadence_count or (lambda s: spoc_sector_count(s, exptime=SPOC_20S_EXPTIME)),
         )
     except Exception as exc:
         if not attempt.failed:  # every terminal error is logged once
@@ -459,6 +482,7 @@ def _assemble(
     tess_eb_path: Path | None,
     edition: dict[str, Any],
     spec: dict[str, Any],
+    cadence_count: Callable[[int], int],
 ) -> dict[str, Any]:
     eb_static = _static_edition(attempt, tess_eb_path, edition)
     try:
@@ -474,7 +498,8 @@ def _assemble(
         "log_reconstructed_utc": reconstructed[0].get("utc") if reconstructed else None,
         "files": len(by_name),
         "files_checked": "every file's size and SHA-256 against the log, the old frame included",
-        **{k: v for k, v in spec.items() if k not in ("source", "s_max")},
+        **{k: v for k, v in spec.items() if k not in ("source", "s_max", "frame")},
+        "expected_frame": spec.get("frame"),
     }
     attempt.event({"event": "source", **source})
 
@@ -505,6 +530,16 @@ def _assemble(
     except Exception as exc:
         raise attempt.fail(f"{type(exc).__name__}: {exc}", step="s_max") from exc
     s_max_record["highest_listed_from"] = f"the page copied from {source_dir.name}"
+    s_max_record["exptime_range_s"] = list(SPOC_120S_EXPTIME)
+    s_max_record["spoc_20s_exptime_range_s"] = list(SPOC_20S_EXPTIME)
+    s_max_record["spoc_20s_light_curves"] = {}  # a check by cadence; S_max is defined by 120 s
+    for q in s_max_record["queries"]:
+        try:
+            n20 = cadence_count(q["sector"])
+        except Exception as exc:
+            raise attempt.fail(f"{type(exc).__name__}: {exc}", step="cadence check") from exc
+        s_max_record["spoc_20s_light_curves"][str(q["sector"])] = n20
+        attempt.event({"event": "mast_20s", "sector": q["sector"], "spoc_20s_light_curves": n20})
     attempt.event({"event": "s_max", **s_max_record})
     if s_max_record["s_max"] != spec["s_max"]:
         raise attempt.fail(
@@ -525,6 +560,16 @@ def _assemble(
     }
     frame = sel.build_frame(lists)
     frame_bytes = sel.frame_csv(frame)
+    expected_frame = spec.get("frame")
+    if expected_frame and (
+        hashlib.sha256(frame_bytes).hexdigest() != expected_frame["sha256"]
+        or len(frame) != expected_frame["stars"]
+    ):
+        raise attempt.fail(
+            f"the derived frame ({len(frame)} stars, SHA-256 "
+            f"{hashlib.sha256(frame_bytes).hexdigest()}) is not the expected one",
+            step="frame",
+        )
     old = by_name["frame.csv"]  # its bytes were checked against the log by the inventory
     attempt.keep(
         "frame.csv",
@@ -570,11 +615,15 @@ def verify_inputs(out_dir: Path, inputs: dict[str, Any]) -> None:
 # skips a single value with an InputWarning (so ``t_exptime=120`` counted the 20-s light curves
 # too; found on 2026-10-30, attempt 6). The range keeps 120 s and leaves out 20 s and 200 s.
 SPOC_120S_EXPTIME = [119.5, 120.5]
+SPOC_20S_EXPTIME = [19.5, 20.5]  # a diagnostic count only: S_max is defined by 120 s
 
 
-def spoc_sector_count(sector: int, observations: Any = None) -> int:
-    """How many SPOC 120-s light-curve observations MAST lists for a sector (network). A filter
-    that astroquery skips (an ``InputWarning``) stops the query instead of widening it."""
+def spoc_sector_count(
+    sector: int, observations: Any = None, exptime: list[float] = SPOC_120S_EXPTIME
+) -> int:
+    """How many SPOC light-curve observations of the ``exptime`` range (120 s by default) MAST
+    lists for a sector (network). A filter that astroquery skips (an ``InputWarning``) stops
+    the query instead of widening it."""
     import warnings
 
     if observations is None:
@@ -589,7 +638,7 @@ def spoc_sector_count(sector: int, observations: Any = None) -> int:
                 obs_collection="TESS",
                 provenance_name="SPOC",
                 dataproduct_type="timeseries",
-                t_exptime=SPOC_120S_EXPTIME,
+                t_exptime=list(exptime),
                 sequence_number=int(sector),
             )
         skipped = [str(w.message) for w in caught if w.category.__name__ == "InputWarning"]
