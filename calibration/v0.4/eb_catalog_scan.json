@@ -1,0 +1,438 @@
+{
+  "attachment": "eb_catalog.csv (format refute-eb-catalog-1; TESS-EB as reference rows)",
+  "centre": "each target's TIC position from the selection walk (mast.tic_ra, tic_dec)",
+  "format": "refute-eb-catalog-scan-1",
+  "per_target": {
+    "TIC-100610422": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-120900130": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-122616851": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-138651299": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-140123544": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-140867523": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-140899383": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-141121044": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-141944911": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-142440081": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-142727252": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-146613141": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-147617419": {
+      "gaia": 2,
+      "tess_eb": 0
+    },
+    "TIC-148002142": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-14802455": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-149968737": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-150249543": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-150250788": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-154257406": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-156118042": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-158175179": {
+      "gaia": 1,
+      "tess_eb": 0
+    },
+    "TIC-158461758": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-158636944": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-162582602": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-166087356": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-166151416": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-166761808": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-167755099": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-198407396": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-202295593": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-210464356": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-219404837": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-219407250": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-229943561": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-230068646": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-232623880": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-232966887": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-233045207": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-233231885": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-233747343": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-236778955": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-23708215": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-240171830": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-24607925": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-248356317": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-25155713": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-25382939": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-255927008": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-258827696": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-264252839": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-267039954": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-269533563": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-281426580": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-281574170": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-281709735": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-28289264": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-286480954": {
+      "gaia": 1,
+      "tess_eb": 0
+    },
+    "TIC-29267852": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-298001089": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-300142911": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-321476318": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-323296004": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-326209514": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-334900819": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-336265633": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-349577085": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-349682621": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-354822931": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-356241506": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-356683052": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-358713436": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-364129259": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-372045060": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-37774136": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-380039482": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-381981543": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-383646543": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-387512509": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-388198210": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-393911494": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-394103866": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-396607112": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-397000139": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-405483372": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-406413408": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-416715793": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-421801900": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-441633615": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-441728473": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-441803025": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-44743595": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-453467954": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-456894260": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-458358301": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-468978941": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-62815027": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-75628092": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-79569472": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-86396382": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-88096786": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-95860790": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-97814880": {
+      "gaia": 0,
+      "tess_eb": 0
+    }
+  },
+  "radius_arcsec": 120.0,
+  "rows": 5,
+  "snapshots": [
+    {
+      "cache_path": "v04/tess-eb/tess_ebs_prsa2022.tsv",
+      "catalog_name": "TESS-EB",
+      "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+      "file": "tess_eb.tsv",
+      "parser": "tess-eb-vizier-tsv",
+      "redistributed": false,
+      "rows": 4584,
+      "sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323",
+      "url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited"
+    },
+    {
+      "catalog_name": "Gaia-DR3-EB",
+      "file": "gaia_dr3_eb.csv",
+      "redistributed": true,
+      "rows": 2184477,
+      "sha256": "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df",
+      "url": "https://github.com/klucilla/refute/releases/download/v0.2.0/gaia_dr3_vari_eclipsing_binary.csv"
+    }
+  ]
+}

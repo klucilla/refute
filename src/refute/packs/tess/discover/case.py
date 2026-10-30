@@ -69,6 +69,41 @@ ALTERNATIVES = (
 )
 
 
+def signal_identity(verdict: dict[str, Any], kind: str | None) -> dict[str, Any] | None:
+    """Whether a control's found signal is its catalogued one (protocol section 4.3, H7 of
+    v0.2.1): the planet's found period within the relative ``identity_period_tolerance`` of the
+    published period (aliases not counted); the false positive's at one of
+    ``fp_identity_factors``. The epoch difference is reported, not required. None for a funnel
+    star."""
+    from refute.packs.tess.discover.protocol import CONTROLS
+    from refute.packs.tess.pipeline import matching_factor
+
+    if kind not in ("planet", "false_positive"):
+        return None
+    comparison = verdict.get("period_comparison") or {}
+    published = comparison.get("published_period_days")
+    found = comparison.get("found_period_days")
+    factors = [1.0] if kind == "planet" else list(CONTROLS.fp_identity_factors)
+    factor = matching_factor(published, found, factors, CONTROLS.identity_period_tolerance)
+    epoch = None
+    t0_published = (verdict.get("published") or {}).get("t0_bjd")
+    t0_found = (verdict.get("candidate") or {}).get("t0_bjd")
+    if factor is not None and t0_published is not None and t0_found is not None and found:
+        offset = (float(t0_found) - float(t0_published)) % float(found)
+        epoch = offset - float(found) if offset > float(found) / 2 else offset
+    return {
+        "rule": "found period within the relative tolerance of the published period at a factor",
+        "period_tolerance": CONTROLS.identity_period_tolerance,
+        "factors": factors,
+        "published_period_days": published,
+        "found_period_days": found,
+        "matched_factor": factor,
+        "identified": factor is not None,
+        "epoch_difference_days": epoch,
+        "epoch_note": "reported, not required",
+    }
+
+
 def build_case(
     verdict: dict[str, Any],
     target: dict[str, Any],
@@ -77,7 +112,8 @@ def build_case(
 ) -> dict[str, Any]:
     """The machine-built items of ``case.json`` for one dossier. The review, the questions for a
     human and the conclusion are written by people after the review (P4 and P5); until then
-    they are empty, so the checklist reports the case as incomplete."""
+    they are empty, so the checklist reports the case as incomplete. A control's identity
+    carries its signal identity (``signal_identity``)."""
     tests = verdict.get("tests", [])
     data = verdict.get("data_summary") or {}
     return {
@@ -89,6 +125,7 @@ def build_case(
             "name": target.get("name"),
             "star": data.get("star"),
             "source": target.get("source"),
+            "signal_identity": signal_identity(verdict, target.get("kind")),
         },
         "question": QUESTIONS.get(str(target.get("kind")), QUESTIONS["exploration"]),
         "alternatives": list(ALTERNATIVES),

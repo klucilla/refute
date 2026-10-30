@@ -1,0 +1,257 @@
+# Refute v0.4 pilot claim (calibration/v0.4/PROTOCOL.md, section 12, step 3).
+# Written by calibration/v0.4/write_claim.py (refute.packs.tess.discover.claim) after
+# the selection: the v0.2 thresholds on the legacy path with H4, H7 and H9a (every
+# default of this commit written out). Locked with `refute lock` from a clean tree.
+schema_version: 1
+id: tess-discover-v0.4-pilot
+kind: discover
+pack: tess
+title: 'Refute v0.4 pilot: a funnel search for transit signals, attacked before belief'
+hypothesis: 'Among the 100 funnel stars selected by calibration/v0.4/PROTOCOL.md (the
+  first N of them run, N from the rule of section 4.4), any transit-like signal Refute
+  finds in SPOC 120-s light curves of sectors 1 to S_max is attacked by the declared
+  decisive battery; each case ends in SURVIVED, WEAKENED, REFUTED or INCONCLUSIVE,
+  with SURVIVED meaning only: the signal survived the declared decisive battery; temporal
+  confirmation was not required; the method is not validated. The two known controls
+  (a planet and a false positive) run first, with the same battery.'
+created: '2026-10-30'
+authors:
+- Klauber Lucilla
+definitions:
+  protocol: refute-tess-discover-v0.4, calibration/v0.4/PROTOCOL.md; the selection
+    of round 6598335 from the protocol commit 0000018f1f99d413a211d00f557bf5d60b01858b.
+  run_set: 'The two controls, then the first N funnel stars in the walk order of selection/targets.yaml;
+    the stars beyond N are ''not evaluated past stage 1: N rule'' (section 4.4).'
+  signal_identity: 'Controls only (section 4.3): the planet''s found period is within
+    a relative period_tolerance of 0.001 of the published period (aliases not counted);
+    the false positive''s is within it at one of flag_signal_period_factors [1, 2,
+    0.5]. The values are code (refute.packs.tess.discover.protocol.CONTROLS). The
+    epoch difference is reported, not required.'
+  verdict: Aggregated from the decisive tests only, with the severity each test emits
+    (docs/verdicts.md); holdout_by_year is a diagnostic and never changes it. Never
+    'confirmed', 'discovery', 'TRUE' or a planet letter.
+  method_status: 'not_validated: nothing in v0.4 is a validated method (docs/validation/v0.2.1/closing-2026-10-27.md).'
+  max_sector: 'S_max = 107: no product of a later sector is downloaded or read (test_plan.discovery.max_sector).'
+data_sources:
+- name: TESS two-minute target lists (frame of sectors 1 to S_max)
+  url: https://tess.mit.edu/public/target_lists/target_lists.html
+  retrieved: '2026-10-29T21:21:03Z'
+  notes: Assembled from attempt 4 (PROTOCOL.md 4.0, exception); times are estimates;
+    every list's URL, size and SHA-256 in inputs.json.
+- name: ExoFOP-TESS TOI table
+  url: https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv
+  retrieved: '2026-10-29T21:24:18Z'
+  notes: Exclusions, deduplication and the false-positive pool; inputs.json.
+- name: ExoFOP-TESS CTOI table
+  url: https://exofop.ipac.caltech.edu/tess/download_ctoi.php?sort=ctoi&output=csv
+  retrieved: '2026-10-29T21:24:21Z'
+  notes: Exclusions and deduplication; inputs.json.
+- name: NASA Exoplanet Archive, Planetary Systems Composite Parameters
+  url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+  retrieved: '2026-10-29T21:24:34Z'
+  notes: Exclusions, deduplication and the planet pool; inputs.json.
+- name: TESS-EB, Prsa et al. 2022 (VizieR J/ApJS/258/16/tess-ebs)
+  url: https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited
+  retrieved: '2026-10-30T14:50:51Z'
+  notes: 'The static edition obtained 2026-10-18 (content SHA-256 equal to the v0.2
+    snapshot''s). Not redistributed (#33): eb_catalog.csv holds reference rows only,
+    resolved at run time from a local copy checked against eb_catalog_scan.json.'
+- name: Gaia DR3 eclipsing-binary candidates (the v0.2.0 release asset)
+  url: https://github.com/klucilla/refute/releases/download/v0.2.0/gaia_dr3_vari_eclipsing_binary.csv
+  retrieved: '2026-10-30T14:50:56Z'
+  notes: Rows within 120 arcsec of the targets, in eb_catalog.csv; snapshot hash in
+    eb_catalog_scan.json.
+- name: 'MAST: TIC fields and SPOC 120-s light curve and pixel file listings'
+  url: https://mast.stsci.edu
+  retrieved: '2026-10-30'
+  notes: Queried live during the selection walk; each answer and its time are in selection/selection.json.
+    Data are downloaded at run time, with their hashes in every dossier.
+attachments:
+- path: selection/targets.yaml
+  role: targets
+- path: PROTOCOL.md
+  role: protocol
+- path: inputs.json
+  role: snapshot-index
+- path: selection/selection.json
+  role: selection-log
+- path: eb_catalog.csv
+  role: eb-catalog
+- path: eb_catalog_scan.json
+  role: eb-catalog-scan
+test_plan:
+  data:
+    mission: TESS
+    author: SPOC
+    exptime_seconds: 120
+    flux_column: pdcsap_flux
+    quality_bitmask: default
+    target_pixel_files: true
+    neighbor_radius_arcsec: 120.0
+  detrend:
+    method: robust-local-quadratic
+    window_days: 1.0
+    knot_spacing_days: 0.1
+    segment_gap_days: 0.5
+    min_points_per_knot: 30
+    clip_sigma: 3.0
+    clip_iterations: 2
+    upper_clip_sigma: 5.0
+    transit_mask_half_width_durations: 1.0
+  search:
+    method: bls-two-stage
+    objective: likelihood
+    period_min_days: 0.5
+    period_max_days: 20.0
+    durations_hours:
+    - 0.5
+    - 1.0
+    - 1.5
+    - 2.0
+    - 3.0
+    - 4.0
+    - 6.0
+    - 8.0
+    bin_minutes: 10.0
+    frequency_factor: 1.0
+    peaks_per_sector: 5
+    max_clusters: 5
+    cluster_tolerance: 0.01
+    block_gap_days: 10.0
+    refine_samples_per_width: 6.0
+    refine_width_factor: 1.5
+    final_duration_steps: 21
+    final_oversample: 20
+  gauntlet:
+    snr:
+      min_snr: 7.1
+    odd_even:
+      max_sigma: 3.0
+      min_transits_each: 2
+    secondary_eclipse:
+      max_sigma: 3.0
+      fatal_depth_ratio: 0.1
+    plausibility:
+      max_duration_ratio: 1.5
+      max_companion_radius_rjup: 2.5
+      max_stellar_radius_rel_err: 0.3
+      unreliable_tic_dispositions:
+      - SPLIT
+      - DUPLICATE
+      - ARTIFACT
+      max_tmag_mismatch: 1.0
+    holdout_by_year:
+      min_snr: 5.0
+      timing_sigma: 3.0
+      min_predicted_transits: 2
+      min_train_transits: 3
+      min_window_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+      timing_step_minutes: 1.0
+      timing_scan_half_width_durations: 0.5
+      hidden_detrend_window_factor: 3.0
+      max_timing_sigma_durations: 1.0
+      require_valid_train: true
+      max_train_duration_period_ratio: 0.2
+      max_hidden_window_fraction: 0.5
+    events:
+      min_coverage: 0.5
+      baseline_gap_durations: 0.25
+      baseline_outer_durations: 1.5
+    centroid_shift:
+      max_sigma: 3.0
+      min_offset_pixels: 0.5
+      min_sectors: 1
+    aperture_depth:
+      core_radius_pixels: 1.5
+      dilation_pixels: 1
+      max_sigma: 3.0
+      min_depth_ratio: 1.2
+    nearby_contamination:
+      max_separation_arcsec: 21.0
+      max_eclipse_depth: 1.0
+      min_crowdsap: 0.8
+      ignored_dispositions:
+      - SPLIT
+      - DUPLICATE
+      - ARTIFACT
+    period_alias:
+      min_box_delta_bic: 10.0
+      sine_harmonics: 2
+      detrend_window_periods: 3.0
+      systematic_periods_days:
+      - 13.7
+      - 6.85
+      - 4.566666666666666
+      - 3.425
+      - 1.0
+      systematic_tolerance: 0.01
+    systematics:
+      dump_margin_hours: 1.0
+      max_dump_fraction: 0.5
+      min_events_for_dumps: 3
+      max_sap_sigma: 3.0
+      max_sap_rel_diff: 0.5
+      max_background_sigma: 3.0
+      max_background_fraction: 0.5
+    eb_catalog:
+      match_radius_arcsec: 21.0
+      period_tolerance: 0.01
+      period_factors:
+      - 1.0
+      - 2.0
+      - 0.5
+      same_photometry_catalogs:
+      - TESS-EB
+    corrections:
+      version: 1
+      enabled: false
+      b_min: 20
+      gap_split: 5.0
+      fap_max: 0.0001
+      max_components: 3
+      k_clip: 2.5
+      h_min: 0.9
+      m_beta: 1.2
+      r_min: 20
+      alias_z_f: 18.47
+      alias_f: 0.5
+      capacity_b: 0.0
+      capacity_s: 0.0
+  discovery:
+    version: 1
+    decisive:
+    - snr
+    - odd_even
+    - secondary_eclipse
+    - plausibility
+    - centroid_shift
+    - aperture_depth
+    - nearby_contamination
+    - period_alias
+    - systematics
+    - eb_catalog
+    diagnostic:
+    - holdout_by_year
+    stages:
+      centroid_shift: 2
+      aperture_depth: 2
+    required_diagnostics:
+    - holdout_by_year
+    method_status: not_validated
+    method_status_reference: docs/validation/v0.2.1/closing-2026-10-27.md
+    survived_meaning: the signal survived the declared decisive battery; temporal
+      confirmation was not required; the method is not validated
+    inputs:
+      protocol: 6b22d2b81b80fe462897dabb0a08fb328a6f0ae27f5d09cf48ffb85b6b3c3275
+      inputs_json: c49b3119415f5686eb91a0284e9ffdffa307e0eda2a8356b3b3d470741b080b4
+      selection: 19a013d36585a671f4060c08a556865d56126dea176c8597daea8b91d027daf1
+      target_lists_page: a7091fe02b15207ac56d2baa102726f84fb02eca5ed69632a8f624a5c618003e
+      frame: 58504462715b8bc14155a62be175fcedbc32196c23b726c83520cc3212f2c903
+      toi: 42ff267e5781f3dc06aaeae654551e13dd70b699fa53f34949713ae8ab4adcc9
+      ctoi: 9e11710eaa5604343bef02d6d4b8b6b087f0d335c9213453345a5d2a6243d1f9
+      pscomppars: bb9e29d46336e6a6934bf1a65f07d44d517f49df2ff3dab41f3df31c323fd5a5
+      tess_eb: 61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323
+      gaia_dr3_eb: 5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df
+    max_sector: 107

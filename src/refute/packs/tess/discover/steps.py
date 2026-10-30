@@ -361,6 +361,31 @@ def select_step(root: Path, commit: str) -> dict[str, Any]:
     return out
 
 
+# The committed files the claim is written from (protocol section 12, step 3).
+CLAIM_SOURCES = (
+    "calibration/v0.4/PROTOCOL.md",
+    "calibration/v0.4/inputs.json",
+    "calibration/v0.4/inputs",
+    "calibration/v0.4/selection",
+)
+
+
+def claim_step(root: Path) -> dict[str, Any]:
+    """The claim after the selection (``refute.packs.tess.discover.claim``), from the committed
+    protocol, inputs and selection output only; the frozen inputs it reads are checked against
+    their hashes in ``inputs.json``."""
+    from refute.packs.tess.discover import claim
+
+    diff = _git(root, "status", "--porcelain", "--untracked-files=all", "--", *CLAIM_SOURCES)
+    if diff.returncode != 0 or diff.stdout.strip():
+        raise sel.SelectionError(
+            "the protocol, the inputs and the selection must be committed and unchanged: "
+            + (diff.stdout.strip() or diff.stderr.strip())
+        )
+    inputs = json.loads((root / STEP_DIR / "inputs.json").read_text(encoding="utf-8"))
+    return claim.write_claim(root / STEP_DIR, cache_dir(root, inputs), inputs, pilot.utc_now()[:10])
+
+
 # --- the promotion record's provenance (protocol section 7) ---------------------------------
 
 PROVENANCE_KEYS = (
