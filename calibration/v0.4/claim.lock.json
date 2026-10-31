@@ -1,0 +1,429 @@
+{
+  "attachments": [
+    {
+      "path": "selection/targets.yaml",
+      "role": "targets",
+      "sha256": "d213bd1e37d8b8d7bddc21f9a91e3b1f631e0239c8dfb511cd72d11122f6c75f"
+    },
+    {
+      "path": "PROTOCOL.md",
+      "role": "protocol",
+      "sha256": "6b22d2b81b80fe462897dabb0a08fb328a6f0ae27f5d09cf48ffb85b6b3c3275"
+    },
+    {
+      "path": "inputs.json",
+      "role": "snapshot-index",
+      "sha256": "c49b3119415f5686eb91a0284e9ffdffa307e0eda2a8356b3b3d470741b080b4"
+    },
+    {
+      "path": "selection/selection.json",
+      "role": "selection-log",
+      "sha256": "19a013d36585a671f4060c08a556865d56126dea176c8597daea8b91d027daf1"
+    },
+    {
+      "path": "eb_catalog.csv",
+      "role": "eb-catalog",
+      "sha256": "dff46d62920ae943d6ec75e12acc17cb84f47deea9608b56d15cae112ae04f15"
+    },
+    {
+      "path": "eb_catalog_scan.json",
+      "role": "eb-catalog-scan",
+      "sha256": "a63a5f1e397f272f84348a5955d60ae9b9c6e50fddae87bd24d01bd33889514c"
+    }
+  ],
+  "canonicalization": "refute-cjson-1",
+  "claim_id": "tess-discover-v0.4-pilot",
+  "claim_kind": "discover",
+  "claim_path": "claim.yaml",
+  "claim_path_in_repo": "calibration/v0.4/claim.yaml",
+  "claim_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+  "code": {
+    "algorithm": "refute-code-1",
+    "files": [
+      {
+        "path": "pyproject.toml",
+        "sha256": "bea26d265090e7cdc95706f1d972b7df1362b86c16d5a2fd1678a261b74321de"
+      },
+      {
+        "path": "src/refute/__init__.py",
+        "sha256": "56f846e2bd84b62644c2bc65dd4c43284f1fb8f66550a0a1ad37db6b72bf6bb5"
+      },
+      {
+        "path": "src/refute/cli.py",
+        "sha256": "47ac0b9ecb3dedfa4aeaae7925c603634f8c55d3de9ba31f8a19ec8a1ea2c224"
+      },
+      {
+        "path": "src/refute/core/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "src/refute/core/budget.py",
+        "sha256": "7007f7d8155dba292c9e876120114ad4a4b06c0aae271b0291edc2a54941720a"
+      },
+      {
+        "path": "src/refute/core/canonical.py",
+        "sha256": "02aac5f77ae853583eb4e95c19e7d5363c5e2536e73485cc5d4d500786a346c4"
+      },
+      {
+        "path": "src/refute/core/claim.py",
+        "sha256": "d25c54074e37bb5100455a637ba712875c648c0e59e929020c8b2b8361447afd"
+      },
+      {
+        "path": "src/refute/core/codehash.py",
+        "sha256": "bd9aa5d47ded78db1515763aa5638040dd5f7c7ed5d1a879e72df1634147a528"
+      },
+      {
+        "path": "src/refute/core/dossier.py",
+        "sha256": "2599fb90927a3b6bc3afe0d91d955e324bddedb597e42999a7d27ed704126aed"
+      },
+      {
+        "path": "src/refute/core/environment.py",
+        "sha256": "cc8e92efdce5bda01361cc0aa8b9e8764fe5d2a54f82d77eb9ea0c20ae7da065"
+      },
+      {
+        "path": "src/refute/core/hashing.py",
+        "sha256": "2b94539ba0e44b1e12f7348bda11775711f03bc630468fb39e1b3bb1d6cab3b0"
+      },
+      {
+        "path": "src/refute/core/io.py",
+        "sha256": "c6a9a5eb99ff1b30d8d82dcd830f54e9178b753f4eda2c7cc4b88db14283d544"
+      },
+      {
+        "path": "src/refute/core/ledger.py",
+        "sha256": "0d36d610256e303d63bda89d9f509f4d2136fb976a6c690721f002091f8fd22b"
+      },
+      {
+        "path": "src/refute/core/lock.py",
+        "sha256": "0c21df538504a36dc1a11075c9c35ec0e7335fd6f4720daad2871f6ca9b0f061"
+      },
+      {
+        "path": "src/refute/core/lock_compat.py",
+        "sha256": "d10f7b20f7f722fdc06bbc818668c62dd9ba9cd6cc4763516de397af67823c4d"
+      },
+      {
+        "path": "src/refute/core/pack.py",
+        "sha256": "50d7acd709f163b50e668ffbe645b72ad03d8626850dd5dc97ae4fd73bc4da8d"
+      },
+      {
+        "path": "src/refute/core/paper.py",
+        "sha256": "78e52554639fa1830c2562193c2eb690dedde2e00344a66d1c610dca84c2d405"
+      },
+      {
+        "path": "src/refute/core/reply.py",
+        "sha256": "ab4a34658c3f9ac32b77de0e5e2145cf14afe34e693ca33b343e097ab3f4f287"
+      },
+      {
+        "path": "src/refute/core/review.py",
+        "sha256": "9c7c1db993092012ce7bd397b511c8f8988c4f6a1e39374bbdc8db780f7e18b9"
+      },
+      {
+        "path": "src/refute/core/run.py",
+        "sha256": "e6a1a74c3b19c072f4af418a237627319d6cbb6f6ab698115a338be9032b2e88"
+      },
+      {
+        "path": "src/refute/core/runner.py",
+        "sha256": "d8827484166acdcd520685a89b5b6efa454f84469fbf08d6c7c7508820b09500"
+      },
+      {
+        "path": "src/refute/core/seal.py",
+        "sha256": "909cd407a287ca868397eee0431cd831ad763b6ac836792252822b88c911a3cf"
+      },
+      {
+        "path": "src/refute/core/verdict.py",
+        "sha256": "15118c4b0fcb1af25bbd360fbba616084b8b1a635ae1c76d81c9bacbbd34889c"
+      },
+      {
+        "path": "src/refute/drand.py",
+        "sha256": "20e793b34b815be1d1ce4e8833ee919ee3dc3a863897f225a3901492a58180de"
+      },
+      {
+        "path": "src/refute/packs/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "src/refute/packs/ml/__init__.py",
+        "sha256": "d4ee82d4c949ef10e66a3586e6355a5822a302f6bf427eb0432b4a57f5bd37f4"
+      },
+      {
+        "path": "src/refute/packs/ml/_reaper.py",
+        "sha256": "bb725ccce644c59b38533704b74f2c1f7da9f1ee1c4045ecc710349ab7c5835e"
+      },
+      {
+        "path": "src/refute/packs/ml/attacks.py",
+        "sha256": "1fe224fc421a1d453eb2081a19612e8f883787652a9736e196c84010618cc8aa"
+      },
+      {
+        "path": "src/refute/packs/ml/container_reader.py",
+        "sha256": "4b64c5edda6bd940aa392d02a193a0e0547f8b4ddc30f5bb96bf879ad41cb733"
+      },
+      {
+        "path": "src/refute/packs/ml/coverage_hook.py",
+        "sha256": "a6223fb44452c55e552badbb5e9951bf29037a87ee185844bb9107011efcc69a"
+      },
+      {
+        "path": "src/refute/packs/ml/docker_backend.py",
+        "sha256": "39d4ace9042f27806037a11cca559d2b3769d974d2a6e7d2d63f829ab4f5f849"
+      },
+      {
+        "path": "src/refute/packs/ml/extract.py",
+        "sha256": "35bb34959fdad3841f8479a628548b00950433a66a9bb09c3e23028137086f3e"
+      },
+      {
+        "path": "src/refute/packs/ml/fetch.py",
+        "sha256": "73a51d4af3cc33ad8cab990d9f69508d4c1a7f2e3d09835a7f820370a26a75c1"
+      },
+      {
+        "path": "src/refute/packs/ml/integration.py",
+        "sha256": "547bcb01257ead2badc77969ffa52dff3f906fc76748065317e3009dc32a78ef"
+      },
+      {
+        "path": "src/refute/packs/ml/ladder.py",
+        "sha256": "0dc55c8bb84c1d200138821f8b0197426a12d732423127634ff5fc32c85cecac"
+      },
+      {
+        "path": "src/refute/packs/ml/orchestrate.py",
+        "sha256": "e87dbe4809f3e90713dc7fba9ce2b9b0c6878ccce4c22c03925771f735b6bee2"
+      },
+      {
+        "path": "src/refute/packs/ml/patches.py",
+        "sha256": "80666c6e4fb3d5e4c677fcfd629b002e40ca6fee7863df74f8e1ced364f3f238"
+      },
+      {
+        "path": "src/refute/packs/ml/predicates.py",
+        "sha256": "58e7a75d93589a43e2870135e9535f600adb2f4aeb483468f38a014c7db9d3b0"
+      },
+      {
+        "path": "src/refute/packs/ml/production.py",
+        "sha256": "cbed13e8258094cd6a61949d6f3c0b73abe99a76ff3214d813810ddc3ae3e72c"
+      },
+      {
+        "path": "src/refute/packs/ml/readers.py",
+        "sha256": "f9f9d81bbd9dd853981272f9d62bdcaca506b3cb5946acafe01391ff64cca348"
+      },
+      {
+        "path": "src/refute/packs/ml/recompute.py",
+        "sha256": "8d3d8bd4e3c20e229c68c8a2f64962c0281fdd0903cb67b70da155c50e600090"
+      },
+      {
+        "path": "src/refute/packs/ml/repository.py",
+        "sha256": "a7c35e2ccb854fd64b3e82b9018e01afada0544cb209f9beb6cccbeaca200f80"
+      },
+      {
+        "path": "src/refute/packs/ml/reproduction.py",
+        "sha256": "bd2816ee252e9a0297143e90fd97f28e6b8bb3df7b1696f460398872417e88da"
+      },
+      {
+        "path": "src/refute/packs/ml/rules.py",
+        "sha256": "1fe22051dc515ab0b0809701b94ff1bdc71c04380597e9973880d4c4aaa37d95"
+      },
+      {
+        "path": "src/refute/packs/ml/sandbox.py",
+        "sha256": "e37bf569c96fc8dee0290e43f9bc83931ea4e668f288ea658f9bb8667da6cb81"
+      },
+      {
+        "path": "src/refute/packs/ml/schema.py",
+        "sha256": "b679ff2f56cd42321d0833b498e805d0452384acd04c1693345445d016407d3f"
+      },
+      {
+        "path": "src/refute/packs/ml/seeds.py",
+        "sha256": "066b06728612f4ec2853722544bad67ea9e757e8b6109ce1e7b36064b469b8a2"
+      },
+      {
+        "path": "src/refute/packs/ml/synthetic.py",
+        "sha256": "b12536650cb170f43a155ad8dfaa98dbfca408b9c9538f4100211875ce9bf050"
+      },
+      {
+        "path": "src/refute/packs/ml/tbevents.py",
+        "sha256": "172fcc5d97192e08f1ff5e0ad8a4b52e072cca81ed4bba6680d025eb85fb33e3"
+      },
+      {
+        "path": "src/refute/packs/ml/uncertainty.py",
+        "sha256": "6d6f82791418744de3e7dd805bdf6bafa08b4134dc323706b1c566c331549e4e"
+      },
+      {
+        "path": "src/refute/packs/tess/__init__.py",
+        "sha256": "abc60b6b9610ab2605f36313660fe0f709844538a4c47bf6731c55a1440c0a00"
+      },
+      {
+        "path": "src/refute/packs/tess/adapter.py",
+        "sha256": "2d8f0eae4cdd2a2e1fed10e01009703db0574055673565bfbcbd9e79f30e9732"
+      },
+      {
+        "path": "src/refute/packs/tess/battery.py",
+        "sha256": "4a08c6c76c15cc0b3e4c60aab5818be6b875f72c7149554d08360c1d432f5bb7"
+      },
+      {
+        "path": "src/refute/packs/tess/calibration.py",
+        "sha256": "6a3248c517e23d7be0a1e6c4890c511805821c5e271c78e2eee53c96ca5cdca7"
+      },
+      {
+        "path": "src/refute/packs/tess/detrend.py",
+        "sha256": "5dc4cf517534f25a1f9bf582f2b4800c793f9039bb097758110f52eeff710d07"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/__init__.py",
+        "sha256": "31d7849d8e2be0ff1fc147105ed9231eae5a37d465f03304d2dd4d500a4511c7"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/case.py",
+        "sha256": "568a42d9faffcf5e9334513eebabe412e2154407ad8a2921df3f209c106a8f0a"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/claim.py",
+        "sha256": "cb77f5a92ef6c4b2ec40166e90050e19163d4b1e5d05cf7a1a872aaa27a29c01"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/dedup.py",
+        "sha256": "057b44977807db070c0d60dd625cf4ded89d161067574c53ebce7023f10c3522"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/funnel.py",
+        "sha256": "bd46af20d34233b694759539117485dbba52e5709683092012063e8e98e34fbf"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/injection.py",
+        "sha256": "728904cb3d54e90e28edc95ca8fe93b886898fce640b94c8cc27e33f58ff714f"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/measure.py",
+        "sha256": "42bc120af5645066d5b361d275ac80844716a2dace4bc7faf2e757e9eecd306e"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/pilot.py",
+        "sha256": "3d4744f95dead8d44059b06834baf1902ebc9897930e149abdecc043df47ccb3"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/protocol.py",
+        "sha256": "48829b255fbb1989d081ac933e1144f260da13c9c8333f968ac210aab39c8733"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/runs.py",
+        "sha256": "fa27826ad7d4821285ac73d6d57ab5f624a3c67956f3e5b042efe669549681cc"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/selection.py",
+        "sha256": "5f14bbe9b8a68b97957f399809788509fa8c8e2d53d40352cc6bd3ed9e485be4"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/steps.py",
+        "sha256": "75c53b13b587d4d2f8ca1dc3d964d8124cb5c4f64701fb0c04074e9cb75a36f4"
+      },
+      {
+        "path": "src/refute/packs/tess/discover/transforms.py",
+        "sha256": "c248c2df1ca9b1240f5c4311dbf9db5dd2e62e7783a2c7d6bf2ab5c375bd6cd7"
+      },
+      {
+        "path": "src/refute/packs/tess/domain.py",
+        "sha256": "8e450f1e9624d7253c577b360cd3ffbd18e9fcb6c904740c1e22f6b4fac71d1e"
+      },
+      {
+        "path": "src/refute/packs/tess/duration.py",
+        "sha256": "e40ef5bd24f465eb6893ca50762a1b45162d9cdef5b63d54f17a1086f723d42a"
+      },
+      {
+        "path": "src/refute/packs/tess/ebcatalog.py",
+        "sha256": "9118d916d6da7b6d8fdecf4fe58ba1b772b75c989dba947eb5fb6ec0946ae4dd"
+      },
+      {
+        "path": "src/refute/packs/tess/ephemeris.py",
+        "sha256": "799fdd5a7b1dc2bd5f60a5bcd892c4808bda62d147b562b2366404256a1b579d"
+      },
+      {
+        "path": "src/refute/packs/tess/events.py",
+        "sha256": "065ba11228269bc2d0f84ba6b56dd7605d2b81d5a3240e7a275da57b32659d07"
+      },
+      {
+        "path": "src/refute/packs/tess/exporter.py",
+        "sha256": "73b4aea256ad945c2f18b8e9e989c0bf715c596bf12925761ee0bf6cfbfd642a"
+      },
+      {
+        "path": "src/refute/packs/tess/gauntlet.py",
+        "sha256": "d62a3bc29f1cc947ac0eb15f49082f32e4457c11cd8dfcfaff7e30ebd53d6089"
+      },
+      {
+        "path": "src/refute/packs/tess/holdout.py",
+        "sha256": "9fc1a5400c56411a14c4f53561c556489a46f57291641a5d7dbfaf88ae02b4e5"
+      },
+      {
+        "path": "src/refute/packs/tess/params.py",
+        "sha256": "1903036695262017a8f6860f81b679403546b2e34822956090089c2aa3742822"
+      },
+      {
+        "path": "src/refute/packs/tess/pipeline.py",
+        "sha256": "96eff2662df69135ba1423e4802db14e3d4297db170b92c5bf2dd7f93162e7e8"
+      },
+      {
+        "path": "src/refute/packs/tess/plots.py",
+        "sha256": "3ce616722ce85a7ec2a5b3a5211c834ac78b3b8426c9b515e2aabfbfcaa031f0"
+      },
+      {
+        "path": "src/refute/packs/tess/prewhiten.py",
+        "sha256": "e1446326bb881bd3c03ff519ed337d8d32aa1136be571ae027f47f19a1b8ed7d"
+      },
+      {
+        "path": "src/refute/packs/tess/rednoise.py",
+        "sha256": "a58b1adfa3d943a43915d51f19842c6f60e48ed5f026797c594d33db33591c9a"
+      },
+      {
+        "path": "src/refute/packs/tess/report.py",
+        "sha256": "e7b4c92e60136fd9f5176a8d889b6656be6cc240af0a2a0fd7c9b269b07e1a09"
+      },
+      {
+        "path": "src/refute/packs/tess/schema.py",
+        "sha256": "78d42201ba85c029ad74b8822df44d450ffa9b9253807532c0660ac325b594f1"
+      },
+      {
+        "path": "src/refute/packs/tess/search.py",
+        "sha256": "f277ab9b95b7cf86d3df11dfc64471a10c3124e6340c611336ed7dd3d14af424"
+      },
+      {
+        "path": "src/refute/packs/tess/synthetic.py",
+        "sha256": "2135bcbe0289b35bf8ab6212289c81d0db27a58a9de32cc0d58937526eaf198e"
+      },
+      {
+        "path": "src/refute/packs/tess/timing.py",
+        "sha256": "cbc85a222fe0015f36d253e0026f85e38d6749448871e844fbca00d7aac80124"
+      },
+      {
+        "path": "src/refute/packs/tess/types.py",
+        "sha256": "ba45a5ddeff438db6474f07cfd1a6c77090600b08015af3f2d8f6193aebb60a5"
+      },
+      {
+        "path": "src/refute/selection/__init__.py",
+        "sha256": "fb85b366e745566db0f726226bffb0fbedd7d35864fd4aa29dc75a272804d21c"
+      },
+      {
+        "path": "src/refute/selection/filters.py",
+        "sha256": "61a5c33c58844c126aa99b1184d0940123f27a16a14c57f2b8fb2edd87aff670"
+      },
+      {
+        "path": "src/refute/selection/frame.py",
+        "sha256": "03eb294017d92a89abca89c946d1df313785921b98e809e9ec336d693aa8182b"
+      },
+      {
+        "path": "src/refute/selection/inventory.py",
+        "sha256": "1ad8cf9a47363d0f7073bd00bbdba2564a7db42b898c7e20a1695f947b5d45eb"
+      },
+      {
+        "path": "src/refute/selection/publication.py",
+        "sha256": "6a979b81cfbda8766c7942f7af712251b8e1d1913f3dfb4075cffbb97924ea2b"
+      },
+      {
+        "path": "src/refute/selection/walk.py",
+        "sha256": "6a45750d56fe8a2546802d299a947f5252369accc6baec2f2bb37e7463b08e71"
+      },
+      {
+        "path": "uv.lock",
+        "sha256": "3e02cbff10dc44c1c5fccd36927fe079575d1c851fc5579cc6965c58dcb25bdb"
+      }
+    ],
+    "sha256": "bbf52fdfa93d47b05da305359f376452cd1a8f6158fd75577237a55dc41f88dc"
+  },
+  "git_commit": "910ada156ff57754c82df1496495afefb3020cc4",
+  "git_dirty": false,
+  "git_dirty_paths": [],
+  "lock_version": 1,
+  "locked_at_utc": "2026-10-31T12:25:50Z",
+  "python_version": "3.13.16",
+  "refute_version": "0.2.0"
+}
