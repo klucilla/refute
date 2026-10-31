@@ -615,6 +615,19 @@ def stage1_dir(run_id: str) -> Path:
     return PILOT / "stage1" / run_id
 
 
+def run_set_checked(loaded: Any) -> list[str]:
+    """The run set file, refused unless it is the one stage 2 derives (TessClaimSchema
+    .verify_promotion): the first N funnel stars of the locked targets file, in its order."""
+    n = int(json.loads((ROOT / N_K).read_text("utf-8"))["chosen"]["N"])
+    schema = loaded.pack.schema
+    funnel = [t for t in schema.targets_for_run(loaded) if t.get("kind") == "exploration"]
+    canonical = [schema.target_key(t) for t in funnel[:n]]
+    run_set = json.loads((ROOT / RUN_SET).read_text("utf-8"))
+    if run_set != canonical:
+        raise SystemExit(f"{RUN_SET} is not the first {n} funnel stars of the locked targets")
+    return run_set
+
+
 def cmd_entries(run_id: str) -> int:
     from refute.packs.tess.discover import pilot, runs
 
@@ -622,10 +635,10 @@ def cmd_entries(run_id: str) -> int:
     if path.exists():
         print(f"{path} exists; the stage-1 entries are written once")
         return 1
-    _loaded, targets, identity = locked()
+    loaded, targets, identity = locked()
     inputs, inputs_dir = frozen_inputs()
     indexes = pilot.catalog_indexes(inputs_dir, inputs)
-    run_set = json.loads((ROOT / RUN_SET).read_text("utf-8"))
+    run_set = run_set_checked(loaded)
     entries = runs.stage1_entries(stage1_dir(run_id), run_set, indexes, targets, identity)
     eligible = [e["target_key"] for e in entries if e["eligibility"]["eligible"]]
     write_once(
@@ -647,7 +660,7 @@ def cmd_entries(run_id: str) -> int:
 
 def cmd_promote(results_commit: str, run_id: str) -> int:
     from refute import drand
-    from refute.packs.tess.discover import funnel, pilot, steps
+    from refute.packs.tess.discover import funnel, pilot
     from refute.packs.tess.discover.protocol import PROMOTION
 
     path = RUNS / "promotion.json"
@@ -699,9 +712,9 @@ def cmd_promote(results_commit: str, run_id: str) -> int:
         beacon,
         provenance,
     )
-    run_set = json.loads((ROOT / RUN_SET).read_text("utf-8"))
-    inputs_sha = loaded.claim.test_plan["discovery"]["inputs"]["inputs_json"]
-    problems = steps.promotion_problems(record, ROOT, identity, run_set, targets, inputs_sha)
+    run_set_checked(loaded)
+    # the check stage 2 makes (refute discover --stage 2 --promotion), online
+    problems = loaded.pack.schema.verify_promotion(record, loaded)
     if problems:
         print("the promotion record is refused: " + "; ".join(problems))
         return 1
