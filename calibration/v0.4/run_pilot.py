@@ -17,7 +17,7 @@ interrupted step is visible as a cost not fully known, never as zero).
         its SHA-256.
 
     .venv/Scripts/python.exe calibration/v0.4/run_pilot.py fetch --stage <1|2> --target <key> ...
-            [--promotion <record>]
+            [--run-set <JSON list of keys>] [--promotion <record>]
         `refute fetch` of those targets (network), with the bytes of their files recorded.
 
     .venv/Scripts/python.exe calibration/v0.4/run_pilot.py run --stage <1|2> --run-id <name>
@@ -592,12 +592,10 @@ def main(argv: list[str]) -> int:
     sub.add_parser("place-tess-eb")
     fetch = sub.add_parser("fetch")
     fetch.add_argument("--stage", type=int, required=True, choices=(1, 2))
-    fetch.add_argument("--target", action="append", required=True)
     fetch.add_argument("--promotion")
     run = sub.add_parser("run")
     run.add_argument("--stage", type=int, required=True, choices=(1, 2))
     run.add_argument("--run-id", required=True)
-    run.add_argument("--target", action="append")
     run.add_argument("--workers", type=int, default=1)
     run.add_argument("--promotion")
     run.add_argument("--online", action="store_true")
@@ -607,7 +605,11 @@ def main(argv: list[str]) -> int:
     measure.add_argument("--first", type=int, default=0)
     measure.add_argument("--no-transforms", action="store_true")
     measure.add_argument("--transform-stage", type=int, required=True, choices=(1, 2))
-    measure.add_argument("--target", action="append", required=True)
+    for step in (fetch, run, measure):
+        step.add_argument("--target", action="append", default=[])
+        # a JSON list of target keys, in order (the funnel's run set): a long list is not
+        # passed through the launcher's command line
+        step.add_argument("--run-set")
     n_k = sub.add_parser("n-k")
     n_k.add_argument("--stage1", required=True)
     n_k.add_argument("--stage2", required=True)
@@ -617,22 +619,24 @@ def main(argv: list[str]) -> int:
         return cmd_r_inj(args.commit)
     if args.step == "place-tess-eb":
         return cmd_place_tess_eb()
+    if args.step == "n-k":
+        return cmd_n_k(args.stage1, args.stage2, args.prefix)
+    keys = list(args.target)
+    if args.run_set:
+        keys += json.loads(Path(args.run_set).read_text("utf-8"))
+    if len(set(keys)) != len(keys):
+        parser.error("a target is named twice")
+    if not keys and args.step != "run":
+        parser.error("name the targets with --target or --run-set")
     if args.step == "fetch":
-        return cmd_fetch(args.stage, args.target, args.promotion)
+        return cmd_fetch(args.stage, keys, args.promotion)
     if args.step == "run":
         return cmd_run(
-            args.stage, args.run_id, args.target, args.workers, args.promotion, args.online
+            args.stage, args.run_id, keys or None, args.workers, args.promotion, args.online
         )
-    if args.step == "measure":
-        return cmd_measure(
-            args.name,
-            args.k,
-            args.first,
-            not args.no_transforms,
-            args.transform_stage,
-            args.target,
-        )
-    return cmd_n_k(args.stage1, args.stage2, args.prefix)
+    return cmd_measure(
+        args.name, args.k, args.first, not args.no_transforms, args.transform_stage, keys
+    )
 
 
 if __name__ == "__main__":
