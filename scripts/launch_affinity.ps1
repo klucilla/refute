@@ -36,6 +36,9 @@ Set-Location -LiteralPath $root
 $python = Join-Path $root '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python)) { throw "project venv not found: $python" }
 [System.Diagnostics.Process]::GetCurrentProcess().ProcessorAffinity = [IntPtr]$mask
+# the mask read back from this process, which the child inherits at its creation; it is not read
+# from the child, which may already have exited (the race seen in CI on 2026-10-31, run 41193622198)
+$inherited = [System.Diagnostics.Process]::GetCurrentProcess().ProcessorAffinity.ToInt64()
 $argv = @($Script) + ($Arguments | ForEach-Object { $_.Split(',') } | Where-Object { $_ })
 # Start-Process joins its arguments with spaces: quote each one that needs it.
 $quoted = $argv | ForEach-Object {
@@ -51,7 +54,7 @@ $p = Start-Process -FilePath $python -ArgumentList ($quoted -join ' ') -NoNewWin
 # without an open handle, PowerShell 5.1 leaves ExitCode empty for a process started without -Wait
 $null = $p.Handle
 Set-Content -LiteralPath "$Log.pid" -Value $p.Id -Encoding ascii
-Write-Output ("pid=" + $p.Id + " affinity=" + ('0x{0:X}' -f $p.ProcessorAffinity.ToInt64()))
+Write-Output ("pid=" + $p.Id + " affinity=" + ('0x{0:X}' -f $inherited))
 $p.WaitForExit()
 Write-Output ("exit=" + $p.ExitCode)
 exit $p.ExitCode

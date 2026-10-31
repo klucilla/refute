@@ -73,7 +73,8 @@ print(hex(process.value), sys.argv[1:])
 
 def test_the_launched_process_has_the_mask_from_its_start(tmp_path):
     """The child reads its own mask with GetProcessAffinityMask: 0x1 for 0-0 (a CPU every
-    machine has), and its arguments arrive intact."""
+    machine has), and its arguments arrive intact. The launcher's line reports the mask it set
+    on itself, not one read from the child, which may already have exited."""
     probe = tmp_path / "probe.py"
     probe.write_text(PROBE)
     log = tmp_path / "run"
