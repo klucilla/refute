@@ -1,0 +1,647 @@
+{
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "previous_signature": "b20d553cb270181dc5c55c104b8304d633019f1e9dc9961d103a63e9748cb25bf77e16b796d9e2c5ecf455617a1da2e705138507ac907b83a37131f4566799ca954f2852eaaa6230591db7aed1c51debbf9398f43f2fb23750b6265f6a4a1ab7",
+    "randomness": "731889ea73bc333111d473a211febc87b7bbb156727ff2b67332a1d727eb0d2b",
+    "retrieved_utc": "2026-10-31T18:37:31Z",
+    "round": 6601360,
+    "round_time_utc": "2026-10-31T18:37:00+00:00",
+    "scheme": "pedersen-bls-chained",
+    "signature": "899efbbf895ec36cb748eee9c75a432449b3dba6eabcfc955682ac839844ba78b0297f6e019388f36d562d18dc27a1ee091adca736bf0f9e5c3f5f005046e208e0cc4c0704a523009f3509249480938d7c466479069413e20a0d9819dc0d111a",
+    "signature_verified": true,
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6601360",
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "claim_id": "tess-discover-v0.4-pilot",
+  "claim_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+  "eligible": [
+    "TIC-44743595",
+    "TIC-88096786",
+    "TIC-286480954",
+    "TIC-406413408",
+    "TIC-146613141"
+  ],
+  "entries": [
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-219404837",
+      "verdict_sha256": "9b73d0627f1f83c296fd549c1626e453833ee45b1a838544338a80e67b5543fc"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-233045207",
+      "verdict_sha256": "ef6dca3fac00f3e51e8d5c8db5102444fdbbae59bba30fc492725bfa303d7b8e"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-405483372",
+      "verdict_sha256": "3c14acec7462eb5c0c8862ccee359a48992c7735bafe1f25fde924c7652bc710"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-326209514",
+      "verdict_sha256": "7ad44d3133119273535790e3ec0d8d0b21b805f0467fe15aba5e8a1e86e1ec70"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-372045060",
+      "verdict_sha256": "fbe62cd14388ed250ef12a6633f283432385fd1b0fac0f2a97559619dead315a"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-166151416",
+      "verdict_sha256": "6acfefa8d080982321b46bf64504f39b5027d4a9385463fba0b98c837cd3af75"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-456894260",
+      "verdict_sha256": "63cb60bf1e34193b0a155be3dc514236bfff06cdee6bc759e7feb1e8f5edae38"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-298001089",
+      "verdict_sha256": "8af965a1045549e10d1355776f66a299da1e8b3b5a0263c71418c87908018fa7"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-356683052",
+      "verdict_sha256": "402f803203495ed1db8bfff30ae7d06a70279b84a3798af5b24c91a4f5efa072"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-380039482",
+      "verdict_sha256": "cabc3f6ab8cf3f37eae0b213b85981d80dd7b78a10c94f10fccbd3fa8749546a"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-156118042",
+      "verdict_sha256": "c9b523d690a299202a1ebed6119ff0837f50b0bd6245bb4f972343e88eef8320"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-141121044",
+      "verdict_sha256": "29bc41cfb0882ced803ebf3d839d884bed392533b5fabd91286af43f19d55a25"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-396607112",
+      "verdict_sha256": "e9cd90ac4664f6d23119e2fb026c5059a1fe1b9662529385257505fc5c28e476"
+    },
+    {
+      "eligible": false,
+      "reason": "insufficient data to decide: systematics",
+      "target_key": "TIC-100610422",
+      "verdict_sha256": "1a407015452eeacc280ed14d6d2ad6503173179869c39ad4846a0f89add0b10a"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-441728473",
+      "verdict_sha256": "8671993f8d56f8d7c2e2de2ab55db1e163ef5f5fcb81248b19551472de172765"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-229943561",
+      "verdict_sha256": "f6ef5899c8eb7851e1731f8ef6ea9cf560c478cadcc82108aadb7e86611b0c78"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-388198210",
+      "verdict_sha256": "cbf3aefe33e38d543c4b358c8a49487e202e3c5235f49659e2765e8d7cf0da2d"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-233747343",
+      "verdict_sha256": "02d149a8c7c69b8e3ba563bc94951e995ea40c9650a18ae984982a5396018cf2"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-233231885",
+      "verdict_sha256": "b803b63dc3313134c0dd1352e9d9ae0547dfe8b60f860c6400288f3aab556648"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-441803025",
+      "verdict_sha256": "9c9914b965aafd58cc3f1eb2a0df8bbabb843229f3c8b7870ad237f0378c162b"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-154257406",
+      "verdict_sha256": "436b152d646961669bcc6f6de41bf8eee96153e55027f85901e035258ae892b0"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-158636944",
+      "verdict_sha256": "08239300a17618932fa29002dd1ec04284d2ca412e205c7b61e4fef7a87b2972"
+    },
+    {
+      "eligible": true,
+      "reason": "eligible",
+      "target_key": "TIC-44743595",
+      "verdict_sha256": "449e67f54814b7fab0e5ecdf681f65e93718bfe315354e3611d988ec53233874"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-75628092",
+      "verdict_sha256": "f589844fcd901043b1e47049ed09a76703a41a6357e1d6ada942cff711da57d0"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-147617419",
+      "verdict_sha256": "661caeeda67f4243f6775761b603432fec0dece16603a3dcdab6908e9d8cce78"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-167755099",
+      "verdict_sha256": "49afd44e3d971763410bfc4cf6229344c9a93c5d28c03c60f678cc1aad34be04"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-95860790",
+      "verdict_sha256": "9130b614d48663f201bded05b5a9a0898dc15b7d959b235bab7c0ea383404d98"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-166087356",
+      "verdict_sha256": "eae7cf3c7908897cdaff034cf2399e8a189a3d040af8fc87365904f3f91032a3"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-158461758",
+      "verdict_sha256": "0f945993c034853311bda719009ff2addaab29eed237015acf598c9c975ff8e7"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-24607925",
+      "verdict_sha256": "0402430e41ea0336671db14269d49b6f21c65af2105120bbc099de461d82cd41"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-394103866",
+      "verdict_sha256": "a2f1d8a758273ee89fd014f1765ccade57a392312616c70d04510d665c3f3cab"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-358713436",
+      "verdict_sha256": "cb209ed61d4befe30784d6d378621e42238d7352377d506db0747310f6fcfe0f"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-383646543",
+      "verdict_sha256": "6d834680608bdbf705f5f9e00f4e381fd0520e5543f94b6d94ddb8b08157fc02"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-25155713",
+      "verdict_sha256": "ad166dfc7d43737e3b95a72db56a5c08996d85358f10e371e3425b93e0156da7"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-140867523",
+      "verdict_sha256": "e19a53463c6a6044f8eb474fe9dc471b35ef0921c7a04954bd816e60347711e4"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-421801900",
+      "verdict_sha256": "5e4b05a036c364a003204ff51505171d4e44dc83d7cca5d88e485f13a4cbd0fb"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-162582602",
+      "verdict_sha256": "e495d728eaa58097a049cd657d6e7bfa87fb30e25ab9f9f2e36a6f513f72ef86"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-148002142",
+      "verdict_sha256": "716920dbd1bf1436e54613fa81ea4f4e8617964a0c2c3c9a5bce38a7c09a2bdc"
+    },
+    {
+      "eligible": true,
+      "reason": "eligible",
+      "target_key": "TIC-88096786",
+      "verdict_sha256": "caac0f8f3c0b68812a45e4339c7cebe25382dcc19649e6e51de04e8fbb28046b"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-122616851",
+      "verdict_sha256": "9dd00fa81c60b587e18f9fd8741f5d78f20d64be4e9afc086a87036bbb7a483f"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-149968737",
+      "verdict_sha256": "80fc658d42c2766d8efa4ef0bbc51f2722b255ff5cbbbb2db0d4e6795445be5a"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-336265633",
+      "verdict_sha256": "398a25a33ab276ab05e6b74f35d94c6f7cbc1f3e9897f559c76318579e848b2d"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-23708215",
+      "verdict_sha256": "d3f4f9c26bc6ab4f08e8f955de258736b6687f6e2e8ca06928a0aecf67f64bac"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-202295593",
+      "verdict_sha256": "af3543568fc5e47b550ca0f299826549b90f64aa9caa446e52ac49a8a8e398f1"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-97814880",
+      "verdict_sha256": "a18355c1155e3ac9c8f7a80a7e9df0529932815c6aee7dbed4fe5ce199665f18"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-281709735",
+      "verdict_sha256": "478a3abc2d1c30b521b9f0c01c164950e292b2f18e061546cbe003a2075c322c"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-37774136",
+      "verdict_sha256": "2a6ec29e47e9a472702800f4da88de43c43fd9b1d4060f0aa2f5c564282fdae1"
+    },
+    {
+      "eligible": false,
+      "reason": "insufficient data to decide: odd_even",
+      "target_key": "TIC-321476318",
+      "verdict_sha256": "6c55e250fbcd217ba19959e7b52aa2b0c7f1d6fe1a72cbdf291c662776c56760"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-300142911",
+      "verdict_sha256": "70d522a4bd72ad69068f2c864a6acabb953be1b1365c865d383c4ed052371df9"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-210464356",
+      "verdict_sha256": "a693771517af33b07fa90a81de30c10e68159c4d86396c2633f68cb37ecf501c"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-240171830",
+      "verdict_sha256": "944650ec18e2197568b174b39abe85ce43fa2138db2bd54e4c3370452abd618a"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-258827696",
+      "verdict_sha256": "a9240ace67c0099d74d71a5df3814d7a617864d1e8577a4c2872aee380ab2178"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-138651299",
+      "verdict_sha256": "8e1d2ac8bab077d842734673705ae58ab645e5668b3d957c675b0054f39ff971"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-29267852",
+      "verdict_sha256": "1a6e17ef97065a15b8661fb246c5af516dd5191a7c8c9fd010890facca82786b"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-269533563",
+      "verdict_sha256": "993f650aaed3fd69c72871684f53d9bbb93255c68e8670b02a0751ae7b306248"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-140123544",
+      "verdict_sha256": "12b321da8f43feb5b6f63e6c0f0b4d1c0f441515dac2e8db175c059a2644bdd0"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-120900130",
+      "verdict_sha256": "3a54e11e113bd22753e2eed089bb7a0a75293d9d45a0b1ac5727fb69cd2e01e2"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-416715793",
+      "verdict_sha256": "2b74606e1d7ad4f4ced09c9266775cf226e08d4b12f85628874f9dc5686e6cfd"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-25382939",
+      "verdict_sha256": "480f2049771ebc1e669c575b360f3934fecdf63a608b2e59c7caaf2f4f995285"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-166761808",
+      "verdict_sha256": "946002f749e68240f4957f223577d2814afbe4c79ba16542b9c50e1ae4f2bc6a"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-141944911",
+      "verdict_sha256": "d2a8e37d29d098bdb5c21c2f7379d246c35e2e55b4d133a60825526697e658d8"
+    },
+    {
+      "eligible": true,
+      "reason": "eligible",
+      "target_key": "TIC-286480954",
+      "verdict_sha256": "790b50c87cdca2620014998a9aca78864187549aced741981be3ab2354a0e4f9"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-468978941",
+      "verdict_sha256": "ebbda3b556dca8c50dc6747ee4a0e666835902792c86eca34282fa9f920e6ceb"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-381981543",
+      "verdict_sha256": "6ad02379bd87a2a8e900d67cb9c86418d42ed22da6ae73a5084c660f9218fe4b"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-281574170",
+      "verdict_sha256": "fb3046ca9d17556b70ce19ab519c0406a504f35ba6631298db39474c55a4cde9"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-441633615",
+      "verdict_sha256": "b22ffecbc84f115d60960e85782e660f0fe6a6ed16a8e4d989d10c315e349cb7"
+    },
+    {
+      "eligible": false,
+      "reason": "signal with a likely alternative explanation, by the test(s) period_alias",
+      "target_key": "TIC-158175179",
+      "verdict_sha256": "a29cddabe08c72f0888a5921599fc95d168b2ad8540915450df684f201125a54"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-219407250",
+      "verdict_sha256": "20af4c1f71823813c8bc81132821cacf8bc2e5703272fd5f33a6c80b55da36df"
+    },
+    {
+      "eligible": true,
+      "reason": "eligible",
+      "target_key": "TIC-406413408",
+      "verdict_sha256": "36f44a387835a23f2d382ce645a336c514e098e8cf8d3a4b0b42b31ae51f8dd4"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-364129259",
+      "verdict_sha256": "ddbd99f6f730f08558219276dd8764a1693fc6837c760ca04ec4f17e8d16a015"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-150249543",
+      "verdict_sha256": "b5f0992dcb65059767f8699b32534a0d4d5ed3df71da97268145e1666b827ee1"
+    },
+    {
+      "eligible": false,
+      "reason": "signal with a likely alternative explanation, by the test(s) period_alias",
+      "target_key": "TIC-150250788",
+      "verdict_sha256": "61482c48817617a584b95af7c7ef8e995cfc446b1d2bda0c7322eb62feb31e9b"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-230068646",
+      "verdict_sha256": "fa7553ed7e9ed9dddc9eb879601eeb122a293873dfa33306aa0d537da8c14c60"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-79569472",
+      "verdict_sha256": "185c4ea3cc6e714ad993bafa980647bae96a12dca58bb74c464b66ff7185d78e"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-232623880",
+      "verdict_sha256": "3fb30287d1f0003387192d11d3774768143afb26e711eed7c7a26d5ec304145a"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-267039954",
+      "verdict_sha256": "ec4eeb7451e30db6c0bd85a831eba3f49aad8dbdba789c94ed65c74559305960"
+    },
+    {
+      "eligible": false,
+      "reason": "signal with a likely alternative explanation, by the test(s) period_alias",
+      "target_key": "TIC-281426580",
+      "verdict_sha256": "cf0a4cd479c041bb5ebc82f487ecd4301e99f1174fa5540ef87370832fbffacf"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-323296004",
+      "verdict_sha256": "93708224ba11950bd9e4858f064c85b4edbc258190a2fcf53522112761635f6a"
+    },
+    {
+      "eligible": false,
+      "reason": "signal with a likely alternative explanation, by the test(s) period_alias",
+      "target_key": "TIC-453467954",
+      "verdict_sha256": "a45e727d248427d0718979ac08b9a9094393f825440f3665edb15ce918a6db53"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-349577085",
+      "verdict_sha256": "58eea4cbe2482173bb3b765f748bbd26ae9233724c3a7c53cb2929fa20549a8c"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-264252839",
+      "verdict_sha256": "0ec8d87ebe3f11f8bb978963261398c530bec0dc27266e6b92c767611943cf97"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-397000139",
+      "verdict_sha256": "b70eb70284779a7c0fdf87b61f7afdbd90a933b64c48218a288a72fe889dc8a5"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-232966887",
+      "verdict_sha256": "09c5d76e19defc8d9619b9c78e63a24f9875015bf5f6eb8efa83947782b53086"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-62815027",
+      "verdict_sha256": "bfaafd71ea06a471be5951d3545fd0b079ceacfeeeb86c391cd754a8f64d8e60"
+    },
+    {
+      "eligible": false,
+      "reason": "signal with a likely alternative explanation, by the test(s) period_alias",
+      "target_key": "TIC-236778955",
+      "verdict_sha256": "6c179bac61248efda1b442c1ff9482e8ab8a8fe8732dad3d7064221f6ff0537e"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-356241506",
+      "verdict_sha256": "6da53c81d9f22bc2848945733b13fe93b6c9991237b6ce9e11f4980edb73245e"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-142440081",
+      "verdict_sha256": "61fc74b1ff7d9dbd2a9f9d7a737c4e0eab67d8c85b5b4f8ad6336279bb93d578"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-387512509",
+      "verdict_sha256": "2a17fc046f55f58104c010431163fe510955d1dd3de04b76f065a0651b6d2513"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-140899383",
+      "verdict_sha256": "870057d307dcaebbb5e148477c005da00d896a5600f5a4ff329eb5f3bc3dad17"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-14802455",
+      "verdict_sha256": "8258e8e51d5fee25ce054aef6c05cca3c61779dff735fa8d9af2504bf1360d97"
+    },
+    {
+      "eligible": false,
+      "reason": "insufficient data to decide: odd_even",
+      "target_key": "TIC-458358301",
+      "verdict_sha256": "caa5fe5e71536deaa9dae7b3a4679f7f64cf5a92474b44f1be6f8ef30baa3238"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-28289264",
+      "verdict_sha256": "5efbbd4af39206edce2d22bbfa5df12c593df3c7398f7123e3139b8104b262af"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-255927008",
+      "verdict_sha256": "808e208db9c8a5b9a73aeec7b531389305b234bef06a29fbe34d50f28f7e04a7"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-142727252",
+      "verdict_sha256": "211801cf141a040ba70b44e1068dc8f249ae24aa9660fc899478cbaa1aa68b38"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-349682621",
+      "verdict_sha256": "7dc9d24752a4ab4bb7042bfba2040a318effebc5f13ca15e6c076d8cd01ce5a3"
+    },
+    {
+      "eligible": true,
+      "reason": "eligible",
+      "target_key": "TIC-146613141",
+      "verdict_sha256": "08105309743c3554d50eb6351a8207c0b6d93cf127797c9bc84714ad160447bd"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-198407396",
+      "verdict_sha256": "cdb9d218764cd6b06377fd6e693fd9285de7091f58609f3eca9dc7ecd277a7fa"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-248356317",
+      "verdict_sha256": "394f62fbfb79cf99077d161cc073639584462ecd99504817903466d932b1ba53"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-334900819",
+      "verdict_sha256": "e5a04224ecdf30ca4a5e1dcf83567edaf580c2fb3ef0e90ef506a5dc03122de3"
+    },
+    {
+      "eligible": false,
+      "reason": "no significant signal in these data",
+      "target_key": "TIC-354822931",
+      "verdict_sha256": "92587f7185aa99ed73b9b7e13069abb0ab37b81d00ba966cf5c90f5d47a65e64"
+    }
+  ],
+  "n_chosen": 100,
+  "not_promoted": [
+    "TIC-44743595",
+    "TIC-146613141"
+  ],
+  "promoted": [
+    "TIC-88096786",
+    "TIC-286480954",
+    "TIC-406413408"
+  ],
+  "provenance": {
+    "entries_path": "calibration/v0.4/runs/stage1/entries.json",
+    "inputs_dir": ".cache/v04/inputs-attempts/attempt-07",
+    "inputs_json": "calibration/v0.4/inputs.json",
+    "n_k_commit": "35889a96227af07af8075f45b0906b866167dba1",
+    "n_k_path": "calibration/v0.4/runs/n_k.json",
+    "push_run_created_at": "2026-10-31T17:36:51Z",
+    "results_commit": "0ed40756044b37a978ae24c596f9710acfd0b051",
+    "stage1_run_dir": ".cache/v04/pilot/stage1/funnel-s1"
+  },
+  "schema": "refute-promotion-1"
+}
