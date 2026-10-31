@@ -73,8 +73,9 @@ def signal_identity(verdict: dict[str, Any], kind: str | None) -> dict[str, Any]
     """Whether a control's found signal is its catalogued one (protocol section 4.3, H7 of
     v0.2.1): the planet's found period within the relative ``identity_period_tolerance`` of the
     published period (aliases not counted); the false positive's at one of
-    ``fp_identity_factors``. The epoch difference is reported, not required. None for a funnel
-    star."""
+    ``fp_identity_factors``. The epoch difference (found minus published epoch, modulo the
+    found period, in ``[-P/2, P/2)``) is reported whenever both epochs exist, not required.
+    None for a funnel star."""
     from refute.packs.tess.discover.protocol import CONTROLS
     from refute.packs.tess.pipeline import matching_factor
 
@@ -88,9 +89,11 @@ def signal_identity(verdict: dict[str, Any], kind: str | None) -> dict[str, Any]
     epoch = None
     t0_published = (verdict.get("published") or {}).get("t0_bjd")
     t0_found = (verdict.get("candidate") or {}).get("t0_bjd")
-    if factor is not None and t0_published is not None and t0_found is not None and found:
+    # the epoch difference is reported whenever both epochs and a found period exist, whether or
+    # not the period matches (it is never part of the identity)
+    if t0_published is not None and t0_found is not None and found and float(found) > 0:
         offset = (float(t0_found) - float(t0_published)) % float(found)
-        epoch = offset - float(found) if offset > float(found) / 2 else offset
+        epoch = offset - float(found) if offset >= float(found) / 2 else offset
     return {
         "rule": "found period within the relative tolerance of the published period at a factor",
         "period_tolerance": CONTROLS.identity_period_tolerance,

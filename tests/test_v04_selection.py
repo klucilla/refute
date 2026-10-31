@@ -3,6 +3,7 @@ docs/plans/v0.4-acceptance.md). Synthetic inputs only; no network."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -606,6 +607,18 @@ def test_the_catalog_indexes_come_from_the_frozen_snapshots(tmp_path):
     out = dd.deduplicate(indexes, 500, 500.0, 0.0, 4.0)  # TOI 500.01 at P = 2.0 d, alias 2
     toi = next(c for c in out["catalogs"] if c["catalog"] == "TOI")
     assert toi["state"] == dd.MATCH and toi["matches"][0]["alias_factor"] == 2.0
+
+
+def test_a_gaia_source_id_keeps_all_its_digits(tmp_path):
+    # a 19-digit id read through float64 would become 4295806720123456512
+    inputs_dir, inputs = _inputs(tmp_path)
+    gaia = b"source_id,ra,dec,frequency\n4295806720123456789,104.0,0.0,1.0\n"
+    (inputs_dir / "gaia_dr3_eb.csv").write_bytes(gaia)
+    for record in inputs["files"]:
+        if record["name"] == "gaia_dr3_eb.csv":
+            record["sha256"] = hashlib.sha256(gaia).hexdigest()
+    entries = pilot.catalog_indexes(inputs_dir, inputs)["Gaia-DR3-EB"].entries
+    assert [e.identifier for e in entries] == ["Gaia DR3 4295806720123456789"]
 
 
 def test_the_catalog_indexes_check_the_snapshot_hashes(tmp_path):

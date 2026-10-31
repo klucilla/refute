@@ -196,6 +196,12 @@ def test_signal_identity_reports_the_epoch_and_ignores_funnel_stars():
     out = signal_identity(_verdict(3.0, 3.0, t0_pub=2459000.0, t0_found=2459300.1), "planet")
     assert out["epoch_difference_days"] == pytest.approx(0.1)
     assert out["epoch_note"] == "reported, not required"
+    # reported also when the period does not match (Codex round review of the lock commits)
+    missed = signal_identity(_verdict(3.0, 3.5, t0_pub=2459000.0, t0_found=2459003.4), "planet")
+    assert missed["identified"] is False
+    assert missed["epoch_difference_days"] == pytest.approx(-0.1)
+    half = signal_identity(_verdict(3.0, 2.0, t0_pub=2459000.0, t0_found=2459001.0), "planet")
+    assert half["epoch_difference_days"] == pytest.approx(-1.0)  # the range is [-P/2, P/2)
     assert signal_identity(_verdict(3.0, None), "planet")["identified"] is False
     assert signal_identity(_verdict(3.0, 3.0), "exploration") is None
     case = build_case(_verdict(3.0, 3.0), {"kind": "false_positive"}, None, None)

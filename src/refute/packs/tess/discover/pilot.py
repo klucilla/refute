@@ -988,18 +988,19 @@ def catalog_indexes(inputs_dir: Path, inputs: dict[str, Any]) -> dict[str, Any]:
         )
     gaia_text = _read(inputs_dir, "gaia_dr3_eb.csv").decode("utf-8")
     _, _, body = gaia_text.partition("\n")
-    table = (
-        np.loadtxt(body.splitlines(), delimiter=",", ndmin=2) if body.strip() else np.zeros((0, 4))
-    )
+    lines = body.splitlines()
+    table = np.loadtxt(lines, delimiter=",", ndmin=2) if body.strip() else np.zeros((0, 4))
+    # the source id is taken from its text: a 19-digit id does not survive float64
+    ids = [line.split(",", 1)[0].strip() for line in lines if line.strip()]
     gaia = [
         CatalogEntry(
-            f"Gaia DR3 {int(row[0])}",
+            f"Gaia DR3 {source_id}",
             None,
             float(row[1]),
             float(row[2]),
             (1.0 / float(row[3])) if row[3] > 0 else None,
         )
-        for row in table
+        for source_id, row in zip(ids, table, strict=True)
     ]
     return {
         "TOI": CatalogIndex(toi),
