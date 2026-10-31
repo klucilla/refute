@@ -1,0 +1,22 @@
+{
+  "dossiers_kept_in": ".cache/v04/pilot (not in git)",
+  "rule": "PROTOCOL.md section 12, step 5 (P3a): the controls run first; only the hashes of their sealed dossiers are published (refute seal: the core SHA-256 of each dossier and the combined hash of the set)",
+  "runs": {
+    "stage1": {
+      "combined_sha256": "181882ef4b4306cf39c73a560be1ad4a45d684cc04bc748ab3ba830710438dcb",
+      "core_sha256": {
+        "TIC-393911494": "86980a30b1014626ee78d903a01cea1fe773590b7f11abab4b3ec8f02af92c44",
+        "TIC-86396382": "bb841a9912764539585a853b386e1be295c0c0a5cf8c3cc5e5682465f8d6833c"
+      },
+      "run_id": "controls-s1"
+    },
+    "stage2": {
+      "combined_sha256": "32d5ea0efcfa785084be58045877612ec15b85b871b8ecc213214e98c77f8ac5",
+      "core_sha256": {
+        "TIC-393911494": "649adc930f5e89f459b6e5650522ef8d719b5f0972f1c12c185c4bc93bd033e7",
+        "TIC-86396382": "eb1b06cc6f5f5da1c5032b056de1f41076d9c6549045ab22fb7e64409d6c236f"
+      },
+      "run_id": "controls-s2"
+    }
+  }
+}

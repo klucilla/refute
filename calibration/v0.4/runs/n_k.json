@@ -1,0 +1,88 @@
+{
+  "bytes_left": 8582736353.0,
+  "bytes_used": 1417263647.0,
+  "chosen": {
+    "K": 20,
+    "N": 100
+  },
+  "evaluations": [
+    {
+      "K": 20,
+      "N": 100,
+      "fits": true,
+      "projected_bytes": 1724000000.0,
+      "projected_hours": 19.76
+    },
+    {
+      "K": 20,
+      "N": 50,
+      "fits": true,
+      "projected_bytes": 862000000.0,
+      "projected_hours": 9.88
+    },
+    {
+      "K": 10,
+      "N": 50,
+      "fits": true,
+      "projected_bytes": 862000000.0,
+      "projected_hours": 6.0
+    },
+    {
+      "K": 5,
+      "N": 50,
+      "fits": true,
+      "projected_bytes": 862000000.0,
+      "projected_hours": 4.05
+    }
+  ],
+  "hours_left": 95.89323940333335,
+  "hours_used": 4.106760596666653,
+  "inputs": {
+    "bytes_light_curves": 11488320.0,
+    "h_holdout": 0.0,
+    "h_injection": 0.0051805555555555554,
+    "h_stage1": 0.010746527777777778,
+    "h_transform": 0.005779079861111111
+  },
+  "provenance": {
+    "bytes_used_by_folder": {
+      "lightkurve": 576884160,
+      "refute": 33533,
+      "v04": 840345954
+    },
+    "bytes_used_rule": "bytes present in the phase's .cache folders v04, lightkurve, refute (the frozen inputs and the downloads); not a peak of occupation",
+    "claim": {
+      "claim_id": "tess-discover-v0.4-pilot",
+      "claim_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+      "code_sha256": "bbf52fdfa93d47b05da305359f376452cd1a8f6158fd75577237a55dc41f88dc"
+    },
+    "decided_utc": "2026-10-31T15:12:56Z",
+    "h_holdout_note": "the holdout runs inside the stage-1 analysis; its time is in h_stage1",
+    "h_stage1_note": "the CPU time of the whole stage-1 run of each control (one worker, in process): preparation, analysis with the holdout, and the dossier",
+    "h_transform_note": "the controls' transformed curves run the full battery (stage 2), more than a funnel star's stage-1 curve; an operational assumption, not a measured bound for every star",
+    "hours_note": "the metered hours, the estimate before the lock and the unmetered CPU are reported apart; whether the estimate suffices for the 100-hour cap is the maintainer's decision, reported to them with this record",
+    "hours_unmetered": "CPU before the lock beyond the tests' wall time (the freeze, the selection walk, the claim and lock steps, test pools using more than one processor) was never metered",
+    "hours_used_before_lock_estimate": 3.94,
+    "hours_used_rule": "the pilot's steps since the lock in .cache/v04/pilot/cost.jsonl (a parallel run counted as wall x workers + the parent's CPU), plus 3.94 h for the phase before the lock (never metered; the wall time of the phase's JUnit files, one processor per second, an estimate)",
+    "hours_used_since_lock": 0.16676059666665322,
+    "prefix": "controls-prefix",
+    "prefix_statuses": {
+      "injection:OK": 10,
+      "transform:OK": 6
+    },
+    "records_sha256": {
+      "cost.jsonl": "802ef4ffc089fd94c956912790147fc286d085517fa0450ddc124fe3ca54e817",
+      "manifest TIC-393911494": "f535a103d32ffac4c709e0f5dafebc2c5b4f1ab102b91cbd34335acf42b0068b",
+      "manifest TIC-86396382": "3a930868939a4225328574d722f929cb652d8ea529ea3bf2bab388526e8142c7",
+      "measure/controls-prefix/cost.jsonl": "8508c5d50780092784c08862cc708af84ac43d1a64efe5d2cee801f1df4d3e95",
+      "measure/controls-prefix/measurements.jsonl": "660cfa43b2703db1611cbfe074553cc9ca47d4dc427cf9d1bb635ef1a323a29e"
+    },
+    "rule": "PROTOCOL.md section 4.4; costs from the controls' measurement prefix",
+    "stage1_run": "controls-s1",
+    "stage2_run": "controls-s2",
+    "wrapper": {
+      "git_head": "a5008ccb8b71339927fbdffd99bbf178970ddabf",
+      "path": "calibration/v0.4/run_pilot.py"
+    }
+  }
+}
