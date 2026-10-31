@@ -42,6 +42,14 @@ interrupted step is visible as a cost not fully known, never as zero).
         verdict.json SHA-256, deduplication and eligibility), written once to
         calibration/v0.4/runs/stage1/entries.json, for the results commit (which fixes R_prom).
 
+    .venv/Scripts/python.exe calibration/v0.4/run_pilot.py results --run-id <stage-1 run-id>
+            --measure <name> --controls-measure <name> ...
+        Seal every stage-1 dossier of the run set (refute seal) and write, once, the rest of the
+        stage-1 results to calibration/v0.4/runs/stage1/: the run's summary, the per-star
+        measurement summaries, the seal hashes, and the SHA-256 of the raw records kept in .cache
+        (the controls' measurements by hash only, P3a), with the cut of cost.jsonl that the
+        (N, K) decision hashed.
+
     .venv/Scripts/python.exe calibration/v0.4/run_pilot.py promote --results-commit <full SHA>
             --run-id <stage-1 run-id>
         The promotion record (section 7; funnel.promotion_record), with the R_prom beacon when
@@ -658,6 +666,101 @@ def cmd_entries(run_id: str) -> int:
     return 0
 
 
+def cmd_results(run_id: str, measure: str, controls_measures: list[str]) -> int:
+    from refute.core.seal import SEAL_NAME, combined_sha256, seal
+    from refute.packs.tess.discover import runs
+
+    out = ROOT / "calibration" / "v0.4" / "runs" / "stage1"
+    names = ("run_summary.json", "measurements.json", "seals.json", "records.json")
+    if any((out / name).exists() for name in names):
+        print(f"stage-1 results exist in {out}; they are written once")
+        return 1
+    loaded, _targets, identity = locked()
+    run_set = run_set_checked(loaded)
+    run_dir = stage1_dir(run_id)
+    summary = json.loads((run_dir / "summary.json").read_text("utf-8"))
+    if [t["target"] for t in summary["targets"]] != run_set:
+        print("the stage-1 run is not the run set, in order")
+        return 1
+    cores = {}
+    for key in run_set:
+        dossier = run_dir / key
+        record = (
+            json.loads((dossier / SEAL_NAME).read_text("utf-8"))
+            if (dossier / SEAL_NAME).is_file()
+            else seal(dossier)
+        )
+        cores[key] = record["core_sha256"]
+    measured = PILOT / "measure" / measure
+    records = runs.read_records(measured / "measurements.jsonl")
+    if sorted({r["target_key"] for r in records}) != sorted(run_set):
+        print("the measurements are not of the run set")
+        return 1
+    expected = len(run_set) * 23
+    starts, ends = step_pairs(cost_lines())
+    unfinished = [s.get("name") or s.get("run_id") for k, s in starts.items() if k not in ends]
+    if len(records) != expected or unfinished:
+        print(f"{len(records)} measurement records of {expected}; unfinished steps {unfinished}")
+        return 1
+    cost_text = COST.read_bytes()
+    first_eight = b"".join(cost_text.splitlines(keepends=True)[:8])
+    write_once(out / "run_summary.json", summary)
+    write_once(
+        out / "measurements.json",
+        {
+            "rule": "PROTOCOL.md sections 9 and 10: per curve, the injection-recovery counts with "
+            "denominators and 95 % Wilson intervals (sampling unit: one injection into that "
+            "curve), and the detections on transformed curves (not a false-alarm rate); "
+            "across curves descriptive only",
+            "claim": identity,
+            "measure": measure,
+            "summaries": runs.summarize_records(records),
+        },
+    )
+    write_once(
+        out / "seals.json",
+        {
+            "rule": "refute seal of every stage-1 dossier of the run set (kept in .cache)",
+            "stage1_run_dir": run_dir.relative_to(ROOT).as_posix(),
+            "core_sha256": cores,
+            "combined_sha256": combined_sha256(cores),
+        },
+    )
+    raw = {
+        f"measure/{measure}/measurements.jsonl": sha256_file(measured / "measurements.jsonl"),
+        f"measure/{measure}/cost.jsonl": sha256_file(measured / "cost.jsonl"),
+        f"measure/{measure}/summary.json": sha256_file(measured / "summary.json"),
+    }
+    for name in controls_measures:
+        for file in ("measurements.jsonl", "cost.jsonl", "summary.json"):
+            raw[f"measure/{name}/{file}"] = sha256_file(PILOT / "measure" / name / file)
+    decision = json.loads((ROOT / N_K).read_text("utf-8"))
+    write_once(
+        out / "records.json",
+        {
+            "rule": "the SHA-256 of the raw records kept in .cache/v04/pilot (archived to the "
+            "Drive with a checked manifest); the controls' measurements by hash only (P3a)",
+            "records_sha256": raw,
+            "cost_jsonl": {
+                "sha256_now": hashlib.sha256(cost_text).hexdigest(),
+                "lines_now": len(cost_text.splitlines()),
+                "first_8_lines_sha256": hashlib.sha256(first_eight).hexdigest(),
+                "n_k_record_value": decision["provenance"]["records_sha256"]["cost.jsonl"],
+                "note": "the (N, K) decision hashed cost.jsonl when it held its first 8 lines",
+            },
+            "hours_used": {
+                "metered_since_lock": hours_used(cost_lines())[0],
+                "before_lock_estimate": PRE_LOCK_HOURS,
+                "unmetered": UNMETERED,
+            },
+            "bytes_in_phase_folders": phase_bytes(),
+        },
+    )
+    eligible = json.loads((ROOT / ENTRIES).read_text("utf-8"))["eligible"]
+    print(f"results written; {len(cores)} dossiers sealed; eligible {eligible}")
+    return 0
+
+
 def cmd_promote(results_commit: str, run_id: str) -> int:
     from refute import drand
     from refute.packs.tess.discover import funnel, pilot
@@ -753,12 +856,18 @@ def main(argv: list[str]) -> int:
     n_k.add_argument("--stage2", required=True)
     n_k.add_argument("--prefix", required=True)
     sub.add_parser("entries").add_argument("--run-id", required=True)
+    results = sub.add_parser("results")
+    results.add_argument("--run-id", required=True)
+    results.add_argument("--measure", required=True)
+    results.add_argument("--controls-measure", action="append", default=[])
     promote = sub.add_parser("promote")
     promote.add_argument("--results-commit", required=True)
     promote.add_argument("--run-id", required=True)
     args = parser.parse_args(argv)
     if args.step == "entries":
         return cmd_entries(args.run_id)
+    if args.step == "results":
+        return cmd_results(args.run_id, args.measure, args.controls_measure)
     if args.step == "promote":
         return cmd_promote(args.results_commit, args.run_id)
     if args.step == "r-inj":
