@@ -13,6 +13,20 @@ the records the runs wrote; it adds where things go.
         stage-1 dossier's core hash and verdict.json hash, and the star's deduplication from
         calibration/v0.4/runs/stage1/entries.json (funnel stars) or its signal identity
         (controls).
+
+    .venv/Scripts/python.exe calibration/v0.4/prepare_p5.py case --key <TIC-n>
+            --dossier <stage-2 dossier> --human <human items JSON>
+        The annex `case` (case.json, refute-tess-case-1) of a reviewed stage-2 dossier: the
+        machine-built items (case.build_case), the review annexes by hash, and the drafted human
+        items (questions for a human, conclusion in the closed vocabulary); refused unless the
+        checklist (case.missing_items) is empty.
+
+    .venv/Scripts/python.exe calibration/v0.4/prepare_p5.py ledger --human <human items JSON>
+            --out <ledger.jsonl>
+        The case ledger of every case (refute-ledger-1, chained by hash), from the records:
+        opened (the selection), locked, ran (stage 1, the light entries; stage 2, the dossier's
+        core hash), promoted, reviewed, concluded (drafts: the stage-1 conclusions derived from
+        each entry, the others from the human items); verified with case.check_event.
 """
 
 from __future__ import annotations
@@ -109,6 +123,232 @@ def cmd_annex_measurements(
     return 0
 
 
+def locked_targets() -> dict[str, dict[str, Any]]:
+    from refute.core.claim import load_claim
+
+    loaded = load_claim(ROOT / "calibration" / "v0.4" / "claim.yaml")
+    return {t["key"]: t for t in loaded.pack.schema.targets_for_run(loaded)}
+
+
+def review_annexes(dossier: Path) -> list[dict[str, Any]]:
+    """The review annexes of a dossier (``review-*``), each by the hash of its manifest."""
+    from refute.core.seal import ANNEX_DIR, ANNEX_MANIFEST, verify_annex
+
+    found = []
+    for annex in sorted((dossier / ANNEX_DIR).glob("review-*")):
+        problems = verify_annex(dossier, annex.name)
+        if problems:
+            raise SystemExit(f"{annex}: {problems}")
+        found.append(
+            {
+                "annex": annex.name,
+                "manifest_sha256": sha256_file(annex / ANNEX_MANIFEST),
+                "report": f"annexes/{annex.name}/review.md",
+            }
+        )
+    return found
+
+
+def cmd_case(key: str, dossier: Path, human_path: Path) -> int:
+    from refute.core.seal import add_annex, verify_annex
+    from refute.packs.tess.discover import case
+
+    human = json.loads(human_path.read_text("utf-8"))[key]
+    if verify_annex(dossier, "measurements"):
+        print(f"{dossier}: the measurements annex is missing or not intact")
+        return 1
+    measured = dossier / "annexes" / "measurements"
+    verdict = json.loads((dossier / "verdict.json").read_text("utf-8"))
+    built = case.build_case(
+        verdict,
+        locked_targets()[key],
+        json.loads((measured / "cross_match.json").read_text("utf-8")),
+        json.loads((measured / "summary.json").read_text("utf-8")),
+    )
+    built["review"] = review_annexes(dossier)
+    built["questions_for_a_human"] = human["questions_for_a_human"]
+    built["conclusion"] = human["conclusion"]
+    missing = case.missing_items(built)
+    if missing:
+        print(f"{key}: the case is incomplete: {missing}")
+        return 1
+    source = P5 / "annex-src" / key / "case"
+    source.mkdir(parents=True)
+    write_json(source / "case.json", built)
+    record = add_annex(dossier, "case", source)
+    print(f"annex case: {len(record['files'])} file(s), core {record['core_sha256']}")
+    return 0
+
+
+# the alternative explanation each fatal test points to (case.ALTERNATIVES)
+ALTERNATIVE_OF = {
+    "odd_even": "eclipsing binary on the target",
+    "secondary_eclipse": "eclipsing binary on the target",
+    "plausibility": "eclipsing binary on the target",
+    "eb_catalog": "eclipsing binary on the target",
+    "nearby_contamination": "background or nearby eclipsing binary",
+    "centroid_shift": "background or nearby eclipsing binary",
+    "aperture_depth": "background or nearby eclipsing binary",
+    "systematics": "instrumental systematics",
+    "period_alias": "period alias",
+}
+
+
+def stage1_conclusion(entry: dict[str, Any], promoted: list[str]) -> str:
+    """The drafted conclusion of a funnel star that ends at stage 1, from its eligibility."""
+    reason = entry["eligibility"]["reason"]
+    if entry["eligibility"]["eligible"]:
+        if entry["target_key"] in promoted:
+            raise ValueError(f"{entry['target_key']} is promoted: its conclusion is a human item")
+        return "not evaluated past stage 1: cap"
+    prefix = "signal with a likely alternative explanation, by the test(s) "
+    if reason.startswith(prefix):
+        tests = reason[len(prefix) :].split(", ")
+        return (
+            f"signal with a likely alternative explanation: {ALTERNATIVE_OF[tests[0]]}, "
+            f"by the test {', '.join(tests)}"
+        )
+    if reason == "no significant signal in these data":
+        return reason
+    if reason.startswith("insufficient data to decide: "):
+        return reason
+    if reason == "signal matches a known object":
+        return "signal matches a known object: see the deduplication record"
+    return f"insufficient data to decide: {reason}"
+
+
+def run_finished(run_dir: Path) -> str:
+    """When a run finished, from its summary.json (YYYY-MM-DDTHH:MM:SSZ)."""
+    summary = json.loads((run_dir / "summary.json").read_text("utf-8"))
+    return summary["run"]["finished_utc"].replace("+00:00", "Z")
+
+
+def cmd_ledger(human_path: Path, out: Path) -> int:
+    from refute.core.io import read_json
+    from refute.core.ledger import make_event, verify_events
+    from refute.core.seal import read_seal
+    from refute.packs.tess.discover import case
+
+    if out.exists():
+        print(f"{out} exists; a ledger is only appended to")
+        return 1
+    v04 = ROOT / "calibration" / "v0.4"
+    human = json.loads(human_path.read_text("utf-8"))
+    targets = locked_targets()
+    selection = json.loads((v04 / "selection" / "selection.json").read_text("utf-8"))
+    targets_doc = (v04 / "selection" / "targets.yaml").read_text("utf-8")
+    lock = read_json(v04 / "claim.lock.json")
+    entries_doc = json.loads(ENTRIES.read_text("utf-8"))
+    entries = {e["target_key"]: e for e in entries_doc["entries"]}
+    promotion = json.loads((v04 / "runs" / "promotion.json").read_text("utf-8"))
+    promoted = list(promotion["promoted"])
+    stage2 = human["_stage2_dossiers"]  # key -> stage-2 dossier path (controls and promoted)
+    controls_s1 = human["_controls_stage1_dossiers"]
+    events: list[tuple[str, str, str, dict, dict]] = []  # utc, case, type, data, hashes
+    opened_utc = "2026-10-30T19:03:29Z"  # targets.yaml generated_utc
+    for key, target in targets.items():
+        events.append(
+            (
+                opened_utc,
+                key,
+                "opened",
+                {
+                    "kind": target["kind"],
+                    "name": target.get("name"),
+                    "selection_round": selection.get("round"),
+                    "protocol_commit": "0000018f1f99d413a211d00f557bf5d60b01858b",
+                },
+                {"targets_yaml": hashlib.sha256(targets_doc.encode("utf-8")).hexdigest()},
+            )
+        )
+        events.append(
+            (
+                lock["locked_at_utc"],
+                key,
+                "locked",
+                {"claim_id": "tess-discover-v0.4-pilot", "lock_commit_b": human["_commit_b"]},
+                {"claim": lock["claim_sha256"], "code": lock["code"]["sha256"]},
+            )
+        )
+    for key in [k for k in targets if k in controls_s1]:
+        folder = ROOT / controls_s1[key]
+        verdict = json.loads((folder / "verdict.json").read_text("utf-8"))
+        eligibility = {"eligible": None, "reason": "control: runs every stage, never promoted"}
+        data = case.light_entry(verdict, eligibility, None)
+        hashes = {"verdict": sha256_file(folder / "verdict.json")}
+        hashes["dossier"] = read_seal(folder)["core_sha256"]
+        events.append((run_finished(folder.parent), key, "ran", data, hashes))
+    funnel_finished = run_finished(ROOT / entries_doc["stage1_run_dir"])
+    for key, entry in entries.items():
+        data = dict(entry["ledger"])
+        hashes = {"verdict": entry["verdict_sha256"], "commit": human["_results_commit"]}
+        events.append((funnel_finished, key, "ran", data, hashes))
+    events.append(
+        (
+            human["_promotion_utc"],
+            "funnel",
+            "promoted",
+            {
+                "promotion_sha256": sha256_file(v04 / "runs" / "promotion.json"),
+                "promoted": promoted,
+                "eligible": promotion["eligible"],
+                "beacon_round": (promotion.get("beacon") or {}).get("round"),
+            },
+            {"commit": human["_promotion_commit"]},
+        )
+    )
+    for key, folder_text in stage2.items():
+        folder = ROOT / folder_text
+        verdict = json.loads((folder / "verdict.json").read_text("utf-8"))
+        data = {
+            "stage": 2,
+            "method_status": verdict.get("method_status", "not_validated"),
+            "temporal_diagnostic": (verdict.get("temporal_diagnostic") or {}).get(
+                "state", "not_run"
+            ),
+            "verdict": verdict.get("verdict"),
+            "tests": {t["name"]: t["status"] for t in verdict.get("tests", [])},
+        }
+        hashes = {"dossier": read_seal(folder)["core_sha256"]}
+        events.append((run_finished(folder.parent), key, "ran", data, hashes))
+        for review in review_annexes(folder):
+            events.append(
+                (
+                    human["_review_utc"][key],
+                    key,
+                    "reviewed",
+                    {"annex": review["annex"], "assessment": human[key]["review_assessment"]},
+                    {"annex_manifest": review["manifest_sha256"], "dossier": hashes["dossier"]},
+                )
+            )
+    for key in targets:
+        if key in stage2:
+            conclusion = human[key]["conclusion"]
+        else:
+            conclusion = {
+                "text": stage1_conclusion(entries[key], promoted),
+                "drafted_by": "agent, from the stage-1 entry (funnel.stage1_eligibility)",
+                "status": "draft for the maintainer's approval (P5)",
+            }
+        events.append((human["_conclusion_utc"], key, "concluded", {"conclusion": conclusion}, {}))
+    events.sort(key=lambda e: e[0])  # stable: the order above within a time
+    chain: list[dict[str, Any]] = []
+    for utc, key, kind, data, hashes in events:
+        chain.append(make_event(chain[-1] if chain else None, key, kind, utc, data, None, hashes))
+    problems = verify_events(chain, check=case.check_event)
+    if problems:
+        print("the ledger does not verify: " + "; ".join(problems[:10]))
+        return 1
+    from refute.core.canonical import canonical_bytes
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "xb") as handle:
+        for event in chain:
+            handle.write(canonical_bytes(event) + b"\n")
+    print(f"{len(chain)} events; last hash {chain[-1]['hash']}")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="step", required=True)
@@ -117,7 +357,18 @@ def main(argv: list[str]) -> int:
     annex.add_argument("--dossier", required=True, type=Path)
     annex.add_argument("--stage1-dossier", required=True, type=Path)
     annex.add_argument("--measure", action="append", required=True)
+    case_step = sub.add_parser("case")
+    case_step.add_argument("--key", required=True)
+    case_step.add_argument("--dossier", required=True, type=Path)
+    case_step.add_argument("--human", required=True, type=Path)
+    ledger = sub.add_parser("ledger")
+    ledger.add_argument("--human", required=True, type=Path)
+    ledger.add_argument("--out", required=True, type=Path)
     args = parser.parse_args(argv)
+    if args.step == "case":
+        return cmd_case(args.key, args.dossier.resolve(), args.human)
+    if args.step == "ledger":
+        return cmd_ledger(args.human, args.out)
     return cmd_annex_measurements(
         args.key, args.dossier.resolve(), args.stage1_dossier.resolve(), args.measure
     )
