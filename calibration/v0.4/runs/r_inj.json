@@ -1,0 +1,24 @@
+{
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "previous_signature": "a4c0ae92950b13de1bcef19a1e9cee9130dbbb1152e34be8952de477987a1b634d8d2805219006d0adbff4a8ec1099ab18cd85d7a8b77c24ebec36ba596b150fcca5f55d8321161fce7335047d38758ce24fc39835ec8a8aae071adebb8633a8",
+    "randomness": "0f906884e3857dc1da8dffc75d9c5d3d0a7d4f334897e1b450f816922941037a",
+    "retrieved_utc": "2026-10-31T15:11:16Z",
+    "round": 6600947,
+    "round_time_utc": "2026-10-31T15:10:30+00:00",
+    "scheme": "pedersen-bls-chained",
+    "signature": "8c25d4442a0c05ae28238d98c7b50c146b79be37dcb61fe1e58f013f1495bd3a37c084bb5f9bd19aa49fdcb273d0326a065272db9c96da3545bc497ac9143cf8b5da7f22b8fb3a8df589c3139ec0da66a3d839839a92eafb8b5647b00e6c9071",
+    "signature_verified": true,
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6600947",
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+  "commit": "65e4363316ef77b8a47ed6453d7497de3e778366",
+  "push_run_created_at": "2026-10-31T14:10:18Z",
+  "retrieved_utc": "2026-10-31T15:11:16Z",
+  "round": 6600947,
+  "round_name": "R_inj",
+  "round_time_utc": "2026-10-31T15:10:30Z",
+  "rule": "PROTOCOL.md section 8: the first drand round at least 1 hour after the creation time of the CI push run of the lock's commit B",
+  "signature_verified": true
+}
