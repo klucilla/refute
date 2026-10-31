@@ -1,0 +1,31 @@
+{
+  "bytes_in_phase_folders": {
+    "lightkurve": 2083006080,
+    "refute": 1324640,
+    "v04": 1022568916
+  },
+  "cost_jsonl": {
+    "first_8_lines_sha256": "802ef4ffc089fd94c956912790147fc286d085517fa0450ddc124fe3ca54e817",
+    "lines_now": 16,
+    "n_k_record_value": "802ef4ffc089fd94c956912790147fc286d085517fa0450ddc124fe3ca54e817",
+    "note": "the (N, K) decision hashed cost.jsonl when it held its first 8 lines",
+    "sha256_now": "02b850eb8f441eb5b8459fe06fba0a592c12544fb131ec2555143853f20636f7"
+  },
+  "hours_used": {
+    "before_lock_estimate": 3.94,
+    "metered_since_lock": 27.56924548255561,
+    "unmetered": "CPU before the lock beyond the tests' wall time (the freeze, the selection walk, the claim and lock steps, test pools using more than one processor) was never metered"
+  },
+  "records_sha256": {
+    "measure/controls-continuation/cost.jsonl": "bd00e87c042a1ea55a1ad88307191e51e8af82a4307f3d5d17a5908849e73224",
+    "measure/controls-continuation/measurements.jsonl": "2c3a8e11b9abfa4c63af94145d4032e4df684371752fd70417343ad7fdd9d56c",
+    "measure/controls-continuation/summary.json": "951a7849291e4ab45f7b9e31f9002b68c92d71b4cc32a33cd87757e6ee4276c2",
+    "measure/controls-prefix/cost.jsonl": "8508c5d50780092784c08862cc708af84ac43d1a64efe5d2cee801f1df4d3e95",
+    "measure/controls-prefix/measurements.jsonl": "660cfa43b2703db1611cbfe074553cc9ca47d4dc427cf9d1bb635ef1a323a29e",
+    "measure/controls-prefix/summary.json": "a9fa8f9fbba6b1f4a88ac63d1cc0b184acc3827301fd853a0c97a58294f9325f",
+    "measure/funnel/cost.jsonl": "467a388184c46a2aac866b2321a7d93f029ebbce274358c5cff2a173d695ac31",
+    "measure/funnel/measurements.jsonl": "3c955fca9ff23bd7fa8c0cfaabc04a9cb65b4464e4887b3a244ca4ac0b9a0a5b",
+    "measure/funnel/summary.json": "535af353645dcd09194ebcd70f0301bb4149bd86af1776d7113c7843d9a3d1b5"
+  },
+  "rule": "the SHA-256 of the raw records kept in .cache/v04/pilot (archived to the Drive with a checked manifest); the controls' measurements by hash only (P3a)"
+}

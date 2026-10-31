@@ -1,0 +1,4911 @@
+{
+  "claim": {
+    "claim_id": "tess-discover-v0.4-pilot",
+    "claim_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+    "code_sha256": "bbf52fdfa93d47b05da305359f376452cd1a8f6158fd75577237a55dc41f88dc"
+  },
+  "measure": "funnel",
+  "rule": "PROTOCOL.md sections 9 and 10: per curve, the injection-recovery counts with denominators and 95 % Wilson intervals (sampling unit: one injection into that curve), and the detections on transformed curves (not a false-alarm rate); across curves descriptive only",
+  "summaries": {
+    "TIC-100610422": {
+      "cpu_seconds": 359.28125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 15,
+        "recovery_rate": 0.75,
+        "recovery_wilson_95": [
+          0.531299122381256,
+          0.8881382985923343
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-120900130": {
+      "cpu_seconds": 441.0,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 7,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 6,
+        "recovery_rate": 0.3,
+        "recovery_wilson_95": [
+          0.1454772448676043,
+          0.5189728183535235
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-122616851": {
+      "cpu_seconds": 821.09375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-138651299": {
+      "cpu_seconds": 561.0625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-140123544": {
+      "cpu_seconds": 611.4375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-140867523": {
+      "cpu_seconds": 277.390625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-140899383": {
+      "cpu_seconds": 2156.0,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 18,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 18,
+        "recovery_rate": 0.9,
+        "recovery_wilson_95": [
+          0.6989663547715128,
+          0.9721335187862319
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-141121044": {
+      "cpu_seconds": 2791.0,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 15,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 15,
+        "recovery_rate": 0.75,
+        "recovery_wilson_95": [
+          0.531299122381256,
+          0.8881382985923343
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-141944911": {
+      "cpu_seconds": 2941.125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-142440081": {
+      "cpu_seconds": 287.78125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-142727252": {
+      "cpu_seconds": 408.515625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 11,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 11,
+        "recovery_rate": 0.55,
+        "recovery_wilson_95": [
+          0.34208534245034233,
+          0.7418021417443759
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-146613141": {
+      "cpu_seconds": 289.328125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-147617419": {
+      "cpu_seconds": 494.3125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 10,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 10,
+        "recovery_rate": 0.5,
+        "recovery_wilson_95": [
+          0.2992980081982123,
+          0.7007019918017877
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-148002142": {
+      "cpu_seconds": 530.8125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-14802455": {
+      "cpu_seconds": 351.75,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 2,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-149968737": {
+      "cpu_seconds": 252.265625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-150249543": {
+      "cpu_seconds": 1612.140625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-150250788": {
+      "cpu_seconds": 3223.171875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 11,
+        "recovery_rate": 0.55,
+        "recovery_wilson_95": [
+          0.34208534245034233,
+          0.7418021417443759
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-154257406": {
+      "cpu_seconds": 513.09375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 20,
+        "recovery_rate": 1.0,
+        "recovery_wilson_95": [
+          0.8388748419471806,
+          1.0
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-156118042": {
+      "cpu_seconds": 784.078125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-158175179": {
+      "cpu_seconds": 277.8125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-158461758": {
+      "cpu_seconds": 470.3125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-158636944": {
+      "cpu_seconds": 299.125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 10,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 10,
+        "recovery_rate": 0.5,
+        "recovery_wilson_95": [
+          0.2992980081982123,
+          0.7007019918017877
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-162582602": {
+      "cpu_seconds": 588.015625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 8,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 8,
+        "recovery_rate": 0.4,
+        "recovery_wilson_95": [
+          0.21880653237281705,
+          0.6134184992377469
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-166087356": {
+      "cpu_seconds": 688.1875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 18,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 18,
+        "recovery_rate": 0.9,
+        "recovery_wilson_95": [
+          0.6989663547715128,
+          0.9721335187862319
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-166151416": {
+      "cpu_seconds": 464.875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-166761808": {
+      "cpu_seconds": 346.046875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-167755099": {
+      "cpu_seconds": 1029.0625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 18,
+        "recovery_rate": 0.9,
+        "recovery_wilson_95": [
+          0.6989663547715128,
+          0.9721335187862319
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-198407396": {
+      "cpu_seconds": 892.109375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-202295593": {
+      "cpu_seconds": 308.5625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 17,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-210464356": {
+      "cpu_seconds": 290.765625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 15,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-219404837": {
+      "cpu_seconds": 476.65625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-219407250": {
+      "cpu_seconds": 578.1875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-229943561": {
+      "cpu_seconds": 5542.421875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 8,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 8,
+        "recovery_rate": 0.4,
+        "recovery_wilson_95": [
+          0.21880653237281705,
+          0.6134184992377469
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-230068646": {
+      "cpu_seconds": 2200.765625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 15,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-232623880": {
+      "cpu_seconds": 1819.265625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 18,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 18,
+        "recovery_rate": 0.9,
+        "recovery_wilson_95": [
+          0.6989663547715128,
+          0.9721335187862319
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-232966887": {
+      "cpu_seconds": 544.515625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-233045207": {
+      "cpu_seconds": 2324.09375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-233231885": {
+      "cpu_seconds": 1146.609375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 11,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 11,
+        "recovery_rate": 0.55,
+        "recovery_wilson_95": [
+          0.34208534245034233,
+          0.7418021417443759
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-233747343": {
+      "cpu_seconds": 2966.3125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-236778955": {
+      "cpu_seconds": 3918.828125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 1,
+        "recovery_rate": 0.05,
+        "recovery_wilson_95": [
+          0.008881448800795402,
+          0.23613119344674205
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-23708215": {
+      "cpu_seconds": 207.84375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-240171830": {
+      "cpu_seconds": 352.96875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 17,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-24607925": {
+      "cpu_seconds": 271.65625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 17,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 2,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-248356317": {
+      "cpu_seconds": 247.484375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-25155713": {
+      "cpu_seconds": 1767.234375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-25382939": {
+      "cpu_seconds": 331.71875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-255927008": {
+      "cpu_seconds": 321.078125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-258827696": {
+      "cpu_seconds": 1516.34375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-264252839": {
+      "cpu_seconds": 1517.6875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 11,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 11,
+        "recovery_rate": 0.55,
+        "recovery_wilson_95": [
+          0.34208534245034233,
+          0.7418021417443759
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-267039954": {
+      "cpu_seconds": 267.390625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 2,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 18,
+        "recovery_rate": 0.9,
+        "recovery_wilson_95": [
+          0.6989663547715128,
+          0.9721335187862319
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-269533563": {
+      "cpu_seconds": 676.1875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-281426580": {
+      "cpu_seconds": 262.140625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 2,
+        "gate_passed": 18,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 10,
+        "recovery_rate": 0.5,
+        "recovery_wilson_95": [
+          0.2992980081982123,
+          0.7007019918017877
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-281574170": {
+      "cpu_seconds": 266.5625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-281709735": {
+      "cpu_seconds": 899.015625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 20,
+        "recovery_rate": 1.0,
+        "recovery_wilson_95": [
+          0.8388748419471806,
+          1.0
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-28289264": {
+      "cpu_seconds": 258.34375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-286480954": {
+      "cpu_seconds": 254.609375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 4,
+        "recovery_rate": 0.2,
+        "recovery_wilson_95": [
+          0.08065766257979806,
+          0.41601743225189364
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-29267852": {
+      "cpu_seconds": 248.234375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 10,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 10,
+        "recovery_rate": 0.5,
+        "recovery_wilson_95": [
+          0.2992980081982123,
+          0.7007019918017877
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-298001089": {
+      "cpu_seconds": 555.296875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 17,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-300142911": {
+      "cpu_seconds": 274.9375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 15,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 15,
+        "recovery_rate": 0.75,
+        "recovery_wilson_95": [
+          0.531299122381256,
+          0.8881382985923343
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-321476318": {
+      "cpu_seconds": 247.671875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-323296004": {
+      "cpu_seconds": 276.59375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-326209514": {
+      "cpu_seconds": 787.5625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-334900819": {
+      "cpu_seconds": 311.71875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 15,
+        "recovery_rate": 0.75,
+        "recovery_wilson_95": [
+          0.531299122381256,
+          0.8881382985923343
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-336265633": {
+      "cpu_seconds": 352.796875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 9,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 9,
+        "recovery_rate": 0.45,
+        "recovery_wilson_95": [
+          0.2581978582556243,
+          0.6579146575496577
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-349577085": {
+      "cpu_seconds": 339.46875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 17,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-349682621": {
+      "cpu_seconds": 901.859375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-354822931": {
+      "cpu_seconds": 246.171875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-356241506": {
+      "cpu_seconds": 1147.75,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-356683052": {
+      "cpu_seconds": 658.21875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 20,
+        "recovery_rate": 1.0,
+        "recovery_wilson_95": [
+          0.8388748419471806,
+          1.0
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-358713436": {
+      "cpu_seconds": 271.40625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 15,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 15,
+        "recovery_rate": 0.75,
+        "recovery_wilson_95": [
+          0.531299122381256,
+          0.8881382985923343
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-364129259": {
+      "cpu_seconds": 276.140625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-372045060": {
+      "cpu_seconds": 382.828125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 18,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 18,
+        "recovery_rate": 0.9,
+        "recovery_wilson_95": [
+          0.6989663547715128,
+          0.9721335187862319
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-37774136": {
+      "cpu_seconds": 216.3125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 18,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 18,
+        "recovery_rate": 0.9,
+        "recovery_wilson_95": [
+          0.6989663547715128,
+          0.9721335187862319
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-380039482": {
+      "cpu_seconds": 274.046875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-381981543": {
+      "cpu_seconds": 504.015625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 17,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 17,
+        "recovery_rate": 0.85,
+        "recovery_wilson_95": [
+          0.6395811352592431,
+          0.9476312541037835
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-383646543": {
+      "cpu_seconds": 2439.5,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 11,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 11,
+        "recovery_rate": 0.55,
+        "recovery_wilson_95": [
+          0.34208534245034233,
+          0.7418021417443759
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-387512509": {
+      "cpu_seconds": 344.390625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-388198210": {
+      "cpu_seconds": 540.078125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 15,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 15,
+        "recovery_rate": 0.75,
+        "recovery_wilson_95": [
+          0.531299122381256,
+          0.8881382985923343
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-394103866": {
+      "cpu_seconds": 285.859375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 13,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 13,
+        "recovery_rate": 0.65,
+        "recovery_wilson_95": [
+          0.43285427668523624,
+          0.818808175898918
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-396607112": {
+      "cpu_seconds": 356.90625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 11,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 9,
+        "recovery_rate": 0.45,
+        "recovery_wilson_95": [
+          0.2581978582556243,
+          0.6579146575496577
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-397000139": {
+      "cpu_seconds": 257.25,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 20,
+        "recovery_rate": 1.0,
+        "recovery_wilson_95": [
+          0.8388748419471806,
+          1.0
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-405483372": {
+      "cpu_seconds": 396.71875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-406413408": {
+      "cpu_seconds": 250.984375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 10,
+        "recovery_rate": 0.5,
+        "recovery_wilson_95": [
+          0.2992980081982123,
+          0.7007019918017877
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-416715793": {
+      "cpu_seconds": 351.09375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 11,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 11,
+        "recovery_rate": 0.55,
+        "recovery_wilson_95": [
+          0.34208534245034233,
+          0.7418021417443759
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-421801900": {
+      "cpu_seconds": 326.796875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-441633615": {
+      "cpu_seconds": 511.5625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-441728473": {
+      "cpu_seconds": 2339.09375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-441803025": {
+      "cpu_seconds": 1729.078125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 15,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 15,
+        "recovery_rate": 0.75,
+        "recovery_wilson_95": [
+          0.531299122381256,
+          0.8881382985923343
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-44743595": {
+      "cpu_seconds": 280.234375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-453467954": {
+      "cpu_seconds": 272.078125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 1,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 11,
+        "recovery_rate": 0.55,
+        "recovery_wilson_95": [
+          0.34208534245034233,
+          0.7418021417443759
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-456894260": {
+      "cpu_seconds": 274.390625,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 12,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 12,
+        "recovery_rate": 0.6,
+        "recovery_wilson_95": [
+          0.3865815007622531,
+          0.781193467627183
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-458358301": {
+      "cpu_seconds": 315.953125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 7,
+        "recovery_rate": 0.35,
+        "recovery_wilson_95": [
+          0.18119182410108206,
+          0.5671457233147638
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-468978941": {
+      "cpu_seconds": 437.53125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-62815027": {
+      "cpu_seconds": 364.734375,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 1,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 1,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-75628092": {
+      "cpu_seconds": 705.21875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 19,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 19,
+        "recovery_rate": 0.95,
+        "recovery_wilson_95": [
+          0.763868806553258,
+          0.9911185511992047
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-79569472": {
+      "cpu_seconds": 340.671875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 14,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-88096786": {
+      "cpu_seconds": 296.078125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 20,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 2,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-95860790": {
+      "cpu_seconds": 284.03125,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 14,
+        "recovery_rate": 0.7,
+        "recovery_wilson_95": [
+          0.4810271816464765,
+          0.8545227551323956
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 0,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 0,
+        "transformed_curves": 3
+      }
+    },
+    "TIC-97814880": {
+      "cpu_seconds": 427.046875,
+      "injections": {
+        "crowdsap_missing": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "SAP dip undiluted by assumption; not equivalent to a known CROWDSAP",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ],
+          "sectors": []
+        },
+        "crowdsap_unknown": {
+          "declared_aliases": 0,
+          "gate_passed": 0,
+          "injections": 0,
+          "note": "the task failed before its data were read; CROWDSAP not known",
+          "recovered": 0,
+          "recovery_rate": null,
+          "recovery_wilson_95": [
+            0.0,
+            1.0
+          ]
+        },
+        "declared_aliases": 0,
+        "gate_passed": 16,
+        "independence": "approximate: injections into the same curve are not independent stars",
+        "injections": 20,
+        "recovered": 16,
+        "recovery_rate": 0.8,
+        "recovery_wilson_95": [
+          0.5839825677481064,
+          0.919342337420202
+        ],
+        "sampling_unit": "one injection into this curve",
+        "tasks": 20
+      },
+      "transformed_curves": {
+        "gate_passed": 3,
+        "inconclusive": 0,
+        "name": "detections on transformed curves (not a false-alarm rate)",
+        "survived_stage_tests": 2,
+        "transformed_curves": 3
+      }
+    }
+  }
+}

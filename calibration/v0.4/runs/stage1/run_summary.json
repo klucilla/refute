@@ -1,0 +1,1939 @@
+{
+  "claim_id": "tess-discover-v0.4-pilot",
+  "promotion_sha256": null,
+  "run": {
+    "claim_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+    "code_sha256": "bbf52fdfa93d47b05da305359f376452cd1a8f6158fd75577237a55dc41f88dc",
+    "environment": {
+      "machine": "AMD64",
+      "packages": {
+        "astropy": "8.0.1",
+        "astroquery": "0.4.11",
+        "lightkurve": "2.6.0",
+        "matplotlib": "3.11.2",
+        "numpy": "2.5.3",
+        "pydantic": "2.13.5",
+        "pyyaml": "6.0.3",
+        "typer": "0.27.2"
+      },
+      "platform": "Windows-11-10.0.26300-SP0",
+      "python_implementation": "CPython",
+      "python_version": "3.13.16",
+      "refute_version": "0.2.0"
+    },
+    "finished_utc": "2026-10-31T16:06:23+00:00",
+    "lock_git_commit": "910ada156ff57754c82df1496495afefb3020cc4",
+    "offline": true,
+    "run_git_commit": "196088113eaf3737170cc2ef1bae7406f17ad09e",
+    "run_git_dirty": false,
+    "run_id": "funnel-s1",
+    "started_utc": "2026-10-31T15:53:27+00:00",
+    "targets_requested": [
+      "TIC-219404837",
+      "TIC-233045207",
+      "TIC-405483372",
+      "TIC-326209514",
+      "TIC-372045060",
+      "TIC-166151416",
+      "TIC-456894260",
+      "TIC-298001089",
+      "TIC-356683052",
+      "TIC-380039482",
+      "TIC-156118042",
+      "TIC-141121044",
+      "TIC-396607112",
+      "TIC-100610422",
+      "TIC-441728473",
+      "TIC-229943561",
+      "TIC-388198210",
+      "TIC-233747343",
+      "TIC-233231885",
+      "TIC-441803025",
+      "TIC-154257406",
+      "TIC-158636944",
+      "TIC-44743595",
+      "TIC-75628092",
+      "TIC-147617419",
+      "TIC-167755099",
+      "TIC-95860790",
+      "TIC-166087356",
+      "TIC-158461758",
+      "TIC-24607925",
+      "TIC-394103866",
+      "TIC-358713436",
+      "TIC-383646543",
+      "TIC-25155713",
+      "TIC-140867523",
+      "TIC-421801900",
+      "TIC-162582602",
+      "TIC-148002142",
+      "TIC-88096786",
+      "TIC-122616851",
+      "TIC-149968737",
+      "TIC-336265633",
+      "TIC-23708215",
+      "TIC-202295593",
+      "TIC-97814880",
+      "TIC-281709735",
+      "TIC-37774136",
+      "TIC-321476318",
+      "TIC-300142911",
+      "TIC-210464356",
+      "TIC-240171830",
+      "TIC-258827696",
+      "TIC-138651299",
+      "TIC-29267852",
+      "TIC-269533563",
+      "TIC-140123544",
+      "TIC-120900130",
+      "TIC-416715793",
+      "TIC-25382939",
+      "TIC-166761808",
+      "TIC-141944911",
+      "TIC-286480954",
+      "TIC-468978941",
+      "TIC-381981543",
+      "TIC-281574170",
+      "TIC-441633615",
+      "TIC-158175179",
+      "TIC-219407250",
+      "TIC-406413408",
+      "TIC-364129259",
+      "TIC-150249543",
+      "TIC-150250788",
+      "TIC-230068646",
+      "TIC-79569472",
+      "TIC-232623880",
+      "TIC-267039954",
+      "TIC-281426580",
+      "TIC-323296004",
+      "TIC-453467954",
+      "TIC-349577085",
+      "TIC-264252839",
+      "TIC-397000139",
+      "TIC-232966887",
+      "TIC-62815027",
+      "TIC-236778955",
+      "TIC-356241506",
+      "TIC-142440081",
+      "TIC-387512509",
+      "TIC-140899383",
+      "TIC-14802455",
+      "TIC-458358301",
+      "TIC-28289264",
+      "TIC-255927008",
+      "TIC-142727252",
+      "TIC-349682621",
+      "TIC-146613141",
+      "TIC-198407396",
+      "TIC-248356317",
+      "TIC-334900819",
+      "TIC-354822931"
+    ],
+    "workers": 22
+  },
+  "schema": "refute-run-summary-1",
+  "stage": 1,
+  "targets": [
+    {
+      "status": "OK",
+      "target": "TIC-219404837",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-233045207",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-405483372",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-326209514",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-372045060",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-166151416",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-456894260",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-298001089",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-356683052",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-380039482",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-156118042",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-141121044",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-396607112",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-100610422",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-441728473",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-229943561",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-388198210",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-233747343",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-233231885",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-441803025",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-154257406",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-158636944",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-44743595",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-75628092",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-147617419",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-167755099",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-95860790",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-166087356",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-158461758",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-24607925",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-394103866",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-358713436",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-383646543",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-25155713",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-140867523",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-421801900",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-162582602",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-148002142",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-88096786",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-122616851",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-149968737",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-336265633",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-23708215",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-202295593",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-97814880",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-281709735",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-37774136",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-321476318",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "INCONCLUSIVE",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-300142911",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-210464356",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-240171830",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-258827696",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-138651299",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-29267852",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-269533563",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-140123544",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-120900130",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-416715793",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-25382939",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-166761808",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-141944911",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-286480954",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-468978941",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-381981543",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-281574170",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-441633615",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-158175179",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-219407250",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-406413408",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-364129259",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-150249543",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-150250788",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-230068646",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-79569472",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-232623880",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-267039954",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-281426580",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-323296004",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-453467954",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "INCONCLUSIVE",
+        "period_alias": "FAIL",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-349577085",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-264252839",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-397000139",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-232966887",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-62815027",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-236778955",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "REFUTED"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-356241506",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-142440081",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-387512509",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-140899383",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-14802455",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-458358301",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "INCONCLUSIVE",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-28289264",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-255927008",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-142727252",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-349682621",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-146613141",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "FAIL",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "PASS",
+        "plausibility": "PASS",
+        "secondary_eclipse": "PASS",
+        "snr": "PASS",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-198407396",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-248356317",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-334900819",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "FAIL",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "PASS"
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "status": "OK",
+      "target": "TIC-354822931",
+      "tests": {
+        "aperture_depth": "INCONCLUSIVE",
+        "centroid_shift": "INCONCLUSIVE",
+        "eb_catalog": "PASS",
+        "holdout_by_year": "INCONCLUSIVE",
+        "nearby_contamination": "PASS",
+        "odd_even": "PASS",
+        "period_alias": "FAIL",
+        "plausibility": "FAIL",
+        "secondary_eclipse": "PASS",
+        "snr": "FAIL",
+        "systematics": "INCONCLUSIVE"
+      },
+      "verdict": "INCONCLUSIVE"
+    }
+  ]
+}
