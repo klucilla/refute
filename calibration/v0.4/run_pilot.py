@@ -36,6 +36,18 @@ interrupted step is visible as a cost not fully known, never as zero).
             --prefix <name>
         The controls' costs (section 4.4) and the (N, K) decision, written once to
         calibration/v0.4/runs/n_k.json, with the SHA-256 of every record it rests on.
+
+    .venv/Scripts/python.exe calibration/v0.4/run_pilot.py entries --run-id <stage-1 run-id>
+        The stage-1 entries of the run set (sections 6 and 7; runs.stage1_entries: each star's
+        verdict.json SHA-256, deduplication and eligibility), written once to
+        calibration/v0.4/runs/stage1/entries.json, for the results commit (which fixes R_prom).
+
+    .venv/Scripts/python.exe calibration/v0.4/run_pilot.py promote --results-commit <full SHA>
+            --run-id <stage-1 run-id>
+        The promotion record (section 7; funnel.promotion_record), with the R_prom beacon when
+        more than 3 stars are eligible, refused unless steps.promotion_problems finds nothing
+        (online: the push run time comes from the GitHub API); written once to
+        calibration/v0.4/runs/promotion.json.
 """
 
 from __future__ import annotations
@@ -585,6 +597,119 @@ def cmd_n_k(stage1_run: str, stage2_run: str, prefix: str) -> int:
     return 0 if decision["chosen"] else 3
 
 
+INPUTS_JSON = "calibration/v0.4/inputs.json"
+RUN_SET = "calibration/v0.4/runs/funnel_run_set.json"
+ENTRIES = "calibration/v0.4/runs/stage1/entries.json"
+N_K = "calibration/v0.4/runs/n_k.json"
+
+
+def frozen_inputs() -> tuple[dict[str, Any], Path]:
+    """inputs.json and the folder of the frozen files it names (the freeze attempt)."""
+    from refute.packs.tess.discover import steps
+
+    inputs = json.loads((ROOT / INPUTS_JSON).read_text("utf-8"))
+    return inputs, steps.cache_dir(ROOT, inputs)
+
+
+def stage1_dir(run_id: str) -> Path:
+    return PILOT / "stage1" / run_id
+
+
+def cmd_entries(run_id: str) -> int:
+    from refute.packs.tess.discover import pilot, runs
+
+    path = ROOT / ENTRIES
+    if path.exists():
+        print(f"{path} exists; the stage-1 entries are written once")
+        return 1
+    _loaded, targets, identity = locked()
+    inputs, inputs_dir = frozen_inputs()
+    indexes = pilot.catalog_indexes(inputs_dir, inputs)
+    run_set = json.loads((ROOT / RUN_SET).read_text("utf-8"))
+    entries = runs.stage1_entries(stage1_dir(run_id), run_set, indexes, targets, identity)
+    eligible = [e["target_key"] for e in entries if e["eligibility"]["eligible"]]
+    write_once(
+        path,
+        {
+            "rule": "PROTOCOL.md sections 6 and 7: refute.packs.tess.discover.runs.stage1_entries "
+            "over the run set, from each stage-1 dossier's bytes and the frozen snapshots",
+            "claim": identity,
+            "stage1_run_dir": stage1_dir(run_id).relative_to(ROOT).as_posix(),
+            "run_set": RUN_SET,
+            "run_set_sha256": sha256_file(ROOT / RUN_SET),
+            "eligible": eligible,
+            "entries": entries,
+        },
+    )
+    print(f"{len(entries)} entries, {len(eligible)} eligible: {eligible}")
+    return 0
+
+
+def cmd_promote(results_commit: str, run_id: str) -> int:
+    from refute import drand
+    from refute.packs.tess.discover import funnel, pilot, steps
+    from refute.packs.tess.discover.protocol import PROMOTION
+
+    path = RUNS / "promotion.json"
+    if path.exists():
+        print(f"{path} exists; the promotion record is written once")
+        return 1
+    loaded, targets, identity = locked()
+    shown = subprocess.run(
+        ["git", "show", f"{results_commit}:{ENTRIES}"], cwd=ROOT, capture_output=True, check=False
+    )
+    if shown.returncode != 0:
+        print(f"{ENTRIES} is not in {results_commit}")
+        return 1
+    entries = json.loads(shown.stdout)["entries"]
+    n_k_commit = subprocess.run(
+        ["git", "log", "-n", "1", "--format=%H", "--", N_K],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    decision = json.loads((ROOT / N_K).read_text("utf-8"))
+    _inputs, inputs_dir = frozen_inputs()
+    provenance: dict[str, Any] = {
+        "results_commit": results_commit,
+        "entries_path": ENTRIES,
+        "n_k_commit": n_k_commit,
+        "n_k_path": N_K,
+        "inputs_json": INPUTS_JSON,
+        "inputs_dir": inputs_dir.relative_to(ROOT).as_posix(),
+        "stage1_run_dir": stage1_dir(run_id).relative_to(ROOT).as_posix(),
+    }
+    beacon = None
+    eligible = [e for e in entries if e["eligibility"]["eligible"]]
+    if len(eligible) > PROMOTION.cap:
+        created = pilot.push_run_created_at(results_commit)
+        number = drand.round_after(created)
+        published = drand.round_time(number)
+        if published > datetime.now(UTC):
+            print(f"R_prom is round {number}, published at {published.isoformat()}; run after it")
+            return 2
+        _seed, beacon = drand.drand_seed(number)
+        provenance["push_run_created_at"] = created
+    record = funnel.promotion_record(
+        identity["claim_id"],
+        identity["claim_sha256"],
+        int(decision["chosen"]["N"]),
+        entries,
+        beacon,
+        provenance,
+    )
+    run_set = json.loads((ROOT / RUN_SET).read_text("utf-8"))
+    inputs_sha = loaded.claim.test_plan["discovery"]["inputs"]["inputs_json"]
+    problems = steps.promotion_problems(record, ROOT, identity, run_set, targets, inputs_sha)
+    if problems:
+        print("the promotion record is refused: " + "; ".join(problems))
+        return 1
+    write_once(path, record)
+    print(f"eligible {record['eligible']}; promoted {record['promoted']}")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="step", required=True)
@@ -614,7 +739,15 @@ def main(argv: list[str]) -> int:
     n_k.add_argument("--stage1", required=True)
     n_k.add_argument("--stage2", required=True)
     n_k.add_argument("--prefix", required=True)
+    sub.add_parser("entries").add_argument("--run-id", required=True)
+    promote = sub.add_parser("promote")
+    promote.add_argument("--results-commit", required=True)
+    promote.add_argument("--run-id", required=True)
     args = parser.parse_args(argv)
+    if args.step == "entries":
+        return cmd_entries(args.run_id)
+    if args.step == "promote":
+        return cmd_promote(args.results_commit, args.run_id)
     if args.step == "r-inj":
         return cmd_r_inj(args.commit)
     if args.step == "place-tess-eb":
