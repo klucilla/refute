@@ -349,6 +349,196 @@ def cmd_ledger(human_path: Path, out: Path) -> int:
     return 0
 
 
+def _pct(value: float | None) -> str:
+    return "n/a" if value is None else f"{100 * value:.0f} %"
+
+
+def _interval(pair: list[float]) -> str:
+    return f"[{100 * pair[0]:.0f} %, {100 * pair[1]:.0f} %]"
+
+
+def _assessment(dossier: Path) -> str:
+    text = (dossier / "annexes" / "review-opus-1" / "review.md").read_text("utf-8")
+    line = next((x for x in text.splitlines() if x.startswith("## Assessment")), "")
+    return line.split(":", 1)[-1].strip() or "not found"
+
+
+def cmd_report(human_path: Path, out: Path) -> int:
+    """The pilot's report, a draft for the maintainer (P5): every number comes from a record."""
+    from refute.packs.tess.discover import case
+
+    v04 = ROOT / "calibration" / "v0.4"
+    human = json.loads(human_path.read_text("utf-8"))
+    load = lambda name: json.loads((v04 / "runs" / name).read_text("utf-8"))  # noqa: E731
+    n_k, r_inj, promotion = load("n_k.json"), load("r_inj.json"), load("promotion.json")
+    entries = json.loads(ENTRIES.read_text("utf-8"))["entries"]
+    measured = load("stage1/measurements.json")["summaries"]
+    stage2 = {k: ROOT / v for k, v in human["_stage2_dossiers"].items()}
+    lines = [
+        "# Refute v0.4 pilot: report (draft for the maintainer, not published)",
+        "",
+        "`method_status: not_validated`. Nothing here is a confirmed discovery; no signal is",
+        "called a planet. Verdicts come only from the locked code (claim",
+        f"`{promotion['claim_sha256'][:12]}…`, lock commit B `{human['_commit_b'][:7]}`).",
+        "Prepared at P5; publication is the maintainer's (P7).",
+        "",
+        "## Rounds and decisions",
+        "",
+        "| Item | Value | Record |",
+        "|---|---|---|",
+        "| R_sel | round 6598335 | `selection/selection.json` |",
+        f"| R_inj | round {r_inj['round']} ({r_inj['round_time_utc']}) | `runs/r_inj.json` |",
+        f"| (N, K) | {n_k['chosen']} | `runs/n_k.json` |",
+        f"| R_prom | round {(promotion.get('beacon') or {}).get('round')} "
+        "| `runs/promotion.json` |",
+        "",
+        "## Controls",
+        "",
+        "| Control | Kind | Identity (factor) | Stage-2 verdict | Temporal diagnostic | Review |",
+        "|---|---|---|---|---|---|",
+    ]
+    for key, kind in CONTROL_KINDS.items():
+        verdict = json.loads((stage2[key] / "verdict.json").read_text("utf-8"))
+        identity = case.signal_identity(verdict, kind) or {}
+        lines.append(
+            f"| {key} | {kind} | {identity.get('identified')} ({identity.get('matched_factor')}) | "
+            f"{verdict.get('verdict')} | "
+            f"{(verdict.get('temporal_diagnostic') or {}).get('state')} | "
+            f"{_assessment(stage2[key])} |"
+        )
+    reasons: dict[str, int] = {}
+    for e in entries:
+        reasons[e["eligibility"]["reason"]] = reasons.get(e["eligibility"]["reason"], 0) + 1
+    gate = sum(1 for e in entries if e.get("deduplication") is not None)
+    lines += [
+        "",
+        "## Funnel stage 1 (denominators)",
+        "",
+        f"- Run: {len(entries)} stars (N = {n_k['chosen']['N']}); gate passed: {gate}.",
+        f"- Eligible: {len(promotion['eligible'])}; promoted by the cap (3, R_prom draw): "
+        f"{', '.join(promotion['promoted'])}; not evaluated past stage 1 (cap): "
+        f"{', '.join(promotion['not_promoted']) or 'none'}.",
+        "- Eligibility reasons (funnel.stage1_eligibility):",
+        "",
+    ]
+    lines += [f"  - {count}: {reason}" for reason, count in sorted(reasons.items())]
+    lines += [
+        "",
+        "## Promoted stars, stage 2",
+        "",
+        "| Star | Stage-2 verdict | Reason | Temporal diagnostic | Review |",
+        "|---|---|---|---|---|",
+    ]
+    for key in promotion["promoted"]:
+        verdict = json.loads((stage2[key] / "verdict.json").read_text("utf-8"))
+        lines.append(
+            f"| {key} | {verdict.get('verdict')} | {verdict.get('verdict_reason')} | "
+            f"{(verdict.get('temporal_diagnostic') or {}).get('state')} | "
+            f"{_assessment(stage2[key])} |"
+        )
+    lines += [
+        "",
+        "## Injection-recovery per curve (stage 1)",
+        "",
+        "Sampling unit: one injection into that curve; injections into one curve are not",
+        "independent stars. Across curves the numbers are descriptive only. A curve whose own",
+        "signal passes the gate (marked *) measures whether an injection outranks that signal,",
+        "not sensitivity (review objection D1): the search keeps one candidate.",
+        "",
+        "| Curve | Recovered / injections | Rate | Wilson 95 % | Declared aliases "
+        "| CROWDSAP missing |",
+        "|---|---|---|---|---|---|",
+    ]
+    own_gate = {e["target_key"] for e in entries if e.get("deduplication") is not None}
+    own_gate |= set(CONTROL_KINDS)
+    summaries = dict(measured)
+    for key in CONTROL_KINDS:
+        annex = stage2[key] / "annexes" / "measurements" / "summary.json"
+        summaries[key] = json.loads(annex.read_text("utf-8"))
+    rates = []
+    for key in [*CONTROL_KINDS, *sorted(measured)]:
+        s = summaries[key]["injections"]
+        mark = "*" if key in own_gate else ""
+        if key not in own_gate and s["recovery_rate"] is not None:
+            rates.append(s["recovery_rate"])
+        lines.append(
+            f"| {key}{mark} | {s['recovered']} / {s['injections']} | {_pct(s['recovery_rate'])} | "
+            f"{_interval(s['recovery_wilson_95'])} | {s['declared_aliases']} | "
+            f"{s['crowdsap_missing']['injections']} |"
+        )
+    rates.sort()
+    if rates:
+        lines += [
+            "",
+            f"Descriptive, over the {len(rates)} curves without a gate-passing signal of their "
+            f"own: median rate {_pct(rates[len(rates) // 2])}, range {_pct(rates[0])} to "
+            f"{_pct(rates[-1])}.",
+        ]
+    lines += [
+        "",
+        "## Detections on transformed curves (not a false-alarm rate)",
+        "",
+        "Per star: 3 transformed curves (1 inverted, 2 per-sector cyclic rotations), stage-1",
+        "tests for the funnel; the full battery (stage 2) for the controls and the promoted.",
+        "",
+    ]
+    totals = {"curves": 0, "gate": 0, "survived": 0}
+    for key in sorted(measured):
+        t = measured[key]["transformed_curves"]
+        totals["curves"] += t["transformed_curves"]
+        totals["gate"] += t["gate_passed"]
+        totals["survived"] += t["survived_stage_tests"]
+    lines.append(
+        f"- Funnel, stage 1: {totals['curves']} transformed curves; {totals['gate']} pass the "
+        f"gate; {totals['survived']} survive the stage-1 decisive tests."
+    )
+    for key in [*CONTROL_KINDS, *promotion["promoted"]]:
+        annex = stage2[key] / "annexes" / "measurements" / "summary.json"
+        by_stage = json.loads(annex.read_text("utf-8"))["transformed_curves_by_stage"]
+        for stage, t in sorted(by_stage.items()):
+            lines.append(
+                f"- {key}, stage {stage}: {t['transformed_curves']} curves; {t['gate_passed']} "
+                f"pass the gate; {t['survived_stage_tests']} survive the stage's tests."
+            )
+    records = load("stage1/records.json")
+    lines += [
+        "",
+        "## Exporter",
+        "",
+        "The duration goes without an uncertainty: `trapezoid-least-squares-1` did not pass its",
+        "acceptance (ROADMAP v0.4 amendment 5); review objection D3 notes that the sheet's",
+        "duration is the BLS box and that period and error come from different fits.",
+        "",
+        "## Reviews (P4)",
+        "",
+        "One independent session per stage-2 dossier; objections and their treatment in",
+        "`issue-drafts.md` (filed by the maintainer at P7). None changes a verdict.",
+        "",
+        "## Use of the caps",
+        "",
+        "- Logical-processor hours counted since the lock: "
+        f"{human['_hours_counted']:.2f} (measured CPU and, for parallel runs, wall x workers + "
+        "the parent's CPU); before the lock: "
+        f"{records['hours_used']['before_lock_estimate']} estimated, never metered.",
+        f"- Bytes in the phase's .cache folders: {human['_bytes'] / 1e9:.2f} GB.",
+        f"- Reviewer tokens: {human['_review_tokens']}.",
+        "",
+        "## Limits",
+        "",
+        "- The method is not validated; SURVIVED means the declared decisive battery was",
+        "  survived, with no temporal confirmation required.",
+        "- Pixel tests cannot exclude sources closer than about half a pixel (D5).",
+        "- Injection-recovery uses a trapezoid model, injected before detrending, into the",
+        "  pilot's curves only; the numbers are about these curves and this code.",
+        "- The exclusions use catalog snapshots of 2026-10-29.",
+    ]
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "x", encoding="utf-8", newline=LF) as handle:
+        handle.write("\n".join(lines) + LF)
+    print(f"report written: {out.relative_to(ROOT).as_posix()} ({len(lines)} lines)")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="step", required=True)
@@ -364,7 +554,12 @@ def main(argv: list[str]) -> int:
     ledger = sub.add_parser("ledger")
     ledger.add_argument("--human", required=True, type=Path)
     ledger.add_argument("--out", required=True, type=Path)
+    report = sub.add_parser("report")
+    report.add_argument("--human", required=True, type=Path)
+    report.add_argument("--out", required=True, type=Path)
     args = parser.parse_args(argv)
+    if args.step == "report":
+        return cmd_report(args.human, args.out)
     if args.step == "case":
         return cmd_case(args.key, args.dossier.resolve(), args.human)
     if args.step == "ledger":
