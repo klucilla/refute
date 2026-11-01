@@ -556,6 +556,7 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "issues in generic form (#179 to #188; no star, verdict or result; details at P7); the",
         "objections the first gate review (P6) found untracked are #190 to #194; the full",
         "drafts stay private until P7. None changes a verdict.",
+        *([human["_issues_note"]] if human.get("_issues_note") else []),
         "",
         "## Use of the caps",
         "",
@@ -571,8 +572,11 @@ def cmd_report(human_path: Path, out: Path) -> int:
         )
         + "); before the lock: "
         f"{records['hours_used']['before_lock_estimate']} estimated, never metered.",
-        f"- Bytes in the phase's .cache folders: {human['_bytes'] / 1e9:.2f} GB.",
-        f"- Reviewer tokens: {human['_review_tokens']}.",
+        human.get("_bytes_note")
+        or f"- Bytes in the phase's .cache folders: {human['_bytes'] / 1e9:.2f} GB.",
+        f"- Reviewer tokens: {human['_review_tokens']}"
+        + (f" ({human['_review_tokens_note']})" if human.get("_review_tokens_note") else "")
+        + ".",
         "",
         "## Limits",
         "",
