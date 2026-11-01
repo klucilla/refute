@@ -166,6 +166,11 @@ def cmd_case(key: str, dossier: Path, human_path: Path) -> int:
         json.loads((measured / "summary.json").read_text("utf-8")),
     )
     built["review"] = review_annexes(dossier)
+    # the limits an independent review found, next to the tests' own coverage (Codex, 2026-10-31)
+    for limit in human.get("limits_from_review", []):
+        built["coverage_and_limits"].append(
+            {"source": "independent review, annexes/review-opus-1/review.md", "limit": limit}
+        )
     built["questions_for_a_human"] = human["questions_for_a_human"]
     built["conclusion"] = human["conclusion"]
     missing = case.missing_items(built)
