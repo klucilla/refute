@@ -553,8 +553,9 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "## Reviews (P4)",
         "",
         "One independent session per stage-2 dossier. The objections are tracked in public",
-        "issues in generic form (#179 to #188, no star, verdict or result; details at P7); the",
-        "full drafts stay private until P7. None changes a verdict.",
+        "issues in generic form (#179 to #188; no star, verdict or result; details at P7); the",
+        "objections the first gate review (P6) found untracked are #190 to #194; the full",
+        "drafts stay private until P7. None changes a verdict.",
         "",
         "## Use of the caps",
         "",
@@ -562,8 +563,9 @@ def cmd_report(human_path: Path, out: Path) -> int:
         f"{human['_hours_counted']:.2f} (measured CPU and, for parallel runs, wall x workers + "
         "the parent's CPU"
         + (
-            f"; of which {human['_hours_detail']['reproduction_upper_bound']:.2f} an upper bound "
-            "for the reproduction"
+            f"; of which {human['_hours_detail']['reproduction_upper_bound']:.2f} for the "
+            "reproductions, counted from their wall time (sequential steps, single-threaded "
+            "numerical libraries; an approximation, not a measured CPU time)"
             if human.get("_hours_detail")
             else ""
         )
