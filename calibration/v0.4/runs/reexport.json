@@ -1,0 +1,1184 @@
+{
+  "dossiers": {
+    "controls-s1/TIC-393911494": {
+      "core_sha256": "86980a30b1014626ee78d903a01cea1fe773590b7f11abab4b3ec8f02af92c44",
+      "version1_sha256": {
+        "candidate_parameters.json": "38b0444600c23cfc34f62c09f9e303bf5fff7efa5cbe7901520740b435cee8de",
+        "candidate_parameters.md": "01a012166333c1a57dba56d58b1f02f4f953e05977df04a86799ba87572ba760"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "95e00607da22ccc079f2a267a8886b46dc89847ef3b38e6cba31515f8db45c53",
+        "candidate_parameters.md": "1a5e34bfe543d8e0d49919001dd5f3e177fd3b3db565469e751604dce6df1cba"
+      }
+    },
+    "controls-s1/TIC-86396382": {
+      "core_sha256": "bb841a9912764539585a853b386e1be295c0c0a5cf8c3cc5e5682465f8d6833c",
+      "version1_sha256": {
+        "candidate_parameters.json": "435ede14794965dc328aba78294f8edbceff8e6ea9a16be30c750904dfd44c70",
+        "candidate_parameters.md": "21c7d74201d654e39a8a9f1bd4979f17602d0073bc2bc4301ee454b200e21b55"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "15ed79237b75dd9d4c95aaf834a37d6611b5432da00b576bfacf2a04355ea367",
+        "candidate_parameters.md": "181327ee8eea9de672047749eef28dc87342354560089bc720175718263977f9"
+      }
+    },
+    "controls-s2/TIC-393911494": {
+      "core_sha256": "649adc930f5e89f459b6e5650522ef8d719b5f0972f1c12c185c4bc93bd033e7",
+      "version1_sha256": {
+        "candidate_parameters.json": "b20a03ac9c65c8e733d30544a6d413ed5571d61f6c36a5401b4d4c8b9bfea902",
+        "candidate_parameters.md": "4a3f1eba63187e34ce0a7e72544865453f47104cf08c4aaaccd64fd8f1856ed6"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "4d666d5755595194a084db35c88f4c0673c8e2aa19a7f37e13ccdbad37b7b2cc",
+        "candidate_parameters.md": "1a8c991e353cf12db5271c4ff6194fed1e60829dd06826b609c082e56fd7276b"
+      }
+    },
+    "controls-s2/TIC-86396382": {
+      "core_sha256": "eb1b06cc6f5f5da1c5032b056de1f41076d9c6549045ab22fb7e64409d6c236f",
+      "version1_sha256": {
+        "candidate_parameters.json": "511879c1ed2de89b02db8223ee5b51cff1b2977feb9334795237109ebffa89ca",
+        "candidate_parameters.md": "6fcb1138d0bc52f730ef39c6bd782404244a733e02c6c8f4f82a75b467912cab"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "9337750a8110b38f0054e74b9132abd0cefaf68dee2a397d20ccbfb897c5dd21",
+        "candidate_parameters.md": "1fb140f82607d668c4ced48e4bdf9791af323a0e574145e021bb8c199ce74c50"
+      }
+    },
+    "funnel-s1/TIC-100610422": {
+      "core_sha256": "5d9d40c10d21c793cc7d90153b36c961ecb1a713eec3c94057b485c88c42d020",
+      "version1_sha256": {
+        "candidate_parameters.json": "2ec974406812cb9cd908499ad3194a50414b030bb16ab60951bca69f7f45e2ed",
+        "candidate_parameters.md": "f20b9cfd7983e8debc0ca28a298aea8d36194c320832015c56ab93d61a588c04"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "04844cecfa2ba3c416be14af1a6c2dd2a39312cc514c7476dc49d737a7e80338",
+        "candidate_parameters.md": "c8afa2af502cdb5babb5d0a02c4840a68bbcb886b4e6fbaf4083ab9e3a58568f"
+      }
+    },
+    "funnel-s1/TIC-120900130": {
+      "core_sha256": "021cfd39b60821ea0c05ea81218ca22b0f8e05b2fa054eaefd117d36c7809639",
+      "version1_sha256": {
+        "candidate_parameters.json": "2202bbad886954ae40b2c367d8ed2e266e1c67e66a8acf9927eb86f53eba0d72",
+        "candidate_parameters.md": "de408d53b9fd7a702b5b90bf1eb28a3425f5cb93398cf0b82991e86b259e955b"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "b619e1dc0d9531fc8d4e47f9f8d010de81c5e9ce6bf2742886231fba84500c51",
+        "candidate_parameters.md": "e0bf7b97dd82d9d0281fa0692548a87436d05ab6e175bb85c379d2833cec1485"
+      }
+    },
+    "funnel-s1/TIC-122616851": {
+      "core_sha256": "391699f4d9ec319c6bf85aea97e292e1c23584ce7e5bc293bdd073ccc0878a09",
+      "version1_sha256": {
+        "candidate_parameters.json": "aa5ad99a420aa7646d6491c875ffd5a10d057bc898a1d490e43bbcee9a89d225",
+        "candidate_parameters.md": "ce8db60323a2c3994022d85bf912d80f6583f47cfb9d5a16dd35e6a29afdd641"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e572a55fdcf2d901bc0c10886554214f396dc389f96763b173510605eced55ff",
+        "candidate_parameters.md": "d7d035d6cf217cced0a21be9fe04f11f47674e065f4eef39790162ff2ea12bdf"
+      }
+    },
+    "funnel-s1/TIC-138651299": {
+      "core_sha256": "f46e1f0cf68a72bef73dab2731cc8ce521b2d331f269a0824b4082177667e842",
+      "version1_sha256": {
+        "candidate_parameters.json": "7bda6353a26b2546f484ceb1a0998fb184610dfe8b7b50125e1a577099c30e2a",
+        "candidate_parameters.md": "a12a562e717c12d9f16390b546dec56bc29e37877ee50bbccb9dae31bef0289f"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "c1a1ec746bd1a150117f35d47990a9e9d55481d574fa971b629f93e2376cce35",
+        "candidate_parameters.md": "5e3820a25c850eeeb8571616bbe3808eb98c11edd46bc82089236de9729895da"
+      }
+    },
+    "funnel-s1/TIC-140123544": {
+      "core_sha256": "95a1e5755fee765da0ac8ca13cb0e95964e63677bf7af4b332b5168e6cf9c6ed",
+      "version1_sha256": {
+        "candidate_parameters.json": "73b4f61e0f5a5146d845c1a91ffa722a314dfafbbecfdd287f4a04e69ad4d45c",
+        "candidate_parameters.md": "16fbb8240d04ce806fa616ff15a30216d98462650c9983a43a0fda4e6909ee4b"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "f077fcf5be12601837f3478d15cbaa6046111ccf77b469bdf5eb44b4f756b6af",
+        "candidate_parameters.md": "20756080cefe9edc58217247dbd3ee5b40aa5706bffd2211341ed13d0d6127f9"
+      }
+    },
+    "funnel-s1/TIC-140867523": {
+      "core_sha256": "17c51ba95fea0320bc5967a8610e0d7262f17e0afd5d93d8f38b0f895ac7fd9d",
+      "version1_sha256": {
+        "candidate_parameters.json": "765611445332d33a8b34b965db8dd4fca8bd044365de5ddb4bc24517ce210898",
+        "candidate_parameters.md": "18609c7b16d5340f3454a256d44991e7d739080efb3f0e12117fb3ac9721d314"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e740ceff46e8fb5802892bbeb9b951f7677aaec53075dcb40f2b6f6cb839d8f4",
+        "candidate_parameters.md": "80c51de5975f5b326747810548a1da35ce01390e64e507f90a2642205907992f"
+      }
+    },
+    "funnel-s1/TIC-140899383": {
+      "core_sha256": "ba52a076a7451d4eb7e3f0b532b5d6c0c15d864b93166fdca6a93ea47c494ff8",
+      "version1_sha256": {
+        "candidate_parameters.json": "2e2597daae3a794be9a44c8b6428ff4d552c8bda27b6c4a182ebaae74b1cb7a0",
+        "candidate_parameters.md": "a1dab4a44920b3985bb6d3df676d7022ccdaa313620514772da775475ce61f29"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e16adf35b8f5ef7bee4dd72f4b2a5e78a57cd282e009bf555e1f010aee1805c0",
+        "candidate_parameters.md": "22b74836a2c2313138d3928d55581480a340355010149b9eed5b6502d548528f"
+      }
+    },
+    "funnel-s1/TIC-141121044": {
+      "core_sha256": "d448618cb552b9dc83ca22facabf9dd58b676699300d37c5fbb45b2ac5b909e5",
+      "version1_sha256": {
+        "candidate_parameters.json": "d94bc1b30662e9d78ce7adb4ded6f47ee2aa8237a470ea06c581d3f632517924",
+        "candidate_parameters.md": "1402da479d34d9befc40e7273bf643ccaeb7051af7d164c904dce39e5c685ab3"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "3dda7950ce5c4be34a0a33388129c2160727c7adfdfa6afef659b6c0a608cc0b",
+        "candidate_parameters.md": "5d70375dbd7b84d493bcddf2b7d566befe1f96eda5ad0618b8dbf5a06f2ccfea"
+      }
+    },
+    "funnel-s1/TIC-141944911": {
+      "core_sha256": "8bab4225b495fb2f44e10eb8e5a1b53696376e2c9d9f37916b5a3275a501acb7",
+      "version1_sha256": {
+        "candidate_parameters.json": "14cba9d9f451fa2dac8f4d0f0ff68257819f13d00c6a07001bae39091ce2074c",
+        "candidate_parameters.md": "566146e974dd6928b59a89c41863485de1af751b9a3b97799c746ee0b90cdea4"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "909c8b02be281d28bb64a7a7cd77851d49330788b0f751ef2ed8814912b03794",
+        "candidate_parameters.md": "4ed9170da4eea346b900acfbbde1528d2eb1ea3649b28506de1e638221a633f2"
+      }
+    },
+    "funnel-s1/TIC-142440081": {
+      "core_sha256": "c519b977ccf104fe2ee2b43b5e0f2d82ebce2c0ab0eb50faa23628396dd7348d",
+      "version1_sha256": {
+        "candidate_parameters.json": "4aea403e7231365a0bc96ef380d4e3920390b9360478d1a68c9f725236def5f3",
+        "candidate_parameters.md": "a9016df929d37fa6fdbdeb6fc46b5470e876b8f7352c96a82d81794673f017e5"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "13aa458c53cbf26f05c1f65c0277e0948d67bba11a27d7c8c6197dc1d688fefb",
+        "candidate_parameters.md": "ae011e29830c0b58a2272b7b3a8467b0b5c415794a08d658907af74f9a4bcb81"
+      }
+    },
+    "funnel-s1/TIC-142727252": {
+      "core_sha256": "f49009236a8f4ec4093274671472344915dbb88b9eb44e801f36704ad2597326",
+      "version1_sha256": {
+        "candidate_parameters.json": "330d533c6e69421aad2e92e5783ed1aa51f2c3e16af50c66caddc325d64f15f4",
+        "candidate_parameters.md": "4d20552b788af136558dd68343343d2f87639cc2f65d0b5830852bf9bee36f66"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "4feabd57d62a69e7fd044e233d8d1504cc9c1cade28b30bb36684325b3db431a",
+        "candidate_parameters.md": "84efa7af42509a160b68e9f698905e2d57719f0536e3dc609d397c774f2974e4"
+      }
+    },
+    "funnel-s1/TIC-146613141": {
+      "core_sha256": "683601a84f4dd5627b42cdbcd24d4755a1ef6e42b69b6af93dd954f4cf524390",
+      "version1_sha256": {
+        "candidate_parameters.json": "12b9d0dd24cd3d6ec420b867cff5a579e4766adf3a87176f3b25525882bafaa6",
+        "candidate_parameters.md": "d58fc9c118c5384a870fa644a32c80bfb5a2551a514855785b9a7befd191920f"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "c4d97d82a64282af497662a311e8589e9bdb5dd0b8bbd33924f71969ca47b651",
+        "candidate_parameters.md": "506d9d1385d8030cccd9858c443e0a8c9f99bc3172129cd57c575b88f741b1cd"
+      }
+    },
+    "funnel-s1/TIC-147617419": {
+      "core_sha256": "c69557e460a5e334e2730ec04fda37aeaa452c324757aef18c5e141123b78768",
+      "version1_sha256": {
+        "candidate_parameters.json": "b1581699b075ca2fee5d2ce330093a76a9020e4575a6375ba0cf7c18a68e29f0",
+        "candidate_parameters.md": "fe81dcb7b52eab2c949f3fd39c0cd42b0e0fae07a4d4306e09e966d1a6e4d798"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "4a56be15924e4aa5f13f1d8d113f087a6bfe432bac17c5236365b275a3b01e6e",
+        "candidate_parameters.md": "a335b5f44fb0db82d7b80ab752d3b92120ba6feb9ec304389cc0cc4005f7a670"
+      }
+    },
+    "funnel-s1/TIC-148002142": {
+      "core_sha256": "f58b9bec63f521ecc5d918a0507d61c706d894a540e3753256728a6103a23abb",
+      "version1_sha256": {
+        "candidate_parameters.json": "8d5e47bbb5170ec4aca71543d66e37c1b40d86007b6391f5878302a544f18348",
+        "candidate_parameters.md": "8c0b8b6d13b9afa50324af5733956a38843118686586a0b40911238b7a31c986"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "6bf41edcc147a5b3f73848346741e6131f7d8bec941564c83a0733ae79a38965",
+        "candidate_parameters.md": "5384d531ae8286e5f8979de15e891a268b6d5739afa863d0a6e1d889d1e24573"
+      }
+    },
+    "funnel-s1/TIC-14802455": {
+      "core_sha256": "3494c8e5581b8a189ef8a669c13bb06aba06c7bb5a2dd02032255ba6015dd463",
+      "version1_sha256": {
+        "candidate_parameters.json": "2678db300b33e162e6063a2194e4f4617f83e1614be2812913c633bd67597538",
+        "candidate_parameters.md": "2c5d2f6e91f9066edf90ef5bf175987a8cf202f2a6c87773095111c2b8467173"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "a2f0dec3688c83dff1fa0dad6e4ffe4c3cd0ef2d0cefc3761c249521e42d88de",
+        "candidate_parameters.md": "59b07ffc0de9da6939194882317b410f921eadbb84e8d7cf23c7cbf355a2ddd5"
+      }
+    },
+    "funnel-s1/TIC-149968737": {
+      "core_sha256": "fdf001f23314baf94dc50d01eb4be6d2cd014ee2015130f9a31ef364f9a47067",
+      "version1_sha256": {
+        "candidate_parameters.json": "910b78a525cdfc1bf8dc73b7d410f999ccddb1197abaac766fc813f1af79032a",
+        "candidate_parameters.md": "fcfb2b24b91af7986e0f20a40d6d6f52c5be1747f35feb5215f55236aaed5b11"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "43991e47ef00c1396742d9c1fa90f68ebe3aed07b803b73b1996c47ee364e4c2",
+        "candidate_parameters.md": "611567a41102f2694b700eff1076e255f339ce2281ab4ac136048030eda26323"
+      }
+    },
+    "funnel-s1/TIC-150249543": {
+      "core_sha256": "9edca0a41de27c7f3c98fb94791d38ef58b57817a800566ef1e4704d4932de7d",
+      "version1_sha256": {
+        "candidate_parameters.json": "0c7e74a821b1eedb53a5a8c81b56a41ea770baa5c60043a83fb052c47aef2084",
+        "candidate_parameters.md": "64d040efbecb5fa10448138c58c8a9460266b9af662ab318ef71b159f4c09629"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "80f65474d9eedacdf633b43a1331a4fe649e0652cb13e28b3bb41d83174f50f4",
+        "candidate_parameters.md": "8cf010c9803d8f37b81d69d4f852791c4cfe966c66562bddd1ebcdfe047ee651"
+      }
+    },
+    "funnel-s1/TIC-150250788": {
+      "core_sha256": "af7df7614759504f385aed3081010bd4f0c5b043941619960c4e99ecbbdade08",
+      "version1_sha256": {
+        "candidate_parameters.json": "be70b281957e5ce9bc105e5534db2cbb1db833e1f19dbb89f408a2f21e9eec07",
+        "candidate_parameters.md": "6880809828e28dace71f2b8667aca9ce1506b8266a4483587365ebd45fb6b424"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "1f173f1483ded5a9e70e5dd6e36c6ba36845f5fa3e45f2c7797c02f3826f5322",
+        "candidate_parameters.md": "f9adb90e4065b4860728787adfcb5a7208dd946f5257671dd1db55423b7fe868"
+      }
+    },
+    "funnel-s1/TIC-154257406": {
+      "core_sha256": "35b04a3b8ef2316b04a7f973d6e9ef160f3282402836768b08c301ce6c0ea4d2",
+      "version1_sha256": {
+        "candidate_parameters.json": "ac5131625c58473aaf4dfc48c8477c7e97be402395b4571b01ac4d0b0b8fb6dc",
+        "candidate_parameters.md": "ace5ecbc56f2b8e79d44f79f5ab134f1b766414fca79f5643faebc26d6c82c9e"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "1c6a4843c01338f1dc17bd5d8a809b0131b4c610bd9f607e2b8f78b702fb89d1",
+        "candidate_parameters.md": "152c9be2028d1dac393a783e61ee8395756e90113a4bbdc19f1a3482a9d69bdc"
+      }
+    },
+    "funnel-s1/TIC-156118042": {
+      "core_sha256": "b1818d3acad376c74295ddb165b96985b511be584ec83f69f6665c50df4327e7",
+      "version1_sha256": {
+        "candidate_parameters.json": "e9b114904468d889d64c969c7e4b0079e5629e5ab9e25096424f8022fbacf412",
+        "candidate_parameters.md": "7ba8f43cade125c61c1e9a3228ee005bb3ebc00f62287d56ff3b415c39b60b2b"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "161affc69afe967e637e44dcd9d275fa78fa4e76b098a65a96cf466dc62cba65",
+        "candidate_parameters.md": "21d174dd839043aa8413bea59ed599814420ee5eaf9aa8dd1b456e0f0439027d"
+      }
+    },
+    "funnel-s1/TIC-158175179": {
+      "core_sha256": "e972f9f1ac76ca0912fcbcd54d49d2cc6b06f85a02b3ae966d3cac116cad6aa0",
+      "version1_sha256": {
+        "candidate_parameters.json": "87945ac31c79c17222ce63461957bcb42a1616227b72e8d09c8a607874c69b5a",
+        "candidate_parameters.md": "fa9f7e27ab8cbf6a1bf58c1eb90f09efdbdc9bc38e708c87d046cf93aa3c4cd1"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "c1ebba1d88f935ea2c0817fb412281f8de5760adece7d9aba3512475188f29c2",
+        "candidate_parameters.md": "d346f444f4b4641b12a88771487609544331ab0a6cf4aca405bfbbbaab001ce6"
+      }
+    },
+    "funnel-s1/TIC-158461758": {
+      "core_sha256": "3747f76ec3decc2c47296081b5ade17a8b60ebb6804841b27e468ce936bf79b1",
+      "version1_sha256": {
+        "candidate_parameters.json": "5f514183395c239325d20e1b63aaac67322778a26253f2465710fa4ea1e9e213",
+        "candidate_parameters.md": "0d069055efa976dffe08988745d8c64972c39348ae1639dbb7b6625444465b62"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "538e8c3b8c5d6f12adc6fd4ab077db2bbd063f967482786f0b2e7018650de30d",
+        "candidate_parameters.md": "5aaf04fe6023156f2e5bc2ed66227726586bfd41d2622541677e074d6466572d"
+      }
+    },
+    "funnel-s1/TIC-158636944": {
+      "core_sha256": "4573aefcaa4c352bf6258d92dcb7d6631b5936a4fbe9fa83bdd57618a9bdea50",
+      "version1_sha256": {
+        "candidate_parameters.json": "be66c5755f15f91845d52e3ee5dde040437bfd56f08c8fde6f16039e9bc2a4ef",
+        "candidate_parameters.md": "e3ebe64350b7d84168110d4e505d2c1c206d3cfba07206938d1a7d57a936995a"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "5a59543a41cb13c61ec393b1b46c4f234552d5a45b6f9755b31e1ba0e5aac434",
+        "candidate_parameters.md": "2fc293335994058a8740741b970cace06c17953ec7e6985f7821d9a6e4746dc5"
+      }
+    },
+    "funnel-s1/TIC-162582602": {
+      "core_sha256": "2c90f84b8ddbfe40a7663b16c8feffcf37bc47aa4b2a739769760973c078deaa",
+      "version1_sha256": {
+        "candidate_parameters.json": "090322e130a8b6daf1944c6ca700a07a5a51c0c84edf88c171efe2406ef9da86",
+        "candidate_parameters.md": "d99628e76673ec110c34fb1e34896b284d98d52f19f50e530edca840a24b7c91"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "36bfbad04e7683ce014c4b6ed1e83f1ce892af5818c105943b9e45cb5f889095",
+        "candidate_parameters.md": "b6b41b74135c6b5a2be5ce2b6e2c0aab12a6466701f408a76d144dbd7706c5f5"
+      }
+    },
+    "funnel-s1/TIC-166087356": {
+      "core_sha256": "279c55c641479baaa4ee37a7ec3c79e417c89a84a76fb231a3ba10daf67ce787",
+      "version1_sha256": {
+        "candidate_parameters.json": "9e3694927e9bb2f91e725725edc94f0454ab4d7308d3c7bf4b70fe8f41887096",
+        "candidate_parameters.md": "cedff1312cb0144e564c10a468a73cb320a29f72278dbc304a051ff3ab190338"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "74271271e3b281df59330aefbd65de51edd85795b7b5726367aa728a5b41e864",
+        "candidate_parameters.md": "2484793143f840308ed7abfff9c812d5bd93b949db492008246892e93e7d94eb"
+      }
+    },
+    "funnel-s1/TIC-166151416": {
+      "core_sha256": "c620348490112d517cee7450894149a748ca4cf16fdd11ce9fea162444515dd4",
+      "version1_sha256": {
+        "candidate_parameters.json": "e2bb84e7f600a57b2f8f81d1390efc43f1a08ba80a02b861a870c62c90300a76",
+        "candidate_parameters.md": "aa6bb7dba6f3887429f7c0ab33ae003b4b1ded940e05bd68708bfb893b0ad01e"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "51c61051ff1dada72102633e0e476c623004601fde5429c842ab6bb7ae1ccd24",
+        "candidate_parameters.md": "0fe67148a8e0873419a08e9b34e541528d3c845efbb17ef83ab192777f39eb00"
+      }
+    },
+    "funnel-s1/TIC-166761808": {
+      "core_sha256": "4460fa610829d6da560008675099b1ab44bf9520909cc83108487026e2470bd1",
+      "version1_sha256": {
+        "candidate_parameters.json": "31fd94fab9e55fa3026e2a14244d07ea181f97504143fdb44b5a5c5e6c8649bc",
+        "candidate_parameters.md": "44f5ccae12d70a713cd36a6135048dbe9a58a89347ed0ba772487e3f8d559ffe"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "087c1b6ec6922786189dda7724b01fb1e531faa047d2cac82086ef8fde3f4829",
+        "candidate_parameters.md": "49c08520c8deb4c1b353cfa2b2a5bb6d89e3c2a04a3cefbe994562a2ede59c40"
+      }
+    },
+    "funnel-s1/TIC-167755099": {
+      "core_sha256": "3e38cf94b98339f63e807ba873f723c4959aa14e9a60ffd0493ded281007787a",
+      "version1_sha256": {
+        "candidate_parameters.json": "1cf4b5954b217d8819c11e92f31d7fc7a5f8c0171c18c9a45c69d0c971e09574",
+        "candidate_parameters.md": "1e48f0c98fcbffad8e217f1e5d9fa193abe594ef5c3893142f5695c48a6822ee"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "23d22a0800b8c06c21b3caece1bc16f314ede0f9ae95a71963e7777845544096",
+        "candidate_parameters.md": "81895b47a9bd11d1251f0ef28e006856dbe0628f4657550398fd1d26e09f3833"
+      }
+    },
+    "funnel-s1/TIC-198407396": {
+      "core_sha256": "610f7f2de227f4579a0cd934dd44467df22cd324af237f1aa873ad5aa5328039",
+      "version1_sha256": {
+        "candidate_parameters.json": "3849766e875707ce6504e94a6a5a0303e95c391a71bc43486d4ddeb22e66ce6d",
+        "candidate_parameters.md": "addeeeac139fbf6ee8cd2f41e055893f23fca018f839e2c6af45b67e1d403085"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "77d3109250e3d1abb7ec12138e2eaddb404f18a44f49630c1a86f52f18e719d1",
+        "candidate_parameters.md": "3a8a919577e2069d0c31b10a6e03dd13171468d2fd376af4ed30c130fa68104b"
+      }
+    },
+    "funnel-s1/TIC-202295593": {
+      "core_sha256": "d91f44c59f7915a89baed9eb0a019290dcf9b0199bc808d804237408855589d6",
+      "version1_sha256": {
+        "candidate_parameters.json": "d92aee9dc6cbd9b24a3801dc05e7cded1a25b97440821a0088799d4f6dbe290b",
+        "candidate_parameters.md": "67839517fcb95fd5ce6b42d5f7b14bb6adafff91941325cb625e1301a7451c63"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "2825232b74ea4b5d8ee484393c1978227e8ad737a007e2a5eaee6736780833e4",
+        "candidate_parameters.md": "4276fb86d24359bc3773a29d80256e1a4a961efc0fb84b5551aeeee798010dbd"
+      }
+    },
+    "funnel-s1/TIC-210464356": {
+      "core_sha256": "77f20b14e9725b3b0c95c0f09432c0973b4455683e273cf5498e82dc8d0ed56e",
+      "version1_sha256": {
+        "candidate_parameters.json": "57f72429fea906d3b06f7b600321ccb49e608daed18693ed9c78f71a11f2c92c",
+        "candidate_parameters.md": "c63d205c57665aee6d03ece311bfa63e3f3b73fd33ee590ed1d5d42abf13eaaa"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "15156529c7ba00442d2d841db7ea59476b8d7e79ea6450f719c807aa0823ceda",
+        "candidate_parameters.md": "72fcdca48c8ff97584ace150f32a2eb0a10cda786b712da18d841076a13dc084"
+      }
+    },
+    "funnel-s1/TIC-219404837": {
+      "core_sha256": "9d9f00dc32d167aaa6936c3b32be219f5272be3508384b7d4e65ee54a2f627ab",
+      "version1_sha256": {
+        "candidate_parameters.json": "a77c5089537a385f6b8d09985ef69f56ec916a6af13300425214b97fc733426e",
+        "candidate_parameters.md": "3231b0799f66381e5acd43458f33ec049b2a88c7bf18e3ba04d574773b396b60"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "53abb484915442bc73b73230ca8f9ff514930411c3605b69669669ff86fd5028",
+        "candidate_parameters.md": "73da20b9da5aa083309fab0f14be9eff6d69b210fc0cdd6e9ed935e1e210b81a"
+      }
+    },
+    "funnel-s1/TIC-219407250": {
+      "core_sha256": "5fe4f01232900f5051fb03df7b06298832cde94f0087edf06c026def5c4d0bab",
+      "version1_sha256": {
+        "candidate_parameters.json": "7027882868e55bfcb943d041d716ba5f6cc817e15e7958ea0d893d96a7537c72",
+        "candidate_parameters.md": "8dc6e3f0f8d732d9fe05a5231a2fa1b8490a74406ebfa4d2e3bc9702bcab058a"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "d3a2d520fd9e07f8c808700ae265755c0e3d2d48580d97a524a4f2c6db73373d",
+        "candidate_parameters.md": "38d0823fd2ba2ce7b4f6679cee3cceca8ff40e215c5fc7a96385cd83dc94b0d7"
+      }
+    },
+    "funnel-s1/TIC-229943561": {
+      "core_sha256": "1beb93d4b8e2b6d109308c7bcb8c9e3d1bd1ef0ca32cfa744b18330147e69da5",
+      "version1_sha256": {
+        "candidate_parameters.json": "95fc7555a114d8c90dbd667f79b78e7db865230d1156e72cb7cf838b3dcd65c3",
+        "candidate_parameters.md": "b0cdeb5b94ea73261a8e7d668c499c3fee15e3f38ca185c96d8e073fb2b3a9a3"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "3faa929edf0006358de6d89d0bb932ff7a45389307dde13d9ec995718dba6cfc",
+        "candidate_parameters.md": "bcd0e0b95a5a1c2e405c33bdfbd2df83d6958a00a71ecffec4cc750f21ab648d"
+      }
+    },
+    "funnel-s1/TIC-230068646": {
+      "core_sha256": "a1f958345c8ba11188eee1861ca2edfa4a4dce649387dcda67873172d8b7c6f6",
+      "version1_sha256": {
+        "candidate_parameters.json": "f2833dc55ea5ed73b8b6b20b5da779e7742eb32478d9d50abb1750718997f4b5",
+        "candidate_parameters.md": "1300bac2418a300b20840532cbd53f9f326deef56ac5e8177c358324a449eec1"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "a7dec30ca9f76855a6a1550b311b22d786bcbc0d33419b1700472571491ff0f0",
+        "candidate_parameters.md": "08f0952edd5aadc9bfe3c9367befebaf37df4100abf94e2f90bbd8c099495a54"
+      }
+    },
+    "funnel-s1/TIC-232623880": {
+      "core_sha256": "72aa8d9a95ac6d2c15e22b774e16e3cc9f50584f540272ae6ad82b74ee14af6d",
+      "version1_sha256": {
+        "candidate_parameters.json": "f8c6572812a0e160750de488fbe53609d646f93711befa03a6d7ee6950641fdd",
+        "candidate_parameters.md": "45e956a1ac2bbe7faa7c480a30a7d0d40d28cc6cae49952b95d5099842efdf0a"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "78d98da525c937c03d36edc98dca32cb9d02c6e7e3b63280d4fc6c8eecb3abe9",
+        "candidate_parameters.md": "9e4b87fac90c724177a06c4ab873c728f896e1376fe256038cf89b9e443a975b"
+      }
+    },
+    "funnel-s1/TIC-232966887": {
+      "core_sha256": "1765db3737575db6d0e481dc2374a388c6f934ca3e2acceb7583cc0e0187f3e6",
+      "version1_sha256": {
+        "candidate_parameters.json": "69b0227a5637270d269e95243bec137e84b5a4167f6b0989c095ae73b4e5341e",
+        "candidate_parameters.md": "01a4830f75d6e78483a3cce2028a41de3c6c0f73b3a24319c2eadaca3e40011d"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "5c0d5378c1e413a83b221de38ca9d11f54da562aa53d845f80abf4f767564da8",
+        "candidate_parameters.md": "bb878acf8c05b9ae92f36ea8efb85649372b6fe227f8223e117fe8724fe9625e"
+      }
+    },
+    "funnel-s1/TIC-233045207": {
+      "core_sha256": "d21eeca43a3e33751473195830d1662d088461186c4e6f496dcbc2cb48f4f619",
+      "version1_sha256": {
+        "candidate_parameters.json": "061aa64834b8cb2f133e35ddbd1ee5eda46b86b0843659a21d28e97e66ed0b75",
+        "candidate_parameters.md": "dac0b59b14e73bc927d12833e47026b00c2afdc48ef9823e3db6f3aab1cb1bba"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e7a867b45eb5380b0832cd778333aef13595a431ec3b0b4272f1710fa4ee4b53",
+        "candidate_parameters.md": "5512af91a84a858a24d4fedb1f147930f5417bb141428bcfb1f5ec975f5404d0"
+      }
+    },
+    "funnel-s1/TIC-233231885": {
+      "core_sha256": "5c48a47377de62fc88f796f15830c91d24c276185e456bd59fe4de252e2411a4",
+      "version1_sha256": {
+        "candidate_parameters.json": "0acb2753f0a570e7b3a11d4992aba59849c50c50ae56ffd80ee3a972d41682cb",
+        "candidate_parameters.md": "795993b2093db11956efae15a7d4fa74831c38174e6368214fec8f329ff46bdb"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "bc5a26bb117ca4ea5a6c8872adbac6d554c9cde29af48c1947b6f845ca241f23",
+        "candidate_parameters.md": "a8bd3273b4c6f32e48e1a283f5d548d754f3c2f715b28648bf1c2915927ba6e8"
+      }
+    },
+    "funnel-s1/TIC-233747343": {
+      "core_sha256": "5923d78e7bf6f5420332d7bf90b6ae1ed2d8fa43c5ab0d57f4b61179d5ec9ad4",
+      "version1_sha256": {
+        "candidate_parameters.json": "d941172e76c1fce7509e647848de67eb00c8631540d59284b595c53ee2e0871a",
+        "candidate_parameters.md": "db9000e48059c8e30c6de8f1d512a1f9d8055cffcd8cdec9e8621730fe1eeb92"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "d362ad1ad064fa2b9d604ffbceaa9970c26e9ce881754838e0c72e7db51baf39",
+        "candidate_parameters.md": "51ca3a9a62458b370a8b6b2c6864a4e40dc62452ed620787a4d940aa7310bf84"
+      }
+    },
+    "funnel-s1/TIC-236778955": {
+      "core_sha256": "ebf89b067014908c33b82359db48935e7a44d9a4c144eb45882a855641e7af39",
+      "version1_sha256": {
+        "candidate_parameters.json": "8eaac973856f992b98107193b2627826986739757ba2fc9519d7673c64e52ab1",
+        "candidate_parameters.md": "1b9f76e213de940c70ba56b27cdae2d5f7e80d8ffb5f5b392fee53c565eff887"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "f940c22e01330619582bd65edffe5250889f6153e467fe2327c88a5a55b264db",
+        "candidate_parameters.md": "2b74c8cdca654625866b46ed8e0d4530fa7f16bb969416ad648ffb6bae792dd6"
+      }
+    },
+    "funnel-s1/TIC-23708215": {
+      "core_sha256": "a3ac64eebdb79911df5bafd28cb28090f91f5473e982ca9e1982fafdffa7a2ef",
+      "version1_sha256": {
+        "candidate_parameters.json": "21ab706f3055b17191d360555d6ca9c8fb533588b96bad4085bb9c97e0612089",
+        "candidate_parameters.md": "887e86472a6566f6f291df54168b3787ebf53a50aef3697c37514f8c72ecac46"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "45097e4882205cebfeff209fe20e869c492fdfd6e20369a4def4924101c5cbf3",
+        "candidate_parameters.md": "0a63dd64a3bb609220a8a382c50ed46a3acba6d27b3bb7cd24b55a201724e518"
+      }
+    },
+    "funnel-s1/TIC-240171830": {
+      "core_sha256": "8d23d5fd67f2e6e4eb25323a52f457deb42c40f8a75bf53df8b6231f54503d4a",
+      "version1_sha256": {
+        "candidate_parameters.json": "828e358fa08727370fcba904862737cfd8fa5332ee344876870262b2f0345fd4",
+        "candidate_parameters.md": "e4ec571790202436c058e09dad783cab018dddea02846ea90197c20309d9a131"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "f4f1eb87e8d30d340906929dae9d5112abe4c8ca23814702f0ee1e5bd22bcc8f",
+        "candidate_parameters.md": "649d2b7ad108d0724cc109deecb27487c012ffa3364d918a908ef9d1357cc7c0"
+      }
+    },
+    "funnel-s1/TIC-24607925": {
+      "core_sha256": "07a0fd9d2ade8d11adac78352b66ccf31dcce8b7e01ed066d895add25d6343fd",
+      "version1_sha256": {
+        "candidate_parameters.json": "f1bfaf1c798474e11564ecc94c116f8b89987053e5bf7747018cce09f50fbb27",
+        "candidate_parameters.md": "0554e2c8a5a6eed89fd8ae1db7460b95e1eb84df3229c7efa3b55ffc48c7ac6d"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e1cf086c839fda724265c4e7e549c20dc5199adefcbfabb57c1a0bf9e58291dc",
+        "candidate_parameters.md": "3ba78723284c2a3956603a9630cc3683b7f2ce5fbc45a20087b65b62917b850f"
+      }
+    },
+    "funnel-s1/TIC-248356317": {
+      "core_sha256": "b2ea8f1236dcdd2b3d48bacad5e6db59bf3974cf251ca72405f015e940d9e13a",
+      "version1_sha256": {
+        "candidate_parameters.json": "6b7bdc83cc4ae348d78e8cddfa6ba7add03368af76906d1df060f429d82c5305",
+        "candidate_parameters.md": "e35b9f088ed2d0565ae91df325742e087fe92a9daac48847984c6bad35cae3a4"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "73548ba4a8cc335b85c287aa404c7edb482d44e0a9a889703b626689b479baa2",
+        "candidate_parameters.md": "1bdb04cbc2db8f3261778c823d89a2571b256af4b9e65e443789e3fcb8b3e1e0"
+      }
+    },
+    "funnel-s1/TIC-25155713": {
+      "core_sha256": "dcd176ccaba47b8bf2c5a9880bd740b2e3b06b0c3ede0e3a0ff1fae5936196a2",
+      "version1_sha256": {
+        "candidate_parameters.json": "1dab9d7172ebdb92e75f223ec3adb9e92620c5a1ce98fc4bebc9bf9e7501935b",
+        "candidate_parameters.md": "c8fdedf916a64c2439eadc875a24b6c084945add4a30272bd4780936e9e55aad"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "3a517edfcda96a5620113f72f8d9c1b5fbd08884913d5c68d8d5e432e59e83cd",
+        "candidate_parameters.md": "7c7507b6645e60a989b47752dd32cb7b3cc2128d3dddf4bee843c612a44d6691"
+      }
+    },
+    "funnel-s1/TIC-25382939": {
+      "core_sha256": "9192d916eebdfd0c88ccd5e9cc04ea159034613e87bda2e135f567ff057b4fef",
+      "version1_sha256": {
+        "candidate_parameters.json": "1769338d588f68334e4ac6e578d88aa277448ebecedc134c7229fccdad255599",
+        "candidate_parameters.md": "38da22d612ab7225ff5cfec20b62862e830fe2642ce7ecc08f6c02c55b77b244"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "685fac34b7f92202bde804e161ca2595cbf5d05c95d53dad6b74d286adbd3427",
+        "candidate_parameters.md": "cf4d19aaf0d6d80c25f7bd11e1bd1b48eca584f2e1cdaa7a44082edbd52331cb"
+      }
+    },
+    "funnel-s1/TIC-255927008": {
+      "core_sha256": "55378567b57ea36442c499fd33e17386f6931b7107ec70ad5df362eaebfd5b5f",
+      "version1_sha256": {
+        "candidate_parameters.json": "ad002d4729cb85b0f25f6938c2cf2f44eb8da6d0220907400fe6b5f5455c258a",
+        "candidate_parameters.md": "a5a83f8dd89a18e3f9822e13a7da58e038c5c85c1531dfc29769564aa08ea8c1"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "0c87ec66b5eee0fb12e676673336cfd92287d98e3d724ad2a3a1252bc36370e8",
+        "candidate_parameters.md": "eaaaab9c102b8b7f915c526a22bba11840a3a01b75256f2e2efa165fb23f374c"
+      }
+    },
+    "funnel-s1/TIC-258827696": {
+      "core_sha256": "606c93403d48488d6de4959ed9245d4237bc0804d8bb466d50a7109982235930",
+      "version1_sha256": {
+        "candidate_parameters.json": "31891dcd01ed346e390ee189efbf6f636a354758889b136935a294a9b935b9c4",
+        "candidate_parameters.md": "81f77e2c51698162158f25e7a0ffc90f7783b2e9124d73081be1ce27fff9f043"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "054b8b7e4c0368d7b4aa009689de902654894bc654d3a34b42a55cffd27203dd",
+        "candidate_parameters.md": "d32caa660b1c6ce7ca1edc29b5be3a40c54caf352af93ddc0423d3aff9806bc1"
+      }
+    },
+    "funnel-s1/TIC-264252839": {
+      "core_sha256": "bcd055cfeec431c266e8d5cd52ac5b0e04974aeb59048df0b8a5f9a5ee5d51fb",
+      "version1_sha256": {
+        "candidate_parameters.json": "ff64d2d918b7afd62c7eb0eae9b4326d8c70650b377223b1b42c8ead03377809",
+        "candidate_parameters.md": "35327e61111c536916d91c024ee5e2eab042e9a2c96652d53e0b9a8d2a6cb7ef"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "f455222fe3c33801e4853eb4e6a8570e0ee67eba1936002c1d5e3018ec9428be",
+        "candidate_parameters.md": "f176fe2e1366f58c59f2943d5709739f65408824493b1af85c0434527577db2f"
+      }
+    },
+    "funnel-s1/TIC-267039954": {
+      "core_sha256": "6a4cdeded68a1dea9f324512ab35b54c1027372d28466b378083794b7c78950f",
+      "version1_sha256": {
+        "candidate_parameters.json": "55781577039ecb3293a4156096e7bf3a88e7fd2fda49e2c7c18b506a9ad3a32f",
+        "candidate_parameters.md": "ae264b620dead67fc9038387c8e81418c3fd6c0d9f282205dca059b5722b6f83"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "f4ea0844a136fcc365ded1b286614f902313cbc665b00b307c4687814eb5e971",
+        "candidate_parameters.md": "8f93ecd8c947bd61c31a275c149b8edcf21740279f6e25e669abf211fab80778"
+      }
+    },
+    "funnel-s1/TIC-269533563": {
+      "core_sha256": "ca6d74ff778c2b045d992d2daca2c04e454d9979c949b25ed6fce96370a497fd",
+      "version1_sha256": {
+        "candidate_parameters.json": "b573ad80c1c6c1ad907fd3907f1660c30aca656a550c00112769a295462c231f",
+        "candidate_parameters.md": "49d573254623fe3b33fcf7c08188df8b1fd66bcbcc12bac7e2d3c7c76a4e1756"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "3b749cf688a30964206b1638fd4dca15cb1f164cc1bc904a3f737285bc0a9ec0",
+        "candidate_parameters.md": "a866daf0da93ce26142c06cdf2132abda3e672cd7bb8a6c3c8af5bd888f24768"
+      }
+    },
+    "funnel-s1/TIC-281426580": {
+      "core_sha256": "26cb7be5f12d8271d5355412279f7184aed7ced8e6501b00a4135124408c033d",
+      "version1_sha256": {
+        "candidate_parameters.json": "75d2a44539fdc81e8150e4b55bddbb96b56cd4defa8faf0cf104da008d9a1487",
+        "candidate_parameters.md": "69ca7b8267572705f4410ea6d455c159d0c81f40d469a53ff0e7763809c97d01"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "838f8b68afd4de1e293e8c2e5e165b6c856c13794b6b7a347e6bc530cfec96a8",
+        "candidate_parameters.md": "e0aeaff40cd66b97316c787891e7e960bd7e90b43f93f0f3d25c5e13add4c78b"
+      }
+    },
+    "funnel-s1/TIC-281574170": {
+      "core_sha256": "b05313fb03c6979ae836f0bebf3fcdd3071feb961e5c097374f0225762f2a2c1",
+      "version1_sha256": {
+        "candidate_parameters.json": "726138bda13b9a9c62325a1cef928f2d440274c6cc69aac949896703c89064f2",
+        "candidate_parameters.md": "2ff6248bfb15e08b4090d00e7f97da263aff6476aea524dd36daa20e59dc3b29"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "1d18c2799087ca409dc2f83e6eeb492150935ceb7b90b4cc9c99e58987360a65",
+        "candidate_parameters.md": "dd1a79b5b2aaae5aa0c08518fe2e2f78fff095ad9fab5102452a9f4daf47a764"
+      }
+    },
+    "funnel-s1/TIC-281709735": {
+      "core_sha256": "20ae7071e78e0a53bf523ce07f08393edddb9d130f6690db1f9f9c0956c21538",
+      "version1_sha256": {
+        "candidate_parameters.json": "82650d668edc33c5940d1e809b142d5b9202d0171ca07869e84ffacd7dd77fca",
+        "candidate_parameters.md": "3cb6caaccd9ab2497a3ed8d53d9aeda84a0b9bb1fe9fddeadde2ba66ce0c1a4f"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "586e9d18fd4350f1e53d4bfbfe243c7b8931f4f11162cd698771ca9d55b6b0df",
+        "candidate_parameters.md": "6dd2dbae94dbc566e191b0393330e86bcae2e6a35cef291597965df0e38af469"
+      }
+    },
+    "funnel-s1/TIC-28289264": {
+      "core_sha256": "2b442c6e4e974b049d5934baaae7a569a341bd167066c3cdd5366a23a53e1e22",
+      "version1_sha256": {
+        "candidate_parameters.json": "dd44633aed66dbc978c8df167869eec10b36f54192981ad76c25bfafaa2b8bbf",
+        "candidate_parameters.md": "9703097e9a3a4952f8a7c4aa093f468abdf3b25a038fb5742025f5654b2c3aab"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "8dacb737e22aa8e972e70113b7405633373c8913815b748662a855980068227d",
+        "candidate_parameters.md": "56e29c7430e57986e95d6a1980f6d3382ee7adc92cc7f458b5f720fc1013c69e"
+      }
+    },
+    "funnel-s1/TIC-286480954": {
+      "core_sha256": "66df8626a26e6854deaca33126c6a5ca799ccc0acc49e198428bf0fce02ae96c",
+      "version1_sha256": {
+        "candidate_parameters.json": "172ed3cc55601a7cc4a70a8c349cc8b4af37b3c5d2d8a1386c1cf595ba2736b3",
+        "candidate_parameters.md": "19cbd3ac48ed8658a5fee36ec38e04700361ae51382bf756bbfb0c2c89ad64d5"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "928ac6c1ddaf5a6d57fe4d7e49117faa2089b541e662925fbb04d152f6d5d5a0",
+        "candidate_parameters.md": "539069fbef09a2857abc33ab283716e9a20983fecb3f3754635ca6efbb3d6a08"
+      }
+    },
+    "funnel-s1/TIC-29267852": {
+      "core_sha256": "17cb52e7116e1c4d2adb605be91a7dbeac34237ddfe6ce386becf36da42a65c0",
+      "version1_sha256": {
+        "candidate_parameters.json": "018228d1423ef05d9dc8476d7331385e33b1325b2fd94d85e6b5e7852ea36ae5",
+        "candidate_parameters.md": "484831da64629ee8c8b6f6207c1aaf652680469efc95a8c5bcdbfc943ffb9ad4"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "214c0c044ff7e2a84c493d72c3f5e1c29679fbe7d9a6846f4a262b7b817e732c",
+        "candidate_parameters.md": "8457569194dde71b664b85d2e9aacbdccb3a0d48aa72b8677c607866ab793328"
+      }
+    },
+    "funnel-s1/TIC-298001089": {
+      "core_sha256": "0a20eeb1a1b95c4405e11e159304a01b542f59aece348d3b92efe4886a3f4da0",
+      "version1_sha256": {
+        "candidate_parameters.json": "24212947db9e042fac09474b3cf0f16229cf059894115f9488e931de337bfe4a",
+        "candidate_parameters.md": "f30e71f9551cd3fcc8e0f202171c73a967e89ee4d398498b4ae05c98b5dc4537"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "068e548e599c8bb201a762d0a4c0211b3f63b60c7cb08c610c9a2ffcde01bf88",
+        "candidate_parameters.md": "0b16ef0fdac4b747b8523b9872e07e73ac57794286867fd5c699f3e3d665551d"
+      }
+    },
+    "funnel-s1/TIC-300142911": {
+      "core_sha256": "4eeb20476bee29032de309be830562f2f7719bffbc0b32222776933e5beeee59",
+      "version1_sha256": {
+        "candidate_parameters.json": "bfcc3880b01cdbe28d2f4b4ee48ca5aab28d770e8b9e9450aee6d16e473fb270",
+        "candidate_parameters.md": "9535d90644a2a50c326647c953ce7fc55abafd28a18272bb9ca24e6154944531"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e77448b9993a6e108112bfa9b3f270095ea87f38190fcfc0da0e293ad6c99dd2",
+        "candidate_parameters.md": "46ab06d950c6a6326dbf45b89189023acda22cbb39a9a9c5e4772ce6ffb4f28c"
+      }
+    },
+    "funnel-s1/TIC-321476318": {
+      "core_sha256": "c00b9cd3c7ad3969283385ece39326bd7ef114e447feec37046f4ca275bb9143",
+      "version1_sha256": {
+        "candidate_parameters.json": "3cab3dbedab67f9b5075b5bc55eaf0fbe4c3afee4ca38cfe787d9e6168bdb5a3",
+        "candidate_parameters.md": "73606c9b6afc80abc434df8afba8fd766ea046bc7b5986d3524790fc17599e32"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "307466e6c127a568217c686eeb26c5563649bf25ae21aaac809393b91d838d7c",
+        "candidate_parameters.md": "7077066c1b115eb8ab4177208486bff153b3db2700e3a0eb204945fa803c3f75"
+      }
+    },
+    "funnel-s1/TIC-323296004": {
+      "core_sha256": "df5dd9a36d4f266bd8a6ec78aded215ac206ebb2e3a0e897777851d5bbbd2b2d",
+      "version1_sha256": {
+        "candidate_parameters.json": "89048c32e1b9a6e0fbf955a5ac7a9b466725c52e9b33efbb883b6d40de8244e7",
+        "candidate_parameters.md": "d4fc169634ade2bf24e55ac46741fb08b630115ed08e191ce934fcd504b49d6e"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "2abcc04740c1d1f3ecdc1628b1491f06788633ea5c8ff0732db2b538287e912f",
+        "candidate_parameters.md": "b9b3c1d5a6318d6d338501747a36dae3679a9e860fc6fface91a1a2052684108"
+      }
+    },
+    "funnel-s1/TIC-326209514": {
+      "core_sha256": "830fe057075d8eb300ce37bacf6fcd18ae0598c83b79325beca5daaefb539684",
+      "version1_sha256": {
+        "candidate_parameters.json": "a09d86868a4b15341cdad4884a739765cacca4dfb8e507f20a45851f1e2fcf9b",
+        "candidate_parameters.md": "8d49ca3fdf9d93b16f9291efe0d6bd7cec0182e2d78e0ed8bb09051d360188a2"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "8827ff8762a782234d72d5e2c2f426abbf9e3a843845f3597971a1d1c6698401",
+        "candidate_parameters.md": "9ce1990ae1086bd120ff6dba768002bc8db429be6d908bb5057dab8bc0996c9f"
+      }
+    },
+    "funnel-s1/TIC-334900819": {
+      "core_sha256": "77f7dcd466b68936ac0de4984aa59ff0511539ba4e8716addf3e0ced04abf870",
+      "version1_sha256": {
+        "candidate_parameters.json": "753bff6b1841a4ce8a89f723f9dc12358cc4d688035e1f843375020a060cd9e7",
+        "candidate_parameters.md": "d189f25b8124c79d080ac19cb3d1fc638b919dac2ab72f288ef4a159f0cdfc92"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "ac5b6cd9ee2e9ed1129331e4b7404a4b280c8e87f1b5fc3a437f83ae415d33cd",
+        "candidate_parameters.md": "854a4568fa9ce63f0faeeda461c71a918542d9a602491451808ff903139d4346"
+      }
+    },
+    "funnel-s1/TIC-336265633": {
+      "core_sha256": "8d2de2a0a93e5c59160a14d7caa138f0f0a082922e64f885ab455419c6d6be38",
+      "version1_sha256": {
+        "candidate_parameters.json": "6652e0fb516016f45ee788caaedb456a173754696e670f113137f7c95dead0af",
+        "candidate_parameters.md": "78f5fe557f99f4b9c1fca855c576f607fd640196ea2a20f9d2f87e5bc92309fa"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e54de93c6334d7c027458e4b41cbb2f3789c01dd986c85b412cd3993f21f237d",
+        "candidate_parameters.md": "b04b57850051884807788ee260cf54eb905ba67526010661702468f347d32930"
+      }
+    },
+    "funnel-s1/TIC-349577085": {
+      "core_sha256": "a3e6bb0014bd2dfc522086d3648d61b148e4010b787451b79d6b9e47dc2076dc",
+      "version1_sha256": {
+        "candidate_parameters.json": "14cc669b5aa359e2afc1ce01bcad87e5af26692e14cc30eade90cc57d293901f",
+        "candidate_parameters.md": "6413cfd4789c1775c89dce3d02c56385f78616f8ce04d97098a223724b32d4b5"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "adce7a03be8fdf477e3d24aa80d6110f098f9a60d01e28749bf28a0b982539de",
+        "candidate_parameters.md": "4b12cc48cfe72bcca15c8e0ceb2ba4197ddb970c736fb74654c00e4f1c8745b6"
+      }
+    },
+    "funnel-s1/TIC-349682621": {
+      "core_sha256": "c21b8128fc01fb8b85fa0b06391e9312f9534bdcae2a0facb3eadc9aa1965a60",
+      "version1_sha256": {
+        "candidate_parameters.json": "194ed3c27caae122f347ad9423c5b5c70a7531cc1bcc51e9d696cb06a6ffc944",
+        "candidate_parameters.md": "b51e26870eb240e15df550d1daa94e708c19fdce90739ffe313db922b7887d38"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "1ad36b80a0a2b55508c62befa92f21d51ec7f63560d4774be1f7e758a3786385",
+        "candidate_parameters.md": "2ee6a6110784a148d5f8e025fd7aa98c339d632ea3057bd80b4bb647723ac454"
+      }
+    },
+    "funnel-s1/TIC-354822931": {
+      "core_sha256": "9e3691e36aadead9038af66aa63c43f31918153f5a1b2685abc4af568ebc4b47",
+      "version1_sha256": {
+        "candidate_parameters.json": "d6ddc4f8db267809d9ad752ad8c115a029a13af3283fe699e60972e7c0b06a2b",
+        "candidate_parameters.md": "3d63f9e77f0e3ae9a7cab07251fbf1c489333383a1a623ed81a3d10460890490"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "ba08ce269bcd9f881995d16e24336816d085ba38d2bbd54baa69c37848728818",
+        "candidate_parameters.md": "befb50473ff8ff096126930a525100615a8ef012a8ec5208f0de213322759930"
+      }
+    },
+    "funnel-s1/TIC-356241506": {
+      "core_sha256": "3a06581a09a4efa21de3adf67ae5ee0d8b604e4721a15f7f0506b595e0d9de71",
+      "version1_sha256": {
+        "candidate_parameters.json": "04a63ce1b5b15cf78c676bf271320f5e1bf4d411c400b0173c32dd785faa2798",
+        "candidate_parameters.md": "9ccf1f180d46bcfdc70d7b68147474a319ed4929077ac97c124bee23b3ebd754"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "c1c409fa1cf3019b4e216bc3799bea04edfd1782d66a0d2cc62002844594bb8f",
+        "candidate_parameters.md": "97aca41222013bff7171edd94570761c2cb941ee0b09ca5fa98facea2e4e632b"
+      }
+    },
+    "funnel-s1/TIC-356683052": {
+      "core_sha256": "9e5e11007734467fff4c944c9ae992ca5c3b62ccf907cfed491654aa7b0efdfb",
+      "version1_sha256": {
+        "candidate_parameters.json": "274ba3eb2559638478069622bcc576dddeb626e5c9a156b34f885275286c7072",
+        "candidate_parameters.md": "8e78a40d3c69be76eae945d48250aca3ca6ccf1b30c23187356730497f2978c4"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e6bd8408e4bcca3917333b59e3c280af8cadb4784dcb163555b8ee95137b97cd",
+        "candidate_parameters.md": "807ed250dd0e4c936db3fe9f624bab8b3c50222d8fa66881f01ce3e2886a10df"
+      }
+    },
+    "funnel-s1/TIC-358713436": {
+      "core_sha256": "ed551d82d79f48296429ef28060cf557c799ec9a09edc1c81bf523ddbe2d3fbd",
+      "version1_sha256": {
+        "candidate_parameters.json": "2117e127c2129ba07f52c89233341ccd21a024711ffb64b74cef802643bd9cbf",
+        "candidate_parameters.md": "6c06537b17d59baee26da0b588b0a0e09d0c248a6bd03d5417a81eba719fd597"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "f07678cb9f811162b2ddf0dda2b68299af72c199aaaffe7ab24db0c10729f57a",
+        "candidate_parameters.md": "0112914b76901990c8da0fd667fc27782e6e50009dbc1fb2032b6226b8c585f3"
+      }
+    },
+    "funnel-s1/TIC-364129259": {
+      "core_sha256": "fbf01cdbb2d970584677159961b42d825049c253fb3e4e62dc9dd9f8752da002",
+      "version1_sha256": {
+        "candidate_parameters.json": "27a9dacbae86a28bb793b610e65e06d603829b4c5a2fe7849c8c407341227b8c",
+        "candidate_parameters.md": "facbad9abb1176a59dfc49050eebc24608b5d839be9e45941c4f948ce4daf1db"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "623405998972cce9639ef37ad6298cf4b90d9b8f06f73ee29860e9bae54b2999",
+        "candidate_parameters.md": "2e8da5c830abe2faab2b4b54362f68d3070366f089b24bcf7bed291800949b41"
+      }
+    },
+    "funnel-s1/TIC-372045060": {
+      "core_sha256": "c4a51baa54e3ce943e14a6d962d72b35a213bd50a55170b48622069dd4e0e4e0",
+      "version1_sha256": {
+        "candidate_parameters.json": "a5afd9dce5565b2ed44c7713ecbbb9c180a703f3d77e3ebc69b281ed45ba4ccc",
+        "candidate_parameters.md": "968edfba2ed920ee4f81d4311e4b5e8f0c90b5f168faa90a9396572ce94bad93"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "39d7ffcc95a2ca10a2db141674dd5158f6f7b8fb822975eb2c435feca12b6e23",
+        "candidate_parameters.md": "422766a0bd955e5ef9ff9032c986c6aad8b719ab8a5f32f02a0886f49433a373"
+      }
+    },
+    "funnel-s1/TIC-37774136": {
+      "core_sha256": "f97267d9326cda22012aee05df0c0afbd69b1a9ddc1413056f4618bb57c4a996",
+      "version1_sha256": {
+        "candidate_parameters.json": "0316865a88f603a86edb930dea78b023349b5386790c4867b60e7256f31f0d62",
+        "candidate_parameters.md": "d5cfb47adc44f6ea2689c2a79e1c115140de17334afb931228a8b4ccb0a3b8a8"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "5d6764e846725d94eca2516fdc0e201b7fbb38b3b9de11a1f1f871746765bd4a",
+        "candidate_parameters.md": "579df4195377b3a8eb6592924825c89c7b8b04ea7cb6f4c1edc544fcadecd574"
+      }
+    },
+    "funnel-s1/TIC-380039482": {
+      "core_sha256": "8ffaa3cf40b59e41bafd3b1ce56fe1b97ff46aecfe1ea49b5919a5e19bf19bf3",
+      "version1_sha256": {
+        "candidate_parameters.json": "f721f3baf35c65a1623f2f48e59b2fcde135dbdfced277a036cd8a46a49575ca",
+        "candidate_parameters.md": "565dbd97f2fb7bfbc2117494057aa3884bb4c290675c54361eef5d8b220a5d85"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "ce5482c0b341e9a4b0ad1096dff33b1bfa50a7f4afd41b0b7c8a8d7e51c39ada",
+        "candidate_parameters.md": "16bd96ee9d6e4ac74440427d569498b9957ec9da0e007dc616e435b9dc1da9fb"
+      }
+    },
+    "funnel-s1/TIC-381981543": {
+      "core_sha256": "940310e88e5421d37db4cbf94871cf08d4882b58b20d179d163edd7139147f45",
+      "version1_sha256": {
+        "candidate_parameters.json": "37e6d3173bb2f78017e621b2141be614efc4497f4d64957091d056825a9f4bf5",
+        "candidate_parameters.md": "975d6e8172eb4d04b2ea986a16bc0ba0b154b7746185e041a482a584861cf262"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "b501874ded2b2361b2c767829e4f032994b0262ff076cf3b51aa85fad99e5885",
+        "candidate_parameters.md": "7004556376eb48e310a90ed771e33e85cd5b81b33280375ea32f265fd493ef83"
+      }
+    },
+    "funnel-s1/TIC-383646543": {
+      "core_sha256": "c653acc5547fdd3f0b94cf97b2ca8fdafc7e51e605f5ad728fb01d2fcadb99a8",
+      "version1_sha256": {
+        "candidate_parameters.json": "3a3e8d7386395f3e4972f4e99986473492e1bd2809f638f07b7c9072d60c230b",
+        "candidate_parameters.md": "2e9643a5451f5053f85d3a32909dd240b282c2c561950db235e22c0ee6ca2544"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "79f22a9f52012d3faab9fbab0302cf51bfd6cfaad7d8a3453ab678583decb6de",
+        "candidate_parameters.md": "e5f54463cc5e056b070074d3362f2e2c4a4a114e61ffdef1a38e3740d4261b08"
+      }
+    },
+    "funnel-s1/TIC-387512509": {
+      "core_sha256": "96af6f1d62133d7b72a8ffc2451905ee8edef3bdb3b908a76166fe1bb360a2a7",
+      "version1_sha256": {
+        "candidate_parameters.json": "c34a93f4ef092ed7ba15804760336cc1804b6f4bc1bf789f31f3cbb8747bc0d3",
+        "candidate_parameters.md": "c62a3a6e540f779d104cccf050ed3f6ce9291800ce28f8d7c365a909d90bcd60"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "ad49b0cb561428498c5193d55d6ddfc92236a589e79334432f7d6a9afc7b0970",
+        "candidate_parameters.md": "ae9906c3ac343fd72bf418a119b1d8287b8dbe7eda6928580bf83ec4b3dad9a7"
+      }
+    },
+    "funnel-s1/TIC-388198210": {
+      "core_sha256": "d8a79f4622a6811020012a485cef72d5202492e0b722dfea0245cd1073215294",
+      "version1_sha256": {
+        "candidate_parameters.json": "0d8636f70827a6544d9981b34e307a4f483315a5c7d2706c348a6c7044a5a420",
+        "candidate_parameters.md": "8c94f281ea62659da420b867bd19933dedaef3ffcaa3dcab211ad80a03d633de"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "a359abd628d0ca08dc731d72f48715b4a870450a6acac656873cd1ca2b779e97",
+        "candidate_parameters.md": "7a21486c81694e8e44bdbb0e82a5e70ecd2faf9dc281378c1ea710358e98340b"
+      }
+    },
+    "funnel-s1/TIC-394103866": {
+      "core_sha256": "6429929e5d2d32f350bdca877cf0238fdea2003c16f0ea6f85ee0af560a64b5d",
+      "version1_sha256": {
+        "candidate_parameters.json": "71ce8976ad06912b031a376e5655a71d557759a60ada617bcd2c0cffa02edbfc",
+        "candidate_parameters.md": "5e14c1a3d6d1cb7bb7e876e009d12833d93c901157e5bf3fd04897f68685aa80"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "117a16223cba64aa1736ddf53c47009aa710fe39b2b316070b6fa99263128d67",
+        "candidate_parameters.md": "856c4942e74be25dc7c51daf3792c651fe769a8f401dfc5e90646060d825a316"
+      }
+    },
+    "funnel-s1/TIC-396607112": {
+      "core_sha256": "1b044b092f7ef50aa7ec612da3c18bbf83b75b4ed6e364f10a208f6b128ab5f9",
+      "version1_sha256": {
+        "candidate_parameters.json": "13b278b5de60a8fad580f6b7cac915e857b3c65c708a412792fc2a25c1117b4c",
+        "candidate_parameters.md": "b685b129379c0b60d3c2b110e927f759d6b3c2ab77ddb530f3e31709123a3236"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e9ceca2108e5645f16e5136ddecd59062fd1257bf7a3c08c53999509417bb3d9",
+        "candidate_parameters.md": "8312eb345a34f3b7ed378b12f97fb1509df2e90d1b09888c7afb99047c30b30a"
+      }
+    },
+    "funnel-s1/TIC-397000139": {
+      "core_sha256": "604ee139bf862586999298a13a37563ca7ccf5a6df4898781967bd5a3fdbccd7",
+      "version1_sha256": {
+        "candidate_parameters.json": "315f604ff2d650df7120c85a29cd1a778d16c225d33c6b5adcf5159a3141a16f",
+        "candidate_parameters.md": "94c4efb53795a95a80a483968f0af0cc0e54ffce4b3126a6c4605ea5834c62ec"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "8b7b23cf5f607802af4a01b258de0d34812c7d858a82a6e12b551508d1bd978a",
+        "candidate_parameters.md": "10804f4bba2fd76b12d1b18a1c7598d290f6605977beba1e8c1982abb3ae6150"
+      }
+    },
+    "funnel-s1/TIC-405483372": {
+      "core_sha256": "6a97884396783d9b02899a577e63b49270074a186a8f2834eaa837fd29d0d3c2",
+      "version1_sha256": {
+        "candidate_parameters.json": "aa10cb55a2b32d8486a0f51f8cfef41c065bffff77638ff610bd52702c948942",
+        "candidate_parameters.md": "7081c88522da9f4cb1360ab1b2fe9f63d243b757cf97dd27960a16aa9044c04e"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "748e06022b18fc2f830629ada2a27dbd988f515a653456f900e42cf34aa7010c",
+        "candidate_parameters.md": "be5ae12eb9a4660eb22dfc318aaa90b4a77662bc4fdce11d438a31b1e128027d"
+      }
+    },
+    "funnel-s1/TIC-406413408": {
+      "core_sha256": "5682fcebf57c99b9409b8abca526bea9cadc4c9d798a35f9cd91dd2af352e67d",
+      "version1_sha256": {
+        "candidate_parameters.json": "214ab673b5bef0432254311cb51ccd6be74528a5045e48a2d546c658b980351f",
+        "candidate_parameters.md": "9611a98552225c9e7f3f15e335040a974a291eb3aaed7aba492148d073bcfdb9"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "a00c76d1d54b1751db44b4ae01e7c73619d11ad26e57bc04830dba5fe4ec87ff",
+        "candidate_parameters.md": "359268e1bb089510ba2272443ee35fd1153fc2c64d63b476630331bf6dd9e5c3"
+      }
+    },
+    "funnel-s1/TIC-416715793": {
+      "core_sha256": "0f854d1abeed2916524ac381ff47095f31c9b99c18c4db94e8bea99ffce768f8",
+      "version1_sha256": {
+        "candidate_parameters.json": "7f5638e584a74e23fb04bb8a89d48902c5554c8d0564cb0df6855f4dae90515f",
+        "candidate_parameters.md": "af491c31b0fcc8e7ea716b0f9a8c98f62108d06e6a8ee8464e1011d40a7aeec8"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e91dec6dfd0ae1ff6a2c33beaf3339731b6161558b4b09c72b0259c506e01f15",
+        "candidate_parameters.md": "5f45a070a04b79be994a91218a7177a67df330981e1df86f6b0bc6d20cec418d"
+      }
+    },
+    "funnel-s1/TIC-421801900": {
+      "core_sha256": "18e01acf04caa2dec141e8a6aba06eb115ec76931435068d05d03313e7198725",
+      "version1_sha256": {
+        "candidate_parameters.json": "87c6dd1c81fbf730dbbb227adbaa24a181938206f7997e924da29477f012d10f",
+        "candidate_parameters.md": "a028da35726418b75ca74c07858d126e5e3cb0fd0056c97bf6c47330ff9dc8ce"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "e49e6572c2d62dd4f6f7b2d99f1870e6723d16384011be58f66b15f6761bcded",
+        "candidate_parameters.md": "489a868e0b65852ca1f7bff682daf7ed5327c4b0d465fe9ffb6a9de23a42f126"
+      }
+    },
+    "funnel-s1/TIC-441633615": {
+      "core_sha256": "a2a1afb6356927348a189b0ad244ab4c3e891ca1db236f78f8e8af0a432e3ee4",
+      "version1_sha256": {
+        "candidate_parameters.json": "1aeb9d2eb52975a9f062b0d211d860b0f119850a327defcd85f6371c15ec8f66",
+        "candidate_parameters.md": "91f83b4c1c1c2418aa3025823337300ff9792f314d6a377144704c1a62109b17"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "92ca09607cb12aa3035ef368a92038a73a47de54a23a871003318aa2574fe64c",
+        "candidate_parameters.md": "55a4a6754793fea24987d443992a9beea2323b4a2bd6e30067428b68b67d6973"
+      }
+    },
+    "funnel-s1/TIC-441728473": {
+      "core_sha256": "21f857533c8203459fca4e601817f1eb26478f82549d77b06c277a5036b9c2f5",
+      "version1_sha256": {
+        "candidate_parameters.json": "4fcc0f5c721b34b4b559fdec5d4ce4bae0352c13f278d8e13520bfbd5b2d906e",
+        "candidate_parameters.md": "eff1ef53da9e3a987f12162a2060b2e9c1f588d38591faf4ee981f4fa5079076"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "1b01474171fb12850f7e08bb21675ac7186148d278b4c4e9d4775d7d73aa0961",
+        "candidate_parameters.md": "c956abfba80a18fbd19b847d1c5140b5776242d07eeebd7a02dedcaa20f3c23a"
+      }
+    },
+    "funnel-s1/TIC-441803025": {
+      "core_sha256": "b8aa6308af5c67521d836f431eed1e8c666327592755c387a4c4afc1215a2be7",
+      "version1_sha256": {
+        "candidate_parameters.json": "fe22363ff9fefd699fca1db21a4ea52da6fcb14f2540eff37ed7e31a383ee204",
+        "candidate_parameters.md": "9815df15582274ece7174ced87c98bd637c28381a90eb0755aaf0b25536dade2"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "5addb7c66f70c2e287c24be58d878fe3325b9560dd252673b4806b5e7a605c36",
+        "candidate_parameters.md": "fc7ed9ba95395a067137df245b81a2476f516cd1eb7238db5789fdcaa586098d"
+      }
+    },
+    "funnel-s1/TIC-44743595": {
+      "core_sha256": "916fb8aab3e17e7df2cb488d167abf3e31ad42a7780294cad7c06aee563525f4",
+      "version1_sha256": {
+        "candidate_parameters.json": "0cfd9f0d26a73e137fa87fa51a6652c11aa3d27ef8d24e61c022ac0936a8947b",
+        "candidate_parameters.md": "5b140d2812f1eeb6939854161ac95f0edf0abdbd1e0a56a836c4386fbe7ed820"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "3b1a68d084b0f3348a3818e511362652144920b64636256ba9f76f9b7dff714d",
+        "candidate_parameters.md": "14c4b52715d8127dfcfccf426c2e3bd93abc9bcd6fa5f19ce411a00cc7d2b002"
+      }
+    },
+    "funnel-s1/TIC-453467954": {
+      "core_sha256": "3945790f17cfd3aaab1bc335cafe5f22deed9b5dcc6ea878a4e9898a8a68754a",
+      "version1_sha256": {
+        "candidate_parameters.json": "ca4af6768244a8f5e7171b20a6ad7aeb6287803740ba05a804cb2279395c8eb8",
+        "candidate_parameters.md": "286555516d7740d65b297f3c91a717edc1f8c17c604686f518accdab299ace27"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "2b1b4cb2e54a658964a9d937b8a8c0cd43846b8443bd8325ff4babc5db5062cc",
+        "candidate_parameters.md": "f5da24b30e13952b6d0de0a15fe7015d895483a3a726b01cd9b3eaadab31ef2d"
+      }
+    },
+    "funnel-s1/TIC-456894260": {
+      "core_sha256": "fc99079f33daebabbebd3a081db1c8579b6420f7445ff7c56c1f30bc38d95f8a",
+      "version1_sha256": {
+        "candidate_parameters.json": "bebc0fd14a4be13e931f2dcccb5b9b562f4a2f752eaaf80a504c10e3f280b6a3",
+        "candidate_parameters.md": "f1e1b356d95a9bdd3ea1c920ae70f07f9373ca22507580325654650ed6b23cab"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "655301cb1493a6022b1e18817b0c5e28ad07d18d87d47d8e6333090ff3d0fff5",
+        "candidate_parameters.md": "df40ef7b059749db4c56c1c08d214af7ba43c045ccb067ef3abbeb7220478f84"
+      }
+    },
+    "funnel-s1/TIC-458358301": {
+      "core_sha256": "058cb974cddde2983a5bc965c178cd70d0e5656d79277414485dbe47d9f37c8a",
+      "version1_sha256": {
+        "candidate_parameters.json": "5a8981aa203e489bc7cb600dc3c3dcbf5c27593412bc00eb7fa2f8dadc2611de",
+        "candidate_parameters.md": "76fc868fc9ed8828393baf4b298a3e6ff37e42d007e4583372e1388998fa2cb3"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "2e2a64bf5cb25675ec033ad99f39fc38a5e3858135b0e76bef2a4643a632ed8c",
+        "candidate_parameters.md": "ac501e299ec15bcf6c09ce9c82b13cc9a97b95fca8bf50624ae4fbc5afc52de2"
+      }
+    },
+    "funnel-s1/TIC-468978941": {
+      "core_sha256": "6877bf4e1fca1d640ad154b6d560684664dd8a5dd1bddcfa848a9ff857b8df5d",
+      "version1_sha256": {
+        "candidate_parameters.json": "716d03724d7bf4cd43c65e407ec6c02c1ac0ce57ad37f8f6c225375241c1204b",
+        "candidate_parameters.md": "6bf60f908dcfb46a41e50ff289c1717b14e20d9e8121cbf361d6d65dbfe77c8a"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "9c7c139be2021b7b27892594272b11b94ccfc58f8ec502bd43c4f9f1a48fab3f",
+        "candidate_parameters.md": "5c4a3e1912bf43f7f77b3daee51f9ce72ab95a7997ef358f1afac49092f0c34b"
+      }
+    },
+    "funnel-s1/TIC-62815027": {
+      "core_sha256": "708c132a011bef1a46fb85768fea2e7bd2e017bd93ade46627da4b8e17972ab2",
+      "version1_sha256": {
+        "candidate_parameters.json": "e7445d4faedf8ecf0b683ed3e85e12d822c241c87740e1b8ec491118fda7345b",
+        "candidate_parameters.md": "fd51f576ccb50f8bd7b5c6360e1172b00d98a8a17f1d1d4ab706dd75a27c915d"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "1497b5061cbde24f27fd14d726413d7d17e27c3656321298294a3c11bf7de28b",
+        "candidate_parameters.md": "ca7eb3c578441c579044e94c3dd63cfe75c4933777eb98377a6774266086e397"
+      }
+    },
+    "funnel-s1/TIC-75628092": {
+      "core_sha256": "11d801805d583327766f7f5d75607fdff7bcfea94591c0d1d4365eb8e5b25c77",
+      "version1_sha256": {
+        "candidate_parameters.json": "cd94f26024a432c6ac697c2e91fac05b40423029e52fd2d9d33d1c15ba9e2f73",
+        "candidate_parameters.md": "7b5fc6a4318fa41f9f199fab5c919456f586f3203d5c1e5884fb2c5291b9e775"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "c62cf6c07d9137a2bc66725993b6be27a30b434f66e51c9c72828c7e2e634e40",
+        "candidate_parameters.md": "046742ab78465c99bb542d245076a9e8a3d81ec1ed77b6830aebaefca61538f8"
+      }
+    },
+    "funnel-s1/TIC-79569472": {
+      "core_sha256": "2afd89f92f0c2be412f1a66cc6a8f32defbb4eb5615c087b8f842db867144cd6",
+      "version1_sha256": {
+        "candidate_parameters.json": "62ca6cb8176901ca078f76af9b4e85e9c5ec21e2b7822c880adb1cf95a380c2c",
+        "candidate_parameters.md": "50eaf88c18a10276cdd4f901b12df875550dfc159c22a91d2f8b076ac874d073"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "7e56612bcd36c4b9b8fb6809024a02333e90571c9568a22ac82b71b75b3ae86a",
+        "candidate_parameters.md": "7f1c01406731d57d41f1b959495c24361187200d023a1109cf4b4f782e7c795f"
+      }
+    },
+    "funnel-s1/TIC-88096786": {
+      "core_sha256": "1cf42e6db43a5a4010affb78077fb0a3e311ead03e42d41db7d1b8c976555d40",
+      "version1_sha256": {
+        "candidate_parameters.json": "8c1d64b2a9587468b1d2ed2063f94e9ab498f3cef1799561413171515f6a9afd",
+        "candidate_parameters.md": "688a5f26665c44f912fd8aebd61a6baa7418d516b35660b1986efb361d8a01ab"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "f9f7e73d693ee0866fa36ecb1c30cef242f3a9f198bd1caad02dba995352b672",
+        "candidate_parameters.md": "0a7d1df3f0d3a30792cd34fbfefde6c14094bab4b115db848e460d04c8192040"
+      }
+    },
+    "funnel-s1/TIC-95860790": {
+      "core_sha256": "e008197e7fa9f8cdc7b0c07eea2f299a6eceaa93a98895e2635acf97b1c0b97a",
+      "version1_sha256": {
+        "candidate_parameters.json": "d7addacec2b0cad14d7b7914ed15499f31c9e88ace4f8e6cd046ad6126205934",
+        "candidate_parameters.md": "a863a7a7e80ad7bc602e4b897fbb0e9f6b889089e428df56ddd47de54be7adfc"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "b4b5e1cf85ed98ff1b1e98aca6977b51a2f1d1a56fe9f14f6205b2a5de2564c6",
+        "candidate_parameters.md": "829e1152c7c89a45bb844530fa790ee6a9ac3cb2aef049269facc1f0728aa8c7"
+      }
+    },
+    "funnel-s1/TIC-97814880": {
+      "core_sha256": "52c30a92638c6de545f704da2e14985b987b4dae0166406e6d74fd376837da70",
+      "version1_sha256": {
+        "candidate_parameters.json": "f771139f1c2670ef35198dabdfeadc9e8a6121a8eba1f04a23e0fc7c697f9d27",
+        "candidate_parameters.md": "56c91da6e877b3c6ea441b688d1c2b4f419b8b343b17bd617aac73c994456aaa"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "5d8ffa4d845dbd7d70713ca9e48b8c41ab6055ee5e35eaabbf9feea3dbe51d9a",
+        "candidate_parameters.md": "1fc78902c9690ea8354da1526d1c20ef265938611b5a52fa0f1e8e75e5e6fb94"
+      }
+    },
+    "promoted-s2/TIC-286480954": {
+      "core_sha256": "06fd70b84d2730b4e92d9c35856c0245ab55d8db187b999932538a8d1c238bd1",
+      "version1_sha256": {
+        "candidate_parameters.json": "1ebef9cf3bfeedb7b85a93f2c2ac68299a224c37581beb4e979f9f2e0610bdc9",
+        "candidate_parameters.md": "63b49987dd0fab5dc0581c64b4b2d2bb20b2d4c5968d738676aca787c2cc47f7"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "a49225ca693d12d5d8c101b79edbe4da88bdb1ac9c69643c86a82c0137717fee",
+        "candidate_parameters.md": "087bf62620c1a4635f99fd66da6d8465309bf03e78093b67ae0ce5df0dafa02e"
+      }
+    },
+    "promoted-s2/TIC-406413408": {
+      "core_sha256": "b122aabbe382884c428f1632ce3930ddf150c76a20b24f907fd28696356a9044",
+      "version1_sha256": {
+        "candidate_parameters.json": "692df6bfe3cbd1c3896d8a1ab666b434b90d7c0851ff7e4e257f473d28fe7629",
+        "candidate_parameters.md": "2433feb5e9b0295763a003bfdc67e55a4e16419dfac62952ab8e632236565625"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "cf697006817113eded889ba32b6726fc2ad660dfec40e7cf53d17dbacc29706c",
+        "candidate_parameters.md": "75c2bcba03c688cb3eaa55ee722a7c903985c9f11ba79b4cc611bec60030ce0c"
+      }
+    },
+    "promoted-s2/TIC-88096786": {
+      "core_sha256": "9e061f75136794acf0710d08bec644d917e45580a68c12207c5fe746555b638a",
+      "version1_sha256": {
+        "candidate_parameters.json": "9c6489287b1b42858837e82fe4886f7d717191958425470849d46cf08e9c6abc",
+        "candidate_parameters.md": "e4f0fd99b4cef7b4320db7cb4e14a009cbf115f6821dcbdcf433ab35a148ae4b"
+      },
+      "version2_sha256": {
+        "candidate_parameters.json": "ac9aa87b135c9a6a257c36f565d3f3f22d546bba392e7a1288d6a0d4f00ad241",
+        "candidate_parameters.md": "5279ab0625bbdc12965e0461c65cacf2b580f63e7d775e198843a4ce8583eaf7"
+      }
+    }
+  },
+  "sheet_version": "candidate-parameters-2",
+  "tool_commit": "74e623025f843578dd9056a0569337c2ce82d3b9",
+  "tool_sha256": "b7a49619ddf2c15bcced0d7e03046f27bce05ac316bd28e4dcd8230723dcfb33"
+}
