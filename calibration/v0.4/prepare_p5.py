@@ -149,7 +149,7 @@ def review_annexes(dossier: Path) -> list[dict[str, Any]]:
     return found
 
 
-def cmd_case(key: str, dossier: Path, human_path: Path) -> int:
+def cmd_case(key: str, dossier: Path, human_path: Path, annex: str = "case") -> int:
     from refute.core.seal import add_annex, verify_annex
     from refute.packs.tess.discover import case
 
@@ -177,11 +177,15 @@ def cmd_case(key: str, dossier: Path, human_path: Path) -> int:
     if missing:
         print(f"{key}: the case is incomplete: {missing}")
         return 1
-    source = P5 / "annex-src" / key / "case"
+    # an annex is never rewritten: a later version of the case (for example a conclusion the
+    # maintainer set) is a new annex, case-2, ..., that names the one it supersedes
+    if annex != "case":
+        built["supersedes"] = human.get("supersedes", "the annex case")
+    source = P5 / "annex-src" / key / annex
     source.mkdir(parents=True)
     write_json(source / "case.json", built)
-    record = add_annex(dossier, "case", source)
-    print(f"annex case: {len(record['files'])} file(s), core {record['core_sha256']}")
+    record = add_annex(dossier, annex, source)
+    print(f"annex {annex}: {len(record['files'])} file(s), core {record['core_sha256']}")
     return 0
 
 
@@ -599,6 +603,7 @@ def main(argv: list[str]) -> int:
     case_step.add_argument("--key", required=True)
     case_step.add_argument("--dossier", required=True, type=Path)
     case_step.add_argument("--human", required=True, type=Path)
+    case_step.add_argument("--annex", default="case")
     ledger = sub.add_parser("ledger")
     ledger.add_argument("--human", required=True, type=Path)
     ledger.add_argument("--out", required=True, type=Path)
@@ -609,7 +614,7 @@ def main(argv: list[str]) -> int:
     if args.step == "report":
         return cmd_report(args.human, args.out)
     if args.step == "case":
-        return cmd_case(args.key, args.dossier.resolve(), args.human)
+        return cmd_case(args.key, args.dossier.resolve(), args.human, args.annex)
     if args.step == "ledger":
         return cmd_ledger(args.human, args.out)
     return cmd_annex_measurements(
