@@ -1,0 +1,22 @@
+{
+  "ledger": {
+    "events": 425,
+    "file_sha256": "89b72ac63bec79662bb46a046b2be5eeec8a5e7b52f2eac73e760cc25430b1b0",
+    "last_hash": "bbb0e3afe24fc1de374d38ee9655df9e7f45efac5ff946c6334182b53b8c8209",
+    "last_seq": 425,
+    "verified_with": "refute.core.ledger.verify_file, check=case.check_event"
+  },
+  "private_detail": "the annex manifests of each stage-2 dossier and the private files, published at P7 with these bytes",
+  "private_detail_sha256": "3dace2f12ff09b8cf1eb1284e244bfab1a0334e28b41158e5dfeb657eea50ca0",
+  "purpose": "hashes of the P5 material after the maintainer's decisions of 2026-11-01, which stays unpublished until P7 (the maintainer publishes it)",
+  "reproduce_archives": "calibration/v0.4/runs/reproduce_archives.json",
+  "schema": "refute-v04-p5-anchor-2",
+  "stage2_core_sha256": {
+    "TIC-286480954": "06fd70b84d2730b4e92d9c35856c0245ab55d8db187b999932538a8d1c238bd1",
+    "TIC-393911494": "649adc930f5e89f459b6e5650522ef8d719b5f0972f1c12c185c4bc93bd033e7",
+    "TIC-406413408": "b122aabbe382884c428f1632ce3930ddf150c76a20b24f907fd28696356a9044",
+    "TIC-86396382": "eb1b06cc6f5f5da1c5032b056de1f41076d9c6549045ab22fb7e64409d6c236f",
+    "TIC-88096786": "9e061f75136794acf0710d08bec644d917e45580a68c12207c5fe746555b638a"
+  },
+  "supersedes": "nothing: the first anchor (p5_anchor.json) stays valid for the files it cites"
+}
