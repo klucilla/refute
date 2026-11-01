@@ -554,7 +554,14 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "",
         "- Logical-processor hours counted since the lock: "
         f"{human['_hours_counted']:.2f} (measured CPU and, for parallel runs, wall x workers + "
-        "the parent's CPU); before the lock: "
+        "the parent's CPU"
+        + (
+            f"; of which {human['_hours_detail']['reproduction_upper_bound']:.2f} an upper bound "
+            "for the reproduction"
+            if human.get("_hours_detail")
+            else ""
+        )
+        + "); before the lock: "
         f"{records['hours_used']['before_lock_estimate']} estimated, never metered.",
         f"- Bytes in the phase's .cache folders: {human['_bytes'] / 1e9:.2f} GB.",
         f"- Reviewer tokens: {human['_review_tokens']}.",
@@ -562,7 +569,8 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "## Limits",
         "",
         "- The method is not validated; SURVIVED means the declared decisive battery was",
-        "  survived, with no temporal confirmation required. It is not support for a candidate:",
+        "  survived, without requiring the temporal diagnostic to pass. It is not support for a",
+        "  candidate:",
         "  a fatal test can PASS because it lacked the power to fail (#185).",
         "- A PASS from the pixel tests does not exclude unresolved blends (#187).",
         "- No decisive test models stellar variability (#182); centroid_shift can be decided by",
@@ -575,7 +583,7 @@ def cmd_report(human_path: Path, out: Path) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "x", encoding="utf-8", newline=LF) as handle:
         handle.write("\n".join(lines) + LF)
-    print(f"report written: {out.relative_to(ROOT).as_posix()} ({len(lines)} lines)")
+    print(f"report written: {out.resolve().relative_to(ROOT).as_posix()} ({len(lines)} lines)")
     return 0
 
 
