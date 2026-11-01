@@ -29,17 +29,14 @@ how later work is done.
 
 ## Current phase
 
-**v0.5 Variable stars pack** (next in the order of the sections below; its opening and plan are
-the maintainer's).
+**v0.4 Discover (pilot with a funnel): exit criteria met; publication (P7) pending**
 
-### Previous phase record: v0.4 Discover (pilot with a funnel)
-
-**Closed on 2026-11-01** with an independent gate review `SURVIVED`, and its exit criteria ticked
-with evidence (see its section). Its publication (P7) is the maintainer's. It opened on 2026-10-29
-by the maintainer's decision, as a pilot of complete, auditable cases with the scope amendments
-recorded in its section below (amendments 1 to 5 and the funnel amendment of #9). Tracking: issue
-#177. No method is validated: every v0.4 report carries `method_status: not_validated`. The gate
-verdict is about the phase's completeness, never about any candidate.
+- **Gate.** The v0.4 exit criteria are met. The independent gate review of 2026-11-01 (the seventh reviewer session) returned `SURVIVED`, and the criteria are ticked with their evidence in the v0.4 section.
+- **Still open:** the publication (P7), which is the maintainer's.
+- **v0.5 is not open.** It awaits the maintainer's decision.
+- **Opening and scope.** v0.4 opened on 2026-10-29 by the maintainer's decision, as a pilot of complete, auditable cases. Its scope amendments are recorded in its section below: amendments 1 to 5 and the funnel amendment of #9. Tracking: issue #177.
+- **Method status.** No method is validated: every v0.4 report carries `method_status: not_validated`.
+- **What the gate verdict covers.** It is about the phase's completeness, never about any candidate.
 
 ### Previous phase record: v0.2.1 Gauntlet fixes (resumed)
 
@@ -450,7 +447,7 @@ The scope items above stay listed; the amendments say which are deferred or resi
         approval was recorded in #177 before the run. The inputs a clone lacks are pinned by
         `calibration/v0.4/runs/reproduce_archives.json`.
 
-**Gate.** The second independent gate review (2026-11-01) returned `SURVIVED`: every acceptance
+**Gate.** The second independent gate review (the seventh reviewer session, 2026-11-01) returned `SURVIVED`: every acceptance
 item MET and no critical or important finding. The first returned `REFUTED` (criteria 2 and 9),
 and its findings were answered (#177, #179 to #195). Both reports name results, so they stay
 private until P7; the maintainer publishes them with the dossiers.
