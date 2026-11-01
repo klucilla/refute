@@ -29,13 +29,17 @@ how later work is done.
 
 ## Current phase
 
-**v0.4 Discover (pilot with a funnel)**
+**v0.5 Variable stars pack** (next in the order of the sections below; its opening and plan are
+the maintainer's).
 
-Opened on 2026-10-29 by the maintainer's decision, as a pilot of complete, auditable cases with
-the scope amendments recorded in its section below (amendments 1 to 5 and the funnel amendment
-of #9). Tracking: issue #177. The v0.4 exit criteria and the gate rule of "How phases work" are
-unchanged by the opening. No method is validated: every v0.4 report carries
-`method_status: not_validated`.
+### Previous phase record: v0.4 Discover (pilot with a funnel)
+
+**Closed on 2026-11-01** with an independent gate review `SURVIVED`, and its exit criteria ticked
+with evidence (see its section). Its publication (P7) is the maintainer's. It opened on 2026-10-29
+by the maintainer's decision, as a pilot of complete, auditable cases with the scope amendments
+recorded in its section below (amendments 1 to 5 and the funnel amendment of #9). Tracking: issue
+#177. No method is validated: every v0.4 report carries `method_status: not_validated`. The gate
+verdict is about the phase's completeness, never about any candidate.
 
 ### Previous phase record: v0.2.1 Gauntlet fixes (resumed)
 
@@ -430,10 +434,30 @@ The scope items above stay listed; the amendments say which are deferred or resi
 - Every case, with or without a candidate, has a complete, reproducible dossier.
 
 **Exit criteria**
-- [ ] Injection-recovery test on real light curves (injected synthetic
+- [x] Injection-recovery test on real light curves (injected synthetic
       transits) with published recovery rates. *(Amendment 4: on the pilot's funnel curves.)*
-- [ ] Every surviving candidate has a complete, reproducible dossier. *(Amendment: every case,
-      with or without a candidate.)*
+      Evidence: `calibration/v0.4/runs/stage1/measurements.json` (commit 0ed4075): 100 funnel
+      curves, 20 injections each, per-curve counts, denominators and Wilson 95 % intervals, with
+      the sampling unit declared.
+- [x] Every surviving candidate has a complete, reproducible dossier. *(Amendment: every case,
+      with or without a candidate.)* Evidence:
+      - complete: the case files (zero missing items) and the case ledger, anchored by hash in
+        `calibration/v0.4/runs/p5_anchor.json` (ed314c1) and `p5_anchor-2.json` (bac3300);
+      - reproducible: the five stage-2 dossiers were reproduced from corrected instructions
+        that supersede the core's `REPRODUCE.md` without amending acceptance criterion 2 (the
+        core file is written by the locked `run.py`; #189). The run used a clean clone at
+        commit 95cd7d9 (CI green) and a fresh download, with nothing placed by hand; the
+        approval was recorded in #177 before the run. The inputs a clone lacks are pinned by
+        `calibration/v0.4/runs/reproduce_archives.json`.
+
+**Gate.** The second independent gate review (2026-11-01) returned `SURVIVED`: every acceptance
+item MET and no critical or important finding. The first returned `REFUTED` (criteria 2 and 9),
+and its findings were answered (#177, #179 to #195). Both reports name results, so they stay
+private until P7; the maintainer publishes them with the dossiers.
+
+**Still to do at P7 (the maintainer's):** publish the dossiers, the ledger and the reports; deposit
+the two private zips with the hashes of `reproduce_archives.json`, so that third parties can
+reproduce.
 
 ---
 
