@@ -382,8 +382,8 @@ def cmd_report(human_path: Path, out: Path) -> int:
     lines = [
         "# Refute v0.4 pilot: report (draft for the maintainer, not published)",
         "",
-        "`method_status: not_validated`. Nothing here is a confirmed discovery; no signal is",
-        "called a planet. Verdicts come only from the locked code (claim",
+        "`method_status: not_validated`. No result here establishes a new astrophysical object;",
+        "no signal is called a planet. Verdicts come only from the locked code (claim",
         f"`{promotion['claim_sha256'][:12]}…`, lock commit B `{human['_commit_b'][:7]}`).",
         "Prepared at P5; publication is the maintainer's (P7).",
         "",
@@ -405,8 +405,9 @@ def cmd_report(human_path: Path, out: Path) -> int:
     for key, kind in CONTROL_KINDS.items():
         verdict = json.loads((stage2[key] / "verdict.json").read_text("utf-8"))
         identity = case.signal_identity(verdict, kind) or {}
+        identified = "yes" if identity.get("identified") else "no"
         lines.append(
-            f"| {key} | {kind} | {identity.get('identified')} ({identity.get('matched_factor')}) | "
+            f"| {key} | {kind} | {identified} ({identity.get('matched_factor')}) | "
             f"{verdict.get('verdict')} | "
             f"{(verdict.get('temporal_diagnostic') or {}).get('state')} | "
             f"{_assessment(stage2[key])} |"
@@ -443,12 +444,38 @@ def cmd_report(human_path: Path, out: Path) -> int:
         )
     lines += [
         "",
+        "## Conclusions (drafts for the maintainer)",
+        "",
+        "The verdicts above come from the locked code and no review changes them. The",
+        "conclusions below are the human reading of each case (closed vocabulary, protocol",
+        "section 1), drafted by the agent and checked with Codex; the maintainer approves them.",
+        "",
+    ]
+    for key in [*CONTROL_KINDS, *promotion["promoted"]]:
+        conclusion = human[key]["conclusion"]
+        lines.append(f"- **{key}**: {conclusion['text']}.")
+        for note in ("reading", "verdict_note"):
+            if conclusion.get(note):
+                lines.append(f"  {conclusion[note]}")
+    lines += [
+        "",
+        "## Reproduction (acceptance criterion 2)",
+        "",
+        human["_reproduction"]["method"],
+        "",
+        "| Dossier | check-dossier --against |",
+        "|---|---|",
+    ]
+    lines += [f"| {k} | {v} |" for k, v in human["_reproduction"]["results"].items()]
+    lines += ["", human["_reproduction"]["limit"]]
+    lines += [
+        "",
         "## Injection-recovery per curve (stage 1)",
         "",
         "Sampling unit: one injection into that curve; injections into one curve are not",
         "independent stars. Across curves the numbers are descriptive only. A curve whose own",
         "signal passes the gate (marked *) measures whether an injection outranks that signal,",
-        "not sensitivity (review objection D1): the search keeps one candidate.",
+        "not sensitivity (#180): the search keeps one candidate.",
         "",
         "| Curve | Recovered / injections | Rate | Wilson 95 % | Declared aliases "
         "| CROWDSAP missing |",
@@ -510,14 +537,18 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "",
         "## Exporter",
         "",
-        "The duration goes without an uncertainty: `trapezoid-least-squares-1` did not pass its",
-        "acceptance (ROADMAP v0.4 amendment 5); review objection D3 notes that the sheet's",
-        "duration is the BLS box and that period and error come from different fits.",
+        "Defect in the locked exporter (#179, classified by the maintainer on 2026-11-01): the",
+        "sheet's `duration_hours` is the BLS grid value next to `duration_method:",
+        'trapezoid-least-squares-1`, and the .md says "not estimable" where the method was not',
+        "accepted. It touches no verdict. A fix by a new sheet version, re-exported",
+        "deterministically from the sealed dossiers as an annex, waits for the maintainer's",
+        "approval. Period and epoch from two fits: #186.",
         "",
         "## Reviews (P4)",
         "",
-        "One independent session per stage-2 dossier; objections and their treatment in",
-        "`issue-drafts.md` (filed by the maintainer at P7). None changes a verdict.",
+        "One independent session per stage-2 dossier. The objections are tracked in public",
+        "issues in generic form (#179 to #188, no star, verdict or result; details at P7); the",
+        "full drafts stay private until P7. None changes a verdict.",
         "",
         "## Use of the caps",
         "",
@@ -531,8 +562,12 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "## Limits",
         "",
         "- The method is not validated; SURVIVED means the declared decisive battery was",
-        "  survived, with no temporal confirmation required.",
-        "- Pixel tests cannot exclude sources closer than about half a pixel (D5).",
+        "  survived, with no temporal confirmation required. It is not support for a candidate:",
+        "  a fatal test can PASS because it lacked the power to fail (#185).",
+        "- A PASS from the pixel tests does not exclude unresolved blends (#187).",
+        "- No decisive test models stellar variability (#182); centroid_shift can be decided by",
+        "  one sector (#183); a gate-passing signal can be indistinguishable from the curve's",
+        "  noise (#184).",
         "- Injection-recovery uses a trapezoid model, injected before detrending, into the",
         "  pilot's curves only; the numbers are about these curves and this code.",
         "- The exclusions use catalog snapshots of 2026-10-29.",
