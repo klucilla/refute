@@ -1,0 +1,95 @@
+{
+  "ledger": {
+    "events": 429,
+    "file_sha256": "9275f993ba18d46352577a3fbc052d692cf7e60cca9ddb1f6c6f6c2d21e64663",
+    "last_hash": "ac05c07fcd1ad37029f1c9e165bff5a73b1a7a0b7a1f5ff3a7b35a595d39b99f",
+    "last_seq": 429,
+    "verified_with": "refute.core.ledger.verify_file, check=case.check_event"
+  },
+  "private_files_sha256": {
+    "p7d/anchor-5-detail.json": "d9effaaf7d1687a3d15241652f8e98e8be600d0f5af95d1a3ca8d23d19945baf",
+    "p7e/annex-src/REPRODUCE-4.md": "bae29e6010682fd6202cbcb755a78347c634ec6b27617a891c141a87c17549ca",
+    "p7e/probe/chinavo.tsv": "6e9563e40a441e9216db9ac0d0b40bb2a1fd750a8750a53a1574d5640972e16e",
+    "p7e/probe/naoj.tsv": "b8f28d50d70bc5ccc070caec5e17dec0722027d3b30105b1621430d8e9e0a3f7",
+    "p7e/rehearsal-4-prepare.json": "da24a1401ecb76fdc47c744f6f76e72512814bdd9553e21d1bad3e7c1e839edc",
+    "p7e/rehearsal-4.out.txt": "ee88fc70cc5c2c98acf3d1e98098b067e4e7d80696f628d719dd6d77bea0017d",
+    "p7e/sources/mirrors-20260815011737.html": "4e90c79d2986e9f93bd7dd4f4fe864fcebc6cd12953a9dd113d3d733610bb965",
+    "p7e/sources/mirrors-idia-live.html": "c8d97b690f9e73a3da92fe85136bf54baeaf961351082c8d0407ef38128c15c3",
+    "tools/annex_reproduce4.py": "c971fa8a0cc876d89f7ad55607a2665f33968f27aa93e8fcc0ee7fffbd3b744d",
+    "tools/p5_anchor_6.py": "abd78ccd1e2527377a8427d9308d56fd024a3f21d342fc227ced1fc02e134acd",
+    "tools/rehearse_prepare_4.sh": "dbdc47e13f4cb4bac7d8b405282b5e844e1770fd4ee81915e822b053745b2970"
+  },
+  "stage2_dossiers": {
+    "TIC-286480954": {
+      "annex_manifest_sha256": {
+        "case": "64133ccc7cafeaca4e2fb6e747a60c613818d9b77bebf1b3837d6ec785ec34c8",
+        "export-2": "444721b747e6eda4d3ca18a575de15be641c395402ac4184e1143ff3a9e02d1c",
+        "measurements": "d84ced5d76b65bc389b1a947982aab33ea6182c574ee829eba558afa01fc7f78",
+        "reproduce-2": "e554db2814ec46b4f50e7f4a438e9d9565eae56e65cf3df00bd9305f5c315b20",
+        "reproduce-3": "7cf60bfb99d33e685df78f98114eb42f5e84257296eb8cf5071c9a7d0381f6ec",
+        "reproduce-4": "a63126d4a447897c31f94eb36845770b52d1823b501bc9c884a77d838cc476b0",
+        "reproduction": "113af8a524331a6b760f14eb118f588cd59ca38dd36b75860cf0e43ab9d0cc85",
+        "reproduction-2": "8ff6994c6fc4e5547c106f0423800e884c8ad4c6be8d9ea3dcd742c73621bef4",
+        "review-opus-1": "95087dec4a952e37a1ce71426412308095d73a76fa701a3aea38f75558415195"
+      },
+      "core_sha256": "06fd70b84d2730b4e92d9c35856c0245ab55d8db187b999932538a8d1c238bd1"
+    },
+    "TIC-393911494": {
+      "annex_manifest_sha256": {
+        "case": "fe5f12c5fe4edcb55bfef0cdca4551cab6fb9f049992e87825eb8b3a88c405bc",
+        "export-2": "4690c1ad397482f14001280f343ad9b8ece71ce28bf81417f0a0a67d608b4882",
+        "measurements": "bb43e4301c5b365afa716cab6225f82ec8cc70dd6eafbfbfc502f5b0bd4636e3",
+        "reproduce-2": "a829c4dd72b8e3d6b6acfd5a122fb3e19ada9c3193aa541fc113f0c172c730cc",
+        "reproduce-3": "ed6c7ff4507bba7dea8fe8285eec02c103916286e3d361bddce4e7b8f112af91",
+        "reproduce-4": "aa78345a3401d26c6420b0a725bdb6a8702fb60acdcaa3c4d64df54a489d67fb",
+        "reproduction": "e3cc7e403f710f75978129a285b7db2bbc0a5b83de2083a944724e7747f90ac4",
+        "reproduction-2": "80a904089e9d76e1a904305031d14deda3e51522e9829377fd7c89f4f9f9e73b",
+        "review-opus-1": "3130d2db664b89d11f431d360adbbca061ee4ceebc8a4c2fee5566393df4b3a4"
+      },
+      "core_sha256": "649adc930f5e89f459b6e5650522ef8d719b5f0972f1c12c185c4bc93bd033e7"
+    },
+    "TIC-406413408": {
+      "annex_manifest_sha256": {
+        "case": "1a75c6eabeca4f32c3125cb8c3e64f6aaf9d6fe80d432e00c9870c8ca7e8ee49",
+        "export-2": "43b01de6f95f73831809f22d8a2abdd5073ab2599de9a2cf29d41b064540a56c",
+        "measurements": "c1cb77eebee1d2799cb57658b40d917bd02a2bc0af4d84e6a4268f1e557d6adf",
+        "reproduce-2": "956035f31d37a5fa8d9c8cd7be51fc489a97747ba4292f86e7072d5a271bc9bf",
+        "reproduce-3": "587b4fff674218e2714d0b36f784e8cc3fca1f19a1fe9868bb94e42249ed5e91",
+        "reproduce-4": "f49749aee29e24e79f9383eaf7fdf34c255a31126b5a207ff823edceb4dec78e",
+        "reproduction": "b96a93e587fdd7a50a13bee56a7726e08e73dffa3098334577343bc673121089",
+        "reproduction-2": "c9b79d58f32ce267e93143c57cf5fdcbb663d890200b246bfa13c68ca152c7bc",
+        "review-opus-1": "1054545823c30462da0ad06f0b63b131ba360fcdba17f0e21d2bcf86ed1f6b81"
+      },
+      "core_sha256": "b122aabbe382884c428f1632ce3930ddf150c76a20b24f907fd28696356a9044"
+    },
+    "TIC-86396382": {
+      "annex_manifest_sha256": {
+        "case": "674427a141b950ec3ec94d29721836e74f03750a91b92268126df0a2b968b496",
+        "export-2": "3e1821755a3bd01b9442c6e221e8cb242855e2391df4ccfdfaa092463eea7aff",
+        "measurements": "4a3505699f53efa67a9d7b99e60377c6a6b4ef4fa316272eb4f0bdf8738cbea1",
+        "reproduce-2": "fd8411f8e6379c3a21c9779c50459359f04819999e8fb209cf263ea01c3f5027",
+        "reproduce-3": "93b2a83856d40efca165dd6492fe81e730b43e32ba35357e3b13784d3e487d96",
+        "reproduce-4": "cf4325fa96143f9ce235cff6c92dd2fde0e96961846ae7c5344101677ed2f611",
+        "reproduction": "f749573e53c13459f9d07f56b501e311f408f7b419a7e114c6b2c30577304f97",
+        "reproduction-2": "c8e54321049397c8ea2624c5208c3bfde723a5bb5aee876f68be8a1968c6d265",
+        "review-opus-1": "53218c2c69c90953b9dd3e8a3de1b4709c8fa9fb2899f4ed338c37223be7e2fd"
+      },
+      "core_sha256": "eb1b06cc6f5f5da1c5032b056de1f41076d9c6549045ab22fb7e64409d6c236f"
+    },
+    "TIC-88096786": {
+      "annex_manifest_sha256": {
+        "case": "75d6976241ca6926640c40c1b4d3383a527b6d5506dbba6be35dc7e9b69fa935",
+        "case-2": "ad36cece1fc960b8a265c0e90db643c4496bdb6b790ea91004a48ea8fd5547dc",
+        "export-2": "23620980fe1e762f89745b3f1ca95af7626bd545c5376ea7396e855dc289b0a8",
+        "measurements": "1debe08622ddfa2dd81cb1c003a260fb242a887a0579569ee37cd9ed82e6460a",
+        "reproduce-2": "563998b9fb474a4af19ba8f3e0d4ce3a9dd46f43f00582d02b82060a015f402a",
+        "reproduce-3": "b2c2c23e610fd52272509ae4dd070467eb39d6c11c0756401e60888ad2d2d196",
+        "reproduce-4": "93eb92157dced0d81b6dff912adf47261e613c1dd91fb153d9bf3c915f817970",
+        "reproduction": "1a11b14f423dc5b6a96c298fb3ef82b4ff095b051d9063db6a13cc01154a7f4c",
+        "reproduction-2": "94b1e617fdf96c9577b7a395d0bd7bc2ab0444193775e5b65fea2e3706e965db",
+        "review-opus-1": "cc9c298dd45e4f3f93444ad9d5efa71c21d71a97f5c560b4dcde10d06533d055"
+      },
+      "core_sha256": "9e061f75136794acf0710d08bec644d917e45580a68c12207c5fe746555b638a"
+    }
+  }
+}
