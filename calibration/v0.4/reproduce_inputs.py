@@ -16,19 +16,21 @@ Subcommands:
   for ``check-dossier --against``). Private until P7, then deposited by the maintainer.
 - ``prepare --archive <folder or https URL>`` (the reproducer's side, in the clone's root, with a
   fresh ``.cache``):
-  - the TESS-EB static edition: downloaded from VizieR (the URL in ``inputs.json``, then the CfA
-    mirror), its content checked, its header's server and date lines restored to the frozen values
-    of ``inputs.json``, its raw SHA-256 checked, and written where the claim's scan and the
-    promotion check read it;
+  - the TESS-EB static edition: downloaded from VizieR (the URL in ``inputs.json`` on the CDS,
+    then on the mirrors of ``MIRRORS``, in order), its content checked, its header's server and
+    date lines restored to the frozen values of ``inputs.json``, its raw SHA-256 checked, and
+    written where the claim's scan and the promotion check read it; a server that does not give
+    the frozen edition is refused and recorded, and ``prepare.json`` names the server used;
   - ``toi.csv``, ``ctoi.csv``, ``pscomppars.csv`` from git; ``gaia_dr3_eb.csv`` from its public
     release asset; each checked against ``inputs.json``;
   - the two zips from the archive, checked against ``reproduce_archives.json``; each stage-1
     verdict against ``entries.json``; each original dossier's core recomputed against its public
     anchor, and its annexes against their manifests.
-- ``instructions --commit <C> --archive <location> --out <file> [--version 3 --doi <DOI>]``: the
-  corrected instructions, with every command written out: ``REPRODUCE-2.md`` (version 2, the
-  default) or ``REPRODUCE-3.md`` (version 3: the same commands, with ``ARCHIVE`` the public
-  deposit of P7).
+- ``instructions --commit <C> --archive <location> --out <file> [--version 3|4 --doi <DOI>
+  [--reproduced <commit>]]``: the corrected instructions, with every command written out:
+  ``REPRODUCE-2.md`` (version 2, the default), ``REPRODUCE-3.md`` (version 3: the same commands,
+  with ``ARCHIVE`` the public deposit of P7) or ``REPRODUCE-4.md`` (version 4: the commit with the
+  VizieR mirrors, checked by ``git diff`` against the commit of the full reproduction).
 """
 
 from __future__ import annotations
@@ -45,6 +47,7 @@ import zipfile
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from typing import Any
+from urllib.parse import urlsplit, urlunsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 V04 = ROOT / "calibration" / "v0.4"
@@ -56,7 +59,20 @@ ORIGINALS_DIR = "originals"
 PILOT = ROOT / ".cache" / "v04" / "pilot"
 PREPARE_RECORD = Path(".cache") / "v04" / "reproduce" / "prepare.json"
 CDS_HOST = "vizier.cds.unistra.fr"
-MIRRORS = ("vizier.cds.unistra.fr", "vizier.cfa.harvard.edu")
+# The VizieR servers asked for the TESS-EB table, in order: the CDS, then the mirrors chosen by the
+# maintainer (2026-11-02), from VizieR's mirrors page (calibration/v0.4/sources/
+# vizier-mirrors-2026-11-02.md). NAOJ and China-VO answer over HTTP only; integrity comes from the
+# frozen edition's hashes, never from the transport.
+MIRRORS = (
+    "https://vizier.cds.unistra.fr",
+    "https://vizier.cfa.harvard.edu",
+    "https://vizier.idia.ac.za",
+    "http://vizier.nao.ac.jp",
+    "http://vizier.china-vo.org",
+)
+HOSTS = tuple(urlsplit(base).hostname for base in MIRRORS)
+TESS_EB_TIMEOUT = 120.0
+TESS_EB_MAX_BYTES = 2 * 1024 * 1024
 GIT_INPUTS = ("toi.csv", "ctoi.csv", "pscomppars.csv")
 STAGE2 = (
     ("controls-s2", "TIC-86396382"),
@@ -98,8 +114,9 @@ def rebuild_tess_eb(fresh: bytes, obtained: str, url: str) -> bytes:
     for line in fresh.split(b"\n"):
         text = line.decode("utf-8")
         if text.startswith("#   VizieR Astronomical Server "):
-            for host in MIRRORS:
-                text = text.replace(f"Server {host}", f"Server {CDS_HOST}")
+            for host in HOSTS:
+                if text == f"#   VizieR Astronomical Server {host}":
+                    text = f"#   VizieR Astronomical Server {CDS_HOST}"
         elif text.startswith("#    Date: "):
             text = re.sub(r"Date: \S+", lambda _m: f"Date: {obtained}", text)
         elif text.startswith("#INFO\trequest_date="):
@@ -110,30 +127,80 @@ def rebuild_tess_eb(fresh: bytes, obtained: str, url: str) -> bytes:
     return b"\n".join(out)
 
 
+def on_server(url: str, base: str) -> str:
+    """The recorded URL with only its scheme and host replaced by a server's; path and query
+    are kept."""
+    parts, server = urlsplit(url), urlsplit(base)
+    return urlunsplit((server.scheme, server.netloc, parts.path, parts.query, parts.fragment))
+
+
+def fetch_tess_eb(url: str) -> tuple[bytes, str]:
+    """One server's answer for the TESS-EB table, with up to ATTEMPTS tries: HTTP status 200 and
+    at most TESS_EB_MAX_BYTES, read with a timeout of TESS_EB_TIMEOUT per blocking operation.
+    Returns the bytes and the final URL (after any redirect)."""
+    error: Exception | None = None
+    for attempt in range(ATTEMPTS):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": "refute-reproduce/0.4"})
+            with urllib.request.urlopen(request, timeout=TESS_EB_TIMEOUT) as response:  # noqa: S310
+                final = response.geturl()
+                if response.status != 200:
+                    raise InputError(f"HTTP status {response.status} from {final}")
+                data = response.read(TESS_EB_MAX_BYTES + 1)
+                if len(data) > TESS_EB_MAX_BYTES:
+                    raise InputError(f"larger than {TESS_EB_MAX_BYTES} bytes from {final}")
+                return data, final
+        except Exception as exc:  # noqa: BLE001
+            error = exc
+            if attempt + 1 < ATTEMPTS:
+                time.sleep(5 * (attempt + 1))
+    raise InputError(f"download failed after {ATTEMPTS} attempts: {type(error).__name__}: {error}")
+
+
 def tess_eb(record: dict[str, Any], download=None) -> tuple[bytes, dict[str, Any]]:
-    """The TESS-EB static edition: from VizieR (CDS first, then the CfA mirror), checked by its
-    content hash and then by its raw hash after ``rebuild_tess_eb``. A source that fails a check
-    is reported and the next is tried; if none matches, the step stops."""
+    """The TESS-EB static edition, from the first VizieR server of MIRRORS (in order) whose answer
+    gives the frozen edition: its content hash first, then its raw hash after
+    ``rebuild_tess_eb``. ``download(url)`` returns the bytes and the final URL; a server whose
+    answer fails (no answer, a redirect outside MIRRORS, a status, a size, invalid bytes or a
+    hash) is refused and recorded with the reason and the hashes observed, and the next is
+    asked. No server after the accepted one is asked. If none matches, the step stops."""
     from refute.packs.tess.ebcatalog import content_sha256
 
     static = record["static_edition"]
-    tried = []
-    for host in MIRRORS:
-        url = record["url"].replace(CDS_HOST, host)
+    tried: list[dict[str, Any]] = []
+    for base in MIRRORS:
+        url = on_server(record["url"], base)
+        entry: dict[str, Any] = {"url": url}
         try:
-            fresh = (download or fetch)(url)
-        except Exception as exc:  # noqa: BLE001 - recorded, then the next source
-            tried.append({"url": url, "error": f"{type(exc).__name__}: {exc}"[:300]})
+            fresh, final = (download or fetch_tess_eb)(url)
+            server = urlsplit(final).hostname
+            entry.update({"final_url": final, "bytes": len(fresh), "received_utc": utc_now()})
+            if server not in HOSTS:
+                raise InputError(f"redirected to {server}, which is not in the server list")
+            entry["content_sha256"] = content_sha256(fresh)
+            if entry["content_sha256"] != static["content_sha256"]:
+                raise InputError("content SHA-256 differs from the frozen edition")
+            rebuilt = rebuild_tess_eb(fresh, static["obtained"], record["url"])
+            entry["rebuilt_sha256"] = sha256(rebuilt)
+            if entry["rebuilt_sha256"] != record["sha256"]:
+                raise InputError("raw SHA-256 differs after the header rebuild")
+        except Exception as exc:  # noqa: BLE001 - recorded, then the next server
+            entry["error"] = f"{type(exc).__name__}: {exc}"[:300]
+            entry["refused_utc"] = utc_now()
+            tried.append(entry)
             continue
-        if content_sha256(fresh) != static["content_sha256"]:
-            tried.append({"url": url, "error": "content SHA-256 differs from the frozen edition"})
-            continue
-        rebuilt = rebuild_tess_eb(fresh, static["obtained"], record["url"])
-        if sha256(rebuilt) != record["sha256"]:
-            tried.append({"url": url, "error": "raw SHA-256 differs after the header rebuild"})
-            continue
-        return rebuilt, {"source": url, "obtained_utc": utc_now(), "failed_sources": tried}
-    raise InputError(f"TESS-EB: no source gives the frozen edition: {tried}")
+        return rebuilt, {
+            "source": final,
+            "requested": url,
+            "server": server,
+            "obtained_utc": entry["received_utc"],
+            "failed_sources": tried,
+        }
+    raise InputError(
+        f"TESS-EB: none of the {len(MIRRORS)} VizieR servers gave the frozen edition (raw SHA-256 "
+        f"{record['sha256']}, content SHA-256 {static['content_sha256']}); refused in order: "
+        f"{tried}"
+    )
 
 
 # ---------------------------------------------------------------- zips
@@ -420,14 +487,38 @@ def cmd_prepare(location: str) -> int:
 # ---------------------------------------------------------------- instructions
 
 
-def instructions(commit: str, archive: str, version: int = 2, doi: str | None = None) -> str:
-    """Version 2 (the private archive, before P7) or version 3 (the same commands; ``ARCHIVE`` is
-    the public deposit whose DOI is given). Version 2's text is kept byte for byte."""
-    if version not in (2, 3):
-        raise ValueError("version must be 2 or 3")
-    if version == 3 and (not archive.startswith("https://") or not doi):
-        raise ValueError("version 3 needs an https archive and its DOI")
+SAME_AT_BOTH_COMMITS = (
+    "src/",
+    "pyproject.toml",
+    "uv.lock",
+    "calibration/v0.4/claim.yaml",
+    "calibration/v0.4/inputs.json",
+    "calibration/v0.4/runs/promotion.json",
+    "calibration/v0.4/runs/reproduce_archives.json",
+)
+
+
+def instructions(
+    commit: str,
+    archive: str,
+    version: int = 2,
+    doi: str | None = None,
+    reproduced: str | None = None,
+) -> str:
+    """Version 2 (the private archive, before P7), version 3 (the same commands; ``ARCHIVE`` is
+    the public deposit whose DOI is given) or version 4 (the commit with the VizieR mirrors; a
+    ``git diff`` checks that it has the locked code and the records of ``reproduced``, the commit
+    of the full reproduction). Versions 2 and 3 are kept byte for byte."""
+    if version not in (2, 3, 4):
+        raise ValueError("version must be 2, 3 or 4")
+    if version >= 3 and (not archive.startswith("https://") or not doi):
+        raise ValueError(f"version {version} needs an https archive and its DOI")
+    if version == 4 and not (reproduced and re.fullmatch(r"[0-9a-f]{40}", reproduced)):
+        raise ValueError("version 4 needs the full SHA-1 of the reproduced commit")
     promotion = "calibration/v0.4/runs/promotion.json"
+    same = []
+    if version == 4:
+        same = [f"git diff --exit-code {reproduced} {commit} -- {' '.join(SAME_AT_BOTH_COMMITS)}"]
     discover, check = [], []
     for run, key in STAGE2:
         extra = f" --promotion {promotion}" if run == "promoted-s2" else ""
@@ -461,7 +552,7 @@ def instructions(commit: str, archive: str, version: int = 2, doi: str | None = 
             "stage-2 dossiers) are in the maintainer's private archive, so a third party cannot",
             "run these commands until the maintainer deposits them at P7 with the same hashes.",
         ]
-    else:
+    elif version == 3:
         intro = [
             "# Reproduce the v0.4 pilot's stage-2 dossiers (instructions version 3)",
             "",
@@ -485,6 +576,41 @@ def instructions(commit: str, archive: str, version: int = 2, doi: str | None = 
             "only for the TESS-EB table; if neither supplies data matching the frozen edition's",
             "checks, it stops.",
         ]
+    else:
+        servers = ", ".join(HOSTS)
+        intro = [
+            "# Reproduce the v0.4 pilot's stage-2 dossiers (instructions version 4)",
+            "",
+            "These instructions supersede `REPRODUCE-3.md` (annex `reproduce-3`) of the five",
+            "stage-2 dossiers of the v0.4 pilot. At the commit of version 3, `prepare` asked only",
+            "the CDS and the CfA mirror for the TESS-EB table, so it stopped when both were down.",
+            "The commit below adds VizieR's mirrors to `prepare`; `ARCHIVE` and the analysis",
+            "commands are those of version 3. Like the earlier versions, they supersede the",
+            "core's `REPRODUCE.md` (#189) and do not amend acceptance criterion 2 of",
+            "`docs/plans/v0.4-acceptance.md`. The maintainer approved version 4 (P7; recorded in",
+            "#177).",
+        ]
+        archive_line = [
+            f"- The full reproduction on record (annex `reproduction-2`) ran at `{reproduced}`.",
+            "  The `git diff --exit-code` command below checks that the commit to check out has",
+            f"  the same {', '.join(f'`{p}`' for p in SAME_AT_BOTH_COMMITS)}.",
+            f"- `ARCHIVE`: `{archive}`, the files of the record https://doi.org/{doi}.",
+        ]
+        network = [
+            "- Network: MAST (the TESS data), VizieR (the TESS-EB table), Zenodo (the two zips),",
+            "  GitHub (a release asset and the API, which the promotion check needs to verify",
+            "  R_prom).",
+        ]
+        limit = [
+            f"`ARCHIVE` is public: the record https://doi.org/{doi} holds the two zips with the",
+            "SHA-256 recorded in `calibration/v0.4/runs/reproduce_archives.json`, and `prepare`",
+            "checks them. For the TESS-EB table, `prepare` asks these VizieR servers in order:",
+            f"{servers}. It takes the table from the first whose answer, with the header's",
+            "metadata restored, gives the frozen edition's SHA-256; each server that does not is",
+            "refused. When `prepare` finishes, `.cache/v04/reproduce/prepare.json` names the",
+            "server used and the servers refused before it. If none matches, it stops, and its",
+            "error message lists the refusals in order.",
+        ]
     lines = [
         *intro,
         "",
@@ -504,6 +630,7 @@ def instructions(commit: str, archive: str, version: int = 2, doi: str | None = 
         "git clone https://github.com/klucilla/refute.git WORK",
         "cd WORK",
         f"git checkout {commit}",
+        *same,
         "export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1",
         "uv sync --frozen",
         "uv run refute verify calibration/v0.4/claim.yaml",
@@ -525,7 +652,12 @@ def instructions(commit: str, archive: str, version: int = 2, doi: str | None = 
 
 
 def cmd_instructions(
-    commit: str, archive: str, out: Path, version: int = 2, doi: str | None = None
+    commit: str,
+    archive: str,
+    out: Path,
+    version: int = 2,
+    doi: str | None = None,
+    reproduced: str | None = None,
 ) -> int:
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         print("the commit must be a full SHA-1")
@@ -534,7 +666,7 @@ def cmd_instructions(
         print(f"{out} exists")
         return 1
     try:
-        text = instructions(commit, archive, version, doi)
+        text = instructions(commit, archive, version, doi, reproduced)
     except ValueError as exc:
         print(exc)
         return 1
@@ -556,14 +688,17 @@ def main(argv: list[str]) -> int:
     text.add_argument("--commit", required=True)
     text.add_argument("--archive", required=True)
     text.add_argument("--out", required=True, type=Path)
-    text.add_argument("--version", type=int, choices=(2, 3), default=2)
+    text.add_argument("--version", type=int, choices=(2, 3, 4), default=2)
     text.add_argument("--doi")
+    text.add_argument("--reproduced")
     args = parser.parse_args(argv)
     if args.step == "build-archives":
         return cmd_build_archives(args.out)
     if args.step == "prepare":
         return cmd_prepare(args.archive)
-    return cmd_instructions(args.commit, args.archive, args.out, args.version, args.doi)
+    return cmd_instructions(
+        args.commit, args.archive, args.out, args.version, args.doi, args.reproduced
+    )
 
 
 if __name__ == "__main__":

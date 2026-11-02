@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import io
 import sys
+import urllib.error
 import zipfile
 from pathlib import Path
 
@@ -59,36 +60,164 @@ def record(frozen: bytes = FROZEN) -> dict:
     }
 
 
-def test_rebuild_from_a_mirror_gives_the_frozen_bytes():
-    fresh = vizier("vizier.cfa.harvard.edu", "2026-11-01T16:01:52", ROWS)
+def served(data: bytes):
+    """A download that answers every URL with ``data``, without a redirect."""
+    return lambda url: (data, url)
+
+
+def test_the_servers_are_the_cds_then_the_maintainers_mirrors_in_order():
+    assert tool.HOSTS == (
+        "vizier.cds.unistra.fr",
+        "vizier.cfa.harvard.edu",
+        "vizier.idia.ac.za",
+        "vizier.nao.ac.jp",
+        "vizier.china-vo.org",
+    )
+    url = URL + "&-out.max=unlimited"
+    assert tool.on_server(url, "http://vizier.nao.ac.jp") == url.replace(
+        "https://vizier.cds.unistra.fr", "http://vizier.nao.ac.jp"
+    )
+
+
+@pytest.mark.parametrize("host", tool.HOSTS)
+def test_rebuild_from_every_server_gives_the_frozen_bytes(host):
+    fresh = vizier(host, "2026-11-01T16:01:52", ROWS)
     assert tool.rebuild_tess_eb(fresh, FROZEN_DATE, URL) == FROZEN
-    data, how = tool.tess_eb(record(), download=lambda url: fresh)
+
+
+def test_the_first_server_that_matches_is_used_and_recorded():
+    fresh = vizier("vizier.cfa.harvard.edu", "2026-11-01T16:01:52", ROWS)
+    data, how = tool.tess_eb(record(), download=served(fresh))
     assert data == FROZEN and how["source"].startswith("https://vizier.cds.unistra.fr")
+    assert how["server"] == "vizier.cds.unistra.fr" and how["failed_sources"] == []
 
 
 def test_a_changed_table_never_passes():
     changed = vizier("vizier.cds.unistra.fr", "2026-11-01T16:01:52", [ROWS[0], ROWS[1] + "1"])
-    with pytest.raises(tool.InputError, match="no source"):
-        tool.tess_eb(record(), download=lambda url: changed)
+    with pytest.raises(tool.InputError, match="none of the 5 VizieR servers"):
+        tool.tess_eb(record(), download=served(changed))
 
 
 def test_a_changed_header_beyond_the_metadata_is_refused():
     other = FROZEN.replace(b"[V7.6.1]", b"[V7.7.0]")
-    with pytest.raises(tool.InputError, match="no source"):
-        tool.tess_eb(record(), download=lambda url: other)
+    with pytest.raises(tool.InputError, match="none of the 5 VizieR servers"):
+        tool.tess_eb(record(), download=served(other))
 
 
-def test_the_cds_failure_falls_to_the_mirror_and_is_recorded():
-    fresh = vizier("vizier.cfa.harvard.edu", "2026-11-01T16:01:52", ROWS)
+def test_cds_down_cfa_502_idia_ok_and_no_later_server_is_asked():
+    fresh = vizier("vizier.idia.ac.za", "2026-11-02T17:41:18", ROWS)
+    asked = []
+
+    def download(url):
+        asked.append(url)
+        if "unistra" in url:
+            raise OSError("unreachable")
+        if "cfa" in url:
+            raise urllib.error.HTTPError(url, 502, "Bad Gateway", None, None)
+        return fresh, url
+
+    data, how = tool.tess_eb(record(), download=download)
+    assert data == FROZEN and how["server"] == "vizier.idia.ac.za"
+    assert [e["error"].split(":")[0] for e in how["failed_sources"]] == ["OSError", "HTTPError"]
+    assert len(asked) == 3
+
+
+def test_a_server_with_different_bytes_is_refused_and_the_next_is_taken():
+    reordered = vizier("vizier.cds.unistra.fr", "2026-11-02T19:19:32", ROWS[::-1])
+    extra = vizier("vizier.cfa.harvard.edu", "2026-11-02T19:19:32", ROWS).replace(
+        b"[V7.6.1]", b"[V7.7.0]"
+    )
+    good = vizier("vizier.idia.ac.za", "2026-11-02T19:19:32", ROWS)
+    answers = {"unistra": reordered, "cfa": extra, "idia": good}
+
+    def download(url):
+        return next(v for k, v in answers.items() if k in url), url
+
+    data, how = tool.tess_eb(record(), download=download)
+    assert data == FROZEN and how["server"] == "vizier.idia.ac.za"
+    first, second = how["failed_sources"]
+    assert first["error"].endswith("content SHA-256 differs from the frozen edition")
+    assert "content_sha256" in first and "rebuilt_sha256" not in first
+    assert second["error"].endswith("raw SHA-256 differs after the header rebuild")
+    assert second["rebuilt_sha256"] != record()["sha256"]
+
+
+def test_invalid_bytes_and_a_redirect_outside_the_list_are_refused():
+    good = vizier("vizier.nao.ac.jp", "2026-11-02T19:19:32", ROWS)
 
     def download(url):
         if "unistra" in url:
+            return b"#\n#   VizieR Astronomical Server \xff\xfe\n" + FROZEN, url
+        if "cfa" in url:
+            return good, "https://elsewhere.example/viz-bin/asu-tsv"
+        if "idia" in url:
             raise OSError("unreachable")
-        return fresh
+        return good, url
 
     data, how = tool.tess_eb(record(), download=download)
-    assert data == FROZEN and "cfa" in how["source"]
-    assert how["failed_sources"][0]["error"].startswith("OSError")
+    assert data == FROZEN and how["server"] == "vizier.nao.ac.jp"
+    errors = [e["error"] for e in how["failed_sources"]]
+    assert "elsewhere.example" in errors[1] and "not in the server list" in errors[1]
+    assert len(errors) == 3
+
+
+def test_all_servers_down_gives_a_clear_error():
+    def download(url):
+        raise OSError("unreachable")
+
+    with pytest.raises(tool.InputError) as caught:
+        tool.tess_eb(record(), download=download)
+    message = str(caught.value)
+    assert message.startswith("TESS-EB: none of the 5 VizieR servers gave the frozen edition")
+    assert record()["sha256"] in message
+    assert all(host in message for host in tool.HOSTS)
+
+
+class FakeResponse:
+    def __init__(self, status: int, data: bytes, url: str):
+        self.status, self.data, self.url = status, data, url
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def read(self, size: int = -1) -> bytes:
+        return self.data if size < 0 else self.data[:size]
+
+    def geturl(self) -> str:
+        return self.url
+
+
+@pytest.mark.parametrize(
+    ("status", "size", "match"),
+    [(203, 10, "HTTP status 203"), (200, tool.TESS_EB_MAX_BYTES + 1, "larger than")],
+)
+def test_the_tess_eb_download_needs_status_200_and_a_bounded_size(monkeypatch, status, size, match):
+    monkeypatch.setattr(tool.time, "sleep", lambda s: None)
+    monkeypatch.setattr(
+        tool.urllib.request,
+        "urlopen",
+        lambda request, timeout: FakeResponse(status, b"x" * size, request.full_url),
+    )
+    with pytest.raises(tool.InputError, match=match):
+        tool.fetch_tess_eb("https://vizier.idia.ac.za/x")
+
+
+def test_the_tess_eb_download_returns_the_final_url(monkeypatch):
+    seen = {}
+
+    def urlopen(request, timeout):
+        seen["timeout"] = timeout
+        return FakeResponse(200, b"table", "https://vizier.idia.ac.za/final")
+
+    monkeypatch.setattr(tool.urllib.request, "urlopen", urlopen)
+    assert tool.fetch_tess_eb("https://vizier.idia.ac.za/x") == (
+        b"table",
+        "https://vizier.idia.ac.za/final",
+    )
+    assert seen["timeout"] == tool.TESS_EB_TIMEOUT == 120.0
 
 
 def zip_bytes(members: list[tuple[str, bytes]]) -> bytes:
@@ -207,12 +336,36 @@ def test_instructions_version_3_changes_only_the_archive():
     assert "do not\namend acceptance criterion 2" in v3
 
 
+def test_instructions_version_3_is_unchanged():
+    text = tool.instructions("a" * 40, "https://example.org/records/1/files", 3, "10.0/x.1")
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    assert digest == "7886fef814fcb2c6ecf92a8e91b87487d7eb62f3a1842327d54beddde2b650a4"
+
+
+def test_instructions_version_4_checks_out_the_new_commit_and_diffs_it():
+    def block(text: str) -> list[str]:
+        return text.split("```bash\n")[1].split("```")[0].splitlines()
+
+    archive = "https://example.org/records/1/files"
+    v3 = tool.instructions("a" * 40, archive, version=3, doi="10.0/x.1")
+    v4 = tool.instructions("b" * 40, archive, version=4, doi="10.0/x.1", reproduced="a" * 40)
+    diff = "git diff --exit-code " + "a" * 40 + " " + "b" * 40 + " -- src/ pyproject.toml uv.lock"
+    lines = block(v4)
+    assert lines[4].startswith(diff)
+    assert lines[:4] + lines[5:] == [line.replace("a" * 40, "b" * 40) for line in block(v3)]
+    assert "(instructions version 4)" in v4
+    assert "ran at `" + "a" * 40 + "`" in v4
+    assert all(host in v4 for host in tool.HOSTS)
+
+
 @pytest.mark.parametrize(
     ("archive", "kwargs"),
     [
-        ("https://example.org/files", {"version": 4}),
+        ("https://example.org/files", {"version": 5}),
         ("https://example.org/files", {"version": 3}),
         ("K:/private", {"version": 3, "doi": "10.0/x.1"}),
+        ("https://example.org/files", {"version": 4, "doi": "10.0/x.1"}),
+        ("https://example.org/files", {"version": 4, "doi": "10.0/x.1", "reproduced": "abc"}),
     ],
 )
 def test_instructions_refuse_a_bad_version_or_archive(archive, kwargs):
