@@ -441,24 +441,34 @@ def cmd_report(human_path: Path, out: Path) -> int:
     ]
     for key in promotion["promoted"]:
         verdict = json.loads((stage2[key] / "verdict.json").read_text("utf-8"))
+        # a verdict that must never stand alone carries its reading in the same cell
+        qualifier = (human.get(key) or {}).get("conclusion", {}).get("verdict_qualifier")
+        label = f"{verdict.get('verdict')} ({qualifier})" if qualifier else verdict.get("verdict")
         lines.append(
-            f"| {key} | {verdict.get('verdict')} | {verdict.get('verdict_reason')} | "
+            f"| {key} | {label} | {verdict.get('verdict_reason')} | "
             f"{(verdict.get('temporal_diagnostic') or {}).get('state')} | "
             f"{_assessment(stage2[key])} |"
         )
     lines += [
         "",
-        "## Conclusions (drafts for the maintainer)",
-        "",
-        "The verdicts above come from the locked code and no review changes them. The",
-        "conclusions below are the human reading of each case (closed vocabulary, protocol",
-        "section 1), drafted by the agent and checked with Codex; the maintainer approves them.",
+        *(
+            human["_conclusions_heading"]
+            if human.get("_conclusions_heading")
+            else [
+                "## Conclusions (drafts for the maintainer)",
+                "",
+                "The verdicts above come from the locked code and no review changes them. The",
+                "conclusions below are the human reading of each case (closed vocabulary, protocol",
+                "section 1), drafted by the agent and checked with Codex; the maintainer approves "
+                "them.",
+            ]
+        ),
         "",
     ]
     for key in [*CONTROL_KINDS, *promotion["promoted"]]:
         conclusion = human[key]["conclusion"]
         lines.append(f"- **{key}**: {conclusion['text']}.")
-        for note in ("reading", "verdict_note"):
+        for note in ("reading", "verdict_note", "caveat"):
             if conclusion.get(note):
                 lines.append(f"  {conclusion[note]}")
     lines += [
@@ -580,10 +590,17 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "",
         "## Limits",
         "",
-        "- The method is not validated; SURVIVED means the declared decisive battery was",
-        "  survived, without requiring the temporal diagnostic to pass. It is not support for a",
-        "  candidate:",
-        "  a fatal test can PASS because it lacked the power to fail (#185).",
+        *(
+            human["_limits_survived"]
+            if human.get("_limits_survived")
+            else [
+                "- The method is not validated; SURVIVED means the declared decisive battery was",
+                "  survived, without requiring the temporal diagnostic to pass. It is not support "
+                "for a",
+                "  candidate:",
+                "  a fatal test can PASS because it lacked the power to fail (#185).",
+            ]
+        ),
         "- A PASS from the pixel tests does not exclude unresolved blends (#187).",
         "- No decisive test models stellar variability (#182); centroid_shift can be decided by",
         "  one sector (#183); a gate-passing signal can be indistinguishable from the curve's",
@@ -591,6 +608,7 @@ def cmd_report(human_path: Path, out: Path) -> int:
         "- Injection-recovery uses a trapezoid model, injected before detrending, into the",
         "  pilot's curves only; the numbers are about these curves and this code.",
         "- The exclusions use catalog snapshots of 2026-10-29.",
+        *human.get("_limits_extra", []),
     ]
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "x", encoding="utf-8", newline=LF) as handle:

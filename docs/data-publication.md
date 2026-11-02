@@ -13,6 +13,17 @@ about Zenodo: [sources/zenodo-2026-10-24.md](sources/zenodo-2026-10-24.md) (read
    restricted license (for example the TESS Eclipsing Binary catalog or Gaia DR3 rows, see
    `calibration/v0.2/eb_snapshot/DATA_LICENSE.md`), and **nothing about a paper whose authors'
    reply period is open**.
+   **Exception, restricted to v0.4 (the maintainer's decision of 2026-11-01).** The v0.4 pilot's
+   dossiers and its two reproduction archives may be published, on Zenodo and elsewhere, although
+   they hold Gaia DR3 rows (CC BY-NC 3.0 IGO) and TESS-EB records (CC BY 4.0). This also sets
+   aside, for them only, the maintainer's precaution of 2026-10-08/10 not to redistribute TESS-EB
+   rows (`calibration/v0.2/eb_snapshot/DATA_LICENSE.md`). Reasoning: these dossiers are sealed, and
+   removing the rows would break their seals and the hashes that a third-party reproduction
+   checks; the sources permit redistribution with attribution (and, for Gaia, for non-commercial
+   use only). Each component keeps its own terms, stated outside the sealed bytes in
+   [calibration/v0.4/DATA_LICENSE.md](../calibration/v0.4/DATA_LICENSE.md), with sources. The
+   exception is not a general change of this rule, and it grants no right the sources do not
+   grant. Recorded in issue #177.
 4. **A license in every record.** Zenodo requires one for every public file (S2). **Synthetic
    datasets: CC-BY-4.0** (Zenodo's default, S5; approved by the maintainer on 2026-10-24); any
    other content gets its license decided in its own record.
