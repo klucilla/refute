@@ -25,8 +25,10 @@ Subcommands:
   - the two zips from the archive, checked against ``reproduce_archives.json``; each stage-1
     verdict against ``entries.json``; each original dossier's core recomputed against its public
     anchor, and its annexes against their manifests.
-- ``instructions --commit <C> --archive <location> --out <file>``: the corrected instructions
-  (``REPRODUCE-2.md``), with every command written out.
+- ``instructions --commit <C> --archive <location> --out <file> [--version 3 --doi <DOI>]``: the
+  corrected instructions, with every command written out: ``REPRODUCE-2.md`` (version 2, the
+  default) or ``REPRODUCE-3.md`` (version 3: the same commands, with ``ARCHIVE`` the public
+  deposit of P7).
 """
 
 from __future__ import annotations
@@ -418,7 +420,13 @@ def cmd_prepare(location: str) -> int:
 # ---------------------------------------------------------------- instructions
 
 
-def instructions(commit: str, archive: str) -> str:
+def instructions(commit: str, archive: str, version: int = 2, doi: str | None = None) -> str:
+    """Version 2 (the private archive, before P7) or version 3 (the same commands; ``ARCHIVE`` is
+    the public deposit whose DOI is given). Version 2's text is kept byte for byte."""
+    if version not in (2, 3):
+        raise ValueError("version must be 2 or 3")
+    if version == 3 and (not archive.startswith("https://") or not doi):
+        raise ValueError("version 3 needs an https archive and its DOI")
     promotion = "calibration/v0.4/runs/promotion.json"
     discover, check = [], []
     for run, key in STAGE2:
@@ -431,24 +439,62 @@ def instructions(commit: str, archive: str) -> str:
             f"uv run refute check-dossier repro2/{key}/repro2-{key}/{key} "
             f"--against {ORIGINALS_DIR}/{run}/{key}"
         )
+    if version == 2:
+        intro = [
+            "# Reproduce the v0.4 pilot's stage-2 dossiers (instructions version 2)",
+            "",
+            "These instructions supersede the core's `REPRODUCE.md` of the five stage-2 "
+            "dossiers of",
+            "the v0.4 pilot. They do not amend acceptance criterion 2 of",
+            "`docs/plans/v0.4-acceptance.md`. They exist because the core's `REPRODUCE.md` is",
+            "written by the locked `src/refute/core/run.py`: its commands are not self-sufficient",
+            "in a fresh clone (#189), and neither the sealed core nor the locked code can change.",
+            "The maintainer approved this replacement on 2026-11-01 (Option 1; recorded in #177).",
+        ]
+        archive_line = [f"- `ARCHIVE`: `{archive}`."]
+        network = [
+            "- Network: MAST (the TESS data), VizieR (the TESS-EB table), GitHub (a release asset",
+            "  and the API, which the promotion check needs to verify R_prom).",
+        ]
+        limit = [
+            "Limit: before P7 the two zips in `ARCHIVE` (the stage-1 verdicts and the original",
+            "stage-2 dossiers) are in the maintainer's private archive, so a third party cannot",
+            "run these commands until the maintainer deposits them at P7 with the same hashes.",
+        ]
+    else:
+        intro = [
+            "# Reproduce the v0.4 pilot's stage-2 dossiers (instructions version 3)",
+            "",
+            "These instructions supersede `REPRODUCE-2.md` (annex `reproduce-2`) of the five",
+            "stage-2 dossiers of the v0.4 pilot, whose `ARCHIVE` was the maintainer's private",
+            "archive. The commands are those of version 2; only `ARCHIVE` changes, to the public",
+            "deposit. Like version 2, they supersede the core's `REPRODUCE.md` (#189) and do not",
+            "amend acceptance criterion 2 of `docs/plans/v0.4-acceptance.md`. The maintainer",
+            "approved version 3 (P7, item 7; recorded in #177).",
+        ]
+        archive_line = [f"- `ARCHIVE`: `{archive}`, the files of the record https://doi.org/{doi}."]
+        network = [
+            "- Network: MAST (the TESS data), VizieR (the TESS-EB table), Zenodo (the two zips),",
+            "  GitHub (a release asset and the API, which the promotion check needs to verify",
+            "  R_prom).",
+        ]
+        limit = [
+            f"`ARCHIVE` is public: the record https://doi.org/{doi} holds the two zips with the",
+            "SHA-256 recorded in `calibration/v0.4/runs/reproduce_archives.json`, and `prepare`",
+            "checks them. At the commit above, `prepare` tries the CDS and then the CfA mirror",
+            "only for the TESS-EB table; if neither supplies data matching the frozen edition's",
+            "checks, it stops.",
+        ]
     lines = [
-        "# Reproduce the v0.4 pilot's stage-2 dossiers (instructions version 2)",
-        "",
-        "These instructions supersede the core's `REPRODUCE.md` of the five stage-2 dossiers of",
-        "the v0.4 pilot. They do not amend acceptance criterion 2 of",
-        "`docs/plans/v0.4-acceptance.md`. They exist because the core's `REPRODUCE.md` is",
-        "written by the locked `src/refute/core/run.py`: its commands are not self-sufficient",
-        "in a fresh clone (#189), and neither the sealed core nor the locked code can change.",
-        "The maintainer approved this replacement on 2026-11-01 (Option 1; recorded in #177).",
+        *intro,
         "",
         f"- Commit to check out: `{commit}`. It holds the locked code and claim unchanged",
         "  (`refute verify` gives PASS), and the input tool",
         "  `calibration/v0.4/reproduce_inputs.py`.",
-        f"- `ARCHIVE`: `{archive}`.",
+        *archive_line,
         "- `WORK`: the clone's root. Every command below runs there, and `WORK/.cache` must be",
         "  new.",
-        "- Network: MAST (the TESS data), VizieR (the TESS-EB table), GitHub (a release asset",
-        "  and the API, which the promotion check needs to verify R_prom).",
+        *network,
         "- The numerical libraries run single-threaded, as in the pilot's runs.",
         "- Shell: Bash (on Windows, Git Bash). The block stops at the first command that fails",
         "  (`set -euo pipefail`); a failed step is never followed by the next.",
@@ -472,24 +518,29 @@ def instructions(commit: str, archive: str) -> str:
         "both dossiers and requires identical input data hashes, identical verdict and test",
         "statuses, and key numeric results equal within a relative tolerance of 1e-6.",
         "",
-        "Limit: before P7 the two zips in `ARCHIVE` (the stage-1 verdicts and the original",
-        "stage-2 dossiers) are in the maintainer's private archive, so a third party cannot",
-        "run these commands until the maintainer deposits them at P7 with the same hashes.",
+        *limit,
         "",
     ]
     return LF.join(lines)
 
 
-def cmd_instructions(commit: str, archive: str, out: Path) -> int:
+def cmd_instructions(
+    commit: str, archive: str, out: Path, version: int = 2, doi: str | None = None
+) -> int:
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         print("the commit must be a full SHA-1")
         return 1
     if out.exists():
         print(f"{out} exists")
         return 1
+    try:
+        text = instructions(commit, archive, version, doi)
+    except ValueError as exc:
+        print(exc)
+        return 1
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "x", encoding="utf-8", newline=LF) as handle:
-        handle.write(instructions(commit, archive))
+        handle.write(text)
     print(f"written: {out}")
     return 0
 
@@ -505,12 +556,14 @@ def main(argv: list[str]) -> int:
     text.add_argument("--commit", required=True)
     text.add_argument("--archive", required=True)
     text.add_argument("--out", required=True, type=Path)
+    text.add_argument("--version", type=int, choices=(2, 3), default=2)
+    text.add_argument("--doi")
     args = parser.parse_args(argv)
     if args.step == "build-archives":
         return cmd_build_archives(args.out)
     if args.step == "prepare":
         return cmd_prepare(args.archive)
-    return cmd_instructions(args.commit, args.archive, args.out)
+    return cmd_instructions(args.commit, args.archive, args.out, args.version, args.doi)
 
 
 if __name__ == "__main__":

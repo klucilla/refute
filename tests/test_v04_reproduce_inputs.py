@@ -184,3 +184,37 @@ def test_instructions_write_every_command():
     assert text.count("uv run refute check-dossier") == 5
     assert "git checkout " + "a" * 40 in text
     assert "do not amend acceptance criterion 2" in text
+
+
+def test_instructions_version_2_is_unchanged():
+    # the text of REPRODUCE-2.md, before version 3 was added
+    text = tool.instructions("a" * 40, "ARCHIVE")
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    assert digest == "298cf2fb02c99497463abda1dc7e37a3a85e4741883280647e978a58cbd063fc"
+
+
+def test_instructions_version_3_changes_only_the_archive():
+    def block(text: str) -> list[str]:
+        return text.split("```bash\n")[1].split("```")[0].splitlines()
+
+    archive = "https://example.org/records/1/files"
+    v2 = tool.instructions("a" * 40, "ARCHIVE")
+    v3 = tool.instructions("a" * 40, archive, version=3, doi="10.0/x.1")
+    assert block(v3) == [line.replace("ARCHIVE", archive) for line in block(v2)]
+    assert "(instructions version 3)" in v3
+    assert "https://doi.org/10.0/x.1" in v3
+    assert "private archive, so a third party cannot" not in v3
+    assert "do not\namend acceptance criterion 2" in v3
+
+
+@pytest.mark.parametrize(
+    ("archive", "kwargs"),
+    [
+        ("https://example.org/files", {"version": 4}),
+        ("https://example.org/files", {"version": 3}),
+        ("K:/private", {"version": 3, "doi": "10.0/x.1"}),
+    ],
+)
+def test_instructions_refuse_a_bad_version_or_archive(archive, kwargs):
+    with pytest.raises(ValueError):
+        tool.instructions("a" * 40, archive, **kwargs)
