@@ -1,0 +1,28 @@
+{
+  "upload_type": "software",
+  "title": "Refute: find signals, try to kill them, keep what survives",
+  "creators": [
+    {
+      "name": "Lucilla, Klauber",
+      "orcid": "0009-0002-4519-5457"
+    }
+  ],
+  "description": "<p>Refute is an open-source framework where agents try to break scientific claims before anyone believes them. Claims are pre-registered and locked with SHA-256 hashes, attacked by deterministic falsification tests and a blind holdout, and reported in reproducible evidence dossiers. Agents propose; deterministic tests decide. A claim is never proven: it only survives, or it does not.</p>",
+  "access_right": "open",
+  "license": "apache-2.0",
+  "keywords": [
+    "falsification",
+    "reproducibility",
+    "pre-registration",
+    "exoplanets",
+    "TESS"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/klucilla/refute",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ],
+  "notes": "The license field names the license of the code (Apache-2.0). It does not cover the third-party data files in the repository: each keeps its own terms, stated with their sources in calibration/v0.2/eb_snapshot/DATA_LICENSE.md and calibration/v0.4/DATA_LICENSE.md of this release (https://github.com/klucilla/refute/blob/v0.4.0/calibration/v0.2/eb_snapshot/DATA_LICENSE.md and https://github.com/klucilla/refute/blob/v0.4.0/calibration/v0.4/DATA_LICENSE.md). No single license covers the archive as a whole."
+}
