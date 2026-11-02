@@ -63,6 +63,8 @@ the page changes (CLAUDE.md, rule of issue #34). Nothing here is legal advice.
   makes use of ExoFOP services" (DOI 10.26134/ExoFOP5).
 - Excerpt: "The use for publication of any data on ExoFOP that have appeared in journals should be
   accompanied by a citation to the respective article(s)."
+- Decision (the maintainer, 2026-11-01): the redistribution of the TOI values is accepted on the
+  basis of the acknowledgment and citation; no formal license is stated by ExoFOP.
 
 ## L8. Zenodo, licenses of a record
 
