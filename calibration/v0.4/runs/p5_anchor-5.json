@@ -1,0 +1,41 @@
+{
+  "inputs_deposit": {
+    "checked": "downloaded anonymously on 2026-11-02; the two zips equal reproduce_archives.json",
+    "doi": "10.5281/zenodo.23874043",
+    "files_sha256": {
+      "DATA_LICENSE-map.json": "211d3f43fbbfd5a3f4f4031f083cb6250510061db4dcceebb3d1e359f619eaf6",
+      "DATA_LICENSE.md": "be87ae965fbd70863c65db4b539eb0baca80ccf357345b09fb34dbd9fcd8fc68",
+      "MANIFEST.sha256": "2657d0b2601a6ac7aa2af63730d10554f4f2f1f61232b9498d5c209d22653079",
+      "v0.4-stage1-verdicts.zip": "4737b72fbd2784f70906d6836a45f491e701f71552048a2de95c29242a7eef02",
+      "v0.4-stage2-originals.zip": "003f37c29063bef5b23006ea6f52faf63b35c7770858e34e8e5dfe58ff03024b"
+    }
+  },
+  "ledger": {
+    "events": 429,
+    "file_sha256": "9275f993ba18d46352577a3fbc052d692cf7e60cca9ddb1f6c6f6c2d21e64663",
+    "last_hash": "ac05c07fcd1ad37029f1c9e165bff5a73b1a7a0b7a1f5ff3a7b35a595d39b99f",
+    "last_seq": 429,
+    "verified_with": "refute.core.ledger.verify_file, check=case.check_event"
+  },
+  "previous_anchor": {
+    "file": "calibration/v0.4/runs/p5_anchor-4.json",
+    "sha256": "9e8c6d9673ef93ae89986169b9e58553010f64623a49c4506e961573bae8adb4"
+  },
+  "private_detail": "the annex manifests of each stage-2 dossier and the private files (the rehearsal record and its prepare.json, REPRODUCE-3.md, the scripts)",
+  "private_detail_sha256": "d9effaaf7d1687a3d15241652f8e98e8be600d0f5af95d1a3ca8d23d19945baf",
+  "purpose": "hashes after P7 item 7: the public inputs deposit, the annex reproduce-3 (instructions version 3) of each stage-2 dossier and the rehearsal of prepare against the deposit (a rehearsal, not a reproduction)",
+  "reproduce_3": {
+    "commit_to_check_out": "95cd7d9bf0a842633697bb704894ab9cf4ff340c",
+    "text_generator_commit": "84b091f87de0048ca6460dda2495869c17bd0f6c"
+  },
+  "reproduce_archives": "calibration/v0.4/runs/reproduce_archives.json",
+  "schema": "refute-v04-p5-anchor-5",
+  "stage2_core_sha256": {
+    "TIC-286480954": "06fd70b84d2730b4e92d9c35856c0245ab55d8db187b999932538a8d1c238bd1",
+    "TIC-393911494": "649adc930f5e89f459b6e5650522ef8d719b5f0972f1c12c185c4bc93bd033e7",
+    "TIC-406413408": "b122aabbe382884c428f1632ce3930ddf150c76a20b24f907fd28696356a9044",
+    "TIC-86396382": "eb1b06cc6f5f5da1c5032b056de1f41076d9c6549045ab22fb7e64409d6c236f",
+    "TIC-88096786": "9e061f75136794acf0710d08bec644d917e45580a68c12207c5fe746555b638a"
+  },
+  "supersedes": "nothing: the earlier anchors stay valid for the files they cite"
+}
