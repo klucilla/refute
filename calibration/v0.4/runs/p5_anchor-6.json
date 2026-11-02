@@ -1,0 +1,36 @@
+{
+  "ledger": {
+    "events": 429,
+    "file_sha256": "9275f993ba18d46352577a3fbc052d692cf7e60cca9ddb1f6c6f6c2d21e64663",
+    "last_hash": "ac05c07fcd1ad37029f1c9e165bff5a73b1a7a0b7a1f5ff3a7b35a595d39b99f",
+    "last_seq": 429,
+    "verified_with": "refute.core.ledger.verify_file, check=case.check_event"
+  },
+  "previous_anchor": {
+    "file": "calibration/v0.4/runs/p5_anchor-5.json",
+    "sha256": "500588ce3f917d5f0b56d393c1eb382c1d3e0fce310eae78dfd2d6cddef5cb88"
+  },
+  "private_detail": "the annex manifests of each stage-2 dossier and the private files (the rehearsal output and its prepare.json, REPRODUCE-4.md, the mirrors pages and probes, the scripts)",
+  "private_detail_sha256": "2f16b83deb08b89c931a6a90e0902230afbd43169d43f270e2795633944b9fdf",
+  "purpose": "hashes after the VizieR mirrors were added to prepare (the maintainer's decision of 2026-11-02): the annex reproduce-4 (instructions version 4) of each stage-2 dossier and the clean rehearsal of prepare at that commit (a rehearsal, not a reproduction)",
+  "rehearsal": {
+    "prepare_json_sha256": "da24a1401ecb76fdc47c744f6f76e72512814bdd9553e21d1bad3e7c1e839edc",
+    "servers_refused_before": 2,
+    "tess_eb_server": "vizier.idia.ac.za",
+    "tess_eb_sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323"
+  },
+  "reproduce_4": {
+    "commit_to_check_out": "6143c11ee44e429a30a966c6e70e4cbc9e67c231",
+    "reproduced_commit": "95cd7d9bf0a842633697bb704894ab9cf4ff340c"
+  },
+  "reproduce_archives": "calibration/v0.4/runs/reproduce_archives.json",
+  "schema": "refute-v04-p5-anchor-6",
+  "stage2_core_sha256": {
+    "TIC-286480954": "06fd70b84d2730b4e92d9c35856c0245ab55d8db187b999932538a8d1c238bd1",
+    "TIC-393911494": "649adc930f5e89f459b6e5650522ef8d719b5f0972f1c12c185c4bc93bd033e7",
+    "TIC-406413408": "b122aabbe382884c428f1632ce3930ddf150c76a20b24f907fd28696356a9044",
+    "TIC-86396382": "eb1b06cc6f5f5da1c5032b056de1f41076d9c6549045ab22fb7e64409d6c236f",
+    "TIC-88096786": "9e061f75136794acf0710d08bec644d917e45580a68c12207c5fe746555b638a"
+  },
+  "supersedes": "nothing: the earlier anchors stay valid for the files they cite"
+}
