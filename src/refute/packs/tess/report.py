@@ -118,8 +118,9 @@ BLEND_CAVEAT = (
 
 
 def _bjd(value: Any) -> str:
-    """v0.5 (#186): a BJD at full precision, never in short scientific notation."""
-    return "n/a" if value is None else f"{float(value):.6f}"
+    """v0.5 (#186): a BJD at the full precision of ``verdict.json`` (the shortest decimal that
+    round-trips the float), never in short scientific notation."""
+    return "n/a" if value is None else repr(float(value))
 
 
 def _v05_lines(result: dict[str, Any]) -> list[str]:
@@ -133,7 +134,11 @@ def _v05_lines(result: dict[str, Any]) -> list[str]:
         "detected its declared alternative; otherwise it is INCONCLUSIVE, with the reason. A "
         "PASS means no failure was detected with the declared sensitivity, never that an effect "
         "is absent. Each test's sensitivity is in `verdict.json` (`tests[].sensitivity`).",
-        f"- SDE: {v05.get('sde_note')}.",
+        f"- SDE: {v05.get('sde_note')}. SDE of the kept peak (largest over sectors): "
+        f"{_fmt((v05.get('sde_kept_peak') or {}).get('max'), 2)}.",
+        "- `secondary_eclipse` limits: eccentric secondaries away from phase 0.5 are not "
+        "covered; a secondary alone does not classify an eclipsing binary; a planet's "
+        "occultation is not modelled (#181).",
     ]
     params = v05.get("parameters")
     if params:

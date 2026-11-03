@@ -128,6 +128,8 @@ def _fields_v05(result: dict[str, Any], fields: dict[str, Any]) -> dict[str, Any
             "the duration shown is the BLS grid value; the trapezoid fit's duration and "
             "uncertainty are not reported: " + NOT_ACCEPTED_REASON
         )
+    kept = v05.get("sde_kept_peak") or {}
+    out["sde_kept_peak"] = kept.get("max")
     out["sde_note"] = v05.get("sde_note")
     return out
 

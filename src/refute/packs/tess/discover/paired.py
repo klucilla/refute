@@ -38,8 +38,12 @@ def check_pairing(plan_v04: TessTestPlan, plan_v05: TessTestPlan) -> None:
     for name in SHARED:
         if getattr(plan_v04, name) != getattr(plan_v05, name):
             raise ValueError(f"the plans differ in `{name}`: the candidate would not be shared")
-    if plan_v04.gauntlet.corrections != plan_v05.gauntlet.corrections:
-        raise ValueError("the plans differ in the corrections: the candidate would not be shared")
+    # the finalization of the candidate and its gate read these too (Codex's review of round 2)
+    for name in ("corrections", "events", "snr"):
+        if getattr(plan_v04.gauntlet, name) != getattr(plan_v05.gauntlet, name):
+            raise ValueError(
+                f"the plans differ in `gauntlet.{name}`: the candidate would not be shared"
+            )
 
 
 def _outcome(data, candidate, plan: TessTestPlan, stage: int, catalogs, scan, pw) -> dict:
@@ -88,12 +92,16 @@ def paired_chain(
     pw, searched = global_prewhitening(data, plan_v04, flat)
     search = search_period(searched, plan_v04.search)
     candidate = search.candidate
+    v04 = _outcome(data, candidate, plan_v04, stage, catalogs, catalog_scan, pw)
+    v05 = _outcome(data, candidate, plan_v05, stage, catalogs, catalog_scan, pw)
+    if v04["candidate"] != v05["candidate"]:
+        raise ValueError("the two batteries did not attack the same final candidate")
     return {
         "search_candidate": None
         if candidate is None
         else {"period_days": candidate.period, "t0_btjd": candidate.t0, "snr": candidate.snr},
-        "v04": _outcome(data, candidate, plan_v04, stage, catalogs, catalog_scan, pw),
-        "v05": _outcome(data, candidate, plan_v05, stage, catalogs, catalog_scan, pw),
+        "v04": v04,
+        "v05": v05,
     }
 
 
@@ -196,15 +204,56 @@ def transformed_groups(records: list[dict[str, Any]], own_signal: set[str]) -> d
     return {name: summarize(groups.get(name, []), name) for name in names}
 
 
+def summarize_injections(records: list[dict[str, Any]], group: str) -> dict[str, Any]:
+    """Injections (each record with ``recovery``, from ``recovery_v05`` on the shared final
+    candidate): the two numbers of the plan's section 4 (Codex's review of round 2), never a
+    merged survival:
+
+    - among the **recovered, gate-passing** injections (the identity matched): the four
+      stage-verdict counts per battery and the paired transitions (the conditional cost);
+    - the same counts over **all attempted** injections as the denominator (end to end), with
+      the injections not recovered (failed tasks included) counted apart."""
+    attempted = len(records)
+    ok = [r for r in records if r.get("status") == "OK"]
+    recovered = [r for r in ok if (r.get("recovery") or {}).get("recovered")]
+    v04 = verdict_counts([r["chain"]["v04"]["stage_verdict"] for r in recovered])
+    v05 = verdict_counts([r["chain"]["v05"]["stage_verdict"] for r in recovered])
+    return {
+        "group": group,
+        "attempted": attempted,
+        "failed_tasks": attempted - len(ok),
+        "stars": len({r["target_key"] for r in records}),
+        "recovered": len(recovered),
+        "not_recovered": attempted - len(recovered),
+        "among_recovered": {
+            "denominator": len(recovered),
+            "v04_stage_verdicts": v04,
+            "v05_stage_verdicts": v05,
+            "transitions": transitions(
+                [
+                    (r["chain"]["v04"]["stage_verdict"], r["chain"]["v05"]["stage_verdict"])
+                    for r in recovered
+                ]
+            ),
+        },
+        "among_attempted": {
+            "denominator": attempted,
+            "v04_recovered_with_stage_verdict": v04,
+            "v05_recovered_with_stage_verdict": v05,
+        },
+        "note": "injections into one star are not independent; not a false-alarm rate",
+    }
+
+
 def injection_groups(records: list[dict[str, Any]], own_signal: set[str]) -> dict[str, Any]:
     """Injections by host: original-gate-negative hosts, and hosts whose own signal passes the
     gate, apart and never pooled (case 7.1); the latter measure competition, not sensitivity."""
     neg = [r for r in records if r["target_key"] not in own_signal]
     own = [r for r in records if r["target_key"] in own_signal]
     return {
-        "original_gate_negative": summarize(neg, "original_gate_negative"),
+        "original_gate_negative": summarize_injections(neg, "original_gate_negative"),
         "signal_bearing": {
-            **summarize(own, "signal_bearing"),
+            **summarize_injections(own, "signal_bearing"),
             "caveat": "the host's own signal passes the gate: recovery here measures whether "
             "an injection outranks it, not sensitivity (#180)",
         },

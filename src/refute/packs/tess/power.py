@@ -152,34 +152,52 @@ def systematics_blocks(
     }
     if crowds and g_pdc is not None and g_sap is not None and g_pdc.mean > 0:
         crowd = float(np.median(crowds))
-        expected = crowd * g_pdc.mean
-        sigma = math.hypot(g_sap.error, crowd * g_pdc.error)
+        pdc, e_pdc, e_sap = g_pdc.mean, g_pdc.error, g_sap.error
         rel_alt = params.max_sap_rel_diff + sp.sap_alternative_increment
 
+        # the SAP and PDCSAP depths drawn jointly (Codex's review of round 2): the expected SAP
+        # depth in the rule is the measured PDCSAP depth times CROWDSAP, not a fixed value
         def draw_sap(rng, n):
-            return expected * (1.0 + rel_alt) + sigma * rng.standard_normal(n)
+            p_hat = pdc + e_pdc * rng.standard_normal(n)
+            s_hat = crowd * pdc * (1.0 + rel_alt) + e_sap * rng.standard_normal(n)
+            return p_hat, s_hat
 
-        def reject_sap(sap):
-            diff = sap - expected
-            return (np.abs(diff) / sigma >= params.max_sap_sigma) & (
-                np.abs(diff) / expected >= params.max_sap_rel_diff
+        def reject_sap(stats):
+            p_hat, s_hat = stats
+            expected = crowd * p_hat
+            diff = np.abs(s_hat - expected)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                rel = np.where(expected > 0, diff / expected, 0.0)
+            sigma = math.hypot(e_sap, crowd * e_pdc)
+            return (
+                (p_hat > 0)
+                & (diff / sigma >= params.max_sap_sigma)
+                & (rel >= params.max_sap_rel_diff)
             )
 
-        p = simulated_probability(draw_sap, reject_sap, seed) if sigma > 0 else 0.0
+        ok = e_sap > 0 or e_pdc > 0
+        p = simulated_probability(draw_sap, reject_sap, seed) if ok else 0.0
         blocks["sap"] = rule_block(
             "SAP relative depth difference", rel_alt, "fraction", "compound-sim-1", p
         )
     if g_bkg is not None and g_sap is not None and g_sap.mean > 0 and g_bkg.error > 0:
         frac_alt = params.max_background_fraction + sp.background_alternative_increment
-        rise_alt = frac_alt * g_sap.mean
-        e_bkg, sap_depth = g_bkg.error, g_sap.mean
+        e_bkg, sap_depth, e_sap = g_bkg.error, g_sap.mean, g_sap.error
 
+        # the background rise and the SAP depth drawn jointly, with the positivity branch
         def draw_bkg(rng, n):
-            return rise_alt + e_bkg * rng.standard_normal(n)
+            s_hat = sap_depth + e_sap * rng.standard_normal(n)
+            rise = frac_alt * sap_depth + e_bkg * rng.standard_normal(n)
+            return s_hat, rise
 
-        def reject_bkg(rise):
-            return (rise / e_bkg >= params.max_background_sigma) & (
-                rise / sap_depth >= params.max_background_fraction
+        def reject_bkg(stats):
+            s_hat, rise = stats
+            with np.errstate(divide="ignore", invalid="ignore"):
+                frac = np.where(s_hat > 0, rise / s_hat, 0.0)
+            return (
+                (s_hat > 0)
+                & (rise / e_bkg >= params.max_background_sigma)
+                & (frac >= params.max_background_fraction)
             )
 
         p = simulated_probability(draw_bkg, reject_bkg, seed + 1)

@@ -343,15 +343,21 @@ def v05_tests(
     events = per_event_depths(
         flat, final.period, final.t0, final.duration, cadence, gp.events, 0.0, None, noise
     )
+    events_half = per_event_depths(
+        flat, final.period, final.t0, final.duration, cadence, gp.events, 0.5, None, noise
+    )
     seed = power.candidate_seed
     aux = data.aux
     out: list[TestResult] = []
     for test in tests:
         if test.name == "odd_even":
+            # v0.5: measured again on the red-noise events (whatever the corrections switch),
+            # so that its sensitivity rests on calibrated errors (Codex's review of round 2)
+            test = check_odd_even(events, gp.odd_even)
             test = power.attach(test, power.odd_even_blocks(test, final.depth, sp))
         elif test.name == "secondary_eclipse":
             test = v5.check_secondary_two_sided(
-                primary, secondary, gp.secondary_eclipse, sp, seed("secondary_eclipse", final)
+                events, events_half, gp.secondary_eclipse, sp, seed("secondary_eclipse", final)
             )
         elif test.name == "plausibility":
             test = power.attach(test, power.plausibility_blocks(test))
@@ -622,9 +628,9 @@ def discovery_record(analysis: Analysis, plan: TessTestPlan) -> dict[str, Any]:
 
 
 SDE_NOTE = (
-    "the search's SDE is the stage-1 SDE of the per-sector peak that seeded the kept candidate; "
-    "when the kept period is a multiple of the seed's (search_diagnostics.refined, factor), it "
-    "is not the SDE of the kept peak, which this search does not compute (#186)"
+    "the candidate's `sde` is the stage-1 SDE of the per-sector peak that seeded it (with a "
+    "kept period at a multiple of the seed's, not the SDE of the kept peak); `sde_kept_peak` is "
+    "the SDE of the kept period itself, computed for this report after the selection (#186)"
 )
 
 
@@ -679,10 +685,15 @@ def v05_record(analysis: Analysis, data: TessData, plan: TessTestPlan) -> dict[s
                 "depth_consistency_sigma": r.metrics.get("depth_consistency_sigma"),
             }
         )
+    from refute.packs.tess.search import kept_peak_sde
+
     return {
         "discovery_version": 2,
         "sensitivity_rule": "refute.core.sensitivity.enforce_sensitivity (#185)",
         "parameters": params,
+        "sde_kept_peak": None
+        if candidate is None
+        else kept_peak_sde(analysis.flattened_search, candidate, plan.search),
         "sde_note": SDE_NOTE,
         "cadences_per_sector": sectors,
         "holdout_rounds": rounds,

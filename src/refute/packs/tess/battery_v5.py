@@ -426,21 +426,7 @@ def check_sinusoid(
             "significance": significance,
             "beta": beta,
         }
-        sa, sb = math.sqrt(max(cov[0, 0], 0.0)), math.sqrt(max(cov[1, 1], 0.0))
-
-        def draw(rng, n, sa=sa, sb=sb):
-            return alt + sa * rng.standard_normal(n), sb * rng.standard_normal(n)
-
-        def reject(stats, sigma=sigma):
-            x, y = stats
-            amp_hat = np.hypot(x, y)
-            return (amp_hat / sigma > sp.sinusoid_min_significance) & (
-                amp_hat >= sp.sinusoid_min_amplitude_ratio * depth
-            )
-
-        probabilities.append(
-            simulated_probability(draw, reject, seed + int(factor * 4)) if sigma > 0 else 0.0
-        )
+        probabilities.append(_sinusoid_power(cov, alt, depth, sp, seed + int(factor * 4)))
     worst = int(np.argmin(probabilities))
     block = rule_block(
         "sinusoid semi-amplitude", depth * 1e6, "ppm", "compound-sim-1", probabilities[worst]
@@ -474,6 +460,39 @@ def check_sinusoid(
         coverage_unit="out-of-transit cadences",
         sensitivity={"main": block},
     )
+
+
+def _sinusoid_power(
+    cov: np.ndarray, alternative: float, depth: float, sp: StrongerParams, seed: int
+) -> float:
+    """The probability that the test's own rule rejects a sinusoid of semi-amplitude
+    ``alternative``: the (cos, sin) coefficients drawn jointly with their full covariance, the
+    amplitude and its uncertainty recomputed in each draw as the test computes them, at the
+    worst of eight phases of the alternative (Codex's review of round 2)."""
+    try:
+        chol = np.linalg.cholesky(cov)
+    except np.linalg.LinAlgError:
+        return 0.0
+    probabilities = []
+    for k in range(8):
+        angle = 2.0 * math.pi * k / 8.0
+        truth = alternative * np.array([math.cos(angle), math.sin(angle)])
+
+        def draw(rng, n, truth=truth):
+            return truth + rng.standard_normal((n, 2)) @ chol.T
+
+        def reject(ab):
+            a, b = ab[:, 0], ab[:, 1]
+            amp = np.hypot(a, b)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                var = (a * a * cov[0, 0] + b * b * cov[1, 1] + 2 * a * b * cov[0, 1]) / amp**2
+                sig = np.where(var > 0, amp / np.sqrt(np.abs(var)), 0.0)
+            return (sig > sp.sinusoid_min_significance) & (
+                amp >= sp.sinusoid_min_amplitude_ratio * depth
+            )
+
+        probabilities.append(simulated_probability(draw, reject, seed + k))
+    return min(probabilities)
 
 
 def _box_after(time: np.ndarray, flux: np.ndarray, candidate: Candidate, label: str) -> float:

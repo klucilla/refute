@@ -56,11 +56,13 @@ def test_6_2_period_error_and_epoch_come_from_one_fit(v05):
     assert "one fit" in fields["period_epoch_source"]
 
 
-def test_6_3_the_sde_is_labelled_not_claimed_for_the_kept_peak(v05):
-    # case 6.3 asks for the SDE of the kept peak; this search does not compute it, so the
-    # field is labelled for what it is (recorded as not met as written; #186 stays open)
-    assert "not the SDE of the kept peak" in v05["v05"]["sde_note"]
-    assert "not the SDE of the kept peak" in _fields(v05)["sde_note"]
+def test_6_3_the_sde_of_the_kept_peak_is_reported(v05):
+    # reporting only: the kept period in each sector's stage-1 periodogram, after the selection
+    kept = v05["v05"]["sde_kept_peak"]
+    assert kept["max"] is not None and kept["max"] > 5.0
+    assert set(kept["per_sector"]) == {str(s) for s in v05["data_summary"]["sectors"]}
+    assert _fields(v05)["sde_kept_peak"] == kept["max"]
+    assert "SDE of the kept peak" in render_report(v05, CONTEXT)
 
 
 def test_6_4_diagnostic_tests_are_labelled_diagnostic(v05):
@@ -73,7 +75,7 @@ def test_6_8_epochs_are_printed_at_full_precision(v05):
     text = render_report(v05, CONTEXT)
     row = next(line for line in text.splitlines() if line.startswith("| Epoch (BJD_TDB) |"))
     assert "e+06" not in row
-    assert f"{v05['candidate']['t0_bjd']:.6f}" in row
+    assert repr(float(v05["candidate"]["t0_bjd"])) in row  # round-trips verdict.json
 
 
 def test_6_9_each_holdout_round_says_whether_it_tests_the_candidate(v05):

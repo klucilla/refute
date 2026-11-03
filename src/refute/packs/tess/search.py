@@ -224,6 +224,52 @@ def finalize_candidate(
     )
 
 
+def kept_peak_sde(lc: LightCurveData, candidate: Candidate, params: SearchParams) -> dict[str, Any]:
+    """v0.5 (WP6, case 6.3; #186), reporting only: the SDE of the kept candidate's period in
+    each sector's stage-1 periodogram (the same binning, period grid, durations and
+    normalization as ``search_period``'s stage 1), computed after the selection and never fed
+    back into it. A sector too short for the kept period has none."""
+    durations = np.asarray(params.durations_hours, dtype=float) / 24.0
+    binned = bin_lightcurve(lc, params.bin_minutes)
+    per_sector: dict[str, float | None] = {}
+    for sector in binned.sectors:
+        data = binned.select(binned.sector == sector)
+        max_period = min(params.period_max_days, data.span / 2.0)
+        if (
+            max_period <= params.period_min_days
+            or len(data) < 20
+            or not params.period_min_days <= candidate.period <= max_period
+        ):
+            per_sector[str(int(sector))] = None
+            continue
+        valid = _valid_durations(durations, params.period_min_days)
+        model = _bls(data)
+        periods = model.autoperiod(
+            valid,
+            minimum_period=params.period_min_days,
+            maximum_period=max_period,
+            minimum_n_transit=2,
+            frequency_factor=params.frequency_factor,
+        )
+        power = np.asarray(model.power(periods, valid, objective="likelihood").power, float)
+        finite = np.isfinite(power)
+        at = float(
+            model.power(np.array([candidate.period]), valid, objective="likelihood").power[0]
+        )
+        if finite.sum() < 10 or not np.isfinite(at):
+            per_sector[str(int(sector))] = None
+            continue
+        mean, std = float(power[finite].mean()), float(power[finite].std())
+        per_sector[str(int(sector))] = (at - mean) / std if std > 0 else None
+    values = [v for v in per_sector.values() if v is not None]
+    return {
+        "reference": "each sector's stage-1 BLS likelihood periodogram (search_period's grid and "
+        "normalization), at the kept period",
+        "per_sector": per_sector,
+        "max": max(values) if values else None,
+    }
+
+
 def search_period(lc: LightCurveData, params: SearchParams) -> SearchResult:
     """Find the strongest periodic box signal in a detrended light curve."""
     durations = np.asarray(params.durations_hours, dtype=float) / 24.0

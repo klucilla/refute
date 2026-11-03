@@ -25,3 +25,14 @@ not to open.
   deterministic). Revision 2 of the acceptance documents completes G in section C1 only, before
   any C1 code; the review's other findings (the cleanup guard, the sensitivity validation) were
   fixed in code. Recorded in the tracking issue.
+
+**Round 2 of the work** (the TESS wiring, WP2 to WP4, WP6, WP7):
+- [codex-design-round-2.md](codex-design-round-2.md) (SHA-256
+  `dcbb8514ae5a7ced108054f2b9cc6ba5f37002ac474f3092b65bdfd299de0aa9`): the wiring design,
+  `WEAKENED`; every change adopted (the rule on every fatal or warning test, version-aware
+  expected tests, conditional sub-checks, the registered 0.9 requirement of `period_alias`).
+- [codex-end-of-round-2.md](codex-end-of-round-2.md) (SHA-256
+  `e75b7b579a07f32cd2f2600431ba82ebd46f98828245716d300af3c5919698ee`): `WEAKENED`, 1 critical
+  (the measurement chain without the rule) and 8 important findings. All fixed by bounded
+  repairs to the frozen specification, except the #188 study's measured quantity, recorded as
+  a deviation without a rerun (docs/validation/v0.5/study-188-deviation.md).

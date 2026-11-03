@@ -13,6 +13,7 @@ from refute.packs.tess.discover.paired import (
     paired_chain,
     recovery_v05,
     summarize,
+    summarize_injections,
     transformed_groups,
     transitions,
     verdict_counts,
@@ -40,6 +41,11 @@ def test_10_1_plans_that_would_not_share_the_candidate_are_refused():
     other["search"] = {**other["search"], "period_max_days": 9.0}
     with pytest.raises(ValueError, match="search"):
         check_pairing(V04, TessTestPlan.model_validate(other))
+    # the event measurement feeds the final candidate and its gate (Codex's review)
+    events = discovery_v05_plan_dict()
+    events.setdefault("gauntlet", {})["events"] = {"min_coverage": 0.7}
+    with pytest.raises(ValueError, match="events"):
+        check_pairing(V04, TessTestPlan.model_validate(events))
     with pytest.raises(ValueError, match="discovery version"):
         check_pairing(V05, V05)
 
@@ -80,12 +86,34 @@ def test_10_3_an_empty_group_is_reported_with_zeros():
     assert out["v04_stage_verdicts"] == dict.fromkeys(VERDICTS, 0)
 
 
+def _injected(key, recovered, status="OK", v04="SURVIVED", v05="INCONCLUSIVE"):
+    record = _record(key, status=status, v04=v04, v05=v05)
+    record["recovery"] = {"recovered": recovered, "alias": None, "gate_passed": True}
+    return record
+
+
 def test_7_1_hosts_with_their_own_signal_are_never_pooled():
-    records = [_record("A"), _record("B"), _record("C")]
+    records = [_injected("A", True), _injected("B", True), _injected("C", True)]
     out = injection_groups(records, own_signal={"C"})
-    assert out["original_gate_negative"]["tasks"] == 2
-    assert out["signal_bearing"]["tasks"] == 1
+    assert out["original_gate_negative"]["attempted"] == 2
+    assert out["signal_bearing"]["attempted"] == 1
     assert "not sensitivity" in out["signal_bearing"]["caveat"]
+
+
+def test_injection_counts_are_conditioned_on_recovery():
+    # a gate-passing detection at an unrelated period (not recovered) never enters the counts
+    records = [
+        _injected("A", True, v04="SURVIVED", v05="REFUTED"),
+        _injected("A", False, v04="SURVIVED", v05="SURVIVED"),
+        _injected("B", False, status="ERROR"),
+    ]
+    out = summarize_injections(records, "x")
+    assert out["attempted"] == 3 and out["recovered"] == 1 and out["not_recovered"] == 2
+    assert out["failed_tasks"] == 1
+    assert out["among_recovered"]["denominator"] == 1
+    assert out["among_recovered"]["v05_stage_verdicts"]["REFUTED"] == 1
+    assert out["among_recovered"]["v05_stage_verdicts"]["SURVIVED"] == 0
+    assert out["among_attempted"]["denominator"] == 3
 
 
 def test_7_2_inverted_and_rotated_curves_and_both_hosts_are_apart():

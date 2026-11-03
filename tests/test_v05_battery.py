@@ -290,3 +290,15 @@ def test_a_v04_analysis_is_unchanged_by_the_v05_code():
     analysis = analyze_data(data, plan, stage=1)
     assert all(t.sensitivity is None for t in analysis.tests)
     assert {t.name for t in analysis.tests}.isdisjoint({"single_event", "sinusoid"})
+
+
+def test_the_measurement_chain_applies_the_rule_too(monkeypatch):
+    # Codex's review of round 2 (critical): measure.chain must not let a v0.5 PASS through
+    # without its block; with the odd/even block suppressed, odd_even cannot PASS there
+    from refute.packs.tess import power
+    from refute.packs.tess.discover.measure import chain
+
+    monkeypatch.setattr(power, "odd_even_blocks", lambda *args, **kwargs: None)
+    plan = TessTestPlan.model_validate(discovery_v05_plan_dict())
+    out = chain(scenario_data("planet"), plan, 1)
+    assert out["tests"]["odd_even"]["status"] != "PASS"

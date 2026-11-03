@@ -126,24 +126,6 @@ def sector_offset(
     detect = plan.gauntlet.centroid_shift.max_sigma
     if not (depth > 0) or depth / g_f.error < detect:
         return f"transit not detected in the aperture flux ({depth / g_f.error:.1f} sigma)"
-    expected = candidate.depth * crowdsap
-    agree = abs(depth - expected) / math.hypot(g_f.error, candidate.depth_err * crowdsap)
-    if agree > sp.centroid_qualification_sigma:
-        return (
-            f"aperture depth {depth * 1e6:.0f} ppm disagrees with the light-curve depth times "
-            f"CROWDSAP ({expected * 1e6:.0f} ppm) at {agree:.1f} sigma"
-        )
-    controls_x, controls_y = [], []
-    for phase in control_phases(candidate, sp.centroid_control_epochs, seed + px.sector):
-        cx_c = shift_at(det_x, candidate, plan, phase)
-        cy_c = shift_at(det_y, candidate, plan, phase)
-        if cx_c is not None and cy_c is not None:
-            controls_x.append(cx_c.mean)
-            controls_y.append(cy_c.mean)
-    if len(controls_x) < sp.centroid_min_controls:
-        return f"only {len(controls_x)} valid control epochs (< {sp.centroid_min_controls})"
-    err_x = max(g_x.error, float(np.std(controls_x, ddof=1)))
-    err_y = max(g_y.error, float(np.std(controls_y, ddof=1)))
     half = plan.detrend.transit_mask_half_width_durations * candidate.duration
     out = ~transit_mask(t, candidate.period, candidate.t0, half)
     if out.sum() < 100:
@@ -154,20 +136,45 @@ def sector_offset(
     rel = g_f.error / depth
     tx, ty = px.target_xy
     off = np.array([c_out[0] - dx * factor - tx, c_out[1] - dy * factor - ty])
-    sig = np.array(
-        [
-            math.hypot(err_x * factor, dx * factor * rel),
-            math.hypot(err_y * factor, dy * factor * rel),
-        ]
-    )
-    if not (np.all(np.isfinite(off)) and np.all(sig > 0)):
+    if not np.all(np.isfinite(off)):
         return "centroid offset could not be computed"
+    measured = {"sector": int(px.sector), "offset_px": off}  # reported even when not qualified
+    expected = candidate.depth * crowdsap
+    agree = abs(depth - expected) / math.hypot(g_f.error, candidate.depth_err * crowdsap)
+    if agree > sp.centroid_qualification_sigma:
+        return {
+            **measured,
+            "not_qualified": f"aperture depth {depth * 1e6:.0f} ppm disagrees with the "
+            f"light-curve depth times CROWDSAP ({expected * 1e6:.0f} ppm) at {agree:.1f} sigma",
+        }
+    controls_x, controls_y = [], []
+    for phase in control_phases(candidate, sp.centroid_control_epochs, seed + px.sector):
+        cx_c = shift_at(det_x, candidate, plan, phase)
+        cy_c = shift_at(det_y, candidate, plan, phase)
+        if cx_c is not None and cy_c is not None:
+            controls_x.append(cx_c.mean)
+            controls_y.append(cy_c.mean)
+    if len(controls_x) < sp.centroid_min_controls:
+        why = f"only {len(controls_x)} valid control epochs (< {sp.centroid_min_controls})"
+        return {**measured, "not_qualified": why}
+    # the shift covariance: max(formal, empirical) on the diagonal, the controls' empirical
+    # x-y covariance off it (clipped to keep it positive definite); then the offset's
+    # covariance with the term common to x and y from the uncertain depth (Codex's review)
+    ctrl = np.cov(np.vstack([controls_x, controls_y]))
+    var_x = max(g_x.error**2, float(ctrl[0, 0]))
+    var_y = max(g_y.error**2, float(ctrl[1, 1]))
+    limit = 0.99 * math.sqrt(var_x * var_y)
+    cov_xy = float(np.clip(ctrl[0, 1], -limit, limit))
+    shift_cov = np.array([[var_x, cov_xy], [cov_xy, var_y]])
+    g = np.array([dx, dy]) * factor * rel
+    cov_px = factor**2 * shift_cov + np.outer(g, g)
+    if not np.all(np.isfinite(cov_px)) or np.linalg.det(cov_px) <= 0:
+        return {**measured, "not_qualified": "the offset covariance is not positive definite"}
     jac = np.asarray(jacobian, dtype=float)
     return {
-        "sector": int(px.sector),
-        "offset_px": off,
+        **measured,
         "offset_sky": jac @ off,
-        "cov_sky": jac @ np.diag(sig**2) @ jac.T,
+        "cov_sky": jac @ cov_px @ jac.T,
         "pixel_scale": math.sqrt(abs(float(np.linalg.det(jac)))),
         "n_cadences": int(t.size),
         "controls": len(controls_x),
@@ -187,6 +194,51 @@ def combine(rows: list[dict[str, Any]]) -> tuple[np.ndarray, np.ndarray, float]:
         )
     )
     return mean, cov, chi2
+
+
+def sky_power(
+    rows: list[dict[str, Any]],
+    alternative: float,
+    min_arcsec: float,
+    max_sigma: float,
+    alpha: float,
+    seed: int,
+) -> list[float]:
+    """The probability that the whole WP4 rule fails a source at ``alternative`` arcsec, in
+    each of eight directions: each qualified sector's offset drawn from its own covariance, the
+    draws combined as the test combines them, and a rejection only when the sectors agree
+    (heterogeneity), the combined offset reaches ``max_sigma`` and the minimum offset (Codex's
+    review of round 2)."""
+    from refute.core.chi2 import chi2_isf
+    from refute.packs.tess.battery import gaussian_sigma_from_chi2
+
+    weights = [np.linalg.inv(r["cov_sky"]) for r in rows]
+    cov = np.linalg.inv(sum(weights))
+    inv = np.linalg.inv(cov)
+    chols = [np.linalg.cholesky(r["cov_sky"]) for r in rows]
+    dof = 2 * (len(rows) - 1)
+    critical = chi2_isf(alpha, dof) if dof > 0 else float("inf")
+    out = []
+    for k in range(8):
+        angle = 2.0 * math.pi * k / 8.0
+        truth = alternative * np.array([math.cos(angle), math.sin(angle)])
+
+        def draw(rng: np.random.Generator, n: int, truth=truth) -> np.ndarray:
+            return np.stack([truth + rng.standard_normal((n, 2)) @ c.T for c in chols], axis=1)
+
+        def reject(o: np.ndarray) -> np.ndarray:  # o: (n, sectors, 2)
+            mean = np.einsum("ij,nj->ni", cov, sum(o[:, i] @ w.T for i, w in enumerate(weights)))
+            chi_het = sum(
+                np.einsum("ni,ij,nj->n", o[:, i] - mean, w, o[:, i] - mean)
+                for i, w in enumerate(weights)
+            )
+            chi = np.einsum("ni,ij,nj->n", mean, inv, mean)
+            sig = np.array([gaussian_sigma_from_chi2(float(c), 2) for c in chi])
+            agree = chi_het <= critical
+            return agree & (sig >= max_sigma) & (np.hypot(mean[:, 0], mean[:, 1]) >= min_arcsec)
+
+        out.append(simulated_probability(draw, reject, seed + k))
+    return out
 
 
 def check_centroid_v5(
@@ -214,10 +266,18 @@ def check_centroid_v5(
     crowd = {a.sector: a.crowdsap for a in sectors_aux}
     rows: list[dict[str, Any]] = []
     skipped: dict[str, str] = {}
+    measured_unqualified: dict[str, dict[str, float]] = {}
     for px in pixels:
         r = sector_offset(px, candidate, plan, crowd.get(px.sector), seed)
         if isinstance(r, str):
             skipped[str(px.sector)] = r
+        elif "not_qualified" in r:
+            # WP4: a non-qualifying sector is reported with its offset (Codex's review)
+            skipped[str(px.sector)] = r["not_qualified"]
+            measured_unqualified[str(px.sector)] = {
+                "offset_x_px": float(r["offset_px"][0]),
+                "offset_y_px": float(r["offset_px"][1]),
+            }
         else:
             rows.append(r)
     metrics: dict[str, Any] = {
@@ -233,6 +293,7 @@ def check_centroid_v5(
             for r in rows
         },
         "not_qualified": skipped,
+        "not_qualified_offsets": measured_unqualified,
     }
     coverage = sum(r["n_cadences"] for r in rows)
 
@@ -284,23 +345,8 @@ def check_centroid_v5(
     if p_het < sp.chi2_alpha:
         return result(TestStatus.INCONCLUSIVE, f"sectors disagree (heterogeneity p = {p_het:.2g})")
     alt = sp.centroid_alternative_offset_factor * min_arcsec
+    probabilities = sky_power(rows, alt, min_arcsec, params.max_sigma, sp.chi2_alpha, seed + 100)
     max_sigma = params.max_sigma
-
-    def reject(m: np.ndarray) -> np.ndarray:
-        chi = np.einsum("ni,ij,nj->n", m, inv, m)
-        sig = np.array([gaussian_sigma_from_chi2(float(c), 2) for c in chi])
-        return (sig >= max_sigma) & (np.hypot(m[:, 0], m[:, 1]) >= min_arcsec)
-
-    chol = np.linalg.cholesky(cov)
-    probabilities = []
-    for k in range(8):  # the worst of eight directions
-        angle = 2.0 * math.pi * k / 8.0
-        truth = alt * np.array([math.cos(angle), math.sin(angle)])
-
-        def draw(rng: np.random.Generator, n: int, truth=truth) -> np.ndarray:
-            return truth + rng.standard_normal((n, 2)) @ chol.T
-
-        probabilities.append(simulated_probability(draw, reject, seed + 100 + k))
     block = {
         "main": rule_block("source offset", alt, "arcsec", "centroid-sky-sim-1", min(probabilities))
     }
