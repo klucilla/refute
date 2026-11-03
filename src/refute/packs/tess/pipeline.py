@@ -332,7 +332,7 @@ def v05_tests(
     two-sided phase-0.5 check in place of the v0.4 one, and the v0.5 tests (WP1 to WP3 of
     docs/plans/v0.5-acceptance.md). The v0.4 check functions are unchanged. The per-event
     measurements of the v0.5 tests use the red-noise error model (A1, ``rednoise.event_noise``).
-    ``centroid_shift`` gets its v0.5 rule with WP4; until then its PASS has no block."""
+    ``centroid_shift`` is the per-sector v0.5 test (WP4, ``centroid_v5``)."""
     from refute.packs.tess import battery_v5 as v5
     from refute.packs.tess import power
 
@@ -355,6 +355,16 @@ def v05_tests(
             )
         elif test.name == "plausibility":
             test = power.attach(test, power.plausibility_blocks(test))
+        elif test.name == "centroid_shift":
+            from refute.packs.tess.centroid_v5 import check_centroid_v5
+
+            test = check_centroid_v5(
+                aux.pixels if aux else [],
+                aux.sectors if aux else [],
+                final,
+                plan,
+                seed("centroid_shift", final),
+            )
         elif test.name == "aperture_depth":
             test = power.attach(
                 test, power.aperture_blocks(test, sp, seed("aperture_depth", final))

@@ -20,6 +20,7 @@ FITS readers of the adapter are exercised offline.
 
 from __future__ import annotations
 
+import dataclasses
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -44,6 +45,7 @@ from refute.packs.tess.types import (
     ProductInfo,
     SectorAux,
     SectorInfo,
+    SkyPixelData,
     StarInfo,
     TessData,
     btjd_to_year,
@@ -312,6 +314,31 @@ def render_pixels(
     )
 
 
+def with_sky_jacobians(data: TessData) -> TessData:
+    """v0.5: the same data with each pixel file given the synthetic Jacobian of its sector
+    (``SkyPixelData``); the earlier generators are unchanged."""
+    if data.aux is None:
+        return data
+    pixels = [with_sky_jacobian(px) for px in data.aux.pixels]
+    return dataclasses.replace(data, aux=dataclasses.replace(data.aux, pixels=pixels))
+
+
+def with_sky_jacobian(px: PixelData) -> SkyPixelData:
+    """One pixel file as ``SkyPixelData`` with the synthetic Jacobian of its sector."""
+    fields = {f.name: getattr(px, f.name) for f in dataclasses.fields(PixelData)}
+    return SkyPixelData(**fields, sky_jacobian=sector_jacobian(px.sector))
+
+
+def sector_jacobian(sector: int) -> tuple[tuple[float, float], tuple[float, float]]:
+    """v0.5 (acceptance C1): the synthetic pixel-to-sky Jacobian, the TESS pixel scale rotated
+    by a multiple of 90 degrees that depends on the sector, so that one sky offset appears as
+    different pixel offsets in different sectors."""
+    turns = int(sector) % 4
+    c, s = ((1, 0), (0, 1), (-1, 0), (0, -1))[turns]
+    k = PIXEL_SCALE_ARCSEC
+    return ((k * c, -k * s), (k * s, k * c))
+
+
 def dump_times(start: float, end: float, spacing: float = 3.3, offset: float = 1.7) -> np.ndarray:
     return np.arange(start + offset, end, spacing)
 
@@ -421,6 +448,59 @@ def make_blend(
         pixels=pixels,
         neighbors=neighbors,
         neighbor_radius_arcsec=120.0,
+    )
+    return lc, sectors, aux
+
+
+def make_blend_sky(
+    neighbor_spec: SignalSpec,
+    offset_arcsec: tuple[float, float],
+    *,
+    neighbor_ratio: float = 0.3,
+    sector_starts: tuple[float, ...] = THREE_YEARS,
+    noise_ppm: float = 300.0,
+    seed: int = 0,
+) -> tuple[LightCurveData, list[SectorInfo], AuxData]:
+    """v0.5 (WP4, acceptance C1 family PX): a blend whose neighbor sits at a fixed **sky**
+    offset (arcsec east and north) from the target; in each sector it is drawn at the pixel
+    position that the sector's Jacobian (``sector_jacobian``) gives, so one sky offset appears
+    as different pixel offsets in sectors of different orientation. The light curve is the
+    crowding-corrected aperture photometry, as in ``make_blend`` (which is not changed)."""
+    rng = np.random.default_rng(seed)
+    base, sectors = make_lightcurve(
+        None, sector_starts=sector_starts, noise_ppm=noise_ppm, seed=seed
+    )
+    flux = np.empty(len(base))
+    pixels = []
+    sector_aux = []
+    crowds = []
+    for sector in base.sectors:
+        sel = base.sector == sector
+        t = base.time[sel]
+        jac = np.asarray(sector_jacobian(int(sector)), dtype=float)
+        dx, dy = np.linalg.solve(jac, np.asarray(offset_arcsec, dtype=float))
+        scene = Scene(neighbor_xy=(5.0 + float(dx), 5.0 + float(dy)), neighbor_ratio=neighbor_ratio)
+        c = crowding(scene)
+        crowds.append(c)
+        px = with_sky_jacobian(
+            render_pixels(
+                int(sector), t, base.flux[sel], scene, rng, signal_model(t, neighbor_spec)
+            )
+        )
+        aperture = scene_aperture(scene)
+        ap = px.flux[:, aperture].sum(axis=1)
+        ap = ap / np.median(ap)
+        flux[sel] = (ap - (1.0 - c)) / c
+        pixels.append(px)
+    lc = LightCurveData(base.time, flux, base.flux_err, base.sector, base.year)
+    for sector, c in zip(base.sectors, crowds, strict=True):
+        sector_aux += make_sector_aux(lc.select(lc.sector == sector), c, rng)
+    sep = math.hypot(*offset_arcsec)
+    neighbors = [
+        Neighbor(tic_id=2, tmag=10.0 - 2.5 * math.log10(neighbor_ratio), separation_arcsec=sep)
+    ]
+    aux = AuxData(
+        sectors=sector_aux, pixels=pixels, neighbors=neighbors, neighbor_radius_arcsec=120.0
     )
     return lc, sectors, aux
 

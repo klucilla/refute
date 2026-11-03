@@ -190,6 +190,17 @@ class PixelData:
     n_dropped_cadences: int = 0
 
 
+@dataclass
+class SkyPixelData(PixelData):
+    """v0.5 WP4: a target pixel file with its pixel-to-sky Jacobian: arcsec east and north per
+    pixel step in x (first column) and y (second column) at the target, from the file's WCS;
+    None when the WCS cannot be read. A subclass, so that ``PixelData`` keeps its fields and
+    the anchored digests of the earlier synthetic generators do not change; the v0.5 centroid
+    test reads the Jacobian with ``getattr`` and treats a plain ``PixelData`` as having none."""
+
+    sky_jacobian: tuple[tuple[float, float], tuple[float, float]] | None = None
+
+
 @dataclass(frozen=True)
 class Neighbor:
     """A TIC source near the target (from a cone query around the target)."""

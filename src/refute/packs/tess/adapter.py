@@ -50,6 +50,7 @@ from refute.packs.tess.types import (
     ProductInfo,
     SectorAux,
     SectorInfo,
+    SkyPixelData,
     StarInfo,
     TessData,
     btjd_to_year,
@@ -554,6 +555,41 @@ def _target_xy(hdul: Any) -> tuple[float, float] | None:
     return float(x), float(y)
 
 
+def _sky_jacobian(
+    hdul: Any, target: tuple[float, float] | None
+) -> tuple[tuple[float, float], tuple[float, float]] | None:
+    """v0.5 WP4: arcsec east and north per pixel step in x and in y at the target, by central
+    differences of the aperture HDU's WCS (no sign convention assumed); None when unreadable."""
+    import warnings
+
+    from astropy.wcs import WCS, FITSFixedWarning
+
+    if target is None:
+        return None
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FITSFixedWarning)
+            wcs = WCS(hdul[2].header).celestial
+        x, y = target
+        pts = [[x - 0.5, y], [x + 0.5, y], [x, y - 0.5], [x, y + 0.5]]
+        (ra1, de1), (ra2, de2), (ra3, de3), (ra4, de4) = wcs.all_pix2world(pts, 0)
+    except Exception:  # noqa: BLE001 - an unreadable WCS means "no sky frame"
+        return None
+    cos_dec = math.cos(math.radians(0.5 * (de1 + de2)))
+
+    def east(r_a: float, r_b: float) -> float:
+        d = (r_b - r_a + 180.0) % 360.0 - 180.0  # across RA = 0
+        return d * cos_dec * 3600.0
+
+    jac = (
+        (east(ra1, ra2), east(ra3, ra4)),
+        ((de2 - de1) * 3600.0, (de4 - de3) * 3600.0),
+    )
+    if not all(math.isfinite(v) for row in jac for v in row):
+        return None
+    return jac
+
+
 def read_spoc_tpf(
     path: Path,
     bitmask: int,
@@ -577,6 +613,7 @@ def read_spoc_tpf(
         quality = np.asarray(table["QUALITY"], dtype=np.int64)
         aperture = (np.asarray(hdul[2].data, dtype=np.int64) & APERTURE_OPTIMAL_BIT) != 0
         target = _target_xy(hdul)
+        jacobian = _sky_jacobian(hdul, target)
     if rotate_by:
         same = (
             reference_raw_time is not None
@@ -605,6 +642,7 @@ def read_spoc_tpf(
         "flux_err": err[keep],
         "aperture": aperture,
         "target_xy": target,
+        "sky_jacobian": jacobian,
     }
 
 
@@ -770,7 +808,7 @@ def load_from_manifest(
         lc_times = [t for t, s in zip(times, sectors, strict=True) if int(s[0]) == sector]
         keep = matching_cadences(lc_times[0] if lc_times else np.zeros(0), read["time"])
         pixels.append(
-            PixelData(
+            SkyPixelData(
                 sector=sector,
                 time=read["time"][keep],
                 flux=read["flux"][keep],
@@ -780,6 +818,7 @@ def load_from_manifest(
                 filename=record["name"],
                 sha256=record["sha256"],
                 n_dropped_cadences=int((~keep).sum()),
+                sky_jacobian=read.get("sky_jacobian"),
             )
         )
 
