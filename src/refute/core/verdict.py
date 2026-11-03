@@ -64,6 +64,10 @@ class TestResult:
     Every domain pack must declare it. A PASS with no declared coverage, or with
     zero coverage, is never accepted: :func:`enforce_coverage` turns it into
     INCONCLUSIVE (a check that examined nothing has not shown anything).
+
+    ``sensitivity`` (v0.5, issue #185) maps each sub-check of the test to its sensitivity
+    block (``refute.core.sensitivity``). It is ``None`` for every test of an earlier claim
+    and is then left out of :meth:`to_dict`, so earlier outputs keep their bytes.
     """
 
     __test__ = False  # not a pytest test class
@@ -77,9 +81,10 @@ class TestResult:
     inputs: dict[str, Any] = field(default_factory=dict)
     coverage: int | None = None
     coverage_unit: str = ""
+    sensitivity: dict[str, dict[str, Any]] | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        data = {
             "name": self.name,
             "status": self.status.value,
             "severity": self.severity.value,
@@ -90,9 +95,13 @@ class TestResult:
             "coverage": self.coverage,
             "coverage_unit": self.coverage_unit,
         }
+        if self.sensitivity is not None:
+            data["sensitivity"] = self.sensitivity
+        return data
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> TestResult:
+        sensitivity = data.get("sensitivity")
         return cls(
             name=data["name"],
             status=TestStatus(data["status"]),
@@ -103,6 +112,7 @@ class TestResult:
             inputs=dict(data.get("inputs", {})),
             coverage=data.get("coverage"),
             coverage_unit=data.get("coverage_unit", ""),
+            sensitivity=None if sensitivity is None else dict(sensitivity),
         )
 
 

@@ -3,7 +3,8 @@
 
 - ``measurement_tasks``: the injection and transformed-curve tasks of one star, with the seeds of
   R_inj; ``run_measurements`` runs them over worker processes and writes one JSON line per task
-  and one ``cost.jsonl`` line per task (logical-processor seconds), as input for v0.7.
+  and one ``cost.jsonl`` line per task (logical-processor seconds), as input for v0.8
+  Refute@Home (numbered v0.7 until 2026-11-03).
 - ``stage1_entries``: after a stage-1 run, the deduplication, the eligibility and the light
   ledger entry of every funnel star, from its ``verdict.json`` (with its SHA-256).
 """

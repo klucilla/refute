@@ -200,6 +200,30 @@ examined nothing has shown nothing. This rule lives in the core
 catalog that was searched around the target and has no entry there (coverage: the
 rows scanned), or a TIC cone query that returned no neighbor (coverage: one query).
 
+## Sensitivity: no PASS without the power to fail (claims from v0.5)
+
+Coverage says that a check examined data; it does not say that the check could have
+failed. In a claim that uses the sensitivity rule (v0.5 claims, issue #185), a fatal or
+warning test `PASS`es only when it could have detected its declared **alternative**: an
+effect strictly beyond its rejection boundary, fixed before the claim is locked. Each
+test, and each sub-check of a composite test, reports a sensitivity block: either a
+statistical **rule** (the probability that its full rejection rule rejects under the
+alternative, required to be at least 0.95) or, for a check that is not a statistical
+test, an applicability **category** (`deterministic-bound`, `catalog-lookup`,
+`fraction`). The domain pack's registry fixes which applies to each test, so a
+statistical test cannot pass by declaring a category.
+
+A `PASS` whose block is missing, malformed, of the wrong kind, or says that the
+alternative was not detectable is turned into `INCONCLUSIVE` by the engine, with the
+reason ("insufficient sensitivity: ..."). A `FAIL` is never changed: a detected failure
+stands. The gate is exempt (it is a positive detection test). A `PASS` then means "no
+failure detected, with the declared sensitivity", never that the effect is absent. The
+rule lives in the core (`refute.core.sensitivity.enforce_sensitivity`) and runs after the
+coverage rule; the aggregation below does not change. Because rule 3 makes any
+`INCONCLUSIVE` test decide the verdict, an underpowered warning test makes the verdict
+`INCONCLUSIVE`; reports give the `INCONCLUSIVE` fraction apart. Claims before v0.5 are
+unchanged. The per-test rules are in `docs/plans/v0.5-acceptance.md` (WP1).
+
 ## Aggregation (deterministic)
 
 Rules are applied in order; the first that matches decides:
