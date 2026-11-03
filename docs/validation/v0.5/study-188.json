@@ -1,0 +1,513 @@
+{
+  "curves": [
+    {
+      "index": 0,
+      "kind": "eb",
+      "seed": 1324116895642494431,
+      "true_period_days": 1.6417600975453004,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 34.296176102199134,
+        "candidate_period_days": 0.820487264047588,
+        "candidate_snr": 49.9265274654811,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 34.296176102199134,
+        "candidate_period_days": 0.820487264047588,
+        "candidate_snr": 49.9265274654811,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 1,
+      "kind": "eb",
+      "seed": 3133399007179463988,
+      "true_period_days": 2.071578986589246,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 20.97540684293769,
+        "candidate_period_days": 0.5167904875761282,
+        "candidate_snr": 38.60248426914087,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 20.97540684293769,
+        "candidate_period_days": 0.5167904875761282,
+        "candidate_snr": 38.60248426914087,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 2,
+      "kind": "eb",
+      "seed": 15662796307310107385,
+      "true_period_days": 4.602606887625896,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 16.54843265999925,
+        "candidate_period_days": 2.3023702629897924,
+        "candidate_snr": 16.608640792886728,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 16.54843265999925,
+        "candidate_period_days": 2.3023702629897924,
+        "candidate_snr": 16.608640792886728,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 3,
+      "kind": "eb",
+      "seed": 2349837191235482584,
+      "true_period_days": 2.153783377722166,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 17.41457207157512,
+        "candidate_period_days": 0.5380797110053964,
+        "candidate_snr": 32.44643255687739,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 17.41457207157512,
+        "candidate_period_days": 0.5380797110053964,
+        "candidate_snr": 32.44643255687739,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 4,
+      "kind": "eb",
+      "seed": 12112645303405345580,
+      "true_period_days": 1.7566985124539034,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 37.2789835204849,
+        "candidate_period_days": 0.8779338540288438,
+        "candidate_snr": 50.86233021191544,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 37.2789835204849,
+        "candidate_period_days": 0.8779338540288438,
+        "candidate_snr": 50.86233021191544,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 5,
+      "kind": "eb",
+      "seed": 15406863134512538165,
+      "true_period_days": 2.4384641070885005,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 17.472977261335195,
+        "candidate_period_days": 1.219730921754827,
+        "candidate_snr": 24.07772082662764,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 17.472977261335195,
+        "candidate_period_days": 1.219730921754827,
+        "candidate_snr": 24.07772082662764,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 6,
+      "kind": "eb",
+      "seed": 3415039273850210104,
+      "true_period_days": 2.9950213169075064,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 12.35848691054396,
+        "candidate_period_days": 0.5001605493271999,
+        "candidate_snr": 23.80278294160027,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 12.35848691054396,
+        "candidate_period_days": 0.5001605493271999,
+        "candidate_snr": 23.80278294160027,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 7,
+      "kind": "eb",
+      "seed": 3232492098301086838,
+      "true_period_days": 1.511510723360643,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 32.04280824603873,
+        "candidate_period_days": 0.7557586453394893,
+        "candidate_snr": 41.144174199186466,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 32.04280824603873,
+        "candidate_period_days": 0.7557586453394893,
+        "candidate_snr": 41.144174199186466,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 8,
+      "kind": "eb",
+      "seed": 8830685503094018215,
+      "true_period_days": 2.433859706423053,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 22.094573707255794,
+        "candidate_period_days": 1.2169324508890924,
+        "candidate_snr": 26.88103037018401,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 22.094573707255794,
+        "candidate_period_days": 1.2169324508890924,
+        "candidate_snr": 26.88103037018401,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 9,
+      "kind": "eb",
+      "seed": 12461847050190077831,
+      "true_period_days": 1.163938045239339,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 36.96446941840448,
+        "candidate_period_days": 0.583336765338747,
+        "candidate_snr": 64.13041498843887,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "box_snr_at_true_period": 36.96446941840448,
+        "candidate_period_days": 0.583336765338747,
+        "candidate_snr": 64.13041498843887,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 0,
+      "kind": "sinusoid",
+      "seed": 8199299556949839531,
+      "true_period_days": 3.883008425417864,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.1508448702494887,
+        "candidate_period_days": 0.9062935517077825,
+        "candidate_snr": 6.011401041115098,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.1508448702494887,
+        "candidate_period_days": 0.9062935517077825,
+        "candidate_snr": 6.011401041115098,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 1,
+      "kind": "sinusoid",
+      "seed": 3368007511050265653,
+      "true_period_days": 1.9580024751960035,
+      "with_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 10.420384728964406,
+        "candidate_period_days": 1.968616131185024,
+        "candidate_snr": 12.716148750939553,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 10.420384728964406,
+        "candidate_period_days": 1.968616131185024,
+        "candidate_snr": 12.716148750939553,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 2,
+      "kind": "sinusoid",
+      "seed": 4945814426738370358,
+      "true_period_days": 1.619710315125855,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 2.616056507535699,
+        "candidate_period_days": 0.8982043369314687,
+        "candidate_snr": 5.53657696486055,
+        "gate_passed": false,
+        "prewhitening_components": 1,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 18.39819585312839,
+        "candidate_period_days": 1.619477531143538,
+        "candidate_snr": 23.49992126197773,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 3,
+      "kind": "sinusoid",
+      "seed": 2971618755223856831,
+      "true_period_days": 1.28043668081592,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.2365485613869422,
+        "candidate_period_days": 1.668436820609414,
+        "candidate_snr": 5.58526059077545,
+        "gate_passed": false,
+        "prewhitening_components": 1,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 41.87596495253728,
+        "candidate_period_days": 1.2825615995295236,
+        "candidate_snr": 53.74101589170638,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 4,
+      "kind": "sinusoid",
+      "seed": 3211268149186568679,
+      "true_period_days": 3.102200864773267,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.7063580225246606,
+        "candidate_period_days": 0.9906486775200103,
+        "candidate_snr": 5.219262353675873,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.7063580225246606,
+        "candidate_period_days": 0.9906486775200103,
+        "candidate_snr": 5.219262353675873,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 5,
+      "kind": "sinusoid",
+      "seed": 13892878532758247248,
+      "true_period_days": 3.8069613297946177,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.3463703801161704,
+        "candidate_period_days": 1.63682885243486,
+        "candidate_snr": 5.48613003500229,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.3463703801161704,
+        "candidate_period_days": 1.63682885243486,
+        "candidate_snr": 5.48613003500229,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 6,
+      "kind": "sinusoid",
+      "seed": 9330640279144872000,
+      "true_period_days": 4.110496891194441,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 4.402497151055746,
+        "candidate_period_days": 2.255087499510256,
+        "candidate_snr": 5.103152725948442,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 4.402497151055746,
+        "candidate_period_days": 2.255087499510256,
+        "candidate_snr": 5.103152725948442,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 7,
+      "kind": "sinusoid",
+      "seed": 1590119127911213988,
+      "true_period_days": 2.5063602425488867,
+      "with_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 4.737716898405343,
+        "candidate_period_days": 2.5067618314986033,
+        "candidate_snr": 5.852078351758109,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 4.737716898405343,
+        "candidate_period_days": 2.5067618314986033,
+        "candidate_snr": 5.852078351758109,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 8,
+      "kind": "sinusoid",
+      "seed": 4031960662209489730,
+      "true_period_days": 1.8181728227149225,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "box_snr_at_true_period": 3.6870002251046206,
+        "candidate_period_days": 1.9207691847258275,
+        "candidate_snr": 5.93956585385984,
+        "gate_passed": false,
+        "prewhitening_components": 1,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 13.325277011522815,
+        "candidate_period_days": 1.8090720506481461,
+        "candidate_snr": 15.820026367180546,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    },
+    {
+      "index": 9,
+      "kind": "sinusoid",
+      "seed": 5010245783768268850,
+      "true_period_days": 2.338609984406892,
+      "with_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 5.459865973306775,
+        "candidate_period_days": 2.3302565347180058,
+        "candidate_snr": 7.245035337135658,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "box_snr_at_true_period": 5.459865973306775,
+        "candidate_period_days": 2.3302565347180058,
+        "candidate_snr": 7.245035337135658,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false
+      }
+    }
+  ],
+  "processor_seconds": 100.203125,
+  "script": "docs/validation/v0.5/study_188.py",
+  "study": "#188 (v0.5 WP7), bounded",
+  "summary": {
+    "eb/with_prewhitening": {
+      "curves": 10,
+      "gate_passed": 10,
+      "gate_passed_at_true_period_or_alias": 7,
+      "median_box_snr_at_true_period": 21.534990275096742
+    },
+    "eb/without_prewhitening": {
+      "curves": 10,
+      "gate_passed": 10,
+      "gate_passed_at_true_period_or_alias": 7,
+      "median_box_snr_at_true_period": 21.534990275096742
+    },
+    "sinusoid/with_prewhitening": {
+      "curves": 10,
+      "gate_passed": 2,
+      "gate_passed_at_true_period_or_alias": 2,
+      "median_box_snr_at_true_period": 3.696679123814641
+    },
+    "sinusoid/without_prewhitening": {
+      "curves": 10,
+      "gate_passed": 5,
+      "gate_passed_at_true_period_or_alias": 5,
+      "median_box_snr_at_true_period": 5.098791435856059
+    }
+  }
+}
