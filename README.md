@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/klucilla/refute/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/klucilla/refute/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://doi.org/10.5281/zenodo.23301000"><img alt="DOI 10.5281/zenodo.23301000 (all versions of the software)" src="https://zenodo.org/badge/DOI/10.5281/zenodo.23301000.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg"></a>
   <a href="pyproject.toml"><img alt="Python 3.12 | 3.13 (tested in CI)" src="https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB.svg"></a>
   <a href="ROADMAP.md"><img alt="Status: v0.4 Discover pilot closed; method not validated" src="https://img.shields.io/badge/status-v0.4%20pilot%20closed%2C%20not%20validated-orange.svg"></a>
@@ -88,8 +89,10 @@ and the hidden sectors' time spans. Then, in a round that reaches the measuremen
 hidden year is detrended once, with each predicted window masked out to the inner edge of its
 baseline band; that step is not logged,
 and its outlier clipping can drop hidden cadences. After it, the test reads the hidden year only
-inside the predicted windows, their baseline bands and control windows at the opposite phase,
-and every such read is logged. The test checks whether the predicted signal recurs in the hidden
+inside the predicted windows, their baseline bands and control windows at the opposite phase
+(with the v0.2.1 corrections switched on, replica spans placed away from the windows are also
+masked in that step and then read, to measure the hidden year's noise), and every such read is
+logged. The test checks whether the predicted signal recurs in the hidden
 year. Insufficient validity or capacity makes a round inconclusive.
 
 ## How a TESS signal claim moves through Refute
@@ -126,8 +129,9 @@ never change the verdict.</sub>
    others. In a round that reaches the measurement, the whole hidden year is detrended once,
    with each predicted window masked out to the inner edge of its baseline band (not logged;
    its clipping can drop hidden cadences). After that, the code can only open the predicted
-   windows, their local baseline bands and the phase-0.5 control windows, and every read is
-   logged.
+   windows, their local baseline bands and the phase-0.5 control windows (with the v0.2.1
+   corrections switched on, also replica spans placed away from the windows, to measure the
+   hidden year's noise), and every read is logged.
 5. **Independent review** *(from v0.2)*. Fresh, read-only agent sessions receive
    only the dossier and try to refute it ([protocol](docs/reviewer-protocol.md)). Their
    reports are attached to the dossier with `refute review attach`. They can raise
@@ -298,7 +302,20 @@ Run `20261007T221214Z-5701c54c` from commit [`821b0d791c81`](https://github.com/
 
 ## Quickstart
 
-Refute uses [uv](https://docs.astral.sh/uv/) and Python 3.12+ (CI tests 3.12 and 3.13).
+Refute uses [uv](https://docs.astral.sh/uv/) 0.12.24 and Python 3.12+ (CI tests 3.12 and 3.13).
+`pyproject.toml` pins the uv version (`required-version = "==0.12.24"` in `[tool.uv]`, from tag
+`v0.3.0-main-lock` on; earlier tags pin none). With any other version, uv exits with an error
+([uv settings](https://docs.astral.sh/uv/reference/settings/#required-version), read 2026-11-03),
+so a reproduction resolves and installs with the same uv as CI. To install that version
+([uv installation](https://docs.astral.sh/uv/getting-started/installation/), read 2026-11-03):
+
+```bash
+curl -LsSf https://astral.sh/uv/0.12.24/install.sh | sh    # macOS and Linux
+```
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/0.12.24/install.ps1 | iex"    # Windows
+```
 
 ```bash
 git clone https://github.com/klucilla/refute.git
@@ -491,7 +508,10 @@ everything runs on your own machine.
 
 Because an agent that wants to find something usually finds it. In Refute, agents may propose claims
 and write code, but the verdict comes only from deterministic, versioned tests whose thresholds were
-locked before the data were seen, plus a blind holdout the analysis cannot peek into. Every dossier
+locked before the data were seen. The blind holdout fits the orbit without the hidden year. After
+one unlogged detrending step, it reads the hidden year only in registered spans and logs every
+such read ("The idea in 30 seconds" lists them). In v0.4 claims the holdout is a diagnostic and
+never changes the verdict. Every dossier
 is built to be rerun with the commands it contains, and `refute check-dossier` compares the results.
 
 </details>
@@ -507,9 +527,15 @@ If you use Refute, please cite it via [CITATION.cff](CITATION.cff) (GitHub's "Ci
   version = {0.4.0},
   year    = {2026},
   url     = {https://github.com/klucilla/refute},
+  doi     = {10.5281/zenodo.23301000},
   license = {Apache-2.0}
 }
 ```
+
+The releases are archived on Zenodo. The concept DOI
+[10.5281/zenodo.23301000](https://doi.org/10.5281/zenodo.23301000) covers all versions;
+version 0.4.0 is
+[10.5281/zenodo.23905113](https://doi.org/10.5281/zenodo.23905113).
 
 The v0.4 pilot's data have their own records: the five stage-2 dossiers,
 [doi:10.5281/zenodo.23898648](https://doi.org/10.5281/zenodo.23898648), and the reproduction
@@ -581,6 +607,11 @@ The documentation asks:
 Reference: [2019AJ....157...98G](https://ui.adsabs.harvard.edu/abs/2019AJ....157...98G),
 [doi:10.3847/1538-3881/aafc33](https://doi.org/10.3847/1538-3881/aafc33) (from astroquery's
 [CITATION file](https://github.com/astropy/astroquery/blob/main/astroquery/CITATION)).
+
+**TESS Input Catalog** (stellar parameters and nearby stars, queried from MAST through
+astroquery): Stassun et al. (2019), The Revised TESS Input Catalog and Candidate Target List,
+AJ 158, 138, [doi:10.3847/1538-3881/ab3467](https://doi.org/10.3847/1538-3881/ab3467)
+(retrieved 2026-11-03). Source record: [docs/sources/tic-credit-2026-11-03.md](docs/sources/tic-credit-2026-11-03.md).
 
 **Gaia DR3** (eclipsing-binary candidates, from v0.2): credit and citation instructions
 <https://gea.esac.esa.int/archive/documentation/GDR3/Miscellaneous/sec_credit_and_citation_instructions/> (retrieved 2026-10-08)

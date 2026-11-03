@@ -8,6 +8,14 @@ authors:
     orcid: "https://orcid.org/0009-0002-4519-5457"
 version: 0.4.0
 date-released: 2026-11-03
+doi: 10.5281/zenodo.23301000
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23301000
+    description: "Concept DOI: all versions of Refute on Zenodo."
+  - type: doi
+    value: 10.5281/zenodo.23905113
+    description: "Version DOI of Refute 0.4.0 on Zenodo."
 license: Apache-2.0
 repository-code: "https://github.com/klucilla/refute"
 url: "https://github.com/klucilla/refute"
@@ -23,7 +31,7 @@ keywords:
   - exoplanets
   - TESS
 references:
-  - type: dataset
+  - type: data
     title: "Refute v0.4 Discover pilot: the five stage-2 dossiers (sealed, with annexes)"
     authors:
       - family-names: Lucilla
@@ -31,7 +39,7 @@ references:
         orcid: "https://orcid.org/0009-0002-4519-5457"
     doi: 10.5281/zenodo.23898648
     year: 2026
-  - type: dataset
+  - type: data
     title: "Refute v0.4 Discover pilot: reproduction inputs (stage-1 verdicts and original stage-2 dossiers)"
     authors:
       - family-names: Lucilla

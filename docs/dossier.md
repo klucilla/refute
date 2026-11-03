@@ -59,6 +59,10 @@ analysis, the verdict and the reports cannot change unnoticed after a review.
 
 ## Reproduction
 
+Use the uv version that `pyproject.toml` pins at the run's commit (`required-version` in
+`[tool.uv]`: `==0.12.24` from tag `v0.3.0-main-lock` on; earlier tags pin none). Any other uv
+exits with an error; the README's Quickstart shows how to install that version.
+
 `REPRODUCE.md` lists the commands: clone the repository, check out the run's commit,
 `uv sync --frozen`,
 `refute verify`, re-run the single target into a new directory with

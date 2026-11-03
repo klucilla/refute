@@ -20,7 +20,9 @@ find weaknesses in Refute itself are as welcome as new features.
 
 ## Development setup
 
-Refute uses [uv](https://docs.astral.sh/uv/) and Python 3.12 or newer.
+Refute uses [uv](https://docs.astral.sh/uv/) 0.12.24 and Python 3.12 or newer.
+`pyproject.toml` pins the uv version (`required-version = "==0.12.24"` in `[tool.uv]`); any other
+uv exits with an error. The README's Quickstart shows how to install that version.
 
 ```bash
 uv sync
