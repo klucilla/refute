@@ -20,7 +20,8 @@ Agents working in this repo must read it before planning any work.
 These hold for every phase. They add no work to the current phase; they constrain
 how later work is done.
 
-- **"Everyone can use it".** The volunteer client (v0.7 Refute@Home) must work
+- **"Everyone can use it".** The volunteer client (v0.8 Refute@Home; numbered v0.7 until
+  2026-11-03) must work
   for non-technical users: one-click installers for Windows and macOS, no Python
   or terminal required, a graphical interface, Portuguese and English from day
   one, results explained in plain language, and nothing sent anywhere without
@@ -28,6 +29,25 @@ how later work is done.
   this.
 
 ## Current phase
+
+**v0.5 Stronger tests: open since 2026-11-03**
+
+- **Decision.** The maintainer's decision of 2026-11-03: v0.5 is the phase of stronger tests, from
+  the findings of the v0.4 pilot (#176, #179 to #196, plus #9, #12, #195, #196). The maintainer
+  delegated the scope, and the renumbering of the later phases, to a consensus between Claude
+  and Codex, taken on 2026-11-03 (the consensus record is in the tracking issue, #199).
+- **Plan and scope:** [docs/plans/v0.5-plan.md](docs/plans/v0.5-plan.md), with its caps and its
+  stop rule; acceptance documents, written before any code:
+  [docs/plans/v0.5-acceptance.md](docs/plans/v0.5-acceptance.md).
+- **Renumbering.** v0.5 Stronger tests is inserted; the variable stars pack becomes v0.6, the
+  mathematics pack v0.7 and Refute@Home v0.8. Each moved section keeps its text, with a note.
+- **Method status.** No method is validated: every v0.5 output carries
+  `method_status: not_validated`.
+
+### Previous phase record: v0.4 Discover (pilot with a funnel)
+
+The text below is kept as it was at the close of v0.4. Since then the release v0.4.0 was
+published (2026-11-03, https://github.com/klucilla/refute/releases/tag/v0.4.0).
 
 **v0.4 Discover (pilot with a funnel): closed; exit criteria met and published (P7); release v0.4.0 pending**
 
@@ -475,9 +495,68 @@ Still to do: the release v0.4.0 with its version bump, after the maintainer's ap
 re-read of VizieR's rules page stays open while the CDS does not answer; the publication rests on
 L9 of `calibration/v0.4/sources/data-licenses-2026-11-01.md`.
 
+**Release.** Done: v0.4.0 was published on 2026-11-03
+(https://github.com/klucilla/refute/releases/tag/v0.4.0).
+
 ---
 
-## v0.5 Variable stars pack
+## v0.5 Stronger tests
+
+Make the battery able to say INCONCLUSIVE when a test could not have failed, and able to refute
+the spurious-signal families the v0.4 pilot exposed; measure the change against the v0.4 battery
+on the same curves.
+
+Opened on 2026-11-03 by the maintainer's decision. The scope and the renumbering of the later
+phases were delegated by the maintainer to a consensus between Claude and Codex, taken on
+2026-11-03 (record in the tracking issue, #199). Plan, caps and stop rule:
+[docs/plans/v0.5-plan.md](docs/plans/v0.5-plan.md); acceptance documents:
+[docs/plans/v0.5-acceptance.md](docs/plans/v0.5-acceptance.md).
+
+**Scope** (the plan's work packages; WP5 and WP9 are optional and are dropped first)
+- Sensitivity rule (#185): a fatal or warning test PASSes only when it could have detected its
+  declared minimum effect; otherwise INCONCLUSIVE, with the sensitivity reported.
+- Signal versus noise (#184, #193): single-event dominance, per-event consistency, events at
+  segment edges; the transformed-curve comparison in the report (descriptive).
+- Variability (#182, #181): a two-sided phase-0.5 check, a sinusoid test on the undetrended flux,
+  a duty-cycle bound.
+- Centroid per sector (#183, #187, #190): a fatal FAIL needs consistent offsets from at least two
+  qualified sectors; the FAIL worded as a measurement; the blend caveat in every report.
+- Shape and depth stability (#191), optional.
+- Reporting and exporter fixes (#179, #186, #190, #193, #194).
+- Measurement fixes (#180, #188, #9 report part).
+- Reproducibility and hygiene (#189, #195, #196); tests leave no `.cache/test-*` folder.
+- Duration uncertainty, one bounded attempt (#176), optional.
+- Calibration, pre-registered: a synthetic population study (confirmation set run once, seeds from
+  a future drand round); the v0.4 funnel's curves as a reused, paired benchmark (transformed
+  curves and injections); newly drawn real controls with the full battery.
+- Not in scope: statistical validation and third-party vetters (#12), a validated null (#9), the
+  difference-image centroid (#11), the holdout corrections, new discovery runs, the variable
+  stars pack.
+
+**Exit criteria** (detail and evidence rules in the plan, section 5)
+- [ ] Every new or changed test has its acceptance section committed before its tests and code;
+      its synthetic cases (must pass, must fail, sensitivity, coexistence, sabotage, correlated
+      noise) run with counts from a JUnit XML file; each test accepted (decisive) or recorded as
+      failed (diagnostic only).
+- [ ] No synthetic test that passes at the start of v0.5 fails at its end without a written
+      justification made before; historical claims give their recorded verdicts and hashes.
+- [ ] No fatal or warning test of the v0.5 battery can PASS without its declared sensitivity
+      (engine rule, shown by a sabotage case).
+- [ ] The synthetic confirmation set run once on frozen code and reported, pass or fail.
+- [ ] The paired real-data measurements (reused benchmark and new controls) locked, run and
+      reported, pass or fail, with reviewer reports for the dossiers the protocol draws.
+- [ ] One new-control dossier reproduced in a clean clone from the generated instructions alone;
+      the empty-checkout test runs in CI.
+- [ ] Every scope issue closed, kept open with the part left, or moved with its reason; no
+      `.cache/test-*` folder remains after the suite.
+- [ ] Gate: an independent review returns `SURVIVED`, or `WEAKENED` with its issues open.
+
+---
+
+## v0.6 Variable stars pack
+
+*(Numbered v0.5 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
+maintainer's delegation.)*
 
 Reuse TESS data to find and classify variable stars.
 
@@ -488,7 +567,10 @@ Reuse TESS data to find and classify variable stars.
 
 ---
 
-## v0.6 Mathematics pack
+## v0.7 Mathematics pack
+
+*(Numbered v0.6 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
+maintainer's delegation.)*
 
 The purest form of refutation: counterexample search.
 
@@ -499,7 +581,10 @@ The purest form of refutation: counterexample search.
 
 ---
 
-## v0.7 Refute@Home (Swarm)
+## v0.8 Refute@Home (Swarm)
+
+*(Numbered v0.7 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
+maintainer's delegation.)*
 
 Volunteer computing.
 
