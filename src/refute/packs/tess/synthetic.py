@@ -460,6 +460,10 @@ def make_blend_sky(
     sector_starts: tuple[float, ...] = THREE_YEARS,
     noise_ppm: float = 300.0,
     seed: int = 0,
+    red_noise_ppm: float = 0.0,
+    red_tau_days: float = 1.0 / 24.0,
+    sector_numbers: tuple[int, ...] | None = None,
+    pixel_noise: float | None = None,
 ) -> tuple[LightCurveData, list[SectorInfo], AuxData]:
     """v0.5 (WP4, acceptance C1 family PX): a blend whose neighbor sits at a fixed **sky**
     offset (arcsec east and north) from the target; in each sector it is drawn at the pixel
@@ -468,7 +472,13 @@ def make_blend_sky(
     crowding-corrected aperture photometry, as in ``make_blend`` (which is not changed)."""
     rng = np.random.default_rng(seed)
     base, sectors = make_lightcurve(
-        None, sector_starts=sector_starts, noise_ppm=noise_ppm, seed=seed
+        None,
+        sector_starts=sector_starts,
+        sector_numbers=sector_numbers,
+        noise_ppm=noise_ppm,
+        seed=seed,
+        red_noise_ppm=red_noise_ppm,
+        red_tau_days=red_tau_days,
     )
     flux = np.empty(len(base))
     pixels = []
@@ -480,6 +490,8 @@ def make_blend_sky(
         jac = np.asarray(sector_jacobian(int(sector)), dtype=float)
         dx, dy = np.linalg.solve(jac, np.asarray(offset_arcsec, dtype=float))
         scene = Scene(neighbor_xy=(5.0 + float(dx), 5.0 + float(dy)), neighbor_ratio=neighbor_ratio)
+        if pixel_noise is not None:
+            scene = dataclasses.replace(scene, pixel_noise=pixel_noise)
         c = crowding(scene)
         crowds.append(c)
         px = with_sky_jacobian(
