@@ -1,0 +1,741 @@
+{
+  "approval": "issue #188 (recorded before this run)",
+  "curves": [
+    {
+      "index": 0,
+      "kind": "eb",
+      "processor_seconds": 14.21875,
+      "seed": 1324116895642494431,
+      "true_period_days": 1.6417600975453004,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 372.5428337204968,
+        "candidate_period_days": 0.820487264047588,
+        "candidate_snr": 49.9265274654811,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 3.955857122210735,
+        "sde_at_true_period_per_sector": {
+          "1": 3.662376628822641,
+          "2": 3.955857122210735
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 372.5428337204968,
+        "candidate_period_days": 0.820487264047588,
+        "candidate_snr": 49.9265274654811,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 3.955857122210735,
+        "sde_at_true_period_per_sector": {
+          "1": 3.662376628822641,
+          "2": 3.955857122210735
+        }
+      }
+    },
+    {
+      "index": 1,
+      "kind": "eb",
+      "processor_seconds": 15.265625,
+      "seed": 3133399007179463988,
+      "true_period_days": 2.071578986589246,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 167.502127696653,
+        "candidate_period_days": 0.5167904875761282,
+        "candidate_snr": 38.60248426914087,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 1.5174863736342152,
+        "sde_at_true_period_per_sector": {
+          "1": 1.5174863736342152,
+          "2": 1.3401237736826583
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 167.502127696653,
+        "candidate_period_days": 0.5167904875761282,
+        "candidate_snr": 38.60248426914087,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 1.5174863736342152,
+        "sde_at_true_period_per_sector": {
+          "1": 1.5174863736342152,
+          "2": 1.3401237736826583
+        }
+      }
+    },
+    {
+      "index": 2,
+      "kind": "eb",
+      "processor_seconds": 16.140625,
+      "seed": 15662796307310107385,
+      "true_period_days": 4.602606887625896,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 121.02606380931375,
+        "candidate_period_days": 2.3023702629897924,
+        "candidate_snr": 16.608640792886728,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 8.027632857576743,
+        "sde_at_true_period_per_sector": {
+          "1": 8.027632857576743,
+          "2": 2.4082128326776036
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 121.02606380931375,
+        "candidate_period_days": 2.3023702629897924,
+        "candidate_snr": 16.608640792886728,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 8.027632857576743,
+        "sde_at_true_period_per_sector": {
+          "1": 8.027632857576743,
+          "2": 2.4082128326776036
+        }
+      }
+    },
+    {
+      "index": 3,
+      "kind": "eb",
+      "processor_seconds": 16.0625,
+      "seed": 2349837191235482584,
+      "true_period_days": 2.153783377722166,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 130.43936204836191,
+        "candidate_period_days": 0.5380797110053964,
+        "candidate_snr": 32.44643255687739,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 1.941469205218249,
+        "sde_at_true_period_per_sector": {
+          "1": 1.941469205218249,
+          "2": 0.9821830545749726
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 130.43936204836191,
+        "candidate_period_days": 0.5380797110053964,
+        "candidate_snr": 32.44643255687739,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 1.941469205218249,
+        "sde_at_true_period_per_sector": {
+          "1": 1.941469205218249,
+          "2": 0.9821830545749726
+        }
+      }
+    },
+    {
+      "index": 4,
+      "kind": "eb",
+      "processor_seconds": 15.1875,
+      "seed": 12112645303405345580,
+      "true_period_days": 1.7566985124539034,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 451.4787730976445,
+        "candidate_period_days": 0.8779338540288438,
+        "candidate_snr": 50.86233021191544,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 5.350781840652196,
+        "sde_at_true_period_per_sector": {
+          "1": 4.969936742199478,
+          "2": 5.350781840652196
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 451.4787730976445,
+        "candidate_period_days": 0.8779338540288438,
+        "candidate_snr": 50.86233021191544,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 5.350781840652196,
+        "sde_at_true_period_per_sector": {
+          "1": 4.969936742199478,
+          "2": 5.350781840652196
+        }
+      }
+    },
+    {
+      "index": 5,
+      "kind": "eb",
+      "processor_seconds": 15.9375,
+      "seed": 15406863134512538165,
+      "true_period_days": 2.4384641070885005,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 136.28950256105418,
+        "candidate_period_days": 1.219730921754827,
+        "candidate_snr": 24.07772082662764,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 3.6748888674015765,
+        "sde_at_true_period_per_sector": {
+          "1": 3.6748888674015765,
+          "2": 2.2743213467186494
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 136.28950256105418,
+        "candidate_period_days": 1.219730921754827,
+        "candidate_snr": 24.07772082662764,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 3.6748888674015765,
+        "sde_at_true_period_per_sector": {
+          "1": 3.6748888674015765,
+          "2": 2.2743213467186494
+        }
+      }
+    },
+    {
+      "index": 6,
+      "kind": "eb",
+      "processor_seconds": 15.71875,
+      "seed": 3415039273850210104,
+      "true_period_days": 2.9950213169075064,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 66.67859869722251,
+        "candidate_period_days": 0.5001605493271999,
+        "candidate_snr": 23.80278294160027,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 3.068252823376198,
+        "sde_at_true_period_per_sector": {
+          "1": 3.068252823376198,
+          "2": 1.8096705053647686
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 66.67859869722251,
+        "candidate_period_days": 0.5001605493271999,
+        "candidate_snr": 23.80278294160027,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 3.068252823376198,
+        "sde_at_true_period_per_sector": {
+          "1": 3.068252823376198,
+          "2": 1.8096705053647686
+        }
+      }
+    },
+    {
+      "index": 7,
+      "kind": "eb",
+      "processor_seconds": 15.46875,
+      "seed": 3232492098301086838,
+      "true_period_days": 1.511510723360643,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 446.58591095035905,
+        "candidate_period_days": 0.7557586453394893,
+        "candidate_snr": 41.144174199186466,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 5.2163097379099606,
+        "sde_at_true_period_per_sector": {
+          "1": 5.2163097379099606,
+          "2": 2.9091040407334665
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 446.58591095035905,
+        "candidate_period_days": 0.7557586453394893,
+        "candidate_snr": 41.144174199186466,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 5.2163097379099606,
+        "sde_at_true_period_per_sector": {
+          "1": 5.2163097379099606,
+          "2": 2.9091040407334665
+        }
+      }
+    },
+    {
+      "index": 8,
+      "kind": "eb",
+      "processor_seconds": 16.046875,
+      "seed": 8830685503094018215,
+      "true_period_days": 2.433859706423053,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 228.3273691033177,
+        "candidate_period_days": 1.2169324508890924,
+        "candidate_snr": 26.88103037018401,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 2.3620048142174044,
+        "sde_at_true_period_per_sector": {
+          "1": 2.3620048142174044,
+          "2": 2.0209257695633105
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 228.3273691033177,
+        "candidate_period_days": 1.2169324508890924,
+        "candidate_snr": 26.88103037018401,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 2.3620048142174044,
+        "sde_at_true_period_per_sector": {
+          "1": 2.3620048142174044,
+          "2": 2.0209257695633105
+        }
+      }
+    },
+    {
+      "index": 9,
+      "kind": "eb",
+      "processor_seconds": 15.28125,
+      "seed": 12461847050190077831,
+      "true_period_days": 1.163938045239339,
+      "with_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 673.7745919584428,
+        "candidate_period_days": 0.583336765338747,
+        "candidate_snr": 64.13041498843887,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 2.37260694549876,
+        "sde_at_true_period_per_sector": {
+          "1": 2.137086896385934,
+          "2": 2.37260694549876
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 0.5,
+        "bls_power_at_true_period": 673.7745919584428,
+        "candidate_period_days": 0.583336765338747,
+        "candidate_snr": 64.13041498843887,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 2.37260694549876,
+        "sde_at_true_period_per_sector": {
+          "1": 2.137086896385934,
+          "2": 2.37260694549876
+        }
+      }
+    },
+    {
+      "index": 0,
+      "kind": "sinusoid",
+      "processor_seconds": 16.75,
+      "seed": 8199299556949839531,
+      "true_period_days": 3.883008425417864,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 3.767375636980507,
+        "candidate_period_days": 0.9062935517077825,
+        "candidate_snr": 6.011401041115098,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 0.19530860248786863,
+        "sde_at_true_period_per_sector": {
+          "1": 0.19530860248786863,
+          "2": 0.09072837827286691
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 3.767375636980507,
+        "candidate_period_days": 0.9062935517077825,
+        "candidate_snr": 6.011401041115098,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 0.19530860248786863,
+        "sde_at_true_period_per_sector": {
+          "1": 0.19530860248786863,
+          "2": 0.09072837827286691
+        }
+      }
+    },
+    {
+      "index": 1,
+      "kind": "sinusoid",
+      "processor_seconds": 16.578125,
+      "seed": 3368007511050265653,
+      "true_period_days": 1.9580024751960035,
+      "with_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 57.06927992302838,
+        "candidate_period_days": 1.968616131185024,
+        "candidate_snr": 12.716148750939553,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 8.153984532197558,
+        "sde_at_true_period_per_sector": {
+          "1": 6.1915341590397714,
+          "2": 8.153984532197558
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 57.06927992302838,
+        "candidate_period_days": 1.968616131185024,
+        "candidate_snr": 12.716148750939553,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 8.153984532197558,
+        "sde_at_true_period_per_sector": {
+          "1": 6.1915341590397714,
+          "2": 8.153984532197558
+        }
+      }
+    },
+    {
+      "index": 2,
+      "kind": "sinusoid",
+      "processor_seconds": 18.546875,
+      "seed": 4945814426738370358,
+      "true_period_days": 1.619710315125855,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 2.112708258599224,
+        "candidate_period_days": 0.8982043369314687,
+        "candidate_snr": 5.53657696486055,
+        "gate_passed": false,
+        "prewhitening_components": 1,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": -0.1566122316741623,
+        "sde_at_true_period_per_sector": {
+          "1": -0.3859505896845405,
+          "2": -0.1566122316741623
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 160.31097506306637,
+        "candidate_period_days": 1.619477531143538,
+        "candidate_snr": 23.49992126197773,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 7.961985243716158,
+        "sde_at_true_period_per_sector": {
+          "1": 7.044566007985787,
+          "2": 7.961985243716158
+        }
+      }
+    },
+    {
+      "index": 3,
+      "kind": "sinusoid",
+      "processor_seconds": 18.1875,
+      "seed": 2971618755223856831,
+      "true_period_days": 1.28043668081592,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 5.53533012657794,
+        "candidate_period_days": 1.668436820609414,
+        "candidate_snr": 5.58526059077545,
+        "gate_passed": false,
+        "prewhitening_components": 1,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 1.1328639533272744,
+        "sde_at_true_period_per_sector": {
+          "1": -0.7003178735957045,
+          "2": 1.1328639533272744
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 529.9669883030717,
+        "candidate_period_days": 1.2825615995295236,
+        "candidate_snr": 53.74101589170638,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 8.3953610525435,
+        "sde_at_true_period_per_sector": {
+          "1": 7.2240570590336795,
+          "2": 8.3953610525435
+        }
+      }
+    },
+    {
+      "index": 4,
+      "kind": "sinusoid",
+      "processor_seconds": 16.375,
+      "seed": 3211268149186568679,
+      "true_period_days": 3.102200864773267,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 5.937578627801866,
+        "candidate_period_days": 0.9906486775200103,
+        "candidate_snr": 5.219262353675873,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 1.4136669960980945,
+        "sde_at_true_period_per_sector": {
+          "1": 0.3882813986686981,
+          "2": 1.4136669960980945
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 5.937578627801866,
+        "candidate_period_days": 0.9906486775200103,
+        "candidate_snr": 5.219262353675873,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 1.4136669960980945,
+        "sde_at_true_period_per_sector": {
+          "1": 0.3882813986686981,
+          "2": 1.4136669960980945
+        }
+      }
+    },
+    {
+      "index": 5,
+      "kind": "sinusoid",
+      "processor_seconds": 16.140625,
+      "seed": 13892878532758247248,
+      "true_period_days": 3.8069613297946177,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 4.378767311939255,
+        "candidate_period_days": 1.63682885243486,
+        "candidate_snr": 5.48613003500229,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 0.8287355101483148,
+        "sde_at_true_period_per_sector": {
+          "1": 0.686569384942528,
+          "2": 0.8287355101483148
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 4.378767311939255,
+        "candidate_period_days": 1.63682885243486,
+        "candidate_snr": 5.48613003500229,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 0.8287355101483148,
+        "sde_at_true_period_per_sector": {
+          "1": 0.686569384942528,
+          "2": 0.8287355101483148
+        }
+      }
+    },
+    {
+      "index": 6,
+      "kind": "sinusoid",
+      "processor_seconds": 16.609375,
+      "seed": 9330640279144872000,
+      "true_period_days": 4.110496891194441,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 6.666593684881487,
+        "candidate_period_days": 2.255087499510256,
+        "candidate_snr": 5.103152725948442,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 1.1460135375003888,
+        "sde_at_true_period_per_sector": {
+          "1": 1.1460135375003888,
+          "2": -0.09805870151764454
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 6.666593684881487,
+        "candidate_period_days": 2.255087499510256,
+        "candidate_snr": 5.103152725948442,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 1.1460135375003888,
+        "sde_at_true_period_per_sector": {
+          "1": 1.1460135375003888,
+          "2": -0.09805870151764454
+        }
+      }
+    },
+    {
+      "index": 7,
+      "kind": "sinusoid",
+      "processor_seconds": 16.515625,
+      "seed": 1590119127911213988,
+      "true_period_days": 2.5063602425488867,
+      "with_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 8.96889463565629,
+        "candidate_period_days": 2.5067618314986033,
+        "candidate_snr": 5.852078351758109,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 4.1517810612646935,
+        "sde_at_true_period_per_sector": {
+          "1": 4.1517810612646935,
+          "2": 2.4893876460744964
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 8.96889463565629,
+        "candidate_period_days": 2.5067618314986033,
+        "candidate_snr": 5.852078351758109,
+        "gate_passed": false,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 4.1517810612646935,
+        "sde_at_true_period_per_sector": {
+          "1": 4.1517810612646935,
+          "2": 2.4893876460744964
+        }
+      }
+    },
+    {
+      "index": 8,
+      "kind": "sinusoid",
+      "processor_seconds": 18.8125,
+      "seed": 4031960662209489730,
+      "true_period_days": 1.8181728227149225,
+      "with_prewhitening": {
+        "at_true_period_factor": null,
+        "bls_power_at_true_period": 5.692056319434264,
+        "candidate_period_days": 1.9207691847258275,
+        "candidate_snr": 5.93956585385984,
+        "gate_passed": false,
+        "prewhitening_components": 1,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 0.5788978469518182,
+        "sde_at_true_period_per_sector": {
+          "1": 0.5788978469518182,
+          "2": -0.28777503748599687
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 94.569196571308,
+        "candidate_period_days": 1.8090720506481461,
+        "candidate_snr": 15.820026367180546,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 8.279041230718512,
+        "sde_at_true_period_per_sector": {
+          "1": 7.9250788797224905,
+          "2": 8.279041230718512
+        }
+      }
+    },
+    {
+      "index": 9,
+      "kind": "sinusoid",
+      "processor_seconds": 16.796875,
+      "seed": 5010245783768268850,
+      "true_period_days": 2.338609984406892,
+      "with_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 15.509845200561228,
+        "candidate_period_days": 2.3302565347180058,
+        "candidate_snr": 7.245035337135658,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": true,
+        "sde_at_true_period_max": 6.1013925526492185,
+        "sde_at_true_period_per_sector": {
+          "1": 6.1013925526492185,
+          "2": 4.647460798421619
+        }
+      },
+      "without_prewhitening": {
+        "at_true_period_factor": 1.0,
+        "bls_power_at_true_period": 15.509845200561228,
+        "candidate_period_days": 2.3302565347180058,
+        "candidate_snr": 7.245035337135658,
+        "gate_passed": true,
+        "prewhitening_components": 0,
+        "prewhitening_ran": false,
+        "sde_at_true_period_max": 6.1013925526492185,
+        "sde_at_true_period_per_sector": {
+          "1": 6.1013925526492185,
+          "2": 4.647460798421619
+        }
+      }
+    }
+  ],
+  "first_run": "docs/validation/v0.5/study-188.json (kept unchanged; deviation recorded)",
+  "processor_seconds": 326.640625,
+  "script": "docs/validation/v0.5/study_188_v2.py",
+  "study": "#188 (v0.5 WP7), run again with the specified quantity",
+  "summary": {
+    "eb/with_prewhitening": {
+      "curves": 10,
+      "gate_passed": 10,
+      "gate_passed_at_true_period_or_alias": 7,
+      "median_bls_power_at_true_period": 197.91474839998534,
+      "median_sde_at_true_period": 3.371570845388887
+    },
+    "eb/without_prewhitening": {
+      "curves": 10,
+      "gate_passed": 10,
+      "gate_passed_at_true_period_or_alias": 7,
+      "median_bls_power_at_true_period": 197.91474839998534,
+      "median_sde_at_true_period": 3.371570845388887
+    },
+    "sinusoid/with_prewhitening": {
+      "curves": 10,
+      "gate_passed": 2,
+      "gate_passed_at_true_period_or_alias": 2,
+      "median_bls_power_at_true_period": 5.814817473618065,
+      "median_sde_at_true_period": 1.1394387454138317
+    },
+    "sinusoid/without_prewhitening": {
+      "curves": 10,
+      "gate_passed": 5,
+      "gate_passed_at_true_period_or_alias": 5,
+      "median_bls_power_at_true_period": 12.23936991810876,
+      "median_sde_at_true_period": 5.126586806956956
+    }
+  },
+  "wall_seconds": 21.146546602249146,
+  "workers": 22
+}
