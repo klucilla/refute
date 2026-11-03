@@ -498,7 +498,7 @@ anything; the planned publication path is tracked in
 <details>
 <summary><b>Is this SETI@home?</b></summary>
 
-No. Refute@Home (planned for v0.7) is inspired by volunteer computing projects such as SETI@home and
+No. Refute@Home (planned for v0.8) is inspired by volunteer computing projects such as SETI@home and
 Einstein@Home, and BOINC, the platform behind them, is one of the options we will evaluate. Refute
 does not search for extraterrestrial intelligence, and no volunteer network exists yet: today
 everything runs on your own machine.
