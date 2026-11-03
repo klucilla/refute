@@ -19,8 +19,9 @@ CONFIGS = ROOT / "docs" / "validation" / "v0.2.1" / "population" / "m4-configura
 CONFIG = CONFIGS / "m4-c1.json"
 
 
-def _work():
-    return cache_test_dir("population-v3")
+def _work(request=None):
+    # a module-scoped fixture passes its request, so the folder lives as long as the fixture
+    return cache_test_dir("population-v3", request)
 
 
 def _env(config=CONFIG):
@@ -50,8 +51,8 @@ def _probe(mode, work, config=CONFIG, extra_env=None):
 
 
 @pytest.fixture(scope="module")
-def paths():
-    return _probe("paths", _work())
+def paths(request):
+    return _probe("paths", _work(request))
 
 
 def test_a2_a_relative_path_in_the_authorized_folder_is_accepted(paths):
@@ -78,8 +79,8 @@ def test_a2_a_path_through_a_link_is_refused(paths, kind):
 
 
 @pytest.fixture(scope="module")
-def declarations():
-    return _probe("declaration", _work())
+def declarations(request):
+    return _probe("declaration", _work(request))
 
 
 def test_a1_the_right_member_adds_no_problem(declarations):
@@ -165,8 +166,8 @@ def test_a4_a5_a_resume_accepts_only_confirmed_records():
 
 
 @pytest.fixture(scope="module")
-def records():
-    return _probe("records", _work())
+def records(request):
+    return _probe("records", _work(request))
 
 
 def test_every_consumer_of_the_records_checks_the_identity(records):
@@ -256,9 +257,9 @@ def _harness(args, config):
 
 
 @pytest.fixture(scope="module")
-def campaign_root():
+def campaign_root(request):
     """A diagnostic root with one declaration whose member names m4-c1.json correctly."""
-    work = _work()
+    work = _work(request)
     out = _probe("declaration", work)  # writes the variants under work/campaigns
     assert out["m4_problems"]["good"] == []
     return work / "campaigns"

@@ -92,6 +92,16 @@ def _bad_blocks():
         "boolean alternative": {**good, "alternative": True},
         "not a mapping": ["detectable", True],
         "category on a statistical test": category_block("catalog-lookup", "a lookup"),
+        # the probes of Codex's end-of-round review (2026-11-03)
+        "requirement lowered by the result": {
+            **good,
+            "probability": 0.10,
+            "required_probability": 0.05,
+            "detectable": True,
+        },
+        "NaN effect": {**good, "effect": math.nan},
+        "unit None": {**good, "unit": None},
+        "empty rule_id": {**good, "rule_id": " "},
     }
 
 
@@ -114,6 +124,28 @@ def test_a_category_other_than_the_registered_one_is_refused():
 def test_an_unknown_category_cannot_be_built():
     with pytest.raises(ValueError):
         category_block("anything", "x")
+
+
+def test_a_category_with_an_empty_reason_is_refused():
+    out = _one(_result("eb_catalog", sensitivity={"main": category_block("catalog-lookup", "")}))
+    assert out.status is TestStatus.INCONCLUSIVE
+
+
+@pytest.mark.parametrize("value", [["main"], "main", 1, {"main"}])
+def test_a_sensitivity_that_is_not_a_mapping_is_inconclusive_not_a_crash(value):
+    out = _one(_result("odd_even", sensitivity=value))
+    assert out.status is TestStatus.INCONCLUSIVE
+    assert "not a mapping of sub-checks" in out.message
+
+
+@pytest.mark.parametrize("entry", [{}, None, ["main"]])
+def test_an_empty_or_malformed_registry_entry_never_lets_a_pass_through(entry):
+    for severity in (Severity.FATAL, Severity.WARNING):
+        (out,) = enforce_sensitivity([_result("x", severity=severity)], {"x": entry})
+        assert out.status is TestStatus.INCONCLUSIVE
+    assert registry_problems(["x"], {"x": entry}, exempt=[]) == [
+        "x: no sensitivity rule or category registered"
+    ]
 
 
 # --- case 1.3: composite tests --------------------------------------------------------------
@@ -230,6 +262,32 @@ def test_the_simulation_applies_the_full_rejection_region():
     assert 0.4 < probability < 0.6
     with pytest.raises(ValueError):
         simulated_probability(draw, lambda stats: np.ones(3, dtype=bool), seed=7)
+
+
+@pytest.mark.parametrize(
+    "reject",
+    [
+        lambda stats: np.full(10, np.nan),  # NaN is truthy: never a detection
+        lambda stats: np.ones(10),  # numbers, not booleans
+        lambda stats: [True] * 10,  # not a NumPy array
+    ],
+)
+def test_a_rejection_that_is_not_a_boolean_array_is_refused(reject):
+    with pytest.raises(ValueError, match="boolean"):
+        simulated_probability(lambda rng, n: rng.standard_normal(n), reject, seed=1, draws=10)
+
+
+@pytest.mark.parametrize("draws", [0, -5, 2.5, True])
+def test_the_draw_count_must_be_a_positive_integer(draws):
+    with pytest.raises(ValueError, match="positive integer"):
+        simulated_probability(lambda rng, n: rng.standard_normal(n), lambda s: s > 0, 1, draws)
+
+
+@pytest.mark.parametrize(
+    "args", [(1.0, 1.0, -math.inf), (1.0, 1.0, math.nan), (math.inf, 1.0, 3.0), (1.0, -1.0, 3.0)]
+)
+def test_a_bad_gaussian_input_is_never_detectable(args):
+    assert gaussian_probability(*args) == 0.0
 
 
 # --- the result format ----------------------------------------------------------------------

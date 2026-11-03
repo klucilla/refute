@@ -17,7 +17,11 @@ not to open.
 - Round 2: every remaining point fixed (the severity table, infrastructure failures that cannot
   be downgraded, the agent-day accounting, the reserve invariant, the development processor-hour
   limit, the week-4 trigger); the acceptance documents written.
-- Round 3: corrections A to H applied in full to [../v0.5-acceptance.md](../v0.5-acceptance.md)
+- Round 3: corrections A to H applied to [../v0.5-acceptance.md](../v0.5-acceptance.md)
   (revision 1), the single revision before code that the plan's stop rule allows. Claude agreed
-  with every correction, so no disagreement went to the maintainer. Codex checks that revision
-  in its end-of-round review, recorded in the tracking issue.
+  with every correction, so no disagreement went to the maintainer.
+- Codex's end-of-round review of the first work round ([codex-end-of-round-1.md](codex-end-of-round-1.md),
+  `WEAKENED`) found A to F and H applied and G only in part (the C1 generator was not yet
+  deterministic). Revision 2 of the acceptance documents completes G in section C1 only, before
+  any C1 code; the review's other findings (the cleanup guard, the sensitivity validation) were
+  fixed in code. Recorded in the tracking issue.

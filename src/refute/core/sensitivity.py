@@ -62,22 +62,34 @@ def _finite(value: Any) -> bool:
     )
 
 
+def _text(value: Any) -> bool:
+    return isinstance(value, str) and value.strip() != ""
+
+
 def block_problem(block: Any, expected: str) -> str | None:
-    """Why ``block`` is not a valid block of the kind ``expected`` (None when it is)."""
+    """Why ``block`` is not a valid block of the kind ``expected`` (None when it is).
+
+    The required probability is the engine's (:data:`REQUIRED_PROBABILITY`): a result cannot
+    lower it. Descriptive fields must be non-empty strings."""
     if not isinstance(block, Mapping):
         return "not a mapping"
     if expected == RULE:
         missing = [key for key in RULE_KEYS if key not in block]
         if missing:
             return "missing " + ", ".join(missing)
+        for key in ("effect", "unit", "rule_id"):
+            if not _text(block[key]):
+                return f"{key} is not a non-empty string"
         if not isinstance(block["detectable"], bool):
             return "detectable is not a boolean"
         for key in ("alternative", "probability", "required_probability"):
             if not _finite(block[key]):
                 return f"{key} is not a finite number"
-        if not (0.0 <= block["probability"] <= 1.0 and 0.0 < block["required_probability"] <= 1.0):
-            return "a probability outside [0, 1]"
-        if block["detectable"] != (block["probability"] >= block["required_probability"]):
+        if block["required_probability"] != REQUIRED_PROBABILITY:
+            return f"required_probability is not the engine's {REQUIRED_PROBABILITY}"
+        if not 0.0 <= block["probability"] <= 1.0:
+            return "probability outside [0, 1]"
+        if block["detectable"] != (block["probability"] >= REQUIRED_PROBABILITY):
             return "detectable disagrees with the probabilities"
         return None
     if expected not in CATEGORIES:
@@ -86,15 +98,21 @@ def block_problem(block: Any, expected: str) -> str | None:
         return "missing category or reason"
     if block["category"] != expected:
         return f"category {block['category']!r}, registered {expected!r}"
+    if not _text(block["reason"]):
+        return "reason is not a non-empty string"
     return None
 
 
 def _refusal(result: TestResult, registry: Registry) -> str | None:
     """Why a PASS of ``result`` is refused by the rule (None when it stands)."""
     entries = registry.get(result.name)
-    if entries is None:
+    if not isinstance(entries, Mapping) or not entries:
         return "no sensitivity rule or category registered"
-    blocks = result.sensitivity or {}
+    blocks = result.sensitivity
+    if blocks is None:
+        blocks = {}
+    if not isinstance(blocks, Mapping):
+        return "invalid sensitivity: not a mapping of sub-checks"
     for sub, expected in entries.items():
         block = blocks.get(sub)
         if block is None:
@@ -134,7 +152,7 @@ def registry_problems(tests: Sequence[str], registry: Registry, exempt: Sequence
         if name in exempt:
             continue
         entries = registry.get(name)
-        if not entries:
+        if not isinstance(entries, Mapping) or not entries:
             problems.append(f"{name}: no sensitivity rule or category registered")
             continue
         for sub, kind in entries.items():
@@ -173,9 +191,12 @@ def gaussian_probability(alternative: float, sigma: float, threshold: float) -> 
     """P(alternative + sigma Z >= threshold sigma), Z standard normal: the probability that a
     one-sided Gaussian statistic reaches its threshold (in sigmas) under the alternative.
 
-    ``probability >= 0.95`` is the closed form ``alternative / sigma >= threshold + 1.645``.
+    ``probability >= 0.95`` is, to the rounding of 1.645, the closed form
+    ``alternative / sigma >= threshold + 1.645``. Any non-finite input, or a sigma that is not
+    positive, gives 0 (not detectable): a rule never becomes detectable by a bad input.
     """
-    if not (sigma > 0) or not math.isfinite(sigma) or not math.isfinite(alternative):
+    values = (alternative, sigma, threshold)
+    if not all(_finite(v) for v in values) or not sigma > 0:
         return 0.0
     z = alternative / sigma - threshold
     return 0.5 * math.erfc(-z / math.sqrt(2.0))
@@ -189,9 +210,14 @@ def simulated_probability(
 ) -> float:
     """The fraction of ``draws`` simulated statistics, under the alternative, that the test's
     full rejection rule rejects. ``draw(rng, n)`` returns the statistics for ``n`` draws and
-    ``reject`` returns a boolean array. Deterministic for a given seed."""
+    ``reject`` must return a NumPy boolean array of shape ``(n,)``; anything else (NaN, numbers,
+    another shape) is refused, never cast to a detection. Deterministic for a given seed."""
+    if isinstance(draws, bool) or not isinstance(draws, int) or draws < 1:
+        raise ValueError("draws must be a positive integer")
     rng = np.random.default_rng(seed)
-    rejected = np.asarray(reject(draw(rng, draws)), dtype=bool)
+    rejected = reject(draw(rng, draws))
+    if not isinstance(rejected, np.ndarray) or rejected.dtype != np.bool_:
+        raise ValueError("reject() must return a NumPy boolean array")
     if rejected.shape != (draws,):
         raise ValueError("reject() must return one boolean per draw")
     return float(rejected.mean())

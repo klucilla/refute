@@ -78,19 +78,30 @@ def pytest_runtest_logfinish(nodeid: str, location: tuple) -> None:
 
 # Work folders under .cache/ (#197). Some tests need a folder inside the project (a harness
 # that writes only there, a script that resolves paths from the project root); each gets
-# .cache/test-<name>/<uuid> from cache_test_dir(), and the folder is removed after the test
-# (or, for one created by a wider-scoped fixture, at the end of the session), with a guard
-# that the path is exactly of that form. The test-<name> folder is removed when it is empty.
-CACHE = Path(__file__).resolve().parents[1] / ".cache"
-_cache_dirs: list[Path] = []
+# .cache/test-<name>/<uuid> from cache_test_dir() and the folder is removed when its owner
+# ends: after the test by default, or by the finalizer of the fixture whose ``request`` is
+# passed (a module- or session-scoped fixture must pass it). Removal is refused unless the
+# path is exactly one that cache_test_dir() allocated and not yet removed, and unless no
+# link or junction lies on the way (.cache itself, the test-<name> folder, the folder): the
+# literal path is removed, never its resolved target. A folder that cannot be removed fails
+# the session. The empty test-<name> folder is removed too.
+ROOT = Path(__file__).resolve().parents[1]
+CACHE = ROOT / ".cache"
+_owned: set[Path] = set()
+_by_test: list[Path] = []
+_unremoved: list[str] = []
 
 
-def cache_test_dir(name: str) -> Path:
-    """A fresh path ``.cache/test-<name>/<uuid>`` (not created), removed after the test."""
+def cache_test_dir(name: str, request: pytest.FixtureRequest | None = None) -> Path:
+    """A fresh path ``.cache/test-<name>/<uuid>`` (not created), removed when its owner ends."""
     if not name or not all(c.isalnum() or c in "-_" for c in name):
         raise ValueError(f"invalid cache test folder name: {name!r}")
     path = CACHE / f"test-{name}" / uuid.uuid4().hex
-    _cache_dirs.append(path)
+    _owned.add(path)
+    if request is None:
+        _by_test.append(path)
+    else:
+        request.addfinalizer(lambda: remove_cache_test_dir(path))
     return path
 
 
@@ -100,43 +111,59 @@ def _writable(function, path, _exc) -> None:
     function(path)
 
 
+def _is_link(path: Path) -> bool:
+    return path.is_symlink() or path.is_junction()
+
+
 def remove_cache_test_dir(path: Path) -> None:
-    """Remove one folder made by :func:`cache_test_dir`; refuse any other path."""
-    base = CACHE.resolve()
-    target = path.resolve()
-    group = target.parent
+    """Remove one folder allocated by :func:`cache_test_dir`; refuse any other path."""
+    if path not in _owned:
+        raise RuntimeError(f"refusing to remove {path}: not allocated by cache_test_dir")
+    group = path.parent
     if (
-        group.parent != base
+        group.parent != CACHE
         or not group.name.startswith("test-")
-        or len(target.name) != 32
-        or not all(c in "0123456789abcdef" for c in target.name)
+        or len(path.name) != 32
+        or not all(c in "0123456789abcdef" for c in path.name)
     ):
-        raise RuntimeError(f"refusing to remove {target}: not .cache/test-<name>/<uuid>")
+        raise RuntimeError(f"refusing to remove {path}: not .cache/test-<name>/<uuid>")
+    for part in (CACHE, group, path):
+        if _is_link(part):
+            raise RuntimeError(f"refusing to remove {path}: {part} is a link or a junction")
+    if CACHE.exists() and CACHE.resolve() != ROOT / ".cache":
+        raise RuntimeError(f"refusing to remove {path}: .cache resolves outside the project")
     for attempt in range(5):
-        if not target.exists():
+        if not path.exists():
             break
         try:
-            shutil.rmtree(target, onexc=_writable)
+            shutil.rmtree(path, onexc=_writable)
         except OSError:
             # a child process may still hold a file for a moment on Windows
             time.sleep(0.2 * (attempt + 1))
+    if path.exists():
+        _unremoved.append(str(path))
+    else:
+        _owned.discard(path)
     try:
         group.rmdir()
     except OSError:
-        pass  # not empty: another test's folder is still there
+        pass  # not empty: another folder is still there
 
 
 @pytest.fixture(autouse=True)
 def _remove_cache_test_dirs():
-    start = len(_cache_dirs)
+    start = len(_by_test)
     yield
-    while len(_cache_dirs) > start:
-        remove_cache_test_dir(_cache_dirs.pop())
+    while len(_by_test) > start:
+        remove_cache_test_dir(_by_test.pop())
 
 
 def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
-    while _cache_dirs:
-        remove_cache_test_dir(_cache_dirs.pop())
+    while _by_test:
+        remove_cache_test_dir(_by_test.pop())
+    if _unremoved:
+        sys.stderr.write("cache test folders not removed: " + ", ".join(_unremoved) + "\n")
+        session.exitstatus = pytest.ExitCode.TESTS_FAILED
 
 
 SOURCE = {
