@@ -58,7 +58,7 @@ Verdicts come only from deterministic, versioned, reproducible code.
 | **Pre-registration with teeth**: the claim, its targets and the code are hashed before any hidden data is seen. Any later edit is `TAMPERED`. | An AI oracle. No language-model output ever decides a verdict. |
 | **Reproducible**: every verdict ships in a dossier with data hashes, plots, the environment and the commands to rerun it. | A submission bot. Refute never submits anything to a scientific body; any submission is made by a human. |
 | **Domain-agnostic**: the engine knows no science; domain packs do. | A judge of people. Verdicts are about claims, never about their authors. |
-| **Honest about its limits**: a failed self-claim is published, not tuned away. | A volunteer computing network, yet. Refute@Home is planned for v0.7. |
+| **Honest about its limits**: a failed self-claim is published, not tuned away. | A volunteer computing network, yet. Refute@Home is planned for v0.8. |
 
 ## The idea in 30 seconds
 
@@ -373,19 +373,20 @@ Packs are discovered through Python entry points, so they can live in their own 
 | Full TESS false-positive battery | Centroids, apertures, aliases, known binaries | ![v0.2 released](https://img.shields.io/badge/-v0.2%20released-blue) self-claim FAIL ([post-mortem](calibration/v0.2/POSTMORTEM.md)) |
 | Paper replication (ML) | Published results with public code and data | ![v0.3 closed](https://img.shields.io/badge/-v0.3%20closed-blue) gate `WEAKENED` ([gate record](calibration/v0.3/main/gate/README.md)) |
 | Discover pilot (TESS) | New signals in TESS light curves, through a two-stage funnel | ![v0.4 pilot closed](https://img.shields.io/badge/-v0.4%20pilot%20closed-blue) `method_status: not_validated` ([results](calibration/v0.4/results/README.md)) |
-| Variable stars (TESS) | Eclipsing binaries and pulsating stars | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.5 |
-| Mathematics | Conjectures, by verifiable counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.6 |
+| Stronger tests (TESS) | A battery that says INCONCLUSIVE when a test could not have failed, and attacks noise, variability and one-sector centroid artifacts | ![v0.5 in progress](https://img.shields.io/badge/-v0.5%20in%20progress-orange) ([plan](docs/plans/v0.5-plan.md)) |
+| Variable stars (TESS) | Eclipsing binaries and pulsating stars | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.6 |
+| Mathematics | Conjectures, by verifiable counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.7 |
 | Your field | Anything with public data and falsifiable claims | ![proposals welcome](https://img.shields.io/badge/-proposals%20welcome-brightgreen) pack SDK in v1.0 |
 
 ## Refute@Home
 
 > [!NOTE]
-> **Planned for v0.7. None of this exists yet.** Today everything runs on your own machine.
+> **Planned for v0.8. None of this exists yet.** Today everything runs on your own machine.
 
 Searching years of public survey data for signals, and then attacking every one of them,
 is the kind of work that volunteer computing made possible for projects such as
 SETI@home and Einstein@Home. The plan for Refute@Home
-([scope and exit criteria](ROADMAP.md#v07-refutehome-swarm)):
+([scope and exit criteria](ROADMAP.md#v08-refutehome-swarm)):
 
 - **Work units** handed out by a lightweight coordinator to volunteer machines, each unit
   computed by **two independent workers** whose results must agree, with signed results.
@@ -403,9 +404,10 @@ SETI@home and Einstein@Home. The plan for Refute@Home
 | v0.2.1 Gauntlet fixes | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![ended, not approved](https://img.shields.io/badge/-ended%2C%20not%20approved-lightgrey) on 2026-10-27, no exit criterion met ([closing record](docs/validation/v0.2.1/closing-2026-10-27.md)) |
 | v0.3 Replicate papers | ML papers with public code and data, right of reply | ![closed, gate WEAKENED](https://img.shields.io/badge/-closed%2C%20gate%20WEAKENED-yellow) [gate record](calibration/v0.3/main/gate/README.md) |
 | v0.4 Discover | New candidates in TESS data (a pilot) | ![closed, pilot](https://img.shields.io/badge/-closed%2C%20pilot-yellow) gate `SURVIVED` on the phase's completeness; `method_status: not_validated` ([gate reviews](docs/gates/v0.4-review.md), [release](https://github.com/klucilla/refute/releases/tag/v0.4.0)) |
-| v0.5 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
-| v0.6 Mathematics | Counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
-| v0.7 Refute@Home | Volunteer computing with double verification | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
+| v0.5 Stronger tests | Tests that report their power; refute noise, variability and one-sector artifacts; paired calibration against the v0.4 battery | ![in progress](https://img.shields.io/badge/-in%20progress-orange) ([plan](docs/plans/v0.5-plan.md)) |
+| v0.6 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
+| v0.7 Mathematics | Counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
+| v0.8 Refute@Home | Volunteer computing with double verification | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v1.0 Stable | Stable spec, pack SDK, community packs | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 
 One phase at a time. Phase transitions normally require evidence and an independent review; the maintainer's explicit exception for v0.2.1 → v0.3 is recorded in [ROADMAP.md](ROADMAP.md#current-phase).
@@ -422,7 +424,7 @@ Refute exists to attack claims, so contributions that find weaknesses in Refute 
   that fails. Tests never touch the network.
 - **Ideas for later phases**: new domain packs, new attacks, computation. Open an issue to
   discuss them now; pull requests for future-phase work wait for that phase. Community
-  packs arrive with the pack SDK (v1.0); volunteer computing is planned for v0.7.
+  packs arrive with the pack SDK (v1.0); volunteer computing is planned for v0.8.
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [ROADMAP.md](ROADMAP.md): work happens only on the current phase.
 
