@@ -55,13 +55,18 @@ def entry_for(script, claim=CLAIM):
 # The list ------------------------------------------------------------------------------------
 
 
-def test_the_five_v03_locks_are_a_separate_list_never_in_the_projection_table():
+def test_the_v03_and_v04_locks_are_a_separate_list_never_in_the_projection_table():
     script = load_script()
     from refute.core.lock_compat import HISTORICAL_LOCKS
 
-    assert len(script.DIRECT_LOCKS) == 5
-    assert {d.tag for d in script.DIRECT_LOCKS} == {"v0.3.0-main-lock"}
-    assert {d.commit for d in script.DIRECT_LOCKS} == {"b6f5346cbf2d6c5398b3da2ec37d91a6ae1c87bc"}
+    assert len(script.DIRECT_LOCKS) == 6
+    assert {d.tag: d.commit for d in script.DIRECT_LOCKS} == {
+        "v0.3.0-main-lock": "b6f5346cbf2d6c5398b3da2ec37d91a6ae1c87bc",
+        "v0.4.0-pilot-lock": "65e4363316ef77b8a47ed6453d7497de3e778366",
+    }
+    assert [d.claim for d in script.DIRECT_LOCKS if d.tag == "v0.4.0-pilot-lock"] == [
+        "calibration/v0.4/claim.yaml"
+    ]
     projected = [dict(e.identity) for e in HISTORICAL_LOCKS]
     for direct in script.DIRECT_LOCKS:
         assert dict(direct.identity) not in projected
@@ -83,7 +88,7 @@ def test_every_check_writes_its_own_file():
     script = load_script()
     checks = script.expected_checks()
     names = [script.output_name(c.tag, c.claim) for c in checks]
-    assert len(checks) == 7
+    assert len(checks) == 8
     assert len(set(names)) == len(names)
     assert all(
         n.startswith(c.tag + "__") and n.endswith(".json")
@@ -209,7 +214,7 @@ def test_one_failing_claim_makes_the_joint_verification_fail(tmp_path, monkeypat
     assert summary["joint"] == "FAIL"
     assert [r["claim"] for r in summary["checks"] if not r["pass"]] == [bad]
     written = sorted(p.name for p in out.iterdir())
-    assert len(written) == 8 and "summary.json" in written
+    assert len(written) == 9 and "summary.json" in written
     saved = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     assert saved["joint"] == "FAIL"
 
@@ -218,7 +223,7 @@ def test_every_claim_passing_gives_a_joint_pass(tmp_path, monkeypatch):
     script = load_script()
     summary, out = run_with(script, tmp_path, monkeypatch, lambda c: (passing(script, c), 0))
     assert summary["joint"] == "PASS"
-    assert summary["passed"] == 7
+    assert summary["passed"] == 8
     assert summary["tags_absent"] == []
 
 
@@ -279,7 +284,7 @@ def test_a_verify_that_raises_is_a_recorded_failure(tmp_path, monkeypatch):
         return passing(script, check), 0
 
     summary, out = run_with(script, tmp_path, monkeypatch, verdict)
-    assert summary["joint"] == "FAIL" and summary["passed"] == 5
+    assert summary["joint"] == "FAIL" and summary["passed"] == 6
     assert (out / "summary.json").is_file()
 
 

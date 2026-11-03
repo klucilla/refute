@@ -7,11 +7,12 @@ Two lists, checked apart:
 - ``LOCKED_TAGS``, the **historical** locks of v0.1 and v0.2: their claims match the lock by the
   projection of ``refute.core.lock_compat``, so a worktree is trusted only when its lock has a
   historical identity of that table (``HISTORICAL_LOCKS``).
-- ``DIRECT_LOCKS``, the five locks of the v0.3 main sample: never in ``HISTORICAL_LOCKS`` (that
-  table only projects old claims). Each entry gives the tag, the full commit the tag must point
-  to, the claim path and the expected identity of the lock (``lock_compat.lock_identity``). The
-  worktree must be at that commit with no tracked change and no untracked file, the lock must
-  have exactly that identity, and ``refute verify`` must return ``PASS`` directly: no projection.
+- ``DIRECT_LOCKS``, the five locks of the v0.3 main sample and the lock of the v0.4 pilot claim:
+  never in ``HISTORICAL_LOCKS`` (that table only projects old claims). Each entry gives the tag,
+  the full commit the tag must point to, the claim path and the expected identity of the lock
+  (``lock_compat.lock_identity``). The worktree must be at that commit with no tracked change
+  and no untracked file, the lock must have exactly that identity, and ``refute verify`` must
+  return ``PASS`` directly: no projection.
 
 For each tag the script:
 
@@ -64,6 +65,10 @@ LOCKED_TAGS = (
 V03_TAG = "v0.3.0-main-lock"
 V03_COMMIT = "b6f5346cbf2d6c5398b3da2ec37d91a6ae1c87bc"
 V03_CODE_SHA256 = "3165e1417ebe1f9474145076000f14f3b561b2cdd55f8c2b6b36ffde26e17322"
+
+V04_TAG = "v0.4.0-pilot-lock"
+V04_COMMIT = "65e4363316ef77b8a47ed6453d7497de3e778366"  # commit B of the v0.4 pilot (#177)
+V04_CLAIM = "calibration/v0.4/claim.yaml"
 
 
 @dataclass(frozen=True)
@@ -128,6 +133,23 @@ DIRECT_LOCKS: tuple[DirectLock, ...] = (
         "3e59b8353da037e57d03b68817c7b01c947e06ef113555c8b79f4ec842b857ab",
         "a27fd3c50dd647594858a8e9547194a6c3334b55",
         "2026-10-19T14:42:38Z",
+    ),
+    # Read from calibration/v0.4/claim.lock.json at commit B (2026-11-03); a literal, as above.
+    DirectLock(
+        tag=V04_TAG,
+        commit=V04_COMMIT,
+        claim=V04_CLAIM,
+        identity={
+            "lock_version": 1,
+            "canonicalization": "refute-cjson-1",
+            "claim_id": "tess-discover-v0.4-pilot",
+            "claim_kind": "discover",
+            "claim_path_in_repo": V04_CLAIM,
+            "claim_sha256": "d2ce83808eb026189fa76b83533aeca8b98e81ad5dff92b17e4cfa7a83eb61d5",
+            "code_sha256": "bbf52fdfa93d47b05da305359f376452cd1a8f6158fd75577237a55dc41f88dc",
+            "git_commit": "910ada156ff57754c82df1496495afefb3020cc4",
+            "locked_at_utc": "2026-10-31T12:25:50Z",
+        },
     ),
 )
 
