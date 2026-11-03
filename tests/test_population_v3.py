@@ -10,10 +10,11 @@ import json
 import os
 import subprocess
 import sys
-import uuid
 from pathlib import Path
 
 import pytest
+
+from conftest import cache_test_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 PROBE = ROOT / "tests" / "population_v3_probe.py"
@@ -24,7 +25,7 @@ NON_DEFAULT = CONFIGS / "probe-non-default.json"
 
 def _work():
     # the harness writes only inside the project, so the work folder is under .cache/
-    return ROOT / ".cache" / "test-population-v3" / uuid.uuid4().hex
+    return cache_test_dir("population-v3")
 
 
 def _probe(mode, work, config=CONFIG, extra_env=None):

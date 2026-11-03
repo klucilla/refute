@@ -11,11 +11,12 @@ of the metadata); ``write_record(run_dir, record)`` (never replaces a file).
 import importlib
 import json
 import sys
-import uuid
 from collections import Counter
 from pathlib import Path
 
 import pytest
+
+from conftest import cache_test_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 POPULATION = ROOT / "docs" / "validation" / "v0.2.1" / "population"
@@ -108,7 +109,7 @@ def test_a_target_is_recorded_per_scenario_and_never_replaced(study, monkeypatch
     assert rec["scenario"] == "constant" and rec["group"] == study.group_of(case)
     assert [r["hidden_year"] for r in rec["rounds"]] == sorted(rec["years"])
     assert rec["configuration"] == _declared()
-    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run = cache_test_dir("rmin-lots")
     path = study.write_record(run, rec)
     assert json.loads(path.read_text(encoding="utf-8"))["target"] == rec["target"]
     with pytest.raises(FileExistsError):
@@ -117,7 +118,7 @@ def test_a_target_is_recorded_per_scenario_and_never_replaced(study, monkeypatch
 
 def _built_run(study, lot, records):
     """A run folder with the given records and their manifest (no generation)."""
-    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run = cache_test_dir("rmin-lots")
     run.mkdir(parents=True)
     manifest = [(r["target"], r["scenario"]) for r in records]
     payload = {
@@ -230,7 +231,7 @@ def _lot_env(study, monkeypatch, fail=()):
 
 def test_a_lot_resumes_on_its_own_manifest_without_replacing(study, monkeypatch):
     calls = _lot_env(study, monkeypatch)
-    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run = cache_test_dir("rmin-lots")
     first = study.run_lot("bs-choice", run, executor=study._InlineExecutor())
     assert first["complete"] is True and first["dispatched"] == 100 and len(calls) == 100
     before = {p: p.read_bytes() for p in (run / "records").rglob("*.json")}
@@ -243,7 +244,7 @@ def test_a_lot_resumes_on_its_own_manifest_without_replacing(study, monkeypatch)
 def test_a_failed_target_is_reported_and_the_lot_is_incomplete(study, monkeypatch):
     first_id = study.bs_choice_cases()[3]["id"]
     _lot_env(study, monkeypatch, fail=(first_id,))
-    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run = cache_test_dir("rmin-lots")
     report = study.run_lot("bs-choice", run, executor=study._InlineExecutor())
     assert report["complete"] is False
     assert [f["target"].split("/")[1] for f in report["failures"]] == [first_id]
@@ -274,7 +275,7 @@ class _BreaksOnSecondSubmit:
 def test_a_broken_pool_ends_with_a_report(study, monkeypatch):
     # added after the second round of the Codex review
     _lot_env(study, monkeypatch)
-    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run = cache_test_dir("rmin-lots")
     report = study.run_lot("bs-choice", run, executor=_BreaksOnSecondSubmit(study))
     assert report["complete"] is False and "submission" in report["dispatch_error"]
     assert report["submitted"] == 1 and len(report["not_submitted"]) == 99
@@ -289,7 +290,7 @@ def test_the_ceiling_stops_the_submissions(study, monkeypatch):
     _lot_env(study, monkeypatch)
     ticks = iter(range(10_000))
     clock = lambda: float(next(ticks)) * 3600.0  # noqa: E731 - one hour per reading
-    run = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run = cache_test_dir("rmin-lots")
     report = study.run_lot(
         "bs-choice", run, executor=study._InlineExecutor(), deadline_hours=5.0, clock=clock
     )
@@ -297,7 +298,7 @@ def test_the_ceiling_stops_the_submissions(study, monkeypatch):
     assert 0 < report["submitted"] < 100
     assert len(report["not_submitted"]) == 100 - report["submitted"]
     assert report["deadline_hours"] == 5.0
-    run2 = ROOT / ".cache" / "test-rmin-lots" / uuid.uuid4().hex
+    run2 = cache_test_dir("rmin-lots")
     report = study.run_lot("bs-choice", run2, executor=study._InlineExecutor(), deadline_hours=1e6)
     assert report["complete"] is True and report["deadline_reached"] is False
 

@@ -4,8 +4,12 @@
 from __future__ import annotations
 
 import os
+import shutil
+import stat
 import subprocess
 import sys
+import time
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -70,6 +74,69 @@ def pytest_runtest_logstart(nodeid: str, location: tuple) -> None:
 @pytest.hookimpl(trylast=True)
 def pytest_runtest_logfinish(nodeid: str, location: tuple) -> None:
     _trace(f"end {nodeid}")
+
+
+# Work folders under .cache/ (#197). Some tests need a folder inside the project (a harness
+# that writes only there, a script that resolves paths from the project root); each gets
+# .cache/test-<name>/<uuid> from cache_test_dir(), and the folder is removed after the test
+# (or, for one created by a wider-scoped fixture, at the end of the session), with a guard
+# that the path is exactly of that form. The test-<name> folder is removed when it is empty.
+CACHE = Path(__file__).resolve().parents[1] / ".cache"
+_cache_dirs: list[Path] = []
+
+
+def cache_test_dir(name: str) -> Path:
+    """A fresh path ``.cache/test-<name>/<uuid>`` (not created), removed after the test."""
+    if not name or not all(c.isalnum() or c in "-_" for c in name):
+        raise ValueError(f"invalid cache test folder name: {name!r}")
+    path = CACHE / f"test-{name}" / uuid.uuid4().hex
+    _cache_dirs.append(path)
+    return path
+
+
+def _writable(function, path, _exc) -> None:
+    # a read-only file (git objects, for example) cannot be removed on Windows
+    os.chmod(path, stat.S_IWRITE)
+    function(path)
+
+
+def remove_cache_test_dir(path: Path) -> None:
+    """Remove one folder made by :func:`cache_test_dir`; refuse any other path."""
+    base = CACHE.resolve()
+    target = path.resolve()
+    group = target.parent
+    if (
+        group.parent != base
+        or not group.name.startswith("test-")
+        or len(target.name) != 32
+        or not all(c in "0123456789abcdef" for c in target.name)
+    ):
+        raise RuntimeError(f"refusing to remove {target}: not .cache/test-<name>/<uuid>")
+    for attempt in range(5):
+        if not target.exists():
+            break
+        try:
+            shutil.rmtree(target, onexc=_writable)
+        except OSError:
+            # a child process may still hold a file for a moment on Windows
+            time.sleep(0.2 * (attempt + 1))
+    try:
+        group.rmdir()
+    except OSError:
+        pass  # not empty: another test's folder is still there
+
+
+@pytest.fixture(autouse=True)
+def _remove_cache_test_dirs():
+    start = len(_cache_dirs)
+    yield
+    while len(_cache_dirs) > start:
+        remove_cache_test_dir(_cache_dirs.pop())
+
+
+def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
+    while _cache_dirs:
+        remove_cache_test_dir(_cache_dirs.pop())
 
 
 SOURCE = {

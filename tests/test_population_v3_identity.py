@@ -6,10 +6,11 @@ import json
 import os
 import subprocess
 import sys
-import uuid
 from pathlib import Path
 
 import pytest
+
+from conftest import cache_test_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 PROBE = ROOT / "tests" / "population_v3_probe.py"
@@ -19,7 +20,7 @@ CONFIG = CONFIGS / "m4-c1.json"
 
 
 def _work():
-    return ROOT / ".cache" / "test-population-v3" / uuid.uuid4().hex
+    return cache_test_dir("population-v3")
 
 
 def _env(config=CONFIG):

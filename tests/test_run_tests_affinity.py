@@ -11,11 +11,12 @@ CPUs (the maintainer's machine), and is skipped elsewhere, the CI runners includ
 import os
 import subprocess
 import sys
-import uuid
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
+
+from conftest import cache_test_dir
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "scripts" / "run_tests_affinity.ps1"
@@ -73,7 +74,7 @@ def test_an_absolute_out_path(tmp_path):
 
 
 def test_a_relative_junit_path_is_taken_from_the_project_root(tmp_path):
-    relative = f".cache/test-run-tests-affinity/{uuid.uuid4().hex}/junit.xml"
+    relative = (cache_test_dir("run-tests-affinity") / "junit.xml").relative_to(ROOT).as_posix()
     done = _run(tmp_path, "-Junit", relative)
     _check(done, ROOT / relative, (ROOT / relative).with_suffix(".out.txt"))
 
@@ -108,7 +109,7 @@ def test_a_thread_range_outside_the_machine_is_refused(tmp_path):
 
 def test_a_relative_out_path_is_taken_from_the_project_root(tmp_path):
     junit = tmp_path / "junit.xml"
-    relative = f".cache/test-run-tests-affinity/{uuid.uuid4().hex}/out.txt"
+    relative = (cache_test_dir("run-tests-affinity") / "out.txt").relative_to(ROOT).as_posix()
     done = _run(tmp_path, "-Junit", str(junit), "-Out", relative)
     _check(done, junit, ROOT / relative)
     assert not (tmp_path / relative).exists()

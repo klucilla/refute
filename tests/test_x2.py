@@ -9,12 +9,13 @@ import hashlib
 import importlib
 import math
 import sys
-import uuid
 from collections import Counter
 from pathlib import Path
 
 import numpy as np
 import pytest
+
+from conftest import cache_test_dir
 
 ROOT = Path(__file__).resolve().parents[1]
 POPULATION = ROOT / "docs" / "validation" / "v0.2.1" / "population"
@@ -401,7 +402,7 @@ def _tasks(x2):
 def test_an_interrupted_lot_relaunched_gives_the_continuous_run_s_bytes(lot_env):
     x2 = lot_env
     tasks = _tasks(x2)
-    base = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    base = cache_test_dir("x2-lots")
     continuous = base / "continuous"
     first = x2.run_x2_lot(continuous, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor())
     assert first["complete"] is True and first["dispatched"] == 3
@@ -434,13 +435,13 @@ def test_an_interrupted_lot_relaunched_gives_the_continuous_run_s_bytes(lot_env)
 
 def test_a_record_is_never_replaced_and_another_manifest_is_refused(lot_env):
     x2 = lot_env
-    path = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex / "records" / "c" / "000.json"
+    path = cache_test_dir("x2-lots") / "records" / "c" / "000.json"
     x2.write_record_atomic(path, "{}\n")
     with pytest.raises(FileExistsError):
         x2.write_record_atomic(path, '{"other": 1}\n')
     assert path.read_text(encoding="utf-8") == "{}\n"
     assert not list(path.parent.glob(".*.tmp"))
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     x2.run_x2_lot(run, tasks=_tasks(x2)[:1], workers=1, executor=x2.rs._InlineExecutor())
     with pytest.raises(SystemExit, match="manifest"):
         x2.run_x2_lot(run, tasks=_tasks(x2)[:2], workers=1, executor=x2.rs._InlineExecutor())
@@ -480,7 +481,7 @@ def fake_lot(lot_env, monkeypatch):
 
 def test_an_incomplete_record_is_refused_at_the_check_and_at_the_relaunch(fake_lot):
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     assert x2.run_x2_lot(run, tasks=tasks[:2], workers=1, executor=x2.rs._InlineExecutor())[
         "complete"
     ]
@@ -525,7 +526,7 @@ def test_an_incomplete_record_is_refused_at_the_check_and_at_the_relaunch(fake_l
 
 def test_the_manifest_binds_the_code_and_is_published_atomically(fake_lot, monkeypatch):
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
     manifest = (run / "manifest.json").read_text(encoding="utf-8")
     assert (
@@ -534,7 +535,7 @@ def test_the_manifest_binds_the_code_and_is_published_atomically(fake_lot, monke
     monkeypatch.setattr(x2, "code_digest", lambda: "f" * 64)
     with pytest.raises(SystemExit, match="code"):
         x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
-    other = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    other = cache_test_dir("x2-lots")
     other.mkdir(parents=True)
     (other / "manifest.json").write_text('{"truncated', encoding="utf-8")
     with pytest.raises(SystemExit, match="not readable"):
@@ -543,7 +544,7 @@ def test_the_manifest_binds_the_code_and_is_published_atomically(fake_lot, monke
 
 def test_the_evaluation_refuses_another_code_than_the_lot_s(fake_lot, monkeypatch):
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
     monkeypatch.setattr(x2, "x2_lot_problems", lambda run_dir, full=False: [])  # a subset
     monkeypatch.setattr(x2, "code_digest", lambda: "e" * 64)
@@ -556,7 +557,7 @@ def test_the_ceiling_is_read_right_before_each_submission(fake_lot):
     """The deadline passes while the runner waits for room (4 per worker in flight): no task is
     submitted after it (Codex's review: the clock was read before the wait)."""
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
 
     def clock():  # time "passes" once the first records are written, i.e. during the wait
         root = run / "records"
@@ -578,7 +579,7 @@ def test_the_ceiling_is_read_right_before_each_submission(fake_lot):
 def test_the_workers_are_explicit(fake_lot, monkeypatch):
     x2, tasks = fake_lot
     monkeypatch.setenv("REFUTE_WORKERS", "3")
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     report = x2.run_x2_lot(run, tasks=tasks[:1], workers=2, executor=x2.rs._InlineExecutor())
     assert report["workers"] == 2
     with pytest.raises(SystemExit, match="--workers"):
@@ -742,7 +743,7 @@ def test_an_x2e_lot_names_itself_and_checks_its_own_records(lot_env, monkeypatch
     x2 = lot_env
     monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
     tasks = [(c, 0) for c in x2.x2_cases(x2.X2E)[:2]]
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     report = x2.run_x2_lot(
         run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), spec=x2.X2E
     )
@@ -885,7 +886,7 @@ def test_a_full_check_requires_the_declared_task_list(lot_env, monkeypatch):
     spec = x2.LOTS["x2f-s1"]
     monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
     tasks = [(x2.x2_cases(spec)[0], 0), (x2.x2_cases(spec)[0], 1)]
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), spec=spec)
     assert x2.x2_lot_problems(run) == []
     full = x2.x2_lot_problems(run, full=True)
@@ -906,7 +907,7 @@ def test_a_regime_selection_larger_than_the_prefix_is_refused(x2):
 
 def test_the_cli_refuses_the_removed_sub_lot(x2):
     with pytest.raises(SystemExit, match="unknown lot"):
-        x2.main(["run", str(ROOT / ".cache" / "test-x2-lots" / "none"), "--lot", "x2f-s3",
+        x2.main(["run", str(cache_test_dir("x2-lots") / "none"), "--lot", "x2f-s3",
                  "--workers", "1"])  # fmt: skip
 
 
@@ -916,7 +917,7 @@ def test_an_x2f_sub_lot_names_itself_and_checks_its_own_records(lot_env, monkeyp
     spec = x2.LOTS[name]
     monkeypatch.setattr(x2, "_x2_task", lambda task: _fake_record(x2, *task))
     tasks = [(x2.x2_cases(spec)[0], 0)]
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     report = x2.run_x2_lot(run, tasks=tasks, workers=1, executor=x2.rs._InlineExecutor(), spec=spec)
     assert report["complete"] is True and report["format"] == spec.lot_format
     import json
@@ -998,7 +999,7 @@ def test_a_write_cut_short_leaves_no_record(x2, monkeypatch):
     never a truncated record file; the temporary file left is never read as a record."""
     import os
 
-    path = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex / "records" / "c" / "000.json"
+    path = cache_test_dir("x2-lots") / "records" / "c" / "000.json"
 
     def cut(fd):
         raise OSError("stopped")
@@ -1048,7 +1049,7 @@ def test_r2_a_failed_task_is_terminal_and_is_not_resubmitted_without_a_decision(
     import json
 
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     bad_case, bad_j = tasks[1]
 
     def crashing(task):
@@ -1091,7 +1092,7 @@ def test_r2_a_decision_without_text_or_for_another_failure_is_not_a_decision(fak
     import json
 
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     monkeypatch.setattr(x2, "_x2_task", lambda task: (_ for _ in ()).throw(RuntimeError("x")))
     x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
     marker = next((run / "failed").rglob("*.json")).relative_to(run).as_posix()
@@ -1108,7 +1109,7 @@ def test_r2_a_decision_without_text_or_for_another_failure_is_not_a_decision(fak
 
 def test_r3_the_ceiling_is_counted_across_the_invocations_of_one_lot(fake_lot, monkeypatch):
     x2, tasks = fake_lot  # six tasks
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     now = {"h": 0.0}
 
     def task(t):
@@ -1151,7 +1152,7 @@ def test_r2_r3_a_run_cut_short_leaves_unknown_outcomes_and_an_open_consumption(
     import json
 
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     cut_case, cut_j = tasks[2]
 
     def killed(task):
@@ -1204,7 +1205,7 @@ def test_r3_a_reconciliation_never_gives_back_measured_time(fake_lot):
 
     x2, tasks = fake_lot
     for given, accepted in ((0.5, False), (2.0, True), (3.0, True)):
-        run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+        run = cache_test_dir("x2-lots")
         (run / "consumption").mkdir(parents=True)
         (run / "consumption" / "20261026T000000000000Z.json").write_text(
             '{"started_utc": "20261026T000000000000Z", "elapsed_hours": 2.0, "closed": false}',
@@ -1226,7 +1227,7 @@ def test_r3_the_ceiling_is_read_after_the_submission_is_recorded(fake_lot, monke
     """Codex's second review: the clock was read before the attempt's record was written, so a
     write that crossed the ceiling still let the task be submitted."""
     x2, tasks = fake_lot
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     now = {"h": 0.0}
     real_write = x2.write_record_atomic
 
@@ -1251,14 +1252,14 @@ def test_r3_a_consumption_that_is_not_a_finite_time_is_refused(fake_lot):
 
     x2, tasks = fake_lot
     for bad in ("NaN", "Infinity", "-1.0", '"1"'):
-        run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+        run = cache_test_dir("x2-lots")
         (run / "consumption").mkdir(parents=True)
         (run / "consumption" / "20261026T000000000000Z.json").write_text(
             f'{{"started_utc": "x", "elapsed_hours": {bad}, "closed": true}}', encoding="utf-8"
         )
         with pytest.raises(SystemExit, match="finite"):
             x2.run_x2_lot(run, tasks=tasks[:1], workers=1, executor=x2.rs._InlineExecutor())
-    run = ROOT / ".cache" / "test-x2-lots" / uuid.uuid4().hex
+    run = cache_test_dir("x2-lots")
     (run / "retry-decisions").mkdir(parents=True)
     (run / "retry-decisions" / "001.json").write_text(
         json.dumps({"decision": "x", "consumption": {"a": float("nan")}}), encoding="utf-8"

@@ -11,23 +11,45 @@ import importlib
 import json
 import math
 import multiprocessing
+import os
 import sys
-import uuid
+import time
 from collections import Counter
 from pathlib import Path
 
 import numpy as np
 import pytest
 
+from conftest import cache_test_dir
+
 ROOT = Path(__file__).resolve().parents[1]
 POPULATION = ROOT / "docs" / "validation" / "v0.2.1" / "population"
-WORK = ROOT / ".cache" / "test-viability-cd"
 
 
 def _module(name: str):
     if str(POPULATION) not in sys.path:
         sys.path.insert(0, str(POPULATION))
     return importlib.import_module(name)
+
+
+@pytest.fixture(autouse=True)
+def _retry_replace(monkeypatch):
+    # #197: on Windows another process (an indexer, an antivirus scan) can hold a record file
+    # for a moment, and os.replace fails with PermissionError (once, in the second v0.4 gate
+    # review). The study's code is cited by hash in the v0.2.1 records and is not edited, so
+    # the bounded retry lives in the test.
+    real = os.replace
+
+    def replace(src, dst, *args, **kwargs):
+        for attempt in range(5):
+            try:
+                return real(src, dst, *args, **kwargs)
+            except PermissionError:
+                if attempt == 4:
+                    raise
+                time.sleep(0.1 * (attempt + 1))
+
+    monkeypatch.setattr(os, "replace", replace)
 
 
 @pytest.fixture(scope="module")
@@ -80,7 +102,7 @@ def _geometry(vc, alternative="C", spans=(27.0, 27.4, 28.0, 26.6)):
 
 
 def test_g1_the_source_s_sha256_is_checked(vc):
-    path = WORK / uuid.uuid4().hex / "mast-rows.json"
+    path = cache_test_dir("viability-cd") / "mast-rows.json"
     path.parent.mkdir(parents=True)
     path.write_text("{}", encoding="utf-8")
     with pytest.raises(SystemExit, match="SHA-256"):
@@ -564,7 +586,7 @@ def _bytes(run):
 
 def test_x_a_complete_run_the_manifest_s_binding_and_records_never_replaced(fake_lot, monkeypatch):
     vc, geos, tasks, _ = fake_lot
-    run = WORK / uuid.uuid4().hex
+    run = cache_test_dir("viability-cd")
     report = _run(vc, run, geos, tasks)
     assert report["complete"] is True and len(_bytes(run)) == 6
     manifest = json.loads((run / "manifest.json").read_text(encoding="utf-8"))
@@ -583,7 +605,7 @@ def test_x_a_complete_run_the_manifest_s_binding_and_records_never_replaced(fake
 
 def test_x7_an_interrupted_sub_lot_resumed_gives_the_continuous_run_s_bytes(fake_lot, monkeypatch):
     vc, geos, tasks, _ = fake_lot
-    base = WORK / uuid.uuid4().hex
+    base = cache_test_dir("viability-cd")
     _run(vc, base / "continuous", geos, tasks)
     calls = []
 
@@ -626,7 +648,7 @@ def test_x_an_invocation_never_reuses_an_earlier_invocation_s_stamp(fake_lot, mo
     import datetime as dt
 
     vc, geos, tasks, _ = fake_lot
-    run = WORK / uuid.uuid4().hex
+    run = cache_test_dir("viability-cd")
     frozen = dt.datetime(2026, 10, 27, 12, 0, 0, 1, tzinfo=dt.UTC)
     ticks = iter([frozen, frozen] + [frozen + dt.timedelta(microseconds=k) for k in range(1, 99)])
 
@@ -645,7 +667,7 @@ def test_x_an_invocation_never_reuses_an_earlier_invocation_s_stamp(fake_lot, mo
 def test_x5_the_cost_check_stops_the_sub_lot(fake_lot):
     vc, geos, tasks, seconds = fake_lot
     seconds["value"] = 1e6  # each task as if it took 1e6 s
-    run = WORK / uuid.uuid4().hex
+    run = cache_test_dir("viability-cd")
     report = _run(vc, run, geos, tasks)
     check = json.loads((run / "cost-check.json").read_text(encoding="utf-8"))
     assert check["stop"] is True and check["tasks_checked"] == 1
@@ -667,7 +689,7 @@ def test_x3_a_failed_task_is_terminal(fake_lot, monkeypatch):
         return _fake_record(vc, *task), 1.0
 
     monkeypatch.setattr(vc, "_task", crashing)
-    run = WORK / uuid.uuid4().hex
+    run = cache_test_dir("viability-cd")
     first = _run(vc, run, geos, tasks)
     assert first["complete"] is False and len(first["failures"]) == 1
     monkeypatch.setattr(vc, "_task", lambda task: (_fake_record(vc, *task), 1.0))
@@ -686,7 +708,7 @@ def test_x9_a_generation_defect_stops_the_sub_lot(fake_lot, monkeypatch):
         return _fake_record(vc, *task), 1.0
 
     monkeypatch.setattr(vc, "_task", exhausted)
-    run = WORK / uuid.uuid4().hex
+    run = cache_test_dir("viability-cd")
     report = _run(vc, run, geos, tasks)
     assert report["defect"] is True and report["complete"] is False
     assert report["submitted"] < len(tasks) and (run / "defect.json").exists()
@@ -699,7 +721,7 @@ def test_x9_a_generation_defect_stops_the_sub_lot(fake_lot, monkeypatch):
 
 def test_x8_a_damaged_file_is_a_problem_never_an_exception(fake_lot):
     vc, geos, tasks, _ = fake_lot
-    run = WORK / uuid.uuid4().hex
+    run = cache_test_dir("viability-cd")
     _run(vc, run, geos, tasks)
     vc.record_path(run, tasks[0]["id"]).write_text('{"truncated', encoding="utf-8")
     stray = run / "records" / "stray" / "000.json"
@@ -716,7 +738,7 @@ def test_x8_a_damaged_file_is_a_problem_never_an_exception(fake_lot):
 
 def test_e_the_evaluator_s_operational_causes_and_notes(fake_lot, ev):
     vc, geos, tasks, _ = fake_lot
-    run = WORK / uuid.uuid4().hex
+    run = cache_test_dir("viability-cd")
     _run(vc, run, geos, tasks)
     state = ev.sublot_state(run, _spec(vc), geos, "a" * 64, tasks)
     assert state["causes"] == [] and len(state["records"]) == len(tasks)
@@ -740,7 +762,7 @@ def test_e_the_evaluator_s_operational_causes_and_notes(fake_lot, ev):
     assert state["causes"] == [] and "1 records missing" in state["notes"]
     vc.record_path(run, tasks[2]["id"]).write_text("[", encoding="utf-8")
     assert ev.sublot_state(run, _spec(vc), geos, "a" * 64, tasks)["causes"]
-    assert ev.sublot_state(WORK / uuid.uuid4().hex, _spec(vc), geos, "a" * 64)["causes"]
+    assert ev.sublot_state(cache_test_dir("viability-cd"), _spec(vc), geos, "a" * 64)["causes"]
 
 
 def _many(n, rounds_of, noise, regime="three_years", prefix="x"):
@@ -759,7 +781,7 @@ def _listing(vc, tmp_name: str, c=True, d=True):
             "D": {"selected": [geo] if d else []},
         },
     }
-    path = WORK / uuid.uuid4().hex / tmp_name
+    path = cache_test_dir("viability-cd") / tmp_name
     path.parent.mkdir(parents=True)
     path.write_text(json.dumps(data), encoding="utf-8")
     return path
