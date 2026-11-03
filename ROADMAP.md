@@ -29,10 +29,11 @@ how later work is done.
 
 ## Current phase
 
-**v0.4 Discover (pilot with a funnel): exit criteria met; publication (P7) pending**
+**v0.4 Discover (pilot with a funnel): closed; exit criteria met and published (P7); release v0.4.0 pending**
 
-- **Gate.** The v0.4 exit criteria are met. The independent gate review of 2026-11-01 (the seventh reviewer session) returned `SURVIVED`, and the criteria are ticked with their evidence in the v0.4 section.
-- **Still open:** the publication (P7), which is the maintainer's.
+- **Gate.** The v0.4 exit criteria are met. The independent gate review of 2026-11-01 (the seventh reviewer session) returned `SURVIVED`, and the criteria are ticked with their evidence in the v0.4 section. Both gate reviews are published in [docs/gates/v0.4-review.md](docs/gates/v0.4-review.md).
+- **Publication (P7), done by the maintainer's steps of 2026-11-02 and 2026-11-03 (UTC):** the two Zenodo records (https://doi.org/10.5281/zenodo.23874043, the reproduction inputs; https://doi.org/10.5281/zenodo.23898648, the five stage-2 dossiers), the results in [calibration/v0.4/results/](calibration/v0.4/results/README.md), the results comment on #177 and a note on each of #179 to #194.
+- **Still open:** the release v0.4.0 and its version bump (P7, last step), after the maintainer's approval; the live re-read of VizieR's rules page, while the CDS does not answer (L9 of [calibration/v0.4/sources/data-licenses-2026-11-01.md](calibration/v0.4/sources/data-licenses-2026-11-01.md)).
 - **v0.5 is not open.** It awaits the maintainer's decision.
 - **Opening and scope.** v0.4 opened on 2026-10-29 by the maintainer's decision, as a pilot of complete, auditable cases. Its scope amendments are recorded in its section below: amendments 1 to 5 and the funnel amendment of #9. Tracking: issue #177.
 - **Method status.** No method is validated: every v0.4 report carries `method_status: not_validated`.
@@ -435,7 +436,8 @@ The scope items above stay listed; the amendments say which are deferred or resi
       transits) with published recovery rates. *(Amendment 4: on the pilot's funnel curves.)*
       Evidence: `calibration/v0.4/runs/stage1/measurements.json` (commit 0ed4075): 100 funnel
       curves, 20 injections each, per-curve counts, denominators and Wilson 95 % intervals, with
-      the sampling unit declared.
+      the sampling unit declared. Published in `calibration/v0.4/results/report-4.md`
+      (injection-recovery per curve) and in the results comment on #177.
 - [x] Every surviving candidate has a complete, reproducible dossier. *(Amendment: every case,
       with or without a candidate.)* Evidence:
       - complete: the case files (zero missing items) and the case ledger, anchored by hash in
@@ -446,15 +448,32 @@ The scope items above stay listed; the amendments say which are deferred or resi
         commit 95cd7d9 (CI green) and a fresh download, with nothing placed by hand; the
         approval was recorded in #177 before the run. The inputs a clone lacks are pinned by
         `calibration/v0.4/runs/reproduce_archives.json`.
+      - published (P7): the five stage-2 dossiers, each with every annex, in
+        https://doi.org/10.5281/zenodo.23898648; the inputs a clone lacks, with the hashes of
+        `reproduce_archives.json`, in https://doi.org/10.5281/zenodo.23874043; the report, the
+        case ledger (429 events) and the anchor details in `calibration/v0.4/results/`
+        (commit 0b08c1c), each with the SHA-256 its P5 anchor committed. The current
+        instructions are the annex `reproduce-4` (commit 6143c11: `prepare` asks the CDS and then
+        VizieR's mirrors, and a `git diff` checks the locked code and records against 95cd7d9); a
+        rehearsal of `prepare` only passed at 6143c11 on 2026-11-02 (`p5_anchor-6.json`). No new
+        full reproduction was run.
 
 **Gate.** The second independent gate review (the seventh reviewer session, 2026-11-01) returned `SURVIVED`: every acceptance
 item MET and no critical or important finding. The first returned `REFUTED` (criteria 2 and 9),
-and its findings were answered (#177, #179 to #195). Both reports name results, so they stay
-private until P7; the maintainer publishes them with the dossiers.
+and its findings were answered (#177, #179 to #195). Both reports are published in
+[docs/gates/v0.4-review.md](docs/gates/v0.4-review.md) (an English translation; the second
+review's original is in `docs/gates/v0.4-review-2.pt.md`, and the first's is cited by hash in
+`calibration/v0.4/results/anchor-3-detail.json`).
 
-**Still to do at P7 (the maintainer's):** publish the dossiers, the ledger and the reports; deposit
-the two private zips with the hashes of `reproduce_archives.json`, so that third parties can
-reproduce.
+**Publication (P7).** Done, by the maintainer's steps (#177):
+- the Zenodo records https://doi.org/10.5281/zenodo.23874043 and
+  https://doi.org/10.5281/zenodo.23898648 (2026-11-02);
+- the results and the gate reviews in the repository (commit 0b08c1c, 2026-11-02);
+- the results comment on #177 and a note on each of #179 to #194 (2026-11-03 UTC).
+
+Still to do: the release v0.4.0 with its version bump, after the maintainer's approval. The live
+re-read of VizieR's rules page stays open while the CDS does not answer; the publication rests on
+L9 of `calibration/v0.4/sources/data-licenses-2026-11-01.md`.
 
 ---
 
