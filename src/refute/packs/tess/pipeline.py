@@ -220,6 +220,8 @@ def attack_candidate(
         ]
         if catalogs is not None:
             tests.append(_not_run("eb_catalog", Severity.FATAL, "no candidate"))
+        if plan.v05:
+            tests += [_not_run(name, severity, "no candidate") for name, severity in V05_TESTS]
         return GauntletOutcome(
             None, None, None, None, tests, None, executed=executed, prewhitening=pw
         )
@@ -270,6 +272,8 @@ def attack_candidate(
     ]
     if any(t.name == "period_alias" and "thresholds_m4" in t.metrics for t in tests):
         executed.append("period_alias_m4")  # M4 piece 6 ran (map Amendment 21)
+    if plan.v05:
+        tests = v05_tests(tests, data, flat, final, primary, secondary, plan)
     timing = None
     if gp.corrections.active:
         # M4 piece 3: the trapezoid template, the scan and the error times beta(n_tau).
@@ -304,6 +308,80 @@ def attack_candidate(
         refit_reason,
         refit_left_out,
     )
+
+
+V05_TESTS = (
+    ("single_event", Severity.FATAL),
+    ("event_consistency", Severity.FATAL),
+    ("edge_events", Severity.WARNING),
+    ("sinusoid", Severity.WARNING),
+    ("duty_cycle", Severity.FATAL),
+)
+
+
+def v05_tests(
+    tests: list[TestResult],
+    data: TessData,
+    flat: LightCurveData,
+    final: Candidate,
+    primary: EventDepths,
+    secondary: EventDepths,
+    plan: TessTestPlan,
+) -> list[TestResult]:
+    """A v0.5 claim (discovery version 2): the sensitivity blocks of the v0.4 tests, the
+    two-sided phase-0.5 check in place of the v0.4 one, and the v0.5 tests (WP1 to WP3 of
+    docs/plans/v0.5-acceptance.md). The v0.4 check functions are unchanged. The per-event
+    measurements of the v0.5 tests use the red-noise error model (A1, ``rednoise.event_noise``).
+    ``centroid_shift`` gets its v0.5 rule with WP4; until then its PASS has no block."""
+    from refute.packs.tess import battery_v5 as v5
+    from refute.packs.tess import power
+
+    sp = plan.stronger
+    gp = plan.gauntlet
+    cadence = plan.data.exptime_seconds / 86400.0
+    noise = event_noise(flat, None, final.period, final.t0, final.duration, plan)
+    events = per_event_depths(
+        flat, final.period, final.t0, final.duration, cadence, gp.events, 0.0, None, noise
+    )
+    seed = power.candidate_seed
+    aux = data.aux
+    out: list[TestResult] = []
+    for test in tests:
+        if test.name == "odd_even":
+            test = power.attach(test, power.odd_even_blocks(test, final.depth, sp))
+        elif test.name == "secondary_eclipse":
+            test = v5.check_secondary_two_sided(
+                primary, secondary, gp.secondary_eclipse, sp, seed("secondary_eclipse", final)
+            )
+        elif test.name == "plausibility":
+            test = power.attach(test, power.plausibility_blocks(test))
+        elif test.name == "aperture_depth":
+            test = power.attach(
+                test, power.aperture_blocks(test, sp, seed("aperture_depth", final))
+            )
+        elif test.name == "systematics":
+            blocks = power.systematics_blocks(
+                test, aux.sectors if aux else [], final, plan, seed("systematics", final)
+            )
+            test = power.attach(test, blocks)
+        elif test.name == "period_alias" and test.status is TestStatus.PASS:
+            blocks = power.period_alias_blocks(
+                data.lc, final, plan, check_period_alias, seed("period_alias", final)
+            )
+            test = power.attach(test, blocks)
+        elif test.name == "nearby_contamination":
+            test = power.attach(test, power.catalog_blocks(test, "neighbors within the radius"))
+        elif test.name == "eb_catalog":
+            test = power.attach(test, power.catalog_blocks(test, "catalogued eclipsing binaries"))
+        out.append(test)
+    out += [
+        v5.check_single_event(events, sp, seed("single_event", final)),
+        v5.check_event_consistency(events, sp),
+        v5.check_edge_events(flat.time, events, final.duration, gp.snr.min_snr, sp),
+        v5.check_sinusoid(data.lc, final, sp, seed("sinusoid", final)),
+        v5.check_duty_cycle(final, sp),
+    ]
+    return out
 
 
 def _bls_gate(
@@ -371,12 +449,15 @@ def _bls_gate(
     return corrected, replace(test, metrics=metrics)
 
 
-def expected_tests(catalogs_configured: bool) -> list[str]:
-    """Every test a complete TESS analysis must contain."""
+def expected_tests(catalogs_configured: bool, v05: bool = False) -> list[str]:
+    """Every test a complete TESS analysis must contain (with the v0.5 tests in a v0.5
+    claim)."""
     names = ["snr", "odd_even", "secondary_eclipse", "plausibility"]
     names += [name for name, _ in BATTERY_TESTS]
     if catalogs_configured:
         names.append("eb_catalog")
+    if v05:
+        names += [name for name, _ in V05_TESTS]
     return [*names, "holdout_by_year"]
 
 
@@ -405,7 +486,7 @@ def expected_by_role(plan: TessTestPlan, catalogs_configured: bool) -> tuple[lis
     discovery = plan.discovery
     if discovery is None:
         raise ValueError("expected_by_role needs a plan with a discovery section")
-    names = expected_tests(catalogs_configured)
+    names = expected_tests(catalogs_configured, plan.v05)
     decisive = [n for n in names if discovery.roles.get(n) == "decisive"]
     return decisive, list(discovery.required_diagnostics)
 
@@ -427,6 +508,13 @@ def conclude_analysis(
     decisive tests only; the diagnostics are returned apart, in ``roles``."""
     # Domain-agnostic coverage rule: a PASS that examined nothing is INCONCLUSIVE.
     tests = enforce_coverage([*gauntlet.tests, holdout.test])
+    if plan is not None and plan.v05:
+        # v0.5 (#185): and a fatal or warning PASS without its declared sensitivity, whatever
+        # its role, is INCONCLUSIVE (the holdout diagnostic has no rule in v0.5)
+        from refute.core.sensitivity import enforce_sensitivity
+        from refute.packs.tess.power import TESS_REGISTRY
+
+        tests = enforce_sensitivity(tests, TESS_REGISTRY)
     if plan is None or plan.discovery is None:
         verdict, reason = aggregate(tests, expected=expected_tests(catalogs_configured))
         return Analysis(search, flattened, gauntlet, holdout, tests, verdict.value, reason)
@@ -756,7 +844,15 @@ class TessGauntlet:
     def run(
         self, data: TessData, candidate: Candidate | None, target: dict, params: dict
     ) -> list[TestResult]:
-        return attack_candidate(data, candidate, TessTestPlan.model_validate(params)).tests
+        plan = TessTestPlan.model_validate(params)
+        tests = attack_candidate(data, candidate, plan).tests
+        if plan.v05:
+            # a caller that aggregates these results directly gets the v0.5 rule too
+            from refute.core.sensitivity import enforce_sensitivity
+            from refute.packs.tess.power import TESS_REGISTRY
+
+            tests = enforce_sensitivity(enforce_coverage(tests), TESS_REGISTRY)
+        return tests
 
 
 class TessHoldout:

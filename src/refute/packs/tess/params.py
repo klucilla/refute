@@ -285,8 +285,71 @@ DISCOVERY_TESTS = (
     "eb_catalog",
     "holdout_by_year",
 )
+# v0.5 (docs/plans/v0.5-plan.md): the tests that exist only in a claim with discovery version 2,
+# in the order of expected_tests. Only implemented tests are listed, so a claim cannot give a
+# role to a test the pipeline does not run (the optional WP5 tests enter when they exist).
+V05_TESTS = (
+    "single_event",
+    "event_consistency",
+    "edge_events",
+    "sinusoid",
+    "duty_cycle",
+)
 GATE_TEST = "snr"
 METHOD_STATUS_REFERENCE = "docs/validation/v0.2.1/closing-2026-10-27.md"
+
+
+class StrongerParams(_Model):
+    """The v0.5 section of a test plan (docs/plans/v0.5-acceptance.md): the sensitivity rule's
+    alternatives and the parameters of the v0.5 tests. Present only with discovery version 2;
+    a plan without it dumps exactly as before (issue #30). The provenance of each default (a
+    cited source or a Refute convention) is in the acceptance documents' provenance table.
+    """
+
+    # WP1: alternatives strictly beyond each rejection boundary (#185 examples; conventions)
+    odd_even_alternative_depth_fraction: float = Field(1.0, gt=0)
+    secondary_alternative_depth_fraction: float = Field(1.0, gt=0)
+    aperture_alternative_ratio_increment: float = Field(0.3, gt=0)
+    centroid_alternative_offset_factor: float = Field(2.0, gt=1)
+    sap_alternative_increment: float = Field(0.3, gt=0)
+    background_alternative_increment: float = Field(0.3, gt=0)
+    period_alias_realizations: int = Field(50, ge=10)
+    period_alias_required_failures: int = Field(45, ge=1)
+    # WP2: signal versus noise
+    single_event_max_ratio: float = Field(0.88, gt=0, lt=1)
+    min_measured_events: int = Field(3, ge=2)
+    chi2_alpha: float = Field(0.00135, gt=0, lt=1)
+    edge_gap_days: float = Field(0.3, gt=0)
+    edge_reach_durations: float = Field(2.0, gt=0)
+    edge_min_fraction: float = Field(0.5, gt=0, le=1)
+    edge_alternative_depth_fraction: float = Field(0.5, gt=0)
+    # WP3: variability
+    brightening_min_depth_ratio: float = Field(0.1, gt=0)
+    sinusoid_min_significance: float = Field(15.0, gt=0)
+    sinusoid_max_period_days: float = Field(10.0, gt=0)
+    sinusoid_min_amplitude_ratio: float = Field(0.5, gt=0)
+    sinusoid_mask_durations: float = Field(1.0, ge=0)
+    max_duty_cycle: float = Field(0.5, gt=0, le=1)
+    # WP4: centroid per sector
+    centroid_control_epochs: int = Field(20, ge=1)
+    centroid_min_controls: int = Field(10, ge=1)
+    centroid_min_sectors: int = Field(2, ge=2)
+    centroid_qualification_sigma: float = Field(3.0, gt=0)
+    centroid_max_unqualified_fraction: float = Field(0.5, gt=0, le=1)
+    # WP5 (optional): shape and depth stability
+    shape_max_ingress_fraction: float = Field(0.45, gt=0, lt=0.5)
+    shape_alternative_ingress_fraction: float = Field(0.5, gt=0, le=0.5)
+    depth_stability_alternative_fraction: float = Field(0.5, gt=0)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> StrongerParams:
+        if self.period_alias_required_failures > self.period_alias_realizations:
+            raise ValueError("period_alias_required_failures exceeds the realizations")
+        if self.centroid_min_controls > self.centroid_control_epochs:
+            raise ValueError("centroid_min_controls exceeds centroid_control_epochs")
+        if self.shape_alternative_ingress_fraction <= self.shape_max_ingress_fraction:
+            raise ValueError("the shape alternative must lie beyond the shape bound")
+        return self
 
 
 class DiscoveryParams(_Model):
@@ -309,7 +372,8 @@ class DiscoveryParams(_Model):
       them; the selection and promotion steps check their files against them.
     """
 
-    version: Literal[1] = 1
+    # 1: v0.4. 2: v0.5, the sensitivity rule and the v0.5 tests (needs the plan's `stronger`).
+    version: Literal[1, 2] = 1
     decisive: list[str] = Field(min_length=1)
     diagnostic: list[str] = Field(default_factory=list)
     stages: dict[str, Literal[1, 2]] = Field(default_factory=dict)
@@ -329,7 +393,8 @@ class DiscoveryParams(_Model):
         both = sorted(set(self.decisive) & set(self.diagnostic))
         if both:
             raise ValueError("a test cannot be both decisive and diagnostic: " + ", ".join(both))
-        unknown = sorted(set(self.roles) - set(DISCOVERY_TESTS))
+        known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version == 2 else set())
+        unknown = sorted(set(self.roles) - known)
         if unknown:
             raise ValueError("roles name unknown tests: " + ", ".join(unknown))
         if self.roles.get(GATE_TEST) != "decisive":
@@ -375,14 +440,43 @@ class TessTestPlan(_Model):
     search: SearchParams = Field(default_factory=SearchParams)
     gauntlet: GauntletParams = Field(default_factory=GauntletParams)
     discovery: DiscoveryParams | None = None
+    stronger: StrongerParams | None = None
 
     @model_serializer(mode="wrap")
     def _without_absent_discovery(self, handler: Any) -> dict[str, Any]:
-        """A plan without the v0.4 section dumps exactly as before it existed (issue #30)."""
+        """A plan without the v0.4 or the v0.5 section dumps exactly as before they existed
+        (issue #30)."""
         out = handler(self)
-        if out.get("discovery", 0) is None:
-            del out["discovery"]
+        for key in ("discovery", "stronger"):
+            if out.get(key, 0) is None:
+                del out[key]
         return out
+
+    @model_validator(mode="after")
+    def _v05_section(self) -> TessTestPlan:
+        """Discovery version 2 needs the `stronger` section and a registered sensitivity rule
+        or category for every decisive fatal or warning test (v0.5 acceptance, case 1.5); any
+        other plan must not have the section."""
+        version2 = self.discovery is not None and self.discovery.version == 2
+        if version2 != (self.stronger is not None):
+            raise ValueError(
+                "the `stronger` section goes with discovery version 2, and only with it"
+            )
+        if version2:
+            from refute.core.sensitivity import registry_problems
+            from refute.packs.tess.power import TESS_REGISTRY
+
+            problems = registry_problems(self.discovery.decisive, TESS_REGISTRY, [GATE_TEST])
+            if problems:
+                raise ValueError(
+                    "decisive tests without a sensitivity rule: " + "; ".join(problems)
+                )
+        return self
+
+    @property
+    def v05(self) -> bool:
+        """True for a v0.5 claim (discovery version 2): the sensitivity rule applies."""
+        return self.stronger is not None
 
 
 class PublishedParams(_Model):

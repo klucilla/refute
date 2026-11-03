@@ -659,6 +659,18 @@ def discovery_plan_dict(catalogs: bool = False) -> dict:
     return {**fast_plan_dict(), "discovery": discovery_section(catalogs)}
 
 
+V05_DECISIVE = ("single_event", "event_consistency", "edge_events", "sinusoid", "duty_cycle")
+
+
+def discovery_v05_plan_dict(catalogs: bool = False) -> dict:
+    """The fast test plan of a v0.5 claim: discovery version 2 with the v0.5 tests decisive,
+    and the `stronger` section with its defaults (docs/plans/v0.5-acceptance.md)."""
+    section = discovery_section(catalogs)
+    section["version"] = 2
+    section["decisive"] = [*section["decisive"], *V05_DECISIVE]
+    return {**fast_plan_dict(), "discovery": section, "stronger": {}}
+
+
 NOISE_MODES = ("white", "correlated")
 # v0.2.1: the correlated profile of the suite, the AR(1) of the population harness, added
 # to each scenario's white noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md).
