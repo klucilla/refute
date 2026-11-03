@@ -1,13 +1,14 @@
 {
   "upload_type": "software",
   "title": "Refute: find signals, try to kill them, keep what survives",
+  "version": "0.4.0",
   "creators": [
     {
       "name": "Lucilla, Klauber",
       "orcid": "0009-0002-4519-5457"
     }
   ],
-  "description": "<p>Refute is an open-source framework where agents try to break scientific claims before anyone believes them. Claims are pre-registered and locked with SHA-256 hashes, attacked by deterministic falsification tests and a blind holdout, and reported in reproducible evidence dossiers. Agents propose; deterministic tests decide. A claim is never proven: it only survives, or it does not.</p>",
+  "description": "<p>Refute is an open-source framework where agents try to break scientific claims before anyone believes them. Claims are pre-registered and locked with SHA-256 hashes, attacked by deterministic falsification tests and a blind holdout, and reported in reproducible evidence dossiers. Agents propose; deterministic tests decide. A claim is never proven: it only survives, or it does not.</p><p>Version 0.4.0 closes v0.4 Discover, a pilot of complete, auditable cases for <code>refute discover</code> on TESS data (<code>method_status: not_validated</code>). Its five stage-2 dossiers are in https://doi.org/10.5281/zenodo.23898648 and its reproduction inputs in https://doi.org/10.5281/zenodo.23874043. Refute produces candidates and verdicts only; nothing here is a confirmed discovery.</p>",
   "access_right": "open",
   "license": "apache-2.0",
   "keywords": [
@@ -22,6 +23,16 @@
       "identifier": "https://github.com/klucilla/refute",
       "relation": "isSupplementTo",
       "resource_type": "software"
+    },
+    {
+      "identifier": "10.5281/zenodo.23898648",
+      "relation": "isSupplementedBy",
+      "resource_type": "dataset"
+    },
+    {
+      "identifier": "10.5281/zenodo.23874043",
+      "relation": "isSupplementedBy",
+      "resource_type": "dataset"
     }
   ],
   "notes": "The license field names the license of the code (Apache-2.0). It does not cover the third-party data files in the repository: each keeps its own terms, stated with their sources in calibration/v0.2/eb_snapshot/DATA_LICENSE.md and calibration/v0.4/DATA_LICENSE.md of this release (https://github.com/klucilla/refute/blob/v0.4.0/calibration/v0.2/eb_snapshot/DATA_LICENSE.md and https://github.com/klucilla/refute/blob/v0.4.0/calibration/v0.4/DATA_LICENSE.md). No single license covers the archive as a whole."

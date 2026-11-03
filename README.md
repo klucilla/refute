@@ -10,7 +10,7 @@
   <a href="https://github.com/klucilla/refute/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/klucilla/refute/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg"></a>
   <a href="pyproject.toml"><img alt="Python 3.12 | 3.13 (tested in CI)" src="https://img.shields.io/badge/python-3.12%20%7C%203.13-3776AB.svg"></a>
-  <a href="ROADMAP.md"><img alt="Status: v0.2.1 gauntlet fixes, in progress" src="https://img.shields.io/badge/status-v0.2.1%20gauntlet%20fixes-orange.svg"></a>
+  <a href="ROADMAP.md"><img alt="Status: v0.4 Discover pilot closed; method not validated" src="https://img.shields.io/badge/status-v0.4%20pilot%20closed%2C%20not%20validated-orange.svg"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
 </p>
 
@@ -20,10 +20,21 @@
 </p>
 
 > [!IMPORTANT]
-> **Status: the v0.2 self-claim was locked, run and failed**
-> ([post-mortem](calibration/v0.2/POSTMORTEM.md)); v0.1 is closed, and its self-claim also
-> failed ([post-mortem](calibration/POSTMORTEM.md)). Nothing here is a confirmed discovery.
-> Refute produces candidates and verdicts, never certainties.
+> **Status (v0.4.0).** No method of Refute is validated (`method_status: not_validated`).
+> - **v0.4 Discover** closed as a pilot of complete, auditable cases for `refute discover`
+>   ([results](calibration/v0.4/results/README.md); dossiers:
+>   [10.5281/zenodo.23898648](https://doi.org/10.5281/zenodo.23898648)). Its gate verdict,
+>   `SURVIVED`, is about the completeness of the phase, never about a candidate.
+> - **v0.3 Replicate papers** closed with a gate review `WEAKENED`
+>   ([gate record](calibration/v0.3/main/gate/README.md)).
+> - **v0.2.1 Gauntlet fixes** ended as not approved
+>   ([closing record](docs/validation/v0.2.1/closing-2026-10-27.md)).
+> - **The v0.2 and v0.1 self-claims** were locked, run and failed
+>   ([v0.2 post-mortem](calibration/v0.2/POSTMORTEM.md),
+>   [v0.1 post-mortem](calibration/POSTMORTEM.md)).
+>
+> Nothing here is a confirmed discovery. Refute produces candidates and verdicts, never
+> certainties.
 
 ## Why
 
@@ -130,8 +141,8 @@ never change the verdict.</sub>
 
 | Mode | What it does | Status |
 |---|---|---|
-| `refute replicate` | Re-derives a **published claim** from public data, then attacks it. | Implemented for TESS transits and tested on synthetic data; first real runs come with the v0.1 calibration. Papers in v0.3. |
-| `refute discover` | Searches public data for **new signals**, then attacks them. | Planned (v0.4). |
+| `refute replicate` | Re-derives a **published claim** from public data, then attacks it. | Run on known TESS planets and false positives in the v0.1 and v0.2 calibrations, and on five machine-learning papers in v0.3. |
+| `refute discover` | Searches public data for **new signals**, then attacks them. | Piloted in v0.4 on TESS data (two controls and a funnel of 100 stars); `method_status: not_validated`. |
 
 Same engine, same rigor. A discovery is just a claim nobody has tried to refute yet.
 A third command, `refute calibrate`, runs Refute's own self-claim (below). It is
@@ -223,12 +234,31 @@ version number is part of the code hash, so `refute verify` at the commits after
 version change reports `TAMPERED` for this claim. To verify the v0.2 claim, use tag
 `v0.2.0-calibration-lock` (commit `cc9d104`), where `refute verify` returns `PASS`. The
 v0.1 claim is verified the same way at tag [`v0.1.0`](https://github.com/klucilla/refute/tree/v0.1.0).
+In the same way, from version 0.4.0 on, the v0.4 pilot claim (`calibration/v0.4/claim.yaml`)
+is `TAMPERED` on `main`; it is verified at tag
+[`v0.4.0-pilot-lock`](https://github.com/klucilla/refute/tree/v0.4.0-pilot-lock) (commit
+`65e4363`), and the five v0.3 claims at tag
+[`v0.3.0-main-lock`](https://github.com/klucilla/refute/tree/v0.3.0-main-lock).
+`scripts/verify_locked_tags.py` checks every lock at its tag.
 
 Independent reviews: 17 of the 20 dossiers (every false positive, the 4 refuted planets
 and 3 planets drawn with drand round 6542966), one fresh reviewer session per dossier;
 reviews never change a verdict. Reproduction: 2 of the 20 dossiers were reproduced from
 fresh clones, both with key results reproduced. Details: [run log](calibration/v0.2/RUNS.md)
 and [post-mortem](calibration/v0.2/POSTMORTEM.md).
+
+### Discover pilot (v0.4)
+
+`method_status: not_validated`. Two controls and a funnel of 100 TESS stars, with at most
+three promoted cases. The five stage-2 cases (the two controls and the three promoted stars)
+each have a complete dossier, an independent review and a reproduction (2026-11-01, commit
+`95cd7d9`). The verdicts, the human reading of each case and their caveats are in the
+[results comment on #177](https://github.com/klucilla/refute/issues/177) and in
+[calibration/v0.4/results/](calibration/v0.4/results/README.md). The five stage-2 dossiers are
+in [10.5281/zenodo.23898648](https://doi.org/10.5281/zenodo.23898648), and the inputs a
+clone needs to reproduce them in
+[10.5281/zenodo.23874043](https://doi.org/10.5281/zenodo.23874043). A candidate that survives
+the declared battery is only a candidate, never support for a new object.
 
 ### Calibration results (v0.1)
 
@@ -324,7 +354,8 @@ Packs are discovered through Python entry points, so they can live in their own 
 |---|---|---|
 | Exoplanet transits (TESS) | Transit signals in SPOC 2-minute light curves | ![v0.1 released](https://img.shields.io/badge/-v0.1%20released-blue) self-claim FAIL ([post-mortem](calibration/POSTMORTEM.md)) |
 | Full TESS false-positive battery | Centroids, apertures, aliases, known binaries | ![v0.2 released](https://img.shields.io/badge/-v0.2%20released-blue) self-claim FAIL ([post-mortem](calibration/v0.2/POSTMORTEM.md)) |
-| Paper replication (ML) | Published results with public code and data | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.3 |
+| Paper replication (ML) | Published results with public code and data | ![v0.3 closed](https://img.shields.io/badge/-v0.3%20closed-blue) gate `WEAKENED` ([gate record](calibration/v0.3/main/gate/README.md)) |
+| Discover pilot (TESS) | New signals in TESS light curves, through a two-stage funnel | ![v0.4 pilot closed](https://img.shields.io/badge/-v0.4%20pilot%20closed-blue) `method_status: not_validated` ([results](calibration/v0.4/results/README.md)) |
 | Variable stars (TESS) | Eclipsing binaries and pulsating stars | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.5 |
 | Mathematics | Conjectures, by verifiable counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) v0.6 |
 | Your field | Anything with public data and falsifiable claims | ![proposals welcome](https://img.shields.io/badge/-proposals%20welcome-brightgreen) pack SDK in v1.0 |
@@ -352,9 +383,9 @@ SETI@home and Einstein@Home. The plan for Refute@Home
 |---|---|---|
 | v0.1 Calibration | Replicate published TESS planets, blind holdout, dossiers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.1.0) |
 | v0.2 Gauntlet | Full false-positive battery, independent reviewers | ![closed, self-claim FAIL](https://img.shields.io/badge/-closed%2C%20self--claim%20FAIL-red) [release](https://github.com/klucilla/refute/releases/tag/v0.2.0) |
-| **v0.2.1 Gauntlet fixes** | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![in progress, resumed](https://img.shields.io/badge/-in%20progress%2C%20resumed-f59e0b) resumed on 2026-10-20 after v0.3 ([ROADMAP](ROADMAP.md#current-phase)) |
+| v0.2.1 Gauntlet fixes | Fixes from the v0.2 post-mortem, new pre-registered calibration | ![ended, not approved](https://img.shields.io/badge/-ended%2C%20not%20approved-lightgrey) on 2026-10-27, no exit criterion met ([closing record](docs/validation/v0.2.1/closing-2026-10-27.md)) |
 | v0.3 Replicate papers | ML papers with public code and data, right of reply | ![closed, gate WEAKENED](https://img.shields.io/badge/-closed%2C%20gate%20WEAKENED-yellow) [gate record](calibration/v0.3/main/gate/README.md) |
-| v0.4 Discover | New candidates in TESS data | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
+| v0.4 Discover | New candidates in TESS data (a pilot) | ![closed, pilot](https://img.shields.io/badge/-closed%2C%20pilot-yellow) gate `SURVIVED` on the phase's completeness; `method_status: not_validated` ([gate reviews](docs/gates/v0.4-review.md), [release](https://github.com/klucilla/refute/releases/tag/v0.4.0)) |
 | v0.5 Variable stars | Same TESS data, new science | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.6 Mathematics | Counterexample search | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
 | v0.7 Refute@Home | Volunteer computing with double verification | ![planned](https://img.shields.io/badge/-planned-lightgrey) |
@@ -433,8 +464,8 @@ Community participation follows the [Contributor Covenant](CODE_OF_CONDUCT.md).
 <summary><b>Does Refute discover planets?</b></summary>
 
 No. In v0.1 Refute only re-examines planets and false positives that are already known, to measure
-how well its attacks work. Candidate search starts in v0.4, and even then a signal that survives is
-only a **candidate**: confirming a planet takes follow-up observations and expert vetting. A dossier
+how well its attacks work. Candidate search was piloted in v0.4, and even there a signal that
+survives is only a **candidate**: confirming a planet takes follow-up observations and expert vetting. A dossier
 cannot be sent to ExoFOP as a community candidate: since 2026-08-19 ExoFOP accepts community
 candidates only after they are published in a peer-reviewed journal (or in a Research Note of the
 AAS that cites a peer-reviewed methodology), and only with its approval
@@ -473,12 +504,16 @@ If you use Refute, please cite it via [CITATION.cff](CITATION.cff) (GitHub's "Ci
 @software{refute,
   author  = {Lucilla, Klauber},
   title   = {Refute: find signals, try to kill them, keep what survives},
-  version = {0.2.0},
+  version = {0.4.0},
   year    = {2026},
   url     = {https://github.com/klucilla/refute},
   license = {Apache-2.0}
 }
 ```
+
+The v0.4 pilot's data have their own records: the five stage-2 dossiers,
+[doi:10.5281/zenodo.23898648](https://doi.org/10.5281/zenodo.23898648), and the reproduction
+inputs, [doi:10.5281/zenodo.23874043](https://doi.org/10.5281/zenodo.23874043).
 
 ## Data and acknowledgments
 
@@ -602,6 +637,15 @@ Some data files are not code and keep the terms of their sources
 |---|---|
 | Gaia DR3 rows: `calibration/v0.2/eb_catalog.csv` (written by the v0.2 selection) and the Gaia snapshot `gaia_dr3_vari_eclipsing_binary.csv` published as a release asset | [CC BY-NC 3.0 IGO](https://creativecommons.org/licenses/by-nc/3.0/igo/): non-commercial use, with credit to ESA/Gaia/DPAC |
 | TESS-EB catalog (Prsa et al. 2022) | **not redistributed**, as a precaution (a conflict between the publisher's and the CDS's terms is not demonstrated by the sources checked on 2026-10-10; an earlier statement about the CDS terms was withdrawn as unconfirmed, see [erratum E1](calibration/v0.2/ERRATA.md)). The repository keeps the download script, URL, date and SHA-256, and identifiers in `eb_catalog.csv`; besides these, it contains the 4 TESS-EB periods quoted in four review reports of the v0.2 calibration and the record of the search for TESS-EB values (see "Search record" in [DATA_LICENSE.md](calibration/v0.2/eb_snapshot/DATA_LICENSE.md)). The file is downloaded and its hash checked on every run. Four records appear, with citation, in the v0.2 calibration dossiers, which were published with [release v0.2.0](https://github.com/klucilla/refute/releases/tag/v0.2.0) on 2026-10-11. |
+
+**The v0.4 pilot's dossiers and reproduction archives** (the Zenodo records
+[10.5281/zenodo.23898648](https://doi.org/10.5281/zenodo.23898648) and
+[10.5281/zenodo.23874043](https://doi.org/10.5281/zenodo.23874043)) hold third-party values
+under per-component terms: Gaia DR3 rows (CC BY-NC 3.0 IGO), TESS-EB records (CC BY 4.0) and
+TOI values from ExoFOP (no formal license stated; accepted with the acknowledgment). This is an
+exception to the rule above, restricted to v0.4 by the maintainer's decision of 2026-11-01.
+Terms, credits and sources: [calibration/v0.4/DATA_LICENSE.md](calibration/v0.4/DATA_LICENSE.md)
+and [its sources](calibration/v0.4/sources/data-licenses-2026-11-01.md).
 
 > **Correction (decided 2026-10-10, applied 2026-10-11).** Until 2026-10-11 this table
 > said that the CDS gives TESS-EB CC BY-NC terms with a link to BY-NC-ND. That
