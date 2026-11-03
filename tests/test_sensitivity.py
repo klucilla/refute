@@ -12,9 +12,12 @@ from refute.core.sensitivity import (
     REQUIRED_PROBABILITY,
     RULE,
     Z_POWER,
+    Kind,
     category_block,
     enforce_sensitivity,
     gaussian_probability,
+    not_applicable_block,
+    parse_kind,
     registry_problems,
     rule_block,
     seed_for,
@@ -26,6 +29,8 @@ REGISTRY = {
     "odd_even": {"main": RULE},
     "systematics": {"dumps": "fraction", "sap": RULE, "background": RULE},
     "eb_catalog": {"main": "catalog-lookup"},
+    "edge_events": {"proximity": "fraction", "comparison": "rule?"},
+    "period_alias": {"main": "rule@0.9"},
 }
 
 
@@ -304,3 +309,92 @@ def test_a_result_with_sensitivity_round_trips():
     data = result.to_dict()
     assert data["sensitivity"]["main"]["detectable"] is True
     assert TestResult.from_dict(data) == result
+
+
+# --- registry kinds: conditional sub-checks and a registered requirement (Codex design review) --
+
+
+@pytest.mark.parametrize(
+    "kind, parsed",
+    [
+        ("rule", Kind(RULE, REQUIRED_PROBABILITY, False)),
+        ("rule?", Kind(RULE, REQUIRED_PROBABILITY, True)),
+        ("rule@0.9", Kind(RULE, 0.9, False)),
+        ("rule@0.9?", Kind(RULE, 0.9, True)),
+        ("fraction?", Kind("fraction", None, True)),
+    ],
+)
+def test_a_kind_is_parsed(kind, parsed):
+    assert parse_kind(kind) == parsed
+
+
+@pytest.mark.parametrize("kind", ["", "rules", "rule@x", "rule@0.2", "rule@nan", "fraction@0.9", 3])
+def test_a_bad_kind_is_refused(kind):
+    with pytest.raises(ValueError):
+        parse_kind(kind)
+
+
+def _edge(comparison):
+    return {"proximity": category_block("fraction", "edge fraction 0.2"), "comparison": comparison}
+
+
+def test_a_conditional_sub_check_may_be_not_applicable():
+    out = _one(
+        _result(
+            "edge_events",
+            severity=Severity.WARNING,
+            sensitivity=_edge(
+                not_applicable_block("fewer than half of the events are near an edge")
+            ),
+        )
+    )
+    assert out.status is TestStatus.PASS
+
+
+def test_an_applicable_conditional_sub_check_must_be_detectable():
+    out = _one(_result("edge_events", severity=Severity.WARNING, sensitivity=_edge(_rule(0.3))))
+    assert out.status is TestStatus.INCONCLUSIVE
+    assert "insufficient sensitivity" in out.message
+
+
+@pytest.mark.parametrize(
+    "block",
+    [
+        {"applicable": False, "reason": ""},
+        {"applicable": True, "reason": "x"},
+        {"applicable": False, "reason": "x", "detectable": True},
+    ],
+)
+def test_a_malformed_not_applicable_block_is_refused(block):
+    out = _one(_result("edge_events", severity=Severity.WARNING, sensitivity=_edge(block)))
+    assert out.status is TestStatus.INCONCLUSIVE
+
+
+def test_a_required_sub_check_cannot_be_declared_not_applicable():
+    out = _one(_result("odd_even", sensitivity={"main": not_applicable_block("no reason to run")}))
+    assert out.status is TestStatus.INCONCLUSIVE
+    assert "requires this sub-check" in out.message
+
+
+def test_a_pass_needs_at_least_one_applicable_sub_check():
+    registry = {"x": {"a": "rule?", "b": "rule?"}}
+    blocks = {"a": not_applicable_block("n/a"), "b": not_applicable_block("n/a")}
+    (out,) = enforce_sensitivity([_result("x", sensitivity=blocks)], registry)
+    assert out.status is TestStatus.INCONCLUSIVE
+    assert "no applicable sub-check" in out.message
+    assert registry_problems(["x"], registry, exempt=[]) == ["x: every sub-check is conditional"]
+
+
+def test_the_registry_sets_a_rule_requirement_the_result_cannot_change():
+    # period_alias: detectable iff at least 45 of 50 simulated sinusoids FAIL (acceptance WP1)
+    ok = rule_block("sinusoid", 1000.0, "ppm", "alias-sim-1", 46 / 50, required=0.9)
+    assert _one(_result("period_alias", sensitivity={"main": ok})).status is TestStatus.PASS
+    weak = rule_block("sinusoid", 1000.0, "ppm", "alias-sim-1", 44 / 50, required=0.9)
+    assert (
+        _one(_result("period_alias", sensitivity={"main": weak})).status is TestStatus.INCONCLUSIVE
+    )
+    # the engine default (0.95) is not the registered 0.9: refused
+    default = rule_block("sinusoid", 1000.0, "ppm", "alias-sim-1", 0.99)
+    out = _one(_result("period_alias", sensitivity={"main": default}))
+    assert out.status is TestStatus.INCONCLUSIVE
+    assert "registered 0.9" in out.message

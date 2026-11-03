@@ -15,7 +15,14 @@ sub-check in ``TestResult.sensitivity``:
 - a rule block: ``effect``, ``alternative``, ``unit``, ``rule_id``, ``probability`` (of
   rejecting under the alternative), ``required_probability`` and ``detectable``
   (``probability >= required_probability``);
-- a category block: ``category`` and ``reason``.
+- a category block: ``category`` and ``reason``;
+- for a sub-check the registry marks as conditional, a not-applicable block:
+  ``applicable: false`` and ``reason``.
+
+A registry kind is written ``<base>[@<p>][?]``: the base is ``rule`` or a category; ``@p`` sets
+a rule's required probability (default :data:`REQUIRED_PROBABILITY`), from the pack's trusted
+registry, never from the result; ``?`` marks a conditional sub-check, which may be declared not
+applicable. A PASS needs at least one applicable sub-check.
 
 A statistical test cannot PASS by declaring a category: the registry fixes which applies. A
 PASS still needs positive coverage. The acceptance cases are in
@@ -27,7 +34,7 @@ from __future__ import annotations
 import hashlib
 import math
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from typing import Any
 
 import numpy as np
@@ -50,8 +57,32 @@ REQUIRED_PROBABILITY = 0.95
 Z_POWER = 1.645
 DRAWS = 2000
 
-# test name -> sub-check name -> RULE or a category
+# test name -> sub-check name -> a kind string (see the module docstring)
 Registry = Mapping[str, Mapping[str, str]]
+
+
+@dataclass(frozen=True)
+class Kind:
+    base: str  # RULE or a category
+    required: float | None  # a rule's required probability
+    optional: bool
+
+
+def parse_kind(kind: Any) -> Kind:
+    """Parse a registry kind ``<base>[@<p>][?]``; ValueError when it is not one."""
+    if not isinstance(kind, str) or not kind:
+        raise ValueError(f"not a kind: {kind!r}")
+    optional = kind.endswith("?")
+    text = kind[:-1] if optional else kind
+    base, _, required = text.partition("@")
+    if base == RULE:
+        p = REQUIRED_PROBABILITY if not required else float(required)
+        if not (math.isfinite(p) and 0.5 <= p <= 1.0):
+            raise ValueError(f"a rule's required probability must be in [0.5, 1]: {kind!r}")
+        return Kind(RULE, p, optional)
+    if base in CATEGORIES and not required:
+        return Kind(base, None, optional)
+    raise ValueError(f"unknown kind {kind!r}")
 
 
 def _finite(value: Any) -> bool:
@@ -66,14 +97,31 @@ def _text(value: Any) -> bool:
     return isinstance(value, str) and value.strip() != ""
 
 
-def block_problem(block: Any, expected: str) -> str | None:
+def _not_applicable(block: Any) -> bool:
+    return isinstance(block, Mapping) and "applicable" in block
+
+
+def block_problem(block: Any, expected: str | Kind) -> str | None:
     """Why ``block`` is not a valid block of the kind ``expected`` (None when it is).
 
-    The required probability is the engine's (:data:`REQUIRED_PROBABILITY`): a result cannot
-    lower it. Descriptive fields must be non-empty strings."""
+    A rule's required probability comes from the registry kind (default
+    :data:`REQUIRED_PROBABILITY`): a result cannot lower it. Descriptive fields must be
+    non-empty strings. A not-applicable block is valid only for a conditional kind."""
+    try:
+        kind = expected if isinstance(expected, Kind) else parse_kind(expected)
+    except ValueError as error:
+        return f"{error} in the registry"
     if not isinstance(block, Mapping):
         return "not a mapping"
-    if expected == RULE:
+    if _not_applicable(block):
+        if not kind.optional:
+            return "declared not applicable, but the registry requires this sub-check"
+        if block["applicable"] is not False or set(block) != {"applicable", "reason"}:
+            return "a not-applicable block holds only applicable: false and a reason"
+        if not _text(block["reason"]):
+            return "reason is not a non-empty string"
+        return None
+    if kind.base == RULE:
         missing = [key for key in RULE_KEYS if key not in block]
         if missing:
             return "missing " + ", ".join(missing)
@@ -85,19 +133,17 @@ def block_problem(block: Any, expected: str) -> str | None:
         for key in ("alternative", "probability", "required_probability"):
             if not _finite(block[key]):
                 return f"{key} is not a finite number"
-        if block["required_probability"] != REQUIRED_PROBABILITY:
-            return f"required_probability is not the engine's {REQUIRED_PROBABILITY}"
+        if block["required_probability"] != kind.required:
+            return f"required_probability is not the registered {kind.required}"
         if not 0.0 <= block["probability"] <= 1.0:
             return "probability outside [0, 1]"
-        if block["detectable"] != (block["probability"] >= REQUIRED_PROBABILITY):
+        if block["detectable"] != (block["probability"] >= kind.required):
             return "detectable disagrees with the probabilities"
         return None
-    if expected not in CATEGORIES:
-        return f"unknown category {expected!r} in the registry"
     if "category" not in block or "reason" not in block:
         return "missing category or reason"
-    if block["category"] != expected:
-        return f"category {block['category']!r}, registered {expected!r}"
+    if block["category"] != kind.base:
+        return f"category {block['category']!r}, registered {kind.base!r}"
     if not _text(block["reason"]):
         return "reason is not a non-empty string"
     return None
@@ -113,6 +159,7 @@ def _refusal(result: TestResult, registry: Registry) -> str | None:
         blocks = {}
     if not isinstance(blocks, Mapping):
         return "invalid sensitivity: not a mapping of sub-checks"
+    applicable = 0
     for sub, expected in entries.items():
         block = blocks.get(sub)
         if block is None:
@@ -120,12 +167,17 @@ def _refusal(result: TestResult, registry: Registry) -> str | None:
         problem = block_problem(block, expected)
         if problem:
             return f"invalid sensitivity block for {sub}: {problem}"
-        if expected == RULE and not block["detectable"]:
+        if _not_applicable(block):
+            continue
+        applicable += 1
+        if "detectable" in block and not block["detectable"]:
             return (
                 f"insufficient sensitivity: {block['effect']} {block['alternative']:g} "
                 f"{block['unit']} not detectable ({block['probability']:.3f} < "
                 f"{block['required_probability']:.2f})"
             )
+    if applicable == 0:
+        return "no applicable sub-check"
     return None
 
 
@@ -156,9 +208,20 @@ def registry_problems(tests: Sequence[str], registry: Registry, exempt: Sequence
             problems.append(f"{name}: no sensitivity rule or category registered")
             continue
         for sub, kind in entries.items():
-            if kind != RULE and kind not in CATEGORIES:
+            try:
+                parse_kind(kind)
+            except ValueError:
                 problems.append(f"{name}.{sub}: unknown kind {kind!r}")
+        if entries and all(_optional(kind) for kind in entries.values()):
+            problems.append(f"{name}: every sub-check is conditional")
     return problems
+
+
+def _optional(kind: Any) -> bool:
+    try:
+        return parse_kind(kind).optional
+    except ValueError:
+        return False
 
 
 def seed_for(*parts: object) -> int:
@@ -168,16 +231,22 @@ def seed_for(*parts: object) -> int:
 
 
 def rule_block(
-    effect: str, alternative: float, unit: str, rule_id: str, probability: float
+    effect: str,
+    alternative: float,
+    unit: str,
+    rule_id: str,
+    probability: float,
+    required: float = REQUIRED_PROBABILITY,
 ) -> dict[str, Any]:
+    """A rule block; ``required`` must be the one the pack's registry declares."""
     return {
         "effect": effect,
         "alternative": float(alternative),
         "unit": unit,
         "rule_id": rule_id,
         "probability": float(probability),
-        "required_probability": REQUIRED_PROBABILITY,
-        "detectable": bool(probability >= REQUIRED_PROBABILITY),
+        "required_probability": float(required),
+        "detectable": bool(probability >= required),
     }
 
 
@@ -185,6 +254,11 @@ def category_block(category: str, reason: str) -> dict[str, Any]:
     if category not in CATEGORIES:
         raise ValueError(f"unknown category {category!r}")
     return {"category": category, "reason": reason}
+
+
+def not_applicable_block(reason: str) -> dict[str, Any]:
+    """For a conditional sub-check that did not apply to this candidate."""
+    return {"applicable": False, "reason": reason}
 
 
 def gaussian_probability(alternative: float, sigma: float, threshold: float) -> float:
