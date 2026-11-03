@@ -286,6 +286,32 @@ def target_entry(
     }
 
 
+# v0.5 (WP6, #194): the catalog columns of a control's period and its uncertainty, by source
+PERIOD_COLUMNS_V05 = {
+    "NASA Exoplanet Archive pscomppars": ("pl_orbper", "pl_orbpererr1"),
+    "ExoFOP TOI table": ("Period (days)", "Period (days) err"),
+}
+
+
+def published_period_v05(source_name: str, row: dict | None) -> tuple[dict[str, Any], str | None]:
+    """v0.5 selection (#194): a control's catalogued period with its uncertainty, when the
+    catalog row has it, for ``published``; and a note naming the columns they come from, for the
+    target's ``notes``. The v0.4 ``target_entry`` is not changed (its outputs are recorded)."""
+    columns = PERIOD_COLUMNS_V05.get(source_name)
+    if columns is None or not row:
+        return {}, None
+    value_col, err_col = columns
+    published = {
+        "period_days": sel._float(row.get(value_col)),
+        "period_err_days": sel._float(row.get(err_col)),
+    }
+    note = (
+        f"period and its uncertainty from the columns '{value_col}' and '{err_col}' of "
+        f"{source_name}"
+    )
+    return published, note
+
+
 def targets_document(out: dict[str, Any], inputs: dict[str, Any]) -> dict[str, Any]:
     """The targets file of the claim: the two controls, then the 100 funnel stars in walk
     order (the run set is the first N of them)."""

@@ -621,6 +621,74 @@ def discovery_record(analysis: Analysis, plan: TessTestPlan) -> dict[str, Any]:
     }
 
 
+SDE_NOTE = (
+    "the search's SDE is the stage-1 SDE of the per-sector peak that seeded the kept candidate; "
+    "when the kept period is a multiple of the seed's (search_diagnostics.refined, factor), it "
+    "is not the SDE of the kept peak, which this search does not compute (#186)"
+)
+
+
+def v05_record(analysis: Analysis, data: TessData, plan: TessTestPlan) -> dict[str, Any]:
+    """The v0.5 fields of ``verdict.json`` (docs/plans/v0.5-acceptance.md, WP6): the claim's
+    discovery version and rule, the period, its error and the epoch from one fit, the cadences
+    used per sector, the holdout train ephemeris against the candidate, and the SDE label."""
+    candidate = analysis.gauntlet.candidate
+    ephemeris = analysis.gauntlet.ephemeris
+    cadence = plan.data.exptime_seconds / 86400.0
+    sectors = {}
+    for info in data.sectors:
+        used = int(np.sum(data.lc.sector == info.sector))
+        expected = max(1, int(round((info.t_end - info.t_start) / cadence)))
+        sectors[str(info.sector)] = {
+            "cadences_used": used,
+            "cadences_in_span": expected,
+            "fraction_used": used / expected,
+        }
+    if ephemeris is not None:
+        params = {
+            "source": "linear ephemeris fit of the transit times (one fit)",
+            "period_days": ephemeris.period,
+            "period_err_days": ephemeris.period_err,
+            "epoch_bjd_tdb": ephemeris.t_ref + BTJD_OFFSET,
+            "epoch_err_days": ephemeris.t_ref_err,
+        }
+    elif candidate is not None:
+        params = {
+            "source": "BLS search (no ephemeris fit; no uncertainties)",
+            "period_days": candidate.period,
+            "period_err_days": None,
+            "epoch_bjd_tdb": candidate.t0 + BTJD_OFFSET,
+            "epoch_err_days": None,
+        }
+    else:
+        params = None
+    rounds = []
+    for r in analysis.holdout.rounds:
+        train = r.metrics.get("train_candidate") or {}
+        match = None
+        if candidate is not None and train.get("period"):
+            rel = abs(train["period"] - candidate.period) / candidate.period
+            offset = (train["t0"] - candidate.t0) / candidate.period
+            phase = abs(offset - round(offset)) * candidate.period
+            match = bool(rel <= 0.01 and phase <= 0.5 * candidate.duration)
+        rounds.append(
+            {
+                "hidden_year": r.hidden_year,
+                "train_matches_candidate": match,
+                "train_period_days": train.get("period"),
+                "depth_consistency_sigma": r.metrics.get("depth_consistency_sigma"),
+            }
+        )
+    return {
+        "discovery_version": 2,
+        "sensitivity_rule": "refute.core.sensitivity.enforce_sensitivity (#185)",
+        "parameters": params,
+        "sde_note": SDE_NOTE,
+        "cadences_per_sector": sectors,
+        "holdout_rounds": rounds,
+    }
+
+
 ALIAS_FACTORS = (("P", 1.0), ("2P", 2.0), ("P/2", 0.5), ("3P", 3.0), ("P/3", 1.0 / 3.0))
 
 
@@ -814,6 +882,9 @@ def build_result(
         record["expected_tests"] = decisive
         record["required_diagnostics"] = required
         record.update(discovery_record(analysis, plan))
+    if plan.v05:
+        # v0.5 claims only (WP6), so the records of earlier claims keep their keys and bytes.
+        record["v05"] = v05_record(analysis, data, plan)
     if analysis.gauntlet.timing is not None:
         # M4 piece 3 (switch on only, so records with the switch off keep their keys).
         record["global_timing"] = analysis.gauntlet.timing

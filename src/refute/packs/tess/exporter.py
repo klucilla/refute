@@ -11,6 +11,7 @@ code on purpose.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -87,7 +88,48 @@ def _fields(result: dict[str, Any]) -> dict[str, Any]:
             f"Temporal diagnostic: {fields['temporal_diagnostic']} (a diagnostic, never part "
             "of the verdict)."
         )
+    if "v05" in result:
+        fields = _fields_v05(result, fields)
     return fields
+
+
+SHEET_V05 = "candidate-parameters-2"
+BLS_METHOD = "bls-grid-search"
+
+
+def _fields_v05(result: dict[str, Any], fields: dict[str, Any]) -> dict[str, Any]:
+    """v0.5 claims only (WP6; #179, #186): the sheet's version 2, as approved for the v0.4
+    re-export (calibration/v0.4/reexport.py), with the period, its error and the epoch from
+    one fit. Earlier claims keep the version-1 sheet byte for byte."""
+    from refute.packs.tess.duration import METHOD_ACCEPTED, NOT_ACCEPTED_REASON
+
+    v05 = result["v05"]
+    out: dict[str, Any] = {"sheet_version": SHEET_V05, **fields}
+    params = v05.get("parameters")
+    if params is not None:
+        out["period_days"] = params["period_days"]
+        out["period_err_days"] = params["period_err_days"]
+        out["epoch_bjd_tdb"] = params["epoch_bjd_tdb"]
+        out["epoch_err_days"] = params["epoch_err_days"]
+        out["period_epoch_source"] = params["source"]
+    if result.get("candidate"):
+        out["duration_method"] = BLS_METHOD
+    else:
+        out.pop("duration_method", None)
+    estimate = result.get("duration_estimate")
+    if estimate is not None and not METHOD_ACCEPTED:
+        out["duration_fit"] = {
+            "method": estimate.get("method"),
+            "accepted": False,
+            "estimable": estimate.get("estimable"),
+            "not_reported_reason": NOT_ACCEPTED_REASON,
+        }
+        out["duration_note"] = (
+            "the duration shown is the BLS grid value; the trapezoid fit's duration and "
+            "uncertainty are not reported: " + NOT_ACCEPTED_REASON
+        )
+    out["sde_note"] = v05.get("sde_note")
+    return out
 
 
 class CandidateParameterExporter:
@@ -107,7 +149,16 @@ class CandidateParameterExporter:
                 continue
             shown = value
             if value is None and key.endswith("_err_hours"):
-                shown = "not estimable" if "duration_note" in fields else "not measured"
+                if "duration_fit" in fields:
+                    # v0.5 (#179): estimable but not accepted is "not reported"
+                    shown = (
+                        "not reported (trapezoid fit not accepted; no uncertainty is given for "
+                        "the BLS value)"
+                    )
+                else:
+                    shown = "not estimable" if "duration_note" in fields else "not measured"
+            elif isinstance(value, dict) and "sheet_version" in fields:
+                shown = json.dumps(value, sort_keys=True)
             lines.append(f"| {key} | {shown} |")
         lines.append("")
         lines.append("Evidence: see `report.md`, `verdict.json` and `plots/` in this dossier.")

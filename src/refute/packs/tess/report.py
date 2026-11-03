@@ -111,6 +111,51 @@ def _discovery_lines(result: dict[str, Any]) -> list[str]:
     return lines
 
 
+BLEND_CAVEAT = (
+    "A PASS of the pixel tests (`centroid_shift`, `aperture_depth`) does not exclude unresolved "
+    "blends closer than the minimum offset of `centroid_shift` ({offset})."
+)
+
+
+def _bjd(value: Any) -> str:
+    """v0.5 (#186): a BJD at full precision, never in short scientific notation."""
+    return "n/a" if value is None else f"{float(value):.6f}"
+
+
+def _v05_lines(result: dict[str, Any]) -> list[str]:
+    """The v0.5 sections of a report (WP6): the sensitivity rule, the period and epoch from one
+    fit, the SDE label, the cadences used per sector and the blend caveat."""
+    v05 = result["v05"]
+    lines = [
+        "## v0.5 rules",
+        "",
+        "- Sensitivity rule (#185): a fatal or warning test PASSes only when it could have "
+        "detected its declared alternative; otherwise it is INCONCLUSIVE, with the reason. A "
+        "PASS means no failure was detected with the declared sensitivity, never that an effect "
+        "is absent. Each test's sensitivity is in `verdict.json` (`tests[].sensitivity`).",
+        f"- SDE: {v05.get('sde_note')}.",
+    ]
+    params = v05.get("parameters")
+    if params:
+        lines.append(
+            f"- Period {params['period_days']!r} d (error {params['period_err_days']!r}) and epoch "
+            f"{_bjd(params['epoch_bjd_tdb'])} BJD_TDB (error {params['epoch_err_days']!r}), from: "
+            f"{params['source']}."
+        )
+    centroid = next((t for t in result.get("tests", []) if t["name"] == "centroid_shift"), None)
+    offset = (centroid or {}).get("metrics", {}).get("min_offset_arcsec")
+    shown = f"{offset:.1f} arcsec" if isinstance(offset, (int, float)) else "see its thresholds"
+    lines += ["- " + BLEND_CAVEAT.format(offset=shown), "", "### Cadences used per sector", ""]
+    lines += ["| Sector | Used | In span | Fraction |", "|---|---|---|---|"]
+    for sector, row in (v05.get("cadences_per_sector") or {}).items():
+        lines.append(
+            f"| {sector} | {row['cadences_used']} | {row['cadences_in_span']} | "
+            f"{row['fraction_used']:.3f} |"
+        )
+    lines.append("")
+    return lines
+
+
 def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
     lines = [
         f"# {result.get('target_key')}: {result.get('verdict')}",
@@ -139,15 +184,21 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
 
     cand = result.get("candidate")
     comparison = result.get("period_comparison") or {}
+    v05 = "v05" in result
     lines += ["## Signal", ""]
     if cand:
+        published_t0 = (result.get("published") or {}).get("t0_bjd")
+        epoch = (
+            f"| Epoch (BJD_TDB) | {_bjd(cand['t0_bjd'])} | {_bjd(published_t0)} |"
+            if v05
+            else f"| Epoch (BJD_TDB) | {_fmt(cand['t0_bjd'], 5)} | {_fmt(published_t0, 5)} |"
+        )
         lines += [
             "| Quantity | Found | Published |",
             "|---|---|---|",
             f"| Period (d) | {_fmt(cand['period'], 7)} | "
             f"{_fmt(comparison.get('published_period_days'), 7)} |",
-            f"| Epoch (BJD_TDB) | {_fmt(cand['t0_bjd'], 5)} | "
-            f"{_fmt((result.get('published') or {}).get('t0_bjd'), 5)} |",
+            epoch,
             f"| Duration (h) | {_fmt(cand['duration_hours'], 3)} | "
             f"{_fmt((result.get('published') or {}).get('duration_hours'), 3)} |",
             f"| Depth (ppm) | {_fmt(cand['depth_ppm'], 1)} | "
@@ -164,11 +215,16 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
         lines += ["No candidate signal was found.", ""]
 
     lines += ["## Gauntlet", "", "| Test | Status | Severity | Result |", "|---|---|---|---|"]
+    diagnostic = (
+        set((result.get("discovery") or {}).get("diagnostic_tests") or []) if v05 else set()
+    )
     for test in result.get("tests", []):
-        lines.append(
-            f"| {test['name']} | {test['status']} | {test['severity']} | {test['message']} |"
-        )
+        # v0.5 (#186): a diagnostic test is labelled as such, never by its severity
+        severity = "diagnostic" if test["name"] in diagnostic else test["severity"]
+        lines.append(f"| {test['name']} | {test['status']} | {severity} | {test['message']} |")
     lines.append("")
+    if v05:
+        lines += _v05_lines(result)
     if any(
         t["name"] == "eb_catalog" and (t.get("metrics") or {}).get("downgraded")
         for t in result.get("tests", [])
@@ -202,6 +258,20 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
                 f"{_fmt(m.get('hidden_snr'), 1)} | {_fmt(m.get('control_phase05_snr'), 1)} |"
             )
         lines.append("")
+        if v05:
+            # v0.5 (#190): whether a round tests the candidate's own ephemeris, and the depth
+            # consistency it computed
+            lines += [
+                "| Hidden year | Train ephemeris matches the candidate "
+                "| Depth consistency (sigma) |",
+                "|---|---|---|",
+            ]
+            for row in result["v05"].get("holdout_rounds", []):
+                lines.append(
+                    f"| {row['hidden_year']} | {_fmt(row['train_matches_candidate'])} | "
+                    f"{_fmt(row['depth_consistency_sigma'], 2)} |"
+                )
+            lines.append("")
 
     data = result.get("data_summary") or {}
     product = data.get("product") or {}

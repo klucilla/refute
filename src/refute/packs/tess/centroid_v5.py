@@ -197,7 +197,7 @@ def check_centroid_v5(
     seed: int,
 ) -> TestResult:
     """The v0.5 ``centroid_shift`` (fatal; see the module docstring)."""
-    from refute.packs.tess.battery import gaussian_sigma_from_chi2
+    from refute.packs.tess.battery import MAX_SIGMA_REPORTED, gaussian_sigma_from_chi2
 
     severity = Severity.FATAL
     sp = plan.stronger
@@ -273,6 +273,8 @@ def check_centroid_v5(
             "combined_offset_arcsec": distance,
             "combined_offset_px": distance / scale,
             "offset_sigma": sigma,
+            # WP6 (#186): the significance is capped; a capped value is a bound, not a measure
+            "offset_sigma_saturated": bool(sigma >= MAX_SIGMA_REPORTED),
             "min_offset_arcsec": min_arcsec,
             "heterogeneity_chi2": chi2,
             "heterogeneity_dof": dof,
