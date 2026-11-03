@@ -82,7 +82,8 @@ class TessClaimSchema:
             raise ValueError("discover claims need a test_plan.discovery section (roles)")
         claim = loaded.claim
         catalogs = loaded.attachment_by_role("eb-catalog") is not None
-        expected = set(expected_tests(catalogs))
+        # v0.5: a discovery version-2 claim also gives a role to every v0.5 test
+        expected = set(expected_tests(catalogs, int(discovery.get("version", 1)) == 2))
         roles = set(discovery["decisive"]) | set(discovery["diagnostic"])
         if roles != expected:
             missing = sorted(expected - roles)
@@ -133,6 +134,12 @@ class TessClaimSchema:
             targets = load_targets_file(loaded.attachment_path(attachment)).targets
             return [t.model_dump(mode="json") for t in targets if t.kind != "development"]
         return list(loaded.claim.targets)
+
+    def reproduction_inputs(self, loaded: LoadedClaim) -> list[dict[str, Any]]:
+        """v0.5 (#189, #195): the inputs the claim declares a clone lacks (empty for every
+        earlier claim)."""
+        section = (loaded.claim.test_plan or {}).get("reproduction")
+        return list((section or {}).get("inputs") or [])
 
     def verify_promotion(
         self, record: dict[str, Any], loaded: LoadedClaim, offline: bool = False

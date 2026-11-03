@@ -434,6 +434,31 @@ class DiscoveryParams(_Model):
         return max([1, *(int(s) for s in self.stages.values())])
 
 
+class ReproductionInput(_Model):
+    """One input a clone lacks (v0.5 WP8; ``refute.core.reproduce``)."""
+
+    name: str = Field(min_length=1)
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    url: str = Field(min_length=1)
+    dest: str = Field(min_length=1)
+
+
+class ReproductionParams(_Model):
+    """v0.5 (#189, #195): the inputs a clone lacks, each with its SHA-256, URL and destination
+    under ``.cache/frozen/``. Only with discovery version 2; absent from the dump otherwise."""
+
+    inputs: list[ReproductionInput] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _safe(self) -> ReproductionParams:
+        from refute.core.reproduce import InputSpec, specs_problems
+
+        problems = specs_problems([InputSpec(**i.model_dump()) for i in self.inputs])
+        if problems:
+            raise ValueError("; ".join(problems))
+        return self
+
+
 class TessTestPlan(_Model):
     data: DataParams = Field(default_factory=DataParams)
     detrend: DetrendParams = Field(default_factory=DetrendParams)
@@ -441,13 +466,14 @@ class TessTestPlan(_Model):
     gauntlet: GauntletParams = Field(default_factory=GauntletParams)
     discovery: DiscoveryParams | None = None
     stronger: StrongerParams | None = None
+    reproduction: ReproductionParams | None = None
 
     @model_serializer(mode="wrap")
     def _without_absent_discovery(self, handler: Any) -> dict[str, Any]:
-        """A plan without the v0.4 or the v0.5 section dumps exactly as before they existed
+        """A plan without the v0.4 or the v0.5 sections dumps exactly as before they existed
         (issue #30)."""
         out = handler(self)
-        for key in ("discovery", "stronger"):
+        for key in ("discovery", "stronger", "reproduction"):
             if out.get(key, 0) is None:
                 del out[key]
         return out
@@ -462,6 +488,8 @@ class TessTestPlan(_Model):
             raise ValueError(
                 "the `stronger` section goes with discovery version 2, and only with it"
             )
+        if self.reproduction is not None and not version2:
+            raise ValueError("the `reproduction` section goes only with discovery version 2")
         if version2:
             from refute.core.sensitivity import registry_problems
             from refute.packs.tess.power import TESS_REGISTRY

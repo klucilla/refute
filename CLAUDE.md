@@ -246,8 +246,9 @@ Only files in use, or planned for use in an open task, stay in the project folde
 (C:\Projetos\refute).
 
 - **Never deleted by this rule:** tracked files, the published records of
-  `calibration/*/audit/` and `docs/validation/v0.2.1/pre-document-runs/`, and
-  published dossiers.
+  `calibration/*/audit/` and `docs/validation/v0.2.1/pre-document-runs/`,
+  published dossiers, and the frozen inputs under `.cache/frozen/` (v0.5, #196:
+  inputs of locked claims, each in a folder named after its SHA-256).
 - **Still in use, or planned for use in an open task:** kept. This includes the
   project's main virtual environment and the environments of analyses or fixes in
   progress. When in doubt, keep it and ask the maintainer.

@@ -102,6 +102,38 @@ def verify_command(
     raise typer.Exit(result.exit_code)
 
 
+@app.command("prepare-inputs")
+def prepare_inputs_command(
+    claim: Annotated[Path, typer.Argument(help="Path to claim.yaml")],
+) -> None:
+    """Fetch and verify the inputs a clone lacks, as the locked claim declares them (v0.5).
+
+    The claim is verified first (its declaration is part of the locked claim); each input is
+    fetched over https, checked against its SHA-256 and installed under `.cache/frozen/` without
+    replacing anything. Exit code 0 when every input is present."""
+    from refute.core.claim import load_claim
+    from refute.core.reproduce import InputError, prepare, specs_from
+    from refute.core.run import input_root
+
+    result = verify_claim(claim)
+    if result.status.value != "PASS":
+        typer.echo(f"refused: refute verify gives {result.status.value}")
+        raise typer.Exit(1)
+    loaded = load_claim(claim)
+    hook = getattr(loaded.pack.schema, "reproduction_inputs", None)
+    declared = hook(loaded) if hook is not None else []
+    if not declared:
+        typer.echo("the claim declares no inputs")
+        raise typer.Exit(0)
+    try:
+        report = prepare(specs_from(declared), input_root(loaded))
+    except (InputError, OSError) as error:
+        typer.echo(f"refused: {error}")
+        raise typer.Exit(1) from error
+    for line in report:
+        typer.echo(f"  {line['name']}: {line['state']}")
+
+
 @app.command("fetch")
 def fetch_command(
     claim: Annotated[Path, typer.Argument(help="Path to claim.yaml")],

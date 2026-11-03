@@ -56,6 +56,30 @@ class TargetTask:
     fetch_error: str | None = None
 
 
+def _code_span(text: str) -> str:
+    """``text`` as a Markdown code span that its own backticks cannot close."""
+    fence = "``" if "`" in text else "`"
+    return f"{fence}{text.replace(chr(10), ' ')}{fence}"
+
+
+def _inputs_markdown(inputs: list[dict[str, str]]) -> str:
+    """The section of the declared inputs a clone lacks: each fetched and verified by
+    ``refute prepare-inputs`` (https, SHA-256 checked before it is installed), and checked again
+    by the run, which refuses to start without them."""
+    lines = [
+        "",
+        "Inputs this clone lacks (declared by the claim; `refute prepare-inputs` fetches each one,",
+        "checks its SHA-256 before installing it, and the run refuses to start without them):",
+        "",
+    ]
+    for item in inputs:
+        lines.append(
+            f"- {_code_span(item['name'])}: {_code_span(item['url'])}, SHA-256 "
+            f"{_code_span(item['sha256'])}, installed at {_code_span(item['dest'])}"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def reproduce_markdown(task: TargetTask) -> str:
     ctx = task.context
     mode = ctx["mode"]
@@ -73,6 +97,10 @@ def reproduce_markdown(task: TargetTask) -> str:
         f"is {ctx['code_sha256']})"
     )
     key = task.target_key
+    # v0.5 (#189, #195): only for a claim that declares inputs; otherwise the text is unchanged
+    inputs = ctx.get("reproduction_inputs") or []
+    inputs_section = _inputs_markdown(inputs) if inputs else ""
+    prepare = f"\nuv run refute prepare-inputs {claim_ref}" if inputs else ""
     return f"""# Reproduce this dossier
 
 These commands re-run the analysis of `{key}` from scratch in a fresh clone of the
@@ -85,12 +113,12 @@ Refute repository and compare the new result with this dossier.
 - Commit checked out when this dossier was produced: `{run_commit or "none"}`
   (it contains the lock file; `refute verify` proves its code hash equals the
   locked code hash)
-
+{inputs_section}
 ```bash
 git clone {refute.__repository__}.git refute
 cd refute
 {checkout}
-uv sync --frozen
+uv sync --frozen{prepare}
 uv run refute verify {claim_ref}
 uv run refute {mode} {claim_arg} --target {key} --out repro --run-id repro --workers 1
 uv run refute check-dossier repro/repro/{key} --against <this dossier>
@@ -204,6 +232,32 @@ def _select_targets(
     return chosen, missing
 
 
+def input_root(loaded: Any) -> Path:
+    """Where the declared inputs live: the claim's git checkout (its top level), else the
+    claim's folder."""
+    state = git_state(loaded.directory)
+    return Path(state.toplevel) if state.is_repo and state.toplevel else Path(loaded.directory)
+
+
+def declared_inputs(loaded: Any) -> list | RunOutcome:
+    """The claim's declared inputs, checked under its checkout; a RunOutcome refusing the run
+    when one is missing or wrong (v0.5 WP8). A pack without the hook declares none."""
+    from refute.core.reproduce import InputError, check, specs_from
+
+    hook = getattr(loaded.pack.schema, "reproduction_inputs", None)
+    declared = hook(loaded) if hook is not None else []
+    if not declared:
+        return []
+    try:
+        specs = specs_from(declared)
+    except InputError as error:
+        return RunOutcome(exit_code=1, messages=[str(error)])
+    problems = check(specs, input_root(loaded))
+    if problems:
+        return RunOutcome(exit_code=1, messages=["declared inputs: " + "; ".join(problems)])
+    return specs
+
+
 def execute_run(
     claim_path: Path | str,
     *,
@@ -250,6 +304,11 @@ def execute_run(
     duplicates = duplicate_keys_problem(loaded)
     if duplicates:
         return RunOutcome(exit_code=1, messages=[duplicates])
+    # v0.5 (#189, #195): the inputs a clone lacks, declared by the claim, must be present with
+    # their SHA-256 before anything is queried, downloaded or analyzed
+    inputs = declared_inputs(loaded)
+    if isinstance(inputs, RunOutcome):
+        return inputs
     selected, missing = _select_targets(loaded, targets)
     if missing:
         return RunOutcome(exit_code=1, messages=[f"unknown target(s): {', '.join(missing)}"])
@@ -322,6 +381,9 @@ def execute_run(
     }
     if staging is not None:
         context.update(staging)
+    if inputs:
+        # only when the claim declares inputs, so earlier dossiers keep their REPRODUCE.md
+        context["reproduction_inputs"] = [s.to_dict() for s in inputs]
     attachments = tuple(
         (a.path, loaded.attachment_path(a).read_bytes()) for a in loaded.claim.attachments
     )
