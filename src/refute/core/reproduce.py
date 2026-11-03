@@ -10,10 +10,17 @@ verifies them (``refute prepare-inputs``), and the dossier's ``REPRODUCE.md`` li
 Safety (Codex's design review of 2026-11-03):
 - a destination is a relative path inside ``.cache/frozen/`` (a dedicated input area that the
   hygiene rule never deletes), with plain components only: no traversal, no drive, no UNC path,
-  no backslash, no ``:`` (alternate data streams), no Windows device name, no duplicate under
+  no backslash, no ``:`` (alternate data streams), no Windows device name, no component ending
+  in a dot (Windows drops it, so ``name.`` would alias ``name``), no duplicate under
   case-insensitive comparison; no link or junction may lie on the way;
+- ``install`` validates the destination itself, then checks each existing ancestor and creates
+  the missing ones one level at a time, refusing a link or a junction at each level, before
+  anything is written (Codex's end-of-round review of round 3);
 - a file is installed without clobbering: written to an exclusive temporary file, verified,
   then hard-linked to the destination (which fails if the destination appeared meanwhile);
+- the checks are made before the writes; a hostile process that replaces an ancestor with a
+  junction between the check and the write is outside this guarantee (no anchored directory
+  handles are used);
 - fetching uses https only, with a timeout, a size bound, and redirects that must stay https;
   ``file:`` URLs are accepted only under an explicit fixture root (the offline tests).
 """
@@ -74,6 +81,8 @@ def dest_problem(dest: str) -> str | None:
             return "an empty, '.' or '..' component"
         if not all(c.isalnum() or c in "-_." for c in part):
             return f"a component with other characters: {part!r}"
+        if part.endswith("."):
+            return f"a component ending in a dot (a Windows alias): {part!r}"
         if part.split(".")[0].lower() in _DEVICES:
             return f"a Windows device name: {part!r}"
     return None
@@ -107,6 +116,29 @@ def _no_link(path: Path, root: Path) -> None:
         if part == root:
             return
     raise InputError(f"{path} is not inside {root}")
+
+
+def make_parents(directory: Path, root: Path) -> None:
+    """Create ``directory`` under ``root`` one level at a time, refusing a link or a junction at
+    every level (existing or just created) and a ``directory`` outside ``root``; nothing is
+    created above a refused level."""
+    root, directory = Path(root), Path(directory)
+    if root.is_symlink() or (root.exists() and root.is_junction()):
+        raise InputError(f"{root} is a link or a junction")
+    root.mkdir(parents=True, exist_ok=True)  # the checkout itself, named by the caller
+    try:
+        parts = directory.relative_to(root).parts
+    except ValueError as error:
+        raise InputError(f"{directory} is not inside {root}") from error
+    current = root
+    for part in parts:
+        current = current / part
+        if current.is_symlink() or (current.exists() and current.is_junction()):
+            raise InputError(f"{current} is a link or a junction")
+        if not current.exists():
+            current.mkdir()
+        if current.is_symlink() or current.is_junction() or not current.is_dir():
+            raise InputError(f"{current} is not a plain directory")
 
 
 def check(specs: Sequence[InputSpec], root: Path) -> list[str]:
@@ -166,11 +198,15 @@ def fetch_bytes(url: str, file_root: Path | None = None) -> bytes:
 
 
 def install(data: bytes, spec: InputSpec, root: Path) -> Path:
-    """Install verified bytes at the destination without clobbering anything."""
+    """Install verified bytes at the destination without clobbering anything. The destination is
+    validated here too (a direct caller may skip ``prepare``), before any directory is made."""
+    problems = specs_problems([spec])
+    if problems:
+        raise InputError("; ".join(problems))
     if hashlib.sha256(data).hexdigest() != spec.sha256:
         raise InputError(f"{spec.name}: the fetched bytes do not have the declared SHA-256")
     path = _path(root, spec)
-    path.parent.mkdir(parents=True, exist_ok=True)
+    make_parents(path.parent, Path(root))
     _no_link(path.parent, Path(root))
     temporary = path.with_name(path.name + f".{os.getpid()}.part")
     with open(temporary, "xb") as fh:

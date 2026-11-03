@@ -5,7 +5,9 @@ folder the project's hygiene rule never deletes (CLAUDE.md). The TESS-EB edition
 pilot (``discover.pilot.TESS_EB_STATIC``) keeps its recorded path for v0.4; a v0.5 claim reads the
 same edition from ``.cache/frozen/tess-eb/<sha256>/tess_ebs_prsa2022.tsv``. Placing a file there
 copies it (never moves it), checks the SHA-256 of the source before and of the copy after, refuses
-a link or a junction on the way, and never overwrites a file with other bytes.
+a link or a junction on the way, and never overwrites a file: the copy goes to an exclusively
+created temporary file and is published by a hard link, which fails when the destination exists,
+also when it appeared after the first check (Codex's end-of-round review of round 3).
 """
 
 from __future__ import annotations
@@ -14,6 +16,8 @@ import hashlib
 import os
 import shutil
 from pathlib import Path
+
+from refute.core.reproduce import InputError, make_parents
 
 FROZEN = Path(".cache") / "frozen"
 TESS_EB_NAME = "tess_ebs_prsa2022.tsv"
@@ -71,12 +75,21 @@ def place_frozen_tess_eb(source: Path, root: Path, sha256: str) -> Path:
         if _sha256(dest) != sha256:
             raise ValueError(f"{dest} holds other bytes; it is never overwritten")
         return dest
-    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        make_parents(dest.parent, root)
+    except InputError as error:
+        raise ValueError(str(error)) from error
     _no_link(dest.parent, root)
-    temporary = dest.with_name(dest.name + ".part")
-    shutil.copyfile(source, temporary)
-    if _sha256(temporary) != sha256:
+    temporary = dest.with_name(f"{dest.name}.{os.getpid()}.part")
+    with open(temporary, "xb") as out, open(source, "rb") as src:  # exclusive: never a link
+        shutil.copyfileobj(src, out)
+    try:  # from here on the temporary file is this call's own
+        if _sha256(temporary) != sha256:
+            raise ValueError("the copy's SHA-256 differs from the source's")
+        try:
+            os.link(temporary, dest)  # fails when the destination exists: never overwritten
+        except FileExistsError as error:
+            raise ValueError(f"{dest} appeared meanwhile; it is never overwritten") from error
+    finally:
         os.remove(temporary)
-        raise ValueError("the copy's SHA-256 differs from the source's")
-    os.replace(temporary, dest)
     return dest

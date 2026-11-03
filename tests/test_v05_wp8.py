@@ -81,6 +81,58 @@ def test_8_4_a_link_on_the_way_is_refused(tmp_path):
         os.rmdir(link) if sys.platform == "win32" else link.unlink()  # noqa: B018
 
 
+def test_8_4_an_existing_temporary_file_is_never_written_through(tmp_path):
+    # Codex's end-of-round review of round 3: the temporary file is created exclusively
+    source = tmp_path / TESS_EB_NAME
+    source.write_bytes(b"x")
+    sha = _sha(b"x")
+    root = tmp_path / "p"
+    dest = frozen_tess_eb_path(root, sha)
+    dest.parent.mkdir(parents=True)
+    planted = dest.with_name(f"{dest.name}.{os.getpid()}.part")
+    planted.write_bytes(b"planted")
+    with pytest.raises(FileExistsError):
+        place_frozen_tess_eb(source, root, sha)
+    assert planted.read_bytes() == b"planted" and not dest.exists()
+
+
+def test_8_4_a_destination_that_appears_meanwhile_is_not_replaced(tmp_path, monkeypatch):
+    from refute.packs.tess import frozen
+
+    source = tmp_path / TESS_EB_NAME
+    source.write_bytes(b"x")
+    sha = _sha(b"x")
+    root = tmp_path / "p"
+    dest = frozen_tess_eb_path(root, sha)
+    real = frozen.make_parents
+
+    def racing(directory, base):
+        real(directory, base)
+        dest.write_bytes(b"other")  # another process wins the race
+
+    monkeypatch.setattr(frozen, "make_parents", racing)
+    with pytest.raises(ValueError, match="never overwritten"):
+        place_frozen_tess_eb(source, root, sha)
+    assert dest.read_bytes() == b"other"
+    assert [p.name for p in dest.parent.iterdir()] == [dest.name]  # no temporary left
+
+
+def test_8_x_install_validates_before_creating_anything(tmp_path):
+    from refute.core.reproduce import InputError, InputSpec, dest_problem, install
+
+    assert "dot" in dest_problem(".cache/frozen/edition./file.tsv")
+    assert "dot" in dest_problem(".cache/frozen/edition/file.")
+    bad = InputSpec("x", _sha(b"x"), "https://example.org/x", "outside/../x")
+    with pytest.raises(InputError):
+        install(b"x", bad, tmp_path)
+    assert not any(tmp_path.iterdir())
+    good = InputSpec("x", _sha(b"x"), "https://example.org/x", ".cache/frozen/a/x.tsv")
+    path = install(b"x", good, tmp_path)
+    assert path.read_bytes() == b"x"
+    with pytest.raises(FileExistsError):
+        install(b"x", good, tmp_path)  # never clobbered
+
+
 def test_8_4_a_v05_claim_declares_the_edition_at_its_frozen_destination():
     from refute.core.reproduce import InputSpec, dest_problem, specs_problems
     from refute.packs.tess.frozen import tess_eb_input

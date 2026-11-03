@@ -1,8 +1,9 @@
 # v0.5 acceptance: the rate cases of WP1 to WP4 (one run, 2026-11-03)
 
-The single acceptance run of [acceptance.py](acceptance.py) on the acceptance seeds (unseen until
-this run), from commit `75c02e2` (a clean tree), after three Codex reviews of the harness (two
-NO-GO, then GO). Synthetic data with known truth; `method_status: not_validated`. Nothing here
+The single acceptance run of [acceptance.py](acceptance.py) on the reserved acceptance seeds,
+reported as unused before this run (they are deterministic from public strings, so the record
+shows the procedure, not that they were unknowable), from commit `75c02e2` (a clean tree), after
+three Codex reviews of the harness (two NO-GO, then GO). Synthetic data with known truth; `method_status: not_validated`. Nothing here
 validates the method on real data.
 
 - Summary: [acceptance-run.md](acceptance-run.md) and [acceptance-run.json](acceptance-run.json)
@@ -68,10 +69,10 @@ The group-mean pulls pass in every noise model (sd 1.027, 1.074, 1.022; the scat
 | `edge_events` (group means) | warning | decisive | 1.8 a, b, 2.5, 2.6 pass |
 | `aperture_depth` | fatal | decisive | 1.8 a, b, c pass |
 | `systematics` (SAP, background) | warning | decisive | 1.8 a, b, c pass |
-| `period_alias` | fatal | decisive | 1.11 passes |
+| `period_alias` | fatal | decisive | 1.11 passes; its sensitivity simulation draws white noise internally, so the correlated-noise trials do not validate a correlated internal simulation |
 | `single_event` | fatal | **diagnostic** | 1.8-b fails in every noise model; it rests on per-event errors (1.10 fails in correlated noise: the acceptance document, after row 1.11) |
 | `event_consistency` | fatal | **diagnostic** | 2.1, 1.8-c and 2.7 fail; per-event errors (1.10) |
-| per-sector centroid (`centroid_v5`) | fatal | **not accepted** (diagnostic), unless the maintainer decides otherwise at S2 | 4.1 and 4.5 INVALID; 4.5 in correlated noise is not met under any reading of these trials |
+| per-sector centroid (`centroid_v5`) | fatal | **not accepted** (diagnostic), unless the maintainer decides otherwise at S2 | 4.1 and 4.5 INVALID; neither counterfactual reading establishes acceptance (4.5 in correlated noise would still not be met) |
 
 The engine rule (`enforce_sensitivity`) stays in force for every test (the acceptance document,
 WP1). The rows not in this run (1.1 to 1.7, 1.9, 2.4, 3.4 to 3.7, 4.2 to 4.4, WP5 to WP10) are
