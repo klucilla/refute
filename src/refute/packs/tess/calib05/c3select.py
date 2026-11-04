@@ -356,11 +356,67 @@ def bound_problems(root: Path, commit: str) -> list[str]:
     return problems
 
 
-def select_step(root: Path, commit: str, **kwargs: Any) -> dict[str, Any]:
-    """The C3 selection after R_c3: every bound path must be the protocol commit's bytes and
-    the frozen code hash must be the tree's; then the round, the beacon and the walks. Writes
-    ``selection/selection.json``, ``selection/ledger.json`` and (when complete)
-    ``selection/targets.yaml``, each exclusively."""
+SELECTION_ATTEMPTS = Path(".cache/v05/selection-attempts")
+
+
+def freeze_commit(root: Path) -> str:
+    """The designated freeze commit: the one commit that added both ``inputs.json`` and this
+    protocol (any other commit, even with the same bytes, would have another CI push run and so
+    another R_c3)."""
+    added = {}
+    for path in (f"{STEP_DIR}/inputs.json", f"{STEP_DIR}/PROTOCOL.md"):
+        out = _git(root, "log", "--diff-filter=A", "--format=%H", "--", path)
+        if out.returncode != 0:
+            raise sel.SelectionError(f"git log failed: {out.stderr.strip()}")
+        added[path] = out.stdout.split()
+    commits = {c for found in added.values() for c in found}
+    if len(commits) != 1 or any(len(found) != 1 for found in added.values()):
+        raise sel.SelectionError(f"no single commit added the protocol and its inputs: {added}")
+    return commits.pop()
+
+
+def _attempt(root: Path, approval_url: str | None) -> Path:
+    """A new, exclusive selection attempt folder, reserved before any network access. After an
+    attempt that read the round's beacon (its ``round.json``), a new one needs the URL of its
+    approval recorded in an issue; an attempt that stopped before (the round not yet published,
+    a GitHub error) revealed nothing of the draw."""
+    from refute.packs.tess.discover.steps import APPROVAL_URL
+
+    base = Path(root) / SELECTION_ATTEMPTS
+    earlier = sorted(p for p in base.iterdir()) if base.is_dir() else []
+    revealed = [p.name for p in earlier if (p / "round.json").exists()]
+    if revealed and (approval_url is None or not APPROVAL_URL.fullmatch(approval_url)):
+        raise sel.SelectionError(
+            f"earlier attempts read the beacon {revealed}: a new one needs its approval URL"
+        )
+    folder = base / f"attempt-{len(earlier) + 1:02d}"
+    folder.mkdir(parents=True, exist_ok=False)
+    with open(folder / "attempt.json", "x", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps({"approval": approval_url, "utc": pilot.utc_now()}) + "\n")
+    return folder
+
+
+def _logged(triage_fn, folder: Path):
+    """``triage_fn`` that appends each answer to the attempt's ``decisions.jsonl`` as it comes."""
+
+    def triage(tic: int, domain: Any, s_max: int):
+        ok, reason, evidence = triage_fn(tic, domain, s_max)
+        with open(folder / "decisions.jsonl", "a", encoding="utf-8", newline="\n") as log:
+            line = {"tic_id": tic, "accepted": ok, "reason": reason, "evidence": evidence}
+            log.write(json.dumps(line, sort_keys=True, default=str) + "\n")
+        return ok, reason, evidence
+
+    return triage
+
+
+def select_step(
+    root: Path, commit: str, approval_url: str | None = None, **kwargs: Any
+) -> dict[str, Any]:
+    """The C3 selection after R_c3. Before any network access: ``commit`` must be the designated
+    freeze commit, every bound path its bytes, the tree's code hash the frozen one, no selection
+    output may exist, and a new attempt folder is reserved; then the round, the beacon and the
+    walks, each answer logged as it comes. Writes ``selection/selection.json``,
+    ``selection/ledger.json`` and (when complete) ``selection/targets.yaml``, each exclusively."""
     import yaml
 
     from refute.drand import drand_seed, interpreter_record, round_after, round_time
@@ -368,16 +424,28 @@ def select_step(root: Path, commit: str, **kwargs: Any) -> dict[str, Any]:
     root = Path(root)
     if len(commit) != 40:
         raise sel.SelectionError("the protocol commit needs its full 40-character SHA")
+    designated = freeze_commit(root)
+    if commit != designated:
+        raise sel.SelectionError(f"the freeze commit is {designated}, not {commit}")
     problems = bound_problems(root, commit)
     if problems:
         raise sel.SelectionError("; ".join(problems))
     inputs = json.loads((root / STEP_DIR / "inputs.json").read_text(encoding="utf-8"))
     if code_record(root)["sha256"] != inputs["code"]["sha256"]:
         raise sel.SelectionError("the code hash differs from the one frozen in inputs.json")
+    folder = root / STEP_DIR / SELECTION_DIR
+    if folder.exists():
+        raise sel.SelectionError(f"{folder} exists: the selection is written once")
+    attempt = _attempt(root, approval_url)
+    triage_fn = _logged(kwargs.pop("triage_fn", pilot.triage), attempt)
     created = pilot.push_run_created_at(commit)
     number = round_after(created)
     seed, beacon = drand_seed(number)
-    out = run_selection(cache_dir(root, inputs), inputs, beacon["randomness"], root, **kwargs)
+    with open(attempt / "round.json", "x", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps({"round": number, "beacon": beacon}, default=str) + "\n")
+    out = run_selection(
+        cache_dir(root, inputs), inputs, beacon["randomness"], root, triage_fn, **kwargs
+    )
     out.update(
         {
             "protocol": PROTOCOL_ID,
@@ -388,10 +456,10 @@ def select_step(root: Path, commit: str, **kwargs: Any) -> dict[str, Any]:
             "beacon": beacon,
             "seed": str(seed),
             "interpreter": interpreter_record(),
+            "attempt": attempt.name,
         }
     )
-    folder = root / STEP_DIR / SELECTION_DIR
-    folder.mkdir(parents=True, exist_ok=True)
+    folder.mkdir(parents=True, exist_ok=False)
     files = {
         "selection.json": json.dumps(out, indent=2) + "\n",
         "ledger.json": json.dumps(ledger(out), indent=2) + "\n",

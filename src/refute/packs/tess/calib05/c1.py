@@ -19,7 +19,11 @@ are ``j + 1``; a star's parameters come from ``default_rng(seed)``, its white no
 and edge ramps are additive, the trend multiplicative; PA's artifact is in the pixels only (the
 light curve is the target's); PX uses ``synthetic.make_blend_sky`` (the generator written for this
 family, the neighbor at a fixed sky offset), with its stellar trend applied to the light curve
-and to the PDCSAP and SAP series, not to the pixels.
+and to the PDCSAP and SAP series, not to the pixels. **PX's noise streams are an exception:**
+``make_blend_sky`` draws the target's white noise from ``make_lightcurve``'s own
+``default_rng(seed)``, its correlated noise from ``default_rng([seed, 1])``, and the pixel and
+auxiliary noise from another ``default_rng(seed)``; PX's parameters come from ``default_rng(seed)``
+as for every family. Each is a separate generator object, so no draw depends on another's order.
 """
 
 from __future__ import annotations

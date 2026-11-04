@@ -195,11 +195,55 @@ def identity(kind: str, published: float | None, found: float | None) -> dict[st
     }
 
 
+MISSING = "MISSING_PRODUCTS"
+NO_PRODUCTS = "no SPOC"  # the adapter's DataError when MAST lists no light curve
+
+
+def product_state(manifest: dict[str, Any] | None) -> dict[str, Any]:
+    """Whether a control's stage-2 products are present (protocol section 6): ``missing`` when
+    the fetch found no light curve, or a light-curve sector has no pixel file; ``present``
+    otherwise. Integrity is not judged here: a file with other bytes, a manifest of another
+    target or an unreadable file fails when the data are loaded, as an error record."""
+    if manifest is None:
+        return {"state": "missing", "reason": "MAST lists no SPOC light curve up to S_max"}
+    lc = sorted({int(f["sector"]) for f in manifest.get("files", [])})
+    px = sorted({int(f["sector"]) for f in manifest.get("pixel_files", [])})
+    if not lc:
+        return {"state": "missing", "reason": "no light-curve file"}
+    without = sorted(set(lc) - set(px))
+    if without:
+        return {
+            "state": "missing",
+            "reason": f"light-curve sectors without a pixel file: {without}",
+        }
+    return {"state": "present", "light_curve_sectors": lc, "pixel_file_sectors": px}
+
+
+def fetch_products(target: dict[str, Any], test_plan: dict[str, Any], cache: Path) -> dict:
+    """Stage-2 download of one control (network) and its product state; only the adapter's
+    "no SPOC light curves" answer means absence; any other failure is ``error`` (not a reason
+    for replacement)."""
+    from refute.core.io import read_json
+    from refute.packs.tess.adapter import DataError, TessAdapter, manifest_path
+    from refute.packs.tess.discover.measure import stage_plan
+
+    try:
+        TessAdapter().fetch(target, stage_plan(test_plan, 2), Path(cache))
+    except DataError as exc:
+        if str(exc).startswith(NO_PRODUCTS):
+            return product_state(None)
+        return {"state": "error", "reason": f"DataError: {exc}"}
+    except Exception as exc:  # noqa: BLE001 - recorded: not a replacement reason
+        return {"state": "error", "reason": f"{type(exc).__name__}: {exc}"}
+    return product_state(read_json(manifest_path(Path(cache), int(target["tic_id"]))))
+
+
 @dataclass(frozen=True)
 class C3Task:
     target: dict[str, Any]
     test_plan_v04: dict[str, Any]
     cache_dir: str
+    products: dict[str, Any]
     catalog_paths: tuple[str, ...] = field(default_factory=tuple)
     scan_path: str | None = None
 
@@ -209,9 +253,10 @@ def task_id(task: C3Task) -> str:
 
 
 def run_task(task: C3Task) -> dict[str, Any]:
-    """One control at stage 2, with and without the catalog test; missing products are their
-    own status (a replacement reason), any other failure an error record."""
-    from refute.packs.tess.adapter import DataError, TessAdapter
+    """One control at stage 2, with and without the catalog test; absent products (from the
+    fetch's product state) are their own status, a replacement reason; any other failure, an
+    integrity or loading failure included, is an error record."""
+    from refute.packs.tess.adapter import TessAdapter
     from refute.packs.tess.calib05.plans import pair
     from refute.packs.tess.discover.measure import load_catalogs, stage_plan
     from refute.packs.tess.discover.paired import paired_chain
@@ -221,20 +266,28 @@ def run_task(task: C3Task) -> dict[str, Any]:
         "target_key": task.target["key"],
         "kind": task.target["kind"],
         "place": task.target.get("c3_place"),
+        "products": task.products,
     }
+    if task.products.get("state") == "missing":
+        record.update({"status": MISSING, "reason": task.products.get("reason")})
+        record["cpu_seconds"] = time.process_time() - started
+        return record
     try:
+        if task.products.get("state") != "present":
+            raise ValueError(f"the products could not be fetched: {task.products.get('reason')}")
         test_plan = stage_plan(task.test_plan_v04, 2)
         p04, p05 = pair(test_plan)
         cache = Path(task.cache_dir)
-        try:
-            data = TessAdapter().load(task.target, test_plan, cache)
-        except DataError as exc:
-            record.update({"status": "MISSING_PRODUCTS", "reason": str(exc)})
-            record["cpu_seconds"] = time.process_time() - started
-            return record
+        data = TessAdapter().load(task.target, test_plan, cache)
         catalogs, scan = load_catalogs(task.catalog_paths, task.scan_path, cache)
         with_catalog = paired_chain(data, p04, p05, 2, catalogs, scan)
         without = paired_chain(data, p04, p05, 2, None, None)
+        # the two variants differ only by the catalog test: the same candidate generation
+        if with_catalog["search_candidate"] != without["search_candidate"]:
+            raise ValueError("the two variants did not share the search candidate")
+        for battery in ("v04", "v05"):
+            if with_catalog[battery]["candidate"] != without[battery]["candidate"]:
+                raise ValueError("the two variants did not attack the same final candidate")
         found = (without["v05"]["candidate"] or {}).get("period_days")
         published = (task.target.get("published") or {}).get("period_days")
         record.update(

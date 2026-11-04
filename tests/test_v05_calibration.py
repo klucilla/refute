@@ -372,23 +372,97 @@ def _double(x: int) -> dict:
     return {"value": 2 * x, "cpu_seconds": 0.0, "status": "OK"}
 
 
-def test_runner_runs_once_and_resumes_only_missing(tmp_path):
+URL = "https://github.com/klucilla/refute/issues/199#issuecomment-1"
+
+
+def test_runner_runs_once_with_its_manifest(tmp_path):
     out = tmp_path / "run"
-    records = runner.run_tasks(_double, [1, 2, 3], str, out, workers=1)
+    prov = {"code_sha256": "c", "step": "s"}
+    records = runner.run_tasks(_double, [1, 2, 3], str, out, workers=1, prov=prov)
     assert [r["value"] for r in records] == [2, 4, 6]
-    assert len((out / "cost.jsonl").read_text().splitlines()) == 3
+    manifest = runner.read_manifest(out)
+    assert manifest["tasks"] == ["1", "2", "3"] and manifest["provenance"] == prov
+    assert manifest["function"].endswith("_double")
+    assert not (out / "running.lock").exists()
     with pytest.raises(FileExistsError):
         runner.run_tasks(_double, [1], str, out, workers=1)
-    assert len(runner.all_records(out, ["1", "2", "3"])) == 3
-    with pytest.raises(ValueError, match="no record"):
-        runner.all_records(out, ["1", "2", "3", "4"])
+    assert len(runner.all_records(out)) == 3
+    with pytest.raises(ValueError, match="complete"):
+        runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov=prov)
+
+
+def _interrupted(tmp_path: Path) -> tuple[Path, dict]:
+    """A run whose process ended after two of its three tasks (the lock left behind, the third
+    record missing, the second's cost line missing)."""
+    out = tmp_path / "run"
+    prov = {"code_sha256": "c", "step": "s"}
+    runner.run_tasks(_double, [1, 2, 3], str, out, workers=1, prov=prov)
+    lines = (out / "records.jsonl").read_text().splitlines()
+    (out / "records.jsonl").write_text("\n".join(lines[:2]) + "\n")
+    cost = (out / "cost.jsonl").read_text().splitlines()
+    (out / "cost.jsonl").write_text(cost[0] + "\n")
+    (out / "running.lock").write_text(json.dumps({"pid": 999999999, "utc": "t"}))
+    return out, prov
+
+
+def test_runner_resumes_only_the_same_experiment(tmp_path):
+    out, prov = _interrupted(tmp_path)
+    with pytest.raises(ValueError, match="running or interrupted"):
+        runner.all_records(out)
     with pytest.raises(ValueError, match="approval"):
-        runner.resume(_double, [4], str, out, "not a url", workers=1)
-    url = "https://github.com/klucilla/refute/issues/199#issuecomment-1"
-    done = runner.resume(_double, [1, 2, 3, 4], str, out, url, workers=1)
-    assert [r["task"] for r in done] == ["4"]
-    assert len(runner.all_records(out, ["1", "2", "3", "4"])) == 4
-    assert json.loads((out / "resumptions.jsonl").read_text())["tasks"] == 1
+        runner.resume(_double, [1, 2, 3], str, out, "not a url", workers=1, prov=prov)
+    with pytest.raises(ValueError, match="tasks"):
+        runner.resume(_double, [1, 2, 3, 4], str, out, URL, workers=1, prov=prov)
+    with pytest.raises(ValueError, match="provenance"):
+        runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov={"code_sha256": "x"})
+    done = runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov=prov)
+    assert [r["task"] for r in done] == ["3"]
+    assert len(runner.all_records(out)) == 3  # the lost cost line restored
+    log = json.loads((out / "resumptions.jsonl").read_text())
+    assert log["tasks"] == 1 and log["costs_restored"] == 1
+
+
+def test_runner_refuses_a_live_run(tmp_path):
+    import os
+
+    out, prov = _interrupted(tmp_path)
+    (out / "running.lock").write_text(json.dumps({"pid": os.getpid(), "utc": "t"}))
+    with pytest.raises(ValueError, match="still alive"):
+        runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov=prov)
+
+
+def test_c3_product_state():
+    assert c3run.product_state(None)["state"] == "missing"
+    assert c3run.product_state({"files": []})["state"] == "missing"
+    manifest = {"files": [{"sector": 5}, {"sector": 9}], "pixel_files": [{"sector": 5}]}
+    state = c3run.product_state(manifest)
+    assert state["state"] == "missing" and "[9]" in state["reason"]
+    manifest["pixel_files"].append({"sector": 9})
+    assert c3run.product_state(manifest)["state"] == "present"
+
+
+def test_c3_absent_products_only_from_the_fetch_state():
+    task = c3run.C3Task(
+        {"key": "TIC-1", "kind": "planet", "tic_id": 1},
+        {},
+        "x",
+        {"state": "missing", "reason": "r"},
+    )
+    assert c3run.run_task(task)["status"] == "MISSING_PRODUCTS"
+    task = c3run.C3Task(
+        {"key": "TIC-1", "kind": "planet", "tic_id": 1}, {}, "x", {"state": "error", "reason": "r"}
+    )
+    assert c3run.run_task(task)["status"] == "ERROR"  # never a replacement reason
+
+
+def test_selection_attempts(tmp_path):
+    first = c3select._attempt(tmp_path, None)
+    second = c3select._attempt(tmp_path, None)  # the first read no beacon: nothing revealed
+    assert first.name == "attempt-01" and second.name == "attempt-02"
+    (second / "round.json").write_text("{}")
+    with pytest.raises(Exception, match="approval"):
+        c3select._attempt(tmp_path, None)
+    assert c3select._attempt(tmp_path, URL).name == "attempt-03"
 
 
 def test_projected_hours():
