@@ -1,0 +1,29 @@
+{
+  "run_folder": ".cache/v05/calibration/c2-prefix",
+  "files": [
+    {
+      "path": "cost.jsonl",
+      "bytes": 3329,
+      "sha256": "f3643f7f59f612029622c4798f141cecb5145f5a756384367ba089ec1eb7c15f",
+      "in_git": true
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 1659,
+      "sha256": "0fd43300494165537d6aa196abee1ee42a387bb92f25188cadfd83917d65d657",
+      "in_git": true
+    },
+    {
+      "path": "records.jsonl",
+      "bytes": 135133,
+      "sha256": "95f3d8a4578c7968752d7306c1ef7b6698f4908f7b168729e9539bdcbbbf6401",
+      "in_git": true
+    },
+    {
+      "path": "report.json",
+      "bytes": 897,
+      "sha256": "ab5b4848252e87b2d8eddb67ea1d9ed6312eaeaa9c9d20a0add49dd49a9643fa",
+      "in_git": true
+    }
+  ]
+}
