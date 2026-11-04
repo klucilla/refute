@@ -1,0 +1,28 @@
+{
+  "c1_projected_hours": 28.267643229166666,
+  "c1_sizes": {
+    "EB1": 200,
+    "EB2": 200,
+    "ER": 200,
+    "NR": 200,
+    "NW": 200,
+    "P": 200,
+    "PA": 100,
+    "PG": 200,
+    "PV": 200,
+    "PX": 100,
+    "SE": 200,
+    "V1": 200,
+    "V2": 200
+  },
+  "c2_projected_hours": {
+    "10": 36.120852141203706,
+    "20": 67.34018084490741
+  },
+  "c3_projected_hours": 1.350300925925926,
+  "injections_per_curve": 10,
+  "remaining_hours": 95.71641059027777,
+  "reserve_hours": 100.0,
+  "rule": "PROTOCOL.md section 8: 20 when C1 + C2 + C3 fit the remaining reserve, else 10, else stop",
+  "used_hours": 4.283589409722222
+}
