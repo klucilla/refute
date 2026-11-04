@@ -1,0 +1,738 @@
+[
+  {
+    "pool": "planet",
+    "position": 1,
+    "tic_id": 17746821,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 2,
+    "tic_id": 267746941,
+    "decision": "rejected",
+    "reason": "D-2: fewer than 2 years or a span under 300 d",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 3,
+    "tic_id": 318796593,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 4,
+    "tic_id": 459189798,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 5,
+    "tic_id": 13349647,
+    "decision": "rejected",
+    "reason": "D-7: Tmag missing or outside 8 to 12",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 6,
+    "tic_id": 229047362,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 7,
+    "tic_id": 245392284,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 8,
+    "tic_id": 47244580,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 9,
+    "tic_id": 104024556,
+    "decision": "rejected",
+    "reason": "D-6: Teff missing or outside 3200 to 7000 K",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 10,
+    "tic_id": 9344899,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 11,
+    "tic_id": 399860444,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 12,
+    "tic_id": 138219428,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 13,
+    "tic_id": 321668398,
+    "decision": "rejected",
+    "reason": "D-8: contamination ratio missing or > 0.1",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 14,
+    "tic_id": 445903569,
+    "decision": "rejected",
+    "reason": "D-6: Teff missing or outside 3200 to 7000 K",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 15,
+    "tic_id": 88529975,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 16,
+    "tic_id": 36352297,
+    "decision": "rejected",
+    "reason": "D-5: radius or its error missing, or error / radius > 0.25",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 17,
+    "tic_id": 280206394,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 18,
+    "tic_id": 164557360,
+    "decision": "rejected",
+    "reason": "D-2: fewer than 2 years or a span under 300 d",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 19,
+    "tic_id": 460396820,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 20,
+    "tic_id": 151724385,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 21,
+    "tic_id": 610976842,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 22,
+    "tic_id": 257567854,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 23,
+    "tic_id": 15692883,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 24,
+    "tic_id": 138105127,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 25,
+    "tic_id": 372048733,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 26,
+    "tic_id": 230001847,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 27,
+    "tic_id": 77202722,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 28,
+    "tic_id": 404456775,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 29,
+    "tic_id": 120105470,
+    "decision": "rejected",
+    "reason": "D-7: Tmag missing or outside 8 to 12",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 30,
+    "tic_id": 427685831,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 31,
+    "tic_id": 237099296,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 32,
+    "tic_id": 62483237,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 33,
+    "tic_id": 265979849,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 34,
+    "tic_id": 27010191,
+    "decision": "rejected",
+    "reason": "D-7: Tmag missing or outside 8 to 12",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 35,
+    "tic_id": 351060274,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 36,
+    "tic_id": 368739874,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 37,
+    "tic_id": 122605766,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 38,
+    "tic_id": 27649847,
+    "decision": "rejected",
+    "reason": "D-7: Tmag missing or outside 8 to 12",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 39,
+    "tic_id": 139104940,
+    "decision": "rejected",
+    "reason": "D-5: radius or its error missing, or error / radius > 0.25",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 40,
+    "tic_id": 6663331,
+    "decision": "rejected",
+    "reason": "D-5: radius or its error missing, or error / radius > 0.25",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 41,
+    "tic_id": 147977348,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 42,
+    "tic_id": 144193715,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "planet",
+    "position": 43,
+    "tic_id": 310002617,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "reserve 1"
+  },
+  {
+    "pool": "planet",
+    "position": 44,
+    "tic_id": 470127886,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "reserve 2"
+  },
+  {
+    "pool": "planet",
+    "position": 45,
+    "tic_id": 175532955,
+    "decision": "rejected",
+    "reason": "D-8: contamination ratio missing or > 0.1",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 46,
+    "tic_id": 443607377,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 47,
+    "tic_id": 219189765,
+    "decision": "rejected",
+    "reason": "D-7: Tmag missing or outside 8 to 12",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 48,
+    "tic_id": 51664268,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 49,
+    "tic_id": 176314383,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 50,
+    "tic_id": 176279915,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "planet",
+    "position": 51,
+    "tic_id": 384888319,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "reserve 3"
+  },
+  {
+    "pool": "false_positive",
+    "position": 1,
+    "tic_id": 329864959,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 2,
+    "tic_id": 382188882,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 3,
+    "tic_id": 387834907,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 4,
+    "tic_id": 262530873,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 5,
+    "tic_id": 278866211,
+    "decision": "rejected",
+    "reason": "D-8: contamination ratio missing or > 0.1",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 6,
+    "tic_id": 441732151,
+    "decision": "rejected",
+    "reason": "D-8: contamination ratio missing or > 0.1",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 7,
+    "tic_id": 427654774,
+    "decision": "rejected",
+    "reason": "D-7: Tmag missing or outside 8 to 12",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 8,
+    "tic_id": 389525208,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 9,
+    "tic_id": 219164808,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 10,
+    "tic_id": 260609205,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 11,
+    "tic_id": 461271719,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 12,
+    "tic_id": 48476907,
+    "decision": "rejected",
+    "reason": "D-8: contamination ratio missing or > 0.1",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 13,
+    "tic_id": 101395259,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 14,
+    "tic_id": 138017750,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 15,
+    "tic_id": 32830028,
+    "decision": "rejected",
+    "reason": "D-6: Teff missing or outside 3200 to 7000 K",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 16,
+    "tic_id": 382474101,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 17,
+    "tic_id": 300871545,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 18,
+    "tic_id": 233681149,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 19,
+    "tic_id": 49899799,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 20,
+    "tic_id": 155114483,
+    "decision": "rejected",
+    "reason": "D-6: Teff missing or outside 3200 to 7000 K",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 21,
+    "tic_id": 308050066,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 22,
+    "tic_id": 286355915,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 23,
+    "tic_id": 269450900,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 24,
+    "tic_id": 172464366,
+    "decision": "rejected",
+    "reason": "D-8: contamination ratio missing or > 0.1",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 25,
+    "tic_id": 199688472,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 26,
+    "tic_id": 140830390,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 27,
+    "tic_id": 17005768,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 28,
+    "tic_id": 259126549,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 29,
+    "tic_id": 350743714,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 30,
+    "tic_id": 9727392,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "chosen"
+  },
+  {
+    "pool": "false_positive",
+    "position": 31,
+    "tic_id": 308307606,
+    "decision": "rejected",
+    "reason": "D-5: radius or its error missing, or error / radius > 0.25",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 32,
+    "tic_id": 169532369,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 33,
+    "tic_id": 220435095,
+    "decision": "rejected",
+    "reason": "D-4: logg missing or < 4",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 34,
+    "tic_id": 427348923,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 35,
+    "tic_id": 2758565,
+    "decision": "rejected",
+    "reason": "D-7: Tmag missing or outside 8 to 12",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 36,
+    "tic_id": 233390838,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "reserve 1"
+  },
+  {
+    "pool": "false_positive",
+    "position": 37,
+    "tic_id": 188989177,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 38,
+    "tic_id": 461662295,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "reserve 2"
+  },
+  {
+    "pool": "false_positive",
+    "position": 39,
+    "tic_id": 307734817,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 40,
+    "tic_id": 250386181,
+    "decision": "rejected",
+    "reason": "D-1: fewer than 3 sectors",
+    "place": null
+  },
+  {
+    "pool": "false_positive",
+    "position": 41,
+    "tic_id": 184679932,
+    "decision": "accepted",
+    "reason": "accepted",
+    "place": "reserve 3"
+  }
+]
