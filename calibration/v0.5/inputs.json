@@ -1,0 +1,102 @@
+{
+  "schema": "refute-tess-calib05-inputs-1",
+  "attempt": "attempt-01",
+  "s_max": 107,
+  "s_max_record": {
+    "s_max": 107,
+    "queries": [
+      {
+        "sector": 111,
+        "spoc_120s_light_curves": 0,
+        "utc": "2026-11-04T13:07:20Z"
+      },
+      {
+        "sector": 110,
+        "spoc_120s_light_curves": 0,
+        "utc": "2026-11-04T13:07:21Z"
+      },
+      {
+        "sector": 109,
+        "spoc_120s_light_curves": 0,
+        "utc": "2026-11-04T13:07:23Z"
+      },
+      {
+        "sector": 108,
+        "spoc_120s_light_curves": 0,
+        "utc": "2026-11-04T13:07:23Z"
+      },
+      {
+        "sector": 107,
+        "spoc_120s_light_curves": 13000,
+        "utc": "2026-11-04T13:07:31Z"
+      }
+    ]
+  },
+  "frame_stars": 0,
+  "protocol": "refute-tess-v0.5-calibration",
+  "code": {
+    "algorithm": "refute-code-1",
+    "sha256": "15a9c256b5aa8f6b6f1eb9db511420ee1efca15b95edd9343322d7c3bb52bf8e",
+    "files": 112
+  },
+  "files": [
+    {
+      "name": "target_lists.html",
+      "url": "https://tess.mit.edu/public/target_lists/target_lists.html",
+      "retrieved_utc": "2026-11-04T13:07:18Z",
+      "bytes": 96379,
+      "sha256": "8bd500899538e0e4e2e96b2169b1d6c2c423f2593e02c0a71fc3f427baa305c1",
+      "in_git": true
+    },
+    {
+      "name": "toi.csv",
+      "url": "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv",
+      "retrieved_utc": "2026-11-04T13:07:51Z",
+      "bytes": 3817146,
+      "sha256": "942957e3cab82800fb08911d6d83b3e6f524cbc1b475b49be8179234b3c0a99d",
+      "in_git": true
+    },
+    {
+      "name": "pscomppars.csv",
+      "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2Chostname%2Ctic_id%2Ctran_flag%2Csy_pnum%2Cpl_orbper%2Cpl_orbpererr1%2Cpl_tranmid%2Cpl_trandep%2Cpl_trandur%2Csy_tmag%2Cra%2Cdec+from+pscomppars&format=csv",
+      "retrieved_utc": "2026-11-04T13:07:54Z",
+      "bytes": 872064,
+      "sha256": "bb9e29d46336e6a6934bf1a65f07d44d517f49df2ff3dab41f3df31c323fd5a5",
+      "in_git": true
+    },
+    {
+      "name": "tess_eb.tsv",
+      "url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited",
+      "retrieved_utc": "2026-11-04T13:07:54Z",
+      "bytes": 254392,
+      "sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323",
+      "in_git": false,
+      "static_edition": {
+        "path": ".cache/wt-v021/.cache/v021/tess-eb/vizier/tess_ebs_prsa2022.tsv",
+        "obtained": "2026-10-18T00:56:26",
+        "obtained_from": "the request_date line of the file's VizieR 7.6.1 header",
+        "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+        "content_rule": "non-empty lines not starting with '#', LF endings, final LF",
+        "same_as": "calibration/v0.2/eb_snapshot/retrieval.json: the TESS-EB content_sha256 of the v0.2 snapshot (retrieved 2026-10-09T02:44:20Z)",
+        "redistributed": false,
+        "issue": "#33"
+      }
+    },
+    {
+      "name": "gaia_dr3_eb.csv",
+      "url": "https://github.com/klucilla/refute/releases/download/v0.2.0/gaia_dr3_vari_eclipsing_binary.csv",
+      "retrieved_utc": "2026-11-04T13:08:02Z",
+      "bytes": 166493796,
+      "sha256": "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df",
+      "in_git": false,
+      "rows": 2184477,
+      "v02_record": "calibration/v0.2/eb_snapshot/retrieval.json",
+      "obtained_by_v02": "2026-10-09T01:29:48Z (the ESA archive; the v0.2 record)"
+    }
+  ],
+  "total_bytes": 171533777,
+  "pool_preview": {
+    "planet": 952,
+    "false_positive": 63
+  }
+}
