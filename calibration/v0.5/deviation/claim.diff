@@ -1,0 +1,23 @@
+--- calibration/v0.5/deviation/claim.generated.yaml
++++ calibration/v0.5/claim.yaml
+@@ -1,6 +1,8 @@
+ # Refute v0.5 calibration, C3 claim (calibration/v0.5/PROTOCOL.md, section 5).
+ # Written by calibration/v0.5/run_calibration.py (refute.packs.tess.calib05.c3run) after
+ # the selection; locked with `refute lock` from a clean tree at S4.
++# Targets attachment: claim-targets.yaml, projected from selection/targets.yaml by
++# deviation/project_targets.py (the deviation approved on 2026-11-04, #199).
+ schema_version: 1
+ id: tess-calibration-v0.5-c3
+ kind: discover
+@@ -46,8 +48,10 @@
+   retrieved: the selection walk (selection/selection.json)
+   notes: Queried live during the walk; each answer is in the selection record.
+ attachments:
++- path: claim-targets.yaml
++  role: targets
+ - path: selection/targets.yaml
+-  role: targets
++  role: selection-targets
+ - path: PROTOCOL.md
+   role: protocol
+ - path: inputs.json

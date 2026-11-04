@@ -1,0 +1,306 @@
+{
+  "format": "refute-v05-c3-projection-1",
+  "approval": "the maintainer's choice of option C on 2026-11-04, recorded on #199 before any commit",
+  "script": "calibration/v0.5/deviation/project_targets.py",
+  "script_sha256": "97ca185a450cf8fff2d9eeff78eae3aa3d5cb949202ea2f129aa495a2c1d44a4",
+  "inputs": {
+    "calibration/v0.5/selection/targets.yaml": "dac40e09a6d261585bc4e9d14e97a79795e9f9287b661d71160871a903837e69",
+    "calibration/v0.5/deviation/claim.generated.yaml": "2688b0cc33497b707862c716e4747909138e96ab54587d11353d0633face4b2d"
+  },
+  "outputs": {
+    "calibration/v0.5/claim-targets.yaml": "06013508cf511bf5453a37345b3e75c943bd72489826095f7beed40c63edaa00",
+    "calibration/v0.5/claim.yaml": "70065377c10ad7b5fe5a5a199f99d577e29efaff187a44ed4c6115cd9fb7ddad",
+    "calibration/v0.5/deviation/claim-targets.diff": "a9faf89ef70984d22d5fc3c6d1d76b5a1622ce3ec186584e446daabba4785954",
+    "calibration/v0.5/deviation/claim.diff": "86b273da14f6bd1d50f6fe6d7eb7e0361db4852cfb21593205bdb6b6ddcf4d0c"
+  },
+  "removed_lines": [
+    {
+      "line": 74,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 144,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 210,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 265,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 321,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 453,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 514,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 577,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 651,
+      "text": "  c3_place: reserve 1",
+      "key": "c3_place"
+    },
+    {
+      "line": 720,
+      "text": "  c3_place: reserve 2",
+      "key": "c3_place"
+    },
+    {
+      "line": 774,
+      "text": "  c3_place: reserve 3",
+      "key": "c3_place"
+    },
+    {
+      "line": 948,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 949,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 1063,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 1064,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 1224,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 1225,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 1401,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 1402,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 1514,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 1515,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 1621,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 1622,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 1809,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 1810,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 1924,
+      "text": "  c3_place: chosen",
+      "key": "c3_place"
+    },
+    {
+      "line": 1925,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 2053,
+      "text": "  c3_place: reserve 1",
+      "key": "c3_place"
+    },
+    {
+      "line": 2054,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 2161,
+      "text": "  c3_place: reserve 2",
+      "key": "c3_place"
+    },
+    {
+      "line": 2162,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    },
+    {
+      "line": 2268,
+      "text": "  c3_place: reserve 3",
+      "key": "c3_place"
+    },
+    {
+      "line": 2269,
+      "text": "  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)",
+      "key": "fp_class"
+    }
+  ],
+  "targets_checks": {
+    "targets": 22,
+    "false_positives": 11,
+    "removed_c3_place": 22,
+    "removed_fp_class": 11,
+    "target_keys_in_order": [
+      "TIC-17746821",
+      "TIC-399860444",
+      "TIC-280206394",
+      "TIC-151724385",
+      "TIC-257567854",
+      "TIC-237099296",
+      "TIC-62483237",
+      "TIC-144193715",
+      "TIC-310002617",
+      "TIC-470127886",
+      "TIC-384888319",
+      "TIC-382188882",
+      "TIC-101395259",
+      "TIC-300871545",
+      "TIC-233681149",
+      "TIC-308050066",
+      "TIC-286355915",
+      "TIC-199688472",
+      "TIC-9727392",
+      "TIC-233390838",
+      "TIC-461662295",
+      "TIC-184679932"
+    ],
+    "parsed_equal_minus_two_fields": true,
+    "diff_only_removed_lines": true
+  },
+  "claim_checks": {
+    "parsed_equal_except_attachments": true,
+    "attachments": [
+      {
+        "path": "claim-targets.yaml",
+        "role": "targets"
+      },
+      {
+        "path": "selection/targets.yaml",
+        "role": "selection-targets"
+      },
+      {
+        "path": "PROTOCOL.md",
+        "role": "protocol"
+      },
+      {
+        "path": "inputs.json",
+        "role": "snapshot-index"
+      },
+      {
+        "path": "selection/selection.json",
+        "role": "selection-log"
+      },
+      {
+        "path": "eb_catalog.csv",
+        "role": "eb-catalog"
+      },
+      {
+        "path": "eb_catalog_scan.json",
+        "role": "eb-catalog-scan"
+      }
+    ],
+    "diff_only_declared_changes": true
+  },
+  "load_claim": {
+    "staged": {
+      "staging": ".cache/v05/deviation-staging/stage-01/calibration/v0.5",
+      "id": "tess-calibration-v0.5-c3",
+      "run_target_keys": [
+        "TIC-17746821",
+        "TIC-399860444",
+        "TIC-280206394",
+        "TIC-151724385",
+        "TIC-257567854",
+        "TIC-237099296",
+        "TIC-62483237",
+        "TIC-144193715",
+        "TIC-310002617",
+        "TIC-470127886",
+        "TIC-384888319",
+        "TIC-382188882",
+        "TIC-101395259",
+        "TIC-300871545",
+        "TIC-233681149",
+        "TIC-308050066",
+        "TIC-286355915",
+        "TIC-199688472",
+        "TIC-9727392",
+        "TIC-233390838",
+        "TIC-461662295",
+        "TIC-184679932"
+      ]
+    },
+    "repository": {
+      "id": "tess-calibration-v0.5-c3",
+      "run_target_keys": [
+        "TIC-17746821",
+        "TIC-399860444",
+        "TIC-280206394",
+        "TIC-151724385",
+        "TIC-257567854",
+        "TIC-237099296",
+        "TIC-62483237",
+        "TIC-144193715",
+        "TIC-310002617",
+        "TIC-470127886",
+        "TIC-384888319",
+        "TIC-382188882",
+        "TIC-101395259",
+        "TIC-300871545",
+        "TIC-233681149",
+        "TIC-308050066",
+        "TIC-286355915",
+        "TIC-199688472",
+        "TIC-9727392",
+        "TIC-233390838",
+        "TIC-461662295",
+        "TIC-184679932"
+      ]
+    }
+  }
+}

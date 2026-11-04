@@ -1,0 +1,186 @@
+--- calibration/v0.5/selection/targets.yaml
++++ calibration/v0.5/claim-targets.yaml
+@@ -71,7 +71,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-399860444
+   tic_id: 399860444
+   kind: planet
+@@ -141,7 +140,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-280206394
+   tic_id: 280206394
+   kind: planet
+@@ -207,7 +205,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-151724385
+   tic_id: 151724385
+   kind: planet
+@@ -262,7 +259,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-257567854
+   tic_id: 257567854
+   kind: planet
+@@ -318,7 +314,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-237099296
+   tic_id: 237099296
+   kind: planet
+@@ -450,7 +445,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-62483237
+   tic_id: 62483237
+   kind: planet
+@@ -511,7 +505,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-144193715
+   tic_id: 144193715
+   kind: planet
+@@ -574,7 +567,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: chosen
+ - key: TIC-310002617
+   tic_id: 310002617
+   kind: planet
+@@ -648,7 +640,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: reserve 1
+ - key: TIC-470127886
+   tic_id: 470127886
+   kind: planet
+@@ -717,7 +708,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: reserve 2
+ - key: TIC-384888319
+   tic_id: 384888319
+   kind: planet
+@@ -771,7 +761,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'pl_orbper' and 'pl_orbpererr1'
+     of NASA Exoplanet Archive pscomppars
+-  c3_place: reserve 3
+ - key: TIC-382188882
+   tic_id: 382188882
+   kind: false_positive
+@@ -945,8 +934,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-101395259
+   tic_id: 101395259
+   kind: false_positive
+@@ -1060,8 +1047,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-300871545
+   tic_id: 300871545
+   kind: false_positive
+@@ -1221,8 +1206,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-233681149
+   tic_id: 233681149
+   kind: false_positive
+@@ -1398,8 +1381,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-308050066
+   tic_id: 308050066
+   kind: false_positive
+@@ -1511,8 +1492,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-286355915
+   tic_id: 286355915
+   kind: false_positive
+@@ -1618,8 +1597,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-199688472
+   tic_id: 199688472
+   kind: false_positive
+@@ -1806,8 +1783,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-9727392
+   tic_id: 9727392
+   kind: false_positive
+@@ -1921,8 +1896,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: chosen
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-233390838
+   tic_id: 233390838
+   kind: false_positive
+@@ -2050,8 +2023,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: reserve 1
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-461662295
+   tic_id: 461662295
+   kind: false_positive
+@@ -2158,8 +2129,6 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: reserve 2
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)
+ - key: TIC-184679932
+   tic_id: 184679932
+   kind: false_positive
+@@ -2265,5 +2234,3 @@
+   fp_reason: null
+   notes: period and its uncertainty from the columns 'Period (days)' and 'Period (days)
+     err' of ExoFOP TOI table
+-  c3_place: reserve 3
+-  fp_class: eclipsing_binary (TOI FP with TIC in TESS-EB)

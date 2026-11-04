@@ -1,0 +1,118 @@
+{
+  "attachment": "eb_catalog.csv (format refute-eb-catalog-1; TESS-EB as reference rows)",
+  "centre": "each target's TIC position from the selection walk (mast.tic_ra, tic_dec)",
+  "format": "refute-eb-catalog-scan-1",
+  "per_target": {
+    "TIC-101395259": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-144193715": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-151724385": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-17746821": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-184679932": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-199688472": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-233390838": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-233681149": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-237099296": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-257567854": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-280206394": {
+      "gaia": 3,
+      "tess_eb": 1
+    },
+    "TIC-286355915": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-300871545": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-308050066": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-310002617": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-382188882": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-384888319": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-399860444": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-461662295": {
+      "gaia": 0,
+      "tess_eb": 1
+    },
+    "TIC-470127886": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-62483237": {
+      "gaia": 0,
+      "tess_eb": 0
+    },
+    "TIC-9727392": {
+      "gaia": 0,
+      "tess_eb": 1
+    }
+  },
+  "radius_arcsec": 120.0,
+  "rows": 17,
+  "snapshots": [
+    {
+      "cache_path": "v04/tess-eb/tess_ebs_prsa2022.tsv",
+      "catalog_name": "TESS-EB",
+      "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+      "file": "tess_eb.tsv",
+      "parser": "tess-eb-vizier-tsv",
+      "redistributed": false,
+      "rows": 4584,
+      "sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323",
+      "url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited"
+    },
+    {
+      "catalog_name": "Gaia-DR3-EB",
+      "file": "gaia_dr3_eb.csv",
+      "redistributed": true,
+      "rows": 2184477,
+      "sha256": "5183528b8984d16b305b1fb3ce62b96cf7160961f9a59b0cbb85497e5454c3df",
+      "url": "https://github.com/klucilla/refute/releases/download/v0.2.0/gaia_dr3_vari_eclipsing_binary.csv"
+    }
+  ]
+}
