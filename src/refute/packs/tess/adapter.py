@@ -71,6 +71,11 @@ class DataError(Exception):
     """Cached data are missing, incomplete or do not match their recorded hashes."""
 
 
+class NoProductsError(DataError):
+    """MAST lists no light curve of the requested kind for the target (v0.5 calibration: the one
+    meaning of absent products; the message is the earlier DataError's, unchanged)."""
+
+
 def _utc_now() -> str:
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -367,7 +372,9 @@ class TessAdapter:
         )
         result = _up_to_sector(result, max_sector)
         if len(result) == 0:
-            raise DataError(f"no {data.author} {data.exptime_seconds}-s light curves for {query}")
+            raise NoProductsError(
+                f"no {data.author} {data.exptime_seconds}-s light curves for {query}"
+            )
         files = []
         table = result.table
         for index in range(len(result)):  # one file at a time (issue #1)

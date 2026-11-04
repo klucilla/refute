@@ -46,27 +46,47 @@ def v04_test_plan(root: Path) -> dict[str, Any]:
 
 
 def frozen_code(root: Path) -> str:
-    """The code hash frozen in ``inputs.json``; refused when the tree's differs."""
-    from refute.packs.tess.calib05.c3select import code_record
+    """The freeze, checked: the designated freeze commit, every bound path (the code, the
+    protocol, the inputs and the v0.4 records the calibration reads) its bytes, and the tree's
+    code hash the one its ``inputs.json`` records. Returns that code hash."""
+    from refute.packs.tess.calib05.c3select import bound_problems, code_record, freeze_commit
 
-    inputs = _read(Path(root) / STEP_DIR / "inputs.json")
-    frozen = inputs["code"]["sha256"]
+    root = Path(root)
+    commit = freeze_commit(root)
+    problems = bound_problems(root, commit)
+    if problems:
+        raise ValueError("the freeze is not intact: " + "; ".join(problems))
+    frozen = json.loads(_git(root, "show", f"{commit}:{STEP_DIR}/inputs.json"))["code"]["sha256"]
     if code_record(root)["sha256"] != frozen:
         raise ValueError("the tree's code hash is not the one frozen in inputs.json")
     return frozen
 
 
-def _authenticated(root: Path, out_dir: Path, expected_tasks: list[str], step: str) -> list[dict]:
-    """A run folder's records, refused unless its manifest names this step, the frozen code and
-    exactly ``expected_tasks``."""
+def _authenticated(root: Path, out_dir: Path, fn, tasks, task_id, step: str) -> list[dict]:
+    """A run folder's records, refused unless its manifest names this step and the frozen code,
+    and its function, task identities and tasks' SHA-256 are those of ``tasks`` rebuilt now."""
     manifest = runner.read_manifest(out_dir)
     if manifest["provenance"].get("code_sha256") != frozen_code(root):
         raise ValueError(f"{out_dir.name}: not run by the frozen code")
     if manifest["provenance"].get("step") != step:
         raise ValueError(f"{out_dir.name}: not a {step} run")
-    if manifest["tasks"] != expected_tasks:
-        raise ValueError(f"{out_dir.name}: not the scheduled tasks of {step}")
+    rebuilt = runner.manifest_of(fn, tasks, task_id, {})
+    for key in ("function", "tasks", "tasks_sha256"):
+        if manifest[key] != rebuilt[key]:
+            raise ValueError(f"{out_dir.name}: its `{key}` is not that of the scheduled tasks")
     return runner.all_records(out_dir)
+
+
+def _budget_decision(root: Path) -> int:
+    """The written budget decision (20 or 10 injections per curve); a stop, or no decision,
+    refuses every run that reads it."""
+    path = Path(root) / RUNS / "budget.json"
+    if not path.is_file():
+        raise ValueError("no budget decision: run the budget step first")
+    decision = _read(path)["injections_per_curve"]
+    if decision not in (C2.injections_per_curve, C2.injections_fallback):
+        raise ValueError(f"the budget decision is {decision!r}: nothing runs")
+    return decision
 
 
 # --- C1 ---------------------------------------------------------------------------------
@@ -108,7 +128,7 @@ def c1_prefix_report(root: Path, write: bool = False) -> dict[str, Any]:
     """The prefix's projection, from its authenticated records (never from a report file)."""
     tasks = _c1_prefix_tasks(root)
     out_dir = Path(root) / RUNS / "c1-prefix"
-    records = _authenticated(root, out_dir, [_c1_id(t) for t in tasks], "c1-prefix")
+    records = _authenticated(root, out_dir, c1.run_task, tasks, _c1_id, "c1-prefix")
     hours = runner.projected_hours(records, C1.sizes, "family")
     sizes = c1_sizes(hours)
     report = {
@@ -134,7 +154,10 @@ def _git(root: Path, *args: str) -> str:
 
 def lock_commit_b(root: Path) -> str:
     """Commit B: the one commit that added the C3 lock file; its first parent must be the commit
-    the lock records (commit A), and the lock's code hash must be the frozen one."""
+    the lock records (commit A), the lock's code hash must be the frozen one, and the lock must
+    verify against the claim and its attachments as they are now (``refute verify``)."""
+    from refute.core.lock import VerifyStatus, verify_claim
+
     added = _git(root, "log", "--diff-filter=A", "--format=%H", "--", LOCK_FILE).split()
     if len(added) != 1:
         raise ValueError(f"{len(added)} commits added {LOCK_FILE}; the maintainer decides")
@@ -145,42 +168,56 @@ def lock_commit_b(root: Path) -> str:
         raise ValueError("the lock does not record the parent of commit B as its commit A")
     if lock["code"]["sha256"] != frozen_code(root):
         raise ValueError("the lock's code hash is not the one frozen in inputs.json")
+    if _git(root, "diff", "--name-only", commit_b, "--", LOCK_FILE):
+        raise ValueError("the lock file differs from commit B's")
+    verified = verify_claim(Path(root) / STEP_DIR / "claim.yaml", code_root=Path(root))
+    if verified.status is not VerifyStatus.PASS:
+        raise ValueError(f"the C3 claim does not verify against its lock: {verified.status}")
     return commit_b
 
 
-def r_c1(root: Path) -> tuple[str, int, dict[str, Any], str]:
+def r_c1(commit_b: str) -> tuple[int, dict[str, Any], str]:
     """The round R_c1: the first drand round at least one hour after the creation of the CI push
     run of commit B; its beacon, signature verified."""
     from refute.drand import drand_seed, round_after
     from refute.packs.tess.discover import pilot
 
-    commit_b = lock_commit_b(root)
     created = pilot.push_run_created_at(commit_b)
     number = round_after(created)
     _seed, beacon = drand_seed(number)
-    return commit_b, number, beacon, created
+    return number, beacon, created
 
 
-def c1_confirmation(root: Path, commit_b: str, workers: int | None = None) -> dict[str, Any]:
-    """The confirmation set, once, on the locked code: the sizes recomputed from the
-    authenticated prefix, every family and index, the seeds of R_c1; the metrics and D1 to D5.
-    The run folder is reserved before the round is read."""
+def c1_confirmation(
+    root: Path, commit_b: str, workers: int | None = None, approval_url: str | None = None
+) -> dict[str, Any]:
+    """The confirmation set, once, on the locked code. Before any network access: commit B
+    authenticated and equal to ``commit_b``, the budget decision read, the sizes recomputed from
+    the authenticated prefix, and an attempt reserved (any later attempt needs its approval URL);
+    then the round, every family and index with the seeds of R_c1; the metrics and D1 to D5."""
     out_dir = Path(root) / RUNS / "c1-confirmation"
     if out_dir.exists():
         raise FileExistsError(f"{out_dir} exists: the confirmation runs once")
-    if _read(Path(root) / RUNS / "budget.json")["injections_per_curve"] == "stop":
-        raise ValueError("the budget decision is stop: nothing runs; the maintainer decides")
-    sizes = c1_prefix_report(root)["sizes"]
-    found_b, number, beacon, created = r_c1(root)
+    found_b = lock_commit_b(root)
     if commit_b != found_b:
         raise ValueError(f"commit B is {found_b}, not {commit_b}")
+    _budget_decision(root)
+    sizes = c1_prefix_report(root)["sizes"]
+    attempt = runner.reserve_attempt(
+        Path(root) / RUNS / "c1-confirmation-attempts", approval_url, "R_c1"
+    )
+    number, beacon, created = r_c1(commit_b)
+    with open(attempt / "round.json", "x", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps({"round": number, "beacon": beacon}, default=str) + "\n")
     plan = v04_test_plan(root)
     tasks = [
         c1.C1Task(f, i, c1.confirmation_seed(beacon["randomness"], f, i), plan)
         for f in c1.FAMILIES
         for i in range(sizes[f])
     ]
-    prov = runner.provenance(root, step="c1-confirmation", round=number, commit_b=commit_b)
+    prov = runner.provenance(
+        root, step="c1-confirmation", round=number, commit_b=commit_b, attempt=attempt.name
+    )
     runner.run_tasks(c1.run_task, tasks, _c1_id, out_dir, workers, prov)
     records = runner.all_records(out_dir)
     report = {
@@ -336,7 +373,7 @@ def c2_prefix(root: Path, workers: int | None = None) -> dict[str, Any]:
 def _c2_prefix_records(root: Path) -> list[dict[str, Any]]:
     tasks = _c2_prefix_tasks(root)
     return _authenticated(
-        root, Path(root) / RUNS / "c2-prefix", [c2.task_id(t) for t in tasks], "c2-prefix"
+        root, Path(root) / RUNS / "c2-prefix", c2.run_task, tasks, c2.task_id, "c2-prefix"
     )
 
 
@@ -402,9 +439,7 @@ def c2_run(root: Path, workers: int | None = None) -> dict[str, Any]:
     reused (its compatibility must be established before any dispatch) and only the remaining
     curves run; then the compatibility over every curve and the summary."""
     frozen_code(root)
-    decision = _read(Path(root) / RUNS / "budget.json")["injections_per_curve"]
-    if decision not in (C2.injections_per_curve, C2.injections_fallback):
-        raise ValueError(f"the budget decision is {decision!r}: nothing runs")
+    decision = _budget_decision(root)
     prefix = _c2_prefix_records(root)
     if any(_compat(root, prefix).values()):
         raise ValueError("the C2 prefix's compatibility is not established")
@@ -454,6 +489,7 @@ def c3_fetch(root: Path, cache: Path) -> dict[str, Any]:
     import yaml
 
     frozen_code(root)
+    _budget_decision(root)
     step = Path(root) / STEP_DIR
     claim = yaml.safe_load((step / "claim.yaml").read_text(encoding="utf-8"))
     states = {
@@ -473,6 +509,7 @@ def c3_run(root: Path, workers: int | None = None) -> dict[str, Any]:
     from refute.packs.tess.params import TessTestPlan
 
     frozen_code(root)
+    _budget_decision(root)
     step = Path(root) / STEP_DIR
     claim = yaml.safe_load((step / "claim.yaml").read_text(encoding="utf-8"))
     targets = _c3_targets(root)

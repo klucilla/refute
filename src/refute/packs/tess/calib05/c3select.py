@@ -25,10 +25,12 @@ import hashlib
 import json
 import subprocess
 from collections.abc import Callable
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from refute.drand import shuffled
+from refute.packs.tess.calib05 import runner
 from refute.packs.tess.calib05.values import C3, PROTOCOL_ID, STEP_DIR
 from refute.packs.tess.discover import pilot
 from refute.packs.tess.discover import selection as sel
@@ -52,6 +54,12 @@ BOUND_PATHS = (
     "calibration/v0.2/targets.yaml",
     "docs/validation/v0.2.1/reopen/stage-1/real-controls/result.json",
     "calibration/v0.4/selection/targets.yaml",
+    # the v0.4 records the calibration reads (C2's stars, seeds, references and catalogs)
+    "calibration/v0.4/claim.yaml",
+    "calibration/v0.4/claim.lock.json",
+    "calibration/v0.4/eb_catalog.csv",
+    "calibration/v0.4/eb_catalog_scan.json",
+    "calibration/v0.4/runs",
 )
 
 
@@ -375,27 +383,6 @@ def freeze_commit(root: Path) -> str:
     return commits.pop()
 
 
-def _attempt(root: Path, approval_url: str | None) -> Path:
-    """A new, exclusive selection attempt folder, reserved before any network access. After an
-    attempt that read the round's beacon (its ``round.json``), a new one needs the URL of its
-    approval recorded in an issue; an attempt that stopped before (the round not yet published,
-    a GitHub error) revealed nothing of the draw."""
-    from refute.packs.tess.discover.steps import APPROVAL_URL
-
-    base = Path(root) / SELECTION_ATTEMPTS
-    earlier = sorted(p for p in base.iterdir()) if base.is_dir() else []
-    revealed = [p.name for p in earlier if (p / "round.json").exists()]
-    if revealed and (approval_url is None or not APPROVAL_URL.fullmatch(approval_url)):
-        raise sel.SelectionError(
-            f"earlier attempts read the beacon {revealed}: a new one needs its approval URL"
-        )
-    folder = base / f"attempt-{len(earlier) + 1:02d}"
-    folder.mkdir(parents=True, exist_ok=False)
-    with open(folder / "attempt.json", "x", encoding="utf-8", newline="\n") as handle:
-        handle.write(json.dumps({"approval": approval_url, "utc": pilot.utc_now()}) + "\n")
-    return folder
-
-
 def _logged(triage_fn, folder: Path):
     """``triage_fn`` that appends each answer to the attempt's ``decisions.jsonl`` as it comes."""
 
@@ -436,16 +423,23 @@ def select_step(
     folder = root / STEP_DIR / SELECTION_DIR
     if folder.exists():
         raise sel.SelectionError(f"{folder} exists: the selection is written once")
-    attempt = _attempt(root, approval_url)
-    triage_fn = _logged(kwargs.pop("triage_fn", pilot.triage), attempt)
+    # the round's number and time come from the public creation time of the CI push run (no
+    # randomness is read); an attempt is reserved only once the round is published
     created = pilot.push_run_created_at(commit)
     number = round_after(created)
-    seed, beacon = drand_seed(number)
-    with open(attempt / "round.json", "x", encoding="utf-8", newline="\n") as handle:
-        handle.write(json.dumps({"round": number, "beacon": beacon}, default=str) + "\n")
-    out = run_selection(
-        cache_dir(root, inputs), inputs, beacon["randomness"], root, triage_fn, **kwargs
-    )
+    if datetime.now(UTC) < round_time(number) + timedelta(seconds=60):
+        raise sel.SelectionError(
+            f"R_c3 is round {number}, published at {round_time(number).isoformat()}: wait"
+        )
+    attempt = runner.reserve_attempt(root / SELECTION_ATTEMPTS, approval_url, "R_c3")
+    with runner.owned(attempt):
+        triage_fn = _logged(kwargs.pop("triage_fn", pilot.triage), attempt)
+        seed, beacon = drand_seed(number)
+        with open(attempt / "round.json", "x", encoding="utf-8", newline="\n") as handle:
+            handle.write(json.dumps({"round": number, "beacon": beacon}, default=str) + "\n")
+        out = run_selection(
+            cache_dir(root, inputs), inputs, beacon["randomness"], root, triage_fn, **kwargs
+        )
     out.update(
         {
             "protocol": PROTOCOL_ID,

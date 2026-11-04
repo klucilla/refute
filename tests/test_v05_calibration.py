@@ -383,25 +383,26 @@ def test_runner_runs_once_with_its_manifest(tmp_path):
     manifest = runner.read_manifest(out)
     assert manifest["tasks"] == ["1", "2", "3"] and manifest["provenance"] == prov
     assert manifest["function"].endswith("_double")
-    assert not (out / "running.lock").exists()
+    assert manifest["tasks_sha256"] == runner.tasks_sha256([1, 2, 3])
+    assert not (out / "running.marker").exists()
     with pytest.raises(FileExistsError):
         runner.run_tasks(_double, [1], str, out, workers=1)
     assert len(runner.all_records(out)) == 3
-    with pytest.raises(ValueError, match="complete"):
+    with pytest.raises(ValueError, match="ended normally"):
         runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov=prov)
 
 
-def _interrupted(tmp_path: Path) -> tuple[Path, dict]:
-    """A run whose process ended after two of its three tasks (the lock left behind, the third
-    record missing, the second's cost line missing)."""
+def _interrupted(tmp_path: Path, keep: int = 2) -> tuple[Path, dict]:
+    """A run whose process ended after ``keep`` of its three records (the marker left behind,
+    the later records missing, the last kept record's cost line missing)."""
     out = tmp_path / "run"
     prov = {"code_sha256": "c", "step": "s"}
     runner.run_tasks(_double, [1, 2, 3], str, out, workers=1, prov=prov)
     lines = (out / "records.jsonl").read_text().splitlines()
-    (out / "records.jsonl").write_text("\n".join(lines[:2]) + "\n")
+    (out / "records.jsonl").write_text("\n".join(lines[:keep]) + "\n")
     cost = (out / "cost.jsonl").read_text().splitlines()
-    (out / "cost.jsonl").write_text(cost[0] + "\n")
-    (out / "running.lock").write_text(json.dumps({"pid": 999999999, "utc": "t"}))
+    (out / "cost.jsonl").write_text("\n".join(cost[: keep - 1]) + "\n")
+    (out / "running.marker").write_text(json.dumps({"pid": 1, "utc": "t"}))
     return out, prov
 
 
@@ -422,23 +423,42 @@ def test_runner_resumes_only_the_same_experiment(tmp_path):
     assert log["tasks"] == 1 and log["costs_restored"] == 1
 
 
-def test_runner_refuses_a_live_run(tmp_path):
-    import os
+def test_runner_finalizes_a_run_interrupted_at_its_last_write(tmp_path):
+    out, prov = _interrupted(tmp_path, keep=3)  # every record, a cost line and the marker lost
+    done = runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov=prov)
+    assert done == []
+    assert len(runner.all_records(out)) == 3
+    assert json.loads((out / "resumptions.jsonl").read_text())["finalization_only"] is True
 
+
+def test_runner_refuses_a_run_another_process_owns(tmp_path):
     out, prov = _interrupted(tmp_path)
-    (out / "running.lock").write_text(json.dumps({"pid": os.getpid(), "utc": "t"}))
-    with pytest.raises(ValueError, match="still alive"):
+    with runner.owned(out), pytest.raises(runner.OwnershipError):
         runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov=prov)
 
 
-def test_c3_product_state():
+def test_c3_product_state(tmp_path):
+    from refute.packs.tess.adapter import FETCH_SCHEMA
+
     assert c3run.product_state(None)["state"] == "missing"
-    assert c3run.product_state({"files": []})["state"] == "missing"
-    manifest = {"files": [{"sector": 5}, {"sector": 9}], "pixel_files": [{"sector": 5}]}
+    assert c3run.product_state({"files": []})["state"] == "error"  # no schema: invalid
+    base = {"schema": FETCH_SCHEMA, "tic_id": 7, "target_key": "TIC-7"}
+    assert c3run.product_state({**base, "files": []})["state"] == "missing"
+    manifest = {**base, "files": [{"sector": 5}, {"sector": 9}], "pixel_files": [{"sector": 5}]}
     state = c3run.product_state(manifest)
     assert state["state"] == "missing" and "[9]" in state["reason"]
     manifest["pixel_files"].append({"sector": 9})
     assert c3run.product_state(manifest)["state"] == "present"
+    target = {"key": "TIC-8", "tic_id": 8}
+    assert c3run.product_state(manifest, target)["state"] == "error"  # another target
+    data = b"fits"
+    (tmp_path / "a.fits").write_bytes(data)
+    good = {"sector": 5, "path": "a.fits", "sha256": hashlib.sha256(data).hexdigest()}
+    bad = {**good, "sha256": "0" * 64}
+    checked = {**base, "files": [good], "pixel_files": []}
+    assert c3run.product_state(checked, None, tmp_path)["state"] == "missing"
+    corrupt = {**base, "files": [bad], "pixel_files": []}
+    assert c3run.product_state(corrupt, None, tmp_path)["state"] == "error"  # never absence
 
 
 def test_c3_absent_products_only_from_the_fetch_state():
@@ -455,14 +475,12 @@ def test_c3_absent_products_only_from_the_fetch_state():
     assert c3run.run_task(task)["status"] == "ERROR"  # never a replacement reason
 
 
-def test_selection_attempts(tmp_path):
-    first = c3select._attempt(tmp_path, None)
-    second = c3select._attempt(tmp_path, None)  # the first read no beacon: nothing revealed
-    assert first.name == "attempt-01" and second.name == "attempt-02"
-    (second / "round.json").write_text("{}")
-    with pytest.raises(Exception, match="approval"):
-        c3select._attempt(tmp_path, None)
-    assert c3select._attempt(tmp_path, URL).name == "attempt-03"
+def test_attempts_after_the_first_need_approval(tmp_path):
+    first = runner.reserve_attempt(tmp_path / "attempts", None, "R_c3")
+    assert first.name == "attempt-01" and (first / "exposure.json").is_file()
+    with pytest.raises(ValueError, match="approval"):
+        runner.reserve_attempt(tmp_path / "attempts", None, "R_c3")
+    assert runner.reserve_attempt(tmp_path / "attempts", URL, "R_c3").name == "attempt-02"
 
 
 def test_projected_hours():

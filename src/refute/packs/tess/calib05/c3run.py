@@ -196,18 +196,36 @@ def identity(kind: str, published: float | None, found: float | None) -> dict[st
 
 
 MISSING = "MISSING_PRODUCTS"
-NO_PRODUCTS = "no SPOC"  # the adapter's DataError when MAST lists no light curve
 
 
-def product_state(manifest: dict[str, Any] | None) -> dict[str, Any]:
-    """Whether a control's stage-2 products are present (protocol section 6): ``missing`` when
-    the fetch found no light curve, or a light-curve sector has no pixel file; ``present``
-    otherwise. Integrity is not judged here: a file with other bytes, a manifest of another
-    target or an unreadable file fails when the data are loaded, as an error record."""
+def product_state(
+    manifest: dict[str, Any] | None, target: dict[str, Any] | None = None, cache: Path | None = None
+) -> dict[str, Any]:
+    """A control's stage-2 product state (protocol section 6). ``None`` (the adapter's
+    ``NoProductsError``: MAST lists no light curve) is ``missing``. Otherwise the manifest is
+    validated first, and any failure is ``error``, never absence: its schema, its target (TIC and
+    key), and the SHA-256 of every file it lists (``adapter._verified``). Only a valid manifest
+    with no light-curve file, or with a light-curve sector that has no pixel file, is
+    ``missing``; else ``present``."""
+    from refute.packs.tess.adapter import SUPPORTED_SCHEMAS, DataError, _verified
+
     if manifest is None:
         return {"state": "missing", "reason": "MAST lists no SPOC light curve up to S_max"}
-    lc = sorted({int(f["sector"]) for f in manifest.get("files", [])})
-    px = sorted({int(f["sector"]) for f in manifest.get("pixel_files", [])})
+    try:
+        if manifest.get("schema") not in SUPPORTED_SCHEMAS:
+            raise DataError(f"unsupported manifest schema {manifest.get('schema')!r}")
+        if target is not None:
+            tic = int(target["tic_id"])
+            if manifest.get("tic_id") != tic or manifest.get("target_key") != f"TIC-{tic}":
+                raise DataError("the manifest is of another target")
+        files = [*manifest.get("files", []), *manifest.get("pixel_files", [])]
+        if cache is not None:
+            for record in files:
+                _verified(record, Path(cache))
+        lc = sorted({int(f["sector"]) for f in manifest.get("files", [])})
+        px = sorted({int(f["sector"]) for f in manifest.get("pixel_files", [])})
+    except Exception as exc:  # noqa: BLE001 - an invalid manifest is an error, never absence
+        return {"state": "error", "reason": f"{type(exc).__name__}: {exc}"}
     if not lc:
         return {"state": "missing", "reason": "no light-curve file"}
     without = sorted(set(lc) - set(px))
@@ -220,22 +238,21 @@ def product_state(manifest: dict[str, Any] | None) -> dict[str, Any]:
 
 
 def fetch_products(target: dict[str, Any], test_plan: dict[str, Any], cache: Path) -> dict:
-    """Stage-2 download of one control (network) and its product state; only the adapter's
-    "no SPOC light curves" answer means absence; any other failure is ``error`` (not a reason
-    for replacement)."""
+    """Stage-2 download of one control (network) and its product state. Only the adapter's
+    ``NoProductsError`` means that MAST lists nothing; every other failure, reading and
+    validating the manifest included, is ``error`` (not a reason for replacement)."""
     from refute.core.io import read_json
-    from refute.packs.tess.adapter import DataError, TessAdapter, manifest_path
+    from refute.packs.tess.adapter import NoProductsError, TessAdapter, manifest_path
     from refute.packs.tess.discover.measure import stage_plan
 
     try:
         TessAdapter().fetch(target, stage_plan(test_plan, 2), Path(cache))
-    except DataError as exc:
-        if str(exc).startswith(NO_PRODUCTS):
-            return product_state(None)
-        return {"state": "error", "reason": f"DataError: {exc}"}
+        manifest = read_json(manifest_path(Path(cache), int(target["tic_id"])))
+    except NoProductsError:
+        return product_state(None)
     except Exception as exc:  # noqa: BLE001 - recorded: not a replacement reason
         return {"state": "error", "reason": f"{type(exc).__name__}: {exc}"}
-    return product_state(read_json(manifest_path(Path(cache), int(target["tic_id"]))))
+    return product_state(manifest, target, Path(cache))
 
 
 @dataclass(frozen=True)

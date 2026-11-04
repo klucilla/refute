@@ -47,6 +47,7 @@ def main(argv: list[str]) -> int:
     conf = sub.add_parser("c1-confirm")
     conf.add_argument("--commit-b", required=True)
     conf.add_argument("--workers", type=int)
+    conf.add_argument("--approval", help="issue comment URL, only for a new attempt")
     fetch = sub.add_parser("c3-fetch")
     fetch.add_argument("--cache", required=True)
     args = ap.parse_args(argv)
@@ -77,7 +78,7 @@ def main(argv: list[str]) -> int:
         out = steps.budget(ROOT)
         summary = out
     elif args.step == "c1-confirm":
-        out = steps.c1_confirmation(ROOT, args.commit_b, args.workers)
+        out = steps.c1_confirmation(ROOT, args.commit_b, args.workers, args.approval)
         summary = {"round": out["round"], "rules": out["decision_rules"]}
     elif args.step == "c2-run":
         out = steps.c2_run(ROOT, args.workers)
