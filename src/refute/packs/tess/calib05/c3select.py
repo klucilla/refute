@@ -400,9 +400,12 @@ def select_step(
     root: Path, commit: str, approval_url: str | None = None, **kwargs: Any
 ) -> dict[str, Any]:
     """The C3 selection after R_c3. Before any network access: ``commit`` must be the designated
-    freeze commit, every bound path its bytes, the tree's code hash the frozen one, no selection
-    output may exist, and a new attempt folder is reserved; then the round, the beacon and the
-    walks, each answer logged as it comes. Writes ``selection/selection.json``,
+    freeze commit, every bound path its bytes, the tree's code hash the frozen one, and no
+    selection output may exist. Then the public creation time of the commit's CI push run (the
+    GitHub API; no randomness) gives the round, refused until 60 seconds after the round's
+    publication time; only then is an attempt reserved (``runner.reserve_attempt``: any attempt
+    after the first needs its approval URL), and under the attempt's lock the beacon is read and
+    the walks run, each answer logged as it comes. Writes ``selection/selection.json``,
     ``selection/ledger.json`` and (when complete) ``selection/targets.yaml``, each exclusively."""
     import yaml
 

@@ -247,10 +247,47 @@ def compat_problems(record: dict[str, Any], reference: dict[str, Any]) -> list[s
     return out
 
 
+V04_SEALS = "calibration/v0.4/runs/stage1/seals.json"
+V04_RECORDS = "calibration/v0.4/runs/stage1/records.json"
+MEASUREMENTS_KEY = "measure/funnel/measurements.jsonl"
+
+
+def reference_problems(root: Path) -> list[str]:
+    """Why the external v0.4 references cannot be used (empty when they can): the stage-1
+    dossiers must be exactly the stars of the committed seal record
+    (``calibration/v0.4/runs/stage1/seals.json``, a bound path of the freeze), each dossier's sealed
+    core (everything but ``SEAL.json`` and the annexes, so its ``verdict.json`` and
+    ``data/manifest.json`` included) must have the recorded SHA-256, and the measurement records
+    must have the SHA-256 that ``calibration/v0.4/runs/stage1/records.json`` records."""
+    import hashlib
+
+    from refute.core.seal import core_sha256
+
+    root = Path(root)
+    seals = json.loads((root / V04_SEALS).read_text(encoding="utf-8"))["core_sha256"]
+    recorded = json.loads((root / V04_RECORDS).read_text(encoding="utf-8"))["records_sha256"]
+    base = root / V04_DOSSIERS
+    present = {p.name for p in base.iterdir() if p.is_dir()} if base.is_dir() else set()
+    problems = [f"no dossier: {k}" for k in sorted(set(seals) - present)]
+    problems += [f"unexpected dossier: {k}" for k in sorted(present - set(seals))]
+    for key in sorted(set(seals) & present):
+        if core_sha256(base / key) != seals[key]:
+            problems.append(f"{key}: its sealed core differs from the recorded SHA-256")
+    path = root / V04_MEASUREMENTS
+    if not path.is_file():
+        problems.append(f"missing {V04_MEASUREMENTS}")
+    elif hashlib.sha256(path.read_bytes()).hexdigest() != recorded[MEASUREMENTS_KEY]:
+        problems.append(f"{V04_MEASUREMENTS} differs from the recorded SHA-256")
+    return problems
+
+
 def references(root: Path) -> tuple[dict[str, dict], dict[str, dict]]:
-    """The v0.4 references: per star its dossier (``dossier_reference`` and its data manifest),
-    and per transformed or injected curve its measurement record, from the raw records whose
-    SHA-256 the v0.4 results commit recorded."""
+    """The v0.4 references, refused unless ``reference_problems`` is empty: per star its dossier
+    (``dossier_reference`` and its data manifest), and per transformed or injected curve its
+    measurement record."""
+    problems = reference_problems(root)
+    if problems:
+        raise ValueError("the v0.4 references are not authenticated: " + "; ".join(problems[:5]))
     dossiers = {}
     base = Path(root) / V04_DOSSIERS
     for folder in sorted(p for p in base.iterdir() if p.is_dir()):

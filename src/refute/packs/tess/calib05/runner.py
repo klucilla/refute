@@ -1,10 +1,12 @@
 """Task runs of the v0.5 calibration (calibration/v0.5/PROTOCOL.md, section 7, frozen before any
 run).
 
-- **Ownership.** Every operation on a run folder holds an operating-system exclusive lock on its
-  ``owner.lock`` (``msvcrt.locking`` on Windows, ``fcntl.flock`` elsewhere) from its first check
-  to its last write; the system releases it when the process ends, so a second process is refused
-  while the first lives, and a dead process never holds it.
+- **Ownership.** Every operation that writes to a run folder (the run, a resumption, an attempt's
+  reservation) holds an operating-system exclusive lock on its ``owner.lock`` (``msvcrt.locking``
+  on Windows, ``fcntl.flock`` elsewhere) from its first check to its last write; the system
+  releases it when the process ends, so a second writer is refused while the first lives, and a
+  dead process never holds it. Readers take no lock: a run that is still writing keeps its marker
+  and is refused by ``all_records``.
 - **A run folder** is created exclusively before any task is dispatched, with its **manifest**
   (``manifest.json``: the task function, the ordered task identities, the SHA-256 of the tasks'
   content, and the provenance: the step, the code hash and the step's inputs) and a marker
@@ -221,10 +223,9 @@ def resume(
                 raise ValueError(f"the resumption differs from the run's manifest in `{key}`")
         if not (out_dir / MARKER).is_file():
             raise ValueError("the run ended normally; nothing to resume")
+        _validate(out_dir, current["tasks"], complete=False)  # before any write
         restored = _restore_costs(out_dir)
         recorded = {r["task"] for r in read_records(out_dir)}
-        if recorded - set(current["tasks"]):
-            raise ValueError("the folder holds records of unscheduled tasks")
         missing = [t for t in tasks if task_id(t) not in recorded]
         with open(out_dir / "resumptions.jsonl", "a", encoding="utf-8", newline=LF) as log:
             entry = {
@@ -236,30 +237,42 @@ def resume(
             }
             log.write(json.dumps(entry) + LF)
         done = _dispatch(fn, missing, task_id, out_dir, workers or default_workers(), recorded)
+        _validate(out_dir, current["tasks"], complete=True)  # the marker stays on a failure
         (out_dir / MARKER).unlink()
     return done
 
 
-def all_records(out_dir: Path) -> list[dict[str, Any]]:
-    """The run's records, refused unless they are exactly the manifest's tasks, each once, each
-    with its cost line, and the run is not marked as unfinished."""
-    out_dir = Path(out_dir)
-    manifest = read_manifest(out_dir)
-    if (out_dir / MARKER).exists():
-        raise ValueError("the run is marked as running or interrupted")
+def _validate(out_dir: Path, scheduled: list[str], complete: bool) -> list[dict[str, Any]]:
+    """The records of ``out_dir``: each task at most once and only scheduled tasks; with
+    ``complete``, every scheduled task recorded and each record with its cost line."""
     records = read_records(out_dir)
     ids = [r["task"] for r in records]
     if len(ids) != len(set(ids)):
         raise ValueError("a task is recorded twice")
-    expected = set(manifest["tasks"])
-    missing, extra = sorted(expected - set(ids)), sorted(set(ids) - expected)
-    if missing:
-        raise ValueError(f"{len(missing)} scheduled tasks have no record (first: {missing[:3]})")
+    expected = set(scheduled)
+    extra = sorted(set(ids) - expected)
     if extra:
         raise ValueError(f"records of unscheduled tasks: {extra[:3]}")
-    if set(ids) - _cost_ids(out_dir):
-        raise ValueError("a recorded task has no cost line")
+    if complete:
+        missing = sorted(expected - set(ids))
+        if missing:
+            raise ValueError(
+                f"{len(missing)} scheduled tasks have no record (first: {missing[:3]})"
+            )
+        if set(ids) - _cost_ids(out_dir):
+            raise ValueError("a recorded task has no cost line")
     return records
+
+
+def all_records(out_dir: Path) -> list[dict[str, Any]]:
+    """The run's records, refused unless they are exactly the manifest's tasks, each once, each
+    with its cost line, and the run is not marked as unfinished. A reader: it takes no lock (a
+    run that is still writing keeps its marker, and is refused)."""
+    out_dir = Path(out_dir)
+    manifest = read_manifest(out_dir)
+    if (out_dir / MARKER).exists():
+        raise ValueError("the run is marked as running or interrupted")
+    return _validate(out_dir, manifest["tasks"], complete=True)
 
 
 def read_manifest(out_dir: Path) -> dict[str, Any]:

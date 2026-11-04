@@ -196,6 +196,11 @@ def identity(kind: str, published: float | None, found: float | None) -> dict[st
 
 
 MISSING = "MISSING_PRODUCTS"
+# The formats the adapter reads (adapter.load_from_manifest, raw_lengths) and the fields every
+# file record of a manifest carries.
+LC_FORMATS = ("spoc-fits", "synthetic-npz")
+PIXEL_FORMATS = ("spoc-tpf",)
+RECORD_FIELDS = frozenset({"sector", "path", "sha256", "format"})
 
 
 def product_state(
@@ -212,17 +217,32 @@ def product_state(
     if manifest is None:
         return {"state": "missing", "reason": "MAST lists no SPOC light curve up to S_max"}
     try:
+        if not isinstance(manifest, dict):
+            raise DataError("the manifest is not a mapping")
         if manifest.get("schema") not in SUPPORTED_SCHEMAS:
             raise DataError(f"unsupported manifest schema {manifest.get('schema')!r}")
         if target is not None:
             tic = int(target["tic_id"])
             if manifest.get("tic_id") != tic or manifest.get("target_key") != f"TIC-{tic}":
                 raise DataError("the manifest is of another target")
-        files = [*manifest.get("files", []), *manifest.get("pixel_files", [])]
+        for key, formats in (("files", LC_FORMATS), ("pixel_files", PIXEL_FORMATS)):
+            if key == "files" and key not in manifest:
+                raise DataError("the manifest has no 'files' list")
+            records = manifest.get(key, [])
+            if not isinstance(records, list):
+                raise DataError(f"'{key}' is not a list")
+            for record in records:
+                if not isinstance(record, dict) or not RECORD_FIELDS <= set(record):
+                    raise DataError(f"a record of '{key}' lacks {sorted(RECORD_FIELDS)}")
+                if record["format"] not in formats:
+                    raise DataError(f"unsupported format {record['format']!r} in '{key}'")
+                if not isinstance(record["sector"], int):
+                    raise DataError(f"a record of '{key}' has no integer sector")
+        files = [*manifest["files"], *manifest.get("pixel_files", [])]
         if cache is not None:
             for record in files:
                 _verified(record, Path(cache))
-        lc = sorted({int(f["sector"]) for f in manifest.get("files", [])})
+        lc = sorted({int(f["sector"]) for f in manifest["files"]})
         px = sorted({int(f["sector"]) for f in manifest.get("pixel_files", [])})
     except Exception as exc:  # noqa: BLE001 - an invalid manifest is an error, never absence
         return {"state": "error", "reason": f"{type(exc).__name__}: {exc}"}

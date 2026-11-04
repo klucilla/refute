@@ -431,6 +431,42 @@ def test_runner_finalizes_a_run_interrupted_at_its_last_write(tmp_path):
     assert json.loads((out / "resumptions.jsonl").read_text())["finalization_only"] is True
 
 
+def test_runner_keeps_the_marker_when_the_records_are_invalid(tmp_path):
+    out, prov = _interrupted(tmp_path, keep=3)
+    lines = (out / "records.jsonl").read_text().splitlines()
+    (out / "records.jsonl").write_text("\n".join([*lines, lines[0]]) + "\n")  # a task twice
+    with pytest.raises(ValueError, match="twice"):
+        runner.resume(_double, [1, 2, 3], str, out, URL, workers=1, prov=prov)
+    assert (out / "running.marker").exists()
+    assert not (out / "resumptions.jsonl").exists()  # refused before any write
+
+
+def test_c2_references_are_authenticated(tmp_path):
+    from refute.core.seal import core_sha256
+
+    stage1 = tmp_path / "calibration/v0.4/runs/stage1"
+    stage1.mkdir(parents=True)
+    dossier = tmp_path / c2.V04_DOSSIERS / "TIC-1"
+    (dossier / "data").mkdir(parents=True)
+    (dossier / "verdict.json").write_text("{}")
+    (dossier / "data/manifest.json").write_text('{"files": []}')
+    measurements = tmp_path / c2.V04_MEASUREMENTS
+    measurements.parent.mkdir(parents=True)
+    measurements.write_bytes(b"")
+    seals = {"core_sha256": {"TIC-1": core_sha256(dossier)}}
+    (stage1 / "seals.json").write_text(json.dumps(seals))
+    sha = hashlib.sha256(b"").hexdigest()
+    records = {"records_sha256": {c2.MEASUREMENTS_KEY: sha}}
+    (stage1 / "records.json").write_text(json.dumps(records))
+    assert c2.reference_problems(tmp_path) == []
+    (dossier / "data/manifest.json").write_text('{"files": [1]}')
+    assert any("sealed core" in p for p in c2.reference_problems(tmp_path))
+    with pytest.raises(ValueError, match="not authenticated"):
+        c2.references(tmp_path)
+    (tmp_path / c2.V04_DOSSIERS / "TIC-2").mkdir()
+    assert "unexpected dossier: TIC-2" in c2.reference_problems(tmp_path)
+
+
 def test_runner_refuses_a_run_another_process_owns(tmp_path):
     out, prov = _interrupted(tmp_path)
     with runner.owned(out), pytest.raises(runner.OwnershipError):
@@ -440,20 +476,33 @@ def test_runner_refuses_a_run_another_process_owns(tmp_path):
 def test_c3_product_state(tmp_path):
     from refute.packs.tess.adapter import FETCH_SCHEMA
 
+    def rec(sector, fmt="spoc-fits"):
+        return {"sector": sector, "path": f"{sector}.fits", "sha256": "0" * 64, "format": fmt}
+
     assert c3run.product_state(None)["state"] == "missing"
     assert c3run.product_state({"files": []})["state"] == "error"  # no schema: invalid
     base = {"schema": FETCH_SCHEMA, "tic_id": 7, "target_key": "TIC-7"}
+    assert c3run.product_state(base)["state"] == "error"  # no 'files' list: invalid
     assert c3run.product_state({**base, "files": []})["state"] == "missing"
-    manifest = {**base, "files": [{"sector": 5}, {"sector": 9}], "pixel_files": [{"sector": 5}]}
+    unsupported = {**base, "files": [rec(5, "unsupported")], "pixel_files": []}
+    assert c3run.product_state(unsupported)["state"] == "error"  # never absence
+    no_format = {**base, "files": [{"sector": 5, "path": "a", "sha256": "0" * 64}]}
+    assert c3run.product_state(no_format)["state"] == "error"
+    manifest = {**base, "files": [rec(5), rec(9)], "pixel_files": [rec(5, "spoc-tpf")]}
     state = c3run.product_state(manifest)
     assert state["state"] == "missing" and "[9]" in state["reason"]
-    manifest["pixel_files"].append({"sector": 9})
+    manifest["pixel_files"].append(rec(9, "spoc-tpf"))
     assert c3run.product_state(manifest)["state"] == "present"
     target = {"key": "TIC-8", "tic_id": 8}
     assert c3run.product_state(manifest, target)["state"] == "error"  # another target
     data = b"fits"
     (tmp_path / "a.fits").write_bytes(data)
-    good = {"sector": 5, "path": "a.fits", "sha256": hashlib.sha256(data).hexdigest()}
+    good = {
+        "sector": 5,
+        "path": "a.fits",
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "format": "spoc-fits",
+    }
     bad = {**good, "sha256": "0" * 64}
     checked = {**base, "files": [good], "pixel_files": []}
     assert c3run.product_state(checked, None, tmp_path)["state"] == "missing"
