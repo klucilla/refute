@@ -1,0 +1,53 @@
+{
+  "dossier": "TIC-101395259",
+  "steps": [
+    {
+      "command": "git clone https://github.com/klucilla/refute.git refute",
+      "cwd": ".",
+      "start": "2026-11-05T15:54:00Z",
+      "end": "2026-11-05T15:54:08Z",
+      "exit": 0,
+      "log": "step-01.log"
+    },
+    {
+      "command": "cd refute",
+      "cwd": ".",
+      "start": "2026-11-05T15:54:08Z",
+      "end": "2026-11-05T15:54:08Z",
+      "exit": 0
+    },
+    {
+      "command": "git checkout 49d823aa8955997016706ab02d8304ae59c7ac75",
+      "cwd": "refute",
+      "start": "2026-11-05T15:54:08Z",
+      "end": "2026-11-05T15:54:08Z",
+      "exit": 0,
+      "log": "step-03.log"
+    },
+    {
+      "command": "uv sync --frozen",
+      "cwd": "refute",
+      "start": "2026-11-05T15:54:08Z",
+      "end": "2026-11-05T15:54:18Z",
+      "exit": 0,
+      "log": "step-04.log"
+    },
+    {
+      "command": "uv run refute verify calibration/v0.5/claim.yaml",
+      "cwd": "refute",
+      "start": "2026-11-05T15:54:18Z",
+      "end": "2026-11-05T15:54:22Z",
+      "exit": 0,
+      "log": "step-05.log"
+    },
+    {
+      "command": "uv run refute discover calibration/v0.5/claim.yaml --stage 2 --target TIC-101395259 --out repro --run-id repro --workers 1",
+      "cwd": "refute",
+      "start": "2026-11-05T15:54:22Z",
+      "end": "2026-11-05T15:54:46Z",
+      "exit": 1,
+      "log": "step-06.log"
+    }
+  ],
+  "result": "FAIL"
+}

@@ -1,0 +1,42 @@
+C:\Projetos\refute\.cache\v05\repro-c6-attempt-02\refute\.venv\Lib\site-packages\lightkurve\prf\__init__.py:7: UserWarning: Warning: the tpfmodel submodule is not available without oktopus installed, which requires a current version of autograd. See #1452 for details.
+  warnings.warn(
+# Run summary: tess-calibration-v0.5-c3
+
+| Target | Verdict | Status |
+|---|---|---|
+| TIC-101395259 | INCONCLUSIVE | OK |
+
+{
+  "tests": {
+    "TIC-101395259": {
+      "aperture_depth": "PASS",
+      "centroid_shift": "INCONCLUSIVE",
+      "duty_cycle": "PASS",
+      "eb_catalog": "FAIL",
+      "edge_events": "PASS",
+      "event_consistency": "PASS",
+      "holdout_by_year": "INCONCLUSIVE",
+      "nearby_contamination": "PASS",
+      "odd_even": "PASS",
+      "period_alias": "INCONCLUSIVE",
+      "plausibility": "PASS",
+      "secondary_eclipse": "PASS",
+      "single_event": "PASS",
+      "sinusoid": "PASS",
+      "snr": "PASS",
+      "systematics": "PASS"
+    }
+  }
+}
+
+## Run
+
+- Run id: `repro`
+- Started / finished (UTC): 2026-11-05T17:33:30+00:00 / 2026-11-05T17:38:35+00:00
+- Workers: 1, offline: false
+- Claim SHA-256: `48acfe245a7231c35353319212324574d408be493c3c53d062ea02adfbd00210`
+- Code SHA-256: `15a9c256b5aa8f6b6f1eb9db511420ee1efca15b95edd9343322d7c3bb52bf8e`
+- Lock commit: `dbc67a14724f290562d3c040f0c96a71480066e0`; run commit: `49d823aa8955997016706ab02d8304ae59c7ac75` (dirty: False)
+- Python 3.13.16 on Windows-11-10.0.26300-SP0
+
+dossiers written to C:\Projetos\refute\.cache\v05\repro-c6-attempt-02\refute\repro\repro

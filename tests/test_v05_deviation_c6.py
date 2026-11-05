@@ -118,6 +118,70 @@ def test_the_mirror_source_must_be_a_checked_fetch_in_the_prep_folder(request, m
         repro.mirror_source(outside)
 
 
+def _evaluator():
+    spec = importlib.util.spec_from_file_location(
+        "v05_evaluate_c6", ROOT / "calibration" / "v0.5" / "reviews" / "evaluate_c6.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _record(work: Path, dossier: str, check_log: str, with_compare: bool = True) -> None:
+    verify = "uv run refute verify calibration/v0.5/claim.yaml"
+    steps = [
+        {"command": "git clone u refute", "exit": 0},
+        {"command": "cd refute", "exit": 0},
+        {"command": verify, "exit": 0},
+        {
+            "command": "(deviation) place the mirror's TESS-EB file",
+            "exit": 0,
+            "content_sha256": "a",
+            "claim_content_sha256": "a",
+        },
+        {"command": f"uv run refute discover c --target {dossier}", "exit": 0},
+    ]
+    if with_compare:
+        steps.append(
+            {
+                "command": f"uv run refute check-dossier r/{dossier} --against /x/{dossier}",
+                "exit": 0,
+                "log": "cmp.log",
+            }
+        )
+        (work / "cmp.log").write_text(check_log, encoding="utf-8")
+    steps.append({"command": verify, "exit": 0})
+    record = {"dossier": dossier, "deviation": "d", "steps": steps, "result": "PASS"}
+    (work / "reproduce.json").write_text(json.dumps(record), encoding="utf-8")
+
+
+def test_the_evaluator_requires_the_fixed_dossier_and_a_passing_comparison(request):
+    evaluate = _evaluator().evaluate
+    drawn = json.loads((ROOT / "calibration/v0.5/reviews/draw.json").read_text(encoding="utf-8"))
+    fixed = drawn["draw"]["eb-fp-inconclusive"]["drawn"]
+    ok = "OK: manifest intact; key results reproduced\n"
+    cases = (
+        (fixed, ok, True, "PASS"),
+        ("TIC-1", ok, True, "FAIL"),
+        (fixed, "difference: verdict\nOK: manifest intact; key results reproduced\n", True, "FAIL"),
+        (fixed, "OK: manifest intact\n", True, "FAIL"),
+        (fixed, ok, False, "FAIL"),
+    )
+    for dossier, log, with_compare, expected in cases:
+        work = cache_test_dir("v05-c6", request)
+        work.mkdir(parents=True)
+        _record(work, dossier, log, with_compare)
+        assert evaluate(ROOT, work)["criterion_run"] == expected, (dossier, log, with_compare)
+    # a second, malformed check-dossier call makes the run FAIL
+    work = cache_test_dir("v05-c6", request)
+    work.mkdir(parents=True)
+    _record(work, fixed, ok)
+    record = json.loads((work / "reproduce.json").read_text(encoding="utf-8"))
+    record["steps"].insert(-1, {"command": "uv run refute check-dossier other", "exit": 0})
+    (work / "reproduce.json").write_text(json.dumps(record), encoding="utf-8")
+    assert evaluate(ROOT, work)["criterion_run"] == "FAIL"
+
+
 def test_a_junction_on_the_way_to_the_mirror_file_is_refused(request, monkeypatch):
     import hashlib
 

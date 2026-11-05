@@ -1,0 +1,14 @@
+{
+  "host": "vizier.cfa.harvard.edu",
+  "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited",
+  "recorded_url": "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited",
+  "utc": "2026-11-05T17:32:39Z",
+  "bytes": 254394,
+  "raw_sha256": "a33a31e03296996dc559017c5f00e6f4ca0fde55cfdc97c6c3e42ca3f5204995",
+  "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+  "expected_content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+  "cache_path": "v04/tess-eb/tess_ebs_prsa2022.tsv",
+  "file": ".cache/v05/c6-prep/vizier.cfa.harvard.edu/tess_ebs_prsa2022.tsv",
+  "earlier_attempts": [],
+  "content_matches": true
+}

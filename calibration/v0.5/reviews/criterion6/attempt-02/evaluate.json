@@ -1,0 +1,16 @@
+{
+  "work": ".cache/v05/repro-c6-attempt-02",
+  "dossier": "TIC-101395259",
+  "checks": {
+    "dossier_is_the_fixed_one": true,
+    "record_result_pass": true,
+    "every_step_exit_0": true,
+    "verify_before_discover": true,
+    "check_dossier_ran_and_exit_0": true,
+    "check_dossier_log_ok": true,
+    "one_placement_exit_0": true,
+    "placement_content_hash_is_the_claims": true,
+    "verify_after_exit_0": true
+  },
+  "criterion_run": "PASS"
+}

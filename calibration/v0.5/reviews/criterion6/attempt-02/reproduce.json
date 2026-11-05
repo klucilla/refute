@@ -1,0 +1,91 @@
+{
+  "dossier": "TIC-101395259",
+  "deviation": "one input placed from an official CDS mirror, verified by the claim's content hash (the maintainer's decision of 2026-11-05, #199)",
+  "note": "criterion 6 as written requires nothing placed by hand; this run placed one input, the single exception the maintainer approved",
+  "mirror": {
+    "host": "vizier.cfa.harvard.edu",
+    "url": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/ApJS/258/16/tess-ebs&-out=TIC,m_TIC,RAJ2000,DEJ2000,Per&-out.max=unlimited",
+    "utc": "2026-11-05T17:32:39Z",
+    "raw_sha256": "a33a31e03296996dc559017c5f00e6f4ca0fde55cfdc97c6c3e42ca3f5204995",
+    "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c"
+  },
+  "steps": [
+    {
+      "command": "git clone https://github.com/klucilla/refute.git refute",
+      "cwd": ".",
+      "start": "2026-11-05T17:32:59Z",
+      "end": "2026-11-05T17:33:09Z",
+      "exit": 0,
+      "log": "step-01.log"
+    },
+    {
+      "command": "cd refute",
+      "cwd": ".",
+      "start": "2026-11-05T17:33:09Z",
+      "end": "2026-11-05T17:33:09Z",
+      "exit": 0
+    },
+    {
+      "command": "git checkout 49d823aa8955997016706ab02d8304ae59c7ac75",
+      "cwd": "refute",
+      "start": "2026-11-05T17:33:09Z",
+      "end": "2026-11-05T17:33:09Z",
+      "exit": 0,
+      "log": "step-03.log"
+    },
+    {
+      "command": "uv sync --frozen",
+      "cwd": "refute",
+      "start": "2026-11-05T17:33:09Z",
+      "end": "2026-11-05T17:33:18Z",
+      "exit": 0,
+      "log": "step-04.log"
+    },
+    {
+      "command": "uv run refute verify calibration/v0.5/claim.yaml",
+      "cwd": "refute",
+      "start": "2026-11-05T17:33:18Z",
+      "note": "after the instructions: the claim must still verify",
+      "end": "2026-11-05T17:33:26Z",
+      "exit": 0,
+      "log": "step-05.log"
+    },
+    {
+      "command": "(deviation) place the mirror's TESS-EB file",
+      "start": "2026-11-05T17:33:26Z",
+      "source": "C:/Projetos/refute/.cache/v05/c6-prep/vizier.cfa.harvard.edu/tess_ebs_prsa2022.tsv",
+      "destination": ".cache/v04/tess-eb/tess_ebs_prsa2022.tsv",
+      "raw_sha256": "a33a31e03296996dc559017c5f00e6f4ca0fde55cfdc97c6c3e42ca3f5204995",
+      "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+      "claim_content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+      "exit": 0,
+      "end": "2026-11-05T17:33:29Z"
+    },
+    {
+      "command": "uv run refute discover calibration/v0.5/claim.yaml --stage 2 --target TIC-101395259 --out repro --run-id repro --workers 1",
+      "cwd": "refute",
+      "start": "2026-11-05T17:33:29Z",
+      "end": "2026-11-05T17:38:37Z",
+      "exit": 0,
+      "log": "step-07.log"
+    },
+    {
+      "command": "uv run refute check-dossier repro/repro/TIC-101395259 --against C:/Projetos/refute/.cache/v05/c3/dossiers/c3-dossiers/TIC-101395259",
+      "cwd": "refute",
+      "start": "2026-11-05T17:38:37Z",
+      "end": "2026-11-05T17:38:38Z",
+      "exit": 0,
+      "log": "step-08.log"
+    },
+    {
+      "command": "uv run refute verify calibration/v0.5/claim.yaml",
+      "cwd": "refute",
+      "start": "2026-11-05T17:38:38Z",
+      "note": "after the instructions: the claim must still verify",
+      "end": "2026-11-05T17:38:43Z",
+      "exit": 0,
+      "log": "step-09.log"
+    }
+  ],
+  "result": "PASS"
+}
