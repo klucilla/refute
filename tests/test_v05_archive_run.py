@@ -58,6 +58,36 @@ def test_archives_only_files_outside_git_with_a_checked_manifest(request):
     assert (drive / "step/archive_run.py").read_bytes() == SCRIPT.read_bytes()
 
 
+DOSSIER_SCRIPT = ROOT / "calibration" / "v0.5" / "archive_dossiers.py"
+spec_d = importlib.util.spec_from_file_location("v05_archive_dossiers", DOSSIER_SCRIPT)
+archive_d = importlib.util.module_from_spec(spec_d)
+spec_d.loader.exec_module(archive_d)
+
+
+def test_dossiers_archived_as_one_checked_zip(request):
+    import zipfile
+
+    base = cache_test_dir("v05-archive", request)
+    root = base / "repo"
+    source = root / "dossiers/run"
+    (source / "TIC-1").mkdir(parents=True)
+    (source / "TIC-1/verdict.json").write_bytes(b'{"v": 1}\n')
+    (source / "summary.json").write_bytes(b"{}\n")
+    (source / "summary.md").write_bytes(b"# s\n")
+    result = archive_d.archive(root, Path("dossiers/run"), "c3-dossiers", base / "drive")
+    assert result["problems"] == [] and result["members"] == 3
+    with zipfile.ZipFile(base / "drive/c3-dossiers/c3-dossiers.zip") as zf:
+        assert zf.namelist() == ["TIC-1/verdict.json", "summary.json", "summary.md"]
+        assert zf.read("TIC-1/verdict.json") == b'{"v": 1}\n'
+    out = root / "calibration/v0.5/runs/c3-dossiers"
+    manifest = (out / "drive-manifest.sha256").read_bytes()
+    assert manifest == (base / "drive/c3-dossiers/MANIFEST.sha256").read_bytes()
+    assert f"{_sha(b'{}' + bytes([10]))}  summary.json".encode() in manifest
+    assert (out / "summary.md").read_bytes() == b"# s\n"
+    with pytest.raises(ValueError, match="not replaced"):
+        archive_d.archive(root, Path("dossiers/run"), "c3-dossiers", base / "drive")
+
+
 def test_refuses_a_changed_source_and_an_existing_drive_folder(request):
     root, drive, _ = _setup(cache_test_dir("v05-archive", request))
     (root / ".cache/v05/calibration/step/records.jsonl").write_bytes(b"changed\n")

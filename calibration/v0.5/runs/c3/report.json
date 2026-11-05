@@ -1,0 +1,227 @@
+{
+  "assignment": {
+    "false_positive": {
+      "final": [
+        "TIC-382188882",
+        "TIC-101395259",
+        "TIC-300871545",
+        "TIC-233681149",
+        "TIC-308050066",
+        "TIC-286355915",
+        "TIC-199688472",
+        "TIC-9727392"
+      ],
+      "ledger": [],
+      "replacements": 0,
+      "short": 0
+    },
+    "planet": {
+      "final": [
+        "TIC-17746821",
+        "TIC-399860444",
+        "TIC-280206394",
+        "TIC-151724385",
+        "TIC-257567854",
+        "TIC-237099296",
+        "TIC-310002617",
+        "TIC-144193715"
+      ],
+      "ledger": [
+        {
+          "by": "TIC-310002617",
+          "reason": "signal identity not matched",
+          "replaced": "TIC-62483237"
+        }
+      ],
+      "replacements": 1,
+      "short": 0
+    }
+  },
+  "processor_hours": 3.103854166666667,
+  "targets": {
+    "T3a": {
+      "counts": {
+        "with_catalog": {
+          "transitions": {
+            "INCONCLUSIVE": {
+              "INCONCLUSIVE": 0,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "REFUTED": {
+              "INCONCLUSIVE": 0,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "SURVIVED": {
+              "INCONCLUSIVE": 3,
+              "REFUTED": 0,
+              "SURVIVED": 1,
+              "WEAKENED": 0
+            },
+            "WEAKENED": {
+              "INCONCLUSIVE": 1,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 3
+            }
+          },
+          "v04": {
+            "INCONCLUSIVE": 0,
+            "REFUTED": 0,
+            "SURVIVED": 4,
+            "WEAKENED": 4
+          },
+          "v05": {
+            "INCONCLUSIVE": 4,
+            "REFUTED": 0,
+            "SURVIVED": 1,
+            "WEAKENED": 3
+          }
+        },
+        "without_catalog": {
+          "transitions": {
+            "INCONCLUSIVE": {
+              "INCONCLUSIVE": 0,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "REFUTED": {
+              "INCONCLUSIVE": 0,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "SURVIVED": {
+              "INCONCLUSIVE": 3,
+              "REFUTED": 0,
+              "SURVIVED": 3,
+              "WEAKENED": 0
+            },
+            "WEAKENED": {
+              "INCONCLUSIVE": 1,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 1
+            }
+          },
+          "v04": {
+            "INCONCLUSIVE": 0,
+            "REFUTED": 0,
+            "SURVIVED": 6,
+            "WEAKENED": 2
+          },
+          "v05": {
+            "INCONCLUSIVE": 4,
+            "REFUTED": 0,
+            "SURVIVED": 3,
+            "WEAKENED": 1
+          }
+        }
+      },
+      "errors": 0,
+      "group": "planet",
+      "needed": 8,
+      "observed": 0,
+      "result": "PASS",
+      "rule": "v0.5 REFUTED (without the catalog test) at most 1 of 8",
+      "short": 0,
+      "valid_outcomes": 8
+    },
+    "T3b": {
+      "counts": {
+        "with_catalog": {
+          "transitions": {
+            "INCONCLUSIVE": {
+              "INCONCLUSIVE": 0,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "REFUTED": {
+              "INCONCLUSIVE": 1,
+              "REFUTED": 1,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "SURVIVED": {
+              "INCONCLUSIVE": 0,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "WEAKENED": {
+              "INCONCLUSIVE": 2,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 4
+            }
+          },
+          "v04": {
+            "INCONCLUSIVE": 0,
+            "REFUTED": 2,
+            "SURVIVED": 0,
+            "WEAKENED": 6
+          },
+          "v05": {
+            "INCONCLUSIVE": 3,
+            "REFUTED": 1,
+            "SURVIVED": 0,
+            "WEAKENED": 4
+          }
+        },
+        "without_catalog": {
+          "transitions": {
+            "INCONCLUSIVE": {
+              "INCONCLUSIVE": 0,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "REFUTED": {
+              "INCONCLUSIVE": 1,
+              "REFUTED": 1,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "SURVIVED": {
+              "INCONCLUSIVE": 1,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 0
+            },
+            "WEAKENED": {
+              "INCONCLUSIVE": 1,
+              "REFUTED": 0,
+              "SURVIVED": 0,
+              "WEAKENED": 4
+            }
+          },
+          "v04": {
+            "INCONCLUSIVE": 0,
+            "REFUTED": 2,
+            "SURVIVED": 1,
+            "WEAKENED": 5
+          },
+          "v05": {
+            "INCONCLUSIVE": 3,
+            "REFUTED": 1,
+            "SURVIVED": 0,
+            "WEAKENED": 4
+          }
+        }
+      },
+      "errors": 0,
+      "group": "false_positive",
+      "needed": 8,
+      "observed": 0,
+      "result": "PASS",
+      "rule": "v0.5 SURVIVED (without the catalog test) at most 2 of 8",
+      "short": 0,
+      "valid_outcomes": 8
+    }
+  }
+}

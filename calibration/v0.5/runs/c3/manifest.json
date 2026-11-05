@@ -1,0 +1,34 @@
+{
+ "schema": "refute-calib05-run-1",
+ "function": "refute.packs.tess.calib05.c3run.run_task",
+ "tasks": [
+  "TIC-17746821/c3",
+  "TIC-399860444/c3",
+  "TIC-280206394/c3",
+  "TIC-151724385/c3",
+  "TIC-257567854/c3",
+  "TIC-237099296/c3",
+  "TIC-62483237/c3",
+  "TIC-144193715/c3",
+  "TIC-310002617/c3",
+  "TIC-470127886/c3",
+  "TIC-384888319/c3",
+  "TIC-382188882/c3",
+  "TIC-101395259/c3",
+  "TIC-300871545/c3",
+  "TIC-233681149/c3",
+  "TIC-308050066/c3",
+  "TIC-286355915/c3",
+  "TIC-199688472/c3",
+  "TIC-9727392/c3",
+  "TIC-233390838/c3",
+  "TIC-461662295/c3",
+  "TIC-184679932/c3"
+ ],
+ "tasks_sha256": "d8fc18b1b3b9b5e476208966a96448ca3cd63d0f6c370fa89ce2d800c1b7f102",
+ "provenance": {
+  "code_sha256": "15a9c256b5aa8f6b6f1eb9db511420ee1efca15b95edd9343322d7c3bb52bf8e",
+  "step": "c3"
+ },
+ "created_utc": "2026-11-05T12:30:13Z"
+}

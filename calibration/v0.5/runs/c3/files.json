@@ -1,0 +1,29 @@
+{
+  "run_folder": ".cache/v05/calibration/c3",
+  "files": [
+    {
+      "path": "cost.jsonl",
+      "bytes": 1551,
+      "sha256": "b9793cda29d3eb132979ebde4059cecf0fee075615001a55d6a81fc268ae3111",
+      "in_git": true
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 836,
+      "sha256": "333447f9dc2e1d671b9a0c2ab9a2fa4136dae87ba1f402b46bd85acd9bdd2ba8",
+      "in_git": true
+    },
+    {
+      "path": "records.jsonl",
+      "bytes": 120955,
+      "sha256": "f9e6272b50dcf66737f47b64eead38ec13b5b143f4f74c55887ae38ae414ddc0",
+      "in_git": true
+    },
+    {
+      "path": "report.json",
+      "bytes": 5404,
+      "sha256": "bd07b7d59bea6eb6e15db64af8693f63ede54b5cb453fc1fd0cc84e456284012",
+      "in_git": true
+    }
+  ]
+}
