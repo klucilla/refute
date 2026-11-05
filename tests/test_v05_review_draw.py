@@ -93,6 +93,19 @@ def test_the_executed_code_is_the_frozen_code_of_this_tree(monkeypatch):
         draw.check_executed_code(ROOT)
 
 
+def test_the_criterion_6_script_runs_the_bash_block_literally():
+    spec_r = importlib.util.spec_from_file_location(
+        "v05_reproduce_c6", ROOT / "calibration" / "v0.5" / "reviews" / "reproduce_c6.py"
+    )
+    repro = importlib.util.module_from_spec(spec_r)
+    spec_r.loader.exec_module(repro)
+    text = (
+        "# R\n\nIntro.\n\n```bash\ngit clone u r\ncd r\n\n"
+        "uv run x --against <this dossier>\n```\n\nEnd.\n"
+    )
+    assert repro.commands(text) == ["git clone u r", "cd r", "uv run x --against <this dossier>"]
+
+
 def test_a_later_attempt_must_reproduce_the_first(monkeypatch, request):
     import json
 

@@ -1,0 +1,91 @@
+{
+  "rule": "calibration/v0.5/reviews/RULE.md",
+  "rule_commit": "5ee4f0a0838d90b7b9830d718ae4a5eb7bbd83ba",
+  "push_run_created_at": "2026-11-05T14:39:40Z",
+  "round": 6615406,
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "scheme": "pedersen-bls-chained",
+    "round": 6615406,
+    "round_time_utc": "2026-11-05T15:40:00+00:00",
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6615406",
+    "retrieved_utc": "2026-11-05T15:41:15Z",
+    "randomness": "5cf72a5c90a1395873e114119a1d319a6eca3f7e921ca9adfeb6b9c9b9df6044",
+    "signature": "8de12de2e77796dd1f2cd8113729ff410922c942edff7cdef61b170cbda6faf04b90f564449e8fd28228526e635fa2600158bf0bc0396b9a66759f9dbf0477723bb69d3db5c19348cf93a6ae72882913a4db1c682c492a2e0dc8f20159261ec4",
+    "previous_signature": "acfbee9e0e35952dff51cc2756d2624a2bf843b1d79211bf39b06af28ab1ac48944f98cf51de298d250cf3f0b79e75c30879032921696ca1c0afd434633f4f6706ef03c09e47dbd5740bfe56bd8eabb97c8f99b795839652062e04ff087f476c",
+    "signature_verified": true,
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "interpreter": {
+    "python_version": "3.13.16",
+    "python_implementation": "CPython"
+  },
+  "strata": {
+    "planet-inconclusive": [
+      "TIC-280206394",
+      "TIC-151724385",
+      "TIC-237099296",
+      "TIC-144193715"
+    ],
+    "planet-other": [
+      "TIC-17746821",
+      "TIC-399860444",
+      "TIC-257567854",
+      "TIC-310002617"
+    ],
+    "eb-fp-inconclusive": [
+      "TIC-101395259",
+      "TIC-233681149",
+      "TIC-308050066"
+    ],
+    "eb-fp-other": [
+      "TIC-382188882",
+      "TIC-300871545",
+      "TIC-286355915",
+      "TIC-199688472",
+      "TIC-9727392"
+    ]
+  },
+  "draw": {
+    "eb-fp-inconclusive": {
+      "order": [
+        "TIC-101395259",
+        "TIC-233681149",
+        "TIC-308050066"
+      ],
+      "drawn": "TIC-101395259",
+      "dossier": ".cache/v05/c3/dossiers/c3-dossiers/TIC-101395259"
+    },
+    "eb-fp-other": {
+      "order": [
+        "TIC-286355915",
+        "TIC-199688472",
+        "TIC-9727392",
+        "TIC-300871545",
+        "TIC-382188882"
+      ],
+      "drawn": "TIC-286355915",
+      "dossier": ".cache/v05/c3/dossiers/c3-dossiers/TIC-286355915"
+    },
+    "planet-inconclusive": {
+      "order": [
+        "TIC-280206394",
+        "TIC-151724385",
+        "TIC-144193715",
+        "TIC-237099296"
+      ],
+      "drawn": "TIC-280206394",
+      "dossier": ".cache/v05/c3/dossiers/c3-dossiers/TIC-280206394"
+    },
+    "planet-other": {
+      "order": [
+        "TIC-17746821",
+        "TIC-257567854",
+        "TIC-399860444",
+        "TIC-310002617"
+      ],
+      "drawn": "TIC-17746821",
+      "dossier": ".cache/v05/c3/dossiers/c3-dossiers/TIC-17746821"
+    }
+  }
+}
