@@ -7,7 +7,8 @@ Two lists, checked apart:
 - ``LOCKED_TAGS``, the **historical** locks of v0.1 and v0.2: their claims match the lock by the
   projection of ``refute.core.lock_compat``, so a worktree is trusted only when its lock has a
   historical identity of that table (``HISTORICAL_LOCKS``).
-- ``DIRECT_LOCKS``, the five locks of the v0.3 main sample and the lock of the v0.4 pilot claim:
+- ``DIRECT_LOCKS``, the five locks of the v0.3 main sample, the lock of the v0.4 pilot claim and
+  the lock of the v0.5 calibration claim (tag ``v0.5.0-calibration-lock``, commit B):
   never in ``HISTORICAL_LOCKS`` (that table only projects old claims). Each entry gives the tag,
   the full commit the tag must point to, the claim path and the expected identity of the lock
   (``lock_compat.lock_identity``). The worktree must be at that commit with no tracked change
@@ -69,6 +70,10 @@ V03_CODE_SHA256 = "3165e1417ebe1f9474145076000f14f3b561b2cdd55f8c2b6b36ffde26e17
 V04_TAG = "v0.4.0-pilot-lock"
 V04_COMMIT = "65e4363316ef77b8a47ed6453d7497de3e778366"  # commit B of the v0.4 pilot (#177)
 V04_CLAIM = "calibration/v0.4/claim.yaml"
+
+V05_TAG = "v0.5.0-calibration-lock"
+V05_COMMIT = "b6249b500d8d7b98a6246dbe0d99a4c55363f1cb"  # commit B of the v0.5 calibration (#199)
+V05_CLAIM = "calibration/v0.5/claim.yaml"
 
 
 @dataclass(frozen=True)
@@ -149,6 +154,23 @@ DIRECT_LOCKS: tuple[DirectLock, ...] = (
             "code_sha256": "bbf52fdfa93d47b05da305359f376452cd1a8f6158fd75577237a55dc41f88dc",
             "git_commit": "910ada156ff57754c82df1496495afefb3020cc4",
             "locked_at_utc": "2026-10-31T12:25:50Z",
+        },
+    ),
+    # Read from calibration/v0.5/claim.lock.json at commit B (2026-11-04); a literal, as above.
+    DirectLock(
+        tag=V05_TAG,
+        commit=V05_COMMIT,
+        claim=V05_CLAIM,
+        identity={
+            "lock_version": 1,
+            "canonicalization": "refute-cjson-1",
+            "claim_id": "tess-calibration-v0.5-c3",
+            "claim_kind": "discover",
+            "claim_path_in_repo": V05_CLAIM,
+            "claim_sha256": "48acfe245a7231c35353319212324574d408be493c3c53d062ea02adfbd00210",
+            "code_sha256": "15a9c256b5aa8f6b6f1eb9db511420ee1efca15b95edd9343322d7c3bb52bf8e",
+            "git_commit": "dbc67a14724f290562d3c040f0c96a71480066e0",
+            "locked_at_utc": "2026-11-04T21:47:09Z",
         },
     ),
 )
