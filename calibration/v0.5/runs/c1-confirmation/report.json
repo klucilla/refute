@@ -1,0 +1,1280 @@
+{
+  "beacon": {
+    "chain_hash": "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce",
+    "previous_signature": "aca2efee2bdb4747cd37462ee38ad7813226d0210eab5463e6b6dfc8255907db0ce1edd3260187a51dca08261bcb141a0b0065c93ef8a361c052ee5ca2ca8e9255b9c0fb55858360eea8fce62d347c6cf2dee520ef175ac3d29747c5a7df8592",
+    "randomness": "8968d1ce012ba44b905218b14ba9bc5e18c98b48911b99d48e9c6b66dbf3976f",
+    "retrieved_utc": "2026-11-04T23:24:26Z",
+    "round": 6613448,
+    "round_time_utc": "2026-11-04T23:21:00+00:00",
+    "scheme": "pedersen-bls-chained",
+    "signature": "8c1419ef7c5ff9b49d607dc8c558d8e4f441d109d43d566a4f38a5315db7489916dc77062a8479065d195820229c129817903c5e54ea43bd7284248a7e6ce4f983c3faee9abc4c1fe0fafe28ed1b3c94b3d0f792075a094dc17949e69ca7191b",
+    "signature_verified": true,
+    "url": "https://api.drand.sh/8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce/public/6613448",
+    "verifier": "py_ecc 8.0.0 (G2Basic)"
+  },
+  "decision_rules": {
+    "D1": {
+      "EB1": {
+        "eligible": 190,
+        "result": "FAIL",
+        "v04_survived": 75,
+        "v05_survived": 35,
+        "v05_survived_or_weakened": 72,
+        "v05_survived_upper_wilson": 0.2453985005038135
+      },
+      "EB2": {
+        "eligible": 186,
+        "result": "FAIL",
+        "v04_survived": 107,
+        "v05_survived": 40,
+        "v05_survived_or_weakened": 44,
+        "v05_survived_upper_wilson": 0.2795482289835646
+      },
+      "ER": {
+        "eligible": 51,
+        "result": "PASS",
+        "v04_survived": 1,
+        "v05_survived": 0,
+        "v05_survived_or_weakened": 0,
+        "v05_survived_upper_wilson": 0.07004661989853143
+      },
+      "NR": {
+        "eligible": 149,
+        "result": "PASS",
+        "v04_survived": 2,
+        "v05_survived": 0,
+        "v05_survived_or_weakened": 0,
+        "v05_survived_upper_wilson": 0.02513361787000954
+      },
+      "NW": {
+        "eligible": 4,
+        "result": "NOT DECIDABLE",
+        "v04_survived": 0,
+        "v05_survived": 0,
+        "v05_survived_or_weakened": 0,
+        "v05_survived_upper_wilson": 0.4898908364545973
+      },
+      "SE": {
+        "eligible": 98,
+        "result": "PASS",
+        "v04_survived": 3,
+        "v05_survived": 0,
+        "v05_survived_or_weakened": 0,
+        "v05_survived_upper_wilson": 0.037719990121680605
+      },
+      "V1": {
+        "eligible": 87,
+        "result": "PASS",
+        "v04_survived": 2,
+        "v05_survived": 0,
+        "v05_survived_or_weakened": 0,
+        "v05_survived_upper_wilson": 0.04228750694412034
+      },
+      "V2": {
+        "eligible": 72,
+        "result": "PASS",
+        "v04_survived": 1,
+        "v05_survived": 0,
+        "v05_survived_or_weakened": 0,
+        "v05_survived_upper_wilson": 0.05065117259645781
+      }
+    },
+    "D2": {
+      "eligible": 186,
+      "result": "FAIL",
+      "v04_kept": 0.967741935483871,
+      "v05_kept": 0.5376344086021505,
+      "v05_refuted_fraction": 0.016129032258064516,
+      "v05_refuted_upper_wilson": 0.0463401794909036
+    },
+    "D3": {
+      "PA": {
+        "eligible": 99,
+        "result": "PASS",
+        "v05_refuted_fraction": 0.0,
+        "v05_refuted_upper_wilson": 0.03735321206782739
+      },
+      "PG": {
+        "eligible": 159,
+        "result": "PASS",
+        "v05_refuted_fraction": 0.0,
+        "v05_refuted_upper_wilson": 0.023590176902824132
+      },
+      "PV": {
+        "eligible": 181,
+        "result": "PASS",
+        "v05_refuted_fraction": 0.0055248618784530384,
+        "v05_refuted_upper_wilson": 0.030626595358963768
+      }
+    },
+    "D4": {
+      "result": "FAIL",
+      "subset": 147,
+      "v05_inconclusive_fraction": 0.32653061224489793
+    },
+    "D5": {
+      "eligible": 93,
+      "note": "measures the remaining decisive tests: no decisive centroid in the v0.5 battery (the S2 decision); a PASS does not show that the per-sector centroid was accepted",
+      "result": "PASS",
+      "v05_refuted_fraction": 0.967741935483871
+    }
+  },
+  "families": {
+    "EB1": {
+      "curves": 200,
+      "eligible": 190,
+      "outside": {
+        "gate_not_passed": 9,
+        "generation_failure": 1
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 1,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 13,
+          "REFUTED": 61,
+          "SURVIVED": 0,
+          "WEAKENED": 36
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 40,
+          "REFUTED": 0,
+          "SURVIVED": 35,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 3,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 1
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 110,
+          "SURVIVED": 75,
+          "WEAKENED": 4
+        },
+        "survived_or_weakened": 79,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.0009296815656636322,
+            0.029205558110269425
+          ],
+          "REFUTED": [
+            0.5078607891218221,
+            0.6469048641213802
+          ],
+          "SURVIVED": [
+            0.32798141921130386,
+            0.4656643764644266
+          ],
+          "WEAKENED": [
+            0.008216683210937811,
+            0.05287168711363567
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 56,
+          "REFUTED": 62,
+          "SURVIVED": 35,
+          "WEAKENED": 37
+        },
+        "survived_or_weakened": 72,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.23449323517743292,
+            0.3631160663902414
+          ],
+          "REFUTED": [
+            0.263663833013781,
+            0.3958517298511743
+          ],
+          "SURVIVED": [
+            0.1355388865233778,
+            0.2453985005038135
+          ],
+          "WEAKENED": [
+            0.1447126016882911,
+            0.2568602057713272
+          ]
+        }
+      }
+    },
+    "EB2": {
+      "curves": 200,
+      "eligible": 186,
+      "outside": {
+        "gate_not_passed": 13,
+        "generation_failure": 1
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 5,
+          "REFUTED": 1,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 67,
+          "SURVIVED": 0,
+          "WEAKENED": 1
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 65,
+          "REFUTED": 1,
+          "SURVIVED": 40,
+          "WEAKENED": 1
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 2
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 6,
+          "REFUTED": 70,
+          "SURVIVED": 107,
+          "WEAKENED": 3
+        },
+        "survived_or_weakened": 110,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.014866376054114287,
+            0.06857935239267579
+          ],
+          "REFUTED": [
+            0.3098852506232995,
+            0.4478072982764265
+          ],
+          "SURVIVED": [
+            0.5034147269824533,
+            0.6440767649916265
+          ],
+          "WEAKENED": [
+            0.005500229247155104,
+            0.0463401794909036
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 73,
+          "REFUTED": 69,
+          "SURVIVED": 40,
+          "WEAKENED": 4
+        },
+        "survived_or_weakened": 44,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.32515398685928065,
+            0.46414388174917676
+          ],
+          "REFUTED": [
+            0.30481325800139353,
+            0.4423441843287554
+          ],
+          "SURVIVED": [
+            0.1620911228288478,
+            0.2795482289835646
+          ],
+          "WEAKENED": [
+            0.008394044391919146,
+            0.05398147091571669
+          ]
+        }
+      }
+    },
+    "ER": {
+      "curves": 200,
+      "eligible": 51,
+      "outside": {
+        "gate_not_passed": 149
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 7,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 42,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 7,
+          "REFUTED": 42,
+          "SURVIVED": 1,
+          "WEAKENED": 1
+        },
+        "survived_or_weakened": 2,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.06811101735056879,
+            0.2572169225758168
+          ],
+          "REFUTED": [
+            0.6974585747569192,
+            0.9042759653087368
+          ],
+          "SURVIVED": [
+            0.0034696926410608536,
+            0.10304568726144975
+          ],
+          "WEAKENED": [
+            0.0034696926410608536,
+            0.10304568726144975
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 49,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.010821083352867085,
+            0.13216305655362268
+          ],
+          "REFUTED": [
+            0.8678369434463774,
+            0.9891789166471329
+          ],
+          "SURVIVED": [
+            0.0,
+            0.07004661989853143
+          ],
+          "WEAKENED": [
+            0.0,
+            0.07004661989853143
+          ]
+        }
+      }
+    },
+    "NR": {
+      "curves": 200,
+      "eligible": 149,
+      "outside": {
+        "gate_not_passed": 51
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 18,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 127,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 20,
+          "REFUTED": 127,
+          "SURVIVED": 2,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 2,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.08860058748303032,
+            0.19824212626080215
+          ],
+          "REFUTED": [
+            0.7865590528046649,
+            0.9004273238641203
+          ],
+          "SURVIVED": [
+            0.0036887725239569367,
+            0.047615754933434895
+          ],
+          "WEAKENED": [
+            1.734723475976807e-18,
+            0.02513361787000954
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 4,
+          "REFUTED": 145,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.010488186096238764,
+            0.06698725094853536
+          ],
+          "REFUTED": [
+            0.9330127490514647,
+            0.9895118139037612
+          ],
+          "SURVIVED": [
+            1.734723475976807e-18,
+            0.02513361787000954
+          ],
+          "WEAKENED": [
+            1.734723475976807e-18,
+            0.02513361787000954
+          ]
+        }
+      }
+    },
+    "NW": {
+      "curves": 200,
+      "eligible": 4,
+      "outside": {
+        "gate_not_passed": 196
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 3,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 3,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.04558726080970055,
+            0.6993581574175981
+          ],
+          "REFUTED": [
+            0.30064184258240184,
+            0.9544127391902995
+          ],
+          "SURVIVED": [
+            0.0,
+            0.4898908364545973
+          ],
+          "WEAKENED": [
+            0.0,
+            0.4898908364545973
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 3,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.04558726080970055,
+            0.6993581574175981
+          ],
+          "REFUTED": [
+            0.30064184258240184,
+            0.9544127391902995
+          ],
+          "SURVIVED": [
+            0.0,
+            0.4898908364545973
+          ],
+          "WEAKENED": [
+            0.0,
+            0.4898908364545973
+          ]
+        }
+      }
+    },
+    "P": {
+      "curves": 200,
+      "eligible": 186,
+      "outside": {
+        "gate_not_passed": 10,
+        "identity_not_matched": 4
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 3,
+          "SURVIVED": 0,
+          "WEAKENED": 1
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 79,
+          "REFUTED": 0,
+          "SURVIVED": 92,
+          "WEAKENED": 6
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 1
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 5,
+          "SURVIVED": 177,
+          "WEAKENED": 3
+        },
+        "survived_or_weakened": 180,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.000949688025281158,
+            0.029820507573623305
+          ],
+          "REFUTED": [
+            0.011535735864609379,
+            0.06137488601260359
+          ],
+          "SURVIVED": [
+            0.9106114656213832,
+            0.9743374862230955
+          ],
+          "WEAKENED": [
+            0.005500229247155104,
+            0.0463401794909036
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 83,
+          "REFUTED": 3,
+          "SURVIVED": 92,
+          "WEAKENED": 8
+        },
+        "survived_or_weakened": 100,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.37660342273750674,
+            0.518045511566722
+          ],
+          "REFUTED": [
+            0.005500229247155104,
+            0.0463401794909036
+          ],
+          "SURVIVED": [
+            0.42361142875294205,
+            0.5658534646774809
+          ],
+          "WEAKENED": [
+            0.021952788751468784,
+            0.08256315283447554
+          ]
+        }
+      }
+    },
+    "PA": {
+      "curves": 100,
+      "eligible": 99,
+      "outside": {
+        "identity_not_matched": 1
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 6,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 1
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 51,
+          "REFUTED": 0,
+          "SURVIVED": 40,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 6,
+          "REFUTED": 1,
+          "SURVIVED": 91,
+          "WEAKENED": 1
+        },
+        "survived_or_weakened": 92,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.028069797446221498,
+            0.12596787376489954
+          ],
+          "REFUTED": [
+            0.0017853072791700793,
+            0.055015314645872934
+          ],
+          "SURVIVED": [
+            0.8485819115773596,
+            0.9584855974970883
+          ],
+          "WEAKENED": [
+            0.0017853072791700793,
+            0.055015314645872934
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 58,
+          "REFUTED": 0,
+          "SURVIVED": 40,
+          "WEAKENED": 1
+        },
+        "survived_or_weakened": 41,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.487397977962848,
+            0.6779050058234847
+          ],
+          "REFUTED": [
+            0.0,
+            0.03735321206782739
+          ],
+          "SURVIVED": [
+            0.31271856818224286,
+            0.502531038174209
+          ],
+          "WEAKENED": [
+            0.0017853072791700793,
+            0.055015314645872934
+          ]
+        }
+      }
+    },
+    "PG": {
+      "curves": 200,
+      "eligible": 159,
+      "outside": {
+        "gate_not_passed": 27,
+        "generation_failure": 3,
+        "identity_not_matched": 11
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 1
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 64,
+          "REFUTED": 0,
+          "SURVIVED": 84,
+          "WEAKENED": 2
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 3,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 2
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 2,
+          "SURVIVED": 150,
+          "WEAKENED": 5
+        },
+        "survived_or_weakened": 155,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.003456315519739659,
+            0.04469763051760463
+          ],
+          "REFUTED": [
+            0.003456315519739659,
+            0.04469763051760463
+          ],
+          "SURVIVED": [
+            0.8959348401114677,
+            0.9699380218803675
+          ],
+          "WEAKENED": [
+            0.01350538616419597,
+            0.07149421357492854
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 70,
+          "REFUTED": 0,
+          "SURVIVED": 84,
+          "WEAKENED": 5
+        },
+        "survived_or_weakened": 89,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.36540282334136087,
+            0.5179192732696686
+          ],
+          "REFUTED": [
+            0.0,
+            0.023590176902824132
+          ],
+          "SURVIVED": [
+            0.45095898793596156,
+            0.6043094926167089
+          ],
+          "WEAKENED": [
+            0.01350538616419597,
+            0.07149421357492854
+          ]
+        }
+      }
+    },
+    "PV": {
+      "curves": 200,
+      "eligible": 181,
+      "outside": {
+        "gate_not_passed": 19
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 1,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 100,
+          "REFUTED": 0,
+          "SURVIVED": 47,
+          "WEAKENED": 20
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 5,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 5
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 2,
+          "SURVIVED": 167,
+          "WEAKENED": 10
+        },
+        "survived_or_weakened": 177,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.003035481630522502,
+            0.03938713757365047
+          ],
+          "REFUTED": [
+            0.003035481630522502,
+            0.03938713757365047
+          ],
+          "SURVIVED": [
+            0.874367544485964,
+            0.9533688355239882
+          ],
+          "WEAKENED": [
+            0.03028347563894313,
+            0.09869981075581308
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 108,
+          "REFUTED": 1,
+          "SURVIVED": 47,
+          "WEAKENED": 25
+        },
+        "survived_or_weakened": 72,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.5239270468725353,
+            0.6654244126068655
+          ],
+          "REFUTED": [
+            0.0009759404463862975,
+            0.030626595358963768
+          ],
+          "SURVIVED": [
+            0.2012582844957383,
+            0.3280680876554654
+          ],
+          "WEAKENED": [
+            0.09533732646069329,
+            0.19594721091640652
+          ]
+        }
+      }
+    },
+    "PX": {
+      "curves": 100,
+      "eligible": 93,
+      "outside": {
+        "gate_not_passed": 7
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 3,
+          "REFUTED": 90,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 93,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.0,
+            0.03966750261173514
+          ],
+          "REFUTED": [
+            0.960332497388265,
+            1.0
+          ],
+          "SURVIVED": [
+            0.0,
+            0.03966750261173514
+          ],
+          "WEAKENED": [
+            0.0,
+            0.03966750261173514
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 3,
+          "REFUTED": 90,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.011030612815892044,
+            0.09059382511121503
+          ],
+          "REFUTED": [
+            0.9094061748887851,
+            0.988969387184108
+          ],
+          "SURVIVED": [
+            0.0,
+            0.03966750261173514
+          ],
+          "WEAKENED": [
+            0.0,
+            0.03966750261173514
+          ]
+        }
+      }
+    },
+    "SE": {
+      "curves": 200,
+      "eligible": 98,
+      "outside": {
+        "gate_not_passed": 102
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 41,
+          "REFUTED": 4,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 49,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 3,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 45,
+          "REFUTED": 50,
+          "SURVIVED": 3,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 3,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.36392694572948114,
+            0.5575195840763703
+          ],
+          "REFUTED": [
+            0.41273047100283283,
+            0.6069078965457043
+          ],
+          "SURVIVED": [
+            0.010464891082493703,
+            0.0861702016847983
+          ],
+          "WEAKENED": [
+            3.469446951953614e-18,
+            0.037719990121680605
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 45,
+          "REFUTED": 53,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.36392694572948114,
+            0.5575195840763703
+          ],
+          "REFUTED": [
+            0.44248041592362974,
+            0.6360730542705189
+          ],
+          "SURVIVED": [
+            3.469446951953614e-18,
+            0.037719990121680605
+          ],
+          "WEAKENED": [
+            3.469446951953614e-18,
+            0.037719990121680605
+          ]
+        }
+      }
+    },
+    "V1": {
+      "curves": 200,
+      "eligible": 87,
+      "outside": {
+        "gate_not_passed": 113
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 2,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 81,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 4,
+          "REFUTED": 81,
+          "SURVIVED": 2,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 2,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.018022688467086906,
+            0.11233033507987294
+          ],
+          "REFUTED": [
+            0.8576030575941972,
+            0.9680111605574232
+          ],
+          "SURVIVED": [
+            0.006327085105926007,
+            0.0799931801396141
+          ],
+          "WEAKENED": [
+            0.0,
+            0.04228750694412034
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 4,
+          "REFUTED": 83,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.018022688467086906,
+            0.11233033507987294
+          ],
+          "REFUTED": [
+            0.8876696649201269,
+            0.981977311532913
+          ],
+          "SURVIVED": [
+            0.0,
+            0.04228750694412034
+          ],
+          "WEAKENED": [
+            0.0,
+            0.04228750694412034
+          ]
+        }
+      }
+    },
+    "V2": {
+      "curves": 200,
+      "eligible": 72,
+      "outside": {
+        "gate_not_passed": 128
+      },
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 1,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 68,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04": {
+        "counts": {
+          "INCONCLUSIVE": 3,
+          "REFUTED": 68,
+          "SURVIVED": 1,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 1,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.014270807466925182,
+            0.11549276741316111
+          ],
+          "REFUTED": [
+            0.8656798403400208,
+            0.9781857840186834
+          ],
+          "SURVIVED": [
+            0.002455951882905767,
+            0.07456602147476155
+          ],
+          "WEAKENED": [
+            0.0,
+            0.05065117259645781
+          ]
+        }
+      },
+      "v05": {
+        "counts": {
+          "INCONCLUSIVE": 3,
+          "REFUTED": 69,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "survived_or_weakened": 0,
+        "wilson_95": {
+          "INCONCLUSIVE": [
+            0.014270807466925182,
+            0.11549276741316111
+          ],
+          "REFUTED": [
+            0.8845072325868389,
+            0.9857291925330748
+          ],
+          "SURVIVED": [
+            0.0,
+            0.05065117259645781
+          ],
+          "WEAKENED": [
+            0.0,
+            0.05065117259645781
+          ]
+        }
+      }
+    }
+  },
+  "lock_commit_b": "b6249b500d8d7b98a6246dbe0d99a4c55363f1cb",
+  "note": "synthetic data with known truth; method_status: not_validated; no rule blocks the phase; curves are independent stars",
+  "processor_hours": 28.732313368055557,
+  "push_run_created_at": "2026-11-04T22:20:44Z",
+  "round": 6613448,
+  "sizes": {
+    "EB1": 200,
+    "EB2": 200,
+    "ER": 200,
+    "NR": 200,
+    "NW": 200,
+    "P": 200,
+    "PA": 100,
+    "PG": 200,
+    "PV": 200,
+    "PX": 100,
+    "SE": 200,
+    "V1": 200,
+    "V2": 200
+  }
+}
