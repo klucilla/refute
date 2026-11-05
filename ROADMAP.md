@@ -14,6 +14,16 @@ Agents working in this repo must read it before planning any work.
 - **Results are never tuned to pass a gate.** If a pre-registered claim fails,
   the failure is reported and analyzed, never hidden by changing thresholds,
   targets or data.
+- **Advance rule (the maintainer's decision of 2026-11-05).** A new capability phase starts only
+  after the current line of work succeeds: every declared target either PASSes or is shown to be
+  infeasible with the available data (one infeasibility record per such target, with evidence,
+  reviewed by Codex and by an independent review, approved by the maintainer). Until then, the next phase is a
+  correction phase on the same line (v0.5.1, v0.5.2, ...). Each correction round has its own
+  pre-registration, targets fixed before code, a fresh confirmation set never used in
+  development, caps and a stop rule; a round's targets are never relaxed after its results. After
+  three correction rounds without success, the maintainer decides between a change of approach,
+  an infeasibility record, or a pause. *(Clarified by the maintainer on 2026-11-05: every
+  declared target that does not PASS needs its own infeasibility record.)*
 
 ## Cross-cutting principles
 
@@ -30,7 +40,39 @@ how later work is done.
 
 ## Current phase
 
-**v0.5 Stronger tests: open since 2026-11-03**
+**v0.5.1 Battery corrections: to be scoped (not started)**
+
+- **Why.** v0.5 closed as `WEAKENED` with declared targets that failed (D1 for EB1 and EB2, D2,
+  D4, T2a; see its section). By the advance rule (above, the maintainer's decision of
+  2026-11-05), the next phase is a correction phase on the same line, not a new capability phase.
+- **Scope:** to be decided by a Claude and Codex consensus, approved by the maintainer; the
+  candidate issues are #200, #201 and #202 (its section below). No code of v0.5.1 is written
+  before that decision.
+
+### Previous phase record: v0.5 Stronger tests
+
+**v0.5 Stronger tests: closed on 2026-11-05 as `WEAKENED`** (the maintainer's decision of
+2026-11-05, #199)
+
+- **Gate.** All eight exit criteria are met, criterion 6 with one recorded deviation; they are
+  ticked with their evidence in the v0.5 section. The first gate review (2026-11-05) returned
+  `REFUTED` (criterion 7 not yet applied); after its findings were answered, the second gate
+  review returned `WEAKENED`, with its issues open and tracked. Both reports, as they came out,
+  and the dossiers they were given: [calibration/v0.5/gate/](calibration/v0.5/gate/).
+- **Results.** Reported as they came out, pass or fail: the synthetic confirmation (C1), the
+  paired real-data benchmark (C2) and the newly drawn real controls (C3), in
+  [calibration/v0.5/runs/](calibration/v0.5/runs/); the failed targets (D1 EB1/EB2, D2, D4, T2a)
+  are recorded as results, with no rerun and no retuning. The trade-off and its numbers:
+  [calibration/v0.5/results/closing-record.md](calibration/v0.5/results/closing-record.md).
+- **Still open:** the release v0.5.0 and its texts, after the maintainer's approval; the issues
+  the second gate listed: #201, #202, #203, #204, #200 (with #183), #206, #195 (item 4), #205,
+  and the scope issues kept open (#184, #182, #181, #191, #180, #9, #192) or moved (#176).
+- **Method status.** No method is validated: every v0.5 output carries
+  `method_status: not_validated`.
+- **What the gate verdict covers.** It is about the phase's completeness, never about any
+  candidate.
+
+The opening record of v0.5, kept as it was:
 
 - **Decision.** The maintainer's decision of 2026-11-03: v0.5 is the phase of stronger tests, from
   the findings of the v0.4 pilot (#176, #179 to #196, plus #9, #12, #195, #196). The maintainer
@@ -533,23 +575,62 @@ phases were delegated by the maintainer to a consensus between Claude and Codex,
   difference-image centroid (#11), the holdout corrections, new discovery runs, the variable
   stars pack.
 
-**Exit criteria** (detail and evidence rules in the plan, section 5)
-- [ ] Every new or changed test has its acceptance section committed before its tests and code;
+**Exit criteria** (detail and evidence rules in the plan, section 5; closed on 2026-11-05 as
+`WEAKENED`, see "Current phase")
+- [x] Every new or changed test has its acceptance section committed before its tests and code;
       its synthetic cases (must pass, must fail, sensitivity, coexistence, sabotage, correlated
       noise) run with counts from a JUnit XML file; each test accepted (decisive) or recorded as
       failed (diagnostic only).
-- [ ] No synthetic test that passes at the start of v0.5 fails at its end without a written
+      *Evidence:* the acceptance documents (`559eaf0`) before the first code (`0deb97f`); the
+      acceptance run and its roles ([README](docs/validation/v0.5/acceptance/README.md)); its 133
+      rows counted from a JUnit XML (133, 11 failures, 3 skipped;
+      [criterion2/README.md](calibration/v0.5/results/criterion2/README.md)).
+- [x] No synthetic test that passes at the start of v0.5 fails at its end without a written
       justification made before; historical claims give their recorded verdicts and hashes.
-- [ ] No fatal or warning test of the v0.5 battery can PASS without its declared sensitivity
+      *Evidence:* the v0.4.0 baseline (4,176 passing tests) against the final suite (4,538 tests,
+      0 failures, 0 errors, 91 skipped), the two timestamp-dependent IDs explained; the historical
+      locks 8 of 8 PASS and the v0.5 compatibility tests
+      ([criterion2/](calibration/v0.5/results/criterion2/README.md)).
+- [x] No fatal or warning test of the v0.5 battery can PASS without its declared sensitivity
       (engine rule, shown by a sabotage case).
-- [ ] The synthetic confirmation set run once on frozen code and reported, pass or fail.
-- [ ] The paired real-data measurements (reused benchmark and new controls) locked, run and
+      *Evidence:* `tests/test_sensitivity.py` (sabotage cases), `tests/test_v05_battery.py`,
+      passing in the final suite.
+- [x] The synthetic confirmation set run once on frozen code and reported, pass or fail.
+      *Evidence:* C1, once, round 6613448
+      ([runs/c1-confirmation/](calibration/v0.5/runs/c1-confirmation/)): D1 EB1 and EB2 FAIL,
+      D2 FAIL, D4 FAIL; the others PASS, NW not decidable.
+- [x] The paired real-data measurements (reused benchmark and new controls) locked, run and
       reported, pass or fail, with reviewer reports for the dossiers the protocol draws.
-- [ ] One new-control dossier reproduced in a clean clone from the generated instructions alone;
+      *Evidence:* C2 (T2a FAIL; T2b, T2c PASS) and C3 (T3a, T3b PASS)
+      ([runs/](calibration/v0.5/runs/)); four independent reviews of the dossiers drawn by
+      [reviews/RULE.md](calibration/v0.5/reviews/RULE.md), each objection mapped to an issue.
+- [x] One new-control dossier reproduced in a clean clone from the generated instructions alone;
       the empty-checkout test runs in CI.
-- [ ] Every scope issue closed, kept open with the part left, or moved with its reason; no
+      *Met with one recorded deviation:* the TESS-EB table was placed from an official VizieR
+      mirror, verified by the claim's content hash, while the CDS did not answer
+      ([reviews/criterion6/](calibration/v0.5/reviews/criterion6/), #206); criterion 6 as written
+      requires nothing placed by hand. The empty-checkout test runs in CI.
+- [x] Every scope issue closed, kept open with the part left, or moved with its reason; no
       `.cache/test-*` folder remains after the suite.
-- [ ] Gate: an independent review returns `SURVIVED`, or `WEAKENED` with its issues open.
+      *Evidence:* [results/criterion7.md](calibration/v0.5/results/criterion7.md) (12 closed, 8
+      kept open, 2 moved); none left after the final suite.
+- [x] Gate: an independent review returns `SURVIVED`, or `WEAKENED` with its issues open.
+      *Evidence:* the second gate review, `WEAKENED`, with its issues open and tracked
+      ([gate/gate-2-report.md](calibration/v0.5/gate/gate-2-report.md)).
+
+---
+
+## v0.5.1 Battery corrections
+
+**To be scoped (not started).** A correction phase on the line of v0.5, by the advance rule (the
+maintainer's decision of 2026-11-05).
+
+- **Why:** v0.5's declared targets that failed: D1 for EB1 and EB2 (synthetic eclipsing binaries
+  still survive), D2 and D4 (planets lost to INCONCLUSIVE), T2a (injected planets kept, 42.4 %
+  against 99.7 % with v0.4).
+- **Candidate issues:** #200 (a decisive per-sector centroid), #201 (planets lost to
+  INCONCLUSIVE), #202 (synthetic eclipsing binaries that still survive).
+- **Scope:** to be decided by a Claude and Codex consensus, approved by the maintainer.
 
 ---
 
@@ -557,6 +638,8 @@ phases were delegated by the maintainer to a consensus between Claude and Codex,
 
 *(Numbered v0.5 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
 maintainer's delegation.)*
+
+*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
 
 Reuse TESS data to find and classify variable stars.
 
@@ -572,6 +655,8 @@ Reuse TESS data to find and classify variable stars.
 *(Numbered v0.6 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
 maintainer's delegation.)*
 
+*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
+
 The purest form of refutation: counterexample search.
 
 **Scope**
@@ -585,6 +670,8 @@ The purest form of refutation: counterexample search.
 
 *(Numbered v0.7 until 2026-11-03; renumbered by the consensus of 2026-11-03 under the
 maintainer's delegation.)*
+
+*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
 
 Volunteer computing.
 
@@ -602,6 +689,8 @@ Volunteer computing.
 ---
 
 ## v1.0 Stable
+
+*(Starts only under the advance rule of 2026-11-05: after the current line of work succeeds.)*
 
 - Stable claim spec and lock format, with a compatibility statement for PRML.
 - Pack SDK, templates and documentation site.
