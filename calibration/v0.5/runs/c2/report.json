@@ -1,0 +1,463 @@
+{
+  "cohort": {
+    "authenticated": 100,
+    "input_changed": {},
+    "stars": 100,
+    "statement": "every C2 result is conditional on the authenticated available inputs"
+  },
+  "compatibility": {
+    "curves_checked": 1400,
+    "mismatches": {},
+    "state": "established"
+  },
+  "development_stars": [
+    "TIC-286480954",
+    "TIC-406413408",
+    "TIC-88096786"
+  ],
+  "injections": {
+    "original_gate_negative": {
+      "among_attempted": {
+        "denominator": 870,
+        "v04_recovered_with_stage_verdict": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 2,
+          "SURVIVED": 500,
+          "WEAKENED": 135
+        },
+        "v05_recovered_with_stage_verdict": {
+          "INCONCLUSIVE": 366,
+          "REFUTED": 1,
+          "SURVIVED": 220,
+          "WEAKENED": 50
+        }
+      },
+      "among_recovered": {
+        "denominator": 637,
+        "transitions": {
+          "INCONCLUSIVE": {
+            "INCONCLUSIVE": 0,
+            "REFUTED": 0,
+            "SURVIVED": 0,
+            "WEAKENED": 0
+          },
+          "REFUTED": {
+            "INCONCLUSIVE": 1,
+            "REFUTED": 1,
+            "SURVIVED": 0,
+            "WEAKENED": 0
+          },
+          "SURVIVED": {
+            "INCONCLUSIVE": 274,
+            "REFUTED": 0,
+            "SURVIVED": 220,
+            "WEAKENED": 6
+          },
+          "WEAKENED": {
+            "INCONCLUSIVE": 91,
+            "REFUTED": 0,
+            "SURVIVED": 0,
+            "WEAKENED": 44
+          }
+        },
+        "v04_stage_verdicts": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 2,
+          "SURVIVED": 500,
+          "WEAKENED": 135
+        },
+        "v05_stage_verdicts": {
+          "INCONCLUSIVE": 366,
+          "REFUTED": 1,
+          "SURVIVED": 220,
+          "WEAKENED": 50
+        }
+      },
+      "attempted": 870,
+      "failed_tasks": 0,
+      "group": "original_gate_negative",
+      "not_recovered": 233,
+      "note": "injections into one star are not independent; not a false-alarm rate",
+      "recovered": 637,
+      "stars": 87
+    },
+    "signal_bearing": {
+      "among_attempted": {
+        "denominator": 130,
+        "v04_recovered_with_stage_verdict": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 75,
+          "WEAKENED": 4
+        },
+        "v05_recovered_with_stage_verdict": {
+          "INCONCLUSIVE": 35,
+          "REFUTED": 0,
+          "SURVIVED": 40,
+          "WEAKENED": 5
+        }
+      },
+      "among_recovered": {
+        "denominator": 80,
+        "transitions": {
+          "INCONCLUSIVE": {
+            "INCONCLUSIVE": 1,
+            "REFUTED": 0,
+            "SURVIVED": 0,
+            "WEAKENED": 0
+          },
+          "REFUTED": {
+            "INCONCLUSIVE": 0,
+            "REFUTED": 0,
+            "SURVIVED": 0,
+            "WEAKENED": 0
+          },
+          "SURVIVED": {
+            "INCONCLUSIVE": 33,
+            "REFUTED": 0,
+            "SURVIVED": 40,
+            "WEAKENED": 2
+          },
+          "WEAKENED": {
+            "INCONCLUSIVE": 1,
+            "REFUTED": 0,
+            "SURVIVED": 0,
+            "WEAKENED": 3
+          }
+        },
+        "v04_stage_verdicts": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 75,
+          "WEAKENED": 4
+        },
+        "v05_stage_verdicts": {
+          "INCONCLUSIVE": 35,
+          "REFUTED": 0,
+          "SURVIVED": 40,
+          "WEAKENED": 5
+        }
+      },
+      "attempted": 130,
+      "caveat": "the host's own signal passes the gate: recovery here measures whether an injection outranks it, not sensitivity (#180)",
+      "failed_tasks": 0,
+      "group": "signal_bearing",
+      "not_recovered": 50,
+      "note": "injections into one star are not independent; not a false-alarm rate",
+      "recovered": 80,
+      "stars": 13
+    }
+  },
+  "injections_per_curve": 10,
+  "originals_all": {
+    "failed_tasks": 0,
+    "gate_passed": 13,
+    "group": "originals (all authenticated stars)",
+    "note": "detections on transformed or injected curves; not a false-alarm rate; curves of one star are not independent",
+    "stars": 100,
+    "stars_with_gate_passed": 13,
+    "tasks": 100,
+    "transitions": {
+      "INCONCLUSIVE": {
+        "INCONCLUSIVE": 3,
+        "REFUTED": 0,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      },
+      "REFUTED": {
+        "INCONCLUSIVE": 0,
+        "REFUTED": 5,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      },
+      "SURVIVED": {
+        "INCONCLUSIVE": 4,
+        "REFUTED": 0,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      },
+      "WEAKENED": {
+        "INCONCLUSIVE": 1,
+        "REFUTED": 0,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      }
+    },
+    "v04_stage_verdicts": {
+      "INCONCLUSIVE": 3,
+      "REFUTED": 5,
+      "SURVIVED": 4,
+      "WEAKENED": 1
+    },
+    "v05_stage_verdicts": {
+      "INCONCLUSIVE": 8,
+      "REFUTED": 5,
+      "SURVIVED": 0,
+      "WEAKENED": 0
+    }
+  },
+  "originals_subset": {
+    "failed_tasks": 0,
+    "gate_passed": 10,
+    "group": "originals (without the development stars)",
+    "note": "detections on transformed or injected curves; not a false-alarm rate; curves of one star are not independent",
+    "stars": 97,
+    "stars_with_gate_passed": 10,
+    "tasks": 97,
+    "transitions": {
+      "INCONCLUSIVE": {
+        "INCONCLUSIVE": 3,
+        "REFUTED": 0,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      },
+      "REFUTED": {
+        "INCONCLUSIVE": 0,
+        "REFUTED": 5,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      },
+      "SURVIVED": {
+        "INCONCLUSIVE": 2,
+        "REFUTED": 0,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      },
+      "WEAKENED": {
+        "INCONCLUSIVE": 0,
+        "REFUTED": 0,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      }
+    },
+    "v04_stage_verdicts": {
+      "INCONCLUSIVE": 3,
+      "REFUTED": 5,
+      "SURVIVED": 2,
+      "WEAKENED": 0
+    },
+    "v05_stage_verdicts": {
+      "INCONCLUSIVE": 5,
+      "REFUTED": 5,
+      "SURVIVED": 0,
+      "WEAKENED": 0
+    }
+  },
+  "processor_hours": 39.13455295138889,
+  "targets": {
+    "T2a": {
+      "denominator": 637,
+      "result": "FAIL",
+      "v04_survival": 0.9968602825745683,
+      "v05_survival": 0.423861852433281
+    },
+    "T2b-inverted": {
+      "denominator": 100,
+      "result": "PASS",
+      "v04_surviving_detections": 8,
+      "v05_surviving_detections": 0
+    },
+    "T2b-rotated": {
+      "denominator": 200,
+      "result": "PASS",
+      "v04_surviving_detections": 9,
+      "v05_surviving_detections": 0
+    },
+    "T2c": {
+      "denominator": 97,
+      "result": "PASS",
+      "v04_survived": 2,
+      "v05_survived": 0
+    }
+  },
+  "transformed": {
+    "inverted/original_gate_negative": {
+      "failed_tasks": 0,
+      "gate_passed": 15,
+      "group": "inverted/original_gate_negative",
+      "note": "detections on transformed or injected curves; not a false-alarm rate; curves of one star are not independent",
+      "stars": 87,
+      "stars_with_gate_passed": 15,
+      "tasks": 87,
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 5,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 4,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 4,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04_stage_verdicts": {
+        "INCONCLUSIVE": 5,
+        "REFUTED": 4,
+        "SURVIVED": 4,
+        "WEAKENED": 2
+      },
+      "v05_stage_verdicts": {
+        "INCONCLUSIVE": 11,
+        "REFUTED": 4,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      }
+    },
+    "inverted/signal_bearing": {
+      "failed_tasks": 0,
+      "gate_passed": 9,
+      "group": "inverted/signal_bearing",
+      "note": "detections on transformed or injected curves; not a false-alarm rate; curves of one star are not independent",
+      "stars": 13,
+      "stars_with_gate_passed": 9,
+      "tasks": 13,
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 6,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04_stage_verdicts": {
+        "INCONCLUSIVE": 1,
+        "REFUTED": 6,
+        "SURVIVED": 2,
+        "WEAKENED": 0
+      },
+      "v05_stage_verdicts": {
+        "INCONCLUSIVE": 3,
+        "REFUTED": 6,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      }
+    },
+    "rotated/original_gate_negative": {
+      "failed_tasks": 0,
+      "gate_passed": 22,
+      "group": "rotated/original_gate_negative",
+      "note": "detections on transformed or injected curves; not a false-alarm rate; curves of one star are not independent",
+      "stars": 87,
+      "stars_with_gate_passed": 16,
+      "tasks": 174,
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 4,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 9,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 2,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 6,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04_stage_verdicts": {
+        "INCONCLUSIVE": 4,
+        "REFUTED": 10,
+        "SURVIVED": 2,
+        "WEAKENED": 6
+      },
+      "v05_stage_verdicts": {
+        "INCONCLUSIVE": 13,
+        "REFUTED": 9,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      }
+    },
+    "rotated/signal_bearing": {
+      "failed_tasks": 0,
+      "gate_passed": 18,
+      "group": "rotated/signal_bearing",
+      "note": "detections on transformed or injected curves; not a false-alarm rate; curves of one star are not independent",
+      "stars": 13,
+      "stars_with_gate_passed": 11,
+      "tasks": 26,
+      "transitions": {
+        "INCONCLUSIVE": {
+          "INCONCLUSIVE": 8,
+          "REFUTED": 1,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "REFUTED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 8,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "SURVIVED": {
+          "INCONCLUSIVE": 1,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        },
+        "WEAKENED": {
+          "INCONCLUSIVE": 0,
+          "REFUTED": 0,
+          "SURVIVED": 0,
+          "WEAKENED": 0
+        }
+      },
+      "v04_stage_verdicts": {
+        "INCONCLUSIVE": 9,
+        "REFUTED": 8,
+        "SURVIVED": 1,
+        "WEAKENED": 0
+      },
+      "v05_stage_verdicts": {
+        "INCONCLUSIVE": 9,
+        "REFUTED": 9,
+        "SURVIVED": 0,
+        "WEAKENED": 0
+      }
+    }
+  }
+}
