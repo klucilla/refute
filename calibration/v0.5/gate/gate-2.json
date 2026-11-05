@@ -1,0 +1,12 @@
+{
+  "session": "second gate review, a fresh Claude Opus session (claude-opus-5-5), read only, given only the phase dossier (gate-2-phase-dossier.md); 2026-11-05",
+  "verdict": "WEAKENED",
+  "tokens": 247801,
+  "tool_uses": 87,
+  "duration_ms": 396087,
+  "cap_tokens": 400000,
+  "files": {
+    "gate-2-report.md": "665458839e99ef9a13033508129f8f051c1b8b4df68ab43a8b377ed73c5e173c",
+    "gate-2-phase-dossier.md": "347c3895739915c50d7497bec2d9331a13bf0d81bb1a3aef6d90ff57acf12810"
+  }
+}
