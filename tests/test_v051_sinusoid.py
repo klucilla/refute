@@ -81,7 +81,7 @@ def test_version_3_needs_the_corrections_section_and_only_it():
         TessTestPlan.model_validate(v05)
 
 
-def test_a_version_2_plan_dumps_and_runs_exactly_as_before():
+def test_a_version_2_plan_dumps_as_before_and_selects_the_v05_registry():
     plan = TessTestPlan.model_validate(discovery_v05_plan_dict())
     assert not plan.v051
     assert registry_for(plan) is TESS_REGISTRY
@@ -194,3 +194,14 @@ def test_an_undetectable_applicable_harmonic_refuses_the_pass():
     result = v51.check_sinusoid(lc, _cand(), SP, CP, seed=3)
     assert result.status is TestStatus.PASS
     assert enforce_sensitivity([result], TESS_REGISTRY_V3)[0].status is TestStatus.INCONCLUSIVE
+
+
+def test_closely_spaced_variability_gives_no_redundant_extra_frequency():
+    # two sinusoids 0.005 per day apart (closer than 1 / T_span, about 0.019 per day) and a
+    # strong one: the extra frequencies stay at least 1 / T_span apart and the fit stays regular
+    lc = _lc(21, trend=(4.7, 1500e-6), sinus=(4.75, 1500e-6), sigma=500e-6, depth=600e-6)
+    result = v51.check_sinusoid(lc, _cand(depth=600e-6), SP, CP, seed=3)
+    span = float(lc.time.max() - lc.time.min())
+    freqs = sorted(row["frequency_per_day"] for row in result.metrics["extra_frequencies"])
+    assert all(b - a > 1.0 / span for a, b in zip(freqs, freqs[1:], strict=False))
+    assert result.status in (TestStatus.PASS, TestStatus.FAIL)

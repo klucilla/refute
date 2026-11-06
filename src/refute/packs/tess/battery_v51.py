@@ -39,9 +39,13 @@ def _design(time, sector, periods):
 
 
 def _wls(x, flux, err):
+    """Weighted least squares; ``np.linalg.LinAlgError`` when the design is singular."""
     w = 1.0 / np.square(err)
     xtw = x.T * w
-    cov = np.linalg.inv(xtw @ x)
+    normal = xtw @ x
+    if np.linalg.cond(normal) > 1e12:
+        raise np.linalg.LinAlgError("singular design")
+    cov = np.linalg.inv(normal)
     coef = cov @ (xtw @ flux)
     return coef, cov, flux - x @ coef
 
@@ -130,14 +134,24 @@ def check_sinusoid(
     for _ in range(cp.sinusoid_extra_frequencies):
         x = _design(t, sec, [1.0 / q for q in tested + extra])
         _, _, resid = _wls(x, f, e)
-        peak = _ls_peak(t, resid, e, 2.0 / span, EXTRA_MAX_FREQUENCY, tested, width)
+        # a new extra frequency stays outside 1 / T_span of the tested harmonics and of the
+        # extra frequencies already chosen (no redundant column; Codex's review of round 2)
+        peak = _ls_peak(t, resid, e, 2.0 / span, EXTRA_MAX_FREQUENCY, tested + extra, width)
         if peak is None or peak[1] <= cp.sinusoid_extra_min_snr:
+            break
+        try:
+            _wls(_design(t, sec, [1.0 / q for q in tested + extra + [peak[0]]]), f, e)
+        except np.linalg.LinAlgError:
             break
         extra.append(peak[0])
         extra_rows.append({"frequency_per_day": peak[0], "amplitude_snr": peak[1]})
     periods = [1.0 / q for q in tested + extra]
     x = _design(t, sec, periods)
-    coef, cov_all, residuals = _wls(x, f, e)
+    try:
+        coef, cov_all, residuals = _wls(x, f, e)
+    except np.linalg.LinAlgError:
+        why = "the joint sinusoid model is singular for these data"
+        return _inconclusive(name, severity, why, inconclusive_class="not_enough_data")
     beta = _beta(residuals, t, candidate.duration)
     n_off = len(np.unique(sec))
     depth = candidate.depth
