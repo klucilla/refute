@@ -49,9 +49,9 @@ def chain(
     if plan.v05:
         # v0.5 (#185; Codex's review of round 2): the sensitivity rule on this route too
         from refute.core.sensitivity import enforce_sensitivity
-        from refute.packs.tess.power import TESS_REGISTRY
+        from refute.packs.tess.power import registry_for
 
-        tests = enforce_sensitivity(tests, TESS_REGISTRY)
+        tests = enforce_sensitivity(tests, registry_for(plan))
     tests, deferred = defer_tests(tests, dict(discovery.stages), stage)
     decisive, _ = expected_by_role(plan, catalogs is not None)
     verdict, reason = aggregate([t for t in tests if t.name in decisive], expected=decisive)

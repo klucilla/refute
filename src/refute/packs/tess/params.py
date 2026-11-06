@@ -352,6 +352,18 @@ class StrongerParams(_Model):
         return self
 
 
+class CorrectionsParams(_Model):
+    """The v0.5.1 section of a test plan (docs/plans/v0.5.1-acceptance.md): the parameters of the
+    corrected tests. Present only with discovery version 3, which also needs ``stronger``; a plan
+    without it dumps exactly as before (issue #30). The provenance of each default is in the
+    acceptance documents' provenance table."""
+
+    # WP3 (b): the sinusoid per harmonic, with the star's other variability modelled
+    sinusoid_harmonic_max_period_days: float = Field(20.0, gt=0)
+    sinusoid_extra_frequencies: int = Field(3, ge=0)
+    sinusoid_extra_min_snr: float = Field(4.0, gt=0)
+
+
 class DiscoveryParams(_Model):
     """The v0.4 section of a discovery claim's test plan (issue #174).
 
@@ -373,7 +385,8 @@ class DiscoveryParams(_Model):
     """
 
     # 1: v0.4. 2: v0.5, the sensitivity rule and the v0.5 tests (needs the plan's `stronger`).
-    version: Literal[1, 2] = 1
+    # 3: v0.5.1, the corrected battery (needs `stronger` and `corrections`).
+    version: Literal[1, 2, 3] = 1
     decisive: list[str] = Field(min_length=1)
     diagnostic: list[str] = Field(default_factory=list)
     stages: dict[str, Literal[1, 2]] = Field(default_factory=dict)
@@ -393,7 +406,7 @@ class DiscoveryParams(_Model):
         both = sorted(set(self.decisive) & set(self.diagnostic))
         if both:
             raise ValueError("a test cannot be both decisive and diagnostic: " + ", ".join(both))
-        known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version == 2 else set())
+        known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version >= 2 else set())
         unknown = sorted(set(self.roles) - known)
         if unknown:
             raise ValueError("roles name unknown tests: " + ", ".join(unknown))
@@ -467,13 +480,14 @@ class TessTestPlan(_Model):
     discovery: DiscoveryParams | None = None
     stronger: StrongerParams | None = None
     reproduction: ReproductionParams | None = None
+    corrections: CorrectionsParams | None = None
 
     @model_serializer(mode="wrap")
     def _without_absent_discovery(self, handler: Any) -> dict[str, Any]:
         """A plan without the v0.4 or the v0.5 sections dumps exactly as before they existed
         (issue #30)."""
         out = handler(self)
-        for key in ("discovery", "stronger", "reproduction"):
+        for key in ("discovery", "stronger", "reproduction", "corrections"):
             if out.get(key, 0) is None:
                 del out[key]
         return out
@@ -483,18 +497,23 @@ class TessTestPlan(_Model):
         """Discovery version 2 needs the `stronger` section and a registered sensitivity rule
         or category for every decisive fatal or warning test (v0.5 acceptance, case 1.5); any
         other plan must not have the section."""
-        version2 = self.discovery is not None and self.discovery.version == 2
+        version = self.discovery.version if self.discovery is not None else 1
+        version2 = version >= 2
         if version2 != (self.stronger is not None):
             raise ValueError(
-                "the `stronger` section goes with discovery version 2, and only with it"
+                "the `stronger` section goes with discovery version 2 or 3, and only with them"
+            )
+        if (version == 3) != (self.corrections is not None):
+            raise ValueError(
+                "the `corrections` section goes with discovery version 3, and only with it"
             )
         if self.reproduction is not None and not version2:
-            raise ValueError("the `reproduction` section goes only with discovery version 2")
+            raise ValueError("the `reproduction` section goes only with discovery version 2 or 3")
         if version2:
             from refute.core.sensitivity import registry_problems
-            from refute.packs.tess.power import TESS_REGISTRY
+            from refute.packs.tess.power import registry_for
 
-            problems = registry_problems(self.discovery.decisive, TESS_REGISTRY, [GATE_TEST])
+            problems = registry_problems(self.discovery.decisive, registry_for(self), [GATE_TEST])
             if problems:
                 raise ValueError(
                     "decisive tests without a sensitivity rule: " + "; ".join(problems)
@@ -503,8 +522,14 @@ class TessTestPlan(_Model):
 
     @property
     def v05(self) -> bool:
-        """True for a v0.5 claim (discovery version 2): the sensitivity rule applies."""
+        """True for a v0.5 or v0.5.1 claim (discovery version 2 or 3): the sensitivity rule
+        applies."""
         return self.stronger is not None
+
+    @property
+    def v051(self) -> bool:
+        """True for a v0.5.1 claim (discovery version 3): the corrected battery."""
+        return self.corrections is not None
 
 
 class PublishedParams(_Model):

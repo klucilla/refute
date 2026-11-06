@@ -52,9 +52,9 @@ def _outcome(data, candidate, plan: TessTestPlan, stage: int, catalogs, scan, pw
     tests = enforce_coverage(gauntlet.tests)
     if plan.v05:
         from refute.core.sensitivity import enforce_sensitivity
-        from refute.packs.tess.power import TESS_REGISTRY
+        from refute.packs.tess.power import registry_for
 
-        tests = enforce_sensitivity(tests, TESS_REGISTRY)
+        tests = enforce_sensitivity(tests, registry_for(plan))
     tests, deferred = defer_tests(tests, dict(plan.discovery.stages), stage)
     decisive, _ = expected_by_role(plan, catalogs is not None)
     verdict, reason = aggregate([t for t in tests if t.name in decisive], expected=decisive)

@@ -51,6 +51,20 @@ TESS_REGISTRY: dict[str, dict[str, str]] = {
 }
 
 
+# v0.5.1 (discovery version 3, docs/plans/v0.5.1-acceptance.md): the registry of the corrected
+# battery. `sinusoid` has one sub-check per harmonic: P/2 required (always inside its domain for
+# the searched periods), P and 2P conditional (not applicable outside their domain; WP3 (b)).
+TESS_REGISTRY_V3: dict[str, dict[str, str]] = {
+    **TESS_REGISTRY,
+    "sinusoid": {"P/2": "rule", "P": "rule?", "2P": "rule?"},
+}
+
+
+def registry_for(plan: TessTestPlan) -> dict[str, dict[str, str]]:
+    """The registry of a plan's battery: v0.5.1's for discovery version 3, v0.5's otherwise."""
+    return TESS_REGISTRY_V3 if plan.v051 else TESS_REGISTRY
+
+
 def attach(result: TestResult, blocks: dict[str, dict[str, Any]] | None) -> TestResult:
     """The result with its sensitivity blocks (an empty set means "none computed")."""
     return replace(result, sensitivity=blocks or None)

@@ -334,6 +334,7 @@ def v05_tests(
     measurements of the v0.5 tests use the red-noise error model (A1, ``rednoise.event_noise``).
     ``centroid_shift`` is the per-sector v0.5 test (WP4, ``centroid_v5``)."""
     from refute.packs.tess import battery_v5 as v5
+    from refute.packs.tess import battery_v51 as v51
     from refute.packs.tess import power
 
     sp = plan.stronger
@@ -394,7 +395,11 @@ def v05_tests(
         v5.check_single_event(events, sp, seed("single_event", final)),
         v5.check_event_consistency(events, sp),
         v5.check_edge_events(flat.time, events, final.duration, gp.snr.min_snr, sp),
-        v5.check_sinusoid(data.lc, final, sp, seed("sinusoid", final)),
+        (
+            v51.check_sinusoid(data.lc, final, sp, plan.corrections, seed("sinusoid", final))
+            if plan.v051
+            else v5.check_sinusoid(data.lc, final, sp, seed("sinusoid", final))
+        ),
         v5.check_duty_cycle(final, sp),
     ]
     return out
@@ -528,9 +533,9 @@ def conclude_analysis(
         # v0.5 (#185): and a fatal or warning PASS without its declared sensitivity, whatever
         # its role, is INCONCLUSIVE (the holdout diagnostic has no rule in v0.5)
         from refute.core.sensitivity import enforce_sensitivity
-        from refute.packs.tess.power import TESS_REGISTRY
+        from refute.packs.tess.power import registry_for
 
-        tests = enforce_sensitivity(tests, TESS_REGISTRY)
+        tests = enforce_sensitivity(tests, registry_for(plan))
     if plan is None or plan.discovery is None:
         verdict, reason = aggregate(tests, expected=expected_tests(catalogs_configured))
         return Analysis(search, flattened, gauntlet, holdout, tests, verdict.value, reason)
@@ -941,9 +946,9 @@ class TessGauntlet:
         if plan.v05:
             # a caller that aggregates these results directly gets the v0.5 rule too
             from refute.core.sensitivity import enforce_sensitivity
-            from refute.packs.tess.power import TESS_REGISTRY
+            from refute.packs.tess.power import registry_for
 
-            tests = enforce_sensitivity(enforce_coverage(tests), TESS_REGISTRY)
+            tests = enforce_sensitivity(enforce_coverage(tests), registry_for(plan))
         return tests
 
 
