@@ -1,0 +1,212 @@
+{
+ "c1": {
+  "binaries": {
+   "EB1": {
+    "eligible": 190,
+    "median_ratio_others": 0.5049214114216063,
+    "median_ratio_survivors": 0.8641071301017569,
+    "rough_bound_expected_survivors": 24.6,
+    "survivors": 35,
+    "survivors_folded_at_half": 33
+   },
+   "EB2": {
+    "eligible": 186,
+    "median_ratio_others": 0.6444012015343785,
+    "median_ratio_survivors": 0.7869613087167292,
+    "rough_bound_expected_survivors": 20.4,
+    "survivors": 40,
+    "survivors_folded_at_half": 40
+   }
+  },
+  "held_by_inconclusive": {
+   "EB1": {
+    "eligible": 190,
+    "inconclusive_without_decisive_fail": 39,
+    "single_event_among_inconclusive": {
+     "PASS": 56
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 56,
+     "REFUTED": 62,
+     "SURVIVED": 35,
+     "WEAKENED": 37
+    }
+   },
+   "EB2": {
+    "eligible": 186,
+    "inconclusive_without_decisive_fail": 67,
+    "single_event_among_inconclusive": {
+     "FAIL": 2,
+     "PASS": 71
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 73,
+     "REFUTED": 69,
+     "SURVIVED": 40,
+     "WEAKENED": 4
+    }
+   },
+   "ER": {
+    "eligible": 51,
+    "inconclusive_without_decisive_fail": 1,
+    "single_event_among_inconclusive": {
+     "PASS": 2
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 2,
+     "REFUTED": 49
+    }
+   },
+   "NR": {
+    "eligible": 149,
+    "inconclusive_without_decisive_fail": 2,
+    "single_event_among_inconclusive": {
+     "FAIL": 1,
+     "INCONCLUSIVE": 1,
+     "PASS": 2
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 4,
+     "REFUTED": 145
+    }
+   },
+   "NW": {
+    "eligible": 4,
+    "inconclusive_without_decisive_fail": 0,
+    "single_event_among_inconclusive": {
+     "FAIL": 1
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 1,
+     "REFUTED": 3
+    }
+   },
+   "PX": {
+    "eligible": 93,
+    "inconclusive_without_decisive_fail": 2,
+    "single_event_among_inconclusive": {
+     "PASS": 3
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 3,
+     "REFUTED": 90
+    }
+   },
+   "SE": {
+    "eligible": 98,
+    "inconclusive_without_decisive_fail": 39,
+    "single_event_among_inconclusive": {
+     "FAIL": 34,
+     "INCONCLUSIVE": 9,
+     "PASS": 2
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 45,
+     "REFUTED": 53
+    }
+   },
+   "V1": {
+    "eligible": 87,
+    "inconclusive_without_decisive_fail": 1,
+    "single_event_among_inconclusive": {
+     "INCONCLUSIVE": 2,
+     "PASS": 2
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 4,
+     "REFUTED": 83
+    }
+   },
+   "V2": {
+    "eligible": 72,
+    "inconclusive_without_decisive_fail": 1,
+    "single_event_among_inconclusive": {
+     "INCONCLUSIVE": 1,
+     "PASS": 2
+    },
+    "verdicts": {
+     "INCONCLUSIVE": 3,
+     "REFUTED": 69
+    }
+   }
+  },
+  "inconclusive_by_test": {
+   "EB1": {
+    "eligible": 190,
+    "inconclusive": 56,
+    "tests": {
+     "aperture_depth": 45,
+     "odd_even": 24,
+     "sinusoid": 27,
+     "systematics": 30
+    }
+   },
+   "EB2": {
+    "eligible": 186,
+    "inconclusive": 73,
+    "tests": {
+     "aperture_depth": 66,
+     "odd_even": 32,
+     "period_alias": 2,
+     "secondary_eclipse": 1,
+     "sinusoid": 32,
+     "systematics": 38
+    }
+   },
+   "P": {
+    "eligible": 186,
+    "inconclusive": 83,
+    "tests": {
+     "aperture_depth": 65,
+     "odd_even": 23,
+     "period_alias": 1,
+     "sinusoid": 33,
+     "systematics": 28
+    }
+   },
+   "PA": {
+    "eligible": 99,
+    "inconclusive": 58,
+    "tests": {
+     "aperture_depth": 53,
+     "odd_even": 10,
+     "sinusoid": 19,
+     "systematics": 14
+    }
+   },
+   "PG": {
+    "eligible": 159,
+    "inconclusive": 70,
+    "tests": {
+     "aperture_depth": 66,
+     "odd_even": 27,
+     "sinusoid": 10,
+     "systematics": 28
+    }
+   },
+   "PV": {
+    "eligible": 181,
+    "inconclusive": 108,
+    "tests": {
+     "aperture_depth": 67,
+     "odd_even": 22,
+     "period_alias": 2,
+     "sinusoid": 74,
+     "systematics": 25
+    }
+   }
+  }
+ },
+ "c2": {
+  "injections_inconclusive": 631,
+  "tests": {
+   "edge_events": 210,
+   "odd_even": 285,
+   "period_alias": 37,
+   "secondary_eclipse": 221,
+   "sinusoid": 325,
+   "systematics": 586
+  }
+ },
+ "note": "v0.5 records, development use only (v0.5.1 plan, section 5)"
+}

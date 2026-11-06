@@ -40,14 +40,17 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.1 Battery corrections: to be scoped (not started)**
+**v0.5.1 Battery corrections: open since 2026-11-06** (tracking issue #208)
 
 - **Why.** v0.5 closed as `WEAKENED` with declared targets that failed (D1 for EB1 and EB2, D2,
   D4, T2a; see its section). By the advance rule (above, the maintainer's decision of
   2026-11-05), the next phase is a correction phase on the same line, not a new capability phase.
-- **Scope:** to be decided by a Claude and Codex consensus, approved by the maintainer; the
-  candidate issues are #200, #201 and #202 (its section below). No code of v0.5.1 is written
-  before that decision.
+- **Scope:** decided on 2026-11-06 by a Claude and Codex consensus under the maintainer's
+  delegation (three rounds, the last `SURVIVED`): [docs/plans/v0.5.1-plan.md](docs/plans/v0.5.1-plan.md),
+  with Codex's answers in [docs/plans/v0.5.1-consensus/](docs/plans/v0.5.1-consensus/README.md).
+  Its section and exit criteria: "v0.5.1 Battery corrections" below.
+- **Method status.** No method is validated: every v0.5.1 output carries
+  `method_status: not_validated`.
 
 ### Previous phase record: v0.5 Stronger tests
 
@@ -622,15 +625,49 @@ phases were delegated by the maintainer to a consensus between Claude and Codex,
 
 ## v0.5.1 Battery corrections
 
-**To be scoped (not started).** A correction phase on the line of v0.5, by the advance rule (the
-maintainer's decision of 2026-11-05).
+A correction phase on the line of v0.5, by the advance rule (the maintainer's decision of
+2026-11-05). Opened on 2026-11-06 by the maintainer's decision; the scope delegated to a Claude and
+Codex consensus, taken the same day (record: [docs/plans/v0.5.1-consensus/](docs/plans/v0.5.1-consensus/README.md)).
+Plan, caps and stop rule: [docs/plans/v0.5.1-plan.md](docs/plans/v0.5.1-plan.md). Tracking: #208.
+Correction round 1 of at most 3.
 
-- **Why:** v0.5's declared targets that failed: D1 for EB1 and EB2 (synthetic eclipsing binaries
-  still survive), D2 and D4 (planets lost to INCONCLUSIVE), T2a (injected planets kept, 42.4 %
-  against 99.7 % with v0.4).
-- **Candidate issues:** #200 (a decisive per-sector centroid), #201 (planets lost to
-  INCONCLUSIVE), #202 (synthetic eclipsing binaries that still survive).
-- **Scope:** to be decided by a Claude and Codex consensus, approved by the maintainer.
+**The targets** (v0.5's definitions, measured the same way; none relaxed): D1 for EB1 and EB2
+(synthetic eclipsing binaries still survive, #202); D2 and D4 (planets lost to INCONCLUSIVE, #201);
+T2a (injected planets kept, 42.4 % against 99.7 % with v0.4, #201). **Must not regress:** D1 for
+SE, V1, V2, ER and NR; D3; D5; T2b; T2c; T3a; T3b; the historical locks and claims.
+
+**Scope** (the plan's work packages)
+- A feasibility forecast before the corrections (a diagnostic; it settles no target).
+- A per-event error model in correlated noise, so that the per-event tests can be decisive (#209).
+- The sensitivity computation's defects: a joint error model for `aperture_depth` and
+  `systematics`; `sinusoid` per harmonic (#203); the `period_alias` statistic (#204).
+- The eclipsing-binary route: odd/even at the found period, and a duration warning (#10).
+- INCONCLUSIVE classes in the reports (#201, part of #205).
+- Battery version 3 (`discovery.version: 3`); the v0.4 and v0.5 batteries unchanged; the claim
+  packaging rehearsed end to end on synthetic targets before any freeze.
+- CI time: every job under 30 minutes (#210).
+- Calibration, pre-registered, on sets never used in development: C1' (the v0.5 generator, new
+  drand seeds), C2' (new real stars), C3' (new real controls).
+- Not in scope: #200, the EBLM part of #202, #205 beyond the INCONCLUSIVE classes, #206, #12, #9,
+  #11, #192.
+
+**Exit criteria** (detail in the plan)
+- [ ] Every new or changed test has its acceptance section committed before its tests and code;
+      its cases run with counts from a JUnit XML file; each test accepted (decisive) or recorded
+      as failed (diagnostic only); the combined non-regression gates run as the plan fixes them.
+- [ ] No synthetic test that passes at the start of v0.5.1 fails at its end without a written
+      justification made before; historical claims give their recorded verdicts and hashes; the
+      v0.4 and v0.5 batteries reproduce their recorded outputs.
+- [ ] C1', C2' and C3' locked (protocol, code, dependencies, claim), run once and reported by
+      v0.5's reporting rules, every target and every non-regression target pass or fail, with
+      reviewer reports for the C3' dossiers the protocol draws.
+- [ ] Every failed target either PASSes in the confirmation, or has an infeasibility record
+      approved by the maintainer after Codex's and an independent review, or is recorded as
+      outstanding for the next correction round, by the maintainer's decision.
+- [ ] Every CI job under 30 minutes, with no test deleted or skipped without its recorded reason.
+- [ ] Every scope issue closed, or kept open with the part left, or moved with its reason; no
+      `.cache/test-*` folder remains after the suite.
+- [ ] Gate: an independent review returns `SURVIVED`, or `WEAKENED` with its issues open.
 
 ---
 
