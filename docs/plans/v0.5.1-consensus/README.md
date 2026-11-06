@@ -34,3 +34,14 @@ Codex's review of the proposed revision 2 of A0 (2026-11-06, a recorded deviatio
 stop rule 1): `WEAKENED`, 3 critical and 1 important objection; it requires the maintainer's
 disposition before any A0 code: [acceptance-review-2.md](acceptance-review-2.md) (SHA-256
 `0c49b83772b77f8a728277c6d8fe77557347d84f93be5e0a466f8ea43b8597eb`).
+
+## A0, the corrected revision 2 (the maintainer's conditions, amendment 2)
+
+Three rounds in one conversation on 2026-11-06; not adopted (no `SURVIVED`); the remaining
+objection goes to the maintainer.
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [a0-round-1-answer.md](a0-round-1-answer.md) | `WEAKENED` | `6b5374b37f34e226d1f1de5c5e9a50f6859a605be3fc3fd8daf99256b5dd4e70` |
+| 2 | [a0-round-2-answer.md](a0-round-2-answer.md) | `WEAKENED` | `b480733cd0a3737735a757cdf5ee172b3a7c471caeae1dcf735d4b9e61204a46` |
+| 3 | [a0-round-3-answer.md](a0-round-3-answer.md) | `WEAKENED` | `8337c14f2fa07fad9adcdb761cd233b2c544a029ecf6f74a7979ee86c82e76d8` |
