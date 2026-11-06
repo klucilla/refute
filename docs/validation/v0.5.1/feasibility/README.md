@@ -83,3 +83,24 @@ warning test the sensitivity rule refuses its PASS on most planets (71 % of P), 
 5 % radius and mass errors alone almost fill the margin the alternative leaves; D2 allows a loss of
 about 13 %. By amendment 3, item 2 (c) and (d), this goes to the maintainer with Claude's and
 Codex's recommendation.
+
+## `period_alias` on the development control TIC-101395259 (#204, 2026-11-06)
+
+**The data** ([fetch_dev_control.py](fetch_dev_control.py), [dev-control-fetch.json](dev-control-fetch.json)):
+the maintainer's approval of 2026-11-06 (#208), light curves only, into `.cache/v051/dev/` (outside
+git): 6 SPOC 120-s light-curve files (11491200 bytes), retrieved
+2026-11-06T19:06:13Z from MAST through the frozen TESS adapter, no transient error; each file's URL
+and SHA-256 are in the record, and all 6 are equal to the SHA-256 the v0.5 dossier
+recorded (`TIC-101395259/data/manifest.json` in the Drive archive, read only).
+
+**The diagnosis** ([alias_dev_control.py](alias_dev_control.py), [alias-dev-control.json](alias-dev-control.json)):
+the v0.5 sensitivity simulation (50 sinusoids at the candidate's period, peak to trough equal to the
+depth, the same seed) gives **43 of 50 failures as it is**, exactly the v0.5 dossier's value; with
+the test's detrending replaced by the identity, **50 of 50**; with four harmonics in the Fourier
+model instead of two, **50 of 50**; with the test's detrending window of one period instead of three,
+**50 of 50**. So, on this control, the test prefers a box on a pure sinusoid because its own
+detrending (a window of three periods, 22.7 days, longer than an orbit of 13 days) distorts a
+large sinusoid (2,777 ppm semi-amplitude) into a shape that two harmonics do not absorb; it is not
+a penalty for searched box parameters (amendment 1, item 3), and the synthetic check of 240 pure
+sinusoids on two clean sectors did not show it. The acceptance section of WP3 (c) is written from
+this (a design that absorbs the distortion, with both error sides accepted on the full chain).

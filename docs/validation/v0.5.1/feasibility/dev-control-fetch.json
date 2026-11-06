@@ -1,0 +1,60 @@
+{
+ "attempt_errors": [],
+ "bytes_total": 11491200,
+ "files": [
+  {
+   "bytes": 1805760,
+   "equal_to_v05_dossier": true,
+   "name": "tess2019032160000-s0008-0000000101395259-0136-s_lc.fits",
+   "sector": 8,
+   "sha256": "e1b0c0efbedda68e29fcfdf37565aba3eea1287936d4048c3b4ae17c4d8af909",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019032160000-s0008-0000000101395259-0136-s_lc.fits"
+  },
+  {
+   "bytes": 1848960,
+   "equal_to_v05_dossier": true,
+   "name": "tess2019058134432-s0009-0000000101395259-0139-s_lc.fits",
+   "sector": 9,
+   "sha256": "b01ceefe295b5640946db74d8fda13beaf261e94c39f369af66a5c9ba1afc14e",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019058134432-s0009-0000000101395259-0139-s_lc.fits"
+  },
+  {
+   "bytes": 1828800,
+   "equal_to_v05_dossier": true,
+   "name": "tess2021039152502-s0035-0000000101395259-0205-s_lc.fits",
+   "sector": 35,
+   "sha256": "ccaf4456e6a0b407a3e665b1db39b422f17c79b637564ebc48a12fd65ac3def7",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021039152502-s0035-0000000101395259-0205-s_lc.fits"
+  },
+  {
+   "bytes": 1880640,
+   "equal_to_v05_dossier": true,
+   "name": "tess2023043185947-s0062-0000000101395259-0254-s_lc.fits",
+   "sector": 62,
+   "sha256": "7716df695be4d452b75af5d56309d9d388437b13b682dcfa03b2efb3b12c2b54",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2023043185947-s0062-0000000101395259-0254-s_lc.fits"
+  },
+  {
+   "bytes": 2105280,
+   "equal_to_v05_dossier": true,
+   "name": "tess2025042113628-s0089-0000000101395259-0286-s_lc.fits",
+   "sector": 89,
+   "sha256": "b79d304453f9f85be6544eb8888d04f388742d53237afb1eaac396024eb6f687",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025042113628-s0089-0000000101395259-0286-s_lc.fits"
+  },
+  {
+   "bytes": 2021760,
+   "equal_to_v05_dossier": true,
+   "name": "tess2026005125623-s0099-0000000101395259-0300-s_lc.fits",
+   "sector": 99,
+   "sha256": "a5102876bbddd9f9651e477426aa125c7400fdf6f1b6e839ef2443c252dc1e03",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2026005125623-s0099-0000000101395259-0300-s_lc.fits"
+  }
+ ],
+ "label": "development data (v0.5.1 WP3 (c), #204); the maintainer's approval of 2026-11-06",
+ "pixel_files": 0,
+ "retrieved_utc": "2026-11-06T19:06:13Z",
+ "service": "MAST via lightkurve.search_lightcurve and search_targetpixelfile",
+ "target": "TIC-101395259",
+ "v05_dossier_files_recorded": 12
+}
