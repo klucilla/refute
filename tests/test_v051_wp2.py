@@ -87,6 +87,10 @@ def test_version_2_per_event_tests_are_unchanged_by_version_3_code():
     # WP3 (d): version 3 measures odd_even with its own estimator; version 2 keeps v0.5's
     assert "estimator" not in t2["odd_even"].metrics
     assert t3["odd_even"].metrics["estimator"].startswith("matched trapezoid")
+    # WP3 (a): version 3 measures the differences on their own series; version 2 keeps v0.5's
+    for name in ("aperture_depth", "systematics"):
+        assert "estimator" not in t2[name].metrics, name
+        assert "A0" in t3[name].metrics["estimator"], name
     assert np.isfinite(len(t3))
 
 

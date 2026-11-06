@@ -335,6 +335,7 @@ def v05_tests(
     ``centroid_shift`` is the per-sector v0.5 test (WP4, ``centroid_v5``)."""
     from refute.packs.tess import battery_v5 as v5
     from refute.packs.tess import battery_v51 as v51
+    from refute.packs.tess import battery_v51_diff as v51d
     from refute.packs.tess import power
 
     sp = plan.stronger
@@ -392,6 +393,18 @@ def v05_tests(
                 plan,
                 seed("centroid_shift", final),
             )
+        elif test.name == "aperture_depth" and plan.is_v051:
+            # WP3 (a): the large-minus-core difference on its own series, A0's error
+            test = v51d.check_aperture_depth(
+                aux.pixels if aux else [], final, plan, seed("aperture_depth", final),
+                a0_note is not None,
+            )  # fmt: skip
+        elif test.name == "systematics" and plan.is_v051:
+            # WP3 (a): the SAP-minus-expected series and the background with A0's errors
+            test = v51d.check_systematics(
+                aux.sectors if aux else [], final, plan, seed("systematics", final),
+                a0_note is not None,
+            )  # fmt: skip
         elif test.name == "aperture_depth":
             test = power.attach(
                 test, power.aperture_blocks(test, sp, seed("aperture_depth", final))

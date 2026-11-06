@@ -97,3 +97,15 @@ weights, in the real events and the pseudo-events, and its model error is the in
 same weighted information; WP3 (d)'s two INCONCLUSIVE messages carry the reason "phase-0.5 windows
 excluded: a secondary detected" when the exclusion applies; the shortcut requires all 200
 bootstrap replicates of each term.
+
+## WP3 (a): the SAP applicability rule
+
+Codex's review of the WP3 (a) draft code and of Claude's proposal to read the acceptance's "SAP
+and PDCSAP identical up to a constant factor" as "an exact affine function" (the synthetic
+generator's `SAP = 1 + CROWDSAP x (PDCSAP - 1)`): `WEAKENED`
+([wp3a-sap-review.md](wp3a-sap-review.md), SHA-256
+`f35626272200b96486517f72771f0d27ccce901643d99ea52df6f9862ff63490`). The affine reading fits the
+acceptance's intent but changes its written criterion, so it needs an amendment (the maintainer's
+decision); until then the code applies the written rule. Its objection 3 (each sector's own
+CROWDSAP in the expected SAP depth and its sensitivity simulation) was applied in the WP3 (a)
+commit.

@@ -88,12 +88,14 @@ def test_a_version_2_plan_dumps_as_before_and_selects_the_v05_registry():
     assert "v051" not in plan.model_dump(mode="json")
 
 
-def test_the_v3_registry_changes_only_the_sinusoid():
+def test_the_v3_registry_changes_only_the_sinusoid_and_the_sap_sub_check():
     assert set(TESS_REGISTRY_V3) == set(TESS_REGISTRY)
     for name in TESS_REGISTRY:
-        if name != "sinusoid":
+        if name not in ("sinusoid", "systematics"):
             assert TESS_REGISTRY_V3[name] == TESS_REGISTRY[name]
     assert TESS_REGISTRY_V3["sinusoid"] == {"P/2": "rule", "P": "rule?", "2P": "rule?"}
+    # WP3 (a): SAP conditional, the other systematics sub-checks unchanged
+    assert TESS_REGISTRY_V3["systematics"] == {**TESS_REGISTRY["systematics"], "sap": "rule?"}
 
 
 # --- the harmonic domain (#203; rows 3.5, 3.6) ---------------------------------------------

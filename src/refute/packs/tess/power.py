@@ -57,6 +57,9 @@ TESS_REGISTRY: dict[str, dict[str, str]] = {
 TESS_REGISTRY_V3: dict[str, dict[str, str]] = {
     **TESS_REGISTRY,
     "sinusoid": {"P/2": "rule", "P": "rule?", "2P": "rule?"},
+    # WP3 (a): the SAP sub-check is conditional, not applicable where SAP and PDCSAP are
+    # identical up to a constant factor (no corrected flux to compare with)
+    "systematics": {"dumps": "fraction", "sap": "rule?", "background": "rule"},
 }
 
 
