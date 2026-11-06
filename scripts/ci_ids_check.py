@@ -17,6 +17,7 @@ Usage: .venv/Scripts/python.exe scripts/ci_ids_check.py <run id> [--reference <r
 from __future__ import annotations
 
 import hashlib
+import json
 import subprocess
 import sys
 from collections import defaultdict
@@ -24,16 +25,22 @@ from collections import defaultdict
 SHARDS = ("heavy-a", "heavy-b", "heavy-c", "heavy-d", "heavy-e", "heavy-f", "rest")
 
 
-def job_ids(run: str) -> dict[str, dict[str, list[str]]]:
-    """{matrix entry: {shard: [test ids]}} from the run's logs."""
-    log = subprocess.run(
-        ["gh", "run", "view", run, "--log"],
+def _gh(*args: str) -> str:
+    return subprocess.run(
+        ["gh", *args],
         capture_output=True,
         text=True,
         encoding="utf-8",
         errors="replace",
         check=True,
     ).stdout
+
+
+def job_ids(run: str) -> dict[str, dict[str, list[str]]]:
+    """{matrix entry: {shard: [test ids]}} from the run's logs, read job by job (``gh`` refuses
+    the whole log of a run with many jobs)."""
+    jobs = json.loads(_gh("run", "view", run, "--json", "jobs"))["jobs"]
+    log = "\n".join(_gh("run", "view", "--job", str(j["databaseId"]), "--log") for j in jobs)
     out: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
     # each log line: "<job name>\t<step name>\t<timestamp> <message>"
     for line in log.splitlines():
