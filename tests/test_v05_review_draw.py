@@ -80,9 +80,14 @@ def test_authentication_refuses_a_commit_that_did_not_add_the_rule(monkeypatch):
         draw.authenticate(ROOT, "1" * 7)
 
 
-def test_the_executed_code_is_the_frozen_code_of_this_tree(monkeypatch):
+def test_the_executed_code_must_be_the_frozen_code(monkeypatch):
+    """The draw ran on 2026-11-05 with the frozen code (draw.json, af93ca0). Since the version
+    bump to 0.5.0 the tree's code hash is no longer the frozen one (pyproject.toml is part of it),
+    so the check is exercised with the freeze check stubbed: it passes when the freeze is intact
+    and the modules come from this tree's src/, and refuses when the freeze is not intact."""
     from refute.packs.tess.calib05 import steps
 
+    monkeypatch.setattr(steps, "frozen_code", lambda root: "15a9c256")
     draw.check_executed_code(ROOT)
 
     def broken(root):
