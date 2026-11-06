@@ -8,7 +8,8 @@ the true noise, the true shape and the generator's parameters).
 - Script: [forecast.py](forecast.py); output: [forecast.json](forecast.json). Run on 2026-11-06 on
   logical processors 8 to 31 (`scripts/launch_affinity.ps1`): 1,200 development curves (400 each
   of EB1, EB2 and P; seeds `refute-v051-feas:<family>:<i>`), 5 generation failures; task CPU
-  5.03 processor-hours (`.cache/v051/feasibility/cost.jsonl`): **above WP1's allocation of 4**
+  5.03 processor-hours (`forecast.json`, `task_cpu_processor_hours`, from the per-task log
+  `.cache/v051/feasibility/cost.jsonl`): **above WP1's allocation of 4**
   (1.26 times; the stop rule acts at 1.5 times), taken from the development reserve; the smoke
   run had shown 9 s per curve, the parallel run about 15 s.
 - Generator, search and plans: the frozen v0.5 code (`calib05.c1.generate`, the v0.5 candidate
@@ -29,11 +30,12 @@ alternatives leaves almost every planet decidable at the Cramer-Rao error. v0.5'
 therefore comes from the estimators and their errors (section 2 of the plan), not from the
 rule's floor.
 
-**Where the binaries' information is.** For every near-equal folded binary (depth ratio at least
-0.8, found at half the true period: 66 in EB1, 79 in EB2), the nearest planet at the found period
+**Where the binaries' information is** (`forecast.json`, `EB1_near_equal_folded` and
+`EB2_near_equal_folded`). For every near-equal folded binary (depth ratio at least 0.8, found at
+half the true period: 66 in EB1, 79 in EB2), the nearest planet at the found period
 needs the largest stellar radius the fit allowed (1.15 R_sun, 3 sigma above the generator's
 star): the eclipse lasts longer than a planet's transit at the found period can around that star.
-The closest cases (Mahalanobis distance 0.9 to 1.8) are the shorter, higher-impact eclipses. This
+The five closest in each family have Mahalanobis distances 0.9 to 1.83. This
 supports the route of the plan's section 3a, (ii): the duration warning against the
 circular-orbit maximum with the star's uncertainty, and says that its power, not a new kind of
 test, decides D1. A real estimator of the duration has an error the oracle does not have, so the

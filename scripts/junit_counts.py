@@ -10,11 +10,16 @@ counts, never invented ones; with --trace, the tests the trace of tests/conftest
 as started and not ended are named (the test that was running when the process ended).
 The exit code is then 1.
 
-Usage: python scripts/junit_counts.py <junit.xml> [--trace <trace.txt>] [--show <text>]...
+With --ids, every test ID (``classname::name``) is printed on a line ``id <test id>``, sorted,
+after a line ``ids <count> <sha256 of the sorted IDs, one per line>``: the shards of one CI run
+can then be compared from the job logs (``scripts/ci_ids_check.py``; v0.5.1 WP6, #210).
+
+Usage: python scripts/junit_counts.py <junit.xml> [--trace <trace.txt>] [--show <text>]... [--ids]
 """
 
 from __future__ import annotations
 
+import hashlib
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -41,6 +46,12 @@ def outcomes(path: Path, text: str) -> list[str]:
         for prop in case.iter("property"):
             out.append(f"    {prop.get('name', '')}={prop.get('value', '')}")
     return out
+
+
+def test_ids(path: Path) -> list[str]:
+    """Every test ID of the file, sorted (a repeated ID is kept, so a duplicate shows)."""
+    root = ET.parse(path).getroot()
+    return sorted(f"{c.get('classname', '')}::{c.get('name', '')}" for c in root.iter("testcase"))
 
 
 def unfinished(trace: Path) -> list[str]:
@@ -76,7 +87,8 @@ def main(argv: list[str]) -> int:
         print(__doc__)
         return 2
     path, shows, trace = Path(argv[0]), [], None
-    rest = argv[1:]
+    rest = [a for a in argv[1:] if a != "--ids"]
+    ids = len(rest) != len(argv) - 1
     while rest:
         if rest[0] not in ("--show", "--trace") or len(rest) < 2:
             print(__doc__)
@@ -96,6 +108,13 @@ def main(argv: list[str]) -> int:
     for text in shows:
         for line in outcomes(path, text):
             print(line)
+    if ids:
+        listed = test_ids(path)
+        text = "".join(i + "\n" for i in listed)
+        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        print(f"ids {len(listed)} {digest}")
+        for i in listed:
+            print(f"id {i}")
     return 0
 
 

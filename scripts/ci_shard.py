@@ -50,7 +50,9 @@ HEAVY = {
         # heavy-c was the lightest shard (5 to 7 min)
         "tests/test_instrumentation.py",
     ],
-    # v0.5.1 WP6 (#210): CI run 42213700298 took up to 60 min for rest (windows-2025, Python
+    # v0.5.1 WP6 (#210): CI run 42213700298 (job times read from the GitHub API on 2026-11-06,
+    # https://github.com/klucilla/refute/actions/runs/42213700298) took up to 60 min for rest
+    # (windows-2025, Python
     # 3.13); its slowest files move to two new shards, balanced by the local times per file of
     # the final v0.5 suite's JUnit XML (rest about 2385 s before; about 750, 810 and 826 s after)
     "heavy-e": [

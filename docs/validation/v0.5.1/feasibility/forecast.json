@@ -11,6 +11,18 @@
   "generated_ok": 400,
   "median_distance": 7.2764763115711935
  },
+ "EB1_near_equal_folded": {
+  "count": 66,
+  "median_distance": 4.1563335382527296,
+  "nearest_radius_at_upper_bound": 66,
+  "smallest_distances": [
+   0.9,
+   1.16,
+   1.57,
+   1.6,
+   1.74
+  ]
+ },
  "EB2": {
   "c1_prime_eligible_projection": 186,
   "d1_expected_survivors_at_projection": 7.900884925183769,
@@ -22,6 +34,18 @@
   "folded_at_half": 351,
   "generated_ok": 399,
   "median_distance": 5.84025611883904
+ },
+ "EB2_near_equal_folded": {
+  "count": 79,
+  "median_distance": 4.099117324942649,
+  "nearest_radius_at_upper_bound": 79,
+  "smallest_distances": [
+   1.05,
+   1.6,
+   1.63,
+   1.64,
+   1.83
+  ]
  },
  "P": {
   "d2_reference": "kept at least about 0.868 (the v0.5 C1 v0.4 value 0.968 minus 0.10)",
@@ -45,5 +69,6 @@
  "statuses": {
   "GENERATION_FAILURE": 5,
   "OK": 1195
- }
+ },
+ "task_cpu_processor_hours": 5.03
 }

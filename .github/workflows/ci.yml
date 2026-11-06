@@ -134,4 +134,4 @@ jobs:
         if: always()
         shell: bash
         run: |
-          uv run python scripts/junit_counts.py junit.xml --trace test-trace.txt --show test_vm_jea_integration
+          uv run python scripts/junit_counts.py junit.xml --trace test-trace.txt --show test_vm_jea_integration --ids

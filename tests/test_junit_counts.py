@@ -39,6 +39,20 @@ def test_counts_and_outcomes(tmp_path):
     ]
 
 
+def test_ids_are_listed_sorted_with_their_digest(tmp_path):
+    import hashlib
+
+    path = tmp_path / "junit.xml"
+    path.write_text(XML, encoding="utf-8")
+    out = run(str(path), "--ids")
+    assert out.returncode == 0
+    lines = out.stdout.splitlines()
+    ids = [line[3:] for line in lines if line.startswith("id ")]
+    assert ids == sorted(ids) and len(ids) == 4
+    digest = hashlib.sha256("".join(i + "\n" for i in ids).encode("utf-8")).hexdigest()
+    assert lines[1] == f"ids 4 {digest}"
+
+
 def test_usage_errors(tmp_path):
     assert run().returncode == 2
     assert run(str(tmp_path / "x.xml"), "--show").returncode == 2

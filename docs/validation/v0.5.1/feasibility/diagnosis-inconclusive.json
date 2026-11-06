@@ -39,6 +39,13 @@
    "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable": 16
   }
  },
+ "refused_pass_total_by_test": {
+  "aperture_depth": 28,
+  "event_consistency": 55,
+  "odd_even": 15,
+  "sinusoid": 19,
+  "systematics": 16
+ },
  "sinusoid_curves": {
   "no_trend": 36,
   "trend": 38

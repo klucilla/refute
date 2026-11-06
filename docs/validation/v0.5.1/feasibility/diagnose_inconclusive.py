@@ -152,9 +152,11 @@ def summarize() -> dict:
         if fits:
             worst = max(row["beta"] for row in fits.values())
             sinusoid_beta["trend" if r["truth"]["trend"] else "no_trend"].append(worst)
+    refused_total = {k: sum(v.values()) for k, v in reasons.items()}
     out = {
         "label": "development diagnosis (v0.5.1 WP3); it decides nothing",
         "curves_ok_with_identity": len(ok),
+        "refused_pass_total_by_test": refused_total,
         "refused_pass_reasons": {k: dict(v.most_common(8)) for k, v in reasons.items()},
         "sinusoid_worst_beta_median": {
             k: (sorted(v)[len(v) // 2] if v else None) for k, v in sinusoid_beta.items()

@@ -664,7 +664,9 @@ SE, V1, V2, ER and NR; D3; D5; T2b; T2c; T3a; T3b; the historical locks and clai
 - [ ] Every failed target either PASSes in the confirmation, or has an infeasibility record
       approved by the maintainer after Codex's and an independent review, or is recorded as
       outstanding for the next correction round, by the maintainer's decision.
-- [ ] Every CI job under 30 minutes, with no test deleted or skipped without its recorded reason.
+- [ ] Every CI job under 30 minutes, with no test deleted or skipped without its recorded reason;
+      every test ID of a run in exactly one shard, checked from the job logs
+      (`scripts/ci_ids_check.py`).
 - [ ] Every scope issue closed, or kept open with the part left, or moved with its reason; no
       `.cache/test-*` folder remains after the suite.
 - [ ] Gate: an independent review returns `SURVIVED`, or `WEAKENED` with its issues open.

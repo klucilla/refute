@@ -333,6 +333,23 @@ def summarize() -> dict:
             )
             < 0.02
         )
+        near = [
+            r
+            for r in elig
+            if r["truth"]["secondary_ratio"] >= 0.8
+            and abs(
+                r["found"]["period_days"]
+                / (r["truth"].get("true_period_days") or r["truth"]["period_days"])
+                - 0.5
+            )
+            < 0.02
+        ]
+        out[fam + "_near_equal_folded"] = {
+            "count": len(near),
+            "nearest_radius_at_upper_bound": sum(r["nearest"]["radius"] > 1.149 for r in near),
+            "median_distance": float(np.median([r["distance"] for r in near])) if near else None,
+            "smallest_distances": sorted(round(r["distance"], 2) for r in near)[:5],
+        }
         out[fam] = {
             "generated_ok": len(rows),
             "eligible": len(elig),
@@ -361,6 +378,13 @@ def summarize() -> dict:
         "snr15_not_detectable_fraction": len(hi_not) / max(len(hi), 1),
         "d4_reference": "INCONCLUSIVE at most 0.30",
     }
+    if COST.exists():
+        cpu = sum(
+            (json.loads(x).get("cpu") or 0.0)
+            for x in COST.read_text(encoding="utf-8").splitlines()
+            if x.strip()
+        )
+        out["task_cpu_processor_hours"] = round(cpu / 3600.0, 2)
     if C2_RECORDS.exists():
         c2 = [json.loads(x) for x in C2_RECORDS.read_text(encoding="utf-8").splitlines() if x]
         out["T2a"] = _t2a(c2)
