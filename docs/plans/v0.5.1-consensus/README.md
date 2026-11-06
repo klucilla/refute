@@ -45,3 +45,18 @@ objection goes to the maintainer.
 | 1 | [a0-round-1-answer.md](a0-round-1-answer.md) | `WEAKENED` | `6b5374b37f34e226d1f1de5c5e9a50f6859a605be3fc3fd8daf99256b5dd4e70` |
 | 2 | [a0-round-2-answer.md](a0-round-2-answer.md) | `WEAKENED` | `b480733cd0a3737735a757cdf5ee172b3a7c471caeae1dcf735d4b9e61204a46` |
 | 3 | [a0-round-3-answer.md](a0-round-3-answer.md) | `WEAKENED` | `8337c14f2fa07fad9adcdb761cd233b2c544a029ecf6f74a7979ee86c82e76d8` |
+
+## A0 under amendment 3 (the maintainer's decision on the cross-coverage correlation)
+
+Three rounds in one conversation on 2026-11-06; **adopted** with `SURVIVED` in the third.
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [a0-amendment3-round-1-answer.md](a0-amendment3-round-1-answer.md) | `WEAKENED` | `d994e244655e04dcdb45701707ed8cfcb53a8f658dffdc19a301903118964205` |
+| 2 | [a0-amendment3-round-2-answer.md](a0-amendment3-round-2-answer.md) | `WEAKENED` | `a8bff73fb2423d99c05717ed223722ae39d213db35021c0d565263d2997ae4a3` |
+| 3 | [a0-amendment3-round-3-answer.md](a0-amendment3-round-3-answer.md) | `SURVIVED` | `e4008c6466bbff4761b27b078ea2ee806fe7976049b932316e33c1bbd62efcdd` |
+
+## The duration warning (amendment 3, item 2)
+
+Codex's check of the development measurement and its recommendation (item (d), the same as
+Claude's): [duration-recommendation.md](duration-recommendation.md) (SHA-256 `f782e82edf17875f05dbab095512f0056112fa3df7ccc171b60345010b17f9f1`).

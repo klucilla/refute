@@ -53,3 +53,33 @@ real survivors will be more than forecast.
   `odd_even` against the full depth needs SNR at least `2 (3 + 1.645) = 9.29`).
 
 `method_status: not_validated`.
+
+## The duration warning on development data (amendment 3, item 2 (b), 2026-11-06)
+
+Script: [duration_measurement.py](duration_measurement.py); output:
+[duration-measurement.json](duration-measurement.json). Development data only: 200 planets of each
+of the C1 families P and PG (190 generated in PG), and 100 binaries folded at half their period per
+case (depth ratio 1.0, 0.9, 0.7 x target SNR 10, 20, 30; the C1 EB1 geometry, impact parameter 0 to
+0.8); the TIC star of the generator (radius and mass errors 5 %); the choices the acceptance text
+does not fix yet are stated in the script's docstring; 2.31 processor-hours. It decides nothing.
+
+| Group | Not detectable (Wilson 95 %) | Warning, all | Warning among detectable |
+|---|---|---|---|
+| P | 0.71 (0.64 to 0.77); 0.61 at target SNR >= 15 | 0.005 (1 of 200) | 0.0 |
+| PG | 0.83 (0.77 to 0.88) | 0.0 (0 of 190) | 0.0 |
+| binaries, SNR 10 | 0.95 to 0.98 | 0.25 to 0.35 | 0.2 to 0.8 (few detectable) |
+| binaries, SNR 20 | 0.67 to 0.75 | 0.44 to 0.51 | 0.48 to 0.68 |
+| binaries, SNR 30 | 0.53 to 0.71 | 0.44 to 0.52 | 0.52 to 0.62 |
+
+By impact parameter (all binary cases at SNR 20 and 30): a warning on 92 to 100 % of the binaries
+with b below 0.3, 17 to 32 % with b from 0.3 to 0.6, none with b from 0.6 to 0.8. Median
+`sigma_Tmax / T_max` 5.3 % (the TIC errors), median `sigma_T / T_max` 1.1 to 5.8 % (by SNR). Under
+the per-geometry effect (each binary's own duration minus `T_max(P)`, reported only, never used to
+retune), 0 to 8 % detectable, the effect negative for 16 to 26 % of the binaries.
+
+**Reading.** The warning has power as a measurement (about half the folded binaries at SNR 20 and
+above, nearly all of the central ones, with one false warning in 390 planets), but as a decisive
+warning test the sensitivity rule refuses its PASS on most planets (71 % of P), because the TIC's
+5 % radius and mass errors alone almost fill the margin the alternative leaves; D2 allows a loss of
+about 13 %. By amendment 3, item 2 (c) and (d), this goes to the maintainer with Claude's and
+Codex's recommendation.

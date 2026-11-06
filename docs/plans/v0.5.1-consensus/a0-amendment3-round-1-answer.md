@@ -1,0 +1,28 @@
+# A0 verdict: **WEAKENED**
+
+The revised text resolves the original choice of a cross-coverage correlation and includes the required fallback to INCONCLUSIVE. I cannot mark A0 **SURVIVED** yet because the shortcut test can accept pooling without establishing compatibility, and the correlation definition still leaves consequential details open.
+
+1. **Critical, the homogeneity test does not establish compatibility.** It takes a tail probability of at least 0.05 as evidence to pool. That is a failure to reject heterogeneity, not evidence that the differences are small enough for pooling to preserve calibrated errors. The claim that correlated windows can only make the shortcut too cautious is also not generally valid: the stratum-specific and pooled correlations are estimated from shared data, and the test terms share windows. Their differences and the terms in \(Q\) are dependent, so the stated chi-square reference distribution need not hold. Dependence can make the test accept too often.
+
+   **Exact text change:** Replace “the shortcut is taken when its upper tail probability is at least 0.05” with a prespecified compatibility rule that sets a practically acceptable correlation-difference margin and tests whether the correlations fall within it. Define how uncertainty and dependence between estimates are handled. Remove the claim that dependence can only cause excess refusals. Add a pass condition requiring the resulting shortcut decision and group pulls to be validated on the heterogeneous and homogeneous A0.7 cases.
+
+2. **Important, the cross-correlation is not fully specified for event ordering or segment pooling.** The text says “at grid position \(k\) steps later (or earlier)” for strata \(a,b\), but does not say whether \(a\) is the earlier event’s stratum, whether the correlation averages both directions, or whether \(r_{k,a,b}=r_{k,b,a}\). For a multivariate time series, the cross-correlation can depend on direction. “Each value standardized by its own stratum’s mean and standard deviation” also does not say whether those are computed per segment or across the sector before segment pairs are pooled. The cross-correlations are raw signed correlations; only the separate \(n_\mathrm{eff}\) formula applies a positive-part operation. Pairwise estimates can also produce a non-positive-semidefinite covariance matrix or a negative variance.
+
+   **Exact text change:** Define \(a\) as the earlier event’s stratum and \(b\) as the later event’s stratum at positive lag \(k\), define the standardization level and the precise pooling calculation, and state whether negative cross-correlations are retained. Add a rule that an invalid covariance matrix or non-positive group variance has no calibrated error and makes the decisive test INCONCLUSIVE.
+
+3. **Important, A0.7 is plausible but does not yet demonstrate the promised sabotage as an acceptance criterion.** Adding a longer-timescale AR(1) component near segment edges can produce different structures for edge and full-coverage windows. But the row does not fix how “same standard deviation” applies to the combined noise, or require reporting the realized cross-stratum correlations and the forced-pooling sabotage result. Its stated pull requirement tests the rule; the separate sabotage sentence says pooling fails, but does not give a measurable pass condition for that failure.
+
+   **Exact text change:** Specify that the *total marginal standard deviation* is held equal across coverage strata, define which pseudo-windows count as edge windows, and add A0.7 criteria to report the realized \(r_{k,a,b}\) differences and require forced pooling to fail the specified group-pull band in the heterogeneous case.
+
+## Duration effect
+
+There is no single positive minimum folded-binary duration excess across the stated impact-parameter range. A principled effect can be defined **per injected binary geometry** as its generated folded duration minus \(T_\max(P)\), with impact parameter, depth ratio, period, and stellar parameters fixed in advance. A lower bound or quantile could also be used, but only after specifying the target binary population. Across \(b=0\) to \(0.8\), that effect can be much smaller than the central \(T_\max(2P)-T_\max(P)\) value and can be negative, so it cannot support a universal positive minimum.
+
+Changing that effect definition does **not** change the warning threshold or the approximate \(\sigma_{T_\max}\) floor of 5.3% of \(T_\max\). It changes which injections count as detectable. Below the current roughly 26% central effect, fewer binaries meet the sensitivity condition; at sufficiently high impact parameter, duration excess may not be a useful route at all. The measurement must therefore report, on development data only:
+
+- For **P and PG separately**, the fraction left INCONCLUSIVE under the proposed definition, with the effect definition and reason recorded, and the resulting impact on D2’s kept and REFUTED rates.
+- For every binary depth-ratio and SNR case, the fraction declared detectable and the warning rate both **among detectable injections and among all injections**, with results by impact parameter. Conditional power alone could hide a definition that makes most binaries “not detectable.”
+- A comparison against the current \(T_\max(2P)\) definition on the same development cases, without using those results to retune the definition.
+
+I would choose amendment 3 item **(c)** only if the proposed fixed effect leaves D2 intact and the binaries show useful power under both the detectable fraction and unconditional reporting. Otherwise, item **(d)** is the supported outcome under the maintainer’s stated condition.
+
