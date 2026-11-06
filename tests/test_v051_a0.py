@@ -133,3 +133,54 @@ def test_the_shortcut_needs_three_segments():
     t, flux = _sector(5)
     ws = _windows(t, flux)
     assert a0.shortcut(ws, 1, seed=1) is False
+
+
+# --- Codex's end-of-round review of round 3 ----------------------------------------------------
+
+
+def test_a_short_series_keeps_its_dependence_in_the_effective_count():
+    # 12 windows of a slow ramp: fewer than 20 lag pairs, but a clear positive correlation; n_eff
+    # uses every available pair, so the stratum has no calibrated error (n_eff < 10)
+    ws = [a0.Window(1, 0, i, 2000.0 + i, 0.1 * i, 1.0, "full") for i in range(12)]
+    sigma, info = a0.stratum_error(ws, 1, "full")
+    assert info["r_k"][0] is not None and info["r_k"][0] > 0.5
+    assert info["n_eff"] < 10 and sigma is None
+
+
+def test_the_shortcut_needs_every_bootstrap_replicate(monkeypatch):
+    rng = np.random.default_rng(7)
+    ws = [
+        a0.Window(1, seg, i, 2000.0 + 10 * seg + 0.2 * i, float(rng.standard_normal()), 1.0, "full")
+        for seg in range(3)
+        for i in range(40)
+    ]
+    assert a0.shortcut(ws, 1, seed=3) is True
+    original = a0.lag_correlation
+    state = {"missed": False}
+
+    def one_missing(windows, k, a, b, min_pairs=a0.MIN_PAIRS):
+        if a is None and not state["missed"]:
+            state["missed"] = True
+            return None, 0
+        return original(windows, k, a, b, min_pairs)
+
+    monkeypatch.setattr(a0, "lag_correlation", one_missing)
+    assert a0.shortcut(ws, 1, seed=3) is False
+
+
+def test_the_matched_estimator_is_weighted_least_squares():
+    rng = np.random.default_rng(11)
+    t = np.arange(0.0, 1.0, CADENCE)
+    err = np.where(np.arange(t.size) % 3 == 0, 3e-3, 1e-3)
+    flux = 1.0 - 2e-3 * (np.abs(t - 0.5) < 0.05) + err * rng.standard_normal(t.size)
+
+    def shape(dt):
+        return (np.abs(dt) < 0.05).astype(float)
+
+    _, core = a0.matched_measure(t, flux, err, shape, 0.1, 0.1 / CADENCE, 0.5)
+    amp, cov, info = core(0.5)
+    sel = np.abs(t - 0.5) <= 0.1
+    w, s = 1.0 / err[sel] ** 2, shape(t[sel] - 0.5)
+    assert info == pytest.approx(float(np.sum(w * s * s)))
+    assert amp == pytest.approx(float(np.sum(w * s * (1.0 - flux[sel])) / np.sum(w * s * s)))
+    assert cov > 0.9

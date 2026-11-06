@@ -161,10 +161,14 @@ def pearson(x: np.ndarray, y: np.ndarray) -> float | None:
     return float(np.sum(dx * dy) / den) if den > 0 else None
 
 
-def lag_correlation(windows: Sequence[Window], k: int, a: str | None, b: str | None):
-    """(r_{k,a,b}, number of pairs) on the standardized values; r is None below MIN_PAIRS."""
+def lag_correlation(
+    windows: Sequence[Window], k: int, a: str | None, b: str | None, min_pairs: int = MIN_PAIRS
+):
+    """(r_{k,a,b}, number of pairs) on the standardized values; r is None below ``min_pairs``
+    (MIN_PAIRS for the group rule's correlations; the per-stratum ``n_eff`` uses every
+    available pair, Codex's end-of-round review of round 3)."""
     x, y, _ = _pairs(_standardized(windows), k, a, b)
-    r = pearson(x, y) if x.size >= MIN_PAIRS else None
+    r = pearson(x, y) if x.size >= max(2, min_pairs) else None
     return r, int(x.size)
 
 
@@ -185,7 +189,7 @@ def stratum_error(windows: Sequence[Window], sector: int, st: str) -> tuple[floa
     with ``n_eff < 10``; the diagnostics."""
     sub = [w for w in windows if w.sector == sector and w.stratum == st]
     n = len(sub)
-    rk = [lag_correlation(sub, k, st, st)[0] for k in range(1, MAX_LAG + 1)]
+    rk = [lag_correlation(sub, k, st, st, min_pairs=2)[0] for k in range(1, MAX_LAG + 1)]
     neff = effective_count(n, rk)
     info = {"n": n, "n_eff": neff, "r_k": rk}
     if n < 2 or neff < MIN_EFFECTIVE or n - n / neff <= 0:
@@ -253,7 +257,8 @@ def shortcut(windows: Sequence[Window], sector: int, seed: int) -> bool:
             if r_ab is not None and r_all is not None:
                 diffs[(k, a, b)].append(r_ab - r_all)
     for values in diffs.values():
-        if len(values) < BOOTSTRAP // 2:
+        # every one of the BOOTSTRAP replicates must be usable (Codex's end-of-round review)
+        if len(values) < BOOTSTRAP:
             return False
         lo, hi = np.percentile(values, [2.5, 97.5])
         if lo < -MARGIN or hi > MARGIN:
@@ -383,14 +388,17 @@ def empirical_events(flat, candidate, events, event_params, cadence_days, exclud
     return out, windows, details
 
 
-def matched_measure(time, flux, shape, half_span, expected_in, min_coverage):
-    """WP3 (d)'s estimator at any centre: the least-squares amplitude of the unit-depth shape
-    ``shape(dt)`` against the flattened baseline 1, ``sum s (1 - f) / sum s^2`` over the cadences
-    within ``half_span`` of the centre, with its coverage (cadences where the shape is positive
-    over ``expected_in``); None below ``min_coverage``. Also returns ``sum s^2`` (the white-noise
-    information)."""
+def matched_measure(time, flux, flux_err, shape, half_span, expected_in, min_coverage):
+    """WP3 (d)'s estimator at any centre: the **weighted** least-squares amplitude of the
+    unit-depth shape ``shape(dt)`` against the flattened baseline 1, with the cadence weights
+    ``w = 1 / err^2``: ``sum w s (1 - f) / sum w s^2`` over the cadences within ``half_span`` of
+    the centre, with its coverage (cadences where the shape is positive over ``expected_in``);
+    None below ``min_coverage``. ``measure_with_info`` also returns the weighted information
+    ``sum w s^2``, whose inverse root is the model error (Codex's end-of-round review)."""
+    err = np.where(np.isfinite(flux_err) & (flux_err > 0), flux_err, np.nanmedian(flux_err))
+    weight = 1.0 / np.square(err)
 
-    def measure(centre: float):
+    def core(centre: float):
         lo = np.searchsorted(time, centre - half_span, side="left")
         hi = np.searchsorted(time, centre + half_span, side="right")
         if hi <= lo:
@@ -399,19 +407,15 @@ def matched_measure(time, flux, shape, half_span, expected_in, min_coverage):
         n_in = int(np.sum(sv > 0))
         if n_in < min_coverage * expected_in:
             return None
-        info = float(np.sum(sv * sv))
+        w = weight[lo:hi]
+        info = float(np.sum(w * sv * sv))
         if not info > 0:
             return None
-        amp = float(np.sum(sv * (1.0 - flux[lo:hi])) / info)
-        return amp, n_in / expected_in
+        amp = float(np.sum(w * sv * (1.0 - flux[lo:hi])) / info)
+        return amp, n_in / expected_in, info
 
-    def measure_with_info(centre: float):
-        got = measure(centre)
-        if got is None:
-            return None
-        lo = np.searchsorted(time, centre - half_span, side="left")
-        hi = np.searchsorted(time, centre + half_span, side="right")
-        sv = shape(time[lo:hi] - centre)
-        return got[0], got[1], float(np.sum(sv * sv))
+    def measure(centre: float):
+        got = core(centre)
+        return None if got is None else (got[0], got[1])
 
-    return measure, measure_with_info
+    return measure, core

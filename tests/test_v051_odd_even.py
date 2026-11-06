@@ -82,3 +82,22 @@ def test_the_result_carries_its_sensitivity_and_the_full_depth_alternative():
     assert block["alternative"] == 1500.0
     assert block["rule_id"] == "gaussian-1"
     assert r.metrics["estimator"].startswith("matched trapezoid")
+
+
+def test_inconclusive_results_carry_the_phase_half_exclusion_reason(monkeypatch):
+    from refute.packs.tess import a0
+
+    plan = _plan()
+    reason = "phase-0.5 windows excluded: a secondary detected"
+    flat, cand = _flat(30, 1500e-6), _cand(1500e-6)
+    monkeypatch.setattr(a0, "stratum_error", lambda *a, **k: (None, {}))
+    r = v51.check_odd_even(flat, cand, plan.gauntlet, plan.stronger, CADENCE, True, seed=1)
+    assert r.status is TestStatus.INCONCLUSIVE and reason in r.message
+    assert r.metrics["inconclusive_class"] == "not_enough_data"
+    r = v51.check_odd_even(flat, cand, plan.gauntlet, plan.stronger, CADENCE, False, seed=1)
+    assert reason not in r.message
+    monkeypatch.undo()
+    monkeypatch.setattr(a0, "group_variance", lambda *a, **k: None)
+    r = v51.check_odd_even(flat, cand, plan.gauntlet, plan.stronger, CADENCE, True, seed=1)
+    assert r.status is TestStatus.INCONCLUSIVE and reason in r.message
+    assert r.metrics["inconclusive_class"] == "insufficient_sensitivity"

@@ -79,3 +79,21 @@ Codex's three rounds on amendment 5's text (the conditional exclusion, A0.8, A0.
 | 1 | [amendment5-round-1-answer.md](amendment5-round-1-answer.md) | `WEAKENED` | `5920c65bb4de507e372f9b211f9e80960a0d4e4e3edf18749c33ea871abdb526` |
 | 2 | [amendment5-round-2-answer.md](amendment5-round-2-answer.md) | `WEAKENED` | `e1b40169fac9e7d2cb913df630bce6eeca708fb2a37eac093939c6a890aae4fa` |
 | 3 | [amendment5-round-3-answer.md](amendment5-round-3-answer.md) | `SURVIVED` | `e5e85665791969c877b74806ea31075183d29c92f33566e49e7864e4ecc2ac5a` |
+
+## End-of-round reviews and the WP3 (c) review
+
+Codex's review of WP3 (c)'s revision 1 (cited by the acceptance, WP3 (c)):
+[wp3c-review.md](wp3c-review.md) (SHA-256 `8b00804907c1a6537b93ff16b22dabf91b476d5bb3b753052bac6676edbd179c`).
+
+| Round | Commits | File | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 2 | round 2's commits | [round-2-end-review.md](round-2-end-review.md) | `WEAKENED` | `b916abebf64b6e6c505f564a1da9490df15902d5b31b1076667dfc127bac6040` |
+| 3 | 86e0a1d to 2cd5a5f | [round-3-end-review.md](round-3-end-review.md) | `REFUTED` (4 objections) | `7f2989d624253da6f02a2af35da13611ca2e0536224a9f9ec1361ecf41ab68c1` |
+
+Round 3's four objections were all applied in the commit that adds its review: A0's per-stratum
+`n_eff` uses every available within-segment pair (the 20-pair minimum stays only for the group
+rule's correlations); WP3 (d)'s matched amplitude is weighted least squares with the cadence
+weights, in the real events and the pseudo-events, and its model error is the inverse root of the
+same weighted information; WP3 (d)'s two INCONCLUSIVE messages carry the reason "phase-0.5 windows
+excluded: a secondary detected" when the exclusion applies; the shortcut requires all 200
+bootstrap replicates of each term.

@@ -281,7 +281,6 @@ def check_odd_even(flat, candidate, gp, sp, cadence_days, exclude_phase_half, se
     #185's alternative (the full depth)."""
     from refute.core.sensitivity import gaussian_probability
     from refute.packs.tess import a0
-    from refute.packs.tess.detrend import robust_sigma
     from refute.packs.tess.events import event_epochs
 
     params, ev = gp.odd_even, gp.events
@@ -293,7 +292,7 @@ def check_odd_even(flat, candidate, gp, sp, cadence_days, exclude_phase_half, se
     period = candidate.period
     expected_in = duration / cadence_days
     measure, measure_info = a0.matched_measure(
-        time, flux, shape, duration / 2.0, expected_in, ev.min_coverage
+        time, flux, flat.flux_err, shape, duration / 2.0, expected_in, ev.min_coverage
     )
     windows = a0.pseudo_windows(
         time,
@@ -306,11 +305,6 @@ def check_odd_even(flat, candidate, gp, sp, cadence_days, exclude_phase_half, se
         measure,
         exclude_phase_half=exclude_phase_half,
     )
-    off = np.abs(np.mod(time - t0 + 0.5 * period, period) - 0.5 * period) > duration
-    sigma_point = {}
-    for s in np.unique(sector):
-        sel = (sector == s) & off
-        sigma_point[int(s)] = robust_sigma(1.0 - flux[sel]) if sel.any() else float("nan")
     rows, metas, cache = [], [], {}
     for epoch in event_epochs(time, period, t0, 0.0):
         centre = t0 + epoch * period
@@ -327,14 +321,15 @@ def check_odd_even(flat, candidate, gp, sp, cadence_days, exclude_phase_half, se
         emp = cache[key]
         if emp is None:
             continue
-        model = sigma_point[meta.sector] / math.sqrt(info)
+        model = 1.0 / math.sqrt(info)  # the weighted information of the same estimator
         rows.append((int(epoch), amp, max(model, emp)))
         metas.append(meta)
     odd = [i for i, r in enumerate(rows) if r[0] % 2 != 0]
     even = [i for i, r in enumerate(rows) if r[0] % 2 == 0]
+    note = " (phase-0.5 windows excluded: a secondary detected)" if exclude_phase_half else ""
     if len(odd) < params.min_transits_each or len(even) < params.min_transits_each:
         return _inconclusive_odd_even(
-            f"not enough measured transits: {len(even)} even, {len(odd)} odd",
+            f"not enough measured transits: {len(even)} even, {len(odd)} odd{note}",
             "not_enough_data",
             thresholds,
             n_odd=len(odd),
@@ -357,7 +352,7 @@ def check_odd_even(flat, candidate, gp, sp, cadence_days, exclude_phase_half, se
     var = a0.group_variance(weights, sigmas, metas, windows, h, pooled)
     if var is None:
         return _inconclusive_odd_even(
-            "no calibrated error for the odd/even difference",
+            f"no calibrated error for the odd/even difference{note}",
             "insufficient_sensitivity",
             thresholds,
         )
