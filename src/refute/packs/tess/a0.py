@@ -381,3 +381,37 @@ def empirical_events(flat, candidate, events, event_params, cadence_days, exclud
     )
     details = {f"{sec}:{st}": info for (sec, st), (_, info) in cache.items()}
     return out, windows, details
+
+
+def matched_measure(time, flux, shape, half_span, expected_in, min_coverage):
+    """WP3 (d)'s estimator at any centre: the least-squares amplitude of the unit-depth shape
+    ``shape(dt)`` against the flattened baseline 1, ``sum s (1 - f) / sum s^2`` over the cadences
+    within ``half_span`` of the centre, with its coverage (cadences where the shape is positive
+    over ``expected_in``); None below ``min_coverage``. Also returns ``sum s^2`` (the white-noise
+    information)."""
+
+    def measure(centre: float):
+        lo = np.searchsorted(time, centre - half_span, side="left")
+        hi = np.searchsorted(time, centre + half_span, side="right")
+        if hi <= lo:
+            return None
+        sv = shape(time[lo:hi] - centre)
+        n_in = int(np.sum(sv > 0))
+        if n_in < min_coverage * expected_in:
+            return None
+        info = float(np.sum(sv * sv))
+        if not info > 0:
+            return None
+        amp = float(np.sum(sv * (1.0 - flux[lo:hi])) / info)
+        return amp, n_in / expected_in
+
+    def measure_with_info(centre: float):
+        got = measure(centre)
+        if got is None:
+            return None
+        lo = np.searchsorted(time, centre - half_span, side="left")
+        hi = np.searchsorted(time, centre + half_span, side="right")
+        sv = shape(time[lo:hi] - centre)
+        return got[0], got[1], float(np.sum(sv * sv))
+
+    return measure, measure_with_info

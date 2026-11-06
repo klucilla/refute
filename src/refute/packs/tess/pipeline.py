@@ -368,7 +368,12 @@ def v05_tests(
             a0_note = "phase-0.5 windows excluded: a secondary detected"
     out: list[TestResult] = []
     for test in tests:
-        if test.name == "odd_even":
+        if test.name == "odd_even" and plan.is_v051:
+            # v0.5.1 WP3 (d): the matched-trapezoid estimator with A0's errors
+            test = v51.check_odd_even(
+                flat, final, gp, sp, cadence, a0_note is not None, seed("odd_even", final)
+            )
+        elif test.name == "odd_even":
             # v0.5: measured again on the red-noise events (whatever the corrections switch),
             # so that its sensitivity rests on calibrated errors (Codex's review of round 2)
             test = check_odd_even(events, gp.odd_even)

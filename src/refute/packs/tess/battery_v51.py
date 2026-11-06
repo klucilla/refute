@@ -217,3 +217,189 @@ def check_sinusoid(
         coverage_unit="out-of-transit cadences",
         sensitivity=blocks,
     )
+
+
+# --- odd_even with an efficient estimator (WP3 (d)) ----------------------------------------
+
+
+def _unit_trapezoid(duration: float, ingress_fraction: float):
+    half = duration / 2.0
+    ramp = max(ingress_fraction * duration, 1e-6)
+
+    def shape(dt):
+        return np.clip((half - np.abs(dt)) / ramp, 0.0, 1.0)
+
+    return shape
+
+
+def _fit_shape(time, flux, candidate):
+    """The trapezoid fitted once on all events (depth, total duration, ingress fraction, epoch
+    shift free) on the flattened curve; returns (depth, duration, ingress_fraction, shift)."""
+    from scipy.optimize import least_squares
+
+    from refute.packs.tess import synthetic as syn
+
+    p, t0, dur0 = candidate.period, candidate.t0, candidate.duration
+    d0 = max(candidate.depth, 1e-6)
+    dt = np.mod(time - t0 + 0.5 * p, p) - 0.5 * p
+    near = np.abs(dt) <= 1.5 * dur0
+    tn, yn = time[near], flux[near]
+
+    def resid(x):
+        depth, dur, f, shift = x
+        return (1.0 - syn.trapezoid(tn, p, t0 + shift, depth, dur, f)) - yn
+
+    best = None
+    for f0 in (0.05, 0.2):
+        fit = least_squares(
+            resid,
+            [d0, dur0, f0, 0.0],
+            bounds=([0.0, 0.3 * dur0, 0.01, -0.3 * dur0], [10 * d0, 3.0 * dur0, 0.5, 0.3 * dur0]),
+            x_scale=[d0, 0.1 * dur0, 0.05, 0.05 * dur0],
+            max_nfev=300,
+        )
+        if best is None or fit.cost < best.cost:
+            best = fit
+    return tuple(float(v) for v in best.x)
+
+
+def _inconclusive_odd_even(message, cls, thresholds, **metrics):
+    return TestResult(
+        "odd_even",
+        TestStatus.INCONCLUSIVE,
+        Severity.FATAL,
+        message,
+        metrics={**metrics, "inconclusive_class": cls},
+        thresholds=thresholds,
+    )
+
+
+def check_odd_even(flat, candidate, gp, sp, cadence_days, exclude_phase_half, seed):
+    """WP3 (d), version 3: the odd/even depth difference with each group's amplitude of the
+    fitted trapezoid (a matched filter against the flattened baseline), the errors from A0 on
+    the same estimator at pseudo-event windows; v0.4's rejection region (``max_sigma``) and
+    #185's alternative (the full depth)."""
+    from refute.core.sensitivity import gaussian_probability
+    from refute.packs.tess import a0
+    from refute.packs.tess.detrend import robust_sigma
+    from refute.packs.tess.events import event_epochs
+
+    params, ev = gp.odd_even, gp.events
+    thresholds = {"max_sigma": params.max_sigma, "min_transits_each": params.min_transits_each}
+    time, flux, sector = flat.time, flat.flux, flat.sector
+    _, duration, ingress, shift = _fit_shape(time, flux, candidate)
+    shape = _unit_trapezoid(duration, ingress)
+    t0 = candidate.t0 + shift
+    period = candidate.period
+    expected_in = duration / cadence_days
+    measure, measure_info = a0.matched_measure(
+        time, flux, shape, duration / 2.0, expected_in, ev.min_coverage
+    )
+    windows = a0.pseudo_windows(
+        time,
+        sector,
+        period,
+        t0,
+        candidate.duration,
+        ev.baseline_outer_durations,
+        ev.min_coverage,
+        measure,
+        exclude_phase_half=exclude_phase_half,
+    )
+    off = np.abs(np.mod(time - t0 + 0.5 * period, period) - 0.5 * period) > duration
+    sigma_point = {}
+    for s in np.unique(sector):
+        sel = (sector == s) & off
+        sigma_point[int(s)] = robust_sigma(1.0 - flux[sel]) if sel.any() else float("nan")
+    rows, metas, cache = [], [], {}
+    for epoch in event_epochs(time, period, t0, 0.0):
+        centre = t0 + epoch * period
+        got = measure_info(centre)
+        if got is None:
+            continue
+        amp, cov, info = got
+        meta = a0.event_meta(time, sector, centre, cov, ev.min_coverage)
+        if meta is None:
+            continue
+        key = (meta.sector, meta.stratum)
+        if key not in cache:
+            cache[key] = a0.stratum_error(windows, *key)[0]
+        emp = cache[key]
+        if emp is None:
+            continue
+        model = sigma_point[meta.sector] / math.sqrt(info)
+        rows.append((int(epoch), amp, max(model, emp)))
+        metas.append(meta)
+    odd = [i for i, r in enumerate(rows) if r[0] % 2 != 0]
+    even = [i for i, r in enumerate(rows) if r[0] % 2 == 0]
+    if len(odd) < params.min_transits_each or len(even) < params.min_transits_each:
+        return _inconclusive_odd_even(
+            f"not enough measured transits: {len(even)} even, {len(odd)} odd",
+            "not_enough_data",
+            thresholds,
+            n_odd=len(odd),
+            n_even=len(even),
+        )
+
+    def group(idx):
+        w = np.array([1.0 / rows[i][2] ** 2 for i in idx])
+        w = w / np.sum(w)
+        return float(np.sum(w * np.array([rows[i][1] for i in idx]))), w
+
+    m_odd, w_odd = group(odd)
+    m_even, w_even = group(even)
+    weights = np.zeros(len(rows))
+    weights[odd] = w_odd
+    weights[even] = -w_even
+    h = a0.half_width(candidate.duration, ev.baseline_outer_durations)
+    pooled = {s: a0.shortcut(windows, s, seed + s) for s in {m.sector for m in metas}}
+    sigmas = [r[2] for r in rows]
+    var = a0.group_variance(weights, sigmas, metas, windows, h, pooled)
+    if var is None:
+        return _inconclusive_odd_even(
+            "no calibrated error for the odd/even difference",
+            "insufficient_sensitivity",
+            thresholds,
+        )
+    sigma = math.sqrt(var)
+    diff = m_odd - m_even
+    zscore = abs(diff) / sigma
+    alternative = sp.odd_even_alternative_depth_fraction * candidate.depth
+    block = rule_block(
+        "odd/even depth difference",
+        alternative * 1e6,
+        "ppm",
+        "gaussian-1",
+        gaussian_probability(alternative, sigma, params.max_sigma),
+    )
+    var_odd = a0.group_variance(
+        w_odd, [sigmas[i] for i in odd], [metas[i] for i in odd], windows, h, pooled
+    )
+    var_even = a0.group_variance(
+        w_even, [sigmas[i] for i in even], [metas[i] for i in even], windows, h, pooled
+    )
+    metrics = {
+        "depth_odd_ppm": m_odd * 1e6,
+        "depth_even_ppm": m_even * 1e6,
+        "depth_odd_err_ppm": math.sqrt(var_odd) * 1e6 if var_odd else None,
+        "depth_even_err_ppm": math.sqrt(var_even) * 1e6 if var_even else None,
+        "difference_sigma": zscore,
+        "n_odd": len(odd),
+        "n_even": len(even),
+        "estimator": "matched trapezoid amplitude (WP3 (d)); errors from A0",
+        "fitted_duration_days": duration,
+        "fitted_ingress_fraction": ingress,
+        "phase_half_windows_excluded": bool(exclude_phase_half),
+    }
+    status = TestStatus.FAIL if zscore >= params.max_sigma else TestStatus.PASS
+    return TestResult(
+        "odd_even",
+        status,
+        Severity.FATAL,
+        f"odd/even depths differ by {zscore:.1f} sigma ({len(odd)} odd, {len(even)} even)",
+        metrics=metrics,
+        thresholds=thresholds,
+        coverage=len(rows),
+        coverage_unit="measured transits",
+        sensitivity={"main": block},
+    )

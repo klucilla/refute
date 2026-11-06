@@ -84,7 +84,9 @@ def test_version_2_per_event_tests_are_unchanged_by_version_3_code():
     _, _, _, t2 = _attack("P", 1, v2)
     _, _, _, t3 = _attack("P", 1, v3)
     assert "a0_not_measured" not in str(t2["single_event"].metrics)
-    assert t2["odd_even"].metrics == t3["odd_even"].metrics  # odd_even not yet on A0 (WP3 (d))
+    # WP3 (d): version 3 measures odd_even with its own estimator; version 2 keeps v0.5's
+    assert "estimator" not in t2["odd_even"].metrics
+    assert t3["odd_even"].metrics["estimator"].startswith("matched trapezoid")
     assert np.isfinite(len(t3))
 
 
