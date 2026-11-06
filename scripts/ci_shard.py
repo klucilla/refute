@@ -33,7 +33,9 @@ ROOT = Path(__file__).resolve().parents[1]
 # Python 3.13 rest to 1015 s and heavy-b to 943 s (PR #157, run 39085740367), over the
 # 15-minute target; a fourth shard, heavy-c, balances them by the local times per file.
 HEAVY = {
-    "heavy-a": ["tests/test_ebcatalog_own_tic_e2e.py"],
+    # v0.5.1 (#210): run 42279642640 reached 29.5 min after the v0.5.1 tests entered rest;
+    # test_v051_wp2 (196 s locally) joins the lightest heavy shard (heavy-a, 138 s)
+    "heavy-a": ["tests/test_ebcatalog_own_tic_e2e.py", "tests/test_v051_wp2.py"],
     # stage 1, X1b (2026-10-21): the 32 engine controls of spec B pushed heavy-a to 15.6 and
     # 22.3 min on windows-2025 (run 39696817920, from 11.9 before); they now run in parallel
     # workers and in a shard of their own

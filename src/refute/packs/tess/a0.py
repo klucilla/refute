@@ -4,8 +4,9 @@ revision 2 as adopted under amendment 3).
 - **Pseudo-event windows.** An event's window is its in-event span with its baseline bands, of
   half-width ``h = T / 2 + baseline_outer_durations x T``. In each sector, windows are centred on a
   regular grid of spacing ``2 h`` from the sector's first cadence (so they are disjoint); a window
-  is kept when it shares no cadence with the window of a real event or of the phase-0.5 window of
-  the candidate. Each kept window is measured by the caller's estimator (``measure``), the same as
+  is kept when it shares no cadence with the window of a real event of the candidate; the
+  phase-0.5 window is excluded only when the candidate's own secondary_eclipse detects a secondary
+  (amendment 5). Each kept window is measured by the caller's estimator (``measure``), the same as
   for a real event, with its coverage ``c`` (in-event cadences over a full event's); its **coverage
   stratum** is ``full`` (``c >= 0.9``), ``partial`` (``0.7 <= c < 0.9``) or ``minimal``
   (``min_coverage <= c < 0.7``).
@@ -87,9 +88,9 @@ def pseudo_windows(
     exclude_phase_half: bool = True,
 ) -> list[Window]:
     """The kept, measured pseudo-event windows of every sector. ``measure(centre)`` returns
-    ``(value, coverage)`` or ``None`` when the window cannot be measured. ``exclude_phase_half``
-    is A0 as adopted (True); False exists only for a development measurement of an option that
-    the maintainer has not approved."""
+    ``(value, coverage)`` or ``None`` when the window cannot be measured. ``exclude_phase_half``:
+    amendment 5 makes the phase-0.5 exclusion conditional (the caller passes True only when the
+    candidate's own secondary_eclipse detected a secondary)."""
     h = half_width(duration, baseline_outer_durations)
     out: list[Window] = []
     for s in np.unique(sector):
@@ -327,7 +328,7 @@ def box_measure(time, flux, duration, baseline_gap_durations, baseline_outer_dur
     return measure
 
 
-def empirical_events(flat, candidate, events, event_params, cadence_days):
+def empirical_events(flat, candidate, events, event_params, cadence_days, exclude_phase_half=False):
     """The events of ``events`` (``EventDepths``) with A0's per-event errors: each event's error
     is ``max(model error, the corrected empirical error of its sector and coverage stratum)``;
     an event whose sector and stratum have ``n_eff < 10`` is dropped (counted in ``dropped`` as
@@ -352,6 +353,7 @@ def empirical_events(flat, candidate, events, event_params, cadence_days):
         event_params.baseline_outer_durations,
         event_params.min_coverage,
         measure,
+        exclude_phase_half=exclude_phase_half,
     )
     expected_in = candidate.duration / cadence_days
     cache: dict[tuple[int, str], tuple[float | None, dict]] = {}

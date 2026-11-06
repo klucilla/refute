@@ -350,12 +350,22 @@ def v05_tests(
     seed = power.candidate_seed
     aux = data.aux
     per_event = events
+    secondary = v5.check_secondary_two_sided(
+        events, events_half, gp.secondary_eclipse, sp, seed("secondary_eclipse", final)
+    )
+    a0_note = None
     if plan.is_v051:
         # v0.5.1 A0 (docs/plans/v0.5.1-acceptance.md): the per-event tests use the empirical
-        # errors of pseudo-event windows; the v0.5 path is unchanged
+        # errors of pseudo-event windows; the phase-0.5 windows enter unless the candidate's
+        # own secondary_eclipse detects a secondary (amendment 5); the v0.5 path is unchanged
         from refute.packs.tess import a0
 
-        per_event, _, _ = a0.empirical_events(flat, final, events, gp.events, cadence)
+        exclude = secondary.status is TestStatus.FAIL
+        per_event, _, _ = a0.empirical_events(
+            flat, final, events, gp.events, cadence, exclude_phase_half=exclude
+        )
+        if exclude:
+            a0_note = "phase-0.5 windows excluded: a secondary detected"
     out: list[TestResult] = []
     for test in tests:
         if test.name == "odd_even":
@@ -364,9 +374,7 @@ def v05_tests(
             test = check_odd_even(events, gp.odd_even)
             test = power.attach(test, power.odd_even_blocks(test, final.depth, sp))
         elif test.name == "secondary_eclipse":
-            test = v5.check_secondary_two_sided(
-                events, events_half, gp.secondary_eclipse, sp, seed("secondary_eclipse", final)
-            )
+            test = secondary
         elif test.name == "plausibility":
             test = power.attach(test, power.plausibility_blocks(test))
         elif test.name == "centroid_shift":
@@ -399,8 +407,8 @@ def v05_tests(
             test = power.attach(test, power.catalog_blocks(test, "catalogued eclipsing binaries"))
         out.append(test)
     out += [
-        v5.check_single_event(per_event, sp, seed("single_event", final)),
-        v5.check_event_consistency(per_event, sp),
+        _with_a0_note(v5.check_single_event(per_event, sp, seed("single_event", final)), a0_note),
+        _with_a0_note(v5.check_event_consistency(per_event, sp), a0_note),
         v5.check_edge_events(flat.time, events, final.duration, gp.snr.min_snr, sp),
         (
             v51.check_sinusoid(data.lc, final, sp, plan.v051, seed("sinusoid", final))
@@ -410,6 +418,16 @@ def v05_tests(
         v5.check_duty_cycle(final, sp),
     ]
     return out
+
+
+def _with_a0_note(result: TestResult, note: str | None) -> TestResult:
+    """A per-event test left INCONCLUSIVE after A0 excluded the phase-0.5 windows says so
+    (amendment 5); any other result is unchanged."""
+    from dataclasses import replace
+
+    if note is None or result.status is not TestStatus.INCONCLUSIVE:
+        return result
+    return replace(result, message=f"{result.message} ({note})")
 
 
 def _bls_gate(

@@ -88,14 +88,17 @@ def test_version_2_per_event_tests_are_unchanged_by_version_3_code():
     assert np.isfinite(len(t3))
 
 
-def test_short_periods_leave_a0_without_windows_a_recorded_gap():
-    # docs/validation/v0.5.1/feasibility/a0-window-availability.json: for P below about 1.5 d the
-    # exclusions of the real events and of phase 0.5 cover the period; the events are not measured
-    # (a finding taken to the maintainer, #208); this test records the behaviour, not a goal
+def test_short_periods_keep_windows_unless_a_secondary_excludes_phase_half():
+    # amendment 5: the phase-0.5 windows enter unless the candidate's secondary_eclipse detects a
+    # secondary; with both exclusions, a 1-day period keeps no window (the finding of
+    # docs/validation/v0.5.1/feasibility/a0-window-availability.json)
     from refute.packs.tess import synthetic as syn
 
     t = syn.sector_times(2000.0)
     flux = 1.0 + 1e-3 * np.random.default_rng(0).standard_normal(t.size)
     measure = a0.box_measure(t, flux, 0.08, 0.25, 1.5, 0.5, 2.0 / 1440.0)
-    windows = a0.pseudo_windows(t, np.ones(t.size, int), 1.0, 2000.3, 0.08, 1.5, 0.5, measure)
-    assert windows == []
+    ones = np.ones(t.size, int)
+    excluded = a0.pseudo_windows(t, ones, 1.0, 2000.3, 0.08, 1.5, 0.5, measure, True)
+    included = a0.pseudo_windows(t, ones, 1.0, 2000.3, 0.08, 1.5, 0.5, measure, False)
+    assert excluded == []
+    assert len(included) >= 20

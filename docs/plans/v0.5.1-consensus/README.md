@@ -60,3 +60,22 @@ Three rounds in one conversation on 2026-11-06; **adopted** with `SURVIVED` in t
 
 Codex's check of the development measurement and its recommendation (item (d), the same as
 Claude's): [duration-recommendation.md](duration-recommendation.md) (SHA-256 `f782e82edf17875f05dbab095512f0056112fa3df7ccc171b60345010b17f9f1`).
+
+## A0 window availability (amendment 5)
+
+Codex's two answers on the finding that A0 kept no window for short periods, both unchanged:
+[a0-availability-answer-1.md](a0-availability-answer-1.md) (SHA-256 `ee88efa1c53bb46106e5ceb9ea933a1ddd027ae62c028a0f6cb2ae9c5f6dca4d`) recommended keeping A0's
+rule and accepting the loss (it read Claude's option (d) as amendment 4, which is about
+`duration_excess`); after the measurement of option (a),
+[a0-availability-answer-2.md](a0-availability-answer-2.md) (SHA-256 `64e0b25b51bb9acc2be3bba72487b2b12436a3a4b71e64d46943170b30af6507`) recommended option (a),
+with the caveat that a phase-0.5 signal can bias the variance and the correlations in either
+direction. The maintainer approved option (a) with a conditional exclusion (amendment 5).
+
+Codex's three rounds on amendment 5's text (the conditional exclusion, A0.8, A0.9, the sabotage):
+**adopted** with `SURVIVED` in the third.
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [amendment5-round-1-answer.md](amendment5-round-1-answer.md) | `WEAKENED` | `5920c65bb4de507e372f9b211f9e80960a0d4e4e3edf18749c33ea871abdb526` |
+| 2 | [amendment5-round-2-answer.md](amendment5-round-2-answer.md) | `WEAKENED` | `e1b40169fac9e7d2cb913df630bce6eeca708fb2a37eac093939c6a890aae4fa` |
+| 3 | [amendment5-round-3-answer.md](amendment5-round-3-answer.md) | `SURVIVED` | `e5e85665791969c877b74806ea31075183d29c92f33566e49e7864e4ecc2ac5a` |
