@@ -292,3 +292,52 @@ def candidate_seed(name: str, candidate: Candidate) -> int:
     return seed_for(
         name, round(candidate.period, 9), round(candidate.t0, 7), round(candidate.depth, 9)
     )
+
+
+def period_alias_plan(plan: TessTestPlan) -> TessTestPlan:
+    """A version-3 plan's period_alias with ``v051.period_alias_harmonics`` harmonics (WP3 (c));
+    the v0.4 and v0.5 plans keep theirs."""
+    alias = plan.gauntlet.period_alias.model_copy(
+        update={"sine_harmonics": plan.v051.period_alias_harmonics}
+    )
+    gauntlet = plan.gauntlet.model_copy(update={"period_alias": alias})
+    return plan.model_copy(update={"gauntlet": gauntlet})
+
+
+def period_alias_blocks_v51(
+    lc: LightCurveData, candidate: Candidate, plan: TessTestPlan, check, seed: int
+) -> dict:
+    """WP3 (c), version 3: ``v051.period_alias_realizations`` seeded sinusoids at the candidate's
+    period (peak to trough = the depth) on the candidate's own times and errors; detectable when
+    the exact one-sided 95 % lower bound (Clopper-Pearson) of the failure fraction is at least
+    ``v051.period_alias_required_lower_bound``. ``probability`` is that lower bound."""
+    from scipy.stats import beta
+
+    cp = plan.v051
+    n = cp.period_alias_realizations
+    rng = np.random.default_rng(seed)
+    amplitude = candidate.depth / 2.0
+    errors = np.where(
+        np.isfinite(lc.flux_err) & (lc.flux_err > 0), lc.flux_err, np.nanmedian(lc.flux_err)
+    )
+    failures = 0
+    for _ in range(n):
+        phase = rng.uniform(0.0, 2.0 * math.pi)
+        model = 1.0 + amplitude * np.cos(
+            2.0 * math.pi * (lc.time - candidate.t0) / candidate.period + phase
+        )
+        flux = model + errors * rng.standard_normal(lc.time.size)
+        if check(replace(lc, flux=flux), candidate, plan).status is TestStatus.FAIL:
+            failures += 1
+    lower = float(beta.ppf(0.05, failures, n - failures + 1)) if failures > 0 else 0.0
+    block = rule_block(
+        "sinusoid at the candidate's period, peak to trough = depth",
+        candidate.depth * 1e6,
+        "ppm",
+        "alias-sim-2",
+        lower,
+        required=cp.period_alias_required_lower_bound,
+    )
+    block["failures"], block["realizations"] = failures, n
+    block["failure_fraction"] = failures / n
+    return {"main": block}

@@ -362,6 +362,10 @@ class V051Params(_Model):
     sinusoid_harmonic_max_period_days: float = Field(20.0, gt=0)
     sinusoid_extra_frequencies: int = Field(3, ge=0)
     sinusoid_extra_min_snr: float = Field(4.0, gt=0)
+    # WP3 (c): period_alias with more harmonics; its sensitivity with an exact lower bound
+    period_alias_harmonics: int = Field(4, ge=1)
+    period_alias_realizations: int = Field(100, ge=10)
+    period_alias_required_lower_bound: float = Field(0.9, gt=0, lt=1)
 
 
 class DiscoveryParams(_Model):

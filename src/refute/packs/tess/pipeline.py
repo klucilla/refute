@@ -396,6 +396,16 @@ def v05_tests(
                 test, aux.sectors if aux else [], final, plan, seed("systematics", final)
             )
             test = power.attach(test, blocks)
+        elif test.name == "period_alias" and plan.is_v051:
+            # WP3 (c): version 3 measures again with more harmonics, and its sensitivity with
+            # an exact lower bound over more realizations (the v0.5 path below is unchanged)
+            alias_plan = power.period_alias_plan(plan)
+            test = check_period_alias(data.lc, final, alias_plan)
+            if test.status is TestStatus.PASS:
+                blocks = power.period_alias_blocks_v51(
+                    data.lc, final, alias_plan, check_period_alias, seed("period_alias", final)
+                )
+                test = power.attach(test, blocks)
         elif test.name == "period_alias" and test.status is TestStatus.PASS:
             blocks = power.period_alias_blocks(
                 data.lc, final, plan, check_period_alias, seed("period_alias", final)
