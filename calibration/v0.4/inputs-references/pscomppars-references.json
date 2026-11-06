@@ -1,0 +1,120 @@
+{
+  "schema": "refute-v04-pscomppars-references-1",
+  "decision": "the maintainer, 2026-11-06 (#199)",
+  "table": "NASA Exoplanet Archive, Planetary Systems Composite Parameters (pscomppars)",
+  "query_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2Chostname%2Ctic_id%2Cpl_orbper%2Cpl_orbper_reflink%2Cpl_orbpererr1%2Cpl_tranmid%2Cpl_tranmid_reflink%2Cpl_trandep%2Cpl_trandep_reflink%2Cpl_trandur%2Cpl_trandur_reflink%2Csy_tmag%2Csy_tmag_reflink%2Cra%2Cra_reflink%2Cdec%2Cdisc_refname+from+pscomppars+where+pl_name+in+%28%27WASP-12+b%27%29+order+by+pl_name&format=csv",
+  "retrieved_utc": "2026-11-06T11:46:54Z",
+  "bytes": 1227,
+  "sha256": "cc1ecf827d5079d922548c9fef44fbccda932e0f4326f9a4ae0816dfa3055c90",
+  "file": "pscomppars-references.csv",
+  "column_names_checked_in": [
+    "https://exoplanetarchive.ipac.caltech.edu/docs/API_PS_columns.html",
+    "TAP_SCHEMA.columns where table_name = 'pscomppars'"
+  ],
+  "frozen_input": {
+    "path": "calibration/v0.4/inputs/pscomppars.csv",
+    "sha256": "bb9e29d46336e6a6934bf1a65f07d44d517f49df2ff3dab41f3df31c323fd5a5",
+    "retrieved_utc": "2026-10-29T21:24:34Z (calibration/v0.4/inputs.json)"
+  },
+  "planets_source": "calibration/v0.4/selection/targets.yaml, the target of kind planet",
+  "value_reference_columns": {
+    "pl_orbper": "pl_orbper_reflink",
+    "pl_orbpererr1": "pl_orbper_reflink",
+    "pl_tranmid": "pl_tranmid_reflink",
+    "pl_trandep": "pl_trandep_reflink",
+    "pl_trandur": "pl_trandur_reflink",
+    "sy_tmag": "sy_tmag_reflink",
+    "ra": "ra_reflink",
+    "dec": "ra_reflink"
+  },
+  "value_reference_columns_note": "pl_orbpererr1 and dec have no reference column of their own; the period's and the 'RA Reference' columns are paired with them by the agent's inference",
+  "columns_without_a_reference_column": [
+    "pl_name",
+    "hostname",
+    "tic_id",
+    "tran_flag",
+    "sy_pnum"
+  ],
+  "planets": [
+    {
+      "pl_name": "WASP-12 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=HEBB_ET_AL__2009 href=https://ui.adsabs.harvard.edu/abs/2009ApJ...693.1920H/abstract target=ref> Hebb et al. 2009 </a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "1.09141890100",
+          "today": "1.09141890100",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=LEONARDI_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024A&A...686A..84L/abstract target=ref>Leonardi et al. 2024</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00000001800",
+          "today": "0.00000001800",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=LEONARDI_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024A&A...686A..84L/abstract target=ref>Leonardi et al. 2024</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2457607.51930500",
+          "today": "2457607.51930500",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=LEONARDI_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024A&A...686A..84L/abstract target=ref>Leonardi et al. 2024</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "1.53777921",
+          "today": "1.53777921",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "3.0010000",
+          "today": "3.0010000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=LEONARDI_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024A&A...686A..84L/abstract target=ref>Leonardi et al. 2024</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "11.0967000",
+          "today": "11.0967000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "97.6366450",
+          "today": "97.6366450",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "29.6722662",
+          "today": "29.6722662",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "planets": 1,
+    "returned": 1,
+    "missing": [],
+    "values": 8,
+    "values_changed_since_frozen": 0,
+    "used_values_without_a_reference": []
+  }
+}

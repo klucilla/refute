@@ -24,6 +24,23 @@ about Zenodo: [sources/zenodo-2026-10-24.md](sources/zenodo-2026-10-24.md) (read
    [calibration/v0.4/DATA_LICENSE.md](../calibration/v0.4/DATA_LICENSE.md), with sources. The
    exception is not a general change of this rule, and it grants no right the sources do not
    grant. Recorded in issue #177.
+   **Exception, restricted to v0.5 (the maintainer's decision of 2026-11-05).** The v0.5
+   calibration's third-party files (`calibration/v0.5/eb_catalog.csv`, with 3 Gaia DR3 rows
+   (CC BY-NC 3.0 IGO) and TESS-EB references that are TIC numbers only; the frozen inputs
+   `calibration/v0.5/inputs/toi.csv`, `pscomppars.csv` and `target_lists.html`; and
+   `calibration/v0.5/inputs-references/pscomppars-references.csv`, added on 2026-11-06) stay in
+   the repository and in the release's Zenodo archive, although rule 3 keeps Gaia DR3 rows off
+   Zenodo. Reasoning: they are attachments and frozen inputs of the locked C3 claim, whose hashes
+   a third-party reproduction checks, and the references the archive asks to cite. Each component
+   keeps its own terms, stated in [calibration/v0.5/DATA_LICENSE.md](../calibration/v0.5/DATA_LICENSE.md),
+   with sources. No v0.5 data record is published on Zenodo. The exception is not a general
+   change of this rule, and it grants no right the sources do not grant. Recorded in issue #199.
+   The third-party files of earlier phases that are kept in the repository (the v0.1 and v0.2
+   pool snapshots, the v0.2 and v0.4 catalog attachments and the v0.4 frozen inputs) have been in
+   each release archive since they were committed, and stay there, with the references file of
+   the v0.4 known-planet control added on 2026-11-06; each is listed, with the record that states
+   its terms, in [third-party-data.md](third-party-data.md) (the maintainer's decisions of
+   2026-11-06, #199).
 4. **A license in every record.** Zenodo requires one for every public file (S2). **Synthetic
    datasets: CC-BY-4.0** (Zenodo's default, S5; approved by the maintainer on 2026-10-24); any
    other content gets its license decided in its own record.

@@ -1,0 +1,839 @@
+{
+  "schema": "refute-v05-pscomppars-references-1",
+  "decision": "the maintainer, 2026-11-06 (#199)",
+  "table": "NASA Exoplanet Archive, Planetary Systems Composite Parameters (pscomppars)",
+  "query_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name%2Chostname%2Ctic_id%2Cpl_orbper%2Cpl_orbper_reflink%2Cpl_orbpererr1%2Cpl_tranmid%2Cpl_tranmid_reflink%2Cpl_trandep%2Cpl_trandep_reflink%2Cpl_trandur%2Cpl_trandur_reflink%2Csy_tmag%2Csy_tmag_reflink%2Cra%2Cra_reflink%2Cdec%2Cdisc_refname+from+pscomppars+where+pl_name+in+%28%27HAT-P-50+b%27%2C%27TrES-2+b%27%2C%27TOI-677+b%27%2C%27TOI-5795+b%27%2C%27WASP-22+b%27%2C%27TOI-1750+b%27%2C%27TOI-139+b%27%2C%27TOI-4308+b%27%2C%27TOI-4087+b%27%2C%27TOI-2031+A+b%27%2C%27TOI-4529+b%27%29+order+by+pl_name&format=csv",
+  "retrieved_utc": "2026-11-06T11:22:34Z",
+  "bytes": 11383,
+  "sha256": "cb82841c63a90c3ba8b4dcca8412ef7342d90d3c501d35b704fcbf24a5815614",
+  "file": "pscomppars-references.csv",
+  "column_names_checked_in": [
+    "https://exoplanetarchive.ipac.caltech.edu/docs/API_PS_columns.html",
+    "TAP_SCHEMA.columns where table_name = 'pscomppars'"
+  ],
+  "frozen_input": {
+    "path": "calibration/v0.5/inputs/pscomppars.csv",
+    "sha256": "bb9e29d46336e6a6934bf1a65f07d44d517f49df2ff3dab41f3df31c323fd5a5",
+    "retrieved_utc": "2026-11-04T13:07:54Z (calibration/v0.5/inputs.json)"
+  },
+  "planets_source": "calibration/v0.5/claim-targets.yaml, targets of kind planet",
+  "value_reference_columns": {
+    "pl_orbper": "pl_orbper_reflink",
+    "pl_orbpererr1": "pl_orbper_reflink",
+    "pl_tranmid": "pl_tranmid_reflink",
+    "pl_trandep": "pl_trandep_reflink",
+    "pl_trandur": "pl_trandur_reflink",
+    "sy_tmag": "sy_tmag_reflink",
+    "ra": "ra_reflink",
+    "dec": "ra_reflink"
+  },
+  "columns_without_a_reference_column": [
+    "pl_name",
+    "hostname",
+    "tic_id",
+    "tran_flag",
+    "sy_pnum"
+  ],
+  "planets": [
+    {
+      "pl_name": "HAT-P-50 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=HARTMAN_ET_AL__2015 href=https://ui.adsabs.harvard.edu/abs/2015AJ....150..168H/abstract target=ref>Hartman et al. 2015</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "3.12201090000",
+          "today": "3.12201090000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=HARTMAN_ET_AL__2015 href=https://ui.adsabs.harvard.edu/abs/2015AJ....150..168H/abstract target=ref>Hartman et al. 2015</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00000650000",
+          "today": "0.00000650000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=HARTMAN_ET_AL__2015 href=https://ui.adsabs.harvard.edu/abs/2015AJ....150..168H/abstract target=ref>Hartman et al. 2015</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2456285.90993000",
+          "today": "2456285.90993000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=HARTMAN_ET_AL__2015 href=https://ui.adsabs.harvard.edu/abs/2015AJ....150..168H/abstract target=ref>Hartman et al. 2015</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "0.63049170",
+          "today": "0.63049170",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "3.6744000",
+          "today": "3.6744000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=HARTMAN_ET_AL__2015 href=https://ui.adsabs.harvard.edu/abs/2015AJ....150..168H/abstract target=ref>Hartman et al. 2015</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "11.3155000",
+          "today": "11.3155000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "118.0634379",
+          "today": "118.0634379",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "12.1393474",
+          "today": "12.1393474",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TrES-2 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=O_DONOVAN_ET_AL__2006 href=https://ui.adsabs.harvard.edu/abs/2006ApJ...651L..61O/abstract target=ref> O'Donovan et al. 2006 </a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "2.47063000000",
+          "today": "2.47063000000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2017 href=https://ui.adsabs.harvard.edu/abs/2017AJ....153..136S/abstract target=ref>Stassun et al. 2017</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00001000000",
+          "today": "0.00001000000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2017 href=https://ui.adsabs.harvard.edu/abs/2017AJ....153..136S/abstract target=ref>Stassun et al. 2017</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2454955.76336000",
+          "today": "2454955.76336000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=ESTEVES_ET_AL__2015 href=https://ui.adsabs.harvard.edu/abs/2015ApJ...804..150E/abstract target=ref>Esteves et al. 2015</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "1.60000000",
+          "today": "1.60000000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2017 href=https://ui.adsabs.harvard.edu/abs/2017AJ....153..136S/abstract target=ref>Stassun et al. 2017</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "1.7425900",
+          "today": "1.7425900",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=MORTON_ET_AL__2016 href=https://ui.adsabs.harvard.edu/abs/2016ApJ...822...86M/abstract target=ref>Morton et al. 2016</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "10.8540000",
+          "today": "10.8540000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "286.8085258",
+          "today": "286.8085258",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "49.3164211",
+          "today": "49.3164211",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-677 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=JORD_AACUTE_N_ET_AL__2020 href=https://ui.adsabs.harvard.edu/abs/2020AJ....159..145J/abstract target=ref>Jord&aacute;n et al. 2020</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "11.23659850000",
+          "today": "11.23659850000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=HU_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024AJ....167..175H/abstract target=ref>Hu et al. 2024</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00000190000",
+          "today": "0.00000190000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=HU_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024AJ....167..175H/abstract target=ref>Hu et al. 2024</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2458547.47449000",
+          "today": "2458547.47449000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=HU_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024AJ....167..175H/abstract target=ref>Hu et al. 2024</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "0.94140000",
+          "today": "0.94140000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "2.5350000",
+          "today": "2.5350000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=HU_ET_AL__2024 href=https://ui.adsabs.harvard.edu/abs/2024AJ....167..175H/abstract target=ref>Hu et al. 2024</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "9.2714010",
+          "today": "9.2714010",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "144.1193594",
+          "today": "144.1193594",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "-50.4630933",
+          "today": "-50.4630933",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-5795 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=MANNI_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...701A.230M/abstract target=ref>Manni et al. 2025</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "6.14063250000",
+          "today": "6.14063250000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=MANNI_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...701A.230M/abstract target=ref>Manni et al. 2025</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00000540000",
+          "today": "0.00000540000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=MANNI_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...701A.230M/abstract target=ref>Manni et al. 2025</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2459770.67397000",
+          "today": "2459770.67397000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=MANNI_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...701A.230M/abstract target=ref>Manni et al. 2025</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "0.24694322",
+          "today": "0.24694322",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "3.4070000",
+          "today": "3.4070000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=MANNI_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025A&A...701A.230M/abstract target=ref>Manni et al. 2025</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "10.1872000",
+          "today": "10.1872000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "304.8687820",
+          "today": "304.8687820",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "-7.5476595",
+          "today": "-7.5476595",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "WASP-22 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=MAXTED_ET_AL__2010 href=https://ui.adsabs.harvard.edu/abs/2010AJ....140.2007M/abstract target=ref> Maxted et al. 2010 </a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "3.53269000000",
+          "today": "3.53269000000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2017 href=https://ui.adsabs.harvard.edu/abs/2017AJ....153..136S/abstract target=ref>Stassun et al. 2017</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00001000000",
+          "today": "0.00001000000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2017 href=https://ui.adsabs.harvard.edu/abs/2017AJ....153..136S/abstract target=ref>Stassun et al. 2017</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2456850.43601000",
+          "today": "2456850.43601000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=KOKORI_ET_AL__2023 href=https://ui.adsabs.harvard.edu/abs/2023ApJS..265....4K/abstract target=ref>Kokori et al. 2023</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "1.00000000",
+          "today": "1.00000000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2017 href=https://ui.adsabs.harvard.edu/abs/2017AJ....153..136S/abstract target=ref>Stassun et al. 2017</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "3.4802400",
+          "today": "3.4802400",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=ANDERSON_ET_AL__2011 href=https://ui.adsabs.harvard.edu/abs/2011A%26A...534A..16A/abstract target=ref> Anderson et al. 2011 </a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "11.1850000",
+          "today": "11.1850000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "52.8180374",
+          "today": "52.8180374",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "-23.8197924",
+          "today": "-23.8197924",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-1750 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=LAFARGA_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026MNRAS.548ag512L/abstract target=ref>Lafarga et al. 2026</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "11.33727129656",
+          "today": "11.33727129656",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=LAFARGA_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026MNRAS.548ag512L/abstract target=ref>Lafarga et al. 2026</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00004122430",
+          "today": "0.00004122430",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=LAFARGA_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026MNRAS.548ag512L/abstract target=ref>Lafarga et al. 2026</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2458700.16158506",
+          "today": "2458700.16158506",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=LAFARGA_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026MNRAS.548ag512L/abstract target=ref>Lafarga et al. 2026</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "0.11940452",
+          "today": "0.11940452",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "2.8857877",
+          "today": "2.8857877",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=LAFARGA_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026MNRAS.548ag512L/abstract target=ref>Lafarga et al. 2026</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "11.7077000",
+          "today": "11.7077000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "240.3019781",
+          "today": "240.3019781",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "68.9373001",
+          "today": "68.9373001",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-139 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "11.07085000000",
+          "today": "11.07085000000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00002400000",
+          "today": "0.00002400000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2458334.89060000",
+          "today": "2458334.89060000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "0.11497328",
+          "today": "0.11497328",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "2.1937617",
+          "today": "2.1937617",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "9.3636000",
+          "today": "9.3636000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "336.4024144",
+          "today": "336.4024144",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "-34.9097131",
+          "today": "-34.9097131",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-4308 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "9.15120100000",
+          "today": "9.15120100000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00003600000",
+          "today": "0.00003600000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2458333.42840000",
+          "today": "2458333.42840000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=MISTRY_ET_AL_2023 href=https://ui.adsabs.harvard.edu/abs/2023AJ....166....9M/abstract target=ref>Mistry et al. 2023</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "0.10740000",
+          "today": "0.10740000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "2.6160000",
+          "today": "2.6160000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "10.3390000",
+          "today": "10.3390000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "327.7530693",
+          "today": "327.7530693",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "-43.5623642",
+          "today": "-43.5623642",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-4087 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=YEE_ET_AL__2023 href=https://ui.adsabs.harvard.edu/abs/2023ApJS..265....1Y/abstract target=ref>Yee et al. 2023</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "3.17748350000",
+          "today": "3.17748350000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=YEE_ET_AL__2023 href=https://ui.adsabs.harvard.edu/abs/2023ApJS..265....1Y/abstract target=ref>Yee et al. 2023</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00000094000",
+          "today": "0.00000094000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=YEE_ET_AL__2023 href=https://ui.adsabs.harvard.edu/abs/2023ApJS..265....1Y/abstract target=ref>Yee et al. 2023</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2459244.56641400",
+          "today": "2459244.56641400",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=YEE_ET_AL__2023 href=https://ui.adsabs.harvard.edu/abs/2023ApJS..265....1Y/abstract target=ref>Yee et al. 2023</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "1.15650000",
+          "today": "1.15650000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=YEE_ET_AL__2023 href=https://ui.adsabs.harvard.edu/abs/2023ApJS..265....1Y/abstract target=ref>Yee et al. 2023</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "2.9842000",
+          "today": "2.9842000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=YEE_ET_AL__2023 href=https://ui.adsabs.harvard.edu/abs/2023ApJS..265....1Y/abstract target=ref>Yee et al. 2023</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "11.2961000",
+          "today": "11.2961000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "217.9257785",
+          "today": "217.9257785",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "83.3727061",
+          "today": "83.3727061",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-2031 A b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract target=ref>Yee et al. 2025</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "5.71548654000",
+          "today": "5.71548654000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract target=ref>Yee et al. 2025</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00000076000",
+          "today": "0.00000076000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract target=ref>Yee et al. 2025</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2459806.02913500",
+          "today": "2459806.02913500",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract target=ref>Yee et al. 2025</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "1.10100000",
+          "today": "1.10100000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract target=ref>Yee et al. 2025</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "4.0270000",
+          "today": "4.0270000",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=YEE_ET_AL_2025 href=https://ui.adsabs.harvard.edu/abs/2025ApJS..280...30Y/abstract target=ref>Yee et al. 2025</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "10.7609000",
+          "today": "10.7609000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "331.1178077",
+          "today": "331.1178077",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "81.5659509",
+          "today": "81.5659509",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    },
+    {
+      "pl_name": "TOI-4529 b",
+      "returned": true,
+      "in_frozen": true,
+      "disc_refname": "<a refstr=POULTOURTZIDIS_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026A&A...707A.106P/abstract target=ref>Poultourtzidis et al. 2026</a>",
+      "values": [
+        {
+          "column": "pl_orbper",
+          "frozen": "5.87957700000",
+          "today": "5.87957700000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=POULTOURTZIDIS_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026A&A...707A.106P/abstract target=ref>Poultourtzidis et al. 2026</a>"
+        },
+        {
+          "column": "pl_orbpererr1",
+          "frozen": "0.00001100000",
+          "today": "0.00001100000",
+          "same_as_frozen": true,
+          "reference_column": "pl_orbper_reflink",
+          "reference": "<a refstr=POULTOURTZIDIS_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026A&A...707A.106P/abstract target=ref>Poultourtzidis et al. 2026</a>"
+        },
+        {
+          "column": "pl_tranmid",
+          "frozen": "2459701.33290000",
+          "today": "2459701.33290000",
+          "same_as_frozen": true,
+          "reference_column": "pl_tranmid_reflink",
+          "reference": "<a refstr=POULTOURTZIDIS_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026A&A...707A.106P/abstract target=ref>Poultourtzidis et al. 2026</a>"
+        },
+        {
+          "column": "pl_trandep",
+          "frozen": "0.13527622",
+          "today": "0.13527622",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandep_reflink",
+          "reference": "<a refstr=EXOFOP href=https://exofop.ipac.caltech.edu/tess/view_toi.php target=ref>ExoFOP</a>"
+        },
+        {
+          "column": "pl_trandur",
+          "frozen": "2.2539712",
+          "today": "2.2539712",
+          "same_as_frozen": true,
+          "reference_column": "pl_trandur_reflink",
+          "reference": "<a refstr=LAFARGA_ET_AL_2026 href=https://ui.adsabs.harvard.edu/abs/2026MNRAS.548ag512L/abstract target=ref>Lafarga et al. 2026</a>"
+        },
+        {
+          "column": "sy_tmag",
+          "frozen": "10.1406000",
+          "today": "10.1406000",
+          "same_as_frozen": true,
+          "reference_column": "sy_tmag_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "ra",
+          "frozen": "16.9688462",
+          "today": "16.9688462",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        },
+        {
+          "column": "dec",
+          "frozen": "12.8809549",
+          "today": "12.8809549",
+          "same_as_frozen": true,
+          "reference_column": "ra_reflink",
+          "reference": "<a refstr=STASSUN_ET_AL__2019 href=https://ui.adsabs.harvard.edu/abs/2019AJ....158..138S/abstract target=ref>TICv8</a>"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "planets": 11,
+    "returned": 11,
+    "missing": [],
+    "values": 88,
+    "values_changed_since_frozen": 0,
+    "used_values_without_a_reference": []
+  }
+}
