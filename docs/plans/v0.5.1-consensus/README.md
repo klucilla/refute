@@ -29,3 +29,8 @@ amendment 1 (2026-11-06, 14:14 to 14:20 UTC, a new conversation): `WEAKENED`, 7 
 critical), all applied as the acceptance documents' revision 1 (the one revision before code the
 plan's stop rule allows): [acceptance-review-1.md](acceptance-review-1.md) (SHA-256
 `67fc49966e5410cdb5c8667afea4629b97f92443f753f552dbf85bd8d1aefe4d`).
+
+Codex's review of the proposed revision 2 of A0 (2026-11-06, a recorded deviation from the plan's
+stop rule 1): `WEAKENED`, 3 critical and 1 important objection; it requires the maintainer's
+disposition before any A0 code: [acceptance-review-2.md](acceptance-review-2.md) (SHA-256
+`0c49b83772b77f8a728277c6d8fe77557347d84f93be5e0a466f8ea43b8597eb`).
