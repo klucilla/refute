@@ -62,7 +62,7 @@ TESS_REGISTRY_V3: dict[str, dict[str, str]] = {
 
 def registry_for(plan: TessTestPlan) -> dict[str, dict[str, str]]:
     """The registry of a plan's battery: v0.5.1's for discovery version 3, v0.5's otherwise."""
-    return TESS_REGISTRY_V3 if plan.v051 else TESS_REGISTRY
+    return TESS_REGISTRY_V3 if plan.is_v051 else TESS_REGISTRY
 
 
 def attach(result: TestResult, blocks: dict[str, dict[str, Any]] | None) -> TestResult:

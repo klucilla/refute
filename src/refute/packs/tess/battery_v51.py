@@ -5,7 +5,7 @@ them. A version-3 claim runs these versions where they exist.
 
 - ``check_sinusoid`` (WP3 (b), #203): the sinusoid test per harmonic (P/2, P, 2P), each a
   sub-check applied only inside its declared domain (period below
-  ``corrections.sinusoid_harmonic_max_period_days``), the star's other variability modelled by
+  ``v051.sinusoid_harmonic_max_period_days``), the star's other variability modelled by
   up to ``sinusoid_extra_frequencies`` sinusoids found by iterative prewhitening (amplitude
   signal-to-noise above ``sinusoid_extra_min_snr``, frequencies outside ``1 / T_span`` of every
   tested harmonic). The rejection region and the alternative are v0.5's.
@@ -20,7 +20,7 @@ import numpy as np
 from refute.core.sensitivity import not_applicable_block, rule_block
 from refute.core.verdict import Severity, TestResult, TestStatus
 from refute.packs.tess.battery_v5 import _beta, _box_after, _inconclusive, _sinusoid_power
-from refute.packs.tess.params import CorrectionsParams, StrongerParams
+from refute.packs.tess.params import StrongerParams, V051Params
 from refute.packs.tess.types import Candidate, LightCurveData
 
 HARMONICS = (("P/2", 0.5), ("P", 1.0), ("2P", 2.0))
@@ -79,7 +79,7 @@ def check_sinusoid(
     raw: LightCurveData,
     candidate: Candidate,
     sp: StrongerParams,
-    cp: CorrectionsParams,
+    cp: V051Params,
     seed: int,
 ) -> TestResult:
     """Warning when the undetrended flux, transits masked, holds a sinusoid at an applicable

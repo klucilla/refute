@@ -352,11 +352,11 @@ class StrongerParams(_Model):
         return self
 
 
-class CorrectionsParams(_Model):
-    """The v0.5.1 section of a test plan (docs/plans/v0.5.1-acceptance.md): the parameters of the
-    corrected tests. Present only with discovery version 3, which also needs ``stronger``; a plan
-    without it dumps exactly as before (issue #30). The provenance of each default is in the
-    acceptance documents' provenance table."""
+class V051Params(_Model):
+    """The v0.5.1 section ``v051`` of a test plan (docs/plans/v0.5.1-acceptance.md): the
+    parameters of the corrected tests. Present only with discovery version 3, which also needs
+    ``stronger``; a plan without it dumps exactly as before (issue #30). The provenance of each
+    default is in the acceptance documents' provenance table."""
 
     # WP3 (b): the sinusoid per harmonic, with the star's other variability modelled
     sinusoid_harmonic_max_period_days: float = Field(20.0, gt=0)
@@ -385,7 +385,7 @@ class DiscoveryParams(_Model):
     """
 
     # 1: v0.4. 2: v0.5, the sensitivity rule and the v0.5 tests (needs the plan's `stronger`).
-    # 3: v0.5.1, the corrected battery (needs `stronger` and `corrections`).
+    # 3: v0.5.1, the corrected battery (needs `stronger` and `v051`).
     version: Literal[1, 2, 3] = 1
     decisive: list[str] = Field(min_length=1)
     diagnostic: list[str] = Field(default_factory=list)
@@ -480,14 +480,14 @@ class TessTestPlan(_Model):
     discovery: DiscoveryParams | None = None
     stronger: StrongerParams | None = None
     reproduction: ReproductionParams | None = None
-    corrections: CorrectionsParams | None = None
+    v051: V051Params | None = None
 
     @model_serializer(mode="wrap")
     def _without_absent_discovery(self, handler: Any) -> dict[str, Any]:
         """A plan without the v0.4 or the v0.5 sections dumps exactly as before they existed
         (issue #30)."""
         out = handler(self)
-        for key in ("discovery", "stronger", "reproduction", "corrections"):
+        for key in ("discovery", "stronger", "reproduction", "v051"):
             if out.get(key, 0) is None:
                 del out[key]
         return out
@@ -503,10 +503,8 @@ class TessTestPlan(_Model):
             raise ValueError(
                 "the `stronger` section goes with discovery version 2 or 3, and only with them"
             )
-        if (version == 3) != (self.corrections is not None):
-            raise ValueError(
-                "the `corrections` section goes with discovery version 3, and only with it"
-            )
+        if (version == 3) != (self.v051 is not None):
+            raise ValueError("the `v051` section goes with discovery version 3, and only with it")
         if self.reproduction is not None and not version2:
             raise ValueError("the `reproduction` section goes only with discovery version 2 or 3")
         if version2:
@@ -527,9 +525,9 @@ class TessTestPlan(_Model):
         return self.stronger is not None
 
     @property
-    def v051(self) -> bool:
+    def is_v051(self) -> bool:
         """True for a v0.5.1 claim (discovery version 3): the corrected battery."""
-        return self.corrections is not None
+        return self.v051 is not None
 
 
 class PublishedParams(_Model):

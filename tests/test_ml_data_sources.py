@@ -834,8 +834,15 @@ ARFF = b"""% a comment
         (b"a b\n1 2\n3 4\n", "reader:lines:rows-1", 2),
         (b"", "reader:lines:rows-1", 0),
         (ARFF, "reader:arff:rows", 3),
-        (_zip("d/yacht.data", b"1 2\n3 4\n"), "reader:zip:d/yacht.data!lines:rows", 2),
-        (_zip("k.arff", ARFF), "reader:zip:k.arff!arff:rows", 3),
+        # the zip bytes hold the time they were built: explicit ids keep the test IDs stable
+        # from run to run (v0.5.1 WP6, #210; scripts/ci_ids_check.py compares them)
+        pytest.param(
+            _zip("d/yacht.data", b"1 2\n3 4\n"),
+            "reader:zip:d/yacht.data!lines:rows",
+            2,
+            id="zip-yacht-lines",
+        ),
+        pytest.param(_zip("k.arff", ARFF), "reader:zip:k.arff!arff:rows", 3, id="zip-kin8nm-arff"),
     ],
 )
 def test_host_readers_count(tmp_path, content, source, expected):

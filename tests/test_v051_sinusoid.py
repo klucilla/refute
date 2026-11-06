@@ -14,19 +14,19 @@ from refute.core.verdict import Severity, TestStatus
 from refute.packs.tess import battery_v5 as v5
 from refute.packs.tess import battery_v51 as v51
 from refute.packs.tess import synthetic as syn
-from refute.packs.tess.params import CorrectionsParams, StrongerParams, TessTestPlan
+from refute.packs.tess.params import StrongerParams, TessTestPlan, V051Params
 from refute.packs.tess.power import TESS_REGISTRY, TESS_REGISTRY_V3, registry_for
 from refute.packs.tess.synthetic import discovery_v05_plan_dict
 from refute.packs.tess.types import Candidate, LightCurveData
 
 SP = StrongerParams()
-CP = CorrectionsParams()
+CP = V051Params()
 
 
 def _v3_plan_dict() -> dict:
     d = discovery_v05_plan_dict()
     d["discovery"]["version"] = 3
-    d["corrections"] = {}
+    d["v051"] = {}
     return d
 
 
@@ -69,23 +69,23 @@ def _cand(period=3.3, t0=2001.1, depth=1500e-6, duration=0.12):
 
 def test_version_3_needs_the_corrections_section_and_only_it():
     plan = TessTestPlan.model_validate(_v3_plan_dict())
-    assert plan.v05 and plan.v051
+    assert plan.v05 and plan.is_v051
     assert registry_for(plan) is TESS_REGISTRY_V3
     bad = _v3_plan_dict()
-    del bad["corrections"]
-    with pytest.raises(ValueError, match="corrections"):
+    del bad["v051"]
+    with pytest.raises(ValueError, match="v051"):
         TessTestPlan.model_validate(bad)
     v05 = discovery_v05_plan_dict()
-    v05["corrections"] = {}
-    with pytest.raises(ValueError, match="corrections"):
+    v05["v051"] = {}
+    with pytest.raises(ValueError, match="v051"):
         TessTestPlan.model_validate(v05)
 
 
 def test_a_version_2_plan_dumps_as_before_and_selects_the_v05_registry():
     plan = TessTestPlan.model_validate(discovery_v05_plan_dict())
-    assert not plan.v051
+    assert not plan.is_v051
     assert registry_for(plan) is TESS_REGISTRY
-    assert "corrections" not in plan.model_dump(mode="json")
+    assert "v051" not in plan.model_dump(mode="json")
 
 
 def test_the_v3_registry_changes_only_the_sinusoid():

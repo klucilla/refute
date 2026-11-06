@@ -396,8 +396,8 @@ def v05_tests(
         v5.check_event_consistency(events, sp),
         v5.check_edge_events(flat.time, events, final.duration, gp.snr.min_snr, sp),
         (
-            v51.check_sinusoid(data.lc, final, sp, plan.corrections, seed("sinusoid", final))
-            if plan.v051
+            v51.check_sinusoid(data.lc, final, sp, plan.v051, seed("sinusoid", final))
+            if plan.is_v051
             else v5.check_sinusoid(data.lc, final, sp, seed("sinusoid", final))
         ),
         v5.check_duty_cycle(final, sp),
