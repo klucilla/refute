@@ -1,0 +1,50 @@
+{
+ "curves_ok_with_identity": 75,
+ "label": "development diagnosis (v0.5.1 WP3); it decides nothing",
+ "refused_pass_reasons": {
+  "aperture_depth": {
+   "PASS refused: insufficient sensitivity: large-to-core depth ratio 1.5 ratio not detectable": 28
+  },
+  "event_consistency": {
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 1016.59 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 1361.25 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 1363.91 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 1669.16 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 215.514 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 365.147 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 414.041 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: one event off the common depth by a full depth 699.314 ppm not detectable": 1
+  },
+  "odd_even": {
+   "PASS refused: insufficient sensitivity: odd/even depth difference 1298.04 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: odd/even depth difference 1744.36 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: odd/even depth difference 198.285 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: odd/even depth difference 2818.12 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: odd/even depth difference 383.277 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: odd/even depth difference 449.547 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: odd/even depth difference 475.509 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: odd/even depth difference 741.258 ppm not detectable": 1
+  },
+  "sinusoid": {
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 121.677 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 218.302 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 383.277 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 522.776 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 627.434 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 701.461 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 803.263 ppm not detectable": 1,
+   "PASS refused: insufficient sensitivity: sinusoid semi-amplitude 90.8531 ppm not detectable": 1
+  },
+  "systematics": {
+   "PASS refused: insufficient sensitivity: SAP relative depth difference 0.8 fraction not detectable": 16
+  }
+ },
+ "sinusoid_curves": {
+  "no_trend": 36,
+  "trend": 38
+ },
+ "sinusoid_worst_beta_median": {
+  "no_trend": 1.077583,
+  "trend": 5.752574
+ }
+}

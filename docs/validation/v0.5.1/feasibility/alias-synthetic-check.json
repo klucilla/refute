@@ -1,0 +1,53 @@
+{
+ "label": "development check (v0.5.1 WP3 (c)); it decides nothing",
+ "rows": [
+  {
+   "max_box_delta_bic": -3.9863619512179866,
+   "not_fail_with_mask": 0,
+   "not_fail_without_mask": 0,
+   "period_days": 1.5,
+   "realizations": 40,
+   "sigma_ppm": 300.0
+  },
+  {
+   "max_box_delta_bic": -4.262320868845563,
+   "not_fail_with_mask": 0,
+   "not_fail_without_mask": 0,
+   "period_days": 1.5,
+   "realizations": 40,
+   "sigma_ppm": 1000.0
+  },
+  {
+   "max_box_delta_bic": -3.9709865221520886,
+   "not_fail_with_mask": 0,
+   "not_fail_without_mask": 0,
+   "period_days": 3.3,
+   "realizations": 40,
+   "sigma_ppm": 300.0
+  },
+  {
+   "max_box_delta_bic": -4.723079402639996,
+   "not_fail_with_mask": 0,
+   "not_fail_without_mask": 0,
+   "period_days": 3.3,
+   "realizations": 40,
+   "sigma_ppm": 1000.0
+  },
+  {
+   "max_box_delta_bic": -2.0099730332149193,
+   "not_fail_with_mask": 0,
+   "not_fail_without_mask": 0,
+   "period_days": 7.0,
+   "realizations": 40,
+   "sigma_ppm": 300.0
+  },
+  {
+   "max_box_delta_bic": -3.9604458358953707,
+   "not_fail_with_mask": 0,
+   "not_fail_without_mask": 0,
+   "period_days": 7.0,
+   "realizations": 40,
+   "sigma_ppm": 1000.0
+  }
+ ]
+}

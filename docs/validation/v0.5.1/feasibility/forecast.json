@@ -1,0 +1,49 @@
+{
+ "EB1": {
+  "c1_prime_eligible_projection": 194,
+  "d1_expected_survivors_at_projection": 4.570611763788874,
+  "d1_max_survivors": 11,
+  "d1_pass_probability_median": 0.9999123120218203,
+  "d1_pass_probability_p95": 0.9999999127872252,
+  "eligible": 388,
+  "expected_survival_fraction": 0.02355985445251997,
+  "folded_at_half": 265,
+  "generated_ok": 400,
+  "median_distance": 7.2764763115711935
+ },
+ "EB2": {
+  "c1_prime_eligible_projection": 186,
+  "d1_expected_survivors_at_projection": 7.900884925183769,
+  "d1_max_survivors": 10,
+  "d1_pass_probability_median": 0.8682512460904556,
+  "d1_pass_probability_p95": 0.9843717958776443,
+  "eligible": 372,
+  "expected_survival_fraction": 0.04247787594184822,
+  "folded_at_half": 351,
+  "generated_ok": 399,
+  "median_distance": 5.84025611883904
+ },
+ "P": {
+  "d2_reference": "kept at least about 0.868 (the v0.5 C1 v0.4 value 0.968 minus 0.10)",
+  "d4_reference": "INCONCLUSIVE at most 0.30",
+  "eligible": 356,
+  "generated_ok": 396,
+  "odd_even_not_detectable": 4,
+  "rule_can_be_detectable_fraction": 0.9887640449438202,
+  "secondary_not_detectable": 0,
+  "snr15_not_detectable_fraction": 0.0,
+  "snr15_subset": 253
+ },
+ "T2a": {
+  "fraction_below": 0.004878048780487805,
+  "recovered_gate_passing": 615,
+  "search_snr_below_9_29": 3,
+  "t2a_reference": "survival at least about 0.897 (0.997 minus 0.10)"
+ },
+ "label": "diagnostic forecast (v0.5.1 plan, section 4): it settles no target",
+ "records": 1200,
+ "statuses": {
+  "GENERATION_FAILURE": 5,
+  "OK": 1195
+ }
+}

@@ -21,3 +21,11 @@ The numbers of the plan's section 2 come from
 [../v0.5.1-wp0/diagnose_v05_records.py](../v0.5.1-wp0/diagnose_v05_records.py) (its output:
 [../v0.5.1-wp0/diagnosis.json](../v0.5.1-wp0/diagnosis.json)), run on the v0.5 records, which this
 phase uses for development only.
+
+## The acceptance documents
+
+Codex's one review of [../v0.5.1-acceptance.md](../v0.5.1-acceptance.md) and of the plan's
+amendment 1 (2026-11-06, 14:14 to 14:20 UTC, a new conversation): `WEAKENED`, 7 objections (2
+critical), all applied as the acceptance documents' revision 1 (the one revision before code the
+plan's stop rule allows): [acceptance-review-1.md](acceptance-review-1.md) (SHA-256
+`67fc49966e5410cdb5c8667afea4629b97f92443f753f552dbf85bd8d1aefe4d`).
