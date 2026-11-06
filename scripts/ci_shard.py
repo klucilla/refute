@@ -4,7 +4,7 @@ The test suite is split into shards that run as parallel CI jobs, on every OS an
 Python of the matrix, so that each test still runs once per matrix entry while the
 wall-clock time of a run falls (the end-to-end fixtures below take most of it).
 
-- ``heavy-a``, ``heavy-b``, ``heavy-c``, ``heavy-d``: fixed lists of end-to-end test files;
+- ``heavy-a`` to ``heavy-f``: fixed lists of slow test files;
 - ``rest``: every other test, with ``--ignore`` for each listed file.
 
 Every listed file must exist (a renamed file fails the run instead of silently moving
@@ -17,7 +17,7 @@ Limits to review if the configuration changes (issue #59; Codex review of PR #73
 also run in the heavy shards; and the CI splits the printed arguments on spaces, so a
 test path with spaces or glob characters would need structured arguments.
 
-Usage: uv run python scripts/ci_shard.py heavy-a|heavy-b|heavy-c|heavy-d|rest|check
+Usage: uv run python scripts/ci_shard.py heavy-a|...|heavy-f|rest|check
 """
 
 from __future__ import annotations
@@ -49,6 +49,22 @@ HEAVY = {
         # stage 1, item D (2026-10-21): its fixtures took 150 s in rest (run 39627687323), and
         # heavy-c was the lightest shard (5 to 7 min)
         "tests/test_instrumentation.py",
+    ],
+    # v0.5.1 WP6 (#210): CI run 42213700298 took up to 60 min for rest (windows-2025, Python
+    # 3.13); its slowest files move to two new shards, balanced by the local times per file of
+    # the final v0.5 suite's JUnit XML (rest about 2385 s before; about 750, 810 and 826 s after)
+    "heavy-e": [
+        "tests/test_rmin_derivation.py",
+        "tests/test_rednoise_propagation.py",
+        "tests/test_capacity_plan.py",
+        "tests/test_v05_paired.py",
+    ],
+    "heavy-f": [
+        "tests/test_v04_discover_run.py",
+        "tests/test_prewhiten.py",
+        "tests/test_holdout_capacity.py",
+        "tests/test_v05_centroid.py",
+        "tests/test_v05_battery.py",
     ],
 }
 
