@@ -84,9 +84,12 @@ def pseudo_windows(
     baseline_outer_durations: float,
     min_coverage: float,
     measure: Callable[[float], tuple[float, float] | None],
+    exclude_phase_half: bool = True,
 ) -> list[Window]:
     """The kept, measured pseudo-event windows of every sector. ``measure(centre)`` returns
-    ``(value, coverage)`` or ``None`` when the window cannot be measured."""
+    ``(value, coverage)`` or ``None`` when the window cannot be measured. ``exclude_phase_half``
+    is A0 as adopted (True); False exists only for a development measurement of an option that
+    the maintainer has not approved."""
     h = half_width(duration, baseline_outer_durations)
     out: list[Window] = []
     for s in np.unique(sector):
@@ -101,7 +104,7 @@ def pseudo_windows(
             phase = (centre - t0) / period
             off_event = abs(phase - round(phase)) * period
             off_half = abs((phase - 0.5) - round(phase - 0.5)) * period
-            if off_event < 2.0 * h or off_half < 2.0 * h:
+            if off_event < 2.0 * h or (exclude_phase_half and off_half < 2.0 * h):
                 continue
             got = measure(centre)
             if got is None:
@@ -322,3 +325,57 @@ def box_measure(time, flux, duration, baseline_gap_durations, baseline_outer_dur
         return float(f[base].mean() - f[in_event].mean()), n_in / expected_in
 
     return measure
+
+
+def empirical_events(flat, candidate, events, event_params, cadence_days):
+    """The events of ``events`` (``EventDepths``) with A0's per-event errors: each event's error
+    is ``max(model error, the corrected empirical error of its sector and coverage stratum)``;
+    an event whose sector and stratum have ``n_eff < 10`` is dropped (counted in ``dropped`` as
+    ``a0_not_measured``). Returns the new ``EventDepths`` and the per-(sector, stratum) details."""
+    from refute.packs.tess.events import EventDepths
+
+    measure = box_measure(
+        flat.time,
+        flat.flux,
+        candidate.duration,
+        event_params.baseline_gap_durations,
+        event_params.baseline_outer_durations,
+        event_params.min_coverage,
+        cadence_days,
+    )
+    windows = pseudo_windows(
+        flat.time,
+        flat.sector,
+        candidate.period,
+        candidate.t0,
+        candidate.duration,
+        event_params.baseline_outer_durations,
+        event_params.min_coverage,
+        measure,
+    )
+    expected_in = candidate.duration / cadence_days
+    cache: dict[tuple[int, str], tuple[float | None, dict]] = {}
+    keep, errors = [], []
+    for i, centre in enumerate(events.centers):
+        st = stratum(events.n_in[i] / expected_in, event_params.min_coverage)
+        sec = sector_of(flat.time, flat.sector, centre)
+        if st is None:
+            keep.append(False)
+            errors.append(float("nan"))
+            continue
+        if (sec, st) not in cache:
+            cache[(sec, st)] = stratum_error(windows, sec, st)
+        emp = cache[(sec, st)][0]
+        keep.append(emp is not None)
+        errors.append(max(float(events.errors[i]), emp) if emp is not None else float("nan"))
+    mask = np.asarray(keep, dtype=bool)
+    out = EventDepths(
+        events.epochs[mask],
+        events.centers[mask],
+        events.depths[mask],
+        np.asarray(errors, dtype=float)[mask],
+        events.n_in[mask],
+        {**events.dropped, "a0_not_measured": int((~mask).sum())},
+    )
+    details = {f"{sec}:{st}": info for (sec, st), (_, info) in cache.items()}
+    return out, windows, details

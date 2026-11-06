@@ -1,0 +1,40 @@
+{
+ "all": {
+  "domain_3_events": 1.0,
+  "events_measured_fraction": 0.9975714120504221,
+  "two_per_parity": 0.98
+ },
+ "by_period": {
+  "0.7-1.5 d": {
+   "domain_3_events": 1.0,
+   "events_measured_fraction": 0.997965976331361,
+   "median_windows": 131.0,
+   "planets": 62,
+   "two_per_parity": 1.0
+  },
+  "1.5-3.0 d": {
+   "domain_3_events": 1.0,
+   "events_measured_fraction": 0.9995090819833088,
+   "median_windows": 155.0,
+   "planets": 53,
+   "two_per_parity": 1.0
+  },
+  "3.0-6.0 d": {
+   "domain_3_events": 1.0,
+   "events_measured_fraction": 0.9911054637865311,
+   "median_windows": 139.5,
+   "planets": 42,
+   "two_per_parity": 1.0
+  },
+  "6.0-12.0 d": {
+   "domain_3_events": 1.0,
+   "events_measured_fraction": 0.9951807228915662,
+   "median_windows": 105.0,
+   "planets": 43,
+   "two_per_parity": 0.9069767441860465
+  }
+ },
+ "label": "development check (v0.5.1 A0 window availability); it decides nothing",
+ "planets": 200,
+ "variant": "no_phase_half_exclusion"
+}

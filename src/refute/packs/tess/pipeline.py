@@ -349,6 +349,13 @@ def v05_tests(
     )
     seed = power.candidate_seed
     aux = data.aux
+    per_event = events
+    if plan.is_v051:
+        # v0.5.1 A0 (docs/plans/v0.5.1-acceptance.md): the per-event tests use the empirical
+        # errors of pseudo-event windows; the v0.5 path is unchanged
+        from refute.packs.tess import a0
+
+        per_event, _, _ = a0.empirical_events(flat, final, events, gp.events, cadence)
     out: list[TestResult] = []
     for test in tests:
         if test.name == "odd_even":
@@ -392,8 +399,8 @@ def v05_tests(
             test = power.attach(test, power.catalog_blocks(test, "catalogued eclipsing binaries"))
         out.append(test)
     out += [
-        v5.check_single_event(events, sp, seed("single_event", final)),
-        v5.check_event_consistency(events, sp),
+        v5.check_single_event(per_event, sp, seed("single_event", final)),
+        v5.check_event_consistency(per_event, sp),
         v5.check_edge_events(flat.time, events, final.duration, gp.snr.min_snr, sp),
         (
             v51.check_sinusoid(data.lc, final, sp, plan.v051, seed("sinusoid", final))
