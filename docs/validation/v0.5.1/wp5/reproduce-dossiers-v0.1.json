@@ -1,0 +1,127 @@
+{
+ "archive": {
+  "archive": "refute-v0.1-calibration.zip",
+  "prefix": "refute-v0.1-calibration/20261007T221214Z-5701c54c/TIC-138819293/",
+  "sha256": "6f67781dbd3790cae767ff215bb0d7ee5cfed0763112304a3b318a3e987c993d",
+  "source": "https://github.com/klucilla/refute/releases/download/v0.1.0/refute-v0.1-calibration.zip"
+ },
+ "catalogs": [],
+ "commit": "7f075839411a05fe4dd4e1ad64efc56ca20f71a8",
+ "comparison": {
+  "fixed_rule": {
+   "differences": [
+    "verdict: REFUTED != original SURVIVED",
+    "test statuses differ: {'snr': 'PASS', 'odd_even': 'PASS', 'secondary_eclipse': 'PASS', 'plausibility': 'PASS', 'centroid_shift': 'FAIL', 'aperture_depth': 'PASS', 'nearby_contamination': 'PASS', 'period_alias': 'PASS', 'systematics': 'PASS', 'holdout_by_year': 'PASS'} != original {'snr': 'PASS', 'odd_even': 'PASS', 'secondary_eclipse': 'PASS', 'plausibility': 'PASS', 'holdout_by_year': 'PASS'}",
+    "holdout_2020_snr: 99.80668585166772 != original 99.8082462298023",
+    "holdout_2022_snr: 106.56921558983598 != original 106.56650133385851",
+    "snr: 192.250950063793 != original 192.2532142907026",
+    "input data hashes differ from the original dossier"
+   ],
+   "integrity_problems": [],
+   "ok": false,
+   "rule": "check_dossier --against: identical input data hashes, verdict, status and test statuses; key values within a relative 1e-6"
+  },
+  "report_rerendered_byte_identical": false,
+  "verdict": {
+   "new": "REFUTED",
+   "recorded": "SURVIVED"
+  },
+  "verdict_json_byte_identical": false,
+  "verdict_json_first_differences": [
+   "$.candidate.depth: new 0.005718271382268414 != recorded 0.005718276221111485",
+   "$.candidate.depth_err: new 2.974378737983333e-05 != recorded 2.9743462246956156e-05",
+   "$.candidate.depth_ppm: new 5718.271382268414 != recorded 5718.276221111485",
+   "$.candidate.log_likelihood: new 18677.410117967906 != recorded 18677.849652125806",
+   "$.candidate.sde: new 22.022283277204046 != recorded 22.022048875978022",
+   "$.candidate.snr: new 192.250950063793 != recorded 192.2532142907026",
+   "$.data_quality_warnings: present only in new",
+   "$.data_summary.product.reader: new 'astropy 8.0.1 (astropy.io.fits)' != recorded 'lightkurve 2.6.0'",
+   "$.data_summary.star.retrieved_utc: new '2026-11-07T14:06:06Z' != recorded '2026-10-07T22:10:14Z'",
+   "$.data_summary.star.tic_disposition: present only in new",
+   "$.data_summary.star.tic_duplicate_id: present only in new",
+   "$.data_summary.star.tmag: present only in new",
+   "$.eb_catalog_configured: present only in new",
+   "$.expected_tests: present only in new",
+   "$.holdout_rounds[0].metrics.control_phase05_depth_ppm: new 65.46098719599412 != recorded 65.33331087751854",
+   "$.holdout_rounds[0].metrics.control_phase05_snr: new 1.6077022898655888 != recorded 1.6046121877516073",
+   "$.holdout_rounds[0].metrics.depth_consistency_sigma: new 7.504130335234013 != recorded 7.504242695091163",
+   "$.holdout_rounds[0].metrics.hidden_depth_err_ppm: new 51.34912364612307 != recorded 51.348320984011295",
+   "$.holdout_rounds[0].metrics.hidden_depth_ppm: new 5124.985852507048 != recorded 5124.9858642591225",
+   "$.holdout_rounds[0].metrics.hidden_detrend_window_days: present only in new",
+   "$.holdout_rounds[0].metrics.n_windows_unmeasurable: present only in new",
+   "$.holdout_rounds[0].metrics.train_validity: present only in new"
+  ],
+  "verdict_json_sha256": {
+   "new": "21a71e1587e7765a70e0d177e90e21f215d558bf422b6d6bdb9a537ab53f5162",
+   "recorded": "fe2ede4a95639f497361b7de18d8b4c2977f29f4831a990f69e80d8b3ad773f9"
+  },
+  "verdict_reason": {
+   "new": "fatal failure in: centroid_shift",
+   "recorded": "every test passed"
+  },
+  "verdict_reason_equal": false
+ },
+ "dossier": "TIC-138819293",
+ "downloads": [
+  {
+   "bytes": 1987200,
+   "data_uri": "mast:TESS/product/tess2020049080258-s0022-0000000138819293-0174-s_lc.fits",
+   "kind": "files",
+   "name": "tess2020049080258-s0022-0000000138819293-0174-s_lc.fits",
+   "retrieved_utc": "2026-11-07T14:06:07Z",
+   "sha256": "324472607e9d04c183fe4b6ffa72baa1429629e66fc1602bb4d006305859b078",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020049080258-s0022-0000000138819293-0174-s_lc.fits"
+  },
+  {
+   "bytes": 1964160,
+   "data_uri": "mast:TESS/product/tess2022057073128-s0049-0000000138819293-0221-s_lc.fits",
+   "kind": "files",
+   "name": "tess2022057073128-s0049-0000000138819293-0221-s_lc.fits",
+   "retrieved_utc": "2026-11-07T14:06:07Z",
+   "sha256": "5a981178a4edb8322cf4dffe03105deb58b625bfda2ccf446a47b522d7554467",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022057073128-s0049-0000000138819293-0221-s_lc.fits"
+  },
+  {
+   "bytes": 47969280,
+   "data_uri": "mast:TESS/product/tess2020049080258-s0022-0000000138819293-0174-s_tp.fits",
+   "kind": "pixel_files",
+   "name": "tess2020049080258-s0022-0000000138819293-0174-s_tp.fits",
+   "retrieved_utc": "2026-11-07T14:06:07Z",
+   "sha256": "1ad1368b8ae5cd5231fc3135eba0b2533bdd7229e5bb139d59c10ba1b4f0963a",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020049080258-s0022-0000000138819293-0174-s_tp.fits"
+  },
+  {
+   "bytes": 47361600,
+   "data_uri": "mast:TESS/product/tess2022057073128-s0049-0000000138819293-0221-s_tp.fits",
+   "kind": "pixel_files",
+   "name": "tess2022057073128-s0049-0000000138819293-0221-s_tp.fits",
+   "retrieved_utc": "2026-11-07T14:06:07Z",
+   "sha256": "4269a6b1a1d0ec99bb6d85f243d7e92abd3e894bd9985aa7f6d9f805427cf060",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022057073128-s0049-0000000138819293-0221-s_tp.fits"
+  }
+ ],
+ "fetch_attempts": [
+  {
+   "attempt": 1,
+   "ok": true,
+   "started_utc": "2026-11-07T14:05:23Z"
+  }
+ ],
+ "finished_utc": "2026-11-07T14:06:22Z",
+ "inputs": {
+  "different_sha256": [],
+  "light_curve_files_equal": true,
+  "neighbors_equal": false,
+  "only_fetched": [],
+  "only_recorded": [],
+  "pixel_files_fetched": 2,
+  "pixel_files_recorded": "not recorded in the dossier",
+  "star_equal": false
+ },
+ "processor_seconds": 22.375,
+ "recorded_intact": true,
+ "reproduced_under_the_fixed_rule": false,
+ "stage": {},
+ "started_utc": "2026-11-07T14:05:22Z",
+ "version": "v0.1"
+}
