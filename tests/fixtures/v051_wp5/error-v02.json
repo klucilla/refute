@@ -1,0 +1,33 @@
+{
+  "candidate": null,
+  "error": "boom",
+  "global_ephemeris": null,
+  "holdout_rounds": [],
+  "key_values": {},
+  "period_comparison": {
+    "alias": null,
+    "found_period_days": null,
+    "published_period_days": null,
+    "relative_error": null,
+    "tolerance": null,
+    "within_tolerance": null
+  },
+  "plots": [],
+  "provenance": {
+    "claim_id": "synthetic-v02",
+    "claim_sha256": null,
+    "code_sha256": null,
+    "refute_version": null,
+    "run_id": null
+  },
+  "published": {},
+  "schema": "refute-tess-verdict-1",
+  "status": "ERROR",
+  "target_key": "TIC-1",
+  "target_kind": "exploration",
+  "target_name": "synthetic",
+  "tests": [],
+  "tic_id": 1,
+  "verdict": "INCONCLUSIVE",
+  "verdict_reason": "the analysis could not be completed (see error)"
+}

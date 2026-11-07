@@ -12,17 +12,14 @@ from refute.core.verdict import TestStatus
 from refute.packs.tess import battery_v51 as v51
 from refute.packs.tess import synthetic as syn
 from refute.packs.tess.params import TessTestPlan
-from refute.packs.tess.synthetic import discovery_v05_plan_dict
+from refute.packs.tess.synthetic import discovery_v051_plan_dict
 from refute.packs.tess.types import Candidate, LightCurveData
 
 CADENCE = 2.0 / 1440.0
 
 
 def _plan():
-    d = discovery_v05_plan_dict()
-    d["discovery"]["version"] = 3
-    d["v051"] = {}
-    return TessTestPlan.model_validate(d)
+    return TessTestPlan.model_validate(discovery_v051_plan_dict())
 
 
 def _flat(seed, depth, ratio=1.0, period=3.3, t0=2001.1, duration=0.12, sigma=1000e-6):

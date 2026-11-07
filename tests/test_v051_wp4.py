@@ -31,6 +31,7 @@ from refute.packs.tess.report import render_report
 from refute.packs.tess.synthetic import (
     discovery_plan_dict,
     discovery_v05_plan_dict,
+    discovery_v051_plan_dict,
     scenario_data,
 )
 
@@ -195,8 +196,7 @@ def test_every_table_class_is_known():
 
 
 def _v3_plan(**v051):
-    d = copy.deepcopy(discovery_v05_plan_dict())
-    d["discovery"]["version"] = 3
+    d = copy.deepcopy(discovery_v051_plan_dict())
     d["v051"] = dict(v051)
     return TessTestPlan.model_validate(d)
 

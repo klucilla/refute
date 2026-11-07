@@ -16,16 +16,13 @@ from refute.packs.tess.params import TessTestPlan
 from refute.packs.tess.pipeline import attack_candidate, global_prewhitening
 from refute.packs.tess.rednoise import event_noise
 from refute.packs.tess.search import search_period
-from refute.packs.tess.synthetic import discovery_v05_plan_dict
+from refute.packs.tess.synthetic import discovery_v05_plan_dict, discovery_v051_plan_dict
 
 
 def _plans():
     d = discovery_v05_plan_dict()
     v2 = TessTestPlan.model_validate(d)
-    d3 = discovery_v05_plan_dict()
-    d3["discovery"]["version"] = 3
-    d3["v051"] = {}
-    return v2, TessTestPlan.model_validate(d3)
+    return v2, TessTestPlan.model_validate(discovery_v051_plan_dict())
 
 
 def _seed(text):

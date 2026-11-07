@@ -16,16 +16,13 @@ from refute.packs.tess import synthetic as syn
 from refute.packs.tess.battery import check_period_alias
 from refute.packs.tess.params import TessTestPlan
 from refute.packs.tess.power import TESS_REGISTRY_V3
-from refute.packs.tess.synthetic import discovery_v05_plan_dict
+from refute.packs.tess.synthetic import discovery_v05_plan_dict, discovery_v051_plan_dict
 from refute.packs.tess.types import Candidate, LightCurveData
 
 
 def _plans():
     v2 = TessTestPlan.model_validate(discovery_v05_plan_dict())
-    d = discovery_v05_plan_dict()
-    d["discovery"]["version"] = 3
-    d["v051"] = {}
-    return v2, TessTestPlan.model_validate(d)
+    return v2, TessTestPlan.model_validate(discovery_v051_plan_dict())
 
 
 def _lc(seed, depth=2000e-6, sinus=False, period=3.3, t0=2001.1, duration=0.12):

@@ -520,6 +520,17 @@ class TessTestPlan(_Model):
                 raise ValueError(
                     "decisive tests without a sensitivity rule: " + "; ".join(problems)
                 )
+        if version == 3:
+            # v0.5.1 WP5 (row 5.1): version 3 corrects the v0.5 battery and drops none of its
+            # tests; every decisive or diagnostic test of v0.5 keeps a role
+            from refute.packs.tess.calib05.values import V05_DECISIVE, V05_DIAGNOSTIC
+
+            missing = [n for n in (*V05_DECISIVE, *V05_DIAGNOSTIC) if n not in self.discovery.roles]
+            if missing:
+                raise ValueError(
+                    "version 3 keeps every test of the v0.5 battery; without a role: "
+                    + ", ".join(missing)
+                )
         return self
 
     @property

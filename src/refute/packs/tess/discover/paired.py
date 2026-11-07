@@ -56,13 +56,19 @@ def _outcome(data, candidate, plan: TessTestPlan, stage: int, catalogs, scan, pw
 
         tests = enforce_sensitivity(tests, registry_for(plan))
     tests, deferred = defer_tests(tests, dict(plan.discovery.stages), stage)
+    if plan.is_v051:
+        # v0.5.1 WP5 (Codex's WP5 design review): a version-3 battery classifies its
+        # INCONCLUSIVE results after the deferral, as conclude_analysis does (WP4)
+        from refute.packs.tess.pipeline import classify_v051
+
+        tests = classify_v051(tests, deferred)
     decisive, _ = expected_by_role(plan, catalogs is not None)
     verdict, reason = aggregate([t for t in tests if t.name in decisive], expected=decisive)
     staged = [n for n in decisive if n not in deferred]
     stage_verdict, stage_reason = aggregate([t for t in tests if t.name in staged], expected=staged)
     gate = next((t for t in tests if t.name == "snr"), None)
     final = gauntlet.candidate
-    return {
+    out = {
         "candidate": None
         if final is None
         else {"period_days": final.period, "t0_btjd": final.t0, "snr": final.snr},
@@ -76,6 +82,20 @@ def _outcome(data, candidate, plan: TessTestPlan, stage: int, catalogs, scan, pw
         "stage_verdict_reason": stage_reason,
         "gate_passed": gate is not None and gate.status is TestStatus.PASS,
     }
+    if plan.is_v051:
+        # version 3 only, so the v0.4 and v0.5 records keep their keys and bytes
+        from refute.core.inconclusive import CLASS_KEY, SOURCE_KEY, with_classes
+        from refute.packs.tess.pipeline import v051_fields
+
+        for t in tests:
+            if CLASS_KEY in t.metrics:
+                out["tests"][t.name][CLASS_KEY] = t.metrics[CLASS_KEY]
+                out["tests"][t.name][SOURCE_KEY] = t.metrics[SOURCE_KEY]
+        chosen = [t for t in tests if t.name in decisive]
+        out["verdict_reason"] = with_classes(reason, chosen)
+        out["stage_verdict_reason"] = with_classes(stage_reason, chosen)
+        out["v051"] = v051_fields(verdict.value, reason, chosen, tests)
+    return out
 
 
 def paired_chain(

@@ -154,3 +154,19 @@ The four objections of round 1, all applied: a test not run at this stage is `no
 builds new results; the verdict's class comes only from its decisive INCONCLUSIVE tests, and a gate
 not passed or a missing expected test is recorded apart as a condition; a version-3 record says
 `discovery_version` 3.
+
+## WP5: battery version 3 and the packaging rehearsal
+
+Claude's design went to Codex before code, two rounds on 2026-11-07:
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [wp5-design-round-1-answer.md](wp5-design-round-1-answer.md) | `WEAKENED` (3 objections) | `d9f21e13a707545871fbc559dccc65ba79bb52f534c95e6f6f843c8612fe1a55` |
+| 2 | [wp5-design-round-2-answer.md](wp5-design-round-2-answer.md) | `SURVIVED` | `8f722b9fd77c658759968ac3b134667b2185dfffb6da6760c21c7e525261a4b6` |
+
+The three objections of round 1, all applied: row 5.1's set is named explicitly (every test of
+`V05_DECISIVE` and `V05_DIAGNOSTIC` keeps a role in a version-3 claim); row 5.2 needs the recorded
+claims of v0.1 to v0.5 re-executed, not only synthetic fixtures, and that re-execution (with row
+5.3's) waits for the maintainer's approval on an issue; the paired chain of the calibration
+classifies a version-3 battery's INCONCLUSIVE results (WP4) itself. The rehearsal is a smoke test
+(one minimal synthetic path per step), and the C1', C2', C3' sizes are the plan's fixed minimums.

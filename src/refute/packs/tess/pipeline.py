@@ -649,24 +649,31 @@ def v051_record(analysis: Analysis) -> dict[str, Any]:
     decisive INCONCLUSIVE tests only, ``refute.core.inconclusive.PRIORITY``), the condition when
     the aggregation stopped at the gate or at a missing expected test, and every INCONCLUSIVE
     test's class and source."""
+    decisive = analysis.roles.decisive if analysis.roles is not None else analysis.tests
+    return v051_fields(analysis.verdict, analysis.verdict_reason, decisive, analysis.tests)
+
+
+def v051_fields(verdict: str, reason: str, decisive, tests) -> dict[str, Any]:
+    """The ``v051`` object of a version-3 outcome (``verdict.json``, and the paired chain of the
+    calibration, WP5): the verdict's class or condition and every classified INCONCLUSIVE
+    test's class and source."""
     from refute.core.inconclusive import CLASS_KEY, SOURCE_KEY, verdict_class
 
     condition = None
     cls = None
-    if analysis.verdict == "INCONCLUSIVE":
-        if analysis.verdict_reason.startswith("gate test "):
+    if verdict == "INCONCLUSIVE":
+        if reason.startswith("gate test "):
             condition = GATE_NOT_PASSED
-        elif analysis.verdict_reason.startswith("expected tests missing"):
+        elif reason.startswith("expected tests missing"):
             condition = EXPECTED_TESTS_MISSING
         else:
-            decisive = analysis.roles.decisive if analysis.roles is not None else analysis.tests
             cls = verdict_class(decisive)
     return {
         "inconclusive_class": cls,
         "inconclusive_condition": condition,
         "inconclusive_classes": {
             r.name: {"class": r.metrics[CLASS_KEY], "source": r.metrics[SOURCE_KEY]}
-            for r in analysis.tests
+            for r in tests
             if r.status is TestStatus.INCONCLUSIVE and CLASS_KEY in r.metrics
         },
     }

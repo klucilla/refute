@@ -18,7 +18,7 @@ from refute.packs.tess.synthetic import (
     BLEND_SCENE,
     PLANET,
     SignalSpec,
-    discovery_v05_plan_dict,
+    discovery_v051_plan_dict,
     make_aux,
     make_blend,
     make_lightcurve,
@@ -29,10 +29,7 @@ from refute.packs.tess.types import Candidate
 
 
 def _plan():
-    d = discovery_v05_plan_dict()
-    d["discovery"]["version"] = 3
-    d["v051"] = {}
-    return TessTestPlan.model_validate(d)
+    return TessTestPlan.model_validate(discovery_v051_plan_dict())
 
 
 def _candidate(spec: SignalSpec = PLANET) -> Candidate:

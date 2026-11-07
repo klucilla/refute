@@ -39,7 +39,14 @@ HEAVY = {
     # stage 1, X1b (2026-10-21): the 32 engine controls of spec B pushed heavy-a to 15.6 and
     # 22.3 min on windows-2025 (run 39696817920, from 11.9 before); they now run in parallel
     # workers and in a shard of their own
-    "heavy-d": ["tests/test_spec_b.py", "tests/test_x2.py"],
+    # v0.5.1 WP4 and WP5 (#210): their analyzer runs and byte fixtures (about 140 s and 400 s
+    # locally) join heavy-d, the lightest shard of run 42344929297 (4.1 to 7.0 min)
+    "heavy-d": [
+        "tests/test_spec_b.py",
+        "tests/test_x2.py",
+        "tests/test_v051_wp4.py",
+        "tests/test_v051_wp5.py",
+    ],
     "heavy-b": [
         "tests/test_holdout_train_validity_e2e.py",
         "tests/test_holdout_blindness.py",

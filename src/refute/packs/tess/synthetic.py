@@ -763,6 +763,16 @@ def discovery_v05_plan_dict(catalogs: bool = False) -> dict:
     return {**fast_plan_dict(), "discovery": section, "stronger": {}}
 
 
+def discovery_v051_plan_dict() -> dict:
+    """The fast test plan of a v0.5.1 claim: discovery version 3 with an empty `v051` section;
+    its roles keep every test of the v0.5 battery (WP5, row 5.1), so ``eb_catalog`` has its role
+    (it runs only when a catalog is configured)."""
+    d = discovery_v05_plan_dict(catalogs=True)
+    d["discovery"]["version"] = 3
+    d["v051"] = {}
+    return d
+
+
 NOISE_MODES = ("white", "correlated")
 # v0.2.1: the correlated profile of the suite, the AR(1) of the population harness, added
 # to each scenario's white noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md).
