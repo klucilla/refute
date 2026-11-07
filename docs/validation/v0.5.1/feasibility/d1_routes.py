@@ -72,11 +72,26 @@ def _forecast():
 # --- (a) the decomposition ------------------------------------------------------------------
 
 
-def nearest_with_bounds(fc, t, truth, found, sigma_r):
-    """``forecast.nearest_planet`` with the radius free within 1 +- 3 sigma_r."""
+# (sigma_R, sigma_M) for the joint decomposition (Codex's round 1: the mass too): the planet
+# model's a / R* depends on the star through R / M^(1/3), so the fit's free "radius" is that
+# effective radius, bounded by the 3-sigma extremes of the radius and the mass together
+JOINT = ((0.0, 0.05), (0.025, 0.025), (0.05, 0.05), (0.10, 0.10))
+
+
+def effective_bounds(sigma_r: float, sigma_m: float) -> tuple[float, float]:
+    lo = (1.0 - 3 * sigma_r) / (1.0 + 3 * sigma_m) ** (1.0 / 3.0)
+    hi = (1.0 + 3 * sigma_r) / max(1.0 - 3 * sigma_m, 1e-3) ** (1.0 / 3.0)
+    return (lo, hi) if hi - lo > 2e-9 else (1.0 - 1e-9, 1.0 + 1e-9)
+
+
+def nearest_with_bounds(fc, t, truth, found, sigma_r, bounds=None):
+    """``forecast.nearest_planet`` with the radius free within 1 +- 3 sigma_r (or ``bounds``)."""
     from scipy.optimize import least_squares
 
-    lo, hi = (1.0 - 3 * sigma_r, 1.0 + 3 * sigma_r) if sigma_r > 0 else (1.0 - 1e-9, 1.0 + 1e-9)
+    if bounds is not None:
+        lo, hi = bounds
+    else:
+        lo, hi = (1.0 - 3 * sigma_r, 1.0 + 3 * sigma_r) if sigma_r > 0 else (1.0 - 1e-9, 1.0 + 1e-9)
     pf, t0f = found["period_days"], found["t0_btjd"]
     target = fc.binary_model(t, truth)
     dt = np.mod(t - t0f + 0.5 * pf, pf) - 0.5 * pf
@@ -132,6 +147,32 @@ def decompose_one(family: str, i: int, seed_str: str, found: dict) -> dict:
     return out
 
 
+def decompose_joint_one(family: str, i: int, seed_str: str, found: dict) -> dict:
+    """The decomposition with the radius and the mass free together (``JOINT``)."""
+    from refute.packs.tess.calib05 import c1
+
+    fc = _forecast()
+    started = time.process_time()
+    data, truth = c1.generate(family, int(seed_str))
+    t, sector = data.lc.time, data.lc.sector
+    sigma_w = truth["sigma_white_ppm"] * 1e-6
+    sigma_r_noise = sigma_w / 2.0 if truth["correlated"] else 0.0
+    out = {"family": family, "index": i, "secondary_ratio": truth["secondary_ratio"]}
+    for sr, sm in JOINT:
+        bounds = effective_bounds(sr, sm)
+        radius, r, at_bound = nearest_with_bounds(fc, t, truth, found, sr, bounds)
+        d = math.sqrt(fc.mahalanobis2(t, sector, r, sigma_w, sigma_r_noise))
+        out[f"R{sr}_M{sm}"] = {
+            "effective_radius": radius,
+            "bounds": list(bounds),
+            "distance": d,
+            "survival": 1.0 - NormalDist().cdf(d - 1.645),
+            "at_bound": bool(at_bound),
+        }
+    out["cpu_seconds"] = time.process_time() - started
+    return out
+
+
 # --- (c) the transit-geometry consistency on noisy curves -----------------------------------
 
 
@@ -159,7 +200,10 @@ def planet_model_rm(t, period, t0, depth, b, radius, mass):
     return syn.trapezoid(t, period, t0, depth, total, ingress)
 
 
-def geometry_dchi2(flat, cand, star):
+def geometry_dchi2(flat, cand, star, noise=None):
+    """``noise`` = (sigma_w, sigma_r): the generator's white and AR(1) levels; when given, the
+    same two fits' residuals are also scored under the full covariance (``dchi2_cov``,
+    ``forecast.mahalanobis2``; the fits themselves stay in white weights; Codex's round 1)."""
     from scipy.optimize import least_squares
 
     from refute.packs.tess import battery_v51 as v51
@@ -200,12 +244,24 @@ def geometry_dchi2(flat, cand, star):
                 best = fit
     chi2_planet = 2.0 * float(best.cost)
     depth, b, shift, radius, mass = (float(v) for v in best.x)
-    return {
+    out = {
         "dchi2": chi2_planet - chi2_trap,
         "trapezoid_ok": bool(ok),
         "planet_fit": {"depth": depth, "b": b, "radius": radius, "mass": mass},
         "trapezoid_duration_hours": dur_t * 24.0,
     }
+    if noise is not None:
+        fc = _forecast()
+        sector = flat.sector[near]
+        r_trap = (1.0 - syn.trapezoid(tn, p, t0 + s_t, d_t, dur_t, f_t)) - yn
+        r_planet = (1.0 - planet_model_rm(tn, p, t0 + shift, depth, b, radius, mass)) - yn
+        penalty = ((radius - r0) / sr) ** 2 + ((mass - m0) / sm) ** 2
+        out["dchi2_cov"] = (
+            fc.mahalanobis2(tn, sector, r_planet, *noise)
+            + penalty
+            - fc.mahalanobis2(tn, sector, r_trap, *noise)
+        )
+    return out
 
 
 def route_one(family: str, i: int) -> dict:
@@ -243,7 +299,10 @@ def route_one(family: str, i: int) -> dict:
     if eligible:
         mask = transit_mask(data.lc.time, cand.period, cand.t0, cand.duration)
         flat = detrend(data.lc, p04.detrend, mask=mask)
-        rec.update(geometry_dchi2(flat, cand, data.star))
+        sigma_w = truth["sigma_white_ppm"] * 1e-6
+        noise = (sigma_w, sigma_w / 2.0 if truth["correlated"] else 0.0)
+        rec.update(geometry_dchi2(flat, cand, data.star, noise))
+        rec["candidate"] = {"period_days": cand.period, "t0_btjd": cand.t0, "snr": snr}
         if family == "EB1":
             rec["folded"] = abs(cand.period - truth["period_days"] / 2.0) < 0.01 * cand.period
     rec["cpu_seconds"] = time.process_time() - started
@@ -273,15 +332,14 @@ def run(part: str) -> None:
     done = _done(path)
     with ProcessPoolExecutor(max_workers=default_workers()) as pool:
         futures = {}
-        if part == "decompose":
+        if part in ("decompose", "decompose_joint"):
+            fn = decompose_one if part == "decompose" else decompose_joint_one
             rows = [json.loads(x) for x in FORECAST.read_text(encoding="utf-8").splitlines() if x]
             for r in rows:
                 if r.get("family") in ("EB1", "EB2") and r.get("eligible"):
                     key = (r["family"], r["index"])
                     if key not in done:
-                        fut = pool.submit(
-                            decompose_one, r["family"], r["index"], r["seed"], r["found"]
-                        )
+                        fut = pool.submit(fn, r["family"], r["index"], r["seed"], r["found"])
                         futures[fut] = key
         else:
             for fam in ROUTE_FAMILIES:
@@ -311,32 +369,53 @@ def summarize() -> dict:
                 "expected_survivors_at_c1_prime": round(surv * C1_PRIME_SCALE, 2),
                 "nearest_at_radius_bound": sum(r[k]["at_bound"] for r in rows),
             }
+    joint_path = OUT / "decompose_joint.jsonl"
+    joint = []
+    if joint_path.exists():
+        joint = [json.loads(x) for x in joint_path.read_text("utf-8").splitlines() if x]
+        out["decompose_joint"] = {}
+        for fam in ("EB1", "EB2"):
+            rows = [r for r in joint if r["family"] == fam and "R0.05_M0.05" in r]
+            out["decompose_joint"][fam] = {"eligible": len(rows)}
+            for sr, sm in JOINT:
+                k = f"R{sr}_M{sm}"
+                surv = sum(r[k]["survival"] for r in rows)
+                out["decompose_joint"][fam][k] = {
+                    "expected_survivors_at_c1_prime": round(surv * C1_PRIME_SCALE, 2),
+                    "nearest_at_bound": sum(r[k]["at_bound"] for r in rows),
+                }
     rte = [json.loads(x) for x in (OUT / "route.jsonl").read_text("utf-8").splitlines() if x]
     ok = [r for r in rte if r.get("status") == "OK" and r.get("eligible") and "dchi2" in r]
-    planets = np.array([r["dchi2"] for r in ok if r["family"] in ("P", "PG")])
-    q = float(np.quantile(planets, 0.9973)) if planets.size else None
-    out["route"] = {"planet_threshold_q9973": q, "families": {}}
-    for fam in ROUTE_FAMILIES:
-        for noise in (False, True):
-            g = [r for r in ok if r["family"] == fam and r["correlated"] == noise]
-            vals = np.array([r["dchi2"] for r in g])
-            key = f"{fam} {'correlated' if noise else 'white'}"
-            out["route"]["families"][key] = {
-                "eligible": len(g),
-                "dchi2_quantiles": [float(np.quantile(vals, x)) for x in (0.1, 0.5, 0.9)]
-                if vals.size
-                else None,
-                "flagged_at_9": float(np.mean(vals >= 9.0)) if vals.size else None,
-                "flagged_at_planet_q": float(np.mean(vals >= q)) if vals.size and q else None,
-            }
+    out["route"] = {
+        "note": "thresholds exploratory (Codex's round 1): 9 has no calibrated false-flag "
+        "meaning; the planets' 99.73 % quantile rests on about one tail observation",
+        "families": {},
+    }
+    for stat in ("dchi2", "dchi2_cov"):
+        planets = np.array([r[stat] for r in ok if r["family"] in ("P", "PG") and stat in r])
+        q = float(np.quantile(planets, 0.9973)) if planets.size else None
+        out["route"][f"{stat}_planet_q9973"] = q
+        for fam in ROUTE_FAMILIES:
+            for noise in (False, True):
+                g = [r for r in ok if r["family"] == fam and r["correlated"] == noise and stat in r]
+                vals = np.array([r[stat] for r in g])
+                key = f"{stat} {fam} {'correlated' if noise else 'white'}"
+                out["route"]["families"][key] = {
+                    "eligible": len(g),
+                    "quantiles_10_50_90": [float(np.quantile(vals, x)) for x in (0.1, 0.5, 0.9)]
+                    if vals.size
+                    else None,
+                    "flagged_at_9": float(np.mean(vals >= 9.0)) if vals.size else None,
+                    "flagged_at_planet_q": float(np.mean(vals >= q)) if vals.size and q else None,
+                }
     eb1 = [r for r in ok if r["family"] == "EB1"]
     out["route"]["EB1_folded"] = sum(bool(r.get("folded")) for r in eb1)
-    out["cpu_hours"] = round(sum(r.get("cpu_seconds", 0) for r in dec + rte) / 3600.0, 2)
+    out["cpu_hours"] = round(sum(r.get("cpu_seconds", 0) for r in dec + rte + joint) / 3600.0, 2)
     return out
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] in (["decompose"], ["route"]):
+    if sys.argv[1:] in (["decompose"], ["route"], ["decompose_joint"]):
         run(sys.argv[1])
     elif sys.argv[1:] == ["summarize"]:
         doc = summarize()
