@@ -211,3 +211,24 @@ result is not byte-identical, its 13 code differences are a pre-existing default
 (from v0.2.1), not a v0.5.1 change, and the stop applies. Question C: #213 now separates the v0.2
 defaults that can change a status from the one that only adds bytes, and limits the v0.4 and v0.5
 finding to what was checked.
+
+## Amendment 8: row 5.2's two comparisons
+
+The maintainer decided amendment 8 on 2026-11-07 (plan, "Amendment 8"); Codex reviewed its text
+and the implementation of comparison (a) (`docs/validation/v0.5.1/wp5/reproduce_dossiers.py`,
+steps `baseline` and `compare`) before it ran. Round 1 also answered the maintainer's question for
+#213 (question B: an estimate, from the recorded outputs only, of the published v0.2 dossiers whose
+verdict the later defaults would change).
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [amendment8-round-1-answer.md](amendment8-round-1-answer.md) | A `WEAKENED` (7 objections); B an estimate | `abb0dd16edeb9d016d39e181a5707bdb0919ebb3377906c70085f13451215708` |
+| 2 | [amendment8-round-2-answer.md](amendment8-round-2-answer.md) | `WEAKENED` (2 objections) | `553a1a127deb090f02dd1dabad23067bf6028627198287dbb81b19f44c3eeb23` |
+| 3 | [amendment8-round-3-answer.md](amendment8-round-3-answer.md) | `SURVIVED` | `f59e03c62b224fab11945aefb6454a6318a6d173df59851d382b54eaad9b3aaa` |
+
+Every objection was applied (plan, amendment 8, items 6 and 7). The estimate for #213: 3 of the 20
+v0.2 calibration dossiers would change verdict (TIC-158561566 and TIC-317507345 by
+`same_photometry_catalogs`, TIC-48506505 by the train-validity rule), 14 would not, 3 cannot be
+told from the record; with the observation that TIC-194736418, one of the three, was re-run and
+kept its verdict, round 2 accepts 3 changed, 15 unchanged (one observed), 2 undecidable
+(TIC-118327550, TIC-315755496).
