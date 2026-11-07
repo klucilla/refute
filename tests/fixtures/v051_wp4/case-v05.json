@@ -1,0 +1,286 @@
+{
+  "alternatives": [
+    "eclipsing binary on the target",
+    "background or nearby eclipsing binary",
+    "instrumental systematics",
+    "stellar variability",
+    "period alias",
+    "noise"
+  ],
+  "analyses": {
+    "measurements": null,
+    "temporal_diagnostic": {
+      "aggregation_rule": "legacy rule of holdout_by_year: any hidden year FAIL gives FAIL; otherwise any PASS gives PASS, even with inconclusive years; otherwise INCONCLUSIVE (refute.packs.tess.holdout)",
+      "inability_reasons": [],
+      "message": "PASS refused: no sensitivity rule or category registered (predictions confirmed in 3 of 3 hidden years)",
+      "per_year": [
+        {
+          "hidden_year": 2018,
+          "reason": null,
+          "status": "PASS"
+        },
+        {
+          "hidden_year": 2019,
+          "reason": null,
+          "status": "PASS"
+        },
+        {
+          "hidden_year": 2020,
+          "reason": null,
+          "status": "PASS"
+        }
+      ],
+      "role": "diagnostic",
+      "state": "inconclusive",
+      "test": "holdout_by_year"
+    },
+    "tests": [
+      {
+        "name": "snr",
+        "severity": "gate",
+        "status": "PASS"
+      },
+      {
+        "name": "odd_even",
+        "severity": "fatal",
+        "status": "PASS"
+      },
+      {
+        "name": "secondary_eclipse",
+        "severity": "warning",
+        "status": "PASS"
+      },
+      {
+        "name": "plausibility",
+        "severity": "fatal",
+        "status": "PASS"
+      },
+      {
+        "name": "centroid_shift",
+        "severity": "fatal",
+        "status": "INCONCLUSIVE"
+      },
+      {
+        "name": "aperture_depth",
+        "severity": "fatal",
+        "status": "PASS"
+      },
+      {
+        "name": "nearby_contamination",
+        "severity": "warning",
+        "status": "PASS"
+      },
+      {
+        "name": "period_alias",
+        "severity": "fatal",
+        "status": "PASS"
+      },
+      {
+        "name": "systematics",
+        "severity": "warning",
+        "status": "PASS"
+      },
+      {
+        "name": "single_event",
+        "severity": "fatal",
+        "status": "PASS"
+      },
+      {
+        "name": "event_consistency",
+        "severity": "fatal",
+        "status": "PASS"
+      },
+      {
+        "name": "edge_events",
+        "severity": "warning",
+        "status": "PASS"
+      },
+      {
+        "name": "sinusoid",
+        "severity": "warning",
+        "status": "PASS"
+      },
+      {
+        "name": "duty_cycle",
+        "severity": "fatal",
+        "status": "PASS"
+      },
+      {
+        "name": "holdout_by_year",
+        "severity": "fatal",
+        "status": "INCONCLUSIVE"
+      }
+    ],
+    "verdict": "INCONCLUSIVE",
+    "verdict_reason": "could not be decided: centroid_shift"
+  },
+  "conclusion": null,
+  "coverage_and_limits": [
+    {
+      "coverage": 22,
+      "coverage_unit": "transits with data",
+      "message": "SNR 115.2 >= 7.1",
+      "test": "snr"
+    },
+    {
+      "coverage": 21,
+      "coverage_unit": "transits measured",
+      "message": "odd/even depth difference 2.54 sigma (<= 3.0)",
+      "test": "odd_even"
+    },
+    {
+      "coverage": 21,
+      "coverage_unit": "phase-0.5 windows measured",
+      "message": "no significant dip or brightening at phase 0.5 (1.12 sigma)",
+      "test": "secondary_eclipse"
+    },
+    {
+      "coverage": 1,
+      "coverage_unit": "TIC stellar parameter set",
+      "message": "companion radius 0.42 R_Jup and duration ratio 0.72 are plausible",
+      "test": "plausibility"
+    },
+    {
+      "coverage": 0,
+      "coverage_unit": "pixel-file cadences",
+      "message": "qualification failed: 3 of 3 sector(s) do not qualify",
+      "test": "centroid_shift"
+    },
+    {
+      "coverage": 56160,
+      "coverage_unit": "pixel-file cadences",
+      "message": "depth does not grow with the aperture (ratio 1.00, -0.2 sigma; transit detected at 64.6 sigma)",
+      "test": "aperture_depth"
+    },
+    {
+      "coverage": 1,
+      "coverage_unit": "TIC cone queries examined",
+      "message": "TIC cone query of 120 arcsec returned 0 source(s): 0 within 21 arcsec, none could produce the signal; median CROWDSAP 1.00",
+      "test": "nearby_contamination"
+    },
+    {
+      "coverage": 1355,
+      "coverage_unit": "in-transit cadences",
+      "message": "the dip needs a transit on top of a sinusoid (BIC gain 2137, 1355 in-transit cadences); not near a known systematic period",
+      "test": "period_alias"
+    },
+    {
+      "coverage": 3,
+      "coverage_unit": "sub-checks run",
+      "message": "no problem in 3 sub-checks: momentum dumps (24 in the quality column), SAP versus PDCSAP, background",
+      "test": "systematics"
+    },
+    {
+      "coverage": 21,
+      "coverage_unit": "measured events",
+      "message": "largest single-event SNR 0.24 of the total (<= 0.88)",
+      "test": "single_event"
+    },
+    {
+      "coverage": 21,
+      "coverage_unit": "measured events",
+      "message": "per-event depths: chi2 36.5 for 20 dof, p = 0.013",
+      "test": "event_consistency"
+    },
+    {
+      "coverage": 21,
+      "coverage_unit": "measured events",
+      "message": "0 of 21 events near a segment edge (0%)",
+      "test": "edge_events"
+    },
+    {
+      "coverage": 52096,
+      "coverage_unit": "out-of-transit cadences",
+      "message": "no significant sinusoid at P/2, P or 2P",
+      "test": "sinusoid"
+    },
+    {
+      "coverage": 1,
+      "coverage_unit": "candidate duration",
+      "message": "duration over period 0.024 (<= 0.5)",
+      "test": "duty_cycle"
+    },
+    {
+      "coverage": 21,
+      "coverage_unit": "hidden-year windows measured in conclusive rounds",
+      "message": "PASS refused: no sensitivity rule or category registered (predictions confirmed in 3 of 3 hidden years)",
+      "test": "holdout_by_year"
+    }
+  ],
+  "cross_match": null,
+  "data": {
+    "manifest": "data/manifest.json",
+    "product": {
+      "author": "synthetic",
+      "exptime_seconds": 120,
+      "flux_column": "flux",
+      "product": "synthetic light curve (refute.packs.tess.synthetic)",
+      "quality_bitmask": "none",
+      "quality_bitmask_value": null,
+      "reader": "numpy.load"
+    },
+    "sectors": [
+      1,
+      2,
+      3
+    ],
+    "selection_evidence": null,
+    "years": [
+      2018,
+      2019,
+      2020
+    ]
+  },
+  "identity": {
+    "kind": "exploration",
+    "name": "synthetic",
+    "signal_identity": null,
+    "source": null,
+    "star": {
+      "logg_cgs": 4.44,
+      "mass_msun": 1.0,
+      "radius_err_rsun": 0.05,
+      "radius_rsun": 1.0,
+      "retrieved_utc": null,
+      "stellar_parameters_source": "synthetic (refute.packs.tess.synthetic)",
+      "tic_disposition": null,
+      "tic_duplicate_id": null,
+      "tic_version": "synthetic",
+      "tmag": 10.0
+    },
+    "target_key": "TIC-1",
+    "tic_id": 1
+  },
+  "method_status": "not_validated",
+  "question": "Is there a periodic transit-like signal in this light curve that survives the declared decisive battery?",
+  "questions_for_a_human": null,
+  "review": null,
+  "schema": "refute-tess-case-1",
+  "uncertainties": {
+    "candidate": {
+      "depth": 0.0019035730294296746,
+      "depth_err": 1.6522062179469976e-05,
+      "depth_ppm": 1903.5730294296745,
+      "duration": 0.0875,
+      "duration_hours": 2.0999999999999996,
+      "log_likelihood": 6801.256830206995,
+      "n_transits": 22,
+      "period": 3.7000053018481753,
+      "sde": 10.363827509539934,
+      "snr": 115.2140095317533,
+      "t0": 1326.299375,
+      "t0_bjd": 2458326.299375
+    },
+    "duration": null,
+    "ephemeris": {
+      "chi2_reduced": 6.962547429311134,
+      "n_ref": 95,
+      "n_transits": 22,
+      "period": 3.700001214455494,
+      "period_err": 5.270669824151255e-06,
+      "t_ref": 1677.7997612669722,
+      "t_ref_bjd": 2458677.799761267,
+      "t_ref_err": 0.0004120340735157737
+    }
+  }
+}

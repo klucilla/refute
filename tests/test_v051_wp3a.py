@@ -195,9 +195,50 @@ def test_the_cadence_cutoff_is_inclusive_at_n_min():
     assert v51d.sap_applicability(drop)[::2] == (False, "not_enough_data")
 
 
-def test_sabotage_the_written_rule_makes_the_affine_case_detectable(monkeypatch):
-    # amendment 6's sabotage: the constant-factor rule treats the affine sectors as applicable and
-    # emits a rule block that is detectable without information
+SAP_DETECTABLE = "the SAP block is applicable and detectable"
+
+
+def row_3a7_problems(r, aux) -> list[str]:
+    """Row 3a.7's "must" on one curve (acceptance, WP3 (a)); empty when the row holds."""
+    problems = []
+    classes = {e["sector"]: e["class"] for e in r.metrics["sap_not_applicable_sectors"]}
+    for a in aux[:2]:
+        if classes.get(a.sector) != "no_correction":
+            problems.append(f"affine sector {a.sector} is not 'no correction'")
+    for a in aux[2:]:
+        if classes.get(a.sector) != "not_enough_data":
+            problems.append(f"sector {a.sector} is not not_enough_data")
+    block = r.sensitivity["sap"]
+    if block.get("applicable", True) is not False and block.get("detectable") is True:
+        problems.append(SAP_DETECTABLE)
+    if block.get("applicable", True) is not False and block.get("error") == 0:
+        problems.append("the SAP block has a zero error")
+    why = r.metrics["sub_checks_not_applicable"].get("sap_vs_pdcsap", "")
+    if block != {"applicable": False, "reason": why} or not why:
+        problems.append("the SAP block is not the not-applicable form")
+    elif any(e["reason"] not in why for e in r.metrics["sap_not_applicable_sectors"]):
+        problems.append("the reason does not name every sector's reason")
+    if "SAP versus PDCSAP" in r.metrics["sub_checks_run"]:
+        problems.append("the SAP sub-check ran")
+    return problems
+
+
+CURVES_3A7 = (6, 7, 8)
+
+
+def test_row_3a7_holds_on_its_curves():
+    plan = _plan()
+    for seed in CURVES_3A7:
+        aux = _affine_case(seed)
+        r = v51d.check_systematics(aux, _candidate(), plan, seed=7)
+        assert row_3a7_problems(r, aux) == [], seed
+
+
+def test_sabotage_the_written_rule_makes_row_3a7_fail_on_the_detectable_block(monkeypatch):
+    # amendment 6's sabotage, on 3a.7's curves (Codex's end-of-round review of round 4): the
+    # constant-factor rule; preconditions (else the sabotage is void): both affine sectors meet
+    # the cutoffs, are treated as applicable, and the SAP block is a rule block, detectable on at
+    # least one curve; the row must then fail on that block
     def written(a):
         sap, pdc = v51d._normalized(a.sap_flux), v51d._normalized(a.pdcsap_flux)
         both = np.isfinite(sap) & np.isfinite(pdc)
@@ -206,12 +247,23 @@ def test_sabotage_the_written_rule_makes_the_affine_case_detectable(monkeypatch)
         return True, "", None
 
     plan = _plan()
-    aux = _affine_case()[:2]
     monkeypatch.setattr(v51d, "sap_applicability", written)
-    r = v51d.check_systematics(aux, _candidate(), plan, seed=7)
-    block = r.sensitivity["sap"]
-    assert block.get("applicable", True) is not False
-    assert block["detectable"] is True
+    detectable = 0
+    for seed in CURVES_3A7:
+        aux = _affine_case(seed)
+        for a in aux[:2]:
+            n = int(np.sum(np.isfinite(a.sap_flux) & np.isfinite(a.pdcsap_flux)))
+            assert n >= v51d.SAP_MIN_CADENCES
+            assert np.std(v51d._normalized(a.pdcsap_flux)) >= v51d.SAP_MIN_PDCSAP_SD
+        r = v51d.check_systematics(aux, _candidate(), plan, seed=7)
+        excluded = {e["sector"] for e in r.metrics["sap_not_applicable_sectors"]}
+        assert not excluded & {aux[0].sector, aux[1].sector}  # treated as applicable
+        block = r.sensitivity["sap"]
+        assert "detectable" in block and block.get("applicable", True) is not False
+        if block["detectable"]:
+            detectable += 1
+            assert SAP_DETECTABLE in row_3a7_problems(r, aux)
+    assert detectable >= 1
 
 
 def test_a0_depth_is_none_when_the_error_is_not_measurable():

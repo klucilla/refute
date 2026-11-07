@@ -1,0 +1,43 @@
+{
+  "candidate": null,
+  "discovery": {
+    "diagnostics_complete": false,
+    "stage": null
+  },
+  "error": "boom",
+  "global_ephemeris": null,
+  "holdout_rounds": [],
+  "key_values": {},
+  "method_status": "not_validated",
+  "method_status_reference": "docs/validation/v0.2.1/closing-2026-10-27.md",
+  "period_comparison": {
+    "alias": null,
+    "found_period_days": null,
+    "published_period_days": null,
+    "relative_error": null,
+    "tolerance": null,
+    "within_tolerance": null
+  },
+  "plots": [],
+  "provenance": {
+    "claim_id": "synthetic",
+    "claim_sha256": null,
+    "code_sha256": null,
+    "refute_version": null,
+    "run_id": null
+  },
+  "published": {},
+  "schema": "refute-tess-verdict-1",
+  "status": "ERROR",
+  "target_key": "TIC-1",
+  "target_kind": "exploration",
+  "target_name": "synthetic",
+  "temporal_diagnostic": {
+    "state": "not_run",
+    "test": "holdout_by_year"
+  },
+  "tests": [],
+  "tic_id": 1,
+  "verdict": "INCONCLUSIVE",
+  "verdict_reason": "the analysis could not be completed (see error)"
+}

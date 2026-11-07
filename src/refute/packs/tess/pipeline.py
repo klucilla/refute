@@ -630,6 +630,18 @@ def classify_v051(tests: list[TestResult], deferred=()) -> list[TestResult]:
 
 GATE_NOT_PASSED = "gate_not_passed"
 EXPECTED_TESTS_MISSING = "expected_tests_missing"
+DATA_FETCH_FAILED = "data_fetch_failed"
+ANALYSIS_ERROR = "analysis_error"
+
+
+def _is_v051(test_plan: dict[str, Any] | None) -> bool:
+    """Whether a raw plan is a version-3 plan (False when absent or not a valid plan)."""
+    if not test_plan:
+        return False
+    try:
+        return TessTestPlan.model_validate(test_plan).is_v051
+    except Exception:  # noqa: BLE001 - an invalid plan is not a version-3 plan here
+        return False
 
 
 def v051_record(analysis: Analysis) -> dict[str, Any]:
@@ -1107,7 +1119,11 @@ class TessAnalyzer:
         return result
 
     def error_result(
-        self, target: dict[str, Any], error: str, context: dict[str, Any]
+        self,
+        target: dict[str, Any],
+        error: str,
+        context: dict[str, Any],
+        test_plan: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         criteria = context.get("pass_criteria") or {}
         record = self._error_record(target, error, context, criteria)
@@ -1117,6 +1133,17 @@ class TessAnalyzer:
             record["method_status_reference"] = METHOD_STATUS_REFERENCE
             record["temporal_diagnostic"] = {"state": "not_run", "test": "holdout_by_year"}
             record["discovery"] = {"stage": context.get("stage"), "diagnostics_complete": False}
+        if _is_v051(test_plan):
+            # v0.5.1 WP4 (Codex's end-of-round review of round 4): a version-3 error record says
+            # why its INCONCLUSIVE has no class, as a condition counted apart in the tallies
+            condition = (
+                DATA_FETCH_FAILED if error.startswith("data fetch failed") else ANALYSIS_ERROR
+            )
+            record["v051"] = {
+                "inconclusive_class": None,
+                "inconclusive_condition": condition,
+                "inconclusive_classes": {},
+            }
         return record
 
     def _error_record(

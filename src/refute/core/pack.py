@@ -119,9 +119,14 @@ class Analyzer(Protocol):
         """Search, gauntlet and holdout for one target. Writes plots; returns the result."""
 
     def error_result(
-        self, target: dict[str, Any], error: str, context: dict[str, Any]
+        self,
+        target: dict[str, Any],
+        error: str,
+        context: dict[str, Any],
+        test_plan: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """Result for a target whose analysis raised an exception."""
+        """Result for a target whose analysis raised an exception (``test_plan``, when given,
+        is the claim's plan, so that a pack can add the fields its version needs)."""
 
     def report(self, result: dict[str, Any], context: dict[str, Any]) -> str:
         """Markdown report for one dossier."""

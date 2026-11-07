@@ -7,6 +7,7 @@ functions (``refute.packs.tess.inconclusive``), and the reporting of version-3 c
 from __future__ import annotations
 
 import copy
+import json
 import re
 from dataclasses import replace
 from pathlib import Path
@@ -14,14 +15,24 @@ from pathlib import Path
 import pytest
 
 from refute.core import inconclusive as inc
+from refute.core.io import dumps_json
 from refute.core.sensitivity import enforce_sensitivity
 from refute.core.verdict import Severity, TestResult, TestStatus, enforce_coverage
 from refute.packs.tess.discover.case import build_case
 from refute.packs.tess.inconclusive import TESS_TABLE
 from refute.packs.tess.params import TessTestPlan
-from refute.packs.tess.pipeline import analyze_data, build_result, conclude_analysis
+from refute.packs.tess.pipeline import (
+    TessAnalyzer,
+    analyze_data,
+    build_result,
+    conclude_analysis,
+)
 from refute.packs.tess.report import render_report
-from refute.packs.tess.synthetic import discovery_v05_plan_dict, scenario_data
+from refute.packs.tess.synthetic import (
+    discovery_plan_dict,
+    discovery_v05_plan_dict,
+    scenario_data,
+)
 
 SRC = Path(__file__).resolve().parents[1] / "src" / "refute" / "packs" / "tess"
 TARGET = {"key": "TIC-1", "tic_id": 1, "kind": "exploration", "name": "synthetic", "published": {}}
@@ -263,19 +274,61 @@ def test_4_1_insufficient_sensitivity_is_reported_in_the_three_outputs(v3_run):
     assert case_tests["duty_cycle"]["inconclusive_class"] == "insufficient_sensitivity"
 
 
-def test_4_2_a_version_2_claim_carries_no_class():
-    from refute.packs.tess.pipeline import classify_v051  # noqa: F401  (v3 only)
+# Row 4.2's fixtures: the outputs of the code before WP4 (6f8d805), recorded by
+# tests/fixtures/v051_wp4/make_fixtures.py on the same synthetic claim (Codex's end-of-round review
+# of round 4, objection 3)
+FIXTURES = Path(__file__).resolve().parent / "fixtures" / "v051_wp4"
 
-    plan = TessTestPlan.model_validate(discovery_v05_plan_dict())
+
+def _fixture(name: str) -> str:
+    return (FIXTURES / name).read_bytes().decode("utf-8")
+
+
+@pytest.mark.parametrize(
+    ("label", "plan_dict"),
+    [("v04", discovery_plan_dict), ("v05", discovery_v05_plan_dict)],
+)
+def test_4_2_earlier_claims_keep_the_bytes_of_their_outputs(label, plan_dict):
+    plan = TessTestPlan.model_validate(plan_dict())
     assert not plan.is_v051
     data = scenario_data("planet_three_years")
-    analysis = analyze_data(data, plan, stage=1)
+    analysis = analyze_data(data, plan, stage=2)
     result, report, case = _outputs(data, plan, analysis)
-    assert "v051" not in result
-    assert result["v05"]["discovery_version"] == 2
-    assert all("inconclusive_class" not in t["metrics"] for t in result["tests"])
-    assert "inconclusive_class" not in case["analyses"]
-    assert "INCONCLUSIVE (" not in report
+    assert dumps_json(result) == _fixture(f"verdict-{label}.json")
+    assert report == _fixture(f"report-{label}.md")
+    assert dumps_json(case) == _fixture(f"case-{label}.json")
+
+
+@pytest.mark.parametrize("label", ["v04", "v05"])
+def test_4_2_the_recorded_verdicts_render_the_same_report_and_case(label):
+    # report.md and case.json are pure functions of verdict.json: the recorded verdict renders
+    # the recorded bytes with the WP4 code
+    result = json.loads(_fixture(f"verdict-{label}.json"))
+    assert render_report(result, CONTEXT) == _fixture(f"report-{label}.md")
+    assert dumps_json(build_case(result, TARGET, None, None)) == _fixture(f"case-{label}.json")
+
+
+def test_4_2_an_earlier_error_record_keeps_its_bytes():
+    plan = discovery_v05_plan_dict()
+    error = TessAnalyzer().error_result(TARGET, "boom", CONTEXT, test_plan=plan)
+    assert dumps_json(error) == _fixture("error-v05.json")
+    assert dumps_json(TessAnalyzer().error_result(TARGET, "boom", CONTEXT)) == _fixture(
+        "error-v05.json"
+    )
+
+
+def test_a_version_3_error_record_carries_its_condition():
+    plan = _v3_plan().model_dump(mode="json")
+    error = TessAnalyzer().error_result(TARGET, "boom", CONTEXT, test_plan=plan)
+    assert error["verdict"] == "INCONCLUSIVE"
+    assert error["v051"] == {"inconclusive_class": None, "inconclusive_condition": "analysis_error",
+                             "inconclusive_classes": {}}  # fmt: skip
+    fetch = TessAnalyzer().error_result(TARGET, "data fetch failed: x", CONTEXT, test_plan=plan)
+    assert fetch["v051"]["inconclusive_condition"] == "data_fetch_failed"
+    assert "INCONCLUSIVE verdict: condition `analysis_error`" in render_report(error, CONTEXT)
+    case = build_case(error, TARGET, None, None)
+    assert case["analyses"]["inconclusive_condition"] == "analysis_error"
+    assert inc.tally([error])["inconclusive_by_condition"] == {"analysis_error": 1}
 
 
 # --- row 4.3: the tallies ---------------------------------------------------------------------

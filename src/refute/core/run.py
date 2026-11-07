@@ -149,14 +149,19 @@ def run_target_task(task: TargetTask) -> dict[str, Any]:
 
     if task.fetch_error is not None:
         result = pack.analyzer.error_result(
-            task.target, f"data fetch failed: {task.fetch_error}", task.context
+            task.target,
+            f"data fetch failed: {task.fetch_error}",
+            task.context,
+            test_plan=task.test_plan,
         )
     else:
         try:
             data = pack.adapter.load(task.target, task.test_plan, Path(task.cache_dir))
             result = pack.analyzer.analyze(task.target, data, task.test_plan, task.context, writer)
         except Exception:  # noqa: BLE001 - any failure is recorded in the dossier
-            result = pack.analyzer.error_result(task.target, traceback.format_exc(), task.context)
+            result = pack.analyzer.error_result(
+                task.target, traceback.format_exc(), task.context, test_plan=task.test_plan
+            )
 
     try:
         pack.exporter.export(result, writer.root / "export")

@@ -89,6 +89,16 @@ Codex's review of WP3 (c)'s revision 1 (cited by the acceptance, WP3 (c)):
 |---|---|---|---|---|
 | 2 | round 2's commits | [round-2-end-review.md](round-2-end-review.md) | `WEAKENED` | `b916abebf64b6e6c505f564a1da9490df15902d5b31b1076667dfc127bac6040` |
 | 3 | 86e0a1d to 2cd5a5f | [round-3-end-review.md](round-3-end-review.md) | `REFUTED` (4 objections) | `7f2989d624253da6f02a2af35da13611ca2e0536224a9f9ec1361ecf41ab68c1` |
+| 4 | a188254 to 2f0a48e | [round-4-end-review.md](round-4-end-review.md) | `WEAKENED` (3 objections) | `1fbdc3d65e634baffa79d027e19ae145b2759ad729134eaa6b2ff09c5b51b7f2` |
+
+Round 4's three objections were all applied in the commit that adds its review: amendment 6's
+sabotage is checked against row 3a.7's own "must" on three curves, with its preconditions (the
+affine sectors meet the cutoffs and are treated as applicable, a rule block detectable on at least
+one curve) and the row failing on that block; a version-3 error record carries the condition
+`analysis_error` or `data_fetch_failed` (in `verdict.json`, `report.md`, `case.json` and the
+tallies), the analyzer receiving the claim's plan; row 4.2 compares bytes with fixtures recorded by
+the code before WP4 (6f8d805) for a v0.4 and a v0.5 claim and an error record
+(`tests/fixtures/v051_wp4/`, with the script that wrote them).
 
 Round 3's four objections were all applied in the commit that adds its review: A0's per-stratum
 `n_eff` uses every available within-segment pair (the 20-pair minimum stays only for the group
