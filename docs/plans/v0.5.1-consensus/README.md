@@ -191,3 +191,23 @@ affects a v0.5.1 criterion, and Claude's reading of row 5.2 with a proposal for 
   names. Codex recommends running v0.2, v0.4 and v0.5 under the approved procedure and reporting
   each. Claude accepts every objection; the stop stays, because the maintainer's condition stops
   the re-executions at the first one not reproduced, so the decision is his.
+
+## Amendment 7: row 5.2 and the v0.1 claims
+
+The maintainer approved amendment 7 on 2026-11-07 (plan, "Amendment 7"); Codex reviewed its text
+in three rounds, the first also classifying the v0.2 re-execution (question B) and assessing issue
+#213 (question C):
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [amendment7-round-1-answer.md](amendment7-round-1-answer.md) | A `WEAKENED`; B `SURVIVED`; C `WEAKENED` | `0920d923f75f1717d45db167e054d5e3e3a4adaeb578648d5074253d26d8aefd` |
+| 2 | [amendment7-round-2-answer.md](amendment7-round-2-answer.md) | `WEAKENED` (one minor objection) | `eff815917b9b194e349c33a30678aa43f005671991c9544d21945e10e2405555` |
+| 3 | [amendment7-round-3-answer.md](amendment7-round-3-answer.md) | `WEAKENED` (wording only) | `7c861975c635a1b150965d4fb7349b33e5f8cef51dbd3e7eff92194306a91642` |
+
+Every objection was applied (the exception and the reported `check-dossier` result in row 5.2;
+"locked tag, following its `REPRODUCE.md` procedure"; the amendment's opening in the past tense;
+the overview and row 5.2 naming the v0.1 dossier); no disagreement remains. Question B: the v0.2
+result is not byte-identical, its 13 code differences are a pre-existing default reinterpretation
+(from v0.2.1), not a v0.5.1 change, and the stop applies. Question C: #213 now separates the v0.2
+defaults that can change a status from the one that only adds bytes, and limits the v0.4 and v0.5
+finding to what was checked.

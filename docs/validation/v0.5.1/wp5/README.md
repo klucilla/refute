@@ -40,5 +40,32 @@ recorded on #208 before they ran.
   bytes differ as well, so the outcome is the same. The v0.1 dossier's own
   `REPRODUCE.md` reproduces it at its locked commit, which is how it was reproduced in 2026-10
   (`refute-v0.1-reproduction.zip`, asset of release v0.1.0).
-- Following the maintainer's condition, the work stopped at this version: v0.2, v0.4 and v0.5
-  were **not run**, and the question went to the maintainer on #208.
+- Following the maintainer's condition, the work stopped at this version and the question went
+  to the maintainer on #208.
+- **v0.1 at its locked tag** (amendment 7 of the plan;
+  [reproduce-v0.1-at-tag.json](reproduce-v0.1-at-tag.json)): run at tag `v0.1.0` (`6bb5e78`,
+  whose code, claim and lock equal those of the run commit `821b0d7` named by the dossier's
+  `REPRODUCE.md`), by that file's commands. `refute verify`: PASS. `check-dossier --against` the
+  recorded dossier: "OK: manifest intact; key results reproduced". Verdict SURVIVED, the same
+  reason; `verdict.json` differs only in 4 fields, none of them an analysis value: the two
+  retrieval times of today's TIC query and the run identity (`run_git_commit`, the tag's commit;
+  `run_id`).
+- **v0.2 (`TIC-194736418`)**, after the maintainer's second approval of 2026-11-07, with Codex's
+  criterion (`verdict.json` byte-identical except processor-time and task-identity fields):
+  **not reproduced** ([reproduce-dossiers-v0.2.json](reproduce-dossiers-v0.2.json)). Under the
+  fixed rule it is reproduced: the same verdict (REFUTED) and reason, the same test statuses and
+  key values, the same input data hashes, the target pixel files included (the v0.2 manifest
+  records them; the output's `inputs.light_curve_files_equal: false` compares today's light-curve
+  list with the recorded list of light curves and pixel files, a flaw of the script's own
+  comparison, not a difference). `verdict.json` has 15 differences:
+  - 2 are the retrieval time of today's TIC query (`data_summary.star.retrieved_utc`,
+    `tests[3].inputs.retrieved_utc`); the TIC values and neighbors are equal: a provenance field
+    of data fetched today;
+  - 13 are keys only in the current output: five test-plan defaults the v0.2 claim does not name
+    (`gauntlet.corrections`, `eb_catalog.same_photometry_catalogs`,
+    `holdout_by_year.max_hidden_window_fraction`, `.max_train_duration_period_ratio`,
+    `.require_valid_train`) and the metrics and thresholds they bring. They come from commits
+    `78d79f5` and `9d3f369` (2026-10-10, v0.2.1) and `42e4184` (2026-10-18), all before the v0.5.0
+    lock: code, not inputs, and not introduced by v0.5.1 (#213).
+  - The re-executions stopped here (v0.4 and v0.5 not run), and the finding went to the
+    maintainer.

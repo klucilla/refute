@@ -1,0 +1,11 @@
+## Verdict: WEAKENED
+
+The round 2 objection is **substantively resolved**: the plan now describes the former row 5.2 criterion as historical, and the overview separates v0.1 from the v0.2, v0.4, and v0.5 gate. One minor wording issue remains: the plan and acceptance text still say that the **claims** are reproduced at the locked tag. The evidence shows that the **v0.1 dossier** is reproduced there.
+
+1. **Minor.** The overview says v0.2, v0.4, and v0.5 give “exactly their recorded outputs,” although row 5.2 permits processor-time and task-identity fields in `verdict.json` to differ. It also says v0.1 claims are “reproduced at their locked tag,” which blurs the distinction between reporting the claim and reproducing its dossier. The same shorthand appears in the plan’s amendment 7 item 1 and row 5.2’s v0.1 parenthetical.
+
+   **Evidence:** [Acceptance overview, lines 70–73](/C:/Projetos/refute/docs/plans/v0.5.1-acceptance.md:70) says “exactly their recorded outputs” and attributes locked-tag reproduction to v0.1 claims. [Row 5.2, line 499](/C:/Projetos/refute/docs/plans/v0.5.1-acceptance.md:499) explicitly allows two `verdict.json` field exceptions. [Plan amendment 7, lines 557–563](/C:/Projetos/refute/docs/plans/v0.5.1-plan.md:557) describes v0.1 as reproducible at its locked tag, then clarifies that the dossier is re-run. The reproduction record shows the dossier passed `check-dossier --against`; its verdict and reason match, while `verdict.json` differs in retrieval-time and run-identity fields.
+
+   **Exact change required:** Use wording that names the dossier and preserves row 5.2’s exception. For example: “Claims of v0.2, v0.4 and v0.5 preserve their recorded verdicts and reasons, with `verdict.json` byte-identical except for processor-time and task-identity fields (row 5.2). The v0.1 result is reported; its dossier is reproduced at its locked tag following its `REPRODUCE.md` procedure, with the comparison reported (plan, amendment 7).” Make the v0.1 references in amendment 7 item 1 and row 5.2’s parenthetical consistently refer to reproducing the **dossier**.
+
+The row 5.2 gate itself is otherwise clear; no change to its acceptance criterion is needed. My Refute review follows the project’s read-only evidence boundary.  

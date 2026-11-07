@@ -1,0 +1,67 @@
+{
+ "dossier": "refute-v0.1-calibration.zip, run 20261007T221214Z-5701c54c, TIC-138819293",
+ "tag": "v0.1.0",
+ "checked_out": "6bb5e78ad24e33dbaa391e677234a440c3753056",
+ "reproduce_md_commit": "821b0d791c81d0c3c61d333d93b286b78321dba3",
+ "same_code_claim_lock_as_reproduce_md_commit": "git diff 821b0d7 v0.1.0 -- src pyproject.toml uv.lock calibration/self_claim.yaml calibration/self_claim.lock.json calibration/targets.yaml calibration/PROTOCOL.md: empty",
+ "commands": [
+  "uv sync --frozen",
+  "uv run --frozen refute verify calibration/self_claim.yaml",
+  "uv run --frozen refute calibrate --claim calibration/self_claim.yaml --target TIC-138819293 --out repro --run-id repro --workers 1",
+  "uv run --frozen refute check-dossier repro/repro/TIC-138819293 --against <recorded>"
+ ],
+ "steps": {
+  "sync": {
+   "started_utc": "2026-11-07T14:21:15Z",
+   "exit": 0
+  },
+  "verify": {
+   "started_utc": "2026-11-07T14:21:15Z",
+   "exit": 0,
+   "output": [
+    "PASS",
+    "claim 5701c54cb088f1d33895f73d98244d0ea214ddb3f861340d8261b817e189a53f, code 624f5f900334abcdc614a679a3fdc4ce9c9e8a465f2d3e553d71b24c199f4cfa, 4 attachment(s): all hashes match the lock"
+   ]
+  },
+  "calibrate": {
+   "started_utc": "2026-11-07T14:21:22Z",
+   "exit": 0
+  },
+  "check": {
+   "started_utc": "2026-11-07T14:21:55Z",
+   "exit": 0,
+   "output": [
+    "OK: manifest intact; key results reproduced"
+   ]
+  }
+ },
+ "verdict": {
+  "recorded": "SURVIVED",
+  "at_tag": "SURVIVED"
+ },
+ "verdict_reason_equal": true,
+ "verdict_json_sha256": {
+  "recorded": "fe2ede4a95639f497361b7de18d8b4c2977f29f4831a990f69e80d8b3ad773f9",
+  "at_tag": "694623ecadb0b18c839851ebeb0aaea35b8fb673e072ef455baf557ca0285437"
+ },
+ "verdict_json_differences": [
+  "$.data_summary.star.retrieved_utc: new '2026-11-07T14:21:44Z' != recorded '2026-10-07T22:10:14Z'",
+  "$.provenance.run_git_commit: new '6bb5e78ad24e33dbaa391e677234a440c3753056' != recorded '821b0d791c81d0c3c61d333d93b286b78321dba3'",
+  "$.provenance.run_id: new 'repro' != recorded '20261007T221214Z-5701c54c'",
+  "$.tests[3].inputs.retrieved_utc: new '2026-11-07T14:21:44Z' != recorded '2026-10-07T22:10:14Z'"
+ ],
+ "downloads": [
+  {
+   "name": "tess2020049080258-s0022-0000000138819293-0174-s_lc.fits",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020049080258-s0022-0000000138819293-0174-s_lc.fits",
+   "sha256": "324472607e9d04c183fe4b6ffa72baa1429629e66fc1602bb4d006305859b078",
+   "retrieved_utc": "2026-11-07T14:21:44Z"
+  },
+  {
+   "name": "tess2022057073128-s0049-0000000138819293-0221-s_lc.fits",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022057073128-s0049-0000000138819293-0221-s_lc.fits",
+   "sha256": "5a981178a4edb8322cf4dffe03105deb58b625bfda2ccf446a47b522d7554467",
+   "retrieved_utc": "2026-11-07T14:21:44Z"
+  }
+ ]
+}

@@ -1,0 +1,127 @@
+{
+ "archive": {
+  "archive": "refute-v0.2-calibration.zip",
+  "prefix": "refute-v0.2-calibration/20261009T155044Z-c9f341d2/TIC-194736418/",
+  "sha256": "906c6f46ab3dde9c6bd06ac0f9c453b1b388555b35c33990b3a995f0be04c829",
+  "source": "https://github.com/klucilla/refute/releases/download/v0.2.0/refute-v0.2-calibration.zip"
+ },
+ "catalogs": [
+  {
+   "cache_path": "eb_snapshot_v02/tess_ebs_prsa2022.tsv",
+   "catalog": "TESS-EB",
+   "content_sha256": "a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c",
+   "sha256": "61cb8749ce2ebf87d3fdf495af888b2f803064c67a23c117f742b85598f5a323",
+   "source": ".cache/v04/tess-eb/tess_ebs_prsa2022.tsv (local frozen copy)"
+  },
+  {
+   "check": "TESS-EB: content SHA-256 verified (a31936ce4dc1bfbb27c4e372b145653ef1d97df250df8d1b0fadaa3f0f1b949c)"
+  }
+ ],
+ "commit": "8cf8b1c5dea03df94c91180e6a28aa6dce219496",
+ "comparison": {
+  "fixed_rule": {
+   "differences": [],
+   "integrity_problems": [],
+   "ok": true,
+   "rule": "check_dossier --against: identical input data hashes, verdict, status and test statuses; key values within a relative 1e-6"
+  },
+  "report_rerendered_byte_identical": false,
+  "verdict": {
+   "new": "REFUTED",
+   "recorded": "REFUTED"
+  },
+  "verdict_json_byte_identical": false,
+  "verdict_json_first_differences": [
+   "$.data_summary.star.retrieved_utc: new '2026-11-07T14:17:53Z' != recorded '2026-10-09T15:39:47Z'",
+   "$.holdout_rounds[0].metrics.train_validity: present only in new",
+   "$.holdout_rounds[1].metrics.train_validity: present only in new",
+   "$.test_plan.gauntlet.corrections: present only in new",
+   "$.test_plan.gauntlet.eb_catalog.same_photometry_catalogs: present only in new",
+   "$.test_plan.gauntlet.holdout_by_year.max_hidden_window_fraction: present only in new",
+   "$.test_plan.gauntlet.holdout_by_year.max_train_duration_period_ratio: present only in new",
+   "$.test_plan.gauntlet.holdout_by_year.require_valid_train: present only in new",
+   "$.tests[3].inputs.retrieved_utc: new '2026-11-07T14:17:53Z' != recorded '2026-10-09T15:39:47Z'",
+   "$.tests[9].metrics.downgraded: present only in new",
+   "$.tests[9].metrics.downgraded_matches: present only in new",
+   "$.tests[9].thresholds.same_photometry_catalogs: present only in new",
+   "$.tests[10].thresholds.max_hidden_window_fraction: present only in new",
+   "$.tests[10].thresholds.max_train_duration_period_ratio: present only in new",
+   "$.tests[10].thresholds.require_valid_train: present only in new"
+  ],
+  "verdict_json_sha256": {
+   "new": "d958939a0f0103bd73d0d613e54f377dd0b88b1490a9a6927c0e0fd8ab7fe06e",
+   "recorded": "47e5e7ebd199e2c51b9b6575ea49a61cc51d49927ddfc643e1eb434cb1854602"
+  },
+  "verdict_reason": {
+   "new": "fatal failure in: holdout_by_year",
+   "recorded": "fatal failure in: holdout_by_year"
+  },
+  "verdict_reason_equal": true
+ },
+ "dossier": "TIC-194736418",
+ "downloads": [
+  {
+   "bytes": 1785600,
+   "data_uri": "mast:TESS/product/tess2019306063752-s0018-0000000194736418-0162-s_lc.fits",
+   "kind": "files",
+   "name": "tess2019306063752-s0018-0000000194736418-0162-s_lc.fits",
+   "retrieved_utc": "2026-11-07T14:17:54Z",
+   "sha256": "37f0efc3c9ed1d8df4f59a59183a1bee3d3d6b2fb446e02220efcb7b553af81a",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019306063752-s0018-0000000194736418-0162-s_lc.fits"
+  },
+  {
+   "bytes": 1944000,
+   "data_uri": "mast:TESS/product/tess2024326142117-s0086-0000000194736418-0283-s_lc.fits",
+   "kind": "files",
+   "name": "tess2024326142117-s0086-0000000194736418-0283-s_lc.fits",
+   "retrieved_utc": "2026-11-07T14:17:54Z",
+   "sha256": "35c3fe6bfe676a24143d66eadce1163a1fb7188e9f1feb0ef587289fc0feb677",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2024326142117-s0086-0000000194736418-0283-s_lc.fits"
+  },
+  {
+   "bytes": 43009920,
+   "data_uri": "mast:TESS/product/tess2019306063752-s0018-0000000194736418-0162-s_tp.fits",
+   "kind": "pixel_files",
+   "name": "tess2019306063752-s0018-0000000194736418-0162-s_tp.fits",
+   "retrieved_utc": "2026-11-07T14:17:54Z",
+   "sha256": "fe5650179b669b1cdfc7b9c666f8ced5e6561150e33f647c1ebd855cfe2a1cb6",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019306063752-s0018-0000000194736418-0162-s_tp.fits"
+  },
+  {
+   "bytes": 46874880,
+   "data_uri": "mast:TESS/product/tess2024326142117-s0086-0000000194736418-0283-s_tp.fits",
+   "kind": "pixel_files",
+   "name": "tess2024326142117-s0086-0000000194736418-0283-s_tp.fits",
+   "retrieved_utc": "2026-11-07T14:17:54Z",
+   "sha256": "2e8b4cc1fc1b060dbae5dca25e8e0a62f61695db11140743d0929dd8094906f3",
+   "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2024326142117-s0086-0000000194736418-0283-s_tp.fits"
+  }
+ ],
+ "fetch_attempts": [
+  {
+   "attempt": 1,
+   "ok": true,
+   "started_utc": "2026-11-07T14:17:19Z"
+  }
+ ],
+ "finished_utc": "2026-11-07T14:18:05Z",
+ "inputs": {
+  "different_sha256": [],
+  "light_curve_files_equal": false,
+  "neighbors_equal": true,
+  "only_fetched": [],
+  "only_recorded": [
+   "tess2019306063752-s0018-0000000194736418-0162-s_tp.fits",
+   "tess2024326142117-s0086-0000000194736418-0283-s_tp.fits"
+  ],
+  "pixel_files_fetched": 2,
+  "pixel_files_recorded": "not recorded in the dossier",
+  "star_equal": true
+ },
+ "processor_seconds": 16.109375,
+ "recorded_intact": true,
+ "reproduced_under_the_fixed_rule": true,
+ "stage": {},
+ "started_utc": "2026-11-07T14:17:18Z",
+ "version": "v0.2"
+}
