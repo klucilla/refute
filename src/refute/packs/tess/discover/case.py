@@ -119,7 +119,7 @@ def build_case(
     carries its signal identity (``signal_identity``)."""
     tests = verdict.get("tests", [])
     data = verdict.get("data_summary") or {}
-    return {
+    case = {
         "schema": CASE_SCHEMA,
         "identity": {
             "target_key": verdict.get("target_key"),
@@ -166,6 +166,18 @@ def build_case(
         "questions_for_a_human": None,
         "conclusion": None,
     }
+    v051 = verdict.get("v051")
+    if v051 is not None:
+        # v0.5.1 WP4 (version-3 claims only, so earlier cases keep their bytes): the verdict's
+        # INCONCLUSIVE class or condition and each INCONCLUSIVE test's class
+        analyses = case["analyses"]
+        analyses["inconclusive_class"] = v051.get("inconclusive_class")
+        analyses["inconclusive_condition"] = v051.get("inconclusive_condition")
+        for entry, t in zip(analyses["tests"], tests, strict=True):
+            cls = (t.get("metrics") or {}).get("inconclusive_class")
+            if cls is not None:
+                entry["inconclusive_class"] = cls
+    return case
 
 
 LIGHT_ENTRY_FIELDS = ("method_status", "temporal_diagnostic", "stage1", "promotion")

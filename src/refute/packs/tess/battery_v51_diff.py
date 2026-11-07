@@ -210,6 +210,7 @@ def check_aperture_depth(
             TestStatus.INCONCLUSIVE,
             Severity.FATAL,
             "no target pixel data usable for aperture photometry",
+            metrics={"inconclusive_class": "missing_input"},
             thresholds=thresholds,
             coverage=0,
             coverage_unit=unit,
@@ -395,6 +396,7 @@ def check_systematics(
             TestStatus.INCONCLUSIVE,
             Severity.WARNING,
             "no SAP flux, background or quality data available",
+            metrics={"inconclusive_class": "missing_input"},
             thresholds=thresholds,
             coverage=0,
             coverage_unit=unit,
@@ -542,6 +544,7 @@ def check_systematics(
     elif not_run:
         reasons = "; ".join(f"{name}: {why}" for name, why in not_run.items())
         status, message = TestStatus.INCONCLUSIVE, f"sub-check(s) could not run ({reasons})"
+        metrics["inconclusive_class"] = not_run_class(not_run.values())
     else:
         status = TestStatus.PASS
         message = f"no problem in {len(ran)} sub-checks: " + ", ".join(ran)
@@ -560,6 +563,22 @@ def check_systematics(
         coverage_unit=unit,
         sensitivity=blocks,
     )
+
+
+def not_run_class(reasons) -> str:
+    """WP4: the class of a ``systematics`` INCONCLUSIVE from its sub-checks' reasons, the first
+    of ``refute.core.inconclusive.PRIORITY`` among them."""
+    from refute.core.inconclusive import PRIORITY
+
+    def one(why: str) -> str:
+        if why == "no CROWDSAP value":
+            return "missing_input"
+        if why == "error not measurable" or why.endswith("depth is not positive"):
+            return "insufficient_sensitivity"
+        return "not_enough_data"  # too few transits, or no transit measured
+
+    found = {one(why) for why in reasons}
+    return next(cls for cls in PRIORITY if cls in found)
 
 
 def expected_sap_depth(g_pdc: A0Depth, g_r: A0Depth, crowd_of: dict[int, float]):

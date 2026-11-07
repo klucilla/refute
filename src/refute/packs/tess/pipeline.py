@@ -595,8 +595,16 @@ def conclude_analysis(
     discovery = plan.discovery
     run_stage = discovery.last_stage if stage is None else int(stage)
     tests, deferred = defer_tests(tests, dict(discovery.stages), run_stage)
+    if plan.is_v051:
+        # v0.5.1 WP4: every INCONCLUSIVE of a version-3 claim carries its class (after the
+        # deferral, which builds new results; Codex's WP4 design review)
+        tests = classify_v051(tests, deferred)
     decisive, required = expected_by_role(plan, catalogs_configured)
     roles = aggregate_roles(tests, dict(discovery.roles), decisive, required)
+    if plan.is_v051:
+        from refute.core.inconclusive import with_classes
+
+        roles.reason = with_classes(roles.reason, roles.decisive)
     return Analysis(
         search,
         flattened,
@@ -609,6 +617,47 @@ def conclude_analysis(
         stage=run_stage,
         deferred=deferred,
     )
+
+
+def classify_v051(tests: list[TestResult], deferred=()) -> list[TestResult]:
+    """v0.5.1 WP4: the class of every INCONCLUSIVE test of a version-3 claim
+    (``refute.core.inconclusive`` with the TESS table)."""
+    from refute.core.inconclusive import annotate
+    from refute.packs.tess.inconclusive import TESS_TABLE
+
+    return annotate(tests, TESS_TABLE, deferred)
+
+
+GATE_NOT_PASSED = "gate_not_passed"
+EXPECTED_TESTS_MISSING = "expected_tests_missing"
+
+
+def v051_record(analysis: Analysis) -> dict[str, Any]:
+    """The v0.5.1 fields of ``verdict.json`` (WP4): the verdict's INCONCLUSIVE class (from its
+    decisive INCONCLUSIVE tests only, ``refute.core.inconclusive.PRIORITY``), the condition when
+    the aggregation stopped at the gate or at a missing expected test, and every INCONCLUSIVE
+    test's class and source."""
+    from refute.core.inconclusive import CLASS_KEY, SOURCE_KEY, verdict_class
+
+    condition = None
+    cls = None
+    if analysis.verdict == "INCONCLUSIVE":
+        if analysis.verdict_reason.startswith("gate test "):
+            condition = GATE_NOT_PASSED
+        elif analysis.verdict_reason.startswith("expected tests missing"):
+            condition = EXPECTED_TESTS_MISSING
+        else:
+            decisive = analysis.roles.decisive if analysis.roles is not None else analysis.tests
+            cls = verdict_class(decisive)
+    return {
+        "inconclusive_class": cls,
+        "inconclusive_condition": condition,
+        "inconclusive_classes": {
+            r.name: {"class": r.metrics[CLASS_KEY], "source": r.metrics[SOURCE_KEY]}
+            for r in analysis.tests
+            if r.status is TestStatus.INCONCLUSIVE and CLASS_KEY in r.metrics
+        },
+    }
 
 
 def duration_record(analysis: Analysis, plan: TessTestPlan) -> dict[str, Any]:
@@ -746,7 +795,7 @@ def v05_record(analysis: Analysis, data: TessData, plan: TessTestPlan) -> dict[s
     from refute.packs.tess.search import kept_peak_sde
 
     return {
-        "discovery_version": 2,
+        "discovery_version": 3 if plan.is_v051 else 2,
         "sensitivity_rule": "refute.core.sensitivity.enforce_sensitivity (#185)",
         "parameters": params,
         "sde_kept_peak": None
@@ -954,6 +1003,9 @@ def build_result(
     if plan.v05:
         # v0.5 claims only (WP6), so the records of earlier claims keep their keys and bytes.
         record["v05"] = v05_record(analysis, data, plan)
+    if plan.is_v051:
+        # v0.5.1 claims only (WP4), so the records of earlier claims keep their keys and bytes.
+        record["v051"] = v051_record(analysis)
     if analysis.gauntlet.timing is not None:
         # M4 piece 3 (switch on only, so records with the switch off keep their keys).
         record["global_timing"] = analysis.gauntlet.timing
@@ -1002,6 +1054,8 @@ class TessGauntlet:
             from refute.packs.tess.power import registry_for
 
             tests = enforce_sensitivity(enforce_coverage(tests), registry_for(plan))
+        if plan.is_v051:
+            tests = classify_v051(tests)
         return tests
 
 

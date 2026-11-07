@@ -161,6 +161,19 @@ def _v05_lines(result: dict[str, Any]) -> list[str]:
     return lines
 
 
+def _v051_lines(v051: dict[str, Any]) -> list[str]:
+    """v0.5.1 WP4 (version 3 only): the verdict's INCONCLUSIVE class or condition."""
+    cls, condition = v051.get("inconclusive_class"), v051.get("inconclusive_condition")
+    if cls is None and condition is None:
+        return []
+    what = f"class `{cls}`" if cls is not None else f"condition `{condition}`"
+    return [
+        f"- INCONCLUSIVE verdict: {what} (`v051` in `verdict.json`; the class of each INCONCLUSIVE "
+        "test is next to its status above).",
+        "",
+    ]
+
+
 def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
     lines = [
         f"# {result.get('target_key')}: {result.get('verdict')}",
@@ -223,11 +236,19 @@ def render_report(result: dict[str, Any], context: dict[str, Any]) -> str:
     diagnostic = (
         set((result.get("discovery") or {}).get("diagnostic_tests") or []) if v05 else set()
     )
+    v051 = result.get("v051")
     for test in result.get("tests", []):
         # v0.5 (#186): a diagnostic test is labelled as such, never by its severity
         severity = "diagnostic" if test["name"] in diagnostic else test["severity"]
-        lines.append(f"| {test['name']} | {test['status']} | {severity} | {test['message']} |")
+        status = test["status"]
+        cls = (test.get("metrics") or {}).get("inconclusive_class") if v051 else None
+        if cls:
+            # v0.5.1 WP4 (version 3 only): the class next to each INCONCLUSIVE
+            status = f"{status} ({cls})"
+        lines.append(f"| {test['name']} | {status} | {severity} | {test['message']} |")
     lines.append("")
+    if v051 is not None:
+        lines += _v051_lines(v051)
     if v05:
         lines += _v05_lines(result)
     if any(

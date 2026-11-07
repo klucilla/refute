@@ -126,3 +126,21 @@ The maintainer authorized, on 2026-11-07, a fourth round as a confirmation only 
 applied and recorded and the code starts with no fifth round. Round 4 found the seven earlier
 objections resolved and one wording objection (the registry comment in `power.py`), applied in the
 commit that implements the rule; amendment 6 is adopted.
+
+## WP4: the design of the INCONCLUSIVE classes
+
+Claude's design (a version-3-only pass over the test results; the class set by the test, the
+engine's coverage and sensitivity refusals, a table of the shared v0.4 and v0.5 functions'
+messages, a counted fallback; the verdict's class; the reporting in `verdict.json`, `report.md`
+and `case.json`) went to Codex before code, two rounds on 2026-11-07:
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [wp4-design-round-1-answer.md](wp4-design-round-1-answer.md) | `WEAKENED` (4 objections) | `c513be0114afe7c3be40ea79ae0256c2c1b49f51536e131fdde669a3cf8b0090` |
+| 2 | [wp4-design-round-2-answer.md](wp4-design-round-2-answer.md) | `SURVIVED` | `9de60237ec8fbbc881a6b2a972ce64f7622a4532a9c6c284c616e829e75e9b70` |
+
+The four objections of round 1, all applied: a test not run at this stage is `not_enough_data`
+(source `stage`), never `outside_domain`; the classification runs after the stage deferral, which
+builds new results; the verdict's class comes only from its decisive INCONCLUSIVE tests, and a gate
+not passed or a missing expected test is recorded apart as a condition; a version-3 record says
+`discovery_version` 3.
