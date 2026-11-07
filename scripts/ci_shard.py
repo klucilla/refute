@@ -56,6 +56,9 @@ HEAVY = {
     "heavy-b": [
         "tests/test_holdout_train_validity_e2e.py",
         "tests/test_holdout_blindness.py",
+        # v0.5.1 amendment 9 (#210): the duration_excess tests (about 90 s locally, one full
+        # version-3 analysis) join heavy-b, among the lightest shards of run 42401264680
+        "tests/test_v051_duration.py",
     ],
     "heavy-c": [
         "tests/test_workers_equivalence.py",

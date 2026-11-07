@@ -295,6 +295,8 @@ V05_TESTS = (
     "sinusoid",
     "duty_cycle",
 )
+# v0.5.1 (discovery version 3): the EB route's diagnostic (plan, amendments 4 and 9)
+V051_TESTS = ("duration_excess",)
 GATE_TEST = "snr"
 METHOD_STATUS_REFERENCE = "docs/validation/v0.2.1/closing-2026-10-27.md"
 
@@ -411,6 +413,8 @@ class DiscoveryParams(_Model):
         if both:
             raise ValueError("a test cannot be both decisive and diagnostic: " + ", ".join(both))
         known = set(DISCOVERY_TESTS) | (set(V05_TESTS) if self.version >= 2 else set())
+        if self.version >= 3:
+            known |= set(V051_TESTS)  # the version-3 diagnostic of the EB route (amendment 9)
         unknown = sorted(set(self.roles) - known)
         if unknown:
             raise ValueError("roles name unknown tests: " + ", ".join(unknown))

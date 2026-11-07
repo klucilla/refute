@@ -86,7 +86,10 @@ def test_a_version_2_plan_dumps_as_before_and_selects_the_v05_registry():
 
 
 def test_the_v3_registry_changes_only_the_sinusoid_and_the_sap_sub_check():
-    assert set(TESS_REGISTRY_V3) == set(TESS_REGISTRY)
+    # of the v0.5 entries only these two change; version 3 adds the diagnostic duration_excess
+    # (plan, amendments 4 and 9)
+    assert set(TESS_REGISTRY_V3) == set(TESS_REGISTRY) | {"duration_excess"}
+    assert TESS_REGISTRY_V3["duration_excess"] == {"main": "rule"}
     for name in TESS_REGISTRY:
         if name not in ("sinusoid", "systematics"):
             assert TESS_REGISTRY_V3[name] == TESS_REGISTRY[name]

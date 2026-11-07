@@ -62,6 +62,9 @@ TESS_REGISTRY_V3: dict[str, dict[str, str]] = {
     # with; "identical up to a constant factor" is its special case) or that is below the
     # operational cutoffs (class not_enough_data); see battery_v51_diff.sap_applicability
     "systematics": {"dumps": "fraction", "sap": "rule?", "background": "rule"},
+    # the EB route's diagnostic (amendments 4 and 9): the Gaussian closed form against
+    # T_max(2P) - T_max(P), with the full uncertainty sqrt(sigma_T^2 + sigma_Tmax^2)
+    "duration_excess": {"main": "rule"},
 }
 
 

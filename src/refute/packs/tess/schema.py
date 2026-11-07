@@ -85,7 +85,9 @@ class TessClaimSchema:
         # v0.5: a discovery version-2 claim also gives a role to every v0.5 test; so does a
         # version-3 claim (v0.5.1, acceptance row 5.1), whose battery keeps every v0.5 test (the
         # packaging rehearsal, row 5.4, found this check limited to version 2)
-        expected = set(expected_tests(catalogs, int(discovery.get("version", 1)) >= 2))
+        version = int(discovery.get("version", 1))
+        # a version-3 claim also gives a role to the diagnostic duration_excess (amendment 9)
+        expected = set(expected_tests(catalogs, version >= 2, version >= 3))
         roles = set(discovery["decisive"]) | set(discovery["diagnostic"])
         if roles != expected:
             missing = sorted(expected - roles)

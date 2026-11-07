@@ -232,9 +232,10 @@ def _unit_trapezoid(duration: float, ingress_fraction: float):
     return shape
 
 
-def _fit_shape(time, flux, candidate):
-    """The trapezoid fitted once on all events (depth, total duration, ingress fraction, epoch
-    shift free) on the flattened curve; returns (depth, duration, ingress_fraction, shift)."""
+def _fit_shape_status(time, flux, candidate):
+    """The trapezoid fit of ``_fit_shape`` (the same procedure, bounds and two-start selection:
+    the lower-cost start), returning also the selected fit's success flag and whether any of its
+    parameters is at a bound (``least_squares``'s ``active_mask``)."""
     from scipy.optimize import least_squares
 
     from refute.packs.tess import synthetic as syn
@@ -260,7 +261,14 @@ def _fit_shape(time, flux, candidate):
         )
         if best is None or fit.cost < best.cost:
             best = fit
-    return tuple(float(v) for v in best.x)
+    params = tuple(float(v) for v in best.x)
+    return params, bool(best.success), bool(np.any(best.active_mask != 0))
+
+
+def _fit_shape(time, flux, candidate):
+    """The trapezoid fitted once on all events (depth, total duration, ingress fraction, epoch
+    shift free) on the flattened curve; returns (depth, duration, ingress_fraction, shift)."""
+    return _fit_shape_status(time, flux, candidate)[0]
 
 
 def _inconclusive_odd_even(message, cls, thresholds, **metrics):
@@ -396,5 +404,199 @@ def check_odd_even(flat, candidate, gp, sp, cadence_days, exclude_phase_half, se
         thresholds=thresholds,
         coverage=len(rows),
         coverage_unit="measured transits",
+        sensitivity={"main": block},
+    )
+
+
+# --- duration_excess, the EB route's diagnostic (plan amendments 4 and 9) --------------------
+
+# the 20 phase placements of the fitted trapezoid (the band around phase 0.5 left out)
+DURATION_PHASES = (*np.linspace(0.20, 0.40, 10), *np.linspace(0.60, 0.80, 10))
+DURATION_MIN_VALID = 10
+DURATION_MAX_SIGMA = 3.0
+TMAX_DRAWS = 2000
+# "the battery's minimum number of events": the minimum number of transits the search requires of
+# a candidate (refute.packs.tess.search, at least 2 per period); the plan has no other
+MIN_EVENTS = 2
+
+
+def t_max(period: float, k: float, radius: float, mass: float) -> float:
+    """The circular-orbit maximum duration of a central transit (b = 0):
+    ``(P / pi) asin(min(1, (1 + k) / (a / R*)))``, ``a / R*`` by Kepler's third law from the
+    star's mass and radius (solar units)."""
+    from refute.packs.tess.calib05.c1 import a_over_rstar
+
+    a = a_over_rstar(period) * mass ** (1.0 / 3.0) / radius
+    return period / math.pi * math.asin(min(1.0, (1.0 + k) / a))
+
+
+def _positive_normal(rng: np.random.Generator, mean: float, sd: float, n: int) -> np.ndarray:
+    """``n`` draws of a Gaussian truncated at positive values (non-positive draws redrawn)."""
+    out = rng.normal(mean, sd, n)
+    for _ in range(1000):
+        bad = out <= 0
+        if not bad.any():
+            return out
+        out[bad] = rng.normal(mean, sd, int(bad.sum()))
+    raise ValueError("the Gaussian has almost no mass at positive values")
+
+
+def _covered_events(time, period, t0, duration, cadence_days, min_coverage) -> int:
+    """How many events at this ephemeris keep at least ``min_coverage`` of a full event's
+    in-event cadences (counted over all sectors)."""
+    full = duration / cadence_days
+    epochs = np.unique(np.round((time - t0) / period))
+    n = 0
+    for e in epochs:
+        inside = np.count_nonzero(np.abs(time - (t0 + e * period)) <= duration / 2.0)
+        n += inside / full >= min_coverage
+    return int(n)
+
+
+def _inconclusive_duration(message, cls, thresholds, **metrics):
+    return TestResult(
+        "duration_excess",
+        TestStatus.INCONCLUSIVE,
+        Severity.WARNING,
+        message,
+        metrics={**metrics, "inconclusive_class": cls},
+        thresholds=thresholds,
+    )
+
+
+def check_duration_excess(flat, candidate, star, gp, cadence_days, seed):
+    """``duration_excess`` (the acceptance section "The eclipsing-binary route", as decided under
+    amendment 9): a diagnostic, outside the verdict. ``T`` is the total duration of the trapezoid
+    ``_fit_shape`` fits; ``sigma_T`` a phase-placement estimate: the fitted trapezoid removed and
+    injected again at the 20 ``DURATION_PHASES``, each recovered by the same procedure, the sample
+    standard deviation of the valid placements' durations (dependent placements on one curve: D.1
+    measures whether it is calibrated). A warning when ``T - T_max(P) >= 3 sqrt(sigma_T^2 +
+    sigma_Tmax^2)``; its sensitivity the Gaussian closed form with the alternative
+    ``T_max(2P) - T_max(P)``. ``sigma_Tmax`` from ``TMAX_DRAWS`` seeded draws of the TIC radius
+    and mass (independent Gaussians truncated at positive values) and of ``k`` (the depth with its
+    error ``candidate.depth_err``, the error the gate reports)."""
+    from dataclasses import replace
+
+    from refute.core.sensitivity import gaussian_probability
+    from refute.packs.tess import synthetic as syn
+
+    ev = gp.events
+    thresholds = {
+        "max_sigma": DURATION_MAX_SIGMA,
+        "placements": len(DURATION_PHASES),
+        "min_valid_placements": DURATION_MIN_VALID,
+        "min_events": MIN_EVENTS,
+        "min_coverage": ev.min_coverage,
+        "tmax_draws": TMAX_DRAWS,
+    }
+    values = (
+        getattr(star, "radius_rsun", None),
+        getattr(star, "radius_err_rsun", None),
+        getattr(star, "mass_msun", None),
+        getattr(star, "mass_err_msun", None),
+    )
+    if any(v is None or not math.isfinite(v) or v <= 0 for v in values):
+        return _inconclusive_duration(
+            "no TIC radius, mass or their errors: the circular-orbit maximum cannot be computed",
+            "missing_input",
+            thresholds,
+        )
+    radius, radius_err, mass, mass_err = (float(v) for v in values)
+    time, flux = flat.time, flat.flux
+    period = candidate.period
+    (depth, duration, ingress, shift), fit_ok, fit_bound = _fit_shape_status(time, flux, candidate)
+    t0 = candidate.t0 + shift
+    clean = flux + syn.trapezoid(time, period, t0, depth, duration, ingress)
+    recovered, rejected = [], {"fit failed": 0, "parameter at a bound": 0, "too few events": 0}
+    for phi in DURATION_PHASES:
+        tj = t0 + float(phi) * period
+        yj = clean - syn.trapezoid(time, period, tj, depth, duration, ingress)
+        start = replace(candidate, t0=tj, depth=depth, duration=duration)
+        (_, dur_j, _, _), ok, bound = _fit_shape_status(time, yj, start)
+        events = _covered_events(time, period, tj, duration, cadence_days, ev.min_coverage)
+        if not ok:
+            rejected["fit failed"] += 1
+        elif bound:
+            rejected["parameter at a bound"] += 1
+        elif events < MIN_EVENTS:
+            rejected["too few events"] += 1
+        else:
+            recovered.append(dur_j)
+    placements = {"valid": len(recovered), "rejected": rejected}
+    common = {
+        "duration_hours": duration * 24.0,
+        "fit_success": fit_ok,
+        "fit_parameter_at_bound": fit_bound,
+        "placements": placements,
+        "sigma_T_kind": "phase-placement estimate (dependent placements; calibration by D.1)",
+    }
+    if len(recovered) < DURATION_MIN_VALID:
+        return _inconclusive_duration(
+            f"only {len(recovered)} valid phase placements (at least {DURATION_MIN_VALID})",
+            "not_enough_data",
+            thresholds,
+            **common,
+        )
+    sigma_t = float(np.std(recovered, ddof=1))
+    k = math.sqrt(max(depth, 0.0))
+    tmax_p = t_max(period, k, radius, mass)
+    tmax_2p = t_max(2.0 * period, k, radius, mass)
+    rng = np.random.default_rng(seed)
+    radii = _positive_normal(rng, radius, radius_err, TMAX_DRAWS)
+    masses = _positive_normal(rng, mass, mass_err, TMAX_DRAWS)
+    depth_err = candidate.depth_err
+    if depth_err is not None and math.isfinite(depth_err) and depth_err > 0 and depth > 0:
+        ks = np.sqrt(_positive_normal(rng, depth, float(depth_err), TMAX_DRAWS))
+    else:
+        ks = np.full(TMAX_DRAWS, k)
+    draws = [t_max(period, kk, r, m) for kk, r, m in zip(ks, radii, masses, strict=True)]
+    sigma_tmax = float(np.std(draws, ddof=1))
+    sigma = math.hypot(sigma_t, sigma_tmax)
+    metrics = {
+        **common,
+        "sigma_T_hours": sigma_t * 24.0,
+        "T_max_P_hours": tmax_p * 24.0,
+        "T_max_2P_hours": tmax_2p * 24.0,
+        "sigma_Tmax_hours": sigma_tmax * 24.0,
+    }
+    if not (math.isfinite(sigma) and sigma > 0):
+        return _inconclusive_duration(
+            "no finite positive error for the duration excess",
+            "insufficient_sensitivity",
+            thresholds,
+            **metrics,
+        )
+    excess = (duration - tmax_p) / sigma
+    metrics["excess_sigma"] = excess
+    alternative = tmax_2p - tmax_p
+    block = rule_block(
+        "duration above the circular-orbit maximum",
+        alternative * 24.0,
+        "h",
+        "gaussian-1",
+        gaussian_probability(alternative, sigma, DURATION_MAX_SIGMA),
+    )
+    if excess >= DURATION_MAX_SIGMA:
+        status = TestStatus.FAIL
+        message = (
+            f"duration {duration * 24.0:.2f} h is {excess:.1f} sigma above the circular-orbit "
+            "maximum for the TIC star; an eccentric orbit, a wrong stellar radius or a binary at "
+            "twice the period can do this (a diagnostic: it does not enter the verdict)"
+        )
+    else:
+        status = TestStatus.PASS
+        message = (
+            f"duration {duration * 24.0:.2f} h is {excess:.1f} sigma from the circular-orbit "
+            "maximum for the TIC star"
+        )
+    return TestResult(
+        "duration_excess",
+        status,
+        Severity.WARNING,
+        message,
+        metrics=metrics,
+        thresholds=thresholds,
+        coverage=len(recovered),
+        coverage_unit="valid phase placements",
         sensitivity={"main": block},
     )

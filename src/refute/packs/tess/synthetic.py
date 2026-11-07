@@ -769,6 +769,8 @@ def discovery_v051_plan_dict() -> dict:
     (it runs only when a catalog is configured)."""
     d = discovery_v05_plan_dict(catalogs=True)
     d["discovery"]["version"] = 3
+    # the version-3 diagnostic of the EB route (plan, amendments 4 and 9)
+    d["discovery"]["diagnostic"] = [*d["discovery"]["diagnostic"], "duration_excess"]
     d["v051"] = {}
     return d
 

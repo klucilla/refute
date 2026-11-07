@@ -47,10 +47,9 @@ C2 = C2Values()
 C3 = C3Values()
 
 # The roles of the version-3 battery: every test of the v0.5 battery keeps its role (acceptance
-# row 5.1). The diagnostic `duration_excess` (plan, amendment 4) gets its role when it is built,
-# before the freeze; the rehearsal runs again then.
+# row 5.1), and the diagnostic `duration_excess` (plan, amendments 4 and 9) is a diagnostic.
 V051_DECISIVE = tuple(V05_DECISIVE)
-V051_DIAGNOSTIC = tuple(V05_DIAGNOSTIC)
+V051_DIAGNOSTIC = (*V05_DIAGNOSTIC, "duration_excess")
 
 if sum(C1.sizes.values()) != 2400:
     raise ValueError("plan, section 6: C1' has 2,400 curves")

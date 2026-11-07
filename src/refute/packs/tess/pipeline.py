@@ -445,6 +445,13 @@ def v05_tests(
         ),
         v5.check_duty_cycle(final, sp),
     ]
+    if plan.is_v051:
+        # the EB route's diagnostic (plan, amendments 4 and 9): outside the verdict
+        out.append(
+            v51.check_duration_excess(
+                flat, final, data.star, gp, cadence, seed("duration_excess", final)
+            )
+        )
     return out
 
 
@@ -523,15 +530,17 @@ def _bls_gate(
     return corrected, replace(test, metrics=metrics)
 
 
-def expected_tests(catalogs_configured: bool, v05: bool = False) -> list[str]:
-    """Every test a complete TESS analysis must contain (with the v0.5 tests in a v0.5
-    claim)."""
+def expected_tests(catalogs_configured: bool, v05: bool = False, v051: bool = False) -> list[str]:
+    """Every test a complete TESS analysis must contain (with the v0.5 tests in a v0.5 or
+    v0.5.1 claim, and the version-3 diagnostic ``duration_excess`` in a v0.5.1 claim)."""
     names = ["snr", "odd_even", "secondary_eclipse", "plausibility"]
     names += [name for name, _ in BATTERY_TESTS]
     if catalogs_configured:
         names.append("eb_catalog")
     if v05:
         names += [name for name, _ in V05_TESTS]
+    if v051:
+        names.append("duration_excess")
     return [*names, "holdout_by_year"]
 
 
@@ -560,7 +569,7 @@ def expected_by_role(plan: TessTestPlan, catalogs_configured: bool) -> tuple[lis
     discovery = plan.discovery
     if discovery is None:
         raise ValueError("expected_by_role needs a plan with a discovery section")
-    names = expected_tests(catalogs_configured, plan.v05)
+    names = expected_tests(catalogs_configured, plan.v05, plan.is_v051)
     decisive = [n for n in names if discovery.roles.get(n) == "decisive"]
     return decisive, list(discovery.required_diagnostics)
 
