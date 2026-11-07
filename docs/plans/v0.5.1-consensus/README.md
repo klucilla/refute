@@ -170,3 +170,24 @@ claims of v0.1 to v0.5 re-executed, not only synthetic fixtures, and that re-exe
 5.3's) waits for the maintainer's approval on an issue; the paired chain of the calibration
 classifies a version-3 battery's INCONCLUSIVE results (WP4) itself. The rehearsal is a smoke test
 (one minimal synthetic path per step), and the C1', C2', C3' sizes are the plan's fixed minimums.
+
+## WP5: issue #212 and row 5.2 after the v0.1 re-execution
+
+After row 5.2 (b) stopped at v0.1 (not reproduced; `docs/validation/v0.5.1/wp5/README.md`), two
+questions went to Codex on 2026-11-07: whether #212 (BLS peaks that differ between machines)
+affects a v0.5.1 criterion, and Claude's reading of row 5.2 with a proposal for the maintainer
+([wp5-reexec-answer.md](wp5-reexec-answer.md), SHA-256
+`f381989d7ac92794bddc8bd09bd452ef32b91f024c6ab3f82e9679109a9762cb`).
+
+- #212: `WEAKENED`. No criterion is shown to fail, but whether a dossier's reproduction is
+  promised only in its recorded environment is not specified; and row 5.4's rehearsal, which runs
+  in CI on four platforms, should assert the candidate, the verdict and the test statuses, not the
+  search diagnostics.
+- Row 5.2: `REFUTED` for Claude's reading. The cause of the v0.1 result (defaults of commit
+  `deaa4eb`, v0.2) is supported, but row 5.2 does require the recorded claims' outputs, so (a)
+  and the resolved claim hashes do not meet it; the v0.1 result combines the changed defaults with
+  inputs fetched today (TIC records, pixel files), so it is "not reproduced under the fixed rule
+  with current-code inputs"; and the script's predicate leaves out the byte identity that row 5.2
+  names. Codex recommends running v0.2, v0.4 and v0.5 under the approved procedure and reporting
+  each. Claude accepts every objection; the stop stays, because the maintainer's condition stops
+  the re-executions at the first one not reproduced, so the decision is his.

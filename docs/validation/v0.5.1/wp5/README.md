@@ -21,8 +21,9 @@ recorded on #208 before they ran.
 
 - Script: [reproduce_dossiers.py](reproduce_dossiers.py) (commit `7f07583`); the dossiers, their
   archives and the commands are in its docstring and on #208.
-- **v0.1 (`TIC-138819293`): NOT reproduced under the fixed rule**
-  ([reproduce-dossiers-v0.1.json](reproduce-dossiers-v0.1.json)). Recorded verdict SURVIVED
+- **v0.1 (`TIC-138819293`): not reproduced under the fixed rule with current-code inputs**
+  ([reproduce-dossiers-v0.1.json](reproduce-dossiers-v0.1.json)); `verdict.json` is not
+  byte-identical either. Recorded verdict SURVIVED
   ("every test passed", 5 tests); with the current code REFUTED ("fatal failure in:
   centroid_shift", 10 tests). The light-curve files fetched from MAST have the recorded SHA-256;
   the TIC star and neighbor records differ from the recorded ones (fields added since v0.1), and
@@ -31,7 +32,12 @@ recorded on #208 before they ran.
   claim with defaults that commit `deaa4eb` (2026-10-08, v0.2, before tag `v0.2.0`) introduced:
   `data.target_pixel_files` defaults to true and the tests `centroid_shift`, `aperture_depth`,
   `nearby_contamination`, `period_alias` and `systematics` run by default. The v0.1 claim does not
-  name them, so every code version from v0.2 on runs them on it. The v0.1 dossier's own
+  name them, so every code version from v0.2 on runs them on it. The result is not code alone:
+  the `centroid_shift` failure comes from two target pixel files fetched today (the v0.1 run read
+  none), and the TIC records are today's; the differences are kept next to the verdict in the
+  output. Codex's review (`docs/plans/v0.5.1-consensus/wp5-reexec-answer.md`) also notes that the
+  script's "reproduced" predicate leaves out the byte identity that row 5.2 names; for v0.1 the
+  bytes differ as well, so the outcome is the same. The v0.1 dossier's own
   `REPRODUCE.md` reproduces it at its locked commit, which is how it was reproduced in 2026-10
   (`refute-v0.1-reproduction.zip`, asset of release v0.1.0).
 - Following the maintainer's condition, the work stopped at this version: v0.2, v0.4 and v0.5
