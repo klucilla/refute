@@ -119,3 +119,10 @@ on the amendment's text: `WEAKENED` in each, every objection applied, no disagre
 | 1 | [amendment6-round-1-answer.md](amendment6-round-1-answer.md) | `WEAKENED` | `56607ddfef2267df8e51ee2bd6dfa93c54d1474c8fe8aed5747340038ac5f11c` |
 | 2 | [amendment6-round-2-answer.md](amendment6-round-2-answer.md) | `WEAKENED` | `970373f6935d572c4827cf54742abd6c6466952cfc9d559bcd694424cfe0293d` |
 | 3 | [amendment6-round-3-answer.md](amendment6-round-3-answer.md) | `WEAKENED` (wording only) | `37b82fbbe9f4b2ff214cf5515856106fc73cc4539e2b92f61b4e2edd0a2ffeda` |
+| 4 | [amendment6-round-4-answer.md](amendment6-round-4-answer.md) | `WEAKENED` (wording only) | `de710b1dd977e78f055d2a76a03e4b9276a1c817b71b4896e52f658a76d0a314` |
+
+The maintainer authorized, on 2026-11-07, a fourth round as a confirmation only (plan, amendment
+6, item 6), with its outcome fixed in advance: `WEAKENED` for wording only means the correction is
+applied and recorded and the code starts with no fifth round. Round 4 found the seven earlier
+objections resolved and one wording objection (the registry comment in `power.py`), applied in the
+commit that implements the rule; amendment 6 is adopted.

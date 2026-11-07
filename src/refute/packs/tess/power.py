@@ -57,8 +57,10 @@ TESS_REGISTRY: dict[str, dict[str, str]] = {
 TESS_REGISTRY_V3: dict[str, dict[str, str]] = {
     **TESS_REGISTRY,
     "sinusoid": {"P/2": "rule", "P": "rule?", "2P": "rule?"},
-    # WP3 (a): the SAP sub-check is conditional, not applicable where SAP and PDCSAP are
-    # identical up to a constant factor (no corrected flux to compare with)
+    # WP3 (a), amendment 6: the SAP sub-check is conditional, not applicable in a sector where SAP
+    # is an exact affine function of PDCSAP (no correction applied, no corrected flux to compare
+    # with; "identical up to a constant factor" is its special case) or that is below the
+    # operational cutoffs (class not_enough_data); see battery_v51_diff.sap_applicability
     "systematics": {"dumps": "fraction", "sap": "rule?", "background": "rule"},
 }
 

@@ -4,6 +4,8 @@ data; the rate rows (3a.1 to 3a.6) run in the acceptance scripts on frozen code.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 
 from refute.core.sensitivity import enforce_sensitivity
@@ -132,6 +134,84 @@ def test_the_registry_makes_sap_conditional_and_background_required():
     # a PASS rests on the background and the dumps; the not-applicable SAP never makes it pass
     if checked.status is TestStatus.PASS:
         assert r.sensitivity["background"]["detectable"]
+
+
+def _affine_case(seed=6):
+    """3a.7's mechanism: two affine sectors (CROWDSAP 0.98 and 0.7), one short sector (fewer than
+    N_min finite cadences) and one flat sector (PDCSAP standard deviation below s_min)."""
+    lc, _ = make_lightcurve(PLANET, seed=seed)
+    aux = _aux(lc, crowd=1.0)
+    for a, crowd in zip(aux, (0.98, 0.7), strict=True):
+        a.crowdsap = crowd
+        a.sap_flux = 1.0 + crowd * (a.pdcsap_flux - 1.0)
+    first = aux[0]
+    short = replace(first, sector=901, time=first.time[:60].copy(),
+                    pdcsap_flux=first.pdcsap_flux[:60].copy(), sap_flux=first.sap_flux[:60].copy(),
+                    sap_bkg=first.sap_bkg[:60].copy(), dump_times=np.array([]))  # fmt: skip
+    rng = np.random.default_rng(11)
+    flat_pdc = 1.0 + rng.normal(0.0, 1e-6, first.time.size)
+    flat = replace(first, sector=902, time=first.time + 1000.0, pdcsap_flux=flat_pdc,
+                   sap_flux=flat_pdc + rng.normal(0.0, 3e-4, flat_pdc.size),
+                   dump_times=np.array([]))  # fmt: skip
+    return aux + [short, flat]
+
+
+def test_the_affine_case_makes_the_sap_sub_check_not_applicable_in_every_sector():
+    # 3a.7 (amendment 6): affine sectors "no correction"; short and flat sectors not_enough_data
+    plan = _plan()
+    aux = _affine_case()
+    r = v51d.check_systematics(aux, _candidate(), plan, seed=7)
+    classes = {e["sector"]: e["class"] for e in r.metrics["sap_not_applicable_sectors"]}
+    assert classes == {aux[0].sector: "no_correction", aux[1].sector: "no_correction",
+                       901: "not_enough_data", 902: "not_enough_data"}  # fmt: skip
+    why = r.metrics["sub_checks_not_applicable"]["sap_vs_pdcsap"]
+    assert r.sensitivity["sap"] == {"applicable": False, "reason": why}
+    for e in r.metrics["sap_not_applicable_sectors"]:
+        assert e["reason"] and e["reason"] in why
+    assert "SAP versus PDCSAP" not in r.metrics["sub_checks_run"]
+
+
+def test_the_affine_sectors_meet_the_cutoffs_and_the_others_do_not():
+    aux = _affine_case()
+    for a in aux[:2]:
+        applies, why, kind = v51d.sap_applicability(a)
+        assert (applies, kind) == (False, "no_correction") and "affine" in why
+        assert a.time.size >= v51d.SAP_MIN_CADENCES
+        assert np.std(a.pdcsap_flux / np.median(a.pdcsap_flux)) >= v51d.SAP_MIN_PDCSAP_SD
+    for a in aux[2:]:
+        assert v51d.sap_applicability(a)[::2] == (False, "not_enough_data")
+
+
+def test_the_cadence_cutoff_is_inclusive_at_n_min():
+    lc, _ = make_lightcurve(PLANET, seed=6)
+    a = _aux(lc, crowd=1.0)[0]
+    rng = np.random.default_rng(2)
+    a.sap_flux = a.pdcsap_flux + rng.normal(0.0, 3e-4, a.time.size)
+    n = v51d.SAP_MIN_CADENCES
+    keep = replace(a, time=a.time[:n], pdcsap_flux=a.pdcsap_flux[:n], sap_flux=a.sap_flux[:n])
+    drop = replace(a, time=a.time[: n - 1], pdcsap_flux=a.pdcsap_flux[: n - 1],
+                   sap_flux=a.sap_flux[: n - 1])  # fmt: skip
+    assert v51d.sap_applicability(keep)[0] is True
+    assert v51d.sap_applicability(drop)[::2] == (False, "not_enough_data")
+
+
+def test_sabotage_the_written_rule_makes_the_affine_case_detectable(monkeypatch):
+    # amendment 6's sabotage: the constant-factor rule treats the affine sectors as applicable and
+    # emits a rule block that is detectable without information
+    def written(a):
+        sap, pdc = v51d._normalized(a.sap_flux), v51d._normalized(a.pdcsap_flux)
+        both = np.isfinite(sap) & np.isfinite(pdc)
+        if both.any() and np.max(np.abs(sap[both] - pdc[both])) <= v51d.AFFINE_TOLERANCE:
+            return False, "identical up to a constant factor", None
+        return True, "", None
+
+    plan = _plan()
+    aux = _affine_case()[:2]
+    monkeypatch.setattr(v51d, "sap_applicability", written)
+    r = v51d.check_systematics(aux, _candidate(), plan, seed=7)
+    block = r.sensitivity["sap"]
+    assert block.get("applicable", True) is not False
+    assert block["detectable"] is True
 
 
 def test_a0_depth_is_none_when_the_error_is_not_measurable():

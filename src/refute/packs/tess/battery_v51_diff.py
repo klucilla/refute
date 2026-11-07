@@ -36,9 +36,14 @@ from refute.packs.tess import a0
 from refute.packs.tess.params import TessTestPlan
 from refute.packs.tess.types import Candidate, LightCurveData, PixelData, SectorAux
 
-# SAP and PDCSAP are "identical up to a constant factor" in a sector when their normalized
-# series differ by at most this much at every cadence (no correction was applied there)
-IDENTICAL_TOLERANCE = 1e-9
+# Amendment 6 (acceptance, WP3 (a)): SAP is an exact affine function of PDCSAP in a sector (no
+# correction applied there) when the largest absolute residual of the standardized least-squares
+# fit is at most this (normalized flux)
+AFFINE_TOLERANCE = 1e-9
+# provisional operational cutoffs (a declared convention, not calibrated): below either, the SAP
+# sub-check is not applicable in that sector, class not_enough_data
+SAP_MIN_CADENCES = 100
+SAP_MIN_PDCSAP_SD = 1e-5
 # a per-event error at or below this (normalized flux units, 1e-6 ppm) is rounding, not a
 # measurement: the series has no scatter and its error is "not measurable" (acceptance, WP3 (a))
 MIN_MEASURABLE_ERROR = 1e-12
@@ -333,13 +338,39 @@ def _normalized(values: np.ndarray) -> np.ndarray:
     return values / median if np.isfinite(median) and median != 0 else np.full(values.size, np.nan)
 
 
-def sap_identical(a: SectorAux) -> bool:
-    """SAP and PDCSAP identical up to a constant factor in this sector (no correction applied)."""
+def sap_applicability(a: SectorAux) -> tuple[bool, str, str | None]:
+    """Amendment 6: whether the SAP sub-check applies in this sector, with the reason and the
+    class when it does not (docs/plans/v0.5.1-acceptance.md, WP3 (a)).
+
+    On the cadences where both normalized series (each divided by its median) are finite: below
+    ``SAP_MIN_CADENCES`` cadences or a PDCSAP standard deviation (population, ``ddof=0``) below
+    ``SAP_MIN_PDCSAP_SD``, not applicable with the class ``not_enough_data`` (provisional
+    operational cutoffs, a declared convention, not calibrated); otherwise ``SAP = a + b z`` with
+    ``z`` the standardized PDCSAP is fitted by ordinary least squares, and a largest absolute
+    residual at most ``AFFINE_TOLERANCE`` means SAP is an exact affine function of PDCSAP: no
+    correction was applied, not applicable (class ``no_correction``)."""
     sap, pdc = _normalized(a.sap_flux), _normalized(a.pdcsap_flux)
     both = np.isfinite(sap) & np.isfinite(pdc)
-    if not both.any():
-        return False
-    return bool(np.max(np.abs(sap[both] - pdc[both])) <= IDENTICAL_TOLERANCE)
+    n = int(both.sum())
+    if n < SAP_MIN_CADENCES:
+        why = f"sector {a.sector}: {n} finite cadences (< {SAP_MIN_CADENCES})"
+        return False, why, "not_enough_data"
+    s, p = sap[both], pdc[both]
+    sd = float(np.std(p))
+    if not sd >= SAP_MIN_PDCSAP_SD:
+        why = f"sector {a.sector}: PDCSAP standard deviation {sd:.3g} (< {SAP_MIN_PDCSAP_SD:g})"
+        return False, why, "not_enough_data"
+    z = (p - p.mean()) / sd
+    design = np.column_stack([np.ones(n), z])
+    coef, *_ = np.linalg.lstsq(design, s, rcond=None)
+    worst = float(np.max(np.abs(s - design @ coef)))
+    if worst <= AFFINE_TOLERANCE:
+        why = (
+            f"sector {a.sector}: SAP an exact affine function of PDCSAP (largest residual "
+            f"{worst:.2g} <= {AFFINE_TOLERANCE:g}; no correction applied)"
+        )
+        return False, why, "no_correction"
+    return True, "", None
 
 
 def check_systematics(
@@ -350,8 +381,8 @@ def check_systematics(
     exclude_phase_half: bool = False,
 ) -> TestResult:
     """v0.5's ``systematics`` with A0's errors (WP3 (a)): the SAP sub-check on the
-    SAP-minus-expected series (not applicable in sectors where SAP and PDCSAP are identical up to
-    a constant factor), the background sub-check with A0's error; its blocks attached."""
+    SAP-minus-expected series over the sectors where it applies (``sap_applicability``,
+    amendment 6), the background sub-check with A0's error; its blocks attached."""
     from refute.packs.tess.battery import transit_centers_with_data
 
     params = plan.gauntlet.systematics
@@ -405,11 +436,17 @@ def check_systematics(
         )
 
     # --- SAP versus PDCSAP on the SAP-minus-expected series -------------------------------
-    identical = [a.sector for a in aux if sap_identical(a)]
-    usable = [a for a in aux if a.sector not in identical]
-    metrics["sap_not_applicable_sectors"] = identical
+    usable: list[SectorAux] = []
+    excluded: list[dict[str, Any]] = []
+    for a in aux:
+        applies, why, kind = sap_applicability(a)
+        if applies:
+            usable.append(a)
+        else:
+            excluded.append({"sector": int(a.sector), "reason": why, "class": kind})
+    metrics["sap_not_applicable_sectors"] = excluded
     if not usable:
-        why = "SAP and PDCSAP identical up to a constant factor in every sector (no correction)"
+        why = "not applicable in every sector: " + "; ".join(e["reason"] for e in excluded)
         not_applicable["sap_vs_pdcsap"] = why
         blocks["sap"] = not_applicable_block(why)
     elif any(a.crowdsap is None for a in usable):
