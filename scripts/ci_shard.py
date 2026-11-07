@@ -35,7 +35,13 @@ ROOT = Path(__file__).resolve().parents[1]
 HEAVY = {
     # v0.5.1 (#210): run 42279642640 reached 29.5 min after the v0.5.1 tests entered rest;
     # test_v051_wp2 (196 s locally) joins the lightest heavy shard (heavy-a, 138 s)
-    "heavy-a": ["tests/test_ebcatalog_own_tic_e2e.py", "tests/test_v051_wp2.py"],
+    # v0.5.1 WP5 row 5.4 (#210): the packaging rehearsal (about 300 s locally with parallel
+    # workers) joins heavy-a, the lightest shard (about 334 s locally)
+    "heavy-a": [
+        "tests/test_ebcatalog_own_tic_e2e.py",
+        "tests/test_v051_wp2.py",
+        "tests/test_v051_rehearsal.py",
+    ],
     # stage 1, X1b (2026-10-21): the 32 engine controls of spec B pushed heavy-a to 15.6 and
     # 22.3 min on windows-2025 (run 39696817920, from 11.9 before); they now run in parallel
     # workers and in a shard of their own
