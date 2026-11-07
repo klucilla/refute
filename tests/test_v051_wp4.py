@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+from bytes_or_close import json_problems, text_problems
 from refute.core import inconclusive as inc
 from refute.core.io import dumps_json
 from refute.core.sensitivity import enforce_sensitivity
@@ -294,9 +295,10 @@ def test_4_2_earlier_claims_keep_the_bytes_of_their_outputs(label, plan_dict):
     data = scenario_data("planet_three_years")
     analysis = analyze_data(data, plan, stage=2)
     result, report, case = _outputs(data, plan, analysis)
-    assert dumps_json(result) == _fixture(f"verdict-{label}.json")
-    assert report == _fixture(f"report-{label}.md")
-    assert dumps_json(case) == _fixture(f"case-{label}.json")
+    # byte for byte on the recording platform; elsewhere floats within 1e-9 (bytes_or_close)
+    assert json_problems(dumps_json(result), _fixture(f"verdict-{label}.json")) == []
+    assert text_problems(report, _fixture(f"report-{label}.md")) == []
+    assert json_problems(dumps_json(case), _fixture(f"case-{label}.json")) == []
 
 
 @pytest.mark.parametrize("label", ["v04", "v05"])

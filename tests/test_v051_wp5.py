@@ -13,6 +13,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from bytes_or_close import json_problems, text_problems
 from refute.core.io import dumps_json
 from refute.packs.tess.calib05.values import V05_DECISIVE, V05_DIAGNOSTIC
 from refute.packs.tess.discover.paired import paired_chain
@@ -103,8 +104,9 @@ def test_5_2_the_plans_of_earlier_claims_produce_the_recorded_bytes(label, claim
     data = scenario_data("planet_three_years")
     analysis = analyze_data(data, plan, stage=2 if discover else None)
     result = build_result(TARGET, data, plan, analysis, context)
-    assert dumps_json(result) == _fixture(f"verdict-{label}.json")
-    assert render_report(result, context) == _fixture(f"report-{label}.md")
+    # byte for byte on the recording platform; elsewhere floats within 1e-9 (bytes_or_close)
+    assert json_problems(dumps_json(result), _fixture(f"verdict-{label}.json")) == []
+    assert text_problems(render_report(result, context), _fixture(f"report-{label}.md")) == []
     error = TessAnalyzer().error_result(TARGET, "boom", context, test_plan=claim_plans[label])
     assert dumps_json(error) == _fixture(f"error-{label}.json")
 
@@ -113,7 +115,25 @@ def test_5_2_the_paired_chain_of_the_v05_calibration_keeps_its_bytes(claim_plans
     p04 = TessTestPlan.model_validate(claim_plans["v04"])
     p05 = TessTestPlan.model_validate(claim_plans["v05"])
     chain = paired_chain(scenario_data("planet_three_years"), p04, p05, stage=2)
-    assert dumps_json(chain) == _fixture("paired-v04-v05.json")
+    assert json_problems(dumps_json(chain), _fixture("paired-v04-v05.json")) == []
+
+
+def test_the_fixture_comparison_rule(monkeypatch):
+    import bytes_or_close as boc
+
+    fixture = '{"a": 1903.5730294296745, "b": "x", "c": [1, null]}'
+    last_bits = '{"a": 1903.5730294297387, "b": "x", "c": [1, null]}'
+    monkeypatch.setattr(boc, "on_recording_platform", lambda: True)
+    assert boc.json_problems(fixture, fixture) == []
+    assert boc.json_problems(last_bits, fixture) != []
+    monkeypatch.setattr(boc, "on_recording_platform", lambda: False)
+    assert boc.json_problems(last_bits, fixture) == []
+    assert boc.json_problems(last_bits.replace('"x"', '"y"'), fixture) != []
+    assert boc.json_problems(fixture.replace("1903.57", "1903.58"), fixture) != []
+    assert boc.json_problems('{"b": "x", "a": 1903.5730294296745, "c": [1, null]}', fixture) != []
+    assert boc.text_problems("depth 1903.5730294297387 ppm", "depth 1903.5730294296745 ppm") == []
+    assert boc.text_problems("depth 1903.6 ppm", "depth 1903.5 ppm") != []
+    assert boc.text_problems("depth 1903.5 ppb", "depth 1903.5 ppm") != []
 
 
 # --- row 5.4 (part): the paired chain of a version-3 battery carries the WP4 classes ------------
