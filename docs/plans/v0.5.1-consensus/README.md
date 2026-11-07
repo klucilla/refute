@@ -269,3 +269,20 @@ was applied, no disagreement remains, and the text goes to the maintainer
 
 Round 3's objection (D.1's denominator) is applied with a rule marked as Claude's choice for the
 maintainer to confirm (at least 380 of 400 usable pulls per noise model, else NOT DECIDABLE).
+
+## The D1 route search (amendment 10, item 3)
+
+Codex reviewed the search plan and its results, 2026-11-07
+(`docs/validation/v0.5.1/feasibility/README.md`, "The D1 route search"):
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [d1-routes-round-1-answer.md](d1-routes-round-1-answer.md) | `WEAKENED` (4 objections) | `156b0bab6697c25b687769ed716fc4f61c3c0ff94fba54c186b78fb8f32d2b50` |
+| 2 | [d1-routes-round-2-answer.md](d1-routes-round-2-answer.md) | `WEAKENED` (5 objections, wording and caution) | `f7be5c9592964382e9bb5f4542730f985b260522837b9dd4e1c2f12b95c78b4c` |
+
+Every objection was applied (thresholds exploratory; a covariance-scored statistic; the joint
+radius and mass decomposition; routes unavailable on C1 recorded; the oracle as a proxy forecast;
+per-group flag fractions; the grazing tail unexplained; the cost overrun recorded). Both agree: no
+new decisive test in v0.5.1. They differ on one point, for the maintainer: Codex would keep the
+geometry consistency as a non-fatal diagnostic pending calibration; Claude would record it only,
+since a new diagnostic needs the maintainer's approval.

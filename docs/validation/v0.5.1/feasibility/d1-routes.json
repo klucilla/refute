@@ -1,0 +1,252 @@
+{
+ "cpu_hours": 12.04,
+ "decompose": {
+  "EB1": {
+   "eligible": 388,
+   "sigma_R=0.0": {
+    "expected_survivors_at_c1_prime": 2.0,
+    "nearest_at_radius_bound": 388
+   },
+   "sigma_R=0.025": {
+    "expected_survivors_at_c1_prime": 2.89,
+    "nearest_at_radius_bound": 312
+   },
+   "sigma_R=0.05": {
+    "expected_survivors_at_c1_prime": 4.57,
+    "nearest_at_radius_bound": 304
+   },
+   "sigma_R=0.1": {
+    "expected_survivors_at_c1_prime": 8.96,
+    "nearest_at_radius_bound": 269
+   }
+  },
+  "EB2": {
+   "eligible": 372,
+   "sigma_R=0.0": {
+    "expected_survivors_at_c1_prime": 4.05,
+    "nearest_at_radius_bound": 372
+   },
+   "sigma_R=0.025": {
+    "expected_survivors_at_c1_prime": 5.98,
+    "nearest_at_radius_bound": 357
+   },
+   "sigma_R=0.05": {
+    "expected_survivors_at_c1_prime": 7.9,
+    "nearest_at_radius_bound": 358
+   },
+   "sigma_R=0.1": {
+    "expected_survivors_at_c1_prime": 14.99,
+    "nearest_at_radius_bound": 309
+   }
+  }
+ },
+ "decompose_joint": {
+  "EB1": {
+   "R0.025_M0.025": {
+    "expected_survivors_at_c1_prime": 3.35,
+    "nearest_at_bound": 308
+   },
+   "R0.05_M0.05": {
+    "expected_survivors_at_c1_prime": 7.55,
+    "nearest_at_bound": 297
+   },
+   "R0.0_M0.05": {
+    "expected_survivors_at_c1_prime": 2.69,
+    "nearest_at_bound": 315
+   },
+   "R0.1_M0.1": {
+    "expected_survivors_at_c1_prime": 9.11,
+    "nearest_at_bound": 127
+   },
+   "eligible": 388
+  },
+  "EB2": {
+   "R0.025_M0.025": {
+    "expected_survivors_at_c1_prime": 6.56,
+    "nearest_at_bound": 357
+   },
+   "R0.05_M0.05": {
+    "expected_survivors_at_c1_prime": 12.32,
+    "nearest_at_bound": 357
+   },
+   "R0.0_M0.05": {
+    "expected_survivors_at_c1_prime": 5.45,
+    "nearest_at_bound": 358
+   },
+   "R0.1_M0.1": {
+    "expected_survivors_at_c1_prime": 15.23,
+    "nearest_at_bound": 140
+   },
+   "eligible": 372
+  }
+ },
+ "label": "development data only (amendment 10, item 3); it decides nothing",
+ "route": {
+  "EB1_folded": 105,
+  "dchi2_cov_planet_q9973": 145.52831224230087,
+  "dchi2_planet_q9973": 164.7530478010164,
+  "families": {
+   "dchi2 EB1 correlated": {
+    "eligible": 71,
+    "flagged_at_9": 0.5633802816901409,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     0.016403613744842005,
+     11.884709847043268,
+     25.78220102160958
+    ]
+   },
+   "dchi2 EB1 white": {
+    "eligible": 73,
+    "flagged_at_9": 0.3698630136986301,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -1.23241361226319,
+     1.6480749392067082,
+     29.234567342263652
+    ]
+   },
+   "dchi2 EB2 correlated": {
+    "eligible": 75,
+    "flagged_at_9": 0.7866666666666666,
+    "flagged_at_planet_q": 0.013333333333333334,
+    "quantiles_10_50_90": [
+     3.3064528886667177,
+     16.845433149206656,
+     50.32357144833769
+    ]
+   },
+   "dchi2 EB2 white": {
+    "eligible": 63,
+    "flagged_at_9": 0.47619047619047616,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -0.3177182574399921,
+     8.135714415699113,
+     42.54898593113322
+    ]
+   },
+   "dchi2 P correlated": {
+    "eligible": 73,
+    "flagged_at_9": 0.0273972602739726,
+    "flagged_at_planet_q": 0.0136986301369863,
+    "quantiles_10_50_90": [
+     -0.028891972528799666,
+     0.5265883647371083,
+     4.533875342073043
+    ]
+   },
+   "dchi2 P white": {
+    "eligible": 64,
+    "flagged_at_9": 0.015625,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -1.052401831410134,
+     0.32675071670928446,
+     4.458763796619088
+    ]
+   },
+   "dchi2 PG correlated": {
+    "eligible": 53,
+    "flagged_at_9": 0.05660377358490566,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -0.0013284349273817496,
+     0.48504964870153344,
+     5.169263916379035
+    ]
+   },
+   "dchi2 PG white": {
+    "eligible": 59,
+    "flagged_at_9": 0.3050847457627119,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     0.013050948572527026,
+     2.2496392431639833,
+     64.24691459363858
+    ]
+   },
+   "dchi2_cov EB1 correlated": {
+    "eligible": 71,
+    "flagged_at_9": 0.5070422535211268,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -0.3030728390622244,
+     9.135036902414868,
+     24.198646134360388
+    ]
+   },
+   "dchi2_cov EB1 white": {
+    "eligible": 73,
+    "flagged_at_9": 0.3698630136986301,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -1.232509182167996,
+     1.6481413821907154,
+     29.234749208559695
+    ]
+   },
+   "dchi2_cov EB2 correlated": {
+    "eligible": 75,
+    "flagged_at_9": 0.7466666666666667,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     3.6169792491789847,
+     15.263076505161735,
+     27.543015597083293
+    ]
+   },
+   "dchi2_cov EB2 white": {
+    "eligible": 63,
+    "flagged_at_9": 0.47619047619047616,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -0.3177282236196333,
+     8.135430285854454,
+     42.54361110043538
+    ]
+   },
+   "dchi2_cov P correlated": {
+    "eligible": 73,
+    "flagged_at_9": 0.0273972602739726,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -0.7952027942139466,
+     0.27973806902173237,
+     4.1583872587683794
+    ]
+   },
+   "dchi2_cov P white": {
+    "eligible": 64,
+    "flagged_at_9": 0.015625,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -1.052408988582829,
+     0.3266302213869494,
+     4.458756451076944
+    ]
+   },
+   "dchi2_cov PG correlated": {
+    "eligible": 53,
+    "flagged_at_9": 0.05660377358490566,
+    "flagged_at_planet_q": 0.0,
+    "quantiles_10_50_90": [
+     -0.044794682665087744,
+     0.39654466139506894,
+     4.092392687883515
+    ]
+   },
+   "dchi2_cov PG white": {
+    "eligible": 59,
+    "flagged_at_9": 0.3050847457627119,
+    "flagged_at_planet_q": 0.01694915254237288,
+    "quantiles_10_50_90": [
+     0.013053603768912628,
+     2.2496141028959755,
+     64.24734204147117
+    ]
+   }
+  },
+  "note": "thresholds exploratory (Codex's round 1): 9 has no calibrated false-flag meaning; the planets' 99.73 % quantile rests on about one tail observation"
+ }
+}

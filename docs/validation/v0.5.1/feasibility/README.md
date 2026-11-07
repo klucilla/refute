@@ -114,6 +114,71 @@ group ephemeris (the version-3 `odd_even`, with the shortcut's bootstrap) 0.74 (
 C1 curve through the paired chain of the v0.4 and version-3 batteries 89 (21 to 205), against 48
 for the v0.5 battery's chain (`docs/validation/v0.5.1/wp5/reproduce-c1-prefix.json`).
 
+## The D1 route search for the folded binaries (amendment 10, item 3, 2026-11-07)
+
+Script: [d1_routes.py](d1_routes.py) (commits `82574e6`, `4b058f8`); output:
+[d1-routes.json](d1-routes.json). Development data only (the WP1 forecast's records and seeds,
+new seeds `refute-v051-dev:route-<family>:<i>`). **12.04 processor-hours, above the 10 approved
+(1.2 times; under the 1.5-times stop).** It decides nothing. Codex's two rounds:
+`docs/plans/v0.5.1-consensus/d1-routes-round-*-answer.md`.
+
+**(a) Where the separation is.** The WP1 oracle (the nearest planet at the found period; survival
+`1 - Phi(d - 1.645)` from the Mahalanobis distance of noiseless curves: an optimistic proxy, not a
+measured count), repeated with the star's parameters known or free within 3 sigma, scaled to C1'
+(194 EB1 and 186 EB2 eligible):
+
+| The star | EB1 | EB2 |
+|---|---|---|
+| radius known | 2.0 | 4.1 |
+| radius 2.5 % | 2.9 | 6.0 |
+| radius 5 % (the WP1 forecast; the mass held fixed) | 4.6 | 7.9 |
+| radius known, mass 5 % | 2.7 | 5.5 |
+| radius 2.5 %, mass 2.5 % | 3.4 | 6.6 |
+| **radius 5 %, mass 5 % (the generator's TIC errors)** | **7.6** | **12.3** |
+| radius 10 %, mass 10 % | 9.1 | 15.2 |
+
+The separation is the transit duration and geometry against the star's density, and the TIC's
+radius and mass errors remove much of it: under this oracle proxy, with both errors, EB2's
+forecast is above D1's allowance (about 10 at 186 eligible). The WP1 forecast was optimistic: it
+held the mass fixed. This is a forecast under the oracle proxy, not a proof; D1 is decided by
+C1'.
+
+**(b) Routes unavailable on C1** (the frozen generator, `calib05.c1.generate`): ellipsoidal
+variation, Doppler beaming and reflection are not generated (BEER, Faigler and Mazeh 2011,
+https://arxiv.org/abs/1106.2713, read 2026-11-07, applies to real data only); both eclipses share
+their duration and ingress fraction, so no eclipse-shape asymmetry exists; the catalog star is
+fixed in the generator (radius and mass 1.0 +- 0.05), so better stellar parameters (Gaia DR3) cannot
+move D1 on C1 (on real data they would bring a third-party input: its licence, a DATA_LICENSE and a
+sources record).
+
+**(c) The transit-geometry consistency with a real estimator** (a physical planet at the found
+period with the TIC radius and mass under Gaussian priors, against a free trapezoid, both fitted
+in white weights; `dchi2`, and `dchi2_cov` the same residuals **re-scored** under the generator's
+covariance, not fitted with it; Seager and Mallen-Ornelas 2003, https://arxiv.org/abs/astro-ph/0206228,
+read 2026-11-07). Flag fractions among the eligible curves; both thresholds exploratory (9 has no
+calibrated meaning; the planets' pooled 99.73 % quantile rests on about one tail observation):
+
+| Group | At `dchi2 >= 9` | At the planets' 99.73 % quantile |
+|---|---|---|
+| EB1 (white / correlated) | 0.37 / 0.56 | 0 / 0 |
+| EB2 | 0.48 / 0.79 | 0 / 1 of 75 |
+| P (planets) | 0.016 / 0.027 | 0 / 1 of 73 |
+| PG (grazing planets) | **0.305** / 0.057 | 0 / 0 (`dchi2_cov`: 1 of 59 white) |
+
+The grazing planets' tail (white PG, 90th percentile 64) is unexplained (the records keep neither
+the true impact parameter nor fit diagnostics); the C1 planets share the generator's model, so even
+these rates are optimistic for real planets (limb darkening, eccentricity: Dawson and Johnson 2012,
+https://arxiv.org/abs/1203.5537, read 2026-11-07, cited by Codex).
+
+**Reading (Claude and Codex).** No new decisive test can be justified in v0.5.1 from this
+evidence; D1 for EB1 and EB2 stays measured in C1' and reported; if it fails, the joint
+infeasibility path with D2 (amendment 4, item 2) may cite (a) as supporting forecast evidence, not
+proof. The geometry consistency is a candidate for a later round (Codex: as a non-fatal diagnostic
+pending calibration; Claude: recorded only, since a new diagnostic needs the maintainer's
+approval), with its prerequisites: the grazing tail explained, covariance-aware fitting and a
+full-chain calibration with enough tail evidence, limb-darkening and eccentricity stress cases, a
+real-planet false-flag check. No other route is measured in this round (the budget is spent).
+
 ## `period_alias` on the development control TIC-101395259 (#204, 2026-11-06)
 
 **The data** ([fetch_dev_control.py](fetch_dev_control.py), [dev-control-fetch.json](dev-control-fetch.json)):
