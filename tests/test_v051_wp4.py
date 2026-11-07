@@ -14,7 +14,6 @@ from pathlib import Path
 
 import pytest
 
-from bytes_or_close import json_problems, text_problems
 from refute.core import inconclusive as inc
 from refute.core.io import dumps_json
 from refute.core.sensitivity import enforce_sensitivity
@@ -30,7 +29,6 @@ from refute.packs.tess.pipeline import (
 )
 from refute.packs.tess.report import render_report
 from refute.packs.tess.synthetic import (
-    discovery_plan_dict,
     discovery_v05_plan_dict,
     discovery_v051_plan_dict,
     scenario_data,
@@ -276,29 +274,17 @@ def test_4_1_insufficient_sensitivity_is_reported_in_the_three_outputs(v3_run):
 
 
 # Row 4.2's fixtures: the outputs of the code before WP4 (6f8d805), recorded by
-# tests/fixtures/v051_wp4/make_fixtures.py on the same synthetic claim (Codex's end-of-round review
-# of round 4, objection 3)
+# tests/fixtures/v051_wp4/make_fixtures.py on a synthetic claim (Codex's end-of-round review of
+# round 4, objection 3). The analysis itself is compared differentially with the code of the v0.5.0
+# calibration lock on the machine that runs the tests (tests/test_v051_wp5.py, row 5.2 (a), the
+# synthetic discover plans included): recorded analysis bytes do not travel between machines
+# (tests/baseline_code.py). These tests use what does travel: rendering recorded verdicts, and the
+# error records.
 FIXTURES = Path(__file__).resolve().parent / "fixtures" / "v051_wp4"
 
 
 def _fixture(name: str) -> str:
     return (FIXTURES / name).read_bytes().decode("utf-8")
-
-
-@pytest.mark.parametrize(
-    ("label", "plan_dict"),
-    [("v04", discovery_plan_dict), ("v05", discovery_v05_plan_dict)],
-)
-def test_4_2_earlier_claims_keep_the_bytes_of_their_outputs(label, plan_dict):
-    plan = TessTestPlan.model_validate(plan_dict())
-    assert not plan.is_v051
-    data = scenario_data("planet_three_years")
-    analysis = analyze_data(data, plan, stage=2)
-    result, report, case = _outputs(data, plan, analysis)
-    # byte for byte on the recording platform; elsewhere floats within 1e-9 (bytes_or_close)
-    assert json_problems(dumps_json(result), _fixture(f"verdict-{label}.json")) == []
-    assert text_problems(report, _fixture(f"report-{label}.md")) == []
-    assert json_problems(dumps_json(case), _fixture(f"case-{label}.json")) == []
 
 
 @pytest.mark.parametrize("label", ["v04", "v05"])

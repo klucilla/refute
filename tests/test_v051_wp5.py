@@ -7,18 +7,17 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 from dataclasses import replace
 from pathlib import Path
 
 import pytest
-import yaml
 
-from bytes_or_close import json_problems, text_problems
 from refute.core.io import dumps_json
 from refute.packs.tess.calib05.values import V05_DECISIVE, V05_DIAGNOSTIC
 from refute.packs.tess.discover.paired import paired_chain
 from refute.packs.tess.params import TessTestPlan
-from refute.packs.tess.pipeline import TessAnalyzer, analyze_data, build_result
+from refute.packs.tess.pipeline import TessAnalyzer
 from refute.packs.tess.report import render_report
 from refute.packs.tess.synthetic import (
     discovery_v05_plan_dict,
@@ -58,82 +57,70 @@ def test_5_1_a_version_2_claim_is_not_checked():
 
 # --- row 5.2 (a): the code paths of the earlier claims keep their bytes -------------------------
 
-# Written by the code of the v0.5.0 calibration lock (b6249b5) with
-# tests/fixtures/v051_wp5/make_fixtures.py: the TESS plans of the v0.1, v0.2, v0.4 and v0.5 claims
-# on one synthetic scenario. Evidence about the code paths, not a re-execution of recorded claims
-# (that is row 5.2 (b), after the maintainer's approval).
+# The comparison is differential (tests/baseline_code.py): the outputs of the earlier claims'
+# code paths computed on this machine by the code of the v0.5.0 calibration lock and by the current
+# code must be equal byte for byte. Evidence about the code paths, not a re-execution of recorded
+# claims (row 5.2 (b), after the maintainer's approval).
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURES = ROOT / "tests" / "fixtures" / "v051_wp5"
+RECORDED = ROOT / "tests" / "fixtures" / "v051_wp5"
 TARGET = {"key": "TIC-1", "tic_id": 1, "kind": "exploration", "name": "synthetic", "published": {}}
 
 
-def _fixture(name: str) -> str:
-    return (FIXTURES / name).read_bytes().decode("utf-8")
+def _plans() -> dict:
+    import baseline_code
 
-
-def _claim_plans() -> dict:
-    canon = ROOT / "tests" / "fixtures" / "locked_canonical"
-    out = {}
-    for label, name in (
-        ("v01", "tess-calibration-v0.1.json"),
-        ("v02", "tess-calibration-v0.2.json"),
-    ):
-        out[label] = json.loads((canon / name).read_text(encoding="utf-8"))["canonical"][
-            "test_plan"
-        ]
-    for label, path in (
-        ("v04", "calibration/v0.4/claim.yaml"),
-        ("v05", "calibration/v0.5/claim.yaml"),
-    ):
-        out[label] = yaml.safe_load((ROOT / path).read_text(encoding="utf-8"))["test_plan"]
-    return out
+    return baseline_code._claim_plans()
 
 
 @pytest.fixture(scope="module")
 def claim_plans():
-    return _claim_plans()
+    return _plans()
+
+
+@pytest.fixture(scope="module")
+def differential(tmp_path_factory):
+    import baseline_code
+
+    if not baseline_code.baseline_available():
+        if os.environ.get("CI"):
+            pytest.fail(f"the baseline {baseline_code.BASELINE} is not in CI's clone")
+        pytest.skip(f"the baseline {baseline_code.BASELINE} is not in this clone")
+    base = baseline_code.baseline_outputs(tmp_path_factory.mktemp("baseline"))
+    return base, baseline_code.outputs()
+
+
+def test_5_2_earlier_claims_code_paths_give_the_baseline_bytes(differential):
+    base, current = differential
+    labels = ("v01", "v02", "v04", "v05", "syn-v04", "syn-v05")
+    kinds = (("verdict", "json"), ("report", "md"), ("error", "json"))
+    expected = {f"{kind}-{label}.{ext}" for label in labels for kind, ext in kinds}
+    expected |= {"case-v04.json", "case-v05.json", "case-syn-v04.json", "case-syn-v05.json"}
+    expected |= {"paired-v04-v05.json"}
+    assert set(base) == expected and set(current) == expected
+    assert [name for name in sorted(base) if base[name] != current[name]] == []
+    for name, text in current.items():
+        assert '"v051"' not in text and "inconclusive_class" not in text, name
 
 
 @pytest.mark.parametrize("label", ["v01", "v02", "v04", "v05"])
-def test_5_2_the_plans_of_earlier_claims_produce_the_recorded_bytes(label, claim_plans):
-    plan = TessTestPlan.model_validate(claim_plans[label])
-    assert not plan.is_v051
-    discover = plan.discovery is not None
-    kind = "discover" if discover else "calibration"
+def test_5_2_the_recorded_verdicts_render_the_recorded_reports(label):
+    # written by the code of the v0.5.0 calibration lock (tests/fixtures/v051_wp5/make_fixtures.py);
+    # report.md is a pure function of verdict.json, so this holds on every machine
+    result = json.loads((RECORDED / f"verdict-{label}.json").read_text(encoding="utf-8"))
+    kind = "discover" if "method_status" in result else "calibration"
     context = {"claim_id": f"synthetic-{label}", "claim_kind": kind, "hypothesis": "h"}
-    data = scenario_data("planet_three_years")
-    analysis = analyze_data(data, plan, stage=2 if discover else None)
-    result = build_result(TARGET, data, plan, analysis, context)
-    # byte for byte on the recording platform; elsewhere floats within 1e-9 (bytes_or_close)
-    assert json_problems(dumps_json(result), _fixture(f"verdict-{label}.json")) == []
-    assert text_problems(render_report(result, context), _fixture(f"report-{label}.md")) == []
-    error = TessAnalyzer().error_result(TARGET, "boom", context, test_plan=claim_plans[label])
-    assert dumps_json(error) == _fixture(f"error-{label}.json")
+    report = (RECORDED / f"report-{label}.md").read_bytes().decode("utf-8")
+    assert render_report(result, context) == report
+    error = TessAnalyzer().error_result(TARGET, "boom", context, test_plan=_plans()[label])
+    assert dumps_json(error) == (RECORDED / f"error-{label}.json").read_bytes().decode("utf-8")
 
 
-def test_5_2_the_paired_chain_of_the_v05_calibration_keeps_its_bytes(claim_plans):
-    p04 = TessTestPlan.model_validate(claim_plans["v04"])
-    p05 = TessTestPlan.model_validate(claim_plans["v05"])
-    chain = paired_chain(scenario_data("planet_three_years"), p04, p05, stage=2)
-    assert json_problems(dumps_json(chain), _fixture("paired-v04-v05.json")) == []
-
-
-def test_the_fixture_comparison_rule(monkeypatch):
-    import bytes_or_close as boc
-
-    fixture = '{"a": 1903.5730294296745, "b": "x", "c": [1, null]}'
-    last_bits = '{"a": 1903.5730294297387, "b": "x", "c": [1, null]}'
-    monkeypatch.setattr(boc, "on_recording_platform", lambda: True)
-    assert boc.json_problems(fixture, fixture) == []
-    assert boc.json_problems(last_bits, fixture) != []
-    monkeypatch.setattr(boc, "on_recording_platform", lambda: False)
-    assert boc.json_problems(last_bits, fixture) == []
-    assert boc.json_problems(last_bits.replace('"x"', '"y"'), fixture) != []
-    assert boc.json_problems(fixture.replace("1903.57", "1903.58"), fixture) != []
-    assert boc.json_problems('{"b": "x", "a": 1903.5730294296745, "c": [1, null]}', fixture) != []
-    assert boc.text_problems("depth 1903.5730294297387 ppm", "depth 1903.5730294296745 ppm") == []
-    assert boc.text_problems("depth 1903.6 ppm", "depth 1903.5 ppm") != []
-    assert boc.text_problems("depth 1903.5 ppb", "depth 1903.5 ppm") != []
+def test_5_2_the_recorded_paired_chain_has_no_version_3_fields():
+    chain = json.loads((RECORDED / "paired-v04-v05.json").read_text(encoding="utf-8"))
+    assert set(chain) == {"search_candidate", "v04", "v05"}
+    for battery in ("v04", "v05"):
+        assert "v051" not in chain[battery]
+        assert all("inconclusive_class" not in t for t in chain[battery]["tests"].values())
 
 
 # --- row 5.4 (part): the paired chain of a version-3 battery carries the WP4 classes ------------
