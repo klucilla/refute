@@ -1,0 +1,24 @@
+# Verdict: WEAKENED
+
+**Do not change the code yet.** The amendment addresses the affine case and records C1’s limitation, but the fit thresholds are not justified as stated, the development comparison does not fully measure the requested class changes, and row 3a.7 does not specify the sensitivity block in the format the registry accepts.
+
+## Numbered objections
+
+1. **Major, `N_min = 100` and `s_min = 1e-5` are asserted, not established as fit-identifiability thresholds.** Acceptance lines 257–260 cite an aperture-series cadence floor and a 10 ppm variation rationale. Neither establishes that these are adequate or necessary for identifying a two-parameter least-squares fit, or explains how they behave across sector noise and flux precision. The prior review also found no calibration evidence for the tolerance and called for an identifiability guard ([prior review](docs/plans/v0.5.1-consensus/wp3a-sap-review.md:11)).  
+   **Change required:** State these as provisional operational cutoffs unless evidence supports them. Add a justification or development evidence for both, and describe the fit’s finite-input and numerical-conditioning requirements. Do not claim that the 10,000:1 ratio alone ensures the slope is identifiable.
+
+2. **Major, the paired development measurement does not fully define the requested D2 and D4 class-change fractions or the stop rule.** The plan calls for the fraction of synthetic planets that change class because of the rule change ([plan](docs/plans/v0.5.1-plan.md:500)), while acceptance reports D2 and D4 summary rates plus a count of eligible planets whose verdict differs ([acceptance](docs/plans/v0.5.1-acceptance.md:287)). That count is not specified as a fraction with a denominator, nor is it broken out for the D4 SNR-at-least-15 subset. Also, D2’s kept fraction treats both SURVIVED and WEAKENED as kept, so it can miss class changes between those verdicts.  
+   **Change required:** Specify paired transition counts and fractions by outcome for all eligible planets and separately for the D4 subset, with denominators and the same candidate, inputs, and seeds. Define the stop condition against those paired D2/D4 results. A lower D2 kept fraction is a useful stop trigger, but alone it does not report the requested class-change effect.
+
+3. **Moderate, row 3a.7’s stated not-applicable block conflicts with the required block schema and omits an explicit assertion for the low-input class.** The propagation text requires a block containing `applicable: false` **and a reason**, with sector reasons and classes in metrics ([acceptance](docs/plans/v0.5.1-acceptance.md:268)). Row 3a.7 instead specifies `{"applicable": false}` and does not explicitly require the low-cadence and low-variation sectors to be recorded with class `not_enough_data` in result metrics ([acceptance](docs/plans/v0.5.1-acceptance.md:309)). The sensitivity validator requires the reason in a not-applicable block ([sensitivity.py](src/refute/core/sensitivity.py:117)).  
+   **Change required:** Make the row assert the full block shape, including a non-empty reason, and explicitly assert the per-sector `not_enough_data` class for both low-input cases.
+
+4. **Moderate, the sabotage is directionally right but does not expressly require its preconditions to be verified.** The sabotage requires the old rule to make row 3a.7 fail because the affine sectors become detectable ([acceptance](docs/plans/v0.5.1-acceptance.md:313)). The row includes two affine sectors and varied CROWDSAP values, which is a useful setup, but it does not explicitly require that those sectors meet the fit-input thresholds or that the sabotaged run actually emits a SAP sensitivity block for them. An absent block could make the sabotage fail for a different reason and obscure whether the intended affine-rule regression was caught.  
+   **Change required:** In the sabotage, assert that both affine sectors meet the input thresholds, that the sabotaged run emits an applicable SAP block for them, and that at least one such block is `detectable: true`; require row 3a.7 to fail for that reason. Keep the independent-noise case and its 1.8(c) false-positive band in row 3a.6 as written ([acceptance](docs/plans/v0.5.1-acceptance.md:308)).
+
+## What is sound in the text
+
+The rule treats an exact affine SAP–PDCSAP relation as not applicable, and the stated propagation correctly lets the remaining `systematics` sub-checks determine its result. The registered optional `sap` entry supports a not-applicable block, and the sensitivity rule requires at least one applicable sub-check for a PASS ([registry](power.py:60), [sensitivity.py](sensitivity.py:163)). C1’s limitation and the separate real-data and independent-noise measurements are also recorded ([plan](docs/plans/v0.5.1-plan.md:507), [acceptance](docs/plans/v0.5.1-acceptance.md:282)).
+
+**No files were modified and no tests or other commands that write were run.**
+

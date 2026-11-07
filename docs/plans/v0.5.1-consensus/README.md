@@ -109,3 +109,13 @@ acceptance's intent but changes its written criterion, so it needs an amendment 
 decision); until then the code applies the written rule. Its objection 3 (each sector's own
 CROWDSAP in the expected SAP depth and its sensitivity simulation) was applied in the WP3 (a)
 commit.
+
+The maintainer approved the affine rule on 2026-11-06 (plan, amendment 6). Codex's three rounds
+on the amendment's text: `WEAKENED` in each, every objection applied, no disagreement; no
+`SURVIVED`, so the code has not changed and the text went to the maintainer.
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [amendment6-round-1-answer.md](amendment6-round-1-answer.md) | `WEAKENED` | `56607ddfef2267df8e51ee2bd6dfa93c54d1474c8fe8aed5747340038ac5f11c` |
+| 2 | [amendment6-round-2-answer.md](amendment6-round-2-answer.md) | `WEAKENED` | `970373f6935d572c4827cf54742abd6c6466952cfc9d559bcd694424cfe0293d` |
+| 3 | [amendment6-round-3-answer.md](amendment6-round-3-answer.md) | `WEAKENED` (wording only) | `37b82fbbe9f4b2ff214cf5515856106fc73cc4539e2b92f61b4e2edd0a2ffeda` |
