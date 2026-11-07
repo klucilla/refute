@@ -244,3 +244,10 @@ freeze; the rehearsal in a temporary repository with the CLI path) went to Codex
 conditions are kept: the synthetic substitution only at the network boundary (the production
 adapter reads the cache through its manifest; the claim is validated, its attachments resolved),
 and across platforms only the candidate, the verdict and the test statuses (#212).
+
+## Round 5: the end-of-round review
+
+Codex's review of every commit of round 5 (`911c9a5..9ce92a7`: WP5 rows 5.1 to 5.4, the
+re-executions and their records, amendments 7 and 8), 2026-11-07: `SURVIVED`, no objection
+([round-5-end-review.md](round-5-end-review.md), SHA-256
+`4cd3d3cfe49593204ac55d0b0586d8f862a7c85717d9baffe14435653a3994d3`).
