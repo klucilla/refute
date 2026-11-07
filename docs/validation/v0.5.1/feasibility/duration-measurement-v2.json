@@ -1,0 +1,303 @@
+{
+ "EB-0.7-10": {
+  "measured": 99,
+  "not_detectable_fraction": 0.9696969696969697,
+  "not_detectable_wilson": [
+   0.9147,
+   0.9896
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 5,
+    "too few events": 0
+   },
+   "valid": 1975
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 25,
+   "GENERATION_FAILURE": 1,
+   "PASS": 74
+  },
+  "warning_fraction": 0.25252525252525254,
+  "warning_fraction_among_detectable": 0.6666666666666666,
+  "warning_wilson": [
+   0.1773,
+   0.3462
+  ]
+ },
+ "EB-0.7-20": {
+  "measured": 98,
+  "not_detectable_fraction": 0.7653061224489796,
+  "not_detectable_wilson": [
+   0.6724,
+   0.8382
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 1,
+    "too few events": 0
+   },
+   "valid": 1959
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 44,
+   "GENERATION_FAILURE": 2,
+   "PASS": 54
+  },
+  "warning_fraction": 0.4489795918367347,
+  "warning_fraction_among_detectable": 0.6086956521739131,
+  "warning_wilson": [
+   0.3543,
+   0.5475
+  ]
+ },
+ "EB-0.7-30": {
+  "measured": 100,
+  "not_detectable_fraction": 0.65,
+  "not_detectable_wilson": [
+   0.5525,
+   0.7364
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 10,
+    "too few events": 0
+   },
+   "valid": 1990
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 43,
+   "PASS": 57
+  },
+  "warning_fraction": 0.43,
+  "warning_fraction_among_detectable": 0.5142857142857142,
+  "warning_wilson": [
+   0.3373,
+   0.5278
+  ]
+ },
+ "EB-0.9-10": {
+  "measured": 100,
+  "not_detectable_fraction": 0.95,
+  "not_detectable_wilson": [
+   0.8882,
+   0.9785
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 3,
+    "too few events": 0
+   },
+   "valid": 1997
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 34,
+   "PASS": 66
+  },
+  "warning_fraction": 0.34,
+  "warning_fraction_among_detectable": 0.4,
+  "warning_wilson": [
+   0.2546,
+   0.4372
+  ]
+ },
+ "EB-0.9-20": {
+  "measured": 100,
+  "not_detectable_fraction": 0.75,
+  "not_detectable_wilson": [
+   0.657,
+   0.8245
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 6,
+    "too few events": 0
+   },
+   "valid": 1994
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 51,
+   "PASS": 49
+  },
+  "warning_fraction": 0.51,
+  "warning_fraction_among_detectable": 0.72,
+  "warning_wilson": [
+   0.4135,
+   0.6058
+  ]
+ },
+ "EB-0.9-30": {
+  "measured": 100,
+  "not_detectable_fraction": 0.67,
+  "not_detectable_wilson": [
+   0.5731,
+   0.7544
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 3,
+    "too few events": 0
+   },
+   "valid": 1997
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 53,
+   "PASS": 47
+  },
+  "warning_fraction": 0.53,
+  "warning_fraction_among_detectable": 0.5757575757575758,
+  "warning_wilson": [
+   0.4329,
+   0.6249
+  ]
+ },
+ "EB-1.0-10": {
+  "measured": 100,
+  "not_detectable_fraction": 0.95,
+  "not_detectable_wilson": [
+   0.8882,
+   0.9785
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 4,
+    "too few events": 0
+   },
+   "valid": 1996
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 32,
+   "PASS": 68
+  },
+  "warning_fraction": 0.32,
+  "warning_fraction_among_detectable": 0.6,
+  "warning_wilson": [
+   0.2367,
+   0.4166
+  ]
+ },
+ "EB-1.0-20": {
+  "measured": 100,
+  "not_detectable_fraction": 0.67,
+  "not_detectable_wilson": [
+   0.5731,
+   0.7544
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 1,
+    "too few events": 0
+   },
+   "valid": 1999
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 45,
+   "PASS": 55
+  },
+  "warning_fraction": 0.45,
+  "warning_fraction_among_detectable": 0.5151515151515151,
+  "warning_wilson": [
+   0.3561,
+   0.5476
+  ]
+ },
+ "EB-1.0-30": {
+  "measured": 100,
+  "not_detectable_fraction": 0.54,
+  "not_detectable_wilson": [
+   0.4426,
+   0.6344
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 9,
+    "too few events": 0
+   },
+   "valid": 1991
+  },
+  "records": 100,
+  "statuses": {
+   "FAIL": 52,
+   "PASS": 48
+  },
+  "warning_fraction": 0.52,
+  "warning_fraction_among_detectable": 0.5869565217391305,
+  "warning_wilson": [
+   0.4232,
+   0.6154
+  ]
+ },
+ "P": {
+  "measured": 200,
+  "not_detectable_fraction": 0.695,
+  "not_detectable_wilson": [
+   0.628,
+   0.7546
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 0,
+    "parameter at a bound": 16,
+    "too few events": 0
+   },
+   "valid": 3984
+  },
+  "records": 200,
+  "statuses": {
+   "FAIL": 1,
+   "PASS": 199
+  },
+  "warning_fraction": 0.005,
+  "warning_fraction_among_detectable": 0.0,
+  "warning_wilson": [
+   0.0009,
+   0.0278
+  ]
+ },
+ "PG": {
+  "measured": 190,
+  "not_detectable_fraction": 0.8157894736842105,
+  "not_detectable_wilson": [
+   0.7546,
+   0.8645
+  ],
+  "placements": {
+   "rejected": {
+    "fit failed": 3,
+    "parameter at a bound": 2,
+    "too few events": 0
+   },
+   "valid": 3795
+  },
+  "records": 200,
+  "statuses": {
+   "GENERATION_FAILURE": 10,
+   "PASS": 190
+  },
+  "warning_fraction": 0.0,
+  "warning_fraction_among_detectable": 0.0,
+  "warning_wilson": [
+   0.0,
+   0.0198
+  ]
+ },
+ "cpu_hours": 2.27,
+ "label": "development measurement (amendment 9, item 1): the adopted estimator with its validity rule; it decides nothing"
+}

@@ -84,6 +84,36 @@ warning test the sensitivity rule refuses its PASS on most planets (71 % of P), 
 about 13 %. By amendment 3, item 2 (c) and (d), this goes to the maintainer with Claude's and
 Codex's recommendation.
 
+## The duration measurement with the adopted estimator (amendment 9, item 1, 2026-11-07)
+
+Script: [duration_measurement_v2.py](duration_measurement_v2.py); output:
+[duration-measurement-v2.json](duration-measurement-v2.json). The same development cases and
+seeds as the first measurement, measured by the production function
+`battery_v51.check_duration_excess` (the phase-placement `sigma_T` with its validity rule);
+2.27 processor-hours. It decides nothing.
+
+| Group | Not detectable | Warning, all | Warning among detectable | Placements rejected |
+|---|---|---|---|---|
+| P (200) | 0.695 | 0.005 (1 of 200) | 0.0 | 16 of 4000 (at a bound) |
+| PG (190 generated) | 0.816 | 0.0 | 0.0 | 5 of 3800 |
+| binaries, SNR 10 | 0.95 to 0.97 | 0.25 to 0.34 | 0.4 to 0.67 | 3 to 5 per 2000 |
+| binaries, SNR 20 | 0.67 to 0.77 | 0.45 to 0.51 | 0.52 to 0.72 | 1 to 6 per 2000 |
+| binaries, SNR 30 | 0.54 to 0.67 | 0.43 to 0.53 | 0.51 to 0.59 | 3 to 10 per 2000 |
+
+**Reading.** The adopted estimator reproduces the first measurement's picture (P not detectable
+0.695 against 0.71; PG 0.816 against 0.83; the binaries' warning rates within a few points); the
+validity rule rejects under 1 % of the placements and leaves no planet or binary INCONCLUSIVE.
+Amendment 4's figures may be cited for the adopted estimator with these numbers.
+
+## The cost of the acceptance run (2026-11-07)
+
+Script: [acceptance_cost_probe.py](acceptance_cost_probe.py); output:
+[acceptance-cost-probe.json](acceptance-cost-probe.json). Development seeds only. Mean processor
+seconds per unit (small samples, run beside another job): one A0 per-event ephemeris 0.02; one A0
+group ephemeris (the version-3 `odd_even`, with the shortcut's bootstrap) 0.74 (0.11 to 2.8); one
+C1 curve through the paired chain of the v0.4 and version-3 batteries 89 (21 to 205), against 48
+for the v0.5 battery's chain (`docs/validation/v0.5.1/wp5/reproduce-c1-prefix.json`).
+
 ## `period_alias` on the development control TIC-101395259 (#204, 2026-11-06)
 
 **The data** ([fetch_dev_control.py](fetch_dev_control.py), [dev-control-fetch.json](dev-control-fetch.json)):
