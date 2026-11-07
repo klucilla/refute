@@ -232,3 +232,15 @@ v0.2 calibration dossiers would change verdict (TIC-158561566 and TIC-317507345 
 told from the record; with the observation that TIC-194736418, one of the three, was re-run and
 kept its verdict, round 2 accepts 3 changed, 15 unchanged (one observed), 2 undecidable
 (TIC-118327550, TIC-315755496).
+
+## WP5 row 5.4: the packaging rehearsal
+
+Claude's concrete design (the `calib051` package with what the plan fixes before the protocol;
+the selection walks, draws and protocol steps after the protocol, rehearsed again before the
+freeze; the rehearsal in a temporary repository with the CLI path) went to Codex before code on
+2026-11-07: `SURVIVED`, no objection
+([wp5-row-5-4-design-answer.md](wp5-row-5-4-design-answer.md), SHA-256
+`a1036eeb5e34005f0ffcda4c67feccce4a44996168258ebed3626e3695f64399`). Its two implementation
+conditions are kept: the synthetic substitution only at the network boundary (the production
+adapter reads the cache through its manifest; the claim is validated, its attachments resolved),
+and across platforms only the candidate, the verdict and the test statuses (#212).
