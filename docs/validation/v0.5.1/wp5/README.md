@@ -69,3 +69,26 @@ recorded on #208 before they ran.
     lock: code, not inputs, and not introduced by v0.5.1 (#213).
   - The re-executions stopped here (v0.4 and v0.5 not run), and the finding went to the
     maintainer.
+
+## Row 5.2 under amendment 8: the two comparisons
+
+The maintainer's amendment 8 (2026-11-07) asks, per version, (a) the current code against the
+code of tag `v0.5.0-calibration-lock` on the same claim and inputs, and (b) the current code
+against the recorded dossier with every difference classified. Script steps `baseline` and
+`compare` (commit `707d461`); MAST's observation search, down from about 12:50 UTC, answered
+again at 20:09 UTC (the hourly probe of amendment 9), and v0.4 and v0.5 ran then.
+
+| Version | Dossier | Verdict (recorded / tag / current) | (a) `verdict.json` | (b) differences: (i) / (ii) / (iii) | `check-dossier` |
+|---|---|---|---|---|---|
+| v0.2 | `TIC-194736418` | REFUTED / REFUTED / REFUTED | byte-identical | 2 / 13 / 0 | reproduced |
+| v0.4 | `TIC-286480954` | WEAKENED / WEAKENED / WEAKENED | byte-identical | 2 / 0 / 0 | reproduced |
+| v0.5 | `TIC-151724385` | INCONCLUSIVE / INCONCLUSIVE / INCONCLUSIVE | byte-identical | 2 / 0 / 0 | reproduced |
+
+Class (i) is the retrieval time of the TIC query made that day; v0.2's 13 class (ii) differences
+are the defaults v0.2.1 added (#213). No regression: v0.5.1 changes none of these outputs.
+Outputs: `reproduce-dossiers-<version>.json` and `reproduce-dossiers-<version>-comparisons.json`.
+
+A flaw of the script's own input comparison, not of the dossiers: its `inputs` record says
+`pixel_files_recorded: "not recorded in the dossier"` and `light_curve_files_equal: false`, but
+the manifests of v0.2 and later list the target pixel files in their `files`; the
+`check-dossier --against` result, which compares every input hash, found them identical.

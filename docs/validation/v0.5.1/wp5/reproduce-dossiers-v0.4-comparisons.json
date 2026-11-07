@@ -1,0 +1,62 @@
+{
+ "a_current_vs_tag": {
+  "allowed_differences": [],
+  "byte_identical": true,
+  "byte_identical_outside_the_allowed_fields": true,
+  "regressions": []
+ },
+ "b_current_vs_recorded": {
+  "byte_identical": false,
+  "check_dossier_against_recorded": {
+   "differences": [],
+   "integrity_problems": [],
+   "ok": true,
+   "rule": "check_dossier --against: identical input data hashes, verdict, status and test statuses; key values within a relative 1e-6",
+   "source": "reproduce-dossiers-v0.4.json (the `run` step)"
+  },
+  "counts": {
+   "i": 2,
+   "ii": 0,
+   "iii": 0
+  },
+  "differences": [
+   {
+    "class": "i: the time of data downloaded that day",
+    "current": "2026-11-07T20:12:15Z",
+    "kind": "value",
+    "path": "$.data_summary.star.retrieved_utc",
+    "recorded": "2026-10-31T18:40:43Z"
+   },
+   {
+    "class": "i: the time of data downloaded that day",
+    "current": "2026-11-07T20:12:15Z",
+    "kind": "value",
+    "path": "$.tests[3].inputs.retrieved_utc",
+    "recorded": "2026-10-31T18:40:43Z"
+   }
+  ]
+ },
+ "commit": "72f0ff16f55d017e62bbca315839a7cb88cdcb5a",
+ "dossier": "TIC-286480954",
+ "regression": false,
+ "tag": {
+  "commit": "b6249b500d8d7b98a6246dbe0d99a4c55363f1cb",
+  "name": "v0.5.0-calibration-lock"
+ },
+ "verdict": {
+  "current": "WEAKENED",
+  "recorded": "WEAKENED",
+  "tag": "WEAKENED"
+ },
+ "verdict_json_sha256": {
+  "current": "52b5264f5e5439125d916cec675f3aa97c88a527a825a103fbc1410b504eccdd",
+  "recorded": "3dd95bfa10e004b0a3cf842fed6dd6d45735eae33d93da5c64af2c4d31d31942",
+  "tag": "52b5264f5e5439125d916cec675f3aa97c88a527a825a103fbc1410b504eccdd"
+ },
+ "verdict_reason": {
+  "current": "warning failure in: plausibility",
+  "recorded": "warning failure in: plausibility",
+  "tag": "warning failure in: plausibility"
+ },
+ "version": "v0.4"
+}

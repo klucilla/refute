@@ -1,0 +1,62 @@
+{
+ "a_current_vs_tag": {
+  "allowed_differences": [],
+  "byte_identical": true,
+  "byte_identical_outside_the_allowed_fields": true,
+  "regressions": []
+ },
+ "b_current_vs_recorded": {
+  "byte_identical": false,
+  "check_dossier_against_recorded": {
+   "differences": [],
+   "integrity_problems": [],
+   "ok": true,
+   "rule": "check_dossier --against: identical input data hashes, verdict, status and test statuses; key values within a relative 1e-6",
+   "source": "reproduce-dossiers-v0.5.json (the `run` step)"
+  },
+  "counts": {
+   "i": 2,
+   "ii": 0,
+   "iii": 0
+  },
+  "differences": [
+   {
+    "class": "i: the time of data downloaded that day",
+    "current": "2026-11-07T20:14:32Z",
+    "kind": "value",
+    "path": "$.data_summary.star.retrieved_utc",
+    "recorded": "2026-11-05T11:28:19Z"
+   },
+   {
+    "class": "i: the time of data downloaded that day",
+    "current": "2026-11-07T20:14:32Z",
+    "kind": "value",
+    "path": "$.tests[3].inputs.retrieved_utc",
+    "recorded": "2026-11-05T11:28:19Z"
+   }
+  ]
+ },
+ "commit": "72f0ff16f55d017e62bbca315839a7cb88cdcb5a",
+ "dossier": "TIC-151724385",
+ "regression": false,
+ "tag": {
+  "commit": "b6249b500d8d7b98a6246dbe0d99a4c55363f1cb",
+  "name": "v0.5.0-calibration-lock"
+ },
+ "verdict": {
+  "current": "INCONCLUSIVE",
+  "recorded": "INCONCLUSIVE",
+  "tag": "INCONCLUSIVE"
+ },
+ "verdict_json_sha256": {
+  "current": "faf73e26c9211f8885534a56247dc20ac0fe601afd03fb2ee7cb470b6121d010",
+  "recorded": "e4a4a4cb088a670c8aa45fc3b8607a598f5c948ce7e7cbddb9b1754308e70864",
+  "tag": "faf73e26c9211f8885534a56247dc20ac0fe601afd03fb2ee7cb470b6121d010"
+ },
+ "verdict_reason": {
+  "current": "could not be decided: systematics",
+  "recorded": "could not be decided: systematics",
+  "tag": "could not be decided: systematics"
+ },
+ "version": "v0.5"
+}
