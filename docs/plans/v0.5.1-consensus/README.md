@@ -251,3 +251,21 @@ Codex's review of every commit of round 5 (`911c9a5..9ce92a7`: WP5 rows 5.1 to 5
 re-executions and their records, amendments 7 and 8), 2026-11-07: `SURVIVED`, no objection
 ([round-5-end-review.md](round-5-end-review.md), SHA-256
 `4cd3d3cfe49593204ac55d0b0586d8f862a7c85717d9baffe14435653a3994d3`).
+
+## `duration_excess`: the measurement after A0 revision 2 (a proposal for the maintainer)
+
+The acceptance section of `duration_excess` defines `sigma_T` on "A0's shifted ephemerides", which
+A0's revision 2 removed, and requires the maintainer's decision on a proposal agreed with Codex
+before any code. Claude's proposal went through three Codex rounds on 2026-11-07; every objection
+was applied, no disagreement remains, and the text goes to the maintainer
+([duration-sigma-proposal.md](duration-sigma-proposal.md), SHA-256
+`a953c974075909222a21242137ded156b3071f7054ffbdf1f2dcbe73c524f42a`):
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [duration-sigma-round-1-answer.md](duration-sigma-round-1-answer.md) | `WEAKENED` (7 objections) | `9d421ba1ed761b32b3a15f2ba97323568af35f8d656d6c4a1ee4d43c705a8dbe` |
+| 2 | [duration-sigma-round-2-answer.md](duration-sigma-round-2-answer.md) | `WEAKENED` (3 objections) | `8864f9a1d7a6ff42b4c96c84a0bb0cfb4e55c39bba492ffe8df5b787d7e0dfe6` |
+| 3 | [duration-sigma-round-3-answer.md](duration-sigma-round-3-answer.md) | `WEAKENED` (1 objection, applied after it) | `a570a7fd48a3e83d9c1ac998a4f0e02c620888a1f0bcf98b05c92e1b3ff10dd9` |
+
+Round 3's objection (D.1's denominator) is applied with a rule marked as Claude's choice for the
+maintainer to confirm (at least 380 of 400 usable pulls per noise model, else NOT DECIDABLE).
