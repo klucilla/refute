@@ -286,3 +286,12 @@ per-group flag fractions; the grazing tail unexplained; the cost overrun recorde
 new decisive test in v0.5.1. They differ on one point, for the maintainer: Codex would keep the
 geometry consistency as a non-fatal diagnostic pending calibration; Claude would record it only,
 since a new diagnostic needs the maintainer's approval.
+
+**A disagreement resolved by the maintainer (2026-11-07).** Codex's argument: keep the transit-
+geometry consistency as a weakened, non-fatal diagnostic in v0.5.1 pending its calibration and
+tail work, so that its evidence accumulates. Claude's argument: record it only; it moves no
+target in this round, its thresholds are uncalibrated, and a new diagnostic outside the plan needs
+the maintainer's approval. **The maintainer's decision:** recorded only, neither decisive nor
+diagnostic, because it moves no target and its unexplained tail (about 30 % of the grazing PG
+planets flagged in white noise) could mislead a reader of a dossier (plan, amendment 10, item 7;
+#215).
