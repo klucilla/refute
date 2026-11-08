@@ -40,12 +40,15 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.2 Battery corrections, round 2: to be scoped (not started)**
+**v0.5.2 Battery corrections, round 2: stage 2 in progress (since 2026-11-08)**
 
 - **Why.** v0.5.1, correction round 1 of at most 3, closed as not approved; every failed target of
   v0.5 stays outstanding. By the advance rule (above), the next phase is a correction phase on the
-  same line. Its section: "v0.5.2 Battery corrections, round 2" below. No code before its scope is
-  decided by the maintainer.
+  same line. Its section: "v0.5.2 Battery corrections, round 2" below.
+- **State.** Stage 1 ended on 2026-11-08 ([report](docs/validation/v0.5.2/stage1/README.md)). The
+  maintainer delegated the nine items of its stop to the Claude and Codex consensus, within written
+  guidelines (#216, 2026-11-08). Stage 2 runs until the next mandatory stop. `method_status:
+  not_validated`.
 
 ### Previous phase record: v0.5.1 Battery corrections
 
@@ -687,8 +690,11 @@ SE, V1, V2, ER and NR; D3; D5; T2b; T2c; T3a; T3b; the historical locks and clai
 
 ## v0.5.2 Battery corrections, round 2
 
-To be scoped, by a Claude and Codex consensus, with a stop for the maintainer before any code. Not
-started.
+Scope: [docs/plans/v0.5.2-scope-proposal.md](docs/plans/v0.5.2-scope-proposal.md). Tracking: #216.
+Stage 1, a bounded diagnostic, ended on 2026-11-08; stage 2 (correction code, acceptance runs,
+protocol) runs under the maintainer's delegation of the same date, whose hard maxima are 2,000
+processor-hours of development and acceptance, 150 of calibration, 1.0 M review tokens and 12
+agent-days.
 
 **Why.** v0.5.1 closed as not approved, with every failed target of v0.5 outstanding (D1 for EB1 and
 EB2, D2, D4, T2a). This is correction round 2 of at most 3 under the advance rule.

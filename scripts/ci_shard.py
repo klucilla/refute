@@ -59,6 +59,9 @@ HEAVY = {
         # v0.5.1 amendment 9 (#210): the duration_excess tests (about 90 s locally, one full
         # version-3 analysis) join heavy-b, among the lightest shards of run 42401264680
         "tests/test_v051_duration.py",
+        # v0.5.2 (#210, the maintainer's decision of 2026-11-08 on #216): the WP3 (b) proof (373 s
+        # locally) leaves rest, which reached 37 min after it entered
+        "tests/test_v051_accept_wp3b_series.py",
     ],
     "heavy-c": [
         "tests/test_workers_equivalence.py",
@@ -67,6 +70,8 @@ HEAVY = {
         # stage 1, item D (2026-10-21): its fixtures took 150 s in rest (run 39627687323), and
         # heavy-c was the lightest shard (5 to 7 min)
         "tests/test_instrumentation.py",
+        # v0.5.2 (#210, the maintainer's decision of 2026-11-08 on #216): 167 s locally
+        "tests/test_population_v3_identity.py",
     ],
     # v0.5.1 WP6 (#210): CI run 42213700298 (job times read from the GitHub API on 2026-11-06,
     # https://github.com/klucilla/refute/actions/runs/42213700298) took up to 60 min for rest

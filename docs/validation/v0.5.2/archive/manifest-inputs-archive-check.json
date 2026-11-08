@@ -1,0 +1,22 @@
+{
+ "label": ".cache/v04/inputs-archive checked against its Drive copy before deletion (#216)",
+ "created_utc": "2026-11-08T17:59:25+00:00",
+ "destination": "Drive: Pessoal/Projetos/refute/arquivo-v0.4-inputs",
+ "only_on_the_drive": [
+  "run_selection.py"
+ ],
+ "files": 2,
+ "bytes": 246996914,
+ "entries": [
+  {
+   "path": "MANIFEST.sha256",
+   "bytes": 11766,
+   "sha256": "d76cbd87c3721959280d293d8266e9ac566d0fc505d9b13e9bd0b92d00ee1422"
+  },
+  {
+   "path": "v0.4-inputs.zip",
+   "bytes": 246985148,
+   "sha256": "202bf35cff7b99a38cd6f1b061cdc4d1befac6e12307faae272bbd257f6ef3d5"
+  }
+ ]
+}
