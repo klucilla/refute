@@ -65,6 +65,13 @@ only in its own entry point, unlike `acceptance/a0.py`). The only change is one 
 per worker; the design, the arms and the rule are unchanged. Those 40 records stay in their own
 fingerprint folder and count in the stage's spending (0.21 processor-hours).
 
+**A second correction, the same day: that explanation was wrong.** With one thread per worker the probe
+projected 7.00 hours again (0.20 processor-hours spent, also kept). A single unit run alone costs 2.4
+processor-seconds. The probe's 18 s per unit is the first unit of each of the 22 workers paying for its
+imports (astropy and the battery's modules), which the probe counted as the cost of work: over 40 units
+it dominates. The fix is an `initializer` in `runlib.bounded_run` that imports them once per worker
+before any unit. The thread line stays, harmless. Design, arms and rule are unchanged.
+
 **Identity and cost.** Records carry a fingerprint (design, script, runner files, code hash, resolved
 plan, constants, numpy, scipy, astropy versions), checked at resume and at summary; expected arms and
 metadata are validated against each scheduled unit. Any mismatch, an incomplete schedule, a failed

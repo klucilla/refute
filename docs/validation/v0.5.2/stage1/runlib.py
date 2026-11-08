@@ -77,12 +77,24 @@ def read_records(records: Path, fingerprint: str) -> list[dict]:
 
 
 def bounded_run(
-    fn, uid, schedule, fingerprint, out, cap_hours, probe_units, batch, workers, limit=None
+    fn,
+    uid,
+    schedule,
+    fingerprint,
+    out,
+    cap_hours,
+    probe_units,
+    batch,
+    workers,
+    limit=None,
+    initializer=None,
 ):
     """Runs the unfinished units in batches. Before any dispatch it checks the cumulative cost; it
     projects against the **whole** unfinished schedule; it refuses to continue when that projection
     passes the cap; a batch is never larger than the remaining budget allows. ``limit`` only bounds
-    this invocation, and never changes the projection. Returns the state."""
+    this invocation, and never changes the projection. ``initializer`` runs once in each worker
+    before any unit, so that the first unit of a worker does not carry the cost of its imports into
+    the projection. Returns the state."""
     records = out / "records.jsonl"
     rows = read_records(records, fingerprint)
     done = {r["unit"] for r in rows}
@@ -94,7 +106,7 @@ def bounded_run(
     dispatched = 0
     state = "complete"
     usable = cap_hours * (1.0 - CAP_RESERVE)
-    with ProcessPoolExecutor(max_workers=workers) as pool:
+    with ProcessPoolExecutor(max_workers=workers, initializer=initializer) as pool:
         while args:
             if spent >= usable:
                 state = "stopped: the cap is reached"

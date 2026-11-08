@@ -199,6 +199,18 @@ def _uid(a):
     return f"{a[0]}:{a[1]}:{a[2]}:{a[3]}"
 
 
+def _warm():
+    """One per worker, before any unit: the imports and cached grid a unit needs."""
+    from astropy.timeseries import LombScargle
+
+    from refute.core.sensitivity import enforce_sensitivity  # noqa: F401
+    from refute.packs.tess import battery_v51, power  # noqa: F401
+
+    runner._plan()
+    t = runner._grid().time[:200]
+    LombScargle(t, np.sin(t), np.ones_like(t)).power(np.array([0.1, 0.2]), normalization="psd")
+
+
 def run(limit=None):
     from refute.core.runner import default_workers
 
@@ -206,7 +218,17 @@ def run(limit=None):
     out.mkdir(parents=True, exist_ok=True)
     (out / "manifest.json").write_text(json.dumps(doc, indent=1, sort_keys=True), "utf-8")
     runlib.bounded_run(
-        unit, _uid, schedule(), fp, out, CAP_HOURS, PROBE_UNITS, BATCH, default_workers(), limit
+        unit,
+        _uid,
+        schedule(),
+        fp,
+        out,
+        CAP_HOURS,
+        PROBE_UNITS,
+        BATCH,
+        default_workers(),
+        limit,
+        initializer=_warm,
     )
 
 
