@@ -382,3 +382,14 @@ conversation; Codex CLI `codex-cli 0.167.0-alpha.3.2`.
 
 Every objection was accepted and applied. The version recorded is the CLI's at the time of the
 model change; the three rounds ran within eight minutes of it.
+
+### The closing record
+
+The review of [the closing record](../../validation/v0.5.1/closing-record.md) (the maintainer's
+decision of 2026-11-08, #208). One conversation; Codex CLI `codex-cli 0.167.0-alpha.3.2`. Codex
+identified no reason for an independent gate session.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [closing-round-1-answer.md](closing-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (7 objections) | `e40f79694ed6aff050ff89223428aba45bb12861a15c2b214d4e0187d24e6c21` |
+| 2 | [closing-round-2-answer.md](closing-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `9fd5819d3fb5240ba738b95334c65c5222b4815af067b9a2bcefbda9c5a69fe3` |

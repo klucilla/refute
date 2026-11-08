@@ -40,15 +40,23 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.1 Battery corrections: open since 2026-11-06** (tracking issue #208)
+**v0.5.2 Battery corrections, round 2: to be scoped (not started)**
 
-- **Why.** v0.5 closed as `WEAKENED` with declared targets that failed (D1 for EB1 and EB2, D2,
-  D4, T2a; see its section). By the advance rule (above, the maintainer's decision of
-  2026-11-05), the next phase is a correction phase on the same line, not a new capability phase.
-- **Scope:** decided on 2026-11-06 by a Claude and Codex consensus under the maintainer's
-  delegation (three rounds, the last `SURVIVED`): [docs/plans/v0.5.1-plan.md](docs/plans/v0.5.1-plan.md),
-  with Codex's answers in [docs/plans/v0.5.1-consensus/](docs/plans/v0.5.1-consensus/README.md).
-  Its section and exit criteria: "v0.5.1 Battery corrections" below.
+- **Why.** v0.5.1, correction round 1 of at most 3, closed as not approved; every failed target of
+  v0.5 stays outstanding. By the advance rule (above), the next phase is a correction phase on the
+  same line. Its section: "v0.5.2 Battery corrections, round 2" below. No code before its scope is
+  decided by the maintainer.
+
+### Previous phase record: v0.5.1 Battery corrections
+
+**v0.5.1 Battery corrections: closed on 2026-11-08 as not approved** (the maintainer's decision of
+2026-11-08, #208; [closing record](docs/validation/v0.5.1/closing-record.md))
+
+- Closed before its confirmation by stop rule 6 of its plan: no target passed or was declared
+  infeasible, and all stay outstanding. It counts as the first of the three correction rounds of
+  the advance rule. No confirmation data was used, and no drand round was drawn.
+- A0 and WP3 (b) ran their acceptances once and were not accepted; the other acceptances did not
+  run. No gate review was run, and no exit criterion is ticked.
 - **Method status.** No method is validated: every v0.5.1 output carries
   `method_status: not_validated`.
 
@@ -631,6 +639,10 @@ Codex consensus, taken the same day (record: [docs/plans/v0.5.1-consensus/](docs
 Plan, caps and stop rule: [docs/plans/v0.5.1-plan.md](docs/plans/v0.5.1-plan.md). Tracking: #208.
 Correction round 1 of at most 3.
 
+**Closed on 2026-11-08 as not approved, before its confirmation** (the maintainer's decision; plan,
+amendment 11; [closing record](docs/validation/v0.5.1/closing-record.md)). The exit criteria below
+are kept as written and none is ticked.
+
 **The targets** (v0.5's definitions, measured the same way; none relaxed): D1 for EB1 and EB2
 (synthetic eclipsing binaries still survive, #202); D2 and D4 (planets lost to INCONCLUSIVE, #201);
 T2a (injected planets kept, 42.4 % against 99.7 % with v0.4, #201). **Must not regress:** D1 for
@@ -670,6 +682,24 @@ SE, V1, V2, ER and NR; D3; D5; T2b; T2c; T3a; T3b; the historical locks and clai
 - [ ] Every scope issue closed, or kept open with the part left, or moved with its reason; no
       `.cache/test-*` folder remains after the suite.
 - [ ] Gate: an independent review returns `SURVIVED`, or `WEAKENED` with its issues open.
+
+---
+
+## v0.5.2 Battery corrections, round 2
+
+To be scoped, by a Claude and Codex consensus, with a stop for the maintainer before any code. Not
+started.
+
+**Why.** v0.5.1 closed as not approved, with every failed target of v0.5 outstanding (D1 for EB1 and
+EB2, D2, D4, T2a). This is correction round 2 of at most 3 under the advance rule.
+
+**Lessons of v0.5.1** ([closing record](docs/validation/v0.5.1/closing-record.md)): a runner hands
+the tests the pipeline's own series, proved before any acceptance run; treat real and pseudo-windows
+equivalently, testing the mask asymmetry first; an estimator's calibration includes its selection;
+"pass every row" is a design limit, so the criterion is fixed before the code; a sabotage must be
+distinguishable from an ordinary run; settle what the code can know at run time before a rule
+depends on it; a target must not pass vacuously; caps come from the measured cost; the real-binary
+false-positive pool is scarce.
 
 ---
 
