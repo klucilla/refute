@@ -4,7 +4,9 @@
   hash (``refute-code-1``: ``src/``, ``pyproject.toml``, ``uv.lock``) must equal ``FROZEN_CODE``,
   the hash of commit ``063ac1f`` (the last change to the code before the acceptance; recorded on
   #208 before the first run). A run on another hash refuses to start.
-- **Seeds.** ``int(SHA-256("refute-v051-accept:<case>:<i>")[:16], 16)`` (the conventions).
+- **Seeds.** ``int(SHA-256("<label>:<case>:<i>")[:16], 16)`` (the conventions), the label
+  ``refute-v051-accept``, or a second run's own fixed label (A0's second run, #208:
+  ``refute-v051-accept-r2``).
 - **Binomial bands** (the conventions): "at least at rate p" over N is a count at or above the
   lower 2.5 % quantile of Binomial(N, p); "at most a" a count at or below the upper 97.5 %
   quantile of Binomial(N, a).
@@ -53,12 +55,13 @@ SECTOR_STEP = 27.4
 _FREEZE_CHECKED = False
 
 
-def accept_seed(case: str, i: int) -> int:
+def accept_seed(case: str, i: int, label: str = "refute-v051-accept") -> int:
     """An acceptance seed; refused unless this process has checked the freeze first (Codex's
-    review of the A0 runner design, objection 1)."""
+    review of the A0 runner design, objection 1). ``label`` is the run's fixed label: a second run
+    approved on #208 has its own (A0's: ``refute-v051-accept-r2``), committed before it runs."""
     if not _FREEZE_CHECKED:
         raise SystemExit("an acceptance seed before the freeze check: refused")
-    text = f"refute-v051-accept:{case}:{i}"
+    text = f"{label}:{case}:{i}"
     return int(hashlib.sha256(text.encode()).hexdigest()[:16], 16)
 
 

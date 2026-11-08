@@ -319,3 +319,21 @@ deterministic evaluator written before the run, A0.6 on candidates of period 1, 
 A0.5's unit count corrected (252,000; about 55 processor-hours for A0). Codex reads the finding
 that A0's group error is not calibrated below about P = 1.5 d as a sensitivity limit of the adopted
 rule, to be reported (never counted as a pass), not a reason to change the rule in the run.
+
+### The second A0 run
+
+The first run's A0.1 FAILed with overestimated errors: the runner handed the raw curve to
+functions that receive the flattened curve in the pipeline (#208). The maintainer approved a
+second run on 2026-11-08 under conditions (#208). Codex reviewed the corrected runner (`_flat`,
+new seeds `refute-v051-accept-r2`), the byte-identity test
+([tests/test_v051_accept_a0_series.py](../../../tests/test_v051_accept_a0_series.py)) and the
+procedure before it ran:
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [a0-second-run-round-1-answer.md](a0-second-run-round-1-answer.md) | `WEAKENED` (2 objections) | `d9ee31bb6bbec02aca8afad489bfff6ebd22121c688791ec1fa353099b6971a3` |
+| 2 | [a0-second-run-round-2-answer.md](a0-second-run-round-2-answer.md) | `SURVIVED` | `eb03c06fa8efd7fa11b33dc14ce5161e813439244d006f226e39af376ec98b36` |
+
+Round 1: the test did not spy on `rednoise.event_noise` (now spied, on both sides, and in the
+first-run-behaviour check); the proof's scope stated (the series for a fixed candidate, no
+candidate equivalence with `finalize_candidate`). Round 2: both resolved, no new objection.

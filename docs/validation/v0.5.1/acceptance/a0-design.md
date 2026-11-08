@@ -1,4 +1,4 @@
-# The A0 acceptance runner: design (revision 3, with the runner code)
+# The A0 acceptance runner: design (revision 4, the second run)
 
 Section "A0" of docs/plans/v0.5.1-acceptance.md (rows A0.1 to A0.8, the sabotage rows; A0.9 runs
 with the combined gates). Runner: docs/validation/v0.5.1/acceptance/a0.py on common.py (freeze
@@ -157,6 +157,42 @@ the version-3 `odd_even` is then INCONCLUSIVE (`insufficient_sensitivity`) for e
 candidate. In A0.5 the spacing P = 1 d is therefore mostly undecidable. This is A0's adopted rule
 working as written; whether it matters for short-period binaries is for the D1 lines and the
 maintainer.
+
+**[r4] The second run (#208, the maintainer's decision of 2026-11-08).** The first run's A0.1
+FAILed in 12 of 15 strata with overestimated errors: the runner passed the raw synthetic curve to
+`rednoise.event_noise`, `events.per_event_depths`, `a0.empirical_events` and
+`battery_v51.check_odd_even`, which in the version-3 pipeline receive the flattened curve of
+`pipeline.attack_candidate`. That result stands as recorded. The correction only aligns the runner
+with the pipeline; nothing in `src/`, the thresholds, the bands or the acceptance text changes:
+
+- `_flat(raw, cand, plan)` builds the series as `attack_candidate` does, line for line: the
+  candidate's transits masked (`transit_mask_half_width_durations` durations), the corrections'
+  global components refitted with that mask and subtracted first when the corrections are active
+  (never with this plan), then `detrend(curve, plan.detrend, mask=mask)`. The candidate is the
+  declared ephemeris, as in revision 3 (in the pipeline the mask uses the search candidate and the
+  measurements use `finalize_candidate`'s refinement of it; here both are the declared one).
+- Applied after the coverage cut, `_cut_one_odd`, A0.7's coloured noise and A0.8's injections, all
+  on the raw curve; every measurement of the unit then uses the flattened series. The pixels and the
+  SAP of A0.2's (iii) and (iv) stay raw, as the pipeline renders them from the raw data
+  (`a0_depth` detrends those series itself).
+- A0.8: the phase-0.5 reference error, the branch, the measured events and the reference without
+  secondary are all on flattened curves; the truth of each event is the noise-free curve through the
+  same path (flattened by `_flat`, then the same box estimator).
+- New seeds by the fixed label `refute-v051-accept-r2` (`<label>:a0-...:<i>`), committed before
+  the run; output folders `.cache/v051/accept/a0r2-<section>/`; the result `a0r2-result.json`. The
+  first run's seeds and records decide nothing.
+- The proof (the decision's item a): `tests/test_v051_accept_a0_series.py` runs one unit of every
+  kind on development seeds and checks, byte for byte, that every series those four functions
+  receive is the series `attack_candidate` gives them for the same raw curve and candidate, and
+  that the first run's behaviour (the raw curve handed to all four) fails that check. Its scope
+  (Codex, round 1 of the second run): the construction of the series for a fixed candidate. The
+  acceptance calibrates A0 conditionally on the predetermined candidate (revision 3); the
+  pipeline's refined candidate (`finalize_candidate`) is not reproduced and no candidate
+  equivalence is claimed.
+
+A consequence, not a change: `detrend` drops upward outliers, so a sector's first cadence may fall
+out of the flattened curve and A0's grid then starts at the next one, a few cadences away from the
+positions the coverage kinds cut; the strata used are still those the code computes.
 
 **Order and cost** (measured on development seeds, processor seconds per unit, one process: A0.1
 0.19, A0.2 1.9, A0.4 0.36, A0.5 0.21, A0.6 0.14, A0.7 0.66, A0.8 0.64). Units and projection:

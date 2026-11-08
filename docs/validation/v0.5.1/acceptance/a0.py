@@ -25,8 +25,14 @@ used in the evaluation are the ones the code computes, never the kind.
 Sections (``run <section>``): ``a01`` A0.1 (and A0.3); ``a02`` A0.2 (and A0.3); ``a04``; ``a05``;
 ``a06``; ``a07`` (rule and forced pooling); ``a08``; ``sabotage``.
 
+**The series measured (second run, #208).** Every per-event measurement receives the series the
+pipeline gives it, ``_flat`` (``pipeline.attack_candidate``'s masked detrending for the
+candidate); the first run passed the raw curve, the defect recorded on #208.
+``tests/test_v051_accept_a0_series.py`` checks, byte for byte, that the series A0 receives here is
+the pipeline's.
+
 Usage: scripts/launch_affinity.ps1 -Script docs/validation/v0.5.1/acceptance/a0.py
-       -Arguments 'run','a01' -Log .cache/v051/accept/a0-a01
+       -Arguments 'run,a01' -Log .cache/v051/accept/a0r2-a01.log
 """
 
 from __future__ import annotations
@@ -49,6 +55,12 @@ SPACINGS = (1.0, 3.0, 10.0)
 DEPTHS = (2.5, 3.0, 4.0)
 PRIMARY_SNR = 20.0
 INGRESS = 0.1
+# The second A0 run (#208, the maintainer's decision of 2026-11-08): the runner aligned with the
+# pipeline (``_flat``), new seeds by this fixed label, its own output folders
+# (``.cache/v051/accept/a0r2-<section>/``) and result file (``a0r2-result.json``). The first run's
+# records and seeds decide nothing.
+RUN = "a0r2"
+SEED_LABEL = "refute-v051-accept-r2"
 
 
 # --- shared measurement -------------------------------------------------------------------------
@@ -137,6 +149,32 @@ def _apply_kind(lc, cand, plan, kind):
     for s in np.unique(lc.sector):
         keep[int(np.argmax(lc.sector == s))] = True
     return _cut(lc, keep)
+
+
+def _flat(raw, cand, plan):
+    """The series the pipeline hands to every per-event measurement of this candidate, line for
+    line as ``pipeline.attack_candidate`` builds it (second A0 run, #208, the maintainer's
+    decision of 2026-11-08): the candidate's transits masked (half-width
+    ``transit_mask_half_width_durations`` durations), the global components of the corrections
+    refitted on the raw curve with that mask and subtracted first when the corrections are active
+    (never with this runner's plan), then the plan's detrending with the mask. The runner's first
+    A0 run passed ``raw`` itself: the defect of #208. Coverage cuts and injected signals are
+    applied to the raw curve before this; the pixels of ``_pixel_stats`` stay raw, as the
+    pipeline renders them from the raw data."""
+    from refute.packs.tess import pipeline as pl
+    from refute.packs.tess import synthetic as syn
+
+    pw = None
+    if plan.gauntlet.corrections.active:
+        pw, _ = pl.global_prewhitening(syn.make_data(raw, [], None), plan)
+    mask_half = plan.detrend.transit_mask_half_width_durations * cand.duration
+    mask = pl.transit_mask(raw.time, cand.period, cand.t0, mask_half)
+    curve = raw
+    if pw is not None and pw.components:
+        fitted = pl.refit(raw, pw.components, mask, plan)
+        if fitted.reason is None:
+            curve = pl._minus(raw, fitted.model)
+    return pl.detrend(curve, plan.detrend, mask=mask)
 
 
 def _events(lc, cand, plan, phase=0.0):
@@ -370,7 +408,7 @@ def unit_a01(arg):
     plan = _plan()
     lc, _ = c.noise_curve(seed, noise, 2)
     cand = _candidate(lc.time, np.random.default_rng([seed, 1]))
-    lc = _apply_kind(lc, cand, plan, kind)
+    lc = _flat(_apply_kind(lc, cand, plan, kind), cand, plan)
     events, measured, windows, details = _measured(lc, cand, plan)
     metas = _metas(lc, cand, measured, plan)
     pulls = [
@@ -404,6 +442,7 @@ def unit_group(arg):
         )
         cand = _candidate(lc.time, rng)
         lc = _apply_kind(lc, cand, plan, kind)
+    raw, lc = lc, _flat(lc, cand, plan)
     events, measured, windows, details = _measured(lc, cand, plan)
     metas = _metas(lc, cand, measured, plan)
     stats, pooled = _box_groups(lc, cand, measured, windows, plan)
@@ -425,7 +464,7 @@ def unit_group(arg):
         rec["matched_inconclusive"] = matched_class
     rec["pulls"] = _pulls(stats)
     if row == "a02":
-        pix, n_usable = _pixel_stats(lc, cand, plan, seed)
+        pix, n_usable = _pixel_stats(raw, cand, plan, seed)
         rec["pulls"].update(_pulls(pix))
         rec["sap_usable_sectors"] = n_usable
         rec["a03"] = _a03(lc, cand, windows, measured, details, plan, False)
@@ -498,6 +537,7 @@ def unit_a05(arg):
     lc = _apply_kind(lc, cand, plan, "p3" if pattern == "p3" else kind)
     if pattern == "p1":
         lc = _cut_one_odd(lc, cand, plan)
+    lc = _flat(lc, cand, plan)
     events, measured, windows, details = _measured(lc, cand, plan)
     metas = _metas(lc, cand, measured, plan)
     idx = list(range(len(measured)))
@@ -555,7 +595,7 @@ def unit_a06(arg):
     plan = _plan()
     lc, _ = c.noise_curve(seed, noise, 2)
     cand = _candidate(lc.time, np.random.default_rng([seed, 1]), period=period)
-    lc = _apply_kind(lc, cand, plan, kind)
+    lc = _flat(_apply_kind(lc, cand, plan, kind), cand, plan)
     _, _, windows, _ = _measured(lc, cand, plan)
     h = _h(cand, plan)
     period_lag = int(round(period / (2 * h)))
@@ -595,14 +635,19 @@ def unit_a08(arg):
     cand = replace(cand, depth=depth)
     primary = syn.trapezoid(t, cand.period, cand.t0, depth, cand.duration, INGRESS)
     with_primary = LightCurveData(t, base.flux - primary, base.flux_err, base.sector, base.year)
-    half0 = _events(with_primary, cand, plan, phase=0.5)
+    flat_primary = _flat(with_primary, cand, plan)
+    half0 = _events(flat_primary, cand, plan, phase=0.5)
     if len(half0) == 0:
         return {"shape": shape, "noise": noise, "kind": kind, "no_phase_half_data": True}
     e0 = group_mean(half0.depths, half0.errors).error
     secondary = syn.trapezoid(
         t, cand.period, cand.t0, multiple * e0, cand.duration, INGRESS, phase=0.5
     )
-    lc = LightCurveData(t, with_primary.flux - secondary, base.flux_err, base.sector, base.year)
+    lc = _flat(
+        LightCurveData(t, with_primary.flux - secondary, base.flux_err, base.sector, base.year),
+        cand,
+        plan,
+    )
     events = _events(lc, cand, plan)
     events_half = _events(lc, cand, plan, phase=0.5)
     sec = v5.check_secondary_two_sided(
@@ -614,11 +659,17 @@ def unit_a08(arg):
         lc, cand, events, ev, c.CADENCE, exclude_phase_half=exclude
     )
     ref, _, _ = a0.empirical_events(
-        with_primary, cand, _events(with_primary, cand, plan), ev, c.CADENCE
+        flat_primary, cand, _events(flat_primary, cand, plan), ev, c.CADENCE
     )
-    # the truth of each event: the noise-free curve through the same box estimator
+    # the truth of each event: the noise-free curve through the same path (the pipeline's
+    # flattening, then the same box estimator)
+    clean = _flat(
+        LightCurveData(t, 1.0 - primary - secondary, base.flux_err, base.sector, base.year),
+        cand,
+        plan,
+    )
     noise_free = a0.box_measure(
-        t, 1.0 - primary - secondary, cand.duration, ev.baseline_gap_durations,
+        clean.time, clean.flux, cand.duration, ev.baseline_gap_durations,
         ev.baseline_outer_durations, ev.min_coverage, c.CADENCE,
     )  # fmt: skip
     truths = np.array([(noise_free(x) or (np.nan,))[0] for x in measured.centers.tolist()])
@@ -736,7 +787,9 @@ SABOTAGE = {
 
 
 def schedule(section: str) -> list[tuple[str, object]]:
-    s = c.accept_seed
+    def s(case, i):
+        return c.accept_seed(case, i, label=SEED_LABEL)
+
     n = c.NOISES_A0
     if section == "a01":
         return [
@@ -848,7 +901,7 @@ def _ordered(section):
     count of scheduled units, missing units and units that ended in ERROR."""
     ids = [u for u, _ in schedule(section)]
     pos = {u: i for i, u in enumerate(ids)}
-    recs = [r for r in c._records(c.OUT / f"a0-{section}" / "records.jsonl") if r["unit"] in pos]
+    recs = [r for r in c._records(c.OUT / f"{RUN}-{section}" / "records.jsonl") if r["unit"] in pos]
     recs.sort(key=lambda r: pos[r["unit"]])
     errors = [r for r in recs if r.get("status") != "OK"]
     info = {
@@ -1086,7 +1139,7 @@ def evaluate_section(section):
 
 
 def evaluate():
-    """Every section, once all are complete; writes a0-result.json next to the runner (once)."""
+    """Every section, once all are complete; writes a0r2-result.json next to the runner (once)."""
     incomplete = []
     result: dict = {"code_sha256": c.check_freeze(), "sections": {}}
     for section in SECTIONS:
@@ -1100,7 +1153,8 @@ def evaluate():
     result["sabotage_detected"] = sab
     result["a03"] = {s: result["sections"][s]["a03"]["result"] for s in ("a01", "a02")}
     result["method_status"] = "not_validated"
-    print(c.write_result("a0", result))
+    result["run"] = {"label": RUN, "seed_label": SEED_LABEL}
+    print(c.write_result(RUN, result))
 
 
 if __name__ == "__main__":
@@ -1112,7 +1166,7 @@ if __name__ == "__main__":
         section = sys.argv[2]
         used = float(sys.argv[3]) if len(sys.argv) > 3 else 0.0
         others = float(sys.argv[4]) if len(sys.argv) > 4 else 0.0
-        c.run_section(f"a0-{section}", schedule(section), function_of(section), used, others)
+        c.run_section(f"{RUN}-{section}", schedule(section), function_of(section), used, others)
     else:
         raise SystemExit(
             f"usage: a0.py run <{'|'.join(SECTIONS)}> [used hours] [other projected hours]"
