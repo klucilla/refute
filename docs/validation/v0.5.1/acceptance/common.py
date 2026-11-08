@@ -225,20 +225,38 @@ def run_section(
         raise SystemExit("two units share an identity")
     n_probe = max(1, int(math.ceil(PROBE_FRACTION * len(units))))
 
-    def dispatch(batch):
-        with ProcessPoolExecutor(max_workers=_workers()) as pool:
-            futures = {pool.submit(_timed, fn, arg): uid for uid, arg in batch if uid not in done}
-            for fut in as_completed(futures):
-                uid = futures[fut]
-                try:
-                    rec = fut.result()
-                except Exception as exc:  # noqa: BLE001 - recorded; the unit stays in its denominator
-                    rec = {"status": "ERROR", "reason": repr(exc)[:400], "cpu_seconds": 0.0}
-                rec["unit"] = uid
-                with path.open("a", encoding="utf-8") as fh:
-                    fh.write(json.dumps(rec, sort_keys=True, default=_json) + "\n")
-                done.add(uid)
+    # one pool for the whole section: a pool per chunk re-imported the scientific stack in every
+    # worker and charged it to that worker's first unit (A0.1's run: 0.50 s per unit against 0.19
+    # in one process); the measurements are unchanged
+    pool = ProcessPoolExecutor(max_workers=_workers())
 
+    def dispatch(batch) -> float:
+        """Run ``batch``; returns the processor seconds its records carry."""
+        seconds = 0.0
+        futures = {pool.submit(_timed, fn, arg): uid for uid, arg in batch if uid not in done}
+        for fut in as_completed(futures):
+            uid = futures[fut]
+            try:
+                rec = fut.result()
+            except Exception as exc:  # noqa: BLE001 - recorded; the unit stays in its denominator
+                rec = {"status": "ERROR", "reason": repr(exc)[:400], "cpu_seconds": 0.0}
+            rec["unit"] = uid
+            with path.open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(rec, sort_keys=True, default=_json) + "\n")
+            done.add(uid)
+            seconds += float(rec.get("cpu_seconds", 0.0))
+        return seconds
+
+    try:
+        return _run_chunks(section, units, ids, n_probe, done, path, proj_path, dispatch,
+                           used_dev_hours, other_projected_hours)  # fmt: skip
+    finally:
+        pool.shutdown(wait=True, cancel_futures=True)
+
+
+def _run_chunks(section, units, ids, n_probe, done, path, proj_path, dispatch,
+                used_dev_hours, other_projected_hours):  # fmt: skip
+    """The 5 % probe and projection, then the rest in chunks with the 1.5-times stop."""
     if not proj_path.exists():
         dispatch(units[:n_probe])
         probe = [r for r in _records(path) if r["unit"] in set(ids[:n_probe])]
@@ -262,11 +280,12 @@ def run_section(
             raise SystemExit(f"STOP: the development projection {total:.1f} h passes the cap")
     projection = json.loads(proj_path.read_text(encoding="utf-8"))
     rest = [u for u in units if u[0] not in done]
+    seconds = sum(float(r.get("cpu_seconds", 0.0)) for r in _records(path))
     # in chunks, so that the 1.5-times stop is checked along the way
-    chunk = max(_workers() * 4, 1)
+    chunk = max(_workers() * 20, 1)
     for start in range(0, len(rest), chunk):
-        dispatch(rest[start : start + chunk])
-        spent = sum(float(r.get("cpu_seconds", 0.0)) for r in _records(path)) / 3600.0
+        seconds += dispatch(rest[start : start + chunk])
+        spent = seconds / 3600.0
         if spent > STOP_FACTOR * projection["projected_hours"]:
             raise SystemExit(
                 f"STOP: {section} spent {spent:.2f} h, past 1.5 times its projection "
