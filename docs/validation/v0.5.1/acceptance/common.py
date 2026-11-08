@@ -39,8 +39,8 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[4]
 HERE = Path(__file__).resolve().parent
 OUT = ROOT / ".cache" / "v051" / "accept"
-FROZEN_COMMIT = "063ac1fb2cacdd5a5daa272d97d6ea7bfe5ba370"
-FROZEN_CODE = "57d0e216b589b5ac55aaf3df420807f63153c38293ab5005e99822962c27de6d"
+FROZEN_COMMIT = "06da162c5f7d082bc191f560290411a7ee1cb266"
+FROZEN_CODE = "dc73db1ce7ba9fff0fd3395c86e2348adc3a87b40d461fca42006e22a87349ce"
 DEV_CAP_HOURS = 200.0
 STOP_FACTOR = 1.5
 PROBE_FRACTION = 0.05
