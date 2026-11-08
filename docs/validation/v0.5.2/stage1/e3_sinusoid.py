@@ -26,6 +26,9 @@ sys.path.insert(0, str(HERE))
 import runlib  # noqa: E402
 import wp3b as runner  # noqa: E402
 
+# one thread per worker: the workers read these at start (E1 and E2 get them from acceptance/a0.py)
+runner.c.env_threads()
+
 NOISES = ("trend", "correlated_trend")
 SNRS = (12, 20)
 PLANETS = 150

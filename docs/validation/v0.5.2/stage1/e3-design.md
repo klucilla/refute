@@ -58,6 +58,13 @@ result on the separated subset cannot establish acceptance on the unchanged popu
 unseparated failures are what remains, the conflict between the false-failure limit and the
 detectability requirement is reported at the stop.
 
+**A correction after the first probe (2026-11-08), recorded here.** The first probe of 40 units, on the
+frozen version (commit `22cb13e`), stopped by its own cap rule: it projected 7.34 processor-hours at
+19 s per unit, because the workers ran with several BLAS threads each (the runner sets a single thread
+only in its own entry point, unlike `acceptance/a0.py`). The only change is one line setting one thread
+per worker; the design, the arms and the rule are unchanged. Those 40 records stay in their own
+fingerprint folder and count in the stage's spending (0.21 processor-hours).
+
 **Identity and cost.** Records carry a fingerprint (design, script, runner files, code hash, resolved
 plan, constants, numpy, scipy, astropy versions), checked at resume and at summary; expected arms and
 metadata are validated against each scheduled unit. Any mismatch, an incomplete schedule, a failed
