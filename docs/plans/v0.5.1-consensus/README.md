@@ -337,3 +337,22 @@ procedure before it ran:
 Round 1: the test did not spy on `rednoise.event_noise` (now spied, on both sides, and in the
 first-run-behaviour check); the proof's scope stated (the series for a fixed candidate, no
 candidate equivalence with `finalize_candidate`). Round 2: both resolved, no new objection.
+
+### The WP3 (b) acceptance runner
+
+Item 3 of the maintainer's decision of 2026-11-08 (#208): every runner after A0 needs A0's
+byte-identity proof before its run. Codex reviewed the design of the WP3 (b) runner
+([wp3b-design.md](../../validation/v0.5.1/acceptance/wp3b-design.md)) in rounds 1 and 2, and the
+code with the proof
+([tests/test_v051_accept_wp3b_series.py](../../../tests/test_v051_accept_wp3b_series.py)) in
+round 3:
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [wp3b-runner-round-1-answer.md](wp3b-runner-round-1-answer.md) | `WEAKENED` (4 objections) | `1946aac65e41adaf060fd9ddb3e958a6f267d27a95e8057ab0b91f5fd45019d2` |
+| 2 | [wp3b-runner-round-2-answer.md](wp3b-runner-round-2-answer.md) | `WEAKENED` (1 objection, 1 clarification) | `126ddc5acc47fb797e809262a42e4e89df2eed030b8c6d2f9170c0028bddb4f9` |
+| 3 | [wp3b-runner-round-3-answer.md](wp3b-runner-round-3-answer.md) | `WEAKENED` (3 objections) | `b29e3640325868790f8ca8310666a8dcab1c3a54f724033d7cdb6ff12b755b72` |
+
+Every objection was accepted and applied (design revisions 2 to 4); there is no divergence. No
+round returned `SURVIVED`, so the runner has not run: whether a fourth, confirmation round may
+clear it is the maintainer's decision (#208).

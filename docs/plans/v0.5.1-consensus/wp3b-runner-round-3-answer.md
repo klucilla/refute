@@ -1,0 +1,21 @@
+## Verdict: WEAKENED
+
+**The runner is not cleared for its acceptance run.** Revisions 3 resolve the prior concerns about the 3.7 projection, 3.6 candidate scope, and 3.1 construction decision. The 3.8(b) noise increase is correctly applied to the noise level while keeping signal amplitude based on 1,000 ppm. I found two design or evaluation mismatches and one record-integrity gap.
+
+## Objections
+
+1. **Medium, the sabotage summary can report the wrong 3.2 failure as detection.** The frozen sabotage targets the **detectable fraction**. `_judge` can fail 3.2 because either the false-failure bound or the detectable-fraction bound failed, but `evaluate_section` sets `sabotage_detected` when *any* case result is FAIL. Thus a false-failure failure could be reported as detecting the sabotage even if detectability passed. **Change required:** make the no-extra sabotage criterion inspect the detectable-fraction result specifically, and state whether it must fail in one or both noise cases. The code does retain the separate metric, so it can do this without changing the row judge. [Runner evaluation](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b.py:480), [sabotage aggregation](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b.py:543), [frozen sabotage](C:/Projetos/refute/docs/plans/v0.5.1-acceptance.md:374)
+
+2. **Medium, 3.8(b) does not reuse the same signal realization as 3.8(a).** The design says the planet and sinusoid signals stay the same while the noise increases. But `_cases` gives `a-Q` and `b-Q` different acceptance seeds, and `_planet_curve` uses its seed to draw the planet epoch and sinusoid phase. The signals, including the planet depth, can therefore differ across the paired cases. **Change required:** derive paired signal parameters from a shared per-trial signal seed for (a) and (b), while retaining the separate case records. Reuse standardized noise draws too if the intended comparison is specifically the same realization with only its noise amplitude increased. One defense is that independent samples preserve the same distributions; that does not meet the design’s explicit “same signals” construction. [Signal construction](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b.py:143), [case seeds](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b.py:423), [design](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b-design.md:139)
+
+3. **Low, the evaluator detects missing records by count, not by unit identity.** `_ordered` calculates `missing` as scheduled count minus record count, and `_decide` checks only whether a case has fewer than 200 records. A duplicate record can conceal a missing unit in the same case and let that case be judged with fewer than 200 distinct trials. The prescribed serial run and resume path make duplicates unlikely, but the evaluator does not enforce that assumption. **Change required:** validate that every scheduled unit ID appears exactly once, reject duplicates and unknown IDs, and base NOT DECIDABLE on the missing-ID set. [Record ordering](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b.py:438), [case decision](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b.py:455)
+
+## Checks that survived
+
+- **3.1:** The code returns NOT DECIDABLE if any trial fails its construction check, matching the v0.5 decision rule.
+- **3.3:** It runs the three relevant WP3 tests, applies the v3 registry, and checks for fatal FAILs across them.
+- **3.6 and 3.7:** The fixed-period box candidate is now explicitly scoped as a test fixture, not a claim about v3 search recovery. The 3.7 expected amplitude uses the trial’s mask, normalization, weights, and selected extra frequencies.
+- **3.8(b):** Raising `noise_curve` to 25,000 ppm leaves the injected signal amplitudes unchanged; the previous “scale all deviations” loophole is fixed.
+- **Proof and procedure:** The proof covers the raw and flattened series with negative controls. The schedule places each case’s initial trials in the 5% projection, sabotage runs reuse row seeds, errors and missing units become NOT DECIDABLE, and result creation is exclusive and write-once.
+
+Because the verdict is WEAKENED, this review does not clear the acceptance run. The current JUnit rerun was not independently observed; I did not execute tests or modify files.

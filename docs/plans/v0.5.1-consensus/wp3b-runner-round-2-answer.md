@@ -1,0 +1,15 @@
+## Verdict: WEAKENED
+
+Revision 2 resolves the four round 1 objections. One new issue in 3.7 remains.
+
+## Numbered review
+
+1. **Medium, 3.7’s expected-amplitude calculation does not match the test fit.** The design computes the expected P-harmonic amplitude by **unweighted** least squares with no extra frequencies. `check_sinusoid` normalizes the flux and errors per sector, uses weighted least squares, and includes any selected extra frequencies in its joint fit. The observed amplitude and expected value therefore come from different fitting designs. **Change required:** compute the expectation with the same normalized series, out-of-transit mask, error weights, and design columns used for that trial’s fit, including its selected extras. Then apply the predeclared 3σ and 95% binomial criteria. [Design](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b-design.md:126), [weighted fit implementation](C:/Projetos/refute/src/refute/packs/tess/battery_v51.py:41)
+
+2. **3.3 and its series proof now address the earlier gaps.** The three checks match the v0.5 WP3 tests, and the design applies sensitivity enforcement before evaluating the fatality requirement. The shared `pipeline_flat` plus spies for `event_noise` and `per_event_depths`, with a raw-curve negative control, is appropriate for item 3’s fixed-candidate series comparison. The stated scope correctly avoids claiming the runner’s candidate and seed equal the pipeline’s refined candidate and seed. [Design](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b-design.md:29), [frozen v0.5 WP3 rows](C:/Projetos/refute/docs/plans/v0.5-acceptance.md:200)
+
+3. **The sabotage wrapper now matches the frozen v0.5 domain behavior.** It explicitly returns `outside_domain` at candidate periods of 10 days or longer, avoiding the earlier mistaken assumption that lowering the per-harmonic limit would do that. [Design](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b-design.md:146)
+
+4. **3.6 is a defensible test-only construction, with one scope caveat.** Given the stated evidence that v3 detrending removes the 14-day signal, using `finalize_candidate` at a fixed period on the undetrended curve is a reasonable way to supply a box-estimator candidate to the sinusoid check. This resembles v0.5’s fixed-period `_sin_box` construction. It does **not** show that the v3 search finds this candidate. **Clarification recommended:** call it a fixed-period box-estimator candidate constructed for the test, rather than implying it is produced by the ordinary v3 search. [Design](C:/Projetos/refute/docs/validation/v0.5.1/acceptance/wp3b-design.md:111), [v0.5 construction](C:/Projetos/refute/docs/validation/v0.5/acceptance/acceptance.py:280)
+
+The remaining row constructions and run procedure appear consistent with the frozen text on the reviewed points. I did not modify files or run tests.
