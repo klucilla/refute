@@ -1,12 +1,15 @@
-# v0.5.2 scope consensus: Codex's answers
+# v0.5.2 consensus: Codex's answers
 
 The maintainer's decision of 2026-11-08 (#208; `docs/plans/v0.5.1-plan.md`, amendment 11): the scope
 of v0.5.2 by consensus with Codex, with a stop before any code. Codex ran read-only (sandbox
-`read-only`, logical processors 8 to 31, through `.cache/v04/tools/codex_affinity.ps1`), in one
-conversation on 2026-11-08. Its answers are kept here unchanged; the prompts stay local because they
-name a private folder the session was told not to open.
+`read-only`, logical processors 8 to 31, through `.cache/v04/tools/codex_affinity.ps1`), on
+2026-11-08. Its answers are kept here unchanged; the prompts stay local because they name a private
+folder the session was told not to open.
 
-Each answer lists the model, the effort and the Codex CLI version used: `codex-cli 0.167.0-alpha.3.2`.
+The answer files hold Codex's text only. The tables below give, for each answer, the model and the
+effort used; the Codex CLI version of every answer is `codex-cli 0.167.0-alpha.3.2`.
+
+## The scope
 
 | Round | File | Model, effort | Verdict | SHA-256 |
 |---|---|---|---|---|
@@ -16,3 +19,39 @@ Each answer lists the model, the effort and the Codex CLI version used: `codex-c
 
 Every objection was accepted and applied in [../v0.5.2-scope-proposal.md](../v0.5.2-scope-proposal.md).
 No divergence remained.
+
+## The stage 1 experiment designs
+
+Reviews of each frozen design, before it ran (`docs/validation/v0.5.2/stage1/`).
+
+| Design | Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|---|
+| E1 | 1 | [e1-design-round-1-answer.md](e1-design-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `2510115be7fb085e18ef6c0696f376ff2175d9dc8b936123acd152a27ec11784` |
+| E1 | 2 | [e1-design-round-2-answer.md](e1-design-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `a01e28c19a96d6f1e8e1a934822e3d115335b5b24e6c592a5d1d1432f0b08f7c` |
+| E1 | 3 | [e1-design-round-3-answer.md](e1-design-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `27ea228e63420f526cb46fc303c9ea93bcebbe6ce6728ae268cff4c057113dc2` |
+| E3 | 1 | [e3-design-round-1-answer.md](e3-design-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `ce47b54e5c30763cbc5c0717b264abe28ac7a04bfdcab3f59270678326a47b4c` |
+| E3 | 2 | [e3-design-round-2-answer.md](e3-design-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `34ca298261a2713451fccb177ed5b62248c63dea05c69b6992cd1a2e6db69e11` |
+| E3 | 3 | [e3-design-round-3-answer.md](e3-design-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `ade9984a4033fc31041ff9bff74c945186f3de5019f2d02551172aa385210713` |
+| E2 | 1 | [e2-design-round-1-answer.md](e2-design-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `7023e978e38b72a05eed84e4d5c716d629d1a7139ac7b64aebdc0d34feb31199` |
+| E2 | 2 | [e2-design-round-2-answer.md](e2-design-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `c58822197158ec6e7e8bf5d166e33b90a93b3ac37aa51d402e43f35623d35032` |
+| E2 | 3 | [e2-design-round-3-answer.md](e2-design-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `8409069c0726abf18851e22dcc72f83f5787039de6a5afa268aa239fd4313149` |
+
+E3 and E2 ended their three rounds in `WEAKENED`. One divergence stayed open after the three rounds
+(E3 round 3, objection 3; E2 round 2, objection 3): Codex asks for live termination of workers at the
+cap, and these experiments enforce the cap per batch. It goes to the maintainer with both arguments, in
+[the stage 1 report](../../validation/v0.5.2/stage1/README.md).
+
+## The stage 1 report
+
+The review of [the stage 1 report](../../validation/v0.5.2/stage1/README.md) before the stop, and Codex's
+judgements on the T3b population and the D1 margin (round 1).
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [stage1-report-round-1-answer.md](stage1-report-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (9 objections) | `e52cb1e69997d12ae394221a9ca20d9ac4c70ee6b8f80a8d59cc609214dae339` |
+| 2 | [stage1-report-round-2-answer.md](stage1-report-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (4 objections) | `639b2f94cd96af0262be1eb17c486a286f66324642dcbc10757074b947d85da4` |
+| 3 | [stage1-report-round-3-answer.md](stage1-report-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (1 objection, LOW) | `7dd4f33d769754e5cf79d06705eff7511735d502524be9e7ffa4e735f24385d3` |
+
+Round 3's single low-severity objection (the label of one sensitivity) was applied as it asked; no fourth
+round ran. The conversation holds one more turn than the three rounds: a first launch of round 2 was stopped
+within seconds, because the rewritten report had not yet been saved; it produced no answer.

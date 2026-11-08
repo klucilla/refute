@@ -1,0 +1,132 @@
+{
+ "c1": {
+  "curves": 39,
+  "failed": 0,
+  "mean_cpu_seconds": 46.97716346153846,
+  "per_family_cpu_seconds": {
+   "EB1": 63.307291666666664,
+   "EB2": 66.44791666666667,
+   "ER": 20.276041666666668,
+   "NR": 16.765625,
+   "NW": 48.739583333333336,
+   "P": 80.16666666666667,
+   "PA": 82.3125,
+   "PG": 88.85416666666667,
+   "PV": 30.744791666666668,
+   "PX": 50.838541666666664,
+   "SE": 23.697916666666668,
+   "V1": 18.947916666666668,
+   "V2": 19.604166666666668
+  },
+  "wall_seconds": 492.884664400015,
+  "workers": 4
+ },
+ "label": "development probes of cost; it decides nothing",
+ "method_status": "not_validated",
+ "scan": {
+  "a01": {
+   "1": {
+    "cpu_seconds_per_unit": 0.21142578125,
+    "units": 32,
+    "units_per_second": 4.695236663342361,
+    "wall_seconds": 6.815417899983004
+   },
+   "16": {
+    "cpu_seconds_per_unit": 0.322265625,
+    "units": 32,
+    "units_per_second": 43.973288972815865,
+    "wall_seconds": 0.7277145000407472
+   },
+   "4": {
+    "cpu_seconds_per_unit": 0.21435546875,
+    "units": 32,
+    "units_per_second": 18.404057634651625,
+    "wall_seconds": 1.738746999995783
+   },
+   "8": {
+    "cpu_seconds_per_unit": 0.2255859375,
+    "units": 32,
+    "units_per_second": 33.867024725029346,
+    "wall_seconds": 0.9448719000210986
+   }
+  },
+  "a02": {
+   "1": {
+    "cpu_seconds_per_unit": 0.61083984375,
+    "units": 32,
+    "units_per_second": 1.6273460036157155,
+    "wall_seconds": 19.663918999955058
+   },
+   "16": {
+    "cpu_seconds_per_unit": 1.21337890625,
+    "units": 32,
+    "units_per_second": 12.689696085520934,
+    "wall_seconds": 2.521731000044383
+   },
+   "4": {
+    "cpu_seconds_per_unit": 0.6396484375,
+    "units": 32,
+    "units_per_second": 6.1177800755953085,
+    "wall_seconds": 5.230655499966815
+   },
+   "8": {
+    "cpu_seconds_per_unit": 0.73193359375,
+    "units": 32,
+    "units_per_second": 10.572783171342985,
+    "wall_seconds": 3.026639200048521
+   }
+  },
+  "a05": {
+   "1": {
+    "cpu_seconds_per_unit": 0.1826171875,
+    "units": 32,
+    "units_per_second": 5.4618347385211194,
+    "wall_seconds": 5.8588370999787
+   },
+   "16": {
+    "cpu_seconds_per_unit": 0.2685546875,
+    "units": 32,
+    "units_per_second": 52.35680047162865,
+    "wall_seconds": 0.6111908999737352
+   },
+   "4": {
+    "cpu_seconds_per_unit": 0.1845703125,
+    "units": 32,
+    "units_per_second": 21.307176642555536,
+    "wall_seconds": 1.5018414000514895
+   },
+   "8": {
+    "cpu_seconds_per_unit": 0.19873046875,
+    "units": 32,
+    "units_per_second": 39.164091427907806,
+    "wall_seconds": 0.8170749999117106
+   }
+  },
+  "a08": {
+   "1": {
+    "cpu_seconds_per_unit": 0.52734375,
+    "units": 32,
+    "units_per_second": 1.892186791758091,
+    "wall_seconds": 16.91164960002061
+   },
+   "16": {
+    "cpu_seconds_per_unit": 0.79931640625,
+    "units": 32,
+    "units_per_second": 18.307767300196858,
+    "wall_seconds": 1.747891999897547
+   },
+   "4": {
+    "cpu_seconds_per_unit": 0.53466796875,
+    "units": 32,
+    "units_per_second": 7.36570066202659,
+    "wall_seconds": 4.344461099943146
+   },
+   "8": {
+    "cpu_seconds_per_unit": 0.56787109375,
+    "units": 32,
+    "units_per_second": 13.876461505788736,
+    "wall_seconds": 2.3060633999994025
+   }
+  }
+ }
+}

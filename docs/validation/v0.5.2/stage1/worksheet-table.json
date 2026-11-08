@@ -1,0 +1,114 @@
+{
+ "best_worker_count_per_kind": {
+  "a01": {
+   "cpu_seconds_at_16_workers": 0.322265625,
+   "cpu_seconds_per_unit": 0.322265625,
+   "units_per_second": 43.973288972815865,
+   "units_per_second_at_16_workers": 43.973288972815865,
+   "workers": 16
+  },
+  "a02": {
+   "cpu_seconds_at_16_workers": 1.21337890625,
+   "cpu_seconds_per_unit": 1.21337890625,
+   "units_per_second": 12.689696085520934,
+   "units_per_second_at_16_workers": 12.689696085520934,
+   "workers": 16
+  },
+  "a05": {
+   "cpu_seconds_at_16_workers": 0.2685546875,
+   "cpu_seconds_per_unit": 0.2685546875,
+   "units_per_second": 52.35680047162865,
+   "units_per_second_at_16_workers": 52.35680047162865,
+   "workers": 16
+  },
+  "a08": {
+   "cpu_seconds_at_16_workers": 0.79931640625,
+   "cpu_seconds_per_unit": 0.79931640625,
+   "units_per_second": 18.307767300196858,
+   "units_per_second_at_16_workers": 18.307767300196858,
+   "workers": 16
+  }
+ },
+ "c1_prime_2400_curves_cpu_hours": 31.31810897435897,
+ "c1_probe_mean_cpu_seconds_per_curve": 46.97716346153846,
+ "label": "development worksheet; it decides nothing",
+ "method_status": "not_validated",
+ "options": {
+  "A: the v0.5.1 grid, fixed sample, 500-cell family": {
+   "cpu_hours": 535.64306640625,
+   "machine_days": 1.5181911303288682
+  },
+  "B: A with the A0.5 patterns kept at 400 per row (diagnostic only)": {
+   "cpu_hours": 399.3515625,
+   "machine_days": 1.1143117270259115
+  },
+  "C: A with the three coverage strata grouped by a validated envelope (factor 1/3)": {
+   "cpu_hours": 178.54768880208331,
+   "machine_days": 0.5060637101096227
+  },
+  "D: A with O'Brien-Fleming-type looks, every cell calibrated": {
+   "cpu_hours": 517.3387631404623,
+   "machine_days": 1.4663106289132255
+  },
+  "E: the v0.5.1 grid at its 400 per row (reference)": {
+   "cpu_hours": 64.92643229166666,
+   "machine_days": 0.18402316731259008
+  }
+ },
+ "per_cell_sizes": {
+  "150": {
+   "expected_n_calibrated": {
+    "confidence_sequence_type_1.5z": 5052.858,
+    "fixed": 3000.0,
+    "obrien_fleming_type": 2839.33175,
+    "pocock_type_1.2z": 3386.691
+   },
+   "expected_n_miscalibrated": {
+    "confidence_sequence_type_1.5z": 3214.851,
+    "fixed": 3000.0,
+    "obrien_fleming_type": 2190.78275,
+    "pocock_type_1.2z": 2020.5045
+   },
+   "n_fixed": 3000
+  },
+  "1500": {
+   "expected_n_calibrated": {
+    "confidence_sequence_type_1.5z": 6534.08025,
+    "fixed": 3600.0,
+    "obrien_fleming_type": 3519.6525,
+    "pocock_type_1.2z": 4337.16675
+   },
+   "expected_n_miscalibrated": {
+    "confidence_sequence_type_1.5z": 4144.65375,
+    "fixed": 3600.0,
+    "obrien_fleming_type": 2751.84,
+    "pocock_type_1.2z": 2595.08675
+   },
+   "n_fixed": 3600
+  },
+  "500": {
+   "expected_n_calibrated": {
+    "confidence_sequence_type_1.5z": 5831.4335,
+    "fixed": 3300.0,
+    "obrien_fleming_type": 3187.2305,
+    "pocock_type_1.2z": 3871.96525
+   },
+   "expected_n_miscalibrated": {
+    "confidence_sequence_type_1.5z": 3692.89325,
+    "fixed": 3300.0,
+    "obrien_fleming_type": 2474.296,
+    "pocock_type_1.2z": 2308.668
+   },
+   "n_fixed": 3300
+  }
+ },
+ "units_at_400_per_row": {
+  "a01": 3000,
+  "a02": 31500,
+  "a04": 31500,
+  "a05": 252000,
+  "a06": 6000,
+  "a07": 2100,
+  "a08": 105300
+ }
+}

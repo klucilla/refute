@@ -1,0 +1,1420 @@
+{
+ "entries": [
+  {
+   "bytes": 169433,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 21,
+   "path": ".cache/v04/all-v04",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/archive-07.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 16,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/archive-07.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 7,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/archive-07.pid",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 166,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-06.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 62,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-06.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 7,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-06.pid",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-07.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 62,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-07.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 7,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-07.pid",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 9105,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-block-2.py.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 16762,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/assemble-block.py.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 680977,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 3,
+   "path": ".cache/v04/baseline",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 26426,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/ci-0000018-heavyd.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 118067,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/ci-a2-failed.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 110350,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/ci-win-rest.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 874341,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 14,
+   "path": ".cache/v04/cleanup",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 3791,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/closing.diff",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1109,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-176.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2525,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-attempt06.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2500,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-attempt07.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2189,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-controls.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1158,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-decisions-2.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1285,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-gate.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2433,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-lock-attempt-1.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1837,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-p5.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1209,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-promotion.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2883,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-repro2-approval.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1409,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-repro2-done.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1979,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-rerun-record.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1227,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-rinj.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1576,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-rsel.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2272,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-selection.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1569,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-stage1.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1311,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177-stop.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1081,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-177.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1175,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/comment-179-194.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 971,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-07code.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1149,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-a.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1028,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-a2.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 894,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-a3.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2028,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-assemble.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 502,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-attempt5.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 653,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-b.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 977,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-b2.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1697,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-C.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2101,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-claim.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 490,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-close-v04-fix.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 959,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-close-v04.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 3468,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-code.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 822,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-deps.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 253,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-doc-precision.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1216,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-driver.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 888,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-entries.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 446,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-exofop.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1024,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-exptime.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1560,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-fixes.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 792,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-gaia-asset.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1751,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-mant.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1609,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-nk.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 846,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-anchor-2.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 852,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-anchor-3.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1518,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-anchor-4.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 903,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-anchor.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 730,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-annex.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 785,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-case-ledger.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 416,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-case2.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 511,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-fixes.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 389,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-limits.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 489,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-report-2.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 565,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-report-3.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 731,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-p5-report.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1228,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-promotion.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1468,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-protocol.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1519,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-reexport-1.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 776,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-reexport-2.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 741,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-results-step.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 683,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-rinj.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 456,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-roadmap.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 479,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-runset-check.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 576,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-runset.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 975,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-selection.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2055,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-stage1-results.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1451,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-tesseb.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1020,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-tornado.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 389,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-wp4-clar.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 718,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/commit-wp4-spec.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 5852,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/fix-a2.patch",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 970,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/freeze-05.err.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/freeze-05.out.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 13,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/freeze-05.pid",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1442,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/freeze.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/freeze.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 592546,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 3,
+   "path": ".cache/v04/full",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 594785,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 3,
+   "path": ".cache/v04/full2",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 246996914,
+   "disposition": "CHECK_THEN_DELETE",
+   "files": 2,
+   "path": ".cache/v04/inputs-archive",
+   "reason": "the same name and size as the Drive copy arquivo-v0.4-inputs; delete only after a SHA-256 check of both; steps.py archive_step writes it once and refuses if it exists, and no repository path reads it afterwards"
+  },
+  {
+   "bytes": 581674824,
+   "disposition": "KEEP",
+   "files": 352,
+   "path": ".cache/v04/inputs-attempts",
+   "reason": "read by src/refute/packs/tess/discover/steps.py (ATTEMPTS_DIR) and named in calibration/v0.4/inputs.json"
+  },
+  {
+   "bytes": 1835,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/issue-mast-frame.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1437,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/issue-v05-repro-criterion.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-07.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 906,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-07.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 15770,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-07.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 18,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 81,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1214,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 18,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a2.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a2.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 987,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a2.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 19141,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a2.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a2b.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1079,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a2b.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 31864,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-a2b.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-assemble.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 906,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-assemble.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 16203,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-assemble.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 18,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-c1.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-c1.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 638,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-c1.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 19326,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-c1.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 18,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-claim.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-claim.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 836,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-claim.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 9898,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-claim.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-exptime.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 906,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-exptime.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 15162,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-exptime.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-gaia-asset.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 906,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-gaia-asset.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 12770,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-gaia-asset.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-1.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 81,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-1.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1543,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-1.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-2.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 81,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-2.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1543,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-2.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-3.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 81,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-3.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1543,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-3.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-4.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 81,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-4.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1543,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-4.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-5.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 81,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-5.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1543,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-launch-5.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-proto.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 906,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-proto.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 15770,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-proto.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-sel.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 476,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-sel.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 8741,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-sel.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-v04.out.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 987,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-v04.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 26891,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/junit-v04.xml",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 16017,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/lock-attempt-1.json",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 8643,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 8,
+   "path": ".cache/v04/locked-tags",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 8643,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 8,
+   "path": ".cache/v04/locked-tags-b2",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/locked-tags-b2-run.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 823,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/locked-tags-b2-run.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 6,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/locked-tags-b2-run.pid",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 826,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/locked-tags.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 21574,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/manifesto-attempt07.md",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2439,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/move-06-publication.py",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 2820,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/p4",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 7138552,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 303,
+   "path": ".cache/v04/p5",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 1371724,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 20,
+   "path": ".cache/v04/p6",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 3830185,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 30,
+   "path": ".cache/v04/p7d",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 358744,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 29,
+   "path": ".cache/v04/p7e",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 3503787,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 20,
+   "path": ".cache/v04/p7f",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 49305,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 22,
+   "path": ".cache/v04/p7g",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 7183,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 3,
+   "path": ".cache/v04/p7h",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 755570,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 33,
+   "path": ".cache/v04/p7i",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 197429889,
+   "disposition": "KEEP",
+   "files": 3467,
+   "path": ".cache/v04/pilot",
+   "reason": "read by calibration/v0.5 C2 (src/refute/packs/tess/calib05/c2.py, V04_DOSSIERS and V04_MEASUREMENTS; calibration/v0.5/PROTOCOL.md section 4)"
+  },
+  {
+   "bytes": 15,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/pytest-gaia-asset.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 15,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/pytest-out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 0,
+   "disposition": "CHECK_THEN_DELETE",
+   "files": 0,
+   "path": ".cache/v04/reexport",
+   "reason": "an empty folder"
+  },
+  {
+   "bytes": 616007,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 42,
+   "path": ".cache/v04/repro",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 573881,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 65,
+   "path": ".cache/v04/repro2",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 548,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/run-freeze-05.ps1",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 682,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/run-select.ps1",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 250,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/select.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 30,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/select.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 7,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/select.pid",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 254392,
+   "disposition": "KEEP",
+   "files": 1,
+   "path": ".cache/v04/tess-eb",
+   "reason": "the local frozen copy used by the reproductions (docs/validation/v0.5.1/wp5/reproduce_dossiers.py); TESS-EB never goes to the public Drive"
+  },
+  {
+   "bytes": 196827,
+   "disposition": "KEEP",
+   "files": 55,
+   "path": ".cache/v04/tools",
+   "reason": "the maintainer's decision of 2026-11-08 (in use)"
+  },
+  {
+   "bytes": 2038797,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 18,
+   "path": ".cache/v04/v021",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 20983,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/verify-all-b2.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 759,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/verify-all.ps1",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 20983,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/verify-all.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 1254,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/wait-tess-then-freeze-06.ps1",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 156,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/wait-tess.log",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 37303,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 12,
+   "path": ".cache/v04/wp1",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 58026,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 21,
+   "path": ".cache/v04/wp2",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 12109,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 6,
+   "path": ".cache/v04/wp3",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 6001,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 3,
+   "path": ".cache/v04/wp4",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 17381,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 9,
+   "path": ".cache/v04/wp5",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  },
+  {
+   "bytes": 0,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/write-claim.err.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 95,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/write-claim.out.txt",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 7,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 1,
+   "path": ".cache/v04/write-claim.pid",
+   "reason": "a loose log, process file, commit message or comment draft of v0.4; small, archived with the folders"
+  },
+  {
+   "bytes": 3070464,
+   "disposition": "ARCHIVE_THEN_DELETE",
+   "files": 13,
+   "path": ".cache/v04/zenodo",
+   "reason": "working records of closed v0.4 packages; cited by reviews or results, so archived with a checked SHA-256 manifest first"
+  }
+ ],
+ "label": "a proposal for the maintainer; nothing was deleted or moved",
+ "rule": "deletion only after the maintainer's approval, by literal path with a prefix guard; archiving to the Drive with a checked SHA-256 manifest of source and destination",
+ "summary": {
+  "ARCHIVE_THEN_DELETE": {
+   "bytes": 27054883,
+   "entries": 194
+  },
+  "CHECK_THEN_DELETE": {
+   "bytes": 246996914,
+   "entries": 2
+  },
+  "KEEP": {
+   "bytes": 779555932,
+   "entries": 4
+  }
+ }
+}

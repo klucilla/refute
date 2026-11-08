@@ -1,0 +1,293 @@
+{
+ "family_sizes": {
+  "floor_0.1": {
+   "family_members": 2874,
+   "n_fixed_90pct": 3800,
+   "z_star": 4.447224836220538
+  },
+  "floor_0.25": {
+   "family_members": 2587,
+   "n_fixed_90pct": 3700,
+   "z_star": 4.424564494808346
+  },
+  "floor_0.5": {
+   "family_members": 2170,
+   "n_fixed_90pct": 3700,
+   "z_star": 4.386465603878127
+  }
+ },
+ "label": "the old-grid repricing from A0 round 2's measurements; it decides nothing",
+ "measured_a0r2": {
+  "a01": {
+   "cpu_hours": 0.32036024305555555,
+   "cpu_seconds_per_unit": 0.38443229166666665,
+   "scheduled": 3000
+  },
+  "a02": {
+   "cpu_hours": 17.8439453125,
+   "cpu_seconds_per_unit": 2.039308035714286,
+   "scheduled": 31500
+  },
+  "a04": {
+   "cpu_hours": 5.442265625,
+   "cpu_seconds_per_unit": 0.6219732142857143,
+   "scheduled": 31500
+  },
+  "a05": {
+   "cpu_hours": 34.36934461805556,
+   "cpu_seconds_per_unit": 0.49099063740079363,
+   "scheduled": 252000
+  },
+  "a06": {
+   "cpu_hours": 0.5379774305555556,
+   "cpu_seconds_per_unit": 0.32278645833333336,
+   "scheduled": 6000
+  },
+  "a07": {
+   "cpu_hours": 0.4812196180555556,
+   "cpu_seconds_per_unit": 0.8249479166666667,
+   "scheduled": 2100
+  },
+  "a08": {
+   "cpu_hours": 41.74741319444445,
+   "cpu_seconds_per_unit": 1.4272619895536562,
+   "scheduled": 105300
+  },
+  "sabotage-force_phase_half": {
+   "cpu_hours": 0.396953125,
+   "cpu_seconds_per_unit": 0.9526875,
+   "scheduled": 1500
+  },
+  "sabotage-model_errors_alone": {
+   "cpu_hours": 0.12904513888888888,
+   "cpu_seconds_per_unit": 0.3871354166666667,
+   "scheduled": 1200
+  },
+  "sabotage-neff_equals_n": {
+   "cpu_hours": 0.06943576388888889,
+   "cpu_seconds_per_unit": 0.41661458333333334,
+   "scheduled": 600
+  },
+  "sabotage-pool_sectors": {
+   "cpu_hours": 0.3239019097222222,
+   "cpu_seconds_per_unit": 0.33315625,
+   "scheduled": 3500
+  },
+  "sabotage-rho_zero": {
+   "cpu_hours": 0.19731336805555555,
+   "cpu_seconds_per_unit": 0.3382514880952381,
+   "scheduled": 2100
+  },
+  "sabotage-share_event_cadences": {
+   "cpu_hours": 0.01236545138888889,
+   "cpu_seconds_per_unit": 0.8903125,
+   "scheduled": 50
+  }
+ },
+ "measured_a0r2_total_cpu_hours": 101.87154079861112,
+ "method_status": "not_validated",
+ "reference_cpu_hours_old_design": 100.74252604166668,
+ "rows": 3558,
+ "scenarios": {
+  "T2800_floor0.1": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 13.455130208333333,
+   "a05_left_at_its_old_size_cpu_hours": 1277.5645467984882,
+   "cpu_hours": 1433.44152663473,
+   "cpu_hours_by_run_kind": {
+    "a01": 4.4850434027777775,
+    "a02": 121.8514875062004,
+    "a04": 37.20194564980158,
+    "a05": 190.2463244542973,
+    "a07": 3.1911735243055555,
+    "a08e": 180.15891986305664,
+    "a08g": 836.4242906630855,
+    "a08h": 59.34436414064973
+   },
+   "ideal_22_worker_equivalent_days": 2.7148513762021405,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 11.45644820601852,
+   "rows_below_floor_not_measured": 20,
+   "rows_priced": 2874,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 586.8507198495546,
+   "with_sector_counts_5_8_12_cpu_hours": 4900.829265352341
+  },
+  "T2800_floor0.25": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 13.455130208333333,
+   "a05_left_at_its_old_size_cpu_hours": 762.2864940965522,
+   "cpu_hours": 918.163473932794,
+   "cpu_hours_by_run_kind": {
+    "a01": 4.4850434027777775,
+    "a02": 121.8514875062004,
+    "a04": 37.20194564980158,
+    "a05": 190.2463244542973,
+    "a07": 3.1911735243055555,
+    "a08e": 139.35905004501026,
+    "a08g": 393.93501358173086,
+    "a08h": 27.35545833811465
+   },
+   "ideal_22_worker_equivalent_days": 1.7389459733575643,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 11.45644820601852,
+   "rows_below_floor_not_measured": 307,
+   "rows_priced": 2587,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 390.7484906398561,
+   "with_sector_counts_5_8_12_cpu_hours": 3067.556260195156
+  },
+  "T2800_floor0.5": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 13.455130208333333,
+   "a05_left_at_its_old_size_cpu_hours": 457.82283720653817,
+   "cpu_hours": 610.7669663020391,
+   "cpu_hours_by_run_kind": {
+    "a01": 4.4850434027777775,
+    "a02": 99.241792609127,
+    "a04": 30.30564486607142,
+    "a05": 187.3134737135565,
+    "a07": 3.1911735243055555,
+    "a08e": 71.05544522660128,
+    "a08g": 201.77559561817426,
+    "a08h": 12.860819910869735
+   },
+   "ideal_22_worker_equivalent_days": 1.1567556179962863,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 22.220546523232,
+   "rows_below_floor_not_measured": 724,
+   "rows_priced": 2170,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 259.0014469221205,
+   "with_sector_counts_5_8_12_cpu_hours": 2096.012800307885
+  },
+  "T3300_floor0.1": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 15.85783203125,
+   "a05_left_at_its_old_size_cpu_hours": 1499.453120705209,
+   "cpu_hours": 1687.2543117852504,
+   "cpu_hours_by_run_kind": {
+    "a01": 5.2859440104166655,
+    "a02": 143.60467302827385,
+    "a04": 43.84375572668651,
+    "a05": 222.17053569809693,
+    "a07": 3.7613041956018525,
+    "a08e": 212.32742279927723,
+    "a08g": 985.7813109449198,
+    "a08h": 69.94138795142187
+   },
+   "ideal_22_worker_equivalent_days": 3.195557408684186,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 11.45644820601852,
+   "rows_below_floor_not_measured": 20,
+   "rows_priced": 2874,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 690.6653795523271,
+   "with_sector_counts_5_8_12_cpu_hours": 5768.095888299142
+  },
+  "T3300_floor0.25": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 15.85783203125,
+   "a05_left_at_its_old_size_cpu_hours": 892.1602804600756,
+   "cpu_hours": 1079.961471540117,
+   "cpu_hours_by_run_kind": {
+    "a01": 5.2859440104166655,
+    "a02": 143.60467302827385,
+    "a04": 43.84375572668651,
+    "a05": 222.17053569809693,
+    "a07": 3.7613041956018525,
+    "a08e": 164.2425699095508,
+    "a08g": 464.275638428564,
+    "a08h": 32.23907311237074
+   },
+   "ideal_22_worker_equivalent_days": 2.045381574886585,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 11.45644820601852,
+   "rows_below_floor_not_measured": 307,
+   "rows_priced": 2587,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 459.54408804393836,
+   "with_sector_counts_5_8_12_cpu_hours": 3607.447527622322
+  },
+  "T3300_floor0.5": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 15.85783203125,
+   "a05_left_at_its_old_size_cpu_hours": 531.4457266118076,
+   "cpu_hours": 715.7514735124197,
+   "cpu_hours_by_run_kind": {
+    "a01": 5.2859440104166655,
+    "a02": 116.95828116939485,
+    "a04": 35.71663906001984,
+    "a05": 218.67509151866773,
+    "a07": 3.7613041956018525,
+    "a08e": 83.74182200541445,
+    "a08g": 236.06635784052835,
+    "a08h": 15.00805628182046
+   },
+   "ideal_22_worker_equivalent_days": 1.3555899119553405,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 22.220546523232,
+   "rows_below_floor_not_measured": 724,
+   "rows_priced": 2170,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 303.7378533725498,
+   "with_sector_counts_5_8_12_cpu_hours": 2455.1562792514005
+  },
+  "T3500_floor0.1": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 16.818912760416666,
+   "a05_left_at_its_old_size_cpu_hours": 1588.214406250459,
+   "cpu_hours": 1788.7850363326988,
+   "cpu_hours_by_run_kind": {
+    "a01": 5.606304253472223,
+    "a02": 152.30968596850198,
+    "a04": 46.501136284722236,
+    "a05": 234.93997470029544,
+    "a07": 3.9893106336805553,
+    "a08e": 225.1957754817584,
+    "a08g": 1045.5253084426436,
+    "a08h": 74.1795631370687
+   },
+   "ideal_22_worker_equivalent_days": 3.387850447599808,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 11.45644820601852,
+   "rows_below_floor_not_measured": 20,
+   "rows_priced": 2874,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 732.1921851019422,
+   "with_sector_counts_5_8_12_cpu_hours": 6115.021089574122
+  },
+  "T3500_floor0.25": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 16.818912760416666,
+   "a05_left_at_its_old_size_cpu_hours": 944.115650988048,
+   "cpu_hours": 1144.6862810702878,
+   "cpu_hours_by_run_kind": {
+    "a01": 5.606304253472223,
+    "a02": 152.30968596850198,
+    "a04": 46.501136284722236,
+    "a05": 234.93997470029544,
+    "a07": 3.9893106336805553,
+    "a08e": 174.19494705504113,
+    "a08g": 492.4137120909506,
+    "a08h": 34.19323265306796
+   },
+   "ideal_22_worker_equivalent_days": 2.1679664414209996,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 11.45644820601852,
+   "rows_below_floor_not_measured": 307,
+   "rows_priced": 2587,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 487.0646959360669,
+   "with_sector_counts_5_8_12_cpu_hours": 3823.428093101451
+  },
+  "T3500_floor0.5": {
+   "a01_extra_cpu_hours_if_fraction_0.25_holding_priced_membership_fixed": 16.818912760416666,
+   "a05_left_at_its_old_size_cpu_hours": 560.9062621029556,
+   "cpu_hours": 757.756547016579,
+   "cpu_hours_by_run_kind": {
+    "a01": 5.606304253472223,
+    "a02": 124.04827544022818,
+    "a04": 37.881451386408735,
+    "a05": 231.21962953167903,
+    "a07": 3.9893106336805553,
+    "a08e": 88.81970299491532,
+    "a08g": 249.78631017677668,
+    "a08h": 15.867585168862773
+   },
+   "ideal_22_worker_equivalent_days": 1.4351449754101875,
+   "retained_old_size_of_runs_with_no_row_at_the_floor_cpu_hours": 22.220546523232,
+   "rows_below_floor_not_measured": 724,
+   "rows_priced": 2170,
+   "rows_with_no_observation": 664,
+   "strata_grouped_cpu_hours": 321.6362426632552,
+   "with_sector_counts_5_8_12_cpu_hours": 2598.8469979544566
+  }
+ },
+ "source": "docs/validation/v0.5.1/acceptance/a0r2-result.json",
+ "workers_for_machine_days": 22
+}
