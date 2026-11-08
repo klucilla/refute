@@ -353,6 +353,9 @@ round 3:
 | 2 | [wp3b-runner-round-2-answer.md](wp3b-runner-round-2-answer.md) | `WEAKENED` (1 objection, 1 clarification) | `126ddc5acc47fb797e809262a42e4e89df2eed030b8c6d2f9170c0028bddb4f9` |
 | 3 | [wp3b-runner-round-3-answer.md](wp3b-runner-round-3-answer.md) | `WEAKENED` (3 objections) | `b29e3640325868790f8ca8310666a8dcab1c3a54f724033d7cdb6ff12b755b72` |
 
-Every objection was accepted and applied (design revisions 2 to 4); there is no divergence. No
-round returned `SURVIVED`, so the runner has not run: whether a fourth, confirmation round may
-clear it is the maintainer's decision (#208).
+| 4 | [wp3b-runner-round-4-answer.md](wp3b-runner-round-4-answer.md) | `SURVIVED` | `c297b83be65d912df6b200b450f335800928d9dfb2ce567a2c13b6d699795284` |
+
+Every objection was accepted and applied (design revisions 2 to 4); there is no divergence. Rounds
+1 to 3 returned no `SURVIVED`. The maintainer authorized a fourth round on 2026-11-08 (#208,
+precedent: amendment 6), limited to confirming the three fixes of round 3, with its outcome rules
+fixed before it ran. It returned `SURVIVED` on the code at `349232f`, so the runner runs once.
