@@ -1,0 +1,32 @@
+{
+ "a01": {
+  "not_ok": 0,
+  "records": 3000,
+  "sha256": "a5f176925ba5d27a3bc63ebfee65916444c3b5a28e91636e09b9309828a2d930"
+ },
+ "a02": {
+  "not_ok": 0,
+  "records": 31500,
+  "sha256": "7552b234e1b16fd092217d283654715e80b7f4bef28582c61fa9edb711f4ff9a"
+ },
+ "a04": {
+  "not_ok": 0,
+  "records": 31500,
+  "sha256": "acbfefdbf41b1923cb9e88ea5dc785dce9045938dd322e73be15061f0984da08"
+ },
+ "a05": {
+  "not_ok": 0,
+  "records": 252000,
+  "sha256": "e6c2139f0208869e43aaa52199b2bc3c526a98da9243c206cf8548f5508f4085"
+ },
+ "a07": {
+  "not_ok": 0,
+  "records": 2100,
+  "sha256": "aa9e2deb84bff547abc28a8994a948e8ca7822a57a006e966c3e10e11196b358"
+ },
+ "a08": {
+  "not_ok": 0,
+  "records": 105300,
+  "sha256": "6d0299477b96b56e8e2b457fd17ed3106ad11f506dad846e94ee7af1ec122392"
+ }
+}

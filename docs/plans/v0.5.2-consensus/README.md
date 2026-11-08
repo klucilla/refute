@@ -55,3 +55,26 @@ judgements on the T3b population and the D1 margin (round 1).
 Round 3's single low-severity objection (the label of one sensitivity) was applied as it asked; no fourth
 round ran. The conversation holds one more turn than the three rounds: a first launch of round 2 was stopped
 within seconds, because the rewritten report had not yet been saved; it produced no answer.
+
+## The stage 2 design
+
+Reviews of [the stage 2 design](../v0.5.2-stage2-design.md), under the maintainer's delegation of 2026-11-08 (#216).
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [stage2-design-round-1-answer.md](stage2-design-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` | `d71bfa417472487672ee44bb67362087240ef37096354e46221af74c071d4d62` |
+| 2 | [stage2-design-round-2-answer.md](stage2-design-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` | `9b475913068e1f8c8ba301df35ceda9411caeca85acff210075e1b06ef6566af` |
+| 3 | [stage2-design-round-3-answer.md](stage2-design-round-3-answer.md) | gpt-6.1-sol, high | `REFUTED` | `56d5c6e0bcd8759900004746b30661d0d05e80973ee936ce5b48c2d0657c4a02` |
+
+**The tie-break, applied.** After three rounds Codex's verdict stayed `REFUTED`. By the maintainer's rule the option more conservative against a false PASS
+wins, with both arguments recorded, and the work goes on without a stop. Round 3 accepted the four points on which Claude had not taken round 2's correction as
+written (sizing before the code with a frozen adequacy check; batches never interrupted; the sinusoid rule; `J` = 4) and raised six defects. Every one was adopted as Codex wrote it:
+
+| Round 3's defect | Claude's position before | Adopted |
+|---|---|---|
+| The adequacy check could pass a configuration that cannot deliver `G_min`; 300 curves cannot see a one-in-524 pull | a cheap check (300 curves per noise model, thresholds on availability and on the pooled fourth moment) | the whole A0 round 2 schedule on version 4 development seeds, the complete evaluation repeated with the schedule frozen; pooled moments diagnostic only |
+| The tail sensitivity mixed location, scale and tail, and inferred that a larger `T` buys little | an unadjusted perturbation | relabelled, restandardized variant added, the inference removed; the extreme curve stays |
+| The selector's rule could grant permission without equivalence | point estimates inside, intervals intersecting | default INCONCLUSIVE; only simultaneous intervals wholly inside, as its own family; the same for a sabotage's accepted baseline |
+| The aggregate checks were pooled by section | one aggregate per section | section x statistic x noise model |
+| CPU charges could be incomplete after a crash or failed queries | the last value kept; a fixed 20-second surcharge | a failed query stops dispatch and charges elapsed time for every worker; restart refused while a worker lives; a crashed batch charged a whole shard per worker; workers end with their controller |
+| A stop did not bind the evaluator | a state returned | `stop.json`: no continuation and no bytes until a reason is recorded; the evaluator needs a completed run |

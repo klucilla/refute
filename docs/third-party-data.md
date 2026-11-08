@@ -23,6 +23,7 @@ each data component keeps its own terms, stated in the record named below.
 | [calibration/v0.4/DATA_LICENSE.md](../calibration/v0.4/DATA_LICENSE.md) (2026-11-01, published) | the v0.4 pilot's dossiers and its two reproduction archives (on Zenodo) |
 | [calibration/v0.4/DATA_LICENSE-addendum-2026-11-06.md](../calibration/v0.4/DATA_LICENSE-addendum-2026-11-06.md) | the v0.4 files kept in the repository: frozen inputs, the catalog attachment, the references of the known-planet control's values and the values quoted from them |
 | [calibration/v0.5/DATA_LICENSE.md](../calibration/v0.5/DATA_LICENSE.md) (2026-11-05/06) | the v0.5 frozen inputs, the catalog attachment, the references of the C3 planets' values and the values quoted from them |
+| [docs/validation/v0.5.2/stage2/DATA_LICENSE.md](validation/v0.5.2/stage2/DATA_LICENSE.md) (2026-11-08) | the T10K download of v0.5.2: hashes and counts only, its terms unconfirmed |
 
 ## Third-party data files
 
@@ -79,6 +80,8 @@ are in the public domain" (v0.4 record L5); acknowledge the TESS mission and MAS
 These third-party data are used by Refute but are **not** in the repository or its release
 archives: the TESS-EB table (downloaded from VizieR and checked by its content SHA-256 on every
 run, #33); the Gaia DR3 snapshot (a release asset of v0.2.0, under CC BY-NC 3.0 IGO); the
+TESS Ten Thousand Catalog of v0.5.2 (Tables 3 and 4 of the article, internal use, terms
+unconfirmed; only TIC identifiers may enter a record); the
 per-sector TESS target lists and the v0.4 sampling frame built from them; and every MAST light
 curve and pixel file. Their URLs and SHA-256 are recorded in the `inputs.json` or
 `retrieval.json` of each phase.

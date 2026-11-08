@@ -1,0 +1,18 @@
+{
+ "label": "the vetted tables of the TESS Ten Thousand Catalog, internal use only (#216)",
+ "license_state": "unconfirmed: see docs/plans/sources/ (the data page's statements)",
+ "files": {
+  "table3": {
+   "url": "https://content.cld.iop.org/journals/0067-0049/279/2/50/revision1/apjsade2d8t3_mrt.txt",
+   "retrieved_utc": "2026-11-08T18:15:48+00:00",
+   "bytes": 2002473,
+   "sha256": "e197c05c167225bf9d5ca1bb3a5b9e672d76b9b938168b7a44c7382768fd0fb6"
+  },
+  "table4": {
+   "url": "https://content.cld.iop.org/journals/0067-0049/279/2/50/revision1/apjsade2d8t4_mrt.txt",
+   "retrieved_utc": "2026-11-08T18:15:49+00:00",
+   "bytes": 309972,
+   "sha256": "f5f27c251f53216492fbe0db9c3788d7fc20752c09c9d81ab7ae9099a9331493"
+  }
+ }
+}
