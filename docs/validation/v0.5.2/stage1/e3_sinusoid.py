@@ -43,6 +43,8 @@ S_BINS = ((0.0, 0.5), (0.5, 1.0), (1.0, 2.0), (2.0, math.inf))
 AMP_BINS = ((0.0, 0.5), (0.5, 1.0), (1.0, math.inf))
 WILSON = 1.959964
 PROBE_UNITS = 40
+# the number of processes: a measured choice, not the default of 22 (e3-design.md, third correction)
+WORKERS = 4
 CAP_HOURS = 1.5
 BATCH = 88
 SCREEN_FAILURE = 0.05
@@ -212,8 +214,6 @@ def _warm():
 
 
 def run(limit=None):
-    from refute.core.runner import default_workers
-
     fp, doc, out = _paths()
     out.mkdir(parents=True, exist_ok=True)
     (out / "manifest.json").write_text(json.dumps(doc, indent=1, sort_keys=True), "utf-8")
@@ -226,7 +226,7 @@ def run(limit=None):
         CAP_HOURS,
         PROBE_UNITS,
         BATCH,
-        default_workers(),
+        WORKERS,
         limit,
         initializer=_warm,
     )

@@ -72,6 +72,18 @@ imports (astropy and the battery's modules), which the probe counted as the cost
 it dominates. The fix is an `initializer` in `runlib.bounded_run` that imports them once per worker
 before any unit. The thread line stays, harmless. Design, arms and rule are unchanged.
 
+**A third correction, the same day: that explanation was wrong too, and the measured cause is
+contention.** The third probe also projected 6.91 hours (0.20 processor-hours, kept). Timing the same 24
+development units against the number of processes (a local tool): 1 worker, 0.76 units per second and
+1.32 processor-seconds per unit; 2, 1.38 and 1.40; 4, **1.75** and 2.17; 8, 1.47 and 5.18; 12, 1.42 and
+7.69; and about 18 processor-seconds at 22. The processor cost per unit grows with the number of
+processes and the throughput stops rising above 4: some shared resource saturates (its cause was not
+isolated). So this experiment runs with **4 workers** (the cap counts processor time), recorded here
+as a deviation from the usual 22. The earlier three probes stay in their folders and count in the
+stage's spending (0.61 processor-hours in all). Design, arms and rule are unchanged. **What this means
+beyond E3 goes to the stage-1 worksheet:** the processor-hours measured at 22 workers in v0.5.1 are not
+a fixed cost of the work.
+
 **Identity and cost.** Records carry a fingerprint (design, script, runner files, code hash, resolved
 plan, constants, numpy, scipy, astropy versions), checked at resume and at summary; expected arms and
 metadata are validated against each scheduled unit. Any mismatch, an incomplete schedule, a failed
