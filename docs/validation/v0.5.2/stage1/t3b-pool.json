@@ -1,0 +1,15 @@
+{
+ "acceptance_rate_on_the_v05_walk": 0.2682926829268293,
+ "acceptances_needed_for_one_confirmation": 11,
+ "acceptances_short": 5.097560975609756,
+ "expected_acceptances_from_the_never_walked": 5.902439024390244,
+ "expected_acceptances_if_every_one_of_them_were_catalogued": 212.75609756097563,
+ "label": "reading of frozen v0.5 inputs; no new catalog was read; it decides nothing",
+ "note": "the number actually in the TESS Ten Thousand Catalog is unknown without its table, which is not read before the maintainer's approval; the frozen TOI table is v0.5's (retrieved 2026-11-04)",
+ "of_them_in_tess_eb_the_v05_pool": 63,
+ "of_them_outside_tess_eb": 793,
+ "share_of_them_that_must_be_catalogued_for_one_confirmation": 0.02395964691046658,
+ "the_v05_pool_never_walked": 22,
+ "toi_false_positives_with_the_depth_rule_excluding_known_targets": 856,
+ "upper_bound_on_new_stars_from_any_catalog_cross_match": 793
+}
