@@ -1,0 +1,46 @@
+{
+ "false_positive": {
+  "acceptance_rate_on_the_v05_walk": 0.2682926829268293,
+  "accepted_in_v05": 11,
+  "confirmations_sustained_excluding_accepted_only": 1,
+  "confirmations_sustained_excluding_walked": 0,
+  "left_excluding_every_walked_star": 22,
+  "left_excluding_only_the_accepted_stars": 52,
+  "pool_size_at_v05": 63,
+  "recorded_pool_size": 63,
+  "rejection_reasons_on_the_v05_walk": {
+   "D-1: fewer than 3 sectors": 10,
+   "D-4: logg missing or < 4": 11,
+   "D-5: radius or its error missing, or error / rad": 1,
+   "D-6: Teff missing or outside 3200 to 7000 K": 2,
+   "D-7: Tmag missing or outside 8 to 12": 2,
+   "D-8: contamination ratio missing or > 0.1": 4
+  },
+  "stars_walked_per_confirmation_at_that_rate": 41.0,
+  "walked_in_v05": 41
+ },
+ "known_targets_excluded_in_v05": 148,
+ "label": "development reading; it decides nothing",
+ "planet": {
+  "acceptance_rate_on_the_v05_walk": 0.21568627450980393,
+  "accepted_in_v05": 11,
+  "confirmations_sustained_excluding_accepted_only": 18,
+  "confirmations_sustained_excluding_walked": 17,
+  "left_excluding_every_walked_star": 901,
+  "left_excluding_only_the_accepted_stars": 941,
+  "pool_size_at_v05": 952,
+  "recorded_pool_size": 952,
+  "rejection_reasons_on_the_v05_walk": {
+   "D-1: fewer than 3 sectors": 24,
+   "D-2: fewer than 2 years or a span under 300 d": 2,
+   "D-4: logg missing or < 4": 2,
+   "D-5: radius or its error missing, or error / rad": 3,
+   "D-6: Teff missing or outside 3200 to 7000 K": 2,
+   "D-7: Tmag missing or outside 8 to 12": 5,
+   "D-8: contamination ratio missing or > 0.1": 2
+  },
+  "stars_walked_per_confirmation_at_that_rate": 51.0,
+  "walked_in_v05": 51
+ },
+ "source": "calibration/v0.5/selection/selection.json and the frozen v0.5 pool inputs"
+}

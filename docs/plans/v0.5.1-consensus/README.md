@@ -22,6 +22,14 @@ The numbers of the plan's section 2 come from
 [../v0.5.1-wp0/diagnosis.json](../v0.5.1-wp0/diagnosis.json)), run on the v0.5 records, which this
 phase uses for development only.
 
+## The Codex model (the maintainer's record of 2026-11-08, #208)
+
+From 2026-11-08 13:31:55 UTC (the modification time of `~/.codex/config.toml`) Codex uses
+**gpt-6.1-sol, effort high**; before it, gpt-6-luna, effort high. The first turn under the new model
+was at 13:32:15 UTC, round 2 of the strategy analysis. Codex CLI: `codex-cli 0.167.0-alpha.3.2`.
+From that time on, each Codex answer recorded here carries the model, the effort and the Codex CLI
+version used.
+
 ## The acceptance documents
 
 Codex's one review of [../v0.5.1-acceptance.md](../v0.5.1-acceptance.md) and of the plan's
@@ -359,3 +367,18 @@ Every objection was accepted and applied (design revisions 2 to 4); there is no 
 1 to 3 returned no `SURVIVED`. The maintainer authorized a fourth round on 2026-11-08 (#208,
 precedent: amendment 6), limited to confirming the three fixes of round 3, with its outcome rules
 fixed before it ran. It returned `SURVIVED` on the code at `349232f`, so the runner runs once.
+
+### The analysis before the strategic decision
+
+Item 3 of the maintainer's decisions of 2026-11-08 (#208):
+[the analysis](../../validation/v0.5.1/feasibility/strategy/README.md), development data only. One
+conversation; Codex CLI `codex-cli 0.167.0-alpha.3.2`.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [strategy-round-1-answer.md](strategy-round-1-answer.md) | gpt-6-luna, high | `WEAKENED` (4 objections); recommends path B | `21ddb4b7b69c29734e9ba3c1c08a57d78934fe0cf329361c92b3ddd7d6f6219c` |
+| 2 | [strategy-round-2-answer.md](strategy-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (1 qualification, wording); recommends path B | `6e1f26c2fdd59159ee1eb18ff1032b709db54b851c5fcf59d8e7d06402e60005` |
+| 3 | [strategy-round-3-answer.md](strategy-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `99980d57329eb3938676016628ea4257c7fb72cf5ff034bb697c00daa522d591` |
+
+Every objection was accepted and applied. The version recorded is the CLI's at the time of the
+model change; the three rounds ran within eight minutes of it.

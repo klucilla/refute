@@ -1,0 +1,4010 @@
+{
+ "label": "development reading of the recorded A0 second run; it decides nothing",
+ "method_status": "not_validated",
+ "power": {
+  "a01": {
+   "decidable_rows": 15,
+   "expected_fail_if_perfectly_calibrated": 0.75,
+   "probability_every_row_passes_if_perfectly_calibrated": 0.4633857855050425,
+   "recorded_fail": 5
+  },
+  "a02": {
+   "decidable_rows": 300,
+   "expected_fail_if_perfectly_calibrated": 15.0,
+   "probability_every_row_passes_if_perfectly_calibrated": 2.0837909663827664e-07,
+   "recorded_fail": 138
+  },
+  "a04": {
+   "decidable_rows": 204,
+   "expected_fail_if_perfectly_calibrated": 10.2,
+   "probability_every_row_passes_if_perfectly_calibrated": 2.862996536576926e-05,
+   "recorded_fail": 117
+  },
+  "a05": {
+   "decidable_rows": 718,
+   "expected_fail_if_perfectly_calibrated": 35.89,
+   "probability_every_row_passes_if_perfectly_calibrated": 1.0228005069496121e-16,
+   "recorded_fail": 225
+  },
+  "a07": {
+   "decidable_rows": 18,
+   "expected_fail_if_perfectly_calibrated": 0.9,
+   "probability_every_row_passes_if_perfectly_calibrated": 0.39731160371061236,
+   "recorded_fail": 14
+  },
+  "a08": {
+   "decidable_rows": 293,
+   "expected_fail_if_perfectly_calibrated": 14.65,
+   "probability_every_row_passes_if_perfectly_calibrated": 2.983647785418958e-07,
+   "recorded_fail": 98
+  },
+  "all": {
+   "decidable_rows": 1548,
+   "expected_fail_if_perfectly_calibrated": 77.38,
+   "probability_every_row_passes_if_perfectly_calibrated": 3.3518719483531607e-35,
+   "recorded_fail": 597
+  },
+  "per_row_at_n": {
+   "100": {
+    "mean_band": 0.6827,
+    "pass": 0.574,
+    "sd_band": 0.8407
+   },
+   "1600": {
+    "mean_band": 0.9999,
+    "pass": 0.9999,
+    "sd_band": 1.0
+   },
+   "200": {
+    "mean_band": 0.8427,
+    "pass": 0.8041,
+    "sd_band": 0.9541
+   },
+   "310": {
+    "mean_band": 0.9217,
+    "pass": 0.9099,
+    "sd_band": 0.9872
+   },
+   "400": {
+    "mean_band": 0.9545,
+    "pass": 0.95,
+    "sd_band": 0.9953
+   },
+   "800": {
+    "mean_band": 0.9953,
+    "pass": 0.9953,
+    "sd_band": 0.9999
+   }
+  }
+ },
+ "runtime_cells": {
+  "box_diff|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 5,
+     "not_decidable": 11,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 11,
+     "rows": 20
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 11,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 11,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 11,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.09950115514171122,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_diff|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 7,
+     "not_decidable": 9,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 7,
+     "not_decidable": 9,
+     "rows": 20
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 9,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 9,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 9,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.05958312277321751,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_diff|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 5,
+     "not_decidable": 9,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 6,
+     "not_decidable": 9,
+     "rows": 20
+    },
+    "long": {
+     "fail": 7,
+     "not_decidable": 9,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 9,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.056604736733011855,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_diff|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 21,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 21,
+     "rows": 26
+    },
+    "long": {
+     "fail": 4,
+     "not_decidable": 21,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 21,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 21,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.27748393583761105,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_diff|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 3,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "long": {
+     "fail": 4,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 17,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.09950115514171122,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_diff|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 5,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 18,
+     "rows": 26
+    },
+    "long": {
+     "fail": 3,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 17,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.10473663309925782,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_diff|partial|2": {
+   "a07_result": "PASS",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 15,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 3,
+     "not_decidable": 15,
+     "rows": 20
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 15,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 15,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 15,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.2636133254631653,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_diff|partial|3": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 3,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "long": {
+     "fail": 3,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 13,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.15785651044309867,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_diff|partial|4": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 5,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "long": {
+     "fail": 3,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 13,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.15785651044309867,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_even|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 9,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 8,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 10,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.07699733464793143,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_even|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 7,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 7,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 8,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.04610742093400096,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_even|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 8,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 9,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "long": {
+     "fail": 9,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 9,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.04853346699985301,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_even|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 19,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 20,
+     "rows": 26
+    },
+    "long": {
+     "fail": 4,
+     "not_decidable": 19,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 20,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 20,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.19379583664013386,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_even|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 3,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 7,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "long": {
+     "fail": 3,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 16,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.07699733464793143,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_even|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 7,
+     "not_decidable": 14,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 9,
+     "not_decidable": 15,
+     "rows": 26
+    },
+    "long": {
+     "fail": 6,
+     "not_decidable": 14,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 14,
+     "rows": 26
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 14,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.04853346699985301,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_even|partial|2": {
+   "a07_result": "PASS",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 4,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 3,
+     "not_decidable": 13,
+     "rows": 20
+    },
+    "long": {
+     "fail": 4,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 12,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.12858211157314217,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_even|partial|3": {
+   "a07_result": "PASS",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 5,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 3,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 12,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.12215466788934526,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_even|partial|4": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 7,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 10,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.07314846308876025,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_odd|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 5,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 5,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 10,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 10,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.07699733464793143,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_odd|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 7,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 5,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 8,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.04610742093400096,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_odd|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 6,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 5,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "long": {
+     "fail": 6,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 8,
+     "rows": 20
+    },
+    "white": {
+     "fail": 3,
+     "not_decidable": 8,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.04610742093400096,
+   "rows": 100,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_odd|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 3,
+     "not_decidable": 20,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 3,
+     "not_decidable": 20,
+     "rows": 26
+    },
+    "long": {
+     "fail": 4,
+     "not_decidable": 20,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 20,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 20,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.21472638620812526,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_odd|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 3,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 5,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "long": {
+     "fail": 5,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 16,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.07699733464793143,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_odd|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 6,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "correlated_trend": {
+     "fail": 3,
+     "not_decidable": 17,
+     "rows": 26
+    },
+    "long": {
+     "fail": 6,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 16,
+     "rows": 26
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 16,
+     "rows": 26
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.0810487232751786,
+   "rows": 130,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_odd|partial|2": {
+   "a07_result": "PASS",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 14,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 1,
+     "not_decidable": 14,
+     "rows": 20
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 14,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 14,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 14,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.20399284218794572,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "box_odd|partial|3": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 3,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "long": {
+     "fail": 4,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 12,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.12215466788934526,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "box_odd|partial|4": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 5,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "correlated_trend": {
+     "fail": 5,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "long": {
+     "fail": 3,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 12,
+     "rows": 20
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 12,
+     "rows": 20
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.12215466788934526,
+   "rows": 101,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "large_minus_core|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "large_minus_core|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  },
+  "large_minus_core|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "large_minus_core|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "large_minus_core|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "large_minus_core|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "large_minus_core|partial|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  },
+  "large_minus_core|partial|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "large_minus_core|partial|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  },
+  "matched_diff|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_diff|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_diff|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_diff|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_diff|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_diff|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_diff|partial|2": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.8145505764204206,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_diff|partial|3": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.698403805089268,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_diff|partial|4": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_even|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_even|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_even|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_even|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_even|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_even|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_even|partial|2": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.8145505764204206,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_even|partial|3": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.698403805089268,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_even|partial|4": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_odd|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_odd|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_odd|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_odd|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_odd|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_odd|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 1.0,
+   "rows": 10,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "matched_odd|partial|2": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.8145505764204206,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_odd|partial|3": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 2
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.698403805089268,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "matched_odd|partial|4": {
+   "a07_result": "FAIL",
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 1,
+     "rows": 2
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "long": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "trend": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    },
+    "white": {
+     "fail": 2,
+     "not_decidable": 0,
+     "rows": 2
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.5988184025437515,
+   "rows": 11,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "per_event|full|-": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 3,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "correlated_trend": {
+     "fail": 2,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 7
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.27748393583761105,
+   "rows": 35,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "per_event|minimal|-": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 3,
+     "rows": 7
+    },
+    "correlated_trend": {
+     "fail": 4,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "long": {
+     "fail": 3,
+     "not_decidable": 3,
+     "rows": 7
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 3,
+     "rows": 7
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.32363039582100106,
+   "rows": 35,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "per_event|partial|-": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 1,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "correlated_trend": {
+     "fail": 3,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 2,
+     "rows": 7
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 2,
+     "rows": 7
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.27748393583761105,
+   "rows": 35,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "sap_minus_expected|full|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "sap_minus_expected|full|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  },
+  "sap_minus_expected|full|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "sap_minus_expected|minimal|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  },
+  "sap_minus_expected|minimal|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": true
+  },
+  "sap_minus_expected|minimal|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  },
+  "sap_minus_expected|partial|2": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  },
+  "sap_minus_expected|partial|3": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": false,
+   "ignoring_nd": false,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 1,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": false,
+   "white_only_ignoring_nd": false
+  },
+  "sap_minus_expected|partial|4": {
+   "a07_result": null,
+   "base_row_only_ignoring_nd": true,
+   "ignoring_nd": true,
+   "per_noise": {
+    "correlated": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "correlated_trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "long": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "trend": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    },
+    "white": {
+     "fail": 0,
+     "not_decidable": 0,
+     "rows": 1
+    }
+   },
+   "probability_accepted_if_perfectly_calibrated": 0.77383357548232,
+   "rows": 5,
+   "strict": true,
+   "white_only_ignoring_nd": true
+  }
+ },
+ "sabotage_detected": {
+  "sabotage-force_phase_half": true,
+  "sabotage-model_errors_alone": true,
+  "sabotage-neff_equals_n": true,
+  "sabotage-pool_sectors": true,
+  "sabotage-rho_zero": true,
+  "sabotage-share_event_cadences": true
+ },
+ "sabotage_vs_baseline": {
+  "force_phase_half": {
+   "mean_sd_sabotaged_minus_baseline": -0.019180312427132425,
+   "paired_rows": 26,
+   "rows": [
+    {
+     "baseline": {
+      "mean": -0.024415613504766336,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.2157595618438726
+     },
+     "row": "correlated/full/excluded",
+     "sabotaged": {
+      "mean": 0.07236371460823122,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0729372369741434
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.04451815203070095,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.006808555194735
+     },
+     "row": "correlated/full/included",
+     "sabotaged": {
+      "mean": 0.04333000074271207,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0656990509345925
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.020411214327148482,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.069769977004861
+     },
+     "row": "correlated/minimal/excluded",
+     "sabotaged": {
+      "mean": -0.0004425082206773734,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0951699572526896
+     }
+    },
+    {
+     "baseline": {
+      "mean": null,
+      "n": 367,
+      "result": "NOT DECIDABLE",
+      "sd": null
+     },
+     "row": "correlated/minimal/included",
+     "sabotaged": {
+      "mean": 0.07624912967065713,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.088189631055523
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.006002560394698191,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.995464976055969
+     },
+     "row": "correlated/partial/excluded",
+     "sabotaged": {
+      "mean": -0.0368346033849215,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0567269970317268
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.08191584249571855,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0362255237456064
+     },
+     "row": "correlated/partial/included",
+     "sabotaged": {
+      "mean": -0.030830594144917057,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0381379236713868
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.09526989189443155,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0936977890501647
+     },
+     "row": "correlated_trend/full/excluded",
+     "sabotaged": {
+      "mean": -0.02403597022354817,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.05397041055522
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.07703606541293992,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0352959247642266
+     },
+     "row": "correlated_trend/full/included",
+     "sabotaged": {
+      "mean": -0.02663227949683578,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0665093181444818
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.04872520270409014,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1472571995943486
+     },
+     "row": "correlated_trend/minimal/excluded",
+     "sabotaged": {
+      "mean": -0.008325359498750018,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0658665399533116
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.009216492922110704,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1390751867771975
+     },
+     "row": "correlated_trend/minimal/included",
+     "sabotaged": {
+      "mean": -0.021864579721562295,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0436981953935316
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.029110305704455112,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0342210582609086
+     },
+     "row": "correlated_trend/partial/excluded",
+     "sabotaged": {
+      "mean": -0.04270659002293295,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0134362471412306
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.11833624091773315,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1342776729301058
+     },
+     "row": "correlated_trend/partial/included",
+     "sabotaged": {
+      "mean": null,
+      "n": 270,
+      "result": "NOT DECIDABLE",
+      "sd": null
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.04510948292426642,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.063010030813569
+     },
+     "row": "long/full/excluded",
+     "sabotaged": {
+      "mean": 0.05151515932709895,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1283754339523846
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.00918334277415111,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0589054709771095
+     },
+     "row": "long/full/included",
+     "sabotaged": {
+      "mean": -0.05995767736777721,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1216612844752074
+     }
+    },
+    {
+     "baseline": {
+      "mean": null,
+      "n": 395,
+      "result": "NOT DECIDABLE",
+      "sd": null
+     },
+     "row": "long/minimal/excluded",
+     "sabotaged": {
+      "mean": -0.014962786707663756,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.023770902427999
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.14600904514086452,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.194640242831826
+     },
+     "row": "long/minimal/included",
+     "sabotaged": {
+      "mean": -0.03269751173472988,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0816659265502746
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.02461193071546395,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0772877437846786
+     },
+     "row": "long/partial/excluded",
+     "sabotaged": {
+      "mean": -0.0390936959233463,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9990619074465618
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.00201360925140861,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0663568810830621
+     },
+     "row": "long/partial/included",
+     "sabotaged": {
+      "mean": -0.03275408626193668,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0207894734813787
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.0010488682897609814,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9649750655353116
+     },
+     "row": "trend/full/excluded",
+     "sabotaged": {
+      "mean": -0.005527182834696034,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.023148295325248
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.052585285039703056,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0094622299232803
+     },
+     "row": "trend/full/included",
+     "sabotaged": {
+      "mean": 0.0019024207531701243,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9049068761309023
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.03982658014703591,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0526771828428725
+     },
+     "row": "trend/minimal/excluded",
+     "sabotaged": {
+      "mean": -0.0023181105120756796,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9550659480964278
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.027928004627857713,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.019548502601058
+     },
+     "row": "trend/minimal/included",
+     "sabotaged": {
+      "mean": -0.0059912217149355575,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.961066177914223
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.09901296754059694,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9669562495911859
+     },
+     "row": "trend/partial/excluded",
+     "sabotaged": {
+      "mean": 0.03899079742577603,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9964508585789986
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.019189233257738882,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0312849689581078
+     },
+     "row": "trend/partial/included",
+     "sabotaged": {
+      "mean": -0.01624182816218218,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0127693563060214
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.05772130141636904,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0140348221451165
+     },
+     "row": "white/full/excluded",
+     "sabotaged": {
+      "mean": 0.014939366011896266,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0023096851202788
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.00400634994655575,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.018019889611377
+     },
+     "row": "white/full/included",
+     "sabotaged": {
+      "mean": -0.03209347043685761,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0798928813753732
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.050811105105850365,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9720647506675677
+     },
+     "row": "white/minimal/excluded",
+     "sabotaged": {
+      "mean": 0.008589710037682117,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9019543830873131
+     }
+    },
+    {
+     "baseline": {
+      "mean": null,
+      "n": 305,
+      "result": "NOT DECIDABLE",
+      "sd": null
+     },
+     "row": "white/minimal/included",
+     "sabotaged": {
+      "mean": null,
+      "n": 388,
+      "result": "NOT DECIDABLE",
+      "sd": null
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.0014830241114906207,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9530161018706438
+     },
+     "row": "white/partial/excluded",
+     "sabotaged": {
+      "mean": -0.03146130203348128,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0110530561098683
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.10819010269993458,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.0401325969254112
+     },
+     "row": "white/partial/included",
+     "sabotaged": {
+      "mean": 0.053189202492421955,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0049369383458482
+     }
+    }
+   ],
+   "rows_failing_baseline": 5,
+   "rows_failing_sabotaged": 2,
+   "se_of_that_mean_over_rows": 0.012922478426002389
+  },
+  "model_errors_alone": {
+   "mean_sd_sabotaged_minus_baseline": 0.3988817730858499,
+   "paired_rows": 6,
+   "rows": [
+    {
+     "baseline": {
+      "mean": -0.06065287154284027,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.130777859939366
+     },
+     "row": "correlated/full",
+     "sabotaged": {
+      "mean": 0.05257428022525998,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.4231172978608282
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.0023444672576693913,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0049699414410924
+     },
+     "row": "correlated/minimal",
+     "sabotaged": {
+      "mean": -0.01791851833271661,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.5851029692381085
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.03671750793470232,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0577453502285892
+     },
+     "row": "correlated/partial",
+     "sabotaged": {
+      "mean": -0.10930982996600473,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.523596903296081
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.033135648041008485,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1019758726955537
+     },
+     "row": "correlated_trend/full",
+     "sabotaged": {
+      "mean": 0.08062576419544365,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.3943241521349512
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.03024361447885177,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1508692732286754
+     },
+     "row": "correlated_trend/minimal",
+     "sabotaged": {
+      "mean": 0.01940537155281635,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.5187699805998125
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.08651098543054518,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1493266802011084
+     },
+     "row": "correlated_trend/partial",
+     "sabotaged": {
+      "mean": -0.0773884319473666,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.5440443131197032
+     }
+    }
+   ],
+   "rows_failing_baseline": 4,
+   "rows_failing_sabotaged": 6,
+   "se_of_that_mean_over_rows": 0.04509796363182153
+  },
+  "neff_equals_n": {
+   "mean_sd_sabotaged_minus_baseline": 0.012018984616739706,
+   "paired_rows": 3,
+   "rows": [
+    {
+     "baseline": {
+      "mean": 0.06413657308984044,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0401100853885934
+     },
+     "row": "long/full",
+     "sabotaged": {
+      "mean": -0.029929001175581487,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.11835881882376
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.02838778852000514,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1445193908188414
+     },
+     "row": "long/minimal",
+     "sabotaged": {
+      "mean": 0.05763505017112044,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.085002233849827
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.013713899993168799,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0637759047467201
+     },
+     "row": "long/partial",
+     "sabotaged": {
+      "mean": 0.0035271044041158594,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0811012821307868
+     }
+    }
+   ],
+   "rows_failing_baseline": 1,
+   "rows_failing_sabotaged": 1,
+   "se_of_that_mean_over_rows": 0.0398579916405943
+  },
+  "pool_sectors": {
+   "mean_sd_sabotaged_minus_baseline": 0.01636548759911167,
+   "paired_rows": 15,
+   "rows": [
+    {
+     "baseline": {
+      "mean": -0.007372361500726541,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1176866288938894
+     },
+     "row": "correlated/full/2/box_diff",
+     "sabotaged": {
+      "mean": 0.03493054247710618,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0971005773272893
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.048187070539775306,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1232307309752008
+     },
+     "row": "correlated/full/2/box_even",
+     "sabotaged": {
+      "mean": -0.008996107355309922,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.130463175626058
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.0771353566677744,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1420616265877195
+     },
+     "row": "correlated/full/2/box_odd",
+     "sabotaged": {
+      "mean": 0.00496100449657442,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0347200074195526
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.02641398538104522,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0189364938410337
+     },
+     "row": "correlated_trend/full/2/box_diff",
+     "sabotaged": {
+      "mean": -0.07251218481032605,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0742984605326784
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.07900248705189361,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.064499711727478
+     },
+     "row": "correlated_trend/full/2/box_even",
+     "sabotaged": {
+      "mean": 0.019839659738416213,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0482240154086389
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.021620642129804385,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0705031850632374
+     },
+     "row": "correlated_trend/full/2/box_odd",
+     "sabotaged": {
+      "mean": -0.07039591250403038,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1342349432254557
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.0008344189665890512,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0701265952700554
+     },
+     "row": "long/full/2/box_diff",
+     "sabotaged": {
+      "mean": -0.046823549251577695,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0259254725592264
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.02035590617298694,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0521573031849072
+     },
+     "row": "long/full/2/box_even",
+     "sabotaged": {
+      "mean": -0.0009225278381379142,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0550787296348831
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.009350786242759899,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1131014091259155
+     },
+     "row": "long/full/2/box_odd",
+     "sabotaged": {
+      "mean": -0.0778329474707361,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1020534762557508
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.1415558853825091,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.0592317243611427
+     },
+     "row": "trend/full/2/box_diff",
+     "sabotaged": {
+      "mean": 0.006772220506837341,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0689332113428753
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.0471477069984022,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0333665603958966
+     },
+     "row": "trend/full/2/box_even",
+     "sabotaged": {
+      "mean": 0.03204608707581299,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0924354652628965
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.11404217767004496,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.0707657775447832
+     },
+     "row": "trend/full/2/box_odd",
+     "sabotaged": {
+      "mean": 0.002706094929118026,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0552376644260515
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.05833341670382623,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0131872561662398
+     },
+     "row": "white/full/2/box_diff",
+     "sabotaged": {
+      "mean": 0.009987909070822596,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0857734785334368
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.019935313128848817,
+      "n": 400,
+      "result": "PASS",
+      "sd": 0.9890536305510977
+     },
+     "row": "white/full/2/box_even",
+     "sabotaged": {
+      "mean": -0.020118720638078402,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1369357039462877
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.06785255578298184,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0278397640626518
+     },
+     "row": "white/full/2/box_odd",
+     "sabotaged": {
+      "mean": 0.031353178435291895,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0698163302368426
+     }
+    }
+   ],
+   "rows_failing_baseline": 6,
+   "rows_failing_sabotaged": 4,
+   "se_of_that_mean_over_rows": 0.015458249261440545
+  },
+  "rho_zero": {
+   "mean_sd_sabotaged_minus_baseline": 0.043011259965402275,
+   "paired_rows": 9,
+   "rows": [
+    {
+     "baseline": {
+      "mean": 0.05711594004672241,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0971890052049775
+     },
+     "row": "long/full/2/box_diff",
+     "sabotaged": {
+      "mean": 0.14303850547579652,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1516911777952288
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.009770187527868592,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.06981921218315
+     },
+     "row": "long/full/2/box_even",
+     "sabotaged": {
+      "mean": -0.08841415427371242,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1528578203346302
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.08026439507137952,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0930849422164965
+     },
+     "row": "long/full/2/box_odd",
+     "sabotaged": {
+      "mean": 0.1094482407441599,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1109445456011993
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.047750656290448085,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0698275131659276
+     },
+     "row": "long/minimal/2/box_diff",
+     "sabotaged": {
+      "mean": -0.0831512065257068,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.103001126255455
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.022698327902351795,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.098941588770485
+     },
+     "row": "long/minimal/2/box_even",
+     "sabotaged": {
+      "mean": 0.0792103826122331,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.1849577697816895
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.000575812417109236,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0600120709038916
+     },
+     "row": "long/minimal/2/box_odd",
+     "sabotaged": {
+      "mean": -0.04531677320398717,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0443005253283673
+     }
+    },
+    {
+     "baseline": {
+      "mean": -0.009421309533208837,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0152945913444076
+     },
+     "row": "long/partial/2/box_diff",
+     "sabotaged": {
+      "mean": 0.11140960954577456,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.0835445274313815
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.019798410851397014,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0766578506814772
+     },
+     "row": "long/partial/2/box_even",
+     "sabotaged": {
+      "mean": -0.07221787141175008,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.0713846846274488
+     }
+    },
+    {
+     "baseline": {
+      "mean": 0.0008313493013926832,
+      "n": 400,
+      "result": "PASS",
+      "sd": 1.042525836736021
+     },
+     "row": "long/partial/2/box_odd",
+     "sabotaged": {
+      "mean": 0.07552724244565337,
+      "n": 400,
+      "result": "FAIL",
+      "sd": 1.107771773740054
+     }
+    }
+   ],
+   "rows_failing_baseline": 0,
+   "rows_failing_sabotaged": 7,
+   "se_of_that_mean_over_rows": 0.012485638058680183
+  }
+ },
+ "source": "docs/validation/v0.5.1/acceptance/a0r2-result.json",
+ "tests": {
+  "aperture_depth": {
+   "accepted_cells_ignoring_nd": 3,
+   "accepted_cells_strict": 3,
+   "accepted_cells_white_only_ignoring_nd": 7,
+   "cells": 9,
+   "full|2": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "full|3": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   },
+   "full|4": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|2": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "minimal|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "minimal|4": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "partial|2": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   },
+   "partial|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "partial|4": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   }
+  },
+  "odd_even (decisive statistic)": {
+   "accepted_cells_ignoring_nd": 3,
+   "accepted_cells_strict": 0,
+   "accepted_cells_white_only_ignoring_nd": 3,
+   "cells": 9,
+   "full|2": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "full|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "full|4": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "minimal|2": {
+    "ignoring_nd": true,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|3": {
+    "ignoring_nd": true,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|4": {
+    "ignoring_nd": true,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "partial|2": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "partial|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "partial|4": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   }
+  },
+  "odd_even (the three statistics it reports)": {
+   "accepted_cells_ignoring_nd": 3,
+   "accepted_cells_strict": 0,
+   "accepted_cells_white_only_ignoring_nd": 3,
+   "cells": 9,
+   "full|2": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "full|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "full|4": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "minimal|2": {
+    "ignoring_nd": true,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|3": {
+    "ignoring_nd": true,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|4": {
+    "ignoring_nd": true,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "partial|2": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "partial|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "partial|4": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   }
+  },
+  "single_event, event_consistency": {
+   "accepted_cells_ignoring_nd": 0,
+   "accepted_cells_strict": 0,
+   "accepted_cells_white_only_ignoring_nd": 2,
+   "cells": 3,
+   "full|-": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|-": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "partial|-": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   }
+  },
+  "systematics": {
+   "accepted_cells_ignoring_nd": 5,
+   "accepted_cells_strict": 5,
+   "accepted_cells_white_only_ignoring_nd": 7,
+   "cells": 9,
+   "full|2": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "full|3": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   },
+   "full|4": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|2": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": true
+   },
+   "minimal|4": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   },
+   "partial|2": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   },
+   "partial|3": {
+    "ignoring_nd": false,
+    "strict": false,
+    "white_only_ignoring_nd": false
+   },
+   "partial|4": {
+    "ignoring_nd": true,
+    "strict": true,
+    "white_only_ignoring_nd": true
+   }
+  }
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "label": "development reading; it decides nothing",
+ "c2_stars_by_number_of_light_curve_files": {
+  "3": 36,
+  "4": 18,
+  "5 or more": 46
+ },
+ "c3_targets_by_number_of_light_curve_sectors": {
+  "0": 1,
+  "3": 4,
+  "4": 1,
+  "5 or more": 16
+ },
+ "note": "A0's group rows are calibrated for 2, 3 and 4 sectors only; a star's sectors with measured events can be fewer than its light-curve sectors"
+}

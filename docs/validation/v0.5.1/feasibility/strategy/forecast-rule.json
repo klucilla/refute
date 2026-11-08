@@ -1,0 +1,174 @@
+{
+ "T2a": {
+  "denominator": 615,
+  "label": "development forecast; it decides nothing",
+  "strict": {
+   "note": "odd_even has no accepted cell, so it is INCONCLUSIVE on every curve and no curve is kept; fixed by the rule, whatever the curves are",
+   "value": 0.0
+  },
+  "target_reference": "at least the v0.4 value minus 0.10",
+  "upper_bound_note": "the fraction with no decisive test outside A0 failing fatally or undecided, from the v0.5 statuses (not version 3's): an upper bound for a0_tests_outside and for readings with accepted cells, never a measurement",
+  "upper_bound_rest_of_battery_at_v05": 0.8357723577235773,
+  "v04_survival": 0.9967479674796748,
+  "v05_survival": 0.42276422764227645
+ },
+ "cpu_hours": 3.06,
+ "curves": 100,
+ "d4_subset": 67,
+ "eligible": 91,
+ "errors": 0,
+ "generation_failures": 0,
+ "group_strata": {
+  "full": 91
+ },
+ "label": "development forecast (item 3 (b), #208); it decides nothing",
+ "method_status": "not_validated",
+ "n_sectors": {
+  "2": 36,
+  "3": 29,
+  "4": 26
+ },
+ "scenarios": {
+  "a0_tests_outside": {
+   "D2_kept": 0.945054945054945,
+   "D2_refuted": 0.0,
+   "D4_inconclusive": 0.014925373134328358,
+   "counts": {
+    "INCONCLUSIVE": 5,
+    "REFUTED": 0,
+    "SURVIVED": 82,
+    "WEAKENED": 4
+   },
+   "tests_decided": {
+    "aperture_depth": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 0,
+     "PASS": 91
+    },
+    "odd_even": {
+     "FAIL": 3,
+     "INCONCLUSIVE": 7,
+     "PASS": 81
+    },
+    "systematics": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 0,
+     "PASS": 91
+    }
+   }
+  },
+  "as_built": {
+   "D2_kept": 0.8791208791208791,
+   "D2_refuted": 0.03296703296703297,
+   "D4_inconclusive": 0.029850746268656716,
+   "counts": {
+    "INCONCLUSIVE": 8,
+    "REFUTED": 3,
+    "SURVIVED": 76,
+    "WEAKENED": 4
+   },
+   "tests_decided": {
+    "aperture_depth": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 0,
+     "PASS": 91
+    },
+    "odd_even": {
+     "FAIL": 3,
+     "INCONCLUSIVE": 7,
+     "PASS": 81
+    },
+    "systematics": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 0,
+     "PASS": 91
+    }
+   }
+  },
+  "ignoring_nd": {
+   "D2_kept": 0.0,
+   "D2_refuted": 0.0,
+   "D4_inconclusive": 1.0,
+   "counts": {
+    "INCONCLUSIVE": 91,
+    "REFUTED": 0,
+    "SURVIVED": 0,
+    "WEAKENED": 0
+   },
+   "tests_decided": {
+    "aperture_depth": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 62,
+     "PASS": 29
+    },
+    "odd_even": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 91,
+     "PASS": 0
+    },
+    "systematics": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 62,
+     "PASS": 29
+    }
+   }
+  },
+  "strict": {
+   "D2_kept": 0.0,
+   "D2_refuted": 0.0,
+   "D4_inconclusive": 1.0,
+   "counts": {
+    "INCONCLUSIVE": 91,
+    "REFUTED": 0,
+    "SURVIVED": 0,
+    "WEAKENED": 0
+   },
+   "tests_decided": {
+    "aperture_depth": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 62,
+     "PASS": 29
+    },
+    "odd_even": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 91,
+     "PASS": 0
+    },
+    "systematics": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 62,
+     "PASS": 29
+    }
+   }
+  },
+  "white_only": {
+   "D2_kept": 0.0,
+   "D2_refuted": 0.0,
+   "D4_inconclusive": 1.0,
+   "counts": {
+    "INCONCLUSIVE": 91,
+    "REFUTED": 0,
+    "SURVIVED": 0,
+    "WEAKENED": 0
+   },
+   "tests_decided": {
+    "aperture_depth": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 0,
+     "PASS": 91
+    },
+    "odd_even": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 91,
+     "PASS": 0
+    },
+    "systematics": {
+     "FAIL": 0,
+     "INCONCLUSIVE": 36,
+     "PASS": 55
+    }
+   }
+  }
+ },
+ "v04_kept": 0.967032967032967
+}
