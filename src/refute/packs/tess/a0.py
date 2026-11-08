@@ -100,12 +100,13 @@ def pseudo_windows(
         n = int(math.floor((ts.max() - ts.min()) / (2.0 * h))) + 1
         for g in range(n):
             centre = float(ts.min() + h + 2.0 * g * h)
-            # a real event's or the phase-0.5 window would share cadences when centres are
-            # closer than 2 h (both windows have half-width h)
+            # a real event's or the phase-0.5 window could share a cadence when centres are
+            # closer than 2 h, or exactly 2 h apart (the windows then touch at one end; Codex's
+            # review of the A0 acceptance runner, round 2): both are left out
             phase = (centre - t0) / period
             off_event = abs(phase - round(phase)) * period
             off_half = abs((phase - 0.5) - round(phase - 0.5)) * period
-            if off_event < 2.0 * h or (exclude_phase_half and off_half < 2.0 * h):
+            if off_event <= 2.0 * h or (exclude_phase_half and off_half <= 2.0 * h):
                 continue
             got = measure(centre)
             if got is None:
@@ -310,7 +311,9 @@ def group_variance(
 def box_measure(time, flux, duration, baseline_gap_durations, baseline_outer_durations,
                 min_coverage, cadence_days):  # fmt: skip
     """The local box depth of ``events.per_event_depths`` at any centre: ``(depth, coverage)``,
-    or None when the in-event or baseline coverage is below ``min_coverage``."""
+    or None when the in-event or baseline coverage is below ``min_coverage``. The window is
+    half-open, ``[centre - outer, centre + outer)``, so that two grid windows ``2 outer`` apart,
+    which touch at one end, never share a cadence (Codex's review of the A0 acceptance runner)."""
     half = duration / 2.0
     inner = half + baseline_gap_durations * duration
     outer = half + baseline_outer_durations * duration
@@ -319,7 +322,7 @@ def box_measure(time, flux, duration, baseline_gap_durations, baseline_outer_dur
 
     def measure(centre: float):
         lo = np.searchsorted(time, centre - outer, side="left")
-        hi = np.searchsorted(time, centre + outer, side="right")
+        hi = np.searchsorted(time, centre + outer, side="left")
         if hi <= lo:
             return None
         dt = np.abs(time[lo:hi] - centre)

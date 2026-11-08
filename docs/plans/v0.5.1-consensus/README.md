@@ -295,3 +295,27 @@ the maintainer's approval. **The maintainer's decision:** recorded only, neither
 diagnostic, because it moves no target and its unexplained tail (about 30 % of the grazing PG
 planets flagged in white noise) could mislead a reader of a dossier (plan, amendment 10, item 7;
 #215).
+
+## The A0 acceptance runner
+
+Codex reviewed the design and the code of the A0 acceptance runner before its single run,
+2026-11-07 ([docs/validation/v0.5.1/acceptance/a0-design.md](../../validation/v0.5.1/acceptance/a0-design.md),
+[a0.py](../../validation/v0.5.1/acceptance/a0.py), [common.py](../../validation/v0.5.1/acceptance/common.py)):
+
+| Round | File | Verdict | SHA-256 |
+|---|---|---|---|
+| 1 | [a0-runner-round-1-answer.md](a0-runner-round-1-answer.md) | `WEAKENED` (6 objections) | `a128adeae9b85111bec53746456783a058c09087826bca7eb2a9bfeec17f9939` |
+| 2 | [a0-runner-round-2-answer.md](a0-runner-round-2-answer.md) | `WEAKENED` (1 objection) | `2aff0879a7aa14adb3e69fbb9cc868dcd4bf2242ed3f893a785f7d882484a7ce` |
+| 3 | [a0-runner-round-3-answer.md](a0-runner-round-3-answer.md) | `WEAKENED` (4 objections, applied after it) | `74a79997eb42e38ca56b188cf8efa2df65fb1569d9339dcc62b62b5676ff5e36` |
+
+Round 1: the freeze check before any seed, the two odd/even estimators measured apart, the lag
+estimator's missing pairs reported, A0.8's branch on the battery's own inputs, the processor time of
+failed units, all applied (two with an argument Codex accepted in round 2). Round 2: windows `2h`
+apart touched at one cadence; `box_measure` is now half-open and `pseudo_windows` excludes the
+exact `2h` boundary (src/refute/packs/tess/a0.py). Round 3 confirms that fix and the revision-3
+design (coverage kinds, the pixel statistics through `a0_depth`, A0.8's noise-free truth, the
+sabotage isolation); its four objections are applied: the freeze recorded on the final code, a
+deterministic evaluator written before the run, A0.6 on candidates of period 1, 3 and 10 d, and
+A0.5's unit count corrected (252,000; about 55 processor-hours for A0). Codex reads the finding
+that A0's group error is not calibrated below about P = 1.5 d as a sensitivity limit of the adopted
+rule, to be reported (never counted as a pass), not a reason to change the rule in the run.
