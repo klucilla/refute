@@ -72,6 +72,9 @@ HEAVY = {
         "tests/test_instrumentation.py",
         # v0.5.2 (#210, the maintainer's decision of 2026-11-08 on #216): 167 s locally
         "tests/test_population_v3_identity.py",
+        # v0.5.2 (#216): rest reached 32.3 min (run 42557365119) with these two files in it
+        "tests/test_v052_driver.py",
+        "tests/test_v052_battery.py",
     ],
     # v0.5.1 WP6 (#210): CI run 42213700298 (job times read from the GitHub API on 2026-11-06,
     # https://github.com/klucilla/refute/actions/runs/42213700298) took up to 60 min for rest

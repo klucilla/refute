@@ -1,0 +1,15 @@
+{
+ "cpu_seconds_per_unit": {
+  "a0_selected_from_12_sectors": 0.515625,
+  "a0_selected_from_20_sectors": 0.765625,
+  "a0_selected_from_5_sectors": 0.3020833333333333,
+  "a0_selected_from_8_sectors": 0.3958333333333333,
+  "analysis_claim_plan": 45.65625,
+  "analysis_fast_plan": 39.7890625,
+  "search_claim_plan_2_sectors": 4.671875,
+  "search_fast_plan_2_sectors": 1.3489583333333333,
+  "sinusoid_decision_2_sectors": 0.19791666666666666
+ },
+ "label": "unit costs at one worker, measured on few curves; it decides nothing",
+ "method_status": "not_validated"
+}
