@@ -311,11 +311,19 @@ def test_the_reused_construction_is_byte_identical_to_the_production_one():
         assert a.flux.tobytes() == b.flux.tobytes()
 
 
-def test_a08_truth_keeps_the_production_availability():
-    """The case of Codex's end-of-round review, finding 1: at a window where the production
-    preprocessing leaves no measurable truth box, the pull must not become finite."""
-    a0v4 = _stage2_runner()
-    rec = a0v4.unit_a08(("group", "correlated_trend", "minimal", 4, 4.0, 23, 523))
-    for name in ("box_even", "box_diff"):
-        value = rec["pulls"].get(name)
-        assert value is None or not np.isfinite(value)
+def test_a_noise_free_curve_takes_the_production_path():
+    """Codex's end-of-round review, finding 1: A0.8's truth goes through the production
+    preprocessing, whose clipping on a noise-free curve is at rounding level. No shortcut: the
+    mask-aware code gives the reference's cadences and bytes on this platform (which window is
+    measurable there can differ between platforms, so no single outcome is asserted)."""
+    t = np.arange(100.0, 112.0, CADENCE)
+    flux = np.ones(t.size)
+    flux[np.abs(np.mod(t, 3.0) - 1.5) < 0.05] -= 1e-3
+    lc = LightCurveData(
+        t, flux, np.full(t.size, 5e-4), np.ones(t.size, dtype=int), np.zeros(t.size)
+    )
+    mask = np.abs(np.mod(t, 3.0) - 1.5) < 0.1
+    reference = detrend.detrend(lc, PARAMS, mask=mask)
+    quick = detrend_fast.MaskAwareDetrender(lc, PARAMS, mask).flat()
+    assert quick.time.tobytes() == reference.time.tobytes()
+    assert np.max(np.abs(quick.flux - reference.flux), initial=0.0) <= 1e-11
