@@ -307,6 +307,7 @@ class Run:
         batch_seconds: float = BATCH_SECONDS,
         max_shard_seconds: float = MAX_SHARD_SECONDS,
         check_placement: bool = True,
+        guard: Callable[[float], str | None] | None = None,
     ):
         ids = [s for s, _ in shards]
         if len(set(ids)) != len(ids):
@@ -320,6 +321,7 @@ class Run:
         self.initializer, self.pin, self.clock = initializer, list(pin or []), clock
         self.pause_at, self.batch_seconds = pause_at, batch_seconds
         self.max_shard_seconds, self.check_placement = max_shard_seconds, check_placement
+        self.guard = guard  # given the hours spent, a sentence that stops the run, or None
         self.data_dir, self.side_dir, self.charge_dir = (
             out / "shards",
             out / "sidecars",
@@ -576,12 +578,19 @@ class Run:
             if spent >= self.cap_hours:
                 state = "stopped: the cap is reached"
                 break
+            refused = None if self.guard is None else self.guard(spent)
+            if refused is not None:
+                state = self._record_stop(refused)
+                break
             workers = workers_for(moment, self.workers)
             self._log(event="batch", todo=len(todo), workers=workers, spent_hours=spent)
             ended = self._batch(todo, workers, spent)
             if ended is not None:
                 state = ended
                 break
+        # the last shards can carry consumption past the cap, under the watchdog's 10 %
+        if state == "complete" and self.spent_seconds() / 3600.0 > self.cap_hours:
+            state = self._record_stop("stopped: the cap was passed by the end of the run")
         doc = {
             "state": state,
             "shards": len(self.shards),

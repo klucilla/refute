@@ -240,6 +240,68 @@ def test_the_cap_stops_the_dispatch(tmp_path):
     assert len(list((out / "shards").iterdir())) == 2
 
 
+def test_crossing_the_cap_at_the_end_binds(tmp_path, monkeypatch):
+    """Codex's end-of-round review, finding 4: the last shard can carry consumption past the cap
+    without reaching the watchdog; a completed run must not be assembled without a reason."""
+    out = tmp_path / "r"
+    run = _run(out, SHARDS[:2], cap_hours=10.0, workers=1)
+    run.execute()
+    late = _run(out, SHARDS[:2], cap_hours=1.5, workers=1)
+    monkeypatch.setattr(late, "spent_seconds", lambda: 1.6 * 3600.0)
+    assert late.execute().startswith("stopped")
+    assert late.unresolved_stop() is not None
+    with pytest.raises(SystemExit):
+        late.assemble()
+
+
+def test_a_guard_stops_the_dispatch_and_binds(tmp_path):
+    out = tmp_path / "r"
+    run = _run(out, SHARDS[:2], cap_hours=10.0, workers=1, guard=lambda spent: "stopped: a guard")
+    assert run.execute() == "stopped: a guard"
+    assert not list((out / "shards").iterdir())
+    assert run.unresolved_stop() == "stopped: a guard"
+
+
+def test_a_section_stops_above_one_and_a_half_times_its_line(tmp_path, monkeypatch):
+    import budgeted
+
+    monkeypatch.setattr(budgeted, "LEDGER", tmp_path / "ledger.json")
+    state = budgeted.execute(
+        "adequacy", "p", tmp_path / "r", spin, [(f"s{i:03d}", 0.5) for i in range(40)], "fp",
+        4.0 / 3600.0, 1, clock=sunday, check_placement=PLACED,
+    )  # fmt: skip
+    assert state.startswith("stopped")
+    assert len(list((tmp_path / "r" / "shards").iterdir())) <= 2
+
+
+def test_a_frozen_checkpoint_is_not_measured_again(tmp_path, monkeypatch):
+    import budgeted
+
+    monkeypatch.setattr(budgeted, "LEDGER", tmp_path / "ledger.json")
+    shards = SHARDS[:4]
+    assert (
+        budgeted.execute(
+            "adequacy",
+            "p",
+            tmp_path / "r",
+            job,
+            shards,
+            "fp",
+            1.0,
+            1,
+            clock=sunday,
+            check_placement=PLACED,
+        )  # fmt: skip
+        == "complete"
+    )
+    first = budgeted.load()["adequacy"]["parts"]["p"]["projection_hours"]
+    budgeted.execute(
+        "adequacy", "p", tmp_path / "r", job, shards, "fp", 1.0, 1, clock=sunday,
+        check_placement=PLACED,
+    )  # fmt: skip
+    assert budgeted.load()["adequacy"]["parts"]["p"]["projection_hours"] == first
+
+
 def _events(out):
     return [json.loads(x) for x in (out / "progress.jsonl").read_text("utf-8").splitlines()]
 

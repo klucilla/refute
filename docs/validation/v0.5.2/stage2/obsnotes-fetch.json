@@ -1,0 +1,7 @@
+{
+ "bytes": 18403743,
+ "label": "the ExoFOP-TESS observing notes, for T3b's counts only (#216)",
+ "retrieved_utc": "2026-11-09T11:21:36+00:00",
+ "sha256": "06cf9caf8b099320e3d789ffa8011f4896a422f72192c89bd2d95d6352abce44",
+ "url": "https://exofop.ipac.caltech.edu/tess/download_obsnotes.php?sort=id&output=csv"
+}

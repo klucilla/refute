@@ -58,6 +58,18 @@ within seconds, because the rewritten report had not yet been saved; it produced
 
 **Codex's token use (the maintainer's decision of 2026-11-09, #216).** Codex's tokens do not count against stage 2's review limit. From that date each table below gives the use per round when the CLI reports it. The five calls of stage 2 before that date, together: 928,026 input tokens not cached, 121,922 output, 19.5 M cached.
 
+## T3b's population
+
+The maintainer's item 3 of 2026-11-09 (#216). Counts only; no definition is adopted.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [t3b-frame-round-1-answer.md](t3b-frame-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (6 findings) | `bbde9eb4e37f9242053102360d6eff983db3e97e7fcba11b15aaea5d33a02d32` |
+
+| 2 | [t3b-frame-round-2-answer.md](t3b-frame-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (6 findings) | `94c3b494fe84a460a737a0ab510705356ca80876e34096bd38170c0cb281fadb` |
+
+Round 1 used 913,557 input tokens (817,920 cached) and 14,759 output tokens; round 2, 2,783,950 (2,625,024 cached) and 31,750. The findings of both rounds were applied, and the status for the protocol stop is [`t3b-status.md`](../../validation/v0.5.2/stage2/t3b-status.md). No definition was adopted.
+
 ## The stage 2 implementation
 
 The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d94bef3`), which checks the code against the agreed design.
@@ -66,6 +78,10 @@ The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d
 |---|---|---|---|---|
 | 1 | [stage2-impl-round-1-answer.md](stage2-impl-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (11 findings) | `95ffd933e32a0ab6c08b99f8ecca1ab0d7358e4f50314d7b62f401ae4bd5626b` |
 | 2 | [stage2-impl-round-2-answer.md](stage2-impl-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (2 findings, and a judgement on a failed row) | `064c962753390af52f4285ffdd4a5dcbbf9b9879ad2a1afa6548a143b4e12798` |
+
+| 3 | [stage2-impl-round-3-answer.md](stage2-impl-round-3-answer.md) | gpt-6.1-sol, high | `REFUTED` (6 findings) | `c1125e64138a74165afd262410d17f16a03cb37380296ab0a27050e0b01ecb93` |
+
+Round 3, the end-of-round review, used 8,816,615 input tokens (8,368,256 cached) and 42,499 output tokens; every finding was accepted and applied: the noise-free truth of A0.8 goes through the production preprocessing again (the shortcut changed which windows are measurable, so A0 is repriced); reuse keeps a fresh run's batches and widths, with a byte test of the real series and all four combs; each budget line runs through `budgeted.py`, with a persisted first-5 % checkpoint and a ledger read before each batch; a run that passes its cap at the end binds; the comb reference check has a budget line; the deletion guard refuses parent traversal and checks the resolved path.
 
 In round 1, every finding was accepted and applied: the final upper clip and poorly conditioned windows now go to the reference; the time is rescaled per knot; the global refit runs inside the preprocessing; the real mask follows the final ephemeris
 through one construction shared with the runner; the sectors are chosen before any event is measured and recorded; the grid holds for the additive statistics; the dumps sub-check sees every sector; the sinusoid's sensitivity is zero where the rule cannot FAIL; the

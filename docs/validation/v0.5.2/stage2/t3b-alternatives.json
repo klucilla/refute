@@ -1,0 +1,117 @@
+{
+ "definitions": {
+  "A_screening_tess_disposition_eb_without_neb_text": {
+   "beyond_the_approved_frame": 153,
+   "dropped_from_the_approved_frame": 23,
+   "kept_from_the_approved_frame": 40,
+   "members": 193,
+   "never_walked": 165,
+   "never_walked_passing_the_proxy": 21,
+   "scenario_flat_rate": 44.268292682926834,
+   "scenario_proxy_passing_subset_only": 13.363636363636363,
+   "scenario_two_strata": 32.56363636363636
+  },
+  "B_screening_eb_in_comments_without_neb_text": {
+   "beyond_the_approved_frame": 138,
+   "dropped_from_the_approved_frame": 35,
+   "kept_from_the_approved_frame": 28,
+   "members": 166,
+   "never_walked": 145,
+   "never_walked_passing_the_proxy": 20,
+   "scenario_flat_rate": 38.90243902439025,
+   "scenario_proxy_passing_subset_only": 12.727272727272727,
+   "scenario_two_strata": 29.393939393939394
+  },
+  "C_screening_both_A_and_B": {
+   "beyond_the_approved_frame": 117,
+   "dropped_from_the_approved_frame": 36,
+   "kept_from_the_approved_frame": 27,
+   "members": 144,
+   "never_walked": 124,
+   "never_walked_passing_the_proxy": 19,
+   "scenario_flat_rate": 33.268292682926834,
+   "scenario_proxy_passing_subset_only": 12.09090909090909,
+   "scenario_two_strata": 26.09090909090909
+  },
+  "E_positive_tfop_note_on_the_target": {
+   "beyond_the_approved_frame": 98,
+   "dropped_from_the_approved_frame": 45,
+   "kept_from_the_approved_frame": 18,
+   "members": 116,
+   "never_walked": 103,
+   "never_walked_passing_the_proxy": 14,
+   "scenario_flat_rate": 27.634146341463417,
+   "scenario_proxy_passing_subset_only": 8.909090909090908,
+   "scenario_two_strata": 20.775757575757574
+  },
+  "the_approved_frame_tess_eb": {
+   "beyond_the_approved_frame": 0,
+   "dropped_from_the_approved_frame": 0,
+   "kept_from_the_approved_frame": 63,
+   "members": 63,
+   "never_walked": 22,
+   "never_walked_passing_the_proxy": 2,
+   "scenario_flat_rate": 5.902439024390244,
+   "scenario_proxy_passing_subset_only": 1.2727272727272727,
+   "scenario_two_strata": 3.9393939393939394
+  },
+  "the_approved_frame_union_E": {
+   "beyond_the_approved_frame": 98,
+   "dropped_from_the_approved_frame": 0,
+   "kept_from_the_approved_frame": 63,
+   "members": 161,
+   "never_walked": 120,
+   "never_walked_passing_the_proxy": 16,
+   "scenario_flat_rate": 32.19512195121951,
+   "scenario_proxy_passing_subset_only": 10.181818181818182,
+   "scenario_two_strata": 24.048484848484847
+  }
+ },
+ "historical_rates_not_forecasts": {
+  "flat": {
+   "accepted": 11,
+   "interval": [
+    0.14221300334087128,
+    0.4294447052660821
+   ],
+   "walked": 41
+  },
+  "proxy_fails": {
+   "accepted": 4,
+   "interval": [
+    0.037553496338363315,
+    0.30721835027612676
+   ],
+   "walked": 30
+  },
+  "proxy_passes": {
+   "accepted": 7,
+   "interval": [
+    0.30790471501167715,
+    0.8907365561809019
+   ],
+   "walked": 11
+  }
+ },
+ "label": "T3b: other definitions of the population; counts only; none is adopted",
+ "method_status": "not_validated",
+ "needed_acceptances": 11,
+ "observing_notes": {
+  "notes_on_pool_stars": 1700,
+  "source": "obsnotes-fetch.json, retrieved 2026-11-09T11:21:36+00:00",
+  "stars_with_a_lexical_nearby_flag": 545,
+  "stars_with_a_positive_note": 129,
+  "stars_with_both_left_out_of_E": 13
+ },
+ "pool": {
+  "tess_eb_members_with_a_nearby_note": 23,
+  "tess_eb_members_with_a_positive_note": 19,
+  "tess_eb_members_with_neb_text": 14,
+  "tess_eb_members_with_tess_disposition_eb": 50,
+  "toi_false_positives": 856,
+  "with_eb_text": 186,
+  "with_neb_text": 289,
+  "with_tess_disposition_eb": 397
+ },
+ "toi_table": "toi-fetch.json, retrieved 2026-11-09T11:07:01+00:00"
+}

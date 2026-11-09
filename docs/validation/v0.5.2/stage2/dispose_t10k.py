@@ -26,8 +26,11 @@ FILES = {
 
 def guarded(path: Path) -> Path:
     """The path, if it and every parent up to the project's root are plain, inside ``BASE``."""
-    if BASE not in path.parents and path != BASE:
+    if ".." in path.parts or (BASE not in path.parents and path != BASE):
         raise SystemExit("refused: outside the T10K folder")
+    target = path.resolve()
+    if target != BASE.resolve() and BASE.resolve() not in target.parents:
+        raise SystemExit("refused: resolves outside the T10K folder")
     for item in (path, *path.parents):
         if item == ROOT:
             return path

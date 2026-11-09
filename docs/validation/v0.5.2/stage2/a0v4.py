@@ -271,13 +271,12 @@ def unit_a08(arg):
     exclude = sec.status is TestStatus.FAIL
     _, measured, windows, _ = measured_of(p, cand, plan, events=events, exclude=exclude)
     ref = measured_of(first, cand, plan)[1] if i % INFLATION_EVERY == 0 else None
-    # the truth: the noise-free curve through the same detrending. Its windows are at rounding
-    # level, so no knot goes to the reference for that; only rounding differs (design, section 8)
+    # the truth: the noise-free curve through the production preprocessing itself (Codex's
+    # end-of-round review: a shortcut here changed which windows are measurable)
     clean = df.MaskAwareDetrender(
         LightCurveData(t, 1.0 - primary - secondary, base.flux_err, base.sector, base.year),
         plan.detrend,
         pl.transit_mask(t, cand.period, cand.t0, p.half),
-        rounding_fallback=False,
     ).flat()
     noise_free = a0.box_measure(
         clean.time, clean.flux, cand.duration, ev.baseline_gap_durations,

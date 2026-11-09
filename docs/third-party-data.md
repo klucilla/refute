@@ -23,7 +23,7 @@ each data component keeps its own terms, stated in the record named below.
 | [calibration/v0.4/DATA_LICENSE.md](../calibration/v0.4/DATA_LICENSE.md) (2026-11-01, published) | the v0.4 pilot's dossiers and its two reproduction archives (on Zenodo) |
 | [calibration/v0.4/DATA_LICENSE-addendum-2026-11-06.md](../calibration/v0.4/DATA_LICENSE-addendum-2026-11-06.md) | the v0.4 files kept in the repository: frozen inputs, the catalog attachment, the references of the known-planet control's values and the values quoted from them |
 | [calibration/v0.5/DATA_LICENSE.md](../calibration/v0.5/DATA_LICENSE.md) (2026-11-05/06) | the v0.5 frozen inputs, the catalog attachment, the references of the C3 planets' values and the values quoted from them |
-| [docs/validation/v0.5.2/stage2/DATA_LICENSE.md](validation/v0.5.2/stage2/DATA_LICENSE.md) (2026-11-08, 2026-11-09) | the T10K download of v0.5.2 (hashes and counts only, its terms unconfirmed, the copies deleted) and the ExoFOP TOI table of 2026-11-09 (hash and counts only; the copy is in the git-ignored cache) |
+| [docs/validation/v0.5.2/stage2/DATA_LICENSE.md](validation/v0.5.2/stage2/DATA_LICENSE.md) (2026-11-08, 2026-11-09) | the T10K download of v0.5.2 (hashes and counts only, its terms unconfirmed, the copies deleted) and the ExoFOP TOI table and observing notes of 2026-11-09 (hashes and counts only; the copies are in the git-ignored cache; reliance on the notes is unresolved) |
 
 ## Third-party data files
 

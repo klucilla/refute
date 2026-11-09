@@ -4,6 +4,9 @@ data only."""
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -259,31 +262,6 @@ def test_a_very_narrow_window_goes_to_the_reference():
     same(detrend.detrend(lc, PARAMS), detrend_fast.detrend(lc, PARAMS))
 
 
-def test_a_noise_free_curve_without_the_rounding_fallback_matches_to_rounding():
-    t = np.arange(100.0, 112.0, CADENCE)
-    flux = np.ones(t.size)
-    in_event = np.abs(np.mod(t, 3.0) - 1.5) < 0.05
-    flux[in_event] -= 1e-3
-    lc = LightCurveData(
-        t, flux, np.full(t.size, 5e-4), np.ones(t.size, dtype=int), np.zeros(t.size)
-    )
-    mask = np.abs(np.mod(t, 3.0) - 1.5) < 0.1
-    reference = detrend.detrend(lc, PARAMS, mask=mask)
-    quick = detrend_fast.MaskAwareDetrender(lc, PARAMS, mask, rounding_fallback=False).flat()
-    for centre in (101.5, 104.5, 107.5):
-        for series in (reference, quick):
-            assert np.any(np.abs(series.time - centre) < 0.05)
-        ref_in = np.abs(reference.time - centre) < 0.05
-        ref_out = (np.abs(reference.time - centre) > 0.15) & (
-            np.abs(reference.time - centre) < 0.35
-        )
-        got_in = np.abs(quick.time - centre) < 0.05
-        got_out = (np.abs(quick.time - centre) > 0.15) & (np.abs(quick.time - centre) < 0.35)
-        depth_ref = reference.flux[ref_out].mean() - reference.flux[ref_in].mean()
-        depth_got = quick.flux[got_out].mean() - quick.flux[got_in].mean()
-        assert abs(depth_ref - depth_got) <= 1e-12
-
-
 def test_reuse_with_changed_cadences_matches_a_fresh_detrending():
     lc = curve(24)
     mask = np.abs(np.mod(lc.time, 3.0) - 1.5) < 0.1
@@ -296,3 +274,48 @@ def test_reuse_with_changed_cadences_matches_a_fresh_detrending():
     fresh = detrend_fast.MaskAwareDetrender(moved, PARAMS, mask)
     assert np.array_equal(reused.flat().time, fresh.flat().time)
     assert np.array_equal(reused.flat().flux, fresh.flat().flux)
+
+
+def _stage2_runner():
+    root = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(root / "docs/validation/v0.5.2/stage2"))
+    import a0v4
+
+    return a0v4
+
+
+def test_the_reused_construction_is_byte_identical_to_the_production_one():
+    """The real series and all four comb series (Codex's end-of-round review, finding 2)."""
+    from refute.packs.tess import synthetic as syn
+
+    a0v4 = _stage2_runner()
+    v3, plan = a0v4.v3, a0v4._plan()
+    base, _ = a0v4.c.noise_curve(600, "white", 2)
+    cand = v3._candidate(base.time, np.random.default_rng([600, 1]))
+    base = v3._apply_kind(base, cand, plan, "full")
+    t = base.time
+    primary = syn.trapezoid(t, cand.period, cand.t0, 2e-3, cand.duration, v3.INGRESS)
+    secondary = syn.trapezoid(t, cand.period, cand.t0, 3e-4, cand.duration, v3.INGRESS, phase=0.5)
+    before = LightCurveData(t, base.flux - primary, base.flux_err, base.sector, base.year)
+    after = LightCurveData(t, before.flux - secondary, base.flux_err, base.sector, base.year)
+    first = a0_v4.prepare(before, cand, plan)
+    reused = a0_v4.prepare(after, cand, plan, reuse=first, changed=secondary != 0.0)
+    fresh = a0_v4.prepare(after, cand, plan)
+    assert reused.flat.flux.tobytes() == fresh.flat.flux.tobytes()
+    ev = plan.gauntlet.events
+    h = a0.half_width(cand.duration, ev.baseline_outer_durations)
+    layout = a0_v4.grid(fresh.flat.time, fresh.flat.sector, h)
+    for mask in a0_v4.comb_masks(t, layout, h, fresh.half):
+        a, b = reused.preprocess(mask), fresh.preprocess(mask)
+        assert a.time.tobytes() == b.time.tobytes()
+        assert a.flux.tobytes() == b.flux.tobytes()
+
+
+def test_a08_truth_keeps_the_production_availability():
+    """The case of Codex's end-of-round review, finding 1: at a window where the production
+    preprocessing leaves no measurable truth box, the pull must not become finite."""
+    a0v4 = _stage2_runner()
+    rec = a0v4.unit_a08(("group", "correlated_trend", "minimal", 4, 4.0, 23, 523))
+    for name in ("box_even", "box_diff"):
+        value = rec["pulls"].get(name)
+        assert value is None or not np.isfinite(value)

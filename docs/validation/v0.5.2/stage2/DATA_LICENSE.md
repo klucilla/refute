@@ -27,6 +27,15 @@ URL, UTC time, size and SHA-256 in `toi-fetch.json`. The copy stays in the git-i
 `.cache/v052/toi/<sha256>/`; no row of it is in this folder, only counts. Its terms are those of the earlier
 copies of the same table, stated in [../../../../calibration/DATA_LICENSE.md](../../../../calibration/DATA_LICENSE.md).
 
+## The ExoFOP observing notes of 2026-11-09
+
+`fetch_obsnotes.py` downloaded them for T3b's counts (#216, item 3 (b)): URL, UTC time, size and SHA-256 in
+`obsnotes-fetch.json`. The copy stays in the git-ignored `.cache/v052/toi/<sha256>/`; **no note, username or
+identifier is in this folder**, only the counts of `t3b-alternatives.json`. The notes are contributed by named
+users under ExoFOP's data use policy, so operational or published reliance on them is **unresolved**: the record
+[../../../plans/sources/v0.5.2-t3b-sources-2026-11-09.md](../../../plans/sources/v0.5.2-t3b-sources-2026-11-09.md)
+gives the URL, the date and the literal excerpts, and the question goes to the maintainer at the protocol stop.
+
 ## The other catalogs counted by `t3b_inventory.py`
 
 `t3b-inventory.json` also counts members of TESS-EB, of the Gaia DR3 snapshot and of the v0.5 TOI table.

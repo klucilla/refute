@@ -56,11 +56,12 @@ The first projection for A0 was 3,781 CPU-h. The batched detrending, the reuse o
 | Sector selector's family | 135 | 176 | 203 | 12 |
 | Sabotages and regimes | 30 | 39 | 45 | 3 |
 | WP2, WP3 (a), (c), (d), the D lines | 81 | 105 | 122 | 7 |
-| **Remaining** | **2,329** | **3,028** | | **204** |
+| Comb reference check (section 3 of the design) | 40 | 52 | 60 | 4 |
+| **Remaining** | **2,369** | **3,080** | | **208** |
 | Spent before this decision | about 70 | | | |
-| **Total** | **about 2,400** | **about 3,100** | | |
+| **Total** | **about 2,440** | **about 3,150** | | |
 
-The stop column can sum above the maximum; the maximum wins. 204 hours of wall clock from this morning would reach the pause of 18 November at 20:00 (227 hours away) only with no gaps, and development comes first, so the work is expected to pause and to resume on the maintainer's release.
+The comb reference check was missing from this table until Codex's end-of-round review; its 40 CPU-h is an estimate, priced by its first 5 %. The same review restored the production preprocessing for A0.8's noise-free truth, so the A0 line of 1,048 CPU-h is low and is measured again before the acceptance. The planning cap's total passes 3,100 in this table: the limit that binds is the hard maximum on the projection (`budgeted.py`, which every line of this table runs through), and the stop column can also sum above it; the maximum wins. 204 hours of wall clock from this morning would reach the pause of 18 November at 20:00 (227 hours away) only with no gaps, and development comes first, so the work is expected to pause and to resume on the maintainer's release.
 
 ## What this does not establish
 

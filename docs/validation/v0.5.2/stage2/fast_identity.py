@@ -29,7 +29,7 @@ CACHE = ROOT / ".cache/v052/s2/fast-identity"
 LABEL = "refute-v052-dev:fast-identity"
 NOISES = ("white", "correlated", "long", "correlated_trend")
 PER_CELL = 25
-WORKERS = 12
+WORKERS = 10  # the most the maintainer's rule allows in business hours
 
 
 def evaluated_module():
