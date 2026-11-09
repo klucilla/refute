@@ -9,7 +9,7 @@ least 100 times looser than rounding and tighter than any physical quantity in A
 
 **The set** (development seeds of the label `refute-v052-dev:fast-equivalence`; 1,200 curves):
 
-- Noise models white, correlated, long and correlated with a trend; 2, 3 and 4 sectors; kinds full and partial; 25 curves per cell, each under the candidate's real mask.
+- Noise models white, correlated, long and correlated with a trend; 2, 3 and 4 sectors; kinds full and partial; 50 curves per cell, each under the candidate's real mask.
 - Each curve also under each of the four comb masks of A0 version 4, through the reuse of `MaskAwareDetrender`.
 - Constructed cases, in the unit tests: a residual placed on the clipping threshold, a window with too few cadences, a narrow cluster of cadences, a constant flux (zero median absolute deviation), a non-finite flux.
 
@@ -22,7 +22,7 @@ least 100 times looser than rounding and tighter than any physical quantity in A
 | `rednoise_fast` runs and bins | identical index arrays |
 | `rednoise_fast` estimates (sigma_w, sigma_n, sigma_r2, beta, excluded flag, bin count) | excluded flags and bin counts identical; values within 1e-11 |
 
-**End to end,** on the first 5 curves of each cell of the set (300 curves), the A0 measurement of [`a0_v4`](../../../../src/refute/packs/tess/a0_v4.py) through the fast code and through the reference code:
+**End to end,** on the first 15 curves of each cell of the set (360 curves), the A0 measurement of [`a0_v4`](../../../../src/refute/packs/tess/a0_v4.py) through the fast code and through the reference code:
 
 | Quantity | Requirement |
 |---|---|
