@@ -262,44 +262,115 @@ def test_a_guard_stops_the_dispatch_and_binds(tmp_path):
     assert run.unresolved_stop() == "stopped: a guard"
 
 
-def test_a_section_stops_above_one_and_a_half_times_its_line(tmp_path, monkeypatch):
+@pytest.fixture
+def ledger(tmp_path, monkeypatch):
     import budgeted
 
     monkeypatch.setattr(budgeted, "LEDGER", tmp_path / "ledger.json")
-    state = budgeted.execute(
+    return budgeted
+
+
+def test_a_part_stops_above_one_and_a_half_times_its_allocation(tmp_path, ledger):
+    ledger.declare("adequacy", {"p": 4.0 / 3600.0})
+    state = ledger.execute(
         "adequacy", "p", tmp_path / "r", spin, [(f"s{i:03d}", 0.5) for i in range(40)], "fp",
-        4.0 / 3600.0, 1, clock=sunday, check_placement=PLACED,
+        1, clock=sunday, check_placement=PLACED,
     )  # fmt: skip
     assert state.startswith("stopped")
     assert len(list((tmp_path / "r" / "shards").iterdir())) <= 2
 
 
-def test_a_frozen_checkpoint_is_not_measured_again(tmp_path, monkeypatch):
+def test_a_part_must_be_declared(tmp_path, ledger):
+    with pytest.raises(SystemExit):
+        ledger.execute("adequacy", "p", tmp_path / "r", job, SHARDS[:2], "fp", 1)
+
+
+def test_a_stop_binds_under_other_code_until_it_is_reconciled(tmp_path, ledger):
+    ledger.declare("adequacy", {"p": 4.0 / 3600.0})
+    shards = [(f"s{i:03d}", 0.5) for i in range(40)]
+    args = {"clock": sunday, "check_placement": PLACED}
+    assert ledger.execute(
+        "adequacy", "p", tmp_path / "r", spin, shards, "fp", 1, **args
+    ).startswith("stopped")
+    with pytest.raises(SystemExit):
+        ledger.execute("adequacy", "p", tmp_path / "r2", spin, shards, "other", 1, **args)
+    with pytest.raises(SystemExit):
+        ledger.assembled("adequacy", "p", tmp_path / "r", spin, shards, "fp", 1)
+    ledger.reconcile("adequacy", "p", "a recorded reason")
+    assert "unresolved_stop" not in ledger.load()["sections"]["adequacy"]["parts"]["p"]
+
+
+def test_a_frozen_checkpoint_is_not_measured_again_under_the_same_code(tmp_path, ledger):
+    ledger.declare("adequacy", {"p": 1.0})
+    args = {"clock": sunday, "check_placement": PLACED}
+    # enough work for the checkpoint's projection to exceed a new batch's worker start
+    shards = [(f"s{i:03d}", 0.3) for i in range(20)]
+    assert ledger.execute("adequacy", "p", tmp_path / "r", spin, shards, "fp", 1, **args) == (
+        "complete"
+    )
+    first = ledger.load()["sections"]["adequacy"]["parts"]["p"]["projection_hours"]
+    ledger.execute("adequacy", "p", tmp_path / "r", spin, shards, "fp", 1, **args)
+    assert ledger.load()["sections"]["adequacy"]["parts"]["p"]["projection_hours"] == first
+
+
+def test_other_code_is_a_new_attempt_and_keeps_the_consumption(tmp_path, ledger):
+    ledger.declare("adequacy", {"p": 1.0})
+    args = {"clock": sunday, "check_placement": PLACED}
+    ledger.execute("adequacy", "p", tmp_path / "r", job, SHARDS[:4], "fp", 1, **args)
+    ledger.execute("adequacy", "p", tmp_path / "r2", job, SHARDS[:4], "other", 1, **args)
+    row = ledger.load()["sections"]["adequacy"]["parts"]["p"]
+    assert len(row["attempts"]) == 1 and row["attempts"][0]["spent_hours"] > 0.0
+
+
+def test_a_part_not_reached_keeps_its_reservation():
     import budgeted
 
-    monkeypatch.setattr(budgeted, "LEDGER", tmp_path / "ledger.json")
-    shards = SHARDS[:4]
-    assert (
-        budgeted.execute(
-            "adequacy",
-            "p",
-            tmp_path / "r",
-            job,
-            shards,
-            "fp",
-            1.0,
-            1,
-            clock=sunday,
-            check_placement=PLACED,
-        )  # fmt: skip
-        == "complete"
+    book = {"sections": {"adequacy": {"parts": {
+        "a": {"allocation_hours": 25.0, "projection_hours": 30.0},
+        "b": {"allocation_hours": 70.0},
+    }}}}  # fmt: skip
+    base = budgeted.SPENT_BEFORE + sum(v for k, v in budgeted.LINES.items() if k != "adequacy")
+    assert budgeted.total_projection(book) == pytest.approx(base + 100.0)
+    # a line with no part declared stays reserved whole
+    assert budgeted.total_projection({}) == pytest.approx(
+        budgeted.SPENT_BEFORE + sum(budgeted.LINES.values())
     )
-    first = budgeted.load()["adequacy"]["parts"]["p"]["projection_hours"]
-    budgeted.execute(
-        "adequacy", "p", tmp_path / "r", job, shards, "fp", 1.0, 1, clock=sunday,
-        check_placement=PLACED,
-    )  # fmt: skip
-    assert budgeted.load()["adequacy"]["parts"]["p"]["projection_hours"] == first
+
+
+def test_the_cap_follows_the_frozen_projection():
+    import budgeted
+
+    assert budgeted.cap_of({"allocation_hours": 95.0}) == pytest.approx(142.5)
+    assert budgeted.cap_of({"allocation_hours": 95.0, "projection_hours": 50.0}) == pytest.approx(
+        75.0
+    )
+
+
+def test_the_total_is_checked_after_the_last_batch(ledger, monkeypatch):
+    monkeypatch.setattr(ledger, "HARD_MAXIMUM", 3099.0)
+    ledger.declare("adequacy", {"p": 1.0})
+    book = ledger.load()
+    book["sections"]["adequacy"]["parts"]["p"]["identity"] = "x"
+    assert ledger.finish(book, "adequacy", "p", 5000.0).startswith("stopped")
+    assert "unresolved_stop" in ledger.load()["sections"]["adequacy"]["parts"]["p"]
+
+
+def test_a_failed_gate_blocks_everything_and_stays_on_file(tmp_path, ledger):
+    ledger.declare("adequacy", {"p": 1.0})
+    ledger.fail_gate("adequacy", {"certified": 3})
+    with pytest.raises(SystemExit):
+        ledger.execute("adequacy", "p", tmp_path / "r", job, SHARDS[:2], "fp", 1)
+    ledger.resolve_gate("adequacy", "a prospective redesign")
+    book = ledger.load()
+    assert not book["gates"] and book["gate_history"][0]["detail"] == {"certified": 3}
+
+
+def test_the_checkpoint_is_an_evenly_spaced_twentieth():
+    import budgeted
+
+    assert len(budgeted.checkpoint(list(range(17)))) == 1
+    picked = budgeted.checkpoint(list(range(100)))
+    assert len(picked) == 5 and picked[0] == 0 and picked[-1] == 99
 
 
 def _events(out):

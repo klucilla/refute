@@ -48,6 +48,7 @@ SECTIONS = ("a01", "a02", "a04", "a05", "a07", "a08")
 PER_SHARD = {"a01": 96, "a02": 40, "a04": 128, "a05": 128, "a07": 128, "a08": 96}
 UNITS_PART_HOURS = 75.0
 EVALUATE_PART_HOURS = 20.0
+V3_TABLE_SHA256 = "6d91a7616a54f4293adb165ebff5c94542917db62b26d46fe15c21ef6db1c68b"
 pm.TABLE = V4_TABLE
 
 
@@ -96,7 +97,11 @@ def shard_units(spec) -> bytes:
 
 
 def shards_of(section: str) -> list:
-    args = [arg for _, arg in schedule(section)]
+    # shuffled by hash into the shards, so that the first 5 % sample every construction
+    args = sorted(
+        (arg for _, arg in schedule(section)),
+        key=lambda a: hashlib.sha256(repr(a).encode()).hexdigest(),
+    )
     step = PER_SHARD[section]
     return [
         (f"{section}-{i:06d}", (section, args[i : i + step])) for i in range(0, len(args), step)
@@ -124,10 +129,15 @@ def units() -> None:
     if total != 425400:
         raise SystemExit(f"the schedule has {total} curves, not 425,400")
     weight = {s: sum(len(a[1]) for _, a in every[s]) / total for s in SECTIONS}
+    budgeted.declare(
+        "adequacy",
+        {**{f"units-{s}": UNITS_PART_HOURS * w for s, w in weight.items()},
+         "evaluate": EVALUATE_PART_HOURS},
+    )  # fmt: skip
     for section, shards in every.items():
         state = budgeted.execute(
             "adequacy", f"units-{section}", OUT / f"units-{section}" / fp, shard_units, shards, fp,
-            UNITS_PART_HOURS * weight[section], WORKERS, pin=PIN, max_shard_seconds=900.0,
+            WORKERS, units=lambda a: len(a[1]), pin=PIN, max_shard_seconds=900.0,
         )  # fmt: skip
         print(section, state, flush=True)
         if state != "complete":
@@ -136,8 +146,9 @@ def units() -> None:
 
 def records(section: str, fp: str):
     data = budgeted.assembled(
-        OUT / f"units-{section}" / fp, shard_units, shards_of(section), fp, WORKERS, pin=PIN
-    )
+        "adequacy", f"units-{section}", OUT / f"units-{section}" / fp, shard_units,
+        shards_of(section), fp, WORKERS, pin=PIN,
+    )  # fmt: skip
     return [json.loads(line) for line in data.splitlines()]
 
 
@@ -165,8 +176,10 @@ def build() -> None:
         for row in rows:
             for member, values in row.items():
                 pulls.setdefault(member, []).extend(values)
-    with V3_TABLE.open("rb") as fh:
-        v3_table = pickle.load(fh)  # noqa: S301 - written by plasmode.py, in the local cache
+    raw = V3_TABLE.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != V3_TABLE_SHA256:
+        raise SystemExit("the version 3 table is not the sizing reference")
+    v3_table = pickle.loads(raw)  # noqa: S301 - written by plasmode.py, in the local cache
     family = {m for comp in v3_table for m in comp["members"]}
     table, absent = [], 0
     for comp in v3_table:
@@ -208,10 +221,20 @@ def build() -> None:
         "records_not_ok": not_ok,
         "diagnostic_pooled_moments_certify_nothing": moments,
         "table_sha256": hashlib.sha256(V4_TABLE.read_bytes()).hexdigest(),
+        "version_3_table_sha256": V3_TABLE_SHA256,
         "fingerprint": fp,
     }
     (OUT / "build.json").write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8")
     print(doc, flush=True)
+
+
+def load_verified() -> None:
+    """The rebuilt table, in each worker, only if its bytes are the recorded ones."""
+    expected = json.loads((OUT / "build.json").read_text("utf-8"))["table_sha256"]
+    raw = V4_TABLE.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != expected:
+        raise SystemExit("the rebuilt table is not the recorded one")
+    pm._TABLE = pickle.loads(raw)  # noqa: S301 - written by build, verified just above
 
 
 def shard_evaluate(arg) -> bytes:
@@ -227,19 +250,25 @@ def evaluate() -> None:
     build_doc = json.loads((OUT / "build.json").read_text("utf-8"))
     if build_doc["fingerprint"] != fp:
         raise SystemExit("the build is from other code")
+    load_verified()
     shards = [(f"e-{r:03d}", (TARGET, r)) for r in range(pm.EVAL_REPS)]
     table_fp = hashlib.sha256((fp + build_doc["table_sha256"]).encode()).hexdigest()[:16]
-    kwargs = {"pin": PIN, "initializer": pm._load, "max_shard_seconds": pm.EVAL_MAX_SHARD_SECONDS}
+    kwargs = {
+        "pin": PIN,
+        "initializer": load_verified,
+        "max_shard_seconds": pm.EVAL_MAX_SHARD_SECONDS,
+    }
     state = budgeted.execute(
         "adequacy", "evaluate", OUT / "evaluate" / table_fp, shard_evaluate, shards, table_fp,
-        EVALUATE_PART_HOURS, WORKERS, **kwargs,
+        WORKERS, **kwargs,
     )  # fmt: skip
     print(state, flush=True)
     if state != "complete":
         raise SystemExit(state)
     data = budgeted.assembled(
-        OUT / "evaluate" / table_fp, shard_evaluate, shards, table_fp, WORKERS, **kwargs
-    )
+        "adequacy", "evaluate", OUT / "evaluate" / table_fp, shard_evaluate, shards, table_fp,
+        WORKERS, **kwargs,
+    )  # fmt: skip
     rows = [json.loads(line) for line in data.splitlines()]
     k = sum(r["certified"] for r in rows)
     lower = float(stats.beta.ppf(1.0 - pm.EVAL_LEVEL, k, pm.EVAL_REPS - k + 1)) if k else 0.0
@@ -259,10 +288,15 @@ def evaluate() -> None:
         "degenerate_datasets": sum(r["degenerate_replicates"] >= pm.DEGENERATE_LIMIT for r in rows),
         "build": build_doc,
     }
-    (HERE / "adequacy-result.json").write_text(
-        json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8"
-    )
+    # one file per reference, so that a failed assessment survives a redesign
+    path = HERE / f"adequacy-result-{table_fp}.json"
+    path.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8")
     print(doc, flush=True)
+    summary = {"certified": k, "lower_bound": lower, "file": path.name}
+    if not doc["passes"]:
+        budgeted.fail_gate("adequacy", summary)
+        raise SystemExit("the adequacy check failed: a STOP and a prospective redesign")
+    budgeted.pass_gate("adequacy", summary)
 
 
 if __name__ == "__main__":

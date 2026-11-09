@@ -80,6 +80,9 @@ The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d
 | 2 | [stage2-impl-round-2-answer.md](stage2-impl-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (2 findings, and a judgement on a failed row) | `064c962753390af52f4285ffdd4a5dcbbf9b9879ad2a1afa6548a143b4e12798` |
 
 | 3 | [stage2-impl-round-3-answer.md](stage2-impl-round-3-answer.md) | gpt-6.1-sol, high | `REFUTED` (6 findings) | `c1125e64138a74165afd262410d17f16a03cb37380296ab0a27050e0b01ecb93` |
+| 4 | [stage2-impl-round-4-answer.md](stage2-impl-round-4-answer.md) | gpt-6.1-sol, high | `REFUTED` (7 findings) | `6a3e08e5d8308b681375d5aba423ba8c5e09eae42703b330871ade9f04c68898` |
+
+Round 4, a narrow review before the first long run (11,433,335 input tokens, 10,948,736 cached; 57,970 output): every finding was applied; a failed adequacy gate persists and blocks later work; the rebuilt reference is verified by bytes in each worker; the constructions are shuffled into the shards so that the first 5 % is representative, weighted by units; every part is declared before dispatch; the cap follows the frozen projection; a stop binds across code changes until reconciled; the total is checked after the last batch.
 
 Round 3, the end-of-round review, used 8,816,615 input tokens (8,368,256 cached) and 42,499 output tokens; every finding was accepted and applied: the noise-free truth of A0.8 goes through the production preprocessing again (the shortcut changed which windows are measurable, so A0 is repriced); reuse keeps a fresh run's batches and widths, with a byte test of the real series and all four combs; each budget line runs through `budgeted.py`, with a persisted first-5 % checkpoint and a ledger read before each batch; a run that passes its cap at the end binds; the comb reference check has a budget line; the deletion guard refuses parent traversal and checks the resolved path.
 
