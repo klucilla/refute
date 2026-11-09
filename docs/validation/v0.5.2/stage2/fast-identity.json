@@ -1,0 +1,9 @@
+{
+ "curves": 300,
+ "evaluated_commit": "5b74c2971267dfde5ce10d27c3f310cedd38adaf",
+ "evaluated_module_sha256": "ab5d639e504f5aa5ef73c08458a634068ee7d66288209060c4764c8272fa3c83",
+ "identical": 300,
+ "label": "the evaluated batched code against this tree, byte for byte",
+ "method_status": "not_validated",
+ "passes": true
+}

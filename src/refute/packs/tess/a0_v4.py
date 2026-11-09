@@ -37,20 +37,24 @@ class Measurement:
     flat: object
     preprocess: Preprocess
     half: float
+    detrender: object = None
 
 
-def prepare(lc, candidate, plan, components=None) -> Measurement:
+def prepare(lc, candidate, plan, components=None, reuse=None, changed=None) -> Measurement:
     """The preprocessing of the A0-dependent measurements, the one construction shared by the
     pipeline and the acceptance runner: the real events of ``candidate`` masked (its final
     ephemeris), and, given further cadences to mask, every mask-dependent step again under the
     combined mask. With global components (``components``, the corrections) that includes their
     refit and subtraction, so that a pseudo-window cannot influence the model removed under it;
-    without them the fits of knots that lose no cadence are reused."""
+    without them the fits of knots that lose no cadence are reused. ``reuse`` (a ``Measurement``
+    of the same cadences and candidate) with ``changed`` (the cadences whose flux differs) takes
+    its fits where no changed cadence is in the knot's window."""
     from refute.packs.tess import detrend_fast as df
     from refute.packs.tess.pipeline import _minus, refit, transit_mask
 
     half = plan.detrend.transit_mask_half_width_durations * candidate.duration
     mask = transit_mask(lc.time, candidate.period, candidate.t0, half)
+    detrender = None
     if components:
 
         def preprocess(extra):
@@ -60,8 +64,15 @@ def prepare(lc, candidate, plan, components=None) -> Measurement:
             return df.detrend(curve, plan.detrend, mask=whole)
 
     else:
-        preprocess = df.MaskAwareDetrender(lc, plan.detrend, mask).flat
-    return Measurement(lc, preprocess(None), preprocess, half)
+        detrender = df.MaskAwareDetrender(
+            lc,
+            plan.detrend,
+            mask,
+            reuse=None if reuse is None else reuse.detrender,
+            changed=changed,
+        )
+        preprocess = detrender.flat
+    return Measurement(lc, preprocess(None), preprocess, half, detrender)
 
 
 def grid(time: np.ndarray, sector: np.ndarray, h: float) -> dict[int, tuple[float, int]]:

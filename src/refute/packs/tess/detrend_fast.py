@@ -77,7 +77,7 @@ def _middle(ordered: np.ndarray, count: np.ndarray) -> np.ndarray:
 
 
 def _fit_batch(
-    x: np.ndarray, y: np.ndarray, valid: np.ndarray, params: DetrendParams
+    x: np.ndarray, y: np.ndarray, valid: np.ndarray, params: DetrendParams, rounding_fallback=True
 ) -> tuple[np.ndarray, np.ndarray]:
     """The robust quadratic of every row: (coefficients, whether the row has them)."""
     size = x.shape[0]
@@ -141,8 +141,9 @@ def _fit_batch(
             size_r = np.abs(resid)
             near = np.any(w & _near(size_r, limit[:, None]), axis=1)
             stays = w & (size_r <= limit[:, None])
-        unsafe = degenerate | near
-        send_back[active[unsafe]] = True
+        unsafe = degenerate | near if rounding_fallback else degenerate
+        if rounding_fallback:
+            send_back[active[unsafe]] = True
         keep[active] = stays
         moved = np.any(stays != w, axis=1)
         active = active[moved & ~unsafe]
@@ -160,6 +161,8 @@ def _fits(
     keep: np.ndarray,
     params: DetrendParams,
     base: _KnotFits | None,
+    rounding_fallback: bool = True,
+    changed: np.ndarray | None = None,
 ) -> _KnotFits:
     """Every knot's fit in one segment; a knot with the base's cadences reuses the base's fit."""
     good_t, good_f = time[keep], flux[keep]
@@ -173,6 +176,10 @@ def _fits(
     todo = counts >= params.min_points_per_knot
     if base is not None:
         same = counts == base.counts
+        if changed is not None:
+            # a knot reuses another curve's fit only if no cadence of its window changed flux
+            total = np.concatenate([[0], np.cumsum(changed[keep])])
+            same &= total[hi] == total[lo]
         coef[same] = base.coef[same]
         has[same] = base.has[same]
         todo &= ~same
@@ -185,7 +192,7 @@ def _fits(
         picks = np.minimum(lo[rows, None] + offsets[None, :], good_t.size - 1)
         x = np.where(valid, good_t[picks] - knots[rows, None], 0.0)
         y = np.where(valid, good_f[picks], 0.0)
-        coef[rows], has[rows] = _fit_batch(x, y, valid, params)
+        coef[rows], has[rows] = _fit_batch(x, y, valid, params, rounding_fallback)
     return _KnotFits(knots, counts, coef, has)
 
 
@@ -214,8 +221,19 @@ class MaskAwareDetrender:
     """The detrending of ``lc`` under a base mask and under the base mask plus further cadences."""
 
     def __init__(
-        self, lc: LightCurveData, params: DetrendParams, base_mask: np.ndarray | None = None
+        self,
+        lc: LightCurveData,
+        params: DetrendParams,
+        base_mask: np.ndarray | None = None,
+        rounding_fallback: bool = True,
+        reuse: MaskAwareDetrender | None = None,
+        changed: np.ndarray | None = None,
     ) -> None:
+        """``rounding_fallback`` false: no knot and no upper clip goes to the reference for being at
+        rounding level (a noise-free curve, where only the rounding differs). ``reuse``: a detrender
+        of the same cadences and mask, whose fits are taken wherever no cadence of ``changed`` is
+        in the knot's window."""
+        self.rounding_fallback = rounding_fallback
         self.lc = lc
         self.params = params
         self.base = (
@@ -227,7 +245,16 @@ class MaskAwareDetrender:
             raise ValueError("mask must have one entry per cadence")
         self.segments = segment_slices(lc.time, params.segment_gap_days)
         self.base_fits = [
-            _fits(lc.time[s], lc.flux[s], ~self.base[s], params, None) for s in self.segments
+            _fits(
+                lc.time[s],
+                lc.flux[s],
+                ~self.base[s],
+                params,
+                None if reuse is None else reuse.base_fits[i],
+                rounding_fallback,
+                None if changed is None else changed[s],
+            )
+            for i, s in enumerate(self.segments)
         ]
 
     def _finish(self, exclude: np.ndarray, fits: list[_KnotFits]) -> LightCurveData:
@@ -247,7 +274,9 @@ class MaskAwareDetrender:
             sigma = robust_sigma(flat[reference] - 1.0)
             if np.isfinite(sigma) and sigma > 0:
                 limit = params.upper_clip_sigma * sigma
-                if np.any(_near(flat[in_sector & keep] - 1.0, np.asarray(limit))):
+                if self.rounding_fallback and np.any(
+                    _near(flat[in_sector & keep] - 1.0, np.asarray(limit))
+                ):
                     return _reference_detrend(lc, params, mask=exclude)
                 keep &= ~(in_sector & (flat - 1.0 > limit))
         return LightCurveData(lc.time[keep], flat[keep], err[keep], lc.sector[keep], lc.year[keep])
@@ -264,7 +293,11 @@ class MaskAwareDetrender:
         for seg, base in zip(self.segments, self.base_fits, strict=True):
             changed = np.any(exclude[seg] != self.base[seg])
             fits.append(
-                _fits(lc.time[seg], lc.flux[seg], ~exclude[seg], params, base) if changed else base
+                _fits(
+                    lc.time[seg], lc.flux[seg], ~exclude[seg], params, base, self.rounding_fallback
+                )
+                if changed
+                else base
             )
         return self._finish(exclude, fits)
 

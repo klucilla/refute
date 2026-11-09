@@ -24,16 +24,18 @@ import a0 as v3  # noqa: E402
 
 c = v3.c
 _plan = v3._plan
+# A0.8's median error inflation is a reported diagnostic with no criterion: one unit in this many
+INFLATION_EVERY = 16
 
 
-def prepare(raw, cand, plan):
+def prepare(raw, cand, plan, reuse=None, changed=None):
     """The pipeline's own preprocessing (``a0_v4.prepare``); this runner's plan has no corrections,
     so no global components."""
     from refute.packs.tess import a0_v4
 
     if plan.gauntlet.corrections.active:
         raise ValueError("this runner's plan has no active corrections")
-    return a0_v4.prepare(raw, cand, plan)
+    return a0_v4.prepare(raw, cand, plan, reuse=reuse, changed=changed)
 
 
 def events_of(flat, cand, plan, phase=0.0):
@@ -222,12 +224,13 @@ def unit_a08(arg):
     from refute.core.verdict import TestStatus
     from refute.packs.tess import a0, power
     from refute.packs.tess import battery_v5 as v5
+    from refute.packs.tess import detrend_fast as df
     from refute.packs.tess import pipeline as pl
     from refute.packs.tess import synthetic as syn
     from refute.packs.tess.events import group_mean
     from refute.packs.tess.types import LightCurveData
 
-    shape, noise, kind, sectors, multiple, _i, seed = arg
+    shape, noise, kind, sectors, multiple, i, seed = arg
     plan = _plan()
     ev = plan.gauntlet.events
     if shape == "hetero":
@@ -256,6 +259,8 @@ def unit_a08(arg):
         LightCurveData(t, with_primary.flux - secondary, base.flux_err, base.sector, base.year),
         cand,
         plan,
+        reuse=first,
+        changed=secondary != 0.0,
     )
     events = events_of(p.flat, cand, plan)
     events_half = events_of(p.flat, cand, plan, phase=0.5)
@@ -265,14 +270,15 @@ def unit_a08(arg):
     )  # fmt: skip
     exclude = sec.status is TestStatus.FAIL
     _, measured, windows, _ = measured_of(p, cand, plan, events=events, exclude=exclude)
-    _, ref, _, _ = measured_of(first, cand, plan)
-    # a noise-free curve is a rounding-level case: the batch sends all of it to the reference
-    # detrending, so the truth is computed there directly (the same numbers, half the cost)
-    clean = pl.detrend(
+    ref = measured_of(first, cand, plan)[1] if i % INFLATION_EVERY == 0 else None
+    # the truth: the noise-free curve through the same detrending. Its windows are at rounding
+    # level, so no knot goes to the reference for that; only rounding differs (design, section 8)
+    clean = df.MaskAwareDetrender(
         LightCurveData(t, 1.0 - primary - secondary, base.flux_err, base.sector, base.year),
         plan.detrend,
-        mask=pl.transit_mask(t, cand.period, cand.t0, p.half),
-    )
+        pl.transit_mask(t, cand.period, cand.t0, p.half),
+        rounding_fallback=False,
+    ).flat()
     noise_free = a0.box_measure(
         clean.time, clean.flux, cand.duration, ev.baseline_gap_durations,
         ev.baseline_outer_durations, ev.min_coverage, c.CADENCE,
@@ -290,7 +296,7 @@ def unit_a08(arg):
         "branch": "excluded" if exclude else "included",
         "secondary_sigma": (sec.metrics or {}).get("secondary_sigma"),
         "n_events": len(measured),
-        "n_reference_events": len(ref),
+        "n_reference_events": None if ref is None else len(ref),
     }
     if shape == "event":
         rec["pulls"] = [
@@ -301,7 +307,7 @@ def unit_a08(arg):
         rec["stratum"] = v3._lowest([m.stratum for m in metas])
         stats, _ = v3._box_groups(p.flat, cand, measured, windows, plan, truths=truths)
         rec["pulls"] = v3._pulls(stats)
-    if len(measured) and len(ref):
+    if ref is not None and len(measured) and len(ref):
         rec["error_inflation"] = float(np.median(measured.errors) / np.median(ref.errors))
     return rec
 

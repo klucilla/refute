@@ -65,9 +65,9 @@ def test_a_knot_far_from_a_further_mask_reuses_the_base_fit():
     calls = []
     original = detrend_fast._fit_batch
 
-    def counting(x, y, valid, params):
+    def counting(x, y, valid, params, *rest):
         calls.append(x.shape[0])
-        return original(x, y, valid, params)
+        return original(x, y, valid, params, *rest)
 
     detrend_fast._fit_batch = counting
     try:
@@ -257,3 +257,42 @@ def test_a_very_narrow_window_goes_to_the_reference():
     f = 1.0 + np.random.default_rng(22).normal(0.0, 5e-4, 60)
     lc = LightCurveData(t, f, np.full(60, 5e-4), np.ones(60, dtype=int), np.zeros(60))
     same(detrend.detrend(lc, PARAMS), detrend_fast.detrend(lc, PARAMS))
+
+
+def test_a_noise_free_curve_without_the_rounding_fallback_matches_to_rounding():
+    t = np.arange(100.0, 112.0, CADENCE)
+    flux = np.ones(t.size)
+    in_event = np.abs(np.mod(t, 3.0) - 1.5) < 0.05
+    flux[in_event] -= 1e-3
+    lc = LightCurveData(
+        t, flux, np.full(t.size, 5e-4), np.ones(t.size, dtype=int), np.zeros(t.size)
+    )
+    mask = np.abs(np.mod(t, 3.0) - 1.5) < 0.1
+    reference = detrend.detrend(lc, PARAMS, mask=mask)
+    quick = detrend_fast.MaskAwareDetrender(lc, PARAMS, mask, rounding_fallback=False).flat()
+    for centre in (101.5, 104.5, 107.5):
+        for series in (reference, quick):
+            assert np.any(np.abs(series.time - centre) < 0.05)
+        ref_in = np.abs(reference.time - centre) < 0.05
+        ref_out = (np.abs(reference.time - centre) > 0.15) & (
+            np.abs(reference.time - centre) < 0.35
+        )
+        got_in = np.abs(quick.time - centre) < 0.05
+        got_out = (np.abs(quick.time - centre) > 0.15) & (np.abs(quick.time - centre) < 0.35)
+        depth_ref = reference.flux[ref_out].mean() - reference.flux[ref_in].mean()
+        depth_got = quick.flux[got_out].mean() - quick.flux[got_in].mean()
+        assert abs(depth_ref - depth_got) <= 1e-12
+
+
+def test_reuse_with_changed_cadences_matches_a_fresh_detrending():
+    lc = curve(24)
+    mask = np.abs(np.mod(lc.time, 3.0) - 1.5) < 0.1
+    first = detrend_fast.MaskAwareDetrender(lc, PARAMS, mask)
+    changed = np.abs(lc.time - 102.0) < 0.05
+    flux = lc.flux.copy()
+    flux[changed] -= 1e-3
+    moved = LightCurveData(lc.time, flux, lc.flux_err, lc.sector, lc.year)
+    reused = detrend_fast.MaskAwareDetrender(moved, PARAMS, mask, reuse=first, changed=changed)
+    fresh = detrend_fast.MaskAwareDetrender(moved, PARAMS, mask)
+    assert np.array_equal(reused.flat().time, fresh.flat().time)
+    assert np.array_equal(reused.flat().flux, fresh.flat().flux)
