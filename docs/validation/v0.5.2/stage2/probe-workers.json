@@ -4,13 +4,33 @@
  "results": [
   {
    "cpu_ratio_to_one_worker": 1.0,
-   "cpu_seconds_per_unit": 0.7846013849431818,
-   "kernel_seconds_per_unit": 0.03136097301136364,
+   "cpu_seconds_per_unit": 0.5508478338068182,
+   "kernel_seconds_per_unit": 0.018798828125,
    "units": 704,
-   "units_per_hour": 39189.359925490506,
-   "user_seconds_per_unit": 0.7532404119318182,
-   "wall_seconds": 64.6706148000012,
+   "units_per_hour": 6280.947694448511,
+   "user_seconds_per_unit": 0.5320490056818182,
+   "wall_seconds": 403.50598719999834,
+   "workers": 1
+  },
+  {
+   "cpu_ratio_to_one_worker": 1.2473911116483338,
+   "cpu_seconds_per_unit": 0.6871226917613636,
+   "kernel_seconds_per_unit": 0.02716619318181818,
+   "units": 704,
+   "units_per_hour": 44756.33442039895,
+   "user_seconds_per_unit": 0.6599564985795454,
+   "wall_seconds": 56.62662129999808,
    "workers": 12
+  },
+  {
+   "cpu_ratio_to_one_worker": 2.329223578709859,
+   "cpu_seconds_per_unit": 1.2830477627840908,
+   "kernel_seconds_per_unit": 0.05697354403409091,
+   "units": 704,
+   "units_per_hour": 43450.48756765232,
+   "user_seconds_per_unit": 1.22607421875,
+   "wall_seconds": 58.3284593999997,
+   "workers": 22
   }
  ]
 }

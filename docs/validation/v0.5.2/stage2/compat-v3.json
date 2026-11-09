@@ -1,17 +1,25 @@
 {
  "records": {
-  "v2/eb_odd_even": "a43ffba60b7174c19910f3a2c140e7b391f831c5d684b7d2e923a271aa170c77",
-  "v2/eb_secondary": "6180719c0cd9f1d33359c8edb6b215163f46325593c9df85141b0ed51414cedd",
-  "v2/noise": "912c35de64cfcff1b505f61eeab1ee82e8e0498e5dfacea111fa8c774f43c054",
-  "v2/planet": "daf0421fedbb84973c38a58bb56774f78839862000731ed109807994c006f2cb",
-  "v2/planet_three_years": "8984cf0669a15a687b56117c00ddf468a83c868ee4395267bb0d0d3db5f8fb72",
-  "v2/sinusoid": "e588c4fe6497f35e740c63dcb23e8195213f5af76a462db4b34266c61e6b8ca1",
-  "v3/eb_odd_even": "3dde3785d87a35fc24578f0dd88fd95445417684b55f0071fddc389d6c7c0361",
-  "v3/eb_secondary": "fb2c327569ae8914087badd40e89e328bf7126401ba9071ac809c91ada4958cf",
-  "v3/noise": "110f0ba33d56d67a6442ead2c85f3e39dd83554ad56ee214f6170d356cb5f18e",
-  "v3/planet": "7d13dc3b491422fe82b73ba47cba95e711626663fc02b6c2f344618ea1a23793",
-  "v3/planet_three_years": "45724e3420f48c83876417bb7c890ea659b243fab1554b31cedc594aadb89c54",
-  "v3/sinusoid": "b38dd33d5ba71d1759b81dde234884f8d274bdcb0feee76f8e372a3fab82000f"
- },
- "source": "see the command line"
+  "v2/eb_odd_even": "85c4535d1e0f6b0a7038c25a222f9dc7cd0c352064dd0b03948e8bc6c55bffc0",
+  "v2/eb_secondary": "1455221f54a9e41ac6709a0d7dab3ce0b7abdb3a757d7355c931080c62614ed2",
+  "v2/noise": "28069f2bd49e0f3b8364222d7e9eaa8cff6be7f6f3a599f8aafc14be05596840",
+  "v2/planet": "d69643f36170720cbed502738c1165f82a527f0cc38e07245924f46a30864d3e",
+  "v2/planet-no-aux": "ca1aa35d33ce85a6a1f58c0acc255a3fdea904156455eb38e0ab341e878a0d73",
+  "v2/planet_three_years": "9bb98d1be1a9446eb9c8b8da2804192f97d4c6ab11823dc06339d4820ce51e36",
+  "v2/sinusoid": "796ccfb69c050d6ab5c79eb924ac61fa327e6adbe9dfe368b75bb6153759eb35",
+  "v3-corrections/eb_odd_even": "01986d47f00ff588f1b694cac902e8c69673cc359f1df0d77e3976e25c9892b2",
+  "v3-corrections/eb_secondary": "db6475faa5ec8ab379a62ac437867d83270279fb60d12509d9adecc115dd1ed3",
+  "v3-corrections/noise": "0345fba105dc78a898848e72f72f5a56d7804c0cdc6db2723e81bb15e95b7a63",
+  "v3-corrections/planet": "0c6aa5be57e087dc7bf8087fb77bd093b929778fed316e945b10fabbf640595b",
+  "v3-corrections/planet-no-aux": "e9cdfc78ccd4cffb7beb77565b9dcf9dd3cb8bf7b1c1553c797a505f1a6d26d0",
+  "v3-corrections/planet_three_years": "19766a1f438701552f2d101398f428bc12ce8e3bef2ec619676f38164b5edef0",
+  "v3-corrections/sinusoid": "8571ee20928a040aeea11e3debe3b79e4111562d91271635a18023a82ea1e0cd",
+  "v3/eb_odd_even": "f3fe2258cd106e9455557d603044ede64d6abea5647769eec2371d9cd51370bb",
+  "v3/eb_secondary": "0a0a0b8209a40ce6683c3fbd2d2b403f228cb2ec4e4d62e19d6e4cf73e24f2cd",
+  "v3/noise": "a5246645d66089a05026c74dec2a2b44e33abac0fea326304a8fe628902de7d8",
+  "v3/planet": "5505a3f06dd9b25fa733f2a50aa7ee30825ff586066027a03eaacc3975219038",
+  "v3/planet-no-aux": "c9d7637cebc61776edca76ec4e2ac0d8b3aa05bcb723b24e3ccda13a6cef2894",
+  "v3/planet_three_years": "fac1ac35a3b94b64cd4f5d9ee5891cb93e7a2c25aa021329190440a1aaf23916",
+  "v3/sinusoid": "dca46a0dc999ac1b799a504fa23a7faa36bad5f537079a47c96a29144932c014"
+ }
 }
