@@ -240,20 +240,22 @@ def attack_candidate(
         refit_left_out = list(fitted.sectors_left_out)
         if fitted.reason is None:
             raw = _minus(data.lc, fitted.model)
-    detrender = None
-    if plan.is_v052:
-        from refute.packs.tess.detrend_fast import MaskAwareDetrender
-
-        detrender = MaskAwareDetrender(raw, plan.detrend, mask)
-        flat = detrender.flat()
-    else:
-        flat = detrend(raw, plan.detrend, mask=mask)
+    flat = detrend(raw, plan.detrend, mask=mask)
     sigma = per_point_sigma(
         flat, transit_mask(flat.time, candidate.period, candidate.t0, mask_half)
     )
     final = finalize_candidate(
         flat, candidate.period, candidate.duration, plan.search, candidate.sde, sigma
     )
+    sector_choice = None
+    if plan.is_v052:
+        # the sectors of the A0-dependent tests: chosen here, from the cadences and the final
+        # ephemeris, before any event is measured (design, section 2)
+        from refute.packs.tess.battery_v52 import choose_sectors
+
+        sector_choice = choose_sectors(
+            data.lc.time, data.lc.sector, final, gp.events, cadence, plan.v052.selector_certified
+        )
     noise = None
     if gp.corrections.active:
         # M4 piece 2: the A1 noise model for every per-event measurement and the gate.
@@ -282,7 +284,7 @@ def attack_candidate(
     if plan.is_v052:
         from refute.packs.tess.pipeline_v52 import v052_tests
 
-        tests = v052_tests(tests, data, flat, final, primary, secondary, plan, detrender)
+        tests = v052_tests(tests, data, flat, final, plan, pw, sector_choice)
     elif plan.v05:
         tests = v05_tests(tests, data, flat, final, primary, secondary, plan)
     timing = None

@@ -1,0 +1,16 @@
+{
+ "label": "CPU per unit by worker count; it decides nothing",
+ "method_status": "not_validated",
+ "results": [
+  {
+   "cpu_ratio_to_one_worker": 1.0,
+   "cpu_seconds_per_unit": 0.7846013849431818,
+   "kernel_seconds_per_unit": 0.03136097301136364,
+   "units": 704,
+   "units_per_hour": 39189.359925490506,
+   "user_seconds_per_unit": 0.7532404119318182,
+   "wall_seconds": 64.6706148000012,
+   "workers": 12
+  }
+ ]
+}

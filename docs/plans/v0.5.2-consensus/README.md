@@ -56,6 +56,18 @@ Round 3's single low-severity objection (the label of one sensitivity) was appli
 round ran. The conversation holds one more turn than the three rounds: a first launch of round 2 was stopped
 within seconds, because the rewritten report had not yet been saved; it produced no answer.
 
+## The stage 2 implementation
+
+The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d94bef3`), which checks the code against the agreed design.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [stage2-impl-round-1-answer.md](stage2-impl-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (11 findings) | `95ffd933e32a0ab6c08b99f8ecca1ab0d7358e4f50314d7b62f401ae4bd5626b` |
+
+Every finding was accepted and applied: the final upper clip and poorly conditioned windows now go to the reference; the time is rescaled per knot; the global refit runs inside the preprocessing; the real mask follows the final ephemeris
+through one construction shared with the runner; the sectors are chosen before any event is measured and recorded; the grid holds for the additive statistics; the dumps sub-check sees every sector; the sinusoid's sensitivity is zero where the rule cannot FAIL; the
+compatibility claim was narrowed and its record widened; the comparator no longer absorbs non-finite values; and the equivalence was re-frozen with the omitted paths and run again.
+
 ## The stage 2 design
 
 Reviews of [the stage 2 design](../v0.5.2-stage2-design.md), under the maintainer's delegation of 2026-11-08 (#216).

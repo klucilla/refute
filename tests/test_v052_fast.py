@@ -85,6 +85,40 @@ def test_a_window_with_too_few_cadences_is_skipped_as_the_reference_skips_it():
     same(detrend.detrend(sub, PARAMS), detrend_fast.detrend(sub, PARAMS))
 
 
+def test_a_cadence_on_the_final_upper_clip_goes_to_the_reference():
+    lc = curve(21, days=4.0, gap=(9.0, 9.5))
+    mask = np.zeros(len(lc), dtype=bool)
+    at = len(lc) // 2
+    mask[at] = True
+    reference = detrend.detrend(lc, PARAMS, mask=mask)
+    d = detrend_fast.MaskAwareDetrender(lc, PARAMS, mask)
+    flat = lc.flux / detrend.detrend_parts(lc, PARAMS, mask)[1]
+    limit = PARAMS.upper_clip_sigma * detrend.robust_sigma(flat[~mask] - 1.0)
+    trend_at = detrend.detrend_parts(lc, PARAMS, mask)[1][at]
+    placed = lc.flux.copy()
+    placed[at] = trend_at * (1.0 + limit * (1.0 - 1e-15))
+    moved = LightCurveData(lc.time, placed, lc.flux_err, lc.sector, lc.year)
+    same(detrend.detrend(moved, PARAMS, mask=mask), detrend_fast.detrend(moved, PARAMS, mask=mask))
+    assert len(reference) == len(d.flat()), "the construction starts from an agreeing curve"
+
+
+def test_two_tight_clusters_are_poorly_conditioned_and_go_to_the_reference():
+    a = 100.0 + np.linspace(0.0, 1e-6, 30)
+    b = 100.5 + np.linspace(0.0, 1e-6, 30)
+    t = np.concatenate([a, b])
+    rng = np.random.default_rng(22)
+    f = 1.0 + rng.normal(0.0, 5e-4, t.size)
+    lc = LightCurveData(t, f, np.full(t.size, 5e-4), np.ones(t.size, dtype=int), np.zeros(t.size))
+    same(detrend.detrend(lc, PARAMS), detrend_fast.detrend(lc, PARAMS))
+
+
+def test_the_blocks_do_not_change_the_result(monkeypatch):
+    lc = curve(23)
+    whole = detrend_fast.detrend(lc, PARAMS)
+    monkeypatch.setattr(detrend_fast, "CHUNK_ROWS", 7)
+    same(whole, detrend_fast.detrend(lc, PARAMS))
+
+
 def test_a_narrow_cluster_of_cadences_goes_to_the_reference():
     t = np.concatenate([np.arange(100.0, 100.06, CADENCE), np.arange(101.2, 102.5, CADENCE)])
     rng = np.random.default_rng(7)

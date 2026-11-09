@@ -306,6 +306,8 @@ def check_sinusoid(raw, candidate, sp, cp, ev, cadence_days, fail_allowed, seed)
     rows: dict[str, dict] = {}
     blocks: dict[str, dict] = {}
     flagged = []
+    valid = _coverage_valid(lc.time, candidate, ev, cadence_days)
+    can_fail = fail_allowed and valid
     x_all = _design(lc.time, lc.sector, periods)
     box_after, sigma_r = box_after_model(lc.time, flux, err, keep, x_all, x, candidate, beta)
     attenuated = math.isfinite(sigma_r) and box_after + ATTENUATION_SIGMAS * sigma_r < (
@@ -341,7 +343,7 @@ def check_sinusoid(raw, candidate, sp, cp, ev, cadence_days, fail_allowed, seed)
             depth * 1e6,
             "ppm",
             "compound-sim-1",
-            max(0.0, probability + small - 1.0),
+            max(0.0, probability + small - 1.0) if can_fail else 0.0,
         )
         if significance > sp.sinusoid_min_significance and amp >= (
             sp.sinusoid_min_amplitude_ratio * depth
@@ -362,6 +364,8 @@ def check_sinusoid(raw, candidate, sp, cp, ev, cadence_days, fail_allowed, seed)
         "box_depth_after_model_ppm": box_after * 1e6 if math.isfinite(box_after) else None,
         "box_depth_after_model_err_ppm": sigma_r * 1e6 if math.isfinite(sigma_r) else None,
         "probability_residual_small": small,
+        "coverage_valid": valid,
+        "fail_allowed": fail_allowed,
     }
     common = {
         "metrics": metrics,
@@ -379,9 +383,7 @@ def check_sinusoid(raw, candidate, sp, cp, ev, cadence_days, fail_allowed, seed)
             sensitivity=blocks,
             **common,
         )
-    valid = _coverage_valid(lc.time, candidate, ev, cadence_days)
-    metrics["coverage_valid"] = valid
-    if fail_allowed and valid and attenuated:
+    if can_fail and attenuated:
         return TestResult(
             name,
             TestStatus.FAIL,

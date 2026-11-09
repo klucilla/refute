@@ -383,11 +383,14 @@ def check_systematics(
     seed: int,
     exclude_phase_half: bool = False,
     depth=a0_depth,
+    a0_aux: list[SectorAux] | None = None,
+    a0_refused: str | None = None,
 ) -> TestResult:
     """v0.5's ``systematics`` with A0's errors (WP3 (a)): the SAP sub-check on the
     SAP-minus-expected series over the sectors where it applies (``sap_applicability``,
     amendment 6), the background sub-check with A0's error; its blocks attached. ``depth`` is the
-    A0 group depth (battery version 4 passes its own)."""
+    A0 group depth; ``a0_aux`` the sectors of the sub-checks that use it and ``a0_refused`` why they
+    may not run (battery version 4; by default every sector, and they run)."""
     from refute.packs.tess.battery import transit_centers_with_data
 
     params = plan.gauntlet.systematics
@@ -406,7 +409,6 @@ def check_systematics(
             coverage_unit=unit,
         )
     time = np.concatenate([a.time for a in aux])
-    sector = np.concatenate([np.full(a.time.size, a.sector) for a in aux])
     dumps = np.sort(np.concatenate([a.dump_times for a in aux]))
     centers = transit_centers_with_data(time, candidate)
     reach = candidate.duration / 2 + params.dump_margin_hours / 24
@@ -442,16 +444,19 @@ def check_systematics(
         )
 
     # --- SAP versus PDCSAP on the SAP-minus-expected series -------------------------------
+    a0_source = aux if a0_aux is None else a0_aux
     usable: list[SectorAux] = []
     excluded: list[dict[str, Any]] = []
-    for a in aux:
+    for a in a0_source:
         applies, why, kind = sap_applicability(a)
         if applies:
             usable.append(a)
         else:
             excluded.append({"sector": int(a.sector), "reason": why, "class": kind})
     metrics["sap_not_applicable_sectors"] = excluded
-    if not usable:
+    if a0_refused is not None:
+        not_run["sap_vs_pdcsap"] = a0_refused
+    elif not usable:
         why = "not applicable in every sector: " + "; ".join(e["reason"] for e in excluded)
         not_applicable["sap_vs_pdcsap"] = why
         blocks["sap"] = not_applicable_block(why)
@@ -506,15 +511,21 @@ def check_systematics(
                 blocks["sap"] = block
 
     # --- background --------------------------------------------------------------------
-    g_bkg = depth(
-        time, np.concatenate([a.sap_bkg for a in aux]), sector, candidate, plan, seed + 3,
-        exclude_phase_half,
-    )  # fmt: skip
-    g_sap = depth(
-        time, np.concatenate([a.sap_flux for a in aux]), sector, candidate, plan, seed + 4,
-        exclude_phase_half,
-    )  # fmt: skip
-    if g_bkg is None or g_sap is None:
+    g_bkg = g_sap = None
+    if a0_refused is None and a0_source:
+        t_b = np.concatenate([a.time for a in a0_source])
+        s_b = np.concatenate([np.full(a.time.size, a.sector) for a in a0_source])
+        g_bkg = depth(
+            t_b, np.concatenate([a.sap_bkg for a in a0_source]), s_b, candidate, plan, seed + 3,
+            exclude_phase_half,
+        )  # fmt: skip
+        g_sap = depth(
+            t_b, np.concatenate([a.sap_flux for a in a0_source]), s_b, candidate, plan, seed + 4,
+            exclude_phase_half,
+        )  # fmt: skip
+    if a0_refused is not None:
+        not_run["background"] = a0_refused
+    elif g_bkg is None or g_sap is None:
         not_run["background"] = "no transit measured in the background or SAP flux"
     elif not (g_sap.mean > 0):
         not_run["background"] = "the SAP depth is not positive"

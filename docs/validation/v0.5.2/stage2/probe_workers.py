@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import sys
 import time
@@ -26,9 +27,15 @@ import driver  # noqa: E402
 
 LABEL = "refute-v052-dev:a0v4-workers"
 OUT = ROOT / ".cache/v052/s2/probe-workers"
+if os.environ.get("REFUTE_PROBE_CHUNK"):
+    from refute.packs.tess import detrend_fast
+
+    detrend_fast.CHUNK_ROWS = int(os.environ["REFUTE_PROBE_CHUNK"])
 SHARDS = 176
 PER_SHARD = 4
 SETTINGS = {1: None, 12: list(range(8, 32, 2)), 22: None}
+if os.environ.get("REFUTE_PROBE_ONLY"):
+    SETTINGS = {12: list(range(8, 32, 2))}
 # (section, shape, sectors, weight): roughly the acceptance's hours
 MIX = (
     ("a08", "group", 2, 1), ("a08", "group", 3, 2), ("a08", "group", 4, 3),
@@ -68,9 +75,10 @@ def shard(start: int) -> bytes:
     cpu = []
     for index in range(start, start + PER_SHARD):
         section, arg = args_of(index)
-        before = time.process_time()
+        before = os.times()
         a0v4.UNIT_OF[section](arg)
-        cpu.append(time.process_time() - before)
+        after = os.times()
+        cpu.append([after.user - before.user, after.system - before.system])
     return json.dumps(cpu).encode() + b"\n"
 
 
@@ -94,7 +102,9 @@ def measure(workers: int, pin) -> dict:
     return {
         "workers": workers,
         "units": len(cpu),
-        "cpu_seconds_per_unit": float(np.mean(cpu)),
+        "cpu_seconds_per_unit": float(np.sum(cpu, axis=1).mean()),
+        "user_seconds_per_unit": float(np.mean(cpu, axis=0)[0]),
+        "kernel_seconds_per_unit": float(np.mean(cpu, axis=0)[1]),
         "wall_seconds": wall,
         "units_per_hour": len(cpu) / wall * 3600.0,
     }

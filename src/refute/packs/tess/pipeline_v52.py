@@ -3,6 +3,8 @@ measurements, in a path of its own so that versions 3 and earlier run unchanged.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 
 from refute.core.verdict import Severity, TestResult, TestStatus
@@ -27,8 +29,11 @@ def _refused(name: str, severity: Severity, why: str) -> TestResult:
     )
 
 
-def v052_tests(tests, data, flat, final, primary, secondary, plan, detrender):
-    """The sensitivity blocks and tests of ``pipeline.v05_tests``, through version 4."""
+def v052_tests(tests, data, flat, final, plan, pw, choice):
+    """The sensitivity blocks and tests of ``pipeline.v05_tests``, through version 4. ``flat`` is
+    the gauntlet's series (the search candidate masked) for the tests that do not use A0; the
+    A0-dependent tests use the preprocessing of ``a0_v4.prepare`` under the final ephemeris, on
+    the sectors of ``choice``, which was fixed before any event was measured."""
     from refute.packs.tess.battery import check_period_alias
     from refute.packs.tess.pipeline import _with_a0_note
 
@@ -48,28 +53,22 @@ def v052_tests(tests, data, flat, final, primary, secondary, plan, detrender):
     )
     exclude = two_sided.status is TestStatus.FAIL
     a0_note = "phase-0.5 windows excluded: a secondary detected" if exclude else None
-    choice = v52.choose_sectors(
-        flat.time, flat.sector, final, gp.events, cadence, plan.v052.selector_certified
-    )
     refused = choice.refused
     measured = windows = chosen_flat = None
+    contributing: set[int] = set()
     if refused is None:
-        chosen_flat = flat.select(np.isin(flat.sector, choice.chosen))
+        components = pw.components if pw is not None and pw.components else None
+        prepared = a0_v4.prepare(data.lc, final, plan, components)
+        chosen_flat = prepared.flat.select(np.isin(prepared.flat.sector, choice.chosen))
+        chosen_noise = event_noise(chosen_flat, None, final.period, final.t0, final.duration, plan)
         chosen_events = per_event_depths(
-            chosen_flat,
-            final.period,
-            final.t0,
-            final.duration,
-            cadence,
-            gp.events,
-            0.0,
-            None,
-            noise,
-        )
-        half = plan.detrend.transit_mask_half_width_durations * final.duration
+            chosen_flat, final.period, final.t0, final.duration, cadence, gp.events, 0.0, None,
+            chosen_noise,
+        )  # fmt: skip
         measure = a0_v4.comb_measure(
-            detrender.flat, detrender.lc.time, chosen_flat, final.duration, half, gp.events, cadence
-        )
+            prepared.preprocess, prepared.raw.time, chosen_flat, final.duration, prepared.half,
+            gp.events, cadence,
+        )  # fmt: skip
         measured, windows, _ = a0_v4.empirical_events(
             chosen_flat, final, chosen_events, gp.events, cadence, measure, exclude
         )
@@ -78,13 +77,25 @@ def v052_tests(tests, data, flat, final, primary, secondary, plan, detrender):
         }
         if len(contributing) not in v52.GRID_SECTORS:
             refused = f"{len(contributing)} sector(s) contribute measured events: outside the grid"
-    in_sectors = (lambda s: s in choice.chosen) if refused is None else (lambda s: False)
-    pixels = [p for p in (aux.pixels if aux else []) if in_sectors(p.sector)]
-    sectors = [a for a in (aux.sectors if aux else []) if in_sectors(a.sector)]
+    selection = {
+        "original": list(choice.original),
+        "eligible_events": {str(k): v for k, v in choice.events.items()},
+        "chosen": list(choice.chosen),
+        "contributing": sorted(contributing),
+        "refused": refused,
+    }
+
+    def noted(result: TestResult) -> TestResult:
+        return replace(result, metrics={**result.metrics, "sector_selection": selection})
+
+    pixels, sectors = [], []
+    if refused is None:
+        pixels = [p for p in (aux.pixels if aux else []) if p.sector in choice.chosen]
+        sectors = [a for a in (aux.sectors if aux else []) if a.sector in choice.chosen]
     out: list[TestResult] = []
     for test in tests:
         if test.name == "odd_even":
-            test = (
+            test = noted(
                 _refused("odd_even", Severity.FATAL, refused)
                 if refused
                 else v52.check_odd_even(
@@ -114,7 +125,7 @@ def v052_tests(tests, data, flat, final, primary, secondary, plan, detrender):
                 seed("centroid_shift", final),
             )
         elif test.name == "aperture_depth":
-            test = (
+            test = noted(
                 _refused("aperture_depth", Severity.FATAL, refused)
                 if refused
                 else v51d.check_aperture_depth(
@@ -127,18 +138,23 @@ def v052_tests(tests, data, flat, final, primary, secondary, plan, detrender):
                 )  # fmt: skip
             )
         elif test.name == "systematics":
-            test = (
-                _refused("systematics", Severity.WARNING, refused)
-                if refused
-                else v51d.check_systematics(
-                    sectors,
-                    final,
-                    plan,
-                    seed("systematics", final),
-                    exclude,
-                    depth=a0_v4.a0_depth,
-                )  # fmt: skip
+            # the momentum dumps need no A0 error and see every sector; only the sub-checks
+            # that use A0 follow the selection
+            test = v51d.check_systematics(
+                aux.sectors if aux else [],
+                final,
+                plan,
+                seed("systematics", final),
+                exclude,
+                depth=a0_v4.a0_depth,
+                a0_aux=sectors,
+                a0_refused=f"A0's errors are not available: {refused}" if refused else None,
             )
+            if refused and test.status is TestStatus.INCONCLUSIVE:
+                test = replace(
+                    test, metrics={**test.metrics, "inconclusive_class": OUT_OF_DOMAIN_CLASS}
+                )
+            test = noted(test)
         elif test.name == "period_alias":
             alias_plan = power.period_alias_plan(plan)
             test = check_period_alias(data.lc, final, alias_plan)
@@ -161,8 +177,8 @@ def v052_tests(tests, data, flat, final, primary, secondary, plan, detrender):
         )
         consistency = _with_a0_note(v5.check_event_consistency(measured, sp), a0_note)
     out += [
-        single,
-        consistency,
+        noted(single),
+        noted(consistency),
         v5.check_edge_events(flat.time, events, final.duration, gp.snr.min_snr, sp),
         v52.check_sinusoid(
             data.lc,

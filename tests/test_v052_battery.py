@@ -202,6 +202,24 @@ def test_withdrawing_the_fail_leaves_every_flag_inconclusive():
     assert result.metrics["inconclusive_detail"] == v52.AMBIGUOUS_SINUSOID
 
 
+def test_a_withdrawn_fail_has_no_sensitivity():
+    lc, c = sinusoid_case(0.0, 2e-3)
+    result = run_sinusoid(lc, c, fail_allowed=False)
+    assert result.sensitivity["P/2"]["probability"] == 0.0
+
+
+def test_no_valid_coverage_has_no_sensitivity():
+    lc, c = sinusoid_case(0.0, 2e-3)
+    dt = np.abs(np.mod(lc.time - c.t0 + 0.5 * c.period, c.period) - 0.5 * c.period)
+    ev = plan_v4().gauntlet.events
+    inner = c.duration / 2.0 + ev.baseline_gap_durations * c.duration
+    outer = c.duration / 2.0 + ev.baseline_outer_durations * c.duration
+    bare = lc.select(~((dt > inner) & (dt <= outer)))
+    result = run_sinusoid(bare, c)
+    assert result.metrics["coverage_valid"] is False
+    assert result.sensitivity["P/2"]["probability"] == 0.0
+
+
 def test_a_period_outside_the_domain_is_inconclusive():
     lc, c = sinusoid_case(0.0, 0.0)
     far = candidate(period=100.0, depth=2e-3)
@@ -236,3 +254,96 @@ def test_no_pass_without_coverage_in_version_4():
     for t in run("planet").tests:
         if t.status is TestStatus.PASS:
             assert t.coverage is not None and t.coverage > 0, t.name
+
+
+def five_sector_data():
+    from dataclasses import replace as swap
+
+    data = syn.scenario_data("planet")
+    lc = data.lc
+    sectors = np.unique(lc.sector)
+    return swap(data, lc=lc), sectors
+
+
+def test_the_selection_is_recorded_on_the_a0_tests():
+    analysis = run("planet")
+    by = {t.name: t for t in analysis.tests}
+    for name in ("odd_even", "single_event", "event_consistency"):
+        record = by[name].metrics["sector_selection"]
+        assert record["chosen"]
+        assert record["refused"] is None or by[name].status is TestStatus.INCONCLUSIVE
+        assert set(record["contributing"]) <= set(record["chosen"])
+
+
+def test_a_refused_selection_leaves_the_dumps_sub_check_running():
+    from dataclasses import replace as swap
+
+    from refute.packs.tess import battery_v52
+    from refute.packs.tess import pipeline as pl
+
+    plan = plan_v4()
+    data = syn.scenario_data("planet")
+    original = battery_v52.choose_sectors
+
+    def refuse(time, sector, *rest):
+        return swap(original(time, sector, *rest), refused="a constructed refusal")
+
+    battery_v52.choose_sectors = refuse
+    try:
+        analysis = pl.analyze_data(data, plan)
+    finally:
+        battery_v52.choose_sectors = original
+    by = {t.name: t for t in analysis.tests}
+    assert by["odd_even"].status is TestStatus.INCONCLUSIVE
+    assert by["systematics"].status is TestStatus.INCONCLUSIVE
+    assert any("momentum dumps" in r for r in by["systematics"].metrics["sub_checks_run"])
+    assert by["systematics"].metrics["sub_checks_not_run"]["background"].startswith("A0's errors")
+
+
+def test_the_additive_path_refuses_one_contributing_sector():
+    from refute.packs.tess import a0_v4
+
+    plan = plan_v4()
+    rng = np.random.default_rng(31)
+    t = np.arange(100.0, 127.0, CADENCE)
+    v = rng.normal(0.0, 1e-4, t.size)
+    got = a0_v4.a0_depth(t, v, np.ones(t.size, dtype=int), candidate(), plan, 5)
+    assert got is None
+
+
+def test_the_real_mask_follows_the_final_ephemeris():
+    from dataclasses import replace as swap
+
+    from refute.packs.tess import a0_v4
+
+    plan = plan_v4()
+    lc = syn.scenario_data("planet").lc
+    c = candidate(period=4.0, t0=float(lc.time.min()) + 1.0)
+    moved = swap(c, t0=c.t0 + 0.3)
+    a, b = a0_v4.prepare(lc, c, plan), a0_v4.prepare(lc, moved, plan)
+    assert not np.array_equal(a.flat.flux[:2000], b.flat.flux[:2000])
+
+
+def test_the_global_refit_runs_again_under_each_comb(monkeypatch):
+    from refute.packs.tess import a0_v4
+    from refute.packs.tess import pipeline as pl
+
+    plan = plan_v4()
+    lc = syn.scenario_data("planet").lc
+    seen = []
+
+    class Fitted:
+        reason = None
+        model = np.zeros(len(lc))
+
+    def spy(curve, components, mask, the_plan):
+        seen.append(int(mask.sum()))
+        return Fitted
+
+    monkeypatch.setattr(pl, "refit", spy)
+    p = a0_v4.prepare(lc, candidate(t0=float(lc.time.min()) + 1.0), plan, components=["one"])
+    extra = np.zeros(len(lc), dtype=bool)
+    extra[100:150] = True
+    p.preprocess(extra)
+    assert len(seen) == 2
+    assert seen[1] > seen[0]

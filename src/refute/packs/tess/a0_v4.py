@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -26,6 +27,41 @@ from refute.packs.tess import a0
 J = 4
 
 Preprocess = Callable[[np.ndarray | None], object]
+
+
+@dataclass
+class Measurement:
+    """A curve's real-mask series and the preprocessing that produced it."""
+
+    raw: object
+    flat: object
+    preprocess: Preprocess
+    half: float
+
+
+def prepare(lc, candidate, plan, components=None) -> Measurement:
+    """The preprocessing of the A0-dependent measurements, the one construction shared by the
+    pipeline and the acceptance runner: the real events of ``candidate`` masked (its final
+    ephemeris), and, given further cadences to mask, every mask-dependent step again under the
+    combined mask. With global components (``components``, the corrections) that includes their
+    refit and subtraction, so that a pseudo-window cannot influence the model removed under it;
+    without them the fits of knots that lose no cadence are reused."""
+    from refute.packs.tess import detrend_fast as df
+    from refute.packs.tess.pipeline import _minus, refit, transit_mask
+
+    half = plan.detrend.transit_mask_half_width_durations * candidate.duration
+    mask = transit_mask(lc.time, candidate.period, candidate.t0, half)
+    if components:
+
+        def preprocess(extra):
+            whole = mask if extra is None else mask | extra
+            fitted = refit(lc, components, whole, plan)
+            curve = _minus(lc, fitted.model) if fitted.reason is None else lc
+            return df.detrend(curve, plan.detrend, mask=whole)
+
+    else:
+        preprocess = df.MaskAwareDetrender(lc, plan.detrend, mask).flat
+    return Measurement(lc, preprocess(None), preprocess, half)
 
 
 def grid(time: np.ndarray, sector: np.ndarray, h: float) -> dict[int, tuple[float, int]]:
@@ -93,8 +129,9 @@ def comb_measure(
 def a0_depth(time, values, sector, candidate, plan, seed, exclude_phase_half=False):
     """``battery_v51_diff.a0_depth`` with the additive preprocessing mask-aware: the pseudo-windows
     of the series measured under their own combs."""
+    from refute.packs.tess import detrend_fast as df
     from refute.packs.tess.battery_v51_diff import MIN_MEASURABLE_ERROR, A0Depth
-    from refute.packs.tess.detrend_fast import AdditiveDetrender
+    from refute.packs.tess.battery_v52 import GRID_SECTORS
     from refute.packs.tess.events import per_event_depths, per_point_sigma, transit_mask
 
     good = np.isfinite(time) & np.isfinite(values)
@@ -105,7 +142,7 @@ def a0_depth(time, values, sector, candidate, plan, seed, exclude_phase_half=Fal
     time, values, sector = time[order], values[order], sector[order]
     half = plan.detrend.transit_mask_half_width_durations * candidate.duration
     mask = transit_mask(time, candidate.period, candidate.t0, half)
-    detrender = AdditiveDetrender(time, values, sector, plan.detrend, mask)
+    detrender = df.AdditiveDetrender(time, values, sector, plan.detrend, mask)
     series = detrender.flat()
     ok = np.isfinite(detrender.residuals())
     sigma = per_point_sigma(series, mask[ok])
@@ -131,6 +168,8 @@ def a0_depth(time, values, sector, candidate, plan, seed, exclude_phase_half=Fal
         if meta is None:
             return None
         metas.append(meta)
+    if len({m.sector for m in metas}) not in GRID_SECTORS:
+        return None  # the grid holds for the sectors that actually contribute to this statistic
     errors = measured.errors
     if not np.all(np.isfinite(errors) & (errors > MIN_MEASURABLE_ERROR)):
         return None

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import math
 import sys
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -26,26 +26,14 @@ c = v3.c
 _plan = v3._plan
 
 
-@dataclass
-class Prepared:
-    """A raw curve's real-mask series and the mask-aware preprocessing that produced it."""
-
-    raw: object
-    flat: object
-    detrender: object
-    half: float
-
-
-def prepare(raw, cand, plan) -> Prepared:
-    from refute.packs.tess import detrend_fast as df
-    from refute.packs.tess import pipeline as pl
+def prepare(raw, cand, plan):
+    """The pipeline's own preprocessing (``a0_v4.prepare``); this runner's plan has no corrections,
+    so no global components."""
+    from refute.packs.tess import a0_v4
 
     if plan.gauntlet.corrections.active:
         raise ValueError("this runner's plan has no active corrections")
-    half = plan.detrend.transit_mask_half_width_durations * cand.duration
-    mask = pl.transit_mask(raw.time, cand.period, cand.t0, half)
-    detrender = df.MaskAwareDetrender(raw, plan.detrend, mask)
-    return Prepared(raw, detrender.flat(), detrender, half)
+    return a0_v4.prepare(raw, cand, plan)
 
 
 def events_of(flat, cand, plan, phase=0.0):
@@ -59,15 +47,15 @@ def events_of(flat, cand, plan, phase=0.0):
     )  # fmt: skip
 
 
-def measure_of(p: Prepared, cand, plan):
+def measure_of(p, cand, plan):
     from refute.packs.tess import a0_v4
 
     return a0_v4.comb_measure(
-        p.detrender.flat, p.raw.time, p.flat, cand.duration, p.half, plan.gauntlet.events, c.CADENCE
+        p.preprocess, p.raw.time, p.flat, cand.duration, p.half, plan.gauntlet.events, c.CADENCE
     )
 
 
-def measured_of(p: Prepared, cand, plan, events=None, exclude=False):
+def measured_of(p, cand, plan, events=None, exclude=False):
     from refute.packs.tess import a0_v4
 
     events = events_of(p.flat, cand, plan) if events is None else events
@@ -234,6 +222,7 @@ def unit_a08(arg):
     from refute.core.verdict import TestStatus
     from refute.packs.tess import a0, power
     from refute.packs.tess import battery_v5 as v5
+    from refute.packs.tess import pipeline as pl
     from refute.packs.tess import synthetic as syn
     from refute.packs.tess.events import group_mean
     from refute.packs.tess.types import LightCurveData
@@ -277,13 +266,15 @@ def unit_a08(arg):
     exclude = sec.status is TestStatus.FAIL
     _, measured, windows, _ = measured_of(p, cand, plan, events=events, exclude=exclude)
     _, ref, _, _ = measured_of(first, cand, plan)
-    clean = prepare(
+    # a noise-free curve is a rounding-level case: the batch sends all of it to the reference
+    # detrending, so the truth is computed there directly (the same numbers, half the cost)
+    clean = pl.detrend(
         LightCurveData(t, 1.0 - primary - secondary, base.flux_err, base.sector, base.year),
-        cand,
-        plan,
+        plan.detrend,
+        mask=pl.transit_mask(t, cand.period, cand.t0, p.half),
     )
     noise_free = a0.box_measure(
-        clean.flat.time, clean.flat.flux, cand.duration, ev.baseline_gap_durations,
+        clean.time, clean.flux, cand.duration, ev.baseline_gap_durations,
         ev.baseline_outer_durations, ev.min_coverage, c.CADENCE,
     )  # fmt: skip
     truths = np.array([(noise_free(x) or (np.nan,))[0] for x in measured.centers.tolist()])

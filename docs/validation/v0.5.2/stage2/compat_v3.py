@@ -1,9 +1,12 @@
-"""v0.5.2 stage 2: the byte-compatibility check of versions 2 and 3 (design, section 9, step 3).
+"""v0.5.2 stage 2: a compatibility check of versions 2 and 3 (design, section 9, step 3).
 
 Each scenario goes through ``analyze_data`` under the plans of discovery versions 2 and 3, and the
-canonical JSON of every test (status, message, metrics, thresholds, coverage, sensitivity), with
-the plan's dump, is hashed. Run against an archive of the source at a commit before version 4
-(argument ``--src <folder>``) and against the working tree; the two outputs must be identical.
+canonical JSON of the plan's dump, every test, the final candidate, the flattened curve, the event
+depths, the timing, the ephemeris, the markers, the roles and the prewhitening is hashed. Run
+against an archive of the source at a commit before version 4 (``--src <folder>``) and against the
+working tree; the two outputs must be identical. **What it shows:** those projections are unchanged
+on these scenarios, with the corrections off and on and with the auxiliary data absent; it is not
+a proof for every input, and the persisted dossier's other fields are not hashed.
 
 Usage (from the project root): ``.venv/Scripts/python.exe <this file> --src <folder> --out <file>``.
 """
@@ -15,7 +18,7 @@ import hashlib
 import json
 import math
 import sys
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, is_dataclass, replace
 from pathlib import Path
 
 parser = argparse.ArgumentParser()
@@ -51,21 +54,46 @@ def plain(value):
     return value
 
 
+def record(analysis, plan) -> str:
+    g = analysis.gauntlet
+    doc = {
+        "plan": plan.model_dump(mode="json"),
+        "verdict": analysis.verdict,
+        "reason": analysis.verdict_reason,
+        "tests": [plain(t) for t in analysis.tests],
+        "final": plain(g.final),
+        "flat": hashlib.sha256(np.asarray(g.flat.flux).tobytes()).hexdigest() if g.flat else None,
+        "primary": plain(g.primary),
+        "secondary": plain(g.secondary),
+        "ephemeris": plain(g.ephemeris),
+        "timing": plain(g.timing),
+        "executed": plain(g.executed),
+        "prewhitening": plain(g.prewhitening),
+        "roles": plain(analysis.roles),
+        "stage": analysis.stage,
+    }
+    text = json.dumps(doc, sort_keys=True, allow_nan=False)
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def corrected(raw: dict) -> dict:
+    return {**raw, "gauntlet": {"corrections": {"enabled": True, "version": 2}}}
+
+
 def main() -> None:
-    out = {"source": str(Path(args.src).name) and "see the command line", "records": {}}
-    plans = {"v2": syn.discovery_v05_plan_dict(), "v3": syn.discovery_v051_plan_dict()}
+    out = {"records": {}}
+    plans = {
+        "v2": syn.discovery_v05_plan_dict(),
+        "v3": syn.discovery_v051_plan_dict(),
+        "v3-corrections": corrected(syn.discovery_v051_plan_dict()),
+    }
     for label, raw in plans.items():
         plan = TessTestPlan.model_validate(raw)
         for name in SCENARIOS:
             analysis = analyze_data(syn.scenario_data(name), plan)
-            doc = {
-                "plan": plan.model_dump(mode="json"),
-                "verdict": analysis.verdict,
-                "reason": analysis.verdict_reason,
-                "tests": [plain(t) for t in analysis.tests],
-            }
-            text = json.dumps(doc, sort_keys=True, allow_nan=False)
-            out["records"][f"{label}/{name}"] = hashlib.sha256(text.encode()).hexdigest()
+            out["records"][f"{label}/{name}"] = record(analysis, plan)
+        data = replace(syn.scenario_data("planet"), aux=None)
+        out["records"][f"{label}/planet-no-aux"] = record(analyze_data(data, plan), plan)
     Path(args.out).write_text(json.dumps(out, indent=1, sort_keys=True) + "\n", "utf-8")
     print(json.dumps(out["records"], indent=1, sort_keys=True))
 
