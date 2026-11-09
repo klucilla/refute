@@ -61,8 +61,10 @@ def record(analysis, plan) -> str:
         "verdict": analysis.verdict,
         "reason": analysis.verdict_reason,
         "tests": [plain(t) for t in analysis.tests],
-        "final": plain(g.final),
-        "flat": hashlib.sha256(np.asarray(g.flat.flux).tobytes()).hexdigest() if g.flat else None,
+        "final": plain(g.candidate),
+        "flat": hashlib.sha256(np.asarray(g.flattened.flux).tobytes()).hexdigest()
+        if g.flattened is not None
+        else None,
         "primary": plain(g.primary),
         "secondary": plain(g.secondary),
         "ephemeris": plain(g.ephemeris),

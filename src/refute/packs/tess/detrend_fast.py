@@ -5,7 +5,9 @@ its stopping rules, the blend between knots, the upper clip), with the knots of 
 together: the 3x3 normal equations in place of ``lstsq``, and sorted arrays in place of one median
 call per knot. The system is solved in the time rescaled to [-1, 1] over the kept cadences of each
 knot. A knot leaves the batch and goes to the reference ``detrend._fit_quadratic`` whenever the
-batch could differ in a decision or lose accuracy: a non-finite flux, a poorly conditioned system,
+batch could differ in a decision or lose accuracy: a non-finite flux, kept cadences spanning less
+than a quarter of the window (the reference's own design is then poorly conditioned, whatever the
+rescaled one is), a poorly conditioned rescaled system,
 a median absolute deviation at rounding level (a noise-free or constant flux, whose later upper
 clip depends on the rounding), or a residual within ``BOUNDARY_TOLERANCE`` of the clipping
 threshold. A cadence within that tolerance of the final upper clip sends the whole curve to the
@@ -34,6 +36,7 @@ from refute.packs.tess.types import LightCurveData
 BOUNDARY_TOLERANCE = 1e-9
 BOUNDARY_FLOOR = 1e-13
 CONDITION_LIMIT = 2e4
+MIN_SPAN_FRACTION = 0.25
 ROUNDING_SPREAD = 1e-12
 CHUNK_ROWS = 24
 
@@ -96,7 +99,7 @@ def _fit_batch(
         xa, ya = x[active], y[active]
         top, bottom = np.where(w, xa, -np.inf).max(axis=1), np.where(w, xa, np.inf).min(axis=1)
         centre_x, scale = 0.5 * (top + bottom), 0.5 * (top - bottom)
-        spread_out = scale > 0
+        spread_out = 2.0 * scale >= MIN_SPAN_FRACTION * params.window_days
         if not spread_out.all():
             send_back[active[~spread_out]] = True
             active, w, n, xa, ya = (

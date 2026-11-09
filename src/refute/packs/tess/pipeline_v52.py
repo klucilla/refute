@@ -175,7 +175,10 @@ def v052_tests(tests, data, flat, final, plan, pw, choice):
         single = _with_a0_note(
             v5.check_single_event(measured, sp, seed("single_event", final)), a0_note
         )
-        consistency = _with_a0_note(v5.check_event_consistency(measured, sp), a0_note)
+        consistency = _with_a0_note(
+            v52.stable_consistency_label(v5.check_event_consistency(measured, sp), measured, sp),
+            a0_note,
+        )
     out += [
         noted(single),
         noted(consistency),

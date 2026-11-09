@@ -1,0 +1,226 @@
+{
+ "criteria": {
+  "additive_identical": true,
+  "availability_identical": true,
+  "branches_identical": true,
+  "cadences_kept_identical": true,
+  "decisions_identical": true,
+  "finite_classification_identical": true,
+  "flux_within_tolerance": true,
+  "measurements_within_tolerance": true,
+  "noise_flags_identical": true,
+  "noise_within_tolerance": true,
+  "production_identical": false,
+  "runs_and_bins_identical": true,
+  "validity_identical": true
+ },
+ "curves": 1200,
+ "curves_end_to_end": 360,
+ "label": "the faster code against the reference; development seeds (revision 2)",
+ "max_flux_difference": 2.7533531010703882e-14,
+ "max_measurement_difference": 2.9976021664879227e-15,
+ "max_noise_difference": 0.0,
+ "method_status": "not_validated",
+ "passes": false,
+ "production": [
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "planet/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "planet/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "planet_three_years/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "planet_three_years/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "noise/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "noise/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "eb_secondary/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "eb_secondary/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "eb_odd_even/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "eb_odd_even/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "eb_equal/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": false,
+   "ok": false,
+   "problems": [
+    "event_consistency/sensitivity/main/worst_event: 460.0 against 0.0"
+   ],
+   "scenario": "eb_equal/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "vanishing/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "vanishing/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "no_radius/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "no_radius/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "single_year/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": false,
+   "ok": false,
+   "problems": [
+    "event_consistency/sensitivity/main/worst_event: 0.0 against 4.0"
+   ],
+   "scenario": "single_year/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": false,
+   "ok": false,
+   "problems": [
+    "event_consistency/sensitivity/main/worst_event: 320.0 against 0.0"
+   ],
+   "scenario": "blend/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "blend/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "sinusoid/3/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "sinusoid/4/False",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "planet/3/True",
+   "status_same": true
+  },
+  {
+   "finite_same": true,
+   "metrics_within": true,
+   "ok": true,
+   "problems": [],
+   "scenario": "sinusoid/3/True",
+   "status_same": true
+  }
+ ],
+ "scenarios": 24
+}

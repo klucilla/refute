@@ -11,10 +11,11 @@ earlier never import this module.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
+from refute.core.chi2 import chi2_isf, ncx2_sf
 from refute.core.sensitivity import gaussian_probability, not_applicable_block, rule_block
 from refute.core.verdict import Severity, TestResult, TestStatus
 from refute.packs.tess import a0
@@ -34,6 +35,7 @@ MAX_ORIGINAL_SECTORS = 20
 AMBIGUOUS_SINUSOID = "ambiguous_sinusoid_with_transit"
 ATTENUATION_FRACTION = 0.5
 ATTENUATION_SIGMAS = 3.0
+LABEL_TIE = 1e-9
 
 
 @dataclass(frozen=True)
@@ -182,6 +184,29 @@ def check_odd_even(flat, measured, windows, candidate, gp, sp, cadence_days, exc
         coverage=len(measured),
         coverage_unit="measured transits",
         sensitivity={"main": block},
+    )
+
+
+def stable_consistency_label(result: TestResult, events, sp) -> TestResult:
+    """``event_consistency`` with its ``worst_event`` label chosen stably: the earliest epoch among
+    the events whose power is within 1e-9 (relative) of the minimum. Events of one sector and
+    stratum share their error, so their powers tie exactly and ``argmin`` otherwise depends on
+    rounding. Only the label changes: the block's probability stays the minimum power."""
+    block = (result.sensitivity or {}).get("main")
+    if block is None or "worst_event" not in block:
+        return result
+    d, e = events.depths, events.errors
+    w = 1.0 / np.square(e)
+    w_sum = float(np.sum(w))
+    delta = max(float(np.sum(w * d) / w_sum), 0.0)
+    critical = chi2_isf(sp.chi2_alpha, len(events) - 1)
+    powers = np.array(
+        [ncx2_sf(critical, len(events) - 1, float(lam)) for lam in delta**2 * w * (1.0 - w / w_sum)]
+    )
+    tied = np.abs(powers - powers.min()) <= LABEL_TIE * np.abs(powers.min())
+    label = int(np.min(events.epochs[tied]))
+    return replace(
+        result, sensitivity={**result.sensitivity, "main": {**block, "worst_event": label}}
     )
 
 

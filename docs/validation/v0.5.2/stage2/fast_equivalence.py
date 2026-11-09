@@ -1,5 +1,6 @@
 """v0.5.2 stage 2: the faster code against the reference code, under the criteria frozen in
-``fast-detrend-equivalence.md`` (revision 2). Development seeds; ``method_status: not_validated``.
+``fast-detrend-equivalence.md`` (revision 3, its single third run). Development seeds;
+``method_status: not_validated``.
 
 Usage: ``scripts/launch_affinity.ps1 -Script <this file> -Log .cache/v052/s2/fast-equivalence``;
 writes ``fast-equivalence.json``.
@@ -24,7 +25,7 @@ import a0v4  # noqa: E402
 
 v3 = a0v4.v3
 c = v3.c
-LABEL = "refute-v052-dev:fast-equivalence-r2"
+LABEL = "refute-v052-dev:fast-equivalence-r3"
 NOISES = ("white", "correlated", "long", "correlated_trend")
 SECTORS = (2, 3, 4)
 KINDS = ("full", "partial")
@@ -36,7 +37,9 @@ MEASURE_TOLERANCE = 1e-9
 METRIC_TOLERANCE = 1e-7
 PULL_DECISION = 3.0
 WORKERS = 12
-SCENARIO_SEEDS = (3, 4)
+SCENARIO_SEEDS = (13, 14)
+# the three runs where revision 2 failed: regression cases, reported apart, not fresh evidence
+REGRESSION = (("eb_equal", 4, False), ("single_year", 4, False), ("blend", 3, False))
 WITH_CORRECTIONS = ("planet", "sinusoid")
 
 
@@ -380,9 +383,10 @@ def main() -> None:
     with ProcessPoolExecutor(max_workers=WORKERS) as pool:
         recs = list(pool.map(unit, args, chunksize=8))
         production = list(pool.map(scenario_unit, scenarios, chunksize=1))
+        regression = list(pool.map(scenario_unit, REGRESSION, chunksize=1))
     ends = [r for r in recs if "end_to_end" in r]
     out = {
-        "label": "the faster code against the reference; development seeds (revision 2)",
+        "label": "the faster code against the reference; development seeds (revision 3)",
         "method_status": "not_validated",
         "curves": len(recs),
         "curves_end_to_end": len(ends),
@@ -391,6 +395,7 @@ def main() -> None:
         "max_noise_difference": max(r["noise_worst"] for r in recs),
         "max_measurement_difference": max(r["measure_worst"] for r in ends),
         "production": production,
+        "regression_cases": regression,
         "criteria": {
             "cadences_kept_identical": all(r["keeps"] for r in recs),
             "flux_within_tolerance": all(r["flux_worst"] <= FLUX_TOLERANCE for r in recs),
@@ -410,6 +415,7 @@ def main() -> None:
                 r["measure_worst"] <= MEASURE_TOLERANCE for r in ends
             ),
             "production_identical": all(p["ok"] for p in production),
+            "regression_cases_identical": all(p["ok"] for p in regression),
         },
     }
     out["passes"] = all(out["criteria"].values())

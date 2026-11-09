@@ -347,3 +347,27 @@ def test_the_global_refit_runs_again_under_each_comb(monkeypatch):
     p.preprocess(extra)
     assert len(seen) == 2
     assert seen[1] > seen[0]
+
+
+def test_the_consistency_label_is_stable_and_keeps_the_minimum_power():
+    from refute.core.verdict import Severity, TestResult
+    from refute.packs.tess.events import EventDepths
+
+    plan = plan_v4()
+    errors = np.full(6, 1e-4)
+    errors[3:] = 1e-4 * (1.0 + 1e-13)
+    events = EventDepths(
+        np.array([7, 8, 9, 10, 11, 12]),
+        np.arange(6.0),
+        np.full(6, 2e-3),
+        errors,
+        np.full(6, 72),
+        {},
+    )
+    block = {"probability": 0.5, "worst_event": 10}
+    result = TestResult(
+        "event_consistency", TestStatus.PASS, Severity.FATAL, "x", sensitivity={"main": block}
+    )
+    got = v52.stable_consistency_label(result, events, plan.stronger)
+    assert got.sensitivity["main"]["worst_event"] == 7
+    assert got.sensitivity["main"]["probability"] == 0.5

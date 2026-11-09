@@ -250,3 +250,10 @@ def test_a_window_is_measured_under_its_own_comb():
     assert seen[0][int(np.argmin(np.abs(lc.time - centre)))], "the window's own cadences are masked"
     measure(centre)
     assert len(seen) == 1, "a comb is preprocessed once"
+
+
+def test_a_very_narrow_window_goes_to_the_reference():
+    t = 100.0 + np.linspace(0.0, 1e-7, 60)
+    f = 1.0 + np.random.default_rng(22).normal(0.0, 5e-4, 60)
+    lc = LightCurveData(t, f, np.full(60, 5e-4), np.ones(60, dtype=int), np.zeros(60))
+    same(detrend.detrend(lc, PARAMS), detrend_fast.detrend(lc, PARAMS))

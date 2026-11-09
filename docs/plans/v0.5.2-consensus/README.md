@@ -68,6 +68,10 @@ Every finding was accepted and applied: the final upper clip and poorly conditio
 through one construction shared with the runner; the sectors are chosen before any event is measured and recorded; the grid holds for the additive statistics; the dumps sub-check sees every sector; the sinusoid's sensitivity is zero where the rule cannot FAIL; the
 compatibility claim was narrowed and its record widened; the comparator no longer absorbs non-finite values; and the equivalence was re-frozen with the omitted paths and run again.
 
+| 2 | [stage2-impl-round-2-answer.md](stage2-impl-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (2 findings, and a judgement on a failed row) | `064c962753390af52f4285ffdd4a5dcbbf9b9879ad2a1afa6548a143b4e12798` |
+
+Round 2 judged a failed row of the equivalence evaluation (a tied epoch label): changing the code under the unchanged criterion is valid under stated conditions, changing the criterion inadmissible, and the failure stands for the code it measured. Both findings were applied; its conditions are in `fast-detrend-equivalence.md`, revision 3.
+
 ## The stage 2 design
 
 Reviews of [the stage 2 design](../v0.5.2-stage2-design.md), under the maintainer's delegation of 2026-11-08 (#216).
