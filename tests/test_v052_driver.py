@@ -19,6 +19,8 @@ STAGE2 = ROOT / "docs/validation/v0.5.2/stage2"
 sys.path.insert(0, str(STAGE2))
 import driver  # noqa: E402
 
+# the placement rule is the maintainer's machine's; a CI runner has no processors 8 to 31
+PLACED = (os.cpu_count() or 0) >= 32
 SHARDS = [(f"s{i:03d}", i) for i in range(24)]
 
 
@@ -58,10 +60,12 @@ from pathlib import Path
 sys.path.insert(0, {tests!r})
 sys.path.insert(0, {stage2!r})
 import driver
-from test_v052_driver import SHARDS, job, sunday
+from test_v052_driver import PLACED, SHARDS, job, sunday
 
 if __name__ == "__main__":
-    run = driver.Run(Path({out!r}), job, SHARDS, "fp", 10.0, {workers}, clock=sunday)
+    run = driver.Run(
+        Path({out!r}), job, SHARDS, "fp", 10.0, {workers}, clock=sunday, check_placement=PLACED
+    )
     print(run.execute())
 """
 
@@ -82,7 +86,7 @@ def _launch(tmp_path, out, workers=2):
 def _run(out, shards=SHARDS, **kw):
     kw.setdefault("cap_hours", 10.0)
     kw.setdefault("workers", 2)
-    return driver.Run(out, job, shards, "fp", clock=sunday, **kw)
+    return driver.Run(out, job, shards, "fp", clock=sunday, check_placement=PLACED, **kw)
 
 
 def _kill_after(proc, sidecars, count):
@@ -155,7 +159,9 @@ def test_stale_records_are_refused(tmp_path):
     out = tmp_path / "r"
     _run(out, SHARDS[:2]).execute()
     with pytest.raises(SystemExit, match="another fingerprint"):
-        driver.Run(out, job, SHARDS[:2], "other", 10.0, 1, clock=sunday).execute()
+        driver.Run(
+            out, job, SHARDS[:2], "other", 10.0, 1, clock=sunday, check_placement=PLACED
+        ).execute()
     with pytest.raises(SystemExit, match="another argument"):
         _run(out, [("s000", 99), ("s001", 1)]).execute()
     with pytest.raises(SystemExit, match="not in this schedule"):
@@ -217,7 +223,9 @@ def test_the_worker_rule(moment, configured, expected):
 def test_no_shard_starts_at_the_pause(tmp_path):
     out = tmp_path / "r"
     late = dt.datetime(2026, 11, 18, 20, 0, tzinfo=driver.BRT)
-    run = driver.Run(out, job, SHARDS[:2], "fp", 10.0, 1, clock=lambda: late)
+    run = driver.Run(
+        out, job, SHARDS[:2], "fp", 10.0, 1, clock=lambda: late, check_placement=PLACED
+    )
     assert run.execute().startswith("paused")
     assert not list((out / "shards").iterdir())
 
@@ -241,7 +249,16 @@ def test_the_batch_time_limit_stops_dispatch_and_the_next_batch_finishes(tmp_pat
     out = tmp_path / "r"
     shards = [(f"s{i}", 1.0) for i in range(3)]
     run = driver.Run(
-        out, spin, shards, "fp", 10.0, 1, clock=sunday, batch_seconds=30.0, max_shard_seconds=29.5
+        out,
+        spin,
+        shards,
+        "fp",
+        10.0,
+        1,
+        clock=sunday,
+        check_placement=PLACED,
+        batch_seconds=30.0,
+        max_shard_seconds=29.5,
     )
     assert run.execute() == "complete"
     batches = [e for e in _events(out) if e["event"] == "batch"]
@@ -257,7 +274,16 @@ def test_a_shard_beyond_its_limit_is_kept_and_stops_the_run(tmp_path):
     out = tmp_path / "r"
     shards = [("a", 1.5), ("b", 0.0)]
     run = driver.Run(
-        out, nap, shards, "fp", 10.0, 1, clock=sunday, batch_seconds=60.0, max_shard_seconds=0.5
+        out,
+        nap,
+        shards,
+        "fp",
+        10.0,
+        1,
+        clock=sunday,
+        check_placement=PLACED,
+        batch_seconds=60.0,
+        max_shard_seconds=0.5,
     )
     assert run.execute().startswith("stopped: shard a")
     assert (out / "shards" / "a.bin").read_bytes() == b"slept\n"
@@ -276,6 +302,7 @@ def test_complete_bytes_cannot_pass_an_unresolved_stop(tmp_path):
         10.0,
         1,
         clock=sunday,
+        check_placement=PLACED,
         batch_seconds=60.0,
         max_shard_seconds=0.5,
     )
@@ -323,7 +350,7 @@ def test_a_failed_accounting_stops_dispatch_and_binds(tmp_path, monkeypatch):
     out = tmp_path / "r"
     monkeypatch.setattr(driver, "_times", lambda _handle: None)
     shards = [(f"s{i}", 2.0) for i in range(6)]
-    run = driver.Run(out, spin, shards, "fp", 10.0, 1, clock=sunday)
+    run = driver.Run(out, spin, shards, "fp", 10.0, 1, clock=sunday, check_placement=PLACED)
     assert run.execute() == "stopped: the CPU accounting failed"
     assert len(run._done()) < len(shards)
     assert run.unresolved_stop() == "stopped: the CPU accounting failed"
@@ -331,7 +358,16 @@ def test_a_failed_accounting_stops_dispatch_and_binds(tmp_path, monkeypatch):
 
 def test_a_worker_exception_stops_the_run_and_closes_the_charge(tmp_path):
     out = tmp_path / "r"
-    run = driver.Run(out, boom, [("a", 0), ("b", 1), ("c", 2)], "fp", 10.0, 2, clock=sunday)
+    run = driver.Run(
+        out,
+        boom,
+        [("a", 0), ("b", 1), ("c", 2)],
+        "fp",
+        10.0,
+        2,
+        clock=sunday,
+        check_placement=PLACED,
+    )
     with pytest.raises(ValueError, match="unexpected failure"):
         run.execute()
     doc = json.loads((out / "charges" / "b00000.json").read_text("utf-8"))
@@ -354,7 +390,7 @@ def test_a_failed_time_query_keeps_the_last_value(monkeypatch):
 def test_the_live_cap_stops_dispatch_within_the_run(tmp_path):
     out = tmp_path / "r"
     shards = [(f"s{i:03d}", 0.2) for i in range(60)]
-    run = driver.Run(out, spin, shards, "fp", 0.003, 1, clock=sunday)
+    run = driver.Run(out, spin, shards, "fp", 0.003, 1, clock=sunday, check_placement=PLACED)
     assert run.execute() == "stopped: the cap is reached"
     assert 0 < len(run._done()) < len(shards)
     spent = run.spent_seconds() / 3600.0
@@ -365,7 +401,7 @@ def test_the_live_cap_stops_dispatch_within_the_run(tmp_path):
 def test_the_watchdog_ends_the_workers_above_ten_percent(tmp_path):
     out = tmp_path / "r"
     started = time.monotonic()
-    run = driver.Run(out, spin, [("a", 120.0)], "fp", 5e-4, 1, clock=sunday)
+    run = driver.Run(out, spin, [("a", 120.0)], "fp", 5e-4, 1, clock=sunday, check_placement=PLACED)
     assert run.execute().startswith("over the cap")
     assert time.monotonic() - started < 60.0
     assert not (out / "shards" / "a.bin").exists()

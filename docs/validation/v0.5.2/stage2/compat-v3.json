@@ -1,0 +1,17 @@
+{
+ "records": {
+  "v2/eb_odd_even": "a43ffba60b7174c19910f3a2c140e7b391f831c5d684b7d2e923a271aa170c77",
+  "v2/eb_secondary": "6180719c0cd9f1d33359c8edb6b215163f46325593c9df85141b0ed51414cedd",
+  "v2/noise": "912c35de64cfcff1b505f61eeab1ee82e8e0498e5dfacea111fa8c774f43c054",
+  "v2/planet": "daf0421fedbb84973c38a58bb56774f78839862000731ed109807994c006f2cb",
+  "v2/planet_three_years": "8984cf0669a15a687b56117c00ddf468a83c868ee4395267bb0d0d3db5f8fb72",
+  "v2/sinusoid": "e588c4fe6497f35e740c63dcb23e8195213f5af76a462db4b34266c61e6b8ca1",
+  "v3/eb_odd_even": "3dde3785d87a35fc24578f0dd88fd95445417684b55f0071fddc389d6c7c0361",
+  "v3/eb_secondary": "fb2c327569ae8914087badd40e89e328bf7126401ba9071ac809c91ada4958cf",
+  "v3/noise": "110f0ba33d56d67a6442ead2c85f3e39dd83554ad56ee214f6170d356cb5f18e",
+  "v3/planet": "7d13dc3b491422fe82b73ba47cba95e711626663fc02b6c2f344618ea1a23793",
+  "v3/planet_three_years": "45724e3420f48c83876417bb7c890ea659b243fab1554b31cedc594aadb89c54",
+  "v3/sinusoid": "b38dd33d5ba71d1759b81dde234884f8d274bdcb0feee76f8e372a3fab82000f"
+ },
+ "source": "see the command line"
+}

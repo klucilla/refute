@@ -5,7 +5,8 @@ its stopping rules, the blend between knots, the upper clip), with the knots of 
 together: the 3x3 normal equations in place of ``lstsq``, and sorted arrays in place of one median
 call per knot. A knot leaves the batch and goes to the reference ``detrend._fit_quadratic``
 whenever the batch could differ in a decision or lose accuracy: a non-finite flux, a span of kept
-cadences below half the window, a zero median absolute deviation, a singular system, or a residual
+cadences below half the window, a median absolute deviation at rounding level (a noise-free or
+constant flux, whose later upper clip depends on the rounding), a singular system, or a residual
 within ``BOUNDARY_TOLERANCE`` (relative) of the clipping threshold. Equivalence with the reference
 is a measured property, not an exact one, and it is tested under tolerances frozen before the
 evaluation (docs/validation/v0.5.2/stage2/fast-detrend-equivalence.md).
@@ -29,6 +30,7 @@ from refute.packs.tess.types import LightCurveData
 
 BOUNDARY_TOLERANCE = 1e-9
 MIN_SPAN_FRACTION = 0.5
+ROUNDING_SPREAD = 1e-12
 
 
 @dataclass
@@ -98,7 +100,7 @@ def _fit_batch(
         spread = _middle(np.sort(np.abs(in_use - centre[:, None]), axis=1), n)
         coef[active] = solved
         has[active] = True
-        degenerate = ~(np.isfinite(spread) & (spread > 0))
+        degenerate = ~(np.isfinite(spread) & (spread > ROUNDING_SPREAD))
         limit = params.clip_sigma * 1.4826 * spread
         with np.errstate(invalid="ignore"):
             size_r = np.abs(resid)

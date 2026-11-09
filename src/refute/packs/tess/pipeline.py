@@ -240,7 +240,14 @@ def attack_candidate(
         refit_left_out = list(fitted.sectors_left_out)
         if fitted.reason is None:
             raw = _minus(data.lc, fitted.model)
-    flat = detrend(raw, plan.detrend, mask=mask)
+    detrender = None
+    if plan.is_v052:
+        from refute.packs.tess.detrend_fast import MaskAwareDetrender
+
+        detrender = MaskAwareDetrender(raw, plan.detrend, mask)
+        flat = detrender.flat()
+    else:
+        flat = detrend(raw, plan.detrend, mask=mask)
     sigma = per_point_sigma(
         flat, transit_mask(flat.time, candidate.period, candidate.t0, mask_half)
     )
@@ -272,7 +279,11 @@ def attack_candidate(
     ]
     if any(t.name == "period_alias" and "thresholds_m4" in t.metrics for t in tests):
         executed.append("period_alias_m4")  # M4 piece 6 ran (map Amendment 21)
-    if plan.v05:
+    if plan.is_v052:
+        from refute.packs.tess.pipeline_v52 import v052_tests
+
+        tests = v052_tests(tests, data, flat, final, primary, secondary, plan, detrender)
+    elif plan.v05:
         tests = v05_tests(tests, data, flat, final, primary, secondary, plan)
     timing = None
     if gp.corrections.active:
@@ -823,7 +834,7 @@ def v05_record(analysis: Analysis, data: TessData, plan: TessTestPlan) -> dict[s
     from refute.packs.tess.search import kept_peak_sde
 
     return {
-        "discovery_version": 3 if plan.is_v051 else 2,
+        "discovery_version": 4 if plan.is_v052 else 3 if plan.is_v051 else 2,
         "sensitivity_rule": "refute.core.sensitivity.enforce_sensitivity (#185)",
         "parameters": params,
         "sde_kept_peak": None

@@ -168,9 +168,11 @@ def check_aperture_depth(
     plan: TessTestPlan,
     seed: int,
     exclude_phase_half: bool = False,
+    depth=a0_depth,
 ) -> TestResult:
     """v0.5's ``aperture_depth`` with the large-minus-core difference measured on its own series
-    and its error from A0 (WP3 (a)); its sensitivity block is attached."""
+    and its error from A0 (WP3 (a)); its sensitivity block is attached. ``depth`` is the A0 group
+    depth (battery version 4 passes its own)."""
     from refute.packs.tess.battery import _dilate, aperture_series, core_aperture
 
     params = plan.gauntlet.aperture_depth
@@ -219,9 +221,9 @@ def check_aperture_depth(
     sector = np.concatenate(sectors)
     core_f, large_f = np.concatenate(series["core"]), np.concatenate(series["large"])
     coverage = int(time.size)
-    g_core = a0_depth(time, core_f, sector, candidate, plan, seed, exclude_phase_half)
-    g_large = a0_depth(time, large_f, sector, candidate, plan, seed + 1, exclude_phase_half)
-    g_diff = a0_depth(time, large_f - core_f, sector, candidate, plan, seed + 2, exclude_phase_half)
+    g_core = depth(time, core_f, sector, candidate, plan, seed, exclude_phase_half)
+    g_large = depth(time, large_f, sector, candidate, plan, seed + 1, exclude_phase_half)
+    g_diff = depth(time, large_f - core_f, sector, candidate, plan, seed + 2, exclude_phase_half)
     if g_core is None or g_large is None or g_diff is None:
         return TestResult(
             "aperture_depth",
@@ -233,7 +235,7 @@ def check_aperture_depth(
             coverage=0,
             coverage_unit="transits measured in the pixel data",
         )
-    g_annulus = a0_depth(
+    g_annulus = depth(
         time, np.concatenate(series["annulus"]), sector, candidate, plan, seed + 3,
         exclude_phase_half,
     )  # fmt: skip
@@ -380,10 +382,12 @@ def check_systematics(
     plan: TessTestPlan,
     seed: int,
     exclude_phase_half: bool = False,
+    depth=a0_depth,
 ) -> TestResult:
     """v0.5's ``systematics`` with A0's errors (WP3 (a)): the SAP sub-check on the
     SAP-minus-expected series over the sectors where it applies (``sap_applicability``,
-    amendment 6), the background sub-check with A0's error; its blocks attached."""
+    amendment 6), the background sub-check with A0's error; its blocks attached. ``depth`` is the
+    A0 group depth (battery version 4 passes its own)."""
     from refute.packs.tess.battery import transit_centers_with_data
 
     params = plan.gauntlet.systematics
@@ -460,8 +464,8 @@ def check_systematics(
         r = np.concatenate(
             [_normalized(a.sap_flux) - a.crowdsap * _normalized(a.pdcsap_flux) for a in usable]
         )
-        g_pdc = a0_depth(t_u, pdc_n, s_u, candidate, plan, seed, exclude_phase_half)
-        g_r = a0_depth(t_u, r, s_u, candidate, plan, seed + 1, exclude_phase_half)
+        g_pdc = depth(t_u, pdc_n, s_u, candidate, plan, seed, exclude_phase_half)
+        g_r = depth(t_u, r, s_u, candidate, plan, seed + 1, exclude_phase_half)
         crowd_of = {a.sector: float(a.crowdsap) for a in usable}
         expected, crowd_eff = (
             expected_sap_depth(g_pdc, g_r, crowd_of) if g_pdc and g_r else (None, None)
@@ -502,11 +506,11 @@ def check_systematics(
                 blocks["sap"] = block
 
     # --- background --------------------------------------------------------------------
-    g_bkg = a0_depth(
+    g_bkg = depth(
         time, np.concatenate([a.sap_bkg for a in aux]), sector, candidate, plan, seed + 3,
         exclude_phase_half,
     )  # fmt: skip
-    g_sap = a0_depth(
+    g_sap = depth(
         time, np.concatenate([a.sap_flux for a in aux]), sector, candidate, plan, seed + 4,
         exclude_phase_half,
     )  # fmt: skip

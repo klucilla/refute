@@ -1,0 +1,22 @@
+{
+ "criteria": {
+  "availability_identical": true,
+  "branches_identical": true,
+  "cadences_kept_identical": true,
+  "decisions_identical": true,
+  "flux_within_tolerance": true,
+  "measurements_within_tolerance": true,
+  "noise_flags_identical": true,
+  "noise_within_tolerance": true,
+  "runs_and_bins_identical": true,
+  "validity_identical": true
+ },
+ "curves": 1200,
+ "curves_end_to_end": 360,
+ "label": "the faster code against the reference; development seeds",
+ "max_flux_difference": 2.9753977059954195e-14,
+ "max_measurement_difference": 6.8833827526759706e-15,
+ "max_noise_difference": 0.0,
+ "method_status": "not_validated",
+ "passes": true
+}

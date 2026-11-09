@@ -775,6 +775,14 @@ def discovery_v051_plan_dict() -> dict:
     return d
 
 
+def discovery_v052_plan_dict() -> dict:
+    """The fast test plan of a v0.5.2 claim: discovery version 4 with its sections."""
+    d = discovery_v051_plan_dict()
+    d["discovery"]["version"] = 4
+    d["v052"] = {}
+    return d
+
+
 NOISE_MODES = ("white", "correlated")
 # v0.2.1: the correlated profile of the suite, the AR(1) of the population harness, added
 # to each scenario's white noise (docs/validation/v0.2.1/reopen/correlated-noise-acceptance.md).

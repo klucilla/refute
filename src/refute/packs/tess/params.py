@@ -370,6 +370,19 @@ class V051Params(_Model):
     period_alias_required_lower_bound: float = Field(0.9, gt=0, lt=1)
 
 
+class V052Params(_Model):
+    """The v0.5.2 section ``v052`` of a test plan (docs/plans/v0.5.2-stage2-design.md): present only
+    with discovery version 4; a plan without it dumps exactly as before (issue #30).
+
+    ``sinusoid_fail_allowed``: withdrawn (false) when any per-cell evaluation of section 5 has a
+    false FAIL. ``selector_certified``: true only when the sector selector's own family passes
+    (section 2); otherwise a target of five or more sectors stays INCONCLUSIVE in the A0-dependent
+    tests."""
+
+    sinusoid_fail_allowed: bool = True
+    selector_certified: bool = False
+
+
 class DiscoveryParams(_Model):
     """The v0.4 section of a discovery claim's test plan (issue #174).
 
@@ -392,7 +405,8 @@ class DiscoveryParams(_Model):
 
     # 1: v0.4. 2: v0.5, the sensitivity rule and the v0.5 tests (needs the plan's `stronger`).
     # 3: v0.5.1, the corrected battery (needs `stronger` and `v051`).
-    version: Literal[1, 2, 3] = 1
+    # 4: v0.5.2, battery version 4 (needs `stronger`, `v051` and `v052`).
+    version: Literal[1, 2, 3, 4] = 1
     decisive: list[str] = Field(min_length=1)
     diagnostic: list[str] = Field(default_factory=list)
     stages: dict[str, Literal[1, 2]] = Field(default_factory=dict)
@@ -489,13 +503,14 @@ class TessTestPlan(_Model):
     stronger: StrongerParams | None = None
     reproduction: ReproductionParams | None = None
     v051: V051Params | None = None
+    v052: V052Params | None = None
 
     @model_serializer(mode="wrap")
     def _without_absent_discovery(self, handler: Any) -> dict[str, Any]:
         """A plan without the v0.4 or the v0.5 sections dumps exactly as before they existed
         (issue #30)."""
         out = handler(self)
-        for key in ("discovery", "stronger", "reproduction", "v051"):
+        for key in ("discovery", "stronger", "reproduction", "v051", "v052"):
             if out.get(key, 0) is None:
                 del out[key]
         return out
@@ -511,8 +526,10 @@ class TessTestPlan(_Model):
             raise ValueError(
                 "the `stronger` section goes with discovery version 2 or 3, and only with them"
             )
-        if (version == 3) != (self.v051 is not None):
+        if (version >= 3) != (self.v051 is not None):
             raise ValueError("the `v051` section goes with discovery version 3, and only with it")
+        if (version == 4) != (self.v052 is not None):
+            raise ValueError("the `v052` section goes with discovery version 4, and only with it")
         if self.reproduction is not None and not version2:
             raise ValueError("the `reproduction` section goes only with discovery version 2 or 3")
         if version2:
@@ -524,7 +541,7 @@ class TessTestPlan(_Model):
                 raise ValueError(
                     "decisive tests without a sensitivity rule: " + "; ".join(problems)
                 )
-        if version == 3:
+        if version >= 3:
             # v0.5.1 WP5 (row 5.1): version 3 corrects the v0.5 battery and drops none of its
             # tests; every decisive or diagnostic test of v0.5 keeps a role
             from refute.packs.tess.calib05.values import V05_DECISIVE, V05_DIAGNOSTIC
@@ -542,6 +559,11 @@ class TessTestPlan(_Model):
         """True for a v0.5 or v0.5.1 claim (discovery version 2 or 3): the sensitivity rule
         applies."""
         return self.stronger is not None
+
+    @property
+    def is_v052(self) -> bool:
+        """True for a v0.5.2 claim (discovery version 4): battery version 4."""
+        return self.v052 is not None
 
     @property
     def is_v051(self) -> bool:
