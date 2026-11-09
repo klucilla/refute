@@ -45,6 +45,9 @@ TARGET = 9000
 WORKERS = 12
 PIN = tuple(range(8, 32, 2))
 SECTIONS = ("a01", "a02", "a04", "a05", "a07", "a08")
+# the units part's share per section: measured CPU per unit x units (probe-a0v4-cost.json), with
+# A0.8 doubled for its noise-free truth on the production path; not the count of curves
+ESTIMATED_HOURS = {"a01": 0.3, "a02": 11.1, "a04": 2.8, "a05": 21.5, "a07": 0.2, "a08": 28.0}
 PER_SHARD = {"a01": 96, "a02": 40, "a04": 128, "a05": 128, "a07": 128, "a08": 96}
 UNITS_PART_HOURS = 75.0
 EVALUATE_PART_HOURS = 20.0
@@ -128,7 +131,7 @@ def units() -> None:
     print("curves", total, "fingerprint", fp, flush=True)
     if total != 425400:
         raise SystemExit(f"the schedule has {total} curves, not 425,400")
-    weight = {s: sum(len(a[1]) for _, a in every[s]) / total for s in SECTIONS}
+    weight = {s: ESTIMATED_HOURS[s] / sum(ESTIMATED_HOURS.values()) for s in SECTIONS}
     budgeted.declare(
         "adequacy",
         {**{f"units-{s}": UNITS_PART_HOURS * w for s, w in weight.items()},

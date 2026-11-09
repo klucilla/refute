@@ -1,0 +1,43 @@
+{
+ "sections": {
+  "adequacy": {
+   "parts": {
+    "evaluate": {
+     "allocation_hours": 20.0
+    },
+    "units-a01": {
+     "allocation_hours": 0.5289139633286319,
+     "checkpoint_shards": 2,
+     "identity": "8e25bc54572bc806",
+     "projection_hours": 0.18402777777777776,
+     "spent_hours": 0.20542100694444446
+    },
+    "units-a02": {
+     "allocation_hours": 5.553596614950634,
+     "checkpoint_shards": 40,
+     "identity": "ac0f300bed10315b",
+     "projection_hours": 11.548667424841772,
+     "reconciled": [
+      {
+       "reason": "The part allocation split the 75 CPU-h of the curves by the count of curves, not their cost; A0.2 costs about 4 times more per curve. The section line (95) was not at risk: 11.5 projected. The split is corrected to measured cost per unit, prospectively, and the earlier attempt stays in this ledger.",
+       "stop": "stopped: the projection 11.5 CPU-h passes 1.5 times the allocation, 8.3"
+      }
+     ],
+     "spent_hours": 0.5792664930555556
+    },
+    "units-a04": {
+     "allocation_hours": 5.553596614950634
+    },
+    "units-a05": {
+     "allocation_hours": 44.42877291960507
+    },
+    "units-a07": {
+     "allocation_hours": 0.37023977433004235
+    },
+    "units-a08": {
+     "allocation_hours": 18.564880112834977
+    }
+   }
+  }
+ }
+}
