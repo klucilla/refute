@@ -1,0 +1,71 @@
+{
+ "expected_acceptances_at_the_v05_yield": {
+  "needed": 11,
+  "note": "the yield of a TESS-EB walk, not established for the other catalogs",
+  "scenarios": {
+   "tess_eb_only": {
+    "expected": 5.902439024390244,
+    "high": 9.447783515853805,
+    "low": 3.128686073499168,
+    "never_walked_stars": 22
+   },
+   "with_t10k_all": {
+    "expected": 5.902439024390244,
+    "high": 9.447783515853805,
+    "low": 3.128686073499168,
+    "never_walked_stars": 22
+   },
+   "with_t10k_period_consistent": {
+    "expected": 5.902439024390244,
+    "high": 9.447783515853805,
+    "low": 3.128686073499168,
+    "never_walked_stars": 22
+   }
+  },
+  "yield": 0.2682926829268293,
+  "yield_95_interval": [
+   0.14221300334087128,
+   0.4294447052660821
+  ]
+ },
+ "gaia": {
+  "21_arcsec": {
+   "added_beyond_the_qualified_tess_eb_and_t10k": 105,
+   "added_unique_and_period_consistent": 54,
+   "added_with_exactly_one_gaia_eb": 104,
+   "identity": "position-only proxy; the established association can only remove members",
+   "matched": 106
+  },
+  "2_arcsec": {
+   "added_beyond_the_qualified_tess_eb_and_t10k": 3,
+   "added_unique_and_period_consistent": 0,
+   "added_with_exactly_one_gaia_eb": 3,
+   "identity": "position-only proxy; the established association can only remove members",
+   "matched": 4
+  }
+ },
+ "label": "inventory of the amended T3b frame; counts only; it selects nothing",
+ "method_status": "not_validated",
+ "t10k_added_beyond_tess_eb": 0,
+ "t10k_added_period_consistent": 0,
+ "t10k_toi_hosts": {
+  "false_positives_among_them": 0,
+  "in_tess_eb": 0,
+  "stars": 7,
+  "toi_rows_by_tfopwg_disposition": {
+   "PC": 6,
+   "blank": 1
+  }
+ },
+ "t10k_vetted_rows": 10001,
+ "tess_eb": {
+  "members": 63,
+  "never_walked": 22
+ },
+ "toi_false_positives": 856,
+ "toi_table": "the table of toi-fetch.json, retrieved 2026-11-09T11:07:01+00:00; other inputs frozen",
+ "v05_walk": {
+  "accepted": 11,
+  "walked": 41
+ }
+}

@@ -12,9 +12,20 @@ Nothing here is legal advice.
   settle whether the tables carry a CC BY 4.0 grant.
 - Use, by the maintainer's decision of 2026-11-08 (#216, item 5): internal only. No line of the catalog
   in git or on the public Drive; only TIC identifiers may enter a record, as with TESS-EB.
-- Here: `t10k-fetch.json` (URLs, UTC time, SHA-256 and sizes of the two downloads) and
-  `t3b-inventory.json` (counts). The copies stay in the git-ignored `.cache/v052/t10k/<sha256>/`.
+- Here: `t10k-fetch.json` (URLs, UTC time, SHA-256 and sizes of the two downloads),
+  `t10k-disposition.json` (rows, hashes, paths and sizes) and `t3b-inventory.json` and
+  `t3b-inventory-r2.json` (counts). **The copies were deleted from `.cache` on 2026-11-09**, by the
+  maintainer's decision of that date (#216, item 4), because the catalog adds no star to T3b. The source
+  record is kept; the terms stay unconfirmed: the data page cites CC BY 4.0, but gives the rights to the
+  authors. `t3b_inventory.py` cannot run again without a new download by `fetch_t10k.py`, checked by SHA-256.
 - Citation owed if the table is used in any record: the article above.
+
+## The ExoFOP TOI table of 2026-11-09
+
+`fetch_toi.py` downloaded the table again, by the maintainer's decision of 2026-11-09 (#216, item 3 (a)):
+URL, UTC time, size and SHA-256 in `toi-fetch.json`. The copy stays in the git-ignored
+`.cache/v052/toi/<sha256>/`; no row of it is in this folder, only counts. Its terms are those of the earlier
+copies of the same table, stated in [../../../../calibration/DATA_LICENSE.md](../../../../calibration/DATA_LICENSE.md).
 
 ## The other catalogs counted by `t3b_inventory.py`
 

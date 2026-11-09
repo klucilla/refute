@@ -4,6 +4,11 @@ target is selected, no draw is made, no light curve is read, and no row or ident
 leaves this script. It uses the frozen v0.5 inputs; the TOI table is refreshed at the selection
 step, a stop. ``method_status: not_validated``.
 
+With the argument ``refreshed`` it reads the TOI table of ``toi-fetch.json`` (the maintainer's
+decision of 2026-11-09, item 3 (a)) and writes ``t3b-inventory-r2.json``; the other inputs stay
+frozen. The T10K copies were deleted after that run (item 4); a new run needs ``fetch_t10k.py``
+first.
+
 Frame: a TOI false positive (the v0.5 rule, ``selection.fp_pool``, without already known targets)
 that is catalogued, by TIC, in TESS-EB or in the vetted T10K tables (3 and 4), or that lies within
 ``GAIA_RADII`` arcsec of a Gaia DR3 ``vari_eclipsing_binary`` source. Period consistency, reported
@@ -89,7 +94,7 @@ def gaia_matches(coords, radius):
     return {t: table[h, 2] for t, h in zip(tics, hits, strict=True) if len(h)}
 
 
-def main():
+def main(toi_path: Path = INPUTS / "toi.csv", out_name: str = "t3b-inventory.json", note: str = ""):
     from scipy import stats
 
     from refute.packs.tess.calib05 import c3select
@@ -97,7 +102,7 @@ def main():
     from refute.packs.tess.discover import selection as sel
 
     csv.field_size_limit(10_000_000)
-    toi = sel.toi_rows((INPUTS / "toi.csv").read_bytes())
+    toi = sel.toi_rows(toi_path.read_bytes())
     planets = sel.pscomppars_rows((INPUTS / "pscomppars.csv").read_bytes())
     eb = sel.tess_eb_tics((INPUTS / "tess_eb.tsv").read_bytes())
     planet_tics = {t for t in (sel.parse_tic(r.get("tic_id")) for r in planets) if t}
@@ -121,7 +126,7 @@ def main():
     doc = {
         "label": "inventory of the amended T3b frame; counts only; it selects nothing",
         "method_status": "not_validated",
-        "toi_table": "the frozen v0.5 table (of 2026-11-04); refreshed at the selection stop",
+        "toi_table": note or "the frozen v0.5 table (of 2026-11-04); refreshed at the selection",
         "toi_false_positives": len(fp),
         "v05_walk": {"walked": len(walked), "accepted": accepted},
         "tess_eb": {"members": len(in_eb), "never_walked": len(in_eb - walked)},
@@ -172,12 +177,18 @@ def main():
             for k, v in scenarios.items()
         },
     }
-    (HERE / "t3b-inventory.json").write_text(
-        json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8"
-    )
+    (HERE / out_name).write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8")
     print(json.dumps(doc, indent=1, sort_keys=True))
 
 
 if __name__ == "__main__":
     sys.path.insert(0, str(ROOT / "src"))
-    main()
+    if sys.argv[1:] == ["refreshed"]:
+        fetched = json.loads((HERE / "toi-fetch.json").read_text("utf-8"))
+        main(
+            ROOT / ".cache/v052/toi" / fetched["sha256"] / "toi.csv",
+            "t3b-inventory-r2.json",
+            f"toi-fetch.json, retrieved {fetched['retrieved_utc']}; other inputs frozen",
+        )
+    else:
+        main()

@@ -2,7 +2,7 @@
 
 Written 2026-11-09, on the design's section 9, step 5, before any of the large workloads below was launched. It decides nothing about the method. `method_status: not_validated`.
 
-**The result: the projection is above the hard maximum of 2,000 CPU-h of development and acceptance, so the work stops here for the maintainer** (the design's section 8; the delegation of 2026-11-08, item 6). Nothing below has been launched.
+**The result: the projection was above the hard maximum of 2,000 CPU-h of development and acceptance, so the work stopped for the maintainer** (the design's section 8; the delegation of 2026-11-08, item 6). Nothing below had been launched. **The maintainer's decision of 2026-11-09 is at the end of this page; it raises the maximum to 3,100 CPU-h.**
 
 ## The projection
 
@@ -36,6 +36,31 @@ The first projection for A0 was 3,781 CPU-h. The batched detrending, the reuse o
 4. **Combine 2 and 3:** about 1,630 to 1,730 CPU-h. It fits under 2,000 without the 30 % margin on what remains.
 
 **The time, whichever is chosen.** At 12 workers, 2,300 CPU-h is about 192 hours, or about 8 days with the reduced daytime load, after the remaining development. It would pass the pause of 18 November at 20:00 and resume afterwards.
+
+## The maintainer's decision of 2026-11-09 (#216)
+
+**The hard maximum of stage 2 rises from 2,000 to 3,100 CPU-h** of development and acceptance. The other limits stand: calibration 150 CPU-h, 12 agent-days, 1.0 M review tokens. **Codex's tokens do not count against the review limit**, which is for independent review sessions; Codex's use is recorded per round in the consensus record when the CLI reports it. Conditions:
+
+- Each section projects its own cost from its first 5 % and **stops if it passes 1.5 times the projection**. If the total projection passes 3,100 CPU-h, the work stops before launching.
+- Units per hour are measured with 12 workers (one per physical core, on processors 8 to 31) and with 22, and the setting with the shortest wall-clock time is used. The measure is recorded, and the caps are reported in CPU-h and in wall-clock hours.
+- The machine rules stand (the decision of 2026-11-08, item 10).
+
+**The caps.** The projection is the table above, with the midpoint where it gives a range; 1.3 times it is the planning cap, 1.5 times the stop. Wall-clock hours divide by the 11.4 workers a week averages under the machine rules (118 hours at 12 workers, 50 business hours at 10) and are replaced once the placement is measured.
+
+| Section | Projection (CPU-h) | Planning cap (x1.3) | Stop (x1.5) | Wall-clock at the projection (h) |
+|---|---|---|---|---|
+| A0 acceptance | 1,048 | 1,362 | 1,572 | 92 |
+| Known-answer gate | 820 | 1,066 | 1,230 | 72 |
+| Adequacy check | 95 | 124 | 143 | 8 |
+| Sinusoid evaluation | 120 | 156 | 180 | 11 |
+| Sector selector's family | 135 | 176 | 203 | 12 |
+| Sabotages and regimes | 30 | 39 | 45 | 3 |
+| WP2, WP3 (a), (c), (d), the D lines | 81 | 105 | 122 | 7 |
+| **Remaining** | **2,329** | **3,028** | | **204** |
+| Spent before this decision | about 70 | | | |
+| **Total** | **about 2,400** | **about 3,100** | | |
+
+The stop column can sum above the maximum; the maximum wins. 204 hours of wall clock from this morning would reach the pause of 18 November at 20:00 (227 hours away) only with no gaps, and development comes first, so the work is expected to pause and to resume on the maintainer's release.
 
 ## What this does not establish
 

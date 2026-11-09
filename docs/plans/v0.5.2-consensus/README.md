@@ -56,6 +56,8 @@ Round 3's single low-severity objection (the label of one sensitivity) was appli
 round ran. The conversation holds one more turn than the three rounds: a first launch of round 2 was stopped
 within seconds, because the rewritten report had not yet been saved; it produced no answer.
 
+**Codex's token use (the maintainer's decision of 2026-11-09, #216).** Codex's tokens do not count against stage 2's review limit. From that date each table below gives the use per round when the CLI reports it. The five calls of stage 2 before that date, together: 928,026 input tokens not cached, 121,922 output, 19.5 M cached.
+
 ## The stage 2 implementation
 
 The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d94bef3`), which checks the code against the agreed design.

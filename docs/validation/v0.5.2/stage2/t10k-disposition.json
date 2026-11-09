@@ -1,0 +1,20 @@
+{
+ "distinct_tic_in_both": 10001,
+ "label": "T10K's tables 3 and 4: counts and hashes; the copies were deleted (#216, item 4)",
+ "license_state": "unconfirmed: the source record docs/plans/sources/v0.5.2-t10k-2026-11-08.md",
+ "stars_added_to_t3b": "0: t3b-inventory.json and t3b-inventory-r2.json",
+ "tables": {
+  "table3": {
+   "bytes": 2002473,
+   "distinct_tic": 7936,
+   "path": ".cache/v052/t10k/e197c05c167225bf9d5ca1bb3a5b9e672d76b9b938168b7a44c7382768fd0fb6/apjsade2d8t3_mrt.txt",
+   "sha256": "e197c05c167225bf9d5ca1bb3a5b9e672d76b9b938168b7a44c7382768fd0fb6"
+  },
+  "table4": {
+   "bytes": 309972,
+   "distinct_tic": 2065,
+   "path": ".cache/v052/t10k/f5f27c251f53216492fbe0db9c3788d7fc20752c09c9d81ab7ae9099a9331493/apjsade2d8t4_mrt.txt",
+   "sha256": "f5f27c251f53216492fbe0db9c3788d7fc20752c09c9d81ab7ae9099a9331493"
+  }
+ }
+}

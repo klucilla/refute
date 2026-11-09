@@ -1,0 +1,7 @@
+{
+ "bytes": 3831257,
+ "label": "the ExoFOP-TESS TOI table, for T3b's counts only (#216)",
+ "retrieved_utc": "2026-11-09T11:07:01+00:00",
+ "sha256": "fb4a03393a4b7065230cc0d4acb51ee1f4dfb4e12b9721004eccac879c8942a9",
+ "url": "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=csv"
+}
