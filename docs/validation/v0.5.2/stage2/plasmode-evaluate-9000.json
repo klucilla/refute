@@ -1,0 +1,18 @@
+{
+ "certified": 195,
+ "datasets": 200,
+ "degenerate_datasets": 0,
+ "failed_aggregate_datasets": 0,
+ "failed_member_datasets": 5,
+ "fingerprint": "eb9b5bc55c611eda",
+ "lower_bound": 0.9374041239799062,
+ "not_measured_datasets": 0,
+ "one_sided_level": 0.9875,
+ "passes": true,
+ "q_min_max": [
+  4.476031452174852,
+  4.62138001302981
+ ],
+ "spent_cpu_hours": 20.479244791666666,
+ "target": 9000
+}
