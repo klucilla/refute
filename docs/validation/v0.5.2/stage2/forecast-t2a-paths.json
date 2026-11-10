@@ -30,7 +30,9 @@
      "per_stratum": {
       "2_to_4": 0.325,
       "5_to_20": 0.55
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.6423
     },
     "as_run": {
      "kept_above_20_all_kept": 0.4805,
@@ -39,7 +41,9 @@
      "per_stratum": {
       "2_to_4": 0.325,
       "5_to_20": 0.55
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.6423
     },
     "b_sinusoid_inconclusive_removed": {
      "kept_above_20_all_kept": 0.4805,
@@ -48,7 +52,9 @@
      "per_stratum": {
       "2_to_4": 0.325,
       "5_to_20": 0.55
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.6423
     },
     "c_odd_even_and_sinusoid": {
      "kept_above_20_all_kept": 0.4805,
@@ -57,7 +63,9 @@
      "per_stratum": {
       "2_to_4": 0.325,
       "5_to_20": 0.55
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.6423
     },
     "d_systematics_sensitivity_rule_removed": {
      "kept_above_20_all_kept": 0.7132,
@@ -66,7 +74,9 @@
      "per_stratum": {
       "2_to_4": 0.65,
       "5_to_20": 0.725
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.8488
     },
     "e_systematics_inconclusive_removed": {
      "kept_above_20_all_kept": 0.8127,
@@ -75,7 +85,9 @@
      "per_stratum": {
       "2_to_4": 0.725,
       "5_to_20": 0.875
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.9171
     },
     "f_odd_even_sinusoid_and_systematics_sensitivity": {
      "kept_above_20_all_kept": 0.7255,
@@ -84,16 +96,20 @@
      "per_stratum": {
       "2_to_4": 0.675,
       "5_to_20": 0.725
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.8585
     },
     "g_odd_even_sinusoid_and_systematics": {
      "kept_above_20_all_kept": 0.965,
      "kept_above_20_all_lost": 0.8739,
-     "meets_minimum": "only if the stratum above 20 is mostly kept",
+     "meets_minimum": "only if 25% of the stratum above 20 is kept",
      "per_stratum": {
       "2_to_4": 0.95,
       "5_to_20": 0.975
-     }
+     },
+     "share_above_20_kept_needed": 0.25,
+     "upper_sampling_bound_above_20_all_kept": 0.9951
     },
     "h_every_sensitivity_rule_inconclusive": {
      "kept_above_20_all_kept": 0.7378,
@@ -102,7 +118,9 @@
      "per_stratum": {
       "2_to_4": 0.7,
       "5_to_20": 0.725
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.8667
     },
     "i_every_inconclusive": {
      "kept_above_20_all_kept": 0.9896,
@@ -111,7 +129,20 @@
      "per_stratum": {
       "2_to_4": 1.0,
       "5_to_20": 0.975
-     }
+     },
+     "share_above_20_kept_needed": 0.0,
+     "upper_sampling_bound_above_20_all_kept": 0.9984
+    },
+    "j_every_inconclusive_but_systematics_not_enough_data": {
+     "kept_above_20_all_kept": 0.7378,
+     "kept_above_20_all_lost": 0.6467,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.7,
+      "5_to_20": 0.725
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.8667
     }
    }
   },
@@ -145,7 +176,9 @@
      "per_stratum": {
       "2_to_4": 0.275,
       "5_to_20": 0.425
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.5707
     },
     "as_run": {
      "kept_above_20_all_kept": 0.4037,
@@ -154,7 +187,9 @@
      "per_stratum": {
       "2_to_4": 0.275,
       "5_to_20": 0.425
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.5707
     },
     "b_sinusoid_inconclusive_removed": {
      "kept_above_20_all_kept": 0.4246,
@@ -163,7 +198,9 @@
      "per_stratum": {
       "2_to_4": 0.275,
       "5_to_20": 0.475
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.5902
     },
     "c_odd_even_and_sinusoid": {
      "kept_above_20_all_kept": 0.4246,
@@ -172,7 +209,9 @@
      "per_stratum": {
       "2_to_4": 0.275,
       "5_to_20": 0.475
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.5902
     },
     "d_systematics_sensitivity_rule_removed": {
      "kept_above_20_all_kept": 0.591,
@@ -181,7 +220,9 @@
      "per_stratum": {
       "2_to_4": 0.55,
       "5_to_20": 0.55
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.7463
     },
     "e_systematics_inconclusive_removed": {
      "kept_above_20_all_kept": 0.7009,
@@ -190,7 +231,9 @@
      "per_stratum": {
       "2_to_4": 0.625,
       "5_to_20": 0.725
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.839
     },
     "f_odd_even_sinusoid_and_systematics_sensitivity": {
      "kept_above_20_all_kept": 0.7009,
@@ -199,16 +242,20 @@
      "per_stratum": {
       "2_to_4": 0.625,
       "5_to_20": 0.725
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.839
     },
     "g_odd_even_sinusoid_and_systematics": {
      "kept_above_20_all_kept": 0.9754,
      "kept_above_20_all_lost": 0.8844,
-     "meets_minimum": "only if the stratum above 20 is mostly kept",
+     "meets_minimum": "only if 14% of the stratum above 20 is kept",
      "per_stratum": {
       "2_to_4": 0.95,
       "5_to_20": 1.0
-     }
+     },
+     "share_above_20_kept_needed": 0.136,
+     "upper_sampling_bound_above_20_all_kept": 0.9967
     },
     "h_every_sensitivity_rule_inconclusive": {
      "kept_above_20_all_kept": 0.7132,
@@ -217,7 +264,9 @@
      "per_stratum": {
       "2_to_4": 0.65,
       "5_to_20": 0.725
-     }
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.8488
     },
     "i_every_inconclusive": {
      "kept_above_20_all_kept": 1.0,
@@ -226,7 +275,20 @@
      "per_stratum": {
       "2_to_4": 1.0,
       "5_to_20": 1.0
-     }
+     },
+     "share_above_20_kept_needed": 0.0,
+     "upper_sampling_bound_above_20_all_kept": 1.0
+    },
+    "j_every_inconclusive_but_systematics_not_enough_data": {
+     "kept_above_20_all_kept": 0.7869,
+     "kept_above_20_all_lost": 0.6958,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.8,
+      "5_to_20": 0.725
+     },
+     "share_above_20_kept_needed": null,
+     "upper_sampling_bound_above_20_all_kept": 0.9024
     }
    }
   }
@@ -235,7 +297,7 @@
  "measured_records": 80,
  "method_status": "not_validated",
  "minimum": 0.8967479674796748,
- "note": "the stratum above 20 sectors (56 of 615) was not run: every scenario is given with it all lost and all kept; a warning FAIL gives WEAKENED (kept)",
+ "note": "the stratum above 20 sectors (56 of 615) was not run: every scenario's point is given with it all lost and all kept; a warning FAIL gives WEAKENED (kept); the upper sampling bound is the forecast's stratified hypergeometric upper end with that stratum all kept, a sampling statement, not a point",
  "population": {
   "2_to_4": 302,
   "5_to_20": 257,

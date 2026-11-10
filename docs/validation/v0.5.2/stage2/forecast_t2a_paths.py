@@ -53,6 +53,9 @@ SCENARIOS = {
         x[1] == "INCONCLUSIVE" and x[2] == "insufficient_sensitivity"
     ),
     "i_every_inconclusive": lambda x: x[1] == "INCONCLUSIVE",
+    "j_every_inconclusive_but_systematics_not_enough_data": lambda x: (
+        x[1] == "INCONCLUSIVE" and not (x[0] == "systematics" and x[2] == "not_enough_data")
+    ),
 }
 
 
@@ -87,8 +90,10 @@ def main() -> None:
         "minimum": minimum,
         "population": dict(pop),
         "measured_records": len(recs),
-        "note": "the stratum above 20 sectors (56 of 615) was not run: every scenario is given "
-        "with it all lost and all kept; a warning FAIL gives WEAKENED (kept)",
+        "note": "the stratum above 20 sectors (56 of 615) was not run: every scenario's point is "
+        "given with it all lost and all kept; a warning FAIL gives WEAKENED (kept); the upper "
+        "sampling bound is the forecast's stratified hypergeometric upper end with that stratum "
+        "all kept, a sampling statement, not a point",
         "batteries": {},
     }
     for b in ("v3", "v4B"):
@@ -108,7 +113,7 @@ def main() -> None:
             "scenarios": {},
         }
         for name, rm in SCENARIOS.items():
-            per = {}
+            per, upper = {}, 0
             for s in MEASURED:
                 mine = [r for r in recs if r["stratum"] == s]
                 k = 0
@@ -118,21 +123,31 @@ def main() -> None:
                     elif r[b]["stage_verdict"] == "INCONCLUSIVE":
                         k += not {x for x in blockers(r, b) if not rm(x)}
                 per[s] = round(k / len(mine), 4)
+                # the forecast's own stratified interval (alpha over the three strata)
+                upper += t._hypergeometric(k, len(mine), pop[s], t.ALPHA / len(t.STRATA))[1]
             low = sum(pop[s] * per[s] for s in MEASURED) / len(rows)
             high = low + pop["above_20"] / len(rows)
+            # share of the stratum above 20 that would have to be kept for the point to reach it
+            need = (minimum - low) * len(rows) / pop["above_20"]
             block["scenarios"][name] = {
                 "per_stratum": per,
                 "kept_above_20_all_lost": round(low, 4),
                 "kept_above_20_all_kept": round(high, 4),
+                "share_above_20_kept_needed": round(min(max(need, 0.0), 1.0), 3)
+                if need <= 1 else None,
+                "upper_sampling_bound_above_20_all_kept": round(
+                    (upper + pop["above_20"]) / len(rows), 4
+                ),
                 "meets_minimum": "yes" if low >= minimum else "no" if high < minimum else
-                "only if the stratum above 20 is mostly kept",
+                f"only if {need:.0%} of the stratum above 20 is kept",
             }  # fmt: skip
         out["batteries"][b] = block
     (HERE / "forecast-t2a-paths.json").write_text(
         json.dumps(out, indent=1, sort_keys=True) + "\n", "utf-8"
     )
     print(json.dumps({b: {k: (v["kept_above_20_all_lost"], v["kept_above_20_all_kept"],
-                              v["meets_minimum"]) for k, v in x["scenarios"].items()}
+                              v["upper_sampling_bound_above_20_all_kept"], v["meets_minimum"])
+                          for k, v in x["scenarios"].items()}
                       for b, x in out["batteries"].items()}, indent=1))  # fmt: skip
 
 

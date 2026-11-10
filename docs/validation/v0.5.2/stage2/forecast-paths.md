@@ -5,7 +5,9 @@ for the whole forecast, (a) the T2a part, (b) the `odd_even` diagnosis, (c) the 
 Cramer-Rao bound split between A0 and the estimator; then a STOP with the results and the paths (i) to (iii), each
 with its cost and risks. **Everything here is a forecast or a what-if on development data; it decides nothing.**
 `method_status: not_validated`. The `planet_forecast` gate is failed in the ledger for D2 and now for T2a, and it
-blocks the acceptance. Codex reviewed this record (forecast round 2, `WEAKENED`, 9 findings, all applied below).
+blocks the acceptance. Codex reviewed a first version of this record (forecast round 2, `WEAKENED`, 9 findings,
+applied below), and the advisor the corrected one (an opinion; round 2 of the advisor, 7 items, applied); Codex's
+end-of-round review of the round's commits is recorded in the consensus record.
 
 ## 1. Results
 
@@ -66,15 +68,18 @@ not estimators.
 | `odd_even`, the sinusoid and `systematics`'s `insufficient_sensitivity` | 0.610 to 0.701 | 0.634 to 0.726 |
 | Every INCONCLUSIVE of the class `insufficient_sensitivity` | 0.622 to 0.713 | 0.647 to 0.738 |
 | `odd_even`, the sinusoid and all of `systematics` | 0.884 to 0.975 | 0.874 to 0.965 |
+| Every INCONCLUSIVE but `systematics`'s `not_enough_data` | 0.696 to 0.787 | 0.647 to 0.738 |
 | Every INCONCLUSIVE | 0.909 to 1.000 | 0.899 to 0.990 |
 
 Removing `outside_domain` (in the last two rows) is an oracle: it would need a prospective, validated extension of
 A0's domain, not an estimator. In the row of `odd_even`, the sinusoid and all of `systematics`, reaching 0.897
 needs about 14 % of the stratum above 20 kept for version 4 and 25 % for version 3, so the refusal above 20 would
-have to be lifted. Codex's check (round 2, finding 2): even with `systematics`'s `not_enough_data` kept as it is, an
-optimistic removal of every other INCONCLUSIVE gives version 4 an upper end of about 0.902, above the minimum. **So
-the current battery is forecast to fail T2a, and `systematics`'s unresolved measurements need diagnosis; these 80
-injections do not establish that T2a is out of reach.**
+have to be lifted. With `systematics`'s `not_enough_data` kept as it is and every other INCONCLUSIVE removed (the
+scenario `j` of the record), version 4 B's point is **0.696 to 0.787**, short of the minimum by 0.11 to 0.20; only
+the forecast's upper sampling bound for 80 injections, with the stratum above 20 all kept, reaches it (**0.902**,
+the figure of Codex's round 2, finding 2; version 3 0.647 to 0.738, bound 0.867). **So the current battery is
+forecast to fail T2a, and `systematics`'s unresolved measurements need diagnosis; these 80 injections do not
+establish that T2a is out of reach.**
 
 **The `odd_even` diagnosis** ([`forecast-v4-diagnosis.json`](forecast-v4-diagnosis.json),
 [`forecast-v4-paths.json`](forecast-v4-paths.json), `289b491`): on the 17 planets turned from PASS to INCONCLUSIVE
@@ -111,9 +116,11 @@ resume after it is the maintainer's, so no end date is given.
 **Options in the literature** ([sources](../../../plans/sources/v0.5.2-odd-even-estimators-2026-11-10.md), read
 2026-11-10): a transit model fitted to odd and even transits separately (Kepler DV, Twicken et al. 2018; Li et al.
 2019); LEO-Vetter's trapezoid or transit model with only the depth and T0 free and the shape fixed at the overall
-fit (Kunimoto et al. 2025, which also reports fits whose uncertainties are unavailable); a correlated-noise
-likelihood, wavelet (Carter and Winn 2009, with simulation evidence of better uncertainties under their assumed
-noise processes) or Gaussian process (Aigrain and Foreman-Mackey 2023). These are candidates for investigation:
+fit (Kunimoto et al. 2025; its section IV.4 reports that those fits sometimes produced no uncertainty, so all three
+comparisons run together); a correlated-noise likelihood, wavelet (Carter and Winn 2009: simulated transits, mainly
+the mid-transit time, with truer uncertainties for noise that follows its assumptions) or Gaussian process (Aigrain
+and Foreman-Mackey 2023). The two parenthetical readings were checked on 2026-11-10 after Codex named them (sources
+file, item 5). These are candidates for investigation:
 none supplies the calibration evidence Refute requires, and none validates Refute's odd/even statistic.
 
 **What E2 already rejected** ([stage 1](../stage1/README.md), E2): `built`, `built_masked`, `candidate_shape`,
@@ -144,6 +151,11 @@ counted in it.
 passes only if the sinusoid's INCONCLUSIVE is resolved as well, by 0.020 on 112 development planets. A new estimator
 may fail the 0.20 d null cells like E2's. The acceptance would end after the pause, on an open budget. v0.5.2 is
 round 2 of 3: a failed acceptance leaves one round.
+
+- **Agent-days:** the hard maximum is 12 and the wall-clock bound is already 6.1 after two days; weeks more would
+  pass it on either measure, which is another non-delegated stop.
+- **Budget:** at 3,474 to 4,110 CPU-h in total, option (a) of the open budget decision, 3,300, does not cover path
+  (i), and (b), about 4,036, covers only part of the range. Under path (ii) the budget decision is moot.
 
 ### (ii) Close v0.5.2 as not approved (round 2 of 3)
 

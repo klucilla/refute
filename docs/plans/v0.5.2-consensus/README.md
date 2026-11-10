@@ -100,8 +100,11 @@ The maintainer's decision of 2026-11-10 (#216, item 4) approves at most three co
 | Round | Date | File | Model | Topic | SHA-256 |
 |---|---|---|---|---|---|
 | 1 | 2026-11-10 | [advisor-round-1-answer.md](advisor-round-1-answer.md) | advisor tool ("fable", per the maintainer) | the redesign stop: planning margin, agent-days, T2a's ceiling | `4c8f43ea3cf85c717c26c45c33d02c971c8a119382826d13c1079097de3924e0` |
+| 2 | 2026-11-10 | [advisor-round-2-answer.md](advisor-round-2-answer.md) | advisor tool ("fable", per the maintainer) | the paths stop: the forecast's record after Codex's round 2 | `1dda52e83d112e98a43c43e0b811f5860136bd46ba8145db922f2666d5e51329` |
 
 Applied from round 1: the 30 % margin stated honestly (`c4b29f1`), agent-days measured, `choose_sectors` read (every sector of the light curve, so the T2a ceiling holds approximately), the forecast offered to the maintainer.
+
+Round 2 ran under the maintainer's second set of decisions of 2026-11-10 (item 2, "one of the 2 remaining consultations"); one consultation remains. Its verdict agrees with path (ii). Applied: the T2a what-if's scenario with only `systematics`'s `not_enough_data` kept (point 0.696 to 0.787; only the upper sampling bound, 0.902, reaches the minimum), the record's "mostly kept" replaced by the share needed, the two literature statements read by Claude (sources file, item 5), the memory notes corrected, the agent-day and budget risks of path (i), Codex's end-of-round review of the round's commits, and the affected tests.
 
 ## The forecast of T2a and the refusal above 20 sectors
 
