@@ -89,13 +89,22 @@ def _run(out, shards=SHARDS, **kw):
     return driver.Run(out, job, shards, "fp", clock=sunday, check_placement=PLACED, **kw)
 
 
+def _pids_on_file(charge) -> bool:
+    """The charge file's worker identities; the driver replaces it atomically, and on Windows a
+    read during the replacement is refused (CI run 42817682415): that read is retried."""
+    try:
+        return bool(json.loads(charge.read_text("utf-8"))["pids"])
+    except (PermissionError, FileNotFoundError, json.JSONDecodeError):
+        return False
+
+
 def _kill_after(proc, sidecars, count):
     deadline = time.monotonic() + 200
     charge = sidecars.parent / "charges" / "b00000.json"
     while time.monotonic() < deadline:
         if sidecars.exists() and len(list(sidecars.glob("*.json"))) >= count:
             # on Windows, the workers' identities are on file before the controller dies
-            if sys.platform != "win32" or json.loads(charge.read_text("utf-8"))["pids"]:
+            if sys.platform != "win32" or _pids_on_file(charge):
                 break
         time.sleep(0.02)
     proc.kill()
