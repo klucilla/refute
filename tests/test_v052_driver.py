@@ -25,7 +25,12 @@ SHARDS = [(f"s{i:03d}", i) for i in range(24)]
 
 
 def job(i: int) -> bytes:
-    """A deterministic result that depends on its seed only; shard 5 records an error outcome."""
+    """A deterministic result that depends on its seed only; shard 5 records an error outcome.
+
+    Each shard also takes at least 0.25 s of wall clock (a sleep: no processor time, the same
+    bytes), so a fast runner cannot finish all 24 before the kill test interrupts it (CI run
+    42885945855, Windows, Python 3.13: 24 of 24 done before the kill landed)."""
+    time.sleep(0.25)
     if i == 5:
         return json.dumps({"shard": i, "status": "ERROR"}, sort_keys=True).encode() + b"\n"
     rng = np.random.default_rng([20261108, i])
