@@ -109,6 +109,17 @@ Applied from round 1: the 30 % margin stated honestly (`c4b29f1`), agent-days me
 
 Round 2 ran under the maintainer's second set of decisions of 2026-11-10 (item 2, "one of the 2 remaining consultations"); one consultation remains. Its verdict agrees with path (ii). Applied: the T2a what-if's scenario with only `systematics`'s `not_enough_data` kept (point 0.696 to 0.787; only the upper sampling bound, 0.902, reaches the minimum), the record's "mostly kept" replaced by the share needed, the two literature statements read by Claude (sources file, item 5), the memory notes corrected, the agent-day and budget risks of path (i), Codex's end-of-round review of the round's commits, and the affected tests.
 
+## The closing record
+
+The maintainer's decision of 2026-11-10, third set (#216, item 2 (d)): Codex reviews the [closing record](../../validation/v0.5.2/closing-record.md) in at most three rounds. Codex CLI 0.167.0-alpha.3.2, a new conversation, read only.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [closing-record-round-1-answer.md](closing-record-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (12 findings) | `e922a819228bb146485963c608b9f946227d96d41e5a4f7c0412e69c635ca8c7` |
+| 2 | [closing-record-round-2-answer.md](closing-record-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (12 confirmed applied, 3 new) | `5c0474f668072d0ac2c7081510a2b78c0f991bfef64c6f90d523137bc449e209` |
+
+Tokens: round 1, 1,668,585 input (1,530,880 cached) and 10,276 output; round 2, 2,167,149 (2,018,176) and 13,482. Every finding was applied as Codex wrote it. From round 1: the background sub-check's attribution, the sinusoid's zero (a reported power lower bound, not an impossibility; the other nine at 0.492 to 0.945, checked against the records), the procedural refusals and the group variance's undiagnosed branch, and the `odd_even` and `period_alias` powers are all "undetermined"; the 51 losses are v0.4-kept injections blocked by version 4's present rules, not a measure of #185; the D2 and T2a infeasibility requirements (paired gains, the absolute allowance, sampling uncertainty); the defect statement is bounded by the frozen diagnosis; the caps' qualifications. From round 2: the ROADMAP's summary, the condition "if round 3 also ends without success", and the method status's wording.
+
 ## The diagnosis of T2a's losses
 
 The maintainer's decision of 2026-11-10, third set (#216, item 1): rerun T2a's 80 development injections keeping the messages and inputs of every INCONCLUSIVE, and classify each loss as missing data, a lack of power with the data present, or a code defect, within the forecast's 25 CPU-h. Codex reviewed the design of [`forecast_t2a_diagnosis.py`](../../validation/v0.5.2/stage2/forecast_t2a_diagnosis.py) before the run, in a new conversation, read only. Codex CLI 0.167.0-alpha.3.2.
