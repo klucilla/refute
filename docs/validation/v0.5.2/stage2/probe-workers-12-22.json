@@ -1,0 +1,26 @@
+{
+ "label": "CPU per unit by worker count; it decides nothing",
+ "method_status": "not_validated",
+ "results": [
+  {
+   "cpu_ratio_to_12_workers": 1.0,
+   "cpu_seconds_per_unit": 0.6810724431818181,
+   "kernel_seconds_per_unit": 0.021209161931818182,
+   "units": 7040,
+   "units_per_hour": 16427.858939824586,
+   "user_seconds_per_unit": 0.65986328125,
+   "wall_seconds": 1542.7451680000013,
+   "workers": 12
+  },
+  {
+   "cpu_ratio_to_12_workers": 1.7817176338703793,
+   "cpu_seconds_per_unit": 1.2134787819602273,
+   "kernel_seconds_per_unit": 0.04345259232954545,
+   "units": 7040,
+   "units_per_hour": 16667.028083735015,
+   "user_seconds_per_unit": 1.1700261896306818,
+   "wall_seconds": 1520.607025600002,
+   "workers": 22
+  }
+ ]
+}

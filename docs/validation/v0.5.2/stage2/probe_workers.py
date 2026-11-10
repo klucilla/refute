@@ -31,8 +31,9 @@ if os.environ.get("REFUTE_PROBE_CHUNK"):
     from refute.packs.tess import detrend_fast
 
     detrend_fast.CHUNK_ROWS = int(os.environ["REFUTE_PROBE_CHUNK"])
-SHARDS = int(os.environ.get("REFUTE_PROBE_SHARDS", "176"))  # more shards: less start-up weight
-PER_SHARD = 4
+SHARDS = int(os.environ.get("REFUTE_PROBE_SHARDS", "176"))
+# Units per shard: 4 lets the start of each shard dominate; the acceptance's shards hold 40 to 128.
+PER_SHARD = int(os.environ.get("REFUTE_PROBE_PER_SHARD", "4"))
 SETTINGS = {1: None, 12: list(range(8, 32, 2)), 22: None}
 if os.environ.get("REFUTE_PROBE_ONLY"):
     SETTINGS = {12: list(range(8, 32, 2))}
@@ -41,7 +42,9 @@ if os.environ.get("REFUTE_PROBE_ONLY"):
 RECORD = "probe-workers.json"
 if os.environ.get("REFUTE_PROBE_12_22"):
     SETTINGS = {12: list(range(8, 32, 2)), 22: None}
-    RECORD = "probe-workers-12-22.json"
+    RECORD = (
+        "probe-workers-12-22.json" if PER_SHARD == 4 else f"probe-workers-12-22-{PER_SHARD}.json"
+    )
 # (section, shape, sectors, weight): roughly the acceptance's hours
 MIX = (
     ("a08", "group", 2, 1), ("a08", "group", 3, 2), ("a08", "group", 4, 3),

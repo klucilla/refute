@@ -63,6 +63,21 @@ The first projection for A0 was 3,781 CPU-h. The batched detrending, the reuse o
 
 The comb reference check was missing from this table until Codex's end-of-round review; its 40 CPU-h is an estimate, priced by its first 5 %. The same review restored the production preprocessing for A0.8's noise-free truth, so the A0 line of 1,048 CPU-h is low and is measured again before the acceptance. The planning cap's total passes 3,100 in this table: the limit that binds is the hard maximum on the projection (`budgeted.py`, which every line of this table runs through), and the stop column can also sum above it; the maximum wins. 204 hours of wall clock from this morning would reach the pause of 18 November at 20:00 (227 hours away) only with no gaps, and development comes first, so the work is expected to pause and to resume on the maintainer's release.
 
+## The placement, measured (2026-11-09, at night)
+
+The decision's second condition, measured with [`probe_workers.py`](probe_workers.py) on version 4's A0 units (development label `refute-v052-dev:a0v4-workers`), off business hours:
+
+| Shards x units | Workers | Units per hour | CPU seconds per unit | Wall (s) | Record |
+|---|---|---|---|---|---|
+| 1,760 x 4 | 12, one per physical core | 16,428 | 0.68 | 1,543 | [`probe-workers-12-22.json`](probe-workers-12-22.json) |
+| 1,760 x 4 | 22 | 16,667 | 1.21 | 1,521 | the same |
+| 132 x 64 | 12, one per physical core | 62,309 | 0.66 | 488 | [`probe-workers-12-22-64.json`](probe-workers-12-22-64.json) |
+| 132 x 64 | 22 | 62,116 | 1.22 | 490 | the same |
+
+With 4 units per shard, the start of each shard dominates (about 3 of 12 cores busy), so that run does not decide. With 64 units per shard, close to the acceptance's 40 to 128, 12 workers keep about 11.4 cores busy, and **22 workers give the same wall clock at 1.84 times the CPU-h per unit**. The setting used is **12 workers, one per physical core** (processors 8 to 31, every second one), off business hours; in business hours the machine rules keep 10.
+
+**Wall clock.** Off business hours, 12 workers deliver about 11.4 CPU-h per hour. In business hours the adequacy check delivered about 6 CPU-h per hour with 10 workers (the machine is shared then). A week (118 hours off business hours, 50 in them) then gives about 1,650 CPU-h, 9.8 per hour on average. At that rate the remaining 2,369 CPU-h of the table above take about 242 hours (10 days) of compute alone, before development and before the adequacy's redesign is priced; the pause of 18 November at 20:00 comes first.
+
 ## What this does not establish
 
 These are projections. The per-unit costs are means of a few hundred units; the items marked "estimate" have no measurement of the final workload, and the selector's family and the full-chain sample are not designed yet. No part of this page says that version 4 is calibrated.
