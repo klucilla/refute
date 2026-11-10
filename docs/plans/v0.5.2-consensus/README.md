@@ -70,6 +70,14 @@ The maintainer's item 3 of 2026-11-09 (#216). Counts only; no definition is adop
 
 Round 1 used 913,557 input tokens (817,920 cached) and 14,759 output tokens; round 2, 2,783,950 (2,625,024 cached) and 31,750. The findings of both rounds were applied, and the status for the protocol stop is [`t3b-status.md`](../../validation/v0.5.2/stage2/t3b-status.md). No definition was adopted.
 
+Round 3 answers the maintainer's item 3 dated 2026-11-09 (#216): why the first proxy rejected 4 of the 11 accepted stars, its correction, and the recommendation among A, B and C. Codex CLI 0.167.0-alpha.3.2.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 3 | [t3b-frame-round-3-answer.md](t3b-frame-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` as a counts-only planning proxy; recommendation among A, B, C: none as written (5 findings) | `2a24e0dca486a2ce8e44fa5fec9caca2f67e8b05c9b2c5585803f180d5ff0bd0` |
+
+Round 3 used 5,349,921 input tokens (4,967,424 cached) and 48,021 output tokens (24,940 of them reasoning). Its five findings are disclosures, applied in `t3b-alternatives-r2.json` (`proxy.limits`) and in `t3b-status.md`. Claude agrees with its recommendation: none of A, B or C as written.
+
 ## The stage 2 implementation
 
 The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d94bef3`), which checks the code against the agreed design.

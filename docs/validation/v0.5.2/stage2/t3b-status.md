@@ -36,6 +36,25 @@ purity) found 35 coherent statements of a stellar eclipsing binary on the target
 scenario is 20.8 metadata acceptances under historical rate transport, but the expected yield for an
 admissible, adjudicated E population is unknown; reaching 11 has not been established.
 
+## The proxy corrected (2026-11-10, the maintainer's item 3 dated 2026-11-09)
+
+**Why the first proxy rejected 4 of the 11 accepted stars** ([`t3b_proxy_diagnosis.py`](t3b_proxy_diagnosis.py), [`t3b-proxy-diagnosis.json`](t3b-proxy-diagnosis.json)): three failed D-1/D-2 because the TOI table's `Sectors` column lists the sectors of the TOI's alert (one each), not every sector with a 120-s light curve (3 to 6 measured by the walk); one failed D-4 because the TOI table's stellar log g (3.9) is not the TIC value the walk read (4.02).
+
+**The correction** ([`t3b_alternatives_r2.py`](t3b_alternatives_r2.py), [`t3b-alternatives-r2.json`](t3b-alternatives-r2.json); the first record stays as it was): D-1 and D-2 from TESS's 120-s target lists S001 to S107 (v0.4's attempt 4, retrieved 2026-10-29), D-2's span approximated by sector numbers, D-7 from the lists' magnitude; D-4 to D-6 no longer applied, since the TOI table's stellar columns are not TIC values (no tolerance band fitted to the accepted stars). Each kept clause agrees with the walk on 41 of 41 walked stars; no accepted star is rejected; the strata become 11 of 25 (passing) and 0 of 16 (failing).
+
+| Set | Never walked | Passing the proxy | Flat-rate scenario | Two-strata scenario |
+|---|---|---|---|---|
+| A | 165 | 39 | 44.3 | 17.2 |
+| B | 145 | 37 | 38.9 | 16.3 |
+| C | 124 | 31 | 33.3 | 13.6 |
+| E | 103 | 17 | 27.6 | 7.5 |
+| The approved frame (TESS-EB) | 22 | 9 | 5.9 | 4.0 |
+| The approved frame with E | 120 | 23 | 32.2 | 10.1 |
+
+**Disclosures** (Codex's round 3): the same 41 walked outcomes informed the correction and its check, so 41 of 41 is development agreement, not independent validation; every walked star passes D-2 and their smallest sector gap is 26, so the 11-sector boundary is untested, and sector numbers are neither elapsed time nor calendar years; D-7 uses the first list's magnitude, not the walk's exact TIC value; list membership is not an available SPOC product; 0 of 16 is an observed rate, not a zero probability. The proxy is still never a domain exclusion; the real domain keeps its TIC-based thresholds.
+
+**The recommendation among A, B and C: none as written (Claude and Codex agree).** Correcting the domain proxy does not touch the class: A's TESS disposition does not say which star eclipses, B's comment match is not an affirmative target classification, and C intersects correlated information without adding localization, so it is smaller but not shown to be purer. None is the more conservative choice for validity. A qualified version would need positive, attributable evidence that the target eclipses, a frozen conflict rule (nearby-source evidence and unresolved identity or period make a star ineligible), an independent human adjudication with its rubric and acceptance criterion fixed first, and qualification before any of Refute's results. Under the further assumption that the passing-stratum rate (11 of 25) survives qualification, A, B and C would need to keep about 64 %, 68 % and 81 % of their proxy-passing stars to reach a mean of 11: conditional thresholds, not measured retention. A, B or C alone would also drop 23, 35 and 36 members of the approved frame: replacing the frame and adding to it are different proposals.
+
 ## What the union would need before adoption
 
 1. Review by a knowledgeable person of a reproducibly selected sample, of all identity, period and class

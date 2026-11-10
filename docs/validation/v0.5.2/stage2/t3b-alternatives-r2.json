@@ -1,0 +1,147 @@
+{
+ "definitions": {
+  "A_screening_tess_disposition_eb_without_neb_text": {
+   "beyond_the_approved_frame": 153,
+   "dropped_from_the_approved_frame": 23,
+   "kept_from_the_approved_frame": 40,
+   "members": 193,
+   "never_walked": 165,
+   "never_walked_passing_the_proxy": 39,
+   "scenario_flat_rate": 44.268292682926834,
+   "scenario_proxy_passing_subset_only": 17.16,
+   "scenario_two_strata": 17.16
+  },
+  "B_screening_eb_in_comments_without_neb_text": {
+   "beyond_the_approved_frame": 138,
+   "dropped_from_the_approved_frame": 35,
+   "kept_from_the_approved_frame": 28,
+   "members": 166,
+   "never_walked": 145,
+   "never_walked_passing_the_proxy": 37,
+   "scenario_flat_rate": 38.90243902439025,
+   "scenario_proxy_passing_subset_only": 16.28,
+   "scenario_two_strata": 16.28
+  },
+  "C_screening_both_A_and_B": {
+   "beyond_the_approved_frame": 117,
+   "dropped_from_the_approved_frame": 36,
+   "kept_from_the_approved_frame": 27,
+   "members": 144,
+   "never_walked": 124,
+   "never_walked_passing_the_proxy": 31,
+   "scenario_flat_rate": 33.268292682926834,
+   "scenario_proxy_passing_subset_only": 13.64,
+   "scenario_two_strata": 13.64
+  },
+  "E_positive_tfop_note_on_the_target": {
+   "beyond_the_approved_frame": 98,
+   "dropped_from_the_approved_frame": 45,
+   "kept_from_the_approved_frame": 18,
+   "members": 116,
+   "never_walked": 103,
+   "never_walked_passing_the_proxy": 17,
+   "scenario_flat_rate": 27.634146341463417,
+   "scenario_proxy_passing_subset_only": 7.48,
+   "scenario_two_strata": 7.48
+  },
+  "the_approved_frame_tess_eb": {
+   "beyond_the_approved_frame": 0,
+   "dropped_from_the_approved_frame": 0,
+   "kept_from_the_approved_frame": 63,
+   "members": 63,
+   "never_walked": 22,
+   "never_walked_passing_the_proxy": 9,
+   "scenario_flat_rate": 5.902439024390244,
+   "scenario_proxy_passing_subset_only": 3.96,
+   "scenario_two_strata": 3.96
+  },
+  "the_approved_frame_union_E": {
+   "beyond_the_approved_frame": 98,
+   "dropped_from_the_approved_frame": 0,
+   "kept_from_the_approved_frame": 63,
+   "members": 161,
+   "never_walked": 120,
+   "never_walked_passing_the_proxy": 23,
+   "scenario_flat_rate": 32.19512195121951,
+   "scenario_proxy_passing_subset_only": 10.12,
+   "scenario_two_strata": 10.12
+  }
+ },
+ "first_record": "t3b-alternatives.json (the first proxy, kept as it was)",
+ "historical_rates_not_forecasts": {
+  "flat": {
+   "accepted": 11,
+   "interval": [
+    0.14221300334087128,
+    0.4294447052660821
+   ],
+   "walked": 41
+  },
+  "proxy_fails": {
+   "accepted": 0,
+   "interval": [
+    0.0,
+    0.20590721420782268
+   ],
+   "walked": 16
+  },
+  "proxy_passes": {
+   "accepted": 11,
+   "interval": [
+    0.24402366514720805,
+    0.6507183660086642
+   ],
+   "walked": 25
+  }
+ },
+ "label": "T3b: other definitions of the population; counts only; none is adopted",
+ "method_status": "not_validated",
+ "needed_acceptances": 11,
+ "observing_notes": {
+  "notes_on_pool_stars": 1700,
+  "source": "obsnotes-fetch.json, retrieved 2026-11-09T11:21:36+00:00",
+  "stars_with_a_lexical_nearby_flag": 545,
+  "stars_with_a_positive_note": 129,
+  "stars_with_both_left_out_of_E": 13
+ },
+ "pool": {
+  "tess_eb_members_with_a_nearby_note": 23,
+  "tess_eb_members_with_a_positive_note": 19,
+  "tess_eb_members_with_neb_text": 14,
+  "tess_eb_members_with_tess_disposition_eb": 50,
+  "toi_false_positives": 856,
+  "with_eb_text": 186,
+  "with_neb_text": 289,
+  "with_tess_disposition_eb": 397
+ },
+ "proxy": {
+  "accepted_stars_rejected": 0,
+  "limits": {
+   "d1_lists_not_products": "list membership is not the same as an available SPOC 120-s product; the sector sets agree on all 41",
+   "d2_boundary_untested": "every walked star passes D-2; the smallest sector gap among them is 26, so the 11-sector boundary is never tested, and sector numbers are not elapsed time (sector lengths vary) nor calendar years",
+   "d7_first_list_magnitude": "Tmag is the first list's value, not the walk's exact TIC value; decisions agree on all 41, boundary cases can differ",
+   "development_evidence": "the same 41 walked outcomes informed the correction and its check: agreement on them is not independent validation",
+   "zero_rate_is_a_scenario": "0 of 16 walked stars failing the proxy were accepted: an observed rate, not a zero probability; the scenarios assume it transports"
+  },
+  "proxy_check_against_the_walk": {
+   "d1_sectors": {
+    "agree": 41,
+    "proxy_fails_walk_passes": 0,
+    "proxy_passes_walk_fails": 0
+   },
+   "d2_span": {
+    "agree": 41,
+    "proxy_fails_walk_passes": 0,
+    "proxy_passes_walk_fails": 0
+   },
+   "d7_tmag": {
+    "agree": 41,
+    "proxy_fails_walk_passes": 0,
+    "proxy_passes_walk_fails": 0
+   }
+  },
+  "target_lists": ".cache/v04/inputs-attempts/attempt-04/lists, sectors 1 to 107 (107 lists), retrieved 2026-10-29",
+  "version": "r2: 120-s target lists for D-1, D-2 (span by sector number) and D-7"
+ },
+ "toi_table": "toi-fetch.json, retrieved 2026-11-09T11:07:01+00:00"
+}

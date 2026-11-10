@@ -146,7 +146,9 @@ def noted_sets(path: Path, pool: set[int]) -> tuple[set[int], set[int], int]:
     return positive, nearby, notes
 
 
-def main() -> None:
+def main(proxy=None, out_name: str = "t3b-alternatives.json", extra: dict | None = None) -> dict:
+    """``proxy`` replaces ``proxy_passes`` (``t3b_alternatives_r2.py``); the default output and
+    its bytes are those of the first record."""
     from refute.packs.tess.calib05 import c3select
     from refute.packs.tess.calib05.values import C3
     from refute.packs.tess.discover import selection as sel
@@ -165,7 +167,7 @@ def main() -> None:
     accepted = {int(d["tic_id"]) for d in walk["decisions"] if d["reason"] == "accepted"}
 
     by_tic = {p.tic_id: p.row for p in pool}
-    passes = {t for t, r in by_tic.items() if proxy_passes(r)}
+    passes = {t for t, r in by_tic.items() if (proxy or proxy_passes)(r)}
     walked_in = walked & set(by_tic)
     n_pass, n_fail = len(walked_in & passes), len(walked_in - passes)
     k_pass, k_fail = len(accepted & walked_in & passes), len(accepted & walked_in - passes)
@@ -246,11 +248,11 @@ def main() -> None:
         },
         "needed_acceptances": NEED_ACCEPT,
         "definitions": rows,
+        **(extra or {}),
     }
-    (HERE / "t3b-alternatives.json").write_text(
-        json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8"
-    )
+    (HERE / out_name).write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", "utf-8")
     print(json.dumps(doc, indent=1, sort_keys=True))
+    return doc
 
 
 if __name__ == "__main__":

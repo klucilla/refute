@@ -1,0 +1,332 @@
+{
+ "accepted": 11,
+ "failing_clauses_among_rejected": {
+  "logg_at_least_4": 1,
+  "sector_span_at_least_12": 3,
+  "sectors_at_least_3": 3
+ },
+ "label": "why the T3b proxy rejected accepted stars; it decides nothing",
+ "method_status": "not_validated",
+ "rejected_by_the_proxy": 4,
+ "stars": [
+  {
+   "proxy_by_row": [
+    {
+     "fails": [],
+     "values": {
+      "logg": 4.16217,
+      "radius": 1.5808299779892,
+      "radius_err": 0.0739598,
+      "sector_span": 62,
+      "sectors": 22,
+      "teff": 6366.0,
+      "tmag": 10.6559
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": true,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 35,
+    "light_curve_span_days": 2606.467,
+    "light_curve_years": 7,
+    "tic_Teff": 6443.0,
+    "tic_Tmag": 10.6559,
+    "tic_logg": 4.15424,
+    "tic_rad_rel_err": 0.046785422847491515
+   },
+   "walk_position": 2
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [],
+     "values": {
+      "logg": 4.20608,
+      "radius": 1.48854994773865,
+      "radius_err": 0.0707236,
+      "sector_span": 54,
+      "sectors": 4,
+      "teff": 6422.0,
+      "tmag": 10.1913
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": true,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 6,
+    "light_curve_span_days": 2528.745,
+    "light_curve_years": 5,
+    "tic_Teff": 6518.0,
+    "tic_Tmag": 10.1913,
+    "tic_logg": 4.21964,
+    "tic_rad_rel_err": 0.047511739612374454
+   },
+   "walk_position": 13
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [],
+     "values": {
+      "logg": 4.24852,
+      "radius": 1.4495600461959839,
+      "radius_err": 0.0612664,
+      "sector_span": 93,
+      "sectors": 40,
+      "teff": 6380.0,
+      "tmag": 10.0433
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": true,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 29,
+    "light_curve_span_days": 2582.48,
+    "light_curve_years": 5,
+    "tic_Teff": 6674.0,
+    "tic_Tmag": 10.0433,
+    "tic_logg": 4.26481,
+    "tic_rad_rel_err": 0.04226551505284362
+   },
+   "walk_position": 17
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [],
+     "values": {
+      "logg": 4.48275,
+      "radius": 0.987583,
+      "radius_err": 0.0471407,
+      "sector_span": 72,
+      "sectors": 37,
+      "teff": 5929.0,
+      "tmag": 10.8037
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": true,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 37,
+    "light_curve_span_days": 1952.907,
+    "light_curve_years": 5,
+    "tic_Teff": 5929.0,
+    "tic_Tmag": 10.8037,
+    "tic_logg": 4.48275,
+    "tic_rad_rel_err": 0.04773340569855901
+   },
+   "walk_position": 18
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [
+      "logg_at_least_4"
+     ],
+     "values": {
+      "logg": 3.9,
+      "radius": 1.91,
+      "radius_err": 0.09,
+      "sector_span": 53,
+      "sectors": 3,
+      "teff": 6655.0,
+      "tmag": 9.99028
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": false,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 5,
+    "light_curve_span_days": 2530.375,
+    "light_curve_years": 5,
+    "tic_Teff": 6655.0,
+    "tic_Tmag": 9.99028,
+    "tic_logg": 4.02116,
+    "tic_rad_rel_err": 0.047152689588134775
+   },
+   "walk_position": 21
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [],
+     "values": {
+      "logg": 4.13711,
+      "radius": 1.6430200338363647,
+      "radius_err": 0.0721885,
+      "sector_span": 67,
+      "sectors": 3,
+      "teff": 6531.44,
+      "tmag": 10.6479
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": true,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 3,
+    "light_curve_span_days": 1819.899,
+    "light_curve_years": 3,
+    "tic_Teff": 6531.44,
+    "tic_Tmag": 10.6479,
+    "tic_logg": 4.13711,
+    "tic_rad_rel_err": 0.04393647064551862
+   },
+   "walk_position": 22
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [],
+     "values": {
+      "logg": 4.13,
+      "radius": 1.46,
+      "radius_err": 0.08,
+      "sector_span": 60,
+      "sectors": 30,
+      "teff": 5672.9,
+      "tmag": 9.84566
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": true,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 42,
+    "light_curve_span_days": 1952.906,
+    "light_curve_years": 6,
+    "tic_Teff": 5786.0,
+    "tic_Tmag": 9.84566,
+    "tic_logg": 4.12523,
+    "tic_rad_rel_err": 0.054498274634386806
+   },
+   "walk_position": 25
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [
+      "sectors_at_least_3",
+      "sector_span_at_least_12"
+     ],
+     "values": {
+      "logg": 4.19,
+      "radius": 1.47459,
+      "radius_err": 0.322004,
+      "sector_span": 0,
+      "sectors": 1,
+      "teff": 6421.5,
+      "tmag": 11.2932
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": false,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 6,
+    "light_curve_span_days": 2907.992,
+    "light_curve_years": 5,
+    "tic_Teff": 6421.5,
+    "tic_Tmag": 11.2932,
+    "tic_logg": 4.08773,
+    "tic_rad_rel_err": 0.06008999735301902
+   },
+   "walk_position": 30
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [],
+     "values": {
+      "logg": 4.13,
+      "radius": 1.69,
+      "radius_err": 0.07,
+      "sector_span": 43,
+      "sectors": 7,
+      "teff": 6477.6,
+      "tmag": 9.53591
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": true,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 13,
+    "light_curve_span_days": 1873.225,
+    "light_curve_years": 4,
+    "tic_Teff": 6666.0,
+    "tic_Tmag": 9.53591,
+    "tic_logg": 4.13041,
+    "tic_rad_rel_err": 0.04156039613332229
+   },
+   "walk_position": 36
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [
+      "sectors_at_least_3",
+      "sector_span_at_least_12"
+     ],
+     "values": {
+      "logg": 4.43,
+      "radius": 0.97,
+      "radius_err": 0.05,
+      "sector_span": 0,
+      "sectors": 1,
+      "teff": 5326.0,
+      "tmag": 9.92871
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": false,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 3,
+    "light_curve_span_days": 1094.399,
+    "light_curve_years": 3,
+    "tic_Teff": 5326.0,
+    "tic_Tmag": 9.92871,
+    "tic_logg": 4.42862,
+    "tic_rad_rel_err": 0.05262740579683212
+   },
+   "walk_position": 38
+  },
+  {
+   "proxy_by_row": [
+    {
+     "fails": [
+      "sectors_at_least_3",
+      "sector_span_at_least_12"
+     ],
+     "values": {
+      "logg": 4.27912,
+      "radius": 1.30937,
+      "radius_err": 0.0584171,
+      "sector_span": 0,
+      "sectors": 1,
+      "teff": 6198.0,
+      "tmag": 9.25319
+     }
+    }
+   ],
+   "proxy_passes_on_some_row": false,
+   "toi_rows": 1,
+   "walk_measured": {
+    "light_curve_sectors": 3,
+    "light_curve_span_days": 1819.899,
+    "light_curve_years": 3,
+    "tic_Teff": 6198.0,
+    "tic_Tmag": 9.25319,
+    "tic_logg": 4.27912,
+    "tic_rad_rel_err": 0.04461466201302917
+   },
+   "walk_position": 41
+  }
+ ]
+}
