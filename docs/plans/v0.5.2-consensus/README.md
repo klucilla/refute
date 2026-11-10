@@ -109,6 +109,18 @@ Applied from round 1: the 30 % margin stated honestly (`c4b29f1`), agent-days me
 
 Round 2 ran under the maintainer's second set of decisions of 2026-11-10 (item 2, "one of the 2 remaining consultations"); one consultation remains. Its verdict agrees with path (ii). Applied: the T2a what-if's scenario with only `systematics`'s `not_enough_data` kept (point 0.696 to 0.787; only the upper sampling bound, 0.902, reaches the minimum), the record's "mostly kept" replaced by the share needed, the two literature statements read by Claude (sources file, item 5), the memory notes corrected, the agent-day and budget risks of path (i), Codex's end-of-round review of the round's commits, and the affected tests.
 
+## The diagnosis of T2a's losses
+
+The maintainer's decision of 2026-11-10, third set (#216, item 1): rerun T2a's 80 development injections keeping the messages and inputs of every INCONCLUSIVE, and classify each loss as missing data, a lack of power with the data present, or a code defect, within the forecast's 25 CPU-h. Codex reviewed the design of [`forecast_t2a_diagnosis.py`](../../validation/v0.5.2/stage2/forecast_t2a_diagnosis.py) before the run, in a new conversation, read only. Codex CLI 0.167.0-alpha.3.2.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [t2a-diagnosis-round-1-answer.md](t2a-diagnosis-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (8 findings) | `256915c6debfaf0a0a73f1171afe19cff9cf86165855f143fb8da8c66f1bd8ca` |
+| 2 | [t2a-diagnosis-round-2-answer.md](t2a-diagnosis-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (9 findings) | `3af835ace03c737d3ce42d0b145ce3ac6eeb86a7ad61c0c5a047e1d73e79b1ff` |
+| 3 | [t2a-diagnosis-round-3-answer.md](t2a-diagnosis-round-3-answer.md) | gpt-6.1-sol, high | `REFUTED` (10 points) | `63697d0aab70253ec43e0cfd7555837121acad5142829b862fa6e2a8c5e27538` |
+
+Tokens: round 1, 771,587 input (685,696 cached) and 6,401 output; round 2, 1,415,837 (1,297,664) and 10,724; round 3, 2,360,833 (2,219,520) and 15,632. Every finding of rounds 1 and 2 was applied. **The tie-break, applied:** after three rounds Codex's verdict stayed `REFUTED`, so the more conservative option wins and round 3 was adopted as Codex wrote it: the comparison with the injection's expected depth (a box average on a uniform grid, not the measurement operator on the observed cadences) is not validated, so it only attaches unresolved audit warnings to the blockers, of any status, and never classifies one as a code defect; its boundary is half the expected depth minus three errors and twice it plus three errors; the common-event case recomputes `expected_sap_depth`'s formula (not positive: a lack of power; positive with no measurement: a suspected defect); an instrumentation or classification failure writes a binding sentinel that stops the run at once, and the threshold of six (10 % of the 51 losses) is kept for causal code defects. Rounds 1 and 2 had already brought: the tests kept at three points (`aperture_depth` before its deferral), the quarantine of an injection that does not reproduce the forecast's record or whose instrumentation fails, the per-product transit coverage and file SHA-256, lossless event lists, a binding preflight, the smokes as their own ledger part with a written acceptance that `run` requires, and the cap reserved for the driver's overshoot.
+
 ## The forecast of T2a and the refusal above 20 sectors
 
 The maintainer's decisions of 2026-11-10 (#216, items 1 and 2). Codex CLI 0.167.0-alpha.3.2, in the stage 2 design conversation.
