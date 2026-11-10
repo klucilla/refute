@@ -1,0 +1,2408 @@
+{
+ "audit_warnings": 0,
+ "blockers_by_class": {
+  "b": 44,
+  "d": 31,
+  "e": 15,
+  "u": 6
+ },
+ "blockers_by_test_and_class": {
+  "nearby_contamination FAIL: e": 14,
+  "odd_even INCONCLUSIVE: b": 4,
+  "odd_even INCONCLUSIVE: d": 6,
+  "odd_even INCONCLUSIVE: u": 6,
+  "period_alias FAIL: e": 1,
+  "period_alias INCONCLUSIVE: b": 2,
+  "sinusoid INCONCLUSIVE: b": 15,
+  "systematics INCONCLUSIVE: b": 23,
+  "systematics INCONCLUSIVE: d": 25
+ },
+ "cpu_hours": 2.591,
+ "decision": "The maintainer, 2026-11-10 (third set, #216), item 1: rerun T2a's 80 development injections keeping the messages and input data of each INCONCLUSIVE (and of aperture_depth), within the forecast's 25 CPU-h; no change to src/, to the rules or to T2a's fingerprint.",
+ "defect_flags": [],
+ "fingerprint": "af8277abd9c4741c",
+ "instrumentation_sentinel": false,
+ "label": "diagnosis, decides nothing (#216): T2a's losses with battery version 4",
+ "losses": [
+  {
+   "blockers": [
+    {
+     "cls": "u",
+     "evidence": "no calibrated error for the odd/even difference",
+     "label": "insufficient_sensitivity",
+     "message": "no calibrated error for the odd/even difference",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)",
+        "sap": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      },
+      {
+       "a0_depth_none": {
+        "pdcsap": "the group variance was refused (a0.group_variance)",
+        "sap_minus_expected": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the PDCSAP flux",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance); sap_vs_pdcsap: PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: no transit measured in the PDCSAP flux; background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-140123544/2",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "d",
+     "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "message": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 50 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 50 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "causes": [
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "background"
+      },
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "label_defect": false,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 289.7759329593131,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.15414049402588814,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 289.7759329593131,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 289.7759329593131,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 289.776 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 289.776 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-140867523/8",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "main": {
+       "alternative": 7576.682605036558,
+       "effect": "sinusoid at the candidate's period, peak to trough = depth",
+       "probability": 0.8977466223567255,
+       "required_probability": 0.9,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid at the candidate's period, peak to trough = depth 7576.68 ppm not detectable (0.898 < 0.90) (the dip needs a transit on top of a sinusoid (BIC gain 7622, 968 in-transit cadences); not near a known systematic period)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid at the candidate's period, peak to trough = depth 7576.68 ppm not detectable (0.898 < 0.90) (the dip needs a transit on top of a sinusoid (BIC gain 7622, 968 in-transit cadences); not near a known systematic period)",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "period_alias"
+    }
+   ],
+   "injection": "TIC-166761808/1",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.3,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.300 < 0.95) (no problem in 3 sub-checks: momentum dumps (73 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.300 < 0.95) (no problem in 3 sub-checks: momentum dumps (73 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-202295593/2",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.061,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.061 < 0.95) (no problem in 3 sub-checks: momentum dumps (73 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.061 < 0.95) (no problem in 3 sub-checks: momentum dumps (73 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-202295593/7",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 10 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 10 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.0845,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.085 < 0.95) (no problem in 3 sub-checks: momentum dumps (63 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.085 < 0.95) (no problem in 3 sub-checks: momentum dumps (63 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-23708215/6",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.2465,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.246 < 0.95) (no problem in 3 sub-checks: momentum dumps (88 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.246 < 0.95) (no problem in 3 sub-checks: momentum dumps (88 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-240171830/1",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-248356317/8",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.471,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.471 < 0.95) (no problem in 3 sub-checks: momentum dumps (81 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.471 < 0.95) (no problem in 3 sub-checks: momentum dumps (81 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-255927008/0",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.009,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.009 < 0.95) (no problem in 3 sub-checks: momentum dumps (81 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.009 < 0.95) (no problem in 3 sub-checks: momentum dumps (81 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-255927008/6",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-267039954/2",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "main": {
+       "alternative": 832.6074850418538,
+       "effect": "odd/even depth difference",
+       "probability": 0.790876427837959,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: odd/even depth difference 832.607 ppm not detectable (0.791 < 0.95) (odd/even depths differ by 0.9 sigma (16 odd, 15 even))",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: odd/even depth difference 832.607 ppm not detectable (0.791 < 0.95) (odd/even depths differ by 0.9 sigma (16 odd, 15 even))",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.0125,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.013 < 0.95) (no problem in 3 sub-checks: momentum dumps (56 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.013 < 0.95) (no problem in 3 sub-checks: momentum dumps (56 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 832.6074850418538,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.6042040618397033,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 832.6074850418538,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.6042040618397033,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 832.6074850418538,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.6042040618397033,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 832.607 ppm not detectable (0.604 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 832.607 ppm not detectable (0.604 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-29267852/3",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "u",
+     "evidence": "no calibrated error for the odd/even difference",
+     "label": "insufficient_sensitivity",
+     "message": "no calibrated error for the odd/even difference",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)",
+        "sap": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      },
+      {
+       "a0_depth_none": {
+        "pdcsap": "the group variance was refused (a0.group_variance)",
+        "sap_minus_expected": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the PDCSAP flux",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance); sap_vs_pdcsap: PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: no transit measured in the PDCSAP flux; background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-334900819/0",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "d",
+     "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "message": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal; median CROWDSAP 0.71 < 0.8 (TIC cone query of 120 arcsec returned 88 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal; median CROWDSAP 0.71 < 0.8 (TIC cone query of 120 arcsec returned 88 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "causes": [
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "background"
+      },
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "label_defect": false,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 1075.5870471688452,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.105874071710232,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 1075.5870471688452,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 1075.5870471688452,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1075.59 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1075.59 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-336265633/2",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "u",
+     "evidence": "no calibrated error for the odd/even difference",
+     "label": "insufficient_sensitivity",
+     "message": "no calibrated error for the odd/even difference",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)",
+        "sap": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      },
+      {
+       "a0_depth_none": {
+        "pdcsap": "the group variance was refused (a0.group_variance)",
+        "sap_minus_expected": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the PDCSAP flux",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance); sap_vs_pdcsap: PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: no transit measured in the PDCSAP flux; background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-349577085/7",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "main": {
+       "alternative": 4634.497314515281,
+       "effect": "sinusoid at the candidate's period, peak to trough = depth",
+       "probability": 0.20687974633588707,
+       "required_probability": 0.9,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid at the candidate's period, peak to trough = depth 4634.5 ppm not detectable (0.207 < 0.90) (the dip needs a transit on top of a sinusoid (BIC gain 61820, 1697 in-transit cadences); not near a known systematic period)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid at the candidate's period, peak to trough = depth 4634.5 ppm not detectable (0.207 < 0.90) (the dip needs a transit on top of a sinusoid (BIC gain 61820, 1697 in-transit cadences); not near a known systematic period)",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "period_alias"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the comb measured none of the 11 event(s)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the comb measured none of the 11 event(s)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the comb measured none of the 11 event(s)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-364129259/5",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "d",
+     "evidence": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "message": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "cls": "e",
+     "evidence": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 114 source(s))",
+     "label": null,
+     "message": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 114 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "causes": [
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "sub_check": "background"
+      },
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid; sap_vs_pdcsap: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "label_defect": false,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid; background: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-372045060/7",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "d",
+     "evidence": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "message": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "sub_check": "background"
+      },
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid; sap_vs_pdcsap: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "label_defect": false,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid; background: A0's errors are not available: 1 sector(s) contribute measured events: outside the grid)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-37774136/0",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "main": {
+       "alternative": 566.2048646549392,
+       "effect": "odd/even depth difference",
+       "probability": 0.9172600428705122,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: odd/even depth difference 566.205 ppm not detectable (0.917 < 0.95) (odd/even depths differ by 0.1 sigma (6 odd, 8 even))",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: odd/even depth difference 566.205 ppm not detectable (0.917 < 0.95) (odd/even depths differ by 0.1 sigma (6 odd, 8 even))",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "cls": "e",
+     "evidence": "period within 1% of a known systematic period (4.567 d)",
+     "label": null,
+     "message": "period within 1% of a known systematic period (4.567 d)",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "period_alias"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.014,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.014 < 0.95) (no problem in 3 sub-checks: momentum dumps (114 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.014 < 0.95) (no problem in 3 sub-checks: momentum dumps (114 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 566.2048646549392,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.9338561204790641,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 566.2048646549392,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.9338561204790641,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 566.2048646549392,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.9338561204790641,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 566.205 ppm not detectable (0.934 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 566.205 ppm not detectable (0.934 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-394103866/0",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.021,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.021 < 0.95) (no problem in 3 sub-checks: momentum dumps (114 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.021 < 0.95) (no problem in 3 sub-checks: momentum dumps (114 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-394103866/3",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "d",
+     "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "message": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "background"
+      },
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "label_defect": false,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 332.3828118829813,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.7843548304298409,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 332.3828118829813,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 332.3828118829813,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.7843548304298409,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 332.383 ppm not detectable (0.784 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 332.383 ppm not detectable (0.784 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-397000139/1",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.203,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.203 < 0.95) (no problem in 3 sub-checks: momentum dumps (109 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.203 < 0.95) (no problem in 3 sub-checks: momentum dumps (109 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-416715793/1",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "1 contributing sector(s) [13]: outside the grid of 2 to 4"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: 1 contributing sector(s) [13]: outside the grid of 2 to 4",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: 1 contributing sector(s) [13]: outside the grid of 2 to 4",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-421801900/3",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.9185,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.918 < 0.95) (no problem in 3 sub-checks: momentum dumps (101 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.918 < 0.95) (no problem in 3 sub-checks: momentum dumps (101 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-421801900/6",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "u",
+     "evidence": "no calibrated error for the odd/even difference",
+     "label": "insufficient_sensitivity",
+     "message": "no calibrated error for the odd/even difference",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 35 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 35 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "1 contributing sector(s) [43]: outside the grid of 2 to 4",
+        "sap": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: 1 contributing sector(s) [43]: outside the grid of 2 to 4; SAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      },
+      {
+       "a0_depth_none": {
+        "pdcsap": "the group variance was refused (a0.group_variance)",
+        "sap_minus_expected": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the PDCSAP flux",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: 1 contributing sector(s) [43]: outside the grid of 2 to 4; SAP_FLUX: the group variance was refused (a0.group_variance); sap_vs_pdcsap: PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: no transit measured in the PDCSAP flux; background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 1309.3295084000297,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.9453193631394232,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 1309.3295084000297,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.9453193631394232,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 1309.3295084000297,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.9453193631394232,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1309.33 ppm not detectable (0.945 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1309.33 ppm not detectable (0.945 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-456894260/3",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 35 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 35 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.1825,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.182 < 0.95) (no problem in 3 sub-checks: momentum dumps (83 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.182 < 0.95) (no problem in 3 sub-checks: momentum dumps (83 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 758.1733920226253,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.7396815080696617,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 758.1733920226253,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.7396815080696617,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 758.1733920226253,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.7396815080696617,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 758.173 ppm not detectable (0.740 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 758.173 ppm not detectable (0.740 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-456894260/6",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "d",
+     "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "message": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "background"
+      },
+      {
+       "cls": "d",
+       "evidence": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "reason": "A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid",
+     "label": "outside_domain",
+     "label_defect": false,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid; background: A0's errors are not available: 0 sector(s) contribute measured events: outside the grid)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 258.6435965076322,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.21634813031372002,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 258.6435965076322,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 258.6435965076322,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 258.644 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 258.644 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-62815027/5",
+   "sectors": 4,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.088,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.088 < 0.95) (no problem in 3 sub-checks: momentum dumps (66 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.088 < 0.95) (no problem in 3 sub-checks: momentum dumps (66 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-95860790/7",
+   "sectors": 3,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "2_to_4"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 193.68518217561862,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 193.68518217561862,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 193.68518217561862,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 193.685 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 193.685 ppm not detectable (0.000 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-122616851/9",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.1375,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.138 < 0.95) (no problem in 3 sub-checks: momentum dumps (161 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.138 < 0.95) (no problem in 3 sub-checks: momentum dumps (161 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 423.38815766323637,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.8882297139977817,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 423.38815766323637,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.8882297139977817,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 423.38815766323637,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.8882297139977817,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 423.388 ppm not detectable (0.888 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 423.388 ppm not detectable (0.888 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-138651299/2",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-150249543/5",
+   "sectors": 12,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "1 contributing sector(s) [76]: outside the grid of 2 to 4"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: 1 contributing sector(s) [76]: outside the grid of 2 to 4",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: 1 contributing sector(s) [76]: outside the grid of 2 to 4",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-154257406/7",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-156118042/7",
+   "sectors": 8,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 13 source(s))",
+     "label": null,
+     "message": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 13 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 250.63092055590582,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.6009676098162258,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 250.63092055590582,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.0,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 250.63092055590582,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.5899676098162259,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 250.631 ppm not detectable (0.590 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 250.631 ppm not detectable (0.590 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-158461758/1",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 140 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 140 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 698.0037624096786,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.4919153532036209,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 698.0037624096786,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.4919153532036209,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 698.0037624096786,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.4919153532036209,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 698.004 ppm not detectable (0.492 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 698.004 ppm not detectable (0.492 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-162582602/2",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 11 source(s))",
+     "label": null,
+     "message": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 11 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.15,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.150 < 0.95) (no problem in 3 sub-checks: momentum dumps (197 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.150 < 0.95) (no problem in 3 sub-checks: momentum dumps (197 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-166087356/1",
+   "sectors": 8,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 11 source(s))",
+     "label": null,
+     "message": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 11 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-166087356/9",
+   "sectors": 8,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.1765,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.176 < 0.95) (no problem in 3 sub-checks: momentum dumps (146 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.176 < 0.95) (no problem in 3 sub-checks: momentum dumps (146 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-166151416/3",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-166151416/5",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "u",
+     "evidence": "no calibrated error for the odd/even difference",
+     "label": "insufficient_sensitivity",
+     "message": "no calibrated error for the odd/even difference",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)",
+        "sap": "the comb measured none of the 89 event(s)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the comb measured none of the 89 event(s)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      },
+      {
+       "a0_depth_none": {
+        "pdcsap": "the group variance was refused (a0.group_variance)",
+        "sap_minus_expected": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the PDCSAP flux",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the comb measured none of the 89 event(s); sap_vs_pdcsap: PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: no transit measured in the PDCSAP flux; background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-198407396/6",
+   "sectors": 12,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 48 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 48 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.1075,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.107 < 0.95) (no problem in 3 sub-checks: momentum dumps (709 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.107 < 0.95) (no problem in 3 sub-checks: momentum dumps (709 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 882.907189930452,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.8421691230079675,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 882.907189930452,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.8421691230079675,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 882.907189930452,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.8421691230079675,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 882.907 ppm not detectable (0.842 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 882.907 ppm not detectable (0.842 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-25155713/1",
+   "sectors": 13,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.206,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.206 < 0.95) (no problem in 3 sub-checks: momentum dumps (422 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.206 < 0.95) (no problem in 3 sub-checks: momentum dumps (422 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-258827696/7",
+   "sectors": 16,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "1 contributing sector(s) [2]: outside the grid of 2 to 4"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: 1 contributing sector(s) [2]: outside the grid of 2 to 4",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: 1 contributing sector(s) [2]: outside the grid of 2 to 4",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-281709735/6",
+   "sectors": 9,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 29 source(s))",
+     "label": null,
+     "message": "2 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 29 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-326209514/2",
+   "sectors": 9,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "u",
+     "evidence": "no calibrated error for the odd/even difference",
+     "label": "insufficient_sensitivity",
+     "message": "no calibrated error for the odd/even difference",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "causes": [
+      {
+       "a0_depth_none": {
+        "background": "the group variance was refused (a0.group_variance)",
+        "sap": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the background or SAP flux",
+       "sub_check": "background"
+      },
+      {
+       "a0_depth_none": {
+        "pdcsap": "the group variance was refused (a0.group_variance)",
+        "sap_minus_expected": "the group variance was refused (a0.group_variance)"
+       },
+       "cls": "d",
+       "evidence": "PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+       "reason": "no transit measured in the PDCSAP flux",
+       "sub_check": "sap_vs_pdcsap"
+      }
+     ],
+     "cls": "d",
+     "evidence": "background: SAP_BKG: the group variance was refused (a0.group_variance); SAP_FLUX: the group variance was refused (a0.group_variance); sap_vs_pdcsap: PDCSAP_FLUX: the group variance was refused (a0.group_variance); SAP_FLUX and PDCSAP_FLUX: the group variance was refused (a0.group_variance)",
+     "label": "not_enough_data",
+     "label_defect": true,
+     "label_from_causes": "outside_domain",
+     "message": "sub-check(s) could not run (sap_vs_pdcsap: no transit measured in the PDCSAP flux; background: no transit measured in the background or SAP flux)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-326209514/7",
+   "sectors": 9,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 59 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 59 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.3835,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.384 < 0.95) (no problem in 3 sub-checks: momentum dumps (265 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.384 < 0.95) (no problem in 3 sub-checks: momentum dumps (265 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-349682621/1",
+   "sectors": 12,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "cls": "e",
+     "evidence": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 32 source(s))",
+     "label": null,
+     "message": "1 neighbor(s) within 21 arcsec could produce the signal (TIC cone query of 120 arcsec returned 32 source(s))",
+     "severity": "warning",
+     "status": "FAIL",
+     "test": "nearby_contamination"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 1096.853326494649,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.9324605853852812,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 1096.853326494649,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.9324605853852812,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 1096.853326494649,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.9324605853852812,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1096.85 ppm not detectable (0.932 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1096.85 ppm not detectable (0.932 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-356241506/3",
+   "sectors": 11,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.104,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.104 < 0.95) (no problem in 3 sub-checks: momentum dumps (123 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.104 < 0.95) (no problem in 3 sub-checks: momentum dumps (123 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    },
+    {
+     "blocks_not_detectable": {
+      "2P": {
+       "alternative": 1599.7229808316865,
+       "effect": "sinusoid explaining the dip at 2P",
+       "probability": 0.5912612018445267,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P": {
+       "alternative": 1599.7229808316865,
+       "effect": "sinusoid explaining the dip at P",
+       "probability": 0.5912612018445267,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      },
+      "P/2": {
+       "alternative": 1599.7229808316865,
+       "effect": "sinusoid explaining the dip at P/2",
+       "probability": 0.5912612018445267,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1599.72 ppm not detectable (0.591 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: sinusoid explaining the dip at P/2 1599.72 ppm not detectable (0.591 < 0.95) (no sinusoid above the thresholds at P/2, P, 2P)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "sinusoid"
+    }
+   ],
+   "injection": "TIC-381981543/6",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.0095,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.009 < 0.95) (no problem in 3 sub-checks: momentum dumps (128 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.009 < 0.95) (no problem in 3 sub-checks: momentum dumps (128 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-388198210/1",
+   "sectors": 6,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "main": {
+       "alternative": 394.9439359906234,
+       "effect": "odd/even depth difference",
+       "probability": 0.8976751408983938,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: odd/even depth difference 394.944 ppm not detectable (0.898 < 0.95) (odd/even depths differ by 0.4 sigma (6 odd, 8 even))",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: odd/even depth difference 394.944 ppm not detectable (0.898 < 0.95) (odd/even depths differ by 0.4 sigma (6 odd, 8 even))",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.5735,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.574 < 0.95) (no problem in 3 sub-checks: momentum dumps (125 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.574 < 0.95) (no problem in 3 sub-checks: momentum dumps (125 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-441633615/9",
+   "sectors": 5,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  },
+  {
+   "blockers": [
+    {
+     "blocks_not_detectable": {
+      "main": {
+       "alternative": 296.1307096073054,
+       "effect": "odd/even depth difference",
+       "probability": 0.933582751466473,
+       "required_probability": 0.95,
+       "unit": "ppm"
+      }
+     },
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: odd/even depth difference 296.131 ppm not detectable (0.934 < 0.95) (odd/even depths differ by 0.8 sigma (6 odd, 3 even))",
+     "label": "insufficient_sensitivity",
+     "message": "PASS refused: insufficient sensitivity: odd/even depth difference 296.131 ppm not detectable (0.934 < 0.95) (odd/even depths differ by 0.8 sigma (6 odd, 3 even))",
+     "severity": "fatal",
+     "status": "INCONCLUSIVE",
+     "test": "odd_even"
+    },
+    {
+     "blocks_not_detectable": {
+      "background": {
+       "alternative": 0.8,
+       "effect": "background rise in transit",
+       "probability": 0.0015,
+       "required_probability": 0.95,
+       "unit": "fraction of the depth"
+      }
+     },
+     "causes": [],
+     "cls": "b",
+     "evidence": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.002 < 0.95) (no problem in 3 sub-checks: momentum dumps (136 in the quality column), SAP versus PDCSAP, background)",
+     "label": "insufficient_sensitivity",
+     "label_defect": false,
+     "label_from_causes": null,
+     "message": "PASS refused: insufficient sensitivity: background rise in transit 0.8 fraction of the depth not detectable (0.002 < 0.95) (no problem in 3 sub-checks: momentum dumps (136 in the quality column), SAP versus PDCSAP, background)",
+     "severity": "warning",
+     "status": "INCONCLUSIVE",
+     "test": "systematics"
+    }
+   ],
+   "injection": "TIC-75628092/0",
+   "sectors": 7,
+   "stage_verdict": "INCONCLUSIVE",
+   "stratum": "5_to_20"
+  }
+ ],
+ "losses_by_set_of_classes": {
+  "b": 18,
+  "b+d": 4,
+  "b+d+e": 3,
+  "b+d+e+u": 1,
+  "b+e": 8,
+  "d": 9,
+  "d+e": 3,
+  "d+u": 5
+ },
+ "losses_with_a_code_defect_blocker": 0,
+ "method_status": "not_validated",
+ "preflight": {
+  "forecast_losses_b": 51,
+  "forecast_losses_b_with_systematics_inconclusive": 48,
+  "injections": 80
+ },
+ "quarantined": {},
+ "stop": false,
+ "stop_rule": "(c) blockers in at least 6 of the forecast's 51 losses, or any instrumentation quarantine",
+ "stopped_shards": 0,
+ "systematics_label_defects": {
+  "not_enough_data -> outside_domain": 19
+ }
+}

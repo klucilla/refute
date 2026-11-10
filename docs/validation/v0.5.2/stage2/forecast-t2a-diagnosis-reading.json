@@ -1,0 +1,275 @@
+{
+ "background_power": {
+  "alternative": "a background rise of 0.8 of the depth, detected with probability 0.95",
+  "error_over_depth_median": 0.4084507206503055,
+  "error_over_depth_range": [
+   0.18110777321567312,
+   5.038320905856361
+  ],
+  "fail_rule": "rise at least 3 errors and at least 0.5 of the depth (params.py); power 0.95 at 0.8 of the depth needs about error <= 0.8 / (3 + 1.645) = 0.17 of the depth",
+  "losses": 23,
+  "per_injection": [
+   {
+    "background_error_over_sap_depth": 5.038320905856361,
+    "candidate_snr": 17.46934550503684,
+    "injected_depth_ppm": 330.6406376558256,
+    "injection": "TIC-75628092/0",
+    "probability": 0.0015
+   },
+   {
+    "background_error_over_sap_depth": 1.276720106131494,
+    "candidate_snr": 35.99588033634042,
+    "injected_depth_ppm": 3925.219258602907,
+    "injection": "TIC-255927008/6",
+    "probability": 0.009
+   },
+   {
+    "background_error_over_sap_depth": 1.1757513579718222,
+    "candidate_snr": 29.29058401460093,
+    "injected_depth_ppm": 1718.6678385344956,
+    "injection": "TIC-388198210/1",
+    "probability": 0.0095
+   },
+   {
+    "background_error_over_sap_depth": 1.1032296050248103,
+    "candidate_snr": 9.366402243428967,
+    "injected_depth_ppm": 813.2076265832104,
+    "injection": "TIC-29267852/3",
+    "probability": 0.0125
+   },
+   {
+    "background_error_over_sap_depth": 1.2486535850999356,
+    "candidate_snr": 11.723990821233663,
+    "injected_depth_ppm": 589.3441318872012,
+    "injection": "TIC-394103866/0",
+    "probability": 0.014
+   },
+   {
+    "background_error_over_sap_depth": 0.8436564742854703,
+    "candidate_snr": 29.54139624273695,
+    "injected_depth_ppm": 2104.329693033045,
+    "injection": "TIC-394103866/3",
+    "probability": 0.021
+   },
+   {
+    "background_error_over_sap_depth": 0.5692735083311508,
+    "candidate_snr": 17.83302023293474,
+    "injected_depth_ppm": 339.72978748492136,
+    "injection": "TIC-202295593/7",
+    "probability": 0.061
+   },
+   {
+    "background_error_over_sap_depth": 0.4937660020076221,
+    "candidate_snr": 21.331635195833343,
+    "injected_depth_ppm": 2345.5470305981357,
+    "injection": "TIC-23708215/6",
+    "probability": 0.0845
+   },
+   {
+    "background_error_over_sap_depth": 0.48124445226239937,
+    "candidate_snr": 15.944509159037088,
+    "injected_depth_ppm": 1101.9714457018465,
+    "injection": "TIC-95860790/7",
+    "probability": 0.088
+   },
+   {
+    "background_error_over_sap_depth": 0.4439609850474542,
+    "candidate_snr": 35.92065590985297,
+    "injected_depth_ppm": 1516.1481617770635,
+    "injection": "TIC-381981543/6",
+    "probability": 0.104
+   },
+   {
+    "background_error_over_sap_depth": 0.4684893079406704,
+    "candidate_snr": 43.26095925141426,
+    "injected_depth_ppm": 979.0113599635142,
+    "injection": "TIC-25155713/1",
+    "probability": 0.1075
+   },
+   {
+    "background_error_over_sap_depth": 0.40642005545956544,
+    "candidate_snr": 29.47820866539209,
+    "injected_depth_ppm": 422.55934161435204,
+    "injection": "TIC-138651299/2",
+    "probability": 0.1375
+   },
+   {
+    "background_error_over_sap_depth": 0.4084507206503055,
+    "candidate_snr": 20.406689644230493,
+    "injected_depth_ppm": 381.93257471926034,
+    "injection": "TIC-166087356/1",
+    "probability": 0.15
+   },
+   {
+    "background_error_over_sap_depth": 0.39058354737194645,
+    "candidate_snr": 21.425736565899197,
+    "injected_depth_ppm": 596.8030374912405,
+    "injection": "TIC-166151416/3",
+    "probability": 0.1765
+   },
+   {
+    "background_error_over_sap_depth": 0.3794146497712832,
+    "candidate_snr": 17.799009861552413,
+    "injected_depth_ppm": 725.7586914368734,
+    "injection": "TIC-456894260/6",
+    "probability": 0.1825
+   },
+   {
+    "background_error_over_sap_depth": 0.366591077673972,
+    "candidate_snr": 33.25437881290906,
+    "injected_depth_ppm": 2445.1252712432183,
+    "injection": "TIC-416715793/1",
+    "probability": 0.203
+   },
+   {
+    "background_error_over_sap_depth": 0.37139974750507543,
+    "candidate_snr": 28.173000254924297,
+    "injected_depth_ppm": 562.7840756798985,
+    "injection": "TIC-258827696/7",
+    "probability": 0.206
+   },
+   {
+    "background_error_over_sap_depth": 0.3375811264070273,
+    "candidate_snr": 13.807316600929255,
+    "injected_depth_ppm": 417.6685834613222,
+    "injection": "TIC-240171830/1",
+    "probability": 0.2465
+   },
+   {
+    "background_error_over_sap_depth": 0.324552992328304,
+    "candidate_snr": 24.91045893699171,
+    "injected_depth_ppm": 522.7706629465476,
+    "injection": "TIC-202295593/2",
+    "probability": 0.3
+   },
+   {
+    "background_error_over_sap_depth": 0.2989233054890455,
+    "candidate_snr": 62.7506753892223,
+    "injected_depth_ppm": 1676.3988563823625,
+    "injection": "TIC-349682621/1",
+    "probability": 0.3835
+   },
+   {
+    "background_error_over_sap_depth": 0.27285771166332956,
+    "candidate_snr": 36.94440023892317,
+    "injected_depth_ppm": 3167.1452165021615,
+    "injection": "TIC-255927008/0",
+    "probability": 0.471
+   },
+   {
+    "background_error_over_sap_depth": 0.24837219154710752,
+    "candidate_snr": 13.30741145829837,
+    "injected_depth_ppm": 396.54078515173427,
+    "injection": "TIC-441633615/9",
+    "probability": 0.5735
+   },
+   {
+    "background_error_over_sap_depth": 0.18110777321567312,
+    "candidate_snr": 26.03347764478927,
+    "injected_depth_ppm": 1136.4368517098255,
+    "injection": "TIC-421801900/6",
+    "probability": 0.9185
+   }
+  ],
+  "probability_median": 0.1375,
+  "probability_range": [
+   0.0015,
+   0.9185
+  ]
+ },
+ "blockers_by_test_and_class": {
+  "odd_even: b": 4,
+  "odd_even: d": 12,
+  "period_alias: b": 2,
+  "sinusoid: b": 15,
+  "systematics background sensitivity: b": 23,
+  "systematics: d": 25
+ },
+ "corrections_of_reading": [
+  "a warning FAIL gives WEAKENED (kept): not a blocker",
+  "odd_even 'no calibrated error' is a0.group_variance refused: class (d)"
+ ],
+ "label": "a reading of the diagnosis of T2a's losses; a what-if, it decides nothing",
+ "labels_that_do_not_name_the_cause": {
+  "odd_even: insufficient_sensitivity -> outside_domain": 6,
+  "systematics: not_enough_data -> outside_domain": 19
+ },
+ "losses": 51,
+ "losses_by_set_of_blockers": {
+  "odd_even: b + sinusoid: b + systematics background sensitivity: b": 2,
+  "odd_even: b + systematics background sensitivity: b": 2,
+  "odd_even: d + sinusoid: b + systematics: d": 5,
+  "odd_even: d + systematics: d": 7,
+  "period_alias: b": 1,
+  "period_alias: b + systematics: d": 1,
+  "sinusoid: b": 2,
+  "sinusoid: b + systematics background sensitivity: b": 4,
+  "sinusoid: b + systematics: d": 2,
+  "systematics background sensitivity: b": 15,
+  "systematics: d": 10
+ },
+ "method_status": "not_validated",
+ "minimum": 0.8967479674796748,
+ "scenarios": {
+  "as run": {
+   "kept_above_20_all_kept": 0.4037,
+   "kept_above_20_all_lost": 0.3126,
+   "meets_minimum": "no",
+   "per_stratum": {
+    "2_to_4": 0.275,
+    "5_to_20": 0.425
+   },
+   "upper_sampling_bound_above_20_all_kept": 0.5707
+  },
+  "every (b)": {
+   "kept_above_20_all_kept": 0.7132,
+   "kept_above_20_all_lost": 0.6222,
+   "meets_minimum": "no",
+   "per_stratum": {
+    "2_to_4": 0.65,
+    "5_to_20": 0.725
+   },
+   "upper_sampling_bound_above_20_all_kept": 0.8488
+  },
+  "every (d) and systematics' background sensitivity": {
+   "kept_above_20_all_kept": 0.7832,
+   "kept_above_20_all_lost": 0.6922,
+   "meets_minimum": "no",
+   "per_stratum": {
+    "2_to_4": 0.75,
+    "5_to_20": 0.775
+   },
+   "upper_sampling_bound_above_20_all_kept": 0.9008
+  },
+  "every (d), A0's and the selection's refusals": {
+   "kept_above_20_all_kept": 0.5959,
+   "kept_above_20_all_lost": 0.5049,
+   "meets_minimum": "no",
+   "per_stratum": {
+    "2_to_4": 0.475,
+    "5_to_20": 0.65
+   },
+   "upper_sampling_bound_above_20_all_kept": 0.7496
+  },
+  "every blocker": {
+   "kept_above_20_all_kept": 1.0,
+   "kept_above_20_all_lost": 0.9089,
+   "meets_minimum": "yes",
+   "per_stratum": {
+    "2_to_4": 1.0,
+    "5_to_20": 1.0
+   },
+   "upper_sampling_bound_above_20_all_kept": 1.0
+  },
+  "systematics' background sensitivity (b)": {
+   "kept_above_20_all_kept": 0.591,
+   "kept_above_20_all_lost": 0.4999,
+   "meets_minimum": "no",
+   "per_stratum": {
+    "2_to_4": 0.55,
+    "5_to_20": 0.55
+   },
+   "upper_sampling_bound_above_20_all_kept": 0.7463
+  }
+ }
+}

@@ -62,6 +62,30 @@
    "gate": "planet_forecast",
    "part": "forecast_diagnosis",
    "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (third set, #216), item 1: rerun T2a's 80 development injections keeping the messages and input data of each INCONCLUSIVE (and of aperture_depth), within the forecast's 25 CPU-h; no change to src/, to the rules or to T2a's fingerprint.",
+   "gate": "adequacy",
+   "part": "forecast_t2a_diagnosis_smoke",
+   "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (third set, #216), item 1: rerun T2a's 80 development injections keeping the messages and input data of each INCONCLUSIVE (and of aperture_depth), within the forecast's 25 CPU-h; no change to src/, to the rules or to T2a's fingerprint.",
+   "gate": "planet_forecast",
+   "part": "forecast_t2a_diagnosis_smoke",
+   "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (third set, #216), item 1: rerun T2a's 80 development injections keeping the messages and input data of each INCONCLUSIVE (and of aperture_depth), within the forecast's 25 CPU-h; no change to src/, to the rules or to T2a's fingerprint.",
+   "gate": "adequacy",
+   "part": "forecast_t2a_diagnosis",
+   "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (third set, #216), item 1: rerun T2a's 80 development injections keeping the messages and input data of each INCONCLUSIVE (and of aperture_depth), within the forecast's 25 CPU-h; no change to src/, to the rules or to T2a's fingerprint.",
+   "gate": "planet_forecast",
+   "part": "forecast_t2a_diagnosis",
+   "section": "remaining_work_packages"
   }
  ],
  "gates": {
@@ -184,6 +208,20 @@
      "identity": "85e2a4f1427db930",
      "projection_hours": 5.156944444444444,
      "spent_hours": 6.633624131944444
+    },
+    "forecast_t2a_diagnosis": {
+     "allocation_hours": 5.0,
+     "checkpoint_shards": 4,
+     "identity": "caaf889592bf399f",
+     "projection_hours": 1.7924479166666665,
+     "spent_hours": 2.604079861111111
+    },
+    "forecast_t2a_diagnosis_smoke": {
+     "allocation_hours": 1.0,
+     "checkpoint_shards": 1,
+     "identity": "4a49656b7417e041",
+     "projection_hours": 0.03670138888888889,
+     "spent_hours": 0.0430859375
     }
    }
   }
