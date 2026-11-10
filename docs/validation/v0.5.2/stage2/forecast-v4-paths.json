@@ -1,0 +1,245 @@
+{
+ "d2": {
+  "eligible": 112,
+  "minimum": 0.8642857142857143,
+  "note": "a planet only REFUTED or FAILed by a decisive test stays lost in every scenario",
+  "scenarios": {
+   "a_odd_even_at_the_cramer_rao_error": {
+    "kept": 0.8125,
+    "meets_minimum": false
+   },
+   "a_odd_even_sensitivity_removed_upper_bound": {
+    "kept": 0.8125,
+    "meets_minimum": false
+   },
+   "as_forecast": {
+    "kept": 0.7232142857142857,
+    "meets_minimum": false
+   },
+   "b_sinusoid_inconclusive_removed": {
+    "kept": 0.7410714285714286,
+    "meets_minimum": false
+   },
+   "c_a_upper_bound_and_b": {
+    "kept": 0.8928571428571429,
+    "meets_minimum": true
+   },
+   "d_every_a0_or_sinusoid_inconclusive_removed": {
+    "kept": 0.9910714285714286,
+    "meets_minimum": true
+   }
+  },
+  "v04_kept": 0.9642857142857143
+ },
+ "label": "what the odd_even diagnosis implies for D2; a what-if, it decides nothing",
+ "method_status": "not_validated",
+ "power": {
+  "control": {
+   "n": 10,
+   "reach_threshold_with": {
+    "a0": 10,
+    "box_true": 10,
+    "cr": 10
+   }
+  },
+  "inconclusive": {
+   "n": 17,
+   "reach_threshold_with": {
+    "a0": 0,
+    "box_true": 7,
+    "cr": 16
+   }
+  }
+ },
+ "power_per_curve": [
+  {
+   "a0": 0.971,
+   "box_true": 0.991,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1000
+  },
+  {
+   "a0": 0.99,
+   "box_true": 0.997,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1001
+  },
+  {
+   "a0": 0.833,
+   "box_true": 0.914,
+   "cr": 0.998,
+   "group": "inconclusive",
+   "index": 1002
+  },
+  {
+   "a0": 0.568,
+   "box_true": 0.907,
+   "cr": 0.999,
+   "group": "inconclusive",
+   "index": 1003
+  },
+  {
+   "a0": 0.846,
+   "box_true": 0.981,
+   "cr": 1.0,
+   "group": "inconclusive",
+   "index": 1004
+  },
+  {
+   "a0": 0.93,
+   "box_true": 0.999,
+   "cr": 1.0,
+   "group": "inconclusive",
+   "index": 1005
+  },
+  {
+   "a0": 1.0,
+   "box_true": 1.0,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1006
+  },
+  {
+   "a0": 1.0,
+   "box_true": 1.0,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1007
+  },
+  {
+   "a0": 1.0,
+   "box_true": 1.0,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1008
+  },
+  {
+   "a0": 1.0,
+   "box_true": 1.0,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1009
+  },
+  {
+   "a0": 1.0,
+   "box_true": 1.0,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1010
+  },
+  {
+   "a0": 0.469,
+   "box_true": 0.87,
+   "cr": 0.977,
+   "group": "inconclusive",
+   "index": 1011
+  },
+  {
+   "a0": 0.992,
+   "box_true": 0.996,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1012
+  },
+  {
+   "a0": 1.0,
+   "box_true": 1.0,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1013
+  },
+  {
+   "a0": 1.0,
+   "box_true": 1.0,
+   "cr": 1.0,
+   "group": "control",
+   "index": 1015
+  },
+  {
+   "a0": 0.925,
+   "box_true": 0.964,
+   "cr": 1.0,
+   "group": "inconclusive",
+   "index": 1024
+  },
+  {
+   "a0": 0.917,
+   "box_true": 0.994,
+   "cr": 1.0,
+   "group": "inconclusive",
+   "index": 1038
+  },
+  {
+   "a0": 0.85,
+   "box_true": 0.93,
+   "cr": 0.996,
+   "group": "inconclusive",
+   "index": 1043
+  },
+  {
+   "a0": 0.898,
+   "box_true": 0.926,
+   "cr": 0.999,
+   "group": "inconclusive",
+   "index": 1049
+  },
+  {
+   "a0": 0.948,
+   "box_true": 0.975,
+   "cr": 1.0,
+   "group": "inconclusive",
+   "index": 1068
+  },
+  {
+   "a0": 0.687,
+   "box_true": 0.702,
+   "cr": 0.912,
+   "group": "inconclusive",
+   "index": 1075
+  },
+  {
+   "a0": 0.894,
+   "box_true": 0.955,
+   "cr": 1.0,
+   "group": "inconclusive",
+   "index": 1080
+  },
+  {
+   "a0": 0.786,
+   "box_true": 0.876,
+   "cr": 0.971,
+   "group": "inconclusive",
+   "index": 1081
+  },
+  {
+   "a0": 0.882,
+   "box_true": 0.956,
+   "cr": 0.996,
+   "group": "inconclusive",
+   "index": 1082
+  },
+  {
+   "a0": 0.808,
+   "box_true": 0.882,
+   "cr": 0.998,
+   "group": "inconclusive",
+   "index": 1092
+  },
+  {
+   "a0": 0.858,
+   "box_true": 0.86,
+   "cr": 0.999,
+   "group": "inconclusive",
+   "index": 1099
+  },
+  {
+   "a0": 0.932,
+   "box_true": 0.947,
+   "cr": 1.0,
+   "group": "inconclusive",
+   "index": 1107
+  }
+ ]
+}
