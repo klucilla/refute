@@ -77,7 +77,11 @@ SECTION, PART = "remaining_work_packages", "forecast_t2a"
 FORECAST_CAP_HOURS = 25.0  # the maintainer, 2026-11-10 (second set): the whole forecast
 D2D4_PART = "forecast_d2_d4"
 DIAGNOSIS_PART = "forecast_diagnosis"
-MAX_SHARD_SECONDS = 1500.0
+MAX_SHARD_SECONDS = 1700.0  # inside the 30-minute batch; a 20-sector host takes about 25 minutes
+# Decided after one smoke injection (31 sectors: 2,364 CPU-seconds, 39 minutes) and before any
+# outcome of the run: an injection above 20 sectors outlasts the maintainer's 30-minute batch, so
+# that stratum is not run; its A and B follow from the refusal rule, its v3 and C stay unknown
+MEASURED_STRATA = ("2_to_4", "5_to_20")
 ATTEMPTS, WAIT_SECONDS = 5, 120.0
 ALPHA = 0.05
 KEPT = ("SURVIVED", "WEAKENED")
@@ -152,8 +156,6 @@ def _download(url: str, dest: Path) -> str | None:
 def fetch() -> None:
     """The sampled hosts' FITS files again, checked against the sealed v0.4 dossiers."""
     from refute.core.hashing import sha256_file
-    from refute.core.io import write_json
-    from refute.packs.tess.adapter import manifest_path
     from refute.packs.tess.calib05 import c2
     from refute.packs.tess.discover.claim import TESS_EB_CACHE_PATH
     from refute.packs.tess.discover.pilot import TESS_EB_STATIC, static_tess_eb
@@ -163,7 +165,6 @@ def fetch() -> None:
     if not eb.exists():
         eb.parent.mkdir(parents=True, exist_ok=True)
         eb.write_bytes(static_tess_eb(ROOT / TESS_EB_STATIC["path"], TESS_EB_STATIC))
-    by_key = targets()
     hosts = sorted({r["key"] for r in sample(population())})
     report: dict = {"source": "the sealed v0.4 stage-1 dossiers' data manifests", "hosts": {},
                     "changed": {}, "failed": {}}  # fmt: skip
@@ -193,15 +194,36 @@ def fetch() -> None:
             report["changed"][key] = problems
         elif problems:
             report["failed"][key] = problems
-        else:
-            path = manifest_path(CACHE, int(by_key[key]["tic_id"]))
-            path.parent.mkdir(parents=True, exist_ok=True)
-            write_json(path, manifest)
         print(key, len(records), "ok" if not problems else "problem", flush=True)
     report["bytes"] = sum(f["bytes"] for files in report["hosts"].values() for f in files)
     (HERE / "t2a-fetch.json").write_text(
         json.dumps(report, indent=1, sort_keys=True) + "\n", "utf-8"
     )
+    manifests()
+
+
+def manifests() -> None:
+    """The cache manifests of the authenticated hosts, built from the sealed dossiers' manifests
+    in the adapter's cache format (``refute-tess-fetch-2``; the dossier's own schema is a report
+    format the loader refuses). No network: the files are the ones ``fetch`` checked."""
+    from refute.core.io import write_json
+    from refute.packs.tess.adapter import FETCH_SCHEMA, manifest_path
+    from refute.packs.tess.calib05 import c2
+
+    dossiers, _ = c2.references(ROOT)
+    fetched = json.loads((HERE / "t2a-fetch.json").read_text("utf-8"))
+    excluded = set(fetched["changed"]) | set(fetched["failed"])
+    by_key = targets()
+    for key in sorted(set(fetched["hosts"]) - excluded):
+        manifest = json.loads(json.dumps(dossiers[key]["manifest"]))
+        tic = int(by_key[key]["tic_id"])
+        for f in manifest["files"]:
+            f["path"] = f"files/{f['name']}"
+            f["format"] = "spoc-fits"
+        manifest.update(schema=FETCH_SCHEMA, tic_id=tic, target_key=f"TIC-{tic}", pixel_files=[])
+        path = manifest_path(CACHE, tic)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        write_json(path, manifest)
 
 
 def _plans():
@@ -343,7 +365,7 @@ def shards() -> list:
     return [
         (f"t-{r['key']}-{r['slot']:02d}", r)
         for r in sample(population())
-        if r["key"] not in excluded
+        if r["key"] not in excluded and r["stratum"] in MEASURED_STRATA
     ]
 
 
@@ -417,6 +439,9 @@ def summarize() -> None:
     known, unknown = {}, Counter()
     for r in drawn:
         rec = got.get((r["key"], r["slot"]))
+        if r["stratum"] not in MEASURED_STRATA:
+            unknown[f"{r['stratum']}: not run (an injection outlasts a 30-minute batch)"] += 1
+            continue
         if rec is None or rec.get("status") != "OK" or rec.get("compat_problems"):
             reason = "not run (input)" if rec is None else (
                 "error" if rec.get("status") != "OK" else "v0.4 does not reproduce"
@@ -437,13 +462,29 @@ def summarize() -> None:
         "lower end reaches it; otherwise UNRESOLVED. A's FAIL is a STOP.",
         "batteries": {},
     }
+
+    def outcome(r: dict, b: str) -> bool | None:
+        """Kept or not; None when unknown. Above 20 sectors (not run, see MEASURED_STRATA): v0.4
+        from its record, A and B by the refusal rule (A0's tests refused, odd_even decisive and
+        INCONCLUSIVE), version 3 and C unknown."""
+        rec = known.get((r["key"], r["slot"]))
+        if rec is not None:
+            return rec[b]["stage_verdict"] in KEPT
+        if r["stratum"] not in MEASURED_STRATA:
+            if b == "v04":
+                return r["v04_stage"] in KEPT
+            if b in ("v4A", "v4B"):
+                return False
+        return None
+
     for b in ("v04", "v3", "v4A", "v4B", "v4C"):
         point, low, high, per = 0.0, 0, 0, {}
         for s in STRATA:
             members = [r for r in drawn if r["stratum"] == s]
-            done = [known[(r["key"], r["slot"])] for r in members if (r["key"], r["slot"]) in known]
-            k = sum(x[b]["stage_verdict"] in KEPT for x in done)
-            missing = len(members) - len(done)
+            seen = [o for o in (outcome(r, b) for r in members) if o is not None]
+            k = sum(seen)
+            missing = len(members) - len(seen)
+            done = seen
             lo, _ = _hypergeometric(k, len(members), counts[s], ALPHA / len(STRATA))
             _, hi = _hypergeometric(k + missing, len(members), counts[s], ALPHA / len(STRATA))
             low, high = low + lo, high + hi
@@ -494,4 +535,4 @@ def summarize() -> None:
 
 
 if __name__ == "__main__":
-    {"fetch": fetch, "run": run, "summarize": summarize}[sys.argv[1]]()
+    {"fetch": fetch, "manifests": manifests, "run": run, "summarize": summarize}[sys.argv[1]]()

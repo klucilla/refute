@@ -19,6 +19,11 @@
    "basis": "measured process time of the one-curve smoke test of forecast_v4_diagnosis.py, run outside the ledger",
    "hours": 0.059379340277777776,
    "name": "forecast diagnosis smoke (one curve, 2026-11-10)"
+  },
+  {
+   "basis": "measured process time of the one-injection smoke test of forecast_t2a.py, run outside the ledger",
+   "hours": 0.656640625,
+   "name": "forecast_t2a smoke (one injection above 20 sectors, 2026-11-10)"
   }
  ],
  "gate_exemptions": [
@@ -158,8 +163,19 @@
      "projection_hours": 5.484635416666666,
      "spent_hours": 4.851857638888889
     },
+    "forecast_diagnosis": {
+     "allocation_hours": 2.2,
+     "checkpoint_shards": 2,
+     "identity": "078e39f93d8a32b8",
+     "projection_hours": 1.5905707465277779,
+     "spent_hours": 1.40984375
+    },
     "forecast_t2a": {
-     "allocation_hours": 12.5
+     "allocation_hours": 12.5,
+     "checkpoint_shards": 6,
+     "identity": "711db0abb2940315",
+     "projection_hours": 0.043684895833333334,
+     "spent_hours": 0.01181423611111111
     }
    }
   }
