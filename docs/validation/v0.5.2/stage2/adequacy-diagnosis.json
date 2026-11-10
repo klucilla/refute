@@ -1,0 +1,234 @@
+{
+ "factor_on_the_schedule_that_reaches_the_fraction_for_every_member": 1.3153846153846154,
+ "label": "why the adequacy check found members not measured; it decides nothing",
+ "members": 2293,
+ "members_below_by_section": {
+  "a02": 6,
+  "a04": 1,
+  "a05": 36,
+  "a07": 1,
+  "a08e": 18,
+  "a08g": 40
+ },
+ "members_below_g_min_in_every_dataset": 102,
+ "members_with_fewer_curves_by_section": {
+  "a01": 7,
+  "a02": 150,
+  "a04": 86,
+  "a05": 243,
+  "a07": 5,
+  "a08e": 29,
+  "a08g": 292
+ },
+ "members_with_fewer_curves_in_version_4": 812,
+ "members_within_0_02_above_the_fraction": 80,
+ "method_status": "not_validated",
+ "not_measured_per_dataset": {
+  "datasets": 200,
+  "max": 113,
+  "min": 91
+ },
+ "smallest_ratio_v4": 0.7222222222222222,
+ "worst_25": [
+  {
+   "g3": 36,
+   "g4": 26,
+   "member": "('a08e', 'long', 'minimal', '3', 'excluded')",
+   "min_g": 36,
+   "ratio_v4": 0.7222222222222222,
+   "section": "a08e"
+  },
+  {
+   "g3": 35,
+   "g4": 26,
+   "member": "('a08e', 'white', 'full', '4', 'included')",
+   "min_g": 35,
+   "ratio_v4": 0.7428571428571429,
+   "section": "a08e"
+  },
+  {
+   "g3": 29,
+   "g4": 22,
+   "member": "('a08e', 'correlated_trend', 'full', '3', 'excluded')",
+   "min_g": 29,
+   "ratio_v4": 0.7586206896551724,
+   "section": "a08e"
+  },
+  {
+   "g3": 26,
+   "g4": 20,
+   "member": "('a08e', 'white', 'minimal', '3', 'excluded')",
+   "min_g": 26,
+   "ratio_v4": 0.7692307692307693,
+   "section": "a08e"
+  },
+  {
+   "g3": 57,
+   "g4": 44,
+   "member": "('a08e', 'white', 'minimal', '4', 'excluded')",
+   "min_g": 57,
+   "ratio_v4": 0.7719298245614035,
+   "section": "a08e"
+  },
+  {
+   "g3": 32,
+   "g4": 25,
+   "member": "('a08e', 'long', 'minimal', '4', 'included')",
+   "min_g": 32,
+   "ratio_v4": 0.78125,
+   "section": "a08e"
+  },
+  {
+   "g3": 188,
+   "g4": 149,
+   "member": "('a08g', 'group', 'correlated_trend', 'full', 3, '3', 'excluded', 'box_even')",
+   "min_g": 188,
+   "ratio_v4": 0.7925531914893617,
+   "section": "a08g"
+  },
+  {
+   "g3": 188,
+   "g4": 149,
+   "member": "('a08g', 'group', 'correlated_trend', 'full', 3, '3', 'excluded', 'box_odd')",
+   "min_g": 188,
+   "ratio_v4": 0.7925531914893617,
+   "section": "a08g"
+  },
+  {
+   "g3": 31,
+   "g4": 25,
+   "member": "('a08e', 'correlated_trend', 'minimal', '3', 'excluded')",
+   "min_g": 31,
+   "ratio_v4": 0.8064516129032258,
+   "section": "a08e"
+  },
+  {
+   "g3": 32,
+   "g4": 26,
+   "member": "('a08e', 'trend', 'partial', '4', 'included')",
+   "min_g": 32,
+   "ratio_v4": 0.8125,
+   "section": "a08e"
+  },
+  {
+   "g3": 199,
+   "g4": 166,
+   "member": "('a08g', 'group', 'correlated', 'minimal', 3, '4', 'included', 'box_diff')",
+   "min_g": 199,
+   "ratio_v4": 0.8341708542713567,
+   "section": "a08g"
+  },
+  {
+   "g3": 177,
+   "g4": 150,
+   "member": "('a08g', 'hetero', 'hetero', 'partial', 4, '3', 'excluded', 'box_diff')",
+   "min_g": 177,
+   "ratio_v4": 0.847457627118644,
+   "section": "a08g"
+  },
+  {
+   "g3": 178,
+   "g4": 150,
+   "member": "('a08g', 'hetero', 'hetero', 'partial', 4, '3', 'excluded', 'box_even')",
+   "min_g": 177,
+   "ratio_v4": 0.847457627118644,
+   "section": "a08g"
+  },
+  {
+   "g3": 178,
+   "g4": 151,
+   "member": "('a08g', 'hetero', 'hetero', 'partial', 4, '3', 'excluded', 'box_odd')",
+   "min_g": 177,
+   "ratio_v4": 0.8531073446327684,
+   "section": "a08g"
+  },
+  {
+   "g3": 195,
+   "g4": 167,
+   "member": "('a08g', 'group', 'correlated', 'full', 3, '4', 'included', 'box_diff')",
+   "min_g": 195,
+   "ratio_v4": 0.8564102564102564,
+   "section": "a08g"
+  },
+  {
+   "g3": 190,
+   "g4": 164,
+   "member": "('a08g', 'group', 'correlated_trend', 'partial', 4, '3', 'excluded', 'box_odd')",
+   "min_g": 190,
+   "ratio_v4": 0.8631578947368421,
+   "section": "a08g"
+  },
+  {
+   "g3": 194,
+   "g4": 168,
+   "member": "('a08g', 'group', 'trend', 'partial', 3, '4', 'included', 'box_diff')",
+   "min_g": 194,
+   "ratio_v4": 0.865979381443299,
+   "section": "a08g"
+  },
+  {
+   "g3": 41,
+   "g4": 33,
+   "member": "('a08e', 'correlated_trend', 'full', '4', 'included')",
+   "min_g": 38,
+   "ratio_v4": 0.868421052631579,
+   "section": "a08e"
+  },
+  {
+   "g3": 191,
+   "g4": 165,
+   "member": "('a08g', 'group', 'correlated_trend', 'partial', 4, '3', 'excluded', 'box_even')",
+   "min_g": 190,
+   "ratio_v4": 0.868421052631579,
+   "section": "a08g"
+  },
+  {
+   "g3": 202,
+   "g4": 178,
+   "member": "('a08g', 'group', 'trend', 'minimal', 2, '4', 'included', 'box_even')",
+   "min_g": 202,
+   "ratio_v4": 0.8811881188118812,
+   "section": "a08g"
+  },
+  {
+   "g3": 70,
+   "g4": 62,
+   "member": "('a08e', 'long', 'partial', '3', 'included')",
+   "min_g": 70,
+   "ratio_v4": 0.8857142857142857,
+   "section": "a08e"
+  },
+  {
+   "g3": 205,
+   "g4": 179,
+   "member": "('a08g', 'group', 'trend', 'minimal', 2, '4', 'included', 'box_odd')",
+   "min_g": 202,
+   "ratio_v4": 0.8861386138613861,
+   "section": "a08g"
+  },
+  {
+   "g3": 185,
+   "g4": 164,
+   "member": "('a08g', 'group', 'trend', 'full', 4, '4', 'included', 'box_diff')",
+   "min_g": 185,
+   "ratio_v4": 0.8864864864864865,
+   "section": "a08g"
+  },
+  {
+   "g3": 179,
+   "g4": 159,
+   "member": "('a08g', 'group', 'long', 'minimal', 3, '4', 'included', 'box_diff')",
+   "min_g": 179,
+   "ratio_v4": 0.888268156424581,
+   "section": "a08g"
+  },
+  {
+   "g3": 391,
+   "g4": 349,
+   "member": "('a08g', 'group', 'correlated_trend', 'full', 2, '3', 'included', 'box_diff')",
+   "min_g": 391,
+   "ratio_v4": 0.8925831202046036,
+   "section": "a08g"
+  }
+ ]
+}

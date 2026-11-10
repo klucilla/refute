@@ -31,11 +31,17 @@ if os.environ.get("REFUTE_PROBE_CHUNK"):
     from refute.packs.tess import detrend_fast
 
     detrend_fast.CHUNK_ROWS = int(os.environ["REFUTE_PROBE_CHUNK"])
-SHARDS = 176
+SHARDS = int(os.environ.get("REFUTE_PROBE_SHARDS", "176"))  # more shards: less start-up weight
 PER_SHARD = 4
 SETTINGS = {1: None, 12: list(range(8, 32, 2)), 22: None}
 if os.environ.get("REFUTE_PROBE_ONLY"):
     SETTINGS = {12: list(range(8, 32, 2))}
+# The maintainer's decision of 2026-11-09 (1b): 12 pinned against 22, off business hours, in a
+# separate record so that the first one (probe-workers.json) stays as it was.
+RECORD = "probe-workers.json"
+if os.environ.get("REFUTE_PROBE_12_22"):
+    SETTINGS = {12: list(range(8, 32, 2)), 22: None}
+    RECORD = "probe-workers-12-22.json"
 # (section, shape, sectors, weight): roughly the acceptance's hours
 MIX = (
     ("a08", "group", 2, 1), ("a08", "group", 3, 2), ("a08", "group", 4, 3),
@@ -114,16 +120,14 @@ def main() -> None:
     results = [measure(w, pin) for w, pin in SETTINGS.items()]
     base = results[0]["cpu_seconds_per_unit"]
     for r in results:
-        r["cpu_ratio_to_one_worker"] = r["cpu_seconds_per_unit"] / base
+        r[f"cpu_ratio_to_{results[0]['workers']}_workers"] = r["cpu_seconds_per_unit"] / base
         print(r, flush=True)
     out = {
         "label": "CPU per unit by worker count; it decides nothing",
         "method_status": "not_validated",
         "results": results,
     }
-    (HERE / "probe-workers.json").write_text(
-        json.dumps(out, indent=1, sort_keys=True) + "\n", "utf-8"
-    )
+    (HERE / RECORD).write_text(json.dumps(out, indent=1, sort_keys=True) + "\n", "utf-8")
 
 
 if __name__ == "__main__":

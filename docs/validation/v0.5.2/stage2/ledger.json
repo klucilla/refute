@@ -1,41 +1,85 @@
 {
+ "gates": {
+  "adequacy": {
+   "detail": {
+    "certified": 0,
+    "file": "adequacy-result-aa037e23d0e2d011.json",
+    "lower_bound": 0.0
+   },
+   "state": "failed"
+  }
+ },
  "sections": {
   "adequacy": {
    "parts": {
     "evaluate": {
-     "allocation_hours": 20.0
+     "allocation_hours": 20.0,
+     "checkpoint_shards": 10,
+     "identity": "61874d6170b71c2b",
+     "projection_hours": 18.29592013888889,
+     "spent_hours": 22.17556423611111
     },
     "units-a01": {
-     "allocation_hours": 0.5289139633286319,
+     "allocation_hours": 0.35211267605633806,
+     "attempts": [
+      {
+       "identity": "8e25bc54572bc806",
+       "projection_hours": 0.18402777777777776,
+       "spent_hours": 0.20542100694444446
+      }
+     ],
      "checkpoint_shards": 2,
-     "identity": "8e25bc54572bc806",
-     "projection_hours": 0.18402777777777776,
-     "spent_hours": 0.20542100694444446
+     "identity": "846e0e9cc40d2f78",
+     "projection_hours": 0.17296006944444445,
+     "spent_hours": 0.2159201388888889
     },
     "units-a02": {
-     "allocation_hours": 5.553596614950634,
+     "allocation_hours": 13.028169014084508,
+     "attempts": [
+      {
+       "identity": "ac0f300bed10315b",
+       "projection_hours": 11.548667424841772,
+       "spent_hours": 0.5792664930555556
+      }
+     ],
      "checkpoint_shards": 40,
-     "identity": "ac0f300bed10315b",
-     "projection_hours": 11.548667424841772,
+     "identity": "8b376bb8ccaf8a42",
+     "projection_hours": 11.758677808544302,
      "reconciled": [
       {
        "reason": "The part allocation split the 75 CPU-h of the curves by the count of curves, not their cost; A0.2 costs about 4 times more per curve. The section line (95) was not at risk: 11.5 projected. The split is corrected to measured cost per unit, prospectively, and the earlier attempt stays in this ledger.",
        "stop": "stopped: the projection 11.5 CPU-h passes 1.5 times the allocation, 8.3"
       }
      ],
-     "spent_hours": 0.5792664930555556
+     "spent_hours": 14.746362847222223
     },
     "units-a04": {
-     "allocation_hours": 5.553596614950634
+     "allocation_hours": 3.2863849765258215,
+     "checkpoint_shards": 13,
+     "identity": "7bcc2dc7b87ebd48",
+     "projection_hours": 3.0890665374677004,
+     "spent_hours": 3.050625
     },
     "units-a05": {
-     "allocation_hours": 44.42877291960507
+     "allocation_hours": 25.23474178403756,
+     "checkpoint_shards": 99,
+     "identity": "34766b0144f49fd4",
+     "projection_hours": 24.237032733386076,
+     "spent_hours": 22.588411458333333
     },
     "units-a07": {
-     "allocation_hours": 0.37023977433004235
+     "allocation_hours": 0.2347417840375587,
+     "checkpoint_shards": 1,
+     "identity": "ce9fe5f7f5dd4249",
+     "projection_hours": 0.20842488606770831,
+     "spent_hours": 0.22981336805555555
     },
     "units-a08": {
-     "allocation_hours": 18.564880112834977
+     "allocation_hours": 32.863849765258216,
+     "checkpoint_shards": 55,
+     "identity": "4c520347fce9a638",
+     "projection_hours": 22.29953329655467,
+     "spent_hours": 21.25923611111111
     }
    }
   }

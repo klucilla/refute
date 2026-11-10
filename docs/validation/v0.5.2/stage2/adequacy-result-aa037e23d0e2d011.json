@@ -1,0 +1,38 @@
+{
+ "build": {
+  "diagnostic_pooled_moments_certify_nothing": {
+   "mean_of_member_means": 0.00025490115439136984,
+   "mean_of_member_sds": 1.0285935294732733
+  },
+  "family_members": 2293,
+  "family_members_without_pulls": 0,
+  "fingerprint": "f844b4f527228b13",
+  "priced_only_under_version_4": 318,
+  "records_not_ok": {
+   "a01": 0,
+   "a02": 0,
+   "a04": 0,
+   "a05": 0,
+   "a07": 0,
+   "a08": 0
+  },
+  "table_sha256": "3ae7483fcb9e5727cd91edf3f7e480efbdcce0f994fb6c5f65a811a1b11ab1b5",
+  "version_3_table_sha256": "6d91a7616a54f4293adb165ebff5c94542917db62b26d46fe15c21ef6db1c68b"
+ },
+ "certified": 0,
+ "datasets": 200,
+ "degenerate_datasets": 0,
+ "failed_aggregate_datasets": 0,
+ "failed_member_datasets": 0,
+ "label": "the frozen adequacy check of version 4 (design, section 1); certifies no target",
+ "lower_bound": 0.0,
+ "method_status": "not_validated",
+ "not_measured_datasets": 200,
+ "one_sided_level": 0.9875,
+ "passes": false,
+ "q_min_max": [
+  4.435212907125743,
+  4.6013666928849535
+ ],
+ "target": 9000
+}
