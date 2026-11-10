@@ -10,7 +10,7 @@
   "a08e": 18,
   "a08g": 40
  },
- "members_below_g_min_in_every_dataset": 102,
+ "members_with_expected_contributors_below_g_min": 102,
  "members_with_fewer_curves_by_section": {
   "a01": 7,
   "a02": 150,

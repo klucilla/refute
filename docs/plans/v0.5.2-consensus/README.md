@@ -82,6 +82,16 @@ The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d
 | 3 | [stage2-impl-round-3-answer.md](stage2-impl-round-3-answer.md) | gpt-6.1-sol, high | `REFUTED` (6 findings) | `c1125e64138a74165afd262410d17f16a03cb37380296ab0a27050e0b01ecb93` |
 | 4 | [stage2-impl-round-4-answer.md](stage2-impl-round-4-answer.md) | gpt-6.1-sol, high | `REFUTED` (7 findings) | `6a3e08e5d8308b681375d5aba423ba8c5e09eae42703b330871ade9f04c68898` |
 
+## The adequacy redesign
+
+After the failed adequacy check (`c1e717e`), the maintainer's decision dated 2026-11-09 (#216, item 1): a prospective redesign of the sizing through this consensus, loosening nothing, sized cell by cell from version 4's availability, repriced before launch, and a STOP if the total projection passes 3,100 CPU-h. Codex CLI 0.167.0-alpha.3.2, in the stage 2 design conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [adequacy-redesign-round-1-answer.md](adequacy-redesign-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (8 findings) | `74a06eb44aab9a454287dd848817e0283717cef7c5e383fb4631bc589fe00dc1` |
+
+Round 1 used 8,877,523 input tokens (8,278,912 cached) and 56,006 output tokens (36,308 of them reasoning). Applied: exact integer sizing; the run-by-run rule recorded as equal to the component rule because every component of this table holds one run; the per-member 95 % lower bound as the planning rule, with the whole-family check unchanged and no claim of simultaneous delivery; the targeted A0.8 event pilot priced; the diagnosis's wording corrected (expected contributors below `G_min`, not "every dataset"). Agreed: a fresh out-of-sample check on a frozen manifest of absolute run sizes, new curve and draw labels; an in-sample check stays diagnostic. Every option with a margin passes 3,100 CPU-h once the known-answer gate is rescaled with the schedule (`sizing-v4.json`), so the maintainer's condition (b) applies: a STOP before launch, with the options.
+
 Round 4, a narrow review before the first long run (11,433,335 input tokens, 10,948,736 cached; 57,970 output): every finding was applied; a failed adequacy gate persists and blocks later work; the rebuilt reference is verified by bytes in each worker; the constructions are shuffled into the shards so that the first 5 % is representative, weighted by units; every part is declared before dispatch; the cap follows the frozen projection; a stop binds across code changes until reconciled; the total is checked after the last batch.
 
 Round 3, the end-of-round review, used 8,816,615 input tokens (8,368,256 cached) and 42,499 output tokens; every finding was accepted and applied: the noise-free truth of A0.8 goes through the production preprocessing again (the shortcut changed which windows are measurable, so A0 is repriced); reuse keeps a fresh run's batches and widths, with a byte test of the real series and all four combs; each budget line runs through `budgeted.py`, with a persisted first-5 % checkpoint and a ledger read before each batch; a run that passes its cap at the end binds; the comb reference check has a budget line; the deletion guard refuses parent traversal and checks the resolved path.

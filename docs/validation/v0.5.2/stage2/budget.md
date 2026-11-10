@@ -78,6 +78,22 @@ With 4 units per shard, the start of each shard dominates (about 3 of 12 cores b
 
 **Wall clock.** Off business hours, 12 workers deliver about 11.4 CPU-h per hour. In business hours the adequacy check delivered about 6 CPU-h per hour with 10 workers (the machine is shared then). A week (118 hours off business hours, 50 in them) then gives about 1,650 CPU-h, 9.8 per hour on average. At that rate the remaining 2,369 CPU-h of the table above take about 242 hours (10 days) of compute alone, before development and before the adequacy's redesign is priced; the pause of 18 November at 20:00 comes first.
 
+## The adequacy redesign, repriced (2026-11-10): a STOP before launch
+
+The adequacy check failed (`c1e717e`); the maintainer's decision dated 2026-11-09 (#216, item 1) asks for a prospective redesign sized cell by cell from version 4's availability, repriced here, and **a STOP before launch if the total projection passes 3,100 CPU-h**. [`sizing_v4.py`](sizing_v4.py) ([`sizing-v4.json`](sizing-v4.json)) sizes each run from its members' measured availability, in exact integers; in this table every component holds one run, so "cell by cell" and "component by component" coincide. CPU per curve is measured in the adequacy run itself, which also shows that **the A0 line of 1,048 CPU-h was low: the version 3 schedule costs 1,482 CPU-h on version 4's code** (A0.8's truth back on the production path).
+
+Totals: spent so far 155.1; the other lines as they stand, 1,226; a fresh out-of-sample check, 85 (Codex's round 1: an in-sample check stays diagnostic); and the known-answer gate rescaled with the schedule's curves (its datasets reproduce the schedule; a scaling, not a measurement).
+
+| Sizing of the A0 acceptance | Curves | A0 (CPU-h) | Total | Total with the known-answer rescaling |
+|---|---|---|---|---|
+| Version 3's schedule (the reference, not an option: it fails the check) | 9,669,445 | 1,482 | 2,948 | 2,948 |
+| Point estimate of each member's availability (no margin) | 9,770,215 | 1,505 | 2,971 | 2,979 |
+| Per-member 95 % lower bound | 10,519,939 | 1,644 | 3,110 | 3,182 |
+| The same with Bonferroni over the family | 12,065,585 | 1,932 | 3,398 | 3,601 |
+| Per-member lower bound after a pilot of 10x curves in the 45 A0.8 event runs (8.2 CPU-h; a what-if at the same availability) | 10,323,182 | 1,604 | 3,078 | 3,133 |
+
+**Every option with a margin passes 3,100 CPU-h**, so the work stopped before launch. The point estimate fits, but it has no margin for the availability's uncertainty: the members that drive the size are carried by 20 to 40 of 100 curves, so a fresh check, or the acceptance itself, could fall short of `G_min` on them. Codex's round 1 (`WEAKENED`, [answer](../../../plans/v0.5.2-consensus/adequacy-redesign-round-1-answer.md)) accepts the per-member lower bound as a planning rule with the whole-family check unchanged, finds the targeted pilot the cheapest margin, and requires the known-answer gate, the redesigned check and the A0 workload to be repriced on the new schedule before launch. The wall clock of what remains (about 2,980 CPU-h at 9.8 per hour) is about 304 hours, so the pause of 18 November comes first in every option.
+
 ## What this does not establish
 
 These are projections. The per-unit costs are means of a few hundred units; the items marked "estimate" have no measurement of the final workload, and the selector's family and the full-chain sample are not designed yet. No part of this page says that version 4 is calibrated.

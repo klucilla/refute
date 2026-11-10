@@ -5,8 +5,10 @@ the 200 datasets with members not measured. This script compares, member by memb
 of curves that carry the member (G) under version 3 (the sizing reference) and version 4 (the
 rebuilt reference). The draw scales each run by ``target / min_g`` with version 3's ``min_g``
 (the schedule kept frozen from version 3, as the design says), so a member whose version 4 G is
-below ``0.95 * min_g`` falls below ``G_min`` in every dataset. It decides nothing, changes no
-result and certifies nothing. ``method_status: not_validated``.
+below ``0.95 * min_g`` has fewer than ``G_min`` expected contributing curves; it can still reach
+``G_min`` in some resampled datasets (the observed minimum, 91 members not measured, is below the
+102 counted here; Codex, redesign round 1). It decides nothing, changes no result and certifies
+nothing. ``method_status: not_validated``.
 
 Usage: ``.venv/Scripts/python.exe docs/validation/v0.5.2/stage2/adequacy_diagnosis.py``; writes
 ``adequacy-diagnosis.json``.
@@ -67,7 +69,7 @@ def main() -> None:
         "members_with_fewer_curves_by_section": dict(
             sorted(Counter(r["section"] for r in lost).items())
         ),
-        "members_below_g_min_in_every_dataset": len(below),
+        "members_with_expected_contributors_below_g_min": len(below),
         "members_below_by_section": dict(sorted(Counter(r["section"] for r in below).items())),
         "members_within_0_02_above_the_fraction": len(near),
         "smallest_ratio_v4": float(ratios.min()),

@@ -1,0 +1,139 @@
+{
+ "components_and_runs": 717,
+ "cpu_per_curve_from_the_adequacy_run": {
+  "a01": {
+   "cpu_hours": 0.2159201388888889,
+   "cpu_seconds": 0.2591041666666667,
+   "curves": 3000
+  },
+  "a02": {
+   "cpu_hours": 11.249196180555556,
+   "cpu_seconds": 1.2856224206349207,
+   "curves": 31500
+  },
+  "a04": {
+   "cpu_hours": 3.050625,
+   "cpu_seconds": 0.34864285714285714,
+   "curves": 31500
+  },
+  "a05": {
+   "cpu_hours": 22.588411458333333,
+   "cpu_seconds": 0.32269159226190475,
+   "curves": 252000
+  },
+  "a07": {
+   "cpu_hours": 0.22981336805555555,
+   "cpu_seconds": 0.3939657738095238,
+   "curves": 2100
+  },
+  "a08": {
+   "cpu_hours": 21.25923611111111,
+   "cpu_seconds": 0.7268114909781577,
+   "curves": 105300
+  }
+ },
+ "curves_by_section": {
+  "lower": {
+   "a01": 141561,
+   "a02": 511736,
+   "a04": 502340,
+   "a05": 4317724,
+   "a07": 42832,
+   "a08": 5003746
+  },
+  "lower_family": {
+   "a01": 149328,
+   "a02": 538740,
+   "a04": 527721,
+   "a05": 4532593,
+   "a07": 46162,
+   "a08": 6271041
+  },
+  "lower_pilot_a08e": {
+   "a01": 141561,
+   "a02": 511736,
+   "a04": 502340,
+   "a05": 4317724,
+   "a07": 42832,
+   "a08": 4806989
+  },
+  "point": {
+   "a01": 137916,
+   "a02": 495629,
+   "a04": 487219,
+   "a05": 4203947,
+   "a07": 40846,
+   "a08": 4404658
+  },
+  "version_3": {
+   "a01": 137776,
+   "a02": 485749,
+   "a04": 485279,
+   "a05": 4213434,
+   "a07": 40570,
+   "a08": 4306637
+  }
+ },
+ "family_members": 2293,
+ "fresh_check_cpu_hours": 85.0,
+ "hard_maximum": 3100.0,
+ "label": "the acceptance's schedule sized run by run from version 4; it decides nothing",
+ "method_status": "not_validated",
+ "one_sided_level": 0.05,
+ "other_lines_cpu_hours": 1226.0,
+ "pilot_a08e_what_if": {
+  "cpu_hours": 8.176629273504272,
+  "curves": 40500,
+  "k": 10,
+  "runs": 45
+ },
+ "spent_so_far_cpu_hours": 155.05062065972223,
+ "target": 9000,
+ "totals": {
+  "lower": {
+   "a0_acceptance_cpu_hours": 1643.517566141088,
+   "curves": 10519939,
+   "curves_ratio_to_version_3": 1.087956857916871,
+   "known_answer_rescaling_sensitivity": 72.12462349183424,
+   "pilot_cpu_hours": 0.0,
+   "total_with_known_answer_rescaling": 3181.692810292645,
+   "total_without_known_answer_rescaling": 3109.5681868008105
+  },
+  "lower_family": {
+   "a0_acceptance_cpu_hours": 1931.6595684994609,
+   "curves": 12065585,
+   "curves_ratio_to_version_3": 1.2478053290545632,
+   "known_answer_rescaling_sensitivity": 203.20036982474184,
+   "pilot_cpu_hours": 0.0,
+   "total_with_known_answer_rescaling": 3600.9105589839246,
+   "total_without_known_answer_rescaling": 3397.710189159183
+  },
+  "lower_pilot_a08e": {
+   "a0_acceptance_cpu_hours": 1603.7938859937576,
+   "curves": 10323182,
+   "curves_ratio_to_version_3": 1.0676085338920693,
+   "known_answer_rescaling_sensitivity": 55.43899779149685,
+   "pilot_cpu_hours": 8.176629273504272,
+   "total_with_known_answer_rescaling": 3133.460133718481,
+   "total_without_known_answer_rescaling": 3078.021135926984
+  },
+  "point": {
+   "a0_acceptance_cpu_hours": 1504.6716985060284,
+   "curves": 9770215,
+   "curves_ratio_to_version_3": 1.0104214874793744,
+   "known_answer_rescaling_sensitivity": 8.545619733087037,
+   "pilot_cpu_hours": 0.0,
+   "total_with_known_answer_rescaling": 2979.267938898837,
+   "total_without_known_answer_rescaling": 2970.7223191657504
+  },
+  "version_3": {
+   "a0_acceptance_cpu_hours": 1481.975937445746,
+   "curves": 9669445,
+   "curves_ratio_to_version_3": 1.0,
+   "known_answer_rescaling_sensitivity": 0.0,
+   "pilot_cpu_hours": 0.0,
+   "total_with_known_answer_rescaling": 2948.026558105468,
+   "total_without_known_answer_rescaling": 2948.026558105468
+  }
+ }
+}
