@@ -79,12 +79,7 @@ def lower_size(g: int, n: int, level: float) -> int:
 
 
 def spent_so_far(ledger: dict) -> float:
-    total = budgeted.SPENT_BEFORE
-    for section in ledger.get("sections", {}).values():
-        for row in section["parts"].values():
-            total += row.get("spent_hours", 0.0)
-            total += sum(a["spent_hours"] for a in row.get("attempts", []))
-    return total
+    return budgeted.spent(ledger)  # the charges included (Codex, end of round 5)
 
 
 def main() -> None:
@@ -101,7 +96,9 @@ def main() -> None:
         r3, r4 = c3["runs"][0], c4["runs"][0]
         key, n_r = r4["key"], int(r4["n"].shape[0])
         g = (r4["n"] > 0).sum(axis=0)
-        carried = [int(x) for x in g if x > 0]
+        if (g == 0).any():  # a required member no curve carries cannot be sized (Codex, round 5)
+            raise SystemExit(f"{key!r}: a family member with no contributing curve is unpriceable")
+        carried = [int(x) for x in g]
         size = {
             "version_3": ceil_div(TARGET * int(r3["n"].shape[0]), int(c3["min_g"])),
             "point": max(ceil_div(TARGET * n_r, x) for x in carried),

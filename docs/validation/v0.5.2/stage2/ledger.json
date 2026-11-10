@@ -1,4 +1,16 @@
 {
+ "charges": [
+  {
+   "basis": "the recorded units times their measured CPU seconds per unit, both settings; worker start and other overhead not counted, so a lower bound (probe-workers-12-22.json; Codex, end of round 5)",
+   "hours": 3.704900173611111,
+   "name": "probe-workers-12-22 (1,760 x 4)"
+  },
+  {
+   "basis": "the recorded units times their measured CPU seconds per unit, both settings; worker start and other overhead not counted, so a lower bound (probe-workers-12-22-64.json; Codex, end of round 5)",
+   "hours": 4.403962673611111,
+   "name": "probe-workers-12-22-64 (132 x 64)"
+  }
+ ],
  "gates": {
   "adequacy": {
    "detail": {

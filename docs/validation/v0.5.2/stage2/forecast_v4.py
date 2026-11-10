@@ -149,47 +149,79 @@ def fingerprint() -> str:
     return h.hexdigest()[:16]
 
 
+MAX_SHARD_SECONDS = 1200.0  # inside the driver's 30-minute batch (two curves of about 3 minutes)
+
+
 def run() -> None:
     fp = fingerprint()
     budgeted.declare(SECTION, {PART: ALLOCATION_HOURS})
     state = budgeted.execute(
-        SECTION, PART, OUT / fp, shard, shards(), fp, WORKERS, pin=PIN, max_shard_seconds=1800.0
-    )
+        SECTION, PART, OUT / fp, shard, shards(), fp, WORKERS, pin=PIN,
+        max_shard_seconds=MAX_SHARD_SECONDS,
+    )  # fmt: skip
     print(state, flush=True)
     if state != "complete":
         raise SystemExit(state)
 
 
-def _rate(k: int, n: int) -> dict:
-    from scipy import stats
+def _wilson_upper(k: int, n: int) -> float | None:
+    from refute.packs.tess.calib05.c1 import wilson
 
-    high = float(stats.beta.ppf(0.95, k + 1, n - k)) if k < n else 1.0
-    return {"count": k, "of": n, "fraction": k / n if n else None, "upper_95": high}
+    interval = wilson(k, n)
+    return None if interval is None else interval[1]
+
+
+def _decision(decidable: bool, passed: bool) -> str:
+    """The frozen rules' wording (``calib05.c1._rule``): below the floor, NOT DECIDABLE."""
+    if not decidable:
+        return "NOT DECIDABLE"
+    return "PASS" if passed else "FAIL"
 
 
 def t2a_sector_reading() -> dict:
     """What the sector rule implies for T2a's real hosts: with the selector not certified, a
     target whose measured events fall in five or more sectors is INCONCLUSIVE in every
-    A0-dependent test. Read from the v0.5 C2 records (the sectors of each host's light curve)."""
-    if not C2_RECORDS.exists():
-        return {"state": "the v0.5 C2 records are not available"}
-    counts: Counter = Counter()
-    for line in C2_RECORDS.read_text("utf-8").splitlines():
-        if not line.strip():
-            continue
-        r = json.loads(line)
-        if r.get("kind") != "original":
-            continue
-        n = r.get("n_sectors") or len(r.get("sectors") or [])
-        counts["5_or_more" if n >= 5 else "2_to_4" if n >= 2 else "unknown_or_1"] += 1
-    return {"hosts_by_sector_count": dict(counts)}
+    A0-dependent test. The number of 120-s light-curve files of each original-gate-negative host
+    with a recovered injection (T2a's denominator) is read from v0.5's C2 fetch record; the
+    sectors that hold measured events can be fewer, so this bounds the rule's reach, it does not
+    measure it."""
+    fetch = ROOT / ".cache/v05/calibration/c2-fetch.json"
+    if not C2_RECORDS.exists() or not fetch.exists():
+        return {"state": "the v0.5 C2 records or fetch record are not available"}
+    recs = [json.loads(x) for x in C2_RECORDS.read_text("utf-8").splitlines() if x.strip()]
+    own = {
+        r["target_key"]
+        for r in recs
+        if r["kind"] == "original" and r.get("status") == "OK" and r["chain"]["v04"]["gate_passed"]
+    }
+    rows = [
+        r
+        for r in recs
+        if r["kind"] == "injection" and r.get("status") == "OK" and r["target_key"] not in own
+        and (r.get("recovery") or {}).get("recovered")
+    ]  # fmt: skip
+    files = json.loads(fetch.read_text("utf-8"))["files"]
+    hosts: Counter = Counter()
+    injections: Counter = Counter()
+    for key in {r["target_key"] for r in rows}:
+        n = len(files.get(key) or [])
+        hosts["5_or_more" if n >= 5 else "2_to_4" if n >= 2 else "0_or_1"] += 1
+    for r in rows:
+        n = len(files.get(r["target_key"]) or [])
+        injections["5_or_more" if n >= 5 else "2_to_4" if n >= 2 else "0_or_1"] += 1
+    return {
+        "denominator_injections": len(rows),
+        "hosts_by_light_curve_files": dict(hosts),
+        "injections_by_host_light_curve_files": dict(injections),
+    }
 
 
 def summarize() -> None:
     fp = fingerprint()
     data = budgeted.assembled(
-        SECTION, PART, OUT / fp, shard, shards(), fp, WORKERS, pin=PIN, max_shard_seconds=1800.0
-    )
+        SECTION, PART, OUT / fp, shard, shards(), fp, WORKERS, pin=PIN,
+        max_shard_seconds=MAX_SHARD_SECONDS,
+    )  # fmt: skip
     recs = [json.loads(x) for x in data.decode().splitlines() if x.strip()]
     ok = [r for r in recs if r.get("status") == "OK"]
     eligible = [r for r in ok if r["gate_passed"] and r["identity"]]
@@ -207,24 +239,38 @@ def summarize() -> None:
         "sectors": dict(Counter(str(r["sectors"]) for r in eligible)),
         "batteries": {},
     }
+    from refute.packs.tess.calib05.values import C1
+
+    floor = C1.not_decidable_below
+    out["rules"] = (
+        "D2 and D4 as frozen in calib05.c1.decision_rules: D2 kept >= v0.4 kept - 0.10, REFUTED "
+        f"fraction <= 0.05 and its Wilson 95 % upper bound <= 0.10; D4 INCONCLUSIVE <= 0.30 on "
+        f"target SNR >= 15; NOT DECIDABLE below {floor} eligible curves"
+    )
     v04_kept = sum(r["v04"] in KEPT for r in eligible)
     for b in ("v04", "v3", "v4"):
         kept = sum(r[b] in KEPT for r in eligible)
         refuted = sum(r[b] == "REFUTED" for r in eligible)
         inconclusive = sum(r[b] == "INCONCLUSIVE" for r in subset)
+        upper = _wilson_upper(refuted, n)
         block = {
             "verdicts": dict(Counter(r[b] for r in eligible)),
-            "D2_kept": _rate(kept, n),
-            "D2_refuted": _rate(refuted, n),
-            "D4_inconclusive": _rate(inconclusive, m),
+            "D2_kept": kept / n if n else None,
+            "D2_refuted": refuted / n if n else None,
+            "D2_refuted_upper_wilson": upper,
+            "D4_inconclusive": inconclusive / m if m else None,
         }
         if b != "v04":
             block["D2_kept_minimum"] = (v04_kept / n - 0.10) if n else None
-            block["D2_kept_meets"] = bool(n) and kept / n >= v04_kept / n - 0.10
-            block["D2_refuted_meets"] = (
-                bool(n) and refuted / n <= 0.05 and (block["D2_refuted"]["upper_95"] <= 0.10)
+            block["D2"] = _decision(
+                n >= floor,
+                bool(n)
+                and kept / n >= v04_kept / n - 0.10
+                and refuted / n <= 0.05
+                and upper is not None
+                and upper <= 0.10,
             )
-            block["D4_meets"] = bool(m) and inconclusive / m <= 0.30
+            block["D4"] = _decision(m >= floor, bool(m) and inconclusive / m <= 0.30)
             tests = {}
             for t in (*A0_TESTS, "sinusoid"):
                 tests[t] = dict(Counter(r[f"{b}_tests"].get(t, {}).get("status") for r in eligible))
@@ -251,7 +297,7 @@ def summarize() -> None:
         Counter(f"{r['v3']} -> {r['v4']}" for r in eligible if r["v3"] != r["v4"])
     )
     out["T2a"] = {
-        "state": "not run: real hosts, not cached",
+        "state": "not measured here: real hosts (t2a part, separate)",
         "sector_rule_reading": t2a_sector_reading(),
     }
     out["cpu_hours"] = round(sum(float(r.get("cpu_seconds", 0.0)) for r in recs) / 3600.0, 3)

@@ -89,6 +89,9 @@ The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d
 
 | 3 | [stage2-impl-round-3-answer.md](stage2-impl-round-3-answer.md) | gpt-6.1-sol, high | `REFUTED` (6 findings) | `c1125e64138a74165afd262410d17f16a03cb37380296ab0a27050e0b01ecb93` |
 | 4 | [stage2-impl-round-4-answer.md](stage2-impl-round-4-answer.md) | gpt-6.1-sol, high | `REFUTED` (7 findings) | `6a3e08e5d8308b681375d5aba423ba8c5e09eae42703b330871ade9f04c68898` |
+| 5 | [stage2-impl-round-5-answer.md](stage2-impl-round-5-answer.md) | gpt-6.1-sol, high | `REFUTED` (7 findings) | `f34b94ba4094c3f42f24083ee966e755d99b68abc620d16ca3025d481b8bea8a` |
+
+Round 5 is the end-of-round review of `28a8258` to `ac39ffc`; it used 16,126,126 input tokens (15,134,848 cached) and 73,930 output tokens (43,119 of them reasoning). Applied: every stop the driver issues now binds in the ledger, a pause stays resumable (1, with a test; a test that passed only through the hole was corrected); the two worker probes are charged in the ledger at their measured CPU, 8.1 CPU-h, a lower bound, and the probe keeps one folder per configuration (2); the forecast's shard limit sits inside the batch (3); D2 and D4 use the frozen rules, with the Wilson bound and NOT DECIDABLE below the floor (4); the T2a sector reading uses v0.5's C2 fetch record on T2a's own denominator (6); a family member no curve carries stops the sizing (7). Finding 5 is applied in part: the measured T2a forecast needs the C2 hosts' light curves again, by their recorded URLs and SHA-256, and is planned after the maintainer's decision on the redesign; the sector reading already bounds T2a without a certified selector.
 
 ## The adequacy redesign
 

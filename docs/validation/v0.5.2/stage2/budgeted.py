@@ -92,10 +92,32 @@ def _part_total(row: dict) -> float:
     return earlier + max(row.get("spent_hours", 0.0), expected)
 
 
+def charge(name: str, hours: float, basis: str) -> None:
+    """Consumption that ran outside a section (a probe), charged once by name; it counts in the
+    total like anything spent (Codex, end of round 5)."""
+    ledger = load()
+    charges = ledger.setdefault("charges", [])
+    if any(c["name"] == name for c in charges):
+        raise SystemExit(f"{name}: already charged")
+    charges.append({"name": name, "hours": hours, "basis": basis})
+    save(ledger)
+
+
+def spent(ledger: dict) -> float:
+    """Everything consumed so far: before the decision, the charges, and every part's attempts."""
+    total = SPENT_BEFORE + sum(c["hours"] for c in ledger.get("charges", []))
+    for section in ledger.get("sections", {}).values():
+        for row in section["parts"].values():
+            total += row.get("spent_hours", 0.0)
+            total += sum(a["spent_hours"] for a in row.get("attempts", []))
+    return total
+
+
 def total_projection(ledger: dict) -> float:
-    """Spent before, plus each section's parts and whatever of its line no part has declared."""
+    """Spent before, the charges, each section's parts and whatever of its line no part has
+    declared."""
     sections = ledger.get("sections", {})
-    total = SPENT_BEFORE
+    total = SPENT_BEFORE + sum(c["hours"] for c in ledger.get("charges", []))
     for section, line in LINES.items():
         parts = sections.get(section, {"parts": {}})["parts"]
         allocated = sum(p["allocation_hours"] for p in parts.values())
@@ -213,8 +235,7 @@ def execute(
         state = run.execute()
         row["spent_hours"] = run.spent_seconds() / 3600.0
         if state != "complete":
-            save(ledger)
-            return state
+            return _ended(ledger, row, state)
         share = sum(units(a) for _, a in probe) / sum(units(a) for _, a in shards)
         row["projection_hours"] = row["spent_hours"] / share
         row["checkpoint_shards"] = len(probe)
@@ -233,9 +254,17 @@ def execute(
     state = run.execute()
     if state != "complete":
         row["spent_hours"] = run.spent_seconds() / 3600.0
+        return _ended(ledger, row, state)
+    return finish(ledger, section, part, run.spent_seconds() / 3600.0) or state
+
+
+def _ended(ledger: dict, row: dict, state: str) -> str:
+    """A driver run that did not complete: a stop of any kind (cap, accounting, shard limit, the
+    guard) binds across attempts in the ledger; a pause stays resumable (Codex, end of round 5)."""
+    if state.startswith("paused"):
         save(ledger)
         return state
-    return finish(ledger, section, part, run.spent_seconds() / 3600.0) or state
+    return _stop(ledger, row, state)
 
 
 def assembled(

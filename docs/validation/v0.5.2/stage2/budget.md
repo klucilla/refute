@@ -82,15 +82,17 @@ With 4 units per shard, the start of each shard dominates (about 3 of 12 cores b
 
 The adequacy check failed (`c1e717e`); the maintainer's decision dated 2026-11-09 (#216, item 1) asks for a prospective redesign sized cell by cell from version 4's availability, repriced here, and **a STOP before launch if the total projection passes 3,100 CPU-h**. [`sizing_v4.py`](sizing_v4.py) ([`sizing-v4.json`](sizing-v4.json)) sizes each run from its members' measured availability, in exact integers; in this table every component holds one run, so "cell by cell" and "component by component" coincide. CPU per curve is measured in the adequacy run itself, which also shows that **the A0 line of 1,048 CPU-h was low: the version 3 schedule costs 1,482 CPU-h on version 4's code** (A0.8's truth back on the production path).
 
-Totals: spent so far 155.1; the other lines as they stand, 1,226; a fresh out-of-sample check, 85 (Codex's round 1: an in-sample check stays diagnostic); and the known-answer gate rescaled with the schedule's curves (its datasets reproduce the schedule; a scaling, not a measurement).
+Totals: spent so far 163.2 (155.1 in the ledger's parts and 8.1 CPU-h of the two worker probes, which ran outside the ledger and are now charged in it at their measured CPU, a lower bound; Codex, end of round 5); the other lines as they stand, 1,226; a fresh out-of-sample check, 85 (Codex's round 1: an in-sample check stays diagnostic); and the known-answer gate rescaled with the schedule's curves (its datasets reproduce the schedule; a scaling, not a measurement).
 
 | Sizing of the A0 acceptance | Curves | A0 (CPU-h) | Total | Total with the known-answer rescaling |
 |---|---|---|---|---|
-| Version 3's schedule (the reference, not an option: it fails the check) | 9,669,445 | 1,482 | 2,948 | 2,948 |
-| Point estimate of each member's availability (no margin) | 9,770,215 | 1,505 | 2,971 | 2,979 |
-| Per-member 95 % lower bound | 10,519,939 | 1,644 | 3,110 | 3,182 |
-| The same with Bonferroni over the family | 12,065,585 | 1,932 | 3,398 | 3,601 |
-| Per-member lower bound after a pilot of 10x curves in the 45 A0.8 event runs (8.2 CPU-h; a what-if at the same availability) | 10,323,182 | 1,604 | 3,078 | 3,133 |
+| Version 3's schedule (the reference, not an option: it fails the check) | 9,669,445 | 1,482 | 2,956 | 2,956 |
+| Point estimate of each member's availability (no margin) | 9,770,215 | 1,505 | 2,979 | 2,987 |
+| Per-member 95 % lower bound | 10,519,939 | 1,644 | 3,118 | 3,190 |
+| The same with Bonferroni over the family | 12,065,585 | 1,932 | 3,406 | 3,609 |
+| Per-member lower bound after a pilot of 10x curves in the 45 A0.8 event runs (8.2 CPU-h; a what-if at the same availability) | 10,323,182 | 1,604 | 3,086 | 3,142 |
+
+**The sector selector matters for T2a** (`forecast_v4.py`, `t2a_sector_reading`, from v0.5's C2 fetch record): 313 of the 615 injections of T2a's denominator (41 of 84 hosts) sit in hosts with five or more 120-s light-curve files. With the selector not certified, a target of five or more sectors is INCONCLUSIVE in every A0-dependent test, so T2a's kept fraction could not exceed about 0.49 against its minimum of about 0.90 (v0.4's 0.997 minus 0.10). Leaving the selector uncertified to save its 135 CPU-h would therefore make T2a fail; this is a bound read from file counts, not a measurement of version 4.
 
 **Every option with a margin passes 3,100 CPU-h**, so the work stopped before launch. The point estimate fits, but it has no margin for the availability's uncertainty: the members that drive the size are carried by 20 to 40 of 100 curves, so a fresh check, or the acceptance itself, could fall short of `G_min` on them. Codex's round 1 (`WEAKENED`, [answer](../../../plans/v0.5.2-consensus/adequacy-redesign-round-1-answer.md)) accepts the per-member lower bound as a planning rule with the whole-family check unchanged, finds the targeted pilot the cheapest margin, and requires the known-answer gate, the redesigned check and the A0 workload to be repriced on the new schedule before launch. The wall clock of what remains (about 2,980 CPU-h at 9.8 per hour) is about 304 hours, so the pause of 18 November comes first in every option.
 

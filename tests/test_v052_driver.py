@@ -300,6 +300,24 @@ def test_a_stop_binds_under_other_code_until_it_is_reconciled(tmp_path, ledger):
     assert "unresolved_stop" not in ledger.load()["sections"]["adequacy"]["parts"]["p"]
 
 
+def test_a_stop_issued_by_the_driver_binds_in_the_ledger(tmp_path, ledger):
+    """Codex, end of round 5: a cap, accounting or shard-limit stop of the driver itself is
+    written to the ledger, so other code cannot run the part until it is reconciled."""
+    ledger.declare("adequacy", {"p": 1.0})
+    shards = [(f"s{i:03d}", 0.3) for i in range(6)]
+    book = ledger.load()
+    row = book["sections"]["adequacy"]["parts"]["p"]
+    row["identity"] = ledger._identity("fp", shards, 1.0)
+    row["projection_hours"] = 1e-6  # a frozen projection whose cap the first batch passes
+    ledger.save(book)
+    args = {"clock": sunday, "check_placement": PLACED}
+    state = ledger.execute("adequacy", "p", tmp_path / "r", spin, shards, "fp", 1, **args)
+    assert state != "complete" and not state.startswith("paused")  # the cap, by either path
+    assert ledger.load()["sections"]["adequacy"]["parts"]["p"]["unresolved_stop"] == state
+    with pytest.raises(SystemExit):
+        ledger.execute("adequacy", "p", tmp_path / "r2", spin, shards, "other", 1, **args)
+
+
 def test_a_frozen_checkpoint_is_not_measured_again_under_the_same_code(tmp_path, ledger):
     ledger.declare("adequacy", {"p": 1.0})
     args = {"clock": sunday, "check_placement": PLACED}
@@ -316,7 +334,16 @@ def test_a_frozen_checkpoint_is_not_measured_again_under_the_same_code(tmp_path,
 def test_other_code_is_a_new_attempt_and_keeps_the_consumption(tmp_path, ledger):
     ledger.declare("adequacy", {"p": 1.0})
     args = {"clock": sunday, "check_placement": PLACED}
-    ledger.execute("adequacy", "p", tmp_path / "r", job, SHARDS[:4], "fp", 1, **args)
+    # a frozen projection with room, so that the first run completes: a one-shard checkpoint of
+    # four tiny shards projects less than a new batch's worker start, and its cap would now bind
+    book = ledger.load()
+    row = book["sections"]["adequacy"]["parts"]["p"]
+    row["identity"] = ledger._identity("fp", SHARDS[:4], 1.0)
+    row["projection_hours"] = 1.0
+    ledger.save(book)
+    assert ledger.execute("adequacy", "p", tmp_path / "r", job, SHARDS[:4], "fp", 1, **args) == (
+        "complete"
+    )
     ledger.execute("adequacy", "p", tmp_path / "r2", job, SHARDS[:4], "other", 1, **args)
     row = ledger.load()["sections"]["adequacy"]["parts"]["p"]
     assert len(row["attempts"]) == 1 and row["attempts"][0]["spent_hours"] > 0.0
@@ -335,6 +362,16 @@ def test_a_part_not_reached_keeps_its_reservation():
     assert budgeted.total_projection({}) == pytest.approx(
         budgeted.SPENT_BEFORE + sum(budgeted.LINES.values())
     )
+
+
+def test_a_charge_counts_once_in_the_total_and_in_what_is_spent(ledger):
+    before = ledger.total_projection(ledger.load())
+    ledger.charge("a probe", 2.5, "measured")
+    book = ledger.load()
+    assert ledger.total_projection(book) == pytest.approx(before + 2.5)
+    assert ledger.spent(book) == pytest.approx(ledger.SPENT_BEFORE + 2.5)
+    with pytest.raises(SystemExit):
+        ledger.charge("a probe", 1.0, "again")
 
 
 def test_the_cap_follows_the_frozen_projection():

@@ -87,7 +87,7 @@
   "k": 10,
   "runs": 45
  },
- "spent_so_far_cpu_hours": 155.05062065972223,
+ "spent_so_far_cpu_hours": 163.15948350694444,
  "target": 9000,
  "totals": {
   "lower": {
@@ -96,8 +96,8 @@
    "curves_ratio_to_version_3": 1.087956857916871,
    "known_answer_rescaling_sensitivity": 72.12462349183424,
    "pilot_cpu_hours": 0.0,
-   "total_with_known_answer_rescaling": 3181.692810292645,
-   "total_without_known_answer_rescaling": 3109.5681868008105
+   "total_with_known_answer_rescaling": 3189.801673139867,
+   "total_without_known_answer_rescaling": 3117.6770496480326
   },
   "lower_family": {
    "a0_acceptance_cpu_hours": 1931.6595684994609,
@@ -105,8 +105,8 @@
    "curves_ratio_to_version_3": 1.2478053290545632,
    "known_answer_rescaling_sensitivity": 203.20036982474184,
    "pilot_cpu_hours": 0.0,
-   "total_with_known_answer_rescaling": 3600.9105589839246,
-   "total_without_known_answer_rescaling": 3397.710189159183
+   "total_with_known_answer_rescaling": 3609.019421831147,
+   "total_without_known_answer_rescaling": 3405.8190520064054
   },
   "lower_pilot_a08e": {
    "a0_acceptance_cpu_hours": 1603.7938859937576,
@@ -114,8 +114,8 @@
    "curves_ratio_to_version_3": 1.0676085338920693,
    "known_answer_rescaling_sensitivity": 55.43899779149685,
    "pilot_cpu_hours": 8.176629273504272,
-   "total_with_known_answer_rescaling": 3133.460133718481,
-   "total_without_known_answer_rescaling": 3078.021135926984
+   "total_with_known_answer_rescaling": 3141.5689965657034,
+   "total_without_known_answer_rescaling": 3086.1299987742063
   },
   "point": {
    "a0_acceptance_cpu_hours": 1504.6716985060284,
@@ -123,8 +123,8 @@
    "curves_ratio_to_version_3": 1.0104214874793744,
    "known_answer_rescaling_sensitivity": 8.545619733087037,
    "pilot_cpu_hours": 0.0,
-   "total_with_known_answer_rescaling": 2979.267938898837,
-   "total_without_known_answer_rescaling": 2970.7223191657504
+   "total_with_known_answer_rescaling": 2987.3768017460598,
+   "total_without_known_answer_rescaling": 2978.831182012973
   },
   "version_3": {
    "a0_acceptance_cpu_hours": 1481.975937445746,
@@ -132,8 +132,8 @@
    "curves_ratio_to_version_3": 1.0,
    "known_answer_rescaling_sensitivity": 0.0,
    "pilot_cpu_hours": 0.0,
-   "total_with_known_answer_rescaling": 2948.026558105468,
-   "total_without_known_answer_rescaling": 2948.026558105468
+   "total_with_known_answer_rescaling": 2956.1354209526908,
+   "total_without_known_answer_rescaling": 2956.1354209526908
   }
  }
 }

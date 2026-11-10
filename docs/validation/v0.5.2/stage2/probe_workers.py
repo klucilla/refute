@@ -11,7 +11,6 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import shutil
 import sys
 import time
 from pathlib import Path
@@ -92,11 +91,11 @@ def shard(start: int) -> bytes:
 
 
 def measure(workers: int, pin) -> dict:
-    out = OUT / f"w{workers}"
+    # one folder per configuration, never deleted: each run's accounting stays as evidence (Codex,
+    # end of round 5); a configuration already measured is refused, not overwritten
+    out = OUT / f"w{workers}-{SHARDS}x{PER_SHARD}"
     if out.exists():
-        if OUT.resolve() not in out.resolve().parents:
-            raise SystemExit("refused: outside the probe's folder")
-        shutil.rmtree(out)
+        raise SystemExit(f"{out.name}: already measured; its folder is kept as evidence")
     shards = [(f"s{i:04d}", i * PER_SHARD) for i in range(SHARDS)]
     started = time.monotonic()
     run = driver.Run(out, shard, shards, f"workers-{workers}", 10.0, workers, pin=pin,
