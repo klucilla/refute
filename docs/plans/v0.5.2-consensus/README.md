@@ -103,6 +103,16 @@ The maintainer's decision of 2026-11-10 (#216, item 4) approves at most three co
 
 Applied from round 1: the 30 % margin stated honestly (`c4b29f1`), agent-days measured, `choose_sectors` read (every sector of the light curve, so the T2a ceiling holds approximately), the forecast offered to the maintainer.
 
+## The forecast of T2a and the refusal above 20 sectors
+
+The maintainer's decisions of 2026-11-10 (#216, items 1 and 2). Codex CLI 0.167.0-alpha.3.2, in the stage 2 design conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [forecast-t2a-round-1-answer.md](forecast-t2a-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (9 findings) | `133a19e8a3839a0dbfe9201fc6d4a9601a167756484524f097f37a4a87bf3265` |
+
+Round 1 used 14,729,942 input tokens (13,997,440 cached) and 69,336 output tokens (43,471 of them reasoning). On the refusal: 20 is the selector's declared validation boundary (its family's constructions at 5, 8, 12 and 20 sectors, design section 2), not a statistical limit of choosing four sectors; extending the selector needs a finite domain (practically up to 42 sectors), an extended and repriced selector family covering the added counts and the full production preprocessing, as a design amendment before the acceptance. Applied to `forecast_t2a.py`: inputs authenticated through the sealed v0.4 dossiers (files, stellar parameters, neighbours) instead of new catalogue queries; the v0.4 battery checked by `c2.compat_problems`; the frozen population and sample with unknowns bounded both ways, never replaced; a stratified finite-population interval; every blocker listed (overlapping) and the paired transitions; the same final candidate asserted; the loaded sector count used; the parts run in turn under one cumulative 20 CPU-h; a planet target failing is written as the failed gate `planet_forecast` (`forecast_stop.py`).
+
 ## The adequacy redesign
 
 After the failed adequacy check (`c1e717e`), the maintainer's decision dated 2026-11-09 (#216, item 1): a prospective redesign of the sizing through this consensus, loosening nothing, sized cell by cell from version 4's availability, repriced before launch, and a STOP if the total projection passes 3,100 CPU-h. Codex CLI 0.167.0-alpha.3.2, in the stage 2 design conversation.

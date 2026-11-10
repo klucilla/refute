@@ -1,0 +1,142 @@
+{
+ "T2a": {
+  "sector_rule_reading": {
+   "denominator_injections": 615,
+   "hosts_by_light_curve_files": {
+    "2_to_4": 43,
+    "5_or_more": 41
+   },
+   "injections_by_host_light_curve_files": {
+    "2_to_4": 302,
+    "5_or_more": 313
+   }
+  },
+  "state": "not measured here: real hosts (t2a part, separate)"
+ },
+ "batteries": {
+  "v04": {
+   "D2_kept": 0.9642857142857143,
+   "D2_refuted": 0.017857142857142856,
+   "D2_refuted_upper_wilson": 0.06278048742116135,
+   "D4_inconclusive": 0.02702702702702703,
+   "verdicts": {
+    "INCONCLUSIVE": 2,
+    "REFUTED": 2,
+    "SURVIVED": 106,
+    "WEAKENED": 2
+   }
+  },
+  "v3": {
+   "D2": "FAIL",
+   "D2_kept": 0.8392857142857143,
+   "D2_kept_minimum": 0.8642857142857143,
+   "D2_refuted": 0.026785714285714284,
+   "D2_refuted_upper_wilson": 0.07580545495671442,
+   "D4": "PASS",
+   "D4_inconclusive": 0.10810810810810811,
+   "tests": {
+    "aperture_depth": {
+     "INCONCLUSIVE": 8,
+     "PASS": 104
+    },
+    "event_consistency": {
+     "FAIL": 1,
+     "INCONCLUSIVE": 105,
+     "PASS": 6
+    },
+    "odd_even": {
+     "FAIL": 3,
+     "INCONCLUSIVE": 11,
+     "PASS": 98
+    },
+    "single_event": {
+     "PASS": 112
+    },
+    "sinusoid": {
+     "FAIL": 1,
+     "INCONCLUSIVE": 5,
+     "PASS": 106
+    },
+    "systematics": {
+     "INCONCLUSIVE": 6,
+     "PASS": 106
+    }
+   },
+   "verdicts": {
+    "INCONCLUSIVE": 15,
+    "REFUTED": 3,
+    "SURVIVED": 91,
+    "WEAKENED": 3
+   }
+  },
+  "v4": {
+   "D2": "FAIL",
+   "D2_kept": 0.7232142857142857,
+   "D2_kept_minimum": 0.8642857142857143,
+   "D2_refuted": 0.008928571428571428,
+   "D2_refuted_upper_wilson": 0.048848468308884896,
+   "D4": "PASS",
+   "D4_inconclusive": 0.12162162162162163,
+   "tests": {
+    "aperture_depth": {
+     "INCONCLUSIVE": 9,
+     "PASS": 103
+    },
+    "event_consistency": {
+     "FAIL": 1,
+     "INCONCLUSIVE": 108,
+     "PASS": 3
+    },
+    "odd_even": {
+     "FAIL": 1,
+     "INCONCLUSIVE": 25,
+     "PASS": 86
+    },
+    "single_event": {
+     "INCONCLUSIVE": 1,
+     "PASS": 111
+    },
+    "sinusoid": {
+     "INCONCLUSIVE": 14,
+     "PASS": 98
+    },
+    "systematics": {
+     "INCONCLUSIVE": 6,
+     "PASS": 106
+    }
+   },
+   "verdicts": {
+    "INCONCLUSIVE": 30,
+    "REFUTED": 1,
+    "SURVIVED": 79,
+    "WEAKENED": 2
+   }
+  }
+ },
+ "cpu_hours": 4.84,
+ "curves": 120,
+ "d4_subset": 74,
+ "eligible": 112,
+ "errors": 0,
+ "generation_failures": 0,
+ "label": "forecast, decides nothing (#216, item 2): D2 and D4 with battery version 4",
+ "method_status": "not_validated",
+ "rules": "D2 and D4 as frozen in calib05.c1.decision_rules: D2 kept >= v0.4 kept - 0.10, REFUTED fraction <= 0.05 and its Wilson 95 % upper bound <= 0.10; D4 INCONCLUSIVE <= 0.30 on target SNR >= 15; NOT DECIDABLE below 20 eligible curves",
+ "sectors": {
+  "2": 40,
+  "3": 39,
+  "4": 33
+ },
+ "seeds": "c1.development_seed('P', i), i = 1000 to 1119",
+ "v4_odd_even_inconclusive_causes": {
+  "comb: measured events in a sector count outside 2 to 4": 1,
+  "odd_even undecided on its measured events": 24
+ },
+ "v4_sinusoid_inconclusive": 14,
+ "v4_verdict_changes_from_v3": {
+  "REFUTED -> INCONCLUSIVE": 1,
+  "REFUTED -> SURVIVED": 1,
+  "SURVIVED -> INCONCLUSIVE": 13,
+  "WEAKENED -> INCONCLUSIVE": 1
+ }
+}

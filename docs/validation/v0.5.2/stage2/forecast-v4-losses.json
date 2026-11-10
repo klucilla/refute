@@ -1,0 +1,43 @@
+{
+ "eligible": 112,
+ "label": "where D2's kept fraction goes with version 4; it decides nothing",
+ "method_status": "not_validated",
+ "v3": {
+  "blockers_overlapping": {
+   "aperture_depth INCONCLUSIVE (not_enough_data)": 8,
+   "odd_even FAIL": 2,
+   "odd_even INCONCLUSIVE": 3,
+   "odd_even INCONCLUSIVE (insufficient_sensitivity)": 6,
+   "sinusoid INCONCLUSIVE": 5,
+   "systematics INCONCLUSIVE (not_enough_data)": 6
+  },
+  "lost": 15,
+  "sole_blocker": {
+   "aperture_depth INCONCLUSIVE (not_enough_data)": 1,
+   "odd_even FAIL": 2,
+   "odd_even INCONCLUSIVE": 2,
+   "sinusoid INCONCLUSIVE": 2
+  },
+  "verdict": "kept by v0.4, not by this battery"
+ },
+ "v4": {
+  "blockers_overlapping": {
+   "aperture_depth INCONCLUSIVE (not_enough_data)": 8,
+   "aperture_depth INCONCLUSIVE (outside_domain) [refused: 1 sector(s) contribute measured events: outside the grid]": 1,
+   "odd_even INCONCLUSIVE": 17,
+   "odd_even INCONCLUSIVE (insufficient_sensitivity)": 5,
+   "odd_even INCONCLUSIVE (outside_domain) [refused: 1 sector(s) contribute measured events: outside the grid]": 1,
+   "sinusoid INCONCLUSIVE": 12,
+   "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 1,
+   "systematics INCONCLUSIVE (not_enough_data)": 5,
+   "systematics INCONCLUSIVE (outside_domain) [refused: 1 sector(s) contribute measured events: outside the grid]": 1
+  },
+  "lost": 28,
+  "sole_blocker": {
+   "aperture_depth INCONCLUSIVE (not_enough_data)": 2,
+   "odd_even INCONCLUSIVE": 10,
+   "sinusoid INCONCLUSIVE": 2
+  },
+  "verdict": "kept by v0.4, not by this battery"
+ }
+}
