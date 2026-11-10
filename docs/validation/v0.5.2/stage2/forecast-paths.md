@@ -71,12 +71,14 @@ not estimators.
 | Every INCONCLUSIVE but `systematics`'s `not_enough_data` | 0.696 to 0.787 | 0.647 to 0.738 |
 | Every INCONCLUSIVE | 0.909 to 1.000 | 0.899 to 0.990 |
 
-Removing `outside_domain` (in the last two rows) is an oracle: it would need a prospective, validated extension of
+Removing `outside_domain` blockers (in every scenario that removes them: all of `systematics`, every INCONCLUSIVE,
+and every INCONCLUSIVE but `systematics`'s `not_enough_data`) is an oracle: it would need a prospective, validated extension of
 A0's domain, not an estimator. In the row of `odd_even`, the sinusoid and all of `systematics`, reaching 0.897
 needs about 14 % of the stratum above 20 kept for version 4 and 25 % for version 3, so the refusal above 20 would
 have to be lifted. With `systematics`'s `not_enough_data` kept as it is and every other INCONCLUSIVE removed (the
 scenario `j` of the record), version 4 B's point is **0.696 to 0.787**, short of the minimum by 0.11 to 0.20; only
-the forecast's upper sampling bound for 80 injections, with the stratum above 20 all kept, reaches it (**0.902**,
+the forecast's upper sampling bound for 80 injections, with the stratum above 20 all kept, reaches it (**0.902**, a
+per-scenario exploratory bound, not a coverage statement across all the scenarios;
 the figure of Codex's round 2, finding 2; version 3 0.647 to 0.738, bound 0.867). **So the current battery is
 forecast to fail T2a, and `systematics`'s unresolved measurements need diagnosis; these 80 injections do not
 establish that T2a is out of reach.**
@@ -152,8 +154,11 @@ passes only if the sinusoid's INCONCLUSIVE is resolved as well, by 0.020 on 112 
 may fail the 0.20 d null cells like E2's. The acceptance would end after the pause, on an open budget. v0.5.2 is
 round 2 of 3: a failed acceptance leaves one round.
 
-- **Agent-days:** the hard maximum is 12 and the wall-clock bound is already 6.1 after two days; weeks more would
-  pass it on either measure, which is another non-delegated stop.
+- **Agent-days:** the hard maximum is 12. Measured so far for Claude only: an upper bound of 6.1 (the session
+  transcripts' wall clock over 8-hour days) and about 1.8 of active time (gaps capped at 10 minutes); Codex's share
+  is not counted. Unattended computation need not consume agent time, so whether weeks more would pass 12 depends
+  on which accounting the maintainer applies: on the wall-clock bound it would, on active time it might not. It is
+  a risk, and reaching the maximum would be another non-delegated stop.
 - **Budget:** at 3,474 to 4,110 CPU-h in total, option (a) of the open budget decision, 3,300, does not cover path
   (i), and (b), about 4,036, covers only part of the range. Under path (ii) the budget decision is moot.
 
@@ -197,5 +202,7 @@ causes, keeping the target and the coverage requirement.
 ## What this does not establish
 
 These are forecasts on development data with small samples (112 planets, 80 injections), and the what-ifs remove
-blockers without designing anything: a real estimator would remove fewer. Costs marked as estimates have no
+blockers without designing anything: they do not establish what a real estimator would recover, or what new losses
+it might introduce. The ledger's `planet_forecast` entry names D2 and T2a; `fail_gate` replaces an entry's detail,
+so `forecast_t2a.py summarize` must not be run again without a fix (#59, from Codex's end-of-round review). Costs marked as estimates have no
 measurement behind them. Nothing here says that version 4, or any battery, is calibrated.
