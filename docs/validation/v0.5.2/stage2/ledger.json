@@ -75,7 +75,8 @@
   },
   "planet_forecast": {
    "detail": {
-    "D2": "forecast-v4.json"
+    "D2": "forecast-v4.json",
+    "T2a": "forecast-t2a.json"
    },
    "state": "failed"
   }
@@ -172,10 +173,17 @@
     },
     "forecast_t2a": {
      "allocation_hours": 12.5,
-     "checkpoint_shards": 6,
-     "identity": "711db0abb2940315",
-     "projection_hours": 0.043684895833333334,
-     "spent_hours": 0.01181423611111111
+     "attempts": [
+      {
+       "identity": "711db0abb2940315",
+       "projection_hours": 0.043684895833333334,
+       "spent_hours": 0.01181423611111111
+      }
+     ],
+     "checkpoint_shards": 4,
+     "identity": "85e2a4f1427db930",
+     "projection_hours": 5.156944444444444,
+     "spent_hours": 6.633624131944444
     }
    }
   }

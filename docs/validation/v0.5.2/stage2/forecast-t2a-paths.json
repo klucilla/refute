@@ -1,0 +1,244 @@
+{
+ "batteries": {
+  "v3": {
+   "loss_blockers_overlapping": {
+    "2_to_4: odd_even INCONCLUSIVE insufficient_sensitivity": 5,
+    "2_to_4: odd_even INCONCLUSIVE not_enough_data": 4,
+    "2_to_4: period_alias INCONCLUSIVE insufficient_sensitivity": 2,
+    "2_to_4: sinusoid INCONCLUSIVE insufficient_sensitivity": 4,
+    "2_to_4: systematics INCONCLUSIVE insufficient_sensitivity": 13,
+    "2_to_4: systematics INCONCLUSIVE not_enough_data": 12,
+    "5_to_20: odd_even FAIL": 1,
+    "5_to_20: odd_even INCONCLUSIVE insufficient_sensitivity": 3,
+    "5_to_20: sinusoid INCONCLUSIVE insufficient_sensitivity": 2,
+    "5_to_20: systematics INCONCLUSIVE insufficient_sensitivity": 7,
+    "5_to_20: systematics INCONCLUSIVE not_enough_data": 10
+   },
+   "loss_single_blockers": {
+    "2_to_4: period_alias INCONCLUSIVE insufficient_sensitivity": 1,
+    "2_to_4: systematics INCONCLUSIVE insufficient_sensitivity": 12,
+    "2_to_4: systematics INCONCLUSIVE not_enough_data": 3,
+    "5_to_20: odd_even FAIL": 1,
+    "5_to_20: systematics INCONCLUSIVE insufficient_sensitivity": 7,
+    "5_to_20: systematics INCONCLUSIVE not_enough_data": 6
+   },
+   "scenarios": {
+    "a_odd_even_inconclusive_removed": {
+     "kept_above_20_all_kept": 0.4805,
+     "kept_above_20_all_lost": 0.3894,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.325,
+      "5_to_20": 0.55
+     }
+    },
+    "as_run": {
+     "kept_above_20_all_kept": 0.4805,
+     "kept_above_20_all_lost": 0.3894,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.325,
+      "5_to_20": 0.55
+     }
+    },
+    "b_sinusoid_inconclusive_removed": {
+     "kept_above_20_all_kept": 0.4805,
+     "kept_above_20_all_lost": 0.3894,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.325,
+      "5_to_20": 0.55
+     }
+    },
+    "c_odd_even_and_sinusoid": {
+     "kept_above_20_all_kept": 0.4805,
+     "kept_above_20_all_lost": 0.3894,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.325,
+      "5_to_20": 0.55
+     }
+    },
+    "d_systematics_sensitivity_rule_removed": {
+     "kept_above_20_all_kept": 0.7132,
+     "kept_above_20_all_lost": 0.6222,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.65,
+      "5_to_20": 0.725
+     }
+    },
+    "e_systematics_inconclusive_removed": {
+     "kept_above_20_all_kept": 0.8127,
+     "kept_above_20_all_lost": 0.7217,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.725,
+      "5_to_20": 0.875
+     }
+    },
+    "f_odd_even_sinusoid_and_systematics_sensitivity": {
+     "kept_above_20_all_kept": 0.7255,
+     "kept_above_20_all_lost": 0.6344,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.675,
+      "5_to_20": 0.725
+     }
+    },
+    "g_odd_even_sinusoid_and_systematics": {
+     "kept_above_20_all_kept": 0.965,
+     "kept_above_20_all_lost": 0.8739,
+     "meets_minimum": "only if the stratum above 20 is mostly kept",
+     "per_stratum": {
+      "2_to_4": 0.95,
+      "5_to_20": 0.975
+     }
+    },
+    "h_every_sensitivity_rule_inconclusive": {
+     "kept_above_20_all_kept": 0.7378,
+     "kept_above_20_all_lost": 0.6467,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.7,
+      "5_to_20": 0.725
+     }
+    },
+    "i_every_inconclusive": {
+     "kept_above_20_all_kept": 0.9896,
+     "kept_above_20_all_lost": 0.8985,
+     "meets_minimum": "yes",
+     "per_stratum": {
+      "2_to_4": 1.0,
+      "5_to_20": 0.975
+     }
+    }
+   }
+  },
+  "v4B": {
+   "loss_blockers_overlapping": {
+    "2_to_4: odd_even INCONCLUSIVE insufficient_sensitivity": 6,
+    "2_to_4: odd_even INCONCLUSIVE outside_domain": 6,
+    "2_to_4: period_alias INCONCLUSIVE insufficient_sensitivity": 2,
+    "2_to_4: sinusoid INCONCLUSIVE insufficient_sensitivity": 8,
+    "2_to_4: systematics INCONCLUSIVE insufficient_sensitivity": 13,
+    "2_to_4: systematics INCONCLUSIVE not_enough_data": 8,
+    "2_to_4: systematics INCONCLUSIVE outside_domain": 6,
+    "5_to_20: odd_even INCONCLUSIVE insufficient_sensitivity": 4,
+    "5_to_20: sinusoid INCONCLUSIVE insufficient_sensitivity": 7,
+    "5_to_20: systematics INCONCLUSIVE insufficient_sensitivity": 10,
+    "5_to_20: systematics INCONCLUSIVE not_enough_data": 11
+   },
+   "loss_single_blockers": {
+    "2_to_4: period_alias INCONCLUSIVE insufficient_sensitivity": 1,
+    "2_to_4: systematics INCONCLUSIVE insufficient_sensitivity": 10,
+    "2_to_4: systematics INCONCLUSIVE not_enough_data": 3,
+    "5_to_20: sinusoid INCONCLUSIVE insufficient_sensitivity": 2,
+    "5_to_20: systematics INCONCLUSIVE insufficient_sensitivity": 5,
+    "5_to_20: systematics INCONCLUSIVE not_enough_data": 7
+   },
+   "scenarios": {
+    "a_odd_even_inconclusive_removed": {
+     "kept_above_20_all_kept": 0.4037,
+     "kept_above_20_all_lost": 0.3126,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.275,
+      "5_to_20": 0.425
+     }
+    },
+    "as_run": {
+     "kept_above_20_all_kept": 0.4037,
+     "kept_above_20_all_lost": 0.3126,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.275,
+      "5_to_20": 0.425
+     }
+    },
+    "b_sinusoid_inconclusive_removed": {
+     "kept_above_20_all_kept": 0.4246,
+     "kept_above_20_all_lost": 0.3335,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.275,
+      "5_to_20": 0.475
+     }
+    },
+    "c_odd_even_and_sinusoid": {
+     "kept_above_20_all_kept": 0.4246,
+     "kept_above_20_all_lost": 0.3335,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.275,
+      "5_to_20": 0.475
+     }
+    },
+    "d_systematics_sensitivity_rule_removed": {
+     "kept_above_20_all_kept": 0.591,
+     "kept_above_20_all_lost": 0.4999,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.55,
+      "5_to_20": 0.55
+     }
+    },
+    "e_systematics_inconclusive_removed": {
+     "kept_above_20_all_kept": 0.7009,
+     "kept_above_20_all_lost": 0.6099,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.625,
+      "5_to_20": 0.725
+     }
+    },
+    "f_odd_even_sinusoid_and_systematics_sensitivity": {
+     "kept_above_20_all_kept": 0.7009,
+     "kept_above_20_all_lost": 0.6099,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.625,
+      "5_to_20": 0.725
+     }
+    },
+    "g_odd_even_sinusoid_and_systematics": {
+     "kept_above_20_all_kept": 0.9754,
+     "kept_above_20_all_lost": 0.8844,
+     "meets_minimum": "only if the stratum above 20 is mostly kept",
+     "per_stratum": {
+      "2_to_4": 0.95,
+      "5_to_20": 1.0
+     }
+    },
+    "h_every_sensitivity_rule_inconclusive": {
+     "kept_above_20_all_kept": 0.7132,
+     "kept_above_20_all_lost": 0.6222,
+     "meets_minimum": "no",
+     "per_stratum": {
+      "2_to_4": 0.65,
+      "5_to_20": 0.725
+     }
+    },
+    "i_every_inconclusive": {
+     "kept_above_20_all_kept": 1.0,
+     "kept_above_20_all_lost": 0.9089,
+     "meets_minimum": "yes",
+     "per_stratum": {
+      "2_to_4": 1.0,
+      "5_to_20": 1.0
+     }
+    }
+   }
+  }
+ },
+ "label": "what the T2a forecast implies for the paths; a what-if, it decides nothing",
+ "measured_records": 80,
+ "method_status": "not_validated",
+ "minimum": 0.8967479674796748,
+ "note": "the stratum above 20 sectors (56 of 615) was not run: every scenario is given with it all lost and all kept; a warning FAIL gives WEAKENED (kept)",
+ "population": {
+  "2_to_4": 302,
+  "5_to_20": 257,
+  "above_20": 56
+ }
+}

@@ -110,8 +110,23 @@ The maintainer's decisions of 2026-11-10 (#216, items 1 and 2). Codex CLI 0.167.
 | Round | File | Model, effort | Verdict | SHA-256 |
 |---|---|---|---|---|
 | 1 | [forecast-t2a-round-1-answer.md](forecast-t2a-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (9 findings) | `133a19e8a3839a0dbfe9201fc6d4a9601a167756484524f097f37a4a87bf3265` |
+| 2 | [forecast-t2a-round-2-answer.md](forecast-t2a-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (9 findings) | `87455cae5f0c0ecfe8fcaf92b6bef37fcc80ab487fa61201d2c660d1d244f618` |
 
 Round 1 used 14,729,942 input tokens (13,997,440 cached) and 69,336 output tokens (43,471 of them reasoning). On the refusal: 20 is the selector's declared validation boundary (its family's constructions at 5, 8, 12 and 20 sectors, design section 2), not a statistical limit of choosing four sectors; extending the selector needs a finite domain (practically up to 42 sectors), an extended and repriced selector family covering the added counts and the full production preprocessing, as a design amendment before the acceptance. Applied to `forecast_t2a.py`: inputs authenticated through the sealed v0.4 dossiers (files, stellar parameters, neighbours) instead of new catalogue queries; the v0.4 battery checked by `c2.compat_problems`; the frozen population and sample with unknowns bounded both ways, never replaced; a stratified finite-population interval; every blocker listed (overlapping) and the paired transitions; the same final candidate asserted; the loaded sector count used; the parts run in turn under one cumulative 20 CPU-h; a planet target failing is written as the failed gate `planet_forecast` (`forecast_stop.py`).
+
+Round 2 (2026-11-10, the maintainer's second set of that day, item 2) reviewed the record of the results and the
+three paths, [`forecast-paths.md`](../../validation/v0.5.2/stage2/forecast-paths.md); it used 17,912,788 input
+tokens (17,027,968 cached) and 86,427 output tokens (52,224 of them reasoning). Applied: version 3's and C's
+estimates labelled partially identified; `systematics`'s `not_enough_data` no longer called a limit of the data (A0's
+depth function can return none for reasons of A0's own), so "T2a out of reach" became "the current battery is
+forecast to fail, and `systematics` needs diagnosis", with no change to T2a's target proposed; the what-if's
+counterfactuals named (B above 20, `outside_domain` an oracle, about 14 % and 25 % of the stratum above 20 needed,
+not "mostly"); "no information limit for `odd_even`" became "the diagnosis does not establish one"; `sigma_box_true`
+described as a conditional linear-box error and the ratios as diagnostic comparisons; D2's combined scenario split
+(0.884 bound-supported, margin 0.020; 0.893 with every `odd_even` blocker removed) in a new severity-aware record,
+`forecast_v4_paths_r2.py`; the literature narrowed and E2's untried ingredient named (a joint correlated-noise
+likelihood); costs split into additional and total, no end date without the resume date, the agent-day scope
+stated; the commit `4769684` and "after an end-to-end timing smoke". Codex recommends path (ii), as Claude does.
 
 ## The adequacy redesign
 

@@ -1,0 +1,119 @@
+{
+ "bound_supported_curves": [
+  1000,
+  1001,
+  1002,
+  1003,
+  1004,
+  1005,
+  1006,
+  1007,
+  1008,
+  1009,
+  1010,
+  1011,
+  1012,
+  1013,
+  1015,
+  1024,
+  1038,
+  1043,
+  1049,
+  1068,
+  1080,
+  1081,
+  1082,
+  1092,
+  1099,
+  1107
+ ],
+ "eligible": 112,
+ "label": "D2 what-if, with the warning FAILs read both ways; it decides nothing",
+ "method_status": "not_validated",
+ "minimum": 0.8642857142857143,
+ "note": "the D2 records keep no severity: 'every_fail_blocks' is the committed reading; 'warning_only_fail_kept' lets a FAIL of a test that is always a warning give WEAKENED",
+ "scenarios": {
+  "every_fail_blocks": {
+   "a_odd_even_bound_supported": {
+    "fraction": 0.8125,
+    "kept": 91,
+    "meets_minimum": false
+   },
+   "a_odd_even_upper_bound": {
+    "fraction": 0.8125,
+    "kept": 91,
+    "meets_minimum": false
+   },
+   "as_forecast": {
+    "fraction": 0.7232,
+    "kept": 81,
+    "meets_minimum": false
+   },
+   "b_sinusoid_inconclusive_removed": {
+    "fraction": 0.7411,
+    "kept": 83,
+    "meets_minimum": false
+   },
+   "c_odd_even_bound_supported_and_sinusoid": {
+    "fraction": 0.8839,
+    "kept": 99,
+    "meets_minimum": true
+   },
+   "c_odd_even_upper_bound_and_sinusoid": {
+    "fraction": 0.8929,
+    "kept": 100,
+    "meets_minimum": true
+   },
+   "d_every_a0_or_sinusoid_inconclusive": {
+    "fraction": 0.9911,
+    "kept": 111,
+    "meets_minimum": true
+   }
+  },
+  "warning_only_fail_kept": {
+   "a_odd_even_bound_supported": {
+    "fraction": 0.8125,
+    "kept": 91,
+    "meets_minimum": false
+   },
+   "a_odd_even_upper_bound": {
+    "fraction": 0.8125,
+    "kept": 91,
+    "meets_minimum": false
+   },
+   "as_forecast": {
+    "fraction": 0.7232,
+    "kept": 81,
+    "meets_minimum": false
+   },
+   "b_sinusoid_inconclusive_removed": {
+    "fraction": 0.7411,
+    "kept": 83,
+    "meets_minimum": false
+   },
+   "c_odd_even_bound_supported_and_sinusoid": {
+    "fraction": 0.8839,
+    "kept": 99,
+    "meets_minimum": true
+   },
+   "c_odd_even_upper_bound_and_sinusoid": {
+    "fraction": 0.8929,
+    "kept": 100,
+    "meets_minimum": true
+   },
+   "d_every_a0_or_sinusoid_inconclusive": {
+    "fraction": 0.9911,
+    "kept": 111,
+    "meets_minimum": true
+   }
+  }
+ },
+ "warning_only_tests": [
+  "duration_excess",
+  "edge_events",
+  "nearby_contamination",
+  "secondary_eclipse",
+  "sinusoid",
+  "systematics"
+ ]
+}

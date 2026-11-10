@@ -1,0 +1,198 @@
+{
+ "batteries": {
+  "v04": {
+   "interval": [
+    0.8764227642276423,
+    0.9983739837398374
+   ],
+   "point": 0.9877235772357724,
+   "strata": {
+    "2_to_4": {
+     "kept": 39,
+     "known": 40,
+     "unknown": 0
+    },
+    "5_to_20": {
+     "kept": 40,
+     "known": 40,
+     "unknown": 0
+    },
+    "above_20": {
+     "kept": 30,
+     "known": 30,
+     "unknown": 0
+    }
+   }
+  },
+  "v3": {
+   "forecast": "FAIL",
+   "interval": [
+    0.23902439024390243,
+    0.6422764227642277
+   ],
+   "point": 0.3894308943089431,
+   "strata": {
+    "2_to_4": {
+     "kept": 13,
+     "known": 40,
+     "unknown": 0
+    },
+    "5_to_20": {
+     "kept": 22,
+     "known": 40,
+     "unknown": 0
+    },
+    "above_20": {
+     "kept": 0,
+     "known": 0,
+     "unknown": 30
+    }
+   }
+  },
+  "v4A": {
+   "blockers_of_losses_overlapping": {
+    "2_to_4: nearby_contamination FAIL": 6,
+    "2_to_4: odd_even INCONCLUSIVE": 12,
+    "2_to_4: period_alias FAIL": 1,
+    "2_to_4: period_alias INCONCLUSIVE": 2,
+    "2_to_4: refused, measured events outside 2 to 4 sectors": 6,
+    "2_to_4: sinusoid INCONCLUSIVE": 8,
+    "2_to_4: systematics INCONCLUSIVE": 27,
+    "5_to_20: nearby_contamination FAIL": 11,
+    "5_to_20: odd_even INCONCLUSIVE": 40,
+    "5_to_20: refused, the selector not certified": 40,
+    "5_to_20: sinusoid INCONCLUSIVE": 7,
+    "5_to_20: systematics INCONCLUSIVE": 40
+   },
+   "forecast": "FAIL",
+   "interval": [
+    0.06666666666666667,
+    0.2764227642276423
+   ],
+   "point": 0.1350406504065041,
+   "strata": {
+    "2_to_4": {
+     "kept": 11,
+     "known": 40,
+     "unknown": 0
+    },
+    "5_to_20": {
+     "kept": 0,
+     "known": 40,
+     "unknown": 0
+    },
+    "above_20": {
+     "kept": 0,
+     "known": 30,
+     "unknown": 0
+    }
+   }
+  },
+  "v4B": {
+   "blockers_of_losses_overlapping": {
+    "2_to_4: nearby_contamination FAIL": 6,
+    "2_to_4: odd_even INCONCLUSIVE": 12,
+    "2_to_4: period_alias FAIL": 1,
+    "2_to_4: period_alias INCONCLUSIVE": 2,
+    "2_to_4: refused, measured events outside 2 to 4 sectors": 6,
+    "2_to_4: sinusoid INCONCLUSIVE": 8,
+    "2_to_4: systematics INCONCLUSIVE": 27,
+    "5_to_20: nearby_contamination FAIL": 8,
+    "5_to_20: odd_even INCONCLUSIVE": 4,
+    "5_to_20: sinusoid INCONCLUSIVE": 7,
+    "5_to_20: systematics INCONCLUSIVE": 21
+   },
+   "forecast": "FAIL",
+   "interval": [
+    0.17398373983739837,
+    0.4878048780487805
+   ],
+   "point": 0.3126422764227642,
+   "strata": {
+    "2_to_4": {
+     "kept": 11,
+     "known": 40,
+     "unknown": 0
+    },
+    "5_to_20": {
+     "kept": 17,
+     "known": 40,
+     "unknown": 0
+    },
+    "above_20": {
+     "kept": 0,
+     "known": 30,
+     "unknown": 0
+    }
+   }
+  },
+  "v4C": {
+   "blockers_of_losses_overlapping": {
+    "2_to_4: nearby_contamination FAIL": 6,
+    "2_to_4: odd_even INCONCLUSIVE": 12,
+    "2_to_4: period_alias FAIL": 1,
+    "2_to_4: period_alias INCONCLUSIVE": 2,
+    "2_to_4: refused, measured events outside 2 to 4 sectors": 6,
+    "2_to_4: sinusoid INCONCLUSIVE": 8,
+    "2_to_4: systematics INCONCLUSIVE": 27,
+    "5_to_20: nearby_contamination FAIL": 8,
+    "5_to_20: odd_even INCONCLUSIVE": 4,
+    "5_to_20: sinusoid INCONCLUSIVE": 7,
+    "5_to_20: systematics INCONCLUSIVE": 21
+   },
+   "forecast": "FAIL",
+   "interval": [
+    0.17398373983739837,
+    0.5707317073170731
+   ],
+   "point": 0.3126422764227642,
+   "strata": {
+    "2_to_4": {
+     "kept": 11,
+     "known": 40,
+     "unknown": 0
+    },
+    "5_to_20": {
+     "kept": 17,
+     "known": 40,
+     "unknown": 0
+    },
+    "above_20": {
+     "kept": 0,
+     "known": 0,
+     "unknown": 30
+    }
+   }
+  }
+ },
+ "cpu_hours": 6.603,
+ "label": "forecast, decides nothing (#216): T2a with battery version 4",
+ "method_status": "not_validated",
+ "minimum": 0.8967479674796748,
+ "population": 615,
+ "rule": "FAIL if the point estimate is below the minimum; PASS only if the interval's lower end reaches it; otherwise UNRESOLVED. A's FAIL is a STOP.",
+ "sample": {
+  "2_to_4": 40,
+  "5_to_20": 40,
+  "above_20": 30
+ },
+ "strata_population": {
+  "2_to_4": 302,
+  "5_to_20": 257,
+  "above_20": 56
+ },
+ "transitions_v3_to_v4A": {
+  "REFUTED -> INCONCLUSIVE": 1,
+  "SURVIVED -> INCONCLUSIVE": 17,
+  "WEAKENED -> INCONCLUSIVE": 7
+ },
+ "transitions_v4A_to_v4B": {
+  "INCONCLUSIVE -> SURVIVED": 13,
+  "INCONCLUSIVE -> WEAKENED": 4
+ },
+ "transitions_v4B_to_v4C": {},
+ "unknown": {
+  "above_20: not run (an injection outlasts a 30-minute batch)": 30
+ },
+ "v04_kept_population": "613/615"
+}
