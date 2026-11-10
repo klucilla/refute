@@ -14,6 +14,11 @@
    "basis": "measured process time of the one-curve smoke test of forecast_v4.py, run outside the ledger",
    "hours": 0.05026041666666667,
    "name": "forecast_v4 smoke (one curve, 2026-11-10)"
+  },
+  {
+   "basis": "measured process time of the one-curve smoke test of forecast_v4_diagnosis.py, run outside the ledger",
+   "hours": 0.059379340277777776,
+   "name": "forecast diagnosis smoke (one curve, 2026-11-10)"
   }
  ],
  "gate_exemptions": [
@@ -27,6 +32,30 @@
    "decision": "The maintainer, 2026-11-10 (#216 comment 6769733025), item 1: the development forecast of D2, D4 and T2a with version 4 is released before any budget decision, up to 20 CPU-h; the failed adequacy check keeps blocking the acceptance; this release is for the forecast only.",
    "gate": "adequacy",
    "part": "forecast_t2a",
+   "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (second set, #216): the planet_forecast stop stays and blocks the acceptance; released with development seeds and data only, up to 25 CPU-h for the whole forecast: the T2a part and the odd_even diagnosis (reading the D2/D4 forecast records); no change to src/ and no new rule.",
+   "gate": "planet_forecast",
+   "part": "forecast_d2_d4",
+   "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (second set, #216): the planet_forecast stop stays and blocks the acceptance; released with development seeds and data only, up to 25 CPU-h for the whole forecast: the T2a part and the odd_even diagnosis (reading the D2/D4 forecast records); no change to src/ and no new rule.",
+   "gate": "planet_forecast",
+   "part": "forecast_t2a",
+   "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (second set, #216): the planet_forecast stop stays and blocks the acceptance; released with development seeds and data only, up to 25 CPU-h for the whole forecast: the T2a part and the odd_even diagnosis (reading the D2/D4 forecast records); no change to src/ and no new rule.",
+   "gate": "adequacy",
+   "part": "forecast_diagnosis",
+   "section": "remaining_work_packages"
+  },
+  {
+   "decision": "The maintainer, 2026-11-10 (second set, #216): the planet_forecast stop stays and blocks the acceptance; released with development seeds and data only, up to 25 CPU-h for the whole forecast: the T2a part and the odd_even diagnosis (reading the D2/D4 forecast records); no change to src/ and no new rule.",
+   "gate": "planet_forecast",
+   "part": "forecast_diagnosis",
    "section": "remaining_work_packages"
   }
  ],

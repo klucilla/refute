@@ -74,8 +74,9 @@ SAMPLE = {"2_to_4": 40, "5_to_20": 40, "above_20": 30}
 WORKERS = 12
 PIN = tuple(range(8, 32, 2))
 SECTION, PART = "remaining_work_packages", "forecast_t2a"
-FORECAST_CAP_HOURS = 20.0
+FORECAST_CAP_HOURS = 25.0  # the maintainer, 2026-11-10 (second set): the whole forecast
 D2D4_PART = "forecast_d2_d4"
+DIAGNOSIS_PART = "forecast_diagnosis"
 MAX_SHARD_SECONDS = 1500.0
 ATTEMPTS, WAIT_SECONDS = 5, 120.0
 ALPHA = 0.05
@@ -356,10 +357,11 @@ def fingerprint() -> str:
 
 
 def _forecast_used() -> float:
-    """Everything the forecast has consumed: both parts, every attempt."""
-    parts = budgeted.load()["sections"][SECTION]["parts"]
-    total = 0.0
-    for part in (D2D4_PART, PART):
+    """Everything the forecast has consumed: its parts, every attempt, and its charged smokes."""
+    book = budgeted.load()
+    parts = book["sections"][SECTION]["parts"]
+    total = sum(c["hours"] for c in book.get("charges", []) if c["name"].startswith("forecast"))
+    for part in (D2D4_PART, DIAGNOSIS_PART, PART):
         row = parts.get(part, {})
         total += row.get("spent_hours", 0.0) + sum(
             a["spent_hours"] for a in row.get("attempts", [])
