@@ -14,7 +14,8 @@ decision of 2026-11-09 (#216, item 1; ``budget.md``). ``method_status: not_valid
   batch and again after the last one. A stop is written to the ledger and binds across attempts,
   until ``reconcile`` records a reason; assembly is refused meanwhile.
 - **A failed gate** (``fail_gate``) blocks every later part of every section, until
-  ``resolve_gate`` records the prospective redesign. The failure stays on file.
+  ``resolve_gate`` records the prospective redesign. The failure stays on file. Only the
+  maintainer's explicit decision can let one named part run meanwhile (``exempt``, recorded).
 """
 
 from __future__ import annotations
@@ -146,8 +147,24 @@ def finish(ledger: dict, section: str, part: str, spent: float) -> str | None:
     return None
 
 
-def _open_gates(ledger: dict) -> list[str]:
-    return [k for k, v in ledger.get("gates", {}).items() if v.get("state") == "failed"]
+def _open_gates(ledger: dict, section: str | None = None, part: str | None = None) -> list[str]:
+    """The failed gates that block this part: all of them, unless the maintainer exempted this
+    very part (``exempt``)."""
+    failed = [k for k, v in ledger.get("gates", {}).items() if v.get("state") == "failed"]
+    exempt_parts = {(e["section"], e["part"], e["gate"]) for e in ledger.get("gate_exemptions", [])}
+    return [g for g in failed if (section, part, g) not in exempt_parts]
+
+
+def exempt(gate: str, section: str, part: str, decision: str) -> None:
+    """The maintainer's explicit permission for one part to run while a gate is failed; the
+    failure stays on file and keeps blocking every other part."""
+    ledger = load()
+    if ledger.get("gates", {}).get(gate, {}).get("state") != "failed":
+        raise SystemExit(f"{gate}: not a failed gate")
+    ledger.setdefault("gate_exemptions", []).append(
+        {"gate": gate, "section": section, "part": part, "decision": decision}
+    )
+    save(ledger)
 
 
 def fail_gate(name: str, detail: dict) -> None:
@@ -205,11 +222,14 @@ def execute(
     fingerprint: str,
     workers: int,
     units: Callable[[object], int] = lambda arg: 1,
+    hard_cap_hours: float | None = None,
     **kwargs,
 ) -> str:
-    """Run one declared part; returns the driver's state, or a sentence starting ``stopped``."""
+    """Run one declared part; returns the driver's state, or a sentence starting ``stopped``.
+    ``hard_cap_hours``, when given, bounds the part's cap below the 1.5 rule (a cap the
+    maintainer fixed for this work, such as the forecast's 20 CPU-h)."""
     ledger = load()
-    gates = _open_gates(ledger)
+    gates = _open_gates(ledger, section, part)
     if gates:
         raise SystemExit(f"a failed gate blocks this work: {gates}")
     row = _row(ledger, section, part)
@@ -229,9 +249,14 @@ def execute(
         return None
 
     kwargs["guard"] = guard
+
+    def cap() -> float:
+        rule = cap_of(row)
+        return rule if hard_cap_hours is None else min(rule, hard_cap_hours)
+
     if "projection_hours" not in row:
         probe = checkpoint(shards)
-        run = driver.Run(out, fn, probe, fingerprint, cap_of(row), workers, **kwargs)
+        run = driver.Run(out, fn, probe, fingerprint, cap(), workers, **kwargs)
         state = run.execute()
         row["spent_hours"] = run.spent_seconds() / 3600.0
         if state != "complete":
@@ -250,7 +275,14 @@ def execute(
             )
         if total_projection(ledger) > HARD_MAXIMUM:
             return _stop(ledger, row, f"stopped: the total passes {HARD_MAXIMUM:.0f} CPU-h")
-    run = driver.Run(out, fn, shards, fingerprint, cap_of(row), workers, **kwargs)
+    if hard_cap_hours is not None and row["projection_hours"] > hard_cap_hours:
+        return _stop(
+            ledger,
+            row,
+            f"stopped: the projection {row['projection_hours']:.1f} CPU-h passes the part's hard "
+            f"cap, {hard_cap_hours:.1f}",
+        )
+    run = driver.Run(out, fn, shards, fingerprint, cap(), workers, **kwargs)
     state = run.execute()
     if state != "complete":
         row["spent_hours"] = run.spent_seconds() / 3600.0
@@ -273,6 +305,6 @@ def assembled(
     """The bytes of a completed part; refused under a stop or a failed gate."""
     ledger = load()
     row = _row(ledger, section, part)
-    if "unresolved_stop" in row or _open_gates(ledger):
+    if "unresolved_stop" in row or _open_gates(ledger, section, part):
         raise SystemExit(f"{section}/{part}: refused under a stop or a failed gate")
     return driver.Run(out, fn, shards, fingerprint, 1.0, workers, **kwargs).assemble()

@@ -44,12 +44,15 @@ import budgeted  # noqa: E402
 LABEL = "refute-v052-dev:forecast-v4"
 OUT = ROOT / ".cache/v052/s2/forecast-v4"
 FIRST = 1000
-N = 200
+N = 120  # the maintainer's 20 CPU-h are shared with the T2a part (about 3 CPU-minutes a curve)
 PER_SHARD = 2
 WORKERS = 12
 PIN = tuple(range(8, 32, 2))
 SECTION, PART = "remaining_work_packages", "forecast_d2_d4"
-ALLOCATION_HOURS = 15.0
+ALLOCATION_HOURS = 6.0
+HARD_CAP_HOURS = 7.5
+T2A_PART, T2A_ALLOCATION_HOURS = "forecast_t2a", 12.5  # declared together, so it keeps its share
+FORECAST_CAP_HOURS = 20.0  # the maintainer's cap for the whole forecast (2026-11-10, item 1)
 C2_RECORDS = ROOT / ".cache/v05/calibration/c2/records.jsonl"
 A0_TESTS = ("odd_even", "aperture_depth", "systematics", "single_event", "event_consistency")
 KEPT = ("SURVIVED", "WEAKENED")
@@ -154,10 +157,10 @@ MAX_SHARD_SECONDS = 1200.0  # inside the driver's 30-minute batch (two curves of
 
 def run() -> None:
     fp = fingerprint()
-    budgeted.declare(SECTION, {PART: ALLOCATION_HOURS})
+    budgeted.declare(SECTION, {PART: ALLOCATION_HOURS, T2A_PART: T2A_ALLOCATION_HOURS})
     state = budgeted.execute(
         SECTION, PART, OUT / fp, shard, shards(), fp, WORKERS, pin=PIN,
-        max_shard_seconds=MAX_SHARD_SECONDS,
+        max_shard_seconds=MAX_SHARD_SECONDS, hard_cap_hours=HARD_CAP_HOURS,
     )  # fmt: skip
     print(state, flush=True)
     if state != "complete":

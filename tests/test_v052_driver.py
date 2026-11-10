@@ -383,6 +383,30 @@ def test_a_charge_counts_once_in_the_total_and_in_what_is_spent(ledger):
         ledger.charge("a probe", 1.0, "again")
 
 
+def test_an_exemption_lets_only_its_named_part_run_under_a_failed_gate(tmp_path, ledger):
+    ledger.declare("adequacy", {"p": 1.0, "q": 1.0})
+    ledger.fail_gate("adequacy", {"certified": 0})
+    with pytest.raises(SystemExit):
+        ledger.exempt("other_gate", "adequacy", "p", "no such gate")
+    ledger.exempt("adequacy", "adequacy", "p", "the maintainer's decision")
+    assert ledger._open_gates(ledger.load(), "adequacy", "p") == []
+    assert ledger._open_gates(ledger.load(), "adequacy", "q") == ["adequacy"]
+    with pytest.raises(SystemExit):
+        ledger.execute("adequacy", "q", tmp_path / "r", job, SHARDS[:2], "fp", 1)
+    assert ledger.load()["gates"]["adequacy"]["state"] == "failed"  # the failure stays on file
+
+
+def test_a_hard_cap_stops_a_part_whose_projection_passes_it(tmp_path, ledger):
+    ledger.declare("adequacy", {"p": 1.0})
+    shards = [(f"s{i:03d}", 0.5) for i in range(20)]
+    state = ledger.execute(
+        "adequacy", "p", tmp_path / "r", spin, shards, "fp", 1, hard_cap_hours=1.0 / 3600.0,
+        clock=sunday, check_placement=PLACED,
+    )  # fmt: skip
+    assert state.startswith("stopped")
+    assert "unresolved_stop" in ledger.load()["sections"]["adequacy"]["parts"]["p"]
+
+
 def test_the_cap_follows_the_frozen_projection():
     import budgeted
 

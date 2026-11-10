@@ -93,6 +93,16 @@ The end-of-round review of the first version 4 commits (`569d127`, `94eec96`, `d
 
 Round 5 is the end-of-round review of `28a8258` to `ac39ffc`; it used 16,126,126 input tokens (15,134,848 cached) and 73,930 output tokens (43,119 of them reasoning). Applied: every stop the driver issues now binds in the ledger, a pause stays resumable (1, with a test; a test that passed only through the hole was corrected); the two worker probes are charged in the ledger at their measured CPU, 8.1 CPU-h, a lower bound, and the probe keeps one folder per configuration (2); the forecast's shard limit sits inside the batch (3); D2 and D4 use the frozen rules, with the Wilson bound and NOT DECIDABLE below the floor (4); the T2a sector reading uses v0.5's C2 fetch record on T2a's own denominator (6); a family member no curve carries stops the sizing (7). Finding 5 is applied in part: the measured T2a forecast needs the C2 hosts' light curves again, by their recorded URLs and SHA-256, and is planned after the maintainer's decision on the redesign; the sector reading already bounds T2a without a certified selector.
 
+## The advisor (an opinion only)
+
+The maintainer's decision of 2026-11-10 (#216, item 4) approves at most three consultations of the advisor in this round, as an opinion only (it replaces neither Codex nor any decision), on the acceptance's sizing, T2a's margin and the rule above 20 sectors; read only, no confirmation data. The advisor is a tool of the Claude Code session that sees the whole conversation; it does not report its model, and the maintainer calls it "fable" (Claude Fable 5.1). **Round 1 ran on 2026-11-10 before that approval** (a slip, disclosed on #216): it reviewed the redesign stop. It is counted as one of the three, so two remain.
+
+| Round | Date | File | Model | Topic | SHA-256 |
+|---|---|---|---|---|---|
+| 1 | 2026-11-10 | [advisor-round-1-answer.md](advisor-round-1-answer.md) | advisor tool ("fable", per the maintainer) | the redesign stop: planning margin, agent-days, T2a's ceiling | `4c8f43ea3cf85c717c26c45c33d02c971c8a119382826d13c1079097de3924e0` |
+
+Applied from round 1: the 30 % margin stated honestly (`c4b29f1`), agent-days measured, `choose_sectors` read (every sector of the light curve, so the T2a ceiling holds approximately), the forecast offered to the maintainer.
+
 ## The adequacy redesign
 
 After the failed adequacy check (`c1e717e`), the maintainer's decision dated 2026-11-09 (#216, item 1): a prospective redesign of the sizing through this consensus, loosening nothing, sized cell by cell from version 4's availability, repriced before launch, and a STOP if the total projection passes 3,100 CPU-h. Codex CLI 0.167.0-alpha.3.2, in the stage 2 design conversation.
