@@ -1,0 +1,715 @@
+{
+ "assumptions": [
+  "odd_even: Gaussian noise with the generator's covariance (white plus each sector's exponential term), the true template, an unbiased estimator",
+  "sinusoid: the oracle GLS residual box under the generator's covariance, tested harmonics only, the flag's power taken as 1; necessary, not sufficient",
+  "warning blockers recoverable for kept retention; refusals, blockers without a bound, fatal FAILs of this estimator and quarantined records counted optimistically"
+ ],
+ "eligible": 112,
+ "evidence_qualified_upper_bound": 108,
+ "fingerprint": "e8a8eeca4411804d",
+ "kept_upper_bound": 111,
+ "kept_upper_bound_wilson95_upper": 0.9984221452967079,
+ "label": "D2's bounds; a what-if, decides nothing (#217, stage A (b))",
+ "method_status": "not_validated",
+ "per_planet": [
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.998",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1002,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.999",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.998",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1003,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1004,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1005,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.977",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.885",
+     "evidence_pass_possible": false,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": false,
+   "index": 1011,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "systematics": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1014,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "sinusoid": {
+     "bound": "sinusoid small at bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1017,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1024,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1038,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.996",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1043,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.671",
+     "evidence_pass_possible": false,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    },
+    "systematics": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": false,
+   "index": 1046,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.999",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1049,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "systematics": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1061,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "sinusoid": {
+     "bound": "sinusoid small at bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1065,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1068,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1074,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "INCONCLUSIVE",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.912",
+     "evidence_pass_possible": false,
+     "recoverable_for_kept": false,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.644",
+     "evidence_pass_possible": false,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": false,
+   "index": 1075,
+   "kept_upper_bound": false,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "systematics": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1077,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.999",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1080,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.971",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.974",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1081,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.996",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.948",
+     "evidence_pass_possible": false,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": false,
+   "index": 1082,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.999",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1088,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.998",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1092,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 0.999",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1099,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1100,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1104,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "odd_even bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.999",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1107,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "a FAIL of this estimator (no bound; counted optimistically)",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "FAIL"
+    },
+    "sinusoid": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1108,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "REFUTED",
+   "v4": "REFUTED"
+  },
+  {
+   "blockers": {
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1110,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "INCONCLUSIVE",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 1.000",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    },
+    "systematics": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1111,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  },
+  {
+   "blockers": {
+    "aperture_depth": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "odd_even": {
+     "bound": "a procedural refusal (item (a)); counted optimistically",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "fatal",
+     "status": "INCONCLUSIVE"
+    },
+    "sinusoid": {
+     "bound": "sinusoid small at bound 0.991",
+     "evidence_pass_possible": true,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    },
+    "systematics": {
+     "bound": "no bound",
+     "evidence_pass_possible": null,
+     "recoverable_for_kept": true,
+     "severity": "warning",
+     "status": "INCONCLUSIVE"
+    }
+   },
+   "evidence_upper_bound": true,
+   "index": 1119,
+   "kept_upper_bound": true,
+   "quarantined": false,
+   "v04": "SURVIVED",
+   "v4": "INCONCLUSIVE"
+  }
+ ],
+ "requirement_population": 0.8642857142857143,
+ "requirement_sample": 97,
+ "v04_kept": 108,
+ "v4_kept": 81
+}
