@@ -149,3 +149,46 @@ changes the code hash T2a's v0.5.2 fingerprint covers); the A0-only and whole-sc
 costs told apart; the smoke exception disclosed; planet 1075 excluded from `odd_even`'s 0.97 to 1.0.
 Round 1 reconciled every number of the report with its records (7.7830877 CPU-h) and found no
 protected file, earlier record or v0.5.2 ledger changed in the range.
+
+**A note on the token figures (2026-11-11).** The Codex CLI's usage at the end of a turn
+(`turn.completed`) is cumulative over the conversation (#217, comment 6799452280). The per-round
+"Tokens" lines above are the CLI's figures as reported, so a conversation's total is its last round's
+figure, not the sum of its rounds. Across stage A's 7 conversations, uncached input plus output
+comes to 1.17 M.
+
+## Stage B, B0: the design of D1's gate
+
+The design of B0 ([v0.5.3-stageB0-design.md](../v0.5.3-stageB0-design.md)), the bound's script
+and stage B's ledger (`docs/validation/v0.5.3/stageB/`), reviewed before any run. Codex CLI
+0.167.0-alpha.3.2, one conversation. From stage B on, Codex's tokens count against the review cap
+(the maintainer's rule of 2026-11-11, #217): uncached input plus output, cumulative.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b0-design-round-1-answer.md](b0-design-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `96328c1570f0b6ce622682c91fba661e8e94fe90040eb10ec4c152d64b6282e6` |
+| 2 | [b0-design-round-2-answer.md](b0-design-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the charges' room) | `c7fa4348fc3e480ff868536b5db3b0873c6a711c797702091b7282049f794cb0` |
+| 3 | [b0-design-round-3-answer.md](b0-design-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `09778d88a67962e9b5f3427c16ce2c4a9a8b575751b6bff34564a794a77333fd` |
+
+Tokens, cumulative: round 1, 1,237,919 input (1,106,048 cached) and 11,360 output; round 2,
+2,123,977 (1,962,240) and 17,451; round 3, 2,705,121 (2,537,472) and 19,234. The conversation
+counts **186,883** against B0's cap. Codex answered these three rounds in Portuguese. The
+answers are stored unchanged, as the record requires.
+
+Every correction was applied as Codex wrote it. Round 1 made these:
+
+- the depth row and the candidate-size route (LEO-Vetter IV.1);
+- the bound kept a diagnostic, with "non-rejection" in place of "survival";
+- the per-planet level, the selection and the star's null stated as requirements, not shown;
+- the star's known trend applied to the residual;
+- D1's second condition stated as outside the bound;
+- the outcomes A, B and C reworded, and D added (errors, too few eligible, a non-finite distance);
+- the projection over every attempted curve;
+- `>=` for the stops;
+- the ledger line 149.9, with 0.1 CPU-h outside it for the charges;
+- `summarize` checks the caps and charges its own time;
+- the design in the fingerprint.
+
+Round 2 made two more: a charge always recorded, with a STOP past the room, and `summarize`
+charging its own time in a `finally` after checking that room is left; and `declare` keeping the
+allocations after a transfer. Claude's own fix after round 1: the token parser reads each event's
+type, because a command output that quoted `turn.completed` had broken it.

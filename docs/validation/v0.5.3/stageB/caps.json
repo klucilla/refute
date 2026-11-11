@@ -1,0 +1,12 @@
+{
+ "label": "v0.5.3 stage B: the caps other than CPU-h, recorded before each step (#217; the CPU-h are in ledger.json)",
+ "caps": {
+  "cpu_hours": {"stage_b": 150.0, "b0": 30.0},
+  "review_tokens": {"stage_b": 4500000, "b0": 1500000, "stop_fraction": 0.8},
+  "agent_days": {"stage_b": 8.0, "b0": 2.0}
+ },
+ "review_tokens_method": "the maintainer's rule of 2026-11-11 (#217, comment 6799266241), for stage B only, replacing there the decision of 2026-11-09: each Codex conversation's uncached input plus output (its last turn's cumulative input_tokens - cached_input_tokens + output_tokens; #217, comment 6799452280), plus every independent review session; a stop at 80 % of a cap; no Codex review cut or shortened to fit",
+ "agent_days_method": "Claude's session transcripts since 2026-11-11T14:45:00Z (.cache/v052/tools/agent_time.py): wall clock over 8-hour days (an upper bound) and active time with gaps capped at 10 minutes; Codex's time not counted",
+ "independent_review_tokens": 0,
+ "entries": []
+}

@@ -1,0 +1,29 @@
+{
+ "charges": [
+  {
+   "basis": "the smoke of d1_bound.bound_one on EB1 and EB2 index 100000 (outside the measured 0 to 399), before the design review; process time 19.8 s",
+   "hours": 0.0055000000000000005,
+   "name": "b0_smoke_2026-11-11"
+  },
+  {
+   "basis": "second smoke of bound_one (EB2 index 100000, with the trend factor) after Codex round 1; process time 9.9 s",
+   "hours": 0.0027430555555555554,
+   "name": "b0_smoke2_2026-11-11"
+  }
+ ],
+ "sections": {
+  "stage_b": {
+   "parts": {
+    "b0_bound": {
+     "allocation_hours": 4.0
+    },
+    "b0_reserve": {
+     "allocation_hours": 25.9
+    },
+    "b1_unallocated": {
+     "allocation_hours": 120.0
+    }
+   }
+  }
+ }
+}
