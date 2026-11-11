@@ -109,6 +109,17 @@ Applied from round 1: the 30 % margin stated honestly (`c4b29f1`), agent-days me
 
 Round 2 ran under the maintainer's second set of decisions of 2026-11-10 (item 2, "one of the 2 remaining consultations"); one consultation remains. Its verdict agrees with path (ii). Applied: the T2a what-if's scenario with only `systematics`'s `not_enough_data` kept (point 0.696 to 0.787; only the upper sampling bound, 0.902, reaches the minimum), the record's "mostly kept" replaced by the share needed, the two literature statements read by Claude (sources file, item 5), the memory notes corrected, the agent-day and budget risks of path (i), Codex's end-of-round review of the round's commits, and the affected tests.
 
+## The issue triage
+
+The maintainer's decision of 2026-11-10, third set (#216, item 3): the triage of the open issues, delegated to Claude and Codex, after the closing record. Codex CLI 0.167.0-alpha.3.2, a new conversation, read only (it read the issues through a read-only connector).
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [issue-triage-round-1-answer.md](issue-triage-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` | `3eb67ba933d1e0eecb8b6f3180fb96a707dde10b75229e6bf4f0e434db96dc71` |
+| 2 | [issue-triage-round-2-answer.md](issue-triage-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `60056fc9e57f174693a19ae7a21c6733c198d5ea01c40846de3645c535b84721` |
+
+Tokens: round 1, 1,129,362 input (1,028,224 cached) and 6,057 output; round 2, 1,254,097 (1,146,496) and 6,349. Round 1's corrections were applied (#180 and #211 to "Deferred (no target version)", #215 to v0.5.3, the reasons of #191 and #16 narrowed, one milestone name); round 1 also checked #210's evidence independently. One divergence: Codex proposed moving #24 and #25 to Deferred; Claude argued that deferral is the scope decision the maintainer kept; round 2 agreed with removing their closed-phase milestone and assigning none.
+
 ## The closing record
 
 The maintainer's decision of 2026-11-10, third set (#216, item 2 (d)): Codex reviews the [closing record](../../validation/v0.5.2/closing-record.md) in at most three rounds. Codex CLI 0.167.0-alpha.3.2, a new conversation, read only.
@@ -118,7 +129,9 @@ The maintainer's decision of 2026-11-10, third set (#216, item 2 (d)): Codex rev
 | 1 | [closing-record-round-1-answer.md](closing-record-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (12 findings) | `e922a819228bb146485963c608b9f946227d96d41e5a4f7c0412e69c635ca8c7` |
 | 2 | [closing-record-round-2-answer.md](closing-record-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (12 confirmed applied, 3 new) | `5c0474f668072d0ac2c7081510a2b78c0f991bfef64c6f90d523137bc449e209` |
 
-Tokens: round 1, 1,668,585 input (1,530,880 cached) and 10,276 output; round 2, 2,167,149 (2,018,176) and 13,482. Every finding was applied as Codex wrote it. From round 1: the background sub-check's attribution, the sinusoid's zero (a reported power lower bound, not an impossibility; the other nine at 0.492 to 0.945, checked against the records), the procedural refusals and the group variance's undiagnosed branch, and the `odd_even` and `period_alias` powers are all "undetermined"; the 51 losses are v0.4-kept injections blocked by version 4's present rules, not a measure of #185; the D2 and T2a infeasibility requirements (paired gains, the absolute allowance, sampling uncertainty); the defect statement is bounded by the frozen diagnosis; the caps' qualifications. From round 2: the ROADMAP's summary, the condition "if round 3 also ends without success", and the method status's wording.
+| 3 | [closing-record-round-3-answer.md](closing-record-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (5 findings, on the corrections taken from the independent review) | `a7113b5615d5313b3502e0ec4e0022cbb2731e181022d0d642193a867cbe7540` |
+
+Tokens: round 1, 1,668,585 input (1,530,880 cached) and 10,276 output; round 2, 2,167,149 (2,018,176) and 13,482; round 3, 3,592,333 (3,402,496) and 21,398. Every finding was applied as Codex wrote it. Round 3 corrected the independent review's D2 arithmetic (removing every non-sinusoid INCONCLUSIVE blocker gives 98 of 112, not at most 96; Claude recomputed 98 from the forecast's records), the background error ratio (6.57 from the recorded errors, not about 8 from the search SNR), the sinusoid's statement (under the declared Gaussian residual model, `small` 0.062723 to 0.945319 bounds the joint power below 0.95), the SNR floor (9.29 only if SNR is D over the residual error) and T2a's requirement above 20 sectors (max(0, 552 − k)); the review's report stays unchanged. From round 1: the background sub-check's attribution, the sinusoid's zero (a reported power lower bound, not an impossibility; the other nine at 0.492 to 0.945, checked against the records), the procedural refusals and the group variance's undiagnosed branch, and the `odd_even` and `period_alias` powers are all "undetermined"; the 51 losses are v0.4-kept injections blocked by version 4's present rules, not a measure of #185; the D2 and T2a infeasibility requirements (paired gains, the absolute allowance, sampling uncertainty); the defect statement is bounded by the frozen diagnosis; the caps' qualifications. From round 2: the ROADMAP's summary, the condition "if round 3 also ends without success", and the method status's wording.
 
 ## The diagnosis of T2a's losses
 

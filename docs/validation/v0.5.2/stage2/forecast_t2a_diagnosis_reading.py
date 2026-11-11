@@ -9,8 +9,11 @@ population.
    rule 4): the 15 warning FAILs the classification listed as (e) do not block a loss and are left
    out of the blockers here.
 2. ``odd_even``'s "no calibrated error for the odd/even difference" (class (u) by the frozen rule)
-   is ``battery_v52.check_odd_even`` finding ``a0.group_variance`` refused: A0's rule of at least
-   ``MIN_PAIRS`` window pairs per lag correlation, with the data present, so class (d) here.
+   is ``battery_v52.check_odd_even`` finding that ``a0.group_variance`` returned none (a
+   procedural refusal; which of its branches, a lag correlation below ``MIN_PAIRS`` window pairs,
+   a covariance that is not positive semi-definite or a variance that is not positive, was not
+   diagnosed), so class (d) here. Revised after the independent review of the closing record,
+   which found that an earlier version named ``MIN_PAIRS`` as the cause; the numbers are unchanged.
 
 **The scenarios** remove blockers by class and count a loss kept when nothing decisive is left; the
 stratum above 20 sectors (not run) is given all lost and all kept, as in
@@ -42,7 +45,11 @@ def blockers(rec: dict) -> list[dict]:
         if b["status"] == "FAIL" and b["severity"] == "warning":
             continue
         if b["test"] == "odd_even" and b["message"].startswith("no calibrated error"):
-            b = {**b, "cls": "d", "evidence": "a0.group_variance refused (MIN_PAIRS)"}
+            b = {
+                **b,
+                "cls": "d",
+                "evidence": "a0.group_variance returned none (branch undiagnosed)",
+            }
         out.append(b)
     return out
 
@@ -90,7 +97,7 @@ def main() -> None:
             by_test[_key(b)] += 1
             if b.get("label_defect"):
                 label[f"systematics: {b['label']} -> {b['label_from_causes']}"] += 1
-            if b["test"] == "odd_even" and b["cls"] == "d" and "MIN_PAIRS" in b["evidence"]:
+            if b["test"] == "odd_even" and b["message"].startswith("no calibrated error"):
                 label[f"odd_even: {b['label']} -> outside_domain"] += 1
         sole_sets[" + ".join(sorted({_key(b) for b in bl}))] += 1
     out: dict = {

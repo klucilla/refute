@@ -11,6 +11,12 @@ stands as it came out. `method_status: not_validated`.
 The targets, all outstanding: D1 for EB1 and EB2 (#202), D2 and D4 (#201), T2a (#201). The targets
 that must not regress (D1 for SE, V1, V2, ER, NR; D3; D5; T2b; T2c; T3a; T3b) were not measured.
 
+**Reviews of this record.** Codex reviewed it in three rounds (the consensus record,
+`docs/plans/v0.5.2-consensus/`). One independent review session, read only, answered the maintainer's
+question; its report is [closing-review.md](closing-review.md), unchanged (`WEAKENED`). Its corrections
+of fact are applied below, each marked as the review's; its answer to the question and its proposals
+for round 3 are its own.
+
 ## What led here
 
 Stage 1 (2026-11-08, [report](stage1/README.md)), a bounded diagnostic on development data, then
@@ -98,17 +104,23 @@ error" as A0's group variance returning none:
 |---|---|---|---|
 | `systematics` | (a) missing data | 0 | no sub-check was stopped by a missing product, a missing CROWDSAP or too few transits |
 | `systematics` | (b) lack of power, data present | 23 (the only blocker of 15) | all in the background sub-check, after all three sub-checks ran without a problem: a background rise of 0.8 of the depth is detectable with probability 0.0015 to 0.92 (median 0.14), against 0.95. A0's error on the rise is 0.18 to 5.0 times the SAP depth (median 0.41) in these 23 losses. A Gaussian approximation of the 3-sigma condition alone needs about 0.17; that is a necessary condition, not sufficient for the block's joint rule (the rise must also reach 0.5 of the depth) |
-| `systematics` | (d) a procedural refusal of A0 or of the selection, data present | 25 (the only blocker of 10) | A0's group variance returned none in 15 (the exact branch, a lag correlation below `a0.MIN_PAIRS` window pairs, a covariance that is not positive semi-definite or a variance that is not positive, was not diagnosed); measured events in 0 or 1 sector, outside A0's grid of 2 to 4, in 9; the comb measured no event in 1 |
+| `systematics` | (d) a procedural refusal of A0 or of the selection | 25 (the only blocker of 10) | A0's group variance returned none in 15 (the exact branch, a lag correlation below `a0.MIN_PAIRS` window pairs, a covariance that is not positive semi-definite or a variance that is not positive, was not diagnosed); measured events in 0 or 1 sector, outside A0's grid of 2 to 4, in 9 (in 4 of them no sector contributes a measured event, so "data present" is not established there); the comb measured no event in 1 |
 | `odd_even` | (d) | 12 | A0's group variance returned none in 6; outside the grid in 6 |
 | `odd_even` | (b) | 4 | power 0.79 to 0.93, against 0.95 |
-| sinusoid | (b) | 15 (the only blocker of 2) | in 6, the reported power lower bound is 0 at some harmonic (`battery_v52.py`, a Fréchet lower bound; their `fail_allowed` and `coverage_valid` are true, so the actual joint power is undetermined); in the other 9, the lowest applicable bound is 0.492 to 0.945 |
+| sinusoid | (b) | 15 (the only blocker of 2) | the reported value is the Fréchet lower bound max(0, p + small − 1) of the flag's simulated power p and the small-residual probability `small` (`battery_v52.py`, lines 341 to 371). For all 15 losses, the stored `small` ranges from 0.062723 to 0.945319. **Under the declared Gaussian residual model, the joint rejection probability is at most `small`, hence below 0.95**; this does not establish a calibrated power on the actual data (the independent review's reading, bounded by Codex's round 3) |
 | `period_alias` | (b) | 2 | probability 0.898 and 0.207, against 0.90 |
 
 Labels that do not name the cause (a labelling defect; it causes no loss): 19 `systematics`
 INCONCLUSIVE labelled `not_enough_data` are A0's or the selection's refusals, and 6 `odd_even` labelled
 `insufficient_sensitivity` are A0's group variance returning none. Among the 23 background losses, the
 error ratio is large even for deep, high-SNR injections (one of 3,925 ppm at SNR 36 has 1.28); with 23
-selected losses, this does not establish whether the ratio depends on the depth or on the SNR.
+selected losses, this does not establish whether the ratio depends on the depth or on the SNR. The
+recorded background-rise error over the recorded SAP-depth error has a median of 6.57 over the 23
+losses (the independent review's estimate of about 8 used the candidate's search SNR, which does not
+measure the SAP estimator's uncertainty). The review's explanations, scattered-light variability that
+cancels in SAP or a normalization or units issue of the statistic, are untested and not exhaustive;
+whether SAP_BKG and SAP_FLUX share units was not checked. This is an open question about the
+statistic, not a finding.
 
 What-ifs (removals, not estimators; the stratum above 20 all lost to all kept): every refusal (d)
 removed, 0.50 to 0.60; the background sensitivity removed, 0.50 to 0.59; both, **0.69 to 0.78** (upper
@@ -133,13 +145,16 @@ The 51 injections are v0.4-kept injections blocked by version 4's present rules:
 declared power (b), or no calibrated error at all (d). In the population-weighted what-ifs, which
 overlap and are blocker removals, not attributions, removing every (b) raises the kept fraction by
 0.31, every (d) by 0.19, and both by 0.60. The stratum above 20 sectors (0.091 of the population) is
-lost by the selector's refusal, a rule.
+lost by the selector's refusal, a rule. **With the refusal retained, at least 552 of the other 559
+injections must be kept (0.987)**, v0.4's own in-sample rate. If it is lifted and k of those 559 are
+kept, at least max(0, 552 − k) of the 56 above 20 are needed. The independent review judges that T2a
+would need essentially every blocker class resolved at once (its judgment).
 
 | Test | Losses | Information absent or estimator? | Evidence |
 |---|---|---|---|
 | `systematics`, background sub-check (b) | 23 | **Undetermined.** | Under the Gaussian approximation of the 3-sigma condition, the error would have to shrink by 2.4 times at the median of these 23 (up to about 29). These factors are improvements over that approximation, not information bounds, and no bound was computed for the background rise. |
 | `systematics` and `odd_even`, refusals (d) | 25 and 12 | **Undetermined**: a procedural refusal of the present procedure, not evidence about the information. | The grid of 2 to 4 contributing sectors, A0's group variance returning none, and the selector's validation to 20 sectors. Extending A0's domain is unpriced. `budget.md` prices the existing acceptance schedules at 1,482 to 1,932 CPU-h, which says nothing about an extension. |
-| sinusoid (b) | 15 | **Undetermined.** In 6, the reported power lower bound is 0 at a harmonic, and the actual joint power is unknown. | E3 placed every failure of the built arm within one frequency-resolution unit of a harmonic; this is not a diagnosis of these 15. |
+| sinusoid (b) | 15 | **Undetermined** between information and estimator; under the declared residual model the power is below 0.95 in all 15 (above). | The declared Gaussian residual model requires σ_r / D ≤ 0.107646; if SNR is defined as D / σ_r, this corresponds to 9.29, and its equivalence to the candidate's search SNR is not established. Uniform box weights may lose efficiency with unequal or correlated errors; the attainable gain was not measured. In E3's SNR 12, correlated-trend cell, 0 of 150 planets had every harmonic detectable ([stage 1](stage1/README.md)). |
 | `odd_even` (b) | 4 | **Undetermined.** | Power 0.79 to 0.93 against 0.95. D2's synthetic comparison does not establish T2a's estimator efficiency. |
 | `period_alias` (b) | 2 | **Undetermined.** | 0.898 and 0.207, against 0.90. |
 
@@ -154,9 +169,19 @@ outside the grid) and `systematics` 6 (5 labelled `not_enough_data`, 1 outside t
 - **`odd_even`: undetermined; the evidence available points to the estimator rather than the data.**
   On the 17 sensitivity conversions, A0's error is 1.49 times the Cramer-Rao bound, and at the bound
   16 of the 17 reach the threshold; that is not attainability. E2 found no calibrated estimator that
-  does better.
-- **The sinusoid: not diagnosed on D2.** On T2a, 6 of its 15 refusals have a reported power lower bound
-  of 0 at a harmonic; their actual power is undetermined.
+  does better. The 5 INCONCLUSIVE labelled `insufficient_sensitivity` are not covered by that
+  diagnosis; on T2a, the 6 `odd_even` with that label were A0's group variance returning none, so
+  these may be refusals too (not established).
+- **The sinusoid: not diagnosed on D2**; 12 of its 13 INCONCLUSIVE carry no class in the forecast's
+  records. On T2a, under the declared residual model, every one of its 15 refusals has a power below
+  0.95.
+- **The sinusoid's place in D2, a removal arithmetic.** The minimum needs 97 of the 112 planets kept.
+  The independent review computed that removing every blocker but the sinusoid leaves at most 96 and
+  concluded that D2 needs the sinusoid. **Codex's round 3 corrects that arithmetic:** removing every
+  non-sinusoid INCONCLUSIVE blocker, retaining the fatal failures, also recovers two planets that v0.4
+  lost (1074 and 1110) besides the existing gain (1057), and gives **98 of 112 (0.875)**, above the 97
+  required. This hypothetical removal does not establish attainable performance, nor that resolving
+  the sinusoid is necessary. The review's report is kept unchanged.
 - **`aperture_depth` and `systematics` `not_enough_data`: not diagnosed on D2.** On T2a, every one of
   the 19 `systematics` labels `not_enough_data` turned out to be a refusal by A0 or the selection. The
   D2 labels may hide the same thing; this is not established.
@@ -226,7 +251,7 @@ outside the grid) and `systematics` 6 (5 labelled `not_enough_data`, 1 outside t
 | Development and acceptance CPU-h (stage 2) | 2,000, raised to 3,100 on 2026-11-09 | 179.5 | `budgeted.spent` (ledger): about 70 before the decision of 2026-11-09 (approximate: partly estimated from wall time), the adequacy check, the probes and the forecast; no acceptance ran |
 | The forecast, D2/D4/T2a and both diagnoses | 25 (the maintainer, 2026-11-10) | 16.3 | D2/D4 4.85, `odd_even` diagnosis 1.41, T2a 6.63 (and 0.01 of a failed attempt), the loss diagnosis 2.60 and its smokes 0.04, charged smokes 0.77 |
 | Calibration CPU-h | 150 | 0 | not started |
-| Review tokens | 1.0 M | 0 before the independent review of this record | Codex's tokens do not count (the maintainer, 2026-11-09); each round's are in the consensus record |
+| Review tokens | 1.0 M | 203,057 | the one independent review session of this record (at most 350,000 by the maintainer's decision; [closing-review.md](closing-review.md)); Codex's tokens do not count (the maintainer, 2026-11-09), and each round's are in the consensus record |
 | Agent-days | 12 | Claude: at most 6.6 by wall clock (53.1 hours), about 2.0 active (15.8 hours), at 2026-11-10 23:30 UTC | measured from the session transcripts since 2026-11-08 17:57 UTC (`.cache/v052/tools/agent_time.py`; gaps capped at 10 minutes for active time); Codex's and the reviewer's time not counted, so total compliance is not established |
 | Advisor consultations | 3 | 2 before this record | an opinion only |
 | Disk | | about 1.3 GB in `.cache/v052` | of which 1.0 GB the T2a light curves (`t2a-cache`) |
@@ -253,7 +278,10 @@ planets, 80 injections); the what-ifs remove blockers without designing anything
 - #59 keeps two findings of Codex's end-of-round review that touch fingerprinted files: the
   forecast's cumulative cap across parts, and `budgeted.fail_gate` replacing a gate's detail (so
   `forecast_t2a.py summarize` must not run again before a fix).
-- Issues with the part left are triaged after this record (the stop report has the table). #216 is
-  closed by comment after the closing commit has a green CI.
+- The open issues were triaged after this record ([issue-triage.md](issue-triage.md)): the
+  milestone v0.5.3 holds what round 3 will probably attack. #216 is closed by comment after the
+  closing commit has a green CI.
+- A scope proposal for round 3, for the maintainer's decision:
+  [docs/plans/v0.5.3-scope-proposal.md](../../plans/v0.5.3-scope-proposal.md).
 - For the package of 19 November: the draft README of the v0.5.0 release must say that v0.5.1 and
   v0.5.2 closed as not approved (the drafts are not touched now).
