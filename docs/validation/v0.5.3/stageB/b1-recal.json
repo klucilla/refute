@@ -1,0 +1,158 @@
+{
+ "c1": {
+  "curves": 450,
+  "errors": 0,
+  "ok": 448,
+  "unavailable": 109
+ },
+ "composition": {
+  "e1": true,
+  "e2": true,
+  "e3": true,
+  "e4": true
+ },
+ "estimators": {
+  "e1": {
+   "attempts": 448,
+   "contrasts": 7,
+   "criteria": {
+    "mean": {
+     "interval": [
+      -1.2102135010789263,
+      0.035985852234738935
+     ],
+     "value": -0.5871138244220937
+    },
+    "n": 7,
+    "sd": {
+     "interval": [
+      0.198977232585777,
+      1.2884347713135167
+     ],
+     "value": 0.36951470926459257
+    },
+    "tail": {
+     "count": 0,
+     "interval": [
+      0.0,
+      0.5860331759093567
+     ],
+     "value": 0.0
+    }
+   },
+   "eligible": 7,
+   "errors": 0,
+   "fallback": 0,
+   "judgement": {
+    "availability": 1.0,
+    "mean": "UNRESOLVED",
+    "sd": "UNRESOLVED",
+    "sd_conservative": false,
+    "tail": "UNRESOLVED",
+    "used": true
+   },
+   "ran": 7,
+   "unknown_eligibility": 0
+  },
+  "e2": {
+   "attempts": 448,
+   "contrasts": 316,
+   "criteria": {
+    "mean": {
+     "interval": [
+      -0.14942523542543784,
+      0.1774952859026075
+     ],
+     "value": 0.014035025238584834
+    },
+    "n": 316,
+    "sd": {
+     "interval": [
+      0.902747117956319,
+      1.1348826211429839
+     ],
+     "value": 1.0067169217265777
+    },
+    "tail": {
+     "count": 3,
+     "interval": [
+      0.0007830342332708041,
+      0.03781527497010288
+     ],
+     "value": 0.00949367088607595
+    }
+   },
+   "eligible": 324,
+   "errors": 0,
+   "fallback": 7,
+   "judgement": {
+    "availability": 0.9753086419753086,
+    "mean": "UNRESOLVED",
+    "sd": "PASS",
+    "sd_conservative": false,
+    "tail": "UNRESOLVED",
+    "used": true
+   },
+   "ran": 324,
+   "unknown_eligibility": 0
+  },
+  "e3": {
+   "attempts": 448,
+   "contrasts": 51,
+   "criteria": {
+    "mean": {
+     "interval": [
+      -0.5912882025488823,
+      0.5440481449409821
+     ],
+     "value": -0.023620028803950043
+    },
+    "n": 51,
+    "sd": {
+     "interval": [
+      1.044784890464448,
+      1.8688917919697208
+     ],
+     "value": 1.3499653332625592
+    },
+    "tail": {
+     "count": 1,
+     "interval": [
+      4.089144805962044e-05,
+      0.1535370989683062
+     ],
+     "value": 0.0196078431372549
+    }
+   },
+   "eligible": 339,
+   "errors": 0,
+   "fallback": 288,
+   "judgement": {
+    "availability": 0.1504424778761062,
+    "mean": "UNRESOLVED",
+    "sd": "UNRESOLVED",
+    "sd_conservative": false,
+    "tail": "UNRESOLVED",
+    "used": true
+   },
+   "ran": 339,
+   "unknown_eligibility": 0
+  },
+  "e4": {
+   "contrasts": 1,
+   "eligible": 2,
+   "hosts": 13,
+   "hosts_ok": 13,
+   "judgement": {
+    "availability": 0.0,
+    "mean": "UNRESOLVED",
+    "sd": "UNRESOLVED",
+    "tail": "UNRESOLVED",
+    "used": true
+   },
+   "limit": "these hosts passed the v0.4 gate and T2a's did not: the transport is not shown; dependence between hosts through the instrument is not excluded"
+  }
+ },
+ "label": "B1.3 recalibration screen of version 5's errors (development; an exploratory conservative veto, never a calibration)",
+ "method_status": "not_validated"
+}

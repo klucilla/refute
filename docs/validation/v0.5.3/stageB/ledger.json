@@ -46,6 +46,20 @@
     "b0_reserve": {
      "allocation_hours": 21.9
     },
+    "b1_recal_c1": {
+     "allocation_hours": 8.5,
+     "checkpoint_shards": 23,
+     "identity": "e55793935c0d11b5",
+     "projection_hours": 1.2725883152173911,
+     "spent_hours": 1.2458854166666666
+    },
+    "b1_recal_e4": {
+     "allocation_hours": 1.5,
+     "checkpoint_shards": 1,
+     "identity": "7421b5865ae477eb",
+     "projection_hours": 0.004683159722222222,
+     "spent_hours": 0.006623263888888889
+    },
     "b1_screen": {
      "allocation_hours": 6.0,
      "checkpoint_shards": 6,
@@ -83,7 +97,7 @@
      "spent_hours": 0.07043836805555556
     },
     "b1_unallocated": {
-     "allocation_hours": 111.0
+     "allocation_hours": 101.0
     }
    }
   }
@@ -130,6 +144,20 @@
    "reason": "B1.2's screening (#217)",
    "to": "b1_screen",
    "utc": "2026-11-11T22:05:13Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 8.5,
+   "reason": "B1.3's recalibration screen (#217)",
+   "to": "b1_recal_c1",
+   "utc": "2026-11-11T22:56:52Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 1.5,
+   "reason": "B1.3's recalibration screen (#217)",
+   "to": "b1_recal_e4",
+   "utc": "2026-11-11T23:07:11Z"
   }
  ]
 }

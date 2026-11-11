@@ -1,0 +1,9 @@
+{
+ "composition": {
+  "e1": true,
+  "e2": true,
+  "e3": true,
+  "e4": true
+ },
+ "source": "b1-recal.json (B1.3), frozen before B1.4"
+}

@@ -1,0 +1,787 @@
+{
+ "bytes": 178989120,
+ "changed": {},
+ "downloaded_bytes": 178989120,
+ "failed": {},
+ "hosts": {
+  "TIC-100610422": [
+   {
+    "bytes": 1923840,
+    "name": "tess2018319095959-s0005-0000000100610422-0125-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:33Z",
+    "sha256": "e3d0cbb18a6b26b5afd61ea15ac98139efef36a7edcc64ad93558506a508e62c",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018319095959-s0005-0000000100610422-0125-s_lc.fits"
+   },
+   {
+    "bytes": 1598400,
+    "name": "tess2018349182500-s0006-0000000100610422-0126-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:35Z",
+    "sha256": "dd76395e44cc03bf9b72cac64d3939a278dc6485a4986ed651f33319fde59ca8",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018349182500-s0006-0000000100610422-0126-s_lc.fits"
+   },
+   {
+    "bytes": 1903680,
+    "name": "tess2020324010417-s0032-0000000100610422-0200-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:37Z",
+    "sha256": "4c0a66f5ee4708d1b93a6b016410a14d3c92bd5fd9dc009ef508873e02a23528",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020324010417-s0032-0000000100610422-0200-s_lc.fits"
+   },
+   {
+    "bytes": 1892160,
+    "name": "tess2020351194500-s0033-0000000100610422-0203-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:39Z",
+    "sha256": "ccd824ac4e4ebb9937939e5a7242bff2708e3636f09065aae95f748c05cd19b1",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020351194500-s0033-0000000100610422-0203-s_lc.fits"
+   }
+  ],
+  "TIC-146613141": [
+   {
+    "bytes": 1805760,
+    "name": "tess2019032160000-s0008-0000000146613141-0136-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:41Z",
+    "sha256": "64967b46680b5daf7efdac6e793d3009168b8e91378c019117eb6a4dd96adb9c",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019032160000-s0008-0000000146613141-0136-s_lc.fits"
+   },
+   {
+    "bytes": 1880640,
+    "name": "tess2023043185947-s0062-0000000146613141-0254-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:43Z",
+    "sha256": "1c3c80b5d26692e4534242725eea9ef8f6ad09ba3237f1ba2bfd411581d8d0cf",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2023043185947-s0062-0000000146613141-0254-s_lc.fits"
+   },
+   {
+    "bytes": 2105280,
+    "name": "tess2025042113628-s0089-0000000146613141-0286-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:45Z",
+    "sha256": "250f5d47d3f681b6a86385646843f5e98b281bf8917a6dc305bb8e1bab0eb8a7",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025042113628-s0089-0000000146613141-0286-s_lc.fits"
+   }
+  ],
+  "TIC-150250788": [
+   {
+    "bytes": 2004480,
+    "name": "tess2018234235059-s0002-0000000150250788-0121-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:47Z",
+    "sha256": "fb83bc3dfadd84a4aa67fd115fb5d4432066ac94f7359c5543fee52f55fa7b76",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018234235059-s0002-0000000150250788-0121-s_lc.fits"
+   },
+   {
+    "bytes": 1998720,
+    "name": "tess2018263035959-s0003-0000000150250788-0123-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:48Z",
+    "sha256": "356b5603040af0562f4cac20938412c145e2b97b0a7544967b987a9b643c6034",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018263035959-s0003-0000000150250788-0123-s_lc.fits"
+   },
+   {
+    "bytes": 1923840,
+    "name": "tess2018319095959-s0005-0000000150250788-0125-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:50Z",
+    "sha256": "22c50842cd8afaea5b3c0b4afe0b8d928b7c8e9b40f85b282ed50385bb791b70",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018319095959-s0005-0000000150250788-0125-s_lc.fits"
+   },
+   {
+    "bytes": 1598400,
+    "name": "tess2018349182500-s0006-0000000150250788-0126-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:52Z",
+    "sha256": "d237b06f0d15572b61bc5f7d0d7856dba9bea353858b97e4fcd31f8d4956a626",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018349182500-s0006-0000000150250788-0126-s_lc.fits"
+   },
+   {
+    "bytes": 1791360,
+    "name": "tess2019006130736-s0007-0000000150250788-0131-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:54Z",
+    "sha256": "78ee10a5c95d4c85e085743d6c9ebb7b760d13f11429502cd45da7fd4dbc73a1",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019006130736-s0007-0000000150250788-0131-s_lc.fits"
+   },
+   {
+    "bytes": 1805760,
+    "name": "tess2019032160000-s0008-0000000150250788-0136-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:56Z",
+    "sha256": "2e873ee04bfc2a6c97facb4de34e8f5fcbeeae4bc0b05d1c427167163160906d",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019032160000-s0008-0000000150250788-0136-s_lc.fits"
+   },
+   {
+    "bytes": 1848960,
+    "name": "tess2019058134432-s0009-0000000150250788-0139-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:53:58Z",
+    "sha256": "c31479aaae1b2006560bb8cccf2a11412d9db0e31bd4c87796c296e39d152750",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019058134432-s0009-0000000150250788-0139-s_lc.fits"
+   },
+   {
+    "bytes": 1920960,
+    "name": "tess2019085135100-s0010-0000000150250788-0140-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:00Z",
+    "sha256": "09e8e657f362a8195c18c8e065557e98981703c0d075ae708e4cd385768ce4c5",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019085135100-s0010-0000000150250788-0140-s_lc.fits"
+   },
+   {
+    "bytes": 2041920,
+    "name": "tess2019140104343-s0012-0000000150250788-0144-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:02Z",
+    "sha256": "ea4d4f0a32f3c8a903a78648d1fd6e652a98ccd872709b1c18505e4a7ecf5b56",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019140104343-s0012-0000000150250788-0144-s_lc.fits"
+   },
+   {
+    "bytes": 2079360,
+    "name": "tess2019169103026-s0013-0000000150250788-0146-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:04Z",
+    "sha256": "a8fb39df8608019568eb90b162b37ab911ed2310fec899134319bc9c13740779",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019169103026-s0013-0000000150250788-0146-s_lc.fits"
+   },
+   {
+    "bytes": 1785600,
+    "name": "tess2020186164531-s0027-0000000150250788-0189-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:06Z",
+    "sha256": "13967da9b1afe33931a6db97c0727983048dba96d4443cef2501ded6872c8a69",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020186164531-s0027-0000000150250788-0189-s_lc.fits"
+   },
+   {
+    "bytes": 1848960,
+    "name": "tess2020212050318-s0028-0000000150250788-0190-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:07Z",
+    "sha256": "6ffbfe8a4de22627e270285952a89fbd920af496c6715e4d0fcf35ee847e0a80",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020212050318-s0028-0000000150250788-0190-s_lc.fits"
+   },
+   {
+    "bytes": 1915200,
+    "name": "tess2020238165205-s0029-0000000150250788-0193-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:09Z",
+    "sha256": "409b948b8204b6f3a959bb2ea16aeaee82957b029e0a069ba8b0b70d2558e8cf",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020238165205-s0029-0000000150250788-0193-s_lc.fits"
+   },
+   {
+    "bytes": 1998720,
+    "name": "tess2020266004630-s0030-0000000150250788-0195-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:11Z",
+    "sha256": "e78245bce1cd34e1c7246463435d6a962afdb55908921393d465f00b6d30a5c8",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020266004630-s0030-0000000150250788-0195-s_lc.fits"
+   },
+   {
+    "bytes": 1903680,
+    "name": "tess2020324010417-s0032-0000000150250788-0200-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:13Z",
+    "sha256": "7ff783ee0ae2e44b93875c15582113a00c7bc07f670e83ce9beca58e732c3c95",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020324010417-s0032-0000000150250788-0200-s_lc.fits"
+   },
+   {
+    "bytes": 1892160,
+    "name": "tess2020351194500-s0033-0000000150250788-0203-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:15Z",
+    "sha256": "5acc1e193148b996153ef67a9009ebc296581bf20c06dcec1fa3f193a3c78b2e",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020351194500-s0033-0000000150250788-0203-s_lc.fits"
+   },
+   {
+    "bytes": 1828800,
+    "name": "tess2021039152502-s0035-0000000150250788-0205-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:17Z",
+    "sha256": "40b3318137649b67dc4735b95ef706fcf04546d78f7397714faa57456e38f3cd",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021039152502-s0035-0000000150250788-0205-s_lc.fits"
+   },
+   {
+    "bytes": 1837440,
+    "name": "tess2021065132309-s0036-0000000150250788-0207-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:19Z",
+    "sha256": "1152cbeb060708c67e1312b3d9123644464422a6944761862797567dde4a8633",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021065132309-s0036-0000000150250788-0207-s_lc.fits"
+   },
+   {
+    "bytes": 1854720,
+    "name": "tess2021091135823-s0037-0000000150250788-0208-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:21Z",
+    "sha256": "4764e748712353620c20175c40614e761bf34da6e6e47da5eae063a5d09aedd1",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021091135823-s0037-0000000150250788-0208-s_lc.fits"
+   },
+   {
+    "bytes": 1952640,
+    "name": "tess2021118034608-s0038-0000000150250788-0209-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:23Z",
+    "sha256": "b278984c0cb129f450eb5f1f54adcbc51b17aa7e8d616596c0bda87a90c86f94",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021118034608-s0038-0000000150250788-0209-s_lc.fits"
+   },
+   {
+    "bytes": 2041920,
+    "name": "tess2021146024351-s0039-0000000150250788-0210-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:25Z",
+    "sha256": "90936ecc9b3494fc36951844545d2f5bdf1a299ea9f18543eb820bd698fcfc5b",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021146024351-s0039-0000000150250788-0210-s_lc.fits"
+   },
+   {
+    "bytes": 1967040,
+    "name": "tess2024353092137-s0087-0000000150250788-0284-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:27Z",
+    "sha256": "c9812e5345a303f4e592fed69cf38db79e78b5a127a735d92b8d0e15e86496a1",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2024353092137-s0087-0000000150250788-0284-s_lc.fits"
+   },
+   {
+    "bytes": 2030400,
+    "name": "tess2025014115807-s0088-0000000150250788-0285-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:29Z",
+    "sha256": "43750d809a3958779aba28f66cdd08bbcce505aab537d0d2f93f4d6171f50071",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025014115807-s0088-0000000150250788-0285-s_lc.fits"
+   },
+   {
+    "bytes": 2105280,
+    "name": "tess2025042113628-s0089-0000000150250788-0286-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:31Z",
+    "sha256": "a17c453224311044d1183b33f529f03d4c54e961cf252702e55cd2c86e44d6e8",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025042113628-s0089-0000000150250788-0286-s_lc.fits"
+   },
+   {
+    "bytes": 2041920,
+    "name": "tess2025071122000-s0090-0000000150250788-0287-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:33Z",
+    "sha256": "2de969eb7915a681c86eb994e5564fb9c078957a7398c71f16de694c0b6b83f6",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025071122000-s0090-0000000150250788-0287-s_lc.fits"
+   },
+   {
+    "bytes": 1915200,
+    "name": "tess2025154050500-s0093-0000000150250788-0290-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:35Z",
+    "sha256": "e30e27552fdf06529feba2134edafeadda73ee85b43ee3abb8ae8d85d9755426",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025154050500-s0093-0000000150250788-0290-s_lc.fits"
+   },
+   {
+    "bytes": 1892160,
+    "name": "tess2025180145000-s0094-0000000150250788-0291-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:37Z",
+    "sha256": "5121e9dcf5a85d75e81c8619457303d8a8c4d866d85164a030e3982d931d13de",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025180145000-s0094-0000000150250788-0291-s_lc.fits"
+   },
+   {
+    "bytes": 1846080,
+    "name": "tess2025206162959-s0095-0000000150250788-0292-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:39Z",
+    "sha256": "a591c5da0d4b19c8d4acccd642b5f1f5ac89a92e7147a46617b5f48fc629d44a",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025206162959-s0095-0000000150250788-0292-s_lc.fits"
+   },
+   {
+    "bytes": 1877760,
+    "name": "tess2025232030459-s0096-0000000150250788-0293-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:42Z",
+    "sha256": "b909ff1a8921686dec4a6390f3a4175b2d7984796937c4d6944a0d79202d9512",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2025232030459-s0096-0000000150250788-0293-s_lc.fits"
+   }
+  ],
+  "TIC-158175179": [
+   {
+    "bytes": 1964160,
+    "name": "tess2019198215352-s0014-0000000158175179-0150-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:44Z",
+    "sha256": "01261a985ed868503894abaa91309f534ccf9feabfa2b73c9ec0dd479f371aa2",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019198215352-s0014-0000000158175179-0150-s_lc.fits"
+   },
+   {
+    "bytes": 1906560,
+    "name": "tess2019226182529-s0015-0000000158175179-0151-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:47Z",
+    "sha256": "cd5a31f3ea64c080580b05ec28924ffe85710ae10c70333fe6c6c83a14493597",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019226182529-s0015-0000000158175179-0151-s_lc.fits"
+   },
+   {
+    "bytes": 1820160,
+    "name": "tess2020160202036-s0026-0000000158175179-0188-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:48Z",
+    "sha256": "26dfe44de2a151123fe14e6137c89f86a2b9dc5dfb0d122d6de68ef576a69b7d",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020160202036-s0026-0000000158175179-0188-s_lc.fits"
+   }
+  ],
+  "TIC-236778955": [
+   {
+    "bytes": 1906560,
+    "name": "tess2019226182529-s0015-0000000236778955-0151-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:51Z",
+    "sha256": "48b3966150a6c7072d006b6933222ff9d3b201b23033e74557de0f475cdbc76a",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019226182529-s0015-0000000236778955-0151-s_lc.fits"
+   },
+   {
+    "bytes": 1805760,
+    "name": "tess2019253231442-s0016-0000000236778955-0152-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:53Z",
+    "sha256": "fda5e9cb35bb2d86c3cd70b6938d0e68031be013d235b99e66f707286d9c06dc",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019253231442-s0016-0000000236778955-0152-s_lc.fits"
+   },
+   {
+    "bytes": 1831680,
+    "name": "tess2019279210107-s0017-0000000236778955-0161-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:55Z",
+    "sha256": "4800cc96c2f149a9312abfb64b64668b7bfb302d3e944a0520b5cc7a5f101224",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019279210107-s0017-0000000236778955-0161-s_lc.fits"
+   },
+   {
+    "bytes": 1785600,
+    "name": "tess2019306063752-s0018-0000000236778955-0162-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:56Z",
+    "sha256": "85de7f1f49634f9050e7deb3fecc65d4147112a72a58702a272201a4e9ca1b84",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019306063752-s0018-0000000236778955-0162-s_lc.fits"
+   },
+   {
+    "bytes": 1834560,
+    "name": "tess2019331140908-s0019-0000000236778955-0164-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:54:58Z",
+    "sha256": "b36bf179d6bf9a8a4cfe82448399dfb861beaacc99eb63b24383a8a98d1f0992",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019331140908-s0019-0000000236778955-0164-s_lc.fits"
+   },
+   {
+    "bytes": 1926720,
+    "name": "tess2019357164649-s0020-0000000236778955-0165-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:00Z",
+    "sha256": "7c7a9fdd782ba4b1cbd6ad9d3064dc876e32c995b7ff73d747bb49cb269f61dc",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019357164649-s0020-0000000236778955-0165-s_lc.fits"
+   },
+   {
+    "bytes": 1998720,
+    "name": "tess2020020091053-s0021-0000000236778955-0167-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:02Z",
+    "sha256": "b0746f6cff3d7d4fb129ef64e5cc8a7481186362b119062a5553cb84724dfb8e",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020020091053-s0021-0000000236778955-0167-s_lc.fits"
+   },
+   {
+    "bytes": 1987200,
+    "name": "tess2020049080258-s0022-0000000236778955-0174-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:04Z",
+    "sha256": "59c13c7b31f5231782b30172c0b9e7377f4a8169683ed6c3520ec4f26fb6483e",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020049080258-s0022-0000000236778955-0174-s_lc.fits"
+   },
+   {
+    "bytes": 1958400,
+    "name": "tess2020078014623-s0023-0000000236778955-0177-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:06Z",
+    "sha256": "e65d368baa089b31baeca8ce4b1a7578c02a3be67684b4284fbac2930d4c82c9",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020078014623-s0023-0000000236778955-0177-s_lc.fits"
+   },
+   {
+    "bytes": 1938240,
+    "name": "tess2020106103520-s0024-0000000236778955-0180-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:08Z",
+    "sha256": "49803fa330471a1bbeae3f9c196adbf3d36553dd72cae902856825b36632648f",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020106103520-s0024-0000000236778955-0180-s_lc.fits"
+   },
+   {
+    "bytes": 1877760,
+    "name": "tess2020133194932-s0025-0000000236778955-0182-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:10Z",
+    "sha256": "69152e56cefc1d23a4821c233b8dadbdfbc504c1c15a899d25a721d6d76b2de9",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020133194932-s0025-0000000236778955-0182-s_lc.fits"
+   },
+   {
+    "bytes": 1820160,
+    "name": "tess2020160202036-s0026-0000000236778955-0188-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:12Z",
+    "sha256": "1ac4365098b3b6896a6100f1e023839961fec00010841bf62c840ee048c31017",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020160202036-s0026-0000000236778955-0188-s_lc.fits"
+   },
+   {
+    "bytes": 2062080,
+    "name": "tess2021175071901-s0040-0000000236778955-0211-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:14Z",
+    "sha256": "ab9d6ec0bb348c60a6640e29a6f249d75d25ddd4b76d6903decfb386fac98a24",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021175071901-s0040-0000000236778955-0211-s_lc.fits"
+   },
+   {
+    "bytes": 1944000,
+    "name": "tess2021204101404-s0041-0000000236778955-0212-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:16Z",
+    "sha256": "f6347ac6734b7674eee1a5e9c0c423fd4fbba8ca78e96cf499c2816fd19a0857",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021204101404-s0041-0000000236778955-0212-s_lc.fits"
+   },
+   {
+    "bytes": 1984320,
+    "name": "tess2021364111932-s0047-0000000236778955-0218-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:18Z",
+    "sha256": "f7415d62e45d386d8d393bf2a3f1af34de48b4eb66375024d5590605bfa5615e",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021364111932-s0047-0000000236778955-0218-s_lc.fits"
+   },
+   {
+    "bytes": 2050560,
+    "name": "tess2022027120115-s0048-0000000236778955-0219-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:20Z",
+    "sha256": "5480b385ef5fe9086d1d07aa08008d48fbead82a65bce5d5a3a7e53a5009b987",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022027120115-s0048-0000000236778955-0219-s_lc.fits"
+   },
+   {
+    "bytes": 1964160,
+    "name": "tess2022057073128-s0049-0000000236778955-0221-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:22Z",
+    "sha256": "8e843b2c5c3b2df1fdcc4773cafe6988e6b8ddcbfcd5ea014b13ace3dbf97e98",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022057073128-s0049-0000000236778955-0221-s_lc.fits"
+   },
+   {
+    "bytes": 1920960,
+    "name": "tess2022085151738-s0050-0000000236778955-0222-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:23Z",
+    "sha256": "29da098522ef9de793bbff446c2bdf8cae800bbb8720bd9b7635dd63d80b6f6e",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022085151738-s0050-0000000236778955-0222-s_lc.fits"
+   },
+   {
+    "bytes": 1800000,
+    "name": "tess2022112184951-s0051-0000000236778955-0223-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:25Z",
+    "sha256": "e81ffa736025819a882ecd9de560de94e0cc953d9643dedd5aa226c5982ee955",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022112184951-s0051-0000000236778955-0223-s_lc.fits"
+   },
+   {
+    "bytes": 1791360,
+    "name": "tess2022138205153-s0052-0000000236778955-0224-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:27Z",
+    "sha256": "57b3da8d0e639249ab98408993d1f5f484928cfec6050cd104cbf282da54bf83",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022138205153-s0052-0000000236778955-0224-s_lc.fits"
+   },
+   {
+    "bytes": 1828800,
+    "name": "tess2022164095748-s0053-0000000236778955-0226-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:29Z",
+    "sha256": "70c1c7d8d314b537067beacdc264d67a8d36075b09d14b4ab501e8220cec8c73",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022164095748-s0053-0000000236778955-0226-s_lc.fits"
+   },
+   {
+    "bytes": 1918080,
+    "name": "tess2022190063128-s0054-0000000236778955-0227-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:31Z",
+    "sha256": "c1e7a07af73ae634678767420a26509cd83ee3a35809f7fbf636c8030463b72e",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022190063128-s0054-0000000236778955-0227-s_lc.fits"
+   },
+   {
+    "bytes": 1987200,
+    "name": "tess2022217014003-s0055-0000000236778955-0242-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:33Z",
+    "sha256": "8e76dc3ec3efa19b8c142b5558fbba436ce301564abbce9ff787dc47d060197a",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022217014003-s0055-0000000236778955-0242-s_lc.fits"
+   },
+   {
+    "bytes": 2039040,
+    "name": "tess2022244194134-s0056-0000000236778955-0243-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:35Z",
+    "sha256": "900b6f3270b61336a9cf55eff6fd1f633643af36b34e2b0248289f08b010b9cb",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022244194134-s0056-0000000236778955-0243-s_lc.fits"
+   },
+   {
+    "bytes": 2102400,
+    "name": "tess2022273165103-s0057-0000000236778955-0245-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:37Z",
+    "sha256": "d6c9644dac344bbaa2c5e0ba4b6cd54fda78379f5a08666238577f3106219892",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022273165103-s0057-0000000236778955-0245-s_lc.fits"
+   },
+   {
+    "bytes": 1932480,
+    "name": "tess2022330142927-s0059-0000000236778955-0248-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:39Z",
+    "sha256": "62cb146464706ed752319cc2c8956c063742f2c800421ef29b6479eeadf29509",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022330142927-s0059-0000000236778955-0248-s_lc.fits"
+   },
+   {
+    "bytes": 1880640,
+    "name": "tess2022357055054-s0060-0000000236778955-0249-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:41Z",
+    "sha256": "9236e010c7992fd119364dc24be557a41fcffe2e642e998a28d811530e991942",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022357055054-s0060-0000000236778955-0249-s_lc.fits"
+   },
+   {
+    "bytes": 1883520,
+    "name": "tess2024274222008-s0084-0000000236778955-0281-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:43Z",
+    "sha256": "45ccf7c92c1b664e5e6d15cbc2648f3d01a6c6159f4258fcf6cb3c8d25c3054d",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2024274222008-s0084-0000000236778955-0281-s_lc.fits"
+   },
+   {
+    "bytes": 1866240,
+    "name": "tess2024300212641-s0085-0000000236778955-0282-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:45Z",
+    "sha256": "b5d0548adacdc07bf774074ee8aa1cbc905a4628bfbe1a92d58d87331474f1fd",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2024300212641-s0085-0000000236778955-0282-s_lc.fits"
+   },
+   {
+    "bytes": 1944000,
+    "name": "tess2024326142117-s0086-0000000236778955-0283-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:47Z",
+    "sha256": "b6a28b622857dd4e0c0c7400309e92557b8d39d40387e90ff033bd1257ab1285",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2024326142117-s0086-0000000236778955-0283-s_lc.fits"
+   }
+  ],
+  "TIC-281426580": [
+   {
+    "bytes": 1791360,
+    "name": "tess2019006130736-s0007-0000000281426580-0131-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:49Z",
+    "sha256": "2a4ff120f1807fe685da9ec27e099e28fc3e8706b8b3e455510ffda6f925f067",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019006130736-s0007-0000000281426580-0131-s_lc.fits"
+   },
+   {
+    "bytes": 1805760,
+    "name": "tess2019032160000-s0008-0000000281426580-0136-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:51Z",
+    "sha256": "8414f5a60b6ce855cec2129609fa558a28dd186286b851fad48d6f25e6bb5ed2",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019032160000-s0008-0000000281426580-0136-s_lc.fits"
+   },
+   {
+    "bytes": 1860480,
+    "name": "tess2023018032328-s0061-0000000281426580-0250-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:53Z",
+    "sha256": "1b2f3a15093831bd0c21172b2df5497ae32297b924d71534637e36148ed8b027",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2023018032328-s0061-0000000281426580-0250-s_lc.fits"
+   }
+  ],
+  "TIC-286480954": [
+   {
+    "bytes": 2027520,
+    "name": "tess2022302161335-s0058-0000000286480954-0247-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:55Z",
+    "sha256": "ac11b3e40be413976adf4b19ef380f6e48b55f59b8a90c677cf02deb96103f0c",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022302161335-s0058-0000000286480954-0247-s_lc.fits"
+   },
+   {
+    "bytes": 1932480,
+    "name": "tess2022330142927-s0059-0000000286480954-0248-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:57Z",
+    "sha256": "efee2c969722b38b7f8a48e226497fb4927961e9233723291263d1dabc36f963",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022330142927-s0059-0000000286480954-0248-s_lc.fits"
+   },
+   {
+    "bytes": 1944000,
+    "name": "tess2024326142117-s0086-0000000286480954-0283-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:55:59Z",
+    "sha256": "134cddfee74a6d6abaf029043e76c8d3474bc7150470919093f00c21f4ab1474",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2024326142117-s0086-0000000286480954-0283-s_lc.fits"
+   }
+  ],
+  "TIC-321476318": [
+   {
+    "bytes": 1938240,
+    "name": "tess2020106103520-s0024-0000000321476318-0180-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:01Z",
+    "sha256": "daa8b06237c787001c5409e995e04af50777115161463a04af860b7f6d7fecf1",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020106103520-s0024-0000000321476318-0180-s_lc.fits"
+   },
+   {
+    "bytes": 1920960,
+    "name": "tess2022085151738-s0050-0000000321476318-0222-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:03Z",
+    "sha256": "9242c69e10ea6f3367dc2910996340ade6f37c94b2b48ac8cd4267da9ece4e3e",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022085151738-s0050-0000000321476318-0222-s_lc.fits"
+   },
+   {
+    "bytes": 1800000,
+    "name": "tess2022112184951-s0051-0000000321476318-0223-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:05Z",
+    "sha256": "d8119ed6c0463991ce08d1cfb1e1f2d910fabf7a995339cc3503a2744e756769",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022112184951-s0051-0000000321476318-0223-s_lc.fits"
+   }
+  ],
+  "TIC-406413408": [
+   {
+    "bytes": 1860480,
+    "name": "tess2020294194027-s0031-0000000406413408-0198-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:07Z",
+    "sha256": "a68b39ed31d7aad749511945e2d518a673d4f4b01a14de88fc4985094b275cfd",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020294194027-s0031-0000000406413408-0198-s_lc.fits"
+   },
+   {
+    "bytes": 1863360,
+    "name": "tess2021232031932-s0042-0000000406413408-0213-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:09Z",
+    "sha256": "c86e7a99e502f2f7f372f503863563de780109524a48f21c9746766f7348b678",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021232031932-s0042-0000000406413408-0213-s_lc.fits"
+   },
+   {
+    "bytes": 1811520,
+    "name": "tess2021258175143-s0043-0000000406413408-0214-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:11Z",
+    "sha256": "654d52f8b1f93bffdcb8680cf2ec6dbeeaaa41a7d90ae3615340657966e347f9",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021258175143-s0043-0000000406413408-0214-s_lc.fits"
+   }
+  ],
+  "TIC-44743595": [
+   {
+    "bytes": 1897920,
+    "name": "tess2018292075959-s0004-0000000044743595-0124-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:13Z",
+    "sha256": "1958050dd9e9b1427291a4b423434a0c28920dc6f27d6bed483303be57827948",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018292075959-s0004-0000000044743595-0124-s_lc.fits"
+   },
+   {
+    "bytes": 1923840,
+    "name": "tess2018319095959-s0005-0000000044743595-0125-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:15Z",
+    "sha256": "1bce522b87275af1efa4f468bd8899f02652d167fb31a82a9f278a37dd1fdac3",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2018319095959-s0005-0000000044743595-0125-s_lc.fits"
+   },
+   {
+    "bytes": 1860480,
+    "name": "tess2020294194027-s0031-0000000044743595-0198-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:17Z",
+    "sha256": "15d40367adcc4bc8d277a37d52b37542bd8fca77b2924a8e9bc7a6119439228f",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020294194027-s0031-0000000044743595-0198-s_lc.fits"
+   }
+  ],
+  "TIC-453467954": [
+   {
+    "bytes": 1848960,
+    "name": "tess2019058134432-s0009-0000000453467954-0139-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:19Z",
+    "sha256": "311868f3919deafb718d14cd1f09029196b180aee35fedb78a28c4cd505d49e4",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2019058134432-s0009-0000000453467954-0139-s_lc.fits"
+   },
+   {
+    "bytes": 1837440,
+    "name": "tess2021065132309-s0036-0000000453467954-0207-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:20Z",
+    "sha256": "0b8eb83ee9147f34000cac94874bcfe7b2e7a7d6e6e26b36957326f73e45c37c",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021065132309-s0036-0000000453467954-0207-s_lc.fits"
+   },
+   {
+    "bytes": 1941120,
+    "name": "tess2023069172124-s0063-0000000453467954-0255-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:22Z",
+    "sha256": "55829be04e488924375f7870d32a2571db14cf1228ddb900269d60b89a147cf6",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2023069172124-s0063-0000000453467954-0255-s_lc.fits"
+   }
+  ],
+  "TIC-458358301": [
+   {
+    "bytes": 1860480,
+    "name": "tess2020294194027-s0031-0000000458358301-0198-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:24Z",
+    "sha256": "e39abd0a1da5e552c2f2005bfd864fbaa071ca6e63003ceab43a22cc41c620dd",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020294194027-s0031-0000000458358301-0198-s_lc.fits"
+   },
+   {
+    "bytes": 1863360,
+    "name": "tess2021232031932-s0042-0000000458358301-0213-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:26Z",
+    "sha256": "fa5d7db9a1ac36f7839505417358ac423c827a4e8b1656eae84c6d9711469c34",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021232031932-s0042-0000000458358301-0213-s_lc.fits"
+   },
+   {
+    "bytes": 1811520,
+    "name": "tess2021258175143-s0043-0000000458358301-0214-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:28Z",
+    "sha256": "0570ba360f77c75b145253efac57c3f4c921ba9c13c5a652c433e9c059f2e7c9",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021258175143-s0043-0000000458358301-0214-s_lc.fits"
+   },
+   {
+    "bytes": 1776960,
+    "name": "tess2021284114741-s0044-0000000458358301-0215-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:30Z",
+    "sha256": "2c567f8c5a8a3a207d9af7dbb920f2f8422f241fe1ed1319b1484b36210c042d",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021284114741-s0044-0000000458358301-0215-s_lc.fits"
+   }
+  ],
+  "TIC-88096786": [
+   {
+    "bytes": 1998720,
+    "name": "tess2020020091053-s0021-0000000088096786-0167-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:32Z",
+    "sha256": "7c418527ff9e4bc3ad6d907d1fc9e1067ebc9e2ee05a41126710f182ab2e88e7",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2020020091053-s0021-0000000088096786-0167-s_lc.fits"
+   },
+   {
+    "bytes": 1840320,
+    "name": "tess2021310001228-s0045-0000000088096786-0216-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:34Z",
+    "sha256": "dc3d8541f76d5dae624b80eebf8d70f593bc2b30b6d9f2c913c0cc4dedfb09fb",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2021310001228-s0045-0000000088096786-0216-s_lc.fits"
+   },
+   {
+    "bytes": 2050560,
+    "name": "tess2022027120115-s0048-0000000088096786-0219-s_lc.fits",
+    "origin": "downloaded",
+    "retrieved_utc": "2026-11-11T22:56:36Z",
+    "sha256": "0eb7d3cad5f12dc18ab9d03c2e35f22fbd9b9763b1fcec13d1b379fdb4cbff96",
+    "url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/tess2022027120115-s0048-0000000088096786-0219-s_lc.fits"
+   }
+  ]
+ },
+ "source": "the sealed v0.4 stage-1 dossiers' data manifests"
+}
