@@ -51,6 +51,24 @@ import forecast_v4 as fv  # noqa: E402
 
 PART = "a_refusals"
 OUT = ledger_a.ROOT / ".cache/v053/stageA/a0-refusals"
+# Amendment 1 (2026-11-11, #217): the first attempt stopped by the frozen-projection rule (1.5 times
+# the 5 % checkpoint's 1.34 CPU-h) at 2.20 CPU-h, within its 4 CPU-h allocation, with 72 of the 79
+# records done; the stop is reconciled with that reason and the 7 missing records run as their own
+# part, from 0.5 CPU-h transferred from the reserve; the summary joins both, each shard checked by
+# its sidecar.
+MAIN_FP = "c24c94200bee49dd"  # the first attempt's fingerprint: this script and ledger_a.py at
+# commit adc3f95 (recomputed from those committed files); the amendment only adds code
+REST_FP = "d8e3e9b34e0c7aa0"  # the rest part's fingerprint when it ran (this script before the
+# summary's fix for D2 records; the code that builds a record did not change)
+PART_REST = "a_refusals_rest"
+OUT_REST = ledger_a.ROOT / ".cache/v053/stageA/a0-refusals-rest"
+REST_HOURS = 0.5
+RECONCILE = (
+    "The 5 % checkpoint (4 of 79 records) projected 1.34 CPU-h, below the records' real cost (T2a "
+    "median 96 CPU-seconds with the traces); the part spent 2.20 of its 4.0 CPU-h allocation and "
+    "did 72 of 79 records. The 7 missing ones run as part a_refusals_rest (0.5 CPU-h from the "
+    "reserve, prospective; #217), and this attempt's consumption stays counted."
+)
 WORKERS = 12
 PIN = tuple(range(8, 32, 2))
 MAX_SHARD_SECONDS = 1200.0
@@ -338,12 +356,50 @@ def run() -> None:
         raise SystemExit(state)
 
 
+def _main_done(rows: list) -> dict:
+    """The first attempt's finished records, each checked by its sidecar (``driver.Run._done``:
+    the fingerprint, the argument and the bytes)."""
+    r = driver.Run(OUT / MAIN_FP, shard, rows, MAIN_FP, 1.0, 1, pin=PIN,
+                   max_shard_seconds=MAX_SHARD_SECONDS)  # fmt: skip
+    return {sid: r._paths(sid)[0].read_bytes() for sid in r._done()}
+
+
+def run_rest() -> None:
+    """Amendment 1: reconcile the first attempt's stop and run its missing records."""
+    before = ledger_a.v052_ledger_sha256()
+    try:
+        ledger_a.check_caps(reserve_days=0.1, reserve_tokens=0)
+        rows_book = ledger_a._rows()
+        if "unresolved_stop" in rows_book.get(PART, {}):
+            budgeted.reconcile(ledger_a.SECTION, PART, RECONCILE)
+        if PART_REST not in ledger_a._rows():
+            ledger_a.transfer("reserve", PART_REST, REST_HOURS, RECONCILE)
+        fp = fingerprint()
+        rows = schedule()
+        done = _main_done(rows)
+        rest = [(sid, a) for sid, a in rows if sid not in done]
+        cap = ledger_a.hard_cap(PART_REST, WORKERS, MAX_SHARD_SECONDS)
+        print(len(rest), "records; hard cap", round(cap, 2), "CPU-h", flush=True)
+        state = budgeted.execute(
+            ledger_a.SECTION, PART_REST, OUT_REST / fp, shard, rest, fp, WORKERS, pin=PIN,
+            max_shard_seconds=MAX_SHARD_SECONDS, hard_cap_hours=cap,
+        )  # fmt: skip
+        print(state, flush=True)
+    finally:
+        if ledger_a.v052_ledger_sha256() != before:
+            raise SystemExit("the v0.5.2 ledger changed: refused")
+    if state != "complete":
+        raise SystemExit(state)
+
+
 # --- the summary -----------------------------------------------------------------------------
 
 
 def _trace_failures(rec: dict) -> list[str]:
     why = []
-    depth = rec.get("a0_depth_calls") or (rec.get("v4") or {}).get("a0_depth_calls") or []
+    v4 = rec.get("v4")
+    depth = rec.get("a0_depth_calls") or (v4.get("a0_depth_calls") if isinstance(v4, dict) else [])
+    depth = depth or []
     for c in rec.get("group_variance_calls") or []:
         if "instrumentation_error" in c or c.get("branch") == "COPY DISAGREES":
             why.append("group variance trace")
@@ -387,11 +443,17 @@ def _quarantine_d2(rec: dict, old: dict) -> list[str]:
 def summarize() -> None:
     fp = fingerprint()
     rows = schedule()
-    data = budgeted.assembled(
-        ledger_a.SECTION, PART, OUT / fp, shard, rows, fp, WORKERS, pin=PIN,
-        max_shard_seconds=MAX_SHARD_SECONDS,
-    )  # fmt: skip
+    done = _main_done(rows)
+    rest = [(sid, a) for sid, a in rows if sid not in done]
+    data = b"".join(done.values())
+    if rest:
+        data += budgeted.assembled(
+            ledger_a.SECTION, PART_REST, OUT_REST / REST_FP, shard, rest, REST_FP, WORKERS,
+            pin=PIN, max_shard_seconds=MAX_SHARD_SECONDS,
+        )  # fmt: skip
     recs = [json.loads(x) for x in data.decode().splitlines() if x.strip()]
+    if len(recs) != len(rows):
+        raise SystemExit(f"{len(recs)} records assembled of {len(rows)}")
     t_old, d_old = t2a_old(), d2_old()
     out: dict = {
         "label": "which branch of A0 refuses in T2a's and D2's losses; a diagnosis, decides "
@@ -455,4 +517,4 @@ def summarize() -> None:
 
 
 if __name__ == "__main__":
-    {"run": run, "summarize": summarize}[sys.argv[1]]()
+    {"run": run, "run_rest": run_rest, "summarize": summarize}[sys.argv[1]]()

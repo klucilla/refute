@@ -58,3 +58,22 @@ answered rather than applied:** round 3 read `caps.json`'s zero review tokens as
 Codex's tokens; by the maintainer's decision of 2026-11-09 Codex's tokens do not count against the
 review limit, so `caps.json` now states that rule and counts independent review sessions only (none
 yet).
+
+## Item (b)'s implementation
+
+`docs/validation/v0.5.3/stageA/d2_bounds.py`, reviewed before its run. Codex CLI 0.167.0-alpha.3.2,
+a new conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [d2-bounds-round-1-answer.md](d2-bounds-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (3 findings) | `1cef8f94ac65dceb47c4f176b278011560826f2cf414d0d187c64b8b9b2825a6` |
+| 2 | [d2-bounds-round-2-answer.md](d2-bounds-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (3 corrections) | `9f73ba3b0c6eaf0b373226125c5078c0a27ecd4c51f652d499386fd6c03d2707` |
+| 3 | [d2-bounds-round-3-answer.md](d2-bounds-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `bdd5a39094e9f1ee3c372f97ed7e9420fb389c242351140665a2000defd4c5a3` |
+
+Tokens: round 1, 773,957 input (698,240 cached) and 8,439 output; round 2, 1,465,182 (1,364,864)
+and 13,663; round 3, 1,998,102 (1,885,184) and 16,387. Applied as Codex wrote them: item (a)'s
+refusals read and bound into the fingerprint, an absent or failed (a) diagnosis counted
+optimistically; the generator's known multiplicative trend on the odd and even template columns
+only; the sinusoid's residual box in normalized coordinates (a fixed-normalizer oracle assumption),
+the odd/even columns raw. Codex checked the polarization against a dense covariance (relative error
+1.3e-16) and seven counting scenarios.

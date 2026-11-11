@@ -69,7 +69,7 @@ def transfer(source: str, target: str, hours: float, reason: str) -> None:
     if alloc[source] - hours < spent_source:
         raise SystemExit(f"{source}: cannot give back hours it has spent")
     alloc[source] -= hours
-    alloc[target] += hours
+    alloc[target] = alloc.get(target, 0.0) + hours  # a new part may be created by a transfer
     budgeted.declare(SECTION, alloc)
     book = budgeted.load()
     book.setdefault("transfers", []).append(

@@ -1,0 +1,62 @@
+{
+ "charges": [
+  {
+   "basis": "the measured wall time of a one-planet test of d2_bounds.py run in the shell process, not pinned to processors 8 to 31 and outside the ledger (a slip, disclosed on #217); wall time used as an upper bound of its CPU time",
+   "hours": 0.059055555555555556,
+   "name": "d2_bounds smoke, planet 1002, in-process (2026-11-11)"
+  }
+ ],
+ "sections": {
+  "stage_a": {
+   "parts": {
+    "a_refusals": {
+     "allocation_hours": 4.0,
+     "checkpoint_shards": 4,
+     "identity": "3cfc294c7c0b1a39",
+     "projection_hours": 1.3402398003472225,
+     "reconciled": [
+      {
+       "reason": "The 5 % checkpoint (4 of 79 records) projected 1.34 CPU-h, below the records' real cost (T2a median 96 CPU-seconds with the traces); the part spent 2.20 of its 4.0 CPU-h allocation and did 72 of 79 records. The 7 missing ones run as part a_refusals_rest (0.5 CPU-h from the reserve, prospective; #217), and this attempt's consumption stays counted.",
+       "stop": "stopped: the cap is reached"
+      }
+     ],
+     "spent_hours": 2.197526041666667
+    },
+    "a_refusals_rest": {
+     "allocation_hours": 0.5,
+     "checkpoint_shards": 1,
+     "identity": "f38b8f6fc81432d3",
+     "projection_hours": 0.12505208333333334,
+     "spent_hours": 0.15000868055555555
+    },
+    "b_d2_bound": {
+     "allocation_hours": 8.0
+    },
+    "c1_background_audit": {
+     "allocation_hours": 2.0
+    },
+    "c2_t2a_bound": {
+     "allocation_hours": 4.0
+    },
+    "c3_above_20": {
+     "allocation_hours": 18.0
+    },
+    "d_geometry": {
+     "allocation_hours": 6.0
+    },
+    "reserve": {
+     "allocation_hours": 7.5
+    }
+   }
+  }
+ },
+ "transfers": [
+  {
+   "from": "reserve",
+   "hours": 0.5,
+   "reason": "The 5 % checkpoint (4 of 79 records) projected 1.34 CPU-h, below the records' real cost (T2a median 96 CPU-seconds with the traces); the part spent 2.20 of its 4.0 CPU-h allocation and did 72 of 79 records. The 7 missing ones run as part a_refusals_rest (0.5 CPU-h from the reserve, prospective; #217), and this attempt's consumption stays counted.",
+   "to": "a_refusals_rest",
+   "utc": "2026-11-11T06:47:52Z"
+  }
+ ]
+}
