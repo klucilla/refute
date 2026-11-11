@@ -1,0 +1,76 @@
+{
+ "cpu_seconds": [
+  252.171875
+ ],
+ "part": "b1_smoke_t2a",
+ "paths": [
+  {
+   "attack": "v5A_counts",
+   "counters": {
+    "e1.calls": 0,
+    "e2.calls": 0,
+    "e3.calls": 1,
+    "e3.sinusoid_calls": 1,
+    "e4.calls": 0,
+    "e4.systematics_calls": 1
+   },
+   "effective": {
+    "e1": {
+     "e1.completion_missing": 0,
+     "e1.completion_nonpsd": 0,
+     "e1.v4_finite": 0
+    },
+    "e2": {
+     "e2.gls": 0
+    },
+    "e3": {
+     "e3.gls": 0
+    },
+    "e4": {
+     "e4.window_quadratic": 0
+    }
+   },
+   "fallbacks": {
+    "e3.fallback:phi outside (0, 0.99)": 1
+   },
+   "record": "t2a",
+   "selector_refused": true
+  },
+  {
+   "attack": "v5C_counts",
+   "counters": {
+    "e1.calls": 7,
+    "e2.calls": 1,
+    "e3.calls": 1,
+    "e3.sinusoid_calls": 1,
+    "e4.calls": 1,
+    "e4.systematics_calls": 1
+   },
+   "effective": {
+    "e1": {
+     "e1.completion_missing": 0,
+     "e1.completion_nonpsd": 0,
+     "e1.v4_finite": 7
+    },
+    "e2": {
+     "e2.gls": 1
+    },
+    "e3": {
+     "e3.gls": 0
+    },
+    "e4": {
+     "e4.window_quadratic": 290
+    }
+   },
+   "fallbacks": {
+    "e3.fallback:phi outside (0, 0.99)": 1
+   },
+   "record": "t2a",
+   "selector_refused": false
+  }
+ ],
+ "problems": [],
+ "wall_seconds": [
+  252.7223864999978
+ ]
+}

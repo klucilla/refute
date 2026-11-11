@@ -112,6 +112,92 @@ def d2_one(i: int) -> dict:
     return rec
 
 
+def _detail(tests) -> dict:
+    """The screening's per-test detail of a version-5 attack: odd_even's and the sinusoid's
+    sensitivity and error quantities, to set against version 4's records and stage A's bounds."""
+    out = {}
+    for t in tests:
+        if t.name not in ("odd_even", "sinusoid", "systematics", "aperture_depth"):
+            continue
+        blocks = t.sensitivity or {}
+        probs = {k: b.get("probability") for k, b in blocks.items() if isinstance(b, dict)}
+        keep = ("difference_sigma", "gls_difference_err_ppm", "v4_difference_sigma",
+                "depth_odd_err_ppm", "depth_even_err_ppm", "estimator", "depth_odd_ppm",
+                "depth_even_ppm",
+                "box_depth_after_model_err_ppm", "probability_residual_small",
+                "background_rise_err", "background_rise_sigma", "depth_sap_ppm",
+                "inconclusive_class", "inconclusive_detail")  # fmt: skip
+        out[t.name] = {
+            "status_before_sensitivity": t.status.value,
+            "probabilities": probs,
+            **{k: t.metrics.get(k) for k in keep if k in t.metrics},
+        }
+    return out
+
+
+class RefusalProbe:
+    """Counts version 4's own ``a0.group_variance`` refusals (None) during one version-4 attack:
+    the exact population of E1 on that curve (Codex's review of B1.2, round 1). Version 4's
+    function is wrapped, never replaced in behaviour, and restored after."""
+
+    def __enter__(self):
+        from refute.packs.tess import a0
+
+        battery_b1.check_active(None)
+        self.calls = self.refusals = 0
+        original = a0.group_variance
+
+        def probe(*args, **kwargs):
+            self.calls += 1
+            out = original(*args, **kwargs)
+            if out is None:
+                self.refusals += 1
+            return out
+
+        self._a0, self._original = a0, original
+        a0.group_variance = probe
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self._a0.group_variance = self._original
+        battery_b1.check_active(None)
+
+
+def d2_screen_one(i: int) -> dict:
+    """B1.2: version 4 (again, with the refusal probe) and version 5 on a v0.5.2 forecast curve
+    (C1 P, ``development_seed("P", i)``), on the shared candidate; v0.4's outcome and the
+    eligibility are v0.5.2's records."""
+    from refute.packs.tess.calib05 import c1
+    from refute.packs.tess.detrend import detrend
+    from refute.packs.tess.pipeline import attack_candidate, global_prewhitening
+    from refute.packs.tess.search import search_period
+
+    started = time.process_time()
+    rec: dict = {"index": i}
+    try:
+        data, truth = c1.generate("P", c1.development_seed("P", i))
+    except c1.GenerationFailedError as exc:
+        return {**rec, "status": "GENERATION_FAILURE", "reason": str(exc)}
+    p04, _, p4 = fv.plans()
+    battery_b1.check_active(None)
+    flat = detrend(data.lc, p04.detrend)
+    pw, searched = global_prewhitening(data, p04, flat)
+    cand = search_period(searched, p04.search).candidate
+    with RefusalProbe() as probe:
+        g = attack_candidate(data, cand, p4, None, None, pw)
+    rec["v4"], rec["v4_tests"] = fv._verdict(g.tests, p4)
+    rec["v4_detail"] = _detail(g.tests)
+    rec["v4_group_variance"] = {"calls": probe.calls, "refusals": probe.refusals}
+    with Version5() as v5:
+        g = attack_candidate(data, cand, p4, None, None, pw)
+        rec["v5"], rec["v5_tests"] = fv._verdict(g.tests, p4)
+        rec["v5_detail"] = _detail(g.tests)
+    rec["v5_activation"], rec["v5_counts"] = v5.activation, v5.counts
+    rec["status"] = "OK"
+    rec["cpu_seconds"] = time.process_time() - started
+    return rec
+
+
 def t2a_one(row: dict, only_c: bool = False) -> dict:
     """v0.5.2's ``forecast_t2a.one`` with version 5 in place of version 3 and 4 (the cache is
     v0.5.2's, ``ft.CACHE``, for the hosts it holds). ``only_c``: v0.4 and version 5 C only (the
@@ -209,6 +295,8 @@ def shard(arg: dict) -> bytes:
     try:
         if arg["kind"] == "d2":
             rec = d2_one(arg["index"])
+        elif arg["kind"] == "d2screen":
+            rec = d2_screen_one(arg["index"])
         else:
             rec = t2a_one(arg["row"], only_c=arg["kind"] == "t2a_c")
         rec = {**key, **rec}
@@ -481,6 +569,282 @@ def validate_smoke(name: str, part: str, rows: list) -> None:
         raise SystemExit("the smoke did not pass its checks: " + "; ".join(problems))
 
 
+# --- B1.2: the screening (D2 only; diagnostic) ----------------------------------------------
+
+SCREEN_PART, SCREEN_HOURS = "b1_screen", 6.0
+V052_FORECAST = ledger_b.ROOT / ".cache/v052/s2/forecast-v4/729b7c6bf362170c"
+D2_BOUNDS = ledger_b.ROOT / "docs/validation/v0.5.3/stageA/d2-bounds.json"
+# stage A (b)'s raw records (the error bounds), under the fingerprint of d2-bounds.json
+STAGE_A_RAW = ledger_b.ROOT / ".cache/v053/stageA/d2-bounds/e8a8eeca4411804d"
+
+
+def screen_rows() -> list:
+    return [
+        (f"s{i:05d}", {"kind": "d2screen", "index": i}) for i in range(fv.FIRST, fv.FIRST + fv.N)
+    ]
+
+
+def v052_records() -> dict:
+    """v0.5.2's forecast records of the same curves (version 4 and v0.4), from its run cache,
+    sealed: each shard's SHA-256 must equal its sidecar's, under v0.5.2's fingerprint, and the
+    indices must be exactly 1000 to 1119, each once (Codex's review of B1.2, round 1)."""
+    import hashlib as _h
+
+    out = {}
+    for f in sorted((V052_FORECAST / "shards").glob("*.bin")):
+        side = json.loads((V052_FORECAST / "sidecars" / (f.stem + ".json")).read_text("utf-8"))
+        if side["fingerprint"] != V052_FORECAST.name:
+            raise SystemExit(f"{f.name}: not v0.5.2's forecast run: refused")
+        if _h.sha256(f.read_bytes()).hexdigest() != side["sha256"]:
+            raise SystemExit(f"{f.name}: its SHA-256 differs from its sidecar: refused")
+        for line in f.read_text("utf-8").splitlines():
+            if line.strip():
+                r = json.loads(line)
+                if int(r["index"]) in out:
+                    raise SystemExit(f"index {r['index']} twice in v0.5.2's records: refused")
+                out[int(r["index"])] = r
+    if sorted(out) != list(range(fv.FIRST, fv.FIRST + fv.N)):
+        raise SystemExit("v0.5.2's records are not exactly indices 1000 to 1119: refused")
+    return out
+
+
+def stage_a_raw() -> dict:
+    """Stage A (b)'s raw per-planet records (``sigma_bound_ppm``, ``sigma_box_bound_ppm``),
+    sealed like v0.5.2's: each shard's SHA-256 against its sidecar, the fingerprint that of
+    ``d2-bounds.json`` (Codex's review of B1.2, round 2)."""
+    import hashlib as _h
+
+    fp = json.loads(D2_BOUNDS.read_text("utf-8"))["fingerprint"]
+    if STAGE_A_RAW.name != fp:
+        raise SystemExit("stage A's raw records are not d2-bounds.json's run: refused")
+    out = {}
+    for f in sorted((STAGE_A_RAW / "shards").glob("*.bin")):
+        side = json.loads((STAGE_A_RAW / "sidecars" / (f.stem + ".json")).read_text("utf-8"))
+        if side["fingerprint"] != fp or _h.sha256(f.read_bytes()).hexdigest() != side["sha256"]:
+            raise SystemExit(f"{f.name}: not sealed by its sidecar: refused")
+        for line in f.read_text("utf-8").splitlines():
+            if line.strip():
+                r = json.loads(line)
+                if int(r["index"]) in out:
+                    raise SystemExit(f"stage A: index {r['index']} twice: refused")
+                out[int(r["index"])] = r
+    # exactly the 31 historical losses, each OK with finite positive bounds (Codex's round 3)
+    losses = {p["index"] for p in json.loads(D2_BOUNDS.read_text("utf-8"))["per_planet"]}
+    if set(out) != losses or len(losses) != 31:
+        raise SystemExit("stage A's raw records are not exactly the 31 losses: refused")
+    for i, r in out.items():
+        oe = (r.get("odd_even") or {}).get("sigma_bound_ppm")
+        if r.get("status") != "OK" or not (isinstance(oe, (int, float)) and 0 < oe < float("inf")):
+            raise SystemExit(f"stage A: record {i} is not OK with a finite positive bound: refused")
+    return out
+
+
+def _sigma_odd_even(detail: dict) -> float | None:
+    """The odd-even difference's error the test used (ppm): E2's GLS error, else version 4's,
+    from the difference and its significance."""
+    oe = (detail or {}).get("odd_even") or {}
+    if oe.get("gls_difference_err_ppm"):
+        return float(oe["gls_difference_err_ppm"])
+    a, b, z = oe.get("depth_odd_ppm"), oe.get("depth_even_ppm"), oe.get("difference_sigma")
+    if a is None or b is None or not z:
+        return None
+    return abs(a - b) / z
+
+
+def _sigma_box(detail: dict) -> float | None:
+    v = ((detail or {}).get("sinusoid") or {}).get("box_depth_after_model_err_ppm")
+    return float(v) if v else None
+
+
+def references_sha256() -> str:
+    """The hash of the external references the screening reads (v0.5.2's shards and stage A's
+    bounds), entered into its fingerprint."""
+    import hashlib as _h
+
+    h = _h.sha256()
+    for f in sorted((V052_FORECAST / "shards").glob("*.bin")):
+        h.update(_h.sha256(f.read_bytes()).digest())
+    h.update(_h.sha256(D2_BOUNDS.read_bytes()).digest())
+    for f in sorted((STAGE_A_RAW / "shards").glob("*.bin")):
+        h.update(_h.sha256(f.read_bytes()).digest())
+    return h.hexdigest()
+
+
+def screen() -> None:
+    before = ledger_b.v052_ledger_sha256()
+    try:
+        ledger_b.check_caps("b1 screen", reserve_days=0.2, reserve_tokens=0, in_b0=False)
+        rows = screen_rows()
+        v052_records()  # sealed, or refused
+        stage_a_raw()  # sealed, or refused
+        disk_check(len(rows))
+        _part(SCREEN_PART, SCREEN_HOURS, "B1.2's screening (#217)")
+        state = _execute(SCREEN_PART, rows, "screen" + references_sha256())
+        print(state, flush=True)
+        print("disk used by B1 so far:", disk_after(), "bytes", flush=True)
+    finally:
+        if ledger_b.v052_ledger_sha256() != before:
+            raise SystemExit("the v0.5.2 ledger changed: refused")
+    if state != "complete":
+        raise SystemExit(state)
+
+
+E1_REFUSAL = "no calibrated error"  # version 4's odd_even message where group_variance refuses
+
+
+def _bound_number(text: str | None) -> float | None:
+    """The number in stage A's bound text ("odd_even bound 0.998", "sinusoid small at bound
+    0.885"), or None."""
+    import re
+
+    m = re.search(r"bound ([0-9.]+)", text or "")
+    return float(m.group(1)) if m else None
+
+
+def _ratios(r: dict, a: dict | None) -> dict | None:
+    """The errors each version used against stage A's bounds: odd_even's against
+    ``sigma_bound_ppm``, the sinusoid's residual box against ``sigma_box_bound_ppm``."""
+    if not a:
+        return None
+    out = {}
+    oe_bound = (a.get("odd_even") or {}).get("sigma_bound_ppm")
+    box_bound = (a.get("sinusoid") or {}).get("sigma_box_bound_ppm")
+    for v in ("v4", "v5"):
+        so, sb = _sigma_odd_even(r.get(f"{v}_detail")), _sigma_box(r.get(f"{v}_detail"))
+        out[f"{v}_odd_even_over_bound"] = so / oe_bound if so and oe_bound else None
+        out[f"{v}_box_over_bound"] = sb / box_bound if sb and box_bound else None
+    return out
+
+
+def screen_summary(
+    recs: list, v052: dict, bounds: dict, expected: dict, raw: dict | None = None
+) -> dict:
+    """The screening's report (the design's B1.2; the maintainer's item 3; Codex's round 1):
+    the eligible set fixed from v0.5.2's records; every eligible planet must have one OK record
+    with the configuration's activation and integer counters (a STOP otherwise); version 4 rerun
+    against v0.5.2's statuses (a mismatch is a STOP); every status transition from version 4 to
+    version 5; the sensitivity probabilities of both next to stage A's bounds; and the stops
+    where an estimator's population exists but it was not used: E1 on every planet where
+    version 4's own group_variance refused, E2 on every planet where odd_even runs."""
+    from collections import Counter
+
+    stops: list[str] = []
+    by: dict[int, list] = {}
+    for r in recs:
+        by.setdefault(int(r.get("index", -1)), []).append(r)
+    eligible_idx = sorted(i for i, o in v052.items() if o.get("gate_passed") and o.get("identity"))
+    eligible = []
+    for i in eligible_idx:
+        got = by.get(i, [])
+        if len(got) != 1 or got[0].get("status") != "OK":
+            stops.append(f"{i}: eligible in v0.5.2 but no single OK record ({len(got)})")
+            continue
+        r = got[0]
+        if r.get("v5_activation") != expected:
+            stops.append(f"{i}: the activation record is not the configuration's")
+        c = r.get("v5_counts")
+        if not isinstance(c, dict) or not all(isinstance(v, int) for v in c.values()):
+            stops.append(f"{i}: counters missing or not integers")
+            continue
+        eligible.append(r)
+    if len(recs) != len(v052) or sorted(by) != sorted(v052):
+        stops.append("the records are not exactly the 120 indices, each once")
+    kept = ("SURVIVED", "WEAKENED")
+    verdicts, tests, use = Counter(), Counter(), Counter()
+    mismatch = []
+    by_index = {p["index"]: p for p in bounds.get("per_planet", [])}
+    rows = []
+    e1_population = e2_population = 0
+    for r in eligible:
+        i, old = r["index"], v052[r["index"]]
+        v4t, v5t, c = r["v4_tests"], r["v5_tests"], r["v5_counts"]
+        if r["v4"] != old["v4"] or {k: v.get("status") for k, v in v4t.items()} != {
+            k: v.get("status") for k, v in old["v4_tests"].items()
+        }:
+            mismatch.append(i)
+        verdicts[(r["v4"], r["v5"])] += 1
+        for name in sorted(set(v4t) | set(v5t)):
+            a, b = (v4t.get(name) or {}).get("status"), (v5t.get(name) or {}).get("status")
+            if a != b:
+                tests[f"{name}: {a} -> {b}"] += 1
+        for k, v in c.items():
+            use[k] += v
+        if r["v4_group_variance"]["refusals"] > 0:
+            e1_population += 1
+            done = (
+                c.get("e1.completion_missing", 0)
+                + c.get("e1.completion_nonpsd", 0)
+                - c.get("e1.still_undefined", 0)
+            )  # a completion that stayed undefined is an attempt, not a use (Codex's round 2)
+            if done <= 0:
+                stops.append(f"{i}: version 4's group_variance refused but E1 never completed")
+        oe4 = v4t.get("odd_even") or {}
+        if not oe4.get("refused") and oe4.get("class") != "not_enough_data":
+            e2_population += 1
+            if not c.get("e2.calls"):
+                stops.append(f"{i}: odd_even runs but E2 was not called")
+        blockers = (by_index.get(i) or {}).get("blockers") or {}
+        rows.append({
+            "index": i, "v04": old["v04"], "v4": r["v4"], "v5": r["v5"],
+            "v4_detail": r.get("v4_detail"), "v5_detail": r.get("v5_detail"),
+            "stage_a_bound_probabilities": {
+                k: _bound_number(b.get("bound")) for k, b in blockers.items()
+            },
+            "error_ratios": _ratios(r, (raw or {}).get(i)),
+            "v4_group_variance": r["v4_group_variance"],
+            "counts": {k: v for k, v in c.items() if k.startswith(("e1.", "e2.", "e3.", "e4."))},
+        })  # fmt: skip
+    if mismatch:
+        stops.append(f"version 4 rerun differs from v0.5.2's records on {mismatch}")
+    if e2_population and not use["e2.gls"]:
+        stops.append("E2's GLS never ran on a planet where odd_even runs")
+    return {
+        "label": "B1.2 screening of version 5 on v0.5.2's D2 forecast curves (development; a "
+        "diagnostic that chooses nothing)",
+        "method_status": "not_validated",
+        "eligible": len(eligible_idx),
+        "eligible_with_records": len(eligible),
+        "errors": sum(r.get("status") == "ERROR" for r in recs),
+        "kept_v4": sum(r["v4"] in kept for r in eligible),
+        "kept_v5": sum(r["v5"] in kept for r in eligible),
+        "refuted_v5": sum(r["v5"] == "REFUTED" for r in eligible),
+        "verdict_transitions": {f"{a} -> {b}": n for (a, b), n in sorted(verdicts.items())},
+        "test_transitions": dict(sorted(tests.items())),
+        "estimator_use": dict(sorted(use.items())),
+        "e1_population_planets": e1_population,
+        "e2_population_planets": e2_population,
+        "v4_rerun_mismatches": mismatch,
+        "stops": stops,
+        "planets": rows,
+    }
+
+
+def screen_summarize() -> None:
+    rows = screen_rows()
+    fp = fingerprint("screen" + references_sha256() + json.dumps(rows, sort_keys=True, default=str))
+    data = budgeted.assembled(
+        ledger_b.SECTION, SCREEN_PART, OUT / SCREEN_PART / fp, shard, rows, fp, WORKERS, pin=PIN,
+        max_shard_seconds=MAX_SHARD_SECONDS,
+    )  # fmt: skip
+    recs = [json.loads(x) for x in data.decode().splitlines() if x.strip()]
+    out = screen_summary(
+        recs,
+        v052_records(),
+        json.loads(D2_BOUNDS.read_text("utf-8")),
+        expected_activation(),
+        stage_a_raw(),
+    )
+    out["fingerprint"] = fp
+    (HERE / "b1-screen.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n", "utf-8")
+    print(json.dumps({k: v for k, v in out.items() if k != "planets"}, indent=1, sort_keys=True))
+    if out["stops"]:
+        raise SystemExit("an estimator was not used where its population exists: a STOP")
+
+
 if __name__ == "__main__":
     with ledger_b.Exclusive(f"b1_forecast {sys.argv[1]}"):
-        {"smoke": lambda: smoke(sys.argv[2])}[sys.argv[1]]()
+        {
+            "smoke": lambda: smoke(sys.argv[2]),
+            "screen": screen,
+            "screen-summarize": screen_summarize,
+        }[sys.argv[1]]()

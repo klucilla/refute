@@ -1,0 +1,42 @@
+{
+ "cpu_seconds": [
+  15.265625
+ ],
+ "part": "b1_smoke_d2",
+ "paths": [
+  {
+   "attack": "v5_counts",
+   "counters": {
+    "e1.calls": 0,
+    "e2.calls": 0,
+    "e3.calls": 0,
+    "e3.sinusoid_calls": 1,
+    "e4.calls": 0,
+    "e4.systematics_calls": 1
+   },
+   "effective": {
+    "e1": {
+     "e1.completion_missing": 0,
+     "e1.completion_nonpsd": 0,
+     "e1.v4_finite": 0
+    },
+    "e2": {
+     "e2.gls": 0
+    },
+    "e3": {
+     "e3.gls": 0
+    },
+    "e4": {
+     "e4.window_quadratic": 0
+    }
+   },
+   "fallbacks": {},
+   "record": "d2",
+   "selector_refused": true
+  }
+ ],
+ "problems": [],
+ "wall_seconds": [
+  null
+ ]
+}

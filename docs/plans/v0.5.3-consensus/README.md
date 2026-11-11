@@ -354,3 +354,51 @@ configuration A, and that it still accepted incomplete evidence. Two changes fol
 - the required counters now respect the structural refusals, with tests of their own (20 tests
   pass).
 
+## Stage B, B1.1: the smoke split (rounds 4 and 5 of the code review)
+
+The maintainer's decision on the smoke's stop (#217, comment 6807681986) split the smoke into three homogeneous parts and added the part above 20 sectors. The change to `b1_forecast.py` was reviewed before the runs, in the conversation of the B1.1 code review. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 4 | [b1-code-round-4-answer.md](b1-code-round-4-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the overrun report) | `fd87ae65b3feec2f6a9d94dd10b9d6454246868e56e9518e97f3cdc8c1bc432d` |
+| 5 | [b1-code-round-5-answer.md](b1-code-round-5-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `7cfc0cdb37cae0062c8c5875558413d7ca741fcdcd77acc7eba2dfcadbf7e720` |
+
+The tokens are cumulative over the conversation `b1-code`:
+
+- round 4: 4,339,919 input (4,177,920 cached) and 24,022 output;
+- round 5: 5,138,051 input (4,968,704 cached) and 27,371 output;
+
+The conversation now counts **196,718** against stage B's cap.
+
+Round 4 found the split correct. It asked for a report of an overrun above 20 sectors, read from the driver's own files, with C above 20 unknown and the stop kept. That report was added with a test, and round 5 confirmed it.
+
+## Stage B, B1.2: the screening code
+
+The screening (`screen`, `screen_summarize` in `b1_forecast.py`) was reviewed before its run. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-screen-round-1-answer.md](b1-screen-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` | `5552c17fb7c51909ea3d96a6dffbd2ed621f9262f542cff655aaf1aefbad0db4` |
+| 2 | [b1-screen-round-2-answer.md](b1-screen-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (2 corrections) | `abf85eeb334ec6ce312102bb0d31e9f43c34acbc8f8f066954e81ac762c5c733` |
+| 3 | [b1-screen-round-3-answer.md](b1-screen-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the conservative option, adopted) | `bff93d441f69c0f91fe36ebf62f08d789740a89cf73073bda7a8b6f000cb02e7` |
+
+The tokens are cumulative over the conversation `b1-screen`:
+
+- round 1: 1,000,618 input (892,288 cached) and 8,627 output;
+- round 2: 1,506,504 input (1,379,456 cached) and 12,083 output;
+- round 3: 2,255,479 input (2,110,336 cached) and 15,923 output;
+
+The conversation now counts **161,066** against stage B's cap.
+
+The corrections were these:
+
+- **Round 1:**
+  - the eligible set fixed from v0.5.2's records, with a STOP for any missing, failed or duplicated record;
+  - E1's population taken from version 4's own `group_variance` refusals, counted by a probe in a version-4 rerun on each curve;
+  - v0.5.2's records sealed by their sidecars, and in the fingerprint;
+  - both versions' sensitivity details reported.
+- **Round 2:**
+  - an E1 use counted only as a completion that is not still undefined;
+  - the error ratios computed against stage A's raw bounds (`sigma_bound_ppm`, `sigma_box_bound_ppm`), sealed;
+  - `aperture_depth` added to the details.
+- **Round 3:** exactly the 31 stage A records required, each OK with finite positive bounds. Round 3 was the last round, and its conservative option was adopted.

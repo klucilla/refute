@@ -1,0 +1,48 @@
+{
+ "c_above_20_runs": true,
+ "cpu_seconds": [
+  595.09375
+ ],
+ "fingerprint": "7effd12fa7308fc4",
+ "part": "b1_smoke_above20",
+ "paths": [
+  {
+   "attack": "v5C_counts",
+   "counters": {
+    "e1.calls": 7,
+    "e2.calls": 1,
+    "e3.calls": 1,
+    "e3.sinusoid_calls": 1,
+    "e4.calls": 1,
+    "e4.systematics_calls": 1
+   },
+   "effective": {
+    "e1": {
+     "e1.completion_missing": 0,
+     "e1.completion_nonpsd": 0,
+     "e1.v4_finite": 7
+    },
+    "e2": {
+     "e2.gls": 1
+    },
+    "e3": {
+     "e3.gls": 0
+    },
+    "e4": {
+     "e4.window_quadratic": 1266
+    }
+   },
+   "fallbacks": {
+    "e3.fallback:phi outside (0, 0.99)": 1,
+    "e4.window_fallback": 2
+   },
+   "record": "t2a_c",
+   "selector_refused": false
+  }
+ ],
+ "problems": [],
+ "revalidated": "under the run's own fingerprint (the runner was edited during the run; a read of the stored record, not a rerun)",
+ "wall_seconds": [
+  600.8492725999968
+ ]
+}

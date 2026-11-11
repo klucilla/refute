@@ -54,8 +54,29 @@
      "spent_hours": 0.016189236111111113,
      "unresolved_stop": "over the cap: the workers were ended"
     },
+    "b1_smoke_above20": {
+     "allocation_hours": 1.0,
+     "checkpoint_shards": 1,
+     "identity": "0ab907e1462ddd33",
+     "projection_hours": 0.16569010416666666,
+     "spent_hours": 0.16569010416666666
+    },
+    "b1_smoke_d2": {
+     "allocation_hours": 0.5,
+     "checkpoint_shards": 1,
+     "identity": "26db35457dc34250",
+     "projection_hours": 0.004548611111111111,
+     "spent_hours": 0.004548611111111111
+    },
+    "b1_smoke_t2a": {
+     "allocation_hours": 0.5,
+     "checkpoint_shards": 1,
+     "identity": "5fc93e90c4edeb17",
+     "projection_hours": 0.07043836805555556,
+     "spent_hours": 0.07043836805555556
+    },
     "b1_unallocated": {
-     "allocation_hours": 119.0
+     "allocation_hours": 117.0
     }
    }
   }
@@ -74,6 +95,27 @@
    "reason": "B1.1's smoke (#217, comment 6805071179)",
    "to": "b1_smoke",
    "utc": "2026-11-11T19:47:43Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 0.5,
+   "reason": "B1.1's smoke, part d2 (#217, the maintainer's decision)",
+   "to": "b1_smoke_d2",
+   "utc": "2026-11-11T21:45:18Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 0.5,
+   "reason": "B1.1's smoke, part t2a (#217, the maintainer's decision)",
+   "to": "b1_smoke_t2a",
+   "utc": "2026-11-11T21:46:58Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 1.0,
+   "reason": "B1.1's smoke, part above20 (#217, the maintainer's decision)",
+   "to": "b1_smoke_above20",
+   "utc": "2026-11-11T21:51:26Z"
   }
  ]
 }

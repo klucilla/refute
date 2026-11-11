@@ -518,6 +518,170 @@
     "agent_days": 0.2,
     "review_tokens": 300000
    }
+  },
+  {
+   "utc": "2026-11-11T21:45:18Z",
+   "step": "b1 smoke d2",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 186021,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 961642
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.85,
+   "agent_days_active": 0.44,
+   "cpu_hours": {
+    "stage_b": 4.939,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.1,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T21:46:58Z",
+   "step": "b1 smoke t2a",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 972339
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.85,
+   "agent_days_active": 0.45,
+   "cpu_hours": {
+    "stage_b": 4.943,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.1,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T21:51:25Z",
+   "step": "b1 smoke above20",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 972339
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.86,
+   "agent_days_active": 0.45,
+   "cpu_hours": {
+    "stage_b": 5.014,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.1,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T21:53:12Z",
+   "step": "b1 screen review r1",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 972339
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.86,
+   "agent_days_active": 0.46,
+   "cpu_hours": {
+    "stage_b": 5.014,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T21:58:59Z",
+   "step": "b1 screen review r2",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-screen": 116957
+    },
+    "b0": 489509,
+    "stage_b": 1089296
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.88,
+   "agent_days_active": 0.47,
+   "cpu_hours": {
+    "stage_b": 5.014,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T22:01:41Z",
+   "step": "b1 screen review r3",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-screen": 139131
+    },
+    "b0": 489509,
+    "stage_b": 1111470
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.89,
+   "agent_days_active": 0.48,
+   "cpu_hours": {
+    "stage_b": 5.18,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
   }
  ]
 }
