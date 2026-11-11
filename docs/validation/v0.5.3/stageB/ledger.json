@@ -46,8 +46,16 @@
     "b0_reserve": {
      "allocation_hours": 21.9
     },
+    "b1_smoke": {
+     "allocation_hours": 1.0,
+     "checkpoint_shards": 1,
+     "identity": "e52a21b0c9155aad",
+     "projection_hours": 0.009791666666666667,
+     "spent_hours": 0.016189236111111113,
+     "unresolved_stop": "over the cap: the workers were ended"
+    },
     "b1_unallocated": {
-     "allocation_hours": 120.0
+     "allocation_hours": 119.0
     }
    }
   }
@@ -59,6 +67,13 @@
    "reason": "B0b (#217, comment 6804003610)",
    "to": "b0_infeasibility",
    "utc": "2026-11-11T18:39:32Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 1.0,
+   "reason": "B1.1's smoke (#217, comment 6805071179)",
+   "to": "b1_smoke",
+   "utc": "2026-11-11T19:47:43Z"
   }
  ]
 }

@@ -410,6 +410,60 @@
     "agent_days": 0.2,
     "review_tokens": 300000
    }
+  },
+  {
+   "utc": "2026-11-11T19:47:43Z",
+   "step": "b1 smoke",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 156829,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 932450
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.6,
+   "agent_days_active": 0.34,
+   "cpu_hours": {
+    "stage_b": 4.923,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.1,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T19:58:23Z",
+   "step": "b1 smoke stop",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 156829,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 932450
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.62,
+   "agent_days_active": 0.36,
+   "cpu_hours": {
+    "stage_b": 4.939,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0
+   }
   }
  ]
 }
