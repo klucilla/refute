@@ -272,3 +272,45 @@ Codex's corrections, all applied as written:
 Round 1 recomputed the fingerprint `584a56d8f50283fe` from the files of `98fa3c7`. It also checked
 the 80 shards, the 800 seeds against B0's, the 0 errors and the released lock.
 
+## Stage B, B1: the design of the estimators, recalibration and forecast
+
+The design [v0.5.3-stageB1-design.md](../v0.5.3-stageB1-design.md), reviewed before any B1 code.
+Codex CLI 0.167.0-alpha.3.2 ran one conversation. It answered in Portuguese, and the answers are
+stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-design-round-1-answer.md](b1-design-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` | `758aaf826b069d4505616961778dbec2e535c63be9c99fb912b120f997a5d114` |
+| 2 | [b1-design-round-2-answer.md](b1-design-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` | `b7d0f64f547b19e991de3266f38d4d0cc1f4b42e3270b558a77eee8ceb1f77ff` |
+| 3 | [b1-design-round-3-answer.md](b1-design-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (conservative options named) | `c24407cf08057617b9cfe7a0a6f3256e7dfac8d73e59f365cbc1d00670558983` |
+
+The tokens are cumulative:
+
+- round 1: 2,627,260 input (2,464,640 cached) and 14,842 output;
+- round 2: 4,392,117 input (4,184,448 cached) and 34,271 output;
+- round 3: 5,756,147 input (5,514,880 cached) and 44,845 output;
+
+The conversation counts **286,112** against stage B's cap.
+
+Each round's corrections are mapped in the design's section 6. Round 3 named a conservative option
+for each remaining point, and all were adopted. Round 3 was the last before the tie-break, which
+would have chosen the same options. The main changes were these:
+
+- **Round 1:**
+  - pooling and the matrix repair in A0's domain replaced by a Cauchy-Schwarz completion;
+  - the joint GLS contrast for `odd_even`;
+  - an ARMA(1,1) GLS for the sinusoid's residual;
+  - a window-local quadratic baseline for the background;
+  - T2a measured as a census of 559 injections, because 80 + 80 could never reach a PASS.
+- **Round 2:**
+  - numerical conditions for every inversion;
+  - the state-space treatment of gaps and masks;
+  - the protected alternative kept for the background;
+  - 450 recalibration curves;
+  - the T2a conclusions and the overrun as a stop.
+- **Round 3:**
+  - availability that never erases a FAIL;
+  - intervals as conditional diagnostics;
+  - a degenerate bootstrap as UNRESOLVED;
+  - a disk quota before every write.
+
