@@ -1,0 +1,21 @@
+**WEAKENED: as regras centrais estão corretas, mas há três correções antes do run.**
+
+1. **[P1] O resumo não funciona no cenário de overrun previsto pelo desenho.** [b1_b14.py:345](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:345) exige `_records()` das três partes. Esse caminho usa `budgeted.assembled`, que recusa stops e shards ausentes ([budgeted.py:308](C:/Projetos/refute/docs/validation/v0.5.2/stage2/budgeted.py:308), [driver.py:612](C:/Projetos/refute/docs/validation/v0.5.2/stage2/driver.py:612)). Portanto, se C acima de 20 parar, a função matemática aceita desconhecidos, mas o comando não consegue alimentá-la. **Correção:** acrescentar leitura de diagnóstico dos shards concluídos, verificando identidade, argumentos e hashes, preservando o STOP e contando os restantes como desconhecidos. Sem reconciliar ou retomar automaticamente.
+
+2. **[P2] As “200 novas” incluem uma curva já medida.** O intervalo começa em 3000 ([b1_b14.py:41](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:41)), exatamente o índice do smoke ([b1_forecast.py:48](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_forecast.py:48)). Isso conflita com a verificação de novidade, incluindo smokes, exigida no [desenho:399](C:/Projetos/refute/docs/plans/v0.5.3-stageB1-design.md:399). **Correção:** registrar prospectivamente a resolução dessa sobreposição e a checagem das seeds no procedimento. Não trocar silenciosamente o intervalo congelado.
+
+3. **[P2] O fingerprint não cobre todos os inputs externos efetivamente lidos.** [b1_b14.py:199](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:199) acrescenta composição, C2 e fetch, mas a cadeia herdada também não inclui `r_inj.json`, `selection/targets.yaml`, `runs/funnel_run_set.json`, `eb_catalog.csv` e `eb_catalog_scan.json`, usados por `t2a_one` ([b1_b14.py:113](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:113)). **Correção:** vinculá-los por hash ao fingerprint ou a um manifesto congelado verificado antes do dispatch. Compatibilidade de resultados não substitui identidade dos inputs.
+
+**O que está fiel:**
+
+- **D2/D4:** elegibilidade, piso 20, comparação com v0.4, limite de REFUTED e seu Wilson, SNR ≥15 e limite 0,30 estão corretos. Os Wilson adicionais não condicionam o resultado ([b1_b14.py:253](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:253)).
+- **T2a:** ausências, erros e incompatibilidade viram desconhecidos; B deriva de C até 20 setores; A/B perdem os 56 acima de 20; C usa os 615 para o resgate ([b1_b14.py:295](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:295)). Confirmei a população 302 + 257 + 56 e os 613 mantidos por v0.4: `613 − 0,10×615 = 551,5`, exigindo **552 dos 559**. Os limites yes/no/unresolved e do resgate passaram nos checks isolados.
+- **`t2a_one`:** preserva reconstrução, seed, injeção, candidato compartilhado e `compat_problems` de `forecast_t2a.one`. O comparador roda com v5 desativada; A/C usam a composição; a constante levantada para C é restaurada em `finally` ([b1_b14.py:120](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:120)).
+
+**Operação e limites:** composição ausente é recusada; transferências, caps, identidade, reserva de disco e lock estão conectados corretamente ([b1_b14.py:207](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:207), [b1_b14.py:353](C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_b14.py:353)). O limite de 1.700 s mantém o STOP do driver. O smoke registrado, 600,8 s, permite C acima de 20. As alocações propostas devem constar no procedimento exato.
+
+Não identifiquei leitura dos resultados de B1.2 para escolher o forecast, nem sobreposição com as seeds 4000–4449 de B1.3. B favorável continua condicionado à certificação até 20 setores e não aprova A.
+
+Revisão somente leitura, com checks leves em memória. Nenhum workload, arquivo ou lock foi alterado.
+
+**WEAKENED, corrigir os três pontos antes de executar B1.4, após B1.3 e o procedimento exato registrado em #217.**

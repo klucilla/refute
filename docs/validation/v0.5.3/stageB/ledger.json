@@ -46,6 +46,13 @@
     "b0_reserve": {
      "allocation_hours": 21.9
     },
+    "b1_screen": {
+     "allocation_hours": 6.0,
+     "checkpoint_shards": 6,
+     "identity": "5a6a0836b4205a7b",
+     "projection_hours": 5.470659722222222,
+     "spent_hours": 4.792955729166667
+    },
     "b1_smoke": {
      "allocation_hours": 1.0,
      "checkpoint_shards": 1,
@@ -76,7 +83,7 @@
      "spent_hours": 0.07043836805555556
     },
     "b1_unallocated": {
-     "allocation_hours": 117.0
+     "allocation_hours": 111.0
     }
    }
   }
@@ -116,6 +123,13 @@
    "reason": "B1.1's smoke, part above20 (#217, the maintainer's decision)",
    "to": "b1_smoke_above20",
    "utc": "2026-11-11T21:51:26Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 6.0,
+   "reason": "B1.2's screening (#217)",
+   "to": "b1_screen",
+   "utc": "2026-11-11T22:05:13Z"
   }
  ]
 }

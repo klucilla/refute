@@ -682,6 +682,209 @@
     "agent_days": 0.2,
     "review_tokens": 300000
    }
+  },
+  {
+   "utc": "2026-11-11T22:05:13Z",
+   "step": "b1 screen",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1133405
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.89,
+   "agent_days_active": 0.48,
+   "cpu_hours": {
+    "stage_b": 5.18,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T22:09:09Z",
+   "step": "b1 recal review r1",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1133405
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.9,
+   "agent_days_active": 0.49,
+   "cpu_hours": {
+    "stage_b": 5.18,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T22:17:29Z",
+   "step": "b1 recal review r2",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 123088,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1256493
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.91,
+   "agent_days_active": 0.51,
+   "cpu_hours": {
+    "stage_b": 6.075,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T22:21:28Z",
+   "step": "b1 recal review r3",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 166801,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1300206
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.93,
+   "agent_days_active": 0.52,
+   "cpu_hours": {
+    "stage_b": 6.075,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T22:26:27Z",
+   "step": "b1 b14 review r1",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 186431,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1319836
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.94,
+   "agent_days_active": 0.53,
+   "cpu_hours": {
+    "stage_b": 7.248,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T22:31:40Z",
+   "step": "b1 b14 review r2",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 116372,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 186431,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1436208
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.95,
+   "agent_days_active": 0.54,
+   "cpu_hours": {
+    "stage_b": 7.904,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T22:34:05Z",
+   "step": "b1 b14 review r3",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-b14": 135886,
+     "b1-code": 196718,
+     "b1-design": 286112,
+     "b1-recal": 186431,
+     "b1-screen": 161066
+    },
+    "b0": 489509,
+    "stage_b": 1455722
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.95,
+   "agent_days_active": 0.54,
+   "cpu_hours": {
+    "stage_b": 7.904,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
   }
  ]
 }

@@ -402,3 +402,70 @@ The corrections were these:
   - the error ratios computed against stage A's raw bounds (`sigma_bound_ppm`, `sigma_box_bound_ppm`), sealed;
   - `aperture_depth` added to the details.
 - **Round 3:** exactly the 31 stage A records required, each OK with finite positive bounds. Round 3 was the last round, and its conservative option was adopted.
+
+## Stage B, B1.3: the recalibration screen's code
+
+`b1_recal.py` and `b1_data.py` were reviewed before any B1.3 run. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-recal-round-1-answer.md](b1-recal-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` | `eb946d459934cfbae21e0c23be274a6a4726e130737c11a3e5737ecc96a7ef28` |
+| 2 | [b1-recal-round-2-answer.md](b1-recal-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` | `8f39c4010ca16e946a3f56e4386dae4bbbe52bd6575a525236c2ae053e190ee3` |
+| 3 | [b1-recal-round-3-answer.md](b1-recal-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the conservative options, adopted) | `8891e68620adc9db1f2f7548ad948f9b3f4bc50658ecf88ffe2135ad4712ed64` |
+
+The tokens are cumulative over the conversation `b1-recal`:
+
+- round 1: 1,466,301 input (1,355,648 cached) and 12,435 output;
+- round 2: 2,412,548 input (2,264,320 cached) and 18,573 output;
+- round 3: 3,155,254 input (2,992,384 cached) and 23,561 output;
+
+The conversation now counts **186,431** against stage B's cap.
+
+The corrections were these:
+
+- **Round 1:**
+  - equal host weights in E4's bootstrap;
+  - safeguards that hold whatever the outcome;
+  - E1's population taken from the contrast variance's own refusal, with every branch's population counted;
+  - a fetch under the ledger's lock, bounded by c2-fetch.json's recorded sizes;
+  - the fingerprint extended with E4's inputs;
+  - the activation stored per contrast.
+- **Round 2:**
+  - degeneracy detected with a numerical tolerance;
+  - each estimator's errors kept apart, an unknown eligibility counted against a PASS;
+  - the fetch's metadata reserved before any write.
+- **Round 3:** the manifest's exact bytes checked and written, and existing files checked before any write, with a mismatch a STOP. Round 3 was the last round, and its conservative options were adopted.
+
+The facts disclosed:
+
+- E4 has 13 gate-passing hosts with an OK original record, not the design's 16.
+- scipy is not used, because it is not a declared dependency.
+
+## Stage B, B1.4: the forecast's code
+
+`b1_b14.py` was reviewed before any B1.4 run. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-b14-round-1-answer.md](b1-b14-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (3 corrections) | `eceacaa5aef54aabe16ca5fecca8878d87f60a10ce2b8d2953f9b44be104507a` |
+| 2 | [b1-b14-round-2-answer.md](b1-b14-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (2 corrections) | `955a90625c80e88260d481ac73bd9d2821d6fa1c3395aafbe0005030b6cf0b26` |
+| 3 | [b1-b14-round-3-answer.md](b1-b14-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the conservative option, adopted) | `ea3a9cfa24c445f4bc013d9e84210e41ac6db68a76d61f21cc515ce064b7dd0d` |
+
+The tokens are cumulative over the conversation `b1-b14`:
+
+- round 1: 944,724 input (836,096 cached) and 7,744 output;
+- round 2: 1,503,257 input (1,379,328 cached) and 11,957 output;
+- round 3: 2,147,650 input (2,006,400 cached) and 15,047 output;
+
+The conversation now counts **156,297** against stage B's cap.
+
+The corrections were these:
+
+- **Round 1:**
+  - a checked partial read for a stopped part;
+  - the frozen interval 3000 to 3199 kept, with the smoke's index 3000 disclosed and the overlaps with other development indices refused;
+  - v0.4's inputs in the fingerprint.
+- **Round 2:**
+  - an incomplete D2/D4 part is never decided;
+  - integrity refusals stand.
+- **Round 3:** the partial read decided by the persisted ledger state, with a failed gate always propagated. Round 3 was the last round, and its conservative option was adopted.
