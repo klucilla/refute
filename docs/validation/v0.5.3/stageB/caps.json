@@ -155,6 +155,181 @@
     "agent_days": 0.1,
     "review_tokens": 200000
    }
+  },
+  {
+   "utc": "2026-11-11T18:39:31Z",
+   "step": "b0b run",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-design": 186883,
+     "b0-end": 87309
+    },
+    "b0": 383764,
+    "stage_b": 383764
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.46,
+   "agent_days_active": 0.2,
+   "cpu_hours": {
+    "stage_b": 2.466,
+    "b0": 2.466
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T18:43:04Z",
+   "step": "b1 design review r1",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-design": 186883,
+     "b0-end": 87309
+    },
+    "b0": 383764,
+    "stage_b": 383764
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.47,
+   "agent_days_active": 0.21,
+   "cpu_hours": {
+    "stage_b": 2.577,
+    "b0": 2.577
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T18:55:48Z",
+   "step": "b1 design review r2",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-design": 177462
+    },
+    "b0": 383764,
+    "stage_b": 561226
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.5,
+   "agent_days_active": 0.23,
+   "cpu_hours": {
+    "stage_b": 4.365,
+    "b0": 4.365
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 400000
+   }
+  },
+  {
+   "utc": "2026-11-11T18:57:26Z",
+   "step": "b0b summarize",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-design": 177462
+    },
+    "b0": 383764,
+    "stage_b": 561226
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.5,
+   "agent_days_active": 0.24,
+   "cpu_hours": {
+    "stage_b": 4.917,
+    "b0": 4.917
+   },
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T18:58:32Z",
+   "step": "b0b end review r1",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-design": 177462
+    },
+    "b0": 383764,
+    "stage_b": 561226
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.5,
+   "agent_days_active": 0.24,
+   "cpu_hours": {
+    "stage_b": 4.923,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.1,
+    "review_tokens": 150000
+   }
+  },
+  {
+   "utc": "2026-11-11T19:08:04Z",
+   "step": "b0b end review r2",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 88294,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-design": 241940
+    },
+    "b0": 472058,
+    "stage_b": 713998
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.53,
+   "agent_days_active": 0.26,
+   "cpu_hours": {
+    "stage_b": 4.923,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 100000
+   }
+  },
+  {
+   "utc": "2026-11-11T19:10:14Z",
+   "step": "b1 design review r3",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-design": 241940
+    },
+    "b0": 489509,
+    "stage_b": 731449
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.53,
+   "agent_days_active": 0.26,
+   "cpu_hours": {
+    "stage_b": 4.923,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 500000
+   }
   }
  ]
 }

@@ -19,6 +19,11 @@
    "basis": "d1_infeasibility.smoke: EB1 index 100000, outside the measured 0 to 399; process time 7.7 s",
    "hours": 0.0021354166666666665,
    "name": "b0_b0b_smoke_20261111T183027Z"
+  },
+  {
+   "basis": "d1_infeasibility.summarize: process time 21.1 s",
+   "hours": 0.005868055555555555,
+   "name": "b0_b0b_summarize_20261111T185747Z"
   }
  ],
  "sections": {
@@ -31,13 +36,29 @@
      "projection_hours": 2.363628472222222,
      "spent_hours": 2.447894965277778
     },
+    "b0_infeasibility": {
+     "allocation_hours": 4.0,
+     "checkpoint_shards": 4,
+     "identity": "d207f010bc0227fd",
+     "projection_hours": 2.2250868055555553,
+     "spent_hours": 2.450980902777778
+    },
     "b0_reserve": {
-     "allocation_hours": 25.9
+     "allocation_hours": 21.9
     },
     "b1_unallocated": {
      "allocation_hours": 120.0
     }
    }
   }
- }
+ },
+ "transfers": [
+  {
+   "from": "b0_reserve",
+   "hours": 4.0,
+   "reason": "B0b (#217, comment 6804003610)",
+   "to": "b0_infeasibility",
+   "utc": "2026-11-11T18:39:32Z"
+  }
+ ]
 }

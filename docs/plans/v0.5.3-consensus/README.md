@@ -242,3 +242,33 @@ the ledger, both applied as written:
 - The part's cap is counted over every attempt, and a run under a new identity is refused.
 
 Round 2 confirmed both.
+
+## Stage B, B0b: the end-of-B0b review
+
+The record [`b0b-record.md`](../../validation/v0.5.3/stageB/b0b-record.md), with the output
+(`d1-infeasibility.json`), the ledger and the caps, was reviewed before it was committed. Codex CLI
+0.167.0-alpha.3.2 ran one conversation. It answered in Portuguese, and the answers are stored
+unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b0b-end-round-1-answer.md](b0b-end-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (4 corrections) | `0e56f280fe373204ce937ec67ad8d8f45af11bd23f00f07d2c1cd10d30ee6b2c` |
+| 2 | [b0b-end-round-2-answer.md](b0b-end-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `2175f55ee16545449b47d17dca8c4f37107e0362350f1129e3bd311ac88890ba` |
+
+The tokens are cumulative:
+
+- round 1: 878,707 input (797,312 cached) and 6,899 output;
+- round 2: 1,330,063 input (1,232,640 cached) and 8,322 output.
+
+The conversation counts **105,745**, so B0 in all, B0b included, counts **489,509** of its 1.5 M.
+
+Codex's corrections, all applied as written:
+
+- EB2's star-known figures, 12.9 and 0.077;
+- the extremely small medians at 0.0027 stated, with the tables' 0.000 marked as rounding;
+- the figures at 0.05 named the oracle's optimistic bounds, conditional on B0's assumptions;
+- the comparison with B0 reworded as an illustration of the sensitivity to the seed set.
+
+Round 1 recomputed the fingerprint `584a56d8f50283fe` from the files of `98fa3c7`. It also checked
+the 80 shards, the 800 seeds against B0's, the 0 errors and the released lock.
+
