@@ -65,3 +65,36 @@ def test_rejects_incomplete_or_wrong_evidence(runner, mutate):
     mutate(recs)
     problems, _ = runner.smoke_problems(recs, ROWS, ACT)
     assert problems
+
+
+def test_above_20_part_checks_c_only(runner):
+    rows = [("t2a-c-K-0", {"kind": "t2a_c", "key": "K", "slot": 0, "row": {}})]
+    rec = {"kind": "t2a_c", "key": "K", "slot": 0, "status": "OK", "compat_problems": [],
+           "v5_activation": ACT, "sectors": 42,
+           "v5C": {"selection": {"refused": None}}, "v5C_counts": FULL}  # fmt: skip
+    problems, report = runner.smoke_problems([rec], rows, ACT)
+    assert problems == [] and [r["attack"] for r in report] == ["v5C_counts"]
+    assert report[0]["counters"]["e2.calls"] == 1
+    rec["v5C_counts"] = {**FULL, "e4.systematics_calls": 0}
+    assert runner.smoke_problems([rec], rows, ACT)[0]
+
+
+def test_overrun_report_reads_the_driver_files(runner, tmp_path):
+    import json
+
+    (tmp_path / "shards").mkdir()
+    (tmp_path / "progress.jsonl").write_text(
+        json.dumps({"event": "batch"})
+        + "\n"
+        + json.dumps({"event": "shard_over_limit", "shard": "x", "seconds": 1800.5})
+        + "\n",
+        "utf-8",
+    )
+    (tmp_path / "stop.json").write_text(json.dumps({"state": "stopped"}), "utf-8")
+    rec = {"key": "K", "slot": 0, "status": "OK", "sectors": 42, "wall_seconds": 1799.0,
+           "cpu_seconds": 1500.0, "v5C": {}}  # fmt: skip
+    (tmp_path / "shards" / "x.bin").write_text(json.dumps(rec) + "\n", "utf-8")
+    out = runner.overrun_report(tmp_path, "b1_smoke_above20", "stopped: shard x ran beyond")
+    assert out["seconds_since_dispatch"] == [1800.5]
+    assert out["records"][0]["wall_seconds"] == 1799.0 and out["c_above_20_runs"] is False
+    assert out["stop"] == {"state": "stopped"}

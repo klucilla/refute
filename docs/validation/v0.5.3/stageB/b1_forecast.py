@@ -44,8 +44,14 @@ MAX_SHARD_SECONDS = 1700.0
 MAX_RECORD_BYTES = 200_000
 DISK_QUOTA = 5 * 1024**3
 DISK_BASELINE = ledger_b.ROOT / ".cache/v053/stageB/b1-disk-baseline.json"
-SMOKE_PART, SMOKE_HOURS = "b1_smoke", 1.0
+SMOKE_PART, SMOKE_HOURS = "b1_smoke", 1.0  # stopped on the driver's cap (599d386); kept
 SMOKE_D2_INDEX = 3000
+# the maintainer's decision of 2026-11-11 on the smoke's stop: three homogeneous parts
+SMOKE_PARTS = {"d2": ("b1_smoke_d2", 0.5), "t2a": ("b1_smoke_t2a", 0.5),
+               "above20": ("b1_smoke_above20", 1.0)}  # fmt: skip
+ABOVE20_WALL_SECONDS = (
+    1200.0  # the design: C above 20 is run only if the smoke takes at most 20 min
+)
 
 
 # --- version 5 around one attack ---------------------------------------------------------------
@@ -106,9 +112,10 @@ def d2_one(i: int) -> dict:
     return rec
 
 
-def t2a_one(row: dict) -> dict:
+def t2a_one(row: dict, only_c: bool = False) -> dict:
     """v0.5.2's ``forecast_t2a.one`` with version 5 in place of version 3 and 4 (the cache is
-    v0.5.2's, ``ft.CACHE``, for the hosts it holds)."""
+    v0.5.2's, ``ft.CACHE``, for the hosts it holds). ``only_c``: v0.4 and version 5 C only (the
+    smoke above 20 sectors, where A and B are lost by the refusal rule)."""
     from refute.packs.tess import battery_v52
     from refute.packs.tess.adapter import TessAdapter
     from refute.packs.tess.calib05 import c2
@@ -118,7 +125,7 @@ def t2a_one(row: dict) -> dict:
     from refute.packs.tess.pipeline import global_prewhitening
     from refute.packs.tess.search import search_period
 
-    started = time.process_time()
+    started, wall = time.process_time(), time.perf_counter()
     rec: dict = {"key": row["key"], "slot": row["slot"], "stratum": row["stratum"]}
     target = ft.targets()[row["key"]]
     raw, staged, plans = ft._plans()
@@ -154,11 +161,13 @@ def t2a_one(row: dict) -> dict:
         mine, references[f"{row['key']}/injection/{row['slot']}"]
     )
     rec["v04"] = ft._brief(v04, None, p04)
-    with Version5() as v5a:
-        out, sel = ft._outcome(data, cand, plans["v4A"], catalogs, scan, pw)
-    rec["v5A"] = ft._brief(out, sel, plans["v4A"])
-    rec["v5A_counts"] = v5a.counts
-    if rec["sectors"] <= battery_v52.MAX_SELECTED_SECTORS:
+    v5a = None
+    if not only_c:
+        with Version5() as v5a:
+            out, sel = ft._outcome(data, cand, plans["v4A"], catalogs, scan, pw)
+        rec["v5A"] = ft._brief(out, sel, plans["v4A"])
+        rec["v5A_counts"] = v5a.counts
+    if not only_c and rec["sectors"] <= battery_v52.MAX_SELECTED_SECTORS:
         rec["v5C"], rec["v5C_counts"] = rec["v5A"], "same as v5A (at most 4 sectors)"
     else:
         saved = battery_v52.MAX_ORIGINAL_SECTORS
@@ -169,12 +178,16 @@ def t2a_one(row: dict) -> dict:
         finally:
             battery_v52.MAX_ORIGINAL_SECTORS = saved
         rec["v5C"], rec["v5C_counts"] = ft._brief(out, sel, plans["v4C"]), v5c.counts
-    rec["v5B"] = rec["v5C"] if rec["sectors"] <= battery_v52.MAX_ORIGINAL_SECTORS else rec["v5A"]
-    rec["v5_activation"] = v5a.activation
-    if any(rec[b]["candidate"] != rec["v04"]["candidate"] for b in ("v5A", "v5C")):
+    if not only_c:
+        above = rec["sectors"] > battery_v52.MAX_ORIGINAL_SECTORS
+        rec["v5B"] = rec["v5A"] if above else rec["v5C"]
+    rec["v5_activation"] = (v5a or v5c).activation
+    attacked = ("v5C",) if only_c else ("v5A", "v5C")
+    if any(rec[b]["candidate"] != rec["v04"]["candidate"] for b in attacked):
         raise ValueError("the batteries did not attack the same final candidate")
     rec["status"] = "OK"
     rec["cpu_seconds"] = time.process_time() - started
+    rec["wall_seconds"] = time.perf_counter() - wall
     return rec
 
 
@@ -194,7 +207,10 @@ def _bounded(rec: dict, key: dict) -> bytes:
 def shard(arg: dict) -> bytes:
     key = {k: arg[k] for k in ("kind", "index", "key", "slot") if k in arg}
     try:
-        rec = d2_one(arg["index"]) if arg["kind"] == "d2" else t2a_one(arg["row"])
+        if arg["kind"] == "d2":
+            rec = d2_one(arg["index"])
+        else:
+            rec = t2a_one(arg["row"], only_c=arg["kind"] == "t2a_c")
         rec = {**key, **rec}
     except Exception as exc:  # noqa: BLE001 - recorded, never dropped
         rec = {**key, "status": "ERROR", "reason": repr(exc)}
@@ -286,24 +302,85 @@ def smoke_rows() -> list:
     return rows
 
 
-def smoke() -> None:
+def above20_row() -> tuple:
+    """The design's smoke above 20 sectors: the population's host with the most light-curve
+    files, its lowest slot; v0.4 and version 5 C only."""
+    files = json.loads(ft.C2_FETCH.read_text("utf-8"))["files"]
+    rows = [r for r in ft.population() if r["stratum"] == "above_20"]
+    host = max({r["key"] for r in rows}, key=lambda k: (len(files[k]), k))
+    row = min((r for r in rows if r["key"] == host), key=lambda r: r["slot"])
+    return (f"t2a-c-{row['key']}-{row['slot']}",
+            {"kind": "t2a_c", "key": row["key"], "slot": row["slot"], "row": row})  # fmt: skip
+
+
+def part_rows(name: str) -> list:
+    two = smoke_rows()
+    return {"d2": [two[0]], "t2a": [two[1]], "above20": [above20_row()]}[name]
+
+
+def smoke(name: str) -> None:
+    """One of the three homogeneous smoke parts (the maintainer's decision of 2026-11-11)."""
+    part, hours = SMOKE_PARTS[name]
     before = ledger_b.v052_ledger_sha256()
     try:
-        ledger_b.check_caps("b1 smoke", reserve_days=0.1, reserve_tokens=0, in_b0=False)
-        rows = smoke_rows()
+        ledger_b.check_caps(f"b1 smoke {name}", reserve_days=0.1, reserve_tokens=0, in_b0=False)
+        rows = part_rows(name)
         disk_check(len(rows))
-        _part(SMOKE_PART, SMOKE_HOURS, "B1.1's smoke (#217, comment 6805071179)")
-        state = _execute(SMOKE_PART, rows, "smoke")
+        _part(part, hours, f"B1.1's smoke, part {name} (#217, the maintainer's decision)")
+        state = _execute(part, rows, f"smoke-{name}")
         print(state, flush=True)
         print("disk used by B1 so far:", disk_after(), "bytes", flush=True)
     finally:
         if ledger_b.v052_ledger_sha256() != before:
             raise SystemExit("the v0.5.2 ledger changed: refused")
+    if state != "complete" and name == "above20" and "beyond its declared limit" in state:
+        # the maintainer's item 2: the stop and the measured time recorded, C above 20 unknown,
+        # the work goes on (Codex's code review, round 4); the stop stays on the ledger
+        fp = fingerprint(f"smoke-{name}" + json.dumps(rows, sort_keys=True, default=str))
+        report = overrun_report(OUT / part / fp, part, state)
+        (HERE / "b1-smoke-above20.json").write_text(
+            json.dumps(report, indent=1, sort_keys=True) + "\n", "utf-8"
+        )
+        print(json.dumps(report, indent=1, sort_keys=True), flush=True)
+        return
     if state != "complete":
         raise SystemExit(state)
-    validate_smoke(rows)
+    validate_smoke(name, part, rows)
 
 
+def overrun_report(run_dir: Path, part: str, state: str) -> dict:
+    """The above-20 smoke's overrun, read from the driver's own files (never through
+    ``budgeted.assembled``, which refuses a stopped part): the stop, the driver's time since
+    dispatch and the record's own wall and processor time, C above 20 unknown."""
+    events = []
+    progress = run_dir / "progress.jsonl"
+    if progress.exists():
+        for line in progress.read_text("utf-8").splitlines():
+            if line.strip():
+                events.append(json.loads(line))
+    over = [e for e in events if e.get("event") == "shard_over_limit"]
+    recs = []
+    for f in sorted((run_dir / "shards").glob("*")) if (run_dir / "shards").exists() else []:
+        for line in f.read_text("utf-8", errors="replace").splitlines():
+            if line.strip():
+                r = json.loads(line)
+                recs.append({k: r.get(k) for k in ("key", "slot", "status", "sectors",
+                                                    "wall_seconds", "cpu_seconds")})  # fmt: skip
+    stop = run_dir / "stop.json"
+    return {
+        "part": part,
+        "state": state,
+        "stop": json.loads(stop.read_text("utf-8")) if stop.exists() else None,
+        "seconds_since_dispatch": [e.get("seconds") for e in over],
+        "records": recs,
+        "c_above_20_runs": False,
+        "c_above_20": "unknown (the smoke overran its limit; the price comes at B1's stop)",
+    }
+
+
+# the four estimators' entry counters, reported in every part (the maintainer's item 3)
+FOUR = ("e1.calls", "e2.calls", "e3.sinusoid_calls", "e3.calls", "e4.systematics_calls",
+        "e4.calls")  # fmt: skip
 ALWAYS = ("e3.sinusoid_calls", "e4.systematics_calls")  # these tests run in every attack
 UNLESS_REFUSED = ("e2.calls",)  # odd_even reaches E2 unless the A0 tests are refused
 EFFECTIVE = {
@@ -333,13 +410,14 @@ def smoke_problems(recs: list, rows: list, expected_activation: dict) -> tuple[l
     got = [{k: r[k] for k in ("kind", "index", "key", "slot") if k in r} for r in recs]
     if got != keys:
         problems.append(f"records {got} are not the expected {keys}")
-    attacks = {"d2": ("v5_counts",), "t2a": ("v5A_counts", "v5C_counts")}
+    attacks = {"d2": ("v5_counts",), "t2a": ("v5A_counts", "v5C_counts"),
+               "t2a_c": ("v5C_counts",)}  # fmt: skip
     for rec in recs:
         kind = rec.get("kind")
         if rec.get("status") != "OK":
             problems.append(f"{kind}: status {rec.get('status')}: {rec.get('reason')}")
             continue
-        if kind == "t2a" and rec.get("compat_problems") != []:
+        if kind in ("t2a", "t2a_c") and rec.get("compat_problems") != []:
             problems.append(
                 f"t2a: v0.4 does not reproduce its record: {rec.get('compat_problems')}"
             )
@@ -364,6 +442,7 @@ def smoke_problems(recs: list, rows: list, expected_activation: dict) -> tuple[l
                     "record": kind,
                     "attack": attack,
                     "selector_refused": refused,
+                    "counters": {k: c.get(k, 0) for k in FOUR},
                     "effective": {e: {k: c.get(k, 0) for k in ks} for e, ks in EFFECTIVE.items()},
                     "fallbacks": {k: v for k, v in c.items() if "fallback" in k or "v4_path" in k},
                 }
@@ -378,19 +457,25 @@ def expected_activation() -> dict:
     return record
 
 
-def validate_smoke(rows: list) -> None:
-    """The smoke succeeds only if ``smoke_problems`` finds nothing; the report is written to
-    ``b1-smoke.json`` either way."""
-    fp = fingerprint("smoke" + json.dumps(rows, sort_keys=True, default=str))
+def validate_smoke(name: str, part: str, rows: list) -> None:
+    """A part succeeds only if ``smoke_problems`` finds nothing; the report is written to
+    ``b1-smoke-<name>.json`` either way. Above 20 sectors it also records whether C's wall time
+    allows the stratum (the design: at most 20 minutes)."""
+    fp = fingerprint(f"smoke-{name}" + json.dumps(rows, sort_keys=True, default=str))
     data = budgeted.assembled(
-        ledger_b.SECTION, SMOKE_PART, OUT / SMOKE_PART / fp, shard, rows, fp, WORKERS, pin=PIN,
+        ledger_b.SECTION, part, OUT / part / fp, shard, rows, fp, WORKERS, pin=PIN,
         max_shard_seconds=MAX_SHARD_SECONDS,
     )  # fmt: skip
     recs = [json.loads(x) for x in data.decode().splitlines() if x.strip()]
     problems, report = smoke_problems(recs, rows, expected_activation())
-    out = {"problems": problems, "paths": report,
-           "cpu_seconds": [r.get("cpu_seconds") for r in recs]}  # fmt: skip
-    (HERE / "b1-smoke.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n", "utf-8")
+    out = {"part": part, "problems": problems, "paths": report,
+           "cpu_seconds": [r.get("cpu_seconds") for r in recs],
+           "wall_seconds": [r.get("wall_seconds") for r in recs]}  # fmt: skip
+    if name == "above20":
+        wall = recs[0].get("wall_seconds") if recs else None
+        out["c_above_20_runs"] = wall is not None and wall <= ABOVE20_WALL_SECONDS
+    path = HERE / f"b1-smoke-{name}.json"
+    path.write_text(json.dumps(out, indent=1, sort_keys=True) + "\n", "utf-8")
     print(json.dumps(out, indent=1, sort_keys=True), flush=True)
     if problems:
         raise SystemExit("the smoke did not pass its checks: " + "; ".join(problems))
@@ -398,4 +483,4 @@ def validate_smoke(rows: list) -> None:
 
 if __name__ == "__main__":
     with ledger_b.Exclusive(f"b1_forecast {sys.argv[1]}"):
-        {"smoke": smoke}[sys.argv[1]]()
+        {"smoke": lambda: smoke(sys.argv[2])}[sys.argv[1]]()
