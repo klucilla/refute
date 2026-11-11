@@ -183,8 +183,8 @@ def fetch(name: str) -> None:
     report["bytes"] = sum(f["bytes"] for f in done)
     report["downloaded_bytes"] = sum(f["bytes"] for f in done if f["origin"] == "downloaded")
     (HERE / f"b1-fetch-{name}.json").write_text(
-        json.dumps(report, indent=1, sort_keys=True) + "\n", "utf-8"
-    )
+        json.dumps(report, indent=1, sort_keys=True) + "\n", "utf-8", newline="\n"
+    )  # LF, so that the bytes in B1.4's fingerprint are the committed ones
     write_manifests(dossiers, report)
     print("disk used by B1 so far:", bf.disk_after(), "bytes", flush=True)
 
