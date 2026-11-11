@@ -1,0 +1,235 @@
+{
+ "cpu_seconds_of_the_records": 8774.09375,
+ "errors": 0,
+ "families": {
+  "EB1": {
+   "attempted": 400,
+   "c1_prime_projection": 190,
+   "d1_allowance": 10,
+   "depth_quantiles_10_50_90": {
+    "eclipse": [
+     0.000204474887971397,
+     0.0007727928429251431,
+     0.0025915608862622356
+    ],
+    "folded_mean": [
+     0.00017595626966355446,
+     0.0006005868607788363,
+     0.0022458963237435847
+    ]
+   },
+   "eligible": 381,
+   "folded": 246,
+   "no_room_star_known": false,
+   "room_catalog": false,
+   "stars": {
+    "catalog": {
+     "alphas": {
+      "0.00135": {
+       "expected_non_rejected_at_projection": 32.5623649844883,
+       "illustrative_excess_over_allowance_fraction": 0.11874928939204367,
+       "non_rejection_fraction": 0.1713808683394121,
+       "non_rejection_fraction_folded": 0.24010856787779028,
+       "non_rejection_fraction_unfolded": 0.046143726958367305,
+       "pass_probability_median": 2.5185616098222094e-15,
+       "pass_probability_p95": 2.3725220705494468e-09
+      },
+      "0.0027": {
+       "expected_non_rejected_at_projection": 29.16734984734717,
+       "illustrative_excess_over_allowance_fraction": 0.10088078867024827,
+       "non_rejection_fraction": 0.1535123676176167,
+       "non_rejection_fraction_folded": 0.21746588456109694,
+       "non_rejection_fraction_unfolded": 0.03697484785394158,
+       "pass_probability_median": 1.2055297350287726e-11,
+       "pass_probability_p95": 1.0693965287945804e-06
+      },
+      "0.01": {
+       "expected_non_rejected_at_projection": 22.54453226209858,
+       "illustrative_excess_over_allowance_fraction": 0.06602385401104517,
+       "non_rejection_fraction": 0.11865543295841359,
+       "non_rejection_fraction_folded": 0.17186574808734648,
+       "non_rejection_fraction_unfolded": 0.0216944142790248,
+       "pass_probability_median": 3.033871093153019e-06,
+       "pass_probability_p95": 0.004759296222735379
+      },
+      "0.05": {
+       "expected_non_rejected_at_projection": 14.060155129126494,
+       "illustrative_excess_over_allowance_fraction": 0.02136923752171839,
+       "non_rejection_fraction": 0.07400081646908681,
+       "non_rejection_fraction_folded": 0.11024124929302963,
+       "non_rejection_fraction_unfolded": 0.007962694434346535,
+       "pass_probability_median": 0.07722616974587121,
+       "pass_probability_p95": 0.6013645617402593
+      }
+     },
+     "at_bound": 288,
+     "median_distance": 6.258392112167329
+    },
+    "star_known": {
+     "alphas": {
+      "0.00135": {
+       "expected_non_rejected_at_projection": 13.60695326036229,
+       "illustrative_excess_over_allowance_fraction": 0.018983964528222583,
+       "non_rejection_fraction": 0.071615543475591,
+       "non_rejection_fraction_folded": 0.08601054246962639,
+       "non_rejection_fraction_unfolded": 0.04538465641979321,
+       "pass_probability_median": 0.0789173969234376,
+       "pass_probability_p95": 0.7615385702575361
+      },
+      "0.0027": {
+       "expected_non_rejected_at_projection": 11.870894687268677,
+       "illustrative_excess_over_allowance_fraction": 0.009846814143519355,
+       "non_rejection_fraction": 0.06247839309088778,
+       "non_rejection_fraction_folded": 0.0768322863006053,
+       "non_rejection_fraction_unfolded": 0.03632240990873586,
+       "pass_probability_median": 0.2835456035765237,
+       "pass_probability_p95": 0.9359443680070424
+      },
+      "0.01": {
+       "expected_non_rejected_at_projection": 8.564758091091512,
+       "illustrative_excess_over_allowance_fraction": 0.0,
+       "non_rejection_fraction": 0.04507767416363954,
+       "non_rejection_fraction_folded": 0.058157310133792446,
+       "non_rejection_fraction_unfolded": 0.021243670840249817,
+       "pass_probability_median": 0.8480617999809565,
+       "pass_probability_p95": 0.9988551329952209
+      },
+      "0.05": {
+       "expected_non_rejected_at_projection": 4.594034104304026,
+       "illustrative_excess_over_allowance_fraction": 0.0,
+       "non_rejection_fraction": 0.02417912686475803,
+       "non_rejection_fraction_folded": 0.03319728028616986,
+       "non_rejection_fraction_unfolded": 0.007746047296852029,
+       "pass_probability_median": 0.9996511760717043,
+       "pass_probability_p95": 0.9999999241611558
+      }
+     },
+     "at_bound": 381,
+     "median_distance": 9.08250547471828
+    }
+   },
+   "statuses": {
+    "GENERATION_FAILURE": 3,
+    "OK": 397
+   },
+   "valid": true
+  },
+  "EB2": {
+   "attempted": 400,
+   "c1_prime_projection": 186,
+   "d1_allowance": 10,
+   "depth_quantiles_10_50_90": {
+    "eclipse": [
+     0.000263166610537948,
+     0.0008555965740761985,
+     0.002972720335958474
+    ],
+    "folded_mean": [
+     0.00023020759128700852,
+     0.0007460173012072233,
+     0.002524576068651546
+    ]
+   },
+   "eligible": 373,
+   "folded": 349,
+   "no_room_star_known": false,
+   "room_catalog": false,
+   "stars": {
+    "catalog": {
+     "alphas": {
+      "0.00135": {
+       "expected_non_rejected_at_projection": 41.140958114211,
+       "illustrative_excess_over_allowance_fraction": 0.16742450599038172,
+       "non_rejection_fraction": 0.22118794685059678,
+       "non_rejection_fraction_folded": 0.23633093022723764,
+       "non_rejection_fraction_unfolded": 0.0009837302486111938,
+       "pass_probability_median": 2.8660257481742193e-17,
+       "pass_probability_p95": 2.4468159217051416e-12
+      },
+      "0.0027": {
+       "expected_non_rejected_at_projection": 35.50149925078704,
+       "illustrative_excess_over_allowance_fraction": 0.13710483468165077,
+       "non_rejection_fraction": 0.1908682755418658,
+       "non_rejection_fraction_folded": 0.2039565365435818,
+       "non_rejection_fraction_unfolded": 0.000543146808579612,
+       "pass_probability_median": 1.3854661239160327e-12,
+       "pass_probability_p95": 1.0720447445277913e-08
+      },
+      "0.01": {
+       "expected_non_rejected_at_projection": 24.79682057816693,
+       "illustrative_excess_over_allowance_fraction": 0.07955279880734908,
+       "non_rejection_fraction": 0.13331623966756415,
+       "non_rejection_fraction_folded": 0.14247473217693857,
+       "non_rejection_fraction_unfolded": 0.0001364944270778138,
+       "pass_probability_median": 8.571896201574604e-06,
+       "pass_probability_p95": 0.0011412462160074828
+      },
+      "0.05": {
+       "expected_non_rejected_at_projection": 12.494721171923143,
+       "illustrative_excess_over_allowance_fraction": 0.013412479418941626,
+       "non_rejection_fraction": 0.06717592027915668,
+       "non_rejection_fraction_folded": 0.0717946347509878,
+       "non_rejection_fraction_unfolded": 1.2114001279292056e-05,
+       "pass_probability_median": 0.2473755439266684,
+       "pass_probability_p95": 0.6669897149126093
+      }
+     },
+     "at_bound": 357,
+     "median_distance": 4.875906015084961
+    },
+    "star_known": {
+     "alphas": {
+      "0.00135": {
+       "expected_non_rejected_at_projection": 12.940815214254052,
+       "illustrative_excess_over_allowance_fraction": 0.015810834485236836,
+       "non_rejection_fraction": 0.0695742753454519,
+       "non_rejection_fraction_folded": 0.07429172981509555,
+       "non_rejection_fraction_unfolded": 0.0009746249327169087,
+       "pass_probability_median": 0.14560746523833645,
+       "pass_probability_p95": 0.8624892063508821
+      },
+      "0.0027": {
+       "expected_non_rejected_at_projection": 11.195086340038525,
+       "illustrative_excess_over_allowance_fraction": 0.006425195376551211,
+       "non_rejection_fraction": 0.06018863623676626,
+       "non_rejection_fraction_folded": 0.06429069399710362,
+       "non_rejection_fraction_unfolded": 0.0005378796385269955,
+       "pass_probability_median": 0.39462057189782995,
+       "pass_probability_p95": 0.9534908907649978
+      },
+      "0.01": {
+       "expected_non_rejected_at_projection": 7.930707570684429,
+       "illustrative_excess_over_allowance_fraction": 0.0,
+       "non_rejection_fraction": 0.04263821274561521,
+       "non_rejection_fraction_folded": 0.04556106801188261,
+       "non_rejection_fraction_unfolded": 0.00013502574864339653,
+       "pass_probability_median": 0.9241102366322138,
+       "pass_probability_p95": 0.999484011944987
+      },
+      "0.05": {
+       "expected_non_rejected_at_projection": 4.1260639039047735,
+       "illustrative_excess_over_allowance_fraction": 0.0,
+       "non_rejection_fraction": 0.022183139268305233,
+       "non_rejection_fraction_folded": 0.023707804779881728,
+       "non_rejection_fraction_unfolded": 1.1961620797124503e-05,
+       "pass_probability_median": 0.999899751512479,
+       "pass_probability_p95": 0.9999999828749983
+      }
+     },
+     "at_bound": 373,
+     "median_distance": 9.337569239332256
+    }
+   },
+   "statuses": {
+    "GENERATION_FAILURE": 2,
+    "OK": 398
+   },
+   "valid": true
+  }
+ },
+ "fingerprint": "cc407aecdd294028",
+ "label": "D1's information bound for EB1 and EB2 on development seeds, a diagnostic (#217, stage B, B0); the reading fixed in docs/plans/v0.5.3-stageB0-design.md, sections 3 and 4",
+ "method_status": "not_validated",
+ "outcome": "C",
+ "primary_alpha": 0.0027
+}

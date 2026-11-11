@@ -1,12 +1,90 @@
 {
  "label": "v0.5.3 stage B: the caps other than CPU-h, recorded before each step (#217; the CPU-h are in ledger.json)",
  "caps": {
-  "cpu_hours": {"stage_b": 150.0, "b0": 30.0},
-  "review_tokens": {"stage_b": 4500000, "b0": 1500000, "stop_fraction": 0.8},
-  "agent_days": {"stage_b": 8.0, "b0": 2.0}
+  "cpu_hours": {
+   "stage_b": 150.0,
+   "b0": 30.0
+  },
+  "review_tokens": {
+   "stage_b": 4500000,
+   "b0": 1500000,
+   "stop_fraction": 0.8
+  },
+  "agent_days": {
+   "stage_b": 8.0,
+   "b0": 2.0
+  }
  },
  "review_tokens_method": "the maintainer's rule of 2026-11-11 (#217, comment 6799266241), for stage B only, replacing there the decision of 2026-11-09: each Codex conversation's uncached input plus output (its last turn's cumulative input_tokens - cached_input_tokens + output_tokens; #217, comment 6799452280), plus every independent review session; a stop at 80 % of a cap; no Codex review cut or shortened to fit",
  "agent_days_method": "Claude's session transcripts since 2026-11-11T14:45:00Z (.cache/v052/tools/agent_time.py): wall clock over 8-hour days (an upper bound) and active time with gaps capped at 10 minutes; Codex's time not counted",
  "independent_review_tokens": 0,
- "entries": []
+ "entries": [
+  {
+   "utc": "2026-11-11T15:32:08Z",
+   "step": "b0_bound run",
+   "codex_tokens": {
+    "conversations": {
+     "b0-design": 186883
+    },
+    "b0": 186883,
+    "stage_b": 186883
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.07,
+   "agent_days_active": 0.07,
+   "cpu_hours": {
+    "stage_b": 0.008,
+    "b0": 0.008
+   },
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T15:50:03Z",
+   "step": "b0_bound summarize",
+   "codex_tokens": {
+    "conversations": {
+     "b0-design": 186883
+    },
+    "b0": 186883,
+    "stage_b": 186883
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.11,
+   "agent_days_active": 0.09,
+   "cpu_hours": {
+    "stage_b": 2.456,
+    "b0": 2.456
+   },
+   "reserved": {
+    "agent_days": 0.05,
+    "review_tokens": 0
+   }
+  },
+  {
+   "utc": "2026-11-11T15:56:38Z",
+   "step": "B0 stop (after the end-of-B0 review)",
+   "codex_tokens": {
+    "conversations": {
+     "b0-design": 186883,
+     "b0-end": 87309
+    },
+    "b0": 274192,
+    "stage_b": 274192
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.12,
+   "agent_days_active": 0.11,
+   "cpu_hours": {
+    "stage_b": 2.464,
+    "b0": 2.464
+   },
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0
+   }
+  }
+ ]
 }

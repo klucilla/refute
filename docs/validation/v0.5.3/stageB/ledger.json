@@ -9,13 +9,22 @@
    "basis": "second smoke of bound_one (EB2 index 100000, with the trend factor) after Codex round 1; process time 9.9 s",
    "hours": 0.0027430555555555554,
    "name": "b0_smoke2_2026-11-11"
+  },
+  {
+   "basis": "d1_bound.summarize: process time 27.2 s",
+   "hours": 0.007552083333333333,
+   "name": "b0_summarize_20261111T155031Z"
   }
  ],
  "sections": {
   "stage_b": {
    "parts": {
     "b0_bound": {
-     "allocation_hours": 4.0
+     "allocation_hours": 4.0,
+     "checkpoint_shards": 4,
+     "identity": "3c7e25b621d6fbec",
+     "projection_hours": 2.363628472222222,
+     "spent_hours": 2.447894965277778
     },
     "b0_reserve": {
      "allocation_hours": 25.9

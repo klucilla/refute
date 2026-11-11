@@ -192,3 +192,22 @@ Round 2 made two more: a charge always recorded, with a STOP past the room, and 
 charging its own time in a `finally` after checking that room is left; and `declare` keeping the
 allocations after a transfer. Claude's own fix after round 1: the token parser reads each event's
 type, because a command output that quoted `turn.completed` had broken it.
+
+## Stage B, B0: the end-of-B0 review
+
+The stop report (`docs/validation/v0.5.3/stageB/README.md`), with the bound's output
+(`d1-bound.json`), the ledger and the caps, reviewed before it went to the maintainer. Codex CLI
+0.167.0-alpha.3.2, one conversation, answered in Portuguese and stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b0-end-round-1-answer.md](b0-end-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (2 corrections) | `8da98fb215ae8a87aa4b71ad8d2499559e7f92d7fc286d8e63084c7bd48847a9` |
+| 2 | [b0-end-round-2-answer.md](b0-end-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `97e28605bbfc1c18e3f33efc346f61c896be361f298b8923f2f67545828e8f3c` |
+
+Tokens, cumulative: round 1, 699,907 input (630,784 cached) and 7,391 output; round 2, 990,558
+(911,488) and 8,239. The conversation counts **87,309**, so **B0 in all counts 274,192** of its
+1.5 M cap (18.3 %). Applied as Codex wrote them: EB1's folded fraction rounded to 0.217; the
+assumptions listed in full (the per-planet level over the whole ±3-sigma box; a selection that
+leaves the noise along the binary-to-planet difference unchanged; the eligibility approximation).
+Round 1 reproduced the fingerprint `cc407aecdd294028` from `b00a78d` and checked the 80 shards, the
+800 seeds, 0 errors and the denominator with the 5 generation failures.
