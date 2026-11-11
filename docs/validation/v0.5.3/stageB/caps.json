@@ -330,6 +330,86 @@
     "agent_days": 0.2,
     "review_tokens": 500000
    }
+  },
+  {
+   "utc": "2026-11-11T19:25:13Z",
+   "step": "b1 code review r1",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 775621
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.56,
+   "agent_days_active": 0.29,
+   "cpu_hours": {
+    "stage_b": 4.923,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 400000
+   }
+  },
+  {
+   "utc": "2026-11-11T19:31:32Z",
+   "step": "b1 code review r2",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 118438,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 894059
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.57,
+   "agent_days_active": 0.31,
+   "cpu_hours": {
+    "stage_b": 4.923,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
+  },
+  {
+   "utc": "2026-11-11T19:45:32Z",
+   "step": "b1 code review r3",
+   "codex_tokens": {
+    "conversations": {
+     "b0-b0b-design": 109572,
+     "b0-b0b-end": 105745,
+     "b0-design": 186883,
+     "b0-end": 87309,
+     "b1-code": 140048,
+     "b1-design": 286112
+    },
+    "b0": 489509,
+    "stage_b": 915669
+   },
+   "independent_review_tokens": 0,
+   "agent_days_wall": 0.6,
+   "agent_days_active": 0.34,
+   "cpu_hours": {
+    "stage_b": 4.923,
+    "b0": 4.923
+   },
+   "reserved": {
+    "agent_days": 0.2,
+    "review_tokens": 300000
+   }
   }
  ]
 }

@@ -314,3 +314,43 @@ would have chosen the same options. The main changes were these:
   - a degenerate bootstrap as UNRESOLVED;
   - a disk quota before every write.
 
+## Stage B, B1.1: the code of the candidate version 5, before the smoke
+
+The code was reviewed against the design before any B1 run:
+
+- `docs/validation/v0.5.3/stageB/battery_b1.py`;
+- `b1_forecast.py`;
+- `tests/v053/`.
+
+Codex CLI 0.167.0-alpha.3.2 ran one conversation. It answered in Portuguese, and the answers are
+stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-code-round-1-answer.md](b1-code-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (4 corrections) | `5994194998d717c0062b3b901cca6d5f59650d98717837a116ab57bd40f0a619` |
+| 2 | [b1-code-round-2-answer.md](b1-code-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (the smoke's validator) | `5101cebb77096beb26ffc2328a328e1743542f6736479611dfeda372c77abbfc` |
+| 3 | [b1-code-round-3-answer.md](b1-code-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `90b9ad3460175424321a775e2db25516f08852493e8fc8a87b7258d30180e917` |
+
+The tokens are cumulative:
+
+- round 1: 1,491,949 input (1,383,168 cached) and 9,657 output;
+- round 2: 2,214,788 input (2,088,576 cached) and 13,836 output;
+- round 3: 2,854,191 input (2,714,112 cached) and 16,750 output;
+
+The conversation counts **156,829** against stage B's cap.
+
+Round 1 found no error in the estimators' formulas. It asked for four corrections:
+
+- the smoke validated on its records, not only on the driver's state;
+- the record bound counted with the newline, a bound for the driver's other files, and the disk
+  checked after the run;
+- the rows in the fingerprint;
+- a test of real calls through version 4, then version 5, then version 4.
+
+Round 2 found that the new validator would reject the selector's legitimate refusal in
+configuration A, and that it still accepted incomplete evidence. Two changes followed:
+
+- the validator became a pure function with exact checks;
+- the required counters now respect the structural refusals, with tests of their own (20 tests
+  pass).
+
