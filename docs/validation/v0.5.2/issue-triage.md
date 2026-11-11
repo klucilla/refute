@@ -49,4 +49,8 @@ The maintainer's decision of 2026-11-10, third set (#216, item 3), delegated to 
 | #25 | remove milestone | v0.4 | none | v0.4 is closed; the scope is the maintainer's separate decision |
 | #210 | close (done) | v0.5.1 | closed | done: every CI job under 30 minutes in the last 5 runs of main (longest 26.6 min) and the test IDs checked by scripts/ci_ids_check.py (OK) |
 
+| #195 | move (after the end-of-round review, which both triage rounds had missed it for) | none | Deferred (no target version) | items 1 to 3 complete; item 4 remains library-only until a phase scopes a promotion step (the maintainer's decision of 2026-11-05, #199); stays open |
+
+**Unchanged** (already in a future phase or in Deferred): #13 (v0.6), #17 (v0.6), #21 (v0.8), #30 (v1.0), #42 (Deferred (no target version)), #170 (v0.8). #216 is the tracking issue of v0.5.2.
+
 **Milestones:** v0.5.3 created (13 open issues); v0.2.0, v0.2.1, v0.4, v0.5 and v0.5.1 closed, empty; v0.3 left open (not before 2026-11-18). #216 is closed by comment after the closing commit's CI is green.

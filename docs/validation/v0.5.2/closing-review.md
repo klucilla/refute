@@ -5,6 +5,8 @@ The maintainer's decision of 2026-11-10, third set (#216, item 2 (c)): one indep
 - Session: a Claude Code subagent of type Explore (no write or edit tools), model Opus, launched on 2026-11-10 after commit `2f9e410` (the record as reviewed). Its brief is in the session; it listed the files below the record it could read, forbade writing, the network, git and Python, and set the 350,000-token limit.
 - Tokens: 203,057, as counted by the session tool (the reviewer's own estimate, at the end of its report, is about 130,000); 47 tool calls; 10 minutes 39 seconds.
 - The reviewer disclosed one read-only `ls`/`wc` call and one file read outside its list (`a0_v4.py`, lines 140 to 190), on which it says nothing relies.
+- **A scope deviation:** the brief expanded the permitted corpus beyond the maintainer's "the record and its annexes only" to six source files (`core/verdict.py`, `core/sensitivity.py`, `packs/tess/battery_v51_diff.py`, `a0.py`, `battery_v52.py`, `params.py`), so that the reviewer could check claims about the rules.
+- The report below was transcribed from the session's hand-back message (the harness indents each line; the indentation was removed), not copied from a file.
 
 The report, unchanged:
 

@@ -1,0 +1,11 @@
+1. **fix now**, [closing-record.md:122](C:/Projetos/refute/docs/validation/v0.5.2/closing-record.md:122), also consensus README:109. Matching units and shared adapter scaling do not exclude every normalization defect. **Replace with:** “FITS-column unit mismatch and unequal adapter normalization are ruled out for these 547 cached files. Statistic-level normalization defects remain unexcluded.”
+
+2. **fix now**, [closing-review.md:5](C:/Projetos/refute/docs/validation/v0.5.2/closing-review.md:5). The header omits that the brief additionally permitted six `src/` files. **Add:** “The brief expanded the permitted corpus beyond the maintainer’s record-and-annexes-only scope to six source files; this was a scope deviation.” Preserve the report body exactly.
+
+3. **fix now**, [issue-triage.md:52](C:/Projetos/refute/docs/validation/v0.5.2/issue-triage.md:52). **Agree with deferring #195**, while keeping it open. Add its row, initially marked pending, and record execution afterward. **Exact comment:** “Deferred, no target version. Items 1–3 are complete; item 4 remains library-only, without end-to-end wiring, until a phase scopes a promotion step, per the maintainer’s 2026-11-05 decision (#199).” This preserves [the recorded decision](https://github.com/klucilla/refute/issues/195#issuecomment-6667033792). Also explicitly list #13, #17, #21, #30, #42 and #170 as unchanged.
+
+4. **fix now**, [consensus/README.md:109](C:/Projetos/refute/docs/plans/v0.5.2-consensus/README.md:109). “Five gaps, all closed” prematurely records #195’s triage and this review’s completion. **Replace with actual statuses**, leaving those actions pending until performed and findings addressed. At lines 101 and 113, change the remaining-consultation statements to historical tense; the current allowance is **zero remaining**.
+
+5. **can wait**, [v0.5.3-scope-proposal.md:21](C:/Projetos/refute/docs/plans/v0.5.3-scope-proposal.md:21), before scope approval. An information bound cannot establish reachability merely by leaving room. **Replace “the bound decides it either way” with:** “The bound excludes a target under stated assumptions, or leaves feasibility undetermined for Stage B; reachability requires an attainable, calibrated construction.”
+
+WEAKENED

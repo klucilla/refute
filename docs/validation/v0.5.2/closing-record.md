@@ -118,9 +118,17 @@ selected losses, this does not establish whether the ratio depends on the depth 
 recorded background-rise error over the recorded SAP-depth error has a median of 6.57 over the 23
 losses (the independent review's estimate of about 8 used the candidate's search SNR, which does not
 measure the SAP estimator's uncertainty). The review's explanations, scattered-light variability that
-cancels in SAP or a normalization or units issue of the statistic, are untested and not exhaustive;
-whether SAP_BKG and SAP_FLUX share units was not checked. This is an open question about the
-statistic, not a finding.
+cancels in SAP or a normalization or units issue of the statistic, are untested and not exhaustive.
+**A FITS-column unit mismatch and unequal adapter normalization are ruled out for these 547 cached
+files:** all give SAP_FLUX and SAP_BKG in e-/s, and the adapter divides both by the same sector
+median of SAP_FLUX on the same kept cadences (`adapter.py`, lines 527 to 531). Normalization defects
+at the level of the statistic remain unexcluded; background variability that cancels in SAP stays an
+open question about the statistic, not a finding.
+
+`aperture_depth`, named in the maintainer's decision, is INCONCLUSIVE in all 80 injections and
+deferred to stage 2 in all 80, so it blocks no stage-1 verdict of T2a: in 74 "no target pixel data
+usable for aperture photometry" (an injection has no target pixel file, by design: `inject` does not
+change pixels, and the sample's cache manifests list none), in 6 the selection's grid refusal.
 
 What-ifs (removals, not estimators; the stratum above 20 all lost to all kept): every refusal (d)
 removed, 0.50 to 0.60; the background sensitivity removed, 0.50 to 0.59; both, **0.69 to 0.78** (upper
@@ -252,8 +260,8 @@ outside the grid) and `systematics` 6 (5 labelled `not_enough_data`, 1 outside t
 | The forecast, D2/D4/T2a and both diagnoses | 25 (the maintainer, 2026-11-10) | 16.3 | D2/D4 4.85, `odd_even` diagnosis 1.41, T2a 6.63 (and 0.01 of a failed attempt), the loss diagnosis 2.60 and its smokes 0.04, charged smokes 0.77 |
 | Calibration CPU-h | 150 | 0 | not started |
 | Review tokens | 1.0 M | 203,057 | the one independent review session of this record (at most 350,000 by the maintainer's decision; [closing-review.md](closing-review.md)); Codex's tokens do not count (the maintainer, 2026-11-09), and each round's are in the consensus record |
-| Agent-days | 12 | Claude: at most 6.6 by wall clock (53.1 hours), about 2.0 active (15.8 hours), at 2026-11-10 23:30 UTC | measured from the session transcripts since 2026-11-08 17:57 UTC (`.cache/v052/tools/agent_time.py`; gaps capped at 10 minutes for active time); Codex's and the reviewer's time not counted, so total compliance is not established |
-| Advisor consultations | 3 | 2 before this record | an opinion only |
+| Agent-days | 12 | Claude: at most 6.8 by wall clock (54.2 hours), about 2.1 active (16.7 hours), at 2026-11-11 00:08 UTC | measured from the session transcripts since 2026-11-08 17:57 UTC (`.cache/v052/tools/agent_time.py`; gaps capped at 10 minutes for active time); Codex's and the reviewer's time not counted, so total compliance is not established |
+| Advisor consultations | 3 | 3 | an opinion only; the third, on this closing, is in the consensus record ([advisor-round-3-answer.md](../../plans/v0.5.2-consensus/advisor-round-3-answer.md)) |
 | Disk | | about 1.3 GB in `.cache/v052` | of which 1.0 GB the T2a light curves (`t2a-cache`) |
 
 ## Preserved, unchanged
