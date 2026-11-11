@@ -37,7 +37,11 @@
      "spent_hours": 0.6141015625
     },
     "c1_background_audit": {
-     "allocation_hours": 2.0
+     "allocation_hours": 2.0,
+     "checkpoint_shards": 3,
+     "identity": "a9dd62a47fbdbd0a",
+     "projection_hours": 0.02353732638888889,
+     "spent_hours": 0.015125868055555556
     },
     "c2_t2a_bound": {
      "allocation_hours": 4.0
