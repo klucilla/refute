@@ -1,0 +1,256 @@
+{
+ "curves": {
+  "new": 1900,
+  "v0.5.1": 600
+ },
+ "eligible": {
+  "EB1": 288,
+  "EB2": 279,
+  "P": 865,
+  "PG": 735
+ },
+ "errors": 0,
+ "fingerprint": "3a2a9b25653f00d5",
+ "label": "D1's geometric route on development curves; a diagnostic, decides nothing (#217, stage A (d); #215)",
+ "method_status": "not_validated",
+ "statistics": {
+  "dchi2": {
+   "all": {
+    "EB1": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 288
+    },
+    "EB1_folded": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 199
+    },
+    "EB2": {
+     "flagged": 2,
+     "fraction": 0.007168458781362007,
+     "n": 279
+    },
+    "P": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 865
+    },
+    "PG": {
+     "flagged": 1,
+     "fraction": 0.0013605442176870747,
+     "n": 735
+    }
+   },
+   "correlated": {
+    "EB1": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 136
+    },
+    "EB1_folded": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 94
+    },
+    "EB2": {
+     "flagged": 2,
+     "fraction": 0.012422360248447204,
+     "n": 161
+    },
+    "P": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 433
+    },
+    "PG": {
+     "flagged": 1,
+     "fraction": 0.002857142857142857,
+     "n": 350
+    }
+   },
+   "planets": {
+    "P": 865,
+    "PG": 735
+   },
+   "quantile_99.73": {
+    "P": 97.1375376170422,
+    "PG": 319.04464292082594
+   },
+   "quantiles": {
+    "EB1": [
+     4.543551172864682,
+     29.613832573281897,
+     110.68256098277583
+    ],
+    "EB2": [
+     14.376341656023214,
+     42.52015843032605,
+     128.22010328699645
+    ],
+    "P": [
+     0.38839609409296827,
+     4.183317646288378,
+     13.795580992042627
+    ],
+    "PG": [
+     0.7575268073496773,
+     23.43822119556226,
+     130.4750535729136
+    ]
+   },
+   "rule": "the larger of the P and PG 99.73 % quantiles (calibration-sample fractions)",
+   "strictly_above_threshold": {
+    "P": 0,
+    "PG": 1
+   },
+   "threshold": 319.04464292082594,
+   "white": {
+    "EB1": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 152
+    },
+    "EB1_folded": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 105
+    },
+    "EB2": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 118
+    },
+    "P": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 432
+    },
+    "PG": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 385
+    }
+   }
+  },
+  "dchi2_cov": {
+   "all": {
+    "EB1": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 288
+    },
+    "EB1_folded": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 199
+    },
+    "EB2": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 279
+    },
+    "P": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 865
+    },
+    "PG": {
+     "flagged": 1,
+     "fraction": 0.0013605442176870747,
+     "n": 735
+    }
+   },
+   "correlated": {
+    "EB1": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 136
+    },
+    "EB1_folded": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 94
+    },
+    "EB2": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 161
+    },
+    "P": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 433
+    },
+    "PG": {
+     "flagged": 1,
+     "fraction": 0.002857142857142857,
+     "n": 350
+    }
+   },
+   "planets": {
+    "P": 865,
+    "PG": 735
+   },
+   "quantile_99.73": {
+    "P": 97.13656271790705,
+    "PG": 252.40593660684226
+   },
+   "quantiles": {
+    "EB1": [
+     4.355600504750328,
+     24.654696835448977,
+     81.4585552522488
+    ],
+    "EB2": [
+     12.151006795213107,
+     36.552056302050204,
+     101.553681732187
+    ],
+    "P": [
+     0.2934711222387705,
+     4.026338942776874,
+     12.558337343601533
+    ],
+    "PG": [
+     0.7112325201296699,
+     22.61205028143267,
+     130.47621338041577
+    ]
+   },
+   "rule": "the larger of the P and PG 99.73 % quantiles (calibration-sample fractions)",
+   "strictly_above_threshold": {
+    "P": 0,
+    "PG": 1
+   },
+   "threshold": 252.40593660684226,
+   "white": {
+    "EB1": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 152
+    },
+    "EB1_folded": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 105
+    },
+    "EB2": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 118
+    },
+    "P": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 432
+    },
+    "PG": {
+     "flagged": 0,
+     "fraction": 0.0,
+     "n": 385
+    }
+   }
+  }
+ }
+}

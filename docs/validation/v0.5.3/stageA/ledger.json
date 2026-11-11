@@ -50,7 +50,11 @@
      "allocation_hours": 18.0
     },
     "d_geometry": {
-     "allocation_hours": 6.0
+     "allocation_hours": 6.0,
+     "checkpoint_shards": 5,
+     "identity": "7771ac3b40e0c49b",
+     "projection_hours": 4.546888020833333,
+     "spent_hours": 4.747269965277778
     },
     "reserve": {
      "allocation_hours": 7.5

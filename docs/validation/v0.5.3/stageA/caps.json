@@ -57,6 +57,17 @@
     "agent_days": 0.3,
     "review_tokens": 0
    }
+  },
+  {
+   "utc": "2026-11-11T11:47:56Z",
+   "step": "check",
+   "review_tokens": 0,
+   "agent_days_wall": 0.74,
+   "agent_days_active": 0.21,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0
+   }
   }
  ],
  "review_tokens_method": "the tokens of independent review sessions only (none so far in stage A); Codex's tokens do not count against the review limit, by the maintainer's decision of 2026-11-09 (#216, comment 6738548633), and each Codex round's tokens are recorded in docs/plans/v0.5.3-consensus/README.md"
