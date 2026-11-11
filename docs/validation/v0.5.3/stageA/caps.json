@@ -1,0 +1,19 @@
+{
+ "label": "v0.5.3 stage A: the caps other than CPU-h, recorded before and after each step (#217; the CPU-h are in ledger.json)",
+ "caps": {
+  "cpu_hours": 50.0,
+  "review_tokens": 500000,
+  "agent_days": 4.0
+ },
+ "agent_days_method": "Claude's session transcripts since 2026-11-11T05:55:00Z (.cache/v052/tools/agent_time.py): wall clock over 8-hour days (an upper bound) and active time with gaps capped at 10 minutes; Codex's and any reviewer's time not counted",
+ "entries": [
+  {
+   "utc": "2026-11-11T06:12:39Z",
+   "step": "before stage A's first run",
+   "review_tokens": 0,
+   "agent_days_wall": 0.04,
+   "agent_days_active": 0.03
+  }
+ ],
+ "review_tokens_method": "the tokens of independent review sessions only (none so far in stage A); Codex's tokens do not count against the review limit, by the maintainer's decision of 2026-11-09 (#216, comment 6738548633), and each Codex round's tokens are recorded in docs/plans/v0.5.3-consensus/README.md"
+}

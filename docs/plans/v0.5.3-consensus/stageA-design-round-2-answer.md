@@ -1,0 +1,21 @@
+1. **Applied correctly.** `v0.5.3-stageA-design.md:66` separates evidence-qualified PASS from kept retention and treats warning blockers optimistically.
+
+2. **Applied in principle, with a formula correction.** `v0.5.3-stageA-design.md:84` gives a variance, not a standard error. **Correction:** use `σ_box = sqrt([(ZᵀΣ⁻¹Z)⁻¹]box,box)`. The flag-power value of 1 and necessary-only interpretation are correct. The helper is not yet supplied for implementation review.
+
+3. **Applied correctly.** `v0.5.3-stageA-design.md:102` treats scatter as an audit measurement and the unrounded background condition as necessary for the 3-error component alone.
+
+4. **Partially applied.** `v0.5.3-stageA-design.md:79` retains cross-information correctly, but the contrast has the wrong dimension once baseline columns enter `F`. **Correction:** use `c = (1, −1, 0, …)` and `σ² = cᵀF⁻¹c`; explicitly define the nuisance columns. No helper implementation was supplied.
+
+5. **Applied correctly in the design.** `v0.5.3-stageA-design.md:88` makes unbounded blockers recoverable and specifies enumeration of all 112 planets without duplication.
+
+6. **Partially applied.** The sampling constructions at `v0.5.3-stageA-design.md:95` and `:114` are appropriately separated from bound validity. However, the plug-in white-noise estimate at `:111` still cannot exclude T2a losses when the true error may be smaller. **Correction:** keep this a conditional scenario, or establish a conservative error lower bound with its uncertainty; otherwise count those injections as recoverable. Also distinguish the population threshold `108/112 − 0.10` from the integer sample requirement of 97.
+
+7. **Partially applied; instrumentation still has blocking gaps.** [a0_refusals.py:356](C:/Projetos/refute/docs/validation/v0.5.3/stageA/a0_refusals.py:356) quarantines only group-variance instrumentation failures, ignoring `empirical_events_calls` errors and inherited `a0_depth_calls` errors/disagreements. At `:184`, events are totals, without membership or per-event rejection reasons; D2 at `:214` lacks tracing of earlier `a0_depth` returns. **Correction:** quarantine failures from every trace, record input/output event identities and rejection reasons, and trace D2’s depth returns. Tag diagnostic replays invoked through `td._why_none` so they are not counted as original battery calls.
+
+8. **Partially applied; new blocking accounting defect.** [v0.5.3-stageA-design.md:125](C:/Projetos/refute/docs/plans/v0.5.3-stageA-design.md:125) moves computation into subprocesses, but `driver.py:479` observes pool-worker PIDs and `:268` measures only worker CPU time. Child computation therefore escapes accounting, and killing a worker does not guarantee child termination. **Correction:** provide Stage A process-tree accounting and termination, covering live CPU, timeouts, crashes and controller death. At `:124`, compare the reconstructed **final gauntlet candidate** with C2’s recorded candidate; `paired.py:70` records that candidate, not the initial search candidate.
+
+9. **Partially applied; transfers are not operationally preserved.** [ledger_a.py:44](C:/Projetos/refute/docs/validation/v0.5.3/stageA/ledger_a.py:44) reapplies default allocations on every run, while `:59` ignores transferred ledger allocations. **Correction:** initialize missing allocations only, validate persisted prospective transfers, and calculate caps from the current ledger row. The conservative cap reduction helps direct workers, but does not solve item 8. Wire `caps.json` checks into execution with advance reservations; before/after recording alone cannot prevent crossing token/day caps.
+
+10. **Applied for output isolation and historical reads; exception handling remains incomplete.** [a0_refusals.py:290](C:/Projetos/refute/docs/validation/v0.5.3/stageA/a0_refusals.py:290) checks the historical ledger only after normal execution. **Correction:** place the unchanged-ledger verification in `finally`, covering preflight and execution failures.
+
+REFUTED

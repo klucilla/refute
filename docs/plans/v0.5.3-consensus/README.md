@@ -29,3 +29,32 @@ argument replaced by an argument that constrains change; the sinusoid's FAIL gua
 Fréchet assumptions; the confirmation sets: none drawn or used, pool metadata examined for T3b.
 Round 3: each question keeps a genuine argument for changing, which justifies reconsidering or
 deriving a convention, not a particular relaxation.
+
+## The stage A design
+
+The design of stage A ([v0.5.3-stageA-design.md](../v0.5.3-stageA-design.md)), its ledger shim
+and item (a)'s script (`docs/validation/v0.5.3/stageA/`), reviewed before any run. Codex CLI
+0.167.0-alpha.3.2, a new conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [stageA-design-round-1-answer.md](stageA-design-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (10 findings) | `b0eb17f2f041265f00556a1aeaf14989bdde7cc1934f2d258238d406a4d2db0d` |
+| 2 | [stageA-design-round-2-answer.md](stageA-design-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (10 points) | `a1a0157ede13e9f2ff1d3ab434ac9d927c3646b8be7a78ebd0c5d98b72049475` |
+| 3 | [stageA-design-round-3-answer.md](stageA-design-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` for item (a) and for the design | `456c554062408673f6e216a1ad045cf03e5e5bf93dad7054fdfb6d4149863f8a` |
+
+Tokens: round 1, 1,432,503 input (1,292,160 cached) and 9,466 output; round 2, 2,603,762
+(2,435,456) and 17,116; round 3, 3,604,326 (3,414,272) and 27,278. Every finding was applied as Codex
+wrote it: kept retention kept apart from the evidence-qualified PASS, so a warning blocker counts as
+recoverable (a warning FAIL gives WEAKENED) and only fatal blockers can be bounded as lost; the
+sinusoid's oracle GLS standard error with the flag's power at 1; the background's scatter as an
+audit, not a bound; the joint Fisher information for `odd_even` with per-sector level columns and
+the contrast `(1, -1, 0, ...)`; unbounded blockers recoverable; sampling uncertainty apart from the
+bounds' validity, and T2a's plug-in as a conditional scenario; item (a)'s traces of the group
+variance, the empirical events (each dropped event and its reason) and D2's A0 depths, with replays
+excluded and any trace failure quarantined; the strict cap, prospective transfers, the token and
+day checks before each step, the earlier ledger checked in a `finally`; no child process, and (c3)
+on hold until a batch deadline enforced during the run is designed and reviewed. **One finding was
+answered rather than applied:** round 3 read `caps.json`'s zero review tokens as an omission of
+Codex's tokens; by the maintainer's decision of 2026-11-09 Codex's tokens do not count against the
+review limit, so `caps.json` now states that rule and counts independent review sessions only (none
+yet).
