@@ -96,3 +96,38 @@ asked for five corrections, applied as written: the background not normalized tw
 columns with the host's multiplicative response and a fixed normalizer; the 23-loss background
 cohort for the primary summaries, with the per-sector ratio; the qualifications in the output; the
 fingerprint's coverage.
+
+## Item (c3)'s controller (cut by the tie-break)
+
+`docs/validation/v0.5.3/stageA/above20.py`, the controller of the sample above 20 sectors, reviewed
+before any run. Codex CLI 0.167.0-alpha.3.2, one conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [above20-round-1-answer.md](above20-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (10 findings) | `68fd373839ce4cd5b74c5befa629b672550c912f11ee122d035ba63ae688001b` |
+| 2 | [above20-round-2-answer.md](above20-round-2-answer.md) | gpt-6.1-sol, high | `REFUTED` (remaining blockers) | `d8fb74942edc1cdcc835d83f60ab6251781858417f8f5f7512c5c6caf157a08e` |
+| 3 | [above20-round-3-answer.md](above20-round-3-answer.md) | gpt-6.1-sol, high | `REFUTED` (3 remaining blockers) | `9d4dbfcd4f5b526e365b5b099b51b355747976c7b75f44aa9c2caa7d6c10dae5` |
+
+Tokens: round 1, 962,046 input (872,192 cached) and 9,792 output; round 2, 1,620,974 (1,512,576)
+and 17,731; round 3, 2,461,328 (2,330,112) and 23,606. After three rounds of divergence the more
+conservative option holds: (c3) does not run, nothing of it was executed, and the stratum above 20
+sectors stays bounded both ways (T2a's kept fraction 0.909 to 1.0 under (c2)'s rules). The
+controller is kept as written, never run. The tie-break is recorded in the stage A design.
+
+## Item (d)'s implementation
+
+`docs/validation/v0.5.3/stageA/d1_geometry.py`, D1's geometric route, reviewed before its run.
+Codex CLI 0.167.0-alpha.3.2, one conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [d1-geometry-round-1-answer.md](d1-geometry-round-1-answer.md) | gpt-6.1-sol, high | do not run yet (5 corrections) | `95c21acc13da4e41f0c60ef6bf6006149a0b9117168cfe073966529d8f3f9aec` |
+| 2 | [d1-geometry-round-2-answer.md](d1-geometry-round-2-answer.md) | gpt-6.1-sol, high | do not run yet (checkpoint coverage) | `97856426ec333cf1c2ac19edadeac456809d73aa14eaf47f03acc7a18b32ea43` |
+| 3 | [d1-geometry-round-3-answer.md](d1-geometry-round-3-answer.md) | gpt-6.1-sol, high | acceptable to run | `f8bcfec5e02d116a4b9094c396c4686e9199b847762cc6cf50ae071581ea168c` |
+
+Tokens: round 1, 879,042 input (781,952 cached) and 8,662 output; round 2, 1,268,115 (1,154,560)
+and 11,576; round 3, 1,840,785 (1,718,400) and 13,514. Applied as Codex wrote them: the cost
+revised to about 7.7 CPU-h; the threshold the larger of the P and PG 99.73 % quantiles; the
+fingerprint covering both wrappers, the historical route log and the v0.4 claim; the checkpoint's
+projection in curves, its shards covering all four families; strict exceedances per family. Round 3
+computed an 8.182 CPU-h hard cap from the ledger, above the 7.71 CPU-h estimate.

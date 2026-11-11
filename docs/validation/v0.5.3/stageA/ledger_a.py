@@ -47,6 +47,20 @@ budgeted.HARD_MAXIMUM = CAP_HOURS
 budgeted.SPENT_BEFORE = 0.0
 
 
+def _atomic_save(ledger: dict) -> None:
+    """Stage A only: ``budgeted.save``'s bytes, written atomically (a temporary file replaced)."""
+    tmp = budgeted.LEDGER.with_name(budgeted.LEDGER.name + ".tmp")
+    tmp.write_text(json.dumps(ledger, indent=1, sort_keys=True) + "\n", "utf-8", newline="\n")
+    tmp.replace(budgeted.LEDGER)
+
+
+budgeted.save = _atomic_save
+
+
+def charged(name: str) -> bool:
+    return any(c["name"] == name for c in budgeted.load().get("charges", []))
+
+
 def _rows() -> dict:
     return budgeted.load().get("sections", {}).get(SECTION, {}).get("parts", {})
 
