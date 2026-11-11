@@ -8,7 +8,9 @@ criterion; the design questions argued both ways; whether a data set outside dev
 was touched; and a proposal for where test renames are recorded. Stage B does not start without the
 maintainer's approval of this report. `method_status: not_validated`. Every number below comes from
 a file of this folder, produced by a script reviewed by Codex before its run, with its approval and
-exact procedure posted on #217 before it ran. The design is frozen in
+exact procedure posted on #217 before it ran, with one exception: a one-planet smoke of
+`d2_bounds.py` ran in the shell process, not pinned to processors 8 to 31 and outside the ledger (a
+slip, disclosed on #217 and charged afterwards at its wall time, 0.059 CPU-h). The design is frozen in
 [`v0.5.3-stageA-design.md`](../../../plans/v0.5.3-stageA-design.md) (three amendments, each recorded
 before the run it concerns); Codex's answers are in the
 [consensus record](../../../plans/v0.5.3-consensus/README.md).
@@ -45,8 +47,9 @@ in this sample). Version 4 keeps 81 and v0.4 108.
 - Only planet 1075 is lost at the bound: its fatal `odd_even` reaches 0.912 at its bound, against 0.95.
   Three more lose the evidence-qualified PASS by the sinusoid's residual at its bound (0.885, 0.671,
   0.948), recoverable for kept retention as a warning.
-- At the bound, `odd_even`'s power is 0.97 to 1.0 where A0's error left it INCONCLUSIVE: under this
-  model, the loss is the estimator's, not missing information.
+- At the bound, `odd_even`'s power is 0.97 to 1.0 where A0's error left it INCONCLUSIVE, planet 1075
+  excluded (0.912 at its bound, still INCONCLUSIVE): for those planets, under this model, the loss is
+  the estimator's, not missing information.
 - **Assumptions** (`d2-bounds.json`, `assumptions`): Gaussian noise with the generator's covariance
   (white plus each sector's exponential term), the true template and an unbiased estimator, for
   `odd_even`'s joint Fisher bound; the oracle GLS residual box under that covariance, the tested
@@ -154,8 +157,10 @@ any acceptance is priced**. Proposed scope, in order, cut from the end if a cap 
    A0's domain for the named refusals of (a) (pooled lag correlations below `MIN_PAIRS`, a PSD repair
    of the covariance); an `odd_even` estimator close to its joint Fisher bound (b); an efficient
    (GLS) sinusoid residual; a background-rise estimator that models the series' slow variability
-   (c1). A new battery version; `src/` changes only after the stop that approves stage B, and T2a's
-   fingerprint stays untouched.
+   (c1). A new battery version; `src/` changes only after the stop that approves stage B. A change
+   to `src/` changes the code hash that T2a's v0.5.2 fingerprint covers, even with its four named
+   files untouched: v0.5.2's records stay reproducible from a frozen checkout of their commit, and
+   stage B's forecast carries a fingerprint of its own.
 2. **B2, recalibration on development** of each new estimator's error model, by the existing
    acceptance machinery's rules.
 3. **B3, the forecast** of D2, D4 and T2a (the stratum above 20 sectors included, under a controller
@@ -170,8 +175,9 @@ any acceptance is priced**. Proposed scope, in order, cut from the end if a cap 
 
 The machine rules, the pause at 20:00 on 18 November and a stop at every cap are unchanged.
 **Acceptance, calibration and confirmation are not in stage B**: if B3's forecast passes every
-outstanding target, they are priced (`stage2/budget.md` priced the existing schedules at 1,482 to
-1,932 CPU-h) and brought to the maintainer as their own stop, with the draws of C1', C2', C3'.
+outstanding target, they are priced and brought to the maintainer as their own stop, with the
+draws of C1', C2', C3'. For scale, v0.5.2's `stage2/budget.md` priced the A0 acceptance alone at
+1,482 to 1,932 CPU-h, and the whole schedule at 2,956 to 3,609 CPU-h, by sizing and rescaling.
 
 ## Round 3's closing criterion (the last of three)
 
@@ -179,8 +185,14 @@ Proposed; round 3 closes at the first of:
 
 1. **Approved**: B3's forecast passes D1 (EB1 and EB2), D2, D4 and T2a, and then the acceptance,
    calibration and confirmation on data outside development pass, under their own approved caps.
-2. **Not approved, forecast**: B3's forecast fails any outstanding target (its point estimate below
-   the requirement, or its upper interval end below it). The round closes without acceptance.
+2. **Not approved, forecast**: B3's forecast does not pass an outstanding target under that
+   target's frozen rule, each read in its own direction (`calib05.c1.decision_rules`; v0.5's T2a
+   rule): **D1** for EB1 and EB2, the SURVIVED fraction's Wilson 95 % upper end at most 0.10 and
+   no more SURVIVED than v0.4; **D2**, the kept fraction at least v0.4's minus 0.10, the REFUTED
+   fraction at most 0.05 and its Wilson 95 % upper end at most 0.10; **D4**, the INCONCLUSIVE
+   fraction at target SNR 15 or more at most 0.30; **T2a**, the kept fraction at least v0.4's minus
+   0.10 (0.897). A rule that is NOT DECIDABLE, or a forecast interval that leaves it undetermined,
+   counts as not passed. The round closes without acceptance.
 3. **Not approved, stage B**: no estimator of B1 survives its review and calibration, or a cap is
    reached with the forecast not done.
 4. **Not approved, the maintainer's**: the maintainer stops the round, for example after deciding a

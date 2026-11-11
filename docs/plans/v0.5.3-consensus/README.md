@@ -131,3 +131,21 @@ revised to about 7.7 CPU-h; the threshold the larger of the P and PG 99.73 % qua
 fingerprint covering both wrappers, the historical route log and the v0.4 claim; the checkpoint's
 projection in curves, its shards covering all four families; strict exceedances per family. Round 3
 computed an 8.182 CPU-h hard cap from the ledger, above the 7.71 CPU-h estimate.
+
+## Stage A's end-of-round review
+
+Every commit from `7896ba7` to `35c07cb` and the stop report
+(`docs/validation/v0.5.3/stageA/README.md`). Codex CLI 0.167.0-alpha.3.2, one conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [stageA-end-round-1-answer.md](stageA-end-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (5 corrections) | `91de8737214bb56373ffd43fbf857f8ef1a74de221ffdab8fe801adedf4b93f9` |
+| 2 | [stageA-end-round-2-answer.md](stageA-end-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `1c0114a6740ce5ef8b1161bdeb92252f66cf3e3baa94bd2e7c30225d5bd94438` |
+
+Tokens: round 1, 2,562,343 input (2,375,936 cached) and 12,728 output; round 2, 3,149,019
+(2,945,152) and 13,855. Applied as Codex wrote them: round 3's closing criterion states each
+target's frozen rule in its own direction; the fingerprint promise qualified (a change to `src/`
+changes the code hash T2a's v0.5.2 fingerprint covers); the A0-only and whole-schedule acceptance
+costs told apart; the smoke exception disclosed; planet 1075 excluded from `odd_even`'s 0.97 to 1.0.
+Round 1 reconciled every number of the report with its records (7.7830877 CPU-h) and found no
+protected file, earlier record or v0.5.2 ledger changed in the range.
