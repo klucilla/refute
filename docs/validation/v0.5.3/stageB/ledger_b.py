@@ -76,8 +76,62 @@ def _atomic_save(ledger: dict) -> None:
 budgeted.save = _atomic_save
 
 
+LOCK = ROOT / ".cache/v053/stageB/ledger.lock"
+CAPS_LOCK = ROOT / ".cache/v053/stageB/caps.lock"
+_held: dict[Path, int] = {}
+
+
+class Exclusive:
+    """The ledger's writers are serialized for their whole run (Codex's round 1 of B0b): a run
+    keeps a copy of the ledger and saves it whole, so a second writer's transfers, charges or
+    consumption would be lost. The lock is a file created exclusively; a second process refuses
+    (a STOP), it never waits or removes a lock it does not hold. Re-entrant in one process."""
+
+    def __init__(self, step: str, path: Path = LOCK) -> None:
+        self.step, self.path = step, path
+
+    def __enter__(self) -> Exclusive:
+        if _held.get(self.path, 0) == 0:
+            import os
+
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            except FileExistsError:
+                held = self.path.read_text("utf-8", errors="replace").strip()
+                raise SystemExit(f"{self.path.name} is held ({held}): refused") from None
+            stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            os.write(fd, f"pid {os.getpid()}; {self.step}; {stamp}\n".encode())
+            os.close(fd)
+        _held[self.path] = _held.get(self.path, 0) + 1
+        return self
+
+    def __exit__(self, *exc) -> None:
+        _held[self.path] -= 1
+        if _held[self.path] == 0:
+            self.path.unlink()
+
+
 def _rows() -> dict:
     return budgeted.load().get("sections", {}).get(SECTION, {}).get("parts", {})
+
+
+def part_consumption(part: str) -> float:
+    """A part's consumption over every attempt: its current spending plus its archived attempts."""
+    r = _rows().get(part, {})
+    return r.get("spent_hours", 0.0) + sum(a["spent_hours"] for a in r.get("attempts", []))
+
+
+def refuse_new_identity(part: str, fingerprint: str, shards) -> None:
+    """A part that has run under another identity (another fingerprint, schedule or allocation)
+    does not run again: a rerun needs the maintainer's recorded approval and a new part (Codex's
+    round 1 of B0b). A resume under the same identity is allowed."""
+    r = _rows().get(part)
+    if r is None:
+        return
+    now = budgeted._identity(fingerprint, shards, r["allocation_hours"])
+    if r.get("identity") not in (None, now) or r.get("attempts"):
+        raise SystemExit(f"{part}: a new identity or an archived attempt: a rerun is refused")
 
 
 def _charges(prefix: str = "") -> float:
@@ -86,6 +140,11 @@ def _charges(prefix: str = "") -> float:
 
 
 def declare() -> None:
+    with Exclusive("declare"):
+        _declare()
+
+
+def _declare() -> None:
     """Declare the allocations. A part that has spent nothing (no attempt either) takes the
     design's value; a part that has spent keeps its persisted allocation (transfers included).
     The allocations plus the charges must stay within 150 CPU-h, and B0's within 30 (Codex's
@@ -106,6 +165,11 @@ def declare() -> None:
 
 
 def transfer(source: str, target: str, hours: float, reason: str) -> None:
+    with Exclusive("transfer"):
+        _transfer(source, target, hours, reason)
+
+
+def _transfer(source: str, target: str, hours: float, reason: str) -> None:
     """A prospective transfer between parts, recorded before the target runs; B0's parts may only
     trade among themselves (its sub-cap)."""
     if source.startswith("b0_") != target.startswith("b0_"):
@@ -148,7 +212,8 @@ def charge(name: str, hours: float, basis: str) -> None:
     """``budgeted.charge``: consumption outside a part (a smoke, a summary), charged once by name.
     The consumption happened, so it is always recorded; a STOP follows if the charges pass their
     room (Codex's round 2)."""
-    budgeted.charge(name, hours, basis)
+    with Exclusive("charge"):
+        budgeted.charge(name, hours, basis)
     if _charges() > CHARGES_ROOM + 1e-12:
         raise SystemExit("the charges passed their 0.1 CPU-h room: a STOP")
 
@@ -156,7 +221,8 @@ def charge(name: str, hours: float, basis: str) -> None:
 def hard_cap(part: str, workers: int, max_shard_seconds: float) -> float:
     """The part's strict cap: what is left of the 150 CPU-h (and, for a B0 part, of B0's 30)
     minus one batch's in-flight reserve, over the driver's 10 % overshoot, and at most 1.5 times
-    the part's allocation."""
+    the part's allocation less what the part consumed in every earlier attempt (Codex's round 1 of
+    B0b; on a resume the driver counts that consumption again, a conservative double count)."""
     rows = _rows()
     if part not in rows:
         raise SystemExit(f"{part}: not declared")
@@ -164,7 +230,8 @@ def hard_cap(part: str, workers: int, max_shard_seconds: float) -> float:
     left = CAP_HOURS - spent() - reserve
     if part.startswith("b0_"):
         left = min(left, B0_CAP_HOURS - b0_spent() - reserve)
-    cap = min(left, 1.5 * rows[part]["allocation_hours"]) / OVERSHOOT
+    own = 1.5 * rows[part]["allocation_hours"] - part_consumption(part)
+    cap = min(left, own) / OVERSHOOT
     if cap <= 0:
         raise SystemExit(f"{part}: no room under the caps: a STOP")
     return cap
@@ -223,6 +290,11 @@ def agent_days() -> tuple[float, float]:
 def check_caps(step: str, reserve_days: float, reserve_tokens: int, in_b0: bool = True) -> dict:
     """Before a step: tokens (with the step's reservation) under 80 % of their caps, and the
     agent-days (with the reservation) under theirs; recorded in ``caps.json``. A STOP otherwise."""
+    with Exclusive("check_caps", CAPS_LOCK):
+        return _check_caps(step, reserve_days, reserve_tokens, in_b0)
+
+
+def _check_caps(step: str, reserve_days: float, reserve_tokens: int, in_b0: bool) -> dict:
     doc = json.loads(CAPS.read_text("utf-8"))
     codex = codex_tokens()
     review = independent_review_tokens()

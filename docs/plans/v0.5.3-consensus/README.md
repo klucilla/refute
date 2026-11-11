@@ -211,3 +211,34 @@ assumptions listed in full (the per-planet level over the whole ±3-sigma box; a
 leaves the noise along the binary-to-planet difference unchanged; the eligibility approximation).
 Round 1 reproduced the fingerprint `cc407aecdd294028` from `b00a78d` and checked the 80 shards, the
 800 seeds, 0 errors and the denominator with the 5 generation failures.
+
+## Stage B, B0b: the design of D1's infeasibility test
+
+After B0's stop, the maintainer decided on 2026-11-11 (#217, comment 6804003610) on a
+pre-registered infeasibility test of D1 on C1's information. Its design
+([v0.5.3-stageB0b-design.md](../v0.5.3-stageB0b-design.md)) and script
+(`docs/validation/v0.5.3/stageB/d1_infeasibility.py`), with the ledger's changes, were reviewed
+before any B0b measurement. Codex CLI 0.167.0-alpha.3.2, one conversation, answered in
+Portuguese and stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b0b-design-round-1-answer.md](b0b-design-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (2 corrections) | `07e71a23051e8f12643713e0ca11368e8b36338bea166211641ef42670864db0` |
+| 2 | [b0b-design-round-2-answer.md](b0b-design-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `f7d3b69d2f5b4bcf5f59035abfc197e61c4e81bea9c4d92c55e84b3c5a0f6945` |
+
+Tokens, cumulative:
+
+- round 1: 595,997 input (526,592 cached) and 7,580 output;
+- round 2: 1,031,542 input (933,888 cached) and 11,918 output.
+
+The conversation counts **109,572**, so B0's total is **383,764** of its 1.5 M cap.
+
+Round 1 found the criterion faithful to the maintainer's example and found no tuning to B0's
+figures. It checked the 800 seeds against B0's and found no overlap. It made two corrections to
+the ledger, both applied as written:
+
+- One writer at a time. B0b and B1 run in parallel, and a run saves the whole ledger, so writers
+  are serialized by an exclusive lock file held for the whole run.
+- The part's cap is counted over every attempt, and a run under a new identity is refused.
+
+Round 2 confirmed both.

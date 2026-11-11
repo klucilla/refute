@@ -14,6 +14,11 @@
    "basis": "d1_bound.summarize: process time 27.2 s",
    "hours": 0.007552083333333333,
    "name": "b0_summarize_20261111T155031Z"
+  },
+  {
+   "basis": "d1_infeasibility.smoke: EB1 index 100000, outside the measured 0 to 399; process time 7.7 s",
+   "hours": 0.0021354166666666665,
+   "name": "b0_b0b_smoke_20261111T183027Z"
   }
  ],
  "sections": {
