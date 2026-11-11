@@ -77,3 +77,22 @@ optimistically; the generator's known multiplicative trend on the odd and even t
 only; the sinusoid's residual box in normalized coordinates (a fixed-normalizer oracle assumption),
 the odd/even columns raw. Codex checked the polarization against a dense covariance (relative error
 1.3e-16) and seven counting scenarios.
+
+## Items (c1) and (c2)'s implementation
+
+`docs/validation/v0.5.3/stageA/t2a_bounds.py`, reviewed before its run. Codex CLI
+0.167.0-alpha.3.2, a new conversation.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [t2a-bounds-round-1-answer.md](t2a-bounds-round-1-answer.md) | gpt-6.1-sol, high | `REFUTED` (5 corrections) | `1ac509290c1258c22309852eacaed284ca21d027834b9aab7dcd5c112a161faa` |
+| 2 | [t2a-bounds-round-2-answer.md](t2a-bounds-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `1b22edc3b3217126d06c9daf0f2b07a75bfb1db4c24c2af4cf77df264b93fc09` |
+
+Tokens: round 1, 952,471 input (750,080 cached) and 7,556 output; round 2, 1,303,349 (1,091,968)
+and 10,201. Round 1 confirmed the method's reading (under the design's rules every blocker of T2a's
+51 losses is recoverable, so kept retention's upper bound is 1 on the measured strata, and the
+informative outputs are the background audit and conditional scenarios, labelled as not bounds) and
+asked for five corrections, applied as written: the background not normalized twice; the odd/even
+columns with the host's multiplicative response and a fixed normalizer; the 23-loss background
+cohort for the primary summaries, with the per-sector ratio; the qualifications in the output; the
+fingerprint's coverage.
