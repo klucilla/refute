@@ -40,15 +40,27 @@ how later work is done.
 
 ## Current phase
 
-**v0.5.2 Battery corrections, round 2: stage 2 in progress (since 2026-11-08)**
+**v0.5.3 Battery corrections, round 3: to be scoped (not started)**
 
-- **Why.** v0.5.1, correction round 1 of at most 3, closed as not approved; every failed target of
-  v0.5 stays outstanding. By the advance rule (above), the next phase is a correction phase on the
-  same line. Its section: "v0.5.2 Battery corrections, round 2" below.
-- **State.** Stage 1 ended on 2026-11-08 ([report](docs/validation/v0.5.2/stage1/README.md)). The
-  maintainer delegated the nine items of its stop to the Claude and Codex consensus, within written
-  guidelines (#216, 2026-11-08). Stage 2 runs until the next mandatory stop. `method_status:
-  not_validated`.
+- **Why.** v0.5.2, correction round 2 of at most 3, closed as not approved; every failed target of
+  v0.5 stays outstanding. By the advance rule (above), the next phase is the last correction phase on
+  the same line. Its section: "v0.5.3 Battery corrections, round 3" below.
+- **State.** Not started: its scope is proposed to the maintainer before any work.
+
+### Previous phase record: v0.5.2 Battery corrections, round 2
+
+**v0.5.2 Battery corrections, round 2: closed on 2026-11-10 as not approved** (the maintainer's
+decision of 2026-11-10, #216; [closing record](docs/validation/v0.5.2/closing-record.md))
+
+- No target passed or was declared infeasible; all stay outstanding. It counts as the second of the
+  three correction rounds of the advance rule. No acceptance ran, no confirmation data was used, and
+  no drand round was drawn.
+- The adequacy check of the acceptance's sizing failed; development forecasts showed D2 and T2a
+  failing with battery version 4. The frozen diagnosis of T2a's losses detected no class-(a) or
+  class-(c) blocker among the 51 losses and no instrumentation quarantine; the losses carried unmet
+  sensitivity requirements and procedural refusals whose information limits remain undetermined. No
+  gate review was run, and no exit criterion is ticked.
+- **Method status.** v0.5.2 did not deliver a validated method (`method_status: not_validated`).
 
 ### Previous phase record: v0.5.1 Battery corrections
 
@@ -696,6 +708,10 @@ protocol) runs under the maintainer's delegation of the same date, whose hard ma
 processor-hours of development and acceptance, 150 of calibration, 1.0 M review tokens and 12
 agent-days.
 
+**Closed on 2026-11-10 as not approved, before any acceptance** (the maintainer's decision;
+[closing record](docs/validation/v0.5.2/closing-record.md)). No target passed or was declared
+infeasible.
+
 **Why.** v0.5.1 closed as not approved, with every failed target of v0.5 outstanding (D1 for EB1 and
 EB2, D2, D4, T2a). This is correction round 2 of at most 3 under the advance rule.
 
@@ -706,6 +722,25 @@ equivalently, testing the mask asymmetry first; an estimator's calibration inclu
 distinguishable from an ordinary run; settle what the code can know at run time before a rule
 depends on it; a target must not pass vacuously; caps come from the measured cost; the real-binary
 false-positive pool is scarce.
+
+---
+
+## v0.5.3 Battery corrections, round 3
+
+To be scoped (not started). Its scope is proposed to the maintainer before any work.
+
+**Why.** v0.5.2 closed as not approved, with every failed target of v0.5 outstanding (D1 for EB1 and
+EB2, D2, D4, T2a). This is correction round 3, the last of the advance rule. **If round 3 also ends
+without success, the maintainer decides between changing the approach, recording infeasibility, or
+pausing the line.**
+
+**Lessons of v0.5.2** ([closing record](docs/validation/v0.5.2/closing-record.md)): forecast the
+targets before pricing an acceptance; keep the message and the inputs of every INCONCLUSIVE; a warning
+test's INCONCLUSIVE blocks the verdict while its FAIL only weakens it, a design question for the
+maintainer; an estimator's calibrated domain is a coverage limit, to be sized against the target's
+population; check each power requirement against the target population's noise before building the
+test; size on the code that will run; an information bound is not attainability; review a design
+before its run; hosts of many sectors outlast the 30-minute batch.
 
 ---
 
