@@ -92,8 +92,13 @@
      "checkpoint_shards": 1,
      "identity": "e52a21b0c9155aad",
      "projection_hours": 0.009791666666666667,
-     "spent_hours": 0.016189236111111113,
-     "unresolved_stop": "over the cap: the workers were ended"
+     "reconciled": [
+      {
+       "reason": "The maintainer's decision of 2026-11-12 (afternoon), item 3 (#217, comment 6828684832): the first B1 smoke's stop is reconciled as superseded by the split into b1_smoke_d2, b1_smoke_t2a and b1_smoke_above20 approved on 2026-11-11 (#217, comment 6807681986). The stop stays on file.",
+       "stop": "over the cap: the workers were ended"
+      }
+     ],
+     "spent_hours": 0.016189236111111113
     },
     "b1_smoke_above20": {
      "allocation_hours": 1.0,

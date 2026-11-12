@@ -543,3 +543,57 @@ The tokens are cumulative over the conversation `b1-closing`:
 The conversation now counts **136,938** against stage B's cap.
 
 Applied as Codex wrote them. Round 1 found the closing "not approved" supported (item 2 by T2a, with D2 FAIL on the completed part; item 3 by the cap reached, kept as a fact), the remaining numbers, blockers, intervals and consumption right, the three options concrete and no target relaxed. Its corrections: 17 D2 losses carry both `odd_even` and `sinusoid`; version 5 did not improve retention (142 to 141); only E2's SD criterion passed, and the current E2's insufficiency does not generalize; the 80 % availability is B1.3's; the subtotal excludes the 380 above 20 and contains the 135, with the 163 named as v0.5.2's budget base against its 179.5 CPU-h; for D1, a binary the oracle does not reject is not a SURVIVED; measured numbers distinguished from estimates, stage A's smoke exception named, B1's first smoke left an unresolved stop; the independent review marked pending; LEO-Vetter's full title. Round 2 confirmed every correction; the `{TOKENS}` and `{DAYS}` placeholders are filled after the reviews they count.
+
+## The closing record's revision: the independent review's nine points, checked one by one
+
+Codex's check of the revision of `docs/validation/v0.5.3/closing-record.md` (the maintainer's decision of 2026-11-12, afternoon, items 1 to 3): each of the independent review's nine points (`closing-review.md`, section 5) against the annexes, answered accepted, accepted with a caveat, or rejected; the maintainer's correction on item 3; the first smoke's reconciliation; the review's answer and order in their own section. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-revision-round-1-answer.md](b1-revision-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (points 1, 2, 6, 7, 9 accepted; 3, 4, 5, 8 accepted with a caveat; none rejected; six precision corrections) | `512b0ac401d6874dd4391d55c2cb49b212f9140d78b13182f9cd4e3b0f7c348f` |
+| 2 | [b1-revision-round-2-answer.md](b1-revision-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the consensus record's reference) | `6208eabb8ec062d7407dc321c68d688c53a1e25a3a8018ad97621ca6bf2413cf` |
+
+The tokens are cumulative over the conversation `b1-revision`:
+
+- round 1: 954,057 input (869,632 cached) and 9,361 output;
+- round 2: 1,441,551 input (1,275,776 cached) and 12,327 output;
+
+The conversation now counts **178,102** against stage B's cap.
+
+Applied as Codex wrote them. Round 1 accepted all nine points, four with a caveat, and asked: the check table filled; E2's ratios as the 28 finite values on the 31 earlier losses within the 112 (0.82 to 2.12, median 1.44), not a measurement over all 112; D2's row limited to room under the bound's assumptions on the 112, not recomputed on the 178; item 3's chronology kept (the cap reached at 181 of 200, the application of item 3 withdrawn without undoing the event); "if those five remain REFUTED"; D1's WEAKENED under the aggregation's precedence and the v0.4 clause; the ledgers' exception for the two reconciliations; links instead of "below". It confirmed the smoke's reconciliation in the ledger and the driver's folder, and that `closing-review.md` is byte-identical to `f932cac`. Round 2 confirmed every correction and asked that the record link the consensus files of this conversation, which this entry provides.
+
+## The closing record's revision, round 3
+
+The last round of conversation `b1-revision` (above): the check of the record's links to the archived answers of rounds 1 and 2. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 3 | [b1-revision-round-3-answer.md](b1-revision-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `7e46db8fe451feea03fe2004b7cae10b0f9a2bd84580b8b09cec1eca0a5976a9` |
+
+The tokens are cumulative over the conversation `b1-revision`:
+
+- round 3: 1,985,942 input (1,809,152 cached) and 13,807 output;
+
+The conversation now counts **190,597** against stage B's cap.
+
+Codex confirmed that the links resolve, that the archived answers are byte-identical to its answer files, and that the published SHA-256 match. No correction was needed.
+
+## The decision page after round 3 (`docs/plans/v0.5.3-after-round3-decision.md`)
+
+Codex's review of the one-page design for the maintainer's decision (the maintainer's decision of 2026-11-12, afternoon, item 4): a first stage of cheap information checks (I1 to I4) with pre-registered rules ending in route, draft infeasibility or unresolved, with prices; what a pause leaves pending; the three open design questions, listed only. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-decision-round-1-answer.md](b1-decision-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (I2 and I4's retention counters, I3's joint rule and alternatives, unresolved outcomes, the calendar) | `46628043dbd06e555c30af7b7ee44fde3fca5b65153a8875ab1aef2402e16296` |
+| 2 | [b1-decision-round-2-answer.md](b1-decision-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (I2's keep paths and deduction, I3's planet probabilities, tokens, the table) | `9af9805e74ab4285c16456621df4290f06e9a4aba33394bf493b54891017f4b3` |
+| 3 | [b1-decision-round-3-answer.md](b1-decision-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (I2 unresolved without valid controls: the conservative option) | `a2515ab27e990409efce70bd86fe7c6cc31d726006a36d80b53f81a4c7ec5386` |
+
+The tokens are cumulative over the conversation `b1-decision`:
+
+- round 1: 973,617 input (856,448 cached) and 8,266 output;
+- round 2: 1,376,204 input (1,242,240 cached) and 10,986 output;
+- round 3: 1,820,493 input (1,678,976 cached) and 12,926 output;
+
+The conversation now counts **154,443** against stage B's cap.
+
+Applied as Codex wrote them. Round 1: I1's unresolved outcomes; I2 counted per family and in intersection, with orders, kernels, selection, adequacy and failed fits frozen, and the warning issue (insufficient power prevents a PASS, not by itself a keep); I3 completed with B0's full grid, D4, a defined joint probability, and never a general D1 draft while a warning or INCONCLUSIVE path stays open; I4's counter limited to `odd_even` (the sinusoid apart, a qualified PASS only), with unresolved outcomes and its Cramér-Rao conditions; four business days before the pause. Round 2: I2's keep paths and a dependence-valid deduction; I3's planet-side probabilities left to its own design, with only route or unresolved until then; the tokens reconciled with the per-check estimates; the checks as blocks. Round 3 (the last) found the Markov algebra right but its expectation not grounded (a `systematics` FAIL is not necessarily a false alarm; levels must hold on the U population), and corrected its own round 2: only a FAIL inside `systematics` gets around its INCONCLUSIVE. By the tie-break after three rounds, the more conservative option is recorded: I2 ends in route or unresolved, never in a draft, until controls on `systematics`' FAIL probability on U survive review, with |U_∩| ≥ 64 required.

@@ -1,0 +1,15 @@
+As correções de formato, tokens e escopo de I3 estão corretas. **Resta uma divergência substantiva em I2; a opção conservadora é unresolved, sem rascunho de inviabilidade.**
+
+1. **Markov: a álgebra está correta, condicionada à esperança declarada.** Para \(n=|U_\cap|>63\), atingir 552 mantidos exige pelo menos \(n-63\) recuperações; portanto, \(n-63\ge20\alpha_{\mathrm{tot}}n\) produz o limite de 0,05 **se** \(E[N]\le\alpha_{\mathrm{tot}}n\) estiver justificado ([página:81](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:81)). Acrescentar explicitamente **n ≥ 64**, evitando o caso degenerado n=63, α_tot=0.
+
+2. **A esperança ainda não está fundamentada pelo nulo descrito.** “Planeta injetado sem elevação do background” não torna todo FAIL de `systematics` um falso alarme ([página:78](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:78)). Pode haver problemas reais de momentum dumps ou SAP versus PDCSAP, independentemente do background ([battery_v51_diff.py:437](/C:/Projetos/refute/src/refute/packs/tess/battery_v51_diff.py:437), [503](/C:/Projetos/refute/src/refute/packs/tess/battery_v51_diff.py:503)). Tampouco excluir elevações **detectadas** demonstra ausência de elevações reais.
+
+   Além disso, os níveis precisam limitar as probabilidades **na população selecionada para U**, após ajustes e exclusões, não apenas marginalmente nas calibrações. Markov elimina a exigência de independência, mas não essa exigência.
+
+   **Opção conservadora:** I2 termina em unresolved quanto à inviabilidade enquanto esses controles não estiverem demonstrados; casos sem controle válido não entram no contador certificador.
+
+3. **Precisão sobre warnings, inclusive à minha revisão anterior:** somente um FAIL dentro do próprio `systematics` pode contornar sua sensibilidade insuficiente. Um FAIL de **outro teste warning** não remove o INCONCLUSIVE de `systematics`: a agregação verifica INCONCLUSIVE antes de WEAKENED ([página:73](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:73); [verdict.py:268](/C:/Projetos/refute/src/refute/core/verdict.py:268)). Minha formulação anterior foi ampla demais. **Opção conservadora:** retirar essa outra via de recuperação; manter I2 unresolved pela questão anterior.
+
+As demais correções conferem: I3 reconhece a distribuição conjunta ainda pendente e impede conclusão negativa antes do desenho revisado ([página:109](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:109)); os preços somam **1,75–2,7 M**, com revisão independente adicional ([166](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:166)); os blocos Markdown estão íntegros. I1, I4, calendário, questões apenas listadas e ausência de autorização de execução permanecem preservados.
+
+**WEAKENED (manter I2 unresolved sem controles válidos para a população U, corrigir a via de outros warnings e exigir explicitamente |U_∩| ≥ 64 no gatilho).**

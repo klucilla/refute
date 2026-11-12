@@ -3,15 +3,27 @@
 **For the maintainer's decision; nothing here is decided by Claude or Codex.** Round 3 is the last
 correction round of the advance rule (ROADMAP, "Advance rule"). It closes **not approved** by the
 criterion fixed in stage A's report ([`stageA/README.md`](stageA/README.md), "Round 3's closing
-criterion"), applied as the maintainer's decision of 2026-11-12 (#217) states: **item 2, by T2a**
-(the forecast does not pass it), and **item 3, by a cap reached** (B1.4's D2/D4 part stopped at its
-cap with the forecast not done). Every measured number below comes from a committed file of
+criterion"), by **item 2**: T2a and D2 fail their frozen rules. B1.4's D2/D4 part stopped at its
+cap; that stop is recorded as a fact, and the part was completed afterwards with the maintainer's
+approval. *[The maintainer's correction of 2026-11-12, afternoon (#217): the morning decision
+applied item 3 to that part's cap; item 3 concerns a cap reached with the forecast not done, and the
+forecast was completed, so that application is withdrawn.]* Every measured number below comes from a committed file of
 `stageA/` or `stageB/`, produced by a script reviewed by Codex before its run, with its approval and
 exact procedure posted on #217 before it ran. Stage A's one exception, a smoke run outside the
-ledger, was disclosed there. Prices and the rough development price are estimates, marked as such. Development data only; no confirmation set exists or was
-touched; no drand round was drawn; no lock was made; no real target was selected; nothing in `src/`
+ledger, was disclosed there. Prices and the rough development price are estimates, marked as such.
+Development data only; no confirmation set exists or was touched; no drand round was drawn; no lock was made; no real target was selected; nothing in `src/`
 changed. `method_status: not_validated`. No target is relaxed. The ROADMAP changes only after the
 maintainer approves this record.
+
+**This record was revised on 2026-11-12 (afternoon)** by the maintainer's decision of that day
+(#217):
+- **The independent review's corrections.** The review read commit `40aa485`, and its report,
+  [`closing-review.md`](closing-review.md), is unchanged. Its nine points (section 5) are applied,
+  each marked as the review's. Codex checked each one against the annexes, and its answer per point
+  is in the [table below](#the-independent-reviews-points-and-codexs-check).
+- **The review's own answer** and its proposed order for a change of approach are in a section of
+  their own, as the review's, not adopted.
+- **The maintainer's correction** on item 3, marked as the maintainer's.
 
 ## What led here
 
@@ -41,7 +53,7 @@ The criterion of stage A's report. Round 3 closes at the first of four items:
 |---|---|---|
 | 1. Approved: the forecast passes D1, D2, D4 and T2a, then acceptance and confirmation pass | no | T2a does not pass, and D1 has no route |
 | **2. Not approved, forecast:** an outstanding target fails its frozen rule, or is NOT DECIDABLE | **yes: T2a**. Also D2, which FAILs on the completed part, and D1, which has no forecast and so is not passed | T2a's `K_B` is 331, against 552 needed. D2 version 5 keeps 141 of 178, against at least 156 |
-| **3. Not approved, stage B:** no estimator survives, or a cap is reached with the forecast not done | **yes: a cap was reached** | the part `b1_forecast_d2d4` stopped at its cap with 181 of 200 curves. That stop stays recorded as a fact; the part was completed afterwards under the maintainer's approval |
+| 3. Not approved, stage B: no estimator survives, or a cap is reached with the forecast not done | **no** *[the maintainer's correction, afternoon]* | the part `b1_forecast_d2d4` stopped at its cap with 181 of 200 curves. The cap was reached at 181 of 200, a fact kept in the ledger. The forecast was completed afterwards with approval, which makes the application of item 3 to that part's cap of no effect, without undoing the event. No stage cap was reached. The morning decision's application of item 3 to that part's cap is withdrawn |
 | 4. Not approved, the maintainer's | not invoked | |
 
 ## The state of each target
@@ -51,7 +63,7 @@ The criterion of stage A's report. Round 3 closes at the first of four items:
 | **D1, EB1 and EB2** | the SURVIVED fraction's Wilson 95 % upper end at most 0.10, and no more SURVIVED than v0.4 | **pending, no route.** B0 gave outcome **C**: under the catalog star the bound does not settle it. The oracle leaves an expected 29.2 (EB1) and 35.5 (EB2) non-rejected at the primary level against an allowance of 10; with the star known, 11.9 and 11.2. B0b gave outcome **N**: the pre-registered infeasibility criterion is not met (median pass probabilities 0.452 and 0.102 at 0.05, not below 0.05). Stage A's geometric route (d) did not separate the binaries | `stageB/README.md`, `stageB/b0b-record.md`, `stageA/README.md` (d) |
 | **D2** | kept fraction ≥ v0.4's minus 0.10; REFUTED ≤ 0.05 and its Wilson upper end ≤ 0.10 | **FAIL** on the completed part: 200 new C1 planets, 178 eligible. v0.4 keeps 173, so the minimum is 0.872. Version 5 keeps 141 (0.792 [0.727, 0.845]), with 3 REFUTED (Wilson upper end 0.048). Version 4 keeps 142. Disclosed: the part stopped at its cap at 181 of 200 curves, a stop kept on file, and was completed with the maintainer's approval (0.707 CPU-h, no new stop) | `stageB/b1-forecast-d2d4-complete.json`; `stageB/b1-stop-report-addendum.md` |
 | **D4** | INCONCLUSIVE fraction at target SNR ≥ 15 at most 0.30 | **PASS** in this forecast: version 5 has 7 of 122 INCONCLUSIVE (0.057). It passed in v0.5.2's forecast too (0.122). A forecast is not an acceptance: D4 stays to be accepted with the others | the same |
-| **T2a** | kept fraction ≥ v0.4's minus 0.10, so 0.897 of 615 (551.5) | **no**, by the census rule fixed before the run: `K_B` 331 and `U_B` 0 of 559, against at least 552. C, with the selector treated as certified above 20, keeps 373 of 615, so certification cannot rescue it | `stageB/b1-forecast.json`; the counts are recomputed in `stageB/b1-blockers-decisive.json` |
+| **T2a** | kept fraction ≥ v0.4's minus 0.10, so 0.897 of 615 (551.5) | **no**, by the census rule fixed before the run: `K_B` 331 and `U_B` 0 of 559, against at least 552. C, with the selector treated as certified above 20, keeps 373 of 615, so certification cannot rescue **version 5's** forecast. For a change of approach it is T2a's margin lever: C keeps 42 of 56 above 20 sectors, which raises the losses allowed on 2 to 20 sectors from 7 to about 49 (559 − 510). *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 1.]* | `stageB/b1-forecast.json`; the counts are recomputed in `stageB/b1-blockers-decisive.json` |
 | **T3b** | the EB truth population (v0.5.2: "none as written") | **not executed** in round 3. The recommendation is **A**, added to the approved frame, conditional on qualification; it is pending the maintainer's decision. The qualification costs close to zero CPU and 1 to 2 agent-days; the human adjudication of up to 165 stars is not measured, and ExoFOP's data use policy is an open condition | `stageB/b1-stop-report.md`, section 4 |
 
 ## Stage A's limits (bounds, not attainability)
@@ -61,8 +73,10 @@ The criterion of stage A's report. Round 3 closes at the first of four items:
   - The bound rests on Gaussian noise with the generator's covariance, a joint Fisher bound for
     `odd_even` and the oracle GLS residual for the sinusoid.
   - Three planets stay below 0.95 even for the oracle sinusoid residual.
-- **T2a: narrow room.** The upper bound is 0.909 with the stratum above 20 sectors all lost, and 1.0
-  with it all kept, against 0.897.
+- **T2a: narrow room, and not an information bound.** The upper bound is 0.909 with the stratum
+  above 20 sectors all lost, and 1.0 with it all kept, against 0.897. It is a recoverability count by
+  rule ("every blocker of the 51 losses is recoverable"), on v0.5.2's 51 losses, not a bound on
+  information like D2's. So its room is weaker than D2's. *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 2.]*
   - With the selector's refusal above 20 sectors kept as a rule, at least 552 of the other 559 must
     be kept, which leaves 7 injections of room.
 - **The background's error.** A0's error on the background rise is a median 23.2 times the white
@@ -102,6 +116,11 @@ unaffected.
 
   T2a needs 221 of them, so essentially every class at once.
 
+  This what-if also recovers the 5 REFUTED losses (fatal FAILs: 4 `odd_even`, 1 `period_alias`).
+  If those five remain REFUTED, B tops out at 554 against 552, so at most 2 of the 223 INCONCLUSIVE losses may
+  stay lost. Counted over the INCONCLUSIVE losses only, the recoveries are 72, 124, 207 and 223.
+  *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 3.]*
+
 **D2, version 5 (37 losses of 178):**
 
 | Test | Losses it blocks | As the only blocker | Estimator of version 5, where the test blocks |
@@ -112,6 +131,9 @@ unaffected.
 | `systematics` | 1 | 0 | E4 called, no measurement completed |
 
 - 17 losses carry both `odd_even` and `sinusoid`: 16 with only those two, and 1 with `systematics` too.
+- **No class recorded:** 24 of the 26 `odd_even` and 17 of the 25 `sinusoid` losses are
+  INCONCLUSIVE with no class recorded in the D2 records. So these records do not show a sensitivity
+  cause for them. *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 6.]*
 - **A what-if:** D2 needs 15 more kept. `odd_even` alone recovers 9, `sinusoid` alone 8, and both
   33. So D2 needs both resolved.
 - The diagnostics the stop report had counted (`event_consistency`, `duration_excess`,
@@ -126,12 +148,19 @@ calibrated. B1.3's exploratory veto had no FAIL, so all four were used.
   uninformative.
 - **E2**, the joint GLS odd/even contrast: its SD of 1.007 [0.90, 1.14] passes. It operates on most
   attacks it reaches.
+  - **Against the Fisher bound:** in B1.2, on the 31 earlier losses within v0.5.2's 112 planets
+    that carry `error_ratios` in `b1-screen.json`, the 28 finite ratios of version 5's `odd_even`
+    error to stage A's Fisher bound run from 0.82 to 2.12, with a median of 1.44. They are almost
+    the same as version 4's where both exist. This is not a measurement over all 112 planets. The B1 design did not claim to reach that bound, which
+    assumes the true template.
+  - **B1.2's gain** on those planets (81 to 86 kept) did not carry over to the 178 fresh planets
+    (142 to 141). *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 4.]*
 - **E3**, the ARMA(1,1) GLS of the sinusoid's residual: it delivered 51 of 339 eligible in B1.3. Its
   SD is 1.35 [1.045, 1.87], a warning. It falls back on 547 of 559 T2a attacks of B and on 149 of
   178 D2 attacks (φ outside (0, 0.99), or autocovariances not positive). So **the sinusoid's T2a losses are all version 4's computation**,
   and 23 of its 25 D2 losses are.
-- **E4**, the background sub-check's window-local quadratic baseline: its null screen was empty (2
-  proposals in 13 hosts). It measured in 110 of the 169 T2a losses that `systematics` blocks, and
+- **E4**, the background sub-check's window-local quadratic baseline: its null screen carried no
+  information (2 eligible proposals, 1 contrast, availability 0.0). *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 9.]* It measured in 110 of the 169 T2a losses that `systematics` blocks, and
   `systematics` stayed INCONCLUSIVE in each. The records do not show which of its sub-checks
   kept it so.
 
@@ -149,7 +178,7 @@ From the B1 stop report (sections 2 and 3). Every figure is provisional:
 | Line | CPU-h |
 |---|---|
 | The selector's certification up to 20 sectors | about 135 |
-| The selector's certification above 20 sectors (it buys nothing for T2a) | about 380 |
+| The selector's certification above 20 sectors (it buys nothing for version 5's T2a forecast; for a change of approach it is T2a's margin lever, item 1 of the review's section 5) | about 380 |
 | What remains of v0.5.2's acceptance schedule | 2,824 to 3,446 |
 | The estimators' calibration (an illustration of scale; E4 unpriced; E3's availability is a design problem) | about 206 |
 | The port into `src/` | under 5, plus 1 to 2 agent-days |
@@ -185,7 +214,8 @@ suggest:
      - then an estimator, a screen and a calibration, of the order of tens of CPU-h;
      - unpriced beyond that.
 2. **The sinusoid's residual** (T2a: 95 losses, 29 as the only blocker; D2: 25 losses, 8 as the only blocker, E3 operating in 2 of them).
-   - **The finding:** E3's moment estimates fail on almost every curve.
+   - **The finding:** E3's moment estimates fail on almost every curve. 17 of D2's 25 `sinusoid`
+     losses have no recorded class, so their cause is not shown. *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 6.]*
    - **What to try:** a maximum-likelihood fit of the same noise family on the gapped series (Kalman,
      Jones 1980), or a Gaussian-process kernel. Gate its availability against B1.3's 80 % requirement
      before any calibration.
@@ -196,9 +226,15 @@ suggest:
    - **What to try:** extend A0's domain beyond measured events in 2 to 4 sectors, and certify the
      selector up to 20 sectors.
    - **Price:** about 135 CPU-h for the certification, plus the extension's development.
+   - **The certification above 20 sectors,** about 380 CPU-h (an estimate), belongs here too, as
+     T2a's margin lever. It changes T2a's need from all four blocker classes, with a margin of about
+     2, to three classes, with a margin of about 28. *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 1.]*
 4. **`odd_even`'s sensitivity** (T2a: 43 insufficient sensitivity outside the refusals; D2: 26 losses, 9 as the only blocker. There E2 operated in 22, and `odd_even` stayed INCONCLUSIVE in 21 of them and FAILed in 1, so the current E2 was not enough there; that does not show that every better contrast would fail).
    - **The finding:** E2 operates where it is reached. In B1.3 only its SD criterion passed; its mean and tail stayed UNRESOLVED.
    - **What to try:** use E2's joint contrast where it applies, and widen its domain with A0's.
+   - **On this evidence** E2 alone would not close the gap: its error is 0.82 to 2.12 times the
+     known-template Fisher bound (median 1.44, 28 finite ratios). And D2's `odd_even` losses mostly have no recorded class, so a
+     sensitivity cause is assumed, not shown. *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 4.]* *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 6.]*
 5. **`period_alias`** (T2a: 17). Not addressed in round 3. It needs its own diagnosis.
 
 **Before choosing,** three design questions stay open. They were recorded before stage A's first
@@ -214,7 +250,11 @@ and they are listed here as open, not as proposals.
 
 **D1 needs a new route** before any forecast. B0 points at the star's density, which the catalog
 radius and mass errors blur. A route would need information beyond the light curve and a catalog
-star with 5 % errors, or a test whose power survives them; none is designed.
+star with 5 % errors, or a test whose power survives them; none is designed. Severity matters too.
+D1 counts SURVIVED only, and warning-severity tests exist (`secondary_eclipse` is one). So a warning
+FAIL keeps a binary out of D1's count. Its planet-side price is WEAKENED, which D2 counts as kept,
+when no earlier rule of the aggregation gives REFUTED or INCONCLUSIVE. The
+quantity missing from B0 and B0b is that planet-side cost, by severity. *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 8.]*
 
 **A rough price for one more round of development** like stage B: 60 to 150 CPU-h and 5 to 8
 agent-days, before any acceptance. That is an estimate, not a measurement. It is scaled from round
@@ -228,10 +268,11 @@ target cannot be met with the available data, reviewed by Codex and by an indepe
 
 | Target | Basis? | Why |
 |---|---|---|
-| D1, EB1 and EB2 | **no** | B0b's pre-registered criterion was not met (outcome N). Under the catalog star the oracle bound leaves about three times the allowance at the primary level, but that is a bound on one information model. A binary the oracle does not reject is not a SURVIVED: a binary held INCONCLUSIVE does not survive under D1's frozen rule, so the bound's excess does not show that the frozen target cannot be met. The criterion fixed before the run did not declare infeasibility |
-| D2 | **no** | stage A's bound leaves room (111 and 108 against 97); under stage A's model, `odd_even`'s losses are the estimator's, not missing information; version 5's shortfall shows no information limit |
+| D1, EB1 and EB2 | **no** | B0b's pre-registered criterion was not met (outcome N). Under the catalog star the oracle bound leaves about three times the allowance at the primary level, but that is a bound on one information model. A binary the oracle does not reject is not a SURVIVED: a binary held INCONCLUSIVE does not survive under D1's frozen rule, so the bound's excess does not show that the frozen target cannot be met. The criterion fixed before the run did not declare infeasibility. It is also incomplete: B0 and B0b measured only the binary side. A D1 record would need a joint pre-registered test, with the binaries SURVIVED within the allowance, and no more SURVIVED than v0.4, together with the planet-side rules, for any severity. No number on file addresses that. *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 8.]* |
+| D2 | **no** | stage A's bound leaves room: 111 and 108 against 97, on v0.5.2's 112 planets. Under stage A's model, `odd_even`'s losses are the estimator's, not missing information. Version 5's FAIL is on a different sample (178 fresh planets), and the bound was not recomputed there. So the bound leaves room under its assumptions on the 112, without showing attainability, and it was not recomputed on the 178 *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 5.]* |
 | D4 | **no** | it passes in both forecasts (0.057 here, 0.122 in v0.5.2), so there is nothing to record |
-| T2a | **no** | stage A's bound leaves 7 injections of room; the census shows what blocks, not that it cannot be unblocked |
+| T2a | **no** | no bound exists for its dominant blocker. Stage A's "bound" is a recoverability count, not an information bound *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 2.]*. The 7 injections are the margin under the refusal rule, not an infeasibility threshold. The census shows what blocks, not that it cannot be unblocked |
+| T3b | **no** | not measured in round 3; its population is "none as written", a problem of definition, not an information limit *[The independent review, [`closing-review.md`](closing-review.md), section 5, item 7.]* |
 
 An infeasibility record for T2a would need a bound on the background sub-check's attainable
 error per host, under its declared alternative. It would also need the grid refusals' information
@@ -248,21 +289,85 @@ bounded (v0.5.2's closing record).
 - **What the advance rule implies:** v0.5's capability stays outstanding, and no new capability
   phase starts.
 
+## The independent review's answer and proposed order (the review's, not adopted)
+
+This section reports the review ([`closing-review.md`](closing-review.md), sections 1, 3 and 4). It
+is not adopted: the choice belongs to the maintainer.
+
+- **Does any target have a basis for an infeasibility record?** The review says no, and agrees with
+  this record. It finds the reasons sound for D2 and D4, weaker for T2a (no information bound), and
+  incomplete for D1 (the binary side alone).
+- **Are D2 and T2a reachable by a battery that only passes with evidence?** The review says the
+  evidence does not establish it either way.
+  - **D2:** it has a model-based room, but attainment is far from it.
+  - **T2a:** it has no information bound for its dominant blocker. Its margin is about 2 losses with
+    the refusal above 20 sectors kept, and about 28 with the selector certified above 20.
+  - The review does not count design questions 1 to 3 as a reachability route, because they lie
+    outside the premise of a battery that only passes with evidence.
+- **What a change of approach should try first,** in the review's order:
+  1. **Log what the records cannot tell:**
+     - which `systematics` sub-check holds the 110 losses where E4 measured;
+     - D2's missing INCONCLUSIVE classes.
+  2. **A per-host bound on the background-rise error** under a fitted model of the slow
+     variability, with a pre-registered rule: about 64 of 615 shown unreachable gives a draft
+     infeasibility record, and otherwise an estimator target.
+  3. **A joint pre-registered D1 test,** with the planet side (P and PG under D2, D3 and D4) for
+     fatal and warning severity.
+  4. **`odd_even`'s Fisher bound with the transit shape as a nuisance parameter.** A shape-fitted
+     contrast comes only if room remains.
+  5. **The sinusoid's residual** by exact likelihood on gapped data, with availability gated at 80 %.
+  6. **Coverage:** A0's grid, and the selector's certification up to 20 sectors and above 20, the
+     latter priced as T2a's margin lever.
+  7. **`period_alias`'s diagnosis,** needed only if the stratum above 20 stays refused.
+
+## The independent review's points and Codex's check
+
+Each point is from [`closing-review.md`](closing-review.md), section 5. Codex checked each one
+against the annexes and answered accepted, accepted with a caveat, or rejected with the reason. A
+rejected point stays here with its reason. Codex's answers are in the consensus record, unchanged.
+
+Codex's check is conversation `b1-revision`, archived unchanged in the consensus record:
+[round 1](../../plans/v0.5.3-consensus/b1-revision-round-1-answer.md) (the nine answers) and
+[round 2](../../plans/v0.5.3-consensus/b1-revision-round-2-answer.md), and
+[round 3](../../plans/v0.5.3-consensus/b1-revision-round-3-answer.md) (`SURVIVED`), with their
+SHA-256 in [the consensus README](../../plans/v0.5.3-consensus/README.md) under "The closing
+record's revision".
+
+| Point (section 5) | Codex's answer | Reason or caveat |
+|---|---|---|
+| 1. Certification above 20 is T2a's margin lever | **accepted** | C keeps 42 of 56 above 20, so 552 − 42 = 510 of 559 are needed and 49 losses are allowed. The margin of about 28 depends on the what-if's 207 recoveries |
+| 2. T2a's stage-A "bound" is a recoverability count | **accepted** | `t2a-bounds.json` counts the recoverability of v0.5.2's 51 losses under an optimistic rule. It is not an information limit |
+| 3. The what-if also recovers the 5 REFUTED losses | **accepted with a caveat** | 4 `odd_even` and 1 `period_alias` FAIL. If they remain REFUTED, the ceiling is 554, and the INCONCLUSIVE-only recoveries are 72, 124, 207 and 223. The condition is now explicit |
+| 4. E2's distance to the Fisher bound; B1.2's gain | **accepted with a caveat** | The 81-to-86 gain and its absence on the 178 (142 to 141) check out. The ratios cover the earlier losses' subset, and their full range is 0.82 to 2.12. Both are now stated |
+| 5. The bound's sample (112) versus the FAIL's (178) | **accepted with a caveat** | The over-reaching "no information limit" was removed. The bound leaves room under its assumptions on the 112 and was not recomputed on the 178 |
+| 6. D2 losses with no recorded class | **accepted** | 24 of 26 `odd_even` and 17 of 25 `sinusoid`. These records do not show a sensitivity cause |
+| 7. T3b missing from the infeasibility table | **accepted** | Added: not measured, "none as written", no basis |
+| 8. D1's planet side and severity | **accepted with a caveat** | `secondary_eclipse` is a warning; D1 counts SURVIVED only (`c1.py:641-649`), and D2 counts WEAKENED as kept (`:654`). The v0.4 clause and the aggregation's precedence are now kept |
+| 9. E4's null screen "empty" | **accepted** | 2 eligible, 1 contrast, availability 0.0. "Carried no information" replaces "empty" |
+
+No point was rejected.
+
 ## Use of the caps (round 3)
 
 | Cap | Stage A | Stage B | Note |
 |---|---|---|---|
-| CPU-h | **7.78** of 50 | **53.273** of 150: B0 4.923 of its 30; B1 48.350 of its 120, of which the D2/D4 completion took 0.707 | `stageA/ledger.json`, `stageB/ledger.json`. Two parts reached their own caps: B1's first smoke, which the maintainer's split replaced, and D2/D4, completed afterwards. No stage cap was reached |
-| Review tokens | 0 of 0.5 M (Codex's tokens did not count in stage A) | **2,278,749** of 4.5 M (the stop is at 3.6 M): Codex 2,058,175 over 13 conversations (B0 489,509), and the independent review 220,574, by the session tool's count | stage B counts Codex's uncached input plus output, from the last turn of each conversation, plus the independent review |
-| Agent-days | 0.74 wall-clock bound, 0.21 active, of 4 | **3.0** wall-clock bound, **0.91** active, of 8 (`stageB/caps.json`, the check after the independent review) | Claude's transcripts. Codex's and the reviewer's time is not counted |
+| CPU-h | **7.78** of 50 | **53.273** of 150: B0 4.923 of its 30; B1 48.350 of its 120, of which the D2/D4 completion took 0.707 | `stageA/ledger.json`, `stageB/ledger.json`. Two parts reached their own caps, and both stops are reconciled and kept: B1's first smoke, which the maintainer's split replaced, and D2/D4, completed afterwards. No stage cap was reached |
+| Review tokens | 0 of 0.5 M (Codex's tokens did not count in stage A) | **2,278,749** of 4.5 M (the stop is at 3.6 M): Codex 2,058,175 over 13 conversations (B0 489,509), and the independent review 220,574, by the session tool's count. After this revision and the decision page: **2,623,789** (Codex 2,403,215 over 15 conversations, the review 220,574) | stage B counts Codex's uncached input plus output, from the last turn of each conversation, plus the independent review |
+| Agent-days | 0.74 wall-clock bound, 0.21 active, of 4 | **3.0** wall-clock bound, **0.91** active, of 8 (`stageB/caps.json`, the check after the independent review); after the revision and the decision page, 3.16 and 0.99 | Claude's transcripts. Codex's and the reviewer's time is not counted |
 | Disk | | 1.46 GB under `.cache/v053/stageB/`, of 5 GB | the T2a cache is 1.27 GB of it |
 
 ## Preserved, unchanged
 
-Every record of stage A, B0, B0b and B1 is unchanged:
+Every record of stage A, B0, B0b and B1 is unchanged, with one disclosed exception:
 
-- their scripts, outputs and ledgers;
-- every stop: the D2/D4 cap stop, reconciled, is kept in `ledger.json` under `reconciled`; B1's first smoke stays an `unresolved_stop`, its handling decided by the maintainer;
+- their scripts and outputs;
+- the ledgers, except that stage B's `ledger.json` received the two reconciliations below, each
+  appended under `reconciled` without deleting its stop;
+- every stop, each kept in `ledger.json` under `reconciled`:
+  - the D2/D4 cap stop;
+  - B1's first smoke, reconciled on 2026-11-12 (afternoon) by the maintainer's decision as superseded
+    by the split approved on 2026-11-11. Its driver stop file is kept as
+    `stop-reconciled-000.json`;
 - `b1_b14.py`, `b1_t2a_blockers.py` and their outputs;
 - the stop report, corrected by a new addendum, not by an edit.
 
@@ -283,25 +388,11 @@ Nothing under `src/` or `calibration/` changed. v0.5.0's release files are untou
   - the approach (change, infeasibility or pause);
   - T3b: whether to qualify A, and with whose adjudication.
 - **The ROADMAP** changes only after the maintainer approves this record.
-- **The independent review** of this record (the maintainer's item 4) is
-  [`closing-review.md`](closing-review.md), kept unchanged. It ran on commit `40aa485`, after Codex's
-  review.
-  - **Its verdict: WEAKENED.** It agrees that the round closes not approved and that no target has
-    a basis for an infeasibility record now.
-  - **It lists nine points** where this record overstates or omits (its section 5). Among them:
-    - the certification above 20 sectors "buys nothing" holds only for version 5's forecast; for a
-      change of approach it is T2a's margin lever;
-    - T2a's stage-A "bound" is a recoverability count, not an information bound;
-    - the T2a what-if also recovers the 5 REFUTED losses;
-    - E2's error stays about 1.1 to 2.1 times the Fisher bound;
-    - 24 of 26 `odd_even` and 17 of 25 `sinusoid` D2 losses have no INCONCLUSIVE class recorded;
-    - T3b is missing from the infeasibility table;
-    - D1's planet side and severity are missing.
-  - **It proposes another order** for a change of approach. First, record what the records cannot
-    tell. Then a per-host bound on the background rise, a joint D1 test with the planet side, and
-    `odd_even`'s bound with the transit shape as a nuisance. Estimators come after.
-  - **None of its points is applied to this record.** They are left to the maintainer's decision,
-    which follows this review.
+- **The independent review** of this record (the maintainer's item 4) read commit `40aa485`. Its
+  report, [`closing-review.md`](closing-review.md), is unchanged. Its points are applied above and
+  checked in [the table](#the-independent-reviews-points-and-codexs-check). Its answer and its order are in
+  [their own section](#the-independent-reviews-answer-and-proposed-order-the-reviews-not-adopted).
+- **The decision page** for the approach and T3b is [`v0.5.3-after-round3-decision.md`](../../plans/v0.5.3-after-round3-decision.md).
 - #59 and the open issues are as triaged in v0.5.2.
 
 ## Sources (read on 2026-11-12; they inform the options only, no number comes from them)

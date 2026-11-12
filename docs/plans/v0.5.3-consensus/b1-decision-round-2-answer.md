@@ -1,0 +1,19 @@
+As correções de **I1, I4 e calendário estão adequadas**, mas I2 ainda não sustenta seu rascunho e surgiram inconsistências de especificação e apresentação.
+
+1. **I2: um FAIL de outro subcheck também pode permitir retenção.** A afirmação “only by a FAIL of the sub-check” está incorreta ([página:36](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:36)). `systematics` retorna FAIL quando **qualquer** subcheck identifica um problema, e a sensibilidade só transforma resultados PASS, preservando FAILs ([battery_v51_diff.py:557](/C:/Projetos/refute/src/refute/packs/tess/battery_v51_diff.py:557); [sensitivity.py:188](/C:/Projetos/refute/src/refute/core/sensitivity.py:188)). Portanto, limitar os falsos alarmes do background não limita todas as formas de retenção por WEAKENED. **U precisa considerar essas outras saídas ou terminar em unresolved.**
+
+2. **I2: o desconto binomial precisa de hipóteses adicionais.** O limite marginal \(P(\mathrm{FAIL})\leq\alpha\) não basta para usar um quantil binomial ([página:41](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:41)). Há várias injeções nas mesmas 84 hospedeiras, e a independência não foi estabelecida. Além disso, injetar um planeta não garante ausência de uma elevação real do background original.
+
+   **Correção:** pré-especificar e justificar α para a população selecionada, o nulo e a dependência entre injeções, ou usar um limite válido sob essa dependência. O resultado descontado seria um limite **probabilístico sob essas hipóteses**, não o determinístico “at most 551”. A separação entre \(U_k\), \(U_\cap\) e unresolved ficou correta; 64 continua sendo o limiar aritmético certo ([página:39](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:39)).
+
+3. **I3: proteção de escopo correta, simulação ainda incompleta.** Grade completa, D4 e a proibição de promover o resultado fatal a inviabilidade geral corrigem os problemas anteriores ([página:51](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:51), [60](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:60)). Entretanto, “each planet’s […] oracle probability” permanece indefinido ([página:53](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:53)). B0 fornece um limite de separação por binária a um nível α, não probabilidades de rejeição de P/PG por um único teste comum ([d1_bound.py:10](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/d1_bound.py:10)).
+
+   **Correção:** definir essas probabilidades e demonstrar como formam uma distribuição conjunta válida. Não substituir automaticamente uma probabilidade planetária por seu limite superior α para concluir inviabilidade.
+
+4. **Tokens: a nova justificativa não reproduz o orçamento.** Quatro checagens × três conversas × 150–220 mil resultam em **1,80–2,64 M**, antes da revisão independente, enquanto o total continua 1,6–2,6 M. I4 também continua em 0,3–0,5 M, abaixo dos 0,45 M mínimos dessa hipótese ([página:68](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:68), [72](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:72)). Ajustar os preços ou explicitar quantidades diferentes por checagem.
+
+5. **A tabela Markdown foi quebrada pelas expansões.** Listas e parágrafos com linhas em branco interrompem as células de I2–I4 ([página:30](/C:/Projetos/refute/docs/plans/v0.5.3-after-round3-decision.md:30)). Converter essas checagens em blocos próprios ou restaurar linhas válidas da tabela.
+
+I1 agora trata os casos sem descarte silencioso; I4 separa corretamente retenção de PASS qualificado e declara suas condições. O calendário corrigido é apresentado como estimativa. As questões de desenho continuam apenas listadas, sem alteração das metas ou autorização de execução.
+
+**WEAKENED (corrigir as saídas e o desconto probabilístico de I2, completar a distribuição conjunta de I3, reconciliar tokens e reparar a tabela Markdown).**
