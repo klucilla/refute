@@ -1,0 +1,11 @@
+**Run 2 corrigido; resta um bloqueio no Run 3.** Verificado somente em leitura, com simulações em memória.
+
+- **Run 2:** `_close` preserva identidade, consumo e projeção em `attempts`. Após fechamento e transferência, confirmei **48,6611 CPU-h projetados**, consumo preservado e hard cap de **9,3845 CPU-h**. Permanecem 266 linhas e fingerprint `161851db746b905b` ([i4_rest2.py:152](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:152), [276](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:276)).
+
+- **Run 3, bloqueio:** arquivar mantém **consumo arquivado + alocação restante** na projeção de [budgeted.py:90](C:/Projetos/refute/docs/validation/v0.5.2/stage2/budgeted.py:90). Isso volta a ultrapassar 50 em um cenário autorizado. Reproduzi: projeção congelada de 4,7, cap de 7,05 e consumo de 7,1 CPU-h, encerrado por `stopped: the cap is reached`. Antes do fechamento, total **48,7611**. Após `_close` e transferência, **55,7611**, embora o consumo real da fase seja somente **18,9437**. O doador passa a contar como **14,1 = 7,1 consumidos + 7 alocados**, e o guard impede o Run 3 ([i4_rest2.py:272](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:272)). **Correção:** contabilizar a parte encerrada sem reservar novamente a alocação correspondente ao consumo já arquivado, preservando histórico e tetos.
+
+- **Demais correções:** cap do driver concordante é aceito e reconciliado; divergência é recusada; débito zero é ignorado. Os checks científicos antecedem as mutações, bloqueiam binding stop e **L ≥ 23**. Confirmei nos dados atuais **L = 0, um inválido**, além das recusas em simulações ([i4_rest2.py:134](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:134), [188](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:188), [236](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:236), [267](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:267)).
+
+SHA-256: `a04f7ce11811eebdae3f51b71ab505f1cdb36a1507a10696aeeb37523e97b386`.
+
+WEAKENED (corrigir a projeção após o fechamento de `h1_i4_rest2`).

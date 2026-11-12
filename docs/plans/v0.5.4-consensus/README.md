@@ -65,3 +65,23 @@ The tokens are cumulative over the conversation `h1-i4rest`:
 The conversation now counts **104,498** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1 confirmed the crash charge (5.082674 CPU-h), the 280 rows, the drain at 19:30 through the driver, and the faithful reuse of the frozen summary with planet 3129 excluded from L and disclosed; its corrections: keep finish's stop, resume only this step's own intermediate stop, write the transfer's debit, credit and history in one save (ledger_i.py stays unedited, inside I1's and I4's fingerprints), refuse an open batch of the rest, guard the reader (stops, gates, unique keys, 290 records), and release the stale lock only as a kept file. Round 2: a durable start and end per run (a start without an end is a STOP), a failed PID query treated as alive, and a pending main stop checked whatever the history. Round 3 found no new defect; its conservative note: a crash after a start, even before any dispatch, is a STOP for the maintainer, never a manual completion of the journal or a repeat.
+
+## I4's second completion step (`docs/validation/v0.5.4/i4_rest2.py`), reviewed as a diff against `i4_rest.py`
+
+Codex's review of the script that reconciles h1_i4_rest's cap stop as a fact and runs the 266 remaining planets as h1_i4_rest2 with 6 workers, and of its one pre-approved reserve (h1_i4_rest3 with the first half's sub-cap raised to 30), before its run (the maintainer's decision of 2026-11-12, 18:05). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h1-i4rest2-round-1-answer.md](h1-i4rest2-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the total projection at the transfer, run 3's accepted stops and zero debits, the science checks) | `e8917bdd0fd69e2e8327a583b6ebb96248e50bbd8696ec8558fa2a5fa63d1484` |
+| 2 | [h1-i4rest2-round-2-answer.md](h1-i4rest2-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (a closed part counted twice in run 3) | `0e4b440667c27c88b62795201fa5a6a09d1442a5f7084d2a08b20825688a974c` |
+| 3 | [h1-i4rest2-round-3-answer.md](h1-i4rest2-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (rounding of a debit, a closed part as a target: the conservative options) | `e4041d4b90d09fd674306a1bef68f00bce5b8388285486a29b9283c994114b83` |
+
+The tokens are cumulative over the conversation `h1-i4rest2`:
+
+- round 1: 715,607 input (654,464 cached) and 8,886 output;
+- round 2: 1,516,362 input (1,436,288 cached) and 16,208 output;
+- round 3: 2,099,658 input (2,009,728 cached) and 24,426 output;
+
+The conversation now counts **114,356** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1 confirmed the 290 rows, the 10 and 14 verified shards, the 266 left, the fingerprint, the atomic transfer and the drain; its corrections: the stopped part's frozen projection would push the total projection above 50 at the transfer, so it is accounted by its consumption; run 3 accepts the cause's own cap stop in the driver's folder when it agrees with the ledger, and skips a donor with nothing left; I4's binding stop and L so far (below 23) are checked before any change. Round 2 found the archived consumption counted twice in run 3; archiving, and reducing the allocation, both double count through the unallocated-line term, so a closed part now keeps its identity, consumption and allocation and its projection becomes its consumption, the frozen projection kept as `projection_at_stop` and in `allocation_closures` (totals 48.26 for run 2 and 48.36 in the run-3 scenario). Round 3 (the last): by the tie-break, the conservative options were applied and recorded: a donor's debit is rounded down, and a closed part is never a target again; any failure in the transition to run 3 is a STOP for the maintainer, never resumed by run 2.

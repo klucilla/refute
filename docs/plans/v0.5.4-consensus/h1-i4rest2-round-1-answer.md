@@ -1,0 +1,17 @@
+**Há bloqueios antes da execução.** Comparei com o `i4_rest.py` commitado, sem alterações. As verificações adicionais foram em leitura e em memória, sem executar `run` ou `summarize`.
+
+1. **Run 2: a transferência provoca uma parada pelo total da fase.** Em [i4_rest2.py:214](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:214), os débitos e históricos são atômicos e preservam 49,9 CPU-h alocados. Porém, a projeção congelada de `h1_i4_rest`, 7,2556 CPU-h, continua contando junto com a nova parte. Reproduzi **49,5538 → 55,1538 CPU-h projetados**. O guard de [budgeted.py:247](C:/Projetos/refute/docs/validation/v0.5.2/stage2/budgeted.py:247) interromperia antes do primeiro lote. **Correção:** contabilizar a parte encerrada pelo consumo efetivo, preservando sua projeção e identidade no histórico, sem contar novamente seu trabalho futuro.
+
+2. **Run 3: alguns stops autorizados são recusados.** [i4_rest2.py:163](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:163) rejeita qualquer stop do driver antes de avaliar `CAP_STOPS`. Tanto `over the cap` quanto `cap was passed by the end` deixam esse arquivo. **Correção:** reconhecer e reconciliar exclusivamente o stop autorizado de `rest2`, conferindo a concordância com o ledger e preservando ambos os históricos. Além disso, [i4_rest2.py:135](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:135) recusa débito **zero** quando o doador já gastou acima da alocação. Reproduzi com 7,1 gastos sobre 7 alocados. Esse caso precisa permitir o uso das outras fontes sem retirar horas desse doador.
+
+3. **Run 3: faltam bloqueios científicos antes da reserva.** Os checks de [i4_rest2.py:150](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:150) não verificam `i4.STOP_FILE`, criado pelo shard em caso de erro ou reprodução divergente. Também não verificam L acumulado. Um cap concomitante pode, portanto, abrir o caminho da reserva apesar desses impedimentos. **Correção:** verificar o binding stop e os registros anteriores, inclusive **L ≥ 23**, antes de reconciliar ou transferir. Total da fase, accounting e shard lento são corretamente excluídos pelos prefixos atuais.
+
+Os demais pontos conferem:
+
+- **Run 2:** stop de origem exigido exatamente; reconciliação preservada no histórico; 5,6 deixam 0,4 CPU-h, acima dos 0,3628 gastos. Confirmei **290 linhas, 10 + 14 shards verificados, nenhuma sobreposição, 266 restantes**, fingerprint `161851db746b905b`. Mesmo shard, pasta própria, 6 workers e drenagem herdada em 18/11 às 19:30 ([i4_rest2.py:180](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:180), [232](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:232)).
+- **Subteto:** aumento e transferência de 5 CPU-h de H2 são gravados juntos. O binding ocorre antes de `declare` e `hard_cap`, coerentemente com ambos; fase permanece em 50. A criação da alocação é única ([i4_rest2.py:211](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:211)). Identidade e journals bloqueiam mudança de registro e interrupção aberta.
+- **Summarize:** verifica shards, duplicatas, stops, gates e journals; reutiliza o cálculo congelado. Exclui e divulga 3129. Separa corretamente **5,0827 CPU-h cobrados** dos **0,1858 CPU-h medidos nos dez sidecars** ([i4_rest2.py:249](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:249), [284](C:/Projetos/refute/docs/validation/v0.5.4/i4_rest2.py:284)).
+
+SHA-256 revisado: `422973043bcbbdf0f48933ad00fa9492852f7937e1dd65bac1ca518ac17634b9`.
+
+WEAKENED (corrigir os três bloqueios antes de rodar).
