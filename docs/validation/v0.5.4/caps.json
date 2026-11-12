@@ -92,6 +92,58 @@
     "review_tokens": 0,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-12T18:38:25Z",
+   "step": "i4 run",
+   "codex_tokens": {
+    "conversations": {
+     "h1-design": 222070,
+     "h1-i2i3": 137225
+    },
+    "h1": 359295,
+    "phase": 359295
+   },
+   "independent_review_tokens": 0,
+   "final_review_tokens": 0,
+   "agent_days_wall": 0.2,
+   "agent_days_active": 0.13,
+   "cpu_hours": {
+    "phase": 6.398,
+    "h1": 6.398
+   },
+   "disk_bytes": 2441330,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0,
+    "disk_bytes": 64500000
+   }
+  },
+  {
+   "utc": "2026-11-12T18:47:31Z",
+   "step": "after the I2/I3 paper designs",
+   "codex_tokens": {
+    "conversations": {
+     "h1-design": 222070,
+     "h1-i2i3": 177784
+    },
+    "h1": 399854,
+    "phase": 399854
+   },
+   "independent_review_tokens": 0,
+   "final_review_tokens": 0,
+   "agent_days_wall": 0.21,
+   "agent_days_active": 0.15,
+   "cpu_hours": {
+    "phase": 6.398,
+    "h1": 6.398
+   },
+   "disk_bytes": 2522350,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
   }
  ],
  "final_review_tokens": 0

@@ -10,7 +10,9 @@
      "spent_hours": 6.398289930555555
     },
     "h1_i4": {
-     "allocation_hours": 8.0
+     "allocation_hours": 8.0,
+     "identity": "48fc21d2fa9a67b4",
+     "spent_hours": 0.0
     },
     "h1_reserve": {
      "allocation_hours": 8.9

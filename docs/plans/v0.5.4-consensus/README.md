@@ -25,3 +25,23 @@ The tokens are cumulative over the conversation `h1-design`:
 The conversation now counts **222,070** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1: the full pipeline replayed (coverage, sensitivity, deferral); every supplied block validated; `dumps` categorical; T2a's identity (v0.4's C2 compatibility, the candidate, decisive and deferred lists, inputs in the fingerprint); L over all 178; I4's mean model frozen, analytic derivatives with a baseline-aware convergence check, E extended, the condition number after column scaling, k² Fisher calls and a 4-8 CPU-h price; the ledger's `assert_bound`, independent-review tokens counted (a separate final allowance), and a disk reservation. Round 2: binding stops by a stop file with later shards skipped and a failing summary; absent versus malformed sensitivity and undeclared blocks; the decisive tests' raw and enforced messages and the report's distributions, estimators and unresolved cases; bounded records; I4's sinusoid isolated and non-finite convergence rejected; `_atomic_save` bound. Round 3 (the last) left three stop defects; by the tie-break, its conservative options were applied and recorded: in I4 an unexpected error or an oversized record is a binding stop, not part of E; I4 verifies I1's provenance (its current fingerprint, the completed and verified part, 206 cases, none skipped, no stop anywhere) before scheduling; and a summary writes its report from the verified shards when the assembly is refused, exiting with a failure.
+
+## I2's and I3's paper designs (`docs/plans/v0.5.4-I2-I3-designs.md`)
+
+Codex's review of the paper designs of I2 (T2a's per-host background bound) and I3 (D1's joint test with the planet side), written in the first half and frozen only after I1's result, with neither run (the maintainer's decision of 2026-11-12, 14:00, item 3). Round 2 was interrupted by the desktop app's restart and rerun from the same prompt; only the completed answer is stored. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h1-i2i3-round-1-answer.md](h1-i2i3-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (I2's measurement correspondence and unknowns, I3's joint definition, Monte Carlo uncertainty, the price) | `4a5731c12bddadcb3e2317a95666783b60979355acfbe167a1f1a3ef380031aa` |
+| 2 | [h1-i2i3-round-2-answer.md](h1-i2i3-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (I3's quantile and fatal precedence, I2's nuisances, numerical freeze and price) | `295e30f765fe001a8daa234a7d22152244f29468e236c4d586ea8f74b398dea9` |
+| 3 | [h1-i2i3-round-3-answer.md](h1-i2i3-round-3-answer.md) | gpt-6.1-sol, high | `WEAKENED` (I2's internal detrending, open numerical starts, I3's joint envelope and quantile claim: the conservative options) | `039b36fe7e8dbb755e7016664bb99461710f952b887d57fdb63763dc2b9a67e7` |
+
+The tokens are cumulative over the conversation `h1-i2i3`:
+
+- round 1: 1,491,314 input (1,364,352 cached) and 10,263 output;
+- round 2: 2,143,294 input (1,993,984 cached) and 14,373 output;
+- round 3: 2,502,745 input (2,344,192 cached) and 19,231 output;
+
+The conversation now counts **177,784** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1: I2 rebuilds each injection to read the sub-check's own measurement and the SAP depth's error, keeps σ_op (the sub-check's contrast) apart from σ_GLS (the information bound), counts unknowns so they cannot make a route, and the 56 above 20 a conditional scenario; I3's statistic defined with aliases and penalized priors as a new test, its calibration frozen, its uncertainty propagated, the joint distribution as a conditional scenario, the warning and INCONCLUSIVE paths to the maintainer, its price about 860 CPU-h. Round 2: I3's threshold is the lower α quantile with strict rejection, and a new fatal FAIL makes any gate-passed verdict REFUTED; I2's nuisances are E4's quadratic terms, its numerics filled in, its price 95-380 CPU-h, a smoke only with authorization. Round 3 (the last): by the tie-break, the conservative options were applied and the designs frozen as paper designs only: E4's internal detrending must enter I2's contrast with unit response shown, or the injection is unknown; the remaining starts are impediments; I3 needs a joint-coverage envelope (route only with its lower bound at least 0.95, a finding only with its upper bound below 0.05, unresolved otherwise) and no population guarantee for the quantile. Neither runs before the maintainer's decision.

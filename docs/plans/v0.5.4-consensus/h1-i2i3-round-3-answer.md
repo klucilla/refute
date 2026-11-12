@@ -1,0 +1,19 @@
+**Ainda não como protocolos completos revisados.** Nesta última rodada, a opção conservadora é congelar apenas o desenho no papel **com as correções e impedimentos abaixo incorporados**, mantendo ambos sem execução.
+
+**Correções que sobreviveram**
+
+Estão corretos: nuisances quadráticas de E4 e seu fallback; U sobre 615 com K contado conservadoramente; mediana do I1 sobre 103; quantil inferior e rejeição estrita; precedência fatal sobre INCONCLUSIVE; restrição ao teste e cenário examinados; custos apresentados como estimativas e smoke dependente do mantenedor. Referências: [desenho:88](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:88), [desenho:108](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:108), [desenho:165](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:165), [desenho:185](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:185).
+
+**Divergências restantes e opção conservadora**
+
+- **I2 ainda descreve incorretamente o preprocessing.** [Desenho:82](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:82) afirma ausência de detrending anterior. Receber `sap_bkg` bruto não elimina o detrending **interno**: E4 chama `AdditiveDetrender` e mede sua série transformada, em [battery_b1.py:572](C:/Projetos/refute/docs/validation/v0.5.3/stageB/battery_b1.py:572). **Conservador:** incluir essa transformação completa em `c`, congelando também suas escolhas adaptativas, ou transformar a covariância correspondentemente. Demonstrar resposta unitária à amplitude e remoção das nuisances antes de comparar σ_op e σ_GLS. Onde isso não estiver demonstrado, classificar como **K**, sem declaração de limitação informacional.
+
+- **A especificação numérica ainda não está integralmente fechada.** Falta o start de S₀ e a definição dos três starts da soma dos kernels em [desenho:56](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:56). I3 continua deixando starts, limites e convergência para congelamento futuro: [desenho:163](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:163). **Conservador:** registrar essas lacunas como impedimentos de implementação/execução, sem escolhas discricionárias durante ajustes.
+
+- **I3: duas pontas não delimitam a probabilidade conjunta.** Em [desenho:175](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:175), repetir a computação apenas nos limites dos intervalos não basta: aumentar a rejeição ajuda D1 nas binárias e prejudica D2 nos planetas. A probabilidade conjunta pode atingir seu máximo **no interior**. Intervalos Clopper–Pearson individuais de 95% também não fornecem cobertura simultânea para todas as curvas, e a mediana dos cohorts não quantifica, sozinha, o erro Monte Carlo. **Conservador:** exigir um envelope válido sobre toda a região de incerteza, com cobertura conjunta explicitada. Route somente com limite inferior ≥0,95 em algum nível; finding somente com limite superior <0,05 em todos. Sem esse envelope, **unresolved**.
+
+- **Empates não garantem nível populacional ≤α.** A frase em [desenho:167](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:167) é forte demais para um quantil amostral estimado. Rejeição estrita resolve os empates, mas não a incerteza do corte. **Conservador:** especificar o estimador do quantil e retirar a garantia populacional automática; manter calibração estimada da mistura, sujeita ao tratamento de incerteza acima.
+
+Os impedimentos de orçamento e autorização estão corretamente preservados em [desenho:137](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:137), [desenho:216](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:216) e [desenho:238](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:238). Nenhuma dessas correções relaxa alvo ou regra da bateria.
+
+**WEAKENED, com correção do preprocessing do I2, fechamento numérico e tratamento conservador da calibração e da incerteza conjunta do I3; congelamento apenas documental e condicionado, sem execução.**

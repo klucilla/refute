@@ -1,0 +1,21 @@
+**Ainda não podem ser congelados como desenhos completos revisados.** As correções avançam, mas restam dois erros novos no I3 e pendências materiais no I2. Nada foi alterado ou executado.
+
+**I2**
+
+- **População e desconhecidos: corretos.** Reconstruir as medições, recuperar o erro SAP, manter os 56 acima de 20 condicionados à certificação e exigir `|U_k| + |K_k| ≤ 63` corrigem os problemas anteriores: [desenho:25](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:25), [desenho:98](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:98). I1 confirma os 102 casos pertinentes. Pequena precisão: a mediana **0,371 está registrada sobre os 103 classe (i)**, não especificamente sobre os 102: [diagnóstico:31](C:/Projetos/refute/docs/validation/v0.5.4/i1-diagnosis.json:31).
+
+- **Separar σ_op e σ_GLS é correto, mas as nuisances ainda não coincidem.** [Desenho:79](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:79) prevê somente um nível por janela. E4 remove **constante, termo linear e quadrático**, com fallback para média das bandas: [battery_b1.py:457](C:/Projetos/refute/docs/validation/v0.5.3/stageB/battery_b1.py:457), [battery_b1.py:500](C:/Projetos/refute/docs/validation/v0.5.3/stageB/battery_b1.py:500). Inclua os termos efetivos em Z. Para σ_op, explicite também o detrending anterior no contraste ou na covariância transformada, congelando suas decisões adaptativas. Fixar apenas eventos e pesos não demonstra a variância completa do procedimento: [battery_b1.py:572](C:/Projetos/refute/docs/validation/v0.5.3/stageB/battery_b1.py:572).
+
+- **O congelamento numérico continua pendente.** O texto ainda promete três starts sem fornecer valores, omite limites completos e deixa incompleta a parametrização do oscilador: [desenho:46](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:46). A regra genérica “20 menos parâmetros do kernel” também precisa de justificação/calibração, ou identificação explícita como diagnóstico heurístico.
+
+- **O preço contém erro aritmético.** Os fatores de [desenho:122](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:122) dão 13.608 starts. Com 500 iterações e 0,05–0,2 segundo por avaliação, são **94,5–378 CPU-h**, antes de avaliações adicionais de gradiente e busca de passo. Convergência antecipada pode reduzir isso, mas não sustenta os “10–40 no limite superior”. O smoke de [desenho:125](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:125) deve ficar expressamente **após autorização do mantenedor**, pois já é execução.
+
+**I3**
+
+- **O quantil ficou invertido.** Agora T pequeno favorece binária, mas permanece o quantil `1−α`: [desenho:141](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:141), [desenho:152](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:152). Rejeitar abaixo desse corte rejeitaria aproximadamente **95% dos planetas quando α=0,05**. Use a cauda inferior, quantil α, e fixe uma política de empates compatível com o nível declarado.
+
+- **A precedência fatal está errada.** [Desenho:167](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:167) diz que INCONCLUSIVE permanece INCONCLUSIVE. Com gate aprovado, um novo fatal FAIL produz **REFUTED mesmo havendo outro teste INCONCLUSIVE**: [verdict.py:238](C:/Projetos/refute/src/refute/core/verdict.py:238). Corrija a transformação por realização. Isso também pode mudar D4, convertendo INCONCLUSIVE em REFUTED.
+
+- **As demais restrições melhoraram corretamente:** teste novo com penalização explícita, cenário restrito aos resultados fixados, caminhos warning/INCONCLUSIVE reservados ao mantenedor e nenhuma inviabilidade geral de D1. A extrapolação de aproximadamente 860 CPU-h está corretamente qualificada como estimativa: [desenho:183](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:183), [desenho:194](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:194). Antes do congelamento, preencha os starts/limites, manifesto de calibração e procedimento de propagação da incerteza ainda deixados para depois: [desenho:150](C:/Projetos/refute/docs/plans/v0.5.4-I2-I3-designs.md:150).
+
+**WEAKENED, com correções no quantil e na precedência do I3, nas nuisances e no custo do I2, e fechamento das especificações pendentes antes do congelamento.**
