@@ -1,0 +1,47 @@
+{
+ "label": "v0.5.4 Information checks: review tokens and agent-days (the maintainer's decision of 2026-11-12, 14:00, item 4; #217)",
+ "caps": {
+  "review_tokens": {
+   "h1": 2000000,
+   "phase": 3500000,
+   "independent_review_at_the_end": 350000,
+   "stop_at": 0.8
+  },
+  "agent_days": {
+   "h1": 4,
+   "phase": 10
+  },
+  "disk_bytes": 5000000000
+ },
+ "review_tokens_method": "as in stage B: each Codex conversation's last turn input_tokens - cached_input_tokens + output_tokens, plus every independent review session; ordinary independent review sessions count in their scope (independent_review_tokens), the phase's final independent review against its own 0.35 M (final_review_tokens)",
+ "agent_days_method": "Claude's session transcripts since 2026-11-12T17:00:00Z (14:00 local), wall clock over 8-hour days as an upper bound, active time with gaps capped at 10 minutes",
+ "independent_review_tokens": 0,
+ "entries": [
+  {
+   "utc": "2026-11-12T17:24:07Z",
+   "step": "before committing the first half design",
+   "codex_tokens": {
+    "conversations": {
+     "h1-design": 222070
+    },
+    "h1": 222070,
+    "phase": 222070
+   },
+   "independent_review_tokens": 0,
+   "final_review_tokens": 0,
+   "agent_days_wall": 0.04,
+   "agent_days_active": 0.04,
+   "cpu_hours": {
+    "phase": 0.0,
+    "h1": 0
+   },
+   "disk_bytes": 745176,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
+  }
+ ],
+ "final_review_tokens": 0
+}
