@@ -12,15 +12,38 @@
     "h1_i4": {
      "allocation_hours": 8.0,
      "identity": "48fc21d2fa9a67b4",
-     "spent_hours": 0.0
+     "reconciled": [
+      {
+       "reason": "Interrupted at about 15:40 on 2026-11-12, when the desktop app restarted, at 10 of 290 planets; no worker survived (each recorded PID checked). The maintainer's decision of 2026-11-12, 15:46, item 1 (#217): the open batch is closed by the driver's crash charge and recorded as a fact; the 280 remaining planets run as part h1_i4_rest with the same code, fingerprint and rows (i4_rest.py).",
+       "stop": "interrupted: the desktop app restarted"
+      }
+     ],
+     "spent_hours": 5.082673611111111
+    },
+    "h1_i4_rest": {
+     "allocation_hours": 6.0,
+     "checkpoint_shards": 14,
+     "identity": "a89ad9b0666dd1fb",
+     "projection_hours": 7.255555555555555,
+     "spent_hours": 0.36277777777777775,
+     "unresolved_stop": "stopped: the projection 7.3 CPU-h passes the part's hard cap, 7.1"
     },
     "h1_reserve": {
-     "allocation_hours": 8.9
+     "allocation_hours": 2.9000000000000004
     },
     "h2_unallocated": {
      "allocation_hours": 25.0
     }
    }
   }
- }
+ },
+ "transfers": [
+  {
+   "from": "h1_reserve",
+   "hours": 6.0,
+   "reason": "Interrupted at about 15:40 on 2026-11-12, when the desktop app restarted, at 10 of 290 planets; no worker survived (each recorded PID checked). The maintainer's decision of 2026-11-12, 15:46, item 1 (#217): the open batch is closed by the driver's crash charge and recorded as a fact; the 280 remaining planets run as part h1_i4_rest with the same code, fingerprint and rows (i4_rest.py).",
+   "to": "h1_i4_rest",
+   "utc": "2026-11-12T19:02:15Z"
+  }
+ ]
 }

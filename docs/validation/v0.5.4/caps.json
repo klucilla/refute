@@ -144,6 +144,60 @@
     "review_tokens": 0,
     "disk_bytes": 0
    }
+  },
+  {
+   "utc": "2026-11-12T19:02:15Z",
+   "step": "i4 rest run",
+   "codex_tokens": {
+    "conversations": {
+     "h1-design": 222070,
+     "h1-i2i3": 177784,
+     "h1-i4rest": 104498
+    },
+    "h1": 504352,
+    "phase": 504352
+   },
+   "independent_review_tokens": 0,
+   "final_review_tokens": 0,
+   "agent_days_wall": 0.25,
+   "agent_days_active": 0.18,
+   "cpu_hours": {
+    "phase": 6.398,
+    "h1": 6.398
+   },
+   "disk_bytes": 2872326,
+   "reserved": {
+    "agent_days": 0.3,
+    "review_tokens": 0,
+    "disk_bytes": 64000000
+   }
+  },
+  {
+   "utc": "2026-11-12T19:05:45Z",
+   "step": "i4 rest after the run",
+   "codex_tokens": {
+    "conversations": {
+     "h1-design": 222070,
+     "h1-i2i3": 177784,
+     "h1-i4rest": 104498
+    },
+    "h1": 504352,
+    "phase": 504352
+   },
+   "independent_review_tokens": 0,
+   "final_review_tokens": 0,
+   "agent_days_wall": 0.25,
+   "agent_days_active": 0.18,
+   "cpu_hours": {
+    "phase": 11.844,
+    "h1": 11.844
+   },
+   "disk_bytes": 2890482,
+   "reserved": {
+    "agent_days": 0.0,
+    "review_tokens": 0,
+    "disk_bytes": 0
+   }
   }
  ],
  "final_review_tokens": 0
