@@ -45,3 +45,23 @@ The tokens are cumulative over the conversation `h1-i2i3`:
 The conversation now counts **177,784** against v0.5.4's caps.
 
 Applied as Codex wrote them. Round 1: I2 rebuilds each injection to read the sub-check's own measurement and the SAP depth's error, keeps σ_op (the sub-check's contrast) apart from σ_GLS (the information bound), counts unknowns so they cannot make a route, and the 56 above 20 a conditional scenario; I3's statistic defined with aliases and penalized priors as a new test, its calibration frozen, its uncertainty propagated, the joint distribution as a conditional scenario, the warning and INCONCLUSIVE paths to the maintainer, its price about 860 CPU-h. Round 2: I3's threshold is the lower α quantile with strict rejection, and a new fatal FAIL makes any gate-passed verdict REFUTED; I2's nuisances are E4's quadratic terms, its numerics filled in, its price 95-380 CPU-h, a smoke only with authorization. Round 3 (the last): by the tie-break, the conservative options were applied and the designs frozen as paper designs only: E4's internal detrending must enter I2's contrast with unit response shown, or the injection is unknown; the remaining starts are impediments; I3 needs a joint-coverage envelope (route only with its lower bound at least 0.95, a finding only with its upper bound below 0.05, unresolved otherwise) and no population guarantee for the quantile. Neither runs before the maintainer's decision.
+
+## I4's completion after the interruption (`docs/validation/v0.5.4/i4_rest.py`)
+
+Codex's review of the script that reconciles I4's interruption (the desktop app's restart at 10 of 290 planets) and runs the 280 remaining planets as part h1_i4_rest with the same code, fingerprint and rows (the maintainer's decision of 2026-11-12, 15:46, items 1 to 3), before its run. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [h1-i4rest-round-1-answer.md](h1-i4rest-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (finish's stop, a resumable reconciliation, an atomic transfer, another interruption, the reader's guards, the stale lock) | `339902ad657bc5928631e57ad009abb4cf5b341802363cb1944ed3ec501725b4` |
+| 2 | [h1-i4rest-round-2-answer.md](h1-i4rest-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (a durable record of each run, the PID check, pending stops whatever the history) | `f8713bc7d30b54b53fd8ea195e751a708a4773b71e9b1e4ed9db58754120431f` |
+| 3 | [h1-i4rest-round-3-answer.md](h1-i4rest-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `708e0bbb3d00f2224a1fe6e8b221dc311143b5ca70c65c5bb02d2c17a257bfca` |
+
+The tokens are cumulative over the conversation `h1-i4rest`:
+
+- round 1: 633,746 input (566,656 cached) and 9,650 output;
+- round 2: 1,017,642 input (941,440 cached) and 14,699 output;
+- round 3: 1,348,172 input (1,262,208 cached) and 18,534 output;
+
+The conversation now counts **104,498** against v0.5.4's caps.
+
+Applied as Codex wrote them. Round 1 confirmed the crash charge (5.082674 CPU-h), the 280 rows, the drain at 19:30 through the driver, and the faithful reuse of the frozen summary with planet 3129 excluded from L and disclosed; its corrections: keep finish's stop, resume only this step's own intermediate stop, write the transfer's debit, credit and history in one save (ledger_i.py stays unedited, inside I1's and I4's fingerprints), refuse an open batch of the rest, guard the reader (stops, gates, unique keys, 290 records), and release the stale lock only as a kept file. Round 2: a durable start and end per run (a start without an end is a STOP), a failed PID query treated as alive, and a pending main stop checked whatever the history. Round 3 found no new defect; its conservative note: a crash after a start, even before any dispatch, is a STOP for the maintainer, never a manual completion of the journal or a repeat.
