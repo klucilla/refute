@@ -51,8 +51,20 @@
      "checkpoint_shards": 10,
      "identity": "fcd7d2c3c2290c4e",
      "projection_hours": 4.670486111111111,
-     "spent_hours": 7.092717013888889,
-     "unresolved_stop": "stopped: the cap is reached"
+     "reconciled": [
+      {
+       "reason": "The maintainer's decision of 2026-11-12, item 1 (#217): the part stopped at its cap (1.5 times the 10-curve checkpoint's projection of 4.67 CPU-h, so 7.01) at 7.09 CPU-h with 181 of 200 curves done and no error. The stop stays recorded as a fact. The 19 missing curves run with the same code, fingerprint and rows as part b1_forecast_d2d4_rest (and, if it stops again by the driver's mechanics, one pre-approved rerun as b1_forecast_d2d4_rest2), within 1.5 CPU-h more taken from b1_unallocated (b1_d2d4_rest.py).",
+       "stop": "stopped: the cap is reached"
+      }
+     ],
+     "spent_hours": 7.092717013888889
+    },
+    "b1_forecast_d2d4_rest": {
+     "allocation_hours": 1.0,
+     "checkpoint_shards": 1,
+     "identity": "447074c4bff007ed",
+     "projection_hours": 1.1991276041666667,
+     "spent_hours": 0.7072178819444445
     },
     "b1_recal_c1": {
      "allocation_hours": 8.5,
@@ -126,7 +138,7 @@
      "spent_hours": 8.336184895833334
     },
     "b1_unallocated": {
-     "allocation_hours": 33.0
+     "allocation_hours": 32.0
     }
    }
   }
@@ -215,6 +227,13 @@
    "reason": "B1.4's forecast, above_20 (#217)",
    "to": "b1_t2a_above20",
    "utc": "2026-11-12T04:06:19Z"
+  },
+  {
+   "from": "b1_unallocated",
+   "hours": 1.0,
+   "reason": "The maintainer's decision of 2026-11-12, item 1 (#217): the part stopped at its cap (1.5 times the 10-curve checkpoint's projection of 4.67 CPU-h, so 7.01) at 7.09 CPU-h with 181 of 200 curves done and no error. The stop stays recorded as a fact. The 19 missing curves run with the same code, fingerprint and rows as part b1_forecast_d2d4_rest (and, if it stops again by the driver's mechanics, one pre-approved rerun as b1_forecast_d2d4_rest2), within 1.5 CPU-h more taken from b1_unallocated (b1_d2d4_rest.py).",
+   "to": "b1_forecast_d2d4_rest",
+   "utc": "2026-11-12T14:17:30Z"
   }
  ]
 }

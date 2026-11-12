@@ -1,0 +1,950 @@
+{
+ "d2": {
+  "decisive_tests": [
+   "aperture_depth",
+   "duty_cycle",
+   "edge_events",
+   "nearby_contamination",
+   "odd_even",
+   "period_alias",
+   "plausibility",
+   "secondary_eclipse",
+   "sinusoid",
+   "snr",
+   "systematics"
+  ],
+  "deferred_at_stage_2": [],
+  "eligible": 178,
+  "fingerprint": "5bb3277e4a908c18",
+  "records": 200,
+  "records_per_part": {
+   "b1_forecast_d2d4": 181,
+   "b1_forecast_d2d4_rest": 19
+  },
+  "v4": {
+   "decisive_blockers_by_test": {
+    "aperture_depth": 3,
+    "odd_even": 25,
+    "period_alias": 3,
+    "sinusoid": 25,
+    "systematics": 3
+   },
+   "decisive_blockers_overlapping": {
+    "aperture_depth INCONCLUSIVE (not_enough_data)": 3,
+    "odd_even INCONCLUSIVE": 21,
+    "odd_even INCONCLUSIVE (insufficient_sensitivity)": 3,
+    "odd_even INCONCLUSIVE (not_enough_data)": 1,
+    "period_alias FAIL [severity not recorded]": 2,
+    "period_alias INCONCLUSIVE": 1,
+    "sinusoid INCONCLUSIVE": 17,
+    "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 8,
+    "systematics INCONCLUSIVE (not_enough_data)": 3
+   },
+   "diagnostics_in_losses_not_blockers": {
+    "centroid_shift INCONCLUSIVE": 19,
+    "duration_excess FAIL": 1,
+    "duration_excess INCONCLUSIVE": 31,
+    "event_consistency INCONCLUSIVE": 35
+   },
+   "kept": 142,
+   "loss_verdicts": {
+    "INCONCLUSIVE": 34,
+    "REFUTED": 2
+   },
+   "losses_by_set_of_blocking_tests": {
+    "aperture_depth+odd_even+sinusoid+systematics": 2,
+    "aperture_depth+odd_even+systematics": 1,
+    "odd_even": 7,
+    "odd_even+sinusoid": 15,
+    "period_alias": 3,
+    "sinusoid": 8
+   },
+   "losses_without_a_decisive_blocker": 0,
+   "lost": 36,
+   "lost_v04_kept": 32,
+   "records": 178,
+   "selection_refusals_in_losses": {},
+   "sole_decisive_blocker": {
+    "odd_even INCONCLUSIVE": 6,
+    "odd_even INCONCLUSIVE (not_enough_data)": 1,
+    "period_alias FAIL [severity not recorded]": 2,
+    "period_alias INCONCLUSIVE": 1,
+    "sinusoid INCONCLUSIVE": 3,
+    "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 5
+   },
+   "unknown": 0,
+   "warning_fails_in_losses_not_blockers": {
+    "systematics FAIL": 1
+   }
+  },
+  "v5": {
+   "decisive_blockers_by_test": {
+    "odd_even": 26,
+    "period_alias": 3,
+    "sinusoid": 25,
+    "systematics": 1
+   },
+   "decisive_blockers_overlapping": {
+    "odd_even FAIL [severity not recorded]": 1,
+    "odd_even INCONCLUSIVE": 24,
+    "odd_even INCONCLUSIVE (not_enough_data)": 1,
+    "period_alias FAIL [severity not recorded]": 2,
+    "period_alias INCONCLUSIVE": 1,
+    "sinusoid INCONCLUSIVE": 17,
+    "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 8,
+    "systematics INCONCLUSIVE (not_enough_data)": 1
+   },
+   "diagnostics_in_losses_not_blockers": {
+    "centroid_shift INCONCLUSIVE": 20,
+    "duration_excess FAIL": 1,
+    "duration_excess INCONCLUSIVE": 32,
+    "event_consistency INCONCLUSIVE": 36
+   },
+   "estimators_in_losses_with_their_test_blocking": {
+    "E2": {
+     "fell back to version 4": 4,
+     "operated": 22,
+     "test": "odd_even"
+    },
+    "E3": {
+     "fell back to version 4": 23,
+     "operated": 2,
+     "test": "sinusoid"
+    },
+    "E4": {
+     "called, no measurement completed": 1,
+     "test": "systematics"
+    }
+   },
+   "estimators_over_every_record": {
+    "E2": {
+     "fell back to version 4": 4,
+     "operated": 174,
+     "test": "odd_even"
+    },
+    "E3": {
+     "fell back to version 4": 149,
+     "operated": 29,
+     "test": "sinusoid"
+    },
+    "E4": {
+     "called, no measurement completed": 1,
+     "operated": 177,
+     "test": "systematics"
+    }
+   },
+   "kept": 141,
+   "loss_verdicts": {
+    "INCONCLUSIVE": 34,
+    "REFUTED": 3
+   },
+   "losses_by_set_of_blocking_tests": {
+    "odd_even": 9,
+    "odd_even+sinusoid": 16,
+    "odd_even+sinusoid+systematics": 1,
+    "period_alias": 3,
+    "sinusoid": 8
+   },
+   "losses_without_a_decisive_blocker": 0,
+   "lost": 37,
+   "lost_v04_kept": 32,
+   "records": 178,
+   "selection_refusals_in_losses": {},
+   "sole_decisive_blocker": {
+    "odd_even FAIL [severity not recorded]": 1,
+    "odd_even INCONCLUSIVE": 7,
+    "odd_even INCONCLUSIVE (not_enough_data)": 1,
+    "period_alias FAIL [severity not recorded]": 2,
+    "period_alias INCONCLUSIVE": 1,
+    "sinusoid INCONCLUSIVE": 3,
+    "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 5
+   },
+   "unknown": 0,
+   "warning_fails_in_losses_not_blockers": {
+    "systematics FAIL": 1
+   }
+  }
+ },
+ "decision": "the maintainer's decision of 2026-11-12, item 2 (#217)",
+ "definition": "a decisive blocker of a loss: the gate not PASS, a fatal FAIL (REFUTED), a decisive stage test INCONCLUSIVE, or a decisive test missing; a warning FAIL gives WEAKENED (kept) and diagnostics never enter the verdict, so both are counted apart",
+ "diagnostic_tests": [
+  "duration_excess",
+  "event_consistency",
+  "single_event",
+  "centroid_shift",
+  "holdout_by_year"
+ ],
+ "label": "B1.4's losses: decisive blockers only (a new record; decides nothing)",
+ "method_status": "not_validated",
+ "supersedes_as_blocker_lists": [
+  "b1-t2a-blockers.json (blockers, sole_blocker)",
+  "b1-forecast.json (d2_d4.v5_blockers)"
+ ],
+ "t2a": {
+  "A": {
+   "by_stratum": {
+    "2_to_4": {
+     "decisive_blockers_by_test": {
+      "odd_even": 59,
+      "period_alias": 12,
+      "sinusoid": 66,
+      "systematics": 104
+     },
+     "decisive_blockers_overlapping": {
+      "odd_even FAIL": 3,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 26,
+      "odd_even INCONCLUSIVE (outside_domain)": 30,
+      "period_alias FAIL": 1,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 11,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 66,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 64,
+      "systematics INCONCLUSIVE (not_enough_data)": 10,
+      "systematics INCONCLUSIVE (outside_domain)": 30
+     },
+     "diagnostics_in_losses_not_blockers": {
+      "centroid_shift INCONCLUSIVE (not_enough_data)": 140,
+      "duration_excess INCONCLUSIVE (insufficient_sensitivity)": 130,
+      "event_consistency FAIL": 3,
+      "event_consistency INCONCLUSIVE (insufficient_sensitivity)": 85,
+      "event_consistency INCONCLUSIVE (outside_domain)": 30,
+      "single_event FAIL": 1,
+      "single_event INCONCLUSIVE (outside_domain)": 30
+     },
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "fell back to version 4": 7,
+       "not reached": 30,
+       "operated": 22,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 66,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 9,
+       "not reached": 30,
+       "operated": 65,
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "fell back to version 4": 29,
+       "not reached": 30,
+       "operated": 243,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 291,
+       "operated": 11,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 9,
+       "not reached": 30,
+       "operated": 263,
+       "test": "systematics"
+      }
+     },
+     "kept": 162,
+     "loss_verdicts": {
+      "INCONCLUSIVE": 136,
+      "REFUTED": 4
+     },
+     "losses_by_set_of_blocking_tests": {
+      "odd_even": 5,
+      "odd_even+period_alias+systematics": 2,
+      "odd_even+sinusoid": 7,
+      "odd_even+sinusoid+systematics": 30,
+      "odd_even+systematics": 15,
+      "period_alias": 8,
+      "period_alias+systematics": 2,
+      "sinusoid": 16,
+      "sinusoid+systematics": 13,
+      "systematics": 42
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 140,
+     "lost_v04_kept": 138,
+     "records": 302,
+     "selection_refusals_in_losses": {
+      "measured events outside the grid": 30
+     },
+     "sole_decisive_blocker": {
+      "odd_even FAIL": 3,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 2,
+      "period_alias FAIL": 1,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 7,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 16,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 37,
+      "systematics INCONCLUSIVE (not_enough_data)": 5
+     },
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {
+      "nearby_contamination FAIL": 35,
+      "period_alias FAIL": 3,
+      "systematics FAIL": 1
+     }
+    },
+    "5_to_20": {
+     "decisive_blockers_by_test": {
+      "odd_even": 257,
+      "period_alias": 5,
+      "sinusoid": 29,
+      "systematics": 257
+     },
+     "decisive_blockers_overlapping": {
+      "odd_even INCONCLUSIVE (outside_domain)": 257,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 5,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 29,
+      "systematics INCONCLUSIVE (outside_domain)": 257
+     },
+     "diagnostics_in_losses_not_blockers": {
+      "centroid_shift INCONCLUSIVE (not_enough_data)": 257,
+      "duration_excess INCONCLUSIVE (insufficient_sensitivity)": 239,
+      "event_consistency INCONCLUSIVE (outside_domain)": 257,
+      "single_event INCONCLUSIVE (outside_domain)": 257
+     },
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "not reached": 257,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 29,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "not reached": 257,
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "not reached": 257,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 256,
+       "operated": 1,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "not reached": 257,
+       "test": "systematics"
+      }
+     },
+     "kept": 0,
+     "loss_verdicts": {
+      "INCONCLUSIVE": 257
+     },
+     "losses_by_set_of_blocking_tests": {
+      "odd_even+period_alias+systematics": 5,
+      "odd_even+sinusoid+systematics": 29,
+      "odd_even+systematics": 223
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 257,
+     "lost_v04_kept": 257,
+     "records": 257,
+     "selection_refusals_in_losses": {
+      "the selector not certified": 257
+     },
+     "sole_decisive_blocker": {},
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {
+      "nearby_contamination FAIL": 63,
+      "period_alias FAIL": 5,
+      "secondary_eclipse FAIL": 1
+     }
+    },
+    "above_20": {
+     "decisive_blockers_by_test": {},
+     "decisive_blockers_overlapping": {},
+     "diagnostics_in_losses_not_blockers": {},
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "test": "odd_even"
+      },
+      "E3": {
+       "test": "sinusoid"
+      },
+      "E4": {
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "test": "odd_even"
+      },
+      "E3": {
+       "test": "sinusoid"
+      },
+      "E4": {
+       "test": "systematics"
+      }
+     },
+     "kept": 0,
+     "loss_verdicts": {
+      "not run: above 20 sectors (version 5 A not run)": 56
+     },
+     "losses_by_set_of_blocking_tests": {
+      "(refused: above 20 sectors (version 5 A not run))": 56
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 56,
+     "lost_v04_kept": 56,
+     "records": 56,
+     "selection_refusals_in_losses": {
+      "above 20 sectors (version 5 A not run)": 56
+     },
+     "sole_decisive_blocker": {},
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {}
+    }
+   },
+   "kept_2_to_20": 162,
+   "kept_615": 162,
+   "unknown_2_to_20": 0
+  },
+  "B": {
+   "by_stratum": {
+    "2_to_4": {
+     "decisive_blockers_by_test": {
+      "odd_even": 59,
+      "period_alias": 12,
+      "sinusoid": 66,
+      "systematics": 104
+     },
+     "decisive_blockers_overlapping": {
+      "odd_even FAIL": 3,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 26,
+      "odd_even INCONCLUSIVE (outside_domain)": 30,
+      "period_alias FAIL": 1,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 11,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 66,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 64,
+      "systematics INCONCLUSIVE (not_enough_data)": 10,
+      "systematics INCONCLUSIVE (outside_domain)": 30
+     },
+     "diagnostics_in_losses_not_blockers": {
+      "centroid_shift INCONCLUSIVE (not_enough_data)": 140,
+      "duration_excess INCONCLUSIVE (insufficient_sensitivity)": 130,
+      "event_consistency FAIL": 3,
+      "event_consistency INCONCLUSIVE (insufficient_sensitivity)": 85,
+      "event_consistency INCONCLUSIVE (outside_domain)": 30,
+      "single_event FAIL": 1,
+      "single_event INCONCLUSIVE (outside_domain)": 30
+     },
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "fell back to version 4": 7,
+       "not reached": 30,
+       "operated": 22,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 66,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 9,
+       "not reached": 30,
+       "operated": 65,
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "fell back to version 4": 29,
+       "not reached": 30,
+       "operated": 243,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 291,
+       "operated": 11,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 9,
+       "not reached": 30,
+       "operated": 263,
+       "test": "systematics"
+      }
+     },
+     "kept": 162,
+     "loss_verdicts": {
+      "INCONCLUSIVE": 136,
+      "REFUTED": 4
+     },
+     "losses_by_set_of_blocking_tests": {
+      "odd_even": 5,
+      "odd_even+period_alias+systematics": 2,
+      "odd_even+sinusoid": 7,
+      "odd_even+sinusoid+systematics": 30,
+      "odd_even+systematics": 15,
+      "period_alias": 8,
+      "period_alias+systematics": 2,
+      "sinusoid": 16,
+      "sinusoid+systematics": 13,
+      "systematics": 42
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 140,
+     "lost_v04_kept": 138,
+     "records": 302,
+     "selection_refusals_in_losses": {
+      "measured events outside the grid": 30
+     },
+     "sole_decisive_blocker": {
+      "odd_even FAIL": 3,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 2,
+      "period_alias FAIL": 1,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 7,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 16,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 37,
+      "systematics INCONCLUSIVE (not_enough_data)": 5
+     },
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {
+      "nearby_contamination FAIL": 35,
+      "period_alias FAIL": 3,
+      "systematics FAIL": 1
+     }
+    },
+    "5_to_20": {
+     "decisive_blockers_by_test": {
+      "odd_even": 30,
+      "period_alias": 5,
+      "sinusoid": 29,
+      "systematics": 65
+     },
+     "decisive_blockers_overlapping": {
+      "odd_even FAIL": 1,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 17,
+      "odd_even INCONCLUSIVE (outside_domain)": 12,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 5,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 29,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 43,
+      "systematics INCONCLUSIVE (not_enough_data)": 10,
+      "systematics INCONCLUSIVE (outside_domain)": 12
+     },
+     "diagnostics_in_losses_not_blockers": {
+      "centroid_shift INCONCLUSIVE (not_enough_data)": 88,
+      "duration_excess INCONCLUSIVE (insufficient_sensitivity)": 87,
+      "event_consistency FAIL": 2,
+      "event_consistency INCONCLUSIVE (insufficient_sensitivity)": 61,
+      "event_consistency INCONCLUSIVE (outside_domain)": 12,
+      "single_event INCONCLUSIVE (outside_domain)": 12
+     },
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "fell back to version 4": 5,
+       "not reached": 12,
+       "operated": 13,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 29,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 8,
+       "not reached": 12,
+       "operated": 45,
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "fell back to version 4": 21,
+       "not reached": 12,
+       "operated": 224,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 256,
+       "operated": 1,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 8,
+       "not reached": 12,
+       "operated": 237,
+       "test": "systematics"
+      }
+     },
+     "kept": 169,
+     "loss_verdicts": {
+      "INCONCLUSIVE": 87,
+      "REFUTED": 1
+     },
+     "losses_by_set_of_blocking_tests": {
+      "odd_even": 4,
+      "odd_even+sinusoid": 3,
+      "odd_even+sinusoid+systematics": 3,
+      "odd_even+systematics": 20,
+      "period_alias": 3,
+      "period_alias+systematics": 2,
+      "sinusoid": 13,
+      "sinusoid+systematics": 10,
+      "systematics": 30
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 88,
+     "lost_v04_kept": 88,
+     "records": 257,
+     "selection_refusals_in_losses": {
+      "measured events outside the grid": 12
+     },
+     "sole_decisive_blocker": {
+      "odd_even FAIL": 1,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 3,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 3,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 13,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 22,
+      "systematics INCONCLUSIVE (not_enough_data)": 8
+     },
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {
+      "nearby_contamination FAIL": 33,
+      "period_alias FAIL": 1,
+      "systematics FAIL": 2
+     }
+    },
+    "above_20": {
+     "decisive_blockers_by_test": {},
+     "decisive_blockers_overlapping": {},
+     "diagnostics_in_losses_not_blockers": {},
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "test": "odd_even"
+      },
+      "E3": {
+       "test": "sinusoid"
+      },
+      "E4": {
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "test": "odd_even"
+      },
+      "E3": {
+       "test": "sinusoid"
+      },
+      "E4": {
+       "test": "systematics"
+      }
+     },
+     "kept": 0,
+     "loss_verdicts": {
+      "not run: above 20 sectors (version 5 A not run)": 56
+     },
+     "losses_by_set_of_blocking_tests": {
+      "(refused: above 20 sectors (version 5 A not run))": 56
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 56,
+     "lost_v04_kept": 56,
+     "records": 56,
+     "selection_refusals_in_losses": {
+      "above 20 sectors (version 5 A not run)": 56
+     },
+     "sole_decisive_blocker": {},
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {}
+    }
+   },
+   "kept_2_to_20": 331,
+   "kept_615": 331,
+   "unknown_2_to_20": 0
+  },
+  "C": {
+   "by_stratum": {
+    "2_to_4": {
+     "decisive_blockers_by_test": {
+      "odd_even": 59,
+      "period_alias": 12,
+      "sinusoid": 66,
+      "systematics": 104
+     },
+     "decisive_blockers_overlapping": {
+      "odd_even FAIL": 3,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 26,
+      "odd_even INCONCLUSIVE (outside_domain)": 30,
+      "period_alias FAIL": 1,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 11,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 66,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 64,
+      "systematics INCONCLUSIVE (not_enough_data)": 10,
+      "systematics INCONCLUSIVE (outside_domain)": 30
+     },
+     "diagnostics_in_losses_not_blockers": {
+      "centroid_shift INCONCLUSIVE (not_enough_data)": 140,
+      "duration_excess INCONCLUSIVE (insufficient_sensitivity)": 130,
+      "event_consistency FAIL": 3,
+      "event_consistency INCONCLUSIVE (insufficient_sensitivity)": 85,
+      "event_consistency INCONCLUSIVE (outside_domain)": 30,
+      "single_event FAIL": 1,
+      "single_event INCONCLUSIVE (outside_domain)": 30
+     },
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "fell back to version 4": 7,
+       "not reached": 30,
+       "operated": 22,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 66,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 9,
+       "not reached": 30,
+       "operated": 65,
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "fell back to version 4": 29,
+       "not reached": 30,
+       "operated": 243,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 291,
+       "operated": 11,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 9,
+       "not reached": 30,
+       "operated": 263,
+       "test": "systematics"
+      }
+     },
+     "kept": 162,
+     "loss_verdicts": {
+      "INCONCLUSIVE": 136,
+      "REFUTED": 4
+     },
+     "losses_by_set_of_blocking_tests": {
+      "odd_even": 5,
+      "odd_even+period_alias+systematics": 2,
+      "odd_even+sinusoid": 7,
+      "odd_even+sinusoid+systematics": 30,
+      "odd_even+systematics": 15,
+      "period_alias": 8,
+      "period_alias+systematics": 2,
+      "sinusoid": 16,
+      "sinusoid+systematics": 13,
+      "systematics": 42
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 140,
+     "lost_v04_kept": 138,
+     "records": 302,
+     "selection_refusals_in_losses": {
+      "measured events outside the grid": 30
+     },
+     "sole_decisive_blocker": {
+      "odd_even FAIL": 3,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 2,
+      "period_alias FAIL": 1,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 7,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 16,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 37,
+      "systematics INCONCLUSIVE (not_enough_data)": 5
+     },
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {
+      "nearby_contamination FAIL": 35,
+      "period_alias FAIL": 3,
+      "systematics FAIL": 1
+     }
+    },
+    "5_to_20": {
+     "decisive_blockers_by_test": {
+      "odd_even": 30,
+      "period_alias": 5,
+      "sinusoid": 29,
+      "systematics": 65
+     },
+     "decisive_blockers_overlapping": {
+      "odd_even FAIL": 1,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 17,
+      "odd_even INCONCLUSIVE (outside_domain)": 12,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 5,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 29,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 43,
+      "systematics INCONCLUSIVE (not_enough_data)": 10,
+      "systematics INCONCLUSIVE (outside_domain)": 12
+     },
+     "diagnostics_in_losses_not_blockers": {
+      "centroid_shift INCONCLUSIVE (not_enough_data)": 88,
+      "duration_excess INCONCLUSIVE (insufficient_sensitivity)": 87,
+      "event_consistency FAIL": 2,
+      "event_consistency INCONCLUSIVE (insufficient_sensitivity)": 61,
+      "event_consistency INCONCLUSIVE (outside_domain)": 12,
+      "single_event INCONCLUSIVE (outside_domain)": 12
+     },
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "fell back to version 4": 5,
+       "not reached": 12,
+       "operated": 13,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 29,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 8,
+       "not reached": 12,
+       "operated": 45,
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "fell back to version 4": 21,
+       "not reached": 12,
+       "operated": 224,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 256,
+       "operated": 1,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "called, no measurement completed": 8,
+       "not reached": 12,
+       "operated": 237,
+       "test": "systematics"
+      }
+     },
+     "kept": 169,
+     "loss_verdicts": {
+      "INCONCLUSIVE": 87,
+      "REFUTED": 1
+     },
+     "losses_by_set_of_blocking_tests": {
+      "odd_even": 4,
+      "odd_even+sinusoid": 3,
+      "odd_even+sinusoid+systematics": 3,
+      "odd_even+systematics": 20,
+      "period_alias": 3,
+      "period_alias+systematics": 2,
+      "sinusoid": 13,
+      "sinusoid+systematics": 10,
+      "systematics": 30
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 88,
+     "lost_v04_kept": 88,
+     "records": 257,
+     "selection_refusals_in_losses": {
+      "measured events outside the grid": 12
+     },
+     "sole_decisive_blocker": {
+      "odd_even FAIL": 1,
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 3,
+      "period_alias INCONCLUSIVE (insufficient_sensitivity)": 3,
+      "sinusoid INCONCLUSIVE (insufficient_sensitivity)": 13,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 22,
+      "systematics INCONCLUSIVE (not_enough_data)": 8
+     },
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {
+      "nearby_contamination FAIL": 33,
+      "period_alias FAIL": 1,
+      "systematics FAIL": 2
+     }
+    },
+    "above_20": {
+     "decisive_blockers_by_test": {
+      "odd_even": 8,
+      "systematics": 9
+     },
+     "decisive_blockers_overlapping": {
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 8,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 9
+     },
+     "diagnostics_in_losses_not_blockers": {
+      "centroid_shift INCONCLUSIVE (not_enough_data)": 14,
+      "duration_excess INCONCLUSIVE (insufficient_sensitivity)": 12,
+      "event_consistency INCONCLUSIVE (insufficient_sensitivity)": 12
+     },
+     "estimators_in_losses_with_their_test_blocking": {
+      "E2": {
+       "fell back to version 4": 1,
+       "operated": 7,
+       "test": "odd_even"
+      },
+      "E3": {
+       "test": "sinusoid"
+      },
+      "E4": {
+       "operated": 9,
+       "test": "systematics"
+      }
+     },
+     "estimators_over_every_record": {
+      "E2": {
+       "fell back to version 4": 2,
+       "operated": 54,
+       "test": "odd_even"
+      },
+      "E3": {
+       "fell back to version 4": 56,
+       "test": "sinusoid"
+      },
+      "E4": {
+       "operated": 56,
+       "test": "systematics"
+      }
+     },
+     "kept": 42,
+     "loss_verdicts": {
+      "INCONCLUSIVE": 14
+     },
+     "losses_by_set_of_blocking_tests": {
+      "odd_even": 5,
+      "odd_even+systematics": 3,
+      "systematics": 6
+     },
+     "losses_without_a_decisive_blocker": 0,
+     "lost": 14,
+     "lost_v04_kept": 14,
+     "records": 56,
+     "selection_refusals_in_losses": {},
+     "sole_decisive_blocker": {
+      "odd_even INCONCLUSIVE (insufficient_sensitivity)": 5,
+      "systematics INCONCLUSIVE (insufficient_sensitivity)": 6
+     },
+     "unknown": 0,
+     "warning_fails_in_losses_not_blockers": {
+      "nearby_contamination FAIL": 1
+     }
+    }
+   },
+   "kept_2_to_20": 331,
+   "kept_615": 373,
+   "unknown_2_to_20": 0
+  }
+ },
+ "t2a_answer_unchanged": {
+  "A_kept_2_to_20": 162,
+  "B_kept_2_to_20 (K_B)": 331,
+  "B_unknown_2_to_20 (U_B)": 0,
+  "C_kept_615": 373
+ }
+}

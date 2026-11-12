@@ -487,3 +487,41 @@ The tokens are cumulative over the conversation `b1-end`:
 The conversation now counts **178,171** against stage B's cap.
 
 Applied as Codex wrote them. Round 1 reproduced the forecast, the census, the blockers and the consumption in memory, checked the shards against their sidecars, and confirmed that the D2/D4 stop's reading and the new blocker diagnostic are faithful (`K_B`, `U_B` and the answer do not depend on the defective counter). Its corrections: the A0 line called a provisional inherited reference, and version 3's failed schedule (2,956) left out of the low end; the estimators' 1,000 contrasts an illustration, not a sizing, with E3's 15 % availability a design problem; the confirmation re-extrapolated per stratum and called not priced in full; the totals called provisional subtotals, with the cumulative total against 3,100; the calendar conditioned (no acceptance authorized, the release a hypothesis); E3's lower end 1.045; T3b a planning preference with the union's safeguards before any result; the consumption completed with sub-caps, a per-part table and the first smoke's cap stop. Round 2 confirmed every correction against the records and asked only to remove a duplicated table header, which was removed as written; no third round was needed, since no point remained in divergence.
+
+## B1.4's D2/D4 completion (`b1_d2d4_rest.py`), before its run
+
+Codex's review of the script that reconciles the cap stop of `b1_forecast_d2d4` and runs its 19 missing curves with the same code, fingerprint and rows, within 1.5 CPU-h more (the maintainer's decision of 2026-11-12, item 1, #217), before the run and before its record on #217. Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-rest-round-1-answer.md](b1-rest-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the attempt argument, recoverability, the closing checks, the cap margin) | `b3d74668a32331eb05e54ad1837dd88d4540edf17367a26b245142e5d95c84c4` |
+| 2 | [b1-rest-round-2-answer.md](b1-rest-round-2-answer.md) | gpt-6.1-sol, high | `WEAKENED` (the rerun's preparation not resumable) | `84729a2a39812075eb4a2d0314e0d476018e223886c47d48046c7565e8511c10` |
+| 3 | [b1-rest-round-3-answer.md](b1-rest-round-3-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `f34bfc1eca5988786df91190ffba5606c4a2e1e5601e3d359897fdfdd9bc82ea` |
+
+The tokens are cumulative over the conversation `b1-rest`:
+
+- round 1: 999,689 input (924,672 cached) and 9,898 output;
+- round 2: 1,425,954 input (1,338,368 cached) and 15,381 output;
+- round 3: 1,902,221 input (1,806,848 cached) and 18,757 output;
+
+The conversation now counts **114,130** against stage B's cap.
+
+Applied as Codex wrote them. Round 1 confirmed the fingerprint, the 181 sidecars, the 19 missing rows, the reconciliation keeping the stop on file and the cap's algebra. Its corrections: accept only attempts 1 and 2; run every check before any reconciliation and resume a started part under its identity; reconcile the driver's own stop file and refuse at the closing on a driver stop, a failed gate or a summed consumption above 1.5 CPU-h; a cap margin for the watchdog's polling (`MARGIN` 1.2). It also confirmed that no parameter can widen a one-shard checkpoint without changing `budgeted`, so the re-stop risk stays disclosed. Round 2 confirmed those and found that a failure between the ledger's reconciliation and the rerun part's creation left the rerun blocked; the persisted reconciliation now authorizes the resume (never another attempt), and the foreseeable refusals (allocation, gates) run before any change. Round 3 reproduced the failure cases with mocks and found no new defect.
+
+## The decisive blockers and the stop report's addendum (`b1_blockers_decisive.py`, `b1-stop-report-addendum.md`)
+
+Codex's review of the new read-only record of B1.4's decisive blockers, its output and the addendum to the B1 stop report (the maintainer's decision of 2026-11-12, item 2, with the D2/D4 completion of item 1). Codex CLI 0.167.0-alpha.3.2 answered in Portuguese, and the answers are stored unchanged.
+
+| Round | File | Model, effort | Verdict | SHA-256 |
+|---|---|---|---|---|
+| 1 | [b1-blockers-round-1-answer.md](b1-blockers-round-1-answer.md) | gpt-6.1-sol, high | `WEAKENED` (E4's states, the systematics claim, E2 on D2, one table missing) | `8884b708237b025047dafdb0cb4b897fd163151702eae3c83924e32e8a198581` |
+| 2 | [b1-blockers-round-2-answer.md](b1-blockers-round-2-answer.md) | gpt-6.1-sol, high | `SURVIVED` | `58c5af35ea90f40e0567660cabdf5006d2f09360e919ddd912622673dc8ae571` |
+
+The tokens are cumulative over the conversation `b1-blockers`:
+
+- round 1: 1,604,497 input (1,480,448 cached) and 10,733 output;
+- round 2: 2,076,304 input (1,936,512 cached) and 13,011 output;
+
+The conversation now counts **152,803** against stage B's cap.
+
+Applied as Codex wrote them. Round 1 recomputed the T2a and D2 sections through the verifying readers and found them equal to the JSON, independently re-aggregated T2a, and confirmed K_B 331, U_B 0, C 373, the corrected lists, the what-ifs (72/124/211/228 and 9/8/33/34), D2 FAIL and D4 PASS on the 200 curves, and that only B1's two lists counted diagnostics. Its corrections: E4 without a measurement is "called, no measurement completed", not a fallback to version 4 (the script rerun, read only); the addendum no longer attributes `systematics`' INCONCLUSIVE to the background sub-check's power; on D2, 21 INCONCLUSIVE and 1 FAIL where E2 operated; `forecast-paths.md` added to item 2(c); "single blocker" defined against `aggregate`'s branch. Round 2 confirmed every correction and reproduced the updated JSON exactly.

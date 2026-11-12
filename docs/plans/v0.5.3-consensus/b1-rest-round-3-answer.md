@@ -1,0 +1,9 @@
+**A correção resolve a falha da rodada 2. Não encontrei novo defeito no fluxo revisado.**
+
+- **Recuperação correta:** `_authorized` exige a justificativa exata deste passo e uma parada de `MECHANICS`. `run 2` recupera a preparação interrompida mesmo antes da criação de `rest2`. [b1_d2d4_rest.py:102](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_d2d4_rest.py:102), [b1_d2d4_rest.py:133](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_d2d4_rest.py:133).
+- **Reconciliação recuperável:** as duas pendências são lidas separadamente e apenas as ainda existentes são reconciliadas. Reproduzi, com mocks, falhas no arquivamento do driver e na transferência; ambas permitiram continuar depois, com uma única reconciliação no ledger. [b1_d2d4_rest.py:146](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_d2d4_rest.py:146), [b1_d2d4_rest.py:171](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_d2d4_rest.py:171).
+- **Limites preservados:** paradas não mecânicas, orçamento excedido, alocação insuficiente e gate falho foram recusados antes da reconciliação. O ramo sem linhas permaneceu repetível, sem despacho. Uma parada de `rest2` continuou bloqueada pela regra real de `budgeted.execute`. [b1_d2d4_rest.py:149](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_d2d4_rest.py:149), [b1_d2d4_rest.py:156](/C:/Projetos/refute/docs/validation/v0.5.3/stageB/b1_d2d4_rest.py:156), [budgeted.py:235](/C:/Projetos/refute/docs/validation/v0.5.2/stage2/budgeted.py:235).
+
+O fingerprint recalculado permanece `5bb3277e4a908c18`, com 181 shards originais válidos. Nenhuma curva foi executada e nenhum arquivo foi alterado.
+
+SURVIVED

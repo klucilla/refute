@@ -1,0 +1,76 @@
+{
+ "blockers": "left out: b1_b14.d2d4_summary counts diagnostics as blockers; the decisive blockers are in b1-blockers-decisive.json",
+ "d2_d4": {
+  "batteries": {
+   "v04": {
+    "D2": "PASS",
+    "D4": "PASS",
+    "d2_minimum": 0.8719101123595506,
+    "d4_inconclusive": 1,
+    "diagnostic_d4_wilson": [
+     0.0014483909512207002,
+     0.044970800906824746
+    ],
+    "diagnostic_kept_wilson": [
+     0.9359384559064142,
+     0.9879432655092583
+    ],
+    "kept": 173,
+    "refuted": 4,
+    "refuted_wilson_upper": 0.056346912501650026
+   },
+   "v4": {
+    "D2": "FAIL",
+    "D4": "PASS",
+    "d2_minimum": 0.8719101123595506,
+    "d4_inconclusive": 7,
+    "diagnostic_d4_wilson": [
+     0.02806844241353642,
+     0.11370883025870449
+    ],
+    "diagnostic_kept_wilson": [
+     0.7327430675617074,
+     0.8501823042838953
+    ],
+    "kept": 142,
+    "refuted": 2,
+    "refuted_wilson_upper": 0.04003577110150927
+   },
+   "v5": {
+    "D2": "FAIL",
+    "D4": "PASS",
+    "d2_minimum": 0.8719101123595506,
+    "d4_inconclusive": 7,
+    "diagnostic_d4_wilson": [
+     0.02806844241353642,
+     0.11370883025870449
+    ],
+    "diagnostic_kept_wilson": [
+     0.726663108241346,
+     0.8452636716826418
+    ],
+    "kept": 141,
+    "refuted": 3,
+    "refuted_wilson_upper": 0.04837296004111493
+   }
+  },
+  "cpu_hours": {
+   "b1_forecast_d2d4": 7.0927,
+   "b1_forecast_d2d4_rest": 0.7072
+  },
+  "curves": 200,
+  "d4_subset": 122,
+  "eligible": 178,
+  "errors": 0,
+  "floor": 20,
+  "generation_failures": 1,
+  "part_state": "complete after a reconciled cap stop: the first part stopped at its cap (7.01 CPU-h) at 7.09 CPU-h with 181 of 200 records; records per part {'b1_forecast_d2d4': 181, 'b1_forecast_d2d4_rest': 19}",
+  "smoke_index_disclosed": [
+   3000
+  ]
+ },
+ "decision": "the maintainer's decision of 2026-11-12, item 1 (#217)",
+ "fingerprint": "5bb3277e4a908c18",
+ "label": "B1.4's D2 and D4 development forecast with the candidate version 5, the part completed after its cap stop (decides nothing)",
+ "method_status": "not_validated"
+}
